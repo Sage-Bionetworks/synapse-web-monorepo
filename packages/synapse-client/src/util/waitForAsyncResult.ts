@@ -1,6 +1,6 @@
 import { AsynchronousResponseBody } from '../generated/models/AsynchronousResponseBody'
 import { AsynchronousJobStatus } from '../generated/models/AsynchronousJobStatus'
-import { delay } from './fetchWithExponentialTimeout'
+import { delay } from './delay'
 import { SynapseClientError } from './SynapseClientError'
 
 /**

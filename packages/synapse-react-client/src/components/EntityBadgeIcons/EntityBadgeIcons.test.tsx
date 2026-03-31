@@ -21,9 +21,9 @@ import {
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
 import {
-  ANONYMOUS_PRINCIPAL_ID,
-  AUTHENTICATED_PRINCIPAL_ID,
-} from '@/utils/SynapseConstants'
+  MOCK_ANONYMOUS_PRINCIPAL_ID as ANONYMOUS_PRINCIPAL_ID,
+  MOCK_AUTHENTICATED_PRINCIPAL_ID as AUTHENTICATED_PRINCIPAL_ID,
+} from '@/mocks/realm/mockRealmPrincipal'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   ACCESS_TYPE,

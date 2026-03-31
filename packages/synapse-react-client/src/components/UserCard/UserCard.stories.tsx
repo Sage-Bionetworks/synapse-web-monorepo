@@ -1,6 +1,6 @@
 import { useGetCurrentUserProfile } from '@/synapse-queries'
+import { MOCK_ANONYMOUS_PRINCIPAL_ID as ANONYMOUS_PRINCIPAL_ID } from '@/mocks/realm/mockRealmPrincipal'
 import {
-  ANONYMOUS_PRINCIPAL_ID,
   AVATAR,
   LARGE_USER_CARD,
   MEDIUM_USER_CARD,

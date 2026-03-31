@@ -1,12 +1,12 @@
-import React from 'react'
 import { Box, Typography } from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from 'synapse-react-client'
-import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
-import { parseEntityIdAndVersionFromSqlStatement } from 'synapse-react-client/utils/functions'
-import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
-import styles from './GetInvolvedSection.module.scss'
+import React from 'react'
 import ColorfulPortalCardWithChips from 'synapse-react-client/components/BasePortalCard/ColorfulPortalCardWithChips/ColorfulPortalCardWithChips'
+import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
+import { parseEntityIdAndVersionFromSqlStatement } from 'synapse-react-client/utils/functions/index'
+import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import styles from './GetInvolvedSection.module.scss'
 
 type GetInvolvedSectionProps = {
   sql: string
@@ -47,33 +47,10 @@ const GetInvolvedSection = ({
       </Box>
       <Box className={styles.GetInvolvedSection__container}>
         {dataRows.map(row => {
-          const chips = row.values[getFieldIndex('chips', queryResultBundle)]
-          let chipsArray: string[]
-
-          if (Array.isArray(chips)) {
-            chipsArray = chips.map(String)
-          } else {
-            try {
-              const parsed = JSON.parse(chips ?? '[]')
-              chipsArray = Array.isArray(parsed)
-                ? parsed.map(String)
-                : [String(parsed)]
-            } catch {
-              chipsArray = chips ? [String(chips)] : []
-            }
-          }
-
           return (
             <ColorfulPortalCardWithChips
               cardSize={cardSize}
               key={row.rowId}
-              title={
-                row.values[getFieldIndex('title', queryResultBundle)] ?? ''
-              }
-              subtitle={
-                row.values[getFieldIndex('challengeName', queryResultBundle)] ??
-                ''
-              }
               description={
                 row.values[getFieldIndex('description', queryResultBundle)] ??
                 ''
@@ -86,12 +63,6 @@ const GetInvolvedSection = ({
               learnMoreLink={
                 row.values[getFieldIndex('learnMoreLink', queryResultBundle)] ??
                 ''
-              }
-              chips={chipsArray}
-              tag={
-                row.values[
-                  getFieldIndex('registrationStatus', queryResultBundle)
-                ] ?? ''
               }
               backgroundImage={
                 row.values[

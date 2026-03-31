@@ -8,19 +8,23 @@ import type { RouteObject } from 'react-router'
  *
  * Routes are excluded from the output if they:
  * - Are wildcard routes (path === '*')
- * - Contain route parameters (path includes ':')
- * - End with '/DetailsPage' (these are handled separately via dynamic URL generation)
- * - Are sub-routes of a DetailsPage (e.g., '/DetailsPage/Details') since they require query params
+ * - Contain route parameters (path includes ':') — dynamic segments like
+ *   `:studyId` are excluded because each record's URL is enumerated separately
+ *   via `sitemapConfig` (not extracted from the route tree).
+ * - Are descendants of a route that had a dynamic segment, since those paths
+ *   are only reachable with a known param value.
  *
  * Index routes inherit the parent path (as they render at the parent URL).
  *
  * @param routes - The route tree to flatten
  * @param parentPath - The accumulated path from parent routes (used in recursion)
+ * @param parentHasParams - Whether any ancestor route had a dynamic segment
  * @returns An array of absolute path strings
  */
 export function flattenRoutePaths(
   routes: RouteObject[],
   parentPath: string = '',
+  parentHasParams: boolean = false,
 ): string[] {
   const paths: string[] = []
 
@@ -51,20 +55,14 @@ export function flattenRoutePaths(
 
     // Check if this route should be included in the sitemap
     const isWildcard = route.path === '*'
-    const hasParams = route.path?.includes(':') ?? false
-    const isDetailsPage = encodedPath.endsWith('/DetailsPage')
-    // Also exclude sub-routes of DetailsPage (e.g., /DetailsPage/Details, /DetailsPage/AdditionalFiles)
-    // These require a query param to be useful and are covered by dynamic URL generation
-    const isDetailsPageSubRoute = encodedPath.includes('/DetailsPage/')
+    // Routes with dynamic segments (e.g. :studyId) are excluded — the actual
+    // per-record URLs are enumerated via sitemapConfig / queryTableForSitemap.
+    // Also exclude any descendant paths when an ancestor already had a param,
+    // since they are not reachable without the param value.
+    const hasParams = (route.path?.includes(':') ?? false) || parentHasParams
 
     // Add the path if it's valid and should be included
-    if (
-      encodedPath &&
-      !isWildcard &&
-      !hasParams &&
-      !isDetailsPage &&
-      !isDetailsPageSubRoute
-    ) {
+    if (encodedPath && !isWildcard && !hasParams) {
       // Normalize path to start with /
       const normalizedPath = encodedPath.startsWith('/')
         ? encodedPath
@@ -76,9 +74,13 @@ export function flattenRoutePaths(
       }
     }
 
-    // Recursively process children
+    // Recursively process children, propagating the hasParams flag
     if (route.children && route.children.length > 0) {
-      const childPaths = flattenRoutePaths(route.children, currentPath)
+      const childPaths = flattenRoutePaths(
+        route.children,
+        currentPath,
+        hasParams,
+      )
       for (const childPath of childPaths) {
         if (!paths.includes(childPath)) {
           paths.push(childPath)

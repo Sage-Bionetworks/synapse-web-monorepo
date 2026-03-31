@@ -10,6 +10,7 @@ import {
   TextMatchesQueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import { SYNAPSE_ENTITY_ID_REGEX } from './RegularExpressions'
+import { splitAndTrim } from './StringUtils'
 
 export type SQLOperator =
   | ColumnSingleValueFilterOperator
@@ -33,8 +34,12 @@ export const getIgnoredQueryFilterSearchParamKey = (
 }
 
 // Special search parameter key that will automatically apply a FTS search term to a Query Wrapper if present
-export const FTS_SEARCH_TERM = 'FTS_SEARCH_TERM'
+export const SEARCH_TERM = 'SEARCH_TERM'
+export const SEARCH_ROLE = 'SEARCH_ROLE'
 
+/** @deprecated Use SEARCH_TERM instead */
+export const FTS_SEARCH_TERM = 'FTS_SEARCH_TERM'
+/** @deprecated Use SEARCH_ROLE instead */
 export const FTS_SEARCH_ROLE = 'FTS_SEARCH_ROLE'
 
 /**
@@ -64,7 +69,7 @@ export const getAdditionalFilters = (
   }
   if (searchParams) {
     const isQueryWrapperKey = (key: string) =>
-      key.startsWith('QueryWrapper') || key.startsWith('__')
+      key.startsWith('qw') || key.startsWith('__')
     additionalFilters = additionalFilters.concat(
       Object.keys(searchParams || {})
         .filter(
@@ -74,7 +79,7 @@ export const getAdditionalFilters = (
             searchParams[key].trim() != '',
         )
         .map(key => {
-          if (key == FTS_SEARCH_TERM) {
+          if (key == SEARCH_TERM || key == FTS_SEARCH_TERM) {
             const filter: TextMatchesQueryFilter = {
               concreteType:
                 'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
@@ -99,7 +104,7 @@ export const getAdditionalFilters = (
                   'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
                 columnName: key,
                 operator: operator,
-                values: searchParams[key].split(','),
+                values: splitAndTrim(searchParams[key]),
               }
               return filter
             }
@@ -110,7 +115,7 @@ export const getAdditionalFilters = (
                 columnName: key,
                 function: operator,
                 _function: operator,
-                values: searchParams[key].split(','),
+                values: splitAndTrim(searchParams[key]),
               }
               return filter
             }

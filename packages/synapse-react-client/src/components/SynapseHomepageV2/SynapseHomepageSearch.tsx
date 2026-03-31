@@ -86,7 +86,7 @@ export function SynapseHomepageSearch({
         }
         onChange={(_event, newValue: string | null) => {
           if (newValue) {
-            gotoPlace(`/Search:${encodeURIComponent(newValue)}`)
+            gotoPlace(`/SearchV2:default?query=${encodeURIComponent(newValue)}`)
           }
         }}
         slots={{

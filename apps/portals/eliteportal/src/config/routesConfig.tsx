@@ -75,15 +75,42 @@ const routes: RouteObject[] = [
           },
           {
             path: 'Cohort Builder',
-            lazy: () =>
-              import('@/pages/Explore/cohortBuilder').then(
-                convertModuleToRouteObject,
-              ),
+            children: [
+              {
+                index: true,
+                element: (
+                  <RedirectWithQuery
+                    to={'/Explore/Cohort Builder/Individuals'}
+                  />
+                ),
+              },
+              {
+                path: 'Individuals',
+                lazy: () =>
+                  import('@/pages/Explore/cohortBuilder').then(
+                    convertModuleToRouteObject,
+                  ),
+              },
+              {
+                path: 'Data',
+                lazy: () =>
+                  import('@/pages/Explore/cohortBuilderData').then(
+                    convertModuleToRouteObject,
+                  ),
+              },
+            ],
           },
           {
             path: 'Projects',
             lazy: () =>
               import('@/pages/Explore/projects').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: 'Programs',
+            lazy: () =>
+              import('@/pages/Explore/programs').then(
                 convertModuleToRouteObject,
               ),
           },
@@ -121,6 +148,11 @@ const routes: RouteObject[] = [
           import('@/pages/ProjectDetailsPage').then(convertModuleToRouteObject),
       },
       {
+        path: 'Explore/Programs/DetailsPage',
+        lazy: () =>
+          import('@/pages/ProgramDetailsPage').then(convertModuleToRouteObject),
+      },
+      {
         path: 'Explore/Studies/DetailsPage',
         lazy: () =>
           import('@/pages/StudyDetailsPage/StudyDetailsPage').then(
@@ -155,9 +187,20 @@ const routes: RouteObject[] = [
           import('@/pages/AnalysisPlatforms').then(convertModuleToRouteObject),
       },
       {
-        path: 'Contribute Data',
+        path: 'Data Contribution',
         lazy: () =>
           import('@/pages/ContributeData').then(convertModuleToRouteObject),
+      },
+      {
+        path: 'Data Coordinating Center',
+        lazy: () =>
+          import('@/pages/DataCoordinatingCenter').then(
+            convertModuleToRouteObject,
+          ),
+      },
+      {
+        path: 'Overview',
+        lazy: () => import('@/pages/Overview').then(convertModuleToRouteObject),
       },
       {
         path: 'Comparative Biology',

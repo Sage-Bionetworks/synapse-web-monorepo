@@ -2,7 +2,8 @@ import { CardLink } from '@/components/CardContainer/CardLink'
 import { getValueOrMultiValue } from '@/components/GenericCard/CardUtils'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { getColumnIndex } from '@/utils/functions/index'
-import { Link, Tooltip } from '@mui/material'
+import { TargetEnum } from '@/utils/html/TargetEnum'
+import { Tooltip } from '@mui/material'
 import {
   ColumnModel,
   ColumnTypeEnum,
@@ -12,16 +13,21 @@ import {
 import dayjs from 'dayjs'
 import { isEmpty } from 'lodash-es'
 import { CSSProperties, Fragment, ReactNode } from 'react'
-import { ColumnSpecifiedLink, MarkdownLink } from '../CardContainerLogic'
-import { TargetEnum } from '@/utils/html/TargetEnum'
+import {
+  ColumnIconConfigs,
+  ColumnSpecifiedLink,
+  MarkdownLink,
+} from '../CardContainerLogic'
 import {
   EntityImage,
   MapValueToReactComponentConfig,
 } from '../CardContainerLogic/CardContainerLogic'
 import { EntityLink } from '../EntityLink'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
+import { SmartLink } from '../SmartLink/SmartLink'
 import { UserBadge } from '../UserCard/UserBadge'
 import { EntityColumnImage } from '../widgets/EntityColumnImage'
+import { LabelMaybeWithIcon } from './LabelMaybeWithIcon'
 import Linkify from './Linkify'
 
 type SynapseCardLabelProps = {
@@ -40,6 +46,7 @@ type SynapseCardLabelProps = {
   className?: string
   rowData: Row['values']
   rowId?: string
+  columnIconOptions?: ColumnIconConfigs
 }
 export function SynapseCardLabel(props: SynapseCardLabelProps) {
   const {
@@ -52,7 +59,9 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
     className,
     rowData,
     rowId,
+    columnIconOptions,
   } = props
+
   if (!value) {
     return <p>{value}</p>
   }
@@ -64,6 +73,9 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
   })
 
   const columnModelType = selectColumn?.columnType
+  const iconConfig = columnIconOptions?.columns?.[columnName]
+  //  \u00a0 is a nbsp;
+  const separator = ',\u00a0\u00a0'
 
   if (!str) {
     // the array came back empty
@@ -83,8 +95,7 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
           return (
             <Fragment key={val}>
               <UserBadge userId={val} className={newClassName} />
-              {/* \u00a0 is a nbsp; */}
-              {index < strList.length - 1 && ',\u00a0\u00a0'}
+              {index < strList.length - 1 && separator}
             </Fragment>
           )
         })}
@@ -101,7 +112,25 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
   }
 
   if (!labelLink) {
-    return <Linkify text={str} className={newClassName} />
+    if (strList) {
+      return (
+        <>
+          {strList.map((el, index) => (
+            <Fragment key={el}>
+              <LabelMaybeWithIcon value={el} iconConfig={iconConfig}>
+                <Linkify text={el} className={newClassName} />
+              </LabelMaybeWithIcon>
+              {index < strList.length - 1 && separator}
+            </Fragment>
+          ))}
+        </>
+      )
+    }
+    return (
+      <LabelMaybeWithIcon value={str} iconConfig={iconConfig}>
+        <Linkify text={str} className={newClassName} />
+      </LabelMaybeWithIcon>
+    )
   }
 
   if ('resolveEntityName' in labelLink && labelLink.resolveEntityName && str) {
@@ -128,8 +157,7 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
             return (
               <Fragment key={el}>
                 <MarkdownSynapse key={el} renderInline={true} markdown={el} />
-                {/* \u00a0 is a nbsp; */}
-                {index < strList.length - 1 && ',\u00a0\u00a0'}
+                {index < strList.length - 1 && separator}
               </Fragment>
             )
           })}
@@ -146,9 +174,7 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
             return (
               <Fragment key={el}>
                 <EntityColumnImage entityId={el} />
-
-                {/* \u00a0 is a nbsp; */}
-                {index < strList.length - 1 && ',\u00a0\u00a0'}
+                {index < strList.length - 1 && separator}
               </Fragment>
             )
           })}
@@ -185,16 +211,15 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
               {split.map((el, index) => {
                 return (
                   <Fragment key={el}>
-                    <Link
-                      href={href ?? undefined}
+                    <SmartLink
+                      href={href ?? ''}
                       target={linkTarget ?? TargetEnum.NEW_WINDOW}
-                      rel="noopener noreferrer"
                       key={el}
                       className={newClassName}
                       style={style}
                     >
                       {el}
-                    </Link>
+                    </SmartLink>
                     {index < split.length - 1 && (
                       <span style={{ marginRight: 4 }}>, </span>
                     )}
@@ -213,9 +238,18 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
             const elOrRowId = cardLink.overrideValueWithRowID ? rowId : el
             let href = ''
             if ('baseURL' in cardLink) {
-              const { baseURL, URLColumnName, wrapValueWithParens } = cardLink
+              const {
+                baseURL,
+                URLColumnName,
+                wrapValueWithParens,
+                urlParamStyle = 'query-param',
+              } = cardLink
               const value = wrapValueWithParens ? `(${elOrRowId})` : elOrRowId
-              href = `/${baseURL}?${URLColumnName}=${value}`
+              if (urlParamStyle === 'path-segment') {
+                href = `/${baseURL}/${encodeURIComponent(String(value))}`
+              } else {
+                href = `/${baseURL}?${URLColumnName}=${value}`
+              }
             } else if ('overrideLinkURLColumnName' in cardLink) {
               const overrideHrefIndex = getColumnIndex(
                 cardLink.overrideLinkURLColumnName,
@@ -237,7 +271,7 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
 
             return (
               <Fragment key={el}>
-                <Link
+                <SmartLink
                   href={href}
                   key={el}
                   className={newClassName}
@@ -245,7 +279,7 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
                   target={linkTarget ?? TargetEnum.CURRENT_WINDOW}
                 >
                   {el}
-                </Link>
+                </SmartLink>
                 {index < split.length - 1 && (
                   <span style={{ marginRight: 4 }}>, </span>
                 )}

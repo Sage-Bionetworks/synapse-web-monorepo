@@ -1,5 +1,5 @@
 import { Row, RowSet } from '@sage-bionetworks/synapse-types'
-import { isEmpty } from 'lodash'
+import isEmpty from 'lodash-es/isEmpty'
 import { createContext, PropsWithChildren, ReactNode, useContext } from 'react'
 import NoContentAvailable from 'synapse-react-client/components/SynapseTable/NoContentAvailable'
 

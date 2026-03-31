@@ -1,3 +1,5 @@
 export default {
-  value: 'Friendly Display Value',
+  associatedCodeURL: 'Associated Code',
+  publicationSynID: 'Publication',
+  dbGapAccession: 'dbGaP Accession',
 }

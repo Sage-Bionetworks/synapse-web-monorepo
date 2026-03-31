@@ -6,10 +6,17 @@ import {
 } from '@/types/portal-config'
 import { createContext, PropsWithChildren, useContext } from 'react'
 import { RouteObject } from 'react-router'
+import { SynapseChatProps } from 'synapse-react-client'
 import { NavbarConfig } from './navbar/Navbar'
+
+export type AridhiaConfig = {
+  apiBasePath?: string
+}
 
 export type PortalContextType = {
   portalName: string
+  portalDescription?: string
+  portalKey?: string
   routeConfig: RouteObject[]
   headerConfig: HomePageHeaderConfig
   footerConfig: FooterConfig
@@ -17,6 +24,8 @@ export type PortalContextType = {
   logoFooterConfig: LogoConfig
   navbarConfig: NavbarConfig
   fileEntityPageConfig?: FileEntityPageConfig
+  aridhiaConfig?: AridhiaConfig
+  synapseChatProps?: SynapseChatProps
 }
 
 export const PortalContext = createContext<PortalContextType | undefined>(

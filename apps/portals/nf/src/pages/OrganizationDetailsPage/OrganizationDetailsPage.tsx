@@ -1,17 +1,31 @@
 import { fundersSql } from '@/config/resources'
-import { organizationCardSchema } from '@/config/synapseConfigs/organizations'
-import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
-import {
-  DetailsPageTabConfig,
-  DetailsPageTabs,
-} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
-import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import { Outlet } from 'react-router'
-import { CardContainerLogic, SynapseConstants } from 'synapse-react-client'
 import {
   ORGANIZATION_DATA_TAB_PATH,
   ORGANIZATION_DETAILS_TAB_PATH,
 } from '@/config/routeConstants'
+import { organizationCardSchema } from '@/config/synapseConfigs/organizations'
+import {
+  DetailsPageTabConfig,
+  DetailsPageTabs,
+} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
+import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
+import { createDetailPageRouteExports } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
+import { Outlet, useParams } from 'react-router'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import ErrorPage, {
+  SynapseErrorType,
+} from 'synapse-react-client/components/error/ErrorPage'
+import { metadataConfig } from './OrganizationDetailsPage.config'
+
+export { metadataConfig }
+
+const _routeExports = createDetailPageRouteExports(metadataConfig, {
+  portalName: import.meta.env.VITE_PORTAL_NAME,
+})
+export const loader = _routeExports.loader
+export const clientLoader = _routeExports.clientLoader
+export const meta = _routeExports.meta
 
 const tabConfig: DetailsPageTabConfig[] = [
   {
@@ -23,13 +37,21 @@ const tabConfig: DetailsPageTabConfig[] = [
     title: 'Organization Data',
     path: ORGANIZATION_DATA_TAB_PATH,
     iconName: 'database',
-    tooltip: 'All of the Data generated from this Organization’s studies',
+    tooltip: "All of the Data generated from this Organization's studies",
     iconClassName: 'tab-database',
   },
 ]
 
 function OrganizationDetailsPage() {
-  const searchParams = useGetPortalComponentSearchParams()
+  const { abbreviation } = useParams<{ abbreviation: string }>()
+  const searchParams: Record<string, string> = abbreviation
+    ? { abbreviation }
+    : {}
+
+  if (!abbreviation) {
+    return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
+  }
+
   return (
     <DetailsPage
       header={
@@ -47,6 +69,7 @@ function OrganizationDetailsPage() {
         />
       }
       sql={fundersSql}
+      searchParams={searchParams}
       ContainerProps={{ maxWidth: 'xl' }}
       resourcePrimaryKey={['abbreviation']}
     >

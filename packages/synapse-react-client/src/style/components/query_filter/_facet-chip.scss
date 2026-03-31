@@ -1,24 +1,21 @@
-@use '../../abstracts/variables' as SRC;
-@use 'sass:map';
-
 .Chip {
-  border-radius: SRC.$button-border-radius;
+  border-radius: var(--synapse-button-border-radius);
   padding: 4px 6px;
   margin: 4px 4px 4px 0;
   &:hover {
-    background-color: map.get(SRC.$secondary-color-palette, 100);
+    background-color: var(--synapse-secondary-100);
   }
   &:active {
-    background-color: map.get(SRC.$secondary-color-palette, 200);
+    background-color: var(--synapse-secondary-200);
   }
 }
 .Checked {
   color: #ffffff;
-  background-color: SRC.$secondary-action-color;
+  background-color: var(--synapse-secondary-action-color);
   &:hover {
-    background-color: map.get(SRC.$secondary-color-palette, 700);
+    background-color: var(--synapse-secondary-700);
   }
   &:active {
-    background-color: map.get(SRC.$secondary-color-palette, 600);
+    background-color: var(--synapse-secondary-600);
   }
 }

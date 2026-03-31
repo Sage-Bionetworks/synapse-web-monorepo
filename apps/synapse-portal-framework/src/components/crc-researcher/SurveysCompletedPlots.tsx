@@ -1,6 +1,7 @@
 import { CSSProperties, useEffect, useState } from 'react'
 import Plotly from 'plotly.js-basic-dist'
-import { SynapseConstants, SynapseClient } from 'synapse-react-client'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import * as SynapseClient from 'synapse-react-client/synapse-client/SynapseClient'
 import {
   QueryBundleRequest,
   QueryResultBundle,

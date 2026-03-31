@@ -75,7 +75,15 @@ function getRequirementItemUiState(
   if (isExempt) {
     return RequirementItemStatus.COMPLETE
   }
-  switch (status.currentSubmissionStatus?.state) {
+
+  // If there's no current submission, check the isApproved flag directly
+  if (!status.currentSubmissionStatus) {
+    return status.isApproved
+      ? RequirementItemStatus.COMPLETE
+      : RequirementItemStatus.LOCKED
+  }
+
+  switch (status.currentSubmissionStatus.state) {
     case SubmissionState.APPROVED:
       return status.isApproved
         ? RequirementItemStatus.COMPLETE
@@ -116,9 +124,12 @@ function getActionButtonProps(
       actions.push({
         variant: 'outlined',
         onClick: onRequestAccess,
-        children: 'Request access',
+        // Show "Update Request" if approved, "Request access" otherwise
+        children: accessRequirementStatus.isApproved
+          ? 'Update Request'
+          : 'Request access',
       })
-      if (!isExempt) {
+      if (!isExempt && !accessRequirementStatus.isApproved) {
         actions.push({
           variant: 'text',
           onClick: onRejectTerms,

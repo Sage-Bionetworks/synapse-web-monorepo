@@ -1,0 +1,61 @@
+@use '../../style/abstracts/variables' as SrcVariables;
+@use 'sass:map';
+
+.didYouMeanContainer {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.didYouMeanSuggestion {
+  display: flex;
+  margin-left: auto;
+  align-items: center;
+}
+
+.searchIcon {
+  margin-right: 3px;
+}
+
+.suggestionText {
+  text-decoration: underline;
+  font-style: italic;
+}
+
+.didYouMeanCurrentlyShowing {
+  margin-right: 0;
+}
+
+.didYouMeanArrowContainer:global(.MuiIconButton-root) {
+  border: 1px solid;
+  padding: 6px 16px;
+  border-radius: 0;
+}
+
+.didYouMeanText:global(.MuiTypography-root) {
+  margin-right: 16px;
+}
+
+.searchContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.filterButton:global(.MuiButton-root) {
+  padding: 10px 20px 10px 20px;
+  height: 100%;
+  border-radius: 0;
+  width: 100%;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    width: fit-content;
+  }
+}

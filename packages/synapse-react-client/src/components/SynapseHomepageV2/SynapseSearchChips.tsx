@@ -1,10 +1,6 @@
 import { Chip, Typography } from '@mui/material'
-import {
-  SearchQuery,
-  KeyValue,
-  SearchFieldName,
-  SearchFacetSort,
-} from '@sage-bionetworks/synapse-types'
+import { SearchQuery, KeyValue } from '@sage-bionetworks/synapse-types'
+import { DEFAULT_SEARCH_QUERY } from '@/utils/searchDefaults'
 
 const searchValues = [
   "Alzheimer's Disease",
@@ -50,50 +46,15 @@ export function SynapseSearchChips({ gotoPlace }: SynapseSearchChipsProps) {
             }
             onClick={() => {
               const searchQuery: SearchQuery = {
+                ...DEFAULT_SEARCH_QUERY,
                 queryTerm: [value],
                 booleanQuery: value == 'Cancer' ? [projectKeyValue] : undefined,
-                // match existing facet options in SWC search
-                facetOptions: [
-                  {
-                    name: SearchFieldName.ENTITY_TYPE,
-                    maxResultCount: 300,
-                    sortType: SearchFacetSort.COUNT,
-                  },
-                  {
-                    name: SearchFieldName.CONSORTIUM,
-                    maxResultCount: 300,
-                    sortType: SearchFacetSort.COUNT,
-                  },
-                  {
-                    name: SearchFieldName.MODIFIED_ON,
-                    maxResultCount: 300,
-                    sortType: SearchFacetSort.COUNT,
-                  },
-                  {
-                    name: SearchFieldName.MODIFIED_BY,
-                    maxResultCount: 300,
-                    sortType: SearchFacetSort.COUNT,
-                  },
-                  {
-                    name: SearchFieldName.CREATED_ON,
-                    maxResultCount: 300,
-                    sortType: SearchFacetSort.COUNT,
-                  },
-                  {
-                    name: SearchFieldName.TISSUE,
-                    maxResultCount: 300,
-                    sortType: SearchFacetSort.COUNT,
-                  },
-                  {
-                    name: SearchFieldName.CREATED_BY,
-                    maxResultCount: 300,
-                    sortType: SearchFacetSort.COUNT,
-                  },
-                ],
-                start: 0,
-                size: 30,
               }
-              gotoPlace(`/Search:${JSON.stringify(searchQuery)}`)
+              gotoPlace(
+                `/SearchV2:default?query=${encodeURIComponent(
+                  JSON.stringify(searchQuery),
+                )}`,
+              )
             }}
             variant="outlined"
             // by default, on hover the background color changes to mostly transparent (4%), which looks terrible on top of the header splash image

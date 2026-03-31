@@ -6,11 +6,16 @@ import {
   LOGIN_METHOD_OAUTH2_ARCUS,
   LOGIN_METHOD_OAUTH2_GOOGLE,
   LOGIN_METHOD_OAUTH2_ORCID,
+  LOGIN_METHOD_OAUTH2_SAGE_BIONETWORKS,
   OAUTH2_PROVIDERS,
 } from '@/utils/SynapseConstants'
 import { Box } from '@mui/material'
 import { MouseEvent } from 'react'
 import LoginMethodButton from './LoginMethodButton'
+import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
+import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
+import { Realm } from '@sage-bionetworks/synapse-client'
+import { hasArcusProvider } from '@/utils/functions/RealmUtils'
 
 type AuthenticationMethodSelectionProps = {
   ssoRedirectUrl?: string
@@ -18,7 +23,7 @@ type AuthenticationMethodSelectionProps = {
   onBeginOAuthSignIn?: () => void
   onSelectUsernameAndPassword: () => void
   state?: OAuth2State
-  showArcusSSOButtonOnly?: boolean
+  realm?: Realm
 }
 
 const csrfToken = generateCsrfToken()
@@ -36,8 +41,13 @@ export default function AuthenticationMethodSelection(
     ssoRedirectUrl,
     onSelectUsernameAndPassword,
     state,
-    showArcusSSOButtonOnly = false,
+    realm,
   } = props
+
+  const showArcusSSOButtonOnly = hasArcusProvider(realm)
+  const showSageBionetworksIdp = useGetFeatureFlag(
+    FeatureFlagEnum.SAGE_BIONETWORKS_IDP,
+  )
 
   const stateWithCSRF: OAuth2State = { ...state, csrfToken }
 
@@ -83,6 +93,14 @@ export default function AuthenticationMethodSelection(
             iconName="email"
             onClick={onSelectUsernameAndPassword}
           />
+          {showSageBionetworksIdp && (
+            <LoginMethodButton
+              loginMethod={LOGIN_METHOD_OAUTH2_SAGE_BIONETWORKS}
+              onClick={event => {
+                onSSOSignIn(event, OAUTH2_PROVIDERS.SAGE_BIONETWORKS)
+              }}
+            />
+          )}
         </>
       )}
       {showArcusSSOButtonOnly && (

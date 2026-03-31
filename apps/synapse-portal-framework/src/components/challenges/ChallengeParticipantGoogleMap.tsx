@@ -1,5 +1,6 @@
 import { Box } from '@mui/material'
-import { SynapseQueries, Map } from 'synapse-react-client'
+import * as SynapseQueries from 'synapse-react-client/synapse-queries/index'
+import Map from 'synapse-react-client/components/GoogleMap/GoogleMap'
 
 type ChallengeParticipantGoogleMapProps = {
   projectId: string

@@ -17,6 +17,7 @@ import {
   GetRepoV1DoiAssociationRequest,
   GetRepoV1DoiRequest,
   ListGridSessionsRequest,
+  SuggestionQuery,
   UploadToTablePreviewRequest,
   type UserSubmissionSearchRequest,
   ViewEntityType,
@@ -766,6 +767,10 @@ export class KeyFactory {
     return this.getKey('searchEntities', query)
   }
 
+  public getSuggestionQueryKey(query: SuggestionQuery) {
+    return this.getKey('suggestion', query)
+  }
+
   public getTeamQueryKey(teamId: string) {
     return this.getKey('team', teamId)
   }
@@ -944,6 +949,18 @@ export class KeyFactory {
 
   public getTermsOfServiceStatus() {
     return this.getKey('termsOfServiceStatus')
+  }
+
+  public getRealmPrincipalsQueryKey() {
+    return this.getKey('realmPrincipals')
+  }
+
+  public getCurrentRealmQueryKey() {
+    return this.getKey('currentRealm')
+  }
+
+  public getRealmByIdQueryKey(realmId: string) {
+    return this.getKey('realm', realmId)
   }
 
   public getProjectStorageUsageKey(projectId: string) {

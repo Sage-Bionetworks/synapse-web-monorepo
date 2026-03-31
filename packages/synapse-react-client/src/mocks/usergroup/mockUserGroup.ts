@@ -1,8 +1,8 @@
 import {
-  ANONYMOUS_PRINCIPAL_ID,
-  AUTHENTICATED_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_ID,
-} from '@/utils/SynapseConstants'
+  MOCK_ANONYMOUS_PRINCIPAL_ID as ANONYMOUS_PRINCIPAL_ID,
+  MOCK_AUTHENTICATED_PRINCIPAL_ID as AUTHENTICATED_PRINCIPAL_ID,
+  MOCK_PUBLIC_PRINCIPAL_ID as PUBLIC_PRINCIPAL_ID,
+} from '@/mocks/realm/mockRealmPrincipal'
 import { mockTeamUserGroups } from '../team/mockTeam'
 import {
   mockUserData1,

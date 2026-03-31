@@ -1,6 +1,6 @@
 {
   "name": "@sage-bionetworks/synapse-types",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "private": false,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -25,11 +25,12 @@
   "scripts": {
     "clean": "rimraf ./dist && rimraf *.tsbuildinfo",
     "build": "tsc --build",
+    "type-check": "tsc --build",
     "prepublishOnly": "pnpm install && pnpm nx run @sage-bionetworks/synapse-types:build"
   },
   "devDependencies": {
-    "@types/node": "^20.17.41",
-    "rimraf": "^5.0.10",
+    "@types/node": "^22.19.13",
+    "rimraf": "^6.1.2",
     "typescript": "5.8.3"
   }
 }

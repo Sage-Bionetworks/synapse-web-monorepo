@@ -1,6 +1,10 @@
 import { SynapseCardLabel } from './SynapseCardLabel'
 
-export { default, default as GenericCard } from './GenericCard'
+export {
+  default,
+  default as GenericCard,
+  type CTALinkConfig,
+} from './GenericCard'
 export {
   LongDescription,
   ShortDescription,

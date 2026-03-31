@@ -1,7 +1,3 @@
-@use '../../abstracts/variables' as SRC;
-@use 'sass:color';
-@use 'sass:map';
-
 .EntityFinderSelectionPane {
   width: 100%;
   white-space: nowrap;
@@ -31,7 +27,7 @@
     }
 
     &__DeselectButton {
-      color: map.get(SRC.$primary-color-palette, 500);
+      color: var(--synapse-primary-500);
       cursor: pointer;
     }
   }

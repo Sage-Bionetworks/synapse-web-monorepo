@@ -37,6 +37,7 @@ vi.mock('@/hooks/useSkipMfaPrompt')
 vi.mock('@/hooks/usePathBefore2FARedirect')
 
 const mockApplicationSessionContext: ApplicationSessionContextType = {
+  isAuthenticated: true,
   hasInitializedSession: true,
   refreshSession: vi.fn(),
   clearSession: vi.fn(),
@@ -53,6 +54,7 @@ const mockLocation: Location = {
   pathname: '/',
   search: '',
   hash: '',
+  unstable_mask: undefined,
 }
 const mockUseApplicationSessionContext = vi.mocked(useApplicationSessionContext)
 const mockNavigate = vi.fn()

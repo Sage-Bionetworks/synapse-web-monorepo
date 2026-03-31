@@ -65,8 +65,9 @@ function AccountCreatedPage() {
                       const isProcessed = processRedirectURLInOneSage()
                       if (!isProcessed) {
                         // if not processed, fall back to the source app config redirect URL
-                        appContext?.redirectURL &&
+                        if (appContext?.redirectURL) {
                           window.location.assign(appContext.redirectURL)
+                        }
                       }
                     }}
                   >

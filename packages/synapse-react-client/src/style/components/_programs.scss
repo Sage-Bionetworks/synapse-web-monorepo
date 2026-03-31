@@ -1,4 +1,3 @@
-@use '../abstracts/variables' as SRC;
 @use '../abstracts/mixins' as SrcMixins;
 
 .Programs {
@@ -19,7 +18,7 @@
     display: flex;
     min-height: 300px;
     flex-direction: column;
-    box-shadow: SRC.$box-shadow-soft;
+    box-shadow: var(--synapse-box-shadow-soft);
     background: #ffffff;
     margin: 5px;
 
@@ -32,7 +31,7 @@
     &__header {
       min-height: 75px;
       @include SrcMixins.side-padding();
-      background: SRC.$primary-action-color;
+      background: var(--synapse-primary-action-color);
       display: flex;
       align-items: center;
 

@@ -10,14 +10,14 @@ import {
   ColumnSingleValueFilterOperator,
   ObjectType,
 } from '@sage-bionetworks/synapse-types'
-import { CardContainerLogic } from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import { datasetsSql } from '../config/resources'
 import {
   datasetCardConfiguration,
   datasetColumnAliases,
 } from '../config/synapseConfigs/datasets'
 import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
-import { QueryWrapperPlotNav } from 'synapse-react-client'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import { filesQueryWrapperPlotNavProps } from '@/config/synapseConfigs/data'
 
 export default function DatasetDetailsPage() {

@@ -32,6 +32,7 @@ export function SynapseHomepageChatSearch({
   const [searchValue, setSearchValue] = useState('')
   const [chatValue, setChatValue] = useState('')
   const [mode, setMode] = useState(SearchMode.SEARCH)
+
   const executeSearch = () => {
     if (mode == SearchMode.SEARCH) {
       const searchValueCleaned = searchValue.toLowerCase().trim()
@@ -43,8 +44,11 @@ export function SynapseHomepageChatSearch({
         gotoPlace(`/Synapse:${synIdWithVersion}`)
         return
       }
-
-      gotoPlace(`/Search:${getSearchToken(searchValueCleaned.split(/[ ,]+/))}`)
+      gotoPlace(
+        `/SearchV2:default?query=${getSearchToken(
+          searchValueCleaned.split(/[ ,]+/),
+        )}`,
+      )
     } else {
       gotoPlace(`/Chat:initialMessage=${encodeURIComponent(chatValue)}`)
     }

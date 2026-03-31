@@ -1,24 +1,52 @@
+import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
+import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
+import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import {
+  createDetailPageRouteExports,
+  type BaseDetailPageLoaderData,
+} from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
+import { fetchCroissantMetadata } from '@sage-bionetworks/synapse-portal-framework/utils/fetchCroissantMetadata'
+import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { useParams } from 'react-router'
+import { datasetsSql, enabledAnalysisPlatforms } from '@/config/resources'
+import { columnAliases } from '@/config/synapseConfigs/commonProps'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import { DatasetJsonLdScript } from 'synapse-react-client/components/DatasetJsonLdScript'
+import ErrorPage, {
+  SynapseErrorType,
+} from 'synapse-react-client/components/error/ErrorPage'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import { metadataConfig } from './DatasetDetailsPage.config'
 import {
   datasetCardConfiguration,
   datasetsRgbIndex,
 } from '@/config/synapseConfigs/datasets'
-import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage'
-import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
-import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { datasetsSql, enabledAnalysisPlatforms } from '@/config/resources'
-import { columnAliases } from '@/config/synapseConfigs/commonProps'
-import {
-  CardContainerLogic,
-  DatasetJsonLdScript,
-  ErrorPage,
-  QueryWrapperPlotNav,
-  SynapseErrorType,
-} from 'synapse-react-client'
+
+export { metadataConfig }
+
+interface DatasetLoaderData extends BaseDetailPageLoaderData {
+  croissantJsonLd: Record<string, unknown> | null
+}
+
+const _routeExports = createDetailPageRouteExports<DatasetLoaderData>(
+  metadataConfig,
+  {
+    portalName: import.meta.env.VITE_PORTAL_NAME,
+    extendLoader: async (_base, params) => ({
+      croissantJsonLd: params.id
+        ? await fetchCroissantMetadata(params.id)
+        : null,
+    }),
+    extendMeta: data =>
+      data.croissantJsonLd ? [{ 'script:ld+json': data.croissantJsonLd }] : [],
+  },
+)
+export const loader = _routeExports.loader
+export const clientLoader = _routeExports.clientLoader
+export const meta = _routeExports.meta
 
 function DatasetDetailsPage() {
-  const { id } = useGetPortalComponentSearchParams()
+  const { id } = useParams<{ id: string }>()
 
   if (!id) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
@@ -35,6 +63,7 @@ function DatasetDetailsPage() {
         />
       }
       sql={datasetsSql}
+      searchParams={{ id }}
       sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
       ContainerProps={{
         maxWidth: 'xl',

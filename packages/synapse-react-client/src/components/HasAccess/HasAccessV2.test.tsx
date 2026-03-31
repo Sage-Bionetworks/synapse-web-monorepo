@@ -100,7 +100,7 @@ describe('HasAccess tests', () => {
 
     renderComponent(props)
 
-    await expectIcon('accessOpen', '')
+    await expectIcon('accessOpen', 'You have access to this item.')
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
 
     const expectedRestrictionInformationRequest: RestrictionInformationRequest =
@@ -146,7 +146,8 @@ describe('HasAccess tests', () => {
     })
     it('Handles a file entity where download access is blocked because of missing DOWNLOAD permission, and the user is not signed in', async () => {
       const wrapperProps: Partial<SynapseContextType> = {
-        accessToken: undefined,
+        accessToken: 'anon-token',
+        isAuthenticated: false,
       }
 
       useMswRestrictionInformation({
@@ -170,7 +171,7 @@ describe('HasAccess tests', () => {
 
       expect(getRestrictionInformationSpy).toHaveBeenLastCalledWith(
         expectedRestrictionInformationRequest,
-        undefined,
+        'anon-token',
       )
     })
   })
@@ -394,7 +395,7 @@ describe('HasAccess tests', () => {
       )
 
       // Should show regular open access icon, not external (because external check is disabled)
-      await expectIcon('accessOpen', '')
+      await expectIcon('accessOpen', 'You have access to this item.')
       expect(screen.queryByRole('button')).not.toBeInTheDocument()
     })
 
@@ -427,7 +428,7 @@ describe('HasAccess tests', () => {
       renderComponent({ ...props, showExternalAccessIcon: false })
 
       // Should show regular open access icon, not external, because the feature is disabled
-      await expectIcon('accessOpen', '')
+      await expectIcon('accessOpen', 'You have access to this item.')
       expect(screen.queryByRole('button')).not.toBeInTheDocument()
     })
 

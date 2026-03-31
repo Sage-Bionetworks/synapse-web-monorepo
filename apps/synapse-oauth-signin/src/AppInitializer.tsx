@@ -1,17 +1,17 @@
-import { PropsWithChildren, useCallback } from 'react'
+import { PropsWithChildren, useCallback, useMemo } from 'react'
 import { useSearchParams } from 'react-router'
-import {
-  ApplicationSessionManager,
-  SynapseConstants,
-  useFramebuster,
-} from 'synapse-react-client'
+import { ApplicationSessionManager } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionManager'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import { useFramebuster } from 'synapse-react-client/utils/AppUtils/AppUtils'
 import UniversalCookies from 'universal-cookie'
 import { OAuthClientError } from './OAuthClientError'
 import { handleErrorRedirect } from './URLUtils'
+import useGoogleAnalytics from 'synapse-react-client/utils/analytics/useGoogleAnalytics'
 
-const cookies = new UniversalCookies()
 function AppInitializer(props: PropsWithChildren<Record<string, unknown>>) {
+  useGoogleAnalytics()
   const [searchParams] = useSearchParams()
+  const cookies = useMemo(() => new UniversalCookies(), [])
   const accountSitePrompted =
     cookies.get(SynapseConstants.ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY) ==
     'true' // short-lived cookie
@@ -25,7 +25,7 @@ function AppInitializer(props: PropsWithChildren<Record<string, unknown>>) {
     maxAge = parseInt(maxAgeURLParam)
   }
   const clientId = searchParams.get('client_id') ?? undefined
-  const onNoAccessTokenFound = useCallback(() => {
+  const onMissingAuthentication = useCallback(() => {
     if (prompt === 'none') {
       // not logged in, and prompt is "none".
       handleErrorRedirect(
@@ -36,7 +36,7 @@ function AppInitializer(props: PropsWithChildren<Record<string, unknown>>) {
         ),
       )
     }
-  }, [prompt])
+  }, [searchParams, prompt])
 
   const isFramed = useFramebuster()
   if (prompt === 'login') {
@@ -45,7 +45,7 @@ function AppInitializer(props: PropsWithChildren<Record<string, unknown>>) {
   return (
     <ApplicationSessionManager
       maxAge={maxAge}
-      onNoAccessTokenFound={onNoAccessTokenFound}
+      onMissingExpectedAuthentication={onMissingAuthentication}
       appId={clientId}
     >
       {!isFramed && props.children}

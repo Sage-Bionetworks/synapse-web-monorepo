@@ -52,20 +52,4 @@ describe('ViewTypeSelection', () => {
     await userEvent.click(menuItems[4])
     expect(onTypeSelected).toHaveBeenCalledWith(EntityType.virtualtable)
   })
-
-  it('hides virtual table out of experimental mode', () => {
-    const onTypeSelected = vi.fn()
-    renderComponent(
-      {
-        onTypeSelected,
-      },
-      false,
-    )
-
-    const menu = screen.getByRole('menu')
-    const menuItems = within(menu).getAllByRole('menuitem')
-    expect(menuItems).toHaveLength(4)
-
-    expect(within(menu).queryByText(/^Virtual Table$/)).not.toBeInTheDocument()
-  })
 })

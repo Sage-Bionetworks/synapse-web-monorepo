@@ -1,9 +1,30 @@
 import parseFreeTextGivenJsonSchemaType from '@/components/DataGrid/utils/parseFreeTextUsingJsonSchemaType'
-import { Autocomplete, TextField } from '@mui/material'
+import { Autocomplete, SxProps, TextField, Theme } from '@mui/material'
 import { JSONSchema7Type } from 'json-schema'
 import { isNil } from 'lodash-es'
-import { useEffect, useRef, useState } from 'react'
-import { CellComponent, CellProps, Column } from 'react-datasheet-grid'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  CellComponent,
+  CellProps,
+  Column,
+} from '@sage-bionetworks/react-datasheet-grid'
+
+// Static styles extracted to avoid recreation on every render
+const AUTOCOMPLETE_BASE_SX: SxProps<Theme> = {
+  width: '100%',
+  height: '100%',
+  '& .MuiTextField-root .MuiInputBase-root': {
+    height: '100%',
+    padding: '0 10px',
+    backgroundColor: 'inherit',
+    borderRadius: 0,
+  },
+  '& .MuiAutocomplete-inputRoot': {
+    padding: '0 10px',
+    backgroundColor: 'inherit',
+  },
+  '& .MuiFormControl-root': { height: '100%' },
+}
 
 export type AutocompleteOption =
   | string
@@ -18,6 +39,7 @@ export type AutocompleteCellProps = CellProps & {
   setRowData: (value: AutocompleteOption) => void
   choices: AutocompleteOption[]
   colType?: JSONSchema7Type
+  clearValue?: undefined | null
 }
 
 export function castCellValueToString(toCast: any): string {
@@ -38,6 +60,7 @@ export function AutocompleteCell({
   focus,
   stopEditing,
   active,
+  clearValue = undefined,
 }: AutocompleteCellProps) {
   const [menuIsOpen, setMenuIsOpen] = useState(false)
   const textInputRef = useRef<HTMLInputElement>(null)
@@ -73,6 +96,33 @@ export function AutocompleteCell({
 
   const hasValue = !isNil(rowData) && rowData !== ''
 
+  // Memoize sx to avoid recreation - dynamic styles change based on active/focus state
+  const autocompleteSx = useMemo<SxProps<Theme>>(
+    () => ({
+      ...AUTOCOMPLETE_BASE_SX,
+      '& .MuiAutocomplete-inputRoot': {
+        padding: '0 10px',
+        backgroundColor: 'inherit',
+        pointerEvents: focus ? undefined : 'none',
+      },
+      '& .MuiAutocomplete-clearIndicator': {
+        visibility: active ? 'visible' : 'hidden',
+        pointerEvents: 'auto',
+      },
+      '& .MuiAutocomplete-popupIndicator': {
+        visibility: active ? 'visible' : 'hidden',
+        pointerEvents: 'auto',
+      },
+      '&:hover .MuiAutocomplete-clearIndicator': {
+        visibility: 'visible',
+      },
+      '&:hover .MuiAutocomplete-popupIndicator': {
+        visibility: 'visible',
+      },
+    }),
+    [active, focus],
+  )
+
   return (
     <Autocomplete
       open={menuIsOpen}
@@ -107,7 +157,9 @@ export function AutocompleteCell({
         stopEditing({ nextRow: false })
       }}
       onChange={(_e, newVal, reason) => {
-        if (reason === 'createOption') {
+        if (reason === 'clear') {
+          setRowData(clearValue)
+        } else if (reason === 'createOption') {
           // The user typed an option that wasn't a defined enum. Try to cast it to the correct type
           setRowData(
             parseFreeTextGivenJsonSchemaType(newVal as string, colType),
@@ -122,52 +174,52 @@ export function AutocompleteCell({
       renderInput={params => {
         return <TextField {...params} inputRef={textInputRef} />
       }}
-      sx={{
-        width: '100%',
-        height: '100%',
-        '& .MuiTextField-root .MuiInputBase-root': {
-          height: '100%',
-          padding: '0 10px',
-          backgroundColor: 'inherit',
-          borderRadius: 0,
-        },
-        '& .MuiAutocomplete-inputRoot': {
-          padding: '0 10px',
-          backgroundColor: 'inherit',
-          pointerEvents: focus ? undefined : 'none',
-        },
-        '& .MuiFormControl-root': { height: '100%' },
-        '& .MuiAutocomplete-clearIndicator': {
-          visibility: active ? 'visible' : 'hidden',
-          pointerEvents: 'auto',
-        },
-        '& .MuiAutocomplete-popupIndicator': {
-          visibility: active ? 'visible' : 'hidden',
-          pointerEvents: 'auto',
-        },
-        '&:hover .MuiAutocomplete-clearIndicator': {
-          visibility: 'visible',
-        },
-        '&:hover .MuiAutocomplete-popupIndicator': {
-          visibility: 'visible',
-        },
-      }}
+      sx={autocompleteSx}
     />
   )
 }
 
+// Memoize the cell component to prevent unnecessary re-renders
+// Custom comparison function that ignores function prop identity changes
+// since the grid library recreates them on each render but their behavior is stable
+const MemoizedAutocompleteCell = memo(
+  AutocompleteCell,
+  (prevProps, nextProps) => {
+    // Compare all non-function props that represent actual state changes
+    return (
+      prevProps.active === nextProps.active &&
+      prevProps.focus === nextProps.focus &&
+      prevProps.rowData === nextProps.rowData &&
+      prevProps.choices === nextProps.choices &&
+      prevProps.colType === nextProps.colType &&
+      prevProps.clearValue === nextProps.clearValue
+      // Note: We intentionally skip comparing stopEditing and setRowData
+      // These are recreated by react-datasheet-grid on every render but their
+      // behavior remains functionally identical for the same cell position.
+      // Comparing them would defeat the purpose of memoization.
+    )
+  },
+)
+
 export type AutocompleteColumnProps = {
   choices: AutocompleteOption[]
   colType?: JSONSchema7Type
+  clearValue: undefined | null
 }
 
 export function autocompleteColumn({
   choices,
   colType,
+  clearValue,
 }: AutocompleteColumnProps): Partial<Column> {
   return {
     component: ((props: Omit<AutocompleteCellProps, 'choices'>) => (
-      <AutocompleteCell {...props} choices={choices} colType={colType} />
+      <MemoizedAutocompleteCell
+        {...props}
+        choices={choices}
+        colType={colType}
+        clearValue={clearValue}
+      />
     )) as CellComponent,
     // If we update our enums to support labels, then we can update copy to copy the label and paste to lookup the mapping from label -> value
     copyValue: ({ rowData }) => rowData,

@@ -7,7 +7,7 @@ import {
   standardsSql,
   DST_TABLE_COLUMN_CONSTS,
 } from '../config/resources'
-import { FeaturedDataTabs } from 'synapse-react-client'
+import FeaturedDataTabs from 'synapse-react-client/components/FeaturedDataTabs/FeaturedDataTabs'
 import CTASectionWrapper from 'synapse-react-client/components/CTASectionWrapper/CTASectionWrapper'
 import columnAliases from '../config/columnAliases'
 

@@ -20,6 +20,7 @@ import WebhookDashboard from './components/Webhook/WebhookDashboard'
 
 export * from './components'
 export * from './utils'
+export * from './mocks'
 
 const SynapseContextUtils = {
   SynapseContextProvider,

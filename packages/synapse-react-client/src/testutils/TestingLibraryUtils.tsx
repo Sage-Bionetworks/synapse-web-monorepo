@@ -1,5 +1,6 @@
 import React from 'react'
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import { MOCK_APPLICATION_SESSION_CONTEXT } from '@/mocks'
 import FullContextProvider, {
   defaultQueryClientConfig,
 } from '@/utils/context/FullContextProvider'
@@ -30,6 +31,7 @@ export const createWrapperAndQueryClient = (
         <FullContextProvider
           synapseContext={wrapperProps}
           queryClient={queryClient}
+          applicationSessionContext={MOCK_APPLICATION_SESSION_CONTEXT}
         >
           {children}
         </FullContextProvider>

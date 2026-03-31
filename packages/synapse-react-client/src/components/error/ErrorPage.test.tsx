@@ -1,6 +1,4 @@
 import { MOCK_DOI } from '@/mocks/doi/MockDoi'
-
-import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen, waitFor } from '@testing-library/react'
@@ -8,11 +6,10 @@ import userEvent from '@testing-library/user-event'
 import ErrorPage, {
   ACCESS_DENIED_ANONYMOUS_ACTION_DESCRIPTION,
   ACCESS_DENIED_ANONYMOUS_MESSAGE,
-  ACCESS_DENIED_HELP_FORUM_ACTION_DESCRIPTION,
   ACCESS_DENIED_MESSAGE,
   ACCESS_DENIED_TITLE,
   ErrorPageProps,
-  HELP_FORUM_LINK_TEXT,
+  CONTACT_US_LINK_TEXT,
   LOG_IN_LINK_TEXT,
   NOT_FOUND_MESSAGE,
   NOT_FOUND_TITLE,
@@ -22,18 +19,18 @@ import ErrorPage, {
 
 const mockGotoPlace = vi.fn()
 
-function renderComponent(props: ErrorPageProps, isLoggedIn: boolean) {
+function renderComponent(props: ErrorPageProps, isAuthenticated: boolean) {
   const component = render(<ErrorPage {...props} />, {
     wrapper: createWrapper({
-      accessToken: isLoggedIn ? MOCK_ACCESS_TOKEN : undefined,
+      isAuthenticated,
     }),
   })
   return { component }
 }
 
-async function setUp(props: ErrorPageProps, isLoggedIn: boolean) {
+async function setUp(props: ErrorPageProps, isAuthenticated: boolean) {
   const user = userEvent.setup()
-  const { component } = renderComponent(props, isLoggedIn)
+  const { component } = renderComponent(props, isAuthenticated)
 
   let imageElement: HTMLElement | undefined
   await waitFor(() => {
@@ -50,6 +47,9 @@ describe('ErrorPage: basic functionality', () => {
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
   it('403 error on an entity', async () => {
+    const mockWindowOpen = vi.fn()
+    window.open = mockWindowOpen
+
     const props: ErrorPageProps = {
       type: SynapseErrorType.ACCESS_DENIED,
       entityId: 'syn123',
@@ -61,7 +61,6 @@ describe('ErrorPage: basic functionality', () => {
     )
     await screen.findByText(ACCESS_DENIED_TITLE)
     await screen.findByText(ACCESS_DENIED_MESSAGE)
-    await screen.findByText(ACCESS_DENIED_HELP_FORUM_ACTION_DESCRIPTION)
     // SWC-7073
     // await screen.findByText(ACCESS_DENIED_CONTACT_ADMIN_ACTION_DESCRIPTION)
     // by default, a DOI is set up in MSW (see doiHandlers)
@@ -69,10 +68,13 @@ describe('ErrorPage: basic functionality', () => {
     await screen.findByText(new RegExp(MOCK_DOI.creators[0].creatorName))
     await screen.findByText(new RegExp(MOCK_DOI.titles[0].title))
 
-    const helpForumLink = screen.getByText(HELP_FORUM_LINK_TEXT)
-    await user.click(helpForumLink)
+    const contactUsLink = screen.getByText(CONTACT_US_LINK_TEXT)
+    await user.click(contactUsLink)
     await waitFor(() =>
-      expect(mockGotoPlace).toHaveBeenLastCalledWith('/SynapseForum:default'),
+      expect(mockWindowOpen).toHaveBeenLastCalledWith(
+        'https://sagebionetworks.jira.com/servicedesk/customer/portals',
+        '_blank',
+      ),
     )
 
     // SWC-7073

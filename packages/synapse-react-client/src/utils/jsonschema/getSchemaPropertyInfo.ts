@@ -8,6 +8,7 @@ export interface SchemaPropertyInfo {
   type: FlatTypeInfo | undefined
   isRequired: boolean
   enumeratedValues: EnumeratedValue[] | null
+  description?: string
 }
 
 export interface SchemaPropertiesMap {
@@ -56,6 +57,7 @@ export function getSchemaPropertiesInfo(
         type,
         isRequired: requiredFields.includes(propertyName),
         enumeratedValues: enumeratedValues.length > 0 ? enumeratedValues : null,
+        description: propertySchema?.description,
       }
     })
   }

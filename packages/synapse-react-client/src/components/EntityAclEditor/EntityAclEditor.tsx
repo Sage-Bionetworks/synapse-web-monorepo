@@ -6,8 +6,12 @@ import {
   useSuspenseGetEntityBundle,
   useUpdateEntityACL,
 } from '@/synapse-queries'
+import { useGetRealmPrincipals } from '@/synapse-queries/realm/useRealmPrincipals'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
-import { resourceAccessListIsEqual } from '@/utils/functions/AccessControlListUtils'
+import {
+  isEntityPublic,
+  resourceAccessListIsEqual,
+} from '@/utils/functions/AccessControlListUtils'
 import { getDisplayNameFromProfile } from '@/utils/functions/DisplayUtils'
 import { entityTypeToFriendlyName } from '@/utils/functions/EntityTypeUtils'
 import {
@@ -15,11 +19,7 @@ import {
   PermissionLevel,
   permissionLevelToLabel,
 } from '@/utils/PermissionLevelToAccessType'
-import {
-  ANONYMOUS_PRINCIPAL_ID,
-  AUTHENTICATED_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_ID,
-} from '@/utils/SynapseConstants'
+import { SYNAPSE_DOCS_SHARING_SETTINGS_PERMISSIONS_CONDITIONS_FOR_USE_URL } from '@/utils/SynapseConstants'
 import { Alert, Link, Stack } from '@mui/material'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
@@ -87,6 +87,7 @@ function getCanEditResourceAccess(
   canEdit: boolean,
   isInherited: boolean,
   ownProfile: UserProfile,
+  publicGroupId: string | undefined,
 ): AclEditorProps['canEdit'] {
   if (!canEdit || isInherited) {
     return false
@@ -96,7 +97,9 @@ function getCanEditResourceAccess(
     const isSelf = ownProfile.ownerId === String(resourceAccess.principalId)
     // Users cannot change permission level for the public group, only add/remove it.
     // To give the public group DOWNLOAD access, ACT must mark it as anonymous access.
-    const isPublicGroup = resourceAccess.principalId === PUBLIC_PRINCIPAL_ID
+    const isPublicGroup =
+      publicGroupId !== undefined &&
+      String(resourceAccess.principalId) === publicGroupId
     if (isSelf || isPublicGroup) {
       return false
     }
@@ -124,9 +127,13 @@ function getCanDeleteResourceAccess(
 
 function getDisplayedPermissionLevelOverride(
   isOpenData: boolean,
+  publicGroupId: string | undefined,
 ): AclEditorProps['displayedPermissionLevelOverride'] {
   return (resourceAccess: ResourceAccess) => {
-    if (resourceAccess.principalId === PUBLIC_PRINCIPAL_ID) {
+    if (
+      publicGroupId !== undefined &&
+      String(resourceAccess.principalId) === publicGroupId
+    ) {
       return isOpenData
         ? permissionLevelToLabel['CAN_DOWNLOAD']
         : permissionLevelToLabel['CAN_VIEW']
@@ -147,6 +154,8 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
   } = props
 
   const { data: ownProfile } = useSuspenseGetCurrentUserProfile()
+  const { data: realmPrincipals } = useGetRealmPrincipals()
+  const { publicGroup: publicGroupId } = realmPrincipals || {}
   const { data: entityBundle } = useSuspenseGetEntityBundle(
     entityId,
     undefined,
@@ -220,12 +229,9 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
     updatedIsInherited,
   ])
 
-  const isPublic = updatedResourceAccessList.some(ra =>
-    [
-      AUTHENTICATED_PRINCIPAL_ID,
-      PUBLIC_PRINCIPAL_ID,
-      ANONYMOUS_PRINCIPAL_ID,
-    ].includes(ra.principalId),
+  const isPublic = isEntityPublic(
+    updatedResourceAccessList,
+    realmPrincipals ?? {},
   )
 
   const {
@@ -369,7 +375,7 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
                 View the instructions above for setting your{' '}
                 <Link
                   href={
-                    'https://help.synapse.org/docs/Sharing-Settings,-Permissions,-and-Conditions-for-Use.2024276030.html'
+                    SYNAPSE_DOCS_SHARING_SETTINGS_PERMISSIONS_CONDITIONS_FOR_USE_URL
                   }
                   target={'_blank'}
                 >
@@ -387,6 +393,7 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
           canEdit,
           updatedIsInherited,
           ownProfile,
+          publicGroupId,
         )}
         canRemoveEntry={getCanDeleteResourceAccess(
           canEdit,
@@ -398,9 +405,10 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
         emptyText={/* This should never happen */ ''}
         displayedPermissionLevelOverride={getDisplayedPermissionLevelOverride(
           isOpenData,
+          publicGroupId,
         )}
         onAddPrincipalToAcl={id => {
-          if (id === PUBLIC_PRINCIPAL_ID) {
+          if (publicGroupId !== undefined && String(id) === publicGroupId) {
             addResourceAccessItem(
               id,
               getAccessTypeFromPermissionLevel('CAN_VIEW'),

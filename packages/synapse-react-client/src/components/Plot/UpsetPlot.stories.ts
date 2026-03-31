@@ -32,9 +32,7 @@ export const Demo: Story = {
           },
         ],
       }
-      const url = `/Explore/Data%20by%20Files?QueryWrapper0=${JSON.stringify(
-        query,
-      )}`
+      const url = `/Explore/Data%20by%20Files?qw0=${JSON.stringify(query)}`
       console.log(url)
     },
   },

@@ -102,6 +102,7 @@ import { sanitize } from '@/utils/functions/SanitizeHtmlUtils'
 import * as SynapseConstants from '@/utils/SynapseConstants'
 import { DATETIME_UTC_COOKIE_KEY } from '@/utils/SynapseConstants'
 import {
+  SynapseClient as SynapseOpenAPIClient,
   DoiAssociation,
   EntityType,
   ViewEntityType,
@@ -350,14 +351,15 @@ import {
 } from './SynapseClientUtils'
 import { CSRF_TOKEN_STORAGE_KEY } from '@/utils/hooks'
 
-const cookies = new UniversalCookies()
-
 // Max size file that we will allow the caller to read into memory (5MB)
 const MAX_JS_FILE_DOWNLOAD_SIZE = 5242880
 const MAX_NUMBER_OF_PARTS = 10000
 // This corresponds to the Synapse-managed S3 storage location:
 export const SYNAPSE_STORAGE_LOCATION_ID = 1
 export function getRootURL(): string {
+  if (typeof window === 'undefined') {
+    return 'http://localhost/'
+  }
   const portString = window.location.port ? `:${window.location.port}` : ''
   return `${window.location.protocol}//${window.location.hostname}${portString}/`
 }
@@ -959,11 +961,12 @@ export const getUserGroupHeaders = (
   typeFilter: TYPE_FILTER = TYPE_FILTER.ALL,
   offset: number = 0,
   limit: number = 20,
+  accessToken?: string,
 ): Promise<UserGroupHeaderResponsePage> => {
   return doGet<UserGroupHeaderResponsePage>(
     USER_GROUP_HEADERS +
       `?prefix=${prefix}&typeFilter=${typeFilter}&offset=${offset}&limit=${limit}`,
-    undefined,
+    accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -972,11 +975,14 @@ export const getUserGroupHeaders = (
  * Get Users and Groups that match the given list of aliases.
  * https://repo-prod.prod.sagebase.org/repo/v1/userGroupHeaders/aliases
  */
-export const postUserGroupHeadersWithAlias = (aliases: string[]) => {
+export const postUserGroupHeadersWithAlias = (
+  aliases: string[],
+  accessToken?: string,
+) => {
   return doPost<UserGroupHeaderResponse>(
     `${USER_GROUP_HEADERS}/aliases`,
     { list: aliases },
-    undefined,
+    accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -987,10 +993,11 @@ export const postUserGroupHeadersWithAlias = (aliases: string[]) => {
  */
 export const getGroupHeadersBatch = (
   ids: string[],
+  accessToken?: string,
 ): Promise<UserGroupHeaderResponsePage> => {
   return doGet<UserGroupHeaderResponsePage>(
     USER_GROUP_HEADERS_BATCH + `?ids=${ids.join(',')}`,
-    undefined,
+    accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
@@ -1986,6 +1993,7 @@ export const updateWikiPage = (
 
 export const isInSynapseExperimentalMode = (): boolean => {
   // bang bang, you're a boolean!
+  const cookies = new UniversalCookies()
   return !!cookies.get(SynapseConstants.EXPERIMENTAL_MODE_COOKIE)
 }
 
@@ -1999,6 +2007,7 @@ export const setAccessTokenCookie = async (
   token: string | undefined,
 ): Promise<void> => {
   if (isOutsideSynapseOrg()) {
+    const cookies = new UniversalCookies()
     if (!token) {
       cookies.remove(ACCESS_TOKEN_COOKIE_KEY, { path: '/' })
       // See - https://github.com/reactivestack/cookies/issues/189
@@ -2033,6 +2042,7 @@ export const getAccessTokenFromCookie = async (): Promise<
   string | undefined
 > => {
   if (isOutsideSynapseOrg()) {
+    const cookies = new UniversalCookies()
     return Promise.resolve(cookies.get(ACCESS_TOKEN_COOKIE_KEY) as string)
   }
   return doGet<string>(
@@ -2044,6 +2054,7 @@ export const getAccessTokenFromCookie = async (): Promise<
 }
 
 export const getUseUtcTimeFromCookie = () => {
+  const cookies = new UniversalCookies()
   return cookies.get(DATETIME_UTC_COOKIE_KEY) === 'true'
 }
 
@@ -2072,22 +2083,37 @@ export async function deleteAllSessionAccessTokens(accessToken: string) {
   )
 }
 
-export const signOut = async () => {
+/**
+ * Sign out of the current session by replacing the current token with a fresh anonymous token in the specified realm.
+ * @returns the new anonymous access token that was set in the cookie
+ * @deprecated - Use `clearSession` provided by context, which will provide the correct default realm for the current application.
+ */
+export const signOut = async (realm = '0'): Promise<string> => {
   let accessToken: string | undefined = undefined
   try {
     accessToken = await getAccessTokenFromCookie()
-  } catch (e) {
-    console.warn('Could not get the access token from the cookie', e)
-  }
-  if (accessToken) {
-    try {
+    if (accessToken) {
       // This call may fail if the token was already revoked, so just log any encountered errors
       await deleteSessionAccessToken(accessToken)
-    } catch (e) {
-      console.warn('Could not delete session token', e)
     }
+  } catch (e) {
+    console.warn('Could not get/revoke the current access token', e)
   }
-  await setAccessTokenCookie(undefined)
+
+  // Get a new anonymous token and set it in the cookie.
+  let newAccessToken: string = ''
+  try {
+    const accessTokenResponse = await new SynapseOpenAPIClient({
+      basePath: getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+    }).authenticationServicesClient.getAuthV1AnonymousToken({
+      realm,
+    })
+    newAccessToken = accessTokenResponse.accessToken!
+  } catch (e) {
+    console.error('Failed to get an anonymous access token.', e)
+  }
+  await setAccessTokenCookie(newAccessToken)
+  return newAccessToken
 }
 
 // Progress sent back during upload, will report when a part of a file is finished processing

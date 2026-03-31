@@ -4,9 +4,7 @@ import {
   Box,
   Card,
   Typography,
-  Link,
   // Stack,
-  Button,
   // ButtonProps,
   useTheme,
   useMediaQuery,
@@ -15,6 +13,8 @@ import { DescriptionConfig } from '../CardContainerLogic'
 import { CollapsibleDescription } from '../GenericCard/CollapsibleDescription'
 import { GenericCardProps } from '@/components/GenericCard/GenericCard'
 import { useDocumentMetadata } from '@/utils/context/DocumentMetadataContext'
+import { SmartButton } from '../SmartLink/SmartButton'
+import { SmartLink } from '../SmartLink/SmartLink'
 
 export type HeaderCardV2Props = {
   /** Type label displayed at the top of the card */
@@ -33,6 +33,8 @@ export type HeaderCardV2Props = {
   isAlignToLeftNav?: boolean
   /** Configuration for the collapsible description */
   descriptionConfig?: DescriptionConfig
+  /** Character count threshold for truncating description (default 400) */
+  charCountCutoff?: number
   /** Optional URL for making the title clickable */
   href?: string
   /** Target attribute for the title link */
@@ -43,7 +45,7 @@ export type HeaderCardV2Props = {
   backgroundImage?: string
   /** Force values section to appear below main content */
   forceStackedLayout?: boolean
-  /** Optional CTA link to display below description */
+  /** Optional CTA link(s) to display below description. Accepts a single config or an array. */
   ctaLinkConfig?: GenericCardProps['ctaLinkConfig']
 }
 
@@ -134,6 +136,7 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
     // secondaryLabelLimit,
     isAlignToLeftNav,
     descriptionConfig,
+    charCountCutoff,
     href,
     target,
     icon,
@@ -141,6 +144,7 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
     forceStackedLayout = false,
     ctaLinkConfig,
   } = props
+
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
@@ -156,7 +160,7 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
   const descriptionConfiguration: DescriptionConfig = {
     ...descriptionConfig,
     showFullDescriptionByDefault:
-      descriptionConfig?.showFullDescriptionByDefault ?? true,
+      descriptionConfig?.showFullDescriptionByDefault ?? false,
   }
   const metadataDescription = description || subTitle || undefined
   useDocumentMetadata({
@@ -165,39 +169,42 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
     priority: 100,
   })
 
-  // ctaLink stuff
-  let ctaLinkBox = null
-  if (ctaLinkConfig) {
-    ctaLinkBox = (
-      <Button
-        variant="outlined"
-        component={Link}
-        href={ctaLinkConfig.href}
-        target={ctaLinkConfig.target}
-        rel={
-          ctaLinkConfig.target === '_blank' ? 'noopener noreferrer' : undefined
-        }
-        size="large"
-        sx={{
-          color: '#FFF',
-          '&:hover': {
-            color: '#FFF',
-            textDecorationColor: '#FFF',
-            border: '2px solid white',
-          },
-          '&:focus': { color: '#FFF' },
-          textDecorationColor: '#FFF',
-          padding: '6px 24px',
-          marginTop: '22px',
-          border: '1px solid white',
-        }}
+  // ctaLink stuff - normalize to array
+  const ctaLinkConfigs = ctaLinkConfig
+    ? Array.isArray(ctaLinkConfig)
+      ? ctaLinkConfig
+      : [ctaLinkConfig]
+    : []
+  const ctaLinkBox =
+    ctaLinkConfigs.length > 0 ? (
+      <Box
+        sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', marginTop: '22px' }}
       >
-        {/* TODO: add an external open icon like https://materialui.co/icon/open-in-new */}
-        {/*<AddAlertTwoTone sx={{ width: '24px', height: '24px' }} />*/}
-        {ctaLinkConfig.text}
-      </Button>
-    )
-  }
+        {ctaLinkConfigs.map((config, index) => (
+          <SmartButton
+            key={index}
+            variant="outlined"
+            href={config?.href}
+            target={config?.target}
+            size="large"
+            sx={{
+              color: '#FFF',
+              '&:hover': {
+                color: '#FFF',
+                textDecorationColor: '#FFF',
+                border: '2px solid white',
+              },
+              '&:focus': { color: '#FFF' },
+              textDecorationColor: '#FFF',
+              padding: '6px 24px',
+              border: '1px solid white',
+            }}
+          >
+            {config?.text}
+          </SmartButton>
+        ))}
+      </Box>
+    ) : null
 
   return (
     <Card
@@ -274,14 +281,14 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
               }}
             >
               {href ? (
-                <Link
+                <SmartLink
                   href={href}
                   target={target}
                   underline="hover"
                   color="inherit"
                 >
                   {title}
-                </Link>
+                </SmartLink>
               ) : (
                 title
               )}
@@ -322,6 +329,7 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
               description={description}
               descriptionSubTitle=""
               descriptionConfig={descriptionConfiguration}
+              charCountCutoff={charCountCutoff}
             />
             {ctaLinkBox}
           </Box>

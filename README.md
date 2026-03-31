@@ -53,3 +53,25 @@ Some notes:
 
 - If the test step fails, you can find the failed tests by downloading the artifacts from the job, which includes HTML reports of the tests.
 - We currently have many warnings and errors emitted in each test, so we have configured each test run to silence the output. If you need to see these warnings and errors, remove the 'silent' parameter from the script or configuration file.
+
+## Styling
+
+We use CSS variables for runtime theming across the monorepo.
+
+### Rules for Migration
+
+Use CSS variables where ever possible.Certain Sass-specific features require values to be known at compile-time. Functions like color.adjust, color.mix, or color.change cannot process var() functions. var() functions also cannot be used within @media declarations.
+
+If a value is used in multiple components (e.g., brand colors), define it in the global \_cssVariables.scss file. If specific to a component, you can define it locally within that component's selector.
+
+### Naming Convention
+
+Global CSS variables in the synapse-web-monorepo follow the pattern: `--synapse-{name}`:
+
+| Category | Example                                |
+| -------- | -------------------------------------- |
+| Colors   | `--synapse-primary-action-color`       |
+| Grays    | `--synapse-gray-700`                   |
+| Status   | `--synapse-success`, `--synapse-error` |
+| Text     | `--synapse-text-color-dark`            |
+| Spacing  | `--synapse-space-unit`                 |

@@ -8,6 +8,7 @@ const fileEntityPageConfig: FileEntityPageConfig = {
   showStorageLocation: false,
   showModifiedOn: false,
   showAnnotations: false,
+  restrictSynapseLinkCardToEditableEntity: false,
 }
 
 export default fileEntityPageConfig

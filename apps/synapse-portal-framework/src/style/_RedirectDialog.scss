@@ -1,5 +1,4 @@
 // Import the theme css
-@use './variables' as Portal;
 html:not(#synapse\.org) .RedirectDialog {
   .modal-content,
   .modal-body {

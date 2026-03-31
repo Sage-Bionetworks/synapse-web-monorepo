@@ -1,5 +1,5 @@
 import { LinearProgress } from '@mui/material'
-import { ErrorBanner } from 'synapse-react-client'
+import { ErrorBanner } from 'synapse-react-client/components/error/ErrorBanner'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
 import {

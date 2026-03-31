@@ -1,8 +1,6 @@
-@use './style/variables' as Portal;
-
 @use 'synapse-react-client/style/main.scss' with (
-  $primary-action-color: Portal.$primary-action-color,
-  $secondary-action-color: Portal.$secondary-action-color,
+  $primary-action-color: #395979,
+  $secondary-action-color: #4db3b9,
   $primary-bgcolor-rgba: unset
 );
 @use './style/all';

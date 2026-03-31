@@ -1,7 +1,7 @@
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { ColumnTypeEnum, SelectColumn } from '@sage-bionetworks/synapse-types'
 import { render, screen, within } from '@testing-library/react'
-import { LabelLinkConfig } from '../CardContainerLogic'
+import { ColumnIconConfigs, LabelLinkConfig } from '../CardContainerLogic'
 import { SynapseCardLabel } from './SynapseCardLabel'
 
 describe('SynapseCardLabel tests', () => {
@@ -249,6 +249,72 @@ describe('SynapseCardLabel tests', () => {
     )
     const link = screen.getByRole('link')
     expect(link.getAttribute('href')).toEqual(`https://some-override-link.gov`)
+  })
+
+  it('shows an icon before a single value when columnIconOptions matches', () => {
+    const value = 'human'
+    const columnIconOptions: ColumnIconConfigs = {
+      columns: {
+        [DATASETS]: {
+          human: { icon: 'orcid' },
+        },
+      },
+    }
+    const { container } = render(
+      <SynapseCardLabel
+        value={value}
+        labelLink={undefined}
+        isHeader={false}
+        selectColumns={selectColumns}
+        columnModels={undefined}
+        columnName={DATASETS}
+        rowData={[]}
+        columnIconOptions={columnIconOptions}
+      />,
+      { wrapper: createWrapper() },
+    )
+    expect(container.querySelector('svg')).toBeInTheDocument()
+    screen.getByText(value)
+  })
+
+  it('shows an icon per matching value in a STRING_LIST when columnIconOptions is provided', () => {
+    const val1 = 'human'
+    const val2 = 'mouse'
+    const val3 = 'other'
+    const value = `["${val1}","${val2}","${val3}"]`
+    const columnIconOptions: ColumnIconConfigs = {
+      columns: {
+        [DATASETS]: {
+          human: { icon: 'orcid' },
+          mouse: { icon: 'email' },
+          // 'other' has no icon
+        },
+      },
+    }
+    const { container } = render(
+      <SynapseCardLabel
+        value={value}
+        labelLink={undefined}
+        isHeader={false}
+        selectColumns={[
+          {
+            columnType: ColumnTypeEnum.STRING_LIST,
+            id: 'a',
+            name: DATASETS,
+          },
+        ]}
+        columnModels={undefined}
+        columnName={DATASETS}
+        rowData={[]}
+        columnIconOptions={columnIconOptions}
+      />,
+      { wrapper: createWrapper() },
+    )
+    // Only val1 and val2 have icon configs, so exactly 2 SVG icons should appear
+    expect(container.querySelectorAll('svg')).toHaveLength(2)
+    expect(container.textContent).toContain(val1)
+    expect(container.textContent).toContain(val2)
+    expect(container.textContent).toContain(val3)
   })
 
   it('maps a string to a React node with MapValueToReactNodeConfig', () => {

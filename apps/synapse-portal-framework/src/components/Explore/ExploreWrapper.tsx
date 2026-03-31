@@ -2,16 +2,20 @@ import {
   NEGATIVE_RESPONSIVE_SIDE_MARGIN,
   RESPONSIVE_SIDE_PADDING,
 } from '@/utils'
+import { getPortalOrigin } from '@/utils/getPortalOrigin'
 import { useSetCanonicalUrl } from '@/utils/useSetCanonicalUrl'
 import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material'
 import { Box, Typography, useMediaQuery, useTheme } from '@mui/material'
-import { useState } from 'react'
-import { Outlet, useLocation, useMatch } from 'react-router'
+import { Suspense, useState } from 'react'
+import { Outlet, useLocation, useMatch, useNavigation } from 'react-router'
 import OrientationBanner from 'synapse-react-client/components/OrientationBanner/OrientationBanner'
 import { ExplorePageRoute, ExploreWrapperProps } from './ExploreWrapperProps'
 import { ExploreWrapperTabs } from './ExploreWrapperTabs'
 import { useDocumentMetadata } from 'synapse-react-client/utils/context/DocumentMetadataContext'
+import { matchPath } from 'react-router'
 import React from 'react'
+import { usePortalContext } from '@/components/PortalContext'
+import loadingScreen from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
 
 function RouteMatchedOrientationBanner(props: {
   route: ExplorePageRoute
@@ -38,20 +42,29 @@ export default function ExploreWrapper(
   const [showSubNav, setShowSubNav] = useState<boolean>(false)
 
   const { pathname } = useLocation()
-  const currentExploreRoute = pathname.substring('/Explore/'.length)
-  const currentRoute = explorePaths.find(
-    route => encodeURI(route.path!) === currentExploreRoute,
-  )
+  const navigation = useNavigation()
+
+  // Use the pending navigation destination for immediate UI feedback
+  const effectivePathname = navigation.location?.pathname ?? pathname
+
+  const currentRoute = explorePaths.find(route => {
+    const routePath = encodeURI(`/Explore/${route.path}`)
+    return Boolean(
+      matchPath({ path: routePath, end: false }, effectivePathname),
+    )
+  })
+  const { portalName, portalKey } = usePortalContext()
   const pageName =
     currentRoute?.displayName ??
     currentRoute?.path?.replaceAll('/', '') ??
     'Explore'
 
-  const newTitle: string = `${import.meta.env.VITE_PORTAL_NAME} - ${pageName}`
+  const newTitle: string = `${portalName} - ${pageName}`
   useDocumentMetadata({ title: newTitle, priority: 50 })
 
   // The canonical URL is the explore route with no searchParams
-  useSetCanonicalUrl(new URL(pathname, window.location.origin).toString())
+  const origin = getPortalOrigin(portalKey)
+  useSetCanonicalUrl(new URL(pathname, origin).toString())
 
   return (
     <>
@@ -108,7 +121,9 @@ export default function ExploreWrapper(
           },
         }}
       >
-        <Outlet />
+        <Suspense fallback={loadingScreen}>
+          <Outlet />
+        </Suspense>
       </Box>
     </>
   )

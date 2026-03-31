@@ -7,9 +7,6 @@ export enum FeatureFlagEnum {
   // If enabled, allow viewing & editing the 'description' string field on entities
   DESCRIPTION_FIELD = 'DESCRIPTION_FIELD',
 
-  // Allow creation of VirtualTable entities
-  VIRTUALTABLE_SUPPORT = 'VIRTUALTABLE_SUPPORT',
-
   // If enabled, use the re-implemented ACL Editor for entities
   REACT_ENTITY_ACL_EDITOR = 'REACT_ENTITY_ACL_EDITOR',
 
@@ -21,4 +18,13 @@ export enum FeatureFlagEnum {
 
   // If enabled, load the Crisp chat widget
   CRISP_CHAT = 'CRISP_CHAT',
+
+  // If enabled, show the Download Ineligible for Packaging Files button on the download cart page
+  DOWNLOAD_CART_INELIGIBLE_FILE_DOWNLOADS = 'DOWNLOAD_CART_INELIGIBLE_FILE_DOWNLOADS',
+
+  // If enabled, provide the ability to login or create an account using the Sage Bionetworks IdP OAuth2 provider
+  SAGE_BIONETWORKS_IDP = 'SAGE_BIONETWORKS_IDP',
+
+  // If enabled, show the SynapseChat dialog in portals
+  PORTAL_CHAT = 'PORTAL_CHAT',
 }

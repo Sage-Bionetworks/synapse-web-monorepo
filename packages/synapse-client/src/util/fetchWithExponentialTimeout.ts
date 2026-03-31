@@ -1,113 +1,124 @@
-import { BaseError } from '../generated/models/BaseError'
-import { NETWORK_UNAVAILABLE_MESSAGE } from './Constants'
-import { SynapseClientError } from './SynapseClientError'
+import { promiseWithRetry, RetryError } from './promiseWithRetry'
 
 /**
- * Waits t number of milliseconds
- *
- * @export
- * @param {number} t milliseconds
- * @returns after t milliseconds
+ * HTTP status codes that are safe to retry.
+ * These indicate temporary issues that may resolve on subsequent attempts.
  */
-export function delay(t: number) {
-  return new Promise(resolve => {
-    setTimeout(resolve.bind(null, {}), t)
-  })
+const RETRYABLE_STATUS_CODES = new Set([
+  408, // Request Timeout
+  429, // Too Many Requests (rate limiting)
+  500, // Internal Server Error
+  502, // Bad Gateway
+  503, // Service Unavailable
+  504, // Gateway Timeout
+])
+
+/**
+ * Error thrown when a fetch request fails with a non-retryable status code.
+ */
+export class HttpFetchError extends Error {
+  public response: Response
+  public status: number
+
+  constructor(message: string, response: Response) {
+    super(message)
+    this.response = response
+    this.status = response.status
+    this.name = 'HttpFetchError'
+  }
 }
 
-/*
-  0 - no internet connection
-  429 - Too Many Requests
-  502 - Bad Gateway
-  503 - Service Unavailable
-  504 - Gateway Timeout
-*/
-const RETRY_STATUS_CODES = [0, 429, 502, 503, 504]
-const MAX_RETRY_STATUS_CODES = [502, 503]
-const MAX_RETRY = 3
-
 /**
- * Fetches data, retrying if the HTTP status code indicates that it could be retried.
- * To use it in our generated client, this function must NOT consume the response body.
+ * Performs a fetch request with automatic retry logic for transient failures.
  *
- * @throws SynapseClientError
+ * This function automatically retries fetch requests that fail with retryable HTTP
+ * status codes (408, 429, 500, 502, 503, 504). Client errors (4xx except 408/429)
+ * and successful responses are not retried.
+ *
+ * @param input - The URL or Request object to fetch
+ * @param init - Optional fetch configuration (headers, method, body, etc.)
+ * @param options - Retry configuration options
+ * @param options.retries - Maximum number of retry attempts (default: 3)
+ * @param options.delayMs - Initial delay between retries in milliseconds (default: 1000)
+ * @param options.exponentialBackoff - Whether to double the delay after each retry (default: true)
+ * @returns A promise that resolves with the Response object on success
+ * @throws {HttpFetchError} If the request fails with a non-retryable status code
+ * @throws {RetryError} If all retry attempts are exhausted for a retryable status code
+ * @throws {TypeError} If the fetch request fails due to network issues
+ *
+ * @example
+ * ```ts
+ * // Simple usage with defaults (3 retries, 1s delay, exponential backoff)
+ * const response = await fetchWithExponentialTimeout('https://api.example.com/data')
+ * const data = await response.json()
+ * ```
+ *
+ * @example
+ * ```ts
+ * // Custom retry configuration
+ * const response = await fetchWithExponentialTimeout(
+ *   'https://api.example.com/data',
+ *   { method: 'POST', body: JSON.stringify({ key: 'value' }) },
+ *   { retries: 5, delayMs: 500, exponentialBackoff: true }
+ * )
+ * ```
+ *
+ * @example
+ * ```ts
+ * // Handling errors
+ * try {
+ *   const response = await fetchWithExponentialTimeout('https://api.example.com/data')
+ *   const data = await response.json()
+ * } catch (error) {
+ *   if (error instanceof HttpFetchError) {
+ *     console.error(`HTTP ${error.status}: ${error.message}`)
+ *   } else if (error instanceof RetryError) {
+ *     console.error('All retry attempts exhausted')
+ *   } else {
+ *     console.error('Network error:', error)
+ *   }
+ * }
+ * ```
  */
-export const fetchResponseWithExponentialTimeout = async (
-  requestInfo: RequestInfo,
-  options: RequestInit,
-  delayMs = 1000,
-) => {
-  let response = await fetch(requestInfo, options)
+export async function fetchWithExponentialTimeout(
+  input: RequestInfo | URL,
+  init?: RequestInit,
+  options: {
+    retries?: number
+    delayMs?: number
+    exponentialBackoff?: boolean
+    maxDelayMs?: number
+  } = {},
+): Promise<Response> {
+  const {
+    retries = 3,
+    delayMs = 1000,
+    exponentialBackoff = true,
+    maxDelayMs,
+  } = options
 
-  let numOfTry = 1
-  while (response.status && RETRY_STATUS_CODES.includes(response.status)) {
-    await delay(delayMs)
-    // Exponential backoff if we re-fetch, cap at 10 seconds
-    delayMs = Math.min(delayMs * 2, 10_000)
-    response = await fetch(requestInfo, options)
-    if (MAX_RETRY_STATUS_CODES.includes(response.status)) {
-      numOfTry++
-      if (numOfTry == MAX_RETRY) {
-        break
+  return promiseWithRetry(
+    async () => {
+      const response = await fetch(input, init)
+
+      if (!response.ok) {
+        const statusText = response.statusText || 'Unknown error'
+        const errorMessage = `HTTP ${response.status}: ${statusText}`
+
+        if (RETRYABLE_STATUS_CODES.has(response.status)) {
+          // Clone the response before throwing so it can be inspected if needed
+          throw new RetryError(errorMessage, response.clone())
+        } else {
+          // Non-retryable error (e.g., 400, 401, 403, 404)
+          throw new HttpFetchError(errorMessage, response)
+        }
       }
-    }
-  }
 
-  return response
-}
-
-/**
- * Fetches data, retrying if the HTTP status code indicates that it could be retried. Contains custom logic for
- * handling errors returned by the Synapse backend.
- * @throws SynapseClientError
- */
-export const fetchWithExponentialTimeout = async <TResponse>(
-  requestInfo: RequestInfo,
-  options: RequestInit,
-  delayMs = 1000,
-): Promise<TResponse> => {
-  const url = typeof requestInfo === 'string' ? requestInfo : requestInfo.url
-  let response
-  try {
-    response = await fetchResponseWithExponentialTimeout(
-      requestInfo,
-      options,
-      delayMs,
-    )
-  } catch (err) {
-    console.error(err)
-    throw new SynapseClientError(0, NETWORK_UNAVAILABLE_MESSAGE, url)
-  }
-  const contentType = response.headers.get('Content-Type')
-  const responseBody = await response.text()
-  let responseObject: TResponse | BaseError | string = responseBody
-  try {
-    // try to parse it as json
-    if (contentType && contentType.includes('application/json')) {
-      responseObject = JSON.parse(responseBody) as TResponse | BaseError
-    }
-  } catch (error) {
-    console.warn('Failed to parse response as JSON', responseBody)
-  }
-
-  if (response.ok) {
-    return responseObject as TResponse
-  } else if (
-    responseObject !== null &&
-    typeof responseObject === 'object' &&
-    'reason' in responseObject
-  ) {
-    throw new SynapseClientError(
-      response.status,
-      responseObject.reason!,
-      url,
-      responseObject,
-    )
-  } else {
-    throw new SynapseClientError(
-      response.status,
-      JSON.stringify(responseObject),
-      url,
-    )
-  }
+      return response
+    },
+    retries,
+    delayMs,
+    exponentialBackoff,
+    maxDelayMs,
+  )
 }

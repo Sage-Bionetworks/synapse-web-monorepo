@@ -3,15 +3,21 @@ import App from '@sage-bionetworks/synapse-portal-framework/App'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { RouteObject } from 'react-router'
-import { QueryWrapperPlotNav } from 'synapse-react-client'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import HomePage from '../pages/HomePage'
 import { dataQueryWrapperPlotNavProps } from './synapseConfigs/data'
 
+const ARCUS_BIO_REALM_ID = '0' // replace me!
+
 const routes: RouteObject[] = [
   {
     path: '/',
-    element: <App>{/* Add any global banners here if needed */}</App>,
+    element: (
+      <App defaultRealmId={ARCUS_BIO_REALM_ID} requireAuthentication={true}>
+        {/* Add any global banners here if needed */}
+      </App>
+    ),
     children: [
       ...sharedRoutes,
       {

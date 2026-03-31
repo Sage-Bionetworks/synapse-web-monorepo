@@ -49,8 +49,11 @@ describe('getType', () => {
     })
   })
 
-  it('returns undefined if no type and no oneOf', () => {
-    expect(getFlatTypeInfo({})).toBeUndefined()
+  it('returns default type if no type and no oneOf', () => {
+    expect(getFlatTypeInfo({})).toEqual({
+      type: 'string',
+      isArray: false,
+    })
   })
 
   it('returns TypeInfo from oneOf with only one non-null option', () => {
@@ -63,15 +66,21 @@ describe('getType', () => {
     })
   })
 
-  it('returns undefined if oneOf has multiple non-null options', () => {
+  it('returns default if oneOf has multiple non-null options', () => {
     const schema: JSONSchema7 = {
       oneOf: [{ type: 'string' }, { type: 'number' }],
     }
-    expect(getFlatTypeInfo(schema)).toBeUndefined()
+    expect(getFlatTypeInfo(schema)).toEqual({
+      type: 'string',
+      isArray: false,
+    })
   })
 
-  it('returns undefined if oneOf is empty', () => {
-    expect(getFlatTypeInfo({ oneOf: [] })).toBeUndefined()
+  it('returns default if oneOf is empty', () => {
+    expect(getFlatTypeInfo({ oneOf: [] })).toEqual({
+      type: 'string',
+      isArray: false,
+    })
   })
 
   it('recursively resolves TypeInfo from nested oneOf', () => {
@@ -100,6 +109,17 @@ describe('getType', () => {
   it('captures readOnly', () => {
     const schema: JSONSchema7 = {
       type: 'string',
+      readOnly: true,
+    }
+    expect(getFlatTypeInfo(schema)).toEqual({
+      type: 'string',
+      isArray: false,
+      readOnly: true,
+    })
+  })
+
+  it('captures readOnly without specified type', () => {
+    const schema: JSONSchema7 = {
       readOnly: true,
     }
     expect(getFlatTypeInfo(schema)).toEqual({

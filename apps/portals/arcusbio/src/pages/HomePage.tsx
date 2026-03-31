@@ -1,5 +1,7 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import { Box, Container, Typography } from '@mui/material'
+import { Box, Container, Grid, Typography } from '@mui/material'
+import { QueryCountButton } from 'synapse-react-client/components/QueryCountButton/QueryCountButton'
+import { dataSql } from '@/config/resources'
 import styles from './HomePage.module.scss'
 
 export default function HomePage() {
@@ -24,12 +26,28 @@ export default function HomePage() {
         </Container>
       </Box>
       <SectionLayout title={'What’s in the portal?'}>
-        <Typography>
-          This portal serves as a centralized repository for Arcus Biosciences'
-          private data. Here, team members can explore curated datasets, project
-          documentation, and research files. The portal is designed to
-          facilitate data discovery, analysis, and collaboration across teams.
-        </Typography>
+        <Grid container spacing={3} alignItems="center">
+          <Grid size="grow">
+            <Typography>
+              This portal serves as a centralized repository for Arcus
+              Biosciences' private data. Here, team members can explore curated
+              datasets, project documentation, and research files. The portal is
+              designed to facilitate data discovery, analysis, and collaboration
+              across teams.
+            </Typography>
+          </Grid>
+          <Grid size="auto">
+            <QueryCountButton
+              sql={dataSql}
+              href="/Explore/"
+              prefixText="Explore"
+              suffixText="files"
+              variant="contained"
+              color="primary"
+              size="large"
+            />
+          </Grid>
+        </Grid>
       </SectionLayout>
       <SectionLayout title={'Accessing the data'}>
         <Typography component="div">

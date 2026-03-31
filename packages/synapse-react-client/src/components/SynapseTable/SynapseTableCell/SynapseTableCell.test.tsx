@@ -13,10 +13,8 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
-import {
-  AUTHENTICATED_PRINCIPAL_ID,
-  DEFAULT_PAGE_SIZE,
-} from '@/utils/SynapseConstants'
+import { MOCK_AUTHENTICATED_PRINCIPAL_ID as AUTHENTICATED_PRINCIPAL_ID } from '@/mocks/realm/mockRealmPrincipal'
+import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
 import {
   ColumnTypeEnum,
   EntityHeader,

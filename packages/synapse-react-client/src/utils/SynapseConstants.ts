@@ -1,23 +1,12 @@
 import { ORIENTATION_BANNER_KEYS } from '@/components/OrientationBanner'
 
-/** Bootstrapped principals */
-/** The group representing all users logged-in to Synapse */
-export const AUTHENTICATED_PRINCIPAL_ID = 273948
-/** The group representing all logged-in Synapse users AND anonymous */
-export const PUBLIC_PRINCIPAL_ID = 273949
-/** The single user representing all unauthenticated users */
-export const ANONYMOUS_PRINCIPAL_ID = 273950
-
-export const PUBLIC_PRINCIPAL_IDS = [
-  AUTHENTICATED_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_ID,
-  ANONYMOUS_PRINCIPAL_ID,
-]
-
 /** The Synapse Access and Compliance team */
 export const ACT_TEAM_ID = 464532
 /** The team containing Synapse users whose HTML files may be rendered without sanitization */
 export const TRUSTED_HTML_USERS_TEAM_ID = '3351236'
+
+/** The default Synapse realm ID */
+export const SYNAPSE_REALM = '0'
 
 /** QueryBundleRequest constants */
 export const BUNDLE_MASK_QUERY_RESULTS: number = 1
@@ -166,11 +155,13 @@ export const LOGIN_METHOD_EMAIL = 'EMAIL'
 export const LOGIN_METHOD_OAUTH2_GOOGLE = 'GOOGLE'
 export const LOGIN_METHOD_OAUTH2_ARCUS = 'ARCUS'
 export const LOGIN_METHOD_OAUTH2_ORCID = 'ORCID'
+export const LOGIN_METHOD_OAUTH2_SAGE_BIONETWORKS = 'SAGE_BIONETWORKS'
 
 export const OAUTH2_PROVIDERS = {
   [LOGIN_METHOD_OAUTH2_ARCUS]: 'ARCUS_BIOSCIENCES',
   [LOGIN_METHOD_OAUTH2_GOOGLE]: 'GOOGLE_OAUTH_2_0',
   [LOGIN_METHOD_OAUTH2_ORCID]: 'ORCID',
+  [LOGIN_METHOD_OAUTH2_SAGE_BIONETWORKS]: 'SAGE_BIONETWORKS',
 }
 
 export const EXTERNAL_COMPUTE_ENV_DISCLAIMER =
@@ -199,6 +190,8 @@ export const PERSISTENT_LOCAL_STORAGE_KEYS = [
   EXTERNAL_COMPUTE_ENV_DISCLAIMER,
 ]
 
+export const DATA_CATALOG_PATH_SEGMENT = 'DataCatalog:0'
+
 export const PRIVACY_POLICY_LINK =
   'https://www.synapse.org/TrustCenter:PrivacyPolicy'
 export const CHILD_MINOR_ADDENDUM_LINK =
@@ -218,6 +211,9 @@ export const ONE_SAGE_APPID_QUERY_PARAM_KEY = 'appId'
 export const SAGE_OFFERINGS_HELP_URL =
   'https://help.synapse.org/docs/Sage-Offerings.2965078125.html'
 
+export const SYNAPSE_DOCS_SHARING_SETTINGS_PERMISSIONS_CONDITIONS_FOR_USE_URL =
+  'https://docs.synapse.org/synapse-docs/sharing-settings-permissions-and-conditions-for-use'
+
 // Grid Page URL Query Parameters
 export const GRID_PAGE_SESSION_ID_QUERY_PARAM = 'sessionId'
 export const GRID_PAGE_AGENT_REGISTRATION_ID_QUERY_PARAM = 'agentRegistrationId'
@@ -225,3 +221,6 @@ export const GRID_PAGE_TASK_ID_QUERY_PARAM = 'taskId'
 
 // Search Page URL Query Parameters
 export const SEARCH_PAGE_QUERY_PARAM = 'query'
+
+// Version label used by the backend for version that has not been snapshotted
+export const TABLE_VERSION_IN_PROGRESS = 'in progress'

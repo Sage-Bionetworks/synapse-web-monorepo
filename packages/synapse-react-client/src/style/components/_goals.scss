@@ -1,6 +1,4 @@
-@use '../abstracts/variables' as SRC;
 @use '../abstracts/mixins' as SrcMixins;
-@use 'sass:map';
 
 .Goals {
   &__Card {
@@ -9,13 +7,13 @@
     }
     display: flex;
     flex-direction: column;
-    box-shadow: SRC.$box-shadow-soft;
+    box-shadow: var(--synapse-box-shadow-soft);
     background: #ffffff;
     margin: 10px;
     &__header {
       min-height: 75px;
       @include SrcMixins.side-padding;
-      background: SRC.$primary-action-color;
+      background: var(--synapse-primary-action-color);
       background-size: cover !important;
       background-repeat: no-repeat !important;
       display: flex;
@@ -61,8 +59,8 @@
       @include SrcMixins.hv-center;
       &__Count {
         @include SrcMixins.hv-center;
-        border: 1px solid SRC.$primary-action-color;
-        color: SRC.$primary-action-color;
+        border: 1px solid var(--synapse-primary-action-color);
+        color: var(--synapse-primary-action-color);
         border-radius: 50%;
         min-height: 50px;
         min-width: 50px;
@@ -84,7 +82,7 @@
         margin-top: 20px;
         margin-left: 0px;
         &:hover {
-          color: map.get(SRC.$colors, 'white');
+          color: var(--synapse-white);
         }
       }
     }

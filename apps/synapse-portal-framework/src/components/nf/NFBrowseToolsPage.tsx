@@ -5,16 +5,19 @@ import { ReactComponent as Biobanks } from '@/components/assets/biobanks.svg'
 import { ReactComponent as CellLines } from '@/components/assets/cell-lines.svg'
 import { ReactComponent as PlasmidsReagents } from '@/components/assets/plasmids-reagents.svg'
 import { Box, Link, Typography } from '@mui/material'
-import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
+import { Query } from '@sage-bionetworks/synapse-types'
 import pluralize from 'pluralize'
 import { ReactElement } from 'react'
-import { FeaturedToolsList } from 'synapse-react-client/components/FeaturedToolsList'
+import { FeaturedToolsList } from 'synapse-react-client/components/FeaturedToolsList/index'
+import { SEARCH_TERM } from 'synapse-react-client/utils/functions/SqlFunctions'
+import { generateCompressedQueryURL } from 'synapse-react-client/utils/functions/deepLinkingUtils'
 import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { WideButton } from 'synapse-react-client/components/styled/WideButton'
 import EcosystemLayout from 'synapse-react-client/components/Ecosystem/EcosystemLayout'
 import Layout from '../Layout'
 import PopularSearches from '../PopularSearches'
 import Search from '../Search'
+import { useNavigate } from 'react-router'
 
 type Category = {
   resourceName: string
@@ -29,7 +32,9 @@ const categories: Category[] = [
   { resourceName: 'Biobank', image: <Biobanks /> },
 ]
 
-const host = window.location.host
+// Defer window access to call time so this module can be imported in Node.js (SSR/pre-render)
+const getHost = () =>
+  typeof window !== 'undefined' ? window.location.host : 'nf.synapse.org'
 const baseUrl = `${encodeURIComponent(
   'Research Tools Central',
 )}/${encodeURIComponent('Submit ')}`
@@ -37,8 +42,8 @@ const baseSchemaUrl =
   'https://raw.githubusercontent.com/nf-osi/nf-research-tools-schema/refs/heads/main/NF-Tools-Schemas/'
 const postUrl = 'https://submit-form.com/KwZ46H4T'
 
-const createHref = path =>
-  `http://${host}/${baseUrl}${encodeURIComponent(path)}`
+const createHref = (path: string) =>
+  `http://${getHost()}/${baseUrl}${encodeURIComponent(path)}`
 
 const submitToolButtons = [
   {
@@ -85,12 +90,15 @@ export type NFBrowseToolsPageProps = {
 
 const NFBrowseToolsPage = (props: NFBrowseToolsPageProps): React.ReactNode => {
   const { popularSearchesSql, toolsSql } = props
+  const navigate = useNavigate()
   const gotoExploreTools = () => {
-    window.location.assign('/Explore/Tools')
+    navigate('/Explore/Tools')
   }
 
-  const gotoExploreToolsWithSelectedResource = (selectedResource: string) => {
-    const query: Query = {
+  const gotoExploreToolsWithSelectedResource = async (
+    selectedResource: string,
+  ) => {
+    const currentQuery: Query = {
       sql: toolsSql,
       selectedFacets: [
         {
@@ -101,23 +109,23 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps): React.ReactNode => {
         },
       ],
     }
-    window.location.assign(
-      `/Explore/Tools?QueryWrapper0=${JSON.stringify(query)}`,
+    const initQuery: Query = {
+      sql: toolsSql,
+    }
+    const url = await generateCompressedQueryURL(
+      '/Explore/Tools',
+      0,
+      currentQuery,
+      initQuery,
     )
+    navigate(url)
   }
 
   const gotoExploreToolsWithFullTextSearch = (fullTextSearchString: string) => {
-    const filter: TextMatchesQueryFilter = {
-      concreteType:
-        'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
-      searchExpression: fullTextSearchString,
-    }
-    const query: Query = {
-      sql: toolsSql,
-      additionalFilters: [filter],
-    }
     window.location.assign(
-      `/Explore/Tools?QueryWrapper0=${JSON.stringify(query)}`,
+      `/Search/Tools?${SEARCH_TERM}=${encodeURIComponent(
+        fullTextSearchString,
+      )}`,
     )
   }
 
@@ -159,9 +167,11 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps): React.ReactNode => {
             return (
               <button
                 key={category.resourceName}
-                onClick={() =>
-                  gotoExploreToolsWithSelectedResource(category.resourceName)
-                }
+                onClick={() => {
+                  void gotoExploreToolsWithSelectedResource(
+                    category.resourceName,
+                  )
+                }}
               >
                 <Box sx={{ position: 'relative' }}>
                   {category.image}
@@ -241,7 +251,7 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps): React.ReactNode => {
             descriptionColumnName={'description'}
             typeColumnName={'resourceType'}
             dateColumnName={'dateAdded'}
-            toolDetailPageURL={'/Explore/Tools/DetailsPage?resourceId='}
+            toolDetailPageURL={'/Explore/Tools/'}
             filterClause={'ORDER BY dateAdded DESC'}
           />
         </div>

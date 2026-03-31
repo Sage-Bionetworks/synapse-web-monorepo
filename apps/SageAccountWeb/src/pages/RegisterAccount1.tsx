@@ -14,6 +14,7 @@ import {
 } from '@mui/material'
 import {
   AliasType,
+  FeatureFlagEnum,
   isMembershipInvtnSignedToken,
 } from '@sage-bionetworks/synapse-types'
 import { SyntheticEvent, useEffect, useMemo, useState } from 'react'
@@ -27,24 +28,20 @@ import {
   StyledInnerContainer,
   StyledOuterContainer,
 } from '@/components/StyledComponents'
-import {
-  ARCUS_SOURCE_APP_ID,
-  SYNAPSE_SOURCE_APP_ID,
-  useSourceApp,
-  useSourceAppId,
-} from '@/components/useSourceApp'
-import SynapseClient from 'synapse-react-client/synapse-client'
+import { SYNAPSE_SOURCE_APP_ID, useSourceApp } from '@/components/useSourceApp'
+import SynapseClient from 'synapse-react-client/synapse-client/index'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
-import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
 import LastLoginInfo, {
   useLastLoginInfo,
 } from 'synapse-react-client/components/Authentication/LastLoginInfo'
 import RegisterPageLogoutPrompt from 'synapse-react-client/components/RegisterPageLogoutPrompt/RegisterPageLogoutPrompt'
 import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
 import { generateCsrfToken } from 'synapse-react-client/utils/functions/generateCsrfToken'
+import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/featureflags/useGetFeatureFlag'
+import { hasArcusProvider } from 'synapse-react-client/utils/functions/RealmUtils'
 
 export enum Pages {
   CHOOSE_REGISTRATION,
@@ -90,7 +87,6 @@ const csrfToken = generateCsrfToken()
 const RegisterAccount1 = (): React.ReactNode => {
   const { isAuthenticated } = useSynapseContext()
   const appContext = useAppContext()
-  const sessionContext = useApplicationSessionContext()
   const theme = useTheme()
   const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState('')
@@ -98,9 +94,15 @@ const RegisterAccount1 = (): React.ReactNode => {
   const [usernameInvalidReason, setUsernameInvalidReason] = useState<
     string | null
   >(null)
-  const { appId: sourceAppId, friendlyName: sourceAppName } = useSourceApp()
-  const appId = useSourceAppId()
-  const isArcusApp = appId === ARCUS_SOURCE_APP_ID
+  const {
+    appId: sourceAppId,
+    friendlyName: sourceAppName,
+    defaultRealm,
+  } = useSourceApp()
+  const showSageBionetworksIdp = useGetFeatureFlag(
+    FeatureFlagEnum.SAGE_BIONETWORKS_IDP,
+  )
+  const isArcusApp = hasArcusProvider(defaultRealm)
   const [page, setPage] = useState(Pages.CHOOSE_REGISTRATION)
   const [membershipInvitationEmail, setMembershipInvitationEmail] =
     useState<string>()
@@ -236,9 +238,6 @@ const RegisterAccount1 = (): React.ReactNode => {
           }}
         >
           <RegisterPageLogoutPrompt
-            onLogout={() => {
-              void sessionContext.refreshSession()
-            }}
             logo={<SourceAppLogo sx={{ width: '100%' }} />}
           />
         </Box>
@@ -299,6 +298,21 @@ const RegisterAccount1 = (): React.ReactNode => {
                         >
                           Create account with your email
                         </Button>
+                        {showSageBionetworksIdp && (
+                          <Button
+                            onClick={() => {
+                              setOAuthRegistrationProvider(
+                                SynapseConstants.OAUTH2_PROVIDERS
+                                  .SAGE_BIONETWORKS,
+                              )
+                              setPage(Pages.OAUTH_REGISTRATION)
+                            }}
+                            sx={chooseButtonSx}
+                            variant="outlined"
+                          >
+                            Create account with Sage Bionetworks (Realm)
+                          </Button>
+                        )}
                       </div>
                       {lastLoginInfo && (
                         <Box

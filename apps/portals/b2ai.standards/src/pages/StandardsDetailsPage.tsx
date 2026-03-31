@@ -5,15 +5,13 @@ import {
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import {
-  ErrorPage,
-  SynapseConstants,
-  SynapseErrorType,
-  RowDataTable,
-  SkeletonTable,
-  CardConfiguration,
-} from 'synapse-react-client'
-import { CardContainerLogic } from 'synapse-react-client'
+import ErrorPage from 'synapse-react-client/components/error/ErrorPage'
+import { SynapseErrorType } from 'synapse-react-client/components/error/ErrorPage'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import RowDataTable from 'synapse-react-client/components/RowDataTable/RowDataTable'
+import { SkeletonTable } from 'synapse-react-client/components/Skeleton/SkeletonTable'
+import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '@/config/columnAliases'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
@@ -22,6 +20,13 @@ import {
   standardsDetailsPageSQL,
 } from '@/config/resources'
 import { standardsColumnLinks } from '@/config/synapseConfigs/standards'
+import { CardsFromData, CardData } from '@/components/CardsFromData'
+import {
+  CitationCard,
+  Citation,
+  extractJsonFromContext,
+} from '@/components/CitationCard'
+import { Box, Typography } from '@mui/material'
 
 export const standardsCardSchema: TableToGenericCardMapping = {
   type: SynapseConstants.STANDARD_DATA_MODEL,
@@ -34,6 +39,7 @@ export const standardsCardSchema: TableToGenericCardMapping = {
     'collections',
     'topic',
     'dataTypes',
+    'aiApplicationCount',
     // DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORGANIZATION,
     // DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORG_LINKS,
     // DST_TABLE_COLUMN_NAMES.RELEVANT_ORG_NAMES,
@@ -65,24 +71,85 @@ export const standardDetailsPageContent: DetailsPageContentType = [
       <DetailsPageContextConsumer columnName={'id'}>
         {({ context }) => {
           if (context.rowData && context.rowSet) {
+            const publication = extractJsonFromContext<Citation>(
+              context,
+              'publication',
+            )
             return (
-              <RowDataTable
-                rowData={context.rowData.values ?? []}
-                headers={context.rowSet?.headers ?? []}
-                displayedColumns={[
-                  'standardName',
-                  DST_TABLE_COLUMN_CONSTS.RESPONSIBLE_ORG_LINKS,
-                  DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_LINKS,
-                  'isOpen',
-                  'registration',
-                ]}
-                columnAliases={columnAliases}
-                columnLinks={standardsColumnLinks}
-              />
+              <div>
+                <RowDataTable
+                  rowData={context.rowData.values ?? []}
+                  headers={context.rowSet?.headers ?? []}
+                  displayedColumns={[
+                    'standardName',
+                    DST_TABLE_COLUMN_CONSTS.RESPONSIBLE_ORG_LINKS,
+                    DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_LINKS,
+                    'isOpen',
+                    'registration',
+                  ]}
+                  columnAliases={columnAliases}
+                  columnLinks={standardsColumnLinks}
+                />
+                {publication && publication.ref_url && (
+                  <Box sx={{ mt: 2 }}>
+                    <Typography
+                      variant="subtitle2"
+                      sx={{ color: 'text.secondary', mb: 0.5 }}
+                    >
+                      Publication
+                    </Typography>
+                    <CitationCard citation={publication} />
+                  </Box>
+                )}
+              </div>
             )
           } else {
             return <SkeletonTable numRows={8} numCols={1} />
           }
+        }}
+      </DetailsPageContextConsumer>
+    ),
+  },
+  {
+    id: 'AIApplications',
+    title: 'AI Applications',
+    element: (
+      <DetailsPageContextConsumer
+        columnName={DST_TABLE_COLUMN_CONSTS.AI_APP_JSON}
+      >
+        {({ value }) => {
+          if (!value) return null
+          const apps = JSON.parse(value) as Array<{
+            id: string
+            name: string
+            category: string
+            references?: Citation[]
+            description: string
+            used_in_bridge2ai: boolean
+          }>
+          const cards: CardData[] = apps.map(app => ({
+            key: app.id,
+            // omit type to avoid redundant "APPLICATION" header under "Applications" section
+            title: app.name,
+            subtitle: app.used_in_bridge2ai ? 'Used in Bridge2AI' : undefined,
+            description: app.description || '',
+            footer: app.references?.length ? (
+              <Box sx={{ mt: 2 }}>
+                <Typography
+                  variant="subtitle2"
+                  sx={{ color: 'text.secondary', mb: 0.5 }}
+                >
+                  References
+                </Typography>
+                {app.references
+                  .filter(ref => ref.ref_url)
+                  .map(ref => (
+                    <CitationCard key={ref.ref_url} citation={ref} />
+                  ))}
+              </Box>
+            ) : undefined,
+          }))
+          return <CardsFromData data={cards} />
         }}
       </DetailsPageContextConsumer>
     ),
@@ -154,10 +221,17 @@ export default function StandardsDetailsPage() {
             secondaryLabelLimit: 6,
             isHeader: true,
             headerCardVariant: 'HeaderCardV2',
-            ctaLinkConfig: {
-              text: 'View Standard on External Website',
-              link: 'url',
-            },
+            charCountCutoff: 800,
+            ctaLinkConfig: [
+              {
+                text: 'View Standard on External Website',
+                link: 'url',
+              },
+              {
+                text: 'View Formal Specification',
+                link: 'formalSpec',
+              },
+            ],
             labelLinkConfig: standardsColumnLinks,
           }}
         />

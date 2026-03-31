@@ -133,6 +133,21 @@ const routes: RouteObject[] = [
         path: 'About',
         lazy: () => import('@/pages/About').then(convertModuleToRouteObject),
       },
+      {
+        path: 'Search',
+        children: [
+          {
+            index: true,
+            lazy: () =>
+              import('@/pages/Search').then(convertModuleToRouteObject),
+          },
+          {
+            path: ':resourceType',
+            lazy: () =>
+              import('@/pages/Search').then(convertModuleToRouteObject),
+          },
+        ],
+      },
     ],
   },
 ]

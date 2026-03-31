@@ -6,7 +6,6 @@
  */
 
 import { lazy } from 'react'
-import { version } from '../package.json'
 import {
   displayToast,
   SynapseToastContainer,
@@ -31,9 +30,14 @@ import {
 import { BackendDestinationEnum } from './utils/functions'
 import { xssOptions } from './utils/functions/SanitizeHtmlUtils'
 import { getCurrentCookiePreferences } from './utils/hooks'
+import { SynapseSessionManager } from './utils/AppUtils'
 
 // Also include scss in the bundle
 import './style/main.scss'
+
+// Injected at build time by Vite's `define`
+declare const __SRC_VERSION__: string
+
 
 const SynapseEnums = {
   BackendDestinationEnum,
@@ -91,9 +95,6 @@ const SynapseComponents = {
   DiscussionThread: lazy(() => import('./components/Forum/DiscussionThread')),
   DownloadCartPage: lazy(
     () => import('./components/DownloadCart/DownloadCartPage'),
-  ),
-  DownloadConfirmation: lazy(
-    () => import('./components/download_list/FolderDownloadConfirmation'),
   ),
   EntityAclEditorModal: lazy(
     () => import('./components/EntityAclEditor/EntityAclEditorModal'),
@@ -208,6 +209,9 @@ const SynapseComponents = {
   SynapsePortalBanners: lazy(
     () => import('./components/SynapsePortalBanners/SynapsePortalBanners'),
   ),
+  SynapseSearchPage: lazy(
+    () => import('./components/SynapseSearchPageResults/SynapseSearchPage'),
+  ),
   SynapseToastContainer,
   TableColumnSchemaEditor: lazy(
     () =>
@@ -237,7 +241,7 @@ const Analytics = {
 }
 
 // Include the version in the build
-const SynapseReactClientVersion = version
+const SynapseReactClientVersion = __SRC_VERSION__
 
 export {
   Analytics,
@@ -251,4 +255,5 @@ export {
   SynapseQueries,
   Palettes,
   xssOptions,
+  SynapseSessionManager,
 }

@@ -1,7 +1,11 @@
 import DateTimePicker from '@/components/DateTimePicker/DateTimePicker'
 import dayjs, { Dayjs } from 'dayjs'
 import { JSONSchema7Type } from 'json-schema'
-import { CellComponent, CellProps, Column } from 'react-datasheet-grid'
+import {
+  CellComponent,
+  CellProps,
+  Column,
+} from '@sage-bionetworks/react-datasheet-grid'
 
 export type DateTimeCellProps = CellProps & {
   colType?: JSONSchema7Type

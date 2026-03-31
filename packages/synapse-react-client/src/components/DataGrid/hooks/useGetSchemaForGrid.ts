@@ -14,6 +14,7 @@ import {
 } from '@x0k/json-schema-merge/lib/array'
 import { JSONSchema7 } from 'json-schema'
 import isObject from 'lodash-es/isObject'
+import { useMemo } from 'react'
 
 const { compareSchemaDefinitions, compareSchemaValues } = createComparator()
 const { mergeArrayOfSchemaDefinitions } = createMerger({
@@ -31,6 +32,10 @@ const GRID_ENTITY_READONLY_PROPERTIES = [
   'etag',
   'concreteType',
   'parentId',
+  'path',
+  'type',
+  'currentVersion',
+  'benefactorId',
 ]
 
 /**
@@ -53,6 +58,8 @@ function addReadonlyToEntityProperties(jsonSchema: JSONSchema7): JSONSchema7 {
         ...(isObject(updatedProperties[prop]) ? updatedProperties[prop] : {}),
         readOnly: true,
       }
+    } else {
+      updatedProperties[prop] = { readOnly: true }
     }
   })
 
@@ -92,11 +99,13 @@ export default function useGetSchemaForGrid(session: GridSession | null) {
     },
   )
 
-  if (jsonSchema && entityJsonSchema) {
-    return shallowAllOfMerge({
-      allOf: [entityJsonSchema, jsonSchema],
-    }) as JSONSchema7
-  } else {
-    return jsonSchema
-  }
+  return useMemo(() => {
+    if (jsonSchema && entityJsonSchema) {
+      return shallowAllOfMerge({
+        allOf: [entityJsonSchema, jsonSchema],
+      }) as JSONSchema7
+    } else {
+      return jsonSchema
+    }
+  }, [jsonSchema, entityJsonSchema])
 }

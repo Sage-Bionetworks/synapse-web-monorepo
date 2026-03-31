@@ -1,7 +1,6 @@
 import React from 'react'
 import SynapseIconWhite from '@/assets/icons/SynapseIconWhite'
 import SynapseLogoName from '@/assets/icons/SynapseLogoName'
-import SynapseClient from '@/synapse-client'
 import {
   useGetCurrentUserBundle,
   useGetDownloadListStatistics,
@@ -9,6 +8,7 @@ import {
 } from '@/synapse-queries'
 import {
   storeRedirectURLForOneSageLoginAndGotoURL,
+  useApplicationSessionContext,
   useSynapseContext,
 } from '@/utils'
 import { useOneSageURL } from '@/utils/hooks/useOneSageURL'
@@ -31,10 +31,10 @@ import { CreateProjectModal } from '../CreateProjectModal/CreateProjectModal'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
 import { PLANS_LINK } from '../SynapseHomepageV2/SynapseHomepageNavBar'
 import UserCard from '../UserCard/UserCard'
+import { DEFAULT_SEARCH_QUERY } from '@/utils/searchDefaults'
 
 export type SynapseNavDrawerProps = {
   initIsOpen?: boolean
-  signoutCallback?: () => void
   gotoPlace: (href: string) => void
 }
 
@@ -63,58 +63,16 @@ export enum NavItem {
 
 export const getSearchToken = (queryTerm: string[]) => {
   const searchQuery = {
-    ...searchJson,
+    ...DEFAULT_SEARCH_QUERY,
     queryTerm,
   }
   return encodeURIComponent(JSON.stringify(searchQuery))
 }
 
-// To support project search, we send this json object in the url.
-// We update the queryTerm array based on user input.
-const searchJson = {
-  queryTerm: [] as string[],
-  facetOptions: [
-    {
-      name: 'EntityType',
-      maxResultCount: 300,
-      sortType: 'COUNT',
-    },
-    {
-      name: 'Consortium',
-      maxResultCount: 300,
-      sortType: 'COUNT',
-    },
-    {
-      name: 'ModifiedOn',
-      maxResultCount: 300,
-      sortType: 'COUNT',
-    },
-    {
-      name: 'ModifiedBy',
-      maxResultCount: 300,
-      sortType: 'COUNT',
-    },
-    {
-      name: 'CreatedOn',
-      maxResultCount: 300,
-      sortType: 'COUNT',
-    },
-    {
-      name: 'Tissue',
-      maxResultCount: 300,
-      sortType: 'COUNT',
-    },
-    {
-      name: 'CreatedBy',
-      maxResultCount: 300,
-      sortType: 'COUNT',
-    },
-  ],
-  start: 0,
-  size: 30,
-}
 const projectSearchJson = {
-  ...searchJson,
+  // To support project search, we send this json object in the url.
+  // We update the queryTerm array based on user input.
+  ...DEFAULT_SEARCH_QUERY,
   booleanQuery: [
     {
       key: 'node_type',
@@ -191,7 +149,6 @@ const NavDrawerListItem = (props: MenuItemParams): React.ReactNode => {
  */
 export function SynapseNavDrawer({
   initIsOpen = false,
-  signoutCallback,
   gotoPlace,
 }: SynapseNavDrawerProps) {
   const [isOpen, setOpen] = useState(initIsOpen)
@@ -200,6 +157,8 @@ export function SynapseNavDrawer({
   const [docSiteSearchText, setDocSiteSearchText] = useState<string>('')
   const [isShowingCreateProjectModal, setIsShowingCreateProjectModal] =
     useState<boolean>(false)
+
+  const { clearSession } = useApplicationSessionContext()
 
   const { isAuthenticated } = useSynapseContext()
 
@@ -238,15 +197,6 @@ export function SynapseNavDrawer({
     countOfOpenSubmissionsForReview = `${countOfOpenSubmissionsForReview}+`
   }
 
-  const signOut = async () => {
-    if (signoutCallback) {
-      signoutCallback()
-    } else {
-      await SynapseClient.signOut()
-      window.location.reload()
-    }
-  }
-
   const handleDrawerOpen = (navItem?: NavItem) => {
     setOpen(true)
     setSelectedItem(navItem)
@@ -258,7 +208,11 @@ export function SynapseNavDrawer({
   }
 
   const onProjectSearch = (searchTerm: string) => {
-    gotoPlace(`/Search:${getProjectSearchToken(searchTerm.split(/[ ,]+/))}`)
+    gotoPlace(
+      `/SearchV2:default?query=${getProjectSearchToken(
+        searchTerm.split(/[ ,]+/),
+      )}`,
+    )
   }
 
   const oneSageURL = useOneSageURL()
@@ -324,7 +278,7 @@ export function SynapseNavDrawer({
                   handleDrawerOpen={handleDrawerOpen}
                 />
                 <NavDrawerListItem
-                  tooltip="Download Cart"
+                  tooltip="Download List"
                   iconName="download"
                   onClickGoToPlace={() => gotoPlace('/DownloadCart:0')}
                   badgeContent={numberOfFilesInDownloadList}
@@ -355,7 +309,7 @@ export function SynapseNavDrawer({
             <NavDrawerListItem
               tooltip="Search"
               iconName="search"
-              onClickGoToPlace={() => gotoPlace('/Search:')}
+              onClickGoToPlace={() => gotoPlace('/SearchV2:default')}
               handleDrawerClose={handleDrawerClose}
               handleDrawerOpen={handleDrawerOpen}
             />
@@ -556,7 +510,7 @@ export function SynapseNavDrawer({
                   <a
                     className="SRC-whiteText"
                     onClick={() => {
-                      void signOut()
+                      void clearSession()
                     }}
                     rel="noopener noreferrer"
                   >
@@ -634,14 +588,22 @@ export function SynapseNavDrawer({
                   </a>
                   <a
                     className="SRC-whiteText"
-                    onClick={() => gotoPlace('/SynapseForum:default')}
+                    href="https://r-docs.synapse.org/"
                     rel="noopener noreferrer"
+                    target="_blank"
                   >
-                    Help Forum
+                    R Client Documentation
                   </a>
                   <a
                     className="SRC-whiteText"
-                    href="https://sagebionetworks.jira.com/servicedesk/customer/portal/9"
+                    href="https://blog.synapse.org/"
+                    rel="noopener noreferrer"
+                  >
+                    Blog
+                  </a>
+                  <a
+                    className="SRC-whiteText"
+                    href="https://sagebionetworks.jira.com/servicedesk/customer/portals/"
                     rel="noopener noreferrer"
                     target="_blank"
                   >

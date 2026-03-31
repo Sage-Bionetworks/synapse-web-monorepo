@@ -1,0 +1,34 @@
+.chipStyles:global(.MuiChip-root) {
+  border-radius: 48px;
+  color: var(--synapse-white);
+  background-color: var(--synapse-primary-600);
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+}
+
+.resetFilterButton:global(.MuiButton-root) {
+  padding: 6px 16px;
+  gap: 8px;
+  color: var(--synapse-gray-700) !important;
+  border: 1px solid;
+  border-color: var(--synapse-gray-700) !important;
+  width: fit-content;
+}
+
+.resetFilterButton:global(.MuiButton-root):hover {
+  text-decoration: none;
+}
+
+.displayName:global(.MuiTypography-root) {
+  font-size: 1rem;
+  line-height: 20px;
+  margin-bottom: 10px;
+  color: var(--synapse-gray-900);
+}
+
+.closeIcon:global(.MuiSvgIcon-root) {
+  width: 16px;
+  fill: var(--synapse-white);
+}

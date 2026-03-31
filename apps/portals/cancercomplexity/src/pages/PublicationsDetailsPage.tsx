@@ -2,7 +2,10 @@ import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/c
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import {
+  ColumnSingleValueFilterOperator,
+  ColumnMultiValueFunction,
+} from '@sage-bionetworks/synapse-types'
 import columnAliases from '../config/columnAliases'
 import {
   datasetsSql,
@@ -20,7 +23,7 @@ import { toolsConfiguration } from '../config/synapseConfigs/tools'
 import ErrorPage, {
   SynapseErrorType,
 } from 'synapse-react-client/components/error/ErrorPage'
-import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic'
+import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic/index'
 
 function PublicationsDetailsPage() {
   const { pubMedId } = useGetPortalComponentSearchParams()
@@ -130,7 +133,7 @@ function PublicationsDetailsPage() {
                     cardConfiguration={toolsConfiguration}
                     sql={toolsSql}
                     columnAliases={columnAliases}
-                    sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+                    sqlOperator={ColumnMultiValueFunction.HAS}
                     searchParams={{
                       pubMedId: value!,
                     }}

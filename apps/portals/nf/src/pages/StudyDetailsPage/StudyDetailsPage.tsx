@@ -3,14 +3,13 @@ import {
   DetailsPageTabs,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
-import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
+import { createDetailPageRouteExports } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { Outlet } from 'react-router'
-import {
-  CardContainerLogic,
-  ErrorPage,
+import { Outlet, useParams } from 'react-router'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import ErrorPage, {
   SynapseErrorType,
-} from 'synapse-react-client'
+} from 'synapse-react-client/components/error/ErrorPage'
 import { studiesSql } from '../../config/resources'
 import { columnAliases } from '../../config/synapseConfigs/commonProps'
 import {
@@ -24,6 +23,16 @@ import {
   STUDY_DETAILS_PAGE_FILES_TAB_PATH,
 } from '@/config/routeConstants'
 import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
+import { metadataConfig } from './StudyDetailsPage.config'
+
+export { metadataConfig }
+
+const _routeExports = createDetailPageRouteExports(metadataConfig, {
+  portalName: import.meta.env.VITE_PORTAL_NAME,
+})
+export const loader = _routeExports.loader
+export const clientLoader = _routeExports.clientLoader
+export const meta = _routeExports.meta
 
 const tabConfig: DetailsPageTabConfig[] = [
   {
@@ -56,7 +65,7 @@ const tabConfig: DetailsPageTabConfig[] = [
 ]
 
 function StudyDetailsPage() {
-  const { studyId } = useGetPortalComponentSearchParams()
+  const { studyId } = useParams<{ studyId: string }>()
 
   if (!studyId) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
@@ -82,6 +91,7 @@ function StudyDetailsPage() {
         </>
       }
       sql={studiesSql}
+      searchParams={{ studyId }}
       ContainerProps={{ maxWidth: 'xl' }}
       resourcePrimaryKey={['studyId']}
     >

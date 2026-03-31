@@ -3,15 +3,33 @@ import { NavbarConfig } from '@sage-bionetworks/synapse-portal-framework/compone
 export const navbarConfig: NavbarConfig = {
   routes: [
     {
-      name: 'Home',
-      path: '/',
+      name: 'About',
+      path: '/About',
+      children: [
+        {
+          name: 'Overview',
+          path: '/Overview',
+        },
+        {
+          name: 'Data Coordinating Center',
+          path: '/Data Coordinating Center',
+        },
+        {
+          name: 'Data Contribution',
+          path: '/Data Contribution',
+        },
+      ],
     },
     {
       name: 'Explore',
       path: '/Explore',
       children: [
         { name: 'Data', path: '/Explore/Data' },
-        { name: 'Cohort Builder', path: '/Explore/Cohort Builder' },
+        { name: 'Cohort Builder', path: '/Explore/Cohort Builder/Individuals' },
+        {
+          name: 'Programs',
+          path: '/Explore/Programs',
+        },
         {
           name: 'Projects',
           path: '/Explore/Projects',
@@ -24,10 +42,6 @@ export const navbarConfig: NavbarConfig = {
         { name: 'Computational Tools', path: '/Explore/Computational Tools' },
         { name: 'People', path: '/Explore/People' },
       ],
-    },
-    {
-      name: 'Analysis Platforms',
-      path: '/Analysis Platforms',
     },
     {
       name: 'Data Access',
@@ -48,16 +62,16 @@ export const navbarConfig: NavbarConfig = {
       ],
     },
     {
-      name: 'Contribute Data',
-      path: '/Contribute Data',
-    },
-    {
-      name: 'News',
-      path: 'https://news.eliteportal.org/',
+      name: 'Analysis Platforms',
+      path: '/Analysis Platforms',
     },
     {
       name: 'Help',
       path: 'https://help.eliteportal.org/help/',
+    },
+    {
+      name: 'News',
+      path: 'https://news.eliteportal.org/',
     },
   ],
   isPortalsDropdownEnabled: true,

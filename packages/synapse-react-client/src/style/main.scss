@@ -3,6 +3,7 @@
 // 0. Configuration and helpers
 @forward './abstracts/variables';
 @use './abstracts/variables';
+@use './abstracts/cssVariables';
 @use './abstracts/functions';
 @use './abstracts/mixins';
 

@@ -1,9 +1,5 @@
-@use '../abstracts/variables' as SRC;
-@use '../abstracts/mixins' as SrcMixins;
-@use 'sass:map';
-
 .DatasetEditor {
-  border: 1px solid map.get(SRC.$colors, 'gray-300');
+  border: 1px solid var(--synapse-gray-300);
   .DatasetEditorTopBottomPanel {
     display: flex;
     justify-content: flex-end;
@@ -27,7 +23,7 @@
 
     .DatasetEditorTable {
       tr {
-        border-bottom: 1px solid map.get(SRC.$colors, 'gray-300');
+        border-bottom: 1px solid var(--synapse-gray-300);
       }
       td > * {
         max-width: 100%;
@@ -70,7 +66,7 @@
 }
 
 .EntityErrorRenderer {
-  color: map.get(SRC.$colors, 'warning');
+  color: var(--synapse-warning);
   svg {
     font-size: large;
   }

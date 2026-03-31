@@ -2,11 +2,9 @@ import { observationsSql } from '@/config/resources'
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import {
-  CardContainerLogic,
-  SynapseConstants,
-  TimelinePlot,
-} from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import { TimelinePlot } from 'synapse-react-client/components/TimelinePlot/TimelinePlot'
 import DynamicFormModal from 'synapse-react-client/components/DynamicForm/DynamicFormModal'
 import Markdown from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 

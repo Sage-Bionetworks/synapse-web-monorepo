@@ -2,8 +2,10 @@ import React from 'react'
 import Layout from '@/components/Layout'
 import { Typography } from '@mui/material'
 import logoPath from './assets/arklogomark.png'
+import { usePortalContext } from '@/components/PortalContext'
 
 const ARKWelcomePage = (): React.ReactNode => {
+  const { portalDescription } = usePortalContext()
   return (
     <>
       <Layout containerClassName="ARKWelcomePage">
@@ -13,9 +15,7 @@ const ARKWelcomePage = (): React.ReactNode => {
               Welcome to the ARK Portal
             </p>
             <div className="description">
-              <Typography variant="body1">
-                {import.meta.env.VITE_PORTAL_DESCRIPTION}
-              </Typography>
+              <Typography variant="body1">{portalDescription}</Typography>
             </div>
           </div>
           <img

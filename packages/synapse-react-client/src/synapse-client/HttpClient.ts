@@ -1,5 +1,5 @@
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
-import { fetchWithExponentialTimeout } from '@sage-bionetworks/synapse-client/util/fetchWithExponentialTimeout'
+import { synapseClientFetch } from '@sage-bionetworks/synapse-client/util/synapseClientFetch'
 
 /**
  * Waits t number of milliseconds
@@ -34,7 +34,7 @@ export const doPost = <T>(
     ...additionalOptions,
   }
   const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout<T>(usedEndpoint + url, options)
+  return synapseClientFetch<T>(usedEndpoint + url, options)
 }
 
 export const doGet = <T>(
@@ -54,7 +54,7 @@ export const doGet = <T>(
     ...additionalOptions,
   }
   const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout<T>(usedEndpoint + url, options)
+  return synapseClientFetch<T>(usedEndpoint + url, options)
 }
 
 export const doDelete = (
@@ -74,7 +74,7 @@ export const doDelete = (
     ...additionalOptions,
   }
   const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout<void>(usedEndpoint + url, options)
+  return synapseClientFetch<void>(usedEndpoint + url, options)
 }
 
 export const doPut = <T>(
@@ -97,5 +97,5 @@ export const doPut = <T>(
     ...additionalOptions,
   }
   const usedEndpoint = getEndpoint(endpoint)
-  return fetchWithExponentialTimeout<T>(usedEndpoint + url, options)
+  return synapseClientFetch<T>(usedEndpoint + url, options)
 }

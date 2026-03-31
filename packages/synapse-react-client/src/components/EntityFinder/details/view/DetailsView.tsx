@@ -3,8 +3,10 @@ import { useSynapseContext } from '@/utils/context/SynapseContext'
 import {
   getEntityTypeFromHeader,
   isContainerType,
+  isTableType,
   isVersionableEntityType,
 } from '@/utils/functions/EntityTypeUtils'
+import { TABLE_VERSION_IN_PROGRESS } from '@/utils/SynapseConstants'
 import { Checkbox, Tooltip } from '@mui/material'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
@@ -53,6 +55,20 @@ import { FileEntitySizeCell } from './table/FileEntitySizeCell'
 import { ModifiedByCell } from './table/ModifiedByCell'
 import { ModifiedOnCell } from './table/ModifiedOnCell'
 import { VersionColumnHeader } from './VersionColumnHeader'
+
+/**
+ * Check if a table type entity has the "in progress" version label.
+ */
+function hasInProgressTableVersion(
+  entityType: EntityType,
+  header: EntityFinderHeader | EntityFinderTableViewRowData,
+): boolean {
+  return (
+    isTableType(entityType) &&
+    'versionLabel' in header &&
+    header.versionLabel === TABLE_VERSION_IN_PROGRESS
+  )
+}
 
 /**
  * Set of all columns that can be shown in the DetailsView
@@ -173,6 +189,7 @@ function getColumns(opts: {
   onSelectAll: () => void
   versionSelection: VersionSelectionType
   toggleSelection: (entity: Reference | Reference[]) => void
+  setInitialVersion: (entityId: string, version: number) => void
   sortableColumns?: DetailsViewColumn[]
 }) {
   const {
@@ -183,6 +200,7 @@ function getColumns(opts: {
     onSelectAll,
     versionSelection,
     toggleSelection,
+    setInitialVersion,
     sortableColumns = [],
   } = opts
   return [
@@ -251,6 +269,7 @@ function getColumns(opts: {
         <EntityFinderVersionCell
           versionSelection={versionSelection}
           toggleSelection={toggleSelection}
+          setInitialVersion={setInitialVersion}
           context={context}
         />
       ),
@@ -359,6 +378,7 @@ export function DetailsView(props: DetailsViewProps) {
     visibleTypes,
     selectableTypes,
     toggleSelection,
+    setInitialVersion,
     enableSorting,
     enableMultiSort,
     sortableColumns,
@@ -433,14 +453,23 @@ export function DetailsView(props: DetailsViewProps) {
                   })
                   .map(async e => {
                     let latestVersion: number | undefined
+                    const entityType = getEntityTypeFromHeader(e)
                     if (
                       versionSelection === VersionSelectionType.REQUIRED &&
-                      isVersionableEntityType(getEntityTypeFromHeader(e))
+                      isVersionableEntityType(entityType)
                     ) {
                       // If VersionSelectionType.REQUIRED, then we need to supply a version with the entity.
-                      // We may already have the version from the header:
+                      // We may already have the version from the header, but only use it if it's a valid snapshot
+                      // (table types with "in progress" are not valid)
                       if (
-                        Object.prototype.hasOwnProperty.call(e, 'versionNumber')
+                        Object.prototype.hasOwnProperty.call(
+                          e,
+                          'versionNumber',
+                        ) &&
+                        !hasInProgressTableVersion(
+                          entityType,
+                          e as EntityHeader,
+                        )
                       ) {
                         latestVersion = (e as EntityHeader).versionNumber
                       }
@@ -448,6 +477,7 @@ export function DetailsView(props: DetailsViewProps) {
                         // Failsafe if we didn't get the version in the header. This is rare/unlikely, since the only cases we're sure we don't get versions are:
                         //  - ProjectHeaders (which are versionless)
                         //  - Search Results (for which we don't support Select All)
+                        //  - Table types, whose entity headers report the "in progress" version rather than the latest stable snapshot
                         // For large lists, there's a good chance for this to trigger throttling.
 
                         // Show the loading screen since we must fetch data (potentially a lot) to finish the task
@@ -528,7 +558,10 @@ export function DetailsView(props: DetailsViewProps) {
               versionNumber = currentSelectedVersion
             } else if (versionSelection === VersionSelectionType.REQUIRED) {
               // if a version is not selected, but version selection is required, the row should show the latest version's data
-              versionNumber = entity.versionNumber
+              // Only use EntityHeader's version if it's a valid snapshot (table types with "in progress" are not valid)
+              if (!hasInProgressTableVersion(entityType, entity)) {
+                versionNumber = entity.versionNumber
+              }
             }
             // otherwise, show the current version's data (versionNumber is undefined)
           }
@@ -573,6 +606,7 @@ export function DetailsView(props: DetailsViewProps) {
         },
         versionSelection,
         toggleSelection,
+        setInitialVersion,
         sortableColumns,
       }),
     [
@@ -580,6 +614,7 @@ export function DetailsView(props: DetailsViewProps) {
       isSelectAllVisible,
       selectAllIsChecked,
       setCurrentContainer,
+      setInitialVersion,
       sortableColumns,
       toggleSelection,
       versionSelection,
@@ -641,7 +676,7 @@ export function DetailsView(props: DetailsViewProps) {
   })
 
   function onRowClick(rowData: EntityFinderTableViewRowData) {
-    const { id, isDisabled, isVersionableEntity } = rowData
+    const { id, isDisabled, isVersionableEntity, entityType } = rowData
     let { currentSelectedVersion } = rowData
     if (!isDisabled) {
       if (
@@ -650,7 +685,10 @@ export function DetailsView(props: DetailsViewProps) {
         currentSelectedVersion == null &&
         Object.prototype.hasOwnProperty.call(rowData, 'versionNumber')
       ) {
-        currentSelectedVersion = rowData.versionNumber
+        // Only use EntityHeader's version if it's a valid snapshot (table types with "in progress" are not valid)
+        if (!hasInProgressTableVersion(entityType, rowData)) {
+          currentSelectedVersion = rowData.versionNumber
+        }
         // Note that here we aren't handling the case where the header doesn't have a version, e.g. a search result
         // That case is actually handled by the VersionRenderer, which has an effect that will toggle the selection after data is fetched.
       }

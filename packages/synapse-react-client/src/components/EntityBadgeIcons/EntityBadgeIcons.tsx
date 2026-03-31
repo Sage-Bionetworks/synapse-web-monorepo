@@ -5,8 +5,8 @@ import {
   useGetSchemaBinding,
   useGetValidationResults,
 } from '@/synapse-queries'
-import React from 'react'
-import { PUBLIC_PRINCIPAL_IDS } from '@/utils/SynapseConstants'
+import { useGetRealmPrincipals } from '@/synapse-queries/realm/useRealmPrincipals'
+import { isEntityPublic } from '@/utils/functions/AccessControlListUtils'
 import {
   ChatBubbleTwoTone,
   CheckTwoTone,
@@ -18,22 +18,14 @@ import {
 } from '@mui/icons-material'
 import { Tooltip } from '@mui/material'
 import { EntityType } from '@sage-bionetworks/synapse-client'
-import {
-  ALL_ENTITY_BUNDLE_FIELDS,
-  EntityBundle,
-} from '@sage-bionetworks/synapse-types'
+import { ALL_ENTITY_BUNDLE_FIELDS } from '@sage-bionetworks/synapse-types'
 import { isEmpty } from 'lodash-es'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { getDisplayedAnnotation } from '../entity/metadata/AnnotationsTable'
 import { EntityModal } from '../entity/metadata/EntityModal'
+import { HoverPopover } from '../styled/HoverPopover'
 import WarningDialog from '../SynapseForm/WarningDialog'
-
-function isPublic(bundle: EntityBundle): boolean {
-  return bundle.benefactorAcl.resourceAccess.some(ra => {
-    return PUBLIC_PRINCIPAL_IDS.includes(ra.principalId)
-  })
-}
 
 export type EntityBadgeIconsProps = {
   entityId: string
@@ -94,6 +86,9 @@ export const EntityBadgeIcons = (
     canOpenModal,
   } = props
 
+  const { data } = useGetRealmPrincipals()
+  const realmPrincipals = data || {}
+
   enum SchemaConformanceState {
     NO_SCHEMA = '', // or not in experimental mode
     VALID = 'Valid',
@@ -131,8 +126,6 @@ export const EntityBadgeIcons = (
     staleTime: 60 * 1000, // 60 seconds
   })
 
-  // The maximum number of annotations to show in the popover
-  const maxAnnosToShow = 10
   const annotationsCount =
     annotations && !isEmpty(annotations) ? Object.keys(annotations).length : 0
   useEffect(() => {
@@ -170,36 +163,18 @@ export const EntityBadgeIcons = (
   const annotationsTableRows = (
     <>
       {annotations
-        ? Object.entries(annotations ?? []).reduce(
-            (previous, current, index) => {
-              if (
-                index < maxAnnosToShow ||
-                (index === maxAnnosToShow &&
-                  maxAnnosToShow === annotationsCount)
-              ) {
-                return (
-                  <>
-                    {previous}
-                    <tr>
-                      <td>
-                        <b>{current[0]}</b>
-                      </td>
-                      <td>
-                        {Array.isArray(current[1])
-                          ? current[1].map(getDisplayedAnnotation).join(', ')
-                          : getDisplayedAnnotation(
-                              current[1] as string | number | boolean,
-                            )}
-                      </td>
-                    </tr>
-                  </>
-                )
-              } else {
-                return previous
-              }
-            },
-            <></>,
-          )
+        ? Object.entries(annotations ?? []).map(([key, value]) => (
+            <tr key={key}>
+              <td>
+                <b>{key}</b>
+              </td>
+              <td>
+                {Array.isArray(value)
+                  ? value.map(getDisplayedAnnotation).join(', ')
+                  : getDisplayedAnnotation(value as string | number | boolean)}
+              </td>
+            </tr>
+          ))
         : ''}
     </>
   )
@@ -218,18 +193,15 @@ export const EntityBadgeIcons = (
       )}
     </>
   )
+  const annotationsTitle = schemaValidationResults
+    ? `${schemaConformance} Annotations`
+    : ''
   const annotationsHtml = (
     <div className="EntityBadgeTooltip">
-      {schemaValidationResults ? <p>{schemaConformance} Annotations</p> : ''}
       <table>
         {annotationsTableRows ? annotationsTableRows : ''}
         {valiationSchemaTableRow}
       </table>
-      {annotationsCount > maxAnnosToShow ? (
-        <p>and {annotationsCount - maxAnnosToShow} more</p>
-      ) : (
-        ''
-      )}
     </div>
   )
 
@@ -246,7 +218,12 @@ export const EntityBadgeIcons = (
               initialTab={'ANNOTATIONS'}
             />
           </div>
-          {showIsPublicPrivate && bundle.benefactorAcl && isPublic(bundle) ? (
+          {showIsPublicPrivate &&
+          bundle.benefactorAcl &&
+          isEntityPublic(
+            bundle.benefactorAcl.resourceAccess,
+            realmPrincipals,
+          ) ? (
             <Tooltip title="Public" enterNextDelay={100} placement="right">
               <PublicTwoTone
                 aria-hidden={false}
@@ -256,7 +233,12 @@ export const EntityBadgeIcons = (
               />
             </Tooltip>
           ) : null}
-          {showIsPublicPrivate && bundle.benefactorAcl && !isPublic(bundle) ? (
+          {showIsPublicPrivate &&
+          bundle.benefactorAcl &&
+          !isEntityPublic(
+            bundle.benefactorAcl.resourceAccess,
+            realmPrincipals,
+          ) ? (
             <Tooltip title="Private" enterNextDelay={100} placement="right">
               <LockTwoTone
                 aria-hidden={false}
@@ -285,21 +267,29 @@ export const EntityBadgeIcons = (
 
           {showHasAnnotations &&
             !!(annotationsCount || schemaValidationResults) && (
-              <Tooltip
-                title={annotationsHtml}
-                enterNextDelay={100}
+              <HoverPopover
+                title={annotationsTitle}
+                popoverContent={annotationsHtml}
                 placement="right"
+                maxWidth={500}
+                actionButton={
+                  canOpenModal
+                    ? {
+                        content: 'Edit Annotations',
+                        onClick: () => setShowModal(true),
+                        closeOnClick: true,
+                      }
+                    : undefined
+                }
               >
                 <LocalOfferTwoTone
                   aria-hidden={false}
                   role={canOpenModal ? 'button' : 'img'}
                   className={`EntityBadge__Badge ${schemaConformance}`}
-                  style={canOpenModal ? { cursor: 'pointer' } : undefined}
-                  onClick={canOpenModal ? () => setShowModal(true) : undefined}
                   data-html={true}
                   data-testid={'annotations-icon'}
                 />
-              </Tooltip>
+              </HoverPopover>
             )}
           {showHasWiki && bundle.rootWikiId && (
             <Tooltip title="Has a wiki" enterNextDelay={100} placement="right">

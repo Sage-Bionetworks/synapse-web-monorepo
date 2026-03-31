@@ -2,7 +2,7 @@ import { defineConfig, devices } from '@playwright/test'
 import dotenv from 'dotenv'
 import path from 'path'
 
-const baseURL = 'http://localhost:3000'
+const baseURL = 'http://localhost:3001'
 export const viewports = {
   expanded: { width: 1600, height: 1200 },
   collapsed: { width: 1280, height: 720 },

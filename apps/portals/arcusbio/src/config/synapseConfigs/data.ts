@@ -1,4 +1,4 @@
-import type { QueryWrapperPlotNavProps } from 'synapse-react-client'
+import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import {
   cavaticaConnectAccountURL,
   dataSql,
@@ -13,10 +13,10 @@ export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   visibleColumnCount: 10,
   enabledExternalAnalysisPlatforms: enabledAnalysisPlatforms,
   cavaticaConnectAccountURL: cavaticaConnectAccountURL,
-  isRowSelectionVisible: true,
+  isRowSelectionVisible: false,
   tableConfiguration: {
-    showAccessColumn: true,
-    showDownloadColumn: true,
+    showAccessColumn: false,
+    showDownloadColumn: false,
   },
   sql: dataSql,
   shouldDeepLink: true,

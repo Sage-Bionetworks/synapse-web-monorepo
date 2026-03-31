@@ -1,5 +1,6 @@
 import IsMatureIconMap from '@/components/IsMatureIconMap'
-import { LabelLinkConfig, QueryWrapperPlotNavProps } from 'synapse-react-client'
+import type { LabelLinkConfig } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import columnAliases from '@/config/columnAliases'
 import {
   standardsFtsConfig,
@@ -27,6 +28,10 @@ export const standardsColumnLinks: LabelLinkConfig = [
   {
     isMarkdown: true,
     matchColumnName: 'SDO',
+  },
+  {
+    isMarkdown: true,
+    matchColumnName: 'aiAppMarkdown',
   },
   {
     matchColumnName: 'mature',

@@ -1,8 +1,6 @@
-import type {
-  CardConfiguration,
-  CardContainerLogicProps,
-} from 'synapse-react-client'
-import { SynapseConstants } from 'synapse-react-client'
+import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
+import type { CardContainerLogicProps } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { datasetCollectionsSql } from '../resources'
 
 const datasetCollectionsCardConfiguration: CardConfiguration = {

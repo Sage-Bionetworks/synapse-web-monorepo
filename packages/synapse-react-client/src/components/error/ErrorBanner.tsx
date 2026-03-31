@@ -33,11 +33,11 @@ export const ClientError = (props: {
   error: SynapseClientError
 }): React.ReactNode => {
   const [showDetailedError, setShowDetailedError] = useState(false)
-  const { accessToken } = useSynapseContext()
+  const { isAuthenticated } = useSynapseContext()
   const { error } = props
   const loginError =
-    (error.status === 403 || error.status === 401) && !accessToken
-  const accessDenied = error.status === 403 && accessToken
+    (error.status === 403 || error.status === 401) && !isAuthenticated
+  const accessDenied = error.status === 403 && isAuthenticated
 
   if (loginError) {
     return <SignInPrompt />

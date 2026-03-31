@@ -2,11 +2,9 @@ import studyActiveHeaderSvg from '@/config/style/study-active-header.svg?url'
 import studyActiveSvg from '@/config/style/study-active.svg?url'
 import studyCompleteSvg from '@/config/style/study-complete.svg?url'
 import studyCompleteHeaderSvg from '@/config/style/study-completed-header.svg?url'
-import type {
-  CardConfiguration,
-  ColumnIconConfigs,
-  QueryWrapperPlotNavProps,
-} from 'synapse-react-client'
+import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
+import type { ColumnIconConfigs } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { studiesSql } from '../resources'
 import { columnAliases } from './commonProps'
@@ -95,15 +93,17 @@ export const studyCardConfiguration: CardConfiguration = {
     },
     {
       resolveEntityName: true,
-      baseURL: 'Explore/Studies/DetailsPage',
+      baseURL: 'Explore/Studies',
       URLColumnName: 'studyId',
+      urlParamStyle: 'path-segment',
       matchColumnName: 'nextPhaseProject',
       isMarkdown: false,
     },
     {
       resolveEntityName: true,
-      baseURL: 'Explore/Studies/DetailsPage',
+      baseURL: 'Explore/Studies',
       URLColumnName: 'studyId',
+      urlParamStyle: 'path-segment',
       matchColumnName: 'previousPhaseProject',
       isMarkdown: false,
     },
@@ -114,8 +114,9 @@ export const studyCardConfiguration: CardConfiguration = {
   },
   titleLinkConfig: {
     isMarkdown: false,
-    baseURL: 'Explore/Studies/DetailsPage',
+    baseURL: 'Explore/Studies',
     URLColumnName: 'studyId',
+    urlParamStyle: 'path-segment',
     matchColumnName: 'studyId',
   },
   columnIconOptions: studyColumnIconConfigs,

@@ -1,88 +1,65 @@
 @use 'sass:color';
-@use 'sass:map';
-
-// CSS Variables
-:root {
-  --synapse-button-text-transform: capitalize;
-  --black: #000;
-  --gray-1000: #22252a;
-  --gray-900: #353a3f;
-  --gray-800: #4a5056;
-  --gray-700: #71767f;
-  --gray-600: #aeb5bc;
-  --gray-500: #d0d4d9;
-  --gray-400: #dfe2e6;
-  --gray-300: #eaecee;
-  --gray-200: #f1f3f5;
-  --gray-100: #fbfbfc;
-  --info: #017fa5;
-}
 
 // -----------------------------------------------------------------------------
-// This file contains all application-wide Sass variables.
+// Global SCSS variables, used throughout the app.
+// These variables are explicitly transformed using SCSS functions where CSS does not provide an alternative.
+// They are re-exported as CSS variables in ./_cssVariables.scss .
 // -----------------------------------------------------------------------------
 
-// Colors defined by design: https://www.figma.com/file/0oPm5lLSUva8kyfVNMS6FA/Synapse-Style-%26-Component-Library?node-id=77%3A1232
-$colors: (
-  'gray-1000': #22252a,
-  'gray-900': #353a3f,
-  'gray-800': #4a5056,
-  'gray-700': #71767f,
-  'gray-600': #aeb5bc,
-  'gray-500': #d0d4d9,
-  'gray-400': #dfe2e6,
-  'gray-300': #eaecee,
-  'gray-200': #f1f3f5,
-  'gray-100': #fbfbfc,
-  'white': #ffffff,
-  'success': #32a330,
-  'info': #017fa5,
-  'warning': #cc9f00,
-  'error': #c13415,
-) !default;
-
-$gray-dark: #dcdcdc !default;
-$gray-light: #f9f9f9 !default;
-$background-color-gray: $gray-light !default;
-$border-color-gray: $gray-dark !default;
-$background-color-gray-light: #fcfcfc !default;
 $primary-action-color: rgb(64, 123, 160) !default;
+$secondary-action-color: #469285 !default;
+$tertiary-action-color: #f1d285 !default;
 $primary-bgcolor-rgba: rgba(201, 66, 129, 0.03) !default;
 
-$text-color-dark: #1a1c29 !default;
-$text-color-disabled: #bbbbbc !default;
+// --- UI Focus & Interaction ---
+$primary-focus-border: color.adjust(
+  $primary-action-color,
+  $lightness: 25%
+) !default;
+$primary-focus-shadow: rgba($primary-action-color, 0.25) !default;
+$secondary-200-hover: color.adjust(
+  $secondary-action-color,
+  $saturation: -13%,
+  $lightness: 10%
+) !default;
+$link-underline-color: color.adjust(
+  $primary-action-color,
+  $saturation: -50%,
+  $lightness: 40%
+) !default;
 
-$secondary-action-color: #469285 !default;
-$secondary-action-color-dark: #5660e5 !default;
+// --- Primary Alpha Variants ---
+$primary-action-color-alpha-4: color.change(
+  $primary-action-color,
+  $alpha: 0.04
+) !default;
+$primary-alpha-05: color.change($primary-action-color, $alpha: 0.05) !default;
+$primary-action-color-alpha-10: color.change(
+  $primary-action-color,
+  $alpha: 0.1
+) !default;
 
-$tertiary-action-color: #f1d285 !default;
+// --- Secondary Alpha Variants ---
+$secondary-action-color-alpha-10: color.change(
+  $secondary-action-color,
+  $alpha: 0.1
+) !default;
+$secondary-action-color-alpha-20: color.change(
+  $secondary-action-color,
+  $alpha: 0.2
+) !default;
+$secondary-action-color-alpha-50: color.change(
+  $secondary-action-color,
+  $alpha: 0.5
+) !default;
 
-$gray-formtext: #515359 !default;
-$gray-regular: #515359 !default;
-$gray-deemphasized: #ababac !default;
-$red-error: #b2242a !default;
-$red-error2: #c94281 !default;
-$space-unit: 2.1rem;
+// --- Miscellaneous ---
+$dropdown-disabled-text: color.adjust(#212529, $lightness: 35%) !default;
 
-$green-affirmative: map.get($colors, 'success') !default;
-$yellow-warning: map.get($colors, 'warning') !default;
-$red-delete: $red-error2 !default;
-$red-required: map.get($colors, 'error') !default;
+$synapse-gray-regular: #515359 !default;
+$synapse-gray-deemphasized: #ababac !default;
 
-$box-shadow-med: 0 1px 3px rgba(0, 0, 0, 0.5);
-$box-shadow-soft: 0 3px 10px rgba(93, 105, 171, 0.1);
-
-$active-tab-text: #22252a;
-$inactive-tab-text: #71767f;
-
-$themes: (
-  drug-upload-tool: (
-    action-color: #5960a5,
-  ),
-  contribution-request: (
-    action-color: rgb(12, 141, 22),
-  ),
-);
+$synapse-space-unit: 2.1rem !default;
 
 $primary-action-color-active: color.adjust(
   $primary-action-color,
@@ -136,8 +113,8 @@ $breakpoints: (
 ) !default;
 
 // Buttons
-$button-border-radius: 3px;
 $button-text-transform: capitalize;
+$button-border-radius: 3px;
 
 // To reset bootstrap button style
 %button-reset {
@@ -147,7 +124,3 @@ $button-text-transform: capitalize;
   border-radius: $button-border-radius;
   text-transform: $button-text-transform;
 }
-
-// Form Control
-$gray-input-border: 1px solid #f2f2f2;
-$input-padding: 12px 13px;

@@ -1,8 +1,3 @@
-// Import the theme css
-@use './variables' as Portal;
-@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
-@use 'sass:map';
-
 .ToggleSynapseObjects {
   margin-top: 30px;
   position: relative;
@@ -10,7 +5,7 @@
     position: absolute;
     right: 0px;
     margin-top: -54px;
-    color: Portal.$primary-action-color;
+    color: var(--synapse-primary-action-color);
   }
   .icon {
     display: flex;
@@ -19,6 +14,6 @@
     height: 100%;
   }
   .unselected {
-    color: map.get(SrcVariables.$colors, 'gray-600');
+    color: var(--synapse-gray-600);
   }
 }

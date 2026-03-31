@@ -1,9 +1,5 @@
 import { PermissionLevel } from '@/utils/PermissionLevelToAccessType'
-import {
-  AUTHENTICATED_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_ID,
-  PUBLIC_PRINCIPAL_IDS,
-} from '@/utils/SynapseConstants'
+import { useGetRealmPrincipals } from '@/synapse-queries/realm/useRealmPrincipals'
 import {
   Box,
   Button,
@@ -86,13 +82,27 @@ export function AclEditor(props: AclEditorProps): React.ReactNode {
     displayedPermissionLevelOverride,
   } = props
 
-  if (isLoading) {
+  const { data, isLoading: isLoadingRealmPrincipals } = useGetRealmPrincipals()
+  const realmPrincipals = data || {}
+  const {
+    authenticatedUsers: authenticatedUsersId,
+    publicGroup: publicGroupId,
+    anonymousUser: anonymousUserId,
+  } = realmPrincipals
+
+  const publicPrincipalIds = [
+    authenticatedUsersId,
+    publicGroupId,
+    anonymousUserId,
+  ].filter((id): id is string => id !== undefined)
+
+  if (isLoading || isLoadingRealmPrincipals) {
     return <AclEditorSkeleton />
   }
 
   const resourceAccessListCurrentlyIncludesPublic = Boolean(
     resourceAccessList.find(resourceAccess =>
-      PUBLIC_PRINCIPAL_IDS.includes(resourceAccess.principalId),
+      publicPrincipalIds.some(id => resourceAccess.principalId === Number(id)),
     ),
   )
 
@@ -102,8 +112,8 @@ export function AclEditor(props: AclEditorProps): React.ReactNode {
           startIcon: <IconSvg icon={'close'} wrap={false} />,
           children: REMOVE_PUBLIC_PRINCIPALS_BUTTON_TEXT,
           onClick: () => {
-            PUBLIC_PRINCIPAL_IDS.forEach(publicId => {
-              removeResourceAccessItem(publicId)
+            publicPrincipalIds.forEach(publicId => {
+              removeResourceAccessItem(Number(publicId))
             })
           },
         }
@@ -111,8 +121,9 @@ export function AclEditor(props: AclEditorProps): React.ReactNode {
           startIcon: <IconSvg icon={'public'} wrap={false} />,
           children: ADD_PUBLIC_PRINCIPALS_BUTTON_TEXT,
           onClick: () => {
-            onAddPrincipalToAcl(PUBLIC_PRINCIPAL_ID)
-            onAddPrincipalToAcl(AUTHENTICATED_PRINCIPAL_ID)
+            if (publicGroupId) onAddPrincipalToAcl(Number(publicGroupId))
+            if (authenticatedUsersId)
+              onAddPrincipalToAcl(Number(authenticatedUsersId))
           },
         }
 

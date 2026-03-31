@@ -1,5 +1,3 @@
-@use '../../style/abstracts/variables' as SrcVariables;
-
 .portalCard:global(.MuiCard-root) {
   margin-bottom: 16px;
   transition: box-shadow 0.2s ease-in-out;

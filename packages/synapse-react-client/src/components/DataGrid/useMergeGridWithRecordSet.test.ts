@@ -2,6 +2,7 @@ import { renderHook, waitFor } from '@testing-library/react'
 import { vi, describe, it, expect, beforeEach } from 'vitest'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import useMergeGridWithRecordSet from './useMergeGridWithRecordSet'
+import { KeyFactory } from '@/synapse-queries'
 
 const mockPostRepoV1GridExportRecordsetAsyncStart = vi.fn()
 const mockGetRepoV1AsynchronousJobJobId = vi.fn()
@@ -16,9 +17,14 @@ const mockSynapseClient = {
   },
 }
 
+const mockAccessToken = 'mock-token'
+
 vi.mock('@/utils', () => ({
   useSynapseContext: () => ({
     synapseClient: mockSynapseClient,
+    keyFactory: new KeyFactory(mockAccessToken),
+    accessToken: mockAccessToken,
+    isAuthenticated: true,
   }),
 }))
 

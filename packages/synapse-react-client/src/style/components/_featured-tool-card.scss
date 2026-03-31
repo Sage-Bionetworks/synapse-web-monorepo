@@ -1,5 +1,3 @@
-@use '../abstracts/variables' as SRC;
-
 .FeaturedToolList {
   display: flex;
   flex-direction: row;
@@ -23,7 +21,7 @@
   }
   &__Date {
     grid-row: 2/2;
-    color: SRC.$gray-deemphasized;
+    color: var(--synapse-gray-deemphasized);
   }
 
   &__Name {

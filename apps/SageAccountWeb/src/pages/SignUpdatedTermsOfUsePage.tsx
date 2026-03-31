@@ -50,7 +50,7 @@ function SignUpdatedTermsOfUsePage() {
     event.preventDefault()
     setIsLoading(true)
     try {
-      if (accessToken) {
+      if (isAuthenticated && accessToken) {
         signTermsOfService(
           {
             accessToken,

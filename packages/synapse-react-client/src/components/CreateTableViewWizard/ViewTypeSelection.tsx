@@ -1,10 +1,6 @@
-import { useGetFeatureFlag } from '@/synapse-queries'
 import { Link } from '@mui/material'
 import { EntityType } from '@sage-bionetworks/synapse-client'
-import {
-  ENTITY_VIEW_TYPE_MASK_PROJECT,
-  FeatureFlagEnum,
-} from '@sage-bionetworks/synapse-types'
+import { ENTITY_VIEW_TYPE_MASK_PROJECT } from '@sage-bionetworks/synapse-types'
 import WizardChoiceButton from '../WizardChoiceButton/WizardChoiceButton'
 import WizardChoiceButtonDescription from '../WizardChoiceButton/WizardChoiceButtonDescription'
 import WizardChoiceButtonGroup from '../WizardChoiceButton/WizardChoiceButtonGroup'
@@ -106,10 +102,6 @@ export type ViewTypeSelectionProps = {
 export default function ViewTypeSelection(props: ViewTypeSelectionProps) {
   const { onTypeSelected } = props
 
-  const isFeatureEnabled = useGetFeatureFlag(
-    FeatureFlagEnum.VIRTUALTABLE_SUPPORT,
-  )
-
   return (
     <WizardChoiceButtonGroup>
       <WizardChoiceButton
@@ -140,15 +132,13 @@ export default function ViewTypeSelection(props: ViewTypeSelectionProps) {
           onTypeSelected(EntityType.materializedview)
         }}
       />
-      {isFeatureEnabled && (
-        <WizardChoiceButton
-          title={'Virtual Table'}
-          description={VIRTUAL_TABLE_DESCRIPTION}
-          onClick={() => {
-            onTypeSelected(EntityType.virtualtable)
-          }}
-        />
-      )}
+      <WizardChoiceButton
+        title={'Virtual Table'}
+        description={VIRTUAL_TABLE_DESCRIPTION}
+        onClick={() => {
+          onTypeSelected(EntityType.virtualtable)
+        }}
+      />
     </WizardChoiceButtonGroup>
   )
 }

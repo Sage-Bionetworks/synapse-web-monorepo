@@ -6,7 +6,7 @@ import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types
 import ErrorPage, {
   SynapseErrorType,
 } from 'synapse-react-client/components/error/ErrorPage'
-import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic'
+import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic/index'
 import columnAliases from '../config/columnAliases'
 import {
   datasetsSql,
@@ -86,7 +86,7 @@ function PeopleDetailsPage() {
                     cardConfiguration={publicationsCardConfiguration}
                     sql={publicationSql}
                     columnAliases={columnAliases}
-                    sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+                    sqlOperator={ColumnSingleValueFilterOperator.IN}
                     searchParams={{
                       pubMedId: value!,
                     }}
@@ -107,7 +107,7 @@ function PeopleDetailsPage() {
                     cardConfiguration={datasetCardConfiguration}
                     sql={datasetsSql}
                     columnAliases={columnAliases}
-                    sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+                    sqlOperator={ColumnSingleValueFilterOperator.IN}
                     searchParams={{
                       datasetAlias: value!,
                     }}
@@ -128,7 +128,7 @@ function PeopleDetailsPage() {
                     cardConfiguration={toolsConfiguration}
                     sql={toolsSql}
                     columnAliases={columnAliases}
-                    sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+                    sqlOperator={ColumnSingleValueFilterOperator.IN}
                     searchParams={{
                       toolName: value!,
                     }}

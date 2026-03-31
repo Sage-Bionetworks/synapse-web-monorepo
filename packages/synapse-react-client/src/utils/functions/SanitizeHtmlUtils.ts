@@ -1,5 +1,13 @@
-import DOMPurify from 'dompurify'
-import { escapeAttrValue, IFilterXSSOptions, safeAttrValue } from 'xss'
+import DOMPurify, { clearWindow, removeAllHooks } from 'isomorphic-dompurify'
+import xssLib from 'xss'
+import type { IFilterXSSOptions } from 'xss'
+
+// xss is a CJS-only module; pull runtime values from the default import to
+// avoid "named export not found" errors in Vite dev mode (native ESM).
+const { safeAttrValue, escapeAttrValue } = xssLib as unknown as {
+  safeAttrValue: typeof import('xss')['safeAttrValue']
+  escapeAttrValue: typeof import('xss')['escapeAttrValue']
+}
 
 // allow list used by both the xss config and DOMPurify config
 const xssWhiteList: XSS.IWhiteList = {
@@ -127,57 +135,65 @@ const ALLOWED_STYLES: Record<string, boolean> = {
 // Regex to allow only secure image sources
 const ALLOWED_URI_REGEXP: RegExp = /^(https?:|data:image\/)/
 
-// Configure DOMPurify with TypeScript support
-DOMPurify.setConfig({
+const domPurifyConfig = {
   ALLOWED_TAGS,
   ALLOWED_ATTR,
   KEEP_CONTENT: true,
   RETURN_DOM_FRAGMENT: false,
   RETURN_TRUSTED_TYPE: false,
-})
+}
 
-// Hook: Sanitize attributes (equivalent to safeAttrValue)
-DOMPurify.addHook('uponSanitizeAttribute', (node, data) => {
-  const { attrName, attrValue } = data
+function configureDomPurify() {
+  // Configure DOMPurify with TypeScript support
+  DOMPurify.setConfig(domPurifyConfig)
 
-  // Ensure only safe src values for images
-  if (node.nodeName.toLowerCase() === 'img' && attrName === 'src') {
-    if (!ALLOWED_URI_REGEXP.test(attrValue)) {
-      data.keepAttr = false // Remove unsafe src values
+  // Hook: Sanitize attributes (equivalent to safeAttrValue)
+  DOMPurify.addHook('uponSanitizeAttribute', (node, data) => {
+    const { attrName, attrValue } = data
+
+    // Ensure only safe src values for images
+    if (node.nodeName.toLowerCase() === 'img' && attrName === 'src') {
+      if (!ALLOWED_URI_REGEXP.test(attrValue)) {
+        data.keepAttr = false // Remove unsafe src values
+      }
     }
-  }
 
-  if (attrName === 'data-widgetparams' || attrName === 'data-widget-type') {
-    data.attrValue = attrValue
-  } else if (attrName === 'style') {
-    const safeStyles = attrValue
-      .split(';')
-      .map(style => style.trim())
-      .filter(style => {
-        const [property] = style.split(':').map(s => s.trim())
-        return ALLOWED_STYLES[property] || false // Only allow explicitly listed styles
-      })
-      .join('; ')
-    data.attrValue = safeStyles
-  } else {
-    data.attrValue = DOMPurify.sanitize(attrValue)
-  }
-})
-
-// Hook: Prevent removal of `!doctype` (equivalent to onIgnoreTag)
-DOMPurify.addHook('uponSanitizeElement', (node, data) => {
-  if (data.tagName === '!doctype') {
-    // Reinsert the doctype manually after sanitization
-    if (node.parentNode) {
-      node.parentNode.insertBefore(
-        document.implementation.createDocumentType('html', '', ''),
-        node,
-      )
+    if (attrName === 'data-widgetparams' || attrName === 'data-widget-type') {
+      data.attrValue = attrValue
+    } else if (attrName === 'style') {
+      const safeStyles = attrValue
+        .split(';')
+        .map(style => style.trim())
+        .filter(style => {
+          const [property] = style.split(':').map(s => s.trim())
+          return ALLOWED_STYLES[property] || false // Only allow explicitly listed styles
+        })
+        .join('; ')
+      data.attrValue = safeStyles
+    } else {
+      data.attrValue = DOMPurify.sanitize(attrValue, domPurifyConfig)
     }
-  }
-})
+  })
 
-// Sanitize function with TypeScript type safety
+  // Hook: Prevent removal of `!doctype` (equivalent to onIgnoreTag)
+  DOMPurify.addHook('uponSanitizeElement', (node, data) => {
+    if (data.tagName === '!doctype') {
+      // Reinsert the doctype manually after sanitization
+      if (node.parentNode) {
+        node.parentNode.insertBefore(
+          document.implementation.createDocumentType('html', '', ''),
+          node,
+        )
+      }
+    }
+  })
+}
+
 export function sanitize(input: string): string {
-  return DOMPurify.sanitize(input)
+  configureDomPurify()
+  const result = DOMPurify.sanitize(input, domPurifyConfig)
+  // clearWindow clears memory usage in Node.js, noop in browser:
+  clearWindow()
+  removeAllHooks()
+  return result
 }

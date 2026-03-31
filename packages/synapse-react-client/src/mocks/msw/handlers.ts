@@ -21,6 +21,7 @@ import { getMessageHandlers } from './handlers/messageHandlers'
 import { getPersonalAccessTokenHandlers } from './handlers/personalAccessTokenHandlers'
 import { getResearchProjectHandlers } from './handlers/researchProjectHandlers'
 import { getResetTwoFactorAuthHandlers } from './handlers/resetTwoFactorAuthHandlers'
+import { getRealmHandlers } from './handlers/realmHandlers'
 import { getShortIoHandlers } from './handlers/shortIoHandlers'
 import { getSubscriptionHandlers } from './handlers/subscriptionHandlers'
 import {
@@ -75,6 +76,7 @@ const getHandlers = (backendOrigin: string, portalOrigin?: string) => [
   ...getAllChallengeHandlers(backendOrigin),
   ...getResetTwoFactorAuthHandlers(backendOrigin),
   ...getMessageHandlers(backendOrigin),
+  ...getRealmHandlers(backendOrigin),
   getFeatureFlagsOverride({ portalOrigin }),
   ...getHandlersForTableQuery(backendOrigin),
   ...getDoiHandler(backendOrigin),

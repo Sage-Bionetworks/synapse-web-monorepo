@@ -6,7 +6,7 @@ import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '@/utils'
 import { ENTITY_BUNDLE_V2 } from '@/utils/APIConstants'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
-import { AUTHENTICATED_PRINCIPAL_ID } from '@/utils/SynapseConstants'
+import { MOCK_AUTHENTICATED_PRINCIPAL_ID as AUTHENTICATED_PRINCIPAL_ID } from '@/mocks/realm/mockRealmPrincipal'
 import {
   ACCESS_TYPE,
   EntityBundle,

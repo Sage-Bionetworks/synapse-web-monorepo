@@ -1,6 +1,7 @@
 import React from 'react'
 import { Box, useTheme } from '@mui/material'
-import { PortalSectionHeader, UpsetPlot } from 'synapse-react-client'
+import PortalSectionHeader from 'synapse-react-client/components/PortalSectionHeader/PortalSectionHeader'
+import { UpsetPlot } from 'synapse-react-client/components/Plot/UpsetPlot'
 import { handleUpsetPlotClick } from '@/utils/handleUpsetPlotClick'
 import { useNavigate } from 'react-router'
 

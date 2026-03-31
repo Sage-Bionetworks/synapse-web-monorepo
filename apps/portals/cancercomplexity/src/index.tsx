@@ -13,6 +13,7 @@ import 'katex/dist/katex.css'
 
 import './App.scss'
 import headerConfig from './config/headerConfig'
+import synapseChatConfig from './config/synapseChatConfig'
 
 const container = document.getElementById('root')
 
@@ -22,6 +23,8 @@ root.render(
   <StrictMode>
     <Portal
       portalName={import.meta.env.VITE_PORTAL_NAME}
+      portalDescription={import.meta.env.VITE_PORTAL_DESCRIPTION}
+      portalKey={import.meta.env.VITE_PORTAL_KEY}
       palette={palette}
       routeConfig={routes}
       headerConfig={headerConfig}
@@ -29,6 +32,7 @@ root.render(
       logoHeaderConfig={logoHeaderConfig}
       logoFooterConfig={logoFooterConfig}
       navbarConfig={navbarConfig}
+      synapseChatProps={synapseChatConfig}
     />
   </StrictMode>,
 )

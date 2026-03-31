@@ -33,5 +33,5 @@ export const navbarConfig: NavbarConfig = {
       path: 'https://arcusbio.com/',
     },
   ],
-  isPortalsDropdownEnabled: true,
+  isPortalsDropdownEnabled: false,
 }

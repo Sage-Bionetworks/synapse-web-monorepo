@@ -2,28 +2,26 @@
 // Synapse React Client (SRC) Custom scss                   //
 // params: $primary-action-color                            //
 //////////////////////////////////////////////////////////////
-@use '../style/abstracts/variables' as SRC;
-
 .SRC-primary-text-color {
-  color: SRC.$primary-action-color !important;
+  color: var(--synapse-primary-action-color) !important;
 }
 .SRC-primary-fill-color {
-  fill: SRC.$primary-action-color;
+  fill: var(--synapse-primary-action-color);
 }
 .SRC-primary-stroke-color {
-  stroke: SRC.$primary-action-color;
+  stroke: var(--synapse-primary-action-color);
 }
 .SRC-primary-color-hover:hover * {
-  color: SRC.$primary-action-color !important;
-  fill: SRC.$primary-action-color !important;
+  color: var(--synapse-primary-action-color) !important;
+  fill: var(--synapse-primary-action-color) !important;
 }
 
 .SRC-primary-background-color {
-  background-color: SRC.$primary-action-color !important;
+  background-color: var(--synapse-primary-action-color) !important;
 }
 
 .SRC-primary-background-color-border-left {
-  border-left-color: SRC.$primary-action-color !important;
+  border-left-color: var(--synapse-primary-action-color) !important;
 }
 
 %hoverFade {
@@ -33,11 +31,11 @@
 .SRC-primary-background-color-hover {
   &:hover,
   &[aria-expanded='true'] {
-    background-color: SRC.$primary-action-color !important;
+    background-color: var(--synapse-primary-action-color) !important;
     color: white !important;
     fill: white !important;
     * {
-      background-color: SRC.$primary-action-color !important;
+      background-color: var(--synapse-primary-action-color) !important;
       color: white !important;
     }
   }
@@ -45,7 +43,7 @@
 
 .SRC-button-focus-primary-color {
   &:focus {
-    outline-color: SRC.$primary-action-color;
+    outline-color: var(--synapse-primary-action-color);
     outline-style: auto;
     outline-width: 5px;
   }
@@ -54,7 +52,7 @@
 .SRC-basicButton {
   border: none;
   background: none;
-  color: SRC.$primary-action-color;
+  color: var(--synapse-primary-action-color);
 }
 
 .SRC-mailchimpSubscribeContainer {
@@ -74,36 +72,36 @@
     cursor: pointer;
     border: 1px solid transparent;
     border-radius: 3px;
-    background-color: SRC.$primary-action-color;
+    background-color: var(--synapse-primary-action-color);
     color: white;
   }
 }
 
 :focus {
-  outline-color: SRC.$primary-action-color;
+  outline-color: var(--synapse-primary-action-color);
 }
 
 .SRC-portalCard {
   .SRC-downloadData {
-    background-color: SRC.$primary-action-color;
+    background-color: var(--synapse-primary-action-color);
   }
 }
 
 .dropdown-menu.SRC-primary-color-hover-dropdown {
   a.dropdown-item:hover:not(.disabled) {
-    background: SRC.$primary-action-color;
+    background: var(--synapse-primary-action-color);
     color: white !important;
     text-decoration: none;
   }
   a.dropdown-item:hover:not(.disabled) * {
-    background: SRC.$primary-action-color;
+    background: var(--synapse-primary-action-color);
     color: white !important;
     text-decoration: none;
   }
 }
 
 .SRC-icon-fill {
-  fill: SRC.$primary-action-color;
+  fill: var(--synapse-primary-action-color);
 }
 
 .SRC-portalCardHeader {
@@ -116,10 +114,10 @@
 }
 
 .homepage-color-background {
-  background-color: SRC.$primary-bgcolor-rgba;
+  background-color: var(--synapse-primary-bgcolor-rgba);
   padding: 40px 0;
 }
 
 .SRC-secondary-text-color {
-  color: SRC.$secondary-action-color;
+  color: var(--synapse-secondary-action-color);
 }

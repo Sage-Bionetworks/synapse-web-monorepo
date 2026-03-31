@@ -1,4 +1,4 @@
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/index'
 import { genieBPCDataQueryWrapperPlotNavProps } from '@/config/synapseConfigs'
 
 function ExploreGenieBPC() {

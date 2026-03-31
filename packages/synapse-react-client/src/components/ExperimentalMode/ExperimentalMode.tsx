@@ -16,7 +16,6 @@ export type ExperimentalModeProps = {
 function ExperimentalMode({ onExperimentalModeToggle }: ExperimentalModeProps) {
   const [isExperimentalModeOn, setIsExperimentalModeOn] =
     useState<boolean>(false)
-  const cookies = new UniversalCookies()
   let mounted = true
   const theme = useTheme()
   useEffect(() => {
@@ -30,8 +29,21 @@ function ExperimentalMode({ onExperimentalModeToggle }: ExperimentalModeProps) {
     }
   }, [])
 
+  const getExperimentalModeCookieOptions = () => {
+    const hostname = window.location.hostname.toLowerCase()
+    return {
+      path: '/',
+      domain: hostname.endsWith('.synapse.org') ? 'synapse.org' : undefined,
+    }
+  }
+
   const createExperimentalModeCookie = () => {
-    cookies.set(EXPERIMENTAL_MODE_COOKIE, 'true', { path: '/' })
+    const cookies = new UniversalCookies()
+    cookies.set(
+      EXPERIMENTAL_MODE_COOKIE,
+      'true',
+      getExperimentalModeCookieOptions(),
+    )
     setIsExperimentalModeOn(true)
     if (onExperimentalModeToggle) {
       onExperimentalModeToggle(true)
@@ -39,7 +51,8 @@ function ExperimentalMode({ onExperimentalModeToggle }: ExperimentalModeProps) {
   }
 
   const deleteExperimentalModeCookie = () => {
-    cookies.remove(EXPERIMENTAL_MODE_COOKIE, { path: '/' })
+    const cookies = new UniversalCookies()
+    cookies.remove(EXPERIMENTAL_MODE_COOKIE, getExperimentalModeCookieOptions())
     setIsExperimentalModeOn(false)
     if (onExperimentalModeToggle) {
       onExperimentalModeToggle(false)

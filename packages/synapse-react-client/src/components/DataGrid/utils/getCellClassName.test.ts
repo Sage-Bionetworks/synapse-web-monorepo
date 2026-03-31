@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import { getCellClassName } from './getCellClassName'
 import { DataGridRow } from '../DataGridTypes'
-import { SelectionWithId } from 'react-datasheet-grid/dist/types'
-import { Column } from 'react-datasheet-grid'
+import { SelectionWithId } from '@sage-bionetworks/react-datasheet-grid'
+import { Column } from '@sage-bionetworks/react-datasheet-grid'
 
 describe('getCellClassName', () => {
   const createMockRowData = (

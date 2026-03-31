@@ -1,10 +1,5 @@
-@use '../variables' as Portal;
 @use 'synapse-react-client/style/abstracts/mixins' as SrcMixins;
 // local variable for study page
-
-$marginTop: 40px;
-$study-page-tab-height: 50px;
-$svg-icon-height: 30px;
 
 %svg-icon {
   color: #fff;
@@ -12,8 +7,8 @@ $svg-icon-height: 30px;
 }
 
 %svg-icon-active {
-  color: Portal.$primary-action-color;
-  fill: Portal.$primary-action-color;
+  color: var(--synapse-primary-action-color);
+  fill: var(--synapse-primary-action-color);
 }
 
 %alignContent {
@@ -29,13 +24,17 @@ $svg-icon-height: 30px;
 
 .DetailsPage {
   // keeps h2 in markdown and in this component the same
+  --marginTop: 40px;
+  --study-page-tab-height: 50px;
+  --svg-icon-height: 30px;
+
   .h2,
   h2 {
     font-size: 21px;
     text-transform: uppercase;
     font-weight: 700;
     color: #515359;
-    margin-top: 42px;
+    margin-top: var(--marginTop);
   }
 
   // Jump menu css
@@ -71,7 +70,7 @@ $svg-icon-height: 30px;
     margin-right: 30px;
     position: sticky;
     flex: 1;
-    margin-top: $marginTop;
+    margin-top: var(--marginTop);
   }
 
   .component-container {
@@ -97,19 +96,19 @@ $svg-icon-height: 30px;
     min-height: 150px !important; // Overwrite javascript injected css
   }
   .first-title {
-    margin-top: $marginTop;
+    margin-top: var(--marginTop);
   }
 
   .tab-groups {
     position: relative;
     width: 100%;
-    top: -$study-page-tab-height;
+    top: calc(-1 * var(--study-page-tab-height));
     margin-bottom: -50px;
     display: flex;
     font-size: 16px;
     justify-content: center;
-    height: $study-page-tab-height;
-    line-height: $study-page-tab-height;
+    height: var(--study-page-tab-height);
+    line-height: var(--study-page-tab-height);
     .tab-item {
       cursor: pointer;
       display: inline-block;
@@ -123,7 +122,7 @@ $svg-icon-height: 30px;
         padding-right: 10px;
         font-size: 34px;
         vertical-align: middle;
-        height: $svg-icon-height;
+        height: var(--svg-icon-height);
         width: auto;
       }
     }

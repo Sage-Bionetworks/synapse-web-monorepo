@@ -9,18 +9,16 @@ import ElNewsletterSection from '@sage-bionetworks/synapse-portal-framework/comp
 import ELSupportedByNIH from '@sage-bionetworks/synapse-portal-framework/components/eliteportal/ELSupportedByNIH'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import { TypeAnimation } from 'react-type-animation'
-import {
-  FeaturedDataTabs,
-  FeaturedResearch,
-  GoalsV2,
-  ImageCardGridWithLinks,
-  PortalFeaturedPartners,
-  PortalFeatureHighlights,
-  PortalHomePageHeader,
-  PortalSectionHeader,
-  RecentPublicationsGrid,
-  UpsetPlot,
-} from 'synapse-react-client'
+import FeaturedDataTabs from 'synapse-react-client/components/FeaturedDataTabs/FeaturedDataTabs'
+import FeaturedResearch from 'synapse-react-client/components/FeaturedResearch/FeaturedResearch'
+import { GoalsV2 } from 'synapse-react-client/components/GoalsV2/GoalsV2'
+import ImageCardGridWithLinks from 'synapse-react-client/components/ImageCardGridWithLinks/ImageCardGridWithLinks'
+import PortalFeaturedPartners from 'synapse-react-client/components/PortalFeaturedPartners/PortalFeaturedPartners'
+import PortalFeatureHighlights from 'synapse-react-client/components/PortalFeatureHighlights/PortalFeatureHighlights'
+import PortalHomePageHeader from 'synapse-react-client/components/PortalHomePageHeader/PortalHomePageHeader'
+import PortalSectionHeader from 'synapse-react-client/components/PortalSectionHeader/PortalSectionHeader'
+import RecentPublicationsGrid from 'synapse-react-client/components/RecentPublicationsGrid/RecentPublicationsGrid'
+import { UpsetPlot } from 'synapse-react-client/components/Plot/UpsetPlot'
 import {
   cohortBuilderSql,
   dataSql,
@@ -33,10 +31,23 @@ import {
 } from '../config/resources'
 import { useNavigate } from 'react-router'
 import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
+import { visuallyHidden } from 'synapse-react-client'
 
 function HomePageInternal() {
   const theme = useTheme()
   const navigate = useNavigate()
+
+  const animationPhrases = [
+    'exceptional longevity',
+    'healthy aging',
+    'life span',
+    'health span',
+    'familial longevity',
+    'centenarians',
+    'cross-species studies',
+    'longevity-associated genes',
+    'longevity-associated omics',
+  ]
 
   const styledPortalFeatureHighlightsSummaryText = (
     <>
@@ -88,26 +99,8 @@ function HomePageInternal() {
         })}
       >
         <TypeAnimation
-          sequence={[
-            'exceptional longevity',
-            3000,
-            'healthy aging',
-            3000,
-            'life span',
-            3000,
-            'health span',
-            3000,
-            'familial longevity',
-            3000,
-            'centenarians',
-            3000,
-            'cross-species studies',
-            3000,
-            'longevity-associated genes',
-            3000,
-            'longevity-associated omics',
-            3000,
-          ]}
+          aria-hidden="true"
+          sequence={animationPhrases.flatMap(phrase => [phrase, 3000])}
           wrapper="span"
           speed={20}
           repeat={Infinity}
@@ -116,6 +109,10 @@ function HomePageInternal() {
             color: '#35E7C6',
           }}
         />
+        {/* Screen reader only text */}
+        <Box component="span" sx={visuallyHidden}>
+          {animationPhrases.join(', ')}
+        </Box>
       </Box>
     </Box>
   )
@@ -192,7 +189,7 @@ function HomePageInternal() {
           combinationName="Intersection Size"
           onClick={handleUpsetPlotClick({
             sql: cohortBuilderSql,
-            explorePath: 'Cohort Builder',
+            explorePath: 'Cohort Builder/Individuals',
             columnName: 'dataTypes',
             navigate,
           })}
@@ -218,7 +215,7 @@ function HomePageInternal() {
                       description:
                         'The Long Life Family Study (LLFS) is an international study of genetics and familial components of exceptional survival, longevity, and healthy aging, providing rich longitudinal data including physical, cognitive, and cardiovascular phenotypes and comprehensive genetic and multi-OMIC profiles from families with exceptional longevity.',
                       facetsToPlot: ['dataTypes'],
-                      selectFacetColumnName: 'Study',
+                      selectFacetColumnName: 'studyKey',
                       selectFacetColumnValue: 'LLFS',
                       detailsPagePath:
                         '/Explore/Studies/DetailsPage?studyKey=LLFS',
@@ -226,27 +223,26 @@ function HomePageInternal() {
                       plotType: 'STACKED_HORIZONTAL_BAR',
                     },
                     {
-                      title: 'ADAMTS7 Study',
+                      title: 'The New England Centenarian Study APOE',
                       description:
-                        'This study evaluates Longevity-Associated Variants (LAVs) from a GWAS of parental lifespan and assesses their translational potential by applying Mendelian Randomization to evaluate the influence of tissue-specific LAG expression on disease pathways using data from the MrOS, SOF, and Health ABC cohorts.',
+                        'This study explores how the protective APOE e2 allele shapes metabolism in aging. It includes serum metabolomics and cognitive assessments from ~200 participants—centenarians, their offspring, and controls—all free of major diseases. A subset also has proteomics data, offering a deeper look into longevity-related biological signatures.',
                       facetsToPlot: ['dataTypes'],
-                      selectFacetColumnName: 'Study',
-                      selectFacetColumnValue: 'ADAMTS7',
+                      selectFacetColumnName: 'studyKey',
+                      selectFacetColumnValue: 'NECS_APOE',
                       detailsPagePath:
-                        '/Explore/Studies/DetailsPage?studyKey=ADAMTS7',
+                        '/Explore/Studies/DetailsPage?studyKey=NECS_APOE',
                       unitDescription: 'Files',
                       plotType: 'STACKED_HORIZONTAL_BAR',
                     },
                     {
-                      title:
-                        'Shotgun Metagenomics Analysis of the Gut Microbiome',
+                      title: 'Arivale Scientific Wellness Study',
                       description:
-                        'The study provides metagenomics data from 209 samples including 78 centenarian samples (over 100 years of age) and 131 younger samples (59-99). Samples were collected as part of the Integrative longevity Omics (ILO) study with the aim to discover molecular profiles that associate with exceptional longevity and healthy aging phenotypes including delay of or escape from Alzheimer’s disease.',
+                        'The Arivale-Providence Feasibility Study of Scientific Wellness is a 3-year pilot study examining the impact of a Scientific Wellness intervention on health, wellness, quality of life, productivity, and medical claims among Providence employees. Building on preliminary research by the Institute for Systems Biology, the study uses longitudinal monitoring of clinical labs, genetics, gut microbiome, and lifestyle data combined with personalized coaching to recommend actionable interventions.',
                       facetsToPlot: ['dataTypes'],
-                      selectFacetColumnName: 'Study',
-                      selectFacetColumnValue: 'ILOMGS',
+                      selectFacetColumnName: 'studyKey',
+                      selectFacetColumnValue: 'Arivale_SWS',
                       detailsPagePath:
-                        '/Explore/Studies/DetailsPage?studyKey=ILOMGS',
+                        '/Explore/Studies/DetailsPage?studyKey=Arivale_SWS',
                       unitDescription: 'Files',
                       plotType: 'STACKED_HORIZONTAL_BAR',
                     },
@@ -265,7 +261,7 @@ function HomePageInternal() {
                       description:
                         'The Mendelian randomization of human longevity using genetically-predicted exposures from the GWAS catalog (MRGWAS) study provides analysis results of a two Sample Mendelian Randomization used to analyze the relationship between significantly associated GWAS  traits and five distinct definitions of longevity.',
                       facetsToPlot: ['dataTypes'],
-                      selectFacetColumnName: 'Study',
+                      selectFacetColumnName: 'studyKey',
                       selectFacetColumnValue: 'MRGWAS',
                       detailsPagePath:
                         '/Explore/Studies/DetailsPage?studyKey=MRGWAS',
@@ -277,7 +273,7 @@ function HomePageInternal() {
                       description:
                         'This study is a collection of genetically-predicted tissue-specific gene expression associations with a collection of aging-related traits and outcomes.',
                       facetsToPlot: ['dataTypes'],
-                      selectFacetColumnName: 'Study',
+                      selectFacetColumnName: 'studyKey',
                       selectFacetColumnValue: 'Aging-PheWAS',
                       detailsPagePath:
                         '/Explore/Studies/DetailsPage?studyKey=Aging-PheWAS',
@@ -300,7 +296,7 @@ function HomePageInternal() {
                       description:
                         'The Gladyshev Multi-Omic Signatures of Longevity Across Avian and Mammalian Species (G_M-OSLAMS) study analyzes transcriptomic, proteomic, and metabolomic data across multiple avian tissues to identify key gene expression biomarkers linked to lifespan. Comparing these longevity signatures to those previously identified in mammals, the research aims to uncover universal and species-specific pathways regulating lifespan across vertebrates.',
                       facetsToPlot: ['dataTypes'],
-                      selectFacetColumnName: 'Study',
+                      selectFacetColumnName: 'studyKey',
                       selectFacetColumnValue: 'G_M-OSLAMS',
                       detailsPagePath:
                         '/Explore/Studies/DetailsPage?studyKey=G_M-OSLAMS',
@@ -313,7 +309,7 @@ function HomePageInternal() {
                       description:
                         'This study conducted comparative transcriptomics on 26 species with diverse lifespans, identifying thousands of genes correlated with maximum lifespan. This work provides targets for anti-aging interventions by defining pathways correlated with longevity across mammals and uncovers circadian and pluripotency networks as central regulators of longevity.',
                       facetsToPlot: ['dataTypes'],
-                      selectFacetColumnName: 'Study',
+                      selectFacetColumnName: 'studyKey',
                       selectFacetColumnValue: 'Gorbunova_CP_Transcriptomics',
                       detailsPagePath:
                         '/Explore/Studies/DetailsPage?studyKey=Gorbunova_CP_Transcriptomics',
@@ -325,7 +321,7 @@ function HomePageInternal() {
                       description:
                         'Multiomic assays were applied to a large scale cross species fibroblast cell culture collection derived from nearly 150 primate, bat, rodent, and bird species to determine factors related to aging and longevity.',
                       facetsToPlot: ['dataTypes'],
-                      selectFacetColumnName: 'Study',
+                      selectFacetColumnName: 'studyKey',
                       selectFacetColumnValue: 'LC_CP_OMICS',
                       detailsPagePath:
                         '/Explore/Studies/DetailsPage/StudyDetails?studyKey=LC_CP_OMICS',

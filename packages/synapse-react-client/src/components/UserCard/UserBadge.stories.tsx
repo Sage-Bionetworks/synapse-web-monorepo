@@ -1,5 +1,5 @@
 import { useGetCurrentUserProfile } from '@/synapse-queries'
-import { ANONYMOUS_PRINCIPAL_ID } from '@/utils/SynapseConstants'
+import { MOCK_ANONYMOUS_PRINCIPAL_ID as ANONYMOUS_PRINCIPAL_ID } from '@/mocks/realm/mockRealmPrincipal'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { UserBadge } from './UserBadge'
 

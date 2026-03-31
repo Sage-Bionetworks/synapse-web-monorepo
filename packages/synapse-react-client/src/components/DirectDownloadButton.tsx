@@ -13,10 +13,10 @@ export type DirectFileDownloadButtonProps = Omit<ButtonProps, 'onClick'> & {
 
 function DirectDownloadButton(props: DirectFileDownloadButtonProps) {
   const { fileHandleAssociation, fileName, ...buttonProps } = props
-  const { accessToken } = useSynapseContext()
+  const { accessToken, isAuthenticated } = useSynapseContext()
 
   const getDownloadLink = async () => {
-    if (!fileHandleAssociation.fileHandleId || !accessToken) return
+    if (!fileHandleAssociation.fileHandleId || !isAuthenticated) return
 
     const batchFileRequest: BatchFileRequest = {
       requestedFiles: [fileHandleAssociation],

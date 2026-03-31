@@ -5,6 +5,10 @@ export enum RestrictionUiType {
   Accessible = 'Accessible',
   AccessibleWithTerms = 'AccessibleWithTerms',
   AccessBlockedByRestriction = 'AccessBlockedByRestriction',
+  AccessBlockedByRestrictionWithPendingRequest = 'AccessBlockedByRestrictionWithPendingRequest',
+  AccessBlockedByRestrictionWithPendingExternalRequest = 'AccessBlockedByRestrictionWithPendingExternalRequest',
+  AccessBlockedByRestrictionWithPendingRDCADAPRequest = 'AccessBlockedByRestrictionWithPendingRDCADAPRequest',
+  AccessBlockedByRestrictionWithRejectedRDCADAPRequest = 'AccessBlockedByRestrictionWithRejectedRDCADAPRequest',
   AccessBlockedByACL = 'AccessBlockedByACL',
   AccessBlockedToAnonymous = 'AccessBlockedToAnonymous',
   AccessibleExternalFileHandle = 'AccessibleExternalFileHandle',
@@ -24,6 +28,27 @@ const iconConfiguration: Record<
     color: theme => theme.palette.warning.main,
     tooltipText: 'You must request access to this restricted item.',
   },
+  [RestrictionUiType.AccessBlockedByRestrictionWithPendingRequest]: {
+    icon: 'accessPending',
+    color: theme => theme.palette.warning.main,
+    tooltipText: 'Your access request is pending approval.',
+  },
+  [RestrictionUiType.AccessBlockedByRestrictionWithPendingExternalRequest]: {
+    icon: 'accessPendingCloud',
+    color: theme => theme.palette.warning.main,
+    tooltipText:
+      'Your access request is pending approval from an external system.',
+  },
+  [RestrictionUiType.AccessBlockedByRestrictionWithPendingRDCADAPRequest]: {
+    icon: 'accessPendingCloud',
+    color: theme => theme.palette.warning.main,
+    tooltipText: 'Your access request is pending approval by RDCA-DAP.',
+  },
+  [RestrictionUiType.AccessBlockedByRestrictionWithRejectedRDCADAPRequest]: {
+    icon: 'accessClosed',
+    color: theme => theme.palette.warning.main,
+    tooltipText: 'Your access request has been denied by RDCA-DAP.',
+  },
   [RestrictionUiType.AccessBlockedByACL]: {
     icon: 'accessClosed',
     color: theme => theme.palette.warning.main,
@@ -37,7 +62,7 @@ const iconConfiguration: Record<
   [RestrictionUiType.Accessible]: {
     icon: 'accessOpen',
     color: theme => theme.palette.success.main,
-    tooltipText: '',
+    tooltipText: 'You have access to this item.',
   },
   [RestrictionUiType.AccessibleExternalFileHandle]: {
     icon: 'linkOff',

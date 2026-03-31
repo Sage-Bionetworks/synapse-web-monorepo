@@ -3,9 +3,9 @@ import { ExternalAnalysisPlatform } from 'synapse-react-client/components/Synaps
 export const SYNAPSE_PORTAL_ID = '1001'
 
 export const computationalSql = 'Select * from syn20337467'
-export const dataSql = 'SELECT * FROM syn11346063.78'
+export const dataSql = 'SELECT * FROM syn11346063.82'
 export const dataOnStudiesPageSql =
-  "SELECT id, name, metadataType, dataType, assay FROM syn11346063.78 WHERE `resourceType` = 'metadata'"
+  "SELECT id, name, metadataType, dataType, assay FROM syn11346063.82 WHERE `resourceType` = 'metadata'"
 export const peopleSql = 'SELECT * FROM syn13897207'
 export const projectsSql = 'SELECT * FROM syn17024229 ORDER BY isFeatured DESC'
 export const publicationsSql = 'SELECT * FROM syn20448807'
@@ -14,6 +14,9 @@ export const programsSql = 'SELECT * FROM syn17024173'
 
 export const experimentalModelsSql =
   'select * from syn22219805 ORDER BY isFeatured DESC'
+
+export const cohortBuilderSql = 'SELECT * FROM syn72123781'
+export const cohortBuilderFilesSql = 'SELECT * FROM syn72123859'
 
 // PORTALS-2028: /MODEL-ADstrains redirects to "/Explore/Experimental Models" with this facet preselected
 export const modelADStrainsSelectedFacet = {

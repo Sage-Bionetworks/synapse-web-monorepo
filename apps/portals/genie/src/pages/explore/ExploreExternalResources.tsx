@@ -1,5 +1,5 @@
 import { toolProps } from '@/config/synapseConfigs/tools'
-import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic'
+import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic/index'
 
 function ExploreExternalResources() {
   return <CardContainerLogic {...toolProps} />

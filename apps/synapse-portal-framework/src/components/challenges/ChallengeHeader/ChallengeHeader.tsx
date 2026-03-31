@@ -1,14 +1,14 @@
-import React from 'react'
 import { Box, Stack, Typography } from '@mui/material'
+import React from 'react'
+import { ReactComponent as SageLogo } from '../../assets/sage-logo.svg'
+import headerImgSrc from '../assets/challengeHeaderImg.png'
 import styles from './ChallengeHeader.module.scss'
-import { ReactComponent as HeaderImg } from '../assets/challengeHeaderImg.svg'
-import { ReactComponent as SageLogo } from '../assets/sageBionetworksLogo.svg'
 
 const ChallengeHeader = (): React.ReactNode => {
   return (
     <Box className={styles.root}>
       <Box className={styles.imageWrapper}>
-        <HeaderImg className={styles.headerImg} />
+        <img src={headerImgSrc} className={styles.headerImg} alt="" />
       </Box>
       <Stack className={styles.textContainer}>
         <Typography variant="headline1" className={styles.headerText}>

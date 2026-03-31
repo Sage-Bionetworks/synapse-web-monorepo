@@ -7,17 +7,9 @@
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": false,
-    "types": ["vite/client", "@testing-library/jest-dom"],
+    "types": ["vite/client", "node", "@testing-library/jest-dom"],
     "paths": {
-      "@/*": ["./src/*"],
-      "@sage-bionetworks/synapse-types": ["../../packages/synapse-types/src"],
-      "@sage-bionetworks/synapse-types/*": [
-        "../../packages/synapse-types/src/*"
-      ],
-      "synapse-react-client": ["../../packages/synapse-react-client/src"],
-      "synapse-react-client/*": ["../../packages/synapse-react-client/src/*"],
-      "vite-config": ["../../packages/vite-config/src"],
-      "vite-config/*": ["../../packages/vite-config/src/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src/**/*.tsx", "src/**/*.ts"],

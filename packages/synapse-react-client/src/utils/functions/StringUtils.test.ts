@@ -2,6 +2,7 @@ import {
   hex2ascii,
   normalizeNumericId,
   replaceFileExtension,
+  splitAndTrim,
 } from './StringUtils'
 import { JoinTeamSignedToken } from '@sage-bionetworks/synapse-types'
 
@@ -52,6 +53,39 @@ describe('StringUtils', () => {
       const newExtension = 'html'
       const result = replaceFileExtension(filePath, newExtension)
       expect(result).toEqual('example.html')
+    })
+  })
+
+  describe('splitAndTrim', () => {
+    it('should split a string by the default separator (a comma) and trim', () => {
+      const input = 'foo, baz, bar'
+      const result = splitAndTrim(input)
+      expect(result).toEqual(['foo', 'baz', 'bar'])
+    })
+    it('should split by a custom separator and trim', () => {
+      const input = 'foo :: baz :: bar'
+      const result = splitAndTrim(input, '::')
+      expect(result).toEqual(['foo', 'baz', 'bar'])
+    })
+    it('should handle strings without extra spaces', () => {
+      const input = 'foo,baz,bar'
+      const result = splitAndTrim(input)
+      expect(result).toEqual(['foo', 'baz', 'bar'])
+    })
+    it('should handle strings with varying amounts of spaces', () => {
+      const input = 'foo,  baz  ,   bar   '
+      const result = splitAndTrim(input)
+      expect(result).toEqual(['foo', 'baz', 'bar'])
+    })
+    it('should handle a single value', () => {
+      const input = 'foo'
+      const result = splitAndTrim(input)
+      expect(result).toEqual(['foo'])
+    })
+    it('should handle empty strings in the list', () => {
+      const input = 'foo,,bar'
+      const result = splitAndTrim(input)
+      expect(result).toEqual(['foo', '', 'bar'])
     })
   })
 })

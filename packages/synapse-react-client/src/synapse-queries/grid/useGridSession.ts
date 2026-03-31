@@ -10,6 +10,9 @@ import {
   ListGridSessionsResponse,
   PostRepoV1GridSessionSessionIdReplicaRequest,
   SynapseClient,
+  SynchronizeGridRequest,
+  SynchronizeGridResponse,
+  waitForAsyncResult,
 } from '@sage-bionetworks/synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
@@ -167,4 +170,66 @@ export const useCreateGridSession = (
         await startGridSession(synapseClient, request),
     },
   )
+}
+
+/**
+ * Synchronization is a two-phase process that ensures consistency between the user's local
+ * changes and external changes made to the source:
+ *
+ * Phase 1: Schema Synchronization
+ * - Synchronizes column definitions between the grid copy and source
+ * - Resolves schema conflicts
+ *
+ * Phase 2: Row Synchronization
+ * - Synchronizes row data using the final schema from Phase 1
+ * - Merges cell-level changes when rows conflict
+ * - Pushes user changes from copy to source
+ * - Pulls external changes from source to copy
+ *
+ * @see {@link https://rest-docs.synapse.org/rest/POST/grid/synchronize/async/start.html}
+ * @see {@link https://rest-docs.synapse.org/rest/GET/grid/synchronize/async/get/asyncToken.html}
+ */
+export function useSynchronizeGridSession(
+  options?: Omit<
+    UseMutationOptions<
+      SynchronizeGridResponse,
+      SynapseClientError,
+      Omit<SynchronizeGridRequest, 'concreteType'>
+    >,
+    'mutationFn'
+  >,
+) {
+  const { synapseClient } = useSynapseContext()
+
+  return useMutation<
+    SynchronizeGridResponse,
+    SynapseClientError,
+    Omit<SynchronizeGridRequest, 'concreteType'>
+  >({
+    ...options,
+    mutationFn: async request => {
+      const synchronizeGridRequest: SynchronizeGridRequest = {
+        ...request,
+        concreteType:
+          'org.sagebionetworks.repo.model.grid.SynchronizeGridRequest',
+      }
+
+      // Start the async export job
+      const asyncJobId =
+        await synapseClient.gridServicesClient.postRepoV1GridSynchronizeAsyncStart(
+          { synchronizeGridRequest },
+        )
+
+      // Poll for the async job
+      const asyncJobResponse = await waitForAsyncResult(() =>
+        synapseClient.asynchronousJobServicesClient.getRepoV1AsynchronousJobJobId(
+          {
+            jobId: asyncJobId.token!,
+          },
+        ),
+      )
+
+      return asyncJobResponse.responseBody as SynchronizeGridResponse
+    },
+  })
 }

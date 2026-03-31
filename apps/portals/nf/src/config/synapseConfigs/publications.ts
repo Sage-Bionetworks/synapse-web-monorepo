@@ -1,7 +1,5 @@
-import type {
-  CardConfiguration,
-  QueryWrapperPlotNavProps,
-} from 'synapse-react-client'
+import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
+import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { columnAliases } from './commonProps'
 import { publicationsSql } from '../resources'
@@ -15,8 +13,9 @@ export const publicationsCardConfiguration: CardConfiguration = {
   labelLinkConfig: [
     {
       isMarkdown: false,
-      baseURL: 'Explore/Studies/DetailsPage',
+      baseURL: 'Explore/Studies',
       URLColumnName: 'studyName',
+      urlParamStyle: 'path-segment',
       matchColumnName: 'studyName',
     },
     {

@@ -8,7 +8,8 @@ import { studyCardConfiguration } from '@/config/synapseConfigs/studies'
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { CardContainerLogic, QueryWrapperPlotNav } from 'synapse-react-client'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 
 function OrganizationDetailsTab() {

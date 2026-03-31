@@ -1,7 +1,5 @@
-import {
-  CardConfiguration,
-  QueryWrapperPlotNavProps,
-} from 'synapse-react-client'
+import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
+import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { datasetsSql } from '../resources'
 import { columnAliases as sharedColumnAliases } from './commonProps'
@@ -62,7 +60,8 @@ export const datasetCardConfiguration: CardConfiguration = {
       isMarkdown: false,
       matchColumnName: 'studyId',
       URLColumnName: 'studyId',
-      baseURL: 'Explore/Studies/DetailsPage',
+      baseURL: 'Explore/Studies',
+      urlParamStyle: 'path-segment',
       resolveEntityName: true,
     },
   ],
@@ -70,7 +69,8 @@ export const datasetCardConfiguration: CardConfiguration = {
     isMarkdown: false,
     matchColumnName: 'id',
     URLColumnName: 'id',
-    baseURL: 'Explore/Datasets/DetailsPage',
+    baseURL: 'Explore/Datasets',
+    urlParamStyle: 'path-segment',
   },
   columnIconOptions: studyColumnIconConfigs,
 }

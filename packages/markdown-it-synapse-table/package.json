@@ -16,6 +16,7 @@
   "scripts": {
     "clean": "rimraf ./dist && rimraf *.tsbuildinfo",
     "build": "vite build",
+    "type-check": "tsc --build",
     "lint": "eslint src/*",
     "test": "vitest",
     "coverage": "vitest --coverage",
@@ -32,14 +33,14 @@
   "license": "MIT",
   "devDependencies": {
     "@types/markdown-it": "^13.0.9",
-    "@types/node": "^20.17.41",
+    "@types/node": "^22.19.13",
     "@vitest/coverage-v8": "^3.2.2",
     "@vitest/ui": "^3.2.4",
     "markdown-it": "^14.1.0",
     "markdown-it-testgen": "~0.1.6",
     "tslib": "^2.8.1",
     "typescript": "5.8.3",
-    "vite": "^6.3.5",
+    "vite": "^7.3.0",
     "vite-config": "workspace:*",
     "vitest": "^3.2.2"
   },

@@ -15,16 +15,13 @@ export function useExportToADWorkbench(
   fileIdColumnName: string = 'id',
   fileNameColumnName: string = 'name',
   fileVersionColumnName: string = 'currentVersion',
-  isDev: boolean = false,
 ) {
   const { accessToken } = useSynapseContext()
   const separator = ','
   const writeHeader = true
   const includeRowIdAndRowVersion = false
   const originalSql = queryBundleRequest.query.sql
-  const adwbUrl = isDev
-    ? 'https://victorious-stone-0fe9de30f.3.azurestaticapps.net/'
-    : 'https://adwb-ws-transfer.alzheimersdata.org/'
+  const adwbUrl = 'https://adwb-ws-transfer.discover.alzheimersdata.org/'
   return async () => {
     try {
       const sql = addDrsUriToSql(

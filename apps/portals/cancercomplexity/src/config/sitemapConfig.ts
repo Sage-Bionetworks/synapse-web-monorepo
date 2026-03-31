@@ -1,7 +1,7 @@
 import {
   DetailPageConfig,
   SitemapConfig,
-} from '@sage-bionetworks/synapse-portal-framework/src/sitemap/types'
+} from '@sage-bionetworks/synapse-portal-framework/sitemap/types'
 import { datasetsSql, toolsSql, educationSql } from './resources'
 
 const detailPages: DetailPageConfig[] = [

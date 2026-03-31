@@ -10,15 +10,17 @@ const portalExploreConfig = exploreConfig[getPortal()]
 const goToExploreTab = async (page: Page, exploreTab: string) => {
   await test.step(`go to Explore/${exploreTab}`, async () => {
     await test.step('navigate to explore page', async () => {
-      await page.goto(`/Explore/${exploreTab}`)
+      await page.goto(`/Explore/${exploreTab}`, { waitUntil: 'networkidle' })
     })
 
     await test.step('explore page has loaded', async () => {
       await expect(
-        page.getByRole('main').getByText('Explore', { exact: true }),
+        page.getByRole('heading', { name: 'Explore', exact: true }),
       ).toBeVisible()
       await expect(page.getByLabel('Explore Sections')).toBeVisible()
-      await expect(page.getByRole('tab', { name: exploreTab })).toBeVisible()
+      // Extract the main tab name from paths like "Cohort Builder/Individuals"
+      const tabName = exploreTab.split('/')[0]
+      await expect(page.getByRole('tab', { name: tabName })).toBeVisible()
     })
 
     await dismissBanners(page)
@@ -71,20 +73,29 @@ const expectTopLevelControls = async (
   await test.step('expect top level controls', async () => {
     const header = page.getByTestId('TopLevelControls')
 
+    // Wait for the TopLevelControls to be visible
+    // Increase timeout for data-loading pages like Cohort Builder
+    await expect(header).toBeVisible({ timeout: 30000 })
+
     await test.step('confirm heading', async () => {
-      let exploreTabHeading = exploreTab
+      // Extract the main tab name from paths like "Cohort Builder/Individuals"
+      const tabName = exploreTab.split('/')[0]
+      let exploreTabHeading = tabName
       if (
-        (getPortal() === 'arkportal' && exploreTab === 'All Data') ||
-        (getPortal() === 'eliteportal' && exploreTab === 'Data')
+        (getPortal() === 'arkportal' && tabName === 'All Data') ||
+        (getPortal() === 'eliteportal' && tabName === 'Data')
       ) {
         exploreTabHeading = 'Data'
       } else if (
-        getPortal() === 'eliteportal' &&
-        exploreTab === 'Cohort Builder'
+        (getPortal() === 'eliteportal' ||
+          getPortal() === 'adknowledgeportal') &&
+        tabName === 'Cohort Builder'
       ) {
         exploreTabHeading = 'Participants'
       }
-      await expect(header.getByRole('heading')).toContainText(exploreTabHeading)
+      const heading = header.getByRole('heading')
+      await expect(heading).toBeVisible()
+      await expect(heading).toContainText(exploreTabHeading)
     })
 
     await test.step('confirm header buttons', async () => {

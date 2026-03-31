@@ -1,8 +1,8 @@
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from 'synapse-react-client'
-import { parseEntityIdFromSqlStatement } from 'synapse-react-client/utils/functions'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import { parseEntityIdFromSqlStatement } from 'synapse-react-client/utils/functions/index'
 import { metricsConfigSql, toolkitSql } from '@/config/resources'
-import { getAdditionalFilters } from 'synapse-react-client/utils/functions'
+import { getAdditionalFilters } from 'synapse-react-client/utils/functions/index'
 import {
   getMetricConfig,
   MetricsConfig,
@@ -11,7 +11,7 @@ import {
 import {
   SustainabilityScorecardProps,
   SustainabilityScorecardSummaryProps,
-} from 'synapse-react-client/components/SustainabilityScorecard'
+} from 'synapse-react-client/components/SustainabilityScorecard/index'
 import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
 import { TOOLS_DETAILS_PAGE_SUSTAINABILITY_AND_REUSABILITY_TAB_PATH } from '@/config/routeConstants'
 import { Link } from '@mui/material'

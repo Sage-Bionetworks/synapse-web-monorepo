@@ -9,7 +9,10 @@ export const useNativeSearchParams = (
   param: string,
 ): [string | null, (newValue: string | null) => void] => {
   const getValue = useCallback(
-    () => new URLSearchParams(window.location.search).get(param),
+    () =>
+      new URLSearchParams(
+        typeof window !== 'undefined' ? window.location.search : '',
+      ).get(param),
     [param],
   )
 
@@ -36,7 +39,8 @@ export const useNativeSearchParams = (
       searchParams.delete(param)
     }
     const newUrl = `${window.location.pathname}?${searchParams.toString()}`
-    window.history.pushState({}, '', newUrl)
+    // Preserve existing history.state to avoid corrupting React Router internals
+    window.history.pushState(window.history.state ?? {}, '', newUrl)
     setValue(newValue)
     window.dispatchEvent(new Event('pushstate'))
   }

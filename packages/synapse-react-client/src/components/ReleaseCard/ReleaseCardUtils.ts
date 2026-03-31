@@ -132,11 +132,11 @@ const getAllSelectedFacets = (
   return allSelectedFacets
 }
 
-export const formatExplorePagePathAndQueryString = (
+export const formatExplorePagePathAndQueryString = async (
   schema: ReleaseCardSchema,
   data: (string | null)[],
   btnConfig?: ButtonToExplorePageConfig,
-) => {
+): Promise<string | null> => {
   if (!btnConfig) return null
   const path = getValueFromData(
     schema,
@@ -168,7 +168,7 @@ export const formatExplorePagePathAndQueryString = (
   const hasSelectedFacets = exploreDataSql && allSelectedFacets.length > 0
 
   return hasSelectedFacets
-    ? generateEncodedPathAndQueryForSelectedFacetURL(
+    ? await generateEncodedPathAndQueryForSelectedFacetURL(
         path,
         exploreDataSql,
         allSelectedFacets,

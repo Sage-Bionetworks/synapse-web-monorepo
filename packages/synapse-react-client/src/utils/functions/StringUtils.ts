@@ -115,3 +115,8 @@ export function stringListToArray(input: string): string[] {
   }
   return inputArray
 }
+
+// Split a value by a separator and remove leading/trailing spaces
+export function splitAndTrim(value: string, sep: string = ','): string[] {
+  return value?.split(sep).map(v => v.trim()) ?? []
+}

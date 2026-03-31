@@ -1,4 +1,5 @@
 import SynapseClient from '@/synapse-client'
+import { useGlobalIsEditingContext } from '@/utils/context/GlobalIsEditingContext'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import {
   Alert,
@@ -16,8 +17,8 @@ import { Evaluation } from '@sage-bionetworks/synapse-types'
 import { MouseEvent, useEffect, useState } from 'react'
 import { ErrorBanner } from '../error/ErrorBanner'
 import IconSvg from '../IconSvg/IconSvg'
-import WarningDialog from '../SynapseForm/WarningDialog'
 import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
+import { DeleteEvaluationQueueConfirmationDialog } from './DeleteEvaluationQueueConfirmationDialog'
 
 export type EvaluationEditorProps = {
   /** Use if UPDATING an existing Evaluation. Id of the evaluation to edit */
@@ -43,8 +44,17 @@ export function EvaluationEditor({
     throw new Error('please use either evaluationId or entityId but not both')
   }
   const { accessToken } = useSynapseContext()
+  const { setIsEditing } = useGlobalIsEditingContext()
+  const [isDirty, setIsDirty] = useState(false)
   const [error, setError] = useState<SynapseClientError>()
   const [showSaveSuccess, setShowSaveSuccess] = useState<boolean>(false)
+
+  useEffect(() => {
+    setIsEditing(isDirty)
+    return () => {
+      setIsEditing(false)
+    }
+  }, [isDirty, setIsEditing])
 
   useEffect(() => {
     if (error) {
@@ -70,6 +80,7 @@ export function EvaluationEditor({
       evaluation.submissionInstructionsMessage ?? '',
     )
     setSubmissionReceiptMessage(evaluation.submissionReceiptMessage ?? '')
+    setIsDirty(false)
   }, [evaluation])
 
   useEffect(() => {
@@ -104,6 +115,7 @@ export function EvaluationEditor({
     promise
       .then(evaluation => {
         setEvaluation(evaluation)
+        setIsDirty(false)
         setShowSaveSuccess(true)
         if (onSaveSuccess) {
           onSaveSuccess(evaluation.id!)
@@ -137,7 +149,10 @@ export function EvaluationEditor({
           label={'Name'}
           fullWidth
           value={name}
-          onChange={event => setName(event.target.value)}
+          onChange={event => {
+            setName(event.target.value)
+            setIsDirty(true)
+          }}
         />
         <TextField
           label={'Description'}
@@ -145,7 +160,10 @@ export function EvaluationEditor({
           multiline
           value={description}
           rows={2}
-          onChange={event => setDescription(event.target.value)}
+          onChange={event => {
+            setDescription(event.target.value)
+            setIsDirty(true)
+          }}
         />
         <TextField
           fullWidth
@@ -153,15 +171,19 @@ export function EvaluationEditor({
           value={submissionInstructionsMessage}
           multiline
           rows={2}
-          onChange={event =>
+          onChange={event => {
             setSubmissionInstructionsMessage(event.target.value)
-          }
+            setIsDirty(true)
+          }}
         />
         <TextField
           label={'Submission Receipt Message'}
           fullWidth
           value={submissionReceiptMessage}
-          onChange={event => setSubmissionReceiptMessage(event.target.value)}
+          onChange={event => {
+            setSubmissionReceiptMessage(event.target.value)
+            setIsDirty(true)
+          }}
         />
         {evaluation?.createdOn && (
           <CreatedOnByUserDiv
@@ -217,20 +239,14 @@ function EvaluationEditorDropdown({
   return (
     <>
       {onDelete && (
-        <WarningDialog
-          title="Delete Evaluation Queue"
-          content="Are you sure you want to delete this Evaluation Queue?"
+        <DeleteEvaluationQueueConfirmationDialog
+          key={String(deleteWarningShow)}
           open={deleteWarningShow}
-          confirmButtonText="Delete"
           onConfirm={() => {
             onDelete()
             setDeleteWarningShow(false)
           }}
-          onConfirmCallbackArgs={[]}
-          onCancel={() => {
-            setDeleteWarningShow(false)
-          }}
-          confirmButtonColor="error"
+          onCancel={() => setDeleteWarningShow(false)}
         />
       )}
 

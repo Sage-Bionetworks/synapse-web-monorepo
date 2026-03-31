@@ -51,27 +51,27 @@ export const navbarConfig: NavbarConfig = {
       children: [
         {
           name: 'CTF',
-          path: '/Organizations/DetailsPage?abbreviation=CTF',
+          path: '/Organizations/CTF',
         },
         {
           name: 'NTAP',
-          path: '/Organizations/DetailsPage?abbreviation=NTAP',
+          path: '/Organizations/NTAP',
         },
         {
           name: 'GFF',
-          path: '/Organizations/DetailsPage?abbreviation=GFF',
+          path: '/Organizations/GFF',
         },
         {
           name: 'NCI DHART SPORE',
-          path: '/Organizations/DetailsPage?fundingAgency=NIH-NCI',
+          path: '/Organizations/DHART SPORE',
         },
         {
           name: 'CDMRP NFRP',
-          path: '/Organizations/DetailsPage?abbreviation=CDMRP',
+          path: '/Organizations/CDMRP',
         },
         {
           name: 'NFRI',
-          path: '/Organizations/DetailsPage?abbreviation=NFRI',
+          path: '/Organizations/NFRI',
         },
       ],
     },
@@ -82,7 +82,7 @@ export const navbarConfig: NavbarConfig = {
         { name: 'News', path: 'https://news.nfdataportal.org/' },
         {
           name: 'NF-OSI',
-          path: 'https://help.nf.synapse.org/NFdocs/about',
+          path: 'https://help.nf.synapse.org/nf-data-portal-documentation/about',
         },
         {
           name: 'Data Standards',
@@ -92,9 +92,12 @@ export const navbarConfig: NavbarConfig = {
     },
     {
       name: 'Contribute Data',
-      path: 'https://help.nf.synapse.org/NFdocs/how-to-share-data-an-overview',
+      path: 'https://help.nf.synapse.org/nf-data-portal-documentation/contributing-data',
     },
-    { name: 'Help', path: 'https://help.nf.synapse.org/NFdocs/' },
+    {
+      name: 'Help',
+      path: 'https://help.nf.synapse.org/nf-data-portal-documentation',
+    },
   ],
   isPortalsDropdownEnabled: true,
 }

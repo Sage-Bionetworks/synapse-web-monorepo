@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router'
 import { useAppContext } from '../AppContext'
 import { StyledOuterContainer } from '../components/StyledComponents'
-import SynapseClient from 'synapse-react-client/synapse-client'
+import SynapseClient from 'synapse-react-client/synapse-client/index'
 import UserOrTeamBadge from 'synapse-react-client/components/UserOrTeamBadge/UserOrTeamBadge'
 import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
 

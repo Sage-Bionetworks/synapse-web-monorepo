@@ -40,7 +40,7 @@
 }
 
 .ColorfulPortalCardWithChips__sectionTitle:global(.MuiTypography-root) {
-  color: var(--black);
+  color: var(--synapse-black);
   margin-bottom: 25px;
   font-size: 48px;
   line-height: 80px;
@@ -73,7 +73,7 @@
 }
 
 .ColorfulPortalCardWithChips__descriptionTitle:global(.MuiTypography-root) {
-  color: var(--black);
+  color: var(--synapse-black);
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -83,7 +83,7 @@
 
 .ColorfulPortalCardWithChips__registrationStatus:global(.MuiChip-root) {
   margin-left: auto;
-  color: var(--gray-900);
+  color: var(--synapse-gray-900);
   position: absolute;
   top: 0;
   right: 0;
@@ -102,8 +102,8 @@
   height: 36px;
   padding: 6px 16px;
   border-radius: 8px;
-  color: var(--black) !important;
-  border: 1px solid var(--black) !important;
+  color: var(--synapse-black) !important;
+  border: 1px solid var(--synapse-black) !important;
 
   @media (max-width: map.get(SrcVariables.$breakpoints, 'medium')) {
     width: 100%;
@@ -120,7 +120,7 @@
 .ColorfulPortalCardWithChips__chip:global(.MuiChip-root)
   :global(.MuiChip-label) {
   padding-right: 0;
-  color: var(--gray-900);
+  color: var(--synapse-gray-900);
 }
 
 .ColorfulPortalCardWithChips__chip:global(.MuiChip-root)
@@ -128,7 +128,7 @@
   margin-left: 0;
   margin-right: 5px;
   padding-right: 5px;
-  color: var(--black);
+  color: var(--synapse-black);
 }
 
 .ColorfulPortalCardWithChips__triangleImage {
@@ -204,7 +204,7 @@
 }
 
 .ColorfulPortalCardWithChips__description :global(.markdown) p {
-  color: var(--black) !important;
+  color: var(--synapse-black) !important;
   font-size: 14px;
   line-height: 20px;
 }

@@ -1,8 +1,6 @@
 import React from 'react'
 import { Box, Typography, Button } from '@mui/material'
 import HeaderSearchBox from '@sage-bionetworks/synapse-portal-framework/components/HeaderSearchBox'
-import { Query } from '@sage-bionetworks/synapse-types'
-import { getTextMatchesQueryFilter } from 'synapse-react-client/components/FullTextSearch/FullTextSearchUtils'
 import { FTSConfig } from 'synapse-react-client/components/SynapseTable/SearchV2'
 
 export type StandardsHeaderProps = {
@@ -99,19 +97,7 @@ const StandardsHeader = (props: StandardsHeaderProps): React.ReactNode => {
         <HeaderSearchBox
           searchExampleTerms={searchExampleTerms}
           searchPlaceholder={searchPlaceholder}
-          callback={searchString => {
-            const filter = getTextMatchesQueryFilter(
-              searchString,
-              props.ftsConfig,
-            )
-            const query: Query = {
-              sql: props.sql,
-              additionalFilters: [filter],
-            }
-            window.location.assign(
-              `/Explore/?QueryWrapper0=${JSON.stringify(query)}`,
-            )
-          }}
+          path="/Search"
           sx={{
             flex: 1,
             '& > :first-child': {

@@ -6,10 +6,8 @@ import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/Lo
 import { PortalSearchTabConfig, PortalSearchTabs } from './PortalSearchTabs'
 import PortalFullTextSearchField from './PortalFullTextSearchField'
 import SearchParamAwareQueryWrapperPlotNav from './SearchParamAwareQueryWrapperPlotNav'
-import {
-  QueryWrapperPlotNavProps,
-  StandaloneQueryWrapperProps,
-} from 'synapse-react-client'
+import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import type { StandaloneQueryWrapperProps } from 'synapse-react-client/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
 
 export type PortalSearchPageProps = {
   selectedTabIndex?: number
@@ -35,7 +33,7 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
   const navigate = useNavigate()
   const location = useLocation()
   const [searchParams] = useSearchParams()
-  const role = searchParams.get('FTS_SEARCH_ROLE')
+  const role = searchParams.get('SEARCH_ROLE')
   const onQueryResultBundleChange = useCallback(
     (
       tabIndex: number,
@@ -92,7 +90,7 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
       })
     }, [configs, selectedTabIndex])
 
-  // on search field value update, update the special search parameter FTS_SEARCH_TERM, which the QueryWrapperPlotNav will load as the search term
+  // on search field value update, update the special search parameter SEARCH_TERM, which the QueryWrapperPlotNav will load as the search term
   return (
     <Box sx={{ p: { xs: '10px', lg: '50px' } }}>
       <PortalFullTextSearchField

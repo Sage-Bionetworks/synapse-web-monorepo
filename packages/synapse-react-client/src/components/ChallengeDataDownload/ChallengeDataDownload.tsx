@@ -21,17 +21,17 @@ export function ChallengeDataDownload({
 }: ChallengeDataDownloadProps) {
   const { downloadCartPageUrl } = useSynapseContext()
   const selectMultiple = true
-  const { selectedEntities, toggleSelection } =
+  const { selectedEntities, toggleSelection, setInitialVersion } =
     useEntitySelection(selectMultiple)
 
   const { mutate: addBatchToDownloadList } = useAddFileBatchToDownloadList({
     onSuccess: () => {
       displayToast(
-        'File(s) were successfully added to your Download Cart.',
+        'File(s) were successfully added to your Download List.',
         'success',
         {
           primaryButtonConfig: {
-            text: 'View Download Cart',
+            text: 'View Download List',
             onClick: () => (window.location.href = downloadCartPageUrl),
           },
         },
@@ -39,7 +39,7 @@ export function ChallengeDataDownload({
     },
     onError: e => {
       displayToast(
-        `Unable to add the file to your Download Cart. ${e.reason}`,
+        `Unable to add the file to your Download List. ${e.reason}`,
         'danger',
       )
     },
@@ -72,6 +72,7 @@ export function ChallengeDataDownload({
     isIdSelected,
     isSelectable: () => true,
     toggleSelection,
+    setInitialVersion,
     hiddenColumns: [
       DetailsViewColumn.BADGES,
       DetailsViewColumn.ADD_TO_DOWNLOAD_CART,
@@ -100,7 +101,7 @@ export function ChallengeDataDownload({
           onClick={onAddClick}
           disabled={!selectedEntities.toArray().length}
         >
-          Add to Download Cart
+          Add to Download List
         </Button>
       </Box>
     </>

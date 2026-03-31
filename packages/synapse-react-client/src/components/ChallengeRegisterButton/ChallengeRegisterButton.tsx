@@ -24,7 +24,7 @@ const ChallengeRegisterButton = ({
   onJoinClick,
   onLeaveClick,
 }: ChallengeRegisterButtonProps): React.ReactNode => {
-  const { isAuthenticated, accessToken } = useSynapseContext()
+  const { isAuthenticated } = useSynapseContext()
   const { data: userProfile } = useGetCurrentUserProfile({
     enabled: isAuthenticated,
   })
@@ -86,7 +86,7 @@ const ChallengeRegisterButton = ({
           disableElevation={true}
           variant="contained"
           onClick={() =>
-            accessToken && onJoinClick ? onJoinClick() : undefined
+            isAuthenticated && onJoinClick ? onJoinClick() : undefined
           }
           sx={{
             color: 'white',

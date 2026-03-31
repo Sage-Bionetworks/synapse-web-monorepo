@@ -20,13 +20,13 @@ export function SageResourcesPopover({
   anchorEl,
   onClose,
   resourceName = 'Portals',
-  description = 'Community data portals in Sage Bionetworks serve as specialized platforms designed to facilitate open data sharing and collaboration among researchers.',
+  description = 'Sage Bionetworks builds and supports community portals as tailored platforms for data sharing and collaboration across diverse research areas.',
   filterByType,
   allResourcesUrl,
 }: SageResourcesPopoverProps) {
   const theme = useTheme()
   const open = Boolean(anchorEl)
-  const hostname = window.location.hostname
+  const hostname = typeof window !== 'undefined' ? window.location.hostname : ''
 
   const additionalFilters: ColumnSingleValueQueryFilter[] = [
     {

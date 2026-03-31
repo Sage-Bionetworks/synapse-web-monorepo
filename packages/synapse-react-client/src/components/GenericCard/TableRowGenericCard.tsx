@@ -13,17 +13,18 @@ import {
 } from '@/components/GenericCard/PortalDOI/PortalDOIUtils'
 import { mapRowToRecord } from '@/components/SynapseTable/SynapseTableUtils'
 import { useGetEntity } from '@/synapse-queries'
-import * as SynapseConstants from '@/utils/SynapseConstants'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import {
   isDatasetCollection,
   isTableEntity,
 } from '@/utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
-import { getColumnIndex } from '@/utils/functions/SqlFunctions'
 import { parseSynId } from '@/utils/functions/RegularExpressions'
+import { getColumnIndex } from '@/utils/functions/SqlFunctions'
+import { TargetEnum } from '@/utils/html/TargetEnum'
+import * as SynapseConstants from '@/utils/SynapseConstants'
 import { GetAppTwoTone } from '@mui/icons-material'
-import { Box, Collapse, Link } from '@mui/material'
+import { Box, Collapse, Link, Stack, Typography } from '@mui/material'
 import {
   ColumnModel,
   ColumnTypeEnum,
@@ -33,21 +34,20 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import React, { useCallback, useMemo, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
-import { TargetEnum } from '@/utils/html/TargetEnum'
 import CitationPopover from '../CitationPopover'
 import { EntityDownloadConfirmation } from '../EntityDownloadConfirmation'
 import { HeaderCardVariant } from '../HeaderCard'
 import IconList from '../IconList'
 import { useQueryContext } from '../QueryContext/QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
-import GenericCard from './GenericCard'
-import GenericCardActionButton from './GenericCardActionButton'
-import { SynapseCardLabel } from './SynapseCardLabel'
-import { SustainabilityScorecardProps } from '../SustainabilityScorecard/SustainabilityScorecard'
-import { PortalDOIConfiguration } from './PortalDOI/PortalDOIConfiguration'
 import ShareThisPage, {
   ShareThisPageProps,
 } from '../ShareThisPage/ShareThisPage'
+import { SustainabilityScorecardProps } from '../SustainabilityScorecard/SustainabilityScorecard'
+import GenericCard from './GenericCard'
+import GenericCardActionButton from './GenericCardActionButton'
+import { PortalDOIConfiguration } from './PortalDOI/PortalDOIConfiguration'
+import { SynapseCardLabel } from './SynapseCardLabel'
 import { useResolvedSynapseEntity } from './useResolvedSynapseEntity'
 
 type RowSynapseEntityConfig = {
@@ -128,6 +128,12 @@ export type TableToGenericCardMapping = {
   link?: string
   /** Column name of the STRING_LIST column that includes icon names that represent icons that should be displayed on the card */
   dataTypeIconNames?: string
+  /**
+   * Ordered list of column names to display to the right of the title area.
+   * Each renders as "Display Name: Value" on its own line. Rows with empty values are skipped.
+   * The display name is derived from getColumnDisplayName (respects column aliases and unCamelCase).
+   */
+  titleAreaDetails?: string[]
   /** Configuration for resolving the Synapse entity ID/version represented by each card row.
    *  The ID and version sources must both reference either row-based values or column-based values.
    */
@@ -222,6 +228,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     descriptionConfig,
     columnIconOptions,
     CardTypeAdornment,
+    charCountCutoff,
   } = props
 
   const {
@@ -280,6 +287,53 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     },
     [schema, data],
   )
+
+  const resolvedTitleAreaRightContent = useMemo(() => {
+    const { titleAreaDetails } = genericCardSchema
+    if (!titleAreaDetails || titleAreaDetails.length === 0) return undefined
+    const rows = titleAreaDetails
+      .map(columnName => {
+        const rawValue: string | undefined = data[schema[columnName]]
+        if (!rawValue) return null
+        return { name: getColumnDisplayName(columnName), rawValue, columnName }
+      })
+      .filter(Boolean) as {
+      name: string
+      rawValue: string
+      columnName: string
+    }[]
+    if (rows.length === 0) return undefined
+    return (
+      <Stack direction="column" gap="4px">
+        {rows.map(({ name, rawValue, columnName }) => (
+          <Stack key={columnName} direction="row" gap="4px" alignItems="center">
+            <Typography component="span" variant="body1">
+              {name}:
+            </Typography>
+            <SynapseCardLabel
+              value={rawValue}
+              columnName={columnName}
+              labelLink={undefined}
+              isHeader={isHeader}
+              selectColumns={selectColumns}
+              columnModels={columnModels}
+              rowData={data}
+              columnIconOptions={columnIconOptions}
+            />
+          </Stack>
+        ))}
+      </Stack>
+    )
+  }, [
+    genericCardSchema,
+    data,
+    schema,
+    getColumnDisplayName,
+    isHeader,
+    selectColumns,
+    columnModels,
+    columnIconOptions,
+  ])
 
   const {
     entityId: resolvedSynapseEntityId,
@@ -350,7 +404,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
         columnDisplayName: 'HOW TO DOWNLOAD',
         value: (
           <Link onClick={() => setShowDownloadConfirmation(val => !val)}>
-            Click here to add to Synapse download cart
+            Click here to add to Synapse download list
           </Link>
         ),
       })
@@ -393,6 +447,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
             selectColumns={selectColumns}
             columnModels={columnModels}
             rowData={data}
+            columnIconOptions={columnIconOptions}
           />
         )
         columnDisplayName = getColumnDisplayName(columnName)
@@ -420,20 +475,30 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   const doiValue =
     doiColumnIndex !== undefined ? data[doiColumnIndex] : undefined
 
-  let ctaHref: string | undefined = undefined,
-    ctaTarget: string | undefined = undefined
-  if (ctaLinkConfig) {
-    const ctaLinkValue: string = data[schema[ctaLinkConfig.link]] || ''
-    const { href: newCtaHref, target: newCtaTarget } = getLinkParams(
-      ctaLinkValue,
-      undefined, //card link config
-      data,
-      schema,
-      rowId,
-    )
-    ctaHref = newCtaHref
-    ctaTarget = newCtaTarget
-  }
+  // Normalize ctaLinkConfig to array and resolve each config
+  const ctaLinkConfigs = ctaLinkConfig
+    ? Array.isArray(ctaLinkConfig)
+      ? ctaLinkConfig
+      : [ctaLinkConfig]
+    : []
+  const resolvedCtaLinkConfigs = ctaLinkConfigs
+    .map(config => {
+      const ctaLinkValue: string = data[schema[config.link]] || ''
+      if (!ctaLinkValue) return null
+      const { href, target } = getLinkParams(
+        ctaLinkValue,
+        undefined, //card link config
+        data,
+        schema,
+        rowId,
+      )
+      return {
+        text: config.text,
+        href,
+        target,
+      }
+    })
+    .filter(Boolean) as { text: string; href: string; target?: string }[]
 
   let croissantButton = <></>
   if (
@@ -487,20 +552,15 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
           : undefined
       }
       ctaLinkConfig={
-        ctaLinkConfig && ctaHref
-          ? {
-              text: ctaLinkConfig?.text,
-              href: ctaHref,
-              target: ctaTarget,
-            }
-          : undefined
+        resolvedCtaLinkConfigs.length > 0 ? resolvedCtaLinkConfigs : undefined
       }
+      titleAreaRightContent={resolvedTitleAreaRightContent}
       description={description}
       descriptionSubTitle={descriptionSubTitle}
       descriptionConfig={descriptionConfig}
+      charCountCutoff={charCountCutoff}
       labels={values}
       secondaryLabelLimit={secondaryLabelLimit}
-      columnIconOptions={columnIconOptions}
       useStylesForDisplayedImage={Boolean(imageFileHandleIdValue)}
       cardTopContent={
         resolvedDownloadCartSynIdValue && (

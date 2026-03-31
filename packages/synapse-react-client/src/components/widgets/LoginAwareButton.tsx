@@ -1,4 +1,4 @@
-import { useSynapseContext } from '@/utils'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import { Button, ButtonProps } from '@mui/material'
 import React from 'react'

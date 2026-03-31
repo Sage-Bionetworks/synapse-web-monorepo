@@ -8,7 +8,7 @@
 
   // Almost a direct copy of the form-control-focus mixin in bootstrap 4
   .form-control:focus-within {
-    border-color: color.adjust(SRC.$primary-action-color, $lightness: 25%);
-    box-shadow: 0 0 0 0.2rem rgba(SRC.$primary-action-color, 0.25);
+    border-color: var(--synapse-primary-focus-border);
+    box-shadow: 0 0 0 0.2rem var(--synapse-primary-focus-shadow);
   }
 }

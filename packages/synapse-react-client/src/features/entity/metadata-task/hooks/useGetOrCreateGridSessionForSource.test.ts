@@ -1,4 +1,5 @@
 import * as gridSession from '@/synapse-queries/grid/useGridSession'
+import { KeyFactory } from '@/synapse-queries'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import * as context from '@/utils/context/SynapseContext'
 import { CreateGridRequest } from '@sage-bionetworks/synapse-client'
@@ -26,7 +27,10 @@ describe('useGetOrCreateGridSessionForSource', () => {
     vi.spyOn(gridSession, 'useCreateGridSession').mockReturnValue({
       mutateAsync: vi.fn(),
     } as any)
-    vi.spyOn(context, 'useSynapseContext').mockReturnValue({} as any)
+    vi.spyOn(context, 'useSynapseContext').mockReturnValue({
+      keyFactory: new KeyFactory('mock-token'),
+      synapseClient: {} as any,
+    } as any)
     const { result } = renderHook(() => useGetOrCreateGridSessionForSource(), {
       wrapper: createWrapper(),
     })
@@ -45,7 +49,10 @@ describe('useGetOrCreateGridSessionForSource', () => {
     vi.spyOn(gridSession, 'useCreateGridSession').mockReturnValue({
       mutateAsync,
     } as any)
-    vi.spyOn(context, 'useSynapseContext').mockReturnValue({} as any)
+    vi.spyOn(context, 'useSynapseContext').mockReturnValue({
+      keyFactory: new KeyFactory('mock-token'),
+      synapseClient: {} as any,
+    } as any)
     const { result } = renderHook(() => useGetOrCreateGridSessionForSource(), {
       wrapper: createWrapper(),
     })
