@@ -21,7 +21,7 @@
     "@nx/shared-fs-cache": "^5.0.0",
     "@vitest/eslint-plugin": "^1.2.1",
     "dotenv-cli": "^7.4.4",
-    "eslint": "^9.26.0",
+    "eslint": "^9.39.4",
     "eslint-plugin-barrel-files": "^2.1.1",
     "eslint-plugin-jest-dom": "^5.5.0",
     "eslint-plugin-react": "^7.37.5",
