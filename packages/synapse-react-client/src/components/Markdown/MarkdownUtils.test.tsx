@@ -19,11 +19,18 @@ describe('MarkdownUtils DOM', () => {
       expect(isBlockLevelElement(h1)).toBe(true)
     })
 
-    it('should return true for Synapse widgets (data-widgetparams)', () => {
+    it('should return true for block Synapse widgets (data-widgetparams)', () => {
       const widget = document.createElement('div')
       widget.setAttribute('data-widgetparams', 'entitypreview?entityId=syn123')
 
       expect(isBlockLevelElement(widget)).toBe(true)
+    })
+
+    it('should return false for inline Synapse widgets (badge)', () => {
+      const widget = document.createElement('span')
+      widget.setAttribute('data-widgetparams', 'badge?alias=test')
+
+      expect(isBlockLevelElement(widget)).toBe(false)
     })
 
     it('should return false for inline elements', () => {
@@ -159,6 +166,17 @@ describe('MarkdownUtils DOM', () => {
 
       expect(doc.body.querySelector('p')).toBeNull()
       expect(doc.body.querySelector('[data-widgetparams]')).not.toBeNull()
+    })
+
+    it('should not swap <p> for a badge widget (inline widget)', () => {
+      const doc = new DOMParser().parseFromString(
+        '<p><span data-widgetparams="badge?alias=jsmith"></span></p>',
+        'text/html',
+      )
+
+      fixInvalidNesting(doc.body)
+
+      expect(doc.body.querySelector('p')).not.toBeNull()
     })
 
     it('should not modify valid inline nesting', () => {

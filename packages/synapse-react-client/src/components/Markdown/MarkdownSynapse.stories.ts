@@ -59,6 +59,8 @@ export const ButtonLink: Story = {
 
 \${buttonlink?text=Highlight&highlight=true} \n
 
+Some text before the inline button \${buttonlink?text=Highlight&highlight=true} \n
+
 Links to synapse: \n
 \${buttonlink?text=This%20Button%20Links%20to%20Synapse&url=https://synapse.org/}
   `,

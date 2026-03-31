@@ -212,6 +212,9 @@ const inlineTags = ['span', 'a', 'em', 'strong', 'b', 'i', 'u', 'sub', 'sup']
 
 const tableTags = ['table', 'thead', 'tbody', 'tr', 'tfoot']
 
+// Widget types that render inline elements and should not be treated as block-level
+const inlineWidgetTypes = ['badge', 'image', 'imageLink', 'buttonlink']
+
 const isInlineContainer = (node: Node): boolean => {
   if (node.nodeType !== Node.ELEMENT_NODE) {
     return false
@@ -232,7 +235,10 @@ export const isBlockLevelElement = (node: Node): boolean => {
   const tag = element.tagName.toLowerCase()
   const isStandardBlock = blockLevelTags.includes(tag)
 
-  const isWidget = element.hasAttribute('data-widgetparams')
+  const widgetParams = element.getAttribute('data-widgetparams')
+  const isWidget =
+    widgetParams !== null &&
+    !inlineWidgetTypes.includes(widgetParams.split('?')[0])
 
   return isStandardBlock || isWidget
 }
