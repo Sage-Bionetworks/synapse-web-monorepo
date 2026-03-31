@@ -17,7 +17,7 @@ import {
 import { omitBy } from 'lodash-es'
 import { useCallback, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
-import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
+import UserSearchBox from '../UserSearchBox/UserSearchBox'
 import {
   AccessRequestSubmissionTable,
   AccessRequestSubmissionTableProps,
@@ -169,7 +169,7 @@ export const DataAccessSubmissionDashboard = (): React.ReactNode => {
           >
             Filter by Requester
           </Typography>
-          <UserSearchBoxV2
+          <UserSearchBox
             inputId="requester-filter"
             placeholder="Search for a user name"
             defaultValue={accessorId}
@@ -185,7 +185,7 @@ export const DataAccessSubmissionDashboard = (): React.ReactNode => {
           >
             Filter by Reviewer
           </Typography>
-          <UserSearchBoxV2
+          <UserSearchBox
             inputId="reviewer-filter"
             placeholder="Search for a user or team name"
             defaultValue={reviewerId}

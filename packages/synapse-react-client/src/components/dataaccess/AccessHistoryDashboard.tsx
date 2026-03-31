@@ -9,7 +9,7 @@ import { omitBy } from 'lodash-es'
 import { useCallback, useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
-import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
+import UserSearchBox from '../UserSearchBox/UserSearchBox'
 import {
   AccessApprovalsTable,
   AccessApprovalsTableProps,
@@ -127,7 +127,7 @@ export const UserHistoryDashboard = (): React.ReactNode => {
           >
             Select a user to view their access history
           </Typography>
-          <UserSearchBoxV2
+          <UserSearchBox
             inputId="user-filter"
             onChange={onAccessorChange}
             defaultValue={accessorId}

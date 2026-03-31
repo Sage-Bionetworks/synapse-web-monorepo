@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { DialogBase } from '../DialogBase'
 import { TYPE_FILTER, UserGroupHeader } from '@sage-bionetworks/synapse-types'
-import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
+import UserSearchBox from '../UserSearchBox/UserSearchBox'
 
 export type UserMentionModalProps = {
   show: boolean
@@ -31,11 +31,11 @@ export function UserMentionModal({
         onCancel={onClose}
         title="Find User or Team"
         content={
-          <UserSearchBoxV2
+          <UserSearchBox
             placeholder="Search for a user or team name"
             onChange={onUserChange}
             typeFilter={TYPE_FILTER.ALL}
-            focusOnSelect={true}
+            autoFocus={true}
           />
         }
         sx={{

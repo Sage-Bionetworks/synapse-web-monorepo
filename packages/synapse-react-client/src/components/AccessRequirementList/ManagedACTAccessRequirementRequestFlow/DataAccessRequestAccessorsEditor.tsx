@@ -16,7 +16,7 @@ import {
 import { ReactNode } from 'react'
 import IconSvg from '../../IconSvg/IconSvg'
 import { UserBadge } from '../../UserCard/UserBadge'
-import UserSearchBoxV2 from '../../UserSearchBox/UserSearchBoxV2'
+import UserSearchBox from '../../UserSearchBox/UserSearchBox'
 
 export type DataAccessRequestAccessorsEditorProps = {
   /* The current set of accessor changes for a data access request */
@@ -90,7 +90,7 @@ export default function DataAccessRequestAccessorsEditor(
       >
         {helpText}
       </Typography>
-      <UserSearchBoxV2
+      <UserSearchBox
         inputId={'requesters'}
         typeFilter={TYPE_FILTER.USERS_ONLY}
         onChange={onSelectUserCallback}
