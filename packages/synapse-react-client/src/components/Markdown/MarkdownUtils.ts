@@ -208,7 +208,7 @@ const blockLevelTags = [
   'video',
 ]
 
-const inlineTags = ['span', 'a']
+const inlineTags = ['span', 'a', 'em', 'strong', 'b', 'i', 'u', 'sub', 'sup']
 
 const tableTags = ['table', 'thead', 'tbody', 'tr', 'tfoot']
 
