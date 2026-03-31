@@ -3,7 +3,7 @@ import { useDebouncedEffect } from '@/utils/hooks/useDebouncedEffect'
 import useGetInfoFromIds from '@/utils/hooks/useGetInfoFromIds'
 import { Autocomplete, Box, Skeleton, TextField } from '@mui/material'
 import { TYPE_FILTER, UserGroupHeader } from '@sage-bionetworks/synapse-types'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
 
 export type UserSearchBoxProps = {
@@ -75,24 +75,21 @@ function UserSearchBox(props: UserSearchBoxProps) {
       type: 'USER_PROFILE',
     })
 
-  // Internal state for uncontrolled mode
-  const [internalValue, setInternalValue] = useState<UserGroupHeader | null>(
-    null,
-  )
-  // Once the defaultValue header resolves, set it as the initial internal value
-  const [defaultValueApplied, setDefaultValueApplied] = useState(false)
-  useEffect(() => {
-    if (!defaultValueApplied && defaultUserGroupHeader !== undefined) {
-      setInternalValue(defaultUserGroupHeader)
-      setDefaultValueApplied(true)
-    }
-  }, [defaultUserGroupHeader, defaultValueApplied])
+  // Internal state for uncontrolled mode.
+  // undefined = user hasn't interacted yet → falls back to defaultUserGroupHeader
+  // null      = user explicitly cleared the selection
+  // header    = user's current selection
+  const [internalValue, setInternalValue] = useState<
+    UserGroupHeader | null | undefined
+  >(undefined)
 
   const resolvedValue: UserGroupHeader | null = isControlled
     ? typeof valueProp === 'string'
       ? resolvedControlledHeader ?? null
       : null
-    : internalValue
+    : internalValue !== undefined
+    ? internalValue
+    : defaultUserGroupHeader ?? null
 
   // Show the badge in the input field when a value is selected and the user
   // is not actively searching.
@@ -124,7 +121,10 @@ function UserSearchBox(props: UserSearchBoxProps) {
     }
   }, [placeholder, typeFilter])
 
-  const isLoadingDefaultValue = defaultValue != null && !defaultValueApplied
+  const isLoadingDefaultValue =
+    defaultValue != null &&
+    internalValue === undefined &&
+    defaultUserGroupHeader === undefined
   const isLoadingControlledValue =
     isControlled &&
     typeof valueProp === 'string' &&
