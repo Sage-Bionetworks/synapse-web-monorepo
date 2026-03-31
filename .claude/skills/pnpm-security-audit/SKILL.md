@@ -106,7 +106,16 @@ pnpm info <parent> versions --json
 pnpm info <parent>@latest dependencies --json | grep <vulnerable-package>
 ```
 
-Always check for breaking changes before recommending a parent upgrade, especially for major version bumps or core tools (eslint, vite, storybook, typescript-eslint).
+**Before applying a parent update, check for breaking changes** — especially for major version bumps or core tools (eslint, vite, storybook, typescript-eslint):
+
+```bash
+# Check the changelog or release notes
+pnpm info <parent>@latest --json | grep -E '"version"|"description"'
+# For GitHub-hosted packages, check releases page for BREAKING CHANGES entries
+# For major version bumps, check the migration guide before proceeding
+```
+
+If there are breaking changes, weigh them against the security risk. For dev-only deps, breaking changes are usually lower risk. For production deps or core build tools, confirm with the user before upgrading.
 
 ### Option C — pnpm override (last resort)
 
@@ -147,6 +156,8 @@ Option 3: pnpm override
 If one option is clearly superior, proceed directly and explain the choice.
 
 ## Step 5: Apply the fix and verify
+
+**Before editing any package.json, note the existing version specifier style** — exact pin (`"4.1.0"`), caret range (`"^4.1.0"`), or tilde (`"~4.1.0"`). When bumping a version for security, preserve the original style. If the original was exact-pinned, use the exact patched version, not a range. Changing pinning policy is a separate decision that should be made deliberately, not silently as a side effect of a security fix.
 
 After applying, always confirm the vulnerable version is gone:
 

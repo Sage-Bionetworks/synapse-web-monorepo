@@ -39,6 +39,31 @@ if (!VER_RE.test(patchedVersion)) {
   process.exit(1)
 }
 
+// ---------------------------------------------------------------------------
+// Workspace package detection — fetched once, used to flag parents that are
+// local workspace packages (pnpm info returns registry data for those, which
+// won't reflect local changes and makes overrides look necessary when a direct
+// package.json edit is the right fix).
+// ---------------------------------------------------------------------------
+
+function getWorkspacePackageNames(): Set<string> {
+  try {
+    const result = spawnSync(
+      'pnpm',
+      ['list', '--recursive', '--depth', '0', '--json'],
+      { encoding: 'utf8', timeout: 30_000 },
+    )
+    const parsed = JSON.parse(result.stdout ?? '[]') as Array<{
+      name?: string
+    }>
+    return new Set(parsed.map(p => p.name).filter(Boolean) as string[])
+  } catch {
+    return new Set()
+  }
+}
+
+const workspacePackages = getWorkspacePackageNames()
+
 function satisfies(version: string, range: string): boolean | null {
   if (!semver.valid(semver.coerce(version))) return null
   try {
@@ -198,7 +223,13 @@ for (const block of blocks) {
     seenParent.add(key)
 
     const depType = parent.isDev ? dim(' (dev)') : ' (prod)'
-    console.log(`\n    Parent: ${bold(key)}${depType}`)
+    const isWorkspace = workspacePackages.has(parent.name)
+    const workspaceNote = isWorkspace
+      ? yellow(
+          '  ⚠️  workspace package — edit its package.json directly, not an override',
+        )
+      : ''
+    console.log(`\n    Parent: ${bold(key)}${depType}${workspaceNote}`)
 
     const info = runJSON(['info', `${parent.name}@${parent.version}`, '--json'])
     const range = allDeps(info)[pkg] ?? null
@@ -224,6 +255,17 @@ for (const block of blocks) {
 
     if (rangeOk && !isPeer) {
       console.log(green(`      → FIX: pnpm update ${pkg} --recursive`))
+      continue
+    }
+
+    // For workspace packages, pnpm info returns registry data (not local state),
+    // so the "latest parent" lookup is meaningless. Always recommend editing directly.
+    if (isWorkspace) {
+      console.log(
+        yellow(
+          `      → FIX: bump ${pkg}@"${range}" to "${patchedVersion}" in ${parent.name}'s package.json`,
+        ),
+      )
       continue
     }
 
