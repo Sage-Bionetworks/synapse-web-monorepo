@@ -6,21 +6,27 @@
  * immediate parent's declared range, and recommends the best fix strategy.
  *
  * Usage (run from monorepo root):
- *   npx tsx .claude/skills/pnpm-security-audit/scripts/investigate.ts <package> <patched-version>
+ *   npx tsx .claude/skills/pnpm-security-audit/scripts/investigate.ts <package> <patched-version> [vulnerable-range]
+ *
+ * The optional vulnerable-range scopes which installed versions are considered
+ * vulnerable. Use this when a CVE affects only a specific version range (e.g.
+ * ">=4.0.0 <4.0.4") so that installs outside that range aren't incorrectly
+ * flagged. Without it, any version below patched-version is treated as vulnerable.
  *
  * Examples:
  *   npx tsx .claude/skills/pnpm-security-audit/scripts/investigate.ts flatted 3.4.2
  *   npx tsx .claude/skills/pnpm-security-audit/scripts/investigate.ts minimatch 3.1.4
+ *   npx tsx .claude/skills/pnpm-security-audit/scripts/investigate.ts picomatch 4.0.4 ">=4.0.0 <4.0.4"
  */
 
 import { spawnSync } from 'node:child_process'
 import semver from 'semver'
 
-const [pkg, patchedVersion] = process.argv.slice(2)
+const [pkg, patchedVersion, vulnerableRange] = process.argv.slice(2)
 
 if (!pkg || !patchedVersion) {
   console.error(
-    'Usage: npx tsx investigate.ts <package-name> <patched-version>',
+    'Usage: npx tsx investigate.ts <package-name> <patched-version> [vulnerable-range]',
   )
   process.exit(1)
 }
@@ -201,7 +207,17 @@ if (blocks.length === 0) {
 const seenParent = new Set<string>()
 
 for (const block of blocks) {
-  const isPatched = satisfies(block.installedVersion, `>=${patchedVersion}`)
+  // If a vulnerableRange is provided, a version is only vulnerable if it falls
+  // within that range. Without it, anything below patchedVersion is vulnerable.
+  // This matters when a CVE affects a specific range (e.g. ">=4.0.0 <4.0.4") —
+  // older major versions have their own separate vulnerability status and
+  // shouldn't be flagged as needing the 4.x patch.
+  const isInVulnerableRange = vulnerableRange
+    ? semver.satisfies(block.installedVersion, vulnerableRange) ?? false
+    : true
+  const isPatched = isInVulnerableRange
+    ? satisfies(block.installedVersion, `>=${patchedVersion}`)
+    : true // outside the vulnerable range → not affected by this CVE
   const label =
     isPatched === false
       ? red(' VULNERABLE')

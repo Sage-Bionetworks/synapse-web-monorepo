@@ -64,10 +64,12 @@ Then add your analysis block immediately after (populated as you investigate).
 Use the bundled investigation script — it runs `pnpm why`, fetches every immediate parent's declared range, checks whether that range covers the patched version, and looks up the latest parent to determine if a simple update will fix it:
 
 ```bash
-npx tsx .claude/skills/pnpm-security-audit/scripts/investigate.ts <package> <patched-version>
+npx tsx .claude/skills/pnpm-security-audit/scripts/investigate.ts <package> <patched-version> [vulnerable-range]
 # Example:
 npx tsx .claude/skills/pnpm-security-audit/scripts/investigate.ts flatted 3.4.2
 ```
+
+Pass the optional `vulnerable-range` when the CVE's vulnerable versions don't start at 0 — e.g. `>=4.0.0 <4.0.4`. Without it, the script treats any version below `patched-version` as vulnerable, which produces false positives when multiple major version lines are installed and each has its own patched version. Read the `Vulnerable versions` field in the audit table: if it starts with `>=` rather than `<`, always pass the range.
 
 The script outputs per-version status and a concrete `→ FIX:` recommendation for each parent:
 
