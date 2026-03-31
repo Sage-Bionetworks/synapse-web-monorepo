@@ -21,6 +21,8 @@ export type PlotsContainerProps = {
   facetsToPlot?: string[]
   customPlots?: QueryWrapperSynapsePlotProps[]
   initialPlotType?: PlotType
+  /** Specify the initial plot type per facet column name. Takes precedence over `initialPlotType` for matching facets. */
+  initialPlotTypeByFacetColumnName?: Record<string, PlotType>
 }
 type CustomPlotIdentifier = {
   title: string
@@ -90,6 +92,7 @@ const getCombinedNewPlots = (
     'applyChangesToFacetFilter' | 'applyChangesToGraphSlice' | 'facetToPlot'
   >[] = [],
   initialPlotType: PlotType = DEFAULT_PLOT_TYPE,
+  initialPlotTypeByFacetColumnName?: Record<string, PlotType>,
 ): UiPlotState[] => [
   ...customPlots.map((plotProps, index) => ({
     plotId: getCustomPlotIdentifier(plotProps),
@@ -99,7 +102,10 @@ const getCombinedNewPlots = (
   ...facetNavPanelPropsArray.map((facetPlotProps, index) => ({
     plotId: facetPlotProps.facetToPlot,
     isHidden: index + customPlots.length >= DEFAULT_VISIBLE_PLOTS,
-    plotType: initialPlotType,
+    plotType:
+      initialPlotTypeByFacetColumnName?.[
+        facetPlotProps.facetToPlot.columnName
+      ] ?? initialPlotType,
   })),
 ]
 
@@ -135,6 +141,7 @@ function PlotsContainer(props: PlotsContainerProps) {
     facetsToPlot = DEFAULT_FACETS_TO_PLOT,
     customPlots = DEFAULT_CUSTOM_PLOTS,
     initialPlotType = DEFAULT_PLOT_TYPE,
+    initialPlotTypeByFacetColumnName,
   } = props
   const { data: queryMetadata } = useSuspenseGetQueryMetadata()
   const { showPlots: showPlotVisualization } = useQueryVisualizationContext()
@@ -153,6 +160,7 @@ function PlotsContainer(props: PlotsContainerProps) {
       customPlots,
       facetNavPanelPropsArray,
       initialPlotType,
+      initialPlotTypeByFacetColumnName,
     )
 
     // Update the state with new plots
@@ -171,7 +179,12 @@ function PlotsContainer(props: PlotsContainerProps) {
       const combinedPlots = [...updatedPlots, ...newPlots]
       return combinedPlots
     })
-  }, [customPlots, facetNavPanelPropsArray])
+  }, [
+    customPlots,
+    facetNavPanelPropsArray,
+    initialPlotType,
+    initialPlotTypeByFacetColumnName,
+  ])
 
   // when 'show more/less' is clicked
   const onShowMoreClick = (shouldShowMore: boolean) => {

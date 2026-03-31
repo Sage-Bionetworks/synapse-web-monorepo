@@ -67,4 +67,5 @@ export const allChallenges: QueryWrapperPlotNavProps = {
   columnAliases: {
     metadataCompletenessTier: 'Metadata Completeness',
   },
+  initialPlotTypeByFacetColumnName: { platform: 'BAR', species: 'PIE' },
 }
