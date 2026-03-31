@@ -45,13 +45,12 @@ const HeaderSearchBox = ({
   roles,
 }: HeaderSearchBoxProps): React.ReactNode => {
   const [role, setRole] = useState('')
-  const [mode, setMode] = useState<'Chat' | 'Search'>('Chat')
+  const [mode, setMode] = useState<'Chat' | 'Search'>('Search')
   const theme = useTheme()
   const navigate = useNavigate()
   const { isAuthenticated } = useSynapseContext()
   const isChatEnabled = useGetFeatureFlag(FeatureFlagEnum.PORTAL_CHAT)
   const chatDialogContext = useChatDialogContext()
-
   const showChatOption = isAuthenticated && chatDialogContext && isChatEnabled
 
   const handleTermClick = (term: string) => {
@@ -92,14 +91,14 @@ const HeaderSearchBox = ({
                 onChange={e => setMode(e.target.value)}
                 IconComponent={KeyboardArrowDown}
               >
-                <MenuItem value="Chat" className={styles.menuItem}>
-                  <Typography className={styles.roleMenuItemLabel}>
-                    Chat
-                  </Typography>
-                </MenuItem>
                 <MenuItem value="Search" className={styles.menuItem}>
                   <Typography className={styles.roleMenuItemLabel}>
                     Search
+                  </Typography>
+                </MenuItem>
+                <MenuItem value="Chat" className={styles.menuItem}>
+                  <Typography className={styles.roleMenuItemLabel}>
+                    Chat
                   </Typography>
                 </MenuItem>
               </Select>
