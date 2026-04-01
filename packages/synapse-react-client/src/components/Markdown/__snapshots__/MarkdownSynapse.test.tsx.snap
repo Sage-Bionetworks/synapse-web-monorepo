@@ -185,7 +185,9 @@ exports[`MarkdownSynapse tests > Snapshot tests > works with two inline widgets 
     class="markdown"
     data-testid="markdown"
   >
-    <div>
+    <p
+      class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
+    >
       <span>
         <a
           class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-i9dpmq-MuiButtonBase-root-MuiButton-root-WideButton"
@@ -204,7 +206,7 @@ exports[`MarkdownSynapse tests > Snapshot tests > works with two inline widgets 
           APPLY
         </a>
       </span>
-    </div>
+    </p>
     
 
   </div>
@@ -217,7 +219,9 @@ exports[`MarkdownSynapse tests > Snapshot tests > works with two inline widgets 
     class="markdown"
     data-testid="markdown"
   >
-    <div>
+    <p
+      class="MuiTypography-root MuiTypography-body1 css-xmjzya-MuiTypography-root"
+    >
       <span>
         <a
           class="MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary MuiButton-root MuiButton-contained MuiButton-containedSecondary MuiButton-sizeMedium MuiButton-containedSizeMedium MuiButton-colorSecondary css-i9dpmq-MuiButtonBase-root-MuiButton-root-WideButton"
@@ -238,7 +242,7 @@ exports[`MarkdownSynapse tests > Snapshot tests > works with two inline widgets 
           APPLY
         </a>
       </span>
-    </div>
+    </p>
     
 
   </div>
