@@ -158,7 +158,15 @@ export async function extractPlotDataArray(
   const anyFacetsSelected = facetToPlot.facetValues.some(
     value => value.isSelected,
   )
-
+  const selectionAwareColorPalette = anyFacetsSelected
+    ? facetToPlot.facetValues.map((facetValue, index) =>
+        facetValue.isSelected
+          ? colorPalette[index]
+          : colorPalette[index]
+              .replace('rgb(', 'rgba(')
+              .replace(')', ', 0.25)'),
+      )
+    : colorPalette
   const counts: Plotly.Datum[] = facetToPlot.facetValues.map(
     facet => facet.count,
   )
@@ -215,9 +223,10 @@ export async function extractPlotDataArray(
       : undefined,
     selected: { marker: { opacity: 1 } },
     unselected: { marker: { opacity: 0.25 } },
+
     marker: {
-      colors: plotType === 'PIE' ? colorPalette : undefined,
-      color: plotType === 'PIE' ? undefined : colorPalette,
+      colors: plotType === 'PIE' ? selectionAwareColorPalette : undefined,
+      color: plotType === 'PIE' ? undefined : selectionAwareColorPalette,
     },
   }
   const result = {
