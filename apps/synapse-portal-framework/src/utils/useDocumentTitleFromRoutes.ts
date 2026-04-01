@@ -1,5 +1,6 @@
 import { useMatches } from 'react-router'
 import { useDocumentMetadata } from 'synapse-react-client/utils/context/DocumentMetadataContext'
+import { usePortalContext } from '@/components/PortalContext'
 
 /**
  * Uses the current routes to set the document title. The title will only be set when routes change, so if placed high
@@ -8,13 +9,14 @@ import { useDocumentMetadata } from 'synapse-react-client/utils/context/Document
  */
 export function useDocumentTitleFromRoutes() {
   const matches = useMatches()
+  const { portalName } = usePortalContext()
 
-  const portalTitleEnv = import.meta.env.VITE_PORTAL_NAME ?? 'Synapse Portal'
-  let newDocumentTitle = portalTitleEnv
+  const portalTitle = portalName || 'Synapse Portal'
+  let newDocumentTitle = portalTitle
 
   const routeTitle = matches.at(-1)?.pathname.split('/').at(-1)
   if (routeTitle) {
-    newDocumentTitle = `${portalTitleEnv} - ${routeTitle}`
+    newDocumentTitle = `${portalTitle} - ${routeTitle}`
   }
 
   useDocumentMetadata({ title: newDocumentTitle, priority: 10 })

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useLocation } from 'react-router'
 
 export type RedirectToURLProps = {
@@ -17,8 +18,12 @@ export default function RedirectToURL(props: RedirectToURLProps) {
   const { toURL, search } = props
   const isSearchMatch =
     search == undefined ? true : `?${search}` == currentSearch
-  if (isSearchMatch) {
-    window.location.replace(toURL)
-  }
+  useEffect(() => {
+    // Check match and redirect
+    // `window` access is safe in useEffect; only runs in browser
+    if (isSearchMatch) {
+      window.location.replace(toURL)
+    }
+  }, [isSearchMatch, toURL])
   return null
 }

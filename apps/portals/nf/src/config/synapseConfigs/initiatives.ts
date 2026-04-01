@@ -1,7 +1,5 @@
-import {
-  CardConfiguration,
-  QueryWrapperPlotNavProps,
-} from 'synapse-react-client'
+import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
+import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { initiativesSql } from '../resources'
 import { columnAliases } from './commonProps'
@@ -30,8 +28,9 @@ const initiatives: QueryWrapperPlotNavProps = {
     titleLinkConfig: {
       matchColumnName: 'initiative',
       isMarkdown: false,
-      baseURL: 'Explore/Initiatives/DetailsPage',
+      baseURL: 'Explore/Initiatives',
       URLColumnName: 'initiative',
+      urlParamStyle: 'path-segment',
     },
     ctaLinkConfig: {
       text: 'Visit Website',

@@ -1,4 +1,4 @@
-import { SitemapConfig } from '@sage-bionetworks/synapse-portal-framework/src/sitemap/types'
+import { SitemapConfig } from '@sage-bionetworks/synapse-portal-framework/sitemap/types'
 
 // genie portal only has table explore pages, no detail pages for resource navigation
 const sitemapConfig: SitemapConfig = {

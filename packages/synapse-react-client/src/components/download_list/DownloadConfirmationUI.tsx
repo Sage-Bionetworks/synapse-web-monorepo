@@ -34,7 +34,7 @@ type UiStateDictionary = {
 const StatusConstruct: UiStateDictionary = {
   [StatusEnum.INFO]: {
     severity: 'info',
-    infoText: 'Would you like to add these files to the download cart?',
+    infoText: 'Would you like to add these files to the download list?',
     closeText: 'Cancel',
   },
   [StatusEnum.INFO_ITEMS_IN_LIST]: {
@@ -42,9 +42,9 @@ const StatusConstruct: UiStateDictionary = {
     infoText: (
       <>
         Note: Files that you add will be mixed in with the files already in your
-        download cart.
+        download list.
         <br />
-        If you don&apos;t want to mix these files, clear your download cart
+        If you don&apos;t want to mix these files, clear your download list
         before continuing.
       </>
     ),
@@ -52,7 +52,7 @@ const StatusConstruct: UiStateDictionary = {
   },
   [StatusEnum.PROCESSING]: {
     severity: 'info',
-    infoText: 'Adding files to download cart',
+    infoText: 'Adding files to download list',
     closeText: 'Cancel',
   },
 
@@ -66,7 +66,7 @@ const StatusConstruct: UiStateDictionary = {
     closeText: 'Close',
     infoText: (
       <>
-        Please <SignInButton /> to add files to your download cart.
+        Please <SignInButton /> to add files to your download list.
       </>
     ),
   },
@@ -119,7 +119,7 @@ function DownloadConfirmationContent(props: DownloadConfirmationContentProps) {
 
 /**
  * This component is used to display the download confirmation dialog that presents to a user the number of files and the
- * total size of the files they are about to add to their download cart.
+ * total size of the files they are about to add to their download list.
  */
 export function DownloadConfirmationUI(props: DownloadConfirmationUIProps) {
   const {

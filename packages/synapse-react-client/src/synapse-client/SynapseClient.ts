@@ -351,14 +351,15 @@ import {
 } from './SynapseClientUtils'
 import { CSRF_TOKEN_STORAGE_KEY } from '@/utils/hooks'
 
-const cookies = new UniversalCookies()
-
 // Max size file that we will allow the caller to read into memory (5MB)
 const MAX_JS_FILE_DOWNLOAD_SIZE = 5242880
 const MAX_NUMBER_OF_PARTS = 10000
 // This corresponds to the Synapse-managed S3 storage location:
 export const SYNAPSE_STORAGE_LOCATION_ID = 1
 export function getRootURL(): string {
+  if (typeof window === 'undefined') {
+    return 'http://localhost/'
+  }
   const portString = window.location.port ? `:${window.location.port}` : ''
   return `${window.location.protocol}//${window.location.hostname}${portString}/`
 }
@@ -1992,6 +1993,7 @@ export const updateWikiPage = (
 
 export const isInSynapseExperimentalMode = (): boolean => {
   // bang bang, you're a boolean!
+  const cookies = new UniversalCookies()
   return !!cookies.get(SynapseConstants.EXPERIMENTAL_MODE_COOKIE)
 }
 
@@ -2005,6 +2007,7 @@ export const setAccessTokenCookie = async (
   token: string | undefined,
 ): Promise<void> => {
   if (isOutsideSynapseOrg()) {
+    const cookies = new UniversalCookies()
     if (!token) {
       cookies.remove(ACCESS_TOKEN_COOKIE_KEY, { path: '/' })
       // See - https://github.com/reactivestack/cookies/issues/189
@@ -2039,6 +2042,7 @@ export const getAccessTokenFromCookie = async (): Promise<
   string | undefined
 > => {
   if (isOutsideSynapseOrg()) {
+    const cookies = new UniversalCookies()
     return Promise.resolve(cookies.get(ACCESS_TOKEN_COOKIE_KEY) as string)
   }
   return doGet<string>(
@@ -2050,6 +2054,7 @@ export const getAccessTokenFromCookie = async (): Promise<
 }
 
 export const getUseUtcTimeFromCookie = () => {
+  const cookies = new UniversalCookies()
   return cookies.get(DATETIME_UTC_COOKIE_KEY) === 'true'
 }
 

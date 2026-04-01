@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material'
 import exploreIcon from './assets/explore_icon.png'
 import uncoverIcon from './assets/uncover_icon.png'
 import accessIcon from './assets/access_icon.png'
-import { PortalSectionHeader } from 'synapse-react-client'
+import PortalSectionHeader from 'synapse-react-client/components/PortalSectionHeader/PortalSectionHeader'
 
 export function IconSquare({ iconUrl, headline, description }) {
   return (

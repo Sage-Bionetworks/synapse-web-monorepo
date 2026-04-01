@@ -1,7 +1,5 @@
-import type {
-  CardConfiguration,
-  QueryWrapperPlotNavProps,
-} from 'synapse-react-client'
+import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
+import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import { toolsSql } from '../resources'
@@ -45,8 +43,9 @@ export const toolsCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   titleLinkConfig: {
     isMarkdown: false,
-    baseURL: 'Explore/Tools/DetailsPage',
+    baseURL: 'Explore/Tools',
     URLColumnName: 'resourceId',
+    urlParamStyle: 'path-segment',
     matchColumnName: 'resourceId',
     overrideLinkURLColumnName: 'biobankURL',
   },

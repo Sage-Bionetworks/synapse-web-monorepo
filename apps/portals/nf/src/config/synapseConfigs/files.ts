@@ -1,4 +1,4 @@
-import { QueryWrapperPlotNavProps } from 'synapse-react-client'
+import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import { enabledAnalysisPlatforms, filesSql } from '../resources'
 import { columnAliases } from './commonProps'
 

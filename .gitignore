@@ -50,5 +50,10 @@ debug-storybook.log
 .nx/cache
 .nx/workspace-data
 
+# React Router Framework Mode generated types
+.react-router/
+
 apps/portals/*/public/build-date.txt
 apps/portals/*/public/deploy-date.txt
+
+.nx/key

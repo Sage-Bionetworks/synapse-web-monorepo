@@ -27,7 +27,7 @@ export default function EntityPreview(props: EntityPreviewProps) {
   const isResolvedLinkFileEntity = resolvedLink && isFileEntity(resolvedLink)
 
   const { data: bundle, isLoading: isLoadingBundle } = useGetEntityBundle(
-    resolvedLink?.id!,
+    resolvedLink?.id,
     (resolvedLink as FileEntity | undefined)?.versionNumber,
     ALL_ENTITY_BUNDLE_FIELDS,
     {

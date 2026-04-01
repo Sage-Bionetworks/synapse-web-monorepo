@@ -23,7 +23,7 @@ import QueryWrapper from '../../QueryWrapper'
 import { DownloadOptionsProps } from './DownloadOptions'
 import { DownloadOptions } from './index'
 
-const ADD_ALL_FILES_TO_DOWNLOAD_CART = 'Add All Files to Download Cart'
+const ADD_ALL_FILES_TO_DOWNLOAD_CART = 'Add All Files to Download List'
 
 const mockDatasetEntity = mockDatasetData.entity
 

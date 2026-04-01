@@ -1,7 +1,8 @@
-import { SynapseConstants, SynapseUtilityFunctions } from 'synapse-react-client'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import * as SynapseUtilityFunctions from 'synapse-react-client/utils/functions/index'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { Link } from '@mui/material'
-import { SynapseQueries } from 'synapse-react-client'
+import * as SynapseQueries from 'synapse-react-client/synapse-queries/index'
 
 export type PopularSearchesProps = {
   sql: string

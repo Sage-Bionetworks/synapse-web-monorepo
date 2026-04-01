@@ -9,6 +9,14 @@
   margin-right: 4px;
 }
 
+.cardDescription {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .locatedInLink:global(.MuiTypography-root) {
   font-weight: 400;
   color: var(--synapse-gray-900) !important;
@@ -16,4 +24,8 @@
 
 .locatedInLink:global(.MuiTypography-root):hover {
   text-decoration-color: var(--synapse-gray-900) !important;
+}
+
+:global(.MuiTypography-root).cardTitle {
+  line-height: 30px;
 }

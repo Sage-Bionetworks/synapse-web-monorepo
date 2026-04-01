@@ -49,8 +49,9 @@ export default function UnmanagedACTAccessRequirementItem(
 
   let acceptButtonText = ''
   if (
-    window.location.hostname === 'www.synapse.org' ||
-    window.location.hostname === 'staging.synapse.org'
+    typeof window !== 'undefined' &&
+    (window.location.hostname === 'www.synapse.org' ||
+      window.location.hostname === 'staging.synapse.org')
   ) {
     acceptButtonText = 'Request access'
   } else {

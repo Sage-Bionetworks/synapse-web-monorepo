@@ -8,8 +8,8 @@ import { Box, Link, Typography } from '@mui/material'
 import { Query } from '@sage-bionetworks/synapse-types'
 import pluralize from 'pluralize'
 import { ReactElement } from 'react'
-import { FeaturedToolsList } from 'synapse-react-client/components/FeaturedToolsList'
-import { FTS_SEARCH_TERM } from 'synapse-react-client/utils/functions/SqlFunctions'
+import { FeaturedToolsList } from 'synapse-react-client/components/FeaturedToolsList/index'
+import { SEARCH_TERM } from 'synapse-react-client/utils/functions/SqlFunctions'
 import { generateCompressedQueryURL } from 'synapse-react-client/utils/functions/deepLinkingUtils'
 import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import { WideButton } from 'synapse-react-client/components/styled/WideButton'
@@ -17,6 +17,7 @@ import EcosystemLayout from 'synapse-react-client/components/Ecosystem/Ecosystem
 import Layout from '../Layout'
 import PopularSearches from '../PopularSearches'
 import Search from '../Search'
+import { useNavigate } from 'react-router'
 
 type Category = {
   resourceName: string
@@ -31,7 +32,9 @@ const categories: Category[] = [
   { resourceName: 'Biobank', image: <Biobanks /> },
 ]
 
-const host = window.location.host
+// Defer window access to call time so this module can be imported in Node.js (SSR/pre-render)
+const getHost = () =>
+  typeof window !== 'undefined' ? window.location.host : 'nf.synapse.org'
 const baseUrl = `${encodeURIComponent(
   'Research Tools Central',
 )}/${encodeURIComponent('Submit ')}`
@@ -40,7 +43,7 @@ const baseSchemaUrl =
 const postUrl = 'https://submit-form.com/KwZ46H4T'
 
 const createHref = (path: string) =>
-  `http://${host}/${baseUrl}${encodeURIComponent(path)}`
+  `http://${getHost()}/${baseUrl}${encodeURIComponent(path)}`
 
 const submitToolButtons = [
   {
@@ -87,8 +90,9 @@ export type NFBrowseToolsPageProps = {
 
 const NFBrowseToolsPage = (props: NFBrowseToolsPageProps): React.ReactNode => {
   const { popularSearchesSql, toolsSql } = props
+  const navigate = useNavigate()
   const gotoExploreTools = () => {
-    window.location.assign('/Explore/Tools')
+    navigate('/Explore/Tools')
   }
 
   const gotoExploreToolsWithSelectedResource = async (
@@ -114,12 +118,12 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps): React.ReactNode => {
       currentQuery,
       initQuery,
     )
-    window.location.assign(url)
+    navigate(url)
   }
 
   const gotoExploreToolsWithFullTextSearch = (fullTextSearchString: string) => {
     window.location.assign(
-      `/Search/Tools?${FTS_SEARCH_TERM}=${encodeURIComponent(
+      `/Search/Tools?${SEARCH_TERM}=${encodeURIComponent(
         fullTextSearchString,
       )}`,
     )
@@ -247,7 +251,7 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps): React.ReactNode => {
             descriptionColumnName={'description'}
             typeColumnName={'resourceType'}
             dateColumnName={'dateAdded'}
-            toolDetailPageURL={'/Explore/Tools/DetailsPage?resourceId='}
+            toolDetailPageURL={'/Explore/Tools/'}
             filterClause={'ORDER BY dateAdded DESC'}
           />
         </div>

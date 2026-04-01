@@ -22,8 +22,8 @@ import {
 import { MouseEvent, useEffect, useState } from 'react'
 import { ErrorBanner } from '../error/ErrorBanner'
 import IconSvg from '../IconSvg/IconSvg'
-import WarningDialog from '../SynapseForm/WarningDialog'
 import { CreatedOnByUserDiv } from './CreatedOnByUserDiv'
+import { DeleteEvaluationQueueConfirmationDialog } from './DeleteEvaluationQueueConfirmationDialog'
 
 export type ExistingEvaluation = RequiredProperties<
   Evaluation,
@@ -165,20 +165,14 @@ function EvaluationCardDropdown({
   return (
     <>
       {permissions?.canDelete && (
-        <WarningDialog
-          title="Delete Evaluation Queue"
-          content="Are you sure you want to delete the Evaluation Queue?"
+        <DeleteEvaluationQueueConfirmationDialog
+          key={String(deleteWarningShow)}
           open={deleteWarningShow}
-          confirmButtonText="Delete"
           onConfirm={() => {
             onDelete()
             setDeleteWarningShow(false)
           }}
-          onConfirmCallbackArgs={[]}
-          onCancel={() => {
-            setDeleteWarningShow(false)
-          }}
-          confirmButtonColor="error"
+          onCancel={() => setDeleteWarningShow(false)}
         />
       )}
       <IconButton onClick={handleClick} aria-label="Options">

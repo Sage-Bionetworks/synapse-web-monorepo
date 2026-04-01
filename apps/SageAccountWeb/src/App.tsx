@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router'
-import { CookiesNotification } from 'synapse-react-client/components/CookiesNotification'
+import { CookiesNotification } from 'synapse-react-client/components/CookiesNotification/index'
 import './App.scss'
 
 function App() {

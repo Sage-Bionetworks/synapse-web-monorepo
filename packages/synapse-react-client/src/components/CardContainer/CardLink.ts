@@ -20,6 +20,18 @@ export type CardLink =
           baseURL: string
           // the key that will go into the url
           URLColumnName: string
+          /**
+           * Controls how the record identifier is appended to baseURL.
+           *
+           * - `'query-param'` (default): appends as a query string parameter, e.g.
+           *   `/<baseURL>?<URLColumnName>=<value>`
+           * - `'path-segment'`: appends as a path segment, e.g.
+           *   `/<baseURL>/<value>`
+           *
+           * Use `'path-segment'` for clean-URL detail pages that use React Router
+           * dynamic segments (`:param`) rather than `?param=` query strings.
+           */
+          urlParamStyle?: 'query-param' | 'path-segment'
           // the value that will go into the url link should be surrounded with parenthesis, making the search
           // param study=(ROSMAP) instead of study=ROSMAP
           wrapValueWithParens?: boolean

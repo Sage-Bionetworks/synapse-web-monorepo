@@ -1,5 +1,6 @@
 import IsMatureIconMap from '@/components/IsMatureIconMap'
-import { LabelLinkConfig, QueryWrapperPlotNavProps } from 'synapse-react-client'
+import type { LabelLinkConfig } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import columnAliases from '@/config/columnAliases'
 import {
   standardsFtsConfig,
@@ -50,8 +51,11 @@ export const standardsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
     showDownloadColumn: false,
     columnLinks: standardsColumnLinks,
   },
-  facetsToPlot: ['topic', DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_NAMES],
-  initialPlotType: 'BAR',
+  facetsToPlot: [
+    'topic',
+    // DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_NAMES, // Vast majority of values are currently 'Not Assigned', making the facet not useful. Re-add in the future if more values are annotated.
+  ],
+  initialPlotTypeByFacetColumnName: { topic: 'BAR' },
   searchConfiguration: {
     ftsConfig: standardsFtsConfig,
   },

@@ -15,13 +15,13 @@ export type ShowDownloadV2Props = {
 }
 
 /**
- * Nav bar item, displayed when files have been added to the Download Cart.
- * This must be configured with the URL of a page dedicated to showing the Download Cart.
+ * Nav bar item, displayed when files have been added to the Download List.
+ * This must be configured with the URL of a page dedicated to showing the Download List.
  */
 function ShowDownloadV2Internal({ to, className = '' }: ShowDownloadV2Props) {
   const { isAuthenticated } = useSynapseContext()
   const handleError = useErrorHandler()
-  const tooltipText = 'Click to view items in your download cart.'
+  const tooltipText = 'Click to view items in your download list.'
 
   const {
     data,
@@ -52,7 +52,7 @@ function ShowDownloadV2Internal({ to, className = '' }: ShowDownloadV2Props) {
     >
       <span>
         <span className="SRC-primary-text-color">
-          <IconSvg icon="cart" />
+          <IconSvg icon="download" />
         </span>
         <span className={`download-cart-size`}>{size}</span>
       </span>

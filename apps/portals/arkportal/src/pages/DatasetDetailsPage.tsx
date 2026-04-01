@@ -9,7 +9,7 @@ import {
   datasetCardConfiguration,
   datasetColumnAliases,
 } from '../config/synapseConfigs/datasets'
-import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
 import DatasetDetailsFilesTable from './DatasetDetailsFilesTable'
 
 function DatasetDetailsPage() {

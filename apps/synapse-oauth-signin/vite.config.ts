@@ -1,15 +1,21 @@
-import { ConfigBuilder } from 'vite-config'
+import { mergeConfig } from 'vite'
+import {
+  baseConfig,
+  nodePolyfillsPlugin,
+  reactPlugins,
+  tsconfigPathsPlugin,
+  vitestConfig,
+} from 'vite-config'
 
-const config = new ConfigBuilder()
-  .setIncludeReactConfig(true)
-  .setIncludeVitestConfig(true)
-  .setConfigOverrides({
+const config = mergeConfig(
+  baseConfig,
+  mergeConfig(vitestConfig, {
+    plugins: [nodePolyfillsPlugin(), tsconfigPathsPlugin(), ...reactPlugins()],
     test: {
       include: ['src/test/**/*.test.[jt]s?(x)'],
       setupFiles: ['src/test/setupTests.ts'],
-      environment: 'jsdom', // introduced due to random "ReferenceError: window is not defined" during tests
     },
-  })
-  .build()
+  }),
+)
 
 export default config

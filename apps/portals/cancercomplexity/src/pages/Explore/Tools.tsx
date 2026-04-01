@@ -1,5 +1,5 @@
 import { toolsQueryWrapperPlotNavProps } from '@/config/synapseConfigs'
-import { QueryWrapperPlotNav } from 'synapse-react-client/components/QueryWrapperPlotNav'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/index'
 
 function ExploreTools() {
   return <QueryWrapperPlotNav {...toolsQueryWrapperPlotNavProps} />

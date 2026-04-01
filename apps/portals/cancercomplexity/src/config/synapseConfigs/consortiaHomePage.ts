@@ -1,4 +1,4 @@
-import type { ProgramsProps } from 'synapse-react-client'
+import type { ProgramsProps } from 'synapse-react-client/components/Programs/Programs'
 import { TableQueryCardDeckProps } from 'synapse-react-client/components/CardDeck/TableQueryCardDeck'
 
 export const consortiaHomePageConfig: ProgramsProps = {

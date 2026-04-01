@@ -1,6 +1,6 @@
 import ARKWelcomePage from '@sage-bionetworks/synapse-portal-framework/components/arkportal/ARKWelcomePage'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import { Goals } from 'synapse-react-client/components/Goals'
+import { Goals } from 'synapse-react-client/components/Goals/index'
 import { JsonLdScript } from 'synapse-react-client/components/JsonLdScript'
 
 function Home() {

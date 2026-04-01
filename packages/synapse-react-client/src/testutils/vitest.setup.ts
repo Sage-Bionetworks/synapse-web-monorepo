@@ -12,61 +12,63 @@ import { TextEncoder, TextDecoder } from 'node:util'
 // so for those cases, we can stub `jest` to use `vi`.
 vi.stubGlobal('jest', vi)
 
-// JSDOM doesn't support createObjectURL and revokeObjectURL, so we shim them
-// https://github.com/jsdom/jsdom/issues/1721
-window.URL.createObjectURL = vi
-  .fn()
-  .mockReturnValue('blob:mockBlobUrlConfiguredInTestSetup')
-window.URL.revokeObjectURL = vi.fn()
-
 // ResizeObserver polyfill for JSDOM
 global.ResizeObserver = ResizeObserver
 
-// IntersectionObserver polyfill for JSDOM
-setupIntersectionMocking(vi.fn)
+if (typeof window !== 'undefined') {
+  // JSDOM doesn't support createObjectURL and revokeObjectURL, so we shim them
+  // https://github.com/jsdom/jsdom/issues/1721
+  window.URL.createObjectURL = vi
+    .fn()
+    .mockReturnValue('blob:mockBlobUrlConfiguredInTestSetup')
+  window.URL.revokeObjectURL = vi.fn()
 
-const oldWindowLocation = window.location
-const oldWindowOpen = window.open
+  // IntersectionObserver polyfill for JSDOM
+  setupIntersectionMocking(vi.fn)
 
-/**
- * Mock `window.location` so we can verify interactions in tests
- * See https://www.benmvp.com/blog/mocking-window-location-methods-jest-jsdom/
- */
-beforeAll(() => {
-  // @ts-expect-error - TS doesn't allow us to delete location. Not an issue because we're immediately replacing it with the mock
-  delete window.location
-  // @ts-expect-error - TS 5.8.3 broke reassigning `window.location` - https://github.com/microsoft/TypeScript/issues/61335
-  window.location = Object.defineProperties(
-    {},
-    {
-      ...Object.getOwnPropertyDescriptors(oldWindowLocation),
-      // Each method must be manually mocked
-      assign: {
-        configurable: true,
-        value: vi.fn(),
-      },
-      replace: {
-        configurable: true,
-        value: vi.fn(),
-      },
-      reload: {
-        configurable: true,
-        value: vi.fn(),
-      },
-    },
-  ) as Location
+  const oldWindowLocation = window.location
+  const oldWindowOpen = window.open
 
-  // @ts-expect-error - `delete` is not allowed on a required property
-  delete window.open
-  window.open = vi.fn()
-})
-afterAll(() => {
-  // restore `window.location` to the original `jsdom`
-  // `Location` object
-  // @ts-expect-error - TS 5.8.3 broke reassigning `window.location` - https://github.com/microsoft/TypeScript/issues/61335
-  window.location = oldWindowLocation
-  window.open = oldWindowOpen
-})
+  /**
+   * Mock `window.location` so we can verify interactions in tests
+   * See https://www.benmvp.com/blog/mocking-window-location-methods-jest-jsdom/
+   */
+  beforeAll(() => {
+    // @ts-expect-error - TS doesn't allow us to delete location. Not an issue because we're immediately replacing it with the mock
+    delete window.location
+    // @ts-expect-error - TS 5.8.3 broke reassigning `window.location` - https://github.com/microsoft/TypeScript/issues/61335
+    window.location = Object.defineProperties(
+      {},
+      {
+        ...Object.getOwnPropertyDescriptors(oldWindowLocation),
+        // Each method must be manually mocked
+        assign: {
+          configurable: true,
+          value: vi.fn(),
+        },
+        replace: {
+          configurable: true,
+          value: vi.fn(),
+        },
+        reload: {
+          configurable: true,
+          value: vi.fn(),
+        },
+      },
+    ) as Location
+
+    // @ts-expect-error - `delete` is not allowed on a required property
+    delete window.open
+    window.open = vi.fn()
+  })
+  afterAll(() => {
+    // restore `window.location` to the original `jsdom`
+    // `Location` object
+    // @ts-expect-error - TS 5.8.3 broke reassigning `window.location` - https://github.com/microsoft/TypeScript/issues/61335
+    window.location = oldWindowLocation
+    window.open = oldWindowOpen
+  })
+}
 
 // Add TextEncoder & TextDecoder polyfills for react-router - https://github.com/remix-run/react-router/issues/12363
 if (!global.TextEncoder) {

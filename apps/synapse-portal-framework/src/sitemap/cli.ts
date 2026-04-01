@@ -3,7 +3,7 @@
  * CLI entry point for sitemap generation.
  *
  * Usage:
- *   npx tsx sitemap/cli.ts <portal-name> --routes <routes-json-path> [--config <config-path>]
+ *   npx tsx sitemap/cli.ts <portal-name> --routes <routes-json-path> [--config <config-path>] [--output <output-dir>]
  *
  * Arguments:
  *   portal-name: The name of the portal (used to construct base URL)
@@ -12,6 +12,7 @@
  *   --routes: Path to pre-extracted routes JSON file (from Vite SSR build)
  *   --config: Path to a sitemap config file (TypeScript or JSON)
  *             If not provided, only static routes will be included
+ *   --output: Output directory for the generated sitemap (defaults to 'build/')
  */
 
 import * as fs from 'fs'
@@ -24,7 +25,7 @@ async function main() {
 
   if (args.length === 0) {
     console.error(
-      'Usage: tsx sitemap/cli.ts <portal-name> --routes <routes-json-path> [--config <config-path>]',
+      'Usage: tsx sitemap/cli.ts <portal-name> --routes <routes-json-path> [--config <config-path>] [--output <output-dir>]',
     )
     console.error(
       '\nNote: sitemap.xml assumes portal is hosted on <portal-name>.synapse.org',
@@ -100,7 +101,16 @@ async function main() {
     }
   }
 
-  const outputDir = path.join(process.cwd(), 'build')
+  // Parse optional --output argument for custom output directory
+  const outputIndex = args.indexOf('--output')
+  let outputDir: string
+  if (outputIndex !== -1 && args[outputIndex + 1]) {
+    outputDir = path.isAbsolute(args[outputIndex + 1])
+      ? args[outputIndex + 1]
+      : path.join(process.cwd(), args[outputIndex + 1])
+  } else {
+    outputDir = path.join(process.cwd(), 'build')
+  }
 
   console.log(`Generating sitemap for ${portalName}...`)
   console.log(`Output directory: ${outputDir}`)

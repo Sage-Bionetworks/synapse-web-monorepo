@@ -9,7 +9,7 @@ import { KeyFactory } from './KeyFactory'
 import {
   expectQueryKeyNotToMatch,
   expectQueryKeyToMatch,
-} from './QueryMatchingTestUtils'
+} from './QueryMatching.test-utils'
 
 describe('KeyFactory tests', () => {
   let keyFactory = new KeyFactory(MOCK_ACCESS_TOKEN)

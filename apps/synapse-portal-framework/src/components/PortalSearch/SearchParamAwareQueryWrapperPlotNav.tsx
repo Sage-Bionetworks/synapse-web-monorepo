@@ -1,11 +1,12 @@
 import { Query, TextMatchesQueryFilter } from '@sage-bionetworks/synapse-types'
 import { useMemo } from 'react'
 import { useSearchParams } from 'react-router'
-import { QueryWrapperPlotNav } from 'synapse-react-client'
-import { QueryWrapper, StandaloneQueryWrapperProps } from 'synapse-react-client'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import { QueryWrapper } from 'synapse-react-client/components/QueryWrapper/QueryWrapper'
+import type { StandaloneQueryWrapperProps } from 'synapse-react-client/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
 import { getTextMatchesQueryFilter } from 'synapse-react-client/components/FullTextSearch/FullTextSearchUtils'
 import { generateInitQueryRequest } from 'synapse-react-client/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
-import { FTS_SEARCH_TERM } from 'synapse-react-client/utils/functions/SqlFunctions'
+import { SEARCH_TERM } from 'synapse-react-client/utils/functions/SqlFunctions'
 
 export type SearchParamAwareQueryWrapperPlotNavProps = {
   isVisible: boolean
@@ -18,7 +19,7 @@ export function SearchParamAwareQueryWrapperPlotNav(
   const [searchParams] = useSearchParams()
   const { searchConfiguration, sql } = standaloneQueryWrapperProps
 
-  const searchText = searchParams.get(FTS_SEARCH_TERM)
+  const searchText = searchParams.get(SEARCH_TERM)
   const textMatchesQueryFilter: TextMatchesQueryFilter | undefined =
     useMemo(() => {
       if (searchText) {

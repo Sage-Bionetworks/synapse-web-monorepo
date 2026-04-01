@@ -2,10 +2,21 @@ import { ReactComponent as ArcusBioIcon } from '@/assets/ArcusBioIcon.svg'
 import { GoogleIcon24 } from '@/assets/GoogleIcon24'
 import { ReactComponent as AccessPending } from '@/assets/icons/AccessPending.svg'
 import { ReactComponent as AccessPendingCloud } from '@/assets/icons/AccessPendingCloud.svg'
+import AwardScroll from '@/assets/icons/AwardScroll'
+import Baseline from '@/assets/icons/Baseline'
+import ClappingHands from '@/assets/icons/ClappingHands'
 import CreateVersion from '@/assets/icons/CreateVersion'
 import FileWithShield from '@/assets/icons/FileWithShield'
+import MultiFile from '@/assets/icons/MultiFile'
+import UnpackagableFile from '@/assets/icons/UnpackagableFile'
+import HandWithMoney from '@/assets/icons/HandWithMoney'
 import { ORCIDIcon } from '@/assets/icons/ORCIDIcon'
+import OpenBook from '@/assets/icons/OpenBook'
+import Podium from '@/assets/icons/Podium'
+import RosetteRibbon from '@/assets/icons/RosetteRibbon'
+import StarTrophy from '@/assets/icons/StarTrophy'
 import { TasksIcon } from '@/assets/icons/TasksIcon'
+import ThreeStars from '@/assets/icons/ThreeStars'
 import AccessManagement from '@/assets/mui_components/AccessManagement'
 import AccountCertified from '@/assets/mui_components/AccountCertified'
 import AccountRegistered from '@/assets/mui_components/AccountRegistered'
@@ -205,6 +216,7 @@ export const IconStrings = [
   'kinomics',
   'proteomics',
   'packagableFile',
+  'unpackagableFile',
   'other',
   'wiki',
   'file',
@@ -280,6 +292,16 @@ export const IconStrings = [
   'openInFull',
   'tableview',
   'fileWithShield',
+  'baseline',
+  'rosetteRibbon',
+  'starTrophy',
+  'awardScroll',
+  'clappingHands',
+  'podium',
+  'openBook',
+  'handWithMoney',
+  'threeStars',
+  'multiFile',
 ] as const
 
 export type IconName = (typeof IconStrings)[number]
@@ -465,6 +487,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <Proteomics {...otherProps} />
     case 'packagableFile':
       return <PackagableFile {...otherProps} />
+    case 'unpackagableFile':
+      return <UnpackagableFile {...otherProps} />
     case 'other':
       return <Other fill={color} {...otherProps} />
     case 'wiki':
@@ -589,6 +613,27 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <OpenInFull {...otherProps} />
     case 'fileWithShield':
       return <FileWithShield {...otherProps} />
+    case 'baseline':
+      return <Baseline {...otherProps} />
+    case 'rosetteRibbon':
+      return <RosetteRibbon {...otherProps} />
+    case 'starTrophy':
+      return <StarTrophy {...otherProps} />
+    case 'awardScroll':
+      return <AwardScroll {...otherProps} />
+    case 'clappingHands':
+      return <ClappingHands {...otherProps} />
+    case 'podium':
+      return <Podium {...otherProps} />
+    case 'openBook':
+      return <OpenBook {...otherProps} />
+    case 'handWithMoney':
+      return <HandWithMoney {...otherProps} />
+    case 'threeStars':
+      return <ThreeStars {...otherProps} />
+    case 'multiFile':
+      return <MultiFile {...otherProps} />
+
     default:
       return <></>
   }

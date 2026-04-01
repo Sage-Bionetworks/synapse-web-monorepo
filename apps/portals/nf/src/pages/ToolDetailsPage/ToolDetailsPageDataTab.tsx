@@ -6,7 +6,7 @@ import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framewor
 import { DetailsPageTabs } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
 import { ColumnMultiValueFunction } from '@sage-bionetworks/synapse-types'
 import { Outlet, RouteObject } from 'react-router'
-import { QueryWrapperPlotNav } from 'synapse-react-client'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 
 export function ToolDetailsPageDataTabLayout() {
   return (

@@ -1,5 +1,5 @@
-import PortalDOI from '@/components/GenericCard/PortalDOI/PortalDOI'
 import CroissantButton from '@/components/GenericCard/CroissantButton/CroissantButton'
+import PortalDOI from '@/components/GenericCard/PortalDOI/PortalDOI'
 import {
   getCandidateDoiId,
   useShowDoiCardLabel,
@@ -22,9 +22,11 @@ import {
   FileHandleAssociateType,
 } from '@sage-bionetworks/synapse-types'
 import { act, fireEvent, render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { cloneDeep } from 'lodash-es'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { beforeEach, describe, it, test, vi } from 'vitest'
+import { ColumnIconConfigs } from '../CardContainerLogic'
 import { EntityDownloadConfirmation } from '../EntityDownloadConfirmation'
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper'
 import { QueryWrapper } from '../QueryWrapper/QueryWrapper'
@@ -35,7 +37,6 @@ import TableRowGenericCard, {
   TableRowGenericCardProps,
   TableToGenericCardMapping,
 } from './TableRowGenericCard'
-import userEvent from '@testing-library/user-event'
 
 vi.mock('@/components/GenericCard/PortalDOI/PortalDOI', () => ({
   __esModule: true,
@@ -444,7 +445,7 @@ describe('TableRowGenericCard tests', () => {
         },
         'TableEntity',
       )
-      const howToDownloadLabel = await screen.findByText(/download cart/i, {})
+      const howToDownloadLabel = await screen.findByText(/download list/i, {})
       expect(howToDownloadLabel).toBeVisible()
     })
 
@@ -456,7 +457,7 @@ describe('TableRowGenericCard tests', () => {
             ...genericCardSchema,
             customSecondaryLabelConfig: {
               key: 'How to Download',
-              value: 'Explain how to add to download cart',
+              value: 'Explain how to add to download list',
               isVisible: (schema: Record<string, number>, data: string[]) => {
                 return Boolean(
                   data[schema['externalLink']] || data[schema['datasetAlias']],
@@ -468,7 +469,7 @@ describe('TableRowGenericCard tests', () => {
         'TableEntity',
       )
       const howToDownloadLabel = await screen.findByText(
-        /how to add to download cart/i,
+        /how to add to download list/i,
         {},
       )
       expect(howToDownloadLabel).toBeVisible()
@@ -660,5 +661,57 @@ describe('TableRowGenericCard tests', () => {
     expect(screen.queryByTestId('PortalDOI')).not.toBeInTheDocument()
 
     expect(PortalDOI).not.toHaveBeenCalled()
+  })
+
+  test('renders column icons inline with secondary label values when columnIconOptions is configured', async () => {
+    const columnIconOptions: ColumnIconConfigs = {
+      columns: {
+        [labelOneColumnName]: {
+          [MOCKED_LABELONE]: { icon: 'data', sx: { color: '#28A745' } },
+        },
+      },
+    }
+
+    renderComponent(
+      {
+        ...propsForNonHeaderMode,
+        columnIconOptions,
+      },
+      'TableEntity',
+    )
+
+    await screen.findByTestId('CardFooter')
+
+    expect(mockIconSvg).toHaveBeenRenderedWithProps({
+      icon: 'data',
+      sx: { color: '#28A745' },
+      wrap: false,
+    })
+  })
+
+  test('does not render a column icon when the row value does not match any configured icon', async () => {
+    const columnIconOptions: ColumnIconConfigs = {
+      columns: {
+        [labelOneColumnName]: {
+          SOME_OTHER_VALUE: { icon: 'data', sx: { color: '#28A745' } },
+        },
+      },
+    }
+
+    renderComponent(
+      {
+        ...propsForNonHeaderMode,
+        columnIconOptions,
+      },
+      'TableEntity',
+    )
+
+    await screen.findByTestId('CardFooter')
+
+    expect(mockIconSvg).not.toHaveBeenRenderedWithProps({
+      icon: 'data',
+      sx: expect.objectContaining({ color: '#28A745' }),
+      wrap: false,
+    })
   })
 })

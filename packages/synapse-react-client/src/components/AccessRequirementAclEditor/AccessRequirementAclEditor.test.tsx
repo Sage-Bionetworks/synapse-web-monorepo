@@ -25,7 +25,7 @@ import {
   confirmItem,
   removeItem,
   updatePermissionLevel,
-} from '../AclEditor/AclEditorTestUtils'
+} from '../AclEditor/AclEditor.test-utils'
 import { PRINCIPAL_ALREADY_ADDED_ERROR_MESSAGE } from '../AclEditor/useUpdateAcl'
 import {
   AccessRequirementAclEditor,

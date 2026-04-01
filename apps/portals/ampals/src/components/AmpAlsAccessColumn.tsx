@@ -5,7 +5,7 @@ import AccessIcon, {
 } from 'synapse-react-client/components/HasAccess/AccessIcon'
 import HasAccessV2 from 'synapse-react-client/components/HasAccess/HasAccessV2'
 import AridhiaAccessStatus from 'synapse-react-client/components/Aridhia/AridhiaAccessStatus'
-import { getColumnIndex } from 'synapse-react-client/utils/functions'
+import { getColumnIndex } from 'synapse-react-client/utils/functions/index'
 
 type SourceValue = 'Synapse' | 'GEO' | 'Critical Path Institute' | null
 

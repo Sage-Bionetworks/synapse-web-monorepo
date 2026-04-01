@@ -3,10 +3,8 @@ import {
   doiSerializer,
   RESOURCE_TYPE_KEY_CONFIGURATION,
 } from '@/config/doiRedirector'
-import type {
-  CardConfiguration,
-  QueryWrapperPlotNavProps,
-} from 'synapse-react-client'
+import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
+import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { studiesSql, SYNAPSE_PORTAL_ID } from '../resources'
 import { PortalDOIConfiguration } from 'synapse-react-client/components/GenericCard/PortalDOI/PortalDOIConfiguration'

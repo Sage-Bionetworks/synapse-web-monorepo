@@ -90,6 +90,7 @@ export function useSessionManager(
   const sessionState = useSyncExternalStore(
     manager.subscribe,
     manager.getSnapshot,
+    manager.getServerSnapshot,
   )
 
   useEffect(() => {

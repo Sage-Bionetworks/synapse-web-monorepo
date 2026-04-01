@@ -1,15 +1,16 @@
-import { useGetPortalComponentSearchParams } from '@/utils/UseGetPortalComponentSearchParams'
+import { useParams } from 'react-router'
 import { Box, Container, Stack } from '@mui/material'
-import { IconSvg, ProvenanceGraph } from 'synapse-react-client'
+import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
+import ProvenanceGraph from 'synapse-react-client/components/ProvenanceGraph/ProvenanceGraph'
 import MarkdownSynapse from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 import {
   useGetEntityBundle,
   useGetEntityPermissions,
-} from 'synapse-react-client/synapse-queries'
+} from 'synapse-react-client/synapse-queries/index'
 import { DetailsPageSectionLayoutType } from '@/components/DetailsPage/DetailsPageSectionLayout'
 import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
 import HeaderCard from 'synapse-react-client/components/HeaderCard'
-import CitationPopover from 'synapse-react-client/components/CitationPopover'
+import CitationPopover from 'synapse-react-client/components/CitationPopover/index'
 import { DetailsPageContent } from '../../components/DetailsPage/DetailsPageContentLayout'
 import SynapseFileEntityLinkCard from './SynapseFileEntityLinkCard'
 import SynapseFileEntityPageProperties from './SynapseFileEntityPageProperties'
@@ -17,11 +18,11 @@ import { usePortalContext } from '@/components/PortalContext'
 import { AnnotationsTable } from 'synapse-react-client/components/entity/metadata/AnnotationsTable'
 
 function FileEntityPage() {
-  const searchParams = useGetPortalComponentSearchParams()
-  const entityId = searchParams?.entityId
-  const version = searchParams?.version
-    ? Number(searchParams.version)
-    : undefined
+  const { entityId, versionNumber } = useParams<{
+    entityId?: string
+    versionNumber?: string
+  }>()
+  const version = versionNumber ? Number(versionNumber) : undefined
 
   const { fileEntityPageConfig, portalName } = usePortalContext()
   const {
@@ -32,7 +33,7 @@ function FileEntityPage() {
   } = fileEntityPageConfig ?? {}
 
   const { data: entityBundle, isLoading } = useGetEntityBundle(
-    entityId,
+    entityId ?? '',
     version,
     {
       includeEntity: true,
@@ -42,7 +43,11 @@ function FileEntityPage() {
     },
   )
 
-  const { data: entityPermissions } = useGetEntityPermissions(entityId)
+  const { data: entityPermissions } = useGetEntityPermissions(entityId ?? '')
+
+  if (!entityId) {
+    return null
+  }
 
   const showLinkCard: boolean =
     !restrictSynapseLinkCardToEditableEntity ||

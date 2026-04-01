@@ -1,4 +1,4 @@
-import { FullWidthAlert } from 'synapse-react-client/components/FullWidthAlert'
+import { FullWidthAlert } from 'synapse-react-client/components/FullWidthAlert/index'
 
 export type RepositoryUnderReviewAlertProps = {
   portalSpecificDisclaimer?: string

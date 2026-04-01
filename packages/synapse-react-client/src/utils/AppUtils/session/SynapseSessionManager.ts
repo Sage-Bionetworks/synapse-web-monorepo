@@ -70,6 +70,7 @@ export class SynapseSessionManager {
     // Bind methods so they can be passed directly to useSyncExternalStore
     this.subscribe = this.subscribe.bind(this)
     this.getSnapshot = this.getSnapshot.bind(this)
+    this.getServerSnapshot = this.getServerSnapshot.bind(this)
   }
 
   /**
@@ -93,6 +94,14 @@ export class SynapseSessionManager {
    */
   getSnapshot(): SessionState {
     return this.state
+  }
+
+  /**
+   * Get the server-side (SSR) snapshot: always returns the unauthenticated initial state.
+   * Required by React's `useSyncExternalStore` when rendering on the server.
+   */
+  getServerSnapshot(): SessionState {
+    return INITIAL_STATE
   }
 
   /**

@@ -9,18 +9,16 @@ import ElNewsletterSection from '@sage-bionetworks/synapse-portal-framework/comp
 import ELSupportedByNIH from '@sage-bionetworks/synapse-portal-framework/components/eliteportal/ELSupportedByNIH'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import { TypeAnimation } from 'react-type-animation'
-import {
-  FeaturedDataTabs,
-  FeaturedResearch,
-  GoalsV2,
-  ImageCardGridWithLinks,
-  PortalFeaturedPartners,
-  PortalFeatureHighlights,
-  PortalHomePageHeader,
-  PortalSectionHeader,
-  RecentPublicationsGrid,
-  UpsetPlot,
-} from 'synapse-react-client'
+import FeaturedDataTabs from 'synapse-react-client/components/FeaturedDataTabs/FeaturedDataTabs'
+import FeaturedResearch from 'synapse-react-client/components/FeaturedResearch/FeaturedResearch'
+import { GoalsV2 } from 'synapse-react-client/components/GoalsV2/GoalsV2'
+import ImageCardGridWithLinks from 'synapse-react-client/components/ImageCardGridWithLinks/ImageCardGridWithLinks'
+import PortalFeaturedPartners from 'synapse-react-client/components/PortalFeaturedPartners/PortalFeaturedPartners'
+import PortalFeatureHighlights from 'synapse-react-client/components/PortalFeatureHighlights/PortalFeatureHighlights'
+import PortalHomePageHeader from 'synapse-react-client/components/PortalHomePageHeader/PortalHomePageHeader'
+import PortalSectionHeader from 'synapse-react-client/components/PortalSectionHeader/PortalSectionHeader'
+import RecentPublicationsGrid from 'synapse-react-client/components/RecentPublicationsGrid/RecentPublicationsGrid'
+import { UpsetPlot } from 'synapse-react-client/components/Plot/UpsetPlot'
 import {
   cohortBuilderSql,
   dataSql,
@@ -225,27 +223,26 @@ function HomePageInternal() {
                       plotType: 'STACKED_HORIZONTAL_BAR',
                     },
                     {
-                      title: 'ADAMTS7 Study',
+                      title: 'The New England Centenarian Study APOE',
                       description:
-                        'This study evaluates Longevity-Associated Variants (LAVs) from a GWAS of parental lifespan and assesses their translational potential by applying Mendelian Randomization to evaluate the influence of tissue-specific LAG expression on disease pathways using data from the MrOS, SOF, and Health ABC cohorts.',
+                        'This study explores how the protective APOE e2 allele shapes metabolism in aging. It includes serum metabolomics and cognitive assessments from ~200 participants—centenarians, their offspring, and controls—all free of major diseases. A subset also has proteomics data, offering a deeper look into longevity-related biological signatures.',
                       facetsToPlot: ['dataTypes'],
                       selectFacetColumnName: 'studyKey',
-                      selectFacetColumnValue: 'ADAMTS7',
+                      selectFacetColumnValue: 'NECS_APOE',
                       detailsPagePath:
-                        '/Explore/Studies/DetailsPage?studyKey=ADAMTS7',
+                        '/Explore/Studies/DetailsPage?studyKey=NECS_APOE',
                       unitDescription: 'Files',
                       plotType: 'STACKED_HORIZONTAL_BAR',
                     },
                     {
-                      title:
-                        'Shotgun Metagenomics Analysis of the Gut Microbiome',
+                      title: 'Arivale Scientific Wellness Study',
                       description:
-                        'The study provides metagenomics data from 209 samples including 78 centenarian samples (over 100 years of age) and 131 younger samples (59-99). Samples were collected as part of the Integrative longevity Omics (ILO) study with the aim to discover molecular profiles that associate with exceptional longevity and healthy aging phenotypes including delay of or escape from Alzheimer’s disease.',
+                        'The Arivale-Providence Feasibility Study of Scientific Wellness is a 3-year pilot study examining the impact of a Scientific Wellness intervention on health, wellness, quality of life, productivity, and medical claims among Providence employees. Building on preliminary research by the Institute for Systems Biology, the study uses longitudinal monitoring of clinical labs, genetics, gut microbiome, and lifestyle data combined with personalized coaching to recommend actionable interventions.',
                       facetsToPlot: ['dataTypes'],
                       selectFacetColumnName: 'studyKey',
-                      selectFacetColumnValue: 'ILOMGS',
+                      selectFacetColumnValue: 'Arivale_SWS',
                       detailsPagePath:
-                        '/Explore/Studies/DetailsPage?studyKey=ILOMGS',
+                        '/Explore/Studies/DetailsPage?studyKey=Arivale_SWS',
                       unitDescription: 'Files',
                       plotType: 'STACKED_HORIZONTAL_BAR',
                     },

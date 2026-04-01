@@ -94,6 +94,7 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
       providedContext?.accessToken,
       providedContext?.isAuthenticated,
       providedContext?.downloadCartPageUrl,
+      providedContext?.peopleSearchPageUrl,
       providedContext?.isInExperimentalMode,
       providedContext?.keyFactory,
       providedContext?.utcTime,

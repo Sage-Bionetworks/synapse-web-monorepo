@@ -8,11 +8,11 @@ import {
   Typography,
   Stack,
 } from '@mui/material'
-import { useGetEntity } from 'synapse-react-client/synapse-queries'
-import { isFileEntity } from 'synapse-react-client'
+import { useGetEntity } from 'synapse-react-client/synapse-queries/index'
+import { isFileEntity } from 'synapse-react-client/utils/types/IsType'
 import { useLocation, useNavigate } from 'react-router'
 import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
-import { ReactComponent as RDCADAP } from '/../../portals/ampals/src/config/style/RDCADAP.svg'
+import { ReactComponent as RDCADAP } from '../portal-assets/RDCADAP.svg'
 
 export type RedirectDialogProps = {
   onCancelRedirect: () => void
@@ -135,8 +135,8 @@ const RedirectDialog = (props: RedirectDialogProps): React.ReactNode => {
   useEffect(() => {
     if (redirectUrl && isRedirectTargetFileEntity && !isLoading) {
       const currentUrl = `${location.pathname}${location.search}`
-      const internalUrl = `/FileEntity?entityId=${entityId}${
-        versionNumber ? `&version=${versionNumber}` : ''
+      const internalUrl = `/FileEntity/${entityId}${
+        versionNumber ? `/version/${versionNumber}` : ''
       }`
 
       if (currentUrl === internalUrl) {

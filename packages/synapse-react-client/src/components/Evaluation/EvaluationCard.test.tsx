@@ -173,6 +173,7 @@ describe('test Evaluation Card', () => {
 
     // Confirm delete
     const modal = screen.getByRole('dialog')
+    await user.click(within(modal).getByRole('checkbox'))
     const deleteButton = within(modal).getByRole('button', { name: 'Delete' })
     await userEvent.click(deleteButton)
 
@@ -207,6 +208,7 @@ describe('test Evaluation Card', () => {
 
     // Confirm delete
     const modal = screen.getByRole('dialog')
+    await user.click(within(modal).getByRole('checkbox'))
     const deleteButton = within(modal).getByRole('button', { name: 'Delete' })
     await user.click(deleteButton)
 
@@ -272,6 +274,7 @@ describe('test Evaluation Card', () => {
 
     // Confirm delete
     const modal = screen.getByRole('dialog')
+    await user.click(within(modal).getByRole('checkbox'))
     const deleteButton = within(modal).getByRole('button', { name: 'Delete' })
     await user.click(deleteButton)
 
@@ -302,6 +305,7 @@ describe('test Evaluation Card', () => {
 
     // Confirm delete
     const modal = screen.getByRole('dialog')
+    await user.click(within(modal).getByRole('checkbox'))
     const deleteButton = within(modal).getByRole('button', { name: 'Delete' })
     await user.click(deleteButton)
 

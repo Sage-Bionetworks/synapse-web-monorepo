@@ -1,9 +1,10 @@
+import { useGetEntityBundle } from '@/synapse-queries'
+import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
-import { useInView } from 'react-intersection-observer'
 import { StyledComponent } from '@emotion/styled'
 import {
   ArticleOutlined,
@@ -21,19 +22,19 @@ import {
   styled,
   Typography,
 } from '@mui/material'
-import dayjs from 'dayjs'
-import { EntityTypeIcon } from '../EntityIcon'
 import { EntityType } from '@sage-bionetworks/synapse-client'
-import FavoriteButton from '../favorites/FavoriteButton'
+import dayjs from 'dayjs'
+import { useRef } from 'react'
+import { useInView } from 'react-intersection-observer'
 import { EntityDownloadButton } from '../EntityDownloadButton/EntityDownloadButton'
-import HasAccessChip from './HasAccessChip'
-import { searchResultsCardChipStyles } from './chipStyles'
-import styles from './SynapseSearchResultsCard.module.scss'
-import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
-import { useGetEntityBundle } from '@/synapse-queries'
 import { FileHandleWithPreview } from '../EntityFinder/details/view/table/TableCellTypes'
-import { HighlightedTypography } from './HighlightedTypography'
+import { EntityTypeIcon } from '../EntityIcon'
+import FavoriteButton from '../favorites/FavoriteButton'
 import { markdownToPlainText } from '../Markdown/MarkdownUtils'
+import { searchResultsCardChipStyles } from './chipStyles'
+import HasAccessChip from './HasAccessChip'
+import { HighlightedTypography } from './HighlightedTypography'
+import styles from './SynapseSearchResultsCard.module.scss'
 
 export type SynapseSearchResultsCardProps = {
   entityId: string
@@ -61,7 +62,7 @@ const SynapseSearchResultsCardContainer: StyledComponent<PaperProps> = styled(
 })
 
 export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
-  const HIT_DESCRIPTION_LENGTH_CHAR = 200
+  const downloadConfirmationRef = useRef<HTMLDivElement>(null)
 
   const { ref, inView } = useInView({
     triggerOnce: true,
@@ -81,6 +82,10 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
 
   const friendlySize = file?.contentSize
     ? calculateFriendlyFileSize(file?.contentSize)
+    : ''
+
+  const plainDescription = props.description
+    ? markdownToPlainText(props.description)
     : ''
 
   return (
@@ -103,6 +108,7 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
           }}
         >
           <HighlightedTypography
+            className={styles.cardTitle}
             variant="headline3"
             text={props.name}
             searchTerms={props.searchTerms ?? []}
@@ -121,9 +127,12 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
             entityId={props.entityId}
             name={props.name}
             entityType={props.entityType}
+            downloadConfirmationContainer={downloadConfirmationRef}
           />
         </Box>
       </Box>
+      {/* Portal target for EntityDownloadButton's download confirmation dialog */}
+      <div ref={downloadConfirmationRef} />
       <Box
         sx={{
           display: 'flex',
@@ -150,7 +159,7 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
           gap: '8px',
         }}
       >
-        <Stack sx={{ gap: '20px' }}>
+        <Stack sx={{ gap: '20px', minWidth: 0, width: '100%' }}>
           <Box sx={{ display: 'flex' }}>
             <UpdateIcon className={styles.cardMetadataIcon} />
             <Typography className={styles.cardMetadataTypographyWithIcon}>
@@ -158,15 +167,14 @@ export function SynapseSearchResultsCard(props: SynapseSearchResultsCardProps) {
               {formatDate(dayjs.unix(props.modifiedOn), 'M/D/YYYY')}
             </Typography>
           </Box>
-          {props.description && (
+          {plainDescription && (
             <Box sx={{ display: 'flex' }}>
               <ArticleOutlined className={styles.cardMetadataIcon} />
-              <Typography className={styles.cardMetadataTypographyWithIcon}>
-                {markdownToPlainText(
-                  props.description,
-                  HIT_DESCRIPTION_LENGTH_CHAR,
-                )}
-              </Typography>
+              <HighlightedTypography
+                className={`${styles.cardMetadataTypographyWithIcon} ${styles.cardDescription}`}
+                text={plainDescription}
+                searchTerms={props.searchTerms ?? []}
+              />
             </Box>
           )}
 

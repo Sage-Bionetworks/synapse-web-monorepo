@@ -1,5 +1,5 @@
 import { OAuthClientError } from './OAuthClientError'
-import { SynapseClientError } from 'synapse-react-client'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 
 /**
  * Returns true iff a redirect has started
