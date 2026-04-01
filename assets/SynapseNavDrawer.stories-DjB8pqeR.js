@@ -1,8 +1,0 @@
-import{S as t}from"./SynapseNavDrawer-ByoUnSf-.js";import"./iframe-CtRRQlop.js";import"./index-Chi_LkuB.js";import"./useDataAccessSubmission-D2-Eyd6q.js";import"./useInfiniteQuery-SCJRjalP.js";import"./useDownloadList-CuCrjAS2.js";import"./waitForAsyncResult-BvMu9EHP.js";import"./useUserBundle-B0DX8PZs.js";import"./CreateProjectModal-Cr-lIVTN.js";import"./ConfirmationDialog-D_lIVX08.js";import"./DialogBase-C8HPRqha.js";import"./Close-CTvsNcCQ.js";import"./HelpPopover-DWiuaJ6Y.js";import"./MarkdownPopover-Cjdvah9D.js";import"./LightTooltip-CnDTJ09B.js";import"./MarkdownSynapse-BokKjTo9.js";import"./SkeletonButton-pOxqmMp7.js";import"./SkeletonInlineBlock-DEN7Z-Ku.js";import"./SkeletonTable-DdWEF2Hw.js";import"./SkeletonParagraph-B1xPIO3Y.js";import"./SynapseHomepageNavBar-CDIWWdO7.js";import"./SageResourcesPopover-Bl-zZaiZ.js";import"./Grid-DXPNqt8F.js";import"./index-6GE_fzjW.js";import"./MenuItem-BQGtU2sS.js";import"./UserBadge-euSgz4-X.js";import"./Card-zOjMR6J6.js";import"./Chip-CNSuJPte.js";import"./searchDefaults-CsTFKTuZ.js";import"./Slide-D1PBi8Q_.js";import"./InputAdornment-DBq-5Nbw.js";import"./listItemButtonClasses-Od4d1K6B.js";import"./Badge-JSrpYFq2.js";import"./usePreviousProps-Twb_anNL.js";const C={title:"Synapse/SynapseNavDrawer",component:t},r={args:{initIsOpen:!1,gotoPlace:o=>{window.alert(`Nav bar calling back to change route to ${o}`)}}};r.parameters={...r.parameters,docs:{...r.parameters?.docs,source:{originalSource:`{
-  args: {
-    initIsOpen: false,
-    gotoPlace: (href: string) => {
-      window.alert(\`Nav bar calling back to change route to \${href}\`);
-    }
-  }
-}`,...r.parameters?.docs?.source}}};const F=["Demo"];export{r as Demo,F as __namedExportsOrder,C as default};
