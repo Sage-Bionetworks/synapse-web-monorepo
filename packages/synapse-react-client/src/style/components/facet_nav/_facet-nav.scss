@@ -13,5 +13,9 @@
       flex-grow: 1;
       flex-basis: 45%;
     }
+
+    > div.PlotsContainer__row__item--full-width {
+      flex-basis: 100%;
+    }
   }
 }

@@ -5,6 +5,9 @@
   .main-svg {
     // https://sagebionetworks.jira.com/browse/PORTALS-1454
     overflow: visible !important;
+    .draglayer {
+      cursor: pointer !important;
+    }
   }
   padding: 5px 0;
   &__title {

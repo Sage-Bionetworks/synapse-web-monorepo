@@ -279,6 +279,11 @@ function PlotsContainer(props: PlotsContainerProps) {
 
               return (
                 <div
+                  className={
+                    plotUiState.plotType === 'BAR'
+                      ? 'PlotsContainer__row__item--full-width'
+                      : undefined
+                  }
                   style={{
                     minWidth: '435px',
                     display: isPlotHiddenInGrid(plotUiState.plotId)

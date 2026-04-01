@@ -51,7 +51,10 @@ export const standardsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
     showDownloadColumn: false,
     columnLinks: standardsColumnLinks,
   },
-  facetsToPlot: ['topic', DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_NAMES],
+  facetsToPlot: [
+    'topic',
+    // DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_NAMES, // Vast majority of values are currently 'Not Assigned', making the facet not useful. Re-add in the future if more values are annotated.
+  ],
   initialPlotType: 'BAR',
   searchConfiguration: {
     ftsConfig: standardsFtsConfig,
