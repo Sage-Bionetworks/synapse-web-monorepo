@@ -408,6 +408,9 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                             'grid-' + (session.sourceEntityId || 'export')
                           }
                           includeEtag={entityIsRecordSet ? false : undefined}
+                          includeRowIdAndRowVersion={
+                            entityIsRecordSet ? false : undefined
+                          }
                         />
                       )}
                       {session.sourceEntityId && (

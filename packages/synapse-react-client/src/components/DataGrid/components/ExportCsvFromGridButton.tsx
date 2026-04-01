@@ -6,17 +6,20 @@ export type ExportCsvFromGridButtonProps = {
   gridSessionId: string
   filename: string
   includeEtag?: boolean
+  includeRowIdAndRowVersion?: boolean
 }
 
 export default function ExportCsvFromGridButton(
   props: ExportCsvFromGridButtonProps,
 ) {
-  const { gridSessionId, filename, includeEtag } = props
+  const { gridSessionId, filename, includeEtag, includeRowIdAndRowVersion } =
+    props
 
   const { exportToCsv, isExporting } = useExportDataGridToCsv({
     gridSessionId,
     filename,
     includeEtag,
+    includeRowIdAndRowVersion,
   })
 
   return (

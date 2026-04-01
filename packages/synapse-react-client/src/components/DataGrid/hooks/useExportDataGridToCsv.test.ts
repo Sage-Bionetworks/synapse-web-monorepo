@@ -72,6 +72,7 @@ describe('useExportDataGridToCsv', () => {
     expect(mockMutate).toHaveBeenCalledWith({
       sessionId: 'session-123',
       includeEtag: undefined,
+      includeRowIdAndRowVersion: undefined,
       concreteType:
         'org.sagebionetworks.repo.model.grid.DownloadFromGridRequest',
     })
@@ -93,6 +94,29 @@ describe('useExportDataGridToCsv', () => {
     expect(mockMutate).toHaveBeenCalledWith({
       sessionId: 'session-123',
       includeEtag: false,
+      includeRowIdAndRowVersion: undefined,
+      concreteType:
+        'org.sagebionetworks.repo.model.grid.DownloadFromGridRequest',
+    })
+  })
+
+  it('should pass includeRowIdAndRowVersion: false when specified', () => {
+    const { result } = renderHook(
+      () =>
+        useExportDataGridToCsv({
+          gridSessionId: 'session-123',
+          filename: 'my-export',
+          includeRowIdAndRowVersion: false,
+        }),
+      { wrapper: createWrapper() },
+    )
+
+    result.current.exportToCsv()
+
+    expect(mockMutate).toHaveBeenCalledWith({
+      sessionId: 'session-123',
+      includeEtag: undefined,
+      includeRowIdAndRowVersion: false,
       concreteType:
         'org.sagebionetworks.repo.model.grid.DownloadFromGridRequest',
     })
