@@ -1,7 +1,7 @@
 import { SynapseChatProps } from 'synapse-react-client'
 
 const synapseChatConfig: SynapseChatProps = {
-  agentRegistrationId: '197',
+  agentRegistrationId: '238',
   chatbotName: 'NF Portal Assistant',
 }
 export default synapseChatConfig
