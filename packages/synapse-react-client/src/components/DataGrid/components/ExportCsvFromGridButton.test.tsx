@@ -42,6 +42,23 @@ describe('ExportCsvFromGridButton', () => {
     expect(useExportDataGridToCsv).toHaveBeenCalledWith({
       gridSessionId: 'my-session-456',
       filename: 'my-export-file',
+      includeEtag: undefined,
+    })
+  })
+
+  it('should pass includeEtag={false} to useExportDataGridToCsv hook when provided', () => {
+    render(
+      <ExportCsvFromGridButton
+        gridSessionId="my-session-456"
+        filename="my-export-file"
+        includeEtag={false}
+      />,
+    )
+
+    expect(useExportDataGridToCsv).toHaveBeenCalledWith({
+      gridSessionId: 'my-session-456',
+      filename: 'my-export-file',
+      includeEtag: false,
     })
   })
 

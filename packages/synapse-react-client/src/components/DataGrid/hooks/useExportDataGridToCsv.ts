@@ -5,11 +5,12 @@ import { getFileHandleByIdURL } from '@/synapse-client/SynapseClient'
 
 export interface UseExportDataGridToCsvOptions {
   gridSessionId: string
+  includeEtag?: boolean
   filename: string
 }
 
 export function useExportDataGridToCsv(options: UseExportDataGridToCsvOptions) {
-  const { gridSessionId, filename } = options
+  const { gridSessionId, filename, includeEtag } = options
   const { accessToken } = useSynapseContext()
 
   const { mutate: exportGrid, isPending } = useExportGridAsCsv({
@@ -59,6 +60,7 @@ export function useExportDataGridToCsv(options: UseExportDataGridToCsvOptions) {
   const exportToCsv = () => {
     exportGrid({
       sessionId: gridSessionId,
+      includeEtag,
       concreteType:
         'org.sagebionetworks.repo.model.grid.DownloadFromGridRequest',
     })

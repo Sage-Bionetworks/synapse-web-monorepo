@@ -162,6 +162,9 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       entityData?.concreteType ===
       'org.sagebionetworks.repo.model.table.EntityView'
 
+    const entityIsRecordSet =
+      entityData?.concreteType === 'org.sagebionetworks.repo.model.RecordSet'
+
     // Process schema properties once
     const schemaPropertiesInfo = useMemo(() => {
       return getSchemaPropertiesInfo(jsonSchema ?? null)
@@ -404,6 +407,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                           filename={
                             'grid-' + (session.sourceEntityId || 'export')
                           }
+                          includeEtag={entityIsRecordSet ? false : undefined}
                         />
                       )}
                       {session.sourceEntityId && (
