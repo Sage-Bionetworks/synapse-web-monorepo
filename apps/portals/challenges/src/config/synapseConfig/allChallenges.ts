@@ -64,7 +64,10 @@ export const allChallenges: QueryWrapperPlotNavProps = {
   name: 'Challenges',
   hideTopLevelControls: true,
   defaultShowPlots: true,
+  facetsToPlot: ['startYear', 'organizingCommunity', 'platform', 'status'],
   columnAliases: {
     metadataCompletenessTier: 'Metadata Completeness',
+    startYear: `Challenges by Year`,
   },
+  initialPlotTypeByFacetColumnName: { startYear: 'BAR' },
 }
