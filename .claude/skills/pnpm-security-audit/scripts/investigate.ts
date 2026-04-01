@@ -19,8 +19,11 @@
  *   npx tsx .claude/skills/pnpm-security-audit/scripts/investigate.ts picomatch 4.0.4 ">=4.0.0 <4.0.4"
  */
 
-import { spawnSync } from 'node:child_process'
+import { execFile as execFileCb, spawnSync } from 'node:child_process'
+import { promisify } from 'node:util'
 import semver from 'semver'
+
+const execFileAsync = promisify(execFileCb)
 
 const [pkg, patchedVersion, vulnerableRange] = process.argv.slice(2)
 
@@ -32,7 +35,8 @@ if (!pkg || !patchedVersion) {
 }
 
 // Basic validation: package names and versions should only contain safe chars.
-// This is a developer tool, but we still avoid shell injection via spawnSync.
+// This is a developer tool, but we still avoid shell injection via
+// spawnSync/execFile argument arrays (no shell interpolation).
 const PKG_RE = /^(@[a-z0-9_.-]+\/)?[a-z0-9_.-]+$/i
 
 if (!PKG_RE.test(pkg)) {
@@ -71,8 +75,6 @@ function getWorkspacePackageNames(): Set<string> {
   }
 }
 
-const workspacePackages = getWorkspacePackageNames()
-
 function satisfies(version: string, range: string): boolean | null {
   const coerced = semver.coerce(version)
   if (!coerced) return null
@@ -84,7 +86,8 @@ function satisfies(version: string, range: string): boolean | null {
 }
 
 // ---------------------------------------------------------------------------
-// Shell helpers — use spawnSync with argument arrays to avoid shell injection.
+// Shell helpers — use spawnSync/execFile with argument arrays to avoid
+// shell injection.
 // ---------------------------------------------------------------------------
 
 function runStdout(args: string[]): string {
@@ -92,11 +95,78 @@ function runStdout(args: string[]): string {
   return result.stdout ?? ''
 }
 
-function runJSON(args: string[]): Record<string, unknown> | null {
+type InfoResult = Record<string, unknown> | null
+type InfoCache = Map<string, InfoResult>
+
+async function fetchInfo(spec: string): Promise<InfoResult> {
   try {
-    return JSON.parse(runStdout(args)) as Record<string, unknown>
+    const { stdout } = await execFileAsync('pnpm', ['info', spec, '--json'], {
+      encoding: 'utf8',
+      timeout: 30_000,
+    })
+    return JSON.parse(stdout) as Record<string, unknown>
   } catch {
     return null
+  }
+}
+
+/**
+ * Pre-fetch pnpm info for all unique parents from vulnerable blocks in parallel.
+ * Returns caches keyed by "name@version" (current) and package name (latest).
+ */
+async function prefetchParentInfo(
+  blocks: VersionBlock[],
+  workspacePackages: Set<string>,
+): Promise<{ currentCache: InfoCache; latestCache: InfoCache }> {
+  const seen = new Set<string>()
+  const parents: { name: string; version: string }[] = []
+
+  for (const block of blocks) {
+    if (getBlockPatchStatus(block) === true) continue
+
+    for (const parent of block.parents) {
+      const key = `${parent.name}@${parent.version}`
+      if (seen.has(key) || workspacePackages.has(parent.name)) continue
+      seen.add(key)
+      parents.push({ name: parent.name, version: parent.version })
+    }
+  }
+
+  const uniqueNames = [...new Set(parents.map(p => p.name))]
+  const total = parents.length + uniqueNames.length
+  if (total === 0) return { currentCache: new Map(), latestCache: new Map() }
+
+  let completed = 0
+  const updateProgress = () => {
+    completed++
+    process.stderr.write(
+      `\r  ${dim(`Fetching package info… ${completed}/${total}`)}`,
+    )
+  }
+
+  const [currentResults, latestResults] = await Promise.all([
+    Promise.all(
+      parents.map(async p => {
+        const spec = `${p.name}@${p.version}`
+        const result = [spec, await fetchInfo(spec)] as const
+        updateProgress()
+        return result
+      }),
+    ),
+    Promise.all(
+      uniqueNames.map(async name => {
+        const result = [name, await fetchInfo(`${name}@latest`)] as const
+        updateProgress()
+        return result
+      }),
+    ),
+  ])
+
+  process.stderr.write('\r\x1b[2K') // clear the progress line
+
+  return {
+    currentCache: new Map(currentResults),
+    latestCache: new Map(latestResults),
   }
 }
 
@@ -173,6 +243,29 @@ function parseWhyJson(entries: WhyJsonEntry[]): VersionBlock[] {
   }))
 }
 
+/**
+ * Check whether this version block is patched, vulnerable, or indeterminate.
+ *
+ * If a vulnerableRange is provided, a version is only vulnerable if it falls
+ * within that range. Without it, anything below patchedVersion is vulnerable.
+ * This matters when a CVE affects a specific range (e.g. ">=4.0.0 <4.0.4") —
+ * older major versions have their own separate vulnerability status and
+ * shouldn't be flagged as needing the 4.x patch.
+ *
+ * Returns: true = patched, false = vulnerable, null = indeterminate (unparseable version).
+ */
+function getBlockPatchStatus(block: VersionBlock): boolean | null {
+  // If outside the vulnerable range, this version isn't affected by this CVE.
+  // Use the safe wrapper: if the version is unparseable, assume it might be
+  // in the vulnerable range (coalesce null → true) so the subsequent check
+  // produces an indeterminate ❓ rather than a false "patched" ✅.
+  const isInVulnerableRange = vulnerableRange
+    ? satisfies(block.installedVersion, vulnerableRange) ?? true
+    : true
+  if (!isInVulnerableRange) return true
+  return satisfies(block.installedVersion, `>=${patchedVersion}`)
+}
+
 // ---------------------------------------------------------------------------
 // Output helpers
 // ---------------------------------------------------------------------------
@@ -190,184 +283,195 @@ const icon = (ok: boolean | null) =>
 // Main
 // ---------------------------------------------------------------------------
 
-console.log(`\n${bold(`🔍 ${pkg}`)}  (patched: >= ${patchedVersion})\n`)
+async function main() {
+  console.log(`\n${bold(`🔍 ${pkg}`)}  (patched: >= ${patchedVersion})\n`)
 
-const whyJson = runStdout(['why', pkg, '--recursive', '--json'])
+  process.stderr.write(dim('  Scanning workspace…'))
+  const workspacePackages = getWorkspacePackageNames()
+  process.stderr.write('\r\x1b[2K')
 
-let whyData: WhyJsonEntry[]
-try {
-  whyData = JSON.parse(whyJson) as WhyJsonEntry[]
-} catch {
-  if (whyJson.includes('is not in the dependency graph') || !whyJson.trim()) {
+  process.stderr.write(dim('  Tracing dependency tree…'))
+  const whyJson = runStdout(['why', pkg, '--recursive', '--json'])
+
+  let whyData: WhyJsonEntry[]
+  try {
+    whyData = JSON.parse(whyJson) as WhyJsonEntry[]
+  } catch {
+    process.stderr.write('\r\x1b[2K')
+    if (whyJson.includes('is not in the dependency graph') || !whyJson.trim()) {
+      console.log(green(`  ✅ ${pkg} is not installed — nothing to do.\n`))
+      process.exit(0)
+    }
+    console.log(yellow('  ⚠️  Could not parse pnpm why --json output. Raw:'))
+    console.log(whyJson)
+    process.exit(1)
+  }
+
+  if (whyData.length === 0) {
+    process.stderr.write('\r\x1b[2K')
     console.log(green(`  ✅ ${pkg} is not installed — nothing to do.\n`))
     process.exit(0)
   }
-  console.log(yellow('  ⚠️  Could not parse pnpm why --json output. Raw:'))
-  console.log(whyJson)
-  process.exit(1)
-}
 
-if (whyData.length === 0) {
-  console.log(green(`  ✅ ${pkg} is not installed — nothing to do.\n`))
-  process.exit(0)
-}
+  const blocks = parseWhyJson(whyData)
 
-const blocks = parseWhyJson(whyData)
-
-const seenParent = new Set<string>()
-
-for (const block of blocks) {
-  // If a vulnerableRange is provided, a version is only vulnerable if it falls
-  // within that range. Without it, anything below patchedVersion is vulnerable.
-  // This matters when a CVE affects a specific range (e.g. ">=4.0.0 <4.0.4") —
-  // older major versions have their own separate vulnerability status and
-  // shouldn't be flagged as needing the 4.x patch.
-  const isInVulnerableRange = vulnerableRange
-    ? semver.satisfies(block.installedVersion, vulnerableRange) ?? false
-    : true
-  const isPatched = isInVulnerableRange
-    ? satisfies(block.installedVersion, `>=${patchedVersion}`)
-    : true // outside the vulnerable range → not affected by this CVE
-  const label =
-    isPatched === false
-      ? red(' VULNERABLE')
-      : isPatched === true
-      ? green(' patched')
-      : ''
-  console.log(
-    `  ${icon(isPatched)} ${bold(`${pkg}@${block.installedVersion}`)}${label}`,
+  const { currentCache, latestCache } = await prefetchParentInfo(
+    blocks,
+    workspacePackages,
   )
+  process.stderr.write('\r\x1b[2K')
 
-  if (isPatched !== false) {
-    console.log('')
-    continue
-  }
+  const seenParent = new Set<string>()
 
-  for (const parent of block.parents) {
-    const key = `${parent.name}@${parent.version}`
-    if (seenParent.has(key)) continue
-    seenParent.add(key)
-
-    const depType = parent.isDev ? dim(' (dev)') : ' (prod)'
-    const isWorkspace = workspacePackages.has(parent.name)
-    const workspaceNote = isWorkspace
-      ? yellow(
-          '  ⚠️  workspace package — edit its package.json directly, not an override',
-        )
-      : ''
-    console.log(`\n    Parent: ${bold(key)}${depType}${workspaceNote}`)
-
-    const info = runJSON(['info', `${parent.name}@${parent.version}`, '--json'])
-    const range = allDeps(info)[pkg] ?? null
-
-    if (!range) {
-      console.log(
-        `      ${yellow(
-          '⚠️  Not a direct dep of this parent — deeper transitive.',
-        )}`,
-      )
-      console.log(dim(`      Trace further: pnpm why ${pkg} --recursive`))
-      continue
-    }
-
-    const rangeOk = satisfies(patchedVersion, range)
-    const isPeer = isPeerDep(info, pkg)
-    const peerNote = isPeer
-      ? yellow("  ⚠️  peer dep — pnpm update won't re-resolve this")
-      : ''
+  for (const block of blocks) {
+    const isPatched = getBlockPatchStatus(block)
+    const label =
+      isPatched === false
+        ? red(' VULNERABLE')
+        : isPatched === true
+        ? green(' patched')
+        : ''
     console.log(
-      `      Declared: ${pkg}@"${range}"  ${icon(rangeOk)}${peerNote}`,
+      `  ${icon(isPatched)} ${bold(
+        `${pkg}@${block.installedVersion}`,
+      )}${label}`,
     )
 
-    if (rangeOk && !isPeer) {
-      console.log(green(`      → FIX: pnpm update ${pkg} --recursive`))
+    if (isPatched !== false) {
+      console.log('')
       continue
     }
 
-    // For workspace packages, pnpm info returns registry data (not local state),
-    // so the "latest parent" lookup is meaningless. Always recommend editing directly.
-    if (isWorkspace) {
-      console.log(
-        yellow(
-          `      → FIX: bump ${pkg}@"${range}" to "${patchedVersion}" in ${parent.name}'s package.json`,
-        ),
-      )
-      continue
-    }
+    for (const parent of block.parents) {
+      const key = `${parent.name}@${parent.version}`
+      if (seenParent.has(key)) continue
+      seenParent.add(key)
 
-    // For peer deps with a flexible range, or any range that's too tight:
-    // check the latest parent version to see if updating the parent fixes it.
-    const latestInfo = runJSON(['info', `${parent.name}@latest`, '--json'])
-    if (!latestInfo) {
-      console.log(
-        red(`      → FIX: pnpm override  "${key}>${pkg}": "${patchedVersion}"`),
-      )
-      continue
-    }
+      const depType = parent.isDev ? dim(' (dev)') : ' (prod)'
+      const isWorkspace = workspacePackages.has(parent.name)
+      const workspaceNote = isWorkspace
+        ? yellow(
+            '  ⚠️  workspace package — edit its package.json directly, not an override',
+          )
+        : ''
+      console.log(`\n    Parent: ${bold(key)}${depType}${workspaceNote}`)
 
-    if (typeof latestInfo.version !== 'string') {
-      console.log(
-        red(`      → FIX: pnpm override  "${key}>${pkg}": "${patchedVersion}"`),
-      )
-      continue
-    }
-    const latestVer = latestInfo.version
-    const latestRange = allDeps(latestInfo)[pkg] ?? null
-    const isRemoved = !latestRange
-    const latestOk = !isPeer
-      ? latestRange
-        ? satisfies(patchedVersion, latestRange)
-        : false
-      : true // for peer deps the parent version itself is what matters, not its declared range for pkg
+      const info = currentCache.get(key) ?? null
+      const range = allDeps(info)[pkg] ?? null
 
-    console.log(`      Latest:   ${parent.name}@${latestVer}`)
-
-    const alreadyLatest = latestVer === parent.version
-    const pinNote = isPeer
-      ? dim(
-          `  (if exact-pinned in workspace package.json, bump to ${latestVer} directly)`,
+      if (!range) {
+        console.log(
+          `      ${yellow(
+            '⚠️  Not a direct dep of this parent — deeper transitive.',
+          )}`,
         )
-      : ''
+        console.log(dim(`      Trace further: pnpm why ${pkg} --recursive`))
+        continue
+      }
 
-    if (rangeOk && isPeer) {
-      // Parent's current range already covers the fix — just need to update the parent itself
-      if (alreadyLatest) {
+      const rangeOk = satisfies(patchedVersion, range)
+      const isPeer = isPeerDep(info, pkg)
+      const peerNote = isPeer
+        ? yellow("  ⚠️  peer dep — pnpm update won't re-resolve this")
+        : ''
+      console.log(
+        `      Declared: ${pkg}@"${range}"  ${icon(rangeOk)}${peerNote}`,
+      )
+
+      if (rangeOk && !isPeer) {
+        console.log(green(`      → FIX: pnpm update ${pkg} --recursive`))
+        continue
+      }
+
+      // For workspace packages, pnpm info returns registry data (not local state),
+      // so the "latest parent" lookup is meaningless. Always recommend editing directly.
+      if (isWorkspace) {
         console.log(
           yellow(
-            `      Already at latest — run pnpm install to re-resolve peer deps`,
+            `      → FIX: bump ${pkg}@"${range}" to "${patchedVersion}" in ${parent.name}'s package.json`,
           ),
         )
+        continue
+      }
+
+      // For peer deps with a flexible range, or any range that's too tight:
+      // check the latest parent version to see if updating the parent fixes it.
+      const latestInfo = latestCache.get(parent.name) ?? null
+      if (!latestInfo || typeof latestInfo.version !== 'string') {
+        console.log(
+          red(
+            `      → FIX: pnpm override  "${key}>${pkg}": "${patchedVersion}"`,
+          ),
+        )
+        continue
+      }
+      const latestVer = latestInfo.version
+      const latestRange = allDeps(latestInfo)[pkg] ?? null
+      const isRemoved = !latestRange
+      const latestOk = !isPeer
+        ? latestRange
+          ? satisfies(patchedVersion, latestRange)
+          : false
+        : true // for peer deps the parent version itself is what matters, not its declared range for pkg
+
+      console.log(`      Latest:   ${parent.name}@${latestVer}`)
+
+      const alreadyLatest = latestVer === parent.version
+      const pinNote = isPeer
+        ? dim(
+            `  (if exact-pinned in workspace package.json, bump to ${latestVer} directly)`,
+          )
+        : ''
+
+      if (rangeOk && isPeer) {
+        // Parent's current range already covers the fix — just need to update the parent itself
+        if (alreadyLatest) {
+          console.log(
+            yellow(
+              `      Already at latest — run pnpm install to re-resolve peer deps`,
+            ),
+          )
+        } else {
+          console.log(
+            green(`      → FIX: pnpm update ${parent.name} --recursive`),
+          )
+          if (pinNote) console.log(dim(`             ${pinNote.trim()}`))
+        }
+      } else if (isRemoved) {
+        console.log(green(`      Latest dropped ${pkg} entirely`))
+        console.log(
+          green(`      → FIX: pnpm update ${parent.name} --recursive`),
+        )
+        if (isPeer && pinNote)
+          console.log(dim(`             ${pinNote.trim()}`))
+      } else if (latestOk) {
+        if (!isPeer)
+          console.log(
+            `      Latest range: ${pkg}@"${latestRange}"  ${icon(true)}`,
+          )
+        console.log(
+          green(`      → FIX: pnpm update ${parent.name} --recursive`),
+        )
+        if (isPeer && pinNote)
+          console.log(dim(`             ${pinNote.trim()}`))
       } else {
         console.log(
-          green(
-            `      → FIX: pnpm update ${parent.name} --recursive${
-              pinNote ? '' : ''
-            }`,
+          `      Latest range: ${pkg}@"${latestRange}"  ${icon(false)}  ${dim(
+            '(no upstream fix)',
+          )}`,
+        )
+        console.log(
+          red(
+            `      → FIX: pnpm override  "${key}>${pkg}": "${patchedVersion}"`,
           ),
         )
-        if (pinNote) console.log(dim(`             ${pinNote.trim()}`))
       }
-    } else if (isRemoved) {
-      console.log(green(`      Latest dropped ${pkg} entirely`))
-      console.log(green(`      → FIX: pnpm update ${parent.name} --recursive`))
-      if (isPeer && pinNote) console.log(dim(`             ${pinNote.trim()}`))
-    } else if (latestOk) {
-      if (!isPeer)
-        console.log(
-          `      Latest range: ${pkg}@"${latestRange}"  ${icon(true)}`,
-        )
-      console.log(green(`      → FIX: pnpm update ${parent.name} --recursive`))
-      if (isPeer && pinNote) console.log(dim(`             ${pinNote.trim()}`))
-    } else {
-      console.log(
-        `      Latest range: ${pkg}@"${latestRange}"  ${icon(false)}  ${dim(
-          '(no upstream fix)',
-        )}`,
-      )
-      console.log(
-        red(`      → FIX: pnpm override  "${key}>${pkg}": "${patchedVersion}"`),
-      )
     }
+    console.log('')
   }
-  console.log('')
 }
+
+main().catch(err => {
+  console.error(err)
+  process.exit(1)
+})
