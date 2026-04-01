@@ -130,7 +130,7 @@ export const UserHistoryDashboard = (): React.ReactNode => {
           <UserSearchBox
             inputId="user-filter"
             onChange={onAccessorChange}
-            defaultValue={accessorId}
+            value={accessorId}
             placeholder="Search for a user name"
             typeFilter={TYPE_FILTER.USERS_ONLY}
           />

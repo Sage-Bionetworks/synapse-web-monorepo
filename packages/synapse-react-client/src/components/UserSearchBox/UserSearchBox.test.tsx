@@ -32,9 +32,9 @@ describe('UserSearchBox tests', () => {
     const input = screen.getByRole('combobox')
 
     await user.type(input, MOCK_USER_NAME.substring(0, 3))
-    const option = await screen.findByText(
-      new RegExp('@' + MOCK_USER_NAME),
-      undefined,
+    const option = await screen.findByRole(
+      'option',
+      { name: new RegExp('@' + MOCK_USER_NAME) },
       { timeout: 15000 },
     )
     await user.click(option)
@@ -60,9 +60,9 @@ describe('UserSearchBox tests', () => {
     const input = screen.getByRole('combobox')
 
     await user.type(input, MOCK_USER_NAME.substring(0, 3))
-    const option = await screen.findByText(
-      new RegExp('@' + MOCK_USER_NAME),
-      undefined,
+    const option = await screen.findByRole(
+      'option',
+      { name: new RegExp('@' + MOCK_USER_NAME) },
       { timeout: 15000 },
     )
     await user.click(option)
@@ -104,9 +104,9 @@ describe('UserSearchBox tests', () => {
     const input = screen.getByRole('combobox')
     await user.type(input, MOCK_USER_NAME.substring(0, 3))
 
-    const option = await screen.findByText(
-      new RegExp('@' + MOCK_USER_NAME),
-      undefined,
+    const option = await screen.findByRole(
+      'option',
+      { name: new RegExp('@' + MOCK_USER_NAME) },
       { timeout: 15000 },
     )
     await user.click(option)

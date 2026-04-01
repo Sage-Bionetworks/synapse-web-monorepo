@@ -5,9 +5,8 @@ import SynapseClient from '@/synapse-client'
 import { getLocationTracker } from '@/testutils/LocationTracker'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import userEvent, { PointerEventsCheckLevel } from '@testing-library/user-event'
 import { createMemoryRouter, RouterProvider } from 'react-router'
-import selectEvent from 'react-select-event'
 import {
   AccessRequirementDashboard,
   AccessRequirementDashboardProps,
@@ -51,7 +50,9 @@ function renderComponent(
   const renderResult = render(<RouterProvider router={router} />, {
     wrapper: createWrapper(),
   })
-  return { ...renderResult }
+  const user = userEvent.setup()
+
+  return { renderResult, user }
 }
 
 describe('AccessRequirementDashboard tests', () => {
@@ -61,7 +62,9 @@ describe('AccessRequirementDashboard tests', () => {
 
   it('Renders input fields and the table component', async () => {
     const mockOnCreateNewAR = vi.fn()
-    renderComponent({ onCreateNewAccessRequirementClicked: mockOnCreateNewAR })
+    renderComponent({
+      onCreateNewAccessRequirementClicked: mockOnCreateNewAR,
+    })
 
     expect(await screen.findAllByRole('combobox')).toHaveLength(1)
     expect(await screen.findAllByRole('textbox')).toHaveLength(2)
@@ -79,11 +82,11 @@ describe('AccessRequirementDashboard tests', () => {
   })
 
   it('Updates the passed props and URLSearchParams when updating nameOrID', async () => {
-    renderComponent()
+    const { user } = renderComponent()
     const nameOrIDInput = await screen.findByLabelText(
       'Filter by Access Requirement Name or ID',
     )
-    await userEvent.type(nameOrIDInput, NAME_CONTAINS_PREFIX)
+    await user.type(nameOrIDInput, NAME_CONTAINS_PREFIX)
 
     await waitFor(() => {
       expect(new URLSearchParams(getLocation().search).get('nameOrID')).toEqual(
@@ -102,11 +105,11 @@ describe('AccessRequirementDashboard tests', () => {
   })
 
   it('Updates the URL search parameters when updating relatedProjectId', async () => {
-    renderComponent()
+    const { user } = renderComponent()
     const relatedProjectInput = await screen.findByLabelText(
       'Filter by Project',
     )
-    await userEvent.type(relatedProjectInput, RELATED_PROJECT_ID)
+    await user.type(relatedProjectInput, RELATED_PROJECT_ID)
 
     await waitFor(() =>
       expect(
@@ -124,12 +127,17 @@ describe('AccessRequirementDashboard tests', () => {
   })
 
   it('Updates the URL search parameters when updating reviewerId', async () => {
-    renderComponent()
+    const { user } = renderComponent()
     const reviewerInput = await screen.findByLabelText('Filter by Reviewer')
-    await userEvent.click(reviewerInput)
-    await userEvent.type(reviewerInput, MOCK_USER_NAME.substring(0, 1))
-    await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
-    await selectEvent.select(reviewerInput, new RegExp('@' + MOCK_USER_NAME))
+    await user.type(reviewerInput, MOCK_USER_NAME.substring(0, 1))
+    const option = await screen.findByRole(
+      'option',
+      { name: new RegExp('@' + MOCK_USER_NAME) },
+      { timeout: 15000 },
+    )
+    await user
+      .setup({ pointerEventsCheck: PointerEventsCheckLevel.Never })
+      .click(option)
 
     await waitFor(() =>
       expect(

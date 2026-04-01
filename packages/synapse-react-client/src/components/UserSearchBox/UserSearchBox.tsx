@@ -1,6 +1,8 @@
-import { useSearchUserGroupHeaders } from '@/synapse-queries'
+import {
+  useGetUserGroupHeader,
+  useSearchUserGroupHeaders,
+} from '@/synapse-queries'
 import { useDebouncedEffect } from '@/utils/hooks/useDebouncedEffect'
-import useGetInfoFromIds from '@/utils/hooks/useGetInfoFromIds'
 import { Autocomplete, Box, Skeleton, TextField } from '@mui/material'
 import { TYPE_FILTER, UserGroupHeader } from '@sage-bionetworks/synapse-types'
 import { useMemo, useState } from 'react'
@@ -60,20 +62,19 @@ function UserSearchBox(props: UserSearchBoxProps) {
   const [isSearching, setIsSearching] = useState(false)
 
   // Resolve defaultValue principalId → UserGroupHeader for the initial uncontrolled state
-  const [defaultUserGroupHeader = undefined] =
-    useGetInfoFromIds<UserGroupHeader>({
-      ids: defaultValue ? [defaultValue] : [],
-      type: 'USER_PROFILE',
-    })
+  const { data: defaultUserGroupHeader, isLoading: isLoadingDefaultValue } =
+    useGetUserGroupHeader(defaultValue ?? '', { enabled: !!defaultValue })
 
   // Resolve controlled string principalId → UserGroupHeader
   const controlledPrincipalId =
     isControlled && typeof valueProp === 'string' ? valueProp : null
-  const [resolvedControlledHeader = undefined] =
-    useGetInfoFromIds<UserGroupHeader>({
-      ids: controlledPrincipalId ? [controlledPrincipalId] : [],
-      type: 'USER_PROFILE',
-    })
+
+  const {
+    data: resolvedControlledHeader,
+    isLoading: isLoadingControlledValue,
+  } = useGetUserGroupHeader(controlledPrincipalId ?? '', {
+    enabled: !!controlledPrincipalId,
+  })
 
   // Internal state for uncontrolled mode.
   // undefined = user hasn't interacted yet → falls back to defaultUserGroupHeader
@@ -121,14 +122,6 @@ function UserSearchBox(props: UserSearchBoxProps) {
     }
   }, [placeholder, typeFilter])
 
-  const isLoadingDefaultValue =
-    defaultValue != null &&
-    internalValue === undefined &&
-    defaultUserGroupHeader === undefined
-  const isLoadingControlledValue =
-    isControlled &&
-    typeof valueProp === 'string' &&
-    resolvedControlledHeader === undefined
   if (isLoadingDefaultValue || isLoadingControlledValue) {
     return <Skeleton width="100%" />
   }
