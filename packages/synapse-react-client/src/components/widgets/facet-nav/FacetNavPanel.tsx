@@ -158,6 +158,7 @@ export async function extractPlotDataArray(
   const anyFacetsSelected = facetToPlot.facetValues.some(
     value => value.isSelected,
   )
+
   const selectionAwareColorPalette = anyFacetsSelected
     ? facetToPlot.facetValues.map((facetValue, index) =>
         facetValue.isSelected
@@ -167,6 +168,7 @@ export async function extractPlotDataArray(
               .replace(')', ', 0.25)'),
       )
     : colorPalette
+
   const counts: Plotly.Datum[] = facetToPlot.facetValues.map(
     facet => facet.count,
   )
@@ -216,13 +218,14 @@ export async function extractPlotDataArray(
             facetValue.isSelected ? 0.1 : 0,
           )
         : undefined,
-    selectedpoints: anyFacetsSelected
-      ? facetToPlot.facetValues
-          .map((facetValue, index) => (facetValue.isSelected ? index : -1))
-          .filter(index => index !== -1)
-      : undefined,
-    selected: { marker: { opacity: 1 } },
-    unselected: { marker: { opacity: 0.25 } },
+    selectedpoints:
+      plotType !== 'PIE' && anyFacetsSelected
+        ? facetToPlot.facetValues
+            .map((facetValue, index) => (facetValue.isSelected ? index : -1))
+            .filter(index => index !== -1)
+        : undefined,
+    selected: plotType !== 'PIE' ? { marker: { opacity: 1 } } : undefined,
+    unselected: plotType !== 'PIE' ? { marker: { opacity: 0.25 } } : undefined,
 
     marker: {
       colors: plotType === 'PIE' ? selectionAwareColorPalette : undefined,
@@ -260,39 +263,41 @@ const applyFacetFilter = (
   }
 }
 
+export function getPlotDimensions(
+  parentWidth: number | null | undefined,
+  plotType: PlotType,
+  maxHeight: number,
+): { width: number; height: number } {
+  let quotient = 1
+  switch (plotType) {
+    case 'BAR':
+      quotient = 0.8
+      break
+    case 'PIE':
+      quotient = 0.6
+      break
+    case 'STACKED_HORIZONTAL_BAR':
+      quotient = 1
+      break
+  }
+  const width = parentWidth ? parentWidth * quotient : 200
+  let height = plotType === 'PIE' ? width : width / 3
+  // max height of .PlotsContainer row col* is 200px, so the effective plot height max is around 150 unless it's expanded
+  if (height > maxHeight) {
+    height = maxHeight
+  }
+  return { width, height }
+}
+
 export function getPlotStyle(
   parentWidth: number | null | undefined,
   plotType: PlotType,
   maxHeight: number,
 ): { width: string; height: string } {
-  if (parentWidth != undefined) {
-    let quotient = 1
-    switch (plotType) {
-      case 'BAR':
-        quotient = 0.8
-        break
-      case 'PIE':
-        quotient = 0.6
-        break
-      case 'STACKED_HORIZONTAL_BAR':
-        quotient = 1
-        break
-    }
-    const width = parentWidth ? parentWidth * quotient : 200
-    let height = plotType === 'PIE' ? width : width / 3
-    // max height of .PlotsContainer row col* is 200px, so the effective plot height max is around 150 unless it's expanded
-    if (height > maxHeight) {
-      height = maxHeight
-    }
-    return {
-      width: `${width}px`,
-      height: `${height}px`,
-    }
-  }
-  //else parent width is undefined
+  const { width, height } = getPlotDimensions(parentWidth, plotType, maxHeight)
   return {
-    width: '100%',
-    height: `${maxHeight}px`,
+    width: `${width}px`,
+    height: `${height}px`,
   }
 }
 
@@ -441,8 +446,15 @@ function FacetNavPanel(props: FacetNavPanelProps) {
           >
             <div ref={plotContainerRef}>
               <Plot
-                key={`${facetToPlot.columnName}-${facetToPlot.jsonPath}-${plotType}-${plotContainerMeasurements?.width}`}
-                layout={layout}
+                key={`${facetToPlot.columnName}-${facetToPlot.jsonPath}-${plotType}`}
+                layout={{
+                  ...layout,
+                  ...getPlotDimensions(
+                    plotContainerMeasurements?.width,
+                    plotType,
+                    isModalView ? 300 : 150,
+                  ),
+                }}
                 data={plotData?.data ?? []}
                 style={getPlotStyle(
                   plotContainerMeasurements?.width,
