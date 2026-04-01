@@ -40,8 +40,12 @@ if (!PKG_RE.test(pkg)) {
   console.error(`Invalid package name: ${pkg}`)
   process.exit(1)
 }
-if (!VER_RE.test(patchedVersion)) {
+if (!semver.valid(patchedVersion)) {
   console.error(`Invalid version: ${patchedVersion}`)
+  process.exit(1)
+}
+if (vulnerableRange && !semver.validRange(vulnerableRange)) {
+  console.error(`Invalid vulnerable range: ${vulnerableRange}`)
   process.exit(1)
 }
 
@@ -71,9 +75,10 @@ function getWorkspacePackageNames(): Set<string> {
 const workspacePackages = getWorkspacePackageNames()
 
 function satisfies(version: string, range: string): boolean | null {
-  if (!semver.valid(semver.coerce(version))) return null
+  const coerced = semver.coerce(version)
+  if (!coerced) return null
   try {
-    return semver.satisfies(version, range)
+    return semver.satisfies(coerced, range)
   } catch {
     return null
   }
