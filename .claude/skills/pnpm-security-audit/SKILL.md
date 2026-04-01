@@ -5,7 +5,7 @@ description: Systematically patches security vulnerabilities in this pnpm monore
 
 # pnpm Security Audit & Patch Workflow
 
-Patch security vulnerabilities one package group at a time — preferring parent package updates over lockfile tricks, and lockfile updates over pnpm overrides.
+Patch security vulnerabilities one package group at a time — preferring lockfile updates over parent package updates (less likely to introduce breaking changes), and both over pnpm overrides.
 
 ## Step 1: Run the audit, triage, and initialize the doc
 
