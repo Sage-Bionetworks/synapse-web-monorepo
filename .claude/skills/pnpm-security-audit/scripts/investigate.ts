@@ -279,6 +279,18 @@ const dim = (s: string) => `\x1b[2m${s}\x1b[0m`
 const icon = (ok: boolean | null) =>
   ok === true ? green('✅') : ok === false ? red('❌') : yellow('❓')
 
+function printOverrideFix(parentKey: string): void {
+  console.log(
+    red(
+      `      → FIX: pnpm override  "${parentKey}>${pkg}": "${patchedVersion}"`,
+    ),
+  )
+}
+
+function printNotInstalled(): void {
+  console.log(green(`  ✅ ${pkg} is not installed — nothing to do.\n`))
+}
+
 // ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
@@ -299,7 +311,7 @@ async function main() {
   } catch {
     process.stderr.write('\r\x1b[2K')
     if (whyJson.includes('is not in the dependency graph') || !whyJson.trim()) {
-      console.log(green(`  ✅ ${pkg} is not installed — nothing to do.\n`))
+      printNotInstalled()
       process.exit(0)
     }
     console.log(yellow('  ⚠️  Could not parse pnpm why --json output. Raw:'))
@@ -309,7 +321,7 @@ async function main() {
 
   if (whyData.length === 0) {
     process.stderr.write('\r\x1b[2K')
-    console.log(green(`  ✅ ${pkg} is not installed — nothing to do.\n`))
+    printNotInstalled()
     process.exit(0)
   }
 
@@ -330,14 +342,14 @@ async function main() {
         ? red(' VULNERABLE')
         : isPatched === true
         ? green(' patched')
-        : ''
+        : yellow(' (version not parseable — may be vulnerable)')
     console.log(
       `  ${icon(isPatched)} ${bold(
         `${pkg}@${block.installedVersion}`,
       )}${label}`,
     )
 
-    if (isPatched !== false) {
+    if (isPatched === true) {
       console.log('')
       continue
     }
@@ -398,21 +410,15 @@ async function main() {
       // check the latest parent version to see if updating the parent fixes it.
       const latestInfo = latestCache.get(parent.name) ?? null
       if (!latestInfo || typeof latestInfo.version !== 'string') {
-        console.log(
-          red(
-            `      → FIX: pnpm override  "${key}>${pkg}": "${patchedVersion}"`,
-          ),
-        )
+        printOverrideFix(key)
         continue
       }
       const latestVer = latestInfo.version
       const latestRange = allDeps(latestInfo)[pkg] ?? null
       const isRemoved = !latestRange
-      const latestOk = !isPeer
-        ? latestRange
-          ? satisfies(patchedVersion, latestRange)
-          : false
-        : true // for peer deps the parent version itself is what matters, not its declared range for pkg
+      const latestOk = latestRange
+        ? satisfies(patchedVersion, latestRange)
+        : false
 
       console.log(`      Latest:   ${parent.name}@${latestVer}`)
 
@@ -454,17 +460,21 @@ async function main() {
         )
         if (isPeer && pinNote)
           console.log(dim(`             ${pinNote.trim()}`))
-      } else {
+      } else if (latestOk === false) {
         console.log(
           `      Latest range: ${pkg}@"${latestRange}"  ${icon(false)}  ${dim(
             '(no upstream fix)',
           )}`,
         )
+        printOverrideFix(key)
+      } else {
+        // latestOk === null → unparseable version; can't determine if latest fixes it
         console.log(
-          red(
-            `      → FIX: pnpm override  "${key}>${pkg}": "${patchedVersion}"`,
-          ),
+          `      Latest range: ${pkg}@"${latestRange}"  ${icon(null)}  ${dim(
+            '(unable to determine)',
+          )}`,
         )
+        printOverrideFix(key)
       }
     }
     console.log('')
