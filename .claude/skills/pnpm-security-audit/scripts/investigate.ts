@@ -34,7 +34,6 @@ if (!pkg || !patchedVersion) {
 // Basic validation: package names and versions should only contain safe chars.
 // This is a developer tool, but we still avoid shell injection via spawnSync.
 const PKG_RE = /^(@[a-z0-9_.-]+\/)?[a-z0-9_.-]+$/i
-const VER_RE = /^[0-9a-zA-Z_.+-]+$/
 
 if (!PKG_RE.test(pkg)) {
   console.error(`Invalid package name: ${pkg}`)
@@ -88,14 +87,14 @@ function satisfies(version: string, range: string): boolean | null {
 // Shell helpers — use spawnSync with argument arrays to avoid shell injection.
 // ---------------------------------------------------------------------------
 
-function run(args: string[]): string {
+function runStdout(args: string[]): string {
   const result = spawnSync('pnpm', args, { encoding: 'utf8', timeout: 30_000 })
-  return (result.stdout ?? '') + (result.stderr ?? '')
+  return result.stdout ?? ''
 }
 
 function runJSON(args: string[]): Record<string, unknown> | null {
   try {
-    return JSON.parse(run(args)) as Record<string, unknown>
+    return JSON.parse(runStdout(args)) as Record<string, unknown>
   } catch {
     return null
   }
@@ -113,13 +112,31 @@ function isPeerDep(info: Record<string, unknown> | null, dep: string): boolean {
 }
 
 // ---------------------------------------------------------------------------
-// Parse `pnpm why <pkg> --recursive` tree output.
+// Parse `pnpm why <pkg> --recursive --json` output.
 //
-// Returns: Array<{ installedVersion, parents: Array<{ name, version, isDev }> }>
-//
-// Depth-0 immediate parents are lines starting with ├─ or └─ with no
-// leading whitespace or pipe characters.
+// JSON format: Array of { name, version, path, dependents: [...] }
+// Each top-level entry = one installed version of the package.
+// entry.dependents = immediate parents (depth 0), each with nested dependents
+// forming the full chain up to workspace root packages.
+// Leaf nodes (workspace packages) have a `depField` property.
 // ---------------------------------------------------------------------------
+
+interface WhyJsonDependent {
+  name: string
+  version: string
+  depField?: string
+  deduped?: boolean
+  circular?: boolean
+  peersSuffixHash?: string
+  dependents?: WhyJsonDependent[]
+}
+
+interface WhyJsonEntry {
+  name: string
+  version: string
+  path: string
+  dependents: WhyJsonDependent[]
+}
 
 interface Parent {
   name: string
@@ -132,47 +149,28 @@ interface VersionBlock {
   parents: Parent[]
 }
 
-function parseWhy(output: string): VersionBlock[] {
-  const lines = output.split('\n')
-  const blocks: VersionBlock[] = []
-  let cur: VersionBlock | null = null
+/** Check if all leaf paths from a node reach only devDependencies. */
+function isDevOnly(node: WhyJsonDependent): boolean {
+  if (node.depField) return node.depField === 'devDependencies'
+  const all = node.dependents ?? []
+  const meaningful = all.filter(d => !d.deduped && !d.circular)
+  // Deduped/circular nodes are stubs — they carry no depField and no subtree,
+  // so we can't determine their dev/prod status. If any were dropped, we don't
+  // have complete information and must conservatively assume prod.
+  if (meaningful.length < all.length) return false
+  if (meaningful.length === 0) return false
+  return meaningful.every(d => isDevOnly(d))
+}
 
-  for (const line of lines) {
-    // Version header: "pkg@x.y.z" — no tree characters
-    if (
-      line.startsWith(`${pkg}@`) &&
-      !/[├└│]/.test(line[pkg.length + 1] ?? '')
-    ) {
-      if (cur) blocks.push(cur)
-      const installedVersion = line.slice(pkg.length + 1).trim()
-      if (!VER_RE.test(installedVersion)) continue
-      cur = { installedVersion, parents: [] }
-      continue
-    }
-
-    if (!cur) continue
-
-    // Depth-0: lines like "├─┬ parent@version" or "└── parent@version"
-    const m = line.match(/^[├└]─[─┬] (.+)$/)
-    if (!m) continue
-
-    // Strip suffixes like " [deduped]", " (devDependencies)", " peer#xxx"
-    const spec = (m[1] ?? '').trim().replace(/\s.*$/, '')
-    const atIdx = spec.lastIndexOf('@')
-    if (atIdx <= 0) continue
-
-    const name = spec.slice(0, atIdx)
-    const version = spec.slice(atIdx + 1)
-    if (!PKG_RE.test(name) || !VER_RE.test(version)) continue
-    cur.parents.push({
-      name,
-      version,
-      isDev: (m[1] ?? '').includes('devDependencies'),
-    })
-  }
-
-  if (cur) blocks.push(cur)
-  return blocks
+function parseWhyJson(entries: WhyJsonEntry[]): VersionBlock[] {
+  return entries.map(entry => ({
+    installedVersion: entry.version,
+    parents: (entry.dependents ?? []).map(d => ({
+      name: d.name,
+      version: d.version,
+      isDev: isDevOnly(d),
+    })),
+  }))
 }
 
 // ---------------------------------------------------------------------------
@@ -194,20 +192,27 @@ const icon = (ok: boolean | null) =>
 
 console.log(`\n${bold(`🔍 ${pkg}`)}  (patched: >= ${patchedVersion})\n`)
 
-const whyOutput = run(['why', pkg, '--recursive'])
+const whyJson = runStdout(['why', pkg, '--recursive', '--json'])
 
-if (!whyOutput.trim() || whyOutput.includes('is not in the dependency graph')) {
+let whyData: WhyJsonEntry[]
+try {
+  whyData = JSON.parse(whyJson) as WhyJsonEntry[]
+} catch {
+  if (whyJson.includes('is not in the dependency graph') || !whyJson.trim()) {
+    console.log(green(`  ✅ ${pkg} is not installed — nothing to do.\n`))
+    process.exit(0)
+  }
+  console.log(yellow('  ⚠️  Could not parse pnpm why --json output. Raw:'))
+  console.log(whyJson)
+  process.exit(1)
+}
+
+if (whyData.length === 0) {
   console.log(green(`  ✅ ${pkg} is not installed — nothing to do.\n`))
   process.exit(0)
 }
 
-const blocks = parseWhy(whyOutput)
-
-if (blocks.length === 0) {
-  console.log(yellow('  ⚠️  Could not parse pnpm why output. Raw:'))
-  console.log(whyOutput)
-  process.exit(1)
-}
+const blocks = parseWhyJson(whyData)
 
 const seenParent = new Set<string>()
 
