@@ -20,8 +20,6 @@ type ShowMoreState = 'MORE' | 'LESS' | 'NONE'
 export type PlotsContainerProps = {
   facetsToPlot?: string[]
   customPlots?: QueryWrapperSynapsePlotProps[]
-  initialPlotType?: PlotType
-  /** Specify the initial plot type per facet column name. Takes precedence over `initialPlotType` for matching facets. */
   initialPlotTypeByFacetColumnName?: Record<string, PlotType>
 }
 type CustomPlotIdentifier = {
@@ -91,7 +89,6 @@ const getCombinedNewPlots = (
     FacetNavPanelProps,
     'applyChangesToFacetFilter' | 'applyChangesToGraphSlice' | 'facetToPlot'
   >[] = [],
-  initialPlotType: PlotType = DEFAULT_PLOT_TYPE,
   initialPlotTypeByFacetColumnName?: Record<string, PlotType>,
 ): UiPlotState[] => [
   ...customPlots.map((plotProps, index) => ({
@@ -105,7 +102,7 @@ const getCombinedNewPlots = (
     plotType:
       initialPlotTypeByFacetColumnName?.[
         facetPlotProps.facetToPlot.columnName
-      ] ?? initialPlotType,
+      ] ?? DEFAULT_PLOT_TYPE,
   })),
 ]
 
@@ -140,7 +137,6 @@ function PlotsContainer(props: PlotsContainerProps) {
   const {
     facetsToPlot = DEFAULT_FACETS_TO_PLOT,
     customPlots = DEFAULT_CUSTOM_PLOTS,
-    initialPlotType = DEFAULT_PLOT_TYPE,
     initialPlotTypeByFacetColumnName,
   } = props
   const { data: queryMetadata } = useSuspenseGetQueryMetadata()
@@ -159,7 +155,6 @@ function PlotsContainer(props: PlotsContainerProps) {
     const combinedNewPlots = getCombinedNewPlots(
       customPlots,
       facetNavPanelPropsArray,
-      initialPlotType,
       initialPlotTypeByFacetColumnName,
     )
 
@@ -179,12 +174,7 @@ function PlotsContainer(props: PlotsContainerProps) {
       const combinedPlots = [...updatedPlots, ...newPlots]
       return combinedPlots
     })
-  }, [
-    customPlots,
-    facetNavPanelPropsArray,
-    initialPlotType,
-    initialPlotTypeByFacetColumnName,
-  ])
+  }, [customPlots, facetNavPanelPropsArray, initialPlotTypeByFacetColumnName])
 
   // when 'show more/less' is clicked
   const onShowMoreClick = (shouldShowMore: boolean) => {

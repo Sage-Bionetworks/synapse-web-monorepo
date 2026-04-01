@@ -135,7 +135,6 @@ type QueryWrapperPlotNavContentsProps = Pick<
   | 'fileNameColumnName'
   | 'fileVersionColumnName'
   | 'initialLimit'
-  | 'initialPlotType'
   | 'initialPlotTypeByFacetColumnName'
   | 'hideTopLevelControls'
 > & {
@@ -162,7 +161,6 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
     isFullTextSearchEnabled,
     customPlots,
     initialLimit,
-    initialPlotType,
     initialPlotTypeByFacetColumnName,
     hideTopLevelControls,
   } = props
@@ -268,7 +266,6 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
               <PlotsContainer
                 facetsToPlot={facetsToPlot}
                 customPlots={customPlots}
-                initialPlotType={initialPlotType}
                 initialPlotTypeByFacetColumnName={
                   initialPlotTypeByFacetColumnName
                 }
