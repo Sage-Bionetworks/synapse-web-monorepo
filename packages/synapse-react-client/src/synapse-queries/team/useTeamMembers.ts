@@ -11,12 +11,15 @@ import {
   TeamMembershipStatus,
 } from '@sage-bionetworks/synapse-types'
 import {
+  queryOptions,
   useMutation,
   UseMutationOptions,
   useQuery,
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
+import { SynapseQueriesContext } from '../types'
+import { getUserGroupHeaderQuery } from '../user'
 
 export function useGetTeamMembers(
   teamId: string | number,
@@ -47,18 +50,102 @@ export function useGetTeamMemberCount(
   })
 }
 
+export function getIsUserMemberOfTeamQuery(
+  teamId: string,
+  userId: string,
+  context: SynapseQueriesContext,
+) {
+  const { accessToken, keyFactory } = context
+  return queryOptions<TeamMember | null, SynapseClientError>({
+    queryKey: keyFactory.getIsUserMemberOfTeamQueryKey(teamId, userId),
+    queryFn: () =>
+      SynapseClient.getIsUserMemberOfTeam(teamId, userId, accessToken),
+  })
+}
+
 export function useGetIsUserMemberOfTeam(
   teamId: string,
   userId: string,
   options?: Partial<UseQueryOptions<TeamMember | null, SynapseClientError>>,
 ) {
-  const { accessToken, keyFactory } = useSynapseContext()
+  const synapseContext = useSynapseContext()
+  const queryClient = useQueryClient()
 
   return useQuery({
     ...options,
-    queryKey: keyFactory.getIsUserMemberOfTeamQueryKey(teamId, userId),
-    queryFn: () =>
-      SynapseClient.getIsUserMemberOfTeam(teamId, userId, accessToken),
+    ...getIsUserMemberOfTeamQuery(teamId, userId, {
+      ...synapseContext,
+      queryClient,
+    }),
+  })
+}
+
+/**
+ * Checks if the passed principalId is either the userId or a team that the userId is a member of.
+ *
+ * @param userId the userId of the current user
+ * @param principalId the principalId of the share (either a userId or a teamId)
+ * @param context context required to issue the request(s)
+ * @returns true if the principalId is either the userId or a team that the userId is a member of. Returns false otherwise.
+ */
+export function getIsPrincipalIdUserOrMemberOfTeamQuery(
+  userId: string,
+  principalId: string,
+  context: SynapseQueriesContext,
+) {
+  const { keyFactory, queryClient } = context
+  return queryOptions<boolean, SynapseClientError>({
+    queryKey: keyFactory.getIsPrincipalIdSelfOrTeamMemberQueryKey(
+      principalId,
+      userId,
+    ),
+    queryFn: async () => {
+      // Is the principalId the userId?
+      if (principalId.trim() === userId.trim()) {
+        return true
+      }
+      // Is the principalId a team ID?
+      const principalUserGroupResult = await queryClient.fetchQuery(
+        getUserGroupHeaderQuery(principalId, context),
+      )
+      if (
+        !principalUserGroupResult ||
+        principalUserGroupResult?.isIndividual === false
+      ) {
+        return false
+      }
+
+      // Is the user a member of the team?
+      const teamMembership = await queryClient.fetchQuery(
+        getIsUserMemberOfTeamQuery(principalId, userId, context),
+      )
+      return teamMembership !== null
+    },
+  })
+}
+
+/**
+ * Checks if the passed principalId is either the userId or a team that the userId is a member of.
+ *
+ * @param userId the userId of the current user
+ * @param principalId the principalId of the share (either a userId or a teamId)
+ * @param options react-query options
+ * @returns true if the principalId is either the userId or a team that the userId is a member of. Returns false otherwise.
+ */
+export function useGetIsPrincipalIdUserOrMemberOfTeam(
+  userId: string,
+  principalId: string,
+  options?: Partial<UseQueryOptions<boolean, SynapseClientError>>,
+) {
+  const synapseContext = useSynapseContext()
+  const queryClient = useQueryClient()
+
+  return useQuery({
+    ...options,
+    ...getIsPrincipalIdUserOrMemberOfTeamQuery(userId, principalId, {
+      ...synapseContext,
+      queryClient,
+    }),
   })
 }
 

@@ -1,15 +1,20 @@
 import { useSynapseContext } from '@/utils/index'
 import {
   CurationTask,
+  ListCurationTaskRequest,
   ListCurationTaskResponse,
   SynapseClientError,
+  TaskStatus,
 } from '@sage-bionetworks/synapse-client'
 import {
   InfiniteData,
   QueryKey,
   useInfiniteQuery,
   UseInfiniteQueryOptions,
+  useMutation,
+  UseMutationOptions,
   useQuery,
+  useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
 
@@ -20,7 +25,7 @@ export function useGetCurationTask<TData = CurationTask>(
   const { synapseClient, keyFactory } = useSynapseContext()
   return useQuery({
     ...options,
-    queryKey: keyFactory.getCurationTaskKey(taskId),
+    queryKey: keyFactory.getCurationTaskIdTaskKey(taskId),
     queryFn: async () => {
       return synapseClient.curationTaskServicesClient.getRepoV1CurationTaskTaskId(
         { taskId },
@@ -29,10 +34,80 @@ export function useGetCurationTask<TData = CurationTask>(
   })
 }
 
+export function useGetCurationTaskStatus<TData = TaskStatus>(
+  taskId: number,
+  options?: Partial<UseQueryOptions<TaskStatus, SynapseClientError, TData>>,
+) {
+  const { synapseClient, keyFactory } = useSynapseContext()
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getAllCurationTaskListKey(),
+    queryFn: () =>
+      synapseClient.curationTaskServicesClient.getRepoV1CurationTaskTaskIdStatus(
+        { taskId },
+      ),
+  })
+}
+
+export function useUpdateCurationTask(
+  options?: Partial<
+    UseMutationOptions<CurationTask, SynapseClientError, CurationTask>
+  >,
+) {
+  const { synapseClient, keyFactory } = useSynapseContext()
+  const queryClient = useQueryClient()
+  return useMutation({
+    ...options,
+    mutationFn: curationTask =>
+      synapseClient.curationTaskServicesClient.putRepoV1CurationTaskTaskId({
+        taskId: curationTask.taskId!,
+        curationTask,
+      }),
+    onSuccess: (data, variables, context) => {
+      // Invalidate both the status query and the task query using the ID key
+      queryClient.invalidateQueries({
+        queryKey: keyFactory.getCurationTaskIdKey(variables.taskId!),
+      })
+      queryClient.invalidateQueries({
+        queryKey: keyFactory.getAllCurationTaskListKey(),
+      })
+      if (options?.onSuccess) {
+        options.onSuccess(data, variables, context)
+      }
+    },
+  })
+}
+
+export function useUpdateCurationTaskStatus(
+  options?: Partial<
+    UseMutationOptions<TaskStatus, SynapseClientError, TaskStatus>
+  >,
+) {
+  const { synapseClient, keyFactory } = useSynapseContext()
+  const queryClient = useQueryClient()
+  return useMutation({
+    ...options,
+    mutationFn: taskStatus =>
+      synapseClient.curationTaskServicesClient.putRepoV1CurationTaskTaskIdStatus(
+        { taskId: taskStatus.taskId!, taskStatus },
+      ),
+    onSuccess: (data, variables, context) => {
+      // Invalidate both the status query and the task query using the ID key
+      queryClient.invalidateQueries({
+        queryKey: keyFactory.getCurationTaskIdKey(variables.taskId!),
+      })
+
+      if (options?.onSuccess) {
+        options.onSuccess(data, variables, context)
+      }
+    },
+  })
+}
+
 export function useGetCurationTasksByProjectInfinite<
   TData = InfiniteData<ListCurationTaskResponse>,
 >(
-  projectId: string,
+  request: ListCurationTaskRequest,
   options?: Partial<
     UseInfiniteQueryOptions<
       ListCurationTaskResponse,
@@ -53,11 +128,11 @@ export function useGetCurationTasksByProjectInfinite<
     ListCurationTaskResponse['nextPageToken']
   >({
     ...options,
-    queryKey: keyFactory.getCurationTaskListKey(projectId),
+    queryKey: keyFactory.getCurationTaskListKey(request),
     queryFn: context =>
       synapseClient.curationTaskServicesClient.postRepoV1CurationTaskList({
         listCurationTaskRequest: {
-          projectId,
+          ...request,
           nextPageToken: context.pageParam,
         },
       }),
