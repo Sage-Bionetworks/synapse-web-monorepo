@@ -53,7 +53,8 @@ const OpenChallengesSection = ({
           variant="body1"
           className={styles.OpenChallengesSection__sectionSubtitle}
         >
-          Curated list of crowdsourced challenges outside of the Sage ecosystem
+          A curated collection of crowdsourced challenges within Sage and
+          beyond.
         </Typography>
       </Box>
       <Box className={styles.OpenChallengesSection__container}>
