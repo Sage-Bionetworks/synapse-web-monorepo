@@ -19,7 +19,12 @@ const allChallengesSchema: TableToGenericCardMapping = {
     'submissionType',
     'inputDataType',
   ],
-  titleAreaDetails: ['status', 'startDate', 'endDate'],
+  titleAreaDetails: (schema, data) => {
+    const status = data[schema['status']]
+    if (status === 'Coming soon') return ['status', 'startDate']
+    if (status === 'Closed') return ['status']
+    return ['status', 'endDate']
+  },
 }
 const allChallengesTitleLinkConfig: CardLink = {
   isMarkdown: false,
