@@ -40,6 +40,20 @@ export default [
         route('Submit Cell Line', 'pages/SubmitCellLine.tsx'),
         route('Submit Antibody', 'pages/SubmitAntibody.tsx'),
         route('Submit Genetic Reagent', 'pages/SubmitGeneticReagent.tsx'),
+        route(
+          'Submit Advanced Cellular Model',
+          'pages/SubmitAdvancedCellularModel.tsx',
+        ),
+        route('Submit Biobank', 'pages/SubmitBiobank.tsx'),
+        route(
+          'Submit Clinical Assessment Tool',
+          'pages/SubmitClinicalAssessmentTool.tsx',
+        ),
+        route('Submit Computational Tool', 'pages/SubmitComputationalTool.tsx'),
+        route(
+          'Submit Patient Derived Model',
+          'pages/SubmitPatientDerivedModel.tsx',
+        ),
       ]),
 
       // Explore section (layout with tab navigation)
