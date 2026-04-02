@@ -132,8 +132,13 @@ export type TableToGenericCardMapping = {
    * Ordered list of column names to display to the right of the title area.
    * Each renders as "Display Name: Value" on its own line. Rows with empty values are skipped.
    * The display name is derived from getColumnDisplayName (respects column aliases and unCamelCase).
+   *
+   * Can also be a function that receives the schema and row data and returns the list of column
+   * names to display, allowing the displayed details to vary based on the row's actual values.
    */
-  titleAreaDetails?: string[]
+  titleAreaDetails?:
+    | string[]
+    | ((schema: Record<string, number>, data: string[]) => string[])
   /** Configuration for resolving the Synapse entity ID/version represented by each card row.
    *  The ID and version sources must both reference either row-based values or column-based values.
    */
@@ -290,8 +295,13 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
 
   const resolvedTitleAreaRightContent = useMemo(() => {
     const { titleAreaDetails } = genericCardSchema
-    if (!titleAreaDetails || titleAreaDetails.length === 0) return undefined
-    const rows = titleAreaDetails
+    if (!titleAreaDetails) return undefined
+    const columns =
+      typeof titleAreaDetails === 'function'
+        ? titleAreaDetails(schema, data)
+        : titleAreaDetails
+    if (columns.length === 0) return undefined
+    const rows = columns
       .map(columnName => {
         const rawValue: string | undefined = data[schema[columnName]]
         if (!rawValue) return null
