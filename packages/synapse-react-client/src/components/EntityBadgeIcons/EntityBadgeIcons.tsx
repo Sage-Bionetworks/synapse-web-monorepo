@@ -199,8 +199,10 @@ export const EntityBadgeIcons = (
   const annotationsHtml = (
     <div className="EntityBadgeTooltip">
       <table>
-        {annotationsTableRows ? annotationsTableRows : ''}
-        {valiationSchemaTableRow}
+        <tbody>
+          {annotationsTableRows ? annotationsTableRows : ''}
+          {valiationSchemaTableRow}
+        </tbody>
       </table>
     </div>
   )

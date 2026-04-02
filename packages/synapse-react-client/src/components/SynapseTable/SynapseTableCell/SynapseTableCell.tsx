@@ -84,7 +84,11 @@ function SynapseTableCell(props: SynapseTableCellProps) {
   const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
 
   if (!columnValue) {
-    return <p className="SRC-inactive">{NOT_SET_DISPLAY_VALUE}</p>
+    return (
+      <div className="SynapseTableCellContent SRC-inactive">
+        {NOT_SET_DISPLAY_VALUE}
+      </div>
+    )
   }
 
   if (columnLinkConfig) {
@@ -115,7 +119,7 @@ function SynapseTableCell(props: SynapseTableCellProps) {
     rowVersionNumber
   ) {
     return (
-      <p>
+      <div className="SynapseTableCellContent">
         <EntityLink
           entity={rowId}
           versionNumber={rowVersionNumber}
@@ -123,7 +127,7 @@ function SynapseTableCell(props: SynapseTableCellProps) {
           showIcon={false}
           displayTextField={columnName}
         />
-      </p>
+      </div>
     )
   }
 
@@ -131,20 +135,20 @@ function SynapseTableCell(props: SynapseTableCellProps) {
     case ColumnTypeEnum.ENTITYID: {
       const displayTextField = getDisplayTextFieldForEntityIdColumn(columnName)
       return (
-        <p>
+        <div className="SynapseTableCellContent">
           <EntityLink
             entity={columnValue}
             className={`${isBold}`}
             displayTextField={displayTextField}
             showIcon={false}
           />
-        </p>
+        </div>
       )
     }
     case ColumnTypeEnum.DATE_LIST: {
       const jsonData: number[] = JSON.parse(columnValue)
       return (
-        <p>
+        <div className="SynapseTableCellContent">
           {jsonData.map((val: number, index: number) => {
             return (
               <span key={index} className={isBold}>
@@ -153,13 +157,13 @@ function SynapseTableCell(props: SynapseTableCellProps) {
               </span>
             )
           })}{' '}
-        </p>
+        </div>
       )
     }
     case ColumnTypeEnum.BOOLEAN_LIST: {
       const jsonData: boolean[] = JSON.parse(columnValue)
       return (
-        <p>
+        <div className="SynapseTableCellContent">
           {jsonData.map((val: boolean, index: number) => {
             return (
               <span key={index} className={isBold}>
@@ -168,7 +172,7 @@ function SynapseTableCell(props: SynapseTableCellProps) {
               </span>
             )
           })}
-        </p>
+        </div>
       )
     }
     case ColumnTypeEnum.FILEHANDLEID: {
@@ -181,7 +185,7 @@ function SynapseTableCell(props: SynapseTableCellProps) {
       return (
         <>
           {entity && (
-            <p>
+            <div className="SynapseTableCellContent">
               <DirectDownload
                 iconSvgPropOverrides={{ sx: { color: 'primary.main' } }}
                 associatedObjectId={associatedObjectId}
@@ -189,7 +193,7 @@ function SynapseTableCell(props: SynapseTableCellProps) {
                 fileHandleId={columnValue}
                 displayFileName={true}
               />
-            </p>
+            </div>
           )}
         </>
       )
@@ -198,21 +202,21 @@ function SynapseTableCell(props: SynapseTableCellProps) {
       const displayTextField = getDisplayTextFieldForEntityIdColumn(columnName)
       const jsonData: string[] = JSON.parse(columnValue)
       return (
-        <p>
+        <div className="SynapseTableCellContent">
           <EntityIdList
             entityIdList={jsonData}
             displayTextField={displayTextField}
             showIcon={false}
           />
-        </p>
+        </div>
       )
     }
     case ColumnTypeEnum.USERID_LIST: {
       const jsonData: string[] = JSON.parse(columnValue)
       return (
-        <p>
+        <div className="SynapseTableCellContent">
           <UserIdList userIds={jsonData} />
-        </p>
+        </div>
       )
     }
     // handle other list types
@@ -220,7 +224,7 @@ function SynapseTableCell(props: SynapseTableCellProps) {
     case ColumnTypeEnum.INTEGER_LIST: {
       const jsonData: string[] = JSON.parse(columnValue)
       return (
-        <p className={isBold}>
+        <div className={`SynapseTableCellContent ${isBold}`}>
           {jsonData.map((val: string, index: number) => {
             const textRenderer =
               columnType == ColumnTypeEnum.STRING_LIST ? (
@@ -235,71 +239,97 @@ function SynapseTableCell(props: SynapseTableCellProps) {
               </Fragment>
             )
           })}
-        </p>
+        </div>
       )
     }
     case ColumnTypeEnum.EVALUATIONID: {
-      return <EvaluationIdRenderer evaluationId={columnValue} />
+      return (
+        <div className="SynapseTableCellContent">
+          <EvaluationIdRenderer evaluationId={columnValue} />
+        </div>
+      )
     }
 
     case ColumnTypeEnum.DATE:
-      return <p className={isBold}>{formatDate(dayjs(Number(columnValue)))}</p>
+      return (
+        <div className={`SynapseTableCellContent ${isBold}`}>
+          {formatDate(dayjs(Number(columnValue)))}
+        </div>
+      )
 
     case ColumnTypeEnum.USERID:
-      return <UserOrTeamBadge principalId={columnValue} />
+      return (
+        <div className="SynapseTableCellContent">
+          <UserOrTeamBadge principalId={columnValue} />
+        </div>
+      )
     case ColumnTypeEnum.LINK:
       return (
-        <p>
+        <div className="SynapseTableCellContent">
           <Link target="_blank" rel="noopener noreferrer" href={columnValue}>
             {columnValue}
           </Link>
-        </p>
+        </div>
       )
     case ColumnTypeEnum.STRING:
     case ColumnTypeEnum.BOOLEAN:
     case ColumnTypeEnum.MEDIUMTEXT:
     case ColumnTypeEnum.LARGETEXT: {
       return (
-        <Typography variant={'smallText1'} className={isBold}>
-          <Linkify text={columnValue} />
-        </Typography>
+        <div className="SynapseTableCellContent">
+          <Typography variant={'smallText1'} className={isBold}>
+            <Linkify text={columnValue} />
+          </Typography>
+        </div>
       )
     }
     case ColumnTypeEnum.INTEGER:
       return (
-        <Typography
-          variant={'smallText1'}
-          sx={{ textAlign: 'right' }}
-          className={isBold}
-        >
-          {parseInt(columnValue).toLocaleString()}
-        </Typography>
+        <div className="SynapseTableCellContent">
+          <Typography
+            variant={'smallText1'}
+            sx={{ textAlign: 'right' }}
+            className={isBold}
+          >
+            {parseInt(columnValue).toLocaleString()}
+          </Typography>
+        </div>
       )
     case ColumnTypeEnum.DOUBLE:
       return (
-        <Typography
-          variant={'smallText1'}
-          sx={{ textAlign: 'right' }}
-          className={isBold}
-        >
-          {parseFloat(columnValue).toLocaleString()}
-        </Typography>
+        <div className="SynapseTableCellContent">
+          <Typography
+            variant={'smallText1'}
+            sx={{ textAlign: 'right' }}
+            className={isBold}
+          >
+            {parseFloat(columnValue).toLocaleString()}
+          </Typography>
+        </div>
       )
     case ColumnTypeEnum.JSON:
-      return <JSONTableCellRenderer value={columnValue} />
+      return (
+        <div className="SynapseTableCellContent">
+          <JSONTableCellRenderer value={columnValue} />
+        </div>
+      )
     default:
       console.warn(
         `ColumnType ${columnType} has unspecified handler. Rendering the column value.`,
       )
       return (
-        <Typography variant={'smallText1'} className={isBold}>
-          {columnValue}
-        </Typography>
+        <div className="SynapseTableCellContent">
+          <Typography variant={'smallText1'} className={isBold}>
+            {columnValue}
+          </Typography>
+        </div>
       )
   }
   // We can reach this if we don't get a mapping of IDs to entities or principals.
   // TODO: If we don't have a id:data mapping, we should render a component that can fetch the required data, rather than breaking from the case.
-  return <p className={isBold}>{columnValue}</p>
+  return (
+    <div className={`SynapseTableCellContent ${isBold}`}>{columnValue}</div>
+  )
 }
 
 export default memo(SynapseTableCell)
