@@ -14,6 +14,16 @@ const config: StorybookConfig = {
     '@storybook/addon-designs',
   ],
 
+  features: {
+    // Storybook 10.3 enabled componentsManifest by default and wired it to
+    // react-docgen-typescript, adding a second full TypeScript compiler pass
+    // over all stories. Combined with the existing Vite plugin pass this
+    // exceeds Node's default heap. We don't use the MCP integration that
+    // the manifest serves, so disable it to restore 10.1.x build behavior.
+    // https://github.com/storybookjs/storybook/pull/33818
+    componentsManifest: false,
+  },
+
   framework: {
     name: '@storybook/react-vite',
     options: {
