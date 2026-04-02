@@ -25,6 +25,26 @@ import semver from 'semver'
 
 const execFileAsync = promisify(execFileCb)
 
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+enum PatchStatus {
+  Patched = 'patched',
+  Vulnerable = 'vulnerable',
+  Indeterminate = 'indeterminate',
+}
+
+enum CheckResult {
+  Pass = 'pass',
+  Fail = 'fail',
+  Unknown = 'unknown',
+}
+
+// ---------------------------------------------------------------------------
+// CLI args
+// ---------------------------------------------------------------------------
+
 const [pkg, patchedVersion, vulnerableRange] = process.argv.slice(2)
 
 if (!pkg || !patchedVersion) {
@@ -75,13 +95,15 @@ function getWorkspacePackageNames(): Set<string> {
   }
 }
 
-function satisfies(version: string, range: string): boolean | null {
+function satisfies(version: string, range: string): CheckResult {
   const coerced = semver.coerce(version)
-  if (!coerced) return null
+  if (!coerced) return CheckResult.Unknown
   try {
     return semver.satisfies(coerced, range)
+      ? CheckResult.Pass
+      : CheckResult.Fail
   } catch {
-    return null
+    return CheckResult.Unknown
   }
 }
 
@@ -122,7 +144,7 @@ async function prefetchParentInfo(
   const parents: { name: string; version: string }[] = []
 
   for (const block of blocks) {
-    if (getBlockPatchStatus(block) === true) continue
+    if (getBlockPatchStatus(block) === PatchStatus.Patched) continue
 
     for (const parent of block.parents) {
       const key = `${parent.name}@${parent.version}`
@@ -252,18 +274,21 @@ function parseWhyJson(entries: WhyJsonEntry[]): VersionBlock[] {
  * older major versions have their own separate vulnerability status and
  * shouldn't be flagged as needing the 4.x patch.
  *
- * Returns: true = patched, false = vulnerable, null = indeterminate (unparseable version).
+ * Returns: Patched, Vulnerable, or Indeterminate (unparseable version).
  */
-function getBlockPatchStatus(block: VersionBlock): boolean | null {
+function getBlockPatchStatus(block: VersionBlock): PatchStatus {
   // If outside the vulnerable range, this version isn't affected by this CVE.
   // Use the safe wrapper: if the version is unparseable, assume it might be
   // in the vulnerable range (coalesce null → true) so the subsequent check
   // produces an indeterminate ❓ rather than a false "patched" ✅.
   const isInVulnerableRange = vulnerableRange
-    ? satisfies(block.installedVersion, vulnerableRange) ?? true
+    ? satisfies(block.installedVersion, vulnerableRange) !== CheckResult.Fail
     : true
-  if (!isInVulnerableRange) return true
-  return satisfies(block.installedVersion, `>=${patchedVersion}`)
+  if (!isInVulnerableRange) return PatchStatus.Patched
+  const result = satisfies(block.installedVersion, `>=${patchedVersion}`)
+  if (result === CheckResult.Pass) return PatchStatus.Patched
+  if (result === CheckResult.Fail) return PatchStatus.Vulnerable
+  return PatchStatus.Indeterminate
 }
 
 // ---------------------------------------------------------------------------
@@ -276,8 +301,21 @@ const red = (s: string) => `\x1b[31m${s}\x1b[0m`
 const yellow = (s: string) => `\x1b[33m${s}\x1b[0m`
 const dim = (s: string) => `\x1b[2m${s}\x1b[0m`
 
-const icon = (ok: boolean | null) =>
-  ok === true ? green('✅') : ok === false ? red('❌') : yellow('❓')
+const icon = (result: CheckResult) =>
+  result === CheckResult.Pass
+    ? green('✅')
+    : result === CheckResult.Fail
+    ? red('❌')
+    : yellow('❓')
+
+const statusIcon = (status: PatchStatus) =>
+  icon(
+    status === PatchStatus.Patched
+      ? CheckResult.Pass
+      : status === PatchStatus.Vulnerable
+      ? CheckResult.Fail
+      : CheckResult.Unknown,
+  )
 
 function printOverrideFix(parentKey: string): void {
   console.log(
@@ -336,20 +374,20 @@ async function main() {
   const seenParent = new Set<string>()
 
   for (const block of blocks) {
-    const isPatched = getBlockPatchStatus(block)
+    const status = getBlockPatchStatus(block)
     const label =
-      isPatched === false
+      status === PatchStatus.Vulnerable
         ? red(' VULNERABLE')
-        : isPatched === true
+        : status === PatchStatus.Patched
         ? green(' patched')
         : yellow(' (version not parseable — may be vulnerable)')
     console.log(
-      `  ${icon(isPatched)} ${bold(
+      `  ${statusIcon(status)} ${bold(
         `${pkg}@${block.installedVersion}`,
       )}${label}`,
     )
 
-    if (isPatched === true) {
+    if (status === PatchStatus.Patched) {
       console.log('')
       continue
     }
@@ -381,13 +419,14 @@ async function main() {
         continue
       }
 
-      const rangeOk = satisfies(patchedVersion, range)
+      const rangeResult = satisfies(patchedVersion, range)
+      const rangeOk = rangeResult === CheckResult.Pass
       const isPeer = isPeerDep(info, pkg)
       const peerNote = isPeer
         ? yellow("  ⚠️  peer dep — pnpm update won't re-resolve this")
         : ''
       console.log(
-        `      Declared: ${pkg}@"${range}"  ${icon(rangeOk)}${peerNote}`,
+        `      Declared: ${pkg}@"${range}"  ${icon(rangeResult)}${peerNote}`,
       )
 
       if (rangeOk && !isPeer) {
@@ -416,9 +455,9 @@ async function main() {
       const latestVer = latestInfo.version
       const latestRange = allDeps(latestInfo)[pkg] ?? null
       const isRemoved = !latestRange
-      const latestOk = latestRange
+      const latestResult = latestRange
         ? satisfies(patchedVersion, latestRange)
-        : false
+        : CheckResult.Fail
 
       console.log(`      Latest:   ${parent.name}@${latestVer}`)
 
@@ -450,29 +489,31 @@ async function main() {
         )
         if (isPeer && pinNote)
           console.log(dim(`             ${pinNote.trim()}`))
-      } else if (latestOk) {
+      } else if (latestResult === CheckResult.Pass) {
         if (!isPeer)
           console.log(
-            `      Latest range: ${pkg}@"${latestRange}"  ${icon(true)}`,
+            `      Latest range: ${pkg}@"${latestRange}"  ${icon(
+              latestResult,
+            )}`,
           )
         console.log(
           green(`      → FIX: pnpm update ${parent.name} --recursive`),
         )
         if (isPeer && pinNote)
           console.log(dim(`             ${pinNote.trim()}`))
-      } else if (latestOk === false) {
+      } else if (latestResult === CheckResult.Fail) {
         console.log(
-          `      Latest range: ${pkg}@"${latestRange}"  ${icon(false)}  ${dim(
-            '(no upstream fix)',
-          )}`,
+          `      Latest range: ${pkg}@"${latestRange}"  ${icon(
+            latestResult,
+          )}  ${dim('(no upstream fix)')}`,
         )
         printOverrideFix(key)
       } else {
-        // latestOk === null → unparseable version; can't determine if latest fixes it
+        // latestResult === CheckResult.Unknown → unparseable version; can't determine if latest fixes it
         console.log(
-          `      Latest range: ${pkg}@"${latestRange}"  ${icon(null)}  ${dim(
-            '(unable to determine)',
-          )}`,
+          `      Latest range: ${pkg}@"${latestRange}"  ${icon(
+            latestResult,
+          )}  ${dim('(unable to determine)')}`,
         )
         printOverrideFix(key)
       }
