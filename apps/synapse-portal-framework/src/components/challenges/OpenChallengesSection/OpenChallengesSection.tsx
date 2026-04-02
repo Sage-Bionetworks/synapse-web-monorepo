@@ -46,7 +46,7 @@ const OpenChallengesSection = ({
             variant="headline1"
             className={styles.OpenChallengesSection__sectionTitle}
           >
-            Open Challenges
+            OpenChallenges
           </Typography>
         </Box>
         <Typography
