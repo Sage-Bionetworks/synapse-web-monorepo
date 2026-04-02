@@ -1,4 +1,5 @@
 import {
+  allChallengesSql,
   featuredTeamSql,
   getInvolvedSql,
   homeAllChallengesSql,
@@ -19,6 +20,7 @@ import NewChallengesSection from '@sage-bionetworks/synapse-portal-framework/com
 import OpenChallengesSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/OpenChallengesSection/OpenChallengesSection'
 import PopularChallengesSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/PopularChallengesSection/PopularChallengesSection'
 import PortalFeaturedPartners from 'synapse-react-client/components/PortalFeaturedPartners/PortalFeaturedPartners'
+import TotalChallengesTrackedSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/TotalChallengesTrackedSection/TotalChallengesTrackedSection'
 
 const CARD_BORDER_RADIUS_PX = 4
 
@@ -59,6 +61,7 @@ function Home() {
         sql={homeAllChallengesSql}
         borderRadiusPx={CARD_BORDER_RADIUS_PX}
       />
+      <TotalChallengesTrackedSection allChallengesSql={allChallengesSql} />
     </>
   )
 }

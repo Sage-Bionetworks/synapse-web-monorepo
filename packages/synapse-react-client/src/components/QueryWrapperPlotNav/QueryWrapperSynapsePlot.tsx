@@ -22,7 +22,7 @@ type QueryWrapperSynapsePlotInternalProps = {
 }
 export type QueryWrapperSynapsePlotRowClickEvent = {
   row: Row
-  queryContext: QueryContextType
+  queryContext?: QueryContextType
 }
 
 /**

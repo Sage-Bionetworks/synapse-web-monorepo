@@ -1,0 +1,8 @@
+.SynapsePlot--clickable {
+  .main-svg {
+    overflow: visible !important;
+    .draglayer {
+      cursor: pointer !important;
+    }
+  }
+}

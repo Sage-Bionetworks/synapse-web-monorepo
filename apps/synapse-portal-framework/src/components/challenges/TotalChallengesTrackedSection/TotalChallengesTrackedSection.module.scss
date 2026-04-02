@@ -1,0 +1,9 @@
+@use '../ChallengeCardsSection.module.scss' as Base;
+
+.TotalChallengesTrackedSection__root {
+  margin-top: 70px;
+}
+
+.TotalChallengesTrackedSection__sectionTitle:global(.MuiTypography-root) {
+  @include Base.sectionTitle;
+}
