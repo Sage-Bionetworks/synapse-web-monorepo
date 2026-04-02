@@ -7,8 +7,8 @@ export const navbarConfig: NavbarConfig = {
       path: '/',
     },
     {
-      name: 'Challenge List',
-      path: '/Challenge List',
+      name: 'OpenChallenges',
+      path: '/OpenChallenges',
     },
   ],
   isPortalsDropdownEnabled: false,
