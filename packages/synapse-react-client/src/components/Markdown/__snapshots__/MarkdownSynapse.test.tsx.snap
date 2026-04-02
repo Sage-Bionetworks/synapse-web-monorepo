@@ -1,5 +1,65 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`MarkdownSynapse tests > Snapshot tests > should not warn when a plot widget is a direct child of a paragraph 1`] = `
+<div>
+  <div
+    class="markdown"
+    data-testid="markdown"
+  >
+    <div>
+      Some plot: 
+      <figure
+        data-testid="MarkdownSynapsePlot"
+      />
+    </div>
+    
+
+  </div>
+</div>
+`;
+
+exports[`MarkdownSynapse tests > Snapshot tests > should not warn when a plot widget is nested inside a link 1`] = `
+<div>
+  <div
+    class="markdown"
+    data-testid="markdown"
+  >
+    <div>
+      <div
+        href="https://synapse.org"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        <figure
+          data-testid="MarkdownSynapsePlot"
+        />
+      </div>
+    </div>
+    
+
+  </div>
+</div>
+`;
+
+exports[`MarkdownSynapse tests > Snapshot tests > should not warn when a plot widget is nested inside italic text 1`] = `
+<div>
+  <div
+    class="markdown"
+    data-testid="markdown"
+  >
+    <div>
+      <div>
+        <figure
+          data-testid="MarkdownSynapsePlot"
+        />
+      </div>
+    </div>
+    
+
+  </div>
+</div>
+`;
+
 exports[`MarkdownSynapse tests > Snapshot tests > supports bootstrap rows and columns 1`] = `
 <div>
   <div

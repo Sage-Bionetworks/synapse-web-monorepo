@@ -73,7 +73,7 @@ export default function MarkdownButton(
   )
 
   return buttonIsCenterAligned ? (
-    <div style={{ textAlign: 'center' }}>{button}</div>
+    <span style={{ display: 'block', textAlign: 'center' }}>{button}</span>
   ) : (
     <span>{button}</span>
   )

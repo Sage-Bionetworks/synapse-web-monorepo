@@ -160,6 +160,7 @@ export const CitationPopoverContent = (
         )}
         <Typography
           variant="smallText1"
+          component={'div'}
           sx={{
             lineHeight: 'normal',
             maxHeight: '300px',

@@ -71,6 +71,7 @@ function MissingQueryResultsWarning({
 
     return (
       <Typography
+        component={'div'}
         className="SRC-centerContent"
         style={{
           marginLeft: 10,

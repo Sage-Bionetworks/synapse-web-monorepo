@@ -10,7 +10,7 @@ import {
   OVERVIEW_PATH,
 } from './challengeDetailsPageTabConfig'
 
-const CHALLENGE_LIST_PATH = '/Challenge List'
+const CHALLENGE_LIST_PATH = '/OpenChallenges'
 
 const routes: RouteObject[] = [
   {

@@ -84,6 +84,7 @@ export default function DataAccessRequestAccessorsEditor(
         Data Requesters
       </Typography>
       <Typography
+        component={'div'}
         variant={'body1'}
         sx={{ mb: 1 }}
         className={'requester-label'}
