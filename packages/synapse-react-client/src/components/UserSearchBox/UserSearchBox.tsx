@@ -11,7 +11,7 @@ import UserOrTeamBadge from '../UserOrTeamBadge/UserOrTeamBadge'
 export type UserSearchBoxProps = {
   /* id for the input element, for associating with a <label> */
   inputId?: string
-  /* The initial principal ID (uncontrolled) */
+  /* The initial principal ID (uncontrolled). Ignored if `value` is provided. */
   defaultValue?: string
   onChange?: (
     principalId: string | null,
@@ -63,7 +63,9 @@ function UserSearchBox(props: UserSearchBoxProps) {
 
   // Resolve defaultValue principalId → UserGroupHeader for the initial uncontrolled state
   const { data: defaultUserGroupHeader, isLoading: isLoadingDefaultValue } =
-    useGetUserGroupHeader(defaultValue ?? '', { enabled: !!defaultValue })
+    useGetUserGroupHeader(defaultValue ?? '', {
+      enabled: !!defaultValue && !isControlled,
+    })
 
   // Resolve controlled string principalId → UserGroupHeader
   const controlledPrincipalId =
@@ -84,13 +86,13 @@ function UserSearchBox(props: UserSearchBoxProps) {
     UserGroupHeader | null | undefined
   >(undefined)
 
+  const controlledValue =
+    typeof valueProp === 'string' ? resolvedControlledHeader ?? null : null
+  const uncontrolledValue =
+    internalValue !== undefined ? internalValue : defaultUserGroupHeader ?? null
   const resolvedValue: UserGroupHeader | null = isControlled
-    ? typeof valueProp === 'string'
-      ? resolvedControlledHeader ?? null
-      : null
-    : internalValue !== undefined
-    ? internalValue
-    : defaultUserGroupHeader ?? null
+    ? controlledValue
+    : uncontrolledValue
 
   // Show the badge in the input field when a value is selected and the user
   // is not actively searching.
@@ -128,6 +130,7 @@ function UserSearchBox(props: UserSearchBoxProps) {
 
   return (
     <Autocomplete<UserGroupHeader, false, false, false>
+      id={inputId}
       value={resolvedValue}
       inputValue={inputValue}
       onInputChange={(_event, newInputValue, reason) => {
@@ -143,8 +146,10 @@ function UserSearchBox(props: UserSearchBoxProps) {
       openOnFocus={resolvedValue !== null}
       onOpen={() => {
         setIsSearching(true)
-        // Clear the search text so the user starts with a fresh query.
-        setInputValue('')
+        if (resolvedValue) {
+          // Clear the search text so the user starts with a fresh query.
+          setInputValue('')
+        }
       }}
       onClose={() => setIsSearching(false)}
       options={options}
@@ -174,10 +179,12 @@ function UserSearchBox(props: UserSearchBoxProps) {
           slotProps={{
             htmlInput: {
               ...inputPropsFromParams,
-              id: inputId,
-              // While the badge is displayed, hide the underlying input text and
-              // cursor.
-              style: showBadge ? { color: 'transparent' } : undefined,
+              // While the badge is displayed, hide the underlying input text and cursor.
+              // Merge custom styles with parent styles to preserve mouse selection and other behaviors.
+              style: {
+                ...inputPropsFromParams.style,
+                ...(showBadge ? { color: 'transparent' } : {}),
+              },
             },
             input: {
               ...InputPropsFromParams,
