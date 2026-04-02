@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# WorktreeCreate hook for Claude Code
+#
+# Handles worktree creation for `claude -w`:
+# reuses an existing branch if found, otherwise creates a new one,
+# then runs pnpm install in the background.
+#
+# Input (JSON on stdin): { "name": "<slug>", "cwd": "<project-root>", ... }
+# Output (stdout):       Absolute path to the created worktree directory
+
+input=$(cat)
+name=$(echo "$input" | jq -r '.name')
+cwd=$(echo "$input" | jq -r '.cwd')
+worktree_path="$cwd/.claude/worktrees/$name"
+
+# Reuse existing branch if it exists, otherwise create a new one
+if git -C "$cwd" show-ref --verify --quiet "refs/heads/$name"; then
+  git -C "$cwd" worktree add "$worktree_path" "$name" >&2 || exit 1
+else
+  git -C "$cwd" worktree add -b "$name" "$worktree_path" HEAD >&2 || exit 1
+fi
+
+# Run pnpm install in the background; SessionStart hook will notify the user.
+# Output is logged to .pnpm-install.log — tail it to follow progress.
+nohup bash -c "cd '$worktree_path' && pnpm install && rm -f '$worktree_path/.pnpm-installing'" > "$worktree_path/.pnpm-install.log" 2>&1 &
+echo $! > "$worktree_path/.pnpm-installing"
+
+echo "$worktree_path"

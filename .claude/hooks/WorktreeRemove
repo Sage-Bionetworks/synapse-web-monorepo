@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# WorktreeRemove hook for Claude Code
+#
+# Handles cleanup when a worktree session ends.
+# Since WorktreeCreate replaces the default git behavior,
+# we need this hook to properly run git worktree remove.
+#
+# Input (JSON on stdin): { "worktree_path": "<absolute-path>", ... }
+
+input=$(cat)
+worktree_path=$(echo "$input" | jq -r '.worktree_path')
+
+# Kill any in-progress pnpm install before removing the worktree
+if [ -f "$worktree_path/.pnpm-installing" ]; then
+  kill "$(cat "$worktree_path/.pnpm-installing")" 2>/dev/null || true
+fi
+
+# Try clean removal first; if it fails (e.g. process still inside the worktree dir),
+# fall back to pruning stale metadata and force-deleting the directory.
+# Fallback: prune and force-remove directory if clean removal fails
+git worktree remove "$worktree_path" --force 2>/dev/null || {
+  git worktree prune 2>/dev/null || true
+  rm -rf "$worktree_path" 2>/dev/null || true
+}
+
+exit 0
