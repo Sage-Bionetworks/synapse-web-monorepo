@@ -13,7 +13,7 @@ const ChallengeListPage = (): React.ReactNode => {
           color="black"
           lineHeight="80px"
         >
-          Listed Challenges
+          OpenChallenges
         </Typography>
       </Box>
       <Box px="80px">
