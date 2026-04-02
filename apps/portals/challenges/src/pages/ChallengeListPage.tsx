@@ -1,64 +1,25 @@
+import { allChallenges } from '@/config/synapseConfig/allChallenges'
+import { Box, Typography } from '@mui/material'
 import React from 'react'
-import { challengeProjectsSql } from '@/config/resources'
-import {
-  challengeCardConfiguration,
-  challengeTitleLinkConfig,
-} from '@/config/synapseConfig/challenges'
-import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import TabbedSynapseObjects from '@sage-bionetworks/synapse-portal-framework/components/TabbedSynapseObjects'
-import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 
 const ChallengeListPage = (): React.ReactNode => {
   return (
-    <SectionLayout
-      title="Listed Challenges"
-      subtitle="Explore and join our currently running challenges, or browse completed ones and review their findings."
-      centerTitle
-      ContainerProps={{ className: 'home-spacer' }}
-    >
-      <TabbedSynapseObjects
-        centerTabs
-        tabConfigs={[
-          // Add list of challenge project cards
-          {
-            label: 'Active',
-            element: (
-              <CardContainerLogic
-                sql={`${challengeProjectsSql} where Status='Active'`}
-                cardConfiguration={{
-                  ...challengeCardConfiguration,
-                  titleLinkConfig: challengeTitleLinkConfig,
-                }}
-              />
-            ),
-          },
-          {
-            label: 'Upcoming',
-            element: (
-              <CardContainerLogic
-                sql={`${challengeProjectsSql} where Status='Upcoming'`}
-                cardConfiguration={{
-                  ...challengeCardConfiguration,
-                  titleLinkConfig: challengeTitleLinkConfig,
-                }}
-              />
-            ),
-          },
-          {
-            label: 'Completed',
-            element: (
-              <CardContainerLogic
-                sql={`${challengeProjectsSql} where Status='Closed'`}
-                cardConfiguration={{
-                  ...challengeCardConfiguration,
-                  titleLinkConfig: challengeTitleLinkConfig,
-                }}
-              />
-            ),
-          },
-        ]}
-      />
-    </SectionLayout>
+    <>
+      <Box px="60px" py="20px" display="flex" justifyContent="center">
+        <Typography
+          variant="h3"
+          fontWeight="700"
+          color="black"
+          lineHeight="80px"
+        >
+          Listed Challenges
+        </Typography>
+      </Box>
+      <Box px="80px">
+        <QueryWrapperPlotNav {...allChallenges} />
+      </Box>
+    </>
   )
 }
 

@@ -11,9 +11,12 @@ import {
   Alert,
   Box,
   Button,
+  Chip,
   Collapse,
   ListItem,
   ListItemText,
+  Stack,
+  Tooltip,
   useTheme,
 } from '@mui/material'
 import { Color } from '@mui/material/styles'
@@ -27,6 +30,7 @@ export type SynapseChatInteractionProps = {
   chatResponseTrace?: TraceEvent[]
   scrollIntoView?: boolean
   chatErrorReason?: string
+  onSendChat?: (message: string) => void
 }
 
 // Show tool calls in the trace. Useful for development. We may want to show them to users in the future.
@@ -54,10 +58,12 @@ export function SynapseChatInteraction({
   chatErrorReason,
   chatResponseTrace,
   scrollIntoView = false,
+  onSendChat,
 }: SynapseChatInteractionProps) {
   const theme = useTheme()
   const ref = useRef<HTMLLIElement | null>(null)
   const [showTrace, setShowTrace] = useState(false)
+
   useEffect(() => {
     // on mount, scroll into view if instructed
     if (scrollIntoView) {
@@ -65,7 +71,7 @@ export function SynapseChatInteraction({
         ref.current.scrollIntoView({ behavior: 'smooth' })
       }
     }
-  }, [ref])
+  }, [ref, scrollIntoView])
 
   const isLoading = !chatResponseText && !chatErrorReason
 
@@ -93,12 +99,38 @@ export function SynapseChatInteraction({
     ? traceButtonLoadingText
     : `${showTrace ? 'Hide' : 'Show'} Trace`
 
-  const textContent = useMemo(() => {
-    const parser = new DOMParser()
-    const doc = parser.parseFromString(chatResponseText ?? '', 'text/html')
-    const elementsToRemove = doc.querySelectorAll('tool_name')
-    elementsToRemove.forEach(element => element.remove())
-    return doc.body.textContent ?? ''
+  const { textContent, guidePrompts } = useMemo(() => {
+    try {
+      const parser = new DOMParser()
+      const doc = parser.parseFromString(chatResponseText ?? '', 'text/html')
+
+      // Remove tool_name and actions elements (AI XML tags not for display)
+      doc
+        .querySelectorAll('tool_name, actions')
+        .forEach(element => element.remove())
+
+      // Extract guideprompts before removing them
+      const extractedGuidePrompts = Array.from(
+        doc.querySelectorAll('guideprompt'),
+      )
+        .map(el => el.textContent?.trim())
+        .filter((t): t is string => !!t)
+
+      // Remove guideprompt elements
+      doc.querySelectorAll('guideprompt').forEach(element => element.remove())
+
+      // Extract text from <chat> element if present, otherwise use full body text
+      const chatElement = doc.querySelector('chat')
+      return {
+        textContent: chatElement
+          ? chatElement.textContent ?? ''
+          : doc.body.textContent ?? '',
+        guidePrompts: extractedGuidePrompts,
+      }
+    } catch (e) {
+      console.error(e)
+      return { textContent: chatResponseText ?? '', guidePrompts: [] }
+    }
   }, [chatResponseText])
 
   return (
@@ -210,6 +242,22 @@ export function SynapseChatInteraction({
             )}
           </Box>
           {textContent && <MarkdownSynapse markdown={textContent} />}
+          {onSendChat && guidePrompts.length > 0 && (
+            <Stack direction="row" flexWrap="wrap" gap={1} mt={1}>
+              {guidePrompts.map(prompt => (
+                <Tooltip key={prompt} title={prompt}>
+                  <Chip
+                    label={prompt}
+                    variant="outlined"
+                    color="primary"
+                    clickable
+                    onClick={() => onSendChat(prompt)}
+                    sx={{ maxWidth: 200 }}
+                  />
+                </Tooltip>
+              ))}
+            </Stack>
+          )}
         </Box>
       </ListItem>
       {chatErrorReason && (

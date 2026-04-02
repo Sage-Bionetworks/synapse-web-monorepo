@@ -14,7 +14,7 @@ export function SubmissionInfoCard({ info }: SubmissionInfoCardProps) {
   return (
     <>
       {info && (
-        <p className="SubmissionInfoCard">
+        <div className="SubmissionInfoCard">
           <strong> Project Lead: </strong> <span>{info.projectLead}</span>{' '}
           <br />
           <strong> Institution: </strong> <span>{info.institution}</span> <br />
@@ -33,7 +33,7 @@ export function SubmissionInfoCard({ info }: SubmissionInfoCardProps) {
                 {accessorChange.type}
               </div>
             ))}
-        </p>
+        </div>
       )}
     </>
   )
@@ -41,9 +41,9 @@ export function SubmissionInfoCard({ info }: SubmissionInfoCardProps) {
 
 export function LoadingSubmissionInfoCard() {
   return (
-    <p className="SubmissionInfoCard">
+    <div className="SubmissionInfoCard">
       <SkeletonTable numCols={1} numRows={4} />
       <Skeleton variant="rectangular" width={'100%'} height={80} />
-    </p>
+    </div>
   )
 }

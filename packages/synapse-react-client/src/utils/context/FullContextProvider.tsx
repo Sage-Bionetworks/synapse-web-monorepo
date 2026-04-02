@@ -71,7 +71,7 @@ export function FullContextProvider(props: FullContextProviderProps) {
   return (
     <QueryClientProvider client={queryClient ?? defaultQueryClient}>
       <ThemeProvider theme={theme}>
-        <SynapseContextProvider synapseContext={synapseContext}>
+        <SynapseContextProvider synapseContext={{ ...synapseContext }}>
           <ApplicationSessionContextProvider
             context={applicationSessionContext}
           >

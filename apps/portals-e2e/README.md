@@ -14,7 +14,7 @@
 
 1. Create a `.env` file with the following environment variables: `PORTAL`. The value should match one of the Portal directory names in `apps/portals/`, e.g. 'adknowledgeportal'.
 2. Build the Portal: `pnpm portal:build`.
-3. Start the Portal: `pnpm portal:start`. The Portal will be available at `http://localhost:3000`.
+3. Start the Portal: `pnpm portal:start`. The Portal will be available at `http://localhost:3001`.
 4. Run tests: `pnpm e2e`. Tests can be run multiple times against the running Portal.
 5. Stop the Portal: `pnpm portal:stop`.
 

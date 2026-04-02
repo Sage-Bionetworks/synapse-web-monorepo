@@ -1,3 +1,4 @@
+import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import {
   Box,
   Stack,
@@ -13,14 +14,17 @@ import {
 } from '@mui/material'
 import React from 'react'
 import PortalFullTextSearchField from './PortalSearch/PortalFullTextSearchField'
-import { spreadSx } from 'synapse-react-client/theme/spreadSx'
 import { useNavigate } from 'react-router'
+import styles from './HeaderSearchBox.module.scss'
 import { KeyboardArrowDown } from '@mui/icons-material'
 import { useState } from 'react'
 import {
-  FTS_SEARCH_TERM,
-  FTS_SEARCH_ROLE,
+  SEARCH_TERM,
+  SEARCH_ROLE,
 } from 'synapse-react-client/utils/functions/SqlFunctions'
+import { useChatDialogContext } from './ChatDialogContext'
+import { useSynapseContext } from 'synapse-react-client'
+import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
 
 type HeaderSearchBoxProps = {
   searchPlaceholder?: string
@@ -41,24 +45,33 @@ const HeaderSearchBox = ({
   roles,
 }: HeaderSearchBoxProps): React.ReactNode => {
   const [role, setRole] = useState('')
+  const [mode, setMode] = useState<'Chat' | 'Search'>('Search')
   const theme = useTheme()
   const navigate = useNavigate()
+  const { isAuthenticated } = useSynapseContext()
+  const isChatEnabled = useGetFeatureFlag(FeatureFlagEnum.PORTAL_CHAT)
+  const chatDialogContext = useChatDialogContext()
+  const showChatOption = isAuthenticated && chatDialogContext && isChatEnabled
 
   const handleTermClick = (term: string) => {
     const trimmedTerm = term.trim()
-    if (path) {
-      const params = new URLSearchParams()
-      params.set(FTS_SEARCH_TERM, trimmedTerm)
-      if (role) {
-        params.set(FTS_SEARCH_ROLE, role)
+    if (chatDialogContext && mode === 'Chat') {
+      chatDialogContext.openChat(trimmedTerm)
+    } else {
+      if (path) {
+        const params = new URLSearchParams()
+        params.set(SEARCH_TERM, trimmedTerm)
+        if (role) {
+          params.set(SEARCH_ROLE, role)
+        }
+        navigate({
+          pathname: path,
+          search: `?${params.toString()}`,
+        })
       }
-      navigate({
-        pathname: path,
-        search: `?${params.toString()}`,
-      })
-    }
-    if (callback) {
-      callback(trimmedTerm)
+      if (callback) {
+        callback(trimmedTerm)
+      }
     }
   }
 
@@ -67,147 +80,88 @@ const HeaderSearchBox = ({
   }
 
   return (
-    <Box
-      sx={spreadSx(sx, {
-        padding: { xs: '40px', lg: '40px 80px 40px 0' },
-        width: '100%',
-      })}
-    >
-      <Stack
-        sx={theme => ({
-          padding: '40px',
-          gap: '30px',
-          borderRadius: '6px',
-          backdropFilter: 'blur(15px)',
-          [theme.breakpoints.up('lg')]: {
-            minWidth: '660px',
-          },
-        })}
-      >
-        <Box
-          sx={theme => ({
-            display: 'flex',
-            gap: '20px',
-            alignItems: 'center',
-            [theme.breakpoints.down('md')]: {
-              flexDirection: 'column',
-            },
-          })}
-        >
-          {roles && (
-            <FormControl
-              sx={theme => ({
-                minWidth: '187px',
-                minHeight: '38px',
-                height: '100%',
-                [theme.breakpoints.down('md')]: {
-                  width: '100%',
-                },
-              })}
-            >
+    <Box className={styles.root} sx={sx}>
+      <Stack className={styles.stack}>
+        <Box className={styles.searchRow}>
+          {showChatOption ? (
+            <FormControl className={styles.formControl}>
               <Select
-                sx={{
-                  backgroundColor: '#FFFF',
-                  height: '48px',
-                  svg: {
-                    color: '#878E95',
-                    width: '24px',
-                    height: '24px',
-                    right: '10px',
-                  },
-                  '.MuiSelect-select': {
-                    marginRight: '10px',
-                  },
-                }}
-                displayEmpty
-                label="Select a Role"
-                value={role}
-                onChange={handleChange}
+                className={styles.select}
+                value={mode}
+                onChange={e => setMode(e.target.value)}
                 IconComponent={KeyboardArrowDown}
               >
-                <MenuItem disabled value="">
-                  <Typography
-                    sx={{
-                      fontStyle: 'italic',
-                      color: 'grey.700',
-                    }}
-                  >
-                    Select a Role
+                <MenuItem value="Search" className={styles.menuItem}>
+                  <Typography className={styles.roleMenuItemLabel}>
+                    Search
                   </Typography>
                 </MenuItem>
-                {roles.map(({ value, label }) => (
-                  <MenuItem key={value} value={value} sx={{ fontSize: '16px' }}>
-                    <Typography
-                      sx={{
-                        display: 'inline',
-                      }}
-                    >
-                      {label}
-                    </Typography>
-                  </MenuItem>
-                ))}
+                <MenuItem value="Chat" className={styles.menuItem}>
+                  <Typography className={styles.roleMenuItemLabel}>
+                    Chat
+                  </Typography>
+                </MenuItem>
               </Select>
             </FormControl>
+          ) : (
+            roles && (
+              <FormControl className={styles.formControl}>
+                <Select
+                  className={styles.select}
+                  displayEmpty
+                  label="Select a Role"
+                  value={role}
+                  onChange={handleChange}
+                  IconComponent={KeyboardArrowDown}
+                >
+                  <MenuItem disabled value="">
+                    <Typography className={styles.roleMenuItemPlaceholder}>
+                      Select a Role
+                    </Typography>
+                  </MenuItem>
+                  {roles.map(({ value, label }) => (
+                    <MenuItem
+                      key={value}
+                      value={value}
+                      className={styles.menuItem}
+                    >
+                      <Typography className={styles.roleMenuItemLabel}>
+                        {label}
+                      </Typography>
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )
           )}
           <PortalFullTextSearchField
             placeholder={searchPlaceholder}
-            path={path}
-            callback={callback}
+            callback={handleTermClick}
             role={role}
-            sx={{
-              boxShadow: 'none',
-              margin: 0,
-              height: '48px',
-              borderRadius: '3px',
-              '.MuiInputBase-root': {
-                height: '100%',
-                borderRadius: '3px',
-                fontSize: '16px',
-              },
-              '.MuiInputBase-input::placeholder': {
-                fontStyle: 'italic',
-                opacity: 1,
-                color: 'grey.700',
-              },
-            }}
+            className={styles.searchField}
           />
         </Box>
-        <Stack sx={{ gap: '8px' }}>
-          <Typography sx={{ color: 'grey.900', fontWeight: 700 }}>
+        <Stack className={styles.exampleSearchesSection}>
+          <Typography className={styles.exampleSearchesLabel}>
             Example searches
           </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '8px 6px;',
-            }}
-          >
+          <Box className={styles.exampleTermsContainer}>
             {searchExampleTerms &&
               searchExampleTerms.map(term => (
                 <Button
                   key={term}
                   variant="contained"
                   onClick={() => handleTermClick(term)}
+                  className={styles.exampleTermButton}
                   sx={{
-                    boxShadow: 'none !important',
-                    borderRadius: '30px',
-                    border: '1px solid',
                     borderColor: lighten(theme.palette.primary.main, 0.9),
-                    padding: '1px 9px',
-                    textDecoration: 'none !important',
                     backgroundColor: lighten(theme.palette.primary.main, 0.8),
                     '&:hover': {
                       background: lighten(theme.palette.primary.main, 0.7),
                     },
-                    textTransform: 'none',
                   }}
                 >
-                  <Typography
-                    sx={{
-                      color: 'grey.800',
-                    }}
-                  >
+                  <Typography className={styles.exampleTermLabel}>
                     {term}
                   </Typography>
                 </Button>

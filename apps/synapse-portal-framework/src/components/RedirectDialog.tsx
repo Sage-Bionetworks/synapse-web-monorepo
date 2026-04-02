@@ -135,8 +135,8 @@ const RedirectDialog = (props: RedirectDialogProps): React.ReactNode => {
   useEffect(() => {
     if (redirectUrl && isRedirectTargetFileEntity && !isLoading) {
       const currentUrl = `${location.pathname}${location.search}`
-      const internalUrl = `/FileEntity?entityId=${entityId}${
-        versionNumber ? `&version=${versionNumber}` : ''
+      const internalUrl = `/FileEntity/${entityId}${
+        versionNumber ? `/version/${versionNumber}` : ''
       }`
 
       if (currentUrl === internalUrl) {
@@ -248,7 +248,7 @@ const RedirectDialog = (props: RedirectDialogProps): React.ReactNode => {
                 Redirecting
               </Typography>
               {redirectInstructions}
-              <p>
+              <div>
                 <Typography variant="body1" sx={{ paddingBottom: '20px' }}>
                   You will be redirected in{' '}
                   <strong>{countdownSeconds} seconds</strong>
@@ -267,7 +267,7 @@ const RedirectDialog = (props: RedirectDialogProps): React.ReactNode => {
                     Stay in the Portal
                   </Button>
                 </div>
-              </p>
+              </div>
             </div>
             {isSynapseURL(redirectUrl) && (
               <div className="redirect-dialog-footer">

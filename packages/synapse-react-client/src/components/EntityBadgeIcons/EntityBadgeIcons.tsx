@@ -24,6 +24,7 @@ import React, { useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { getDisplayedAnnotation } from '../entity/metadata/AnnotationsTable'
 import { EntityModal } from '../entity/metadata/EntityModal'
+import { HoverPopover } from '../styled/HoverPopover'
 import WarningDialog from '../SynapseForm/WarningDialog'
 
 export type EntityBadgeIconsProps = {
@@ -125,8 +126,6 @@ export const EntityBadgeIcons = (
     staleTime: 60 * 1000, // 60 seconds
   })
 
-  // The maximum number of annotations to show in the popover
-  const maxAnnosToShow = 10
   const annotationsCount =
     annotations && !isEmpty(annotations) ? Object.keys(annotations).length : 0
   useEffect(() => {
@@ -164,36 +163,18 @@ export const EntityBadgeIcons = (
   const annotationsTableRows = (
     <>
       {annotations
-        ? Object.entries(annotations ?? []).reduce(
-            (previous, current, index) => {
-              if (
-                index < maxAnnosToShow ||
-                (index === maxAnnosToShow &&
-                  maxAnnosToShow === annotationsCount)
-              ) {
-                return (
-                  <>
-                    {previous}
-                    <tr>
-                      <td>
-                        <b>{current[0]}</b>
-                      </td>
-                      <td>
-                        {Array.isArray(current[1])
-                          ? current[1].map(getDisplayedAnnotation).join(', ')
-                          : getDisplayedAnnotation(
-                              current[1] as string | number | boolean,
-                            )}
-                      </td>
-                    </tr>
-                  </>
-                )
-              } else {
-                return previous
-              }
-            },
-            <></>,
-          )
+        ? Object.entries(annotations ?? []).map(([key, value]) => (
+            <tr key={key}>
+              <td>
+                <b>{key}</b>
+              </td>
+              <td>
+                {Array.isArray(value)
+                  ? value.map(getDisplayedAnnotation).join(', ')
+                  : getDisplayedAnnotation(value as string | number | boolean)}
+              </td>
+            </tr>
+          ))
         : ''}
     </>
   )
@@ -212,18 +193,17 @@ export const EntityBadgeIcons = (
       )}
     </>
   )
+  const annotationsTitle = schemaValidationResults
+    ? `${schemaConformance} Annotations`
+    : ''
   const annotationsHtml = (
     <div className="EntityBadgeTooltip">
-      {schemaValidationResults ? <p>{schemaConformance} Annotations</p> : ''}
       <table>
-        {annotationsTableRows ? annotationsTableRows : ''}
-        {valiationSchemaTableRow}
+        <tbody>
+          {annotationsTableRows ? annotationsTableRows : ''}
+          {valiationSchemaTableRow}
+        </tbody>
       </table>
-      {annotationsCount > maxAnnosToShow ? (
-        <p>and {annotationsCount - maxAnnosToShow} more</p>
-      ) : (
-        ''
-      )}
     </div>
   )
 
@@ -289,21 +269,29 @@ export const EntityBadgeIcons = (
 
           {showHasAnnotations &&
             !!(annotationsCount || schemaValidationResults) && (
-              <Tooltip
-                title={annotationsHtml}
-                enterNextDelay={100}
+              <HoverPopover
+                title={annotationsTitle}
+                popoverContent={annotationsHtml}
                 placement="right"
+                maxWidth={500}
+                actionButton={
+                  canOpenModal
+                    ? {
+                        content: 'Edit Annotations',
+                        onClick: () => setShowModal(true),
+                        closeOnClick: true,
+                      }
+                    : undefined
+                }
               >
                 <LocalOfferTwoTone
                   aria-hidden={false}
                   role={canOpenModal ? 'button' : 'img'}
                   className={`EntityBadge__Badge ${schemaConformance}`}
-                  style={canOpenModal ? { cursor: 'pointer' } : undefined}
-                  onClick={canOpenModal ? () => setShowModal(true) : undefined}
                   data-html={true}
                   data-testid={'annotations-icon'}
                 />
-              </Tooltip>
+              </HoverPopover>
             )}
           {showHasWiki && bundle.rootWikiId && (
             <Tooltip title="Has a wiki" enterNextDelay={100} placement="right">

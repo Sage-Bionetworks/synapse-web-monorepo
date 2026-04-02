@@ -43,7 +43,7 @@ export function AddFileToDownloadListCell<T extends EntityIdAndVersionNumber>(
         height: '100%',
       }}
     >
-      <Tooltip title="Add to Download Cart" placement="right">
+      <Tooltip title="Add to Download List" placement="right">
         <IconButton
           sx={{ height: '35px', width: '35px' }}
           onClick={event => {

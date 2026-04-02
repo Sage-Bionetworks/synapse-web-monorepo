@@ -1,7 +1,7 @@
 import { Box, Button, Container, Link, Typography } from '@mui/material'
 import { useCallback, useState } from 'react'
 import { ReactComponent as AcknowledgementStatementsIllustration } from '../../assets/illustrations/acknowledgement_statements_illustration.svg'
-import ComponentCollapse from '../ComponentCollapse'
+import TextToComponentCollapse from '../TextToComponentCollapse'
 import AcknowledgementsDialog from './AcknowledgementsDialog'
 import { MarkdownSynapseProps } from '../Markdown/MarkdownSynapse'
 import MarkdownCollapse from '../Markdown/MarkdownCollapse'
@@ -71,6 +71,7 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
         </Typography>
         <Typography
           variant="body1"
+          component={'div'}
           sx={{
             mb: '2em',
             '& li::marker': {
@@ -119,7 +120,7 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
             </li>
           </ol>
         </Typography>
-        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+        <Typography component={'div'} variant="h5" sx={{ fontWeight: 'bold' }}>
           <ol start={1} style={{ paddingInlineStart: '20px' }}>
             <li>Select study acknowledgement statements</li>
           </ol>
@@ -152,7 +153,7 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
             setAcknowledgementItems([...acknowledgementItems])
           }}
         />
-        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+        <Typography variant="h5" component={'div'} sx={{ fontWeight: 'bold' }}>
           <ol start={2} style={{ paddingInlineStart: '25px' }}>
             <li>Generate compiled statement</li>
           </ol>
@@ -172,7 +173,7 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
         >
           Generate compiled statement
         </Button>
-        <ComponentCollapse
+        <TextToComponentCollapse
           text={'Click to see other text included in the compiled statement'}
           textVariant="h5"
           textSx={{ fontSize: '16px', fontWeight: 'bold' }}
@@ -214,9 +215,9 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
               />
             </>
           )}
-        </ComponentCollapse>
+        </TextToComponentCollapse>
         <hr />
-        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+        <Typography variant="h5" component={'div'} sx={{ fontWeight: 'bold' }}>
           <ol start={3} style={{ paddingInlineStart: '25px' }}>
             <li>Create a DOI for your dataset</li>
           </ol>

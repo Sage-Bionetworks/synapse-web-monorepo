@@ -1,9 +1,11 @@
+import { getPortalOrigin } from '@/utils/getPortalOrigin'
 import { useSetCanonicalUrl } from '@/utils/useSetCanonicalUrl'
 import { Row, RowSet } from '@sage-bionetworks/synapse-types'
 import { useLocation } from 'react-router'
 
 import { getColumnIndex } from 'synapse-react-client/utils/functions/index'
 import { useDetailsPageContext } from './DetailsPageContext'
+import { usePortalContext } from '@/components/PortalContext'
 
 type DetailsPageDocumentMetadataProps = {
   /** The set of column name(s) which define the main unique key of the column (used to define the canonical URL for SEO) */
@@ -12,12 +14,14 @@ type DetailsPageDocumentMetadataProps = {
 
 function getCanonicalUrl(
   pathname: string,
+  portalKey: string | undefined,
   resourcePrimaryKey: string[],
   rowSet: RowSet,
   rowData: Row,
 ) {
   try {
-    const canonicalUrl = new URL(pathname, window.location.origin)
+    const origin = getPortalOrigin(portalKey)
+    const canonicalUrl = new URL(pathname, origin)
     resourcePrimaryKey.forEach(columnName => {
       const columnIndex = getColumnIndex(resourcePrimaryKey[0], rowSet?.headers)
       if (columnIndex == null) {
@@ -45,13 +49,20 @@ export function DetailsPageDocumentMetadata(
   const { resourcePrimaryKey } = props
 
   const { pathname } = useLocation()
+  const { portalKey } = usePortalContext()
   const {
     context: { rowSet, rowData },
   } = useDetailsPageContext()
 
   const canonicalUrl =
     resourcePrimaryKey != null && rowSet != null && rowData != null
-      ? getCanonicalUrl(pathname, resourcePrimaryKey, rowSet, rowData)
+      ? getCanonicalUrl(
+          pathname,
+          portalKey,
+          resourcePrimaryKey,
+          rowSet,
+          rowData,
+        )
       : undefined
 
   useSetCanonicalUrl(canonicalUrl)

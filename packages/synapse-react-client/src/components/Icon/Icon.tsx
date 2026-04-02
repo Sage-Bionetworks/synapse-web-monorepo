@@ -11,8 +11,8 @@ import { ReactComponent as studyCompleteSvg } from '@/assets/icons/study-complet
 import { ReactComponent as translationalSvg } from '@/assets/icons/translational.svg'
 import { ReactComponent as treeHorizontalSvg } from '@/assets/icons/tree_horizontal.svg'
 import { ReactComponent as standardDataModelSvg } from '@/assets/icons/standardDataModel.svg'
+import { ReactComponent as Challenge } from '@/assets/icons/Challenge.svg'
 import {
-  Challenge,
   Chart,
   Close,
   Collapse,

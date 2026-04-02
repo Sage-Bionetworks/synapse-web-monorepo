@@ -51,27 +51,27 @@ export const navbarConfig: NavbarConfig = {
       children: [
         {
           name: 'CTF',
-          path: '/Organizations/DetailsPage?abbreviation=CTF',
+          path: '/Organizations/CTF',
         },
         {
           name: 'NTAP',
-          path: '/Organizations/DetailsPage?abbreviation=NTAP',
+          path: '/Organizations/NTAP',
         },
         {
           name: 'GFF',
-          path: '/Organizations/DetailsPage?abbreviation=GFF',
+          path: '/Organizations/GFF',
         },
         {
           name: 'NCI DHART SPORE',
-          path: '/Organizations/DetailsPage?fundingAgency=NIH-NCI',
+          path: '/Organizations/DHART SPORE',
         },
         {
           name: 'CDMRP NFRP',
-          path: '/Organizations/DetailsPage?abbreviation=CDMRP',
+          path: '/Organizations/CDMRP',
         },
         {
           name: 'NFRI',
-          path: '/Organizations/DetailsPage?abbreviation=NFRI',
+          path: '/Organizations/NFRI',
         },
       ],
     },
@@ -94,7 +94,10 @@ export const navbarConfig: NavbarConfig = {
       name: 'Contribute Data',
       path: 'https://help.nf.synapse.org/nf-data-portal-documentation/contributing-data',
     },
-    { name: 'Help', path: 'https://help.nf.synapse.org/nf-data-portal-documentation' },
+    {
+      name: 'Help',
+      path: 'https://help.nf.synapse.org/nf-data-portal-documentation',
+    },
   ],
   isPortalsDropdownEnabled: true,
 }

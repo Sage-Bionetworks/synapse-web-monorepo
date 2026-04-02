@@ -18,6 +18,18 @@ export interface DetailPageConfig {
    * This will be used as the search parameter value in the generated URLs
    */
   primaryKeyColumn: string
+
+  /**
+   * Controls how the record identifier is appended to the detail page URL.
+   * - 'query-param' (default): `/<path>?<primaryKeyColumn>=<id>`
+   *   e.g. `/Explore/Studies/DetailsPage?studyId=syn123`
+   * - 'path-segment': `/<path>/<id>`
+   *   e.g. `/Explore/Studies/syn123`
+   *
+   * Use 'path-segment' for portals that have migrated to SSR with `/:param` routing.
+   * Defaults to 'query-param' for backwards compatibility.
+   */
+  urlParamStyle?: 'query-param' | 'path-segment'
 }
 
 /**

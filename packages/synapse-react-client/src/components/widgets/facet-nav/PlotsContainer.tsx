@@ -20,7 +20,7 @@ type ShowMoreState = 'MORE' | 'LESS' | 'NONE'
 export type PlotsContainerProps = {
   facetsToPlot?: string[]
   customPlots?: QueryWrapperSynapsePlotProps[]
-  initialPlotType?: PlotType
+  initialPlotTypeByFacetColumnName?: Record<string, PlotType>
 }
 type CustomPlotIdentifier = {
   title: string
@@ -89,7 +89,7 @@ const getCombinedNewPlots = (
     FacetNavPanelProps,
     'applyChangesToFacetFilter' | 'applyChangesToGraphSlice' | 'facetToPlot'
   >[] = [],
-  initialPlotType: PlotType = DEFAULT_PLOT_TYPE,
+  initialPlotTypeByFacetColumnName?: Record<string, PlotType>,
 ): UiPlotState[] => [
   ...customPlots.map((plotProps, index) => ({
     plotId: getCustomPlotIdentifier(plotProps),
@@ -99,7 +99,10 @@ const getCombinedNewPlots = (
   ...facetNavPanelPropsArray.map((facetPlotProps, index) => ({
     plotId: facetPlotProps.facetToPlot,
     isHidden: index + customPlots.length >= DEFAULT_VISIBLE_PLOTS,
-    plotType: initialPlotType,
+    plotType:
+      initialPlotTypeByFacetColumnName?.[
+        facetPlotProps.facetToPlot.columnName
+      ] ?? DEFAULT_PLOT_TYPE,
   })),
 ]
 
@@ -134,7 +137,7 @@ function PlotsContainer(props: PlotsContainerProps) {
   const {
     facetsToPlot = DEFAULT_FACETS_TO_PLOT,
     customPlots = DEFAULT_CUSTOM_PLOTS,
-    initialPlotType = DEFAULT_PLOT_TYPE,
+    initialPlotTypeByFacetColumnName,
   } = props
   const { data: queryMetadata } = useSuspenseGetQueryMetadata()
   const { showPlots: showPlotVisualization } = useQueryVisualizationContext()
@@ -152,7 +155,7 @@ function PlotsContainer(props: PlotsContainerProps) {
     const combinedNewPlots = getCombinedNewPlots(
       customPlots,
       facetNavPanelPropsArray,
-      initialPlotType,
+      initialPlotTypeByFacetColumnName,
     )
 
     // Update the state with new plots
@@ -171,7 +174,7 @@ function PlotsContainer(props: PlotsContainerProps) {
       const combinedPlots = [...updatedPlots, ...newPlots]
       return combinedPlots
     })
-  }, [customPlots, facetNavPanelPropsArray])
+  }, [customPlots, facetNavPanelPropsArray, initialPlotTypeByFacetColumnName])
 
   // when 'show more/less' is clicked
   const onShowMoreClick = (shouldShowMore: boolean) => {
@@ -266,6 +269,11 @@ function PlotsContainer(props: PlotsContainerProps) {
 
               return (
                 <div
+                  className={
+                    plotUiState.plotType === 'BAR'
+                      ? 'PlotsContainer__row__item--full-width'
+                      : undefined
+                  }
                   style={{
                     minWidth: '435px',
                     display: isPlotHiddenInGrid(plotUiState.plotId)

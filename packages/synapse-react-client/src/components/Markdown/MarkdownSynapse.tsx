@@ -4,6 +4,7 @@ import {
   decodeXml,
   handleLinkClicks,
   processMath,
+  fixInvalidNesting,
 } from '@/components/Markdown/MarkdownUtils'
 import {
   useGetWikiPage,
@@ -184,10 +185,20 @@ function RenderMarkdown(props: {
     return markup
   }, [markdown, renderInline])
 
-  if (markup.length > 0) {
-    const domParser = new DOMParser()
-    const document = domParser.parseFromString(markup, 'text/html')
-    return <RecursiveRender element={document.body} markdown={markup} />
+  const processedDocuments = useMemo(() => {
+    if (markup.length > 0) {
+      const domParser = new DOMParser()
+      const document = domParser.parseFromString(markup, 'text/html')
+
+      fixInvalidNesting(document.body)
+
+      return document.body
+    }
+    return null
+  }, [markup])
+
+  if (processedDocuments) {
+    return <RecursiveRender element={processedDocuments} markdown={markup} />
   }
 
   if (!isLoading && showPlaceholderIfNoWikiContent && markup === '') {
@@ -208,6 +219,7 @@ function RenderMarkdown(props: {
  * @param {string} markdown The original markdown, its kept as a special case for the table of contents widget
  * @returns {*}
  */
+
 function RecursiveRender(props: { element: Node; markdown: string }) {
   const { element, markdown } = props
   /*
@@ -229,6 +241,7 @@ function RecursiveRender(props: { element: Node; markdown: string }) {
     const Tag: keyof JSX.IntrinsicElements =
       element.tagName.toLowerCase() as keyof JSX.IntrinsicElements
     const widgetParams = element.getAttribute('data-widgetparams')
+
     if (widgetParams) {
       // case 2
       // process widget
@@ -271,6 +284,7 @@ function RecursiveRender(props: { element: Node; markdown: string }) {
       // e.g. self closing tag like <br/> or <img>
       return <Tag {...props} />
     }
+
     // case 3
     // recursively render children
     const children = Array.from(element.childNodes).map((el, index) => {

@@ -47,14 +47,16 @@ export async function generateDynamicUrls(
 
     console.log(`  Found ${result.ids.length} resources`)
 
-    const paramName = config.primaryKeyColumn
-    const encodedParamName = encodeURIComponent(paramName)
+    const encodedParamName = encodeURIComponent(config.primaryKeyColumn)
     for (const id of result.ids) {
       const encodedId = encodeURIComponent(id)
-      urls.push({
-        loc: `${baseUrl}/${config.path}?${encodedParamName}=${encodedId}`,
-        lastmod,
-      })
+      const loc =
+        config.urlParamStyle === 'path-segment'
+          ? // SSR portals with /:param routing — e.g. /Explore/Datasets/syn123
+            `${baseUrl}/${config.path}/${encodedId}`
+          : // Legacy SPA portals with query-param routing — e.g. /Explore/Datasets/DetailsPage?id=syn123
+            `${baseUrl}/${config.path}?${encodedParamName}=${encodedId}`
+      urls.push({ loc, lastmod })
     }
   }
 

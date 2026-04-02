@@ -1,29 +1,41 @@
+import styles from './DownloadCartPage.module.scss'
 import SynapseClient from '@/synapse-client'
 import { useGetDownloadListStatistics } from '@/synapse-queries/download/useDownloadList'
 import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { DeleteTwoTone } from '@mui/icons-material'
 import { Button, Tooltip, Typography } from '@mui/material'
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
-import { useEffect, useState } from 'react'
+import {
+  AvailableFilter,
+  FeatureFlagEnum,
+  FilesStatisticsResponse,
+} from '@sage-bionetworks/synapse-types'
+import { useEffect, useRef, useState } from 'react'
 import { ErrorBanner } from '../error/ErrorBanner'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
-import { HelpPopover } from '../HelpPopover/HelpPopover'
 import IconSvg from '../IconSvg/IconSvg'
 import { ProgrammaticInstructionsModal } from '../ProgrammaticInstructionsModal/ProgrammaticInstructionsModal'
 import AvailableForDownloadTable from './AvailableForDownloadTable'
 import { CreatePackageV2 } from './CreatePackageV2'
 import { PYTHON_CLIENT_IMPORT_AND_LOGIN } from './DirectProgrammaticDownload'
+import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import { DownloadIneligibleForPackagingFilesFromListButton } from './DownloadIneligibleForPackagingFilesFromListButton'
 import {
   DownloadListActionsRequired,
   DownloadListActionsRequiredProps,
 } from './DownloadListActionsRequired'
+import ComponentCollapse from '../ComponentCollapse'
 
 const pythonDownloadCode = `${PYTHON_CLIENT_IMPORT_AND_LOGIN}
 dl_list_file_entities = syn.get_download_list()`
 
 const cliDownloadCode = `synapse get-download-list`
+
+const filterTabs: { label: string; filter: AvailableFilter }[] = [
+  { label: 'All Files', filter: undefined },
+  { label: 'Files included in ZIP', filter: 'eligibleForPackaging' },
+  { label: 'Files not included in ZIP', filter: 'ineligibleForPackaging' },
+]
 
 /**
  * Show the Download Cart page.
@@ -31,8 +43,21 @@ const cliDownloadCode = `synapse get-download-list`
 export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
   const { accessToken } = useSynapseContext()
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
+  const [selectedFilterTabIndex, setSelectedFilterTabIndex] =
+    useState<number>(0)
+  const selectedFilter = filterTabs[selectedFilterTabIndex].filter
   const [isShowingCreatePackageUI, setIsShowingCreatePackageUI] =
     useState<boolean>(false)
+  const createPackageRef = useRef<HTMLDivElement>(null)
+  // scroll to the CreatePackageV2 component when it is shown so that the user is aware of the next steps after clicking the button to create a package
+  useEffect(() => {
+    if (isShowingCreatePackageUI) {
+      createPackageRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      })
+    }
+  }, [isShowingCreatePackageUI])
   const [isShowingModal, setIsShowingModal] = useState<boolean>(false)
   const [isShowingDownloadSuccessAlert, setIsShowingDownloadSuccessAlert] =
     useState(false)
@@ -53,10 +78,29 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
     }
   }, [isError, newError])
 
+  const getFilterCount = (
+    data: FilesStatisticsResponse,
+    filter: AvailableFilter,
+  ) => {
+    if (filter === undefined) return data.numberOfFilesAvailableForDownload
+    if (filter === 'eligibleForPackaging')
+      return data.numberOfFilesAvailableForDownloadAndEligibleForPackaging
+    return (
+      data.numberOfFilesAvailableForDownload -
+      data.numberOfFilesAvailableForDownloadAndEligibleForPackaging
+    )
+  }
   // SWC-5874: When arriving at the download cart when there are no ARs, the user should start in the Download list
   useEffect(() => {
     if (data && data.numberOfFilesRequiringAction == 0) {
       setSelectedTabIndex(1)
+    }
+    // also hide the Create Package UI if there are no files available for download
+    if (
+      data &&
+      data.numberOfFilesAvailableForDownloadAndEligibleForPackaging === 0
+    ) {
+      setIsShowingCreatePackageUI(false)
     }
   }, [data])
 
@@ -68,53 +112,45 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
     refetch()
   }
   return (
-    <div className="DownloadCartPage">
+    <div className={styles.DownloadCartPage}>
       <div>
-        <div className="pageHeader">
-          <div className="grid">
-            <h3 className="pageHeaderTitle">Your Download Cart</h3>
-            <Tooltip
-              title="Immediately removes all items from your download cart"
-              enterNextDelay={300}
-              placement="right"
-            >
-              <Button
-                onClick={() => {
-                  clearDownloadList()
-                }}
-                variant="text"
-                color="primary"
-                startIcon={<DeleteTwoTone />}
+        <div className={`${styles.pageHeader}`}>
+          <div className="container">
+            <div className={styles.grid}>
+              <h3 className="pageHeaderTitle">Your Download List</h3>
+              <Tooltip
+                title="Immediately removes all items from your download list"
+                enterNextDelay={300}
+                placement="right"
               >
-                Clear Your Download Cart
-              </Button>
-            </Tooltip>
+                <Button
+                  onClick={() => {
+                    clearDownloadList()
+                  }}
+                  variant="text"
+                  color="primary"
+                  startIcon={<DeleteTwoTone />}
+                >
+                  Clear Your Download List
+                </Button>
+              </Tooltip>
+            </div>
           </div>
-          <Typography
-            className="description"
-            variant="body1"
-            sx={{
-              display: { xs: 'none', md: 'block' },
-            }}
-          >
-            Your added files can be found in the tabs below. Files requiring
-            actions before download are listed in the Access Actions Required
-            tab, while those ready for download can be found in the Download
-            List tab.
-          </Typography>
         </div>
       </div>
-      <div className="tabs-container">
+      <div className={styles.tabsContainer}>
         <div className="container">
-          <ul className="nav nav-tabs">
+          <ul className={styles.navTabs}>
             <li
-              className={`nav-item ${selectedTabIndex == 0 ? 'active' : ''}`}
+              className={`${styles.navItem}${
+                selectedTabIndex == 0 ? ` ${styles.active}` : ''
+              }`}
               aria-selected={selectedTabIndex == 0}
             >
               <button onClick={() => setSelectedTabIndex(0)}>
                 Access Actions Required
                 {!isError && !isLoading && data && (
-                  <span className="fileCount">
+                  <span className={styles.fileCount}>
                     {data.totalNumberOfFiles -
                       data.numberOfFilesAvailableForDownload}
                   </span>
@@ -122,13 +158,15 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
               </button>
             </li>
             <li
-              className={`nav-item ${selectedTabIndex == 1 ? 'active' : ''}`}
+              className={`${styles.navItem}${
+                selectedTabIndex == 1 ? ` ${styles.active}` : ''
+              }`}
               aria-selected={selectedTabIndex == 1}
             >
               <button onClick={() => setSelectedTabIndex(1)}>
                 Download List
                 {!isError && !isLoading && data && (
-                  <span className="fileCount">
+                  <span className={styles.fileCount}>
                     {data.numberOfFilesAvailableForDownload}
                   </span>
                 )}
@@ -139,17 +177,16 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
       </div>
 
       <div
-        style={{
+        className={
           /*
            The DownloadListActionsRequired component stores actions in local state to track which actions are completed.
 
            Mount the actions required component and hide it with style to ensure actions stored in component state are persisted as the user switches tabs
            */
-          display:
-            selectedTabIndex == 0 && !isError && !isLoading && data
-              ? 'block'
-              : 'none',
-        }}
+          !(selectedTabIndex == 0 && !isError && !isLoading && data)
+            ? styles.hidden
+            : undefined
+        }
       >
         {data?.numberOfFilesRequiringAction &&
           data.numberOfFilesRequiringAction > 0 && (
@@ -158,13 +195,13 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
             // file was removed from the download cart.
             // In the typical case where the download cart is cleared, unmounting the component ensures that the actions are cleared out.
             <div>
-              <div className="actionsRequiredContainer container">
+              <div className="container">
                 <DownloadListActionsRequired {...props} />
               </div>
             </div>
           )}
         {data?.numberOfFilesRequiringAction === 0 && (
-          <div className="placeholder">
+          <div className={styles.placeholder}>
             <div>No actions are currently required.</div>
           </div>
         )}
@@ -173,150 +210,303 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
       {selectedTabIndex == 1 && !isError && !isLoading && data && (
         <div>
           {data.numberOfFilesAvailableForDownload > 0 && (
-            <div className="DownloadListTabContent">
-              <div className="subSectionOverviewContainer">
-                <div className="subSectionOverview container">
-                  <div>
-                    <div className="headlineWithHelp">
-                      <Typography variant={'headline3'} sx={{ mb: 2 }}>
-                        <IconSvg icon="packagableFile" /> Web Download
-                      </Typography>
-                      <HelpPopover
-                        markdownText="This will allow you to create a .zip file that contains eligible files. Files greater that 100 MB, external links, or files which are not stored on Synapse native storage are ineligible. In most cases, ineligible files can be downloaded individually. External links will require navigation to an external site, which may require a separate login process."
-                        helpUrl="https://help.synapse.org/docs/Downloading-Data-From-the-Synapse-UI.2004254837.html"
-                      />
-                    </div>
-                    <Typography
-                      variant={'body1'}
-                      component={'div'}
-                      sx={{
-                        mb: 2,
-                        display: { xs: 'none', md: 'block' },
-                      }}
-                    >
-                      <ul>
-                        <li>
-                          Eligible files will be added to .ZIP packages of up to
-                          1GB in size
-                        </li>
-                        <li>
-                          If you have more than 1GB, you can create multiple
-                          packages
-                        </li>
-                        <li>
-                          Packages will only include files which are hosted on
-                          Synapse native storage
-                        </li>
-                        <li>
-                          Packages include a CSV manifest that contains file
-                          annotations and other information for each file
-                        </li>
-                      </ul>
-                    </Typography>
-                    {data.numberOfFilesAvailableForDownloadAndEligibleForPackaging >
-                      0 && (
-                      <Button
-                        variant="contained"
-                        onClick={() => {
-                          setIsShowingCreatePackageUI(true)
-                        }}
-                        startIcon={<IconSvg icon="download" wrap={false} />}
-                      >
-                        Download As .Zip Packages
-                      </Button>
-                    )}
-                    {data.numberOfFilesAvailableForDownloadAndEligibleForPackaging ==
-                      0 && (
-                      <Tooltip
-                        title="You cannot create a .zip package because there are no eligible files."
-                        enterNextDelay={300}
-                        placement="top"
-                      >
-                        <span>
+            <div className={`container ${styles.DownloadListTabContent}`}>
+              <h3 className={`${styles.sectionTitle} pageHeaderTitle`}>
+                Bulk Download Options
+                {data.sumOfFileSizesAvailableForDownload != null && (
+                  <Tooltip
+                    placement="right"
+                    title={
+                      <>
+                        Total file size
+                        <br />
+                        Does not include files hosted outside Synapse
+                      </>
+                    }
+                    slotProps={{ tooltip: { sx: { maxWidth: 400 } } }}
+                  >
+                    <span className={styles.totalFileSize}>
+                      {calculateFriendlyFileSize(
+                        data.sumOfFileSizesAvailableForDownload,
+                      )}{' '}
+                      total*
+                    </span>
+                  </Tooltip>
+                )}
+              </h3>
+              <div>
+                <div className={styles.subSectionOverview}>
+                  <div className={styles.subSection}>
+                    <div className={styles.subSectionHeader}>
+                      <div className={styles.headline}>
+                        <Typography variant={'headline3'}>
+                          <IconSvg icon="packagableFile" /> Web Download (.ZIP)
+                        </Typography>
+                      </div>
+                      <div className={styles.subSectionActions}>
+                        {data.numberOfFilesAvailableForDownloadAndEligibleForPackaging >
+                          0 && (
                           <Button
                             variant="contained"
-                            disabled
+                            onClick={() => {
+                              setIsShowingCreatePackageUI(true)
+                            }}
                             startIcon={<IconSvg icon="download" wrap={false} />}
                           >
-                            Download As .Zip Packages
+                            Download Packages
                           </Button>
-                        </span>
-                      </Tooltip>
-                    )}
-                    {isDownloadAllEnabled &&
-                      data.numberOfFilesAvailableForDownloadAndEligibleForPackaging <
-                        data.numberOfFilesAvailableForDownload && (
-                        <div style={{ marginTop: '1rem' }}>
-                          <DownloadIneligibleForPackagingFilesFromListButton />
-                        </div>
-                      )}
-                  </div>
-                  <div>
-                    <div className="headlineWithHelp">
-                      <Typography variant={'headline3'} sx={{ mb: 2 }}>
-                        <IconSvg icon="code" /> Programmatic Download
-                      </Typography>
-                      <HelpPopover
-                        markdownText="This will provide syntax which you can enter into your programmatic client. It is suitable for large files (>100 MB), for packages > 1GB, and for files which aren’t stored on Synapse native storage (e.g. in a special AWS S3 or Google Cloud bucket).  External links will require navigation to an external site, which may require a separate login process."
-                        helpUrl="https://help.synapse.org/docs/Downloading-Data-Programmatically.2003796248.html"
-                      />
+                        )}
+                        {data.numberOfFilesAvailableForDownloadAndEligibleForPackaging ==
+                          0 && (
+                          <Tooltip
+                            title="You cannot create a .zip package because there are no eligible files."
+                            enterNextDelay={300}
+                            placement="top"
+                          >
+                            <span>
+                              <Button
+                                variant="contained"
+                                disabled
+                                startIcon={
+                                  <IconSvg icon="download" wrap={false} />
+                                }
+                              >
+                                Download Packages
+                              </Button>
+                            </span>
+                          </Tooltip>
+                        )}
+                      </div>
                     </div>
-                    <Typography
-                      variant={'body1'}
-                      component={'div'}
-                      sx={{
-                        mb: 2,
-                        display: { xs: 'none', md: 'block' },
+                    <ComponentCollapse
+                      component={
+                        <Typography variant={'body1'} component={'div'}>
+                          Only some files may be eligible for packaging as ZIP.
+                          Use the Individual Downloads tab, below, to download
+                          non-packageable files.&nbsp;
+                          <a
+                            href="https://help.synapse.org/docs/Downloading-Data-From-the-Synapse-UI.2004254837.html"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            More Information.
+                          </a>
+                        </Typography>
+                      }
+                      collapseBoxSx={{
+                        backgroundColor: 'transparent',
+                        p: 0,
+                        mt: '15px',
                       }}
-                    >
-                      <ul>
-                        <li>
-                          Requires installation of a programmatic client (R,
-                          Python, CLI)
-                        </li>
-                        <li>
-                          No limit to the file size or the size of the package
-                          that can be downloaded
-                        </li>
-                        <li>
-                          Will include files which are hosted on and off Synapse
-                          native storage
-                        </li>
-                        <li>
-                          Packages include a CSV manifest that contains file
-                          annotations and other information for each file
-                        </li>
-                      </ul>
-                    </Typography>
-                    <Button
-                      variant="contained"
-                      onClick={() => {
-                        setIsShowingModal(true)
+                      componentContainerSx={{
+                        backgroundColor: 'transparent',
+                        p: 0,
                       }}
-                      startIcon={<IconSvg icon="code" wrap={false} />}
+                      iconSx={{ width: '25px', height: '25px' }}
                     >
-                      Create Programmatic Package
-                    </Button>
+                      <Typography
+                        variant={'body1'}
+                        component={'div'}
+                        sx={{ marginBottom: '15px' }}
+                      >
+                        <ul>
+                          <li>Files are bundled into .ZIPs up to 1 GB each.</li>
+                          <li>
+                            Larger selections are split into multiple packages.
+                          </li>
+                          <li>
+                            Includes only files stored in Synapse native
+                            storage.
+                          </li>
+                          <li>
+                            Each package contains a CSV manifest with file
+                            annotations and metadata.
+                          </li>
+                        </ul>
+                      </Typography>
+                    </ComponentCollapse>
                   </div>
+                  <div className={styles.subSection}>
+                    <div className={styles.subSectionHeader}>
+                      <div className={styles.headline}>
+                        <Typography variant={'headline3'}>
+                          <IconSvg icon="code" /> Programmatic Download
+                        </Typography>
+                      </div>
+                      <div className={styles.subSectionActions}>
+                        <Button
+                          variant="contained"
+                          onClick={() => {
+                            setIsShowingModal(true)
+                          }}
+                          startIcon={<IconSvg icon="download" wrap={false} />}
+                        >
+                          Get R / Python / CLI Code
+                        </Button>
+                      </div>
+                    </div>
+                    <ComponentCollapse
+                      component={
+                        <Typography variant={'body1'} component={'div'}>
+                          Use our Python, R, or command line clients to download
+                          files quickly.&nbsp;
+                          <a
+                            href="https://help.synapse.org/docs/Downloading-Data-Programmatically.2003796248.html"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            More Information.
+                          </a>
+                        </Typography>
+                      }
+                      collapseBoxSx={{
+                        backgroundColor: 'transparent',
+                        p: 0,
+                        mt: '15px',
+                      }}
+                      componentContainerSx={{
+                        backgroundColor: 'transparent',
+                        p: 0,
+                      }}
+                      iconSx={{ width: '25px', height: '25px' }}
+                    >
+                      <Typography
+                        variant={'body1'}
+                        component={'div'}
+                        sx={{ marginBottom: '15px' }}
+                      >
+                        <ul>
+                          <li>Requires a client (R, Python, or CLI).</li>
+                          <li>
+                            No limits on individual file size or total download
+                            size.
+                          </li>
+                          <li>
+                            Includes files stored both on and off Synapse native
+                            storage.
+                          </li>
+                          <li>
+                            Downloads include a CSV manifest with file
+                            annotations and metadata.
+                          </li>
+                        </ul>
+                      </Typography>
+                    </ComponentCollapse>
+                  </div>
+                  {isDownloadAllEnabled &&
+                    data.numberOfFilesAvailableForDownloadAndEligibleForPackaging <
+                      data.numberOfFilesAvailableForDownload && (
+                      <div className={styles.subSection}>
+                        <div className={styles.subSectionHeader}>
+                          <div className={styles.headline}>
+                            <Typography variant={'headline3'}>
+                              <IconSvg icon="multiFile" /> Multi-file Download
+                            </Typography>
+                          </div>
+                          <div className={styles.subSectionActions}>
+                            <div className={styles.ineligibleDownloadContainer}>
+                              <DownloadIneligibleForPackagingFilesFromListButton />
+                            </div>
+                          </div>
+                        </div>
+                        <ComponentCollapse
+                          component={
+                            <Typography variant={'body1'} component={'div'}>
+                              Files which <strong>aren't</strong> included in a
+                              ZIP package may be downloaded as a multi-file
+                              download.&nbsp;
+                            </Typography>
+                          }
+                          collapseBoxSx={{
+                            backgroundColor: 'transparent',
+                            p: 0,
+                            mt: '15px',
+                          }}
+                          componentContainerSx={{
+                            backgroundColor: 'transparent',
+                            p: 0,
+                          }}
+                          iconSx={{ width: '25px', height: '25px' }}
+                        >
+                          <Typography
+                            variant={'body1'}
+                            component={'div'}
+                            sx={{ marginBottom: '15px' }}
+                          >
+                            Clicking “Start Multi-file Download” initiates a
+                            download of all files in your Download List that
+                            can’t be bundled into a ZIP—such as large files or
+                            external links—in one step. Files are saved one by
+                            one with clear progress updates, automatic handling
+                            of duplicate names, and retry support if something
+                            fails. You can cancel anytime.
+                            <br />
+                            <br />
+                            Note: in some browsers, files download individually
+                            to your default Downloads folder instead of a
+                            selected location.
+                          </Typography>
+                        </ComponentCollapse>
+                      </div>
+                    )}
                 </div>
               </div>
-              <div className="availableForDownloadTableContainer container">
+
+              <div>
                 {isShowingCreatePackageUI && (
-                  <CreatePackageV2
-                    onPackageCreation={() => {
-                      setIsShowingDownloadSuccessAlert(true)
-                      // we refetch the data because the backend will instantly remove the downloadable files from the download list after a package has been created
-                      refetch()
-                    }}
-                  />
+                  <div ref={createPackageRef}>
+                    <CreatePackageV2
+                      onPackageCreation={() => {
+                        setIsShowingDownloadSuccessAlert(true)
+                      }}
+                    />
+                  </div>
                 )}
-                <AvailableForDownloadTable />
+                <h3 className={`${styles.sectionTitle} pageHeaderTitle`}>
+                  Download Individual Files
+                </h3>
+                <div className={styles.tabsContainer}>
+                  <ul className={styles.navTabs}>
+                    <li className={styles.navLabel}>View:</li>
+                    {filterTabs.map((tab, index) => (
+                      <li
+                        key={tab.label}
+                        className={`${styles.navItem}${
+                          selectedFilterTabIndex === index
+                            ? ` ${styles.active}`
+                            : ''
+                        }`}
+                        aria-selected={selectedFilterTabIndex === index}
+                      >
+                        <button
+                          onClick={() => setSelectedFilterTabIndex(index)}
+                        >
+                          {tab.label}
+                          {!isError && !isLoading && data && (
+                            <span className={styles.fileCount}>
+                              {getFilterCount(data, tab.filter)}
+                            </span>
+                          )}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className={styles.availableForDownloadTableContainer}>
+                  <AvailableForDownloadTable
+                    key={selectedFilter ?? 'all'}
+                    filter={selectedFilter}
+                  />
+                </div>
               </div>
             </div>
           )}
           {data.numberOfFilesAvailableForDownload === 0 && (
-            <div className="placeholder">
-              <div>Your Download Cart is currently empty.</div>
+            <div className={styles.placeholder}>
+              <Typography variant="body1Italic">
+                Your Download List is currently empty.
+              </Typography>
             </div>
           )}
         </div>

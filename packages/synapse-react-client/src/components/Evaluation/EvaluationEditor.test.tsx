@@ -285,6 +285,7 @@ describe('test EvaluationEditor', () => {
     const warningDialog = await screen.findByRole('dialog')
 
     //simulate the warning button click
+    await user.click(within(warningDialog).getByRole('checkbox'))
     const deleteButton = await within(warningDialog).findByRole('button', {
       name: 'Delete',
     })
@@ -334,6 +335,7 @@ describe('test EvaluationEditor', () => {
     const dialog = await screen.findByRole('dialog')
 
     //simulate the warning button click
+    await user.click(within(dialog).getByRole('checkbox'))
     const deleteButton = within(dialog).getByRole('button', { name: 'Delete' })
     await user.click(deleteButton)
 
