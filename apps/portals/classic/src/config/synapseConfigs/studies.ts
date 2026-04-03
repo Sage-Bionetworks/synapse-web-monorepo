@@ -27,11 +27,20 @@ export const studyCardConfiguration: CardConfiguration = {
   ],
   genericCardSchema: {
     type: SynapseConstants.STUDY,
-    title: 'projectFullName',
+    title: 'studyName',
     subTitle: 'studyFocus',
     // icon: 'Access_Type',
     description: 'studyDescription',
-    secondaryLabels: ['studyName', 'grantNumber', 'isFeatured', 'isReleased'],
+    secondaryLabels: [
+      'metadataStatus',
+      'measuredConstruct',
+      'measureType',
+      'constructDomain',
+      'instrumentName',
+      'diseaseFocus',
+      'primaryHealthFocus',
+      'grantNumber',
+    ],
     includeShareButton: true,
   },
 }
