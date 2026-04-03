@@ -59,6 +59,8 @@ export function useExportDataGridToCsv(options: UseExportDataGridToCsvOptions) {
   const exportToCsv = () => {
     exportGrid({
       sessionId: gridSessionId,
+      includeEtag: false,
+      includeRowIdAndRowVersion: false,
       concreteType:
         'org.sagebionetworks.repo.model.grid.DownloadFromGridRequest',
     })

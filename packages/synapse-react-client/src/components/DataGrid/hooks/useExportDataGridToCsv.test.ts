@@ -71,6 +71,8 @@ describe('useExportDataGridToCsv', () => {
 
     expect(mockMutate).toHaveBeenCalledWith({
       sessionId: 'session-123',
+      includeEtag: false,
+      includeRowIdAndRowVersion: false,
       concreteType:
         'org.sagebionetworks.repo.model.grid.DownloadFromGridRequest',
     })
