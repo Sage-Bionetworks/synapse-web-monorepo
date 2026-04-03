@@ -9,13 +9,11 @@ import useGridSessionForCurationTask from './useGridSessionForCurationTask'
 import * as getOrCreateModule from './useGetOrCreateGridSessionForSource'
 import * as curationTaskModule from '@/synapse-queries/curation/task/useCurationTask'
 import * as gridSessionModule from '@/synapse-queries/grid/useGridSession'
-import * as teamMembersModule from '@/synapse-queries/team/useTeamMembers'
 import * as userBundleModule from '@/synapse-queries/user/useUserBundle'
 
 vi.mock('./useGetOrCreateGridSessionForSource')
 vi.mock('@/synapse-queries/curation/task/useCurationTask')
 vi.mock('@/synapse-queries/grid/useGridSession')
-vi.mock('@/synapse-queries/team/useTeamMembers')
 vi.mock('@/synapse-queries/user/useUserBundle')
 
 const MOCK_USER_ID = 'user123'
@@ -68,13 +66,6 @@ describe('useGridSessionForCurationTask', () => {
         queryFn: () => mockExistingGridSession,
       } as any)
 
-      vi.mocked(
-        teamMembersModule.getIsPrincipalIdUserOrMemberOfTeamQuery,
-      ).mockReturnValue({
-        queryKey: ['mock-is-member'],
-        queryFn: () => true,
-      } as any)
-
       const { result } = renderHook(() => useGridSessionForCurationTask(), {
         wrapper: createWrapper(),
       })
@@ -84,36 +75,7 @@ describe('useGridSessionForCurationTask', () => {
       )
 
       expect(returnValue.gridSession).toEqual(mockExistingGridSession)
-      expect(returnValue.hasAccessToGridSession).toBe(true)
       expect(returnValue.gridSessionOwnerMatchesTaskAssignee).toBe(true)
-    })
-
-    it('returns hasAccessToGridSession=false when user does not own the session', async () => {
-      const sessionWithOtherOwner = {
-        sessionId: MOCK_SESSION_ID,
-        ownerPrincipalId: 'someOtherUser',
-      }
-      vi.mocked(gridSessionModule.getGridSessionQuery).mockReturnValue({
-        queryKey: ['mock-grid-session-other'],
-        queryFn: () => sessionWithOtherOwner,
-      } as any)
-
-      vi.mocked(
-        teamMembersModule.getIsPrincipalIdUserOrMemberOfTeamQuery,
-      ).mockReturnValue({
-        queryKey: ['mock-is-member-other'],
-        queryFn: () => false,
-      } as any)
-
-      const { result } = renderHook(() => useGridSessionForCurationTask(), {
-        wrapper: createWrapper(),
-      })
-
-      const returnValue = await act(() =>
-        result.current.mutateAsync(bundleWithActiveSession),
-      )
-
-      expect(returnValue.hasAccessToGridSession).toBe(false)
     })
 
     it('returns gridSessionOwnerMatchesTaskAssignee=false when owner differs from assignee', async () => {
@@ -126,13 +88,6 @@ describe('useGridSessionForCurationTask', () => {
         queryFn: () => sessionWithDifferentOwner,
       } as any)
 
-      vi.mocked(
-        teamMembersModule.getIsPrincipalIdUserOrMemberOfTeamQuery,
-      ).mockReturnValue({
-        queryKey: ['mock-is-member-diff'],
-        queryFn: () => true,
-      } as any)
-
       const { result } = renderHook(() => useGridSessionForCurationTask(), {
         wrapper: createWrapper(),
       })
@@ -141,7 +96,6 @@ describe('useGridSessionForCurationTask', () => {
         result.current.mutateAsync(bundleWithActiveSession),
       )
 
-      expect(returnValue.hasAccessToGridSession).toBe(true)
       expect(returnValue.gridSessionOwnerMatchesTaskAssignee).toBe(false)
     })
 
@@ -167,7 +121,6 @@ describe('useGridSessionForCurationTask', () => {
       )
 
       expect(returnValue.gridSession).toEqual(mockNewGridSession)
-      expect(returnValue.hasAccessToGridSession).toBe(true)
       expect(mockUpdateStatus).toHaveBeenCalledWith(
         expect.objectContaining({
           executionDetails: expect.objectContaining({
@@ -211,7 +164,6 @@ describe('useGridSessionForCurationTask', () => {
       )
 
       expect(returnValue.gridSession).toEqual(mockNewGridSession)
-      expect(returnValue.hasAccessToGridSession).toBe(true)
       expect(returnValue.gridSessionOwnerMatchesTaskAssignee).toBe(true)
       expect(mockUpdateStatus).toHaveBeenCalledWith(
         expect.objectContaining({

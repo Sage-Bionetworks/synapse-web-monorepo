@@ -9,11 +9,21 @@ import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 import { getLinkToGridSession } from '@/utils/functions/getSynapseWebClientLink'
 import { StickyNote2Outlined } from '@mui/icons-material'
 import { Button, Tooltip } from '@mui/material'
-import { TaskBundle } from '@sage-bionetworks/synapse-client'
+import {
+  SynapseClientError,
+  TaskBundle,
+} from '@sage-bionetworks/synapse-client'
 import { useCallback, useState } from 'react'
 import useGridSessionForCurationTask from '../hooks/useGridSessionForCurationTask'
 import { getGridSourceIdForTask } from '../utils/getGridSourceIdForTask'
 import taskHasAssignee from '../utils/taskHasAssignee'
+
+export const OPEN_CURATOR_ERROR_TITLE =
+  'An error occurred while trying to open Curator'
+export const OPEN_CURATOR_UNAUTHORIZED_ERROR_MESSAGE =
+  "You don't have permission to view the existing Curator session for this task. It was likely created by another data contributor. A data manager should create a new task and assign it to you or your team."
+
+export const NO_TASK_ASSIGNEE_WARNING_DIALOG_TITLE = 'Task Has No Assignee'
 
 function openGridSessionInNewWindow(gridSessionId: string, taskId: number) {
   const gridUrl = getLinkToGridSession(gridSessionId, taskId)
@@ -60,36 +70,29 @@ export default function MetadataTaskTableActionCell(props: {
   } = useGetEntityPermissions(gridSourceEntityId)
 
   const isLoading = isLoadingEntityPermissions
-  const hasPermission =
-    sourceEntityPermissions?.canView && (canEdit || isUserAssignedToTask)
+  const hasAssignee = taskHasAssignee(curationTask)
+  const isAssignedToTask = canEdit || isUserAssignedToTask || !hasAssignee
+
+  const hasPermission = sourceEntityPermissions?.canView && isAssignedToTask
 
   const isOpenDataGridDisabled =
     openGridIsPending || isLoading || !hasPermission
-  const toolTipTitle = sourceEntityPermissions?.canView
+  const toolTipTitle = hasPermission
     ? 'Open Curator to edit metadata'
-    : 'You must be assigned to the task and have READ access to ' +
+    : !isAssignedToTask
+    ? 'You must be assigned to this task to open it'
+    : sourceEntityPermissions?.canView
+    ? 'You have READ access to ' +
       gridSourceEntityId +
       ' to view the Working Copy'
-
-  const hasAssignee = taskHasAssignee(curationTask)
+    : 'You do not have permission to view the Working Copy'
 
   const openNewOrExistingCuratorSession = useCallback(async () => {
     try {
-      const {
-        gridSession,
-        hasAccessToGridSession,
-        gridSessionOwnerMatchesTaskAssignee,
-      } = await getGridSessionForTask(taskBundle)
+      const { gridSession, gridSessionOwnerMatchesTaskAssignee } =
+        await getGridSessionForTask(taskBundle)
 
-      if (!hasAccessToGridSession) {
-        displayToast(
-          "You don't have permission to view the existing Curator session for this task. A data manager should create a new task and assign it to you or your team.",
-          'danger',
-        )
-      } else if (
-        hasAccessToGridSession &&
-        !gridSessionOwnerMatchesTaskAssignee
-      ) {
+      if (!gridSessionOwnerMatchesTaskAssignee) {
         // The user has access, but the assignee does not match the grid session owner.
         // Show a warning before allowing the user to proceed.
         setShowGridSessionAssigneeMismatchDialog(true)
@@ -97,10 +100,17 @@ export default function MetadataTaskTableActionCell(props: {
         openGridSessionInNewWindow(gridSession.sessionId!, curationTask.taskId!)
       }
     } catch (error) {
-      console.error('Error opening Curator for curation task', error)
-      displayToast(error.message, 'danger', {
-        title: 'An error occurred while trying to open Curator',
-      })
+      if (error instanceof SynapseClientError && error.status === 403) {
+        console.error(error)
+        displayToast(OPEN_CURATOR_UNAUTHORIZED_ERROR_MESSAGE, 'danger', {
+          title: OPEN_CURATOR_ERROR_TITLE,
+        })
+      } else {
+        console.error('Error opening Curator for curation task', error)
+        displayToast(error.message, 'danger', {
+          title: OPEN_CURATOR_ERROR_TITLE,
+        })
+      }
     }
   }, [curationTask.taskId, getGridSessionForTask, taskBundle])
 
@@ -117,7 +127,7 @@ export default function MetadataTaskTableActionCell(props: {
   const openWithNoAssigneeWarningDialog = (
     <ConfirmationDialog
       open={showOpenWithNoAssigneeWarning}
-      title={'No assignee'}
+      title={NO_TASK_ASSIGNEE_WARNING_DIALOG_TITLE}
       content={
         <p>
           The task you selected has no assignee. A Curator session will only be

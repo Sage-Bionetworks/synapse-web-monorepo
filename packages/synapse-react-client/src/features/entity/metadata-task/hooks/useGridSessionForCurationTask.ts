@@ -13,13 +13,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { getCreateGridRequestForMetadataTask } from '../utils/getCreateGridRequestForMetadataTask'
 import { getGridSourceIdForTask } from '../utils/getGridSourceIdForTask'
 import useGetOrCreateGridSessionForSource from './useGetOrCreateGridSessionForSource'
-import { getIsPrincipalIdUserOrMemberOfTeamQuery } from '@/synapse-queries/team/useTeamMembers'
 import { useGetCurrentUserProfile } from '@/synapse-queries/user/useUserBundle'
 import taskHasAssignee from '../utils/taskHasAssignee'
 
 type UseGridSessionForCurationTaskResult = {
   gridSession: GridSession
-  hasAccessToGridSession: boolean
   gridSessionOwnerMatchesTaskAssignee: boolean
 }
 
@@ -28,7 +26,8 @@ type UseGridSessionForCurationTaskResult = {
  * If not, a new GridSession will be created based on the CurationTask's properties.
  *
  * @returns A mutation object with a function to get or create a GridSession for a CurationTask. The response will also indicate
- * if the user has access to the GridSession and if the GridSession owner matches the task assignee (if there is one).
+ * if the GridSession owner matches the task assignee (if there is one).
+ * @throws SynapseClientError with status 403 if the user does not have permission to access an existing GridSession
  */
 export default function useGridSessionForCurationTask() {
   const { data: currentUser } = useGetCurrentUserProfile()
@@ -71,17 +70,8 @@ export default function useGridSessionForCurationTask() {
             hasAssignee &&
             gridSession.ownerPrincipalId == task.assigneePrincipalId
 
-          const userHasAccessToGridSession = await queryClient.fetchQuery(
-            getIsPrincipalIdUserOrMemberOfTeamQuery(
-              currentUser?.ownerId!,
-              gridSession.ownerPrincipalId!,
-              { ...synapseContext, queryClient },
-            ),
-          )
-
           return {
             gridSession,
-            hasAccessToGridSession: userHasAccessToGridSession,
             gridSessionOwnerMatchesTaskAssignee:
               assigneeMatchesGridSessionOwner,
           }
@@ -132,7 +122,6 @@ export default function useGridSessionForCurationTask() {
       // Since we just created the session, the user must have access, and the owner must match the assignee (if there is one).
       return {
         gridSession,
-        hasAccessToGridSession: true,
         gridSessionOwnerMatchesTaskAssignee: hasAssignee,
       }
     },

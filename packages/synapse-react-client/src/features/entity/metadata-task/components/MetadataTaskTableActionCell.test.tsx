@@ -6,7 +6,7 @@ import {
 import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 import { useGetIsPrincipalIdUserOrMemberOfTeam } from '@/synapse-queries/team/useTeamMembers'
 import { getLinkToGridSession } from '@/utils/functions/getSynapseWebClientLink'
-import type {
+import {
   GridSession,
   SynapseClientError,
   TaskBundle,
@@ -16,7 +16,11 @@ import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import useGridSessionForCurationTask from '../hooks/useGridSessionForCurationTask'
-import MetadataTaskTableActionCell from './MetadataTaskTableActionCell'
+import MetadataTaskTableActionCell, {
+  NO_TASK_ASSIGNEE_WARNING_DIALOG_TITLE,
+  OPEN_CURATOR_ERROR_TITLE,
+  OPEN_CURATOR_UNAUTHORIZED_ERROR_MESSAGE,
+} from './MetadataTaskTableActionCell'
 
 vi.mock('../hooks/useGridSessionForCurationTask', () => ({
   default: vi.fn(),
@@ -261,7 +265,9 @@ describe('MetadataTaskTableActionCell', () => {
         screen.getByRole('button', { name: /open curator/i }),
       )
 
-      await screen.findByRole('heading', { name: 'No assignee' })
+      await screen.findByRole('heading', {
+        name: NO_TASK_ASSIGNEE_WARNING_DIALOG_TITLE,
+      })
       expect(mockMutateAsync).not.toHaveBeenCalled()
     })
 
@@ -271,13 +277,17 @@ describe('MetadataTaskTableActionCell', () => {
       await userEvent.click(
         screen.getByRole('button', { name: /open curator/i }),
       )
-      await screen.findByRole('heading', { name: 'No assignee' })
+      await screen.findByRole('heading', {
+        name: NO_TASK_ASSIGNEE_WARNING_DIALOG_TITLE,
+      })
 
       await userEvent.click(screen.getByRole('button', { name: /cancel/i }))
 
       await waitFor(() =>
         expect(
-          screen.queryByRole('heading', { name: 'No assignee' }),
+          screen.queryByRole('heading', {
+            name: NO_TASK_ASSIGNEE_WARNING_DIALOG_TITLE,
+          }),
         ).not.toBeInTheDocument(),
       )
       expect(mockMutateAsync).not.toHaveBeenCalled()
@@ -293,7 +303,9 @@ describe('MetadataTaskTableActionCell', () => {
       await userEvent.click(
         screen.getByRole('button', { name: /open curator/i }),
       )
-      await screen.findByRole('heading', { name: 'No assignee' })
+      await screen.findByRole('heading', {
+        name: NO_TASK_ASSIGNEE_WARNING_DIALOG_TITLE,
+      })
 
       await userEvent.click(screen.getByRole('button', { name: /proceed/i }))
 
@@ -308,11 +320,13 @@ describe('MetadataTaskTableActionCell', () => {
 
   describe('session access control', () => {
     it('shows an error toast and does not open window when user has no access to session', async () => {
-      mockMutateAsync.mockResolvedValue({
-        gridSession: { sessionId: 'session-123' },
-        hasAccessToGridSession: false,
-        gridSessionOwnerMatchesTaskAssignee: false,
-      })
+      mockMutateAsync.mockRejectedValue(
+        new SynapseClientError(
+          403,
+          'Forbidden',
+          expect.getState().currentTestName!,
+        ),
+      )
       const windowOpenSpy = vi
         .spyOn(window, 'open')
         .mockReturnValue(null as unknown as Window)
@@ -325,8 +339,11 @@ describe('MetadataTaskTableActionCell', () => {
 
       await waitFor(() => {
         expect(mockDisplayToast).toHaveBeenCalledWith(
-          expect.stringContaining("don't have permission"),
+          expect.stringContaining(OPEN_CURATOR_UNAUTHORIZED_ERROR_MESSAGE),
           'danger',
+          {
+            title: OPEN_CURATOR_ERROR_TITLE,
+          },
         )
         expect(windowOpenSpy).not.toHaveBeenCalled()
       })

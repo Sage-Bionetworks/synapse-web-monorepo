@@ -24,7 +24,7 @@ function getColumns(canEdit: boolean) {
   const columnHelper = createColumnHelper<TaskBundle>()
   return [
     columnHelper.accessor('task.dataType', {
-      header: props => <ColumnHeader {...props} title={'Tasks'} />,
+      header: props => <ColumnHeader {...props} title={'Task'} />,
       cell: ({ row, getValue }) => {
         const entityId = getGridSourceIdForTask(row.original.task!)
         return <Link href={getLinkToEntityPage(entityId)}>{getValue()}</Link>
@@ -93,6 +93,7 @@ export function useMetadataTaskTable(opts: UseMetadataTaskTableOptions) {
       { includePermissions: true },
       {
         enabled: !!listCurationTaskRequest.projectId,
+        staleTime: Infinity,
       },
     )
 
