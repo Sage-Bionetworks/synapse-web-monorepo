@@ -5,21 +5,16 @@ import { DownloadTwoTone } from '@mui/icons-material'
 export type ExportCsvFromGridButtonProps = {
   gridSessionId: string
   filename: string
-  includeEtag?: boolean
-  includeRowIdAndRowVersion?: boolean
 }
 
 export default function ExportCsvFromGridButton(
   props: ExportCsvFromGridButtonProps,
 ) {
-  const { gridSessionId, filename, includeEtag, includeRowIdAndRowVersion } =
-    props
+  const { gridSessionId, filename } = props
 
   const { exportToCsv, isExporting } = useExportDataGridToCsv({
     gridSessionId,
     filename,
-    includeEtag,
-    includeRowIdAndRowVersion,
   })
 
   return (

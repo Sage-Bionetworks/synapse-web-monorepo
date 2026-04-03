@@ -42,42 +42,6 @@ describe('ExportCsvFromGridButton', () => {
     expect(useExportDataGridToCsv).toHaveBeenCalledWith({
       gridSessionId: 'my-session-456',
       filename: 'my-export-file',
-      includeEtag: undefined,
-      includeRowIdAndRowVersion: undefined,
-    })
-  })
-
-  it('should pass includeEtag={false} to useExportDataGridToCsv hook when provided', () => {
-    render(
-      <ExportCsvFromGridButton
-        gridSessionId="my-session-456"
-        filename="my-export-file"
-        includeEtag={false}
-      />,
-    )
-
-    expect(useExportDataGridToCsv).toHaveBeenCalledWith({
-      gridSessionId: 'my-session-456',
-      filename: 'my-export-file',
-      includeEtag: false,
-      includeRowIdAndRowVersion: undefined,
-    })
-  })
-
-  it('should pass includeRowIdAndRowVersion={false} to useExportDataGridToCsv hook when provided', () => {
-    render(
-      <ExportCsvFromGridButton
-        gridSessionId="my-session-456"
-        filename="my-export-file"
-        includeRowIdAndRowVersion={false}
-      />,
-    )
-
-    expect(useExportDataGridToCsv).toHaveBeenCalledWith({
-      gridSessionId: 'my-session-456',
-      filename: 'my-export-file',
-      includeEtag: undefined,
-      includeRowIdAndRowVersion: false,
     })
   })
 
