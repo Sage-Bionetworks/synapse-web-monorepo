@@ -15,7 +15,7 @@ import { noop } from 'lodash-es'
 import React, { ReactNode } from 'react'
 import { TransitionGroup } from 'react-transition-group'
 import IconSvg from '../IconSvg'
-import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
+import UserSearchBox from '../UserSearchBox/UserSearchBox'
 import { AclEditorSkeleton } from './AclEditorSkeleton'
 import { ResourceAccessItem } from './ResourceAccessItem'
 import useUpdateAcl from './useUpdateAcl'
@@ -214,7 +214,7 @@ export function AclEditor(props: AclEditorProps): React.ReactNode {
             >
               {ADD_PRINCIPAL_TO_ACL_COMBOBOX_LABEL}
             </Typography>
-            <UserSearchBoxV2
+            <UserSearchBox
               value={null}
               inputId="reviewer-search"
               placeholder="Username, name (first and last) or team name."

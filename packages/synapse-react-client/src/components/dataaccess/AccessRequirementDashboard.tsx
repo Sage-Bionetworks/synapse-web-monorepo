@@ -9,7 +9,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
 import { FinderScope } from '../EntityFinder/tree/EntityTree'
-import UserSearchBoxV2 from '../UserSearchBox/UserSearchBoxV2'
+import UserSearchBox from '../UserSearchBox/UserSearchBox'
 import { AccessRequirementTable } from './AccessRequirementTable'
 
 export const AR_NAME_OR_ID_SEARCH_PARAM_KEY = 'nameOrID'
@@ -204,7 +204,7 @@ export function AccessRequirementDashboard(
           >
             Filter by Reviewer
           </Typography>
-          <UserSearchBoxV2
+          <UserSearchBox
             inputId="reviewer-filter"
             placeholder="Search for a username or team name"
             defaultValue={reviewerId}

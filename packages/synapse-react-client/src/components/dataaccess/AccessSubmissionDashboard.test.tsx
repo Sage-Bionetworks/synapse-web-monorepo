@@ -161,10 +161,12 @@ describe('AccessSubmissionDashboard tests', () => {
     renderComponent()
     const requesterInput = await screen.findByLabelText('Filter by Requester')
     await userEvent.type(requesterInput, MOCK_USER_NAME.substring(0, 1))
-    await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
-    await act(async () => {
-      await selectEvent.select(requesterInput, new RegExp('@' + MOCK_USER_NAME))
-    })
+    const option = await screen.findByRole(
+      'option',
+      { name: new RegExp('@' + MOCK_USER_NAME) },
+      { timeout: 15000 },
+    )
+    await userEvent.click(option)
 
     await waitFor(() => {
       expect(
@@ -185,10 +187,12 @@ describe('AccessSubmissionDashboard tests', () => {
     renderComponent()
     const reviewerInput = await screen.findByLabelText('Filter by Reviewer')
     await userEvent.type(reviewerInput, MOCK_USER_NAME.substring(0, 1))
-    await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
-    await act(async () => {
-      await selectEvent.select(reviewerInput, new RegExp('@' + MOCK_USER_NAME))
-    })
+    const option = await screen.findByRole(
+      'option',
+      { name: new RegExp('@' + MOCK_USER_NAME) },
+      { timeout: 15000 },
+    )
+    await userEvent.click(option)
 
     await waitFor(() => {
       expect(

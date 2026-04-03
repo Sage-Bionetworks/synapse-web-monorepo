@@ -36,7 +36,7 @@ import {
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import MarkdownSynapse from '../../../Markdown/MarkdownSynapse'
-import * as UserSearchBoxV2Module from '../../../UserSearchBox/UserSearchBoxV2'
+import * as UserSearchBoxModule from '../../../UserSearchBox/UserSearchBox'
 import * as AccessRequirementListUtils from '../../AccessRequirementListUtils'
 import DataAccessRequestAccessorsFilesForm, {
   DataAccessRequestAccessorsFilesFormProps,
@@ -87,9 +87,9 @@ vi.spyOn(SynapseClient, 'getUserBundle').mockImplementation(id => {
 })
 
 const mockedUserSearchBox = vi
-  .spyOn(UserSearchBoxV2Module, 'default')
+  .spyOn(UserSearchBoxModule, 'default')
   .mockImplementation(props => {
-    return <div data-testid={'UserSearchBoxV2-MOCK'}></div>
+    return <div data-testid={'UserSearchBox-MOCK'}></div>
   })
 
 const mockGetDataRequestForUpdate = vi.spyOn(

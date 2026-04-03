@@ -136,10 +136,12 @@ describe('AccessHistoryDashboard tests', () => {
 
     const userInput = await screen.findByRole('combobox')
     await userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
-    await screen.findByText(new RegExp(`@${MOCK_USER_NAME}`))
-    await act(async () => {
-      await selectEvent.select(userInput, new RegExp(`@${MOCK_USER_NAME}`))
-    })
+    const option = await screen.findByRole(
+      'option',
+      { name: new RegExp('@' + MOCK_USER_NAME) },
+      { timeout: 15000 },
+    )
+    await userEvent.click(option)
 
     await screen.findByLabelText('Select a user to view their access history')
     await screen.findByLabelText('Filter by Access Requirement Name')
@@ -173,10 +175,12 @@ describe('AccessHistoryDashboard tests', () => {
 
     const userInput = await screen.findByRole('combobox')
     await userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
-    await screen.findByText(new RegExp(`@${MOCK_USER_NAME}`))
-    await act(async () => {
-      await selectEvent.select(userInput, new RegExp(`@${MOCK_USER_NAME}`))
-    })
+    const option = await screen.findByRole(
+      'option',
+      { name: new RegExp('@' + MOCK_USER_NAME) },
+      { timeout: 15000 },
+    )
+    await userEvent.click(option)
 
     await screen.findByLabelText('Select a user to view their access history')
     await screen.findByLabelText('Filter by Access Requirement Name')
@@ -200,10 +204,12 @@ describe('AccessHistoryDashboard tests', () => {
 
     const userInput = await screen.findByRole('combobox')
     await userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
-    await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
-    await act(async () => {
-      await selectEvent.select(userInput, new RegExp('@' + MOCK_USER_NAME))
-    })
+    const option = await screen.findByRole(
+      'option',
+      { name: new RegExp('@' + MOCK_USER_NAME) },
+      { timeout: 15000 },
+    )
+    await userEvent.click(option)
 
     await waitFor(() => {
       expect(
@@ -232,10 +238,12 @@ describe('AccessHistoryDashboard tests', () => {
     renderComponent()
     const userInput = await screen.findByRole('combobox')
     await userEvent.type(userInput, MOCK_USER_NAME.substring(0, 1))
-    await screen.findByText(new RegExp('@' + MOCK_USER_NAME))
-    await act(async () => {
-      await selectEvent.select(userInput, new RegExp('@' + MOCK_USER_NAME))
-    })
+    const option = await screen.findByRole(
+      'option',
+      { name: new RegExp('@' + MOCK_USER_NAME) },
+      { timeout: 15000 },
+    )
+    await userEvent.click(option)
 
     await screen.findByLabelText('Select a user to view their access history')
     const arNameInput = await screen.findByLabelText(

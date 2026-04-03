@@ -141,6 +141,7 @@ export async function addUserToAcl(
 ) {
   const userInput = queryForAddUserCombobox()!
   expect(userInput).toBeInTheDocument()
+  await user.clear(userInput)
   await user.type(userInput, userName)
 
   const option = await screen.findByText(new RegExp(`\\(@${userName}\\)`))
