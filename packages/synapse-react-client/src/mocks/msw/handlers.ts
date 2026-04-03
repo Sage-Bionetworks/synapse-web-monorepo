@@ -1,3 +1,4 @@
+import { MOCK_REALM_PRINCIPAL } from '@/mocks/index'
 import { getValidationSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
 import {
   BackendDestinationEnum,
@@ -51,6 +52,19 @@ const getHandlers = (backendOrigin: string, portalOrigin?: string) => [
       { authenticatedOn: new Date().toISOString() },
       { status: 200 },
     )
+  }),
+  http.get(`${backendOrigin}/auth/v1/anonymousToken`, () => {
+    return HttpResponse.json(
+      { accessToken: 'mock-anonymous-token' },
+      { status: 200 },
+    )
+  }),
+
+  http.post(`${backendOrigin}/auth/v1/oauth2/introspect`, () => {
+    return HttpResponse.json({ active: true }, { status: 200 })
+  }),
+  http.get(`${backendOrigin}/repo/v1/realm/principals`, () => {
+    return HttpResponse.json(MOCK_REALM_PRINCIPAL, { status: 200 })
   }),
   ...getEntityHandlers(backendOrigin),
   ...getUserProfileHandlers(backendOrigin),

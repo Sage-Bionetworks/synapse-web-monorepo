@@ -134,11 +134,10 @@ function UserSearchBox(props: UserSearchBoxProps) {
       value={resolvedValue}
       inputValue={inputValue}
       onInputChange={(_event, newInputValue, reason) => {
-        // Only track user-typed input for debounced search. 'reset' (after
-        // selection) is intentionally ignored — the text is hidden via
-        // color:transparent when showBadge is true, so there's no visual need
-        // to reset it.
-        if (reason !== 'reset') {
+        if (reason === 'selectOption' || reason === 'reset') {
+          // After an option is selected/removed, clear the input text so it's ready for the next search.
+          setInputValue('')
+        } else {
           setInputValue(newInputValue)
         }
       }}
@@ -146,10 +145,6 @@ function UserSearchBox(props: UserSearchBoxProps) {
       openOnFocus={resolvedValue !== null}
       onOpen={() => {
         setIsSearching(true)
-        if (resolvedValue) {
-          // Clear the search text so the user starts with a fresh query.
-          setInputValue('')
-        }
       }}
       onClose={() => setIsSearching(false)}
       options={options}

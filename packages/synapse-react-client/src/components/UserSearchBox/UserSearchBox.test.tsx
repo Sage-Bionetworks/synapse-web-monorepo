@@ -98,6 +98,8 @@ describe('UserSearchBox tests', () => {
   })
 
   it('does not retain a selection when value={null} is provided (controlled)', async () => {
+    // Simulates cases like ACL editor where the selected user is added to a separate list component,
+    // so this component does not retain the selection after it's made.
     const user = userEvent.setup()
     renderComponent({ value: null })
 
