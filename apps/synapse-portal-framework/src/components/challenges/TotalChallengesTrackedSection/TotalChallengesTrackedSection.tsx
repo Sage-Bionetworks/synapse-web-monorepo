@@ -15,10 +15,14 @@ const TotalChallengesTrackedSection = ({
   const handlePlotClick = async (
     event: QueryWrapperSynapsePlotRowClickEvent,
   ) => {
-    const year = event.row.values[0] as string
+    const year = event.row.values[0]
+    if (!year || isNaN(Number(year))) return
     const initQuery = { sql: allChallengesSql }
+    const hasWhere = /\bwhere\b/i.test(allChallengesSql)
     const currentQuery = {
-      sql: `${allChallengesSql} where startYear <= ${year}`,
+      sql: `${allChallengesSql} ${
+        hasWhere ? 'AND' : 'WHERE'
+      } startYear <= ${year}`,
     }
     const url = await generateCompressedQueryURL(
       '/OpenChallenges/',
@@ -46,7 +50,9 @@ const TotalChallengesTrackedSection = ({
         customPlotParams={{
           selectedFacets: [],
           additionalFilters: [],
-          onCustomPlotClick: event => void handlePlotClick(event),
+          onCustomPlotClick: event => {
+            void handlePlotClick(event)
+          },
         }}
       />
       <Typography

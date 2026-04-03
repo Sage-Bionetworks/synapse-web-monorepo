@@ -33,9 +33,7 @@ export type SynapsePlotWidgetParams = {
 export type QueryWrapperPlotNavCustomPlotParams = {
   selectedFacets: FacetColumnRequest[]
   additionalFilters: QueryFilter[]
-  onCustomPlotClick?: (
-    event: QueryWrapperSynapsePlotRowClickEvent,
-  ) => void | Promise<void>
+  onCustomPlotClick?: (event: QueryWrapperSynapsePlotRowClickEvent) => void
   queryContext?: QueryContextType
 }
 export type SynapsePlotProps = {
