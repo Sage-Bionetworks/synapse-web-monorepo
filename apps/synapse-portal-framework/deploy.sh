@@ -68,13 +68,19 @@ EOL
 
 elif [ "$1" = "push-staging" ]; then
   # build was done by build step
+  # React Router framework mode (SSG) outputs to build/client/; legacy Vite SPA outputs to build/
+  if [ -d "./build/client" ]; then
+    BUILD_DIR="./build/client"
+  else
+    BUILD_DIR="./build"
+  fi
   # generate robots.txt
-cat > ./build/robots.txt <<EOL
-User-agent: * 
+cat > $BUILD_DIR/robots.txt <<EOL
+User-agent: *
 Disallow: /
 EOL
-  date > ./build/deploy_date.txt
-  aws s3 sync --delete --cache-control max-age=0 ./build $S3_STAGING_BUCKET_LOCATION
+  date > $BUILD_DIR/deploy_date.txt
+  aws s3 sync --delete --cache-control max-age=0 $BUILD_DIR $S3_STAGING_BUCKET_LOCATION
 fi
 echo 'Success - finished!'
 exit 0

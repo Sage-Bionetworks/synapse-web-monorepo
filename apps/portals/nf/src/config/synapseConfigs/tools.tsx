@@ -43,8 +43,9 @@ export const toolsCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   titleLinkConfig: {
     isMarkdown: false,
-    baseURL: 'Explore/Tools/DetailsPage',
+    baseURL: 'Explore/Tools',
     URLColumnName: 'resourceId',
+    urlParamStyle: 'path-segment',
     matchColumnName: 'resourceId',
     overrideLinkURLColumnName: 'biobankURL',
   },

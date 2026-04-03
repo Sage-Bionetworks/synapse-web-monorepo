@@ -1,19 +1,29 @@
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
-import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
+import { createDetailPageRouteExports } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import {
-  CardContainerLogic,
-  ErrorPage,
+import { useParams } from 'react-router'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import ErrorPage, {
   SynapseErrorType,
-} from 'synapse-react-client'
+} from 'synapse-react-client/components/error/ErrorPage'
 import { initiativesSql, studiesSql } from '../config/resources'
 import { columnAliases } from '../config/synapseConfigs/commonProps'
 import { initiativeCardConfiguration } from '../config/synapseConfigs/initiatives'
 import { studyCardConfiguration } from '../config/synapseConfigs/studies'
+import { metadataConfig } from './InitiativeDetailsPage.config'
+
+export { metadataConfig }
+
+const _routeExports = createDetailPageRouteExports(metadataConfig, {
+  portalName: import.meta.env.VITE_PORTAL_NAME,
+})
+export const loader = _routeExports.loader
+export const clientLoader = _routeExports.clientLoader
+export const meta = _routeExports.meta
 
 function InitiativeDetailsPage() {
-  const { initiative } = useGetPortalComponentSearchParams()
+  const { initiative } = useParams<{ initiative: string }>()
 
   if (!initiative) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
@@ -31,6 +41,7 @@ function InitiativeDetailsPage() {
         />
       }
       sql={initiativesSql}
+      searchParams={{ initiative }}
       ContainerProps={{
         maxWidth: 'xl',
       }}

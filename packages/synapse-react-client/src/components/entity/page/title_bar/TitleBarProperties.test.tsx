@@ -280,7 +280,8 @@ describe('TitleBarProperties', () => {
       await expandPropertiesIfPossible()
 
       await screen.findByText('URL')
-      await screen.findByText(externalUrl)
+      const link = await screen.findByRole('link', { name: externalUrl })
+      expect(link).toHaveAttribute('href', externalUrl)
       expect(screen.queryByText('Endpoint')).not.toBeInTheDocument()
       expect(screen.queryByText('Bucket')).not.toBeInTheDocument()
       expect(screen.queryByText('File Key')).not.toBeInTheDocument()

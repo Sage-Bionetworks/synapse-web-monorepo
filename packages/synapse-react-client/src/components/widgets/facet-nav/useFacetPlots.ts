@@ -89,5 +89,11 @@ export function getFacets(
         !isSingleNotSetValue(item)
       )
     }) ?? []
+  if (facetsToPlot?.length) {
+    result.sort(
+      (a, b) =>
+        facetsToPlot.indexOf(a.columnName) - facetsToPlot.indexOf(b.columnName),
+    )
+  }
   return result
 }

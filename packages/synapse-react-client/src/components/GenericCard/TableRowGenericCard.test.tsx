@@ -714,4 +714,73 @@ describe('TableRowGenericCard tests', () => {
       wrap: false,
     })
   })
+
+  describe('titleAreaDetails', () => {
+    test('renders detail labels from a static string array', async () => {
+      renderComponent(
+        {
+          ...propsForNonHeaderMode,
+          genericCardSchema: {
+            ...genericCardSchema,
+            titleAreaDetails: [labelOneColumnName, 'labelTwo'],
+          },
+        },
+        'TableEntity',
+      )
+
+      await screen.findByTestId('CardFooter')
+      expect(screen.getByText('Label One:')).toBeVisible()
+      expect(screen.getByText('Label Two:')).toBeVisible()
+    })
+
+    test('renders detail labels from a function, calling it with schema and data', async () => {
+      const titleAreaDetailsFn = vi.fn(
+        (colSchema: Record<string, number>, rowData: string[]) => {
+          return rowData[colSchema[labelOneColumnName]] === MOCKED_LABELONE
+            ? [labelOneColumnName]
+            : ['labelTwo']
+        },
+      )
+
+      renderComponent(
+        {
+          ...propsForNonHeaderMode,
+          genericCardSchema: {
+            ...genericCardSchema,
+            titleAreaDetails: titleAreaDetailsFn,
+          },
+        },
+        'TableEntity',
+      )
+
+      await screen.findByTestId('CardFooter')
+      expect(titleAreaDetailsFn).toHaveBeenCalledWith(schema, data)
+      expect(screen.getByText('Label One:')).toBeVisible()
+      expect(screen.queryByText('Label Two:')).not.toBeInTheDocument()
+    })
+
+    test('function form renders different columns based on row data', async () => {
+      const altData = [...data]
+      altData[schema[labelOneColumnName]] = '' // empty value → labelOne skipped
+
+      renderComponent(
+        {
+          ...propsForNonHeaderMode,
+          data: altData,
+          genericCardSchema: {
+            ...genericCardSchema,
+            titleAreaDetails: (colSchema, rowData) =>
+              rowData[colSchema[labelOneColumnName]]
+                ? [labelOneColumnName]
+                : ['labelTwo'],
+          },
+        },
+        'TableEntity',
+      )
+
+      await screen.findByTestId('CardFooter')
+      expect(screen.queryByText('Label One:')).not.toBeInTheDocument()
+      expect(screen.getByText('Label Two:')).toBeVisible()
+    })
+  })
 })

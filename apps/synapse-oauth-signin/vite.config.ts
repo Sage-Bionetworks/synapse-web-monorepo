@@ -1,10 +1,10 @@
 import { mergeConfig } from 'vite'
 import {
   baseConfig,
-  vitestConfig,
-  reactPlugins,
   nodePolyfillsPlugin,
+  reactPlugins,
   tsconfigPathsPlugin,
+  vitestConfig,
 } from 'vite-config'
 
 const config = mergeConfig(

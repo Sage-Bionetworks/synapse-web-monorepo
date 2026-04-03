@@ -1,9 +1,7 @@
 import hackathonActiveSvg from '@/config/style/hackathon-active.svg?url'
 import hackathonCompleteSvg from '@/config/style/hackathon-complete.svg?url'
-import type {
-  CardConfiguration,
-  QueryWrapperPlotNavProps,
-} from 'synapse-react-client'
+import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
+import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { hackathonsSql } from '../resources'
 import { columnAliases } from './commonProps'
@@ -43,8 +41,9 @@ export const hackathonCardConfiguration: CardConfiguration = {
   },
   titleLinkConfig: {
     isMarkdown: false,
-    baseURL: 'Explore/Hackathon/DetailsPage',
+    baseURL: 'Explore/Hackathon',
     URLColumnName: 'id',
+    urlParamStyle: 'path-segment',
     matchColumnName: 'id',
   },
   columnIconOptions: {

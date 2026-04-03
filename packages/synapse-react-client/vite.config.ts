@@ -5,7 +5,6 @@ import {
   baseConfig,
   vitestConfig,
   reactPlugins,
-  nodePolyfillsPlugin,
   tsconfigPathsPlugin,
   libraryPlugins,
   preserveModulesBuildConfig,
@@ -42,7 +41,6 @@ const config = mergeConfig(
     mergeConfig(preserveModulesBuildConfig(allSourceFiles), {
       root: '.',
       plugins: [
-        nodePolyfillsPlugin(),
         tsconfigPathsPlugin(),
         ...reactPlugins(),
         ...libraryPlugins({ preserveModules: true }),

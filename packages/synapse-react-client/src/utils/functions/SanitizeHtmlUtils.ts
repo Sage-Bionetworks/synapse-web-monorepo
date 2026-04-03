@@ -1,4 +1,4 @@
-import DOMPurify from 'dompurify'
+import DOMPurify, { clearWindow, removeAllHooks } from 'isomorphic-dompurify'
 import xssLib from 'xss'
 import type { IFilterXSSOptions } from 'xss'
 
@@ -135,18 +135,20 @@ const ALLOWED_STYLES: Record<string, boolean> = {
 // Regex to allow only secure image sources
 const ALLOWED_URI_REGEXP: RegExp = /^(https?:|data:image\/)/
 
-function configureDomPurify(instance: typeof DOMPurify): void {
+const domPurifyConfig = {
+  ALLOWED_TAGS,
+  ALLOWED_ATTR,
+  KEEP_CONTENT: true,
+  RETURN_DOM_FRAGMENT: false,
+  RETURN_TRUSTED_TYPE: false,
+}
+
+function configureDomPurify() {
   // Configure DOMPurify with TypeScript support
-  instance.setConfig({
-    ALLOWED_TAGS,
-    ALLOWED_ATTR,
-    KEEP_CONTENT: true,
-    RETURN_DOM_FRAGMENT: false,
-    RETURN_TRUSTED_TYPE: false,
-  })
+  DOMPurify.setConfig(domPurifyConfig)
 
   // Hook: Sanitize attributes (equivalent to safeAttrValue)
-  instance.addHook('uponSanitizeAttribute', (node, data) => {
+  DOMPurify.addHook('uponSanitizeAttribute', (node, data) => {
     const { attrName, attrValue } = data
 
     // Ensure only safe src values for images
@@ -169,12 +171,12 @@ function configureDomPurify(instance: typeof DOMPurify): void {
         .join('; ')
       data.attrValue = safeStyles
     } else {
-      data.attrValue = instance.sanitize(attrValue)
+      data.attrValue = DOMPurify.sanitize(attrValue, domPurifyConfig)
     }
   })
 
   // Hook: Prevent removal of `!doctype` (equivalent to onIgnoreTag)
-  instance.addHook('uponSanitizeElement', (node, data) => {
+  DOMPurify.addHook('uponSanitizeElement', (node, data) => {
     if (data.tagName === '!doctype') {
       // Reinsert the doctype manually after sanitization
       if (node.parentNode) {
@@ -187,24 +189,11 @@ function configureDomPurify(instance: typeof DOMPurify): void {
   })
 }
 
-let domPurifyInstance: typeof DOMPurify | null = null
-
-if (typeof window === 'undefined') {
-  // Running in a Node.js environment; initialize JSDOM and create a DOMPurify instance
-  // Cannot use top-level await is unsafe in Safari: https://caniuse.com/wf-top-level-await
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { JSDOM } = require('jsdom')
-  domPurifyInstance = DOMPurify(new JSDOM('<!DOCTYPE html>').window)
-  configureDomPurify(domPurifyInstance)
-} else {
-  domPurifyInstance = DOMPurify
-  configureDomPurify(domPurifyInstance)
-}
-
 export function sanitize(input: string): string {
-  if (domPurifyInstance == null) {
-    throw new Error('DOMPurify instance not initialized')
-  }
-
-  return domPurifyInstance.sanitize(input)
+  configureDomPurify()
+  const result = DOMPurify.sanitize(input, domPurifyConfig)
+  // clearWindow clears memory usage in Node.js, noop in browser:
+  clearWindow()
+  removeAllHooks()
+  return result
 }

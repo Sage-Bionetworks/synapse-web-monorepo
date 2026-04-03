@@ -30,6 +30,10 @@ const tableInfo: TableInfoMap = {
     name: 'D4D_content',
     id: 'syn68885644.8', // current version of D4D_content
   },
+  Manifest: {
+    name: 'Manifest',
+    id: 'syn72106735', // denormalized manifest, one row per data part
+  },
   // UseCase: { name: 'UseCase', id: 'syn63096837' }, // not using this, might in the future?
 }
 
@@ -79,6 +83,38 @@ export const D4D_CONTENT_COLUMN_CONSTS: ColumnConsts = {
 }
 tableInfo.D4D_content.columnConsts = D4D_CONTENT_COLUMN_CONSTS
 tableInfo.D4D_content.queries ??= {}
+
+export const MANIFEST_COLUMN_CONSTS: ColumnConsts = {
+  ID: 'id',
+  ORGANIZATION: 'organization',
+  ORGANIZATION_LINK: 'organization_link',
+  DATA_PART_NAME: 'data_part_name',
+  DATA_PART_DESCRIPTION: 'data_part_description',
+  STANDARDS_AND_TOOLS: 'standards_and_tools',
+  STANDARDS_AND_TOOLS_LINKS: 'standards_and_tools_links',
+  USES_DATA_SUBSTRATES: 'uses_data_substrates',
+  USES_DATA_SUBSTRATES_LINKS: 'uses_data_substrates_links',
+  CONCERNS_DATA_TOPICS: 'concerns_data_topics',
+  CONCERNS_DATA_TOPICS_LINKS: 'concerns_data_topics_links',
+  CONCERNS_DATA_TOPICS_DOC_LINKS: 'concerns_data_topics_doc_links',
+  ANATOMY: 'anatomy',
+  ANATOMY_LINKS: 'anatomy_links',
+  DATASETS: 'datasets',
+  DATASETS_LINK: 'datasets_link',
+} as const
+tableInfo.Manifest.columnConsts = MANIFEST_COLUMN_CONSTS
+
+export const manifestSql = `
+  SELECT
+    data_part_name,
+    data_part_description,
+    standards_and_tools_links,
+    uses_data_substrates_links,
+    concerns_data_topics_doc_links,
+    concerns_data_topics_links,
+    anatomy_links
+  FROM ${tableInfo.Manifest.id}
+`
 
 export const GC_ORG_IDS = [114, 115, 116, 117].map(id => `B2AI_ORG:${id}`)
 

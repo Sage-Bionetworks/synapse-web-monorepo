@@ -99,13 +99,23 @@ export default function Navbar() {
   ) : (
     <></>
   )
-  const hostname = window.location.hostname.toLowerCase()
-  // for now, we only support login in the dev environment (localstorage) or from a .synapse.org subdomain (http-only secure cookie)
-  const isSynapseSubdomainOrLocal =
-    (hostname.endsWith('.synapse.org') ||
-      hostname.includes('127.0.0.1') ||
-      hostname.includes('localhost')) &&
-    !hideLogin
+
+  const [allowAuth, setAllowAuth] = useState(false)
+  useEffect(() => {
+    // only allow auth if we're on a synapse.org subdomain or localhost
+    // compute in an effect for SSR/SSG compatibility
+    const hostname =
+      typeof window !== 'undefined'
+        ? window.location.hostname.toLowerCase()
+        : ''
+    // for now, we only support login in the dev environment (localstorage) or from a .synapse.org subdomain (http-only secure cookie)
+    const isSynapseSubdomainOrLocal =
+      (hostname.endsWith('.synapse.org') ||
+        hostname.includes('127.0.0.1') ||
+        hostname.includes('localhost')) &&
+      !hideLogin
+    setAllowAuth(isSynapseSubdomainOrLocal)
+  }, [hideLogin])
 
   const oneSageUrl = useOneSageURL()
   const accountSettingsUrl = useOneSageURL('/authenticated/myaccount')
@@ -167,7 +177,7 @@ export default function Navbar() {
         </div>
         <div className="nav-link-container">
           {isAuthenticated &&
-            isSynapseSubdomainOrLocal && ( // mobile sign out
+            allowAuth && ( // mobile sign out
               <div className="center-content nav-button nav-button-signin mobile-signout-container">
                 <Button
                   id="signin-button"
@@ -183,7 +193,7 @@ export default function Navbar() {
               </div>
             )}
           {!isAuthenticated &&
-            isSynapseSubdomainOrLocal && ( // desktop sign in
+            allowAuth && ( // desktop sign in
               <div className="center-content nav-button-signin">
                 <Button
                   id="signin-button"
@@ -202,7 +212,7 @@ export default function Navbar() {
 
           {isAuthenticated &&
             userProfile &&
-            isSynapseSubdomainOrLocal && ( // desktop version, show dropdown
+            allowAuth && ( // desktop version, show dropdown
               <>
                 <div className="user-loggedIn">
                   <button

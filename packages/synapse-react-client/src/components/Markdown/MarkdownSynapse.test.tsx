@@ -367,6 +367,16 @@ describe('MarkdownSynapse tests', () => {
   })
 
   describe('Snapshot tests', () => {
+    let consoleErrorSpy: ReturnType<typeof vi.spyOn>
+
+    beforeEach(() => {
+      consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    })
+
+    afterEach(() => {
+      consoleErrorSpy.mockRestore()
+    })
+
     it('works with header and a link', () => {
       const { container } = renderComponent({
         markdown: '# header [text](https://synapse.org)',
@@ -413,6 +423,37 @@ describe('MarkdownSynapse tests', () => {
           ' {column}\n' +
           '{row}',
       })
+      expect(container).toMatchSnapshot()
+    })
+
+    it('should not warn when a plot widget is a direct child of a paragraph', () => {
+      // <p> contains a widget directly, fixInvalidNesting transforms <p> to <div>
+      const { container } = renderComponent({
+        markdown: 'Some plot: ${plot?query=select}',
+      })
+
+      expect(consoleErrorSpy).not.toHaveBeenCalled()
+      expect(container).toMatchSnapshot()
+    })
+
+    it('should not warn when a plot widget is nested inside italic text', () => {
+      // <p><em><span data-widgetparams/></em></p>,  shallow check would miss this
+      // fixInvalidNesting sees the block descendant and transforms <p> to <div>
+      const { container } = renderComponent({
+        markdown: '*${plot?query=select}*',
+      })
+
+      expect(consoleErrorSpy).not.toHaveBeenCalled()
+      expect(container).toMatchSnapshot()
+    })
+
+    it('should not warn when a plot widget is nested inside a link', () => {
+      // <a> contains a widget, fixInvalidNesting transforms <a> to <div>
+      const { container } = renderComponent({
+        markdown: '[${plot?query=select}](https://synapse.org)',
+      })
+
+      expect(consoleErrorSpy).not.toHaveBeenCalled()
       expect(container).toMatchSnapshot()
     })
   })

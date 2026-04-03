@@ -33,7 +33,7 @@ const routesConfig: RouteConfig = {
   },
   challenges: {
     buttons: [],
-    links: ['Home', 'Challenge List'],
+    links: ['Home', 'OpenChallenges'],
   },
   digitalhealth: {
     buttons: ['Home', 'Explore', 'Sign In'],

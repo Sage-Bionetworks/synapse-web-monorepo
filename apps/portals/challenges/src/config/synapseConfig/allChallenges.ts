@@ -19,7 +19,12 @@ const allChallengesSchema: TableToGenericCardMapping = {
     'submissionType',
     'inputDataType',
   ],
-  titleAreaDetails: ['status', 'startDate', 'endDate'],
+  titleAreaDetails: (schema, data) => {
+    const status = data[schema['status']]
+    if (status === 'Coming soon') return ['status', 'startDate']
+    if (status === 'Closed') return ['status']
+    return ['status', 'endDate']
+  },
 }
 const allChallengesTitleLinkConfig: CardLink = {
   isMarkdown: false,
@@ -63,8 +68,11 @@ export const allChallenges: QueryWrapperPlotNavProps = {
   cardConfiguration: allChallengesCardConfiguration,
   name: 'Challenges',
   hideTopLevelControls: true,
-  defaultShowPlots: false,
+  defaultShowPlots: true,
+  facetsToPlot: ['startYear', 'organizingCommunity', 'platform', 'status'],
   columnAliases: {
     metadataCompletenessTier: 'Metadata Completeness',
+    startYear: `Challenges by Year`,
   },
+  initialPlotTypeByFacetColumnName: { startYear: 'BAR' },
 }
