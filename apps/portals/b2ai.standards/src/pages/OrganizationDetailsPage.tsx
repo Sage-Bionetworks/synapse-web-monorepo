@@ -1,6 +1,7 @@
 import { LinearProgress } from '@mui/material'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
+import type { LabelLinkConfig } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import { ErrorBanner } from 'synapse-react-client/components/error/ErrorBanner'
 import ErrorPage from 'synapse-react-client/components/error/ErrorPage'
@@ -24,9 +25,12 @@ import {
 import {
   DATASET_DENORMALIZED_COLUMN_CONSTS,
   DST_TABLE_COLUMN_CONSTS,
+  GC_ORG_IDS,
+  MANIFEST_COLUMN_CONSTS,
   ORG_TABLE_COLUMN_CONSTS,
   organizationDetailsPageSQL,
   dataSetSQL,
+  manifestSql,
   standardsFtsConfig,
   standardsSql,
 } from '@/config/resources'
@@ -119,6 +123,7 @@ export default function OrganizationDetailsPage() {
 
   const sections: DetailsPageSectionLayoutType[] = detailSections({
     detailOrg: jsonColCounts,
+    id,
   })
 
   return (
@@ -164,7 +169,40 @@ export const linkedDataSetCardConfiguration: CardConfiguration = {
   },
 }
 
-function detailSections({ detailOrg: jsonColCounts }) {
+const manifestColumnLinks: LabelLinkConfig = [
+  {
+    isMarkdown: true,
+    matchColumnName: MANIFEST_COLUMN_CONSTS.STANDARDS_AND_TOOLS_LINKS,
+  },
+  {
+    isMarkdown: true,
+    matchColumnName: MANIFEST_COLUMN_CONSTS.USES_DATA_SUBSTRATES_LINKS,
+  },
+  {
+    isMarkdown: true,
+    matchColumnName: MANIFEST_COLUMN_CONSTS.CONCERNS_DATA_TOPICS_LINKS,
+  },
+  {
+    isMarkdown: true,
+    matchColumnName: MANIFEST_COLUMN_CONSTS.CONCERNS_DATA_TOPICS_DOC_LINKS,
+  },
+  {
+    isMarkdown: true,
+    matchColumnName: MANIFEST_COLUMN_CONSTS.ANATOMY_LINKS,
+  },
+  {
+    isMarkdown: true,
+    matchColumnName: MANIFEST_COLUMN_CONSTS.DATASETS_LINK,
+  },
+]
+
+function detailSections({
+  detailOrg: jsonColCounts,
+  id,
+}: {
+  detailOrg: Record<string, number>
+  id: string
+}) {
   const sections: DetailsPageSectionLayoutType[] = []
 
   // Main Organization section
@@ -240,6 +278,32 @@ function detailSections({ detailOrg: jsonColCounts }) {
             )
           }}
         </DetailsPageContextConsumer>
+      ),
+    })
+  }
+
+  // Manifest section (data parts for GC orgs)
+  if (GC_ORG_IDS.includes(id)) {
+    sections.push({
+      id: 'Manifest',
+      title: 'Data Manifest',
+      helpText: 'Data types collected by this organization',
+      element: (
+        <StandaloneQueryWrapper
+          sql={manifestSql}
+          searchParams={{
+            [MANIFEST_COLUMN_CONSTS.ORGANIZATION]: id,
+          }}
+          sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
+          columnAliases={columnAliases}
+          tableConfiguration={{
+            showDownloadColumn: false,
+            columnLinks: manifestColumnLinks,
+          }}
+          shouldDeepLink={false}
+          hideQueryCount={true}
+          hideDownload={true}
+        />
       ),
     })
   }
