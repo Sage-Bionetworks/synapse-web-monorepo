@@ -68,7 +68,17 @@ export const DataCatalogCards: Story = {
 
 const handlePlotClick = (event: QueryWrapperSynapsePlotRowClickEvent) => {
   // window.alert(`Handling click on this row: ${JSON.stringify(event.row)}`)
-  const { getCurrentQueryRequest, executeQueryRequest } = event.queryContext
+  const getCurrentQueryRequest = event.queryContext?.getCurrentQueryRequest
+  const executeQueryRequest = event.queryContext?.executeQueryRequest
+  if (
+    getCurrentQueryRequest === undefined ||
+    executeQueryRequest === undefined
+  ) {
+    window.alert(
+      'Query context functions not found, cannot apply additional filter',
+    )
+    return
+  }
   const requestCopy = getCurrentQueryRequest()
   requestCopy.query.additionalFilters = [
     ...(requestCopy.query.additionalFilters || []),

@@ -20,6 +20,7 @@ const rgbIndex = 1
 
 const handlePlotClick = (event: QueryWrapperSynapsePlotRowClickEvent) => {
   // window.alert(`Handling click on this row: ${JSON.stringify(event.row)}`)
+  if (!event.queryContext) return
   const { setRangeFacetValue } = event.queryContext
   let newMin: string | undefined = undefined,
     newMax: string | undefined = undefined

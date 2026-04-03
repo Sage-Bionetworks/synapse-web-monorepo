@@ -13,6 +13,7 @@ import Plotly, { AxisType, PlotType } from 'plotly.js-basic-dist'
 import { QueryContextType } from '../QueryContext'
 import { QueryWrapperSynapsePlotRowClickEvent } from '../QueryWrapperPlotNav/QueryWrapperSynapsePlot'
 import Plot from './Plot'
+import './SynapsePlot.scss'
 
 export type SynapsePlotWidgetParams = {
   query: string //sql string
@@ -25,6 +26,7 @@ export type SynapsePlotWidgetParams = {
   horizontal?: boolean // sets the if a bar chart should be horizontal or vertical
   barmode?: Plotly.Layout['barmode'] // Plotly barmode
   displayModeBar?: Plotly.Config['displayModeBar'] // sets the modebar visibility
+  hoverinfo?: Plotly.PlotData['hoverinfo'] // sets the hover info
 }
 
 // QueryWrapperPlotNav customPlot parameters, undefined otherwise
@@ -72,6 +74,7 @@ export const SynapsePlot = (props: SynapsePlotProps): React.ReactNode => {
     barmode,
     horizontal,
     displayModeBar,
+    hoverinfo,
   } = props.synapsePlotWidgetParams
 
   const config: Partial<Plotly.Config> = {
@@ -115,6 +118,7 @@ export const SynapsePlot = (props: SynapsePlotProps): React.ReactNode => {
       x: [],
       y: [],
       customdata: [],
+      ...(hoverinfo !== undefined && { hoverinfo }),
     }
   }
   // grab all the data
@@ -134,7 +138,7 @@ export const SynapsePlot = (props: SynapsePlotProps): React.ReactNode => {
   let onPlotClick:
     | ((event: Readonly<Plotly.PlotMouseEvent>) => void)
     | undefined
-  if (onCustomPlotClick && queryContext) {
+  if (onCustomPlotClick) {
     onPlotClick = eventData => {
       const selectedRow = JSON.parse(
         eventData.points[0].customdata as string,
@@ -149,12 +153,11 @@ export const SynapsePlot = (props: SynapsePlotProps): React.ReactNode => {
   return (
     <Plot
       style={{ width: '100%', height: '450px' }}
+      className={onPlotClick ? 'SynapsePlot--clickable' : undefined}
       layout={layout}
       data={plotData}
       config={config}
       onClick={onPlotClick}
-      // TODO: if we want to change the cursor to pointer on hovering over a point,
-      // we could add a handler for onHover (if there's an onClick handler), and add/remove a class to the plot
     />
   )
 }
