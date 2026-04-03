@@ -9,7 +9,7 @@ type BasePortalCardProps = {
   borderRadiusPx?: number
   boxShadow?: string
   cardSize?: 'small' | 'medium' | 'large'
-  backgroundImage?: string
+  backgroundImage?: string | ReactNode
   backgroundColor?: string
   className?: string
 }
@@ -34,8 +34,10 @@ const BasePortalCard = ({
       }}
     >
       <Box className={styles.BasePortalCard__media}>
-        {backgroundImage && (
+        {typeof backgroundImage === 'string' ? (
           <CardMedia image={backgroundImage} component="img" />
+        ) : (
+          backgroundImage
         )}
       </Box>
       <CardContent className={styles.BasePortalCard__content}>
