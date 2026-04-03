@@ -59,66 +59,64 @@ export default function MetadataTasksTableAssigneeCell(
     [curationTask, updateCurationTask],
   )
 
-  let editButton = null
-  if (canEdit) {
-    editButton = (
-      <>
-        <ConfirmationDialog
-          title="Set Assignee"
-          open={showUserPicker}
-          content={
-            <Stack>
-              <Typography variant="body1" gutterBottom>
-                Select a user or team to assign this task to:
-              </Typography>
-              <UserSearchBox
-                key={showUserPicker.toString()}
-                defaultValue={assigneePrincipalId}
-                onChange={principalId => setSelectedPrincipalId(principalId)}
-                typeFilter={TYPE_FILTER.ALL}
-              />
-              {taskBundle.status?.executionDetails?.activeSessionId && (
-                <Alert severity="warning" sx={{ mt: 2 }}>
-                  This task has an active Curator session. If you change the
-                  assignee, these effects could happen:
-                  <ul>
-                    <li>
-                      Current assignee(s) may lose access to the session,
-                      unsaved changes will be lost, and they may not be able to
-                      complete their work.
-                    </li>
-                    <li>
-                      New assignee(s) may not have permission to access the
-                      current session
-                    </li>
-                  </ul>
-                  To avoid these issues, a data manager should create a new
-                  task.
-                </Alert>
-              )}
-            </Stack>
-          }
-          confirmButtonProps={{
-            children: 'Save',
-            loading: updateTaskIsPending,
-          }}
-          onConfirm={() => {
-            onConfirmUpdateAssignee(selectedPrincipalId ?? undefined)
-          }}
-          onCancel={() => setShowUserPicker(false)}
-        />
-        <div>
-          <IconButton
-            aria-label="Edit assignee"
-            size="small"
-            onClick={() => setShowUserPicker(true)}
-          >
-            <EditTwoTone fontSize="inherit" />
-          </IconButton>
-        </div>
-      </>
-    )
-  }
+  const editDialog = (
+    <ConfirmationDialog
+      title="Set Assignee"
+      open={showUserPicker}
+      content={
+        <Stack gap={2}>
+          <Typography variant="body1" gutterBottom>
+            Assign this task to a team or an individual user. All members of a
+            team will be able to collaborate in the same Curator session.
+          </Typography>
+          <UserSearchBox
+            key={showUserPicker.toString()}
+            defaultValue={assigneePrincipalId}
+            onChange={principalId => setSelectedPrincipalId(principalId)}
+            typeFilter={TYPE_FILTER.ALL}
+          />
+          {taskBundle.status?.executionDetails?.activeSessionId && (
+            <Alert severity="warning">
+              This task has an active Curator session. If you change the
+              assignee, these effects could happen:
+              <ul>
+                <li>
+                  Current assignee(s) may lose access to the session, unsaved
+                  changes will be lost, and they may not be able to complete
+                  their work.
+                </li>
+                <li>
+                  New assignee(s) may not have permission to access the current
+                  session
+                </li>
+              </ul>
+              To avoid these issues, a data manager should create a new task.
+            </Alert>
+          )}
+        </Stack>
+      }
+      confirmButtonProps={{
+        children: 'Save',
+        loading: updateTaskIsPending,
+      }}
+      onConfirm={() => {
+        onConfirmUpdateAssignee(selectedPrincipalId ?? undefined)
+      }}
+      onCancel={() => setShowUserPicker(false)}
+    />
+  )
+
+  const editButton = (
+    <div>
+      <IconButton
+        aria-label="Edit assignee"
+        size="small"
+        onClick={() => setShowUserPicker(true)}
+      >
+        <EditTwoTone fontSize="inherit" />
+      </IconButton>
+    </div>
+  )
 
   return (
     <Stack
@@ -134,7 +132,8 @@ export default function MetadataTasksTableAssigneeCell(
       }}
     >
       <span style={{ overflow: 'hidden' }}>{assigneeDisplay}</span>
-      {isHoveringOnCell && editButton}
+      {isHoveringOnCell && canEdit && editButton}
+      {editDialog}
     </Stack>
   )
 }
