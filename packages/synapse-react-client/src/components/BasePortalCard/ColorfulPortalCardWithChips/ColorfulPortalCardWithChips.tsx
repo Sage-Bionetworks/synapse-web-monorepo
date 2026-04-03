@@ -1,3 +1,4 @@
+import { ReactComponent as DefaultBackground } from '@/assets/DefaultColorfulPortalCardBackground.svg'
 import MarkdownSynapse from '@/components/Markdown/MarkdownSynapse'
 import { hashCode } from '@/utils/functions/StringUtils'
 import { useImageUrl } from '@/utils/hooks/useImageUrlUtils'
@@ -66,13 +67,13 @@ const ColorfulPortalCardWithChips = ({
   cardSize = 'medium',
 }: ColorfulPortalCardWithChipsProps): React.ReactNode => {
   const imageUrl = useImageUrl(backgroundImage ?? '', entityId ?? '')
-  const backgroundImageValue = imageUrl ?? backgroundImage
+  const backgroundImageValue = imageUrl || backgroundImage
 
   return (
     <BasePortalCard
       cardSize={cardSize}
       borderRadiusPx={borderRadiusPx}
-      backgroundImage={backgroundImageValue}
+      backgroundImage={backgroundImageValue || <DefaultBackground />}
       backgroundColor={backgroundColor || colors[0]}
       contentBelowCard={chips && chips.length > 0 && <Chips values={chips} />}
     >

@@ -37,6 +37,8 @@
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow-wrap: break-word;
+  max-width: 225px;
+  font-weight: 600;
 }
 
 .ColorfulPortalCardWithChips__sectionTitle:global(.MuiTypography-root) {
