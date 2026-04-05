@@ -820,6 +820,39 @@ export default function StudyDetailsPageWildcard() {
 }
 ```
 
+#### 12h. Enable SSG canonical URL handling
+
+SSG portals must emit the canonical URL via the React Router `meta()` export so
+it appears in pre-rendered HTML and is immediately visible to search crawlers —
+without waiting for JavaScript to run. The client-side hook in
+`DetailsPageDocumentMetadata` must also be disabled to prevent it from
+overwriting the static canonical after hydration.
+
+**In the `createDetailPageRouteExports` call**, pass `portalKey`:
+
+```diff
+ const _routeExports = createDetailPageRouteExports(metadataConfig, {
+   portalName: import.meta.env.VITE_PORTAL_NAME,
++  portalKey: import.meta.env.VITE_PORTAL_KEY,
+ })
+```
+
+**In the detail page component**, add `disableCanonicalUrl` to `<DetailsPage>`:
+
+```diff
+ <DetailsPage
+   sql={studiesSql}
+   searchParams={{ studyId }}
+   resourcePrimaryKey={['studyId']}
++  disableCanonicalUrl
+ >
+```
+
+Without `portalKey`, no canonical tag is emitted at all. Without
+`disableCanonicalUrl`, the hook runs after hydration and overwrites the static
+canonical with an incorrect query-param URL (e.g.
+`/Explore/Studies/syn123?studyId=syn123`).
+
 ---
 
 ### Step 13: Create legacy redirect pages
@@ -1083,6 +1116,8 @@ Use this checklist to track progress during migration:
 - [ ] Null guard added for URL parameter
 - [ ] `searchParams` prop added to `<DetailsPage>`
 - [ ] `resourcePrimaryKey` prop added to `<DetailsPage>`
+- [ ] `disableCanonicalUrl` added to `<DetailsPage>` (step 12h)
+- [ ] `portalKey` added to `createDetailPageRouteExports` options (step 12h)
 - [ ] Index redirect file created (for tabbed detail pages)
 - [ ] Wildcard redirect file created (for tabbed detail pages)
 

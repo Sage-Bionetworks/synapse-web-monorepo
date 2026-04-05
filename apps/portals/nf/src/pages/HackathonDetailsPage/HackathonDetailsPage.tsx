@@ -23,6 +23,7 @@ export { metadataConfig }
 
 const _routeExports = createDetailPageRouteExports(metadataConfig, {
   portalName: import.meta.env.VITE_PORTAL_NAME,
+  portalKey: import.meta.env.VITE_PORTAL_KEY,
 })
 export const loader = _routeExports.loader
 export const clientLoader = _routeExports.clientLoader
@@ -68,6 +69,7 @@ function HackathonDetailsPage() {
       searchParams={{ id }}
       ContainerProps={{ maxWidth: 'xl' }}
       resourcePrimaryKey={['id']}
+      disableCanonicalUrl
     >
       <DetailsPageTabs tabConfig={tabConfig} />
       <Outlet />
