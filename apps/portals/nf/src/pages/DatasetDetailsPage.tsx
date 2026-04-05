@@ -32,6 +32,7 @@ const _routeExports = createDetailPageRouteExports<DatasetLoaderData>(
   metadataConfig,
   {
     portalName: import.meta.env.VITE_PORTAL_NAME,
+    portalKey: import.meta.env.VITE_PORTAL_KEY,
     extendLoader: async (_base, params) => ({
       croissantJsonLd: params.id
         ? await fetchCroissantMetadata(params.id)
@@ -69,6 +70,7 @@ function DatasetDetailsPage() {
         maxWidth: 'xl',
       }}
       resourcePrimaryKey={['id']}
+      disableCanonicalUrl
     >
       <DetailsPageContent
         content={[

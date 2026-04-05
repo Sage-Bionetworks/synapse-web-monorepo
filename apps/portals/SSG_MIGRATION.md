@@ -707,11 +707,16 @@ export { metadataConfig } // re-export so react-router.config.ts can import it
 
 const _routeExports = createDetailPageRouteExports(metadataConfig, {
   portalName: import.meta.env.VITE_PORTAL_NAME,
+  portalKey: import.meta.env.VITE_PORTAL_KEY,
 })
 export const loader = _routeExports.loader
 export const clientLoader = _routeExports.clientLoader
 export const meta = _routeExports.meta
 ```
+
+`portalKey` causes `meta()` to emit a `<link rel="canonical">` in the
+pre-rendered HTML, so search crawlers see the correct URL without needing
+JavaScript to run.
 
 For detail pages that need extra loader data (e.g. Croissant JSON-LD for
 dataset pages), use the extended form:
@@ -731,6 +736,7 @@ const _routeExports = createDetailPageRouteExports<DatasetLoaderData>(
   metadataConfig,
   {
     portalName: import.meta.env.VITE_PORTAL_NAME,
+    portalKey: import.meta.env.VITE_PORTAL_KEY,
     extendLoader: async (_base, params) => ({
       croissantJsonLd: params.id
         ? await fetchCroissantMetadata(params.id)
@@ -752,10 +758,11 @@ export const meta = _routeExports.meta
 +const { studyId } = useParams<{ studyId: string }>()
 ```
 
-#### 12e. Add a null guard for the URL parameter
+#### 12e. Add a null guard and update `<DetailsPage>` props
 
-Always guard against the param being undefined (e.g. if the user navigates to
-the detail page without a valid ID):
+Guard against the param being undefined (e.g. if the user navigates to the
+detail page without a valid ID), and pass `searchParams`, `resourcePrimaryKey`,
+and `disableCanonicalUrl` to `<DetailsPage>`:
 
 ```tsx
 import ErrorPage, {
@@ -774,6 +781,7 @@ function StudyDetailsPage() {
       sql={studiesSql}
       searchParams={{ studyId }}
       resourcePrimaryKey={['studyId']}
+      disableCanonicalUrl
       // ...
     >
       {/* For tabbed detail pages: */}
@@ -784,21 +792,11 @@ function StudyDetailsPage() {
 }
 ```
 
-#### 12f. Pass `searchParams` prop to `<DetailsPage>`
+`disableCanonicalUrl` prevents the client-side `DetailsPageDocumentMetadata`
+hook from running after hydration and overwriting the static canonical tag with
+an incorrect query-param URL (e.g. `/Explore/Studies/syn123?studyId=syn123`).
 
-The `DetailsPage` component now accepts an explicit `searchParams` prop, which
-merges with (and takes priority over) URL query-string params:
-
-```diff
- <DetailsPage
-   sql={studiesSql}
-+  searchParams={{ studyId }}
-+  resourcePrimaryKey={['studyId']}
-   // ...
- >
-```
-
-#### 12g. Create index and wildcard route files for tabbed detail pages
+#### 12f. Create index and wildcard route files for tabbed detail pages
 
 For detail pages with sub-tabs, extract the inline `<RedirectWithQuery>` that
 was nested inside `routesConfig.tsx` into files:
@@ -1049,7 +1047,6 @@ Use this checklist to track progress during migration:
 - [ ] `src/types.d.ts` — environment variable types declared
 - [ ] `react-router.config.ts` — created with prerender config
 - [ ] `vite.config.ts` — rewritten with `reactRouter()` plugin
-- [ ] `sitemap.vite.config.ts` — created for sitemap build
 
 ### New entry/root files
 
@@ -1078,11 +1075,10 @@ Use this checklist to track progress during migration:
 ### Detail pages (repeat for each detail page type)
 
 - [ ] `*.config.ts` metadata file created
-- [ ] `loader`, `clientLoader`, `meta` exports added
+- [ ] `loader`, `clientLoader`, `meta` exports added (including `portalKey` in options)
 - [ ] `useGetPortalComponentSearchParams` → `useParams`
 - [ ] Null guard added for URL parameter
-- [ ] `searchParams` prop added to `<DetailsPage>`
-- [ ] `resourcePrimaryKey` prop added to `<DetailsPage>`
+- [ ] `searchParams`, `resourcePrimaryKey`, and `disableCanonicalUrl` props added to `<DetailsPage>`
 - [ ] Index redirect file created (for tabbed detail pages)
 - [ ] Wildcard redirect file created (for tabbed detail pages)
 

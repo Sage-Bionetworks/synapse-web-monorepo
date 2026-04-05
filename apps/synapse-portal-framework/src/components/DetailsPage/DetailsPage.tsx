@@ -43,6 +43,7 @@ export default function DetailsPage(props: DetailsPageProps) {
     children = <Outlet />,
     resourcePrimaryKey,
     portalDOIConfiguration,
+    disableCanonicalUrl = false,
   } = props
 
   const queryStringSearchParams = useGetPortalComponentSearchParams()
@@ -114,7 +115,9 @@ export default function DetailsPage(props: DetailsPageProps) {
         rowData: row,
       }}
     >
-      <DetailsPageDocumentMetadata resourcePrimaryKey={resourcePrimaryKey} />
+      {!disableCanonicalUrl && (
+        <DetailsPageDocumentMetadata resourcePrimaryKey={resourcePrimaryKey} />
+      )}
       {header}
       <Container
         maxWidth={'lg'}
