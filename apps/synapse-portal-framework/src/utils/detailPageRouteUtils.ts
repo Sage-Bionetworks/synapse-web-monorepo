@@ -21,8 +21,8 @@ export type BaseDetailPageLoaderData = DetailPageMetadata
  * forking the core logic.
  *
  * `portalName` and `portalKey` must be passed explicitly from the portal (e.g.
- * `import.meta.env.VITE_PORTAL_NAME` and `import.meta.env.VITE_PORTAL_KEY`). 
- * They cannot be read inside this library because the framework package is 
+ * `import.meta.env.VITE_PORTAL_NAME` and `import.meta.env.VITE_PORTAL_KEY`).
+ * They cannot be read inside this library because the framework package is
  * pre-built separately from each portal's Vite build, so `import.meta.env`
  * variables are not available here at runtime.
  *
