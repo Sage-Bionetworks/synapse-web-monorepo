@@ -127,6 +127,7 @@ export default tseslint.config(
       '**/build/',
       '**/dist/',
       '**/playwright-report/',
+      '.claude/**/*.js',
     ],
   },
 )

@@ -9,7 +9,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/WorktreeCreate",
+            "command": "node .claude/hooks/WorktreeCreate.js",
             "statusMessage": "Creating worktree..."
           }
         ]
@@ -20,7 +20,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": ".claude/hooks/WorktreeRemove",
+            "command": "node .claude/hooks/WorktreeRemove.js",
             "statusMessage": "Removing worktree..."
           }
         ]
@@ -31,7 +31,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "[ -f .pnpm-installing ] && echo '{\"systemMessage\": \"pnpm install is running in the background. Run: tail -f .pnpm-install.log to follow progress.\"}' || true"
+            "command": "node .claude/hooks/SessionStart.js"
           }
         ]
       }
