@@ -62,10 +62,7 @@ export type SearchQueryWrapperPlotNavProps = SearchQueryWrapperPlotNavOwnProps &
     | 'hideSearchBarControl'
     | 'hideVisualizationsControl'
   > &
-  Pick<
-    TopLevelControlsProps,
-    'name' | 'hideDownload' | 'hideQueryCount' | 'hideSqlEditorControl'
-  > & {
+  Pick<TopLevelControlsProps, 'name' | 'hideQueryCount'> & {
     /** Optional initial query parameters. Only selectedFacets, limit, and offset are used. */
     initQueryRequest?: SearchQueryWrapperProps['initQueryRequest']
   }
@@ -78,9 +75,7 @@ type SearchQueryWrapperPlotNavContentsProps = Pick<
   | 'facetsToPlot'
   | 'availableFacets'
   | 'initialExpandedFacetControls'
-  | 'hideDownload'
   | 'hideQueryCount'
-  | 'hideSqlEditorControl'
   | 'hideVisualizationsControl'
   | 'initialLimit'
   | 'initialPlotTypeByFacetColumnName'
@@ -97,9 +92,7 @@ function SearchQueryWrapperPlotNavContents(
     facetsToPlot,
     availableFacets,
     initialExpandedFacetControls,
-    hideDownload,
     hideQueryCount,
-    hideSqlEditorControl,
     hideVisualizationsControl,
     initialLimit,
     initialPlotTypeByFacetColumnName,
@@ -147,13 +140,13 @@ function SearchQueryWrapperPlotNavContents(
                 <TopLevelControls
                   showColumnSelection={tableConfiguration !== undefined}
                   name={name}
-                  hideDownload={hideDownload}
+                  hideDownload={true}
                   hideQueryCount={hideQueryCount}
                   hideFacetFilterControl={!isFaceted}
                   hideVisualizationsControl={
                     !isFaceted || hideVisualizationsControl
                   }
-                  hideSqlEditorControl={hideSqlEditorControl ?? true}
+                  hideSqlEditorControl={true}
                 />
               )}
             </SynapseErrorBoundary>
@@ -176,7 +169,7 @@ function SearchQueryWrapperPlotNavContents(
             />
             <RowSetView
               tableConfiguration={tableConfiguration}
-              hideDownload={hideDownload}
+              hideDownload={true}
               cardConfiguration={cardConfiguration}
               initialLimit={initialLimit}
             />
@@ -257,9 +250,7 @@ export default function SearchQueryWrapperPlotNav(
             facetsToPlot={props.facetsToPlot}
             availableFacets={props.availableFacets}
             initialExpandedFacetControls={props.initialExpandedFacetControls}
-            hideDownload={props.hideDownload}
             hideQueryCount={props.hideQueryCount}
-            hideSqlEditorControl={props.hideSqlEditorControl}
             hideVisualizationsControl={props.hideVisualizationsControl}
             initialLimit={props.initialLimit}
             initialPlotTypeByFacetColumnName={

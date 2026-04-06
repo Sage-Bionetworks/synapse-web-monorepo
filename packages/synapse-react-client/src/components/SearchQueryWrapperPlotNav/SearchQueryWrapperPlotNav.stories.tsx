@@ -62,7 +62,6 @@ export const TableWithFacetsOnly: Story = {
     availableFacets: ['consortium', 'diagnosis', 'organ', 'tissue'],
     defaultShowPlots: false,
     hideTopLevelControls: false,
-    hideDownload: true,
     hideQueryCount: false,
   },
 }
