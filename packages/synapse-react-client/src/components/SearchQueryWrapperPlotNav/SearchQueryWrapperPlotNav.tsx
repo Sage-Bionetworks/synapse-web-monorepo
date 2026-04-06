@@ -3,9 +3,9 @@ import { SynapseConstants } from '@/utils'
 import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
 import { Box } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
-import { Suspense, useMemo } from 'react'
+import { Suspense } from 'react'
+import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import { CardConfiguration } from '../CardContainer/CardConfiguration'
-import { SynapseErrorBoundary } from '../error'
 import { useQueryContext } from '../QueryContext'
 import {
   QueryVisualizationContextConsumer,
@@ -13,6 +13,7 @@ import {
   QueryVisualizationWrapperProps,
 } from '../QueryVisualizationWrapper'
 import QueryWrapperLoadingScreen from '../QueryWrapper/QueryWrapperLoadingScreen'
+import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
 import { SynapseTableConfiguration } from '../SynapseTable'
 import TopLevelControls, {
   TopLevelControlsProps,
@@ -44,6 +45,9 @@ type SearchQueryWrapperPlotNavOwnProps = {
   initialExpandedFacetControls?: FacetFilterControlsProps['initialExpandedFacetControls']
   initialLimit?: number
   hideTopLevelControls?: boolean
+  // Note: hideDownload, hideSqlEditorControl, and hideSearchBarControl are intentionally
+  // excluded — they are hardcoded to true because these controls are not applicable to the
+  // SearchQueryServicesApi (no file download, no SQL editing, no text search).
 }
 
 export type SearchQueryWrapperPlotNavProps = SearchQueryWrapperPlotNavOwnProps &
@@ -134,7 +138,7 @@ function SearchQueryWrapperPlotNavContents(
               },
             }}
           >
-            <SynapseErrorBoundary>
+            <QueryWrapperErrorBoundary>
               {!hideTopLevelControls && (
                 <TopLevelControls
                   showColumnSelection={tableConfiguration !== undefined}
@@ -148,30 +152,30 @@ function SearchQueryWrapperPlotNavContents(
                   hideSqlEditorControl={true}
                 />
               )}
-            </SynapseErrorBoundary>
-            {isFaceted && (
-              <FacetFilterControls
-                availableFacets={availableFacets}
-                initialExpandedFacetControls={initialExpandedFacetControls}
+              {isFaceted && (
+                <FacetFilterControls
+                  availableFacets={availableFacets}
+                  initialExpandedFacetControls={initialExpandedFacetControls}
+                />
+              )}
+              <TotalQueryResults
+                frontText={''}
+                endText={hasFacetsOrFilters ? 'filtered by' : ''}
+                hideIfUnfiltered={true}
               />
-            )}
-            <TotalQueryResults
-              frontText={''}
-              endText={hasFacetsOrFilters ? 'filtered by' : ''}
-              hideIfUnfiltered={true}
-            />
-            <PlotsContainer
-              facetsToPlot={facetsToPlot}
-              initialPlotTypeByFacetColumnName={
-                initialPlotTypeByFacetColumnName
-              }
-            />
-            <RowSetView
-              tableConfiguration={tableConfiguration}
-              hideDownload={true}
-              cardConfiguration={cardConfiguration}
-              initialLimit={initialLimit}
-            />
+              <PlotsContainer
+                facetsToPlot={facetsToPlot}
+                initialPlotTypeByFacetColumnName={
+                  initialPlotTypeByFacetColumnName
+                }
+              />
+              <RowSetView
+                tableConfiguration={tableConfiguration}
+                hideDownload={true}
+                cardConfiguration={cardConfiguration}
+                initialLimit={initialLimit}
+              />
+            </QueryWrapperErrorBoundary>
           </Box>
         )
       }}
@@ -203,19 +207,15 @@ export default function SearchQueryWrapperPlotNav(
     initQueryRequest: initQueryRequestFromProps,
   } = props
 
-  const initQueryRequest: SearchQueryWrapperProps['initQueryRequest'] = useMemo(
-    () => ({
-      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+  const initQueryRequest: SearchQueryWrapperProps['initQueryRequest'] =
+    useDeepCompareMemoize({
       partMask: initQueryRequestFromProps?.partMask ?? DEFAULT_PART_MASK,
       query: {
         selectedFacets: initQueryRequestFromProps?.query?.selectedFacets,
         limit: initQueryRequestFromProps?.query?.limit ?? DEFAULT_PAGE_SIZE,
         offset: initQueryRequestFromProps?.query?.offset ?? 0,
       },
-    }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [JSON.stringify(initQueryRequestFromProps)],
-  )
+    })
 
   return (
     <SearchQueryWrapper

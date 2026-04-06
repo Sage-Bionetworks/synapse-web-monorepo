@@ -80,6 +80,9 @@ function processSearchRequest(
   request: SearchQueryBundleRequest,
   baseBundle: QueryResultBundle,
 ): QueryResultBundle {
+  // Note: selectedFacets in the request are intentionally not applied as row filters here.
+  // The mock returns the full registered bundle; tests that need facet-filtered results
+  // should register a separate binding via registerSearchQueryResult().
   let result = baseBundle
   result = applyPartMask(result, request.partMask ?? 0xffffffff)
   result = applyLimitOffset(result, request.query.limit, request.query.offset)

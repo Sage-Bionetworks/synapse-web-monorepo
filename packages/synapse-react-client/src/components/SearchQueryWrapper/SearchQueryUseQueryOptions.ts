@@ -21,6 +21,10 @@ import { KeyFactory } from '@/synapse-queries/KeyFactory'
 /**
  * Converts a QueryBundleRequest (used internally for state management) into a SearchQueryBundleRequest
  * that can be sent to the SearchQueryServicesApi.
+ *
+ * Note: `queryTerm` and `facetOptions` are not mapped from the internal QueryBundleRequest because
+ * QueryBundleRequest has no equivalent fields. These search-specific fields would be passed directly
+ * to SearchQueryWrapper when the search-as-you-type feature is implemented.
  */
 export function toSearchQueryBundleRequest(
   queryBundleRequest: QueryBundleRequest,
@@ -55,8 +59,9 @@ export function getSearchQueryUseQueryOptions(
     metadataPartMask,
   )
 
-  // Cast to the expected TableQueryUseQueryOptions types — necessary because
-  // SearchQueryBundleRequest differs from QueryBundleRequest (no entityId/sql).
+  // `as unknown as` is necessary because TableQueryUseQueryOptions is parameterized
+  // over QueryBundleRequest, but SearchQueryBundleRequest has no entityId/sql fields.
+  // The runtime shape is compatible — only the TypeScript generics differ.
   const rowDataQueryOptions = {
     ...tableQueryUseQueryDefaults,
     queryKey: keyFactory.getSearchQueryResultWithAsyncStatusQueryKey(
@@ -121,23 +126,25 @@ export function getSearchQueryUseQueryOptions(
         AsynchronousJobStatus<SearchQueryBundleRequest, QueryResultBundle>
       >,
     ) => {
-      // Merge first-page metadata into subsequent pages that only have row data
+      // Merge first-page metadata into subsequent pages that only have row data.
+      // Return new objects to avoid mutating TanStack Query's cache.
       const firstPage = data?.pages[0]
-      if (firstPage?.responseBody) {
-        for (let i = 1; i < data.pages.length; i++) {
-          if (data.pages[i].responseBody == null) {
-            data.pages[i] = {
-              ...data.pages[i],
-              responseBody: {
-                ...firstPage.responseBody,
-                queryResult: data.pages[i].responseBody?.queryResult,
-              },
-            }
+      if (!firstPage?.responseBody) return data
+      return {
+        ...data,
+        pages: data.pages.map((page, i) => {
+          if (i === 0 || page.responseBody != null) return page
+          return {
+            ...page,
+            responseBody: {
+              ...firstPage.responseBody,
+              queryResult: undefined,
+            },
           }
-        }
+        }),
       }
-      return data
     },
+    // Same rationale as rowDataQueryOptions: SearchQueryBundleRequest vs QueryBundleRequest generics.
   } as unknown as TableQueryUseQueryOptions['rowDataInfiniteQueryOptions']
 
   const queryMetadataQueryOptions = {
@@ -155,6 +162,7 @@ export function getSearchQueryUseQueryOptions(
         QueryResultBundle,
         'queryResult'
       >,
+    // Same rationale as rowDataQueryOptions: SearchQueryBundleRequest vs QueryBundleRequest generics.
   } as unknown as TableQueryUseQueryOptions['queryMetadataQueryOptions']
 
   return {

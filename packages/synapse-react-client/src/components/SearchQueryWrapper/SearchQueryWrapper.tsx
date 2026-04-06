@@ -54,21 +54,18 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
   // Build a full synthetic QueryBundleRequest so we can reuse useImmutableTableQuery.
   // The entityId and sql are placeholders; only selectedFacets, limit, offset, and partMask
   // are passed through to the actual SearchQueryServicesApi call.
-  const initQueryRequest: QueryBundleRequest = useMemo(
-    () => ({
-      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-      entityId: SEARCH_QUERY_WRAPPER_SYNTHETIC_ENTITY_ID,
-      partMask: initQueryRequestFromProps.partMask ?? 0,
-      query: {
-        sql: SEARCH_QUERY_WRAPPER_SYNTHETIC_SQL,
-        selectedFacets: initQueryRequestFromProps.query?.selectedFacets,
-        limit: initQueryRequestFromProps.query?.limit,
-        offset: initQueryRequestFromProps.query?.offset,
-      },
-    }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [JSON.stringify(initQueryRequestFromProps)],
-  )
+  const initQueryRequest = useDeepCompareMemoize({
+    concreteType:
+      'org.sagebionetworks.repo.model.table.QueryBundleRequest' as const,
+    entityId: SEARCH_QUERY_WRAPPER_SYNTHETIC_ENTITY_ID,
+    partMask: initQueryRequestFromProps.partMask ?? 0,
+    query: {
+      sql: SEARCH_QUERY_WRAPPER_SYNTHETIC_SQL,
+      selectedFacets: initQueryRequestFromProps.query?.selectedFacets,
+      limit: initQueryRequestFromProps.query?.limit,
+      offset: initQueryRequestFromProps.query?.offset,
+    },
+  }) as QueryBundleRequest
 
   const immutableTableQueryResult = useImmutableTableQuery({
     initQueryRequest,
@@ -95,15 +92,11 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
     setPageSize,
   } = immutableTableQueryResult
 
-  const lastQueryRequest = useMemo(() => {
-    return getCurrentQueryRequest()
-  }, [getCurrentQueryRequest])
-
   const {
     rowDataQueryOptions,
     rowDataInfiniteQueryOptions,
     queryMetadataQueryOptions,
-  } = useSearchQueryUseQueryOptions(lastQueryRequest)
+  } = useSearchQueryUseQueryOptions(currentQueryRequest as QueryBundleRequest)
 
   const hasFacetedSelectColumn = useHasFacetedSelectColumn(
     queryMetadataQueryOptions,
