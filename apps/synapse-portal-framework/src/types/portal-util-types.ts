@@ -18,6 +18,12 @@ export type DetailsPageProps = {
   ContainerProps?: ContainerProps
   /** The set of column name(s) which define the main unique key of the column (used to define the canonical URL for SEO) */
   resourcePrimaryKey: string[]
+  /**
+   * Set to true for SSG portals where the canonical URL is emitted via the route's
+   * meta() export (so it is present in pre-rendered HTML). Prevents DetailsPageDocumentMetadata
+   * from running and overwriting the static canonical tag after hydration.
+   */
+  disableCanonicalUrl?: boolean
   /** Configuration for displaying a DOI */
   portalDOIConfiguration?: PortalDOIConfiguration
 }

@@ -4,10 +4,10 @@ import { ReactComponent as Ctf } from '@/assets/homepage/ctf.svg'
 import { ReactComponent as Gff } from '@/assets/homepage/gff.svg'
 import { ReactComponent as Gray } from '@/assets/homepage/gray.svg'
 import { ReactComponent as MlCommons } from '@/assets/homepage/ml-commons.svg'
-import { ReactComponent as Nci } from '@/assets/homepage/nci.svg'
+import { ReactComponent as Nci } from '@/assets/homepage/nih-nci.svg'
 import { ReactComponent as NihAging } from '@/assets/homepage/nih-aging.svg'
 import { ReactComponent as NihHeart } from '@/assets/homepage/nih-heart.svg'
-import { ReactComponent as NihMental } from '@/assets/homepage/nih-mental.svg'
+import { ReactComponent as NihMental } from '@/assets/homepage/nih-nimh.svg'
 import { ReactComponent as Ntap } from '@/assets/homepage/ntap.svg'
 import { ReactComponent as Sloan } from '@/assets/homepage/sloan.svg'
 import { Box } from '@mui/material'
@@ -22,6 +22,12 @@ export function SynapsePartners() {
           justifyContent: 'center',
           alignItems: 'center',
           gap: '25px',
+
+          '& > a': {
+            display: 'flex',
+            justifyContent: 'center',
+            width: { xs: '100%', sm: 'auto' },
+          },
         }}
       >
         <a href="https://sloan.org/" target="_blank" rel="noreferrer">

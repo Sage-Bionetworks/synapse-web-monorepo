@@ -22,7 +22,7 @@ export default function LegacyDetailsPageRedirect({
 
   // Strip the trailing /DetailsPage segment from the current pathname to get
   // the new base, e.g. /Explore/Datasets/DetailsPage → /Explore/Datasets
-  const newBase = pathname.replace(/\/DetailsPage$/, '')
+  const newBase = pathname.replace(/\/DetailsPage\/?$/, '')
 
   if (!id) {
     return <Navigate to={newBase} replace />

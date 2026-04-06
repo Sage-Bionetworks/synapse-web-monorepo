@@ -3,6 +3,7 @@ import type {
   DetailPageMetadata,
 } from './fetchDetailPageMetadata'
 import { fetchDetailPageMetadata } from './fetchDetailPageMetadata'
+import { getPortalOrigin } from './getPortalOrigin'
 import type { MetaDescriptor } from 'react-router'
 
 /** Base loader data shape for standard detail pages. */
@@ -19,14 +20,15 @@ export type BaseDetailPageLoaderData = DetailPageMetadata
  * the base data (e.g. DatasetDetailsPage adding Croissant JSON-LD) without
  * forking the core logic.
  *
- * `portalName` must be passed explicitly from the portal (e.g.
- * `import.meta.env.VITE_PORTAL_NAME`). It cannot be read inside this library
- * because the framework package is pre-built separately from each portal's
- * Vite build, so `import.meta.env` variables are not available here at
- * runtime.
+ * `portalName` and `portalKey` must be passed explicitly from the portal (e.g.
+ * `import.meta.env.VITE_PORTAL_NAME` and `import.meta.env.VITE_PORTAL_KEY`).
+ * They cannot be read inside this library because the framework package is
+ * pre-built separately from each portal's Vite build, so `import.meta.env`
+ * variables are not available here at runtime.
  *
  * @param config - Metadata config with sql, titleColumn, descriptionColumn, paramName
  * @param options.portalName   - Portal display name appended to the `<title>`, e.g. "NF Data Portal"
+ * @param options.portalKey    - Portal key used to construct the canonical URL, e.g. "nf"
  * @param options.extendLoader - Additional async work; receives the base metadata and params
  * @param options.extendMeta  - Additional meta descriptors derived from loader data
  * @returns Object with `loader`, `clientLoader`, and `meta` exports ready to spread
@@ -63,6 +65,14 @@ export function createDetailPageRouteExports<
   options: {
     /** Portal display name appended to each `<title>`, e.g. "NF Data Portal". */
     portalName: string
+    /**
+     * Portal key used to construct the canonical URL (e.g. "nf" → https://nf.synapse.org).
+     * When provided, a `<link rel="canonical">` tag is emitted in the route's meta() output,
+     * which ensures the canonical URL appears in pre-rendered HTML for SSG portals.
+     * Must be passed explicitly from the portal (e.g. `import.meta.env.VITE_PORTAL_KEY`)
+     * because `import.meta.env` is not available inside this pre-built library.
+     */
+    portalKey: string
     /** Additional async work in the loader. Receives the base metadata and params. */
     extendLoader?: (
       baseData: BaseDetailPageLoaderData,
@@ -72,7 +82,7 @@ export function createDetailPageRouteExports<
     extendMeta?: (loaderData: TLoaderData) => MetaDescriptor[]
   },
 ) {
-  const { portalName, extendLoader, extendMeta } = options
+  const { portalName, portalKey, extendLoader, extendMeta } = options
 
   async function loader({
     params,
@@ -108,16 +118,28 @@ export function createDetailPageRouteExports<
   function meta({
     loaderData,
     matches,
+    location,
   }: {
     loaderData?: TLoaderData
     matches: Array<{ meta: MetaDescriptor[] }>
+    location: { pathname: string }
   }): MetaDescriptor[] {
-    if (!loaderData?.title) {
-      return matches.flatMap(match => match.meta ?? [])
+    const descriptors: MetaDescriptor[] = []
+
+    if (portalKey) {
+      const origin = getPortalOrigin(portalKey)
+      descriptors.push({
+        tagName: 'link',
+        rel: 'canonical',
+        href: new URL(location.pathname, origin).toString(),
+      })
     }
-    const descriptors: MetaDescriptor[] = [
-      { title: `${loaderData.title} | ${portalName}` },
-    ]
+
+    if (!loaderData?.title) {
+      return [...matches.flatMap(match => match.meta ?? []), ...descriptors]
+    }
+
+    descriptors.push({ title: `${loaderData.title} | ${portalName}` })
     if (loaderData.description) {
       descriptors.push({ name: 'description', content: loaderData.description })
     }

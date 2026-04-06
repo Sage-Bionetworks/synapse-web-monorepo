@@ -16,15 +16,15 @@ export const useShowDesktop = () =>
 
 export const RESPONSIVE_SIDE_PADDING = {
   px: {
-    xs: 2,
-    md: 5,
+    xs: '16px !important',
+    md: '40px !important',
   },
 } satisfies SxProps
 
 // Should stay in sync with RESPONSIVE_SIDE_PADDING
 export const NEGATIVE_RESPONSIVE_SIDE_MARGIN = {
   mx: {
-    xs: -2,
-    md: -5,
+    xs: '-16px !important',
+    md: '-40px !important',
   },
 } satisfies SxProps
