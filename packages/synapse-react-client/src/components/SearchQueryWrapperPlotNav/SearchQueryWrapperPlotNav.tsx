@@ -1,5 +1,4 @@
 import { NoContentPlaceholderType } from '@/components/SynapseTable/NoContentPlaceholderType'
-import { SynapseConstants } from '@/utils'
 import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
 import { Box } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
@@ -36,6 +35,8 @@ import {
 } from '../QueryWrapperPlotNav/QueryWrapperPlotNav'
 
 type SearchQueryWrapperPlotNavOwnProps = {
+  /** The ID of the SearchIndex entity to query. */
+  searchIndexId: string
   /** Whether the displayed results should be paginated or infinite. Default for cards is true, default for table is false */
   isInfinite?: boolean
   tableConfiguration?: SynapseTableConfiguration
@@ -183,14 +184,6 @@ function SearchQueryWrapperPlotNavContents(
   )
 }
 
-const DEFAULT_PART_MASK =
-  SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
-  SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
-  SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-  SynapseConstants.BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE |
-  SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-  SynapseConstants.BUNDLE_MASK_QUERY_FACETS
-
 /**
  * A component similar to QueryWrapperPlotNav that sources its data from the SearchQueryServicesApi
  * rather than the standard Synapse Table Services. Facets, table/card rendering, and plots are
@@ -205,11 +198,12 @@ export default function SearchQueryWrapperPlotNav(
     unitDescription,
     helpConfiguration,
     initQueryRequest: initQueryRequestFromProps,
+    searchIndexId,
   } = props
 
   const initQueryRequest: SearchQueryWrapperProps['initQueryRequest'] =
     useDeepCompareMemoize({
-      partMask: initQueryRequestFromProps?.partMask ?? DEFAULT_PART_MASK,
+      partMask: initQueryRequestFromProps?.partMask ?? 0,
       query: {
         selectedFacets: initQueryRequestFromProps?.query?.selectedFacets,
         limit: initQueryRequestFromProps?.query?.limit ?? DEFAULT_PAGE_SIZE,
@@ -220,6 +214,7 @@ export default function SearchQueryWrapperPlotNav(
   return (
     <SearchQueryWrapper
       key={JSON.stringify(initQueryRequest)}
+      searchIndexId={searchIndexId}
       initQueryRequest={initQueryRequest}
       isInfinite={isInfinite}
     >

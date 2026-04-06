@@ -22,6 +22,10 @@ export const SEARCH_QUERY_WRAPPER_SYNTHETIC_SQL = `SELECT * FROM ${SEARCH_QUERY_
 
 export type SearchQueryWrapperProps = PropsWithChildren<{
   /**
+   * The ID of the SearchIndex entity to query.
+   */
+  searchIndexId: string
+  /**
    * The initial query request. Only `query.selectedFacets`, `query.limit`, and `query.offset`
    * are used; the `entityId` and `sql` fields are overridden with synthetic values.
    * The `partMask` controls which parts of the response bundle to request.
@@ -49,6 +53,7 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
     initQueryRequest: initQueryRequestFromProps,
     onQueryChange,
     isInfinite = false,
+    searchIndexId,
   } = props
 
   // Build a full synthetic QueryBundleRequest so we can reuse useImmutableTableQuery.
@@ -96,7 +101,10 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
     rowDataQueryOptions,
     rowDataInfiniteQueryOptions,
     queryMetadataQueryOptions,
-  } = useSearchQueryUseQueryOptions(currentQueryRequest as QueryBundleRequest)
+  } = useSearchQueryUseQueryOptions(
+    currentQueryRequest as QueryBundleRequest,
+    searchIndexId,
+  )
 
   const hasFacetedSelectColumn = useHasFacetedSelectColumn(
     queryMetadataQueryOptions,

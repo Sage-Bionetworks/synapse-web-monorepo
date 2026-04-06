@@ -30,7 +30,7 @@ import { KeyFactory } from '@/synapse-queries/KeyFactory'
  */
 export function toSearchIndexQuery(
   queryBundleRequest: QueryBundleRequest,
-  searchIndexId?: string,
+  searchIndexId: string,
 ): SearchIndexQuery {
   const facetRequests: FacetRequest[] | undefined =
     queryBundleRequest.query.selectedFacets?.map(f => ({
@@ -112,7 +112,7 @@ export function getSearchQueryUseQueryOptions(
   queryBundleRequest: QueryBundleRequest,
   keyFactory: KeyFactory,
   accessToken: string | undefined,
-  searchIndexId?: string,
+  searchIndexId: string,
 ): TableQueryUseQueryOptions {
   const rowDataQuery = toSearchIndexQuery(queryBundleRequest, searchIndexId)
   const metadataQuery = toSearchIndexQuery(queryBundleRequest, searchIndexId)
@@ -215,7 +215,7 @@ export function getSearchQueryUseQueryOptions(
  */
 export function useSearchQueryUseQueryOptions(
   queryBundleRequest: QueryBundleRequest,
-  searchIndexId?: string,
+  searchIndexId: string,
 ): TableQueryUseQueryOptions {
   const { keyFactory, accessToken } = useSynapseContext()
 

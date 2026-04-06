@@ -14,6 +14,7 @@ type Story = StoryObj<typeof meta>
 
 export const TableView: Story = {
   args: {
+    searchIndexId: 'syn123',
     name: 'Search Results',
     unitDescription: 'file',
     tableConfiguration: {
@@ -26,8 +27,8 @@ export const TableView: Story = {
 
 export const CardView: Story = {
   args: {
+    searchIndexId: 'syn123',
     name: 'Search Results',
-    unitDescription: 'dataset',
     cardConfiguration: {
       type: GENERIC_CARD,
       genericCardSchema: {
@@ -45,6 +46,7 @@ export const CardView: Story = {
 
 export const TableWithFacetsOnly: Story = {
   args: {
+    searchIndexId: 'syn123',
     name: 'Search Results',
     unitDescription: 'result',
     tableConfiguration: {},
