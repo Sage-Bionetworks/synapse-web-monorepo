@@ -191,9 +191,6 @@ const DEFAULT_PART_MASK =
  * A component similar to QueryWrapperPlotNav that sources its data from the SearchQueryServicesApi
  * rather than the standard Synapse Table Services. Facets, table/card rendering, and plots are
  * all reused from the existing component library.
- *
- * Note: The SearchQueryServicesApi is not yet functional; a mock implementation is used in
- * development and tests.
  */
 export default function SearchQueryWrapperPlotNav(
   props: SearchQueryWrapperPlotNavProps,

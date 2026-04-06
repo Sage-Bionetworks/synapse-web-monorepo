@@ -12,10 +12,6 @@ const meta: Meta<SearchQueryWrapperPlotNavProps> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-/**
- * Table view with faceted filtering.
- * Uses mock data from the SearchQueryServicesApi (not yet functional).
- */
 export const TableView: Story = {
   args: {
     name: 'Search Results',
@@ -28,10 +24,6 @@ export const TableView: Story = {
   },
 }
 
-/**
- * Card view with faceted filtering.
- * Uses mock data from the SearchQueryServicesApi (not yet functional).
- */
 export const CardView: Story = {
   args: {
     name: 'Search Results',
@@ -51,9 +43,6 @@ export const CardView: Story = {
   },
 }
 
-/**
- * Table view with only facet filter controls (no plots).
- */
 export const TableWithFacetsOnly: Story = {
   args: {
     name: 'Search Results',

@@ -2,9 +2,7 @@ import { FacetColumnRequest } from './Table/FacetColumnRequest'
 import { SearchFacetOption } from './Search'
 
 /**
- * Request type for the new SearchQueryServicesApi.
- * Note: This API is not yet functional; mock implementations are used for development.
- * https://sagebionetworks.jira.com/browse/PORTALS-4134
+ * Request type for the SearchQueryServicesApi.
  */
 export type SearchQueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.search.query.SearchQueryBundleRequest'

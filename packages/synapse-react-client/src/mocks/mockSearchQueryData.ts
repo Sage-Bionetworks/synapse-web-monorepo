@@ -4,11 +4,6 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '@/utils'
 
-/**
- * Mock data for the SearchQueryServicesApi.
- * Used in tests and Storybook while the API is under development.
- */
-
 export const mockSearchQueryRequest: SearchQueryBundleRequest = {
   concreteType:
     'org.sagebionetworks.repo.model.search.query.SearchQueryBundleRequest',

@@ -159,8 +159,6 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
  * Provides a QueryContext populated by results from the SearchQueryServicesApi rather than
  * the standard Table Query Services. All subcomponents that consume QueryContext can be
  * used unchanged within a SearchQueryWrapper tree.
- *
- * Note: The SearchQueryServicesApi is not yet functional; mock data is used in development.
  */
 export function SearchQueryWrapper(props: SearchQueryWrapperProps) {
   return (

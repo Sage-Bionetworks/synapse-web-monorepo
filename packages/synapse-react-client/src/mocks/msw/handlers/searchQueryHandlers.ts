@@ -115,7 +115,7 @@ function getSearchQueryResult(
 }
 
 /**
- * Returns MSW handlers for the SearchQueryServicesApi mock endpoints.
+ * Returns MSW handlers for the SearchQueryServicesApi endpoints.
  * Uses the default mock data from mockSearchQueryData.ts unless overridden via registerSearchQueryResult().
  */
 export function getHandlersForSearchQuery(

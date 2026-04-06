@@ -582,7 +582,6 @@ export const getQueryTableAsyncJobResults = async (
 }
 
 /**
- * Calls the new SearchQueryServicesApi (not yet functional; mock implementations are used for development).
  * @param searchQueryRequest
  * @param accessToken
  * @param setCurrentAsyncStatus
