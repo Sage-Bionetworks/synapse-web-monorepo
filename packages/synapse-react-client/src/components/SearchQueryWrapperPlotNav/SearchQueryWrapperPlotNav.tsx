@@ -59,7 +59,6 @@ export type SearchQueryWrapperPlotNavProps = SearchQueryWrapperPlotNavOwnProps &
     | 'unitDescription'
     | 'helpConfiguration'
     | 'hideCopyToClipboard'
-    | 'hideSearchBarControl'
     | 'hideVisualizationsControl'
   > &
   Pick<TopLevelControlsProps, 'name' | 'hideQueryCount'> & {
@@ -236,7 +235,7 @@ export default function SearchQueryWrapperPlotNav(
           visibleColumnCount={props.visibleColumnCount}
           defaultShowPlots={props.defaultShowPlots}
           hideCopyToClipboard={props.hideCopyToClipboard}
-          hideSearchBarControl={props.hideSearchBarControl}
+          hideSearchBarControl={true}
           showLastUpdatedOn={props.showLastUpdatedOn}
           noContentPlaceholderType={
             props.noContentPlaceholderType ??
