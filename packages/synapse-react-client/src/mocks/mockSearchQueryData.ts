@@ -1,22 +1,9 @@
-import {
-  QueryResultBundle,
-  SearchQueryBundleRequest,
-} from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from '@/utils'
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
+import { SearchIndexQuery } from '@sage-bionetworks/synapse-client'
 
-export const mockSearchQueryRequest: SearchQueryBundleRequest = {
-  concreteType:
-    'org.sagebionetworks.repo.model.search.query.SearchQueryBundleRequest',
-  query: {
-    limit: 25,
-    offset: 0,
-  },
-  partMask:
-    SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
-    SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
-    SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
-    SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
-    SynapseConstants.BUNDLE_MASK_QUERY_FACETS,
+export const mockSearchIndexQuery: SearchIndexQuery = {
+  limit: 25,
+  offset: 0,
 }
 
 export const mockSearchQueryResultBundle: QueryResultBundle = {

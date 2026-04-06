@@ -108,6 +108,8 @@ import {
   DoiAssociation,
   EntityType,
   ViewEntityType,
+  SearchIndexQuery,
+  SearchQueryResults,
 } from '@sage-bionetworks/synapse-client'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import {
@@ -339,7 +341,6 @@ import {
   ViewColumnModelResponse,
   WikiPage,
   WikiPageKey,
-  SearchQueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
 import { JSONSchema7 } from 'json-schema'
 import { memoize } from 'lodash-es'
@@ -587,21 +588,19 @@ export const getQueryTableAsyncJobResults = async (
  * @param setCurrentAsyncStatus
  */
 export const getSearchQueryAsyncJobResults = async (
-  searchQueryRequest: SearchQueryBundleRequest,
+  searchIndexQuery: SearchIndexQuery,
   accessToken?: string,
   setCurrentAsyncStatus?: (
-    result: AsynchronousJobStatus<SearchQueryBundleRequest, QueryResultBundle>,
+    result: AsynchronousJobStatus<SearchIndexQuery, SearchQueryResults>,
   ) => void,
-): Promise<
-  AsynchronousJobStatus<SearchQueryBundleRequest, QueryResultBundle>
-> => {
+): Promise<AsynchronousJobStatus<SearchIndexQuery, SearchQueryResults>> => {
   const asyncJobId = await doPost<AsyncJobId>(
     SEARCH_QUERY_ASYNC_START,
-    searchQueryRequest,
+    searchIndexQuery,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
-  return getAsyncResultFromJobId<SearchQueryBundleRequest, QueryResultBundle>(
+  return getAsyncResultFromJobId<SearchIndexQuery, SearchQueryResults>(
     asyncJobId.token,
     SEARCH_QUERY_ASYNC_GET(asyncJobId.token),
     accessToken,

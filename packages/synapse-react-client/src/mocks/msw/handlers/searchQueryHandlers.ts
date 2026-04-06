@@ -1,14 +1,4 @@
 import {
-  BUNDLE_MASK_QUERY_RESULTS,
-  BUNDLE_MASK_QUERY_COUNT,
-  BUNDLE_MASK_QUERY_SELECT_COLUMNS,
-  BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE,
-  BUNDLE_MASK_QUERY_COLUMN_MODELS,
-  BUNDLE_MASK_QUERY_FACETS,
-  BUNDLE_MASK_SUM_FILES_SIZE_BYTES,
-  BUNDLE_MASK_LAST_UPDATED_ON,
-} from '@/utils/SynapseConstants'
-import {
   SEARCH_QUERY_ASYNC_GET,
   SEARCH_QUERY_ASYNC_START,
 } from '@/utils/APIConstants'
@@ -16,29 +6,25 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import {
-  QueryResultBundle,
-  SearchQueryBundleRequest,
-} from '@sage-bionetworks/synapse-types'
+  SearchIndexQuery,
+  SearchQueryResults,
+} from '@sage-bionetworks/synapse-client'
 import { cloneDeep, omit } from 'lodash-es'
 import { generateAsyncJobHandlers } from './asyncJobHandlers'
 import { mockSearchQueryResultBundle } from '@/mocks/mockSearchQueryData'
 import BasicMockedCrudService from '../util/BasicMockedCrudService'
 
-const BIT_TO_FIELD_MAP: Record<number, keyof QueryResultBundle> = {
-  [BUNDLE_MASK_QUERY_RESULTS]: 'queryResult',
-  [BUNDLE_MASK_QUERY_COUNT]: 'queryCount',
-  [BUNDLE_MASK_QUERY_SELECT_COLUMNS]: 'selectColumns',
-  [BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE]: 'maxRowsPerPage',
-  [BUNDLE_MASK_QUERY_COLUMN_MODELS]: 'columnModels',
-  [BUNDLE_MASK_QUERY_FACETS]: 'facets',
-  [BUNDLE_MASK_SUM_FILES_SIZE_BYTES]: 'sumFileSizes',
-  [BUNDLE_MASK_LAST_UPDATED_ON]: 'lastUpdatedOn',
-}
+/**
+ * A key derived from a SearchIndexQuery, excluding pagination fields.
+ * Used to match registered bindings against incoming requests.
+ */
+type SearchIndexQueryKey = Omit<SearchIndexQuery, 'limit' | 'offset'>
 
 type SearchQueryBinding = {
   id: string
-  query: Omit<SearchQueryBundleRequest['query'], 'limit' | 'offset'>
+  queryKey: SearchIndexQueryKey
   result: QueryResultBundle
 }
 
@@ -49,19 +35,6 @@ const mockSearchQueryService = new BasicMockedCrudService<
   idField: 'id',
   autoGenerateId: true,
 })
-
-function applyPartMask(
-  bundle: QueryResultBundle,
-  partMask: number,
-): QueryResultBundle {
-  const result = cloneDeep(bundle)
-  Object.entries(BIT_TO_FIELD_MAP).forEach(([bit, field]) => {
-    if ((partMask & parseInt(bit)) === 0) {
-      delete result[field]
-    }
-  })
-  return result
-}
 
 function applyLimitOffset(
   bundle: QueryResultBundle,
@@ -77,44 +50,61 @@ function applyLimitOffset(
 }
 
 function processSearchRequest(
-  request: SearchQueryBundleRequest,
+  request: SearchIndexQuery,
   baseBundle: QueryResultBundle,
 ): QueryResultBundle {
-  // Note: selectedFacets in the request are intentionally not applied as row filters here.
-  // The mock returns the full registered bundle; tests that need facet-filtered results
-  // should register a separate binding via registerSearchQueryResult().
-  let result = baseBundle
-  result = applyPartMask(result, request.partMask ?? 0xffffffff)
-  result = applyLimitOffset(result, request.query.limit, request.query.offset)
-  return result
+  return applyLimitOffset(baseBundle, request.limit, request.offset)
 }
 
 /**
  * Register a specific query binding for the mock search service.
- * If a binding for the same query (ignoring limit/offset) already exists, it is updated.
+ * If a binding for the same query key (ignoring limit/offset) already exists, it is updated.
  */
 export function registerSearchQueryResult(
-  query: Omit<SearchQueryBundleRequest['query'], 'limit' | 'offset'>,
+  queryKey: SearchIndexQueryKey,
   result: QueryResultBundle,
 ) {
-  const existing = mockSearchQueryService.getOneByField('query', query)
+  const existing = mockSearchQueryService.getOneByField('queryKey', queryKey)
   if (existing) {
     mockSearchQueryService.update(existing.id, { ...existing, result })
   } else {
-    mockSearchQueryService.create({ query, result })
+    mockSearchQueryService.create({ queryKey, result })
   }
 }
 
-function getSearchQueryResult(
-  request: SearchQueryBundleRequest,
-): QueryResultBundle {
-  const queryKey = omit(cloneDeep(request.query), ['limit', 'offset'])
+function getSearchQueryResult(request: SearchIndexQuery): QueryResultBundle {
+  const queryKey = omit(cloneDeep(request), [
+    'limit',
+    'offset',
+  ]) as SearchIndexQueryKey
 
-  // Try to find a registered binding
-  const binding = mockSearchQueryService.getOneByField('query', queryKey)
+  const binding = mockSearchQueryService.getOneByField('queryKey', queryKey)
   const baseBundle = binding?.result ?? mockSearchQueryResultBundle
 
   return processSearchRequest(request, baseBundle)
+}
+
+/**
+ * Adapts the QueryResultBundle mock result into the SearchQueryResults shape
+ * that the real SearchQueryServicesApi returns.
+ */
+function toSearchQueryResults(bundle: QueryResultBundle): SearchQueryResults {
+  const hits = (bundle.queryResult?.queryResults.rows ?? []).map(row => ({
+    rowId: row.rowId,
+    rowVersion: row.versionNumber,
+    fields: (bundle.queryResult?.queryResults.headers ?? []).map(
+      (header, i) => ({ name: header.name, value: row.values[i] ?? undefined }),
+    ),
+  }))
+
+  return {
+    concreteType:
+      'org.sagebionetworks.repo.model.search.SearchQueryResults' as const,
+    totalHits: bundle.queryCount,
+    hits,
+    facets: bundle.facets as SearchQueryResults['facets'],
+    offset: bundle.queryResult?.queryResults.rows?.length ? 0 : undefined,
+  }
 }
 
 /**
@@ -124,10 +114,10 @@ function getSearchQueryResult(
 export function getHandlersForSearchQuery(
   backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
 ) {
-  return generateAsyncJobHandlers<SearchQueryBundleRequest, QueryResultBundle>(
+  return generateAsyncJobHandlers<SearchIndexQuery, SearchQueryResults>(
     SEARCH_QUERY_ASYNC_START,
     tokenParam => SEARCH_QUERY_ASYNC_GET(tokenParam),
-    request => getSearchQueryResult(request),
+    request => toSearchQueryResults(getSearchQueryResult(request)),
     backendOrigin,
   )
 }

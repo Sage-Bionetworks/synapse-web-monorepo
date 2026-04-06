@@ -78,7 +78,7 @@ export * from './RestrictionInformation'
 export * from './ResponseMessage'
 export * from './Schema'
 export * from './Search'
-export * from './SearchQueryServices'
+// SearchQueryServices.ts is kept as a placeholder; types live in @sage-bionetworks/synapse-client
 export * from './SignedToken'
 export * from './Statistics'
 export * from './Subscription'

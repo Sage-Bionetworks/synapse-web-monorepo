@@ -1,24 +1,3 @@
-import { FacetColumnRequest } from './Table/FacetColumnRequest'
-import { SearchFacetOption } from './Search'
-
-/**
- * Request type for the SearchQueryServicesApi.
- */
-export type SearchQueryBundleRequest = {
-  concreteType: 'org.sagebionetworks.repo.model.search.query.SearchQueryBundleRequest'
-  query: {
-    /** Optional free-text search term */
-    queryTerm?: string
-    /** Facet value/range filters to apply */
-    selectedFacets?: FacetColumnRequest[]
-    /** Configuration for which facets to return and how to sort them */
-    facetOptions?: SearchFacetOption[]
-    limit?: number
-    offset?: number
-  }
-  /**
-   * Bitmask specifying which parts of the response bundle to include.
-   * Uses the same BUNDLE_MASK_* constants as QueryBundleRequest.
-   */
-  partMask?: number
-}
+// The SearchQueryServicesApi uses SearchIndexQuery (from synapse-client) as its request type
+// and SearchQueryResults (from synapse-client) as its response type.
+// See packages/synapse-client/src/generated/apis/SearchQueryServicesApi.ts
