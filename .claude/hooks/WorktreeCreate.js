@@ -16,6 +16,12 @@ const input = JSON.parse(fs.readFileSync(process.stdin.fd, 'utf8'))
 const { name, cwd } = input
 const worktreePath = path.join(cwd, '.claude', 'worktrees', name)
 
+// If the worktree directory already exists, reuse it as-is
+if (fs.existsSync(worktreePath)) {
+  process.stdout.write(worktreePath + '\n')
+  process.exit(0)
+}
+
 // Reuse existing branch if it exists, otherwise create a new one
 let branchExists = false
 try {
