@@ -55,6 +55,7 @@ import {
   TYPE_FILTER,
   ViewColumnModelRequest,
   WikiPageKey,
+  SearchQueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
 import { QueryKey } from '@tanstack/react-query'
 
@@ -389,6 +390,13 @@ export class KeyFactory {
         infinite,
       ),
     )
+  }
+
+  public getSearchQueryResultWithAsyncStatusQueryKey(
+    request: SearchQueryBundleRequest,
+    infinite: boolean,
+  ) {
+    return this.getKey('searchQueryResult', infinite, request)
   }
 
   public getRootWikiPageKeyQueryKey(

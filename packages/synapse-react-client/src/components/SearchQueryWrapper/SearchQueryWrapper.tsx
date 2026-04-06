@@ -1,0 +1,171 @@
+import { hasResettableFilters as hasResettableFiltersUtil } from '@/utils/functions/queryUtils'
+import useImmutableTableQuery from '@/utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { Provider } from 'jotai'
+import { PropsWithChildren, useMemo } from 'react'
+import { useDeepCompareMemoize } from 'use-deep-compare-effect'
+import {
+  QueryContextProvider,
+  QueryContextType,
+} from '../QueryContext/QueryContext'
+import { useSearchQueryUseQueryOptions } from './SearchQueryUseQueryOptions'
+import useHasFacetedSelectColumn from '../QueryWrapper/useHasFacetedSelectColumn'
+import { SessionInitializedGuard } from '@/utils/AppUtils/session/SessionInitializedGuard'
+
+/**
+ * The initQueryRequest used internally within SearchQueryWrapper. It uses a synthetic entity ID
+ * and SQL so we can reuse useImmutableTableQuery for facet/pagination state management, even though
+ * the actual data is fetched from the SearchQueryServicesApi (not a table entity).
+ */
+export const SEARCH_QUERY_WRAPPER_SYNTHETIC_ENTITY_ID = 'search'
+export const SEARCH_QUERY_WRAPPER_SYNTHETIC_SQL = `SELECT * FROM ${SEARCH_QUERY_WRAPPER_SYNTHETIC_ENTITY_ID}`
+
+export type SearchQueryWrapperProps = PropsWithChildren<{
+  /**
+   * The initial query request. Only `query.selectedFacets`, `query.limit`, and `query.offset`
+   * are used; the `entityId` and `sql` fields are overridden with synthetic values.
+   * The `partMask` controls which parts of the response bundle to request.
+   */
+  initQueryRequest: {
+    concreteType?: QueryBundleRequest['concreteType']
+    partMask?: QueryBundleRequest['partMask']
+    query?: Partial<QueryBundleRequest['query']>
+  }
+  /** If onQueryChange is set, the callback will be invoked when the Query changes */
+  onQueryChange?: (newQueryJson: string) => void
+  isInfinite?: boolean
+}>
+
+function SearchQueryWrapperInternal(props: SearchQueryWrapperProps) {
+  return (
+    <SessionInitializedGuard>
+      <SearchQueryWrapperInternalWithSession {...props} />
+    </SessionInitializedGuard>
+  )
+}
+
+function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
+  const {
+    initQueryRequest: initQueryRequestFromProps,
+    onQueryChange,
+    isInfinite = false,
+  } = props
+
+  // Build a full synthetic QueryBundleRequest so we can reuse useImmutableTableQuery.
+  // The entityId and sql are placeholders; only selectedFacets, limit, offset, and partMask
+  // are passed through to the actual SearchQueryServicesApi call.
+  const initQueryRequest: QueryBundleRequest = useMemo(
+    () => ({
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+      entityId: SEARCH_QUERY_WRAPPER_SYNTHETIC_ENTITY_ID,
+      partMask: initQueryRequestFromProps.partMask ?? 0,
+      query: {
+        sql: SEARCH_QUERY_WRAPPER_SYNTHETIC_SQL,
+        selectedFacets: initQueryRequestFromProps.query?.selectedFacets,
+        limit: initQueryRequestFromProps.query?.limit,
+        offset: initQueryRequestFromProps.query?.offset,
+      },
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [JSON.stringify(initQueryRequestFromProps)],
+  )
+
+  const immutableTableQueryResult = useImmutableTableQuery({
+    initQueryRequest,
+    onQueryChange,
+  })
+
+  const {
+    getInitQueryRequest,
+    getCurrentQueryRequest,
+    setQuery,
+    resetQuery,
+    removeSelectedFacet,
+    removeValueFromSelectedFacet,
+    removeQueryFilter,
+    removeValueFromQueryFilter,
+    nextQueryRequest,
+    currentQueryRequest,
+    addValueToSelectedFacet,
+    setRangeFacetValue,
+    resetDebounceTimer,
+    currentPage,
+    goToPage,
+    pageSize,
+    setPageSize,
+  } = immutableTableQueryResult
+
+  const lastQueryRequest = useMemo(() => {
+    return getCurrentQueryRequest()
+  }, [getCurrentQueryRequest])
+
+  const {
+    rowDataQueryOptions,
+    rowDataInfiniteQueryOptions,
+    queryMetadataQueryOptions,
+  } = useSearchQueryUseQueryOptions(lastQueryRequest)
+
+  const hasFacetedSelectColumn = useHasFacetedSelectColumn(
+    queryMetadataQueryOptions,
+  )
+
+  const hasResettableFilters = useMemo(() => {
+    const request = getCurrentQueryRequest()
+    return hasResettableFiltersUtil(request.query, undefined)
+  }, [getCurrentQueryRequest])
+
+  const context: QueryContextType = useDeepCompareMemoize({
+    isInfinite,
+    entityId: SEARCH_QUERY_WRAPPER_SYNTHETIC_ENTITY_ID,
+    versionNumber: undefined,
+    nextQueryRequest,
+    currentQueryRequest,
+    getCurrentQueryRequest,
+    getInitQueryRequest,
+    executeQueryRequest: setQuery,
+    hasFacetedSelectColumn,
+    hasResettableFilters,
+    removeSelectedFacet,
+    removeValueFromSelectedFacet,
+    resetQuery,
+    removeQueryFilter,
+    removeValueFromQueryFilter,
+    onViewSharingSettingsClicked: undefined,
+    addValueToSelectedFacet,
+    combineRangeFacetConfig: undefined,
+    setRangeFacetValue,
+    resetDebounceTimer,
+    rowDataQueryOptions,
+    rowDataInfiniteQueryOptions,
+    queryMetadataQueryOptions,
+    currentPage,
+    goToPage,
+    pageSize,
+    setPageSize,
+    lockedColumn: undefined,
+    fileIdColumnName: undefined,
+    fileVersionColumnName: undefined,
+    fileNameColumnName: undefined,
+  })
+
+  return (
+    <QueryContextProvider queryContext={context}>
+      {props.children}
+    </QueryContextProvider>
+  )
+}
+
+/**
+ * Provides a QueryContext populated by results from the SearchQueryServicesApi rather than
+ * the standard Table Query Services. All subcomponents that consume QueryContext can be
+ * used unchanged within a SearchQueryWrapper tree.
+ *
+ * Note: The SearchQueryServicesApi is not yet functional; mock data is used in development.
+ */
+export function SearchQueryWrapper(props: SearchQueryWrapperProps) {
+  return (
+    <Provider>
+      <SearchQueryWrapperInternal {...props} />
+    </Provider>
+  )
+}

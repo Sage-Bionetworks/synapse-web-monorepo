@@ -67,6 +67,8 @@ import {
   START_CHAT_ASYNC,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
+  SEARCH_QUERY_ASYNC_GET,
+  SEARCH_QUERY_ASYNC_START,
   TEAM,
   TEAM_ID_MEMBER_ID,
   TEAM_ID_MEMBER_ID_WITH_NOTIFICATION,
@@ -337,6 +339,7 @@ import {
   ViewColumnModelResponse,
   WikiPage,
   WikiPageKey,
+  SearchQueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
 import { JSONSchema7 } from 'json-schema'
 import { memoize } from 'lodash-es'
@@ -573,6 +576,35 @@ export const getQueryTableAsyncJobResults = async (
   return getAsyncResultFromJobId<QueryBundleRequest, QueryResultBundle>(
     asyncJobId.token,
     TABLE_QUERY_ASYNC_GET(queryBundleRequest.entityId, asyncJobId.token),
+    accessToken,
+    setCurrentAsyncStatus,
+  )
+}
+
+/**
+ * Calls the new SearchQueryServicesApi (not yet functional; mock implementations are used for development).
+ * @param searchQueryRequest
+ * @param accessToken
+ * @param setCurrentAsyncStatus
+ */
+export const getSearchQueryAsyncJobResults = async (
+  searchQueryRequest: SearchQueryBundleRequest,
+  accessToken?: string,
+  setCurrentAsyncStatus?: (
+    result: AsynchronousJobStatus<SearchQueryBundleRequest, QueryResultBundle>,
+  ) => void,
+): Promise<
+  AsynchronousJobStatus<SearchQueryBundleRequest, QueryResultBundle>
+> => {
+  const asyncJobId = await doPost<AsyncJobId>(
+    SEARCH_QUERY_ASYNC_START,
+    searchQueryRequest,
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+  return getAsyncResultFromJobId<SearchQueryBundleRequest, QueryResultBundle>(
+    asyncJobId.token,
+    SEARCH_QUERY_ASYNC_GET(asyncJobId.token),
     accessToken,
     setCurrentAsyncStatus,
   )
