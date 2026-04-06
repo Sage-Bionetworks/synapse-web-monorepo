@@ -72,7 +72,18 @@ export default {
       console.log(
         `[prerender] Preloaded metadata for ${metadataConfigs.length} detail page types and Croissant`,
       )
-      return [...getStaticPaths(), ...dynamicRoutes]
+
+      // Exclude legacy /DetailsPage redirect routes from prerendering.
+      // Prerendering them creates S3 directory structures (DetailsPage/index.html)
+      // that cause S3 to 302-redirect `/DetailsPage?id=X` → `/DetailsPage/`
+      // while dropping the query string, breaking the client-side redirect logic.
+      // CloudFront serves __spa-fallback.html for these 404s, so React Router
+      // handles them client-side with the full URL (including query params) intact.
+      const staticPaths = getStaticPaths().filter(
+        p => !p.endsWith('/DetailsPage'),
+      )
+
+      return [...staticPaths, ...dynamicRoutes]
     },
     unstable_concurrency: 4,
   },
