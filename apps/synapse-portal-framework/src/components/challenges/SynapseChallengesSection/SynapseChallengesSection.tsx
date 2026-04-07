@@ -85,6 +85,15 @@ const SynapseChallengesSection = ({
           )
         })}
       </Box>
+      <Button
+        component={RouterLink}
+        variant="outlined"
+        to="/OpenChallenges"
+        endIcon={<ArrowForwardIcon />}
+        className={styles.SynapseChallengesSection__viewChallengeListButton}
+      >
+        View All Synapse Challenges
+      </Button>
     </Box>
   )
 }
