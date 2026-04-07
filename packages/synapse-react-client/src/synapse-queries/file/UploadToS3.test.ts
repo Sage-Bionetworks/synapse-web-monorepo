@@ -51,7 +51,6 @@ describe('UploadToS3', () => {
   })
 
   test('failed upload', async () => {
-    // @ts-expect-error - Only implement required properties
     mockUpload.mockImplementation(() => {
       return {
         on: vi.fn(),

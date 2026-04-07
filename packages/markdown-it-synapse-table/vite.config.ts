@@ -4,18 +4,13 @@ import {
   baseConfig,
   vitestConfig,
   nodePolyfillsPlugin,
-  tsconfigPathsPlugin,
   libraryPlugins,
 } from 'vite-config'
 
 export default mergeConfig(
   baseConfig,
   mergeConfig(vitestConfig, {
-    plugins: [
-      nodePolyfillsPlugin(),
-      tsconfigPathsPlugin(),
-      ...libraryPlugins(),
-    ],
+    plugins: [nodePolyfillsPlugin(), ...libraryPlugins()],
     build: {
       sourcemap: true,
       emptyOutDir: true,

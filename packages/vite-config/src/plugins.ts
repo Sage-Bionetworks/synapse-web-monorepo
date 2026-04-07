@@ -1,14 +1,21 @@
-import type { PluginOption } from 'vite'
-import react from '@vitejs/plugin-react'
+import { createRequire } from 'node:module'
+import type { Plugin, PluginOption } from 'vite'
+import react, { reactCompilerPreset } from '@vitejs/plugin-react'
+import babel from '@rolldown/plugin-babel'
 import svgr from 'vite-plugin-svgr'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import { externalizeDeps } from 'vite-plugin-externalize-deps'
 import dts from 'vite-plugin-dts'
-import tsconfigPaths from 'vite-tsconfig-paths'
+
+const require = createRequire(import.meta.url)
 
 /**
- * Returns the @vitejs/plugin-react plugin configured with babel-plugin-react-compiler
+ * Returns the @vitejs/plugin-react plugin with babel-plugin-react-compiler
  * for the DataGrid components, and the vite-plugin-svgr plugin for SVG imports.
+ *
+ * In Vite 8 / @vitejs/plugin-react v6, Babel is no longer built in.
+ * React Compiler support is provided via @rolldown/plugin-babel with
+ * the reactCompilerPreset() from the React plugin.
  *
  * @param options.skipReactPlugin - If true, omit @vitejs/plugin-react (useful when
  *   another plugin like reactRouter() provides React support). svgr is still included.
@@ -19,16 +26,11 @@ export function reactPlugins(
   const plugins: PluginOption[] = []
 
   if (!options.skipReactPlugin) {
+    plugins.push(...react())
     plugins.push(
-      react({
-        babel: {
-          overrides: [
-            {
-              test: /src\/components\/DataGrid\/.*\.(t|j)sx?$/,
-              plugins: [['babel-plugin-react-compiler']],
-            },
-          ],
-        },
+      babel({
+        include: /src\/components\/DataGrid\/.*\.(t|j)sx?$/,
+        presets: [reactCompilerPreset()],
       }),
     )
   }
@@ -52,20 +54,26 @@ export function reactPlugins(
  * Returns the vite-plugin-node-polyfills plugin, which polyfills Node.js built-in
  * modules (fs, stream, buffer, etc.) for browser environments.
  *
+ * Includes a companion plugin that resolves the shim imports
+ * (`vite-plugin-node-polyfills/shims/*`) to absolute paths. This is needed
+ * because in pnpm strict mode, the polyfills package lives in vite-config's
+ * node_modules and is not directly accessible from consuming apps.
+ *
  * For SSR apps, wrap the result with `clientOnly()` to prevent polyfills from
  * being applied to the Node.js server build.
  */
-export function nodePolyfillsPlugin(): PluginOption {
-  return nodePolyfills()
-}
-
-/**
- * Returns the vite-tsconfig-paths plugin, which resolves TypeScript path aliases
- * from tsconfig.json. Centralizes the import so consumers don't each need the
- * direct dependency.
- */
-export function tsconfigPathsPlugin(): PluginOption {
-  return tsconfigPaths()
+export function nodePolyfillsPlugin(): PluginOption[] {
+  const shimResolver: Plugin = {
+    name: 'node-polyfills-shim-resolver',
+    enforce: 'pre',
+    resolveId(id: string) {
+      if (id.startsWith('vite-plugin-node-polyfills/shims/')) {
+        return require.resolve(id)
+      }
+      return null
+    },
+  }
+  return [shimResolver, nodePolyfills()]
 }
 
 export type LibraryPluginsOptions = {

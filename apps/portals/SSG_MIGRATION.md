@@ -44,7 +44,6 @@ Application) setup to React Router Framework Mode with Static Site Generation
 "@types/node": "^22.19.13",
 "vite-plugin-node-polyfills": "^0.17.0",
 "vite-plugin-svgr": "^4.3.0",
-"vite-tsconfig-paths": "^5.1.4",
 ```
 
 Note: `react-router` itself is already a dependency in all portals — no need to
@@ -227,7 +226,6 @@ import {
   clientOnly,
   nodePolyfillsPlugin,
   reactPlugins,
-  tsconfigPathsPlugin,
 } from 'vite-config'
 
 export default defineConfig(({ isSsrBuild }) =>
@@ -239,7 +237,6 @@ export default defineConfig(({ isSsrBuild }) =>
         // Apply nodePolyfills only to the client environment, not SSR/prerender
         clientOnly(nodePolyfillsPlugin() as Plugin),
         reactRouter(),
-        tsconfigPathsPlugin(),
         // reactRouter() includes its own React plugin, so skip the default one
         ...reactPlugins({ skipReactPlugin: true }),
       ],

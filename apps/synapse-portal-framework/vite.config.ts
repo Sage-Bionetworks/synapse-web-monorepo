@@ -5,7 +5,6 @@ import {
   baseConfig,
   vitestConfig,
   reactPlugins,
-  tsconfigPathsPlugin,
   libraryPlugins,
   preserveModulesBuildConfig,
 } from 'vite-config'
@@ -36,8 +35,8 @@ const config = mergeConfig(
   mergeConfig(
     vitestConfig,
     mergeConfig(preserveModulesBuildConfig(allSourceFiles), {
+      root: '.',
       plugins: [
-        tsconfigPathsPlugin(),
         ...reactPlugins(),
         ...libraryPlugins({ preserveModules: true }),
       ],

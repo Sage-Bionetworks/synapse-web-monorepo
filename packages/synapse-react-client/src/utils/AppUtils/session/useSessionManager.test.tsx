@@ -34,14 +34,16 @@ vi.mock('@sage-bionetworks/synapse-client', async () => {
   >('@sage-bionetworks/synapse-client')
   return {
     ...actual,
-    SynapseClient: vi.fn().mockImplementation(() => ({
-      openIDConnectServicesClient: {
-        postAuthV1Oauth2Introspect: mockPostAuthV1Oauth2Introspect,
-      },
-      realmServicesClient: {
-        getRepoV1RealmPrincipals: mockGetRepoV1RealmPrincipals,
-      },
-    })),
+    SynapseClient: vi.fn().mockImplementation(function () {
+      return {
+        openIDConnectServicesClient: {
+          postAuthV1Oauth2Introspect: mockPostAuthV1Oauth2Introspect,
+        },
+        realmServicesClient: {
+          getRepoV1RealmPrincipals: mockGetRepoV1RealmPrincipals,
+        },
+      }
+    }),
   }
 })
 

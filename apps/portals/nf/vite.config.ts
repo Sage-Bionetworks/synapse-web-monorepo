@@ -6,7 +6,6 @@ import {
   clientOnly,
   nodePolyfillsPlugin,
   reactPlugins,
-  tsconfigPathsPlugin,
 } from 'vite-config'
 
 export default defineConfig(
@@ -17,9 +16,8 @@ export default defineConfig(
 
       plugins: [
         // Apply nodePolyfills only to the client environment
-        clientOnly(nodePolyfillsPlugin() as Plugin),
+        ...nodePolyfillsPlugin().map(p => clientOnly(p as Plugin)),
         reactRouter(),
-        tsconfigPathsPlugin(),
         // Since we are using the reactRouter plugin, do not use the @vitejs/plugin-react plugin
         ...reactPlugins({ skipReactPlugin: true }),
       ],
