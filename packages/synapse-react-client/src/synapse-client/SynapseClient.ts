@@ -1,4 +1,3 @@
-import { ACCESS_TOKEN_COOKIE_KEY, getCookieDomain, OAuth2State } from '@/utils'
 import {
   ACCESS_APPROVAL,
   ACCESS_APPROVAL_BY_ID,
@@ -94,13 +93,20 @@ import {
   WIKI_PAGE_ID,
 } from '@/utils/APIConstants'
 import appendFinalQueryParamKey from '@/utils/appendFinalQueryParamKey'
-import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import { dispatchDownloadListChangeEvent } from '@/utils/functions/dispatchDownloadListChangeEvent'
 import { removeUndefined } from '@/utils/functions/ObjectUtils'
 import { sanitize } from '@/utils/functions/SanitizeHtmlUtils'
 import * as SynapseConstants from '@/utils/SynapseConstants'
-import { DATETIME_UTC_COOKIE_KEY } from '@/utils/SynapseConstants'
+import {
+  ACCESS_TOKEN_COOKIE_KEY,
+  CSRF_TOKEN_STORAGE_KEY,
+  DATETIME_UTC_COOKIE_KEY,
+} from '@/utils/SynapseConstants'
 import {
   SynapseClient as SynapseOpenAPIClient,
   DoiAssociation,
@@ -349,7 +355,8 @@ import {
   isOutsideSynapseOrg,
   returnIfTwoFactorAuthError,
 } from './SynapseClientUtils'
-import { CSRF_TOKEN_STORAGE_KEY } from '@/utils/hooks'
+import { OAuth2State } from '@/utils/types/OAuth2State'
+import { getCookieDomain } from '@/utils/AppUtils/AppUtils'
 
 // Max size file that we will allow the caller to read into memory (5MB)
 const MAX_JS_FILE_DOWNLOAD_SIZE = 5242880

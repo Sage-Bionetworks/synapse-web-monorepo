@@ -13,14 +13,16 @@ import {
 // Mock the synapse-client module
 vi.mock('@sage-bionetworks/synapse-client', () => {
   return {
-    SynapseClient: vi.fn().mockImplementation(() => ({
-      tableServicesClient: {
-        postRepoV1EntityIdTableQueryAsyncStart: vi.fn(),
-      },
-      asynchronousJobServicesClient: {
-        getRepoV1AsynchronousJobJobId: vi.fn(),
-      },
-    })),
+    SynapseClient: vi.fn().mockImplementation(function () {
+      return {
+        tableServicesClient: {
+          postRepoV1EntityIdTableQueryAsyncStart: vi.fn(),
+        },
+        asynchronousJobServicesClient: {
+          getRepoV1AsynchronousJobJobId: vi.fn(),
+        },
+      }
+    }),
     waitForAsyncResult: vi.fn(),
   }
 })
