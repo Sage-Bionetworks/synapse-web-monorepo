@@ -2,7 +2,7 @@ import {
   allChallengesSql,
   featuredTeamSql,
   getInvolvedSql,
-  homeAllChallengesSql,
+  // homeAllChallengesSql,
   homeNewChallengesSql,
   homeOpenChallengesSql,
   homePopularChallengesSql,
@@ -10,7 +10,7 @@ import {
   newsSql,
   partnersSql,
 } from '@/config/resources'
-import AllChallengesSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/AllChallengesSection/AllChallengesSection'
+// import AllChallengesSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/AllChallengesSection/AllChallengesSection'
 import ChallengeFeaturedTeam from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeFeaturedTeam/ChallengeFeaturedTeam'
 import ChallengeHeader from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeHeader/ChallengeHeader'
 import ChallengeMetrics from '@sage-bionetworks/synapse-portal-framework/components/challenges/ChallengeMetrics/ChallengeMetrics'
@@ -57,8 +57,12 @@ function Home() {
         borderRadiusPx={CARD_BORDER_RADIUS_PX}
         cardSize="large"
       />
-      <AllChallengesSection
+      {/* <AllChallengesSection
         sql={homeAllChallengesSql}
+        borderRadiusPx={CARD_BORDER_RADIUS_PX}
+      /> */}
+      <OpenChallengesSection
+        sql={homeOpenChallengesSql}
         borderRadiusPx={CARD_BORDER_RADIUS_PX}
       />
       <TotalChallengesTrackedSection allChallengesSql={allChallengesSql} />
