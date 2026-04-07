@@ -33,7 +33,7 @@ export default function MetadataTasksPage(props: MetadataTaskTableProps) {
         <FormControlLabel
           control={
             <Switch
-              value={!!listCurationTaskRequest.assignedToMe}
+              checked={!!listCurationTaskRequest.assignedToMe}
               onChange={(_e, checked) => {
                 setListCurationTaskRequest(prev => ({
                   ...prev,

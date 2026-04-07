@@ -41,7 +41,7 @@ export function useGetCurationTaskStatus<TData = TaskStatus>(
   const { synapseClient, keyFactory } = useSynapseContext()
   return useQuery({
     ...options,
-    queryKey: keyFactory.getAllCurationTaskListKey(),
+    queryKey: keyFactory.getCurationTaskIdStatusKey(taskId),
     queryFn: () =>
       synapseClient.curationTaskServicesClient.getRepoV1CurationTaskTaskIdStatus(
         { taskId },

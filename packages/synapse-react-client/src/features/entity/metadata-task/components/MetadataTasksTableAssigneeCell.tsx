@@ -6,7 +6,7 @@ import { useUpdateCurationTask } from '@/synapse-queries/curation/task/useCurati
 import { EditTwoTone } from '@mui/icons-material'
 import { Alert, Box, IconButton, Stack, Typography } from '@mui/material'
 import { TaskBundle } from '@sage-bionetworks/synapse-client'
-import { TYPE_FILTER } from '@sage-bionetworks/synapse-types/src/UserGroupHeader'
+import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import { useCallback, useState } from 'react'
 import taskHasAssignee from '../utils/taskHasAssignee'
 

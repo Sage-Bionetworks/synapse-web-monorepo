@@ -110,7 +110,7 @@ export function getIsPrincipalIdUserOrMemberOfTeamQuery(
       )
       if (
         !principalUserGroupResult ||
-        principalUserGroupResult?.isIndividual === false
+        principalUserGroupResult?.isIndividual === true
       ) {
         return false
       }

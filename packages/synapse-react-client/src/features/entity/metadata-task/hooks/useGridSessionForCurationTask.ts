@@ -107,6 +107,9 @@ export default function useGridSessionForCurationTask() {
           throw new Error(
             'Failed to link Grid session to Curation Task. The task was updated since it was last retrieved. Please refresh and try again.',
           )
+        } else {
+          // Rethrow any other error
+          throw e
         }
       }
 

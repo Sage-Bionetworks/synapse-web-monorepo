@@ -9,7 +9,7 @@ import {
 import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 import { getLinkToGridSession } from '@/utils/functions/getSynapseWebClientLink'
 import { StickyNote2Outlined } from '@mui/icons-material'
-import { Button, Tooltip } from '@mui/material'
+import { Button, Tooltip, Typography } from '@mui/material'
 import {
   GridSession,
   SynapseClientError,
@@ -25,7 +25,7 @@ export const OPEN_CURATOR_ERROR_TITLE =
 export const OPEN_CURATOR_UNAUTHORIZED_ERROR_MESSAGE =
   "You don't have permission to view the existing Curator session for this task. It was likely created by another data contributor. A data manager should create a new task and assign it to you or your team."
 
-export const NO_TASK_ASSIGNEE_WARNING_DIALOG_TITLE = 'Task Has No Assignee'
+export const NO_TASK_ASSIGNEE_WARNING_DIALOG_TITLE = 'Task is Unassigned'
 
 function openGridSessionInNewWindow(gridSessionId: string, taskId: number) {
   const gridUrl = getLinkToGridSession(gridSessionId, taskId)
@@ -160,14 +160,17 @@ export default function MetadataTaskTableActionCell(props: {
       open={showOpenWithNoAssigneeWarning}
       title={NO_TASK_ASSIGNEE_WARNING_DIALOG_TITLE}
       content={
-        <p>
-          The task you selected has no assignee. A Curator session will only be
-          accessible by you and no other collaborators. If the task is assigned
-          to a new user or team later, you may be unable to recover any unsaved
-          work.
-          <br />
-          Do you want to proceed and open Curator using this unassigned task?
-        </p>
+        <>
+          <Typography variant="body1" gutterBottom>
+            This task is currently unassigned. A Curator session created using
+            an unassigned task will be private to your account. If the task is
+            assigned later, a new Curator session will be created and you may be
+            unable to recover any unsaved changes.
+          </Typography>
+          <Typography variant="body1">
+            Do you want to proceed and open Curator using this unassigned task?
+          </Typography>
+        </>
       }
       confirmButtonProps={{ children: 'Proceed' }}
       onConfirm={() => {
