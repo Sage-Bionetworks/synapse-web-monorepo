@@ -131,7 +131,12 @@ export const initialWebSocketState: WebSocketState = {
  *   - Reconnection on disconnect
  *   - Grid model updates and snapshot tracking
  */
-export function useDataGridWebSocket() {
+export interface UseDataGridWebSocketOptions {
+  onReplicaConnected?: () => void
+  onReplicaDisconnected?: () => void
+}
+
+export function useDataGridWebSocket(options?: UseDataGridWebSocketOptions) {
   const [state, dispatch] = useReducer(websocketReducer, initialWebSocketState)
 
   const connectionAttemptCounter = useRef(0)
@@ -165,8 +170,14 @@ export function useDataGridWebSocket() {
       onStatusChange: (open: boolean) =>
         dispatch({ type: open ? 'CONNECTION_OPENED' : 'CONNECTION_CLOSED' }),
       onModelCreate: handleModelCreate,
+      onReplicaConnected: options?.onReplicaConnected,
+      onReplicaDisconnected: options?.onReplicaDisconnected,
     }),
-    [handleModelCreate],
+    [
+      handleModelCreate,
+      options?.onReplicaConnected,
+      options?.onReplicaDisconnected,
+    ],
   )
 
   // Initiate (or re-initiate) a connection
