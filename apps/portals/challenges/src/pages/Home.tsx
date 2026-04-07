@@ -53,7 +53,8 @@ function Home() {
         borderRadiusPx={CARD_BORDER_RADIUS_PX}
         cardSize="large"
       />
-      {/* <AllChallengesSection
+      {/* Comment out for now, in case Gaia wants it back
+      <AllChallengesSection
         sql={homeAllChallengesSql}
         borderRadiusPx={CARD_BORDER_RADIUS_PX}
       /> */}
