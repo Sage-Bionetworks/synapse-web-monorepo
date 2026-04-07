@@ -1040,6 +1040,10 @@ export class KeyFactory {
     return this.getKey('gridSession', 'list', request)
   }
 
+  public getGridReplicaListKey(sessionId: string) {
+    return this.getKey('gridSession', sessionId, 'replicas')
+  }
+
   public getCurationTaskKey(taskId: number) {
     return this.getKey('curationTask', taskId)
   }
