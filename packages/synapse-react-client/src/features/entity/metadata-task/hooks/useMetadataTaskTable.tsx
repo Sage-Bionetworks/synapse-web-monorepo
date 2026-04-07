@@ -93,7 +93,6 @@ export function useMetadataTaskTable(opts: UseMetadataTaskTableOptions) {
       { includePermissions: true },
       {
         enabled: !!listCurationTaskRequest.projectId,
-        staleTime: Infinity,
       },
     )
 
