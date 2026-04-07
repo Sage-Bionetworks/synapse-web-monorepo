@@ -21,21 +21,24 @@ const studyDataTabContent: DetailsPageSectionLayoutType[] = [
   {
     title: 'Recent Data Updates',
     id: 'RecentDataUpdates',
-    // TODO: Removed usage of these props in PORTALS-3195 refactor
-    // Were these used to create props to inject into RssFeedCards? Does not seem like it
-    // columnName: 'Study',
-    // resolveSynId: {
-    //   value: true,
-    // },
     element: (
-      <RssFeedCards
-        url="https://news.adknowledgeportal.org"
-        itemsToShow={3}
-        allowCategories={[]}
-        // mailChimpListName: 'study specific list name????',
-        // mailChimpUrl:'https://study specific url????'
-        viewAllNewsButtonText={'View All Data Updates'}
-      />
+      <DetailsPageContextConsumer columnName={STUDY_TABLE_COLUMN_NAMES.STUDY}>
+        {({ value: entityId }) => (
+          <EntityResolver entityId={entityId!}>
+            {entityHeader => (
+              <RssFeedCards
+                url="https://news.adknowledgeportal.org"
+                itemsToShow={3}
+                allowCategories={[]}
+                filter={{ type: 'tag', value: entityHeader.name }}
+                // mailChimpListName: 'study specific list name????',
+                // mailChimpUrl:'https://study specific url????'
+                viewAllNewsButtonText={'View All Data Updates'}
+              />
+            )}
+          </EntityResolver>
+        )}
+      </DetailsPageContextConsumer>
     ),
   },
   {
