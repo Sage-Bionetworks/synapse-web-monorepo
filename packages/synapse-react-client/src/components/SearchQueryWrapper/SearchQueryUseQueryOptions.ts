@@ -5,14 +5,24 @@ import { useSynapseContext } from '@/utils/context/SynapseContext'
 import {
   AsynchronousJobStatus,
   ColumnModel,
+  FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
+  FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+  FacetColumnRangeRequest,
+  FacetColumnValuesRequest,
   QueryBundleRequest,
   QueryResultBundle,
   RowSet,
 } from '@sage-bionetworks/synapse-types'
 import type {
   FacetRequest,
+  KeyValues,
   SearchIndexQuery,
+  SearchKeyRange,
   SearchQueryResults,
+} from '@sage-bionetworks/synapse-client'
+import {
+  FacetRequestSortDirectionEnum as FacetRequestSortDirectionEnumValues,
+  FacetRequestSortFieldEnum as FacetRequestSortFieldEnumValues,
 } from '@sage-bionetworks/synapse-client'
 import { InfiniteData } from '@tanstack/react-query'
 import { omit } from 'lodash-es'
@@ -25,7 +35,9 @@ import { KeyFactory } from '@/synapse-queries/KeyFactory'
  * that can be sent to the SearchQueryServicesApi.
  *
  * Mapping:
- *  - query.selectedFacets → facetRequests (column names for aggregation)
+ *  - columnModels (facetType defined) → facetRequests (columns to aggregate as facets, with optional sort config)
+ *  - query.selectedFacets (enumeration) → termsFilters (IN-clause filters)
+ *  - query.selectedFacets (range) → rangeFilters (range filters)
  *  - query.limit → limit
  *  - query.offset → offset
  *  - partMask → dropped (SearchIndexQuery has no bitmask concept)
@@ -33,15 +45,62 @@ import { KeyFactory } from '@/synapse-queries/KeyFactory'
 export function toSearchIndexQuery(
   queryBundleRequest: QueryBundleRequest,
   searchIndexId: string,
+  columnModels?: ColumnModel[],
 ): SearchIndexQuery {
-  const facetRequests: FacetRequest[] | undefined =
-    queryBundleRequest.query.selectedFacets?.map(f => ({
-      columnName: f.columnName,
-    }))
+  // Build facetRequests from ColumnModels that have a facetType defined
+  const facetRequests: FacetRequest[] | undefined = columnModels
+    ?.filter(cm => cm.facetType != null)
+    .map(cm => {
+      const facetReq: FacetRequest = { columnName: cm.name }
+      if (cm.facetSortConfig) {
+        // Map FacetColumnSortProperty ('FREQUENCY'|'VALUE') → FacetRequestSortFieldEnum ('COUNT'|'KEY')
+        if (cm.facetSortConfig.property != null) {
+          facetReq.sortField =
+            cm.facetSortConfig.property === 'VALUE'
+              ? FacetRequestSortFieldEnumValues.KEY
+              : FacetRequestSortFieldEnumValues.COUNT
+        }
+        if (cm.facetSortConfig.direction != null) {
+          facetReq.sortDirection =
+            cm.facetSortConfig.direction === 'ASC'
+              ? FacetRequestSortDirectionEnumValues.ASC
+              : FacetRequestSortDirectionEnumValues.DESC
+        }
+      }
+      return facetReq
+    })
+
+  // Build termsFilters from enumeration selectedFacets
+  const termsFilters: KeyValues[] | undefined =
+    queryBundleRequest.query.selectedFacets
+      ?.filter(
+        f => f.concreteType === FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+      )
+      .map(f => {
+        const valuesReq = f
+        return { key: valuesReq.columnName, values: valuesReq.facetValues }
+      })
+
+  // Build rangeFilters from range selectedFacets
+  const rangeFilters: SearchKeyRange[] | undefined =
+    queryBundleRequest.query.selectedFacets
+      ?.filter(
+        f => f.concreteType === FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
+      )
+      .map(f => {
+        const rangeReq = f
+        return {
+          key: rangeReq.columnName,
+          min: rangeReq.min,
+          max: rangeReq.max,
+        }
+      })
 
   return {
     searchIndexId,
     facetRequests: facetRequests?.length ? facetRequests : undefined,
+    termsFilters: termsFilters?.length ? termsFilters : undefined,
+    rangeFilters: rangeFilters?.length ? rangeFilters : undefined,
     limit: queryBundleRequest.query.limit,
     offset: queryBundleRequest.query.offset,
   }
@@ -121,8 +180,16 @@ export function getSearchQueryUseQueryOptions(
   searchIndexId: string,
   columnModels?: ColumnModel[],
 ): TableQueryUseQueryOptions {
-  const rowDataQuery = toSearchIndexQuery(queryBundleRequest, searchIndexId)
-  const metadataQuery = toSearchIndexQuery(queryBundleRequest, searchIndexId)
+  const rowDataQuery = toSearchIndexQuery(
+    queryBundleRequest,
+    searchIndexId,
+    columnModels,
+  )
+  const metadataQuery = toSearchIndexQuery(
+    queryBundleRequest,
+    searchIndexId,
+    columnModels,
+  )
 
   // Fetches from the SearchQueryServicesApi and converts the SearchQueryResults responseBody
   // into QueryResultBundle shape. This allows all downstream shared components
