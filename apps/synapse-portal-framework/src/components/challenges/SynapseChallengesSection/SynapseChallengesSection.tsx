@@ -38,6 +38,15 @@ const SynapseChallengesSection = ({
 
   const dataRows = queryResultBundle?.queryResult?.queryResults.rows ?? []
 
+  const [synapseFilteredLink, setSynapseFilteredLink] =
+    useState('/OpenChallenges')
+
+  useEffect(() => {
+    generateEncodedPathAndQueryForSelectedFacetURL('/OpenChallenges', sql, [
+      { facet: 'platform', facetValue: 'Synapse' },
+    ]).then(setSynapseFilteredLink)
+  }, [sql])
+
   return (
     <Box className={styles.SynapseChallengesSection__root}>
       <Box className={styles.SynapseChallengesSection__headerSection}>
@@ -88,7 +97,7 @@ const SynapseChallengesSection = ({
       <Button
         component={RouterLink}
         variant="outlined"
-        to="/OpenChallenges"
+        to={synapseFilteredLink}
         endIcon={<ArrowForwardIcon />}
         className={styles.SynapseChallengesSection__viewChallengeListButton}
       >
