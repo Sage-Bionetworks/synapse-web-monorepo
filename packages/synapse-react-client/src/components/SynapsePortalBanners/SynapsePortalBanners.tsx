@@ -34,7 +34,7 @@ export default function SynapsePortalBanners({
     : [entityId]
 
   const dataCatalogAdditionalFilters: ColumnSingleValueQueryFilter[] =
-    entityPathData
+    entityIdValues
       ? [
           {
             concreteType:
@@ -64,23 +64,26 @@ export default function SynapsePortalBanners({
   const hasPortalBanners = !!rowSet && rowSet?.rows.length > 0
 
   const appIds = rowSet?.rows.map(row => row.values[0]) as string[]
+  const hasAppIds = appIds && appIds.length > 0
 
-  const sourceAppConfigFilters: ColumnSingleValueQueryFilter[] = [
-    {
-      concreteType:
-        'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-      columnName: 'appId',
-      operator: ColumnSingleValueFilterOperator.EQUAL,
-      values: appIds,
-    },
-  ]
+  const sourceAppConfigFilters: ColumnSingleValueQueryFilter[] = hasAppIds
+    ? [
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+          columnName: 'appId',
+          operator: ColumnSingleValueFilterOperator.EQUAL,
+          values: appIds,
+        },
+      ]
+    : []
   const sourceAppConfigs = useSourceAppConfigs(
     sourceAppConfigTableID,
     sourceAppConfigFilters,
   )
   const hasSourceAppConfigs = !!sourceAppConfigs && sourceAppConfigs.length > 0
 
-  if (!hasPortalBanners || !hasSourceAppConfigs) {
+  if (!hasAppIds || !hasPortalBanners || !hasSourceAppConfigs) {
     return <></>
   }
 
