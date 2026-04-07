@@ -1,6 +1,8 @@
-import { Box, Typography } from '@mui/material'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+import { Box, Button, Typography } from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import React from 'react'
+import { Link as RouterLink } from 'react-router'
 import { SynapseConstants } from 'synapse-react-client'
 import ColorfulPortalCardWithChips from 'synapse-react-client/components/BasePortalCard/ColorfulPortalCardWithChips/ColorfulPortalCardWithChips'
 import { useGetFullTableQueryResults } from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
@@ -53,7 +55,7 @@ const OpenChallengesSection = ({
           variant="body1"
           className={styles.OpenChallengesSection__sectionSubtitle}
         >
-          A curated collection of crowdsourced challenges within Sage and
+          A curated collection of crowdsourced challenges within Synapse and
           beyond.
         </Typography>
       </Box>
@@ -91,6 +93,15 @@ const OpenChallengesSection = ({
           )
         })}
       </Box>
+      <Button
+        component={RouterLink}
+        variant="outlined"
+        to="/OpenChallenges"
+        endIcon={<ArrowForwardIcon />}
+        className={styles.OpenChallengesSection__viewChallengeListButton}
+      >
+        View All Challenges
+      </Button>
     </Box>
   )
 }
