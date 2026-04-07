@@ -110,6 +110,15 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       websocketInstanceRef.current = websocketInstance
     }, [websocketInstance])
 
+    // The server doesn't send `replica-connected` to the joining replica itself.
+    // Refetch once the initial sync completes — by that point the server has
+    // finished processing the connection and will return our replica as isConnected: true.
+    useEffect(() => {
+      if (hasCompletedInitialSync) {
+        void refetchReplicas()
+      }
+    }, [hasCompletedInitialSync, refetchReplicas])
+
     // Track last connection parameters to avoid redundant connections
     const lastConnectParamsRef = useRef<{
       replicaId: number
