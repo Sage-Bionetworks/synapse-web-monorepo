@@ -1,8 +1,10 @@
 import * as SynapseClient from '@/synapse-client/SynapseClient'
 import { tableQueryUseQueryDefaults } from '@/synapse-queries'
+import { useGetEntityBundle } from '@/synapse-queries/entity/useEntityBundle'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import {
   AsynchronousJobStatus,
+  ColumnModel,
   QueryBundleRequest,
   QueryResultBundle,
   RowSet,
@@ -57,6 +59,7 @@ export function toSearchIndexQuery(
 export function searchQueryResultsToQueryResultBundle(
   results: SearchQueryResults | undefined,
   query: SearchIndexQuery,
+  columnModels?: ColumnModel[],
 ): QueryResultBundle {
   if (!results) {
     return {
@@ -72,7 +75,9 @@ export function searchQueryResultsToQueryResultBundle(
 
   const headers = fieldNames.map(name => ({
     name,
-    columnType: 'STRING' as const,
+    columnType:
+      columnModels?.find(cm => cm.name === name)?.columnType ??
+      ('STRING' as const),
   }))
 
   const rows = (results.hits ?? []).map(hit => ({
@@ -102,6 +107,7 @@ export function searchQueryResultsToQueryResultBundle(
   return {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
     queryCount: results.totalHits,
+    selectColumns: headers,
     queryResult,
     // FacetColumnResult is the same discriminated union type in both response shapes
     facets: results.facets as QueryResultBundle['facets'],
@@ -113,9 +119,29 @@ export function getSearchQueryUseQueryOptions(
   keyFactory: KeyFactory,
   accessToken: string | undefined,
   searchIndexId: string,
+  columnModels?: ColumnModel[],
 ): TableQueryUseQueryOptions {
   const rowDataQuery = toSearchIndexQuery(queryBundleRequest, searchIndexId)
   const metadataQuery = toSearchIndexQuery(queryBundleRequest, searchIndexId)
+
+  // Fetches from the SearchQueryServicesApi and converts the SearchQueryResults responseBody
+  // into QueryResultBundle shape. This allows all downstream shared components
+  // (UseRowSet, QueryVisualizationWrapper, etc.) to access data.responseBody.*
+  // using the same patterns as regular table queries (queryResult.queryResults, selectColumns, etc.).
+  const fetchAndConvert = async (query: SearchIndexQuery) => {
+    const asyncStatus = await SynapseClient.getSearchQueryAsyncJobResults(
+      query,
+      accessToken,
+    )
+    return {
+      ...asyncStatus,
+      responseBody: searchQueryResultsToQueryResultBundle(
+        asyncStatus.responseBody,
+        query,
+        columnModels,
+      ),
+    }
+  }
 
   // `as unknown as` is necessary because TableQueryUseQueryOptions is parameterized
   // over QueryBundleRequest, but SearchIndexQuery has a different shape.
@@ -126,13 +152,10 @@ export function getSearchQueryUseQueryOptions(
       rowDataQuery,
       false,
     ),
-    queryFn: () =>
-      SynapseClient.getSearchQueryAsyncJobResults(rowDataQuery, accessToken),
+    queryFn: () => fetchAndConvert(rowDataQuery),
     select: (
-      data: AsynchronousJobStatus<SearchIndexQuery, SearchQueryResults>,
-    ): RowSet | undefined =>
-      searchQueryResultsToQueryResultBundle(data.responseBody, rowDataQuery)
-        .queryResult?.queryResults,
+      data: AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle>,
+    ): RowSet | undefined => data.responseBody?.queryResult?.queryResults,
   } as unknown as TableQueryUseQueryOptions['rowDataQueryOptions']
 
   const rowDataInfiniteQueryOptions = {
@@ -143,12 +166,14 @@ export function getSearchQueryUseQueryOptions(
     ),
     initialPageParam: 0 as number | string | undefined,
     getNextPageParam: (
-      lastPage: AsynchronousJobStatus<SearchIndexQuery, SearchQueryResults>,
-      allPages: AsynchronousJobStatus<SearchIndexQuery, SearchQueryResults>[],
+      lastPage: AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle>,
+      allPages: AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle>[],
     ): number | string | undefined => {
-      const totalRows = lastPage.responseBody?.totalHits
+      const totalRows = lastPage.responseBody?.queryCount
       const fetchedRows = allPages.reduce(
-        (acc, page) => acc + (page.responseBody?.hits?.length ?? 0),
+        (acc, page) =>
+          acc +
+          (page.responseBody?.queryResult?.queryResults.rows?.length ?? 0),
         0,
       )
       if (totalRows != null && fetchedRows >= totalRows) {
@@ -165,14 +190,11 @@ export function getSearchQueryUseQueryOptions(
         ...rowDataQuery,
         offset,
       }
-      return SynapseClient.getSearchQueryAsyncJobResults(
-        requestForPage,
-        accessToken,
-      )
+      return fetchAndConvert(requestForPage)
     },
     select: (
       data: InfiniteData<
-        AsynchronousJobStatus<SearchIndexQuery, SearchQueryResults>
+        AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle>
       >,
     ) => data,
     // Same rationale as rowDataQueryOptions: SearchIndexQuery vs QueryBundleRequest generics.
@@ -184,19 +206,15 @@ export function getSearchQueryUseQueryOptions(
       metadataQuery,
       false,
     ),
-    queryFn: () =>
-      SynapseClient.getSearchQueryAsyncJobResults(metadataQuery, accessToken),
+    queryFn: () => fetchAndConvert(metadataQuery),
     select: (
-      data: AsynchronousJobStatus<SearchIndexQuery, SearchQueryResults>,
+      data: AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle>,
     ): Omit<QueryResultBundle, 'queryResult'> => {
-      const bundle = searchQueryResultsToQueryResultBundle(
-        data.responseBody,
-        metadataQuery,
-      )
-      return omit(bundle, 'queryResult') as Omit<
+      const result = omit(data.responseBody ?? {}, 'queryResult') as Omit<
         QueryResultBundle,
         'queryResult'
       >
+      return columnModels ? { ...result, columnModels } : result
     },
     // Same rationale as rowDataQueryOptions: SearchIndexQuery vs QueryBundleRequest generics.
   } as unknown as TableQueryUseQueryOptions['queryMetadataQueryOptions']
@@ -216,8 +234,14 @@ export function getSearchQueryUseQueryOptions(
 export function useSearchQueryUseQueryOptions(
   queryBundleRequest: QueryBundleRequest,
   searchIndexId: string,
+  synapseId?: string,
 ): TableQueryUseQueryOptions {
   const { keyFactory, accessToken } = useSynapseContext()
+
+  const { data: entityBundle } = useGetEntityBundle(synapseId, undefined, {
+    includeTableBundle: true,
+  })
+  const columnModels = entityBundle?.tableBundle?.columnModels
 
   return useMemo(
     () =>
@@ -226,7 +250,8 @@ export function useSearchQueryUseQueryOptions(
         keyFactory,
         accessToken,
         searchIndexId,
+        columnModels,
       ),
-    [keyFactory, accessToken, queryBundleRequest, searchIndexId],
+    [keyFactory, accessToken, queryBundleRequest, searchIndexId, columnModels],
   )
 }

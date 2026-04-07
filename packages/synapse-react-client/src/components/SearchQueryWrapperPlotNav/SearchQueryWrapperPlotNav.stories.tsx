@@ -1,12 +1,38 @@
+import { getEntityBundleHandler } from '@/mocks/msw/handlers/entityHandlers'
+import { getHandlersForSearchQuery } from '@/mocks/msw/handlers/searchQueryHandlers'
+import { getHandlers } from '@/mocks/msw/handlers'
+import { mockSearchQueryResultBundle } from '@/mocks/mockSearchQueryData'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { GENERIC_CARD } from '@/utils/SynapseConstants'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import SearchQueryWrapperPlotNav, {
   SearchQueryWrapperPlotNavProps,
 } from './SearchQueryWrapperPlotNav'
 
+const MOCK_SEARCH_TABLE_ID = 'syn123'
+
 const meta: Meta<SearchQueryWrapperPlotNavProps> = {
   title: 'Explore/SearchQueryWrapperPlotNav',
   component: SearchQueryWrapperPlotNav,
+  parameters: {
+    stack: 'mock',
+    msw: {
+      handlers: [
+        getEntityBundleHandler(MOCK_REPO_ORIGIN, {
+          tableBundle: {
+            columnModels: mockSearchQueryResultBundle.columnModels!,
+            maxRowsPerPage: 25,
+          },
+        }),
+        ...getHandlers(MOCK_REPO_ORIGIN),
+        ...getHandlersForSearchQuery(MOCK_REPO_ORIGIN),
+      ],
+    },
+  },
+  args: {
+    synapseId: MOCK_SEARCH_TABLE_ID,
+    searchIndexId: MOCK_SEARCH_TABLE_ID,
+  },
 } satisfies Meta<SearchQueryWrapperPlotNavProps>
 
 export default meta
@@ -14,7 +40,6 @@ type Story = StoryObj<typeof meta>
 
 export const TableView: Story = {
   args: {
-    searchIndexId: 'syn123',
     name: 'Search Results',
     unitDescription: 'file',
     tableConfiguration: {
@@ -27,7 +52,6 @@ export const TableView: Story = {
 
 export const CardView: Story = {
   args: {
-    searchIndexId: 'syn123',
     name: 'Search Results',
     cardConfiguration: {
       type: GENERIC_CARD,
@@ -46,7 +70,6 @@ export const CardView: Story = {
 
 export const TableWithFacetsOnly: Story = {
   args: {
-    searchIndexId: 'syn123',
     name: 'Search Results',
     unitDescription: 'result',
     tableConfiguration: {},

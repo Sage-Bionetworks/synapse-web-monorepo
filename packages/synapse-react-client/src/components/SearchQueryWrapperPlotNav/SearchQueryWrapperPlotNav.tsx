@@ -37,6 +37,12 @@ import {
 type SearchQueryWrapperPlotNavOwnProps = {
   /** The ID of the SearchIndex entity to query. */
   searchIndexId: string
+  /**
+   * The Synapse ID of the Table entity whose schema (column models) backs this search index.
+   * When provided, column models are fetched from the entity bundle so that
+   * FacetFilterControls can render the correct filter controls (e.g. range vs enumeration).
+   */
+  synapseId?: string
   /** Whether the displayed results should be paginated or infinite. Default for cards is true, default for table is false */
   isInfinite?: boolean
   tableConfiguration?: SynapseTableConfiguration
@@ -145,7 +151,7 @@ function SearchQueryWrapperPlotNavContents(
                   showColumnSelection={tableConfiguration !== undefined}
                   name={name}
                   hideDownload={true}
-                  hideQueryCount={hideQueryCount}
+                  hideQueryCount={true}
                   hideFacetFilterControl={!isFaceted}
                   hideVisualizationsControl={
                     !isFaceted || hideVisualizationsControl
@@ -199,6 +205,7 @@ export default function SearchQueryWrapperPlotNav(
     helpConfiguration,
     initQueryRequest: initQueryRequestFromProps,
     searchIndexId,
+    synapseId,
   } = props
 
   const initQueryRequest: SearchQueryWrapperProps['initQueryRequest'] =
@@ -215,6 +222,7 @@ export default function SearchQueryWrapperPlotNav(
     <SearchQueryWrapper
       key={JSON.stringify(initQueryRequest)}
       searchIndexId={searchIndexId}
+      synapseId={synapseId}
       initQueryRequest={initQueryRequest}
       isInfinite={isInfinite}
     >

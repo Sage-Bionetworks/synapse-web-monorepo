@@ -38,6 +38,12 @@ export type SearchQueryWrapperProps = PropsWithChildren<{
   /** If onQueryChange is set, the callback will be invoked when the Query changes */
   onQueryChange?: (newQueryJson: string) => void
   isInfinite?: boolean
+  /**
+   * The Synapse ID of the Table entity whose schema (column models) backs this search index.
+   * When provided, column models are fetched from the entity bundle and used by
+   * FacetFilterControls to render the correct filter controls.
+   */
+  synapseId?: string
 }>
 
 function SearchQueryWrapperInternal(props: SearchQueryWrapperProps) {
@@ -54,6 +60,7 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
     onQueryChange,
     isInfinite = false,
     searchIndexId,
+    synapseId,
   } = props
 
   // Build a full synthetic QueryBundleRequest so we can reuse useImmutableTableQuery.
@@ -104,6 +111,7 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
   } = useSearchQueryUseQueryOptions(
     currentQueryRequest as QueryBundleRequest,
     searchIndexId,
+    synapseId,
   )
 
   const hasFacetedSelectColumn = useHasFacetedSelectColumn(
@@ -117,7 +125,7 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
 
   const context: QueryContextType = useDeepCompareMemoize({
     isInfinite,
-    entityId: SEARCH_QUERY_WRAPPER_SYNTHETIC_ENTITY_ID,
+    entityId: undefined,
     versionNumber: undefined,
     nextQueryRequest,
     currentQueryRequest,
