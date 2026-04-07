@@ -18,8 +18,8 @@ import ChallengeNewsSection from '@sage-bionetworks/synapse-portal-framework/com
 import GetInvolvedSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/GetInvolvedSection/GetInvolvedSection'
 import NewChallengesSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/NewChallengesSection/NewChallengesSection'
 import OpenChallengesSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/OpenChallengesSection/OpenChallengesSection'
-import PopularChallengesSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/PopularChallengesSection/PopularChallengesSection'
 import PortalFeaturedPartners from 'synapse-react-client/components/PortalFeaturedPartners/PortalFeaturedPartners'
+import SynapseChallengesSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/SynapseChallengesSection/SynapseChallengesSection'
 import TotalChallengesTrackedSection from '@sage-bionetworks/synapse-portal-framework/components/challenges/TotalChallengesTrackedSection/TotalChallengesTrackedSection'
 
 const CARD_BORDER_RADIUS_PX = 4
@@ -38,12 +38,8 @@ function Home() {
         sql={homeNewChallengesSql}
         borderRadiusPx={CARD_BORDER_RADIUS_PX}
       />
-      <PopularChallengesSection
+      <SynapseChallengesSection
         sql={homePopularChallengesSql}
-        borderRadiusPx={CARD_BORDER_RADIUS_PX}
-      />
-      <OpenChallengesSection
-        sql={homeOpenChallengesSql}
         borderRadiusPx={CARD_BORDER_RADIUS_PX}
       />
       <ChallengeFeaturedTeam sql={featuredTeamSql} />
