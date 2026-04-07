@@ -102,7 +102,7 @@ export default function MetadataTaskTableActionCell(props: {
     : !isAssignedToTask && disableLegacyUnassignedTaskBehavior
     ? 'You must be assigned to this task to open it'
     : sourceEntityPermissions?.canView
-    ? 'You have READ access to ' +
+    ? 'You must have READ access to ' +
       gridSourceEntityId +
       ' to view the Working Copy'
     : 'You do not have permission to view the Working Copy'
