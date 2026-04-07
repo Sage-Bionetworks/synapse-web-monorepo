@@ -1,4 +1,5 @@
 import { displayToast } from '@/components/ToastMessage/ToastMessage'
+import useGridSessionForCurationTask_legacy from '@/features/entity/metadata-task/hooks/useGridSessionForCurationTask_legacy'
 import {
   createMockTaskBundle,
   MOCK_CURATION_TASK_ID,
@@ -7,6 +8,7 @@ import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 import { useGetIsPrincipalIdUserOrMemberOfTeam } from '@/synapse-queries/team/useTeamMembers'
 import { getLinkToGridSession } from '@/utils/functions/getSynapseWebClientLink'
 import {
+  CurationTask,
   GridSession,
   SynapseClientError,
   TaskBundle,
@@ -15,7 +17,9 @@ import type { UserEntityPermissions } from '@sage-bionetworks/synapse-types'
 import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import useGridSessionForCurationTask from '../hooks/useGridSessionForCurationTask'
+import useGridSessionForCurationTask, {
+  UseGridSessionForCurationTaskResult,
+} from '../hooks/useGridSessionForCurationTask'
 import MetadataTaskTableActionCell, {
   NO_TASK_ASSIGNEE_WARNING_DIALOG_TITLE,
   OPEN_CURATOR_ERROR_TITLE,
@@ -23,6 +27,10 @@ import MetadataTaskTableActionCell, {
 } from './MetadataTaskTableActionCell'
 
 vi.mock('../hooks/useGridSessionForCurationTask', () => ({
+  default: vi.fn(),
+}))
+
+vi.mock('../hooks/useGridSessionForCurationTask_legacy', () => ({
   default: vi.fn(),
 }))
 
@@ -58,6 +66,9 @@ const mockDisplayToast = vi.mocked(displayToast)
 const mockUseGridSessionForCurationTask = vi.mocked(
   useGridSessionForCurationTask,
 )
+const mockUseGridSessionForCurationTaskLegacy = vi.mocked(
+  useGridSessionForCurationTask_legacy,
+)
 const mockGetLinkToGridSession = vi.mocked(getLinkToGridSession)
 
 const mockUseGetEntityPermissions = vi.mocked(useGetEntityPermissions)
@@ -65,32 +76,48 @@ const mockUseGetIsPrincipalIdUserOrMemberOfTeam = vi.mocked(
   useGetIsPrincipalIdUserOrMemberOfTeam,
 )
 
-type GridSessionResult = {
-  gridSession: GridSession
-  hasAccessToGridSession: boolean
-  gridSessionOwnerMatchesTaskAssignee: boolean
-}
-type MutationResult = UseMutationResult<
-  GridSessionResult,
+type UseGridForTaskMutationResult = UseMutationResult<
+  UseGridSessionForCurationTaskResult,
   SynapseClientError,
   TaskBundle
 >
+
+const mockUseGridForTaskMutateAsync =
+  vi.fn<UseGridForTaskMutationResult['mutateAsync']>()
+
+const createUseGridForTaskMutationResult = (
+  overrides: Partial<UseGridForTaskMutationResult> = {},
+): UseGridForTaskMutationResult =>
+  ({
+    mutateAsync: mockUseGridForTaskMutateAsync,
+    isPending: false,
+    data: undefined,
+    ...overrides,
+  } as Partial<UseGridForTaskMutationResult> as UseGridForTaskMutationResult)
+
+type UseGridForTaskLegacyMutationResult = UseMutationResult<
+  GridSession,
+  SynapseClientError,
+  { curationTask: CurationTask }
+>
+
+const mockUseGridForTaskLegacyMutateAsync =
+  vi.fn<UseGridForTaskLegacyMutationResult['mutateAsync']>()
+
+const createUseGridForTaskLegacyMutationResult = (
+  overrides: Partial<UseGridForTaskLegacyMutationResult> = {},
+): UseGridForTaskLegacyMutationResult =>
+  ({
+    mutateAsync: mockUseGridForTaskLegacyMutateAsync,
+    isPending: false,
+    data: undefined,
+    ...overrides,
+  } as Partial<UseGridForTaskLegacyMutationResult> as UseGridForTaskLegacyMutationResult)
+
 type EntityPermissionsQueryResult = UseQueryResult<
   UserEntityPermissions | null,
   SynapseClientError
 >
-
-const mockMutateAsync = vi.fn<MutationResult['mutateAsync']>()
-
-const createMutationResult = (
-  overrides: Partial<MutationResult> = {},
-): MutationResult =>
-  ({
-    mutateAsync: mockMutateAsync,
-    isPending: false,
-    data: undefined,
-    ...overrides,
-  } as Partial<MutationResult> as MutationResult)
 
 const createPermissionsQueryResult = (
   overrides: Partial<EntityPermissionsQueryResult> = {},
@@ -117,12 +144,20 @@ const renderComponent = (
 
 beforeEach(() => {
   vi.clearAllMocks()
-  mockMutateAsync.mockResolvedValue({
+  mockUseGridForTaskMutateAsync.mockResolvedValue({
     gridSession: { sessionId: 'session-123' },
-    hasAccessToGridSession: true,
     gridSessionOwnerMatchesTaskAssignee: true,
   })
-  mockUseGridSessionForCurationTask.mockReturnValue(createMutationResult())
+  mockUseGridSessionForCurationTask.mockReturnValue(
+    createUseGridForTaskMutationResult(),
+  )
+  mockUseGridForTaskLegacyMutateAsync.mockResolvedValue({
+    sessionId: 'session-123',
+  })
+
+  mockUseGridSessionForCurationTaskLegacy.mockReturnValue(
+    createUseGridForTaskLegacyMutationResult(),
+  )
   mockUseGetEntityPermissions.mockReturnValue(createPermissionsQueryResult())
   mockUseGetIsPrincipalIdUserOrMemberOfTeam.mockReturnValue({
     data: true,
@@ -190,7 +225,7 @@ describe('MetadataTaskTableActionCell', () => {
 
   it('disables the Open Curator button while opening the grid session', () => {
     mockUseGridSessionForCurationTask.mockReturnValue(
-      createMutationResult({ isPending: true }),
+      createUseGridForTaskMutationResult({ isPending: true }),
     )
 
     renderComponent()
@@ -209,7 +244,8 @@ describe('MetadataTaskTableActionCell', () => {
     await userEvent.click(screen.getByRole('button', { name: /open curator/i }))
 
     await waitFor(() => {
-      expect(mockMutateAsync).toHaveBeenCalledWith(mockTaskBundle)
+      expect(mockUseGridForTaskMutateAsync).toHaveBeenCalledWith(mockTaskBundle)
+      expect(mockUseGridForTaskLegacyMutateAsync).not.toHaveBeenCalled()
       expect(mockGetLinkToGridSession).toHaveBeenCalledWith(
         'session-123',
         MOCK_CURATION_TASK_ID,
@@ -229,7 +265,7 @@ describe('MetadataTaskTableActionCell', () => {
       .spyOn(console, 'error')
       .mockImplementation(() => {})
     const errorMessage = 'Failed to open grid session'
-    mockMutateAsync.mockRejectedValue(new Error(errorMessage))
+    mockUseGridForTaskMutateAsync.mockRejectedValue(new Error(errorMessage))
 
     renderComponent()
 
@@ -268,7 +304,8 @@ describe('MetadataTaskTableActionCell', () => {
       await screen.findByRole('heading', {
         name: NO_TASK_ASSIGNEE_WARNING_DIALOG_TITLE,
       })
-      expect(mockMutateAsync).not.toHaveBeenCalled()
+      expect(mockUseGridForTaskLegacyMutateAsync).not.toHaveBeenCalled()
+      expect(mockUseGridForTaskMutateAsync).not.toHaveBeenCalled()
     })
 
     it('cancelling the no-assignee dialog closes it without opening a session', async () => {
@@ -290,7 +327,8 @@ describe('MetadataTaskTableActionCell', () => {
           }),
         ).not.toBeInTheDocument(),
       )
-      expect(mockMutateAsync).not.toHaveBeenCalled()
+      expect(mockUseGridForTaskLegacyMutateAsync).not.toHaveBeenCalled()
+      expect(mockUseGridForTaskMutateAsync).not.toHaveBeenCalled()
     })
 
     it('confirming the no-assignee dialog proceeds to open the session', async () => {
@@ -310,7 +348,8 @@ describe('MetadataTaskTableActionCell', () => {
       await userEvent.click(screen.getByRole('button', { name: /proceed/i }))
 
       await waitFor(() => {
-        expect(mockMutateAsync).toHaveBeenCalled()
+        expect(mockUseGridForTaskLegacyMutateAsync).toHaveBeenCalled()
+        expect(mockUseGridForTaskMutateAsync).not.toHaveBeenCalled()
         expect(windowOpenSpy).toHaveBeenCalled()
       })
 
@@ -320,7 +359,7 @@ describe('MetadataTaskTableActionCell', () => {
 
   describe('session access control', () => {
     it('shows an error toast and does not open window when user has no access to session', async () => {
-      mockMutateAsync.mockRejectedValue(
+      mockUseGridForTaskMutateAsync.mockRejectedValue(
         new SynapseClientError(
           403,
           'Forbidden',
@@ -352,17 +391,16 @@ describe('MetadataTaskTableActionCell', () => {
     })
 
     it('shows assignee-mismatch dialog when session owner differs from assignee', async () => {
-      const sessionData: GridSessionResult = {
+      const sessionData: UseGridSessionForCurationTaskResult = {
         gridSession: {
           sessionId: 'session-123',
           ownerPrincipalId: 'ownerPrincipal',
         },
-        hasAccessToGridSession: true,
         gridSessionOwnerMatchesTaskAssignee: false,
       }
-      mockMutateAsync.mockResolvedValue(sessionData)
+      mockUseGridForTaskMutateAsync.mockResolvedValue(sessionData)
       mockUseGridSessionForCurationTask.mockReturnValue(
-        createMutationResult({ data: sessionData }),
+        createUseGridForTaskMutationResult({ data: sessionData }),
       )
 
       renderComponent()
@@ -375,17 +413,16 @@ describe('MetadataTaskTableActionCell', () => {
     })
 
     it('cancelling the assignee-mismatch dialog closes it without opening a window', async () => {
-      const sessionData: GridSessionResult = {
+      const sessionData: UseGridSessionForCurationTaskResult = {
         gridSession: {
           sessionId: 'session-123',
           ownerPrincipalId: 'ownerPrincipal',
         },
-        hasAccessToGridSession: true,
         gridSessionOwnerMatchesTaskAssignee: false,
       }
-      mockMutateAsync.mockResolvedValue(sessionData)
+      mockUseGridForTaskMutateAsync.mockResolvedValue(sessionData)
       mockUseGridSessionForCurationTask.mockReturnValue(
-        createMutationResult({ data: sessionData }),
+        createUseGridForTaskMutationResult({ data: sessionData }),
       )
       const windowOpenSpy = vi
         .spyOn(window, 'open')
@@ -411,17 +448,16 @@ describe('MetadataTaskTableActionCell', () => {
     })
 
     it('confirming the assignee-mismatch dialog opens the session', async () => {
-      const sessionData: GridSessionResult = {
+      const sessionData: UseGridSessionForCurationTaskResult = {
         gridSession: {
           sessionId: 'session-123',
           ownerPrincipalId: 'ownerPrincipal',
         },
-        hasAccessToGridSession: true,
         gridSessionOwnerMatchesTaskAssignee: false,
       }
-      mockMutateAsync.mockResolvedValue(sessionData)
+      mockUseGridForTaskMutateAsync.mockResolvedValue(sessionData)
       mockUseGridSessionForCurationTask.mockReturnValue(
-        createMutationResult({ data: sessionData }),
+        createUseGridForTaskMutationResult({ data: sessionData }),
       )
       mockGetLinkToGridSession.mockReturnValue('https://example.org/grid')
       const windowOpenSpy = vi

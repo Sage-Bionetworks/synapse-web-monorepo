@@ -1,6 +1,7 @@
 import { ConfirmationDialog } from '@/components/ConfirmationDialog'
 import { displayToast } from '@/components/ToastMessage/ToastMessage'
 import { UserOrTeamBadge } from '@/components/UserOrTeamBadge'
+import useGridSessionForCurationTask_legacy from '@/features/entity/metadata-task/hooks/useGridSessionForCurationTask_legacy'
 import {
   useGetCurrentUserProfile,
   useGetIsPrincipalIdUserOrMemberOfTeam,
@@ -10,6 +11,7 @@ import { getLinkToGridSession } from '@/utils/functions/getSynapseWebClientLink'
 import { StickyNote2Outlined } from '@mui/icons-material'
 import { Button, Tooltip } from '@mui/material'
 import {
+  GridSession,
   SynapseClientError,
   TaskBundle,
 } from '@sage-bionetworks/synapse-client'
@@ -60,8 +62,16 @@ export default function MetadataTaskTableActionCell(props: {
   const {
     data: gridSessionInfoForCurationTask,
     mutateAsync: getGridSessionForTask,
-    isPending: openGridIsPending,
+    isPending: getOrCreateGridSessionIsPending,
   } = useGridSessionForCurationTask()
+
+  const {
+    mutateAsync: getOrCreateLegacyGridSessionForUnassignedTask,
+    isPending: getOrCreateLegacyGridSessionIsPending,
+  } = useGridSessionForCurationTask_legacy()
+
+  const openGridIsPending =
+    getOrCreateGridSessionIsPending || getOrCreateLegacyGridSessionIsPending
 
   const gridSourceEntityId = getGridSourceIdForTask(curationTask)
   const {
@@ -87,32 +97,53 @@ export default function MetadataTaskTableActionCell(props: {
       ' to view the Working Copy'
     : 'You do not have permission to view the Working Copy'
 
-  const openNewOrExistingCuratorSession = useCallback(async () => {
-    try {
-      const { gridSession, gridSessionOwnerMatchesTaskAssignee } =
-        await getGridSessionForTask(taskBundle)
+  const openNewOrExistingCuratorSession = useCallback(
+    async (
+      /**
+       * If unassigned, use legacy grid session retrieval behavior where grid sessions are not linked to the task
+       * This can lead to data loss because different users create multiple grid sessions that overwrite each other
+       */
+      legacyIgnoreLinkedGridSession = false,
+    ) => {
+      let gridSession: GridSession
+      try {
+        if (legacyIgnoreLinkedGridSession) {
+          gridSession = await getOrCreateLegacyGridSessionForUnassignedTask({
+            curationTask,
+          })
+        } else {
+          const getSessionResult = await getGridSessionForTask(taskBundle)
+          gridSession = getSessionResult.gridSession
 
-      if (!gridSessionOwnerMatchesTaskAssignee) {
-        // The user has access, but the assignee does not match the grid session owner.
-        // Show a warning before allowing the user to proceed.
-        setShowGridSessionAssigneeMismatchDialog(true)
-      } else {
+          if (!getSessionResult.gridSessionOwnerMatchesTaskAssignee) {
+            // The user has access, but the assignee does not match the grid session owner.
+            // Show a warning before allowing the user to proceed.
+            setShowGridSessionAssigneeMismatchDialog(true)
+            return
+          }
+        }
         openGridSessionInNewWindow(gridSession.sessionId!, curationTask.taskId!)
+      } catch (error) {
+        if (error instanceof SynapseClientError && error.status === 403) {
+          console.error(error)
+          displayToast(OPEN_CURATOR_UNAUTHORIZED_ERROR_MESSAGE, 'danger', {
+            title: OPEN_CURATOR_ERROR_TITLE,
+          })
+        } else {
+          console.error('Error opening Curator for curation task', error)
+          displayToast(error.message, 'danger', {
+            title: OPEN_CURATOR_ERROR_TITLE,
+          })
+        }
       }
-    } catch (error) {
-      if (error instanceof SynapseClientError && error.status === 403) {
-        console.error(error)
-        displayToast(OPEN_CURATOR_UNAUTHORIZED_ERROR_MESSAGE, 'danger', {
-          title: OPEN_CURATOR_ERROR_TITLE,
-        })
-      } else {
-        console.error('Error opening Curator for curation task', error)
-        displayToast(error.message, 'danger', {
-          title: OPEN_CURATOR_ERROR_TITLE,
-        })
-      }
-    }
-  }, [curationTask.taskId, getGridSessionForTask, taskBundle])
+    },
+    [
+      curationTask,
+      getGridSessionForTask,
+      getOrCreateLegacyGridSessionForUnassignedTask,
+      taskBundle,
+    ],
+  )
 
   const handleClickOpenCurator = useCallback(() => {
     if (!hasAssignee) {
@@ -140,7 +171,9 @@ export default function MetadataTaskTableActionCell(props: {
       }
       confirmButtonProps={{ children: 'Proceed' }}
       onConfirm={() => {
-        void openNewOrExistingCuratorSession()
+        // If unassigned, use legacy grid session retrieval behavior where grid sessions are not linked to the task
+        // This can lead to data loss because different users create multiple grid sessions that overwrite each other
+        void openNewOrExistingCuratorSession(true)
         setShowOpenWithNoAssigneeWarning(false)
       }}
       onCancel={() => {

@@ -1,6 +1,7 @@
 import { useUpdateCurationTaskStatus } from '@/synapse-queries/curation/task/useCurationTask'
 import {
   getGridSessionQuery,
+  useCreateGridSession,
   useDeleteGridSession,
 } from '@/synapse-queries/grid/useGridSession'
 import { useSynapseContext } from '@/utils'
@@ -11,12 +12,9 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { getCreateGridRequestForMetadataTask } from '../utils/getCreateGridRequestForMetadataTask'
-import { getGridSourceIdForTask } from '../utils/getGridSourceIdForTask'
-import useGetOrCreateGridSessionForSource from './useGetOrCreateGridSessionForSource'
-import { useGetCurrentUserProfile } from '@/synapse-queries/user/useUserBundle'
 import taskHasAssignee from '../utils/taskHasAssignee'
 
-type UseGridSessionForCurationTaskResult = {
+export type UseGridSessionForCurationTaskResult = {
   gridSession: GridSession
   gridSessionOwnerMatchesTaskAssignee: boolean
 }
@@ -30,10 +28,7 @@ type UseGridSessionForCurationTaskResult = {
  * @throws SynapseClientError with status 403 if the user does not have permission to access an existing GridSession
  */
 export default function useGridSessionForCurationTask() {
-  const { data: currentUser } = useGetCurrentUserProfile()
-
-  const { mutateAsync: getOrCreateGridSession } =
-    useGetOrCreateGridSessionForSource()
+  const { mutateAsync: createGridSession } = useCreateGridSession()
   const { mutateAsync: updateCurationTaskStatus } =
     useUpdateCurationTaskStatus()
   const { mutateAsync: deleteGridSession } = useDeleteGridSession()
@@ -89,13 +84,9 @@ export default function useGridSessionForCurationTask() {
         throw new Error('CurationTask is missing taskProperties')
       }
 
-      const gridSourceId = getGridSourceIdForTask(task)
-
       const createGridRequest = getCreateGridRequestForMetadataTask(task)
-      const gridSession = await getOrCreateGridSession({
-        sourceId: gridSourceId,
-        createRequest: createGridRequest,
-      })
+      const createGridResponse = await createGridSession(createGridRequest)
+      const gridSession = createGridResponse.gridSession!
 
       // Associate the new session with the task
       try {

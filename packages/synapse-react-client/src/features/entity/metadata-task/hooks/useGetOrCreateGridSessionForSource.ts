@@ -8,7 +8,13 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
-export default function useGetOrCreateGridSessionForSource() {
+/**
+ * Given a source ID, retrieve the latest grid session owned by the user that uses that source. If no grid session
+ * exists, a new one is created.
+ * @deprecated Functionality to retrieve grid sessions has been replaced by tasks. This hook only remains to enable a legacy
+ * scenario that will be removed in the future.
+ */
+export default function useGetOrCreateGridSessionForSource_legacy() {
   const queryClient = useQueryClient()
   const synapseContext = useSynapseContext()
 

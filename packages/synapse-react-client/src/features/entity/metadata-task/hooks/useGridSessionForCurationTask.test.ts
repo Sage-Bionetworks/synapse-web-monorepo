@@ -6,12 +6,10 @@ import {
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import { act, renderHook } from '@testing-library/react'
 import useGridSessionForCurationTask from './useGridSessionForCurationTask'
-import * as getOrCreateModule from './useGetOrCreateGridSessionForSource'
 import * as curationTaskModule from '@/synapse-queries/curation/task/useCurationTask'
 import * as gridSessionModule from '@/synapse-queries/grid/useGridSession'
 import * as userBundleModule from '@/synapse-queries/user/useUserBundle'
 
-vi.mock('./useGetOrCreateGridSessionForSource')
 vi.mock('@/synapse-queries/curation/task/useCurationTask')
 vi.mock('@/synapse-queries/grid/useGridSession')
 vi.mock('@/synapse-queries/user/useUserBundle')
@@ -45,16 +43,16 @@ beforeEach(() => {
     data: { ownerId: MOCK_USER_ID },
   } as any)
 
-  vi.mocked(getOrCreateModule.default).mockReturnValue({
-    mutateAsync: vi.fn().mockResolvedValue(mockNewGridSession),
-  } as any)
-
   vi.mocked(curationTaskModule.useUpdateCurationTaskStatus).mockReturnValue({
     mutateAsync: vi.fn().mockResolvedValue({}),
   } as any)
 
   vi.mocked(gridSessionModule.useDeleteGridSession).mockReturnValue({
     mutateAsync: vi.fn().mockResolvedValue({}),
+  } as any)
+
+  vi.mocked(gridSessionModule.useCreateGridSession).mockReturnValue({
+    mutateAsync: vi.fn().mockResolvedValue({ gridSession: mockNewGridSession }),
   } as any)
 })
 
