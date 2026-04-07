@@ -10,6 +10,7 @@ import {
   SynapseSessionManagerOptions,
 } from './SynapseSessionManager'
 import SynapseClient from '@/synapse-client'
+import { Mock } from 'vitest'
 
 const mockPostAuthV1Oauth2Introspect = vi.fn()
 const mockGetRepoV1RealmPrincipals = vi.fn()
@@ -70,8 +71,8 @@ const MOCK_INTROSPECTION_INACTIVE: OAuthTokenIntrospectionResponse = {
 }
 
 describe('SynapseSessionManager', () => {
+  let mockWindowLocationReload: Mock<() => void>
   const mockGetAccessToken = vi.spyOn(SynapseClient, 'getAccessTokenFromCookie')
-  const mockWindowLocationReload = vi.spyOn(window.location, 'reload')
   const signOutSpy = vi
     .spyOn(SynapseClient, 'signOut')
     .mockResolvedValue(MOCK_ANONYMOUS_TOKEN)
@@ -91,6 +92,7 @@ describe('SynapseSessionManager', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    mockWindowLocationReload = vi.spyOn(window.location, 'reload')
     signOutSpy.mockResolvedValue(MOCK_ANONYMOUS_TOKEN)
     mockGetRepoV1RealmPrincipals.mockResolvedValue(MOCK_REALM_PRINCIPAL)
   })
