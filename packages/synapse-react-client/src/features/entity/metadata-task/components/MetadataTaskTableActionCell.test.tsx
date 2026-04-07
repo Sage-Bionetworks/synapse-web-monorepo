@@ -5,6 +5,7 @@ import {
   MOCK_CURATION_TASK_ID,
 } from '@/mocks/curation/mockCurationTask'
 import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
+import { useGetFeatureFlag } from '@/synapse-queries/index'
 import { useGetIsPrincipalIdUserOrMemberOfTeam } from '@/synapse-queries/team/useTeamMembers'
 import { getLinkToGridSession } from '@/utils/functions/getSynapseWebClientLink'
 import {
@@ -17,6 +18,7 @@ import type { UserEntityPermissions } from '@sage-bionetworks/synapse-types'
 import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { beforeEach } from 'vitest'
 import useGridSessionForCurationTask, {
   UseGridSessionForCurationTaskResult,
 } from '../hooks/useGridSessionForCurationTask'
@@ -46,6 +48,12 @@ vi.mock('@/synapse-queries/user/useUserBundle', () => ({
   }),
 }))
 
+vi.mock('@/synapse-queries/featureflags/useGetFeatureFlag', () => ({
+  useGetFeatureFlag: vi.fn().mockReturnValue({
+    data: true,
+  }),
+}))
+
 vi.mock('@/synapse-queries/team/useTeamMembers', () => ({
   useGetIsPrincipalIdUserOrMemberOfTeam: vi.fn().mockReturnValue({
     data: true,
@@ -71,6 +79,7 @@ const mockUseGridSessionForCurationTaskLegacy = vi.mocked(
 )
 const mockGetLinkToGridSession = vi.mocked(getLinkToGridSession)
 
+const mockUseGetFeatureFlag = vi.mocked(useGetFeatureFlag)
 const mockUseGetEntityPermissions = vi.mocked(useGetEntityPermissions)
 const mockUseGetIsPrincipalIdUserOrMemberOfTeam = vi.mocked(
   useGetIsPrincipalIdUserOrMemberOfTeam,
@@ -159,6 +168,7 @@ beforeEach(() => {
     createUseGridForTaskLegacyMutationResult(),
   )
   mockUseGetEntityPermissions.mockReturnValue(createPermissionsQueryResult())
+  mockUseGetFeatureFlag.mockReturnValue(true)
   mockUseGetIsPrincipalIdUserOrMemberOfTeam.mockReturnValue({
     data: true,
   } as any)
@@ -181,7 +191,7 @@ describe('MetadataTaskTableActionCell', () => {
     expect(screen.getByRole('button', { name: /open curator/i })).toBeDisabled()
   })
 
-  it('disables the Open Curator button when READ access is denied', () => {
+  it('disables the Open Curator button with no READ access on source entity', () => {
     mockUseGetEntityPermissions.mockReturnValue(
       createPermissionsQueryResult({
         data: { canView: false } as UserEntityPermissions,
@@ -193,7 +203,7 @@ describe('MetadataTaskTableActionCell', () => {
     expect(screen.getByRole('button', { name: /open curator/i })).toBeDisabled()
   })
 
-  it('disables the Open Curator button when user does not have READ access and is not assigned', () => {
+  it('disables the Open Curator button when user is not assigned', () => {
     mockUseGetEntityPermissions.mockReturnValue(
       createPermissionsQueryResult({
         data: { canView: true } as UserEntityPermissions,
@@ -206,6 +216,22 @@ describe('MetadataTaskTableActionCell', () => {
     renderComponent({ canEdit: false })
 
     expect(screen.getByRole('button', { name: /open curator/i })).toBeDisabled()
+  })
+
+  it('enables the Open Curator button when user is not assigned if CURATOR_DISABLE_OPEN_FOR_UNASSIGNED_TASKS is false', () => {
+    mockUseGetFeatureFlag.mockReturnValue(false)
+    mockUseGetEntityPermissions.mockReturnValue(
+      createPermissionsQueryResult({
+        data: { canView: true } as UserEntityPermissions,
+      }),
+    )
+    mockUseGetIsPrincipalIdUserOrMemberOfTeam.mockReturnValue({
+      data: false,
+    } as any)
+
+    renderComponent({ canEdit: false })
+
+    expect(screen.getByRole('button', { name: /open curator/i })).toBeEnabled()
   })
 
   it('enables the Open Curator button when canEdit=false but user is assigned to task', () => {
@@ -289,6 +315,10 @@ describe('MetadataTaskTableActionCell', () => {
   })
 
   describe('no-assignee warning', () => {
+    beforeEach(() => {
+      // This flow is only supported when CURATOR_DISABLE_OPEN_FOR_UNASSIGNED_TASKS is false
+      mockUseGetFeatureFlag.mockReturnValue(false)
+    })
     const taskBundleWithNoAssignee: TaskBundle = {
       ...mockTaskBundle,
       task: { ...mockTaskBundle.task!, assigneePrincipalId: undefined },

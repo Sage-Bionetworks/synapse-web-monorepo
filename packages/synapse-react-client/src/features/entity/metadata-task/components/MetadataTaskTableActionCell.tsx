@@ -4,6 +4,7 @@ import { UserOrTeamBadge } from '@/components/UserOrTeamBadge'
 import useGridSessionForCurationTask_legacy from '@/features/entity/metadata-task/hooks/useGridSessionForCurationTask_legacy'
 import {
   useGetCurrentUserProfile,
+  useGetFeatureFlag,
   useGetIsPrincipalIdUserOrMemberOfTeam,
 } from '@/synapse-queries'
 import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
@@ -15,6 +16,7 @@ import {
   SynapseClientError,
   TaskBundle,
 } from '@sage-bionetworks/synapse-client'
+import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import { useCallback, useState } from 'react'
 import useGridSessionForCurationTask from '../hooks/useGridSessionForCurationTask'
 import { getGridSourceIdForTask } from '../utils/getGridSourceIdForTask'
@@ -43,6 +45,12 @@ export default function MetadataTaskTableActionCell(props: {
 }) {
   const { taskBundle, canEdit } = props
   const curationTask = taskBundle.task!
+
+  // If true, allows opening a grid session for an unassigned task, even if it can lead to data loss, because blocking this behavior prevents important use cases
+  // such as data contributors creating a grid session before a task is assigned
+  const disableLegacyUnassignedTaskBehavior = useGetFeatureFlag(
+    FeatureFlagEnum.CURATOR_DISABLE_OPEN_FOR_UNASSIGNED_TASKS,
+  )
 
   const [showOpenWithNoAssigneeWarning, setShowOpenWithNoAssigneeWarning] =
     useState(false)
@@ -83,13 +91,15 @@ export default function MetadataTaskTableActionCell(props: {
   const hasAssignee = taskHasAssignee(curationTask)
   const isAssignedToTask = canEdit || isUserAssignedToTask || !hasAssignee
 
-  const hasPermission = sourceEntityPermissions?.canView && isAssignedToTask
+  const hasPermission =
+    sourceEntityPermissions?.canView &&
+    (isAssignedToTask || !disableLegacyUnassignedTaskBehavior)
 
   const isOpenDataGridDisabled =
     openGridIsPending || isLoading || !hasPermission
   const toolTipTitle = hasPermission
     ? 'Open Curator to edit metadata'
-    : !isAssignedToTask
+    : !isAssignedToTask && disableLegacyUnassignedTaskBehavior
     ? 'You must be assigned to this task to open it'
     : sourceEntityPermissions?.canView
     ? 'You have READ access to ' +
@@ -107,7 +117,10 @@ export default function MetadataTaskTableActionCell(props: {
     ) => {
       let gridSession: GridSession
       try {
-        if (legacyIgnoreLinkedGridSession) {
+        if (
+          legacyIgnoreLinkedGridSession &&
+          !disableLegacyUnassignedTaskBehavior
+        ) {
           gridSession = await getOrCreateLegacyGridSessionForUnassignedTask({
             curationTask,
           })
