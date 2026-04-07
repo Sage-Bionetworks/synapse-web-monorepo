@@ -131,8 +131,11 @@ export default function MetadataTaskTableActionCell(props: {
       content={
         <p>
           The task you selected has no assignee. A Curator session will only be
-          accessible by you and no other collaborators. Do you want to proceed
-          and open Curator?
+          accessible by you and no other collaborators. If the task is assigned
+          to a new user or team later, you may be unable to recover any unsaved
+          work.
+          <br />
+          Do you want to proceed and open Curator using this unassigned task?
         </p>
       }
       confirmButtonProps={{ children: 'Proceed' }}
