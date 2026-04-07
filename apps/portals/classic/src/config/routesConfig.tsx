@@ -39,6 +39,29 @@ const routes: RouteObject[] = [
           import('@/pages/StudyDetailsPage/StudyDetailsPage').then(
             convertModuleToRouteObject,
           ),
+        children: [
+          {
+            index: true,
+            lazy: () =>
+              import('@/pages/StudyDetailsPage/StudyDetailsPage-Index').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: 'StudyDetails',
+            lazy: () =>
+              import('@/pages/StudyDetailsPage/StudyDetailsTab').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: 'StudyMetadata',
+            lazy: () =>
+              import('@/pages/StudyDetailsPage/StudyMetadataTab').then(
+                convertModuleToRouteObject,
+              ),
+          },
+        ],
       },
       {
         path: 'Contribute Study Metadata',
