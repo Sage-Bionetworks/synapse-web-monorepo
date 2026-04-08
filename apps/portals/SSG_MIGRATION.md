@@ -42,7 +42,7 @@ Application) setup to React Router Framework Mode with Static Site Generation
 // devDependencies
 "@react-router/dev": "^7.13.1",
 "@types/node": "^22.19.13",
-"vite-plugin-node-polyfills": "^0.17.0",
+"vite-plugin-node-polyfills": "^0.26.0",
 "vite-plugin-svgr": "^4.3.0",
 ```
 

@@ -60,8 +60,8 @@ export function reactPlugins(
  * For SSR apps, wrap the result with `clientOnly()` to prevent polyfills from
  * being applied to the Node.js server build.
  */
-export function nodePolyfillsPlugin(): PluginOption[] {
-  return [nodePolyfills()]
+export function nodePolyfillsPlugin(): PluginOption {
+  return nodePolyfills()
 }
 
 export type LibraryPluginsOptions = {

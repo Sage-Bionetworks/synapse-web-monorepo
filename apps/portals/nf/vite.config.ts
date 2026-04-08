@@ -1,5 +1,5 @@
 import { reactRouter } from '@react-router/dev/vite'
-import { mergeConfig, defineConfig, type Plugin } from 'vite'
+import { mergeConfig, defineConfig, Plugin } from 'vite'
 import {
   baseConfig,
   vitestConfig,
@@ -16,7 +16,7 @@ export default defineConfig(
 
       plugins: [
         // Apply nodePolyfills only to the client environment
-        ...nodePolyfillsPlugin().map(p => clientOnly(p as Plugin)),
+        clientOnly(nodePolyfillsPlugin() as Plugin),
         reactRouter(),
         // Since we are using the reactRouter plugin, do not use the @vitejs/plugin-react plugin
         ...reactPlugins({ skipReactPlugin: true }),
