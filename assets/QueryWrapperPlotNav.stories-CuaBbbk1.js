@@ -1,0 +1,260 @@
+import{gh as q,ef as L,ed as A,d_ as r,ci as k,ex as D,I as b,j as T,jv as O,a8 as F}from"./iframe-Ddo1nd2c.js";import{Q as M}from"./CardContainerLogic-DrghNMDR.js";import"./index-Chi_LkuB.js";import"./QueryContext-cp5-8dtJ.js";import"./QueryWrapper-BPKJ2tkx.js";import"./unCamelCase-ZiU_emRy.js";import"./use-deep-compare-effect.esm-C0R9k3zV.js";import"./NoSearchResults-BrkJftp-.js";import"./NoData-H1pFhkra.js";import"./NoContentAvailable-CG7lnb_j.js";import"./index-BhJS0qsZ.js";import"./index-BKkMlrls.js";import"./index-CDfeInQK.js";import"./ConfirmationDialog-DbD8Znq3.js";import"./DialogBase-CayqfCYU.js";import"./Close-Bdp-VK_k.js";import"./HelpPopover-CG9mhVeJ.js";import"./MarkdownPopover-Dbkj-DS5.js";import"./LightTooltip-LQW8Tril.js";import"./MarkdownSynapse-D36GJOu2.js";import"./SkeletonButton-0wbjxtel.js";import"./SkeletonInlineBlock-CIgujLoL.js";import"./SkeletonTable-0-Nn1Nvg.js";import"./SkeletonParagraph-B50bUVUG.js";import"./TableRowSelectionState-DcG0PK9X.js";import"./useEntity-6i1utiFK.js";import"./pickBy-Ca1HoaHl.js";import"./isString-C31m5vfz.js";import"./_baseIteratee-BL_XVY7N.js";import"./useInfiniteQuery-DJwQPHS2.js";import"./InfiniteQueryUtils-CKlRW-xB.js";import"./useEntityBundle-qjtX1WIb.js";import"./SynapseTableUtils-CVQCwvkz.js";import"./Autocomplete-3ZOC5Hmp.js";import"./usePreviousProps-BnbbWDH5.js";import"./Chip-Lk48EpR4.js";import"./Select-aab027f3.esm-CyaZA9AI.js";import"./defineProperty-Cp4flQ_6.js";import"./toPropertyKey-C9c9JG92.js";import"./JsonSchemaForm-CkNu40W4.js";import"./enums-C9JBc_Cp.js";import"./_arrayReduce-CrxnWFSq.js";import"./_baseEach-Deb1er3l.js";import"./uniq-DVrtmJut.js";import"./forEach-UWyboym_.js";import"./index-DOjG6Ddz.js";import"./Add-CijTS_uY.js";import"./Grid-CX3jOppe.js";import"./ListItem-B658fDRe.js";import"./listItemButtonClasses-n83jtxv3.js";import"./ListItemIcon-BF-eEpva.js";import"./MenuItem-BaT97X1Q.js";import"./ListItemText-DTXYYnkS.js";import"./ArrowUpward-0TOaHorK.js";import"./ContentCopy-DR9HhUK8.js";import"./FormControlLabel-Y3B08TzJ.js";import"./Checkbox-DuiaAW4b.js";import"./SwitchBase-LT8Y2S2D.js";import"./FormGroup-D84xiJQ6.js";import"./RadioGroup-DchJVIWM.js";import"./Radio-a_ECWc1o.js";import"./Slider-Cs4tG1QE.js";import"./visuallyHidden-Dan1xhjv.js";import"./GridLegacy-DORIVWfG.js";import"./HelpTwoTone-DTgcwAO9.js";import"./index-browser-esm-k-o2Qe0C.js";import"./groupBy-BgtZoBjx.js";import"./_createAggregator-CDvlTxUA.js";import"./_baseMap-ZZuoWbUp.js";import"./DateTimePicker-RQikRj_R.js";import"./useMobilePicker-BZIty5Jz.js";import"./index-CvmZKthN.js";import"./index-Chjiymov.js";import"./InputAdornment-PLwEupuk.js";import"./index-BY1pmXbi.js";import"./Tabs-DYRr0WqH.js";import"./KeyboardArrowRight-C3RussVL.js";import"./FeaturedDataTabs-CtVAWOF5.js";import"./ActionRequiredListItem-DihQFN0D.js";import"./differenceWith-DtRDeEQO.js";import"./MeetAccessRequirementCard-Bg0bQURb.js";import"./WideButton-CSRfNsmW.js";import"./useAccessRequirements-89AzbV_J.js";import"./_baseOrderBy-BJUcHcg9.js";import"./AccessRequirementList-B01G8aYc.js";import"./EntityLink-Bru2vQ9X.js";import"./useGetEntityHeaders-D0yLijSd.js";import"./EntityIcon-C1GtyKyQ.js";import"./ErrorChip-B2CshbSc.js";import"./UserOrTeamBadge-BABkP8Xd.js";import"./UserBadge-BZOEQyuT.js";import"./useUserBundle-CRr4o42O.js";import"./Card-DjIjXO0o.js";import"./TeamBadge-QrVsDqd7.js";import"./UnmanagedACTAccessRequirementItem-CdeGgCAy.js";import"./RequirementItem-BG23Nz_l.js";import"./LockTwoTone-dRhcJpHU.js";import"./ManagedACTAccessRequirementItemView-CJ2a_8-X.js";import"./SelfSignAccessRequirementItem-cRBJiXfo.js";import"./DataAccessRequestAccessorsFilesForm-BTgruAjE.js";import"./useDataAccessSubmission-D6paqFv6.js";import"./UserSearchBox-C6bkTzGH.js";import"./useDebouncedEffect-Beio-S8K.js";import"./UploadDocumentField-DPoH1nyp.js";import"./FileUpload-D_G90iYJ.js";import"./ManagedACTAccessRequirementFormWikiWrapper-DjvNmEQq.js";import"./ResearchProjectForm-BrAjUjay.js";import"./TextFieldWithWordLimit-33mtP2mc.js";import"./AuthenticatedRequirement--R6BjID5.js";import"./CertificationRequirement-DhBPkr7R.js";import"./TwoFactorAuthEnabledRequirement-Cbn9ESDx.js";import"./ValidationRequirement-CF6VhrwG.js";import"./ActionRequiredCard-C_Rxv2xz.js";import"./Icon-BAi2plud.js";import"./mouse-BkmkHzbz.js";import"./SortDown-VtMfcCFB.js";import"./RequestDownloadCard-BYx-3Lzt.js";import"./EntityAclEditorModal-DwBAMBNc.js";import"./ConfirmCloseWithoutSavingDialog-Dx6_u8F_.js";import"./AccessControlListUtils-3ZruTWXu.js";import"./AclEditor-B3i1o3YR.js";import"./IconSvgButton-HXU0k65y.js";import"./useUpdateAcl-Cuvd01JB.js";import"./OpenData-DZmrPleT.js";import"./useMessage-DrGSmCTL.js";import"./EnableTwoFaRequirementCard-ENzTXHXo.js";import"./Plot-CT3hn_K-.js";import"./index-Ce4aRzCA.js";import"./ShowMore-CndYW_Ay.js";import"./ColorGradient-Zy7TAKxK.js";import"./colorPalette-BALeOMsp.js";import"./EnumFacetFilter-Bwxvgl7j.js";import"./without-DoQa1ABS.js";import"./EnumFacetFilterSkeleton-DSZkoPWT.js";import"./EnumFacetFilterUI-BD17I7Qt.js";import"./FacetFilterHeader-CAt7ZOGp.js";import"./index-BFUlLeto.js";import"./index-CChM59pi.js";import"./RangeFacetFilterUI-0rZu9JNU.js";import"./RangeSlider-BH8WTbcJ.js";import"./CardUtils-C80rNMFV.js";import"./TargetEnum-CqkqtPVW.js";import"./IsExternalLink--eXBmGmb.js";import"./GenericCardIcon-Ba7Pfu0v.js";import"./ImageFileHandle-DDiHr5Wb.js";import"./index-CZPPQviy.js";import"./CopyToClipboardIcon-BLUaQWNK.js";import"./CreateOrUpdateDoiModal-BSMYweY1.js";import"./useDOI-D_-C_POa.js";import"./waitForAsyncResult-w2oqcPPV.js";import"./usePortal-C3Q8fB_G.js";import"./CitationPopoverContent-K1NrWdAg.js";import"./KeyboardArrowDown-DqaiiWk0.js";import"./ErrorPage-BDwVzaP0.js";import"./AccessTokenPage-CsEFDKXo.js";import"./relativeTime-DVX9LeFM.js";import"./WarningDialog-6YVcffrf.js";import"./CopyToClipboardInput-Pr2_wCwa.js";import"./AccountLevelBadges-_xTIWo2v.js";import"./AccountLevelBadge-BqbSTw_-.js";import"./CardGridWithLinks-VGh9iUfD.js";import"./RowDataTable-wFLPQE8P.js";import"./StyledTableContainer-DG0XH7Tg.js";import"./SynapseCardLabel-OiCBNvGc.js";import"./HeaderCardV2-C8ogRcCL.js";import"./Box-DKBjR2_l.js";import"./Linkify-CqRxRGm1.js";import"./GenericCard-CRNKypbw.js";import"./HeaderCard-CiJE2PrA.js";import"./SustainabilityScorecard-BCPBTIsS.js";import"./Dial-D80AUTEV.js";import"./CheckIcon-B4YNTwmX.js";import"./FileHandleLink-DaiaWWlC.js";import"./RowDataTableWithQuery-C8PoLIBu.js";import"./useDownloadList-D8yZ1ADs.js";import"./CertificationAnswer-Bi2laKYy.js";import"./ChallengeDetailPage-DWMCkyrg.js";import"./useGetEntityChallenge-DYo3vVJI.js";import"./useTeamMembers-CDqLjatG.js";import"./useGetUserTeams-B0DMH0Fq.js";import"./ChallengeRegisterButton-78pLGDri.js";import"./ExitToApp-CeeovMiy.js";import"./SpinnerButton-C8k80S0h.js";import"./LoginAwareButton-2mquSpw6.js";import"./ChallengeTeamWizard-CSzNNt1V.js";import"./CreateChallengeTeam-BEgbCc5t.js";import"./useTeam-1joqtbph.js";import"./papaparse.min-B2a08khz.js";import"./Search-DPpIPqZh.js";import"./DataGrid-CPAIYIf_.js";import"./index-Ch4Ngz7p.js";import"./Switch-8IeUVa8X.js";import"./Badge-CdrfpXS1.js";import"./index-C_2xk3Hd.js";import"./useEntitySelection-9jtcaaNz.js";import"./useGetEntityChildren-xN4px3jE.js";import"./StyledTanStackTable-C-5b9hpG.js";import"./ExpandCollapseButton-BmXB9vx3.js";import"./ColumnHeader-D304YPsI.js";import"./ModifiedOnCell-CBUmgCnu.js";import"./EntityBadgeIcons-CO3EaNXN.js";import"./useSchema-DhEtz-r0.js";import"./AnnotationsTable-CSclGgwz.js";import"./EntityModal-DBf2VHQ5.js";import"./SchemaDrivenAnnotationEditor-DlZSZgyP.js";import"./TextWidget-BvKp9z8n.js";import"./FileHandleUtils-SDjFPeui.js";import"./FileEntityDirectDownload-kA196bPv.js";import"./DirectDownload-D8bQxKnP.js";import"./SynapseTableConstants-2qH3fDlQ.js";import"./immutable.es-CT6QCxCG.js";import"./AvailableEvaluationQueueList-BExg7ll0.js";import"./ChallengeSubmission-DBYiw4tQ.js";import"./StepperDialog-BVsnOXiZ.js";import"./useEvaluation-B5dOBYQg.js";import"./ChangePassword-euzJ6HdD.js";import"./useChangePasswordFormState-Dy9a8Y7P.js";import"./ChangePasswordWithToken-CTbukhPu.js";import"./CookiesNotification-K65PWLxT.js";import"./CTASectionWrapper-C58pXrYv.js";import"./DownloadCartPage-Du_NWOjW.js";import"./ProgrammaticInstructionsModal-Dj_Oa3wl.js";import"./InteractiveCopyIdsIcon-CwUsF7vn.js";import"./ComponentCollapse-Baevt62X.js";import"./KeyboardArrowUpTwoTone-C8m9TDWM.js";import"./ShowDownloadV2-C0caB-dd.js";import"./DynamicForm-DGKfu54A.js";import"./EntityFinder-BU7NtKKs.js";import"./useFavorites-BcTKGudA.js";import"./DropdownSelect-C-5FVGEy.js";import"./getValidReactChildren-7HVTnq7g.js";import"./index.esm-DSUTIGTf.js";import"./EvaluationCard-USyq-OpN.js";import"./DeleteEvaluationQueueConfirmationDialog-C3X-v_Wc.js";import"./CardContent-DJSkx3TR.js";import"./EvaluationEditorPage-DEsJmvo2.js";import"./upperFirst-Brb2hS1_.js";import"./_stringToArray-tHr5q6sH.js";import"./ExperimentalMode-q3lUFZ5c.js";import"./index.prod-Di2HdizQ.js";import"./FeaturedToolsList-BAsPFev0.js";import"./DiscussionThread-DaSeoEbX.js";import"./ForumThreadEditor-C6HY6tJp.js";import"./useThread-CkNju8Pp.js";import"./MarkdownEditor-BL0H-mbV.js";import"./useSubscription-DvuGgotf.js";import"./SubscribersModal-Cn4nDYcL.js";import"./useForum-C4CW6iO6.js";import"./SignInRequiredModal-TLDSDNUs.js";import"./ForumPage-ClI4OP-I.js";import"./InfiniteTableLayout-BVY0PZT1.js";import"./Goals-CIClGpNc.js";import"./ExpandableContent-m6j5CDlt.js";import"./QueryCount-ri7wR0lx.js";import"./GoalsV2-BB8VdQzy.js";import"./PortalSectionHeader-Be0v8Tih.js";import"./NavigateNext-6Yd6B56e.js";import"./CardActionArea-CEE9WBBz.js";import"./CardMedia-CNYLpglM.js";import"./GoalsV3-DZ28szHc.js";import"./GoogleMap-blbO0bL8.js";import"./HasAccessV2-Dg08tV53.js";import"./AccessIcon-BhCMBjY1.js";import"./MarkdownCollapse-BHk1EUqJ.js";import"./MarkdownGithub-DdORp9Rc.js";import"./Container-qlmXC9wu.js";import"./ModalDownload-D8I7Wh2_.js";import"./SynapseFormRadioWidget-CxPE3nVT.js";import"./OAuthAclEditorModal-BRlKetzR.js";import"./OAuthClientAclEditor-DhgIDsu6.js";import"./ThemesPlot-CFMMVrAY.js";import"./head-aneRfQQJ.js";import"./UpsetPlot-Bir-m5TD.js";import"./LargeButton-CiC56o80.js";import"./SynapsePlot-B9u8AI4I.js";import"./Programs-BW8GsWLM.js";import"./ProvenanceGraph-BRWUTDmg.js";import"./pluralize-DvqWrKl4.js";import"./ProjectDataAvailability-Bm1uQo_i.js";import"./ExportToAnalysisPlatformDialog-U5DRJl3j.js";import"./WizardChoiceButtonGroup-BqpXP2_2.js";import"./RowSelectionUI-C50qRXGu.js";import"./DownloadLoginModal-CjAGD_Gj.js";import"./SelectionCriteriaPill-B6AYFgYS.js";import"./RegisterPageLogoutPrompt-ccQaNqXC.js";import"./SageFullLogo-DIBtCNs8.js";import"./RenderIfInView-BWrFF-Uy.js";import"./Resources-CwUczSz_.js";import"./AccessRequirementAclEditor-DfF5NS_-.js";import"./RssFeedCards-Bq05nzpt.js";import"./index-BtB7dkFq.js";import"./index-B3lu7P6U.js";import"./events-DQ172AOg.js";import"./InputSizedButton--uCY5BDA.js";import"./SubscriptionItem-CxG2b0e-.js";import"./Topic-Ctnu42ZI.js";import"./SubsectionRowRenderer-BRvjUgvB.js";import"./SynapseFormWrapper-BbOkSw4Z.js";import"./types-CP9zjM1W.js";import"./SynapseFormSubmissionGrid-DupzGvtQ.js";import"./SynapseTable-DQXOY1zH.js";import"./SynapseTableCell-DjvC716k.js";import"./SynapseChat-VbPRGCSH.js";import"./DraggableDialog-BdcEx-aw.js";import"./TableFeedCards-2hJGy3st.js";import"./TermsAndConditions-Cpo8ANdU.js";import"./UserCardListRotate-VIPVedPz.js";import"./UserCardListGroups-DdM6MhQZ.js";import"./UserProfileLinks-C8oAVIW-.js";import"./EntityHeaderTable-D6BjGjPR.js";import"./EntityFinderModal-niku0kdg.js";import"./EntityHeaderTableCellRenderers-CLGpgv7f.js";import"./AccessRequirementRelatedProjectsList-BPpSVBw6.js";import"./SageResourcesPopover-D1yKo4k8.js";import"./RecentPublicationsGrid-u-eYxihW.js";import"./ImageCardGridWithLinks-1aun_9Iu.js";import"./PortalFeatureHighlights-5CndGq7i.js";import"./Slide-Cb0Axxh1.js";import"./useImageUrlUtils-gN0Db20s.js";import"./CreatePortalModal-CZMvG7I1.js";import"./DownloadConfirmationUI-4TtjqEzm.js";import"./duration-DbmI10NM.js";import"./IconList-BoHmDvzN.js";import"./ShareThisPage-D22rS6ot.js";import"./index-DbESNxNd.js";const{fn:w}=__STORYBOOK_MODULE_TEST__,Qn={title:"Explore/QueryWrapperPlotNav",component:M,decorators:[e=>T.jsx("div",{style:{paddingBottom:"50px"},children:T.jsx(e,{})})],args:{onQueryChange:w(),onQueryResultBundleChange:w()}},s={args:{name:"Data Catalog",sql:"SELECT * FROM syn61609402 where includedInDataCatalog = 'true'",defaultShowPlots:!1,defaultShowSearchBox:!0,hideCopyToClipboard:!0,hideSearchBarControl:!1,hideDownload:!0,cardConfiguration:{type:L,secondaryLabelLimit:4,genericCardSchema:{type:A,title:"name",subTitle:"community",description:"description",secondaryLabels:["contributors","individuals","id","link"]}}}},N=e=>{const t=e.queryContext?.getCurrentQueryRequest,i=e.queryContext?.executeQueryRequest;if(t===void 0||i===void 0){window.alert("Query context functions not found, cannot apply additional filter");return}const o=t();o.query.additionalFilters=[...o.query.additionalFilters||[],{concreteType:"org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter",columnName:"resourceType",operator:r.EQUAL,values:[e.row.values[0]]}],i(o)},l={args:{name:"Tools",sql:"SELECT * FROM syn51730943",customPlots:[{query:"SELECT resourceType, count(resourceType) FROM syn51730943 GROUP BY resourceType ",type:"bar",title:"Resource Type",onCustomPlotClick:N}],limit:5,initialLimit:2,defaultShowPlots:!1,defaultShowSearchBox:!0,shouldDeepLink:!0,cardConfiguration:{type:L,titleLinkConfig:{isMarkdown:!1,baseURL:"Explore/Tools/DetailsPage",URLColumnName:"resourceId",matchColumnName:"resourceId",overrideLinkURLColumnName:"biobankURL"},secondaryLabelLimit:4,genericCardSchema:{type:q,title:"resourceName",subTitle:"resourceType",description:"description",secondaryLabels:["investigatorName","institution","rrid","synonyms","cellLineCategory","cellLineDisease","modelofManifestation","backgroundStrain","backgroundSubstrain","animalModelDisease","animalModelOfManifestation","targetAntigen","reactiveSpecies","hostOrganism","specimenTissueType","specimenPreparationMethod","diseaseType","tumorType","specimenFormat","specimenType","dateModified"]}}}},a={args:{tableConfiguration:{showAccessColumn:!0,showDirectDownloadColumn:!0,columnLinks:[{matchColumnName:"study",isMarkdown:!1,baseURL:"Explore/Studies/DetailsPage",URLColumnName:"Study_Name",wrapValueWithParens:!0},{matchColumnName:"name",isMarkdown:!1,baseURL:"Explore/Files/DetailsPage",URLColumnName:"FileId",overrideValueWithRowID:!0,wrapValueWithParens:!1}]},searchConfiguration:{searchable:["study","dataType","assay","organ","tissue","species","diagnosis","sex","consortium","grant","modelSystemName","treatmentType","specimenID","individualID","individualIdSource","specimenIdSource","resourceType","dataSubtype","metadataType","assayTarget","analysisType","cellType","nucleicAcidSource","fileFormat","group","name","isModelSystem","isConsortiumAnalysis","isMultiSpecimen","metaboliteType","chromosome"]},shouldDeepLink:!0,visibleColumnCount:10,rgbIndex:1,name:"Data",sqlOperator:r.EQUAL,sql:"SELECT * FROM syn11346063",hideSqlEditorControl:!1}},I={sql:"SELECT * FROM syn11346063.28",additionalFilters:[{concreteType:"org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter",columnName:"study",function:D.HAS_LIKE,_function:D.HAS_LIKE,values:["ADMC_ADNI_BakerLipidomics"]}]},n={args:{...a.args,shouldDeepLink:!1,initQueryJson:JSON.stringify(I),lockedColumn:{columnName:"study",value:""}}},m={args:{sql:"SELECT * FROM syn11346063.69",isRowSelectionVisible:!0,tableConfiguration:{showAccessColumn:!0,showDirectDownloadColumn:!0},unitDescription:"file",name:"CAVATICA/Terra/Pluto Integration Demo",hideSqlEditorControl:!1,shouldDeepLink:!1,enabledExternalAnalysisPlatforms:["cavatica","terra","plutodev"]}},P=async e=>{const t=[];return e.request.query.sql="select id from syn51186974",(await F.getFullQueryTableResults(e.request)).queryResult?.queryResults.rows.map(o=>{o.values&&o.values[0]&&t.push(o.values[0])}),t},x=async e=>{const t=e.selectedRows&&e.selectedRows.length>0;b(`Custom action applied to ${t?e.selectedRows.length:"all"} rows (see js console for more information)`),console.log("Rows selected:"),console.log(e.selectedRows);const i=e.queryMetadata?.columnModels?.findIndex(E=>E.name==="id"),o=t?e.selectedRows.map(E=>E.values[i]):await P(e),R={concreteType:"org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter",columnName:"id",operator:r.IN,values:o};localStorage.setItem(O("syn51186974-selectedfiles"),JSON.stringify([R])),console.log("Local Storage value set, refresh table to see additionalFilter QueryFilter being utilized"),e.refresh()},p={args:{sql:"SELECT * FROM syn11346063.57",isRowSelectionVisible:!0,tableConfiguration:{},name:"Row Selection Demo",hideSqlEditorControl:!0,shouldDeepLink:!1,additionalFiltersSessionStorageKey:" syn11346063-selectedfiles",customControls:[{buttonText:"Row Custom Command",onClick:e=>{x(e)},buttonID:"RowSelectionCustomCommandButtonID"}]}},u={args:{sql:"SELECT * FROM syn51425243",tableConfiguration:{showAccessColumn:!0,showDirectDownloadColumn:!0},name:"Table Has Access Requirement",hideSqlEditorControl:!1,shouldDeepLink:!1}},c={args:{sql:"SELECT * FROM syn51489955",tableConfiguration:{showAccessColumn:!1,showDirectDownloadColumn:!1},name:"No Table Download Access",hideSqlEditorControl:!1,shouldDeepLink:!1,onViewSharingSettingsClicked:e=>{b(`Open the ${e} Sharing Settings dialog.  If undefined, send to the entity page.`,"info",{primaryButtonConfig:{text:"Open Entity Page",href:`https://www.synapse.org/Synapse:${e}`}})}}},d={args:{sql:"SELECT * FROM syn26302617",tableConfiguration:{showAccessColumn:!0,showDirectDownloadColumn:!0},name:"Dataset Demo",sqlOperator:r.EQUAL,hideSqlEditorControl:!1,shouldDeepLink:!1,enabledExternalAnalysisPlatforms:["cavatica","terra"],helpConfiguration:[{columnName:"id",helpText:"This represents the unique ID in Synapse"}]}},C={args:{sql:"SELECT * FROM syn33199585",tableConfiguration:{showAccessColumn:!0,showDirectDownloadColumn:!0},name:"Dataset Collection Demo",sqlOperator:r.EQUAL,hideSqlEditorControl:!1,shouldDeepLink:!1}},h={args:{sql:"SELECT * FROM syn13897207",name:"People Demo",sqlOperator:r.EQUAL,hideSqlEditorControl:!1,shouldDeepLink:!1,cardConfiguration:{type:k}}},f={args:{sql:"SELECT * FROM syn52115635",tableConfiguration:{},name:"JSON Column Demo",hideSqlEditorControl:!1,shouldDeepLink:!1}},y={args:{sql:"SELECT * FROM syn52737576",tableConfiguration:{showAccessColumn:!0,showDirectDownloadColumn:!0},name:"MV with File Commands Demo",sqlOperator:r.EQUAL,hideSqlEditorControl:!1,shouldDeepLink:!1,enabledExternalAnalysisPlatforms:["cavatica","terra"],fileIdColumnName:"id",fileNameColumnName:"name",fileVersionColumnName:"currentVersion"}},g={parameters:{stack:"development"},args:{sql:"SELECT * FROM syn14227599",tableConfiguration:{showAccessColumn:!0,showDirectDownloadColumn:!0},name:"Table with Click Wrap",hideSqlEditorControl:!1,shouldDeepLink:!1,enabledExternalAnalysisPlatforms:["cavatica","terra"],fileIdColumnName:"id",fileNameColumnName:"name",fileVersionColumnName:"currentVersion"}},S={args:{sql:"SELECT * FROM syn64926023",tableConfiguration:{showAccessColumn:!0,showDirectDownloadColumn:!0},name:"Table with Range Types",hideSqlEditorControl:!1,shouldDeepLink:!1,enabledExternalAnalysisPlatforms:[]}};s.parameters={...s.parameters,docs:{...s.parameters?.docs,source:{originalSource:`{
+  args: {
+    name: 'Data Catalog',
+    sql: "SELECT * FROM syn61609402 where includedInDataCatalog = 'true'",
+    defaultShowPlots: false,
+    defaultShowSearchBox: true,
+    hideCopyToClipboard: true,
+    hideSearchBarControl: false,
+    hideDownload: true,
+    cardConfiguration: {
+      type: GENERIC_CARD,
+      secondaryLabelLimit: 4,
+      genericCardSchema: {
+        type: DATASET,
+        title: 'name',
+        subTitle: 'community',
+        description: 'description',
+        secondaryLabels: ['contributors', 'individuals', 'id', 'link']
+      }
+    }
+  }
+}`,...s.parameters?.docs?.source}}};l.parameters={...l.parameters,docs:{...l.parameters?.docs,source:{originalSource:`{
+  args: {
+    name: 'Tools',
+    sql: 'SELECT * FROM syn51730943',
+    customPlots: [{
+      query: 'SELECT resourceType, count(resourceType) FROM syn51730943 GROUP BY resourceType ',
+      type: 'bar',
+      title: 'Resource Type',
+      onCustomPlotClick: handlePlotClick
+    }],
+    limit: 5,
+    initialLimit: 2,
+    defaultShowPlots: false,
+    defaultShowSearchBox: true,
+    shouldDeepLink: true,
+    cardConfiguration: {
+      type: GENERIC_CARD,
+      titleLinkConfig: {
+        isMarkdown: false,
+        baseURL: 'Explore/Tools/DetailsPage',
+        URLColumnName: 'resourceId',
+        matchColumnName: 'resourceId',
+        overrideLinkURLColumnName: 'biobankURL'
+      },
+      secondaryLabelLimit: 4,
+      genericCardSchema: {
+        type: EXPERIMENTAL_TOOL,
+        title: 'resourceName',
+        subTitle: 'resourceType',
+        description: 'description',
+        secondaryLabels: ['investigatorName', 'institution', 'rrid', 'synonyms', 'cellLineCategory', 'cellLineDisease', 'modelofManifestation', 'backgroundStrain', 'backgroundSubstrain', 'animalModelDisease', 'animalModelOfManifestation', 'targetAntigen', 'reactiveSpecies', 'hostOrganism', 'specimenTissueType', 'specimenPreparationMethod', 'diseaseType', 'tumorType', 'specimenFormat', 'specimenType', 'dateModified']
+      }
+    }
+  }
+}`,...l.parameters?.docs?.source}}};a.parameters={...a.parameters,docs:{...a.parameters?.docs,source:{originalSource:`{
+  args: {
+    tableConfiguration: {
+      showAccessColumn: true,
+      showDirectDownloadColumn: true,
+      columnLinks: [{
+        matchColumnName: 'study',
+        isMarkdown: false,
+        baseURL: 'Explore/Studies/DetailsPage',
+        URLColumnName: 'Study_Name',
+        wrapValueWithParens: true
+      }, {
+        matchColumnName: 'name',
+        isMarkdown: false,
+        baseURL: 'Explore/Files/DetailsPage',
+        URLColumnName: 'FileId',
+        overrideValueWithRowID: true,
+        wrapValueWithParens: false
+      }]
+    },
+    searchConfiguration: {
+      searchable: ['study', 'dataType', 'assay', 'organ', 'tissue', 'species', 'diagnosis', 'sex', 'consortium', 'grant', 'modelSystemName', 'treatmentType', 'specimenID', 'individualID', 'individualIdSource', 'specimenIdSource', 'resourceType', 'dataSubtype', 'metadataType', 'assayTarget', 'analysisType', 'cellType', 'nucleicAcidSource', 'fileFormat', 'group', 'name', 'isModelSystem', 'isConsortiumAnalysis', 'isMultiSpecimen', 'metaboliteType', 'chromosome']
+    },
+    shouldDeepLink: true,
+    visibleColumnCount: 10,
+    rgbIndex: 1,
+    name: 'Data',
+    sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
+    sql: 'SELECT * FROM syn11346063',
+    hideSqlEditorControl: false
+  }
+}`,...a.parameters?.docs?.source}}};n.parameters={...n.parameters,docs:{...n.parameters?.docs,source:{originalSource:`{
+  args: {
+    ...FileView.args,
+    shouldDeepLink: false,
+    initQueryJson: JSON.stringify(queryWithAdditionalFilter),
+    lockedColumn: {
+      columnName: 'study',
+      value: ''
+    }
+  }
+}`,...n.parameters?.docs?.source},description:{story:`This demo contains a filter on a locked column. This type of configuration should hide that the filter on the locked
+column is applied, making it seem as if the total contents of the table are just the filtered results. Common in
+DetailsPages in portals.`,...n.parameters?.docs?.description}}};m.parameters={...m.parameters,docs:{...m.parameters?.docs,source:{originalSource:`{
+  args: {
+    sql: 'SELECT * FROM syn11346063.69',
+    isRowSelectionVisible: true,
+    tableConfiguration: {
+      showAccessColumn: true,
+      showDirectDownloadColumn: true
+    },
+    unitDescription: 'file',
+    name: 'CAVATICA/Terra/Pluto Integration Demo',
+    hideSqlEditorControl: false,
+    shouldDeepLink: false,
+    enabledExternalAnalysisPlatforms: ['cavatica', 'terra', 'plutodev']
+  }
+}`,...m.parameters?.docs?.source}}};p.parameters={...p.parameters,docs:{...p.parameters?.docs,source:{originalSource:`{
+  args: {
+    sql: 'SELECT * FROM syn11346063.57',
+    isRowSelectionVisible: true,
+    tableConfiguration: {},
+    name: 'Row Selection Demo',
+    hideSqlEditorControl: true,
+    shouldDeepLink: false,
+    // demo custom additional filter local storage key.
+    // In the cohort builder, the file view of the Virtual Table should have one value,
+    // while the participant view of the same Virtual Table should have another.
+    // The custom commands should add filters that target the other perspective
+    // (file command adds filter for participant perspective, participant command adds filter for the file perspective)
+    additionalFiltersSessionStorageKey: ' syn11346063-selectedfiles',
+    customControls: [{
+      buttonText: 'Row Custom Command',
+      onClick: (event: CustomControlCallbackData) => {
+        handleRowSelectionCustomCommandClick(event);
+      },
+      buttonID: 'RowSelectionCustomCommandButtonID'
+    }]
+  }
+}`,...p.parameters?.docs?.source}}};u.parameters={...u.parameters,docs:{...u.parameters?.docs,source:{originalSource:`{
+  args: {
+    sql: 'SELECT * FROM syn51425243',
+    tableConfiguration: {
+      showAccessColumn: true,
+      showDirectDownloadColumn: true
+    },
+    name: 'Table Has Access Requirement',
+    hideSqlEditorControl: false,
+    shouldDeepLink: false
+  }
+}`,...u.parameters?.docs?.source}}};c.parameters={...c.parameters,docs:{...c.parameters?.docs,source:{originalSource:`{
+  args: {
+    sql: 'SELECT * FROM syn51489955',
+    tableConfiguration: {
+      showAccessColumn: false,
+      showDirectDownloadColumn: false
+    },
+    name: 'No Table Download Access',
+    hideSqlEditorControl: false,
+    shouldDeepLink: false,
+    // onViewSharingSettingsClicked: undefined
+    onViewSharingSettingsClicked: (benefactorEntityId: string) => {
+      displayToast(\`Open the \${benefactorEntityId} Sharing Settings dialog.  If undefined, send to the entity page.\`, 'info', {
+        primaryButtonConfig: {
+          text: 'Open Entity Page',
+          href: \`https://www.synapse.org/Synapse:\${benefactorEntityId}\`
+        }
+      });
+    }
+  }
+}`,...c.parameters?.docs?.source}}};d.parameters={...d.parameters,docs:{...d.parameters?.docs,source:{originalSource:`{
+  args: {
+    sql: 'SELECT * FROM syn26302617',
+    tableConfiguration: {
+      showAccessColumn: true,
+      showDirectDownloadColumn: true
+    },
+    name: 'Dataset Demo',
+    sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
+    hideSqlEditorControl: false,
+    shouldDeepLink: false,
+    enabledExternalAnalysisPlatforms: ['cavatica', 'terra'],
+    helpConfiguration: [{
+      columnName: 'id',
+      helpText: 'This represents the unique ID in Synapse'
+    }]
+  }
+}`,...d.parameters?.docs?.source}}};C.parameters={...C.parameters,docs:{...C.parameters?.docs,source:{originalSource:`{
+  args: {
+    sql: 'SELECT * FROM syn33199585',
+    tableConfiguration: {
+      showAccessColumn: true,
+      showDirectDownloadColumn: true
+    },
+    name: 'Dataset Collection Demo',
+    sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
+    hideSqlEditorControl: false,
+    shouldDeepLink: false
+  }
+}`,...C.parameters?.docs?.source}}};h.parameters={...h.parameters,docs:{...h.parameters?.docs,source:{originalSource:`{
+  args: {
+    sql: 'SELECT * FROM syn13897207',
+    name: 'People Demo',
+    sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
+    hideSqlEditorControl: false,
+    shouldDeepLink: false,
+    cardConfiguration: {
+      type: MEDIUM_USER_CARD
+    }
+  }
+}`,...h.parameters?.docs?.source}}};f.parameters={...f.parameters,docs:{...f.parameters?.docs,source:{originalSource:`{
+  args: {
+    sql: 'SELECT * FROM syn52115635',
+    tableConfiguration: {},
+    name: 'JSON Column Demo',
+    hideSqlEditorControl: false,
+    shouldDeepLink: false
+  }
+}`,...f.parameters?.docs?.source}}};y.parameters={...y.parameters,docs:{...y.parameters?.docs,source:{originalSource:`{
+  args: {
+    sql: 'SELECT * FROM syn52737576',
+    tableConfiguration: {
+      showAccessColumn: true,
+      showDirectDownloadColumn: true
+    },
+    name: 'MV with File Commands Demo',
+    sqlOperator: ColumnSingleValueFilterOperator.EQUAL,
+    hideSqlEditorControl: false,
+    shouldDeepLink: false,
+    enabledExternalAnalysisPlatforms: ['cavatica', 'terra'],
+    fileIdColumnName: 'id',
+    fileNameColumnName: 'name',
+    fileVersionColumnName: 'currentVersion'
+  }
+}`,...y.parameters?.docs?.source}}};g.parameters={...g.parameters,docs:{...g.parameters?.docs,source:{originalSource:`{
+  parameters: {
+    stack: 'development'
+  },
+  args: {
+    sql: 'SELECT * FROM syn14227599',
+    tableConfiguration: {
+      showAccessColumn: true,
+      showDirectDownloadColumn: true
+    },
+    name: 'Table with Click Wrap',
+    hideSqlEditorControl: false,
+    shouldDeepLink: false,
+    enabledExternalAnalysisPlatforms: ['cavatica', 'terra'],
+    fileIdColumnName: 'id',
+    fileNameColumnName: 'name',
+    fileVersionColumnName: 'currentVersion'
+  }
+}`,...g.parameters?.docs?.source}}};S.parameters={...S.parameters,docs:{...S.parameters?.docs,source:{originalSource:`{
+  args: {
+    sql: 'SELECT * FROM syn64926023',
+    tableConfiguration: {
+      showAccessColumn: true,
+      showDirectDownloadColumn: true
+    },
+    name: 'Table with Range Types',
+    hideSqlEditorControl: false,
+    shouldDeepLink: false,
+    enabledExternalAnalysisPlatforms: []
+  }
+}`,...S.parameters?.docs?.source}}};const _n=["DataCatalogCards","Cards","FileView","FileViewWithLockedColumn","SendToAnalysisPlatform","TableRowSelectionWithCustomCommand","TableHasAccessRequirement","TableWithNoDownloadAccess","Dataset","DatasetCollection","People","TableWithJSONColumns","MaterializedViewOfFiles","TableWithClickWrap","TableWithRange"];export{l as Cards,s as DataCatalogCards,d as Dataset,C as DatasetCollection,a as FileView,n as FileViewWithLockedColumn,y as MaterializedViewOfFiles,h as People,m as SendToAnalysisPlatform,u as TableHasAccessRequirement,p as TableRowSelectionWithCustomCommand,g as TableWithClickWrap,f as TableWithJSONColumns,c as TableWithNoDownloadAccess,S as TableWithRange,_n as __namedExportsOrder,Qn as default};

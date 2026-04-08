@@ -1,0 +1,11 @@
+import{r as o,hs as n,i3 as j,j as t,X as h,ad as P,B as f,jd as O,b as y}from"./iframe-Ddo1nd2c.js";import{b as D}from"./useSubscription-DvuGgotf.js";import{D as I}from"./DropdownSelect-C-5FVGEy.js";import{S as T}from"./SubscriptionItem-CxG2b0e-.js";import{T as v,a as l}from"./Tabs-DYRr0WqH.js";import"./index-Chi_LkuB.js";import"./useInfiniteQuery-DJwQPHS2.js";import"./getValidReactChildren-7HVTnq7g.js";import"./MenuItem-BaT97X1Q.js";import"./useEntity-6i1utiFK.js";import"./pickBy-Ca1HoaHl.js";import"./isString-C31m5vfz.js";import"./_baseIteratee-BL_XVY7N.js";import"./InfiniteQueryUtils-CKlRW-xB.js";import"./useEntityBundle-qjtX1WIb.js";import"./useForum-C4CW6iO6.js";import"./Topic-Ctnu42ZI.js";import"./useThread-CkNju8Pp.js";import"./KeyboardArrowRight-C3RussVL.js";const s=[{value:"ASC",label:"Date Posted"},{value:"DESC",label:"Most Recent"}];function R(){const[i,d]=o.useState(n.FORUM),[p,u]=o.useState(s[0]),g=o.useId(),c={objectType:i,sortBy:j.CREATED_ON,sortDirection:p.value},{data:x,hasNextPage:b,isFetchingNextPage:m,fetchNextPage:S}=D(c,{staleTime:1/0,select:e=>({pages:e.pages.flatMap(r=>r.results),pageParams:e.pageParams})},[`subscriptionPageFetch_${g}`,c]);return t.jsxs(t.Fragment,{children:[t.jsx(h,{sx:{float:"right"},children:t.jsx(I,{variant:"outlined",options:s.map(e=>e.label),selectedIndex:s.findIndex(e=>e.value===p.value),setSelectedIndex:e=>u(s[e])})}),t.jsxs(v,{sx:{mb:3},value:i,onChange:(e,r)=>{e.stopPropagation(),d(r)},textColor:"secondary",indicatorColor:"secondary",children:[t.jsx(l,{value:n.FORUM,label:"Project Forums"}),t.jsx(l,{value:n.THREAD,label:"Threads"})]}),t.jsx(P,{sx:{gap:.5},children:x?.pages.map(e=>t.jsx(T,{subscription:e},e.subscriptionId))}),b&&t.jsx(f,{variant:"contained",onClick:()=>{S()},disabled:m,sx:{mt:6},children:m?"Loading...":"Load More"})]})}const z={title:"Synapse/Following/SubscriptionPage",component:R,parameters:{stack:"mock"}},a={name:"SubscriptionPage",args:{},parameters:{msw:{handlers:{...O(y)}}}};a.parameters={...a.parameters,docs:{...a.parameters?.docs,source:{originalSource:`{
+  name: 'SubscriptionPage',
+  args: {},
+  parameters: {
+    msw: {
+      handlers: {
+        ...getHandlers(MOCK_REPO_ORIGIN)
+      }
+    }
+  }
+}`,...a.parameters?.docs?.source}}};const J=["Demo"];export{a as Demo,J as __namedExportsOrder,z as default};
