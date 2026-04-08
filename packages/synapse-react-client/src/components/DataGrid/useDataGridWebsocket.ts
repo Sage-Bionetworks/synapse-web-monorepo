@@ -132,6 +132,7 @@ export const initialWebSocketState: WebSocketState = {
  *   - Grid model updates and snapshot tracking
  */
 export interface UseDataGridWebSocketOptions {
+  onGridReady?: () => void
   onReplicaConnected?: () => void
   onReplicaDisconnected?: () => void
 }
@@ -166,7 +167,10 @@ export function useDataGridWebSocket(options?: UseDataGridWebSocketOptions) {
   // Memoize websocket options to prevent unnecessary re-renders (excluding model to avoid circular deps)
   const websocketOptionsWithoutModel = useMemo(
     () => ({
-      onGridReady: () => dispatch({ type: 'GRID_READY' }),
+      onGridReady: () => {
+        dispatch({ type: 'GRID_READY' })
+        options?.onGridReady?.()
+      },
       onStatusChange: (open: boolean) =>
         dispatch({ type: open ? 'CONNECTION_OPENED' : 'CONNECTION_CLOSED' }),
       onModelCreate: handleModelCreate,
@@ -175,6 +179,7 @@ export function useDataGridWebSocket(options?: UseDataGridWebSocketOptions) {
     }),
     [
       handleModelCreate,
+      options?.onGridReady,
       options?.onReplicaConnected,
       options?.onReplicaDisconnected,
     ],
