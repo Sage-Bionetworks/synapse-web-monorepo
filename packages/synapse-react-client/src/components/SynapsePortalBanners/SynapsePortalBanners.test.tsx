@@ -178,6 +178,16 @@ const createQueryBundleResult = (
     isSuccess: true,
   } as unknown as ReturnType<typeof useGetQueryResultBundleWithAsyncStatus>)
 
+const createUndefinedQueryBundleResult = (): ReturnType<
+  typeof useGetQueryResultBundleWithAsyncStatus
+> =>
+  ({
+    data: undefined,
+    isLoading: false,
+    isError: false,
+    isSuccess: false,
+  } as unknown as ReturnType<typeof useGetQueryResultBundleWithAsyncStatus>)
+
 describe('SynapsePortalBanners', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -212,6 +222,18 @@ describe('SynapsePortalBanners', () => {
       createQueryBundleResult(portalRows),
     )
     mockUseSourceAppConfigs.mockReturnValue([])
+
+    await renderComponent(defaultProps)
+    expect(
+      screen.queryByText('This resource is part of a Portal'),
+    ).not.toBeInTheDocument()
+  })
+
+  it('Banner is not shown when appIds is undefined because the data catalog query has not yet returned data', async () => {
+    mockUseGetQueryResultBundleWithAsyncStatus.mockReturnValue(
+      createUndefinedQueryBundleResult(),
+    )
+    mockUseSourceAppConfigs.mockReturnValue(portalConfigs)
 
     await renderComponent(defaultProps)
     expect(

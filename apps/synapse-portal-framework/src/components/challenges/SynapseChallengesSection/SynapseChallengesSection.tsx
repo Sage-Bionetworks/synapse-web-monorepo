@@ -1,6 +1,9 @@
-import { Box, Typography } from '@mui/material'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
+import { Box, Button, Typography } from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { Link as RouterLink } from 'react-router'
+import { generateEncodedPathAndQueryForSelectedFacetURL } from 'synapse-react-client/components/QueryWrapper/generateEncodedPathAndQueryForSelectedFacetURL'
 import ColorfulPortalCardWithChips from 'synapse-react-client/components/BasePortalCard/ColorfulPortalCardWithChips/ColorfulPortalCardWithChips'
 import { useGetFullTableQueryResults } from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
 import { parseEntityIdAndVersionFromSqlStatement } from 'synapse-react-client/utils/functions/index'
@@ -8,17 +11,17 @@ import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import getChallengeKeywordsFromRow from '../../../utils/getChallengeKeywordsFromRow'
 import { ReactComponent as Vectors } from '../assets/popularChallengesVectors.svg'
-import styles from './PopularChallengesSection.module.scss'
+import styles from './SynapseChallengesSection.module.scss'
 
-type PopularChallengesSectionProps = {
+type SynapseChallengesSectionProps = {
   sql: string
   borderRadiusPx?: number
 }
 
-const PopularChallengesSection = ({
+const SynapseChallengesSection = ({
   sql,
   borderRadiusPx,
-}: PopularChallengesSectionProps): React.ReactNode => {
+}: SynapseChallengesSectionProps): React.ReactNode => {
   const { entityId } = parseEntityIdAndVersionFromSqlStatement(sql)
 
   const queryBundleRequest: QueryBundleRequest = {
@@ -35,20 +38,29 @@ const PopularChallengesSection = ({
 
   const dataRows = queryResultBundle?.queryResult?.queryResults.rows ?? []
 
+  const [synapseFilteredLink, setSynapseFilteredLink] =
+    useState('/OpenChallenges')
+
+  useEffect(() => {
+    generateEncodedPathAndQueryForSelectedFacetURL('/OpenChallenges', sql, [
+      { facet: 'platform', facetValue: 'Synapse' },
+    ]).then(setSynapseFilteredLink)
+  }, [sql])
+
   return (
-    <Box className={styles.PopularChallengesSection__root}>
-      <Box className={styles.PopularChallengesSection__headerSection}>
+    <Box className={styles.SynapseChallengesSection__root}>
+      <Box className={styles.SynapseChallengesSection__headerSection}>
         <Vectors
-          className={styles.PopularChallengesSection__titleSectionVectors}
+          className={styles.SynapseChallengesSection__titleSectionVectors}
         />
         <Typography
           variant="headline1"
-          className={styles.PopularChallengesSection__sectionTitle}
+          className={styles.SynapseChallengesSection__sectionTitle}
         >
-          Popular Challenges
+          Synapse Challenges
         </Typography>
       </Box>
-      <Box className={styles.PopularChallengesSection__container}>
+      <Box className={styles.SynapseChallengesSection__container}>
         {dataRows.map(row => {
           const chipsArray = getChallengeKeywordsFromRow(row, queryResultBundle)
 
@@ -82,8 +94,17 @@ const PopularChallengesSection = ({
           )
         })}
       </Box>
+      <Button
+        component={RouterLink}
+        variant="outlined"
+        to={synapseFilteredLink}
+        endIcon={<ArrowForwardIcon />}
+        className={styles.SynapseChallengesSection__viewChallengeListButton}
+      >
+        View All Synapse Challenges
+      </Button>
     </Box>
   )
 }
 
-export default PopularChallengesSection
+export default SynapseChallengesSection

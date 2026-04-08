@@ -7,14 +7,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Run from the `packages/synapse-react-client` directory (or use `pnpm nx run synapse-react-client:<script>` from the monorepo root):
 
 ```bash
-pnpm test                    # Run all tests (Vitest, interactive watch mode)
-pnpm test -- --run           # Run tests once (non-interactive)
-pnpm test -- src/components/Foo/Foo.test.tsx   # Run a single test file
-pnpm test -- --reporter=verbose                # Run with verbose output
-pnpm build                   # Build the library (Vite + tsc + copy assets)
-pnpm start                   # Run Storybook dev server on port 6060
-pnpm lint                    # ESLint
-pnpm type-check              # TypeScript type check
+pnpm test                                        # Run all tests (Vitest, interactive watch mode)
+pnpm test run                                    # Run all tests once (non-interactive)
+pnpm test run src/components/Foo/Foo.test.tsx    # Run a single test file once
+pnpm test run src/features/entity/metadata-task  # Run all tests under a directory once
+pnpm test --reporter=verbose                     # Run with verbose output (watch mode)
+pnpm build                                       # Build the library (Vite + tsc + copy assets)
+pnpm start                                       # Run Storybook dev server on port 6060
+pnpm lint                                        # ESLint
+pnpm type-check                                  # TypeScript type check
 ```
 
 ## Architecture

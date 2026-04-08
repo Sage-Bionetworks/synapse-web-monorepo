@@ -30,6 +30,7 @@ import type {
   RestrictionInformationResponse,
 } from '@sage-bionetworks/synapse-client'
 import {
+  ColumnTypeEnum,
   EntityHeader,
   FileEntity,
   PaginatedResults,
@@ -54,7 +55,11 @@ import {
 import * as NoContentPlaceholderModule from '../QueryVisualizationWrapper/NoContentPlaceholder'
 import { QueryWrapper, QueryWrapperProps } from '../QueryWrapper'
 import * as UserCardModule from '../UserCard/UserCard'
-import { SynapseTable, SynapseTableProps } from './SynapseTable'
+import {
+  getColumnMinSize,
+  SynapseTable,
+  SynapseTableProps,
+} from './SynapseTable'
 
 const synapseTableEntityId = 'syn16787123'
 
@@ -719,5 +724,51 @@ describe.skip('SynapseTable tests', () => {
     renderTable(queryResultBundleWithNoRows)
 
     await screen.findByTestId('NoContentPlaceholder')
+  })
+
+  it('applies correct minSize to columns based on type and name', () => {
+    // Test getColumnMinSize function directly with various column types and names
+
+    // ID-type columns should get 180px
+    expect(getColumnMinSize('id', ColumnTypeEnum.ENTITYID)).toBe(180)
+    expect(getColumnMinSize('userId', ColumnTypeEnum.USERID)).toBe(180)
+    expect(getColumnMinSize('fileHandleId', ColumnTypeEnum.FILEHANDLEID)).toBe(
+      180,
+    )
+    expect(getColumnMinSize('evalId', ColumnTypeEnum.EVALUATIONID)).toBe(180)
+    expect(getColumnMinSize('submissionId', ColumnTypeEnum.SUBMISSIONID)).toBe(
+      180,
+    )
+    expect(getColumnMinSize('entityList', ColumnTypeEnum.ENTITYID_LIST)).toBe(
+      180,
+    )
+    expect(getColumnMinSize('userList', ColumnTypeEnum.USERID_LIST)).toBe(180)
+
+    // Columns with 'name' or 'description' in the name should get 250px (takes precedence over type)
+    expect(getColumnMinSize('studyName', ColumnTypeEnum.STRING)).toBe(250)
+    expect(getColumnMinSize('projectName', ColumnTypeEnum.LARGETEXT)).toBe(250)
+    expect(getColumnMinSize('Name', ColumnTypeEnum.INTEGER)).toBe(250) // case-insensitive
+    expect(getColumnMinSize('description', ColumnTypeEnum.STRING)).toBe(250)
+    expect(getColumnMinSize('Description', ColumnTypeEnum.MEDIUMTEXT)).toBe(250) // case-insensitive
+    expect(getColumnMinSize('someDescriptionField', ColumnTypeEnum.JSON)).toBe(
+      250,
+    )
+
+    // Date columns should get 120px
+    expect(getColumnMinSize('createdOn', ColumnTypeEnum.DATE)).toBe(120)
+    expect(getColumnMinSize('dateList', ColumnTypeEnum.DATE_LIST)).toBe(120)
+
+    // STRING and STRING_LIST should get 100px
+    expect(getColumnMinSize('status', ColumnTypeEnum.STRING)).toBe(100)
+    expect(getColumnMinSize('tags', ColumnTypeEnum.STRING_LIST)).toBe(100)
+
+    // Other types should get the default 60px
+    expect(getColumnMinSize('count', ColumnTypeEnum.INTEGER)).toBe(60)
+    expect(getColumnMinSize('score', ColumnTypeEnum.DOUBLE)).toBe(60)
+    expect(getColumnMinSize('isActive', ColumnTypeEnum.BOOLEAN)).toBe(60)
+    expect(getColumnMinSize('data', ColumnTypeEnum.JSON)).toBe(60)
+    expect(getColumnMinSize('link', ColumnTypeEnum.LINK)).toBe(60)
+    expect(getColumnMinSize('text', ColumnTypeEnum.MEDIUMTEXT)).toBe(60)
+    expect(getColumnMinSize('longText', ColumnTypeEnum.LARGETEXT)).toBe(60)
   })
 })

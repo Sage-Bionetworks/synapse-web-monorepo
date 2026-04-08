@@ -2,19 +2,19 @@
 @use '../ChallengeCardsSection.module.scss' as Base;
 @use 'sass:map';
 
-.PopularChallengesSection__root {
+.SynapseChallengesSection__root {
   margin: 120px 0;
 }
 
-.PopularChallengesSection__sectionTitle:global(.MuiTypography-root) {
+.SynapseChallengesSection__sectionTitle:global(.MuiTypography-root) {
   @include Base.sectionTitle;
 }
 
-.PopularChallengesSection__container {
+.SynapseChallengesSection__container {
   @include Base.sectionContainer;
 }
 
-.PopularChallengesSection__triangleImage {
+.SynapseChallengesSection__triangleImage {
   @include Base.imagePosition;
   left: 83%;
   top: 4%;
@@ -26,7 +26,7 @@
   }
 }
 
-.PopularChallengesSection__circleImage {
+.SynapseChallengesSection__circleImage {
   @include Base.imagePosition;
   left: 10%;
   bottom: 100%;
@@ -37,7 +37,7 @@
   }
 }
 
-.PopularChallengesSection__longLineImage {
+.SynapseChallengesSection__longLineImage {
   @include Base.imagePosition;
   right: 10%;
   bottom: 100%;
@@ -49,7 +49,7 @@
   }
 }
 
-.PopularChallengesSection__titleSectionVectors {
+.SynapseChallengesSection__titleSectionVectors {
   position: absolute;
   bottom: 16%;
   left: 5%;
@@ -61,8 +61,23 @@
   }
 }
 
-.PopularChallengesSection__headerSection {
+.SynapseChallengesSection__headerSection {
   display: flex;
   flex-direction: column;
   position: relative;
+}
+
+.SynapseChallengesSection__viewChallengeListButton:global(.MuiButton-root) {
+  display: flex;
+  height: 36px;
+  padding: 6px 16px;
+  margin: 36px auto 0;
+  border-radius: 8px;
+  color: var(--synapse-black) !important;
+  border: 1px solid var(--synapse-black) !important;
+  width: 400px;
+
+  @media (max-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    width: 90%;
+  }
 }
