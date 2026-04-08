@@ -5,6 +5,7 @@ import {
   CreateGridRequest,
   CreateGridResponse,
   CreateReplicaResponse,
+  GridReplicaInfo,
   GridSession,
   ListGridSessionsRequest,
   ListGridSessionsResponse,
@@ -242,6 +243,43 @@ export function useSynchronizeGridSession(
       )
 
       return asyncJobResponse.responseBody as SynchronizeGridResponse
+    },
+  })
+}
+
+/**
+ * Fetches all replicas in a grid session by following pagination tokens.
+ * Refetch this query on `replica-connected` or `replica-disconnected` WebSocket events
+ * to keep the replica list current.
+ */
+export function useListGridReplicas(
+  sessionId: string | undefined,
+  options?: Partial<UseQueryOptions<GridReplicaInfo[], SynapseClientError>>,
+) {
+  const { keyFactory, synapseClient } = useSynapseContext()
+
+  return useQuery<GridReplicaInfo[], SynapseClientError>({
+    ...options,
+    queryKey: keyFactory.getGridReplicaListKey(sessionId!),
+    enabled: !!sessionId && (options?.enabled ?? true),
+    queryFn: async () => {
+      const replicas: GridReplicaInfo[] = []
+      let nextPageToken: string | undefined = undefined
+      do {
+        const response =
+          await synapseClient.gridServicesClient.postRepoV1GridSessionSessionIdReplicaList(
+            {
+              sessionId: sessionId!,
+              listGridReplicasRequest: {
+                gridSessionId: sessionId!,
+                nextPageToken,
+              },
+            },
+          )
+        replicas.push(...(response.page ?? []))
+        nextPageToken = response.nextPageToken
+      } while (nextPageToken)
+      return replicas
     },
   })
 }

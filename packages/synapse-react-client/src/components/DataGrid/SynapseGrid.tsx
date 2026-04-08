@@ -9,7 +9,7 @@ import { SkeletonTable } from '@/components/index'
 import { useGetEntity } from '@/synapse-queries/index'
 import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import { SmartToyTwoTone } from '@mui/icons-material'
-import { Stack } from '@mui/material'
+import { Stack, Tooltip } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import {
   CreateGridRequest,
@@ -37,6 +37,7 @@ import { applyModelChange, ModelChange } from './utils/applyModelChange'
 import { removeNoOpOperations } from './utils/DataGridUtils'
 import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
 import { useGetCurrentUserBundle } from '@/synapse-queries'
+import { useListGridReplicas } from '@/synapse-queries/grid/useGridSession'
 import CertificationRequirement from '@/components/AccessRequirementList/RequirementItem/CertificationRequirement'
 import { ValidationAlert } from './components/ValidationAlert'
 
@@ -63,6 +64,13 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
     const gridRef = useRef<DataSheetGridRef | null>(null)
 
     const { data: userBundle, isLoading } = useGetCurrentUserBundle()
+
+    const { data: replicas = [], refetch: refetchReplicas } =
+      useListGridReplicas(session?.sessionId)
+
+    const handleReplicaConnectionChange = useCallback(() => {
+      void refetchReplicas()
+    }, [refetchReplicas])
 
     useImperativeHandle(
       ref,
@@ -91,7 +99,11 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       connect,
       presignedUrl,
       hasSufficientData,
-    } = useDataGridWebSocket()
+    } = useDataGridWebSocket({
+      onGridReady: handleReplicaConnectionChange,
+      onReplicaConnected: handleReplicaConnectionChange,
+      onReplicaDisconnected: handleReplicaConnectionChange,
+    })
 
     const websocketInstanceRef = useRef<typeof websocketInstance | null>(null)
 
@@ -341,6 +353,41 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                   <span style={{ color: isConnected ? 'green' : 'red' }}>
                     {connectionStatus}
                   </span>
+                </p>
+                <p>
+                  {(() => {
+                    const connectedReplicas = replicas.filter(
+                      r => r.isConnected,
+                    )
+                    return (
+                      <>
+                        Connected Replicas ({connectedReplicas.length} /{' '}
+                        {replicas.length} total):{' '}
+                        {connectedReplicas.length === 0
+                          ? 'none'
+                          : connectedReplicas.map((r, i) => (
+                              <Tooltip
+                                key={r.replicaId}
+                                title={
+                                  <pre style={{ margin: 0, fontSize: '11px' }}>
+                                    {JSON.stringify(r, null, 2)}
+                                  </pre>
+                                }
+                              >
+                                <span
+                                  style={{
+                                    cursor: 'pointer',
+                                    textDecoration: 'underline dotted',
+                                  }}
+                                >
+                                  {r.replicaId}
+                                  {i < connectedReplicas.length - 1 ? ', ' : ''}
+                                </span>
+                              </Tooltip>
+                            ))}
+                      </>
+                    )
+                  })()}
                 </p>
               </div>
             )}
