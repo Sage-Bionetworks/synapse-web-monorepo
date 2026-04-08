@@ -155,6 +155,10 @@
       "description": "The recycle bin (or trash can) is the special folder that holds the deleted entities for users.\n <p>\n Services are provided for users to delete entities into the trash can, to view entities\n in the trash can, to purge entities from the trash can, and to restore entities out\n of the trash can."
     },
     {
+      "name": "Search Query Services",
+      "description": "Services for search queries and autocomplete."
+    },
+    {
       "name": "Search Services",
       "description": "Search for Entities on Synapse"
     },
@@ -2714,7 +2718,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/org.sagebionetworks.repo.model.table.search.ColumnAnalyzerOverride"
+                "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.table.ColumnAnalyzerOverride"
               }
             }
           },
@@ -2727,7 +2731,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.table.search.ColumnAnalyzerOverride"
+                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.table.ColumnAnalyzerOverride"
                 }
               }
             }
@@ -2754,7 +2758,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.table.search.ColumnAnalyzerOverride"
+                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.table.ColumnAnalyzerOverride"
                 }
               }
             }
@@ -2776,7 +2780,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/org.sagebionetworks.repo.model.table.search.ColumnAnalyzerOverride"
+                "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.table.ColumnAnalyzerOverride"
               }
             }
           },
@@ -2789,7 +2793,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.table.search.ColumnAnalyzerOverride"
+                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.table.ColumnAnalyzerOverride"
                 }
               }
             }
@@ -2820,7 +2824,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/org.sagebionetworks.repo.model.table.search.ListColumnAnalyzerOverridesRequest"
+                "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.table.ListColumnAnalyzerOverridesRequest"
               }
             }
           },
@@ -2833,7 +2837,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.table.search.ListColumnAnalyzerOverridesResponse"
+                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.table.ListColumnAnalyzerOverridesResponse"
                 }
               }
             }
@@ -9241,7 +9245,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/org.sagebionetworks.repo.model.table.search.TextAnalyzer"
+                "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.table.TextAnalyzer"
               }
             }
           },
@@ -9254,7 +9258,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.table.search.TextAnalyzer"
+                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.table.TextAnalyzer"
                 }
               }
             }
@@ -9282,7 +9286,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.table.search.TextAnalyzer"
+                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.table.TextAnalyzer"
                 }
               }
             }
@@ -9305,7 +9309,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/org.sagebionetworks.repo.model.table.search.TextAnalyzer"
+                "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.table.TextAnalyzer"
               }
             }
           },
@@ -9318,7 +9322,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.table.search.TextAnalyzer"
+                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.table.TextAnalyzer"
                 }
               }
             }
@@ -9350,7 +9354,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/org.sagebionetworks.repo.model.table.search.ListTextAnalyzersRequest"
+                "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.table.ListTextAnalyzersRequest"
               }
             }
           },
@@ -9363,7 +9367,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.table.search.ListTextAnalyzersResponse"
+                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.table.ListTextAnalyzersResponse"
                 }
               }
             }
@@ -15760,6 +15764,93 @@
         }
       }
     },
+    "/repo/v1/search/query/async/start": {
+      "post": {
+        "tags": ["Search Query Services"],
+        "operationId": "post-/repo/v1/search/query/async/start",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.table.SearchIndexQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "201": {
+            "description": "Auto-generated description",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.asynch.AsyncJobId"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repo/v1/search/query/async/get/{asyncToken}": {
+      "get": {
+        "tags": ["Search Query Services"],
+        "operationId": "get-/repo/v1/search/query/async/get/{asyncToken}",
+        "parameters": [
+          {
+            "name": "asyncToken",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Auto-generated description",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.SearchQueryResults"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repo/v1/search/autocomplete": {
+      "post": {
+        "tags": ["Search Query Services"],
+        "operationId": "post-/repo/v1/search/autocomplete",
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.table.SearchIndexQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Auto-generated description",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.SearchQueryResults"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/repo/v1/storageReport/async/start": {
       "post": {
         "tags": ["Storage Report Services"],
@@ -19832,24 +19923,6 @@
         "description": "The status of a user meeting a TermsOfUseAccessRequirement.",
         "required": ["concreteType"]
       },
-      "org.sagebionetworks.repo.model.table.search.ListColumnAnalyzerOverridesResponse": {
-        "type": "object",
-        "properties": {
-          "results": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.table.search.ColumnAnalyzerOverride",
-              "description": "A shared resource containing per-column analyzer override entries. ColumnAnalyzerOverrides belong to an Organization and can be referenced by SearchConfigurations. Cannot be deleted while referenced by any SearchConfiguration."
-            },
-            "description": "The list of column analyzer overrides for this page."
-          },
-          "nextPageToken": {
-            "type": "string",
-            "description": "Token for the next page of results, if more results exist."
-          }
-        },
-        "description": "Response containing a page of column analyzer overrides."
-      },
       "org.sagebionetworks.repo.model.message.cloudmailin.Message": {
         "type": "object",
         "properties": {
@@ -19883,6 +19956,20 @@
           }
         },
         "description": "JSON schema for the CloudMainIn message format"
+      },
+      "org.sagebionetworks.repo.model.search.table.ListTextAnalyzersRequest": {
+        "type": "object",
+        "properties": {
+          "organizationName": {
+            "type": "string",
+            "description": "The name of the Organization to list analyzers for. If not provided, lists all analyzers."
+          },
+          "nextPageToken": {
+            "type": "string",
+            "description": "Optional pagination token from a previous response."
+          }
+        },
+        "description": "Request to list text analyzers. Returns all analyzers if no organizationName is provided."
       },
       "org.sagebionetworks.repo.model.dataaccess.AccessorGroup": {
         "type": "object",
@@ -20348,6 +20435,18 @@
           }
         }
       },
+      "org.sagebionetworks.repo.model.search.SearchQueryType": {
+        "type": "string",
+        "enum": [
+          "SIMPLE_QUERY_STRING",
+          "MATCH",
+          "MULTI_MATCH",
+          "MATCH_PHRASE",
+          "PREFIX",
+          "WILDCARD",
+          "MATCH_ALL"
+        ]
+      },
       "org.sagebionetworks.repo.model.download.DownloadListManifestRequest": {
         "type": "object",
         "properties": {
@@ -20801,52 +20900,6 @@
             }
           }
         }
-      },
-      "org.sagebionetworks.repo.model.table.search.TextAnalyzer": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "The unique ID of this text analyzer."
-          },
-          "organizationName": {
-            "type": "string",
-            "description": "The name of the Organization this resource belongs to."
-          },
-          "name": {
-            "type": "string",
-            "description": "Display name. Unique within the organization."
-          },
-          "description": {
-            "type": "string",
-            "description": "Optional description."
-          },
-          "settings": {
-            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.table.search.TextAnalyzerSettings",
-            "description": "The OpenSearch analyzer configuration. Stores the full definition of how text is analyzed."
-          },
-          "etag": {
-            "type": "string",
-            "description": "Synapse employs an Optimistic Concurrency Control (OCC) scheme."
-          },
-          "createdOn": {
-            "type": "string",
-            "description": "The date this resource was created."
-          },
-          "createdBy": {
-            "type": "string",
-            "description": "The ID of the user that created this resource."
-          },
-          "modifiedOn": {
-            "type": "string",
-            "description": "The date this resource was last modified."
-          },
-          "modifiedBy": {
-            "type": "string",
-            "description": "The ID of the user that last modified this resource."
-          }
-        },
-        "description": "A text analyzer configuration. Used to configure how text is tokenized for a search index."
       },
       "org.sagebionetworks.repo.model.search.query.SuggestedTermSort": {
         "type": "string",
@@ -22187,6 +22240,104 @@
         "description": "Request to get a single page of files from the user's download list for files that are currently available for download.",
         "required": ["concreteType"]
       },
+      "org.sagebionetworks.repo.model.search.SearchQuery": {
+        "type": "object",
+        "properties": {
+          "concreteType": {
+            "type": "string",
+            "enum": ["org.sagebionetworks.repo.model.search.SearchQuery"]
+          },
+          "queryType": {
+            "type": "string",
+            "description": "The type of full-text query to execute against a search index.",
+            "enum": [
+              "SIMPLE_QUERY_STRING",
+              "MATCH",
+              "MULTI_MATCH",
+              "MATCH_PHRASE",
+              "PREFIX",
+              "WILDCARD",
+              "MATCH_ALL"
+            ]
+          },
+          "queryText": {
+            "type": "string",
+            "description": "The search text. Null or empty matches all documents."
+          },
+          "queryFields": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Column names with optional boost (e.g., 'studyName^3'). Empty means all indexed fields."
+          },
+          "termsFilters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.KeyValues",
+              "description": "A multi-value filter (IN clause). Matches rows where the key column contains any of the listed values."
+            },
+            "description": "Multi-value filters (IN clause)."
+          },
+          "rangeFilters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.KeyRange",
+              "description": "A range filter. Matches rows where min <= value <= max. At least one of either 'min' or 'max' must be set for this range to be valid."
+            },
+            "description": "Range filters with min and max."
+          },
+          "existsFilters": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Columns that must have a non-null value."
+          },
+          "notExistsFilters": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Columns that must be null or missing."
+          },
+          "fuzziness": {
+            "type": "string",
+            "description": "Typo tolerance: 'AUTO', '0', '1', or '2'."
+          },
+          "facetRequests": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.FacetRequest",
+              "description": "A request to aggregate a column as a facet in search results."
+            },
+            "description": "Columns to aggregate as facets."
+          },
+          "returnFields": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Columns to include in results. Empty means all columns."
+          },
+          "sort": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.SortField",
+              "description": "Sort specification for search results."
+            },
+            "description": "Sort order. Default: relevance descending."
+          },
+          "highlight": {
+            "type": "boolean",
+            "description": "Whether to return highlighted snippets. Default: false."
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Zero-based pagination offset. Default: 0.",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Results per page. Default: 25. Max: 100.",
+            "format": "int32"
+          }
+        },
+        "description": "A structured search query against an OpenSearch index. Can be submitted as an asynchronous job.",
+        "required": ["concreteType"]
+      },
       "org.sagebionetworks.repo.model.grid.CreateGridRequest": {
         "type": "object",
         "properties": {
@@ -22807,6 +22958,31 @@
         },
         "description": "An AsynchronousRequestBody to define a new JsonSchema.",
         "required": ["concreteType"]
+      },
+      "org.sagebionetworks.repo.model.search.FacetRequest": {
+        "type": "object",
+        "properties": {
+          "columnName": {
+            "type": "string",
+            "description": "The name of the column to aggregate."
+          },
+          "maxValueCount": {
+            "type": "integer",
+            "description": "Maximum number of facet values to return. Default: 25.",
+            "format": "int32"
+          },
+          "sortField": {
+            "type": "string",
+            "description": "The field to sort facet values by in a terms aggregation.",
+            "enum": ["COUNT", "KEY"]
+          },
+          "sortDirection": {
+            "type": "string",
+            "description": "Sort direction for search results.",
+            "enum": ["ASC", "DESC"]
+          }
+        },
+        "description": "A request to aggregate a column as a facet in search results."
       },
       "org.sagebionetworks.repo.model.oauth.OAuthScope": {
         "type": "string",
@@ -24137,6 +24313,42 @@
         },
         "description": "The Thread model object represents a single Thread."
       },
+      "org.sagebionetworks.repo.model.search.SearchHit": {
+        "type": "object",
+        "properties": {
+          "rowId": {
+            "type": "integer",
+            "description": "The row ID from the source table.",
+            "format": "int32"
+          },
+          "rowVersion": {
+            "type": "integer",
+            "description": "The row version from the source table.",
+            "format": "int32"
+          },
+          "score": {
+            "type": "number",
+            "description": "The relevance score for this hit."
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.SearchFieldValue",
+              "description": "A field name and value pair from a search result hit."
+            },
+            "description": "Column name/value pairs for the requested return fields."
+          },
+          "highlights": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.SearchFieldValue",
+              "description": "A field name and value pair from a search result hit."
+            },
+            "description": "Column name/highlighted snippet pairs, if highlight was requested."
+          }
+        },
+        "description": "A single search result hit."
+      },
       "org.sagebionetworks.repo.model.table.UploadToTablePreviewResult": {
         "type": "object",
         "properties": {
@@ -24273,6 +24485,10 @@
           }
         },
         "description": "A column model contains the metadata of a single column of a TableEntity"
+      },
+      "org.sagebionetworks.repo.model.search.FacetSortField": {
+        "type": "string",
+        "enum": ["COUNT", "KEY"]
       },
       "org.sagebionetworks.repo.model.ACTAccessRequirement": {
         "type": "object",
@@ -25100,24 +25316,6 @@
         "type": "string",
         "enum": ["FAILED", "SUCCESS"]
       },
-      "org.sagebionetworks.repo.model.table.search.ColumnAnalyzerOverrideEntry": {
-        "type": "object",
-        "properties": {
-          "columnName": {
-            "type": "string",
-            "description": "The name of the column to override. Must exist in the entity's schema."
-          },
-          "indexAnalyzerId": {
-            "type": "string",
-            "description": "The ID of the TextAnalyzer to use when indexing this column."
-          },
-          "searchAnalyzerId": {
-            "type": "string",
-            "description": "The ID of the TextAnalyzer to use when searching this column."
-          }
-        },
-        "description": "A per-column analyzer override entry. Specifies which analyzers to use at index time and search time for a specific column."
-      },
       "org.sagebionetworks.repo.model.dataaccess.SubmissionReviewerFilterType": {
         "type": "string",
         "enum": ["ALL", "ACT_ONLY", "DELEGATED_ONLY"]
@@ -25436,6 +25634,9 @@
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.table.QueryNextPageToken"
           },
           {
+            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.SearchQuery"
+          },
+          {
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.download.DownloadListManifestRequest"
           },
           {
@@ -25681,6 +25882,42 @@
           }
         },
         "description": "Reference for a single Row of a TableEntity"
+      },
+      "org.sagebionetworks.repo.model.search.table.TextAnalyzerSettings": {
+        "type": "object",
+        "properties": {
+          "charFilters": {
+            "type": "string",
+            "description": "JSON string defining named character filter configurations. Each key is a filter name, each value is the filter config object."
+          },
+          "tokenizer": {
+            "type": "string",
+            "description": "The tokenizer name (e.g., 'standard', 'whitespace'). For custom tokenizers, define in 'tokenizerConfig'."
+          },
+          "tokenizerConfig": {
+            "type": "string",
+            "description": "JSON-serialized custom tokenizer configuration object. Must include a 'type' field. Example: {\"type\":\"edge_ngram\",\"min_gram\":2,\"max_gram\":20,\"token_chars\":[\"letter\",\"digit\"]}"
+          },
+          "tokenFilters": {
+            "type": "string",
+            "description": "JSON string defining named token filter configurations. Each key is a filter name, each value is the filter config object."
+          },
+          "filterOrder": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Ordered list of token filter names to apply. Can reference built-in filters (e.g., 'lowercase') or custom ones defined in 'tokenFilters'."
+          },
+          "charFilterOrder": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Ordered list of character filter names to apply."
+          },
+          "synonymAware": {
+            "type": "boolean",
+            "description": "Whether the synonym token filter should be appended when synonyms are configured."
+          }
+        },
+        "description": "The OpenSearch analyzer configuration. Stores the full definition of how text is analyzed."
       },
       "org.sagebionetworks.repo.model.table.QueryResult": {
         "type": "object",
@@ -26053,6 +26290,20 @@
         },
         "description": "The status of a particular feature"
       },
+      "org.sagebionetworks.repo.model.search.SearchFieldValue": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The column name."
+          },
+          "value": {
+            "type": "string",
+            "description": "The column value."
+          }
+        },
+        "description": "A field name and value pair from a search result hit."
+      },
       "org.sagebionetworks.repo.model.webhook.VerifyWebhookRequest": {
         "type": "object",
         "properties": {
@@ -26081,6 +26332,21 @@
           }
         },
         "description": "List of principal aliases"
+      },
+      "org.sagebionetworks.repo.model.search.SortField": {
+        "type": "object",
+        "properties": {
+          "columnName": {
+            "type": "string",
+            "description": "The column name to sort by, or '_score' for relevance."
+          },
+          "direction": {
+            "type": "string",
+            "description": "Sort direction for search results.",
+            "enum": ["ASC", "DESC"]
+          }
+        },
+        "description": "Sort specification for search results."
       },
       "org.sagebionetworks.repo.model.audit.FileHandleSnapshot": {
         "type": "object",
@@ -27280,6 +27546,24 @@
         },
         "description": "The response of a principal alias lookup request"
       },
+      "org.sagebionetworks.repo.model.search.table.ListColumnAnalyzerOverridesResponse": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.table.ColumnAnalyzerOverride",
+              "description": "A shared resource containing per-column analyzer override entries. ColumnAnalyzerOverrides belong to an Organization and can be referenced by SearchConfigurations. Cannot be deleted while referenced by any SearchConfiguration."
+            },
+            "description": "The list of column analyzer overrides for this page."
+          },
+          "nextPageToken": {
+            "type": "string",
+            "description": "Token for the next page of results, if more results exist."
+          }
+        },
+        "description": "Response containing a page of column analyzer overrides."
+      },
       "PaginatedResultsOfMembershipInvitation": {
         "type": "object",
         "properties": {
@@ -28095,24 +28379,6 @@
         ],
         "discriminator": { "propertyName": "concreteType" }
       },
-      "org.sagebionetworks.repo.model.table.search.ListTextAnalyzersResponse": {
-        "type": "object",
-        "properties": {
-          "results": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.table.search.TextAnalyzer",
-              "description": "A text analyzer configuration. Used to configure how text is tokenized for a search index."
-            },
-            "description": "The list of text analyzers."
-          },
-          "nextPageToken": {
-            "type": "string",
-            "description": "Pagination token for the next page, or null if no more results."
-          }
-        },
-        "description": "Response for listing text analyzers."
-      },
       "org.sagebionetworks.repo.model.curation.ListCurationTaskRequest": {
         "type": "object",
         "properties": {
@@ -28375,6 +28641,20 @@
           }
         },
         "description": "Request for a single page of DownloadOrderSummary objects."
+      },
+      "org.sagebionetworks.repo.model.search.table.ListColumnAnalyzerOverridesRequest": {
+        "type": "object",
+        "properties": {
+          "organizationName": {
+            "type": "string",
+            "description": "Optional filter by organization name."
+          },
+          "nextPageToken": {
+            "type": "string",
+            "description": "Token for the next page of results."
+          }
+        },
+        "description": "Request to list column analyzer overrides, optionally filtered by organization."
       },
       "org.sagebionetworks.repo.model.doi.v2.Doi": {
         "type": "object",
@@ -29168,56 +29448,6 @@
           }
         },
         "description": "Response body containg the result of a webhook verification reqeust."
-      },
-      "org.sagebionetworks.repo.model.table.search.ColumnAnalyzerOverride": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "The unique ID of this column analyzer override."
-          },
-          "organizationName": {
-            "type": "string",
-            "description": "The name of the Organization this resource belongs to."
-          },
-          "name": {
-            "type": "string",
-            "description": "Display name. Unique within the organization."
-          },
-          "description": {
-            "type": "string",
-            "description": "Optional description."
-          },
-          "overrides": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.table.search.ColumnAnalyzerOverrideEntry",
-              "description": "A per-column analyzer override entry. Specifies which analyzers to use at index time and search time for a specific column."
-            },
-            "description": "The list of per-column analyzer override entries."
-          },
-          "etag": {
-            "type": "string",
-            "description": "Synapse employs an Optimistic Concurrency Control (OCC) scheme."
-          },
-          "createdOn": {
-            "type": "string",
-            "description": "The date this resource was created."
-          },
-          "createdBy": {
-            "type": "string",
-            "description": "The ID of the user that created this resource."
-          },
-          "modifiedOn": {
-            "type": "string",
-            "description": "The date this resource was last modified."
-          },
-          "modifiedBy": {
-            "type": "string",
-            "description": "The ID of the user that last modified this resource."
-          }
-        },
-        "description": "A shared resource containing per-column analyzer override entries. ColumnAnalyzerOverrides belong to an Organization and can be referenced by SearchConfigurations. Cannot be deleted while referenced by any SearchConfiguration."
       },
       "org.sagebionetworks.repo.model.SignedTokenInterface": {
         "type": "object",
@@ -30432,6 +30662,56 @@
         "description": "Async Migration requests will implement this type of AsynchronousRequestBody",
         "required": ["concreteType"]
       },
+      "org.sagebionetworks.repo.model.search.table.ColumnAnalyzerOverride": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique ID of this column analyzer override."
+          },
+          "organizationName": {
+            "type": "string",
+            "description": "The name of the Organization this resource belongs to."
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name. Unique within the organization."
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description."
+          },
+          "overrides": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.table.ColumnAnalyzerOverrideEntry",
+              "description": "A per-column analyzer override entry. Specifies which analyzers to use at index time and search time for a specific column."
+            },
+            "description": "The list of per-column analyzer override entries."
+          },
+          "etag": {
+            "type": "string",
+            "description": "Synapse employs an Optimistic Concurrency Control (OCC) scheme."
+          },
+          "createdOn": {
+            "type": "string",
+            "description": "The date this resource was created."
+          },
+          "createdBy": {
+            "type": "string",
+            "description": "The ID of the user that created this resource."
+          },
+          "modifiedOn": {
+            "type": "string",
+            "description": "The date this resource was last modified."
+          },
+          "modifiedBy": {
+            "type": "string",
+            "description": "The ID of the user that last modified this resource."
+          }
+        },
+        "description": "A shared resource containing per-column analyzer override entries. ColumnAnalyzerOverrides belong to an Organization and can be referenced by SearchConfigurations. Cannot be deleted while referenced by any SearchConfiguration."
+      },
       "org.sagebionetworks.repo.model.grid.update.GridUpdateRequest": {
         "type": "object",
         "properties": {
@@ -30441,6 +30721,10 @@
           }
         },
         "description": "Request to update one or more cells of the current grid session."
+      },
+      "org.sagebionetworks.repo.model.search.SortDirection": {
+        "type": "string",
+        "enum": ["ASC", "DESC"]
       },
       "org.sagebionetworks.repo.model.quiz.QuestionVariety": {
         "type": "object",
@@ -30826,6 +31110,9 @@
           },
           {
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.grid.SynchronizeGridResponse"
+          },
+          {
+            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.SearchQueryResults"
           },
           {
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.migration.AsyncMigrationResponse"
@@ -32318,6 +32605,103 @@
         },
         "description": "A CSV Grid download request.",
         "required": ["concreteType"]
+      },
+      "org.sagebionetworks.repo.model.search.table.SearchIndexQuery": {
+        "type": "object",
+        "properties": {
+          "searchIndexId": {
+            "type": "string",
+            "description": "The ID of the SearchIndex entity to query."
+          },
+          "queryType": {
+            "type": "string",
+            "description": "The type of full-text query to execute against a search index.",
+            "enum": [
+              "SIMPLE_QUERY_STRING",
+              "MATCH",
+              "MULTI_MATCH",
+              "MATCH_PHRASE",
+              "PREFIX",
+              "WILDCARD",
+              "MATCH_ALL"
+            ]
+          },
+          "queryText": {
+            "type": "string",
+            "description": "The search text. Null or empty matches all documents."
+          },
+          "queryFields": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Column names with optional boost (e.g., 'studyName^3'). Empty means all indexed fields."
+          },
+          "termsFilters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.KeyValues",
+              "description": "A multi-value filter (IN clause). Matches rows where the key column contains any of the listed values."
+            },
+            "description": "Multi-value filters (IN clause)."
+          },
+          "rangeFilters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.KeyRange",
+              "description": "A range filter. Matches rows where min <= value <= max. At least one of either 'min' or 'max' must be set for this range to be valid."
+            },
+            "description": "Range filters with min and max."
+          },
+          "existsFilters": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Columns that must have a non-null value."
+          },
+          "notExistsFilters": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Columns that must be null or missing."
+          },
+          "fuzziness": {
+            "type": "string",
+            "description": "Typo tolerance: 'AUTO', '0', '1', or '2'."
+          },
+          "facetRequests": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.FacetRequest",
+              "description": "A request to aggregate a column as a facet in search results."
+            },
+            "description": "Columns to aggregate as facets."
+          },
+          "returnFields": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Columns to include in results. Empty means all columns."
+          },
+          "sort": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.SortField",
+              "description": "Sort specification for search results."
+            },
+            "description": "Sort order. Default: relevance descending."
+          },
+          "highlight": {
+            "type": "boolean",
+            "description": "Whether to return highlighted snippets. Default: false."
+          },
+          "offset": {
+            "type": "integer",
+            "description": "Zero-based pagination offset. Default: 0.",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Results per page. Default: 25. Max: 100.",
+            "format": "int32"
+          }
+        },
+        "description": "A search query against a SearchIndex entity's OpenSearch index. Extends SearchQuery with searchIndexId to identify which index to query."
       },
       "org.sagebionetworks.repo.model.schema.JsonSchemaVersionInfo": {
         "type": "object",
@@ -34625,20 +35009,6 @@
         "description": "Use this to count the total number of rows that match the query. For example, for a user request like 'how many rows are there in total?', select this item. The alias property can be used to name the resulting count column.",
         "required": ["concreteType"]
       },
-      "org.sagebionetworks.repo.model.table.search.ListColumnAnalyzerOverridesRequest": {
-        "type": "object",
-        "properties": {
-          "organizationName": {
-            "type": "string",
-            "description": "Optional filter by organization name."
-          },
-          "nextPageToken": {
-            "type": "string",
-            "description": "Token for the next page of results."
-          }
-        },
-        "description": "Request to list column analyzer overrides, optionally filtered by organization."
-      },
       "org.sagebionetworks.repo.model.InviteeVerificationSignedToken": {
         "type": "object",
         "properties": {
@@ -34888,6 +35258,24 @@
         },
         "description": "A single page of an agent trace events for an asynchronous agent chat job. The events are sorted by timestamp ascending."
       },
+      "org.sagebionetworks.repo.model.search.table.ListTextAnalyzersResponse": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.table.TextAnalyzer",
+              "description": "A text analyzer configuration. Used to configure how text is tokenized for a search index."
+            },
+            "description": "The list of text analyzers."
+          },
+          "nextPageToken": {
+            "type": "string",
+            "description": "Pagination token for the next page, or null if no more results."
+          }
+        },
+        "description": "Response for listing text analyzers."
+      },
       "org.sagebionetworks.repo.model.project.ProjectSettingsType": {
         "type": "string",
         "enum": ["upload"]
@@ -35085,6 +35473,25 @@
       "org.sagebionetworks.repo.model.dataaccess.AccessApprovalSortField": {
         "type": "string",
         "enum": ["MODIFIED_ON", "EXPIRED_ON"]
+      },
+      "org.sagebionetworks.repo.model.search.KeyRange": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "The column name to filter on."
+          },
+          "min": {
+            "type": "string",
+            "description": "The minimum value in the range (inclusive). At least one of either 'min' or 'max' must be set."
+          },
+          "max": {
+            "type": "string",
+            "description": "The maximum value in the range (inclusive). At least one of either 'min' or 'max' must be set."
+          }
+        },
+        "description": "A range filter. Matches rows where min <= value <= max. At least one of either 'min' or 'max' must be set for this range to be valid.",
+        "required": ["key"]
       },
       "org.sagebionetworks.repo.model.file.DownloadList": {
         "type": "object",
@@ -36959,6 +37366,25 @@
         },
         "description": "Results of validating an object against a schema"
       },
+      "org.sagebionetworks.repo.model.search.KeyValues": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "The column name to filter on."
+          },
+          "values": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "The values to match."
+          },
+          "not": {
+            "type": "boolean",
+            "description": "If true, excludes matching values instead. Default: false."
+          }
+        },
+        "description": "A multi-value filter (IN clause). Matches rows where the key column contains any of the listed values."
+      },
       "org.sagebionetworks.repo.model.RestrictableObjectDescriptor": {
         "type": "object",
         "properties": {
@@ -37678,6 +38104,24 @@
         },
         "description": "The response to creating a new grid sesion.",
         "required": ["concreteType"]
+      },
+      "org.sagebionetworks.repo.model.search.table.ColumnAnalyzerOverrideEntry": {
+        "type": "object",
+        "properties": {
+          "columnName": {
+            "type": "string",
+            "description": "The name of the column to override. Must exist in the entity's schema."
+          },
+          "indexAnalyzerId": {
+            "type": "string",
+            "description": "The ID of the TextAnalyzer to use when indexing this column."
+          },
+          "searchAnalyzerId": {
+            "type": "string",
+            "description": "The ID of the TextAnalyzer to use when searching this column."
+          }
+        },
+        "description": "A per-column analyzer override entry. Specifies which analyzers to use at index time and search time for a specific column."
       },
       "org.sagebionetworks.repo.model.oauth.OIDCClaimsRequestDetails": {
         "type": "object",
@@ -38937,42 +39381,6 @@
         },
         "description": "A single page of a users/groups info query response."
       },
-      "org.sagebionetworks.repo.model.table.search.TextAnalyzerSettings": {
-        "type": "object",
-        "properties": {
-          "charFilters": {
-            "type": "string",
-            "description": "JSON string defining named character filter configurations. Each key is a filter name, each value is the filter config object."
-          },
-          "tokenizer": {
-            "type": "string",
-            "description": "The tokenizer name (e.g., 'standard', 'whitespace'). For custom tokenizers, define in 'tokenizerConfig'."
-          },
-          "tokenizerConfig": {
-            "type": "string",
-            "description": "JSON-serialized custom tokenizer configuration object. Must include a 'type' field. Example: {\"type\":\"edge_ngram\",\"min_gram\":2,\"max_gram\":20,\"token_chars\":[\"letter\",\"digit\"]}"
-          },
-          "tokenFilters": {
-            "type": "string",
-            "description": "JSON string defining named token filter configurations. Each key is a filter name, each value is the filter config object."
-          },
-          "filterOrder": {
-            "type": "array",
-            "items": { "type": "string" },
-            "description": "Ordered list of token filter names to apply. Can reference built-in filters (e.g., 'lowercase') or custom ones defined in 'tokenFilters'."
-          },
-          "charFilterOrder": {
-            "type": "array",
-            "items": { "type": "string" },
-            "description": "Ordered list of character filter names to apply."
-          },
-          "synonymAware": {
-            "type": "boolean",
-            "description": "Whether the synonym token filter should be appended when synonyms are configured."
-          }
-        },
-        "description": "The OpenSearch analyzer configuration. Stores the full definition of how text is analyzed."
-      },
       "org.sagebionetworks.repo.model.oauth.JsonWebKeyRSA": {
         "type": "object",
         "properties": {
@@ -39093,6 +39501,43 @@
             "format": "int32"
           }
         }
+      },
+      "org.sagebionetworks.repo.model.search.SearchQueryResults": {
+        "type": "object",
+        "properties": {
+          "concreteType": {
+            "type": "string",
+            "enum": ["org.sagebionetworks.repo.model.search.SearchQueryResults"]
+          },
+          "totalHits": {
+            "type": "integer",
+            "description": "The total number of matching documents.",
+            "format": "int32"
+          },
+          "hits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.SearchHit",
+              "description": "A single search result hit."
+            },
+            "description": "The list of search result hits for this page."
+          },
+          "facets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.table.FacetColumnResult",
+              "description": "Resulting information about a faceted column"
+            },
+            "description": "Facet aggregation results, if requested."
+          },
+          "offset": {
+            "type": "integer",
+            "description": "The offset used for this page of results.",
+            "format": "int32"
+          }
+        },
+        "description": "Results of a search query against an OpenSearch index.",
+        "required": ["concreteType"]
       },
       "org.sagebionetworks.repo.model.webhook.WebhookVerificationStatus": {
         "type": "string",
@@ -42097,6 +42542,52 @@
         },
         "description": "Oauth 2.0 Token Response"
       },
+      "org.sagebionetworks.repo.model.search.table.TextAnalyzer": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The unique ID of this text analyzer."
+          },
+          "organizationName": {
+            "type": "string",
+            "description": "The name of the Organization this resource belongs to."
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name. Unique within the organization."
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description."
+          },
+          "settings": {
+            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.search.table.TextAnalyzerSettings",
+            "description": "The OpenSearch analyzer configuration. Stores the full definition of how text is analyzed."
+          },
+          "etag": {
+            "type": "string",
+            "description": "Synapse employs an Optimistic Concurrency Control (OCC) scheme."
+          },
+          "createdOn": {
+            "type": "string",
+            "description": "The date this resource was created."
+          },
+          "createdBy": {
+            "type": "string",
+            "description": "The ID of the user that created this resource."
+          },
+          "modifiedOn": {
+            "type": "string",
+            "description": "The date this resource was last modified."
+          },
+          "modifiedBy": {
+            "type": "string",
+            "description": "The ID of the user that last modified this resource."
+          }
+        },
+        "description": "A text analyzer configuration. Used to configure how text is tokenized for a search index."
+      },
       "org.sagebionetworks.repo.model.schema.ListJsonSchemaVersionInfoResponse": {
         "type": "object",
         "properties": {
@@ -43955,20 +44446,6 @@
           }
         },
         "description": "A research project describes a project at an institution that used a controlled data set for the purposes that are stated in the Intended Data Use Statement."
-      },
-      "org.sagebionetworks.repo.model.table.search.ListTextAnalyzersRequest": {
-        "type": "object",
-        "properties": {
-          "organizationName": {
-            "type": "string",
-            "description": "The name of the Organization to list analyzers for. If not provided, lists all analyzers."
-          },
-          "nextPageToken": {
-            "type": "string",
-            "description": "Optional pagination token from a previous response."
-          }
-        },
-        "description": "Request to list text analyzers. Returns all analyzers if no organizationName is provided."
       },
       "org.sagebionetworks.repo.model.dataaccess.ManagedACTAccessRequirementStatus": {
         "type": "object",
