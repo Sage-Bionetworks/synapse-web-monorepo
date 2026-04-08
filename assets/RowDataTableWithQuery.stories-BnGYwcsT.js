@@ -1,0 +1,13 @@
+import{j as m}from"./iframe-FEhVLLlO.js";import{R as o}from"./RowDataTableWithQuery-eHkYAD2g.js";import"./index-Chi_LkuB.js";import"./SkeletonButton-Co5le0HJ.js";import"./SkeletonInlineBlock-DfOva5mF.js";import"./SkeletonTable-B83fe7X5.js";import"./SkeletonParagraph-u_Ry22JM.js";import"./RowDataTable-CTs-iWZD.js";import"./StyledTableContainer-CgCqUsVV.js";import"./SynapseCardLabel-DTinxLbM.js";import"./CardUtils-jNGtbBXo.js";import"./TargetEnum-CqkqtPVW.js";import"./IsExternalLink--eXBmGmb.js";import"./EntityLink-B3cFFCeI.js";import"./useEntity-REhwfYE-.js";import"./pickBy-Be7w8Qan.js";import"./isString-4XSt_YuW.js";import"./_baseIteratee-mWx-HW66.js";import"./queryOptions-C9woPjwX.js";import"./useInfiniteQuery-BAQMxQ9Q.js";import"./InfiniteQueryUtils-CKlRW-xB.js";import"./useEntityBundle-Kr-j5CL1.js";import"./useGetEntityHeaders-DB8lRLKN.js";import"./EntityIcon-C1WaeWmj.js";import"./ErrorChip-COsLfVNI.js";import"./Chip-CX6tLmAn.js";import"./MarkdownSynapse-FlaLI_XD.js";import"./HeaderCardV2-BFnwemLK.js";import"./index-D-512QAu.js";import"./Card-BONVzKOo.js";import"./UserBadge-MRmSzjU6.js";import"./useUserBundle-pC4-2Gey.js";import"./useUserGroupHeader-CFFdJM92.js";import"./MenuItem-CP-QVevM.js";import"./ImageFileHandle-Ct-OsIpC.js";import"./index-BFX2ar4d.js";import"./Box-hGTxkDOb.js";import"./Linkify-BtO_B9oG.js";import"./GenericCard-D0ehIoub.js";import"./HeaderCard-Clgsw0mN.js";import"./index-D8JaEOzG.js";import"./Icon-9qGasyhU.js";import"./mouse-CZbGC8vw.js";import"./SortDown-DKsNIfCV.js";import"./ShowMore-BsxSJUfT.js";import"./SustainabilityScorecard-C-J4j0zU.js";import"./Close-DZo8bFox.js";import"./Dial-On4XHVWE.js";import"./CheckIcon-W-d1JWZX.js";import"./NoContentAvailable-C0-WGX5o.js";import"./FileHandleLink-C4J10TsX.js";const i={name:"Name",grantDOI:"DOI",dataType:"Data Type(s)"},a={sql:"SELECT * FROM syn52694652"},mr={title:"UI/RowDataTable/RowDataTableWithQuery",component:o,parameters:{chromatic:{viewports:[600,1200]}}},r={render:t=>m.jsx(o,{...t}),args:{query:a,columnAliases:i,displayedColumns:["studyId","name","grantDOI"],columnLinks:[{isMarkdown:!1,matchColumnName:"Grant DOI",linkColumnName:"Grant DOI"}]}};r.parameters={...r.parameters,docs:{...r.parameters?.docs,source:{originalSource:`{
+  render: args => <RowDataTableWithQuery {...args} />,
+  args: {
+    query: mockQuery,
+    columnAliases: dataColumnAliases,
+    displayedColumns: ['studyId', 'name', 'grantDOI'],
+    columnLinks: [{
+      isMarkdown: false,
+      matchColumnName: 'Grant DOI',
+      linkColumnName: 'Grant DOI'
+    }]
+  }
+}`,...r.parameters?.docs?.source}}};const ir=["Demo"];export{r as Demo,ir as __namedExportsOrder,mr as default};
