@@ -9,7 +9,7 @@ import { useDirectUploadToS3 } from './useDirectUploadToS3'
 
 vi.mock('@aws-sdk/lib-storage', () => {
   return {
-    Upload: vi.fn().mockImplementation(() => {
+    Upload: vi.fn().mockImplementation(function () {
       return {
         on: vi.fn(),
         done: vi.fn(),

@@ -12,6 +12,14 @@ import {
   useGetEntityChildrenInfinite,
 } from './useGetEntityChildren'
 
+vi.mock('@/synapse-client', function () {
+  return {
+    default: {
+      getEntityChildren: vi.fn(),
+    },
+  }
+})
+
 const request: EntityChildrenRequest = {
   parentId: 'syn123',
   includeTypes: [EntityType.file],
@@ -56,10 +64,12 @@ const page2: EntityChildrenResponse = {
   ],
   nextPageToken: undefined,
 }
-
-const mockGetEntityChildren = vi.spyOn(SynapseClient, 'getEntityChildren')
+const mockGetEntityChildren = vi.mocked(SynapseClient.getEntityChildren)
 
 describe('basic functionality', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
   it('correctly calls SynapseClient', async () => {
     mockGetEntityChildren.mockResolvedValueOnce(page1)
 
@@ -80,7 +90,6 @@ describe('basic functionality', () => {
     mockGetEntityChildren
       .mockResolvedValueOnce(page1)
       .mockResolvedValueOnce(page2)
-    const controller = new AbortController()
 
     const { result } = renderHook(() => useGetEntityChildrenInfinite(request), {
       wrapper: createWrapper(),
@@ -88,8 +97,8 @@ describe('basic functionality', () => {
 
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true)
-
-      expect(mockGetEntityChildren).toHaveBeenCalledWith(
+      expect(mockGetEntityChildren).toHaveBeenCalledTimes(1)
+      expect(mockGetEntityChildren).toHaveBeenLastCalledWith(
         request,
         MOCK_CONTEXT_VALUE.accessToken,
         expect.anything(),
@@ -104,15 +113,15 @@ describe('basic functionality', () => {
 
     await waitFor(() => {
       expect(result.current.isFetching).toBe(false)
-
-      expect(mockGetEntityChildren).toHaveBeenCalledWith(
+      expect(mockGetEntityChildren).toHaveBeenCalledTimes(2)
+      expect(mockGetEntityChildren).toHaveBeenLastCalledWith(
         {
           ...request,
           includeTotalChildCount: false,
           nextPageToken: page1.nextPageToken,
         },
         MOCK_CONTEXT_VALUE.accessToken,
-        controller.signal,
+        expect.anything(),
       )
       expect(result.current.data?.pages[1]).toEqual(page2)
       expect(result.current.hasNextPage).toBe(false)
