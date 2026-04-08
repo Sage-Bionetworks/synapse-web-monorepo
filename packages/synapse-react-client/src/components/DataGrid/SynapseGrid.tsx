@@ -68,7 +68,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
     const { data: replicas = [], refetch: refetchReplicas } =
       useListGridReplicas(session?.sessionId)
 
-    const handleReplicaTopologyChange = useCallback(() => {
+    const handleReplicaConnectionChange = useCallback(() => {
       void refetchReplicas()
     }, [refetchReplicas])
 
@@ -100,8 +100,8 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       presignedUrl,
       hasSufficientData,
     } = useDataGridWebSocket({
-      onReplicaConnected: handleReplicaTopologyChange,
-      onReplicaDisconnected: handleReplicaTopologyChange,
+      onReplicaConnected: handleReplicaConnectionChange,
+      onReplicaDisconnected: handleReplicaConnectionChange,
     })
 
     const websocketInstanceRef = useRef<typeof websocketInstance | null>(null)
