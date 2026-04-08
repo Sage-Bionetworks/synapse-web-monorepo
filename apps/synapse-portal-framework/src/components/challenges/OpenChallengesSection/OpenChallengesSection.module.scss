@@ -41,3 +41,18 @@
   display: flex;
   flex-direction: column;
 }
+
+.OpenChallengesSection__viewChallengeListButton:global(.MuiButton-root) {
+  display: flex;
+  height: 36px;
+  padding: 6px 16px;
+  margin: 36px auto 0;
+  border-radius: 8px;
+  color: var(--synapse-black) !important;
+  border: 1px solid var(--synapse-black) !important;
+  width: 400px;
+
+  @media (max-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    width: 90%;
+  }
+}
