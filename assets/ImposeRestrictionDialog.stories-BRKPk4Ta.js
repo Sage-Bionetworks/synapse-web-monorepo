@@ -1,7 +1,0 @@
-import{I as t}from"./ImposeRestrictionDialog-CzWGN60w.js";import"./iframe-D5wXuBlT.js";import"./index-Chi_LkuB.js";import"./useAccessRequirements-DWRH5L8-.js";import"./index-2JT8eoUE.js";import"./_baseOrderBy-7pI0o-Mb.js";import"./_baseIteratee-B9EFKTSA.js";import"./_baseMap-BIuedYiU.js";import"./_baseEach-DHRpkkAi.js";import"./useInfiniteQuery-CIna-n7q.js";import"./ConfirmationDialog-DkVuItCQ.js";import"./DialogBase-B7NPj_K8.js";import"./Close-B44_taEp.js";import"./HelpPopover-B270wGmb.js";import"./MarkdownPopover-D357WAt_.js";import"./LightTooltip-Bqvn3Vpy.js";import"./MarkdownSynapse-DIWDvDqy.js";import"./SkeletonButton-1p1-0lGV.js";import"./SkeletonInlineBlock-Djh2iYmW.js";import"./SkeletonTable-DQgfKfH3.js";import"./SkeletonParagraph-CICWHgmn.js";import"./RadioGroup-BQVSxRN2.js";import"./Radio-DQnBLPnH.js";import"./SwitchBase-CF4iIkRZ.js";import"./FormGroup-Cz-izA0X.js";import"./FormControlLabel-DdIGgxtb.js";const{fn:r}=__STORYBOOK_MODULE_TEST__,G={title:"Governance/ImposeRestrictionDialog",component:t},o={args:{entityId:"syn45328519",open:!0,onClose:r()}};o.parameters={...o.parameters,docs:{...o.parameters?.docs,source:{originalSource:`{
-  args: {
-    entityId: 'syn45328519',
-    open: true,
-    onClose: fn()
-  }
-}`,...o.parameters?.docs?.source}}};const K=["Demo"];export{o as Demo,K as __namedExportsOrder,G as default};
