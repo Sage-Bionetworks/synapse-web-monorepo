@@ -27,4 +27,7 @@ export enum FeatureFlagEnum {
 
   // If enabled, show the SynapseChat dialog in portals
   PORTAL_CHAT = 'PORTAL_CHAT',
+
+  // If enabled, prevent users from opening Curator for a CurationTask which is unassigned
+  CURATOR_DISABLE_OPEN_FOR_UNASSIGNED_TASKS = 'CURATOR_DISABLE_OPEN_FOR_UNASSIGNED_TASKS',
 }

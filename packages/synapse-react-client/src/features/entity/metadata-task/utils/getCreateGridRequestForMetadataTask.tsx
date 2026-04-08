@@ -1,7 +1,8 @@
 import {
-  CurationTaskProperties,
   CreateGridRequest,
+  CurationTask,
 } from '@sage-bionetworks/synapse-client'
+import taskHasAssignee from './taskHasAssignee'
 
 /**
  * Generates a CreateGridRequest for a metadata task based on its properties.
@@ -9,18 +10,33 @@ import {
  * @returns A CreateGridRequest object.
  */
 export function getCreateGridRequestForMetadataTask(
-  taskProperties: CurationTaskProperties,
+  task: CurationTask,
 ): CreateGridRequest {
+  const taskProperties = task.taskProperties
+  if (!taskProperties) {
+    throw new Error('CurationTask is missing taskProperties')
+  }
+
+  const hasAssignee = taskHasAssignee(task)
+
+  // If there is no assignee, leave empty;
+  // The owner will be the creator.
+  const ownerPrincipalId: string | undefined = hasAssignee
+    ? task.assigneePrincipalId
+    : undefined
+
   switch (taskProperties.concreteType) {
     case 'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties':
       return {
         concreteType: 'org.sagebionetworks.repo.model.grid.CreateGridRequest',
         initialQuery: { sql: `SELECT * FROM ${taskProperties.fileViewId!}` },
+        ownerPrincipalId,
       }
     case 'org.sagebionetworks.repo.model.curation.metadata.RecordBasedMetadataTaskProperties':
       return {
         concreteType: 'org.sagebionetworks.repo.model.grid.CreateGridRequest',
         recordSetId: taskProperties.recordSetId!,
+        ownerPrincipalId,
       }
     default:
       throw new Error(

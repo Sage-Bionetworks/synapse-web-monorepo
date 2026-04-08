@@ -1,40 +1,94 @@
 import { describe, it, expect } from 'vitest'
 import { getCreateGridRequestForMetadataTask } from './getCreateGridRequestForMetadataTask'
-import { CurationTaskProperties } from '@sage-bionetworks/synapse-client'
+import { CurationTask } from '@sage-bionetworks/synapse-client'
+
+const FILE_BASED =
+  'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties'
+const RECORD_BASED =
+  'org.sagebionetworks.repo.model.curation.metadata.RecordBasedMetadataTaskProperties'
+const GRID_REQUEST_CONCRETE_TYPE =
+  'org.sagebionetworks.repo.model.grid.CreateGridRequest'
 
 describe('getCreateGridRequestForMetadataTask', () => {
-  it('returns correct CreateGridRequest for FileBasedMetadataTaskProperties', () => {
-    const props = {
-      concreteType:
-        'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties',
-      fileViewId: 'syn123',
-    } satisfies CurationTaskProperties
-    const result = getCreateGridRequestForMetadataTask(props)
-    expect(result).toEqual({
-      concreteType: 'org.sagebionetworks.repo.model.grid.CreateGridRequest',
-      initialQuery: { sql: 'SELECT * FROM syn123' },
-    })
+  it('throws when taskProperties is missing', () => {
+    const task = {} as CurationTask
+    expect(() => getCreateGridRequestForMetadataTask(task)).toThrow(
+      'CurationTask is missing taskProperties',
+    )
   })
 
-  it('returns correct CreateGridRequest for RecordBasedMetadataTaskProperties', () => {
-    const props = {
-      concreteType:
-        'org.sagebionetworks.repo.model.curation.metadata.RecordBasedMetadataTaskProperties',
-      recordSetId: 'syn456',
-    } satisfies CurationTaskProperties
-    const result = getCreateGridRequestForMetadataTask(props)
-    expect(result).toEqual({
-      concreteType: 'org.sagebionetworks.repo.model.grid.CreateGridRequest',
-      recordSetId: 'syn456',
-    })
-  })
-
-  it('throws error for unknown concreteType', () => {
-    const props = {
-      concreteType: 'unknownType',
+  it('throws for unknown concreteType', () => {
+    const task = {
+      taskProperties: { concreteType: 'unknownType' },
     } as any
-    expect(() => getCreateGridRequestForMetadataTask(props)).toThrow(
+    expect(() => getCreateGridRequestForMetadataTask(task)).toThrow(
       'Unknown taskProperties concreteType: unknownType',
     )
+  })
+
+  describe('FileBasedMetadataTaskProperties', () => {
+    it('sets ownerPrincipalId when task has assignee', () => {
+      const task = {
+        assigneePrincipalId: '456',
+        taskProperties: { concreteType: FILE_BASED, fileViewId: 'syn123' },
+      } as unknown as CurationTask
+      expect(getCreateGridRequestForMetadataTask(task)).toEqual({
+        concreteType: GRID_REQUEST_CONCRETE_TYPE,
+        initialQuery: { sql: 'SELECT * FROM syn123' },
+        ownerPrincipalId: '456',
+      })
+    })
+
+    it('leaves ownerPrincipalId undefined when assigneePrincipalId is undefined', () => {
+      const task = {
+        taskProperties: { concreteType: FILE_BASED, fileViewId: 'syn123' },
+      } as unknown as CurationTask
+      expect(getCreateGridRequestForMetadataTask(task)).toEqual({
+        concreteType: GRID_REQUEST_CONCRETE_TYPE,
+        initialQuery: { sql: 'SELECT * FROM syn123' },
+        ownerPrincipalId: undefined,
+      })
+    })
+
+    it('leaves ownerPrincipalId undefined when assigneePrincipalId is "0"', () => {
+      const task = {
+        assigneePrincipalId: '0',
+        taskProperties: { concreteType: FILE_BASED, fileViewId: 'syn123' },
+      } as unknown as CurationTask
+      expect(
+        getCreateGridRequestForMetadataTask(task).ownerPrincipalId,
+      ).toBeUndefined()
+    })
+  })
+
+  describe('RecordBasedMetadataTaskProperties', () => {
+    it('returns correct CreateGridRequest without assignee', () => {
+      const task = {
+        taskProperties: {
+          concreteType: RECORD_BASED,
+          recordSetId: 'syn456',
+        },
+      } as unknown as CurationTask
+      expect(getCreateGridRequestForMetadataTask(task)).toEqual({
+        concreteType: GRID_REQUEST_CONCRETE_TYPE,
+        recordSetId: 'syn456',
+        ownerPrincipalId: undefined,
+      })
+    })
+
+    it('sets ownerPrincipalId when task has assignee', () => {
+      const task = {
+        assigneePrincipalId: '789',
+        taskProperties: {
+          concreteType: RECORD_BASED,
+          recordSetId: 'syn456',
+        },
+      } as unknown as CurationTask
+      expect(getCreateGridRequestForMetadataTask(task)).toEqual({
+        concreteType: GRID_REQUEST_CONCRETE_TYPE,
+        recordSetId: 'syn456',
+        ownerPrincipalId: '789',
+      })
+    })
   })
 })
