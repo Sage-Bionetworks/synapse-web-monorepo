@@ -16,6 +16,7 @@ import {
   EntityLookupRequest,
   GetRepoV1DoiAssociationRequest,
   GetRepoV1DoiRequest,
+  ListCurationTaskRequest,
   ListGridSessionsRequest,
   SuggestionQuery,
   UploadToTablePreviewRequest,
@@ -794,6 +795,13 @@ export class KeyFactory {
     return this.getKey('team', teamId, 'member', userId)
   }
 
+  public getIsPrincipalIdSelfOrTeamMemberQueryKey(
+    principalId: string,
+    userId: string,
+  ) {
+    return this.getKey('principal', userId, principalId, 'isSelfOrTeamMember')
+  }
+
   public getMembershipStatusQueryKey(teamId: string, userId?: string) {
     return this.getKey('team', teamId, 'membershipStatus', userId)
   }
@@ -1044,12 +1052,24 @@ export class KeyFactory {
     return this.getKey('gridSession', sessionId, 'replicas')
   }
 
-  public getCurationTaskKey(taskId: number) {
+  public getCurationTaskIdKey(taskId: number) {
     return this.getKey('curationTask', taskId)
   }
 
-  public getCurationTaskListKey(projectId: string) {
-    return this.getKey('curationTask', 'list', projectId)
+  public getCurationTaskIdTaskKey(taskId: number) {
+    return this.getKey('curationTask', taskId, 'task')
+  }
+
+  public getCurationTaskIdStatusKey(taskId: number) {
+    return this.getKey('curationTask', taskId, 'status')
+  }
+
+  public getCurationTaskListKey(request: ListCurationTaskRequest) {
+    return this.getKey('curationTask', 'list', request)
+  }
+
+  public getAllCurationTaskListKey() {
+    return this.getKey('curationTask', 'list')
   }
 
   public getCsvPreviewQueryKey(request: UploadToTablePreviewRequest) {

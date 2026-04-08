@@ -23,7 +23,7 @@ import NewChallengesSection from './challenges/NewChallengesSection/NewChallenge
 import AllChallengesSection from './challenges/AllChallengesSection/AllChallengesSection'
 import GetInvolvedSection from './challenges/GetInvolvedSection/GetInvolvedSection'
 import ChallengeNewsSection from './challenges/ChallengeNewsSection/ChallengeNewsSection'
-import PopularChallengesSection from './challenges/PopularChallengesSection/PopularChallengesSection'
+import SynapseChallengesSection from './challenges/SynapseChallengesSection/SynapseChallengesSection'
 import ExploreWrapper from './Explore/ExploreWrapper'
 import GenieHomePageHeader from './genie/GenieHomePageHeader'
 import CancerComplexityHeader from './cancercomplexity/CancerComplexityHeader'
@@ -62,7 +62,7 @@ const PortalComponents = {
   NewChallengesSection,
   GetInvolvedSection,
   ChallengeNewsSection,
-  PopularChallengesSection,
+  SynapseChallengesSection,
   AllChallengesSection,
   ClassicSupportedByNIABanner,
   ARKWelcomePage,

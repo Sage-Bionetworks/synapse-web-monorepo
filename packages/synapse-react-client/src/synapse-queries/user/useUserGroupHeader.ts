@@ -7,6 +7,29 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
+import { SynapseQueriesContext } from '../types'
+
+export function getUserGroupHeaderQuery(
+  principalId: string,
+  context: SynapseQueriesContext,
+) {
+  const { accessToken, keyFactory } = context
+  return {
+    queryKey: keyFactory.getUserGroupHeaderQueryKey(principalId),
+    queryFn: async () => {
+      const responsePage = await SynapseClient.getGroupHeadersBatch(
+        [principalId],
+        accessToken,
+      )
+      if (responsePage.children.length !== 1) {
+        throw new Error(
+          `Expected one response in getUserGroupHeaderQuery for id: ${principalId}, got ${responsePage.children.length}`,
+        )
+      }
+      return responsePage.children[0]
+    },
+  }
+}
 
 /**
  * Get a single UserGroupHeader, utilizing a react-query cache.  This is always an unauthenticated call
@@ -19,24 +42,12 @@ export function useGetUserGroupHeader(
   principalId: string,
   options?: Partial<UseQueryOptions<UserGroupHeader, SynapseClientError>>,
 ) {
-  const { keyFactory, accessToken } = useSynapseContext()
-  const queryKey = keyFactory.getUserGroupHeaderQueryKey(principalId)
+  const synapseContext = useSynapseContext()
+  const queryClient = useQueryClient()
 
   return useQuery({
     ...options,
-    queryKey: queryKey,
-    queryFn: async () => {
-      const responsePage = await SynapseClient.getGroupHeadersBatch(
-        [principalId],
-        accessToken,
-      )
-      if (responsePage.children.length !== 1) {
-        throw new Error(
-          `Expected one response in useGetUserGroupHeader for id: ${principalId}, got ${responsePage.children.length}`,
-        )
-      }
-      return responsePage.children[0]
-    },
+    ...getUserGroupHeaderQuery(principalId, { ...synapseContext, queryClient }),
   })
 }
 

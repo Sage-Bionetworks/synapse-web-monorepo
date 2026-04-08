@@ -28,6 +28,7 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
+import { SynapseQueriesContext } from '../types'
 
 export function useCreateGridReplica(
   options?: Partial<
@@ -137,19 +138,30 @@ export function useGetGridSessionsInfinite<
   })
 }
 
-export function useGetGridSession<TData = GridSession>(
+export function getGridSessionQuery(
   sessionId: string,
-  options?: Partial<UseQueryOptions<GridSession, SynapseClientError, TData>>,
+  context: SynapseQueriesContext,
 ) {
-  const { keyFactory, synapseClient } = useSynapseContext()
-
-  return useQuery<GridSession, SynapseClientError, TData>({
-    ...options,
+  const { keyFactory, synapseClient } = context
+  return queryOptions<GridSession, SynapseClientError>({
     queryKey: keyFactory.getGridSessionKey(sessionId),
     queryFn: () =>
       synapseClient.gridServicesClient.getRepoV1GridSessionSessionId({
         sessionId: sessionId,
       }),
+  })
+}
+
+export function useGetGridSession(
+  sessionId: string,
+  options?: Partial<UseQueryOptions<GridSession, SynapseClientError>>,
+) {
+  const synapseContext = useSynapseContext()
+  const queryClient = useQueryClient()
+
+  return useQuery<GridSession, SynapseClientError>({
+    ...options,
+    ...getGridSessionQuery(sessionId, { ...synapseContext, queryClient }),
   })
 }
 
