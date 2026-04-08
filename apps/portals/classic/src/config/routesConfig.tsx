@@ -1,6 +1,10 @@
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { RouteObject } from 'react-router'
 import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
+import {
+  STUDY_DETAILS_PAGE_DETAILS_TAB_PATH,
+  STUDY_DETAILS_PAGE_METADATA_TAB_PATH,
+} from '@/config/routeConstants'
 
 const routes: RouteObject[] = [
   {
@@ -48,14 +52,14 @@ const routes: RouteObject[] = [
               ),
           },
           {
-            path: 'StudyDetails',
+            path: STUDY_DETAILS_PAGE_DETAILS_TAB_PATH,
             lazy: () =>
               import('@/pages/StudyDetailsPage/StudyDetailsTab').then(
                 convertModuleToRouteObject,
               ),
           },
           {
-            path: 'StudyMetadata',
+            path: STUDY_DETAILS_PAGE_METADATA_TAB_PATH,
             lazy: () =>
               import('@/pages/StudyDetailsPage/StudyMetadataTab').then(
                 convertModuleToRouteObject,
