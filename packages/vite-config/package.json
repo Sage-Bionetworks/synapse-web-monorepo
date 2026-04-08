@@ -21,10 +21,14 @@
   },
   "peerDependencies": {
     "vite": "^8.0.0",
-    "vitest": "^4.0.0"
+    "vitest": "^4.0.0",
+    "vite-plugin-node-polyfills": "^0.26.0"
   },
   "peerDependenciesMeta": {
     "vitest": {
+      "optional": true
+    },
+    "vite-plugin-node-polyfills": {
       "optional": true
     }
   },

@@ -8,6 +8,7 @@ const meta = {
   component: SynapseFormWrapper,
   parameters: {
     withRouter: true,
+    requireLogin: true,
   },
 } satisfies Meta<SynapseFormWrapperProps>
 export default meta
