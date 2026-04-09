@@ -1,6 +1,9 @@
 import InfiniteTableLayout from '@/components/layout/InfiniteTableLayout'
 import StyledTanStackTable from '@/components/TanStackTable/StyledTanStackTable'
 import { useMetadataTaskTable } from '@/features/entity/metadata-task/hooks/useMetadataTaskTable'
+import { FormControlLabel, Stack, Switch } from '@mui/material'
+import { useState } from 'react'
+import { ListCurationTaskRequest } from '@sage-bionetworks/synapse-client'
 
 export type MetadataTaskTableProps = {
   projectId: string
@@ -13,27 +16,50 @@ export type MetadataTaskTableProps = {
  */
 export default function MetadataTasksPage(props: MetadataTaskTableProps) {
   const { projectId } = props
+  const [listCurationTaskRequest, setListCurationTaskRequest] =
+    useState<ListCurationTaskRequest>({
+      projectId,
+      assignedToMe: false,
+    })
 
   const { table, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useMetadataTaskTable({
-      projectId,
+      listCurationTaskRequest,
     })
 
   return (
-    <InfiniteTableLayout
-      table={
-        <StyledTanStackTable
-          table={table}
-          styledTableContainerProps={{ sx: { my: 2 } }}
+    <Stack>
+      <Stack direction="row" justifyContent="flex-end">
+        <FormControlLabel
+          control={
+            <Switch
+              checked={!!listCurationTaskRequest.assignedToMe}
+              onChange={(_e, checked) => {
+                setListCurationTaskRequest(prev => ({
+                  ...prev,
+                  assignedToMe: checked,
+                }))
+              }}
+            />
+          }
+          label="View only tasks assigned to me"
         />
-      }
-      isLoading={isLoading}
-      isEmpty={!isLoading && table.getRowModel().rows.length === 0}
-      hasNextPage={hasNextPage}
-      onFetchNextPageClicked={() => {
-        fetchNextPage()
-      }}
-      isFetchingNextPage={isFetchingNextPage}
-    />
+      </Stack>
+      <InfiniteTableLayout
+        table={
+          <StyledTanStackTable
+            table={table}
+            styledTableContainerProps={{ sx: { my: 2 } }}
+          />
+        }
+        isLoading={isLoading}
+        isEmpty={!isLoading && table.getRowModel().rows.length === 0}
+        hasNextPage={hasNextPage}
+        onFetchNextPageClicked={() => {
+          fetchNextPage()
+        }}
+        isFetchingNextPage={isFetchingNextPage}
+      />
+    </Stack>
   )
 }

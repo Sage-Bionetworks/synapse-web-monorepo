@@ -10,7 +10,7 @@ const portalExploreConfig = exploreConfig[getPortal()]
 const goToExploreTab = async (page: Page, exploreTab: string) => {
   await test.step(`go to Explore/${exploreTab}`, async () => {
     await test.step('navigate to explore page', async () => {
-      await page.goto(`/Explore/${exploreTab}`, { waitUntil: 'networkidle' })
+      await page.goto(`/Explore/${exploreTab}`, { waitUntil: 'load' })
     })
 
     await test.step('explore page has loaded', async () => {

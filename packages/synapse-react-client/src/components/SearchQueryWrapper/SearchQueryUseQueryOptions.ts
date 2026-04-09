@@ -7,8 +7,6 @@ import {
   ColumnModel,
   FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
   FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
-  FacetColumnRangeRequest,
-  FacetColumnValuesRequest,
   QueryBundleRequest,
   QueryResultBundle,
   RowSet,

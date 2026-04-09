@@ -476,6 +476,26 @@ describe('DataGridWebSocket', () => {
       expect(mockSocket.sentMessages.length).toBe(0)
     })
 
+    it('calls onReplicaConnected on "replica-connected" notification', () => {
+      vi.spyOn(console, 'debug').mockImplementation(() => {})
+      const onReplicaConnected = vi.fn()
+      const { mockSocket } = createDataGridWebSocket({ onReplicaConnected })
+
+      mockSocket.simulateMessage([8, 'replica-connected'])
+
+      expect(onReplicaConnected).toHaveBeenCalledTimes(1)
+    })
+
+    it('calls onReplicaDisconnected on "replica-disconnected" notification', () => {
+      vi.spyOn(console, 'debug').mockImplementation(() => {})
+      const onReplicaDisconnected = vi.fn()
+      const { mockSocket } = createDataGridWebSocket({ onReplicaDisconnected })
+
+      mockSocket.simulateMessage([8, 'replica-disconnected'])
+
+      expect(onReplicaDisconnected).toHaveBeenCalledTimes(1)
+    })
+
     it('accepts "ping" notification', () => {
       vi.spyOn(console, 'debug').mockImplementation(() => {})
       vi.spyOn(console, 'log').mockImplementation(() => {})

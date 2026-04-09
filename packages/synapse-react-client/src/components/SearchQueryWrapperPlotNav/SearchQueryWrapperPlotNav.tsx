@@ -102,7 +102,7 @@ function SearchQueryWrapperPlotNavContents(
     facetsToPlot,
     availableFacets,
     initialExpandedFacetControls,
-    hideQueryCount,
+    hideQueryCount: _hideQueryCount,
     hideVisualizationsControl,
     initialLimit,
     initialPlotTypeByFacetColumnName,

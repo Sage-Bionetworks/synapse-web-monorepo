@@ -15,5 +15,6 @@ export const Demo: Story = {
   },
   parameters: {
     stack: 'development',
+    requireLogin: true,
   },
 }

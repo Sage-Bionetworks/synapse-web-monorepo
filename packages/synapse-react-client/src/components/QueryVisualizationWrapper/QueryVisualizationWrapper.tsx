@@ -249,6 +249,7 @@ export function QueryVisualizationWrapper(
       visibleColumns,
       hasCustomPlots,
       enabledExternalAnalysisPlatforms,
+      hideSearchBarControl,
     ],
   )
   /**

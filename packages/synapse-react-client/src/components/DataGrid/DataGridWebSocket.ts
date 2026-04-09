@@ -45,6 +45,8 @@ type DataGridWebSocketConstructorArgs = {
   onGridReady?: () => void
   onStatusChange?: (isOpen: boolean, instance: DataGridWebSocket) => void
   onModelCreate?: (model: GridModel) => void
+  onReplicaConnected?: () => void
+  onReplicaDisconnected?: () => void
   maxPayloadSizeBytes?: number
   socket?: WebSocket
   model?: GridModel | null
@@ -70,6 +72,8 @@ export class DataGridWebSocket {
   private onModelCreate: (model: GridModel) => void
   private onGridReady: () => void
   private onStatusChange: (isOpen: boolean, _this: DataGridWebSocket) => void
+  private onReplicaConnected: () => void
+  private onReplicaDisconnected: () => void
 
   constructor(args: DataGridWebSocketConstructorArgs) {
     const {
@@ -78,6 +82,8 @@ export class DataGridWebSocket {
       onGridReady,
       onStatusChange,
       onModelCreate,
+      onReplicaConnected,
+      onReplicaDisconnected,
       maxPayloadSizeBytes,
       socket,
       model,
@@ -93,6 +99,8 @@ export class DataGridWebSocket {
     this.onModelCreate = onModelCreate ?? noop
     this.onGridReady = onGridReady ?? noop
     this.onStatusChange = onStatusChange ?? noop
+    this.onReplicaConnected = onReplicaConnected ?? noop
+    this.onReplicaDisconnected = onReplicaDisconnected ?? noop
 
     // Restore existing model if provided
     if (model) {
@@ -274,6 +282,16 @@ export class DataGridWebSocket {
           )
           this.sendMessage(msg)
         }
+        break
+
+      case 'replica-connected':
+        console.debug('A replica connected to the grid session')
+        this.onReplicaConnected()
+        break
+
+      case 'replica-disconnected':
+        console.debug('A replica disconnected from the grid session')
+        this.onReplicaDisconnected()
         break
 
       default:

@@ -1,12 +1,38 @@
+import { ConfirmationDialog } from '@/components/ConfirmationDialog'
+import { displayToast } from '@/components/ToastMessage/ToastMessage'
+import { UserOrTeamBadge } from '@/components/UserOrTeamBadge'
+import useGridSessionForCurationTask_legacy from '@/features/entity/metadata-task/hooks/useGridSessionForCurationTask_legacy'
+import {
+  useGetCurrentUserProfile,
+  useGetFeatureFlag,
+  useGetIsPrincipalIdUserOrMemberOfTeam,
+} from '@/synapse-queries'
+import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 import { getLinkToGridSession } from '@/utils/functions/getSynapseWebClientLink'
 import { StickyNote2Outlined } from '@mui/icons-material'
-import { Button, Tooltip } from '@mui/material'
-import { CurationTask } from '@sage-bionetworks/synapse-client'
-import { useCallback } from 'react'
+import { Button, Tooltip, Typography } from '@mui/material'
+import {
+  GridSession,
+  SynapseClientError,
+  TaskBundle,
+} from '@sage-bionetworks/synapse-client'
+import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
+import { useCallback, useState } from 'react'
 import useGridSessionForCurationTask from '../hooks/useGridSessionForCurationTask'
 import { getGridSourceIdForTask } from '../utils/getGridSourceIdForTask'
-import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
-import { displayToast } from '@/components/ToastMessage/ToastMessage'
+import taskHasAssignee from '../utils/taskHasAssignee'
+
+export const OPEN_CURATOR_ERROR_TITLE =
+  'An error occurred while trying to open Curator'
+export const OPEN_CURATOR_UNAUTHORIZED_ERROR_MESSAGE =
+  "You don't have permission to view the existing Curator session for this task. It was likely created by another data contributor. A data manager should create a new task and assign it to you or your team."
+
+export const NO_TASK_ASSIGNEE_WARNING_DIALOG_TITLE = 'Task is Unassigned'
+
+function openGridSessionInNewWindow(gridSessionId: string, taskId: number) {
+  const gridUrl = getLinkToGridSession(gridSessionId, taskId)
+  window.open(gridUrl, '_blank', 'noopener')
+}
 
 /**
  * Handles rendering the 'Actions' cell in the Metadata Task table, which provides buttons for the user
@@ -14,77 +40,235 @@ import { displayToast } from '@/components/ToastMessage/ToastMessage'
  * by the task.
  */
 export default function MetadataTaskTableActionCell(props: {
-  curationTask: CurationTask
+  taskBundle: TaskBundle
   canEdit: boolean
 }) {
+  const { taskBundle, canEdit } = props
+  const curationTask = taskBundle.task!
+
+  // If true, allows opening a grid session for an unassigned task, even if it can lead to data loss, because blocking this behavior prevents important use cases
+  // such as data contributors creating a grid session before a task is assigned
+  const disableLegacyUnassignedTaskBehavior = useGetFeatureFlag(
+    FeatureFlagEnum.CURATOR_DISABLE_OPEN_FOR_UNASSIGNED_TASKS,
+  )
+
+  const [showOpenWithNoAssigneeWarning, setShowOpenWithNoAssigneeWarning] =
+    useState(false)
+  const [
+    showGridSessionAssigneeMismatchDialog,
+    setShowGridSessionAssigneeMismatchDialog,
+  ] = useState(false)
+
+  const { data: currentUser } = useGetCurrentUserProfile()
+
+  const { data: isUserAssignedToTask } = useGetIsPrincipalIdUserOrMemberOfTeam(
+    currentUser?.ownerId!,
+    curationTask.assigneePrincipalId!,
+    { enabled: !!currentUser?.ownerId && !!curationTask.assigneePrincipalId },
+  )
+
   const {
-    curationTask,
-    // canEdit
-  } = props
+    data: gridSessionInfoForCurationTask,
+    mutateAsync: getGridSessionForTask,
+    isPending: getOrCreateGridSessionIsPending,
+  } = useGridSessionForCurationTask()
 
-  const { mutateAsync: getGridSessionForTask, isPending: openGridIsPending } =
-    useGridSessionForCurationTask()
+  const {
+    mutateAsync: getOrCreateLegacyGridSessionForUnassignedTask,
+    isPending: getOrCreateLegacyGridSessionIsPending,
+  } = useGridSessionForCurationTask_legacy()
 
-  const gridSourceId = getGridSourceIdForTask(curationTask)
-  const { data, isLoading } = useGetEntityPermissions(gridSourceId)
+  const openGridIsPending =
+    getOrCreateGridSessionIsPending || getOrCreateLegacyGridSessionIsPending
+
+  const gridSourceEntityId = getGridSourceIdForTask(curationTask)
+  const {
+    data: sourceEntityPermissions,
+    isLoading: isLoadingEntityPermissions,
+  } = useGetEntityPermissions(gridSourceEntityId)
+
+  const isLoading = isLoadingEntityPermissions
+  const hasAssignee = taskHasAssignee(curationTask)
+  const isAssignedToTask = canEdit || isUserAssignedToTask || !hasAssignee
+
+  const hasPermission =
+    sourceEntityPermissions?.canView &&
+    (isAssignedToTask || !disableLegacyUnassignedTaskBehavior)
+
   const isOpenDataGridDisabled =
-    openGridIsPending || isLoading || !data?.canView
-  const toolTipTitle = data?.canView
+    openGridIsPending || isLoading || !hasPermission
+  const toolTipTitle = hasPermission
     ? 'Open Curator to edit metadata'
-    : 'You must have READ access to ' +
-      gridSourceId +
+    : !isAssignedToTask && disableLegacyUnassignedTaskBehavior
+    ? 'You must be assigned to this task to open it'
+    : sourceEntityPermissions?.canView
+    ? 'You must have READ access to ' +
+      gridSourceEntityId +
       ' to view the Working Copy'
+    : 'You do not have permission to view the Working Copy'
 
-  const handleOpenDataGrid = useCallback(async () => {
-    try {
-      const gridSession = await getGridSessionForTask({ curationTask })
-      const gridUrl = getLinkToGridSession(
-        gridSession.sessionId!,
-        curationTask.taskId,
-      )
+  const openNewOrExistingCuratorSession = useCallback(
+    async (
+      /**
+       * If unassigned, use legacy grid session retrieval behavior where grid sessions are not linked to the task
+       * This can lead to data loss because different users create multiple grid sessions that overwrite each other
+       */
+      legacyIgnoreLinkedGridSession = false,
+    ) => {
+      let gridSession: GridSession
+      try {
+        if (
+          legacyIgnoreLinkedGridSession &&
+          !disableLegacyUnassignedTaskBehavior
+        ) {
+          gridSession = await getOrCreateLegacyGridSessionForUnassignedTask({
+            curationTask,
+          })
+        } else {
+          const getSessionResult = await getGridSessionForTask(taskBundle)
+          gridSession = getSessionResult.gridSession
 
-      // Open the Grid in a new tab
-      window.open(gridUrl, '_blank', 'noopener')
-    } catch (error) {
-      console.error('Error opening Curator for curation task', error)
-      displayToast(error.message, 'danger', {
-        title: 'An error occurred while trying to open Curator',
-      })
+          if (!getSessionResult.gridSessionOwnerMatchesTaskAssignee) {
+            // The user has access, but the assignee does not match the grid session owner.
+            // Show a warning before allowing the user to proceed.
+            setShowGridSessionAssigneeMismatchDialog(true)
+            return
+          }
+        }
+        openGridSessionInNewWindow(gridSession.sessionId!, curationTask.taskId!)
+      } catch (error) {
+        if (error instanceof SynapseClientError && error.status === 403) {
+          console.error(error)
+          displayToast(OPEN_CURATOR_UNAUTHORIZED_ERROR_MESSAGE, 'danger', {
+            title: OPEN_CURATOR_ERROR_TITLE,
+          })
+        } else {
+          console.error('Error opening Curator for curation task', error)
+          displayToast(error.message, 'danger', {
+            title: OPEN_CURATOR_ERROR_TITLE,
+          })
+        }
+      }
+    },
+    [
+      curationTask,
+      getGridSessionForTask,
+      getOrCreateLegacyGridSessionForUnassignedTask,
+      taskBundle,
+    ],
+  )
+
+  const handleClickOpenCurator = useCallback(() => {
+    if (!hasAssignee) {
+      setShowOpenWithNoAssigneeWarning(true)
+    } else {
+      void openNewOrExistingCuratorSession()
     }
-  }, [curationTask, getGridSessionForTask])
+  }, [openNewOrExistingCuratorSession, hasAssignee])
 
-  // TODO: SWC-7480
-  // const editTaskButton = canEdit ? <></> : null
+  // Dialog to warn a user before opening a curation task without an assignee. Intended to discourage creating
+  // grid sessions for unassigned tasks without completely blocking data contributors from doing so
+  const openWithNoAssigneeWarningDialog = (
+    <ConfirmationDialog
+      open={showOpenWithNoAssigneeWarning}
+      title={NO_TASK_ASSIGNEE_WARNING_DIALOG_TITLE}
+      content={
+        <>
+          <Typography variant="body1" gutterBottom>
+            This task is currently unassigned. A Curator session created using
+            an unassigned task will be private to your account. If the task is
+            assigned later, a new Curator session will be created and you may be
+            unable to recover any unsaved changes.
+          </Typography>
+          <Typography variant="body1">
+            Do you want to proceed and open Curator using this unassigned task?
+          </Typography>
+        </>
+      }
+      confirmButtonProps={{ children: 'Proceed' }}
+      onConfirm={() => {
+        // If unassigned, use legacy grid session retrieval behavior where grid sessions are not linked to the task
+        // This can lead to data loss because different users create multiple grid sessions that overwrite each other
+        void openNewOrExistingCuratorSession(true)
+        setShowOpenWithNoAssigneeWarning(false)
+      }}
+      onCancel={() => {
+        setShowOpenWithNoAssigneeWarning(false)
+      }}
+    />
+  )
 
-  // TODO: SWC-7484
-  // const isFileBasedTask = instanceOfFileBasedMetadataTaskProperties(
-  //   curationTask.taskProperties!,
-  // )
-  // const uploadButton = isFileBasedTask ? <></> : null
+  const assigneeMismatchWarningDialog = (
+    <ConfirmationDialog
+      open={showGridSessionAssigneeMismatchDialog}
+      title={'Task assignee changed'}
+      content={
+        <>
+          <p>
+            The existing Curator session for the task was created with a
+            different owner{' '}
+            <span style={{ whiteSpace: 'nowrap' }}>
+              (
+              {gridSessionInfoForCurationTask?.gridSession.ownerPrincipalId && (
+                <UserOrTeamBadge
+                  principalId={
+                    gridSessionInfoForCurationTask.gridSession.ownerPrincipalId
+                  }
+                />
+              )}
+              )
+            </span>{' '}
+            than the current assignee{' '}
+            <span style={{ whiteSpace: 'nowrap' }}>
+              (
+              {curationTask.assigneePrincipalId ? (
+                <UserOrTeamBadge
+                  principalId={curationTask.assigneePrincipalId}
+                />
+              ) : (
+                'None'
+              )}
+              )
+            </span>
+            . Collaborators may not have access to this session.
+          </p>
+          <p>Are you sure you want to open Curator?</p>
+        </>
+      }
+      confirmButtonProps={{ children: 'Open Curator' }}
+      onConfirm={() => {
+        if (gridSessionInfoForCurationTask?.gridSession) {
+          openGridSessionInNewWindow(
+            gridSessionInfoForCurationTask.gridSession.sessionId!,
+            curationTask.taskId!,
+          )
 
-  const openDataGridButton = (
-    <Tooltip title={toolTipTitle}>
-      <span>
-        <Button
-          size={'small'}
-          startIcon={<StickyNote2Outlined />}
-          loading={openGridIsPending || isLoading}
-          disabled={isOpenDataGridDisabled}
-          onClick={() => {
-            void handleOpenDataGrid()
-          }}
-        >
-          Open Curator
-        </Button>
-      </span>
-    </Tooltip>
+          setShowGridSessionAssigneeMismatchDialog(false)
+        }
+      }}
+      onCancel={() => {
+        setShowGridSessionAssigneeMismatchDialog(false)
+      }}
+    />
   )
 
   return (
     <>
-      {/*{editTaskButton}*/}
-      {openDataGridButton}
-      {/*{uploadButton}*/}
+      {openWithNoAssigneeWarningDialog}
+      {assigneeMismatchWarningDialog}
+      <Tooltip title={toolTipTitle}>
+        <span>
+          <Button
+            size={'small'}
+            startIcon={<StickyNote2Outlined />}
+            loading={openGridIsPending || isLoading}
+            disabled={isOpenDataGridDisabled}
+            onClick={handleClickOpenCurator}
+          >
+            Open Curator
+          </Button>
+        </span>
+      </Tooltip>
     </>
   )
 }
