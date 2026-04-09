@@ -38,6 +38,7 @@ import { removeNoOpOperations } from './utils/DataGridUtils'
 import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
 import { useGetCurrentUserBundle } from '@/synapse-queries'
 import { useListGridReplicas } from '@/synapse-queries/grid/useGridSession'
+import { useRemoteSelections } from './hooks/useRemoteSelections'
 import CertificationRequirement from '@/components/AccessRequirementList/RequirementItem/CertificationRequirement'
 import { ValidationAlert } from './components/ValidationAlert'
 
@@ -180,6 +181,13 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
     }, [jsonSchema])
 
     const connectionStatus = isConnected ? 'Connected' : 'Disconnected'
+
+    const remoteSelections = useRemoteSelections(
+      modelSnapshot,
+      model,
+      replicas,
+      replicaId,
+    )
 
     // Transform the model view rows and columns to DataSheetGrid format
     const rowValues = useMemo(
@@ -478,6 +486,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                       handleChange={handleChange}
                       handleSelectionChange={handleSelectionChange}
                       onSelectedRowChange={handleSelectedRowChange}
+                      remoteSelections={remoteSelections}
                     />
                   </Grid>
                   <Grid size={12}>
