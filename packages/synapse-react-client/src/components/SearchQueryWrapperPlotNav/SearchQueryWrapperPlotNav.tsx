@@ -1,38 +1,22 @@
 import { NoContentPlaceholderType } from '@/components/SynapseTable/NoContentPlaceholderType'
 import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
-import { Box } from '@mui/material'
-import { useQuery } from '@tanstack/react-query'
 import { Suspense } from 'react'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import { CardConfiguration } from '../CardContainer/CardConfiguration'
-import { useQueryContext } from '../QueryContext'
 import {
-  QueryVisualizationContextConsumer,
   QueryVisualizationWrapper,
   QueryVisualizationWrapperProps,
 } from '../QueryVisualizationWrapper'
 import QueryWrapperLoadingScreen from '../QueryWrapper/QueryWrapperLoadingScreen'
-import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
 import { SynapseTableConfiguration } from '../SynapseTable'
-import TopLevelControls, {
-  TopLevelControlsProps,
-} from '../SynapseTable/TopLevelControls/TopLevelControls'
-import TotalQueryResults from '../TotalQueryResults'
-import PlotsContainer, {
-  PlotsContainerProps,
-} from '../widgets/facet-nav/PlotsContainer'
-import FacetFilterControls, {
-  FacetFilterControlsProps,
-} from '../widgets/query-filter/FacetFilterControls'
-import { RowSetView } from '../QueryWrapperPlotNav/RowSetView'
+import { TopLevelControlsProps } from '../SynapseTable/TopLevelControls/TopLevelControls'
+import { PlotsContainerProps } from '../widgets/facet-nav/PlotsContainer'
+import { FacetFilterControlsProps } from '../widgets/query-filter/FacetFilterControls'
 import {
   SearchQueryWrapper,
   SearchQueryWrapperProps,
 } from '../SearchQueryWrapper/SearchQueryWrapper'
-import {
-  QUERY_FILTERS_COLLAPSED_CSS,
-  QUERY_FILTERS_EXPANDED_CSS,
-} from '../QueryWrapperPlotNav/QueryWrapperPlotNav'
+import { QueryWrapperPlotNavContents } from '../QueryWrapperPlotNav/QueryWrapperPlotNav'
 
 type SearchQueryWrapperPlotNavOwnProps = {
   /** The ID of the SearchIndex entity to query. */
@@ -76,119 +60,6 @@ export type SearchQueryWrapperPlotNavProps = SearchQueryWrapperPlotNavOwnProps &
     /** Optional initial query parameters. Only selectedFacets, limit, and offset are used. */
     initQueryRequest?: SearchQueryWrapperProps['initQueryRequest']
   }
-
-type SearchQueryWrapperPlotNavContentsProps = Pick<
-  SearchQueryWrapperPlotNavProps,
-  | 'tableConfiguration'
-  | 'name'
-  | 'cardConfiguration'
-  | 'facetsToPlot'
-  | 'availableFacets'
-  | 'initialExpandedFacetControls'
-  | 'hideQueryCount'
-  | 'hideVisualizationsControl'
-  | 'initialLimit'
-  | 'initialPlotTypeByFacetColumnName'
-  | 'hideTopLevelControls'
->
-
-function SearchQueryWrapperPlotNavContents(
-  props: SearchQueryWrapperPlotNavContentsProps,
-) {
-  const {
-    tableConfiguration,
-    name,
-    cardConfiguration,
-    facetsToPlot,
-    availableFacets,
-    initialExpandedFacetControls,
-    hideQueryCount: _hideQueryCount,
-    hideVisualizationsControl,
-    initialLimit,
-    initialPlotTypeByFacetColumnName,
-    hideTopLevelControls,
-  } = props
-
-  const queryContext = useQueryContext()
-  const { hasFacetedSelectColumn: isFaceted, queryMetadataQueryOptions } =
-    queryContext
-  const { isLoading: isLoadingQueryMetadata } = useQuery(
-    queryMetadataQueryOptions,
-  )
-
-  const currentQueryRequest = queryContext.currentQueryRequest
-  const hasFacetsOrFilters =
-    (currentQueryRequest?.query.selectedFacets !== undefined &&
-      currentQueryRequest.query.selectedFacets.length > 0) ||
-    (currentQueryRequest?.query.additionalFilters !== undefined &&
-      currentQueryRequest?.query.additionalFilters.length > 0)
-
-  return (
-    <QueryVisualizationContextConsumer>
-      {queryVisualizationContext => {
-        if (queryVisualizationContext === undefined) {
-          throw new Error(
-            'No queryVisualizationContext found when using QueryVisualizationContextConsumer',
-          )
-        }
-
-        return (
-          <Box
-            className={`SearchQueryWrapperPlotNav ${
-              queryVisualizationContext.showFacetFilter
-                ? QUERY_FILTERS_EXPANDED_CSS
-                : QUERY_FILTERS_COLLAPSED_CSS
-            } ${hideTopLevelControls ? 'isHidingTopLevelControls' : ''}`}
-            sx={{
-              '*': {
-                cursor: isLoadingQueryMetadata ? 'wait' : undefined,
-              },
-            }}
-          >
-            <QueryWrapperErrorBoundary>
-              {!hideTopLevelControls && (
-                <TopLevelControls
-                  showColumnSelection={tableConfiguration !== undefined}
-                  name={name}
-                  hideDownload={true}
-                  hideQueryCount={true}
-                  hideFacetFilterControl={!isFaceted}
-                  hideVisualizationsControl={
-                    !isFaceted || hideVisualizationsControl
-                  }
-                  hideSqlEditorControl={true}
-                />
-              )}
-              {isFaceted && (
-                <FacetFilterControls
-                  availableFacets={availableFacets}
-                  initialExpandedFacetControls={initialExpandedFacetControls}
-                />
-              )}
-              <TotalQueryResults
-                frontText={''}
-                endText={hasFacetsOrFilters ? 'filtered by' : ''}
-                hideIfUnfiltered={true}
-              />
-              <PlotsContainer
-                facetsToPlot={facetsToPlot}
-                initialPlotTypeByFacetColumnName={
-                  initialPlotTypeByFacetColumnName
-                }
-              />
-              <RowSetView
-                tableConfiguration={tableConfiguration}
-                hideDownload={true}
-                cardConfiguration={cardConfiguration}
-                initialLimit={initialLimit}
-              />
-            </QueryWrapperErrorBoundary>
-          </Box>
-        )
-      }}
-    </QueryVisualizationContextConsumer>
-  )
-}
 
 /**
  * A component similar to QueryWrapperPlotNav that sources its data from the SearchQueryServicesApi
@@ -242,20 +113,23 @@ export default function SearchQueryWrapperPlotNav(
             NoContentPlaceholderType.INTERACTIVE
           }
         >
-          <SearchQueryWrapperPlotNavContents
+          <QueryWrapperPlotNavContents
             tableConfiguration={tableConfiguration}
             name={props.name}
             cardConfiguration={props.cardConfiguration}
             facetsToPlot={props.facetsToPlot}
             availableFacets={props.availableFacets}
             initialExpandedFacetControls={props.initialExpandedFacetControls}
-            hideQueryCount={props.hideQueryCount}
+            hideDownload={true}
+            hideQueryCount={true}
+            hideSqlEditorControl={true}
             hideVisualizationsControl={props.hideVisualizationsControl}
             initialLimit={props.initialLimit}
             initialPlotTypeByFacetColumnName={
               props.initialPlotTypeByFacetColumnName
             }
             hideTopLevelControls={props.hideTopLevelControls}
+            isFullTextSearchEnabled={false}
           />
         </QueryVisualizationWrapper>
       </Suspense>

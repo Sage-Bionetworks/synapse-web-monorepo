@@ -114,7 +114,7 @@ export type QueryWrapperPlotNavProps = QueryOrDeprecatedSearchParams &
   PlotsContainerProps &
   QueryWrapperPlotNavOwnProps
 
-type QueryWrapperPlotNavContentsProps = Pick<
+export type QueryWrapperPlotNavContentsProps = Pick<
   QueryWrapperPlotNavProps,
   | 'tableConfiguration'
   | 'name'
@@ -139,10 +139,12 @@ type QueryWrapperPlotNavContentsProps = Pick<
   | 'hideTopLevelControls'
 > & {
   isFullTextSearchEnabled: boolean
-  remount: () => void
+  remount?: () => void
 }
 
-function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
+export function QueryWrapperPlotNavContents(
+  props: QueryWrapperPlotNavContentsProps,
+) {
   const {
     tableConfiguration,
     name,
@@ -157,7 +159,7 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
     searchConfiguration,
     cavaticaConnectAccountURL,
     customControls,
-    remount,
+    remount = () => {},
     isFullTextSearchEnabled,
     customPlots,
     initialLimit,
