@@ -1,6 +1,11 @@
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { SearchIndexQuery } from '@sage-bionetworks/synapse-client'
 
+/** The SearchIndex entity that accepts search API calls and has a definingSql. */
+export const MOCK_SEARCH_INDEX_ENTITY_ID = 'syn60001'
+/** The underlying Table/View whose schema (column models) backs the search index. */
+export const MOCK_SEARCH_UNDERLYING_TABLE_ENTITY_ID = 'syn60000'
+
 export const mockSearchIndexQuery: SearchIndexQuery = {
   limit: 25,
   offset: 0,

@@ -8,8 +8,10 @@ import { Meta, StoryObj } from '@storybook/react-vite'
 import SearchQueryWrapperPlotNav, {
   SearchQueryWrapperPlotNavProps,
 } from './SearchQueryWrapperPlotNav'
-
-const MOCK_SEARCH_TABLE_ID = 'syn123'
+import {
+  MOCK_SEARCH_INDEX_ENTITY_ID,
+  MOCK_SEARCH_UNDERLYING_TABLE_ENTITY_ID,
+} from '@/mocks/mockSearchQueryData'
 
 const meta: Meta<SearchQueryWrapperPlotNavProps> = {
   title: 'Explore/SearchQueryWrapperPlotNav',
@@ -18,6 +20,7 @@ const meta: Meta<SearchQueryWrapperPlotNavProps> = {
     stack: 'mock',
     msw: {
       handlers: [
+        // Entity bundle handler for the underlying table (synapseId) — provides column models
         getEntityBundleHandler(MOCK_REPO_ORIGIN, {
           tableBundle: {
             columnModels: mockSearchQueryResultBundle.columnModels!,
@@ -25,13 +28,14 @@ const meta: Meta<SearchQueryWrapperPlotNavProps> = {
           },
         }),
         ...getHandlers(MOCK_REPO_ORIGIN),
+        // Search API handlers are keyed to the searchIndexId
         ...getHandlersForSearchQuery(MOCK_REPO_ORIGIN),
       ],
     },
   },
   args: {
-    synapseId: MOCK_SEARCH_TABLE_ID,
-    searchIndexId: MOCK_SEARCH_TABLE_ID,
+    synapseId: MOCK_SEARCH_UNDERLYING_TABLE_ENTITY_ID,
+    searchIndexId: MOCK_SEARCH_INDEX_ENTITY_ID,
   },
 } satisfies Meta<SearchQueryWrapperPlotNavProps>
 
