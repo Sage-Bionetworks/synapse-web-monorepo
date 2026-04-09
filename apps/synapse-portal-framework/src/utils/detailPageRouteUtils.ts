@@ -139,9 +139,30 @@ export function createDetailPageRouteExports<
       return [...matches.flatMap(match => match.meta ?? []), ...descriptors]
     }
 
-    descriptors.push({ title: `${loaderData.title} | ${portalName}` })
+    const pageTitle = `${loaderData.title} | ${portalName}`
+    const pageUrl = portalKey
+      ? new URL(location.pathname, getPortalOrigin(portalKey)).toString()
+      : undefined
+
+    descriptors.push({ title: pageTitle })
+    descriptors.push({ property: 'og:title', content: pageTitle })
+    descriptors.push({ name: 'twitter:title', content: pageTitle })
+
+    if (pageUrl) {
+      descriptors.push({ property: 'og:url', content: pageUrl })
+      descriptors.push({ property: 'twitter:url', content: pageUrl })
+    }
+
     if (loaderData.description) {
       descriptors.push({ name: 'description', content: loaderData.description })
+      descriptors.push({
+        property: 'og:description',
+        content: loaderData.description,
+      })
+      descriptors.push({
+        name: 'twitter:description',
+        content: loaderData.description,
+      })
     }
     if (extendMeta) {
       descriptors.push(...extendMeta(loaderData))
@@ -167,7 +188,8 @@ export function createDetailPageRouteExports<
  *
  * @param pageTitle  - The page-specific portion of the title, e.g. "Explore Studies"
  * @param portalName - Portal display name appended to the title, e.g. "NF Data Portal"
- * @returns A `meta()` function that returns `[{ title: "<pageTitle> | <portalName>" }]`
+ * @returns A `meta()` function that merges parent route meta descriptors and
+ *   overrides `<title>` and `og:title` with the page-specific value.
  *
  * @example
  * ```ts
@@ -177,6 +199,25 @@ export function createDetailPageRouteExports<
 export function createStaticMeta(
   pageTitle: string,
   portalName: string,
-): () => MetaDescriptor[] {
-  return () => [{ title: `${pageTitle} | ${portalName}` }]
+): (args: { matches: Array<{ meta: MetaDescriptor[] }> }) => MetaDescriptor[] {
+  return ({ matches }) => {
+    const fullTitle = `${pageTitle} | ${portalName}`
+    const parentMeta = matches
+      .flatMap(m => m.meta ?? [])
+      .filter(
+        d =>
+          !('title' in d) &&
+          !(
+            typeof d === 'object' &&
+            d !== null &&
+            'property' in d &&
+            (d as Record<string, unknown>)['property'] === 'og:title'
+          ),
+      )
+    return [
+      ...parentMeta,
+      { title: fullTitle },
+      { property: 'og:title', content: fullTitle },
+    ]
+  }
 }

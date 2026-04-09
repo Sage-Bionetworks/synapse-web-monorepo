@@ -12,10 +12,22 @@ import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
 export function meta(): MetaDescriptor[] {
   const portalName = import.meta.env.VITE_PORTAL_NAME
   const portalDescription = import.meta.env.VITE_PORTAL_DESCRIPTION
+  const portalKey = import.meta.env.VITE_PORTAL_KEY ?? ''
+  const baseUrl = `https://${portalKey}.synapse.org`
   return [
     { title: portalName },
     ...(portalDescription
       ? [{ name: 'description', content: portalDescription }]
+      : []),
+    { property: 'og:url', content: `${baseUrl}/` },
+    { property: 'og:title', content: portalName },
+    ...(portalDescription
+      ? [{ property: 'og:description', content: portalDescription }]
+      : []),
+    { property: 'twitter:url', content: `${baseUrl}/` },
+    { name: 'twitter:title', content: portalName },
+    ...(portalDescription
+      ? [{ name: 'twitter:description', content: portalDescription }]
       : []),
   ]
 }
@@ -34,8 +46,6 @@ export function links() {
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const portalKey = import.meta.env.VITE_PORTAL_KEY ?? ''
-  const portalName = import.meta.env.VITE_PORTAL_NAME ?? ''
-  const portalDescription = import.meta.env.VITE_PORTAL_DESCRIPTION ?? ''
   const baseUrl = `https://${portalKey}.synapse.org`
 
   return (
@@ -46,10 +56,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="theme-color" content="#000000" />
 
         {/* Facebook / Open Graph Meta Tags */}
-        <meta property="og:url" content={`${baseUrl}/`} />
         <meta property="og:type" content="website" />
-        <meta property="og:title" content={portalName} />
-        <meta property="og:description" content={portalDescription} />
         <meta
           name="image"
           property="og:image"
@@ -59,9 +66,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {/* Twitter Meta Tags */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta property="twitter:domain" content="synapse.org" />
-        <meta property="twitter:url" content={`${baseUrl}/`} />
-        <meta name="twitter:title" content={portalName} />
-        <meta name="twitter:description" content={portalDescription} />
         <meta name="twitter:image" content={`${baseUrl}/socialmedia.png`} />
 
         {/*
