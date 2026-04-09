@@ -1,3 +1,0 @@
-import{S as e}from"./ShareThisPage-DEIiFLe_.js";import"./iframe-DvDRa5Q6.js";import"./index-Chi_LkuB.js";import"./Close-LY7gHL5l.js";import"./CopyToClipboardIcon-VdiadM10.js";import"./index-DbESNxNd.js";import"./index-BtB7dkFq.js";const c={title:"UI/ShareThisPage",component:e,parameters:{}},r={args:{}};r.parameters={...r.parameters,docs:{...r.parameters?.docs,source:{originalSource:`{
-  args: {}
-}`,...r.parameters?.docs?.source}}};const n=["Default"];export{r as Default,n as __namedExportsOrder,c as default};
