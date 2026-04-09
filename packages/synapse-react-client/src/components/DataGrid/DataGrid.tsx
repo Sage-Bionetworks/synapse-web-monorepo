@@ -23,6 +23,7 @@ import {
   calculateDefaultColumnWidth,
   HeaderOptions,
 } from './utils/calculateColumnWidth'
+import type { ReplicaUserInfo } from './hooks/useGridReplicaUsers'
 
 type DataGridProps = {
   gridRef: React.RefObject<DataSheetGridRef | null>
@@ -39,6 +40,8 @@ type DataGridProps = {
     rowIndex: number | null,
     row: DataGridRow | null,
   ) => void
+  cellChanges?: ReadonlyMap<string, number>
+  replicaUserMap?: ReadonlyMap<number, ReplicaUserInfo>
 }
 
 /**
@@ -59,6 +62,8 @@ export default function DataGrid(props: DataGridProps) {
     handleChange,
     handleSelectionChange,
     onSelectedRowChange,
+    cellChanges,
+    replicaUserMap,
   } = props
 
   // Move columnWidths state into DataGrid
@@ -192,9 +197,11 @@ export default function DataGrid(props: DataGridProps) {
         selectedRowIndex,
         lastSelection,
         colValues,
+        cellChanges,
+        replicaUserMap,
       })
     },
-    [selectedRowIndex, lastSelection, colValues],
+    [selectedRowIndex, lastSelection, colValues, cellChanges, replicaUserMap],
   )
 
   // Wrap duplicateRow in useCallback

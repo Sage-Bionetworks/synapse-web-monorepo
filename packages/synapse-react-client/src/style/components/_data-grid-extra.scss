@@ -9,6 +9,12 @@ $color-spinner: #e6c200;
 $color-text-primary: #353a3f; // grey-900
 $color-text-disabled: #71767f; // gray-700
 
+// Cell change indicator colors (triangle badge — upper-right corner)
+$color-change-self: #52c41a; // green
+$color-change-own-agent: #13c2c2; // teal
+$color-change-other-user: #1677ff; // blue
+$color-change-other-agent: #9254de; // purple
+
 // Input styles
 .dsg-input {
   font-size: inherit;
@@ -221,5 +227,42 @@ body.col-resizing {
   .dsg-container,
   .dsg-container * {
     cursor: col-resize;
+  }
+}
+
+// ── Cell change indicators ─────────────────────────────────────────────────
+// A small triangle badge in the upper-right corner of any cell changed since
+// the client joined the session.  Color encodes attribution category.
+@mixin change-triangle($color) {
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 7px 7px 0;
+    border-color: transparent $color transparent transparent;
+    z-index: 20;
+    pointer-events: none;
+  }
+}
+
+.dsg-cell {
+  &.cell-changed--self {
+    @include change-triangle($color-change-self);
+  }
+
+  &.cell-changed--own-agent {
+    @include change-triangle($color-change-own-agent);
+  }
+
+  &.cell-changed--other-user {
+    @include change-triangle($color-change-other-user);
+  }
+
+  &.cell-changed--other-agent {
+    @include change-triangle($color-change-other-agent);
   }
 }
