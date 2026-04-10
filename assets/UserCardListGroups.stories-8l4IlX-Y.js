@@ -1,0 +1,12 @@
+import{cr as a}from"./iframe-90f2SQV6.js";import{U as s}from"./UserCardListGroups-D76jnJpB.js";import"./index-Chi_LkuB.js";import"./LargeButton-BXysyVcH.js";import"./ExpandableContent-GWnjoi05.js";import"./UserCardListRotate-CSYSMgor.js";import"./use-deep-compare-effect.esm-BIqY3Cs8.js";import"./UserBadge-BhjoWwGQ.js";import"./useUserBundle-C1tRTjHW.js";import"./useUserGroupHeader-3u-W-R_V.js";import"./SkeletonTable-CUhBOjKD.js";import"./MenuItem-BuPaY9i0.js";import"./Card-BjkUBjOd.js";import"./Chip-DkWyanB2.js";import"./without-CKb5w1tn.js";const y={title:"Home Page/UserCardListGroups",component:s,parameters:{chromatic:{viewports:[600,1200]}}},i={args:{sql:"SELECT * FROM syn21781196 WHERE isFeatured='true'",columnName:"Project Title",facetValues:["Somatic Mosaicism in the brain of Tourette syndrome","Somatic Mosaicism in Schizophrenia and Control Brains","1/3-Schizophrenia Genetics and Brain Somatic Mosaicism","2/3-Schizophrenia Genetics and Brain Somatic Mosaicism","Role of brain somatic mosaicism in autism, schizophrenia, and bipolar disorder","Mosaicism in focal cortical dysplasias spectrum seen in neuropsychiatric disease","1/2-Somatic mosaicism and autism spectrum disorder","2/2-Somatic mosaicism and autism spectrum disorder","3/3-Schizophrenia Genetics and Brain Somatic Mosaicism"],size:a,useQueryResultUserData:!1,summaryLinkText:"Explore All People",summaryLink:"/Explore/People",count:6}};i.parameters={...i.parameters,docs:{...i.parameters?.docs,source:{originalSource:`{
+  args: {
+    sql: "SELECT * FROM syn21781196 WHERE isFeatured='true'",
+    columnName: 'Project Title',
+    facetValues: ['Somatic Mosaicism in the brain of Tourette syndrome', 'Somatic Mosaicism in Schizophrenia and Control Brains', '1/3-Schizophrenia Genetics and Brain Somatic Mosaicism', '2/3-Schizophrenia Genetics and Brain Somatic Mosaicism', 'Role of brain somatic mosaicism in autism, schizophrenia, and bipolar disorder', 'Mosaicism in focal cortical dysplasias spectrum seen in neuropsychiatric disease', '1/2-Somatic mosaicism and autism spectrum disorder', '2/2-Somatic mosaicism and autism spectrum disorder', '3/3-Schizophrenia Genetics and Brain Somatic Mosaicism'],
+    size: MEDIUM_USER_CARD,
+    useQueryResultUserData: false,
+    summaryLinkText: 'Explore All People',
+    summaryLink: '/Explore/People',
+    count: 6
+  }
+}`,...i.parameters?.docs?.source}}};const f=["Demo"];export{i as Demo,f as __namedExportsOrder,y as default};
