@@ -48,6 +48,8 @@ export function CreateProjectModal({
       <TextField
         id="projectInput"
         label="Project Name"
+        required
+        helperText="Pick a unique title for your project"
         value={projectName}
         fullWidth
         onChange={event => {
