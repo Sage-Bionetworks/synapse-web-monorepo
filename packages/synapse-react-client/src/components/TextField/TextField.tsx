@@ -1,9 +1,12 @@
 import StyledFormControl from '@/components/styled/StyledFormControl'
 import {
+  Box,
   InputBase,
   InputLabel,
   TextFieldProps as MuiTextFieldProps,
+  Typography,
 } from '@mui/material'
+import styles from './TextField.module.scss'
 import { PropsWithChildren, useId, useMemo } from 'react'
 
 export type TextFieldProps = Pick<
@@ -13,6 +16,7 @@ export type TextFieldProps = Pick<
   | 'disabled'
   | 'error'
   | 'fullWidth'
+  | 'helperText'
   | 'id'
   | 'inputProps'
   | 'label'
@@ -34,7 +38,7 @@ export type TextFieldProps = Pick<
  */
 export default function TextField(props: TextFieldProps) {
   const id = useId()
-  const { noWrapInFormControl, label, ...rest } = props
+  const { noWrapInFormControl, label: _label, helperText, ...rest } = props
   const Wrapper = useMemo(
     () =>
       noWrapInFormControl
@@ -48,22 +52,29 @@ export default function TextField(props: TextFieldProps) {
   )
   return (
     <Wrapper>
-      {props.label && (
-        <InputLabel
-          htmlFor={props.id || id}
-          sx={{
-            fontWeight: 700,
-            mb: '4px',
-            pointerEvents: 'unset',
-            '&::after': ({ palette }) => ({
-              content: props.required ? '"*"' : undefined,
-              marginLeft: '3px',
-              color: palette.secondary.main,
-            }),
-          }}
-        >
-          {props.label}
-        </InputLabel>
+      {(props.label || helperText) && (
+        <Box className={styles.labelRow}>
+          {props.label && (
+            <InputLabel
+              htmlFor={props.id || id}
+              className={styles.inputLabel}
+              sx={{
+                '&::after': ({ palette }) => ({
+                  content: props.required ? '"*"' : undefined,
+                  marginLeft: '3px',
+                  color: palette.secondary.main,
+                }),
+              }}
+            >
+              {props.label}
+            </InputLabel>
+          )}
+          {helperText && (
+            <Typography variant="body2" className={styles.helperText}>
+              {helperText}
+            </Typography>
+          )}
+        </Box>
       )}
       <InputBase id={id} {...rest}></InputBase>
     </Wrapper>

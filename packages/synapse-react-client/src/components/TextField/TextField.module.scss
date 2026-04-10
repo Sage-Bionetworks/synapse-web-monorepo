@@ -1,0 +1,18 @@
+.labelRow {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.inputLabel {
+  position: relative !important;
+  font-weight: 700;
+  margin-bottom: 0;
+  pointer-events: unset;
+}
+
+.helperText {
+  font-weight: 500;
+  color: var(--synapse-gray-600);
+}

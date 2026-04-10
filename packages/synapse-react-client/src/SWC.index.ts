@@ -127,6 +127,11 @@ const SynapseComponents = {
     () =>
       import('./components/EntityViewScopeEditor/EntityViewScopeEditorModal'),
   ),
+  CreateProjectModal: lazy(() =>
+    import('./components/CreateProjectModal/CreateProjectModal').then(m => ({
+      default: m.CreateProjectModal,
+    })),
+  ),
   ErrorPage: lazy(() => import('./components/error/ErrorPage')),
   EvaluationCard: lazy(() => import('./components/Evaluation/EvaluationCard')),
   EvaluationEditorPage: lazy(
