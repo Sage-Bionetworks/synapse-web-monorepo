@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import {
@@ -95,6 +95,146 @@ describe('autocompleteMultipleEnumColumn', () => {
         cellClassName({ rowData: ['1', '2', '3', '4'], rowIndex: 0 }),
       ).toBe('multi-value-cell-large')
     }
+  })
+
+  describe('Hover and click-away behavior', () => {
+    it('does not add a highlighted dropdown option when clicking away without selecting', async () => {
+      // Regression: the onBlur handler committed localInputState if it was non-empty.
+      // If MUI updated the input value internally (e.g. from hover/highlight events),
+      // clicking away would silently add the hovered item. The userIsTypingRef guard
+      // prevents onBlur from committing values that did not originate from a keypress.
+      const mockSetRowData = vi.fn()
+      const mockStopEditing = vi.fn()
+      const TestCell = createTestCell(
+        ['option1', 'option2', 'option3'],
+        'string',
+      )
+
+      const { rerender } = render(
+        <TestCell
+          rowData={[]}
+          setRowData={mockSetRowData}
+          focus={true}
+          active={true}
+          stopEditing={mockStopEditing}
+        />,
+      )
+
+      // Open the dropdown and navigate into it with the keyboard
+      const dropdownButton = screen.getByRole('button', { name: /open/i })
+      await userEvent.click(dropdownButton)
+      expect(
+        await screen.findByRole('option', { name: 'option1' }),
+      ).toBeInTheDocument()
+
+      await userEvent.keyboard('{ArrowDown}')
+      await userEvent.keyboard('{ArrowDown}')
+
+      // Simulate clicking away without selecting
+      act(() => {
+        rerender(
+          <TestCell
+            rowData={[]}
+            setRowData={mockSetRowData}
+            focus={false}
+            active={false}
+            stopEditing={mockStopEditing}
+          />,
+        )
+      })
+
+      // Nothing should have been committed
+      await waitFor(() => {
+        expect(mockSetRowData).not.toHaveBeenCalled()
+      })
+    })
+
+    it('commits free-typed text when clicking away without pressing Enter', async () => {
+      // The onBlur handler is intentional for free-text entry: if the user types a value
+      // but clicks away before pressing Enter, it should still be saved.
+      // The userIsTypingRef guard must not break this path.
+      const mockSetRowData = vi.fn()
+      const mockStopEditing = vi.fn()
+      const TestCell = createTestCell(['option1', 'option2'], 'string')
+
+      render(
+        <TestCell
+          rowData={['option1']}
+          setRowData={mockSetRowData}
+          focus={true}
+          active={true}
+          stopEditing={mockStopEditing}
+        />,
+      )
+
+      // Type a new value in the free-text input (without pressing Enter)
+      const input = screen.getByRole('combobox')
+      await userEvent.type(input, 'free text value')
+
+      // Simulate the input losing focus when the user clicks another cell.
+      // Note: blurring the Autocomplete root div (via the active→false useEffect) does not
+      // blur the focused <input> element. We blur the input directly here, which is what
+      // actually happens in the browser when the user clicks elsewhere.
+      act(() => {
+        input.blur()
+      })
+
+      // The typed text should have been appended to the existing values
+      await waitFor(() => {
+        expect(mockSetRowData).toHaveBeenCalledWith([
+          'option1',
+          'free text value',
+        ])
+      })
+    })
+
+    it('does not double-commit after a dropdown selection followed by clicking away', async () => {
+      // After a selection, MUI fires onInputChange(reason="reset") to clear the input field.
+      // This must not be treated as user-typed text by onBlur, which would add a spurious
+      // extra value on top of the already-committed selection.
+      const mockSetRowData = vi.fn()
+      const mockStopEditing = vi.fn()
+      const TestCell = createTestCell(
+        ['option1', 'option2', 'option3'],
+        'string',
+      )
+
+      const { rerender } = render(
+        <TestCell
+          rowData={[]}
+          setRowData={mockSetRowData}
+          focus={true}
+          active={true}
+          stopEditing={mockStopEditing}
+        />,
+      )
+
+      // Open the dropdown and explicitly select an option
+      const dropdownButton = screen.getByRole('button', { name: /open/i })
+      await userEvent.click(dropdownButton)
+      const option = await screen.findByRole('option', { name: 'option2' })
+      await userEvent.click(option)
+
+      // Simulate clicking away
+      act(() => {
+        rerender(
+          <TestCell
+            rowData={['option2']}
+            setRowData={mockSetRowData}
+            focus={false}
+            active={false}
+            stopEditing={mockStopEditing}
+          />,
+        )
+      })
+
+      // setRowData should have been called exactly once (for the click-selection),
+      // not a second time from onBlur after MUI reset the input value
+      await waitFor(() => {
+        expect(mockSetRowData).toHaveBeenCalledTimes(1)
+        expect(mockSetRowData).toHaveBeenCalledWith(['option2'])
+      })
+    })
   })
 
   describe('Memoization and Performance', () => {

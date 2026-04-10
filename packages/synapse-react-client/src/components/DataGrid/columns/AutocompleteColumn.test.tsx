@@ -203,6 +203,105 @@ describe('AutocompleteColumn', () => {
     })
   })
 
+  describe('Hover and click-away behavior', () => {
+    it('does not commit a highlighted option when clicking away without selecting', async () => {
+      // Regression: the removed `autoSelect` prop caused MUI to fire onChange(reason="blur")
+      // with the currently highlighted option when the input lost focus. This meant hovering
+      // over an option and then clicking another cell would silently change the cell value.
+      const mockSetRowData = vi.fn()
+      const mockStopEditing = vi.fn()
+
+      const { rerender } = render(
+        <AutocompleteCell
+          rowData=""
+          setRowData={mockSetRowData}
+          choices={['option1', 'option2', 'option3']}
+          focus={true}
+          active={true}
+          stopEditing={mockStopEditing}
+        />,
+      )
+
+      const input = screen.getByRole('combobox')
+
+      // Open the dropdown
+      await userEvent.click(input)
+      expect(
+        await screen.findByRole('option', { name: 'option1' }),
+      ).toBeInTheDocument()
+
+      // Navigate into the list with the keyboard, highlighting option1 then option2
+      await userEvent.keyboard('{ArrowDown}')
+      await userEvent.keyboard('{ArrowDown}')
+
+      // Simulate clicking away: the grid marks the cell inactive without the user confirming
+      act(() => {
+        rerender(
+          <AutocompleteCell
+            rowData=""
+            setRowData={mockSetRowData}
+            choices={['option1', 'option2', 'option3']}
+            focus={false}
+            active={false}
+            stopEditing={mockStopEditing}
+          />,
+        )
+      })
+
+      // The hovered/highlighted option must not have been committed
+      await waitFor(() => {
+        expect(mockSetRowData).not.toHaveBeenCalledWith('option1')
+        expect(mockSetRowData).not.toHaveBeenCalledWith('option2')
+        expect(mockSetRowData).not.toHaveBeenCalledWith('option3')
+      })
+    })
+
+    it('still commits free-typed text when clicking away after navigating the dropdown', async () => {
+      // Removing `autoSelect` must not break the useEffect-based commit of free text.
+      // If the user typed something and then clicked away, that text should still be saved.
+      const mockSetRowData = vi.fn()
+      const mockStopEditing = vi.fn()
+
+      const { rerender } = render(
+        <AutocompleteCell
+          rowData=""
+          setRowData={mockSetRowData}
+          choices={['option1', 'option2', 'option3']}
+          focus={true}
+          active={true}
+          stopEditing={mockStopEditing}
+        />,
+      )
+
+      const input = screen.getByRole('combobox')
+
+      // Type free text, then navigate the dropdown with the keyboard
+      await userEvent.type(input, 'custom value')
+      await userEvent.keyboard('{ArrowDown}')
+
+      // Simulate clicking away
+      act(() => {
+        rerender(
+          <AutocompleteCell
+            rowData=""
+            setRowData={mockSetRowData}
+            choices={['option1', 'option2', 'option3']}
+            focus={false}
+            active={false}
+            stopEditing={mockStopEditing}
+          />,
+        )
+      })
+
+      // The typed text should be committed, not the highlighted option
+      await waitFor(() => {
+        expect(mockSetRowData).toHaveBeenCalledWith('custom value')
+        expect(mockSetRowData).not.toHaveBeenCalledWith('option1')
+        expect(mockSetRowData).not.toHaveBeenCalledWith('option2')
+      })
+    })
+  })
+
   describe('Memoization and Performance', () => {
     it('should memoize cell component with custom comparison', () => {
       const mockSetRowData = vi.fn()
