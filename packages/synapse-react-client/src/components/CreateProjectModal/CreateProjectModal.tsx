@@ -9,11 +9,13 @@ import TextField from '../TextField/TextField'
 export type CreateProjectModalProps = {
   isShowingModal?: boolean
   onClose: () => void
+  gotoPlace?: (href: string) => void
 }
 
 export function CreateProjectModal({
   isShowingModal = false,
   onClose,
+  gotoPlace,
 }: CreateProjectModalProps) {
   const { accessToken } = useSynapseContext()
   const [projectName, setProjectName] = useState<string>('')
@@ -33,7 +35,12 @@ export function CreateProjectModal({
       )
       setIsShowingSuccessAlert(true)
       hide()
-      window.location.href = `/Synapse:${newProject.id}`
+      const href = `/Synapse:${newProject.id}`
+      if (gotoPlace) {
+        gotoPlace(href)
+      } else {
+        window.location.href = href
+      }
     } catch (err) {
       if (err.reason) {
         setErrorMessage(err.reason)
