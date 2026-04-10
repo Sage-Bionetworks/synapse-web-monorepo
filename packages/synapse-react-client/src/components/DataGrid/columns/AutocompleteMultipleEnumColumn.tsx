@@ -91,6 +91,10 @@ function AutocompleteMultipleEnumCell({
   const ref = useRef<HTMLInputElement>(null)
   const [menuIsOpen, setMenuIsOpen] = useState(false)
   const [localInputState, setLocalInputState] = useState<string>('')
+  // Track whether the current localInputState came from actual user typing.
+  // MUI can update the input value internally (e.g. on hover/highlight) without user intent,
+  // so we only commit free text on blur when the user deliberately typed it.
+  const userIsTypingRef = useRef(false)
 
   useEffect(() => {
     // Treat `active` as the source of truth for focus/blur and menu state
@@ -199,7 +203,12 @@ function AutocompleteMultipleEnumCell({
           }}
           value={selectedOptions}
           inputValue={localInputState}
-          onInputChange={(_, newInputValue) => {
+          onInputChange={(_, newInputValue, reason) => {
+            // Only mark as user-typed when the change came from keyboard input,
+            // not from MUI's internal hover/highlight updates
+            if (reason === 'input') {
+              userIsTypingRef.current = true
+            }
             setLocalInputState(newInputValue)
           }}
           onClose={() => {
@@ -215,16 +224,22 @@ function AutocompleteMultipleEnumCell({
             })
             // Use clearValue when all items are removed
             setRowData(values.length === 0 ? clearValue : values)
+            userIsTypingRef.current = false
             setLocalInputState('')
           }}
           disableCloseOnSelect={choices.length > 1}
           onBlur={() => {
-            if (localInputState.trim()) {
+            // Only commit free text if the user actually typed it.
+            // Guarding with userIsTypingRef prevents committing a value that was merely
+            // hovered/highlighted in the dropdown (which can also update localInputState
+            // via MUI's internal input change events).
+            if (userIsTypingRef.current && localInputState.trim()) {
               const parsedValue = parseFreeTextGivenJsonSchemaType(
                 localInputState,
                 colType,
               )
               setRowData([...safeRowData, parsedValue])
+              userIsTypingRef.current = false
               setLocalInputState('')
             }
           }}

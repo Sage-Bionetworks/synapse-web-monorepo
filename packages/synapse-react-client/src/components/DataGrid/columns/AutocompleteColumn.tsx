@@ -134,7 +134,6 @@ export function AutocompleteCell({
       freeSolo={true}
       disablePortal={false}
       options={choices}
-      autoSelect
       selectOnFocus
       getOptionLabel={option => castCellValueToString(option)}
       value={rowData as AutocompleteOption}
