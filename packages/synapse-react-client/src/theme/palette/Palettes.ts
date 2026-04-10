@@ -115,8 +115,16 @@ export const adKnowledgePortalPalette: PaletteOptions = {
 
 export const elPortalPalette: PaletteOptions = {
   ...palette,
-  primary: generatePalette('#39AC97'),
+  primary: generatePalette('#526BB6'),
   secondary: generatePalette('#39AC97'),
+}
+
+export const namshubPortalPalette: PaletteOptions = {
+  ...palette,
+  // primary: { ...generatePalette('#125e81'), contrastText: '#fff' },
+  // secondary: { ...generatePalette('#404b63'), contrastText: '#fff' },
+  primary: generatePalette('#526BB6'),
+  secondary: generatePalette('#526BB6'),
 }
 
 export const nfPortalPalette: PaletteOptions = {
@@ -216,4 +224,5 @@ export default {
   ampalsPalette,
   classicPalette,
   arcusbioPalette,
+  namshubPortalPalette,
 }
