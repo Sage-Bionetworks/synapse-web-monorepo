@@ -238,7 +238,7 @@ export class DataGridWebSocket {
         ) as unknown as GridModel
         this.onModelCreate(this.model)
         // Seed the baseline from the initial model
-        this.rowsBaseline = this.model.api.getSnapshot().rows
+        this.rowsBaseline = this.model.api.getSnapshot()?.rows ?? null
       } else {
         // Extract author sid before applying (each patch has its own author;
         // for the common single-patch case this is exact; for rare multi-author
@@ -305,7 +305,7 @@ export class DataGridWebSocket {
       this.model = decodedModel.fork(this.replicaId) as unknown as GridModel
       this.onModelCreate(this.model)
       // Seed baseline so subsequent patch diffs have a starting point
-      this.rowsBaseline = this.model.api.getSnapshot().rows
+      this.rowsBaseline = this.model.api.getSnapshot()?.rows ?? null
       this.sendClockSync()
     } catch (err) {
       console.error('Failed to fetch or decode snapshot', err)
