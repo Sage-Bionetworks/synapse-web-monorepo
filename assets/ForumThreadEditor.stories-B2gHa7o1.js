@@ -1,8 +1,0 @@
-import{F as r}from"./ForumThreadEditor-CN1oOZnt.js";import"./iframe-FsOg9uwU.js";import"./index-Chi_LkuB.js";import"./useInfiniteQuery-rDeNbqp3.js";import"./InfiniteQueryUtils-CKlRW-xB.js";import"./useThread-C8E4MuOR.js";import"./ConfirmationDialog-CGiwaw_9.js";import"./DialogBase-D5H1TxpQ.js";import"./Close-wJLSQlcF.js";import"./HelpPopover-CsCYRymI.js";import"./MarkdownPopover-B4rff8pl.js";import"./LightTooltip-BHJ8VyPd.js";import"./MarkdownSynapse-B-j5Jwdf.js";import"./SkeletonButton-o5wIbKa8.js";import"./SkeletonInlineBlock-C-VJXZCx.js";import"./SkeletonTable-D70G5IuO.js";import"./SkeletonParagraph-CbUekLjy.js";import"./MarkdownEditor-CbTjuHN2.js";import"./UserSearchBox-PBqxDBJQ.js";import"./useDebouncedEffect-BzQrwVMU.js";import"./useUserGroupHeader-CLfJ9kmo.js";import"./UserOrTeamBadge-D0NT5qeZ.js";import"./TeamBadge-CFTbV6P9.js";import"./UserBadge-BgWUpTwS.js";import"./useUserBundle-DlEfeCz8.js";import"./MenuItem-Cj71RViP.js";import"./Card-Bl03myfA.js";import"./Chip-CwjHvWgT.js";import"./Autocomplete-BJva2ObM.js";import"./usePreviousProps-ryOaqf0v.js";import"./Tabs-BleNELhm.js";import"./KeyboardArrowRight-BelLxV6k.js";import"./_arrayReduce-CrxnWFSq.js";import"./upperFirst-gquU-9F2.js";import"./_stringToArray-EQ8z8-zj.js";const{fn:t}=__STORYBOOK_MODULE_TEST__,v={title:"Synapse/ForumThreadEditor",component:r},o={args:{id:"123",isReply:!1,isDialog:!1,onClose:t()}};o.parameters={...o.parameters,docs:{...o.parameters?.docs,source:{originalSource:`{
-  args: {
-    id: '123',
-    isReply: false,
-    isDialog: false,
-    onClose: fn()
-  }
-}`,...o.parameters?.docs?.source}}};const w=["ForumThreadEditorDemo"];export{o as ForumThreadEditorDemo,w as __namedExportsOrder,v as default};
