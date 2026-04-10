@@ -29,7 +29,7 @@ export const studyColumnIconConfigs: ColumnIconConfigs = {
     },
     studyStatus: {
       Active: { icon: 'reload', sx: { color: '#28A745' } },
-      Completed: { icon: 'check', sx: { color: '#B2242A' } },
+      Completed: { icon: 'check', sx: { color: '#FF6B6B' } },
     },
     dataType: {
       genomicVariants: {
