@@ -1,11 +1,6 @@
 import { mergeConfig } from 'vite'
-import { baseConfig, vitestConfig, nodePolyfillsPlugin } from 'vite-config'
+import { baseConfig, vitestConfig } from 'vite-config'
 
-const config = mergeConfig(
-  baseConfig,
-  mergeConfig(vitestConfig, {
-    plugins: [nodePolyfillsPlugin()],
-  }),
-)
+const config = mergeConfig(baseConfig, vitestConfig)
 
 export default config
