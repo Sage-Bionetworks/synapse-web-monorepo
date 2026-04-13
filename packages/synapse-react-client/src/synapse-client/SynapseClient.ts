@@ -867,11 +867,13 @@ export const createEntity = <T extends Entity>(
  */
 export const createProject = (
   name: string,
+  description: string | undefined,
   accessToken: string | undefined,
 ): Promise<Entity> => {
   return createEntity(
     {
       name,
+      description,
       concreteType: 'org.sagebionetworks.repo.model.Project',
     },
     accessToken,
