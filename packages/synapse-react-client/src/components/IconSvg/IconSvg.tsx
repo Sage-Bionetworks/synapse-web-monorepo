@@ -1,4 +1,3 @@
-import { ReactComponent as ArcusBioIcon } from '@/assets/ArcusBioIcon.svg'
 import { GoogleIcon24 } from '@/assets/GoogleIcon24'
 import { ReactComponent as AccessPending } from '@/assets/icons/AccessPending.svg'
 import { ReactComponent as AccessPendingCloud } from '@/assets/icons/AccessPendingCloud.svg'
@@ -104,6 +103,7 @@ import {
   LinkTwoTone,
   ListTwoTone,
   LockOpenTwoTone,
+  LockTwoTone,
   Login,
   MailOutlineTwoTone,
   MoreVertTwoTone,
@@ -288,7 +288,6 @@ export const IconStrings = [
   'orcid',
   'tasks',
   'google24',
-  'arcusbio',
   'openInFull',
   'tableview',
   'fileWithShield',
@@ -302,6 +301,9 @@ export const IconStrings = [
   'handWithMoney',
   'threeStars',
   'multiFile',
+  'publicVisibility',
+  'openVisibility',
+  'privateVisibility',
 ] as const
 
 export type IconName = (typeof IconStrings)[number]
@@ -403,7 +405,10 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
     case 'share':
       return <ShareTwoTone {...otherProps} />
     case 'public':
+    case 'openVisibility':
       return <PublicTwoTone {...otherProps} />
+    case 'privateVisibility':
+      return <LockTwoTone {...otherProps} />
     case 'clipboard':
       return <AssignmentOutlined {...otherProps} />
     case 'clipboardCheck':
@@ -492,6 +497,7 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
     case 'other':
       return <Other fill={color} {...otherProps} />
     case 'wiki':
+    case 'publicVisibility':
       return <LanguageTwoTone {...otherProps} />
     case 'file':
       return <InsertDriveFileTwoTone {...otherProps} />
@@ -601,8 +607,6 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <Sort {...otherProps} />
     case 'google24':
       return <GoogleIcon24 {...otherProps} />
-    case 'arcusbio':
-      return <ArcusBioIcon {...otherProps} />
     case 'orcid':
       return <ORCIDIcon {...otherProps} />
     case 'tasks':

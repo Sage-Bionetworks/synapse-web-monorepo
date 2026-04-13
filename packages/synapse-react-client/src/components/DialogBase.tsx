@@ -86,6 +86,8 @@ export type DialogBaseProps = DialogBaseTitleProps & {
   sx?: DialogProps['sx']
   contentProps?: DialogContentProps
   DialogProps?: Partial<DialogProps>
+  /** If true, reduces the vertical padding of the title, content, and actions for a more compact layout. */
+  dense?: boolean
 }
 
 /**
@@ -105,6 +107,7 @@ export const DialogBase = ({
   sx,
   contentProps = EMPTY_OBJECT,
   DialogProps,
+  dense = false,
 }: DialogBaseProps): React.ReactNode => {
   return (
     <Dialog
@@ -113,18 +116,36 @@ export const DialogBase = ({
       open={open}
       className={className}
       onClose={() => onCancel()}
-      sx={spreadSx(sx, theme => ({
-        [theme.breakpoints.down('sm')]: {
-          width: '100vw',
+      sx={spreadSx(
+        sx,
+        dense && {
           '.MuiDialog-container > .MuiPaper-root': {
-            padding: '33px',
-            margin: 0,
-            width: '100%',
-            height: '100%',
-            maxHeight: 'unset',
+            padding: '10px 30px',
+          },
+          '& .MuiDialogTitle-root': {
+            py: 1.5,
+            typography: 'headline3',
+          },
+          '& .MuiDialogContent-root': {
+            pt: 1,
+          },
+          '& .MuiDialogActions-root': {
+            pb: 2,
           },
         },
-      }))}
+        theme => ({
+          [theme.breakpoints.down('sm')]: {
+            width: '100vw',
+            '.MuiDialog-container > .MuiPaper-root': {
+              padding: '33px',
+              margin: 0,
+              width: '100%',
+              height: '100%',
+              maxHeight: 'unset',
+            },
+          },
+        }),
+      )}
       {...DialogProps}
     >
       <DialogBaseTitle
