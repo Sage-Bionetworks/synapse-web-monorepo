@@ -1,5 +1,9 @@
 import { useMemo } from 'react'
-import type { GridModel, ReplicaSelectionModel } from '../DataGridTypes'
+import type {
+  GridModel,
+  GridModelSnapshot,
+  ReplicaSelectionModel,
+} from '../DataGridTypes'
 import type { GridReplicaInfo } from '@sage-bionetworks/synapse-client'
 import {
   replicaSelectionToGridSelection,

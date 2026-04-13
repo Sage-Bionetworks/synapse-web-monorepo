@@ -35,12 +35,7 @@ describe('replicaSelectionToGridSelection', () => {
   })
 
   it('returns null when selection is undefined', () => {
-    expect(
-      replicaSelectionToGridSelection(
-        undefined as unknown as ReplicaSelectionModel,
-        model,
-      ),
-    ).toBeNull()
+    expect(replicaSelectionToGridSelection(undefined, model)).toBeNull()
   })
 
   it('returns null when the model has no rows', () => {

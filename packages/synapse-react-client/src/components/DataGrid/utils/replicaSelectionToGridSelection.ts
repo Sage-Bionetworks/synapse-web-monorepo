@@ -40,7 +40,7 @@ function crdtIdsToIndices(
  * This is the inverse of getCrdtIdsForArrayRange in computeReplicaSelectionModel.
  */
 export function replicaSelectionToGridSelection(
-  selection: ReplicaSelectionModel,
+  selection: ReplicaSelectionModel | null | undefined,
   model: GridModel,
 ): GridSelectionRange | null {
   if (!selection) return null
