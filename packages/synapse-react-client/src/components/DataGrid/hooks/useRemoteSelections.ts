@@ -19,7 +19,7 @@ export interface RemoteSelection {
  * `snapshot.selection[replicaId]`, so no extra API calls are needed.
  */
 export function useRemoteSelections(
-  modelSnapshot: ReturnType<GridModel['api']['getSnapshot']> | null | undefined,
+  modelSnapshot: GridModelSnapshot | null | undefined,
   model: GridModel | null | undefined,
   replicas: GridReplicaInfo[],
   localReplicaId: number | null,
