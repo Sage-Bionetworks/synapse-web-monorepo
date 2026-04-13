@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import { DataGridRow } from '../DataGridTypes'
 import { SelectionWithId } from '@sage-bionetworks/react-datasheet-grid'
 import { Column } from '@sage-bionetworks/react-datasheet-grid'
+import type { RemoteSelection } from '../hooks/useRemoteSelections'
 
 export function getCellClassName(params: {
   rowData: DataGridRow
@@ -10,6 +11,8 @@ export function getCellClassName(params: {
   selectedRowIndex: number | null
   lastSelection?: SelectionWithId | null
   colValues?: Column[]
+  /** Remote replica selection ranges to visualise as tinted backgrounds. */
+  remoteSelections?: readonly RemoteSelection[]
 }): string | undefined {
   const {
     rowData,
@@ -18,6 +21,7 @@ export function getCellClassName(params: {
     selectedRowIndex,
     lastSelection,
     colValues,
+    remoteSelections,
   } = params
 
   const isSelected = selectedRowIndex === rowIndex
@@ -48,6 +52,18 @@ export function getCellClassName(params: {
 
   if (isInvalid) {
     classList.push('cell-invalid')
+  }
+
+  // ── Remote selection tint ─────────────────────────────────────────────────
+  if (remoteSelections && columnId) {
+    for (const remote of remoteSelections) {
+      const { minRow, maxRow, columnNames } = remote.range
+      if (rowIndex < minRow || rowIndex > maxRow) continue
+      if (columnNames !== undefined && !columnNames.has(columnId)) continue
+      classList.push('cell-remote-selected')
+      classList.push(`cell-remote-selected--color-${remote.colorIndex}`)
+      break // apply the first matching remote selection only
+    }
   }
 
   return classList.length ? classNames(classList) : undefined
