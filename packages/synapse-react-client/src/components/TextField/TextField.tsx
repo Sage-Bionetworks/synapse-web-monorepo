@@ -31,14 +31,25 @@ export type TextFieldProps = Pick<
   | 'sx'
   | 'type'
   | 'value'
-> & { noWrapInFormControl?: boolean }
+> & { noWrapInFormControl?: boolean; maxCharacterCount?: number }
 
 /**
  * A styled text field built using MUI components and designed to match the Sage Design System (SDS) input fields.
  */
 export default function TextField(props: TextFieldProps) {
   const id = useId()
-  const { noWrapInFormControl, label: _label, helperText, ...rest } = props
+  const {
+    noWrapInFormControl,
+    label: _label,
+    helperText,
+    maxCharacterCount,
+    inputProps: inputPropsProp,
+    ...rest
+  } = props
+  const mergedInputProps = maxCharacterCount
+    ? { ...inputPropsProp, maxLength: maxCharacterCount }
+    : inputPropsProp
+  const currentLength = typeof rest.value === 'string' ? rest.value.length : 0
   const Wrapper = useMemo(
     () =>
       noWrapInFormControl
@@ -76,7 +87,12 @@ export default function TextField(props: TextFieldProps) {
           )}
         </Box>
       )}
-      <InputBase id={id} {...rest}></InputBase>
+      <InputBase id={id} inputProps={mergedInputProps} {...rest}></InputBase>
+      {maxCharacterCount !== undefined && (
+        <Typography variant="body2" className={styles.charCount}>
+          {currentLength}/{maxCharacterCount}
+        </Typography>
+      )}
     </Wrapper>
   )
 }

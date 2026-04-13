@@ -1,6 +1,6 @@
 import SynapseClient from '@/synapse-client'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { Alert } from '@mui/material'
+import { Alert, Box } from '@mui/material'
 import { KeyboardEvent, useState } from 'react'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
@@ -19,11 +19,13 @@ export function CreateProjectModal({
 }: CreateProjectModalProps) {
   const { accessToken } = useSynapseContext()
   const [projectName, setProjectName] = useState<string>('')
+  const [description, setDescription] = useState<string>('')
   const [isShowingSuccessAlert, setIsShowingSuccessAlert] =
     useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>()
   const hide = () => {
     setProjectName('')
+    setDescription('')
     setErrorMessage(undefined)
     onClose()
   }
@@ -31,6 +33,7 @@ export function CreateProjectModal({
     try {
       const newProject = await SynapseClient.createProject(
         projectName,
+        description,
         accessToken,
       )
       setIsShowingSuccessAlert(true)
@@ -72,6 +75,22 @@ export function CreateProjectModal({
           },
         }}
       />
+      <Box mt={2}>
+        <TextField
+          id="descriptionInput"
+          label="Description"
+          helperText="(optional)"
+          placeholder="Brief description of this project"
+          multiline
+          minRows={3}
+          value={description}
+          fullWidth
+          maxCharacterCount={350}
+          onChange={event => {
+            setDescription(event.target.value)
+          }}
+        />
+      </Box>
       {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
     </>
   )
