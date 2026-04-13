@@ -1,6 +1,6 @@
 import SynapseClient from '@/synapse-client'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { Alert, Box } from '@mui/material'
+import { Alert, Stack } from '@mui/material'
 import { KeyboardEvent, useState } from 'react'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
@@ -54,7 +54,7 @@ export function CreateProjectModal({
   }
 
   const dialogContent = (
-    <>
+    <Stack gap={2}>
       <TextField
         id="projectInput"
         label="Project Name"
@@ -75,24 +75,22 @@ export function CreateProjectModal({
           },
         }}
       />
-      <Box mt={2}>
-        <TextField
-          id="descriptionInput"
-          label="Description"
-          helperText="(optional)"
-          placeholder="Brief description of this project"
-          multiline
-          minRows={3}
-          value={description}
-          fullWidth
-          maxCharacterCount={350}
-          onChange={event => {
-            setDescription(event.target.value)
-          }}
-        />
-      </Box>
+      <TextField
+        id="descriptionInput"
+        label="Description"
+        helperText="(optional)"
+        placeholder="Brief description of this project"
+        multiline
+        minRows={3}
+        value={description}
+        fullWidth
+        maxCharacterCount={350}
+        onChange={event => {
+          setDescription(event.target.value)
+        }}
+      />
       {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-    </>
+    </Stack>
   )
 
   return (
