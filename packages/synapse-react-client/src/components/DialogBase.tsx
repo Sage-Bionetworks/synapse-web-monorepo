@@ -118,21 +118,23 @@ export const DialogBase = ({
       onClose={() => onCancel()}
       sx={spreadSx(
         sx,
-        dense && {
-          '.MuiDialog-container > .MuiPaper-root': {
-            padding: '10px 30px',
-          },
-          '& .MuiDialogTitle-root': {
-            py: 1.5,
-            typography: 'headline3',
-          },
-          '& .MuiDialogContent-root': {
-            pt: 1,
-          },
-          '& .MuiDialogActions-root': {
-            pb: 2,
-          },
-        },
+        dense
+          ? {
+              '.MuiDialog-container > .MuiPaper-root': {
+                padding: '10px 30px',
+              },
+              '& .MuiDialogTitle-root': {
+                py: 1.5,
+                typography: 'headline3',
+              },
+              '& .MuiDialogContent-root': {
+                pt: 1,
+              },
+              '& .MuiDialogActions-root': {
+                pb: 2,
+              },
+            }
+          : undefined,
         theme => ({
           [theme.breakpoints.down('sm')]: {
             width: '100vw',
