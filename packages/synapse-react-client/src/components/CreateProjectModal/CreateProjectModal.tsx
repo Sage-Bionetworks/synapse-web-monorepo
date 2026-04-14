@@ -47,9 +47,9 @@ export function CreateProjectModal({
     onClose()
   }
 
-  const applyVisibilityAcl = async (projectId: string) => {
+  const applyVisibilityAcl = async (projectId: string): Promise<boolean> => {
     if (visibility === 'PRIVATE') {
-      return
+      return true
     }
     try {
       const currentAcl = await SynapseClient.getEntityACL(
@@ -91,6 +91,7 @@ export function CreateProjectModal({
         { ...currentAcl, resourceAccess: newResourceAccess },
         accessToken,
       )
+      return true
     } catch (e) {
       const err = e as SynapseClientError
       setAclErrorMessage(
@@ -98,6 +99,7 @@ export function CreateProjectModal({
           err.reason ?? err.message
         }`,
       )
+      return false
     }
   }
 
@@ -108,7 +110,10 @@ export function CreateProjectModal({
         description,
         accessToken,
       )
-      await applyVisibilityAcl(newProject.id!)
+      const aclSuccess = await applyVisibilityAcl(newProject.id!)
+      if (!aclSuccess) {
+        return
+      }
       setIsShowingSuccessAlert(true)
       hide()
       const href = `/Synapse:${newProject.id}`

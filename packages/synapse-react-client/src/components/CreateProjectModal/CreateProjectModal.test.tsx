@@ -42,8 +42,27 @@ function setUp(wrapperProps?: SynapseContextType) {
 }
 
 describe('CreateProjectModal tests', () => {
+  const mockInitialAcl = {
+    id: 'syn123',
+    etag: 'initial-etag',
+    creationDate: '2020-01-01T00:00:00.000Z',
+    resourceAccess: [
+      {
+        principalId: 999,
+        accessType: [ACCESS_TYPE.READ, ACCESS_TYPE.UPDATE, ACCESS_TYPE.DELETE],
+      },
+    ],
+  }
+
   beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
+  beforeEach(() => {
+    vi.spyOn(SynapseClient, 'getEntityACL').mockResolvedValue(mockInitialAcl)
+    vi.spyOn(SynapseClient, 'updateEntityACL').mockResolvedValue(mockInitialAcl)
+  })
+  afterEach(() => {
+    server.restoreHandlers()
+    vi.restoreAllMocks()
+  })
   afterAll(() => server.close())
 
   it('Shows the modal', async () => {
@@ -117,36 +136,14 @@ describe('CreateProjectModal tests', () => {
   })
 
   describe('ACL visibility', () => {
-    const mockInitialAcl = {
-      id: 'syn123',
-      etag: 'initial-etag',
-      creationDate: '2020-01-01T00:00:00.000Z',
-      resourceAccess: [
-        {
-          principalId: 999,
-          accessType: [
-            ACCESS_TYPE.READ,
-            ACCESS_TYPE.UPDATE,
-            ACCESS_TYPE.DELETE,
-          ],
-        },
-      ],
-    }
-
     let mockGetEntityACL: ReturnType<typeof vi.spyOn>
     let mockUpdateEntityACL: ReturnType<typeof vi.spyOn>
 
     beforeEach(() => {
-      mockGetEntityACL = vi
-        .spyOn(SynapseClient, 'getEntityACL')
-        .mockResolvedValue(mockInitialAcl)
-      mockUpdateEntityACL = vi
-        .spyOn(SynapseClient, 'updateEntityACL')
-        .mockResolvedValue(mockInitialAcl)
-    })
-
-    afterEach(() => {
-      vi.restoreAllMocks()
+      // Re-capture the spies set up by the outer beforeEach so individual
+      // tests in this block can override or assert on them.
+      mockGetEntityACL = vi.spyOn(SynapseClient, 'getEntityACL')
+      mockUpdateEntityACL = vi.spyOn(SynapseClient, 'updateEntityACL')
     })
 
     it('does not call getEntityACL or updateEntityACL when visibility is PRIVATE', async () => {
@@ -222,7 +219,7 @@ describe('CreateProjectModal tests', () => {
       )
     })
 
-    it('still creates the project successfully when the ACL update fails', async () => {
+    it('shows an ACL error and keeps the dialog open when the ACL update fails', async () => {
       mockUpdateEntityACL.mockRejectedValue(
         Object.assign(new Error(), { reason: 'ACL update failed' }),
       )
@@ -232,7 +229,12 @@ describe('CreateProjectModal tests', () => {
       await user.type(input, MOCK_PROJECT_NAME)
       await user.click(saveButton)
 
-      await screen.findByText('Project created')
+      await screen.findByText(
+        /Project was created, but visibility could not be set: ACL update failed/i,
+      )
+      expect(screen.queryByText('Project created')).not.toBeInTheDocument()
+      // Dialog should still be open
+      expect(screen.getByText('Create a new Project')).toBeInTheDocument()
     })
   })
 })
