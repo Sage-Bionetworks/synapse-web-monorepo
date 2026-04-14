@@ -1,0 +1,32 @@
+@use '../../style/abstracts/variables' as SrcVariables;
+@use 'sass:map';
+
+.container {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.bullet {
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  border: 4px solid;
+  flex-shrink: 0;
+}
+
+.mainText {
+  font-size: 16px;
+  font-weight: bold;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    font-size: 18px;
+  }
+}
+
+.subText {
+  font-size: 14px;
+  line-height: 144%;
+}

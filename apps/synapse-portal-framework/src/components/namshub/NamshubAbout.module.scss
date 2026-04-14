@@ -1,0 +1,39 @@
+@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+@use 'sass:map';
+
+.aboutContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    flex-direction: row;
+    align-items: center;
+    padding: 40px;
+  }
+}
+
+.aboutImageContainer {
+  width: 100%;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    width: 50%;
+  }
+}
+
+.aboutImage {
+  width: 100%;
+  height: auto;
+}
+
+.aboutTextContainer {
+  gap: 11px;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    width: 50%;
+  }
+}
+
+.aboutTitle:global(.MuiTypography-root) {
+  color: var(--synapse-gray-1000);
+}
