@@ -9,7 +9,18 @@ const computationalSchema: TableToGenericCardMapping = {
   title: 'name',
   description: 'summary',
   subTitle: 'softwareType',
-  secondaryLabels: ['contributor', 'project', 'toolType', 'documentation'],
+  secondaryLabels: [
+    'toolOperation',
+    'toolInputData',
+    'toolInputFormat',
+    'toolOutputData',
+    'toolOutputFormat',
+    'toolType',
+    'documentation',
+    'project',
+    'institution',
+    'contributor',
+  ],
   link: 'url',
 }
 

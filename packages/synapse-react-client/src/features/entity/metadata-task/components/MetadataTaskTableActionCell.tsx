@@ -46,8 +46,9 @@ export default function MetadataTaskTableActionCell(props: {
   const { taskBundle, canEdit } = props
   const curationTask = taskBundle.task!
 
-  // If true, allows opening a grid session for an unassigned task, even if it can lead to data loss, because blocking this behavior prevents important use cases
-  // such as data contributors creating a grid session before a task is assigned
+  // If false, allows opening a grid session for an unassigned task, even if it can lead to data loss,
+  // because blocking this behavior prevents important use cases such as data contributors creating a
+  // grid session before a task is assigned
   const disableLegacyUnassignedTaskBehavior = useGetFeatureFlag(
     FeatureFlagEnum.CURATOR_DISABLE_OPEN_FOR_UNASSIGNED_TASKS,
   )

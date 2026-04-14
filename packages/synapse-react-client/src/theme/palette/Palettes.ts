@@ -119,6 +119,12 @@ export const elPortalPalette: PaletteOptions = {
   secondary: generatePalette('#39AC97'),
 }
 
+export const namshubPortalPalette: PaletteOptions = {
+  ...palette,
+  primary: generatePalette('#526BB6'),
+  secondary: generatePalette('#526BB6'),
+}
+
 export const nfPortalPalette: PaletteOptions = {
   ...palette,
   primary: { ...generatePalette('#125e81'), contrastText: '#fff' },
@@ -216,4 +222,5 @@ export default {
   ampalsPalette,
   classicPalette,
   arcusbioPalette,
+  namshubPortalPalette,
 }

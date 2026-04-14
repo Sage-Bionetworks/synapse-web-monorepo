@@ -4,6 +4,7 @@ import { SelectionWithId } from '@sage-bionetworks/react-datasheet-grid'
 import { Column } from '@sage-bionetworks/react-datasheet-grid'
 import type { ReplicaUserInfo } from '../hooks/useGridReplicaUsers'
 import { cellChangeKey } from '../hooks/useCellChangeTracker'
+import type { RemoteSelection } from '../hooks/useRemoteSelections'
 
 export function getCellClassName(params: {
   rowData: DataGridRow
@@ -16,6 +17,8 @@ export function getCellClassName(params: {
   cellChanges?: ReadonlyMap<string, number>
   /** Map from replicaId → ReplicaUserInfo for attributing change indicators. */
   replicaUserMap?: ReadonlyMap<number, ReplicaUserInfo>
+  /** Remote replica selection ranges to visualise as tinted backgrounds. */
+  remoteSelections?: readonly RemoteSelection[]
 }): string | undefined {
   const {
     rowData,
@@ -26,6 +29,7 @@ export function getCellClassName(params: {
     colValues,
     cellChanges,
     replicaUserMap,
+    remoteSelections,
   } = params
 
   const isSelected = selectedRowIndex === rowIndex
@@ -67,6 +71,17 @@ export function getCellClassName(params: {
       if (info) {
         classList.push(`cell-changed--${info.category}`)
       }
+    }
+  }
+  // ── Remote selection tint ─────────────────────────────────────────────────
+  if (remoteSelections && columnId) {
+    for (const remote of remoteSelections) {
+      const { minRow, maxRow, columnNames } = remote.range
+      if (rowIndex < minRow || rowIndex > maxRow) continue
+      if (columnNames !== undefined && !columnNames.has(columnId)) continue
+      classList.push('cell-remote-selected')
+      classList.push(`cell-remote-selected--color-${remote.colorIndex}`)
+      break // apply the first matching remote selection only
     }
   }
 

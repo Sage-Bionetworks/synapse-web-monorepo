@@ -1,0 +1,37 @@
+{
+  "name": "namshub",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@mui/material": "^5.17.1",
+    "@sage-bionetworks/synapse-portal-framework": "workspace:*",
+    "@sage-bionetworks/synapse-types": "workspace:*",
+    "katex": "^0.16.22",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router": "^7.13.1",
+    "synapse-react-client": "workspace:*",
+    "vite": "^7.3.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6",
+    "sass": "^1.98.0",
+    "tslib": "^2.8.1",
+    "typescript": "5.8.3",
+    "vite-config": "workspace:*",
+    "vitest": "^3.2.2"
+  },
+  "scripts": {
+    "start": "vite",
+    "build": "pnpm save-build-date && vite build && pnpm run generate-sitemap",
+    "preview": "vite preview",
+    "type-check": "tsc --build",
+    "lint": "eslint src",
+    "build-sitemap-routes": "vite build --config sitemap.vite.config.ts && node build/sitemap-entry.mjs",
+    "_generate-sitemap": "pnpm build-sitemap-routes && tsx ../../synapse-portal-framework/src/sitemap/cli.ts \\\"$VITE_PORTAL_KEY\\\" --config src/config/sitemapConfig.ts --routes build/sitemap-routes.json",
+    "generate-sitemap": "dotenv -- pnpm _generate-sitemap",
+    "save-build-date": "mkdir -p public && date > public/build-date.txt"
+  }
+}

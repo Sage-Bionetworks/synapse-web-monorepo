@@ -17,20 +17,22 @@ function resetTimer(timer: NodeJS.Timeout | null) {
 const DEFAULT_DELAY_SHOW_MS = 250
 const DEFAULT_DELAY_HIDE_MS = 500
 
+const defaultAnchorOrigin: PopoverProps['anchorOrigin'] = {
+  vertical: 'top',
+  horizontal: 'left',
+}
+
+const defaultTransformOrigin: PopoverProps['transformOrigin'] = {
+  vertical: 'bottom',
+  horizontal: 'left',
+}
+
 export function useOverlay(
   children: ReactNode,
   targetRef: RefObject<any>,
   delayShow = DEFAULT_DELAY_SHOW_MS,
   delayHide = DEFAULT_DELAY_HIDE_MS,
-  paperProps: PaperProps = {},
-  anchorOrigin: PopoverProps['anchorOrigin'] = {
-    vertical: 'top',
-    horizontal: 'right',
-  },
-  transformOrigin: PopoverProps['transformOrigin'] = {
-    vertical: 'center',
-    horizontal: 'left',
-  },
+  paperProps?: PaperProps,
 ) {
   const isMounted = useRef(false)
   const timer = useRef<NodeJS.Timeout | null>(null)
@@ -81,8 +83,8 @@ export function useOverlay(
       <Popover
         anchorEl={targetRef.current}
         open={isShowing}
-        anchorOrigin={anchorOrigin}
-        transformOrigin={transformOrigin}
+        anchorOrigin={defaultAnchorOrigin}
+        transformOrigin={defaultTransformOrigin}
         sx={{ pointerEvents: 'none' }}
         slots={{
           transition: Fade,
@@ -100,14 +102,14 @@ export function useOverlay(
             pointerEvents: 'auto',
             width: 'max-content',
             minWidth: '300px',
-            ...paperProps.sx,
+            ...paperProps?.sx,
           }}
         >
           {children}
         </Paper>
       </Popover>
     ),
-    [children, isShowing, anchorOrigin, targetRef, toggle, toggleHide],
+    [children, isShowing, paperProps, targetRef, toggle, toggleHide],
   )
 
   return { OverlayComponent, isShowing, toggleShow, toggleHide, toggle }

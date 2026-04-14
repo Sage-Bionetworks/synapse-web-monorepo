@@ -1,6 +1,6 @@
 import SynapseClient from '@/synapse-client'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { Alert } from '@mui/material'
+import { Alert, Stack } from '@mui/material'
 import { KeyboardEvent, useState } from 'react'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
@@ -9,19 +9,23 @@ import TextField from '../TextField/TextField'
 export type CreateProjectModalProps = {
   isShowingModal?: boolean
   onClose: () => void
+  gotoPlace?: (href: string) => void
 }
 
 export function CreateProjectModal({
   isShowingModal = false,
   onClose,
+  gotoPlace,
 }: CreateProjectModalProps) {
   const { accessToken } = useSynapseContext()
   const [projectName, setProjectName] = useState<string>('')
+  const [description, setDescription] = useState<string>('')
   const [isShowingSuccessAlert, setIsShowingSuccessAlert] =
     useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>()
   const hide = () => {
     setProjectName('')
+    setDescription('')
     setErrorMessage(undefined)
     onClose()
   }
@@ -29,11 +33,17 @@ export function CreateProjectModal({
     try {
       const newProject = await SynapseClient.createProject(
         projectName,
+        description,
         accessToken,
       )
       setIsShowingSuccessAlert(true)
       hide()
-      window.location.href = `/Synapse:${newProject.id}`
+      const href = `/Synapse:${newProject.id}`
+      if (gotoPlace) {
+        gotoPlace(href)
+      } else {
+        window.location.href = href
+      }
     } catch (err) {
       if (err.reason) {
         setErrorMessage(err.reason)
@@ -44,10 +54,12 @@ export function CreateProjectModal({
   }
 
   const dialogContent = (
-    <>
+    <Stack gap={2}>
       <TextField
         id="projectInput"
         label="Project Name"
+        required
+        helperText="Pick a unique title for your project"
         value={projectName}
         fullWidth
         onChange={event => {
@@ -63,8 +75,22 @@ export function CreateProjectModal({
           },
         }}
       />
+      <TextField
+        id="descriptionInput"
+        label="Description"
+        helperText="(optional)"
+        placeholder="Brief description of this project"
+        multiline
+        minRows={3}
+        value={description}
+        fullWidth
+        maxCharacterCount={350}
+        onChange={event => {
+          setDescription(event.target.value)
+        }}
+      />
       {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-    </>
+    </Stack>
   )
 
   return (

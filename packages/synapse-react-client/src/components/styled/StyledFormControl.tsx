@@ -34,7 +34,7 @@ export const StyledFormControl: StyledComponent<FormControlProps> = styled(
   },
 
   [`& .${inputBaseClasses.root}`]: {
-    marginTop: theme.spacing(3),
+    marginTop: theme.spacing(0.5),
   },
   '& .MuiInputBase-multiline': {
     padding: '0px',

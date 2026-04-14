@@ -24,6 +24,7 @@ import {
   HeaderOptions,
 } from './utils/calculateColumnWidth'
 import type { ReplicaUserInfo } from './hooks/useGridReplicaUsers'
+import type { RemoteSelection } from './hooks/useRemoteSelections'
 
 type DataGridProps = {
   gridRef: React.RefObject<DataSheetGridRef | null>
@@ -42,6 +43,7 @@ type DataGridProps = {
   ) => void
   cellChanges?: ReadonlyMap<string, number>
   replicaUserMap?: ReadonlyMap<number, ReplicaUserInfo>
+  remoteSelections?: readonly RemoteSelection[]
 }
 
 /**
@@ -64,6 +66,7 @@ export default function DataGrid(props: DataGridProps) {
     onSelectedRowChange,
     cellChanges,
     replicaUserMap,
+    remoteSelections,
   } = props
 
   // Move columnWidths state into DataGrid
@@ -199,9 +202,17 @@ export default function DataGrid(props: DataGridProps) {
         colValues,
         cellChanges,
         replicaUserMap,
+        remoteSelections,
       })
     },
-    [selectedRowIndex, lastSelection, colValues, cellChanges, replicaUserMap],
+    [
+      selectedRowIndex,
+      lastSelection,
+      colValues,
+      cellChanges,
+      replicaUserMap,
+      remoteSelections,
+    ],
   )
 
   // Wrap duplicateRow in useCallback
