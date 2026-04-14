@@ -57,33 +57,56 @@ export function CreateProjectModal({
         accessToken,
       )
 
-      const newResourceAccess = [...currentAcl.resourceAccess]
+      const upsertAccessTypes = (
+        entries: typeof currentAcl.resourceAccess,
+        principalId: number,
+        accessTypes: ACCESS_TYPE[],
+      ): typeof currentAcl.resourceAccess => {
+        const existing = entries.find(e => e.principalId === principalId)
+        if (existing) {
+          return entries.map(e =>
+            e.principalId === principalId
+              ? {
+                  ...e,
+                  accessType: [...new Set([...e.accessType, ...accessTypes])],
+                }
+              : e,
+          )
+        }
+        return [...entries, { principalId, accessType: accessTypes }]
+      }
+
+      let newResourceAccess = [...currentAcl.resourceAccess]
 
       if (visibility === 'DISCOVERABLE') {
         if (publicGroupId) {
-          newResourceAccess.push({
-            principalId: Number(publicGroupId),
-            accessType: [ACCESS_TYPE.READ],
-          })
+          newResourceAccess = upsertAccessTypes(
+            newResourceAccess,
+            Number(publicGroupId),
+            [ACCESS_TYPE.READ],
+          )
         }
         if (authenticatedUsersId) {
-          newResourceAccess.push({
-            principalId: Number(authenticatedUsersId),
-            accessType: [ACCESS_TYPE.READ],
-          })
+          newResourceAccess = upsertAccessTypes(
+            newResourceAccess,
+            Number(authenticatedUsersId),
+            [ACCESS_TYPE.READ],
+          )
         }
       } else if (visibility === 'PUBLIC') {
         if (publicGroupId) {
-          newResourceAccess.push({
-            principalId: Number(publicGroupId),
-            accessType: [ACCESS_TYPE.READ],
-          })
+          newResourceAccess = upsertAccessTypes(
+            newResourceAccess,
+            Number(publicGroupId),
+            [ACCESS_TYPE.READ],
+          )
         }
         if (authenticatedUsersId) {
-          newResourceAccess.push({
-            principalId: Number(authenticatedUsersId),
-            accessType: [ACCESS_TYPE.READ, ACCESS_TYPE.DOWNLOAD],
-          })
+          newResourceAccess = upsertAccessTypes(
+            newResourceAccess,
+            Number(authenticatedUsersId),
+            [ACCESS_TYPE.READ, ACCESS_TYPE.DOWNLOAD],
+          )
         }
       }
 

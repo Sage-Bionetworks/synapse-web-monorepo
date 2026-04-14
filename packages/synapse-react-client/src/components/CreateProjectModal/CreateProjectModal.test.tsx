@@ -236,5 +236,50 @@ describe('CreateProjectModal tests', () => {
       // Dialog should still be open
       expect(screen.getByText('Create a new Project')).toBeInTheDocument()
     })
+
+    it('merges access types when a principal already exists in the ACL', async () => {
+      // Pre-populate ACL with the public group already having some unrelated access
+      const existingPublicEntry = {
+        principalId: MOCK_PUBLIC_PRINCIPAL_ID,
+        accessType: [ACCESS_TYPE.READ],
+      }
+      mockGetEntityACL.mockResolvedValue({
+        id: 'syn123',
+        etag: 'initial-etag',
+        creationDate: '2020-01-01T00:00:00.000Z',
+        resourceAccess: [
+          {
+            principalId: 999,
+            accessType: [
+              ACCESS_TYPE.READ,
+              ACCESS_TYPE.UPDATE,
+              ACCESS_TYPE.DELETE,
+            ],
+          },
+          existingPublicEntry,
+        ],
+      })
+
+      const { user, input, saveButton } = setUp()
+
+      const discoverableRadio = screen.getByRole('radio', {
+        name: /discoverable/i,
+      })
+      await user.click(discoverableRadio)
+
+      await user.type(input, MOCK_PROJECT_NAME)
+      await user.click(saveButton)
+
+      await screen.findByText('Project created')
+
+      const calledWith = mockUpdateEntityACL.mock.calls[0][0] as {
+        resourceAccess: { principalId: number; accessType: ACCESS_TYPE[] }[]
+      }
+      const publicEntries = calledWith.resourceAccess.filter(
+        e => e.principalId === MOCK_PUBLIC_PRINCIPAL_ID,
+      )
+      // Should not have created a duplicate entry for the public principal
+      expect(publicEntries).toHaveLength(1)
+    })
   })
 })
