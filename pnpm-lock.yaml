@@ -154,8 +154,8 @@ importers:
         specifier: ^5.4.1
         version: 5.4.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-router:
-        specifier: ^7.12.0
-        version: 7.13.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^7.14.0
+        version: 7.14.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       sass:
         specifier: ^1.98.0
         version: 1.98.0
@@ -320,8 +320,8 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
       react-router:
-        specifier: ^7.13.1
-        version: 7.13.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^7.14.0
+        version: 7.14.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -381,8 +381,8 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
       react-router:
-        specifier: ^7.13.1
-        version: 7.13.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^7.14.0
+        version: 7.14.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -445,8 +445,8 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
       react-router:
-        specifier: ^7.13.1
-        version: 7.13.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^7.14.0
+        version: 7.14.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -500,8 +500,8 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
       react-router:
-        specifier: ^7.13.1
-        version: 7.13.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^7.14.0
+        version: 7.14.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -564,8 +564,8 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
       react-router:
-        specifier: ^7.13.1
-        version: 7.13.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^7.14.0
+        version: 7.14.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -619,8 +619,8 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
       react-router:
-        specifier: ^7.13.1
-        version: 7.13.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^7.14.0
+        version: 7.14.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -674,8 +674,8 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
       react-router:
-        specifier: ^7.13.1
-        version: 7.13.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^7.14.0
+        version: 7.14.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -732,8 +732,8 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
       react-router:
-        specifier: ^7.13.1
-        version: 7.13.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^7.14.0
+        version: 7.14.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -799,8 +799,8 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
       react-router:
-        specifier: ^7.13.1
-        version: 7.13.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^7.14.0
+        version: 7.14.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-type-animation:
         specifier: ^3.2.0
         version: 3.2.0(prop-types@15.8.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -857,8 +857,8 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
       react-router:
-        specifier: ^7.13.1
-        version: 7.13.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^7.14.0
+        version: 7.14.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -924,8 +924,8 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
       react-router:
-        specifier: ^7.13.1
-        version: 7.13.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^7.14.0
+        version: 7.14.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-type-animation:
         specifier: ^3.2.0
         version: 3.2.0(prop-types@15.8.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -982,8 +982,8 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
       react-router:
-        specifier: ^7.13.1
-        version: 7.13.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^7.14.0
+        version: 7.14.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -1025,8 +1025,8 @@ importers:
         specifier: ^7.1.1
         version: 7.1.1(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.1.0))(@types/react@19.1.8)(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@react-router/node':
-        specifier: ^7.13.1
-        version: 7.13.1(react-router@7.14.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3)
+        specifier: ^7.14.0
+        version: 7.14.0(react-router@7.14.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3)
       '@sage-bionetworks/synapse-portal-framework':
         specifier: workspace:*
         version: link:../../synapse-portal-framework
@@ -1122,8 +1122,8 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
       react-router:
-        specifier: ^7.13.1
-        version: 7.13.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^7.14.0
+        version: 7.14.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       synapse-react-client:
         specifier: workspace:*
         version: link:../../../packages/synapse-react-client
@@ -1198,8 +1198,8 @@ importers:
         specifier: ^19.1.0
         version: 19.1.0(react@19.1.0)
       react-router:
-        specifier: ^7.12.0
-        version: 7.13.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^7.14.0
+        version: 7.14.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       sass:
         specifier: ^1.98.0
         version: 1.98.0
@@ -1388,8 +1388,8 @@ importers:
         specifier: ^2.6.0
         version: 2.6.0(plotly.js@2.34.0(mapbox-gl@1.13.3))(react@19.1.0)
       react-router:
-        specifier: ^7.13.1
-        version: 7.13.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^7.14.0
+        version: 7.14.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-switch:
         specifier: ^7.1.0
         version: 7.1.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -1929,8 +1929,8 @@ importers:
         specifier: ^4.2.7
         version: 4.2.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-router:
-        specifier: ^7.13.1
-        version: 7.13.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: ^7.14.0
+        version: 7.14.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react-select:
         specifier: ^5.10.1
         version: 5.10.1(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -4332,16 +4332,6 @@ packages:
       wrangler:
         optional: true
 
-  '@react-router/node@7.13.1':
-    resolution: {integrity: sha512-IWPPf+Q3nJ6q4bwyTf5leeGUfg8GAxSN1RKj5wp9SK915zKK+1u4TCOfOmr8hmC6IW1fcjKV0WChkM0HkReIiw==}
-    engines: {node: '>=20.0.0'}
-    peerDependencies:
-      react-router: 7.13.1
-      typescript: ^5.1.0
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-
   '@react-router/node@7.14.0':
     resolution: {integrity: sha512-ZxJJLE4PX29+cHLacH3pmCHMCJQz/1dpEgFQtm8Pst2IP5GI6897rShYylLZbJ7jRBJSkskHn+opSEh+o6mmOA==}
     engines: {node: '>=20.0.0'}
@@ -6601,8 +6591,8 @@ packages:
     resolution: {integrity: sha512-yki5XnKuf750l50uGTllt6kKILY4nQ1eNIQatoXEByZ5dWgnKqbnqmTrBE5B4N7lrMJKQ2ytWMiTO2o0v6Ew/w==}
     engines: {node: '>= 0.6'}
 
-  cookie@1.0.2:
-    resolution: {integrity: sha512-9Kr/j4O16ISv8zBBhJoi4bXOYNTkFLOqSL3UDB0njXxCXNezjeyVrJyGOWtgfs/q2km1gwBcfH8q1yEGoMYunA==}
+  cookie@1.1.1:
+    resolution: {integrity: sha512-ei8Aos7ja0weRpFzJnEA9UHJ/7XQmqglbRwnf2ATjcB9Wq874VKH9kfjjirM6UhU2/E5fFYadylyhFldcqSidQ==}
     engines: {node: '>=18'}
 
   copy-to-clipboard@3.3.3:
@@ -9877,16 +9867,6 @@ packages:
       react: '*'
       tslib: '*'
 
-  react-router@7.13.1:
-    resolution: {integrity: sha512-td+xP4X2/6BJvZoX6xw++A2DdEi++YypA69bJUV5oVvqf6/9/9nNlD70YO1e9d3MyamJEBQFEzk6mbfDYbqrSA==}
-    engines: {node: '>=20.0.0'}
-    peerDependencies:
-      react: '>=18'
-      react-dom: '>=18'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-
   react-router@7.14.0:
     resolution: {integrity: sha512-m/xR9N4LQLmAS0ZhkY2nkPA1N7gQ5TUVa5n8TgANuDTARbn1gt+zLPXEm7W0XDTbrQ2AJSJKhoa6yx1D8BcpxQ==}
     engines: {node: '>=20.0.0'}
@@ -10299,8 +10279,8 @@ packages:
   set-blocking@2.0.0:
     resolution: {integrity: sha512-KiKBS8AnWGEyLzofFfmvKwpdPzqiy16LvQfK3yv/fVH7Bj13/wl3JSR1J+rfgRE9q7xUJK4qvgS8raSOeLUehw==}
 
-  set-cookie-parser@2.7.1:
-    resolution: {integrity: sha512-IOc8uWeOZgnb3ptbCURJWNjWUPcO3ZnTTdzsurqERrP6nPyv+paC55vJM0LpOlT2ne+Ix+9+CRG1MNLlyZ4GjQ==}
+  set-cookie-parser@2.7.2:
+    resolution: {integrity: sha512-oeM1lpU/UvhTxw+g3cIfxXHyJRc/uidd3yK1P242gzHds0udQBYzs3y8j4gCCW+ZJ7ad0yctld8RYO+bdurlvw==}
 
   set-function-length@1.2.2:
     resolution: {integrity: sha512-pgRc4hJ4/sNjWCSS9AmnS40x3bNMDTknHgL5UaMBTMyJnU90EgWh1Rz+MC9eFu4BuN/UwZjKQuY/1v3rM7HMfg==}
@@ -13887,13 +13867,6 @@ snapshots:
       - tsx
       - yaml
 
-  '@react-router/node@7.13.1(react-router@7.14.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3)':
-    dependencies:
-      '@mjackson/node-fetch-server': 0.2.0
-      react-router: 7.14.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-    optionalDependencies:
-      typescript: 5.8.3
-
   '@react-router/node@7.14.0(react-router@7.14.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3)':
     dependencies:
       '@mjackson/node-fetch-server': 0.2.0
@@ -16430,7 +16403,7 @@ snapshots:
 
   cookie@0.7.2: {}
 
-  cookie@1.0.2: {}
+  cookie@1.1.1: {}
 
   copy-to-clipboard@3.3.3:
     dependencies:
@@ -20354,19 +20327,11 @@ snapshots:
       react: 19.1.0
       tslib: 2.8.1
 
-  react-router@7.13.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
-    dependencies:
-      cookie: 1.0.2
-      react: 19.1.0
-      set-cookie-parser: 2.7.1
-    optionalDependencies:
-      react-dom: 19.1.0(react@19.1.0)
-
   react-router@7.14.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
-      cookie: 1.0.2
+      cookie: 1.1.1
       react: 19.1.0
-      set-cookie-parser: 2.7.1
+      set-cookie-parser: 2.7.2
     optionalDependencies:
       react-dom: 19.1.0(react@19.1.0)
 
@@ -20909,7 +20874,7 @@ snapshots:
 
   set-blocking@2.0.0: {}
 
-  set-cookie-parser@2.7.1: {}
+  set-cookie-parser@2.7.2: {}
 
   set-function-length@1.2.2:
     dependencies:

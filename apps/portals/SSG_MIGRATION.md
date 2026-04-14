@@ -33,14 +33,14 @@ Application) setup to React Router Framework Mode with Static Site Generation
 
 ```jsonc
 // dependencies
-"@react-router/node": "^7.13.1",
+"@react-router/node": "^7.14.0",
 "@tanstack/react-query": "^5.80.7",
 "isbot": "^5",
 "jsdom": "^28.1.0",
 "react-cookie": "^7.2.2",
 
 // devDependencies
-"@react-router/dev": "^7.13.1",
+"@react-router/dev": "^7.14.0",
 "@types/node": "^22.19.13",
 "vite-plugin-node-polyfills": "^0.26.0",
 "vite-plugin-svgr": "^4.3.0",
