@@ -1,0 +1,26 @@
+@use 'sass:map';
+@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+
+.logoContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+
+  svg {
+    width: 70%;
+
+    @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+      width: 250px;
+    }
+  }
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    gap: 50px;
+  }
+}
+
+.termsAndConditions {
+  padding: 16px;
+}
