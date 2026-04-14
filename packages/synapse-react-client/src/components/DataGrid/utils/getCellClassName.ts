@@ -1,10 +1,10 @@
 import classNames from 'classnames'
-import { DataGridRow } from '../DataGridTypes'
+import { DataGridRow, GridModel } from '../DataGridTypes'
 import { SelectionWithId } from '@sage-bionetworks/react-datasheet-grid'
 import { Column } from '@sage-bionetworks/react-datasheet-grid'
 import type { ReplicaUserInfo } from '../hooks/useGridReplicaUsers'
-import { cellChangeKey } from '../hooks/useCellChangeTracker'
 import type { RemoteSelection } from '../hooks/useRemoteSelections'
+import { getCellAuthorSid } from './getCellAuthorSid'
 
 export function getCellClassName(params: {
   rowData: DataGridRow
@@ -13,8 +13,13 @@ export function getCellClassName(params: {
   selectedRowIndex: number | null
   lastSelection?: SelectionWithId | null
   colValues?: Column[]
-  /** Map from "rowIndex:colName" → authorSid for cells changed since joining. */
-  cellChanges?: ReadonlyMap<string, number>
+  /**
+   * Raw CRDT column names array (columnNames[i] = name of the column at data
+   * index i). Required alongside `model` for change indicators.
+   */
+  columnNames?: string[]
+  /** The CRDT model, used to derive per-cell authorship for change indicators. */
+  model?: GridModel | null
   /** Map from replicaId → ReplicaUserInfo for attributing change indicators. */
   replicaUserMap?: ReadonlyMap<number, ReplicaUserInfo>
   /** Remote replica selection ranges to visualise as tinted backgrounds. */
@@ -27,7 +32,8 @@ export function getCellClassName(params: {
     selectedRowIndex,
     lastSelection,
     colValues,
-    cellChanges,
+    columnNames,
+    model,
     replicaUserMap,
     remoteSelections,
   } = params
@@ -63,22 +69,25 @@ export function getCellClassName(params: {
   }
 
   // ── Cell change indicator ─────────────────────────────────────────────────
-  if (cellChanges && columnId) {
-    const key = cellChangeKey(rowIndex, columnId)
-    const authorSid = cellChanges.get(key)
-    if (authorSid !== undefined) {
-      const info = replicaUserMap?.get(authorSid)
-      if (info) {
-        classList.push(`cell-changed--${info.category}`)
+  if (model && columnId && columnNames) {
+    const colIndex = columnNames.indexOf(columnId)
+    if (colIndex !== -1) {
+      const authorSid = getCellAuthorSid(model, rowIndex, colIndex)
+      if (authorSid !== null) {
+        const info = replicaUserMap?.get(authorSid)
+        if (info) {
+          classList.push(`cell-changed--${info.category}`)
+        }
       }
     }
   }
   // ── Remote selection tint ─────────────────────────────────────────────────
   if (remoteSelections && columnId) {
     for (const remote of remoteSelections) {
-      const { minRow, maxRow, columnNames } = remote.range
+      const { minRow, maxRow, columnNames: remoteColumnNames } = remote.range
       if (rowIndex < minRow || rowIndex > maxRow) continue
-      if (columnNames !== undefined && !columnNames.has(columnId)) continue
+      if (remoteColumnNames !== undefined && !remoteColumnNames.has(columnId))
+        continue
       classList.push('cell-remote-selected')
       classList.push(`cell-remote-selected--color-${remote.colorIndex}`)
       break // apply the first matching remote selection only

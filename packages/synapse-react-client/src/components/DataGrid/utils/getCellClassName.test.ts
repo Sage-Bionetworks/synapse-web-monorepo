@@ -4,7 +4,7 @@ import { DataGridRow } from '../DataGridTypes'
 import { SelectionWithId } from '@sage-bionetworks/react-datasheet-grid'
 import { Column } from '@sage-bionetworks/react-datasheet-grid'
 import type { ReplicaUserInfo } from '../hooks/useGridReplicaUsers'
-import { cellChangeKey } from '../hooks/useCellChangeTracker'
+import createTestModel from './createTestModel'
 
 describe('getCellClassName', () => {
   const createMockRowData = (
@@ -315,9 +315,12 @@ describe('getCellClassName', () => {
         profile: undefined,
       } as ReplicaUserInfo)
 
-    it('appends the cell-changed--{category} class when the cell has a known change attributed to a known replica', () => {
+    it('appends the cell-changed--{category} class when the cell was written by a known replica', () => {
       const authorSid = 101
-      const cellChanges = new Map([[cellChangeKey(0, 'col1'), authorSid]])
+      // createTestModel with sid=101: all cell nodes will have id.sid === 101
+      const model = createTestModel(1, 2, authorSid)
+      // columnNames for a 2-col model: ['c0', 'c1']
+      const columnNames = ['c0', 'c1']
       const replicaUserMap = new Map([
         [authorSid, makeReplicaUserInfo('self', authorSid)],
       ])
@@ -325,9 +328,10 @@ describe('getCellClassName', () => {
       const result = getCellClassName({
         rowData: createMockRowData(),
         rowIndex: 0,
-        columnId: 'col1',
+        columnId: 'c0',
         selectedRowIndex: null,
-        cellChanges,
+        model,
+        columnNames,
         replicaUserMap,
       })
 
@@ -336,46 +340,51 @@ describe('getCellClassName', () => {
 
     it('uses the correct category string for other-user', () => {
       const authorSid = 202
-      const cellChanges = new Map([[cellChangeKey(1, 'col2'), authorSid]])
+      const model = createTestModel(1, 2, authorSid)
+      const columnNames = ['c0', 'c1']
       const replicaUserMap = new Map([
         [authorSid, makeReplicaUserInfo('other-user', authorSid)],
       ])
 
       const result = getCellClassName({
         rowData: createMockRowData(),
-        rowIndex: 1,
-        columnId: 'col2',
+        rowIndex: 0,
+        columnId: 'c1',
         selectedRowIndex: null,
-        cellChanges,
+        model,
+        columnNames,
         replicaUserMap,
       })
 
       expect(result).toBe('cell-changed--other-user')
     })
 
-    it('adds no cell-changed class when the cell has a change entry but replicaUserMap has no entry for that sid', () => {
-      const cellChanges = new Map([[cellChangeKey(0, 'col1'), 999]])
+    it('adds no cell-changed class when the cell sid is not in replicaUserMap (e.g. SERVICE replica)', () => {
+      const authorSid = 999
+      const model = createTestModel(1, 2, authorSid)
+      const columnNames = ['c0', 'c1']
       const replicaUserMap = new Map<number, ReplicaUserInfo>() // sid 999 not present
 
       const result = getCellClassName({
         rowData: createMockRowData(),
         rowIndex: 0,
-        columnId: 'col1',
+        columnId: 'c0',
         selectedRowIndex: null,
-        cellChanges,
+        model,
+        columnNames,
         replicaUserMap,
       })
 
       expect(result).toBeUndefined()
     })
 
-    it('adds no cell-changed class when cellChanges is undefined', () => {
+    it('adds no cell-changed class when model is undefined', () => {
       const result = getCellClassName({
         rowData: createMockRowData(),
         rowIndex: 0,
-        columnId: 'col1',
+        columnId: 'c0',
         selectedRowIndex: null,
-        cellChanges: undefined,
+        model: undefined,
       })
 
       expect(result).toBeUndefined()
@@ -383,7 +392,8 @@ describe('getCellClassName', () => {
 
     it('adds no cell-changed class when columnId is undefined', () => {
       const authorSid = 101
-      const cellChanges = new Map([[cellChangeKey(0, 'col1'), authorSid]])
+      const model = createTestModel(1, 2, authorSid)
+      const columnNames = ['c0', 'c1']
       const replicaUserMap = new Map([
         [authorSid, makeReplicaUserInfo('self', authorSid)],
       ])
@@ -393,7 +403,27 @@ describe('getCellClassName', () => {
         rowIndex: 0,
         columnId: undefined,
         selectedRowIndex: null,
-        cellChanges,
+        model,
+        columnNames,
+        replicaUserMap,
+      })
+
+      expect(result).toBeUndefined()
+    })
+
+    it('adds no cell-changed class when columnNames is not provided', () => {
+      const authorSid = 101
+      const model = createTestModel(1, 2, authorSid)
+      const replicaUserMap = new Map([
+        [authorSid, makeReplicaUserInfo('self', authorSid)],
+      ])
+
+      const result = getCellClassName({
+        rowData: createMockRowData(),
+        rowIndex: 0,
+        columnId: 'c0',
+        selectedRowIndex: null,
+        model,
         replicaUserMap,
       })
 
@@ -402,18 +432,20 @@ describe('getCellClassName', () => {
 
     it('combines cell-row-selected, cell-invalid, and cell-changed--other-user when all three apply', () => {
       const authorSid = 303
-      const cellChanges = new Map([[cellChangeKey(0, 'col1'), authorSid]])
+      const model = createTestModel(1, 2, authorSid)
+      const columnNames = ['c0', 'c1']
       const replicaUserMap = new Map([
         [authorSid, makeReplicaUserInfo('other-user', authorSid)],
       ])
-      const validationResults = new Map([['col1', ['Required field']]])
+      const validationResults = new Map([['c0', ['Required field']]])
 
       const result = getCellClassName({
         rowData: createMockRowData(validationResults),
         rowIndex: 0,
-        columnId: 'col1',
+        columnId: 'c0',
         selectedRowIndex: 0,
-        cellChanges,
+        model,
+        columnNames,
         replicaUserMap,
       })
 
