@@ -2,77 +2,16 @@ import SynapseClient from '@/synapse-client'
 import { useGetRealmPrincipals } from '@/synapse-queries/realm/useRealmPrincipals'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import {
-  Alert,
-  Box,
-  Chip,
-  FormControl,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
-  Stack,
-  Typography,
-} from '@mui/material'
+import { Alert, Stack } from '@mui/material'
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import { KeyboardEvent, useState } from 'react'
-import IconSvg from '../IconSvg'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 import TextField from '../TextField/TextField'
-
-type ProjectVisibility = 'PRIVATE' | 'DISCOVERABLE' | 'PUBLIC' | 'OPEN'
-
-type VisibilityOption = {
-  value: ProjectVisibility
-  label: string
-  chipText: string
-  description: string
-  note?: string
-  disabled?: boolean
-}
-
-const VISIBILITY_OPTIONS: VisibilityOption[] = [
-  {
-    value: 'PRIVATE',
-    label: 'Private',
-    chipText: 'Invisible',
-    description:
-      'Only you and people you invite can see this project exists. Others with the link will see an error.',
-  },
-  {
-    value: 'DISCOVERABLE',
-    label: 'Discoverable',
-    chipText: 'Visible metadata',
-    description:
-      'Anyone can find and view this project. Data download is not allowed.',
-  },
-  {
-    value: 'PUBLIC',
-    label: 'Public',
-    chipText: 'Visible metadata, registered download',
-    description:
-      'Anyone can find and view this project. Registered Synapse users can download data.',
-  },
-  {
-    value: 'OPEN',
-    label: 'Open',
-    chipText: 'Fully visible, anonymous download',
-    description: 'Anyone can find and view this project and download its data.',
-    note: 'Currently available upon request for non-sensitive data.',
-    disabled: true,
-  },
-]
-
-// Placeholder icons — replace with desired icons per option
-const VISIBILITY_ICONS: Record<
+import {
   ProjectVisibility,
-  React.ComponentProps<typeof IconSvg>['icon']
-> = {
-  PRIVATE: 'privateVisibility',
-  DISCOVERABLE: 'visibility',
-  PUBLIC: 'publicVisibility',
-  OPEN: 'openVisibility',
-}
+  ProjectVisibilityRadioGroup,
+} from './ProjectVisibilityRadioGroup'
 
 export type CreateProjectModalProps = {
   isShowingModal?: boolean
@@ -220,84 +159,10 @@ export function CreateProjectModal({
           setDescription(event.target.value)
         }}
       />
-      <FormControl component="fieldset">
-        <Typography
-          variant="smallText2"
-          component="legend"
-          sx={{ mb: 1, pb: 1 }}
-        >
-          Visibility
-        </Typography>
-        <RadioGroup
-          sx={{ mt: 1 }}
-          value={visibility}
-          onChange={(_e, val) => setVisibility(val as ProjectVisibility)}
-        >
-          {VISIBILITY_OPTIONS.map(option => (
-            <FormControlLabel
-              key={option.value}
-              value={option.value}
-              disabled={option.disabled}
-              sx={{
-                alignItems: 'flex-start',
-                mb: 1,
-                opacity: option.disabled ? 0.5 : 1,
-              }}
-              control={<Radio sx={{ pt: '2px' }} />}
-              label={
-                <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1 }}>
-                  <IconSvg
-                    icon={VISIBILITY_ICONS[option.value]}
-                    wrap={false}
-                    sx={{ mt: '2px', flexShrink: 0 }}
-                  />
-                  <Box>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1,
-                        flexWrap: 'wrap',
-                      }}
-                    >
-                      <Typography
-                        variant="body1"
-                        component="span"
-                        fontWeight="bold"
-                      >
-                        {option.label}
-                      </Typography>
-                      <Chip
-                        label={option.chipText}
-                        size="small"
-                        sx={{
-                          bgcolor: 'grey.200',
-                          color: 'text.secondary',
-                          height: 20,
-                          fontSize: '0.7rem',
-                        }}
-                      />
-                    </Box>
-                    <Typography
-                      variant="body1"
-                      color="text.secondary"
-                      sx={{ mt: 0.25 }}
-                    >
-                      {option.description}
-                      {option.note && (
-                        <>
-                          {' '}
-                          <em>{option.note}</em>
-                        </>
-                      )}
-                    </Typography>
-                  </Box>
-                </Box>
-              }
-            />
-          ))}
-        </RadioGroup>
-      </FormControl>
+      <ProjectVisibilityRadioGroup
+        value={visibility}
+        onChange={setVisibility}
+      />
       {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
       {aclErrorMessage && <Alert severity="error">{aclErrorMessage}</Alert>}
       <Alert severity="warning">
