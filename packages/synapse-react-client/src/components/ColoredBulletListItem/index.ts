@@ -1,5 +1,4 @@
-export {
-  default,
-  default as ColoredBulletListItem,
-} from './ColoredBulletListItem'
-export type { ColoredBulletListItemProps } from './ColoredBulletListItem'
+import ColoredBulletListItem from './ColoredBulletListItem'
+import type { ColoredBulletListItemProps } from './ColoredBulletListItem'
+export { ColoredBulletListItem, ColoredBulletListItemProps }
+export default ColoredBulletListItem

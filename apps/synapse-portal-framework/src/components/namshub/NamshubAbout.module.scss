@@ -5,11 +5,13 @@
   display: flex;
   flex-direction: column;
   padding: 16px;
+  gap: 20px;
 
   @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
     flex-direction: row;
     align-items: center;
     padding: 40px;
+    gap: 50px;
   }
 }
 
