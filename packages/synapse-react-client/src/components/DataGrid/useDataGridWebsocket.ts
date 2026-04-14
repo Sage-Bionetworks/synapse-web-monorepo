@@ -1,7 +1,7 @@
 import { GridModel } from '@/components/DataGrid/DataGridTypes'
 import { useCRDTModelView } from '@/components/DataGrid/useCRDTModelView'
 import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react'
-import { DataGridWebSocket, type CellChangeInfo } from './DataGridWebSocket'
+import { DataGridWebSocket } from './DataGridWebSocket'
 import { useEstablishWebsocketConnection } from '@/synapse-queries/grid/useEstablishWebsocketConnection'
 import { useDocumentVisibility } from '@react-hookz/web'
 
@@ -135,7 +135,6 @@ export interface UseDataGridWebSocketOptions {
   onGridReady?: () => void
   onReplicaConnected?: () => void
   onReplicaDisconnected?: () => void
-  onPatchApplied?: (authorSid: number, changes: CellChangeInfo[]) => void
 }
 
 export function useDataGridWebSocket(options?: UseDataGridWebSocketOptions) {
@@ -177,14 +176,12 @@ export function useDataGridWebSocket(options?: UseDataGridWebSocketOptions) {
       onModelCreate: handleModelCreate,
       onReplicaConnected: options?.onReplicaConnected,
       onReplicaDisconnected: options?.onReplicaDisconnected,
-      onPatchApplied: options?.onPatchApplied,
     }),
     [
       handleModelCreate,
       options?.onGridReady,
       options?.onReplicaConnected,
       options?.onReplicaDisconnected,
-      options?.onPatchApplied,
     ],
   )
 

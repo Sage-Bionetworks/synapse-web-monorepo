@@ -1,7 +1,4 @@
-import {
-  GridModel,
-  GridModelSnapshot,
-} from '@/components/DataGrid/DataGridTypes'
+import { GridModel } from '@/components/DataGrid/DataGridTypes'
 import JsonRx from '@/components/DataGrid/utils/json-rx/JsonRx'
 import JsonRxMessage from '@/components/DataGrid/utils/json-rx/JsonRxMessage'
 import JsonRxNotification from '@/components/DataGrid/utils/json-rx/JsonRxNotification'
@@ -42,11 +39,6 @@ type SynapseGridWebSocketMessagePayload =
     }
   | { type: SynapseGridWebSocketMessagePayloadType.SNAPSHOT; body: string }
 
-export interface CellChangeInfo {
-  rowIndex: number
-  colName: string
-}
-
 type DataGridWebSocketConstructorArgs = {
   replicaId: number
   url: string
@@ -55,14 +47,6 @@ type DataGridWebSocketConstructorArgs = {
   onModelCreate?: (model: GridModel) => void
   onReplicaConnected?: () => void
   onReplicaDisconnected?: () => void
-  /**
-   * Called after each incoming patch is applied to the model.
-   * authorSid is the json-joy session ID of the replica that authored the patch,
-   * which equals the server-assigned replicaId for that replica.
-   * changes lists each cell (by row index and column name) modified by the patch.
-   * SERVICE-authored patches are excluded by the consumer using the replica list.
-   */
-  onPatchApplied?: (authorSid: number, changes: CellChangeInfo[]) => void
   maxPayloadSizeBytes?: number
   socket?: WebSocket
   model?: GridModel | null
@@ -90,9 +74,6 @@ export class DataGridWebSocket {
   private onStatusChange: (isOpen: boolean, _this: DataGridWebSocket) => void
   private onReplicaConnected: () => void
   private onReplicaDisconnected: () => void
-  private onPatchApplied: (authorSid: number, changes: CellChangeInfo[]) => void
-  /** Snapshot of rows after last applied incoming patch, used for diffing. */
-  private rowsBaseline: GridModelSnapshot['rows'] | null = null
 
   constructor(args: DataGridWebSocketConstructorArgs) {
     const {
@@ -103,7 +84,6 @@ export class DataGridWebSocket {
       onModelCreate,
       onReplicaConnected,
       onReplicaDisconnected,
-      onPatchApplied,
       maxPayloadSizeBytes,
       socket,
       model,
@@ -121,7 +101,6 @@ export class DataGridWebSocket {
     this.onStatusChange = onStatusChange ?? noop
     this.onReplicaConnected = onReplicaConnected ?? noop
     this.onReplicaDisconnected = onReplicaDisconnected ?? noop
-    this.onPatchApplied = onPatchApplied ?? noop
 
     // Restore existing model if provided
     if (model) {
@@ -237,65 +216,13 @@ export class DataGridWebSocket {
           this.replicaId,
         ) as unknown as GridModel
         this.onModelCreate(this.model)
-        // Seed the baseline from the initial model
-        this.rowsBaseline = this.model.api.getSnapshot()?.rows ?? null
       } else {
-        // Extract author sid before applying (each patch has its own author;
-        // for the common single-patch case this is exact; for rare multi-author
-        // batches we attribute to the first patch's author).
-        const firstPatch = patches[0]
-        const authorSid =
-          firstPatch && firstPatch.ops.length > 0
-            ? firstPatch.ops[0].id.sid
-            : null
-
         this.model.applyBatch(patches)
-
-        // Report cell changes attributed to the author.
-        // Single snapshot call (not two) — compare against stored baseline.
-        if (authorSid !== null) {
-          const newSnapshot = this.model.api.getSnapshot()
-          const changes = this.diffRows(
-            newSnapshot.rows,
-            newSnapshot.columnNames,
-          )
-          if (changes.length > 0) {
-            this.onPatchApplied(authorSid, changes)
-          }
-          this.rowsBaseline = newSnapshot.rows
-        }
       }
       this.sendClockSync()
     } catch (err) {
       console.error('Failed to apply patches or send clock:', err)
     }
-  }
-
-  /**
-   * Compare the new rows snapshot against the stored baseline and return cells
-   * whose values have changed.
-   */
-  private diffRows(
-    newRows: GridModelSnapshot['rows'],
-    columnNames: GridModelSnapshot['columnNames'],
-  ): CellChangeInfo[] {
-    const changes: CellChangeInfo[] = []
-    const baseline = this.rowsBaseline
-    if (!baseline) return changes
-
-    const minRows = Math.min(baseline.length, newRows.length)
-    for (let i = 0; i < minRows; i++) {
-      const prevData = baseline[i]?.data
-      const nextData = newRows[i]?.data
-      if (!prevData || !nextData) continue
-      const minCols = Math.min(prevData.length, nextData.length)
-      for (let j = 0; j < minCols; j++) {
-        if (prevData[j] !== nextData[j]) {
-          changes.push({ rowIndex: i, colName: columnNames[j] ?? String(j) })
-        }
-      }
-    }
-    return changes
   }
 
   private async handleSnapshotPayload(snapshotUrl: string) {
@@ -304,8 +231,6 @@ export class DataGridWebSocket {
       const decodedModel = await this.fetchAndDecodeSnapshot(snapshotUrl)
       this.model = decodedModel.fork(this.replicaId) as unknown as GridModel
       this.onModelCreate(this.model)
-      // Seed baseline so subsequent patch diffs have a starting point
-      this.rowsBaseline = this.model.api.getSnapshot()?.rows ?? null
       this.sendClockSync()
     } catch (err) {
       console.error('Failed to fetch or decode snapshot', err)
@@ -403,15 +328,6 @@ export class DataGridWebSocket {
     const hasOperationsToDispatch = patch.ops.length > 0
 
     if (hasOperationsToDispatch) {
-      // Track local changes for cell decorators. The local replica's edits are
-      // never echoed back by the server, so we must attribute them here.
-      const newSnapshot = this.model.api.getSnapshot()
-      const changes = this.diffRows(newSnapshot.rows, newSnapshot.columnNames)
-      if (changes.length > 0) {
-        this.onPatchApplied(this.replicaId, changes)
-      }
-      this.rowsBaseline = newSnapshot.rows
-
       // Split the patch if it exceeds the maximum size we can send in a single frame
       const patches = splitPatch(patch, this.maxPayloadSizeBytes)
       patches.forEach(compactEncodedPatch => {
