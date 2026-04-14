@@ -11,18 +11,17 @@ const computationalSchema: TableToGenericCardMapping = {
   description: 'summary',
   subTitle: 'softwareType',
   secondaryLabels: [
+    'downloadLink',
     'toolOperation',
     'toolInputData',
     'toolInputFormat',
     'toolOutputData',
     'toolOutputFormat',
     'toolType',
-    'documentation',
     'project',
     'institution',
     'contributor',
   ],
-  link: 'url',
 }
 
 export const computationalCardConfiguration: CardConfiguration = {
