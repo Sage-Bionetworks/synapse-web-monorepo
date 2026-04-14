@@ -15,6 +15,7 @@ export default function Homepage() {
             url="https://nhdcc.wpenginepowered.com"
             itemsToShow={2}
             allowCategories={[]}
+            viewAllNewsButtonText="View All Events"
           />
         </SectionLayout>
       </div>
