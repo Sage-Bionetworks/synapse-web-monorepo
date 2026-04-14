@@ -27,6 +27,7 @@ type VisibilityOption = {
   label: string
   chipText: string
   description: string
+  note?: string
   disabled?: boolean
 }
 
@@ -56,8 +57,8 @@ const VISIBILITY_OPTIONS: VisibilityOption[] = [
     value: 'OPEN',
     label: 'Open',
     chipText: 'Fully visible, anonymous download',
-    description:
-      'Anyone can find and view this project and download its data. Currently available upon request for non-sensitive data.',
+    description: 'Anyone can find and view this project and download its data.',
+    note: 'Currently available upon request for non-sensitive data.',
     disabled: true,
   },
 ]
@@ -220,10 +221,15 @@ export function CreateProjectModal({
         }}
       />
       <FormControl component="fieldset">
-        <Typography variant="smallText2" component="legend" sx={{ mb: 1 }}>
+        <Typography
+          variant="smallText2"
+          component="legend"
+          sx={{ mb: 1, pb: 1 }}
+        >
           Visibility
         </Typography>
         <RadioGroup
+          sx={{ mt: 1 }}
           value={visibility}
           onChange={(_e, val) => setVisibility(val as ProjectVisibility)}
         >
@@ -278,6 +284,12 @@ export function CreateProjectModal({
                       sx={{ mt: 0.25 }}
                     >
                       {option.description}
+                      {option.note && (
+                        <>
+                          {' '}
+                          <em>{option.note}</em>
+                        </>
+                      )}
                     </Typography>
                   </Box>
                 </Box>
