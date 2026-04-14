@@ -21,8 +21,8 @@
   },
   "peerDependencies": {
     "vite": "^8.0.0",
-    "vitest": "^4.0.0",
-    "vite-plugin-node-polyfills": "^0.26.0"
+    "vite-plugin-node-polyfills": "^0.26.0",
+    "vitest": "^4.0.0"
   },
   "peerDependenciesMeta": {
     "vitest": {
@@ -38,13 +38,13 @@
     "@vitejs/plugin-react": "^6.0.1",
     "svgo": "^3.3.3",
     "typescript": "5.8.3",
-    "vite": "^8.0.3",
+    "vite": "^8.0.8",
     "vite-plugin-dts": "^4.5.3",
     "vite-plugin-externalize-deps": "^0.10.0",
     "vite-plugin-html": "^3.2.2",
     "vite-plugin-lib-inject-css": "^2.2.2",
     "vite-plugin-node-polyfills": "^0.26.0",
     "vite-plugin-svgr": "^5.2.0",
-    "vitest": "^4.1.2"
+    "vitest": "^4.1.4"
   }
 }

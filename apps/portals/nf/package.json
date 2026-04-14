@@ -19,7 +19,7 @@
     "react-dom": "^19.1.0",
     "react-router": "^7.14.0",
     "synapse-react-client": "workspace:*",
-    "vite": "^8.0.3"
+    "vite": "^8.0.8"
   },
   "devDependencies": {
     "@react-router/dev": "^7.14.0",
@@ -32,7 +32,7 @@
     "vite-config": "workspace:*",
     "vite-plugin-node-polyfills": "^0.26.0",
     "vite-plugin-svgr": "^5.2.0",
-    "vitest": "^4.1.2"
+    "vitest": "^4.1.4"
   },
   "nx": {
     "targets": {

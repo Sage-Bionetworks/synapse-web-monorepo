@@ -43,16 +43,16 @@
   "devDependencies": {
     "@types/markdown-it": "^13.0.9",
     "@types/node": "^22.19.13",
-    "@vitest/coverage-v8": "^4.1.2",
-    "@vitest/ui": "^4.1.2",
+    "@vitest/coverage-v8": "^4.1.4",
+    "@vitest/ui": "^4.1.4",
     "markdown-it": "^14.1.0",
     "markdown-it-testgen": "~0.1.6",
     "tslib": "^2.8.1",
     "tsup": "^8.4.0",
     "typescript": "5.8.3",
-    "vite": "^8.0.3",
+    "vite": "^8.0.8",
     "vite-config": "workspace:*",
-    "vitest": "^4.1.2"
+    "vitest": "^4.1.4"
   },
   "directories": {
     "test": "test"
