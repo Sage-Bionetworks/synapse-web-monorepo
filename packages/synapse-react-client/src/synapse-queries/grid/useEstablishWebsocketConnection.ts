@@ -1,8 +1,5 @@
 import { useGridPresignedUrl } from '@/synapse-queries/grid/useGridPresignedUrl'
-import {
-  DataGridWebSocket,
-  type CellChangeInfo,
-} from '@/components/DataGrid/DataGridWebSocket'
+import { DataGridWebSocket } from '@/components/DataGrid/DataGridWebSocket'
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 import { GridModel } from '@/components/DataGrid/DataGridTypes'
 import { useCallback, useState } from 'react'
@@ -16,7 +13,6 @@ interface EstablishWebsocketParams {
     onModelCreate?: (model: GridModel) => void
     onReplicaConnected?: () => void
     onReplicaDisconnected?: () => void
-    onPatchApplied?: (authorSid: number, changes: CellChangeInfo[]) => void
     model?: GridModel | null
   }
 }
