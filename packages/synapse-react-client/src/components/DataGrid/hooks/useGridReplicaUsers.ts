@@ -78,7 +78,10 @@ export function useGridReplicaUsers(
       })
     }
     return result
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // `profileQueries` is intentionally omitted: `profileDataKey` is a stable
+    // string proxy derived from each query's `dataUpdatedAt`, so the memo only
+    // re-runs when query data actually changes rather than on every render when
+    // React Query returns a new array reference.
   }, [
     attributableReplicas,
     uniqueUserIds,
