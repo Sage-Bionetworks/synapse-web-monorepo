@@ -8,6 +8,7 @@ import type { GridReplicaInfo } from '@sage-bionetworks/synapse-client'
 import type { UserProfile } from '@sage-bionetworks/synapse-types'
 import { getUserProfileQuery } from '@/synapse-queries/user/useUserBundle'
 import { useMemo } from 'react'
+import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 
 export interface ReplicaUserInfo {
   replicaInfo: GridReplicaInfo
@@ -50,14 +51,15 @@ export function useGridReplicaUsers(
     })),
   })
 
-  // Stable cache key: only changes when a query's data actually updates
-  const profileDataKey = profileQueries.map(q => `${q.dataUpdatedAt}`).join(',')
+  const stableProfileData = useDeepCompareMemoize(
+    profileQueries.map(q => q.data),
+  )
 
   return useMemo(() => {
     // Build userId → profile map from query results
     const profileByUserId = new Map<string, UserProfile>()
     uniqueUserIds.forEach((userId, i) => {
-      const data = profileQueries[i]?.data
+      const data = stableProfileData[i]
       if (data) profileByUserId.set(userId, data)
     })
 
@@ -78,14 +80,10 @@ export function useGridReplicaUsers(
       })
     }
     return result
-    // `profileQueries` is intentionally omitted: `profileDataKey` is a stable
-    // string proxy derived from each query's `dataUpdatedAt`, so the memo only
-    // re-runs when query data actually changes rather than on every render when
-    // React Query returns a new array reference.
   }, [
     attributableReplicas,
     uniqueUserIds,
-    profileDataKey,
+    stableProfileData,
     localReplicaId,
     currentUserId,
   ])
