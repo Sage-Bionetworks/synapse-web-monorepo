@@ -5,9 +5,10 @@ import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-por
 import { ColumnMultiValueFunction } from '@sage-bionetworks/synapse-types'
 import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 // import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import { computationalSql, projectsSql } from '../config/resources'
+import { computationalSql, peopleSql, projectsSql } from '../config/resources'
 import { computationalCardConfiguration } from '../config/synapseConfigs/computational_tools'
 import { projectCardConfiguration } from '@/config/synapseConfigs/projects'
+import { SynapseConstants } from 'synapse-react-client'
 
 function ToolDetailsPage() {
   const { name } = useGetPortalComponentSearchParams()
@@ -47,25 +48,25 @@ function ToolDetailsPage() {
               </DetailsPageContextConsumer>
             ),
           },
-          //   {
-          //     id: 'People',
-          //     title: 'People',
-          //     element: (
-          //       <DetailsPageContextConsumer columnName={'contributor'}>
-          //         {({ value }) => (
-          //           <CardContainerLogic
-          //             sql={peopleSql}
-          //             limit={6}
-          //             cardConfiguration={{
-          //               type: SynapseConstants.MEDIUM_USER_CARD,
-          //             }}
-          //             searchParams={{ contributor: value! }}
-          //             sqlOperator={ColumnMultiValueFunction.HAS}
-          //           />
-          //         )}
-          //       </DetailsPageContextConsumer>
-          //     ),
-          //   },
+          {
+            id: 'Related People',
+            title: 'Related People',
+            element: (
+              <DetailsPageContextConsumer columnName={'id'}>
+                {({ value }) => (
+                  <CardContainerLogic
+                    sql={peopleSql}
+                    limit={6}
+                    cardConfiguration={{
+                      type: SynapseConstants.MEDIUM_USER_CARD,
+                    }}
+                    searchParams={{ computationalToolIds: value! }}
+                    sqlOperator={ColumnMultiValueFunction.HAS}
+                  />
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
         ]}
       />
     </DetailsPage>
