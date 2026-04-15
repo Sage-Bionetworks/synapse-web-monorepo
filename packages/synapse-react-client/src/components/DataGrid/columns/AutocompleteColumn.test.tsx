@@ -211,15 +211,22 @@ describe('AutocompleteColumn', () => {
       const mockSetRowData = vi.fn()
       const mockStopEditing = vi.fn()
 
+      const activeProps: Partial<AutocompleteCellProps> = {
+        rowData: '',
+        setRowData: mockSetRowData,
+        choices: ['option1', 'option2', 'option3'],
+        focus: true,
+        active: true,
+        stopEditing: mockStopEditing,
+      }
+      const inactiveProps: Partial<AutocompleteCellProps> = {
+        ...activeProps,
+        focus: false,
+        active: false,
+      }
+
       const { rerender } = render(
-        <AutocompleteCell
-          rowData=""
-          setRowData={mockSetRowData}
-          choices={['option1', 'option2', 'option3']}
-          focus={true}
-          active={true}
-          stopEditing={mockStopEditing}
-        />,
+        <AutocompleteCell {...(activeProps as AutocompleteCellProps)} />,
       )
 
       const input = screen.getByRole('combobox')
@@ -237,14 +244,7 @@ describe('AutocompleteColumn', () => {
       // Simulate clicking away: the grid marks the cell inactive without the user confirming
       act(() => {
         rerender(
-          <AutocompleteCell
-            rowData=""
-            setRowData={mockSetRowData}
-            choices={['option1', 'option2', 'option3']}
-            focus={false}
-            active={false}
-            stopEditing={mockStopEditing}
-          />,
+          <AutocompleteCell {...(inactiveProps as AutocompleteCellProps)} />,
         )
       })
 
@@ -262,15 +262,22 @@ describe('AutocompleteColumn', () => {
       const mockSetRowData = vi.fn()
       const mockStopEditing = vi.fn()
 
+      const activeProps: Partial<AutocompleteCellProps> = {
+        rowData: '',
+        setRowData: mockSetRowData,
+        choices: ['option1', 'option2', 'option3'],
+        focus: true,
+        active: true,
+        stopEditing: mockStopEditing,
+      }
+      const inactiveProps: Partial<AutocompleteCellProps> = {
+        ...activeProps,
+        focus: false,
+        active: false,
+      }
+
       const { rerender } = render(
-        <AutocompleteCell
-          rowData=""
-          setRowData={mockSetRowData}
-          choices={['option1', 'option2', 'option3']}
-          focus={true}
-          active={true}
-          stopEditing={mockStopEditing}
-        />,
+        <AutocompleteCell {...(activeProps as AutocompleteCellProps)} />,
       )
 
       const input = screen.getByRole('combobox')
@@ -282,14 +289,7 @@ describe('AutocompleteColumn', () => {
       // Simulate clicking away
       act(() => {
         rerender(
-          <AutocompleteCell
-            rowData=""
-            setRowData={mockSetRowData}
-            choices={['option1', 'option2', 'option3']}
-            focus={false}
-            active={false}
-            stopEditing={mockStopEditing}
-          />,
+          <AutocompleteCell {...(inactiveProps as AutocompleteCellProps)} />,
         )
       })
 

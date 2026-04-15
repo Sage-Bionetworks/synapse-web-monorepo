@@ -13,7 +13,9 @@ function createTestCell(choices: unknown[], colType?: string, limitTags = 2) {
     colType: colType,
     limitTags,
   })
-  return column.component as React.ComponentType<AutocompleteMultipleEnumCellProps>
+  return column.component as React.ComponentType<
+    Partial<AutocompleteMultipleEnumCellProps>
+  >
 }
 
 describe('autocompleteMultipleEnumColumn', () => {
