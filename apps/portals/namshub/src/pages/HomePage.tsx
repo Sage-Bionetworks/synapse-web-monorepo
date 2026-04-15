@@ -2,7 +2,7 @@ import NamshubHeader from '@sage-bionetworks/synapse-portal-framework/components
 import NamshubAbout from '@sage-bionetworks/synapse-portal-framework/components/namshub/NamshubAbout'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import { RssFeedCards } from 'synapse-react-client'
-import styles from './Homepage.module.scss'
+import styles from './HomePage.module.scss'
 
 export default function Homepage() {
   return (
