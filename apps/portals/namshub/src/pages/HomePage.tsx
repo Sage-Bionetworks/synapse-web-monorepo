@@ -13,15 +13,17 @@ export default function Homepage() {
     <>
       <NamshubHeader />
       <NamshubAbout />
-      <div className={styles.eventSection}>
-        <SectionLayout title="Events" centerTitle>
-          <RssFeedCards
-            url="https://nhdcc.wpenginepowered.com"
-            itemsToShow={2}
-            allowCategories={[]}
-            viewAllNewsButtonText="View All Events"
-          />
-        </SectionLayout>
+      <div className={'home-bg-dark'}>
+        <div className={styles.eventSection}>
+          <SectionLayout title="Events" centerTitle>
+            <RssFeedCards
+              url="https://nhdcc.wpenginepowered.com"
+              itemsToShow={2}
+              allowCategories={[]}
+              viewAllNewsButtonText="View All Events"
+            />
+          </SectionLayout>
+        </div>
       </div>
       <div className={styles.termsAndConditions}>
         <DevelopedBySage />
