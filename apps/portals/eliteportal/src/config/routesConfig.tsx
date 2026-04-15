@@ -143,6 +143,11 @@ const routes: RouteObject[] = [
         ],
       },
       {
+        path: 'Explore/Computational Tools/DetailsPage',
+        lazy: () =>
+          import('@/pages/ToolDetailsPage').then(convertModuleToRouteObject),
+      },
+      {
         path: 'Explore/Projects/DetailsPage',
         lazy: () =>
           import('@/pages/ProjectDetailsPage').then(convertModuleToRouteObject),
