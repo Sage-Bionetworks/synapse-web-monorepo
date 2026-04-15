@@ -1,13 +1,24 @@
+@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+@use 'sass:map';
+
 .headerContainer {
   display: grid;
-  grid-template-columns: 50% 50%;
+  grid-template-columns: 100%;
   background: linear-gradient(90deg, #f6fcff 11.06%, #dceff9 100%);
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    grid-template-columns: 50% 50%;
+  }
 }
 
 .headerTextContainer {
   display: flex;
   justify-content: center;
-  padding: 0 80px;
+  padding: 0 16px;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    padding: 0 80px;
+  }
 }
 
 .headerText {
