@@ -2,13 +2,22 @@ import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/c
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import { ColumnMultiValueFunction } from '@sage-bionetworks/synapse-types'
+import {
+  ColumnMultiValueFunction,
+  ColumnSingleValueFilterOperator,
+} from '@sage-bionetworks/synapse-types'
 import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 // import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import { computationalSql, peopleSql, projectsSql } from '../config/resources'
+import {
+  computationalSql,
+  peopleSql,
+  projectsSql,
+  publicationsSql,
+} from '../config/resources'
 import { computationalCardConfiguration } from '../config/synapseConfigs/computational_tools'
 import { projectCardConfiguration } from '@/config/synapseConfigs/projects'
 import { SynapseConstants } from 'synapse-react-client'
+import { publicationCardProps } from '@/config/synapseConfigs/publications'
 
 function ToolDetailsPage() {
   const { name } = useGetPortalComponentSearchParams()
@@ -62,6 +71,23 @@ function ToolDetailsPage() {
                     }}
                     searchParams={{ computationalToolIds: value! }}
                     sqlOperator={ColumnMultiValueFunction.HAS}
+                  />
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
+          {
+            id: 'Related Publications',
+            title: 'Related Publications',
+
+            element: (
+              <DetailsPageContextConsumer columnName={'publicationIds'}>
+                {({ value }) => (
+                  <CardContainerLogic
+                    cardConfiguration={publicationCardProps}
+                    sql={publicationsSql}
+                    searchParams={{ id: value! }}
+                    sqlOperator={ColumnSingleValueFilterOperator.IN}
                   />
                 )}
               </DetailsPageContextConsumer>
