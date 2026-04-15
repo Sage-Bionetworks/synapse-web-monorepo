@@ -18,10 +18,12 @@ import {
   UserProfile,
 } from '@sage-bionetworks/synapse-types'
 import {
+  queryOptions,
   useQuery,
   UseQueryOptions,
   useSuspenseQuery,
 } from '@tanstack/react-query'
+import type { SynapseQueriesContext } from '../types'
 
 export function useGetNotificationEmail(
   options?: Partial<UseQueryOptions<NotificationEmail, SynapseClientError>>,
@@ -103,19 +105,29 @@ export function useGetCurrentUserBundle<TData = UserBundle>(
   })
 }
 
+export function getUserProfileQuery(
+  principalId: string,
+  context: Pick<SynapseQueriesContext, 'accessToken' | 'keyFactory'>,
+) {
+  const { accessToken, keyFactory } = context
+  return queryOptions<UserProfile, SynapseClientError>({
+    queryKey: keyFactory.getUserProfileQueryKey(principalId),
+    queryFn: () => SynapseClient.getUserProfileById(principalId, accessToken),
+  })
+}
+
 export function useGetUserProfile(
   principalId: string,
   options?: Partial<UseQueryOptions<UserProfile, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
-  const queryKey = keyFactory.getUserProfileQueryKey(principalId)
   // We store the profile in a session storage cache used by SWC
   const sessionStorageCacheKey = `${principalId}_USER_PROFILE`
   const cachedValue = sessionStorage.getItem(sessionStorageCacheKey)
 
   return useQuery({
     ...options,
-    queryKey: queryKey,
+    ...getUserProfileQuery(principalId, { accessToken, keyFactory }),
     queryFn: async () => {
       const userProfile = await SynapseClient.getUserProfileById(
         principalId,

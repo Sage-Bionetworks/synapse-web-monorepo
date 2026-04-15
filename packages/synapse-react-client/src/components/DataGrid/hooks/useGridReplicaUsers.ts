@@ -6,7 +6,7 @@ import {
 } from '@/components/DataGrid/utils/getReplicaCategory'
 import type { GridReplicaInfo } from '@sage-bionetworks/synapse-client'
 import type { UserProfile } from '@sage-bionetworks/synapse-types'
-import SynapseClient from '@/synapse-client'
+import { getUserProfileQuery } from '@/synapse-queries/user/useUserBundle'
 import { useMemo } from 'react'
 
 export interface ReplicaUserInfo {
@@ -45,8 +45,7 @@ export function useGridReplicaUsers(
 
   const profileQueries = useQueries({
     queries: uniqueUserIds.map(userId => ({
-      queryKey: keyFactory.getUserProfileQueryKey(userId),
-      queryFn: () => SynapseClient.getUserProfileById(userId, accessToken),
+      ...getUserProfileQuery(userId, { accessToken, keyFactory }),
       staleTime: 5 * 60 * 1000, // profiles are stable within a session
     })),
   })
