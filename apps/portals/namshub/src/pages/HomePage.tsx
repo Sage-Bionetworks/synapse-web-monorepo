@@ -6,7 +6,7 @@ import DevelopedBySage from '@sage-bionetworks/synapse-portal-framework/componen
 import { ReactComponent as NYUGSOMLogo } from '../assets/NYUGSOM.svg'
 import { ReactComponent as SageLogo } from '@sage-bionetworks/synapse-portal-framework/components/assets/sage-logo.svg'
 import { Link } from '@mui/material'
-import styles from './Homepage.module.scss'
+import styles from './HomePage.module.scss'
 
 export default function Homepage() {
   return (
