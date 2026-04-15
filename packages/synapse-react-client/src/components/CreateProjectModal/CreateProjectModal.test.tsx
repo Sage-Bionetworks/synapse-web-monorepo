@@ -11,6 +11,7 @@ import { SynapseContextType } from '@/utils/context/SynapseContext'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
+import { MockedFunction } from 'vitest'
 import { CANCEL_BUTTON_TEXT } from '../ConfirmationDialog/ConfirmationDialog'
 import { CLOSE_BUTTON_LABEL } from '../DialogBase'
 import {
@@ -136,14 +137,16 @@ describe('CreateProjectModal tests', () => {
   })
 
   describe('ACL visibility', () => {
-    let mockGetEntityACL: ReturnType<typeof vi.spyOn>
-    let mockUpdateEntityACL: ReturnType<typeof vi.spyOn>
+    let mockGetEntityACL: MockedFunction<typeof SynapseClient.getEntityACL>
+    let mockUpdateEntityACL: MockedFunction<
+      typeof SynapseClient.updateEntityACL
+    >
 
     beforeEach(() => {
       // Re-capture the spies set up by the outer beforeEach so individual
       // tests in this block can override or assert on them.
-      mockGetEntityACL = vi.spyOn(SynapseClient, 'getEntityACL')
-      mockUpdateEntityACL = vi.spyOn(SynapseClient, 'updateEntityACL')
+      mockGetEntityACL = vi.mocked(SynapseClient.getEntityACL)
+      mockUpdateEntityACL = vi.mocked(SynapseClient.updateEntityACL)
     })
 
     it('does not call getEntityACL or updateEntityACL when visibility is PRIVATE', async () => {
@@ -176,6 +179,7 @@ describe('CreateProjectModal tests', () => {
 
       expect(mockUpdateEntityACL).toHaveBeenCalledWith(
         expect.objectContaining({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           resourceAccess: expect.arrayContaining([
             expect.objectContaining({
               principalId: MOCK_PUBLIC_PRINCIPAL_ID,
@@ -204,6 +208,7 @@ describe('CreateProjectModal tests', () => {
 
       expect(mockUpdateEntityACL).toHaveBeenCalledWith(
         expect.objectContaining({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           resourceAccess: expect.arrayContaining([
             expect.objectContaining({
               principalId: MOCK_PUBLIC_PRINCIPAL_ID,
