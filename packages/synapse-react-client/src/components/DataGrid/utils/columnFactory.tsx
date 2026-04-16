@@ -15,27 +15,31 @@ import {
 } from './calculateColumnWidth'
 import { ColumnHeaderWithTooltip } from '../components/ColumnHeaderWithTooltip'
 import { Tooltip } from '@mui/material'
+import { SmartToyTwoTone } from '@mui/icons-material'
 import type { ComponentType } from 'react'
 import type { DataGridRow } from '../DataGridTypes'
 
 /**
- * Wraps a column cell component to render an MUI Tooltip over the change-indicator
- * triangle when the cell has `__cellChangeInfo` attribution data. The tooltip is
- * attached to a small overlay div positioned over the triangle (top-right corner).
+ * Wraps a column cell component to overlay change-attribution indicators:
+ * - Non-agent changes: invisible 7×7px tooltip trigger over the CSS triangle (top-right).
+ * - Agent changes: robot icon (1em, vertically centered on the right) with no triangle.
  */
 function withChangeIndicatorTooltip(
   OriginalComponent: ComponentType<any>,
   colName: string,
 ): ComponentType<any> {
   function CellWithTooltip(props: any) {
-    const tooltipText = (props.rowData as DataGridRow).__cellChangeInfo?.[
+    const changeInfo = (props.rowData as DataGridRow).__cellChangeInfo?.[
       colName
-    ]?.tooltipText
+    ]
+    const isAgent =
+      changeInfo?.category === 'own-agent' ||
+      changeInfo?.category === 'other-agent'
     return (
       <div style={{ position: 'relative', width: '100%', height: '100%' }}>
         <OriginalComponent {...props} />
-        {tooltipText && (
-          <Tooltip title={tooltipText} placement="top-end">
+        {changeInfo && !isAgent && (
+          <Tooltip title={changeInfo.tooltipText} placement="top-end">
             <div
               style={{
                 position: 'absolute',
@@ -45,6 +49,22 @@ function withChangeIndicatorTooltip(
                 height: 7,
                 zIndex: 21,
                 pointerEvents: 'auto',
+              }}
+            />
+          </Tooltip>
+        )}
+        {isAgent && (
+          <Tooltip title={changeInfo.tooltipText} placement="left">
+            <SmartToyTwoTone
+              sx={{
+                fontSize: '1em',
+                position: 'absolute',
+                top: '50%',
+                right: 4,
+                transform: 'translateY(-50%)',
+                zIndex: 21,
+                pointerEvents: 'auto',
+                display: 'block',
               }}
             />
           </Tooltip>
