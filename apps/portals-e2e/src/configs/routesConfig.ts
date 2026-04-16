@@ -46,7 +46,7 @@ const routesConfig: RouteConfig = {
   },
   namshub: {
     buttons: ['Sign In'],
-    links: [''],
+    links: ['Events'],
   },
   nf: {
     buttons: [
