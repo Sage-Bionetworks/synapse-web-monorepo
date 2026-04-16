@@ -75,6 +75,9 @@ export function RJSFInputLabelWrapper<
           {description && descriptionVariant === 'expand' && expandButton}
         </div>
       )}
+      {!hideLabel && descriptionVariant === 'inline' && description && (
+        <div className="field-description-inline">{description}</div>
+      )}
       {children}
       {!hideLabel && descriptionVariant === 'expand' && (
         <Collapse className="field-description" in={showDetails}>
