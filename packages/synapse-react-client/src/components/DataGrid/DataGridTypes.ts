@@ -1,6 +1,7 @@
 import { ValidationResults } from '@sage-bionetworks/synapse-types'
 import { Model } from 'json-joy/lib/json-crdt'
 import { s } from 'json-joy/lib/json-crdt-patch'
+import type { ReplicaCategory } from './utils/getReplicaCategory'
 
 const gridRowSchema = s.obj({
   data: s.vec(s.con('')),
@@ -61,6 +62,11 @@ export interface QueryInput {
 export type GridModel = ReturnType<typeof Model.create<typeof gridSchema>>
 export type GridModelSnapshot = ReturnType<GridModel['api']['getSnapshot']>
 
+export type CellChangeInfo = {
+  category: ReplicaCategory
+  tooltipText: string
+}
+
 export interface Operation {
   type: 'UPDATE' | 'DELETE' | 'CREATE'
   fromRowIndex: number
@@ -80,4 +86,6 @@ export type DataGridRow = {
   __validationStatus?: 'valid' | 'invalid' | 'pending'
   /** The parsed validation messages for individual columns **/
   __cellValidationResults?: Map<string, string[]>
+  /** Per-cell change attribution, keyed by column name */
+  __cellChangeInfo?: Record<string, CellChangeInfo>
 }
