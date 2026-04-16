@@ -19,13 +19,13 @@ function InstructionsTab() {
             <MarkdownSynapseFromColumnData columnName={'EligibilityRules'} />
           ),
         },
-        {
-          id: 'Conduct Rules',
-          title: 'Conduct Rules',
-          element: (
-            <MarkdownSynapseFromColumnData columnName={'ConductRules'} />
-          ),
-        },
+        // {
+        //   id: 'Conduct Rules',
+        //   title: 'Conduct Rules',
+        //   element: (
+        //     <MarkdownSynapseFromColumnData columnName={'ConductRules'} />
+        //   ),
+        // },
         {
           id: 'Data Conditions For Use',
           title: 'Data Conditions For Use',
