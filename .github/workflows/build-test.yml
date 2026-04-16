@@ -70,18 +70,6 @@ jobs:
         with:
           STORE_NX_CACHE: 'true'
       - run: pnpm nx affected --target=type-check --base=remotes/origin/main
-  storybook:
-    needs: build
-    runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'push' }}
-    steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-        with:
-          fetch-depth: 0
-      - uses: ./.github/actions/pnpm-setup-action
-        with:
-          STORE_NX_CACHE: 'true'
-      - run: pnpm nx run synapse-react-client:storybook:build
   sonarqube-src:
     # For monorepos, create one sonarcloud job per project and specify its directory
     needs: test
