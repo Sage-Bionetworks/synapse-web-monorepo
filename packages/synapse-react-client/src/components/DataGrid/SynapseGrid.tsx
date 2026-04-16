@@ -40,6 +40,7 @@ import { useGetCurrentUserBundle } from '@/synapse-queries'
 import { useListGridReplicas } from '@/synapse-queries/grid/useGridSession'
 import { useGridReplicaUsers } from './hooks/useGridReplicaUsers'
 import { useRemoteSelections } from './hooks/useRemoteSelections'
+import { enrichRowsWithChangeInfo } from './utils/enrichRowsWithChangeInfo'
 import CertificationRequirement from '@/components/AccessRequirementList/RequirementItem/CertificationRequirement'
 import { ValidationAlert } from './components/ValidationAlert'
 
@@ -204,6 +205,18 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
     const rowValues = useMemo(
       () => (modelSnapshot ? modelRowsToGrid(model, modelSnapshot) : []),
       [model, modelSnapshot],
+    )
+
+    // Enrich rows with per-cell change attribution for CSS indicators and tooltips
+    const enrichedRowValues = useMemo(
+      () =>
+        enrichRowsWithChangeInfo(
+          rowValues,
+          model,
+          modelSnapshot,
+          replicaUserMap,
+        ),
+      [rowValues, model, modelSnapshot, replicaUserMap],
     )
 
     const commit = useCallback(() => {
@@ -487,7 +500,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                   <Grid size={12}>
                     <DataGrid
                       gridRef={gridRef}
-                      rowValues={rowValues}
+                      rowValues={enrichedRowValues}
                       columnNames={modelSnapshot?.columnNames ?? []}
                       columnOrder={modelSnapshot?.columnOrder ?? []}
                       schemaPropertiesInfo={schemaPropertiesInfo}
@@ -497,8 +510,6 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                       handleChange={handleChange}
                       handleSelectionChange={handleSelectionChange}
                       onSelectedRowChange={handleSelectedRowChange}
-                      model={model}
-                      replicaUserMap={replicaUserMap}
                       remoteSelections={remoteSelections}
                     />
                   </Grid>
