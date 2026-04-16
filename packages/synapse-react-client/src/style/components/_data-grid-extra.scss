@@ -257,16 +257,8 @@ body.col-resizing {
     @include change-triangle($color-change-self);
   }
 
-  &.cell-changed--own-agent {
-    @include change-triangle($color-change-own-agent);
-  }
-
   &.cell-changed--other-user {
     @include change-triangle($color-change-other-user);
-  }
-
-  &.cell-changed--other-agent {
-    @include change-triangle($color-change-other-agent);
   }
 }
 // ── Remote selection tints ─────────────────────────────────────────────────
