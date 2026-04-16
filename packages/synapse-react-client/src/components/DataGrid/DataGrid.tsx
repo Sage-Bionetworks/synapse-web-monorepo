@@ -15,7 +15,7 @@ import {
   renderRecordSetContextMenu,
   renderViewContextMenu,
 } from './components/contextMenu'
-import { DataGridRow, GridModel, Operation } from './DataGridTypes'
+import { DataGridRow, Operation } from './DataGridTypes'
 import { GRID_ROW_REACT_KEY_PROPERTY } from './utils/DataGridUtils'
 import { getCellClassName } from './utils/getCellClassName'
 import { useColumnResizeHandles } from './hooks/useColumnResizeHandles'
@@ -23,7 +23,6 @@ import {
   calculateDefaultColumnWidth,
   HeaderOptions,
 } from './utils/calculateColumnWidth'
-import type { ReplicaUserInfo } from './hooks/useGridReplicaUsers'
 import type { RemoteSelection } from './hooks/useRemoteSelections'
 
 type DataGridProps = {
@@ -41,8 +40,6 @@ type DataGridProps = {
     rowIndex: number | null,
     row: DataGridRow | null,
   ) => void
-  model?: GridModel | null
-  replicaUserMap?: ReadonlyMap<number, ReplicaUserInfo>
   remoteSelections?: readonly RemoteSelection[]
 }
 
@@ -64,8 +61,6 @@ export default function DataGrid(props: DataGridProps) {
     handleChange,
     handleSelectionChange,
     onSelectedRowChange,
-    model,
-    replicaUserMap,
     remoteSelections,
   } = props
 
@@ -200,21 +195,10 @@ export default function DataGrid(props: DataGridProps) {
         selectedRowIndex,
         lastSelection,
         colValues,
-        columnNames,
-        model,
-        replicaUserMap,
         remoteSelections,
       })
     },
-    [
-      selectedRowIndex,
-      lastSelection,
-      colValues,
-      columnNames,
-      model,
-      replicaUserMap,
-      remoteSelections,
-    ],
+    [selectedRowIndex, lastSelection, colValues, remoteSelections],
   )
 
   // Wrap duplicateRow in useCallback
