@@ -1,4 +1,4 @@
-name: 'Deploy NAM Hub portal'
+name: 'Deploy NAMs Hub portal'
 
 on:
   push:
