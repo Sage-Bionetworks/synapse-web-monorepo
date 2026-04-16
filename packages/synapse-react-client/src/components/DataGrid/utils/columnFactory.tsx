@@ -2,6 +2,8 @@ import { dateTimeColumn } from '@/components/DataGrid/columns/DateTimeColumn'
 import { EnumeratedValue } from '@/utils/jsonschema/getEnumeratedValues'
 import { FlatTypeInfo } from '@/utils/jsonschema/getType'
 import {
+  CellComponent,
+  CellProps,
   Column,
   createTextColumn,
   floatColumn,
@@ -16,7 +18,6 @@ import {
 import { ColumnHeaderWithTooltip } from '../components/ColumnHeaderWithTooltip'
 import { Tooltip } from '@mui/material'
 import { SmartToyTwoTone } from '@mui/icons-material'
-import type { ComponentType } from 'react'
 import type { DataGridRow } from '../DataGridTypes'
 
 /**
@@ -24,11 +25,11 @@ import type { DataGridRow } from '../DataGridTypes'
  * - Non-agent changes: invisible 7×7px tooltip trigger over the CSS triangle (top-right).
  * - Agent changes: robot icon (1em, vertically centered on the right) with no triangle.
  */
-function withChangeIndicatorTooltip(
-  OriginalComponent: ComponentType<any>,
+function withChangeIndicatorTooltip<T, C>(
+  OriginalComponent: CellComponent<T, C>,
   colName: string,
-): ComponentType<any> {
-  function CellWithTooltip(props: any) {
+): CellComponent<T, C> {
+  function CellWithTooltip(props: CellProps<T, C>) {
     const changeInfo = (props.rowData as DataGridRow).__cellChangeInfo?.[
       colName
     ]
@@ -127,7 +128,7 @@ function createBaseColumn(config: ColumnConfig, columnImpl: any) {
   const keyed = keyColumn(config.columnName, columnImpl)
   return {
     ...keyed,
-    component: withChangeIndicatorTooltip(keyed.component, config.columnName),
+    component: withChangeIndicatorTooltip(keyed.component!, config.columnName),
     title: (
       <ColumnHeaderWithTooltip
         name={config.columnName}
