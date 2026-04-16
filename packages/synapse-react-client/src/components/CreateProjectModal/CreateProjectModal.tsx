@@ -5,6 +5,7 @@ import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { Alert, Stack } from '@mui/material'
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import { KeyboardEvent, useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
 import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
 import TextField from '../TextField/TextField'
@@ -31,25 +32,14 @@ export function CreateProjectModal({
     useState<ProjectVisibility>('DISCOVERABLE')
   const [isShowingSuccessAlert, setIsShowingSuccessAlert] =
     useState<boolean>(false)
-  const [errorMessage, setErrorMessage] = useState<string>()
-  const [aclErrorMessage, setAclErrorMessage] = useState<string>()
 
   const { data: realmPrincipals } = useGetRealmPrincipals()
   const publicGroupId = realmPrincipals?.publicGroup
   const authenticatedUsersId = realmPrincipals?.authenticatedUsers
 
-  const hide = () => {
-    setProjectName('')
-    setDescription('')
-    setVisibility('DISCOVERABLE')
-    setErrorMessage(undefined)
-    setAclErrorMessage(undefined)
-    onClose()
-  }
-
-  const applyVisibilityAcl = async (projectId: string): Promise<boolean> => {
+  const applyVisibilityAcl = async (projectId: string): Promise<void> => {
     if (visibility === 'PRIVATE') {
-      return true
+      return
     }
     try {
       const currentAcl = await SynapseClient.getEntityACL(
@@ -114,29 +104,27 @@ export function CreateProjectModal({
         { ...currentAcl, resourceAccess: newResourceAccess },
         accessToken,
       )
-      return true
     } catch (e) {
       const err = e as SynapseClientError
-      setAclErrorMessage(
+      throw new Error(
         `Project was created, but visibility could not be set: ${
           err.reason ?? err.message
         }`,
       )
-      return false
     }
   }
 
-  const onCreateProject = async () => {
-    try {
+  const createProjectMutation = useMutation({
+    mutationFn: async () => {
       const newProject = await SynapseClient.createProject(
         projectName,
         description,
         accessToken,
       )
-      const aclSuccess = await applyVisibilityAcl(newProject.id!)
-      if (!aclSuccess) {
-        return
-      }
+      await applyVisibilityAcl(newProject.id!)
+      return newProject
+    },
+    onSuccess: newProject => {
       setIsShowingSuccessAlert(true)
       hide()
       const href = `/Synapse:${newProject.id}`
@@ -145,11 +133,21 @@ export function CreateProjectModal({
       } else {
         window.location.href = href
       }
-    } catch (e) {
-      const err = e as SynapseClientError
-      setErrorMessage(err.reason ?? err.message)
-    }
+    },
+  })
+
+  const hide = () => {
+    setProjectName('')
+    setDescription('')
+    setVisibility('DISCOVERABLE')
+    createProjectMutation.reset()
+    onClose()
   }
+
+  const errorMessage = createProjectMutation.error
+    ? (createProjectMutation.error as SynapseClientError).reason ??
+      createProjectMutation.error.message
+    : undefined
 
   const dialogContent = (
     <Stack gap={2}>
@@ -167,7 +165,7 @@ export function CreateProjectModal({
           onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => {
             if (event.key === 'Enter') {
               if (projectName !== '') {
-                void onCreateProject()
+                createProjectMutation.mutate()
               }
             }
           },
@@ -192,10 +190,9 @@ export function CreateProjectModal({
         onChange={setVisibility}
       />
       {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-      {aclErrorMessage && <Alert severity="error">{aclErrorMessage}</Alert>}
       <Alert severity="warning">
-        You can change visibility later in Project Tools and also at a
-        granular/file level
+        You can update project visibility at any time in Project Tools, or
+        manage access at a more granular level for individual files and folders.
       </Alert>
     </Stack>
   )
@@ -206,9 +203,13 @@ export function CreateProjectModal({
         open={isShowingModal}
         title="Create a new Project"
         content={dialogContent}
-        confirmButtonProps={{ children: 'Save' }}
+        confirmButtonProps={{
+          children: 'Save',
+          disabled: createProjectMutation.isPending,
+          loading: createProjectMutation.isPending,
+        }}
         onConfirm={() => {
-          void onCreateProject()
+          createProjectMutation.mutate()
         }}
         onCancel={hide}
         maxWidth="sm"

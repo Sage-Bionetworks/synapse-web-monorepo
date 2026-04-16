@@ -11,7 +11,6 @@ import { SynapseContextType } from '@/utils/context/SynapseContext'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
-import { MockedFunction } from 'vitest'
 import { CANCEL_BUTTON_TEXT } from '../ConfirmationDialog/ConfirmationDialog'
 import { CLOSE_BUTTON_LABEL } from '../DialogBase'
 import {
@@ -137,9 +136,11 @@ describe('CreateProjectModal tests', () => {
   })
 
   describe('ACL visibility', () => {
-    let mockGetEntityACL: MockedFunction<typeof SynapseClient.getEntityACL>
-    let mockUpdateEntityACL: MockedFunction<
-      typeof SynapseClient.updateEntityACL
+    let mockGetEntityACL: ReturnType<
+      typeof vi.mocked<typeof SynapseClient.getEntityACL>
+    >
+    let mockUpdateEntityACL: ReturnType<
+      typeof vi.mocked<typeof SynapseClient.updateEntityACL>
     >
 
     beforeEach(() => {
