@@ -13,15 +13,16 @@ jobs:
     name: scan-synapse-react-client
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           # Disabling shallow clones is recommended for improving the relevancy of reporting
           fetch-depth: 0
       - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v6
+        uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602 # v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         with:
           projectBaseDir: packages/synapse-react-client
           args: |
-            '-Dsonar.pullrequest.key=${{ github.event.pull_request.number }}'
+            '-Dsonar.pullrequest.key=${{ env.PR_NUMBER }}'

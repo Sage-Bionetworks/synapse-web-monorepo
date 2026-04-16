@@ -33,11 +33,11 @@ jobs:
           ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@v4
+        uses: nrwl/nx-set-shas@3e9ad7370203c1e93d109be57f3b72eb0eb511b1 # v4
 
       - uses: ./.github/actions/pnpm-setup-action
         with:
@@ -80,7 +80,7 @@ jobs:
           PORTAL: ${{ matrix.PORTAL }}
 
       - name: Upload blob report to GitHub Actions Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: ${{ always() }}
         with:
           name: ${{ env.PW_ALL_BLOBS_DIR }}${{ matrix.PORTAL }}
@@ -93,12 +93,12 @@ jobs:
     needs: [e2e-tests]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
       - name: Download blob reports from GitHub Actions Artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           pattern: ${{ env.PW_ALL_BLOBS_DIR }}*
           path: ${{ env.PORTALS_E2E_SUBDIR }}/${{ env.PW_ALL_BLOBS_DIR }}
@@ -118,7 +118,7 @@ jobs:
             pnpm exec playwright merge-reports --reporter html ./"${{ env.PW_ALL_BLOBS_DIR }}"
           fi
       - name: Upload HTML report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: html-report--attempt-${{ github.run_attempt }}
           path: '${{ env.PORTALS_E2E_SUBDIR }}/playwright-report'

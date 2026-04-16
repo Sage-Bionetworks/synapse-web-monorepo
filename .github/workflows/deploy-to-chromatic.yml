@@ -1,42 +1,35 @@
 name: 'Deploy Storybook to Chromatic'
 
-env:
-  NODE_OPTIONS: '--max-old-space-size=4096'
-
 on:
-  push:
-    branches:
-      - main
-  pull_request_target:
-    types: [labeled]
-    branches:
-      - main
+  workflow_run:
+    workflows: ['Build Storybook for Chromatic']
+    types: [completed]
+
+permissions:
+  actions: read # needed to download artifacts from the triggering workflow run
+  contents: read
 
 jobs:
   deploy-to-chromatic:
     name: Deploy to Chromatic
     runs-on: ubuntu-latest
+    # Only proceed if the upstream build workflow succeeded
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
-      - name: Check PR label
-        if: ${{ (github.event_name == 'pull_request' || github.event_name == 'pull_request_target') && github.event.label.name != 'chromatic' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # The following script will cancel the rest of the job
-        run: |
-          gh run cancel ${{ github.run_id }}
-          gh run watch ${{ github.run_id }}
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
-          repository: ${{github.event.pull_request.head.repo.full_name}}
+          ref: ${{ github.event.workflow_run.head_sha }}
           # Chromatic requires full git history to track changes
           fetch-depth: 0
-      - uses: ./.github/actions/pnpm-setup-action
-      - name: Prebuild dependencies
-        # we technically only need to build the dependencies of SRC, but Nx doesn't expose an easy way to do that
-        run: pnpm nx run synapse-react-client:build
+      - name: Download Storybook artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: storybook-static
+          path: packages/synapse-react-client/storybook-static
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
       - name: Publish to Chromatic
-        uses: chromaui/action@v11
+        uses: chromaui/action@1cfa065cbdab28f6ca3afaeb3d761383076a35aa # v11
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           workingDir: packages/synapse-react-client
@@ -44,4 +37,4 @@ jobs:
           exitOnceUploaded: true
           autoAcceptChanges: 'main'
           onlyChanged: true
-          buildScriptName: 'storybook:build'
+          storybookBuildDir: storybook-static
