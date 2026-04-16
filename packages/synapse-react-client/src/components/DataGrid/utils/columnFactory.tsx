@@ -14,6 +14,47 @@ import {
   HeaderOptions,
 } from './calculateColumnWidth'
 import { ColumnHeaderWithTooltip } from '../components/ColumnHeaderWithTooltip'
+import { Tooltip } from '@mui/material'
+import type { ComponentType } from 'react'
+import type { DataGridRow } from '../DataGridTypes'
+
+/**
+ * Wraps a column cell component to render an MUI Tooltip over the change-indicator
+ * triangle when the cell has `__cellChangeInfo` attribution data. The tooltip is
+ * attached to a small overlay div positioned over the triangle (top-right corner).
+ */
+function withChangeIndicatorTooltip(
+  OriginalComponent: ComponentType<any>,
+  colName: string,
+): ComponentType<any> {
+  function CellWithTooltip(props: any) {
+    const tooltipText = (props.rowData as DataGridRow).__cellChangeInfo?.[
+      colName
+    ]?.tooltipText
+    return (
+      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+        <OriginalComponent {...props} />
+        {tooltipText && (
+          <Tooltip title={tooltipText} placement="top-end">
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                width: 7,
+                height: 7,
+                zIndex: 21,
+                pointerEvents: 'auto',
+              }}
+            />
+          </Tooltip>
+        )}
+      </div>
+    )
+  }
+  CellWithTooltip.displayName = `CellWithTooltip(${colName})`
+  return CellWithTooltip
+}
 
 type ColumnConfig = {
   columnName: string
@@ -63,8 +104,10 @@ function createBaseColumn(config: ColumnConfig, columnImpl: any) {
       headerOptions,
     )
 
+  const keyed = keyColumn(config.columnName, columnImpl)
   return {
-    ...keyColumn(config.columnName, columnImpl),
+    ...keyed,
+    component: withChangeIndicatorTooltip(keyed.component, config.columnName),
     title: (
       <ColumnHeaderWithTooltip
         name={config.columnName}
