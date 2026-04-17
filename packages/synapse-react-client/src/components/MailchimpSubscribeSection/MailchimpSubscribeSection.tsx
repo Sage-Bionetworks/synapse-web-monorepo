@@ -77,7 +77,7 @@ function MailchimpForm({ subscribe, status, message }: MailchimpFormProps) {
       {status === 'success' && (
         <Typography
           variant="caption"
-          color="success.main"
+          sx={{ color: 'success.main' }}
           className={styles.statusMessage}
         >
           {message}
