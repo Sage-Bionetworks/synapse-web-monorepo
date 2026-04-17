@@ -3,7 +3,7 @@ import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/c
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic/index'
-import NoContentAvailable from 'synapse-react-client/components/SynapseTable/NoContentAvailable'
+// import NoContentAvailable from 'synapse-react-client/components/SynapseTable/NoContentAvailable'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
 function OverviewTab() {
