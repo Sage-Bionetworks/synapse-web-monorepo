@@ -4,9 +4,11 @@ import { variablesSql } from '../resources'
 const variablesPlotNavProps: QueryWrapperPlotNavProps = {
   sql: variablesSql,
   //   name: 'Variables',
+  fileIdColumnName: 'id',
   tableConfiguration: {
-    showAccessColumn: false,
+    showAccessColumn: true,
     showDownloadColumn: false,
+    hideAddToDownloadListColumn: true,
   },
 }
 
