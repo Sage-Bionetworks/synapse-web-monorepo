@@ -37,7 +37,7 @@ function withChangeIndicatorTooltip<T, C>(
       changeInfo?.category === 'own-agent' ||
       changeInfo?.category === 'other-agent'
     return (
-      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <>
         <OriginalComponent {...props} />
         {changeInfo && !isAgent && (
           <Tooltip title={changeInfo.tooltipText} placement="top-end">
@@ -54,23 +54,22 @@ function withChangeIndicatorTooltip<T, C>(
             />
           </Tooltip>
         )}
-        {isAgent && (
+        {isAgent && !props.focus && (
           <Tooltip title={changeInfo.tooltipText} placement="left">
             <SmartToyTwoTone
               sx={{
                 fontSize: '1em',
-                position: 'absolute',
-                top: '50%',
-                right: 4,
-                transform: 'translateY(-50%)',
+                alignSelf: 'center',
+                flexShrink: 0,
+                mr: 0.5,
                 zIndex: 21,
                 pointerEvents: 'auto',
-                display: 'block',
+                backgroundColor: 'transparent',
               }}
             />
           </Tooltip>
         )}
-      </div>
+      </>
     )
   }
   CellWithTooltip.displayName = `CellWithTooltip(${colName})`
