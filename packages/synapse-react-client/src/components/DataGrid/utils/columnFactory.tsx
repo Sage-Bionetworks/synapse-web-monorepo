@@ -64,6 +64,7 @@ function withChangeIndicatorTooltip<T, C>(
                 mr: 0.5,
                 zIndex: 21,
                 pointerEvents: 'auto',
+                color: 'grey.400',
                 backgroundColor: 'transparent',
               }}
             />
