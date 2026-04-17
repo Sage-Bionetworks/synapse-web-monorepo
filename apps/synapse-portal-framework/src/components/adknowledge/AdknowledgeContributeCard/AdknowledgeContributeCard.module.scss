@@ -7,14 +7,12 @@
   background: #fff;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
   padding: 20px;
-  margin: 16px;
   align-items: center;
   text-align: center;
   gap: 41px;
 
   @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
     padding: 40px;
-    margin: 40px 80px;
   }
 }
 
