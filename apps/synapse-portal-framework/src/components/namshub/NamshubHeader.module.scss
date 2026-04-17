@@ -1,14 +1,33 @@
 @use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
 @use 'sass:map';
 
-.headerContainer {
+.eventSection {
+  color: var(--synapse-gray-1000);
+  padding-bottom: 65px;
+
+  :global(h2.title) {
+    text-transform: none;
+    font-size: 24px;
+  }
+
+  :global(.Feed .FeedItems .FeedItem) {
+    border: none;
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.03), 0 3px 3px 0 rgba(0, 0, 0, 0.03),
+      0 9px 9px 0 rgba(0, 0, 0, 0.03);
+  }
+}
+
+.topSectionContainer {
   display: grid;
   grid-template-columns: 100%;
-  background: linear-gradient(90deg, #f6fcff 11.06%, #dceff9 100%);
 
   @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
     grid-template-columns: 50% 50%;
   }
+}
+
+.headerContainer {
+  background: linear-gradient(90deg, #f6fcff 11.06%, #dceff9 100%);
 }
 
 .headerTextContainer {

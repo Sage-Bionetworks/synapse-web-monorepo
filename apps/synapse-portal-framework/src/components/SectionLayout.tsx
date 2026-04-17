@@ -7,14 +7,23 @@ import { HelpPopover } from 'synapse-react-client/components/HelpPopover/HelpPop
 type SectionLayoutProps = PropsWithChildren<{
   ContainerProps?: ContainerProps
   title?: string
+  /** JSX override for rendering. 'title' (string) is still required for hash-based scroll */
+  titleNode?: React.ReactNode
   centerTitle?: boolean
   subtitle?: string
   helpText?: string
 }>
 
 export function SectionLayout(props: SectionLayoutProps) {
-  const { ContainerProps, title, centerTitle, subtitle, helpText, children } =
-    props
+  const {
+    ContainerProps,
+    title,
+    titleNode,
+    centerTitle,
+    subtitle,
+    helpText,
+    children,
+  } = props
   const { hash, pathname } = useLocation()
 
   const scrollToRef = useRef(null)
@@ -49,7 +58,7 @@ export function SectionLayout(props: SectionLayoutProps) {
       {scrollToJsx}
       {title && (
         <h2 className={`title ${centerTitle ? 'center-title' : ''}`}>
-          {title}
+          {titleNode ?? title}
           {helpText && (
             <Box sx={{ fontSize: '14px', display: 'inline-block', ml: '5px' }}>
               <HelpPopover markdownText={helpText} />
