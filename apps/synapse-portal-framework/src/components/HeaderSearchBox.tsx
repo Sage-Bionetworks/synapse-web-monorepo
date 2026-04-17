@@ -15,7 +15,8 @@ import {
 import React from 'react'
 import PortalFullTextSearchField from './PortalSearch/PortalFullTextSearchField'
 import { useNavigate } from 'react-router'
-import styles from './HeaderSearchBox.module.scss'
+import defaultStyles from './HeaderSearchBox.module.scss'
+import v2Styles from './HeaderSearchBoxV2.module.scss'
 import { KeyboardArrowDown } from '@mui/icons-material'
 import { useState } from 'react'
 import {
@@ -34,6 +35,7 @@ type HeaderSearchBoxProps = {
   callback?: (searchString: string) => void // call back this function with the search term
   sx?: SxProps
   roles?: { value: string; label: string }[]
+  variant?: 'default' | 'v2'
 }
 
 const HeaderSearchBox = ({
@@ -43,7 +45,9 @@ const HeaderSearchBox = ({
   callback,
   sx,
   roles,
+  variant = 'default',
 }: HeaderSearchBoxProps): React.ReactNode => {
+  const styles = { ...defaultStyles, ...(variant === 'v2' ? v2Styles : {}) }
   const [role, setRole] = useState('')
   const [mode, setMode] = useState<'Chat' | 'Search'>('Search')
   const theme = useTheme()
@@ -142,24 +146,36 @@ const HeaderSearchBox = ({
           />
         </Box>
         <Stack className={styles.exampleSearchesSection}>
-          <Typography className={styles.exampleSearchesLabel}>
-            Example searches
-          </Typography>
+          {variant === 'default' && (
+            <Typography className={styles.exampleSearchesLabel}>
+              Example searches
+            </Typography>
+          )}
           <Box className={styles.exampleTermsContainer}>
             {searchExampleTerms &&
               searchExampleTerms.map(term => (
                 <Button
                   key={term}
-                  variant="contained"
+                  variant={variant === 'default' ? 'contained' : 'outlined'}
                   onClick={() => handleTermClick(term)}
                   className={styles.exampleTermButton}
-                  sx={{
-                    borderColor: lighten(theme.palette.primary.main, 0.9),
-                    backgroundColor: lighten(theme.palette.primary.main, 0.8),
-                    '&:hover': {
-                      background: lighten(theme.palette.primary.main, 0.7),
-                    },
-                  }}
+                  sx={
+                    variant === 'default'
+                      ? {
+                          borderColor: lighten(theme.palette.primary.main, 0.9),
+                          backgroundColor: lighten(
+                            theme.palette.primary.main,
+                            0.8,
+                          ),
+                          '&:hover': {
+                            background: lighten(
+                              theme.palette.primary.main,
+                              0.7,
+                            ),
+                          },
+                        }
+                      : undefined
+                  }
                 >
                   <Typography className={styles.exampleTermLabel}>
                     {term}
