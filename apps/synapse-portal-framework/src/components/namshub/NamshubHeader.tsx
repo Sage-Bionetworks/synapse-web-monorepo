@@ -1,6 +1,6 @@
 // import { usePortalContext } from '@/components/PortalContext'
 import styles from './NamshubHeader.module.scss'
-import { Stack } from '@mui/material'
+import { Link, Stack } from '@mui/material'
 import { ReactComponent as HeaderImage } from './assets/namshub-header-background.svg'
 import { RssFeedCards } from 'synapse-react-client'
 import { SectionLayout } from '../SectionLayout'
@@ -15,8 +15,16 @@ function NamshubHomePageHeader() {
     <>
       Explore datasets, models, and more shared on the <b>N</b>ew <b>A</b>
       pproach <b>M</b>ethodologies Hub.
-      <br /> <br /> Learn more about the NIH Complement Animal Research In
-      Experimentation (Complement-ARIE) program.
+      <br /> <br />{' '}
+      <Link
+        href="https://commonfund.nih.gov/complementarie"
+        target="_blank"
+        rel="noreferrer"
+      >
+        Learn more
+      </Link>{' '}
+      about the NIH Complement Animal Research In Experimentation
+      (Complement-ARIE) program.
     </>
   )
 
