@@ -11,7 +11,6 @@ export function getCellClassName(params: {
   selectedRowIndex: number | null
   lastSelection?: SelectionWithId | null
   colValues?: Column[]
-  /** Remote replica selection ranges to visualise as tinted backgrounds. */
   remoteSelections?: readonly RemoteSelection[]
 }): string | undefined {
   const {
@@ -54,12 +53,21 @@ export function getCellClassName(params: {
     classList.push('cell-invalid')
   }
 
+  // ── Cell change indicator ─────────────────────────────────────────────────
+  const cellChangeInfo = columnId
+    ? rowData.__cellChangeInfo?.[columnId]
+    : undefined
+  if (cellChangeInfo) {
+    classList.push(`cell-changed--${cellChangeInfo.category}`)
+  }
+
   // ── Remote selection tint ─────────────────────────────────────────────────
   if (remoteSelections && columnId) {
     for (const remote of remoteSelections) {
-      const { minRow, maxRow, columnNames } = remote.range
+      const { minRow, maxRow, columnNames: remoteColumnNames } = remote.range
       if (rowIndex < minRow || rowIndex > maxRow) continue
-      if (columnNames !== undefined && !columnNames.has(columnId)) continue
+      if (remoteColumnNames !== undefined && !remoteColumnNames.has(columnId))
+        continue
       classList.push('cell-remote-selected')
       classList.push(`cell-remote-selected--color-${remote.colorIndex}`)
       break // apply the first matching remote selection only

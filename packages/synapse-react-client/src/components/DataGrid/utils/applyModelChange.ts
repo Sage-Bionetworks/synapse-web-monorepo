@@ -5,6 +5,7 @@ import {
 } from '@/components/DataGrid/DataGridTypes'
 import { SchemaPropertiesMap } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import { s } from 'json-joy/lib/json-crdt-patch'
+import isEqual from 'lodash-es/isEqual'
 
 /**
  * Represents a change operation on the GridModel.
@@ -73,10 +74,14 @@ export function applyModelChange(
       break
 
     case 'UPDATE': {
+      const currentRowData = model.api.getSnapshot().rows[change.rowIndex]?.data
       Object.entries(change.updatedData).forEach(([key, value]) => {
         if (key.startsWith('_')) return // Skip internal properties like _rowId
         const colIndex = columnNames.indexOf(key)
         if (colIndex !== -1) {
+          // Only write cells whose value actually changed to avoid stamping
+          // the local replica's SID on unmodified cells.
+          if (isEqual(currentRowData?.[colIndex], value)) return
           // Get the CRDT array of cell values for this row
           const rowVec = model.api.vec([
             'rows',

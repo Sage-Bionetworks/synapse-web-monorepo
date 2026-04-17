@@ -301,4 +301,95 @@ describe('getCellClassName', () => {
       expect(result).toBe('cell-selected')
     })
   })
+
+  describe('cell change indicator', () => {
+    it('appends the cell-changed--{category} class when __cellChangeInfo is present', () => {
+      const rowData: DataGridRow = {
+        __cellChangeInfo: {
+          c0: { category: 'self', tooltipText: 'You changed this' },
+        },
+      }
+      const result = getCellClassName({
+        rowData,
+        rowIndex: 0,
+        columnId: 'c0',
+        selectedRowIndex: null,
+      })
+      expect(result).toBe('cell-changed--self')
+    })
+
+    it('uses the correct category string for other-user', () => {
+      const rowData: DataGridRow = {
+        __cellChangeInfo: {
+          c1: { category: 'other-user', tooltipText: 'Changed by Alice' },
+        },
+      }
+      const result = getCellClassName({
+        rowData,
+        rowIndex: 0,
+        columnId: 'c1',
+        selectedRowIndex: null,
+      })
+      expect(result).toBe('cell-changed--other-user')
+    })
+
+    it('adds no cell-changed class when __cellChangeInfo has no entry for the column', () => {
+      const rowData: DataGridRow = {
+        __cellChangeInfo: {
+          c1: { category: 'self', tooltipText: 'You changed this' },
+        },
+      }
+      const result = getCellClassName({
+        rowData,
+        rowIndex: 0,
+        columnId: 'c0',
+        selectedRowIndex: null,
+      })
+      expect(result).toBeUndefined()
+    })
+
+    it('adds no cell-changed class when __cellChangeInfo is absent', () => {
+      const result = getCellClassName({
+        rowData: createMockRowData(),
+        rowIndex: 0,
+        columnId: 'c0',
+        selectedRowIndex: null,
+      })
+      expect(result).toBeUndefined()
+    })
+
+    it('adds no cell-changed class when columnId is undefined', () => {
+      const rowData: DataGridRow = {
+        __cellChangeInfo: {
+          c0: { category: 'self', tooltipText: 'You changed this' },
+        },
+      }
+      const result = getCellClassName({
+        rowData,
+        rowIndex: 0,
+        columnId: undefined,
+        selectedRowIndex: null,
+      })
+      expect(result).toBeUndefined()
+    })
+
+    it('combines cell-row-selected, cell-invalid, and cell-changed--other-user when all three apply', () => {
+      const validationResults = new Map([['c0', ['Required field']]])
+      const rowData: DataGridRow = {
+        __cellValidationResults: validationResults,
+        __cellChangeInfo: {
+          c0: { category: 'other-user', tooltipText: 'Changed by Alice' },
+        },
+      }
+      const result = getCellClassName({
+        rowData,
+        rowIndex: 0,
+        columnId: 'c0',
+        selectedRowIndex: 0,
+      })
+      expect(result).toBe(
+        'cell-row-selected cell-invalid cell-changed--other-user',
+      )
+    })
+  })
 })
