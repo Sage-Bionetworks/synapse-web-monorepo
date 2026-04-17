@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import {
   Box,
   Button,
@@ -26,14 +26,29 @@ type MailchimpFormProps = FormHooks<EmailFormFields>
 function MailchimpForm({ subscribe, status, message }: MailchimpFormProps) {
   const emailRef = useRef<HTMLInputElement>(null)
 
+  useEffect(() => {
+    if (status === 'success' && emailRef.current) {
+      emailRef.current.value = ''
+    }
+  }, [status])
+
   return (
-    <div className={styles.formWrapper}>
+    <form
+      className={styles.formWrapper}
+      onSubmit={e => {
+        e.preventDefault()
+        if (emailRef.current) {
+          subscribe({ EMAIL: emailRef.current.value })
+        }
+      }}
+    >
       <div className={styles.formRow}>
         <TextField
           inputRef={emailRef}
           placeholder="Your email"
           type="email"
           size="small"
+          required
           inputProps={{ 'aria-label': 'Email address' }}
           className={styles.emailInput}
           slotProps={{
@@ -47,13 +62,9 @@ function MailchimpForm({ subscribe, status, message }: MailchimpFormProps) {
           }}
         />
         <Button
+          type="submit"
           variant="contained"
           disableElevation
-          onClick={() => {
-            if (emailRef.current) {
-              subscribe({ EMAIL: emailRef.current.value })
-            }
-          }}
           disabled={status === 'sending'}
           className={styles.submitButton}
         >
@@ -83,7 +94,7 @@ function MailchimpForm({ subscribe, status, message }: MailchimpFormProps) {
           {message}
         </Typography>
       )}
-    </div>
+    </form>
   )
 }
 
