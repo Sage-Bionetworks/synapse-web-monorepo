@@ -27,19 +27,7 @@ describe('getCreateGridRequestForMetadataTask', () => {
   })
 
   describe('FileBasedMetadataTaskProperties', () => {
-    it('sets ownerPrincipalId when task has assignee', () => {
-      const task = {
-        assigneePrincipalId: '456',
-        taskProperties: { concreteType: FILE_BASED, fileViewId: 'syn123' },
-      } as unknown as CurationTask
-      expect(getCreateGridRequestForMetadataTask(task)).toEqual({
-        concreteType: GRID_REQUEST_CONCRETE_TYPE,
-        initialQuery: { sql: 'SELECT * FROM syn123' },
-        ownerPrincipalId: '456',
-      })
-    })
-
-    it('leaves ownerPrincipalId undefined when assigneePrincipalId is undefined', () => {
+    it('returns correct CreateGridRequest', () => {
       const task = {
         taskProperties: { concreteType: FILE_BASED, fileViewId: 'syn123' },
       } as unknown as CurationTask
@@ -50,44 +38,19 @@ describe('getCreateGridRequestForMetadataTask', () => {
       })
     })
 
-    it('leaves ownerPrincipalId undefined when assigneePrincipalId is "0"', () => {
-      const task = {
-        assigneePrincipalId: '0',
-        taskProperties: { concreteType: FILE_BASED, fileViewId: 'syn123' },
-      } as unknown as CurationTask
-      expect(
-        getCreateGridRequestForMetadataTask(task).ownerPrincipalId,
-      ).toBeUndefined()
-    })
-  })
-
-  describe('RecordBasedMetadataTaskProperties', () => {
-    it('returns correct CreateGridRequest without assignee', () => {
-      const task = {
-        taskProperties: {
-          concreteType: RECORD_BASED,
+    describe('RecordBasedMetadataTaskProperties', () => {
+      it('returns correct CreateGridRequest', () => {
+        const task = {
+          taskProperties: {
+            concreteType: RECORD_BASED,
+            recordSetId: 'syn456',
+          },
+        } as unknown as CurationTask
+        expect(getCreateGridRequestForMetadataTask(task)).toEqual({
+          concreteType: GRID_REQUEST_CONCRETE_TYPE,
           recordSetId: 'syn456',
-        },
-      } as unknown as CurationTask
-      expect(getCreateGridRequestForMetadataTask(task)).toEqual({
-        concreteType: GRID_REQUEST_CONCRETE_TYPE,
-        recordSetId: 'syn456',
-        ownerPrincipalId: undefined,
-      })
-    })
-
-    it('sets ownerPrincipalId when task has assignee', () => {
-      const task = {
-        assigneePrincipalId: '789',
-        taskProperties: {
-          concreteType: RECORD_BASED,
-          recordSetId: 'syn456',
-        },
-      } as unknown as CurationTask
-      expect(getCreateGridRequestForMetadataTask(task)).toEqual({
-        concreteType: GRID_REQUEST_CONCRETE_TYPE,
-        recordSetId: 'syn456',
-        ownerPrincipalId: '789',
+          ownerPrincipalId: undefined,
+        })
       })
     })
   })
