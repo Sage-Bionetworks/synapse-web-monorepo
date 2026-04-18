@@ -4,7 +4,7 @@ import styles from './ColoredBulletListItem.module.scss'
 export type ColoredBulletListItemProps = {
   bulletColor: string
   mainText: string
-  subText: string
+  subText?: string
 }
 
 function ColoredBulletListItem(props: ColoredBulletListItemProps) {
@@ -19,9 +19,11 @@ function ColoredBulletListItem(props: ColoredBulletListItemProps) {
       <Typography variant="headline1" className={styles.mainText}>
         {mainText}
       </Typography>
-      <Typography variant="body1" className={styles.subText}>
-        {subText}
-      </Typography>
+      {subText && (
+        <Typography variant="body1" className={styles.subText}>
+          {subText}
+        </Typography>
+      )}
     </div>
   )
 }
