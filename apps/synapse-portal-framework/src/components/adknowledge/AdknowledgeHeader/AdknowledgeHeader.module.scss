@@ -1,0 +1,69 @@
+@use 'sass:map';
+@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+
+header {
+  background: url('../assets/brain-bg-transparent.svg') white center 10% / 90%
+    90% no-repeat;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    background: url('../assets/brain-bg-transparent.svg') white center 10% / 40%
+      70% no-repeat;
+  }
+}
+
+.adknowledgeHeaderStack {
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.adknowledgeHeaderTextBox {
+  margin: 0;
+  color: #ffff;
+  text-align: center;
+  max-width: 650px;
+}
+
+.adknowledgeHeaderHeadline {
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  line-height: 45px;
+  background: var(
+    --Logo-Gradient,
+    linear-gradient(
+      180deg,
+      #443471 -18.56%,
+      #5a488f 2.03%,
+      #8f65a4 101.68%,
+      #d46e7b 139.57%
+    )
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    font-size: 48px;
+    line-height: 54px;
+  }
+}
+
+.adknowledgeHeaderTypeAnimation {
+  color: #b5d3ce;
+}
+
+.adknowledgeHeaderSubtitle {
+  line-height: 144%;
+  color: var(--synapse-gray-800);
+}
+
+.adknowledgeHeaderContentBox {
+  margin: 0;
+  flex: 1;
+  padding: 40px;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    padding: 40px 80px;
+  }
+}

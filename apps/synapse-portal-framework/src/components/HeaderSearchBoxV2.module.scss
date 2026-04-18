@@ -1,0 +1,53 @@
+@use 'sass:map';
+@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+
+// Only overrides from HeaderSearchBox.module.scss are defined here.
+
+.root {
+  width: 100%;
+  padding: 8px 24px;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    display: flex;
+    justify-content: center;
+    width: 544px;
+  }
+}
+
+.stack {
+  gap: 30px;
+  border-radius: 6px;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    min-width: 660px;
+  }
+}
+
+.exampleTermsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.searchField {
+  border-radius: 100px;
+  border: 1px solid #e4e4e4;
+  background: #fff;
+  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.05), 0 1px 1px 0 rgba(0, 0, 0, 0.05);
+
+  :global(.MuiInputBase-root) {
+    border: 1px solid #e4e4e4;
+    border-radius: 100px;
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.05), 0 1px 1px 0 rgba(0, 0, 0, 0.05);
+  }
+
+  :global(.MuiInputBase-input)::placeholder {
+    opacity: 1;
+  }
+}
+
+.exampleTermButton {
+  padding: 9px 24px;
+  border-radius: 48px;
+  border: 1px solid rgba(143, 101, 164, 0.3);
+}

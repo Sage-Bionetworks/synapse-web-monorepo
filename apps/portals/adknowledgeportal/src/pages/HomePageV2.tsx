@@ -1,10 +1,12 @@
 import AdknowledgeContributeCard from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgeContributeCard/AdknowledgeContributeCard'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import MailchimpSubscribeSection from 'synapse-react-client/components/MailchimpSubscribeSection/MailchimpSubscribeSection'
+import AdknowledgeHeader from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgeHeader/AdknowledgeHeader'
 
 function HomePageV2() {
   return (
     <div className="HomePageV2">
+      <AdknowledgeHeader />
       <SectionLayout
         ContainerProps={{
           className: 'home-spacer',
