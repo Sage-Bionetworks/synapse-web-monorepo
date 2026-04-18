@@ -53,9 +53,11 @@ const HeaderSearchBox = ({
   const theme = useTheme()
   const navigate = useNavigate()
   const { isAuthenticated } = useSynapseContext()
-  const isChatEnabled = useGetFeatureFlag(FeatureFlagEnum.PORTAL_CHAT)
   const chatDialogContext = useChatDialogContext()
-  const showChatOption = isAuthenticated && chatDialogContext && isChatEnabled
+  const isChatAvailable = chatDialogContext?.isChatAvailable
+  const isChatEnabled = useGetFeatureFlag(FeatureFlagEnum.PORTAL_CHAT)
+  const showChatOption =
+    isAuthenticated && chatDialogContext && isChatEnabled && isChatAvailable
 
   const handleTermClick = (term: string) => {
     const trimmedTerm = term.trim()
