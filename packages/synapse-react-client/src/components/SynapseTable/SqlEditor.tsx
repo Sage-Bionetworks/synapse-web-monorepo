@@ -22,7 +22,7 @@ export type SqlEditorProps = {
 const helpMessageCopy =
   'The data within tables and views can be retrieved by using a SQL-like query language either from the web interface or from the programmatic clients.'
 const helpLink =
-  'https://docs.synapse.org/synapse-docs/querying-tables-views-and-datasets'
+  'https://docs.synapse.org/synapse-docs/querying-tables-views-and-datasets#Querying-Tables,-Views,-and-Datasets-Programatically'
 
 export function SqlEditor({
   helpMessage = helpMessageCopy,
