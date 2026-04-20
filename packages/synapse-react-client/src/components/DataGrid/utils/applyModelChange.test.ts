@@ -168,6 +168,80 @@ describe('applyModelChange', () => {
     expect(snapshot.rows[0].data).toEqual(['only-col1', undefined])
   })
 
+  it('UPDATE does not advance the clock for cells whose values are unchanged', () => {
+    const model = createModel()
+
+    applyModelChange(
+      model,
+      {
+        type: 'CREATE',
+        rowIndex: 0,
+        rowData: { col1: 'v', col2: 'w' },
+      },
+      schemaPropertyInfo,
+    )
+
+    const clockTimeBefore = model.clock.time
+
+    // Both values are identical to what is already in the model
+    applyModelChange(
+      model,
+      {
+        type: 'UPDATE',
+        rowIndex: 0,
+        updatedData: { col1: 'v', col2: 'w' },
+      },
+      schemaPropertyInfo,
+    )
+
+    // No new CRDT nodes should have been created
+    expect(model.clock.time).toBe(clockTimeBefore)
+  })
+
+  it('UPDATE only advances the clock for cells that actually changed', () => {
+    const model = createModel()
+
+    applyModelChange(
+      model,
+      {
+        type: 'CREATE',
+        rowIndex: 0,
+        rowData: { col1: 'v', col2: 'w' },
+      },
+      schemaPropertyInfo,
+    )
+
+    const clockTimeBefore = model.clock.time
+
+    // col1 unchanged, col2 changed
+    applyModelChange(
+      model,
+      {
+        type: 'UPDATE',
+        rowIndex: 0,
+        updatedData: { col1: 'v', col2: 'CHANGED' },
+      },
+      schemaPropertyInfo,
+    )
+
+    const clockAfterOneChange = model.clock.time
+    expect(clockAfterOneChange).toBeGreaterThan(clockTimeBefore)
+
+    // Changing both cells should advance the clock proportionally more
+    applyModelChange(
+      model,
+      {
+        type: 'UPDATE',
+        rowIndex: 0,
+        updatedData: { col1: 'ALSO_CHANGED', col2: 'CHANGED_AGAIN' },
+      },
+      schemaPropertyInfo,
+    )
+
+    const advancementPerCell = clockAfterOneChange - clockTimeBefore
+    expect(model.clock.time - clockAfterOneChange).toBe(2 * advancementPerCell)
+  })
+
   it('UPDATE skips internal keys (starting with underscore) and unknown columns', () => {
     const model = createModel()
 

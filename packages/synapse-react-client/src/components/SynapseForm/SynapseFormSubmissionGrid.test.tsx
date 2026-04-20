@@ -2,10 +2,14 @@ import {
   formListDataInProgress,
   formListDataSubmitted,
 } from '@/mocks/mock_drug_tool_data'
-import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import {
+  MOCK_ACCESS_TOKEN,
+  MOCK_CONTEXT_VALUE,
+} from '@/mocks/MockSynapseContext'
 import { server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { SynapseContextType } from '@/utils/context/SynapseContext'
 import { StatusEnum } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -18,12 +22,15 @@ const formGroupId = '5'
 const itemNoun = 'submission'
 const mockListFormData = vi.spyOn(SynapseClient, 'listFormData')
 
-const renderComponent = async (props: SynapseFormSubmissionGridProps) => {
+const renderComponent = async (
+  props: SynapseFormSubmissionGridProps,
+  contextOverrides?: Partial<SynapseContextType>,
+) => {
   // We must await asynchronous events for our assertions to pass
   // eslint-disable-next-line @typescript-eslint/require-await
   return await act(async () => {
     render(<UserFileGrid {...props} />, {
-      wrapper: createWrapper(),
+      wrapper: createWrapper(contextOverrides),
     })
   })
 }
@@ -37,6 +44,7 @@ describe('SynapseFormSubmissionsGrid', () => {
   beforeAll(() => server.listen())
   afterEach(() => server.restoreHandlers())
   beforeEach(() => {
+    mockListFormData.mockClear()
     mockListFormData.mockImplementation(request => {
       if (request.filterByState?.includes(StatusEnum.WAITING_FOR_SUBMISSION)) {
         return Promise.resolve(formListDataInProgress)
@@ -124,5 +132,18 @@ describe('SynapseFormSubmissionsGrid', () => {
         MOCK_CONTEXT_VALUE.accessToken,
       ),
     )
+  })
+
+  test('shows the sign-in prompt and does not fetch data when a token is set but isAuthenticated is false', async () => {
+    await renderComponent(props, {
+      accessToken: MOCK_ACCESS_TOKEN,
+      isAuthenticated: false,
+    })
+
+    await screen.findByText(
+      'Please sign in or register to initiate or continue your submission',
+    )
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
+    expect(mockListFormData).not.toHaveBeenCalled()
   })
 })

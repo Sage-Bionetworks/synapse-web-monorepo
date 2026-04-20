@@ -25,7 +25,17 @@ function StudyDetailsTab() {
           title: 'Acknowledgement',
           id: 'Acknowledgement',
           element: (
-            <MarkdownSynapseFromColumnData columnName={'Acknowledgement'} />
+            <>
+              <MarkdownSynapseFromColumnData columnName={'ackContent'} />
+              <MarkdownSynapseFromColumnData
+                columnName={'Acknowledgement'}
+                MarkdownCollapseProps={{
+                  title: 'Acknowledgement Statement',
+                  textDescription: 'full statement',
+                  showCopyPlainText: true,
+                }}
+              />
+            </>
           ),
         },
         {

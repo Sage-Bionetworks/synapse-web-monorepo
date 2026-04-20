@@ -30,4 +30,7 @@ export enum FeatureFlagEnum {
 
   // If enabled, prevent users from opening Curator for a CurationTask which is unassigned
   CURATOR_DISABLE_OPEN_FOR_UNASSIGNED_TASKS = 'CURATOR_DISABLE_OPEN_FOR_UNASSIGNED_TASKS',
+
+  // If enabled, show the new version of the ADKP homepage
+  ADKP_HOMEPAGE_V2 = 'ADKP_HOMEPAGE_V2',
 }

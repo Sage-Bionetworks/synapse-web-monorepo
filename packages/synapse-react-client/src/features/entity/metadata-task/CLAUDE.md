@@ -22,7 +22,8 @@ Data curation task management for Synapse. Enables two user types to collaborate
 - **`hooks/`** — Data fetching and state management
   - `useMetadataTaskTable` — TanStack Table instance with columns and data fetching
   - `useGetOrCreateGridSessionForSource` — Gets or creates a grid session for a task's data source
-  - `useGridSessionForCurationTask` — Higher-level hook combining task data + grid session
+  - `useGridSessionForCurationTask_legacy` — Used by `MetadataTaskTableActionCell` to get or create a grid session owned by the calling user. Does not link the session to the task or check assignee. Deprecated long-term (enables a data-loss scenario when multiple users create parallel sessions) but currently the only path used, since task-linked sessions caused unexpected assignee-gating behavior for users
+  - `useGridSessionForCurationTask` — Task-linked variant that tracks session ownership vs. task assignee. Not currently wired into the UI; retained for when task linking is revisited
 - **`utils/`** — Helper functions
   - `getGridSourceIdForTask` — Determines the entity ID to open for editing
   - `getLatestGridSessionForSource` — Finds the most recent grid session for a data source
@@ -31,11 +32,12 @@ Data curation task management for Synapse. Enables two user types to collaborate
 
 ## Key Pattern: Grid Session Lifecycle
 
-1. User opens a task → `useGridSessionForCurationTask` is called
-2. Hook checks if a grid session exists for this task's data source
-3. If missing → `useGetOrCreateGridSessionForSource` creates one
-4. Grid session ID is used to open the editing context (usually opens SWC)
-5. Subsequent tasks from the same source reuse the grid session
+1. User opens a task → `useGridSessionForCurationTask_legacy` is called
+2. `useGetOrCreateGridSessionForSource` returns an existing session for the data source or creates one owned by the calling user
+3. Grid session ID is used to open the editing context (usually opens SWC)
+4. Subsequent tasks from the same source reuse the grid session
+
+The action cell only gates the **Open Curator** button on READ access to the source entity — no assignee check, no feature-flag branches, no warning dialogs. Task assignee is informational only.
 
 ## Testing
 
