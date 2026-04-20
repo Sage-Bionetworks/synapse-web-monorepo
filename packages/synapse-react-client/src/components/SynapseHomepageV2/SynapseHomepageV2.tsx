@@ -346,7 +346,7 @@ export function SynapseHomepageV2({ gotoPlace }: SynapseHomepageV2Props) {
                     textAlign: 'center',
                     fontSize: '36px',
                     lineHeight: '40px',
-                    mt: '60px',
+                    mt: '90px',
                     mb: '25px',
                     color: 'white',
                     fontWeight: 400,
