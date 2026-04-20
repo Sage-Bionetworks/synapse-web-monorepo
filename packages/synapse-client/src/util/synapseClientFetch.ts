@@ -7,6 +7,10 @@ const RATE_LIMIT_MAX_RETRY = 10
 const SERVER_ERROR_MAX_RETRY = 3
 export const SERVER_ERROR_RETRY_CODES = [502, 503, 504]
 
+function getRandomInt(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min) + min)
+}
+
 /**
  * Fetches data, retrying if the HTTP status code indicates that it could be retried.
  * To use it in our generated client, this function must NOT consume the response body.
@@ -16,14 +20,26 @@ export const SERVER_ERROR_RETRY_CODES = [502, 503, 504]
 export async function synapseFetchWithRetry(
   requestInfo: RequestInfo,
   options: RequestInit,
-  delayMs = 1000,
+  delayMs = 1000 + getRandomInt(0, 100),
 ): Promise<Response> {
   let rateLimitRetryCount = 0
-  let serverErrorRetryCount = 0
+  let transientErrorRetryCount = 0
 
   return promiseWithRetry(
     async () => {
-      const response = await fetch(requestInfo, options)
+      let response: Response
+      try {
+        response = await fetch(requestInfo, options)
+      } catch (err) {
+        transientErrorRetryCount++
+        if (transientErrorRetryCount < SERVER_ERROR_MAX_RETRY) {
+          throw new RetryError(
+            err instanceof Error ? err.message : 'Network error',
+            err,
+          )
+        }
+        throw err
+      }
 
       if (response.status === 429) {
         rateLimitRetryCount++
@@ -31,8 +47,8 @@ export async function synapseFetchWithRetry(
           throw new RetryError(`HTTP ${response.status}`, response)
         }
       } else if (SERVER_ERROR_RETRY_CODES.includes(response.status)) {
-        serverErrorRetryCount++
-        if (serverErrorRetryCount < SERVER_ERROR_MAX_RETRY) {
+        transientErrorRetryCount++
+        if (transientErrorRetryCount < SERVER_ERROR_MAX_RETRY) {
           throw new RetryError(`HTTP ${response.status}`, response)
         }
       }
@@ -54,12 +70,11 @@ export async function synapseFetchWithRetry(
 export const synapseClientFetch = async <TResponse>(
   requestInfo: RequestInfo,
   options: RequestInit,
-  delayMs = 1000,
 ): Promise<TResponse> => {
   const url = typeof requestInfo === 'string' ? requestInfo : requestInfo.url
   let response
   try {
-    response = await synapseFetchWithRetry(requestInfo, options, delayMs)
+    response = await synapseFetchWithRetry(requestInfo, options)
   } catch (err) {
     console.error(err)
     throw new SynapseClientError(0, NETWORK_UNAVAILABLE_MESSAGE, url)
