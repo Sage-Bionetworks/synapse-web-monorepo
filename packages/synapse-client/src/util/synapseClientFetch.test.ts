@@ -5,6 +5,10 @@ import {
 } from './synapseClientFetch'
 import { SynapseClientError } from './SynapseClientError'
 
+// 1000ms delay plus 0-100ms jitter
+const DELAY_PLUS_MAX_JITTER = 1000 + 100
+const DELAY_CAP = 10_000 // 10s
+
 describe('synapseClientFetch', () => {
   let mockFetch = vi.spyOn(global, 'fetch')
 
@@ -57,7 +61,7 @@ describe('synapseClientFetch', () => {
 
     // Only one attempt should be made for non-retryable errors
     expect(mockFetch).toHaveBeenCalledTimes(1)
-    await vi.advanceTimersByTimeAsync(1_000)
+    await vi.advanceTimersByTimeAsync(DELAY_PLUS_MAX_JITTER)
     expect(mockFetch).toHaveBeenCalledTimes(1)
 
     await expect(promise).rejects.toEqual(
@@ -97,15 +101,15 @@ describe('synapseClientFetch', () => {
 
     // 5 backoff errors followed by 1 success
     expect(mockFetch).toHaveBeenCalledTimes(1)
-    await vi.advanceTimersByTimeAsync(1_000)
+    await vi.advanceTimersByTimeAsync(DELAY_PLUS_MAX_JITTER)
     expect(mockFetch).toHaveBeenCalledTimes(2)
-    await vi.advanceTimersByTimeAsync(2_000)
+    await vi.advanceTimersByTimeAsync(DELAY_PLUS_MAX_JITTER * 2)
     expect(mockFetch).toHaveBeenCalledTimes(3)
-    await vi.advanceTimersByTimeAsync(4_000)
+    await vi.advanceTimersByTimeAsync(DELAY_PLUS_MAX_JITTER * 4)
     expect(mockFetch).toHaveBeenCalledTimes(4)
-    await vi.advanceTimersByTimeAsync(8_000)
+    await vi.advanceTimersByTimeAsync(DELAY_PLUS_MAX_JITTER * 8)
     expect(mockFetch).toHaveBeenCalledTimes(5)
-    await vi.advanceTimersByTimeAsync(10_000)
+    await vi.advanceTimersByTimeAsync(DELAY_CAP)
     expect(mockFetch).toHaveBeenCalledTimes(6)
     await expect(responsePromise).resolves.toEqual({ success: true })
   })
@@ -133,9 +137,9 @@ describe('synapseClientFetch', () => {
 
       // Maximum 3 attempts
       expect(mockFetch).toHaveBeenCalledTimes(1)
-      await vi.advanceTimersByTimeAsync(1_000)
+      await vi.advanceTimersByTimeAsync(DELAY_PLUS_MAX_JITTER)
       expect(mockFetch).toHaveBeenCalledTimes(2)
-      await vi.advanceTimersByTimeAsync(2_000)
+      await vi.advanceTimersByTimeAsync(DELAY_PLUS_MAX_JITTER * 2)
       expect(mockFetch).toHaveBeenCalledTimes(3)
 
       await expect(promise).rejects.toEqual(
@@ -146,17 +150,75 @@ describe('synapseClientFetch', () => {
     },
   )
 
-  it('should throw on network errors', async () => {
-    mockFetch.mockRejectedValueOnce(new Error('Network Error'))
-
-    await expect(() =>
-      synapseClientFetch('/test-url', {
-        method: 'GET',
-      }),
-    ).rejects.toEqual(
-      new SynapseClientError(0, NETWORK_UNAVAILABLE_MESSAGE, '/test-url'),
+  it('should retry on network errors and succeed if a retry succeeds', async () => {
+    const mockSuccessResponse = new Response(
+      JSON.stringify({ success: true }),
+      {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      },
     )
 
+    mockFetch
+      .mockRejectedValueOnce(new Error('Network Error'))
+      .mockResolvedValueOnce(mockSuccessResponse)
+
+    const responsePromise = synapseClientFetch('/test-url', { method: 'GET' })
+
     expect(mockFetch).toHaveBeenCalledTimes(1)
+    await vi.advanceTimersByTimeAsync(DELAY_PLUS_MAX_JITTER)
+    expect(mockFetch).toHaveBeenCalledTimes(2)
+
+    await expect(responsePromise).resolves.toEqual({ success: true })
+  })
+
+  it('should retry a limited number of times then throw on network errors', async () => {
+    mockFetch.mockRejectedValue(new Error('Network Error'))
+
+    const promise = synapseClientFetch('/test-url', { method: 'GET' })
+
+    promise.catch(() => {
+      // Error will be tested after timers are fired
+    })
+
+    // Maximum 3 attempts (SERVER_ERROR_MAX_RETRY = 3)
+    expect(mockFetch).toHaveBeenCalledTimes(1)
+    await vi.advanceTimersByTimeAsync(DELAY_PLUS_MAX_JITTER)
+    expect(mockFetch).toHaveBeenCalledTimes(2)
+    await vi.advanceTimersByTimeAsync(DELAY_PLUS_MAX_JITTER * 2)
+    expect(mockFetch).toHaveBeenCalledTimes(3)
+
+    await expect(promise).rejects.toEqual(
+      new SynapseClientError(0, NETWORK_UNAVAILABLE_MESSAGE, '/test-url'),
+    )
+  })
+
+  it('should share the transient error counter between server errors and network errors', async () => {
+    const mock502Response = new Response(
+      JSON.stringify({ reason: 'Bad Gateway' }),
+      { status: 502, headers: { 'Content-Type': 'application/json' } },
+    )
+
+    // 1 server error + 2 network errors = 3 transient errors total, no more retries
+    mockFetch
+      .mockResolvedValueOnce(mock502Response)
+      .mockRejectedValueOnce(new Error('Network Error'))
+      .mockRejectedValue(new Error('Network Error'))
+
+    const promise = synapseClientFetch('/test-url', { method: 'GET' })
+
+    promise.catch(() => {
+      // Error will be tested after timers are fired
+    })
+
+    expect(mockFetch).toHaveBeenCalledTimes(1)
+    await vi.advanceTimersByTimeAsync(DELAY_PLUS_MAX_JITTER)
+    expect(mockFetch).toHaveBeenCalledTimes(2)
+    await vi.advanceTimersByTimeAsync(DELAY_PLUS_MAX_JITTER * 2)
+    expect(mockFetch).toHaveBeenCalledTimes(3)
+
+    await expect(promise).rejects.toEqual(
+      new SynapseClientError(0, NETWORK_UNAVAILABLE_MESSAGE, '/test-url'),
+    )
   })
 })

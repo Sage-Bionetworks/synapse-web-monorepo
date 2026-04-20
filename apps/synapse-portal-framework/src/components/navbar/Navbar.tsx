@@ -41,6 +41,10 @@ const synapseQuickLinks: SynapseSettingLink[] = [
     text: 'Profile',
   },
   {
+    text: 'Favorites',
+    settingSubPath: 'favorites',
+  },
+  {
     text: 'Projects',
     settingSubPath: 'projects',
   },
