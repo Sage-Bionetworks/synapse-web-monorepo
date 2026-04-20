@@ -38,7 +38,7 @@ export default function RequestDataAccessSuccess(
 
       <DialogContent>
         <Typography variant="body1">
-          Your data access request been submitted and is currently being
+          Your data access request has been submitted and is currently being
           reviewed. Please allow for up to 2 weeks for your request to be
           reviewed and approved.
         </Typography>
