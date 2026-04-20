@@ -8,6 +8,7 @@ import {
   libraryPlugins,
   preserveModulesBuildConfig,
 } from 'vite-config'
+import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 const packageJson = JSON.parse(
   readFileSync(resolve(__dirname, 'package.json'), 'utf-8'),
@@ -42,7 +43,19 @@ const config = mergeConfig(
       plugins: [
         ...reactPlugins(),
         ...libraryPlugins({ preserveModules: true }),
+        viteStaticCopy({
+          targets: [
+            {
+              src: 'src/**/*.{css,scss,svg}',
+              dest: '',
+              rename: { stripBase: 1 },
+            },
+          ],
+        }),
       ],
+      build: {
+        emptyOutDir: true,
+      },
       define: {
         __SRC_VERSION__: JSON.stringify(packageJson.version),
       },

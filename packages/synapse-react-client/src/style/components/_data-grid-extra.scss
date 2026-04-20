@@ -1,3 +1,5 @@
+@use 'sass:list';
+
 // Color variables for validation states
 $color-deleted: #fff1f0;
 $color-created: #f6ffed;
@@ -265,7 +267,7 @@ body.col-resizing {
 // Cells within another connected replica's selection are tinted with one of
 // 8 stable colors (replicaId % 8).
 @each $color in $remote-selection-colors {
-  $i: index($remote-selection-colors, $color) - 1;
+  $i: list.index($remote-selection-colors, $color) - 1;
 
   .dsg-cell.cell-remote-selected--color-#{$i} {
     background-color: rgba($color, 0.12) !important;

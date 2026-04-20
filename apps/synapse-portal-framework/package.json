@@ -14,7 +14,8 @@
       "types": "./dist/*.d.ts",
       "import": "./dist/*.js"
     },
-    "./style/*": "./src/style/*"
+    "./style/*": "./src/style/*",
+    "./*.svg": "./src/*.svg"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -90,6 +91,7 @@
     "util": "^0.12.5",
     "vite": "^8.0.8",
     "vite-config": "workspace:*",
+    "vite-plugin-static-copy": "^4.0.1",
     "vitest": "^4.1.4",
     "whatwg-fetch": "^3.6.20"
   },

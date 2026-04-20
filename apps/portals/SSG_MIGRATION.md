@@ -43,7 +43,7 @@ Application) setup to React Router Framework Mode with Static Site Generation
 "@react-router/dev": "^7.14.0",
 "@types/node": "^22.19.13",
 "vite-plugin-node-polyfills": "^0.26.0",
-"vite-plugin-svgr": "^4.3.0",
+"vite-plugin-svgr": "^5.2.0",
 ```
 
 Note: `react-router` itself is already a dependency in all portals — no need to
