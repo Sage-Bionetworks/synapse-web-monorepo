@@ -13,26 +13,22 @@ function InstructionsTab() {
           ),
         },
         {
-          id: 'Eligibility Rules',
-          title: 'Eligibility Rules',
-          element: (
-            <MarkdownSynapseFromColumnData columnName={'EligibilityRules'} />
-          ),
+          id: 'Eligibility',
+          title: 'Eligibility',
+          element: <MarkdownSynapseFromColumnData columnName={'Eligibility'} />,
         },
+        // {
+        //   id: 'Conduct Rules',
+        //   title: 'Conduct Rules',
+        //   element: (
+        //     <MarkdownSynapseFromColumnData columnName={'ConductRules'} />
+        //   ),
+        // },
         {
-          id: 'Conduct Rules',
-          title: 'Conduct Rules',
+          id: 'Challenge Rules',
+          title: 'Challenge Rules',
           element: (
-            <MarkdownSynapseFromColumnData columnName={'ConductRules'} />
-          ),
-        },
-        {
-          id: 'Data Conditions For Use',
-          title: 'Data Conditions For Use',
-          element: (
-            <MarkdownSynapseFromColumnData
-              columnName={'DataConditionsForUse'}
-            />
+            <MarkdownSynapseFromColumnData columnName={'ChallengeRules'} />
           ),
         },
       ]}
