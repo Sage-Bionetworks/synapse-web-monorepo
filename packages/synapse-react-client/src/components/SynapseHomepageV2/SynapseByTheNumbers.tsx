@@ -67,14 +67,14 @@ export function SynapseByTheNumbers({
       />
       <SynapseByTheNumbersItem
         title={values[activeUsersLastMonthColIndex] ?? '-'}
-        description={'Registered active users per month'}
+        description={'Registered users / month'}
         rows={rowSet.rows}
         plotXColIndex={exportDateColIndex}
         plotYColIndex={activeUsersLastMonthColIndex}
       />
       <SynapseByTheNumbersItem
         title={totalDownloadsPerMonth}
-        description={'Total downloads per month'}
+        description={'Total downloads / month'}
         rows={rowSet.rows}
         plotXColIndex={exportDateColIndex}
         plotYColIndex={totalDownloadsLastMonthColIndex}
