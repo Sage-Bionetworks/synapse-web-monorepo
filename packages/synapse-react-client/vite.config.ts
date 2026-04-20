@@ -50,6 +50,11 @@ const config = mergeConfig(
               dest: '',
               rename: { stripBase: 1 },
             },
+            {
+              src: 'src/types/*.d.ts',
+              dest: '',
+              rename: { stripBase: 1 },
+            },
           ],
         }),
       ],
