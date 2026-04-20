@@ -16,17 +16,17 @@ const WordPressNewsBackground = (): React.ReactNode => {
         {/* Small circle top-left */}
         <circle
           className={styles.layer3}
-          cx="30"
-          cy="60"
-          r="20"
+          cx="17.5"
+          cy="182"
+          r="17"
           fill="url(#wp_grad2)"
         />
         {/* Medium circle top-right */}
         <circle
           className={styles.layer5}
-          cx="490"
-          cy="80"
-          r="38"
+          cx="178.5"
+          cy="68.5"
+          r="31"
           fill="url(#wp_grad4)"
         />
         {/* Large blob center */}
@@ -38,17 +38,17 @@ const WordPressNewsBackground = (): React.ReactNode => {
         {/* Small circle bottom-right */}
         <circle
           className={styles.layer4}
-          cx="480"
-          cy="390"
-          r="22"
+          cx="418"
+          cy="364"
+          r="17"
           fill="url(#wp_grad3)"
         />
         {/* Medium circle bottom-left */}
         <circle
           className={styles.layer2}
-          cx="55"
-          cy="360"
-          r="55"
+          cx="84.5"
+          cy="309.75"
+          r="74.25"
           fill="url(#wp_grad1)"
         />
 
