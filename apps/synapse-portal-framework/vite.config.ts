@@ -37,6 +37,9 @@ const config = mergeConfig(
     vitestConfig,
     mergeConfig(preserveModulesBuildConfig(allSourceFiles), {
       root: '.',
+      build: {
+        emptyOutDir: true,
+      },
       plugins: [
         ...reactPlugins(),
         ...libraryPlugins({ preserveModules: true }),
@@ -44,8 +47,8 @@ const config = mergeConfig(
           targets: [
             {
               src: 'src/components/assets/*',
-              dest: 'components/assets',
-              rename: { stripBase: 3 },
+              dest: '',
+              rename: { stripBase: 1 },
             },
           ],
         }),
