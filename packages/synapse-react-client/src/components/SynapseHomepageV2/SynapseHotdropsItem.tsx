@@ -34,17 +34,13 @@ export function SynapseHotDropItem({ entityHeader }: SynapseHotDropItemProps) {
       className={styles.item}
     >
       <Box className={styles.itemContent}>
-        <Typography
-          variant="body1"
-          sx={{ color: 'grey.900', fontSize: '16px' }}
-          noWrap
-        >
+        <Typography variant="body1" className={styles.itemTitle} noWrap>
           {entityHeader.name}
         </Typography>
         <Typography
           component={'span'}
           variant={'body1'}
-          sx={{ color: 'grey.700' }}
+          className={styles.itemMeta}
         >
           Created {dayjs(entityHeader.createdOn).fromNow()} by{' '}
           <UserBadge userId={entityHeader.createdBy} />

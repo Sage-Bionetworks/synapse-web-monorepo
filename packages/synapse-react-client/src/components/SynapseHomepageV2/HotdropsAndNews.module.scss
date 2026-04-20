@@ -126,14 +126,47 @@
 .item {
   display: grid;
   grid-template-columns: 80% 20%;
-  border: 1px solid #bdbdbd; // grey[400]
+  // Each item provides its own right + bottom edge.
+  // Leading edges (top/left) are added selectively to avoid doubling.
+  border-right: 1px solid var(--synapse-gray-400); // lighter interior border
+  border-bottom: 1px solid var(--synapse-gray-400);
+
+  // Mobile: single column — every item is the left edge; only the first has a top edge.
+  border-left: 1px solid var(--synapse-gray-400);
+  &:first-child {
+    border-top: 1px solid var(--synapse-gray-400);
+  }
+
+  // Desktop: two columns — left edge belongs to odd items (col 1); top edge to the first two (row 1).
+  @media (min-width: 600px) {
+    border-left: none;
+    border-top: none;
+
+    &:nth-child(odd) {
+      border-left: 1px solid var(--synapse-gray-400);
+    }
+
+    &:nth-child(-n + 2) {
+      border-top: 1px solid var(--synapse-gray-400);
+    }
+  }
+
   width: 100%;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.9);
   padding: 15px 0;
 
   &:hover {
-    background-color: rgba(233, 243, 254, 0.9);
+    background-color: rgba(233, 243, 254, 0.95);
     cursor: pointer;
+  }
+
+  .itemTitle {
+    color: var(--synapse-gray-900);
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .itemMeta {
+    color: var(--synapse-gray-700);
   }
 }
 
@@ -142,7 +175,7 @@
 // ---------------------------------------------------------------------------
 
 .itemContent {
-  color: #212121; // grey[900]
+  color: var(--synapse-gray-900);
   padding-left: 15px;
   padding-right: 10px;
 }

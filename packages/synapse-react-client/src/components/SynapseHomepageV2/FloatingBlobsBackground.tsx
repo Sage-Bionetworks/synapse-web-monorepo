@@ -2,7 +2,15 @@ import React from 'react'
 import { Box } from '@mui/material'
 import styles from './HotdropsAndNews.module.scss'
 
-const WordPressNewsBackground = (): React.ReactNode => {
+export type FloatingBlobsBackgroundProps = {
+  stopColor1: string
+  stopColor2: string
+}
+
+const FloatingBlobsBackground = ({
+  stopColor1,
+  stopColor2,
+}: FloatingBlobsBackgroundProps): React.ReactNode => {
   return (
     <Box className={styles.background}>
       <svg
@@ -61,8 +69,8 @@ const WordPressNewsBackground = (): React.ReactNode => {
             y2="360"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stopColor="#6B5FD9" />
-            <stop offset="1" stopColor="#3A5AA8" />
+            <stop stopColor={stopColor1} />
+            <stop offset="1" stopColor={stopColor2} />
           </linearGradient>
           <linearGradient
             id="wp_grad1"
@@ -72,8 +80,8 @@ const WordPressNewsBackground = (): React.ReactNode => {
             y2="390"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stopColor="#6B5FD9" />
-            <stop offset="1" stopColor="#3A5AA8" />
+            <stop stopColor={stopColor1} />
+            <stop offset="1" stopColor={stopColor2} />
           </linearGradient>
           <linearGradient
             id="wp_grad2"
@@ -83,8 +91,8 @@ const WordPressNewsBackground = (): React.ReactNode => {
             y2="74"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stopColor="#6B5FD9" />
-            <stop offset="1" stopColor="#3A5AA8" />
+            <stop stopColor={stopColor1} />
+            <stop offset="1" stopColor={stopColor2} />
           </linearGradient>
           <linearGradient
             id="wp_grad3"
@@ -94,8 +102,8 @@ const WordPressNewsBackground = (): React.ReactNode => {
             y2="402"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stopColor="#6B5FD9" />
-            <stop offset="1" stopColor="#3A5AA8" />
+            <stop stopColor={stopColor1} />
+            <stop offset="1" stopColor={stopColor2} />
           </linearGradient>
           <linearGradient
             id="wp_grad4"
@@ -105,8 +113,8 @@ const WordPressNewsBackground = (): React.ReactNode => {
             y2="110"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stopColor="#6B5FD9" />
-            <stop offset="1" stopColor="#3A5AA8" />
+            <stop stopColor={stopColor1} />
+            <stop offset="1" stopColor={stopColor2} />
           </linearGradient>
         </defs>
       </svg>
@@ -114,4 +122,4 @@ const WordPressNewsBackground = (): React.ReactNode => {
   )
 }
 
-export default WordPressNewsBackground
+export default FloatingBlobsBackground

@@ -38,11 +38,11 @@ export function WordPressNewsItem({
       <Box className={styles.itemContent}>
         <Typography
           variant="body1"
-          sx={{ color: 'grey.900', fontSize: '16px' }}
+          className={styles.itemTitle}
           noWrap
           dangerouslySetInnerHTML={{ __html: post.title.rendered }}
         />
-        <Typography variant="body1" sx={{ color: 'grey.700' }}>
+        <Typography variant="body1" className={styles.itemMeta}>
           {dayjs(post.date).fromNow()}
         </Typography>
       </Box>
