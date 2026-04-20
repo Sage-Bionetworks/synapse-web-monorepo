@@ -3,9 +3,10 @@ import {
   useGetQueryResultBundleWithAsyncStatus,
 } from '@/synapse-queries'
 import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
-import { Box, useMediaQuery, useTheme } from '@mui/material'
+import { Box } from '@mui/material'
 import { SynapseHotDropItem } from './SynapseHotdropsItem'
 import { ReferenceList } from '@sage-bionetworks/synapse-types'
+import styles from './HotdropsAndNews.module.scss'
 
 export type SynapseHotDropsProps = {
   tableId: string
@@ -22,9 +23,6 @@ export function SynapseHotDrops({ tableId }: SynapseHotDropsProps) {
     partMask: BUNDLE_MASK_QUERY_RESULTS,
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
   })
-  const theme = useTheme()
-  const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
-
   const rowSet = data?.responseBody?.queryResult?.queryResults
 
   const references: ReferenceList = rowSet
@@ -41,25 +39,11 @@ export function SynapseHotDrops({ tableId }: SynapseHotDropsProps) {
 
   return (
     <>
-      <Box
-        sx={{
-          color: 'primary.100',
-          display: 'grid',
-          justifyItems: 'start',
-          backgroundColor: 'rgba(255, 255, 255, 0.2)',
-          borderRadius: '9px',
-          maxWidth: '1300px',
-          gridTemplateColumns: isMobileView ? '100%' : '50% 50%',
-          m: 'auto',
-          pt: isMobileView ? '0px' : '80px',
-          pb: isMobileView ? '40px' : '60px',
-        }}
-      >
-        {entityHeaders.results.map((entityHeader, index) => (
+      <Box className={styles.container} sx={{ color: 'primary.100' }}>
+        {entityHeaders.results.map(entityHeader => (
           <SynapseHotDropItem
             key={entityHeader.id}
             entityHeader={entityHeader}
-            isMobileView={isMobileView}
           />
         ))}
       </Box>
