@@ -48,11 +48,15 @@ export const navbarConfig: NavbarConfig = {
       path: '/Data Access',
       children: [
         {
-          name: 'How to Access Data',
-          path: '/Data Access/How to Access Data',
+          name: 'Data Access Overview',
+          path: '/Data Access/Data Access Overview',
         },
         {
-          name: 'Required Data Acknowledgement',
+          name: 'Approved Access Requests',
+          path: '/Data Access/Approved Access Requests',
+        },
+        {
+          name: 'Acknowledge Data Use',
           path: '/Data Access/Data Acknowledgement',
         },
         {
