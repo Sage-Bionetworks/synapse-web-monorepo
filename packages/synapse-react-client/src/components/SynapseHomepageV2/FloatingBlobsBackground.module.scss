@@ -1,0 +1,92 @@
+// ---------------------------------------------------------------------------
+// Keyframe animations
+// ---------------------------------------------------------------------------
+
+@keyframes float1 {
+  0%,
+  100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(11px) scale(1.02);
+  }
+}
+
+@keyframes float2 {
+  0%,
+  100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(17px) scale(1.03);
+  }
+}
+
+@keyframes float3 {
+  0%,
+  100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(23px) scale(1.15);
+  }
+}
+
+@keyframes float4 {
+  0%,
+  100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(13px) scale(1.05);
+  }
+}
+
+@keyframes float5 {
+  0%,
+  100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(15px) scale(1.06);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Background component container
+// ---------------------------------------------------------------------------
+
+.background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// SVG shape animation layers (apply to SVG children inside .background)
+// ---------------------------------------------------------------------------
+
+.layer1 {
+  animation: float1 4s ease-in-out infinite;
+}
+.layer2 {
+  animation: float2 5s ease-in-out infinite;
+}
+.layer3 {
+  animation: float3 6s ease-in-out infinite;
+}
+.layer4 {
+  animation: float4 3s ease-in-out infinite;
+}
+.layer5 {
+  animation: float5 5.5s ease-in-out infinite;
+}

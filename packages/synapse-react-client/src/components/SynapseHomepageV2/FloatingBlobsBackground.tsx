@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box } from '@mui/material'
-import styles from './HotdropsAndNews.module.scss'
+import styles from './FloatingBlobsBackground.module.scss'
 
 export type FloatingBlobsBackgroundProps = {
   stopColor1: string
