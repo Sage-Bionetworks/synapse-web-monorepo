@@ -12,10 +12,6 @@ import {
   MOCK_USER_NAME,
   mockUserGroupHeader,
 } from '@/mocks/user/mock_user_profile'
-import {
-  mockAuthenticatedGroupData,
-  mockPublicGroupData,
-} from '@/mocks/usergroup/mockUserGroup'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { UserGroupHeader } from '@sage-bionetworks/synapse-types'

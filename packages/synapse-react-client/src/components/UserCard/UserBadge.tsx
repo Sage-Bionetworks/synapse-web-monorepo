@@ -2,7 +2,7 @@ import { useUserOrTeam } from '../UserOrTeamBadge/useUserOrTeam'
 import { useGetUserBundle } from '@/synapse-queries/user/useUserBundle'
 import { SynapseConstants } from '@/utils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
-import { getUserDisplayName } from '@/utils/functions/getUserDisplayName'
+import { getPrincipalDisplayName } from '@/utils/functions/getPrincipalDisplayName'
 import { useOverlay } from '@/utils/hooks/useOverlay'
 import { Box, Chip, Link, Skeleton } from '@mui/material'
 import { CSSProperties, useMemo, useRef } from 'react'
@@ -37,8 +37,6 @@ export type UserBadgeProps = {
 
 const TIMER_DELAY_SHOW = 250 // milliseconds
 const TIMER_DELAY_HIDE = 500
-
-const NONBREAKING_SPACE = '\u00A0'
 
 export function UserBadge(props: UserBadgeProps) {
   const {
@@ -128,13 +126,9 @@ export function UserBadge(props: UserBadgeProps) {
     </Box>
   )
 
-  const { fullName: fullNameStr, userName: userNameStr } = userGroupHeader
-    ? getUserDisplayName(userGroupHeader, showFullName)
-    : { fullName: null, userName: null }
-
-  const fullName = fullNameStr ? (
-    <span className={'user-fullname'}>{fullNameStr}</span>
-  ) : null
+  const displayName = userGroupHeader
+    ? getPrincipalDisplayName(userGroupHeader, { showFullName })
+    : undefined
 
   const Tag = showCardOnHover || !disableLink ? Link : 'span'
 
@@ -159,10 +153,7 @@ export function UserBadge(props: UserBadgeProps) {
         onMouseEnter={() => toggleShow()}
         onMouseLeave={() => toggleHide()}
       >
-        {fullName}
-        {fullName ? `${NONBREAKING_SPACE}(` : ''}
-        {userNameStr ?? <Skeleton width={'100px'} />}
-        {fullName ? ')' : ''}
+        {displayName ?? <Skeleton width={'100px'} />}
         {showAccountLevelIcon && accountLevelIcon}
       </Tag>
       {showModeratorBadge && (

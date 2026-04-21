@@ -1,5 +1,5 @@
 import { useUserOrTeam } from '@/components/UserOrTeamBadge/useUserOrTeam'
-import { getUserDisplayName } from '@/utils/functions/getUserDisplayName'
+import { getPrincipalDisplayName } from '@/utils/functions/getPrincipalDisplayName'
 import { Chip, Skeleton } from '@mui/material'
 import { TaskState } from '@sage-bionetworks/synapse-client'
 import styles from './UserOrTeamChip.module.scss'
@@ -23,14 +23,17 @@ export default function UserOrTeamChip(props: { principalId: string }) {
     return <Skeleton width={125} height={30} />
   }
 
+  if (!userGroupHeader) {
+    return null
+  }
+
   return (
     <Chip
       className={styles.chip}
-      label={
-        userGroupHeader?.isIndividual
-          ? getUserDisplayName(userGroupHeader, true).fullName
-          : userGroupHeader?.userName
-      }
+      label={getPrincipalDisplayName(userGroupHeader, {
+        showFullName: true,
+        showUsername: false,
+      })}
       avatar={<IconComponent avatarSize="SMALL" />}
     />
   )
