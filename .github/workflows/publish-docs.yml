@@ -12,14 +12,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
       - uses: ./.github/actions/pnpm-setup-action
       - name: Build Storybook
         run: pnpm nx run synapse-react-client:storybook:build
       - name: Create .nojekyll file for GitHub Actions
         run: touch packages/synapse-react-client/storybook-static/.nojekyll
       - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4.7.3
+        uses: JamesIves/github-pages-deploy-action@6c2d9db40f9296374acc17b90404b6e8864128c8 # v4.7.3
         with:
           branch: gh-pages
           folder: packages/synapse-react-client/storybook-static

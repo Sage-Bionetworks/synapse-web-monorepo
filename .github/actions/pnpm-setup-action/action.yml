@@ -9,11 +9,11 @@ runs:
   using: 'composite'
   steps:
     - name: Use Node.js 22
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
       with:
         node-version: 22
         registry-url: https://registry.npmjs.org/
-    - uses: pnpm/action-setup@v4
+    - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4.3.0
       name: Install pnpm
       id: pnpm-install
       with:
@@ -24,7 +24,7 @@ runs:
       run: |
         echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
     - name: Setup pnpm cache
-      uses: actions/cache@v3
+      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
       with:
         path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
         key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
@@ -35,7 +35,7 @@ runs:
       # It should be safe to use when running tests, but do not use it in deploy workflows.
       # See: https://nx.dev/recipes/troubleshooting/unknown-local-cache#you-share-cache-with-another-machine-using-a-network-drive
       if: ${{ inputs.STORE_NX_CACHE == 'true' }}
-      uses: actions/cache@v3
+      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
       with:
         path: .nx/cache
         key: ${{ runner.os }}-nx-${{ github.ref }}-${{ github.sha }}
