@@ -3,13 +3,13 @@ import { Box } from '@mui/material'
 import styles from './FloatingBlobsBackground.module.scss'
 
 export type FloatingBlobsBackgroundProps = {
-  stopColor1: string
-  stopColor2: string
+  color1: string
+  color2: string
 }
 
 const FloatingBlobsBackground = ({
-  stopColor1,
-  stopColor2,
+  color1: stopColor1,
+  color2: stopColor2,
 }: FloatingBlobsBackgroundProps): React.ReactNode => {
   return (
     <Box className={styles.background}>
@@ -85,10 +85,10 @@ const FloatingBlobsBackground = ({
           </linearGradient>
           <linearGradient
             id="wp_grad2"
-            x1="46"
-            y1="46"
-            x2="14"
-            y2="74"
+            x1="35"
+            y1="165"
+            x2="0"
+            y2="199"
             gradientUnits="userSpaceOnUse"
           >
             <stop stopColor={stopColor1} />
@@ -96,10 +96,10 @@ const FloatingBlobsBackground = ({
           </linearGradient>
           <linearGradient
             id="wp_grad3"
-            x1="498"
-            y1="374"
-            x2="464"
-            y2="402"
+            x1="435"
+            y1="347"
+            x2="401"
+            y2="381"
             gradientUnits="userSpaceOnUse"
           >
             <stop stopColor={stopColor1} />
@@ -107,10 +107,10 @@ const FloatingBlobsBackground = ({
           </linearGradient>
           <linearGradient
             id="wp_grad4"
-            x1="524"
-            y1="48"
-            x2="456"
-            y2="110"
+            x1="210"
+            y1="37"
+            x2="147"
+            y2="100"
             gradientUnits="userSpaceOnUse"
           >
             <stop stopColor={stopColor1} />
