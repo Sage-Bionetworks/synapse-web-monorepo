@@ -19,18 +19,6 @@ function HomePageV2() {
         <AdknowledgeContributeCard />
       </SectionLayout>
       <SectionLayout
-        title={'News Releases'}
-        centerTitle={true}
-        ContainerProps={{
-          className: 'home-spacer',
-        }}
-      >
-        <div style={{ position: 'relative', minHeight: '500px' }}>
-          <FloatingBlobsBackground stopColor1="#3A5AA8" stopColor2="#6B5FD9" />
-          <WordPressNews wordpressSiteUrl="https://news.adknowledgeportal.org" />
-        </div>
-      </SectionLayout>
-      <SectionLayout
         ContainerProps={{
           className: 'home-spacer',
         }}
@@ -42,6 +30,18 @@ function HomePageV2() {
         />
       </SectionLayout>
       <AdknowledgePrograms sql={`${programsSql} ORDER BY Program ASC`} />
+      <SectionLayout
+        title={'News Releases'}
+        centerTitle={true}
+        ContainerProps={{
+          className: 'home-spacer',
+        }}
+      >
+        <div style={{ position: 'relative', minHeight: '500px' }}>
+          <FloatingBlobsBackground stopColor1="#3A5AA8" stopColor2="#6B5FD9" />
+          <WordPressNews wordpressSiteUrl="https://news.adknowledgeportal.org" />
+        </div>
+      </SectionLayout>
     </div>
   )
 }
