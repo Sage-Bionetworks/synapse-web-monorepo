@@ -120,13 +120,14 @@ export function HoverPopover({
         disableAutoFocus
         disableEnforceFocus
         disableScrollLock
+        sx={{ pointerEvents: 'none' }}
         slotProps={{
           backdrop: { sx: { pointerEvents: 'none' } },
           paper: {
             onMouseEnter: cancelClose,
             onMouseLeave: scheduleClose,
             className: styles.paper,
-            sx: { maxWidth, minWidth },
+            sx: { maxWidth, minWidth, pointerEvents: 'auto' },
           },
         }}
       >

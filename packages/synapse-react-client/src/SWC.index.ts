@@ -38,7 +38,6 @@ import './style/main.scss'
 // Injected at build time by Vite's `define`
 declare const __SRC_VERSION__: string
 
-
 const SynapseEnums = {
   BackendDestinationEnum,
 }
@@ -89,6 +88,7 @@ const SynapseComponents = {
   CreatedByModifiedBy: lazy(
     () => import('./components/entity/page/CreatedByModifiedBy'),
   ),
+  CsvPreview: lazy(() => import('./components/table/CsvPreview/CsvPreview')),
   DatasetItemsEditor: lazy(
     () => import('./components/SynapseTable/datasets/DatasetItemsEditor'),
   ),
@@ -126,6 +126,11 @@ const SynapseComponents = {
   EntityViewScopeEditorModal: lazy(
     () =>
       import('./components/EntityViewScopeEditor/EntityViewScopeEditorModal'),
+  ),
+  CreateProjectModal: lazy(() =>
+    import('./components/CreateProjectModal/CreateProjectModal').then(m => ({
+      default: m.CreateProjectModal,
+    })),
   ),
   ErrorPage: lazy(() => import('./components/error/ErrorPage')),
   EvaluationCard: lazy(() => import('./components/Evaluation/EvaluationCard')),

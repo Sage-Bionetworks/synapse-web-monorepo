@@ -28,6 +28,7 @@ jobs:
             digitalhealth,
             eliteportal,
             genie,
+            namshub,
             nf,
             stopadportal,
           ]

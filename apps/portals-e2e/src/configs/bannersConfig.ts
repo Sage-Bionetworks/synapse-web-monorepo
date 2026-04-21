@@ -14,6 +14,7 @@ const bannerConfig: BannerConfig = {
   challenges: ['cookies'],
   digitalhealth: ['cookies'],
   eliteportal: ['cookies'],
+  namshub: ['cookies'],
   nf: ['cookies', 'survey'],
   stopadportal: ['cookies'],
   genie: ['cookies'],

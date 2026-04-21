@@ -23,6 +23,7 @@ import {
   calculateDefaultColumnWidth,
   HeaderOptions,
 } from './utils/calculateColumnWidth'
+import type { RemoteSelection } from './hooks/useRemoteSelections'
 
 type DataGridProps = {
   gridRef: React.RefObject<DataSheetGridRef | null>
@@ -39,6 +40,7 @@ type DataGridProps = {
     rowIndex: number | null,
     row: DataGridRow | null,
   ) => void
+  remoteSelections?: readonly RemoteSelection[]
 }
 
 /**
@@ -59,6 +61,7 @@ export default function DataGrid(props: DataGridProps) {
     handleChange,
     handleSelectionChange,
     onSelectedRowChange,
+    remoteSelections,
   } = props
 
   // Move columnWidths state into DataGrid
@@ -192,9 +195,10 @@ export default function DataGrid(props: DataGridProps) {
         selectedRowIndex,
         lastSelection,
         colValues,
+        remoteSelections,
       })
     },
-    [selectedRowIndex, lastSelection, colValues],
+    [selectedRowIndex, lastSelection, colValues, remoteSelections],
   )
 
   // Wrap duplicateRow in useCallback

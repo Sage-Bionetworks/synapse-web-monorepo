@@ -5,6 +5,8 @@ export const featuredResearchSql =
   'SELECT * FROM syn69806889 ORDER BY order ASC'
 export const publicationsSql = 'SELECT * FROM syn69806872 ORDER BY "Year" DESC'
 export const studiesSql = 'SELECT * FROM syn70760510'
+export const instrumentsSql = 'select * from syn74439438'
+export const variablesSql = 'select * from syn74439535'
 
 export const defaultSearchConfiguration: Omit<
   SearchV2Props,

@@ -1,0 +1,42 @@
+@use 'sass:map';
+@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+
+.eventSection {
+  color: var(--synapse-gray-1000);
+  padding-bottom: 65px;
+
+  :global(h2.title) {
+    text-transform: none;
+    font-size: 24px;
+  }
+
+  :global(.Feed .FeedItems .FeedItem) {
+    border: none;
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.03), 0 3px 3px 0 rgba(0, 0, 0, 0.03),
+      0 9px 9px 0 rgba(0, 0, 0, 0.03);
+  }
+}
+
+.logoContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+
+  svg {
+    width: 70%;
+
+    @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+      width: 250px;
+    }
+  }
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    gap: 50px;
+  }
+}
+
+.termsAndConditions {
+  padding: 16px;
+}

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Typography } from '@mui/material'
 import { ReactComponent as IntroSvg } from '@/components/assets/cancerComplexityIntro.svg'
-import CancerComplexityIntroSubItem from './CancerComplexityIntroSubItem'
+import { ColoredBulletListItem } from 'synapse-react-client'
 
 const CancerComplexityIntro = (): React.ReactNode => {
   return (
@@ -60,17 +60,17 @@ const CancerComplexityIntro = (): React.ReactNode => {
             studies, advancing our understanding of cancer biology and
             accelerating innovations in prevention, diagnosis, and treatment.
           </Typography>
-          <CancerComplexityIntroSubItem
+          <ColoredBulletListItem
             bulletColor="#862FB9"
             mainText="Explore"
             subText="Browse data, publications, and tools."
           />
-          <CancerComplexityIntroSubItem
+          <ColoredBulletListItem
             bulletColor="#F46055"
             mainText="Find"
             subText="Search, filter, and refine to find the right data."
           />
-          <CancerComplexityIntroSubItem
+          <ColoredBulletListItem
             bulletColor="#ECB915"
             mainText="Access"
             subText="Download datasets, publications, and tools."

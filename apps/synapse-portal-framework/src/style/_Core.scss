@@ -17,7 +17,7 @@
 }
 
 %home-bg-util {
-  background: var(--synapse-primary-action-color-alpha-5);
+  background: var(--synapse-primary-alpha-05);
   &:last-child {
     // this handles the case when the last element on the home page
     // has its background colored and should not have padding on the bottom

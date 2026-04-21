@@ -38,6 +38,9 @@ import { removeNoOpOperations } from './utils/DataGridUtils'
 import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
 import { useGetCurrentUserBundle } from '@/synapse-queries'
 import { useListGridReplicas } from '@/synapse-queries/grid/useGridSession'
+import { useGridReplicaUsers } from './hooks/useGridReplicaUsers'
+import { useRemoteSelections } from './hooks/useRemoteSelections'
+import { enrichRowsWithChangeInfo } from './utils/enrichRowsWithChangeInfo'
 import CertificationRequirement from '@/components/AccessRequirementList/RequirementItem/CertificationRequirement'
 import { ValidationAlert } from './components/ValidationAlert'
 
@@ -71,6 +74,16 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
     const handleReplicaConnectionChange = useCallback(() => {
       void refetchReplicas()
     }, [refetchReplicas])
+
+    // ── Attribution infrastructure ─────────────────────────────────────────
+    const currentUserId =
+      userBundle?.userId != null ? String(userBundle.userId) : undefined
+
+    const replicaUserMap = useGridReplicaUsers(
+      replicas,
+      replicaId,
+      currentUserId,
+    )
 
     useImperativeHandle(
       ref,
@@ -181,10 +194,29 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
 
     const connectionStatus = isConnected ? 'Connected' : 'Disconnected'
 
+    const remoteSelections = useRemoteSelections(
+      modelSnapshot,
+      model,
+      replicas,
+      replicaId,
+    )
+
     // Transform the model view rows and columns to DataSheetGrid format
     const rowValues = useMemo(
       () => (modelSnapshot ? modelRowsToGrid(model, modelSnapshot) : []),
       [model, modelSnapshot],
+    )
+
+    // Enrich rows with per-cell change attribution for CSS indicators and tooltips
+    const enrichedRowValues = useMemo(
+      () =>
+        enrichRowsWithChangeInfo(
+          rowValues,
+          model,
+          modelSnapshot,
+          replicaUserMap,
+        ),
+      [rowValues, model, modelSnapshot, replicaUserMap],
     )
 
     const commit = useCallback(() => {
@@ -468,7 +500,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                   <Grid size={12}>
                     <DataGrid
                       gridRef={gridRef}
-                      rowValues={rowValues}
+                      rowValues={enrichedRowValues}
                       columnNames={modelSnapshot?.columnNames ?? []}
                       columnOrder={modelSnapshot?.columnOrder ?? []}
                       schemaPropertiesInfo={schemaPropertiesInfo}
@@ -478,6 +510,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                       handleChange={handleChange}
                       handleSelectionChange={handleSelectionChange}
                       onSelectedRowChange={handleSelectedRowChange}
+                      remoteSelections={remoteSelections}
                     />
                   </Grid>
                   <Grid size={12}>

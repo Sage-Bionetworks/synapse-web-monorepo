@@ -48,7 +48,9 @@ export default function App(props: AppProps) {
   }, [navigate, synapseChatProps])
 
   const content = (
-    <ChatDialogContext.Provider value={{ openChat }}>
+    <ChatDialogContext.Provider
+      value={{ openChat, isChatAvailable: !!synapseChatProps }}
+    >
       <SynapseToastContainer />
       <Navbar />
       <CookiesNotification />

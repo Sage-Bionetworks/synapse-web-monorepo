@@ -1,0 +1,2 @@
+export S3_PRODUCTION_BUCK_LOCATION=s3://prod.namshub.synapse.org
+export CF_PRODUCTION_DIST_ID=E29ZBO1AK7SFJX

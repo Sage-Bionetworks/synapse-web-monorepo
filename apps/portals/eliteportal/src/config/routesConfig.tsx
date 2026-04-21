@@ -50,7 +50,7 @@ const routes: RouteObject[] = [
               ),
           },
           {
-            path: 'How to Access Data',
+            path: 'Data Access Overview',
             lazy: () =>
               import('@/pages/DataAccess').then(convertModuleToRouteObject),
           },
@@ -58,6 +58,13 @@ const routes: RouteObject[] = [
             path: 'AI_ML_Acceptable_Use_Policy',
             lazy: () =>
               import('@/pages/AIMLAcceptableUsePolicy').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: 'Approved Access Requests',
+            lazy: () =>
+              import('@/pages/ApprovedAccessRequests').then(
                 convertModuleToRouteObject,
               ),
           },
@@ -141,6 +148,11 @@ const routes: RouteObject[] = [
               import('@/pages/Explore/people').then(convertModuleToRouteObject),
           },
         ],
+      },
+      {
+        path: 'Explore/Computational Tools/DetailsPage',
+        lazy: () =>
+          import('@/pages/ToolDetailsPage').then(convertModuleToRouteObject),
       },
       {
         path: 'Explore/Projects/DetailsPage',

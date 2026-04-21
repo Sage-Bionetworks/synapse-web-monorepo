@@ -33,6 +33,7 @@ dayjs.extend(calendar)
 
 export type SynapseFormSubmissionGridProps = {
   token?: string
+  isAuthenticated?: boolean
   formGroupId: string
   pathpart: string
   formClass?: string
@@ -103,18 +104,18 @@ class _SynapseFormSubmissionGrid extends Component<
   }
 
   componentDidMount() {
-    this.refresh(this.props.token)
+    this.refresh(this.props.isAuthenticated)
   }
 
   componentDidUpdate(prevProps: SynapseFormSubmissionGridProps) {
     const shouldUpdate = this.props.token !== prevProps.token
     if (shouldUpdate) {
-      this.refresh(this.props.token)
+      this.refresh(this.props.isAuthenticated)
     }
   }
 
-  async refresh(token?: string) {
-    if (token) {
+  async refresh(isAuthenticated?: boolean) {
+    if (isAuthenticated) {
       await this.getUserFileListing().catch(error => {
         this.onError(error)
       })
@@ -245,8 +246,11 @@ class _SynapseFormSubmissionGrid extends Component<
   }
   /* ------------------------------------------   rendering fns  ------------------------------------------------*/
 
-  renderLoading = (token: string | undefined, isLoading: boolean) => {
-    if (token && isLoading) {
+  renderLoading = (
+    isAuthenticated: boolean | undefined,
+    isLoading: boolean,
+  ) => {
+    if (isAuthenticated && isLoading) {
       return (
         <div className="text-center">
           <span>Loading&hellip;</span>
@@ -258,8 +262,8 @@ class _SynapseFormSubmissionGrid extends Component<
     }
   }
 
-  renderUnauthenticatedView = (token: string | undefined) => {
-    if (token) {
+  renderUnauthenticatedView = (isAuthenticated: boolean | undefined) => {
+    if (isAuthenticated) {
       return <></>
     } else {
       return (
@@ -450,10 +454,10 @@ class _SynapseFormSubmissionGrid extends Component<
     return (
       <div className={`theme-${this.props.formClass}`}>
         <div className="SRC-ReactJsonForm">
-          {this.renderLoading(this.props.token, this.state.isLoading)}
-          {this.renderUnauthenticatedView(this.props.token)}
+          {this.renderLoading(this.props.isAuthenticated, this.state.isLoading)}
+          {this.renderUnauthenticatedView(this.props.isAuthenticated)}
 
-          {this.props.token && !this.state.isLoading && (
+          {this.props.isAuthenticated && !this.state.isLoading && (
             <div className="file-grid ">
               <Typography variant="h3">Your Submissions</Typography>
               <div className="panel panel-default padding-full">
@@ -523,9 +527,13 @@ class _SynapseFormSubmissionGrid extends Component<
 export function SynapseFormSubmissionGrid(
   props: SynapseFormSubmissionGridProps,
 ) {
-  const synapseContext = useSynapseContext()
+  const { accessToken, isAuthenticated } = useSynapseContext()
   return (
-    <_SynapseFormSubmissionGrid {...props} token={synapseContext.accessToken} />
+    <_SynapseFormSubmissionGrid
+      {...props}
+      token={accessToken}
+      isAuthenticated={isAuthenticated}
+    />
   )
 }
 

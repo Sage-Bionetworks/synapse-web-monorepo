@@ -8,71 +8,44 @@ import { EntityHeader } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { UserBadge } from '../UserCard/UserBadge'
+import styles from './HotdropsAndNews.module.scss'
 
 dayjs.extend(relativeTime)
 
 export type SynapseHotDropItemProps = {
   entityHeader: EntityHeader
-  isMobileView: boolean
 }
 
-export function SynapseHotDropItem({
-  entityHeader,
-  isMobileView,
-}: SynapseHotDropItemProps) {
+export function SynapseHotDropItem({ entityHeader }: SynapseHotDropItemProps) {
   const typeName = entityTypeToFriendlyName(
     convertToEntityType(entityHeader.type),
   )
   const chipColor = typeName === 'Project' ? 'primary' : 'secondary'
   return (
     <Box
-      onClick={() => {
-        window.open(
-          `${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}Synapse:${
-            entityHeader.id
-          }`,
-          '_blank',
-        )
-      }}
-      sx={{
-        display: 'grid',
-        borderColor: 'grey.400',
-        borderWidth: '1px',
-        borderStyle: 'solid',
-        width: '100%',
-        gridTemplateColumns: '80% 20%',
-        backgroundColor:
-          'rgba(255, 255, 255, 0.8)' /* White with 50% opacity */,
-        '&:hover': {
-          backgroundColor: 'rgba(233, 243, 254, 0.9)',
-          cursor: 'pointer',
-        },
-        p: '15px 0px',
-      }}
+      component="a"
+      href={`${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}Synapse:${
+        entityHeader.id
+      }`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={styles.item}
     >
-      <Box sx={{ color: 'grey.900', pl: '15px', pr: '10px' }}>
-        <Typography
-          variant="body1"
-          sx={{ color: 'grey.900', fontSize: '16px' }}
-          noWrap
-        >
+      <Box className={styles.itemContent}>
+        <Typography variant="body1" className={styles.itemTitle} noWrap>
           {entityHeader.name}
         </Typography>
         <Typography
           component={'span'}
           variant={'body1'}
-          sx={{ color: 'grey.700' }}
+          className={styles.itemMeta}
         >
           Created {dayjs(entityHeader.createdOn).fromNow()} by{' '}
           <UserBadge userId={entityHeader.createdBy} />
         </Typography>
       </Box>
-      <Box sx={{ justifySelf: 'end', pr: '15px', alignSelf: 'start' }}>
-        <Chip
-          sx={{ borderRadius: '5px', height: '24px' }}
-          label={typeName}
-          color={chipColor}
-        />
+      <Box className={styles.itemAction}>
+        <Chip className={styles.chip} label={typeName} color={chipColor} />
       </Box>
     </Box>
   )
