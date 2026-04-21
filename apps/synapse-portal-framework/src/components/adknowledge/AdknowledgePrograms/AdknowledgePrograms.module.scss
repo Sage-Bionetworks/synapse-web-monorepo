@@ -1,6 +1,3 @@
-@use 'sass:map';
-@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
-
 .adknowledgeProgramsTitle:global(.MuiTypography-root) {
   color: var(--adkp-accent-color);
   font-size: 36px;
