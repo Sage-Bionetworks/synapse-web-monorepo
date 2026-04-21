@@ -1,6 +1,4 @@
-// import { useState } from 'react'
 import styles from './HexGrid.module.scss'
-// import { Button } from '@mui/material'
 import { parseEntityIdFromSqlStatement } from 'synapse-react-client/utils/functions/SqlFunctions'
 import {
   FileHandleAssociateType,
@@ -14,6 +12,7 @@ import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
 import { useState } from 'react'
 import { Button, ButtonBase, Typography, useMediaQuery } from '@mui/material'
 import { useNavigate } from 'react-router'
+import { Link as RouterLink } from 'react-router'
 
 type HexGridProps = {
   sql: string
@@ -81,10 +80,10 @@ function HexGrid({ sql }: HexGridProps) {
       <div className={styles.layoutWrapper}>
         <div className={styles.gridWrapper}>
           <ul className={styles.hexGrid}>
-            {dataRows.map((program, index) => (
+            {dataRows.map(program => (
               <ButtonBase
                 component="li"
-                key={index}
+                key={program.rowId}
                 className={styles.hex}
                 onClick={() => handleHexClick(program)}
               >
@@ -131,7 +130,8 @@ function HexGrid({ sql }: HexGridProps) {
                 {selected.values[shortDescriptionColumnIndex]}
               </Typography>
               <Button
-                href={getDetailsUrl(selected)}
+                component={RouterLink}
+                to={getDetailsUrl(selected)}
                 className={styles.sidebarBtn}
                 variant="contained"
               >
