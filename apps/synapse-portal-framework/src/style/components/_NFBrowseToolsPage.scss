@@ -97,6 +97,11 @@
     margin-bottom: 0;
     text-align: left;
   }
+  .categories {
+    justify-content: flex-start !important;
+    gap: 14px;
+    margin-top: 18px;
+  }
   .submit-not-sure {
     margin-top: 40px;
     padding-bottom: 20px;
