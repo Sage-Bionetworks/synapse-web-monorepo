@@ -89,8 +89,8 @@ const categoryGroups: SubmitCategoryGroup[] = [
         ),
       },
       {
-        label: 'Advanced Cellular Models',
-        submitPath: '/Research Tools Central/Submit Advanced Cellular Model',
+        label: 'Organoid Protocols',
+        submitPath: '/Research Tools Central/Submit Organoid Protocol',
         tooltip:
           'Protocols to create organoids, spheroids, and other 3D models',
         image: <BlueOverlayImg src={advancedCellularModelsUrl} />,

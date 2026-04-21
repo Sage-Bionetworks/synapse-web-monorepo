@@ -41,10 +41,7 @@ export default [
         route('Submit Cell Line', 'pages/SubmitCellLine.tsx'),
         route('Submit Antibody', 'pages/SubmitAntibody.tsx'),
         route('Submit Genetic Reagent', 'pages/SubmitGeneticReagent.tsx'),
-        route(
-          'Submit Advanced Cellular Model',
-          'pages/SubmitAdvancedCellularModel.tsx',
-        ),
+        route('Submit Organoid Protocol', 'pages/SubmitOrganoidProtocol.tsx'),
         route('Submit Biobank', 'pages/SubmitBiobank.tsx'),
         route(
           'Submit Clinical Assessment Tool',
