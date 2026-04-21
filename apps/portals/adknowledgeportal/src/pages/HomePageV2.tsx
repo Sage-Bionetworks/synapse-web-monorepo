@@ -24,7 +24,7 @@ function HomePageV2() {
         }}
       >
         <div style={{ position: 'relative', minHeight: '500px' }}>
-          <FloatingBlobsBackground stopColor1="#3A5AA8" stopColor2="#6B5FD9" />
+          <FloatingBlobsBackground color1="#dcc9e4" color2="#cdc8dd" />
           <WordPressNews wordpressSiteUrl="https://news.adknowledgeportal.org" />
         </div>
       </SectionLayout>
