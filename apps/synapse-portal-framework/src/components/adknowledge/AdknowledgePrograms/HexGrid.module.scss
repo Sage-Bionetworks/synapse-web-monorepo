@@ -1,0 +1,243 @@
+.hexSlat {
+  /* --- Hex Configuration --- */
+  --s: 150px; /* Width of the hexagon (flat-to-flat) */
+  --gap: 10px; /* Spacing between hexes */
+
+  /* Calculated values (Do not edit usually) */
+  /* Pointy-topped hexagon aspect ratio is 1.1547 */
+  --h: calc(var(--s) * 1.1547);
+  --v-gap: calc(var(--h) * 0.25 * -1 + var(--gap)); /* Overlap factor */
+
+  --hex-bg: #f9f9f9;
+  --hex-hover-bg: #f9f9f9;
+  --hex-text: #213547;
+
+  @media (max-width: 450px) {
+    --gap: 4px;
+  }
+
+  width: 100%;
+  padding: 2rem 0;
+
+  @media (max-width: 600px) {
+    overflow-x: hidden;
+  }
+
+  /* --- Layout --- */
+  .layoutWrapper {
+    display: flex;
+    gap: 3rem;
+    text-align: left;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 0 2rem;
+
+    @media (max-width: 1100px) {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+}
+
+.gridWrapper {
+  flex: 1;
+  min-width: 0;
+  max-width: 820px;
+  container-type: inline-size;
+}
+
+/* --- Honeycomb Grid --- */
+.hexGrid {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 2rem 0 4rem;
+  margin: 0 auto;
+  justify-content: flex-start;
+  max-width: 100%;
+  /* Adjust width logic in media queries if needed to perfectly center */
+
+  /* --- Responsive Layout Logic --- */
+  /*
+   We want a honeycomb pattern.
+   Row 1: A A A A
+   Row 2:  B B B
+   Row 3: C C C C
+
+   To do this with Flexbox wrapping:
+   We need to shift the first item of every even row.
+
+   We use media queries to define the number of columns (N).
+   The pattern repeats every 2N-1 items usually? No, simpler:
+
+   If N items per row.
+   Item (N+1) starts the new row. We want it indented.
+   margin-left: calc(var(--s) * 0.5 + var(--gap));
+
+   But if we indent the whole row, the last item might push out.
+*/
+
+  /*
+   Breakpoints
+   Adjust N based on screen width.
+*/
+
+  /* 5 Columns (Default / Large Screens) */
+  /*
+   Pattern: 5 items, then 4 items, then 5 items...
+   Cycle is 9 items.
+   1, 2, 3, 4, 5
+     6, 7, 8, 9
+   10, 11, 12...
+*/
+  @container (min-width: 800px) {
+    /* Let's define N=5, N_even=4. Cycle=9 */
+    width: calc(5 * var(--s) + 5 * var(--gap));
+
+    .hex:nth-child(9n + 6) {
+      margin-left: calc(var(--s) * 0.5 + var(--gap) * 0.5);
+    }
+  }
+
+  @container (min-width: 640px) and (max-width: 799px) {
+    /* N=4, N_even=3. Cycle=7 */
+    width: calc(4 * var(--s) + 4 * var(--gap));
+
+    .hex:nth-child(7n + 5) {
+      margin-left: calc(var(--s) * 0.5 + var(--gap) * 0.5);
+    }
+  }
+
+  @container (min-width: 480px) and (max-width: 639px) {
+    /* N=3, N_even=2. Cycle=5 */
+    width: calc(3 * var(--s) + 3 * var(--gap));
+
+    .hex:nth-child(5n + 4) {
+      margin-left: calc(var(--s) * 0.5 + var(--gap) * 0.5);
+    }
+  }
+
+  @container (max-width: 479px) {
+    /* N=2, N_even=1. Cycle=3 */
+    width: calc(2 * var(--s) + 2 * var(--gap));
+
+    .hex:nth-child(3n + 3) {
+      margin-left: calc(var(--s) * 0.5 + var(--gap) * 0.5);
+    }
+  }
+}
+
+.hex {
+  width: var(--s);
+  height: var(--h);
+  margin-right: var(--gap);
+  margin-bottom: var(--v-gap);
+  position: relative;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  fill: var(--UI-Gray-100, #fbfbfc);
+  stroke-width: 1px;
+  stroke: var(--synapse-gray-200, #f1f3f5);
+  /* Shadow */
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1))
+    drop-shadow(0 3px 6px rgba(0, 0, 0, 0.08));
+
+  /* Hover Effects */
+  &:hover,
+  &:active {
+    transform: scale(1.1) translateY(-10px);
+    z-index: 10;
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.12))
+      drop-shadow(0 15px 25px rgba(0, 0, 0, 0.15));
+  }
+
+  /* Content Positioning */
+  .hexIn {
+    position: absolute;
+    inset: 0;
+    /* Shape */
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    background-color: var(--hex-bg);
+    color: var(--hex-text);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 1rem;
+    transition: background-color 0.4s ease;
+  }
+
+  &:hover .hexIn,
+  &:active .hexIn {
+    background-color: var(--hex-hover-bg);
+  }
+
+  .hexIcon {
+    width: 100%;
+    height: 55px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto 0.5rem;
+  }
+
+  .hexTitle {
+    color: #3c4a63;
+    font-size: 16px;
+    line-height: 28px; /* 175% */
+  }
+}
+
+/* --- Sidebar Content --- */
+.sidebar {
+  width: 320px;
+  flex-shrink: 0;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  margin: 2rem 0 0;
+  padding: 0 2rem 1rem;
+
+  @media (max-width: 1100px) {
+    display: none;
+  }
+
+  .sidebarEmpty {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.5;
+  }
+
+  .sidebarIcon {
+    max-width: 100%;
+    max-height: 80px;
+    object-fit: contain;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .sidebarTitle {
+    margin-bottom: 12px;
+    color: var(--synapse-gray-1000, #22252a);
+  }
+
+  .sidebarDetails {
+    margin-bottom: 30px;
+    color: var(--synapse-gray-1000, #22252a);
+    line-height: 20px;
+  }
+
+  .sidebarBtn {
+    padding: 13px 16px;
+    border-radius: 8px;
+    background: var(--adkp-button-gradient);
+    border: 1px solid;
+    border-color: var(--adkp-button-border-color);
+    font-size: 14px;
+    font-weight: 540;
+    line-height: 14px; /* 100% */
+    letter-spacing: -0.28px;
+  }
+}

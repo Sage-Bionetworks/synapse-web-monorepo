@@ -1,3 +1,9 @@
+:root {
+  --adkp-accent-color: #684b84;
+  --adkp-button-gradient: linear-gradient(180deg, #443471 0%, #5a488f 100%);
+  --adkp-button-border-color: #32243f;
+}
+
 #header,
 #footer {
   background-color: var(--synapse-primary-action-color);

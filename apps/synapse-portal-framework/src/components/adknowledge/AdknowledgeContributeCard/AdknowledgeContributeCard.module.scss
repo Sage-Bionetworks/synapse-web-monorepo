@@ -17,7 +17,7 @@
 }
 
 .adknowledgeContributeCardTitle:global(.MuiTypography-root) {
-  color: #684b84;
+  color: var(--adkp-accent-color);
   font-size: 36px;
   line-height: 40px; /* 111.111% */
   margin-bottom: 10px;
@@ -33,6 +33,7 @@
 
 .adknowledgeContributeCardButton:global(.MuiButton-root) {
   border-radius: 8px;
-  background: linear-gradient(180deg, #443471 0%, #5a488f 100%);
-  border: 1px solid #32243f;
+  background: var(--adkp-button-gradient);
+  border: 1px solid;
+  border-color: var(--adkp-button-border-color);
 }

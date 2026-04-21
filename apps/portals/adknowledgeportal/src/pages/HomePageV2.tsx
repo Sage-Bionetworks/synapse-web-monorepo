@@ -2,6 +2,8 @@ import AdknowledgeContributeCard from '@sage-bionetworks/synapse-portal-framewor
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import MailchimpSubscribeSection from 'synapse-react-client/components/MailchimpSubscribeSection/MailchimpSubscribeSection'
 import AdknowledgeHeader from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgeHeader/AdknowledgeHeader'
+import AdknowledgePrograms from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgePrograms/AdknowledgePrograms'
+import { programsSql } from '@/config/resources'
 
 function HomePageV2() {
   return (
@@ -25,6 +27,7 @@ function HomePageV2() {
           mailchimpUrl="https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&id=96b614587a"
         />
       </SectionLayout>
+      <AdknowledgePrograms sql={`${programsSql} ORDER BY Program ASC`} />
     </div>
   )
 }
