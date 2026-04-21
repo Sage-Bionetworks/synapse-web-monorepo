@@ -15,7 +15,6 @@ import { ReactElement } from 'react'
 import { useNavigate } from 'react-router'
 import Layout from '../Layout'
 
-const CARD_WIDTH = 260
 const CARD_HEIGHT = 114
 
 // Wraps an <img> in a blue-background box with mix-blend-mode:multiply to
@@ -29,7 +28,7 @@ const BlueOverlayImg = ({
 }) => (
   <Box
     sx={{
-      width: CARD_WIDTH,
+      width: '100%',
       height: CARD_HEIGHT,
       backgroundColor: 'primary.main',
       overflow: 'hidden',
@@ -71,13 +70,21 @@ const categoryGroups: SubmitCategoryGroup[] = [
         label: 'Cell Lines',
         submitPath: '/Research Tools Central/Submit Cell Line',
         tooltip: 'Established cell lines derived from NF patients or models',
-        image: <CellLines width={CARD_WIDTH} height={CARD_HEIGHT} />,
+        image: (
+          <CellLines
+            style={{ width: '100%', height: CARD_HEIGHT, display: 'block' }}
+          />
+        ),
       },
       {
         label: 'Animal Models',
         submitPath: '/Research Tools Central/Submit Animal Model',
         tooltip: 'Mouse, rat, or other animal models of NF (neurofibromatosis)',
-        image: <AnimalModels width={CARD_WIDTH} height={CARD_HEIGHT} />,
+        image: (
+          <AnimalModels
+            style={{ width: '100%', height: CARD_HEIGHT, display: 'block' }}
+          />
+        ),
       },
       {
         label: 'Patient-Derived Models',
@@ -85,7 +92,10 @@ const categoryGroups: SubmitCategoryGroup[] = [
         tooltip:
           'Xenografts and organoids created directly from patient tissue',
         image: (
-          <BlueOverlayImg src={patientDerivedModelsUrl} objectPosition="top center" />
+          <BlueOverlayImg
+            src={patientDerivedModelsUrl}
+            objectPosition="top center"
+          />
         ),
       },
       {
@@ -103,13 +113,21 @@ const categoryGroups: SubmitCategoryGroup[] = [
         label: 'Antibodies',
         submitPath: '/Research Tools Central/Submit Antibody',
         tooltip: 'NF-relevant antibodies',
-        image: <Antibodies width={CARD_WIDTH} height={CARD_HEIGHT} />,
+        image: (
+          <Antibodies
+            style={{ width: '100%', height: CARD_HEIGHT, display: 'block' }}
+          />
+        ),
       },
       {
         label: 'Genetic Reagents',
         submitPath: '/Research Tools Central/Submit Genetic Reagent',
         tooltip: 'CRISPR constructs, plasmids, viral vectors, etc.',
-        image: <PlasmidsReagents width={CARD_WIDTH} height={CARD_HEIGHT} />,
+        image: (
+          <PlasmidsReagents
+            style={{ width: '100%', height: CARD_HEIGHT, display: 'block' }}
+          />
+        ),
       },
     ],
   },
@@ -127,7 +145,10 @@ const categoryGroups: SubmitCategoryGroup[] = [
         submitPath: '/Research Tools Central/Submit Clinical Assessment Tool',
         tooltip: 'Validated clinical outcome measures',
         image: (
-          <BlueOverlayImg src={clinicalAssessmentToolsUrl} objectPosition="top center" />
+          <BlueOverlayImg
+            src={clinicalAssessmentToolsUrl}
+            objectPosition="top center"
+          />
         ),
       },
     ],
@@ -139,7 +160,11 @@ const categoryGroups: SubmitCategoryGroup[] = [
         label: 'Biobanks',
         submitPath: '/Research Tools Central/Submit Biobank',
         tooltip: 'Biobanks with NF biospecimens',
-        image: <Biobanks width={CARD_WIDTH} height={CARD_HEIGHT} />,
+        image: (
+          <Biobanks
+            style={{ width: '100%', height: CARD_HEIGHT, display: 'block' }}
+          />
+        ),
       },
     ],
   },
@@ -183,19 +208,21 @@ const NFSubmitToolsPage = (): React.ReactNode => {
                 <button
                   key={item.label}
                   title={item.tooltip}
-                  onClick={() => navigate(item.submitPath)}
+                  onClick={() => void navigate(item.submitPath)}
                 >
                   <Box sx={{ position: 'relative' }}>
                     {item.image ?? (
                       <Box
                         sx={{
-                          width: CARD_WIDTH,
+                          width: '100%',
                           height: CARD_HEIGHT,
                           backgroundColor: 'primary.main',
                         }}
                       />
                     )}
-                    <Typography variant="headline3">{item.label}</Typography>
+                    <Typography variant="headline3" component="p">
+                      {item.label}
+                    </Typography>
                   </Box>
                 </button>
               ))}
