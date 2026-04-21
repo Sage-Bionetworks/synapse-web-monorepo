@@ -1,14 +1,14 @@
 import styles from './HexGrid.module.scss'
-import { parseEntityIdFromSqlStatement } from 'synapse-react-client/utils/functions/SqlFunctions'
+import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
 import {
   FileHandleAssociateType,
   QueryBundleRequest,
   Row,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseConstants } from 'synapse-react-client'
-import { useGetFullTableQueryResults } from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
-import { ImageFileHandle } from 'synapse-react-client/components/widgets/ImageFileHandle'
-import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
+import { SynapseConstants } from '@/utils'
+import { useGetFullTableQueryResults } from '@/synapse-queries/entity/useGetQueryResultBundle'
+import { ImageFileHandle } from '@/components/widgets/ImageFileHandle'
+import { getFieldIndex } from '@/utils/functions/queryUtils'
 import { useState } from 'react'
 import { Button, ButtonBase, Typography, useMediaQuery } from '@mui/material'
 import { useNavigate } from 'react-router'
