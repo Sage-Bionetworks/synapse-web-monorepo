@@ -12,7 +12,7 @@ import { useGetFullTableQueryResults } from 'synapse-react-client/synapse-querie
 import { ImageFileHandle } from 'synapse-react-client/components/widgets/ImageFileHandle'
 import { getFieldIndex } from 'synapse-react-client/utils/functions/queryUtils'
 import { useState } from 'react'
-import { Button, Typography, useMediaQuery, useTheme } from '@mui/material'
+import { Button, ButtonBase, Typography, useMediaQuery } from '@mui/material'
 import { useNavigate } from 'react-router'
 
 type HexGridProps = {
@@ -64,8 +64,8 @@ function HexGrid({ sql }: HexGridProps) {
       row.values[programColumnIndex] ?? '',
     )}`
 
-  const { breakpoints } = useTheme()
-  const isMobile = useMediaQuery(breakpoints.down('md'))
+  const SIDEBAR_BREAKPOINT = '(max-width: 1100px)'
+  const isMobile = useMediaQuery(SIDEBAR_BREAKPOINT)
 
   const handleHexClick = (row: Row) => {
     // for mobile, navigate to the details page on click. For desktop, set the selected program to show details in the sidebar
@@ -82,7 +82,8 @@ function HexGrid({ sql }: HexGridProps) {
         <div className={styles.gridWrapper}>
           <ul className={styles.hexGrid}>
             {dataRows.map((program, index) => (
-              <li
+              <ButtonBase
+                component="li"
                 key={index}
                 className={styles.hex}
                 onClick={() => handleHexClick(program)}
@@ -101,7 +102,7 @@ function HexGrid({ sql }: HexGridProps) {
                     imgProps={{ className: styles.hexIcon }}
                   />
                 </div>
-              </li>
+              </ButtonBase>
             ))}
           </ul>
         </div>
