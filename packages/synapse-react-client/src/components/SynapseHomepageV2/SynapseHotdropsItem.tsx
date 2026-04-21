@@ -23,14 +23,12 @@ export function SynapseHotDropItem({ entityHeader }: SynapseHotDropItemProps) {
   const chipColor = typeName === 'Project' ? 'primary' : 'secondary'
   return (
     <Box
-      onClick={() => {
-        window.open(
-          `${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}Synapse:${
-            entityHeader.id
-          }`,
-          '_blank',
-        )
-      }}
+      component="a"
+      href={`${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}Synapse:${
+        entityHeader.id
+      }`}
+      target="_blank"
+      rel="noopener noreferrer"
       className={styles.item}
     >
       <Box className={styles.itemContent}>

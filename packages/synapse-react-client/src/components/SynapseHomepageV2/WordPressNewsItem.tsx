@@ -30,9 +30,10 @@ export function WordPressNewsItem({
 }: WordPressNewsItemProps) {
   return (
     <Box
-      onClick={() => {
-        window.open(post.link, '_blank', 'noopener,noreferrer')
-      }}
+      component="a"
+      href={post.link}
+      target="_blank"
+      rel="noopener noreferrer"
       className={styles.item}
     >
       <Box className={styles.itemContent}>
