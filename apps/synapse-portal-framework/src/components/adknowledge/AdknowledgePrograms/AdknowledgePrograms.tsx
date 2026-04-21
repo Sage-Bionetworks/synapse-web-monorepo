@@ -1,6 +1,6 @@
 import { Button, Stack } from '@mui/material'
 import styles from './AdknowledgePrograms.module.scss'
-import HexGrid from './HexGrid'
+import HexGrid from 'synapse-react-client/components/HexGrid/HexGrid'
 
 type AdknowledgeProgramsProps = {
   sql: string
@@ -18,7 +18,12 @@ function AdknowledgePrograms({ sql }: AdknowledgeProgramsProps) {
       >
         Contribute Data
       </Button>
-      <HexGrid sql={sql} />
+      <HexGrid
+        sql={sql}
+        titleColName="Program"
+        imageColName="Homepage Image"
+        descriptionColName="Short Description"
+      />
     </Stack>
   )
 }

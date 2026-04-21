@@ -14,11 +14,19 @@ import { Button, ButtonBase, Typography, useMediaQuery } from '@mui/material'
 import { useNavigate } from 'react-router'
 import { Link as RouterLink } from 'react-router'
 
-type HexGridProps = {
+export type HexGridProps = {
   sql: string
+  titleColName: string
+  imageColName: string
+  descriptionColName: string
 }
 
-function HexGrid({ sql }: HexGridProps) {
+function HexGrid({
+  sql,
+  titleColName,
+  imageColName,
+  descriptionColName,
+}: HexGridProps) {
   const navigate = useNavigate()
   const [selected, setSelected] = useState<Row | null>(null)
 
@@ -37,24 +45,15 @@ function HexGrid({ sql }: HexGridProps) {
 
   const dataRows = queryResultBundle?.queryResult?.queryResults.rows ?? []
 
-  enum ExpectedColumns {
-    PROGRAM = 'Program',
-    HOMEPAGE_IMAGE = 'Homepage Image',
-    SHORT_DESCRIPTION = 'Short Description',
-  }
-
-  const programColumnIndex = getFieldIndex(
-    ExpectedColumns.PROGRAM,
-    queryResultBundle,
-  )
+  const programColumnIndex = getFieldIndex(titleColName, queryResultBundle)
 
   const homepageImageColumnIndex = getFieldIndex(
-    ExpectedColumns.HOMEPAGE_IMAGE,
+    imageColName,
     queryResultBundle,
   )
 
   const shortDescriptionColumnIndex = getFieldIndex(
-    ExpectedColumns.SHORT_DESCRIPTION,
+    descriptionColName,
     queryResultBundle,
   )
 
