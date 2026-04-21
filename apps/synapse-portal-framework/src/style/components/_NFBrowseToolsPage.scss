@@ -83,3 +83,22 @@
     padding-bottom: 0px;
   }
 }
+
+.submit-tools-page {
+  .submit-category-group {
+    margin-top: 40px;
+    &:first-child {
+      margin-top: 60px;
+    }
+  }
+  .submit-group-label {
+    border-bottom: 2px solid #e0e6ee;
+    padding-bottom: 14px;
+    margin-bottom: 0;
+    text-align: left;
+  }
+  .submit-not-sure {
+    margin-top: 40px;
+    padding-bottom: 20px;
+  }
+}
