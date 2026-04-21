@@ -4,6 +4,12 @@ import { ReactComponent as Antibodies } from '@/components/assets/antibodies.svg
 import { ReactComponent as Biobanks } from '@/components/assets/biobanks.svg'
 import { ReactComponent as CellLines } from '@/components/assets/cell-lines.svg'
 import { ReactComponent as PlasmidsReagents } from '@/components/assets/plasmids-reagents.svg'
+// Imported as URLs and rendered with a blue multiply overlay to replicate the
+// blue overlay style of the Figma-exported category card SVGs.
+import advancedCellularModelsUrl from '@/components/assets/advanced-cellular-models.svg?url'
+import clinicalAssessmentToolsUrl from '@/components/assets/clinical-assessment-tools.svg?url'
+import computationalToolsUrl from '@/components/assets/computational-tools.svg?url'
+import patientDerivedModelsUrl from '@/components/assets/patient-derived-models.svg?url'
 import { Box, Link, Typography } from '@mui/material'
 import { ReactElement } from 'react'
 import { useNavigate } from 'react-router'
@@ -11,6 +17,39 @@ import Layout from '../Layout'
 
 const CARD_WIDTH = 260
 const CARD_HEIGHT = 114
+
+// Wraps an <img> in a blue-background box with mix-blend-mode:multiply to
+// replicate the blue overlay style of the Figma-exported category card SVGs.
+const BlueOverlayImg = ({
+  src,
+  objectPosition = 'center',
+}: {
+  src: string
+  objectPosition?: string
+}) => (
+  <Box
+    sx={{
+      width: CARD_WIDTH,
+      height: CARD_HEIGHT,
+      backgroundColor: 'primary.main',
+      overflow: 'hidden',
+    }}
+  >
+    <Box
+      component="img"
+      src={src}
+      alt=""
+      sx={{
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+        objectPosition,
+        mixBlendMode: 'multiply',
+        display: 'block',
+      }}
+    />
+  </Box>
+)
 
 type SubmitCategoryItem = {
   label: string
@@ -45,14 +84,16 @@ const categoryGroups: SubmitCategoryGroup[] = [
         submitPath: '/Research Tools Central/Submit Patient Derived Model',
         tooltip:
           'Xenografts and organoids created directly from patient tissue',
-        image: null,
+        image: (
+          <BlueOverlayImg src={patientDerivedModelsUrl} objectPosition="top center" />
+        ),
       },
       {
         label: 'Advanced Cellular Models',
         submitPath: '/Research Tools Central/Submit Advanced Cellular Model',
         tooltip:
           'Protocols to create organoids, spheroids, and other 3D models',
-        image: null,
+        image: <BlueOverlayImg src={advancedCellularModelsUrl} />,
       },
     ],
   },
@@ -80,13 +121,15 @@ const categoryGroups: SubmitCategoryGroup[] = [
         label: 'Computational Tools',
         submitPath: '/Research Tools Central/Submit Computational Tool',
         tooltip: 'Software, pipelines, packages',
-        image: null,
+        image: <BlueOverlayImg src={computationalToolsUrl} />,
       },
       {
         label: 'Clinical Assessment Tools',
         submitPath: '/Research Tools Central/Submit Clinical Assessment Tool',
         tooltip: 'Validated clinical outcome measures',
-        image: null,
+        image: (
+          <BlueOverlayImg src={clinicalAssessmentToolsUrl} objectPosition="top center" />
+        ),
       },
     ],
   },
