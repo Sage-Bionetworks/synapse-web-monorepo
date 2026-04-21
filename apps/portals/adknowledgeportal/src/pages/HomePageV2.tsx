@@ -2,6 +2,8 @@ import AdknowledgeContributeCard from '@sage-bionetworks/synapse-portal-framewor
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import MailchimpSubscribeSection from 'synapse-react-client/components/MailchimpSubscribeSection/MailchimpSubscribeSection'
 import AdknowledgeHeader from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgeHeader/AdknowledgeHeader'
+import { WordPressNews } from 'synapse-react-client/components/SynapseHomepageV2/WordPressNews'
+import FloatingBlobsBackground from 'synapse-react-client/components/SynapseHomepageV2/FloatingBlobsBackground'
 
 function HomePageV2() {
   return (
@@ -13,6 +15,18 @@ function HomePageV2() {
         }}
       >
         <AdknowledgeContributeCard />
+      </SectionLayout>
+      <SectionLayout
+        title={'News Releases'}
+        centerTitle={true}
+        ContainerProps={{
+          className: 'home-spacer',
+        }}
+      >
+        <div style={{ position: 'relative', minHeight: '500px' }}>
+          <FloatingBlobsBackground stopColor1="#3A5AA8" stopColor2="#6B5FD9" />
+          <WordPressNews wordpressSiteUrl="https://news.adknowledgeportal.org" />
+        </div>
       </SectionLayout>
       <SectionLayout
         ContainerProps={{
