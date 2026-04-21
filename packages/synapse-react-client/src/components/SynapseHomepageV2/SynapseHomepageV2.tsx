@@ -400,10 +400,7 @@ export function SynapseHomepageV2({ gotoPlace }: SynapseHomepageV2Props) {
               </Typography>
             </Box>
             <Box sx={{ position: 'relative', minHeight: '500px' }}>
-              <FloatingBlobsBackground
-                stopColor1="#2FB7A8"
-                stopColor2="#2969AC"
-              />
+              <FloatingBlobsBackground color1="#30b7a8" color2="#296aac" />
               <SynapseHotDrops tableId={newAndTrendingTable} />
             </Box>
           </Box>
