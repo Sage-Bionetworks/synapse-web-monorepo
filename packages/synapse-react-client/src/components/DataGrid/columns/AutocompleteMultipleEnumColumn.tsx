@@ -88,23 +88,36 @@ function AutocompleteMultipleEnumCell({
   stopEditing,
   clearValue = undefined,
 }: AutocompleteMultipleEnumCellProps) {
-  const ref = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
   const [menuIsOpen, setMenuIsOpen] = useState(false)
   const [localInputState, setLocalInputState] = useState<string>('')
   // Track whether the current localInputState came from actual user typing.
   // MUI can update the input value internally (e.g. on hover/highlight) without user intent,
   // so we only commit free text on blur when the user deliberately typed it.
   const userIsTypingRef = useRef(false)
+  // Tracks whether the user moused down inside the dropdown listbox.
+  // When keepFocus fails (q=false in react-datasheet-grid, so portal clicks deactivate the cell),
+  // we use this ref to detect that an option click is in progress and suppress the useEffect
+  // from closing the menu before onClick→onChange can fire and commit the selection.
+  const optionMouseDownRef = useRef(false)
+  // Keep a ref to the latest `active` value so onClose and onChange can read it synchronously
+  // without stale closures.
+  const activeRef = useRef(active)
+  useEffect(() => {
+    activeRef.current = active
+  }, [active])
 
   useEffect(() => {
-    // Treat `active` as the source of truth for focus/blur and menu state
+    // Treat `active` as the source of truth for focus/blur and menu state.
     // If we listen to Autocomplete's onBlur, it will fire when selecting an option from the dropdown,
-    // in which case we do not want to update rowData
+    // in which case we do not want to update rowData.
     if (active) {
-      ref.current?.focus()
-    } else {
+      inputRef.current?.focus()
+    } else if (!optionMouseDownRef.current) {
+      // Only close and blur when there is no pending option click. If optionMouseDownRef is
+      // set, the click event will fire shortly after and onChange will handle closing.
       setMenuIsOpen(false)
-      ref.current?.blur()
+      inputRef.current?.blur()
     }
   }, [active])
 
@@ -178,7 +191,6 @@ function AutocompleteMultipleEnumCell({
         }}
       >
         <Autocomplete
-          ref={ref}
           forcePopupIcon={choices.length > 0}
           disableClearable={!hasValue}
           multiple
@@ -211,11 +223,20 @@ function AutocompleteMultipleEnumCell({
             }
             setLocalInputState(newInputValue)
           }}
-          onClose={() => {
+          onClose={(_event, reason) => {
+            optionMouseDownRef.current = false
+            if (reason === 'blur' && activeRef.current) {
+              // The cell is still active (keepFocus:true kept it alive), which means
+              // the blur was triggered by clicking inside the portal-rendered dropdown,
+              // not by a genuine outside click. Suppress this close so the pending
+              // click event can land and trigger onChange.
+              return
+            }
             setMenuIsOpen(false)
             stopEditing({ nextRow: false })
           }}
           onChange={(_e, newVal, _reason) => {
+            optionMouseDownRef.current = false
             // Handle both selection/deselection and free text creation the same way
             const values = (newVal || []).map(item => {
               return typeof item === 'string'
@@ -226,8 +247,27 @@ function AutocompleteMultipleEnumCell({
             setRowData(values.length === 0 ? clearValue : values)
             userIsTypingRef.current = false
             setLocalInputState('')
+            if (!activeRef.current) {
+              // The cell was deactivated while the menu was open (keepFocus didn't protect
+              // because q=false). Now that the value is committed, close the menu.
+              setMenuIsOpen(false)
+            }
           }}
           disableCloseOnSelect={choices.length > 1}
+          slotProps={{
+            listbox: {
+              onMouseDown: (event: React.MouseEvent) => {
+                // Prevent the input from blurring when clicking an option.
+                // MUI's internal listbox onMouseDown does the same, but our custom slotProps.listbox
+                // replaces it (mergeSlotProps gives externalSlotProps priority over additionalProps),
+                // so we must call preventDefault() here to preserve that behavior.
+                event.preventDefault()
+                // Signal that an option click is in progress so the useEffect watching `active`
+                // doesn't close the menu before onClick→onChange can fire.
+                optionMouseDownRef.current = true
+              },
+            },
+          }}
           onBlur={() => {
             // Only commit free text if the user actually typed it.
             // Guarding with userIsTypingRef prevents committing a value that was merely
@@ -261,6 +301,7 @@ function AutocompleteMultipleEnumCell({
           renderInput={params => (
             <TextField
               {...params}
+              inputRef={inputRef}
               slotProps={{
                 input: {
                   ...params.InputProps,

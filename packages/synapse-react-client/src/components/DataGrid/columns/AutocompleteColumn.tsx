@@ -64,6 +64,13 @@ export function AutocompleteCell({
 }: AutocompleteCellProps) {
   const [menuIsOpen, setMenuIsOpen] = useState(false)
   const textInputRef = useRef<HTMLInputElement>(null)
+  // Tracks whether the user has typed into the input (vs. only keyboard-navigating the dropdown).
+  // Used to guard the useEffect commit path so we don't commit a merely-highlighted option.
+  const userIsTypingRef = useRef(false)
+  // Tracks whether the user moused down inside the dropdown listbox. autoSelect fires
+  // onChange(reason='blur') when the input loses focus; this ref distinguishes a genuine
+  // option-click from a click on a different cell that happens to have an option highlighted.
+  const optionMouseDownRef = useRef(false)
 
   const rowDataAsString = castCellValueToString(rowData)
   const [localInputState, setLocalInputState] =
@@ -78,10 +85,12 @@ export function AutocompleteCell({
     } else {
       setMenuIsOpen(false)
       textInputRef.current?.blur()
-      if (localInputState !== rowDataAsString) {
-        // If we have local edits that haven't been committed yet, commit them now
+      if (userIsTypingRef.current && localInputState !== rowDataAsString) {
+        // Commit free-typed text. We only commit when the user deliberately typed
+        // (not when the input was updated by keyboard-highlight navigation).
         setRowData(parseFreeTextGivenJsonSchemaType(localInputState, colType))
       }
+      userIsTypingRef.current = false
     }
     // only invoke this if active changes!
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -138,7 +147,10 @@ export function AutocompleteCell({
       getOptionLabel={option => castCellValueToString(option)}
       value={rowData as AutocompleteOption}
       inputValue={localInputState}
-      onInputChange={(_, newInputValue) => {
+      onInputChange={(_, newInputValue, reason) => {
+        if (reason === 'input') {
+          userIsTypingRef.current = true
+        }
         setLocalInputState(newInputValue)
       }}
       onKeyDown={e => {
@@ -156,6 +168,18 @@ export function AutocompleteCell({
         stopEditing({ nextRow: false })
       }}
       onChange={(_e, newVal, reason) => {
+        if (reason === 'blur') {
+          // autoSelect fires onChange(reason='blur') whenever the input loses focus with a
+          // highlighted option. We only want to commit if the blur was caused by a genuine
+          // option click (tracked via ListboxProps.onMouseDown), not by clicking a different cell.
+          if (!optionMouseDownRef.current) {
+            return
+          }
+          optionMouseDownRef.current = false
+        } else {
+          optionMouseDownRef.current = false
+        }
+        userIsTypingRef.current = false
         if (reason === 'clear') {
           setRowData(clearValue)
         } else if (reason === 'createOption') {
@@ -170,6 +194,14 @@ export function AutocompleteCell({
         setTimeout(() => stopEditing({ nextRow: false }), 0)
       }}
       blurOnSelect={true}
+      autoSelect
+      slotProps={{
+        listbox: {
+          onMouseDown: () => {
+            optionMouseDownRef.current = true
+          },
+        },
+      }}
       renderInput={params => {
         return <TextField {...params} inputRef={textInputRef} />
       }}
