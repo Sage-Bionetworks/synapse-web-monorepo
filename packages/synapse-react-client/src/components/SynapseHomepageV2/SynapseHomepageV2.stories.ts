@@ -11,7 +11,7 @@ import { Meta, StoryObj } from '@storybook/react-vite'
 import { SynapseHomepageV2 } from './SynapseHomepageV2'
 
 const meta = {
-  title: 'Synapse/HomePage',
+  title: 'Synapse/SynapseHomepageV2',
   component: SynapseHomepageV2,
   parameters: {
     chromatic: { viewports: [600, 1200] },

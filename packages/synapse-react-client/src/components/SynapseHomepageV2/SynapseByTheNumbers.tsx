@@ -56,6 +56,7 @@ export function SynapseByTheNumbers({
         display: 'flex',
         flexWrap: 'wrap',
         justifyContent: 'space-evenly',
+        gap: '30px',
       }}
     >
       <SynapseByTheNumbersItem
@@ -67,7 +68,7 @@ export function SynapseByTheNumbers({
       />
       <SynapseByTheNumbersItem
         title={values[activeUsersLastMonthColIndex] ?? '-'}
-        description={'Active users per month'}
+        description={'Registered active users per month'}
         rows={rowSet.rows}
         plotXColIndex={exportDateColIndex}
         plotYColIndex={activeUsersLastMonthColIndex}
