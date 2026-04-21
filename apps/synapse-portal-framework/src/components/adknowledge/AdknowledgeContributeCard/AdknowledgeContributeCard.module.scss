@@ -30,10 +30,3 @@
 .textContainer {
   max-width: 650px;
 }
-
-.adknowledgeContributeCardButton:global(.MuiButton-root) {
-  border-radius: 8px;
-  background: var(--adkp-button-gradient);
-  border: 1px solid;
-  border-color: var(--adkp-button-border-color);
-}

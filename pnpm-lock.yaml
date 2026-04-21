@@ -301,6 +301,9 @@ importers:
 
   apps/portals/adknowledgeportal:
     dependencies:
+      '@mui/material':
+        specifier: ^7.1.1
+        version: 7.1.1(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.1.0))(@types/react@19.1.8)(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@sage-bionetworks/synapse-portal-framework':
         specifier: workspace:*
         version: link:../../synapse-portal-framework
@@ -13001,7 +13004,7 @@ snapshots:
 
   '@mui/material@7.1.1(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.1.0))(@types/react@19.1.8)(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
-      '@babel/runtime': 7.28.6
+      '@babel/runtime': 7.29.2
       '@mui/core-downloads-tracker': 7.1.1
       '@mui/system': 7.1.1(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.1.0))(@types/react@19.1.8)(react@19.1.0))(@types/react@19.1.8)(react@19.1.0)
       '@mui/types': 7.4.3(@types/react@19.1.8)
@@ -13118,7 +13121,7 @@ snapshots:
 
   '@mui/utils@7.1.1(@types/react@19.1.8)(react@19.1.0)':
     dependencies:
-      '@babel/runtime': 7.28.6
+      '@babel/runtime': 7.29.2
       '@mui/types': 7.4.3(@types/react@19.1.8)
       '@types/prop-types': 15.7.14
       clsx: 2.1.1
@@ -15111,7 +15114,7 @@ snapshots:
       std-env: 3.10.0
       test-exclude: 7.0.1
       tinyrainbow: 2.0.0
-      vitest: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.4)(jsdom@26.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+      vitest: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.4)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -15239,7 +15242,7 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 2.0.0
-      vitest: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.4)(jsdom@26.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+      vitest: 3.2.2(@types/debug@4.1.12)(@types/node@22.19.13)(@vitest/ui@3.2.4)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
 
   '@vitest/ui@4.0.18(vitest@4.0.18)':
     dependencies:

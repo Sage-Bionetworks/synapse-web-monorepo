@@ -6,8 +6,9 @@ import { WordPressNews } from 'synapse-react-client/components/SynapseHomepageV2
 import FloatingBlobsBackground from 'synapse-react-client/components/SynapseHomepageV2/FloatingBlobsBackground'
 import AdknowledgePrograms from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgePrograms/AdknowledgePrograms'
 import { programsSql } from '@/config/resources'
+import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
 
-function HomePageV2() {
+function HomePageInternal() {
   return (
     <div className="HomePageV2">
       <AdknowledgeHeader />
@@ -29,7 +30,13 @@ function HomePageV2() {
           mailchimpUrl="https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&id=96b614587a"
         />
       </SectionLayout>
-      <AdknowledgePrograms sql={`${programsSql} ORDER BY Program ASC`} />
+      <SectionLayout
+        title="Programs"
+        subtitle="These initiatives accelerate breakthroughs by producing, curating, and providing access to extensive datasets and resources relevant to AD/ADRD. Delve into program-specific data to drive forward your own research."
+        centerTitle
+      >
+        <AdknowledgePrograms sql={`${programsSql} ORDER BY Program ASC`} />
+      </SectionLayout>
       <SectionLayout
         title={'News Releases'}
         centerTitle={true}
@@ -43,6 +50,14 @@ function HomePageV2() {
         </div>
       </SectionLayout>
     </div>
+  )
+}
+
+function HomePageV2() {
+  return (
+    <HomePageThemeProvider>
+      <HomePageInternal />
+    </HomePageThemeProvider>
   )
 }
 
