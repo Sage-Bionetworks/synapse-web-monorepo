@@ -1,4 +1,4 @@
-import { Stack, Typography } from '@mui/material'
+import { Button, Stack, Typography } from '@mui/material'
 import styles from './AdknowledgePrograms.module.scss'
 import HexGrid from './HexGrid'
 
@@ -25,6 +25,15 @@ function AdknowledgePrograms({ sql }: AdknowledgeProgramsProps) {
           AD/ADRD. Delve into program-specific data to drive forward your own
           research.
         </Typography>
+        <Button
+          variant="contained"
+          className={styles.adknowledgeProgramsButton}
+          href="https://sagebionetworks.jira.com/servicedesk/customer/portal/12/group/34"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Contribute Data
+        </Button>
       </Stack>
       <div className="adknowledgeProgramsVisualization">
         <HexGrid sql={sql} />

@@ -7,6 +7,7 @@
 
 .adknowledgeProgramsDescription:global(.MuiTypography-root) {
   line-height: 21px;
+  margin-bottom: 24px;
 }
 
 .adknowledgeTitleSection {
@@ -18,4 +19,12 @@
 
 .adknowledgeProgramsContainer {
   width: 100%;
+}
+
+.adknowledgeProgramsButton {
+  align-self: center;
+  border-radius: 8px;
+  background: var(--adkp-button-gradient);
+  border: 1px solid;
+  border-color: var(--adkp-button-border-color);
 }
