@@ -146,9 +146,7 @@ export function useUserOrTeam(
   const userName = userGroupHeader?.userName
   const firstName = userGroupHeader?.firstName
 
-  const { data: realmPrincipals } = useGetRealmPrincipals({
-    enabled: isIndividual !== true,
-  })
+  const { data: realmPrincipals } = useGetRealmPrincipals()
 
   const specialGroupType: 'authenticatedUsers' | 'publicGroup' | null =
     isIndividual === false
