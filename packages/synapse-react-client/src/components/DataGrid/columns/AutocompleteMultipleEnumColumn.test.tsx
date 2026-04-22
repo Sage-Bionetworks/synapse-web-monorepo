@@ -4,10 +4,15 @@ import { describe, expect, it, vi } from 'vitest'
 import {
   autocompleteMultipleEnumColumn,
   AutocompleteMultipleEnumCellProps,
+  AutocompleteMultipleEnumOption,
 } from './AutocompleteMultipleEnumColumn'
 
 // Helper to create a test cell component from the column factory
-function createTestCell(choices: unknown[], colType?: string, limitTags = 2) {
+function createTestCell(
+  choices: AutocompleteMultipleEnumOption[],
+  colType?: string,
+  limitTags = 2,
+) {
   const column = autocompleteMultipleEnumColumn({
     choices,
     colType: colType,
