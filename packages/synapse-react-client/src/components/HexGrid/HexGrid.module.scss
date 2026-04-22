@@ -127,7 +127,7 @@
   }
 }
 
-.hex {
+.hex:global(.MuiButtonBase-root) {
   width: var(--s);
   height: var(--h);
   margin-right: var(--gap);
