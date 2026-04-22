@@ -2,12 +2,13 @@ import parseFreeTextGivenJsonSchemaType from '@/components/DataGrid/utils/parseF
 import { Autocomplete, SxProps, TextField, Theme } from '@mui/material'
 import { JSONSchema7Type } from 'json-schema'
 import { isNil } from 'lodash-es'
-import { memo, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   CellComponent,
   CellProps,
   Column,
 } from '@sage-bionetworks/react-datasheet-grid'
+import { useGridAutocompleteState } from './useGridAutocompleteState'
 
 // Static styles extracted to avoid recreation on every render
 const AUTOCOMPLETE_BASE_SX: SxProps<Theme> = {
@@ -62,39 +63,37 @@ export function AutocompleteCell({
   active,
   clearValue = undefined,
 }: AutocompleteCellProps) {
-  const [menuIsOpen, setMenuIsOpen] = useState(false)
-  const textInputRef = useRef<HTMLInputElement>(null)
-  // Tracks whether an option click is in progress. The dropdown renders in a portal outside
-  // the grid cell's DOM, so react-datasheet-grid treats the click as an outside click and
-  // sets active=false before onChange fires. This ref defers the cleanup so the click can
-  // complete and commit the selection before the menu is closed.
-  const optionMouseDownRef = useRef(false)
+  // Stable refs so memo(AutocompleteCell) can use default shallow comparison —
+  // react-datasheet-grid recreates these functions on every render, but their
+  // behavior is stable for a given cell position.
+  const setRowDataRef = useRef(setRowData)
+  setRowDataRef.current = setRowData
+  const stopEditingRef = useRef(stopEditing)
+  stopEditingRef.current = stopEditing
 
   const rowDataAsString = castCellValueToString(rowData)
   const [localInputState, setLocalInputState] =
     useState<string>(rowDataAsString)
 
-  useEffect(() => {
-    // Treat `active` as the source of truth for blurring
-    // If we listen to Autocomplete's onBlur, it will fire when selecting an option from the dropdown, in which case
-    // we do not want to update rowData
-    if (active) {
-      textInputRef.current?.focus()
-    } else if (!optionMouseDownRef.current) {
-      // Only close when there is no pending option click; if there is one, onChange will
-      // handle cleanup via blurOnSelect→onClose once the selection is committed.
-      setMenuIsOpen(false)
-      textInputRef.current?.blur()
+  const {
+    menuIsOpen,
+    setMenuIsOpen,
+    inputRef,
+    optionMouseDownRef,
+    handleListboxMouseDown,
+  } = useGridAutocompleteState({
+    active,
+    onDeactivate: () => {
       if (localInputState !== rowDataAsString) {
-        // If we have local edits that haven't been committed yet, commit them now
-        setRowData(parseFreeTextGivenJsonSchemaType(localInputState, colType))
+        // Commit any free-typed text that hasn't been saved yet
+        setRowDataRef.current(
+          parseFreeTextGivenJsonSchemaType(localInputState, colType),
+        )
       }
-    }
-    // only invoke this if active changes!
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active])
+    },
+  })
 
-  // When not actively being edited, sync localInputState with rowData (e.g., after cut)
+  // When not actively being edited, sync localInputState with rowData (e.g. after cut)
   useEffect(() => {
     if (!focus && !active) {
       setLocalInputState(rowDataAsString)
@@ -103,7 +102,7 @@ export function AutocompleteCell({
 
   const hasValue = !isNil(rowData) && rowData !== ''
 
-  // Memoize sx to avoid recreation - dynamic styles change based on active/focus state
+  // Memoize sx to avoid recreation — dynamic styles change based on active/focus state
   const autocompleteSx = useMemo<SxProps<Theme>>(
     () => ({
       ...AUTOCOMPLETE_BASE_SX,
@@ -130,12 +129,44 @@ export function AutocompleteCell({
     [active, focus],
   )
 
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Tab') {
+      e.preventDefault()
+      stopEditingRef.current({ nextRow: false })
+    } else if (e.key === 'Enter') {
+      e.preventDefault()
+      stopEditingRef.current({ nextRow: true })
+    }
+  }, [])
+
+  const handleClose = useCallback(() => {
+    setMenuIsOpen(false)
+    stopEditingRef.current({ nextRow: false })
+  }, [setMenuIsOpen])
+
+  const handleChange = useCallback(
+    (_e: React.SyntheticEvent, newVal: AutocompleteOption, reason: string) => {
+      // Reset the portal-click guard now that the selection has been committed
+      optionMouseDownRef.current = false
+      if (reason === 'clear') {
+        setRowDataRef.current(clearValue)
+      } else if (reason === 'createOption') {
+        // The user typed an option that wasn't a defined enum — cast to correct type
+        setRowDataRef.current(
+          parseFreeTextGivenJsonSchemaType(newVal as string, colType),
+        )
+      } else {
+        setRowDataRef.current(newVal)
+      }
+      setTimeout(() => stopEditingRef.current({ nextRow: false }), 0)
+    },
+    [clearValue, colType],
+  )
+
   return (
     <Autocomplete
       open={menuIsOpen}
-      onOpen={() => {
-        setMenuIsOpen(true)
-      }}
+      onOpen={() => setMenuIsOpen(true)}
       forcePopupIcon={true}
       disableClearable={!hasValue}
       freeSolo={true}
@@ -148,78 +179,23 @@ export function AutocompleteCell({
       onInputChange={(_, newInputValue) => {
         setLocalInputState(newInputValue)
       }}
-      onKeyDown={e => {
-        // tab
-        if (e.key === 'Tab') {
-          e.preventDefault()
-          stopEditing({ nextRow: false })
-        } else if (e.key === 'Enter') {
-          e.preventDefault()
-          stopEditing({ nextRow: true })
-        }
-      }}
-      onClose={() => {
-        setMenuIsOpen(false)
-        stopEditing({ nextRow: false })
-      }}
-      onChange={(_e, newVal, reason) => {
-        optionMouseDownRef.current = false
-        if (reason === 'clear') {
-          setRowData(clearValue)
-        } else if (reason === 'createOption') {
-          // The user typed an option that wasn't a defined enum. Try to cast it to the correct type
-          setRowData(
-            parseFreeTextGivenJsonSchemaType(newVal as string, colType),
-          )
-        } else {
-          // The value was selected, so explicitly set it
-          setRowData(newVal)
-        }
-        setTimeout(() => stopEditing({ nextRow: false }), 0)
-      }}
+      onKeyDown={handleKeyDown}
+      onClose={handleClose}
+      onChange={handleChange as any}
       blurOnSelect={true}
       slotProps={{
-        listbox: {
-          onMouseDown: (event: React.MouseEvent) => {
-            // Prevent the input from blurring when clicking an option. MUI's internal
-            // listbox onMouseDown does the same, but our slotProps replaces it, so we
-            // must call preventDefault() here to preserve that behavior.
-            event.preventDefault()
-            // Signal that an option click is in progress so the active→false useEffect
-            // doesn't close the menu before onClick→onChange can fire.
-            optionMouseDownRef.current = true
-          },
-        },
+        listbox: { onMouseDown: handleListboxMouseDown },
       }}
-      renderInput={params => {
-        return <TextField {...params} inputRef={textInputRef} />
-      }}
+      renderInput={params => <TextField {...params} inputRef={inputRef} />}
       sx={autocompleteSx}
     />
   )
 }
 
-// Memoize the cell component to prevent unnecessary re-renders
-// Custom comparison function that ignores function prop identity changes
-// since the grid library recreates them on each render but their behavior is stable
-const MemoizedAutocompleteCell = memo(
-  AutocompleteCell,
-  (prevProps, nextProps) => {
-    // Compare all non-function props that represent actual state changes
-    return (
-      prevProps.active === nextProps.active &&
-      prevProps.focus === nextProps.focus &&
-      prevProps.rowData === nextProps.rowData &&
-      prevProps.choices === nextProps.choices &&
-      prevProps.colType === nextProps.colType &&
-      prevProps.clearValue === nextProps.clearValue
-      // Note: We intentionally skip comparing stopEditing and setRowData
-      // These are recreated by react-datasheet-grid on every render but their
-      // behavior remains functionally identical for the same cell position.
-      // Comparing them would defeat the purpose of memoization.
-    )
-  },
-)
+// Memoize the cell component to prevent unnecessary re-renders.
+// setRowData and stopEditing are stabilized via refs inside the component, so
+// standard shallow comparison is sufficient — no custom comparator needed.
+export const MemoizedAutocompleteCell = memo(AutocompleteCell)
 
 export type AutocompleteColumnProps = {
   choices: AutocompleteOption[]
