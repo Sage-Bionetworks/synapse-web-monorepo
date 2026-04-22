@@ -117,8 +117,7 @@ describe('UserBadge tests', () => {
       showFullName: true,
     })
     await screen.findByText(
-      `${mockUserProfileData.firstName} ${mockUserProfileData.lastName}`,
+      `${mockUserProfileData.firstName} ${mockUserProfileData.lastName} (@${mockUserProfileData.userName})`,
     )
-    await screen.findByText(`(@${mockUserProfileData.userName})`)
   })
 })
