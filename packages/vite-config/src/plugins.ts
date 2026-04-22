@@ -6,8 +6,6 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import { externalizeDeps } from 'vite-plugin-externalize-deps'
 import dts from 'vite-plugin-dts'
 
-// const require = createRequire(import.meta.url)
-
 /**
  * Returns the @vitejs/plugin-react plugin with babel-plugin-react-compiler
  * for the DataGrid components, and the vite-plugin-svgr plugin for SVG imports.
