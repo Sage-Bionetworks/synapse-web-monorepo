@@ -1,4 +1,3 @@
-import React from 'react'
 import { ReactComponent as AnimalModels } from '@/components/assets/animalmodels.svg'
 import { ReactComponent as Antibodies } from '@/components/assets/antibodies.svg'
 import { ReactComponent as Biobanks } from '@/components/assets/biobanks.svg'
@@ -208,6 +207,7 @@ const NFSubmitToolsPage = (): React.ReactNode => {
                 <button
                   key={item.label}
                   title={item.tooltip}
+                  aria-label={item.label}
                   onClick={() => void navigate(item.submitPath)}
                 >
                   <Box sx={{ position: 'relative' }}>

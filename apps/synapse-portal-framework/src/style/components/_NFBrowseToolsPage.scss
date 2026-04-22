@@ -111,6 +111,9 @@
     @media (max-width: 900px) {
       grid-template-columns: repeat(2, 1fr);
     }
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+    }
   }
   .submit-not-sure {
     margin-top: 40px;
