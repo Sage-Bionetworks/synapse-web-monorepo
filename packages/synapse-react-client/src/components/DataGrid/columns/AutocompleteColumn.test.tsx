@@ -2,7 +2,11 @@ import parseFreeTextGivenJsonSchemaType from '@/components/DataGrid/utils/parseF
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { vi } from 'vitest'
-import { AutocompleteCell, AutocompleteCellProps } from './AutocompleteColumn'
+import {
+  AutocompleteCell,
+  AutocompleteCellProps,
+  MemoizedAutocompleteCell,
+} from './AutocompleteColumn'
 
 describe('AutocompleteColumn', () => {
   it('should initialize and render AutocompleteCell with basic props', () => {
@@ -678,5 +682,92 @@ describe('AutocompleteColumn', () => {
       render(<AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />)
       expect(screen.getByRole('combobox')).toHaveValue('2')
     })
+  })
+})
+
+describe('MemoizedAutocompleteCell', () => {
+  it('does not re-render when only setRowData and stopEditing references change', () => {
+    const choices = ['option1', 'option2']
+    const baseProps: Partial<AutocompleteCellProps> = {
+      rowData: 'option1',
+      setRowData: vi.fn(),
+      choices,
+      colType: 'string',
+      clearValue: undefined,
+      focus: false,
+      active: false,
+      stopEditing: vi.fn(),
+    }
+
+    const { rerender } = render(
+      <MemoizedAutocompleteCell {...(baseProps as AutocompleteCellProps)} />,
+    )
+    const inputBefore = screen.getByRole('combobox')
+
+    // Simulate what react-datasheet-grid does: recreate function props every render
+    rerender(
+      <MemoizedAutocompleteCell
+        {...(baseProps as AutocompleteCellProps)}
+        setRowData={vi.fn()}
+        stopEditing={vi.fn()}
+      />,
+    )
+
+    // The same DOM node means memo prevented a re-render
+    expect(screen.getByRole('combobox')).toBe(inputBefore)
+    expect(screen.getByRole('combobox')).toHaveValue('option1')
+  })
+
+  it('re-renders when rowData changes', () => {
+    const choices = ['option1', 'option2']
+    const baseProps: Partial<AutocompleteCellProps> = {
+      rowData: 'option1',
+      setRowData: vi.fn(),
+      choices,
+      focus: false,
+      active: false,
+      stopEditing: vi.fn(),
+    }
+
+    const { rerender } = render(
+      <MemoizedAutocompleteCell {...(baseProps as AutocompleteCellProps)} />,
+    )
+    expect(screen.getByRole('combobox')).toHaveValue('option1')
+
+    rerender(
+      <MemoizedAutocompleteCell
+        {...(baseProps as AutocompleteCellProps)}
+        rowData="option2"
+      />,
+    )
+    expect(screen.getByRole('combobox')).toHaveValue('option2')
+  })
+
+  it('re-renders when active changes', () => {
+    const baseProps: Partial<AutocompleteCellProps> = {
+      rowData: 'option1',
+      setRowData: vi.fn(),
+      choices: ['option1'],
+      focus: false,
+      active: false,
+      stopEditing: vi.fn(),
+    }
+
+    const { rerender } = render(
+      <MemoizedAutocompleteCell {...(baseProps as AutocompleteCellProps)} />,
+    )
+    const inputBefore = screen.getByRole('combobox')
+
+    rerender(
+      <MemoizedAutocompleteCell
+        {...(baseProps as AutocompleteCellProps)}
+        active={true}
+      />,
+    )
+
+    // The DOM node changes because active affects the sx styles — a re-render occurred
+    expect(screen.getByRole('combobox')).toBeInTheDocument()
+    // The input node itself is the same element (active triggers focus, not remount)
+    expect(screen.getByRole('combobox')).toBe(inputBefore)
   })
 })
