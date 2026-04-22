@@ -83,3 +83,42 @@
     padding-bottom: 0px;
   }
 }
+
+.submit-tools-page {
+  .submit-category-group {
+    margin-top: 40px;
+    &:first-child {
+      margin-top: 60px;
+    }
+  }
+  .submit-group-label {
+    border-bottom: 2px solid #e0e6ee;
+    padding-bottom: 14px;
+    margin-bottom: 0;
+    text-align: left;
+  }
+  .categories {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-top: 18px;
+    // Override flex properties inherited from .browse-tools-page .categories
+    justify-content: initial;
+    flex-wrap: initial;
+    button {
+      width: 100%;
+      min-width: 0;
+      overflow: hidden;
+    }
+    @media (max-width: 900px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+    }
+  }
+  .submit-not-sure {
+    margin-top: 40px;
+    padding-bottom: 20px;
+  }
+}
