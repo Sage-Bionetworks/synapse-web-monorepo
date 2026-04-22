@@ -17,13 +17,13 @@ function AdknowledgeCard({
   buttonLink,
 }: AdknowledgeCardProps) {
   return (
-    <Stack className={styles.adknowledgeContributeCardContainer}>
-      {Image && <Image className={styles.contributeIcon} />}
+    <Stack className={styles.adknowledgeCardContainer}>
+      {Image && <Image />}
       <div className={styles.textContainer}>
         {title && (
           <Typography
             variant="headline1"
-            className={styles.adknowledgeContributeCardTitle}
+            className={styles.adknowledgeCardTitle}
           >
             {title}
           </Typography>
@@ -31,7 +31,7 @@ function AdknowledgeCard({
         {description && (
           <Typography
             variant="smallText1"
-            className={styles.adknowledgeContributeCardDescription}
+            className={styles.adknowledgeCardDescription}
           >
             {description}
           </Typography>
@@ -40,7 +40,6 @@ function AdknowledgeCard({
       {buttonLink && buttonText && (
         <Button
           variant="contained"
-          className={styles.adknowledgeContributeCardButton}
           href={buttonLink}
           target="_blank"
           rel="noopener noreferrer"
