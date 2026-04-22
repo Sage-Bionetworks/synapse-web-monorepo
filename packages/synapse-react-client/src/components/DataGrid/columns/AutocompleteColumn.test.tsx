@@ -211,18 +211,22 @@ describe('AutocompleteColumn', () => {
       // active→false useEffect closed the menu first and the selection was lost.
       const mockSetRowData = vi.fn()
       const mockStopEditing = vi.fn()
+      const activeProps: Partial<AutocompleteCellProps> = {
+        rowData: '',
+        setRowData: mockSetRowData,
+        choices: ['option1', 'option2', 'option3'],
+        focus: true,
+        active: true,
+        stopEditing: mockStopEditing,
+      }
+      const inactiveProps: Partial<AutocompleteCellProps> = {
+        ...activeProps,
+        focus: false,
+        active: false,
+      }
 
       const { rerender } = render(
-        <AutocompleteCell
-          {...({
-            rowData: '',
-            setRowData: mockSetRowData,
-            choices: ['option1', 'option2', 'option3'],
-            focus: true,
-            active: true,
-            stopEditing: mockStopEditing,
-          } as AutocompleteCellProps)}
-        />,
+        <AutocompleteCell {...(activeProps as AutocompleteCellProps)} />,
       )
 
       // Open the dropdown
@@ -236,16 +240,7 @@ describe('AutocompleteColumn', () => {
       // The grid fires active=false before the click completes (portal outside-click)
       act(() => {
         rerender(
-          <AutocompleteCell
-            {...({
-              rowData: '',
-              setRowData: mockSetRowData,
-              choices: ['option1', 'option2', 'option3'],
-              focus: false,
-              active: false,
-              stopEditing: mockStopEditing,
-            } as AutocompleteCellProps)}
-          />,
+          <AutocompleteCell {...(inactiveProps as AutocompleteCellProps)} />,
         )
       })
 
