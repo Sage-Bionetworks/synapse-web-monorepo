@@ -3,18 +3,25 @@ import { ReactComponent as Antibodies } from '@/components/assets/antibodies.svg
 import { ReactComponent as Biobanks } from '@/components/assets/biobanks.svg'
 import { ReactComponent as CellLines } from '@/components/assets/cell-lines.svg'
 import { ReactComponent as PlasmidsReagents } from '@/components/assets/plasmids-reagents.svg'
-// Imported as URLs and rendered with a blue multiply overlay to replicate the
-// blue overlay style of the Figma-exported category card SVGs.
 import advancedCellularModelsUrl from '@/components/assets/advanced-cellular-models.svg?url'
 import clinicalAssessmentToolsUrl from '@/components/assets/clinical-assessment-tools.svg?url'
 import computationalToolsUrl from '@/components/assets/computational-tools.svg?url'
 import patientDerivedModelsUrl from '@/components/assets/patient-derived-models.svg?url'
 import { Box, Link, Typography } from '@mui/material'
-import { ReactElement } from 'react'
+import { CSSProperties, ReactElement, ReactNode } from 'react'
 import { useNavigate } from 'react-router'
 import Layout from '../Layout'
 
 const CARD_HEIGHT = 114
+
+// Wraps a Figma-exported SVG ReactComponent.  preserveAspectRatio="xMidYMid
+// slice" (passed as a prop to each SVG) makes the content cover the viewport
+// rather than letterbox — equivalent to object-fit:cover for inline SVGs.
+const SvgCard = ({ children }: { children: ReactElement }) => (
+  <Box sx={{ width: '100%', height: CARD_HEIGHT, overflow: 'hidden' }}>
+    {children}
+  </Box>
+)
 
 // Wraps an <img> in a blue-background box with mix-blend-mode:multiply to
 // replicate the blue overlay style of the Figma-exported category card SVGs.
@@ -49,6 +56,17 @@ const BlueOverlayImg = ({
   </Box>
 )
 
+// Style + attribute shared by all Figma SVG cards.
+// preserveAspectRatio="xMidYMid slice" scales content to cover (not letterbox).
+const svgProps = {
+  preserveAspectRatio: 'xMidYMid slice' as const,
+  style: {
+    width: '100%',
+    height: `${CARD_HEIGHT}px`,
+    display: 'block',
+  } as CSSProperties,
+}
+
 type SubmitCategoryItem = {
   label: string
   submitPath: string
@@ -70,9 +88,9 @@ const categoryGroups: SubmitCategoryGroup[] = [
         submitPath: '/Research Tools Central/Submit Cell Line',
         tooltip: 'Established cell lines derived from NF patients or models',
         image: (
-          <CellLines
-            style={{ width: '100%', height: CARD_HEIGHT, display: 'block' }}
-          />
+          <SvgCard>
+            <CellLines {...svgProps} />
+          </SvgCard>
         ),
       },
       {
@@ -80,9 +98,9 @@ const categoryGroups: SubmitCategoryGroup[] = [
         submitPath: '/Research Tools Central/Submit Animal Model',
         tooltip: 'Mouse, rat, or other animal models of NF (neurofibromatosis)',
         image: (
-          <AnimalModels
-            style={{ width: '100%', height: CARD_HEIGHT, display: 'block' }}
-          />
+          <SvgCard>
+            <AnimalModels {...svgProps} />
+          </SvgCard>
         ),
       },
       {
@@ -113,9 +131,9 @@ const categoryGroups: SubmitCategoryGroup[] = [
         submitPath: '/Research Tools Central/Submit Antibody',
         tooltip: 'NF-relevant antibodies',
         image: (
-          <Antibodies
-            style={{ width: '100%', height: CARD_HEIGHT, display: 'block' }}
-          />
+          <SvgCard>
+            <Antibodies {...svgProps} />
+          </SvgCard>
         ),
       },
       {
@@ -123,9 +141,9 @@ const categoryGroups: SubmitCategoryGroup[] = [
         submitPath: '/Research Tools Central/Submit Genetic Reagent',
         tooltip: 'CRISPR constructs, plasmids, viral vectors, etc.',
         image: (
-          <PlasmidsReagents
-            style={{ width: '100%', height: CARD_HEIGHT, display: 'block' }}
-          />
+          <SvgCard>
+            <PlasmidsReagents {...svgProps} />
+          </SvgCard>
         ),
       },
     ],
@@ -160,16 +178,16 @@ const categoryGroups: SubmitCategoryGroup[] = [
         submitPath: '/Research Tools Central/Submit Biobank',
         tooltip: 'Biobanks with NF biospecimens',
         image: (
-          <Biobanks
-            style={{ width: '100%', height: CARD_HEIGHT, display: 'block' }}
-          />
+          <SvgCard>
+            <Biobanks {...svgProps} />
+          </SvgCard>
         ),
       },
     ],
   },
 ]
 
-const NFSubmitToolsPage = (): React.ReactNode => {
+const NFSubmitToolsPage = (): ReactNode => {
   const navigate = useNavigate()
 
   return (
@@ -210,7 +228,7 @@ const NFSubmitToolsPage = (): React.ReactNode => {
                   aria-label={item.label}
                   onClick={() => void navigate(item.submitPath)}
                 >
-                  <Box sx={{ position: 'relative' }}>
+                  <Box sx={{ position: 'relative', width: '100%' }}>
                     {item.image ?? (
                       <Box
                         sx={{
