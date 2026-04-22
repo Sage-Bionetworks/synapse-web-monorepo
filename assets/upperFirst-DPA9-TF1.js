@@ -1,1 +1,0 @@
-import{h as s,s as c,c as i}from"./_stringToArray-CF7PN5Kk.js";import{gu as n}from"./iframe-KW3Ki4s5.js";function u(e){return function(r){r=n(r);var a=s(r)?c(r):void 0,o=a?a[0]:r.charAt(0),t=a?i(a,1).join(""):r.slice(1);return o[e]()+t}}var m=u("toUpperCase");export{m as u};
