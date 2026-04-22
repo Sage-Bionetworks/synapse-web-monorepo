@@ -1,3 +1,9 @@
+:root {
+  --adkp-accent-color: #684b84;
+  --adkp-button-gradient: linear-gradient(180deg, #443471 0%, #5a488f 100%);
+  --adkp-button-border-color: #32243f;
+}
+
 #header,
 #footer {
   background-color: var(--synapse-primary-action-color);
@@ -30,5 +36,23 @@ footer {
 .ProgramsHomePage {
   .Programs__Card {
     width: 32%;
+  }
+}
+
+.HomePageV2 {
+  h2.title {
+    color: var(--adkp-accent-color);
+    font-size: 36px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 62px; /* 172.222% */
+    text-transform: none;
+    margin: 0;
+  }
+
+  p.center-title {
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
