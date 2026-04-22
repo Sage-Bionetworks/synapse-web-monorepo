@@ -27,6 +27,8 @@ function AdknowledgeContributeCard() {
         variant="contained"
         className={styles.adknowledgeContributeCardButton}
         href="https://sagebionetworks.jira.com/servicedesk/customer/portal/12/group/34/create/829"
+        target="_blank"
+        rel="noopener noreferrer"
       >
         Contribute Data as a Community Member
       </Button>

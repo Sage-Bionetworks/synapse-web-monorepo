@@ -304,6 +304,9 @@ importers:
 
   apps/portals/adknowledgeportal:
     dependencies:
+      '@mui/material':
+        specifier: ^7.1.1
+        version: 7.1.1(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.1.0))(@types/react@19.1.8)(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@sage-bionetworks/synapse-portal-framework':
         specifier: workspace:*
         version: link:../../synapse-portal-framework
@@ -13291,7 +13294,7 @@ snapshots:
 
   '@mui/material@7.1.1(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.1.0))(@types/react@19.1.8)(react@19.1.0))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
-      '@babel/runtime': 7.28.6
+      '@babel/runtime': 7.29.2
       '@mui/core-downloads-tracker': 7.1.1
       '@mui/system': 7.1.1(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.1.0))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.1.8)(react@19.1.0))(@types/react@19.1.8)(react@19.1.0))(@types/react@19.1.8)(react@19.1.0)
       '@mui/types': 7.4.3(@types/react@19.1.8)
@@ -13408,7 +13411,7 @@ snapshots:
 
   '@mui/utils@7.1.1(@types/react@19.1.8)(react@19.1.0)':
     dependencies:
-      '@babel/runtime': 7.28.6
+      '@babel/runtime': 7.29.2
       '@mui/types': 7.4.3(@types/react@19.1.8)
       '@types/prop-types': 15.7.14
       clsx: 2.1.1
