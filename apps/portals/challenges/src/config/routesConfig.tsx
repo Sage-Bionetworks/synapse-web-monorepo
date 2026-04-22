@@ -2,7 +2,7 @@ import App from '@sage-bionetworks/synapse-portal-framework/App'
 import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
-import { RouteObject } from 'react-router'
+import { Navigate, RouteObject } from 'react-router'
 import {
   COMMUNITY_PATH,
   INSTRUCTIONS_PATH,
@@ -12,12 +12,26 @@ import {
 
 const CHALLENGE_LIST_PATH = '/OpenChallenges'
 
+/**
+ * Short-name redirects: map a vanity path (e.g. "brats2026") to its full
+ * challenge details URL.  To add a new redirect, append a new entry here:
+ *
+ *   'brats2027': '/Challenges/DetailsPage?id=syn74274098',
+ */
+const CHALLENGE_SHORTCUTS: Record<string, string> = {
+  brats2026: '/Challenges/DetailsPage?id=syn74274097',
+}
+
 const routes: RouteObject[] = [
   {
     path: '/',
     element: <App />,
     children: [
       ...sharedRoutes,
+      ...Object.entries(CHALLENGE_SHORTCUTS).map(([shortName, target]) => ({
+        path: shortName,
+        element: <Navigate to={target} replace />,
+      })),
       {
         index: true,
         lazy: () => import('@/pages/Home').then(convertModuleToRouteObject),
