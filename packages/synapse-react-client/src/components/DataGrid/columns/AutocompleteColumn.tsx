@@ -64,12 +64,10 @@ export function AutocompleteCell({
 }: AutocompleteCellProps) {
   const [menuIsOpen, setMenuIsOpen] = useState(false)
   const textInputRef = useRef<HTMLInputElement>(null)
-  // Tracks whether the user has typed into the input (vs. only keyboard-navigating the dropdown).
-  // Used to guard the useEffect commit path so we don't commit a merely-highlighted option.
-  const userIsTypingRef = useRef(false)
-  // Tracks whether the user moused down inside the dropdown listbox. autoSelect fires
-  // onChange(reason='blur') when the input loses focus; this ref distinguishes a genuine
-  // option-click from a click on a different cell that happens to have an option highlighted.
+  // Tracks whether an option click is in progress. The dropdown renders in a portal outside
+  // the grid cell's DOM, so react-datasheet-grid treats the click as an outside click and
+  // sets active=false before onChange fires. This ref defers the cleanup so the click can
+  // complete and commit the selection before the menu is closed.
   const optionMouseDownRef = useRef(false)
 
   const rowDataAsString = castCellValueToString(rowData)
@@ -82,15 +80,15 @@ export function AutocompleteCell({
     // we do not want to update rowData
     if (active) {
       textInputRef.current?.focus()
-    } else {
+    } else if (!optionMouseDownRef.current) {
+      // Only close when there is no pending option click; if there is one, onChange will
+      // handle cleanup via blurOnSelect→onClose once the selection is committed.
       setMenuIsOpen(false)
       textInputRef.current?.blur()
-      if (userIsTypingRef.current && localInputState !== rowDataAsString) {
-        // Commit free-typed text. We only commit when the user deliberately typed
-        // (not when the input was updated by keyboard-highlight navigation).
+      if (localInputState !== rowDataAsString) {
+        // If we have local edits that haven't been committed yet, commit them now
         setRowData(parseFreeTextGivenJsonSchemaType(localInputState, colType))
       }
-      userIsTypingRef.current = false
     }
     // only invoke this if active changes!
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -147,10 +145,7 @@ export function AutocompleteCell({
       getOptionLabel={option => castCellValueToString(option)}
       value={rowData as AutocompleteOption}
       inputValue={localInputState}
-      onInputChange={(_, newInputValue, reason) => {
-        if (reason === 'input') {
-          userIsTypingRef.current = true
-        }
+      onInputChange={(_, newInputValue) => {
         setLocalInputState(newInputValue)
       }}
       onKeyDown={e => {
@@ -168,18 +163,7 @@ export function AutocompleteCell({
         stopEditing({ nextRow: false })
       }}
       onChange={(_e, newVal, reason) => {
-        if (reason === 'blur') {
-          // autoSelect fires onChange(reason='blur') whenever the input loses focus with a
-          // highlighted option. We only want to commit if the blur was caused by a genuine
-          // option click (tracked via ListboxProps.onMouseDown), not by clicking a different cell.
-          if (!optionMouseDownRef.current) {
-            return
-          }
-          optionMouseDownRef.current = false
-        } else {
-          optionMouseDownRef.current = false
-        }
-        userIsTypingRef.current = false
+        optionMouseDownRef.current = false
         if (reason === 'clear') {
           setRowData(clearValue)
         } else if (reason === 'createOption') {
@@ -194,10 +178,15 @@ export function AutocompleteCell({
         setTimeout(() => stopEditing({ nextRow: false }), 0)
       }}
       blurOnSelect={true}
-      autoSelect
       slotProps={{
         listbox: {
-          onMouseDown: () => {
+          onMouseDown: (event: React.MouseEvent) => {
+            // Prevent the input from blurring when clicking an option. MUI's internal
+            // listbox onMouseDown does the same, but our slotProps replaces it, so we
+            // must call preventDefault() here to preserve that behavior.
+            event.preventDefault()
+            // Signal that an option click is in progress so the active→false useEffect
+            // doesn't close the menu before onClick→onChange can fire.
             optionMouseDownRef.current = true
           },
         },
