@@ -3,22 +3,27 @@ import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
 import {
   FileHandleAssociateType,
   QueryBundleRequest,
-  Row,
 } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '@/utils'
 import { useGetFullTableQueryResults } from '@/synapse-queries/entity/useGetQueryResultBundle'
 import { ImageFileHandle } from '@/components/widgets/ImageFileHandle'
 import { getFieldIndex } from '@/utils/functions/queryUtils'
-import { useState } from 'react'
-import { Button, ButtonBase, Typography, useMediaQuery } from '@mui/material'
-import { useNavigate } from 'react-router'
-import { Link as RouterLink } from 'react-router'
+import { ButtonBase, Typography } from '@mui/material'
 
-export type HexGridProps = {
+// Column values resolved by name so consumers don't need the indices that are only known inside HexGrid.
+export type HexRowData = {
+  title: string
+  imageFileHandleId: string | null
+  description: string | null
+  entityId: string
+}
+
+type HexGridProps = {
   sql: string
   titleColName: string
   imageColName: string
   descriptionColName: string
+  onRowClick?: (rowData: HexRowData) => void
 }
 
 function HexGrid({
@@ -26,10 +31,8 @@ function HexGrid({
   titleColName,
   imageColName,
   descriptionColName,
+  onRowClick,
 }: HexGridProps) {
-  const navigate = useNavigate()
-  const [selected, setSelected] = useState<Row | null>(null)
-
   const entityId = parseEntityIdFromSqlStatement(sql)
   const queryBundleRequest: QueryBundleRequest = {
     entityId,
@@ -45,100 +48,46 @@ function HexGrid({
 
   const dataRows = queryResultBundle?.queryResult?.queryResults.rows ?? []
 
-  const programColumnIndex = getFieldIndex(titleColName, queryResultBundle)
+  const titleColIndex = getFieldIndex(titleColName, queryResultBundle)
 
-  const homepageImageColumnIndex = getFieldIndex(
-    imageColName,
-    queryResultBundle,
-  )
+  const imageColIndex = getFieldIndex(imageColName, queryResultBundle)
 
-  const shortDescriptionColumnIndex = getFieldIndex(
-    descriptionColName,
-    queryResultBundle,
-  )
-
-  const getDetailsUrl = (row: Row) =>
-    `/Explore/Programs/DetailsPage?Program=${encodeURIComponent(
-      row.values[programColumnIndex] ?? '',
-    )}`
-
-  const SIDEBAR_BREAKPOINT = '(max-width: 1100px)'
-  const isMobile = useMediaQuery(SIDEBAR_BREAKPOINT)
-
-  const handleHexClick = (row: Row) => {
-    // for mobile, navigate to the details page on click. For desktop, set the selected program to show details in the sidebar
-    if (isMobile) {
-      navigate(getDetailsUrl(row))
-      return
-    }
-    setSelected(row)
-  }
+  const descColIndex = getFieldIndex(descriptionColName, queryResultBundle)
 
   return (
     <div className={styles.hexSlat}>
-      <div className={styles.layoutWrapper}>
-        <div className={styles.gridWrapper}>
-          <ul className={styles.hexGrid}>
-            {dataRows.map(program => (
-              <ButtonBase
-                component="li"
-                key={program.rowId}
-                className={styles.hex}
-                onClick={() => handleHexClick(program)}
-              >
-                <div className={styles.hexIn}>
-                  <Typography variant="headline3" className={styles.hexTitle}>
-                    {program.values[programColumnIndex]}
-                  </Typography>
-                  <ImageFileHandle
-                    fileHandleAssociation={{
-                      fileHandleId:
-                        program.values[homepageImageColumnIndex] ?? '',
-                      associateObjectId: entityId,
-                      associateObjectType: FileHandleAssociateType.TableEntity,
-                    }}
-                    imgProps={{ className: styles.hexIcon }}
-                  />
-                </div>
-              </ButtonBase>
-            ))}
-          </ul>
-        </div>
-
-        <aside className={styles.sidebar}>
-          {!selected ? (
-            <div className={styles.sidebarEmpty}>
-              <Typography variant="body1">
-                Select a tile to view details
-              </Typography>
-            </div>
-          ) : (
-            <div>
-              <ImageFileHandle
-                fileHandleAssociation={{
-                  fileHandleId: selected.values[homepageImageColumnIndex] ?? '',
-                  associateObjectId: entityId,
-                  associateObjectType: FileHandleAssociateType.TableEntity,
-                }}
-                imgProps={{ className: styles.sidebarIcon }}
-              />
-              <Typography variant="headline3" className={styles.sidebarTitle}>
-                {selected.values[programColumnIndex]}
-              </Typography>
-              <Typography variant="body1" className={styles.sidebarDetails}>
-                {selected.values[shortDescriptionColumnIndex]}
-              </Typography>
-              <Button
-                component={RouterLink}
-                to={getDetailsUrl(selected)}
-                className={styles.sidebarBtn}
-                variant="contained"
-              >
-                View Program
-              </Button>
-            </div>
-          )}
-        </aside>
+      <div className={styles.gridWrapper}>
+        <ul className={styles.hexGrid}>
+          {dataRows.map(row => (
+            <ButtonBase
+              component="li"
+              key={row.rowId}
+              className={styles.hex}
+              onClick={() =>
+                onRowClick?.({
+                  title: row.values[titleColIndex] ?? '',
+                  imageFileHandleId: row.values[imageColIndex] ?? null,
+                  description: row.values[descColIndex] ?? null,
+                  entityId,
+                })
+              }
+            >
+              <div className={styles.hexIn}>
+                <Typography variant="headline3" className={styles.hexTitle}>
+                  {row.values[titleColIndex]}
+                </Typography>
+                <ImageFileHandle
+                  fileHandleAssociation={{
+                    fileHandleId: row.values[imageColIndex] ?? '',
+                    associateObjectId: entityId,
+                    associateObjectType: FileHandleAssociateType.TableEntity,
+                  }}
+                  imgProps={{ className: styles.hexIcon }}
+                />
+              </div>
+            </ButtonBase>
+          ))}
+        </ul>
       </div>
     </div>
   )

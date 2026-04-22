@@ -1,4 +1,4 @@
 import HexGrid from './HexGrid'
-import type { HexGridProps } from './HexGrid'
-export { HexGrid, HexGridProps }
+import type { HexRowData } from './HexGrid'
+export { HexGrid, HexRowData }
 export default HexGrid

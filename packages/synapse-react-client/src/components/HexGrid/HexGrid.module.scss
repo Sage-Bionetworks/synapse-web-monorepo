@@ -22,21 +22,6 @@
   @media (max-width: 600px) {
     overflow-x: hidden;
   }
-
-  /* --- Layout --- */
-  .layoutWrapper {
-    display: flex;
-    gap: 3rem;
-    text-align: left;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 0 2rem;
-
-    @media (max-width: 1100px) {
-      flex-direction: column;
-      align-items: stretch;
-    }
-  }
 }
 
 .gridWrapper {
@@ -187,45 +172,5 @@
     color: #3c4a63;
     font-size: 16px;
     line-height: 28px; /* 175% */
-  }
-}
-
-/* --- Sidebar Content --- */
-.sidebar {
-  width: 320px;
-  flex-shrink: 0;
-  border-left: 1px solid rgba(0, 0, 0, 0.1);
-  margin: 2rem 0 0;
-  padding: 0 2rem 1rem;
-
-  @media (max-width: 1100px) {
-    display: none;
-  }
-
-  .sidebarEmpty {
-    display: flex;
-    height: 100%;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.5;
-  }
-
-  .sidebarIcon {
-    max-width: 100%;
-    max-height: 80px;
-    object-fit: contain;
-    display: block;
-    margin-bottom: 1rem;
-  }
-
-  .sidebarTitle {
-    margin-bottom: 12px;
-    color: var(--synapse-gray-1000, #22252a);
-  }
-
-  .sidebarDetails {
-    margin-bottom: 30px;
-    color: var(--synapse-gray-1000, #22252a);
-    line-height: 20px;
   }
 }
