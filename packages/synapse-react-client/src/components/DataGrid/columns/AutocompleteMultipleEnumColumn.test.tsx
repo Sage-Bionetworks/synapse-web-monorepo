@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import {
@@ -802,6 +802,57 @@ describe('autocompleteMultipleEnumColumn', () => {
       expect(
         await screen.findByRole('option', { name: 'option2' }),
       ).toBeInTheDocument()
+    })
+
+    it('commits a selected option when the grid deactivates the cell mid-click', async () => {
+      // Regression: the dropdown renders in a portal outside the grid cell's DOM.
+      // react-datasheet-grid sees the mousedown as an outside click and fires active=false
+      // before the click event fires onChange. Without the optionMouseDownRef guard the
+      // active→false useEffect closed the menu first and the selection was lost.
+      const mockSetRowData = vi.fn()
+      const mockStopEditing = vi.fn()
+      const TestCell = createTestCell(
+        ['option1', 'option2', 'option3'],
+        'string',
+      )
+
+      const { rerender } = render(
+        <TestCell
+          rowData={[]}
+          setRowData={mockSetRowData}
+          focus={true}
+          active={true}
+          stopEditing={mockStopEditing}
+        />,
+      )
+
+      // Open the dropdown
+      await userEvent.click(screen.getByRole('button', { name: /open/i }))
+      const listbox = await screen.findByRole('listbox')
+      const option = screen.getByRole('option', { name: 'option2' })
+
+      // Mousedown on the listbox sets optionMouseDownRef, signalling a click is in progress
+      fireEvent.mouseDown(listbox)
+
+      // The grid fires active=false before the click completes (portal outside-click)
+      act(() => {
+        rerender(
+          <TestCell
+            rowData={[]}
+            setRowData={mockSetRowData}
+            focus={false}
+            active={false}
+            stopEditing={mockStopEditing}
+          />,
+        )
+      })
+
+      // Complete the click — the menu must still be open so onChange can fire
+      fireEvent.click(option)
+
+      await waitFor(() => {
+        expect(mockSetRowData).toHaveBeenCalledWith(['option2'])
+      })
     })
   })
 })

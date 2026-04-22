@@ -1,5 +1,5 @@
 import parseFreeTextGivenJsonSchemaType from '@/components/DataGrid/utils/parseFreeTextUsingJsonSchemaType'
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { vi } from 'vitest'
 import { AutocompleteCell, AutocompleteCellProps } from './AutocompleteColumn'
@@ -200,6 +200,61 @@ describe('AutocompleteColumn', () => {
     // Dropdown should close (no options visible)
     await waitFor(() => {
       expect(screen.queryByRole('option')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('Portal click behavior', () => {
+    it('commits a selected option when the grid deactivates the cell mid-click', async () => {
+      // Regression: the dropdown renders in a portal outside the grid cell's DOM.
+      // react-datasheet-grid sees the mousedown as an outside click and fires active=false
+      // before the click event fires onChange. Without the optionMouseDownRef guard the
+      // active→false useEffect closed the menu first and the selection was lost.
+      const mockSetRowData = vi.fn()
+      const mockStopEditing = vi.fn()
+
+      const { rerender } = render(
+        <AutocompleteCell
+          {...({
+            rowData: '',
+            setRowData: mockSetRowData,
+            choices: ['option1', 'option2', 'option3'],
+            focus: true,
+            active: true,
+            stopEditing: mockStopEditing,
+          } as AutocompleteCellProps)}
+        />,
+      )
+
+      // Open the dropdown
+      await userEvent.click(screen.getByRole('button', { name: /open/i }))
+      const listbox = await screen.findByRole('listbox')
+      const option = screen.getByRole('option', { name: 'option2' })
+
+      // Mousedown on the listbox sets optionMouseDownRef, signalling a click is in progress
+      fireEvent.mouseDown(listbox)
+
+      // The grid fires active=false before the click completes (portal outside-click)
+      act(() => {
+        rerender(
+          <AutocompleteCell
+            {...({
+              rowData: '',
+              setRowData: mockSetRowData,
+              choices: ['option1', 'option2', 'option3'],
+              focus: false,
+              active: false,
+              stopEditing: mockStopEditing,
+            } as AutocompleteCellProps)}
+          />,
+        )
+      })
+
+      // Complete the click — the menu must still be open so onChange can fire
+      fireEvent.click(option)
+
+      await waitFor(() => {
+        expect(mockSetRowData).toHaveBeenCalledWith('option2')
+      })
     })
   })
 
