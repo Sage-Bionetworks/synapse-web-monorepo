@@ -1,3 +1,4 @@
+import { Chip } from '@mui/material'
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
@@ -6,6 +7,11 @@ import { publicationsSql } from '../resources'
 
 export const publicationsCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
+  CardTypeAdornment: ({ schema, data }) => {
+    const publicationType = data[schema['publicationType']]
+    if (!publicationType) return null
+    return <Chip label={publicationType} size="small" />
+  },
   labelLinkConfig: [
     {
       isMarkdown: false,
@@ -27,7 +33,6 @@ export const publicationsCardConfiguration: CardConfiguration = {
       'journal',
       'year',
       'associatedDataset',
-      'publicationType',
       'program',
       'PMID',
     ],
