@@ -160,6 +160,9 @@ function AutocompleteMultipleEnumCell({
   )
 
   const handleClose = useCallback(() => {
+    // clear the guard in case a mousedown on an option
+    // was abandoned before onChange could fire (e.g. drag-off).
+    optionMouseDownRef.current = false
     setMenuIsOpen(false)
     stopEditingRef.current({ nextRow: false })
   }, [setMenuIsOpen])

@@ -235,11 +235,12 @@ describe('AutocompleteColumn', () => {
 
       // Open the dropdown
       await userEvent.click(screen.getByRole('button', { name: /open/i }))
-      const listbox = await screen.findByRole('listbox')
+      await screen.findByRole('listbox')
       const option = screen.getByRole('option', { name: 'option2' })
 
-      // Mousedown on the listbox sets optionMouseDownRef, signalling a click is in progress
-      fireEvent.mouseDown(listbox)
+      // Mousedown on the option element sets optionMouseDownRef, signalling a click is in progress.
+      // (In a real portal click the mousedown lands on the option li, not the listbox ul.)
+      fireEvent.mouseDown(option)
 
       // The grid fires active=false before the click completes (portal outside-click)
       act(() => {

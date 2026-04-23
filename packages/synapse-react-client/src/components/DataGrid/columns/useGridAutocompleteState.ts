@@ -75,13 +75,17 @@ export function useGridAutocompleteState({
   }, [active])
 
   const handleListboxMouseDown = useCallback((event: React.MouseEvent) => {
-    // Prevent the input from blurring when clicking an option. MUI's internal
-    // listbox onMouseDown does the same, but our slotProps replaces it, so we
-    // must call preventDefault() here to preserve that behavior.
+    // Prevent the input from blurring when clicking inside the listbox. MUI's
+    // internal listbox onMouseDown does the same, but our slotProps replaces it,
+    // so we must call preventDefault() here to preserve that behavior.
     event.preventDefault()
-    // Signal that an option click is in progress so the active→false useEffect
-    // doesn't close the menu before onClick→onChange can fire.
-    optionMouseDownRef.current = true
+    // Only signal a pending option click when the mousedown actually targets an
+    // option element. Clicks on scrollbars or listbox padding would otherwise
+    // leave the guard stuck true (onChange never fires for non-selections),
+    // causing later active→false transitions to skip blur/onDeactivate cleanup.
+    if ((event.target as Element).closest('[role="option"]')) {
+      optionMouseDownRef.current = true
+    }
   }, [])
 
   return {

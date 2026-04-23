@@ -79,10 +79,13 @@ describe('useGridAutocompleteState', () => {
       { initialProps: { active: true } },
     )
 
-    // Simulate listbox mousedown (portal click in progress)
+    // Simulate mousedown on an option element (portal click in progress)
     act(() => {
+      const optionEl = document.createElement('li')
+      optionEl.setAttribute('role', 'option')
       const mockEvent = {
         preventDefault: vi.fn(),
+        target: optionEl,
       } as unknown as React.MouseEvent
       result.current.handleListboxMouseDown(mockEvent)
     })
@@ -120,13 +123,18 @@ describe('useGridAutocompleteState', () => {
     expect(secondCallback).toHaveBeenCalledTimes(1)
   })
 
-  it('handleListboxMouseDown calls preventDefault and sets optionMouseDownRef', () => {
+  it('handleListboxMouseDown calls preventDefault and sets optionMouseDownRef when target is an option', () => {
     const { result } = renderHook(() =>
       useGridAutocompleteState({ active: true }),
     )
 
     const preventDefault = vi.fn()
-    const mockEvent = { preventDefault } as unknown as React.MouseEvent
+    const optionEl = document.createElement('li')
+    optionEl.setAttribute('role', 'option')
+    const mockEvent = {
+      preventDefault,
+      target: optionEl,
+    } as unknown as React.MouseEvent
 
     act(() => {
       result.current.handleListboxMouseDown(mockEvent)
@@ -134,6 +142,28 @@ describe('useGridAutocompleteState', () => {
 
     expect(preventDefault).toHaveBeenCalledTimes(1)
     expect(result.current.optionMouseDownRef.current).toBe(true)
+  })
+
+  it('handleListboxMouseDown calls preventDefault but does NOT set optionMouseDownRef when target is not an option', () => {
+    const { result } = renderHook(() =>
+      useGridAutocompleteState({ active: true }),
+    )
+
+    const preventDefault = vi.fn()
+    // Simulate a mousedown on the listbox container (e.g. scrollbar area)
+    const listboxEl = document.createElement('ul')
+    listboxEl.setAttribute('role', 'listbox')
+    const mockEvent = {
+      preventDefault,
+      target: listboxEl,
+    } as unknown as React.MouseEvent
+
+    act(() => {
+      result.current.handleListboxMouseDown(mockEvent)
+    })
+
+    expect(preventDefault).toHaveBeenCalledTimes(1)
+    expect(result.current.optionMouseDownRef.current).toBe(false)
   })
 
   it('handleListboxMouseDown is stable across re-renders', () => {
@@ -180,10 +210,13 @@ describe('useGridAutocompleteState', () => {
       result.current.setMenuIsOpen(true)
     })
 
-    // Portal mousedown begins
+    // Portal mousedown begins — simulate mousedown on an option element
     act(() => {
+      const optionEl = document.createElement('li')
+      optionEl.setAttribute('role', 'option')
       result.current.handleListboxMouseDown({
         preventDefault: vi.fn(),
+        target: optionEl,
       } as unknown as React.MouseEvent)
     })
 
