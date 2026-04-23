@@ -7,6 +7,10 @@ import FloatingBlobsBackground from 'synapse-react-client/components/SynapseHome
 import AdknowledgePrograms from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgePrograms/AdknowledgePrograms'
 import { programsSql } from '@/config/resources'
 import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
+import { ReactComponent as CavaticaLogo } from '../assets/cavatica.svg'
+import { ReactComponent as TerraLogo } from '../assets/terra.svg'
+import { ReactComponent as ADDILogo } from '../assets/addi.svg'
+import styles from './HomePageV2.module.scss'
 
 function HomePageInternal() {
   return (
@@ -34,8 +38,35 @@ function HomePageInternal() {
         title="Programs"
         subtitle="These initiatives accelerate breakthroughs by producing, curating, and providing access to extensive datasets and resources relevant to AD/ADRD. Delve into program-specific data to drive forward your own research."
         centerTitle
+        ContainerProps={{
+          className: 'home-spacer',
+        }}
       >
         <AdknowledgePrograms sql={`${programsSql} ORDER BY Program ASC`} />
+      </SectionLayout>
+      <SectionLayout
+        ContainerProps={{
+          className: 'home-spacer',
+        }}
+        title="Data Analysis Platform Integrations"
+        subtitle="Analyze your data in a trusted research environment, integrated with the knowledge portal ecosystem."
+        centerTitle
+      >
+        <div className={styles.dataAnalysisIntegrationsLogoContainer}>
+          <a
+            href="https://www.alzheimersdata.org/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <ADDILogo />
+          </a>
+          <a href="https://www.cavatica.org/" target="_blank" rel="noreferrer">
+            <CavaticaLogo />
+          </a>
+          <a href="https://terra.bio/" target="_blank" rel="noreferrer">
+            <TerraLogo />
+          </a>
+        </div>
       </SectionLayout>
       <SectionLayout
         title={'News Releases'}
