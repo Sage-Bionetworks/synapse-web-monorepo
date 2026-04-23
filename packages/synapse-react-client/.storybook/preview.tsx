@@ -10,7 +10,7 @@ import { initialize, mswLoader } from 'msw-storybook-addon'
 import '../src/stories/DemoStyle.scss'
 import * as React from 'react'
 import { StorybookComponentWrapper } from '../src/components/StorybookComponentWrapper'
-import { getHandlers } from '../src/mocks/msw/handlers'
+import { getHandlersForStorybook } from '../src/mocks/msw/handlers'
 import defaultMuiThemeOptions from '../src/theme/DefaultTheme'
 import {
   adKnowledgePortalPalette,
@@ -83,10 +83,7 @@ const preview: Preview = {
       },
     },
     msw: {
-      handlers: [
-        // Only return mocked data when making requests to our mock stack
-        ...getHandlers(MOCK_REPO_ORIGIN),
-      ],
+      handlers: getHandlersForStorybook(MOCK_REPO_ORIGIN),
     },
   },
   decorators: [
