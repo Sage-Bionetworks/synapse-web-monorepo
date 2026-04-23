@@ -193,10 +193,27 @@ export function AutocompleteCell({
 }
 
 // Memoize the cell component to prevent unnecessary re-renders.
-// setRowData and stopEditing are stabilized via refs inside the component, so
-// standard shallow comparison is sufficient — no custom comparator needed.
-export const MemoizedAutocompleteCell = memo(AutocompleteCell)
+// react-datasheet-grid provides new setRowData/stopEditing function instances
+// on each render, so we must ignore those callback identities here and only
+// compare the props that affect rendering.
+function areAutocompleteCellPropsEqual(
+  prevProps: AutocompleteCellProps,
+  nextProps: AutocompleteCellProps,
+) {
+  return (
+    prevProps.rowData === nextProps.rowData &&
+    prevProps.choices === nextProps.choices &&
+    prevProps.colType === nextProps.colType &&
+    prevProps.focus === nextProps.focus &&
+    prevProps.active === nextProps.active &&
+    prevProps.clearValue === nextProps.clearValue
+  )
+}
 
+export const MemoizedAutocompleteCell = memo(
+  AutocompleteCell,
+  areAutocompleteCellPropsEqual,
+)
 export type AutocompleteColumnProps = {
   choices: AutocompleteOption[]
   colType?: JSONSchema7Type
