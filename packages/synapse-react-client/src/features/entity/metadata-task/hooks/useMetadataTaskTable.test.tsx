@@ -14,10 +14,10 @@ vi.mock('@/synapse-queries/index', () => ({
   }),
 }))
 
-import { useGetCurationTasksByProjectInfinite } from '@/synapse-queries/curation/task/useCurationTask'
+import { useGetCurationTasksInfinite } from '@/synapse-queries/curation/task/useCurationTask'
 
 const mockUseGetCurationTasksByProjectInfinite = vi.mocked(
-  useGetCurationTasksByProjectInfinite,
+  useGetCurationTasksInfinite,
 )
 
 const defaultTaskPages = {

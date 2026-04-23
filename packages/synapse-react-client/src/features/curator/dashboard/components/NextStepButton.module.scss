@@ -1,0 +1,57 @@
+.button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 32px;
+
+  .icon {
+    color: var(--synapse-gray-700);
+    font-size: 30px;
+  }
+
+  .buttonText {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0;
+    flex-shrink: 0;
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+
+  .buttonTextSub {
+    color: var(--synapse-gray-700);
+  }
+
+  &:disabled {
+    pointer-events: all;
+    opacity: 0.5;
+  }
+
+  &:hover:not(:disabled) {
+    .buttonTextMain {
+      text-decoration: underline;
+    }
+    .icon {
+      color: var(--synapse-gray-800);
+    }
+    .buttonTextSub {
+      color: var(--synapse-gray-800);
+    }
+  }
+
+  &:active:not(:disabled) {
+    .buttonTextMain {
+      text-decoration: underline;
+      text-decoration-thickness: 3px;
+    }
+    .icon {
+      color: var(--synapse-gray-900);
+    }
+    .buttonTextSub {
+      color: var(--synapse-gray-900);
+    }
+  }
+}

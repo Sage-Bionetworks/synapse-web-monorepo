@@ -104,7 +104,7 @@ export function useUpdateCurationTaskStatus(
   })
 }
 
-export function useGetCurationTasksByProjectInfinite<
+export function useGetCurationTasksInfinite<
   TData = InfiniteData<ListCurationTaskResponse>,
 >(
   request: ListCurationTaskRequest,

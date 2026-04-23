@@ -1,4 +1,5 @@
 import { ErrorBanner } from '@/components/index'
+import SWCHeader from '@/components/layout/SWCHeader'
 import { StyledPopover } from '@/components/styled/StyledPopover'
 import { useGetCurationTask } from '@/synapse-queries/curation/task/useCurationTask'
 import { useGetGridSession } from '@/synapse-queries/grid/useGridSession'
@@ -26,41 +27,40 @@ export default function GridPageTitle(props: GridPageTitleProps) {
     return <ErrorBanner error={gridSessionError} />
   }
 
-  return (
-    <div className={'pageHeader'}>
-      <h3 className={'pageHeaderTitle'}>
-        Working Copy{' '}
-        {gridSourceEntity?.name ? `of ${gridSourceEntity.name}` : ''}
-      </h3>
-      <Stack className={'description'} spacing={1}>
-        <Typography variant={'headline2'}>ID: {sessionId}</Typography>
-        {curationTask && (
-          <Stack direction="row" spacing={1} alignItems="center">
-            <Typography variant={'body1'}>
-              <strong>Task Name:</strong> {curationTask.dataType}{' '}
-            </Typography>
-            <StyledPopover popoverContent={curationTask.instructions}>
-              <Link underline="hover">View Instructions</Link>
-            </StyledPopover>
-          </Stack>
-        )}
-        {gridSession?.gridJsonSchema$Id && (
-          <div>
-            <Tooltip title={gridSession?.gridJsonSchema$Id} placement={'right'}>
-              <Link
-                target={'_blank'}
-                href={`${getEndpoint(
-                  BackendDestinationEnum.REPO_ENDPOINT,
-                )}/repo/v1/schema/type/registered/${
-                  gridSession?.gridJsonSchema$Id
-                }`}
-              >
-                View Validation Schema (JSON)
-              </Link>
-            </Tooltip>
-          </div>
-        )}
-      </Stack>
-    </div>
+  const title = `Working Copy ${
+    gridSourceEntity?.name ? `of ${gridSourceEntity.name}` : ''
+  }`
+  const description = (
+    <Stack spacing={1}>
+      <Typography variant={'headline2'}>ID: {sessionId}</Typography>
+      {curationTask && (
+        <Stack direction="row" spacing={1} alignItems="center">
+          <Typography variant={'body1'}>
+            <strong>Task Name:</strong> {curationTask.dataType}{' '}
+          </Typography>
+          <StyledPopover popoverContent={curationTask.instructions}>
+            <Link underline="hover">View Instructions</Link>
+          </StyledPopover>
+        </Stack>
+      )}
+      {gridSession?.gridJsonSchema$Id && (
+        <div>
+          <Tooltip title={gridSession?.gridJsonSchema$Id} placement={'right'}>
+            <Link
+              target={'_blank'}
+              href={`${getEndpoint(
+                BackendDestinationEnum.REPO_ENDPOINT,
+              )}/repo/v1/schema/type/registered/${
+                gridSession?.gridJsonSchema$Id
+              }`}
+            >
+              View Validation Schema (JSON)
+            </Link>
+          </Tooltip>
+        </div>
+      )}
+    </Stack>
   )
+
+  return <SWCHeader title={title} description={description} />
 }
