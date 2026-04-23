@@ -17,7 +17,6 @@
   }
 
   width: 100%;
-  padding: 2rem 0;
 
   @media (max-width: 600px) {
     overflow-x: hidden;
@@ -36,7 +35,7 @@
   display: flex;
   flex-wrap: wrap;
   list-style: none;
-  padding: 2rem 0 4rem;
+  padding: 0 0 4rem;
   margin: 0 auto;
   justify-content: flex-start;
   max-width: 100%;
