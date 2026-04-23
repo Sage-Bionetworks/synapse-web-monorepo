@@ -234,6 +234,9 @@ export function useAddMemberToTeam(
       }
       await Promise.all([
         queryClient.invalidateQueries({
+          queryKey: keyFactory.getAllOpenMembershipInvitationsQueryKey(),
+        }),
+        queryClient.invalidateQueries({
           queryKey: keyFactory.getMembershipStatusQueryKey(
             variables.teamId,
             variables.userId,
@@ -287,6 +290,43 @@ export function useRequestToJoinTeam(
         return options.onSuccess(data, variables, ctx)
       }
       return
+    },
+  })
+}
+
+/**
+ * Delete an invitation.
+ * Note: The client must be an administrator of the Team referenced by the invitation or the invitee to make this request.
+ *
+ * @see https://rest-docs.synapse.org/rest/DELETE/membershipInvitation/id.html
+ */
+export function useDeleteMembershipInvitation(
+  options?: Partial<
+    UseMutationOptions<void, SynapseClientError, { invitationId: string }>
+  >,
+) {
+  const queryClient = useQueryClient()
+  const { keyFactory, synapseClient } = useSynapseContext()
+
+  return useMutation<
+    void,
+    SynapseClientError,
+    {
+      invitationId: string
+    }
+  >({
+    ...options,
+    mutationFn: ({ invitationId }) =>
+      synapseClient.membershipInvitationServicesClient.deleteRepoV1MembershipInvitationId(
+        { id: invitationId },
+      ),
+    onSuccess: async (data, variables, ctx) => {
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getAllOpenMembershipInvitationsQueryKey(),
+      })
+      if (options?.onSuccess) {
+        await options.onSuccess(data, variables, ctx)
+      }
     },
   })
 }

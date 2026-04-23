@@ -12,6 +12,9 @@ import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import ChallengeTeamWizard from './index'
+import getAllTeamHandlers from '@/mocks/msw/handlers/teamHandlers'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
 
 const createTeamSpy = vi.spyOn(SynapseClient, 'createTeam')
 const registerChallengeTeamSpy = vi.spyOn(
@@ -146,6 +149,18 @@ describe('ChallengeTeamWizard tests', () => {
 
   it('handles joining a team where the current user has an open invitation', async () => {
     const teamToSelect = mockTeamData4
+    server.use(
+      ...getAllTeamHandlers(getEndpoint(BackendDestinationEnum.REPO_ENDPOINT), [
+        {
+          id: 'invitation-1',
+          createdOn: new Date().toISOString(),
+          createdBy: String(mockTeamData5.createdBy),
+          teamId: String(teamToSelect.id),
+          inviteeId: String(MOCK_USER_ID),
+          message: 'Please join my team!',
+        },
+      ]),
+    )
 
     const { user, dialog } = renderComponent()
 
