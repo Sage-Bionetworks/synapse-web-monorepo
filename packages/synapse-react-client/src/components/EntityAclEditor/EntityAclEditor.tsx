@@ -12,7 +12,7 @@ import {
   isEntityPublic,
   resourceAccessListIsEqual,
 } from '@/utils/functions/AccessControlListUtils'
-import { getDisplayNameFromProfile } from '@/utils/functions/DisplayUtils'
+import { getPrincipalDisplayName } from '@/utils/functions/getPrincipalDisplayName'
 import { entityTypeToFriendlyName } from '@/utils/functions/EntityTypeUtils'
 import {
   getAccessTypeFromPermissionLevel,
@@ -76,8 +76,13 @@ function getSubject(entityName: string) {
 }
 
 function getBody(profile: UserProfile, entityId: string) {
-  return `${getDisplayNameFromProfile(
-    profile,
+  return `${getPrincipalDisplayName(
+    {
+      userName: profile.userName ?? '',
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+    },
+    { showFullName: true, showUsername: false },
   )} has shared an item with you on Synapse:\n${getEndpoint(
     BackendDestinationEnum.PORTAL_ENDPOINT,
   )}Synapse:${entityId}`

@@ -1,7 +1,8 @@
-import { useGetUserGroupHeader } from '@/synapse-queries'
+import { useUserOrTeam } from '../UserOrTeamBadge/useUserOrTeam'
 import { useGetUserBundle } from '@/synapse-queries/user/useUserBundle'
 import { SynapseConstants } from '@/utils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
+import { getPrincipalDisplayName } from '@/utils/functions/getPrincipalDisplayName'
 import { useOverlay } from '@/utils/hooks/useOverlay'
 import { Box, Chip, Link, Skeleton } from '@mui/material'
 import { CSSProperties, useMemo, useRef } from 'react'
@@ -37,8 +38,6 @@ export type UserBadgeProps = {
 const TIMER_DELAY_SHOW = 250 // milliseconds
 const TIMER_DELAY_HIDE = 500
 
-const NONBREAKING_SPACE = '\u00A0'
-
 export function UserBadge(props: UserBadgeProps) {
   const {
     userId,
@@ -59,10 +58,7 @@ export function UserBadge(props: UserBadgeProps) {
     SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
     SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED
 
-  const { data: userGroupHeader } = useGetUserGroupHeader(userId!, {
-    enabled: Boolean(userId),
-    staleTime: 1000 * 60 * 15, // 15 min
-  })
+  const { userGroupHeader, IconComponent } = useUserOrTeam(userId)
 
   // To show certification/validation status, we need the full bundle. Only fetch if these should be shown.
   const { data: userBundle } = useGetUserBundle(
@@ -92,7 +88,7 @@ export function UserBadge(props: UserBadgeProps) {
 
   const avatar = withAvatar ? (
     <span className="SRC-inline-avatar">
-      <UserCard ownerId={userId} size={'AVATAR'} avatarSize={avatarSize} />
+      <IconComponent avatarSize={avatarSize} />
     </span>
   ) : (
     <></>
@@ -130,17 +126,9 @@ export function UserBadge(props: UserBadgeProps) {
     </Box>
   )
 
-  const fullName =
-    showFullName &&
-    (userGroupHeader?.firstName || userGroupHeader?.lastName) ? (
-      <span className={'user-fullname'}>
-        {`${userGroupHeader?.firstName ?? ''}`}
-        {userGroupHeader?.firstName && userGroupHeader?.lastName
-          ? NONBREAKING_SPACE
-          : ''}
-        {`${userGroupHeader?.lastName ?? ''}`}
-      </span>
-    ) : null
+  const displayName = userGroupHeader
+    ? getPrincipalDisplayName(userGroupHeader, { showFullName })
+    : undefined
 
   const Tag = showCardOnHover || !disableLink ? Link : 'span'
 
@@ -165,14 +153,7 @@ export function UserBadge(props: UserBadgeProps) {
         onMouseEnter={() => toggleShow()}
         onMouseLeave={() => toggleHide()}
       >
-        {fullName}
-        {fullName ? `${NONBREAKING_SPACE}(` : ''}
-        {userGroupHeader ? (
-          `@${userGroupHeader.userName}`
-        ) : (
-          <Skeleton width={'100px'} />
-        )}
-        {fullName ? ')' : ''}
+        {displayName ?? <Skeleton width={'100px'} />}
         {showAccountLevelIcon && accountLevelIcon}
       </Tag>
       {showModeratorBadge && (
