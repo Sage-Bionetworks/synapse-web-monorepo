@@ -7,18 +7,16 @@ import { Query, QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { act, render, screen } from '@testing-library/react'
 import { Markdown } from '@/components/Markdown/MarkdownSynapse'
 
-vi.mock('@/components/Markdown/MarkdownSynapse', () => ({
-  Markdown: vi.fn().mockReturnValue(<span data-testid={'Markdown'} />),
-}))
-vi.mock('@/synapse-queries/entity/useGetQueryResultBundle', () => ({
-  useGetFullTableQueryResults: vi.fn(),
-}))
-vi.mock('@/components/widgets/ImageFileHandle', () => ({
-  ImageFileHandle: vi.fn().mockReturnValue(<span>ImageFileHandle</span>),
-}))
+vi.mock('@/components/Markdown/MarkdownSynapse')
+vi.mock('@/synapse-queries/entity/useGetQueryResultBundle')
+vi.mock('@/components/widgets/ImageFileHandle')
 
-const mockMarkdownSynapse = vi.mocked(Markdown)
-const mockImageFileHandle = vi.mocked(ImageFileHandle)
+const mockMarkdownSynapse = vi
+  .mocked(Markdown)
+  .mockReturnValue(<span data-testid={'Markdown'} />)
+const mockImageFileHandle = vi
+  .mocked(ImageFileHandle)
+  .mockReturnValue(<span>ImageFileHandle</span>)
 
 const mockUseGetFullTableQueryResults = vi.mocked(useGetFullTableQueryResults)
 const { mock: mockUseGetFullTableQueryResultsImpl, setSuccess } =

@@ -45,6 +45,9 @@ async function renderTimelineSelector(
 }
 
 describe('TimelinePlotSpeciesSelector tests', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks()
+  })
   it('renders timeline species selector', async () => {
     vi.spyOn(SynapseClient, 'getFullQueryTableResults').mockResolvedValueOnce(
       queryResultBundleJson,

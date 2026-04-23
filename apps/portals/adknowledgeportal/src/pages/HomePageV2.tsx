@@ -1,4 +1,4 @@
-import AdknowledgeContributeCard from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgeContributeCard/AdknowledgeContributeCard'
+import AdknowledgeCard from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgeCard/AdknowledgeCard'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import MailchimpSubscribeSection from 'synapse-react-client/components/MailchimpSubscribeSection/MailchimpSubscribeSection'
 import AdknowledgeHeader from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgeHeader/AdknowledgeHeader'
@@ -10,9 +10,38 @@ import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
 import { ReactComponent as CavaticaLogo } from '../assets/cavatica.svg'
 import { ReactComponent as TerraLogo } from '../assets/terra.svg'
 import { ReactComponent as ADDILogo } from '../assets/addi.svg'
+import { ReactComponent as ContributeIcon } from '../assets/contribution.svg'
+import { ReactComponent as AgoraIcon } from '../assets/agora.svg'
+import { ReactComponent as ModelADIcon } from '../assets/modelAD.svg'
 import styles from './HomePageV2.module.scss'
 
 function HomePageInternal() {
+  const agoraCard = {
+    Image: AgoraIcon,
+    description:
+      "Explore our vast collection of Alzheimer's disease data, tools, and resources to accelerate your research and drive new discoveries.",
+    buttonText: 'Explore Agora',
+    buttonLink: 'https://agora.adknowledgeportal.org',
+  }
+
+  const modelADCard = {
+    Image: ModelADIcon,
+    description:
+      "Explore our vast collection of Alzheimer's disease data, tools, and resources to accelerate your research and drive new discoveries.",
+    buttonText: 'Explore MODEL-AD',
+    buttonLink: 'https://www.model-ad.org',
+  }
+
+  const contributeCard = {
+    title: 'Participate in the Community Data Contribution Program',
+    description:
+      "The AD Community Contribution program welcomes researchers, citizen scientists, and data enthusiasts to share their unique findings, datasets, and analytical tools, fostering a collaborative environment to accelerate discoveries in Alzheimer's research.",
+    buttonText: 'Contribute Data as a Community Member',
+    buttonLink:
+      'https://sagebionetworks.jira.com/servicedesk/customer/portal/12/group/34/create/829',
+    Image: ContributeIcon,
+  }
+
   return (
     <div className="HomePageV2">
       <AdknowledgeHeader />
@@ -21,7 +50,7 @@ function HomePageInternal() {
           className: 'home-spacer',
         }}
       >
-        <AdknowledgeContributeCard />
+        <AdknowledgeCard {...contributeCard} />
       </SectionLayout>
       <SectionLayout
         ContainerProps={{
@@ -78,6 +107,12 @@ function HomePageInternal() {
         <div style={{ position: 'relative', minHeight: '500px' }}>
           <FloatingBlobsBackground color1="#dcc9e4" color2="#cdc8dd" />
           <WordPressNews wordpressSiteUrl="https://news.adknowledgeportal.org" />
+        </div>
+      </SectionLayout>
+      <SectionLayout title="Results Explorers" centerTitle>
+        <div className={styles.resultsExplorersContainer}>
+          <AdknowledgeCard {...agoraCard} />
+          <AdknowledgeCard {...modelADCard} />
         </div>
       </SectionLayout>
     </div>

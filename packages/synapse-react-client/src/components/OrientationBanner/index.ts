@@ -1,4 +1,4 @@
-import OrientationBanner, { ORIENTATION_BANNER_KEYS } from './OrientationBanner'
+import OrientationBanner from './OrientationBanner'
 import type { OrientationBannerProps } from './OrientationBanner'
-export { OrientationBanner, ORIENTATION_BANNER_KEYS, OrientationBannerProps }
+export { OrientationBanner, OrientationBannerProps }
 export default OrientationBanner

@@ -5,10 +5,10 @@ import {
   baseConfig,
   vitestConfig,
   reactPlugins,
-  tsconfigPathsPlugin,
   libraryPlugins,
   preserveModulesBuildConfig,
 } from 'vite-config'
+import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 const packageJson = JSON.parse(
   readFileSync(resolve(__dirname, 'package.json'), 'utf-8'),
@@ -41,24 +41,28 @@ const config = mergeConfig(
     mergeConfig(preserveModulesBuildConfig(allSourceFiles), {
       root: '.',
       plugins: [
-        tsconfigPathsPlugin(),
         ...reactPlugins(),
         ...libraryPlugins({ preserveModules: true }),
+        viteStaticCopy({
+          targets: [
+            {
+              src: 'src/**/*.{css,scss,svg}',
+              dest: '',
+              rename: { stripBase: 1 },
+            },
+            {
+              src: 'src/types/*.d.ts',
+              dest: '',
+              rename: { stripBase: 1 },
+            },
+          ],
+        }),
       ],
+      build: {
+        emptyOutDir: true,
+      },
       define: {
         __SRC_VERSION__: JSON.stringify(packageJson.version),
-      },
-      build: {
-        commonjsOptions: {
-          // react-datasheet-grid is common-js only and imports tanstack/react-virtual which is an ESM package
-          // for some reason this transitive import is treated as common-js but we can fix it with the config below:
-          esmExternals: (id: string) => {
-            if (id == '@tanstack/react-virtual') {
-              return true
-            }
-            return false
-          },
-        },
       },
       test: {
         include: ['**/*.test.?(c|m)[jt]s?(x)'],

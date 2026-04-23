@@ -38,32 +38,30 @@ import TableRowGenericCard, {
   TableToGenericCardMapping,
 } from './TableRowGenericCard'
 
-vi.mock('@/components/GenericCard/PortalDOI/PortalDOI', () => ({
-  __esModule: true,
-  default: vi.fn().mockReturnValue(<div data-testid="PortalDOI" />),
-}))
+vi.mock('@/components/GenericCard/PortalDOI/PortalDOI')
 vi.mock('@/components/GenericCard/PortalDOI/PortalDOIUtils')
-vi.mock('@/components/GenericCard/CroissantButton/CroissantButton', () => ({
-  __esModule: true,
-  default: vi.fn().mockReturnValue(<div data-testid="CroissantButton" />),
-}))
-vi.mock('../widgets/FileHandleLink', () => ({
-  FileHandleLink: vi.fn().mockReturnValue(<div data-testid="FileHandleLink" />),
-}))
-vi.mock('../widgets/ImageFileHandle', () => ({
-  ImageFileHandle: vi
-    .fn()
-    .mockReturnValue(<img data-testid="ImageFileHandle" />),
-}))
-vi.mock('../EntityDownloadConfirmation', () => ({
-  EntityDownloadConfirmation: vi
-    .fn()
-    .mockReturnValue(<div data-testid="EntityDownloadConfirmation" />),
-}))
+vi.mock('@/components/GenericCard/CroissantButton/CroissantButton')
+vi.mock('../widgets/FileHandleLink')
+vi.mock('../widgets/ImageFileHandle')
+vi.mock('../EntityDownloadConfirmation')
 vi.mock('@/components/IconSvg/IconSvg', async importOriginal => ({
   ...(await importOriginal<typeof IconSvgModule>()),
-  default: vi.fn().mockReturnValue(<img data-testid="IconSvg" />),
+  default: vi.fn(),
 }))
+
+// Set default mock return values (must be after imports so JSX is available)
+vi.mocked(PortalDOI).mockReturnValue(<div data-testid="PortalDOI" />)
+vi.mocked(CroissantButton).mockReturnValue(
+  <div data-testid="CroissantButton" />,
+)
+vi.mocked(FileHandleLink).mockReturnValue(<div data-testid="FileHandleLink" />)
+vi.mocked(ImageFileHandle).mockReturnValue(
+  <img data-testid="ImageFileHandle" />,
+)
+vi.mocked(EntityDownloadConfirmation).mockReturnValue(
+  <div data-testid="EntityDownloadConfirmation" />,
+)
+vi.mocked(IconSvg).mockReturnValue(<img data-testid="IconSvg" />)
 
 const renderComponent = (
   props: TableRowGenericCardProps,

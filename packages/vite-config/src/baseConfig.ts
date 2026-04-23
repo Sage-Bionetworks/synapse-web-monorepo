@@ -9,21 +9,13 @@ const baseConfig: UserConfig = defineConfig({
   server: { port: 3000 },
   build: {
     outDir: './build',
-    commonjsOptions: {
-      transformMixedEsModules: true,
-    },
   },
   define: {
     __TEST__: JSON.stringify(false),
     __DEV__: JSON.stringify(false),
   },
-  optimizeDeps: {
-    esbuildOptions: {
-      // Node.js global to browser globalThis
-      define: {
-        global: 'globalThis',
-      },
-    },
+  resolve: {
+    tsconfigPaths: true,
   },
 })
 

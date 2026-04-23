@@ -90,8 +90,12 @@ describe('useMergeGridWithTable', () => {
       concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
     } as TableEntity
     mockGetEntity.mockResolvedValue(entity)
-    mockExportGridToCsv.mockResolvedValue({ resultsFileHandleId: fileHandleId })
-    mockUpdateTable.mockResolvedValue({ success: true })
+    mockExportGridToCsv.mockResolvedValue({
+      resultsFileHandleId: fileHandleId,
+      concreteType:
+        'org.sagebionetworks.repo.model.grid.DownloadFromGridResult',
+    })
+    mockUpdateTable.mockResolvedValue({ success: true } as any)
 
     const { result } = renderHook(() => useMergeGridWithTable(), {
       wrapper: createWrapper(),

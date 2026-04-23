@@ -6,11 +6,11 @@ import {
   waitForElementToBeRemoved,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import OrientationBanner, {
+import OrientationBanner, { OrientationBannerProps } from './OrientationBanner'
+import {
   getOrientationBannerKey,
   OrientationBannerName,
-  OrientationBannerProps,
-} from './OrientationBanner'
+} from '@/utils/OrientationBannerConstants'
 
 const onPrimaryButtonClicked = vi.fn()
 window.open = vi.fn()

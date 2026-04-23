@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react'
-import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { vi, describe, it, expect, beforeEach, afterEach, Mock } from 'vitest'
 import { useColumnResizeHandles } from './useColumnResizeHandles'
 import { Column } from '@sage-bionetworks/react-datasheet-grid'
 import * as reactHookz from '@react-hookz/web'
@@ -13,7 +13,7 @@ describe('useColumnResizeHandles', () => {
   let mockWrapperRef: React.RefObject<HTMLDivElement | null>
   let mockGridContainer: HTMLElement
   let mockHeaderRow: HTMLElement
-  let mockOnColumnResize: ReturnType<typeof vi.fn>
+  let mockOnColumnResize: Mock<(columnName: string, newWidth: number) => void>
   let mockColValues: Column[]
   let resizeObserverCallback: ((entry: ResizeObserverEntry) => void) | null =
     null

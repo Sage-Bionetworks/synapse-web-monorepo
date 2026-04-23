@@ -14,19 +14,12 @@ import EntityDownloadConfirmation, {
 vi.mock('../../synapse-queries')
 vi.mock(
   '../download_list/AddToDownloadListConfirmationAlert/AddToDownloadListConfirmationAlert',
-  () => ({
-    default: vi
-      .fn()
-      .mockReturnValue(
-        <div data-testid="AddToDownloadListConfirmationAlert" />,
-      ),
-  }),
 )
 
 const mockUseGetEntity = vi.mocked(useGetEntity)
-const mockAddToDownloadListConfirmationAlert = vi.mocked(
-  AddToDownloadListConfirmationAlert,
-)
+const mockAddToDownloadListConfirmationAlert = vi
+  .mocked(AddToDownloadListConfirmationAlert)
+  .mockReturnValue(<div data-testid="AddToDownloadListConfirmationAlert" />)
 
 beforeEach(() => {
   vi.clearAllMocks()
