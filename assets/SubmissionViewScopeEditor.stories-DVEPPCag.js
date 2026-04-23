@@ -1,5 +1,0 @@
-import{n as e,o as t}from"./chunk-zsgVPwQN.js";import{t as n}from"./react-hje2xbxh.js";import{Kt as r}from"./TextField-ChXz3tov.js";import{t as i}from"./jsx-runtime-CR4qI0Ep.js";import{t as a}from"./esm-Czevgpuk.js";import{n as o,t as s}from"./SubmissionViewScopeEditor-BJY-yEGY.js";var c,l,u,d,f;e((()=>{o(),a(),c=t(n(),1),l=i(),u={title:`Synapse/SubmissionView Scope Editor`,component:s,decorators:[e=>(0,l.jsx)(r,{sx:{mx:`auto`,p:4,maxWidth:`720px`},children:(0,l.jsx)(e,{})})],render:function(e){let[t,n]=(0,c.useState)([]);return(0,l.jsx)(s,{...e,evaluationIds:t,onChange:n})}},d={args:{scopeIds:[]}},d.parameters={...d.parameters,docs:{...d.parameters?.docs,source:{originalSource:`{
-  args: {
-    scopeIds: []
-  }
-}`,...d.parameters?.docs?.source}}},f=[`Empty`]}))();export{d as Empty,f as __namedExportsOrder,u as default};
