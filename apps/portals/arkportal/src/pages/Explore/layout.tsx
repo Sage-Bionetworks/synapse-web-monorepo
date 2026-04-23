@@ -17,6 +17,9 @@ function ExploreLayout() {
           path: 'Datasets',
         },
         {
+          path: 'Publications',
+        },
+        {
           path: 'All Data',
         },
       ]}
