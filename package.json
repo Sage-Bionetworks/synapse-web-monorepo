@@ -60,19 +60,7 @@
       "@nx/devkit@22.0.3>minimatch": "9.0.9",
       "mocha@10.8.2>serialize-javascript": "7.0.5",
       "@nestjs/core@11.1.17>path-to-regexp": "8.4.0"
-    },
-    "ignoredBuiltDependencies": [
-      "@nestjs/core",
-      "@openapitools/openapi-generator-cli",
-      "@parcel/watcher",
-      "core-js",
-      "es5-ext",
-      "esbuild",
-      "libreact",
-      "msw",
-      "nx",
-      "weak-napi"
-    ]
+    }
   },
   "packageManager": "pnpm@10.33.0+sha512.10568bb4a6afb58c9eb3630da90cc9516417abebd3fabbe6739f0ae795728da1491e9db5a544c76ad8eb7570f5c4bb3d6c637b2cb41bfdcdb47fa823c8649319"
 }
