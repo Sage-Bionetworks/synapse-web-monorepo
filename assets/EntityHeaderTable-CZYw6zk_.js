@@ -1,0 +1,1 @@
+import{n as e}from"./chunk-zsgVPwQN.js";import{n as t,t as n}from"./EntityHeaderTable-lxTY7yRw.js";var r,i=e((()=>{t(),r=n}));export{i as n,r as t};
