@@ -2,6 +2,7 @@
   display: grid;
   grid-template-columns: minmax(200px, 20%) auto 80px 80px;
   gap: 8px;
+  align-items: center;
 
   .invitationMessage {
     display: flex;

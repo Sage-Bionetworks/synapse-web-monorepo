@@ -15,6 +15,11 @@ import Typography from '@mui/material/Typography'
 import { MembershipInvitation } from '@sage-bionetworks/synapse-client/generated/models/index'
 import { useRef } from 'react'
 import TransitionGroup from 'react-transition-group/TransitionGroup'
+import {
+  ACCEPT_TEAM_INVITATION_ERROR_MESSAGE,
+  ACCEPT_TEAM_INVITATION_SUCCESS_MESSAGE,
+  DECLINE_TEAM_INVITATION_ERROR_MESSAGE,
+} from '../utils/constants'
 import styles from './OpenInvitationsToUserCard.module.scss'
 
 function InvitationRow(props: { invitation: MembershipInvitation }) {
@@ -23,13 +28,12 @@ function InvitationRow(props: { invitation: MembershipInvitation }) {
   const { mutate: acceptInvitation, isPending: acceptIsPending } =
     useAddMemberToTeam({
       onSuccess: () => {
-        displayToast('You have successfully joined the team.', 'success')
+        displayToast(ACCEPT_TEAM_INVITATION_SUCCESS_MESSAGE, 'success')
       },
-      onError: () => {
-        displayToast(
-          'An error occurred while trying to join the team.',
-          'danger',
-        )
+      onError: error => {
+        displayToast(error.message, 'danger', {
+          title: ACCEPT_TEAM_INVITATION_ERROR_MESSAGE,
+        })
       },
     })
   const { mutate: deleteMembershipInvitation, isPending: deleteIsPending } =
@@ -37,11 +41,10 @@ function InvitationRow(props: { invitation: MembershipInvitation }) {
       onSuccess: () => {
         displayToast('Invitation dismissed.', 'info')
       },
-      onError: () => {
-        displayToast(
-          'An error occurred while trying to decline the invitation.',
-          'danger',
-        )
+      onError: error => {
+        displayToast(error.message, 'danger', {
+          title: DECLINE_TEAM_INVITATION_ERROR_MESSAGE,
+        })
       },
     })
 
@@ -151,7 +154,7 @@ export default function OpenInvitationsToUserCard(
           spacing={2}
           mt={2}
         >
-          {openInvitations?.map(invitation => (
+          {openInvitations.map(invitation => (
             <Collapse key={invitation.id}>
               <InvitationRow invitation={invitation} />
             </Collapse>

@@ -15,10 +15,18 @@ import {
   getUseMutationPendingMock,
   getUseQuerySuccessMock,
 } from '@/testutils/ReactQueryMockUtils'
-import { MembershipInvitation } from '@sage-bionetworks/synapse-client'
+import {
+  MembershipInvitation,
+  SynapseClientError,
+} from '@sage-bionetworks/synapse-client'
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import OpenInvitationsToUserCard from './OpenInvitationsToUserCard'
+import {
+  ACCEPT_TEAM_INVITATION_ERROR_MESSAGE,
+  ACCEPT_TEAM_INVITATION_SUCCESS_MESSAGE,
+  DECLINE_TEAM_INVITATION_ERROR_MESSAGE,
+} from '../utils/constants'
 
 vi.mock('@/synapse-queries/user/useUserBundle')
 vi.mock('@/synapse-queries/team/useTeamMembers')
@@ -199,7 +207,7 @@ describe('OpenInvitationsToUserCard', () => {
       })
 
       expect(mockDisplayToast).toHaveBeenCalledWith(
-        'You have successfully joined the team.',
+        ACCEPT_TEAM_INVITATION_SUCCESS_MESSAGE,
         'success',
       )
     })
@@ -208,12 +216,19 @@ describe('OpenInvitationsToUserCard', () => {
       renderComponent()
 
       act(() => {
-        capturedAddMemberOptions?.onError?.()
+        capturedAddMemberOptions?.onError?.(
+          new SynapseClientError(
+            400,
+            'Some error reason',
+            expect.getState().currentTestName!,
+          ),
+        )
       })
 
       expect(mockDisplayToast).toHaveBeenCalledWith(
-        'An error occurred while trying to join the team.',
+        'Some error reason',
         'danger',
+        { title: ACCEPT_TEAM_INVITATION_ERROR_MESSAGE },
       )
     })
 
@@ -267,12 +282,19 @@ describe('OpenInvitationsToUserCard', () => {
       renderComponent()
 
       act(() => {
-        capturedDeleteInvitationOptions?.onError?.()
+        capturedDeleteInvitationOptions?.onError?.(
+          new SynapseClientError(
+            400,
+            'Some error reason',
+            expect.getState().currentTestName!,
+          ),
+        )
       })
 
       expect(mockDisplayToast).toHaveBeenCalledWith(
-        'An error occurred while trying to decline the invitation.',
+        'Some error reason',
         'danger',
+        { title: DECLINE_TEAM_INVITATION_ERROR_MESSAGE },
       )
     })
 
