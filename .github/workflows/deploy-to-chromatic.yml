@@ -2,7 +2,7 @@ name: 'Deploy Storybook to Chromatic'
 
 on:
   workflow_run:
-    workflows: ['Build Storybook for Chromatic']
+    workflows: ['Build Storybook']
     types: [completed]
 
 permissions:
