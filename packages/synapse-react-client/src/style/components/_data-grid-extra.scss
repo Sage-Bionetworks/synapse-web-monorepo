@@ -172,6 +172,21 @@ $remote-selection-colors: #1677ff, #52c41a, #fa8c16, #eb2f96, #13c2c2, #9254de,
   z-index: 50;
 }
 
+// Raise the expand-rows drag handle above column resize handles (z-index: 1000)
+// and extend its hit area via ::before so it is easy to target without
+// accidentally triggering the column-resize cursor.
+.dsg-expand-rows-indicator {
+  z-index: 1001;
+  overflow: visible;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    cursor: crosshair;
+  }
+}
+
 .cell-selected {
   border: 1px solid rgba(25, 118, 210, 1);
 }
