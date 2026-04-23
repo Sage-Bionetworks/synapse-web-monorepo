@@ -285,9 +285,28 @@ function AutocompleteMultipleEnumCell({
 }
 
 // Memoize the cell component to prevent unnecessary re-renders.
-// setRowData and stopEditing are stabilized via refs inside the component, so
-// standard shallow comparison is sufficient — no custom comparator needed.
-const MemoizedAutocompleteMultipleEnumCell = memo(AutocompleteMultipleEnumCell)
+// react-datasheet-grid provides new setRowData/stopEditing function instances
+// on each render, so we must ignore those callback identities here and only
+// compare the props that affect rendering.
+function areAutocompleteMultipleEnumCellPropsEqual(
+  prevProps: AutocompleteMultipleEnumCellProps,
+  nextProps: AutocompleteMultipleEnumCellProps,
+) {
+  return (
+    prevProps.rowData === nextProps.rowData &&
+    prevProps.choices === nextProps.choices &&
+    prevProps.colType === nextProps.colType &&
+    prevProps.focus === nextProps.focus &&
+    prevProps.active === nextProps.active &&
+    prevProps.clearValue === nextProps.clearValue &&
+    prevProps.limitTags === nextProps.limitTags
+  )
+}
+
+const MemoizedAutocompleteMultipleEnumCell = memo(
+  AutocompleteMultipleEnumCell,
+  areAutocompleteMultipleEnumCellPropsEqual,
+)
 
 export type AutocompleteMultipleEnumColumnProps = {
   choices: AutocompleteMultipleEnumOption[]
