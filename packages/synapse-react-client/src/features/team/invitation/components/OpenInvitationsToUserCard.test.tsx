@@ -246,7 +246,7 @@ describe('OpenInvitationsToUserCard', () => {
       await user.click(screen.getByRole('button', { name: /decline/i }))
 
       expect(mockDeclineMutate).toHaveBeenCalledWith({
-        invitationId: MOCK_INVITATION_WITH_MESSAGE.id,
+        membershipInvitation: MOCK_INVITATION_WITH_MESSAGE,
       })
     })
 

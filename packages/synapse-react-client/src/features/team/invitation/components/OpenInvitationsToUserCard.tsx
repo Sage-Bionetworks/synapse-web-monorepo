@@ -94,7 +94,7 @@ function InvitationRow(props: { invitation: MembershipInvitation }) {
         disabled={acceptIsPending}
         onClick={() => {
           deleteMembershipInvitation({
-            invitationId: invitation.id!,
+            membershipInvitation: invitation,
           })
         }}
       >

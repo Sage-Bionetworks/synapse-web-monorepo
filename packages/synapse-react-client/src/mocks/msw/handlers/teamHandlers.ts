@@ -12,7 +12,11 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { uniqueId } from 'lodash-es'
 import { http, HttpResponse } from 'msw'
-import { mockTeamMembershipStatuses, mockTeams } from '../../team/mockTeam'
+import {
+  mockTeamMembershipInvitations,
+  mockTeamMembershipStatuses,
+  mockTeams,
+} from '../../team/mockTeam'
 import { MOCK_USER_ID } from '../../user/mock_user_profile'
 import { SynapseApiResponse } from '../handlers'
 import BasicMockedCrudService from '../util/BasicMockedCrudService'
@@ -264,7 +268,9 @@ export function getDeleteMembershipInvitationHandler(
 
 export default function getAllTeamHandlers(
   backendOrigin: string,
-  initialInvitations: MembershipInvitation[] = [],
+  initialInvitations: MembershipInvitation[] = [
+    ...mockTeamMembershipInvitations,
+  ],
 ) {
   const mockedInvitationService = new BasicMockedCrudService<
     MembershipInvitation,

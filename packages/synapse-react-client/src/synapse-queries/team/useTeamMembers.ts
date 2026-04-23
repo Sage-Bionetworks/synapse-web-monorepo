@@ -1,6 +1,9 @@
 import SynapseClient, { deleteMemberFromTeam } from '@/synapse-client'
 import { SynapseClientError, useSynapseContext } from '@/utils'
-import { Count } from '@sage-bionetworks/synapse-client'
+import {
+  Count,
+  MembershipInvitation as MembershipInvitationGenerated,
+} from '@sage-bionetworks/synapse-client'
 import {
   CreateMembershipInvitationRequest,
   CreateMembershipRequestRequest,
@@ -302,7 +305,11 @@ export function useRequestToJoinTeam(
  */
 export function useDeleteMembershipInvitation(
   options?: Partial<
-    UseMutationOptions<void, SynapseClientError, { invitationId: string }>
+    UseMutationOptions<
+      void,
+      SynapseClientError,
+      { membershipInvitation: MembershipInvitationGenerated }
+    >
   >,
 ) {
   const queryClient = useQueryClient()
@@ -311,19 +318,26 @@ export function useDeleteMembershipInvitation(
   return useMutation<
     void,
     SynapseClientError,
-    {
-      invitationId: string
-    }
+    { membershipInvitation: MembershipInvitationGenerated }
   >({
     ...options,
-    mutationFn: ({ invitationId }) =>
+    mutationFn: ({ membershipInvitation }) =>
       synapseClient.membershipInvitationServicesClient.deleteRepoV1MembershipInvitationId(
-        { id: invitationId },
+        { id: membershipInvitation.id! },
       ),
     onSuccess: async (data, variables, ctx) => {
-      await queryClient.invalidateQueries({
-        queryKey: keyFactory.getAllOpenMembershipInvitationsQueryKey(),
-      })
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getAllOpenMembershipInvitationsQueryKey(),
+        }),
+        // MembershipStatus includes `hasOpenInvitation`, which may change after deleting an invitation
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getMembershipStatusQueryKey(
+            variables.membershipInvitation.teamId!,
+            variables.membershipInvitation.inviteeId,
+          ),
+        }),
+      ])
       if (options?.onSuccess) {
         await options.onSuccess(data, variables, ctx)
       }
