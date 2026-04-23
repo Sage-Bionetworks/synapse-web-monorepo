@@ -1,1 +1,0 @@
-import{n as e}from"./chunk-zsgVPwQN.js";import{Jn as t}from"./TextField-ChXz3tov.js";import{t as n}from"./jsx-runtime-CR4qI0Ep.js";import{t as r}from"./createSvgIcon-Cmr1WCgq.js";var i,a,o=e((()=>{r(),i=n(),a=t((0,i.jsx)(`path`,{d:`M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z`}),`Close`)}));export{o as n,a as t};
