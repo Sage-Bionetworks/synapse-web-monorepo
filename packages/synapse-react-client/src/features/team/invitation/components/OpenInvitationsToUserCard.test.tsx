@@ -20,8 +20,6 @@ import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import OpenInvitationsToUserCard from './OpenInvitationsToUserCard'
 
-// The component imports useAddMemberToTeam and useGetCurrentUserProfile from the
-// @/synapse-queries barrel, so we partially mock the barrel to override only those two.
 vi.mock('@/synapse-queries/user/useUserBundle')
 vi.mock('@/synapse-queries/team/useTeamMembers')
 vi.mock('@/components/ToastMessage/ToastMessage')
