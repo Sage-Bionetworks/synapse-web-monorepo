@@ -49,17 +49,20 @@ type MockWebSocketInstance = MockWebSocketConfig & {
 }
 
 vi.mock('./DataGridWebSocket', () => ({
-  DataGridWebSocket: vi.fn().mockImplementation(
-    (
+  DataGridWebSocket: vi
+    .fn()
+    .mockImplementation(function (
+      this: MockWebSocketInstance,
       config: MockWebSocketConfig,
       _instance?: unknown,
-    ): MockWebSocketInstance => ({
-      ...config,
-      socket: { readyState: WebSocket.OPEN },
-      sendPatch: vi.fn(),
-      disconnect: vi.fn(),
+    ): MockWebSocketInstance {
+      return {
+        ...config,
+        socket: { readyState: WebSocket.OPEN },
+        sendPatch: vi.fn(),
+        disconnect: vi.fn(),
+      }
     }),
-  ),
 }))
 
 const MockDataGridWebSocket = vi.mocked(DataGridWebSocket)

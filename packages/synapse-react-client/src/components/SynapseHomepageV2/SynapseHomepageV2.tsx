@@ -30,7 +30,7 @@ import { SynapseFeatures } from './SynapseFeatures'
 import { SynapseHomepageChatSearch } from './SynapseHomepageChatSearch'
 import { SynapseHomepageNavBar } from './SynapseHomepageNavBar'
 import { SynapseHotDrops } from './SynapseHotdrops'
-import SynapseHotdropsBackground from './SynapseHotdropsBackground'
+import FloatingBlobsBackground from './FloatingBlobsBackground'
 import { SynapseInAction } from './SynapseInAction'
 import { SynapsePartners } from './SynapsePartners'
 import { SynapsePlans } from './SynapsePlans'
@@ -346,7 +346,7 @@ export function SynapseHomepageV2({ gotoPlace }: SynapseHomepageV2Props) {
                     textAlign: 'center',
                     fontSize: '36px',
                     lineHeight: '40px',
-                    mt: '60px',
+                    mt: '90px',
                     mb: '25px',
                     color: 'white',
                     fontWeight: 400,
@@ -400,7 +400,7 @@ export function SynapseHomepageV2({ gotoPlace }: SynapseHomepageV2Props) {
               </Typography>
             </Box>
             <Box sx={{ position: 'relative', minHeight: '500px' }}>
-              <SynapseHotdropsBackground />
+              <FloatingBlobsBackground color1="#30b7a8" color2="#296aac" />
               <SynapseHotDrops tableId={newAndTrendingTable} />
             </Box>
           </Box>
