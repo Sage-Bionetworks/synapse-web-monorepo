@@ -1,0 +1,1 @@
+import{n as e}from"./chunk-zsgVPwQN.js";var t,n=e((()=>{t=e=>e.replace(/([a-z])([A-Z])/g,`$1 $2`).replace(/\b([A-Z]+)([A-Z])([a-z])/,`$1 $2$3`).replace(/^./,e=>e.toUpperCase())}));export{t as n,n as t};

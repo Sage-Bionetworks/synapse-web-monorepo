@@ -1,0 +1,1 @@
+import{n as e}from"./chunk-zsgVPwQN.js";function t(e){return`orientation_banner_`+e.toLowerCase()+`_dismissed`}var n,r,i=e((()=>{n=[`Challenges`,`CohortBuilder`,`DataAccessManagement`,`Datasets`,`Discussions`,`Docker`,`Favorites`,`Files`,`Following`,`Projects`,`Tables`,`Teams`,`TrashCan`,`Wikis`,`Donate`,`UnderConstruction`],r=n.map(e=>t(e))}));export{t as n,i as r,r as t};

@@ -1,0 +1,1 @@
+import{n as e}from"./chunk-zsgVPwQN.js";import{f as t,t as n}from"./dist-jiKX-16m.js";import{o as r,t as i}from"./mockRealmPrincipal-NEix5wNq.js";var a=e((()=>{n(),t.STRING,t.STRING,t.STRING})),o=e((()=>{r(),i.toString()})),s=e((()=>{a(),o(),r()}));export{s as t};

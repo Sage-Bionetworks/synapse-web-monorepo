@@ -1,0 +1,1 @@
+import{n as e}from"./chunk-zsgVPwQN.js";import{n as t,r as n,t as r}from"./core-DzrPRFGD.js";function i(e){return[n.post(`${e}/auth/v1/2fa/reset`,()=>t.json(``,{status:201})),n.post(`${e}/auth/v1/2fa/disable`,()=>t.json(``,{status:200}))]}var a=e((()=>{r()}));export{a as n,i as t};
