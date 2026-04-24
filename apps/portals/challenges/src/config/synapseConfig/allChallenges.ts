@@ -9,11 +9,11 @@ import { allChallengesSql } from '../resources'
 const allChallengesSchema: TableToGenericCardMapping = {
   type: SynapseConstants.CHALLENGE,
   title: 'title',
-  subTitle: 'organizingCommunity',
+  subTitle: 'platform',
   description: 'description',
   secondaryLabels: [
     'metadataCompletenessTier',
-    'platform',
+    'organizingCommunity',
     'keywords',
     'incentive',
     'inputDataType',
