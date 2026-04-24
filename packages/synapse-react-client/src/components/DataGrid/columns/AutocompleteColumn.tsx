@@ -88,8 +88,8 @@ export function AutocompleteCell({
   const {
     menuIsOpen,
     inputRef,
-    optionMouseDownRef,
     handleListboxMouseDown,
+    notifyOptionCommitted,
     handleMenuOpen,
     handleClose,
   } = useGridAutocompleteState({
@@ -153,8 +153,7 @@ export function AutocompleteCell({
 
   const handleChange = useCallback(
     (_e: React.SyntheticEvent, newVal: AutocompleteOption, reason: string) => {
-      // Reset the portal-click guard now that the selection has been committed
-      optionMouseDownRef.current = false
+      notifyOptionCommitted()
       if (reason === 'clear') {
         setRowDataRef.current(clearValue)
       } else if (reason === 'createOption') {
@@ -167,7 +166,7 @@ export function AutocompleteCell({
       }
       setTimeout(() => stopEditingRef.current({ nextRow: false }), 0)
     },
-    [clearValue, colType],
+    [clearValue, colType, notifyOptionCommitted],
   )
 
   return (

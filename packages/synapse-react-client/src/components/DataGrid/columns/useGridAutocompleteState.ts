@@ -26,14 +26,14 @@ export type UseGridAutocompleteStateReturn = {
    * handler closures (e.g. onChange) without a stale capture.
    */
   activeRef: React.RefObject<boolean>
-  /**
-   * Set to `true` on listbox mousedown and back to `false` inside onChange.
-   * Prevents the active→false useEffect from closing the menu before the
-   * portal click's onChange can fire.
-   */
-  optionMouseDownRef: React.RefObject<boolean>
   /** Pass to `slotProps.listbox.onMouseDown` on the MUI Autocomplete. */
   handleListboxMouseDown: (event: React.MouseEvent) => void
+  /**
+   * Call at the top of every `onChange` handler to signal that a pending
+   * option click has been committed. Clears the portal-click guard so that
+   * subsequent active→false transitions can proceed normally.
+   */
+  notifyOptionCommitted: () => void
   /** Pass to the Autocomplete `onOpen` prop. */
   handleMenuOpen: () => void
   /**
@@ -103,6 +103,10 @@ export function useGridAutocompleteState({
     }
   }, [])
 
+  const notifyOptionCommitted = useCallback(() => {
+    optionMouseDownRef.current = false
+  }, [])
+
   const handleMenuOpen = useCallback(() => {
     setMenuIsOpen(true)
   }, [])
@@ -120,8 +124,8 @@ export function useGridAutocompleteState({
     setMenuIsOpen,
     inputRef,
     activeRef,
-    optionMouseDownRef,
     handleListboxMouseDown,
+    notifyOptionCommitted,
     handleMenuOpen,
     handleClose,
   }

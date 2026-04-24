@@ -89,7 +89,6 @@ describe('useGridAutocompleteState', () => {
       } as unknown as React.MouseEvent
       result.current.handleListboxMouseDown(mockEvent)
     })
-    expect(result.current.optionMouseDownRef.current).toBe(true)
 
     // Cell deactivates before onChange fires
     act(() => {
@@ -123,9 +122,11 @@ describe('useGridAutocompleteState', () => {
     expect(secondCallback).toHaveBeenCalledTimes(1)
   })
 
-  it('handleListboxMouseDown calls preventDefault and sets optionMouseDownRef when target is an option', () => {
-    const { result } = renderHook(() =>
-      useGridAutocompleteState({ active: true }),
+  it('handleListboxMouseDown calls preventDefault and defers deactivation when target is an option', () => {
+    const onDeactivate = vi.fn()
+    const { result, rerender } = renderHook(
+      ({ active }) => useGridAutocompleteState({ active, onDeactivate }),
+      { initialProps: { active: true } },
     )
 
     const preventDefault = vi.fn()
@@ -141,12 +142,19 @@ describe('useGridAutocompleteState', () => {
     })
 
     expect(preventDefault).toHaveBeenCalledTimes(1)
-    expect(result.current.optionMouseDownRef.current).toBe(true)
+
+    // Deactivating while the guard is set must NOT trigger onDeactivate
+    act(() => {
+      rerender({ active: false })
+    })
+    expect(onDeactivate).not.toHaveBeenCalled()
   })
 
-  it('handleListboxMouseDown calls preventDefault but does NOT set optionMouseDownRef when target is not an option', () => {
-    const { result } = renderHook(() =>
-      useGridAutocompleteState({ active: true }),
+  it('handleListboxMouseDown calls preventDefault but does NOT defer deactivation when target is not an option', () => {
+    const onDeactivate = vi.fn()
+    const { result, rerender } = renderHook(
+      ({ active }) => useGridAutocompleteState({ active, onDeactivate }),
+      { initialProps: { active: true } },
     )
 
     const preventDefault = vi.fn()
@@ -163,7 +171,12 @@ describe('useGridAutocompleteState', () => {
     })
 
     expect(preventDefault).toHaveBeenCalledTimes(1)
-    expect(result.current.optionMouseDownRef.current).toBe(false)
+
+    // Guard was not set, so deactivation should proceed normally
+    act(() => {
+      rerender({ active: false })
+    })
+    expect(onDeactivate).toHaveBeenCalledTimes(1)
   })
 
   it('handleListboxMouseDown is stable across re-renders', () => {
@@ -227,10 +240,10 @@ describe('useGridAutocompleteState', () => {
     // Menu must still be open so onChange can fire
     expect(result.current.menuIsOpen).toBe(true)
 
-    // Simulate onChange resetting the ref and closing the menu
+    // Simulate onChange committing the selection, then onClose closing the menu
     act(() => {
-      result.current.optionMouseDownRef.current = false
-      result.current.setMenuIsOpen(false)
+      result.current.notifyOptionCommitted()
+      result.current.handleClose()
     })
     expect(result.current.menuIsOpen).toBe(false)
   })

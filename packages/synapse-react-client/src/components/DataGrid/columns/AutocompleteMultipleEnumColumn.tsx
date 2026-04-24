@@ -98,8 +98,8 @@ function AutocompleteMultipleEnumCell({
     setMenuIsOpen,
     inputRef,
     activeRef,
-    optionMouseDownRef,
     handleListboxMouseDown,
+    notifyOptionCommitted,
     handleMenuOpen,
     handleClose,
   } = useGridAutocompleteState({ active, stopEditing })
@@ -164,8 +164,7 @@ function AutocompleteMultipleEnumCell({
       newVal: (EnumOption | string)[] | null,
       _reason: string,
     ) => {
-      // Reset the portal-click guard now that the selection has been committed
-      optionMouseDownRef.current = false
+      notifyOptionCommitted()
       const values = (newVal || []).map(item => {
         return typeof item === 'string'
           ? parseFreeTextGivenJsonSchemaType(item, colType)
@@ -181,7 +180,7 @@ function AutocompleteMultipleEnumCell({
         setMenuIsOpen(false)
       }
     },
-    [activeRef, clearValue, colType, optionMouseDownRef, setMenuIsOpen],
+    [activeRef, clearValue, colType, notifyOptionCommitted, setMenuIsOpen],
   )
 
   const handleBlur = useCallback(() => {
