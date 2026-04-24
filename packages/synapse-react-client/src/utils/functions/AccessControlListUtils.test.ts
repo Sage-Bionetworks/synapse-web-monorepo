@@ -299,6 +299,10 @@ describe('AccessControlListUtils', () => {
           ACCESS_TYPE.DELETE,
         ]),
       )
+
+      // Verify that the non-duplicate entry is unchanged
+      const entry2 = result.find(item => item.principalId === 2)
+      expect(entry2?.accessType).toEqual([ACCESS_TYPE.READ])
     })
 
     it('returns an empty list for empty input', () => {
