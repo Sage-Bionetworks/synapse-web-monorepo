@@ -106,6 +106,25 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
     return <UserBadge userId={str} className={newClassName} />
   }
 
+  if (columnModelType === ColumnTypeEnum.ENTITYID_LIST && strList) {
+    return (
+      <p>
+        {strList.map((entityId: string, index: number) => {
+          return (
+            <Fragment key={entityId}>
+              <EntityLink entity={entityId} className={newClassName} />
+              {index < strList.length - 1 && separator}
+            </Fragment>
+          )
+        })}
+      </p>
+    )
+  }
+
+  if (columnModelType === ColumnTypeEnum.ENTITYID && str && !labelLink) {
+    return <EntityLink entity={str} className={newClassName} />
+  }
+
   // NFINT-906
   if (columnModelType === ColumnTypeEnum.DATE && str) {
     return <p>{formatDate(dayjs(Number(str)))}</p>

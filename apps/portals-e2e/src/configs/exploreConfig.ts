@@ -32,6 +32,7 @@ const exploreConfig: ExploreConfig = {
   arkportal: {
     table: ['Datasets', 'All Data'],
     cards: ['Programs', 'Projects', 'Collections'],
+    cards_charts: ['Publications'],
   },
   bsmn: {
     cards_charts: ['Projects', 'Data', 'Tools', 'Publications'],
