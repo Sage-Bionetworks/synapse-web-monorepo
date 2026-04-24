@@ -1,5 +1,12 @@
 import parseFreeTextGivenJsonSchemaType from '@/components/DataGrid/utils/parseFreeTextUsingJsonSchemaType'
-import { Autocomplete, SxProps, TextField, Theme, Tooltip } from '@mui/material'
+import {
+  Autocomplete,
+  AutocompleteChangeReason,
+  SxProps,
+  TextField,
+  Theme,
+  Tooltip,
+} from '@mui/material'
 import { JSONSchema7Type } from 'json-schema'
 import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { CellComponent, Column } from '@sage-bionetworks/react-datasheet-grid'
@@ -161,11 +168,11 @@ function AutocompleteMultipleEnumCell({
   const handleChange = useCallback(
     (
       _e: React.SyntheticEvent,
-      newVal: (EnumOption | string)[] | null,
-      _reason: string,
+      newVal: (EnumOption | string)[],
+      _reason: AutocompleteChangeReason,
     ) => {
       notifyOptionCommitted()
-      const values = (newVal || []).map(item => {
+      const values = newVal.map(item => {
         return typeof item === 'string'
           ? parseFreeTextGivenJsonSchemaType(item, colType)
           : item.value
@@ -236,7 +243,7 @@ function AutocompleteMultipleEnumCell({
             setLocalInputState(newInputValue)
           }}
           onClose={handleClose}
-          onChange={handleChange as any}
+          onChange={handleChange}
           disableCloseOnSelect={choices.length > 1}
           slotProps={{
             listbox: { onMouseDown: handleListboxMouseDown },
