@@ -63,7 +63,7 @@ export const OAuthClientAclEditor = forwardRef(function OAuthClientAclEditor(
       staleTime: Infinity,
     })
 
-  const originalResourceAccess = useMemo(
+  const consolidatedOriginalResourceAccess = useMemo(
     () =>
       consolidateResourceAccessList(
         convertResourceAccessSetToSRC(originalAcl?.resourceAccess),
@@ -87,11 +87,11 @@ export const OAuthClientAclEditor = forwardRef(function OAuthClientAclEditor(
   useEffect(() => {
     if (originalAcl) {
       resetDirtyState()
-      setResourceAccessList(originalResourceAccess)
+      setResourceAccessList(consolidatedOriginalResourceAccess)
     }
   }, [
     originalAcl,
-    originalResourceAccess,
+    consolidatedOriginalResourceAccess,
     resetDirtyState,
     setResourceAccessList,
   ])
@@ -111,7 +111,7 @@ export const OAuthClientAclEditor = forwardRef(function OAuthClientAclEditor(
           const aclIsUnchanged =
             (originalAcl === null && updatedAcl == null) ||
             // ignore properties that will change when the ACL is saved (etag, modifiedOn)
-            (isEqual(originalResourceAccess, resourceAccessList) &&
+            (isEqual(consolidatedOriginalResourceAccess, resourceAccessList) &&
               originalAcl?.id === updatedAcl?.id)
 
           if (aclIsUnchanged) {
@@ -126,7 +126,7 @@ export const OAuthClientAclEditor = forwardRef(function OAuthClientAclEditor(
     [
       clientId,
       originalAcl,
-      originalResourceAccess,
+      consolidatedOriginalResourceAccess,
       resourceAccessList,
       onSaveComplete,
       updateAcl,

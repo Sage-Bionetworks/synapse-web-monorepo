@@ -58,7 +58,7 @@ export const PortalAclEditor = forwardRef(function PortalAclEditor(
       staleTime: Infinity,
     })
 
-  const originalResourceAccess = useMemo(
+  const consolidatedOriginalResourceAccess = useMemo(
     () =>
       consolidateResourceAccessList(
         convertResourceAccessSetToSRC(originalAcl?.resourceAccess),
@@ -82,11 +82,11 @@ export const PortalAclEditor = forwardRef(function PortalAclEditor(
   useEffect(() => {
     if (originalAcl) {
       resetDirtyState()
-      setResourceAccessList(originalResourceAccess)
+      setResourceAccessList(consolidatedOriginalResourceAccess)
     }
   }, [
     originalAcl,
-    originalResourceAccess,
+    consolidatedOriginalResourceAccess,
     resetDirtyState,
     setResourceAccessList,
   ])
@@ -106,7 +106,7 @@ export const PortalAclEditor = forwardRef(function PortalAclEditor(
           const aclIsUnchanged =
             (originalAcl === null && updatedAcl == null) ||
             // ignore properties that will change when the ACL is saved (etag, modifiedOn)
-            (isEqual(originalResourceAccess, resourceAccessList) &&
+            (isEqual(consolidatedOriginalResourceAccess, resourceAccessList) &&
               originalAcl?.id === updatedAcl?.id)
 
           if (aclIsUnchanged) {
@@ -121,7 +121,7 @@ export const PortalAclEditor = forwardRef(function PortalAclEditor(
     [
       portalId,
       originalAcl,
-      originalResourceAccess,
+      consolidatedOriginalResourceAccess,
       resourceAccessList,
       onSaveComplete,
       updateAcl,

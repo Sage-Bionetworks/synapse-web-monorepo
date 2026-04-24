@@ -72,7 +72,7 @@ export const AccessRequirementAclEditor = forwardRef(
         staleTime: Infinity,
       })
 
-    const originalResourceAccess = useMemo(
+    const consolidatedOriginalResourceAccess = useMemo(
       () => consolidateResourceAccessList(originalAcl?.resourceAccess ?? []),
       [originalAcl],
     )
@@ -93,11 +93,11 @@ export const AccessRequirementAclEditor = forwardRef(
     useEffect(() => {
       if (originalAcl) {
         resetDirtyState()
-        setResourceAccessList(originalResourceAccess)
+        setResourceAccessList(consolidatedOriginalResourceAccess)
       }
     }, [
       originalAcl,
-      originalResourceAccess,
+      consolidatedOriginalResourceAccess,
       resetDirtyState,
       setResourceAccessList,
     ])
@@ -133,7 +133,10 @@ export const AccessRequirementAclEditor = forwardRef(
             const aclIsUnchanged =
               (originalAcl === null && updatedAcl == null) ||
               // ignore properties that will change when the ACL is saved (etag, modifiedOn)
-              (isEqual(originalResourceAccess, resourceAccessList) &&
+              (isEqual(
+                consolidatedOriginalResourceAccess,
+                resourceAccessList,
+              ) &&
                 originalAcl?.id === updatedAcl?.id)
 
             if (aclIsUnchanged) {
