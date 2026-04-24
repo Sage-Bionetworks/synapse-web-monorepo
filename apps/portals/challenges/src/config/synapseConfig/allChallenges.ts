@@ -16,8 +16,14 @@ const allChallengesSchema: TableToGenericCardMapping = {
     'platform',
     'keywords',
     'incentive',
-    'submissionType',
     'inputDataType',
+    'dataFormat',
+    'evaluationMetric',
+    'submissionType',
+    'dataAccessType',
+    'dataLicense',
+    'submissionLicense',
+    'contactEmail',
   ],
   titleAreaDetails: (schema, data) => {
     const status = data[schema['status']]
