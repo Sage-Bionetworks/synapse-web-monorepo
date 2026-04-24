@@ -8,21 +8,23 @@ import {
 } from '@/utils/PermissionLevelToAccessType'
 import { Alert, Stack } from '@mui/material'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import {
+  consolidateResourceAccessList,
+  convertResourceAccessSetToSRC,
+  updateACLWithSRCResourceAccessList,
+} from '@/utils/functions/AccessControlListUtils'
 import { isEqual } from 'lodash-es'
 import {
   ForwardedRef,
   forwardRef,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useState,
 } from 'react'
 import { AclEditor } from '../AclEditor/AclEditor'
 import useUpdateAcl from '../AclEditor/useUpdateAcl'
 import { AccessControlList } from '@sage-bionetworks/synapse-client'
-import {
-  convertResourceAccessSetToSRC,
-  updateACLWithSRCResourceAccessList,
-} from '@/utils/functions/AccessControlListUtils'
 
 const availablePermissionLevels: PermissionLevel[] = [
   'CAN_ADMINISTER_OAUTH_CLIENT',
@@ -61,6 +63,14 @@ export const OAuthClientAclEditor = forwardRef(function OAuthClientAclEditor(
       staleTime: Infinity,
     })
 
+  const originalResourceAccess = useMemo(
+    () =>
+      consolidateResourceAccessList(
+        convertResourceAccessSetToSRC(originalAcl?.resourceAccess),
+      ),
+    [originalAcl],
+  )
+
   const {
     resourceAccessList,
     setResourceAccessList,
@@ -77,11 +87,14 @@ export const OAuthClientAclEditor = forwardRef(function OAuthClientAclEditor(
   useEffect(() => {
     if (originalAcl) {
       resetDirtyState()
-      setResourceAccessList(
-        convertResourceAccessSetToSRC(originalAcl.resourceAccess),
-      )
+      setResourceAccessList(originalResourceAccess)
     }
-  }, [originalAcl, setResourceAccessList])
+  }, [
+    originalAcl,
+    originalResourceAccess,
+    resetDirtyState,
+    setResourceAccessList,
+  ])
 
   const { mutate: updateAcl } = useUpdateOAuthClientACL({
     onSuccess: () => onMutationSuccess(),
@@ -98,7 +111,7 @@ export const OAuthClientAclEditor = forwardRef(function OAuthClientAclEditor(
           const aclIsUnchanged =
             (originalAcl === null && updatedAcl == null) ||
             // ignore properties that will change when the ACL is saved (etag, modifiedOn)
-            (isEqual(originalAcl?.resourceAccess, resourceAccessList) &&
+            (isEqual(originalResourceAccess, resourceAccessList) &&
               originalAcl?.id === updatedAcl?.id)
 
           if (aclIsUnchanged) {
@@ -110,7 +123,14 @@ export const OAuthClientAclEditor = forwardRef(function OAuthClientAclEditor(
         },
       }
     },
-    [clientId, originalAcl, resourceAccessList, onSaveComplete, updateAcl],
+    [
+      clientId,
+      originalAcl,
+      originalResourceAccess,
+      resourceAccessList,
+      onSaveComplete,
+      updateAcl,
+    ],
   )
 
   return (

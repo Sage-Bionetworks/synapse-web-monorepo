@@ -5,6 +5,7 @@ import {
 } from '@/mocks/realm/mockRealmPrincipal'
 import { ACCESS_TYPE, ResourceAccess } from '@sage-bionetworks/synapse-types'
 import {
+  consolidateResourceAccessList,
   isEntityPublic,
   resourceAccessListIsEqual,
 } from './AccessControlListUtils'
@@ -259,6 +260,49 @@ describe('AccessControlListUtils', () => {
       })
 
       expect(result).toBe(false)
+    })
+  })
+
+  describe('consolidateResourceAccessList', () => {
+    it('returns the same number of entries when there are no duplicates', () => {
+      const list: ResourceAccess[] = [
+        { principalId: 1, accessType: [ACCESS_TYPE.READ] },
+        { principalId: 2, accessType: [ACCESS_TYPE.DOWNLOAD] },
+      ]
+
+      expect(consolidateResourceAccessList(list)).toHaveLength(2)
+    })
+
+    it('unions accessType arrays for duplicate principalId entries', () => {
+      const list: ResourceAccess[] = [
+        {
+          principalId: 1,
+          accessType: [ACCESS_TYPE.READ, ACCESS_TYPE.DOWNLOAD],
+        },
+        {
+          principalId: 1,
+          accessType: [ACCESS_TYPE.UPDATE, ACCESS_TYPE.DELETE],
+        },
+        { principalId: 2, accessType: [ACCESS_TYPE.READ] },
+      ]
+
+      const result = consolidateResourceAccessList(list)
+      expect(result).toHaveLength(2)
+
+      const entry = result.find(item => item.principalId === 1)
+      expect(entry?.accessType).toHaveLength(4)
+      expect(entry?.accessType).toEqual(
+        expect.arrayContaining([
+          ACCESS_TYPE.READ,
+          ACCESS_TYPE.DOWNLOAD,
+          ACCESS_TYPE.UPDATE,
+          ACCESS_TYPE.DELETE,
+        ]),
+      )
+    })
+
+    it('returns an empty list for empty input', () => {
+      expect(consolidateResourceAccessList([])).toEqual([])
     })
   })
 })

@@ -9,12 +9,14 @@ import { PermissionLevel } from '@/utils/PermissionLevelToAccessType'
 import { Alert, Box, Stack, Typography } from '@mui/material'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { ACCESS_TYPE, AccessControlList } from '@sage-bionetworks/synapse-types'
+import { consolidateResourceAccessList } from '@/utils/functions/AccessControlListUtils'
 import { isEqual } from 'lodash-es'
 import {
   ForwardedRef,
   forwardRef,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useState,
 } from 'react'
 import { AclEditor } from '../AclEditor/AclEditor'
@@ -70,6 +72,11 @@ export const AccessRequirementAclEditor = forwardRef(
         staleTime: Infinity,
       })
 
+    const originalResourceAccess = useMemo(
+      () => consolidateResourceAccessList(originalAcl?.resourceAccess ?? []),
+      [originalAcl],
+    )
+
     const {
       resourceAccessList,
       setResourceAccessList,
@@ -86,9 +93,14 @@ export const AccessRequirementAclEditor = forwardRef(
     useEffect(() => {
       if (originalAcl) {
         resetDirtyState()
-        setResourceAccessList(originalAcl.resourceAccess)
+        setResourceAccessList(originalResourceAccess)
       }
-    }, [originalAcl, setResourceAccessList])
+    }, [
+      originalAcl,
+      originalResourceAccess,
+      resetDirtyState,
+      setResourceAccessList,
+    ])
 
     const { mutate: deleteAcl } = useDeleteAccessRequirementACL({
       onSuccess: () => onMutationSuccess(),
@@ -121,7 +133,7 @@ export const AccessRequirementAclEditor = forwardRef(
             const aclIsUnchanged =
               (originalAcl === null && updatedAcl == null) ||
               // ignore properties that will change when the ACL is saved (etag, modifiedOn)
-              (isEqual(originalAcl?.resourceAccess, resourceAccessList) &&
+              (isEqual(originalResourceAccess, resourceAccessList) &&
                 originalAcl?.id === updatedAcl?.id)
 
             if (aclIsUnchanged) {

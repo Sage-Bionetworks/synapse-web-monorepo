@@ -9,6 +9,7 @@ import {
 import { useGetRealmPrincipals } from '@/synapse-queries/realm/useRealmPrincipals'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import {
+  consolidateResourceAccessList,
   isEntityPublic,
   resourceAccessListIsEqual,
 } from '@/utils/functions/AccessControlListUtils'
@@ -177,7 +178,12 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
     },
   )
 
-  const originalResourceAccess = entityBundle.benefactorAcl.resourceAccess
+  const originalResourceAccess = useMemo(
+    () =>
+      consolidateResourceAccessList(entityBundle.benefactorAcl.resourceAccess),
+    [entityBundle.benefactorAcl.resourceAccess],
+  )
+
   const parentResourceAccess = useMemo(
     () => parentAcl?.resourceAccess ?? [],
     [parentAcl],
