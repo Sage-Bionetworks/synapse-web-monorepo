@@ -1,0 +1,15 @@
+import{n as e}from"./chunk-zsgVPwQN.js";import{t}from"./jsx-runtime-CR4qI0Ep.js";import{Yt as n,kt as r,t as i}from"./esm-D6QtY4ss.js";import{i as a,n as o,r as s,t as c}from"./WizardChoiceButtonGroup-BzrN0lsk.js";var l,u,d,f,p;e((()=>{i(),a(),o(),l=t(),u={title:`UI/WizardChoiceButtonGroup`,component:c,parameters:{design:{type:`figma`,url:`https://www.figma.com/file/vLusb6uSfhx45OyFx5IHwy/(XDM)-Extensible-Data-Management-Comps?type=design&node-id=2955-29513&mode=design&t=Dhbz59ySu37vSy4e-4`}}},d={args:{children:(0,l.jsxs)(l.Fragment,{children:[(0,l.jsx)(s,{title:`'Classic' Access Requirement`,description:`These access requirements use proprietary a proprietary model for describing access conditions. If you need to maintain compatibility with a legacy access requirement, or cannot use DUO, choose this option.`}),(0,l.jsx)(s,{title:`DUO Access Requirement`,description:`The Data Use Ontology (DUO) is an open standard for describing access requirement conditions. Access Requirements managed under DUO support additional automation features.`})]})}},f={args:{children:(0,l.jsxs)(l.Fragment,{children:[(0,l.jsx)(s,{title:`File`,description:`Some option with a file icon. This is a long description that should wrap to multiple lines. This is a long description that should wrap to multiple lines. This is a long description that should wrap to multiple lines.`,icon:(0,l.jsx)(r,{fontSize:`large`})}),(0,l.jsx)(s,{title:`Folder or Directory`,description:`Select this option for "Folder or Directory".`,icon:(0,l.jsx)(n,{fontSize:`large`})})]})}},d.parameters={...d.parameters,docs:{...d.parameters?.docs,source:{originalSource:`{
+  args: {
+    children: <>
+        <WizardChoiceButton title={"'Classic' Access Requirement"} description={'These access requirements use proprietary a proprietary model for describing access conditions. If you need to maintain compatibility with a legacy access requirement, or cannot use DUO, choose this option.'} />
+        <WizardChoiceButton title={'DUO Access Requirement'} description={'The Data Use Ontology (DUO) is an open standard for describing access requirement conditions. Access Requirements managed under DUO support additional automation features.'} />
+      </>
+  }
+}`,...d.parameters?.docs?.source}}},f.parameters={...f.parameters,docs:{...f.parameters?.docs,source:{originalSource:`{
+  args: {
+    children: <>
+        <WizardChoiceButton title={'File'} description={'Some option with a file icon. This is a long description that should wrap to multiple lines. This is a long description that should wrap to multiple lines. This is a long description that should wrap to multiple lines.'} icon={<InsertDriveFileTwoTone fontSize={'large'} />} />
+        <WizardChoiceButton title={'Folder or Directory'} description={'Select this option for "Folder or Directory".'} icon={<FolderTwoTone fontSize={'large'} />} />
+      </>
+  }
+}`,...f.parameters?.docs?.source}}},p=[`Basic`,`WithIcons`]}))();export{d as Basic,f as WithIcons,p as __namedExportsOrder,u as default};
