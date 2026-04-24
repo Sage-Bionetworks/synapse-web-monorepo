@@ -20,8 +20,10 @@ export const publicationsCardConfiguration: CardConfiguration = {
       matchColumnName: 'program',
     },
     {
-      isMarkdown: true,
+      isMarkdown: false,
       matchColumnName: 'DOI',
+      overrideLinkURLColumnName: 'DOI',
+      overrideLinkURLColumnTransform: doi => `https://doi.org/${doi}`,
     },
   ],
   genericCardSchema: {
@@ -35,6 +37,7 @@ export const publicationsCardConfiguration: CardConfiguration = {
       'associatedDataset',
       'program',
       'PMID',
+      'DOI',
     ],
   },
 }
@@ -45,7 +48,7 @@ const publications: QueryWrapperPlotNavProps = {
   shouldDeepLink: true,
   name: 'Publications',
   cardConfiguration: publicationsCardConfiguration,
-  columnAliases,
+  columnAliases: { ...columnAliases, associatedDataset: 'Dataset' },
   searchConfiguration: {
     searchable: [
       'title',
