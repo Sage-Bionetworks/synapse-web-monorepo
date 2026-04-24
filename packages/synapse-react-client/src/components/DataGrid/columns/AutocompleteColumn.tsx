@@ -202,7 +202,7 @@ export function AutocompleteCell({
 // react-datasheet-grid provides new setRowData/stopEditing function instances
 // on each render, so we must ignore those callback identities here and only
 // compare the props that affect rendering.
-function areAutocompleteCellPropsEqual(
+export function areAutocompleteCellPropsEqual(
   prevProps: AutocompleteCellProps,
   nextProps: AutocompleteCellProps,
 ) {

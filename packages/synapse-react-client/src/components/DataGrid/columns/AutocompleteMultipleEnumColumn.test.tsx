@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import {
+  areAutocompleteMultipleEnumCellPropsEqual,
   autocompleteMultipleEnumColumn,
   AutocompleteMultipleEnumCellProps,
   AutocompleteMultipleEnumOption,
@@ -280,36 +281,26 @@ describe('autocompleteMultipleEnumColumn', () => {
     })
 
     it('should not re-render when only function props change', () => {
-      const mockSetRowData = vi.fn()
-      const mockStopEditing = vi.fn()
-      const choices = ['option1', 'option2', 'option3']
-
-      const TestCell = createTestCell(choices, 'string')
-
-      const mockCellProps: Partial<AutocompleteMultipleEnumCellProps> = {
+      const choices = ['option1', 'option2']
+      const baseProps = {
         rowData: ['option1', 'option2'],
-        setRowData: mockSetRowData,
+        setRowData: vi.fn(),
+        choices,
+        colType: 'string',
+        clearValue: undefined,
         focus: false,
         active: false,
-        stopEditing: mockStopEditing,
-      }
+        stopEditing: vi.fn(),
+        limitTags: 2,
+      } as AutocompleteMultipleEnumCellProps
 
-      const { rerender } = render(
-        <TestCell {...(mockCellProps as AutocompleteMultipleEnumCellProps)} />,
-      )
-      const input = screen.getByRole('combobox')
-
-      // Rerender with only function props changed (grid behavior)
-      rerender(
-        <TestCell
-          {...(mockCellProps as AutocompleteMultipleEnumCellProps)}
-          setRowData={vi.fn()}
-          stopEditing={vi.fn()}
-        />,
-      )
-
-      // Should still be the same DOM element (no re-render)
-      expect(screen.getByRole('combobox')).toBe(input)
+      expect(
+        areAutocompleteMultipleEnumCellPropsEqual(baseProps, {
+          ...baseProps,
+          setRowData: vi.fn(),
+          stopEditing: vi.fn(),
+        }),
+      ).toBe(true)
     })
 
     it('should re-render when active state changes', () => {
@@ -404,6 +395,102 @@ describe('autocompleteMultipleEnumColumn', () => {
       // Component should show new values
       expect(screen.getByRole('combobox')).toBeInTheDocument()
       expect(screen.getByText('option2')).toBeInTheDocument()
+    })
+  })
+
+  describe('areAutocompleteMultipleEnumCellPropsEqual', () => {
+    const choices = ['option1', 'option2']
+    const baseProps = {
+      rowData: ['option1'],
+      setRowData: vi.fn(),
+      choices,
+      colType: 'string',
+      clearValue: undefined,
+      focus: false,
+      active: false,
+      stopEditing: vi.fn(),
+      limitTags: 2,
+    } as AutocompleteMultipleEnumCellProps
+
+    it('returns true when only setRowData changes', () => {
+      expect(
+        areAutocompleteMultipleEnumCellPropsEqual(baseProps, {
+          ...baseProps,
+          setRowData: vi.fn(),
+        }),
+      ).toBe(true)
+    })
+
+    it('returns true when only stopEditing changes', () => {
+      expect(
+        areAutocompleteMultipleEnumCellPropsEqual(baseProps, {
+          ...baseProps,
+          stopEditing: vi.fn(),
+        }),
+      ).toBe(true)
+    })
+
+    it('returns false when rowData changes', () => {
+      expect(
+        areAutocompleteMultipleEnumCellPropsEqual(baseProps, {
+          ...baseProps,
+          rowData: ['option1', 'option2'],
+        }),
+      ).toBe(false)
+    })
+
+    it('returns false when choices changes', () => {
+      expect(
+        areAutocompleteMultipleEnumCellPropsEqual(baseProps, {
+          ...baseProps,
+          choices: [...choices],
+        }),
+      ).toBe(false)
+    })
+
+    it('returns false when colType changes', () => {
+      expect(
+        areAutocompleteMultipleEnumCellPropsEqual(baseProps, {
+          ...baseProps,
+          colType: 'number',
+        }),
+      ).toBe(false)
+    })
+
+    it('returns false when focus changes', () => {
+      expect(
+        areAutocompleteMultipleEnumCellPropsEqual(baseProps, {
+          ...baseProps,
+          focus: true,
+        }),
+      ).toBe(false)
+    })
+
+    it('returns false when active changes', () => {
+      expect(
+        areAutocompleteMultipleEnumCellPropsEqual(baseProps, {
+          ...baseProps,
+          active: true,
+        }),
+      ).toBe(false)
+    })
+
+    it('returns false when clearValue changes', () => {
+      expect(
+        areAutocompleteMultipleEnumCellPropsEqual(baseProps, {
+          ...baseProps,
+          clearValue: null,
+        }),
+      ).toBe(false)
+    })
+
+    it('returns false when limitTags changes', () => {
+      expect(
+        areAutocompleteMultipleEnumCellPropsEqual(baseProps, {
+          ...baseProps,
+          limitTags: 5,
+        }),
+      ).toBe(false)
     })
   })
 

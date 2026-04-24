@@ -3,6 +3,7 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { vi } from 'vitest'
 import {
+  areAutocompleteCellPropsEqual,
   AutocompleteCell,
   AutocompleteCellProps,
   MemoizedAutocompleteCell,
@@ -357,269 +358,89 @@ describe('AutocompleteColumn', () => {
     })
   })
 
-  describe('Memoization and Performance', () => {
-    it('should memoize cell component with custom comparison', () => {
-      const mockSetRowData = vi.fn()
-      const mockStopEditing = vi.fn()
-      const choices = ['option1', 'option2']
+  describe('areAutocompleteCellPropsEqual', () => {
+    const choices = ['option1', 'option2']
+    const baseProps = {
+      rowData: 'option1',
+      setRowData: vi.fn(),
+      choices,
+      colType: 'string',
+      clearValue: undefined,
+      focus: false,
+      active: false,
+      stopEditing: vi.fn(),
+    } as AutocompleteCellProps
 
-      const mockCellProps: Partial<AutocompleteCellProps> = {
-        rowData: 'option1',
-        setRowData: mockSetRowData,
-        choices,
-        colType: 'string',
-        clearValue: undefined,
-        focus: false,
-        active: false,
-        stopEditing: mockStopEditing,
-      }
-
-      const { rerender } = render(
-        <AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />,
-      )
-
-      // Rerender with same props but new function references (simulating grid behavior)
-      const newSetRowData = vi.fn()
-      const newStopEditing = vi.fn()
-      rerender(
-        <AutocompleteCell
-          {...(mockCellProps as AutocompleteCellProps)}
-          setRowData={newSetRowData}
-          stopEditing={newStopEditing}
-        />,
-      )
-
-      // Component should still render correctly despite function prop changes
-      expect(screen.getByRole('combobox')).toBeInTheDocument()
-      expect(screen.getByRole('combobox')).toHaveValue('option1')
+    it('returns true when only setRowData changes', () => {
+      expect(
+        areAutocompleteCellPropsEqual(baseProps, {
+          ...baseProps,
+          setRowData: vi.fn(),
+        }),
+      ).toBe(true)
     })
 
-    it('should not re-render when only function props change', () => {
-      const mockSetRowData = vi.fn()
-      const mockStopEditing = vi.fn()
-      const choices = ['option1', 'option2']
-
-      const mockCellProps: Partial<AutocompleteCellProps> = {
-        rowData: 'option1',
-        setRowData: mockSetRowData,
-        choices,
-        colType: 'string',
-        clearValue: undefined,
-        focus: false,
-        active: false,
-        stopEditing: mockStopEditing,
-      }
-
-      const { rerender } = render(
-        <AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />,
-      )
-      const input = screen.getByRole('combobox')
-
-      // Rerender with only function props changed (grid behavior)
-      rerender(
-        <AutocompleteCell
-          {...(mockCellProps as AutocompleteCellProps)}
-          setRowData={vi.fn()}
-          stopEditing={vi.fn()}
-        />,
-      )
-
-      // Should still be the same DOM element (no re-render)
-      expect(screen.getByRole('combobox')).toBe(input)
+    it('returns true when only stopEditing changes', () => {
+      expect(
+        areAutocompleteCellPropsEqual(baseProps, {
+          ...baseProps,
+          stopEditing: vi.fn(),
+        }),
+      ).toBe(true)
     })
 
-    it('should re-render when active state changes', () => {
-      const mockSetRowData = vi.fn()
-      const mockStopEditing = vi.fn()
-      const choices = ['option1', 'option2']
-
-      const mockCellProps: Partial<AutocompleteCellProps> = {
-        rowData: 'option1',
-        setRowData: mockSetRowData,
-        choices,
-        colType: 'string',
-        clearValue: undefined,
-        focus: false,
-        active: false,
-        stopEditing: mockStopEditing,
-      }
-
-      const { rerender } = render(
-        <AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />,
-      )
-
-      // Change active state
-      rerender(
-        <AutocompleteCell
-          {...(mockCellProps as AutocompleteCellProps)}
-          active={true}
-        />,
-      )
-
-      // Component should update to show active state (indicators visible)
-      expect(screen.getByRole('combobox')).toBeInTheDocument()
+    it('returns false when rowData changes', () => {
+      expect(
+        areAutocompleteCellPropsEqual(baseProps, {
+          ...baseProps,
+          rowData: 'option2',
+        }),
+      ).toBe(false)
     })
 
-    it('should re-render when focus state changes', () => {
-      const mockSetRowData = vi.fn()
-      const mockStopEditing = vi.fn()
-      const choices = ['option1', 'option2']
-
-      const mockCellProps: Partial<AutocompleteCellProps> = {
-        rowData: 'option1',
-        setRowData: mockSetRowData,
-        choices,
-        colType: 'string',
-        clearValue: undefined,
-        focus: false,
-        active: false,
-        stopEditing: mockStopEditing,
-      }
-
-      const { rerender } = render(
-        <AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />,
-      )
-
-      // Change focus state
-      rerender(
-        <AutocompleteCell
-          {...(mockCellProps as AutocompleteCellProps)}
-          focus={true}
-        />,
-      )
-
-      // Component should update
-      expect(screen.getByRole('combobox')).toBeInTheDocument()
+    it('returns false when choices changes', () => {
+      expect(
+        areAutocompleteCellPropsEqual(baseProps, {
+          ...baseProps,
+          choices: [...choices],
+        }),
+      ).toBe(false)
     })
 
-    it('should re-render when rowData changes', () => {
-      const mockSetRowData = vi.fn()
-      const mockStopEditing = vi.fn()
-      const choices = ['option1', 'option2', 'option3']
-
-      const mockCellProps: Partial<AutocompleteCellProps> = {
-        rowData: 'option1',
-        setRowData: mockSetRowData,
-        choices,
-        colType: 'string',
-        clearValue: undefined,
-        focus: false,
-        active: false,
-        stopEditing: mockStopEditing,
-      }
-
-      const { rerender } = render(
-        <AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />,
-      )
-      expect(screen.getByRole('combobox')).toHaveValue('option1')
-
-      // Change rowData
-      rerender(
-        <AutocompleteCell
-          {...(mockCellProps as AutocompleteCellProps)}
-          rowData="option2"
-        />,
-      )
-
-      // Component should show new value
-      expect(screen.getByRole('combobox')).toHaveValue('option2')
+    it('returns false when colType changes', () => {
+      expect(
+        areAutocompleteCellPropsEqual(baseProps, {
+          ...baseProps,
+          colType: 'number',
+        }),
+      ).toBe(false)
     })
 
-    it('should re-render when choices change', () => {
-      const mockSetRowData = vi.fn()
-      const mockStopEditing = vi.fn()
-      const initialChoices = ['option1', 'option2']
-
-      const mockCellProps: Partial<AutocompleteCellProps> = {
-        rowData: 'option1',
-        setRowData: mockSetRowData,
-        choices: initialChoices,
-        colType: 'string',
-        clearValue: undefined,
-        focus: false,
-        active: false,
-        stopEditing: mockStopEditing,
-      }
-
-      const { rerender } = render(
-        <AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />,
-      )
-
-      // Change choices
-      const newChoices = ['option1', 'option2', 'option3']
-      rerender(
-        <AutocompleteCell
-          {...(mockCellProps as AutocompleteCellProps)}
-          choices={newChoices}
-        />,
-      )
-
-      // Component should update with new choices
-      expect(screen.getByRole('combobox')).toBeInTheDocument()
+    it('returns false when focus changes', () => {
+      expect(
+        areAutocompleteCellPropsEqual(baseProps, {
+          ...baseProps,
+          focus: true,
+        }),
+      ).toBe(false)
     })
 
-    it('should re-render when colType changes', () => {
-      const mockSetRowData = vi.fn()
-      const mockStopEditing = vi.fn()
-      const choices = ['1', '2', '3']
-
-      const mockCellProps: Partial<AutocompleteCellProps> = {
-        rowData: '1',
-        setRowData: mockSetRowData,
-        choices,
-        colType: 'string',
-        clearValue: undefined,
-        focus: false,
-        active: false,
-        stopEditing: mockStopEditing,
-      }
-
-      const { rerender } = render(
-        <AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />,
-      )
-
-      // Change colType
-      rerender(
-        <AutocompleteCell
-          {...(mockCellProps as AutocompleteCellProps)}
-          colType="number"
-        />,
-      )
-
-      // Component should update
-      expect(screen.getByRole('combobox')).toBeInTheDocument()
+    it('returns false when active changes', () => {
+      expect(
+        areAutocompleteCellPropsEqual(baseProps, {
+          ...baseProps,
+          active: true,
+        }),
+      ).toBe(false)
     })
 
-    it('should re-render when clearValue changes', () => {
-      const mockSetRowData = vi.fn()
-      const mockStopEditing = vi.fn()
-      const choices = ['option1', 'option2']
-
-      const mockCellProps: Partial<AutocompleteCellProps> = {
-        rowData: 'option1',
-        setRowData: mockSetRowData,
-        choices,
-        colType: 'string',
-        clearValue: undefined,
-        focus: false,
-        active: false,
-        stopEditing: mockStopEditing,
-      }
-
-      const { rerender } = render(
-        <AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />,
-      )
-
-      // Change clearValue
-      rerender(
-        <AutocompleteCell
-          {...(mockCellProps as AutocompleteCellProps)}
-          clearValue={null}
-        />,
-      )
-
-      // Component should update
-      expect(screen.getByRole('combobox')).toBeInTheDocument()
+    it('returns false when clearValue changes', () => {
+      expect(
+        areAutocompleteCellPropsEqual(baseProps, {
+          ...baseProps,
+          clearValue: null,
+        }),
+      ).toBe(false)
     })
   })
 
@@ -687,38 +508,6 @@ describe('AutocompleteColumn', () => {
 })
 
 describe('MemoizedAutocompleteCell', () => {
-  it('does not re-render when only setRowData and stopEditing references change', () => {
-    const choices = ['option1', 'option2']
-    const baseProps: Partial<AutocompleteCellProps> = {
-      rowData: 'option1',
-      setRowData: vi.fn(),
-      choices,
-      colType: 'string',
-      clearValue: undefined,
-      focus: false,
-      active: false,
-      stopEditing: vi.fn(),
-    }
-
-    const { rerender } = render(
-      <MemoizedAutocompleteCell {...(baseProps as AutocompleteCellProps)} />,
-    )
-    const inputBefore = screen.getByRole('combobox')
-
-    // Simulate what react-datasheet-grid does: recreate function props every render
-    rerender(
-      <MemoizedAutocompleteCell
-        {...(baseProps as AutocompleteCellProps)}
-        setRowData={vi.fn()}
-        stopEditing={vi.fn()}
-      />,
-    )
-
-    // The same DOM node means memo prevented a re-render
-    expect(screen.getByRole('combobox')).toBe(inputBefore)
-    expect(screen.getByRole('combobox')).toHaveValue('option1')
-  })
-
   it('re-renders when rowData changes', () => {
     const choices = ['option1', 'option2']
     const baseProps: Partial<AutocompleteCellProps> = {
@@ -742,33 +531,5 @@ describe('MemoizedAutocompleteCell', () => {
       />,
     )
     expect(screen.getByRole('combobox')).toHaveValue('option2')
-  })
-
-  it('re-renders when active changes', () => {
-    const baseProps: Partial<AutocompleteCellProps> = {
-      rowData: 'option1',
-      setRowData: vi.fn(),
-      choices: ['option1'],
-      focus: false,
-      active: false,
-      stopEditing: vi.fn(),
-    }
-
-    const { rerender } = render(
-      <MemoizedAutocompleteCell {...(baseProps as AutocompleteCellProps)} />,
-    )
-    const inputBefore = screen.getByRole('combobox')
-
-    rerender(
-      <MemoizedAutocompleteCell
-        {...(baseProps as AutocompleteCellProps)}
-        active={true}
-      />,
-    )
-
-    // The DOM node changes because active affects the sx styles — a re-render occurred
-    expect(screen.getByRole('combobox')).toBeInTheDocument()
-    // The input node itself is the same element (active triggers focus, not remount)
-    expect(screen.getByRole('combobox')).toBe(inputBefore)
   })
 })

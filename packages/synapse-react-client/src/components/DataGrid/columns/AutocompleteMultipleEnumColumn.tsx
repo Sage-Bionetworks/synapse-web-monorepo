@@ -11,6 +11,7 @@ import { JSONSchema7Type } from 'json-schema'
 import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { CellComponent, Column } from '@sage-bionetworks/react-datasheet-grid'
 import {
+  areAutocompleteCellPropsEqual,
   AutocompleteCellProps,
   castCellValueToString,
   AutocompleteOption,
@@ -288,17 +289,12 @@ function AutocompleteMultipleEnumCell({
 // react-datasheet-grid provides new setRowData/stopEditing function instances
 // on each render, so we must ignore those callback identities here and only
 // compare the props that affect rendering.
-function areAutocompleteMultipleEnumCellPropsEqual(
+export function areAutocompleteMultipleEnumCellPropsEqual(
   prevProps: AutocompleteMultipleEnumCellProps,
   nextProps: AutocompleteMultipleEnumCellProps,
 ) {
   return (
-    prevProps.rowData === nextProps.rowData &&
-    prevProps.choices === nextProps.choices &&
-    prevProps.colType === nextProps.colType &&
-    prevProps.focus === nextProps.focus &&
-    prevProps.active === nextProps.active &&
-    prevProps.clearValue === nextProps.clearValue &&
+    areAutocompleteCellPropsEqual(prevProps, nextProps) &&
     prevProps.limitTags === nextProps.limitTags
   )
 }
