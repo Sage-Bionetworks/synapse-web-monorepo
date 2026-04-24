@@ -9,15 +9,21 @@ import { allChallengesSql } from '../resources'
 const allChallengesSchema: TableToGenericCardMapping = {
   type: SynapseConstants.CHALLENGE,
   title: 'title',
-  subTitle: 'organizingCommunity',
+  subTitle: 'platform',
   description: 'description',
   secondaryLabels: [
     'metadataCompletenessTier',
-    'platform',
+    'organizingCommunity',
     'keywords',
     'incentive',
-    'submissionType',
     'inputDataType',
+    'dataFormat',
+    'evaluationMetric',
+    'submissionType',
+    'dataAccessType',
+    'dataLicense',
+    'submissionLicense',
+    'contactEmail',
   ],
   titleAreaDetails: (schema, data) => {
     const status = data[schema['status']]
