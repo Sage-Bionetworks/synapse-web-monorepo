@@ -2,7 +2,15 @@ import parseFreeTextGivenJsonSchemaType from '@/components/DataGrid/utils/parseF
 import { Autocomplete, SxProps, TextField, Theme } from '@mui/material'
 import { JSONSchema7Type } from 'json-schema'
 import { isNil } from 'lodash-es'
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import {
   CellComponent,
   CellProps,
@@ -67,7 +75,9 @@ export function AutocompleteCell({
   // react-datasheet-grid recreates these functions on every render, but their
   // behavior is stable for a given cell position.
   const setRowDataRef = useRef(setRowData)
-  setRowDataRef.current = setRowData
+  useLayoutEffect(() => {
+    setRowDataRef.current = setRowData
+  })
   const stopEditingRef = useRef(stopEditing)
   stopEditingRef.current = stopEditing
 
@@ -77,12 +87,14 @@ export function AutocompleteCell({
 
   const {
     menuIsOpen,
-    setMenuIsOpen,
     inputRef,
     optionMouseDownRef,
     handleListboxMouseDown,
+    handleMenuOpen,
+    handleClose,
   } = useGridAutocompleteState({
     active,
+    stopEditing,
     onDeactivate: () => {
       if (localInputState !== rowDataAsString) {
         // Commit any free-typed text that hasn't been saved yet
@@ -139,14 +151,6 @@ export function AutocompleteCell({
     }
   }, [])
 
-  const handleClose = useCallback(() => {
-    // clear the guard in case a mousedown on an option
-    // was abandoned before onChange could fire (e.g. drag-off).
-    optionMouseDownRef.current = false
-    setMenuIsOpen(false)
-    stopEditingRef.current({ nextRow: false })
-  }, [setMenuIsOpen])
-
   const handleChange = useCallback(
     (_e: React.SyntheticEvent, newVal: AutocompleteOption, reason: string) => {
       // Reset the portal-click guard now that the selection has been committed
@@ -169,7 +173,7 @@ export function AutocompleteCell({
   return (
     <Autocomplete
       open={menuIsOpen}
-      onOpen={() => setMenuIsOpen(true)}
+      onOpen={handleMenuOpen}
       forcePopupIcon={true}
       disableClearable={!hasValue}
       freeSolo={true}

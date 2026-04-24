@@ -3,6 +3,11 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 export type UseGridAutocompleteStateProps = {
   active: boolean
   /**
+   * `stopEditing` from react-datasheet-grid's CellProps. The hook ref-stabilizes
+   * this internally, so callers can pass it directly without memoizing.
+   */
+  stopEditing?: (opts?: { nextRow: boolean }) => void
+  /**
    * Called when the cell transitions from active to inactive and there is no
    * pending option click in progress (i.e. the portal-click guard is not set).
    * Store any free-text commit logic here. The callback is ref-stabilized inside
@@ -29,6 +34,13 @@ export type UseGridAutocompleteStateReturn = {
   optionMouseDownRef: React.RefObject<boolean>
   /** Pass to `slotProps.listbox.onMouseDown` on the MUI Autocomplete. */
   handleListboxMouseDown: (event: React.MouseEvent) => void
+  /** Pass to the Autocomplete `onOpen` prop. */
+  handleMenuOpen: () => void
+  /**
+   * Pass to the Autocomplete `onClose` prop. Clears the portal-click guard and
+   * closes the menu, then stops editing without advancing to the next row.
+   */
+  handleClose: () => void
 }
 
 /**
@@ -46,6 +58,7 @@ export type UseGridAutocompleteStateReturn = {
  */
 export function useGridAutocompleteState({
   active,
+  stopEditing,
   onDeactivate,
 }: UseGridAutocompleteStateProps): UseGridAutocompleteStateReturn {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -56,10 +69,12 @@ export function useGridAutocompleteState({
   const activeRef = useRef(active)
   activeRef.current = active
 
-  // Ref-stabilize onDeactivate so the useEffect below never needs it in its
-  // deps array, yet always calls the latest version (avoiding stale closures).
+  // Ref-stabilize callbacks so effects/handlers never need them in deps arrays,
+  // yet always call the latest versions (avoiding stale closures).
   const onDeactivateRef = useRef(onDeactivate)
   onDeactivateRef.current = onDeactivate
+  const stopEditingRef = useRef(stopEditing)
+  stopEditingRef.current = stopEditing
 
   useEffect(() => {
     if (active) {
@@ -88,6 +103,18 @@ export function useGridAutocompleteState({
     }
   }, [])
 
+  const handleMenuOpen = useCallback(() => {
+    setMenuIsOpen(true)
+  }, [])
+
+  const handleClose = useCallback(() => {
+    // Clear the guard in case a mousedown on an option was abandoned before
+    // onChange could fire (e.g. drag-off).
+    optionMouseDownRef.current = false
+    setMenuIsOpen(false)
+    stopEditingRef.current?.({ nextRow: false })
+  }, [])
+
   return {
     menuIsOpen,
     setMenuIsOpen,
@@ -95,5 +122,7 @@ export function useGridAutocompleteState({
     activeRef,
     optionMouseDownRef,
     handleListboxMouseDown,
+    handleMenuOpen,
+    handleClose,
   }
 }

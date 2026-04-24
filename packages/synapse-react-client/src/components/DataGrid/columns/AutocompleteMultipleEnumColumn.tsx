@@ -91,9 +91,6 @@ function AutocompleteMultipleEnumCell({
   // but their behavior is stable for a given cell position.
   const setRowDataRef = useRef(setRowData)
   setRowDataRef.current = setRowData
-  const stopEditingRef = useRef(stopEditing)
-  stopEditingRef.current = stopEditing
-
   const [localInputState, setLocalInputState] = useState<string>('')
 
   const {
@@ -103,7 +100,9 @@ function AutocompleteMultipleEnumCell({
     activeRef,
     optionMouseDownRef,
     handleListboxMouseDown,
-  } = useGridAutocompleteState({ active })
+    handleMenuOpen,
+    handleClose,
+  } = useGridAutocompleteState({ active, stopEditing })
 
   const safeRowData = createSafeRowData(rowData)
   const optionsWithLabels = choices.map(createOptionFromValue)
@@ -158,14 +157,6 @@ function AutocompleteMultipleEnumCell({
     }),
     [active, focus],
   )
-
-  const handleClose = useCallback(() => {
-    // clear the guard in case a mousedown on an option
-    // was abandoned before onChange could fire (e.g. drag-off).
-    optionMouseDownRef.current = false
-    setMenuIsOpen(false)
-    stopEditingRef.current({ nextRow: false })
-  }, [setMenuIsOpen])
 
   const handleChange = useCallback(
     (
@@ -225,7 +216,7 @@ function AutocompleteMultipleEnumCell({
           multiple
           freeSolo
           open={menuIsOpen}
-          onOpen={() => setMenuIsOpen(true)}
+          onOpen={handleMenuOpen}
           disablePortal={false}
           limitTags={effectiveLimitTags}
           options={optionsWithLabels}
