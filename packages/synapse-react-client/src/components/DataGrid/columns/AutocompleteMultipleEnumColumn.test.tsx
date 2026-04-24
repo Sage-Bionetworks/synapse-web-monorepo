@@ -292,7 +292,7 @@ describe('autocompleteMultipleEnumColumn', () => {
         active: false,
         stopEditing: vi.fn(),
         limitTags: 2,
-      } as AutocompleteMultipleEnumCellProps
+      } as unknown as AutocompleteMultipleEnumCellProps
 
       expect(
         areAutocompleteMultipleEnumCellPropsEqual(baseProps, {
@@ -410,7 +410,7 @@ describe('autocompleteMultipleEnumColumn', () => {
       active: false,
       stopEditing: vi.fn(),
       limitTags: 2,
-    } as AutocompleteMultipleEnumCellProps
+    } as unknown as AutocompleteMultipleEnumCellProps
 
     it('returns true when only setRowData changes', () => {
       expect(

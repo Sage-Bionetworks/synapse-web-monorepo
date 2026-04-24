@@ -369,7 +369,7 @@ describe('AutocompleteColumn', () => {
       focus: false,
       active: false,
       stopEditing: vi.fn(),
-    } as AutocompleteCellProps
+    } as unknown as AutocompleteCellProps
 
     it('returns true when only setRowData changes', () => {
       expect(
