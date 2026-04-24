@@ -48,7 +48,6 @@ export const DuplicatePrincipal: Story = {
           ...mockProject.bundle,
           benefactorAcl: {
             id: mockProject.id,
-            etag: 'test-etag',
             resourceAccess: [
               {
                 principalId: MOCK_USER_ID,
