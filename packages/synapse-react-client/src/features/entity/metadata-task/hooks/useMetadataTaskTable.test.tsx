@@ -2,9 +2,10 @@ import { describe, it, expect } from 'vitest'
 import { renderHook } from '@testing-library/react'
 import { useMetadataTaskTable } from './useMetadataTaskTable'
 import { ListCurationTaskRequest } from '@sage-bionetworks/synapse-client'
+import { useGetCurationTasksInfinite } from '@/synapse-queries/curation/task/useCurationTask'
 
 vi.mock('@/synapse-queries/curation/task/useCurationTask', () => ({
-  useGetCurationTasksByProjectInfinite: vi.fn(),
+  useGetCurationTasksInfinite: vi.fn(),
 }))
 
 vi.mock('@/synapse-queries/index', () => ({
@@ -14,11 +15,7 @@ vi.mock('@/synapse-queries/index', () => ({
   }),
 }))
 
-import { useGetCurationTasksInfinite } from '@/synapse-queries/curation/task/useCurationTask'
-
-const mockUseGetCurationTasksByProjectInfinite = vi.mocked(
-  useGetCurationTasksInfinite,
-)
+const mockUseGetCurationTasksInfinite = vi.mocked(useGetCurationTasksInfinite)
 
 const defaultTaskPages = {
   pages: [
@@ -52,7 +49,7 @@ const defaultTaskPages = {
 }
 
 beforeEach(() => {
-  mockUseGetCurationTasksByProjectInfinite.mockReturnValue({
+  mockUseGetCurationTasksInfinite.mockReturnValue({
     data: defaultTaskPages,
     hasNextPage: false,
     fetchNextPage: vi.fn(),
@@ -82,8 +79,6 @@ describe('useMetadataTaskTable', () => {
       assignedToMe: true,
     }
     renderHook(() => useMetadataTaskTable({ listCurationTaskRequest: request }))
-    expect(mockUseGetCurationTasksByProjectInfinite).toHaveBeenCalledWith(
-      request,
-    )
+    expect(mockUseGetCurationTasksInfinite).toHaveBeenCalledWith(request)
   })
 })
