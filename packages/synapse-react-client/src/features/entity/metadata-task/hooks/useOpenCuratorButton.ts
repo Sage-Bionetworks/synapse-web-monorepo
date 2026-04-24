@@ -18,7 +18,6 @@ type UseOpenCuratorFromTaskButtonReturn = {
   isLoading: boolean
   isPending: boolean
   hasPermission?: boolean
-  noPermissionMessage?: string
   onClick: () => void
 }
 
@@ -43,15 +42,6 @@ export default function useOpenCuratorFromTaskButton(
 
   const hasPermission = sourceEntityPermissions?.canView
 
-  let noPermissionMessage: string | undefined = undefined
-  if (!hasPermission) {
-    noPermissionMessage = sourceEntityPermissions?.canView
-      ? 'You must have READ access to ' +
-        gridSourceEntityId +
-        ' to view the Working Copy'
-      : 'You do not have permission to view the Working Copy'
-  }
-
   const openNewOrExistingCuratorSession = useCallback(async () => {
     let gridSession: GridSession
     try {
@@ -67,7 +57,9 @@ export default function useOpenCuratorFromTaskButton(
         })
       } else {
         console.error('Error opening Curator for curation task', error)
-        displayToast(error.message, 'danger', {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error)
+        displayToast(errorMessage, 'danger', {
           title: OPEN_CURATOR_ERROR_TITLE,
         })
       }
@@ -80,7 +72,6 @@ export default function useOpenCuratorFromTaskButton(
 
   return {
     hasPermission,
-    noPermissionMessage,
     isLoading: isLoadingEntityPermissions,
     isPending: openGridIsPending,
     onClick: handleClickOpenCurator,

@@ -1,19 +1,20 @@
+import { displayToast } from '@/components'
+import useOpenCuratorFromTaskButton from '@/features/entity/metadata-task/hooks/useOpenCuratorButton'
+import { OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE } from '@/features/entity/metadata-task/utils/constants'
 import { Card, Chip, Divider, Typography } from '@mui/material'
 import { TaskBundle } from '@sage-bionetworks/synapse-client'
 import classNames from 'classnames'
 import styles from './CurationTaskCard.module.scss'
+import NextStepButton from './NextStepButton'
 import sharedStyles from './shared.module.scss'
 import UserOrTeamChip from './UserOrTeamChip'
-import useOpenCuratorFromTaskButton from '@/features/entity/metadata-task/hooks/useOpenCuratorButton'
-import { displayToast } from '@/components'
-import NextStepButton from './NextStepButton'
 
 export type CurationTaskCardProps = {
   taskBundle: TaskBundle
 }
 
 function useUiForTask(taskBundle: TaskBundle) {
-  const { onClick, isLoading, isPending, noPermissionMessage, hasPermission } =
+  const { onClick, isLoading, isPending, hasPermission } =
     useOpenCuratorFromTaskButton(taskBundle.task!)
 
   if (!taskBundle.task || !taskBundle.status) {
@@ -34,7 +35,6 @@ function useUiForTask(taskBundle: TaskBundle) {
         onClickNextStep: onClick,
         isLoading,
         isPending,
-        noPermissionMessage,
         hasPermission,
       }
     default: {
@@ -61,7 +61,6 @@ function useUiForTask(taskBundle: TaskBundle) {
     },
     isLoading: false,
     isPending: false,
-    noPermissionMessage: undefined,
     hasPermission: undefined,
   }
 }
@@ -85,7 +84,6 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
     principalIds,
     buttonText,
     onClickNextStep,
-    noPermissionMessage,
     hasPermission,
     isLoading,
     isPending,
@@ -119,8 +117,7 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
               ? onClickNextStep
               : () => {
                   displayToast(
-                    noPermissionMessage ??
-                      'You do not have permission to perform this action',
+                    OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE,
                     'danger',
                   )
                 }

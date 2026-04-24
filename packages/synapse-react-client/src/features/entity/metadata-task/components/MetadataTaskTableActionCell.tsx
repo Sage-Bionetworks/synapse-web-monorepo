@@ -2,6 +2,10 @@ import { StickyNote2Outlined } from '@mui/icons-material'
 import { Button, Tooltip } from '@mui/material'
 import { TaskBundle } from '@sage-bionetworks/synapse-client'
 import useOpenCuratorFromTaskButton from '../hooks/useOpenCuratorButton'
+import {
+  OPEN_CURATOR_TOOLTIP_TITLE,
+  OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE,
+} from '../utils/constants'
 
 export const NO_TASK_ASSIGNEE_WARNING_DIALOG_TITLE = 'Task is Unassigned'
 
@@ -17,13 +21,16 @@ export default function MetadataTaskTableActionCell(props: {
   const { taskBundle } = props
   const curationTask = taskBundle.task!
 
-  const { hasPermission, noPermissionMessage, isLoading, isPending, onClick } =
+  const { hasPermission, isLoading, isPending, onClick } =
     useOpenCuratorFromTaskButton(curationTask)
 
   const disableButton = isPending || isLoading || !hasPermission
-  const tooltipTitle = hasPermission
-    ? 'Open Curator to edit metadata'
-    : noPermissionMessage!
+  let tooltipTitle: string | undefined = undefined
+  if (hasPermission === true) {
+    tooltipTitle = OPEN_CURATOR_TOOLTIP_TITLE
+  } else if (hasPermission === false) {
+    tooltipTitle = OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE
+  }
 
   return (
     <>

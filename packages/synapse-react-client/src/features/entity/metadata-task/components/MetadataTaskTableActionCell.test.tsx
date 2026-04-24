@@ -29,7 +29,6 @@ beforeEach(() => {
   vi.clearAllMocks()
   mockUseOpenCuratorFromTaskButton.mockReturnValue({
     hasPermission: true,
-    noPermissionMessage: undefined,
     isLoading: false,
     isPending: false,
     onClick: mockOnClick,
@@ -40,7 +39,6 @@ describe('MetadataTaskTableActionCell', () => {
   it('disables the Open Curator button while checking READ access', () => {
     mockUseOpenCuratorFromTaskButton.mockReturnValue({
       hasPermission: undefined,
-      noPermissionMessage: undefined,
       isLoading: true,
       isPending: false,
       onClick: mockOnClick,
@@ -54,8 +52,6 @@ describe('MetadataTaskTableActionCell', () => {
   it('disables the Open Curator button with no READ access on source entity', () => {
     mockUseOpenCuratorFromTaskButton.mockReturnValue({
       hasPermission: false,
-      noPermissionMessage:
-        'You do not have permission to view the Working Copy',
       isLoading: false,
       isPending: false,
       onClick: mockOnClick,
@@ -69,7 +65,6 @@ describe('MetadataTaskTableActionCell', () => {
   it('disables the Open Curator button while opening the grid session', () => {
     mockUseOpenCuratorFromTaskButton.mockReturnValue({
       hasPermission: true,
-      noPermissionMessage: undefined,
       isLoading: false,
       isPending: true,
       onClick: mockOnClick,

@@ -20,6 +20,7 @@ export default function NextStepButton(props: NextStepButtonProps) {
   const { className, buttonText, onClick, disabled, loading } = props
   return (
     <button
+      type="button"
       className={classNames(styles.button, className)}
       onClick={onClick}
       disabled={disabled || loading}
