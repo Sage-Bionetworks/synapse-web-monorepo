@@ -1,17 +1,16 @@
 import { getEntityBundleHandler } from '@/mocks/msw/handlers/entityHandlers'
 import { getHandlersForSearchQuery } from '@/mocks/msw/handlers/searchQueryHandlers'
 import { getHandlers } from '@/mocks/msw/handlers'
-import { mockSearchQueryResultBundle } from '@/mocks/mockSearchQueryData'
+import {
+  mockSearchQueryResultBundle,
+  MOCK_SEARCH_INDEX_ENTITY_ID,
+} from '@/mocks/mockSearchQueryData'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { GENERIC_CARD } from '@/utils/SynapseConstants'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import SearchQueryWrapperPlotNav, {
   SearchQueryWrapperPlotNavProps,
 } from './SearchQueryWrapperPlotNav'
-import {
-  MOCK_SEARCH_INDEX_ENTITY_ID,
-  MOCK_SEARCH_UNDERLYING_TABLE_ENTITY_ID,
-} from '@/mocks/mockSearchQueryData'
 
 const meta: Meta<SearchQueryWrapperPlotNavProps> = {
   title: 'Explore/SearchQueryWrapperPlotNav',
@@ -20,7 +19,7 @@ const meta: Meta<SearchQueryWrapperPlotNavProps> = {
     stack: 'mock',
     msw: {
       handlers: [
-        // Entity bundle handler for the underlying table (synapseId) — provides column models
+        // Entity bundle handler for the underlying table — provides column models
         getEntityBundleHandler(MOCK_REPO_ORIGIN, {
           tableBundle: {
             columnModels: mockSearchQueryResultBundle.columnModels!,
@@ -28,13 +27,12 @@ const meta: Meta<SearchQueryWrapperPlotNavProps> = {
           },
         }),
         ...getHandlers(MOCK_REPO_ORIGIN),
-        // Search API handlers are keyed to the searchIndexId
+        // Includes the SearchIndex entity GET handler and async search API handlers
         ...getHandlersForSearchQuery(MOCK_REPO_ORIGIN),
       ],
     },
   },
   args: {
-    synapseId: MOCK_SEARCH_UNDERLYING_TABLE_ENTITY_ID,
     searchIndexId: MOCK_SEARCH_INDEX_ENTITY_ID,
   },
 } satisfies Meta<SearchQueryWrapperPlotNavProps>

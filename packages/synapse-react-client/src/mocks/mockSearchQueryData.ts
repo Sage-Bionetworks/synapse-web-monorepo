@@ -1,10 +1,27 @@
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import { SearchIndexQuery } from '@sage-bionetworks/synapse-client'
+import { SearchIndex, SearchIndexQuery } from '@sage-bionetworks/synapse-client'
+import { MockEntityData } from '@/mocks/entity/MockEntityData'
+import { Entity } from '@sage-bionetworks/synapse-types'
 
 /** The SearchIndex entity that accepts search API calls and has a definingSql. */
 export const MOCK_SEARCH_INDEX_ENTITY_ID = 'syn60001'
 /** The underlying Table/View whose schema (column models) backs the search index. */
 export const MOCK_SEARCH_UNDERLYING_TABLE_ENTITY_ID = 'syn60000'
+
+/** Mock SearchIndex entity whose definingSQL references the underlying table. */
+export const mockSearchIndexEntity: SearchIndex = {
+  id: MOCK_SEARCH_INDEX_ENTITY_ID,
+  name: 'Mock Search Index',
+  concreteType: 'org.sagebionetworks.repo.model.search.table.SearchIndex',
+  definingSQL: `SELECT * FROM ${MOCK_SEARCH_UNDERLYING_TABLE_ENTITY_ID}`,
+}
+
+/** MockEntityData wrapper so the default entity GET handler can serve syn60001. */
+export const mockSearchIndexEntityData: MockEntityData = {
+  id: MOCK_SEARCH_INDEX_ENTITY_ID,
+  name: mockSearchIndexEntity.name!,
+  entity: mockSearchIndexEntity as unknown as Entity,
+}
 
 export const mockSearchIndexQuery: SearchIndexQuery = {
   concreteType: 'org.sagebionetworks.repo.model.search.table.SearchIndexQuery',

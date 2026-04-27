@@ -13,6 +13,7 @@ import {
   SearchSearchQuery,
 } from '@sage-bionetworks/synapse-client'
 import { cloneDeep } from 'lodash-es'
+import { HttpHandler } from 'msw'
 import { generateAsyncJobHandlers } from './asyncJobHandlers'
 import { mockSearchQueryResultBundle } from '@/mocks/mockSearchQueryData'
 import BasicMockedCrudService from '../util/BasicMockedCrudService'
@@ -122,7 +123,7 @@ function toSearchQueryResults(bundle: QueryResultBundle): SearchQueryResults {
  */
 export function getHandlersForSearchQuery(
   backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
-) {
+): HttpHandler[] {
   return generateAsyncJobHandlers<SearchIndexQuery, SearchQueryResults>(
     SEARCH_QUERY_ASYNC_START,
     tokenParam => SEARCH_QUERY_ASYNC_GET(tokenParam),

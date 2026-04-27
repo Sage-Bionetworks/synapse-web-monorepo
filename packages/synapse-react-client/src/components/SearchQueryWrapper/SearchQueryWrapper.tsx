@@ -1,4 +1,5 @@
 import { hasResettableFilters as hasResettableFiltersUtil } from '@/utils/functions/queryUtils'
+import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
 import useImmutableTableQuery from '@/utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { Provider } from 'jotai'
@@ -11,6 +12,8 @@ import {
 import { useSearchQueryUseQueryOptions } from './SearchQueryUseQueryOptions'
 import useHasFacetedSelectColumn from '../QueryWrapper/useHasFacetedSelectColumn'
 import { SessionInitializedGuard } from '@/utils/AppUtils/session/SessionInitializedGuard'
+import { useGetEntity } from '@/synapse-queries'
+import { SearchIndex } from '@sage-bionetworks/synapse-client'
 
 /**
  * The initQueryRequest used internally within SearchQueryWrapper. It uses a synthetic entity ID
@@ -38,12 +41,6 @@ export type SearchQueryWrapperProps = PropsWithChildren<{
   /** If onQueryChange is set, the callback will be invoked when the Query changes */
   onQueryChange?: (newQueryJson: string) => void
   isInfinite?: boolean
-  /**
-   * The Synapse ID of the Table entity whose schema (column models) backs this search index.
-   * When provided, column models are fetched from the entity bundle and used by
-   * FacetFilterControls to render the correct filter controls.
-   */
-  synapseId?: string
 }>
 
 function SearchQueryWrapperInternal(props: SearchQueryWrapperProps) {
@@ -60,8 +57,15 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
     onQueryChange,
     isInfinite = false,
     searchIndexId,
-    synapseId,
   } = props
+
+  const { data: searchIndexEntity } = useGetEntity(
+    searchIndexId,
+  ) as unknown as { data: SearchIndex | undefined }
+
+  const synapseId = searchIndexEntity?.definingSQL
+    ? parseEntityIdFromSqlStatement(searchIndexEntity.definingSQL)
+    : undefined
 
   // Build a full synthetic QueryBundleRequest so we can reuse useImmutableTableQuery.
   // The entityId and sql are placeholders; only selectedFacets, limit, offset, and partMask
