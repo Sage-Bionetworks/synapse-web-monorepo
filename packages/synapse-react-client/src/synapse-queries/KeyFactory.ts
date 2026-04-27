@@ -814,6 +814,10 @@ export class KeyFactory {
     return this.getKey('team', teamId, 'membershipStatus', userId)
   }
 
+  public getAllOpenMembershipInvitationsQueryKey() {
+    return this.getKey('openMembershipInvitations')
+  }
+
   public getAllOpenMembershipInvitationsForUserQueryKey(userId: string) {
     return this.getKey('openMembershipInvitations', userId)
   }

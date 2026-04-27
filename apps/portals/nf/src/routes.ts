@@ -35,15 +35,13 @@ export default [
       // Research Tools Central
       ...prefix('Research Tools Central', [
         route('Browse Tools', 'pages/BrowseTools.tsx'),
-        route('Submit Animal Model', 'pages/SubmitAnimalModel.tsx'),
+        route('Submit New Tool', 'pages/SubmitNewTool.tsx'),
         route('Submit Observation', 'pages/SubmitObservation.tsx'),
+        route('Submit Animal Model', 'pages/SubmitAnimalModel.tsx'),
         route('Submit Cell Line', 'pages/SubmitCellLine.tsx'),
         route('Submit Antibody', 'pages/SubmitAntibody.tsx'),
         route('Submit Genetic Reagent', 'pages/SubmitGeneticReagent.tsx'),
-        route(
-          'Submit Advanced Cellular Model',
-          'pages/SubmitAdvancedCellularModel.tsx',
-        ),
+        route('Submit Organoid Protocol', 'pages/SubmitOrganoidProtocol.tsx'),
         route('Submit Biobank', 'pages/SubmitBiobank.tsx'),
         route(
           'Submit Clinical Assessment Tool',

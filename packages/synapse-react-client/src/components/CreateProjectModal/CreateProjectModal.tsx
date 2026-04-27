@@ -7,7 +7,7 @@ import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import { KeyboardEvent, useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { ConfirmationDialog } from '../ConfirmationDialog/ConfirmationDialog'
-import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
+import { displayToast } from '../ToastMessage/ToastMessage'
 import TextField from '../TextField/TextField'
 import {
   ProjectVisibility,
@@ -30,8 +30,6 @@ export function CreateProjectModal({
   const [description, setDescription] = useState<string>('')
   const [visibility, setVisibility] =
     useState<ProjectVisibility>('DISCOVERABLE')
-  const [isShowingSuccessAlert, setIsShowingSuccessAlert] =
-    useState<boolean>(false)
 
   const { data: realmPrincipals } = useGetRealmPrincipals()
   const publicGroupId = realmPrincipals?.publicGroup
@@ -121,12 +119,32 @@ export function CreateProjectModal({
         description,
         accessToken,
       )
-      await applyVisibilityAcl(newProject.id!)
-      return newProject
+      let aclError: string | undefined
+      try {
+        await applyVisibilityAcl(newProject.id!)
+      } catch (e) {
+        aclError = (e as Error).message
+      }
+      return { newProject, aclError }
     },
-    onSuccess: newProject => {
-      setIsShowingSuccessAlert(true)
-      hide()
+    onError: error => {
+      const synapseError = error as SynapseClientError
+      displayToast(synapseError.reason ?? error.message, 'danger')
+    },
+    onSuccess: ({ newProject, aclError }) => {
+      // Note - Do NOT call createProjectMutation.reset() here — in TanStack Query v5,
+      // reset() inside onSuccess interrupts the rest of this callback.
+      // Note 2 - displayToast is not shown in Storybook (with the window.location.href change), but works when
+      // integrated in the Synapse.org app.
+      if (aclError) {
+        displayToast(aclError, 'danger')
+      } else {
+        displayToast('Project created', 'success')
+      }
+      setProjectName('')
+      setDescription('')
+      setVisibility('DISCOVERABLE')
+      onClose()
       const href = `/Synapse:${newProject.id}`
       if (gotoPlace) {
         gotoPlace(href)
@@ -143,11 +161,6 @@ export function CreateProjectModal({
     createProjectMutation.reset()
     onClose()
   }
-
-  const errorMessage = createProjectMutation.error
-    ? (createProjectMutation.error as SynapseClientError).reason ??
-      createProjectMutation.error.message
-    : undefined
 
   const dialogContent = (
     <Stack gap={2}>
@@ -189,7 +202,6 @@ export function CreateProjectModal({
         value={visibility}
         onChange={setVisibility}
       />
-      {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
       <Alert severity="warning">
         You can update project visibility at any time in Project Tools, or
         manage access at a more granular level for individual files and folders.
@@ -214,16 +226,6 @@ export function CreateProjectModal({
         onCancel={hide}
         maxWidth="sm"
         dense
-      />
-      <FullWidthAlert
-        show={isShowingSuccessAlert}
-        variant="info"
-        title="Project created"
-        description=""
-        autoCloseAfterDelayInSeconds={10}
-        onClose={() => {
-          setIsShowingSuccessAlert(false)
-        }}
       />
     </>
   )

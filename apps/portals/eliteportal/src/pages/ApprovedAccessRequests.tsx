@@ -18,9 +18,41 @@ function ApprovedAccessRequests() {
       <DetailsPageContent
         content={[
           {
-            title:
-              'The Characterization of Gene Associations with Aging-Related Traits with a Genetically-Predicted Transcriptome-Wide Association Study (ADAMTS7)',
-            id: 'ADAMTS7',
+            title: 'The Arivale Scientific Wellness Study',
+            id: 'Arivale',
+            element: (
+              <Markdown
+                ownerId="syn27229419"
+                wikiId="640292"
+                loadingSkeletonRowCount={10}
+              />
+            ),
+          },
+          {
+            title: 'Integrative Longevity Omics (ILO)',
+            id: 'ILO',
+            element: (
+              <Markdown
+                ownerId="syn27229419"
+                wikiId="622485"
+                loadingSkeletonRowCount={10}
+              />
+            ),
+          },
+          {
+            title: 'The Longevity Consortium (LC)',
+            id: 'LC',
+            element: (
+              <Markdown
+                ownerId="syn27229419"
+                wikiId="640285"
+                loadingSkeletonRowCount={10}
+              />
+            ),
+          },
+          {
+            title: 'The Longevity Genomics Consortium (LG)',
+            id: 'LG',
             element: (
               <Markdown
                 ownerId="syn27229419"
@@ -30,13 +62,12 @@ function ApprovedAccessRequests() {
             ),
           },
           {
-            title:
-              'The Single Cell Transcriptomic Analysis of PBMCs in Extreme Longevity (ELPSCRNA) Study',
-            id: 'ELPSCRNA',
+            title: 'The Long Life Family Study (LLFS) Danish Cohort',
+            id: 'LLFS_Danish',
             element: (
               <Markdown
                 ownerId="syn27229419"
-                wikiId="622485"
+                wikiId="631447"
                 loadingSkeletonRowCount={10}
               />
             ),
@@ -53,12 +84,23 @@ function ApprovedAccessRequests() {
             ),
           },
           {
-            title: 'The Long Life Family Study (LLFS) Danish Cohort',
-            id: 'LLFS_Danish',
+            title: 'The New England Centenarian Study (NECS)',
+            id: 'NECS',
             element: (
               <Markdown
                 ownerId="syn27229419"
-                wikiId="631447"
+                wikiId="640286"
+                loadingSkeletonRowCount={10}
+              />
+            ),
+          },
+          {
+            title: 'The SuperAgers Family Study',
+            id: 'SuperAgers',
+            element: (
+              <Markdown
+                ownerId="syn27229419"
+                wikiId="640293"
                 loadingSkeletonRowCount={10}
               />
             ),

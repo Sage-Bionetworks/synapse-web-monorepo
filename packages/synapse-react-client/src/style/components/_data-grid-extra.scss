@@ -1,3 +1,5 @@
+@use 'sass:list';
+
 // Color variables for validation states
 $color-deleted: #fff1f0;
 $color-created: #f6ffed;
@@ -164,6 +166,27 @@ $remote-selection-colors: #1677ff, #52c41a, #fa8c16, #eb2f96, #13c2c2, #9254de,
   min-height: 80px;
 }
 
+.dsg-expand-rows-rect {
+  background: rgba(69, 128, 230, 0.08);
+  box-shadow: inset 0 0 0 1px rgb(69, 128, 230);
+  z-index: 50;
+}
+
+// Raise the expand-rows drag handle above column resize handles (z-index: 1000)
+// and extend its hit area via ::before so it is easy to target without
+// accidentally triggering the column-resize cursor.
+.dsg-expand-rows-indicator {
+  z-index: 1001;
+  overflow: visible;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    cursor: crosshair;
+  }
+}
+
 .cell-selected {
   border: 1px solid rgba(25, 118, 210, 1);
 }
@@ -265,7 +288,7 @@ body.col-resizing {
 // Cells within another connected replica's selection are tinted with one of
 // 8 stable colors (replicaId % 8).
 @each $color in $remote-selection-colors {
-  $i: index($remote-selection-colors, $color) - 1;
+  $i: list.index($remote-selection-colors, $color) - 1;
 
   .dsg-cell.cell-remote-selected--color-#{$i} {
     background-color: rgba($color, 0.12) !important;

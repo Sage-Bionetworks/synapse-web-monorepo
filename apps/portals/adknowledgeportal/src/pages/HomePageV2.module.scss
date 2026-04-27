@@ -1,0 +1,23 @@
+@use 'sass:map';
+@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+
+.resultsExplorersContainer {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  margin-top: 40px;
+  flex-wrap: wrap;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    margin-top: 75px;
+    flex-wrap: nowrap;
+  }
+}
+
+.dataAnalysisIntegrationsLogoContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+  flex-wrap: wrap;
+  gap: 75px;
+}

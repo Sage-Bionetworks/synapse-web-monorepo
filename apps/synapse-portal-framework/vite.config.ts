@@ -5,10 +5,10 @@ import {
   baseConfig,
   vitestConfig,
   reactPlugins,
-  tsconfigPathsPlugin,
   libraryPlugins,
   preserveModulesBuildConfig,
 } from 'vite-config'
+import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 /**
  * Vite config for synapse-portal-framework.
@@ -36,10 +36,22 @@ const config = mergeConfig(
   mergeConfig(
     vitestConfig,
     mergeConfig(preserveModulesBuildConfig(allSourceFiles), {
+      root: '.',
+      build: {
+        emptyOutDir: true,
+      },
       plugins: [
-        tsconfigPathsPlugin(),
         ...reactPlugins(),
         ...libraryPlugins({ preserveModules: true }),
+        viteStaticCopy({
+          targets: [
+            {
+              src: 'src/components/assets/*',
+              dest: '',
+              rename: { stripBase: 1 },
+            },
+          ],
+        }),
       ],
       test: {
         include: ['src/**/*.test.[jt]s?(x)'],

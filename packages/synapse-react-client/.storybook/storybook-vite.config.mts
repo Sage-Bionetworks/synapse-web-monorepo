@@ -3,12 +3,11 @@ import {
   baseConfig,
   reactPlugins,
   nodePolyfillsPlugin,
-  tsconfigPathsPlugin,
 } from 'vite-config'
 
 const config = mergeConfig(baseConfig, {
   root: '.',
-  plugins: [nodePolyfillsPlugin(), tsconfigPathsPlugin(), ...reactPlugins()],
+  plugins: [nodePolyfillsPlugin(), ...reactPlugins()],
 })
 
 export default config

@@ -7,6 +7,7 @@ export const datasetsSql =
   "SELECT * FROM syn68554562 WHERE datasetStatus = 'released'"
 export const datasetCollectionsSql =
   'SELECT * FROM syn38814510 ORDER BY ItemOrder'
+export const publicationsSql = 'SELECT * FROM syn71306282'
 
 export const enabledAnalysisPlatforms: ExternalAnalysisPlatform[] = [
   'cavatica',

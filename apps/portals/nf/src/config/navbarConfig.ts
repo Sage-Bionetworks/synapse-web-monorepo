@@ -8,24 +8,12 @@ export const navbarConfig: NavbarConfig = {
       children: [
         { name: 'Browse Tools', path: '/Research Tools Central/Browse Tools' },
         {
-          name: 'Submit Animal Model',
-          path: '/Research Tools Central/Submit Animal Model',
+          name: 'Submit New Tool',
+          path: '/Research Tools Central/Submit New Tool',
         },
         {
           name: 'Submit Observation',
           path: '/Research Tools Central/Submit Observation',
-        },
-        {
-          name: 'Submit Cell Line',
-          path: '/Research Tools Central/Submit Cell Line',
-        },
-        {
-          name: 'Submit Antibody',
-          path: '/Research Tools Central/Submit Antibody',
-        },
-        {
-          name: 'Submit Genetic Reagent',
-          path: '/Research Tools Central/Submit Genetic Reagent',
         },
       ],
     },

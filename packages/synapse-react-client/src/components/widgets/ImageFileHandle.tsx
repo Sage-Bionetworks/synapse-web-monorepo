@@ -28,6 +28,13 @@ export const ImageFileHandle = (
     rootMargin: '500px 0px',
   })
 
+  // Clear the url if the fileHandleId changes to avoid showing the wrong image while loading the new one
+  useEffect(() => {
+    if (!fileHandleId) {
+      setUrl(undefined)
+    }
+  }, [fileHandleId])
+
   useEffect(() => {
     const getData = () => {
       if (fileHandleId && associateObjectId && associateObjectType && inView) {

@@ -1,21 +1,11 @@
 import { resolve } from 'path'
 import { mergeConfig } from 'vite'
-import {
-  baseConfig,
-  vitestConfig,
-  nodePolyfillsPlugin,
-  tsconfigPathsPlugin,
-  libraryPlugins,
-} from 'vite-config'
+import { baseConfig, vitestConfig, libraryPlugins } from 'vite-config'
 
 export default mergeConfig(
   baseConfig,
   mergeConfig(vitestConfig, {
-    plugins: [
-      nodePolyfillsPlugin(),
-      tsconfigPathsPlugin(),
-      ...libraryPlugins(),
-    ],
+    plugins: [...libraryPlugins()],
     build: {
       sourcemap: true,
       emptyOutDir: true,

@@ -13,10 +13,15 @@ import userEvent from '@testing-library/user-event'
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import { CANCEL_BUTTON_TEXT } from '../ConfirmationDialog/ConfirmationDialog'
 import { CLOSE_BUTTON_LABEL } from '../DialogBase'
+import { displayToast } from '../ToastMessage/ToastMessage'
 import {
   CreateProjectModal,
   CreateProjectModalProps,
 } from './CreateProjectModal'
+
+vi.mock('../ToastMessage/ToastMessage', () => ({
+  displayToast: vi.fn(),
+}))
 
 const MOCK_PROJECT_NAME = mockProjectEntityData.name
 
@@ -77,8 +82,9 @@ describe('CreateProjectModal tests', () => {
     expect(input.value).toBe(MOCK_PROJECT_NAME)
     await user.click(saveButton)
 
-    // should show success alert
-    await screen.findByText('Project created')
+    await vi.waitFor(() => {
+      expect(displayToast).toHaveBeenCalledWith('Project created', 'success')
+    })
   })
 
   it('Creates project on enter', async () => {
@@ -88,8 +94,9 @@ describe('CreateProjectModal tests', () => {
     expect(input.value).toBe(MOCK_PROJECT_NAME)
     await user.keyboard('{ENTER}')
 
-    // should show success alert
-    await screen.findByText('Project created')
+    await vi.waitFor(() => {
+      expect(displayToast).toHaveBeenCalledWith('Project created', 'success')
+    })
   })
 
   it('Shows error if creation fails', async () => {
@@ -99,39 +106,52 @@ describe('CreateProjectModal tests', () => {
     expect(input.value).toBe(MOCK_INVALID_PROJECT_NAME)
     await user.click(saveButton)
 
-    // should show error alert
-    await screen.findByText('Invalid project name')
+    // should show error toast
+    await vi.waitFor(() => {
+      expect(displayToast).toHaveBeenCalledWith(
+        'Invalid project name',
+        'danger',
+      )
+    })
   })
 
-  it('Clears alert and project name on cancel', async () => {
+  it('Clears project name on cancel', async () => {
     const { user, input, saveButton } = setUp()
 
     await user.type(input, MOCK_INVALID_PROJECT_NAME)
     await user.click(saveButton)
 
-    const errorMessage = await screen.findByText('Invalid project name')
+    await vi.waitFor(() => {
+      expect(displayToast).toHaveBeenCalledWith(
+        'Invalid project name',
+        'danger',
+      )
+    })
 
     const cancelButton = screen.getByRole('button', {
       name: CANCEL_BUTTON_TEXT,
     })
     await user.click(cancelButton)
 
-    expect(errorMessage).not.toBeInTheDocument()
     expect(input.value).toBe('')
   })
 
-  it('Clears alert and project name on closing dialog', async () => {
+  it('Clears project name on closing dialog', async () => {
     const { user, input, saveButton } = setUp()
 
     await user.type(input, MOCK_INVALID_PROJECT_NAME)
     await user.click(saveButton)
 
-    const errorMessage = await screen.findByText('Invalid project name')
+    await vi.waitFor(() => {
+      expect(displayToast).toHaveBeenCalledWith(
+        'Invalid project name',
+        'danger',
+      )
+    })
 
     const closeButton = screen.getByRole('button', { name: CLOSE_BUTTON_LABEL })
     await user.click(closeButton)
 
-    expect(errorMessage).not.toBeInTheDocument()
     expect(input.value).toBe('')
   })
 
@@ -159,7 +179,9 @@ describe('CreateProjectModal tests', () => {
       await user.type(input, MOCK_PROJECT_NAME)
       await user.click(saveButton)
 
-      await screen.findByText('Project created')
+      await vi.waitFor(() => {
+        expect(displayToast).toHaveBeenCalledWith('Project created', 'success')
+      })
 
       expect(mockGetEntityACL).not.toHaveBeenCalled()
       expect(mockUpdateEntityACL).not.toHaveBeenCalled()
@@ -176,7 +198,9 @@ describe('CreateProjectModal tests', () => {
       await user.type(input, MOCK_PROJECT_NAME)
       await user.click(saveButton)
 
-      await screen.findByText('Project created')
+      await vi.waitFor(() => {
+        expect(displayToast).toHaveBeenCalledWith('Project created', 'success')
+      })
 
       expect(mockUpdateEntityACL).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -205,7 +229,9 @@ describe('CreateProjectModal tests', () => {
       await user.type(input, MOCK_PROJECT_NAME)
       await user.click(saveButton)
 
-      await screen.findByText('Project created')
+      await vi.waitFor(() => {
+        expect(displayToast).toHaveBeenCalledWith('Project created', 'success')
+      })
 
       expect(mockUpdateEntityACL).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -225,22 +251,35 @@ describe('CreateProjectModal tests', () => {
       )
     })
 
-    it('shows an ACL error and keeps the dialog open when the ACL update fails', async () => {
+    it('shows an ACL error toast and still navigates when the ACL update fails', async () => {
       mockUpdateEntityACL.mockRejectedValue(
         Object.assign(new Error(), { reason: 'ACL update failed' }),
       )
 
-      const { user, input, saveButton } = setUp()
+      const gotoPlace = vi.fn()
+      render(<CreateProjectModal {...defaultProps} gotoPlace={gotoPlace} />, {
+        wrapper: createWrapper(),
+      })
+      const user = userEvent.setup()
+      const input = screen.getByRole<HTMLInputElement>('textbox', {
+        name: /project name/i,
+      })
+      const saveButton = screen.getByRole('button', { name: /save/i })
 
       await user.type(input, MOCK_PROJECT_NAME)
       await user.click(saveButton)
 
-      await screen.findByText(
-        /Project was created, but visibility could not be set: ACL update failed/i,
+      await vi.waitFor(() => {
+        expect(displayToast).toHaveBeenCalledWith(
+          expect.stringContaining('ACL update failed'),
+          'danger',
+        )
+      })
+      // Dialog should have been closed and navigation still happens
+      expect(defaultProps.onClose).toHaveBeenCalled()
+      expect(gotoPlace).toHaveBeenCalledWith(
+        expect.stringMatching(/^\/Synapse:syn/),
       )
-      expect(screen.queryByText('Project created')).not.toBeInTheDocument()
-      // Dialog should still be open
-      expect(screen.getByText('Create a new Project')).toBeInTheDocument()
     })
 
     it('merges access types when a principal already exists in the ACL', async () => {
@@ -276,7 +315,9 @@ describe('CreateProjectModal tests', () => {
       await user.type(input, MOCK_PROJECT_NAME)
       await user.click(saveButton)
 
-      await screen.findByText('Project created')
+      await vi.waitFor(() => {
+        expect(displayToast).toHaveBeenCalledWith('Project created', 'success')
+      })
 
       const calledWith = mockUpdateEntityACL.mock.calls[0][0] as {
         resourceAccess: { principalId: number; accessType: ACCESS_TYPE[] }[]

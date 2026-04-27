@@ -5,21 +5,23 @@ import {
 } from '@/utils/PermissionLevelToAccessType'
 import { Alert, Stack } from '@mui/material'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import {
+  consolidateResourceAccessList,
+  convertResourceAccessSetToSRC,
+  updateACLWithSRCResourceAccessList,
+} from '@/utils/functions/AccessControlListUtils'
 import { isEqual } from 'lodash-es'
 import {
   ForwardedRef,
   forwardRef,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useState,
 } from 'react'
 import { AclEditor } from '../AclEditor/AclEditor'
 import useUpdateAcl from '../AclEditor/useUpdateAcl'
 import { AccessControlList } from '@sage-bionetworks/synapse-client'
-import {
-  convertResourceAccessSetToSRC,
-  updateACLWithSRCResourceAccessList,
-} from '@/utils/functions/AccessControlListUtils'
 
 const availablePermissionLevels: PermissionLevel[] = ['CAN_ADMINISTER_PORTAL']
 
@@ -56,6 +58,14 @@ export const PortalAclEditor = forwardRef(function PortalAclEditor(
       staleTime: Infinity,
     })
 
+  const consolidatedOriginalResourceAccess = useMemo(
+    () =>
+      consolidateResourceAccessList(
+        convertResourceAccessSetToSRC(originalAcl?.resourceAccess),
+      ),
+    [originalAcl],
+  )
+
   const {
     resourceAccessList,
     setResourceAccessList,
@@ -72,11 +82,14 @@ export const PortalAclEditor = forwardRef(function PortalAclEditor(
   useEffect(() => {
     if (originalAcl) {
       resetDirtyState()
-      setResourceAccessList(
-        convertResourceAccessSetToSRC(originalAcl.resourceAccess),
-      )
+      setResourceAccessList(consolidatedOriginalResourceAccess)
     }
-  }, [originalAcl, setResourceAccessList, resetDirtyState])
+  }, [
+    originalAcl,
+    consolidatedOriginalResourceAccess,
+    resetDirtyState,
+    setResourceAccessList,
+  ])
 
   const { mutate: updateAcl } = useUpdatePortalACL({
     onSuccess: () => onMutationSuccess(),
@@ -93,7 +106,7 @@ export const PortalAclEditor = forwardRef(function PortalAclEditor(
           const aclIsUnchanged =
             (originalAcl === null && updatedAcl == null) ||
             // ignore properties that will change when the ACL is saved (etag, modifiedOn)
-            (isEqual(originalAcl?.resourceAccess, resourceAccessList) &&
+            (isEqual(consolidatedOriginalResourceAccess, resourceAccessList) &&
               originalAcl?.id === updatedAcl?.id)
 
           if (aclIsUnchanged) {
@@ -105,7 +118,14 @@ export const PortalAclEditor = forwardRef(function PortalAclEditor(
         },
       }
     },
-    [portalId, originalAcl, resourceAccessList, onSaveComplete, updateAcl],
+    [
+      portalId,
+      originalAcl,
+      consolidatedOriginalResourceAccess,
+      resourceAccessList,
+      onSaveComplete,
+      updateAcl,
+    ],
   )
 
   return (

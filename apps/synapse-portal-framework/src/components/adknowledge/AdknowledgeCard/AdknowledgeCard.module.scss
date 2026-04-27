@@ -1,9 +1,9 @@
 @use 'sass:map';
 @use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
 
-.adknowledgeContributeCardContainer {
+.adknowledgeCardContainer {
   border-radius: 5px;
-  border: 1px solid var(--UI-Gray-400, #dfe2e6);
+  border: 1px solid var(--synapse-gray-400);
   background: #fff;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
   padding: 20px;
@@ -16,23 +16,17 @@
   }
 }
 
-.adknowledgeContributeCardTitle:global(.MuiTypography-root) {
-  color: #684b84;
+.adknowledgeCardTitle:global(.MuiTypography-root) {
+  color: var(--adkp-accent-color);
   font-size: 36px;
   line-height: 40px; /* 111.111% */
   margin-bottom: 10px;
 }
 
-.adknowledgeContributeCardDescription:global(.MuiTypography-root) {
+.adknowledgeCardDescription:global(.MuiTypography-root) {
   line-height: 21px;
 }
 
 .textContainer {
   max-width: 650px;
-}
-
-.adknowledgeContributeCardButton:global(.MuiButton-root) {
-  border-radius: 8px;
-  background: linear-gradient(180deg, #443471 0%, #5a488f 100%);
-  border: 1px solid #32243f;
 }
