@@ -10,8 +10,9 @@ import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import {
   SearchIndexQuery,
   SearchQueryResults,
+  SearchSearchQuery,
 } from '@sage-bionetworks/synapse-client'
-import { cloneDeep, omit } from 'lodash-es'
+import { cloneDeep } from 'lodash-es'
 import { generateAsyncJobHandlers } from './asyncJobHandlers'
 import { mockSearchQueryResultBundle } from '@/mocks/mockSearchQueryData'
 import BasicMockedCrudService from '../util/BasicMockedCrudService'
@@ -20,7 +21,9 @@ import BasicMockedCrudService from '../util/BasicMockedCrudService'
  * A key derived from a SearchIndexQuery, excluding pagination fields.
  * Used to match registered bindings against incoming requests.
  */
-type SearchIndexQueryKey = Omit<SearchIndexQuery, 'limit' | 'offset'>
+type SearchIndexQueryKey = Omit<SearchIndexQuery, 'searchQuery'> & {
+  searchQuery?: Omit<SearchSearchQuery, 'limit' | 'offset'>
+}
 
 type SearchQueryBinding = {
   id: string
@@ -53,7 +56,11 @@ function processSearchRequest(
   request: SearchIndexQuery,
   baseBundle: QueryResultBundle,
 ): QueryResultBundle {
-  return applyLimitOffset(baseBundle, request.limit, request.offset)
+  return applyLimitOffset(
+    baseBundle,
+    request.searchQuery?.limit,
+    request.searchQuery?.offset,
+  )
 }
 
 /**
@@ -73,10 +80,12 @@ export function registerSearchQueryResult(
 }
 
 function getSearchQueryResult(request: SearchIndexQuery): QueryResultBundle {
-  const queryKey = omit(cloneDeep(request), [
-    'limit',
-    'offset',
-  ]) as SearchIndexQueryKey
+  const requestCopy = cloneDeep(request)
+  if (requestCopy.searchQuery) {
+    delete requestCopy.searchQuery.limit
+    delete requestCopy.searchQuery.offset
+  }
+  const queryKey = requestCopy as SearchIndexQueryKey
 
   const binding = mockSearchQueryService.getOneByField('queryKey', queryKey)
   const baseBundle = binding?.result ?? mockSearchQueryResultBundle

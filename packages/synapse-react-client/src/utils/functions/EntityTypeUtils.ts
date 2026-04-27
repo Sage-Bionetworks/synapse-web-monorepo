@@ -386,6 +386,10 @@ export const entityJsonKeys: Record<ENTITY_CONCRETE_TYPE, string[]> = {
   [TABLE_ENTITY_CONCRETE_TYPE_VALUE]: tableKeys,
   [MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE]: [...tableKeys, 'definingSQL'],
   [VIRTUAL_TABLE_CONCRETE_TYPE_VALUE]: [...tableKeys, 'definingSQL'],
+  'org.sagebionetworks.repo.model.search.table.SearchIndex': [
+    ...tableKeys,
+    'definingSQL',
+  ],
   [FOLDER_CONCRETE_TYPE_VALUE]: allEntityKeys,
   [PROJECT_CONCRETE_TYPE_VALUE]: [...allEntityKeys, 'alias'],
   ['org.sagebionetworks.repo.model.RecordSet']: [

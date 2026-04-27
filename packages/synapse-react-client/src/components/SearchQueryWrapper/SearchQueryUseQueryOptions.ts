@@ -17,6 +17,7 @@ import type {
   SearchIndexQuery,
   SearchKeyRange,
   SearchQueryResults,
+  SearchSearchQuery,
 } from '@sage-bionetworks/synapse-client'
 import {
   FacetRequestSortDirectionEnum as FacetRequestSortDirectionEnumValues,
@@ -94,13 +95,19 @@ export function toSearchIndexQuery(
         }
       })
 
-  return {
-    searchIndexId,
+  const searchQuery: SearchSearchQuery = {
     facetRequests: facetRequests?.length ? facetRequests : undefined,
     termsFilters: termsFilters?.length ? termsFilters : undefined,
     rangeFilters: rangeFilters?.length ? rangeFilters : undefined,
     limit: queryBundleRequest.query.limit,
     offset: queryBundleRequest.query.offset,
+  }
+
+  return {
+    concreteType:
+      'org.sagebionetworks.repo.model.search.table.SearchIndexQuery' as const,
+    searchIndexId,
+    searchQuery,
   }
 }
 
@@ -126,7 +133,7 @@ export function searchQueryResultsToQueryResultBundle(
 
   // Derive SelectColumn headers from returnFields or from the first hit's field names
   const fieldNames: string[] =
-    query.returnFields ??
+    query.searchQuery?.returnFields ??
     results.hits?.[0]?.fields?.map(f => f.name ?? '').filter(Boolean) ??
     []
 
@@ -253,7 +260,10 @@ export function getSearchQueryUseQueryOptions(
           : context.pageParam ?? 0
       const requestForPage: SearchIndexQuery = {
         ...rowDataQuery,
-        offset,
+        searchQuery: {
+          ...rowDataQuery.searchQuery,
+          offset,
+        },
       }
       return fetchAndConvert(requestForPage)
     },

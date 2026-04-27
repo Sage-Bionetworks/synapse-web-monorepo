@@ -7,8 +7,11 @@ export const MOCK_SEARCH_INDEX_ENTITY_ID = 'syn60001'
 export const MOCK_SEARCH_UNDERLYING_TABLE_ENTITY_ID = 'syn60000'
 
 export const mockSearchIndexQuery: SearchIndexQuery = {
-  limit: 25,
-  offset: 0,
+  concreteType: 'org.sagebionetworks.repo.model.search.table.SearchIndexQuery',
+  searchQuery: {
+    limit: 25,
+    offset: 0,
+  },
 }
 
 export const mockSearchQueryResultBundle: QueryResultBundle = {
