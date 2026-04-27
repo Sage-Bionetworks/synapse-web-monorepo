@@ -86,7 +86,7 @@ export function AutocompleteCell({
   })
   const stopEditingRef = useRef(stopEditing)
   useLayoutEffect(() => {
-    stopEdtingRef.current = stopEditing
+    stopEditingRef.current = stopEditing
   })
 
   const rowDataAsString = castCellValueToString(rowData)
