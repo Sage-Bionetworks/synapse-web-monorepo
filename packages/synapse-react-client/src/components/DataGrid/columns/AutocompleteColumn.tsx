@@ -162,7 +162,7 @@ export function AutocompleteCell({
   const handleChange = useCallback(
     (
       _e: React.SyntheticEvent,
-      newVal: AutocompleteOption,
+      newVal: unknown,
       reason: AutocompleteChangeReason,
     ) => {
       notifyOptionCommitted()
@@ -174,7 +174,7 @@ export function AutocompleteCell({
           parseFreeTextGivenJsonSchemaType(newVal as string, colType),
         )
       } else {
-        setRowDataRef.current(newVal)
+        setRowDataRef.current(newVal as AutocompleteOption)
       }
       setTimeout(() => {
         stopEditingRef.current({ nextRow: false })
