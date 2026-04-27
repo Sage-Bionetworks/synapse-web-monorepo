@@ -3,8 +3,25 @@ import { ColumnTypeEnum, SelectColumn } from '@sage-bionetworks/synapse-types'
 import { render, screen, within } from '@testing-library/react'
 import { ColumnIconConfigs, LabelLinkConfig } from '../CardContainerLogic'
 import { SynapseCardLabel } from './SynapseCardLabel'
+import { EntityLink } from '../EntityLink'
+
+vi.mock('../EntityLink', () => ({
+  EntityLink: vi.fn(({ entity }) => (
+    <a
+      data-testid="EntityLink"
+      href={`https://www.synapse.org/Synapse:${entity}`}
+    >
+      {entity}
+    </a>
+  )),
+}))
+const mockEntityLink = vi.mocked(EntityLink)
 
 describe('SynapseCardLabel tests', () => {
+  beforeEach(() => {
+    mockEntityLink.mockClear()
+  })
+
   const DATASETS = 'datasets'
   const datasetBaseURL = 'Explore/Datasets'
   const labelLinkConfig: LabelLinkConfig = [
@@ -342,5 +359,59 @@ describe('SynapseCardLabel tests', () => {
       { wrapper: createWrapper() },
     )
     screen.getByText('The value is syn1234567 and the column is dataset')
+  })
+
+  it('renders an EntityLink for each item in an ENTITYID_LIST column', () => {
+    const synId1 = 'syn111'
+    const synId2 = 'syn222'
+    const synId3 = 'syn333'
+    const value = JSON.stringify([synId1, synId2, synId3])
+    render(
+      <SynapseCardLabel
+        value={value}
+        labelLink={undefined}
+        isHeader={false}
+        selectColumns={[
+          {
+            columnType: ColumnTypeEnum.ENTITYID_LIST,
+            id: 'a',
+            name: 'associatedDataset',
+          },
+        ]}
+        columnModels={undefined}
+        columnName={'associatedDataset'}
+        rowData={[]}
+      />,
+      { wrapper: createWrapper() },
+    )
+    const links = screen.getAllByTestId('EntityLink')
+    expect(links).toHaveLength(3)
+    expect(links[0]).toHaveTextContent(synId1)
+    expect(links[1]).toHaveTextContent(synId2)
+    expect(links[2]).toHaveTextContent(synId3)
+  })
+
+  it('renders an EntityLink for a single ENTITYID column with no labelLink', () => {
+    const synId = 'syn999'
+    render(
+      <SynapseCardLabel
+        value={synId}
+        labelLink={undefined}
+        isHeader={false}
+        selectColumns={[
+          {
+            columnType: ColumnTypeEnum.ENTITYID,
+            id: 'a',
+            name: 'associatedDataset',
+          },
+        ]}
+        columnModels={undefined}
+        columnName={'associatedDataset'}
+        rowData={[]}
+      />,
+      { wrapper: createWrapper() },
+    )
+    const link = screen.getByTestId('EntityLink')
+    expect(link).toHaveTextContent(synId)
   })
 })

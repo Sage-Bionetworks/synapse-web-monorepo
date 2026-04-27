@@ -1,0 +1,9 @@
+.chip {
+  font-weight: 600;
+  padding-left: 6px;
+  padding-right: 14px;
+  & :global(.MuiChip-label) {
+    padding-left: 10px;
+    padding-right: 0;
+  }
+}

@@ -28,7 +28,7 @@
     "eslint-plugin-jest-dom": "^5.5.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
-    "eslint-plugin-storybook": "10.3.3",
+    "eslint-plugin-storybook": "10.3.4",
     "eslint-plugin-testing-library": "^7.1.1",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.2",
@@ -52,8 +52,8 @@
   },
   "pnpm": {
     "overrides": {
-      "@types/react": "19.1.8",
-      "@types/react-dom": "19.1.6",
+      "@types/react": "19.2.14",
+      "@types/react-dom": "19.2.3",
       "node-fetch": "^2.6.7",
       "glob@>=10.0.0 <11.0.0": "10.5.0",
       "js-yaml": "^4.1.1",
@@ -62,5 +62,5 @@
       "@nestjs/core@11.1.17>path-to-regexp": "8.4.0"
     }
   },
-  "packageManager": "pnpm@10.30.3+sha512.c961d1e0a2d8e354ecaa5166b822516668b7f44cb5bd95122d590dd81922f606f5473b6d23ec4a5be05e7fcd18e8488d47d978bbe981872f1145d06e9a740017"
+  "packageManager": "pnpm@10.33.0+sha512.10568bb4a6afb58c9eb3630da90cc9516417abebd3fabbe6739f0ae795728da1491e9db5a544c76ad8eb7570f5c4bb3d6c637b2cb41bfdcdb47fa823c8649319"
 }

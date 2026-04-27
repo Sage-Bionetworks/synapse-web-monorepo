@@ -16,6 +16,7 @@ export default defineConfig({
     watch: false,
     globals: true,
     environment: 'jsdom',
+    exclude: ['**/node_modules/**', '**/.git/**', '**/dist/**'],
     reporters: ['default', 'html'],
     outputFile: { html: './coverage/report/index.html' },
     coverage: {

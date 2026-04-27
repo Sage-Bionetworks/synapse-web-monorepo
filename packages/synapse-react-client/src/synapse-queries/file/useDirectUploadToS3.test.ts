@@ -9,7 +9,7 @@ import { useDirectUploadToS3 } from './useDirectUploadToS3'
 
 vi.mock('@aws-sdk/lib-storage', () => {
   return {
-    Upload: vi.fn().mockImplementation(() => {
+    Upload: vi.fn().mockImplementation(function () {
       return {
         on: vi.fn(),
         done: vi.fn(),
@@ -99,8 +99,7 @@ describe('useDirectUploadToS3', () => {
   })
 
   it('does not create a file handle when s3 upload fails', async () => {
-    // @ts-expect-error - Only implement required properties
-    mockUpload.mockImplementation(() => {
+    mockUpload.mockImplementation(function () {
       return {
         on: vi.fn(),
         done: vi.fn().mockRejectedValue(new Error('Access Denied')),

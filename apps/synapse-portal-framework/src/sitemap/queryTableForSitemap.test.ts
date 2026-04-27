@@ -11,16 +11,18 @@ import {
 } from '@sage-bionetworks/synapse-client'
 
 // Mock the synapse-client module
-vi.mock('@sage-bionetworks/synapse-client', () => {
+vi.mock('@sage-bionetworks/synapse-client', function () {
   return {
-    SynapseClient: vi.fn().mockImplementation(() => ({
-      tableServicesClient: {
-        postRepoV1EntityIdTableQueryAsyncStart: vi.fn(),
-      },
-      asynchronousJobServicesClient: {
-        getRepoV1AsynchronousJobJobId: vi.fn(),
-      },
-    })),
+    SynapseClient: vi.fn().mockImplementation(function () {
+      return {
+        tableServicesClient: {
+          postRepoV1EntityIdTableQueryAsyncStart: vi.fn(),
+        },
+        asynchronousJobServicesClient: {
+          getRepoV1AsynchronousJobJobId: vi.fn(),
+        },
+      }
+    }),
     waitForAsyncResult: vi.fn(),
   }
 })
@@ -128,9 +130,9 @@ describe('fetchResourceIds', () => {
         getRepoV1AsynchronousJobJobId: vi.fn(),
       },
     }
-    mockSynapseClient.mockImplementation(
-      () => mockClient as unknown as SynapseClient,
-    )
+    mockSynapseClient.mockImplementation(function () {
+      return mockClient as unknown as SynapseClient
+    })
 
     const result = await fetchResourceIds(mockConfig)
 
@@ -149,9 +151,9 @@ describe('fetchResourceIds', () => {
         getRepoV1AsynchronousJobJobId: vi.fn(),
       },
     }
-    mockSynapseClient.mockImplementation(
-      () => mockClient as unknown as SynapseClient,
-    )
+    mockSynapseClient.mockImplementation(function () {
+      return mockClient as unknown as SynapseClient
+    })
 
     // First page
     mockWaitForAsyncResult.mockResolvedValueOnce({
@@ -215,9 +217,9 @@ describe('fetchResourceIds', () => {
         getRepoV1AsynchronousJobJobId: vi.fn(),
       },
     }
-    mockSynapseClient.mockImplementation(
-      () => mockClient as unknown as SynapseClient,
-    )
+    mockSynapseClient.mockImplementation(function () {
+      return mockClient as unknown as SynapseClient
+    })
     mockWaitForAsyncResult.mockResolvedValueOnce({
       jobState: 'COMPLETE',
       responseBody: {
@@ -258,9 +260,9 @@ describe('fetchResourceIds', () => {
         getRepoV1AsynchronousJobJobId: vi.fn(),
       },
     }
-    mockSynapseClient.mockImplementation(
-      () => mockClient as unknown as SynapseClient,
-    )
+    mockSynapseClient.mockImplementation(function () {
+      return mockClient as unknown as SynapseClient
+    })
     mockWaitForAsyncResult.mockResolvedValueOnce({
       jobState: 'COMPLETE',
       responseBody: {
@@ -291,9 +293,9 @@ describe('fetchResourceIds', () => {
         getRepoV1AsynchronousJobJobId: vi.fn(),
       },
     }
-    mockSynapseClient.mockImplementation(
-      () => mockClient as unknown as SynapseClient,
-    )
+    mockSynapseClient.mockImplementation(function () {
+      return mockClient as unknown as SynapseClient
+    })
     mockWaitForAsyncResult.mockResolvedValueOnce({
       jobState: 'COMPLETE',
       responseBody: {
@@ -339,9 +341,9 @@ describe('fetchResourceIds', () => {
         getRepoV1AsynchronousJobJobId: vi.fn(),
       },
     }
-    mockSynapseClient.mockImplementation(
-      () => mockClient as unknown as SynapseClient,
-    )
+    mockSynapseClient.mockImplementation(function () {
+      return mockClient as unknown as SynapseClient
+    })
 
     // First page - includes maxRowsPerPage in response
     mockWaitForAsyncResult.mockResolvedValueOnce({
@@ -406,9 +408,9 @@ describe('fetchResourceIds', () => {
         getRepoV1AsynchronousJobJobId: vi.fn(),
       },
     }
-    mockSynapseClient.mockImplementation(
-      () => mockClient as unknown as SynapseClient,
-    )
+    mockSynapseClient.mockImplementation(function () {
+      return mockClient as unknown as SynapseClient
+    })
 
     // First and only page - fewer rows than maxRowsPerPage means we're done
     mockWaitForAsyncResult.mockResolvedValueOnce({
@@ -447,9 +449,9 @@ describe('fetchResourceIds', () => {
         getRepoV1AsynchronousJobJobId: vi.fn(),
       },
     }
-    mockSynapseClient.mockImplementation(
-      () => mockClient as unknown as SynapseClient,
-    )
+    mockSynapseClient.mockImplementation(function () {
+      return mockClient as unknown as SynapseClient
+    })
     mockWaitForAsyncResult.mockResolvedValueOnce({
       jobState: 'COMPLETE',
       responseBody: {

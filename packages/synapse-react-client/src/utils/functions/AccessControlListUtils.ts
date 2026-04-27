@@ -87,3 +87,26 @@ export function isEntityPublic(
     publicPrincipalIds.includes(String(ra.principalId)),
   )
 }
+
+/**
+ * Consolidate access types for duplicate entries for the same principal into a single entry with the union of all access types.
+ */
+export function consolidateResourceAccessList(
+  list: ResourceAccess[],
+): ResourceAccess[] {
+  const permissionsMap = new Map<number, Set<ACCESS_TYPE>>()
+  for (const item of list) {
+    const permissions = permissionsMap.get(item.principalId)
+
+    if (permissions) {
+      item.accessType.forEach(type => permissions.add(type))
+    } else {
+      permissionsMap.set(item.principalId, new Set(item.accessType))
+    }
+  }
+
+  return Array.from(permissionsMap, ([principalId, accessTypeSet]) => ({
+    principalId,
+    accessType: Array.from(accessTypeSet),
+  }))
+}

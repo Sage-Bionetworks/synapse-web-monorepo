@@ -89,10 +89,6 @@ export function SynapseByTheNumbersItem({
         display: 'flex',
         alignItems: 'center',
         gap: '15px',
-        p: {
-          xs: '5px',
-          sm: '20px',
-        },
       }}
     >
       <Box>
@@ -110,10 +106,11 @@ export function SynapseByTheNumbersItem({
         <Typography
           variant="body1"
           sx={{
-            fontWeight: 400,
-            fontSize: '18px',
+            fontWeight: 300,
+            fontSize: '16px',
             lineHeight: '24px',
-            color: 'white',
+            color: 'grey.600',
+            maxWidth: '150px',
           }}
         >
           {description}

@@ -1,15 +1,9 @@
 import { mergeConfig } from 'vite'
-import {
-  baseConfig,
-  vitestConfig,
-  nodePolyfillsPlugin,
-  tsconfigPathsPlugin,
-} from 'vite-config'
+import { baseConfig, vitestConfig } from 'vite-config'
 
 const config = mergeConfig(
   baseConfig,
   mergeConfig(vitestConfig, {
-    plugins: [nodePolyfillsPlugin(), tsconfigPathsPlugin()],
     test: {
       setupFiles: ['./src/vitest.setup.ts'],
     },

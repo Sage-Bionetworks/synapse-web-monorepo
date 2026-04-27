@@ -6,7 +6,7 @@ import {
   UseMutationResult,
   UseQueryResult,
 } from '@tanstack/react-query'
-import noop from 'lodash-es/noop'
+import type { Mock } from '@vitest/spy'
 import { Dispatch, SetStateAction, useState } from 'react'
 
 /**
@@ -26,7 +26,14 @@ import { Dispatch, SetStateAction, useState } from 'react'
  * act(() => { myMockedHook.setSuccess(myDataArray, true); });
  * ```
  */
-export function getUseQueryMock<TData = unknown, TError = unknown>() {
+export function getUseQueryMock<TData = unknown, TError = unknown>(): {
+  mock: Mock<() => UseQueryResult<TData, TError>>
+  mockRefetch: Mock
+  setSuccess: (data: TData) => void
+  setError: (error: TError) => void
+  setLoading: () => void
+  setIdle: () => void
+} {
   // Stable mock functions
   const mockRefetch = vi.fn()
 
@@ -252,7 +259,7 @@ export function getUseQuerySuccessMock<TData>(
     isRefetching: false,
     isStale: false,
     isSuccess: true,
-    refetch: noop as any,
+    refetch: vi.fn(),
     status: 'success',
     failureReason: null,
     fetchStatus: 'idle',
@@ -288,7 +295,7 @@ export function getUseQueryLoadingMock(): QueryObserverLoadingResult<
     isRefetching: false,
     isStale: false,
     isSuccess: false,
-    refetch: noop as any,
+    refetch: vi.fn(),
     status: 'pending',
     failureReason: null,
     fetchStatus: 'fetching',
@@ -330,7 +337,7 @@ export function getUseQueryErrorMock<TError>(
     isPaused: false,
     isLoading: false,
     isPending: false,
-    promise: undefined as any,
+    promise: new Promise<never>(() => {}),
   }
 }
 
@@ -355,7 +362,7 @@ export function getUseQueryIdleMock(): UseQueryResult<never, never> {
     isRefetching: false,
     isStale: false,
     isSuccess: false,
-    refetch: noop as any,
+    refetch: vi.fn(),
     status: 'pending',
     failureReason: null,
     fetchStatus: 'idle',
@@ -393,7 +400,16 @@ export function getUseMutationMock<
   TData = unknown,
   TError = unknown,
   TVariables = unknown,
->() {
+>(): {
+  mock: Mock<() => UseMutationResult<TData, TError, TVariables>>
+  mockMutate: Mock<(vars: TVariables) => void>
+  mockMutateAsync: Mock<(vars: TVariables) => Promise<TData>>
+  mockReset: Mock
+  setSuccess: (data: TData) => void
+  setError: (error: TError) => void
+  setPending: () => void
+  setIdle: () => void
+} {
   let currentSetValue: Dispatch<
     SetStateAction<UseMutationResult<TData, TError, TVariables>>
   > | null = null
@@ -418,17 +434,17 @@ export function getUseMutationMock<
   const mockMutate = vi.fn()
   const mockMutateAsync = vi.fn()
   const mockReset = vi.fn()
-  const variables =
-    mockMutate.mock.lastCall?.[0] || mockMutateAsync.mock.lastCall?.[0]
+  const variables = (mockMutate.mock.lastCall?.[0] ??
+    mockMutateAsync.mock.lastCall?.[0]) as TVariables | undefined
 
   function mutate(vars: TVariables): void {
     setVars(vars)
-    return mockMutate(vars)
+    mockMutate(vars)
   }
 
   function mutateAsync(vars: TVariables): Promise<TData> {
     setVars(vars)
-    return mockMutateAsync(vars)
+    return mockMutateAsync(vars) as Promise<TData>
   }
 
   const setSuccess = (data: TData) => {
@@ -609,8 +625,11 @@ export function getUseMutationMock<
  * @deprecated Use {@link getUseMutationMock} instead, which provides utilities to dynamically change the state of the mock hook.
  */
 export function getUseMutationIdleMock<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   TData = any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   TError = any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   TVariables = any,
 >(data?: TData) {
   return {
@@ -637,8 +656,11 @@ export function getUseMutationIdleMock<
  * @deprecated Use {@link getUseMutationMock} instead, which provides utilities to dynamically change the state of the mock hook.
  */
 export function getUseMutationPendingMock<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   TData = any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   TError = any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   TVariables = any,
 >(data?: TData, variables?: TVariables) {
   return {
@@ -667,7 +689,7 @@ export function getUseMutationPendingMock<
 export function getUseInfiniteQuerySuccessMock<TData>(
   pages: TData[],
   hasNextPage = false,
-) {
+): UseInfiniteQueryResult<{ pages: TData[] }, never> {
   return {
     data: {
       pages: pages,
@@ -721,7 +743,17 @@ export function getUseInfiniteQuerySuccessMock<TData>(
  * act(() => { myMockedHook.setSuccess(myDataArray, true); });
  * ```
  */
-export function getUseInfiniteQueryMock<TData = unknown, TError = unknown>() {
+export function getUseInfiniteQueryMock<TData = unknown, TError = unknown>(): {
+  mock: Mock<() => UseInfiniteQueryResult<InfiniteData<TData>, TError>>
+  mockFetchNextPage: Mock
+  setSuccess: (
+    data: TData[],
+    hasNextPage?: boolean,
+    isFetchingNextPage?: boolean,
+  ) => void
+  setError: (error: TError) => void
+  setLoading: () => void
+} {
   // Stable mock functions
   const mockFetchNextPage = vi.fn()
   const mockFetchPreviousPage = vi.fn()

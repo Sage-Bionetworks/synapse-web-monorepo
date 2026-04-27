@@ -1,7 +1,6 @@
 import { delay } from '@/synapse-client/HttpClient'
 import { IdList } from '@sage-bionetworks/synapse-client'
 import {
-  CreateMembershipInvitationRequest,
   CreateMembershipRequestRequest,
   CreateTeamRequest,
   ListWrapper,
@@ -42,10 +41,6 @@ function getTeamMembershipStatusByTeamIdMemberId(
       membership.teamId === teamId && membership.userId === memberId,
   )
 }
-
-const teamMembershipInvitations: MembershipInvitation[] = [
-  ...mockTeamMembershipInvitations,
-]
 
 export function getTeamHandler(backendOrigin: string) {
   return http.get(`${backendOrigin}/repo/v1/team/:teamId`, ({ params }) => {
@@ -164,7 +159,10 @@ export function getTeamMembershipStatusHandler(backendOrigin: string) {
   )
 }
 
-export function getUpdateTeamMembershipStatusHandler(backendOrigin: string) {
+export function getUpdateTeamMembershipStatusHandler(
+  backendOrigin: string,
+  mockedInvitationService: BasicMockedCrudService<MembershipInvitation, 'id'>,
+) {
   return http.put(
     `${backendOrigin}/repo/v1/team/:teamId/member/:memberId`,
     ({ params }) => {
@@ -193,6 +191,13 @@ export function getUpdateTeamMembershipStatusHandler(backendOrigin: string) {
           canSendEmail: false, // TODO
         }
         mockedTeamMembershipService.create(membershipStatus)
+        // Remove any open invitation for this user/team so subsequent GET reflects the accepted state
+        const invitation = mockedInvitationService.getOneByPredicate(
+          inv => inv.teamId === teamId && inv.inviteeId === memberId,
+        )
+        if (invitation?.id) {
+          mockedInvitationService.delete(invitation.id)
+        }
         response = ''
         status = 201
       }
@@ -218,35 +223,16 @@ export function getCreateTeamMembershipRequestHandler(backendOrigin: string) {
   )
 }
 
-export function getCreateTeamMembershipInvitationHandler(
+export function getOpenInvitationsForUserHandler(
   backendOrigin: string,
+  mockedInvitationService: BasicMockedCrudService<MembershipInvitation, 'id'>,
 ) {
-  return http.post<never, CreateMembershipInvitationRequest>(
-    `${backendOrigin}/repo/v1/membershipInvitation`,
-    async ({ request }) => {
-      const requestBody: CreateMembershipInvitationRequest =
-        await request.json()
-
-      const response: SynapseApiResponse<MembershipInvitation> = {
-        ...requestBody,
-        id: uniqueId(),
-        createdOn: new Date().toISOString(),
-        createdBy: String(MOCK_USER_ID),
-      }
-
-      teamMembershipInvitations.push(response)
-      return HttpResponse.json(response, { status: 201 })
-    },
-  )
-}
-
-export function getOpenInvitationsRequestHandler(backendOrigin: string) {
   return http.get(
     `${backendOrigin}/repo/v1/user/:userId/openInvitation`,
     ({ params }) => {
-      const userInvitations = teamMembershipInvitations.filter(inv => {
-        return String(inv.inviteeId) === String(params.userId)
-      })
+      const userInvitations = mockedInvitationService.getMany(
+        inv => String(inv.inviteeId) === String(params.userId),
+      )
       const response: SynapseApiResponse<
         PaginatedResults<MembershipInvitation>
       > = {
@@ -258,15 +244,56 @@ export function getOpenInvitationsRequestHandler(backendOrigin: string) {
   )
 }
 
-export default function getAllTeamHandlers(backendOrigin: string) {
+export function getDeleteMembershipInvitationHandler(
+  backendOrigin: string,
+  mockedInvitationService: BasicMockedCrudService<MembershipInvitation, 'id'>,
+) {
+  return http.delete(
+    `${backendOrigin}/repo/v1/membershipInvitation/:invitationId`,
+    ({ params }) => {
+      const invitationId = params.invitationId as string
+      const invitation = mockedInvitationService.getOneById(invitationId)
+      if (!invitation) {
+        const errorResponse: SynapseApiResponse<void> = {
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+          reason: `Membership invitation with ID ${invitationId} not found`,
+        }
+        return HttpResponse.json(errorResponse, { status: 404 })
+      }
+      mockedInvitationService.delete(invitationId)
+      return new HttpResponse(null, { status: 204 })
+    },
+  )
+}
+
+export default function getAllTeamHandlers(
+  backendOrigin: string,
+  initialInvitations: MembershipInvitation[] = [
+    ...mockTeamMembershipInvitations,
+  ],
+) {
+  const mockedInvitationService = new BasicMockedCrudService<
+    MembershipInvitation,
+    'id'
+  >({
+    initialData: initialInvitations,
+    idField: 'id',
+  })
+
   return [
     getTeamHandler(backendOrigin),
     getTeamListHandler(backendOrigin),
     getCreateTeamHandler(backendOrigin),
     getTeamMembershipStatusHandler(backendOrigin),
-    getUpdateTeamMembershipStatusHandler(backendOrigin),
+    getUpdateTeamMembershipStatusHandler(
+      backendOrigin,
+      mockedInvitationService,
+    ),
     getCreateTeamMembershipRequestHandler(backendOrigin),
-    getCreateTeamMembershipInvitationHandler(backendOrigin),
-    getOpenInvitationsRequestHandler(backendOrigin),
+    getOpenInvitationsForUserHandler(backendOrigin, mockedInvitationService),
+    getDeleteMembershipInvitationHandler(
+      backendOrigin,
+      mockedInvitationService,
+    ),
   ]
 }
