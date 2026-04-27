@@ -7,7 +7,6 @@ import { PortalSearchTabConfig, PortalSearchTabs } from './PortalSearchTabs'
 import PortalFullTextSearchField from './PortalFullTextSearchField'
 import SearchParamAwareQueryWrapperPlotNav from './SearchParamAwareQueryWrapperPlotNav'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
-import type { StandaloneQueryWrapperProps } from 'synapse-react-client/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
 import type { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 export type PortalSearchPageProps = {

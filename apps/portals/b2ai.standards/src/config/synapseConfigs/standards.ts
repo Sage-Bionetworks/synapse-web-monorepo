@@ -61,3 +61,10 @@ export const standardsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
     ftsConfig: standardsFtsConfig,
   },
 }
+
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+export const standardsSearchQueryWrapperPlotNavProps: SearchQueryWrapperPlotNavProps =
+  {
+    searchIndexId: 'syn1234567', // TODO: update with real search index id once created
+    ...standardsQueryWrapperPlotNavProps,
+  }
