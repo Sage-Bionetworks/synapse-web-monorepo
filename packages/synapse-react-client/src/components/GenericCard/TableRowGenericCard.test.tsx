@@ -823,6 +823,7 @@ describe('TableRowGenericCard tests', () => {
 
       await screen.findByTestId('CardFooter')
       expect(screen.queryByText('[]')).not.toBeInTheDocument()
+      expect(screen.queryByText(MOCKED_LABELONE)).not.toBeInTheDocument()
     })
 
     test('does not render a secondary label when the value is a JSON array containing a single empty string (\'[""]\')', async () => {
