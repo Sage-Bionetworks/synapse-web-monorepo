@@ -843,6 +843,7 @@ describe('TableRowGenericCard tests', () => {
 
       await screen.findByTestId('CardFooter')
       expect(screen.queryByText('[""]')).not.toBeInTheDocument()
+      expect(screen.queryByText(MOCKED_LABELONE)).not.toBeInTheDocument()
     })
   })
 })
