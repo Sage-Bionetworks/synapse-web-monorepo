@@ -96,14 +96,20 @@ export function toSearchIndexQuery(
         }
       })
 
-  // Extract queryText from a TextMatchesQueryFilter in additionalFilters
-  const textMatchesFilter = queryBundleRequest.query.additionalFilters?.find(
-    f => f.concreteType === TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
-  )
+  // Extract queryText by concatenating all TextMatchesQueryFilter searchExpression values
+  const textMatchesExpressions = queryBundleRequest.query.additionalFilters
+    ?.filter(
+      f => f.concreteType === TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+    )
+    .map(f =>
+      f.concreteType === TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE
+        ? f.searchExpression
+        : undefined,
+    )
+    .filter((expr): expr is string => expr != null && expr.length > 0)
   const queryText =
-    textMatchesFilter?.concreteType ===
-    TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE
-      ? textMatchesFilter.searchExpression
+    textMatchesExpressions && textMatchesExpressions.length > 0
+      ? textMatchesExpressions.join(' ')
       : undefined
 
   const searchQuery: SearchSearchQuery = {

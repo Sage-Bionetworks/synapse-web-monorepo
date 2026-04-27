@@ -104,6 +104,7 @@ export default function SearchQueryWrapperPlotNav(
           defaultShowPlots={props.defaultShowPlots}
           hideCopyToClipboard={props.hideCopyToClipboard}
           hideSearchBarControl={false}
+          defaultShowSearchBar={true}
           showLastUpdatedOn={props.showLastUpdatedOn}
           noContentPlaceholderType={
             props.noContentPlaceholderType ??
@@ -126,7 +127,7 @@ export default function SearchQueryWrapperPlotNav(
               props.initialPlotTypeByFacetColumnName
             }
             hideTopLevelControls={props.hideTopLevelControls}
-            isFullTextSearchEnabled={false}
+            isFullTextSearchEnabled={true}
           />
         </QueryVisualizationWrapper>
       </Suspense>
