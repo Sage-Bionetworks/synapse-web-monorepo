@@ -8,6 +8,7 @@ import {
   standardsSql,
   DST_TABLE_COLUMN_CONSTS,
 } from '@/config/resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 export const standardsRgbIndex = 0
 export const standardsColumnLinks: LabelLinkConfig = [

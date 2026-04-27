@@ -32,7 +32,7 @@ type SearchQueryWrapperPlotNavOwnProps = {
   hideTopLevelControls?: boolean
   // Note: hideDownload, hideSqlEditorControl, and hideSearchBarControl are intentionally
   // excluded — they are hardcoded to true because these controls are not applicable to the
-  // SearchQueryServicesApi (no file download, no SQL editing, no text search).
+  // SearchQueryServicesApi (no file download, no SQL editing).
 }
 
 export type SearchQueryWrapperPlotNavProps = SearchQueryWrapperPlotNavOwnProps &
@@ -77,6 +77,7 @@ export default function SearchQueryWrapperPlotNav(
       partMask: initQueryRequestFromProps?.partMask ?? 0,
       query: {
         selectedFacets: initQueryRequestFromProps?.query?.selectedFacets,
+        additionalFilters: initQueryRequestFromProps?.query?.additionalFilters,
         limit: initQueryRequestFromProps?.query?.limit ?? DEFAULT_PAGE_SIZE,
         offset: initQueryRequestFromProps?.query?.offset ?? 0,
       },
@@ -98,7 +99,7 @@ export default function SearchQueryWrapperPlotNav(
           visibleColumnCount={props.visibleColumnCount}
           defaultShowPlots={props.defaultShowPlots}
           hideCopyToClipboard={props.hideCopyToClipboard}
-          hideSearchBarControl={true}
+          hideSearchBarControl={false}
           showLastUpdatedOn={props.showLastUpdatedOn}
           noContentPlaceholderType={
             props.noContentPlaceholderType ??

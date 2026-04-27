@@ -78,6 +78,7 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
     query: {
       sql: SEARCH_QUERY_WRAPPER_SYNTHETIC_SQL,
       selectedFacets: initQueryRequestFromProps.query?.selectedFacets,
+      additionalFilters: initQueryRequestFromProps.query?.additionalFilters,
       limit: initQueryRequestFromProps.query?.limit,
       offset: initQueryRequestFromProps.query?.offset,
     },

@@ -10,6 +10,7 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
   RowSet,
+  TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
 import type {
   FacetRequest,
@@ -95,10 +96,21 @@ export function toSearchIndexQuery(
         }
       })
 
+  // Extract queryText from a TextMatchesQueryFilter in additionalFilters
+  const textMatchesFilter = queryBundleRequest.query.additionalFilters?.find(
+    f => f.concreteType === TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+  )
+  const queryText =
+    textMatchesFilter?.concreteType ===
+    TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE
+      ? textMatchesFilter.searchExpression
+      : undefined
+
   const searchQuery: SearchSearchQuery = {
     facetRequests: facetRequests?.length ? facetRequests : undefined,
     termsFilters: termsFilters?.length ? termsFilters : undefined,
     rangeFilters: rangeFilters?.length ? rangeFilters : undefined,
+    queryText,
     limit: queryBundleRequest.query.limit,
     offset: queryBundleRequest.query.offset,
   }
