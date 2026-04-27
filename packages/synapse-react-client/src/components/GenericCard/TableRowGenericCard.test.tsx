@@ -140,7 +140,7 @@ const MOCKED_SUBTITLE = 'MOCKED SUBTITLE'
 const MOCKED_DESCRIPTION = 'MOCKED DESCRIPTION'
 const MOCKED_ICON = 'dataset'
 const MOCKED_LABELONE = 'MOCKED_LABELONE'
-const MOCKED_LABELTWO = 'MOCKED_LABELONE'
+const MOCKED_LABELTWO = 'MOCKED_LABELTWO'
 const MOCKED_LINK = 'MOCKED_LINK'
 const MOCKED_ID = 'MOCKED_ID'
 const MOCKED_IMAGE_FILE_HANDLE_ID = 'MOCKED_IMAGE_FILE_HANDLE_ID'
@@ -779,6 +779,70 @@ describe('TableRowGenericCard tests', () => {
       await screen.findByTestId('CardFooter')
       expect(screen.queryByText('Label One:')).not.toBeInTheDocument()
       expect(screen.getByText('Label Two:')).toBeVisible()
+    })
+  })
+
+  describe('secondary label empty-array filtering', () => {
+    test('does not render a secondary label when the value is undefined', async () => {
+      const dataWithUndefined = [...data]
+      dataWithUndefined[schema[labelOneColumnName]] =
+        undefined as unknown as string
+
+      renderComponent(
+        {
+          ...propsForNonHeaderMode,
+          genericCardSchema: {
+            ...genericCardSchema,
+            secondaryLabels: [labelOneColumnName, 'labelTwo'],
+          },
+          data: dataWithUndefined,
+        },
+        'TableEntity',
+      )
+
+      // Wait for card to render (labelTwo is present)
+      await screen.findByText(MOCKED_LABELTWO)
+      expect(screen.queryByText(MOCKED_LABELONE)).not.toBeInTheDocument()
+    })
+
+    test('does not render a secondary label when the value is an empty JSON array ("[]")', async () => {
+      const dataWithEmptyArray = [...data]
+      dataWithEmptyArray[schema[labelOneColumnName]] = '[]'
+
+      renderComponent(
+        {
+          ...propsForNonHeaderMode,
+          genericCardSchema: {
+            ...genericCardSchema,
+            secondaryLabels: [labelOneColumnName, 'labelTwo'],
+          },
+          data: dataWithEmptyArray,
+        },
+        'TableEntity',
+      )
+
+      await screen.findByTestId('CardFooter')
+      expect(screen.queryByText('[]')).not.toBeInTheDocument()
+    })
+
+    test('does not render a secondary label when the value is a JSON array containing a single empty string (\'[""]\')', async () => {
+      const dataWithEmptyStringArray = [...data]
+      dataWithEmptyStringArray[schema[labelOneColumnName]] = '[""]'
+
+      renderComponent(
+        {
+          ...propsForNonHeaderMode,
+          genericCardSchema: {
+            ...genericCardSchema,
+            secondaryLabels: [labelOneColumnName, 'labelTwo'],
+          },
+          data: dataWithEmptyStringArray,
+        },
+        'TableEntity',
+      )
+
+      await screen.findByTestId('CardFooter')
+      expect(screen.queryByText('[""]')).not.toBeInTheDocument()
     })
   })
 })
