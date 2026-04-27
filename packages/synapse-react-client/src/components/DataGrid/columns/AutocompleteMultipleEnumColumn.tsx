@@ -8,7 +8,14 @@ import {
   Tooltip,
 } from '@mui/material'
 import { JSONSchema7Type } from 'json-schema'
-import { memo, useCallback, useMemo, useRef, useState } from 'react'
+import {
+  memo,
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { CellComponent, Column } from '@sage-bionetworks/react-datasheet-grid'
 import {
   areAutocompleteCellPropsEqual,
@@ -98,7 +105,9 @@ function AutocompleteMultipleEnumCell({
   // comparison — react-datasheet-grid recreates these functions on every render,
   // but their behavior is stable for a given cell position.
   const setRowDataRef = useRef(setRowData)
-  setRowDataRef.current = setRowData
+  useLayoutEffect(() => {
+    setRowDataRef.current = setRowData
+  })
   const [localInputState, setLocalInputState] = useState<string>('')
 
   const {

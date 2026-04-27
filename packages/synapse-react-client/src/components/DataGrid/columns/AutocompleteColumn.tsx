@@ -1,5 +1,11 @@
 import parseFreeTextGivenJsonSchemaType from '@/components/DataGrid/utils/parseFreeTextUsingJsonSchemaType'
-import { Autocomplete, SxProps, TextField, Theme } from '@mui/material'
+import {
+  Autocomplete,
+  AutocompleteChangeReason,
+  SxProps,
+  TextField,
+  Theme,
+} from '@mui/material'
 import { JSONSchema7Type } from 'json-schema'
 import { isNil } from 'lodash-es'
 import {
@@ -79,7 +85,9 @@ export function AutocompleteCell({
     setRowDataRef.current = setRowData
   })
   const stopEditingRef = useRef(stopEditing)
-  stopEditingRef.current = stopEditing
+  useLayoutEffect(() => {
+    stopEdtingRef.current = stopEditing
+  })
 
   const rowDataAsString = castCellValueToString(rowData)
   const [localInputState, setLocalInputState] =
@@ -152,7 +160,11 @@ export function AutocompleteCell({
   }, [])
 
   const handleChange = useCallback(
-    (_e: React.SyntheticEvent, newVal: AutocompleteOption, reason: string) => {
+    (
+      _e: React.SyntheticEvent,
+      newVal: AutocompleteOption,
+      reason: AutocompleteChangeReason,
+    ) => {
       notifyOptionCommitted()
       if (reason === 'clear') {
         setRowDataRef.current(clearValue)
@@ -164,7 +176,9 @@ export function AutocompleteCell({
       } else {
         setRowDataRef.current(newVal)
       }
-      setTimeout(() => stopEditingRef.current({ nextRow: false }), 0)
+      setTimeout(() => {
+        stopEditingRef.current({ nextRow: false })
+      }, 0)
     },
     [clearValue, colType, notifyOptionCommitted],
   )
@@ -187,7 +201,7 @@ export function AutocompleteCell({
       }}
       onKeyDown={handleKeyDown}
       onClose={handleClose}
-      onChange={handleChange as any}
+      onChange={handleChange}
       blurOnSelect={true}
       slotProps={{
         listbox: { onMouseDown: handleListboxMouseDown },

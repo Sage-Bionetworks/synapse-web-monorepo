@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 
 export type UseGridAutocompleteStateProps = {
   active: boolean
@@ -67,14 +73,20 @@ export function useGridAutocompleteState({
 
   // Always reflects the latest `active` value — safe to read in closures.
   const activeRef = useRef(active)
-  activeRef.current = active
+  useLayoutEffect(() => {
+    activeRef.current = active
+  })
 
   // Ref-stabilize callbacks so effects/handlers never need them in deps arrays,
   // yet always call the latest versions (avoiding stale closures).
   const onDeactivateRef = useRef(onDeactivate)
-  onDeactivateRef.current = onDeactivate
+  useLayoutEffect(() => {
+    onDeactivateRef.current = onDeactivate
+  })
   const stopEditingRef = useRef(stopEditing)
-  stopEditingRef.current = stopEditing
+  useLayoutEffect(() => {
+    stopEditingRef.current = stopEditing
+  })
 
   useEffect(() => {
     if (active) {
