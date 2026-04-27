@@ -1,9 +1,24 @@
 import parseFreeTextGivenJsonSchemaType from '@/components/DataGrid/utils/parseFreeTextUsingJsonSchemaType'
-import { Autocomplete, SxProps, TextField, Theme, Tooltip } from '@mui/material'
+import {
+  Autocomplete,
+  AutocompleteChangeReason,
+  SxProps,
+  TextField,
+  Theme,
+  Tooltip,
+} from '@mui/material'
 import { JSONSchema7Type } from 'json-schema'
-import { memo, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  memo,
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { CellComponent, Column } from '@sage-bionetworks/react-datasheet-grid'
 import {
+  areAutocompleteCellPropsEqual,
   AutocompleteCellProps,
   castCellValueToString,
   AutocompleteOption,
@@ -11,6 +26,7 @@ import {
 import { GridAutocompleteChip } from './GridAutocompleteChip'
 import isNil from 'lodash-es/isNil'
 import isEqual from 'lodash-es/isEqual'
+import { useGridAutocompleteState } from './useGridAutocompleteState'
 
 // Static styles extracted to avoid recreation on every render
 const AUTOCOMPLETE_MULTIPLE_BASE_SX: SxProps<Theme> = {
@@ -37,10 +53,7 @@ const TEXT_FIELD_SX: SxProps<Theme> = {
   borderRadius: 0,
 }
 
-export type AutocompleteMultipleEnumOption =
-  | AutocompleteOption
-  | unknown
-  | unknown[]
+export type AutocompleteMultipleEnumOption = AutocompleteOption
 
 export type AutocompleteMultipleEnumCellProps = Omit<
   AutocompleteCellProps,
@@ -69,7 +82,7 @@ function createSafeRowData(
   rowData: AutocompleteMultipleEnumOption,
 ): AutocompleteMultipleEnumOption[] {
   if (Array.isArray(rowData)) {
-    return rowData
+    return rowData as AutocompleteMultipleEnumOption[]
   } else if (isNil(rowData)) {
     return []
   } else {
@@ -88,21 +101,25 @@ function AutocompleteMultipleEnumCell({
   stopEditing,
   clearValue = undefined,
 }: AutocompleteMultipleEnumCellProps) {
-  const ref = useRef<HTMLInputElement>(null)
-  const [menuIsOpen, setMenuIsOpen] = useState(false)
+  // Stable refs so memo(AutocompleteMultipleEnumCell) can use default shallow
+  // comparison — react-datasheet-grid recreates these functions on every render,
+  // but their behavior is stable for a given cell position.
+  const setRowDataRef = useRef(setRowData)
+  useLayoutEffect(() => {
+    setRowDataRef.current = setRowData
+  })
   const [localInputState, setLocalInputState] = useState<string>('')
 
-  useEffect(() => {
-    // Treat `active` as the source of truth for focus/blur and menu state
-    // If we listen to Autocomplete's onBlur, it will fire when selecting an option from the dropdown,
-    // in which case we do not want to update rowData
-    if (active) {
-      ref.current?.focus()
-    } else {
-      setMenuIsOpen(false)
-      ref.current?.blur()
-    }
-  }, [active])
+  const {
+    menuIsOpen,
+    setMenuIsOpen,
+    inputRef,
+    activeRef,
+    handleListboxMouseDown,
+    notifyOptionCommitted,
+    handleMenuOpen,
+    handleClose,
+  } = useGridAutocompleteState({ active, stopEditing })
 
   const safeRowData = createSafeRowData(rowData)
   const optionsWithLabels = choices.map(createOptionFromValue)
@@ -117,7 +134,7 @@ function AutocompleteMultipleEnumCell({
 
   const hasValue = !isNil(rowData) && rowData !== ''
 
-  // Memoize sx to avoid recreation - dynamic styles change based on active/focus state
+  // Memoize sx to avoid recreation — dynamic styles change based on active/focus state
   const autocompleteSx = useMemo<SxProps<Theme>>(
     () => ({
       ...AUTOCOMPLETE_MULTIPLE_BASE_SX,
@@ -158,6 +175,42 @@ function AutocompleteMultipleEnumCell({
     [active, focus],
   )
 
+  const handleChange = useCallback(
+    (
+      _e: React.SyntheticEvent,
+      newVal: (EnumOption | string)[],
+      _reason: AutocompleteChangeReason,
+    ) => {
+      notifyOptionCommitted()
+      const values = newVal.map(item => {
+        return typeof item === 'string'
+          ? parseFreeTextGivenJsonSchemaType(item, colType)
+          : item.value
+      })
+      // Use clearValue when all items are removed
+      setRowDataRef.current(values.length === 0 ? clearValue : values)
+      setLocalInputState('')
+      if (!activeRef.current) {
+        // The cell was deactivated while the option click was in progress (portal
+        // click was seen as an outside click by the grid). Now that the value is
+        // committed, close the menu.
+        setMenuIsOpen(false)
+      }
+    },
+    [activeRef, clearValue, colType, notifyOptionCommitted, setMenuIsOpen],
+  )
+
+  const handleBlur = useCallback(() => {
+    if (localInputState.trim()) {
+      const parsedValue = parseFreeTextGivenJsonSchemaType(
+        localInputState,
+        colType,
+      )
+      setRowDataRef.current([...safeRowData, parsedValue])
+      setLocalInputState('')
+    }
+  }, [localInputState, colType, safeRowData])
+
   return (
     <Tooltip
       title={tooltipContent}
@@ -174,15 +227,12 @@ function AutocompleteMultipleEnumCell({
         }}
       >
         <Autocomplete
-          ref={ref}
           forcePopupIcon={choices.length > 0}
           disableClearable={!hasValue}
           multiple
           freeSolo
           open={menuIsOpen}
-          onOpen={() => {
-            setMenuIsOpen(true)
-          }}
+          onOpen={handleMenuOpen}
           disablePortal={false}
           limitTags={effectiveLimitTags}
           options={optionsWithLabels}
@@ -202,32 +252,13 @@ function AutocompleteMultipleEnumCell({
           onInputChange={(_, newInputValue) => {
             setLocalInputState(newInputValue)
           }}
-          onClose={() => {
-            setMenuIsOpen(false)
-            stopEditing({ nextRow: false })
-          }}
-          onChange={(_e, newVal, _reason) => {
-            // Handle both selection/deselection and free text creation the same way
-            const values = (newVal || []).map(item => {
-              return typeof item === 'string'
-                ? parseFreeTextGivenJsonSchemaType(item, colType)
-                : item.value
-            })
-            // Use clearValue when all items are removed
-            setRowData(values.length === 0 ? clearValue : values)
-            setLocalInputState('')
-          }}
+          onClose={handleClose}
+          onChange={handleChange}
           disableCloseOnSelect={choices.length > 1}
-          onBlur={() => {
-            if (localInputState.trim()) {
-              const parsedValue = parseFreeTextGivenJsonSchemaType(
-                localInputState,
-                colType,
-              )
-              setRowData([...safeRowData, parsedValue])
-              setLocalInputState('')
-            }
+          slotProps={{
+            listbox: { onMouseDown: handleListboxMouseDown },
           }}
+          onBlur={handleBlur}
           renderValue={(tagValue, getTagProps) =>
             tagValue.map((option, index) => {
               const { key, ...tagProps } = getTagProps({ index })
@@ -246,6 +277,7 @@ function AutocompleteMultipleEnumCell({
           renderInput={params => (
             <TextField
               {...params}
+              inputRef={inputRef}
               slotProps={{
                 input: {
                   ...params.InputProps,
@@ -262,27 +294,23 @@ function AutocompleteMultipleEnumCell({
   )
 }
 
-// Memoize the cell component to prevent unnecessary re-renders
-// Custom comparison function that ignores function prop identity changes
-// since the grid library recreates them on each render but their behavior is stable
+// Memoize the cell component to prevent unnecessary re-renders.
+// react-datasheet-grid provides new setRowData/stopEditing function instances
+// on each render, so we must ignore those callback identities here and only
+// compare the props that affect rendering.
+export function areAutocompleteMultipleEnumCellPropsEqual(
+  prevProps: AutocompleteMultipleEnumCellProps,
+  nextProps: AutocompleteMultipleEnumCellProps,
+) {
+  return (
+    areAutocompleteCellPropsEqual(prevProps, nextProps) &&
+    prevProps.limitTags === nextProps.limitTags
+  )
+}
+
 const MemoizedAutocompleteMultipleEnumCell = memo(
   AutocompleteMultipleEnumCell,
-  (prevProps, nextProps) => {
-    // Compare all non-function props that represent actual state changes
-    return (
-      prevProps.active === nextProps.active &&
-      prevProps.focus === nextProps.focus &&
-      prevProps.rowData === nextProps.rowData &&
-      prevProps.choices === nextProps.choices &&
-      prevProps.colType === nextProps.colType &&
-      prevProps.limitTags === nextProps.limitTags &&
-      prevProps.clearValue === nextProps.clearValue
-      // Note: We intentionally skip comparing stopEditing and setRowData
-      // These are recreated by react-datasheet-grid on every render but their
-      // behavior remains functionally identical for the same cell position.
-      // Comparing them would defeat the purpose of memoization.
-    )
-  },
+  areAutocompleteMultipleEnumCellPropsEqual,
 )
 
 export type AutocompleteMultipleEnumColumnProps = {
