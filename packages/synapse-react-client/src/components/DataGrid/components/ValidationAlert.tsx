@@ -1,12 +1,14 @@
 import { DataGridRow } from '../DataGridTypes'
-import { Box, Chip, Collapse, Link, Typography } from '@mui/material'
-import { useEffect, useMemo, useState } from 'react'
+import { Box, Chip, Collapse, Link, Tab, Tabs, Typography } from '@mui/material'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 
 type ValidationError = {
   rowIndex: number
   columnName: string
   message: string
 }
+
+type GroupBy = 'row' | 'column' | 'message'
 
 type ValidationAlertProps = {
   rowValues: DataGridRow[]
@@ -21,6 +23,11 @@ function getColDisplayIndex(
   columnOrder: number[],
 ): number {
   return columnOrder.findIndex(i => columnNames[i] === colName)
+}
+
+/** Column name for display — '_row' becomes 'Row-level'. */
+function colLabel(colName: string): string {
+  return colName === '_row' ? 'Row-level' : colName
 }
 
 /** Renders a column name + message pair with distinct styles. */
@@ -60,6 +67,51 @@ function ErrorText({
   )
 }
 
+const rowLinkSx = {
+  textDecoration: 'none',
+  cursor: 'pointer',
+  '&:hover': { textDecoration: 'underline' },
+} as const
+
+/** Renders a list of row number links. The first shows "Row N"; subsequent
+ *  items show only the number, separated by a middle dot. */
+function RowLinks({
+  rows,
+  navCol,
+  onNavigateToCell,
+}: {
+  rows: number[]
+  navCol: number
+  onNavigateToCell: (rowIndex: number, colIndex: number) => void
+}) {
+  return (
+    <>
+      {rows.map((rowIndex, j) => (
+        <Fragment key={rowIndex}>
+          {j > 0 && (
+            <Box
+              component="span"
+              aria-hidden
+              sx={{ color: 'text.disabled', userSelect: 'none' }}
+            >
+              ·
+            </Box>
+          )}
+          <Link
+            component="button"
+            variant="caption"
+            color="text.secondary"
+            onClick={() => onNavigateToCell(rowIndex, navCol)}
+            sx={rowLinkSx}
+          >
+            {j === 0 ? `Row ${rowIndex + 1}` : rowIndex + 1}
+          </Link>
+        </Fragment>
+      ))}
+    </>
+  )
+}
+
 export const ValidationAlert = ({
   rowValues,
   columnNames,
@@ -67,6 +119,7 @@ export const ValidationAlert = ({
   onNavigateToCell,
 }: ValidationAlertProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
+  const [groupBy, setGroupBy] = useState<GroupBy>('row')
 
   const allErrors = useMemo((): ValidationError[] => {
     const errors: ValidationError[] = []
@@ -80,6 +133,30 @@ export const ValidationAlert = ({
     })
     return errors
   }, [rowValues])
+
+  // columnName → messageText → rowIndex[]
+  const byColumn = useMemo(() => {
+    const groups = new Map<string, Map<string, number[]>>()
+    allErrors.forEach(({ rowIndex, columnName, message }) => {
+      if (!groups.has(columnName)) groups.set(columnName, new Map())
+      const colGroup = groups.get(columnName)!
+      if (!colGroup.has(message)) colGroup.set(message, [])
+      colGroup.get(message)!.push(rowIndex)
+    })
+    return groups
+  }, [allErrors])
+
+  // messageText → columnName → rowIndex[]
+  const byMessage = useMemo(() => {
+    const groups = new Map<string, Map<string, number[]>>()
+    allErrors.forEach(({ rowIndex, columnName, message }) => {
+      if (!groups.has(message)) groups.set(message, new Map())
+      const msgGroup = groups.get(message)!
+      if (!msgGroup.has(columnName)) msgGroup.set(columnName, [])
+      msgGroup.get(columnName)!.push(rowIndex)
+    })
+    return groups
+  }, [allErrors])
 
   useEffect(() => {
     if (allErrors.length === 0) setIsExpanded(false)
@@ -100,6 +177,7 @@ export const ValidationAlert = ({
         mb: 1,
       }}
     >
+      {/* Header */}
       <Box
         sx={{
           display: 'flex',
@@ -131,48 +209,185 @@ export const ValidationAlert = ({
           </Typography>
         )}
       </Box>
+
+      {/* Expanded panel */}
       <Collapse in={isExpanded}>
-        <Box
-          component="ul"
+        <Tabs
+          value={groupBy}
+          onChange={(_, v: GroupBy) => setGroupBy(v)}
+          textColor="inherit"
           sx={{
-            m: 0,
             px: 2,
-            pb: 1,
-            listStyle: 'none',
-            maxHeight: 200,
-            overflowY: 'auto',
+            minHeight: 36,
+            borderTop: '1px solid',
+            borderColor: 'divider',
           }}
+          TabIndicatorProps={{ style: { height: 2 } }}
         >
-          {allErrors.map((error, i) => {
-            const colIdx = getColDisplayIndex(
-              error.columnName,
-              columnNames,
-              columnOrder,
-            )
-            const navCol = colIdx >= 0 ? colIdx : 0
-            return (
-              <Box component="li" key={i} sx={{ py: 0.25 }}>
-                <Link
-                  component="button"
-                  variant="body2"
-                  color="text.secondary"
-                  onClick={() => onNavigateToCell(error.rowIndex, navCol)}
-                  sx={{
-                    textAlign: 'left',
-                    cursor: 'pointer',
-                    textDecoration: 'none',
-                    '&:hover': { textDecoration: 'underline' },
-                  }}
-                >
-                  <ErrorText
-                    columnName={error.columnName}
-                    message={error.message}
-                    rowIndex={error.rowIndex}
-                  />
-                </Link>
-              </Box>
-            )
-          })}
+          <Tab
+            label="By row"
+            value="row"
+            sx={{ minHeight: 36, py: 0.5, fontSize: '0.75rem' }}
+          />
+          <Tab
+            label="By column"
+            value="column"
+            sx={{ minHeight: 36, py: 0.5, fontSize: '0.75rem' }}
+          />
+          <Tab
+            label="By message"
+            value="message"
+            sx={{ minHeight: 36, py: 0.5, fontSize: '0.75rem' }}
+          />
+        </Tabs>
+
+        <Box sx={{ px: 2, py: 1, maxHeight: 200, overflowY: 'auto' }}>
+          {/* ── By row ─────────────────────────────────────────── */}
+          {groupBy === 'row' && (
+            <Box component="ul" sx={{ m: 0, p: 0, listStyle: 'none' }}>
+              {allErrors.map((error, i) => {
+                const navCol = Math.max(
+                  0,
+                  getColDisplayIndex(
+                    error.columnName,
+                    columnNames,
+                    columnOrder,
+                  ),
+                )
+                return (
+                  <Box component="li" key={i} sx={{ py: 0.25 }}>
+                    <Link
+                      component="button"
+                      variant="body2"
+                      color="text.secondary"
+                      onClick={() => onNavigateToCell(error.rowIndex, navCol)}
+                      sx={{ textAlign: 'left', ...rowLinkSx }}
+                    >
+                      <ErrorText
+                        columnName={error.columnName}
+                        message={error.message}
+                        rowIndex={error.rowIndex}
+                      />
+                    </Link>
+                  </Box>
+                )
+              })}
+            </Box>
+          )}
+
+          {/* ── By column ──────────────────────────────────────── */}
+          {groupBy === 'column' &&
+            Array.from(byColumn.entries()).map(([colName, messages]) => {
+              const totalCount = Array.from(messages.values()).reduce(
+                (sum, rows) => sum + rows.length,
+                0,
+              )
+              const navCol = Math.max(
+                0,
+                getColDisplayIndex(colName, columnNames, columnOrder),
+              )
+              return (
+                <Box key={colName} sx={{ mb: 1 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 0.5,
+                      mb: 0.25,
+                    }}
+                  >
+                    <Typography variant="body2" fontWeight="bold">
+                      {colLabel(colName)}
+                    </Typography>
+                    <Chip label={totalCount} color="error" size="small" />
+                  </Box>
+                  {Array.from(messages.entries()).map(([msg, rows]) => (
+                    <Box
+                      key={msg}
+                      sx={{
+                        pl: 2,
+                        display: 'flex',
+                        alignItems: 'baseline',
+                        flexWrap: 'wrap',
+                        gap: 0.5,
+                        py: 0.25,
+                      }}
+                    >
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ mr: 0.5 }}
+                      >
+                        {msg}
+                      </Typography>
+                      <RowLinks
+                        rows={rows}
+                        navCol={navCol}
+                        onNavigateToCell={onNavigateToCell}
+                      />
+                    </Box>
+                  ))}
+                </Box>
+              )
+            })}
+
+          {/* ── By message ─────────────────────────────────────── */}
+          {groupBy === 'message' &&
+            Array.from(byMessage.entries()).map(([msg, columns]) => {
+              const totalCount = Array.from(columns.values()).reduce(
+                (sum, rows) => sum + rows.length,
+                0,
+              )
+              return (
+                <Box key={msg} sx={{ mb: 1 }}>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 0.5,
+                      mb: 0.25,
+                    }}
+                  >
+                    <Typography variant="body2" fontWeight="bold">
+                      {msg}
+                    </Typography>
+                    <Chip label={totalCount} color="error" size="small" />
+                  </Box>
+                  {Array.from(columns.entries()).map(([colName, rows]) => {
+                    const navCol = Math.max(
+                      0,
+                      getColDisplayIndex(colName, columnNames, columnOrder),
+                    )
+                    return (
+                      <Box
+                        key={colName}
+                        sx={{
+                          pl: 2,
+                          display: 'flex',
+                          alignItems: 'baseline',
+                          flexWrap: 'wrap',
+                          gap: 0.5,
+                          py: 0.25,
+                        }}
+                      >
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ mr: 0.5, fontStyle: 'italic' }}
+                        >
+                          {colLabel(colName)}
+                        </Typography>
+                        <RowLinks
+                          rows={rows}
+                          navCol={navCol}
+                          onNavigateToCell={onNavigateToCell}
+                        />
+                      </Box>
+                    )
+                  })}
+                </Box>
+              )
+            })}
         </Box>
       </Collapse>
     </Box>
