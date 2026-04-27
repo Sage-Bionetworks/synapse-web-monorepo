@@ -1,0 +1,1 @@
+import{n as e}from"./chunk-zsgVPwQN.js";import{h as t}from"./SynapseContext-Bv86KVYZ.js";var n=e((()=>{t()}));export{n as t};
