@@ -66,6 +66,7 @@ export function isContainerType(type: EntityType): boolean {
     case EntityType.datasetcollection:
     case EntityType.materializedview:
     case EntityType.virtualtable:
+    case EntityType.searchindex:
       return false
     default:
       throw new Error(`Unknown entity type: ${type}`)
@@ -122,6 +123,8 @@ export function entityTypeToFriendlyName(entityType: EntityType): string {
       return 'Virtual Table'
     case EntityType.recordset:
       return 'Record Set'
+    case EntityType.searchindex:
+      return 'Search Index'
     default:
       console.warn('Entity type could not be mapped to name:', entityType)
       return ''
@@ -161,6 +164,8 @@ export function convertToEntityType(
       return EntityType.virtualtable
     case 'org.sagebionetworks.repo.model.RecordSet':
       return EntityType.recordset
+    case 'org.sagebionetworks.repo.model.search.table.SearchIndex':
+      return EntityType.searchindex
     default:
       throw new Error(`Unknown entity type: ${typeString}`)
   }
@@ -196,6 +201,8 @@ export function convertToConcreteEntityType(
       return 'org.sagebionetworks.repo.model.table.VirtualTable'
     case EntityType.recordset:
       return 'org.sagebionetworks.repo.model.RecordSet'
+    case EntityType.searchindex:
+      return 'org.sagebionetworks.repo.model.search.table.SearchIndex'
     default:
       throw new Error(`Unknown entity type: ${type}`)
   }
@@ -215,6 +222,7 @@ export function isVersionableEntityType(type: EntityType): boolean {
     case EntityType.submissionview: // SubmissionView implements VersionableEntity, but versions aren't supported
     case EntityType.materializedview: // MaterializedView implements VersionableEntity, but versions aren't supported.
     case EntityType.virtualtable: // VirtualTable implements VersionableEntity, but versions aren't supported.
+    case EntityType.searchindex: // SearchIndex does not support versioning.
       return false
     case EntityType.file:
     case EntityType.recordset:
