@@ -3,17 +3,19 @@ import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
 import useImmutableTableQuery from '@/utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { Provider } from 'jotai'
-import { PropsWithChildren, useMemo } from 'react'
+import { PropsWithChildren, useEffect, useMemo } from 'react'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import {
   QueryContextProvider,
   QueryContextType,
+  useQueryContext,
 } from '../QueryContext/QueryContext'
 import { useSearchQueryUseQueryOptions } from './SearchQueryUseQueryOptions'
 import useHasFacetedSelectColumn from '../QueryWrapper/useHasFacetedSelectColumn'
 import { SessionInitializedGuard } from '@/utils/AppUtils/session/SessionInitializedGuard'
 import { useGetEntity } from '@/synapse-queries'
 import { SearchIndex } from '@sage-bionetworks/synapse-client'
+import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 
 /**
  * The initQueryRequest used internally within SearchQueryWrapper. It uses a synthetic entity ID
@@ -29,9 +31,10 @@ export type SearchQueryWrapperProps = PropsWithChildren<{
    */
   searchIndexId: string
   /**
-   * The initial query request. Only `query.selectedFacets`, `query.limit`, and `query.offset`
-   * are used; the `entityId` and `sql` fields are overridden with synthetic values.
-   * The `partMask` controls which parts of the response bundle to request.
+   * The initial query request. Only `query.selectedFacets`, `query.additionalFilters`,
+   * `query.limit`, and `query.offset` are used; the `entityId` and `sql` fields are
+   * overridden with synthetic values. The `partMask` controls which parts of the response
+   * bundle to request.
    */
   initQueryRequest: {
     concreteType?: QueryBundleRequest['concreteType']
@@ -40,8 +43,40 @@ export type SearchQueryWrapperProps = PropsWithChildren<{
   }
   /** If onQueryChange is set, the callback will be invoked when the Query changes */
   onQueryChange?: (newQueryJson: string) => void
+  /** If onQueryResultBundleChange is set, it will be called whenever the query result bundle changes */
+  onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
   isInfinite?: boolean
 }>
+
+/**
+ * Internal component that reads the current query metadata from QueryContext and fires
+ * onQueryResultBundleChange whenever the data changes. Must be rendered as a child of
+ * QueryContextProvider (i.e. inside SearchQueryWrapper).
+ */
+function SearchQueryResultBundleChangeNotifier({
+  onQueryResultBundleChange,
+}: {
+  onQueryResultBundleChange: (json: string) => void
+}) {
+  const { queryMetadataQueryOptions } = useQueryContext()
+  // queryMetadataQueryOptions is UseSuspenseQueryOptions; cast to UseQueryOptions so we can use
+  // regular (non-suspense) `useQuery` here — the same cache key is shared, so no extra request is made.
+  const queryOpts = queryMetadataQueryOptions as UseQueryOptions<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    any
+  >
+  const { data } = useQuery(queryOpts)
+  useEffect(() => {
+    if (data) {
+      onQueryResultBundleChange(JSON.stringify(data))
+    }
+  }, [data, onQueryResultBundleChange])
+  return null
+}
 
 function SearchQueryWrapperInternal(props: SearchQueryWrapperProps) {
   return (
@@ -55,6 +90,7 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
   const {
     initQueryRequest: initQueryRequestFromProps,
     onQueryChange,
+    onQueryResultBundleChange,
     isInfinite = false,
     searchIndexId,
   } = props
@@ -164,6 +200,11 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
 
   return (
     <QueryContextProvider queryContext={context}>
+      {onQueryResultBundleChange && (
+        <SearchQueryResultBundleChangeNotifier
+          onQueryResultBundleChange={onQueryResultBundleChange}
+        />
+      )}
       {props.children}
     </QueryContextProvider>
   )

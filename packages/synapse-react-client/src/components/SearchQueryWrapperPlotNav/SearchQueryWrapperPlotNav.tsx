@@ -51,8 +51,10 @@ export type SearchQueryWrapperPlotNavProps = SearchQueryWrapperPlotNavOwnProps &
     | 'hideVisualizationsControl'
   > &
   Pick<TopLevelControlsProps, 'name' | 'hideQueryCount'> & {
-    /** Optional initial query parameters. Only selectedFacets, limit, and offset are used. */
+    /** Optional initial query parameters. Only selectedFacets, additionalFilters, limit, and offset are used. */
     initQueryRequest?: SearchQueryWrapperProps['initQueryRequest']
+    /** Called when the query result bundle changes (e.g. to report result counts to a parent). */
+    onQueryResultBundleChange?: SearchQueryWrapperProps['onQueryResultBundleChange']
   }
 
 /**
@@ -69,6 +71,7 @@ export default function SearchQueryWrapperPlotNav(
     unitDescription,
     helpConfiguration,
     initQueryRequest: initQueryRequestFromProps,
+    onQueryResultBundleChange,
     searchIndexId,
   } = props
 
@@ -89,6 +92,7 @@ export default function SearchQueryWrapperPlotNav(
       searchIndexId={searchIndexId}
       initQueryRequest={initQueryRequest}
       isInfinite={isInfinite}
+      onQueryResultBundleChange={onQueryResultBundleChange}
     >
       <Suspense fallback={<QueryWrapperLoadingScreen />}>
         <QueryVisualizationWrapper
