@@ -429,7 +429,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     const rawValue: string | undefined = data[schema[columnName]]
     let renderedValue: React.ReactNode = rawValue
     let columnDisplayName
-    if (renderedValue) {
+    if (renderedValue && rawValue !== '[]' && rawValue !== '[""]') {
       // PORTALS-2750: special rendering of the datasetSizeInBytes (for Dataset Collections)
       if (
         isDatasetCollection(table as Entity) &&
