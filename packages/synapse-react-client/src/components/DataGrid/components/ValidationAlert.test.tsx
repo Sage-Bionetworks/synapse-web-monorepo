@@ -58,63 +58,193 @@ describe('ValidationAlert', () => {
     expect(screen.getByText('Collapse')).toBeInTheDocument()
   })
 
-  it('shows full error list when expanded', async () => {
-    const rowValues = [
-      makeInvalidRow({
-        platform: ['cannot be empty'],
-        disease: ['invalid value'],
-      }),
-    ]
+  it('renders three tabs when expanded', async () => {
+    const rowValues = [makeInvalidRow({ platform: ['cannot be empty'] })]
     render(<ValidationAlert {...defaultProps} rowValues={rowValues} />)
 
     await userEvent.click(screen.getByText('Expand'))
-    expect(screen.getAllByText('platform').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('cannot be empty').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('disease').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('invalid value').length).toBeGreaterThan(0)
+    expect(screen.getByRole('tab', { name: 'By row' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'By column' })).toBeInTheDocument()
+    expect(screen.getByRole('tab', { name: 'By message' })).toBeInTheDocument()
   })
 
-  it('calls onNavigateToCell with correct rowIndex and colDisplayIndex when error is clicked', async () => {
-    const onNavigateToCell = vi.fn()
-    // columnOrder [0,1,2] means: col 0=patientId, col 1=platform, col 2=disease
-    const rowValues = [makeInvalidRow({ platform: ['cannot be empty'] })]
-    render(
-      <ValidationAlert
-        {...defaultProps}
-        rowValues={rowValues}
-        onNavigateToCell={onNavigateToCell}
-      />,
-    )
+  describe('By row tab (default)', () => {
+    it('shows a flat list of all errors', async () => {
+      const rowValues = [
+        makeInvalidRow({
+          platform: ['cannot be empty'],
+          disease: ['invalid value'],
+        }),
+      ]
+      render(<ValidationAlert {...defaultProps} rowValues={rowValues} />)
 
-    await userEvent.click(screen.getByText('Expand'))
-    // The error link button's accessible name contains both column name and message
-    await userEvent.click(
-      screen.getByRole('button', { name: /platform.*cannot be empty/i }),
-    )
-    // 'platform' is at columnOrder index 1 (columnNames[1] === 'platform')
-    expect(onNavigateToCell).toHaveBeenCalledWith(0, 1)
+      await userEvent.click(screen.getByText('Expand'))
+      expect(screen.getAllByText('platform').length).toBeGreaterThan(0)
+      expect(screen.getAllByText('cannot be empty').length).toBeGreaterThan(0)
+      expect(screen.getAllByText('disease').length).toBeGreaterThan(0)
+      expect(screen.getAllByText('invalid value').length).toBeGreaterThan(0)
+    })
+
+    it('calls onNavigateToCell with correct rowIndex and colDisplayIndex', async () => {
+      const onNavigateToCell = vi.fn()
+      const rowValues = [makeInvalidRow({ platform: ['cannot be empty'] })]
+      render(
+        <ValidationAlert
+          {...defaultProps}
+          rowValues={rowValues}
+          onNavigateToCell={onNavigateToCell}
+        />,
+      )
+
+      await userEvent.click(screen.getByText('Expand'))
+      // The error link's accessible name contains both column name and message
+      await userEvent.click(
+        screen.getByRole('button', { name: /platform.*cannot be empty/i }),
+      )
+      // 'platform' is at columnOrder index 1 (columnNames[1] === 'platform')
+      expect(onNavigateToCell).toHaveBeenCalledWith(0, 1)
+    })
+
+    it('navigates to col 0 for row-level (_row) errors', async () => {
+      const onNavigateToCell = vi.fn()
+      const rowValues = [
+        makeInvalidRow({ _row: ['required key [platform] not found'] }),
+      ]
+      render(
+        <ValidationAlert
+          {...defaultProps}
+          rowValues={rowValues}
+          onNavigateToCell={onNavigateToCell}
+        />,
+      )
+
+      await userEvent.click(screen.getByText('Expand'))
+      await userEvent.click(
+        screen.getByRole('button', {
+          name: /required key \[platform\] not found/i,
+        }),
+      )
+      expect(onNavigateToCell).toHaveBeenCalledWith(0, 0)
+    })
   })
 
-  it('navigates to col 0 for row-level (_row) errors', async () => {
-    const onNavigateToCell = vi.fn()
-    const rowValues = [
-      makeInvalidRow({ _row: ['required key [platform] not found'] }),
-    ]
-    render(
-      <ValidationAlert
-        {...defaultProps}
-        rowValues={rowValues}
-        onNavigateToCell={onNavigateToCell}
-      />,
-    )
+  describe('By column tab', () => {
+    it('groups errors under column section headers with counts', async () => {
+      // 2 platform errors, 1 disease error
+      const rowValues = [
+        makeInvalidRow({ platform: ['cannot be empty'] }),
+        makeInvalidRow({ platform: ['cannot be empty'] }),
+        makeInvalidRow({ disease: ['invalid value'] }),
+      ]
+      render(<ValidationAlert {...defaultProps} rowValues={rowValues} />)
 
-    await userEvent.click(screen.getByText('Expand'))
-    await userEvent.click(
-      screen.getByRole('button', {
-        name: /required key \[platform\] not found/i,
-      }),
-    )
-    expect(onNavigateToCell).toHaveBeenCalledWith(0, 0)
+      await userEvent.click(screen.getByText('Expand'))
+      await userEvent.click(screen.getByRole('tab', { name: 'By column' }))
+
+      expect(screen.getAllByText('platform').length).toBeGreaterThan(0)
+      expect(screen.getAllByText('disease').length).toBeGreaterThan(0)
+      // platform section chip shows count 2
+      expect(screen.getAllByText('2').length).toBeGreaterThan(0)
+    })
+
+    it('shows message text and row number links within each column section', async () => {
+      const rowValues = [
+        makeInvalidRow({ platform: ['cannot be empty'] }),
+        makeInvalidRow({ platform: ['cannot be empty'] }),
+      ]
+      render(<ValidationAlert {...defaultProps} rowValues={rowValues} />)
+
+      await userEvent.click(screen.getByText('Expand'))
+      await userEvent.click(screen.getByRole('tab', { name: 'By column' }))
+
+      expect(screen.getAllByText('cannot be empty').length).toBeGreaterThan(0)
+      // First row shows "Row 1"; subsequent rows in the same group show just the number
+      expect(screen.getByRole('button', { name: 'Row 1' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: '2' })).toBeInTheDocument()
+    })
+
+    it('calls onNavigateToCell when a row number link is clicked', async () => {
+      const onNavigateToCell = vi.fn()
+      const rowValues = [makeInvalidRow({ platform: ['cannot be empty'] })]
+      render(
+        <ValidationAlert
+          {...defaultProps}
+          rowValues={rowValues}
+          onNavigateToCell={onNavigateToCell}
+        />,
+      )
+
+      await userEvent.click(screen.getByText('Expand'))
+      await userEvent.click(screen.getByRole('tab', { name: 'By column' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Row 1' }))
+
+      expect(onNavigateToCell).toHaveBeenCalledWith(0, 1)
+    })
+
+    it('shows row-level errors under "Row-level" section header', async () => {
+      const rowValues = [
+        makeInvalidRow({ _row: ['required key [x] not found'] }),
+      ]
+      render(<ValidationAlert {...defaultProps} rowValues={rowValues} />)
+
+      await userEvent.click(screen.getByText('Expand'))
+      await userEvent.click(screen.getByRole('tab', { name: 'By column' }))
+
+      expect(screen.getByText('Row-level')).toBeInTheDocument()
+    })
+  })
+
+  describe('By message tab', () => {
+    it('groups errors under message section headers with counts', async () => {
+      const rowValues = [
+        makeInvalidRow({ platform: ['cannot be empty'] }),
+        makeInvalidRow({ disease: ['cannot be empty'] }),
+        makeInvalidRow({ patientId: ['too long'] }),
+      ]
+      render(<ValidationAlert {...defaultProps} rowValues={rowValues} />)
+
+      await userEvent.click(screen.getByText('Expand'))
+      await userEvent.click(screen.getByRole('tab', { name: 'By message' }))
+
+      // 'cannot be empty' applies to 2 errors — count badge shows 2
+      expect(screen.getAllByText('cannot be empty').length).toBeGreaterThan(0)
+      expect(screen.getAllByText('2').length).toBeGreaterThan(0)
+    })
+
+    it('shows column names and row number links within each message section', async () => {
+      const rowValues = [
+        makeInvalidRow({ platform: ['cannot be empty'] }),
+        makeInvalidRow({ disease: ['cannot be empty'] }),
+      ]
+      render(<ValidationAlert {...defaultProps} rowValues={rowValues} />)
+
+      await userEvent.click(screen.getByText('Expand'))
+      await userEvent.click(screen.getByRole('tab', { name: 'By message' }))
+
+      expect(screen.getAllByText('platform').length).toBeGreaterThan(0)
+      expect(screen.getAllByText('disease').length).toBeGreaterThan(0)
+      expect(screen.getByRole('button', { name: 'Row 1' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Row 2' })).toBeInTheDocument()
+    })
+
+    it('calls onNavigateToCell when a row number link is clicked', async () => {
+      const onNavigateToCell = vi.fn()
+      const rowValues = [makeInvalidRow({ disease: ['invalid value'] })]
+      render(
+        <ValidationAlert
+          {...defaultProps}
+          rowValues={rowValues}
+          onNavigateToCell={onNavigateToCell}
+        />,
+      )
+
+      await userEvent.click(screen.getByText('Expand'))
+      await userEvent.click(screen.getByRole('tab', { name: 'By message' }))
+      await userEvent.click(screen.getByRole('button', { name: 'Row 1' }))
+
+      // 'disease' is at columnOrder index 2
+      expect(onNavigateToCell).toHaveBeenCalledWith(0, 2)
+    })
   })
 
   it('aggregates errors across multiple invalid rows', () => {
