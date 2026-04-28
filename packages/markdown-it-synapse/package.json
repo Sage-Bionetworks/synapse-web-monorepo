@@ -1,6 +1,6 @@
 {
   "name": "markdown-it-synapse",
-  "version": "1.1.17",
+  "version": "2.0.0",
   "description": "tag for markdown-it markdown parser.",
   "main": "dist/index.cjs",
   "module": "dist/index.js",
@@ -25,7 +25,7 @@
   ],
   "scripts": {
     "type-check": "tsc --build",
-    "build": "tsup",
+    "build": "vite build && tsc -p tsconfig.build.json",
     "lint": "eslint src/*",
     "test": "vitest",
     "coverage": "vitest --coverage",
@@ -47,8 +47,6 @@
     "@vitest/ui": "^4.1.4",
     "markdown-it": "^14.1.0",
     "markdown-it-testgen": "~0.1.6",
-    "tslib": "^2.8.1",
-    "tsup": "^8.4.0",
     "typescript": "5.8.3",
     "vite": "^8.0.8",
     "vite-config": "workspace:*",

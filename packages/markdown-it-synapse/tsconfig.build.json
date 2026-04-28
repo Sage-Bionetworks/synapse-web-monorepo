@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "declarationMap": true,
+    // Disable composite — not needed for declaration-only emit and avoids conflicts with the main tsconfig's tsbuildinfo
+    "composite": false,
+    "incremental": true,
+    "tsBuildInfoFile": "./dist/tsconfig.build.tsbuildinfo",
+    // Test types are not needed for library declarations
+    "types": []
+  },
+  "include": ["src/**/*.ts"]
+}
