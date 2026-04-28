@@ -4,7 +4,9 @@ import {
   Chip,
   CircularProgress,
   Collapse,
+  Divider,
   Link,
+  Stack,
   Tab,
   Tabs,
   Typography,
@@ -158,7 +160,7 @@ function ByColumnTab({
   onNavigateToCell,
 }: NavProps & { groups: Map<string, Map<string, RowEntry[]>> }) {
   return (
-    <>
+    <Stack divider={<Divider />} spacing={1}>
       {Array.from(groups.entries()).map(([colName, messages]) => {
         const totalCount = Array.from(messages.values()).reduce(
           (sum, rows) => sum + rows.length,
@@ -169,7 +171,7 @@ function ByColumnTab({
           getColDisplayIndex(colName, columnNames, columnOrder),
         )
         return (
-          <Box key={colName} sx={{ mb: 1 }}>
+          <Box key={colName}>
             <Box sx={groupSectionHeaderSx}>
               <Typography variant="body1" fontWeight="bold">
                 {colLabel(colName)}
@@ -195,7 +197,7 @@ function ByColumnTab({
           </Box>
         )
       })}
-    </>
+    </Stack>
   )
 }
 
@@ -206,14 +208,14 @@ function ByMessageTab({
   onNavigateToCell,
 }: NavProps & { groups: Map<string, Map<string, RowEntry[]>> }) {
   return (
-    <>
+    <Stack divider={<Divider />} spacing={1}>
       {Array.from(groups.entries()).map(([msg, columns]) => {
         const totalCount = Array.from(columns.values()).reduce(
           (sum, rows) => sum + rows.length,
           0,
         )
         return (
-          <Box key={msg} sx={{ mb: 1 }}>
+          <Box key={msg}>
             <Box sx={groupSectionHeaderSx}>
               <Typography variant="body1" fontWeight="bold">
                 {msg}
@@ -245,7 +247,7 @@ function ByMessageTab({
           </Box>
         )
       })}
-    </>
+    </Stack>
   )
 }
 
@@ -429,7 +431,7 @@ export const ValidationAlert = ({
         <Box sx={{ px: 2, py: 1, maxHeight: 200, overflowY: 'auto' }}>
           {/* ── By row ─────────────────────────────────────────── */}
           {groupBy === 'row' && (
-            <Box component="ul" sx={{ m: 0, p: 0, listStyle: 'none' }}>
+            <Stack divider={<Divider />}>
               {allErrors.map((error, i) => {
                 const navCol = Math.max(
                   0,
@@ -440,28 +442,28 @@ export const ValidationAlert = ({
                   ),
                 )
                 return (
-                  <Box component="li" key={i} sx={{ py: 0.25 }}>
-                    <Link
-                      component="button"
-                      variant="body1"
-                      color="text.secondary"
-                      onClick={() => onNavigateToCell(error.rowIndex, navCol)}
-                      sx={{
-                        textAlign: 'left',
-                        ...rowLinkSx,
-                        opacity: error.pending ? 0.5 : 1,
-                      }}
-                    >
-                      <ErrorText
-                        columnName={error.columnName}
-                        message={error.message}
-                        rowIndex={error.rowIndex}
-                      />
-                    </Link>
-                  </Box>
+                  <Link
+                    key={i}
+                    component="button"
+                    variant="body1"
+                    color="text.secondary"
+                    onClick={() => onNavigateToCell(error.rowIndex, navCol)}
+                    sx={{
+                      textAlign: 'left',
+                      py: 0.5,
+                      ...rowLinkSx,
+                      opacity: error.pending ? 0.5 : 1,
+                    }}
+                  >
+                    <ErrorText
+                      columnName={error.columnName}
+                      message={error.message}
+                      rowIndex={error.rowIndex}
+                    />
+                  </Link>
                 )
               })}
-            </Box>
+            </Stack>
           )}
 
           {/* ── By column ──────────────────────────────────────── */}
