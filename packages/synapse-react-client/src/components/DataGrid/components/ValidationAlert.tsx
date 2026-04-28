@@ -9,7 +9,7 @@ import {
   Tabs,
   Typography,
 } from '@mui/material'
-import { Fragment, useEffect, useMemo, useState } from 'react'
+import { Fragment, useMemo, useState } from 'react'
 
 type ValidationError = {
   rowIndex: number
@@ -175,9 +175,7 @@ export const ValidationAlert = ({
     return groups
   }, [allErrors])
 
-  useEffect(() => {
-    if (allErrors.length === 0) setIsExpanded(false)
-  }, [allErrors.length])
+  const shouldExpand = isExpanded && allErrors.length > 0
 
   const firstError = allErrors[0]
 
@@ -258,9 +256,9 @@ export const ValidationAlert = ({
           onClick={() => setIsExpanded(p => !p)}
           sx={{ cursor: 'pointer', flexShrink: 0 }}
         >
-          {isExpanded ? 'Collapse' : 'Expand'}
+          {shouldExpand ? 'Collapse' : 'Expand'}
         </Link>
-        {!isExpanded && (
+        {!shouldExpand && (
           <Link
             component="button"
             variant="body2"
@@ -295,7 +293,7 @@ export const ValidationAlert = ({
       </Box>
 
       {/* Expanded panel */}
-      <Collapse in={isExpanded}>
+      <Collapse in={shouldExpand}>
         <Tabs
           value={groupBy}
           onChange={(_, v: GroupBy) => setGroupBy(v)}
