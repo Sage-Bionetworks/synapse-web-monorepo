@@ -17,21 +17,17 @@ function makeInvalidRow(cellErrors: Record<string, string[]>): DataGridRow {
 }
 
 describe('ValidationAlert', () => {
-  it('returns null when there are no invalid rows', () => {
+  it('shows a no-errors message when there are no invalid rows', () => {
     const rowValues: DataGridRow[] = [
       { __validationStatus: 'valid' } as unknown as DataGridRow,
     ]
-    const { container } = render(
-      <ValidationAlert {...defaultProps} rowValues={rowValues} />,
-    )
-    expect(container.firstChild).toBeNull()
+    render(<ValidationAlert {...defaultProps} rowValues={rowValues} />)
+    expect(screen.getByText('No validation errors')).toBeInTheDocument()
   })
 
-  it('returns null when rowValues is empty', () => {
-    const { container } = render(
-      <ValidationAlert {...defaultProps} rowValues={[]} />,
-    )
-    expect(container.firstChild).toBeNull()
+  it('shows a no-errors message when rowValues is empty', () => {
+    render(<ValidationAlert {...defaultProps} rowValues={[]} />)
+    expect(screen.getByText('No validation errors')).toBeInTheDocument()
   })
 
   it('shows the correct error count badge', () => {
@@ -269,9 +265,7 @@ describe('ValidationAlert', () => {
         __cellValidationResults: cellMap,
       } as unknown as DataGridRow,
     ]
-    const { container } = render(
-      <ValidationAlert {...defaultProps} rowValues={rowValues} />,
-    )
-    expect(container.firstChild).toBeNull()
+    render(<ValidationAlert {...defaultProps} rowValues={rowValues} />)
+    expect(screen.getByText('No validation errors')).toBeInTheDocument()
   })
 })

@@ -162,9 +162,28 @@ export const ValidationAlert = ({
     if (allErrors.length === 0) setIsExpanded(false)
   }, [allErrors.length])
 
-  if (allErrors.length === 0) return null
-
   const firstError = allErrors[0]
+
+  if (allErrors.length === 0) {
+    return (
+      <Box
+        sx={{
+          border: '1px solid',
+          borderColor: 'success.main',
+          borderLeft: '4px solid',
+          borderLeftColor: 'success.main',
+          borderRadius: 1,
+          mb: 1,
+          px: 2,
+          py: 1,
+        }}
+      >
+        <Typography variant="body2" color="success.main">
+          No validation errors
+        </Typography>
+      </Box>
+    )
+  }
 
   return (
     <Box
