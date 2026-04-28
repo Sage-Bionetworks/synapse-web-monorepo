@@ -37,10 +37,10 @@ describe('ValidationAlert', () => {
     expect(screen.getByText('No validation errors')).toBeInTheDocument()
   })
 
-  it('shows syncing message when isSyncing is true', () => {
+  it('shows syncing message when isLoading is true', () => {
     const rowValues = [makeInvalidRow({ platform: ['cannot be empty'] })]
     render(
-      <ValidationAlert {...defaultProps} rowValues={rowValues} isSyncing />,
+      <ValidationAlert {...defaultProps} rowValues={rowValues} isLoading />,
     )
     expect(screen.getByText('Syncing validation errors…')).toBeInTheDocument()
     expect(screen.queryByText('Validation errors')).not.toBeInTheDocument()

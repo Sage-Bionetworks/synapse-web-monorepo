@@ -25,7 +25,7 @@ type ValidationAlertProps = {
   columnNames: string[]
   columnOrder: number[]
   onNavigateToCell: (rowIndex: number, colIndex: number) => void
-  isSyncing?: boolean
+  isLoading?: boolean
 }
 
 function getColDisplayIndex(
@@ -129,7 +129,7 @@ export const ValidationAlert = ({
   columnNames,
   columnOrder,
   onNavigateToCell,
-  isSyncing = false,
+  isLoading = false,
 }: ValidationAlertProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [groupBy, setGroupBy] = useState<GroupBy>('row')
@@ -181,7 +181,7 @@ export const ValidationAlert = ({
 
   const firstError = allErrors[0]
 
-  if (isSyncing) {
+  if (isLoading) {
     return (
       <Box
         sx={{

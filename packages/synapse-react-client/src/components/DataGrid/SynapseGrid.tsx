@@ -455,7 +455,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                       columnNames={modelSnapshot?.columnNames ?? []}
                       columnOrder={modelSnapshot?.columnOrder ?? []}
                       onNavigateToCell={handleNavigateToCell}
-                      isSyncing={!hasCompletedInitialSync}
+                      isLoading={!hasCompletedInitialSync}
                     />
                   </Grid>
                   <Grid size={12}>
