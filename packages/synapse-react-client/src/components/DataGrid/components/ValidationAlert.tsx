@@ -200,13 +200,32 @@ export const ValidationAlert = ({
           {isExpanded ? 'Collapse' : 'Expand'}
         </Link>
         {!isExpanded && (
-          <Typography variant="body2" color="text.secondary" noWrap>
+          <Link
+            component="button"
+            variant="body2"
+            color="text.secondary"
+            onClick={() =>
+              onNavigateToCell(
+                firstError.rowIndex,
+                Math.max(
+                  0,
+                  getColDisplayIndex(
+                    firstError.columnName,
+                    columnNames,
+                    columnOrder,
+                  ),
+                ),
+              )
+            }
+            noWrap
+            sx={{ textAlign: 'left', ...rowLinkSx }}
+          >
             <ErrorText
               columnName={firstError.columnName}
               message={firstError.message}
               rowIndex={firstError.rowIndex}
             />
-          </Typography>
+          </Link>
         )}
       </Box>
 
