@@ -32,6 +32,7 @@ import IconSvg, { IconName } from '../IconSvg/IconSvg'
 import { PLANS_LINK } from '../SynapseHomepageV2/SynapseHomepageNavBar'
 import UserCard from '../UserCard/UserCard'
 import { DEFAULT_SEARCH_QUERY } from '@/utils/searchDefaults'
+import { useGetCurationTasksInfinite } from '@/synapse-queries/curation/task/useCurationTask'
 
 export type SynapseNavDrawerProps = {
   initIsOpen?: boolean
@@ -52,6 +53,7 @@ type MenuItemParams = {
 
 export enum NavItem {
   PROJECTS,
+  CURATOR_DASHBOARD,
   FAVORITES,
   TEAMS,
   CHALLENGES,
@@ -197,6 +199,17 @@ export function SynapseNavDrawer({
     countOfOpenSubmissionsForReview = `${countOfOpenSubmissionsForReview}+`
   }
 
+  const { data: curationTasksAssignedToCurrentUser } =
+    useGetCurationTasksInfinite(
+      { assignedToMe: true },
+      { enabled: isAuthenticated },
+    )
+  const hasCurationTasksAssignedToCurrentUser = Boolean(
+    curationTasksAssignedToCurrentUser?.pages.some(
+      page => page.bundlePage && page.bundlePage.length > 0,
+    ),
+  )
+
   const handleDrawerOpen = (navItem?: NavItem) => {
     setOpen(true)
     setSelectedItem(navItem)
@@ -246,6 +259,18 @@ export function SynapseNavDrawer({
                   handleDrawerClose={handleDrawerClose}
                   handleDrawerOpen={handleDrawerOpen}
                 />
+                {hasCurationTasksAssignedToCurrentUser && (
+                  <NavDrawerListItem
+                    tooltip="Curator Dashboard"
+                    iconName="tasks"
+                    onClickGoToPlace={() => gotoPlace('/CuratorDashboard:0')}
+                    isCurrentlySelectedItem={
+                      selectedItem == NavItem.CURATOR_DASHBOARD
+                    }
+                    handleDrawerClose={handleDrawerClose}
+                    handleDrawerOpen={handleDrawerOpen}
+                  />
+                )}
                 <NavDrawerListItem
                   tooltip="Favorites"
                   iconName="favTwoTone"
