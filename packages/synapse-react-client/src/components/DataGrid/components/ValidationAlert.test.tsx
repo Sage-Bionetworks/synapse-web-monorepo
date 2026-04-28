@@ -42,7 +42,7 @@ describe('ValidationAlert', () => {
     render(
       <ValidationAlert {...defaultProps} rowValues={rowValues} isLoading />,
     )
-    expect(screen.getByText('Syncing validation errors…')).toBeInTheDocument()
+    expect(screen.getByText('Loading validation errors…')).toBeInTheDocument()
     expect(screen.queryByText('Validation errors')).not.toBeInTheDocument()
   })
 
@@ -56,9 +56,11 @@ describe('ValidationAlert', () => {
   it('shows first error preview when collapsed', () => {
     const rowValues = [makeInvalidRow({ platform: ['cannot be empty'] })]
     render(<ValidationAlert {...defaultProps} rowValues={rowValues} />)
-    // Column name and message are rendered as separate spans
+    // Column name is a standalone span; message is combined with separator and row suffix
     expect(screen.getAllByText('platform')[0]).toBeInTheDocument()
-    expect(screen.getAllByText('cannot be empty')[0]).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: /cannot be empty/i }),
+    ).toBeInTheDocument()
   })
 
   it('shows expand link when collapsed and collapse link when expanded', async () => {
@@ -92,9 +94,13 @@ describe('ValidationAlert', () => {
 
       await userEvent.click(screen.getByText('Expand'))
       expect(screen.getAllByText('platform').length).toBeGreaterThan(0)
-      expect(screen.getAllByText('cannot be empty').length).toBeGreaterThan(0)
+      expect(
+        screen.getByRole('button', { name: /cannot be empty/i }),
+      ).toBeInTheDocument()
       expect(screen.getAllByText('disease').length).toBeGreaterThan(0)
-      expect(screen.getAllByText('invalid value').length).toBeGreaterThan(0)
+      expect(
+        screen.getByRole('button', { name: /invalid value/i }),
+      ).toBeInTheDocument()
     })
 
     it('calls onNavigateToCell with correct rowIndex and colDisplayIndex', async () => {
