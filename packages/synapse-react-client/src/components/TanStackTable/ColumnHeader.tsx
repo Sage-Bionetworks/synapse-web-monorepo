@@ -9,6 +9,7 @@ type ColumnHeaderProps = {
   title?: string
   helpText?: ReactNode
   additionalButtons?: ReactNode
+  wrap?: boolean
 
   // TODO: Replace with props that can be passed to a reusable filter control
   filterControl?: ReactNode
@@ -24,6 +25,7 @@ export default function ColumnHeader<TData = unknown, TValue = unknown>(
   const {
     column,
     title = props.column.id,
+    wrap = false,
     helpText,
     filterControl: filterControlFromProps,
     additionalButtons,
@@ -62,7 +64,7 @@ export default function ColumnHeader<TData = unknown, TValue = unknown>(
         style={{
           overflow: 'hidden',
           textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
+          whiteSpace: wrap ? 'pre-wrap' : 'nowrap',
           minWidth: 0,
         }}
         title={title}
