@@ -171,7 +171,7 @@ function ByColumnTab({
         return (
           <Box key={colName} sx={{ mb: 1 }}>
             <Box sx={groupSectionHeaderSx}>
-              <Typography variant="body2" fontWeight="bold">
+              <Typography variant="body1" fontWeight="bold">
                 {colLabel(colName)}
               </Typography>
               <Chip label={totalCount} color="error" size="small" />
@@ -179,7 +179,7 @@ function ByColumnTab({
             {Array.from(messages.entries()).map(([msg, rows]) => (
               <Box key={msg} sx={groupSectionItemSx}>
                 <Typography
-                  variant="body2"
+                  variant="body1"
                   color="text.secondary"
                   sx={{ mr: 0.5 }}
                 >
@@ -215,7 +215,7 @@ function ByMessageTab({
         return (
           <Box key={msg} sx={{ mb: 1 }}>
             <Box sx={groupSectionHeaderSx}>
-              <Typography variant="body2" fontWeight="bold">
+              <Typography variant="body1" fontWeight="bold">
                 {msg}
               </Typography>
               <Chip label={totalCount} color="error" size="small" />
@@ -228,7 +228,7 @@ function ByMessageTab({
               return (
                 <Box key={colName} sx={groupSectionItemSx}>
                   <Typography
-                    variant="body2"
+                    variant="body1"
                     color="text.secondary"
                     sx={{ mr: 0.5, fontStyle: 'italic' }}
                   >
@@ -310,14 +310,14 @@ export const ValidationAlert = ({
           borderColor: 'divider',
           borderLeftColor: 'divider',
           px: 2,
-          py: 1,
+          py: 2,
           display: 'flex',
           alignItems: 'center',
           gap: 1,
         }}
       >
         <CircularProgress size={14} />
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body1" color="text.secondary">
           Syncing validation errors…
         </Typography>
       </Box>
@@ -332,10 +332,10 @@ export const ValidationAlert = ({
           borderColor: 'success.main',
           borderLeftColor: 'success.main',
           px: 2,
-          py: 1,
+          py: 2,
         }}
       >
-        <Typography variant="body2" color="success.main">
+        <Typography variant="body1" color="success.main">
           No validation errors
         </Typography>
       </Box>
@@ -356,7 +356,7 @@ export const ValidationAlert = ({
           display: 'flex',
           alignItems: 'center',
           px: 2,
-          py: 1,
+          py: 2,
           gap: 1,
         }}
       >
@@ -366,7 +366,7 @@ export const ValidationAlert = ({
         <Chip label={allErrors.length} color="error" size="small" />
         <Link
           component="button"
-          variant="body2"
+          variant="body1"
           onClick={() => setIsExpanded(p => !p)}
           sx={{ cursor: 'pointer', flexShrink: 0 }}
         >
@@ -375,7 +375,7 @@ export const ValidationAlert = ({
         {!shouldExpand && (
           <Link
             component="button"
-            variant="body2"
+            variant="body1"
             color="text.secondary"
             onClick={() =>
               onNavigateToCell(
@@ -393,6 +393,7 @@ export const ValidationAlert = ({
             noWrap
             sx={{
               textAlign: 'left',
+              ml: 'auto',
               ...rowLinkSx,
               opacity: firstError.pending ? 0.5 : 1,
             }}
@@ -442,7 +443,7 @@ export const ValidationAlert = ({
                   <Box component="li" key={i} sx={{ py: 0.25 }}>
                     <Link
                       component="button"
-                      variant="body2"
+                      variant="body1"
                       color="text.secondary"
                       onClick={() => onNavigateToCell(error.rowIndex, navCol)}
                       sx={{
