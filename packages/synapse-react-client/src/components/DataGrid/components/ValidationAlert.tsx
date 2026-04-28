@@ -99,7 +99,7 @@ const bannerBaseSx = {
   mb: 1,
 } as const
 
-const tabSx = { minHeight: 36, py: 0.5, fontSize: '0.75rem' } as const
+const tabSx = { minHeight: 36, py: 0.5 } as const
 
 const groupSectionHeaderSx = {
   display: 'flex',
@@ -144,7 +144,7 @@ function RowLinks({
           )}
           <Link
             component="button"
-            variant="caption"
+            variant="body1"
             color="text.secondary"
             onClick={() => onNavigateToCell(rowIndex, navCol)}
             sx={{ ...rowLinkSx, opacity: pending ? 0.5 : 1 }}
