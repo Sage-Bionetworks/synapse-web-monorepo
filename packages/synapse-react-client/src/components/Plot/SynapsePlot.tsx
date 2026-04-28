@@ -27,6 +27,7 @@ export type SynapsePlotWidgetParams = {
   barmode?: Plotly.Layout['barmode'] // Plotly barmode
   displayModeBar?: Plotly.Config['displayModeBar'] // sets the modebar visibility
   hoverinfo?: Plotly.PlotData['hoverinfo'] // sets the hover info
+  hideYAxisTickLabels?: boolean // hides the y-axis tick labels
 }
 
 // QueryWrapperPlotNav customPlot parameters, undefined otherwise
@@ -75,6 +76,7 @@ export const SynapsePlot = (props: SynapsePlotProps): React.ReactNode => {
     horizontal,
     displayModeBar,
     hoverinfo,
+    hideYAxisTickLabels,
   } = props.synapsePlotWidgetParams
 
   const config: Partial<Plotly.Config> = {
@@ -96,9 +98,10 @@ export const SynapsePlot = (props: SynapsePlotProps): React.ReactNode => {
       type: xaxistype,
     }
   }
-  if (ytitle) {
+  if (ytitle || hideYAxisTickLabels) {
     layout.yaxis = {
-      title: ytitle,
+      ...(ytitle && { title: ytitle }),
+      ...(hideYAxisTickLabels && { showticklabels: false }),
     }
   }
   // init plot_data
