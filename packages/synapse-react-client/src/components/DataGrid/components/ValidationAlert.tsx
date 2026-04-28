@@ -65,8 +65,10 @@ function ErrorText({
   if (columnName === '_row') {
     return (
       <>
-        {message}
-        {rowSuffix}
+        <Box component="span" sx={{ fontWeight: 'normal' }}>
+          {message}
+          {rowSuffix}
+        </Box>
       </>
     )
   }
@@ -75,9 +77,11 @@ function ErrorText({
       <Box component="span" sx={{ fontWeight: 'bold' }}>
         {columnName}
       </Box>
-      {' — '}
-      {message}
-      {rowSuffix}
+      <Box component="span" sx={{ fontWeight: 'normal' }}>
+        {' — '}
+        {message}
+        {rowSuffix}
+      </Box>
     </>
   )
 }
@@ -370,7 +374,7 @@ export const ValidationAlert = ({
           component="button"
           variant="body1"
           onClick={() => setIsExpanded(p => !p)}
-          sx={{ cursor: 'pointer', flexShrink: 0 }}
+          sx={{ cursor: 'pointer', flexShrink: 0, fontWeight: 'normal' }}
         >
           {shouldExpand ? 'Collapse' : 'Expand'}
         </Link>
