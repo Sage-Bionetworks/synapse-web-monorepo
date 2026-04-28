@@ -18,6 +18,8 @@ type ValidationError = {
   pending: boolean
 }
 
+type RowEntry = { rowIndex: number; pending: boolean }
+
 type GroupBy = 'row' | 'column' | 'message'
 
 type ValidationAlertProps = {
@@ -26,6 +28,12 @@ type ValidationAlertProps = {
   columnOrder: number[]
   onNavigateToCell: (rowIndex: number, colIndex: number) => void
   isLoading?: boolean
+}
+
+type NavProps = {
+  columnNames: string[]
+  columnOrder: number[]
+  onNavigateToCell: (rowIndex: number, colIndex: number) => void
 }
 
 function getColDisplayIndex(
@@ -78,6 +86,31 @@ const rowLinkSx = {
   '&:hover': { textDecoration: 'underline' },
 } as const
 
+const bannerBaseSx = {
+  border: '1px solid',
+  borderLeft: '4px solid',
+  borderRadius: 1,
+  mb: 1,
+} as const
+
+const tabSx = { minHeight: 36, py: 0.5, fontSize: '0.75rem' } as const
+
+const groupSectionHeaderSx = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: 0.5,
+  mb: 0.25,
+} as const
+
+const groupSectionItemSx = {
+  pl: 2,
+  display: 'flex',
+  alignItems: 'baseline',
+  flexWrap: 'wrap',
+  gap: 0.5,
+  py: 0.25,
+} as const
+
 /** Renders a list of row number links. The first shows "Row N"; subsequent
  *  items show only the number, separated by a middle dot.
  *  Pending entries are dimmed to signal unconfirmed validation state. */
@@ -86,7 +119,7 @@ function RowLinks({
   navCol,
   onNavigateToCell,
 }: {
-  rows: { rowIndex: number; pending: boolean }[]
+  rows: RowEntry[]
   navCol: number
   onNavigateToCell: (rowIndex: number, colIndex: number) => void
 }) {
@@ -118,6 +151,104 @@ function RowLinks({
   )
 }
 
+function ByColumnTab({
+  groups,
+  columnNames,
+  columnOrder,
+  onNavigateToCell,
+}: NavProps & { groups: Map<string, Map<string, RowEntry[]>> }) {
+  return (
+    <>
+      {Array.from(groups.entries()).map(([colName, messages]) => {
+        const totalCount = Array.from(messages.values()).reduce(
+          (sum, rows) => sum + rows.length,
+          0,
+        )
+        const navCol = Math.max(
+          0,
+          getColDisplayIndex(colName, columnNames, columnOrder),
+        )
+        return (
+          <Box key={colName} sx={{ mb: 1 }}>
+            <Box sx={groupSectionHeaderSx}>
+              <Typography variant="body2" fontWeight="bold">
+                {colLabel(colName)}
+              </Typography>
+              <Chip label={totalCount} color="error" size="small" />
+            </Box>
+            {Array.from(messages.entries()).map(([msg, rows]) => (
+              <Box key={msg} sx={groupSectionItemSx}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mr: 0.5 }}
+                >
+                  {msg}
+                </Typography>
+                <RowLinks
+                  rows={rows}
+                  navCol={navCol}
+                  onNavigateToCell={onNavigateToCell}
+                />
+              </Box>
+            ))}
+          </Box>
+        )
+      })}
+    </>
+  )
+}
+
+function ByMessageTab({
+  groups,
+  columnNames,
+  columnOrder,
+  onNavigateToCell,
+}: NavProps & { groups: Map<string, Map<string, RowEntry[]>> }) {
+  return (
+    <>
+      {Array.from(groups.entries()).map(([msg, columns]) => {
+        const totalCount = Array.from(columns.values()).reduce(
+          (sum, rows) => sum + rows.length,
+          0,
+        )
+        return (
+          <Box key={msg} sx={{ mb: 1 }}>
+            <Box sx={groupSectionHeaderSx}>
+              <Typography variant="body2" fontWeight="bold">
+                {msg}
+              </Typography>
+              <Chip label={totalCount} color="error" size="small" />
+            </Box>
+            {Array.from(columns.entries()).map(([colName, rows]) => {
+              const navCol = Math.max(
+                0,
+                getColDisplayIndex(colName, columnNames, columnOrder),
+              )
+              return (
+                <Box key={colName} sx={groupSectionItemSx}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ mr: 0.5, fontStyle: 'italic' }}
+                  >
+                    {colLabel(colName)}
+                  </Typography>
+                  <RowLinks
+                    rows={rows}
+                    navCol={navCol}
+                    onNavigateToCell={onNavigateToCell}
+                  />
+                </Box>
+              )
+            })}
+          </Box>
+        )
+      })}
+    </>
+  )
+}
+
 export const ValidationAlert = ({
   rowValues,
   columnNames,
@@ -142,8 +273,6 @@ export const ValidationAlert = ({
     })
     return errors
   }, [rowValues])
-
-  type RowEntry = { rowIndex: number; pending: boolean }
 
   // columnName → messageText → RowEntry[]
   const byColumn = useMemo(() => {
@@ -177,12 +306,9 @@ export const ValidationAlert = ({
     return (
       <Box
         sx={{
-          border: '1px solid',
+          ...bannerBaseSx,
           borderColor: 'divider',
-          borderLeft: '4px solid',
           borderLeftColor: 'divider',
-          borderRadius: 1,
-          mb: 1,
           px: 2,
           py: 1,
           display: 'flex',
@@ -202,12 +328,9 @@ export const ValidationAlert = ({
     return (
       <Box
         sx={{
-          border: '1px solid',
+          ...bannerBaseSx,
           borderColor: 'success.main',
-          borderLeft: '4px solid',
           borderLeftColor: 'success.main',
-          borderRadius: 1,
-          mb: 1,
           px: 2,
           py: 1,
         }}
@@ -222,12 +345,9 @@ export const ValidationAlert = ({
   return (
     <Box
       sx={{
-        border: '1px solid',
+        ...bannerBaseSx,
         borderColor: 'error.main',
-        borderLeft: '4px solid',
         borderLeftColor: 'error.main',
-        borderRadius: 1,
-        mb: 1,
       }}
     >
       {/* Header */}
@@ -240,7 +360,7 @@ export const ValidationAlert = ({
           gap: 1,
         }}
       >
-        <Typography variant="body2" fontWeight="bold">
+        <Typography variant="body1" fontWeight="bold">
           Validation errors
         </Typography>
         <Chip label={allErrors.length} color="error" size="small" />
@@ -300,21 +420,9 @@ export const ValidationAlert = ({
           }}
           TabIndicatorProps={{ style: { height: 2 } }}
         >
-          <Tab
-            label="By row"
-            value="row"
-            sx={{ minHeight: 36, py: 0.5, fontSize: '0.75rem' }}
-          />
-          <Tab
-            label="By column"
-            value="column"
-            sx={{ minHeight: 36, py: 0.5, fontSize: '0.75rem' }}
-          />
-          <Tab
-            label="By message"
-            value="message"
-            sx={{ minHeight: 36, py: 0.5, fontSize: '0.75rem' }}
-          />
+          <Tab label="By row" value="row" sx={tabSx} />
+          <Tab label="By column" value="column" sx={tabSx} />
+          <Tab label="By message" value="message" sx={tabSx} />
         </Tabs>
 
         <Box sx={{ px: 2, py: 1, maxHeight: 200, overflowY: 'auto' }}>
@@ -356,118 +464,24 @@ export const ValidationAlert = ({
           )}
 
           {/* ── By column ──────────────────────────────────────── */}
-          {groupBy === 'column' &&
-            Array.from(byColumn.entries()).map(([colName, messages]) => {
-              const totalCount = Array.from(messages.values()).reduce(
-                (sum, rows) => sum + rows.length,
-                0,
-              )
-              const navCol = Math.max(
-                0,
-                getColDisplayIndex(colName, columnNames, columnOrder),
-              )
-              return (
-                <Box key={colName} sx={{ mb: 1 }}>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 0.5,
-                      mb: 0.25,
-                    }}
-                  >
-                    <Typography variant="body2" fontWeight="bold">
-                      {colLabel(colName)}
-                    </Typography>
-                    <Chip label={totalCount} color="error" size="small" />
-                  </Box>
-                  {Array.from(messages.entries()).map(([msg, rows]) => (
-                    <Box
-                      key={msg}
-                      sx={{
-                        pl: 2,
-                        display: 'flex',
-                        alignItems: 'baseline',
-                        flexWrap: 'wrap',
-                        gap: 0.5,
-                        py: 0.25,
-                      }}
-                    >
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ mr: 0.5 }}
-                      >
-                        {msg}
-                      </Typography>
-                      <RowLinks
-                        rows={rows}
-                        navCol={navCol}
-                        onNavigateToCell={onNavigateToCell}
-                      />
-                    </Box>
-                  ))}
-                </Box>
-              )
-            })}
+          {groupBy === 'column' && (
+            <ByColumnTab
+              groups={byColumn}
+              columnNames={columnNames}
+              columnOrder={columnOrder}
+              onNavigateToCell={onNavigateToCell}
+            />
+          )}
 
           {/* ── By message ─────────────────────────────────────── */}
-          {groupBy === 'message' &&
-            Array.from(byMessage.entries()).map(([msg, columns]) => {
-              const totalCount = Array.from(columns.values()).reduce(
-                (sum, rows) => sum + rows.length,
-                0,
-              )
-              return (
-                <Box key={msg} sx={{ mb: 1 }}>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 0.5,
-                      mb: 0.25,
-                    }}
-                  >
-                    <Typography variant="body2" fontWeight="bold">
-                      {msg}
-                    </Typography>
-                    <Chip label={totalCount} color="error" size="small" />
-                  </Box>
-                  {Array.from(columns.entries()).map(([colName, rows]) => {
-                    const navCol = Math.max(
-                      0,
-                      getColDisplayIndex(colName, columnNames, columnOrder),
-                    )
-                    return (
-                      <Box
-                        key={colName}
-                        sx={{
-                          pl: 2,
-                          display: 'flex',
-                          alignItems: 'baseline',
-                          flexWrap: 'wrap',
-                          gap: 0.5,
-                          py: 0.25,
-                        }}
-                      >
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          sx={{ mr: 0.5, fontStyle: 'italic' }}
-                        >
-                          {colLabel(colName)}
-                        </Typography>
-                        <RowLinks
-                          rows={rows}
-                          navCol={navCol}
-                          onNavigateToCell={onNavigateToCell}
-                        />
-                      </Box>
-                    )
-                  })}
-                </Box>
-              )
-            })}
+          {groupBy === 'message' && (
+            <ByMessageTab
+              groups={byMessage}
+              columnNames={columnNames}
+              columnOrder={columnOrder}
+              onNavigateToCell={onNavigateToCell}
+            />
+          )}
         </Box>
       </Collapse>
     </Box>
