@@ -324,7 +324,7 @@ export const ValidationAlert = ({
       >
         <CircularProgress size={14} />
         <Typography variant="body1" color="text.secondary">
-          Syncing validation errors…
+          Loading validation errors…
         </Typography>
       </Box>
     )
