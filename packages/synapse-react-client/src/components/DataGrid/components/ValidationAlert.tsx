@@ -6,6 +6,7 @@ type ValidationError = {
   rowIndex: number
   columnName: string
   message: string
+  pending: boolean
 }
 
 type GroupBy = 'row' | 'column' | 'message'
@@ -74,19 +75,20 @@ const rowLinkSx = {
 } as const
 
 /** Renders a list of row number links. The first shows "Row N"; subsequent
- *  items show only the number, separated by a middle dot. */
+ *  items show only the number, separated by a middle dot.
+ *  Pending entries are dimmed to signal unconfirmed validation state. */
 function RowLinks({
   rows,
   navCol,
   onNavigateToCell,
 }: {
-  rows: number[]
+  rows: { rowIndex: number; pending: boolean }[]
   navCol: number
   onNavigateToCell: (rowIndex: number, colIndex: number) => void
 }) {
   return (
     <>
-      {rows.map((rowIndex, j) => (
+      {rows.map(({ rowIndex, pending }, j) => (
         <Fragment key={rowIndex}>
           {j > 0 && (
             <Box
@@ -102,7 +104,7 @@ function RowLinks({
             variant="caption"
             color="text.secondary"
             onClick={() => onNavigateToCell(rowIndex, navCol)}
-            sx={rowLinkSx}
+            sx={{ ...rowLinkSx, opacity: pending ? 0.5 : 1 }}
           >
             {j === 0 ? `Row ${rowIndex + 1}` : rowIndex + 1}
           </Link>
@@ -124,36 +126,40 @@ export const ValidationAlert = ({
   const allErrors = useMemo((): ValidationError[] => {
     const errors: ValidationError[] = []
     rowValues.forEach((row, rowIndex) => {
-      if (row.__validationStatus !== 'invalid') return
+      const status = row.__validationStatus
+      if (status !== 'invalid' && status !== 'pending') return
+      const pending = status === 'pending'
       row.__cellValidationResults?.forEach((messages, columnName) => {
         messages.forEach(message =>
-          errors.push({ rowIndex, columnName, message }),
+          errors.push({ rowIndex, columnName, message, pending }),
         )
       })
     })
     return errors
   }, [rowValues])
 
-  // columnName → messageText → rowIndex[]
+  type RowEntry = { rowIndex: number; pending: boolean }
+
+  // columnName → messageText → RowEntry[]
   const byColumn = useMemo(() => {
-    const groups = new Map<string, Map<string, number[]>>()
-    allErrors.forEach(({ rowIndex, columnName, message }) => {
+    const groups = new Map<string, Map<string, RowEntry[]>>()
+    allErrors.forEach(({ rowIndex, columnName, message, pending }) => {
       if (!groups.has(columnName)) groups.set(columnName, new Map())
       const colGroup = groups.get(columnName)!
       if (!colGroup.has(message)) colGroup.set(message, [])
-      colGroup.get(message)!.push(rowIndex)
+      colGroup.get(message)!.push({ rowIndex, pending })
     })
     return groups
   }, [allErrors])
 
-  // messageText → columnName → rowIndex[]
+  // messageText → columnName → RowEntry[]
   const byMessage = useMemo(() => {
-    const groups = new Map<string, Map<string, number[]>>()
-    allErrors.forEach(({ rowIndex, columnName, message }) => {
+    const groups = new Map<string, Map<string, RowEntry[]>>()
+    allErrors.forEach(({ rowIndex, columnName, message, pending }) => {
       if (!groups.has(message)) groups.set(message, new Map())
       const msgGroup = groups.get(message)!
       if (!msgGroup.has(columnName)) msgGroup.set(columnName, [])
-      msgGroup.get(columnName)!.push(rowIndex)
+      msgGroup.get(columnName)!.push({ rowIndex, pending })
     })
     return groups
   }, [allErrors])
@@ -237,7 +243,11 @@ export const ValidationAlert = ({
               )
             }
             noWrap
-            sx={{ textAlign: 'left', ...rowLinkSx }}
+            sx={{
+              textAlign: 'left',
+              ...rowLinkSx,
+              opacity: firstError.pending ? 0.5 : 1,
+            }}
           >
             <ErrorText
               columnName={firstError.columnName}
@@ -299,7 +309,11 @@ export const ValidationAlert = ({
                       variant="body2"
                       color="text.secondary"
                       onClick={() => onNavigateToCell(error.rowIndex, navCol)}
-                      sx={{ textAlign: 'left', ...rowLinkSx }}
+                      sx={{
+                        textAlign: 'left',
+                        ...rowLinkSx,
+                        opacity: error.pending ? 0.5 : 1,
+                      }}
                     >
                       <ErrorText
                         columnName={error.columnName}

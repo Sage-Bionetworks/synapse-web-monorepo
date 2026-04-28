@@ -16,6 +16,13 @@ function makeInvalidRow(cellErrors: Record<string, string[]>): DataGridRow {
   } as unknown as DataGridRow
 }
 
+function makePendingRow(cellErrors: Record<string, string[]>): DataGridRow {
+  return {
+    __validationStatus: 'pending',
+    __cellValidationResults: new Map(Object.entries(cellErrors)),
+  } as unknown as DataGridRow
+}
+
 describe('ValidationAlert', () => {
   it('shows a no-errors message when there are no invalid rows', () => {
     const rowValues: DataGridRow[] = [
@@ -253,19 +260,40 @@ describe('ValidationAlert', () => {
     expect(screen.getByText('3')).toBeInTheDocument()
   })
 
-  it('ignores rows with valid or pending status', () => {
-    const cellMap = new Map([['platform', ['cannot be empty']]])
+  it('ignores rows with valid status', () => {
     const rowValues: DataGridRow[] = [
       {
         __validationStatus: 'valid',
-        __cellValidationResults: cellMap,
-      } as unknown as DataGridRow,
-      {
-        __validationStatus: 'pending',
-        __cellValidationResults: cellMap,
+        __cellValidationResults: new Map([['platform', ['cannot be empty']]]),
       } as unknown as DataGridRow,
     ]
     render(<ValidationAlert {...defaultProps} rowValues={rowValues} />)
     expect(screen.getByText('No validation errors')).toBeInTheDocument()
+  })
+
+  describe('pending rows', () => {
+    it('includes pending rows with prior errors in the error list', () => {
+      const rowValues = [makePendingRow({ platform: ['cannot be empty'] })]
+      render(<ValidationAlert {...defaultProps} rowValues={rowValues} />)
+      expect(screen.getByText('Validation errors')).toBeInTheDocument()
+      expect(screen.getByText('1')).toBeInTheDocument()
+    })
+
+    it('shows no-errors message for pending rows without prior errors', () => {
+      const rowValues: DataGridRow[] = [
+        { __validationStatus: 'pending' } as unknown as DataGridRow,
+      ]
+      render(<ValidationAlert {...defaultProps} rowValues={rowValues} />)
+      expect(screen.getByText('No validation errors')).toBeInTheDocument()
+    })
+
+    it('counts both confirmed and pending errors in the total badge', () => {
+      const rowValues = [
+        makeInvalidRow({ platform: ['cannot be empty'] }),
+        makePendingRow({ disease: ['invalid value'] }),
+      ]
+      render(<ValidationAlert {...defaultProps} rowValues={rowValues} />)
+      expect(screen.getByText('2')).toBeInTheDocument()
+    })
   })
 })
