@@ -51,11 +51,7 @@ function ErrorText({
   message: string
   rowIndex: number
 }) {
-  const rowSuffix = (
-    <Box component="span" sx={{ color: 'text.secondary', ml: 0.5 }}>
-      (Row {rowIndex + 1})
-    </Box>
-  )
+  const rowSuffix = ` (Row ${rowIndex + 1})`
   if (columnName === '_row') {
     return (
       <>
@@ -69,9 +65,7 @@ function ErrorText({
       <Box component="span" sx={{ fontWeight: 'bold' }}>
         {columnName}
       </Box>
-      <Box component="span" sx={{ mx: 0.5 }}>
-        —
-      </Box>
+      {' — '}
       {message}
       {rowSuffix}
     </>
