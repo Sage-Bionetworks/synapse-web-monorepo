@@ -37,6 +37,15 @@ describe('ValidationAlert', () => {
     expect(screen.getByText('No validation errors')).toBeInTheDocument()
   })
 
+  it('shows syncing message when isSyncing is true', () => {
+    const rowValues = [makeInvalidRow({ platform: ['cannot be empty'] })]
+    render(
+      <ValidationAlert {...defaultProps} rowValues={rowValues} isSyncing />,
+    )
+    expect(screen.getByText('Syncing validation errors…')).toBeInTheDocument()
+    expect(screen.queryByText('Validation errors')).not.toBeInTheDocument()
+  })
+
   it('shows the correct error count badge', () => {
     const rowValues = [makeInvalidRow({ platform: ['cannot be empty'] })]
     render(<ValidationAlert {...defaultProps} rowValues={rowValues} />)

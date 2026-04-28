@@ -1,5 +1,14 @@
 import { DataGridRow } from '../DataGridTypes'
-import { Box, Chip, Collapse, Link, Tab, Tabs, Typography } from '@mui/material'
+import {
+  Box,
+  Chip,
+  CircularProgress,
+  Collapse,
+  Link,
+  Tab,
+  Tabs,
+  Typography,
+} from '@mui/material'
 import { Fragment, useEffect, useMemo, useState } from 'react'
 
 type ValidationError = {
@@ -16,6 +25,7 @@ type ValidationAlertProps = {
   columnNames: string[]
   columnOrder: number[]
   onNavigateToCell: (rowIndex: number, colIndex: number) => void
+  isSyncing?: boolean
 }
 
 function getColDisplayIndex(
@@ -119,6 +129,7 @@ export const ValidationAlert = ({
   columnNames,
   columnOrder,
   onNavigateToCell,
+  isSyncing = false,
 }: ValidationAlertProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [groupBy, setGroupBy] = useState<GroupBy>('row')
@@ -169,6 +180,31 @@ export const ValidationAlert = ({
   }, [allErrors.length])
 
   const firstError = allErrors[0]
+
+  if (isSyncing) {
+    return (
+      <Box
+        sx={{
+          border: '1px solid',
+          borderColor: 'divider',
+          borderLeft: '4px solid',
+          borderLeftColor: 'divider',
+          borderRadius: 1,
+          mb: 1,
+          px: 2,
+          py: 1,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1,
+        }}
+      >
+        <CircularProgress size={14} />
+        <Typography variant="body2" color="text.secondary">
+          Syncing validation errors…
+        </Typography>
+      </Box>
+    )
+  }
 
   if (allErrors.length === 0) {
     return (
