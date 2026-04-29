@@ -44,7 +44,7 @@
     "@types/node": "^22.19.13",
     "@vitest/coverage-v8": "^4.1.4",
     "@vitest/ui": "^4.1.4",
-    "markdown-it": "^14.1.0",
+    "markdown-it": "^14.1.1",
     "markdown-it-testgen": "~0.1.6",
     "typescript": "6.0.3",
     "vite": "^8.0.8",
