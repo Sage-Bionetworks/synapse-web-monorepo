@@ -236,19 +236,27 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
     if (tableId) {
       // table already exists; upload csv rows directly to table
       void handleFinish()
-    } else if (parentId) {
+      return
+    }
+
+    const suggestedColumns = csvPreviewData?.suggestedColumns
+    if (!suggestedColumns) {
+      return
+    }
+
+    if (parentId) {
       // create new table: use suggested columns to seed the schema editor, then show the TABLE_NAME step
       setColumnModels(
-        (csvPreviewData?.suggestedColumns ?? []).map(cm =>
+        suggestedColumns.map(cm =>
           omitBy(cm, isUndefined),
         ) as SetOptional<SynapseTypesColumnModel, 'id'>[],
       )
       setStep(CsvPreviewDialogStep.TABLE_NAME)
-    } else {
+    } else if (uploadedFileHandleId != null) {
       // Grid mode, delegate to parent
       onConfirm?.(
-        uploadedFileHandleId!,
-        csvPreviewData!.suggestedColumns!,
+        uploadedFileHandleId,
+        suggestedColumns,
         csvTableDescriptor,
       )
     }
