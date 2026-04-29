@@ -25,8 +25,11 @@ export function getCellClassName(params: {
 
   const isSelected = selectedRowIndex === rowIndex
   const cellValidationResults = rowData.__cellValidationResults
-  const isInvalid =
-    cellValidationResults && columnId && cellValidationResults.has(columnId)
+  const validationStatus = rowData.__validationStatus
+  const hasCellError =
+    cellValidationResults != null &&
+    columnId != null &&
+    cellValidationResults.has(columnId)
 
   const classList: string[] = []
 
@@ -49,8 +52,15 @@ export function getCellClassName(params: {
     }
   }
 
-  if (isInvalid) {
-    classList.push('cell-invalid')
+  if (hasCellError) {
+    // Confirmed invalid — full red cell background
+    if (validationStatus === 'invalid') {
+      classList.push('cell-invalid')
+    }
+    // Pending revalidation — yellow cell background to signal the prior error is unconfirmed
+    if (validationStatus === 'pending') {
+      classList.push('cell-unknown')
+    }
   }
 
   // ── Cell change indicator ─────────────────────────────────────────────────
