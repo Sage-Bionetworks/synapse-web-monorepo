@@ -1,6 +1,6 @@
 import ColumnHeader from '@/components/TanStackTable/ColumnHeader'
 import { getGridSourceIdForTask } from '@/features/entity/metadata-task/utils/getGridSourceIdForTask'
-import { useGetCurationTasksByProjectInfinite } from '@/synapse-queries/curation/task/useCurationTask'
+import { useGetCurationTasksInfinite } from '@/synapse-queries/curation/task/useCurationTask'
 import { useGetEntityBundle } from '@/synapse-queries/index'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { getLinkToEntityPage } from '@/utils/functions/getSynapseWebClientLink'
@@ -84,7 +84,7 @@ export function useMetadataTaskTable(opts: UseMetadataTaskTableOptions) {
     fetchNextPage,
     isLoading: isLoadingTasks,
     isFetchingNextPage,
-  } = useGetCurationTasksByProjectInfinite(listCurationTaskRequest)
+  } = useGetCurationTasksInfinite(listCurationTaskRequest)
 
   const { data: projectBundle, isLoading: isLoadingProjectBundle } =
     useGetEntityBundle(

@@ -36,10 +36,6 @@ type DataGridProps = {
   lastSelection: SelectionWithId | null
   handleChange: (newValue: DataGridRow[], operations: Operation[]) => void
   handleSelectionChange: (opts: { selection: SelectionWithId | null }) => void
-  onSelectedRowChange?: (
-    rowIndex: number | null,
-    row: DataGridRow | null,
-  ) => void
   remoteSelections?: readonly RemoteSelection[]
 }
 
@@ -60,7 +56,6 @@ export default function DataGrid(props: DataGridProps) {
     lastSelection,
     handleChange,
     handleSelectionChange,
-    onSelectedRowChange,
     remoteSelections,
   } = props
 
@@ -212,15 +207,9 @@ export default function DataGrid(props: DataGridProps) {
   // Wrap onActiveCellChange in useCallback
   const handleActiveCellChange = useCallback(
     ({ cell }: { cell: { row: number; col: number } | null }) => {
-      if (cell) {
-        setSelectedRowIndex(cell.row)
-        onSelectedRowChange?.(cell.row, rowValues[cell.row])
-      } else {
-        setSelectedRowIndex(null)
-        onSelectedRowChange?.(null, null)
-      }
+      setSelectedRowIndex(cell ? cell.row : null)
     },
-    [onSelectedRowChange, rowValues],
+    [],
   )
 
   // Wrapper ref for the grid container

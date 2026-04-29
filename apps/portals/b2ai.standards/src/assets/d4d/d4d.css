@@ -135,10 +135,18 @@
   .long-description {
     background: #f8f9fa;
     border-left: 4px solid #007bff;
-    padding: 1rem;
-    margin: 0.5rem 0;
+    padding: 0.75rem 1rem;
+    margin: 0.25rem 0;
     border-radius: 0 6px 6px 0;
-    line-height: 1.7;
+    line-height: 1.6;
+  }
+
+  /* Compact long-description inside table cells */
+  .data-table td .long-description {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.75rem;
+    margin: 0;
+    line-height: 1.5;
   }
 
   a {
