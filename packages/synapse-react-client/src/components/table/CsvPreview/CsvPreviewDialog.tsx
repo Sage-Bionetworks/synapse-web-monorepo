@@ -105,14 +105,21 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
   >([])
   const columnSchemaFormRef = useRef<SubmitHandle>(null)
 
-  const { mutateAsync: createColumnModels, error: createColumnModelsError } =
-    useCreateColumnModels()
-  const { mutateAsync: createEntity, error: createEntityError } =
-    useCreateEntity()
+  const {
+    mutateAsync: createColumnModels,
+    error: createColumnModelsError,
+    reset: resetCreateColumnModels,
+  } = useCreateColumnModels()
+  const {
+    mutateAsync: createEntity,
+    error: createEntityError,
+    reset: resetCreateEntity,
+  } = useCreateEntity()
   const {
     mutateAsync: tableTransaction,
     error: tableTransactionError,
     isPending: isTransactionPending,
+    reset: resetTableTransaction,
   } = useTableUpdateTransaction()
 
   // Reset local state when dialog is closed
@@ -130,8 +137,11 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
         lineEnd: '\n',
         isFirstLineHeader: true,
       })
+      resetCreateColumnModels()
+      resetCreateEntity()
+      resetTableTransaction()
     }
-  }, [open])
+  }, [open, resetCreateColumnModels, resetCreateEntity, resetTableTransaction])
 
   const onFileUploaded = useCallback((fileHandleId: string) => {
     setUploadedFileHandleId(fileHandleId)
