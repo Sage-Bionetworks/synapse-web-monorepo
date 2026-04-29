@@ -45,31 +45,47 @@ enum CsvPreviewDialogStep {
   TABLE_NAME = 2,
 }
 
-export type CsvPreviewDialogProps = {
+type CsvPreviewDialogBaseProps = {
   /** Whether the dialog is open */
   open: boolean
   /** Callback when the dialog is closed */
   onClose: () => void
-  /** Callback when the user confirms the column models
-   * @param dataFileHandleId - The file handle ID of the uploaded CSV
-   * @param columnModels - The confirmed column models
-   * */
-  onConfirm?: (
-    dataFileHandleId: string,
-    columnModels: ColumnModel[],
-    csvTableDescriptor: CsvTableDescriptor,
-  ) => void
   /** Whether the confirm action is pending */
   confirmIsPending?: boolean
   /** An optional error message to display */
   errorMessage?: string
-  /** If provided, upload csv rows to existing table */
-  tableId?: string
-  /** Destination project/folder to upload to */
-  parentId?: string
   /** Invoked after all backend operations successfully complete */
   onSuccess?: () => void
 }
+
+export type CsvPreviewDialogProps = CsvPreviewDialogBaseProps &
+  (
+    | {
+        /** Callback when the user confirms the column models
+         * @param dataFileHandleId - The file handle ID of the uploaded CSV
+         * @param columnModels - The confirmed column models
+         */
+        onConfirm: (
+          dataFileHandleId: string,
+          columnModels: ColumnModel[],
+          csvTableDescriptor: CsvTableDescriptor,
+        ) => void
+        tableId?: never
+        parentId?: never
+      }
+    | {
+        /** If provided, upload csv rows to existing table */
+        tableId: string
+        parentId?: never
+        onConfirm?: never
+      }
+    | {
+        /** Destination project/folder to upload to */
+        parentId: string
+        tableId?: never
+        onConfirm?: never
+      }
+  )
 
 export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
   const {
@@ -245,20 +261,17 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
     }
 
     if (parentId) {
-      // create new table: use suggested columns to seed the schema editor, then show the TABLE_NAME step
+      // create new table; initialize schema editor with suggestions and proceed to naming.
       setColumnModels(
-        suggestedColumns.map(cm =>
-          omitBy(cm, isUndefined),
-        ) as SetOptional<SynapseTypesColumnModel, 'id'>[],
+        suggestedColumns.map(cm => omitBy(cm, isUndefined)) as SetOptional<
+          SynapseTypesColumnModel,
+          'id'
+        >[],
       )
       setStep(CsvPreviewDialogStep.TABLE_NAME)
     } else if (uploadedFileHandleId != null) {
       // Grid mode, delegate to parent
-      onConfirm?.(
-        uploadedFileHandleId,
-        suggestedColumns,
-        csvTableDescriptor,
-      )
+      onConfirm?.(uploadedFileHandleId, suggestedColumns, csvTableDescriptor)
     }
   }, [
     tableId,
