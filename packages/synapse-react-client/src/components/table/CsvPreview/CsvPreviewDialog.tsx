@@ -144,7 +144,7 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
   /**
    * If no tableId is provided, creates column models and a new table entity, then uploads the CSV to the new table.
    * If a tableId is provided, uploads the csv to the existing table.
-   * @param columnModelsParam - The schema defined by the user. Defaults to empty array fro append flow.
+   * @param columnModelsParam - The schema defined by the user. Defaults to empty array for append flow.
    */
   const handleFinish = useCallback(
     async (
@@ -221,12 +221,6 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
     },
     [handleFinish],
   )
-
-  const onCreateClicked = useCallback(() => {
-    if (columnSchemaFormRef.current != null) {
-      columnSchemaFormRef.current.submit()
-    }
-  }, [])
 
   const handlePreviewConfirm = useCallback(() => {
     if (tableId) {
