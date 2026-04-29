@@ -1,0 +1,3 @@
+import{n as e}from"./chunk-jRWAZmH_.js";import{n as t,t as n}from"./CsvTableDescriptorForm-Byh9PPbq.js";var r,i,a,o;e((()=>{t(),{fn:r}=__STORYBOOK_MODULE_TEST__,i={title:`Components/Table/CSV Table Descriptor Form`,component:n,args:{onChange:r()}},a={name:`CSV Table Descriptor Form`},a.parameters={...a.parameters,docs:{...a.parameters?.docs,source:{originalSource:`{
+  name: 'CSV Table Descriptor Form'
+}`,...a.parameters?.docs?.source}}},o=[`Demo`]}))();export{a as Demo,o as __namedExportsOrder,i as default};

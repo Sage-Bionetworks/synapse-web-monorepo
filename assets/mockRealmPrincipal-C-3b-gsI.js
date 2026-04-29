@@ -1,1 +1,0 @@
-import{n as e}from"./chunk-zsgVPwQN.js";var t,n,r,i,a,o=e((()=>{t=273948,n=273949,r=273950,i={id:`0`,name:`Mock Realm`,createdOn:new Date().toISOString(),identityProvider:[]},a={realmId:`0`,anonymousUser:String(r),publicGroup:String(n),authenticatedUsers:String(t),administrativeGroup:void 0}}));export{a,i,t as n,o,n as r,r as t};

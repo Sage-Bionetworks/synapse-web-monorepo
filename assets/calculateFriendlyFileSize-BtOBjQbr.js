@@ -1,1 +1,0 @@
-import{n as e}from"./chunk-zsgVPwQN.js";function t(e,t=2){if(e==null)return``;let r=Math.floor(Math.log(e)/Math.log(1024));return e==0&&`0 Bytes`||(e/1024**r).toFixed(t)+` `+n[r]}var n,r=e((()=>{n=[`Bytes`,`KB`,`MB`,`GB`,`TB`,`PB`,`EB`,`ZB`,`YB`]}));export{r as n,t};
