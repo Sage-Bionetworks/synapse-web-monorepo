@@ -51,7 +51,7 @@ describe('UploadCsvToGridDialog', () => {
       })
 
       act(() => {
-        mockCsvPreviewDialog.mock.lastCall![0].onConfirm(
+        mockCsvPreviewDialog.mock.lastCall![0].onConfirm!(
           fhId,
           schema,
           descriptor,
