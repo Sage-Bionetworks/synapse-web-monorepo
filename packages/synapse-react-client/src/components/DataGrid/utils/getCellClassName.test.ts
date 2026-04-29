@@ -7,9 +7,13 @@ import { Column } from '@sage-bionetworks/react-datasheet-grid'
 describe('getCellClassName', () => {
   const createMockRowData = (
     validationResults?: Map<string, string[]>,
+    validationStatus: DataGridRow['__validationStatus'] = validationResults
+      ? 'invalid'
+      : undefined,
   ): DataGridRow =>
     ({
       __cellValidationResults: validationResults,
+      __validationStatus: validationStatus,
     } as DataGridRow)
 
   const createMockColumns = (): Column[] => [
@@ -167,6 +171,42 @@ describe('getCellClassName', () => {
     })
 
     expect(result).toBe('cell-invalid')
+  })
+
+  it('adds cell-unknown class when row is pending and cell had a prior error', () => {
+    const validationResults = new Map([['col1', ['Error message']]])
+    const result = getCellClassName({
+      rowData: createMockRowData(validationResults, 'pending'),
+      rowIndex: 0,
+      columnId: 'col1',
+      selectedRowIndex: null,
+    })
+
+    expect(result).toBe('cell-unknown')
+  })
+
+  it('does not add cell-invalid or cell-unknown when row is pending but cell had no prior error', () => {
+    const validationResults = new Map([['col2', ['Error message']]])
+    const result = getCellClassName({
+      rowData: createMockRowData(validationResults, 'pending'),
+      rowIndex: 0,
+      columnId: 'col1',
+      selectedRowIndex: null,
+    })
+
+    expect(result).toBeUndefined()
+  })
+
+  it('does not add cell-invalid or cell-unknown for a valid row', () => {
+    const validationResults = new Map([['col1', ['Error message']]])
+    const result = getCellClassName({
+      rowData: createMockRowData(validationResults, 'valid'),
+      rowIndex: 0,
+      columnId: 'col1',
+      selectedRowIndex: null,
+    })
+
+    expect(result).toBeUndefined()
   })
 
   describe('lastSelection functionality', () => {
@@ -376,6 +416,7 @@ describe('getCellClassName', () => {
     it('combines cell-row-selected, cell-invalid, and cell-changed--other-user when all three apply', () => {
       const validationResults = new Map([['c0', ['Required field']]])
       const rowData: DataGridRow = {
+        __validationStatus: 'invalid',
         __cellValidationResults: validationResults,
         __cellChangeInfo: {
           c0: { category: 'other-user', tooltipText: 'Changed by Alice' },

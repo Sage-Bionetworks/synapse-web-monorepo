@@ -127,6 +127,8 @@ $remote-selection-colors: #1677ff, #52c41a, #fa8c16, #eb2f96, #13c2c2, #9254de,
   }
 
   &.cell-unknown {
+    background: $color-unknown;
+
     &.dsg-cell-sticky-left {
       @include data-cell-only {
         background: $color-unknown;
