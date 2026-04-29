@@ -14,10 +14,12 @@ interface WebSocketState {
    */
   hasCompletedInitialSync: boolean
   /**
-   * True while a clock-sync round is in progress: from when the client sends a
-   * `synchronize-clock` message until the server responds with `ResponseComplete`.
+   * Number of in-flight clock-sync rounds — incremented when the client sends a
+   * `synchronize-clock` message and decremented when the server responds with
+   * `ResponseComplete`. A counter (rather than a boolean) is used because a new
+   * round can begin before the previous one is acknowledged.
    */
-  isSyncing: boolean
+  pendingSyncRounds: number
   isConnected: boolean
   isConnecting: boolean
   connectionParams: {
@@ -65,7 +67,7 @@ function websocketReducer(
         hasCompletedInitialSync: isSameConnection
           ? state.hasCompletedInitialSync
           : false,
-        isSyncing: false,
+        pendingSyncRounds: 0,
         model: isSameConnection ? state.model : null,
         isConnected: false,
         isConnecting: false,
@@ -93,7 +95,7 @@ function websocketReducer(
         ...state,
         isConnected: false,
         isConnecting: false,
-        isSyncing: false,
+        pendingSyncRounds: 0,
       }
 
     case 'GRID_READY':
@@ -105,13 +107,13 @@ function websocketReducer(
     case 'SYNC_STARTED':
       return {
         ...state,
-        isSyncing: true,
+        pendingSyncRounds: state.pendingSyncRounds + 1,
       }
 
     case 'SYNC_ENDED':
       return {
         ...state,
-        isSyncing: false,
+        pendingSyncRounds: Math.max(0, state.pendingSyncRounds - 1),
       }
 
     case 'MODEL_CREATED':
@@ -135,7 +137,7 @@ function websocketReducer(
 export const initialWebSocketState: WebSocketState = {
   model: null,
   hasCompletedInitialSync: false,
-  isSyncing: false,
+  pendingSyncRounds: 0,
   isConnected: false,
   isConnecting: false,
   connectionParams: null,
@@ -344,7 +346,7 @@ export function useDataGridWebSocket(options?: UseDataGridWebSocketOptions) {
     isConnected: state.isConnected,
     websocketInstance: state.websocketInstance,
     hasCompletedInitialSync: state.hasCompletedInitialSync,
-    isSyncing: state.isSyncing,
+    isSyncing: state.pendingSyncRounds > 0,
     model: state.model,
     modelSnapshot,
     connect,
