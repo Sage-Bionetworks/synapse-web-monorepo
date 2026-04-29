@@ -113,6 +113,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       isConnected,
       websocketInstance,
       hasCompletedInitialSync,
+      isSyncing,
       model,
       modelSnapshot,
       connect,
@@ -464,7 +465,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                       spacing={1}
                       sx={{ justifyContent: 'flex-end' }}
                     >
-                      {!hasCompletedInitialSync && (
+                      {(!hasCompletedInitialSync || isSyncing) && (
                         <Box
                           sx={{
                             display: 'flex',
@@ -475,7 +476,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                         >
                           <CircularProgress size={16} />
                           <Typography variant="caption" color="text.secondary">
-                            Syncing…
+                            {hasCompletedInitialSync ? 'Syncing…' : 'Loading…'}
                           </Typography>
                         </Box>
                       )}
