@@ -143,7 +143,7 @@ describe('createDetailPageRouteExports — meta()', () => {
         content: 'https://nf.synapse.org/Explore/Studies/syn2343195',
       })
       expect(result).toContainEqual({
-        property: 'twitter:url',
+        name: 'twitter:url',
         content: 'https://nf.synapse.org/Explore/Studies/syn2343195',
       })
     })
@@ -467,7 +467,7 @@ describe('createStaticMeta', () => {
                 property: 'og:description',
                 content: 'An open science platform.',
               },
-              { property: 'twitter:url', content: 'https://nf.synapse.org/' },
+              { name: 'twitter:url', content: 'https://nf.synapse.org/' },
               { name: 'twitter:title', content: 'NF Data Portal' },
               {
                 name: 'twitter:description',
@@ -490,11 +490,11 @@ describe('createStaticMeta', () => {
       content: 'https://nf.synapse.org/',
     })
     expect(result).toContainEqual({
-      property: 'twitter:url',
+      name: 'twitter:url',
       content: 'https://nf.synapse.org/path/to/StaticPage',
     })
     expect(result).not.toContainEqual({
-      property: 'twitter:url',
+      name: 'twitter:url',
       content: 'https://nf.synapse.org/',
     })
 

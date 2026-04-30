@@ -1,6 +1,7 @@
 import NFHeader from '@sage-bionetworks/synapse-portal-framework/components/nf/NFHeader'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
-import type { MetaDescriptor } from 'react-router'
+import { mergeMeta } from '@sage-bionetworks/synapse-portal-framework/utils/mergeMeta'
+import type { MetaArgs, MetaDescriptor } from 'react-router'
 import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import { Goals } from 'synapse-react-client/components/Goals/Goals'
 import RssFeedCards from 'synapse-react-client/components/RssFeedCards/RssFeedCards'
@@ -17,9 +18,8 @@ import {
   studyCardConfiguration,
   studyColumnIconConfigs,
 } from '../config/synapseConfigs/studies'
-import { mergeMeta } from '@sage-bionetworks/synapse-portal-framework/utils/mergeMeta'
 
-export function meta(args): MetaDescriptor[] {
+export function meta(args: MetaArgs): MetaDescriptor[] {
   const portalDescription = import.meta.env.VITE_PORTAL_DESCRIPTION
   const portalUrl = `https://${import.meta.env.VITE_PORTAL_KEY}.synapse.org`
   return mergeMeta(args, [

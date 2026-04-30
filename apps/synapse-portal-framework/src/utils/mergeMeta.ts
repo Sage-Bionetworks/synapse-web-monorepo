@@ -1,6 +1,15 @@
-import { MetaDescriptor } from 'react-router'
+import type { MetaDescriptor } from 'react-router'
 
-// Copied from https://github.com/remix-run/react-router/discussions/12672#discussioncomment-12211998
+// Adapted from https://github.com/remix-run/react-router/discussions/12672#discussioncomment-12211998
+
+function isSimilar(a: MetaDescriptor, b: MetaDescriptor, key: string) {
+  const keysAreEqual = key in a && key in b
+  const valuesAreEqual = a[key as keyof typeof a] === b[key as keyof typeof b]
+
+  return key === 'charSet' || key === 'title'
+    ? keysAreEqual
+    : keysAreEqual && valuesAreEqual
+}
 
 /**
  * Merges meta descriptors from route matches, ensuring that the most specific descriptors take precedence while avoiding duplicates. For 'charSet' and 'title' descriptors, only the presence of the key is considered for similarity, while for others, both key and value must match.
@@ -9,25 +18,19 @@ import { MetaDescriptor } from 'react-router'
  * @param descriptors - An array of meta descriptors to merge with those from the matches.
  * @returns A merged array of meta descriptors with duplicates removed based on the defined similarity criteria.
  */
-export const mergeMeta = <TMetaArgs extends { matches: any[] }>(
+export const mergeMeta = <
+  TMetaArgs extends { matches: { meta?: MetaDescriptor[] }[] },
+>(
   args: TMetaArgs,
   descriptors: MetaDescriptor[],
 ): MetaDescriptor[] => {
   descriptors = [...descriptors]
 
-  const isSimilar = (a: MetaDescriptor, b: MetaDescriptor, key: string) => {
-    const keysAreEqual = key in a && key in b
-    const valuesAreEqual = a[key as keyof typeof a] === b[key as keyof typeof b]
-
-    return key === 'charSet' || key === 'title'
-      ? keysAreEqual
-      : keysAreEqual && valuesAreEqual
-  }
-
   for (const descriptor of args.matches
-    .filter(Boolean)
-    .flatMap(_ => _.meta)
-    .toReversed()) {
+    .filter(match => match && match.meta)
+    .flatMap(_ => _.meta!)
+    .slice()
+    .reverse()) {
     const foundSimilar = descriptors.some(
       _ =>
         isSimilar(_, descriptor, 'charSet') ||

@@ -138,7 +138,7 @@ export function createDetailPageRouteExports<
       })
 
       descriptors.push({ property: 'og:url', content: pageUrl })
-      descriptors.push({ property: 'twitter:url', content: pageUrl })
+      descriptors.push({ name: 'twitter:url', content: pageUrl })
     }
 
     if (loaderData?.title) {
@@ -211,7 +211,7 @@ export function createStaticMeta(
       })
 
       descriptors.push({ property: 'og:url', content: pageUrl })
-      descriptors.push({ property: 'twitter:url', content: pageUrl })
+      descriptors.push({ name: 'twitter:url', content: pageUrl })
     }
 
     if (description) {
