@@ -200,7 +200,12 @@ export default function useLogin(opts: UseLoginOptions): UseLoginReturn {
       mutationFn: SynapseClient.loginWith2fa,
       onError: e => {
         setErrorMessage(e.reason)
-        if (
+        if (e.reason.includes('The provided code is invalid')) {
+          // The most common cause of an invalid TOTP code is clock skew between the user's device and the server.
+          setErrorMessage(
+            'The provided code is invalid. Please ensure automatic date and time is enabled on your device and try again.',
+          )
+        } else if (
           // The twoFaToken wasn't transmitted correctly
           e.reason.includes('The provided twoFaToken is invalid') ||
           // The user waited too long to enter the code.

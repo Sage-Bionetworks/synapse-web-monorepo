@@ -352,6 +352,55 @@ describe('useLogin tests', () => {
     })
   })
 
+  it('Handles 2fa error where the provided code is invalid, suggesting time sync', async () => {
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
+
+    const timedOneTimePassword = '123456'
+    const error = new SynapseClientError(
+      400,
+      'The provided code is invalid.',
+      expect.getState().currentTestName!,
+    )
+    mockLogInWith2FA.mockRejectedValue(error)
+
+    const { result } = renderUseLogin(
+      onSuccessfulLoginFn,
+      twoFactorAuthErrorResponse,
+    )
+
+    await waitFor(() => {
+      expect(result.current.step).toBe('VERIFICATION_CODE')
+    })
+
+    act(() => {
+      result.current.submitOneTimePassword(timedOneTimePassword, 'TOTP')
+    })
+
+    await waitFor(() => {
+      expect(mockLogInWith2FA).toHaveBeenCalledWith({
+        userId: twoFactorAuthErrorResponse.userId,
+        twoFaToken: twoFactorAuthErrorResponse.twoFaToken,
+        otpCode: timedOneTimePassword,
+        otpType: 'TOTP',
+      })
+      expect(result.current.errorMessage).toContain(
+        'The provided code is invalid.',
+      )
+      expect(result.current.errorMessage).toContain(
+        'Please ensure automatic date and time is enabled on your device and try again.',
+      )
+      expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
+      expect(
+        localStorage.getItem(AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY),
+      ).toBe(null)
+      expect(result.current.step).toBe('VERIFICATION_CODE')
+    })
+
+    consoleErrorSpy.mockRestore()
+  })
+
   it('Handles 2fa error where the token is invalid/expired', async () => {
     const consoleErrorSpy = vi
       .spyOn(console, 'error')
