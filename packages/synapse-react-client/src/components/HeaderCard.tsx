@@ -2,10 +2,11 @@ import { CardLabel } from '@/components/row_renderers/utils/CardFooter'
 import { Box, SxProps } from '@mui/material'
 import { SmartLink } from './SmartLink/SmartLink'
 import { ForwardedRef, forwardRef } from 'react'
+import { FileHandleLink } from './widgets/FileHandleLink'
+import { GenericCardProps } from '@/components/GenericCard/GenericCard'
 import { CardFooter } from './row_renderers/utils'
 import { DescriptionConfig } from './CardContainerLogic'
 import { CollapsibleDescription } from './GenericCard/CollapsibleDescription'
-import { GenericCardProps } from '@/components/GenericCard/GenericCard'
 import HeaderCardV2 from './HeaderCard/HeaderCardV2'
 import SustainabilityScorecard, {
   SustainabilityScorecardProps,
@@ -26,12 +27,17 @@ export type HeaderCardProps = {
   charCountCutoff?: number
   href?: string
   target?: string
+  titleAsFileHandleLinkConfiguration?: GenericCardProps['titleAsFileHandleLinkConfiguration']
+  titleAreaRightContent?: React.ReactNode
+  descriptionSubTitle?: string
   icon: React.ReactNode
   headerCardVariant?: HeaderCardVariant
   cardTopContent?: React.ReactNode
   ctaLinkConfig?: GenericCardProps['ctaLinkConfig']
   cardTopButtons?: React.ReactNode
   sustainabilityScorecard?: SustainabilityScorecardProps
+  renderedIconList?: React.ReactNode
+  cardTypeAdornment?: React.ReactNode
   doiUri?: string
   sx?: SxProps
 }
@@ -51,10 +57,15 @@ const HeaderCardClassic = forwardRef(function HeaderCardClassic(
     descriptionConfig,
     href,
     target,
+    titleAsFileHandleLinkConfiguration,
+    titleAreaRightContent,
+    descriptionSubTitle = '',
     icon,
     cardTopContent,
     cardTopButtons,
     sustainabilityScorecard,
+    renderedIconList,
+    cardTypeAdornment,
     sx,
   } = props
 
@@ -103,48 +114,94 @@ const HeaderCardClassic = forwardRef(function HeaderCardClassic(
                   }),
                 }}
               >
-                <div className="SRC-cardContent" style={{ marginLeft: '15px' }}>
-                  <div className="SRC-type">{type}</div>
-                  <div>
-                    <h3 className="SRC-boldText" style={{ margin: 'none' }}>
-                      {href ? (
-                        <SmartLink
-                          href={href ?? ''}
-                          className="highlight-link"
-                          target={target}
-                        >
-                          {title}
-                        </SmartLink>
-                      ) : (
-                        <span>{title}</span>
-                      )}
-                    </h3>
-                  </div>
-                  {subTitle && <div className="SRC-author"> {subTitle} </div>}
-                  <CollapsibleDescription
-                    description={description}
-                    descriptionSubTitle=""
-                    descriptionConfig={descriptionConfiguration}
-                  />
-                  {sustainabilityScorecard && (
-                    <SustainabilityScorecard
-                      metricsConfig={sustainabilityScorecard.metricsConfig}
-                      searchParamKey={sustainabilityScorecard.searchParamKey}
-                      filterColumn={sustainabilityScorecard.filterColumn}
-                      scoreDescriptorColumnName={
-                        sustainabilityScorecard.scoreDescriptorColumnName
-                      }
-                      queryRequest={sustainabilityScorecard.queryRequest}
-                      sustainabilityReportLink={
-                        sustainabilityScorecard.sustainabilityReportLink
-                      }
+                <Box
+                  sx={{ display: 'flex', flexDirection: 'row', width: '100%' }}
+                >
+                  <div
+                    className="SRC-cardContent"
+                    style={{ marginLeft: '15px', flex: 1, minWidth: 0 }}
+                  >
+                    <Box
                       sx={{
-                        background: 'rgba(0, 0, 0, 0.10)',
-                        marginTop: '30px',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: '10px',
+                        color: 'var(--synapse-gray-300)',
+                        '& .MuiChip-root, & .MuiChip-label': {
+                          color: 'var(--synapse-gray-300)',
+                        },
                       }}
+                    >
+                      <div className="SRC-type">{type}</div>
+                      {cardTypeAdornment}
+                    </Box>
+                    <Box
+                      sx={{
+                        '& .icon-list.themed path, & .icon-list.themed circle':
+                          {
+                            fill: 'white',
+                          },
+                      }}
+                    >
+                      {renderedIconList}
+                    </Box>
+                    <div>
+                      <h3 className="SRC-boldText" style={{ margin: 'none' }}>
+                        {titleAsFileHandleLinkConfiguration ? (
+                          <FileHandleLink
+                            fileHandleAssociation={
+                              titleAsFileHandleLinkConfiguration.fileHandleAssociation
+                            }
+                            showDownloadIcon={
+                              titleAsFileHandleLinkConfiguration.showDownloadIcon
+                            }
+                            displayValue={title}
+                          />
+                        ) : href ? (
+                          <SmartLink
+                            href={href ?? ''}
+                            className="highlight-link"
+                            target={target}
+                          >
+                            {title}
+                          </SmartLink>
+                        ) : (
+                          <span>{title}</span>
+                        )}
+                      </h3>
+                    </div>
+                    {subTitle && <div className="SRC-author"> {subTitle} </div>}
+                    <CollapsibleDescription
+                      description={description}
+                      descriptionSubTitle={descriptionSubTitle}
+                      descriptionConfig={descriptionConfiguration}
                     />
+                    {sustainabilityScorecard && (
+                      <SustainabilityScorecard
+                        metricsConfig={sustainabilityScorecard.metricsConfig}
+                        searchParamKey={sustainabilityScorecard.searchParamKey}
+                        filterColumn={sustainabilityScorecard.filterColumn}
+                        scoreDescriptorColumnName={
+                          sustainabilityScorecard.scoreDescriptorColumnName
+                        }
+                        queryRequest={sustainabilityScorecard.queryRequest}
+                        sustainabilityReportLink={
+                          sustainabilityScorecard.sustainabilityReportLink
+                        }
+                        sx={{
+                          background: 'rgba(0, 0, 0, 0.10)',
+                          marginTop: '30px',
+                        }}
+                      />
+                    )}
+                  </div>
+                  {titleAreaRightContent && (
+                    <div className="SRC-cardTitleAreaDetails">
+                      {titleAreaRightContent}
+                    </div>
                   )}
-                </div>
+                </Box>
                 {(values || cardTopContent) && (
                   <>
                     <div
