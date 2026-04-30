@@ -127,10 +127,6 @@ const HeaderCardClassic = forwardRef(function HeaderCardClassic(
                         flexDirection: 'row',
                         alignItems: 'center',
                         gap: '10px',
-                        color: 'var(--synapse-gray-300)',
-                        '& .MuiChip-root, & .MuiChip-label': {
-                          color: 'var(--synapse-gray-300)',
-                        },
                       }}
                     >
                       <div className="SRC-type">{type}</div>
