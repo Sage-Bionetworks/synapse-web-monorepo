@@ -389,7 +389,7 @@ describe('useLogin tests', () => {
         'The provided code is invalid.',
       )
       expect(result.current.errorMessage).toContain(
-        'Please ensure automatic date and time is enabled on your device and try again.',
+        'Please ensure automatic date and time is enabled in your device settings and try again.',
       )
       expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
       expect(

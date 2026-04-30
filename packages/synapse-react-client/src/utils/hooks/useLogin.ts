@@ -203,7 +203,7 @@ export default function useLogin(opts: UseLoginOptions): UseLoginReturn {
         if (e.reason.includes('The provided code is invalid')) {
           // The most common cause of an invalid TOTP code is clock skew between the user's device and the server.
           setErrorMessage(
-            `${e.reason} Please ensure automatic date and time is enabled on your device and try again.`,
+            `${e.reason} Please ensure automatic date and time is enabled in your device settings and try again.`,
           )
         } else if (
           // The twoFaToken wasn't transmitted correctly
