@@ -169,7 +169,15 @@ describe('mergeMeta', () => {
 
   it('filters out null/falsy matches', () => {
     const result = mergeMeta(
-      { matches: [null, undefined, { meta: [{ title: 'From Match' }] }] },
+      {
+        matches: [
+          null as any,
+          undefined as any,
+          { meta: null as any },
+          { meta: undefined },
+          { meta: [{ title: 'From Match' }] },
+        ],
+      },
       [],
     )
     expect(result).toEqual([{ title: 'From Match' }])
