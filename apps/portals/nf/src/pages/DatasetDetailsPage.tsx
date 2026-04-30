@@ -21,6 +21,7 @@ import {
   datasetCardConfiguration,
   datasetsRgbIndex,
 } from '@/config/synapseConfigs/datasets'
+import { portalMetadata } from '@/config/portalMetadata'
 
 export { metadataConfig }
 
@@ -30,9 +31,8 @@ interface DatasetLoaderData extends BaseDetailPageLoaderData {
 
 const _routeExports = createDetailPageRouteExports<DatasetLoaderData>(
   metadataConfig,
+  portalMetadata,
   {
-    portalName: import.meta.env.VITE_PORTAL_NAME,
-    portalKey: import.meta.env.VITE_PORTAL_KEY,
     extendLoader: async (_base, params) => ({
       croissantJsonLd: params.id
         ? await fetchCroissantMetadata(params.id)
