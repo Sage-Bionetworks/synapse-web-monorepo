@@ -17,11 +17,12 @@ import {
   studyCardConfiguration,
   studyColumnIconConfigs,
 } from '../config/synapseConfigs/studies'
+import { mergeMeta } from '@sage-bionetworks/synapse-portal-framework/utils/mergeMeta'
 
-export function meta(): MetaDescriptor[] {
+export function meta(args): MetaDescriptor[] {
   const portalDescription = import.meta.env.VITE_PORTAL_DESCRIPTION
   const portalUrl = `https://${import.meta.env.VITE_PORTAL_KEY}.synapse.org`
-  return [
+  return mergeMeta(args, [
     { title: import.meta.env.VITE_PORTAL_NAME },
     { name: 'description', content: portalDescription },
     {
@@ -56,7 +57,7 @@ export function meta(): MetaDescriptor[] {
         alternateName: 'Neurofibromatosis Data Portal',
       },
     },
-  ]
+  ])
 }
 
 const limit = 3

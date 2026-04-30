@@ -4,7 +4,8 @@ import type {
 } from './fetchDetailPageMetadata'
 import { fetchDetailPageMetadata } from './fetchDetailPageMetadata'
 import { getPortalOrigin } from './getPortalOrigin'
-import type { MetaDescriptor } from 'react-router'
+import type { MetaArgs, MetaDescriptor } from 'react-router'
+import { mergeMeta } from './mergeMeta'
 
 /** Base loader data shape for standard detail pages. */
 export type BaseDetailPageLoaderData = DetailPageMetadata
@@ -115,45 +116,34 @@ export function createDetailPageRouteExports<
     }
   }
 
-  function meta({
-    loaderData,
-    matches,
-    location,
-  }: {
-    loaderData?: TLoaderData
-    matches: Array<{ meta: MetaDescriptor[] }>
-    location: { pathname: string }
-  }): MetaDescriptor[] {
+  function meta(args: MetaArgs<() => TLoaderData>): MetaDescriptor[] {
+    const { loaderData, location } = args
     const descriptors: MetaDescriptor[] = []
 
-    if (portalKey) {
-      const origin = getPortalOrigin(portalKey)
-      descriptors.push({
-        tagName: 'link',
-        rel: 'canonical',
-        href: new URL(location.pathname, origin).toString(),
-      })
-    }
+    const origin = getPortalOrigin(portalKey)
+    descriptors.push({
+      tagName: 'link',
+      rel: 'canonical',
+      href: new URL(location.pathname, origin).toString(),
+    })
 
-    if (!loaderData?.title) {
-      return [...matches.flatMap(match => match.meta ?? []), ...descriptors]
-    }
-
-    const pageTitle = `${loaderData.title} | ${portalName}`
     const pageUrl = portalKey
       ? new URL(location.pathname, getPortalOrigin(portalKey)).toString()
       : undefined
-
-    descriptors.push({ title: pageTitle })
-    descriptors.push({ property: 'og:title', content: pageTitle })
-    descriptors.push({ name: 'twitter:title', content: pageTitle })
 
     if (pageUrl) {
       descriptors.push({ property: 'og:url', content: pageUrl })
       descriptors.push({ property: 'twitter:url', content: pageUrl })
     }
 
-    if (loaderData.description) {
+    if (loaderData?.title) {
+      const pageTitle = `${loaderData.title} | ${portalName}`
+      descriptors.push({ title: pageTitle })
+      descriptors.push({ property: 'og:title', content: pageTitle })
+      descriptors.push({ name: 'twitter:title', content: pageTitle })
+    }
+
+    if (loaderData?.description) {
       descriptors.push({ name: 'description', content: loaderData.description })
       descriptors.push({
         property: 'og:description',
@@ -164,10 +154,10 @@ export function createDetailPageRouteExports<
         content: loaderData.description,
       })
     }
-    if (extendMeta) {
-      descriptors.push(...extendMeta(loaderData))
+    if (extendMeta && loaderData) {
+      descriptors.push(...extendMeta(loaderData as TLoaderData))
     }
-    return descriptors
+    return mergeMeta(args, descriptors)
   }
 
   return { loader, clientLoader, meta }
@@ -199,25 +189,12 @@ export function createDetailPageRouteExports<
 export function createStaticMeta(
   pageTitle: string,
   portalName: string,
-): (args: { matches: Array<{ meta: MetaDescriptor[] }> }) => MetaDescriptor[] {
-  return ({ matches }) => {
+): (args: MetaArgs) => MetaDescriptor[] {
+  return args => {
     const fullTitle = `${pageTitle} | ${portalName}`
-    const parentMeta = matches
-      .flatMap(m => m.meta ?? [])
-      .filter(
-        d =>
-          !('title' in d) &&
-          !(
-            typeof d === 'object' &&
-            d !== null &&
-            'property' in d &&
-            (d as Record<string, unknown>)['property'] === 'og:title'
-          ),
-      )
-    return [
-      ...parentMeta,
+    return mergeMeta(args, [
       { title: fullTitle },
       { property: 'og:title', content: fullTitle },
-    ]
+    ])
   }
 }
