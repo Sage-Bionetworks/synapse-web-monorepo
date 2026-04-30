@@ -101,7 +101,9 @@ export function EntityDownloadConfirmation({
       return (
         <div>
           <DownloadConfirmationUI
-            onAddToDownloadCart={() => {}}
+            onAddToDownloadCart={() => {
+            	// Only displaying UI to prompt sign-in, so no-op is OK
+            }}
             onCancel={handleClose}
           />
         </div>
