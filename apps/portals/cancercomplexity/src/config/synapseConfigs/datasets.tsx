@@ -7,6 +7,7 @@ import { datasetsSql } from '../resources'
 import { citationBoilerplateText } from './commonProps'
 import { columnIconConfigs } from './commonProps'
 import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
+import { Chip } from '@mui/material'
 
 const rgbIndex = 0
 const CUSTOM_LABEL_KEY = 'HOW TO DOWNLOAD'
@@ -26,23 +27,23 @@ export const datasetSchema: TableToGenericCardMapping = {
     value: CUSTOM_LABEL_VALUE,
     isVisible: (schema: Record<string, number>, data: string[]) => {
       return Boolean(
-        data[schema['externalLink']] || data[schema['datasetAlias']],
+        data[schema['externalLink']] || data[schema['downloadSynId']],
       )
     },
   },
   secondaryLabels: [
+    'externalLink',
     'overallDesign',
     'tumorType',
     'tissue',
     'assay',
     'species',
     'fileFormats',
-    'externalLink',
     'consortium',
   ],
   dataTypeIconNames: 'dataType',
-  // override Download List to use datasetAlias
-  downloadCartSynId: 'datasetAlias',
+  // override Download List to use downloadSynId
+  downloadCartSynId: 'downloadSynId',
   synapseEntityConfig: {
     id: {
       source: 'column',
@@ -60,6 +61,11 @@ export const datasetCardConfiguration: CardConfiguration = {
   genericCardSchema: datasetSchema,
   secondaryLabelLimit: 4,
   sharePageLinkButtonProps: sharePageLinkButtonDetailPageProps,
+  CardTypeAdornment: ({ schema, data }) => {
+    const downloadType = data[schema['downloadType']]
+    if (!downloadType) return null
+    return <Chip label={downloadType} size="small" />
+  },
   labelLinkConfig: [
     {
       isMarkdown: true,
@@ -101,18 +107,5 @@ export const datasetsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
       textMatchesMode: 'BOOLEAN',
       distance: 3,
     },
-    searchable: [
-      'datasetName',
-      'description',
-      'overallDesign',
-      'publicationTitle',
-      'tummorType',
-      'species',
-      'assay',
-      'grantName',
-      'grantNumber',
-      'datasetAlias',
-      'externalLink',
-    ],
   },
 }
