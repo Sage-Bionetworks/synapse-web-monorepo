@@ -1,13 +1,16 @@
-import React from 'react'
-import { ReactComponent as AnimalModels } from '@/components/assets/animalmodels.svg'
-import { ReactComponent as Antibodies } from '@/components/assets/antibodies.svg'
-import { ReactComponent as Biobanks } from '@/components/assets/biobanks.svg'
-import { ReactComponent as CellLines } from '@/components/assets/cell-lines.svg'
-import { ReactComponent as PlasmidsReagents } from '@/components/assets/plasmids-reagents.svg'
+import animalModelsUrl from '@/components/assets/animalmodels.svg?url'
+import antibodiesUrl from '@/components/assets/antibodies.svg?url'
+import biobanksUrl from '@/components/assets/biobanks.svg?url'
+import cellLinesUrl from '@/components/assets/cell-lines.svg?url'
+import plasmidsReagentsUrl from '@/components/assets/plasmids-reagents.svg?url'
+import advancedCellularModelsUrl from '@/components/assets/advanced-cellular-models.svg?url'
+import clinicalAssessmentToolsUrl from '@/components/assets/clinical-assessment-tools.svg?url'
+import computationalToolsUrl from '@/components/assets/computational-tools.svg?url'
+import patientDerivedModelsUrl from '@/components/assets/patient-derived-models.svg?url'
 import { Box, Link, Typography } from '@mui/material'
 import { Query } from '@sage-bionetworks/synapse-types'
 import pluralize from 'pluralize'
-import { ReactElement } from 'react'
+import { ReactElement, ReactNode } from 'react'
 import { FeaturedToolsList } from 'synapse-react-client/components/FeaturedToolsList/index'
 import { SEARCH_TERM } from 'synapse-react-client/utils/functions/SqlFunctions'
 import { generateCompressedQueryURL } from 'synapse-react-client/utils/functions/deepLinkingUtils'
@@ -19,17 +22,115 @@ import PopularSearches from '../PopularSearches'
 import Search from '../Search'
 import { useNavigate } from 'react-router'
 
+const CARD_HEIGHT = `${114}px`
+
+// For Figma SVGs that already have the blue tint baked in — no overlay needed.
+const ImgCard = ({
+  src,
+  objectPosition = 'center',
+}: {
+  src: string
+  objectPosition?: string
+}) => (
+  <Box sx={{ width: '100%', height: CARD_HEIGHT, overflow: 'hidden' }}>
+    <Box
+      component="img"
+      src={src}
+      alt=""
+      sx={{
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+        objectPosition,
+        display: 'block',
+      }}
+    />
+  </Box>
+)
+
+const BlueOverlayImg = ({
+  src,
+  objectPosition = 'center',
+}: {
+  src: string
+  objectPosition?: string
+}) => (
+  <Box
+    sx={{
+      width: '100%',
+      height: CARD_HEIGHT,
+      backgroundColor: 'primary.main',
+      overflow: 'hidden',
+    }}
+  >
+    <Box
+      component="img"
+      src={src}
+      alt=""
+      sx={{
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+        objectPosition,
+        mixBlendMode: 'multiply',
+        display: 'block',
+      }}
+    />
+  </Box>
+)
+
 type Category = {
   resourceName: string
   image: ReactElement
 }
 
 const categories: Category[] = [
-  { resourceName: 'Animal Model', image: <AnimalModels /> },
-  { resourceName: 'Antibody', image: <Antibodies /> },
-  { resourceName: 'Genetic Reagent', image: <PlasmidsReagents /> },
-  { resourceName: 'Cell Line', image: <CellLines /> },
-  { resourceName: 'Biobank', image: <Biobanks /> },
+  {
+    resourceName: 'Animal Model',
+    image: <ImgCard src={animalModelsUrl} />,
+  },
+  {
+    resourceName: 'Antibody',
+    image: <ImgCard src={antibodiesUrl} />,
+  },
+  {
+    resourceName: 'Genetic Reagent',
+    image: <ImgCard src={plasmidsReagentsUrl} />,
+  },
+  {
+    resourceName: 'Cell Line',
+    image: <ImgCard src={cellLinesUrl} />,
+  },
+  {
+    resourceName: 'Biobank',
+    image: <ImgCard src={biobanksUrl} />,
+  },
+  {
+    resourceName: 'Patient-Derived Model',
+    image: (
+      <BlueOverlayImg
+        src={patientDerivedModelsUrl}
+        objectPosition="top center"
+      />
+    ),
+  },
+  {
+    resourceName: 'Organoid Protocol',
+    image: <BlueOverlayImg src={advancedCellularModelsUrl} />,
+  },
+  {
+    resourceName: 'Computational Tool',
+    image: <BlueOverlayImg src={computationalToolsUrl} />,
+  },
+  {
+    resourceName: 'Clinical Assessment Tool',
+    image: (
+      <BlueOverlayImg
+        src={clinicalAssessmentToolsUrl}
+        objectPosition="top center"
+      />
+    ),
+  },
 ]
 
 // Defer window access to call time so this module can be imported in Node.js (SSR/pre-render)
@@ -88,7 +189,7 @@ export type NFBrowseToolsPageProps = {
   toolsSql: string
 }
 
-const NFBrowseToolsPage = (props: NFBrowseToolsPageProps): React.ReactNode => {
+const NFBrowseToolsPage = (props: NFBrowseToolsPageProps): ReactNode => {
   const { popularSearchesSql, toolsSql } = props
   const navigate = useNavigate()
   const gotoExploreTools = () => {
@@ -167,13 +268,14 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps): React.ReactNode => {
             return (
               <button
                 key={category.resourceName}
+                aria-label={pluralize(category.resourceName)}
                 onClick={() => {
                   void gotoExploreToolsWithSelectedResource(
                     category.resourceName,
                   )
                 }}
               >
-                <Box sx={{ position: 'relative' }}>
+                <Box sx={{ position: 'relative', width: '100%' }}>
                   {category.image}
                   <Typography variant="headline3">
                     {pluralize(category.resourceName)}
