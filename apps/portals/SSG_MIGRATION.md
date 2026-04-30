@@ -194,7 +194,14 @@ export default {
         ])
       }
 
-      return [...getStaticPaths(), ...dynamicRoutes]
+      // Exclude legacy /DetailsPage redirect routes from prerendering.
+      // Prerendering them creates S3 directory structures that cause S3 to
+      // drop the query string on redirect, breaking the client-side redirect logic.
+      const staticPaths = getStaticPaths().filter(
+        p => !p.endsWith('/DetailsPage'),
+      )
+
+      return [...staticPaths, ...dynamicRoutes]
     },
     unstable_concurrency: 4,
   },
@@ -266,21 +273,51 @@ This replaces the `index.html` template's `<head>` and `<body>` content. It is
 the HTML shell rendered for every pre-rendered route.
 
 ```tsx
+import { mergeMeta } from '@sage-bionetworks/synapse-portal-framework/utils/mergeMeta'
 import type { MetaDescriptor } from 'react-router'
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
 
 /**
- * Default meta tags inherited by all routes that don't export their own meta().
+ * Default meta tags for the root route. All meta tags are declared here
+ * (including OG/Twitter tags) so that child routes can inherit and override
+ * them via mergeMeta.
  */
-export function meta(): MetaDescriptor[] {
+export function meta(args): MetaDescriptor[] {
   const portalName = import.meta.env.VITE_PORTAL_NAME
   const portalDescription = import.meta.env.VITE_PORTAL_DESCRIPTION
-  return [
+  const portalKey = import.meta.env.VITE_PORTAL_KEY ?? ''
+  const baseUrl = `https://${portalKey}.synapse.org`
+
+  const descriptors: MetaDescriptor[] = [
+    { charSet: 'utf-8' },
+    { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+    { name: 'theme-color', content: '#000000' },
     { title: portalName },
-    ...(portalDescription
-      ? [{ name: 'description', content: portalDescription }]
-      : []),
+    { property: 'og:url', content: `${baseUrl}/` },
+    { property: 'twitter:url', content: `${baseUrl}/` },
+    { property: 'og:title', content: portalName },
+    { property: 'twitter:title', content: portalName },
+    { property: 'og:type', content: 'website' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    {
+      name: 'image',
+      property: 'og:image',
+      content: `${baseUrl}/socialmedia.png`,
+    },
+    { name: 'twitter:domain', content: 'synapse.org' },
+    { name: 'twitter:image', content: `${baseUrl}/socialmedia.png` },
   ]
+
+  if (portalDescription) {
+    descriptors.push({ name: 'description', content: portalDescription })
+    descriptors.push({ property: 'og:description', content: portalDescription })
+    descriptors.push({
+      name: 'twitter:description',
+      content: portalDescription,
+    })
+  }
+
+  return mergeMeta(args, descriptors)
 }
 
 export function links() {
@@ -292,49 +329,17 @@ export function links() {
         'sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u',
       crossOrigin: 'anonymous',
     },
+    {
+      rel: 'shortcut icon',
+      href: '/favicon.svg',
+    },
   ]
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const portalKey = import.meta.env.VITE_PORTAL_KEY ?? ''
-  const portalName = import.meta.env.VITE_PORTAL_NAME ?? ''
-  const portalDescription = import.meta.env.VITE_PORTAL_DESCRIPTION ?? ''
-  const baseUrl = `https://${portalKey}.synapse.org`
-
   return (
     <html lang="en">
       <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#000000" />
-
-        {/* Facebook / Open Graph */}
-        <meta property="og:url" content={`${baseUrl}/`} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={portalName} />
-        <meta property="og:description" content={portalDescription} />
-        <meta
-          name="image"
-          property="og:image"
-          content={`${baseUrl}/socialmedia.png`}
-        />
-
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta property="twitter:domain" content="synapse.org" />
-        <meta property="twitter:url" content={`${baseUrl}/`} />
-        <meta name="twitter:title" content={portalName} />
-        <meta name="twitter:description" content={portalDescription} />
-        <meta name="twitter:image" content={`${baseUrl}/socialmedia.png`} />
-
-        {/*
-          Note: <meta name="description"> is injected by route-level meta() exports
-          via <Meta /> below. Do NOT hard-code it here to avoid duplicate tags.
-        */}
-
-        <link rel="shortcut icon" href="/favicon.svg" />
-
-        {/* React Router injects route-level <title>, <meta>, and <link> elements here */}
         <Meta />
         <Links />
       </head>
@@ -363,10 +368,11 @@ export default function Root() {
 }
 ```
 
-This moves the `<head>` metadata, GTM snippet, and other boilerplate out of
-`index.html` and into a React component that React Router controls. The
-`<Meta />` and `<Links />` components inject route-level meta tags and
-stylesheets.
+All meta tags (including OG/Twitter) are declared in `meta()` rather than
+hard-coded in `Layout` JSX. `mergeMeta` merges parent route meta with the
+route-specific descriptors, preventing duplicate tags. `Layout` is simplified
+to only `<Meta />` and `<Links />` in `<head>` — React Router injects the
+merged meta descriptors there at render time.
 
 ---
 
@@ -907,9 +913,10 @@ the `'script:ld+json'` key:
 
 ```tsx
 import type { MetaDescriptor } from 'react-router'
+import { mergeMeta } from '@sage-bionetworks/synapse-portal-framework/utils/mergeMeta'
 
-export function meta(): MetaDescriptor[] {
-  return [
+export function meta(args): MetaDescriptor[] {
+  return mergeMeta(args, [
     { title: import.meta.env.VITE_PORTAL_NAME },
     { name: 'description', content: import.meta.env.VITE_PORTAL_DESCRIPTION },
     {
@@ -919,7 +926,7 @@ export function meta(): MetaDescriptor[] {
         // ... structured data specific to this portal
       },
     },
-  ]
+  ])
 }
 ```
 
