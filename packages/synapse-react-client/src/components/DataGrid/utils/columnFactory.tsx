@@ -1,6 +1,7 @@
 import { dateTimeColumn } from '@/components/DataGrid/columns/DateTimeColumn'
 import { EnumeratedValue } from '@/utils/jsonschema/getEnumeratedValues'
 import { FlatTypeInfo } from '@/utils/jsonschema/getType'
+import { SchemaPropertyInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import {
   CellComponent,
   CellProps,
@@ -19,6 +20,7 @@ import { ColumnHeaderWithTooltip } from '../components/ColumnHeaderWithTooltip'
 import { Tooltip } from '@mui/material'
 import { SmartToyTwoTone } from '@mui/icons-material'
 import type { DataGridRow } from '../DataGridTypes'
+import { wrapPasteValueWithSchemaCoercion } from './schemaAwarePasteValue'
 
 /**
  * Wraps a column cell component to overlay change-attribution indicators:
@@ -88,6 +90,13 @@ type ColumnConfig = {
   showPinIcon?: boolean
   isPinned?: boolean
   onTogglePin?: () => void
+  /**
+   * Optional column-level schema info. When provided, paste behavior coerces
+   * empty pasted cells to the schema-correct blank (undefined for optional
+   * columns, null for required columns). Omit to preserve the column impl's
+   * default paste behavior.
+   */
+  schemaPropertyInfo?: SchemaPropertyInfo
 }
 
 function getHeaderClassName(isRequired: boolean): string {
@@ -145,6 +154,11 @@ function createBaseColumn(config: ColumnConfig, columnImpl: any) {
     shrink: 0,
     disabled: config.disabled,
     deleteValue: createDeleteValue(config.columnName, config.isRequired),
+    pasteValue: wrapPasteValueWithSchemaCoercion(
+      keyed.pasteValue,
+      config.columnName,
+      config.schemaPropertyInfo,
+    ),
     stickyLeft: config.isPinned,
   }
 }

@@ -359,7 +359,10 @@ export function autocompleteMultipleEnumColumn({
         .map(item => parseFreeTextGivenJsonSchemaType(item, colType))
         .filter(item => item !== null && item !== undefined)
 
-      return parsedValues.length > 0 ? parsedValues : []
+      // Mirror handleChange: when no values remain, use clearValue so paste
+      // and the X-clear button converge on the same in-model representation
+      // (null for required, undefined for optional) instead of [].
+      return parsedValues.length > 0 ? parsedValues : clearValue
     },
     disableKeys: true,
     keepFocus: true,

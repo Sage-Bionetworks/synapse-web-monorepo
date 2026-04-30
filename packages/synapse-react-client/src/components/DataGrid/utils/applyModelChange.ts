@@ -6,6 +6,7 @@ import {
 import { SchemaPropertiesMap } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import { s } from 'json-joy/lib/json-crdt-patch'
 import isEqual from 'lodash-es/isEqual'
+import { coercePastedCellValue } from './schemaAwarePasteValue'
 
 /**
  * Represents a change operation on the GridModel.
@@ -79,9 +80,17 @@ export function applyModelChange(
         if (key.startsWith('_')) return // Skip internal properties like _rowId
         const colIndex = columnNames.indexOf(key)
         if (colIndex !== -1) {
+          // Coerce empty values (null/undefined/"") to the schema-correct blank
+          // so any path that reaches the model — paste, programmatic edits,
+          // etc. — produces a value the validator can describe with its
+          // standard "<value> is not a valid …" message format.
+          const coercedValue = coercePastedCellValue(
+            value,
+            schemaPropertyInfo[key],
+          )
           // Only write cells whose value actually changed to avoid stamping
           // the local replica's SID on unmodified cells.
-          if (isEqual(currentRowData?.[colIndex], value)) return
+          if (isEqual(currentRowData?.[colIndex], coercedValue)) return
           // Get the CRDT array of cell values for this row
           const rowVec = model.api.vec([
             'rows',
@@ -89,7 +98,7 @@ export function applyModelChange(
             'data',
           ])
           // Update the specific column with the new value
-          rowVec?.set([[colIndex, s.con(value)]])
+          rowVec?.set([[colIndex, s.con(coercedValue)]])
         }
       })
       break

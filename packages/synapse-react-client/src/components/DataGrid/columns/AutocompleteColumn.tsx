@@ -67,6 +67,21 @@ export function castCellValueToString(toCast: any): string {
   return String(toCast)
 }
 
+// Free-text typed/pasted into the cell parses to "" for empty input. Committing
+// "" leaves the cell as an empty string, which fails enum validation with a
+// terse "is not a valid enum value" message. Substitute the column's clearValue
+// (null for required, undefined for optional) so the commit path matches the
+// X-button clear path and the validator surfaces the substantive message.
+function commitParsedValue(
+  parsed: unknown,
+  clearValue: undefined | null,
+): unknown {
+  if (parsed === null || parsed === undefined || parsed === '') {
+    return clearValue
+  }
+  return parsed
+}
+
 export function AutocompleteCell({
   rowData,
   setRowData,
@@ -106,8 +121,12 @@ export function AutocompleteCell({
     onDeactivate: () => {
       if (localInputState !== rowDataAsString) {
         // Commit any free-typed text that hasn't been saved yet
+        const parsed = parseFreeTextGivenJsonSchemaType(
+          localInputState,
+          colType,
+        )
         setRowDataRef.current(
-          parseFreeTextGivenJsonSchemaType(localInputState, colType),
+          commitParsedValue(parsed, clearValue) as AutocompleteOption,
         )
       }
     },
@@ -170,8 +189,12 @@ export function AutocompleteCell({
         setRowDataRef.current(clearValue)
       } else if (reason === 'createOption') {
         // The user typed an option that wasn't a defined enum — cast to correct type
+        const parsed = parseFreeTextGivenJsonSchemaType(
+          newVal as string,
+          colType,
+        )
         setRowDataRef.current(
-          parseFreeTextGivenJsonSchemaType(newVal as string, colType),
+          commitParsedValue(parsed, clearValue) as AutocompleteOption,
         )
       } else {
         setRowDataRef.current(newVal as AutocompleteOption)
