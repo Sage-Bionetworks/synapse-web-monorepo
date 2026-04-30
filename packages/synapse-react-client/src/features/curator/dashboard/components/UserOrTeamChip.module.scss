@@ -1,0 +1,9 @@
+.chip:global(.MuiChip-root) {
+  font-weight: 600;
+  & :global(.MuiAvatar-root) {
+    margin-left: 0.5em;
+  }
+  & :global(.MuiChip-label) {
+    padding-left: 0.75em;
+  }
+}

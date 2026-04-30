@@ -1,8 +1,8 @@
-import { useGetUserGroupHeader } from '@/synapse-queries'
 import { Skeleton } from '@mui/material'
 import { UserGroupHeader } from '@sage-bionetworks/synapse-types'
 import TeamBadge from '../TeamBadge'
 import { UserBadge } from '../UserCard/UserBadge'
+import { useUserOrTeam } from './useUserOrTeam'
 
 export type UserOrTeamBadgeProps = {
   /* The principal ID of the user or team. Required if userGroupHeader is undefined. */
@@ -16,8 +16,8 @@ export type UserOrTeamBadgeProps = {
 }
 
 export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
-  let principalId = props.principalId
   const {
+    principalId,
     disableHref,
     showCardOnHover,
     showFullName,
@@ -25,20 +25,14 @@ export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
     openLinkInNewTab,
   } = props
 
-  if (principalId == null) {
-    principalId = providedUserGroupHeader?.ownerId
-  }
-
-  const { data: fetchedUserGroupHeader } = useGetUserGroupHeader(
-    (principalId ?? '').toString(),
-    {
-      enabled: !providedUserGroupHeader,
-    },
+  const { userGroupHeader } = useUserOrTeam(
+    principalId,
+    providedUserGroupHeader,
   )
 
-  const userGroupHeader = providedUserGroupHeader ?? fetchedUserGroupHeader
+  const resolvedPrincipalId = principalId ?? providedUserGroupHeader?.ownerId
 
-  if (principalId == null && providedUserGroupHeader == null) {
+  if (resolvedPrincipalId == null && providedUserGroupHeader == null) {
     console.error(
       'Expected one of principalId or userGroupHeader to be defined but both were null or undefined',
     )
@@ -48,7 +42,7 @@ export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
   } else if (userGroupHeader.isIndividual) {
     return (
       <UserBadge
-        userId={principalId!.toString()}
+        userId={resolvedPrincipalId!.toString()}
         disableLink={disableHref}
         showFullName={showFullName}
         showCardOnHover={showCardOnHover}
@@ -58,7 +52,7 @@ export default function UserOrTeamBadge(props: UserOrTeamBadgeProps) {
   } else {
     return (
       <TeamBadge
-        teamId={principalId!}
+        teamId={resolvedPrincipalId!}
         teamName={userGroupHeader.userName}
         disableHref={disableHref}
         openLinkInNewTab={openLinkInNewTab}

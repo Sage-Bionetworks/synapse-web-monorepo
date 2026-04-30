@@ -1,4 +1,7 @@
-import SynapseClient from '@/synapse-client'
+import {
+  getUseUtcTimeFromCookie,
+  isInSynapseExperimentalMode,
+} from '@/synapse-client/SynapseClient'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import { PropsWithChildren } from 'react'
 import { SynapseContextProvider, SynapseContextType } from '../../context'
@@ -60,8 +63,8 @@ export function ApplicationSessionManager(
         synapseContext={{
           accessToken: token,
           isAuthenticated: sessionContext.isAuthenticated,
-          isInExperimentalMode: SynapseClient.isInSynapseExperimentalMode(),
-          utcTime: SynapseClient.getUseUtcTimeFromCookie(),
+          isInExperimentalMode: isInSynapseExperimentalMode(),
+          utcTime: getUseUtcTimeFromCookie(),
           downloadCartPageUrl,
           appId: appId,
         }}

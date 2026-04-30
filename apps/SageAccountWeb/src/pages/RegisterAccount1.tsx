@@ -14,7 +14,6 @@ import {
 } from '@mui/material'
 import {
   AliasType,
-  FeatureFlagEnum,
   isMembershipInvtnSignedToken,
 } from '@sage-bionetworks/synapse-types'
 import { SyntheticEvent, useEffect, useMemo, useState } from 'react'
@@ -40,8 +39,10 @@ import LastLoginInfo, {
 import RegisterPageLogoutPrompt from 'synapse-react-client/components/RegisterPageLogoutPrompt/RegisterPageLogoutPrompt'
 import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
 import { generateCsrfToken } from 'synapse-react-client/utils/functions/generateCsrfToken'
-import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/featureflags/useGetFeatureFlag'
-import { hasArcusProvider } from 'synapse-react-client/utils/functions/RealmUtils'
+import {
+  hasArcusProvider,
+  hasSageBionetworksProvider,
+} from 'synapse-react-client/utils/functions/RealmUtils'
 
 export enum Pages {
   CHOOSE_REGISTRATION,
@@ -53,10 +54,10 @@ export enum Pages {
 function BackButtonForPage(props: {
   page: Pages
   setPage: (page: Pages) => void
-  isArcusApp: boolean
+  isSingleIdp: boolean
 }) {
-  const { page, setPage, isArcusApp } = props
-  if (isArcusApp) {
+  const { page, setPage, isSingleIdp } = props
+  if (isSingleIdp) {
     return <></>
   }
   switch (page) {
@@ -99,9 +100,7 @@ const RegisterAccount1 = (): React.ReactNode => {
     friendlyName: sourceAppName,
     defaultRealm,
   } = useSourceApp()
-  const showSageBionetworksIdp = useGetFeatureFlag(
-    FeatureFlagEnum.SAGE_BIONETWORKS_IDP,
-  )
+  const isSageBionetworksApp = hasSageBionetworksProvider(defaultRealm)
   const isArcusApp = hasArcusProvider(defaultRealm)
   const [page, setPage] = useState(Pages.CHOOSE_REGISTRATION)
   const [membershipInvitationEmail, setMembershipInvitationEmail] =
@@ -111,7 +110,7 @@ const RegisterAccount1 = (): React.ReactNode => {
   const { search } = useLocation()
   const queryParams = useMemo(() => new URLSearchParams(search), [search])
   const emailFromParams = queryParams.get('email')
-
+  const isSingleIdp = isArcusApp || isSageBionetworksApp
   // If we have an email param, initialize the email address with the param
   useEffect(() => {
     if (emailFromParams) {
@@ -124,11 +123,21 @@ const RegisterAccount1 = (): React.ReactNode => {
 
   // If this is the Arcus app, skip the "choose registration" page and go straight to OAuth registration
   useEffect(() => {
-    if (isArcusApp) {
+    if (isSingleIdp) {
       setPage(Pages.OAUTH_REGISTRATION)
-      setOAuthRegistrationProvider(SynapseConstants.OAUTH2_PROVIDERS.ARCUS)
+      let provider: string
+      if (isArcusApp) {
+        provider = SynapseConstants.OAUTH2_PROVIDERS.ARCUS
+      } else if (isSageBionetworksApp) {
+        provider = SynapseConstants.OAUTH2_PROVIDERS.SAGE_BIONETWORKS
+      } else {
+        // This should never happen
+        console.error('No valid identity provider found for this app')
+        provider = SynapseConstants.OAUTH2_PROVIDERS.GOOGLE
+      }
+      setOAuthRegistrationProvider(provider)
     }
-  }, [isArcusApp])
+  }, [isSingleIdp, isArcusApp, isSageBionetworksApp])
 
   // If we have a MembershipInvtnSignedToken, initialize the email address with the membership invitation invitee email.
   useEffect(() => {
@@ -255,7 +264,7 @@ const RegisterAccount1 = (): React.ReactNode => {
                 <BackButtonForPage
                   page={page}
                   setPage={setPage}
-                  isArcusApp={isArcusApp}
+                  isSingleIdp={isSingleIdp}
                 />
                 <Box
                   sx={{
@@ -298,21 +307,6 @@ const RegisterAccount1 = (): React.ReactNode => {
                         >
                           Create account with your email
                         </Button>
-                        {showSageBionetworksIdp && (
-                          <Button
-                            onClick={() => {
-                              setOAuthRegistrationProvider(
-                                SynapseConstants.OAUTH2_PROVIDERS
-                                  .SAGE_BIONETWORKS,
-                              )
-                              setPage(Pages.OAUTH_REGISTRATION)
-                            }}
-                            sx={chooseButtonSx}
-                            variant="outlined"
-                          >
-                            Create account with Sage Bionetworks (Realm)
-                          </Button>
-                        )}
                       </div>
                       {lastLoginInfo && (
                         <Box

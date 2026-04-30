@@ -84,6 +84,8 @@ export default tseslint.config(
       'no-extra-semi': 'off',
       'prefer-const': 'warn',
       'vitest/expect-expect': 'off',
+      'vitest/no-conditional-expect': 'off',
+      'vitest/no-standalone-expect': 'off',
       'no-unused-vars': 'off',
       '@typescript-eslint/restrict-template-expressions': [
         'warn',

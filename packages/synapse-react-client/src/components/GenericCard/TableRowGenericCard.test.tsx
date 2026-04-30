@@ -38,32 +38,30 @@ import TableRowGenericCard, {
   TableToGenericCardMapping,
 } from './TableRowGenericCard'
 
-vi.mock('@/components/GenericCard/PortalDOI/PortalDOI', () => ({
-  __esModule: true,
-  default: vi.fn().mockReturnValue(<div data-testid="PortalDOI" />),
-}))
+vi.mock('@/components/GenericCard/PortalDOI/PortalDOI')
 vi.mock('@/components/GenericCard/PortalDOI/PortalDOIUtils')
-vi.mock('@/components/GenericCard/CroissantButton/CroissantButton', () => ({
-  __esModule: true,
-  default: vi.fn().mockReturnValue(<div data-testid="CroissantButton" />),
-}))
-vi.mock('../widgets/FileHandleLink', () => ({
-  FileHandleLink: vi.fn().mockReturnValue(<div data-testid="FileHandleLink" />),
-}))
-vi.mock('../widgets/ImageFileHandle', () => ({
-  ImageFileHandle: vi
-    .fn()
-    .mockReturnValue(<img data-testid="ImageFileHandle" />),
-}))
-vi.mock('../EntityDownloadConfirmation', () => ({
-  EntityDownloadConfirmation: vi
-    .fn()
-    .mockReturnValue(<div data-testid="EntityDownloadConfirmation" />),
-}))
+vi.mock('@/components/GenericCard/CroissantButton/CroissantButton')
+vi.mock('../widgets/FileHandleLink')
+vi.mock('../widgets/ImageFileHandle')
+vi.mock('../EntityDownloadConfirmation')
 vi.mock('@/components/IconSvg/IconSvg', async importOriginal => ({
   ...(await importOriginal<typeof IconSvgModule>()),
-  default: vi.fn().mockReturnValue(<img data-testid="IconSvg" />),
+  default: vi.fn(),
 }))
+
+// Set default mock return values (must be after imports so JSX is available)
+vi.mocked(PortalDOI).mockReturnValue(<div data-testid="PortalDOI" />)
+vi.mocked(CroissantButton).mockReturnValue(
+  <div data-testid="CroissantButton" />,
+)
+vi.mocked(FileHandleLink).mockReturnValue(<div data-testid="FileHandleLink" />)
+vi.mocked(ImageFileHandle).mockReturnValue(
+  <img data-testid="ImageFileHandle" />,
+)
+vi.mocked(EntityDownloadConfirmation).mockReturnValue(
+  <div data-testid="EntityDownloadConfirmation" />,
+)
+vi.mocked(IconSvg).mockReturnValue(<img data-testid="IconSvg" />)
 
 const renderComponent = (
   props: TableRowGenericCardProps,
@@ -142,7 +140,7 @@ const MOCKED_SUBTITLE = 'MOCKED SUBTITLE'
 const MOCKED_DESCRIPTION = 'MOCKED DESCRIPTION'
 const MOCKED_ICON = 'dataset'
 const MOCKED_LABELONE = 'MOCKED_LABELONE'
-const MOCKED_LABELTWO = 'MOCKED_LABELONE'
+const MOCKED_LABELTWO = 'MOCKED_LABELTWO'
 const MOCKED_LINK = 'MOCKED_LINK'
 const MOCKED_ID = 'MOCKED_ID'
 const MOCKED_IMAGE_FILE_HANDLE_ID = 'MOCKED_IMAGE_FILE_HANDLE_ID'
@@ -781,6 +779,72 @@ describe('TableRowGenericCard tests', () => {
       await screen.findByTestId('CardFooter')
       expect(screen.queryByText('Label One:')).not.toBeInTheDocument()
       expect(screen.getByText('Label Two:')).toBeVisible()
+    })
+  })
+
+  describe('secondary label empty-array filtering', () => {
+    test('does not render a secondary label when the value is undefined', async () => {
+      const dataWithUndefined = [...data]
+      dataWithUndefined[schema[labelOneColumnName]] =
+        undefined as unknown as string
+
+      renderComponent(
+        {
+          ...propsForNonHeaderMode,
+          genericCardSchema: {
+            ...genericCardSchema,
+            secondaryLabels: [labelOneColumnName, 'labelTwo'],
+          },
+          data: dataWithUndefined,
+        },
+        'TableEntity',
+      )
+
+      // Wait for card to render (labelTwo is present)
+      await screen.findByText(MOCKED_LABELTWO)
+      expect(screen.queryByText(MOCKED_LABELONE)).not.toBeInTheDocument()
+    })
+
+    test('does not render a secondary label when the value is an empty JSON array ("[]")', async () => {
+      const dataWithEmptyArray = [...data]
+      dataWithEmptyArray[schema[labelOneColumnName]] = '[]'
+
+      renderComponent(
+        {
+          ...propsForNonHeaderMode,
+          genericCardSchema: {
+            ...genericCardSchema,
+            secondaryLabels: [labelOneColumnName, 'labelTwo'],
+          },
+          data: dataWithEmptyArray,
+        },
+        'TableEntity',
+      )
+
+      await screen.findByTestId('CardFooter')
+      expect(screen.queryByText('[]')).not.toBeInTheDocument()
+      expect(screen.queryByText(MOCKED_LABELONE)).not.toBeInTheDocument()
+    })
+
+    test('does not render a secondary label when the value is a JSON array containing a single empty string (\'[""]\')', async () => {
+      const dataWithEmptyStringArray = [...data]
+      dataWithEmptyStringArray[schema[labelOneColumnName]] = '[""]'
+
+      renderComponent(
+        {
+          ...propsForNonHeaderMode,
+          genericCardSchema: {
+            ...genericCardSchema,
+            secondaryLabels: [labelOneColumnName, 'labelTwo'],
+          },
+          data: dataWithEmptyStringArray,
+        },
+        'TableEntity',
+      )
+
+      await screen.findByTestId('CardFooter')
+      expect(screen.queryByText('[""]')).not.toBeInTheDocument()
+      expect(screen.queryByText(MOCKED_LABELONE)).not.toBeInTheDocument()
     })
   })
 })

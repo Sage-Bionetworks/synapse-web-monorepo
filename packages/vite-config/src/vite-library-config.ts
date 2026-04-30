@@ -44,7 +44,7 @@ export function preserveModulesBuildConfig(
         entry,
         formats: ['es'],
       },
-      rollupOptions: {
+      rolldownOptions: {
         output: {
           preserveModules: true,
           preserveModulesRoot: 'src',

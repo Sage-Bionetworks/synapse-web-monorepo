@@ -1,4 +1,7 @@
-import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import { synapseClientFetch } from '@sage-bionetworks/synapse-client/util/synapseClientFetch'
 
 /**

@@ -1,8 +1,10 @@
 import AddToDownloadListConfirmationAlert from '@/components/download_list/AddToDownloadListConfirmationAlert/AddToDownloadListConfirmationAlert'
+import DownloadConfirmationUI from '@/components/download_list/DownloadConfirmationUI'
 import {
   convertToEntityType,
   isContainerType,
 } from '@/utils/functions/EntityTypeUtils'
+import { useSynapseContext } from '@/utils'
 import {
   AddToDownloadListRequest,
   EntityType,
@@ -50,7 +52,10 @@ export function EntityDownloadConfirmation({
   handleClose,
   onIsLoadingChange,
 }: EntityDownloadConfirmationProps) {
-  const { data: entity, isLoading: isLoadingEntity } = useGetEntity(entityId)
+  const { isAuthenticated } = useSynapseContext()
+  const { data: entity, isLoading: isLoadingEntity } = useGetEntity(
+    isAuthenticated ? entityId : undefined,
+  )
   const entityType = entity?.concreteType
     ? convertToEntityType(entity.concreteType)
     : undefined
@@ -92,6 +97,18 @@ export function EntityDownloadConfirmation({
     }, [entityType, entityId, versionNumber])
 
   if (!addToDownloadListRequest) {
+    if (!isAuthenticated) {
+      return (
+        <div>
+          <DownloadConfirmationUI
+            onAddToDownloadCart={() => {
+            	// Only displaying UI to prompt sign-in, so no-op is OK
+            }}
+            onCancel={handleClose}
+          />
+        </div>
+      )
+    }
     return null
   }
 

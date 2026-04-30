@@ -1,4 +1,4 @@
-import { ORIENTATION_BANNER_KEYS } from '@/components/OrientationBanner'
+import { ORIENTATION_BANNER_KEYS } from './OrientationBannerConstants'
 
 /** The Synapse Access and Compliance team */
 export const ACT_TEAM_ID = 464532
@@ -224,3 +224,5 @@ export const SEARCH_PAGE_QUERY_PARAM = 'query'
 
 // Version label used by the backend for version that has not been snapshotted
 export const TABLE_VERSION_IN_PROGRESS = 'in progress'
+
+export const CSRF_TOKEN_STORAGE_KEY = 'oauth2_csrf_token'

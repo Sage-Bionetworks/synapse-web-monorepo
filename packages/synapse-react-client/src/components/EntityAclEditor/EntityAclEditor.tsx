@@ -9,10 +9,11 @@ import {
 import { useGetRealmPrincipals } from '@/synapse-queries/realm/useRealmPrincipals'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import {
+  consolidateResourceAccessList,
   isEntityPublic,
   resourceAccessListIsEqual,
 } from '@/utils/functions/AccessControlListUtils'
-import { getDisplayNameFromProfile } from '@/utils/functions/DisplayUtils'
+import { getPrincipalDisplayName } from '@/utils/functions/getPrincipalDisplayName'
 import { entityTypeToFriendlyName } from '@/utils/functions/EntityTypeUtils'
 import {
   getAccessTypeFromPermissionLevel,
@@ -76,8 +77,13 @@ function getSubject(entityName: string) {
 }
 
 function getBody(profile: UserProfile, entityId: string) {
-  return `${getDisplayNameFromProfile(
-    profile,
+  return `${getPrincipalDisplayName(
+    {
+      userName: profile.userName ?? '',
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+    },
+    { showFullName: true, showUsername: false },
   )} has shared an item with you on Synapse:\n${getEndpoint(
     BackendDestinationEnum.PORTAL_ENDPOINT,
   )}Synapse:${entityId}`
@@ -172,7 +178,12 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
     },
   )
 
-  const originalResourceAccess = entityBundle.benefactorAcl.resourceAccess
+  const consolidatedOriginalResourceAccess = useMemo(
+    () =>
+      consolidateResourceAccessList(entityBundle.benefactorAcl.resourceAccess),
+    [entityBundle.benefactorAcl.resourceAccess],
+  )
+
   const parentResourceAccess = useMemo(
     () => parentAcl?.resourceAccess ?? [],
     [parentAcl],
@@ -192,15 +203,21 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
     updateResourceAccessItem,
     removeResourceAccessItem,
     resetDirtyState,
-  } = useUpdateAcl({ initialResourceAccessList: originalResourceAccess })
+  } = useUpdateAcl({
+    initialResourceAccessList: consolidatedOriginalResourceAccess,
+  })
 
-  // If `originalResourceAccess` changes, reset state
+  // If `consolidatedOriginalResourceAccess` changes, reset state
   useEffect(() => {
-    if (originalResourceAccess) {
+    if (consolidatedOriginalResourceAccess) {
       resetDirtyState()
-      setResourceAccessList([...originalResourceAccess])
+      setResourceAccessList([...consolidatedOriginalResourceAccess])
     }
-  }, [originalResourceAccess, resetDirtyState, setResourceAccessList])
+  }, [
+    consolidatedOriginalResourceAccess,
+    resetDirtyState,
+    setResourceAccessList,
+  ])
 
   // If `originalIsInherited` changes, reset state
   useEffect(() => {
@@ -212,7 +229,7 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
   useEffect(() => {
     if (originalIsInherited == updatedIsInherited) {
       // The user reverted to the original state (regardless of inherited or not)
-      setResourceAccessList(originalResourceAccess)
+      setResourceAccessList(consolidatedOriginalResourceAccess)
     } else if (updatedIsInherited) {
       // The user toggled to inherited, update the resource access list to match the parent
       setResourceAccessList(parentResourceAccess)
@@ -222,7 +239,7 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
     resetDirtyState()
   }, [
     originalIsInherited,
-    originalResourceAccess,
+    consolidatedOriginalResourceAccess,
     parentResourceAccess,
     resetDirtyState,
     setResourceAccessList,
@@ -241,7 +258,7 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
   } = useNotifyNewACLUsers({
     subject: getSubject(entityBundle.entity.name || ''),
     body: getBody(ownProfile, entityId),
-    initialResourceAccessList: originalResourceAccess,
+    initialResourceAccessList: consolidatedOriginalResourceAccess,
     newResourceAccessList: updatedResourceAccessList,
   })
 
@@ -274,12 +291,12 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
     return (
       originalIsInherited != updatedIsInherited ||
       !resourceAccessListIsEqual(
-        originalResourceAccess,
+        consolidatedOriginalResourceAccess,
         updatedResourceAccessList,
       )
     )
   }, [
-    originalResourceAccess,
+    consolidatedOriginalResourceAccess,
     originalIsInherited,
     updatedIsInherited,
     updatedResourceAccessList,

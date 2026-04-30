@@ -9,12 +9,7 @@ export {
 } from './vite-library-config.js'
 
 // Plugin helpers
-export {
-  reactPlugins,
-  nodePolyfillsPlugin,
-  tsconfigPathsPlugin,
-  libraryPlugins,
-} from './plugins.js'
+export { reactPlugins, nodePolyfillsPlugin, libraryPlugins } from './plugins.js'
 export type { LibraryPluginsOptions } from './plugins.js'
 
 // SSR utility

@@ -1,7 +1,6 @@
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
-import { useGetRealmPrincipals } from '@/synapse-queries/realm/useRealmPrincipals'
 import { Box, Link } from '@mui/material'
-import IconSvg, { IconName } from './IconSvg/IconSvg'
+import { useUserOrTeam } from './UserOrTeamBadge/useUserOrTeam'
 
 export const AUTHENTICATED_GROUP_DISPLAY_TEXT = 'All registered Synapse users'
 export const PUBLIC_GROUP_DISPLAY_TEXT = 'Anyone on the web'
@@ -17,25 +16,12 @@ export default function TeamBadge(props: TeamBadgeProps) {
   const { teamId, openLinkInNewTab } = props
   let { teamName, disableHref } = props
 
-  const { data } = useGetRealmPrincipals()
-  const realmPrincipals = data || {}
-  const {
-    authenticatedUsers: authenticatedUsersId,
-    publicGroup: publicGroupId,
-  } = realmPrincipals
+  const { specialGroupType, IconComponent } = useUserOrTeam(String(teamId))
 
-  let icon: IconName = 'team'
-
-  // Convert teamId to string for comparison with realm principal IDs
-  const teamIdStr = String(teamId)
-
-  if (authenticatedUsersId && teamIdStr === authenticatedUsersId) {
-    icon = 'public'
+  if (specialGroupType === 'authenticatedUsers') {
     teamName = AUTHENTICATED_GROUP_DISPLAY_TEXT
     disableHref = true
-  }
-  if (publicGroupId && teamIdStr === publicGroupId) {
-    icon = 'public'
+  } else if (specialGroupType === 'publicGroup') {
     teamName = PUBLIC_GROUP_DISPLAY_TEXT
     disableHref = true
   }
@@ -50,7 +36,7 @@ export default function TeamBadge(props: TeamBadgeProps) {
         alignItems: 'center',
       }}
     >
-      <IconSvg icon={icon} fontSize={'small'} />
+      <IconComponent />
       <Tag
         style={{ marginLeft: '5px' }}
         href={

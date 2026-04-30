@@ -1,6 +1,9 @@
 import SynapseClient, { deleteMemberFromTeam } from '@/synapse-client'
 import { SynapseClientError, useSynapseContext } from '@/utils'
-import { Count } from '@sage-bionetworks/synapse-client'
+import {
+  Count,
+  MembershipInvitation as MembershipInvitationGenerated,
+} from '@sage-bionetworks/synapse-client'
 import {
   CreateMembershipInvitationRequest,
   CreateMembershipRequestRequest,
@@ -234,6 +237,9 @@ export function useAddMemberToTeam(
       }
       await Promise.all([
         queryClient.invalidateQueries({
+          queryKey: keyFactory.getAllOpenMembershipInvitationsQueryKey(),
+        }),
+        queryClient.invalidateQueries({
           queryKey: keyFactory.getMembershipStatusQueryKey(
             variables.teamId,
             variables.userId,
@@ -287,6 +293,54 @@ export function useRequestToJoinTeam(
         return options.onSuccess(data, variables, ctx)
       }
       return
+    },
+  })
+}
+
+/**
+ * Delete an invitation.
+ * Note: The client must be an administrator of the Team referenced by the invitation or the invitee to make this request.
+ *
+ * @see https://rest-docs.synapse.org/rest/DELETE/membershipInvitation/id.html
+ */
+export function useDeleteMembershipInvitation(
+  options?: Partial<
+    UseMutationOptions<
+      void,
+      SynapseClientError,
+      { membershipInvitation: MembershipInvitationGenerated }
+    >
+  >,
+) {
+  const queryClient = useQueryClient()
+  const { keyFactory, synapseClient } = useSynapseContext()
+
+  return useMutation<
+    void,
+    SynapseClientError,
+    { membershipInvitation: MembershipInvitationGenerated }
+  >({
+    ...options,
+    mutationFn: ({ membershipInvitation }) =>
+      synapseClient.membershipInvitationServicesClient.deleteRepoV1MembershipInvitationId(
+        { id: membershipInvitation.id! },
+      ),
+    onSuccess: async (data, variables, ctx) => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getAllOpenMembershipInvitationsQueryKey(),
+        }),
+        // MembershipStatus includes `hasOpenInvitation`, which may change after deleting an invitation
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getMembershipStatusQueryKey(
+            variables.membershipInvitation.teamId!,
+            variables.membershipInvitation.inviteeId,
+          ),
+        }),
+      ])
+      if (options?.onSuccess) {
+        await options.onSuccess(data, variables, ctx)
+      }
     },
   })
 }

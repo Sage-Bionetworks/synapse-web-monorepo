@@ -6,6 +6,7 @@ import {
   SelectColumn,
 } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor } from '@testing-library/react'
+import { ButtonProps } from '@mui/material'
 import { upperFirst } from 'lodash-es'
 import { useExportTableQueryToAnalysisPlatform } from '../../../synapse-queries/entity/useExportTableQueryToAnalysisPlatform'
 import { getUseQuerySuccessMock } from '../../../testutils/ReactQueryMockUtils'
@@ -42,7 +43,7 @@ const mockUseQueryContext = vi.mocked(useQueryContext)
 const mockUseQueryVisualizationContext = vi.mocked(useQueryVisualizationContext)
 const mockUseGetQueryMetadata = vi.mocked(useGetQueryMetadata)
 const MockTableQueryActionsRequired = vi.mocked(TableQueryActionsRequired)
-const mockOnConfirmButtonPropsChange = vi.fn()
+const mockOnConfirmButtonPropsChange = vi.fn<(props: ButtonProps) => void>()
 const mockOnSuccessfulExport = vi.fn()
 
 const mockUseHasSelectedRowsAtomValue = vi.mocked(useHasSelectedRowsAtomValue)
@@ -95,17 +96,17 @@ const mockQueryContext: QueryContextType = {
   hasFacetedSelectColumn: false,
   rowDataQueryOptions: {
     queryKey: ['rowDataQueryOptions'],
-    queryFn: vi.fn(),
+    queryFn: vi.fn() as never,
   },
   rowDataInfiniteQueryOptions: {
     queryKey: ['rowDataInfiniteQueryOptions'],
-    queryFn: vi.fn(),
+    queryFn: vi.fn() as never,
     initialPageParam: undefined,
-    getNextPageParam: vi.fn(),
+    getNextPageParam: vi.fn() as never,
   },
   queryMetadataQueryOptions: {
     queryKey: ['queryMetadataQueryOptions'],
-    queryFn: vi.fn(),
+    queryFn: vi.fn() as never,
   },
   goToPage: vi.fn(),
   currentPage: 0,
@@ -224,7 +225,9 @@ describe('ExternalPlatformActionsRequiredPrecheck', () => {
 
       // Simulate clicking the confirm button
       act(() => {
-        mockOnConfirmButtonPropsChange.mock.lastCall![0].onClick()
+        ;(
+          mockOnConfirmButtonPropsChange.mock.lastCall![0].onClick as () => void
+        )()
       })
 
       await waitFor(() => {
@@ -300,7 +303,9 @@ describe('ExternalPlatformActionsRequiredPrecheck', () => {
 
     // Simulate clicking the confirm button
     act(() => {
-      mockOnConfirmButtonPropsChange.mock.lastCall![0].onClick()
+      ;(
+        mockOnConfirmButtonPropsChange.mock.lastCall![0].onClick as () => void
+      )()
     })
 
     await waitFor(() => {
@@ -356,7 +361,9 @@ describe('ExternalPlatformActionsRequiredPrecheck', () => {
 
     // Simulate clicking the confirm button
     act(() => {
-      mockOnConfirmButtonPropsChange.mock.lastCall![0].onClick()
+      ;(
+        mockOnConfirmButtonPropsChange.mock.lastCall![0].onClick as () => void
+      )()
     })
 
     await waitFor(() => {

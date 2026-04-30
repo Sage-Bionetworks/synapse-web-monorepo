@@ -9,6 +9,7 @@ import ResetTwoFactorAuth from '../../pages/ResetTwoFactorAuth'
 import { SourceAppContext } from '@/components/useSourceApp'
 import { STATIC_SOURCE_APP_CONFIG } from 'synapse-react-client/utils/hooks/useSourceAppConfigs'
 import { MOCK_APPLICATION_SESSION_CONTEXT } from 'synapse-react-client/mocks/applicationSessionContext/MockApplicationSessionContext'
+import { serializeAndHexEncode } from '@/URLUtils'
 
 describe('ResetTwoFactorAuth', () => {
   beforeAll(() => {
@@ -34,10 +35,9 @@ describe('ResetTwoFactorAuth', () => {
     expiresOn: new Date().toISOString(),
     createdOn: new Date().toISOString(),
   }
-  const hexEncodedResetToken = Buffer.from(
-    JSON.stringify(mockTwoFactorAuthResetToken),
-    'utf-8',
-  ).toString('hex')
+  const hexEncodedResetToken = serializeAndHexEncode(
+    mockTwoFactorAuthResetToken,
+  )
 
   // Mock source app config with a valid realm to avoid skeleton loading state
   const testSourceAppConfig = {

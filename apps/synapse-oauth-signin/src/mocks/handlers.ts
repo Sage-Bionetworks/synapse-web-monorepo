@@ -21,7 +21,7 @@ export function resetConsentedInMockService(newValue: boolean) {
 
 let mockPostConsentFn = vi.fn()
 
-export function setMockPostConsentFn(fn: Mock<any>) {
+export function setMockPostConsentFn(fn: Mock<() => void>) {
   mockPostConsentFn = fn
 }
 

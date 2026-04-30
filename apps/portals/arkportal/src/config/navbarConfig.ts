@@ -16,6 +16,7 @@ export const navbarConfig: NavbarConfig = {
         { name: 'Projects', path: '/Explore/Projects' },
         { name: 'Collections', path: '/Explore/Collections' },
         { name: 'Datasets', path: '/Explore/Datasets' },
+        { name: 'Publications', path: '/Explore/Publications' },
         { name: 'All Data', path: '/Explore/All Data' },
       ],
     },

@@ -100,7 +100,8 @@ function getPreviewColumns(columnModels: ColumnModel[]) {
       header: props => (
         <ColumnHeader
           {...props}
-          title={`${columnModel.name} (${columnModel.columnType})`}
+          wrap={true}
+          title={`${columnModel.name}\n(${columnModel.columnType})`}
         />
       ),
       enableColumnFilter: false,

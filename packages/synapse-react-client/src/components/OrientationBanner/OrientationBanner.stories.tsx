@@ -1,8 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
-import OrientationBanner, {
-  getOrientationBannerKey,
-  OrientationBannerProps,
-} from './OrientationBanner'
+import OrientationBanner, { OrientationBannerProps } from './OrientationBanner'
+import { getOrientationBannerKey } from '@/utils/OrientationBannerConstants'
 
 const meta = {
   title: 'UI/OrientationBanner',
