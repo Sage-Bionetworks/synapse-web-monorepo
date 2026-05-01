@@ -1,3 +1,0 @@
-import{n as e,o as t}from"./chunk-jRWAZmH_.js";import{jS as n,zS as r}from"./iframe-BMIHSClC.js";import{n as i,t as a}from"./SageResourcesPopover-TqMCr3M2.js";var o,s,c,l,u;e((()=>{o=t(r(),1),i(),s=n(),c={title:`Home Page/SageResources`,component:a,render:function(e){let[t,n]=(0,o.useState)(null);return(0,s.jsxs)(s.Fragment,{children:[(0,s.jsx)(`a`,{onClick:e=>n(e.currentTarget),children:`Show portals`}),(0,s.jsx)(a,{anchorEl:t,onClose:()=>{n(null)}})]})}},l={args:{}},l.parameters={...l.parameters,docs:{...l.parameters?.docs,source:{originalSource:`{
-  args: {}
-}`,...l.parameters?.docs?.source}}},u=[`SageResourcesPopoverDemo`]}))();export{l as SageResourcesPopoverDemo,u as __namedExportsOrder,c as default};
