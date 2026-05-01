@@ -10,6 +10,11 @@ export const navbarConfig: NavbarConfig = {
       name: 'OpenChallenges',
       path: '/OpenChallenges',
     },
+    {
+      name: 'Admin',
+      path: 'https://www.synapse.org/Synapse:syn51476216',
+      requiredTeamId: '3379097',
+    },
   ],
   isPortalsDropdownEnabled: false,
 }
