@@ -141,6 +141,7 @@ describe('useDataGridWebSocket', () => {
     expect(result.current.isConnected).toBe(false)
     expect(result.current.websocketInstance).toBeNull()
     expect(result.current.hasCompletedInitialSync).toBe(false)
+    expect(result.current.isSyncing).toBe(false)
     expect(result.current.modelSnapshot).toBeUndefined()
     expect(result.current.presignedUrl).toBe('ws://mocked-url')
     expect(result.current.errorEstablishingWebsocketConnection).toBeNull()
@@ -466,6 +467,64 @@ describe('useDataGridWebSocket', () => {
       expect(result.current.websocketInstance).not.toBe(firstInstance)
     })
     expect(mockClearPresignedUrl).toHaveBeenCalledTimes(1)
+  })
+
+  it('should toggle isSyncing via onSyncStart/onSyncEnd callbacks', async () => {
+    const { result } = renderHook(() => useDataGridWebSocket(), {
+      wrapper: createWrapper(),
+    })
+
+    act(() => {
+      result.current.connect(42, 'sync-session')
+    })
+
+    await waitFor(() => {
+      expect(result.current.websocketInstance).not.toBeNull()
+    })
+
+    expect(result.current.isSyncing).toBe(false)
+
+    act(() => {
+      MockDataGridWebSocket.mock.lastCall![0].onSyncStart!()
+    })
+    expect(result.current.isSyncing).toBe(true)
+
+    act(() => {
+      MockDataGridWebSocket.mock.lastCall![0].onSyncEnd!()
+    })
+    expect(result.current.isSyncing).toBe(false)
+  })
+
+  it('should reset isSyncing when the websocket closes mid-sync', async () => {
+    const { result } = renderHook(() => useDataGridWebSocket(), {
+      wrapper: createWrapper(),
+    })
+
+    act(() => {
+      result.current.connect(43, 'sync-close-session')
+    })
+
+    await waitFor(() => {
+      expect(result.current.websocketInstance).not.toBeNull()
+    })
+
+    const config = MockDataGridWebSocket.mock.lastCall![0]
+
+    act(() => {
+      config.onStatusChange!(true, result.current.websocketInstance!)
+      config.onSyncStart!()
+    })
+    expect(result.current.isSyncing).toBe(true)
+
+    act(() => {
+      config.onStatusChange!(false, result.current.websocketInstance!)
+    })
+
+    // The close also triggers an auto-reconnect; wait for it to settle
+    await waitFor(() => {
+      expect(result.current.isSyncing).toBe(false)
+      expect(mockEstablishWebsocketConnection).toHaveBeenCalledTimes(2)
+    })
   })
 
   it('should disconnect the websocket on unmount without clearing the model', async () => {

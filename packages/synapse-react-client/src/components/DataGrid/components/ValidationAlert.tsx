@@ -2,7 +2,6 @@ import { DataGridRow } from '../DataGridTypes'
 import {
   Box,
   Chip,
-  CircularProgress,
   Collapse,
   Divider,
   Link,
@@ -12,6 +11,7 @@ import {
   Typography,
 } from '@mui/material'
 import { Fragment, useMemo, useState } from 'react'
+import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
 
 type ValidationError = {
   rowIndex: number
@@ -322,7 +322,7 @@ export const ValidationAlert = ({
           gap: 1,
         }}
       >
-        <CircularProgress size={14} />
+        <SynapseSpinner size={14} margin="0" />
         <Typography variant="body1" color="text.secondary">
           Loading validation errors…
         </Typography>

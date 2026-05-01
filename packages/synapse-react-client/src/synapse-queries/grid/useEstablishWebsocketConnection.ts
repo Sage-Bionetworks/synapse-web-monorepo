@@ -13,6 +13,8 @@ interface EstablishWebsocketParams {
     onModelCreate?: (model: GridModel) => void
     onReplicaConnected?: () => void
     onReplicaDisconnected?: () => void
+    onSyncStart?: () => void
+    onSyncEnd?: () => void
     model?: GridModel | null
   }
 }
