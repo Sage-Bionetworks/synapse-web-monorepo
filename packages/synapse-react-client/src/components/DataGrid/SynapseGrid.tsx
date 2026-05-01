@@ -9,13 +9,8 @@ import { SkeletonTable } from '@/components/index'
 import { useGetEntity } from '@/synapse-queries/index'
 import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import { SmartToyTwoTone } from '@mui/icons-material'
-import {
-  Box,
-  CircularProgress,
-  Stack,
-  Tooltip,
-  Typography,
-} from '@mui/material'
+import { Box, Stack, Tooltip, Typography } from '@mui/material'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import Grid from '@mui/material/Grid'
 import {
   CreateGridRequest,
@@ -474,7 +469,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                             mr: 'auto',
                           }}
                         >
-                          <CircularProgress size={16} />
+                          <SynapseSpinner size={16} margin="0" />
                           <Typography variant="caption" color="text.secondary">
                             {hasCompletedInitialSync ? 'Syncing…' : 'Loading…'}
                           </Typography>
