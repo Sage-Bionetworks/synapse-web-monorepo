@@ -527,48 +527,6 @@ describe('useDataGridWebSocket', () => {
     })
   })
 
-  it('should keep isSyncing true until every in-flight clock has been acknowledged', async () => {
-    const { result } = renderHook(() => useDataGridWebSocket(), {
-      wrapper: createWrapper(),
-    })
-
-    act(() => {
-      result.current.connect(44, 'overlapping-sync-session')
-    })
-
-    await waitFor(() => {
-      expect(result.current.websocketInstance).not.toBeNull()
-    })
-
-    const config = MockDataGridWebSocket.mock.lastCall![0]
-
-    // Client sends clock #1 — round 1 starts
-    act(() => {
-      config.onSyncStart!()
-    })
-    expect(result.current.isSyncing).toBe(true)
-
-    // Before round 1 completes, client sends clock #2 (e.g. server pinged
-    // 'new-patch' while round 1 was still in flight) — round 2 starts
-    act(() => {
-      config.onSyncStart!()
-    })
-    expect(result.current.isSyncing).toBe(true)
-
-    // Server acknowledges round 1 — but round 2 is still pending, so the
-    // spinner must stay on
-    act(() => {
-      config.onSyncEnd!()
-    })
-    expect(result.current.isSyncing).toBe(true)
-
-    // Server finally acknowledges round 2 — now we are truly idle
-    act(() => {
-      config.onSyncEnd!()
-    })
-    expect(result.current.isSyncing).toBe(false)
-  })
-
   it('should disconnect the websocket on unmount without clearing the model', async () => {
     const { result, unmount } = renderHook(() => useDataGridWebSocket(), {
       wrapper: createWrapper(),

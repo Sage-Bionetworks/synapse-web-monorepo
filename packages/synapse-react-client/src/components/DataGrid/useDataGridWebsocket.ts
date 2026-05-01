@@ -14,12 +14,11 @@ interface WebSocketState {
    */
   hasCompletedInitialSync: boolean
   /**
-   * Number of in-flight clock-sync rounds — incremented when the client sends a
-   * `synchronize-clock` message and decremented when the server responds with
-   * `ResponseComplete`. A counter (rather than a boolean) is used because a new
-   * round can begin before the previous one is acknowledged.
+   * True while a clock-sync exchange is in progress. Set on every outgoing
+   * `synchronize-clock` and cleared on `ResponseComplete`, which the server
+   * sends once per exchange to signal "we're synchronized" — not per request.
    */
-  pendingSyncRounds: number
+  isSyncing: boolean
   isConnected: boolean
   isConnecting: boolean
   connectionParams: {
@@ -67,7 +66,7 @@ function websocketReducer(
         hasCompletedInitialSync: isSameConnection
           ? state.hasCompletedInitialSync
           : false,
-        pendingSyncRounds: 0,
+        isSyncing: false,
         model: isSameConnection ? state.model : null,
         isConnected: false,
         isConnecting: false,
@@ -95,7 +94,7 @@ function websocketReducer(
         ...state,
         isConnected: false,
         isConnecting: false,
-        pendingSyncRounds: 0,
+        isSyncing: false,
       }
 
     case 'GRID_READY':
@@ -107,13 +106,13 @@ function websocketReducer(
     case 'SYNC_STARTED':
       return {
         ...state,
-        pendingSyncRounds: state.pendingSyncRounds + 1,
+        isSyncing: true,
       }
 
     case 'SYNC_ENDED':
       return {
         ...state,
-        pendingSyncRounds: Math.max(0, state.pendingSyncRounds - 1),
+        isSyncing: false,
       }
 
     case 'MODEL_CREATED':
@@ -137,7 +136,7 @@ function websocketReducer(
 export const initialWebSocketState: WebSocketState = {
   model: null,
   hasCompletedInitialSync: false,
-  pendingSyncRounds: 0,
+  isSyncing: false,
   isConnected: false,
   isConnecting: false,
   connectionParams: null,
@@ -346,7 +345,7 @@ export function useDataGridWebSocket(options?: UseDataGridWebSocketOptions) {
     isConnected: state.isConnected,
     websocketInstance: state.websocketInstance,
     hasCompletedInitialSync: state.hasCompletedInitialSync,
-    isSyncing: state.pendingSyncRounds > 0,
+    isSyncing: state.isSyncing,
     model: state.model,
     modelSnapshot,
     connect,
