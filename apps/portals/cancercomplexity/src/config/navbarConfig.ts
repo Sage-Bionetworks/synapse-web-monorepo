@@ -74,6 +74,11 @@ export const navbarConfig: NavbarConfig = {
       name: 'Help',
       path: 'https://help.cancercomplexity.synapse.org/',
     },
+    {
+      name: 'Admin',
+      path: 'https://www.synapse.org/Synapse:syn21498902',
+      requiredTeamId: '3450948',
+    },
   ],
   isPortalsDropdownEnabled: true,
 }

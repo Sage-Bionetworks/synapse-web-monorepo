@@ -32,6 +32,11 @@ export const navbarConfig: NavbarConfig = {
       name: 'Help',
       path: '/Help',
     },
+    {
+      name: 'Admin',
+      path: 'https://www.synapse.org/Synapse:syn53013218',
+      requiredTeamId: '3325866',
+    },
   ],
   isPortalsDropdownEnabled: false,
 }
