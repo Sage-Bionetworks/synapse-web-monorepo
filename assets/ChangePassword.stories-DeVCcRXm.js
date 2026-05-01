@@ -1,0 +1,13 @@
+import{n as e}from"./chunk-jRWAZmH_.js";import{Jh as t,Mv as n,Zh as r,b as i,bx as a,cn as o,jS as s,y as c}from"./iframe-DluvnujF.js";import{n as l,t as u}from"./ChangePassword-DFY1Vs3Y.js";import{n as d,r as f,t as p}from"./changePasswordHandlers-BGORY-fs.js";var m,h,g,_,v;e((()=>{f(),i(),o(),r(),n(),l(),m=s(),h={title:`Authentication/ChangePassword/WithCurrentPassword`,component:u,parameters:{stack:`mock`,withRouter:!0},decorators:[e=>(0,m.jsxs)(m.Fragment,{children:[`This story uses mock server responses. You may need to refresh the page to reset the mock server responses.`,(0,m.jsx)(a,{sx:{my:4,p:4,mx:`auto`,width:`600px`},children:(0,m.jsx)(e,{})})]})]},g={parameters:{msw:{handlers:[d(t)]}}},_={parameters:{msw:{handlers:[p(t,999,`mock-2fa-token`),...c(t)]}}},g.parameters={...g.parameters,docs:{...g.parameters?.docs,source:{originalSource:`{
+  parameters: {
+    msw: {
+      handlers: [getSuccessfulChangePasswordHandler(MOCK_REPO_ORIGIN)]
+    }
+  }
+}`,...g.parameters?.docs?.source}}},_.parameters={..._.parameters,docs:{..._.parameters?.docs,source:{originalSource:`{
+  parameters: {
+    msw: {
+      handlers: [getRequires2FAChangePasswordHandler(MOCK_REPO_ORIGIN, MOCK_USER_ID, 'mock-2fa-token'), ...getResetTwoFactorAuthHandlers(MOCK_REPO_ORIGIN)]
+    }
+  }
+}`,..._.parameters?.docs?.source}}},v=[`NoTwoFactorAuth`,`WithTwoFactorAuth`]}))();export{g as NoTwoFactorAuth,_ as WithTwoFactorAuth,v as __namedExportsOrder,h as default};

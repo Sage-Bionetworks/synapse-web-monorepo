@@ -1,0 +1,1 @@
+import{n as e}from"./chunk-jRWAZmH_.js";import{$m as t,sh as n,yh as r}from"./iframe-DluvnujF.js";function i(e){if(e.length===0)return;let t=e[0],i=n.CREATED_ON;return t.id===`createdOn`?i=n.CREATED_ON:t.id===`modifiedOn`&&(i=n.MODIFIED_ON),[{field:i,direction:t.desc?r.DESC:r.ASC}]}var a=e((()=>{t()}));export{a as n,i as t};
