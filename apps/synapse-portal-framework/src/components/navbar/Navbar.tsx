@@ -4,6 +4,7 @@ import { MouseEvent, Suspense, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import ShowDownloadV2 from 'synapse-react-client/components/DownloadCart/ShowDownloadV2'
 import SageResourcesPopover from 'synapse-react-client/components/SageResourcesPopover/index'
+import { useGetIsUserMemberOfTeam } from 'synapse-react-client/synapse-queries/team/useTeamMembers'
 import { useGetCurrentUserProfile } from 'synapse-react-client/synapse-queries/user/useUserBundle'
 import {
   storeRedirectURLForOneSageLoginAndGotoURL,
@@ -26,14 +27,54 @@ type SynapseSettingLink = {
   settingSubPath?: string
 }
 
+type NavRoute = {
+  name: string
+  icon?: string
+  path: string
+  children?: { name: string; path: string }[]
+  requiredTeamId?: string
+}
+
 export type NavbarConfig = {
-  routes: {
-    name: string
-    icon?: string
-    path: string
-    children?: { name: string; path: string }[]
-  }[]
+  routes: NavRoute[]
   isPortalsDropdownEnabled: boolean
+}
+
+type ConditionalNavRouteProps = {
+  route: NavRoute
+  userId: string
+  onClickedNavLink: () => void
+}
+
+function ConditionalNavRoute({
+  route,
+  userId,
+  onClickedNavLink,
+}: ConditionalNavRouteProps) {
+  const { data: teamMember } = useGetIsUserMemberOfTeam(
+    route.requiredTeamId!,
+    userId,
+    { enabled: !!userId && !!route.requiredTeamId },
+  )
+
+  if (!teamMember) return null
+
+  if (route.children) {
+    return (
+      <DropdownNavButton route={route} onClickedNavLink={onClickedNavLink}>
+        {route.name}
+      </DropdownNavButton>
+    )
+  }
+
+  return (
+    <NavLink
+      to={route.path}
+      className="nav-button-container nav-button center-content"
+    >
+      {route.name}
+    </NavLink>
+  )
 }
 
 const synapseQuickLinks: SynapseSettingLink[] = [
@@ -349,6 +390,16 @@ export default function Navbar() {
             </>
           )}
           {navbarConfig.routes.toReversed().map(route => {
+            if (route.requiredTeamId) {
+              return (
+                <ConditionalNavRoute
+                  key={route.path}
+                  route={route}
+                  userId={userProfile?.ownerId ?? ''}
+                  onClickedNavLink={() => setShowMenu(false)}
+                />
+              )
+            }
             if (route.children) {
               return (
                 <DropdownNavButton
