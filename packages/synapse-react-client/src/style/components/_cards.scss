@@ -153,6 +153,10 @@
     text-transform: uppercase;
   }
 
+  .SRC-type {
+    margin-right: calc(var(--baseline-grid) * 0.5);
+  }
+
   .SRC-cardThumbnail {
     vertical-align: top;
     margin-top: auto;
