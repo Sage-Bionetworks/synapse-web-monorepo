@@ -274,6 +274,93 @@ describe('applyModelChange', () => {
     expect(snapshot.rows[0].data).toEqual(['a', 'updated2'])
   })
 
+  it('UPDATE coerces an empty string to null for a required column', () => {
+    const model = createModel()
+    const schema: SchemaPropertiesMap = {
+      col1: {
+        type: { type: 'string', isArray: false },
+        isRequired: true,
+        enumeratedValues: null,
+      },
+      col2: {
+        type: { type: 'string', isArray: false },
+        isRequired: false,
+        enumeratedValues: null,
+      },
+    }
+
+    applyModelChange(
+      model,
+      { type: 'CREATE', rowIndex: 0, rowData: { col1: 'a', col2: 'b' } },
+      schema,
+    )
+    applyModelChange(
+      model,
+      { type: 'UPDATE', rowIndex: 0, updatedData: { col1: '' } },
+      schema,
+    )
+
+    expect(model.api.getSnapshot().rows[0].data).toEqual([null, 'b'])
+  })
+
+  it('UPDATE coerces an empty string to undefined for an optional column', () => {
+    const model = createModel()
+    const schema: SchemaPropertiesMap = {
+      col1: {
+        type: { type: 'string', isArray: false },
+        isRequired: false,
+        enumeratedValues: null,
+      },
+      col2: {
+        type: { type: 'string', isArray: false },
+        isRequired: true,
+        enumeratedValues: null,
+      },
+    }
+
+    applyModelChange(
+      model,
+      { type: 'CREATE', rowIndex: 0, rowData: { col1: 'a', col2: 'b' } },
+      schema,
+    )
+    applyModelChange(
+      model,
+      { type: 'UPDATE', rowIndex: 0, updatedData: { col1: '' } },
+      schema,
+    )
+
+    expect(model.api.getSnapshot().rows[0].data).toEqual([undefined, 'b'])
+  })
+
+  it('UPDATE coerces null to undefined for an optional column', () => {
+    const model = createModel()
+    const schema: SchemaPropertiesMap = {
+      col1: {
+        type: { type: 'string', isArray: false },
+        isRequired: false,
+        enumeratedValues: null,
+      },
+      col2: {
+        type: { type: 'string', isArray: false },
+        isRequired: true,
+        enumeratedValues: null,
+      },
+    }
+
+    applyModelChange(
+      model,
+      { type: 'CREATE', rowIndex: 0, rowData: { col1: 'a', col2: 'b' } },
+      schema,
+    )
+    applyModelChange(
+      model,
+      { type: 'UPDATE', rowIndex: 0, updatedData: { col1: null } },
+      schema,
+    )
+
+    expect(model.api.getSnapshot().rows[0].data).toEqual([undefined, 'b'])
+  })
+
   it('DELETE with count removes multiple rows', () => {
     const model = createModel()
 
