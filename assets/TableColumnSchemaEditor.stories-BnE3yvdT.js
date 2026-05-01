@@ -1,0 +1,23 @@
+import{n as e,o as t}from"./chunk-jRWAZmH_.js";import{Gc as n,Gm as r,Gp as i,Gt as a,H as o,Hn as s,Jh as c,Kh as l,Kt as u,Lp as d,Lt as f,Mv as p,Rh as m,Rt as h,Sa as g,Ta as _,V as v,Vt as y,Wt as b,Xc as x,Xo as S,Yo as C,Zh as w,g as T,it as E,jS as D,m as O,np as k,nt as A,p as j,tx as M,zS as N,zt as P}from"./iframe-BN9ezngx.js";import{t as F}from"./SkeletonTable-CsEVK1YD.js";import{t as I}from"./Skeleton-CxnXksZK.js";import{n as L}from"./ConfirmationDialog-A97rIkat.js";import{n as R}from"./ConfirmationDialog-DcDynC3U.js";import{n as z,t as B}from"./TableColumnSchemaForm-CuHrZDRU.js";import{_ as V,g as H}from"./MultiValueField-Cgm4eu8g.js";function U(e){let{entityId:t,open:a,onColumnsUpdated:o=r,onCancel:s=r}=e,c=(0,W.useRef)(null),{data:l,isLoading:u}=_(t,void 0,{includeEntity:!0,includeTableBundle:!0},{staleTime:1/0,throwOnError:!0}),f=l?.entity,p=l?.tableBundle?.columnModels,{mutate:m,isPending:h,error:v}=g({onSuccess:()=>{o()}}),y=(0,W.useCallback)(e=>{m({entityId:t,originalColumnModels:p,newColumnModels:e.map(e=>d(e,i))})},[t,m,p]),b=(0,W.useMemo)(()=>{if(f)return H(f)},[f]);return u||!l||!f?(0,G.jsx)(F,{numRows:8,numCols:7,rowHeight:`50px`,fullWidthCells:!0}):(0,G.jsx)(L,{open:a,maxWidth:`xl`,title:`Edit Columns`,content:(0,G.jsxs)(G.Fragment,{children:[(0,G.jsx)(B,{ref:c,entityType:n(f.concreteType),viewScope:b,initialData:l?.tableBundle?.columnModels,isSubmitting:h,onSubmit:e=>{y(e)},originalColumnModels:p}),v&&(0,G.jsx)(M,{severity:`error`,sx:{my:2},children:v?.message})]}),confirmButtonProps:{children:h?`Saving...`:`Save`,disabled:h,startIcon:h?(0,G.jsx)(C,{}):void 0},onConfirm:()=>{c.current&&c.current.submit()},cancelButtonProps:{disabled:h},onCancel:s})}var W,G,K=e((()=>{s(),x(),p(),k(),W=t(N(),1),R(),S(),I(),V(),z(),G=D();try{U.displayName=`TableColumnSchemaEditor`,U.__docgenInfo={description:`Fetches column model data for a Synapse Table and renders a form to edit the column models.`,displayName:`TableColumnSchemaEditor`,filePath:`/home/runner/work/synapse-web-monorepo/synapse-web-monorepo/packages/synapse-react-client/src/components/TableColumnSchemaEditor/TableColumnSchemaEditor.tsx`,methods:[],props:{entityId:{defaultValue:null,declarations:[{fileName:`synapse-react-client/src/components/TableColumnSchemaEditor/TableColumnSchemaEditor.tsx`,name:`TypeLiteral`}],description:``,name:`entityId`,required:!0,tags:{},type:{name:`string`}},open:{defaultValue:null,declarations:[{fileName:`synapse-react-client/src/components/TableColumnSchemaEditor/TableColumnSchemaEditor.tsx`,name:`TypeLiteral`}],description:``,name:`open`,required:!0,tags:{},type:{name:`boolean`}},onColumnsUpdated:{defaultValue:null,declarations:[{fileName:`synapse-react-client/src/components/TableColumnSchemaEditor/TableColumnSchemaEditor.tsx`,name:`TypeLiteral`}],description:``,name:`onColumnsUpdated`,required:!1,tags:{},type:{name:`(() => void)`}},onCancel:{defaultValue:null,declarations:[{fileName:`synapse-react-client/src/components/TableColumnSchemaEditor/TableColumnSchemaEditor.tsx`,name:`TypeLiteral`}],description:``,name:`onCancel`,required:!1,tags:{},type:{name:`(() => void)`}}},tags:{param:`props`,constructor:`function Object() { [native code] }
+`}}}catch{}})),q,J,Y,X;e((()=>{v(),A(),h(),P(),T(),l(),w(),b(),K(),q={title:`Synapse/Table Column Schema Editor`,component:U,parameters:{stack:`mock`,design:[{name:`Use Recommended Sizes button`,type:`figma`,url:`https://www.figma.com/design/ek9F9IqpsS8UnihBR9filP/Schema-Editor?node-id=83-9747`}]}},J={columnModels:y.columnModels,maxRowsPerPage:25},Y={name:`Table Column Schema Editor`,parameters:{msw:{handlers:[...O(c),...j(f,c),u.post(`${c}${m(`:entityId`)}`,({params:e})=>{let t=o.find(t=>t.id===e.entityId)||E;return a.json({entity:t.entity,tableBundle:J},{status:200})})]}},args:{entityId:E.id,open:!0}},Y.parameters={...Y.parameters,docs:{...Y.parameters?.docs,source:{originalSource:`{
+  name: 'Table Column Schema Editor',
+  parameters: {
+    msw: {
+      handlers: [...getDefaultColumnHandlers(MOCK_REPO_ORIGIN), ...getAnnotationColumnHandlers(MOCK_ANNOTATION_COLUMN_RESPONSE, MOCK_REPO_ORIGIN), http.post(\`\${MOCK_REPO_ORIGIN}\${ENTITY_BUNDLE_V2(':entityId')}\`, ({
+        params
+      }) => {
+        const entity = mockEntities.find(entity => entity.id === params.entityId) || mockTableEntityData;
+        return HttpResponse.json({
+          entity: entity.entity,
+          tableBundle: mockTableBundle
+        }, {
+          status: 200
+        });
+      })]
+    }
+  },
+  args: {
+    entityId: mockTableEntityData.id,
+    open: true
+  }
+}`,...Y.parameters?.docs?.source}}},X=[`Demo`]}))();export{Y as Demo,X as __namedExportsOrder,q as default};
