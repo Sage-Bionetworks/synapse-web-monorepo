@@ -197,6 +197,7 @@ export function createStaticMeta(
     const descriptors: MetaDescriptor[] = [
       { title: fullTitle },
       { property: 'og:title', content: fullTitle },
+      { name: 'twitter:title', content: fullTitle },
     ]
     const origin = getPortalOrigin(portalKey)
     const pageUrl = origin

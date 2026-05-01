@@ -432,20 +432,12 @@ describe('createStaticMeta', () => {
     )
 
     expect(result).toContainEqual({ title: 'Explore Studies | NF Data Portal' })
-  })
-
-  it('emits og:title with the combined title', () => {
-    const meta = createStaticMeta({ title: 'Explore Studies' }, portalMetadata)
-
-    const result = meta(
-      buildMetaArgs({
-        location: { pathname: '/path/to/StaticPage' },
-        matches: [],
-      }),
-    )
-
     expect(result).toContainEqual({
       property: 'og:title',
+      content: 'Explore Studies | NF Data Portal',
+    })
+    expect(result).toContainEqual({
+      name: 'twitter:title',
       content: 'Explore Studies | NF Data Portal',
     })
   })
