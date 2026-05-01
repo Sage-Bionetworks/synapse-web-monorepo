@@ -117,10 +117,9 @@ workspace packages being built:
 This enables TypeScript to find the auto-generated route types produced by
 `react-router typegen`.
 
-#### Create `src/types.d.ts`
+#### Create `src/vite-env.d.ts`
 
-This file provides type-safe access to your portal's environment variables
-(used in `root.tsx`, `PortalRoot.tsx`, and detail page loaders):
+This file provides type-safe access to your portal's environment variables:
 
 ```ts
 /// <reference types="vite/client" />
@@ -133,7 +132,13 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv
 }
+```
 
+#### Create `src/types.d.ts`
+
+This file holds MUI type augmentations (kept separate from `vite-env.d.ts`):
+
+```ts
 // Import MUI type augmentations from 'synapse-react-client' so we can use custom property values defined for our MUI theme
 import 'synapse-react-client/ThemeTypes'
 ```
@@ -194,7 +199,14 @@ export default {
         ])
       }
 
-      return [...getStaticPaths(), ...dynamicRoutes]
+      // Exclude legacy /DetailsPage redirect routes from prerendering.
+      // Prerendering them creates S3 directory structures that cause S3 to
+      // drop the query string on redirect, breaking the client-side redirect logic.
+      const staticPaths = getStaticPaths().filter(
+        p => !p.endsWith('/DetailsPage'),
+      )
+
+      return [...staticPaths, ...dynamicRoutes]
     },
     unstable_concurrency: 4,
   },
@@ -266,21 +278,50 @@ This replaces the `index.html` template's `<head>` and `<body>` content. It is
 the HTML shell rendered for every pre-rendered route.
 
 ```tsx
+import { mergeMeta } from '@sage-bionetworks/synapse-portal-framework/utils/mergeMeta'
 import type { MetaDescriptor } from 'react-router'
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
 
 /**
- * Default meta tags inherited by all routes that don't export their own meta().
+ * Default meta tags for the root route. All meta tags are declared here
+ * (including OG/Twitter tags) so that child routes can inherit and override
+ * them via mergeMeta.
  */
-export function meta(): MetaDescriptor[] {
+export function meta(args): MetaDescriptor[] {
   const portalName = import.meta.env.VITE_PORTAL_NAME
   const portalDescription = import.meta.env.VITE_PORTAL_DESCRIPTION
-  return [
+  const portalKey = import.meta.env.VITE_PORTAL_KEY ?? ''
+  const baseUrl = `https://${portalKey}.synapse.org`
+
+  const descriptors: MetaDescriptor[] = [
+    { charSet: 'utf-8' },
+    { name: 'viewport', content: 'width=device-width, initial-scale=1' },
     { title: portalName },
-    ...(portalDescription
-      ? [{ name: 'description', content: portalDescription }]
-      : []),
+    { property: 'og:url', content: `${baseUrl}/` },
+    { property: 'og:title', content: portalName },
+    { property: 'og:type', content: 'website' },
+    {
+      name: 'image',
+      property: 'og:image',
+      content: `${baseUrl}/socialmedia.png`,
+    },
+    { name: 'twitter:url', content: `${baseUrl}/` },
+    { name: 'twitter:title', content: portalName },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:domain', content: 'synapse.org' },
+    { name: 'twitter:image', content: `${baseUrl}/socialmedia.png` },
   ]
+
+  if (portalDescription) {
+    descriptors.push({ name: 'description', content: portalDescription })
+    descriptors.push({ property: 'og:description', content: portalDescription })
+    descriptors.push({
+      name: 'twitter:description',
+      content: portalDescription,
+    })
+  }
+
+  return mergeMeta(args, descriptors)
 }
 
 export function links() {
@@ -292,49 +333,17 @@ export function links() {
         'sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u',
       crossOrigin: 'anonymous',
     },
+    {
+      rel: 'shortcut icon',
+      href: '/favicon.svg',
+    },
   ]
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const portalKey = import.meta.env.VITE_PORTAL_KEY ?? ''
-  const portalName = import.meta.env.VITE_PORTAL_NAME ?? ''
-  const portalDescription = import.meta.env.VITE_PORTAL_DESCRIPTION ?? ''
-  const baseUrl = `https://${portalKey}.synapse.org`
-
   return (
     <html lang="en">
       <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#000000" />
-
-        {/* Facebook / Open Graph */}
-        <meta property="og:url" content={`${baseUrl}/`} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={portalName} />
-        <meta property="og:description" content={portalDescription} />
-        <meta
-          name="image"
-          property="og:image"
-          content={`${baseUrl}/socialmedia.png`}
-        />
-
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta property="twitter:domain" content="synapse.org" />
-        <meta property="twitter:url" content={`${baseUrl}/`} />
-        <meta name="twitter:title" content={portalName} />
-        <meta name="twitter:description" content={portalDescription} />
-        <meta name="twitter:image" content={`${baseUrl}/socialmedia.png`} />
-
-        {/*
-          Note: <meta name="description"> is injected by route-level meta() exports
-          via <Meta /> below. Do NOT hard-code it here to avoid duplicate tags.
-        */}
-
-        <link rel="shortcut icon" href="/favicon.svg" />
-
-        {/* React Router injects route-level <title>, <meta>, and <link> elements here */}
         <Meta />
         <Links />
       </head>
@@ -363,10 +372,11 @@ export default function Root() {
 }
 ```
 
-This moves the `<head>` metadata, GTM snippet, and other boilerplate out of
-`index.html` and into a React component that React Router controls. The
-`<Meta />` and `<Links />` components inject route-level meta tags and
-stylesheets.
+All meta tags (including OG/Twitter) are declared in `meta()` rather than
+hard-coded in `Layout` JSX. `mergeMeta` merges parent route meta with the
+route-specific descriptors, preventing duplicate tags. `Layout` is simplified
+to only `<Meta />` and `<Links />` in `<head>` — React Router injects the
+merged meta descriptors there at render time.
 
 ---
 
@@ -664,7 +674,24 @@ export default function TestInitError() {
 
 This is the most involved step. Each detail page needs several changes.
 
-#### 12a. Create route path constants (recommended)
+#### 12a. Create `src/config/portalMetadata.ts`
+
+Create a shared constant for portal metadata used by all detail pages and
+Explore tab pages:
+
+```ts
+import { type PortalMetadata } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
+
+export const portalMetadata: PortalMetadata = {
+  portalName: import.meta.env.VITE_PORTAL_NAME,
+  portalKey: import.meta.env.VITE_PORTAL_KEY,
+}
+```
+
+Import from this file in detail pages and Explore tab pages instead of
+repeating `import.meta.env` inline.
+
+#### 12b. Create route path constants (recommended)
 
 Extract tab path strings into a constants file so they can be shared between
 `routes.ts`, detail page tab configs, and redirect components:
@@ -699,24 +726,25 @@ export const metadataConfig: DetailPageMetadataConfig = {
 import { createDetailPageRouteExports } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
 import { useParams } from 'react-router'
 import { metadataConfig } from './StudyDetailsPage.config'
+import { portalMetadata } from '../../config/portalMetadata'
 
 export { metadataConfig } // re-export so react-router.config.ts can import it
 
-const _routeExports = createDetailPageRouteExports(metadataConfig, {
-  portalName: import.meta.env.VITE_PORTAL_NAME,
-  portalKey: import.meta.env.VITE_PORTAL_KEY,
-})
+const _routeExports = createDetailPageRouteExports(
+  metadataConfig,
+  portalMetadata,
+)
 export const loader = _routeExports.loader
 export const clientLoader = _routeExports.clientLoader
 export const meta = _routeExports.meta
 ```
 
-`portalKey` causes `meta()` to emit a `<link rel="canonical">` in the
+`portalKey` (from `portalMetadata`) causes `meta()` to emit a `<link rel="canonical">` in the
 pre-rendered HTML, so search crawlers see the correct URL without needing
 JavaScript to run.
 
 For detail pages that need extra loader data (e.g. Croissant JSON-LD for
-dataset pages), use the extended form:
+dataset pages), pass an `options` object as a third argument:
 
 ```tsx
 import {
@@ -724,6 +752,7 @@ import {
   type BaseDetailPageLoaderData,
 } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
 import { fetchCroissantMetadata } from '@sage-bionetworks/synapse-portal-framework/utils/fetchCroissantMetadata'
+import { portalMetadata } from '../../config/portalMetadata'
 
 interface DatasetLoaderData extends BaseDetailPageLoaderData {
   croissantJsonLd: Record<string, unknown> | null
@@ -731,9 +760,8 @@ interface DatasetLoaderData extends BaseDetailPageLoaderData {
 
 const _routeExports = createDetailPageRouteExports<DatasetLoaderData>(
   metadataConfig,
+  portalMetadata,
   {
-    portalName: import.meta.env.VITE_PORTAL_NAME,
-    portalKey: import.meta.env.VITE_PORTAL_KEY,
     extendLoader: async (_base, params) => ({
       croissantJsonLd: params.id
         ? await fetchCroissantMetadata(params.id)
@@ -891,10 +919,20 @@ can set the `<title>` tag during pre-rendering:
 
 ```tsx
 import { createStaticMeta } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
+import { portalMetadata } from '../../config/portalMetadata'
 
 export const meta = createStaticMeta(
-  'Explore Studies', // page-specific title fragment
-  import.meta.env.VITE_PORTAL_NAME, // appended as "... | NF Data Portal"
+  { title: 'Explore Studies' }, // page-specific title fragment
+  portalMetadata,
+)
+```
+
+If the page has a distinct description (uncommon for Explore tabs), pass it in the first argument:
+
+```tsx
+export const meta = createStaticMeta(
+  { title: 'About', description: 'Learn about the NF Data Portal.' },
+  portalMetadata,
 )
 ```
 
@@ -907,9 +945,10 @@ the `'script:ld+json'` key:
 
 ```tsx
 import type { MetaDescriptor } from 'react-router'
+import { mergeMeta } from '@sage-bionetworks/synapse-portal-framework/utils/mergeMeta'
 
-export function meta(): MetaDescriptor[] {
-  return [
+export function meta(args): MetaDescriptor[] {
+  return mergeMeta(args, [
     { title: import.meta.env.VITE_PORTAL_NAME },
     { name: 'description', content: import.meta.env.VITE_PORTAL_DESCRIPTION },
     {
@@ -919,7 +958,7 @@ export function meta(): MetaDescriptor[] {
         // ... structured data specific to this portal
       },
     },
-  ]
+  ])
 }
 ```
 
@@ -1041,7 +1080,8 @@ Use this checklist to track progress during migration:
 
 - [ ] `package.json` — dependencies, scripts, and nx targets updated
 - [ ] `tsconfig.json` — `rootDirs`, `types`, `include`, and `files` updated
-- [ ] `src/types.d.ts` — environment variable types declared
+- [ ] `src/vite-env.d.ts` — environment variable types declared
+- [ ] `src/types.d.ts` — MUI type augmentations
 - [ ] `react-router.config.ts` — created with prerender config
 - [ ] `vite.config.ts` — rewritten with `reactRouter()` plugin
 
@@ -1057,6 +1097,7 @@ Use this checklist to track progress during migration:
 
 - [ ] `src/routes.ts` — Framework Mode route config created
 - [ ] `src/config/routeConstants.ts` — tab path constants extracted (if applicable)
+- [ ] `src/config/portalMetadata.ts` — `PortalMetadata` constant created
 - [ ] `src/config/routesConfig.tsx` — deleted
 - [ ] `src/index.tsx` — deleted
 - [ ] `index.html` — deleted
@@ -1072,7 +1113,7 @@ Use this checklist to track progress during migration:
 ### Detail pages (repeat for each detail page type)
 
 - [ ] `*.config.ts` metadata file created
-- [ ] `loader`, `clientLoader`, `meta` exports added (including `portalKey` in options)
+- [ ] `loader`, `clientLoader`, `meta` exports added (using `portalMetadata` from `src/config/portalMetadata.ts`)
 - [ ] `useGetPortalComponentSearchParams` → `useParams`
 - [ ] Null guard added for URL parameter
 - [ ] `searchParams`, `resourcePrimaryKey`, and `disableCanonicalUrl` props added to `<DetailsPage>`

@@ -12,6 +12,7 @@ import Navbar from './components/navbar/Navbar'
 import { usePortalContext } from './components/PortalContext'
 import { processResponseDocument } from './shared-config/synapseChatHelpers'
 import { useDocumentTitleFromRoutes } from './utils/useDocumentTitleFromRoutes'
+import { useTheme } from '@mui/material'
 
 export type AppProps = PropsWithChildren<{
   /** The default realm ID to use for the application */
@@ -23,6 +24,7 @@ export type AppProps = PropsWithChildren<{
 export default function App(props: AppProps) {
   const { defaultRealmId, requireAuthentication } = props
   useDocumentTitleFromRoutes()
+  const { palette } = useTheme()
   const { aridhiaConfig, synapseChatProps } = usePortalContext()
   const navigate = useNavigate()
   const [chatOpen, setChatOpen] = useState(false)
@@ -51,6 +53,7 @@ export default function App(props: AppProps) {
     <ChatDialogContext.Provider
       value={{ openChat, isChatAvailable: !!synapseChatProps }}
     >
+      <meta name="theme-color" content={palette.primary.main} />
       <SynapseToastContainer />
       <Navbar />
       <CookiesNotification />

@@ -18,13 +18,14 @@ import {
   HACKATHONS_DETAILS_PAGE_METHODOLOGY_TAB_PATH,
 } from '@/config/routeConstants'
 import { metadataConfig } from './HackathonDetailsPage.config'
+import { portalMetadata } from '@/config/portalMetadata'
 
 export { metadataConfig }
 
-const _routeExports = createDetailPageRouteExports(metadataConfig, {
-  portalName: import.meta.env.VITE_PORTAL_NAME,
-  portalKey: import.meta.env.VITE_PORTAL_KEY,
-})
+const _routeExports = createDetailPageRouteExports(
+  metadataConfig,
+  portalMetadata,
+)
 export const loader = _routeExports.loader
 export const clientLoader = _routeExports.clientLoader
 export const meta = _routeExports.meta

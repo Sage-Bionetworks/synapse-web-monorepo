@@ -17,13 +17,14 @@ import ErrorPage, {
   SynapseErrorType,
 } from 'synapse-react-client/components/error/ErrorPage'
 import { metadataConfig } from './OrganizationDetailsPage.config'
+import { portalMetadata } from '@/config/portalMetadata'
 
 export { metadataConfig }
 
-const _routeExports = createDetailPageRouteExports(metadataConfig, {
-  portalName: import.meta.env.VITE_PORTAL_NAME,
-  portalKey: import.meta.env.VITE_PORTAL_KEY,
-})
+const _routeExports = createDetailPageRouteExports(
+  metadataConfig,
+  portalMetadata,
+)
 export const loader = _routeExports.loader
 export const clientLoader = _routeExports.clientLoader
 export const meta = _routeExports.meta

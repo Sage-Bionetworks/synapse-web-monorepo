@@ -5,11 +5,11 @@ import {
   TOOLS_DETAILS_PAGE_OBSERVATIONS_TAB_PATH,
 } from '@/config/routeConstants'
 import { toolsSchema } from '@/config/synapseConfigs/tools'
-import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import {
   DetailsPageTabConfig,
   DetailsPageTabs,
 } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
+import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { createDetailPageRouteExports } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { Outlet, useParams } from 'react-router'
@@ -19,13 +19,14 @@ import ErrorPage, {
 } from 'synapse-react-client/components/error/ErrorPage'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { metadataConfig } from './ToolDetailsPage.config'
+import { portalMetadata } from '@/config/portalMetadata'
 
 export { metadataConfig }
 
-const _routeExports = createDetailPageRouteExports(metadataConfig, {
-  portalName: import.meta.env.VITE_PORTAL_NAME,
-  portalKey: import.meta.env.VITE_PORTAL_KEY,
-})
+const _routeExports = createDetailPageRouteExports(
+  metadataConfig,
+  portalMetadata,
+)
 export const loader = _routeExports.loader
 export const clientLoader = _routeExports.clientLoader
 export const meta = _routeExports.meta

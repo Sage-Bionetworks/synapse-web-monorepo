@@ -1,4 +1,5 @@
-import type { MetaDescriptor } from 'react-router'
+import { mergeMeta } from '@sage-bionetworks/synapse-portal-framework/utils/mergeMeta'
+import type { MetaArgs, MetaDescriptor } from 'react-router'
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
 
 /**
@@ -9,15 +10,41 @@ import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
  * tabs, etc.) completely replace these defaults. Routes that do NOT export
  * `meta()` inherit these.
  */
-export function meta(): MetaDescriptor[] {
+export function meta(args: MetaArgs): MetaDescriptor[] {
   const portalName = import.meta.env.VITE_PORTAL_NAME
   const portalDescription = import.meta.env.VITE_PORTAL_DESCRIPTION
-  return [
+  const portalKey = import.meta.env.VITE_PORTAL_KEY ?? ''
+  const baseUrl = `https://${portalKey}.synapse.org`
+
+  const descriptors: MetaDescriptor[] = [
+    { charSet: 'utf-8' },
+    { name: 'viewport', content: 'width=device-width, initial-scale=1' },
     { title: portalName },
-    ...(portalDescription
-      ? [{ name: 'description', content: portalDescription }]
-      : []),
+    { property: 'og:url', content: `${baseUrl}/` },
+    { property: 'og:title', content: portalName },
+    { property: 'og:type', content: 'website' },
+    {
+      name: 'image',
+      property: 'og:image',
+      content: `${baseUrl}/socialmedia.png`,
+    },
+    { name: 'twitter:url', content: `${baseUrl}/` },
+    { name: 'twitter:title', content: portalName },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:domain', content: 'synapse.org' },
+    { name: 'twitter:image', content: `${baseUrl}/socialmedia.png` },
   ]
+
+  if (portalDescription) {
+    descriptors.push({ name: 'description', content: portalDescription })
+    descriptors.push({ property: 'og:description', content: portalDescription })
+    descriptors.push({
+      name: 'twitter:description',
+      content: portalDescription,
+    })
+  }
+
+  return mergeMeta(args, descriptors)
 }
 
 export function links() {
@@ -29,50 +56,17 @@ export function links() {
         'sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u',
       crossOrigin: 'anonymous',
     },
+    {
+      rel: 'shortcut icon',
+      href: '/favicon.svg',
+    },
   ]
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const portalKey = import.meta.env.VITE_PORTAL_KEY ?? ''
-  const portalName = import.meta.env.VITE_PORTAL_NAME ?? ''
-  const portalDescription = import.meta.env.VITE_PORTAL_DESCRIPTION ?? ''
-  const baseUrl = `https://${portalKey}.synapse.org`
-
   return (
     <html lang="en">
       <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#000000" />
-
-        {/* Facebook / Open Graph Meta Tags */}
-        <meta property="og:url" content={`${baseUrl}/`} />
-        <meta property="og:type" content="website" />
-        <meta property="og:title" content={portalName} />
-        <meta property="og:description" content={portalDescription} />
-        <meta
-          name="image"
-          property="og:image"
-          content={`${baseUrl}/socialmedia.png`}
-        />
-
-        {/* Twitter Meta Tags */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta property="twitter:domain" content="synapse.org" />
-        <meta property="twitter:url" content={`${baseUrl}/`} />
-        <meta name="twitter:title" content={portalName} />
-        <meta name="twitter:description" content={portalDescription} />
-        <meta name="twitter:image" content={`${baseUrl}/socialmedia.png`} />
-
-        {/*
-          Note: <meta name="description"> is provided by route-level meta() exports
-          (rendered by <Meta /> below), NOT as a hardcoded tag here.
-          This avoids duplicate description tags when child routes provide their own.
-        */}
-
-        <link rel="shortcut icon" href="/favicon.svg" />
-
-        {/* React Router injects route-level <title>, <meta>, and stylesheet <link> elements here */}
         <Meta />
         <Links />
       </head>
