@@ -207,6 +207,130 @@ describe('createColumn end-to-end paste behavior', () => {
     expect(result).toEqual({ platform: '' })
   })
 
+  it('coerces empty paste to null for a required number column', () => {
+    // floatColumn.parsePastedValue('') returns null (NaN guard); the wrapper then
+    // leaves null as-is for required columns.
+    const column = createColumn({
+      columnName: 'count',
+      typeInfo: { type: 'number', isArray: false },
+      enumeratedValues: null,
+      isRequired: true,
+      schemaPropertyInfo: {
+        type: { type: 'number', isArray: false },
+        enumeratedValues: null,
+        isRequired: true,
+      },
+    })
+    const result = column.pasteValue!({
+      rowData: { count: 42 },
+      value: '' as never,
+      rowIndex: 0,
+    })
+    expect(result).toEqual({ count: null })
+  })
+
+  it('coerces empty paste to undefined for an optional number column', () => {
+    // floatColumn.parsePastedValue('') returns null; the wrapper coerces null →
+    // undefined for optional columns.
+    const column = createColumn({
+      columnName: 'count',
+      typeInfo: { type: 'number', isArray: false },
+      enumeratedValues: null,
+      isRequired: false,
+      schemaPropertyInfo: {
+        type: { type: 'number', isArray: false },
+        enumeratedValues: null,
+        isRequired: false,
+      },
+    })
+    const result = column.pasteValue!({
+      rowData: { count: 42 },
+      value: '' as never,
+      rowIndex: 0,
+    })
+    expect(result).toEqual({ count: undefined })
+  })
+
+  it('coerces empty paste to null for a required boolean column', () => {
+    const column = createColumn({
+      columnName: 'active',
+      typeInfo: { type: 'boolean', isArray: false },
+      enumeratedValues: null,
+      isRequired: true,
+      schemaPropertyInfo: {
+        type: { type: 'boolean', isArray: false },
+        enumeratedValues: null,
+        isRequired: true,
+      },
+    })
+    const result = column.pasteValue!({
+      rowData: { active: true },
+      value: '' as never,
+      rowIndex: 0,
+    })
+    expect(result).toEqual({ active: null })
+  })
+
+  it('coerces empty paste to undefined for an optional boolean column', () => {
+    const column = createColumn({
+      columnName: 'active',
+      typeInfo: { type: 'boolean', isArray: false },
+      enumeratedValues: null,
+      isRequired: false,
+      schemaPropertyInfo: {
+        type: { type: 'boolean', isArray: false },
+        enumeratedValues: null,
+        isRequired: false,
+      },
+    })
+    const result = column.pasteValue!({
+      rowData: { active: true },
+      value: '' as never,
+      rowIndex: 0,
+    })
+    expect(result).toEqual({ active: undefined })
+  })
+
+  it('coerces empty paste to null for a required date-time column', () => {
+    const column = createColumn({
+      columnName: 'timestamp',
+      typeInfo: { type: 'string', isArray: false, format: 'date-time' },
+      enumeratedValues: null,
+      isRequired: true,
+      schemaPropertyInfo: {
+        type: { type: 'string', isArray: false, format: 'date-time' },
+        enumeratedValues: null,
+        isRequired: true,
+      },
+    })
+    const result = column.pasteValue!({
+      rowData: { timestamp: '2024-01-01T00:00:00.000Z' },
+      value: '' as never,
+      rowIndex: 0,
+    })
+    expect(result).toEqual({ timestamp: null })
+  })
+
+  it('coerces empty paste to undefined for an optional date-time column', () => {
+    const column = createColumn({
+      columnName: 'timestamp',
+      typeInfo: { type: 'string', isArray: false, format: 'date-time' },
+      enumeratedValues: null,
+      isRequired: false,
+      schemaPropertyInfo: {
+        type: { type: 'string', isArray: false, format: 'date-time' },
+        enumeratedValues: null,
+        isRequired: false,
+      },
+    })
+    const result = column.pasteValue!({
+      rowData: { timestamp: '2024-01-01T00:00:00.000Z' },
+      value: '' as never,
+      rowIndex: 0,
+    })
+    expect(result).toEqual({ timestamp: undefined })
+  })
+
   it('mirrors a multi-column paste sequence (text + autocomplete) and coerces empties on both', () => {
     const textCol = createColumn({
       columnName: 'name',
