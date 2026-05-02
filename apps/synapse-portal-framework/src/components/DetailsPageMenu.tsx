@@ -67,6 +67,16 @@ const DetailsPageMenu = ({
           {option.title}
         </Button>
       ))}
+      {
+        <Button
+          sx={{
+            color: 'primary.main',
+          }}
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        >
+          Back to Top
+        </Button>
+      }
     </Stack>
   )
 }
