@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { DetailsPageSectionLayoutType } from '@/components/DetailsPage/DetailsPageSectionLayout'
 import { scrollToWithOffset } from '@/utils'
 import { Button, Stack, Typography } from '@mui/material'
@@ -11,6 +11,15 @@ const DetailsPageMenu = ({
 }): React.ReactNode => {
   const location = useLocation()
   const navigate = useNavigate()
+  const [showBackToTop, setShowBackToTop] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => {
+      setShowBackToTop(window.scrollY > 500)
+    }
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   function handleMenuClick(id: string) {
     navigate(`${location.search}#${id}`)
@@ -67,7 +76,7 @@ const DetailsPageMenu = ({
           {option.title}
         </Button>
       ))}
-      {
+      {showBackToTop && (
         <Button
           sx={{
             color: 'primary.main',
@@ -76,7 +85,7 @@ const DetailsPageMenu = ({
         >
           Back to Top
         </Button>
-      }
+      )}
     </Stack>
   )
 }
