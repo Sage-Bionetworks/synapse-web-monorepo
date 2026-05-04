@@ -1,12 +1,1 @@
-import { startTransition, StrictMode } from 'react'
-import { hydrateRoot } from 'react-dom/client'
-import { HydratedRouter } from 'react-router/dom'
-
-startTransition(() => {
-  hydrateRoot(
-    document,
-    <StrictMode>
-      <HydratedRouter unstable_useTransitions />
-    </StrictMode>,
-  )
-})
+import '@sage-bionetworks/synapse-portal-framework/ssg/entry.client'

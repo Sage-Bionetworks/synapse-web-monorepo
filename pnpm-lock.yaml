@@ -1409,6 +1409,9 @@ importers:
       '@react-hookz/web':
         specifier: ^25.1.1
         version: 25.1.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@react-router/dev':
+        specifier: ^7.14.0
+        version: 7.14.2(@types/node@22.19.13)(babel-plugin-macros@3.1.0)(lightningcss@1.32.0)(react-router@7.14.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(typescript@6.0.3)(vite@8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))(yaml@2.7.1)
       '@sage-bionetworks/synapse-client':
         specifier: workspace:*
         version: link:../../packages/synapse-client
@@ -1463,6 +1466,9 @@ importers:
       synapse-react-client:
         specifier: workspace:*
         version: link:../../packages/synapse-react-client
+      vite-config:
+        specifier: workspace:*
+        version: link:../../packages/vite-config
     devDependencies:
       '@testing-library/jest-dom':
         specifier: ^6.9.1
@@ -1572,9 +1578,6 @@ importers:
       vite:
         specifier: ^8.0.8
         version: 8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
-      vite-config:
-        specifier: workspace:*
-        version: link:../../packages/vite-config
       vite-plugin-static-copy:
         specifier: ^4.0.1
         version: 4.1.0(vite@8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))

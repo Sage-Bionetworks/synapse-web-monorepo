@@ -99,7 +99,9 @@ function StudyDetailsPage() {
       disableCanonicalUrl
     >
       <DetailsPageTabs tabConfig={tabConfig} />
-      <Outlet />
+      <Outlet
+        context={{ defaultTabPath: STUDY_DETAILS_PAGE_DETAILS_TAB_PATH }}
+      />
     </DetailsPage>
   )
 }

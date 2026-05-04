@@ -83,8 +83,10 @@ export default [
         'Explore/Studies/:studyId',
         'pages/StudyDetailsPage/StudyDetailsPage.tsx',
         [
-          index('pages/StudyDetailsPage/StudyDetailsPageIndex.tsx'),
-          route('*', 'pages/StudyDetailsPage/StudyDetailsPageWildcard.tsx'),
+          index('pages/DefaultTabIndexRedirect.tsx', { id: 'study-index' }),
+          route('*', 'pages/DefaultTabWildcardRedirect.tsx', {
+            id: 'study-wildcard',
+          }),
           route('Details', 'pages/StudyDetailsPage/StudyDetailsTab.tsx'),
           route('Datasets', 'pages/StudyDetailsPage/StudyDatasetsTab.tsx'),
           route('Files', 'pages/StudyDetailsPage/StudyFilesTab.tsx'),
@@ -98,8 +100,10 @@ export default [
         'Explore/Tools/:resourceId',
         'pages/ToolDetailsPage/ToolDetailsPage.tsx',
         [
-          index('pages/ToolDetailsPage/ToolDetailsPageIndex.tsx'),
-          route('*', 'pages/ToolDetailsPage/ToolDetailsPageWildcard.tsx'),
+          index('pages/DefaultTabIndexRedirect.tsx', { id: 'tool-index' }),
+          route('*', 'pages/DefaultTabWildcardRedirect.tsx', {
+            id: 'tool-wildcard',
+          }),
           route(
             'Details',
             'pages/ToolDetailsPage/ToolDetailsPageDetailsTab.tsx',
@@ -115,11 +119,10 @@ export default [
         'Explore/Hackathon/:id',
         'pages/HackathonDetailsPage/HackathonDetailsPage.tsx',
         [
-          index('pages/HackathonDetailsPage/HackathonDetailsPageIndex.tsx'),
-          route(
-            '*',
-            'pages/HackathonDetailsPage/HackathonDetailsPageWildcard.tsx',
-          ),
+          index('pages/DefaultTabIndexRedirect.tsx', { id: 'hackathon-index' }),
+          route('*', 'pages/DefaultTabWildcardRedirect.tsx', {
+            id: 'hackathon-wildcard',
+          }),
           route(
             'Background&Results',
             'pages/HackathonDetailsPage/HackathonBackgroundResultsTab.tsx',
@@ -134,13 +137,12 @@ export default [
         'Organizations/:abbreviation',
         'pages/OrganizationDetailsPage/OrganizationDetailsPage.tsx',
         [
-          index(
-            'pages/OrganizationDetailsPage/OrganizationDetailsPageIndex.tsx',
-          ),
-          route(
-            '*',
-            'pages/OrganizationDetailsPage/OrganizationDetailsPageWildcard.tsx',
-          ),
+          index('pages/DefaultTabIndexRedirect.tsx', {
+            id: 'organization-index',
+          }),
+          route('*', 'pages/DefaultTabWildcardRedirect.tsx', {
+            id: 'organization-wildcard',
+          }),
           route(
             'Details',
             'pages/OrganizationDetailsPage/OrganizationDetailsTab.tsx',

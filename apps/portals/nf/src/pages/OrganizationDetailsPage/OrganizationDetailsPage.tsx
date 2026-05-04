@@ -77,7 +77,7 @@ function OrganizationDetailsPage() {
       disableCanonicalUrl
     >
       <DetailsPageTabs tabConfig={tabConfig} />
-      <Outlet />
+      <Outlet context={{ defaultTabPath: ORGANIZATION_DETAILS_TAB_PATH }} />
     </DetailsPage>
   )
 }

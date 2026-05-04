@@ -77,7 +77,9 @@ function ToolDetailsPage() {
       disableCanonicalUrl
     >
       <DetailsPageTabs tabConfig={toolDetailsPageTabConfig} />
-      <Outlet />
+      <Outlet
+        context={{ defaultTabPath: TOOLS_DETAILS_PAGE_DETAILS_TAB_PATH }}
+      />
     </DetailsPage>
   )
 }
