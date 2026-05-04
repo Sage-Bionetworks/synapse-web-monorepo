@@ -15,7 +15,9 @@ const DetailsPageMenu = ({
 
   useEffect(() => {
     const onScroll = () => {
-      setShowBackToTop(window.scrollY > 500)
+      requestAnimationFrame(() => {
+        setShowBackToTop(window.scrollY > 500)
+      })
     }
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
