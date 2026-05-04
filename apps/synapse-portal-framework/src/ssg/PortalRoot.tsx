@@ -20,31 +20,16 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState, type ReactNode } from 'react'
 import { CookiesProvider } from 'react-cookie'
 import { Outlet } from 'react-router'
-import type { SynapseChatProps } from 'synapse-react-client'
+import { ThemeProvider } from 'synapse-react-client/theme/ThemeProvider'
 import { DocumentMetadataProvider } from 'synapse-react-client/utils/context/DocumentMetadataContext'
 import { defaultQueryClientConfig } from 'synapse-react-client/utils/context/FullContextProvider'
-import { ThemeProvider } from 'synapse-react-client/theme/ThemeProvider'
-import type { NavbarConfig } from '../components/navbar/Navbar'
-import { PortalContextProvider } from '../components/PortalContext'
-import type {
-  FooterConfig,
-  HomePageHeaderConfig,
-  LogoConfig,
-} from '../types/portal-config'
+import {
+  PortalContextProvider,
+  PortalContextType,
+} from '../components/PortalContext'
 
-export type PortalRootProps = {
-  /** Portal display name (read from `import.meta.env.VITE_PORTAL_NAME` in the portal). */
-  portalName: string
-  /** Portal key — e.g. "nf" → nf.synapse.org. */
-  portalKey: string
+export type PortalRootProps = Omit<PortalContextType, 'routeConfig'> & {
   palette: PaletteOptions
-  navbarConfig: NavbarConfig
-  headerConfig: HomePageHeaderConfig
-  footerConfig: FooterConfig
-  logoHeaderConfig: LogoConfig
-  logoFooterConfig: LogoConfig
-  /** Optional chat config — only set on portals that enable Synapse Chat. */
-  synapseChatProps?: SynapseChatProps
   /**
    * If provided, rendered in place of the default `<Outlet />`. Most portals
    * leave this unset; supplied for cases where the portal needs to wrap the
@@ -54,6 +39,7 @@ export type PortalRootProps = {
 }
 
 export default function PortalRoot(props: PortalRootProps) {
+  const { children, palette, ...portalContextProps } = props
   const [queryClient] = useState(
     () => new QueryClient(defaultQueryClientConfig),
   )
@@ -61,26 +47,19 @@ export default function PortalRoot(props: PortalRootProps) {
   // routeConfig is unused in framework mode — routing is handled by routes.ts.
   // Pass an empty array to satisfy the PortalContextType (which is shared with
   // SPA-mode portals that still consume it).
-  const portalContext = {
-    portalName: props.portalName,
-    portalKey: props.portalKey,
+  const portalContext: PortalContextType = {
+    ...portalContextProps,
     routeConfig: [],
-    headerConfig: props.headerConfig,
-    footerConfig: props.footerConfig,
-    logoHeaderConfig: props.logoHeaderConfig,
-    logoFooterConfig: props.logoFooterConfig,
-    navbarConfig: props.navbarConfig,
-    synapseChatProps: props.synapseChatProps,
   }
 
   return (
     <PortalContextProvider value={portalContext}>
       <CookiesProvider>
-        <ThemeProvider theme={{ palette: props.palette }}>
+        <ThemeProvider theme={{ palette }}>
           <CssBaseline />
           <QueryClientProvider client={queryClient}>
-            <DocumentMetadataProvider defaultTitle={props.portalName}>
-              {props.children ?? <Outlet />}
+            <DocumentMetadataProvider defaultTitle={portalContext.portalName}>
+              {children ?? <Outlet />}
             </DocumentMetadataProvider>
           </QueryClientProvider>
         </ThemeProvider>

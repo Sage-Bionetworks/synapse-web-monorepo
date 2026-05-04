@@ -32,10 +32,10 @@ import { mergeMeta } from '../utils/mergeMeta'
 export type RootMetaOptions = {
   /** Portal display name, used as `<title>` and in OG/Twitter title tags. */
   portalName: string
-  /** Optional portal description, used as `<meta name="description">` etc. */
-  portalDescription?: string
+  /** Portal description, used as `<meta name="description">` etc. */
+  portalDescription: string
   /** Portal key (e.g. "nf"); used to derive `https://${key}.synapse.org` URLs. */
-  portalKey?: string
+  portalKey: string
 }
 
 /**
@@ -46,7 +46,7 @@ export type RootMetaOptions = {
  * these defaults; routes that don't inherit them.
  */
 export function createRootMeta(options: RootMetaOptions) {
-  const { portalName, portalDescription, portalKey = '' } = options
+  const { portalName, portalDescription, portalKey } = options
   const baseUrl = `https://${portalKey}.synapse.org`
 
   return function meta(args: MetaArgs): MetaDescriptor[] {

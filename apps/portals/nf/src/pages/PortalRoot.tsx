@@ -16,6 +16,7 @@ export default function NfPortalRoot() {
     <PortalRoot
       portalName={import.meta.env.VITE_PORTAL_NAME}
       portalKey={import.meta.env.VITE_PORTAL_KEY}
+      portalDescription={import.meta.env.VITE_PORTAL_DESCRIPTION}
       palette={palette}
       navbarConfig={navbarConfig}
       headerConfig={headerConfig}

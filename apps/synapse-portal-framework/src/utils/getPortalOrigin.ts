@@ -8,7 +8,7 @@
  *
  * This avoids hard-coding a specific portal's domain in shared framework code.
  */
-export function getPortalOrigin(portalKey?: string): string {
+export function getPortalOrigin(portalKey: string): string {
   if (typeof window !== 'undefined') {
     return window.location.origin
   }
