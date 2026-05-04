@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { DetailsPageSectionLayoutType } from '@/components/DetailsPage/DetailsPageSectionLayout'
 import { scrollToWithOffset } from '@/utils'
 import { Button, Stack, Typography } from '@mui/material'
