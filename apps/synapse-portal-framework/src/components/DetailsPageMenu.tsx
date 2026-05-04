@@ -83,7 +83,7 @@ const DetailsPageMenu = ({
           }}
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
-          Back to Top
+          ↑ Back to Top
         </Button>
       )}
     </Stack>
