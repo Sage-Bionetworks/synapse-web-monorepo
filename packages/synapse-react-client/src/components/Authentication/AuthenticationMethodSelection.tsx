@@ -12,10 +12,11 @@ import {
 import { Box } from '@mui/material'
 import { MouseEvent } from 'react'
 import LoginMethodButton from './LoginMethodButton'
-import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import { Realm } from '@sage-bionetworks/synapse-client'
-import { hasArcusProvider } from '@/utils/functions/RealmUtils'
+import {
+  hasArcusProvider,
+  hasSageBionetworksProvider,
+} from '@/utils/functions/RealmUtils'
 
 type AuthenticationMethodSelectionProps = {
   ssoRedirectUrl?: string
@@ -45,10 +46,10 @@ export default function AuthenticationMethodSelection(
   } = props
 
   const showArcusSSOButtonOnly = hasArcusProvider(realm)
-  const showSageBionetworksIdp = useGetFeatureFlag(
-    FeatureFlagEnum.SAGE_BIONETWORKS_IDP,
-  )
+  const showSageBionetworksSSOButtonOnly = hasSageBionetworksProvider(realm)
 
+  const isSingleIdpOnly =
+    showArcusSSOButtonOnly || showSageBionetworksSSOButtonOnly
   const stateWithCSRF: OAuth2State = { ...state, csrfToken }
 
   function onSSOSignIn(event: MouseEvent<HTMLButtonElement>, provider: string) {
@@ -72,7 +73,7 @@ export default function AuthenticationMethodSelection(
 
   return (
     <Box>
-      {!showArcusSSOButtonOnly && (
+      {!isSingleIdpOnly && (
         <>
           <LoginMethodButton
             loginMethod={LOGIN_METHOD_OAUTH2_GOOGLE}
@@ -93,14 +94,6 @@ export default function AuthenticationMethodSelection(
             iconName="email"
             onClick={onSelectUsernameAndPassword}
           />
-          {showSageBionetworksIdp && (
-            <LoginMethodButton
-              loginMethod={LOGIN_METHOD_OAUTH2_SAGE_BIONETWORKS}
-              onClick={event => {
-                onSSOSignIn(event, OAUTH2_PROVIDERS.SAGE_BIONETWORKS)
-              }}
-            />
-          )}
         </>
       )}
       {showArcusSSOButtonOnly && (
@@ -109,6 +102,14 @@ export default function AuthenticationMethodSelection(
           // iconName="arcusbio"
           onClick={event => {
             onSSOSignIn(event, OAUTH2_PROVIDERS.ARCUS)
+          }}
+        />
+      )}
+      {showSageBionetworksSSOButtonOnly && (
+        <LoginMethodButton
+          loginMethod={LOGIN_METHOD_OAUTH2_SAGE_BIONETWORKS}
+          onClick={event => {
+            onSSOSignIn(event, OAUTH2_PROVIDERS.SAGE_BIONETWORKS)
           }}
         />
       )}

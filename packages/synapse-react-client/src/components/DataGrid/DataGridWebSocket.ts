@@ -47,6 +47,8 @@ type DataGridWebSocketConstructorArgs = {
   onModelCreate?: (model: GridModel) => void
   onReplicaConnected?: () => void
   onReplicaDisconnected?: () => void
+  onSyncStart?: () => void
+  onSyncEnd?: () => void
   maxPayloadSizeBytes?: number
   socket?: WebSocket
   model?: GridModel | null
@@ -74,6 +76,8 @@ export class DataGridWebSocket {
   private onStatusChange: (isOpen: boolean, _this: DataGridWebSocket) => void
   private onReplicaConnected: () => void
   private onReplicaDisconnected: () => void
+  private onSyncStart: () => void
+  private onSyncEnd: () => void
 
   constructor(args: DataGridWebSocketConstructorArgs) {
     const {
@@ -84,6 +88,8 @@ export class DataGridWebSocket {
       onModelCreate,
       onReplicaConnected,
       onReplicaDisconnected,
+      onSyncStart,
+      onSyncEnd,
       maxPayloadSizeBytes,
       socket,
       model,
@@ -101,6 +107,8 @@ export class DataGridWebSocket {
     this.onStatusChange = onStatusChange ?? noop
     this.onReplicaConnected = onReplicaConnected ?? noop
     this.onReplicaDisconnected = onReplicaDisconnected ?? noop
+    this.onSyncStart = onSyncStart ?? noop
+    this.onSyncEnd = onSyncEnd ?? noop
 
     // Restore existing model if provided
     if (model) {
@@ -240,6 +248,7 @@ export class DataGridWebSocket {
   private handleResponseComplete() {
     // Clocks are in sync, no further action needed
     this.onGridReady()
+    this.onSyncEnd()
     console.debug(
       'Clocks synchronized with server. Incrementing sequence number.',
     )
@@ -275,12 +284,7 @@ export class DataGridWebSocket {
         {
           const verbModel = this.verboseEncoder.encode(this.model)
           console.debug('New patch received, syncing data:', verbModel.time)
-          const msg = new JsonRxRequestComplete(
-            this.messageCounter.getNext(),
-            'synchronize-clock',
-            verbModel.time,
-          )
-          this.sendMessage(msg)
+          this.sendSyncMessage(verbModel.time)
         }
         break
 
@@ -350,6 +354,7 @@ export class DataGridWebSocket {
       'synchronize-clock',
       clock ?? [],
     )
+    this.onSyncStart()
     this.sendMessage(message)
   }
 

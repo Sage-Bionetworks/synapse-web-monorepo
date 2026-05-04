@@ -48,6 +48,11 @@ export const navbarConfig: NavbarConfig = {
       name: 'Help',
       path: 'https://help.adknowledgeportal.org/apd/',
     },
+    {
+      name: 'Admin',
+      path: 'https://www.synapse.org/Synapse:syn2580853/tables/',
+      requiredTeamId: '3377637',
+    },
   ],
   isPortalsDropdownEnabled: false,
 }

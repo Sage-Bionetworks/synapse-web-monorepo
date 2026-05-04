@@ -9,7 +9,8 @@ import { SkeletonTable } from '@/components/index'
 import { useGetEntity } from '@/synapse-queries/index'
 import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import { SmartToyTwoTone } from '@mui/icons-material'
-import { Stack, Tooltip } from '@mui/material'
+import { Box, Stack, Tooltip, Typography } from '@mui/material'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import Grid from '@mui/material/Grid'
 import {
   CreateGridRequest,
@@ -107,6 +108,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       isConnected,
       websocketInstance,
       hasCompletedInitialSync,
+      isSyncing,
       model,
       modelSnapshot,
       connect,
@@ -324,18 +326,9 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       [applyAndCommitChanges, model, replicaId],
     )
 
-    // Track selected row index for validation display
-    const selectedRowIndexRef = useRef<number | null>(null)
-    const [, forceUpdate] = useState({})
-
-    const handleSelectedRowChange = useCallback(
-      (rowIndex: number | null, _row: DataGridRow | null) => {
-        // Only update when a real row is selected — don't clear on blur/click-away
-        // so the ValidationAlert stays open while the user interacts with it.
-        if (rowIndex !== null) {
-          selectedRowIndexRef.current = rowIndex
-          forceUpdate({})
-        }
+    const handleNavigateToCell = useCallback(
+      (rowIndex: number, colIndex: number) => {
+        gridRef.current?.setActiveCell({ col: colIndex, row: rowIndex })
       },
       [],
     )
@@ -453,11 +446,35 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
               {hasSufficientData && (
                 <>
                   <Grid size={12}>
+                    <ValidationAlert
+                      rowValues={rowValues}
+                      columnNames={modelSnapshot?.columnNames ?? []}
+                      columnOrder={modelSnapshot?.columnOrder ?? []}
+                      onNavigateToCell={handleNavigateToCell}
+                      isLoading={!hasCompletedInitialSync}
+                    />
+                  </Grid>
+                  <Grid size={12}>
                     <Stack
                       direction={'row'}
                       spacing={1}
                       sx={{ justifyContent: 'flex-end' }}
                     >
+                      {(!hasCompletedInitialSync || isSyncing) && (
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1,
+                            mr: 'auto',
+                          }}
+                        >
+                          <SynapseSpinner size={16} margin="0" />
+                          <Typography variant="caption" color="text.secondary">
+                            {hasCompletedInitialSync ? 'Syncing…' : 'Loading…'}
+                          </Typography>
+                        </Box>
+                      )}
                       {undoUI}
                       {redoUI}
                       <GridMenuButton
@@ -509,14 +526,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                       lastSelection={lastSelection}
                       handleChange={handleChange}
                       handleSelectionChange={handleSelectionChange}
-                      onSelectedRowChange={handleSelectedRowChange}
                       remoteSelections={remoteSelections}
-                    />
-                  </Grid>
-                  <Grid size={12}>
-                    <ValidationAlert
-                      selectedRowIndex={selectedRowIndexRef.current}
-                      rowValues={rowValues}
                     />
                   </Grid>
                 </>

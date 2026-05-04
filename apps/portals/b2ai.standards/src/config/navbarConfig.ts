@@ -25,6 +25,11 @@ export const navbarConfig: NavbarConfig = {
       name: 'About',
       path: 'https://bridge2ai.github.io/b2ai-standards-registry/',
     },
+    {
+      name: 'Admin',
+      path: 'https://www.synapse.org/Synapse:syn63096806/tables/',
+      requiredTeamId: '3534128',
+    },
   ],
   isPortalsDropdownEnabled: false,
 }

@@ -66,8 +66,10 @@ export default function MetadataTasksTableAssigneeCell(
       content={
         <Stack gap={2}>
           <Typography variant="body1" gutterBottom>
-            Assign this task to a team or an individual user. All members of a
-            team will be able to collaborate in the same Curator session.
+            Use the Assignee field to organize work by assigning a task to a
+            specific person or team. This field is only for task organization
+            and filtering. It does not control project access or permission
+            levels.
           </Typography>
           <UserSearchBox
             key={showUserPicker.toString()}

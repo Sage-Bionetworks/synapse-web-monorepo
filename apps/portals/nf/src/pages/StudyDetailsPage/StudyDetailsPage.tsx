@@ -24,13 +24,14 @@ import {
 } from '@/config/routeConstants'
 import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 import { metadataConfig } from './StudyDetailsPage.config'
+import { portalMetadata } from '@/config/portalMetadata'
 
 export { metadataConfig }
 
-const _routeExports = createDetailPageRouteExports(metadataConfig, {
-  portalName: import.meta.env.VITE_PORTAL_NAME,
-  portalKey: import.meta.env.VITE_PORTAL_KEY,
-})
+const _routeExports = createDetailPageRouteExports(
+  metadataConfig,
+  portalMetadata,
+)
 export const loader = _routeExports.loader
 export const clientLoader = _routeExports.clientLoader
 export const meta = _routeExports.meta

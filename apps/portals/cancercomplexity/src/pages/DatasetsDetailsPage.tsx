@@ -15,7 +15,10 @@ import {
   publicationSql,
 } from '../config/resources'
 import DatasetSvg from '../config/style/Dataset.svg?url'
-import { datasetCardConfiguration } from '../config/synapseConfigs/datasets'
+import {
+  datasetCardConfiguration,
+  DatasetHeaderCardTypeAdornment,
+} from '../config/synapseConfigs/datasets'
 import { grantsCardConfiguration } from '../config/synapseConfigs/grants'
 import { peopleCardConfiguration } from '../config/synapseConfigs/people'
 import { publicationsCardConfiguration } from '../config/synapseConfigs/publications'
@@ -37,6 +40,7 @@ function DatasetsDetailsPage() {
               secondaryLabelLimit: Infinity,
               iconOptions: { dataset: DatasetSvg },
               isHeader: true,
+              CardTypeAdornment: DatasetHeaderCardTypeAdornment,
             }}
             sql={datasetsSql}
             columnAliases={columnAliases}

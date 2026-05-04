@@ -18,6 +18,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { AUTHENTICATION_RECEIPT_LOCALSTORAGE_KEY } from '../SynapseConstants'
 import { useOneSageURL } from './useOneSageURL'
 import { ONE_TIME_PASSWORD_STEP } from '@/components/Authentication/OneTimePasswordForm'
+import { TOTP_CLOCK_SKEW_ERROR_APPENDAGE } from '@/components/Authentication/Constants'
 
 export type UseLoginOptions = {
   sessionCallback?: () => void
@@ -200,7 +201,10 @@ export default function useLogin(opts: UseLoginOptions): UseLoginReturn {
       mutationFn: SynapseClient.loginWith2fa,
       onError: e => {
         setErrorMessage(e.reason)
-        if (
+        if (e.reason.includes('The provided code is invalid')) {
+          // The most common cause of an invalid TOTP code is clock skew between the user's device and the server.
+          setErrorMessage(`${e.reason} ${TOTP_CLOCK_SKEW_ERROR_APPENDAGE}`)
+        } else if (
           // The twoFaToken wasn't transmitted correctly
           e.reason.includes('The provided twoFaToken is invalid') ||
           // The user waited too long to enter the code.
