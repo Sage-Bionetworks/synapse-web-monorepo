@@ -53,9 +53,13 @@ export function ApplicationSessionManager(
     downloadCartPageUrl,
     appId,
     requireAuthentication,
+    defaultRealmId,
     ...hookOptions
   } = props
-  const { sessionContext, token } = useSessionManager(hookOptions)
+  const { sessionContext, token } = useSessionManager({
+    ...hookOptions,
+    defaultRealm: defaultRealmId,
+  })
 
   return (
     <ApplicationSessionContextProvider context={sessionContext}>

@@ -1,11 +1,14 @@
+import App from '@sage-bionetworks/synapse-portal-framework/App'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
 import { RouteObject } from 'react-router'
 
+const SAGE_BIONETWORKS_REALM_ID = '2'
+
 const routes: RouteObject[] = [
   {
     path: '/',
-    lazy: () => import('@/pages/RootApp').then(convertModuleToRouteObject),
+    element: <App defaultRealmId={SAGE_BIONETWORKS_REALM_ID} />,
     children: [
       ...sharedRoutes,
       {
