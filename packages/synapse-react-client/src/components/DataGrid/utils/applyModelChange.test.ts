@@ -168,6 +168,54 @@ describe('applyModelChange', () => {
     expect(snapshot.rows[0].data).toEqual(['only-col1', undefined])
   })
 
+  it('CREATE coerces an empty string value to null for a required column', () => {
+    const model = createModel()
+    const schema: SchemaPropertiesMap = {
+      col1: {
+        type: { type: 'string', isArray: false },
+        isRequired: true,
+        enumeratedValues: null,
+      },
+      col2: {
+        type: { type: 'string', isArray: false },
+        isRequired: false,
+        enumeratedValues: null,
+      },
+    }
+
+    applyModelChange(
+      model,
+      { type: 'CREATE', rowIndex: 0, rowData: { col1: '', col2: 'b' } },
+      schema,
+    )
+
+    expect(model.api.getSnapshot().rows[0].data).toEqual([null, 'b'])
+  })
+
+  it('CREATE coerces an empty string value to undefined for an optional column', () => {
+    const model = createModel()
+    const schema: SchemaPropertiesMap = {
+      col1: {
+        type: { type: 'string', isArray: false },
+        isRequired: false,
+        enumeratedValues: null,
+      },
+      col2: {
+        type: { type: 'string', isArray: false },
+        isRequired: true,
+        enumeratedValues: null,
+      },
+    }
+
+    applyModelChange(
+      model,
+      { type: 'CREATE', rowIndex: 0, rowData: { col1: '', col2: 'b' } },
+      schema,
+    )
+
+    expect(model.api.getSnapshot().rows[0].data).toEqual([undefined, 'b'])
+  })
+
   it('UPDATE does not advance the clock for cells whose values are unchanged', () => {
     const model = createModel()
 

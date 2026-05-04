@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import {
-  coercePastedCellValue,
+  coerceModelCellValue,
   wrapPasteValueWithSchemaCoercion,
 } from './schemaAwarePasteValue'
 import type { SchemaPropertyInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
@@ -18,44 +18,44 @@ const required: SchemaPropertyInfo = {
   enumeratedValues: null,
 }
 
-describe('coercePastedCellValue', () => {
+describe('coerceModelCellValue', () => {
   it('returns value unchanged when no schema info is provided', () => {
-    expect(coercePastedCellValue('hello')).toBe('hello')
-    expect(coercePastedCellValue(null)).toBeNull()
-    expect(coercePastedCellValue(undefined)).toBeUndefined()
-    expect(coercePastedCellValue('')).toBe('')
+    expect(coerceModelCellValue('hello')).toBe('hello')
+    expect(coerceModelCellValue(null)).toBeNull()
+    expect(coerceModelCellValue(undefined)).toBeUndefined()
+    expect(coerceModelCellValue('')).toBe('')
   })
 
   it('coerces whitespace-only strings (including stacked newlines from HTML paste) to the schema blank', () => {
-    expect(coercePastedCellValue('\n\n\n', optional)).toBeUndefined()
-    expect(coercePastedCellValue('   ', optional)).toBeUndefined()
-    expect(coercePastedCellValue('\t', optional)).toBeUndefined()
-    expect(coercePastedCellValue('\n\n\n', required)).toBeNull()
+    expect(coerceModelCellValue('\n\n\n', optional)).toBeUndefined()
+    expect(coerceModelCellValue('   ', optional)).toBeUndefined()
+    expect(coerceModelCellValue('\t', optional)).toBeUndefined()
+    expect(coerceModelCellValue('\n\n\n', required)).toBeNull()
   })
 
   it('coerces empty values to undefined for optional columns', () => {
-    expect(coercePastedCellValue(null, optional)).toBeUndefined()
-    expect(coercePastedCellValue(undefined, optional)).toBeUndefined()
-    expect(coercePastedCellValue('', optional)).toBeUndefined()
+    expect(coerceModelCellValue(null, optional)).toBeUndefined()
+    expect(coerceModelCellValue(undefined, optional)).toBeUndefined()
+    expect(coerceModelCellValue('', optional)).toBeUndefined()
   })
 
   it('coerces empty values to null for required columns', () => {
-    expect(coercePastedCellValue(null, required)).toBeNull()
-    expect(coercePastedCellValue(undefined, required)).toBeNull()
-    expect(coercePastedCellValue('', required)).toBeNull()
+    expect(coerceModelCellValue(null, required)).toBeNull()
+    expect(coerceModelCellValue(undefined, required)).toBeNull()
+    expect(coerceModelCellValue('', required)).toBeNull()
   })
 
   it('preserves non-empty values regardless of schema info', () => {
-    expect(coercePastedCellValue('hello', optional)).toBe('hello')
-    expect(coercePastedCellValue(0, optional)).toBe(0)
-    expect(coercePastedCellValue(false, optional)).toBe(false)
-    expect(coercePastedCellValue('hello', required)).toBe('hello')
+    expect(coerceModelCellValue('hello', optional)).toBe('hello')
+    expect(coerceModelCellValue(0, optional)).toBe(0)
+    expect(coerceModelCellValue(false, optional)).toBe(false)
+    expect(coerceModelCellValue('hello', required)).toBe('hello')
   })
 
   it('does not coerce empty arrays (left to the column impl)', () => {
     const arr: unknown[] = []
-    expect(coercePastedCellValue(arr, optional)).toBe(arr)
-    expect(coercePastedCellValue(arr, required)).toBe(arr)
+    expect(coerceModelCellValue(arr, optional)).toBe(arr)
+    expect(coerceModelCellValue(arr, required)).toBe(arr)
   })
 })
 

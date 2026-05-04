@@ -2,8 +2,9 @@ import type { Column } from '@sage-bionetworks/react-datasheet-grid'
 import type { SchemaPropertyInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 
 /**
- * Decide what value an "empty" pasted cell should produce, given the column's
- * schema info.
+ * Coerce an empty cell value to the schema-correct blank before it reaches
+ * the model, regardless of how the edit originated (paste, free-typed commit,
+ * programmatic CREATE/UPDATE, etc.).
  *
  * - Optional columns -> undefined (property is absent and passes validation
  *   for any optional type).
@@ -19,7 +20,7 @@ import type { SchemaPropertyInfo } from '@/utils/jsonschema/getSchemaPropertyInf
  *
  * If schemaPropertyInfo is omitted, the original value is returned unchanged.
  */
-export function coercePastedCellValue(
+export function coerceModelCellValue(
   value: unknown,
   schemaPropertyInfo?: SchemaPropertyInfo,
 ): unknown {
@@ -60,7 +61,7 @@ export function wrapPasteValueWithSchemaCoercion<
   return ({ rowData, value, rowIndex }) => {
     const result = originalPasteValue({ rowData, value, rowIndex })
     const cellValue = result[columnName]
-    const coerced = coercePastedCellValue(cellValue, schemaPropertyInfo)
+    const coerced = coerceModelCellValue(cellValue, schemaPropertyInfo)
     if (coerced === cellValue) {
       return result
     }

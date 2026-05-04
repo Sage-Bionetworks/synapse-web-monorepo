@@ -76,7 +76,11 @@ function commitParsedValue(
   parsed: unknown,
   clearValue: undefined | null,
 ): unknown {
-  if (parsed === null || parsed === undefined || parsed === '') {
+  if (
+    parsed === null ||
+    parsed === undefined ||
+    (typeof parsed === 'string' && parsed.trim() === '')
+  ) {
     return clearValue
   }
   return parsed
