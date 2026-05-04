@@ -117,6 +117,7 @@ import {
   SearchIndexQuery,
   SearchQueryResults,
 } from '@sage-bionetworks/synapse-client'
+import { SearchIndexQueryToJSON } from '@sage-bionetworks/synapse-client/generated/models/SearchIndexQuery'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import {
   ACCESS_TYPE,
@@ -603,7 +604,7 @@ export const getSearchQueryAsyncJobResults = async (
 ): Promise<AsynchronousJobStatus<SearchIndexQuery, SearchQueryResults>> => {
   const asyncJobId = await doPost<AsyncJobId>(
     SEARCH_QUERY_ASYNC_START,
-    searchIndexQuery,
+    SearchIndexQueryToJSON(searchIndexQuery),
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

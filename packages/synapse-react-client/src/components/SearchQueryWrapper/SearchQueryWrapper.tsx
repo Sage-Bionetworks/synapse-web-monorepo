@@ -1,21 +1,27 @@
 import { hasResettableFilters as hasResettableFiltersUtil } from '@/utils/functions/queryUtils'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
 import useImmutableTableQuery from '@/utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
+import { goToPage as transformQueryToGoToPage } from '@/utils/hooks/useImmutableTableQuery/TableQueryReducerActions'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { Provider } from 'jotai'
-import { PropsWithChildren, useEffect, useMemo } from 'react'
+import { PropsWithChildren, useCallback, useEffect, useMemo } from 'react'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import {
   QueryContextProvider,
   QueryContextType,
   useQueryContext,
 } from '../QueryContext/QueryContext'
-import { useSearchQueryUseQueryOptions } from './SearchQueryUseQueryOptions'
+import {
+  getSearchQueryUseQueryOptions,
+  useSearchQueryUseQueryOptions,
+} from './SearchQueryUseQueryOptions'
 import useHasFacetedSelectColumn from '../QueryWrapper/useHasFacetedSelectColumn'
 import { SessionInitializedGuard } from '@/utils/AppUtils/session/SessionInitializedGuard'
-import { useGetEntity } from '@/synapse-queries'
+import { useGetEntity, useGetEntityBundle } from '@/synapse-queries'
 import { SearchIndex } from '@sage-bionetworks/synapse-client'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { cloneDeep } from 'lodash-es'
 
 /**
  * The initQueryRequest used internally within SearchQueryWrapper. It uses a synthetic entity ID
@@ -95,6 +101,8 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
     searchIndexId,
   } = props
 
+  const { keyFactory, accessToken } = useSynapseContext()
+
   const { data: searchIndexEntity } = useGetEntity(
     searchIndexId,
   ) as unknown as { data: SearchIndex | undefined }
@@ -102,6 +110,11 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
   const synapseId = searchIndexEntity?.definingSQL
     ? parseEntityIdFromSqlStatement(searchIndexEntity.definingSQL)
     : undefined
+
+  const { data: entityBundle } = useGetEntityBundle(synapseId, undefined, {
+    includeTableBundle: true,
+  })
+  const columnModels = entityBundle?.tableBundle?.columnModels
 
   // Build a full synthetic QueryBundleRequest so we can reuse useImmutableTableQuery.
   // The entityId and sql are placeholders; only selectedFacets, limit, offset, and partMask
@@ -164,6 +177,32 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
     return hasResettableFiltersUtil(request.query, undefined)
   }, [getCurrentQueryRequest])
 
+  // Provides page-specific row query options using the search API, so components like
+  // usePrefetchTableRows don't accidentally call the standard table query API with the
+  // synthetic entity ID.
+  const getRowDataQueryOptionsForPage = useCallback(
+    (pageNumber: number) => {
+      const queryWithUpdatedPage = transformQueryToGoToPage(
+        { type: 'goToPage', pageNumber },
+        cloneDeep(getCurrentQueryRequest()),
+      )
+      return getSearchQueryUseQueryOptions(
+        queryWithUpdatedPage,
+        keyFactory,
+        accessToken,
+        searchIndexId,
+        columnModels,
+      ).rowDataQueryOptions
+    },
+    [
+      getCurrentQueryRequest,
+      keyFactory,
+      accessToken,
+      searchIndexId,
+      columnModels,
+    ],
+  )
+
   const context: QueryContextType = useDeepCompareMemoize({
     isInfinite,
     entityId: undefined,
@@ -196,6 +235,7 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
     fileIdColumnName: undefined,
     fileVersionColumnName: undefined,
     fileNameColumnName: undefined,
+    getRowDataQueryOptionsForPage,
   })
 
   return (

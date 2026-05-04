@@ -65,6 +65,7 @@ export const standardsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 export const standardsSearchQueryWrapperPlotNavProps: SearchQueryWrapperPlotNavProps =
   {
-    searchIndexId: 'syn1234567', // TODO: update with real search index id once created
+    searchIndexId: 'syn74803513',
     ...standardsQueryWrapperPlotNavProps,
+    hideTopLevelControls: true,
   }

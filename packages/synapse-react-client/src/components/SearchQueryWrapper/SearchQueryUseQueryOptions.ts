@@ -138,6 +138,34 @@ export function toSearchIndexQuery(
  *  - hits → queryResult.queryResults (rows derived from hit.rowId/rowVersion/fields)
  *  - facets → facets (same FacetColumnResult type)
  */
+/**
+ * The search API returns list column values as "[item1, item2, item3]" — a plain-text
+ * bracket-delimited string that is NOT valid JSON. SynapseTableCell expects valid JSON
+ * arrays (e.g. '["item1","item2","item3"]'). This function converts the former to the
+ * latter. If the value already looks like a valid JSON array it is returned unchanged.
+ */
+function convertSearchListValueToJson(value: string): string {
+  if (value === '[]' || value.startsWith('["')) {
+    // Already valid JSON array
+    return value
+  }
+  if (value.startsWith('[') && value.endsWith(']')) {
+    const inner = value.slice(1, -1).trim()
+    if (inner.length === 0) return '[]'
+    return JSON.stringify(inner.split(', '))
+  }
+  return value
+}
+
+const LIST_COLUMN_TYPES = new Set([
+  'STRING_LIST',
+  'INTEGER_LIST',
+  'BOOLEAN_LIST',
+  'DATE_LIST',
+  'USERID_LIST',
+  'ENTITYID_LIST',
+])
+
 export function searchQueryResultsToQueryResultBundle(
   results: SearchQueryResults | undefined,
   query: SearchIndexQuery,
@@ -149,11 +177,12 @@ export function searchQueryResultsToQueryResultBundle(
     }
   }
 
-  // Derive SelectColumn headers from returnFields or from the first hit's field names
+  // Derive column names from the server-returned selectColumns. Both the row data
+  // query and the metadata query request SELECT_COLUMNS, so this is always present.
   const fieldNames: string[] =
-    query.searchQuery?.returnFields ??
-    results.hits?.[0]?.fields?.map(f => f.name ?? '').filter(Boolean) ??
-    []
+    results.selectColumns
+      ?.map(col => col.name)
+      .filter((n): n is string => !!n) ?? []
 
   const headers = fieldNames.map(name => ({
     name,
@@ -162,12 +191,30 @@ export function searchQueryResultsToQueryResultBundle(
       ('STRING' as const),
   }))
 
+  // Build a map of column name → columnType using the server-returned selectColumns
+  // (most accurate) with a fallback to the columnModels prop.
+  const serverSelectColumns = (results.selectColumns ?? []) as Array<{
+    name: string
+    columnType: string
+  }>
+  const selectColumnsByName = new Map(
+    serverSelectColumns.map(col => [col.name, col.columnType]),
+  )
+  const getColumnType = (name: string): string =>
+    selectColumnsByName.get(name) ??
+    columnModels?.find(cm => cm.name === name)?.columnType ??
+    'STRING'
+
   const rows = (results.hits ?? []).map(hit => ({
     rowId: hit.rowId,
     versionNumber: hit.rowVersion,
-    values: fieldNames.map(
-      name => hit.fields?.find(f => f.name === name)?.value ?? null,
-    ),
+    values: fieldNames.map(name => {
+      const rawValue = hit.fields?.find(f => f.name === name)?.value ?? null
+      if (rawValue != null && LIST_COLUMN_TYPES.has(getColumnType(name))) {
+        return convertSearchListValueToJson(rawValue)
+      }
+      return rawValue
+    }),
   }))
 
   const queryResult =
@@ -203,16 +250,31 @@ export function getSearchQueryUseQueryOptions(
   searchIndexId: string,
   columnModels?: ColumnModel[],
 ): TableQueryUseQueryOptions {
-  const rowDataQuery = toSearchIndexQuery(
-    queryBundleRequest,
-    searchIndexId,
-    columnModels,
-  )
-  const metadataQuery = toSearchIndexQuery(
-    queryBundleRequest,
-    searchIndexId,
-    columnModels,
-  )
+  const rowDataQuery: SearchIndexQuery = {
+    ...toSearchIndexQuery(queryBundleRequest, searchIndexId, columnModels),
+    // Request SELECT_COLUMNS so headers are available for row rendering.
+    // HITS is returned by default even when responseParts is specified.
+    responseParts: new Set(['HITS', 'SELECT_COLUMNS'] as const),
+  }
+  const metadataQuery: SearchIndexQuery = {
+    ...toSearchIndexQuery(queryBundleRequest, searchIndexId, columnModels),
+    // Request all opt-in parts needed for the metadata response:
+    // TOTAL_HITS → queryCount (drives tab count / spinner resolution)
+    // SELECT_COLUMNS → column headers for the table
+    // FACETS → facet aggregations for FacetFilterControls / plots
+    responseParts: new Set(['TOTAL_HITS', 'SELECT_COLUMNS', 'FACETS'] as const),
+  }
+
+  // Convert responseParts Set → sorted array for query key building.
+  // JSON.stringify(new Set([...])) === '{}', so two queries whose only difference is
+  // their responseParts would hash to the same key and share a cache entry.
+  // Using a sorted array gives each query a distinct, stable key.
+  const toKeyShape = (query: SearchIndexQuery) => ({
+    ...query,
+    responseParts: query.responseParts
+      ? [...query.responseParts].sort()
+      : undefined,
+  })
 
   // Fetches from the SearchQueryServicesApi and converts the SearchQueryResults responseBody
   // into QueryResultBundle shape. This allows all downstream shared components
@@ -239,7 +301,7 @@ export function getSearchQueryUseQueryOptions(
   const rowDataQueryOptions = {
     ...tableQueryUseQueryDefaults,
     queryKey: keyFactory.getSearchQueryResultWithAsyncStatusQueryKey(
-      rowDataQuery,
+      toKeyShape(rowDataQuery) as unknown as SearchIndexQuery,
       false,
     ),
     queryFn: () => fetchAndConvert(rowDataQuery),
@@ -251,7 +313,7 @@ export function getSearchQueryUseQueryOptions(
   const rowDataInfiniteQueryOptions = {
     ...tableQueryUseQueryDefaults,
     queryKey: keyFactory.getSearchQueryResultWithAsyncStatusQueryKey(
-      rowDataQuery,
+      toKeyShape(rowDataQuery) as unknown as SearchIndexQuery,
       true,
     ),
     initialPageParam: 0 as number | string | undefined,
@@ -296,7 +358,7 @@ export function getSearchQueryUseQueryOptions(
   const queryMetadataQueryOptions = {
     ...tableQueryUseQueryDefaults,
     queryKey: keyFactory.getSearchQueryResultWithAsyncStatusQueryKey(
-      metadataQuery,
+      toKeyShape(metadataQuery) as unknown as SearchIndexQuery,
       false,
     ),
     queryFn: () => fetchAndConvert(metadataQuery),

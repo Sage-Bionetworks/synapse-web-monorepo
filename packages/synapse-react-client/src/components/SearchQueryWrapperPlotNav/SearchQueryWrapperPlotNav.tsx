@@ -104,7 +104,7 @@ export default function SearchQueryWrapperPlotNav(
           defaultShowPlots={props.defaultShowPlots}
           hideCopyToClipboard={props.hideCopyToClipboard}
           hideSearchBarControl={false}
-          defaultShowSearchBar={true}
+          defaultShowSearchBar={false}
           showLastUpdatedOn={props.showLastUpdatedOn}
           noContentPlaceholderType={
             props.noContentPlaceholderType ??

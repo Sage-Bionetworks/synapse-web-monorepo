@@ -85,8 +85,8 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
         <PortalSearchTabs tabConfig={searchPageTabsState} />
       )}
       {configs.map((config, index) => {
+        const key = `searchResultTab-${selectedTabIndex}-${index}`
         const sharedProps = {
-          key: `searchResultTab-${selectedTabIndex}-${index}`,
           isVisible: selectedTabIndex == index,
           onQueryResultBundleChange: (newQueryResultBundleJSON: string) => {
             onQueryResultBundleChange(
@@ -99,6 +99,7 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
         if ('searchIndexId' in config) {
           return (
             <SearchParamAwareQueryWrapperPlotNav
+              key={key}
               {...sharedProps}
               searchQueryWrapperPlotNavProps={config}
             />
@@ -106,6 +107,7 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
         }
         return (
           <SearchParamAwareQueryWrapperPlotNav
+            key={key}
             {...sharedProps}
             standaloneQueryWrapperProps={config}
           />
