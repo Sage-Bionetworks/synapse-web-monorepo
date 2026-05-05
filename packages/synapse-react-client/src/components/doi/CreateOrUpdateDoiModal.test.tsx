@@ -431,7 +431,7 @@ describe('CreateOrUpdateDoiModal', () => {
   })
 
   describe('Private Entity DOI Warning Step', () => {
-    it('shows form directly when objectType is not ENTITY (e.g. WIKI)', async () => {
+    it('shows form directly when objectType is not ENTITY (e.g. PORTAL_RESOURCE)', async () => {
       // When objectType is not ENTITY, useGetEntityBundle is disabled and entityBundle is
       // never populated. shouldShowWarning must resolve to false (not undefined) so the
       // step can be determined as soon as the DOI query resolves.
