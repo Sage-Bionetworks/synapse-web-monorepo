@@ -366,7 +366,9 @@ function SubmissionDirectoryList({
           variant="h6"
           sx={{ fontSize: '18px', lineHeight: '20px', fontWeight: 700 }}
         >
-          Your Submission Directory
+          {entityType === EntityType.file
+            ? 'Submit File'
+            : 'Submit Docker Image'}
         </Typography>
         <Box sx={{ display: 'flex' }}>
           <Typography
