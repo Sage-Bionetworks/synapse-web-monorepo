@@ -21,6 +21,7 @@ import { Tooltip } from '@mui/material'
 import { SmartToyTwoTone } from '@mui/icons-material'
 import type { DataGridRow } from '../DataGridTypes'
 import { wrapPasteValueWithSchemaCoercion } from './schemaAwarePasteValue'
+import { getEmptyValue } from './getEmptyValue.ts'
 
 /**
  * Wraps a column cell component to overlay change-attribution indicators:
@@ -106,7 +107,7 @@ function getHeaderClassName(isRequired: boolean): string {
 function createDeleteValue(columnName: string, isRequired?: boolean) {
   return ({ rowData }: { rowData: Record<string, unknown> }) => ({
     ...rowData,
-    [columnName]: isRequired ? null : undefined,
+    [columnName]: getEmptyValue(isRequired),
   })
 }
 
@@ -114,7 +115,7 @@ function createParseUserInput(isRequired?: boolean) {
   return (value: string) => {
     const trimmedValue = value.trim()
     if (trimmedValue === '') {
-      return isRequired ? null : undefined
+      return getEmptyValue(isRequired)
     }
     return trimmedValue
   }
@@ -171,7 +172,7 @@ const COLUMN_FACTORIES = {
         choices: config.enumeratedValues ?? [],
         colType: config.typeInfo?.type || null,
         limitTags: 3,
-        clearValue: config.isRequired ? null : undefined,
+        clearValue: getEmptyValue(config.isRequired),
       }),
     )
   },
@@ -182,7 +183,7 @@ const COLUMN_FACTORIES = {
       autocompleteColumn({
         choices: [true, false],
         colType: 'boolean',
-        clearValue: config.isRequired ? null : undefined,
+        clearValue: getEmptyValue(config.isRequired),
       }),
     )
   },
@@ -197,7 +198,7 @@ const COLUMN_FACTORIES = {
       autocompleteColumn({
         choices: config.enumeratedValues ?? [],
         colType: config.typeInfo?.type || null,
-        clearValue: config.isRequired ? null : undefined,
+        clearValue: getEmptyValue(config.isRequired),
       }),
     )
   },

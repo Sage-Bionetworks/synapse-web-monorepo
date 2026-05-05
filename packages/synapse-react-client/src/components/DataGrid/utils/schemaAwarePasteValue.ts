@@ -1,5 +1,6 @@
 import type { Column } from '@sage-bionetworks/react-datasheet-grid'
 import type { SchemaPropertyInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
+import { getEmptyValue } from './getEmptyValue.ts'
 
 /**
  * Coerce an empty cell value to the schema-correct blank before it reaches
@@ -32,7 +33,7 @@ export function coerceModelCellValue(
     value === undefined ||
     (typeof value === 'string' && value.trim() === '')
   ) {
-    return schemaPropertyInfo.isRequired ? null : undefined
+    return getEmptyValue(schemaPropertyInfo.isRequired)
   }
   return value
 }

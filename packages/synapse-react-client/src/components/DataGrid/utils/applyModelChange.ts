@@ -7,6 +7,7 @@ import { SchemaPropertiesMap } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import { s } from 'json-joy/lib/json-crdt-patch'
 import isEqual from 'lodash-es/isEqual'
 import { coerceModelCellValue } from './schemaAwarePasteValue'
+import { getEmptyValue } from './getEmptyValue'
 
 /**
  * Represents a change operation on the GridModel.
@@ -26,19 +27,12 @@ export function getDefaultValueForProperty(
   property: string,
   schemaPropertyInfo: SchemaPropertiesMap,
 ) {
-  let value
+  const info = schemaPropertyInfo[property]
   if (Object.hasOwn(row, property)) {
-    value = row[property]
-  } else {
-    // Inspect the schema. If the property is required, it should be `null`
-    // Otherwise, the property is optional. It should be undefined to be valid against the JSON Schema
-    if (schemaPropertyInfo[property]?.isRequired) {
-      value = null
-    } else {
-      value = undefined
-    }
+    return coerceModelCellValue(row[property], info)
   }
-  return value
+  // Property absent from the row: derive the schema-correct blank directly.
+  return getEmptyValue(info?.isRequired)
 }
 
 /**
@@ -60,14 +54,7 @@ export function applyModelChange(
       // Convert rowData object into a CRDT vector
       const rowData = columnNames.map(name =>
         s.con(
-          coerceModelCellValue(
-            getDefaultValueForProperty(
-              change.rowData,
-              name,
-              schemaPropertyInfo,
-            ),
-            schemaPropertyInfo[name],
-          ),
+          getDefaultValueForProperty(change.rowData, name, schemaPropertyInfo),
         ),
       )
       // Insert a new row object at the specified index
