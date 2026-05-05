@@ -132,40 +132,43 @@ describe('AutocompleteColumn', () => {
     })
   })
 
-  it('commits null (clearValue) when the user clears a required cell and deactivates', async () => {
-    const mockSetRowData = vi.fn()
-    const mockStopEditing = vi.fn()
-    const mockCellProps: Partial<AutocompleteCellProps> = {
-      rowData: 'option1',
-      setRowData: mockSetRowData,
-      choices: ['option1', 'option2'],
-      colType: 'string',
-      clearValue: null,
-      focus: true,
-      active: true,
-      stopEditing: mockStopEditing,
-    }
+  it.each([null, undefined])(
+    'commits clearValue (%s) when the user clears a required cell and deactivates',
+    async clearValue => {
+      const mockSetRowData = vi.fn()
+      const mockStopEditing = vi.fn()
+      const mockCellProps: Partial<AutocompleteCellProps> = {
+        rowData: 'option1',
+        setRowData: mockSetRowData,
+        choices: ['option1', 'option2'],
+        colType: 'string',
+        clearValue: null,
+        focus: true,
+        active: true,
+        stopEditing: mockStopEditing,
+      }
 
-    const { rerender } = render(
-      <AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />,
-    )
-
-    await userEvent.clear(screen.getByRole('combobox'))
-
-    act(() => {
-      rerender(
-        <AutocompleteCell
-          {...(mockCellProps as AutocompleteCellProps)}
-          focus={false}
-          active={false}
-        />,
+      const { rerender } = render(
+        <AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />,
       )
-    })
 
-    await waitFor(() => {
-      expect(mockSetRowData).toHaveBeenCalledWith(null)
-    })
-  })
+      await userEvent.clear(screen.getByRole('combobox'))
+
+      act(() => {
+        rerender(
+          <AutocompleteCell
+            {...(mockCellProps as AutocompleteCellProps)}
+            focus={false}
+            active={false}
+          />,
+        )
+      })
+
+      await waitFor(() => {
+        expect(mockSetRowData).toHaveBeenCalledWith(null)
+      })
+    },
+  )
 
   it('commits undefined (clearValue) when the user clears an optional cell and deactivates', async () => {
     const mockSetRowData = vi.fn()

@@ -112,6 +112,54 @@ describe('applyModelChange', () => {
     expect(snapshot.rows).toHaveLength(0)
   })
 
+  it('CREATE coerces empty string in rowData to null for a required column', () => {
+    const model = createModel()
+    const schema: SchemaPropertiesMap = {
+      col1: {
+        type: { type: 'string', isArray: false },
+        isRequired: true,
+        enumeratedValues: null,
+      },
+      col2: {
+        type: { type: 'string', isArray: false },
+        isRequired: false,
+        enumeratedValues: null,
+      },
+    }
+
+    applyModelChange(
+      model,
+      { type: 'CREATE', rowIndex: 0, rowData: { col1: '', col2: 'b' } },
+      schema,
+    )
+
+    expect(model.api.getSnapshot().rows[0].data).toEqual([null, 'b'])
+  })
+
+  it('CREATE coerces null in rowData to undefined for an optional column', () => {
+    const model = createModel()
+    const schema: SchemaPropertiesMap = {
+      col1: {
+        type: { type: 'string', isArray: false },
+        isRequired: true,
+        enumeratedValues: null,
+      },
+      col2: {
+        type: { type: 'string', isArray: false },
+        isRequired: false,
+        enumeratedValues: null,
+      },
+    }
+
+    applyModelChange(
+      model,
+      { type: 'CREATE', rowIndex: 0, rowData: { col1: 'a', col2: null } },
+      schema,
+    )
+
+    expect(model.api.getSnapshot().rows[0].data).toEqual(['a', undefined])
+  })
+
   it('CREATE fills missing columns with null when property is required', () => {
     const model = createModel()
     change = {
@@ -540,6 +588,62 @@ describe('getDefaultValueForProperty', () => {
       undefined,
     )
   })
+  it('coerces empty string to null when property exists and column is required', () => {
+    const row = { col1: '' }
+    const schemaPropertyInfo: SchemaPropertiesMap = {
+      col1: {
+        type: { type: 'string', isArray: false },
+        isRequired: true,
+        enumeratedValues: null,
+      },
+    }
+    expect(
+      getDefaultValueForProperty(row, 'col1', schemaPropertyInfo),
+    ).toBeNull()
+  })
+
+  it('coerces empty string to undefined when property exists and column is optional', () => {
+    const row = { col1: '' }
+    const schemaPropertyInfo: SchemaPropertiesMap = {
+      col1: {
+        type: { type: 'string', isArray: false },
+        isRequired: false,
+        enumeratedValues: null,
+      },
+    }
+    expect(
+      getDefaultValueForProperty(row, 'col1', schemaPropertyInfo),
+    ).toBeUndefined()
+  })
+
+  it('coerces null to undefined when property exists and column is optional', () => {
+    const row = { col1: null }
+    const schemaPropertyInfo: SchemaPropertiesMap = {
+      col1: {
+        type: { type: 'string', isArray: false },
+        isRequired: false,
+        enumeratedValues: null,
+      },
+    }
+    expect(
+      getDefaultValueForProperty(row, 'col1', schemaPropertyInfo),
+    ).toBeUndefined()
+  })
+
+  it('coerces undefined to null when property key exists and column is required', () => {
+    const row: Record<string, unknown> = { col1: undefined }
+    const schemaPropertyInfo: SchemaPropertiesMap = {
+      col1: {
+        type: { type: 'string', isArray: false },
+        isRequired: true,
+        enumeratedValues: null,
+      },
+    }
+    expect(
+      getDefaultValueForProperty(row, 'col1', schemaPropertyInfo),
+    ).toBeNull()
+  })
+
   it('returns the expected value for missing values based on the schema', () => {
     const row = {} // all values missing
     const schemaPropertyInfo: SchemaPropertiesMap = {
