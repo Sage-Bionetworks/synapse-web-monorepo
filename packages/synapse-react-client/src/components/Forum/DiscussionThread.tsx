@@ -127,8 +127,9 @@ export function DiscussionThread(props: DiscussionThreadProps) {
     setReplyIdParam(null)
   }
 
-  const { data: currentUser } = useGetCurrentUserProfile()
-  const isForumModerator = moderatorList?.includes(currentUser?.ownerId ?? '')
+  const isForumModerator = moderatorList?.includes(
+    currentUserProfile?.ownerId ?? '',
+  )
 
   return (
     <div className="DiscussionThread" role={'article'}>
