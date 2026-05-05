@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="230" height="40" viewBox="0 0 230 40" fill="none">
+  <!-- YLH monogram badge -->
+  <rect width="52" height="40" rx="6" fill="#526bb6"/>
+  <!-- Y -->
+  <line x1="5"  y1="10" x2="10" y2="18" stroke="white"    stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="15" y1="10" x2="10" y2="18" stroke="white"    stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="10" y1="18" x2="10" y2="30" stroke="white"    stroke-width="2.2" stroke-linecap="round"/>
+  <!-- L -->
+  <line x1="19" y1="10" x2="19" y2="30" stroke="#c8d4ff"  stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="19" y1="30" x2="26" y2="30" stroke="#c8d4ff"  stroke-width="2.2" stroke-linecap="round"/>
+  <!-- H -->
+  <line x1="30" y1="10" x2="30" y2="30" stroke="#a8bfff"  stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="37" y1="10" x2="37" y2="30" stroke="#a8bfff"  stroke-width="2.2" stroke-linecap="round"/>
+  <line x1="30" y1="20" x2="37" y2="20" stroke="#a8bfff"  stroke-width="2.2" stroke-linecap="round"/>
+  <!-- Label text -->
+  <text x="60" y="26" font-family="sans-serif" font-size="15" font-weight="600" fill="#2d3a6b">Your Logo Here</text>
+</svg>
