@@ -383,6 +383,48 @@ function SubmissionDirectoryList({
           <CopyToClipboardIcon value={PROJECT_URL} sx={{ marginTop: '-4px' }} />
         </Box>
       </Box>
+      <Box
+        sx={{
+          my: 3,
+          display: 'flex',
+        }}
+      >
+        <NotesTwoTone
+          sx={{
+            width: '16px',
+            height: '16px',
+            verticalAlign: 'text-bottom',
+          }}
+        />
+        <Box
+          sx={{
+            ml: 1,
+          }}
+        >
+          {entityType === EntityType.file && (
+            <>
+              Choose a prediction file from your submission directory below and
+              click "Submit Selection" to pick an evaluation queue. If you need
+              to add a new file, click "Upload File" first.
+            </>
+          )}
+          {entityType === EntityType.dockerrepo && (
+            <>
+              Choose a Docker image from your submission directory below and
+              click "Submit Selection" to pick an image version and evaluation
+              queue. If you need to upload a new image to your project (
+              <code>{challengeProjectId}</code>), see our{' '}
+              <Link
+                to="https://github.com/Sage-Bionetworks-Challenges/sample-model-templates#build-your-model"
+                target="_blank"
+              >
+                Docker model submission guide
+              </Link>{' '}
+              for command-line instructions on how to build and upload.
+            </>
+          )}
+        </Box>
+      </Box>
       <Box>
         <DataGrid
           loading={areEntitiesLoading}
@@ -451,38 +493,6 @@ function SubmissionDirectoryList({
           Submit Selection
         </Button>
       </Box>
-      {entityType === EntityType.dockerrepo && (
-        <Box
-          sx={{
-            mt: 4,
-            display: 'flex',
-          }}
-        >
-          <InfoTwoTone
-            sx={{
-              width: '16px',
-              height: '16px',
-              verticalAlign: 'text-bottom',
-            }}
-          />
-
-          <Box
-            sx={{
-              ml: 2,
-            }}
-          >
-            To learn more about how to create and submit the Docker containers
-            using command line, see our{' '}
-            <Link
-              to="https://github.com/Sage-Bionetworks-Challenges/sample-model-templates#build-your-model"
-              target="_blank"
-            >
-              Docker model submission guide
-            </Link>
-            .
-          </Box>
-        </Box>
-      )}
       <ConfirmationDialog
         open={confirmOpen}
         title="File exists"
