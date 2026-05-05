@@ -15,6 +15,7 @@ import {
   getSearchQueryUseQueryOptions,
   useSearchQueryUseQueryOptions,
 } from './SearchQueryUseQueryOptions'
+import { TableQueryUseQueryOptions } from '../QueryWrapper/TableQueryUseQueryOptions'
 import useHasFacetedSelectColumn from '../QueryWrapper/useHasFacetedSelectColumn'
 import { SessionInitializedGuard } from '@/utils/AppUtils/session/SessionInitializedGuard'
 import { useGetEntity, useGetEntityBundle } from '@/synapse-queries'
@@ -158,6 +159,10 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
     setPageSize,
   } = immutableTableQueryResult
 
+  // SearchTableQueryUseQueryOptions uses SearchIndexQuery generics rather than QueryBundleRequest.
+  // QueryContextType (and all downstream consumers) expect TableQueryUseQueryOptions. The runtime
+  // shapes are identical — only the TypeScript generics differ — so a single cast is made here at
+  // the architectural boundary rather than scattering `as unknown as` across the implementation.
   const {
     rowDataQueryOptions,
     rowDataInfiniteQueryOptions,
@@ -166,7 +171,7 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
     currentQueryRequest as QueryBundleRequest,
     searchIndexId,
     synapseId,
-  )
+  ) as unknown as TableQueryUseQueryOptions
 
   const hasFacetedSelectColumn = useHasFacetedSelectColumn(
     queryMetadataQueryOptions,
@@ -186,12 +191,14 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
         { type: 'goToPage', pageNumber },
         cloneDeep(getCurrentQueryRequest()),
       )
-      return getSearchQueryUseQueryOptions(
-        queryWithUpdatedPage,
-        keyFactory,
-        accessToken,
-        searchIndexId,
-        columnModels,
+      return (
+        getSearchQueryUseQueryOptions(
+          queryWithUpdatedPage,
+          keyFactory,
+          accessToken,
+          searchIndexId,
+          columnModels,
+        ) as unknown as TableQueryUseQueryOptions
       ).rowDataQueryOptions
     },
     [

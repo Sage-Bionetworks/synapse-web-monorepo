@@ -119,7 +119,7 @@ export default function SearchQueryWrapperPlotNav(
             availableFacets={props.availableFacets}
             initialExpandedFacetControls={props.initialExpandedFacetControls}
             hideDownload={true}
-            hideQueryCount={true}
+            hideQueryCount={props.hideQueryCount ?? false}
             hideSqlEditorControl={true}
             hideVisualizationsControl={props.hideVisualizationsControl}
             initialLimit={props.initialLimit}

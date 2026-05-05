@@ -68,4 +68,5 @@ export const standardsSearchQueryWrapperPlotNavProps: SearchQueryWrapperPlotNavP
     searchIndexId: 'syn74803513',
     ...standardsQueryWrapperPlotNavProps,
     hideTopLevelControls: true,
+    hideQueryCount: true,
   }

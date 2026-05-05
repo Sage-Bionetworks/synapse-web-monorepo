@@ -120,7 +120,13 @@ function SearchParamAwareStandaloneQueryWrapperPlotNav({
   onQueryResultBundleChange?: (json: string) => void
 }) {
   const [searchParams] = useSearchParams()
-  const { searchConfiguration, sql } = standaloneQueryWrapperProps
+  const {
+    searchConfiguration,
+    sql,
+    fileIdColumnName,
+    fileNameColumnName,
+    fileVersionColumnName,
+  } = standaloneQueryWrapperProps
 
   const searchText = searchParams.get(SEARCH_TERM)
   const textMatchesQueryFilter: TextMatchesQueryFilter | undefined =
@@ -159,8 +165,9 @@ function SearchParamAwareStandaloneQueryWrapperPlotNav({
   const derivedQueryRequestFromSearchParams = generateInitQueryRequest(query)
   return (
     <QueryWrapper
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      {...(standaloneQueryWrapperProps as any)}
+      fileIdColumnName={fileIdColumnName}
+      fileNameColumnName={fileNameColumnName}
+      fileVersionColumnName={fileVersionColumnName}
       shouldDeepLink={false}
       initQueryRequest={derivedQueryRequestFromSearchParams}
       onQueryResultBundleChange={onQueryResultBundleChange}

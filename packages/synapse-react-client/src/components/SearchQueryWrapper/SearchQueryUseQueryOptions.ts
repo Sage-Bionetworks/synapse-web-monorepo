@@ -6,11 +6,14 @@ import {
   AsynchronousJobStatus,
   ColumnModel,
   FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
+  FacetColumnRangeRequest,
   FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+  FacetColumnValuesRequest,
   QueryBundleRequest,
   QueryResultBundle,
   RowSet,
   TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+  TextMatchesQueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import type {
   FacetRequest,
@@ -19,16 +22,47 @@ import type {
   SearchKeyRange,
   SearchQueryResults,
   SearchSearchQuery,
+  SynapseClientError,
 } from '@sage-bionetworks/synapse-client'
 import {
   FacetRequestSortDirectionEnum as FacetRequestSortDirectionEnumValues,
   FacetRequestSortFieldEnum as FacetRequestSortFieldEnumValues,
 } from '@sage-bionetworks/synapse-client'
-import { InfiniteData } from '@tanstack/react-query'
+import {
+  InfiniteData,
+  QueryKey,
+  UseInfiniteQueryOptions,
+  UseSuspenseQueryOptions,
+} from '@tanstack/react-query'
 import { omit } from 'lodash-es'
 import { useMemo } from 'react'
-import { TableQueryUseQueryOptions } from '../QueryWrapper/TableQueryUseQueryOptions'
 import { KeyFactory } from '@/synapse-queries/KeyFactory'
+
+/**
+ * TanStack Query options for the SearchQueryServicesApi, mirroring TableQueryUseQueryOptions
+ * but parameterised over SearchIndexQuery rather than QueryBundleRequest. This eliminates
+ * `as unknown as` casts inside the implementation. A single cast to TableQueryUseQueryOptions
+ * is still required at the boundary where SearchQueryWrapper assigns these into QueryContextType.
+ */
+export type SearchTableQueryUseQueryOptions = {
+  rowDataQueryOptions: UseSuspenseQueryOptions<
+    AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle>,
+    SynapseClientError,
+    RowSet | undefined
+  >
+  rowDataInfiniteQueryOptions: UseInfiniteQueryOptions<
+    AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle>,
+    SynapseClientError,
+    InfiniteData<AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle>>,
+    QueryKey,
+    string | number | undefined
+  >
+  queryMetadataQueryOptions: UseSuspenseQueryOptions<
+    AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle>,
+    SynapseClientError,
+    Omit<QueryResultBundle, 'queryResult'>
+  >
+}
 
 /**
  * Converts a QueryBundleRequest (used internally for state management) into a SearchIndexQuery
@@ -51,7 +85,7 @@ export function toSearchIndexQuery(
   const facetRequests: FacetRequest[] | undefined = columnModels
     ?.filter(cm => cm.facetType != null)
     .map(cm => {
-      const facetReq: FacetRequest = { columnName: cm.name }
+      const facetReq: FacetRequest = { columnName: cm.name, maxValueCount: 100 }
       if (cm.facetSortConfig) {
         // Map FacetColumnSortProperty ('FREQUENCY'|'VALUE') → FacetRequestSortFieldEnum ('COUNT'|'KEY')
         if (cm.facetSortConfig.property != null) {
@@ -74,38 +108,31 @@ export function toSearchIndexQuery(
   const termsFilters: KeyValues[] | undefined =
     queryBundleRequest.query.selectedFacets
       ?.filter(
-        f => f.concreteType === FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+        (f): f is FacetColumnValuesRequest =>
+          f.concreteType === FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
       )
-      .map(f => {
-        const valuesReq = f
-        return { key: valuesReq.columnName, values: valuesReq.facetValues }
-      })
+      .map(f => ({ key: f.columnName, values: f.facetValues }))
 
   // Build rangeFilters from range selectedFacets
   const rangeFilters: SearchKeyRange[] | undefined =
     queryBundleRequest.query.selectedFacets
       ?.filter(
-        f => f.concreteType === FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
+        (f): f is FacetColumnRangeRequest =>
+          f.concreteType === FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
       )
-      .map(f => {
-        const rangeReq = f
-        return {
-          key: rangeReq.columnName,
-          min: rangeReq.min,
-          max: rangeReq.max,
-        }
-      })
+      .map(f => ({
+        key: f.columnName,
+        min: f.min,
+        max: f.max,
+      }))
 
   // Extract queryText by concatenating all TextMatchesQueryFilter searchExpression values
   const textMatchesExpressions = queryBundleRequest.query.additionalFilters
     ?.filter(
-      f => f.concreteType === TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+      (f): f is TextMatchesQueryFilter =>
+        f.concreteType === TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
     )
-    .map(f =>
-      f.concreteType === TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE
-        ? f.searchExpression
-        : undefined,
-    )
+    .map(f => f.searchExpression)
     .filter((expr): expr is string => expr != null && expr.length > 0)
   const queryText =
     textMatchesExpressions && textMatchesExpressions.length > 0
@@ -249,7 +276,7 @@ export function getSearchQueryUseQueryOptions(
   accessToken: string | undefined,
   searchIndexId: string,
   columnModels?: ColumnModel[],
-): TableQueryUseQueryOptions {
+): SearchTableQueryUseQueryOptions {
   const rowDataQuery: SearchIndexQuery = {
     ...toSearchIndexQuery(queryBundleRequest, searchIndexId, columnModels),
     // Request SELECT_COLUMNS so headers are available for row rendering.
@@ -295,84 +322,84 @@ export function getSearchQueryUseQueryOptions(
     }
   }
 
-  // `as unknown as` is necessary because TableQueryUseQueryOptions is parameterized
-  // over QueryBundleRequest, but SearchIndexQuery has a different shape.
-  // The runtime shape is compatible — only the TypeScript generics differ.
-  const rowDataQueryOptions = {
-    ...tableQueryUseQueryDefaults,
-    queryKey: keyFactory.getSearchQueryResultWithAsyncStatusQueryKey(
-      toKeyShape(rowDataQuery) as unknown as SearchIndexQuery,
-      false,
-    ),
-    queryFn: () => fetchAndConvert(rowDataQuery),
-    select: (
-      data: AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle>,
-    ): RowSet | undefined => data.responseBody?.queryResult?.queryResults,
-  } as unknown as TableQueryUseQueryOptions['rowDataQueryOptions']
+  // `as unknown as` is necessary because SearchIndexQuery.responseParts is a Set but
+  // toKeyShape converts it to a sorted string[] for stable cache key serialisation.
+  const rowDataQueryOptions: SearchTableQueryUseQueryOptions['rowDataQueryOptions'] =
+    {
+      ...tableQueryUseQueryDefaults,
+      queryKey: keyFactory.getSearchQueryResultWithAsyncStatusQueryKey(
+        toKeyShape(rowDataQuery) as unknown as SearchIndexQuery,
+        false,
+      ),
+      queryFn: () => fetchAndConvert(rowDataQuery),
+      select: (
+        data: AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle>,
+      ): RowSet | undefined => data.responseBody?.queryResult?.queryResults,
+    }
 
-  const rowDataInfiniteQueryOptions = {
-    ...tableQueryUseQueryDefaults,
-    queryKey: keyFactory.getSearchQueryResultWithAsyncStatusQueryKey(
-      toKeyShape(rowDataQuery) as unknown as SearchIndexQuery,
-      true,
-    ),
-    initialPageParam: 0 as number | string | undefined,
-    getNextPageParam: (
-      lastPage: AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle>,
-      allPages: AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle>[],
-    ): number | string | undefined => {
-      const totalRows = lastPage.responseBody?.queryCount
-      const fetchedRows = allPages.reduce(
-        (acc, page) =>
-          acc +
-          (page.responseBody?.queryResult?.queryResults.rows?.length ?? 0),
-        0,
-      )
-      if (totalRows != null && fetchedRows >= totalRows) {
-        return undefined
-      }
-      return fetchedRows
-    },
-    queryFn: (context: { pageParam?: number | string }) => {
-      const offset =
-        typeof context.pageParam === 'string'
-          ? parseInt(context.pageParam)
-          : context.pageParam ?? 0
-      const requestForPage: SearchIndexQuery = {
-        ...rowDataQuery,
-        searchQuery: {
-          ...rowDataQuery.searchQuery,
-          offset,
-        },
-      }
-      return fetchAndConvert(requestForPage)
-    },
-    select: (
-      data: InfiniteData<
-        AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle>
-      >,
-    ) => data,
-    // Same rationale as rowDataQueryOptions: SearchIndexQuery vs QueryBundleRequest generics.
-  } as unknown as TableQueryUseQueryOptions['rowDataInfiniteQueryOptions']
+  const rowDataInfiniteQueryOptions: SearchTableQueryUseQueryOptions['rowDataInfiniteQueryOptions'] =
+    {
+      ...tableQueryUseQueryDefaults,
+      queryKey: keyFactory.getSearchQueryResultWithAsyncStatusQueryKey(
+        toKeyShape(rowDataQuery) as unknown as SearchIndexQuery,
+        true,
+      ),
+      initialPageParam: 0 as number | string | undefined,
+      getNextPageParam: (
+        lastPage: AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle>,
+        allPages: AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle>[],
+      ): number | string | undefined => {
+        const totalRows = lastPage.responseBody?.queryCount
+        const fetchedRows = allPages.reduce(
+          (acc, page) =>
+            acc +
+            (page.responseBody?.queryResult?.queryResults.rows?.length ?? 0),
+          0,
+        )
+        if (totalRows != null && fetchedRows >= totalRows) {
+          return undefined
+        }
+        return fetchedRows
+      },
+      queryFn: (context: { pageParam?: number | string }) => {
+        const offset =
+          typeof context.pageParam === 'string'
+            ? parseInt(context.pageParam)
+            : context.pageParam ?? 0
+        const requestForPage: SearchIndexQuery = {
+          ...rowDataQuery,
+          searchQuery: {
+            ...rowDataQuery.searchQuery,
+            offset,
+          },
+        }
+        return fetchAndConvert(requestForPage)
+      },
+      select: (
+        data: InfiniteData<
+          AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle>
+        >,
+      ) => data,
+    }
 
-  const queryMetadataQueryOptions = {
-    ...tableQueryUseQueryDefaults,
-    queryKey: keyFactory.getSearchQueryResultWithAsyncStatusQueryKey(
-      toKeyShape(metadataQuery) as unknown as SearchIndexQuery,
-      false,
-    ),
-    queryFn: () => fetchAndConvert(metadataQuery),
-    select: (
-      data: AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle>,
-    ): Omit<QueryResultBundle, 'queryResult'> => {
-      const result = omit(data.responseBody ?? {}, 'queryResult') as Omit<
-        QueryResultBundle,
-        'queryResult'
-      >
-      return columnModels ? { ...result, columnModels } : result
-    },
-    // Same rationale as rowDataQueryOptions: SearchIndexQuery vs QueryBundleRequest generics.
-  } as unknown as TableQueryUseQueryOptions['queryMetadataQueryOptions']
+  const queryMetadataQueryOptions: SearchTableQueryUseQueryOptions['queryMetadataQueryOptions'] =
+    {
+      ...tableQueryUseQueryDefaults,
+      queryKey: keyFactory.getSearchQueryResultWithAsyncStatusQueryKey(
+        toKeyShape(metadataQuery) as unknown as SearchIndexQuery,
+        false,
+      ),
+      queryFn: () => fetchAndConvert(metadataQuery),
+      select: (
+        data: AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle>,
+      ): Omit<QueryResultBundle, 'queryResult'> => {
+        const result = omit(data.responseBody ?? {}, 'queryResult') as Omit<
+          QueryResultBundle,
+          'queryResult'
+        >
+        return columnModels ? { ...result, columnModels } : result
+      },
+    }
 
   return {
     rowDataQueryOptions,
@@ -390,7 +417,7 @@ export function useSearchQueryUseQueryOptions(
   queryBundleRequest: QueryBundleRequest,
   searchIndexId: string,
   synapseId?: string,
-): TableQueryUseQueryOptions {
+): SearchTableQueryUseQueryOptions {
   const { keyFactory, accessToken } = useSynapseContext()
 
   const { data: entityBundle } = useGetEntityBundle(synapseId, undefined, {
