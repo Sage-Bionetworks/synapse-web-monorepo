@@ -375,7 +375,7 @@ function SubmissionDirectoryList({
             variant="body1"
             sx={{ fontSize: '14px', color: '#71767F' }}
           >
-            Project SynID:{'  '}
+            Your Project SynID:{'  '}
             <Link to={{ pathname: PROJECT_URL }} target="_blank">
               {challengeProjectId}
             </Link>
