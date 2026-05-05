@@ -8,6 +8,7 @@ import {
   useGetAccessRequirementWikiPageKey,
 } from '@/synapse-queries/dataaccess/useAccessRequirements'
 import useGetDataAccessSubmission from '@/synapse-queries/dataaccess/useDataAccessSubmission'
+import { useGetThreadForSubmission } from '@/synapse-queries/forum/useThread'
 import { useGetCurrentUserProfile } from '@/synapse-queries/user'
 import { useGetUserAccessApproval } from '@/synapse-queries/dataaccess/useAccessApprovals'
 import { formatDate } from '@/utils/functions/DateFormatter'
@@ -31,6 +32,7 @@ import { UserBadge } from '../../UserCard/UserBadge'
 import UserOrTeamBadge from '../../UserOrTeamBadge/UserOrTeamBadge'
 import { FileHandleLink } from '../../widgets/FileHandleLink'
 import RejectDataAccessRequestModal from '../RejectDataAccessRequestModal'
+import { DiscussionThread } from '@/components/Forum'
 
 dayjs.extend(duration)
 
@@ -152,6 +154,8 @@ export default function SubmissionPage(props: SubmissionPageProps) {
     submission?.accessRequirementId!,
     { enabled: !!submission, throwOnError: true },
   )
+
+  const { data: thread } = useGetThreadForSubmission(submissionId)
 
   const [showUpdateRequestDialog, setShowUpdateRequestDialog] = useState(false)
   const [
@@ -553,6 +557,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
               )}
             </Stack>
           </section>
+          {thread?.id && <DiscussionThread threadId={thread.id} limit={25} />}
         </Stack>
       </Grid>
     </Grid>

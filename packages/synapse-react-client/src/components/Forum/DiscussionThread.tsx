@@ -127,33 +127,38 @@ export function DiscussionThread(props: DiscussionThreadProps) {
     setReplyIdParam(null)
   }
 
+  const { data: currentUser } = useGetCurrentUserProfile()
+  const isForumModerator = moderatorList?.includes(currentUser?.ownerId ?? '')
+
   return (
     <div className="DiscussionThread" role={'article'}>
-      {threadData && threadBody ? (
-        <>
-          <Box sx={{ mb: 2, textAlign: 'right' }}>
-            <Typography component={'span'} sx={{ mr: 1 }}>
-              Sort:
-            </Typography>
-            <ToggleButtonGroup
-              color={'primary'}
-              exclusive
-              value={orderByDatePosted ? 'datePosted' : 'mostRecent'}
+      {threadData && (
+        <Box sx={{ mb: 2, textAlign: 'right' }}>
+          <Typography component={'span'} sx={{ mr: 1 }}>
+            Sort:
+          </Typography>
+          <ToggleButtonGroup
+            color={'primary'}
+            exclusive
+            value={orderByDatePosted ? 'datePosted' : 'mostRecent'}
+          >
+            <ToggleButton
+              value={'datePosted'}
+              onClick={() => setOrderByDatePosted(true)}
             >
-              <ToggleButton
-                value={'datePosted'}
-                onClick={() => setOrderByDatePosted(true)}
-              >
-                Date Posted
-              </ToggleButton>
-              <ToggleButton
-                value={'mostRecent'}
-                onClick={() => setOrderByDatePosted(false)}
-              >
-                Most Recent
-              </ToggleButton>
-            </ToggleButtonGroup>
-          </Box>
+              Date Posted
+            </ToggleButton>
+            <ToggleButton
+              value={'mostRecent'}
+              onClick={() => setOrderByDatePosted(false)}
+            >
+              Most Recent
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Box>
+      )}
+      {threadData && threadBody !== undefined ? (
+        <>
           <UserBadge
             userId={threadData.createdBy}
             withAvatar={true}
@@ -308,6 +313,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
             <DiscussionReply
               key={reply.id}
               reply={reply}
+              isForumModerator={isForumModerator}
               isReplyAuthorModerator={isReplyAuthorModerator}
             />
           )
