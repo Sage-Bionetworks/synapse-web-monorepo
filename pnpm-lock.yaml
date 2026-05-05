@@ -842,6 +842,64 @@ importers:
         specifier: ^4.1.4
         version: 4.1.5(@types/node@22.19.13)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@6.0.3))(vite@8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
 
+  apps/portals/demoportal:
+    dependencies:
+      '@mui/material':
+        specifier: ^5.17.1
+        version: 5.17.1(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(@types/react@19.2.14)(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@sage-bionetworks/synapse-portal-framework':
+        specifier: workspace:*
+        version: link:../../synapse-portal-framework
+      '@sage-bionetworks/synapse-types':
+        specifier: workspace:*
+        version: link:../../../packages/synapse-types
+      katex:
+        specifier: ^0.16.22
+        version: 0.16.22
+      react:
+        specifier: ^19.2.5
+        version: 19.2.5
+      react-dom:
+        specifier: ^19.2.5
+        version: 19.2.5(react@19.2.5)
+      react-router:
+        specifier: ^7.14.0
+        version: 7.14.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      react-type-animation:
+        specifier: ^3.2.0
+        version: 3.2.0(prop-types@15.8.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      synapse-react-client:
+        specifier: workspace:*
+        version: link:../../../packages/synapse-react-client
+      vite:
+        specifier: ^8.0.8
+        version: 8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
+    devDependencies:
+      '@types/react':
+        specifier: 19.2.14
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: 19.2.3
+        version: 19.2.3(@types/react@19.2.14)
+      sass:
+        specifier: ^1.98.0
+        version: 1.98.0
+      tslib:
+        specifier: ^2.8.1
+        version: 2.8.1
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+      vite-config:
+        specifier: workspace:*
+        version: link:../../../packages/vite-config
+      vite-plugin-node-polyfills:
+        specifier: ^0.26.0
+        version: 0.26.0(rollup@4.60.2)(vite@8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
+      vitest:
+        specifier: ^4.1.4
+        version: 4.1.5(@types/node@22.19.13)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(vite@8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
+
   apps/portals/digitalhealth:
     dependencies:
       '@sage-bionetworks/synapse-portal-framework':
@@ -13237,7 +13295,7 @@ snapshots:
 
   '@mui/material@5.17.1(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(@types/react@19.2.14)(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
-      '@babel/runtime': 7.28.6
+      '@babel/runtime': 7.29.2
       '@mui/core-downloads-tracker': 5.17.1
       '@mui/system': 5.17.1(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(@types/react@19.2.14)(react@19.2.5))(@types/react@19.2.14)(react@19.2.5)
       '@mui/types': 7.2.24(@types/react@19.2.14)
@@ -13279,7 +13337,7 @@ snapshots:
 
   '@mui/private-theming@5.17.1(@types/react@19.2.14)(react@19.2.5)':
     dependencies:
-      '@babel/runtime': 7.28.6
+      '@babel/runtime': 7.29.2
       '@mui/utils': 5.17.1(@types/react@19.2.14)(react@19.2.5)
       prop-types: 15.8.1
       react: 19.2.5
@@ -13297,7 +13355,7 @@ snapshots:
 
   '@mui/styled-engine@5.16.14(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(@types/react@19.2.14)(react@19.2.5))(react@19.2.5)':
     dependencies:
-      '@babel/runtime': 7.28.6
+      '@babel/runtime': 7.29.2
       '@emotion/cache': 11.14.0
       csstype: 3.2.3
       prop-types: 15.8.1
@@ -13321,7 +13379,7 @@ snapshots:
 
   '@mui/system@5.17.1(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(@types/react@19.2.14)(react@19.2.5))(@types/react@19.2.14)(react@19.2.5)':
     dependencies:
-      '@babel/runtime': 7.28.6
+      '@babel/runtime': 7.29.2
       '@mui/private-theming': 5.17.1(@types/react@19.2.14)(react@19.2.5)
       '@mui/styled-engine': 5.16.14(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(@types/react@19.2.14)(react@19.2.5))(react@19.2.5)
       '@mui/types': 7.2.24(@types/react@19.2.14)
@@ -13363,7 +13421,7 @@ snapshots:
 
   '@mui/utils@5.17.1(@types/react@19.2.14)(react@19.2.5)':
     dependencies:
-      '@babel/runtime': 7.28.6
+      '@babel/runtime': 7.29.2
       '@mui/types': 7.2.24(@types/react@19.2.14)
       '@types/prop-types': 15.7.14
       clsx: 2.1.1
@@ -15508,7 +15566,7 @@ snapshots:
       obug: 2.1.1
       std-env: 4.1.0
       tinyrainbow: 3.1.0
-      vitest: 4.1.5(@types/node@22.19.13)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@6.0.3))(vite@8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
+      vitest: 4.1.5(@types/node@22.19.13)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(vite@8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
 
   '@vitest/eslint-plugin@1.2.1(eslint@9.39.4)(typescript@6.0.3)(vitest@4.1.5)':
     dependencies:
@@ -15590,7 +15648,7 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.16
       tinyrainbow: 3.1.0
-      vitest: 4.1.5(@types/node@22.19.13)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@6.0.3))(vite@8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
+      vitest: 4.1.5(@types/node@22.19.13)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(vite@8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
 
   '@vitest/utils@3.2.4':
     dependencies:
