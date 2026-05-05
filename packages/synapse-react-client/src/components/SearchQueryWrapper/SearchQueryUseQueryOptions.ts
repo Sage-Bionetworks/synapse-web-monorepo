@@ -165,34 +165,6 @@ export function toSearchIndexQuery(
  *  - hits → queryResult.queryResults (rows derived from hit.rowId/rowVersion/fields)
  *  - facets → facets (same FacetColumnResult type)
  */
-/**
- * The search API returns list column values as "[item1, item2, item3]" — a plain-text
- * bracket-delimited string that is NOT valid JSON. SynapseTableCell expects valid JSON
- * arrays (e.g. '["item1","item2","item3"]'). This function converts the former to the
- * latter. If the value already looks like a valid JSON array it is returned unchanged.
- */
-function convertSearchListValueToJson(value: string): string {
-  if (value === '[]' || value.startsWith('["')) {
-    // Already valid JSON array
-    return value
-  }
-  if (value.startsWith('[') && value.endsWith(']')) {
-    const inner = value.slice(1, -1).trim()
-    if (inner.length === 0) return '[]'
-    return JSON.stringify(inner.split(', '))
-  }
-  return value
-}
-
-const LIST_COLUMN_TYPES = new Set([
-  'STRING_LIST',
-  'INTEGER_LIST',
-  'BOOLEAN_LIST',
-  'DATE_LIST',
-  'USERID_LIST',
-  'ENTITYID_LIST',
-])
-
 export function searchQueryResultsToQueryResultBundle(
   results: SearchQueryResults | undefined,
   query: SearchIndexQuery,
@@ -218,29 +190,11 @@ export function searchQueryResultsToQueryResultBundle(
       ('STRING' as const),
   }))
 
-  // Build a map of column name → columnType using the server-returned selectColumns
-  // (most accurate) with a fallback to the columnModels prop.
-  const serverSelectColumns = (results.selectColumns ?? []) as Array<{
-    name: string
-    columnType: string
-  }>
-  const selectColumnsByName = new Map(
-    serverSelectColumns.map(col => [col.name, col.columnType]),
-  )
-  const getColumnType = (name: string): string =>
-    selectColumnsByName.get(name) ??
-    columnModels?.find(cm => cm.name === name)?.columnType ??
-    'STRING'
-
   const rows = (results.hits ?? []).map(hit => ({
     rowId: hit.rowId,
     versionNumber: hit.rowVersion,
     values: fieldNames.map(name => {
-      const rawValue = hit.fields?.find(f => f.name === name)?.value ?? null
-      if (rawValue != null && LIST_COLUMN_TYPES.has(getColumnType(name))) {
-        return convertSearchListValueToJson(rawValue)
-      }
-      return rawValue
+      return hit.fields?.find(f => f.name === name)?.value ?? null
     }),
   }))
 

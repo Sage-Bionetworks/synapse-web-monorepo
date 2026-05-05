@@ -8,6 +8,7 @@ import PortalFullTextSearchField from './PortalFullTextSearchField'
 import SearchParamAwareQueryWrapperPlotNav from './SearchParamAwareQueryWrapperPlotNav'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import type { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
+import { isSearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 export type PortalSearchPageProps = {
   selectedTabIndex?: number
@@ -96,7 +97,7 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
             )
           },
         }
-        if ('searchIndexId' in config) {
+        if (isSearchQueryWrapperPlotNavProps(config)) {
           return (
             <SearchParamAwareQueryWrapperPlotNav
               key={key}

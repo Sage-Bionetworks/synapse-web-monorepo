@@ -30,7 +30,7 @@ type SearchQueryWrapperPlotNavOwnProps = {
   initialExpandedFacetControls?: FacetFilterControlsProps['initialExpandedFacetControls']
   initialLimit?: number
   hideTopLevelControls?: boolean
-  // Note: hideDownload, hideSqlEditorControl, and hideSearchBarControl are intentionally
+  // Note: hideDownload, hideSqlEditorControl are intentionally
   // excluded — they are hardcoded to true because these controls are not applicable to the
   // SearchQueryServicesApi (no file download, no SQL editing).
 }
@@ -56,6 +56,23 @@ export type SearchQueryWrapperPlotNavProps = SearchQueryWrapperPlotNavOwnProps &
     /** Called when the query result bundle changes (e.g. to report result counts to a parent). */
     onQueryResultBundleChange?: SearchQueryWrapperProps['onQueryResultBundleChange']
   }
+
+/**
+ * Type guard that identifies a SearchQueryWrapperPlotNavProps from the union
+ * `QueryWrapperPlotNavProps | SearchQueryWrapperPlotNavProps`.
+ *
+ * Two conditions are checked to be robust against future API changes:
+ *  1. The config has `searchIndexId` (present only on SearchQueryWrapperPlotNavProps).
+ *  2. The config does NOT have `sql` (always present on QueryWrapperPlotNavProps via
+ *     QueryOrDeprecatedSearchParams), so that if QueryWrapperPlotNavProps ever gains a
+ *     `searchIndexId` field the guard remains correct.
+ */
+export function isSearchQueryWrapperPlotNavProps(config: {
+  searchIndexId?: unknown
+  sql?: unknown
+}): config is SearchQueryWrapperPlotNavProps {
+  return 'searchIndexId' in config && !('sql' in config)
+}
 
 /**
  * A component similar to QueryWrapperPlotNav that sources its data from the SearchQueryServicesApi

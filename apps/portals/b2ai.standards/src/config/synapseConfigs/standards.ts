@@ -62,11 +62,18 @@ export const standardsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   },
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 export const standardsSearchQueryWrapperPlotNavProps: SearchQueryWrapperPlotNavProps =
   {
     searchIndexId: 'syn74803513',
-    ...standardsQueryWrapperPlotNavProps,
+    rgbIndex: standardsRgbIndex,
+    name: 'Standards',
+    columnAliases,
+    tableConfiguration: {
+      showDownloadColumn: false,
+      columnLinks: standardsColumnLinks,
+    },
+    facetsToPlot: ['topic'],
+    initialPlotTypeByFacetColumnName: { topic: 'BAR' },
     hideTopLevelControls: true,
     hideQueryCount: true,
   }
