@@ -3,7 +3,11 @@ import { SchemaPropertiesMap } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import { Model } from 'json-joy/lib/json-crdt'
 import { s } from 'json-joy/lib/json-crdt-patch'
 import { applyModelChange, ModelChange } from './applyModelChange'
-import { gridSchema, ReplicaSelectionModel } from '../DataGridTypes'
+import {
+  DataGridRow,
+  gridSchema,
+  ReplicaSelectionModel,
+} from '../DataGridTypes'
 import { getDefaultValueForProperty } from './applyModelChange'
 
 function createModel() {
@@ -631,7 +635,7 @@ describe('getDefaultValueForProperty', () => {
   })
 
   it('coerces undefined to null when property key exists and column is required', () => {
-    const row: Record<string, unknown> = { col1: undefined }
+    const row: DataGridRow = { col1: undefined }
     const schemaPropertyInfo: SchemaPropertiesMap = {
       col1: {
         type: { type: 'string', isArray: false },

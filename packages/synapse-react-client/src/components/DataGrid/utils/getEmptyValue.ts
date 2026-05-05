@@ -1,3 +1,3 @@
-export function getEmptyValue(isRequired: boolean) {
+export function getEmptyValue(isRequired?: boolean) {
   return isRequired ? null : undefined
 }

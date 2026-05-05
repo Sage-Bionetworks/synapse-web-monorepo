@@ -1,6 +1,6 @@
 import type { Column } from '@sage-bionetworks/react-datasheet-grid'
 import type { SchemaPropertyInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
-import { getEmptyValue } from './getEmptyValue.ts'
+import { getEmptyValue } from './getEmptyValue'
 
 /**
  * Coerce an empty cell value to the schema-correct blank before it reaches

@@ -21,7 +21,7 @@ import { Tooltip } from '@mui/material'
 import { SmartToyTwoTone } from '@mui/icons-material'
 import type { DataGridRow } from '../DataGridTypes'
 import { wrapPasteValueWithSchemaCoercion } from './schemaAwarePasteValue'
-import { getEmptyValue } from './getEmptyValue.ts'
+import { getEmptyValue } from './getEmptyValue'
 
 /**
  * Wraps a column cell component to overlay change-attribution indicators:
