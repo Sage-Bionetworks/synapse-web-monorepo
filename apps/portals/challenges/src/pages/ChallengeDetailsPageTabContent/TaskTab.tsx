@@ -84,13 +84,37 @@ function TaskTab() {
               <DetailsPageContextConsumer
                 columnName={`${taskId}.SubmissionType`}
               >
-                {({ value }) => (
-                  <ChallengeSubmissionWrapper
-                    entityType={
-                      value as ChallengeSubmissionWrapperProps['entityType']
-                    }
-                  />
-                )}
+                {({ value }) => {
+                  // Parse annotation value to determine which submission widget to show
+                  const submissionTypes = String(value || '')
+                    .split(',')
+                    .map(type => type.trim().toLowerCase())
+
+                  const content: React.ReactElement[] = []
+
+                  // Show file submission widget if submission type includes 'file'
+                  if (submissionTypes.includes('file')) {
+                    content.push(
+                      <ChallengeSubmissionWrapper
+                        entityType={
+                          'file' as ChallengeSubmissionWrapperProps['entityType']
+                        }
+                      />,
+                    )
+                  }
+
+                  // Show docker submission widget if submission type includes 'dockerrepo'
+                  if (submissionTypes.includes('dockerrepo')) {
+                    content.push(
+                      <ChallengeSubmissionWrapper
+                        entityType={
+                          'dockerrepo' as ChallengeSubmissionWrapperProps['entityType']
+                        }
+                      />,
+                    )
+                  }
+                  return content
+                }}
               </DetailsPageContextConsumer>
             ),
           },
