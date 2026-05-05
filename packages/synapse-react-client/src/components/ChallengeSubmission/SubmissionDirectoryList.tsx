@@ -10,7 +10,7 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
-import { InfoTwoTone } from '@mui/icons-material'
+import { NotesTwoTone } from '@mui/icons-material'
 import { Box, Button, Radio, Typography } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
 import { EntityType } from '@sage-bionetworks/synapse-client'
