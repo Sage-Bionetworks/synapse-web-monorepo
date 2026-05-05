@@ -705,6 +705,7 @@ export const type2SvgIconName: Record<EntityType, IconName> = {
   dataset: 'dataset',
   datasetcollection: 'datasetcollection',
   recordset: 'fileWithShield',
+  searchindex: 'data',
 }
 
 export default IconSvg

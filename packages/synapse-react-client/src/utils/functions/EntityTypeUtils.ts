@@ -399,6 +399,9 @@ export const entityJsonKeys: Record<ENTITY_CONCRETE_TYPE, string[]> = {
   'org.sagebionetworks.repo.model.ExampleEntity': [
     /* unused */
   ],
+  'org.sagebionetworks.repo.model.search.table.SearchIndex': [
+    /* unused */
+  ],
 }
 
 type EntityTypeGroupKey = 'ALL_TABLES' | 'CONTAINER'
