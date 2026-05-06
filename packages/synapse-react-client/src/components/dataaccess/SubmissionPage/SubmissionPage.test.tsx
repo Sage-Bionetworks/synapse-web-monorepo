@@ -1,4 +1,5 @@
 import AccessRequirementList from '@/components/AccessRequirementList/AccessRequirementList'
+import { DiscussionThread } from '@/components/Forum'
 import { mockManagedACTAccessRequirement } from '@/mocks/accessRequirement/mockAccessRequirements'
 import {
   mockApprovedSubmission,
@@ -8,6 +9,7 @@ import {
   mockSubmittedSubmission,
 } from '@/mocks/dataaccess/MockSubmission'
 import { server } from '@/mocks/msw/server'
+import { generateDiscussionThreadBundle } from '@/mocks/faker/generateDiscussion'
 import { mockActTeam } from '@/mocks/team/mockTeam'
 import {
   MOCK_USER_ID,
@@ -18,6 +20,7 @@ import {
   MOCK_USER_NAME_3,
 } from '@/mocks/user/mock_user_profile'
 import { useGetUserAccessApproval } from '@/synapse-queries/dataaccess/useAccessApprovals'
+import { useGetThreadForSubmission } from '@/synapse-queries/forum/useThread'
 import {
   getUseQueryErrorMock,
   getUseQueryIdleMock,
@@ -75,8 +78,15 @@ const onServerReceivedUpdate = vi.fn()
 vi.mock('react-router')
 vi.mock('./CancelDataAccessRequestConfirmationModal')
 vi.mock('@/synapse-queries/dataaccess/useAccessApprovals')
+vi.mock('@/synapse-queries/forum/useThread', () => ({
+  useGetThreadForSubmission: vi.fn(),
+}))
 
 vi.mock('@/components/AccessRequirementList/AccessRequirementList')
+
+vi.mock('@/components/Forum', () => ({
+  DiscussionThread: vi.fn(),
+}))
 
 // Mock links to file handles
 vi.mock('../../widgets/FileHandleLink', () => ({
@@ -115,6 +125,14 @@ const mockAccessRequirementList = vi
   .mockImplementation(() => {
     return <div data-testid="AccessRequirementList" />
   })
+
+const mockDiscussionThread = vi
+  .mocked(DiscussionThread)
+  .mockImplementation(() => <div data-testid="DiscussionThread" />)
+
+const mockGetThreadForSubmission = vi
+  .mocked(useGetThreadForSubmission)
+  .mockReturnValue(getUseQueryIdleMock())
 
 const mockGetUserAccessApproval = vi
   .mocked(useGetUserAccessApproval)
@@ -573,6 +591,36 @@ describe('Submission Page tests', () => {
       expect(mockCancelSubmissionModal).not.toHaveBeenRenderedWithProps(
         expect.objectContaining({ open: true }),
       )
+    })
+
+    it('renders the Discussion section when the submission has an associated thread', async () => {
+      const thread = generateDiscussionThreadBundle({
+        forumId: 'test-forum-id',
+        projectId: 'test-project-id',
+      })
+      mockGetThreadForSubmission.mockReturnValue(getUseQuerySuccessMock(thread))
+
+      renderComponent({
+        submissionId: SUBMITTED_SUBMISSION_ID,
+        isReviewer: false,
+      })
+
+      await screen.findByTestId('DiscussionThread')
+      expect(mockDiscussionThread).toHaveBeenLastRenderedWithProps(
+        expect.objectContaining({ threadId: thread.id }),
+      )
+    })
+
+    it('does not render the Discussion section when there is no associated thread', () => {
+      mockGetThreadForSubmission.mockReturnValue(getUseQueryIdleMock())
+
+      renderComponent({
+        submissionId: SUBMITTED_SUBMISSION_ID,
+        isReviewer: false,
+      })
+
+      expect(screen.queryByTestId('DiscussionThread')).not.toBeInTheDocument()
+      expect(mockDiscussionThread).not.toHaveBeenCalled()
     })
 
     it('hides certain ui elements that should not be shown to accessors', () => {

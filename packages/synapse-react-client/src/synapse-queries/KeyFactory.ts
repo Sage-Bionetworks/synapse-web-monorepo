@@ -708,6 +708,10 @@ export class KeyFactory {
     return this.getKey('thread', threadId)
   }
 
+  public getThreadForSubmissionQueryKey(submissionId: string | number) {
+    return this.getKey('thread', 'submission', submissionId)
+  }
+
   public getThreadBodyQueryKey(threadId: string, messageKey: string) {
     return this.getKey('thread', threadId, messageKey)
   }

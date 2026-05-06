@@ -234,6 +234,8 @@ export function getDownloadActionsForEntityType(
       return [[DownloadAction.exportTable, DownloadAction.programmaticAccess]]
     case EntityType.link:
       return [[DownloadAction.programmaticAccess]]
+    case EntityType.searchindex:
+      return []
     default:
       // this will fail if a new EntityType is added and not handled
       throw new Error(`Unhandled EntityType: ${type}`)
