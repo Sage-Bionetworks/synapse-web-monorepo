@@ -1,9 +1,20 @@
 import { useSynapseContext } from '@/utils'
 import { implementsExternalFileHandleInterface } from '@/utils/types/IsType'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
-import { Button, LinearProgress, Typography } from '@mui/material'
-import { Download } from '@mui/icons-material'
+import {
+  Box,
+  Button,
+  IconButton,
+  LinearProgress,
+  Paper,
+  Typography,
+} from '@mui/material'
+import { Close, Download } from '@mui/icons-material'
+import CloudWarning from '@/assets/icons/CloudWarning'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import dayjs from 'dayjs'
+import duration from 'dayjs/plugin/duration'
+import relativeTime from 'dayjs/plugin/relativeTime'
 import {
   BatchFileRequest,
   BatchFileResult,
@@ -22,8 +33,9 @@ import {
 } from '@/synapse-queries/download/useDownloadList'
 import { getFiles } from '@/synapse-client/SynapseClient'
 import { useGetEntityQueryOptions } from '@/synapse-queries/entity/useEntity'
-import { DialogBase } from '../DialogBase'
+
 import { deduplicateFileName, getFileName } from './fileNameUtils'
+import styles from './DownloadIneligibleForPackagingFilesFromListButton.module.scss'
 
 // showDirectoryPicker is not yet available on the Window interface.
 interface FileSystemAccessWindow extends Window {
@@ -49,6 +61,10 @@ function supportsFileSystemAccess(
 }
 
 const FILE_BATCH_SIZE = 50 // Maximum batch size for fetching presigned URLs
+const ETA_DELAY_MS = 3000 // Wait this long before showing ETA
+
+dayjs.extend(duration)
+dayjs.extend(relativeTime)
 
 export type DownloadIneligibleForPackagingFilesFromListButtonProps = {
   buttonText?: string
@@ -70,6 +86,7 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
   const getEntityQueryOptions = useGetEntityQueryOptions<FileEntity>()
   const [isDownloading, setIsDownloading] = useState(false)
   const isDownloadingRef = useRef(false)
+  const [showExternalFileWarning, setShowExternalFileWarning] = useState(false)
   const isCancelledRef = useRef(false)
   const [downloadProgress, setDownloadProgress] = useState<{
     currentFile: string
@@ -77,7 +94,9 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
     totalFiles: number
     bytesDownloaded: number
     totalBytes: number
+    estimatedSecondsRemaining: number | null
   } | null>(null)
+  const fileDownloadStartRef = useRef<number | null>(null)
 
   const { data, status, hasNextPage, fetchNextPage, error } =
     useGetAvailableFilesToDownloadInfinite()
@@ -106,6 +125,7 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
       try {
         isDownloadingRef.current = true
         isCancelledRef.current = false
+        setShowExternalFileWarning(false)
         const allItems = downloadListItems.pages.flatMap(page => page.page)
 
         // Filter to only include files that are NOT eligible for packaging
@@ -155,12 +175,14 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
         }
 
         // Initialize progress tracking
+        fileDownloadStartRef.current = null
         setDownloadProgress({
           currentFile: '',
           fileIndex: 0,
           totalFiles: nonPackageableFiles.length,
           bytesDownloaded: 0,
           totalBytes: 0,
+          estimatedSecondsRemaining: null,
         })
 
         // Fetch entities to get dataFileHandleId for each file
@@ -299,6 +321,7 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
               // For external file handles, use the externalURL
               downloadUrl = (fileResult.fileHandle as ExternalFileHandle)
                 .externalURL
+              setShowExternalFileWarning(true)
             } else if (fileResult.preSignedURL) {
               // For other file types, use the presigned URL
               downloadUrl = fileResult.preSignedURL
@@ -316,6 +339,7 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
 
             // Update progress with current file info
             const currentFileIndex = downloadedCount + 1
+            fileDownloadStartRef.current = null
             setDownloadProgress(prev =>
               prev
                 ? {
@@ -324,6 +348,7 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
                     fileIndex: currentFileIndex,
                     bytesDownloaded: 0,
                     totalBytes: 0,
+                    estimatedSecondsRemaining: null,
                   }
                 : null,
             )
@@ -380,6 +405,7 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
               if (response.body) {
                 const reader = response.body.getReader()
                 let bytesReceived = 0
+                let streamAborted = false
 
                 try {
                   while (true) {
@@ -389,21 +415,59 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
                     bytesReceived += value.length
                     await writableStream.write(value)
 
+                    // Check for cancellation on every chunk
+                    if (isCancelledRef.current) {
+                      streamAborted = true
+                      await writableStream.abort()
+                      break
+                    }
+
+                    if (fileDownloadStartRef.current === null) {
+                      fileDownloadStartRef.current = Date.now()
+                    }
+                    const elapsed =
+                      (Date.now() - fileDownloadStartRef.current) / 1000
+                    let estimatedSecondsRemaining: number | null = null
+                    if (
+                      elapsed * 1000 > ETA_DELAY_MS &&
+                      bytesReceived > 0 &&
+                      totalBytes > 0
+                    ) {
+                      const rate = bytesReceived / elapsed
+                      estimatedSecondsRemaining = Math.max(
+                        0,
+                        (totalBytes - bytesReceived) / rate,
+                      )
+                    }
+
                     // Update progress
                     setDownloadProgress(prev =>
                       prev
                         ? {
                             ...prev,
                             bytesDownloaded: bytesReceived,
+                            ...(elapsed * 1000 > ETA_DELAY_MS && {
+                              estimatedSecondsRemaining,
+                            }),
                           }
                         : null,
                     )
                   }
                 } catch (streamError) {
-                  await writableStream.abort()
+                  if (!streamAborted) {
+                    await writableStream.abort()
+                    streamAborted = true
+                  }
                   throw streamError
                 } finally {
-                  await writableStream.close()
+                  if (!streamAborted) {
+                    await writableStream.close()
+                  }
+                }
+
+                // If cancelled mid-stream, return false without falling through to success path
+                if (isCancelledRef.current) {
+                  return false
                 }
               } else {
                 // Fallback if streaming not supported
@@ -683,68 +747,95 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
 
   return (
     <>
-      <DialogBase
-        open={!!downloadProgress}
-        title="Downloading Files"
-        hasCloseButton={false}
-        onCancel={handleCancel}
-        maxWidth="sm"
-        content={
-          downloadProgress ? (
-            <>
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                gutterBottom
-                id="download-progress-description"
-              >
-                File {downloadProgress.fileIndex} of{' '}
-                {downloadProgress.totalFiles}
-              </Typography>
-              <Typography variant="body2" noWrap gutterBottom>
-                {downloadProgress.currentFile}
-              </Typography>
-              {downloadProgress.totalBytes > 0 && (
-                <>
-                  <LinearProgress
-                    variant="determinate"
-                    value={
-                      (downloadProgress.bytesDownloaded /
+      {!!downloadProgress && showExternalFileWarning && (
+        <Paper elevation={8} className={styles.externalWarningPanel}>
+          <CloudWarning className={styles.warningIcon} />
+          <Box className={styles.warningTextContainer}>
+            <Typography className={styles.warningTitleText}>
+              Some of your files are hosted externally.
+            </Typography>
+            <Typography className={styles.progressFileNameText}>
+              Downloads may be slower than expected
+            </Typography>
+          </Box>
+          <IconButton
+            onClick={() => setShowExternalFileWarning(false)}
+            size="small"
+            className={styles.warningCloseButton}
+            aria-label="Dismiss external file warning"
+          >
+            <Close />
+          </IconButton>
+        </Paper>
+      )}
+      {!!downloadProgress && (
+        <Paper
+          elevation={8}
+          className={styles.progressPanel}
+          sx={{ zIndex: theme => theme.zIndex.modal }}
+        >
+          <Typography className={styles.progressTitleText}>
+            Downloading file {downloadProgress.fileIndex} of{' '}
+            {downloadProgress.totalFiles}
+          </Typography>
+          <Typography className={styles.progressFileNameText}>
+            {downloadProgress.currentFile}
+          </Typography>
+          <Box className={styles.progressFooter}>
+            <Box className={styles.progressBarContainer}>
+              <Box className={styles.progressStats}>
+                <Typography className={styles.progressStatsText}>
+                  {downloadProgress.totalBytes > 0
+                    ? `${Math.round(
+                        (downloadProgress.bytesDownloaded /
+                          downloadProgress.totalBytes) *
+                          100,
+                      )}% ( ${calculateFriendlyFileSize(
+                        downloadProgress.bytesDownloaded,
+                      )} / ${calculateFriendlyFileSize(
+                        downloadProgress.totalBytes,
+                      )} )`
+                    : ''}
+                </Typography>
+                <Typography className={styles.progressStatsText}>
+                  {downloadProgress.estimatedSecondsRemaining !== null
+                    ? `About ${dayjs
+                        .duration({
+                          seconds: downloadProgress.estimatedSecondsRemaining,
+                        })
+                        .humanize()} remaining`
+                    : ''}
+                </Typography>
+              </Box>
+              <LinearProgress
+                variant={
+                  downloadProgress.totalBytes > 0
+                    ? 'determinate'
+                    : 'indeterminate'
+                }
+                value={
+                  downloadProgress.totalBytes > 0
+                    ? (downloadProgress.bytesDownloaded /
                         downloadProgress.totalBytes) *
                       100
-                    }
-                    sx={{ my: 2 }}
-                    aria-label="Download progress"
-                  />
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    aria-live="polite"
-                    aria-atomic="true"
-                  >
-                    {calculateFriendlyFileSize(
-                      downloadProgress.bytesDownloaded,
-                    )}{' '}
-                    of {calculateFriendlyFileSize(downloadProgress.totalBytes)}
-                  </Typography>
-                </>
-              )}
-              {downloadProgress.totalBytes === 0 && (
-                <LinearProgress sx={{ my: 2 }} aria-label="Download progress" />
-              )}
-            </>
-          ) : null
-        }
-        actions={
-          <Button variant="outlined" color="error" onClick={handleCancel}>
-            Cancel
-          </Button>
-        }
-        DialogProps={{
-          'aria-describedby': 'download-progress-description',
-          disableEscapeKeyDown: false,
-        }}
-      />
+                    : undefined
+                }
+                aria-label="Download progress"
+                className={styles.progressBar}
+              />
+            </Box>
+            <Box className={styles.cancelButtonContainer}>
+              <Button
+                variant="outlined"
+                onClick={handleCancel}
+                className={styles.cancelButton}
+              >
+                Cancel
+              </Button>
+            </Box>
+          </Box>
+        </Paper>
+      )}
       <Button
         variant={variant}
         onClick={() => {
