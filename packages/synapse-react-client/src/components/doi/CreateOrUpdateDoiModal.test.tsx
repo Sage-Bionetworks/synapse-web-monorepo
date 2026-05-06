@@ -431,6 +431,18 @@ describe('CreateOrUpdateDoiModal', () => {
   })
 
   describe('Private Entity DOI Warning Step', () => {
+    it('shows form directly when objectType is not ENTITY (e.g. PORTAL_RESOURCE)', async () => {
+      // When objectType is not ENTITY, useGetEntityBundle is disabled and entityBundle is
+      // never populated. shouldShowWarning must resolve to false (not undefined) so the
+      // step can be determined as soon as the DOI query resolves.
+      setup({ ...defaultProps, objectType: DoiObjectType.PORTAL_RESOURCE })
+
+      await waitFor(() => {
+        expectFormStep(true)
+      })
+      expectWarningStep(false)
+    })
+
     it('shows warning step when creating DOI for private entity', async () => {
       mockUseGetEntityBundle.mockReturnValue(
         getUseQuerySuccessMock(mockEntityWithNoPublicAccess.bundle),

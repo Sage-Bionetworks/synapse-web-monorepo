@@ -187,6 +187,9 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
   )
 
   const shouldShowWarning = useMemo(() => {
+    if (objectType !== DoiObjectType.ENTITY) {
+      return false
+    }
     return (
       open &&
       doi === null && // Creating new DOI
@@ -197,7 +200,7 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
         realmPrincipals,
       )
     )
-  }, [open, doi, entityBundle, realmPrincipals])
+  }, [open, doi, entityBundle, realmPrincipals, objectType])
 
   useEffect(() => {
     if (
