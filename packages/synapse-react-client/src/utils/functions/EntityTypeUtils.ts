@@ -81,6 +81,7 @@ export function isTableType(type: EntityType): boolean {
     case EntityType.dockerrepo:
     case EntityType.file:
     case EntityType.recordset:
+    case EntityType.searchindex:
       return false
     case EntityType.table:
     case EntityType.submissionview:
@@ -222,7 +223,7 @@ export function isVersionableEntityType(type: EntityType): boolean {
     case EntityType.submissionview: // SubmissionView implements VersionableEntity, but versions aren't supported
     case EntityType.materializedview: // MaterializedView implements VersionableEntity, but versions aren't supported.
     case EntityType.virtualtable: // VirtualTable implements VersionableEntity, but versions aren't supported.
-    case EntityType.searchindex: // SearchIndex does not support versioning.
+    case EntityType.searchindex:
       return false
     case EntityType.file:
     case EntityType.recordset:
@@ -394,10 +395,6 @@ export const entityJsonKeys: Record<ENTITY_CONCRETE_TYPE, string[]> = {
   [TABLE_ENTITY_CONCRETE_TYPE_VALUE]: tableKeys,
   [MATERIALIZED_VIEW_CONCRETE_TYPE_VALUE]: [...tableKeys, 'definingSQL'],
   [VIRTUAL_TABLE_CONCRETE_TYPE_VALUE]: [...tableKeys, 'definingSQL'],
-  'org.sagebionetworks.repo.model.search.table.SearchIndex': [
-    ...tableKeys,
-    'definingSQL',
-  ],
   [FOLDER_CONCRETE_TYPE_VALUE]: allEntityKeys,
   [PROJECT_CONCRETE_TYPE_VALUE]: [...allEntityKeys, 'alias'],
   ['org.sagebionetworks.repo.model.RecordSet']: [
@@ -410,6 +407,11 @@ export const entityJsonKeys: Record<ENTITY_CONCRETE_TYPE, string[]> = {
   ],
   'org.sagebionetworks.repo.model.ExampleEntity': [
     /* unused */
+  ],
+  'org.sagebionetworks.repo.model.search.table.SearchIndex': [
+    ...allEntityKeys,
+    'definingSQL',
+    'searchConfigurationId',
   ],
 }
 

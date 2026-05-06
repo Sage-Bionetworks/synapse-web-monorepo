@@ -38,6 +38,7 @@ import { SignInRequiredModal } from '../SignInRequiredModal/SignInRequiredModal'
 export type DiscussionThreadProps = {
   threadId: string
   limit: number
+  emptyBodyContent?: string
 }
 
 const FOLLOWING_TEXT = 'You are following this topic. Click to stop following.'
@@ -45,7 +46,7 @@ const UNFOLLOWING_TEXT = 'You are not following this topic. Click to follow.'
 const INPUT_PLACEHOLDER = 'Write a reply...'
 
 export function DiscussionThread(props: DiscussionThreadProps) {
-  const { threadId, limit } = props
+  const { threadId, limit, emptyBodyContent } = props
   const defaultMargin = '16px'
 
   const [orderByDatePosted, setOrderByDatePosted] = useState(true)
@@ -127,33 +128,39 @@ export function DiscussionThread(props: DiscussionThreadProps) {
     setReplyIdParam(null)
   }
 
+  const isForumModerator = moderatorList?.includes(
+    currentUserProfile?.ownerId ?? '',
+  )
+
   return (
     <div className="DiscussionThread" role={'article'}>
-      {threadData && threadBody ? (
-        <>
-          <Box sx={{ mb: 2, textAlign: 'right' }}>
-            <Typography component={'span'} sx={{ mr: 1 }}>
-              Sort:
-            </Typography>
-            <ToggleButtonGroup
-              color={'primary'}
-              exclusive
-              value={orderByDatePosted ? 'datePosted' : 'mostRecent'}
+      {threadData && (
+        <Box sx={{ mb: 2, textAlign: 'right' }}>
+          <Typography component={'span'} sx={{ mr: 1 }}>
+            Sort:
+          </Typography>
+          <ToggleButtonGroup
+            color={'primary'}
+            exclusive
+            value={orderByDatePosted ? 'datePosted' : 'mostRecent'}
+          >
+            <ToggleButton
+              value={'datePosted'}
+              onClick={() => setOrderByDatePosted(true)}
             >
-              <ToggleButton
-                value={'datePosted'}
-                onClick={() => setOrderByDatePosted(true)}
-              >
-                Date Posted
-              </ToggleButton>
-              <ToggleButton
-                value={'mostRecent'}
-                onClick={() => setOrderByDatePosted(false)}
-              >
-                Most Recent
-              </ToggleButton>
-            </ToggleButtonGroup>
-          </Box>
+              Date Posted
+            </ToggleButton>
+            <ToggleButton
+              value={'mostRecent'}
+              onClick={() => setOrderByDatePosted(false)}
+            >
+              Most Recent
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Box>
+      )}
+      {threadData && (threadBody !== undefined || emptyBodyContent) ? (
+        <>
           <UserBadge
             userId={threadData.createdBy}
             withAvatar={true}
@@ -187,7 +194,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
           </Box>
           <div>
             <MarkdownSynapse
-              markdown={threadBody}
+              markdown={threadBody || emptyBodyContent}
               objectType={ObjectType.THREAD}
             />
           </div>
@@ -308,6 +315,7 @@ export function DiscussionThread(props: DiscussionThreadProps) {
             <DiscussionReply
               key={reply.id}
               reply={reply}
+              isForumModerator={isForumModerator}
               isReplyAuthorModerator={isReplyAuthorModerator}
             />
           )
