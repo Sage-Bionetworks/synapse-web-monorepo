@@ -1,5 +1,0 @@
-import{n as e}from"./chunk-jRWAZmH_.js";import{MS as t,Nv as n,tx as r}from"./iframe-DtZHC7tB.js";var i,a,o,s;e((()=>{n(),i=t(),a={title:`UI/Typography`,component:r,argTypes:{children:{control:`text`},variant:{control:`select`,options:[`headline1`,`headline2`,`headline3`,`body1`,`body1Italic`,`body2`,`breadcrumb1`,`breadcrumb2`,`smallText1`,`smallText2`,`smallLink`,`label`,`buttonLink`,`hintText`,`sectionTitle`,`subsectionHeader`,`dataFieldKey`]}},render:e=>(0,i.jsx)(r,{...e,children:e.children??`Modify this sample text using the 'children' control below`})},o={args:{variant:`body1`}},o.parameters={...o.parameters,docs:{...o.parameters?.docs,source:{originalSource:`{
-  args: {
-    variant: 'body1'
-  }
-}`,...o.parameters?.docs?.source}}},s=[`TypographyDemo`]}))();export{o as TypographyDemo,s as __namedExportsOrder,a as default};

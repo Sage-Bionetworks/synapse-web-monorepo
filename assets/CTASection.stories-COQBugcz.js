@@ -1,7 +1,0 @@
-import{n as e}from"./chunk-jRWAZmH_.js";import{MS as t,Nv as n,Py as r,cf as i,jb as a,ru as o,tx as s}from"./iframe-DtZHC7tB.js";import{n as c,t as l}from"./CTASectionWrapper-BV2dkyRA.js";var u,d,f,p,m;e((()=>{c(),n(),o(),u=t(),d={title:`Home Page/CTASectionWrapper`,component:l,parameters:{chromatic:{viewports:[600,1200]},withRouter:!0}},f=(0,u.jsxs)(u.Fragment,{children:[(0,u.jsx)(s,{variant:`headline2`,sx:{fontSize:`24px`,color:`grey.900`,lineHeight:`normal`,marginBottom:`16px`},children:`Test Title`}),(0,u.jsx)(s,{sx:{color:`grey.900`,fontStyle:`italic`,lineHeight:`22.4px`,marginBottom:`26px`},children:`Test Subtitle`}),(0,u.jsxs)(a,{variant:`contained`,component:r,href:`https://test-link.com`,target:`_blank`,rel:`noopener noreferrer`,sx:{color:`#FFF`,"&:hover":{color:`#FFF`,textDecorationColor:`#FFF`},"&:focus":{color:`#FFF`},textDecorationColor:`#FFF`,display:`flex`,padding:`6px 24px`,gap:`10px`},children:[(0,u.jsx)(i,{sx:{width:`24px`,height:`24px`}}),(0,u.jsx)(s,{sx:{fontSize:`18px`,fontWeight:`600`,lineHeight:`144%`},children:`Test Button`})]})]}),p={render:e=>(0,u.jsx)(l,{...e}),args:{content:f,themeMode:`light`}},p.parameters={...p.parameters,docs:{...p.parameters?.docs,source:{originalSource:`{
-  render: args => <CTASectionWrapper {...args} />,
-  args: {
-    content: content,
-    themeMode: 'light'
-  }
-}`,...p.parameters?.docs?.source}}},m=[`Demo`]}))();export{p as Demo,m as __namedExportsOrder,d as default};
