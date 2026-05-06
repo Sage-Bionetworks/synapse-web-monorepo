@@ -80,6 +80,33 @@ describe('autocompleteMultipleEnumColumn', () => {
     )
   })
 
+  it('pasteValue returns clearValue (null) for empty input on required columns', () => {
+    const column = autocompleteMultipleEnumColumn({
+      choices: [],
+      colType: 'string',
+      clearValue: null,
+    })
+    const pasteValue = column.pasteValue!
+
+    expect(pasteValue({ value: '', rowData: ['x'], rowIndex: 0 })).toBeNull()
+    expect(
+      pasteValue({ value: '\n\n\n', rowData: ['x'], rowIndex: 0 }),
+    ).toBeNull()
+  })
+
+  it('pasteValue returns clearValue (undefined) for empty input on optional columns', () => {
+    const column = autocompleteMultipleEnumColumn({
+      choices: [],
+      colType: 'string',
+      clearValue: undefined,
+    })
+    const pasteValue = column.pasteValue!
+
+    expect(
+      pasteValue({ value: '', rowData: ['x'], rowIndex: 0 }),
+    ).toBeUndefined()
+  })
+
   it('cellClassName reflects value count when dynamic height is enabled', () => {
     // Ensure dynamic height class toggles based on the number of values shown.
     const column = autocompleteMultipleEnumColumn({

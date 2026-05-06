@@ -29,6 +29,7 @@ export function modelColsToGrid(
       showPinIcon,
       isPinned,
       onTogglePin: onTogglePin ? () => onTogglePin(arrayIndex) : undefined,
+      schemaPropertyInfo: propertyInfo,
     })
   })
 }

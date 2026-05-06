@@ -1,6 +1,7 @@
 import { dateTimeColumn } from '@/components/DataGrid/columns/DateTimeColumn'
 import { EnumeratedValue } from '@/utils/jsonschema/getEnumeratedValues'
 import { FlatTypeInfo } from '@/utils/jsonschema/getType'
+import { SchemaPropertyInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import {
   CellComponent,
   CellProps,
@@ -19,6 +20,8 @@ import { ColumnHeaderWithTooltip } from '../components/ColumnHeaderWithTooltip'
 import { Tooltip } from '@mui/material'
 import { SmartToyTwoTone } from '@mui/icons-material'
 import type { DataGridRow } from '../DataGridTypes'
+import { wrapPasteValueWithSchemaCoercion } from './schemaAwarePasteValue'
+import { getEmptyValue } from './getEmptyValue'
 
 /**
  * Wraps a column cell component to overlay change-attribution indicators:
@@ -88,6 +91,13 @@ type ColumnConfig = {
   showPinIcon?: boolean
   isPinned?: boolean
   onTogglePin?: () => void
+  /**
+   * Optional column-level schema info. When provided, paste behavior coerces
+   * empty pasted cells to the schema-correct blank (undefined for optional
+   * columns, null for required columns). Omit to preserve the column impl's
+   * default paste behavior.
+   */
+  schemaPropertyInfo?: SchemaPropertyInfo
 }
 
 function getHeaderClassName(isRequired: boolean): string {
@@ -97,7 +107,7 @@ function getHeaderClassName(isRequired: boolean): string {
 function createDeleteValue(columnName: string, isRequired?: boolean) {
   return ({ rowData }: { rowData: Record<string, unknown> }) => ({
     ...rowData,
-    [columnName]: isRequired ? null : undefined,
+    [columnName]: getEmptyValue(isRequired),
   })
 }
 
@@ -105,7 +115,7 @@ function createParseUserInput(isRequired?: boolean) {
   return (value: string) => {
     const trimmedValue = value.trim()
     if (trimmedValue === '') {
-      return isRequired ? null : undefined
+      return getEmptyValue(isRequired)
     }
     return trimmedValue
   }
@@ -145,6 +155,11 @@ function createBaseColumn(config: ColumnConfig, columnImpl: any) {
     shrink: 0,
     disabled: config.disabled,
     deleteValue: createDeleteValue(config.columnName, config.isRequired),
+    pasteValue: wrapPasteValueWithSchemaCoercion(
+      keyed.pasteValue,
+      config.columnName,
+      config.schemaPropertyInfo,
+    ),
     stickyLeft: config.isPinned,
   }
 }
@@ -157,7 +172,7 @@ const COLUMN_FACTORIES = {
         choices: config.enumeratedValues ?? [],
         colType: config.typeInfo?.type || null,
         limitTags: 3,
-        clearValue: config.isRequired ? null : undefined,
+        clearValue: getEmptyValue(config.isRequired),
       }),
     )
   },
@@ -168,7 +183,7 @@ const COLUMN_FACTORIES = {
       autocompleteColumn({
         choices: [true, false],
         colType: 'boolean',
-        clearValue: config.isRequired ? null : undefined,
+        clearValue: getEmptyValue(config.isRequired),
       }),
     )
   },
@@ -183,7 +198,7 @@ const COLUMN_FACTORIES = {
       autocompleteColumn({
         choices: config.enumeratedValues ?? [],
         colType: config.typeInfo?.type || null,
-        clearValue: config.isRequired ? null : undefined,
+        clearValue: getEmptyValue(config.isRequired),
       }),
     )
   },
