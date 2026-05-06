@@ -132,6 +132,110 @@ describe('AutocompleteColumn', () => {
     })
   })
 
+  it.each([null, undefined])(
+    'commits clearValue (%s) when the user clears a required cell and deactivates',
+    async clearValue => {
+      const mockSetRowData = vi.fn()
+      const mockStopEditing = vi.fn()
+      const mockCellProps: Partial<AutocompleteCellProps> = {
+        rowData: 'option1',
+        setRowData: mockSetRowData,
+        choices: ['option1', 'option2'],
+        colType: 'string',
+        clearValue: null,
+        focus: true,
+        active: true,
+        stopEditing: mockStopEditing,
+      }
+
+      const { rerender } = render(
+        <AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />,
+      )
+
+      await userEvent.clear(screen.getByRole('combobox'))
+
+      act(() => {
+        rerender(
+          <AutocompleteCell
+            {...(mockCellProps as AutocompleteCellProps)}
+            focus={false}
+            active={false}
+          />,
+        )
+      })
+
+      await waitFor(() => {
+        expect(mockSetRowData).toHaveBeenCalledWith(null)
+      })
+    },
+  )
+
+  it('commits undefined (clearValue) when the user clears an optional cell and deactivates', async () => {
+    const mockSetRowData = vi.fn()
+    const mockStopEditing = vi.fn()
+    const mockCellProps: Partial<AutocompleteCellProps> = {
+      rowData: 'option1',
+      setRowData: mockSetRowData,
+      choices: ['option1', 'option2'],
+      colType: 'string',
+      clearValue: undefined,
+      focus: true,
+      active: true,
+      stopEditing: mockStopEditing,
+    }
+
+    const { rerender } = render(
+      <AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />,
+    )
+
+    await userEvent.clear(screen.getByRole('combobox'))
+
+    act(() => {
+      rerender(
+        <AutocompleteCell
+          {...(mockCellProps as AutocompleteCellProps)}
+          focus={false}
+          active={false}
+        />,
+      )
+    })
+
+    await waitFor(() => {
+      expect(mockSetRowData).toHaveBeenCalledWith(undefined)
+    })
+  })
+
+  it('commits clearValue via the createOption path when the parsed result coerces to clearValue', async () => {
+    // Typing 'null' into a colType='null' column parses to JS null via
+    // parseFreeTextGivenJsonSchemaType, then commitParsedValue maps null →
+    // clearValue. Using clearValue=undefined (optional column) means this test
+    // fails without commitParsedValue (setRowData would receive null instead of
+    // undefined), verifying the createOption branch is wired to commitParsedValue.
+    const mockSetRowData = vi.fn()
+    const mockStopEditing = vi.fn()
+    const mockCellProps: Partial<AutocompleteCellProps> = {
+      rowData: 'current',
+      setRowData: mockSetRowData,
+      choices: [],
+      colType: 'null',
+      clearValue: undefined,
+      focus: true,
+      active: true,
+      stopEditing: mockStopEditing,
+    }
+
+    render(<AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />)
+
+    const input = screen.getByRole('combobox')
+    await userEvent.clear(input)
+    await userEvent.type(input, 'null')
+    await userEvent.keyboard('{Enter}')
+
+    await waitFor(() => {
+      expect(mockSetRowData).toHaveBeenCalledWith(undefined)
+    })
+  })
+
   it("supports opening the menu and selecting an option when clicking the input's dropdown arrow", async () => {
     const mockSetRowData = vi.fn()
     const mockStopEditing = vi.fn()

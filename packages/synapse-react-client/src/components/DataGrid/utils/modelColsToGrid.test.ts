@@ -88,6 +88,7 @@ describe('modelColsToGrid', () => {
       isPinned: false,
       onTogglePin: undefined,
       showPinIcon: false,
+      schemaPropertyInfo: schemaPropertiesInfo.status,
     })
   })
 
@@ -115,6 +116,7 @@ describe('modelColsToGrid', () => {
       isPinned: false,
       onTogglePin: undefined,
       showPinIcon: false,
+      schemaPropertyInfo: undefined,
     })
   })
 
@@ -148,6 +150,7 @@ describe('modelColsToGrid', () => {
       isPinned: false,
       onTogglePin: undefined,
       showPinIcon: false,
+      schemaPropertyInfo: schemaPropertiesInfo.partialColumn,
     })
   })
 
@@ -187,6 +190,7 @@ describe('modelColsToGrid', () => {
       isPinned: false,
       onTogglePin: undefined,
       showPinIcon: false,
+      schemaPropertyInfo: schemaPropertiesInfo.complexColumn,
     })
   })
 
@@ -220,6 +224,7 @@ describe('modelColsToGrid', () => {
       isPinned: false,
       onTogglePin: undefined,
       showPinIcon: false,
+      schemaPropertyInfo: schemaPropertiesInfo.undefinedTypeColumn,
     })
   })
 
@@ -253,6 +258,7 @@ describe('modelColsToGrid', () => {
       isPinned: false,
       onTogglePin: undefined,
       showPinIcon: false,
+      schemaPropertyInfo: schemaPropertiesInfo.nullEnumColumn,
     })
   })
 
@@ -305,6 +311,7 @@ describe('modelColsToGrid', () => {
       isPinned: false,
       onTogglePin: undefined,
       showPinIcon: false,
+      schemaPropertyInfo: schemaPropertiesInfo.id,
     })
 
     expect((result[1] as any).mockConfig).toEqual({
@@ -321,6 +328,7 @@ describe('modelColsToGrid', () => {
       isPinned: false,
       onTogglePin: undefined,
       showPinIcon: false,
+      schemaPropertyInfo: schemaPropertiesInfo.tags,
     })
 
     expect((result[2] as any).mockConfig).toEqual({
@@ -334,6 +342,7 @@ describe('modelColsToGrid', () => {
       isPinned: false,
       onTogglePin: undefined,
       showPinIcon: false,
+      schemaPropertyInfo: schemaPropertiesInfo.active,
     })
 
     expect((result[3] as any).mockConfig).toEqual({
@@ -347,6 +356,7 @@ describe('modelColsToGrid', () => {
       isPinned: false,
       onTogglePin: undefined,
       showPinIcon: false,
+      schemaPropertyInfo: schemaPropertiesInfo.count,
     })
   })
 
@@ -404,6 +414,7 @@ describe('modelColsToGrid', () => {
       isPinned: false,
       onTogglePin: undefined,
       showPinIcon: false,
+      schemaPropertyInfo: schemaPropertiesInfo.testColumn,
     })
   })
 })
