@@ -409,7 +409,9 @@ export const entityJsonKeys: Record<ENTITY_CONCRETE_TYPE, string[]> = {
     /* unused */
   ],
   'org.sagebionetworks.repo.model.search.table.SearchIndex': [
-    /* unused */
+    ...allEntityKeys,
+    'definingSQL',
+    'searchConfigurationId',
   ],
 }
 
