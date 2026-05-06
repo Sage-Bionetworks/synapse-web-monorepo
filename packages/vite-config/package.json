@@ -17,7 +17,10 @@
     "./clientOnly": "./dist/clientOnly.js",
     "./libraryConfig": "./dist/vite-library-config.js",
     "./portalsViteConfig": "./dist/portals-vite-config.js",
-    "./sitemapViteConfig": "./dist/sitemap-vite-config.js"
+    "./sitemapViteConfig": "./dist/sitemap-vite-config.js",
+    "./portal-env": {
+      "types": "./portal-env.d.ts"
+    }
   },
   "peerDependencies": {
     "vite": "^8.0.0",

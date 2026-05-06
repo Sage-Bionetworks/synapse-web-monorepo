@@ -10,6 +10,8 @@ import {
 
 const mockPortalContext: PortalContextType = {
   portalName: 'TestPortal',
+  portalKey: 'test',
+  portalDescription: 'Test description',
   routeConfig: [],
   headerConfig: { title: 'Test', summary: 'Test summary' },
   footerConfig: {},

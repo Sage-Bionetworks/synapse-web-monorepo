@@ -1,5 +1,1 @@
-import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
-
-export default function HomeRedirect() {
-  return <RedirectWithQuery to="/" />
-}
+export { default } from '@sage-bionetworks/synapse-portal-framework/pages/HomeRedirect'

@@ -1,67 +1,29 @@
-/**
- * PortalRoot — root layout route for Framework Mode.
- *
- * Replaces the role of Portal.tsx + index.tsx in the SPA setup:
- * - Provides all context (theme, query client, portal context, document metadata)
- * - Renders <Outlet /> to host child routes
- *
- * This component is used as the top-level layout route in routes.ts.
- */
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useState } from 'react'
-import { CookiesProvider } from 'react-cookie'
-import { Outlet } from 'react-router'
-import { defaultQueryClientConfig } from 'synapse-react-client/utils/context/FullContextProvider'
-import { DocumentMetadataProvider } from 'synapse-react-client/utils/context/DocumentMetadataContext'
-import { ThemeProvider } from 'synapse-react-client/theme/ThemeProvider'
-import { PortalContextProvider } from '@sage-bionetworks/synapse-portal-framework/components/PortalContext'
+import PortalRoot from '@sage-bionetworks/synapse-portal-framework/ssg/PortalRoot'
 import { navbarConfig } from '../config/navbarConfig'
 import palette from '../config/paletteConfig'
 import footerConfig from '../config/footerConfig'
 import logoHeaderConfig from '../config/logoHeaderConfig'
 import logoFooterConfig from '../config/logoFooterConfig'
 import headerConfig from '../config/headerConfig'
-import { CssBaseline } from '@mui/material'
 import synapseChatConfig from '@/config/synapseChatConfig'
 
 // KaTeX CSS is not included in the SRC style bundle since it includes many large font files.
 import 'katex/dist/katex.css'
 import '../App.scss'
 
-const portalContext = {
-  portalName: import.meta.env.VITE_PORTAL_NAME ?? '',
-  portalKey: import.meta.env.VITE_PORTAL_KEY ?? '',
-  // routeConfig is unused in SSR/Framework Mode — routing is handled by routes.ts.
-  // Pass empty array to satisfy the PortalContextType (other SPA-mode portals still use it).
-  routeConfig: [],
-  headerConfig,
-  footerConfig,
-  logoHeaderConfig,
-  logoFooterConfig,
-  navbarConfig,
-  synapseChatProps: synapseChatConfig,
-}
-
-export default function PortalRoot() {
-  const [queryClient] = useState(
-    () => new QueryClient(defaultQueryClientConfig),
-  )
-  const portalTitleEnv: unknown = import.meta.env.VITE_PORTAL_NAME
-  const defaultTitle =
-    typeof portalTitleEnv === 'string' ? portalTitleEnv : undefined
-
+export default function NfPortalRoot() {
   return (
-    <PortalContextProvider value={portalContext}>
-      <CookiesProvider>
-        <ThemeProvider theme={{ palette }}>
-          <CssBaseline />
-          <QueryClientProvider client={queryClient}>
-            <DocumentMetadataProvider defaultTitle={defaultTitle}>
-              <Outlet />
-            </DocumentMetadataProvider>
-          </QueryClientProvider>
-        </ThemeProvider>
-      </CookiesProvider>
-    </PortalContextProvider>
+    <PortalRoot
+      portalName={import.meta.env.VITE_PORTAL_NAME}
+      portalKey={import.meta.env.VITE_PORTAL_KEY}
+      portalDescription={import.meta.env.VITE_PORTAL_DESCRIPTION}
+      palette={palette}
+      navbarConfig={navbarConfig}
+      headerConfig={headerConfig}
+      footerConfig={footerConfig}
+      logoHeaderConfig={logoHeaderConfig}
+      logoFooterConfig={logoFooterConfig}
+      synapseChatProps={synapseChatConfig}
+    />
   )
 }
