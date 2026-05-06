@@ -43,6 +43,9 @@ export type SubmissionPageProps = {
   isReviewer: boolean // There is currently no API to check if a user has review permissions on a specific submission ID
 }
 
+const THREAD_BODY =
+  'Use this thread to communicate with the reviewers about this access request.'
+
 function DataAccessSubmissionFileHandleLink(props: {
   submissionId: string
   fileHandleId: string
@@ -557,7 +560,13 @@ export default function SubmissionPage(props: SubmissionPageProps) {
               )}
             </Stack>
           </section>
-          {thread?.id && <DiscussionThread threadId={thread.id} limit={25} />}
+          {thread?.id && (
+            <DiscussionThread
+              threadId={thread.id}
+              limit={25}
+              emptyBodyContent={THREAD_BODY}
+            />
+          )}
         </Stack>
       </Grid>
     </Grid>
