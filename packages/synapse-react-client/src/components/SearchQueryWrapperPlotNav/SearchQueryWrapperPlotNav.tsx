@@ -17,10 +17,17 @@ import {
   SearchQueryWrapperProps,
 } from '../SearchQueryWrapper/SearchQueryWrapper'
 import { QueryWrapperPlotNavContents } from '../QueryWrapperPlotNav/QueryWrapperPlotNav'
+import { useGetSuggestionsForSearchIndex } from '../SearchQueryWrapper/SearchQueryUseQueryOptions'
 
 type SearchQueryWrapperPlotNavOwnProps = {
   /** The ID of the SearchIndex entity to query. */
   searchIndexId: string
+  /**
+   * The name of the field to use for autocomplete suggestions.
+   * When provided, the search bar will show a dropdown of suggestions as the user types,
+   * populated by querying the search index with this field restricted via POST /search/autocomplete.
+   */
+  autocompleteFieldName?: string
   /** Whether the displayed results should be paginated or infinite. Default for cards is true, default for table is false */
   isInfinite?: boolean
   tableConfiguration?: SynapseTableConfiguration
@@ -90,7 +97,13 @@ export default function SearchQueryWrapperPlotNav(
     initQueryRequest: initQueryRequestFromProps,
     onQueryResultBundleChange,
     searchIndexId,
+    autocompleteFieldName,
   } = props
+
+  const getSuggestions = useGetSuggestionsForSearchIndex(
+    searchIndexId,
+    autocompleteFieldName,
+  )
 
   const initQueryRequest: SearchQueryWrapperProps['initQueryRequest'] =
     useDeepCompareMemoize({
@@ -121,7 +134,7 @@ export default function SearchQueryWrapperPlotNav(
           defaultShowPlots={props.defaultShowPlots}
           hideCopyToClipboard={props.hideCopyToClipboard}
           hideSearchBarControl={false}
-          defaultShowSearchBar={false}
+          defaultShowSearchBar={true}
           showLastUpdatedOn={props.showLastUpdatedOn}
           noContentPlaceholderType={
             props.noContentPlaceholderType ??
@@ -145,6 +158,14 @@ export default function SearchQueryWrapperPlotNav(
             }
             hideTopLevelControls={props.hideTopLevelControls}
             isFullTextSearchEnabled={true}
+            searchConfiguration={{
+              ftsConfig: {
+                textMatchesMode: 'NATURAL_LANGUAGE',
+                getSuggestions: autocompleteFieldName
+                  ? getSuggestions
+                  : undefined,
+              },
+            }}
           />
         </QueryVisualizationWrapper>
       </Suspense>

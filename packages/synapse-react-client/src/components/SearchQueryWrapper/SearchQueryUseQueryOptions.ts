@@ -35,7 +35,7 @@ import {
   UseSuspenseQueryOptions,
 } from '@tanstack/react-query'
 import { omit } from 'lodash-es'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { KeyFactory } from '@/synapse-queries/KeyFactory'
 
 /**
@@ -360,6 +360,57 @@ export function getSearchQueryUseQueryOptions(
     rowDataInfiniteQueryOptions,
     queryMetadataQueryOptions,
   }
+}
+
+/**
+ * Returns a stable callback that fetches autocomplete suggestions for a search input
+ * using the synchronous `POST /search/autocomplete` endpoint.
+ *
+ * The query is built from the current `searchIndexId` and `autocompleteFieldName`:
+ *  - `searchQuery.queryText` is set to the user-entered search text
+ *  - `searchQuery.queryFields` is set to `[autocompleteFieldName]` so the server
+ *    only returns values for that single field
+ *
+ * When `autocompleteFieldName` is undefined, the returned callback immediately returns `[]`.
+ */
+export function useGetSuggestionsForSearchIndex(
+  searchIndexId: string,
+  autocompleteFieldName: string | undefined,
+): (searchText: string) => Promise<string[]> {
+  const { synapseClient } = useSynapseContext()
+
+  return useCallback(
+    async (searchText: string): Promise<string[]> => {
+      if (!autocompleteFieldName) return []
+      const trimmed = searchText.trim()
+      if (!trimmed) return []
+      const results =
+        await synapseClient.searchManagementServicesClient.postRepoV1SearchAutocomplete(
+          {
+            searchIndexQuery: {
+              concreteType:
+                'org.sagebionetworks.repo.model.search.table.SearchIndexQuery' as const,
+              searchIndexId,
+              searchQuery: {
+                queryText: trimmed,
+                queryFields: [autocompleteFieldName],
+                returnFields: [autocompleteFieldName],
+              },
+            },
+          },
+        )
+      const suggestions: string[] = []
+      for (const hit of results.hits ?? []) {
+        for (const field of hit.fields ?? []) {
+          if (field.value) {
+            suggestions.push(field.value)
+          }
+        }
+      }
+      return suggestions
+    },
+    [synapseClient, searchIndexId, autocompleteFieldName],
+  )
 }
 
 /**
