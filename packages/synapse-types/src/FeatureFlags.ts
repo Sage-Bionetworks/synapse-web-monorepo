@@ -22,9 +22,6 @@ export enum FeatureFlagEnum {
   // If enabled, show the Download Ineligible for Packaging Files button on the download cart page
   DOWNLOAD_CART_INELIGIBLE_FILE_DOWNLOADS = 'DOWNLOAD_CART_INELIGIBLE_FILE_DOWNLOADS',
 
-  // If enabled, provide the ability to login or create an account using the Sage Bionetworks IdP OAuth2 provider
-  SAGE_BIONETWORKS_IDP = 'SAGE_BIONETWORKS_IDP',
-
   // If enabled, show the SynapseChat dialog in portals
   PORTAL_CHAT = 'PORTAL_CHAT',
 

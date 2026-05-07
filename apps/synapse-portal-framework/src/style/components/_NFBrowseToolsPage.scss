@@ -45,24 +45,16 @@
     max-width: 750px;
   }
   .categories {
-    display: flex;
-    @media (min-width: 1350px) {
-      justify-content: space-between;
-      margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 30px;
+    button {
+      width: 100%;
+      min-width: 0;
     }
-    @media (max-width: 1349px) {
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    p {
-      color: #fff !important;
-      border-bottom: 1px transparent;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 18px;
-      white-space: nowrap;
+    @media (max-width: 600px) {
+      grid-template-columns: 1fr;
     }
   }
   .highlightSubmitToolContainer {

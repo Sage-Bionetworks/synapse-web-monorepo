@@ -77,6 +77,11 @@ export const navbarConfig: NavbarConfig = {
       name: 'News',
       path: 'https://news.eliteportal.org/',
     },
+    {
+      name: 'Admin',
+      path: 'https://www.synapse.org/Synapse:syn27229419',
+      requiredTeamId: '3459311',
+    },
   ],
   isPortalsDropdownEnabled: true,
 }

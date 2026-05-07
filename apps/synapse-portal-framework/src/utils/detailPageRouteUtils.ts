@@ -4,7 +4,21 @@ import type {
 } from './fetchDetailPageMetadata'
 import { fetchDetailPageMetadata } from './fetchDetailPageMetadata'
 import { getPortalOrigin } from './getPortalOrigin'
-import type { MetaDescriptor } from 'react-router'
+import type { MetaArgs, MetaDescriptor } from 'react-router'
+import { mergeMeta } from './mergeMeta'
+
+export type PortalMetadata = {
+  /** Portal display name appended to each `<title>`, e.g. "NF Data Portal". */
+  portalName: string
+  /**
+   * Portal key used to construct the canonical URL (e.g. "nf" → https://nf.synapse.org).
+   * When provided, a `<link rel="canonical">` tag is emitted in the route's meta() output,
+   * which ensures the canonical URL appears in pre-rendered HTML for SSG portals.
+   * Must be passed explicitly from the portal (e.g. `import.meta.env.VITE_PORTAL_KEY`)
+   * because `import.meta.env` is not available inside this pre-built library.
+   */
+  portalKey: string
+}
 
 /** Base loader data shape for standard detail pages. */
 export type BaseDetailPageLoaderData = DetailPageMetadata
@@ -62,17 +76,8 @@ export function createDetailPageRouteExports<
   TLoaderData extends BaseDetailPageLoaderData = BaseDetailPageLoaderData,
 >(
   config: DetailPageMetadataConfig,
+  portalMetadata: PortalMetadata,
   options: {
-    /** Portal display name appended to each `<title>`, e.g. "NF Data Portal". */
-    portalName: string
-    /**
-     * Portal key used to construct the canonical URL (e.g. "nf" → https://nf.synapse.org).
-     * When provided, a `<link rel="canonical">` tag is emitted in the route's meta() output,
-     * which ensures the canonical URL appears in pre-rendered HTML for SSG portals.
-     * Must be passed explicitly from the portal (e.g. `import.meta.env.VITE_PORTAL_KEY`)
-     * because `import.meta.env` is not available inside this pre-built library.
-     */
-    portalKey: string
     /** Additional async work in the loader. Receives the base metadata and params. */
     extendLoader?: (
       baseData: BaseDetailPageLoaderData,
@@ -80,9 +85,10 @@ export function createDetailPageRouteExports<
     ) => Promise<Partial<TLoaderData>>
     /** Additional meta descriptors derived from loader data. */
     extendMeta?: (loaderData: TLoaderData) => MetaDescriptor[]
-  },
+  } = {},
 ) {
-  const { portalName, portalKey, extendLoader, extendMeta } = options
+  const { portalName, portalKey } = portalMetadata
+  const { extendLoader, extendMeta } = options
 
   async function loader({
     params,
@@ -115,68 +121,115 @@ export function createDetailPageRouteExports<
     }
   }
 
-  function meta({
-    loaderData,
-    matches,
-    location,
-  }: {
-    loaderData?: TLoaderData
-    matches: Array<{ meta: MetaDescriptor[] }>
-    location: { pathname: string }
-  }): MetaDescriptor[] {
+  function meta(args: MetaArgs<() => TLoaderData>): MetaDescriptor[] {
+    const { loaderData, location } = args
     const descriptors: MetaDescriptor[] = []
 
-    if (portalKey) {
-      const origin = getPortalOrigin(portalKey)
+    const origin = getPortalOrigin(portalKey)
+    const pageUrl = origin
+      ? new URL(location.pathname, origin).toString()
+      : null
+
+    if (pageUrl) {
       descriptors.push({
         tagName: 'link',
         rel: 'canonical',
-        href: new URL(location.pathname, origin).toString(),
+        href: pageUrl,
+      })
+
+      descriptors.push({ property: 'og:url', content: pageUrl })
+      descriptors.push({ name: 'twitter:url', content: pageUrl })
+    }
+
+    if (loaderData?.title) {
+      const pageTitle = `${loaderData.title} | ${portalName}`
+      descriptors.push({ title: pageTitle })
+      descriptors.push({ property: 'og:title', content: pageTitle })
+      descriptors.push({ name: 'twitter:title', content: pageTitle })
+    }
+
+    if (loaderData?.description) {
+      descriptors.push({ name: 'description', content: loaderData.description })
+      descriptors.push({
+        property: 'og:description',
+        content: loaderData.description,
+      })
+      descriptors.push({
+        name: 'twitter:description',
+        content: loaderData.description,
       })
     }
-
-    if (!loaderData?.title) {
-      return [...matches.flatMap(match => match.meta ?? []), ...descriptors]
+    if (extendMeta && loaderData) {
+      descriptors.push(...extendMeta(loaderData as TLoaderData))
     }
-
-    descriptors.push({ title: `${loaderData.title} | ${portalName}` })
-    if (loaderData.description) {
-      descriptors.push({ name: 'description', content: loaderData.description })
-    }
-    if (extendMeta) {
-      descriptors.push(...extendMeta(loaderData))
-    }
-    return descriptors
+    return mergeMeta(args, descriptors)
   }
 
   return { loader, clientLoader, meta }
 }
 
 /**
- * Creates a static `meta()` export for pages whose title never changes.
+ * Creates a `meta()` export for pages with static metadata.
+
  *
- * Intended for Explore tab pages where the title is always the same string
- * (e.g. "Explore Studies | NF Data Portal"). Eliminates the boilerplate
- * two-line function body that was repeated across 7 Explore pages.
- *
- * `portalName` must be passed explicitly from the portal (e.g.
- * `import.meta.env.VITE_PORTAL_NAME`). It cannot be read inside this library
- * because the framework package is pre-built separately from each portal's
- * Vite build, so `import.meta.env` variables are not available here at
- * runtime.
- *
- * @param pageTitle  - The page-specific portion of the title, e.g. "Explore Studies"
- * @param portalName - Portal display name appended to the title, e.g. "NF Data Portal"
- * @returns A `meta()` function that returns `[{ title: "<pageTitle> | <portalName>" }]`
+ * @param staticMetadata  - The page-specific metadata (e.g. title/description) to merge with the portal-level defaults
+ * @param portalMetadata - Portal metadata used to construct the page metadata (e.g. portalName appended to title, portalKey used for canonical URL)
+ * @returns A `meta()` function that merges parent route meta descriptors and
+ *   overrides `meta` tags with page-specific values.
  *
  * @example
  * ```ts
- * export const meta = createStaticMeta('Explore Studies', import.meta.env.VITE_PORTAL_NAME)
+ * export const meta = createStaticMeta({ title: 'Explore Studies' }, { portalName: import.meta.env.VITE_PORTAL_NAME, portalKey: import.meta.env.VITE_PORTAL_KEY })
  * ```
  */
 export function createStaticMeta(
-  pageTitle: string,
-  portalName: string,
-): () => MetaDescriptor[] {
-  return () => [{ title: `${pageTitle} | ${portalName}` }]
+  staticMetadata: {
+    title: string
+    description?: string
+  },
+  portalMetadata: PortalMetadata,
+): (args: MetaArgs) => MetaDescriptor[] {
+  const { title, description } = staticMetadata
+  const { portalKey, portalName } = portalMetadata
+  return args => {
+    const { location } = args
+    const fullTitle = `${title} | ${portalName}`
+    const descriptors: MetaDescriptor[] = [
+      { title: fullTitle },
+      { property: 'og:title', content: fullTitle },
+      { name: 'twitter:title', content: fullTitle },
+    ]
+    const origin = getPortalOrigin(portalKey)
+    const pageUrl = origin
+      ? new URL(location.pathname, origin).toString()
+      : null
+
+    if (pageUrl) {
+      descriptors.push({
+        tagName: 'link',
+        rel: 'canonical',
+        href: pageUrl,
+      })
+
+      descriptors.push({ property: 'og:url', content: pageUrl })
+      descriptors.push({ name: 'twitter:url', content: pageUrl })
+    }
+
+    if (description) {
+      descriptors.push({
+        name: 'description',
+        content: description,
+      })
+      descriptors.push({
+        property: 'og:description',
+        content: description,
+      })
+      descriptors.push({
+        name: 'twitter:description',
+        content: description,
+      })
+    }
+
+    return mergeMeta(args, descriptors)
+  }
 }

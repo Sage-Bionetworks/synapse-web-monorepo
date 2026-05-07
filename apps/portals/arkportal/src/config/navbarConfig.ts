@@ -28,6 +28,11 @@ export const navbarConfig: NavbarConfig = {
       name: 'Help',
       path: 'https://help.arkportal.org/help/',
     },
+    {
+      name: 'Admin',
+      path: 'https://www.synapse.org/Synapse:syn26710600',
+      requiredTeamId: '3430506',
+    },
   ],
   isPortalsDropdownEnabled: false,
 }

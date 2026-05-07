@@ -61,7 +61,7 @@
     "timers-browserify": "^2.0.12",
     "tslib": "^2.8.1",
     "type-fest": "^4.41.0",
-    "typescript": "5.8.3",
+    "typescript": "6.0.3",
     "util": "^0.12.5",
     "vite": "^8.0.8",
     "vite-config": "workspace:*",

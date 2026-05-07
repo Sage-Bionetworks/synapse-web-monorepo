@@ -13,6 +13,12 @@ interface WebSocketState {
    * Corresponds to the `GRID_READY` action.
    */
   hasCompletedInitialSync: boolean
+  /**
+   * True while a clock-sync exchange is in progress. Set on every outgoing
+   * `synchronize-clock` and cleared on `ResponseComplete`, which the server
+   * sends once per exchange to signal "we're synchronized" — not per request.
+   */
+  isSyncing: boolean
   isConnected: boolean
   isConnecting: boolean
   connectionParams: {
@@ -34,6 +40,8 @@ type WebSocketAction =
   | { type: 'CONNECTION_OPENED' }
   | { type: 'CONNECTION_CLOSED' }
   | { type: 'GRID_READY' }
+  | { type: 'SYNC_STARTED' }
+  | { type: 'SYNC_ENDED' }
   | { type: 'MODEL_CREATED'; payload: GridModel }
   | { type: 'CONNECTION_ERROR'; payload: unknown }
 
@@ -58,6 +66,7 @@ function websocketReducer(
         hasCompletedInitialSync: isSameConnection
           ? state.hasCompletedInitialSync
           : false,
+        isSyncing: false,
         model: isSameConnection ? state.model : null,
         isConnected: false,
         isConnecting: false,
@@ -85,12 +94,25 @@ function websocketReducer(
         ...state,
         isConnected: false,
         isConnecting: false,
+        isSyncing: false,
       }
 
     case 'GRID_READY':
       return {
         ...state,
         hasCompletedInitialSync: true,
+      }
+
+    case 'SYNC_STARTED':
+      return {
+        ...state,
+        isSyncing: true,
+      }
+
+    case 'SYNC_ENDED':
+      return {
+        ...state,
+        isSyncing: false,
       }
 
     case 'MODEL_CREATED':
@@ -114,6 +136,7 @@ function websocketReducer(
 export const initialWebSocketState: WebSocketState = {
   model: null,
   hasCompletedInitialSync: false,
+  isSyncing: false,
   isConnected: false,
   isConnecting: false,
   connectionParams: null,
@@ -176,6 +199,8 @@ export function useDataGridWebSocket(options?: UseDataGridWebSocketOptions) {
       onModelCreate: handleModelCreate,
       onReplicaConnected: options?.onReplicaConnected,
       onReplicaDisconnected: options?.onReplicaDisconnected,
+      onSyncStart: () => dispatch({ type: 'SYNC_STARTED' }),
+      onSyncEnd: () => dispatch({ type: 'SYNC_ENDED' }),
     }),
     [
       handleModelCreate,
@@ -320,6 +345,7 @@ export function useDataGridWebSocket(options?: UseDataGridWebSocketOptions) {
     isConnected: state.isConnected,
     websocketInstance: state.websocketInstance,
     hasCompletedInitialSync: state.hasCompletedInitialSync,
+    isSyncing: state.isSyncing,
     model: state.model,
     modelSnapshot,
     connect,

@@ -1,4 +1,5 @@
 import { StyledOuterContainer } from '@/components/styled/LeftRightPanel'
+import { TOTP_CLOCK_SKEW_ERROR_APPENDAGE } from '@/components/Authentication/Constants'
 import { useFinishTwoFactorEnrollment } from '@/synapse-queries/auth/useTwoFactorEnrollment'
 import { StyledComponent } from '@emotion/styled'
 import {
@@ -285,7 +286,11 @@ export default function TwoFactorEnrollmentForm(
           <FullWidthAlert
             variant={'danger'}
             isGlobal={false}
-            description={error.reason}
+            description={
+              error.reason.toLowerCase().includes('invalid totp code')
+                ? `${error.reason}. ${TOTP_CLOCK_SKEW_ERROR_APPENDAGE}`
+                : error.reason
+            }
           />
         )}
       </Paper>

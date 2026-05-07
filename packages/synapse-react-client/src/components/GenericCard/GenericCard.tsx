@@ -158,6 +158,11 @@ export const GenericCard = forwardRef(function GenericCard(
         cardTopButtons={cardTopButtons}
         cardTopContent={cardTopContent}
         sustainabilityScorecard={sustainabilityScorecard}
+        renderedIconList={renderedIconList}
+        cardTypeAdornment={cardTypeAdornment}
+        titleAsFileHandleLinkConfiguration={titleAsFileHandleLinkConfiguration}
+        titleAreaRightContent={titleAreaRightContent}
+        descriptionSubTitle={descriptionSubTitle}
       />
     )
   }

@@ -10,6 +10,7 @@ import TwoFactorEnrollmentForm, {
   TwoFactorEnrollmentFormProps,
 } from './TwoFactorEnrollmentForm'
 import { MOCK_USER_NAME } from '@/mocks/user/mock_user_profile'
+import { TOTP_CLOCK_SKEW_ERROR_APPENDAGE } from './Constants'
 
 const totpSecret: TotpSecret = {
   secretId: '1234',
@@ -94,7 +95,9 @@ describe('TwoFactorEnrollmentForm', () => {
     await userEvent.click(submitButton)
 
     const errorAlert = await screen.findByRole('alert')
-    within(errorAlert).getByText('Invalid TOTP code')
+    within(errorAlert).getByText(
+      `Invalid TOTP code. ${TOTP_CLOCK_SKEW_ERROR_APPENDAGE}`,
+    )
     expect(mockComplete2FAEnrollment).toHaveBeenCalledTimes(1)
 
     consoleErrorSpy.mockRestore()

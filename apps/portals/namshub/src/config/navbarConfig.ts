@@ -10,6 +10,11 @@ export const navbarConfig: NavbarConfig = {
       name: 'Events',
       path: 'https://nhdcc.wpenginepowered.com/',
     },
+    {
+      name: 'Admin',
+      path: 'https://www.synapse.org/Synapse:syn74360399/wiki/640276',
+      requiredTeamId: '3582968',
+    },
   ],
   isPortalsDropdownEnabled: false,
 }
