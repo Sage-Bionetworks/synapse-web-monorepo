@@ -20,6 +20,11 @@
 
 .warningIcon {
   flex-shrink: 0;
+
+  // Use &#{&} to increase specificity and override MUI SvgIcon's default styles
+  &#{&} {
+    font-size: 40px;
+  }
 }
 
 .warningTextContainer {
