@@ -104,6 +104,31 @@ export function useUpdateCurationTaskStatus(
   })
 }
 
+export function useDeleteCurationTask(
+  options?: Partial<UseMutationOptions<void, SynapseClientError, number>>,
+) {
+  const { synapseClient, keyFactory } = useSynapseContext()
+  const queryClient = useQueryClient()
+  return useMutation({
+    ...options,
+    mutationFn: (taskId: number) =>
+      synapseClient.curationTaskServicesClient.deleteRepoV1CurationTaskTaskId({
+        taskId,
+      }),
+    onSuccess: (data, taskId, context) => {
+      queryClient.invalidateQueries({
+        queryKey: keyFactory.getCurationTaskIdKey(taskId),
+      })
+      queryClient.invalidateQueries({
+        queryKey: keyFactory.getAllCurationTaskListKey(),
+      })
+      if (options?.onSuccess) {
+        options.onSuccess(data, taskId, context)
+      }
+    },
+  })
+}
+
 export function useGetCurationTasksInfinite<
   TData = InfiniteData<ListCurationTaskResponse>,
 >(
