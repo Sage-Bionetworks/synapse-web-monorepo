@@ -23,7 +23,7 @@ import {
   FileHandleAssociation,
   FileHandleAssociateType,
 } from '@sage-bionetworks/synapse-types'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import {
@@ -88,6 +88,7 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
   const isDownloadingRef = useRef(false)
   const [showExternalFileWarning, setShowExternalFileWarning] = useState(false)
   const isCancelledRef = useRef(false)
+  const abortControllerRef = useRef<AbortController | null>(null)
   const [downloadProgress, setDownloadProgress] = useState<{
     currentFile: string
     fileIndex: number
@@ -97,6 +98,44 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
     estimatedSecondsRemaining: number | null
   } | null>(null)
   const fileDownloadStartRef = useRef<number | null>(null)
+
+  // Accessibility: tracks the last announced file index and progress bucket so
+  // the aria-live region only updates on meaningful changes (not every chunk).
+  const [announceText, setAnnounceText] = useState('')
+  const lastAnnouncedFileIndexRef = useRef<number>(-1)
+  const lastAnnouncedPercentBucketRef = useRef<number>(-1)
+
+  useEffect(() => {
+    if (!downloadProgress) {
+      lastAnnouncedFileIndexRef.current = -1
+      lastAnnouncedPercentBucketRef.current = -1
+      setAnnounceText('')
+      return
+    }
+
+    const { fileIndex, totalFiles, currentFile, bytesDownloaded, totalBytes } =
+      downloadProgress
+
+    // Announce when a new file starts downloading
+    if (fileIndex !== lastAnnouncedFileIndexRef.current) {
+      lastAnnouncedFileIndexRef.current = fileIndex
+      lastAnnouncedPercentBucketRef.current = -1
+      setAnnounceText(
+        `Downloading file ${fileIndex} of ${totalFiles}: ${currentFile}`,
+      )
+      return
+    }
+
+    // Announce at each 25% milestone (25, 50, 75, 100) once per file
+    if (totalBytes > 0) {
+      const percent = Math.floor((bytesDownloaded / totalBytes) * 100)
+      const bucket = Math.floor(percent / 25) * 25
+      if (bucket > 0 && bucket !== lastAnnouncedPercentBucketRef.current) {
+        lastAnnouncedPercentBucketRef.current = bucket
+        setAnnounceText(`${bucket}% of ${currentFile} downloaded`)
+      }
+    }
+  }, [downloadProgress])
 
   const { data, status, hasNextPage, fetchNextPage, error } =
     useGetAvailableFilesToDownloadInfinite()
@@ -375,7 +414,10 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
 
             try {
               // Fetch the file
-              const response = await fetch(downloadUrl)
+              abortControllerRef.current = new AbortController()
+              const response = await fetch(downloadUrl, {
+                signal: abortControllerRef.current.signal,
+              })
               if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`)
               }
@@ -418,6 +460,7 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
                     // Check for cancellation on every chunk
                     if (isCancelledRef.current) {
                       streamAborted = true
+                      reader.cancel()
                       await writableStream.abort()
                       break
                     }
@@ -487,6 +530,14 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
               }
               return true
             } catch (fetchError) {
+              // If the fetch was aborted due to cancellation, do not fall back
+              if (
+                isCancelledRef.current ||
+                (fetchError instanceof DOMException &&
+                  fetchError.name === 'AbortError')
+              ) {
+                return false
+              }
               console.error(
                 `Failed to fetch/write file ${fileResult.fileHandleId}:`,
                 fetchError,
@@ -736,6 +787,7 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
 
   const handleCancel = useCallback(() => {
     isCancelledRef.current = true
+    abortControllerRef.current?.abort()
     setDownloadProgress(null)
     setIsDownloading(false)
     isDownloadingRef.current = false
@@ -747,8 +799,23 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
 
   return (
     <>
+      {/* Visually-hidden live region — announces file start and progress milestones to screen readers */}
+      <span
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className={styles.visuallyHidden}
+      >
+        {announceText}
+      </span>
       {!!downloadProgress && showExternalFileWarning && (
-        <Paper elevation={8} className={styles.externalWarningPanel}>
+        <Paper
+          elevation={8}
+          className={styles.externalWarningPanel}
+          sx={{ zIndex: theme => theme.zIndex.modal }}
+          role="region"
+          aria-label="External file warning"
+        >
           <CloudWarning className={styles.warningIcon} />
           <Box className={styles.warningTextContainer}>
             <Typography className={styles.warningTitleText}>
@@ -773,6 +840,8 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
           elevation={8}
           className={styles.progressPanel}
           sx={{ zIndex: theme => theme.zIndex.modal }}
+          role="region"
+          aria-label="Download progress"
         >
           <Typography className={styles.progressTitleText}>
             Downloading file {downloadProgress.fileIndex} of{' '}

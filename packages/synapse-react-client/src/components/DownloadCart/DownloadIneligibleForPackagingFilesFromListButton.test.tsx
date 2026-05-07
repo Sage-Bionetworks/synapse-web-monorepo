@@ -74,10 +74,16 @@ function setupDownloadListWithNonPackageableFiles(
   )
 }
 
-function createHangingStreamResponse() {
+function createHangingStreamResponse(signal?: AbortSignal) {
   const stream = new ReadableStream({
-    start() {
-      // Never enqueue or close — keeps the download in progress so the progress panel stays visible
+    start(controller) {
+      // Never enqueue or close — keeps the download in progress so the progress panel stays visible.
+      // If an AbortSignal is provided, error the stream when it fires so reader.read() unblocks.
+      if (signal) {
+        signal.addEventListener('abort', () => {
+          controller.error(new DOMException('Download aborted', 'AbortError'))
+        })
+      }
     },
   })
   return new Response(stream, {
@@ -127,8 +133,17 @@ const mockDirectoryHandle = {
 // Mock showDirectoryPicker
 const mockShowDirectoryPicker = vi.fn().mockResolvedValue(mockDirectoryHandle)
 
-// Mock fetch for streaming
-const mockFetch = vi.fn()
+// Mock fetch for streaming — forwards the AbortSignal to the hanging stream so that
+// aborting the controller causes reader.read() to reject promptly.
+// In the Node.js/MSW test environment fetch receives a Request object as its first
+// argument (with the signal embedded in Request.signal), so we handle both forms.
+const mockFetch = vi
+  .fn()
+  .mockImplementation((input: string | Request, options?: RequestInit) => {
+    const signal =
+      input instanceof Request ? input.signal : options?.signal ?? undefined
+    return Promise.resolve(createHangingStreamResponse(signal))
+  })
 global.fetch = mockFetch as unknown as typeof fetch
 
 // Add showDirectoryPicker to window
@@ -289,7 +304,6 @@ describe('DownloadIneligibleForPackagingFilesFromListButton', () => {
         },
       ],
     })
-    mockFetch.mockResolvedValue(createHangingStreamResponse())
 
     const button = await renderAndWaitForQueryLoad()
     await userEvent.click(button)
@@ -319,7 +333,6 @@ describe('DownloadIneligibleForPackagingFilesFromListButton', () => {
         },
       ],
     })
-    mockFetch.mockResolvedValue(createHangingStreamResponse())
 
     const button = await renderAndWaitForQueryLoad()
     await userEvent.click(button)
@@ -352,7 +365,6 @@ describe('DownloadIneligibleForPackagingFilesFromListButton', () => {
         },
       ],
     })
-    mockFetch.mockResolvedValue(createHangingStreamResponse())
 
     const button = await renderAndWaitForQueryLoad()
     await userEvent.click(button)
@@ -381,7 +393,6 @@ describe('DownloadIneligibleForPackagingFilesFromListButton', () => {
         },
       ],
     })
-    mockFetch.mockResolvedValue(createHangingStreamResponse())
 
     const button = await renderAndWaitForQueryLoad()
     await userEvent.click(button)
@@ -392,6 +403,49 @@ describe('DownloadIneligibleForPackagingFilesFromListButton', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
 
+    await waitFor(() => {
+      expect(screen.queryByText(/Downloading file/)).not.toBeInTheDocument()
+    })
+  })
+
+  it('aborts the in-flight fetch when Cancel is clicked during a stalled stream', async () => {
+    setupDownloadListWithNonPackageableFiles({
+      requestedFiles: [
+        {
+          fileHandleId: MOCK_FILE_HANDLE_ID,
+          preSignedURL: MOCK_PRESIGNED_URL,
+        },
+      ],
+    })
+    // Default mockFetch passes the AbortSignal to the stream, so abort() causes
+    // reader.read() to reject with AbortError rather than blocking indefinitely.
+
+    const button = await renderAndWaitForQueryLoad()
+    await userEvent.click(button)
+
+    await waitFor(() => {
+      expect(screen.getByText('Downloading file 1 of 1')).toBeInTheDocument()
+    })
+
+    // Verify the fetch was called and extract the AbortSignal.
+    // In the Node.js/MSW environment fetch arguments are normalised into a
+    // Request object, so the signal may live on the Request rather than in a
+    // separate options argument.
+    expect(mockFetch).toHaveBeenCalled()
+    const firstArg = mockFetch.mock.calls[0][0] as string | Request
+    const signal: AbortSignal =
+      firstArg instanceof Request
+        ? firstArg.signal
+        : (mockFetch.mock.calls[0][1] as RequestInit | undefined)?.signal!
+    expect(signal).toBeInstanceOf(AbortSignal)
+    expect(signal.aborted).toBe(false)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+
+    // The AbortSignal should now be aborted, proving the in-flight request was cancelled
+    expect(signal.aborted).toBe(true)
+
+    // Progress panel disappears
     await waitFor(() => {
       expect(screen.queryByText(/Downloading file/)).not.toBeInTheDocument()
     })
