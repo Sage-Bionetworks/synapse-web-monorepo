@@ -1,10 +1,119 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { server } from '@/mocks/msw/server'
 import { http, HttpResponse } from 'msw'
 import { getEndpoint, BackendDestinationEnum } from '@/utils/functions'
+import { FILE_HANDLE_BATCH } from '@/utils/APIConstants'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import SynapseClient from '@/synapse-client'
+import {
+  BatchFileResult,
+  DownloadListItemResult,
+} from '@sage-bionetworks/synapse-types'
 import { DownloadIneligibleForPackagingFilesFromListButton } from './DownloadIneligibleForPackagingFilesFromListButton'
+
+vi.spyOn(SynapseClient, 'removeItemsFromDownloadListV2').mockResolvedValue({
+  numberOfFilesRemoved: 0,
+})
+vi.spyOn(SynapseClient, 'getDownloadListStatistics').mockResolvedValue({
+  concreteType:
+    'org.sagebionetworks.repo.model.download.FilesStatisticsResponse',
+  totalNumberOfFiles: 0,
+  numberOfFilesAvailableForDownload: 0,
+  numberOfFilesAvailableForDownloadAndEligibleForPackaging: 0,
+  numberOfFilesRequiringAction: 0,
+  sumOfFileSizesAvailableForDownload: 0,
+})
+
+const MOCK_ENTITY_ID = 'syn123'
+const MOCK_VERSION = 1
+const MOCK_FILE_HANDLE_ID = 'fh456'
+const MOCK_PRESIGNED_URL = 'https://presigned.example.com/download/file.txt'
+const MOCK_EXTERNAL_URL = 'https://external-host.example.com/data/file.txt'
+
+const mockNonPackageableItem: DownloadListItemResult = {
+  fileEntityId: MOCK_ENTITY_ID,
+  versionNumber: MOCK_VERSION,
+  addedOn: '2024-01-01T00:00:00.000Z',
+  fileName: 'test-file.txt',
+  fileSizeBytes: 1024,
+  projectId: 'syn200',
+  projectName: 'Test Project',
+  createdBy: '12345',
+  createdOn: '2024-01-01T00:00:00.000Z',
+  isEligibleForPackaging: false,
+}
+
+function setupDownloadListWithNonPackageableFiles(
+  batchFileResult: Pick<BatchFileResult, 'requestedFiles'>,
+) {
+  vi.spyOn(SynapseClient, 'getAvailableFilesToDownload').mockResolvedValue({
+    concreteType:
+      'org.sagebionetworks.repo.model.download.AvailableFilesResponse',
+    page: [mockNonPackageableItem],
+    nextPageToken: undefined,
+  })
+  vi.spyOn(SynapseClient, 'getEntity').mockResolvedValue({
+    id: MOCK_ENTITY_ID,
+    versionNumber: MOCK_VERSION,
+    dataFileHandleId: MOCK_FILE_HANDLE_ID,
+    concreteType: 'org.sagebionetworks.repo.model.FileEntity',
+    etag: 'test-etag',
+    name: 'test-file.txt',
+    parentId: 'syn200',
+  } as unknown as Awaited<ReturnType<typeof SynapseClient.getEntity>>)
+  // Use MSW to intercept the file batch request, because `getFiles` is imported
+  // as a direct named import in the component and cannot be intercepted via vi.spyOn.
+  server.use(
+    http.post(
+      `${getEndpoint(
+        BackendDestinationEnum.REPO_ENDPOINT,
+      )}${FILE_HANDLE_BATCH}`,
+      () => HttpResponse.json(batchFileResult, { status: 201 }),
+    ),
+  )
+}
+
+function createHangingStreamResponse(signal?: AbortSignal) {
+  const stream = new ReadableStream({
+    start(controller) {
+      // Never enqueue or close — keeps the download in progress so the progress panel stays visible.
+      // If an AbortSignal is provided, error the stream when it fires so reader.read() unblocks.
+      if (signal) {
+        signal.addEventListener('abort', () => {
+          controller.error(new DOMException('Download aborted', 'AbortError'))
+        })
+      }
+    },
+  })
+  return new Response(stream, {
+    status: 200,
+    headers: { 'content-length': '1000' },
+  })
+}
+
+/**
+ * Renders the component and waits for the download list query to succeed
+ * so that `status === 'success'` is true before the button is clicked.
+ */
+async function renderAndWaitForQueryLoad() {
+  render(<DownloadIneligibleForPackagingFilesFromListButton />, {
+    wrapper: createWrapper(),
+  })
+  // Ensure the download list query has resolved; this guarantees status === 'success'
+  // when the button is clicked, so the download flow is triggered.
+  await waitFor(() => {
+    expect(
+      vi.mocked(SynapseClient.getAvailableFilesToDownload),
+    ).toHaveBeenCalled()
+  })
+  // Flush the microtask queue so React Query processes the resolved data and React
+  // re-renders with status === 'success' before we click the button.
+  await act(async () => {
+    await Promise.resolve()
+  })
+  return screen.getByRole('button', { name: 'Start Multi-file Download' })
+}
 
 // Mock File System Access API
 const mockWritableStream = {
@@ -24,8 +133,17 @@ const mockDirectoryHandle = {
 // Mock showDirectoryPicker
 const mockShowDirectoryPicker = vi.fn().mockResolvedValue(mockDirectoryHandle)
 
-// Mock fetch for streaming
-const mockFetch = vi.fn()
+// Mock fetch for streaming — forwards the AbortSignal to the hanging stream so that
+// aborting the controller causes reader.read() to reject promptly.
+// In the Node.js/MSW test environment fetch receives a Request object as its first
+// argument (with the signal embedded in Request.signal), so we handle both forms.
+const mockFetch = vi
+  .fn()
+  .mockImplementation((input: string | Request, options?: RequestInit) => {
+    const signal =
+      input instanceof Request ? input.signal : options?.signal ?? undefined
+    return Promise.resolve(createHangingStreamResponse(signal))
+  })
 global.fetch = mockFetch as unknown as typeof fetch
 
 // Add showDirectoryPicker to window
@@ -85,6 +203,25 @@ describe('DownloadIneligibleForPackagingFilesFromListButton', () => {
     vi.clearAllMocks()
   })
   afterAll(() => server.close())
+
+  // Currently tested scenarios:
+  // - Button rendering (default, custom text, custom variant)
+  // - Query error handling (component returns null)
+  // - Unauthenticated user (directory picker is not invoked)
+  // - Progress panel display during an active download (file name, count, Cancel button)
+  // - External file warning panel appearance and dismissal
+  // - Cancellation: progress panel is hidden when Cancel is clicked
+  // - Cancellation: AbortController signal is aborted, unblocking a stalled reader.read()
+  //
+  // Scenarios that still rely on manual testing:
+  // - Directory picker cancellation (SecurityError path)
+  // - Successful end-to-end download completion (stream finishes, file written, toast shown)
+  // - Progress stats display (bytes downloaded, percentage, ETA)
+  // - Batch file fetch failures with retry and per-file fallback logic
+  // - Filename collision handling (e.g., "data.csv" → "data (1).csv")
+  // - Removing successfully downloaded files from the download list
+  // - Fallback to traditional anchor-tag download for browsers without File System Access API
+  // - Button loading state during an active download
 
   it('renders the button', () => {
     setupEmptyDownloadListHandlers()
@@ -177,25 +314,159 @@ describe('DownloadIneligibleForPackagingFilesFromListButton', () => {
     expect(mockShowDirectoryPicker).not.toHaveBeenCalled()
   })
 
-  // Note: Full integration testing of the download flow with File System Access API
-  // is complex due to the async nature of queries and the need to mock multiple endpoints.
-  // Additional scenarios that would benefit from manual testing:
-  // - Empty download list handling
-  // - Directory picker cancellation
-  // - Progress dialog display during active downloads
-  // - Cancellation flow while downloading
-  // - Batch file fetch failures with retry and fallback logic
-  // - Filename collision handling
-  // - Button disabled state during downloads
-  //
-  // The download functionality has been manually tested and works correctly:
-  // - Uses File System Access API's showDirectoryPicker() to let user select a directory
-  // - Streams file downloads using fetch() and ReadableStream
-  // - Shows progress UI with file name, count, and bytes downloaded
-  // - Uses calculateFriendlyFileSize() for formatting byte sizes
-  // - Falls back to traditional download method if streaming fails
-  // - Handles filename collisions by adding a counter suffix (e.g., "data.csv", "data (1).csv", "data (2).csv")
-  //   to prevent files from different projects/locations from overwriting each other
-  // - Implements retry logic for failed batch requests
-  // - Removes successfully downloaded files from the download list
+  it('shows a progress panel with the current file name and count while downloading', async () => {
+    setupDownloadListWithNonPackageableFiles({
+      requestedFiles: [
+        {
+          fileHandleId: MOCK_FILE_HANDLE_ID,
+          preSignedURL: MOCK_PRESIGNED_URL,
+        },
+      ],
+    })
+
+    const button = await renderAndWaitForQueryLoad()
+    await userEvent.click(button)
+
+    await waitFor(() => {
+      expect(screen.getByText('Downloading file 1 of 1')).toBeInTheDocument()
+    })
+    expect(screen.getByText('test-file.txt')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument()
+  })
+
+  it('shows an external file warning panel when an external file handle is encountered', async () => {
+    setupDownloadListWithNonPackageableFiles({
+      requestedFiles: [
+        {
+          fileHandleId: MOCK_FILE_HANDLE_ID,
+          fileHandle: {
+            id: MOCK_FILE_HANDLE_ID,
+            concreteType:
+              'org.sagebionetworks.repo.model.file.ExternalFileHandle',
+            externalURL: MOCK_EXTERNAL_URL,
+            createdBy: '12345',
+            createdOn: '2024-01-01T00:00:00.000Z',
+            modifiedOn: '2024-01-01T00:00:00.000Z',
+            etag: 'etag',
+          } as unknown as BatchFileResult['requestedFiles'][0]['fileHandle'],
+        },
+      ],
+    })
+
+    const button = await renderAndWaitForQueryLoad()
+    await userEvent.click(button)
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('Some of your files are hosted externally.'),
+      ).toBeInTheDocument()
+    })
+    expect(
+      screen.getByText('Downloads may be slower than expected'),
+    ).toBeInTheDocument()
+  })
+
+  it('dismisses the external file warning panel when the close button is clicked', async () => {
+    setupDownloadListWithNonPackageableFiles({
+      requestedFiles: [
+        {
+          fileHandleId: MOCK_FILE_HANDLE_ID,
+          fileHandle: {
+            id: MOCK_FILE_HANDLE_ID,
+            concreteType:
+              'org.sagebionetworks.repo.model.file.ExternalFileHandle',
+            externalURL: MOCK_EXTERNAL_URL,
+            createdBy: '12345',
+            createdOn: '2024-01-01T00:00:00.000Z',
+            modifiedOn: '2024-01-01T00:00:00.000Z',
+            etag: 'etag',
+          } as unknown as BatchFileResult['requestedFiles'][0]['fileHandle'],
+        },
+      ],
+    })
+
+    const button = await renderAndWaitForQueryLoad()
+    await userEvent.click(button)
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('Some of your files are hosted externally.'),
+      ).toBeInTheDocument()
+    })
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Dismiss external file warning' }),
+    )
+
+    expect(
+      screen.queryByText('Some of your files are hosted externally.'),
+    ).not.toBeInTheDocument()
+  })
+
+  it('cancels the download and hides the progress panel when the Cancel button is clicked', async () => {
+    setupDownloadListWithNonPackageableFiles({
+      requestedFiles: [
+        {
+          fileHandleId: MOCK_FILE_HANDLE_ID,
+          preSignedURL: MOCK_PRESIGNED_URL,
+        },
+      ],
+    })
+
+    const button = await renderAndWaitForQueryLoad()
+    await userEvent.click(button)
+
+    await waitFor(() => {
+      expect(screen.getByText('Downloading file 1 of 1')).toBeInTheDocument()
+    })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+
+    await waitFor(() => {
+      expect(screen.queryByText(/Downloading file/)).not.toBeInTheDocument()
+    })
+  })
+
+  it('aborts the in-flight fetch when Cancel is clicked during a stalled stream', async () => {
+    setupDownloadListWithNonPackageableFiles({
+      requestedFiles: [
+        {
+          fileHandleId: MOCK_FILE_HANDLE_ID,
+          preSignedURL: MOCK_PRESIGNED_URL,
+        },
+      ],
+    })
+    // Default mockFetch passes the AbortSignal to the stream, so abort() causes
+    // reader.read() to reject with AbortError rather than blocking indefinitely.
+
+    const button = await renderAndWaitForQueryLoad()
+    await userEvent.click(button)
+
+    await waitFor(() => {
+      expect(screen.getByText('Downloading file 1 of 1')).toBeInTheDocument()
+    })
+
+    // Verify the fetch was called and extract the AbortSignal.
+    // In the Node.js/MSW environment fetch arguments are normalised into a
+    // Request object, so the signal may live on the Request rather than in a
+    // separate options argument.
+    expect(mockFetch).toHaveBeenCalled()
+    const firstArg = mockFetch.mock.calls[0][0] as string | Request
+    const signal: AbortSignal =
+      firstArg instanceof Request
+        ? firstArg.signal
+        : (mockFetch.mock.calls[0][1] as RequestInit | undefined)?.signal!
+    expect(signal).toBeInstanceOf(AbortSignal)
+    expect(signal.aborted).toBe(false)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+
+    // The AbortSignal should now be aborted, proving the in-flight request was cancelled
+    expect(signal.aborted).toBe(true)
+
+    // Progress panel disappears
+    await waitFor(() => {
+      expect(screen.queryByText(/Downloading file/)).not.toBeInTheDocument()
+    })
+  })
 })
