@@ -72,13 +72,15 @@ export default function MetadataTaskTableActionCell(props: {
           </span>
         </Tooltip>
         {canEdit && (
-          <IconButton
-            aria-label="Delete task"
-            size="small"
-            onClick={() => setShowDeleteConfirmation(true)}
-          >
-            <DeleteTwoTone fontSize="inherit" />
-          </IconButton>
+          <Tooltip title="Delete this task">
+            <IconButton
+              aria-label="Delete task"
+              size="small"
+              onClick={() => setShowDeleteConfirmation(true)}
+            >
+              <DeleteTwoTone fontSize="inherit" />
+            </IconButton>
+          </Tooltip>
         )}
       </Stack>
       <ConfirmationDialog
