@@ -49,7 +49,7 @@
     flex-shrink: 0;
 
     &:hover {
-      color: #e0e0e0; // grey.300
+      color: #889baf;
     }
   }
 }
@@ -89,7 +89,7 @@
 
   // Use &#{&} to increase specificity and override MUI Typography's default styles
   &#{&} {
-    color: #757575; // grey.600
+    color: #889baf;
     font-size: 13px;
     line-height: 1.4;
   }
@@ -118,7 +118,7 @@
 .progressStatsText {
   // Use &#{&} to increase specificity and override MUI Typography's default styles
   &#{&} {
-    color: #757575; // grey.600
+    color: #889baf;
     font-size: 12px;
   }
 }
@@ -147,8 +147,8 @@
     line-height: 1;
 
     &:hover {
-      border-color: #e0e0e0; // grey.300
-      color: #e0e0e0;
+      border-color: #889baf;
+      color: #889baf;
     }
   }
 }
