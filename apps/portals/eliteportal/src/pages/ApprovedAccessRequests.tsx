@@ -66,8 +66,7 @@ function ApprovedAccessRequests() {
             id: 'LLFS_Danish',
             element: (
               <Markdown
-                ownerId="syn27229419"
-                wikiId="631447"
+                markdown={`###Past Data Use Proposals\n\n**Project Lead:** Susheel Varma\n**Institution:** Sage Bionetworks\n**Data Access Request Submitted By:** @milan.vu\n**Intended Data Use Statement (accepted on 1/16/2026):**\n\nThis request is to enable access to the following datasets in order to perform data curation and scientific facilitation as part of my role on the Sage Bionetworks Exceptional Longevity Data Management and Coordination Center (EL DMCC) team.\n\nData sets requested: The Long Life Family Study (LLFS) Danish Family Cohort.`}
                 loadingSkeletonRowCount={10}
               />
             ),
