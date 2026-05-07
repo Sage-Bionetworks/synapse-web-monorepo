@@ -204,6 +204,25 @@ describe('DownloadIneligibleForPackagingFilesFromListButton', () => {
   })
   afterAll(() => server.close())
 
+  // Currently tested scenarios:
+  // - Button rendering (default, custom text, custom variant)
+  // - Query error handling (component returns null)
+  // - Unauthenticated user (directory picker is not invoked)
+  // - Progress panel display during an active download (file name, count, Cancel button)
+  // - External file warning panel appearance and dismissal
+  // - Cancellation: progress panel is hidden when Cancel is clicked
+  // - Cancellation: AbortController signal is aborted, unblocking a stalled reader.read()
+  //
+  // Scenarios that still rely on manual testing:
+  // - Directory picker cancellation (SecurityError path)
+  // - Successful end-to-end download completion (stream finishes, file written, toast shown)
+  // - Progress stats display (bytes downloaded, percentage, ETA)
+  // - Batch file fetch failures with retry and per-file fallback logic
+  // - Filename collision handling (e.g., "data.csv" → "data (1).csv")
+  // - Removing successfully downloaded files from the download list
+  // - Fallback to traditional anchor-tag download for browsers without File System Access API
+  // - Button loading state during an active download
+
   it('renders the button', () => {
     setupEmptyDownloadListHandlers()
 

@@ -10,9 +10,14 @@
   width: 1px;
 }
 
+$progress-panel-bottom: 20px;
+$progress-panel-height: 150px;
+
 .externalWarningPanel {
   position: fixed;
-  bottom: calc(150px + 10px); // positioned above the progress panel
+  bottom: calc(
+    #{$progress-panel-height} + 10px
+  ); // positioned above the progress panel
   right: 20px;
   width: 500px;
   padding: 16px;
@@ -67,10 +72,10 @@
 
 .progressPanel {
   position: fixed;
-  bottom: 20px;
+  bottom: $progress-panel-bottom;
   right: 20px;
   width: 500px;
-  height: 150px;
+  height: $progress-panel-height;
   padding: 16px;
   display: flex;
   flex-direction: column;

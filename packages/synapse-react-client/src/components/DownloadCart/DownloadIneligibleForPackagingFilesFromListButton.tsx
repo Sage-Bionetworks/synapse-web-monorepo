@@ -468,18 +468,17 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
                     if (fileDownloadStartRef.current === null) {
                       fileDownloadStartRef.current = Date.now()
                     }
-                    const elapsed =
-                      (Date.now() - fileDownloadStartRef.current) / 1000
+                    const elapsedMs = Date.now() - fileDownloadStartRef.current
                     let estimatedSecondsRemaining: number | null = null
                     if (
-                      elapsed * 1000 > ETA_DELAY_MS &&
+                      elapsedMs > ETA_DELAY_MS &&
                       bytesReceived > 0 &&
                       totalBytes > 0
                     ) {
-                      const rate = bytesReceived / elapsed
+                      const rate = bytesReceived / elapsedMs
                       estimatedSecondsRemaining = Math.max(
                         0,
-                        (totalBytes - bytesReceived) / rate,
+                        (totalBytes - bytesReceived) / rate / 1000,
                       )
                     }
 
@@ -489,7 +488,7 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
                         ? {
                             ...prev,
                             bytesDownloaded: bytesReceived,
-                            ...(elapsed * 1000 > ETA_DELAY_MS && {
+                            ...(elapsedMs > ETA_DELAY_MS && {
                               estimatedSecondsRemaining,
                             }),
                           }
