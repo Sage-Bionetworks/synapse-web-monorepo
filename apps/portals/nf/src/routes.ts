@@ -16,6 +16,7 @@ export default [
     route('/', 'pages/RootApp.tsx', [
       // sharedRoutes equivalents
       route('*', 'pages/ErrorPage.tsx'),
+      route('doi', 'pages/DoiRedirect.tsx'),
       route('Home', 'pages/HomeRedirect.tsx'),
       route('DownloadCart', 'pages/DownloadCartPage.tsx'),
       route('FileEntity/:entityId', 'pages/FileEntityPage.tsx'),
