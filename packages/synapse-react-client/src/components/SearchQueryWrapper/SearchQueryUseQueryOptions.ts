@@ -144,6 +144,8 @@ export function toSearchIndexQuery(
     termsFilters: termsFilters?.length ? termsFilters : undefined,
     rangeFilters: rangeFilters?.length ? rangeFilters : undefined,
     queryText,
+    queryType: 'MULTI_MATCH',
+    fuzziness: 'AUTO',
     limit: queryBundleRequest.query.limit,
     offset: queryBundleRequest.query.offset,
   }
