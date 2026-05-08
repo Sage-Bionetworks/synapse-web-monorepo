@@ -28,7 +28,7 @@ const OBJECT_ID_QUERY_PARAM = 'objectId'
  *
  * If no id is provided in the URLSearchParams, or if the deserializer or redirector throw an error, the user is redirected to the home page.
  */
-function DoiRedirectComponent<TResourceType extends string>(props: {
+export function DoiRedirectComponent<TResourceType extends string>(props: {
   deserializer: PortalsDoiIdSerializer<TResourceType>
   redirector: PortalResourceRedirector<TResourceType>
 }) {
