@@ -8,8 +8,10 @@ import { ArrowUpward } from '@mui/icons-material'
 import {
   Alert,
   Box,
+  Chip,
   IconButton,
   List,
+  Stack,
   TextField,
   Typography,
   useTheme,
@@ -52,6 +54,8 @@ export type SynapseChatProps = {
    * Called in the mutation onSuccess handler so it runs exactly once per response.
    */
   onChatResponse?: (responseText: string) => void
+  /** Optional list of prompt suggestions shown as clickable pills above the text input */
+  suggestedPrompts?: string[]
 }
 
 export type ChatInteraction = {
@@ -77,6 +81,7 @@ export function SynapseChat({
   externalChatState,
   showAccessLevelMenu = true,
   onChatResponse,
+  suggestedPrompts,
 }: SynapseChatProps) {
   const { accessToken } = useSynapseContext()
   const [localAgentSession, setLocalAgentSession] = useState<AgentSession>()
@@ -277,6 +282,24 @@ export function SynapseChat({
           backgroundColor: 'white',
         }}
       >
+        {suggestedPrompts && suggestedPrompts.length > 0 && (
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{ pt: '8px', flexWrap: 'wrap', gap: 1 }}
+          >
+            {suggestedPrompts.map(prompt => (
+              <Chip
+                key={prompt}
+                label={prompt}
+                variant="outlined"
+                onClick={() => setUserChatTextfieldValue(prompt)}
+                disabled={!agentSession || !!pendingMessage}
+                sx={{ cursor: 'pointer' }}
+              />
+            ))}
+          </Stack>
+        )}
         <Box
           component="form"
           sx={{
