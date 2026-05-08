@@ -1,4 +1,5 @@
 import { displayToast } from '@/components'
+import DeleteCurationTaskButton from '@/features/entity/metadata-task/components/DeleteCurationTaskButton'
 import useOpenCuratorFromTaskButton from '@/features/entity/metadata-task/hooks/useOpenCuratorButton'
 import { OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE } from '@/features/entity/metadata-task/utils/constants'
 import { Card, Chip, Divider, Typography } from '@mui/material'
@@ -96,6 +97,7 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
           <div className={styles.titleChipContainer}>
             <Typography variant="headline3">{title}</Typography>
             {taskType && <TaskTypeChip label={taskType} />}
+            <DeleteCurationTaskButton taskBundle={taskBundle} />
           </div>
           <Typography variant="body1">{description}</Typography>
           <div className={styles.userChipContainer}>
