@@ -1,0 +1,3 @@
+import{n as e}from"./chunk-jRWAZmH_.js";import{Hn as t,MS as n,Q as r,pr as i}from"./iframe-BjzKDBgV.js";import{n as a,t as o}from"./UserBadge-CO5D6TXm.js";var s,c,l,u;e((()=>{t(),r(),a(),s=n(),c={title:`UI/UserBadge`,component:o,render:function(e){let{data:t}=i(),n=t?.ownerId;return n===`273950`&&(n=void 0),(0,s.jsxs)(s.Fragment,{children:[(0,s.jsx)(`p`,{children:`If you are logged in, your username will appear. If you are not logged in, enter a userId (e.g. 273960) below.`}),(0,s.jsx)(o,{userId:e.ownerId??n,...e})]})}},l={name:`UserBadge`},l.parameters={...l.parameters,docs:{...l.parameters?.docs,source:{originalSource:`{
+  name: 'UserBadge'
+}`,...l.parameters?.docs?.source}}},u=[`Demo`]}))();export{l as Demo,u as __namedExportsOrder,c as default};
