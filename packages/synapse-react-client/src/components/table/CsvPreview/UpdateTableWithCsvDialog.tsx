@@ -3,7 +3,7 @@ import {
   BasicFileHandleUpload,
   FileUploadHandle,
 } from '@/components/file/upload/BasicFileHandleUpload'
-import { ErrorBanner } from '@/components/index'
+import { displayToast } from '@/components/index'
 import CsvPreview from '@/components/table/CsvPreview/CsvPreview'
 import CsvTableDescriptorForm, {
   CsvTableDescriptorFormHandle,
@@ -16,41 +16,31 @@ import AccordionSummary from '@mui/material/AccordionSummary'
 import Button from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
-import {
-  ColumnModel,
-  CsvTableDescriptor,
-  UploadToTablePreviewResult,
-} from '@sage-bionetworks/synapse-client'
+import { CsvTableDescriptor } from '@sage-bionetworks/synapse-client'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import useUploadCsvToTable from './useUploadCsvToTable'
 
-enum CsvPreviewDialogStep {
+enum UpdateTableWithCsvDialogStep {
   UPLOAD_CSV = 0,
   COLUMN_PREVIEW = 1,
 }
 
-export type CsvPreviewDialogProps = {
+export type UpdateTableWithCsvDialogProps = {
   /** Whether the dialog is open */
   open: boolean
   /** Callback when the dialog is closed */
   onClose: () => void
-  /** Whether the confirm action is pending */
-  confirmIsPending?: boolean
-  /** An optional error message to display */
-  errorMessage?: string
-  /** Callback when the user confirms the column models
-   * @param dataFileHandleId - The file handle ID of the uploaded CSV
-   * @param columnModels - The confirmed column models
-   */
-  onConfirm: (
-    dataFileHandleId: string,
-    columnModels: ColumnModel[],
-    csvTableDescriptor: CsvTableDescriptor,
-  ) => void
+  /** If provided, upload csv rows to existing table */
+  tableId: string
+  /** Invoked after all backend operations successfully complete */
+  onSuccess?: () => void
 }
 
-export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
-  const { open, onClose, onConfirm, confirmIsPending, errorMessage } = props
-  const [step, setStep] = useState(CsvPreviewDialogStep.UPLOAD_CSV)
+export default function UpdateTableWithCsvDialog(
+  props: UpdateTableWithCsvDialogProps,
+) {
+  const { open, onClose, tableId, onSuccess } = props
+  const [step, setStep] = useState(UpdateTableWithCsvDialogStep.UPLOAD_CSV)
   const [csvTableDescriptor, setCsvTableDescriptor] =
     useState<CsvTableDescriptor>({
       separator: ',',
@@ -59,20 +49,27 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
       lineEnd: '\n',
       isFirstLineHeader: true,
     })
-  const [csvPreviewData, setCsvPreviewData] =
-    useState<UploadToTablePreviewResult | null>(null)
   const [isLoadingPreview, setIsLoadingPreview] = useState(false)
 
   const [uploadedFileHandleId, setUploadedFileHandleId] = useState<
     string | null
   >(null)
 
+  const { mutate: uploadCsvToTable, isPending: isUploading } =
+    useUploadCsvToTable({
+      onSuccess() {
+        onSuccess?.()
+      },
+      onError(error) {
+        displayToast(error.message, 'danger')
+      },
+    })
+
   // Reset local state when dialog is closed
   useEffect(() => {
     if (!open) {
-      setStep(CsvPreviewDialogStep.UPLOAD_CSV)
+      setStep(UpdateTableWithCsvDialogStep.UPLOAD_CSV)
       setUploadedFileHandleId(null)
-      setCsvPreviewData(null)
       setCsvTableDescriptor({
         separator: ',',
         quoteCharacter: '"',
@@ -85,22 +82,20 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
 
   const onFileUploaded = useCallback((fileHandleId: string) => {
     setUploadedFileHandleId(fileHandleId)
-    setStep(CsvPreviewDialogStep.COLUMN_PREVIEW)
+    setStep(UpdateTableWithCsvDialogStep.COLUMN_PREVIEW)
   }, [])
 
   const uploadRef = useRef<FileUploadHandle | null>(null)
   const csvDescriptorFormRef = useRef<CsvTableDescriptorFormHandle | null>(null)
 
-  const handlePreviewConfirm = useCallback(() => {
-    const suggestedColumns = csvPreviewData?.suggestedColumns
-    if (!suggestedColumns) {
-      return
-    }
-
-    if (uploadedFileHandleId != null) {
-      onConfirm(uploadedFileHandleId, suggestedColumns, csvTableDescriptor)
-    }
-  }, [csvPreviewData, onConfirm, uploadedFileHandleId, csvTableDescriptor])
+  const handleFinish = useCallback(() => {
+    // table already exists; upload csv rows directly to table
+    uploadCsvToTable({
+      csvTableDescriptor,
+      fileHandleId: uploadedFileHandleId!,
+      tableId,
+    })
+  }, [tableId, csvTableDescriptor, uploadedFileHandleId, uploadCsvToTable])
 
   const uploadStepContent = (
     <BasicFileHandleUpload
@@ -119,7 +114,6 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
         <CsvPreview
           fileHandleId={uploadedFileHandleId}
           csvTableDescriptor={csvTableDescriptor}
-          onCsvPreviewDataChange={setCsvPreviewData}
           onIsLoadingChange={setIsLoadingPreview}
         />
       )}
@@ -160,9 +154,10 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
       open={open}
       content={
         <>
-          {step === CsvPreviewDialogStep.UPLOAD_CSV && uploadStepContent}
-          {step === CsvPreviewDialogStep.COLUMN_PREVIEW && previewStepContent}
-          {errorMessage && <ErrorBanner error={errorMessage} />}
+          {step === UpdateTableWithCsvDialogStep.UPLOAD_CSV &&
+            uploadStepContent}
+          {step === UpdateTableWithCsvDialogStep.COLUMN_PREVIEW &&
+            previewStepContent}
         </>
       }
       actions={
@@ -176,12 +171,12 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
           >
             Cancel
           </Button>
-          {step === CsvPreviewDialogStep.COLUMN_PREVIEW && (
+          {step === UpdateTableWithCsvDialogStep.COLUMN_PREVIEW && (
             <Button
               disabled={isLoadingPreview}
               variant={'contained'}
-              onClick={handlePreviewConfirm}
-              loading={confirmIsPending}
+              onClick={handleFinish}
+              loading={isUploading}
             >
               Confirm
             </Button>

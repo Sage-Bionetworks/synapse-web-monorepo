@@ -1,9 +1,12 @@
+import TableColumnSchemaForm, {
+  SubmitHandle,
+} from '@/components/TableColumnSchemaEditor/TableColumnSchemaForm'
 import { DialogBase } from '@/components/DialogBase'
 import {
   BasicFileHandleUpload,
   FileUploadHandle,
 } from '@/components/file/upload/BasicFileHandleUpload'
-import { ErrorBanner } from '@/components/index'
+import { displayToast } from '@/components/index'
 import CsvPreview from '@/components/table/CsvPreview/CsvPreview'
 import CsvTableDescriptorForm, {
   CsvTableDescriptorFormHandle,
@@ -15,42 +18,41 @@ import AccordionDetails from '@mui/material/AccordionDetails'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import Button from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import {
-  ColumnModel,
   CsvTableDescriptor,
+  EntityType,
   UploadToTablePreviewResult,
 } from '@sage-bionetworks/synapse-client'
+import { isUndefined, omitBy } from 'lodash-es'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { SetOptional } from 'type-fest'
+import { ColumnModel as SynapseTypesColumnModel } from '@sage-bionetworks/synapse-types'
+import useUploadCsvToTable from './useUploadCsvToTable'
 
-enum CsvPreviewDialogStep {
+enum CreateTableFromCsvDialogStep {
   UPLOAD_CSV = 0,
   COLUMN_PREVIEW = 1,
+  TABLE_NAME = 2,
 }
 
-export type CsvPreviewDialogProps = {
+export type CreateTableFromCsvDialogProps = {
   /** Whether the dialog is open */
   open: boolean
   /** Callback when the dialog is closed */
   onClose: () => void
-  /** Whether the confirm action is pending */
-  confirmIsPending?: boolean
-  /** An optional error message to display */
-  errorMessage?: string
-  /** Callback when the user confirms the column models
-   * @param dataFileHandleId - The file handle ID of the uploaded CSV
-   * @param columnModels - The confirmed column models
-   */
-  onConfirm: (
-    dataFileHandleId: string,
-    columnModels: ColumnModel[],
-    csvTableDescriptor: CsvTableDescriptor,
-  ) => void
+  /** Destination project/folder to upload to */
+  parentId: string
+  /** Invoked after all backend operations successfully complete */
+  onSuccess?: () => void
 }
 
-export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
-  const { open, onClose, onConfirm, confirmIsPending, errorMessage } = props
-  const [step, setStep] = useState(CsvPreviewDialogStep.UPLOAD_CSV)
+export default function CreateTableFromCsvDialog(
+  props: CreateTableFromCsvDialogProps,
+) {
+  const { open, onClose, parentId, onSuccess } = props
+  const [step, setStep] = useState(CreateTableFromCsvDialogStep.UPLOAD_CSV)
   const [csvTableDescriptor, setCsvTableDescriptor] =
     useState<CsvTableDescriptor>({
       separator: ',',
@@ -67,12 +69,30 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
     string | null
   >(null)
 
+  const [tableName, setTableName] = useState('')
+  const [columnModels, setColumnModels] = useState<
+    SetOptional<SynapseTypesColumnModel, 'id'>[]
+  >([])
+  const columnSchemaFormRef = useRef<SubmitHandle>(null)
+
+  const { mutate: uploadCsvToTable, isPending: isUploading } =
+    useUploadCsvToTable({
+      onSuccess() {
+        onSuccess?.()
+      },
+      onError(error) {
+        displayToast(error.message, 'danger')
+      },
+    })
+
   // Reset local state when dialog is closed
   useEffect(() => {
     if (!open) {
-      setStep(CsvPreviewDialogStep.UPLOAD_CSV)
+      setStep(CreateTableFromCsvDialogStep.UPLOAD_CSV)
       setUploadedFileHandleId(null)
       setCsvPreviewData(null)
+      setTableName('')
+      setColumnModels([])
       setCsvTableDescriptor({
         separator: ',',
         quoteCharacter: '"',
@@ -85,11 +105,39 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
 
   const onFileUploaded = useCallback((fileHandleId: string) => {
     setUploadedFileHandleId(fileHandleId)
-    setStep(CsvPreviewDialogStep.COLUMN_PREVIEW)
+    setStep(CreateTableFromCsvDialogStep.COLUMN_PREVIEW)
   }, [])
 
   const uploadRef = useRef<FileUploadHandle | null>(null)
   const csvDescriptorFormRef = useRef<CsvTableDescriptorFormHandle | null>(null)
+
+  const handleFinish = useCallback(
+    (columnModelsParam: SetOptional<SynapseTypesColumnModel, 'id'>[] = []) => {
+      uploadCsvToTable({
+        csvTableDescriptor,
+        fileHandleId: uploadedFileHandleId!,
+        createTableProps: {
+          parentId,
+          tableName,
+          columnModels: columnModelsParam,
+        },
+      })
+    },
+    [
+      parentId,
+      tableName,
+      csvTableDescriptor,
+      uploadedFileHandleId,
+      uploadCsvToTable,
+    ],
+  )
+
+  const onColumnSchemaSubmit = useCallback(
+    (editedColumnModels: SetOptional<SynapseTypesColumnModel, 'id'>[]) => {
+      void handleFinish(editedColumnModels)
+    },
+    [handleFinish],
+  )
 
   const handlePreviewConfirm = useCallback(() => {
     const suggestedColumns = csvPreviewData?.suggestedColumns
@@ -97,10 +145,15 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
       return
     }
 
-    if (uploadedFileHandleId != null) {
-      onConfirm(uploadedFileHandleId, suggestedColumns, csvTableDescriptor)
-    }
-  }, [csvPreviewData, onConfirm, uploadedFileHandleId, csvTableDescriptor])
+    // create new table; initialize schema editor with suggestions and proceed to naming.
+    setColumnModels(
+      suggestedColumns.map(cm => omitBy(cm, isUndefined)) as SetOptional<
+        SynapseTypesColumnModel,
+        'id'
+      >[],
+    )
+    setStep(CreateTableFromCsvDialogStep.TABLE_NAME)
+  }, [csvPreviewData])
 
   const uploadStepContent = (
     <BasicFileHandleUpload
@@ -152,6 +205,35 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
     </Stack>
   )
 
+  const tableNameStepContent = (
+    <Stack spacing={2}>
+      <TextField
+        required
+        label={'Table Name'}
+        value={tableName}
+        onChange={e => setTableName(e.target.value)}
+        fullWidth
+      />
+      <Typography variant={'body1'}>
+        Use the schema options button to make changes to the columns of the
+        table. Use the create button to finish building the table.
+      </Typography>
+      <Accordion>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography variant={'headline3'}>Schema Options</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <TableColumnSchemaForm
+            initialData={columnModels}
+            entityType={EntityType.table}
+            ref={columnSchemaFormRef}
+            onSubmit={onColumnSchemaSubmit}
+          />
+        </AccordionDetails>
+      </Accordion>
+    </Stack>
+  )
+
   return (
     <DialogBase
       maxWidth={'lg'}
@@ -160,9 +242,12 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
       open={open}
       content={
         <>
-          {step === CsvPreviewDialogStep.UPLOAD_CSV && uploadStepContent}
-          {step === CsvPreviewDialogStep.COLUMN_PREVIEW && previewStepContent}
-          {errorMessage && <ErrorBanner error={errorMessage} />}
+          {step === CreateTableFromCsvDialogStep.UPLOAD_CSV &&
+            uploadStepContent}
+          {step === CreateTableFromCsvDialogStep.COLUMN_PREVIEW &&
+            previewStepContent}
+          {step === CreateTableFromCsvDialogStep.TABLE_NAME &&
+            tableNameStepContent}
         </>
       }
       actions={
@@ -176,15 +261,34 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
           >
             Cancel
           </Button>
-          {step === CsvPreviewDialogStep.COLUMN_PREVIEW && (
+          {step === CreateTableFromCsvDialogStep.COLUMN_PREVIEW && (
             <Button
               disabled={isLoadingPreview}
               variant={'contained'}
               onClick={handlePreviewConfirm}
-              loading={confirmIsPending}
             >
-              Confirm
+              Next
             </Button>
+          )}
+          {step === CreateTableFromCsvDialogStep.TABLE_NAME && (
+            <>
+              <Button
+                variant={'outlined'}
+                onClick={() =>
+                  setStep(CreateTableFromCsvDialogStep.COLUMN_PREVIEW)
+                }
+              >
+                Back
+              </Button>
+              <Button
+                variant={'contained'}
+                onClick={() => columnSchemaFormRef.current?.submit()}
+                loading={isUploading}
+                disabled={!tableName}
+              >
+                Create
+              </Button>
+            </>
           )}
         </>
       }
