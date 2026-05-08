@@ -37,6 +37,12 @@ export function GridAgentChat({
     usersReplicaId,
   }
 
+  const suggestedPrompts = [
+    'Help me fill this out',
+    'Help me understand this',
+    'Find missing fields',
+  ]
+
   return (
     <DraggableDialog open={open} onClose={onClose} title={chatbotName}>
       <SynapseChat
@@ -52,6 +58,7 @@ export function GridAgentChat({
         externalSession={agentSession}
         setExternalSession={setAgentSession}
         externalChatState={chatState}
+        suggestedPrompts={suggestedPrompts}
       />
     </DraggableDialog>
   )
