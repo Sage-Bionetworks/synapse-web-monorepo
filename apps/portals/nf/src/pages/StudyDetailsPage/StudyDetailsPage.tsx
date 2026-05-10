@@ -14,6 +14,7 @@ import { studiesSql } from '../../config/resources'
 import { columnAliases } from '../../config/synapseConfigs/commonProps'
 import {
   studyCardConfiguration,
+  studyDoiConfiguration,
   studyHeaderIconOptions,
 } from '../../config/synapseConfigs/studies'
 import {
@@ -96,6 +97,7 @@ function StudyDetailsPage() {
       searchParams={{ studyId }}
       ContainerProps={{ maxWidth: 'xl' }}
       resourcePrimaryKey={['studyId']}
+      portalDOIConfiguration={studyDoiConfiguration}
       disableCanonicalUrl
     >
       <DetailsPageTabs tabConfig={tabConfig} />
