@@ -1,0 +1,11 @@
+import{n as e,o as t}from"./chunk-jRWAZmH_.js";import{BS as n,El as r,Gt as i,Hh as a,Kt as o,MS as s,Nv as c,Qh as l,Wt as u,Yh as d,cn as f,en as p,jb as m,l as h,qh as g,rn as _,u as v,wl as y,xx as b}from"./iframe-DIpPaeje.js";import{n as x,t as S}from"./OAuthClientAclEditor-CQd_H9h0.js";var C,w,T,E=e((()=>{f(),_(),r(),C={client_id:`1234`,client_name:`OAuth Client Demo`,verified:!0,client_uri:`https://yourhost.com/index.html`,policy_uri:`https://yourhost.com/policy`,tos_uri:`https://yourhost.com/terms_of_service`},w={id:C.client_id.toString(),resourceAccess:new Set([{principalId:p,accessType:new Set(y(`CAN_ADMINISTER_OAUTH_CLIENT`))},{principalId:999,accessType:new Set(y(`CAN_ADMINISTER_OAUTH_CLIENT`))}])},T=[w]}));function D(e){return o.get(`${e}${a(`:id`)}`,({params:e})=>{let t=404,n={concreteType:`org.sagebionetworks.repo.model.ErrorResponse`,reason:`Mock Service worker could not find an ACL for OAuth client with ID ${e.id}`},r=T.find(t=>t.id===e.id);return r&&(n=r,t=200),i.json(n,{status:t})})}function O(e){return o.put(`${e}${a(`:id`)}`,async({request:e})=>{let t=await e.json();return i.json(t,{status:200})})}function k(e){return[D(e),O(e)]}var A=e((()=>{g(),u(),E()})),j,M,N,P,F;e((()=>{v(),l(),c(),j=t(n(),1),x(),A(),E(),M=s(),N={title:`Synapse/OAuthManagement/OAuthClientAclEditor`,component:S,render:function(e){let[t,n]=(0,j.useState)(!1),r=(0,j.useRef)(null);return(0,M.jsxs)(M.Fragment,{children:[(0,M.jsx)(m,{onClick:()=>{n(!0),r.current?.save()},variant:`contained`,disabled:t,children:`Save ACL`}),(0,M.jsx)(b,{sx:{mx:`auto`,p:`44px`,maxWidth:`750px`},children:(0,M.jsx)(S,{...e,ref:r,onSaveComplete:()=>n(!1)})})]})}},P={args:{clientId:w.id},parameters:{stack:`mock`,msw:{handlers:[...h(d),k(d)]}}},P.parameters={...P.parameters,docs:{...P.parameters?.docs,source:{originalSource:`{
+  args: {
+    clientId: MOCK_OAUTH_CLIENT_ACL.id
+  },
+  parameters: {
+    stack: 'mock',
+    msw: {
+      handlers: [...getUserProfileHandlers(MOCK_REPO_ORIGIN), getAllOAuthClientAclHandlers(MOCK_REPO_ORIGIN)]
+    }
+  }
+}`,...P.parameters?.docs?.source}}},F=[`MockDemoExistingAcl`]}))();export{P as MockDemoExistingAcl,F as __namedExportsOrder,N as default};

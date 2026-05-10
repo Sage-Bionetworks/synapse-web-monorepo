@@ -1,0 +1,6 @@
+import{n as e}from"./chunk-jRWAZmH_.js";import{Ct as t,Ot as n,Qh as r,S as i,Yh as a,gt as o,i as s,mt as c,r as l,x as u}from"./iframe-DIpPaeje.js";import{n as d,t as f}from"./ResearchProjectForm-10tp4Wz7.js";var p,m,h;e((()=>{t(),o(),i(),s(),r(),d(),p={title:`Governance/Data Access Request Flow/Managed Access Requirement/Step 1 - Research Project Information`,component:f,parameters:{stack:`mock`,chromatic:{viewports:[600,1200]},msw:{handlers:[...u(a),...c(a),...l(a)]}}},m={name:`Step 1 - Research Project Information`,args:{managedACTAccessRequirement:n}},m.parameters={...m.parameters,docs:{...m.parameters?.docs,source:{originalSource:`{
+  name: 'Step 1 - Research Project Information',
+  args: {
+    managedACTAccessRequirement: mockManagedACTAccessRequirement
+  }
+}`,...m.parameters?.docs?.source}}},h=[`Step1`]}))();export{m as Step1,h as __namedExportsOrder,p as default};
