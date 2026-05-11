@@ -207,7 +207,7 @@ export function searchQueryResultsToQueryResultBundle(
             'org.sagebionetworks.repo.model.table.QueryResult' as const,
           queryResults: {
             concreteType:
-              'org.sagebionetworks.repo.model.table.QueryResultBundle',
+              'org.sagebionetworks.repo.model.table.RowSet' as const,
             tableId: query.searchIndexId ?? '',
             etag: '',
             headers,
