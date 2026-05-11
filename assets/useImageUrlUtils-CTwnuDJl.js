@@ -1,0 +1,1 @@
+import{n as e}from"./chunk-jRWAZmH_.js";import{Hn as t,X_ as n,_i as r,k_ as i}from"./iframe-CCN0AJIy.js";var a,o=e((()=>{t(),i(),a=(e,t)=>r({associateObjectId:t,associateObjectType:n.TableEntity,fileHandleId:e||``},!1,{enabled:!!e})?.dataUrl}));export{a as n,o as t};
