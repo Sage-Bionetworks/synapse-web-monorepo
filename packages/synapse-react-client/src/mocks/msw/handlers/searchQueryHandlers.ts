@@ -99,12 +99,21 @@ function getSearchQueryResult(request: SearchIndexQuery): QueryResultBundle {
  * that the real SearchQueryServicesApi returns.
  */
 function toSearchQueryResults(bundle: QueryResultBundle): SearchQueryResults {
+  const headers = bundle.queryResult?.queryResults.headers ?? []
+
   const hits = (bundle.queryResult?.queryResults.rows ?? []).map(row => ({
     rowId: row.rowId,
     rowVersion: row.versionNumber,
-    fields: (bundle.queryResult?.queryResults.headers ?? []).map(
-      (header, i) => ({ name: header.name, value: row.values[i] ?? undefined }),
-    ),
+    fields: headers.map((header, i) => ({
+      name: header.name,
+      value: row.values[i] ?? undefined,
+    })),
+  }))
+
+  const selectColumns = headers.map(header => ({
+    name: header.name,
+    columnType: header.columnType,
+    id: header.id,
   }))
 
   return {
@@ -112,6 +121,7 @@ function toSearchQueryResults(bundle: QueryResultBundle): SearchQueryResults {
       'org.sagebionetworks.repo.model.search.SearchQueryResults' as const,
     totalHits: bundle.queryCount,
     hits,
+    selectColumns,
     facets: bundle.facets as SearchQueryResults['facets'],
     offset: bundle.queryResult?.queryResults.rows?.length ? 0 : undefined,
   }

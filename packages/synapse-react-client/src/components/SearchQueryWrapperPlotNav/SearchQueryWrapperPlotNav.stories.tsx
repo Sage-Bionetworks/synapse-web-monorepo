@@ -8,6 +8,7 @@ import {
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { GENERIC_CARD } from '@/utils/SynapseConstants'
 import { Meta, StoryObj } from '@storybook/react-vite'
+import { fn } from 'storybook/test'
 import SearchQueryWrapperPlotNav, {
   SearchQueryWrapperPlotNavProps,
 } from './SearchQueryWrapperPlotNav'
@@ -34,6 +35,7 @@ const meta: Meta<SearchQueryWrapperPlotNavProps> = {
   },
   args: {
     searchIndexId: MOCK_SEARCH_INDEX_ENTITY_ID,
+    onQueryResultBundleChange: fn(),
   },
 } satisfies Meta<SearchQueryWrapperPlotNavProps>
 
@@ -43,12 +45,20 @@ type Story = StoryObj<typeof meta>
 export const TableView: Story = {
   args: {
     name: 'Search Results',
-    unitDescription: 'file',
+    unitDescription: 'result',
     tableConfiguration: {
       columnLinks: [],
     },
-    facetsToPlot: ['consortium', 'diagnosis', 'organ'],
-    availableFacets: ['consortium', 'diagnosis', 'organ', 'tissue'],
+    facetsToPlot: ['category', 'collections', 'topic'],
+    availableFacets: [
+      'category',
+      'collections',
+      'topic',
+      'dataTypes',
+      'isOpen',
+      'mature',
+      'registration',
+    ],
   },
 }
 
@@ -58,14 +68,22 @@ export const CardView: Story = {
     cardConfiguration: {
       type: GENERIC_CARD,
       genericCardSchema: {
-        type: 'Dataset',
+        type: 'Standard',
         title: 'name',
-        description: 'description',
-        secondaryLabels: ['consortium', 'diagnosis', 'organ', 'tissue'],
+        subTitle: 'acronym',
+        secondaryLabels: ['category', 'collections', 'topic', 'isOpen'],
       },
     },
-    facetsToPlot: ['consortium', 'diagnosis', 'organ'],
-    availableFacets: ['consortium', 'diagnosis', 'organ', 'tissue'],
+    facetsToPlot: ['category', 'collections', 'topic'],
+    availableFacets: [
+      'category',
+      'collections',
+      'topic',
+      'dataTypes',
+      'isOpen',
+      'mature',
+      'registration',
+    ],
     defaultShowPlots: true,
   },
 }
@@ -75,7 +93,15 @@ export const TableWithFacetsOnly: Story = {
     name: 'Search Results',
     unitDescription: 'result',
     tableConfiguration: {},
-    availableFacets: ['consortium', 'diagnosis', 'organ', 'tissue'],
+    availableFacets: [
+      'category',
+      'collections',
+      'topic',
+      'dataTypes',
+      'isOpen',
+      'mature',
+      'registration',
+    ],
     defaultShowPlots: false,
     hideTopLevelControls: false,
     hideQueryCount: false,

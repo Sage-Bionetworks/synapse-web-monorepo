@@ -61,8 +61,13 @@ export * from './QueryContext'
 export * from './QueryCount'
 export * from './QueryWrapper'
 export * from './QueryWrapperPlotNav'
-export * from './SearchQueryWrapper'
-export * from './SearchQueryWrapperPlotNav'
+export { SearchQueryWrapper } from './SearchQueryWrapper/SearchQueryWrapper'
+export type { SearchQueryWrapperProps } from './SearchQueryWrapper/SearchQueryWrapper'
+export {
+  default as SearchQueryWrapperPlotNav,
+  isSearchQueryWrapperPlotNavProps,
+} from './SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
+export type { SearchQueryWrapperPlotNavProps } from './SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 export * from './RegisterPageLogoutPrompt'
 export * from './RenderIfInView'
 export * from './Resources'
