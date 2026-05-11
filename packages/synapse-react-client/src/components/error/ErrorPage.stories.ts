@@ -1,6 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { fn } from 'storybook/test'
 import ErrorPage, { ErrorPageProps, SynapseErrorType } from './ErrorPage'
+import { DoiObjectType } from '@sage-bionetworks/synapse-client'
 
 const meta: Meta<ErrorPageProps> = {
   title: 'Synapse/ErrorPage',
@@ -22,7 +23,8 @@ export const Maintenance: Story = {
 export const NoAccess: Story = {
   args: {
     type: SynapseErrorType.ACCESS_DENIED,
-    entityId: 'syn12345',
+    id: 'syn12345',
+    objectType: DoiObjectType.ENTITY,
   },
 }
 
