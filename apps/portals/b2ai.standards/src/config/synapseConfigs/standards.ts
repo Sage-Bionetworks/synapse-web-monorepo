@@ -64,7 +64,7 @@ export const standardsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
 
 export const standardsSearchQueryWrapperPlotNavProps: SearchQueryWrapperPlotNavProps =
   {
-    searchIndexId: 'syn74846962',
+    searchIndexId: 'syn74909093',
     autocompleteFieldName: 'name',
     rgbIndex: standardsRgbIndex,
     name: 'Standards',
