@@ -282,24 +282,27 @@ export function SynapseChat({
           backgroundColor: 'white',
         }}
       >
-        {suggestedPrompts && suggestedPrompts.length > 0 && (
-          <Stack
-            direction="row"
-            spacing={1}
-            sx={{ pt: '8px', flexWrap: 'wrap', gap: 1 }}
-          >
-            {suggestedPrompts.map(prompt => (
-              <Chip
-                key={prompt}
-                label={prompt}
-                variant="outlined"
-                onClick={() => setUserChatTextfieldValue(prompt)}
-                disabled={!agentSession || !!pendingMessage}
-                sx={{ cursor: 'pointer' }}
-              />
-            ))}
-          </Stack>
-        )}
+        {suggestedPrompts &&
+          suggestedPrompts.length > 0 &&
+          chatJobIds.length === 0 &&
+          !pendingMessage && (
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{ pt: '8px', flexWrap: 'wrap', gap: 1 }}
+            >
+              {suggestedPrompts.map(prompt => (
+                <Chip
+                  key={prompt}
+                  label={prompt}
+                  variant="outlined"
+                  onClick={() => setUserChatTextfieldValue(prompt)}
+                  disabled={!agentSession}
+                  sx={{ cursor: 'pointer' }}
+                />
+              ))}
+            </Stack>
+          )}
         <Box
           component="form"
           sx={{

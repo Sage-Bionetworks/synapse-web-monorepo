@@ -2,6 +2,7 @@ import { useChatState } from '@/components/SynapseChat/useChatState'
 import { mockAgentSession } from '@/mocks/chat/mockChat'
 import {
   useCreateAgentSession,
+  useGetChatAgentTraceEvents,
   useUpdateAgentSession,
 } from '@/synapse-queries/chat/useChat'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
@@ -14,6 +15,7 @@ vi.mock('@/components/SynapseChat/useChatState')
 
 const mockUseCreateAgentSession = vi.mocked(useCreateAgentSession)
 const mockUseUpdateAgentSession = vi.mocked(useUpdateAgentSession)
+const mockUseGetChatAgentTraceEvents = vi.mocked(useGetChatAgentTraceEvents)
 const mockUseChatState = vi.mocked(useChatState)
 
 const mockSendChat = vi.fn()
@@ -74,6 +76,8 @@ describe('SynapseChat - suggestedPrompts', () => {
     mockUseCreateAgentSession.mockReturnValue(idleMutation as any)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockUseUpdateAgentSession.mockReturnValue(idleMutation as any)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockUseGetChatAgentTraceEvents.mockReturnValue({ data: undefined } as any)
     mockUseChatState.mockReturnValue(defaultMockChatState)
   })
 
@@ -128,7 +132,7 @@ describe('SynapseChat - suggestedPrompts', () => {
     })
   })
 
-  it('chips are disabled while a message is pending', () => {
+  it('chips are hidden while a message is pending', () => {
     const pendingChatState = {
       ...defaultMockChatState,
       pendingMessage: 'waiting...',
@@ -139,10 +143,23 @@ describe('SynapseChat - suggestedPrompts', () => {
     })
 
     mockPrompts.forEach(prompt => {
-      expect(screen.getByRole('button', { name: prompt })).toHaveAttribute(
-        'aria-disabled',
-        'true',
-      )
+      expect(
+        screen.queryByRole('button', { name: prompt }),
+      ).not.toBeInTheDocument()
+    })
+  })
+
+  it('chips are hidden after a conversation has started', () => {
+    const activeChatState = { ...defaultMockChatState, chatJobIds: ['job-1'] }
+    renderComponent({
+      suggestedPrompts: mockPrompts,
+      externalChatState: activeChatState,
+    })
+
+    mockPrompts.forEach(prompt => {
+      expect(
+        screen.queryByRole('button', { name: prompt }),
+      ).not.toBeInTheDocument()
     })
   })
 
