@@ -20,9 +20,11 @@ export default function LegacyDetailsPageRedirect({
   const params = new URLSearchParams(search)
   const id = params.get(paramName)
 
-  // Strip the trailing /DetailsPage segment from the current pathname to get
-  // the new base, e.g. /Explore/Datasets/DetailsPage → /Explore/Datasets
-  const newBase = pathname.replace(/\/DetailsPage\/?$/, '')
+  // Strip /DetailsPage and everything after it from the current pathname to get
+  // the new base, e.g.:
+  //   /Explore/Datasets/DetailsPage         → /Explore/Datasets
+  //   /Explore/Studies/DetailsPage/Details  → /Explore/Studies
+  const newBase = pathname.replace(/\/DetailsPage(\/.*)?$/, '')
 
   if (!id) {
     return <Navigate to={newBase} replace />

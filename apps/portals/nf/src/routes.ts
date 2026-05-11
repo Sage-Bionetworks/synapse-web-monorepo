@@ -161,7 +161,14 @@ export default [
         'pages/LegacyInitiativeRedirect.tsx',
       ),
       route('Explore/Datasets/DetailsPage', 'pages/LegacyDatasetRedirect.tsx'),
-      route('Explore/Studies/DetailsPage', 'pages/LegacyStudyRedirect.tsx'),
+      route('Explore/Studies/DetailsPage', 'pages/LegacyStudyRedirect.tsx', {
+        id: 'legacy-study-redirect',
+      }),
+      route(
+        'Explore/Studies/DetailsPage/Details',
+        'pages/LegacyStudyRedirect.tsx',
+        { id: 'legacy-study-redirect-details' },
+      ),
       route('Explore/Tools/DetailsPage', 'pages/LegacyToolRedirect.tsx'),
       route(
         'Explore/Hackathon/DetailsPage',
