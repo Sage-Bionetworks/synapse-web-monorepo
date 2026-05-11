@@ -12,6 +12,7 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
   RowSet,
+  SortItem,
   TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
   TextMatchesQueryFilter,
 } from '@sage-bionetworks/synapse-types'
@@ -22,6 +23,7 @@ import type {
   SearchKeyRange,
   SearchQueryResults,
   SearchSearchQuery,
+  SearchSortField,
   SynapseClientError,
 } from '@sage-bionetworks/synapse-client'
 import {
@@ -72,6 +74,7 @@ export type SearchTableQueryUseQueryOptions = {
  *  - columnModels (facetType defined) → facetRequests (columns to aggregate as facets, with optional sort config)
  *  - query.selectedFacets (enumeration) → termsFilters (IN-clause filters)
  *  - query.selectedFacets (range) → rangeFilters (range filters)
+ *  - query.sort → sort (SortItem { column, direction } → SearchSortField { columnName, direction })
  *  - query.limit → limit
  *  - query.offset → offset
  *  - partMask → dropped (SearchIndexQuery has no bitmask concept)
@@ -139,6 +142,15 @@ export function toSearchIndexQuery(
       ? textMatchesExpressions.join(' ')
       : undefined
 
+  // Map SortItem[] (column + direction) → SearchSortField[] (columnName + direction),
+  // filtering out entries with no direction (which mean "remove sort").
+  const sort: SearchSortField[] | undefined = queryBundleRequest.query.sort
+    ?.filter(
+      (s): s is SortItem & { direction: 'ASC' | 'DESC' } =>
+        s.direction === 'ASC' || s.direction === 'DESC',
+    )
+    .map(s => ({ columnName: s.column, direction: s.direction }))
+
   const searchQuery: SearchSearchQuery = {
     facetRequests: facetRequests?.length ? facetRequests : undefined,
     termsFilters: termsFilters?.length ? termsFilters : undefined,
@@ -146,6 +158,7 @@ export function toSearchIndexQuery(
     queryText,
     queryType: 'MULTI_MATCH',
     fuzziness: 'AUTO',
+    sort: sort?.length ? sort : undefined,
     limit: queryBundleRequest.query.limit,
     offset: queryBundleRequest.query.offset,
   }
