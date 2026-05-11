@@ -125,6 +125,7 @@ export function FullTextSearch({
           {ftsConfig?.getSuggestions ? (
             <Autocomplete
               freeSolo
+              disableClearable
               options={suggestions}
               inputValue={searchText}
               onInputChange={(_, newValue, reason) => {

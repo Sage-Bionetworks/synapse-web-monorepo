@@ -1,6 +1,6 @@
 import { NoContentPlaceholderType } from '@/components/SynapseTable/NoContentPlaceholderType'
 import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
-import { Suspense } from 'react'
+import { Suspense, useRef } from 'react'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import { CardConfiguration } from '../CardContainer/CardConfiguration'
 import {
@@ -116,9 +116,20 @@ export default function SearchQueryWrapperPlotNav(
       },
     })
 
+  // Remount SearchQueryWrapper when initQueryRequest content changes.
+  // useDeepCompareMemoize returns the same reference when content is equal, so reference
+  // comparison is sufficient here. A counter is used rather than JSON.stringify to avoid
+  // serializing the object on every render.
+  const mountKeyRef = useRef(0)
+  const prevInitQueryRef = useRef(initQueryRequest)
+  if (prevInitQueryRef.current !== initQueryRequest) {
+    mountKeyRef.current += 1
+    prevInitQueryRef.current = initQueryRequest
+  }
+
   return (
     <SearchQueryWrapper
-      key={JSON.stringify(initQueryRequest)}
+      key={mountKeyRef.current}
       searchIndexId={searchIndexId}
       initQueryRequest={initQueryRequest}
       isInfinite={isInfinite}

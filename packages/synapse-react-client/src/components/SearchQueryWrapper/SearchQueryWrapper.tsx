@@ -2,7 +2,11 @@ import { hasResettableFilters as hasResettableFiltersUtil } from '@/utils/functi
 import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
 import useImmutableTableQuery from '@/utils/hooks/useImmutableTableQuery/useImmutableTableQuery'
 import { goToPage as transformQueryToGoToPage } from '@/utils/hooks/useImmutableTableQuery/TableQueryReducerActions'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import {
+  AsynchronousJobStatus,
+  QueryBundleRequest,
+  QueryResultBundle,
+} from '@sage-bionetworks/synapse-types'
 import { Provider } from 'jotai'
 import { PropsWithChildren, useCallback, useEffect, useMemo } from 'react'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
@@ -19,6 +23,10 @@ import { TableQueryUseQueryOptions } from '../QueryWrapper/TableQueryUseQueryOpt
 import useHasFacetedSelectColumn from '../QueryWrapper/useHasFacetedSelectColumn'
 import { SessionInitializedGuard } from '@/utils/AppUtils/session/SessionInitializedGuard'
 import { useGetEntity, useGetEntityBundle } from '@/synapse-queries'
+import type {
+  SearchIndexQuery,
+  SynapseClientError,
+} from '@sage-bionetworks/synapse-client'
 import { SearchIndex } from '@sage-bionetworks/synapse-client'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
@@ -69,12 +77,9 @@ function SearchQueryResultBundleChangeNotifier({
   // queryMetadataQueryOptions is UseSuspenseQueryOptions; cast to UseQueryOptions so we can use
   // regular (non-suspense) `useQuery` here — the same cache key is shared, so no extra request is made.
   const queryOpts = queryMetadataQueryOptions as UseQueryOptions<
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    any,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    any,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    any
+    AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle>,
+    SynapseClientError,
+    Omit<QueryResultBundle, 'queryResult'>
   >
   const { data } = useQuery(queryOpts)
   useEffect(() => {
