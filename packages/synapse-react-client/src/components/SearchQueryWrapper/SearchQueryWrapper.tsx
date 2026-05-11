@@ -104,9 +104,14 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
 
   const { keyFactory, accessToken } = useSynapseContext()
 
-  const { data: searchIndexEntity } = useGetEntity(
+  const { data: searchIndexEntityData } = useGetEntity(
     searchIndexId,
-  ) as unknown as { data: SearchIndex | undefined }
+    undefined,
+    {
+      throwOnError: true,
+    },
+  )
+  const searchIndexEntity = searchIndexEntityData as SearchIndex | undefined
 
   const synapseId = searchIndexEntity?.definingSQL
     ? parseEntityIdFromSqlStatement(searchIndexEntity.definingSQL)
@@ -114,6 +119,7 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
 
   const { data: entityBundle } = useGetEntityBundle(synapseId, undefined, {
     includeTableBundle: true,
+    throwOnError: true,
   })
   const columnModels = entityBundle?.tableBundle?.columnModels
 
@@ -210,6 +216,11 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
     ],
   )
 
+  // TODO: useDeepCompareMemoize cannot meaningfully compare functions — it falls back to
+  // reference equality for them. The callbacks below (getCurrentQueryRequest, removeSelectedFacet,
+  // getRowDataQueryOptionsForPage, etc.) behave identically to a shallow useMemo dep.
+  // The correct fix is to deep-compare only serializable data fields and use a plain useMemo for
+  // the full context object. QueryWrapper.tsx has the same issue; fix both together in a follow-up.
   const context: QueryContextType = useDeepCompareMemoize({
     isInfinite,
     entityId: undefined,
