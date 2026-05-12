@@ -246,14 +246,19 @@ export function getSearchQueryUseQueryOptions(
   searchIndexId: string,
   columnModels?: ColumnModel[],
 ): SearchTableQueryUseQueryOptions {
+  const baseQuery: SearchIndexQuery = toSearchIndexQuery(
+    queryBundleRequest,
+    searchIndexId,
+    columnModels,
+  )
   const rowDataQuery: SearchIndexQuery = {
-    ...toSearchIndexQuery(queryBundleRequest, searchIndexId, columnModels),
+    ...baseQuery,
     // Request SELECT_COLUMNS so headers are available for row rendering.
     // HITS is returned by default even when responseParts is specified.
     responseParts: new Set(['HITS', 'SELECT_COLUMNS'] as const),
   }
   const metadataQuery: SearchIndexQuery = {
-    ...toSearchIndexQuery(queryBundleRequest, searchIndexId, columnModels),
+    ...baseQuery,
     // Request all opt-in parts needed for the metadata response:
     // TOTAL_HITS → queryCount (drives tab count / spinner resolution)
     // SELECT_COLUMNS → column headers for the table
