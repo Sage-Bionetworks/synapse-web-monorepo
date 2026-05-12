@@ -253,6 +253,14 @@ export function getSearchQueryUseQueryOptions(
   )
   const rowDataQuery: SearchIndexQuery = {
     ...baseQuery,
+    searchQuery: {
+      ...baseQuery.searchQuery,
+      // Omit facetRequests from the row data query: facet aggregations are only needed
+      // in the metadata query (which requests FACETS). Removing facetRequests here keeps
+      // the row data query key stable while column models are loading, preventing an
+      // unnecessary re-fetch (and a brief loading flash) when column models first arrive.
+      facetRequests: undefined,
+    },
     // Request SELECT_COLUMNS so headers are available for row rendering.
     // HITS is returned by default even when responseParts is specified.
     responseParts: new Set(['HITS', 'SELECT_COLUMNS'] as const),

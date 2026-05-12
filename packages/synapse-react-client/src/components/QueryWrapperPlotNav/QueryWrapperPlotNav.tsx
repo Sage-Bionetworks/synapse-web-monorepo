@@ -256,11 +256,14 @@ export function QueryWrapperPlotNavContents(
                   />
                 </>
               )}
-              <TotalQueryResults
-                frontText={''}
-                endText={hasFacetsOrFilters ? 'filtered by' : ''}
-                hideIfUnfiltered={true}
-              />
+              {/* Isolated Suspense so that metadata loading does not hide the table */}
+              <Suspense fallback={null}>
+                <TotalQueryResults
+                  frontText={''}
+                  endText={hasFacetsOrFilters ? 'filtered by' : ''}
+                  hideIfUnfiltered={true}
+                />
+              </Suspense>
               <CustomControls
                 customControls={customControls}
                 remount={remount}
