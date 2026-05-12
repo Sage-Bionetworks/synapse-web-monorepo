@@ -122,10 +122,12 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
     ? parseEntityIdFromSqlStatement(searchIndexEntity.definingSQL)
     : undefined
 
-  const { data: entityBundle } = useGetEntityBundle(synapseId, undefined, {
-    includeTableBundle: true,
-    throwOnError: true,
-  })
+  const { data: entityBundle } = useGetEntityBundle(
+    synapseId,
+    undefined,
+    { includeTableBundle: true },
+    { throwOnError: true },
+  )
   const columnModels = entityBundle?.tableBundle?.columnModels
 
   // Build a full synthetic QueryBundleRequest so we can reuse useImmutableTableQuery.
