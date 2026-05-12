@@ -55,5 +55,4 @@ export const navbarConfig: NavbarConfig = {
     },
   ],
   isPortalsDropdownEnabled: false,
-  variant: 'adkp',
 }
