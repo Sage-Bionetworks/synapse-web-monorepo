@@ -6,6 +6,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
+import { useDebouncedEffect } from '@/utils/hooks'
 import { HelpPopover } from '../HelpPopover/HelpPopover'
 import IconSvg from '../IconSvg/IconSvg'
 import { IconSvgButton } from '../IconSvgButton'
@@ -35,23 +36,33 @@ export function FullTextSearch({
   const { data } = useGetQueryMetadata()
   const columnModels = data?.columnModels
 
-  // Fetch autocomplete suggestions whenever searchText changes (debounced)
+  // Clear suggestions immediately when the search text is too short
   useEffect(() => {
     if (
       !ftsConfig?.getSuggestions ||
       searchText.trim().length < MIN_SEARCH_QUERY_LENGTH
     ) {
       setSuggestions([])
-      return
     }
-    const { getSuggestions } = ftsConfig
-    const timer = setTimeout(() => {
-      getSuggestions(searchText)
+  }, [ftsConfig?.getSuggestions, searchText])
+
+  // Fetch autocomplete suggestions whenever searchText changes (debounced)
+  useDebouncedEffect(
+    () => {
+      if (
+        !ftsConfig?.getSuggestions ||
+        searchText.trim().length < MIN_SEARCH_QUERY_LENGTH
+      ) {
+        return
+      }
+      ftsConfig
+        .getSuggestions(searchText)
         .then(setSuggestions)
         .catch(() => setSuggestions([]))
-    }, SUGGESTION_DEBOUNCE_MS)
-    return () => clearTimeout(timer)
-  }, [searchText, ftsConfig])
+    },
+    [searchText, ftsConfig],
+    SUGGESTION_DEBOUNCE_MS,
+  )
 
   const executeSearch = (text: string) => {
     executeQueryRequest(queryBundleRequest =>
