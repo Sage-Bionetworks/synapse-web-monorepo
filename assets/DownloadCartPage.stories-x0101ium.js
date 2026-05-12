@@ -1,1 +1,0 @@
-import{n as e}from"./chunk-jRWAZmH_.js";import{n as t,t as n}from"./DownloadCartPage-CR_bf6w0.js";var r,i,a;e((()=>{t(),r={title:`Download/DownloadCartPage`,component:n},i={},i.parameters={...i.parameters,docs:{...i.parameters?.docs,source:{originalSource:`{}`,...i.parameters?.docs?.source}}},a=[`Demo`]}))();export{i as Demo,a as __namedExportsOrder,r as default};
