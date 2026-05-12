@@ -156,6 +156,7 @@ export function FullTextSearch({
               renderInput={params => (
                 <TextField
                   {...params}
+                  inputRef={searchInputRef}
                   sx={{ width: '100%' }}
                   placeholder="Enter Search Terms"
                   type="text"
@@ -168,21 +169,6 @@ export function FullTextSearch({
                     htmlInput: {
                       ...params.inputProps,
                       minLength: MIN_SEARCH_QUERY_LENGTH,
-                      ref: (node: HTMLInputElement | null) => {
-                        searchInputRef.current = node
-                        // Also forward Autocomplete's internal ref
-                        const { ref } =
-                          params.inputProps as React.InputHTMLAttributes<HTMLInputElement> & {
-                            ref?: React.Ref<HTMLInputElement>
-                          }
-                        if (typeof ref === 'function') {
-                          ref(node)
-                        } else if (ref && 'current' in ref) {
-                          ;(
-                            ref as React.MutableRefObject<HTMLInputElement | null>
-                          ).current = node
-                        }
-                      },
                     },
                   }}
                 />
