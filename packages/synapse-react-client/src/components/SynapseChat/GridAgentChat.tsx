@@ -5,6 +5,12 @@ import { useState } from 'react'
 import DraggableDialog from '../DraggableDialog/DraggableDialog'
 import { SynapseChat } from './index'
 
+const suggestedPrompts = [
+  'Help me fill this out',
+  'Help me understand this',
+  'Find missing fields',
+]
+
 export type GridAgentChatProps = {
   gridSessionId: string
   usersReplicaId: number
@@ -52,6 +58,7 @@ export function GridAgentChat({
         externalSession={agentSession}
         setExternalSession={setAgentSession}
         externalChatState={chatState}
+        suggestedPrompts={suggestedPrompts}
       />
     </DraggableDialog>
   )
