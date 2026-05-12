@@ -21,7 +21,7 @@ export type MailchimpSubscribeSectionProps = {
   description: string
   mailchimpUrl: string
   headlineSx?: SxProps
-  background: string
+  background?: string
 }
 
 type MailchimpFormProps = FormHooks<EmailFormFields>
