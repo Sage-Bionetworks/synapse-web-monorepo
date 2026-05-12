@@ -7,7 +7,8 @@
     "pnpm": ">=10.16.0 <11"
   },
   "scripts": {
-    "prepare": "husky",
+    "prepare": "husky && ./scripts/install-actionlint.sh",
+    "lint:actions": "./bin/actionlint",
     "build": "nx run-many --target=build",
     "lint": "nx run-many --target=lint --quiet",
     "test": "nx run-many --target=test --coverage",
@@ -48,6 +49,9 @@
     ],
     "*.{json,yml,scss,css,md}": [
       "prettier --write"
+    ],
+    ".github/workflows/*.{yml,yaml}": [
+      "./bin/actionlint"
     ]
   },
   "pnpm": {
