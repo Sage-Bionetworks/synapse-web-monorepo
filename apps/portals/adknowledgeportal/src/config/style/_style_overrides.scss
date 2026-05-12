@@ -2,11 +2,99 @@
   --adkp-accent-color: #684b84;
   --adkp-button-gradient: linear-gradient(180deg, #443471 0%, #5a488f 100%);
   --adkp-button-border-color: #32243f;
+  --Brand-dark: #1f3042;
 }
 
 #header,
 #footer {
   background-color: var(--synapse-primary-action-color);
+}
+
+body:has(.HomePageV2) {
+  background-color: #faf9fa;
+}
+
+body:has(.HomePageV2) .nav.top-nav.top-nav--adkp {
+  box-shadow: none;
+
+  .nav-logo-container {
+    flex-basis: auto;
+    padding-right: 24px;
+  }
+
+  .nav-button {
+    color: var(--Brand-dark);
+  }
+
+  #signin-button {
+    border-radius: 8px;
+    background: var(--adkp-button-gradient);
+    border: 1px solid;
+    border-color: var(--adkp-button-border-color);
+    font-size: 14px;
+    font-weight: 540;
+    line-height: 14px;
+    letter-spacing: -0.28px;
+    padding: 13px 16px;
+
+    color: #fff !important;
+  }
+
+  @media screen and (min-width: 1281px) {
+    .nav-link-container > .nav-button-signin,
+    .nav-link-container > .Download-Link,
+    .nav-link-container > .user-loggedIn:not(:has(~ .Download-Link)) {
+      margin-left: auto;
+    }
+
+    .nav-button {
+      color: var(--Brand-dark);
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 24px; /* 171.429% */
+      letter-spacing: -0.07px;
+      padding: 0 8px;
+      min-width: unset;
+    }
+
+    .nav-link-container {
+      gap: 36px;
+    }
+
+    .nav-link-container {
+      flex: 1;
+      gap: 4px;
+    }
+  }
+}
+
+body:has(.HomePageV2) #footer.footer--adkp {
+  .footer-main {
+    background: linear-gradient(
+      91deg,
+      #7761b7 5.34%,
+      #9067b6 24.31%,
+      #816dc8 91.15%
+    );
+
+    .footer-links {
+      text-transform: uppercase;
+    }
+  }
+
+  .footer-bottom {
+    background: linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15) 0%,
+        rgba(0, 0, 0, 0.15) 100%
+      ),
+      linear-gradient(91deg, #7761b7 5.34%, #9067b6 24.31%, #816dc8 91.15%);
+  }
+
+  .nav-logo {
+    // swaps rendered footer logo image
+    content: url('/footerLogo.svg');
+  }
 }
 
 .SRC-primary-background-color-border-left {

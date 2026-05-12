@@ -2,12 +2,13 @@
 @use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
 
 header {
-  background: url('../assets/brain-bg-transparent.svg') white center 10% / 90%
-    90% no-repeat;
+  margin-bottom: 160px;
+  background: url('../assets/brain-bg-transparent.svg') center 10% / 90% 90%
+    no-repeat;
 
   @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
-    background: url('../assets/brain-bg-transparent.svg') white center 10% / 40%
-      70% no-repeat;
+    background: url('../assets/brain-bg-transparent.svg') center 10% / 40% 70%
+      no-repeat;
   }
 }
 

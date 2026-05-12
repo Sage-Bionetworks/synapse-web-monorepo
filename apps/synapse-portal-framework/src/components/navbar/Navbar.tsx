@@ -38,6 +38,7 @@ type NavRoute = {
 export type NavbarConfig = {
   routes: NavRoute[]
   isPortalsDropdownEnabled: boolean
+  variant?: 'adkp'
 }
 
 type ConditionalNavRouteProps = {
@@ -104,7 +105,7 @@ export default function Navbar() {
   const { isAuthenticated } = useSynapseContext()
   const navigate = useNavigate()
   const { data: userProfile } = useGetCurrentUserProfile()
-  const { isPortalsDropdownEnabled } = navbarConfig
+  const { isPortalsDropdownEnabled, variant } = navbarConfig
   const [showMenu, setShowMenu] = useState(false)
   const navRef = useRef<HTMLElement>(null)
 
@@ -185,11 +186,9 @@ export default function Navbar() {
       <Box
         ref={navRef}
         component={'nav'}
-        className={
-          !showMenu
-            ? 'flex-display nav top-nav'
-            : 'flex-display nav top-nav mb-active'
-        }
+        className={`flex-display nav top-nav${showMenu ? ' mb-active' : ''}${
+          variant ? ` top-nav--${variant}` : ''
+        }`}
         sx={RESPONSIVE_SIDE_PADDING}
       >
         <div className="nav-logo-container">

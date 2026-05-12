@@ -4,6 +4,7 @@ import {
   Button,
   InputAdornment,
   Stack,
+  SxProps,
   TextField,
   Typography,
 } from '@mui/material'
@@ -19,6 +20,8 @@ export type MailchimpSubscribeSectionProps = {
   headline: string
   description: string
   mailchimpUrl: string
+  headlineSx?: SxProps
+  background: string
 }
 
 type MailchimpFormProps = FormHooks<EmailFormFields>
@@ -102,6 +105,8 @@ export default function MailchimpSubscribeSection({
   headline,
   description,
   mailchimpUrl,
+  headlineSx,
+  background,
 }: MailchimpSubscribeSectionProps) {
   return (
     <Stack
@@ -109,13 +114,15 @@ export default function MailchimpSubscribeSection({
       spacing={4}
       alignItems="center"
       sx={theme => ({
-        backgroundColor: theme.palette.lightPrimary.main,
+        background: background ? background : theme.palette.lightPrimary.main,
         borderRadius: '12px',
         padding: 3,
       })}
     >
       <Box sx={{ flex: 1, minWidth: 0 }}>
-        <Typography variant="headline1">{headline}</Typography>
+        <Typography variant="headline1" sx={headlineSx}>
+          {headline}
+        </Typography>
         <Typography variant="body1" className={styles.description}>
           {description}
         </Typography>
