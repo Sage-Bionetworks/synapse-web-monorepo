@@ -1,13 +1,11 @@
 import styles from './DownloadCartPage.module.scss'
 import SynapseClient from '@/synapse-client'
 import { useGetDownloadListStatistics } from '@/synapse-queries/download/useDownloadList'
-import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { DeleteTwoTone } from '@mui/icons-material'
 import { Button, Tooltip, Typography } from '@mui/material'
 import {
   AvailableFilter,
-  FeatureFlagEnum,
   FilesStatisticsResponse,
 } from '@sage-bionetworks/synapse-types'
 import { useEffect, useRef, useState } from 'react'
@@ -62,9 +60,6 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
   const [isShowingDownloadSuccessAlert, setIsShowingDownloadSuccessAlert] =
     useState(false)
   const [error, setError] = useState<Error>()
-  const isDownloadAllEnabled = useGetFeatureFlag(
-    FeatureFlagEnum.DOWNLOAD_CART_INELIGIBLE_FILE_DOWNLOADS,
-  )
   const {
     data,
     isLoading,
@@ -393,62 +388,61 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
                       </Typography>
                     </ComponentCollapse>
                   </div>
-                  {isDownloadAllEnabled &&
-                    data.numberOfFilesAvailableForDownloadAndEligibleForPackaging <
-                      data.numberOfFilesAvailableForDownload && (
-                      <div className={styles.subSection}>
-                        <div className={styles.subSectionHeader}>
-                          <div className={styles.headline}>
-                            <Typography variant={'headline3'}>
-                              <IconSvg icon="multiFile" /> Multi-file Download
-                            </Typography>
-                          </div>
-                          <div className={styles.subSectionActions}>
-                            <div className={styles.ineligibleDownloadContainer}>
-                              <DownloadIneligibleForPackagingFilesFromListButton />
-                            </div>
+                  {data.numberOfFilesAvailableForDownloadAndEligibleForPackaging <
+                    data.numberOfFilesAvailableForDownload && (
+                    <div className={styles.subSection}>
+                      <div className={styles.subSectionHeader}>
+                        <div className={styles.headline}>
+                          <Typography variant={'headline3'}>
+                            <IconSvg icon="multiFile" /> Multi-file Download
+                          </Typography>
+                        </div>
+                        <div className={styles.subSectionActions}>
+                          <div className={styles.ineligibleDownloadContainer}>
+                            <DownloadIneligibleForPackagingFilesFromListButton />
                           </div>
                         </div>
-                        <ComponentCollapse
-                          component={
-                            <Typography variant={'body1'} component={'div'}>
-                              Files which <strong>aren't</strong> included in a
-                              ZIP package may be downloaded as a multi-file
-                              download.&nbsp;
-                            </Typography>
-                          }
-                          collapseBoxSx={{
-                            backgroundColor: 'transparent',
-                            p: 0,
-                            mt: '15px',
-                          }}
-                          componentContainerSx={{
-                            backgroundColor: 'transparent',
-                            p: 0,
-                          }}
-                          iconSx={{ width: '25px', height: '25px' }}
-                        >
-                          <Typography
-                            variant={'body1'}
-                            component={'div'}
-                            sx={{ marginBottom: '15px' }}
-                          >
-                            Clicking “Start Multi-file Download” initiates a
-                            download of all files in your Download List that
-                            can’t be bundled into a ZIP—such as large files or
-                            external links—in one step. Files are saved one by
-                            one with clear progress updates, automatic handling
-                            of duplicate names, and retry support if something
-                            fails. You can cancel anytime.
-                            <br />
-                            <br />
-                            Note: in some browsers, files download individually
-                            to your default Downloads folder instead of a
-                            selected location.
-                          </Typography>
-                        </ComponentCollapse>
                       </div>
-                    )}
+                      <ComponentCollapse
+                        component={
+                          <Typography variant={'body1'} component={'div'}>
+                            Files which <strong>aren't</strong> included in a
+                            ZIP package may be downloaded as a multi-file
+                            download.&nbsp;
+                          </Typography>
+                        }
+                        collapseBoxSx={{
+                          backgroundColor: 'transparent',
+                          p: 0,
+                          mt: '15px',
+                        }}
+                        componentContainerSx={{
+                          backgroundColor: 'transparent',
+                          p: 0,
+                        }}
+                        iconSx={{ width: '25px', height: '25px' }}
+                      >
+                        <Typography
+                          variant={'body1'}
+                          component={'div'}
+                          sx={{ marginBottom: '15px' }}
+                        >
+                          Clicking “Start Multi-file Download” initiates a
+                          download of all files in your Download List that can’t
+                          be bundled into a ZIP—such as large files or external
+                          links—in one step. Files are saved one by one with
+                          clear progress updates, automatic handling of
+                          duplicate names, and retry support if something fails.
+                          You can cancel anytime.
+                          <br />
+                          <br />
+                          Note: in some browsers, files download individually to
+                          your default Downloads folder instead of a selected
+                          location.
+                        </Typography>
+                      </ComponentCollapse>
+                    </div>
+                  )}
                 </div>
               </div>
 

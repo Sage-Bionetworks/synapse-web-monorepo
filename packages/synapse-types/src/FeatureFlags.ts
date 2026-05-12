@@ -19,9 +19,6 @@ export enum FeatureFlagEnum {
   // If enabled, load the Crisp chat widget
   CRISP_CHAT = 'CRISP_CHAT',
 
-  // If enabled, show the Download Ineligible for Packaging Files button on the download cart page
-  DOWNLOAD_CART_INELIGIBLE_FILE_DOWNLOADS = 'DOWNLOAD_CART_INELIGIBLE_FILE_DOWNLOADS',
-
   // If enabled, show the SynapseChat dialog in portals
   PORTAL_CHAT = 'PORTAL_CHAT',
 
