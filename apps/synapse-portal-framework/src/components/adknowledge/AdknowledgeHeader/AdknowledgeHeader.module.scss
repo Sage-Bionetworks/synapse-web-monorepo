@@ -1,7 +1,7 @@
 @use 'sass:map';
 @use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
 
-header {
+.adknowledgeHeader {
   margin-bottom: 160px;
   background: url('../assets/brain-bg-transparent.svg') center 10% / 90% 90%
     no-repeat;

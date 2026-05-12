@@ -43,7 +43,7 @@ const AdknowledgeHeader = (): React.ReactNode => {
   )
 
   return (
-    <header>
+    <header className={styles.adknowledgeHeader}>
       <Stack className={styles.adknowledgeHeaderStack}>
         <Box className={styles.adknowledgeHeaderContentBox}>{content}</Box>
         <HeaderSearchBox
