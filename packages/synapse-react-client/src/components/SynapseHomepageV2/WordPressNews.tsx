@@ -13,7 +13,7 @@ export type WordPressNewsProps = {
   /** Number of posts to display. Defaults to 10. */
   postCount?: number
   showCategoryChips?: boolean
-  variant?: 'default' | 'adkp'
+  variant?: 'adkp'
 }
 
 async function fetchWordPressPosts(
@@ -50,7 +50,7 @@ export function WordPressNews({
   wordpressSiteUrl,
   postCount = 10,
   showCategoryChips = true,
-  variant = 'default',
+  variant,
 }: WordPressNewsProps) {
   const { data: posts } = useQuery({
     queryKey: ['wordpressPosts', wordpressSiteUrl, postCount],
