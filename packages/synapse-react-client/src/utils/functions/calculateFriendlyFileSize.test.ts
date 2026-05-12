@@ -22,16 +22,16 @@ describe('calculateFriendlyFileSize', () => {
     expect(calculateFriendlyFileSize(1024)).toBe('1 KB')
   })
 
-  it('formats megabytes with no decimal places', () => {
-    expect(calculateFriendlyFileSize(5 * 1024 * 1024)).toBe('5 MB')
+  it('formats megabytes with 1 decimal place by default', () => {
+    expect(calculateFriendlyFileSize(5 * 1024 * 1024)).toBe('5.0 MB')
   })
 
   it('formats gigabytes with 2 decimal places by default', () => {
     expect(calculateFriendlyFileSize(1.5 * 1024 * 1024 * 1024)).toBe('1.50 GB')
   })
 
-  it('formats terabytes with 2 decimal places by default', () => {
-    expect(calculateFriendlyFileSize(2 * 1024 ** 4)).toBe('2.00 TB')
+  it('formats terabytes with 3 decimal places by default', () => {
+    expect(calculateFriendlyFileSize(2 * 1024 ** 4)).toBe('2.000 TB')
   })
 
   it('allows overriding fractionDigits for sub-GB values', () => {

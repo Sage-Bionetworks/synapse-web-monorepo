@@ -19,8 +19,8 @@ export function calculateFriendlyFileSize(
   }
   // https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
   const i = Math.floor(Math.log(bytes) / Math.log(1024))
-  // Use 2 decimal places for GB and above, 0 for smaller units
-  const digits = fractionDigits ?? (i >= 3 ? 2 : 0)
+  // 0 for Bytes/KB, 1 for MB, 2 for GB, 3 for TB etc
+  const digits = fractionDigits ?? Math.max(0, i - 1)
   // tslint:disable-next-line
   return (
     (bytes == 0 && '0 Bytes') ||
