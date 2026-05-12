@@ -289,6 +289,9 @@
     > * {
       margin-left: 15px;
     }
+    > table {
+      margin-left: 0;
+    }
 
     &.hasIcon {
       @media (min-width: map.get(SRC.$breakpoints, 'medium')) {

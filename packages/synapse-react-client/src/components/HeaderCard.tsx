@@ -12,6 +12,7 @@ import SustainabilityScorecard, {
   SustainabilityScorecardProps,
 } from './SustainabilityScorecard/SustainabilityScorecard'
 import { useDocumentMetadata } from '@/utils/context/DocumentMetadataContext'
+import { AdaptiveTwoColumnLayout } from './AdaptiveTwoColumnLayout/AdaptiveTwoColumnLayout'
 
 export type HeaderCardVariant = 'HeaderCard' | 'HeaderCardV2'
 
@@ -155,81 +156,81 @@ const HeaderCardClassic = forwardRef(function HeaderCardClassic(
           </Box>
         )}
 
-        {/* Row 4: Two columns (stack on mobile) */}
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', md: 'row' },
-            gap: '16px',
-            marginTop: '24px',
-          }}
-        >
-          {/* Column 1: icon (floated left) with subTitle and description flowing around */}
-          <Box sx={{ flex: 1 }}>
-            {icon && (
-              <Box
-                sx={{
-                  width: '120px',
-                  float: 'left',
-                  paddingRight: '24px',
-                  paddingBottom: '24px',
-                  display: 'flex',
-                  justifyContent: 'center',
-                }}
-              >
-                {icon}
-              </Box>
-            )}
-            {subTitle && <div className="SRC-author">{subTitle}</div>}
-            <CollapsibleDescription
-              description={description}
-              descriptionSubTitle={descriptionSubTitle}
-              descriptionConfig={descriptionConfiguration}
-            />
-            {sustainabilityScorecard && (
-              <SustainabilityScorecard
-                metricsConfig={sustainabilityScorecard.metricsConfig}
-                searchParamKey={sustainabilityScorecard.searchParamKey}
-                filterColumn={sustainabilityScorecard.filterColumn}
-                scoreDescriptorColumnName={
-                  sustainabilityScorecard.scoreDescriptorColumnName
-                }
-                queryRequest={sustainabilityScorecard.queryRequest}
-                sustainabilityReportLink={
-                  sustainabilityScorecard.sustainabilityReportLink
-                }
-                sx={{
-                  background: 'rgba(0, 0, 0, 0.10)',
-                  marginTop: '30px',
-                }}
-              />
-            )}
-            <Box sx={{ clear: 'both' }} />
-          </Box>
-
-          {/* Column 2: titleAreaRightContent, cardTopContent, CardFooter */}
-          {(titleAreaRightContent || cardTopContent || values) && (
-            <Box sx={{ flex: 1 }}>
-              {titleAreaRightContent && (
-                <div className="SRC-cardTitleAreaDetails">
-                  {titleAreaRightContent}
-                </div>
-              )}
-              {cardTopContent && (
-                <div className="SRC-cardContent">{cardTopContent}</div>
-              )}
-              {values && (
-                <Box sx={{ '&& .SRC-cardMetadata': { paddingTop: 0 } }}>
-                  <CardFooter
-                    isHeader={true}
-                    secondaryLabelLimit={secondaryLabelLimit}
-                    values={values}
-                  />
+        {/* Row 4: Two columns with adaptive stacking.
+            Stacks when leftHeight / rightHeight < 0.45 (measured once on mount). */}
+        <AdaptiveTwoColumnLayout
+          stackRatioThreshold={0.45}
+          gap="16px"
+          sx={{ marginTop: '24px' }}
+          leftContent={
+            <>
+              {/* Column 1: icon (floated left) with subTitle and description flowing around */}
+              {icon && (
+                <Box
+                  sx={{
+                    width: '120px',
+                    float: 'left',
+                    paddingRight: '24px',
+                    paddingBottom: '24px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                  }}
+                >
+                  {icon}
                 </Box>
               )}
-            </Box>
-          )}
-        </Box>
+              {subTitle && <div className="SRC-author">{subTitle}</div>}
+              <CollapsibleDescription
+                description={description}
+                descriptionSubTitle={descriptionSubTitle}
+                descriptionConfig={descriptionConfiguration}
+              />
+              {sustainabilityScorecard && (
+                <SustainabilityScorecard
+                  metricsConfig={sustainabilityScorecard.metricsConfig}
+                  searchParamKey={sustainabilityScorecard.searchParamKey}
+                  filterColumn={sustainabilityScorecard.filterColumn}
+                  scoreDescriptorColumnName={
+                    sustainabilityScorecard.scoreDescriptorColumnName
+                  }
+                  queryRequest={sustainabilityScorecard.queryRequest}
+                  sustainabilityReportLink={
+                    sustainabilityScorecard.sustainabilityReportLink
+                  }
+                  sx={{
+                    background: 'rgba(0, 0, 0, 0.10)',
+                    marginTop: '30px',
+                  }}
+                />
+              )}
+              <Box sx={{ clear: 'both' }} />
+            </>
+          }
+          rightContent={
+            titleAreaRightContent || cardTopContent || values ? (
+              /* Column 2: titleAreaRightContent, cardTopContent, CardFooter */
+              <>
+                {titleAreaRightContent && (
+                  <div className="SRC-cardTitleAreaDetails">
+                    {titleAreaRightContent}
+                  </div>
+                )}
+                {cardTopContent && (
+                  <div className="SRC-cardContent">{cardTopContent}</div>
+                )}
+                {values && (
+                  <Box sx={{ '&& .SRC-cardMetadata': { paddingTop: 0 } }}>
+                    <CardFooter
+                      isHeader={true}
+                      secondaryLabelLimit={secondaryLabelLimit}
+                      values={values}
+                    />
+                  </Box>
+                )}
+              </>
+            ) : undefined
+          }
+        />
       </Container>
     </Box>
   )
