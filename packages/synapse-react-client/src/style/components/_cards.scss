@@ -52,6 +52,9 @@
   &.SRC-portalCardHeader {
     color: white;
     margin-top: 0px;
+    h3 {
+      font-size: 24px !important;
+    }
     margin-bottom: 0px;
     background: var(--synapse-primary-action-color);
     @media (min-width: map.get(SRC.$breakpoints, 'medium')) {

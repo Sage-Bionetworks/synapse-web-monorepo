@@ -72,7 +72,7 @@ const HeaderCardClassic = forwardRef(function HeaderCardClassic(
   const descriptionConfiguration: DescriptionConfig = {
     ...descriptionConfig,
     showFullDescriptionByDefault:
-      descriptionConfig?.showFullDescriptionByDefault ?? true,
+      descriptionConfig?.showFullDescriptionByDefault ?? false,
   }
 
   const metadataDescription = description || subTitle || undefined
@@ -161,7 +161,7 @@ const HeaderCardClassic = forwardRef(function HeaderCardClassic(
             display: 'flex',
             flexDirection: { xs: 'column', md: 'row' },
             gap: '16px',
-            marginTop: '16px',
+            marginTop: '24px',
           }}
         >
           {/* Column 1: icon (floated left) with subTitle and description flowing around */}
@@ -186,6 +186,24 @@ const HeaderCardClassic = forwardRef(function HeaderCardClassic(
               descriptionSubTitle={descriptionSubTitle}
               descriptionConfig={descriptionConfiguration}
             />
+            {sustainabilityScorecard && (
+              <SustainabilityScorecard
+                metricsConfig={sustainabilityScorecard.metricsConfig}
+                searchParamKey={sustainabilityScorecard.searchParamKey}
+                filterColumn={sustainabilityScorecard.filterColumn}
+                scoreDescriptorColumnName={
+                  sustainabilityScorecard.scoreDescriptorColumnName
+                }
+                queryRequest={sustainabilityScorecard.queryRequest}
+                sustainabilityReportLink={
+                  sustainabilityScorecard.sustainabilityReportLink
+                }
+                sx={{
+                  background: 'rgba(0, 0, 0, 0.10)',
+                  marginTop: '30px',
+                }}
+              />
+            )}
             <Box sx={{ clear: 'both' }} />
           </Box>
 
@@ -201,7 +219,7 @@ const HeaderCardClassic = forwardRef(function HeaderCardClassic(
                 <div className="SRC-cardContent">{cardTopContent}</div>
               )}
               {values && (
-                <Box sx={{ '& .SRC-cardMetadata': { paddingTop: 0 } }}>
+                <Box sx={{ '&& .SRC-cardMetadata': { paddingTop: 0 } }}>
                   <CardFooter
                     isHeader={true}
                     secondaryLabelLimit={secondaryLabelLimit}
@@ -212,26 +230,6 @@ const HeaderCardClassic = forwardRef(function HeaderCardClassic(
             </Box>
           )}
         </Box>
-
-        {/* Row 5: sustainabilityScorecard */}
-        {sustainabilityScorecard && (
-          <SustainabilityScorecard
-            metricsConfig={sustainabilityScorecard.metricsConfig}
-            searchParamKey={sustainabilityScorecard.searchParamKey}
-            filterColumn={sustainabilityScorecard.filterColumn}
-            scoreDescriptorColumnName={
-              sustainabilityScorecard.scoreDescriptorColumnName
-            }
-            queryRequest={sustainabilityScorecard.queryRequest}
-            sustainabilityReportLink={
-              sustainabilityScorecard.sustainabilityReportLink
-            }
-            sx={{
-              background: 'rgba(0, 0, 0, 0.10)',
-              marginTop: '30px',
-            }}
-          />
-        )}
       </Container>
     </Box>
   )
