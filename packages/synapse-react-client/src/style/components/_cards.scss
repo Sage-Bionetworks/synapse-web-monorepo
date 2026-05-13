@@ -109,8 +109,10 @@
     .SRC-imageThumbnail,
     .SRC-cardThumbnail {
       width: unset;
+      max-width: 110px;
       img {
         width: unset;
+        max-width: 110px;
       }
     }
     @media (min-width: map.get(SRC.$breakpoints, 'medium')) {
