@@ -156,13 +156,9 @@ const HeaderCardClassic = forwardRef(function HeaderCardClassic(
           </Box>
         )}
 
-        {/* Row 4: Two columns with adaptive stacking.
-            Stacks when leftHeight / rightHeight < 0.45 (measured once on mount). */}
-        <AdaptiveTwoColumnLayout
-          stackRatioThreshold={0.45}
-          gap="16px"
-          sx={{ marginTop: '24px' }}
-          leftContent={
+        {/* Row 4: left content, optionally alongside right content in an adaptive two-column layout */}
+        {(() => {
+          const leftContent = (
             <>
               {/* Column 1: icon (floated left) with subTitle and description flowing around */}
               {icon && (
@@ -205,9 +201,10 @@ const HeaderCardClassic = forwardRef(function HeaderCardClassic(
               )}
               <Box sx={{ clear: 'both' }} />
             </>
-          }
-          rightContent={
-            titleAreaRightContent || cardTopContent || values ? (
+          )
+
+          const rightContent =
+            titleAreaRightContent || cardTopContent || values?.length ? (
               /* Column 2: titleAreaRightContent, cardTopContent, CardFooter */
               <>
                 {titleAreaRightContent && (
@@ -229,8 +226,19 @@ const HeaderCardClassic = forwardRef(function HeaderCardClassic(
                 )}
               </>
             ) : undefined
-          }
-        />
+
+          return rightContent ? (
+            <AdaptiveTwoColumnLayout
+              stackRatioThreshold={0.45}
+              gap="16px"
+              sx={{ marginTop: '24px' }}
+              leftContent={leftContent}
+              rightContent={rightContent}
+            />
+          ) : (
+            <Box sx={{ marginTop: '24px' }}>{leftContent}</Box>
+          )
+        })()}
       </Container>
     </Box>
   )

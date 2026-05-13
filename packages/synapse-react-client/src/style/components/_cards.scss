@@ -106,6 +106,13 @@
     .SRC-cardMetadata {
       background-color: inherit;
     }
+    .SRC-imageThumbnail,
+    .SRC-cardThumbnail {
+      width: unset;
+      img {
+        width: unset;
+      }
+    }
     @media (min-width: map.get(SRC.$breakpoints, 'medium')) {
       &.isAlignToLeftNav {
         .SRC-cardThumbnail {
