@@ -22,11 +22,13 @@ export type WordPressCategory = {
 export type WordPressNewsItemProps = {
   post: WordPressPost
   categoryName: string | undefined
+  showCategoryChip?: boolean
 }
 
 export function WordPressNewsItem({
   post,
   categoryName,
+  showCategoryChip = true,
 }: WordPressNewsItemProps) {
   return (
     <Box
@@ -48,7 +50,7 @@ export function WordPressNewsItem({
         </Typography>
       </Box>
       <Box className={styles.itemAction}>
-        {categoryName && (
+        {categoryName && showCategoryChip && (
           <Chip className={styles.chip} label={categoryName} color="primary" />
         )}
       </Box>
