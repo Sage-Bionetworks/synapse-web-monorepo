@@ -33,9 +33,11 @@ function Footer() {
   const termsOfServiceUrl =
     footerConfig.termsOfService ??
     SynapseConstants.URL_TERMS_CONDITIONS_AGREEMENT
+  const { variant } = footerConfig
   return (
-    <footer id="footer">
+    <footer id="footer" className={variant ? `footer--${variant}` : undefined}>
       <Box
+        className="footer-main"
         sx={{
           backgroundColor: theme.palette.primary.main,
           display: 'flex',
@@ -48,6 +50,7 @@ function Footer() {
       >
         <Box>{logo}</Box>
         <Box
+          className="footer-links"
           sx={{
             display: 'flex',
             gap: { xs: '30px', md: '60px' },
@@ -100,6 +103,7 @@ function Footer() {
         </Box>
       </Box>
       <Box
+        className="footer-bottom"
         sx={{
           backgroundColor: darkerBackgroundColor,
           display: 'flex',

@@ -12,6 +12,8 @@ export type WordPressNewsProps = {
   wordpressSiteUrl: string
   /** Number of posts to display. Defaults to 10. */
   postCount?: number
+  showCategoryChips?: boolean
+  variant?: 'adkp'
 }
 
 async function fetchWordPressPosts(
@@ -47,6 +49,8 @@ async function fetchWordPressCategories(
 export function WordPressNews({
   wordpressSiteUrl,
   postCount = 10,
+  showCategoryChips = true,
+  variant,
 }: WordPressNewsProps) {
   const { data: posts } = useQuery({
     queryKey: ['wordpressPosts', wordpressSiteUrl, postCount],
@@ -67,12 +71,18 @@ export function WordPressNews({
   }
 
   return (
-    <Box className={styles.container} sx={{ color: 'primary.100' }}>
+    <Box
+      className={`${styles.container}${
+        variant === 'adkp' ? ` ${styles.adkpVariant}` : ''
+      }`}
+      sx={{ color: 'primary.100' }}
+    >
       {posts.map(post => (
         <WordPressNewsItem
           key={post.id}
           post={post}
           categoryName={categoryMap.get(post.categories[0])}
+          showCategoryChip={showCategoryChips}
         />
       ))}
     </Box>
