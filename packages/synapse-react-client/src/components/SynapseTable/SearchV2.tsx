@@ -62,6 +62,13 @@ export type FTSConfig = {
   textMatchesMode: TextMatchesMode
   distance?: number // In BOOLEAN mode, this operator tests whether two or more words all start within a specified distance from each other, measured in words.
   searchHelpURL?: string
+  /**
+   * Optional function to provide autocomplete suggestions for the search bar.
+   * When provided, the search input will show a dropdown of suggestions as the user types.
+   * @param searchText - The current text in the search input
+   * @returns A promise resolving to an array of suggestion strings
+   */
+  getSuggestions?: (searchText: string) => Promise<string[]>
 }
 
 type InternalSearchProps = SearchV2Props & {
