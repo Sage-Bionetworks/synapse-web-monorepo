@@ -1,0 +1,5 @@
+import{n as e}from"./chunk-jRWAZmH_.js";import{Cf as t,HS as n,Uv as r,Vb as i,wf as a}from"./iframe-CEwhhiec.js";function o(e){let{callback:t}=e;return(0,s.jsx)(`div`,{children:(0,s.jsx)(i,{variant:`contained`,color:`primary`,onClick:()=>{a.signOut().then(t)},children:`Log out`})})}var s,c=e((()=>{t(),r(),s=n();try{o.displayName=`Logout`,o.__docgenInfo={description:``,displayName:`Logout`,filePath:`/home/runner/work/synapse-web-monorepo/synapse-web-monorepo/packages/synapse-react-client/src/components/Authentication/Logout.tsx`,methods:[],props:{callback:{defaultValue:null,declarations:[{fileName:`synapse-react-client/src/components/Authentication/Logout.tsx`,name:`TypeLiteral`}],description:``,name:`callback`,required:!0,tags:{},type:{name:`() => void`}}},tags:{}}}catch{}})),l,u,d,f;e((()=>{c(),{fn:l}=__STORYBOOK_MODULE_TEST__,u={title:`Authentication/Logout`,component:o},d={args:{callback:l()}},d.parameters={...d.parameters,docs:{...d.parameters?.docs,source:{originalSource:`{
+  args: {
+    callback: fn()
+  }
+}`,...d.parameters?.docs?.source}}},f=[`Demo`]}))();export{d as Demo,f as __namedExportsOrder,u as default};
