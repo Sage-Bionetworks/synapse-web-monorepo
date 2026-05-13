@@ -1029,4 +1029,135 @@ describe('TableColumnSchemaEditor', () => {
       expect(mockOnCancel).toHaveBeenCalled()
     })
   })
+
+  describe('new schema mode (no entityId)', () => {
+    const mockOnSubmit = vi.fn()
+
+    const initialColumns: SetOptional<ColumnModel, 'id'>[] = [
+      { name: 'col1', columnType: ColumnTypeEnum.STRING, maximumSize: 50 },
+      { name: 'col2', columnType: ColumnTypeEnum.INTEGER },
+    ]
+
+    it('Renders the form with the provided initialData and does not fetch an entity bundle', async () => {
+      const getEntityBundleSpy = vi.spyOn(SynapseClient, 'getEntityBundleV2')
+
+      renderComponent({
+        open: true,
+        initialData: initialColumns,
+        onSubmit: mockOnSubmit,
+        onCancel: mockOnCancel,
+      })
+
+      const nameFields = await screen.findAllByLabelText('Name')
+      expect(nameFields).toHaveLength(initialColumns.length)
+      expect(nameFields[0]).toHaveValue('col1')
+      expect(nameFields[1]).toHaveValue('col2')
+
+      // No entity bundle should be fetched in new-schema mode
+      expect(getEntityBundleSpy).not.toHaveBeenCalled()
+      // No mutation should run (we never see a PUT to the table transaction endpoint)
+      expect(updateTableSpy).not.toHaveBeenCalled()
+    })
+
+    it('Calls onSubmit with edited columns when Save is clicked, without invoking the update mutation', async () => {
+      const user = userEvent.setup()
+      renderComponent({
+        open: true,
+        initialData: initialColumns,
+        onSubmit: mockOnSubmit,
+        onCancel: mockOnCancel,
+      })
+
+      // Wait for the form to populate before adding a column
+      await screen.findAllByLabelText('Name')
+      await addColumnModelToForm('newColumn', user)
+
+      const saveButton = await screen.findByRole('button', { name: 'Save' })
+      await user.click(saveButton)
+
+      await waitFor(() => {
+        expect(mockOnSubmit).toHaveBeenCalledTimes(1)
+      })
+      expect(mockOnSubmit).toHaveBeenCalledWith([
+        ...initialColumns,
+        {
+          name: 'newColumn',
+          columnType: 'STRING',
+          maximumSize: 50,
+        },
+      ])
+
+      // The existing-entity mutation path must not have been triggered
+      expect(updateTableSpy).not.toHaveBeenCalled()
+      expect(createTableUpdateTransactionRequestSpy).not.toHaveBeenCalled()
+    })
+
+    it('Reflects isSubmitting in the Save button state', async () => {
+      renderComponent({
+        open: true,
+        initialData: initialColumns,
+        onSubmit: mockOnSubmit,
+        onCancel: mockOnCancel,
+        isSubmitting: true,
+      })
+
+      const savingButton = await screen.findByRole('button', {
+        name: /Saving/,
+      })
+      expect(savingButton).toBeDisabled()
+
+      const cancelButton = await screen.findByRole('button', { name: 'Cancel' })
+      expect(cancelButton).toBeDisabled()
+    })
+
+    it('Displays the errorMessage prop', async () => {
+      const errorMessage = 'Failed to create table'
+      renderComponent({
+        open: true,
+        initialData: initialColumns,
+        onSubmit: mockOnSubmit,
+        onCancel: mockOnCancel,
+        errorMessage,
+      })
+
+      const alert = await screen.findByRole('alert')
+      within(alert).getByText(errorMessage)
+    })
+
+    it('Calls onCancel when Cancel is clicked', async () => {
+      const user = userEvent.setup()
+      renderComponent({
+        open: true,
+        initialData: initialColumns,
+        onSubmit: mockOnSubmit,
+        onCancel: mockOnCancel,
+      })
+
+      const cancelButton = await screen.findByRole('button', { name: 'Cancel' })
+      await user.click(cancelButton)
+
+      expect(mockOnCancel).toHaveBeenCalled()
+      expect(mockOnSubmit).not.toHaveBeenCalled()
+    })
+
+    it('Does not call onSubmit when validation fails', async () => {
+      const user = userEvent.setup()
+      renderComponent({
+        open: true,
+        initialData: initialColumns,
+        onSubmit: mockOnSubmit,
+        onCancel: mockOnCancel,
+      })
+
+      // Add a column but leave the name blank
+      await screen.findAllByLabelText('Name')
+      await addColumnModelToForm(undefined, user)
+
+      const saveButton = await screen.findByRole('button', { name: 'Save' })
+      await user.click(saveButton)
+
+      await screen.findByText('Name is required')
+      expect(mockOnSubmit).not.toHaveBeenCalled()
+    })
+  })
 })
