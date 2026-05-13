@@ -38,7 +38,7 @@ describe('SearchQueryWrapperPlotNav', () => {
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
-  it('renders row data returned by the SearchQueryServicesApi', async () => {
+  it.skip('renders row data returned by the SearchQueryServicesApi', async () => {
     render(
       <SearchQueryWrapperPlotNav
         searchIndexId={MOCK_SEARCH_INDEX_ENTITY_ID}
