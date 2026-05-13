@@ -143,23 +143,8 @@ export function PortalFullTextSearchField({
         setSearchInput(event.target.value)
       }}
       onKeyDown={event => {
-        const trimmedInput = (event.target as HTMLInputElement).value.trim()
-        if (event.key === 'Enter' && trimmedInput.length > 0) {
-          if (path) {
-            const params = new URLSearchParams()
-            params.set(SEARCH_TERM, trimmedInput)
-            if (role) {
-              params.set(SEARCH_ROLE, role)
-            }
-            navigate({
-              pathname: path,
-              search: `?${params.toString()}`,
-            })
-          }
-          if (callback) {
-            callback(trimmedInput)
-            setSearchInput('')
-          }
+        if (event.key === 'Enter') {
+          handleSubmit((event.target as HTMLInputElement).value)
         }
       }}
       fullWidth
