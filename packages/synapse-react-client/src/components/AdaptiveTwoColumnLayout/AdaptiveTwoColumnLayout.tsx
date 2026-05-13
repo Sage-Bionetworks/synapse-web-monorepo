@@ -1,5 +1,5 @@
 import { Box, SxProps } from '@mui/material'
-import { ReactNode, useEffect, useRef, useState } from 'react'
+import { ReactNode, useLayoutEffect, useRef, useState } from 'react'
 
 export type MeasurementInfo = {
   leftHeight: number
@@ -30,8 +30,8 @@ export type AdaptiveTwoColumnLayoutProps = {
  * their heights. If leftHeight / rightHeight < stackRatioThreshold, the layout
  * switches to a single stacked column. On mobile (xs–md) the layout always stacks.
  *
- * Measurement is performed once on mount. The container is kept invisible until
- * the measurement is complete to avoid a visible layout shift.
+ * Measurement is performed once on mount via useLayoutEffect, which fires
+ * synchronously before the browser paints, so there is no visible layout shift.
  *
  * Algorithm mirrors the prototype at https://github.com/adamhindman/detail-page-columns:
  * measure in side-by-side mode, compute ratio = leftHeight / rightHeight, stack if below threshold.
@@ -46,11 +46,11 @@ export function AdaptiveTwoColumnLayout({
   leftContent,
   rightContent,
   stackRatioThreshold = 0.45,
-  gap = '16px',
+  gap = '40px',
   sx,
   onMeasure,
 }: AdaptiveTwoColumnLayoutProps) {
-  // null = not yet measured (container is hidden while side-by-side heights are read)
+  // null = not yet measured (2-column mode until useLayoutEffect reads heights)
   const [isStacked, setIsStacked] = useState<boolean | null>(null)
   const leftRef = useRef<HTMLDivElement>(null)
   const rightRef = useRef<HTMLDivElement>(null)
@@ -58,55 +58,43 @@ export function AdaptiveTwoColumnLayout({
   const onMeasureRef = useRef(onMeasure)
   onMeasureRef.current = onMeasure
 
-  useEffect(() => {
-    let cancelled = false
+  // useLayoutEffect fires synchronously after React commits the DOM but before
+  // the browser paints, so offsetHeight values are accurate and the user never
+  // sees the intermediate 2-column state.
+  //
+  // NOTE: rightContent and onMeasure are intentionally excluded from the
+  // dependency array. rightContent is JSX — a new object reference on every
+  // parent render — so including it would restart this effect on every render,
+  // preventing measurement from completing. onMeasure is accessed via
+  // onMeasureRef to avoid the same issue.
+  useLayoutEffect(() => {
+    if (!leftRef.current) return
 
-    // Two rAFs: the first waits for the browser to commit the layout, the
-    // second waits for the subsequent paint — giving accurate offsetHeight
-    // readings without any visible flash.
-    //
-    // NOTE: rightContent and onMeasure are intentionally excluded from the
-    // dependency array. rightContent is JSX — a new object reference on every
-    // parent render — so including it would cancel and restart this effect on
-    // every render, preventing measurement from completing. onMeasure is
-    // accessed via onMeasureRef to avoid the same issue.
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        if (cancelled || !leftRef.current) return
+    if (!rightRef.current) {
+      setIsStacked(false)
+      return
+    }
 
-        if (!rightRef.current) {
-          setIsStacked(false)
-          return
-        }
+    // Both columns are in 2-column grid mode (isStacked is still null).
+    // offsetHeight gives each column's independent content height.
+    const leftH = leftRef.current.offsetHeight
+    const rightH = rightRef.current.offsetHeight
 
-        // Both columns are in 2-column grid mode (isStacked is still null).
-        // offsetHeight gives each column's independent content height.
-        const leftH = leftRef.current.offsetHeight
-        const rightH = rightRef.current.offsetHeight
-
-        if (rightH > 0) {
-          const ratio = leftH / rightH
-          const stacked = ratio < stackRatioThreshold
-          setIsStacked(stacked)
-          onMeasureRef.current?.({
-            leftHeight: leftH,
-            rightHeight: rightH,
-            ratio,
-            stacked,
-          })
-        } else {
-          setIsStacked(false)
-        }
+    if (rightH > 0) {
+      const ratio = leftH / rightH
+      const stacked = ratio < stackRatioThreshold
+      setIsStacked(stacked)
+      onMeasureRef.current?.({
+        leftHeight: leftH,
+        rightHeight: rightH,
+        ratio,
+        stacked,
       })
-    })
-
-    return () => {
-      cancelled = true
+    } else {
+      setIsStacked(false)
     }
     // rightContent and onMeasure intentionally omitted — see note above.
   }, [stackRatioThreshold])
-
-  const measured = isStacked !== null
 
   return (
     <Box
@@ -114,14 +102,14 @@ export function AdaptiveTwoColumnLayout({
         display: 'grid',
         // While unmeasured: 2 equal columns so heights are independently comparable.
         // After measurement: xs always single column; md+ follows the decision.
-        gridTemplateColumns: measured
-          ? { xs: '1fr', md: isStacked ? '1fr' : '1fr 1fr' }
-          : '1fr 1fr',
+        gridTemplateColumns:
+          isStacked === null
+            ? '1fr 1fr'
+            : { xs: '1fr', md: isStacked ? '1fr' : '1fr 1fr' },
         // align-items:start is critical — each cell is only as tall as its own
         // content, giving independent heights for the ratio comparison.
         alignItems: 'start',
         gap,
-        visibility: measured ? 'visible' : 'hidden',
         ...sx,
       }}
     >

@@ -195,6 +195,7 @@ const HeaderCardClassic = forwardRef(function HeaderCardClassic(
                   sx={{
                     background: 'rgba(0, 0, 0, 0.10)',
                     marginTop: '30px',
+                    ...sustainabilityScorecard.sx,
                   }}
                 />
               )}
@@ -229,7 +230,6 @@ const HeaderCardClassic = forwardRef(function HeaderCardClassic(
           return rightContent ? (
             <AdaptiveTwoColumnLayout
               stackRatioThreshold={0.45}
-              gap="16px"
               sx={{ marginTop: '24px' }}
               leftContent={leftContent}
               rightContent={rightContent}
