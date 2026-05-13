@@ -94,7 +94,6 @@ const HeaderCardClassic = forwardRef(function HeaderCardClassic(
         // so the background stretches full-viewport width.
         width: '100vw',
         marginLeft: 'calc(50% - 50vw)',
-        paddingBottom: '40px',
         ...sx,
       }}
     >
@@ -199,7 +198,7 @@ const HeaderCardClassic = forwardRef(function HeaderCardClassic(
                   }}
                 />
               )}
-              <Box sx={{ clear: 'both' }} />
+              <Box sx={{ clear: 'both', pb: 'var(--baseline-grid)' }} />
             </>
           )
 
