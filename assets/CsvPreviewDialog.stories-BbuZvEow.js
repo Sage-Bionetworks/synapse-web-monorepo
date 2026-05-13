@@ -1,3 +1,0 @@
-import{n as e}from"./chunk-jRWAZmH_.js";import{n as t,t as n}from"./CsvPreviewDialog-DACFwbGz.js";var r,i,a,o;e((()=>{t(),{fn:r}=__STORYBOOK_MODULE_TEST__,i={title:`Components/Table/CSV Preview Dialog`,component:n,args:{open:!0,onClose:r(),onConfirm:r()},parameters:{requireLogin:!0}},a={name:`CSV Preview Dialog`},a.parameters={...a.parameters,docs:{...a.parameters?.docs,source:{originalSource:`{
-  name: 'CSV Preview Dialog'
-}`,...a.parameters?.docs?.source}}},o=[`Demo`]}))();export{a as Demo,o as __namedExportsOrder,i as default};
