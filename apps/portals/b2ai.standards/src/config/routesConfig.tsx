@@ -12,6 +12,7 @@ const routes: RouteObject[] = [
         index: true,
         lazy: () => import('@/pages/HomePage').then(convertModuleToRouteObject),
       },
+      // PORTALS-4227: Currently, Explore is unlinked.  The nav bar Explore points to the Search route
       {
         path: 'Explore',
         lazy: () => import('@/pages/Explore').then(convertModuleToRouteObject),
