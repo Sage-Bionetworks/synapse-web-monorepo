@@ -11,6 +11,7 @@ import mockProjectEntityData from './mockProject'
 import mockFileEntityData from './mockFileEntity'
 import mockRootEntityData from './mockRootEntity'
 import { aclCustomizedMockFileEntities } from './mockFileEntityACLVariants'
+import { mockSearchIndexEntityData } from '@/mocks/mockSearchQueryData'
 
 const mockEntities: MockEntityData[] = [
   mockRootEntityData,
@@ -22,6 +23,7 @@ const mockEntities: MockEntityData[] = [
   mockFileViewData,
   mockProjectViewData,
   mockReleaseCardsTableData,
+  mockSearchIndexEntityData,
   ...aclCustomizedMockFileEntities,
   ...mockGeneratedEntityData,
 ]

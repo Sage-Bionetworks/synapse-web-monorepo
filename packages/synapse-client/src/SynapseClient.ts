@@ -33,6 +33,7 @@ import { PrincipalServicesApi } from './generated/apis/PrincipalServicesApi'
 import { ProjectSettingsServicesApi } from './generated/apis/ProjectSettingsServicesApi'
 import { RealmServicesApi } from './generated/apis/RealmServicesApi'
 import { RecycleBinServicesApi } from './generated/apis/RecycleBinServicesApi'
+import { SearchManagementServicesApi } from './generated/apis/SearchManagementServicesApi'
 import { SearchServicesApi } from './generated/apis/SearchServicesApi'
 import { StatisticsServicesApi } from './generated/apis/StatisticsServicesApi'
 import { StorageReportServicesApi } from './generated/apis/StorageReportServicesApi'
@@ -137,6 +138,7 @@ export class SynapseClient {
   public projectSettingsServicesClient: ProjectSettingsServicesApi
   public realmServicesClient: RealmServicesApi
   public recycleBinServicesClient: RecycleBinServicesApi
+  public searchManagementServicesClient: SearchManagementServicesApi
   public searchServicesClient: SearchServicesApi
   public statisticsServicesClient: StatisticsServicesApi
   public storageReportServicesClient: StorageReportServicesApi
@@ -217,6 +219,9 @@ export class SynapseClient {
     )
     this.realmServicesClient = new RealmServicesApi(configuration)
     this.recycleBinServicesClient = new RecycleBinServicesApi(configuration)
+    this.searchManagementServicesClient = new SearchManagementServicesApi(
+      configuration,
+    )
     this.searchServicesClient = new SearchServicesApi(configuration)
     this.statisticsServicesClient = new StatisticsServicesApi(configuration)
     this.storageReportServicesClient = new StorageReportServicesApi(

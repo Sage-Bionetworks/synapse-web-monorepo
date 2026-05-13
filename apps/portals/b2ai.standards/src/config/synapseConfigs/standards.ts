@@ -8,6 +8,7 @@ import {
   standardsSql,
   DST_TABLE_COLUMN_CONSTS,
 } from '@/config/resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 export const standardsRgbIndex = 0
 export const standardsColumnLinks: LabelLinkConfig = [
@@ -60,3 +61,20 @@ export const standardsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
     ftsConfig: standardsFtsConfig,
   },
 }
+
+export const standardsSearchQueryWrapperPlotNavProps: SearchQueryWrapperPlotNavProps =
+  {
+    searchIndexId: 'syn74909093',
+    autocompleteFieldName: 'name',
+    rgbIndex: standardsRgbIndex,
+    name: 'Standards',
+    columnAliases,
+    tableConfiguration: {
+      showDownloadColumn: false,
+      columnLinks: standardsColumnLinks,
+    },
+    facetsToPlot: ['topic'],
+    initialPlotTypeByFacetColumnName: { topic: 'BAR' },
+    hideTopLevelControls: true,
+    hideQueryCount: true,
+  }
