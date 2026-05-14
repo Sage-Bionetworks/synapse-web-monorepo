@@ -860,7 +860,6 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
                           100,
                       )}% ( ${calculateFriendlyFileSize(
                         downloadProgress.bytesDownloaded,
-                        0,
                       )} / ${calculateFriendlyFileSize(
                         downloadProgress.totalBytes,
                       )} )`

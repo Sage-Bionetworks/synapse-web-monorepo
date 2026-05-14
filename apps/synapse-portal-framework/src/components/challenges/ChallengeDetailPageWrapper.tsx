@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, Box, Skeleton } from '@mui/material'
+import { Link, Box, Skeleton, Container } from '@mui/material'
 import * as AppUtils from 'synapse-react-client/utils/AppUtils/index'
 import { ChallengeDetailPage } from 'synapse-react-client/components/ChallengeDetailPage/ChallengeDetailPage'
 import * as SynapseQueries from 'synapse-react-client/synapse-queries/index'
@@ -46,56 +46,50 @@ const ChallengeDetailPageWrapper = (): React.ReactNode => {
   if (projectId !== undefined) {
     return (
       // mimic card container layout to align with card fields
-      <div className="container-fluid container-full-width">
-        <div className="row">
-          <div className="col-md-offset-1 col-md-10">
-            <Box sx={{ display: 'flex', marginLeft: '15px' }}>
-              <Box sx={{ width: '25%', maxWidth: '215px' }} />
-              <Box sx={{ width: '100%' }}>
-                <Box
+      <Container maxWidth="lg">
+        <Box sx={{ display: 'flex' }}>
+          <Box sx={{ width: '100%' }}>
+            <Box
+              sx={{
+                position: 'relative',
+                marginTop: '-130px',
+                zIndex: 100,
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  columnGap: '20px',
+                }}
+              >
+                {isChallengeActive && (
+                  <ChallengeDetailPage projectId={projectId} />
+                )}
+                <Link
+                  target="_blank"
+                  rel="noreferrer"
+                  href={`${SynapseUtilityFunctions.getEndpoint(
+                    SynapseUtilityFunctions.BackendDestinationEnum
+                      .PORTAL_ENDPOINT,
+                  )}Team:${challenge?.participantTeamId}`}
                   sx={{
-                    position: 'relative',
-                    marginTop: '-150px',
-                    paddingLeft: '47px',
-                    zIndex: 100,
+                    color: 'white',
+                    '&:hover': {
+                      color: 'white',
+                      textDecorationColor: 'white',
+                    },
+                    '&:focus': { color: 'white' },
+                    textDecorationColor: 'white',
                   }}
                 >
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      columnGap: '20px',
-                    }}
-                  >
-                    {isChallengeActive && (
-                      <ChallengeDetailPage projectId={projectId} />
-                    )}
-                    <Link
-                      target="_blank"
-                      rel="noreferrer"
-                      href={`${SynapseUtilityFunctions.getEndpoint(
-                        SynapseUtilityFunctions.BackendDestinationEnum
-                          .PORTAL_ENDPOINT,
-                      )}Team:${challenge?.participantTeamId}`}
-                      sx={{
-                        color: 'white',
-                        '&:hover': {
-                          color: 'white',
-                          textDecorationColor: 'white',
-                        },
-                        '&:focus': { color: 'white' },
-                        textDecorationColor: 'white',
-                      }}
-                    >
-                      {memberCount} Registered Participants
-                    </Link>
-                  </Box>
-                </Box>
+                  {memberCount} Registered Participants
+                </Link>
               </Box>
             </Box>
-          </div>
-        </div>
-      </div>
+          </Box>
+        </Box>
+      </Container>
     )
   } else return <></>
 }

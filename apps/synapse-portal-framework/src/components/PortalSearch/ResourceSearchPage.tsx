@@ -1,10 +1,14 @@
 import { PortalSearchPage } from '@/components/PortalSearch/PortalSearchPage'
 import { useParams } from 'react-router'
 import { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/index'
+import type { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 import { PortalSearchTabConfig } from './PortalSearchTabs'
 
 type ResourceSearchPageProps = {
-  portalSearchPageConfigs: QueryWrapperPlotNavProps[]
+  portalSearchPageConfigs: (
+    | QueryWrapperPlotNavProps
+    | SearchQueryWrapperPlotNavProps
+  )[]
   searchPageTabs: PortalSearchTabConfig[]
   roleMapping?: Record<string, string>
 }

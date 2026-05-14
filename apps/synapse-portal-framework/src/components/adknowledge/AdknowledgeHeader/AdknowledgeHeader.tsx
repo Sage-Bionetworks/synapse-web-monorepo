@@ -41,8 +41,9 @@ const AdknowledgeHeader = (): React.ReactNode => {
       </Typography>
     </Box>
   )
+
   return (
-    <header>
+    <header className={styles.adknowledgeHeader}>
       <Stack className={styles.adknowledgeHeaderStack}>
         <Box className={styles.adknowledgeHeaderContentBox}>{content}</Box>
         <HeaderSearchBox

@@ -120,6 +120,7 @@ export function useSustainabilityScorecardProps(toolName: string) {
     metricsConfig: scorecardConfig,
     sustainabilityReportLink:
       TOOLS_DETAILS_PAGE_SUSTAINABILITY_AND_REUSABILITY_TAB_PATH,
+    sx: { maxWidth: '650px' },
   }
 
   return {
