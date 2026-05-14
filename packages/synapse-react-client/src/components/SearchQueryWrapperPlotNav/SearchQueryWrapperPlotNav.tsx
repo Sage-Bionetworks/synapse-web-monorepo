@@ -62,6 +62,8 @@ export type SearchQueryWrapperPlotNavProps = SearchQueryWrapperPlotNavOwnProps &
     initQueryRequest?: SearchQueryWrapperProps['initQueryRequest']
     /** Called when the query result bundle changes (e.g. to report result counts to a parent). */
     onQueryResultBundleChange?: SearchQueryWrapperProps['onQueryResultBundleChange']
+    /** Whether the URL should update when the query is modified (deep linking). */
+    shouldDeepLink?: SearchQueryWrapperProps['shouldDeepLink']
   }
 
 /**
@@ -98,6 +100,7 @@ export default function SearchQueryWrapperPlotNav(
     onQueryResultBundleChange,
     searchIndexId,
     autocompleteFieldName,
+    shouldDeepLink,
   } = props
 
   const getSuggestions = useGetSuggestionsForSearchIndex(
@@ -134,6 +137,7 @@ export default function SearchQueryWrapperPlotNav(
       initQueryRequest={initQueryRequest}
       isInfinite={isInfinite}
       onQueryResultBundleChange={onQueryResultBundleChange}
+      shouldDeepLink={shouldDeepLink}
     >
       <Suspense fallback={<QueryWrapperLoadingScreen />}>
         <QueryVisualizationWrapper
