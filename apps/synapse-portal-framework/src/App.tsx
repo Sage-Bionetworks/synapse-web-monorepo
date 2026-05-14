@@ -25,7 +25,7 @@ export default function App(props: AppProps) {
   const { defaultRealmId, requireAuthentication } = props
   useDocumentTitleFromRoutes()
   const { palette } = useTheme()
-  const { aridhiaConfig, synapseChatProps } = usePortalContext()
+  const { aridhiaConfig, synapseChatProps, navbarConfig } = usePortalContext()
   const navigate = useNavigate()
   const [chatOpen, setChatOpen] = useState(false)
   const [chatInitialMessage, setChatInitialMessage] = useState<
@@ -35,6 +35,8 @@ export default function App(props: AppProps) {
     setChatInitialMessage(initialMessage)
     setChatOpen(true)
   }, [])
+
+  const NavbarToRender = navbarConfig.NavbarComponent ?? Navbar
 
   // Create onChatResponse handler that processes XML-based navigation directives
   // in the AI response. Defined here so it captures navigate from the Router context.
@@ -55,7 +57,7 @@ export default function App(props: AppProps) {
     >
       <meta name="theme-color" content={palette.primary.main} />
       <SynapseToastContainer />
-      <Navbar />
+      <NavbarToRender />
       <CookiesNotification />
       <main className="main">
         {props.children}

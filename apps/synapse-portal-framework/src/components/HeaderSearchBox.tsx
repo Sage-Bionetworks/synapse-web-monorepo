@@ -17,6 +17,7 @@ import PortalFullTextSearchField from './PortalSearch/PortalFullTextSearchField'
 import { useNavigate } from 'react-router'
 import defaultStyles from './HeaderSearchBox.module.scss'
 import v2Styles from './HeaderSearchBoxV2.module.scss'
+import v3Styles from './HeaderSearchBoxV3.module.scss'
 import { KeyboardArrowDown } from '@mui/icons-material'
 import { useState } from 'react'
 import {
@@ -30,12 +31,13 @@ import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
 type HeaderSearchBoxProps = {
   searchPlaceholder?: string
   searchExampleTerms?: string[]
+  hideChatOption?: boolean
   // in practice, either set the path or callback.
   path?: string // redirect to this path with the search term in the search params
   callback?: (searchString: string) => void // call back this function with the search term
   sx?: SxProps
   roles?: { value: string; label: string }[]
-  variant?: 'default' | 'v2'
+  variant?: 'default' | 'v2' | 'v3'
 }
 
 const HeaderSearchBox = ({
@@ -46,8 +48,13 @@ const HeaderSearchBox = ({
   sx,
   roles,
   variant = 'default',
+  hideChatOption = false,
 }: HeaderSearchBoxProps): React.ReactNode => {
-  const styles = { ...defaultStyles, ...(variant === 'v2' ? v2Styles : {}) }
+  const styles = {
+    ...defaultStyles,
+    ...(variant === 'v2' ? v2Styles : {}),
+    ...(variant === 'v3' ? v3Styles : {}),
+  }
   const [role, setRole] = useState('')
   const [mode, setMode] = useState<'Chat' | 'Search'>('Search')
   const theme = useTheme()
@@ -89,7 +96,7 @@ const HeaderSearchBox = ({
     <Box className={styles.root} sx={sx}>
       <Stack className={styles.stack}>
         <Box className={styles.searchRow}>
-          {showChatOption ? (
+          {showChatOption && !hideChatOption ? (
             <FormControl className={styles.formControl}>
               <Select
                 className={styles.select}

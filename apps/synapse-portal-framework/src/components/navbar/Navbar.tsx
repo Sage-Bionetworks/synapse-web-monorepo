@@ -16,10 +16,13 @@ import {
   getEndpoint,
 } from 'synapse-react-client/utils/functions/index'
 import { useOneSageURL } from 'synapse-react-client/utils/hooks/useOneSageURL'
+import HeaderSearchBox from '../HeaderSearchBox'
 import NavLink from '../NavLink'
 import NavUserLink from '../NavUserLink'
 import { usePortalContext } from '../PortalContext'
 import { DropdownNavButton } from './DropdownNavButton'
+
+export type NavbarLayout = 'default' | 'with-sticky-search'
 
 type SynapseSettingLink = {
   text: string
@@ -38,6 +41,15 @@ type NavRoute = {
 export type NavbarConfig = {
   routes: NavRoute[]
   isPortalsDropdownEnabled: boolean
+  /** Optional override component; defaults to <Navbar /> when omitted */
+  NavbarComponent?: React.ComponentType
+  /** Layout variant; defaults to 'default' when omitted */
+  layout?: NavbarLayout
+  /** Required when layout === 'with-sticky-search'; configures the embedded search */
+  headerSearch?: {
+    path: string
+    placeholder?: string
+  }
 }
 
 type ConditionalNavRouteProps = {
@@ -99,12 +111,19 @@ const synapseQuickLinks: SynapseSettingLink[] = [
   },
 ]
 
-export default function Navbar() {
+type NavbarProps = {
+  /** Overrides navbarConfig.layout when provided */
+  layout?: NavbarLayout
+}
+
+export default function Navbar({ layout: layoutProp }: NavbarProps = {}) {
   const { navbarConfig, logoHeaderConfig } = usePortalContext()
   const { isAuthenticated } = useSynapseContext()
   const navigate = useNavigate()
   const { data: userProfile } = useGetCurrentUserProfile()
   const { isPortalsDropdownEnabled } = navbarConfig
+  const layout: NavbarLayout = layoutProp ?? navbarConfig.layout ?? 'default'
+  const isStickySearch = layout === 'with-sticky-search'
   const [showMenu, setShowMenu] = useState(false)
   const navRef = useRef<HTMLElement>(null)
 
@@ -186,24 +205,49 @@ export default function Navbar() {
         ref={navRef}
         component={'nav'}
         className={
-          !showMenu
-            ? 'flex-display nav top-nav'
-            : 'flex-display nav top-nav mb-active'
+          `flex-display nav top-nav mui-fixed` +
+          (showMenu ? ' mb-active' : '') +
+          (isStickySearch ? ' top-nav--with-sticky-search' : '')
         }
-        sx={RESPONSIVE_SIDE_PADDING}
+        sx={isStickySearch ? undefined : RESPONSIVE_SIDE_PADDING}
       >
-        <div className="nav-logo-container">
-          <NavLink
-            onClick={goToTop}
-            style={{ display: 'flex', alignItems: 'center' }}
-            to="/"
-            id="home-link"
-          >
-            <>
-              {imageElement} {nameElement}
-            </>
-          </NavLink>
-        </div>
+        {isStickySearch ? (
+          <div className="nav-logo-and-search-container">
+            <div className="nav-logo-container">
+              <NavLink
+                onClick={goToTop}
+                style={{ display: 'flex', alignItems: 'center' }}
+                to="/"
+                id="home-link"
+              >
+                <>
+                  {imageElement} {nameElement}
+                </>
+              </NavLink>
+            </div>
+            <HeaderSearchBox
+              variant="v3"
+              path={navbarConfig.headerSearch?.path}
+              searchPlaceholder={
+                navbarConfig.headerSearch?.placeholder ?? 'Search'
+              }
+              hideChatOption={true}
+            />
+          </div>
+        ) : (
+          <div className="nav-logo-container">
+            <NavLink
+              onClick={goToTop}
+              style={{ display: 'flex', alignItems: 'center' }}
+              to="/"
+              id="home-link"
+            >
+              <>
+                {imageElement} {nameElement}
+              </>
+            </NavLink>
+          </div>
+        )}
         <div
           className="nav-mobile-menu-btn mb-open"
           onClick={() => {

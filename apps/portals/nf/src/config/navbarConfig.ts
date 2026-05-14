@@ -93,4 +93,9 @@ export const navbarConfig: NavbarConfig = {
     },
   ],
   isPortalsDropdownEnabled: true,
+  layout: 'with-sticky-search',
+  headerSearch: {
+    path: '/Search',
+    placeholder: 'Search',
+  },
 }

@@ -79,11 +79,24 @@
 body {
   font-family: 'DM Sans', sans-serif;
   --synapse-header-height: 75px;
+  --synapse-nav-top-height: 87px;
+  --synapse-nav-bottom-height: 56px;
+  --synapse-header-height-with-sticky-search: calc(
+    var(--synapse-nav-top-height) + var(--synapse-nav-bottom-height)
+  );
   --synapse-banner-height: 47px;
+  --synapse-sticky-content-top: 100px;
   button:focus {
     // bootstrap override
     outline: var(--synapse-primary-action-color);
   }
+}
+
+// Bump the sticky offset for portals using the sticky-search nav
+body:has(.top-nav--with-sticky-search) {
+  --synapse-sticky-content-top: calc(
+    var(--synapse-header-height-with-sticky-search) + 25px
+  );
 }
 
 .nav + .spacer {
@@ -91,9 +104,25 @@ body {
   height: var(--synapse-header-height);
 }
 
+.nav.top-nav--with-sticky-search + .spacer {
+  min-height: var(--synapse-header-height-with-sticky-search);
+  height: var(--synapse-header-height-with-sticky-search);
+}
+
 #banner + .nav + .spacer {
   min-height: calc(var(--synapse-header-height) + var(--synapse-banner-height));
   height: calc(var(--synapse-header-height) + var(--synapse-banner-height));
+}
+
+#banner + .nav.top-nav--with-sticky-search + .spacer {
+  min-height: calc(
+    var(--synapse-header-height-with-sticky-search) +
+      var(--synapse-banner-height)
+  );
+  height: calc(
+    var(--synapse-header-height-with-sticky-search) +
+      var(--synapse-banner-height)
+  );
 }
 
 .flex-display {
