@@ -226,6 +226,9 @@ const SynapseComponents = {
       import('./components/TableColumnSchemaEditor/TableColumnSchemaEditor'),
   ),
   TrashCanList: lazy(() => import('./components/trash/TrashCanList')),
+  UploadCsvWizard: lazy(
+    () => import('./components/UploadCsvWizard/UploadCsvWizard'),
+  ),
   UserAccessRequestHistoryPlace: lazy(
     () =>
       import(
