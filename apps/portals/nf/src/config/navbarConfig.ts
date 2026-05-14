@@ -86,11 +86,6 @@ export const navbarConfig: NavbarConfig = {
       name: 'Help',
       path: 'https://help.nf.synapse.org/nf-data-portal-documentation',
     },
-    {
-      name: 'Admin',
-      path: 'https://www.synapse.org/Synapse:syn26451327',
-      requiredTeamId: '3378999',
-    },
   ],
   isPortalsDropdownEnabled: true,
 }
