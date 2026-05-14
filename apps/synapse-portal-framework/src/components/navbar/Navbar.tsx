@@ -202,6 +202,21 @@ export default function Navbar({ layout: layoutProp }: NavbarProps = {}) {
     setProfileMenuAnchorEl(null)
   }
 
+  const navLogoContainer = (
+    <div className="nav-logo-container">
+      <NavLink
+        onClick={goToTop}
+        style={{ display: 'flex', alignItems: 'center' }}
+        to="/"
+        id="home-link"
+      >
+        <>
+          {imageElement} {nameElement}
+        </>
+      </NavLink>
+    </div>
+  )
+
   return (
     <>
       <Box
@@ -224,18 +239,7 @@ export default function Navbar({ layout: layoutProp }: NavbarProps = {}) {
       >
         {isStickySearch ? (
           <div className="nav-logo-and-search-container">
-            <div className="nav-logo-container">
-              <NavLink
-                onClick={goToTop}
-                style={{ display: 'flex', alignItems: 'center' }}
-                to="/"
-                id="home-link"
-              >
-                <>
-                  {imageElement} {nameElement}
-                </>
-              </NavLink>
-            </div>
+            <>{navLogoContainer}</>
             <HeaderSearchBox
               variant="v3"
               path="/Search"
@@ -244,18 +248,7 @@ export default function Navbar({ layout: layoutProp }: NavbarProps = {}) {
             />
           </div>
         ) : (
-          <div className="nav-logo-container">
-            <NavLink
-              onClick={goToTop}
-              style={{ display: 'flex', alignItems: 'center' }}
-              to="/"
-              id="home-link"
-            >
-              <>
-                {imageElement} {nameElement}
-              </>
-            </NavLink>
-          </div>
+          <>{navLogoContainer}</>
         )}
         <div
           className="nav-mobile-menu-btn mb-open"
