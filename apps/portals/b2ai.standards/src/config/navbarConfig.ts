@@ -15,7 +15,7 @@ export const navbarConfig: NavbarConfig = {
     },
     {
       name: 'Explore',
-      path: '/Explore',
+      path: '/Search', // PORTALS-4227
     },
     {
       name: 'Contribute A Standard',

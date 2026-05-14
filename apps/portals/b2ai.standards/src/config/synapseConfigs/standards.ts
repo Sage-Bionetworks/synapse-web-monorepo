@@ -75,6 +75,7 @@ export const standardsSearchQueryWrapperPlotNavProps: SearchQueryWrapperPlotNavP
     },
     facetsToPlot: ['topic'],
     initialPlotTypeByFacetColumnName: { topic: 'BAR' },
-    hideTopLevelControls: true,
-    hideQueryCount: true,
+    hideTopLevelControls: false,
+    hideQueryCount: false,
+    hideCopyToClipboard: true,
   }
