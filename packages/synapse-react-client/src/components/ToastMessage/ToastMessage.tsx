@@ -90,7 +90,7 @@ type ToastMessageOptions = {
 export const displayToast = (
   message: ReactNode,
   variant?: 'info' | 'success' | 'warning' | 'danger',
-  toastMessageOptions: ToastMessageOptions = {},
+  toastMessageOptions: ToastMessageOptions | null = {},
 ): (() => void) => {
   const id = uniqueId('synToast-')
   const onClose = () => {
@@ -103,7 +103,7 @@ export const displayToast = (
     secondaryButtonConfig = undefined,
     dismissOnPrimaryButtonClick = false,
     dismissOnSecondaryButtonClick = false,
-  } = toastMessageOptions
+  } = toastMessageOptions ?? {}
 
   // If 'dismissOnPrimaryButtonClick' is true, then we need to invoke onClose after onClick is invoked.
   if (
@@ -131,7 +131,7 @@ export const displayToast = (
     }
   }
 
-  let { autoCloseInMs = 15000 } = toastMessageOptions
+  let { autoCloseInMs = 15000 } = toastMessageOptions ?? {}
   // Some toast libraries use 0 to prevent autoclose
   // react-hot-toast doesn't, but we can convert it for better compatibility as we try to migrate to use just one library
   if (autoCloseInMs === 0) {

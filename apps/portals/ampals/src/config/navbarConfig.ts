@@ -72,11 +72,6 @@ export const navbarConfig: NavbarConfig = {
       name: 'Help',
       path: 'https://als-knowledge-portal.scrollhelp.site/help/',
     },
-    {
-      name: 'Admin',
-      path: 'https://www.synapse.org/Synapse:syn64892175',
-      requiredTeamId: '3541222',
-    },
   ],
   isPortalsDropdownEnabled: false,
 }

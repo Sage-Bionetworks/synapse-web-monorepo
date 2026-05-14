@@ -19,7 +19,10 @@ const CHALLENGE_LIST_PATH = '/OpenChallenges'
  *   'brats2027': '/Challenges/DetailsPage?id=syn74274098',
  */
 const CHALLENGE_SHORTCUTS: Record<string, string> = {
+  aou_challenge2026: '/Challenges/DetailsPage?id=syn73123692',
   brats2026: '/Challenges/DetailsPage?id=syn74274097',
+  DigitalPenChallenge: '/Challenges/DetailsPage?id=syn68634259',
+  morphic_dream: '/Challenges/DetailsPage?id=syn69885382',
 }
 
 const routes: RouteObject[] = [
