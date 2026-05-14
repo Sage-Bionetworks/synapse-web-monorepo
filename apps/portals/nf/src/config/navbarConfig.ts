@@ -95,8 +95,4 @@ export const navbarConfig: NavbarConfig = {
   isPortalsDropdownEnabled: true,
   layout: 'with-sticky-search',
   stickyNavBackgroundColor: '#3B4157',
-  headerSearch: {
-    path: '/Search',
-    placeholder: 'Search',
-  },
 }

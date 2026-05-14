@@ -45,11 +45,6 @@ export type NavbarConfig = {
   NavbarComponent?: React.ComponentType
   /** Layout variant; defaults to 'default' when omitted */
   layout?: NavbarLayout
-  /** Required when layout === 'with-sticky-search'; configures the embedded search */
-  headerSearch?: {
-    path: string
-    placeholder?: string
-  }
   /** Background color for the sticky search nav link bar. Defaults to var(--synapse-secondary-action-color). */
   stickyNavBackgroundColor?: string
   /** Text color for the sticky search nav link bar. Defaults to #fff. */
@@ -243,10 +238,8 @@ export default function Navbar({ layout: layoutProp }: NavbarProps = {}) {
             </div>
             <HeaderSearchBox
               variant="v3"
-              path={navbarConfig.headerSearch?.path}
-              searchPlaceholder={
-                navbarConfig.headerSearch?.placeholder ?? 'Search'
-              }
+              path="/Search"
+              searchPlaceholder="Search"
               hideChatOption={true}
             />
           </div>
