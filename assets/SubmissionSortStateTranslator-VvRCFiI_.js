@@ -1,1 +1,0 @@
-import{n as e}from"./chunk-jRWAZmH_.js";import{Th as t,ah as n,ph as r}from"./iframe-8umnNt2a.js";function i(e){if(e.length===0)return;let n=e[0],i=r.CREATED_ON;return n.id===`createdOn`?i=r.CREATED_ON:n.id===`modifiedOn`&&(i=r.MODIFIED_ON),[{field:i,direction:n.desc?t.DESC:t.ASC}]}var a=e((()=>{n()}));export{a as n,i as t};
