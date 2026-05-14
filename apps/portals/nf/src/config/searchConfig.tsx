@@ -38,6 +38,6 @@ export const portalSearchPageConfigs = [
   nfConfigs.datasets,
   nfConfigs.files,
   nfConfigs.publications,
-  nfConfigs.tools,
+  nfConfigs.toolsSearch,
   nfConfigs.hackathons,
 ]

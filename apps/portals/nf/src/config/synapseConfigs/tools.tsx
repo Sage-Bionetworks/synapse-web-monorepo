@@ -4,6 +4,7 @@ import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import { toolsSql } from '../resources'
 import { columnAliases } from './commonProps'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 export const newToolsSql = `${toolsSql} order by ROW_ID desc limit 3`
 
@@ -73,6 +74,18 @@ const tools: QueryWrapperPlotNavProps = {
         'https://help.nf.synapse.org/NFdocs/Tips-for-Search.2640478225.html',
     },
   },
+}
+
+export const toolsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'Tools',
+  shouldDeepLink: false,
+  cardConfiguration: toolsCardConfiguration,
+  columnAliases,
+  searchIndexId: 'syn74937101', //TODO: update to the production Synapse ID once created
+  autocompleteFieldName: 'resourceName',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }
 
 export default tools
