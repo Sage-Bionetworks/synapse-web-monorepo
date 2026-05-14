@@ -26,6 +26,12 @@ import {
 import { useChatDialogContext } from './ChatDialogContext'
 import { useSynapseContext } from 'synapse-react-client'
 import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
+import { useGetSuggestionsForSearchIndex } from 'synapse-react-client/components/SearchQueryWrapper/SearchQueryUseQueryOptions'
+
+type SearchIndexConfig = {
+  searchIndexId: string
+  autocompleteFieldName: string
+}
 
 type HeaderSearchBoxProps = {
   searchPlaceholder?: string
@@ -36,6 +42,7 @@ type HeaderSearchBoxProps = {
   sx?: SxProps
   roles?: { value: string; label: string }[]
   variant?: 'default' | 'v2'
+  searchIndexConfig?: SearchIndexConfig
 }
 
 const HeaderSearchBox = ({
@@ -46,6 +53,7 @@ const HeaderSearchBox = ({
   sx,
   roles,
   variant = 'default',
+  searchIndexConfig,
 }: HeaderSearchBoxProps): React.ReactNode => {
   const styles = { ...defaultStyles, ...(variant === 'v2' ? v2Styles : {}) }
   const [role, setRole] = useState('')
@@ -58,6 +66,10 @@ const HeaderSearchBox = ({
   const isChatEnabled = useGetFeatureFlag(FeatureFlagEnum.PORTAL_CHAT)
   const showChatOption =
     isAuthenticated && chatDialogContext && isChatEnabled && isChatAvailable
+  const getSuggestions = useGetSuggestionsForSearchIndex(
+    searchIndexConfig?.searchIndexId ?? '',
+    searchIndexConfig?.autocompleteFieldName,
+  )
 
   const handleTermClick = (term: string) => {
     const trimmedTerm = term.trim()
@@ -145,6 +157,7 @@ const HeaderSearchBox = ({
             callback={handleTermClick}
             role={role}
             className={styles.searchField}
+            getSuggestions={searchIndexConfig ? getSuggestions : undefined}
           />
         </Box>
         <Stack className={styles.exampleSearchesSection}>
