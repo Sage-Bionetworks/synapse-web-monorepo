@@ -50,6 +50,10 @@ export type NavbarConfig = {
     path: string
     placeholder?: string
   }
+  /** Background color for the sticky search nav link bar. Defaults to var(--synapse-secondary-action-color). */
+  stickyNavBackgroundColor?: string
+  /** Text color for the sticky search nav link bar. Defaults to #fff. */
+  stickyNavTextColor?: string
 }
 
 type ConditionalNavRouteProps = {
@@ -121,7 +125,11 @@ export default function Navbar({ layout: layoutProp }: NavbarProps = {}) {
   const { isAuthenticated } = useSynapseContext()
   const navigate = useNavigate()
   const { data: userProfile } = useGetCurrentUserProfile()
-  const { isPortalsDropdownEnabled } = navbarConfig
+  const {
+    isPortalsDropdownEnabled,
+    stickyNavBackgroundColor,
+    stickyNavTextColor,
+  } = navbarConfig
   const layout: NavbarLayout = layoutProp ?? navbarConfig.layout ?? 'default'
   const isStickySearch = layout === 'with-sticky-search'
   const [showMenu, setShowMenu] = useState(false)
@@ -210,6 +218,14 @@ export default function Navbar({ layout: layoutProp }: NavbarProps = {}) {
           (isStickySearch ? ' top-nav--with-sticky-search' : '')
         }
         sx={isStickySearch ? undefined : RESPONSIVE_SIDE_PADDING}
+        style={
+          isStickySearch
+            ? ({
+                '--sticky-nav-bg': stickyNavBackgroundColor,
+                '--sticky-nav-color': stickyNavTextColor,
+              } as React.CSSProperties)
+            : undefined
+        }
       >
         {isStickySearch ? (
           <div className="nav-logo-and-search-container">

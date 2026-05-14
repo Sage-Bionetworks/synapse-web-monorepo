@@ -39,17 +39,20 @@
     }
 
     .nav-link-container {
-      background-color: var(--synapse-primary-action-color);
+      background-color: var(
+        --sticky-nav-bg,
+        var(--synapse-secondary-action-color)
+      );
       flex: 0 0 var(--synapse-nav-bottom-height);
       padding: 0 40px;
       align-items: center;
 
       .nav-button {
-        color: #fff;
+        color: var(--sticky-nav-color, #fff);
       }
 
       .user-loggedIn svg {
-        color: #fff;
+        color: var(--sticky-nav-color, #fff);
       }
     }
 
@@ -59,11 +62,11 @@
     }
 
     #signin-button {
-      background-color: #fff;
-      color: var(--synapse-primary-action-color);
+      background-color: var(--sticky-nav-color, #fff);
+      color: var(--sticky-nav-bg, var(--synapse-secondary-action-color));
 
       &:hover {
-        background-color: #fff;
+        background-color: var(--sticky-nav-color, #fff);
       }
     }
   }
@@ -99,6 +102,21 @@
     .nav-link-container {
       flex: 1 1 100%;
       background-color: #fff;
+
+      #signin-button.signout-button-mb {
+        background-color: var(
+          --sticky-nav-bg,
+          var(--synapse-secondary-action-color)
+        );
+        color: var(--sticky-nav-color, #fff);
+
+        &:hover {
+          background-color: var(
+            --sticky-nav-bg,
+            var(--synapse-secondary-action-color)
+          );
+        }
+      }
     }
   }
 }

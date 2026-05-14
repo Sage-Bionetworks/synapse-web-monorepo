@@ -64,6 +64,7 @@ export const navbarConfig: NavbarConfig = {
   ],
   isPortalsDropdownEnabled: false,
   NavbarComponent: AdkpNavbar,
+  stickyNavBackgroundColor: '#5A488F',
   headerSearch: {
     path: '/Search',
     placeholder: 'Search',
