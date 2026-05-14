@@ -403,7 +403,9 @@ function ChallengeTeamWizard(props: ChallengeTeamWizardProps) {
       onCancel={hide}
       open={isShowingModal}
       actions={actions}
-      title={getStepDialogTitle(step)}
+      title={`Challenge Registration (Step 2 of 2): ${getStepDialogTitle(
+        step,
+      )}`}
       content={
         <SynapseErrorBoundary>
           <Box

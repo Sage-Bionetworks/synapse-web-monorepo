@@ -127,7 +127,7 @@ export default function ChallengeRequirementsModal(
 
   return (
     <AccessRequirementList
-      dialogTitle={`Challenge Terms and Conditions`}
+      dialogTitle={`Challenge Registration (Step 1 of 2): Terms and Conditions`}
       subjectId={participantTeamId}
       subjectType={RestrictableObjectType.TEAM}
       teamId={challenge?.participantTeamId}
