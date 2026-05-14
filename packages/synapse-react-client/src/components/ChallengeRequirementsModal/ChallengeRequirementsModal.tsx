@@ -104,9 +104,7 @@ export default function ChallengeRequirementsModal(
 
   // It's possible that the user joined the team, but requirements on the team changed since they became a member
   // They do not need to re-join the team, but they should still be prompted to accept the requirements
-  let registerButtonText = teamMembershipStatus?.isMember
-    ? 'Continue'
-    : 'Register'
+  let registerButtonText = 'Next Step'
   if (registrationIsPending) {
     registerButtonText = 'Registering...'
   }
