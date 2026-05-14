@@ -67,6 +67,7 @@ export const standardsSearchQueryWrapperPlotNavProps: SearchQueryWrapperPlotNavP
     searchIndexId: 'syn74909093',
     autocompleteFieldName: 'name',
     rgbIndex: standardsRgbIndex,
+    shouldDeepLink: true,
     name: 'Standards',
     columnAliases,
     tableConfiguration: {

@@ -61,6 +61,8 @@ export type SearchQueryWrapperProps = PropsWithChildren<{
   /** If onQueryResultBundleChange is set, it will be called whenever the query result bundle changes */
   onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
   isInfinite?: boolean
+  /** Whether the URL should update when the query is modified (deep linking). */
+  shouldDeepLink?: boolean
 }>
 
 /**
@@ -105,6 +107,7 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
     onQueryResultBundleChange,
     isInfinite = false,
     searchIndexId,
+    shouldDeepLink = false,
   } = props
 
   const { keyFactory, accessToken } = useSynapseContext()
@@ -150,6 +153,7 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
   const immutableTableQueryResult = useImmutableTableQuery({
     initQueryRequest,
     onQueryChange,
+    shouldDeepLink,
   })
 
   const {
