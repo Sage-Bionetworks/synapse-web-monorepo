@@ -72,7 +72,11 @@ const HeaderSearchBox = ({
   const isChatAvailable = chatDialogContext?.isChatAvailable
   const isChatEnabled = useGetFeatureFlag(FeatureFlagEnum.PORTAL_CHAT)
   const showChatOption =
-    isAuthenticated && chatDialogContext && isChatEnabled && isChatAvailable
+    isAuthenticated &&
+    chatDialogContext &&
+    isChatEnabled &&
+    isChatAvailable &&
+    !hideChatOption
   const getSuggestions = useGetSuggestionsForSearchIndex(
     searchIndexConfig?.searchIndexId ?? '',
     searchIndexConfig?.autocompleteFieldName,
@@ -108,7 +112,7 @@ const HeaderSearchBox = ({
     <Box className={styles.root} sx={sx}>
       <Stack className={styles.stack}>
         <Box className={styles.searchRow}>
-          {showChatOption && !hideChatOption ? (
+          {showChatOption ? (
             <FormControl className={styles.formControl}>
               <Select
                 className={styles.select}
