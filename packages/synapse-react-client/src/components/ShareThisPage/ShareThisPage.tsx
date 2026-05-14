@@ -85,7 +85,7 @@ const ShareThisPage = ({
       {renderAs === 'button' && (
         <Button
           variant="outlined"
-          endIcon={<ShareTwoTone className={styles.shareIcon} />}
+          startIcon={<ShareTwoTone className={styles.shareIcon} />}
           onClick={handleOpen}
         >
           Share
