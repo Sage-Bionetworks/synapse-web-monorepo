@@ -21,6 +21,14 @@ const tableInfo: TableInfoMap = {
   },
   DataSubstrate: { name: 'DataSubstrate', id: 'syn63096834' },
   DataTopic: { name: 'DataTopic', id: 'syn63096835' },
+  // TODO: update synId once DataTopic_denormalized is created in
+  // b2ai-standards-registry (scripts/create_denormalized_tables.py) and
+  // pushed to Synapse. The table needs Synapse public-access approval before
+  // production, but can be referenced from local/staging immediately.
+  DataTopic_denormalized: {
+    name: 'DataTopic_denormalized',
+    id: 'TBD_DATATOPIC_DENORMALIZED_SYN_ID',
+  },
   // Organization: { name: 'Organization', id: 'syn63096836.31' },
   Organization_denormalized: {
     name: 'Organization',
@@ -230,6 +238,43 @@ export const standardsFtsConfig: FTSConfig = {
   textMatchesMode: 'BOOLEAN',
   distance: 50,
 }
+
+export const TOPIC_TABLE_COLUMN_CONSTS: ColumnConsts & {
+  NAME: string
+  DESCRIPTION: string
+} = {
+  ID: 'id',
+  CATEGORY: 'category',
+  NAME: 'name',
+  DESCRIPTION: 'description',
+  SUBCLASS_OF: 'subclass_of',
+  RELATED_TO: 'related_to',
+  EDAM_ID: 'edam_id',
+  MESH_ID: 'mesh_id',
+  NCIT_ID: 'ncit_id',
+  CONTRIBUTOR_NAME: 'contributor_name',
+  CONTRIBUTOR_GITHUB_NAME: 'contributor_github_name',
+  CONTRIBUTOR_ORCID: 'contributor_orcid',
+  // Count columns (camelCase) populated by b2ai-standards-registry's
+  // create_denormalized_tables.py. Missing on raw DataTopic.
+  PARENT_COUNT: 'parentCount',
+  CHILD_COUNT: 'childCount',
+  RELATED_TOPIC_COUNT: 'relatedTopicCount',
+  STANDARD_COUNT: 'standardCount',
+  DATASET_COUNT: 'datasetCount',
+  MANIFEST_COUNT: 'manifestCount',
+} as const
+tableInfo.DataTopic_denormalized.columnConsts = TOPIC_TABLE_COLUMN_CONSTS
+
+// SELECT everything from DataTopic_denormalized — the table is small (~50 rows)
+// so the whole thing is loaded once and the hierarchy widget operates on it
+// in-memory.
+export const topicDetailsPageSQL = `
+  SELECT ${Object.values(TOPIC_TABLE_COLUMN_CONSTS).join(', ')}
+  FROM ${tableInfo.DataTopic_denormalized.id}
+`
+tableInfo.DataTopic_denormalized.queries ??= {}
+tableInfo.DataTopic_denormalized.queries.detailsSQL = topicDetailsPageSQL
 
 export function getTableInfo(tableName: string): TableInfo {
   const tinfo = tableInfo[tableName]
