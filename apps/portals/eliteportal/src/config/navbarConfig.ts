@@ -24,8 +24,6 @@ export const navbarConfig: NavbarConfig = {
       name: 'Explore',
       path: '/Explore',
       children: [
-        { name: 'Data', path: '/Explore/Data' },
-        { name: 'Cohort Builder', path: '/Explore/Cohort Builder/Individuals' },
         {
           name: 'Programs',
           path: '/Explore/Programs',
@@ -38,8 +36,13 @@ export const navbarConfig: NavbarConfig = {
           name: 'Studies',
           path: '/Explore/Studies',
         },
+        { name: 'Files', path: '/Explore/Data' },
+        {
+          name: 'Cohort Discovery',
+          path: '/Explore/Cohort Builder/Individuals',
+        },
         { name: 'Publications', path: '/Explore/Publications' },
-        { name: 'Computational Tools', path: '/Explore/Computational Tools' },
+        { name: 'Tools', path: '/Explore/Computational Tools' },
         { name: 'People', path: '/Explore/People' },
       ],
     },
