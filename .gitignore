@@ -58,6 +58,9 @@ apps/portals/*/public/deploy-date.txt
 
 .nx/key
 
+# actionlint binary (installed by scripts/install-actionlint.sh)
+/bin/
+
 # Claude worktrees
 .claude/worktrees
 # worktree setup sentinel (created during pnpm install in new worktrees)
