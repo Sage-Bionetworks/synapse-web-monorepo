@@ -43,7 +43,10 @@ function DatasetsDetailsPage() {
               CardTypeAdornment: DatasetHeaderCardTypeAdornment,
             }}
             sql={datasetsSql}
-            columnAliases={columnAliases}
+            columnAliases={{
+              ...columnAliases,
+              externalLink: 'Source Repository Link',
+            }}
             sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
             searchParams={{ datasetId }}
           />
