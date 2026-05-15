@@ -40,7 +40,7 @@ const DetailsPageMenu = ({
     <Stack
       sx={{
         position: 'sticky',
-        top: '100px',
+        top: 'var(--synapse-sticky-content-top)',
         zIndex: 1000,
         paddingBottom: '16px',
         padding: '10px 0px 20px 0px',

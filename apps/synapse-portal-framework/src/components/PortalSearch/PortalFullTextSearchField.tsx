@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import SearchIcon from '@mui/icons-material/Search'
 import {
   Autocomplete,
@@ -33,10 +33,18 @@ export function PortalFullTextSearchField({
   ...props
 }: PortalFullTextSearchFieldProps) {
   const [searchParams] = useSearchParams()
-  const [searchInput, setSearchInput] = useState(searchParams.get(SEARCH_TERM))
+  const [searchInput, setSearchInput] = useState(
+    searchParams.get(SEARCH_TERM) ?? '',
+  )
   const [suggestions, setSuggestions] = useState<string[]>([])
   const theme = useTheme()
   const navigate = useNavigate()
+
+  // Keep the input in sync with URL changes so multiple instances
+  // (e.g. sticky nav + search page) reflect the same SEARCH_TERM.
+  useEffect(() => {
+    setSearchInput(searchParams.get(SEARCH_TERM) ?? '')
+  }, [searchParams])
 
   useDebouncedEffect(
     () => {

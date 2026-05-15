@@ -88,4 +88,6 @@ export const navbarConfig: NavbarConfig = {
     },
   ],
   isPortalsDropdownEnabled: true,
+  layout: 'with-sticky-search',
+  stickyNavBackgroundColor: '#3B4157',
 }
