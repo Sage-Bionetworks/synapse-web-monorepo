@@ -59,7 +59,7 @@ describe('ChallengeTeamWizard tests', () => {
   it('Shows the modal and starts on the "select team" step', async () => {
     const { dialog } = renderComponent()
     await within(dialog).findByRole('heading', {
-      name: 'Select Your Challenge Team',
+      name: 'Challenge Registration (Step 2 of 2): Select Your Submission Team',
     })
   })
 
@@ -83,7 +83,7 @@ describe('ChallengeTeamWizard tests', () => {
     await user.click(joinTeamButton)
 
     await within(dialog).findByRole('heading', {
-      name: 'Registration Successful!',
+      name: 'Challenge Registration (Step 2 of 2): Registration Successful!',
     })
 
     await within(dialog).findByText(`You have successfully joined team`, {
@@ -117,7 +117,7 @@ describe('ChallengeTeamWizard tests', () => {
     await user.click(requestToJoinTeamButton)
 
     await within(dialog).findByRole('heading', {
-      name: 'Request Team Membership',
+      name: 'Challenge Registration (Step 2 of 2): Request Team Membership',
     })
     await within(dialog).findByText(
       'The following message will be sent to the Team Manager(s)',
@@ -134,7 +134,7 @@ describe('ChallengeTeamWizard tests', () => {
     await user.click(sendRequestButton)
 
     await within(dialog).findByRole('heading', {
-      name: 'Request Sent',
+      name: 'Challenge Registration (Step 2 of 2): Request Sent',
     })
 
     await within(dialog).findByText(
@@ -169,7 +169,7 @@ describe('ChallengeTeamWizard tests', () => {
     await user.click(viewInvitationButton)
 
     await within(dialog).findByRole('heading', {
-      name: 'Invitation to Join Team',
+      name: 'Challenge Registration (Step 2 of 2): Invitation to Join Team',
     })
     await within(dialog).findByText('Do you want to accept this invitation?')
 
@@ -180,7 +180,7 @@ describe('ChallengeTeamWizard tests', () => {
     await user.click(acceptInvitationButton)
 
     await within(dialog).findByRole('heading', {
-      name: 'Registration Successful!',
+      name: 'Challenge Registration (Step 2 of 2): Registration Successful!',
     })
 
     await within(dialog).findByText(`You have successfully joined team`, {
@@ -227,7 +227,7 @@ describe('ChallengeTeamWizard tests', () => {
 
     await user.click(createNewTeamButton)
     await within(dialog).findByRole('heading', {
-      name: 'Create Team',
+      name: 'Challenge Registration (Step 2 of 2): Create Team',
     })
     const teamNameField = await within(dialog).findByRole('textbox', {
       name: 'Team Name',
@@ -241,7 +241,7 @@ describe('ChallengeTeamWizard tests', () => {
     await user.click(finishCreatingTeamButton)
 
     await within(dialog).findByRole('heading', {
-      name: 'Registration Successful!',
+      name: 'Challenge Registration (Step 2 of 2): Registration Successful!',
     })
 
     await within(dialog).findByText(`You have successfully created team`, {

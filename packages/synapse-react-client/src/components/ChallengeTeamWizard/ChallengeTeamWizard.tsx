@@ -39,7 +39,7 @@ enum ChallengeTeamWizardStep {
 function getStepDialogTitle(step: ChallengeTeamWizardStep) {
   switch (step) {
     case ChallengeTeamWizardStep.SELECT_YOUR_CHALLENGE_TEAM:
-      return 'Select Your Challenge Team'
+      return 'Select Your Submission Team'
     case ChallengeTeamWizardStep.ACCEPT_INVITATION:
       return 'Invitation to Join Team'
     case ChallengeTeamWizardStep.JOIN_REQUEST_FORM:
@@ -403,7 +403,9 @@ function ChallengeTeamWizard(props: ChallengeTeamWizardProps) {
       onCancel={hide}
       open={isShowingModal}
       actions={actions}
-      title={getStepDialogTitle(step)}
+      title={`Challenge Registration (Step 2 of 2): ${getStepDialogTitle(
+        step,
+      )}`}
       content={
         <SynapseErrorBoundary>
           <Box

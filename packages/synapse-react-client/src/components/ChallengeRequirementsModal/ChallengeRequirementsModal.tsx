@@ -104,9 +104,7 @@ export default function ChallengeRequirementsModal(
 
   // It's possible that the user joined the team, but requirements on the team changed since they became a member
   // They do not need to re-join the team, but they should still be prompted to accept the requirements
-  let registerButtonText = teamMembershipStatus?.isMember
-    ? 'Continue'
-    : 'Register'
+  let registerButtonText = 'Next Step'
   if (registrationIsPending) {
     registerButtonText = 'Registering...'
   }
@@ -129,7 +127,7 @@ export default function ChallengeRequirementsModal(
 
   return (
     <AccessRequirementList
-      dialogTitle={`Challenge Terms and Conditions`}
+      dialogTitle={`Challenge Registration (Step 1 of 2): Terms and Conditions`}
       subjectId={participantTeamId}
       subjectType={RestrictableObjectType.TEAM}
       teamId={challenge?.participantTeamId}
