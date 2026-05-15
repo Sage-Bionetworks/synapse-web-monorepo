@@ -2,11 +2,9 @@ import {
   NEGATIVE_RESPONSIVE_SIDE_MARGIN,
   RESPONSIVE_SIDE_PADDING,
 } from '@/utils'
-import { getPortalOrigin } from '@/utils/getPortalOrigin'
-import { useSetCanonicalUrl } from '@/utils/useSetCanonicalUrl'
 import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material'
 import { Box, Typography, useMediaQuery, useTheme } from '@mui/material'
-import { Suspense, useState } from 'react'
+import { useState } from 'react'
 import { Outlet, useLocation, useMatch, useNavigation } from 'react-router'
 import OrientationBanner from 'synapse-react-client/components/OrientationBanner/OrientationBanner'
 import { ExplorePageRoute, ExploreWrapperProps } from './ExploreWrapperProps'
@@ -15,7 +13,6 @@ import { useDocumentMetadata } from 'synapse-react-client/utils/context/Document
 import { matchPath } from 'react-router'
 import React from 'react'
 import { usePortalContext } from '@/components/PortalContext'
-import loadingScreen from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
 
 function RouteMatchedOrientationBanner(props: {
   route: ExplorePageRoute
@@ -53,7 +50,7 @@ export default function ExploreWrapper(
       matchPath({ path: routePath, end: false }, effectivePathname),
     )
   })
-  const { portalName, portalKey } = usePortalContext()
+  const { portalName } = usePortalContext()
   const pageName =
     currentRoute?.displayName ??
     currentRoute?.path?.replaceAll('/', '') ??
@@ -61,10 +58,6 @@ export default function ExploreWrapper(
 
   const newTitle: string = `${portalName} - ${pageName}`
   useDocumentMetadata({ title: newTitle, priority: 50 })
-
-  // The canonical URL is the explore route with no searchParams
-  const origin = getPortalOrigin(portalKey)
-  useSetCanonicalUrl(new URL(pathname, origin).toString())
 
   return (
     <>
@@ -121,9 +114,7 @@ export default function ExploreWrapper(
           },
         }}
       >
-        <Suspense fallback={loadingScreen}>
-          <Outlet />
-        </Suspense>
+        <Outlet />
       </Box>
     </>
   )
