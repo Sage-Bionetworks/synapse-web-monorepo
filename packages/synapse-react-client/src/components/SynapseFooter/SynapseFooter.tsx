@@ -347,7 +347,9 @@ export function SynapseFooter({
             </Stack>
           )}
         </Box>
-        <ExperimentalMode onExperimentalModeToggle={onExperimentalModeToggle} />
+        <ExperimentalMode
+          onExperimentalModeToggle={onExperimentalModeToggle}
+        />
       </Box>
     </Box>
   )
