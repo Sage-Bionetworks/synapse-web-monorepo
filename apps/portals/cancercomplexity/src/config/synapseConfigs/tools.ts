@@ -39,7 +39,8 @@ export const toolsConfiguration: CardConfiguration = {
     isMarkdown: false,
     URLColumnName: 'toolName',
     matchColumnName: 'toolName',
-    baseURL: 'Explore/Tools/DetailsPage',
+    baseURL: 'Explore/Tools',
+    urlParamStyle: 'path-segment',
   },
   labelLinkConfig: [
     {

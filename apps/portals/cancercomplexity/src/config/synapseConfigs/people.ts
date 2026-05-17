@@ -32,7 +32,8 @@ export const peopleCardConfiguration: CardConfiguration = {
     isMarkdown: false,
     URLColumnName: 'name',
     matchColumnName: 'name',
-    baseURL: 'Explore/People/DetailsPage',
+    baseURL: 'Explore/People',
+    urlParamStyle: 'path-segment',
   },
   labelLinkConfig: [
     {

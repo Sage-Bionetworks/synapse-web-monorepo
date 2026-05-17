@@ -18,6 +18,6 @@ export default createReactRouterConfig({
     hackathonMetadata,
     orgMetadata,
   ],
-  // NF is the only portal that ships Croissant JSON-LD for datasets.
+  // Include JSON-LD for datasets.
   additionalPreloads: [preloadAllCroissantMetadata],
 })

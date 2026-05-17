@@ -664,18 +664,33 @@ importers:
       '@mui/material':
         specifier: ^7.1.1
         version: 7.1.1(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(@types/react@19.2.14)(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@react-router/node':
+        specifier: ^7.14.0
+        version: 7.14.2(react-router@7.14.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(typescript@6.0.3)
       '@sage-bionetworks/synapse-portal-framework':
         specifier: workspace:*
         version: link:../../synapse-portal-framework
       '@sage-bionetworks/synapse-types':
         specifier: workspace:*
         version: link:../../../packages/synapse-types
+      '@tanstack/react-query':
+        specifier: ^5.80.7
+        version: 5.80.10(react@19.2.5)
+      isbot:
+        specifier: ^5
+        version: 5.1.35
+      jsdom:
+        specifier: ^28.1.0
+        version: 28.1.0
       katex:
         specifier: ^0.16.22
         version: 0.16.22
       react:
         specifier: ^19.2.5
         version: 19.2.5
+      react-cookie:
+        specifier: ^7.2.2
+        version: 7.2.2(react@19.2.5)
       react-dom:
         specifier: ^19.2.5
         version: 19.2.5(react@19.2.5)
@@ -689,6 +704,12 @@ importers:
         specifier: ^8.0.8
         version: 8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1)
     devDependencies:
+      '@react-router/dev':
+        specifier: ^7.14.0
+        version: 7.14.2(@types/node@22.19.13)(babel-plugin-macros@3.1.0)(lightningcss@1.32.0)(react-router@7.14.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(typescript@6.0.3)(vite@8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))(yaml@2.7.1)
+      '@types/node':
+        specifier: ^22.19.13
+        version: 22.19.13
       '@types/react':
         specifier: 19.2.14
         version: 19.2.14
@@ -710,9 +731,12 @@ importers:
       vite-plugin-node-polyfills:
         specifier: ^0.26.0
         version: 0.26.0(rollup@4.60.2)(vite@8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
+      vite-plugin-svgr:
+        specifier: ^5.2.0
+        version: 5.2.0(rollup@4.60.2)(typescript@6.0.3)(vite@8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
       vitest:
         specifier: ^4.1.4
-        version: 4.1.5(@types/node@22.19.13)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@6.0.3))(vite@8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
+        version: 4.1.5(@types/node@22.19.13)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@28.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@6.0.3))(vite@8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
 
   apps/portals/challenges:
     dependencies:

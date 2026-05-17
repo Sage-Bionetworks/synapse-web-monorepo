@@ -1,12 +1,20 @@
-/**
- * Sitemap route extraction entry point for Cancer Complexity.
- *
- * This script is compiled by Vite in SSR mode to extract the route tree
- * and write it to a JSON file for sitemap generation.
- *
- * Usage: vite build --config sitemap.vite.config.ts && node build/sitemap-entry.mjs
- */
-import routes from '@/config/routesConfig'
-import { generateSitemapRoutesFile } from '@sage-bionetworks/synapse-portal-framework/sitemap/generateSitemapEntry'
+import * as fs from 'fs'
+import * as path from 'path'
 
-generateSitemapRoutesFile(routes)
+const staticRoutes = [
+  '/',
+  '/Explore/Grants',
+  '/Explore/People',
+  '/Explore/Publications',
+  '/Explore/Datasets',
+  '/Explore/Tools',
+  '/Explore/Educational%20Resources',
+  '/Search',
+  '/MC2Supplement',
+]
+
+const outputPath = path.join(process.cwd(), 'build', 'sitemap-routes.json')
+const dir = path.dirname(outputPath)
+if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
+fs.writeFileSync(outputPath, JSON.stringify(staticRoutes, null, 2))
+console.log(`Wrote ${staticRoutes.length} routes to ${outputPath}`)
