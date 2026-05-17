@@ -41,7 +41,8 @@ export const publicationsCardConfiguration: CardConfiguration = {
     isMarkdown: false,
     URLColumnName: 'pubMedId',
     matchColumnName: 'pubMedId',
-    baseURL: 'Explore/Publications/DetailsPage',
+    baseURL: 'Explore/Publications',
+    urlParamStyle: 'path-segment',
   },
   labelLinkConfig: [
     {
@@ -54,15 +55,17 @@ export const publicationsCardConfiguration: CardConfiguration = {
     },
     {
       isMarkdown: false,
-      baseURL: 'Explore/Grants/DetailsPage',
+      baseURL: 'Explore/Grants',
       matchColumnName: 'grantName',
       URLColumnName: 'grantName',
+      urlParamStyle: 'path-segment',
     },
     {
       isMarkdown: false,
-      baseURL: 'Explore/Datasets/DetailsPage',
+      baseURL: 'Explore/Datasets',
       URLColumnName: 'datasetAlias',
       matchColumnName: 'dataset',
+      urlParamStyle: 'path-segment',
     },
   ],
   columnIconOptions: columnIconConfigs,

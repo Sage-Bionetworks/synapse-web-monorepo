@@ -40,7 +40,8 @@ export const educationCardConfiguration: CardConfiguration = {
     isMarkdown: false,
     URLColumnName: 'title',
     matchColumnName: 'title',
-    baseURL: 'Explore/Educational Resources/DetailsPage',
+    baseURL: 'Explore/Educational Resources',
+    urlParamStyle: 'path-segment',
   },
   labelLinkConfig: [
     {
@@ -104,7 +105,8 @@ export const educationDetailsCardConfiguration: CardConfiguration = {
     isMarkdown: false,
     URLColumnName: 'title',
     matchColumnName: 'title',
-    baseURL: 'Explore/Educational Resources/DetailsPage',
+    baseURL: 'Explore/Educational Resources',
+    urlParamStyle: 'path-segment',
   },
   labelLinkConfig: [
     {
