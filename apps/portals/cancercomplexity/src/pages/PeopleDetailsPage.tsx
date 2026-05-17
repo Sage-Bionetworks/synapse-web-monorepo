@@ -1,13 +1,15 @@
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
-import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
+import { createDetailPageRouteExports } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { useParams } from 'react-router'
 import ErrorPage, {
   SynapseErrorType,
 } from 'synapse-react-client/components/error/ErrorPage'
 import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic/index'
 import columnAliases from '../config/columnAliases'
+import { portalMetadata } from '../config/portalMetadata'
 import {
   datasetsSql,
   grantsSql,
@@ -21,9 +23,20 @@ import { grantsCardConfiguration } from '../config/synapseConfigs/grants'
 import { peopleCardConfiguration } from '../config/synapseConfigs/people'
 import { publicationsCardConfiguration } from '../config/synapseConfigs/publications'
 import { toolsConfiguration } from '../config/synapseConfigs/tools'
+import { metadataConfig } from './PeopleDetailsPage.config'
+
+export { metadataConfig }
+
+const _routeExports = createDetailPageRouteExports(
+  metadataConfig,
+  portalMetadata,
+)
+export const loader = _routeExports.loader
+export const clientLoader = _routeExports.clientLoader
+export const meta = _routeExports.meta
 
 function PeopleDetailsPage() {
-  const { name } = useGetPortalComponentSearchParams()
+  const { name } = useParams<{ name: string }>()
 
   if (!name) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
@@ -48,8 +61,10 @@ function PeopleDetailsPage() {
         />
       }
       sql={peopleSql}
+      searchParams={{ name }}
       sqlOperator={ColumnSingleValueFilterOperator.LIKE}
       resourcePrimaryKey={['name']}
+      disableCanonicalUrl
     >
       <DetailsPageContent
         content={[

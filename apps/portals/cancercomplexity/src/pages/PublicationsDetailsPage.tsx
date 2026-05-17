@@ -1,12 +1,14 @@
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
-import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
+import { createDetailPageRouteExports } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
 import {
-  ColumnSingleValueFilterOperator,
   ColumnMultiValueFunction,
+  ColumnSingleValueFilterOperator,
 } from '@sage-bionetworks/synapse-types'
+import { useParams } from 'react-router'
 import columnAliases from '../config/columnAliases'
+import { portalMetadata } from '../config/portalMetadata'
 import {
   datasetsSql,
   grantsSql,
@@ -24,9 +26,20 @@ import ErrorPage, {
   SynapseErrorType,
 } from 'synapse-react-client/components/error/ErrorPage'
 import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic/index'
+import { metadataConfig } from './PublicationsDetailsPage.config'
+
+export { metadataConfig }
+
+const _routeExports = createDetailPageRouteExports(
+  metadataConfig,
+  portalMetadata,
+)
+export const loader = _routeExports.loader
+export const clientLoader = _routeExports.clientLoader
+export const meta = _routeExports.meta
 
 function PublicationsDetailsPage() {
-  const { pubMedId } = useGetPortalComponentSearchParams()
+  const { pubMedId } = useParams<{ pubMedId: string }>()
 
   if (!pubMedId) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
@@ -53,8 +66,10 @@ function PublicationsDetailsPage() {
         </>
       }
       sql={publicationSql}
+      searchParams={{ pubMedId }}
       sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
       resourcePrimaryKey={['pubMedId']}
+      disableCanonicalUrl
     >
       <DetailsPageContent
         content={[

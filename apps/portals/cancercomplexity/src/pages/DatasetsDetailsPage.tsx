@@ -1,13 +1,18 @@
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
-import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
+import {
+  BaseDetailPageLoaderData,
+  createDetailPageRouteExports,
+} from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
+import { useParams } from 'react-router'
 import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic/index'
 import ErrorPage, {
   SynapseErrorType,
 } from 'synapse-react-client/components/error/ErrorPage'
 import columnAliases from '../config/columnAliases'
+import { portalMetadata } from '../config/portalMetadata'
 import {
   datasetsSql,
   grantsSql,
@@ -23,9 +28,36 @@ import { grantsCardConfiguration } from '../config/synapseConfigs/grants'
 import { peopleCardConfiguration } from '../config/synapseConfigs/people'
 import { publicationsCardConfiguration } from '../config/synapseConfigs/publications'
 import { DatasetJsonLdScript } from 'synapse-react-client/components/DatasetJsonLdScript'
+import { metadataConfig } from './DatasetsDetailsPage.config'
+import { fetchCroissantMetadata } from '@sage-bionetworks/synapse-portal-framework/utils/fetchCroissantMetadata'
+
+export { metadataConfig }
+
+type PageParams = { datasetId: string }
+
+interface DatasetLoaderData extends BaseDetailPageLoaderData {
+  croissantJsonLd: Record<string, unknown> | null
+}
+
+const _routeExports = createDetailPageRouteExports<DatasetLoaderData>(
+  metadataConfig,
+  portalMetadata,
+  {
+    extendLoader: async (_base, params: PageParams) => ({
+      croissantJsonLd: params.datasetId
+        ? await fetchCroissantMetadata(params.datasetId)
+        : null,
+    }),
+    extendMeta: data =>
+      data.croissantJsonLd ? [{ 'script:ld+json': data.croissantJsonLd }] : [],
+  },
+)
+export const loader = _routeExports.loader
+export const clientLoader = _routeExports.clientLoader
+export const meta = _routeExports.meta
 
 function DatasetsDetailsPage() {
-  const { datasetId } = useGetPortalComponentSearchParams()
+  const { datasetId } = useParams<PageParams>()
 
   if (!datasetId) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
@@ -53,8 +85,10 @@ function DatasetsDetailsPage() {
         </>
       }
       sql={datasetsSql}
+      searchParams={{ datasetId }}
       sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
       resourcePrimaryKey={['datasetId']}
+      disableCanonicalUrl
     >
       <DetailsPageContent
         content={[

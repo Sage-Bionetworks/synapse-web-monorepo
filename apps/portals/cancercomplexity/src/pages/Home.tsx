@@ -8,11 +8,39 @@ import CancerComplexityHeader from '@sage-bionetworks/synapse-portal-framework/c
 import CancerComplexityIntro from '@sage-bionetworks/synapse-portal-framework/components/cancercomplexity/CancerComplexityIntro'
 import CCKPDevelopedBySage from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/CCKPDevelopedBySage'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
+import { mergeMeta } from '@sage-bionetworks/synapse-portal-framework/utils/mergeMeta'
+import type { MetaArgs, MetaDescriptor } from 'react-router'
 import { Goals } from 'synapse-react-client/components/Goals/Goals'
 import TableQueryEcosystem from 'synapse-react-client/components/Ecosystem/TableQueryEcosystem'
 import { ThemesPlot } from 'synapse-react-client/components/Plot/ThemesPlot'
 import Programs from 'synapse-react-client/components/Programs/index'
 import RssFeedCards from 'synapse-react-client/components/RssFeedCards/index'
+
+export function meta(args: MetaArgs): MetaDescriptor[] {
+  const portalDescription = import.meta.env.VITE_PORTAL_DESCRIPTION
+  const portalUrl = `https://${import.meta.env.VITE_PORTAL_KEY}.synapse.org`
+  return mergeMeta(args, [
+    { title: import.meta.env.VITE_PORTAL_NAME },
+    { name: 'description', content: portalDescription },
+    {
+      'script:ld+json': {
+        '@context': 'https://schema.org',
+        '@type': 'DataCatalog',
+        '@id': portalUrl,
+        name: import.meta.env.VITE_PORTAL_NAME,
+        description: portalDescription,
+        provider: [
+          {
+            '@type': 'Organization',
+            '@id': 'Sage Bionetworks',
+            name: 'Sage Bionetworks',
+            url: 'https://www.synapse.org/',
+          },
+        ],
+      },
+    },
+  ])
+}
 
 function Home() {
   return (

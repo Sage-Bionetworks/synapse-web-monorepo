@@ -1,12 +1,18 @@
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
-import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
+import { createDetailPageRouteExports } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
 import {
   ColumnMultiValueFunction,
   ColumnSingleValueFilterOperator,
 } from '@sage-bionetworks/synapse-types'
+import { useParams } from 'react-router'
+import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic/index'
+import ErrorPage, {
+  SynapseErrorType,
+} from 'synapse-react-client/components/error/ErrorPage'
 import columnAliases from '../config/columnAliases'
+import { portalMetadata } from '../config/portalMetadata'
 import {
   datasetsSql,
   educationSql,
@@ -23,10 +29,25 @@ import { peopleCardConfiguration } from '../config/synapseConfigs/people'
 import { projectCardConfiguration } from '../config/synapseConfigs/projects'
 import { publicationsCardConfiguration } from '../config/synapseConfigs/publications'
 import { toolsConfiguration } from '../config/synapseConfigs/tools'
-import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic/index'
+import { metadataConfig } from './GrantDetailsPage.config'
+
+export { metadataConfig }
+
+const _routeExports = createDetailPageRouteExports(
+  metadataConfig,
+  portalMetadata,
+)
+export const loader = _routeExports.loader
+export const clientLoader = _routeExports.clientLoader
+export const meta = _routeExports.meta
 
 function GrantDetailsPage() {
-  const searchParams = useGetPortalComponentSearchParams()
+  const { grantId } = useParams<{ grantId: string }>()
+
+  if (!grantId) {
+    return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
+  }
+
   return (
     <DetailsPage
       header={
@@ -38,13 +59,15 @@ function GrantDetailsPage() {
               isHeader: true,
             }}
             sql={grantsSql}
-            searchParams={searchParams}
+            searchParams={{ grantId }}
           />
         </>
       }
       sql={grantsSql}
+      searchParams={{ grantId }}
       sqlOperator={ColumnSingleValueFilterOperator.LIKE}
       resourcePrimaryKey={['grantNumber']}
+      disableCanonicalUrl
     >
       <DetailsPageContent
         content={[
