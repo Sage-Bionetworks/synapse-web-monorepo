@@ -1,0 +1,25 @@
+:global(.MuiTab-root.MuiButtonBase-root).tab {
+  transition: all 400ms;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--synapse-gray-700);
+  min-width: 100%;
+  padding: 8px 0;
+  @media (max-width: 600px) {
+    min-width: 100%;
+  }
+  @media (min-width: 601px) {
+    min-width: unset;
+  }
+  border-bottom: 4px solid;
+  border-bottom-color: transparent;
+  text-decoration: none !important;
+  &:global(.Mui-selected) {
+    color: var(--synapse-secondary-action-color);
+    border-bottom-color: var(--synapse-secondary-action-color);
+  }
+
+  &:hover {
+    border-bottom-color: var(--synapse-secondary-action-color);
+  }
+}

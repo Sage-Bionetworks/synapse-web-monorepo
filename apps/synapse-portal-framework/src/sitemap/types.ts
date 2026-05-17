@@ -30,6 +30,24 @@ export interface DetailPageConfig {
    * Defaults to 'query-param' for backwards compatibility.
    */
   urlParamStyle?: 'query-param' | 'path-segment'
+
+  /**
+   * Whether to statically prerender every record's detail page at build time.
+   *
+   * - `true` (default): prerender every record returned by `sql`. Use for
+   *   detail pages with bounded cardinality where SEO benefits outweigh the
+   *   build cost.
+   * - `false`: prerender exactly one sample record (the first one returned
+   *   by `sql`) and leave the rest to the SPA fallback at runtime. Use for
+   *   high-cardinality detail pages (e.g. >1000 records) where the build-time
+   *   cost outweighs the SEO benefit. The single prerendered page is required
+   *   to satisfy React Router's `ssr:false` validator, which rejects `loader`
+   *   exports on routes that have zero prerendered paths.
+   *
+   * Either way, every record is still listed in `sitemap.xml` — this flag
+   * only affects build-time HTML generation, not sitemap inclusion.
+   */
+  prerender?: boolean
 }
 
 /**
