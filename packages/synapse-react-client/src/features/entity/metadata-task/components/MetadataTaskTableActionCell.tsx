@@ -1,11 +1,12 @@
+import { Button, Stack, Tooltip } from '@mui/material'
 import { StickyNote2Outlined } from '@mui/icons-material'
-import { Button, Tooltip } from '@mui/material'
 import { TaskBundle } from '@sage-bionetworks/synapse-client'
 import useOpenCuratorFromTaskButton from '../hooks/useOpenCuratorButton'
 import {
   OPEN_CURATOR_TOOLTIP_TITLE,
   OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE,
 } from '../utils/constants'
+import DeleteCurationTaskButton from './DeleteCurationTaskButton'
 
 export const NO_TASK_ASSIGNEE_WARNING_DIALOG_TITLE = 'Task is Unassigned'
 
@@ -18,7 +19,7 @@ export default function MetadataTaskTableActionCell(props: {
   taskBundle: TaskBundle
   canEdit: boolean
 }) {
-  const { taskBundle } = props
+  const { taskBundle, canEdit } = props
   const curationTask = taskBundle.task!
 
   const { hasPermission, isLoading, isPending, onClick } =
@@ -33,7 +34,7 @@ export default function MetadataTaskTableActionCell(props: {
   }
 
   return (
-    <>
+    <Stack direction="row" alignItems="center" spacing={1}>
       <Tooltip title={tooltipTitle}>
         <span>
           <Button
@@ -47,6 +48,7 @@ export default function MetadataTaskTableActionCell(props: {
           </Button>
         </span>
       </Tooltip>
-    </>
+      {canEdit && <DeleteCurationTaskButton taskBundle={taskBundle} />}
+    </Stack>
   )
 }
