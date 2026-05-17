@@ -92,6 +92,9 @@ const SynapseComponents = {
   CuratorDashboard: lazy(
     () => import('./features/curator/dashboard/CuratorDashboard'),
   ),
+  CsvPreviewDialog: lazy(
+    () => import('./components/table/CsvPreview/CsvPreviewDialog'),
+  ),
   DatasetItemsEditor: lazy(
     () => import('./components/SynapseTable/datasets/DatasetItemsEditor'),
   ),
