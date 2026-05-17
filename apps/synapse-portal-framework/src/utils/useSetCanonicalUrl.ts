@@ -25,6 +25,7 @@ export function useSetCanonicalUrl(canonicalUrl?: string) {
     return () => {
       if (tagWasCreated.current) {
         document.querySelector('link[rel="canonical"]')?.remove()
+        tagWasCreated.current = false
       }
     }
   }, [canonicalUrl])
