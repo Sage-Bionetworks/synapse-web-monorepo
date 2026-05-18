@@ -17,7 +17,7 @@ import { updateQueryUsingSearchTerm } from './FullTextSearchUtils'
 import { FTSConfig } from '../SynapseTable/SearchV2'
 
 // See PLFM-7011
-const MIN_SEARCH_QUERY_LENGTH = 3
+const MIN_SEARCH_QUERY_LENGTH = 2
 const SUGGESTION_DEBOUNCE_MS = 300
 
 export type FullTextSearchProps = {

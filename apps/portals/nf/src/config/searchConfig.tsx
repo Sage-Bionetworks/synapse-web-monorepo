@@ -33,11 +33,11 @@ export const searchPageTabs = [
 ] as const satisfies PortalSearchTabConfig[]
 
 export const portalSearchPageConfigs = [
-  nfConfigs.initiatives,
-  nfConfigs.studies,
-  nfConfigs.datasets,
+  nfConfigs.initiativesSearch,
+  nfConfigs.studiesSearch,
+  nfConfigs.datasetsSearch,
   nfConfigs.files,
-  nfConfigs.publications,
+  nfConfigs.publicationsSearch,
   nfConfigs.toolsSearch,
-  nfConfigs.hackathons,
+  nfConfigs.hackathonsSearch,
 ]

@@ -2,7 +2,7 @@ import type { CardConfiguration } from 'synapse-react-client/components/CardCont
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
-import { toolsSql } from '../resources'
+import { toolsSearchIndexId, toolsSql } from '../resources'
 import { columnAliases } from './commonProps'
 import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
@@ -82,7 +82,7 @@ export const toolsSearch: SearchQueryWrapperPlotNavProps = {
   shouldDeepLink: false,
   cardConfiguration: toolsCardConfiguration,
   columnAliases,
-  searchIndexId: 'syn74937101', //TODO: update to the production Synapse ID once created
+  searchIndexId: toolsSearchIndexId,
   autocompleteFieldName: 'resourceName',
   hideTopLevelControls: false,
   hideQueryCount: false,
