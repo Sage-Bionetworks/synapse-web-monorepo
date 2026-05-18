@@ -20,14 +20,21 @@ export function DataAccessRequestStep({
     }
   }
 
+  // Step title/description are encoded into the step's jsonSchema per the
+  // GenerateDataAccessSchemaResponse design.
+  const title = (step.jsonSchema.title as string) ?? ''
+  const description = (step.jsonSchema.description as string) ?? ''
+
   return (
     <Box className="JsonSchemaFormContainer">
-      <Typography variant="h6" gutterBottom>
-        {step.stepTitle}
-      </Typography>
-      {step.stepDescription && (
+      {title && (
+        <Typography variant="h6" gutterBottom>
+          {title}
+        </Typography>
+      )}
+      {description && (
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          {step.stepDescription}
+          {description}
         </Typography>
       )}
       <JsonSchemaForm
