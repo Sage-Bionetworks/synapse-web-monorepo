@@ -25,8 +25,6 @@ import { portalMetadata } from '@/config/portalMetadata'
 
 export { metadataConfig }
 
-type PageParams = { id: string }
-
 interface DatasetLoaderData extends BaseDetailPageLoaderData {
   croissantJsonLd: Record<string, unknown> | null
 }
@@ -35,7 +33,7 @@ const _routeExports = createDetailPageRouteExports<DatasetLoaderData>(
   metadataConfig,
   portalMetadata,
   {
-    extendLoader: async (_base, params: PageParams) => ({
+    extendLoader: async (_base, params) => ({
       croissantJsonLd: params.id
         ? await fetchCroissantMetadata(params.id)
         : null,
@@ -49,7 +47,7 @@ export const clientLoader = _routeExports.clientLoader
 export const meta = _routeExports.meta
 
 function DatasetDetailsPage() {
-  const { id } = useParams<PageParams>()
+  const { id } = useParams<{ id: string }>()
 
   if (!id) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
