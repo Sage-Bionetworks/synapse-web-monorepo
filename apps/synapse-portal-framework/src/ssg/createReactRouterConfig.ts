@@ -43,7 +43,7 @@ export function createReactRouterConfig(
     metadataConfigs,
     additionalPreloads = [],
     appDirectory = 'src',
-    concurrency = 4,
+    concurrency = 16,
   } = options
 
   return {
@@ -54,14 +54,18 @@ export function createReactRouterConfig(
         const isProduction = process.env.NODE_ENV === 'production'
         const dynamicRoutes: string[] = []
 
-        // Enumerate record IDs for each detail page type. In dev mode, fetch
-        // only 1 ID per type to keep startup fast while still satisfying React
-        // Router's prerender validation for loader exports.
+        // Enumerate record IDs for each detail page type. We fetch only 1 ID
+        // when:
+        //   - in dev mode (keeps startup fast), or
+        //   - the detail page is marked `prerender: false` (high-cardinality
+        //     page that we don't want statically generated at scale).
+        // Either way React Router's ssr:false validator is satisfied because
+        // at least one path matches each loader-exporting route — the
+        // remaining paths fall through to the SPA fallback at runtime.
         for (const detailPage of sitemapConfig.detailPages) {
-          const result = await fetchResourceIds(
-            detailPage,
-            isProduction ? undefined : 1,
-          )
+          const limit =
+            !isProduction || detailPage.prerender === false ? 1 : undefined
+          const result = await fetchResourceIds(detailPage, limit)
           if (!result.success) {
             console.warn(
               `[prerender] Skipping ${detailPage.path}: ${result.error}`,
