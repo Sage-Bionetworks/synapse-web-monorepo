@@ -1,33 +1,44 @@
+import { DragDropProvider, DragEndEvent, DragOverlay } from '@dnd-kit/react'
+import { isSortable } from '@dnd-kit/react/sortable'
 import {
   FormTemplate,
-  FormTemplateField,
   FormTemplateStep,
   SubmissionContext,
 } from '@/utils/types/AccessRequirementFormTypes'
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Alert,
   Box,
   Button,
   Divider,
   Grid,
-  IconButton,
-  MenuItem,
   Paper,
-  Stack,
   TextField,
   Typography,
 } from '@mui/material'
-import {
-  Add as AddIcon,
-  Delete as DeleteIcon,
-  ArrowDownward as DownIcon,
-  ArrowUpward as UpIcon,
-} from '@mui/icons-material'
+import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material'
 import { RJSFSchema } from '@rjsf/utils'
 import { useCallback, useMemo, useState } from 'react'
+import { FieldDefinitionDrawer } from './FieldDefinitionDrawer'
+import { FieldLibrary } from './FieldLibrary'
+import { FIELD_DRAG_TYPE } from './FieldLibraryRow'
+import { FormStructurePanel } from './FormStructurePanel'
 import { FormTemplatePreview } from './FormTemplatePreview'
 import { JsonSchemaBodyEditor } from './JsonSchemaBodyEditor'
-import { listSchemaProperties, moveItem, normalizePointer } from './utils'
+import {
+  SLOT_GROUP_PREFIX,
+  STEP_ID_PREFIX,
+  STEP_SORTABLE_GROUP,
+  STEP_SORTABLE_TYPE,
+} from './StepCard'
+import { SLOT_SORTABLE_TYPE } from './StepFieldRow'
+import {
+  detectFieldType,
+  fieldTypeLabel,
+  generatePropertyKey,
+} from './schemaFieldUtils'
 
 /**
  * The new design treats the JSON Schema and the FormTemplate as separate API
@@ -79,10 +90,8 @@ export function FormTemplateEditor({
   const [steps, setSteps] = useState<FormTemplateStep[]>(
     initialTemplate?.steps ?? [{ ...EMPTY_STEP, fields: [] }],
   )
-
-  const propertyOptions = useMemo(
-    () => listSchemaProperties(jsonSchema),
-    [jsonSchema],
+  const [editingPropertyKey, setEditingPropertyKey] = useState<string | null>(
+    null,
   )
 
   const usedPaths = useMemo(() => {
@@ -95,85 +104,170 @@ export function FormTemplateEditor({
     return paths
   }, [steps])
 
-  const unboundProperties = useMemo(
-    () => propertyOptions.filter(p => !usedPaths.has(`/${p.propertyName}`)),
-    [propertyOptions, usedPaths],
-  )
+  /* ------------------------------------------------------------------------ */
+  /* JSON Schema property mutations                                           */
+  /* ------------------------------------------------------------------------ */
 
-  const handleStepChange = useCallback(
-    (idx: number, patch: Partial<FormTemplateStep>) => {
-      setSteps(prev => prev.map((s, i) => (i === idx ? { ...s, ...patch } : s)))
+  const writeProperties = useCallback(
+    (nextProps: Record<string, RJSFSchema>, nextRequired?: string[]) => {
+      setJsonSchema(prev => ({
+        ...prev,
+        properties: nextProps,
+        required: nextRequired ?? prev.required ?? [],
+      }))
     },
     [],
   )
 
-  const handleAddStep = () => {
-    setSteps(prev => [...prev, { ...EMPTY_STEP, fields: [] }])
-  }
+  const handleCreateField = useCallback(() => {
+    const properties = (jsonSchema.properties ?? {}) as Record<
+      string,
+      RJSFSchema
+    >
+    const existingKeys = new Set(Object.keys(properties))
+    const title = 'New field'
+    const key = generatePropertyKey(title, existingKeys)
+    writeProperties({
+      ...properties,
+      [key]: { type: 'string', title, description: '' },
+    })
+    setEditingPropertyKey(key)
+  }, [jsonSchema.properties, writeProperties])
 
-  const handleRemoveStep = (idx: number) => {
-    setSteps(prev => prev.filter((_, i) => i !== idx))
-  }
-
-  const handleMoveStep = (idx: number, direction: -1 | 1) => {
-    setSteps(prev => moveItem(prev, idx, direction))
-  }
-
-  const handleAddField = (stepIdx: number, schemaPath: string) => {
-    const path = normalizePointer(schemaPath)
-    const newField: FormTemplateField = {
-      schemaPath: path,
-      uiDefinition: {},
-      submissionContext: SubmissionContext.ALWAYS,
-    }
-    setSteps(prev =>
-      prev.map((s, i) =>
-        i === stepIdx ? { ...s, fields: [...s.fields, newField] } : s,
-      ),
-    )
-  }
-
-  const handleFieldChange = (
-    stepIdx: number,
-    fieldIdx: number,
-    patch: Partial<FormTemplateField>,
-  ) => {
-    setSteps(prev =>
-      prev.map((s, i) => {
-        if (i !== stepIdx) return s
-        return {
-          ...s,
-          fields: s.fields.map((f, j) =>
-            j === fieldIdx ? { ...f, ...patch } : f,
-          ),
+  const handleUpdateProperty = useCallback(
+    (key: string, patch: Partial<RJSFSchema>) => {
+      setJsonSchema(prev => {
+        const nextProps = {
+          ...((prev.properties ?? {}) as Record<string, RJSFSchema>),
         }
-      }),
-    )
-  }
+        nextProps[key] = { ...(nextProps[key] ?? {}), ...patch }
+        return { ...prev, properties: nextProps }
+      })
+    },
+    [],
+  )
 
-  const handleRemoveField = (stepIdx: number, fieldIdx: number) => {
-    setSteps(prev =>
-      prev.map((s, i) =>
-        i === stepIdx
-          ? { ...s, fields: s.fields.filter((_, j) => j !== fieldIdx) }
-          : s,
-      ),
-    )
-  }
+  const handleReplaceProperty = useCallback((key: string, next: RJSFSchema) => {
+    setJsonSchema(prev => {
+      const nextProps = {
+        ...((prev.properties ?? {}) as Record<string, RJSFSchema>),
+      }
+      nextProps[key] = next
+      return { ...prev, properties: nextProps }
+    })
+  }, [])
 
-  const handleMoveField = (
-    stepIdx: number,
-    fieldIdx: number,
-    direction: -1 | 1,
-  ) => {
+  const handleChangeRequired = useCallback(
+    (key: string, isRequired: boolean) => {
+      setJsonSchema(prev => {
+        const current = prev.required ?? []
+        const next = current.filter(k => k !== key)
+        if (isRequired) next.push(key)
+        return { ...prev, required: next }
+      })
+    },
+    [],
+  )
+
+  const handleRemoveProperty = useCallback((key: string) => {
+    setJsonSchema(prev => {
+      const nextProps = {
+        ...((prev.properties ?? {}) as Record<string, RJSFSchema>),
+      }
+      delete nextProps[key]
+      return {
+        ...prev,
+        properties: nextProps,
+        required: (prev.required ?? []).filter(k => k !== key),
+      }
+    })
+    // Unbind from any steps that reference this property.
+    const path = `/${key}`
     setSteps(prev =>
-      prev.map((s, i) =>
-        i === stepIdx
-          ? { ...s, fields: moveItem(s.fields, fieldIdx, direction) }
-          : s,
-      ),
+      prev.map(s => ({
+        ...s,
+        fields: s.fields.filter(f => f.schemaPath !== path),
+      })),
     )
-  }
+    setEditingPropertyKey(prevKey => (prevKey === key ? null : prevKey))
+  }, [])
+
+  /* ------------------------------------------------------------------------ */
+  /* Drag-and-drop                                                             */
+  /* ------------------------------------------------------------------------ */
+
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    if (event.canceled) return
+    const { source, target } = event.operation
+    if (!source) return
+
+    // Case 1: bind a field from the library to a step (target is a step
+    // sortable that accepts type 'field').
+    if (source.type === FIELD_DRAG_TYPE) {
+      if (!target) return
+      const targetId = String(target.id)
+      if (!targetId.startsWith(STEP_ID_PREFIX)) return
+      const propertyKey = String(
+        (source.data as { propertyKey?: string } | undefined)?.propertyKey ??
+          '',
+      )
+      const stepIdx = parseInt(targetId.slice(STEP_ID_PREFIX.length), 10)
+      if (!propertyKey || !Number.isFinite(stepIdx)) return
+      const path = `/${propertyKey}`
+      setSteps(prev => {
+        if (prev.some(s => s.fields.some(f => f.schemaPath === path))) {
+          return prev
+        }
+        return prev.map((s, i) =>
+          i === stepIdx
+            ? {
+                ...s,
+                fields: [
+                  ...s.fields,
+                  {
+                    schemaPath: path,
+                    uiDefinition: {},
+                    submissionContext: SubmissionContext.ALWAYS,
+                  },
+                ],
+              }
+            : s,
+        )
+      })
+      return
+    }
+
+    // Case 2: reorder steps.
+    if (source.type === STEP_SORTABLE_TYPE && isSortable(source)) {
+      const { initialIndex, index, group } = source
+      if (initialIndex === index) return
+      if (group === STEP_SORTABLE_GROUP) {
+        setSteps(prev => arrayMove(prev, initialIndex, index))
+      }
+      return
+    }
+
+    // Case 3: reorder slots within a step.
+    if (source.type === SLOT_SORTABLE_TYPE && isSortable(source)) {
+      const { initialIndex, index, group } = source
+      if (initialIndex === index) return
+      if (typeof group === 'string' && group.startsWith(SLOT_GROUP_PREFIX)) {
+        const stepIdx = parseInt(group.slice(SLOT_GROUP_PREFIX.length), 10)
+        if (!Number.isFinite(stepIdx)) return
+        setSteps(prev =>
+          prev.map((s, i) =>
+            i === stepIdx
+              ? { ...s, fields: arrayMove(s.fields, initialIndex, index) }
+              : s,
+          ),
+        )
+      }
+    }
+  }, [])
+
+  /* ------------------------------------------------------------------------ */
+  /* Save                                                                      */
+  /* ------------------------------------------------------------------------ */
 
   const handleSave = () => {
     onSave({
@@ -191,293 +285,194 @@ export function FormTemplateEditor({
     })
   }
 
+  /* ------------------------------------------------------------------------ */
+  /* Render                                                                    */
+  /* ------------------------------------------------------------------------ */
+
+  const editingProperty: RJSFSchema | null =
+    editingPropertyKey !== null
+      ? (jsonSchema.properties as Record<string, RJSFSchema> | undefined)?.[
+          editingPropertyKey
+        ] ?? null
+      : null
+  const editingIsRequired =
+    editingPropertyKey !== null &&
+    (jsonSchema.required ?? []).includes(editingPropertyKey)
+  const editingIsUsedInSteps =
+    editingPropertyKey !== null && usedPaths.has(`/${editingPropertyKey}`)
+
   return (
-    <Paper sx={{ p: 3 }}>
-      <Typography variant="h6" gutterBottom>
-        {initialTemplate ? 'Edit Form Template' : 'Create Form Template'}
-      </Typography>
+    <DragDropProvider onDragEnd={handleDragEnd}>
+      <Paper sx={{ p: 3 }}>
+        <Typography variant="h6" gutterBottom>
+          {initialTemplate ? 'Edit Form Template' : 'Create Form Template'}
+        </Typography>
 
-      <Divider sx={{ mb: 2 }} />
+        <Divider sx={{ mb: 2 }} />
 
-      <TextField
-        label="Internal Name"
-        value={name}
-        onChange={e => setName(e.target.value)}
-        size="small"
-        fullWidth
-        helperText="Used by ACT to identify and find this template."
-        sx={{ mb: 3 }}
-      />
+        <TextField
+          label="Internal Name"
+          value={name}
+          onChange={e => setName(e.target.value)}
+          size="small"
+          fullWidth
+          helperText="Used by ACT to identify and find this template. Not shown to requesters."
+          sx={{ mb: 3 }}
+        />
 
-      <Grid container spacing={3}>
-        {/* Left column: schema body + steps */}
-        <Grid size={{ xs: 12, md: 7 }}>
-          <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-            JSON Schema (data contract)
-          </Typography>
-          <JsonSchemaBodyEditor value={jsonSchema} onChange={setJsonSchema} />
+        <Grid container spacing={2} alignItems="stretch">
+          <Grid size={{ xs: 12, md: 4 }}>
+            <FieldLibrary
+              jsonSchema={jsonSchema}
+              usedPaths={usedPaths}
+              selectedPropertyKey={editingPropertyKey}
+              onSelectField={setEditingPropertyKey}
+              onCreateField={handleCreateField}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 4 }}>
+            <FormStructurePanel
+              steps={steps}
+              jsonSchema={jsonSchema}
+              onStepsChange={setSteps}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 4 }}>
+            <Box sx={{ position: 'sticky', top: 16 }}>
+              <Typography
+                variant="subtitle2"
+                color="text.secondary"
+                gutterBottom
+              >
+                Live Preview
+              </Typography>
+              <FormTemplatePreview
+                template={{
+                  id: initialTemplate?.id ?? 'preview',
+                  name,
+                  etag: initialTemplate?.etag ?? '',
+                  versionNumber: initialTemplate?.versionNumber ?? 1,
+                  schemaRef: {
+                    $id: (jsonSchema.$id as string) ?? '',
+                    semanticVersion:
+                      initialTemplate?.schemaRef.semanticVersion ?? '1.0.0',
+                  },
+                  steps,
+                  deprecated: false,
+                  createdOn: '',
+                  modifiedOn: '',
+                  createdBy: '',
+                  modifiedBy: '',
+                }}
+                jsonSchema={jsonSchema}
+              />
+            </Box>
+          </Grid>
+        </Grid>
 
-          <Divider sx={{ my: 3 }} />
-
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              mb: 1,
-            }}
-          >
-            <Typography variant="subtitle2" color="text.secondary">
-              Steps
+        <Accordion
+          sx={{ mt: 3 }}
+          disableGutters
+          elevation={0}
+          variant="outlined"
+        >
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="subtitle2">
+              Advanced: Edit raw JSON Schema
             </Typography>
-            <Button
-              size="small"
-              startIcon={<AddIcon />}
-              onClick={handleAddStep}
-            >
-              Add Step
-            </Button>
-          </Box>
-
-          {unboundProperties.length > 0 && (
-            <Alert severity="warning" sx={{ mb: 2 }}>
-              {unboundProperties.length} schema{' '}
-              {unboundProperties.length === 1 ? 'property' : 'properties'} not
-              yet bound to a step:{' '}
-              {unboundProperties.map(p => p.propertyName).join(', ')}
+          </AccordionSummary>
+          <AccordionDetails>
+            <Alert severity="info" variant="outlined" sx={{ mb: 2 }}>
+              Direct access to the JSON Schema body. Most editing happens in the
+              Fields panel above — use this view for features the simple editor
+              doesn't support (nested objects, advanced validation, etc.).
             </Alert>
+            <JsonSchemaBodyEditor value={jsonSchema} onChange={setJsonSchema} />
+          </AccordionDetails>
+        </Accordion>
+
+        <Divider sx={{ my: 2 }} />
+
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
+          {onCancel && (
+            <Button variant="outlined" onClick={onCancel}>
+              Cancel
+            </Button>
           )}
-
-          <Stack spacing={2}>
-            {steps.map((step, stepIdx) => (
-              <Paper key={stepIdx} variant="outlined" sx={{ p: 2 }}>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1,
-                    mb: 1,
-                  }}
-                >
-                  <Typography variant="caption" color="text.secondary">
-                    Step {stepIdx + 1}
-                  </Typography>
-                  <Box sx={{ flexGrow: 1 }} />
-                  <IconButton
-                    size="small"
-                    disabled={stepIdx === 0}
-                    onClick={() => handleMoveStep(stepIdx, -1)}
-                  >
-                    <UpIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton
-                    size="small"
-                    disabled={stepIdx === steps.length - 1}
-                    onClick={() => handleMoveStep(stepIdx, 1)}
-                  >
-                    <DownIcon fontSize="small" />
-                  </IconButton>
-                  <IconButton
-                    size="small"
-                    onClick={() => handleRemoveStep(stepIdx)}
-                  >
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
-                </Box>
-
-                <TextField
-                  label="Title"
-                  value={step.title}
-                  onChange={e =>
-                    handleStepChange(stepIdx, { title: e.target.value })
-                  }
-                  size="small"
-                  fullWidth
-                  sx={{ mb: 1 }}
-                />
-                <TextField
-                  label="Description"
-                  value={step.description ?? ''}
-                  onChange={e =>
-                    handleStepChange(stepIdx, { description: e.target.value })
-                  }
-                  size="small"
-                  multiline
-                  rows={2}
-                  fullWidth
-                  sx={{ mb: 2 }}
-                />
-
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  sx={{ display: 'block', mb: 0.5 }}
-                >
-                  Fields
-                </Typography>
-
-                <Stack spacing={1}>
-                  {step.fields.map((field, fieldIdx) => (
-                    <Paper
-                      key={fieldIdx}
-                      variant="outlined"
-                      sx={{ p: 1.5, backgroundColor: 'action.hover' }}
-                    >
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 1,
-                          mb: 1,
-                        }}
-                      >
-                        <Typography
-                          variant="body2"
-                          sx={{ fontFamily: 'monospace' }}
-                        >
-                          {field.schemaPath || '(unbound)'}
-                        </Typography>
-                        <Box sx={{ flexGrow: 1 }} />
-                        <IconButton
-                          size="small"
-                          disabled={fieldIdx === 0}
-                          onClick={() => handleMoveField(stepIdx, fieldIdx, -1)}
-                        >
-                          <UpIcon fontSize="small" />
-                        </IconButton>
-                        <IconButton
-                          size="small"
-                          disabled={fieldIdx === step.fields.length - 1}
-                          onClick={() => handleMoveField(stepIdx, fieldIdx, 1)}
-                        >
-                          <DownIcon fontSize="small" />
-                        </IconButton>
-                        <IconButton
-                          size="small"
-                          onClick={() => handleRemoveField(stepIdx, fieldIdx)}
-                        >
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
-                      </Box>
-
-                      <Stack direction="row" spacing={1}>
-                        <TextField
-                          select
-                          label="Submission Context"
-                          value={field.submissionContext}
-                          onChange={e =>
-                            handleFieldChange(stepIdx, fieldIdx, {
-                              submissionContext: e.target
-                                .value as SubmissionContext,
-                            })
-                          }
-                          size="small"
-                          fullWidth
-                        >
-                          <MenuItem value={SubmissionContext.ALWAYS}>
-                            Always
-                          </MenuItem>
-                          <MenuItem value={SubmissionContext.REQUEST_ONLY}>
-                            Request Only
-                          </MenuItem>
-                          <MenuItem value={SubmissionContext.RENEWAL_ONLY}>
-                            Renewal Only
-                          </MenuItem>
-                        </TextField>
-                        <TextField
-                          label="Template File Handle ID"
-                          type="number"
-                          value={field.templateFileHandleId ?? ''}
-                          onChange={e =>
-                            handleFieldChange(stepIdx, fieldIdx, {
-                              templateFileHandleId: e.target.value
-                                ? parseInt(e.target.value)
-                                : undefined,
-                            })
-                          }
-                          size="small"
-                          helperText="Optional. For file fields."
-                          fullWidth
-                        />
-                      </Stack>
-                    </Paper>
-                  ))}
-
-                  {/* Bind a new property to this step */}
-                  <TextField
-                    select
-                    size="small"
-                    label="Add field"
-                    value=""
-                    onChange={e => {
-                      if (e.target.value) {
-                        handleAddField(stepIdx, e.target.value)
-                      }
-                    }}
-                    helperText="Bind a schema property to this step."
-                    disabled={unboundProperties.length === 0}
-                  >
-                    {unboundProperties.length === 0 ? (
-                      <MenuItem value="" disabled>
-                        All properties bound
-                      </MenuItem>
-                    ) : (
-                      unboundProperties.map(p => (
-                        <MenuItem
-                          key={p.propertyName}
-                          value={`/${p.propertyName}`}
-                        >
-                          /{p.propertyName} — {p.title ?? p.propertyName}
-                        </MenuItem>
-                      ))
-                    )}
-                  </TextField>
-                </Stack>
-              </Paper>
-            ))}
-          </Stack>
-        </Grid>
-
-        {/* Right column: live preview */}
-        <Grid size={{ xs: 12, md: 5 }}>
-          <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-            Live Preview
-          </Typography>
-          <FormTemplatePreview
-            template={{
-              id: initialTemplate?.id ?? 'preview',
-              name,
-              etag: initialTemplate?.etag ?? '',
-              versionNumber: initialTemplate?.versionNumber ?? 1,
-              schemaRef: {
-                $id: (jsonSchema.$id as string) ?? '',
-                semanticVersion:
-                  initialTemplate?.schemaRef.semanticVersion ?? '1.0.0',
-              },
-              steps,
-              deprecated: false,
-              createdOn: '',
-              modifiedOn: '',
-              createdBy: '',
-              modifiedBy: '',
-            }}
-            jsonSchema={jsonSchema}
-          />
-        </Grid>
-      </Grid>
-
-      <Divider sx={{ my: 2 }} />
-
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-        {onCancel && (
-          <Button variant="outlined" onClick={onCancel}>
-            Cancel
+          <Button variant="contained" onClick={handleSave} disabled={!name}>
+            {initialTemplate ? 'Save Changes' : 'Create Template'}
           </Button>
-        )}
-        <Button variant="contained" onClick={handleSave} disabled={!name}>
-          {initialTemplate ? 'Save Changes' : 'Create Template'}
-        </Button>
-      </Box>
-    </Paper>
+        </Box>
+
+        <FieldDefinitionDrawer
+          open={editingPropertyKey !== null}
+          propertyKey={editingPropertyKey}
+          property={editingProperty}
+          isRequired={editingIsRequired}
+          isUsedInSteps={editingIsUsedInSteps}
+          onClose={() => setEditingPropertyKey(null)}
+          onUpdate={patch => {
+            if (editingPropertyKey)
+              handleUpdateProperty(editingPropertyKey, patch)
+          }}
+          onReplace={next => {
+            if (editingPropertyKey)
+              handleReplaceProperty(editingPropertyKey, next)
+          }}
+          onChangeRequired={isReq => {
+            if (editingPropertyKey)
+              handleChangeRequired(editingPropertyKey, isReq)
+          }}
+          onRemove={() => {
+            if (editingPropertyKey) handleRemoveProperty(editingPropertyKey)
+          }}
+        />
+      </Paper>
+
+      <DragOverlay>
+        {source => {
+          if (source.type !== FIELD_DRAG_TYPE) return null
+          const propertyKey = String(
+            (source.data as { propertyKey?: string } | undefined)
+              ?.propertyKey ?? '',
+          )
+          if (!propertyKey) return null
+          const property = (
+            jsonSchema.properties as Record<string, RJSFSchema> | undefined
+          )?.[propertyKey]
+          if (!property) return null
+          return (
+            <Paper
+              elevation={6}
+              sx={{ p: 1.25, cursor: 'grabbing', opacity: 0.95 }}
+            >
+              <Typography variant="body2" fontWeight={500}>
+                {property.title || propertyKey}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {fieldTypeLabel(detectFieldType(property))}
+              </Typography>
+            </Paper>
+          )
+        }}
+      </DragOverlay>
+    </DragDropProvider>
   )
+}
+
+/** Move an item from `fromIndex` to `toIndex`, returning a new array. */
+function arrayMove<T>(arr: T[], fromIndex: number, toIndex: number): T[] {
+  if (
+    fromIndex < 0 ||
+    fromIndex >= arr.length ||
+    toIndex < 0 ||
+    toIndex >= arr.length ||
+    fromIndex === toIndex
+  ) {
+    return arr
+  }
+  const next = [...arr]
+  const [item] = next.splice(fromIndex, 1)
+  next.splice(toIndex, 0, item)
+  return next
 }
