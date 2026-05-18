@@ -6,21 +6,18 @@ const MOBILE_VIEWPORT_MAX_WIDTH_PX = 768
 
 export default function useShowDesktop(breakpoint?: UseShowDesktopProps) {
   const usedBreakpoint = breakpoint ?? MOBILE_VIEWPORT_MAX_WIDTH_PX
-  const [showDesktop, setShowDesktop] = useState(() =>
-    typeof window !== 'undefined' ? window.innerWidth > usedBreakpoint : true,
-  )
+
+  // Match SSR output on the first client render.
+  // This will trigger a flash on mobile, but avoids hydration errors.
+  // If the flash is unacceptable, use CSS media queries to conditionally style identical markup on the first render.
+  const [showDesktop, setShowDesktop] = useState(true)
+
   useEffect(() => {
-    const listener = () => {
-      const updatedValue = window.innerWidth > usedBreakpoint
-      if (updatedValue !== showDesktop) {
-        setShowDesktop(updatedValue)
-      }
-    }
-    window.addEventListener('resize', listener)
-    return () => {
-      window.removeEventListener('resize', listener)
-    }
-  })
+    const update = () => setShowDesktop(window.innerWidth > usedBreakpoint)
+    update() // sync to the real viewport after hydration
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [usedBreakpoint])
 
   return showDesktop
 }
