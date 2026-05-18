@@ -55,6 +55,7 @@ describe('UploadCsvToGridDialog', () => {
           fhId,
           schema,
           descriptor,
+          'data.csv',
         )
       })
 
