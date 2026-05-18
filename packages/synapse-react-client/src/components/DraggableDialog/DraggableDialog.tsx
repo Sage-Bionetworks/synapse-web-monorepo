@@ -118,7 +118,7 @@ export default function DraggableDialog({
     <Box
       sx={{
         position: 'fixed',
-        zIndex: 1000,
+        zIndex: theme.zIndex.modal,
         top: 0,
         left: 0,
         pointerEvents: isMobile ? 'auto' : 'none',

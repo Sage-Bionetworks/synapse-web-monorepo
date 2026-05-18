@@ -8,7 +8,13 @@ import {
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
 import { Provider } from 'jotai'
-import { PropsWithChildren, useCallback, useEffect, useMemo } from 'react'
+import {
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import {
   QueryContextProvider,
@@ -84,11 +90,17 @@ function SearchQueryResultBundleChangeNotifier({
     Omit<QueryResultBundle, 'queryResult'>
   >
   const { data } = useQuery(queryOpts)
+  // Use a ref so we always call the latest callback without including it in the
+  // effect dependency array. Including a frequently-recreated callback in deps
+  // causes the effect to re-fire on every render, creating an infinite loop when
+  // the parent updates state inside the callback.
+  const onQueryResultBundleChangeRef = useRef(onQueryResultBundleChange)
+  onQueryResultBundleChangeRef.current = onQueryResultBundleChange
   useEffect(() => {
     if (data) {
-      onQueryResultBundleChange(JSON.stringify(data))
+      onQueryResultBundleChangeRef.current(JSON.stringify(data))
     }
-  }, [data, onQueryResultBundleChange])
+  }, [data])
   return null
 }
 

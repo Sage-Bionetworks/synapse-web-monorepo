@@ -20,7 +20,16 @@ const goToExploreTab = async (page: Page, exploreTab: string) => {
       await expect(page.getByLabel('Explore Sections')).toBeVisible()
       // Extract the main tab name from paths like "Cohort Builder/Individuals"
       const tabName = exploreTab.split('/')[0]
-      await expect(page.getByRole('tab', { name: tabName })).toBeVisible()
+      let expectedTabLabel = tabName
+      if (getPortal() === 'eliteportal') {
+        if (tabName === 'Data') expectedTabLabel = 'Files'
+        else if (tabName === 'Cohort Builder')
+          expectedTabLabel = 'Cohort Discovery'
+        else if (tabName === 'Computational Tools') expectedTabLabel = 'Tools'
+      }
+      await expect(
+        page.getByRole('tab', { name: expectedTabLabel }),
+      ).toBeVisible()
     })
 
     await dismissBanners(page)
@@ -81,14 +90,15 @@ const expectTopLevelControls = async (
       // Extract the main tab name from paths like "Cohort Builder/Individuals"
       const tabName = exploreTab.split('/')[0]
       let exploreTabHeading = tabName
-      if (
-        (getPortal() === 'arkportal' && tabName === 'All Data') ||
-        (getPortal() === 'eliteportal' && tabName === 'Data')
-      ) {
+      if (getPortal() === 'arkportal' && tabName === 'All Data') {
         exploreTabHeading = 'Data'
+      } else if (getPortal() === 'eliteportal') {
+        if (tabName === 'Data') exploreTabHeading = 'Files'
+        else if (tabName === 'Cohort Builder')
+          exploreTabHeading = 'Cohort Discovery'
+        else if (tabName === 'Computational Tools') exploreTabHeading = 'Tools'
       } else if (
-        (getPortal() === 'eliteportal' ||
-          getPortal() === 'adknowledgeportal') &&
+        getPortal() === 'adknowledgeportal' &&
         tabName === 'Cohort Builder'
       ) {
         exploreTabHeading = 'Participants'

@@ -10,7 +10,7 @@ const rgbIndex = 1
 
 export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   rgbIndex,
-  name: 'Data',
+  name: 'Files',
   enabledExternalAnalysisPlatforms: enabledAnalysisPlatforms,
   fileIdColumnName: 'id',
   fileNameColumnName: 'fileName',
