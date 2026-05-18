@@ -1,11 +1,10 @@
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { fn } from 'storybook/test'
-import { mockFormFields } from '@/mocks/accessRequirement/mockFormFields'
-import { mockFormSteps } from '@/mocks/accessRequirement/mockFormSteps'
+import { mockFormTemplates } from '@/mocks/accessRequirement/mockFormTemplates'
 import { mockJsonSchemaAR1 } from '@/mocks/accessRequirement/mockJsonSchemaAccessRequirements'
-import { getFormFieldHandlers } from '@/mocks/msw/handlers/formFieldHandlers'
-import { getFormStepHandlers } from '@/mocks/msw/handlers/formStepHandlers'
+import { getMockJsonSchemaById } from '@/mocks/accessRequirement/mockJsonSchemas'
+import { getFormTemplateHandlers } from '@/mocks/msw/handlers/formTemplateHandlers'
 import { JsonSchemaAccessRequirementEditor } from './JsonSchemaAccessRequirementEditor'
 
 const meta: Meta<typeof JsonSchemaAccessRequirementEditor> = {
@@ -14,15 +13,12 @@ const meta: Meta<typeof JsonSchemaAccessRequirementEditor> = {
   parameters: {
     stack: 'mock',
     msw: {
-      handlers: [
-        ...getFormFieldHandlers(MOCK_REPO_ORIGIN),
-        ...getFormStepHandlers(MOCK_REPO_ORIGIN),
-      ],
+      handlers: [...getFormTemplateHandlers(MOCK_REPO_ORIGIN)],
     },
   },
   args: {
-    availableFields: mockFormFields,
-    formSteps: mockFormSteps,
+    availableTemplates: mockFormTemplates,
+    resolveJsonSchema: getMockJsonSchemaById,
     onSave: fn(),
     onCancel: fn(),
   },
@@ -32,10 +28,10 @@ const meta: Meta<typeof JsonSchemaAccessRequirementEditor> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-/** Create a new Access Requirement by selecting fields. */
+/** Create a new AR by picking a FormTemplate. */
 export const CreateNew: Story = {}
 
-/** Edit an existing AR (Genomics Data Access) with pre-selected fields. */
+/** Edit the Genomics Data Access AR. */
 export const EditExistingAR: Story = {
   args: {
     initialAR: mockJsonSchemaAR1,

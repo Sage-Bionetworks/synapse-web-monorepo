@@ -1,13 +1,18 @@
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { mockFormFields } from '@/mocks/accessRequirement/mockFormFields'
-import { mockFormSteps } from '@/mocks/accessRequirement/mockFormSteps'
+import {
+  mockClinicalTemplate,
+  mockGenomicsTemplate,
+} from '@/mocks/accessRequirement/mockFormTemplates'
 import {
   mockJsonSchemaAR1,
   mockJsonSchemaAR2,
 } from '@/mocks/accessRequirement/mockJsonSchemaAccessRequirements'
-import { getFormFieldHandlers } from '@/mocks/msw/handlers/formFieldHandlers'
-import { getFormStepHandlers } from '@/mocks/msw/handlers/formStepHandlers'
+import {
+  mockClinicalSchema,
+  mockGenomicsSchema,
+} from '@/mocks/accessRequirement/mockJsonSchemas'
+import { getFormTemplateHandlers } from '@/mocks/msw/handlers/formTemplateHandlers'
 import { DataAccessRequestForm } from './DataAccessRequestForm'
 
 const meta: Meta<typeof DataAccessRequestForm> = {
@@ -16,15 +21,8 @@ const meta: Meta<typeof DataAccessRequestForm> = {
   parameters: {
     stack: 'mock',
     msw: {
-      handlers: [
-        ...getFormFieldHandlers(MOCK_REPO_ORIGIN),
-        ...getFormStepHandlers(MOCK_REPO_ORIGIN),
-      ],
+      handlers: [...getFormTemplateHandlers(MOCK_REPO_ORIGIN)],
     },
-  },
-  args: {
-    allFields: mockFormFields,
-    formSteps: mockFormSteps,
   },
   tags: ['autodocs'],
 } satisfies Meta<typeof DataAccessRequestForm>
@@ -32,19 +30,53 @@ const meta: Meta<typeof DataAccessRequestForm> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-/** Single Access Requirement — multi-step form with all fields from AR 1. */
-export const SingleAccessRequirement: Story = {
+/** Multi-step form for the Genomics Data Access AR. */
+export const GenomicsDataAccess: Story = {
   args: {
-    accessRequirements: [mockJsonSchemaAR1],
+    accessRequirement: mockJsonSchemaAR1,
+    formTemplate: mockGenomicsTemplate,
+    jsonSchema: mockGenomicsSchema,
   },
 }
 
 /**
- * Two Access Requirements sharing the "Institution" field.
- * Demonstrates deduplication: Institution appears only once in the unified form.
+ * Clinical Trial Data Access AR. Includes a file-upload field
+ * (`synapse-filehandle-id` schema format with a downloadable template) and a
+ * `RENEWAL_ONLY` field that does NOT appear in this initial REQUEST.
  */
-export const MultipleWithDeduplication: Story = {
+export const ClinicalTrialDataAccess: Story = {
   args: {
-    accessRequirements: [mockJsonSchemaAR1, mockJsonSchemaAR2],
+    accessRequirement: mockJsonSchemaAR2,
+    formTemplate: mockClinicalTemplate,
+    jsonSchema: mockClinicalSchema,
+  },
+}
+
+/**
+ * Renewal of the Clinical Trial AR. Demonstrates how the `RENEWAL_ONLY`
+ * field (IRB Approval Number) appears for renewals but not initial requests.
+ */
+export const ClinicalTrialRenewal: Story = {
+  args: {
+    accessRequirement: mockJsonSchemaAR2,
+    formTemplate: mockClinicalTemplate,
+    jsonSchema: mockClinicalSchema,
+    requestType: 'RENEWAL',
+  },
+}
+
+/**
+ * Genomics AR with pre-filled data, simulating a SchemaDataDraft loaded for
+ * a returning user.
+ */
+export const WithDraftData: Story = {
+  args: {
+    accessRequirement: mockJsonSchemaAR1,
+    formTemplate: mockGenomicsTemplate,
+    jsonSchema: mockGenomicsSchema,
+    initialSubmissionData: {
+      institution: 'Sage Bionetworks',
+      projectLead: 'Dr. Jane Smith',
+    },
   },
 }

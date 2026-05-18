@@ -1,8 +1,8 @@
 import {
-  FormField,
-  FormStep,
+  FormTemplate,
   GenerateDataAccessSchemaResponse,
   JsonSchemaAccessRequirement,
+  SubmissionRequestType,
 } from '@/utils/types/AccessRequirementFormTypes'
 import { generateDataAccessSchema } from '@/utils/jsonschema/generateDataAccessSchema'
 import {
@@ -17,71 +17,65 @@ import {
   Stepper,
   Typography,
 } from '@mui/material'
+import { RJSFSchema } from '@rjsf/utils'
 import { useMemo, useState } from 'react'
 import { DataAccessRequestStep } from './DataAccessRequestStep'
 
 export type DataAccessRequestFormProps = {
-  /** The Access Requirements the user must satisfy. */
-  accessRequirements: JsonSchemaAccessRequirement[]
-  /** All available form fields (for resolving field references). */
-  allFields: FormField[]
-  /** All available form steps. */
-  formSteps: FormStep[]
+  /**
+   * The Access Requirement the user must satisfy. Per the new design, each
+   * data access request is for exactly one AR (multi-AR coalescing is out
+   * of scope).
+   */
+  accessRequirement: JsonSchemaAccessRequirement
+  /** The FormTemplate referenced by `accessRequirement.formTemplateRef`. */
+  formTemplate: FormTemplate
+  /** The JSON Schema body the template's `schemaRef` resolves to. */
+  jsonSchema: RJSFSchema
+  /** Whether this is an initial REQUEST or a RENEWAL. Default REQUEST. */
+  requestType?: SubmissionRequestType
+  /**
+   * Optional initial submission data, e.g. loaded from a SchemaDataDraft.
+   * Keyed by the schema's top-level property names.
+   */
+  initialSubmissionData?: Record<string, unknown>
 }
 
 export function DataAccessRequestForm({
-  accessRequirements,
-  allFields,
-  formSteps,
+  accessRequirement,
+  formTemplate,
+  jsonSchema,
+  requestType = 'REQUEST',
+  initialSubmissionData,
 }: DataAccessRequestFormProps) {
   const [activeStep, setActiveStep] = useState(0)
-  const [formDataByStep, setFormDataByStep] = useState<
-    Record<number, Record<string, unknown>>
-  >({})
   const [showSuccess, setShowSuccess] = useState(false)
 
-  // Build a field lookup
-  const fieldLookup = useMemo(() => {
-    const map = new Map<string, FormField>()
-    for (const field of allFields) {
-      map.set(field.id, field)
-    }
-    return map
-  }, [allFields])
-
-  // Collect all references and resolve fields from all ARs
-  const allReferences = useMemo(
-    () => accessRequirements.flatMap(ar => ar.formFields),
-    [accessRequirements],
-  )
-
-  const resolvedFields = useMemo(() => {
-    const fields: FormField[] = []
-    for (const ref of allReferences) {
-      const field = fieldLookup.get(ref.fieldId)
-      if (field) {
-        fields.push(field)
-      }
-    }
-    return fields
-  }, [allReferences, fieldLookup])
-
-  // Count total unique fields and total before dedup for display
-  const totalFieldsBeforeDedup = useMemo(
-    () => accessRequirements.reduce((sum, ar) => sum + ar.formFields.length, 0),
-    [accessRequirements],
-  )
-
   const schemaResponse: GenerateDataAccessSchemaResponse = useMemo(
-    () =>
-      generateDataAccessSchema(resolvedFields, allReferences, formSteps, true),
-    [resolvedFields, allReferences, formSteps],
+    () => generateDataAccessSchema(formTemplate, jsonSchema, requestType),
+    [formTemplate, jsonSchema, requestType],
   )
 
-  const uniqueFieldCount = useMemo(() => {
-    const ids = new Set(resolvedFields.map(f => f.id))
-    return ids.size
-  }, [resolvedFields])
+  // Initialize per-step form data with any pre-filled values.
+  const [formDataByStep, setFormDataByStep] = useState<
+    Record<number, Record<string, unknown>>
+  >(() => {
+    if (!initialSubmissionData) return {}
+    const byStep: Record<number, Record<string, unknown>> = {}
+    schemaResponse.steps.forEach((step, idx) => {
+      const props = step.jsonSchema.properties ?? {}
+      const stepData: Record<string, unknown> = {}
+      for (const propertyName of Object.keys(props)) {
+        if (propertyName in initialSubmissionData) {
+          stepData[propertyName] = initialSubmissionData[propertyName]
+        }
+      }
+      if (Object.keys(stepData).length > 0) {
+        byStep[idx] = stepData
+      }
+    })
+    return byStep
+  })
 
   const currentStep = schemaResponse.steps[activeStep]
 
@@ -117,31 +111,26 @@ export function DataAccessRequestForm({
       </Typography>
 
       <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
-        {accessRequirements.map(ar => (
-          <Chip
-            key={ar.id}
-            label={ar.name}
-            variant="outlined"
-            color="primary"
-            size="small"
-          />
-        ))}
+        <Chip
+          label={accessRequirement.name}
+          variant="outlined"
+          color="primary"
+          size="small"
+        />
+        <Chip
+          label={requestType === 'RENEWAL' ? 'Renewal' : 'Initial Request'}
+          variant="outlined"
+          size="small"
+        />
       </Box>
-
-      {totalFieldsBeforeDedup !== uniqueFieldCount && (
-        <Alert severity="info" sx={{ mb: 2 }}>
-          {accessRequirements.length} access requirements share{' '}
-          {totalFieldsBeforeDedup - uniqueFieldCount} field(s) in common. Shared
-          fields appear only once in this form ({uniqueFieldCount} unique fields
-          total).
-        </Alert>
-      )}
 
       {schemaResponse.steps.length > 1 && (
         <Stepper activeStep={activeStep} sx={{ mb: 3 }}>
           {schemaResponse.steps.map((step, index) => (
-            <Step key={step.stepId ?? index}>
-              <StepLabel>{step.stepTitle}</StepLabel>
+            <Step key={index}>
+              <StepLabel>
+                {(step.jsonSchema.title as string) ?? `Step ${index + 1}`}
+              </StepLabel>
             </Step>
           ))}
         </Stepper>
@@ -196,7 +185,7 @@ export function DataAccessRequestForm({
           variant="filled"
         >
           Data access request submitted successfully for{' '}
-          {accessRequirements.length} access requirement(s).
+          {accessRequirement.name}.
         </Alert>
       </Snackbar>
     </Paper>

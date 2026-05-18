@@ -1,32 +1,36 @@
+import { FormTemplatePreview } from '@/components/FormTemplateEditor/FormTemplatePreview'
 import {
-  FormField,
-  FormFieldReference,
-  FormStep,
+  FormTemplate,
   JsonSchemaAccessRequirement,
 } from '@/utils/types/AccessRequirementFormTypes'
 import {
+  Alert,
   Box,
   Button,
   Checkbox,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   Divider,
   FormControlLabel,
   Grid,
+  IconButton,
+  MenuItem,
   Paper,
   TextField,
   Typography,
 } from '@mui/material'
-import { useCallback, useMemo, useState } from 'react'
-import { AccessRequirementFormPreview } from './AccessRequirementFormPreview'
-import { FormFieldSelector } from './FormFieldSelector'
-import { SelectedFieldsList } from './SelectedFieldsList'
+import { Close as CloseIcon } from '@mui/icons-material'
+import { RJSFSchema } from '@rjsf/utils'
+import { useMemo, useState } from 'react'
 
 export type JsonSchemaAccessRequirementEditorProps = {
   /** Existing AR to edit, or undefined for creating a new one. */
   initialAR?: JsonSchemaAccessRequirement
-  /** All available form fields. */
-  availableFields: FormField[]
-  /** All available form steps. */
-  formSteps: FormStep[]
+  /** All FormTemplates ACT can pick from. */
+  availableTemplates: FormTemplate[]
+  /** Resolves a registered JSON Schema by its `$id`. */
+  resolveJsonSchema: (schema$id: string) => RJSFSchema | undefined
   /** Called when the user saves. */
   onSave: (ar: Partial<JsonSchemaAccessRequirement>) => void
   /** Called when the user cancels. */
@@ -35,8 +39,8 @@ export type JsonSchemaAccessRequirementEditorProps = {
 
 export function JsonSchemaAccessRequirementEditor({
   initialAR,
-  availableFields,
-  formSteps,
+  availableTemplates,
+  resolveJsonSchema,
   onSave,
   onCancel,
 }: JsonSchemaAccessRequirementEditorProps) {
@@ -57,90 +61,37 @@ export function JsonSchemaAccessRequirementEditor({
     initialAR?.isTwoFaRequired ?? false,
   )
 
-  // Track selected field IDs in order
-  const [selectedFieldIds, setSelectedFieldIds] = useState<string[]>(() => {
-    if (initialAR?.formFields) {
-      return initialAR.formFields.map(ref => ref.fieldId)
-    }
-    return []
-  })
-
-  // Track which fields are required (by field ID)
-  const [requiredFieldIds, setRequiredFieldIds] = useState<Set<string>>(() => {
-    if (initialAR?.formFields) {
-      return new Set(
-        initialAR.formFields
-          .filter(ref => ref.required)
-          .map(ref => ref.fieldId),
-      )
-    }
-    return new Set()
-  })
-
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>(
+    initialAR?.formTemplateRef.templateId ?? '',
+  )
   const [previewOpen, setPreviewOpen] = useState(false)
 
-  const selectedFieldIdSet = useMemo(
-    () => new Set(selectedFieldIds),
-    [selectedFieldIds],
-  )
-
-  const fieldLookup = useMemo(() => {
-    const map = new Map<string, FormField>()
-    for (const field of availableFields) {
-      map.set(field.id, field)
+  const templateLookup = useMemo(() => {
+    const map = new Map<string, FormTemplate>()
+    for (const t of availableTemplates) {
+      map.set(t.id, t)
     }
     return map
-  }, [availableFields])
+  }, [availableTemplates])
 
-  const selectedFields = useMemo(
-    () =>
-      selectedFieldIds
-        .map(id => fieldLookup.get(id))
-        .filter((f): f is FormField => f != null),
-    [selectedFieldIds, fieldLookup],
-  )
+  const selectedTemplate = selectedTemplateId
+    ? templateLookup.get(selectedTemplateId)
+    : undefined
 
-  const handleToggleField = useCallback((fieldId: string) => {
-    setSelectedFieldIds(prev => {
-      if (prev.includes(fieldId)) {
-        return prev.filter(id => id !== fieldId)
-      }
-      return [...prev, fieldId]
-    })
-  }, [])
-
-  const handleRemoveField = useCallback((fieldId: string) => {
-    setSelectedFieldIds(prev => prev.filter(id => id !== fieldId))
-  }, [])
-
-  const handleToggleRequired = useCallback((fieldId: string) => {
-    setRequiredFieldIds(prev => {
-      const next = new Set(prev)
-      if (next.has(fieldId)) {
-        next.delete(fieldId)
-      } else {
-        next.add(fieldId)
-      }
-      return next
-    })
-  }, [])
-
-  // Build FormFieldReferences for schema generation and saving
-  const fieldReferences: FormFieldReference[] = useMemo(
-    () =>
-      selectedFieldIds.map(fieldId => ({
-        fieldId,
-        fieldVersionNumber: fieldLookup.get(fieldId)?.versionNumber ?? 1,
-        required: requiredFieldIds.has(fieldId),
-      })),
-    [selectedFieldIds, fieldLookup, requiredFieldIds],
-  )
+  const selectedSchema = useMemo(() => {
+    if (!selectedTemplate) return undefined
+    return resolveJsonSchema(selectedTemplate.schemaRef.$id)
+  }, [selectedTemplate, resolveJsonSchema])
 
   const handleSave = () => {
+    if (!selectedTemplate) return
     onSave({
       ...initialAR,
       name,
-      formFields: fieldReferences,
+      formTemplateRef: {
+        templateId: selectedTemplate.id,
+        templateVersionNumber: selectedTemplate.versionNumber,
+      },
       expirationPeriod: expirationDays * 1000 * 60 * 60 * 24,
       isCertifiedUserRequired,
       isValidatedProfileRequired,
@@ -157,7 +108,6 @@ export function JsonSchemaAccessRequirementEditor({
 
         <Divider sx={{ mb: 2 }} />
 
-        {/* AR Metadata */}
         <Typography variant="subtitle2" color="text.secondary" gutterBottom>
           General Settings
         </Typography>
@@ -221,29 +171,41 @@ export function JsonSchemaAccessRequirementEditor({
 
         <Divider sx={{ mb: 2 }} />
 
-        {/* Field Selection */}
         <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-          Form Fields
+          Form Template
         </Typography>
 
-        <Grid container spacing={2}>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <FormFieldSelector
-              availableFields={availableFields}
-              selectedFieldIds={selectedFieldIdSet}
-              formSteps={formSteps}
-              onToggleField={handleToggleField}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <SelectedFieldsList
-              selectedFields={selectedFields}
-              requiredFieldIds={requiredFieldIds}
-              onRemove={handleRemoveField}
-              onToggleRequired={handleToggleRequired}
-            />
-          </Grid>
-        </Grid>
+        <TextField
+          select
+          label="Form Template"
+          value={selectedTemplateId}
+          onChange={e => setSelectedTemplateId(e.target.value)}
+          size="small"
+          fullWidth
+          sx={{ mb: 2 }}
+          helperText="Pick the template to render this AR's data access request form."
+        >
+          <MenuItem value="">
+            <em>None</em>
+          </MenuItem>
+          {availableTemplates.map(t => (
+            <MenuItem key={t.id} value={t.id}>
+              {t.name} (v{t.versionNumber})
+            </MenuItem>
+          ))}
+        </TextField>
+
+        {selectedTemplate && (
+          <Alert severity="info" variant="outlined" sx={{ mb: 2 }}>
+            Pinned schema: <code>{selectedTemplate.schemaRef.$id}</code> v
+            {selectedTemplate.schemaRef.semanticVersion}
+            {!selectedSchema && (
+              <Typography variant="body2" color="warning.main" sx={{ mt: 0.5 }}>
+                Schema body could not be resolved.
+              </Typography>
+            )}
+          </Alert>
+        )}
 
         <Divider sx={{ my: 2 }} />
 
@@ -251,7 +213,7 @@ export function JsonSchemaAccessRequirementEditor({
           <Button
             variant="outlined"
             onClick={() => setPreviewOpen(true)}
-            disabled={selectedFields.length === 0}
+            disabled={!selectedTemplate || !selectedSchema}
           >
             Preview Form
           </Button>
@@ -264,7 +226,7 @@ export function JsonSchemaAccessRequirementEditor({
             <Button
               variant="contained"
               onClick={handleSave}
-              disabled={!name || selectedFields.length === 0}
+              disabled={!name || !selectedTemplate}
             >
               {initialAR ? 'Save Changes' : 'Create Access Requirement'}
             </Button>
@@ -272,13 +234,28 @@ export function JsonSchemaAccessRequirementEditor({
         </Box>
       </Paper>
 
-      <AccessRequirementFormPreview
+      <Dialog
         open={previewOpen}
         onClose={() => setPreviewOpen(false)}
-        selectedFields={selectedFields}
-        fieldReferences={fieldReferences}
-        formSteps={formSteps}
-      />
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          Form Preview
+          <Box sx={{ flexGrow: 1 }} />
+          <IconButton onClick={() => setPreviewOpen(false)} size="small">
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          {selectedTemplate && selectedSchema && (
+            <FormTemplatePreview
+              template={selectedTemplate}
+              jsonSchema={selectedSchema}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   )
 }
