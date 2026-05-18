@@ -36,6 +36,7 @@ type PreviewResult = {
   fileHandleId: string
   suggestedColumns: SetOptional<ColumnModel, 'id'>[]
   csvDescriptor: CsvTableDescriptor
+  fileName: string
 }
 
 /**
@@ -86,6 +87,7 @@ export default function UploadCsvWizard(props: UploadCsvWizardProps) {
       fileHandleId: string,
       columnModels: SynapseClientColumnModel[],
       csvDescriptor: CsvTableDescriptor,
+      fileName: string,
     ) => {
       // Cast through the shared types — fields are populated by the preview API
       // and preProcessColumns guarantees a name.
@@ -107,7 +109,12 @@ export default function UploadCsvWizard(props: UploadCsvWizardProps) {
           changes: [uploadRequest],
         })
       } else {
-        setPreviewResult({ fileHandleId, suggestedColumns, csvDescriptor })
+        setPreviewResult({
+          fileHandleId,
+          suggestedColumns,
+          csvDescriptor,
+          fileName,
+        })
       }
     },
     [appendToTable, isAppendMode, tableId],
@@ -150,7 +157,7 @@ type FinalizeCreateTableDialogProps = {
 function FinalizeCreateTableDialog(props: FinalizeCreateTableDialogProps) {
   const { open, parentId, previewResult, onCancel, onComplete } = props
   const formRef = useRef<SubmitHandle>(null)
-  const [tableName, setTableName] = useState('')
+  const [tableName, setTableName] = useState(previewResult.fileName)
   const [isCreating, setIsCreating] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | undefined>()
 

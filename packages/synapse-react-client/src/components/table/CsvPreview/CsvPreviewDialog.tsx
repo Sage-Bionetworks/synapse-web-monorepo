@@ -36,11 +36,14 @@ export type CsvPreviewDialogProps = {
   /** Callback when the user confirms the column models
    * @param dataFileHandleId - The file handle ID of the uploaded CSV
    * @param columnModels - The confirmed column models
+   * @param csvTableDescriptor - The CSV parsing options applied to the preview
+   * @param fileName - The name of the uploaded file
    * */
   onConfirm: (
     dataFileHandleId: string,
     columnModels: ColumnModel[],
     csvTableDescriptor: CsvTableDescriptor,
+    fileName: string,
   ) => void
   /** Whether the confirm action is pending */
   confirmIsPending?: boolean
@@ -48,17 +51,32 @@ export type CsvPreviewDialogProps = {
   errorMessage?: string
 }
 
+const DEFAULT_CSV_TABLE_DESCRIPTOR: CsvTableDescriptor = {
+  separator: ',',
+  quoteCharacter: '"',
+  escapeCharacter: '\\',
+  lineEnd: '\n',
+  isFirstLineHeader: true,
+}
+
+/**
+ * Returns the column separator to use for a CSV preview based on the uploaded
+ * file's MIME type and name. Tab-separated values are detected by content type
+ * (`text/tab-separated-values`) or by `.tsv`/`.tab` file extensions; everything
+ * else falls back to comma.
+ */
+export function getInitialSeparatorForFile(file: File): string {
+  if (file.type.toLowerCase() === 'text/tab-separated-values') return '\t'
+  const lowerName = file.name.toLowerCase().trim()
+  if (lowerName.endsWith('.tsv') || lowerName.endsWith('.tab')) return '\t'
+  return ','
+}
+
 export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
   const { open, onClose, onConfirm, confirmIsPending, errorMessage } = props
   const [step, setStep] = useState(CsvPreviewDialogStep.UPLOAD_CSV)
   const [csvTableDescriptor, setCsvTableDescriptor] =
-    useState<CsvTableDescriptor>({
-      separator: ',',
-      quoteCharacter: '"',
-      escapeCharacter: '\\',
-      lineEnd: '\n',
-      isFirstLineHeader: true,
-    })
+    useState<CsvTableDescriptor>(DEFAULT_CSV_TABLE_DESCRIPTOR)
   const [csvPreviewData, setCsvPreviewData] =
     useState<UploadToTablePreviewResult | null>(null)
   const [isLoadingPreview, setIsLoadingPreview] = useState(false)
@@ -66,9 +84,15 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
   const [uploadedFileHandleId, setUploadedFileHandleId] = useState<
     string | null
   >(null)
+  const [uploadedFileName, setUploadedFileName] = useState<string>('')
 
-  const onFileUploaded = useCallback((fileHandleId: string) => {
+  const onFileUploaded = useCallback((fileHandleId: string, file: File) => {
     setUploadedFileHandleId(fileHandleId)
+    setUploadedFileName(file.name)
+    setCsvTableDescriptor({
+      ...DEFAULT_CSV_TABLE_DESCRIPTOR,
+      separator: getInitialSeparatorForFile(file),
+    })
     setStep(CsvPreviewDialogStep.COLUMN_PREVIEW)
   }, [])
 
@@ -79,8 +103,8 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
     <BasicFileHandleUpload
       ref={uploadRef}
       allowMultipleUpload={false}
-      onFileUploadComplete={fileHandleId => {
-        onFileUploaded(fileHandleId)
+      onFileUploadComplete={(fileHandleId, file) => {
+        onFileUploaded(fileHandleId, file)
       }}
       disableDragAndDrop={true}
     />
@@ -158,6 +182,7 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
                   uploadedFileHandleId!,
                   csvPreviewData!.suggestedColumns!,
                   csvTableDescriptor,
+                  uploadedFileName,
                 )
               }}
               loading={confirmIsPending}

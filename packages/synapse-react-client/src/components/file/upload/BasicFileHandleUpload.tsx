@@ -23,7 +23,7 @@ export type BasicFileHandleUploadProps = {
   /** Callback that is invoked when component is ready to upload */
   onUploadReady?: () => void
   /** Callback that is invoked when an individual upload is complete */
-  onFileUploadComplete?: (fileHandleIds: string) => void
+  onFileUploadComplete?: (fileHandleId: string, file: File) => void
 }
 
 export type FileUploadHandle = {
@@ -47,8 +47,8 @@ export const BasicFileHandleUpload = forwardRef(function FileHandleUpload(
   } = props
 
   const { startUpload, state, uploadProgress } = useUploadFiles({
-    onUploadComplete: (_, fileHandleId) => {
-      onFileUploadComplete(fileHandleId)
+    onUploadComplete: (preparedFile, fileHandleId) => {
+      onFileUploadComplete(fileHandleId, preparedFile.file)
       return Promise.resolve()
     },
   })

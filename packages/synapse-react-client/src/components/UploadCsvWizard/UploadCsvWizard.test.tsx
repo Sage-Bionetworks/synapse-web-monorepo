@@ -64,6 +64,7 @@ const mockUseTableUpdateTransaction = vi.mocked(useTableUpdateTransaction)
 const mockDisplayToast = vi.mocked(displayToast)
 
 const fileHandleId = 'fh-1'
+const uploadedFileName = 'my-data.csv'
 const csvDescriptor: CsvTableDescriptor = {
   separator: ',',
   quoteCharacter: '"',
@@ -133,6 +134,7 @@ describe('UploadCsvWizard', () => {
           fileHandleId,
           suggestedColumns,
           csvDescriptor,
+          uploadedFileName,
         )
       })
 
@@ -210,6 +212,7 @@ describe('UploadCsvWizard', () => {
           fileHandleId,
           suggestedColumns,
           csvDescriptor,
+          uploadedFileName,
         )
       })
 
@@ -220,8 +223,7 @@ describe('UploadCsvWizard', () => {
       )
     })
 
-    it('disables Create until a table name is entered', async () => {
-      const user = userEvent.setup()
+    it('defaults the table name to the uploaded file name', async () => {
       renderWizard()
       await screen.findByTestId('CsvPreviewDialog')
       act(() => {
@@ -229,6 +231,26 @@ describe('UploadCsvWizard', () => {
           fileHandleId,
           suggestedColumns,
           csvDescriptor,
+          uploadedFileName,
+        )
+      })
+      await screen.findByTestId('TableColumnSchemaForm')
+
+      expect(screen.getByLabelText(/Table Name/)).toHaveValue(uploadedFileName)
+      expect(screen.getByRole('button', { name: 'Create' })).toBeEnabled()
+    })
+
+    it('disables Create when the table name is empty', async () => {
+      const user = userEvent.setup()
+      renderWizard()
+      await screen.findByTestId('CsvPreviewDialog')
+      act(() => {
+        // No file name provided — table name input should start empty
+        mockCsvPreviewDialog.mock.lastCall![0].onConfirm(
+          fileHandleId,
+          suggestedColumns,
+          csvDescriptor,
+          '',
         )
       })
       await screen.findByTestId('TableColumnSchemaForm')
@@ -269,10 +291,12 @@ describe('UploadCsvWizard', () => {
           fileHandleId,
           suggestedColumns,
           csvDescriptor,
+          uploadedFileName,
         )
       })
       await screen.findByTestId('TableColumnSchemaForm')
 
+      await user.clear(screen.getByLabelText(/Table Name/))
       await user.type(screen.getByLabelText(/Table Name/), 'My Table')
       await user.click(screen.getByRole('button', { name: 'Create' }))
 
@@ -330,10 +354,12 @@ describe('UploadCsvWizard', () => {
           fileHandleId,
           suggestedColumns,
           csvDescriptor,
+          uploadedFileName,
         )
       })
       await screen.findByTestId('TableColumnSchemaForm')
 
+      await user.clear(screen.getByLabelText(/Table Name/))
       await user.type(screen.getByLabelText(/Table Name/), 'My Table')
       await user.click(screen.getByRole('button', { name: 'Create' }))
 
