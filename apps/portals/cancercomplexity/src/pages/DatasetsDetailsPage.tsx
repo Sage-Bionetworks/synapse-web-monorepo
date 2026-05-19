@@ -33,8 +33,6 @@ import { fetchCroissantMetadata } from '@sage-bionetworks/synapse-portal-framewo
 
 export { metadataConfig }
 
-type PageParams = { datasetId: string }
-
 interface DatasetLoaderData extends BaseDetailPageLoaderData {
   croissantJsonLd: Record<string, unknown> | null
 }
@@ -43,7 +41,7 @@ const _routeExports = createDetailPageRouteExports<DatasetLoaderData>(
   metadataConfig,
   portalMetadata,
   {
-    extendLoader: async (_base, params: PageParams) => ({
+    extendLoader: async (_base, params) => ({
       croissantJsonLd: params.datasetId
         ? await fetchCroissantMetadata(params.datasetId)
         : null,
@@ -57,7 +55,7 @@ export const clientLoader = _routeExports.clientLoader
 export const meta = _routeExports.meta
 
 function DatasetsDetailsPage() {
-  const { datasetId } = useParams<PageParams>()
+  const { datasetId } = useParams<{ datasetId: string }>()
 
   if (!datasetId) {
     return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />

@@ -217,6 +217,44 @@ must read on its side and pass into `createRootMeta()` — the framework cannot
 read `import.meta.env.VITE_*` because those values are baked in at the
 consuming app's Vite build.
 
+#### Supplemental `<head>` scripts
+
+If the portal's pre-migration `index.html` had any custom `<script>` tags
+(e.g. third-party widget embeds), use `createLayout({ headChildren })` instead
+of re-exporting the default `Layout`. The factory wraps the same shared shell
+(`<Meta />`, `<Links />`, GTM noscript, `<Scripts />`) and only adds whatever
+JSX you pass into `<head>`:
+
+```ts
+import {
+  createLayout,
+  createRootMeta,
+  links,
+} from '@sage-bionetworks/synapse-portal-framework/ssg/root'
+
+export const meta = createRootMeta({
+  /* ... */
+})
+
+export const Layout = createLayout({
+  headChildren: (
+    <script
+      data-jsd-embedded
+      data-key="..."
+      data-base-url="https://jsd-widget.atlassian.com"
+      src="https://jsd-widget.atlassian.com/assets/embed.js"
+    />
+  ),
+})
+
+export { links }
+export { default } from '@sage-bionetworks/synapse-portal-framework/ssg/root'
+```
+
+`headChildren` is the only escape hatch — most other per-portal head content
+(canonical URLs, `<meta name="robots">`, OG tags, JSON-LD) belongs in `meta()`
+and should be expressed there instead.
+
 ---
 
 ### Step 6: Create `src/entry.client.tsx`
@@ -788,6 +826,13 @@ into separate page files before they can be referenced by `routes.ts`.
 The `challenges` portal uses a dynamic `:taskId` sub-route with conditional
 tab visibility (`hideIfColumnValueNull`). This is more complex than the
 static tab patterns shown in this guide and may require custom handling.
+
+### Supplemental `<head>` scripts
+
+The `cancercomplexity` portal includes a Jira Service Desk widget `<script>`
+in `<head>` (see the `createLayout({ headChildren })` example in Step 5).
+Other portals' pre-migration `index.html` files contained only commented-out
+endpoint-override snippets and need no equivalent.
 
 ### Portals without detail pages
 
