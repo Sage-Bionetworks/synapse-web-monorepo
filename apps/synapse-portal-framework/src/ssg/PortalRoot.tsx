@@ -55,7 +55,7 @@ export default function PortalRoot(props: PortalRootProps) {
   return (
     <PortalContextProvider value={portalContext}>
       <CookiesProvider>
-        <ThemeProvider theme={{ palette }} injectFirst>
+        <ThemeProvider theme={{ palette }}>
           <CssBaseline />
           <QueryClientProvider client={queryClient}>
             <DocumentMetadataProvider defaultTitle={portalContext.portalName}>
