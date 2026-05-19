@@ -10,11 +10,12 @@ export default function GoalsDesktop({
   title,
   isAssetIcon,
   linkText = 'Explore',
-}: GoalsDataProps) {
+  cardWidth,
+}: GoalsDataProps & { cardWidth?: string }) {
   return (
     <Box
       className="Goals__Card"
-      sx={{ cursor: 'pointer', maxWidth: '335px', width: '335px' }}
+      sx={{ cursor: 'pointer', flex: `0 0 ${cardWidth ?? 'auto'}` }}
       onClick={() => window.open(link, '_self')}
     >
       <div
