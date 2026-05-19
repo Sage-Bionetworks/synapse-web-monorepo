@@ -25,7 +25,9 @@ export default function LegacyDetailsPageRedirect({
   const tabPath = match?.[2] ?? ''
 
   if (!id) {
-    return <Navigate to={`${newBase}${tabPath}`} replace />
+    // Drop the tab segment too: e.g. `/Explore/Studies/Details` would match
+    // `/Explore/Studies/:studyId` with `studyId="Details"` and load garbage.
+    return <Navigate to={newBase} replace />
   }
   return (
     <Navigate to={`${newBase}/${encodeURIComponent(id)}${tabPath}`} replace />

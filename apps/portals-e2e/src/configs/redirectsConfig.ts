@@ -50,6 +50,8 @@ const redirectsConfig: RedirectsConfig = {
       `/Explore/Studies/DetailsPage/BogusTab?studyId=${NF_STUDY_ID}`,
       `/Explore/Studies/${NF_STUDY_ID}/Details`,
     ],
+    // Missing ID case
+    [`/Explore/Studies/DetailsPage/Details`, `/Explore/Studies`],
 
     // Tools (tabbed; default tab = Details; param = resourceId)
     [
