@@ -5,43 +5,80 @@ import { useGridAutocompleteState } from './useGridAutocompleteState'
 describe('useGridAutocompleteState', () => {
   it('menuIsOpen starts as false', () => {
     const { result } = renderHook(() =>
-      useGridAutocompleteState({ active: false }),
+      useGridAutocompleteState({ active: false, focus: false }),
     )
     expect(result.current.menuIsOpen).toBe(false)
   })
 
-  it('focuses the input when active becomes true', () => {
+  it('focuses the input and opens the menu when focus becomes true', () => {
     const { result, rerender } = renderHook(
-      ({ active }) => useGridAutocompleteState({ active }),
-      { initialProps: { active: false } },
+      ({ active, focus }) => useGridAutocompleteState({ active, focus }),
+      { initialProps: { active: true, focus: false } },
     )
 
     // Attach a mock input element to the ref
     const focusMock = vi.fn()
     const blurMock = vi.fn()
     Object.defineProperty(result.current.inputRef, 'current', {
-      value: { focus: focusMock, blur: blurMock },
+      value: {
+        focus: focusMock,
+        blur: blurMock,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      },
       writable: true,
     })
 
     act(() => {
-      rerender({ active: true })
+      rerender({ active: true, focus: true })
     })
 
     expect(focusMock).toHaveBeenCalledTimes(1)
     expect(blurMock).not.toHaveBeenCalled()
+    expect(result.current.menuIsOpen).toBe(true)
   })
 
-  it('blurs the input and closes the menu when active becomes false', () => {
+  it('does NOT focus the input when only active becomes true', () => {
     const { result, rerender } = renderHook(
-      ({ active }) => useGridAutocompleteState({ active }),
-      { initialProps: { active: true } },
+      ({ active, focus }) => useGridAutocompleteState({ active, focus }),
+      { initialProps: { active: false, focus: false } },
     )
 
     const focusMock = vi.fn()
     const blurMock = vi.fn()
     Object.defineProperty(result.current.inputRef, 'current', {
-      value: { focus: focusMock, blur: blurMock },
+      value: {
+        focus: focusMock,
+        blur: blurMock,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      },
+      writable: true,
+    })
+
+    act(() => {
+      rerender({ active: true, focus: false })
+    })
+
+    expect(focusMock).not.toHaveBeenCalled()
+    expect(result.current.menuIsOpen).toBe(false)
+  })
+
+  it('blurs the input and closes the menu when focus becomes false', () => {
+    const { result, rerender } = renderHook(
+      ({ active, focus }) => useGridAutocompleteState({ active, focus }),
+      { initialProps: { active: true, focus: true } },
+    )
+
+    const focusMock = vi.fn()
+    const blurMock = vi.fn()
+    Object.defineProperty(result.current.inputRef, 'current', {
+      value: {
+        focus: focusMock,
+        blur: blurMock,
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      },
       writable: true,
     })
 
@@ -51,7 +88,7 @@ describe('useGridAutocompleteState', () => {
     expect(result.current.menuIsOpen).toBe(true)
 
     act(() => {
-      rerender({ active: false })
+      rerender({ active: true, focus: false })
     })
 
     expect(blurMock).toHaveBeenCalledTimes(1)
@@ -61,22 +98,39 @@ describe('useGridAutocompleteState', () => {
   it('calls onDeactivate when active becomes false with no pending click', () => {
     const onDeactivate = vi.fn()
     const { rerender } = renderHook(
-      ({ active }) => useGridAutocompleteState({ active, onDeactivate }),
-      { initialProps: { active: true } },
+      ({ active, focus }) =>
+        useGridAutocompleteState({ active, focus, onDeactivate }),
+      { initialProps: { active: true, focus: true } },
     )
 
     act(() => {
-      rerender({ active: false })
+      rerender({ active: false, focus: false })
     })
 
     expect(onDeactivate).toHaveBeenCalledTimes(1)
   })
 
+  it('does NOT call onDeactivate when focus drops but active stays (Escape)', () => {
+    const onDeactivate = vi.fn()
+    const { rerender } = renderHook(
+      ({ active, focus }) =>
+        useGridAutocompleteState({ active, focus, onDeactivate }),
+      { initialProps: { active: true, focus: true } },
+    )
+
+    act(() => {
+      rerender({ active: true, focus: false })
+    })
+
+    expect(onDeactivate).not.toHaveBeenCalled()
+  })
+
   it('does NOT call onDeactivate when a portal click is in progress', () => {
     const onDeactivate = vi.fn()
     const { result, rerender } = renderHook(
-      ({ active }) => useGridAutocompleteState({ active, onDeactivate }),
-      { initialProps: { active: true } },
+      ({ active, focus }) =>
+        useGridAutocompleteState({ active, focus, onDeactivate }),
+      { initialProps: { active: true, focus: true } },
     )
 
     // Simulate mousedown on an option element (portal click in progress)
@@ -92,7 +146,7 @@ describe('useGridAutocompleteState', () => {
 
     // Cell deactivates before onChange fires
     act(() => {
-      rerender({ active: false })
+      rerender({ active: false, focus: false })
     })
 
     // onDeactivate must NOT be called while the click is still in progress
@@ -104,18 +158,24 @@ describe('useGridAutocompleteState', () => {
     const secondCallback = vi.fn()
 
     const { rerender } = renderHook(
-      ({ active, onDeactivate }) =>
-        useGridAutocompleteState({ active, onDeactivate }),
-      { initialProps: { active: true, onDeactivate: firstCallback } },
+      ({ active, focus, onDeactivate }) =>
+        useGridAutocompleteState({ active, focus, onDeactivate }),
+      {
+        initialProps: {
+          active: true,
+          focus: true,
+          onDeactivate: firstCallback,
+        },
+      },
     )
 
     // Swap the callback before deactivation
     act(() => {
-      rerender({ active: true, onDeactivate: secondCallback })
+      rerender({ active: true, focus: true, onDeactivate: secondCallback })
     })
 
     act(() => {
-      rerender({ active: false, onDeactivate: secondCallback })
+      rerender({ active: false, focus: false, onDeactivate: secondCallback })
     })
 
     expect(firstCallback).not.toHaveBeenCalled()
@@ -125,8 +185,9 @@ describe('useGridAutocompleteState', () => {
   it('handleListboxMouseDown calls preventDefault and defers deactivation when target is an option', () => {
     const onDeactivate = vi.fn()
     const { result, rerender } = renderHook(
-      ({ active }) => useGridAutocompleteState({ active, onDeactivate }),
-      { initialProps: { active: true } },
+      ({ active, focus }) =>
+        useGridAutocompleteState({ active, focus, onDeactivate }),
+      { initialProps: { active: true, focus: true } },
     )
 
     const preventDefault = vi.fn()
@@ -145,7 +206,7 @@ describe('useGridAutocompleteState', () => {
 
     // Deactivating while the guard is set must NOT trigger onDeactivate
     act(() => {
-      rerender({ active: false })
+      rerender({ active: false, focus: false })
     })
     expect(onDeactivate).not.toHaveBeenCalled()
   })
@@ -153,8 +214,9 @@ describe('useGridAutocompleteState', () => {
   it('handleListboxMouseDown calls preventDefault but does NOT defer deactivation when target is not an option', () => {
     const onDeactivate = vi.fn()
     const { result, rerender } = renderHook(
-      ({ active }) => useGridAutocompleteState({ active, onDeactivate }),
-      { initialProps: { active: true } },
+      ({ active, focus }) =>
+        useGridAutocompleteState({ active, focus, onDeactivate }),
+      { initialProps: { active: true, focus: true } },
     )
 
     const preventDefault = vi.fn()
@@ -174,21 +236,21 @@ describe('useGridAutocompleteState', () => {
 
     // Guard was not set, so deactivation should proceed normally
     act(() => {
-      rerender({ active: false })
+      rerender({ active: false, focus: false })
     })
     expect(onDeactivate).toHaveBeenCalledTimes(1)
   })
 
   it('handleListboxMouseDown is stable across re-renders', () => {
     const { result, rerender } = renderHook(
-      ({ active }) => useGridAutocompleteState({ active }),
-      { initialProps: { active: false } },
+      ({ active, focus }) => useGridAutocompleteState({ active, focus }),
+      { initialProps: { active: false, focus: false } },
     )
 
     const firstRef = result.current.handleListboxMouseDown
 
     act(() => {
-      rerender({ active: true })
+      rerender({ active: true, focus: true })
     })
 
     expect(result.current.handleListboxMouseDown).toBe(firstRef)
@@ -196,27 +258,27 @@ describe('useGridAutocompleteState', () => {
 
   it('activeRef always reflects the current active value', () => {
     const { result, rerender } = renderHook(
-      ({ active }) => useGridAutocompleteState({ active }),
-      { initialProps: { active: false } },
+      ({ active, focus }) => useGridAutocompleteState({ active, focus }),
+      { initialProps: { active: false, focus: false } },
     )
 
     expect(result.current.activeRef.current).toBe(false)
 
     act(() => {
-      rerender({ active: true })
+      rerender({ active: true, focus: true })
     })
     expect(result.current.activeRef.current).toBe(true)
 
     act(() => {
-      rerender({ active: false })
+      rerender({ active: false, focus: false })
     })
     expect(result.current.activeRef.current).toBe(false)
   })
 
-  it('does not close menu when active becomes false due to portal click, but does close after onChange resets the ref', () => {
+  it('does not close menu when focus becomes false due to portal click, but does close after onChange resets the ref', () => {
     const { result, rerender } = renderHook(
-      ({ active }) => useGridAutocompleteState({ active }),
-      { initialProps: { active: true } },
+      ({ active, focus }) => useGridAutocompleteState({ active, focus }),
+      { initialProps: { active: true, focus: true } },
     )
 
     act(() => {
@@ -233,9 +295,9 @@ describe('useGridAutocompleteState', () => {
       } as unknown as React.MouseEvent)
     })
 
-    // Cell deactivates (portal outside-click)
+    // Focus drops (e.g. cell deactivates as portal outside-click)
     act(() => {
-      rerender({ active: false })
+      rerender({ active: false, focus: false })
     })
     // Menu must still be open so onChange can fire
     expect(result.current.menuIsOpen).toBe(true)
