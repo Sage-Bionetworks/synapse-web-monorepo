@@ -2,17 +2,22 @@ import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/c
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
-import { datasetsSql } from '../config/resources'
+import {
+  ColumnMultiValueFunction,
+  ColumnSingleValueFilterOperator,
+} from '@sage-bionetworks/synapse-types'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import { datasetsSql, peopleSql, publicationsSql } from '../config/resources'
 import {
   datasetCardConfiguration,
   datasetColumnAliases,
 } from '../config/synapseConfigs/datasets'
+import { publicationCardProps } from '../config/synapseConfigs/publications'
 import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
 import DatasetDetailsFilesTable from './DatasetDetailsFilesTable'
 
 function DatasetDetailsPage() {
-  const searchParams = useGetPortalComponentSearchParams()
+  const { id } = useGetPortalComponentSearchParams()
   return (
     <DetailsPage
       header={
@@ -22,8 +27,20 @@ function DatasetDetailsPage() {
             secondaryLabelLimit: 4,
             isHeader: true,
           }}
-          sql={datasetsSql}
-          searchParams={searchParams}
+          query={{
+            sql: datasetsSql,
+            additionalFilters: id
+              ? [
+                  {
+                    concreteType:
+                      'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+                    columnName: 'id',
+                    operator: ColumnSingleValueFilterOperator.EQUAL,
+                    values: [id],
+                  },
+                ]
+              : [],
+          }}
           columnAliases={datasetColumnAliases}
         />
       }
@@ -36,7 +53,59 @@ function DatasetDetailsPage() {
     >
       <DetailsPageContent
         content={[
-          // TODO: Add People and Publications sections once join columns are available.
+          {
+            title: 'People',
+            id: 'People',
+            element: (
+              <DetailsPageContextConsumer columnName={'id'}>
+                {({ value }) => (
+                  <CardContainerLogic
+                    cardConfiguration={{
+                      type: SynapseConstants.MEDIUM_USER_CARD,
+                    }}
+                    query={{
+                      sql: peopleSql,
+                      additionalFilters: [
+                        {
+                          concreteType:
+                            'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
+                          columnName: 'datasetID',
+                          function: ColumnMultiValueFunction.HAS,
+                          _function: ColumnMultiValueFunction.HAS,
+                          values: [value!],
+                        },
+                      ],
+                    }}
+                  />
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
+          {
+            title: 'Publications',
+            id: 'Publications',
+            element: (
+              <DetailsPageContextConsumer columnName={'publicationIds'}>
+                {({ value }) => (
+                  <CardContainerLogic
+                    cardConfiguration={publicationCardProps}
+                    query={{
+                      sql: publicationsSql,
+                      additionalFilters: [
+                        {
+                          concreteType:
+                            'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+                          columnName: 'id',
+                          operator: ColumnSingleValueFilterOperator.IN,
+                          values: value!.split(',').map(v => v.trim()),
+                        },
+                      ],
+                    }}
+                  />
+                )}
+              </DetailsPageContextConsumer>
+            ),
+          },
           {
             title: 'Files',
             id: 'Files',
