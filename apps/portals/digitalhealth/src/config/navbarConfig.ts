@@ -15,11 +15,11 @@ export const navbarConfig: NavbarConfig = {
       path: '/Explore',
       children: [
         { name: 'Collections', path: '/Explore/Collections' },
+        { name: 'Data', path: '/Explore/Data' },
         {
           name: 'Tools',
           path: '/Explore/Tools',
         },
-        { name: 'Data', path: '/Explore/Data' },
         { name: 'Publications', path: '/Explore/Publications' },
       ],
     },
