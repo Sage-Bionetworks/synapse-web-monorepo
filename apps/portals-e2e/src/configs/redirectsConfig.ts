@@ -13,11 +13,52 @@ const NF_STUDY_ID = 'syn2343195'
 const NF_TOOL_ID = '18ba4c2e-e8d5-4032-a6ab-d0fca3f0f984'
 const NF_HACKATHON_ID = 'syn26004582'
 
+const CCKP_TOOL_NAME = 'Cytoscape'
+
 const redirectsConfig: RedirectsConfig = {
   adknowledgeportal: [],
   arkportal: [],
   bsmn: [],
-  cancercomplexity: [],
+  cancercomplexity: [
+    // Tools (tabbed; default tab = Details; param = toolName)
+    [
+      `/Explore/Tools/DetailsPage?toolName=${CCKP_TOOL_NAME}`,
+      `/Explore/Tools/${CCKP_TOOL_NAME}/Details`,
+    ],
+    [
+      `/Explore/Tools/DetailsPage/Details?toolName=${CCKP_TOOL_NAME}`,
+      `/Explore/Tools/${CCKP_TOOL_NAME}/Details`,
+    ],
+    [
+      `/Explore/Tools/DetailsPage/SustainabilityAndReusabilityReport?toolName=${CCKP_TOOL_NAME}`,
+      `/Explore/Tools/${CCKP_TOOL_NAME}/SustainabilityAndReusabilityReport`,
+    ],
+    [
+      `/Explore/Tools/DetailsPage/BogusTab?toolName=${CCKP_TOOL_NAME}`,
+      `/Explore/Tools/${CCKP_TOOL_NAME}/Details`,
+    ],
+
+    // Grants (non-tabbed; param = grantId)
+    ['/Explore/Grants/DetailsPage?grantId=syn1', '/Explore/Grants/syn1'],
+
+    // People (non-tabbed; param = name)
+    ['/Explore/People/DetailsPage?name=Jane', '/Explore/People/Jane'],
+
+    // Publications (non-tabbed; param = pubMedId)
+    [
+      '/Explore/Publications/DetailsPage?pubMedId=12345',
+      '/Explore/Publications/12345',
+    ],
+
+    // Datasets (non-tabbed; param = datasetId)
+    ['/Explore/Datasets/DetailsPage?datasetId=syn2', '/Explore/Datasets/syn2'],
+
+    // Educational Resources (non-tabbed; param = title; path contains a space)
+    [
+      '/Explore/Educational Resources/DetailsPage?title=MyResource',
+      '/Explore/Educational Resources/MyResource',
+    ],
+  ],
   challenges: [],
   digitalhealth: [],
   eliteportal: [],
