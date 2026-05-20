@@ -3,8 +3,9 @@ import hackathonCompleteSvg from '@/config/style/hackathon-complete.svg?url'
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import { hackathonsSql } from '../resources'
+import { hackathonsSearchIndexId, hackathonsSql } from '../resources'
 import { columnAliases } from './commonProps'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 const type = SynapseConstants.GENERIC_CARD
 const rgbIndex = 5
@@ -97,6 +98,18 @@ const hackathons: QueryWrapperPlotNavProps = {
       'manifestation',
     ],
   },
+}
+
+export const hackathonsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'Hackathon Projects',
+  shouldDeepLink: false,
+  cardConfiguration: hackathonCardConfiguration,
+  columnAliases: { ...columnAliases, studyStatus: 'Status' },
+  searchIndexId: hackathonsSearchIndexId,
+  autocompleteFieldName: 'name',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }
 
 export default hackathons

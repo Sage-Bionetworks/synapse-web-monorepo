@@ -32,6 +32,8 @@ export function FullTextSearch({
   const [searchText, setSearchText] = useState('')
   const [suggestions, setSuggestions] = useState<string[]>([])
   const searchInputRef = useRef<HTMLInputElement>(null)
+  const minSearchQueryLength: number =
+    ftsConfig?.minSearchQueryLength ?? MIN_SEARCH_QUERY_LENGTH
 
   const { data } = useGetQueryMetadata()
   const columnModels = data?.columnModels
@@ -40,18 +42,18 @@ export function FullTextSearch({
   useEffect(() => {
     if (
       !ftsConfig?.getSuggestions ||
-      searchText.trim().length < MIN_SEARCH_QUERY_LENGTH
+      searchText.trim().length < minSearchQueryLength
     ) {
       setSuggestions([])
     }
-  }, [ftsConfig?.getSuggestions, searchText])
+  }, [ftsConfig?.getSuggestions, minSearchQueryLength, searchText])
 
   // Fetch autocomplete suggestions whenever searchText changes (debounced)
   useDebouncedEffect(
     () => {
       if (
         !ftsConfig?.getSuggestions ||
-        searchText.trim().length < MIN_SEARCH_QUERY_LENGTH
+        searchText.trim().length < minSearchQueryLength
       ) {
         return
       }
@@ -60,7 +62,7 @@ export function FullTextSearch({
         .then(setSuggestions)
         .catch(() => setSuggestions([]))
     },
-    [searchText, ftsConfig],
+    [searchText, ftsConfig, minSearchQueryLength],
     SUGGESTION_DEBOUNCE_MS,
   )
 
@@ -82,9 +84,9 @@ export function FullTextSearch({
 
     // The HTML validation doesn't trim the string, so we add an extra check.
     // We don't auto-trim the form text ourselves because the user may still be focused on the input.
-    if (searchText.trim().length < MIN_SEARCH_QUERY_LENGTH) {
+    if (searchText.trim().length < minSearchQueryLength) {
       searchInputRef.current?.setCustomValidity(
-        `Search term must have a minimum of ${MIN_SEARCH_QUERY_LENGTH} characters`,
+        `Search term must have a minimum of ${minSearchQueryLength} characters`,
       )
     } else {
       executeSearch(searchText)
@@ -148,7 +150,7 @@ export function FullTextSearch({
                 // Auto-execute search when a suggestion is selected from the dropdown
                 if (
                   typeof newValue === 'string' &&
-                  newValue.trim().length >= MIN_SEARCH_QUERY_LENGTH
+                  newValue.trim().length >= minSearchQueryLength
                 ) {
                   executeSearch(newValue)
                 }
@@ -168,7 +170,7 @@ export function FullTextSearch({
                     },
                     htmlInput: {
                       ...params.inputProps,
-                      minLength: MIN_SEARCH_QUERY_LENGTH,
+                      minLength: minSearchQueryLength,
                     },
                   }}
                 />
@@ -187,7 +189,7 @@ export function FullTextSearch({
                   endAdornment,
                 },
                 htmlInput: {
-                  minLength: MIN_SEARCH_QUERY_LENGTH,
+                  minLength: minSearchQueryLength,
                   ref: searchInputRef,
                 },
               }}

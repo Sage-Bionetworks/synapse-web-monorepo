@@ -246,7 +246,7 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
   // the full context object. QueryWrapper.tsx has the same issue; fix both together in a follow-up.
   const context: QueryContextType = useDeepCompareMemoize({
     isInfinite,
-    entityId: undefined,
+    entityId: synapseId,
     versionNumber: undefined,
     nextQueryRequest,
     currentQueryRequest,

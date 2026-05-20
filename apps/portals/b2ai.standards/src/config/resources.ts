@@ -280,3 +280,5 @@ export function getIdCol(tableName: string) {
   const columnConsts = getColumnConsts(tableName)
   return columnConsts.ID
 }
+
+export const standardsSearchIndexId = 'syn74909093'

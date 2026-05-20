@@ -28,6 +28,7 @@ const initialQueryRequest = mockQueryBundleRequest
 const renderComponent = (
   queryContext: Partial<QueryContextType>,
   queryVisualizationContext: Partial<QueryVisualizationContextType>,
+  ftsConfig?: FTSConfig,
 ) => {
   return render(
     <QueryContextProvider queryContext={queryContext as QueryContextType}>
@@ -36,7 +37,7 @@ const renderComponent = (
           queryVisualizationContext as QueryVisualizationContextType
         }
       >
-        <FullTextSearch />
+        <FullTextSearch ftsConfig={ftsConfig} />
       </QueryVisualizationContextProvider>
     </QueryContextProvider>,
     {
@@ -108,6 +109,21 @@ describe('FullTextSearch tests', () => {
     await userEvent.type(searchBox, searchQuery + '{enter}')
 
     expect(mockExecuteQueryRequest).not.toHaveBeenCalled()
+  })
+
+  it('respects a custom minSearchQueryLength from ftsConfig', async () => {
+    const ftsConfig: FTSConfig = {
+      textMatchesMode: 'NATURAL_LANGUAGE',
+      minSearchQueryLength: 1,
+    }
+    renderComponent(queryContext, queryVisualizationContext, ftsConfig)
+
+    const searchBox = screen.getByRole('textbox')
+
+    // A single character would normally be rejected by the default minimum of 3
+    await userEvent.type(searchBox, 'N{enter}')
+
+    expect(mockExecuteQueryRequest).toHaveBeenCalled()
   })
 
   describe('updateQueryUsingSearchTerm', () => {

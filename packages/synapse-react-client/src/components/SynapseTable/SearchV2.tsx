@@ -69,6 +69,11 @@ export type FTSConfig = {
    * @returns A promise resolving to an array of suggestion strings
    */
   getSuggestions?: (searchText: string) => Promise<string[]>
+  /**
+   * Override the minimum number of characters required before a search is executed.
+   * Defaults to 3 (see PLFM-7011).
+   */
+  minSearchQueryLength?: number
 }
 
 type InternalSearchProps = SearchV2Props & {
