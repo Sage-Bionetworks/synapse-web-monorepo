@@ -32,6 +32,11 @@ const routes: RouteObject[] = [
           ),
       },
       {
+        path: 'Explore/DataTopic/DetailsPage',
+        lazy: () =>
+          import('@/pages/TopicDetailsPage').then(convertModuleToRouteObject),
+      },
+      {
         path: 'Search',
         children: [
           {
