@@ -933,6 +933,10 @@ export class KeyFactory {
     return this.getKey('user', userId, 'profile')
   }
 
+  public getUserProfilesWithProfilePicAttachedQueryKey(principalIds: string[]) {
+    return this.getKey('userProfilesWithProfilePicAttached', principalIds)
+  }
+
   public getPrincipalAliasQueryKey(request: PrincipalAliasRequest) {
     return this.getKey('principalAlias', request)
   }

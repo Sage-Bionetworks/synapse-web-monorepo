@@ -1,9 +1,14 @@
-import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
+import SynapseClient from '@/synapse-client'
+import useGetQueryResultBundle, {
+  tableQueryUseQueryDefaults,
+} from '@/synapse-queries/entity/useGetQueryResultBundle'
+import { KeyFactory } from '@/synapse-queries/KeyFactory'
 import { SynapseConstants } from '@/utils'
 import { getFieldIndex } from '@/utils/functions/queryUtils'
 import useGetGoalData from '@/utils/hooks/useGetGoalData'
 import useShowDesktop from '@/utils/hooks/useShowDesktop'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import { QueryClient } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { ErrorBanner } from '../error/ErrorBanner'
 import GoalsDesktop from './Goals.Desktop'
@@ -39,10 +44,8 @@ enum ExpectedColumns {
 // PORTALS-2367
 const GOALS_DESKTOP_MIN_BREAKPOINT = 1200
 
-export function Goals(props: GoalsProps) {
-  const { entityId, isAssetIcon = false, linkText, itemsPerRow = 3 } = props
-  const showDesktop = useShowDesktop(GOALS_DESKTOP_MIN_BREAKPOINT)
-  const queryBundleRequest: QueryBundleRequest = {
+function buildGoalsQueryBundleRequest(entityId: string): QueryBundleRequest {
+  return {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId,
     partMask:
@@ -54,6 +57,12 @@ export function Goals(props: GoalsProps) {
             order by ItemOrder`,
     },
   }
+}
+
+export function Goals(props: GoalsProps) {
+  const { entityId, isAssetIcon = false, linkText, itemsPerRow = 3 } = props
+  const showDesktop = useShowDesktop(GOALS_DESKTOP_MIN_BREAKPOINT)
+  const queryBundleRequest = buildGoalsQueryBundleRequest(entityId)
   const { data: queryResultBundle } =
     useGetQueryResultBundle(queryBundleRequest)
 
@@ -171,3 +180,24 @@ export function Goals(props: GoalsProps) {
   }
 }
 export default Goals
+
+/**
+ * Prefetches the Goals table query into a QueryClient for use with HydrationBoundary.
+ * Uses anonymous access; warm-caches for unauthenticated users.
+ */
+export async function prefetchGoals(
+  queryClient: QueryClient,
+  entityId: string,
+): Promise<void> {
+  const keyFactory = new KeyFactory(undefined)
+  const queryBundleRequest = buildGoalsQueryBundleRequest(entityId)
+  await queryClient.prefetchQuery({
+    ...tableQueryUseQueryDefaults,
+    queryKey: keyFactory.getEntityTableQueryResultQueryKey(
+      queryBundleRequest,
+      false,
+    ),
+    queryFn: () =>
+      SynapseClient.getQueryTableResults(queryBundleRequest, undefined),
+  })
+}

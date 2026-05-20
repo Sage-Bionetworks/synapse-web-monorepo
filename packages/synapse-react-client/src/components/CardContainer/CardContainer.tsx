@@ -16,11 +16,10 @@ import {
   Row,
   RowSet,
 } from '@sage-bionetworks/synapse-types'
-import { Suspense } from 'react'
 import loadingScreen from '../LoadingScreen/LoadingScreen'
 import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
-import { useSuspenseGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
+import { useGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 import { ReleaseCard } from '../ReleaseCard'
 import { Dataset, Funder } from '../row_renderers'
 import {
@@ -81,7 +80,7 @@ function Card(props: { propsToPass: any; type: string }) {
   }
 }
 
-function CardContainerInternal(props: CardContainerProps) {
+export function CardContainer(props: CardContainerProps) {
   const {
     unitDescription,
     type,
@@ -93,7 +92,7 @@ function CardContainerInternal(props: CardContainerProps) {
   } = props
   const { NoContentPlaceholder } = useQueryVisualizationContext()
   const queryContext = useQueryContext()
-  const { data: queryMetadata } = useSuspenseGetQueryMetadata()
+  const { data: queryMetadata } = useGetQueryMetadata()
   const queryVisualizationContext = useQueryVisualizationContext()
 
   const dataRows: Row[] = rowSet.rows
@@ -104,6 +103,19 @@ function CardContainerInternal(props: CardContainerProps) {
     ids,
     type: 'ENTITY_HEADER',
   })
+
+  // Render a loading placeholder while waiting for query metadata. Using a
+  // non-suspense query (with conditional rendering) instead of Suspense keeps
+  // the cards inline in the prerendered HTML when data is already cached,
+  // rather than forcing React 19 streaming to stash them in a hidden div.
+  if (!queryMetadata) {
+    return (
+      <div>
+        {type === OBSERVATION_CARD && <LoadingObservationCard />}
+        {type !== OBSERVATION_CARD && loadingScreen}
+      </div>
+    )
+  }
 
   // the cards only show the loading screen on initial load, this occurs when data is undefined
   if (dataRows.length === 0) {
@@ -177,29 +189,13 @@ function CardContainerInternal(props: CardContainerProps) {
   }
 
   return (
-    <>
-      <Box role="list" sx={cardListSx}>
-        {title && <h2 className="SRC-card-overview-title">{title}</h2>}
-        {!title && unitDescription && (
-          <TotalQueryResults frontText={'Displaying'} />
-        )}
-        {/* ReactCSSTransitionGroup adds css fade in property for cards that come into view */}
-        {cards}
-      </Box>
-    </>
-  )
-}
-
-export function CardContainer(props: CardContainerProps) {
-  const fallback = (
-    <div>
-      {props.type === OBSERVATION_CARD && <LoadingObservationCard />}
-      {props.type !== OBSERVATION_CARD && loadingScreen}
-    </div>
-  )
-  return (
-    <Suspense fallback={fallback}>
-      <CardContainerInternal {...props} />
-    </Suspense>
+    <Box role="list" sx={cardListSx}>
+      {title && <h2 className="SRC-card-overview-title">{title}</h2>}
+      {!title && unitDescription && (
+        <TotalQueryResults frontText={'Displaying'} />
+      )}
+      {/* ReactCSSTransitionGroup adds css fade in property for cards that come into view */}
+      {cards}
+    </Box>
   )
 }

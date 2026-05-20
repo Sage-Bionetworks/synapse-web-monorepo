@@ -6,6 +6,7 @@ import {
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '@/utils/functions/SqlFunctions'
+import { removeEmptyQueryParams } from '@/utils/functions/queryUtils'
 import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
 import {
   Query,
@@ -13,6 +14,7 @@ import {
   SelectColumn,
   SortDirection,
 } from '@sage-bionetworks/synapse-types'
+import { QueryClient } from '@tanstack/react-query'
 import React, { useMemo } from 'react'
 import ColumnFilter from '../ColumnFilter/ColumnFilter'
 import { SxProps } from '@mui/material'
@@ -26,6 +28,9 @@ import { QueryWrapper } from '../QueryWrapper'
 import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
 import { RowSetView } from '../QueryWrapperPlotNav/RowSetView'
 import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
+import { KeyFactory } from '@/synapse-queries/KeyFactory'
+import { tableQueryUseQueryDefaults } from '@/synapse-queries/entity/useGetQueryResultBundle'
+import { getTableQueryUseQueryOptions } from '../QueryWrapper/TableQueryUseQueryOptions'
 
 /**
  *  Used when a column value should link to an external URL defined by a value in another column.
@@ -265,3 +270,62 @@ export function CardContainerLogic(props: CardContainerLogicProps) {
 }
 
 export default CardContainerLogic
+
+/**
+ * Prefetches both the row data and query metadata for a CardContainerLogic query
+ * into a QueryClient for use with HydrationBoundary. Matches the exact query
+ * structure that CardContainerLogic builds (with deprecated `sql` prop and no
+ * sort/filter overrides). Uses anonymous access; warm-caches for unauthenticated users.
+ *
+ * CardContainerLogic renders with `isInfinite={true}`, so the row data must be
+ * primed via `prefetchInfiniteQuery` against the infinite query key — priming
+ * the non-infinite key here leaves `useInfiniteQuery` with a cache miss and
+ * RowSetView renders its loading screen during SSG.
+ */
+export async function prefetchCardContainerLogicData(
+  queryClient: QueryClient,
+  sql: string,
+): Promise<void> {
+  const entityId = parseEntityIdFromSqlStatement(sql)
+  const keyFactory = new KeyFactory(undefined)
+
+  const initQueryRequest: QueryBundleRequest = {
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    entityId,
+    query: removeEmptyQueryParams({
+      sql,
+      limit: DEFAULT_PAGE_SIZE,
+    } as Query),
+    partMask:
+      SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
+      SynapseConstants.BUNDLE_MASK_QUERY_COUNT |
+      SynapseConstants.BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+      SynapseConstants.BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE |
+      SynapseConstants.BUNDLE_MASK_QUERY_COLUMN_MODELS |
+      SynapseConstants.BUNDLE_MASK_QUERY_FACETS |
+      SynapseConstants.BUNDLE_MASK_SUM_FILES_SIZE_BYTES |
+      SynapseConstants.BUNDLE_MASK_LAST_UPDATED_ON,
+  }
+
+  const { rowDataInfiniteQueryOptions, queryMetadataQueryOptions } =
+    getTableQueryUseQueryOptions(
+      initQueryRequest,
+      undefined,
+      keyFactory,
+      undefined,
+    )
+
+  await Promise.all([
+    queryClient.prefetchInfiniteQuery({
+      queryKey: rowDataInfiniteQueryOptions.queryKey,
+      queryFn: rowDataInfiniteQueryOptions.queryFn!,
+      initialPageParam: rowDataInfiniteQueryOptions.initialPageParam,
+      staleTime: tableQueryUseQueryDefaults.staleTime,
+    }),
+    queryClient.prefetchQuery({
+      queryKey: queryMetadataQueryOptions.queryKey,
+      queryFn: queryMetadataQueryOptions.queryFn!,
+      staleTime: tableQueryUseQueryDefaults.staleTime,
+    }),
+  ])
+}
