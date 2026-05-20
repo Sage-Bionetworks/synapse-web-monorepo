@@ -135,6 +135,7 @@ export const DATASET_DENORMALIZED_COLUMN_CONSTS: ColumnConsts = {
   PRODUCED_BY: 'producedBy',
   PRODUCED_BY_ORG_ID: 'producedByOrgId',
   TOPICS: 'topics',
+  TOPIC_IDS: 'topicIds',
   SUBSTRATES: 'substrates',
   SUBSTRATES_JSON: 'substrates_json',
 }
@@ -241,7 +242,7 @@ export const TOPIC_TABLE_COLUMN_CONSTS: ColumnConsts & {
   DESCRIPTION: string
 } = {
   ID: 'id',
-  CATEGORY: 'category',
+  // CATEGORY: 'category',
   NAME: 'name',
   DESCRIPTION: 'description',
   SUBCLASS_OF: 'subclassOf',

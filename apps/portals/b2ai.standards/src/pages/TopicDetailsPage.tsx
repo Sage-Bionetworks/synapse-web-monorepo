@@ -1,12 +1,4 @@
-import {
-  Box,
-  LinearProgress,
-  Link,
-  List,
-  ListItem,
-  Typography,
-} from '@mui/material'
-import { Link as RouterLink } from 'react-router'
+import { LinearProgress, Typography } from '@mui/material'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ErrorBanner } from 'synapse-react-client/components/error/ErrorBanner'
 import ErrorPage, {
@@ -15,19 +7,39 @@ import ErrorPage, {
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageSectionLayoutType } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageSectionLayout'
+import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import StandaloneQueryWrapper from 'synapse-react-client/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import {
+  ColumnMultiValueFunction,
+  ColumnSingleValueFilterOperator,
+} from '@sage-bionetworks/synapse-types'
 import {
   TOPIC_TABLE_COLUMN_CONSTS as T,
   topicDetailsPageSQL,
+  standardsSql,
+  dataSetSQL,
+  standardsFtsConfig,
+  DST_TABLE_COLUMN_CONSTS,
+  DATASET_DENORMALIZED_COLUMN_CONSTS,
 } from '@/config/resources'
+import columnAliases from '@/config/columnAliases'
+import {
+  standardsColumnLinks,
+  standardsRgbIndex,
+} from '@/config/synapseConfigs/standards'
+import {
+  linkedTopicCardConfiguration,
+  topicsCardSchema,
+  topicsColumnLinks,
+} from '@/config/synapseConfigs/topics'
 import {
   getQueryBundleRequestWithIdFilter,
   useFetchRowsAsObjects,
 } from '@/hooks/fetchDataUtils'
-import TopicHierarchyWidget, {
-  TopicRow,
-} from '@/components/TopicHierarchyWidget'
+import TopicHierarchyWidget from '@/components/TopicHierarchyWidget'
 
-type LinkedItem = { id: string; name: string }
+type LinkedItem = { id: string; name?: string; dataPartName?: string }
 
 function parseJsonLinks(value: string | null | undefined): LinkedItem[] {
   if (!value) return []
@@ -37,75 +49,6 @@ function parseJsonLinks(value: string | null | undefined): LinkedItem[] {
   } catch {
     return []
   }
-}
-
-function LinkedItemList({
-  items,
-  baseURL,
-}: {
-  items: LinkedItem[]
-  baseURL: string
-}) {
-  if (items.length === 0) {
-    return (
-      <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-        None.
-      </Typography>
-    )
-  }
-  return (
-    <List dense sx={{ pl: 0 }}>
-      {items.map(item => (
-        <ListItem key={item.id} sx={{ pl: 0 }}>
-          <Link
-            component={RouterLink}
-            to={`${baseURL}?id=${encodeURIComponent(item.id)}`}
-            underline="hover"
-          >
-            {item.name}
-          </Link>
-        </ListItem>
-      ))}
-    </List>
-  )
-}
-
-function TopicHeader({ topic }: { topic: TopicRow }) {
-  const externalIds = [
-    { key: T.EDAM_ID, label: 'EDAM' },
-    { key: T.MESH_ID, label: 'MeSH' },
-    { key: T.NCIT_ID, label: 'NCIT' },
-  ]
-    .map(x => ({ ...x, value: topic[x.key] }))
-    .filter(x => x.value)
-  return (
-    <Box sx={{ p: 2 }}>
-      <Typography variant="overline" sx={{ color: 'text.secondary' }}>
-        Data Topic
-      </Typography>
-      <Typography variant="h4" sx={{ fontWeight: 700, mt: 0.5 }}>
-        {topic[T.NAME]}
-      </Typography>
-      {topic[T.DESCRIPTION] && (
-        <Typography variant="body1" sx={{ mt: 1, color: 'text.primary' }}>
-          {topic[T.DESCRIPTION]}
-        </Typography>
-      )}
-      {externalIds.length > 0 && (
-        <Box sx={{ mt: 1, display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-          {externalIds.map(x => (
-            <Typography
-              key={x.key}
-              variant="caption"
-              sx={{ fontFamily: 'monospace', color: 'text.secondary' }}
-            >
-              {x.label}: {x.value}
-            </Typography>
-          ))}
-        </Box>
-      )}
-    </Box>
-  )
 }
 
 export default function TopicDetailsPage() {
@@ -158,9 +101,14 @@ export default function TopicDetailsPage() {
       id: 'RelatedTopics',
       title: `Related Topics (${relatedTopics.length})`,
       element: (
-        <LinkedItemList
-          items={relatedTopics}
-          baseURL="/Explore/DataTopic/DetailsPage"
+        <CardContainerLogic
+          cardConfiguration={linkedTopicCardConfiguration}
+          sql={topicDetailsPageSQL}
+          searchParams={{
+            [T.ID]: relatedTopics.map(rt => rt.id).join(','),
+          }}
+          sqlOperator={ColumnSingleValueFilterOperator.IN}
+          columnAliases={columnAliases}
         />
       ),
     })
@@ -171,9 +119,24 @@ export default function TopicDetailsPage() {
       id: 'RelatedStandards',
       title: `Related Standards (${standards.length})`,
       element: (
-        <LinkedItemList
-          items={standards}
-          baseURL="/Explore/Standard/DetailsPage"
+        <StandaloneQueryWrapper
+          rgbIndex={standardsRgbIndex}
+          sql={standardsSql}
+          searchParams={{
+            [DST_TABLE_COLUMN_CONSTS.CONCERNS_DATA_TOPIC]: id,
+          }}
+          sqlOperator={ColumnMultiValueFunction.HAS}
+          columnAliases={columnAliases}
+          tableConfiguration={{
+            showDownloadColumn: false,
+            columnLinks: standardsColumnLinks,
+          }}
+          searchConfiguration={{
+            ftsConfig: standardsFtsConfig,
+          }}
+          shouldDeepLink={false}
+          hideQueryCount={true}
+          hideDownload={true}
         />
       ),
     })
@@ -184,9 +147,19 @@ export default function TopicDetailsPage() {
       id: 'RelatedDatasets',
       title: `Related Datasets (${datasets.length})`,
       element: (
-        <LinkedItemList
-          items={datasets}
-          baseURL="/Explore/DataSet/DetailsPage"
+        <StandaloneQueryWrapper
+          sql={dataSetSQL}
+          searchParams={{
+            [DATASET_DENORMALIZED_COLUMN_CONSTS.TOPIC_IDS]: id,
+          }}
+          sqlOperator={ColumnMultiValueFunction.HAS}
+          columnAliases={columnAliases}
+          tableConfiguration={{
+            showDownloadColumn: false,
+          }}
+          shouldDeepLink={false}
+          hideQueryCount={true}
+          hideDownload={true}
         />
       ),
     })
@@ -199,8 +172,10 @@ export default function TopicDetailsPage() {
       helpText:
         'Data parts in BRIDGE2AI Grand Challenge manifests that concern this topic.',
       element: (
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          {manifestDataParts.map(p => p.name).join(' · ')}
+        <Typography variant="body2" sx={{ color: 'text.primary' }}>
+          {manifestDataParts
+            .map(p => p.dataPartName ?? p.name ?? p.id)
+            .join(' · ')}
         </Typography>
       ),
     })
@@ -208,7 +183,31 @@ export default function TopicDetailsPage() {
 
   return (
     <DetailsPage
-      header={<TopicHeader topic={current} />}
+      header={
+        <CardContainerLogic
+          query={{
+            sql: topicDetailsPageSQL,
+            additionalFilters: [
+              {
+                concreteType:
+                  'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+                columnName: T.ID,
+                operator: ColumnSingleValueFilterOperator.EQUAL,
+                values: [id],
+              },
+            ],
+          }}
+          columnAliases={columnAliases}
+          cardConfiguration={{
+            type: SynapseConstants.GENERIC_CARD,
+            genericCardSchema: topicsCardSchema,
+            secondaryLabelLimit: 6,
+            isHeader: true,
+            headerCardVariant: 'HeaderCardV2',
+            labelLinkConfig: topicsColumnLinks,
+          }}
+        />
+      }
       sql={topicDetailsPageSQL}
       resourcePrimaryKey={[T.ID]}
     >
