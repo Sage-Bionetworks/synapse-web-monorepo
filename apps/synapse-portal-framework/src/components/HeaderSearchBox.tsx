@@ -14,7 +14,7 @@ import {
 } from '@mui/material'
 import React from 'react'
 import PortalFullTextSearchField from './PortalSearch/PortalFullTextSearchField'
-import { useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import defaultStyles from './HeaderSearchBox.module.scss'
 import v2Styles from './HeaderSearchBoxV2.module.scss'
 import v3Styles from './HeaderSearchBoxV3.module.scss'
@@ -67,6 +67,7 @@ const HeaderSearchBox = ({
   const [mode, setMode] = useState<'Chat' | 'Search'>('Search')
   const theme = useTheme()
   const navigate = useNavigate()
+  const location = useLocation()
   const { isAuthenticated } = useSynapseContext()
   const chatDialogContext = useChatDialogContext()
   const isChatAvailable = chatDialogContext?.isChatAvailable
@@ -93,8 +94,9 @@ const HeaderSearchBox = ({
         if (role) {
           params.set(SEARCH_ROLE, role)
         }
+        const alreadyOnPath = location.pathname.startsWith(path)
         navigate({
-          pathname: path,
+          ...(alreadyOnPath ? {} : { pathname: path }),
           search: `?${params.toString()}`,
         })
       }
