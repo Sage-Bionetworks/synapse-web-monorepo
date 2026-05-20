@@ -9,12 +9,21 @@ import CancerComplexityIntro from '@sage-bionetworks/synapse-portal-framework/co
 import CCKPDevelopedBySage from '@sage-bionetworks/synapse-portal-framework/components/csbc-home-page/CCKPDevelopedBySage'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import { mergeMeta } from '@sage-bionetworks/synapse-portal-framework/utils/mergeMeta'
-import type { MetaArgs, MetaDescriptor } from 'react-router'
-import { Goals } from 'synapse-react-client/components/Goals/Goals'
+import { useLoaderData, type MetaArgs, type MetaDescriptor } from 'react-router'
+import {
+  Goals,
+  prefetchGoals,
+} from 'synapse-react-client/components/Goals/Goals'
 import TableQueryEcosystem from 'synapse-react-client/components/Ecosystem/TableQueryEcosystem'
 import { ThemesPlot } from 'synapse-react-client/components/Plot/ThemesPlot'
 import Programs from 'synapse-react-client/components/Programs/index'
 import RssFeedCards from 'synapse-react-client/components/RssFeedCards/index'
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
+import {
+  prefetchRssFeed,
+  RssFilter,
+} from 'synapse-react-client/components/RssFeedCards/RssFeedCards'
+import { createQueryClientForLoader } from '@sage-bionetworks/synapse-portal-framework/utils/createQueryClientForLoader'
 
 export function meta(args: MetaArgs): MetaDescriptor[] {
   const portalDescription = import.meta.env.VITE_PORTAL_DESCRIPTION
@@ -42,9 +51,28 @@ export function meta(args: MetaArgs): MetaDescriptor[] {
   ])
 }
 
+const GOALS_ENTITY_ID = 'syn66276142'
+
+const RSS_URL = 'https://news.cancercomplexity.synapse.org'
+const RSS_FILTER: RssFilter = {
+  type: 'category',
+  value: 'CCKP',
+}
+
+export async function loader() {
+  const queryClient = createQueryClientForLoader()
+  await Promise.all([
+    prefetchGoals(queryClient, GOALS_ENTITY_ID),
+    prefetchRssFeed(queryClient, RSS_URL, RSS_FILTER),
+  ])
+  return { dehydratedState: dehydrate(queryClient) }
+}
+
 function Home() {
+  const { dehydratedState } = useLoaderData<typeof loader>()
+
   return (
-    <>
+    <HydrationBoundary state={dehydratedState}>
       <CancerComplexityHeader />
       <SectionLayout>
         <CancerComplexityIntro />
@@ -57,7 +85,7 @@ function Home() {
             className: 'home-spacer',
           }}
         >
-          <Goals entityId={'syn66276142'} isAssetIcon={true} />
+          <Goals entityId={GOALS_ENTITY_ID} isAssetIcon={true} />
         </SectionLayout>
       </div>
 
@@ -137,13 +165,10 @@ function Home() {
           ContainerProps={{ className: 'home-spacer' }}
         >
           <RssFeedCards
-            url={'https://news.cancercomplexity.synapse.org'}
+            url={RSS_URL}
+            filter={RSS_FILTER}
             itemsToShow={3}
             allowCategories={[]}
-            filter={{
-              value: 'CCKP',
-              type: 'category',
-            }}
           />
         </SectionLayout>
       </div>
@@ -174,7 +199,7 @@ function Home() {
       <SectionLayout>
         <CCKPDevelopedBySage />
       </SectionLayout>
-    </>
+    </HydrationBoundary>
   )
 }
 
