@@ -177,6 +177,7 @@ export default function SearchQueryWrapperPlotNav(
               ftsConfig: {
                 textMatchesMode: 'NATURAL_LANGUAGE',
                 minSearchQueryLength: 1,
+                replaceExistingFilter: true,
                 getSuggestions: autocompleteFieldName
                   ? getSuggestions
                   : undefined,

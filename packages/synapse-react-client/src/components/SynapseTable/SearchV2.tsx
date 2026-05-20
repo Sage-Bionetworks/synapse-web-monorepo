@@ -74,6 +74,12 @@ export type FTSConfig = {
    * Defaults to 3 (see PLFM-7011).
    */
   minSearchQueryLength?: number
+  /**
+   * When true, submitting a new search term replaces any existing TextMatchesQueryFilter
+   * in additionalFilters rather than appending a new one.
+   * Defaults to false (existing behaviour: filters accumulate).
+   */
+  replaceExistingFilter?: boolean
 }
 
 type InternalSearchProps = SearchV2Props & {
