@@ -1,15 +1,15 @@
 import { Navigate, useLocation } from 'react-router'
 
 /**
- * Handles redirects from old query-string–based detail page URLs to the new
- * clean path-segment form.
+ * Redirects old query-string detail page URLs to path-segment form,
+ * preserving any trailing tab sub-path:
  *
- * Examples:
- *   /Explore/Datasets/DetailsPage?id=syn123          → /Explore/Datasets/syn123
- *   /Explore/Studies/DetailsPage?studyId=syn456       → /Explore/Studies/syn456
- *   /Organizations/DetailsPage?abbreviation=CTF       → /Organizations/CTF
+ *   /Explore/Studies/DetailsPage/Details?studyId=syn1 → /Explore/Studies/syn1/Details
  *
- * @param paramName - The query parameter name to promote to a path segment.
+ * Unknown tab segments fall through to the parent route's
+ * `DefaultTabWildcardRedirect`, which recovers to the default tab.
+ *
+ * @param paramName - Query parameter to promote to a path segment.
  */
 export default function LegacyDetailsPageRedirect({
   paramName,
@@ -17,17 +17,19 @@ export default function LegacyDetailsPageRedirect({
   paramName: string
 }) {
   const { search, pathname } = useLocation()
-  const params = new URLSearchParams(search)
-  const id = params.get(paramName)
+  const id = new URLSearchParams(search).get(paramName)
 
-  // Strip /DetailsPage and everything after it from the current pathname to get
-  // the new base, e.g.:
-  //   /Explore/Datasets/DetailsPage         → /Explore/Datasets
-  //   /Explore/Studies/DetailsPage/Details  → /Explore/Studies
-  const newBase = pathname.replace(/\/DetailsPage(\/.*)?$/, '')
+  // Split at /DetailsPage to keep any trailing tab segment (e.g. "/Details").
+  const match = pathname.match(/^(.*?)\/DetailsPage(\/.*)?$/)
+  const newBase = match?.[1] ?? pathname
+  const tabPath = match?.[2] ?? ''
 
   if (!id) {
+    // Drop the tab segment too: e.g. `/Explore/Studies/Details` would match
+    // `/Explore/Studies/:studyId` with `studyId="Details"` and load garbage.
     return <Navigate to={newBase} replace />
   }
-  return <Navigate to={`${newBase}/${encodeURIComponent(id)}`} replace />
+  return (
+    <Navigate to={`${newBase}/${encodeURIComponent(id)}${tabPath}`} replace />
+  )
 }

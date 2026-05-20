@@ -1,5 +1,19 @@
 import { index, layout, prefix, route } from '@react-router/dev/routes'
 import type { RouteConfig } from '@react-router/dev/routes'
+import { legacyDetailsPageRoutes } from '@sage-bionetworks/synapse-portal-framework/ssg/legacyDetailsPageRoutes'
+import {
+  HACKATHONS_DETAILS_PAGE_BACKGROUND_AND_RESULTS_TAB_PATH,
+  HACKATHONS_DETAILS_PAGE_METHODOLOGY_TAB_PATH,
+  ORGANIZATION_DATA_TAB_PATH,
+  ORGANIZATION_DETAILS_TAB_PATH,
+  STUDY_DETAILS_PAGE_ADDITIONAL_FILES_TAB_PATH,
+  STUDY_DETAILS_PAGE_DATASETS_TAB_PATH,
+  STUDY_DETAILS_PAGE_DETAILS_TAB_PATH,
+  STUDY_DETAILS_PAGE_FILES_TAB_PATH,
+  TOOLS_DETAILS_PAGE_DATA_TAB_PATH,
+  TOOLS_DETAILS_PAGE_DETAILS_TAB_PATH,
+  TOOLS_DETAILS_PAGE_OBSERVATIONS_TAB_PATH,
+} from './config/routeConstants'
 
 /**
  * Framework Mode route configuration for the NF portal.
@@ -156,28 +170,59 @@ export default [
       ),
 
       // ── Legacy /DetailsPage redirect routes ────────────────────────────────
-      route(
-        'Explore/Initiatives/DetailsPage',
-        'pages/LegacyInitiativeRedirect.tsx',
-      ),
-      route('Explore/Datasets/DetailsPage', 'pages/LegacyDatasetRedirect.tsx'),
-      route('Explore/Studies/DetailsPage', 'pages/LegacyStudyRedirect.tsx', {
-        id: 'legacy-study-redirect',
+      // For tabbed detail pages, each known tab needs its own explicit static
+      // route so the legacy URL outscores the real `:resourceId/<tab>` route
+      // during react-router path ranking. See legacyDetailsPageRoutes for the
+      // scoring rationale.
+      ...legacyDetailsPageRoutes({
+        basePath: 'Explore/Initiatives/DetailsPage',
+        file: 'pages/LegacyInitiativeRedirect.tsx',
+        idPrefix: 'legacy-initiative',
       }),
-      route(
-        'Explore/Studies/DetailsPage/Details',
-        'pages/LegacyStudyRedirect.tsx',
-        { id: 'legacy-study-redirect-details' },
-      ),
-      route('Explore/Tools/DetailsPage', 'pages/LegacyToolRedirect.tsx'),
-      route(
-        'Explore/Hackathon/DetailsPage',
-        'pages/LegacyHackathonRedirect.tsx',
-      ),
-      route(
-        'Organizations/DetailsPage',
-        'pages/LegacyOrganizationRedirect.tsx',
-      ),
+      ...legacyDetailsPageRoutes({
+        basePath: 'Explore/Datasets/DetailsPage',
+        file: 'pages/LegacyDatasetRedirect.tsx',
+        idPrefix: 'legacy-dataset',
+      }),
+      ...legacyDetailsPageRoutes({
+        basePath: 'Explore/Studies/DetailsPage',
+        file: 'pages/LegacyStudyRedirect.tsx',
+        idPrefix: 'legacy-study',
+        knownTabPaths: [
+          STUDY_DETAILS_PAGE_DETAILS_TAB_PATH,
+          STUDY_DETAILS_PAGE_DATASETS_TAB_PATH,
+          STUDY_DETAILS_PAGE_FILES_TAB_PATH,
+          STUDY_DETAILS_PAGE_ADDITIONAL_FILES_TAB_PATH,
+        ],
+      }),
+      ...legacyDetailsPageRoutes({
+        basePath: 'Explore/Tools/DetailsPage',
+        file: 'pages/LegacyToolRedirect.tsx',
+        idPrefix: 'legacy-tool',
+        knownTabPaths: [
+          TOOLS_DETAILS_PAGE_DETAILS_TAB_PATH,
+          TOOLS_DETAILS_PAGE_OBSERVATIONS_TAB_PATH,
+          TOOLS_DETAILS_PAGE_DATA_TAB_PATH,
+        ],
+      }),
+      ...legacyDetailsPageRoutes({
+        basePath: 'Explore/Hackathon/DetailsPage',
+        file: 'pages/LegacyHackathonRedirect.tsx',
+        idPrefix: 'legacy-hackathon',
+        knownTabPaths: [
+          HACKATHONS_DETAILS_PAGE_BACKGROUND_AND_RESULTS_TAB_PATH,
+          HACKATHONS_DETAILS_PAGE_METHODOLOGY_TAB_PATH,
+        ],
+      }),
+      ...legacyDetailsPageRoutes({
+        basePath: 'Organizations/DetailsPage',
+        file: 'pages/LegacyOrganizationRedirect.tsx',
+        idPrefix: 'legacy-organization',
+        knownTabPaths: [
+          ORGANIZATION_DETAILS_TAB_PATH,
+          ORGANIZATION_DATA_TAB_PATH,
+        ],
+      }),
 
       // PORTALS-2277: Redirect renamed "Hackathon Projects" → "Hackathon"
       route(
