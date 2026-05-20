@@ -59,12 +59,7 @@ export function RowSetView(props: RowSetViewProps) {
           <QueryWrapperLoadingScreen progressMessage={progressMessage} />
         )}
         {!isLoading && rowSet && (
-          // even after the rowSet is loaded, a child component may suspend
-          <Suspense
-            fallback={
-              <QueryWrapperLoadingScreen progressMessage={progressMessage} />
-            }
-          >
+          <>
             {tableConfiguration && (
               <SynapseTable
                 {...tableConfiguration}
@@ -79,7 +74,7 @@ export function RowSetView(props: RowSetViewProps) {
                 multiCardList={multiCardList}
               />
             )}
-          </Suspense>
+          </>
         )}
         <Suspense fallback={<></>}>
           {!isInfinite && (

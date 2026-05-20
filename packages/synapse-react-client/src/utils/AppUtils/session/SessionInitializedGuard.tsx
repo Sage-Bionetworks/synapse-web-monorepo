@@ -25,9 +25,16 @@ export function SessionInitializedGuard(props: SessionInitializedGuardProps) {
   const { children, hintText } = props
   const { hasInitializedSession } = useApplicationSessionContext()
 
-  if (!hasInitializedSession) {
-    return <BlockingLoader show={true} hintText={hintText} />
-  }
-
-  return <>{children}</>
+  // Render children even while the session is initializing so that SSG-prefetched
+  // (anonymous) data appears in the static HTML and is hydration-stable on the
+  // client. A non-blocking BlockingLoader (a fixed-position overlay) sits next
+  // to the children until the session manager finishes its initial check.
+  return (
+    <>
+      {!hasInitializedSession && (
+        <BlockingLoader show={true} hintText={hintText} />
+      )}
+      {children}
+    </>
+  )
 }
