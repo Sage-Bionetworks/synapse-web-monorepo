@@ -147,7 +147,19 @@ const routes: RouteObject[] = [
             lazy: () =>
               import('@/pages/Explore/people').then(convertModuleToRouteObject),
           },
+          {
+            path: 'Datasets',
+            lazy: () =>
+              import('@/pages/Explore/datasets').then(
+                convertModuleToRouteObject,
+              ),
+          },
         ],
+      },
+      {
+        path: 'Explore/Datasets/DetailsPage',
+        lazy: () =>
+          import('@/pages/DatasetDetailsPage').then(convertModuleToRouteObject),
       },
       {
         path: 'Explore/Computational Tools/DetailsPage',
