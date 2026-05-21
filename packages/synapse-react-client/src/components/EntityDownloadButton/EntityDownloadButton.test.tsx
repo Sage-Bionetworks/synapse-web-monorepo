@@ -28,6 +28,7 @@ import { createRef } from 'react'
 import {
   EntityDownloadButton,
   getDownloadActionsForEntityType,
+  getProgrammaticAccessCode,
 } from './EntityDownloadButton'
 
 vi.mock('@/utils/context/SynapseContext')
@@ -46,6 +47,18 @@ vi.mock('../EntityDownloadConfirmation', () => ({
     </div>
   ),
 }))
+
+// This test will fail if a new EntityType is added and not handled in getProgrammaticAccessCode
+describe('getProgrammaticAccessCode', () => {
+  test.each(Object.values(EntityType))(
+    'getProgrammaticAccessCode: %s',
+    type => {
+      expect(() => {
+        getProgrammaticAccessCode(type, 'syn123', undefined)
+      }).not.toThrow()
+    },
+  )
+})
 
 // This test will fail if a new EntityType is added and not handled in getDownloadActionsForEntityType
 describe('getDownloadActionsForEntityType', () => {

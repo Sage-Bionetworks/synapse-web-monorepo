@@ -53,7 +53,7 @@ type ProgrammaticAccessCode = {
 }
 
 // Generate programmatic access code snippet content based on entity type
-function getProgrammaticAccessCode(
+export function getProgrammaticAccessCode(
   type: EntityType,
   entityId: string,
   version: number | undefined,
