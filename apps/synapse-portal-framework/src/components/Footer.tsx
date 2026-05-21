@@ -5,6 +5,7 @@ import ExperimentalMode from 'synapse-react-client/components/ExperimentalMode/i
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { ReactComponent as PoweredBySvg } from '../portal-assets/poweredbysynapse.svg'
 import { usePortalContext } from './PortalContext'
+import SageNonprofitAttribution from './SageNonprofitAttribution'
 
 function Footer() {
   const { footerConfig, logoFooterConfig } = usePortalContext()
@@ -106,14 +107,25 @@ function Footer() {
         className="footer-bottom"
         sx={{
           backgroundColor: darkerBackgroundColor,
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
           p: { xs: '20px 40px', md: '40px 80px' },
         }}
       >
-        <Versions />
-        <ExperimentalMode />
+        <Box
+          sx={{
+            flexWrap: 'wrap',
+            gap: '20px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Versions />
+
+          <ExperimentalMode />
+        </Box>
+        <Box sx={{ mt: 2 }}>
+          <SageNonprofitAttribution />
+        </Box>
       </Box>
     </footer>
   )
