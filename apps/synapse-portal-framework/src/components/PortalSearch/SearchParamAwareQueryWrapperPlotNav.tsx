@@ -91,6 +91,8 @@ function SearchParamAwareSearchQueryWrapperPlotNav({
         {...config}
         initQueryRequest={initQueryRequest}
         onQueryResultBundleChange={onQueryResultBundleChange}
+        hideSearchBarControl={true}
+        defaultShowSearchBar={false}
       />
     )
   }
@@ -157,6 +159,7 @@ function SearchParamAwareStandaloneQueryWrapperPlotNav({
         defaultShowSearchBox={false}
         hideVisualizationsControl={true}
         hideSearchBarControl={true}
+        defaultShowSearchBar={false}
         name={undefined}
       />
     )
