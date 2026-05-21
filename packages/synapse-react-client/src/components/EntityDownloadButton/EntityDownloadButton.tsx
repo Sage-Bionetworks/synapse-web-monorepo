@@ -98,6 +98,12 @@ read.table(query$filepath, sep=",")`,
 query = syn.tableQuery("SELECT * FROM ${id}")
 query.asDataFrame()`,
       }
+    case EntityType.searchindex:
+      return {
+        cliCode: undefined,
+        rCode: undefined,
+        pythonCode: undefined,
+      }
     default:
       throw new Error(`Unhandled EntityType: ${type}`)
   }
