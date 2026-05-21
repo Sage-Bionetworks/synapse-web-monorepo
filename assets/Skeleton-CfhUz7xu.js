@@ -1,0 +1,1 @@
+import{n as e}from"./chunk-jRWAZmH_.js";import{n as t}from"./SkeletonButton-Bf3elwCy.js";import{n}from"./SkeletonInlineBlock-DJoc20AF.js";import{n as r}from"./SkeletonTable-EwMg62XZ.js";import{n as i}from"./SkeletonParagraph-Jjr3dCxD.js";var a=e((()=>{t(),n(),r(),i()}));export{a as t};
