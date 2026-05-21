@@ -96,39 +96,36 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
       {configs.length !== 1 && selectedTabIndex != undefined && (
         <PortalSearchTabs tabConfig={searchPageTabsState} />
       )}
-      <Box sx={{ position: 'relative' }}>
-        <Box sx={{ position: 'relative', zIndex: 1 }}>
-          {configs.map((config, index) => {
-            const key = `searchResultTab-${selectedTabIndex}-${index}`
-            const sharedProps = {
-              isVisible: selectedTabIndex == index,
-              onQueryResultBundleChange: (newQueryResultBundleJSON: string) => {
-                onQueryResultBundleChange(
-                  index,
-                  newQueryResultBundleJSON,
-                  selectedTabIndex,
-                )
-              },
-            }
-            if (isSearchQueryWrapperPlotNavProps(config)) {
-              return (
-                <SearchParamAwareQueryWrapperPlotNav
-                  key={key}
-                  {...sharedProps}
-                  searchQueryWrapperPlotNavProps={config}
-                />
-              )
-            }
-            return (
-              <SearchParamAwareQueryWrapperPlotNav
-                key={key}
-                {...sharedProps}
-                standaloneQueryWrapperProps={config}
-              />
+
+      {configs.map((config, index) => {
+        const key = `searchResultTab-${selectedTabIndex}-${index}`
+        const sharedProps = {
+          isVisible: selectedTabIndex == index,
+          onQueryResultBundleChange: (newQueryResultBundleJSON: string) => {
+            onQueryResultBundleChange(
+              index,
+              newQueryResultBundleJSON,
+              selectedTabIndex,
             )
-          })}
-        </Box>
-      </Box>
+          },
+        }
+        if (isSearchQueryWrapperPlotNavProps(config)) {
+          return (
+            <SearchParamAwareQueryWrapperPlotNav
+              key={key}
+              {...sharedProps}
+              searchQueryWrapperPlotNavProps={config}
+            />
+          )
+        }
+        return (
+          <SearchParamAwareQueryWrapperPlotNav
+            key={key}
+            {...sharedProps}
+            standaloneQueryWrapperProps={config}
+          />
+        )
+      })}
       {selectedTabIndex == undefined && (
         <Box
           sx={{
