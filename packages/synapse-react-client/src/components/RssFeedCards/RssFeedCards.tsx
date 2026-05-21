@@ -126,7 +126,7 @@ export function RssFeedCards(props: RssFeedCardsProps) {
                                 categoryNameLowerCase === item.toLowerCase(),
                             ) === -1
                           )
-                            return <></>
+                            return null
                           // else
                           return (
                             <a

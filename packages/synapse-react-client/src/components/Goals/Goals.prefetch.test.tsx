@@ -13,13 +13,12 @@ import {
   QueryClient,
 } from '@tanstack/react-query'
 import { render, screen } from '@testing-library/react'
-import { Goals, prefetchGoals } from './Goals'
+import { buildGoalsQueryBundleRequest, Goals, prefetchGoals } from './Goals'
 
 const ENTITY_ID = 'syn23516796'
 
-// Exact SQL produced by buildGoalsQueryBundleRequest — whitespace must match.
-const GOALS_SQL =
-  'select *\n            from ' + ENTITY_ID + '\n            order by ItemOrder'
+// Exact SQL produced by buildGoalsQueryBundleRequest
+const GOALS_SQL = buildGoalsQueryBundleRequest(ENTITY_ID).query.sql
 
 const mockGoalsBundle: QueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',

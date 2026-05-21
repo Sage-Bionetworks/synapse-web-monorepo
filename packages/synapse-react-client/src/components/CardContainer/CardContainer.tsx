@@ -92,7 +92,8 @@ export function CardContainer(props: CardContainerProps) {
   } = props
   const { NoContentPlaceholder } = useQueryVisualizationContext()
   const queryContext = useQueryContext()
-  const { data: queryMetadata } = useGetQueryMetadata()
+  const { data: queryMetadata, isLoading: queryMetadataIsLoading } =
+    useGetQueryMetadata({ throwOnError: true })
   const queryVisualizationContext = useQueryVisualizationContext()
 
   const dataRows: Row[] = rowSet.rows
@@ -108,7 +109,7 @@ export function CardContainer(props: CardContainerProps) {
   // non-suspense query (with conditional rendering) instead of Suspense keeps
   // the cards inline in the prerendered HTML when data is already cached,
   // rather than forcing React 19 streaming to stash them in a hidden div.
-  if (!queryMetadata) {
+  if (queryMetadataIsLoading) {
     return (
       <div>
         {type === OBSERVATION_CARD && <LoadingObservationCard />}
@@ -156,7 +157,7 @@ export function CardContainer(props: CardContainerProps) {
           versionNumber: rowData.versionNumber,
           data: rowData.values,
           selectColumns: rowSet.headers,
-          columnModels: queryMetadata.columnModels,
+          columnModels: queryMetadata!.columnModels,
           tableEntityConcreteType:
             tableEntityConcreteType[0] && tableEntityConcreteType[0].type,
           tableId: rowSet.tableId,
