@@ -13,9 +13,9 @@
 }
 
 .adknowledgeHeaderStack {
+  margin-top: 150px;
   justify-content: center;
   align-items: center;
-  padding: 20px 0;
 }
 
 .adknowledgeHeaderTextBox {
@@ -65,6 +65,6 @@
   padding: 40px;
 
   @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
-    padding: 40px 80px;
+    padding: 24px 80px 40px 80px;
   }
 }
