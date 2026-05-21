@@ -15,10 +15,6 @@ export const searchPageTabs = [
     path: 'Datasets',
   },
   {
-    title: 'Files',
-    path: 'Files',
-  },
-  {
     title: 'Publications',
     path: 'Publications',
   },
@@ -36,7 +32,6 @@ export const portalSearchPageConfigs = [
   nfConfigs.initiativesSearch,
   nfConfigs.studiesSearch,
   nfConfigs.datasetsSearch,
-  nfConfigs.files,
   nfConfigs.publicationsSearch,
   nfConfigs.toolsSearch,
   nfConfigs.hackathonsSearch,
