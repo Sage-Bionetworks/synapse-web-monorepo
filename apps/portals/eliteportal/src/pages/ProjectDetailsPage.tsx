@@ -10,12 +10,14 @@ import { CardContainerLogic } from 'synapse-react-client/components/CardContaine
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import {
   computationalSql,
+  datasetsSql,
   peopleSql,
   projectsSql,
   publicationsSql,
   studiesSql,
 } from '../config/resources'
 import { computationalCardConfiguration } from '../config/synapseConfigs/computational_tools'
+import { datasetCardConfiguration } from '../config/synapseConfigs/datasets'
 import { projectCardConfiguration } from '../config/synapseConfigs/projects'
 import { publicationCardProps } from '../config/synapseConfigs/publications'
 import { studyCardConfiguration } from '../config/synapseConfigs/studies'
@@ -55,6 +57,18 @@ function ProjectDetailsPage() {
                 cardConfiguration={studyCardConfiguration}
                 sql={studiesSql}
                 searchParams={{ project: shortName }}
+              />
+            ),
+          },
+          {
+            id: 'Datasets',
+            title: 'Datasets',
+            element: (
+              <CardContainerLogic
+                cardConfiguration={datasetCardConfiguration}
+                sql={datasetsSql}
+                searchParams={{ projectShortName: shortName }}
+                sqlOperator={ColumnMultiValueFunction.HAS}
               />
             ),
           },
