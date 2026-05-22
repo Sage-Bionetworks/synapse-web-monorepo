@@ -13,6 +13,7 @@ export const Demo: Story = {
     taskBundle: {
       task: {
         dataType: 'metadata_clinical',
+        taskId: 123,
         instructions:
           'Project: Precision Drug Treatment Profiling in Human Pancreatic Tissue',
         assigneePrincipalId: '273957',
