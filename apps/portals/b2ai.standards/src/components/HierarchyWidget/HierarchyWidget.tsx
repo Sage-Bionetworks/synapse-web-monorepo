@@ -9,6 +9,7 @@ import {
 } from '../TopicHierarchyShared'
 import { buildGraph, fullUnfolding, type Node } from './graph'
 import {
+  ancestorPath,
   buildParentIndex,
   computeVisible,
   decorateRows,
@@ -42,10 +43,7 @@ export default function HierarchyWidget({
     if (chosenPos < 0) {
       return { forceVisible: new Set<number>(), expanded: new Set<number>() }
     }
-    // Walk up to root via parentIndex on chosen's first path.
-    let cursor = chosenPos
-    while (parentIndex[cursor] >= 0) cursor = parentIndex[cursor]
-    const rootPos = cursor
+    const rootPos = ancestorPath(chosenPos, parentIndex)[0]
     const forceVisible = new Set<number>([chosenPos, rootPos])
     const expanded = new Set<number>([chosenPos])
     return { forceVisible, expanded }
@@ -81,16 +79,12 @@ export default function HierarchyWidget({
     const out: Array<Array<{ posIdx: number; name: string }>> = []
     for (let i = 0; i < unfolding.length; i++) {
       if (unfolding[i].nodeId !== chosenNodeId) continue
-      const chain: Array<{ posIdx: number; name: string }> = []
-      let cursor = i
-      while (cursor >= 0) {
-        const nodeId = unfolding[cursor].nodeId
-        chain.unshift({
-          posIdx: cursor,
-          name: graph.node(nodeId)?.name ?? nodeId,
-        })
-        cursor = parentIndex[cursor]
-      }
+      const chain = ancestorPath(i, parentIndex).map(posIdx => ({
+        posIdx,
+        name:
+          graph.node(unfolding[posIdx].nodeId)?.name ??
+          unfolding[posIdx].nodeId,
+      }))
       out.push(chain)
     }
     return out
@@ -203,6 +197,7 @@ export default function HierarchyWidget({
           name={graph.node(row.nodeId)?.name ?? row.nodeId}
           getHref={getHref}
           onToggle={() => handleToggle(row.posIndex, row.toggleState)}
+          onAlsoUnderClick={handleBreadcrumbClick}
         />
       ))}
     </Box>
@@ -225,9 +220,10 @@ type RowProps = {
   name: string
   getHref: (nodeId: string) => string
   onToggle: () => void
+  onAlsoUnderClick: (posIdx: number) => void
 }
 
-function Row({ row, name, getHref, onToggle }: RowProps) {
+function Row({ row, name, getHref, onToggle, onAlsoUnderClick }: RowProps) {
   return (
     <Box
       sx={{
@@ -289,7 +285,27 @@ function Row({ row, name, getHref, onToggle }: RowProps) {
             ml: '6px',
           }}
         >
-          ★ also under {row.alsoUnderPaths.join(', ')}
+          ★ also under{' '}
+          {row.alsoUnderPaths.map((link, idx) => (
+            <span key={idx}>
+              {idx > 0 && ', '}
+              <Box
+                component="span"
+                onClick={() => onAlsoUnderClick(link.targetPosIdx)}
+                title="Click to reveal this copy in the tree"
+                sx={{
+                  cursor: 'pointer',
+                  textDecoration: 'underline dotted',
+                  '&:hover': {
+                    textDecoration: 'underline',
+                    color: '#7c2d12',
+                  },
+                }}
+              >
+                {link.path}
+              </Box>
+            </span>
+          ))}
         </Box>
       )}
     </Box>

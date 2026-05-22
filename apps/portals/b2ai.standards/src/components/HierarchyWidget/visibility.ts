@@ -38,6 +38,24 @@ export function buildParentIndex(unfolding: UnfoldingRow[]): number[] {
   return out
 }
 
+// Walk up via parentIndex from `posIdx`, returning the chain of ancestor
+// posIndexes from root down to `posIdx` (inclusive). With `stopAt` set, stops
+// before adding that ancestor (so the returned chain is the strict path BETWEEN
+// stopAt and posIdx, exclusive of stopAt, inclusive of posIdx).
+export function ancestorPath(
+  posIdx: number,
+  parentIndex: number[],
+  stopAt?: number,
+): number[] {
+  const chain: number[] = []
+  let cursor = posIdx
+  while (cursor >= 0 && cursor !== stopAt) {
+    chain.unshift(cursor)
+    cursor = parentIndex[cursor]
+  }
+  return chain
+}
+
 // Path-protection set: walking up from each forceVisible to its nearest
 // forceVisible ancestor (or root), collecting every position along the way
 // (not including the starting fv, but including the ancestor fv if found).
@@ -109,6 +127,12 @@ export function computeToggleState(
 // decorateRows
 // ----------------------------------------------------------------------------
 
+export type AlsoUnderLink = {
+  path: string // slash-joined ancestor names (e.g. "Data/Waveform/Voice")
+  targetPosIdx: number // posIndex of the OTHER copy of this node (under
+  // the other parent). Clicking this link should add this to forceVisible.
+}
+
 export type DecoratedRow = {
   posIndex: number
   posKey: string
@@ -117,7 +141,7 @@ export type DecoratedRow = {
   toggleState: ToggleState
   childCount: number
   isChosen: boolean
-  alsoUnderPaths: string[]
+  alsoUnderPaths: AlsoUnderLink[]
   rails: RailKind[]
 }
 
@@ -140,6 +164,15 @@ export function decorateRows(
   const rowAt = new Map<number, number>()
   for (let r = 0; r < visibleOrdered.length; r++) {
     rowAt.set(visibleOrdered[r], r)
+  }
+
+  // All copies of each node in the unfolding, keyed by nodeId. Used to find
+  // "other copies" for the alsoUnder links.
+  const posIdxsByNodeId = new Map<string, number[]>()
+  for (let i = 0; i < unfolding.length; i++) {
+    const arr = posIdxsByNodeId.get(unfolding[i].nodeId)
+    if (arr) arr.push(i)
+    else posIdxsByNodeId.set(unfolding[i].nodeId, [i])
   }
 
   // visibleChildren[parentPosIdx] = ordered list of that parent's visible
@@ -201,15 +234,26 @@ export function decorateRows(
     const rails = railsByRow[r]
     const renderDepth = rails.length
 
-    // alsoUnderPaths
-    const allParents = graph.parents(row.nodeId)
-    const positionParent =
-      row.pathToParent.length > 0
-        ? row.pathToParent[row.pathToParent.length - 1]
-        : null
-    const otherParents =
-      allParents.length > 1 ? allParents.filter(p => p !== positionParent) : []
-    const alsoUnderPaths = otherParents.map(p => fullNamePathTo(p, graph))
+    // alsoUnderPaths: for each OTHER copy of this row's node in the unfolding,
+    // derive its actual ancestor-chain path and a click target. Skips the
+    // copy at the current row (i.e. skips this very position).
+    const alsoUnderPaths: AlsoUnderLink[] = []
+    const copies = posIdxsByNodeId.get(row.nodeId) ?? []
+    if (copies.length > 1) {
+      for (const otherPosIdx of copies) {
+        if (otherPosIdx === posIdx) continue
+        const chain = ancestorPath(otherPosIdx, parentIndex)
+        // Drop the copy itself from the displayed path; show only its ancestry.
+        const ancestors = chain.slice(0, -1)
+        if (ancestors.length === 0) continue
+        const pathStr = ancestors
+          .map(
+            i => graph.node(unfolding[i].nodeId)?.name ?? unfolding[i].nodeId,
+          )
+          .join('/')
+        alsoUnderPaths.push({ path: pathStr, targetPosIdx: otherPosIdx })
+      }
+    }
 
     const childCount = graph.children(row.nodeId).length
     const visibleChildCount = (visibleChildren.get(posIdx) ?? []).length
@@ -243,30 +287,4 @@ function isAncestor(
     cursor = parentIndex[cursor]
   }
   return false
-}
-
-function fullNamePathTo(nodeId: string, graph: Graph): string {
-  const segs: string[] = []
-  const seen = new Set<string>()
-  let cursor: string | undefined = nodeId
-  while (cursor && !seen.has(cursor)) {
-    seen.add(cursor)
-    segs.unshift(graph.node(cursor)?.name ?? cursor)
-    const parents = graph.parents(cursor)
-    if (parents.length === 0) {
-      cursor = undefined
-    } else {
-      let best = parents[0]
-      let bestDepth = graph.depth(best)
-      for (let i = 1; i < parents.length; i++) {
-        const d = graph.depth(parents[i])
-        if (d > bestDepth) {
-          best = parents[i]
-          bestDepth = d
-        }
-      }
-      cursor = best
-    }
-  }
-  return segs.join('/')
 }

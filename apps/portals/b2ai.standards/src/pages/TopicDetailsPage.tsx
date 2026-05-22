@@ -1,4 +1,4 @@
-import { LinearProgress, Typography } from '@mui/material'
+import { LinearProgress } from '@mui/material'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ErrorBanner } from 'synapse-react-client/components/error/ErrorBanner'
 import ErrorPage, {
@@ -19,9 +19,11 @@ import {
   topicDetailsPageSQL,
   standardsSql,
   dataSetSQL,
+  manifestSql,
   standardsFtsConfig,
   DST_TABLE_COLUMN_CONSTS,
   DATASET_DENORMALIZED_COLUMN_CONSTS,
+  MANIFEST_COLUMN_CONSTS,
 } from '@/config/resources'
 import columnAliases from '@/config/columnAliases'
 import {
@@ -33,6 +35,8 @@ import {
   topicsCardSchema,
   topicsColumnLinks,
 } from '@/config/synapseConfigs/topics'
+import { linkedDataSetCardConfiguration } from '@/config/synapseConfigs/datasets'
+import { manifestColumnLinks } from '@/config/synapseConfigs/manifest'
 import {
   getQueryBundleRequestWithIdFilter,
   useFetchRowsAsObjects,
@@ -147,19 +151,14 @@ export default function TopicDetailsPage() {
       id: 'RelatedDatasets',
       title: `Related Datasets (${datasets.length})`,
       element: (
-        <StandaloneQueryWrapper
+        <CardContainerLogic
+          cardConfiguration={linkedDataSetCardConfiguration}
           sql={dataSetSQL}
           searchParams={{
             [DATASET_DENORMALIZED_COLUMN_CONSTS.TOPIC_IDS]: id,
           }}
           sqlOperator={ColumnMultiValueFunction.HAS}
           columnAliases={columnAliases}
-          tableConfiguration={{
-            showDownloadColumn: false,
-          }}
-          shouldDeepLink={false}
-          hideQueryCount={true}
-          hideDownload={true}
         />
       ),
     })
@@ -168,15 +167,25 @@ export default function TopicDetailsPage() {
   if (manifestDataParts.length > 0) {
     sections.push({
       id: 'ManifestDataParts',
-      title: `Related Data Parts (${manifestDataParts.length})`,
+      title: 'Data Manifest',
       helpText:
         'Data parts in BRIDGE2AI Grand Challenge manifests that concern this topic.',
       element: (
-        <Typography variant="body2" sx={{ color: 'text.primary' }}>
-          {manifestDataParts
-            .map(p => p.dataPartName ?? p.name ?? p.id)
-            .join(' · ')}
-        </Typography>
+        <StandaloneQueryWrapper
+          sql={manifestSql}
+          searchParams={{
+            [MANIFEST_COLUMN_CONSTS.CONCERNS_DATA_TOPICS]: id,
+          }}
+          sqlOperator={ColumnMultiValueFunction.HAS}
+          columnAliases={columnAliases}
+          tableConfiguration={{
+            showDownloadColumn: false,
+            columnLinks: manifestColumnLinks,
+          }}
+          shouldDeepLink={false}
+          hideQueryCount={true}
+          hideDownload={true}
+        />
       ),
     })
   }
