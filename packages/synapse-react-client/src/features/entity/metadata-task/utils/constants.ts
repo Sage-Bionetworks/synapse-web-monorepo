@@ -6,3 +6,5 @@ export const OPEN_CURATOR_UNAUTHORIZED_ERROR_MESSAGE =
 export const OPEN_CURATOR_TOOLTIP_TITLE = 'Open Curator to edit metadata'
 export const OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE =
   'You do not have permission to view the Working Copy'
+export const OPEN_CURATOR_LINK_TASK_CONFLICT_ERROR_MESSAGE =
+  'Failed to link Grid session to Curation Task. The task was updated since it was last retrieved. Please refresh and try again.'
