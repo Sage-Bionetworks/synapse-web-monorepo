@@ -1,8 +1,8 @@
-import UploadCsvWizard, { UploadCsvWizardProps } from './UploadCsvWizard'
+import UploadCsvWizard from './UploadCsvWizard'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { fn } from 'storybook/test'
 
-const meta: Meta<UploadCsvWizardProps> = {
+const meta = {
   title: 'Synapse/Upload CSV Wizard',
   component: UploadCsvWizard,
   args: {
@@ -13,7 +13,7 @@ const meta: Meta<UploadCsvWizardProps> = {
   parameters: {
     requireLogin: true,
   },
-}
+} satisfies Meta<typeof UploadCsvWizard>
 export default meta
 type Story = StoryObj<typeof meta>
 

@@ -77,21 +77,31 @@ const suggestedColumns: ColumnModel[] = [
   { name: 'b', columnType: 'INTEGER' },
 ]
 
-function renderWizard(
-  overrides: Partial<React.ComponentProps<typeof UploadCsvWizard>> = {},
-) {
+// The wizard's props are a discriminated union of create-mode vs append-mode.
+// Accept a loose shape here, then cast at the render boundary — tests
+// intentionally exercise both modes (and at least one validation case where
+// neither id is provided would not type-check at the public boundary).
+type RenderOverrides = {
+  open?: boolean
+  parentId?: string
+  tableId?: string
+  onClose?: () => void
+  onComplete?: (entityId: string) => void
+}
+
+function renderWizard(overrides: RenderOverrides = {}) {
   const onClose = vi.fn()
   const onComplete = vi.fn()
-  const result = render(
-    <UploadCsvWizard
-      open={true}
-      parentId={'syn-parent'}
-      onClose={onClose}
-      onComplete={onComplete}
-      {...overrides}
-    />,
-    { wrapper: createWrapper() },
-  )
+  const props = {
+    open: true,
+    parentId: 'syn-parent',
+    onClose,
+    onComplete,
+    ...overrides,
+  } as React.ComponentProps<typeof UploadCsvWizard>
+  const result = render(<UploadCsvWizard {...props} />, {
+    wrapper: createWrapper(),
+  })
   return { onClose, onComplete, ...result }
 }
 

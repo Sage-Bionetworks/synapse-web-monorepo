@@ -20,17 +20,27 @@ import { SetOptional } from 'type-fest'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 
-export type UploadCsvWizardProps = {
+type CommonProps = {
   open: boolean
-  /** ID of the parent project for the new table. Required in create mode. */
-  parentId?: string
-  /** When provided, the uploaded CSV is appended to this table (append mode). */
-  tableId?: string
   /** Called when the wizard is dismissed without completing. */
   onClose: () => void
   /** Called after the upload job completes successfully, with the table entity ID. */
   onComplete: (entityId: string) => void
 }
+
+type CreateModeProps = CommonProps & {
+  /** ID of the parent project for the new table. */
+  parentId: string
+  tableId?: undefined
+}
+
+type AppendModeProps = CommonProps & {
+  /** Existing table to which the uploaded CSV will be appended. */
+  tableId: string
+  parentId?: undefined
+}
+
+export type UploadCsvWizardProps = CreateModeProps | AppendModeProps
 
 type PreviewResult = {
   fileHandleId: string
@@ -45,18 +55,26 @@ type PreviewResult = {
  * Step 1 — file upload + preview via {@link CsvPreviewDialog}.
  *
  * Step 2 depends on mode:
- * - Create mode ({@link UploadCsvWizardProps.parentId} provided): user names the
- *   new table and edits the inferred schema, then the wizard creates the column
- *   models, the TableEntity, and runs a TableTransaction applying the CSV.
- * - Append mode ({@link UploadCsvWizardProps.tableId} provided): the CSV is
- *   applied to the existing table directly with a single TableTransaction.
+ * - Create mode (`parentId` provided): user names the new table and edits the
+ *   inferred schema, then the wizard creates the column models, the
+ *   TableEntity, and runs a TableTransaction applying the CSV.
+ * - Append mode (`tableId` provided): the CSV is applied to the existing table
+ *   directly with a single TableTransaction.
+ *
+ * Exactly one of `parentId` or `tableId` must be provided — the discriminated
+ * union enforces this at the type level.
  *
  * Ported from the GWT `UploadTableModalWidget` wizard.
  */
 export default function UploadCsvWizard(props: UploadCsvWizardProps) {
-  const { open, parentId, tableId, onClose, onComplete } = props
-  const [previewResult, setPreviewResult] = useState<PreviewResult | null>(null)
-  const isAppendMode = tableId != null
+  if (props.tableId != null) {
+    return <AppendModeWizard {...props} />
+  }
+  return <CreateModeWizard {...props} />
+}
+
+function AppendModeWizard(props: AppendModeProps) {
+  const { open, tableId, onClose, onComplete } = props
 
   const {
     mutate: appendToTable,
@@ -66,21 +84,66 @@ export default function UploadCsvWizard(props: UploadCsvWizardProps) {
   } = useTableUpdateTransaction({
     onSuccess: () => {
       displayToast('CSV applied to table.', 'success')
-      onComplete(tableId!)
-      handleCloseAfterSuccess()
+      onComplete(tableId)
+      resetAppendMutation()
     },
   })
 
-  const handleCloseAfterSuccess = useCallback(() => {
-    setPreviewResult(null)
-    resetAppendMutation()
-  }, [resetAppendMutation])
-
   const handleClose = useCallback(() => {
-    setPreviewResult(null)
     resetAppendMutation()
     onClose()
   }, [onClose, resetAppendMutation])
+
+  const handlePreviewConfirm = useCallback(
+    (
+      fileHandleId: string,
+      _columnModels: SynapseClientColumnModel[],
+      csvDescriptor: CsvTableDescriptor,
+    ) => {
+      const uploadRequest = preProcessUploadToTableRequest({
+        concreteType:
+          'org.sagebionetworks.repo.model.table.UploadToTableRequest',
+        uploadFileHandleId: fileHandleId,
+        tableId,
+        csvTableDescriptor: csvDescriptor,
+      })
+      appendToTable({
+        concreteType:
+          'org.sagebionetworks.repo.model.table.TableUpdateTransactionRequest',
+        entityId: tableId,
+        changes: [uploadRequest],
+      })
+    },
+    [appendToTable, tableId],
+  )
+
+  return (
+    <CsvPreviewDialog
+      open={open}
+      onClose={handleClose}
+      onConfirm={handlePreviewConfirm}
+      errorMessage={appendError?.message}
+      confirmIsPending={isAppending}
+    />
+  )
+}
+
+function CreateModeWizard(props: CreateModeProps) {
+  const { open, parentId, onClose, onComplete } = props
+  const [previewResult, setPreviewResult] = useState<PreviewResult | null>(null)
+
+  const handleClose = useCallback(() => {
+    setPreviewResult(null)
+    onClose()
+  }, [onClose])
+
+  const handleCompleteAndClear = useCallback(
+    (entityId: string) => {
+      onComplete(entityId)
+      setPreviewResult(null)
+    },
+    [onComplete],
+  )
 
   const handlePreviewConfirm = useCallback(
     (
@@ -94,30 +157,14 @@ export default function UploadCsvWizard(props: UploadCsvWizardProps) {
       const suggestedColumns = preProcessColumns(
         columnModels as SetOptional<ColumnModel, 'id'>[],
       )
-      if (isAppendMode) {
-        const uploadRequest = preProcessUploadToTableRequest({
-          concreteType:
-            'org.sagebionetworks.repo.model.table.UploadToTableRequest',
-          uploadFileHandleId: fileHandleId,
-          tableId,
-          csvTableDescriptor: csvDescriptor,
-        })
-        appendToTable({
-          concreteType:
-            'org.sagebionetworks.repo.model.table.TableUpdateTransactionRequest',
-          entityId: tableId,
-          changes: [uploadRequest],
-        })
-      } else {
-        setPreviewResult({
-          fileHandleId,
-          suggestedColumns,
-          csvDescriptor,
-          fileName,
-        })
-      }
+      setPreviewResult({
+        fileHandleId,
+        suggestedColumns,
+        csvDescriptor,
+        fileName,
+      })
     },
-    [appendToTable, isAppendMode, tableId],
+    [],
   )
 
   if (previewResult == null) {
@@ -126,8 +173,6 @@ export default function UploadCsvWizard(props: UploadCsvWizardProps) {
         open={open}
         onClose={handleClose}
         onConfirm={handlePreviewConfirm}
-        errorMessage={appendError?.message}
-        confirmIsPending={isAppending}
       />
     )
   }
@@ -135,13 +180,10 @@ export default function UploadCsvWizard(props: UploadCsvWizardProps) {
   return (
     <FinalizeCreateTableDialog
       open={open}
-      parentId={parentId!}
+      parentId={parentId}
       previewResult={previewResult}
       onCancel={handleClose}
-      onComplete={entityId => {
-        onComplete(entityId)
-        handleCloseAfterSuccess()
-      }}
+      onComplete={handleCompleteAndClear}
     />
   )
 }
