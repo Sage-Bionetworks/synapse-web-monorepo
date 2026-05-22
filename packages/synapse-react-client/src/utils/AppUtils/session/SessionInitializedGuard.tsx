@@ -1,7 +1,7 @@
 import { BlockingLoader } from '@/components/LoadingScreen/LoadingScreen'
 import { PropsWithChildren } from 'react'
 import { useApplicationSessionContext } from './ApplicationSessionContext'
-import { SynapseErrorBoundary } from '@/components'
+import { SynapseErrorBoundary } from '@/components/error/ErrorBanner'
 
 export type SessionInitializedGuardProps = PropsWithChildren<{
   /** Optional hint text to display while waiting for session initialization */
