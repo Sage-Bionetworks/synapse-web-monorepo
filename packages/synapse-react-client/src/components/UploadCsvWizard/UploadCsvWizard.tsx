@@ -15,16 +15,26 @@ import {
   UploadToTableRequest,
 } from '@sage-bionetworks/synapse-client'
 import { ColumnModel } from '@sage-bionetworks/synapse-types'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { SetOptional } from 'type-fest'
 import { ConfirmationDialog } from '../ConfirmationDialog'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 
 type CommonProps = {
   open: boolean
-  /** Called when the wizard is dismissed without completing. */
+  /**
+   * Called when the user cancels the wizard or dismisses the dialog. The
+   * parent is responsible for setting `open={false}` in response.
+   */
   onClose: () => void
-  /** Called after the upload job completes successfully, with the table entity ID. */
+  /**
+   * Called once the upload completes successfully, with the table's entity ID.
+   * The parent is responsible for setting `open={false}` in response — the
+   * wizard does not dismiss itself on success and `onClose` will NOT fire on
+   * the success path. (`onComplete` and `onClose` are mutually exclusive exit
+   * paths.) The wizard keeps its post-success UI mounted until `open` becomes
+   * false, then clears internal state on the next render.
+   */
   onComplete: (entityId: string) => void
 }
 
@@ -85,14 +95,25 @@ function AppendModeWizard(props: AppendModeProps) {
     onSuccess: () => {
       displayToast('CSV applied to table.', 'success')
       onComplete(tableId)
-      resetAppendMutation()
+      // Don't reset internal state here — leave the dialog in its current
+      // (closed-by-parent) state so the user doesn't see a flash of the
+      // empty upload step before the parent sets open={false}. Reset happens
+      // in the close-effect below when `open` transitions to false.
     },
   })
 
+  // Clear mutation state (e.g. lingering error from a previous attempt) when
+  // the wizard is dismissed. This keeps state fresh the next time `open`
+  // toggles back to true.
+  useEffect(() => {
+    if (!open) {
+      resetAppendMutation()
+    }
+  }, [open, resetAppendMutation])
+
   const handleClose = useCallback(() => {
-    resetAppendMutation()
     onClose()
-  }, [onClose, resetAppendMutation])
+  }, [onClose])
 
   const handlePreviewConfirm = useCallback(
     (
@@ -132,18 +153,19 @@ function CreateModeWizard(props: CreateModeProps) {
   const { open, parentId, onClose, onComplete } = props
   const [previewResult, setPreviewResult] = useState<PreviewResult | null>(null)
 
+  // Clear internal state when the dialog is closed. After a successful create,
+  // the parent sets `open={false}` in response to `onComplete`; that close is
+  // what resets us, so the user never sees a flash of the empty upload step
+  // before the dialog disappears.
+  useEffect(() => {
+    if (!open) {
+      setPreviewResult(null)
+    }
+  }, [open])
+
   const handleClose = useCallback(() => {
-    setPreviewResult(null)
     onClose()
   }, [onClose])
-
-  const handleCompleteAndClear = useCallback(
-    (entityId: string) => {
-      onComplete(entityId)
-      setPreviewResult(null)
-    },
-    [onComplete],
-  )
 
   const handlePreviewConfirm = useCallback(
     (
@@ -183,7 +205,7 @@ function CreateModeWizard(props: CreateModeProps) {
       parentId={parentId}
       previewResult={previewResult}
       onCancel={handleClose}
-      onComplete={handleCompleteAndClear}
+      onComplete={onComplete}
     />
   )
 }

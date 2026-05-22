@@ -199,7 +199,7 @@ describe('UploadCsvWizard', () => {
         } as any
       })
 
-      const { onComplete } = renderWizard({ tableId: 'syn-table' })
+      const { onClose, onComplete } = renderWizard({ tableId: 'syn-table' })
       await screen.findByTestId('CsvPreviewDialog')
 
       act(() => capturedOnSuccess?.())
@@ -209,6 +209,46 @@ describe('UploadCsvWizard', () => {
         'CSV applied to table.',
         'success',
       )
+      // The wizard does not self-dismiss on success — the parent is expected
+      // to react to onComplete by setting open={false}.
+      expect(onClose).not.toHaveBeenCalled()
+    })
+
+    it('clears mutation state when the parent closes the wizard', () => {
+      const reset = vi.fn()
+      mockUseTableUpdateTransaction.mockReturnValue({
+        mutate: vi.fn(),
+        mutateAsync: vi.fn(),
+        isPending: false,
+        error: null,
+        reset,
+      } as any)
+
+      const onClose = vi.fn()
+      const onComplete = vi.fn()
+      const { rerender } = render(
+        <UploadCsvWizard
+          open={true}
+          tableId={'syn-table'}
+          onClose={onClose}
+          onComplete={onComplete}
+        />,
+        { wrapper: createWrapper() },
+      )
+
+      // Reset should not fire while the wizard is open
+      expect(reset).not.toHaveBeenCalled()
+
+      rerender(
+        <UploadCsvWizard
+          open={false}
+          tableId={'syn-table'}
+          onClose={onClose}
+          onComplete={onComplete}
+        />,
+      )
+
+      expect(reset).toHaveBeenCalled()
     })
   })
 
@@ -313,6 +353,10 @@ describe('UploadCsvWizard', () => {
       await vi.waitFor(() => {
         expect(onComplete).toHaveBeenCalledWith('syn-new-table')
       })
+
+      // The wizard does not fall back to the upload step on success — the
+      // parent is expected to set open={false} in response to onComplete.
+      expect(screen.queryByTestId('CsvPreviewDialog')).not.toBeInTheDocument()
 
       expect(createColumns).toHaveBeenCalledWith(suggestedColumns)
       expect(createEntity).toHaveBeenCalledWith({
