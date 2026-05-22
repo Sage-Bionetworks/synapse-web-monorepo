@@ -3,7 +3,8 @@ import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/Q
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../columnAliases'
-import { publicationSql } from '../resources'
+import { publicationsSearchIndexId, publicationSql } from '../resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 import { citationBoilerplateText } from './commonProps'
 import { columnIconConfigs } from './commonProps'
 import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
@@ -99,4 +100,16 @@ export const publicationsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
       'dataset',
     ],
   },
+}
+
+export const publicationsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'Publications',
+  shouldDeepLink: false,
+  cardConfiguration: publicationsCardConfiguration,
+  columnAliases,
+  searchIndexId: publicationsSearchIndexId,
+  autocompleteFieldName: 'publicationTitle',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }

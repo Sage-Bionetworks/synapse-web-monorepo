@@ -4,8 +4,9 @@ import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/Q
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { Project as ProjectIcon } from 'synapse-react-client/assets/themed_icons/Project'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
-import { grantsSql } from '../resources'
+import { grantsSearchIndexId, grantsSql } from '../resources'
 import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 const rgbIndex = 3
 
@@ -65,4 +66,16 @@ export const grantQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
       'grantNumber',
     ],
   },
+}
+
+export const grantsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'Grants',
+  shouldDeepLink: false,
+  cardConfiguration: grantsCardConfiguration,
+  facetsToPlot: ['consortium', 'grantType'],
+  searchIndexId: grantsSearchIndexId,
+  autocompleteFieldName: 'grantName',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }

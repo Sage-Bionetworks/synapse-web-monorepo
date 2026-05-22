@@ -1,7 +1,7 @@
-import { grantQueryWrapperPlotNavProps } from '@/config/synapseConfigs'
+import { grantsSearch } from '@/config/synapseConfigs'
 import { portalMetadata } from '@/config/portalMetadata'
 import { createStaticMeta } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/index'
+import SearchQueryWrapperPlotNav from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 export const meta = createStaticMeta(
   { title: 'Explore Grants' },
@@ -9,6 +9,6 @@ export const meta = createStaticMeta(
 )
 
 function ExploreGrants() {
-  return <QueryWrapperPlotNav {...grantQueryWrapperPlotNavProps} />
+  return <SearchQueryWrapperPlotNav {...grantsSearch} shouldDeepLink={true} />
 }
 export default ExploreGrants
