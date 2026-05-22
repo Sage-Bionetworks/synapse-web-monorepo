@@ -19,7 +19,7 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
-    tableId: 'syn74757362',
+    tableId: 'syn75132868',
     onSuccess: () => displayToast('Table updated successfully', 'success'),
   },
 }

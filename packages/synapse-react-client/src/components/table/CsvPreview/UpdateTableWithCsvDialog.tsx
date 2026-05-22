@@ -3,7 +3,7 @@ import {
   BasicFileHandleUpload,
   FileUploadHandle,
 } from '@/components/file/upload/BasicFileHandleUpload'
-import { displayToast } from '@/components/index'
+import { displayToast } from '@/components/ToastMessage/ToastMessage'
 import CsvPreview from '@/components/table/CsvPreview/CsvPreview'
 import CsvTableDescriptorForm, {
   CsvTableDescriptorFormHandle,
