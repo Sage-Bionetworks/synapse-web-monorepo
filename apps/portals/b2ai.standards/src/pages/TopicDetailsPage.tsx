@@ -37,7 +37,7 @@ import {
   getQueryBundleRequestWithIdFilter,
   useFetchRowsAsObjects,
 } from '@/hooks/fetchDataUtils'
-import TopicHierarchyWidget from '@/components/TopicHierarchyWidget'
+import TopicHierarchyWidget from '@/components/HierarchyWidget/TopicHierarchyWidget'
 
 type LinkedItem = { id: string; name?: string; dataPartName?: string }
 
