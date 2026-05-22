@@ -202,6 +202,14 @@ function FinalizeCreateTableDialog(props: FinalizeCreateTableDialogProps) {
   const [tableName, setTableName] = useState(previewResult.fileName)
   const [isCreating, setIsCreating] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | undefined>()
+  // Track which steps already succeeded so that a retry after a partial
+  // failure resumes from the failed step rather than re-running earlier ones.
+  // Without this, a failure in runTransaction after createEntity has already
+  // succeeded would orphan a fresh TableEntity on every retry attempt.
+  const [createdColumns, setCreatedColumns] = useState<ColumnModel[] | null>(
+    null,
+  )
+  const [createdEntityId, setCreatedEntityId] = useState<string | null>(null)
 
   const { mutateAsync: createColumns } = useCreateColumnModels()
   const { mutateAsync: createEntity } = useCreateEntity()
@@ -212,30 +220,41 @@ function FinalizeCreateTableDialog(props: FinalizeCreateTableDialogProps) {
       setErrorMessage(undefined)
       setIsCreating(true)
       try {
-        const schema = preProcessColumns(editedColumns)
-        const createdColumns = await createColumns(schema)
-        const tableEntity = await createEntity({
-          concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
-          name: tableName,
-          parentId,
-        })
+        let columns = createdColumns
+        if (columns == null) {
+          const schema = preProcessColumns(editedColumns)
+          columns = await createColumns(schema)
+          setCreatedColumns(columns)
+        }
+
+        let entityId = createdEntityId
+        if (entityId == null) {
+          const tableEntity = await createEntity({
+            concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
+            name: tableName,
+            parentId,
+          })
+          entityId = tableEntity.id!
+          setCreatedEntityId(entityId)
+        }
+
         const uploadRequest = preProcessUploadToTableRequest({
           concreteType:
             'org.sagebionetworks.repo.model.table.UploadToTableRequest',
           uploadFileHandleId: previewResult.fileHandleId,
-          tableId: tableEntity.id!,
+          tableId: entityId,
           csvTableDescriptor: previewResult.csvDescriptor,
         })
         const transactionRequest: TableUpdateTransactionRequest = {
           concreteType:
             'org.sagebionetworks.repo.model.table.TableUpdateTransactionRequest',
-          entityId: tableEntity.id!,
+          entityId,
           changes: [
             {
               concreteType:
                 'org.sagebionetworks.repo.model.table.TableSchemaChangeRequest',
-              entityId: tableEntity.id!,
-              changes: createdColumns.map(cm => ({
+              entityId,
+              changes: columns.map(cm => ({
                 oldColumnId: undefined,
                 newColumnId: cm.id,
               })),
@@ -245,7 +264,7 @@ function FinalizeCreateTableDialog(props: FinalizeCreateTableDialogProps) {
         }
         await runTransaction(transactionRequest)
         displayToast(`Table "${tableName}" created.`, 'success')
-        onComplete(tableEntity.id!)
+        onComplete(entityId)
       } catch (error) {
         setErrorMessage(error instanceof Error ? error.message : String(error))
       } finally {
@@ -255,6 +274,8 @@ function FinalizeCreateTableDialog(props: FinalizeCreateTableDialogProps) {
     [
       createColumns,
       createEntity,
+      createdColumns,
+      createdEntityId,
       onComplete,
       parentId,
       previewResult,
@@ -263,6 +284,10 @@ function FinalizeCreateTableDialog(props: FinalizeCreateTableDialogProps) {
     ],
   )
 
+  // Once the entity exists, the table name and schema are locked in on the
+  // server. Disable those inputs to avoid the illusion of editing.
+  const isAfterPartialSuccess = createdEntityId != null
+  const fieldsLocked = isCreating || isAfterPartialSuccess
   const canSubmit = tableName.trim().length > 0 && !isCreating
 
   return (
@@ -278,14 +303,19 @@ function FinalizeCreateTableDialog(props: FinalizeCreateTableDialogProps) {
             required
             value={tableName}
             onChange={e => setTableName(e.target.value)}
-            disabled={isCreating}
+            disabled={fieldsLocked}
+            helperText={
+              isAfterPartialSuccess
+                ? 'The table has been created. Retrying will only re-apply the CSV.'
+                : undefined
+            }
             sx={{ mb: 2 }}
           />
           <TableColumnSchemaForm
             ref={formRef}
             entityType={EntityType.table}
             initialData={previewResult.suggestedColumns}
-            isSubmitting={isCreating}
+            isSubmitting={fieldsLocked}
             onSubmit={editedColumns => {
               void handleSubmit(editedColumns)
             }}

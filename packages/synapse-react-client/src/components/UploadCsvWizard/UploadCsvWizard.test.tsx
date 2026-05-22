@@ -376,6 +376,68 @@ describe('UploadCsvWizard', () => {
       await screen.findByText('boom')
       expect(onComplete).not.toHaveBeenCalled()
     })
+
+    it('does not re-create the table entity when retrying after a transaction failure', async () => {
+      const createColumns = vi
+        .fn()
+        .mockResolvedValue([{ id: 'col-1', name: 'a', columnType: 'STRING' }])
+      const createEntity = vi.fn().mockResolvedValue({ id: 'syn-new-table' })
+      // First runTransaction call fails; second succeeds.
+      const runTransaction = vi
+        .fn()
+        .mockRejectedValueOnce(new Error('transaction failed'))
+        .mockResolvedValueOnce({})
+
+      mockUseCreateColumnModels.mockReturnValue({
+        mutateAsync: createColumns,
+      } as any)
+      mockUseCreateEntity.mockReturnValue({ mutateAsync: createEntity } as any)
+      mockUseTableUpdateTransaction.mockReturnValue({
+        mutate: vi.fn(),
+        mutateAsync: runTransaction,
+        isPending: false,
+        error: null,
+        reset: vi.fn(),
+      } as any)
+
+      const user = userEvent.setup()
+      const { onComplete } = renderWizard()
+
+      await screen.findByTestId('CsvPreviewDialog')
+      act(() => {
+        mockCsvPreviewDialog.mock.lastCall![0].onConfirm(
+          fileHandleId,
+          suggestedColumns,
+          csvDescriptor,
+          uploadedFileName,
+        )
+      })
+      await screen.findByTestId('TableColumnSchemaForm')
+
+      // First attempt — transaction fails after the entity has been created
+      await user.click(screen.getByRole('button', { name: 'Create' }))
+      await screen.findByText('transaction failed')
+
+      expect(createColumns).toHaveBeenCalledTimes(1)
+      expect(createEntity).toHaveBeenCalledTimes(1)
+      expect(runTransaction).toHaveBeenCalledTimes(1)
+
+      // Table name input should be locked and tell the user the table exists
+      expect(screen.getByLabelText(/Table Name/)).toBeDisabled()
+      expect(
+        screen.getByText(/table has been created.*re-apply the CSV/i),
+      ).toBeInTheDocument()
+
+      // Retry — only runTransaction should fire again
+      await user.click(screen.getByRole('button', { name: 'Create' }))
+
+      await vi.waitFor(() => {
+        expect(onComplete).toHaveBeenCalledWith('syn-new-table')
+      })
+      expect(createColumns).toHaveBeenCalledTimes(1)
+      expect(createEntity).toHaveBeenCalledTimes(1)
+      expect(runTransaction).toHaveBeenCalledTimes(2)
+    })
   })
 
   describe('preProcessColumns', () => {
