@@ -136,50 +136,70 @@ export function decorateRows(
     if (visible.has(i)) visibleOrdered.push(i)
   }
 
-  // For rails AND for visible-child-counting: group visible rows by their
-  // parent-posIndex.
-  const siblingGroups = new Map<number, number[]>() // parentIdx -> [childIdxs]
+  // Map posIdx -> row position in visibleOrdered (for subtree-range lookups).
+  const rowAt = new Map<number, number>()
+  for (let r = 0; r < visibleOrdered.length; r++) {
+    rowAt.set(visibleOrdered[r], r)
+  }
+
+  // visibleChildren[parentPosIdx] = ordered list of that parent's visible
+  // direct child posIdxs (in DFS / visibleOrdered order).
+  const visibleChildren = new Map<number, number[]>()
   for (const i of visibleOrdered) {
     const pi = parentIndex[i]
-    const arr = siblingGroups.get(pi)
+    const arr = visibleChildren.get(pi)
     if (arr) arr.push(i)
-    else siblingGroups.set(pi, [i])
-  }
-  function isLastSibling(idx: number): boolean {
-    const pi = parentIndex[idx]
-    const group = siblingGroups.get(pi)
-    if (!group) return true
-    return group[group.length - 1] === idx
+    else visibleChildren.set(pi, [i])
   }
 
-  // renderDepth = count of visible ancestors of this position.
-  function visibleAncestorChain(idx: number): number[] {
-    const chain: number[] = []
-    let cursor = parentIndex[idx]
-    while (cursor >= 0) {
-      if (visible.has(cursor)) chain.unshift(cursor)
-      cursor = parentIndex[cursor]
-    }
-    return chain
-  }
+  // Each visible row's rails accumulate one cell per visible ancestor as we
+  // process parents from outermost (depth 0) to innermost. We process parents
+  // in DFS / visibleOrdered order, which naturally goes outermost-first.
+  const railsByRow: RailKind[][] = visibleOrdered.map(() => [])
 
-  const decorated: DecoratedRow[] = []
+  for (const parentPosIdx of visibleOrdered) {
+    const kids = visibleChildren.get(parentPosIdx)
+    if (!kids || kids.length === 0) continue
+    const lastKid = kids[kids.length - 1]
+    const kidSet = new Set(kids)
 
-  for (const posIdx of visibleOrdered) {
-    const row = unfolding[posIdx]
-    const ancestors = visibleAncestorChain(posIdx)
-    const renderDepth = ancestors.length
+    // Walk the parent's visible subtree: from the row just after the parent,
+    // up to (but not including) the next visible row that is NOT in this
+    // subtree. We can detect end-of-subtree by tracking renderDepth, but
+    // simpler: walk while the current row's path passes through parentPosIdx.
+    // Equivalently: walk while we haven't yet found a row whose parent chain
+    // doesn't include parentPosIdx. Since the unfolding is DFS pre-order and
+    // visibleOrdered preserves that order, the subtree is contiguous starting
+    // right after the parent row.
+    const parentRow = rowAt.get(parentPosIdx)
+    if (parentRow === undefined) continue
 
-    // Rails: one cell per visible ancestor, last cell is tee/corner connector.
-    const rails: RailKind[] = []
-    for (let i = 0; i < ancestors.length; i++) {
-      const ancestorIdx = ancestors[i]
-      if (i < ancestors.length - 1) {
-        rails.push(isLastSibling(ancestorIdx) ? 'empty' : 'vline')
+    let sawLastKid = false
+    for (let r = parentRow + 1; r < visibleOrdered.length; r++) {
+      const d = visibleOrdered[r]
+      // End-of-subtree check: is parentPosIdx an ancestor of d?
+      if (!isAncestor(parentPosIdx, d, parentIndex)) break
+
+      if (kidSet.has(d)) {
+        if (d === lastKid) {
+          railsByRow[r].push('corner')
+          sawLastKid = true
+        } else {
+          railsByRow[r].push('tee')
+        }
       } else {
-        rails.push(isLastSibling(posIdx) ? 'corner' : 'tee')
+        railsByRow[r].push(sawLastKid ? 'empty' : 'vline')
       }
     }
+  }
+
+  // Build decorated rows.
+  const decorated: DecoratedRow[] = []
+  for (let r = 0; r < visibleOrdered.length; r++) {
+    const posIdx = visibleOrdered[r]
+    const row = unfolding[posIdx]
+    const rails = railsByRow[r]
+    const renderDepth = rails.length
 
     // alsoUnderPaths
     const allParents = graph.parents(row.nodeId)
@@ -192,7 +212,7 @@ export function decorateRows(
     const alsoUnderPaths = otherParents.map(p => fullNamePathTo(p, graph))
 
     const childCount = graph.children(row.nodeId).length
-    const visibleChildCount = (siblingGroups.get(posIdx) ?? []).length
+    const visibleChildCount = (visibleChildren.get(posIdx) ?? []).length
     const isChosen = row.nodeId === chosenNodeId
     const toggleState = computeToggleState(childCount, visibleChildCount)
 
@@ -210,6 +230,19 @@ export function decorateRows(
   }
 
   return decorated
+}
+
+function isAncestor(
+  ancestor: number,
+  descendant: number,
+  parentIndex: number[],
+): boolean {
+  let cursor = parentIndex[descendant]
+  while (cursor >= 0) {
+    if (cursor === ancestor) return true
+    cursor = parentIndex[cursor]
+  }
+  return false
 }
 
 function fullNamePathTo(nodeId: string, graph: Graph): string {
