@@ -19,10 +19,9 @@ export default function MetadataTaskTableActionCell(props: {
   canEdit: boolean
 }) {
   const { taskBundle } = props
-  const curationTask = taskBundle.task!
 
   const { hasPermission, isLoading, isPending, onClick } =
-    useOpenCuratorFromTaskButton(curationTask)
+    useOpenCuratorFromTaskButton(taskBundle)
 
   const disableButton = isPending || isLoading || !hasPermission
   let tooltipTitle: string | undefined = undefined

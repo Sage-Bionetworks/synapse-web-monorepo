@@ -6,11 +6,13 @@ import {
 } from '@/synapse-queries/grid/useGridSession'
 import { useSynapseContext } from '@/utils'
 import {
+  CreateGridRequest,
   GridSession,
   SynapseClientError,
   TaskBundle,
 } from '@sage-bionetworks/synapse-client'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { OPEN_CURATOR_LINK_TASK_CONFLICT_ERROR_MESSAGE } from '../utils/constants'
 import { getCreateGridRequestForMetadataTask } from '../utils/getCreateGridRequestForMetadataTask'
 import taskHasAssignee from '../utils/taskHasAssignee'
 
@@ -84,7 +86,10 @@ export default function useGridSessionForCurationTask() {
         throw new Error('CurationTask is missing taskProperties')
       }
 
-      const createGridRequest = getCreateGridRequestForMetadataTask(task)
+      const createGridRequest: CreateGridRequest = {
+        ...getCreateGridRequestForMetadataTask(task),
+        authorizationMode: 'SOURCE_BENEFACTOR',
+      }
       const createGridResponse = await createGridSession(createGridRequest)
       const gridSession = createGridResponse.gridSession!
 
@@ -104,9 +109,7 @@ export default function useGridSessionForCurationTask() {
           // etag mismatch -- possible race condition.
           // Delete the session we just created to avoid orphaned sessions, and throw an error to notify the user that they may need to refresh and try again.
           await deleteGridSession(gridSession.sessionId!)
-          throw new Error(
-            'Failed to link Grid session to Curation Task. The task was updated since it was last retrieved. Please refresh and try again.',
-          )
+          throw new Error(OPEN_CURATOR_LINK_TASK_CONFLICT_ERROR_MESSAGE)
         } else {
           // Rethrow any other error
           throw e

@@ -15,7 +15,7 @@ export type CurationTaskCardProps = {
 
 function useUiForTask(taskBundle: TaskBundle) {
   const { onClick, isLoading, isPending, hasPermission } =
-    useOpenCuratorFromTaskButton(taskBundle.task!)
+    useOpenCuratorFromTaskButton(taskBundle)
 
   if (!taskBundle.task || !taskBundle.status) {
     throw new Error('Task bundle is missing required properties')
