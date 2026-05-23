@@ -17,41 +17,21 @@ import type { RailKind, ToggleState } from '../TopicHierarchyShared'
 export type ForceVisibleSet = ReadonlySet<number>
 export type ExpandedSet = ReadonlySet<number>
 
-// Index of each position's parent position in the unfolding. -1 for roots.
-// Computed once for the unfolding; passed into visibility-compute functions.
-export function buildParentIndex(unfolding: UnfoldingRow[]): number[] {
-  const out: number[] = new Array(unfolding.length).fill(-1)
-  // Build a Map keyed by full posKey ([...pathToParent, nodeId].join('|'))
-  // mapping to that row's index, so we can look up a row's parent's index.
-  const byKey = new Map<string, number>()
-  for (let i = 0; i < unfolding.length; i++) {
-    const r = unfolding[i]
-    byKey.set([...r.pathToParent, r.nodeId].join('|'), i)
-  }
-  for (let i = 0; i < unfolding.length; i++) {
-    const r = unfolding[i]
-    if (r.pathToParent.length === 0) continue
-    const parentKey = r.pathToParent.join('|')
-    const pi = byKey.get(parentKey)
-    if (pi !== undefined) out[i] = pi
-  }
-  return out
-}
-
-// Walk up via parentIndex from `posIdx`, returning the chain of ancestor
-// posIndexes from root down to `posIdx` (inclusive). With `stopAt` set, stops
-// before adding that ancestor (so the returned chain is the strict path BETWEEN
-// stopAt and posIdx, exclusive of stopAt, inclusive of posIdx).
+// Walk up via `unfolding[i].parentIdx` from `posIdx`, returning the chain of
+// ancestor posIndexes from root down to `posIdx` (inclusive). With `stopAt`
+// set, stops before adding that ancestor (so the returned chain is the
+// strict path BETWEEN stopAt and posIdx, exclusive of stopAt, inclusive of
+// posIdx).
 export function ancestorPath(
   posIdx: number,
-  parentIndex: number[],
+  unfolding: UnfoldingRow[],
   stopAt?: number,
 ): number[] {
   const chain: number[] = []
   let cursor = posIdx
   while (cursor >= 0 && cursor !== stopAt) {
     chain.unshift(cursor)
-    cursor = parentIndex[cursor]
+    cursor = unfolding[cursor].parentIdx
   }
   return chain
 }
@@ -63,42 +43,38 @@ export function ancestorPath(
 // not in `expanded`, so the FV ancestors connect to FV descendants on screen.
 function pathProtectionSet(
   forceVisible: ForceVisibleSet,
-  parentIndex: number[],
+  unfolding: UnfoldingRow[],
 ): Set<number> {
   const out = new Set<number>()
   for (const idx of forceVisible) {
-    let cursor = parentIndex[idx]
+    let cursor = unfolding[idx].parentIdx
     while (cursor >= 0) {
       out.add(cursor)
       if (forceVisible.has(cursor)) break // stop at next FV ancestor (inclusive)
-      cursor = parentIndex[cursor]
+      cursor = unfolding[cursor].parentIdx
     }
   }
   return out
 }
 
-// Compute the set of visible positions. Iterates expanded-children to a
-// fixed point.
+// Compute the set of visible positions. A single forward sweep suffices
+// because the unfolding is DFS pre-order: every row's parent appears at a
+// lower index, so by the time we process row i, its parent's visibility
+// is already settled.
 export function computeVisible(
   unfolding: UnfoldingRow[],
   forceVisible: ForceVisibleSet,
   expanded: ExpandedSet,
-  parentIndex: number[],
 ): Set<number> {
-  // Seed: forceVisible + path-protection (ancestors up to nearest FV).
+  // Seed: forceVisible + path-protection (bridges up to nearest FV).
   const visible = new Set<number>(forceVisible)
-  for (const a of pathProtectionSet(forceVisible, parentIndex)) {
+  for (const a of pathProtectionSet(forceVisible, unfolding)) {
     visible.add(a)
   }
 
-  // Forward sweep: rows whose parent is visible AND in expanded become
-  // visible too. Since unfolding is DFS pre-order, a single forward pass
-  // captures the transitive closure: by the time we visit row i, its parent
-  // (at index < i, except for roots which have no parent) has already been
-  // settled.
   for (let i = 0; i < unfolding.length; i++) {
-    const pi = parentIndex[i]
-    if (pi < 0) continue // root row: visible only if forced or pre-seeded
+    const pi = unfolding[i].parentIdx
+    if (pi < 0) continue
     if (visible.has(pi) && expanded.has(pi)) visible.add(i)
   }
 
@@ -150,7 +126,6 @@ export function decorateRows(
   visible: ReadonlySet<number>,
   graph: Graph,
   chosenNodeId: string,
-  parentIndex: number[],
 ): DecoratedRow[] {
   if (visible.size === 0) return []
 
@@ -179,7 +154,7 @@ export function decorateRows(
   // direct child posIdxs (in DFS / visibleOrdered order).
   const visibleChildren = new Map<number, number[]>()
   for (const i of visibleOrdered) {
-    const pi = parentIndex[i]
+    const pi = unfolding[i].parentIdx
     const arr = visibleChildren.get(pi)
     if (arr) arr.push(i)
     else visibleChildren.set(pi, [i])
@@ -196,22 +171,17 @@ export function decorateRows(
     const lastKid = kids[kids.length - 1]
     const kidSet = new Set(kids)
 
-    // Walk the parent's visible subtree: from the row just after the parent,
-    // up to (but not including) the next visible row that is NOT in this
-    // subtree. We can detect end-of-subtree by tracking renderDepth, but
-    // simpler: walk while the current row's path passes through parentPosIdx.
-    // Equivalently: walk while we haven't yet found a row whose parent chain
-    // doesn't include parentPosIdx. Since the unfolding is DFS pre-order and
-    // visibleOrdered preserves that order, the subtree is contiguous starting
-    // right after the parent row.
+    // Walk the parent's visible subtree starting just after the parent row.
+    // Since unfolding is DFS pre-order, the subtree is contiguous in
+    // visibleOrdered: we stop as soon as we hit a row that isn't a
+    // descendant.
     const parentRow = rowAt.get(parentPosIdx)
     if (parentRow === undefined) continue
 
     let sawLastKid = false
     for (let r = parentRow + 1; r < visibleOrdered.length; r++) {
       const d = visibleOrdered[r]
-      // End-of-subtree check: is parentPosIdx an ancestor of d?
-      if (!isAncestor(parentPosIdx, d, parentIndex)) break
+      if (!isAncestor(parentPosIdx, d, unfolding)) break
 
       if (kidSet.has(d)) {
         if (d === lastKid) {
@@ -242,7 +212,7 @@ export function decorateRows(
     if (copies.length > 1) {
       for (const otherPosIdx of copies) {
         if (otherPosIdx === posIdx) continue
-        const chain = ancestorPath(otherPosIdx, parentIndex)
+        const chain = ancestorPath(otherPosIdx, unfolding)
         // Drop the copy itself from the displayed path; show only its ancestry.
         const ancestors = chain.slice(0, -1)
         if (ancestors.length === 0) continue
@@ -279,12 +249,14 @@ export function decorateRows(
 function isAncestor(
   ancestor: number,
   descendant: number,
-  parentIndex: number[],
+  unfolding: UnfoldingRow[],
 ): boolean {
-  let cursor = parentIndex[descendant]
-  while (cursor >= 0) {
-    if (cursor === ancestor) return true
-    cursor = parentIndex[cursor]
+  // ancestorPath returns the chain from root down to descendant (inclusive).
+  // The last element is descendant itself, so checking earlier elements is
+  // equivalent to "is ancestor a strict ancestor of descendant?".
+  const chain = ancestorPath(descendant, unfolding)
+  for (let i = 0; i < chain.length - 1; i++) {
+    if (chain[i] === ancestor) return true
   }
   return false
 }

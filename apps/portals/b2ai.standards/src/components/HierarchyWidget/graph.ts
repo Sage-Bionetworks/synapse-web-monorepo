@@ -74,17 +74,25 @@ export type UnfoldingRow = {
   nodeId: string
   depth: number
   // Ancestor path from a root down to this row's parent (exclusive of self).
-  // [] for depth-0 rows. Used to derive position-key and breadcrumb info.
+  // [] for depth-0 rows.
   pathToParent: string[]
+  // Index of this row's parent row in the unfolding. -1 for roots.
+  parentIdx: number
 }
 
 export function fullUnfolding(graph: Graph): UnfoldingRow[] {
   const out: UnfoldingRow[] = []
-  function walk(id: string, depth: number, pathToParent: string[]) {
-    out.push({ nodeId: id, depth, pathToParent })
+  function walk(
+    id: string,
+    depth: number,
+    pathToParent: string[],
+    parentIdx: number,
+  ) {
+    const myIdx = out.length
+    out.push({ nodeId: id, depth, pathToParent, parentIdx })
     const nextPath = [...pathToParent, id]
-    for (const c of graph.children(id)) walk(c, depth + 1, nextPath)
+    for (const c of graph.children(id)) walk(c, depth + 1, nextPath, myIdx)
   }
-  for (const r of graph.roots) walk(r, 0, [])
+  for (const r of graph.roots) walk(r, 0, [], -1)
   return out
 }

@@ -10,7 +10,6 @@ import {
 import { buildGraph, fullUnfolding, type Node } from './graph'
 import {
   ancestorPath,
-  buildParentIndex,
   computeVisible,
   decorateRows,
   type DecoratedRow,
@@ -33,7 +32,6 @@ export default function HierarchyWidget({
 }: Props) {
   const graph = useMemo(() => buildGraph(nodes), [nodes])
   const unfolding = useMemo(() => fullUnfolding(graph), [graph])
-  const parentIndex = useMemo(() => buildParentIndex(unfolding), [unfolding])
 
   // Initial state: pin chosen + the root above it (so the full path from
   // root to chosen is visible via path-protection). User can collapse from
@@ -43,11 +41,11 @@ export default function HierarchyWidget({
     if (chosenPos < 0) {
       return { forceVisible: new Set<number>(), expanded: new Set<number>() }
     }
-    const rootPos = ancestorPath(chosenPos, parentIndex)[0]
+    const rootPos = ancestorPath(chosenPos, unfolding)[0]
     const forceVisible = new Set<number>([chosenPos, rootPos])
     const expanded = new Set<number>([chosenPos])
     return { forceVisible, expanded }
-  }, [unfolding, parentIndex, chosenNodeId])
+  }, [unfolding, chosenNodeId])
 
   const [forceVisible, setForceVisible] = useState<ForceVisibleSet>(
     () => initState.forceVisible,
@@ -63,13 +61,13 @@ export default function HierarchyWidget({
   }, [initState])
 
   const visible = useMemo(
-    () => computeVisible(unfolding, forceVisible, expanded, parentIndex),
-    [unfolding, forceVisible, expanded, parentIndex],
+    () => computeVisible(unfolding, forceVisible, expanded),
+    [unfolding, forceVisible, expanded],
   )
 
   const decorated = useMemo(
-    () => decorateRows(unfolding, visible, graph, chosenNodeId, parentIndex),
-    [unfolding, visible, graph, chosenNodeId, parentIndex],
+    () => decorateRows(unfolding, visible, graph, chosenNodeId),
+    [unfolding, visible, graph, chosenNodeId],
   )
 
   // Chosen-path breadcrumbs: one entry per copy of chosen in the unfolding.
@@ -79,7 +77,7 @@ export default function HierarchyWidget({
     const out: Array<Array<{ posIdx: number; name: string }>> = []
     for (let i = 0; i < unfolding.length; i++) {
       if (unfolding[i].nodeId !== chosenNodeId) continue
-      const chain = ancestorPath(i, parentIndex).map(posIdx => ({
+      const chain = ancestorPath(i, unfolding).map(posIdx => ({
         posIdx,
         name:
           graph.node(unfolding[posIdx].nodeId)?.name ??
@@ -88,7 +86,7 @@ export default function HierarchyWidget({
       out.push(chain)
     }
     return out
-  }, [unfolding, parentIndex, graph, chosenNodeId])
+  }, [unfolding, graph, chosenNodeId])
 
   if (!graph.node(chosenNodeId)) {
     return (
@@ -110,14 +108,9 @@ export default function HierarchyWidget({
       const fvDescendants: number[] = []
       for (const fv of forceVisible) {
         if (fv === posIndex) continue
-        let cursor = parentIndex[fv]
-        while (cursor >= 0) {
-          if (cursor === posIndex) {
-            fvDescendants.push(fv)
-            break
-          }
-          cursor = parentIndex[cursor]
-        }
+        // fv descends from posIndex iff posIndex is a strict ancestor of fv.
+        const chain = ancestorPath(fv, unfolding)
+        if (chain.slice(0, -1).includes(posIndex)) fvDescendants.push(fv)
       }
       if (fvDescendants.length > 0) {
         setForceVisible(prev => {
