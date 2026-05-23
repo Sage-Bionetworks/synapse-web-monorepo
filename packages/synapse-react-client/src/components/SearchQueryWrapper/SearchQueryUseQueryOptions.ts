@@ -7,6 +7,7 @@ import {
   ColumnModel,
   FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
   FacetColumnRangeRequest,
+  FacetColumnResultRange,
   FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
   FacetColumnValuesRequest,
   QueryBundleRequest,
@@ -84,9 +85,11 @@ export function toSearchIndexQuery(
   searchIndexId: string,
   columnModels?: ColumnModel[],
 ): SearchIndexQuery {
-  // Build facetRequests from ColumnModels that have a facetType defined
+  // Build facetRequests from ColumnModels that have a facetType of 'enumeration'.
+  // Range columns are excluded: the Search API's FacetRequest only supports terms aggregations
+  // and cannot produce the min/max stats needed for FacetColumnResultRange.
   const facetRequests: FacetRequest[] | undefined = columnModels
-    ?.filter(cm => cm.facetType != null)
+    ?.filter(cm => cm.facetType === 'enumeration')
     .map(cm => {
       const facetReq: FacetRequest = { columnName: cm.name, maxValueCount: 100 }
       if (cm.facetSortConfig) {
@@ -229,24 +232,62 @@ export function searchQueryResultsToQueryResultBundle(
         }
       : undefined
 
-  // Reorder facets to match the columnModels order so downstream components
-  // (e.g. FacetFilterControls) render facets in the expected column order.
   const rawFacets = results.facets as QueryResultBundle['facets']
-  const orderedFacets =
-    columnModels && rawFacets
+
+  // Synthesize FacetColumnResultRange for range-type DATE/DOUBLE columns. The Search API's
+  // FacetRequest only produces terms aggregations and cannot return min/max stats, so these
+  // entries will never appear in results.facets. columnMin/columnMax are empty strings
+  // (unavailable from the server); selectedMin/selectedMax are derived from the query's
+  // rangeFilters so any applied range filter is still reflected in the UI.
+  const syntheticRangeFacets: FacetColumnResultRange[] = (columnModels ?? [])
+    .filter(
+      cm =>
+        cm.facetType === 'range' &&
+        (cm.columnType === 'DATE' || cm.columnType === 'DOUBLE') &&
+        !(rawFacets ?? []).some(
+          f => f.columnName === cm.name && f.facetType === 'range',
+        ),
+    )
+    .map(cm => {
+      const rangeFilter = query.searchQuery?.rangeFilters?.find(
+        rf => rf.key === cm.name,
+      )
+      return {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.FacetColumnResultRange' as const,
+        facetType: 'range' as const,
+        columnName: cm.name,
+        columnMin: '',
+        columnMax: '',
+        selectedMin: rangeFilter?.min,
+        selectedMax: rangeFilter?.max,
+      }
+    })
+
+  const allFacets: NonNullable<QueryResultBundle['facets']> = [
+    ...(rawFacets ?? []),
+    ...syntheticRangeFacets,
+  ]
+
+  // Reorder all facets to match the columnModels order so downstream components
+  // (e.g. FacetFilterControls) render facets in the expected column order.
+  const orderedFacets: QueryResultBundle['facets'] =
+    rawFacets == null && syntheticRangeFacets.length === 0
+      ? undefined
+      : columnModels
       ? [
-          ...rawFacets
+          ...allFacets
             .filter(f => columnModels.some(cm => cm.name === f.columnName))
             .sort(
               (a, b) =>
                 columnModels.findIndex(cm => cm.name === a.columnName) -
                 columnModels.findIndex(cm => cm.name === b.columnName),
             ),
-          ...rawFacets.filter(
+          ...allFacets.filter(
             f => !columnModels.some(cm => cm.name === f.columnName),
           ),
         ]
-      : rawFacets
+      : allFacets
 
   return {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
