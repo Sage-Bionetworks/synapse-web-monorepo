@@ -116,8 +116,7 @@ export function RangeFacetFilterUI(props: RangeFacetFilterProps) {
           ) : (
             <>
               {columnType === 'INTEGER' &&
-                columnMin != null &&
-                columnMax != null && (
+                (columnMin != null && columnMax != null ? (
                   <RangeSlider
                     key="RangeSlider"
                     domain={[columnMin, columnMax]}
@@ -130,20 +129,42 @@ export function RangeFacetFilterUI(props: RangeFacetFilterProps) {
                   >
                     {'>'}
                   </RangeSlider>
-                )}
+                ) : (
+                  <Range
+                    key="Range"
+                    type="number"
+                    initialValues={
+                      currentMin || currentMax
+                        ? {
+                            min: currentMin ? parseInt(currentMin) : undefined,
+                            max: currentMax ? parseInt(currentMax) : undefined,
+                          }
+                        : undefined
+                    }
+                    onApplyClicked={onRangeValueSelected}
+                  />
+                ))}
 
               {columnType === 'DATE' && (
                 <Range
                   key="Range"
-                  initialValues={{
-                    // From the backend, selectedMin is a formatted date (like "2021-06-15"), but columnMin is a unix timestamp in millis (like "1624651794856")
-                    min:
-                      selectedMin ??
-                      (columnMin ? dayjs(parseInt(columnMin)).toString() : ''),
-                    max:
-                      selectedMax ??
-                      (columnMax ? dayjs(parseInt(columnMax)).toString() : ''),
-                  }}
+                  initialValues={
+                    selectedMin || selectedMax || columnMin || columnMax
+                      ? {
+                          // From the backend, selectedMin is a formatted date (like "2021-06-15"), but columnMin is a unix timestamp in millis (like "1624651794856")
+                          min:
+                            selectedMin ??
+                            (columnMin
+                              ? dayjs(parseInt(columnMin)).toString()
+                              : undefined),
+                          max:
+                            selectedMax ??
+                            (columnMax
+                              ? dayjs(parseInt(columnMax)).toString()
+                              : undefined),
+                        }
+                      : undefined
+                  }
                   type={rangeType}
                   onApplyClicked={onRangeValueSelected}
                 />
@@ -151,10 +172,14 @@ export function RangeFacetFilterUI(props: RangeFacetFilterProps) {
               {columnType === 'DOUBLE' && (
                 <Range
                   key="Range"
-                  initialValues={{
-                    min: parseFloat(currentMin ?? '0'),
-                    max: parseFloat(currentMax ?? '0'),
-                  }}
+                  initialValues={
+                    currentMin || currentMax
+                      ? {
+                          min: currentMin ? parseFloat(currentMin) : undefined,
+                          max: currentMax ? parseFloat(currentMax) : undefined,
+                        }
+                      : undefined
+                  }
                   type={rangeType}
                   onApplyClicked={onRangeValueSelected}
                 />

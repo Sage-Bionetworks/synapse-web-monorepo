@@ -38,6 +38,7 @@ import {
   UseSuspenseQueryOptions,
 } from '@tanstack/react-query'
 import { omit } from 'lodash-es'
+import dayjs from 'dayjs'
 import { useCallback, useMemo } from 'react'
 import { KeyFactory } from '@/synapse-queries/KeyFactory'
 
@@ -119,18 +120,33 @@ export function toSearchIndexQuery(
       )
       .map(f => ({ key: f.columnName, values: f.facetValues }))
 
-  // Build rangeFilters from range selectedFacets
+  // Build rangeFilters from range selectedFacets.
+  // DATE columns: the Range UI component emits formatted dates ("YYYY-MM-DD") but the
+  // Search API (OpenSearch) expects unix millisecond timestamps. Convert here.
   const rangeFilters: SearchKeyRange[] | undefined =
     queryBundleRequest.query.selectedFacets
       ?.filter(
         (f): f is FacetColumnRangeRequest =>
           f.concreteType === FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
       )
-      .map(f => ({
-        key: f.columnName,
-        min: f.min,
-        max: f.max,
-      }))
+      .map(f => {
+        const columnType = columnModels?.find(
+          cm => cm.name === f.columnName,
+        )?.columnType
+        const toApiValue = (v: string | undefined): string | undefined => {
+          if (!v || columnType !== 'DATE') return v
+          // Convert "YYYY-MM-DD" → unix ms; leave already-numeric values untouched
+          if (/^\d{4}-\d{2}-\d{2}$/.test(v)) {
+            return String(dayjs(v).valueOf())
+          }
+          return v
+        }
+        return {
+          key: f.columnName,
+          min: toApiValue(f.min),
+          max: toApiValue(f.max),
+        }
+      })
 
   // Extract queryText by concatenating all TextMatchesQueryFilter searchExpression values
   const textMatchesExpressions = queryBundleRequest.query.additionalFilters
@@ -252,6 +268,15 @@ export function searchQueryResultsToQueryResultBundle(
       const rangeFilter = query.searchQuery?.rangeFilters?.find(
         rf => rf.key === cm.name,
       )
+      // rangeFilters carry unix ms for DATE columns (converted in toSearchIndexQuery).
+      // Convert back to "YYYY-MM-DD" so the Range UI component can display them.
+      const toDisplayValue = (v: string | undefined): string | undefined => {
+        if (!v || cm.columnType !== 'DATE') return v
+        if (/^\d+$/.test(v)) {
+          return dayjs(parseInt(v)).format('YYYY-MM-DD')
+        }
+        return v
+      }
       return {
         concreteType:
           'org.sagebionetworks.repo.model.table.FacetColumnResultRange' as const,
@@ -259,8 +284,8 @@ export function searchQueryResultsToQueryResultBundle(
         columnName: cm.name,
         columnMin: '',
         columnMax: '',
-        selectedMin: rangeFilter?.min,
-        selectedMax: rangeFilter?.max,
+        selectedMin: toDisplayValue(rangeFilter?.min),
+        selectedMax: toDisplayValue(rangeFilter?.max),
       }
     })
 
