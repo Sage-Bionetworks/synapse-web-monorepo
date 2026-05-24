@@ -250,16 +250,20 @@ export function searchQueryResultsToQueryResultBundle(
 
   const rawFacets = results.facets as QueryResultBundle['facets']
 
-  // Synthesize FacetColumnResultRange for range-type DATE/DOUBLE columns. The Search API's
+  // Synthesize FacetColumnResultRange for range-type DATE/DOUBLE/INTEGER columns. The Search API's
   // FacetRequest only produces terms aggregations and cannot return min/max stats, so these
   // entries will never appear in results.facets. columnMin/columnMax are empty strings
   // (unavailable from the server); selectedMin/selectedMax are derived from the query's
   // rangeFilters so any applied range filter is still reflected in the UI.
+  // Note: for INTEGER columns the RangeSlider requires real bounds, so the UI falls back to a
+  // plain Range number input when columnMin/columnMax are absent.
   const syntheticRangeFacets: FacetColumnResultRange[] = (columnModels ?? [])
     .filter(
       cm =>
         cm.facetType === 'range' &&
-        (cm.columnType === 'DATE' || cm.columnType === 'DOUBLE') &&
+        (cm.columnType === 'DATE' ||
+          cm.columnType === 'DOUBLE' ||
+          cm.columnType === 'INTEGER') &&
         !(rawFacets ?? []).some(
           f => f.columnName === cm.name && f.facetType === 'range',
         ),

@@ -116,7 +116,7 @@ export function RangeFacetFilterUI(props: RangeFacetFilterProps) {
           ) : (
             <>
               {columnType === 'INTEGER' &&
-                (columnMin != null && columnMax != null ? (
+                (columnMin && columnMax ? (
                   <RangeSlider
                     key="RangeSlider"
                     domain={[columnMin, columnMax]}
