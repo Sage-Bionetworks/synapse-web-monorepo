@@ -4,18 +4,8 @@ import {
   FileUploadHandle,
 } from '@/components/file/upload/BasicFileHandleUpload'
 import { displayToast } from '@/components/ToastMessage/ToastMessage'
-import CsvPreview from '@/components/table/CsvPreview/CsvPreview'
-import CsvTableDescriptorForm, {
-  CsvTableDescriptorFormHandle,
-} from '@/components/table/CsvTableDescriptorForm/CsvTableDescriptorForm'
-import { RefreshTwoTone } from '@mui/icons-material'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import Accordion from '@mui/material/Accordion'
-import AccordionDetails from '@mui/material/AccordionDetails'
-import AccordionSummary from '@mui/material/AccordionSummary'
+import CsvPreviewWithOptions from '@/components/table/CsvPreview/CsvPreviewWithOptions'
 import Button from '@mui/material/Button'
-import Stack from '@mui/material/Stack'
-import Typography from '@mui/material/Typography'
 import { CsvTableDescriptor } from '@sage-bionetworks/synapse-client'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import useUploadCsvToTable from './useUploadCsvToTable'
@@ -86,7 +76,6 @@ export default function UpdateTableWithCsvDialog(
   }, [])
 
   const uploadRef = useRef<FileUploadHandle | null>(null)
-  const csvDescriptorFormRef = useRef<CsvTableDescriptorFormHandle | null>(null)
 
   const handleFinish = useCallback(() => {
     // table already exists; upload csv rows directly to table
@@ -109,41 +98,12 @@ export default function UpdateTableWithCsvDialog(
   )
 
   const previewStepContent = (
-    <Stack spacing={2}>
-      {uploadedFileHandleId && (
-        <CsvPreview
-          fileHandleId={uploadedFileHandleId}
-          csvTableDescriptor={csvTableDescriptor}
-          onIsLoadingChange={setIsLoadingPreview}
-        />
-      )}
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant={'headline3'}>Show Options</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <CsvTableDescriptorForm
-            defaultValue={csvTableDescriptor}
-            ref={csvDescriptorFormRef}
-          />
-          <Button
-            variant={'outlined'}
-            startIcon={<RefreshTwoTone />}
-            sx={{ mt: 2 }}
-            onClick={() => {
-              // Get the state from the form and update local state, which will re-render the preview
-              if (csvDescriptorFormRef.current) {
-                setCsvTableDescriptor(
-                  csvDescriptorFormRef.current.getFormData(),
-                )
-              }
-            }}
-          >
-            Refresh Preview
-          </Button>
-        </AccordionDetails>
-      </Accordion>
-    </Stack>
+    <CsvPreviewWithOptions
+      fileHandleId={uploadedFileHandleId}
+      csvTableDescriptor={csvTableDescriptor}
+      onCsvTableDescriptorChange={setCsvTableDescriptor}
+      onIsLoadingChange={setIsLoadingPreview}
+    />
   )
 
   return (

@@ -7,11 +7,7 @@ import {
   FileUploadHandle,
 } from '@/components/file/upload/BasicFileHandleUpload'
 import { displayToast } from '@/components/ToastMessage/ToastMessage'
-import CsvPreview from '@/components/table/CsvPreview/CsvPreview'
-import CsvTableDescriptorForm, {
-  CsvTableDescriptorFormHandle,
-} from '@/components/table/CsvTableDescriptorForm/CsvTableDescriptorForm'
-import { RefreshTwoTone } from '@mui/icons-material'
+import CsvPreviewWithOptions from '@/components/table/CsvPreview/CsvPreviewWithOptions'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import Accordion from '@mui/material/Accordion'
 import AccordionDetails from '@mui/material/AccordionDetails'
@@ -109,7 +105,6 @@ export default function CreateTableFromCsvDialog(
   }, [])
 
   const uploadRef = useRef<FileUploadHandle | null>(null)
-  const csvDescriptorFormRef = useRef<CsvTableDescriptorFormHandle | null>(null)
 
   const handleFinish = useCallback(
     (columnModelsParam: SetOptional<SynapseTypesColumnModel, 'id'>[] = []) => {
@@ -167,42 +162,13 @@ export default function CreateTableFromCsvDialog(
   )
 
   const previewStepContent = (
-    <Stack spacing={2}>
-      {uploadedFileHandleId && (
-        <CsvPreview
-          fileHandleId={uploadedFileHandleId}
-          csvTableDescriptor={csvTableDescriptor}
-          onCsvPreviewDataChange={setCsvPreviewData}
-          onIsLoadingChange={setIsLoadingPreview}
-        />
-      )}
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant={'headline3'}>Show Options</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <CsvTableDescriptorForm
-            defaultValue={csvTableDescriptor}
-            ref={csvDescriptorFormRef}
-          />
-          <Button
-            variant={'outlined'}
-            startIcon={<RefreshTwoTone />}
-            sx={{ mt: 2 }}
-            onClick={() => {
-              // Get the state from the form and update local state, which will re-render the preview
-              if (csvDescriptorFormRef.current) {
-                setCsvTableDescriptor(
-                  csvDescriptorFormRef.current.getFormData(),
-                )
-              }
-            }}
-          >
-            Refresh Preview
-          </Button>
-        </AccordionDetails>
-      </Accordion>
-    </Stack>
+    <CsvPreviewWithOptions
+      fileHandleId={uploadedFileHandleId}
+      csvTableDescriptor={csvTableDescriptor}
+      onCsvTableDescriptorChange={setCsvTableDescriptor}
+      onCsvPreviewDataChange={setCsvPreviewData}
+      onIsLoadingChange={setIsLoadingPreview}
+    />
   )
 
   const tableNameStepContent = (
