@@ -7,6 +7,7 @@ import {
   // dataSetExploreSql,
   standardsSql,
   DST_TABLE_COLUMN_CONSTS,
+  standardsSearchIndexId,
 } from '@/config/resources'
 import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
@@ -64,7 +65,7 @@ export const standardsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
 
 export const standardsSearchQueryWrapperPlotNavProps: SearchQueryWrapperPlotNavProps =
   {
-    searchIndexId: 'syn74909093',
+    searchIndexId: standardsSearchIndexId,
     autocompleteFieldName: 'name',
     rgbIndex: standardsRgbIndex,
     shouldDeepLink: true,

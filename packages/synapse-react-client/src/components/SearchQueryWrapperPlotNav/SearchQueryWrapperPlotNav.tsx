@@ -57,6 +57,8 @@ export type SearchQueryWrapperPlotNavProps = SearchQueryWrapperPlotNavOwnProps &
     | 'hideCopyToClipboard'
     | 'hideVisualizationsControl'
     | 'hideKeywordSearchPill'
+    | 'hideSearchBarControl'
+    | 'defaultShowSearchBar'
   > &
   Pick<TopLevelControlsProps, 'name' | 'hideQueryCount'> & {
     /** Optional initial query parameters. Only selectedFacets, additionalFilters, limit, and offset are used. */
@@ -149,9 +151,9 @@ export default function SearchQueryWrapperPlotNav(
           visibleColumnCount={props.visibleColumnCount}
           defaultShowPlots={props.defaultShowPlots}
           hideCopyToClipboard={props.hideCopyToClipboard}
-          hideSearchBarControl={false}
+          hideSearchBarControl={props.hideSearchBarControl ?? false}
           hideKeywordSearchPill={props.hideKeywordSearchPill}
-          defaultShowSearchBar={true}
+          defaultShowSearchBar={props.defaultShowSearchBar ?? true}
           showLastUpdatedOn={props.showLastUpdatedOn}
           noContentPlaceholderType={
             props.noContentPlaceholderType ??
@@ -178,6 +180,8 @@ export default function SearchQueryWrapperPlotNav(
             searchConfiguration={{
               ftsConfig: {
                 textMatchesMode: 'NATURAL_LANGUAGE',
+                minSearchQueryLength: 1,
+                replaceExistingFilter: true,
                 getSuggestions: autocompleteFieldName
                   ? getSuggestions
                   : undefined,

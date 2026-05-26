@@ -265,6 +265,14 @@ export const bioregistryRules = [
     onMatch,
   },
   {
+    regex: /(edam.data:\d+)/,
+    onMatch,
+  },
+  {
+    regex: /(edam.topic:\d+)/,
+    onMatch,
+  },
+  {
     regex: /(ega.dataset:EGAD\d{11})/,
     onMatch,
   },
@@ -535,7 +543,7 @@ export const bioregistryRules = [
     onMatch,
   },
   {
-    regex: /(ncit:[CRPA]\d+)/,
+    regex: /(ncit:(?:C|R|P|A|NHC)\d+)/,
     onMatch,
   },
   {

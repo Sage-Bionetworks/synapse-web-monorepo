@@ -8,6 +8,7 @@ import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   ColumnSingleValueFilterOperator,
   QueryBundleRequest,
+  TextMatchesQueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -28,6 +29,7 @@ const initialQueryRequest = mockQueryBundleRequest
 const renderComponent = (
   queryContext: Partial<QueryContextType>,
   queryVisualizationContext: Partial<QueryVisualizationContextType>,
+  ftsConfig?: FTSConfig,
 ) => {
   return render(
     <QueryContextProvider queryContext={queryContext as QueryContextType}>
@@ -36,7 +38,7 @@ const renderComponent = (
           queryVisualizationContext as QueryVisualizationContextType
         }
       >
-        <FullTextSearch />
+        <FullTextSearch ftsConfig={ftsConfig} />
       </QueryVisualizationContextProvider>
     </QueryContextProvider>,
     {
@@ -108,6 +110,21 @@ describe('FullTextSearch tests', () => {
     await userEvent.type(searchBox, searchQuery + '{enter}')
 
     expect(mockExecuteQueryRequest).not.toHaveBeenCalled()
+  })
+
+  it('respects a custom minSearchQueryLength from ftsConfig', async () => {
+    const ftsConfig: FTSConfig = {
+      textMatchesMode: 'NATURAL_LANGUAGE',
+      minSearchQueryLength: 1,
+    }
+    renderComponent(queryContext, queryVisualizationContext, ftsConfig)
+
+    const searchBox = screen.getByRole('textbox')
+
+    // A single character would normally be rejected by the default minimum of 3
+    await userEvent.type(searchBox, 'N{enter}')
+
+    expect(mockExecuteQueryRequest).toHaveBeenCalled()
   })
 
   describe('updateQueryUsingSearchTerm', () => {
@@ -226,6 +243,82 @@ describe('FullTextSearch tests', () => {
         },
       })
     })
+    it('appends a new filter by default (replaceExistingFilter not set)', () => {
+      const columnModels = mockQueryResultBundle.columnModels
+      const ftsConfig: FTSConfig = { textMatchesMode: 'NATURAL_LANGUAGE' }
+      const existingFilter: TextMatchesQueryFilter = {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
+        searchExpression: 'old search',
+        searchMode: 'NATURAL_LANGUAGE',
+      }
+      const initialRequest: QueryBundleRequest = {
+        entityId: 'syn123',
+        query: {
+          sql: 'SELECT * FROM syn123',
+          additionalFilters: [existingFilter],
+        },
+        partMask: 255,
+        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+      }
+
+      const updatedRequest = updateQueryUsingSearchTerm(
+        initialRequest,
+        columnModels,
+        'new search',
+        ftsConfig,
+      )
+
+      expect(updatedRequest.query.additionalFilters).toHaveLength(2)
+    })
+
+    it('replaces all existing TextMatchesQueryFilters when replaceExistingFilter is true', () => {
+      const columnModels = mockQueryResultBundle.columnModels
+      const ftsConfig: FTSConfig = {
+        textMatchesMode: 'NATURAL_LANGUAGE',
+        replaceExistingFilter: true,
+      }
+      const existingFilters: TextMatchesQueryFilter[] = [
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
+          searchExpression: 'old search one',
+          searchMode: 'NATURAL_LANGUAGE',
+        },
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
+          searchExpression: 'old search two',
+          searchMode: 'NATURAL_LANGUAGE',
+        },
+      ]
+      const initialRequest: QueryBundleRequest = {
+        entityId: 'syn123',
+        query: {
+          sql: 'SELECT * FROM syn123',
+          additionalFilters: existingFilters,
+        },
+        partMask: 255,
+        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+      }
+
+      const updatedRequest = updateQueryUsingSearchTerm(
+        initialRequest,
+        columnModels,
+        'new search',
+        ftsConfig,
+      )
+
+      expect(updatedRequest.query.additionalFilters).toEqual([
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
+          searchExpression: 'new search',
+          searchMode: 'NATURAL_LANGUAGE',
+        },
+      ])
+    })
+
     it('adds the appropriate QueryFilter when searching for Synapse ID', () => {
       const columnModels = mockQueryResultBundle.columnModels
       const searchQuery = 'syn123'

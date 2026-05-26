@@ -1,7 +1,7 @@
 import { portalMetadata } from '@/config/portalMetadata'
-import studies from '@/config/synapseConfigs/studies'
+import { studiesSearch } from '@/config/synapseConfigs/studies'
 import { createStaticMeta } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import SearchQueryWrapperPlotNav from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 export const meta = createStaticMeta(
   { title: 'Explore Studies' },
@@ -9,7 +9,7 @@ export const meta = createStaticMeta(
 )
 
 function ExploreStudies() {
-  return <QueryWrapperPlotNav {...studies} />
+  return <SearchQueryWrapperPlotNav {...studiesSearch} shouldDeepLink={true} />
 }
 
 export default ExploreStudies

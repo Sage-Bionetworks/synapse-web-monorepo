@@ -229,13 +229,31 @@ export function searchQueryResultsToQueryResultBundle(
         }
       : undefined
 
+  // Reorder facets to match the columnModels order so downstream components
+  // (e.g. FacetFilterControls) render facets in the expected column order.
+  const rawFacets = results.facets as QueryResultBundle['facets']
+  const orderedFacets =
+    columnModels && rawFacets
+      ? [
+          ...rawFacets
+            .filter(f => columnModels.some(cm => cm.name === f.columnName))
+            .sort(
+              (a, b) =>
+                columnModels.findIndex(cm => cm.name === a.columnName) -
+                columnModels.findIndex(cm => cm.name === b.columnName),
+            ),
+          ...rawFacets.filter(
+            f => !columnModels.some(cm => cm.name === f.columnName),
+          ),
+        ]
+      : rawFacets
+
   return {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
     queryCount: results.totalHits,
     selectColumns: headers,
     queryResult,
-    // FacetColumnResult is the same discriminated union type in both response shapes
-    facets: results.facets as QueryResultBundle['facets'],
+    facets: orderedFacets,
   }
 }
 

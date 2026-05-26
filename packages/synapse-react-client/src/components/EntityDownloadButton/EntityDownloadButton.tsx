@@ -53,7 +53,7 @@ type ProgrammaticAccessCode = {
 }
 
 // Generate programmatic access code snippet content based on entity type
-function getProgrammaticAccessCode(
+export function getProgrammaticAccessCode(
   type: EntityType,
   entityId: string,
   version: number | undefined,
@@ -97,6 +97,12 @@ read.table(query$filepath, sep=",")`,
         pythonCode: `${PYTHON_CLIENT_IMPORT_AND_LOGIN} \n
 query = syn.tableQuery("SELECT * FROM ${id}")
 query.asDataFrame()`,
+      }
+    case EntityType.searchindex:
+      return {
+        cliCode: undefined,
+        rCode: undefined,
+        pythonCode: undefined,
       }
     default:
       throw new Error(`Unhandled EntityType: ${type}`)
