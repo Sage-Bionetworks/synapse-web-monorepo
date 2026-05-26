@@ -9,6 +9,12 @@ export const filesSql = `SELECT * FROM syn66271104`
 
 export const partnersSql = `SELECT * FROM syn68804819`
 
+export const datasetsSearchIndexId = 'syn75169900'
+export const datasetCollectionsSearchIndexId = 'syn75169903'
+export const programsSearchIndexId = 'syn75169905'
+// export const filesSearchIndexId = 'syn75169907'
+export const partnersSearchIndexId = 'syn75169908'
+
 export const enabledAnalysisPlatforms: ExternalAnalysisPlatform[] = [
   'cavatica',
   'terra',
