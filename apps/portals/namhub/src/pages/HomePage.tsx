@@ -1,5 +1,5 @@
-import NamshubHeader from '@sage-bionetworks/synapse-portal-framework/components/namshub/NamshubHeader'
-import NamshubAbout from '@sage-bionetworks/synapse-portal-framework/components/namshub/NamshubAbout'
+import NamhubHeader from '@sage-bionetworks/synapse-portal-framework/components/namhub/NamhubHeader'
+import NamhubAbout from '@sage-bionetworks/synapse-portal-framework/components/namhub/NamhubAbout'
 import DevelopedBySage from '@sage-bionetworks/synapse-portal-framework/components/DevelopedBySage'
 import { ReactComponent as NYUGSOMLogo } from '../assets/NYUGSOM.svg'
 import { ReactComponent as SageLogo } from '@sage-bionetworks/synapse-portal-framework/components/assets/sage-logo.svg'
@@ -9,8 +9,8 @@ import styles from './HomePage.module.scss'
 export default function Homepage() {
   return (
     <>
-      <NamshubHeader />
-      <NamshubAbout />
+      <NamhubHeader />
+      <NamhubAbout />
       <div className={styles.termsAndConditions}>
         <DevelopedBySage />
       </div>

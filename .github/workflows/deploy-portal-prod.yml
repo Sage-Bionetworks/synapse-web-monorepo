@@ -19,7 +19,7 @@ on:
           - digitalhealth
           - eliteportal
           - genie
-          - namshub
+          - namhub
           - nf
           - stopadportal
       tag:
