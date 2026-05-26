@@ -310,6 +310,117 @@ describe('useGridAutocompleteState', () => {
     expect(result.current.menuIsOpen).toBe(false)
   })
 
+  describe('caret-defense listener', () => {
+    it('blurs the input when it receives a focus event while focus=false', () => {
+      const { result, rerender } = renderHook(
+        ({ active, focus }) => useGridAutocompleteState({ active, focus }),
+        { initialProps: { active: true, focus: true } },
+      )
+
+      const input = document.createElement('input')
+      const blurSpy = vi.spyOn(input, 'blur')
+      Object.defineProperty(result.current.inputRef, 'current', {
+        value: input,
+        writable: true,
+      })
+
+      // Transition to focus=false — registers the caret-defense listener.
+      // The main focus effect also calls blur() here; clear the spy so we only
+      // count the blur triggered by the stray focus event below.
+      act(() => {
+        rerender({ active: true, focus: false })
+      })
+      blurSpy.mockClear()
+
+      act(() => {
+        input.dispatchEvent(new Event('focus'))
+      })
+
+      expect(blurSpy).toHaveBeenCalledTimes(1)
+    })
+
+    it('does not intercept focus events when focus=true', () => {
+      const { result, rerender } = renderHook(
+        ({ active, focus }) => useGridAutocompleteState({ active, focus }),
+        { initialProps: { active: true, focus: false } },
+      )
+
+      const input = document.createElement('input')
+      const blurSpy = vi.spyOn(input, 'blur')
+      Object.defineProperty(result.current.inputRef, 'current', {
+        value: input,
+        writable: true,
+      })
+
+      // Transition to focus=true — caret-defense returns early, no listener added.
+      act(() => {
+        rerender({ active: true, focus: true })
+      })
+      blurSpy.mockClear()
+
+      act(() => {
+        input.dispatchEvent(new Event('focus'))
+      })
+
+      expect(blurSpy).not.toHaveBeenCalled()
+    })
+
+    it('removes the listener when focus becomes true', () => {
+      const { result, rerender } = renderHook(
+        ({ active, focus }) => useGridAutocompleteState({ active, focus }),
+        { initialProps: { active: true, focus: true } },
+      )
+
+      const input = document.createElement('input')
+      const removeEventListenerSpy = vi.spyOn(input, 'removeEventListener')
+      Object.defineProperty(result.current.inputRef, 'current', {
+        value: input,
+        writable: true,
+      })
+
+      // Register the listener
+      act(() => {
+        rerender({ active: true, focus: false })
+      })
+
+      // Promote to focus=true — effect cleanup should remove the listener
+      act(() => {
+        rerender({ active: true, focus: true })
+      })
+
+      expect(removeEventListenerSpy).toHaveBeenCalledWith(
+        'focus',
+        expect.any(Function),
+      )
+    })
+
+    it('removes the listener on unmount', () => {
+      const { result, rerender, unmount } = renderHook(
+        ({ active, focus }) => useGridAutocompleteState({ active, focus }),
+        { initialProps: { active: true, focus: true } },
+      )
+
+      const input = document.createElement('input')
+      const removeEventListenerSpy = vi.spyOn(input, 'removeEventListener')
+      Object.defineProperty(result.current.inputRef, 'current', {
+        value: input,
+        writable: true,
+      })
+
+      // Register the listener
+      act(() => {
+        rerender({ active: true, focus: false })
+      })
+
+      unmount()
+
+      expect(removeEventListenerSpy).toHaveBeenCalledWith(
+        'focus',
+        expect.any(Function),
+      )
+    })
+  })
+
   describe('popup indicator', () => {
     it('suppresses auto-open when focus becomes true during the indicator click', () => {
       // The indicator click both (a) promotes the cell to grid focus — which
