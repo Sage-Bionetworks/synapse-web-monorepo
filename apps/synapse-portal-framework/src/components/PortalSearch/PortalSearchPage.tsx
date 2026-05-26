@@ -75,6 +75,7 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
     },
     [searchPageTabsState, navigate, location.search],
   )
+
   // on search field value update, update the special search parameter SEARCH_TERM, which the QueryWrapperPlotNav will load as the search term
   return (
     <Box
@@ -112,6 +113,7 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
             const key = `searchResultTab-${selectedTabIndex}-${index}`
             const sharedProps = {
               isVisible: selectedTabIndex == index,
+              hideKeywordSearchPill: configs.length === 1,
               onQueryResultBundleChange: (newQueryResultBundleJSON: string) => {
                 onQueryResultBundleChange(
                   index,

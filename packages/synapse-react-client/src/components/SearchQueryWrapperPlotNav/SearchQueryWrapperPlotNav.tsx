@@ -56,6 +56,7 @@ export type SearchQueryWrapperPlotNavProps = SearchQueryWrapperPlotNavOwnProps &
     | 'helpConfiguration'
     | 'hideCopyToClipboard'
     | 'hideVisualizationsControl'
+    | 'hideKeywordSearchPill'
   > &
   Pick<TopLevelControlsProps, 'name' | 'hideQueryCount'> & {
     /** Optional initial query parameters. Only selectedFacets, additionalFilters, limit, and offset are used. */
@@ -149,6 +150,7 @@ export default function SearchQueryWrapperPlotNav(
           defaultShowPlots={props.defaultShowPlots}
           hideCopyToClipboard={props.hideCopyToClipboard}
           hideSearchBarControl={false}
+          hideKeywordSearchPill={props.hideKeywordSearchPill}
           defaultShowSearchBar={true}
           showLastUpdatedOn={props.showLastUpdatedOn}
           noContentPlaceholderType={

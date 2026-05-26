@@ -14,6 +14,7 @@ import { DEFAULT_PAGE_SIZE } from 'synapse-react-client/utils/SynapseConstants'
 
 export type SearchParamAwareQueryWrapperPlotNavProps = {
   isVisible: boolean
+  hideKeywordSearchPill?: boolean
   onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
 } & (
   | { standaloneQueryWrapperProps: StandaloneQueryWrapperProps }
@@ -35,6 +36,7 @@ export function SearchParamAwareQueryWrapperPlotNav(
       <SearchParamAwareSearchQueryWrapperPlotNav
         isVisible={props.isVisible}
         config={props.searchQueryWrapperPlotNavProps}
+        hideKeywordSearchPill={props.hideKeywordSearchPill}
         onQueryResultBundleChange={props.onQueryResultBundleChange}
       />
     )
@@ -43,6 +45,7 @@ export function SearchParamAwareQueryWrapperPlotNav(
     <SearchParamAwareStandaloneQueryWrapperPlotNav
       isVisible={props.isVisible}
       standaloneQueryWrapperProps={props.standaloneQueryWrapperProps}
+      hideKeywordSearchPill={props.hideKeywordSearchPill}
       onQueryResultBundleChange={props.onQueryResultBundleChange}
     />
   )
@@ -57,10 +60,12 @@ export function SearchParamAwareQueryWrapperPlotNav(
 function SearchParamAwareSearchQueryWrapperPlotNav({
   isVisible,
   config,
+  hideKeywordSearchPill,
   onQueryResultBundleChange,
 }: {
   isVisible: boolean
   config: SearchQueryWrapperPlotNavProps
+  hideKeywordSearchPill?: boolean
   onQueryResultBundleChange?: (json: string) => void
 }) {
   const [searchParams] = useSearchParams()
@@ -90,6 +95,7 @@ function SearchParamAwareSearchQueryWrapperPlotNav({
       <SearchQueryWrapperPlotNav
         {...config}
         initQueryRequest={initQueryRequest}
+        hideKeywordSearchPill={hideKeywordSearchPill}
         onQueryResultBundleChange={onQueryResultBundleChange}
       />
     )
@@ -113,10 +119,12 @@ function SearchParamAwareSearchQueryWrapperPlotNav({
 function SearchParamAwareStandaloneQueryWrapperPlotNav({
   isVisible,
   standaloneQueryWrapperProps,
+  hideKeywordSearchPill,
   onQueryResultBundleChange,
 }: {
   isVisible: boolean
   standaloneQueryWrapperProps: StandaloneQueryWrapperProps
+  hideKeywordSearchPill?: boolean
   onQueryResultBundleChange?: (json: string) => void
 }) {
   const [searchParams] = useSearchParams()
@@ -151,6 +159,7 @@ function SearchParamAwareStandaloneQueryWrapperPlotNav({
         {...standaloneQueryWrapperProps}
         shouldDeepLink={false}
         query={query}
+        hideKeywordSearchPill={hideKeywordSearchPill}
         onQueryResultBundleChange={onQueryResultBundleChange}
         hideCopyToClipboard={true}
         defaultShowPlots={false}

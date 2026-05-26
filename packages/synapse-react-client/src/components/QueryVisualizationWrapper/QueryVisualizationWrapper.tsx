@@ -38,6 +38,7 @@ export type QueryVisualizationWrapperProps = {
   defaultShowPlots?: boolean
   hideCopyToClipboard?: boolean
   hideSearchBarControl?: boolean
+  hideKeywordSearchPill?: boolean
   defaultShowSearchBar?: boolean
   showLastUpdatedOn?: boolean
   /** Default is INTERACTIVE */
@@ -72,6 +73,7 @@ export function QueryVisualizationWrapper(
     defaultShowPlots = true,
     hideCopyToClipboard = false,
     hideSearchBarControl = false,
+    hideKeywordSearchPill = false,
     unitDescription = 'result',
     helpConfiguration,
     hasCustomPlots = false,
@@ -217,6 +219,7 @@ export function QueryVisualizationWrapper(
       showFacetFilter: hasFacetedSelectColumn ? showFacetFilter : false,
       setShowFacetFilter,
       hideSearchBarControl,
+      hideKeywordSearchPill,
       showSearchBar,
       setShowSearchBar,
       showDownloadConfirmation,
@@ -250,6 +253,7 @@ export function QueryVisualizationWrapper(
       hasCustomPlots,
       enabledExternalAnalysisPlatforms,
       hideSearchBarControl,
+      hideKeywordSearchPill,
     ],
   )
   /**
