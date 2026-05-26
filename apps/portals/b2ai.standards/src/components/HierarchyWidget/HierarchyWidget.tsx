@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link as RouterLink } from 'react-router'
-import { Box } from '@mui/material'
+import { Box, Collapse } from '@mui/material'
 import {
   COLORS,
   RailCell,
@@ -69,6 +69,53 @@ export default function HierarchyWidget({
     () => decorateRows(unfolding, visible, graph, chosenNodeId),
     [unfolding, visible, graph, chosenNodeId],
   )
+
+  // Snapshot of recently-rendered rows by posIdx. Rows that leave `decorated`
+  // stay here until their Collapse animation completes (onExited fires). This
+  // lets MUI Collapse animate the exit smoothly.
+  //
+  // Updated SYNCHRONOUSLY during render so newly-exiting rows are still in
+  // the rendered list on the render that triggers their `in=false`. (If we
+  // updated in an effect, the rows would unmount before Collapse could see
+  // the false transition.)
+  const exitingRef = useRef<Map<number, DecoratedRow>>(new Map())
+  const prevDecoratedRef = useRef<DecoratedRow[]>([])
+  const [, forceRerender] = useState(0)
+
+  const currentPosIdxs = useMemo(
+    () => new Set(decorated.map(r => r.posIndex)),
+    [decorated],
+  )
+
+  // Sync: rows that left `decorated` since last render get parked in
+  // exitingRef so Collapse can animate them out. Rows that came back are
+  // dropped from exitingRef.
+  if (prevDecoratedRef.current !== decorated) {
+    for (const prev of prevDecoratedRef.current) {
+      if (!currentPosIdxs.has(prev.posIndex)) {
+        exitingRef.current.set(prev.posIndex, prev)
+      }
+    }
+    for (const posIdx of currentPosIdxs) {
+      exitingRef.current.delete(posIdx)
+    }
+    prevDecoratedRef.current = decorated
+  }
+
+  // Rows to render: union of current decorated + still-exiting, sorted by
+  // posIdx (which is the unfolding's DFS pre-order — matches decorateRows).
+  const rowsToRender = useMemo(() => {
+    const byPosIdx = new Map<number, DecoratedRow>()
+    for (const [posIdx, row] of exitingRef.current) byPosIdx.set(posIdx, row)
+    for (const row of decorated) byPosIdx.set(row.posIndex, row)
+    return [...byPosIdx.values()].sort((a, b) => a.posIndex - b.posIndex)
+  }, [decorated])
+
+  function handleRowExited(posIdx: number) {
+    if (exitingRef.current.delete(posIdx)) {
+      forceRerender(n => n + 1)
+    }
+  }
 
   // Chosen-path breadcrumbs: one entry per copy of chosen in the unfolding.
   // Each entry is the full ancestor chain (posIndexes + names) from root to
@@ -183,15 +230,22 @@ export default function HierarchyWidget({
           ))}
         </Box>
       )}
-      {decorated.map(row => (
-        <Row
+      {rowsToRender.map(row => (
+        <Collapse
           key={row.posKey}
-          row={row}
-          name={graph.node(row.nodeId)?.name ?? row.nodeId}
-          getHref={getHref}
-          onToggle={() => handleToggle(row.posIndex, row.toggleState)}
-          onAlsoUnderClick={handleBreadcrumbClick}
-        />
+          in={currentPosIdxs.has(row.posIndex)}
+          appear
+          timeout={1000}
+          onExited={() => handleRowExited(row.posIndex)}
+        >
+          <Row
+            row={row}
+            name={graph.node(row.nodeId)?.name ?? row.nodeId}
+            getHref={getHref}
+            onToggle={() => handleToggle(row.posIndex, row.toggleState)}
+            onAlsoUnderClick={handleBreadcrumbClick}
+          />
+        </Collapse>
       ))}
     </Box>
   )
