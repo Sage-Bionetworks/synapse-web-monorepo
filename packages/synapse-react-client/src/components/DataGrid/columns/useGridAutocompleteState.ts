@@ -105,13 +105,11 @@ export function useGridAutocompleteState({
   // grid focus (our effect would open the menu) and (b) toggles via MUI's
   // own onClick (which would then close because we just opened it) — flicker.
   // Letting MUI handle the open via its onOpen avoids the dueling state.
+  // Cleared by handleMenuOpen (successful click) or by the focus/active effects
+  // when focus drops (abandoned press).
   const popupClickInProgressRef = useRef(false)
   const handlePopupIndicatorMouseDown = useCallback(() => {
     popupClickInProgressRef.current = true
-    // Clear on the next macro task — after MUI's click handler has run.
-    window.setTimeout(() => {
-      popupClickInProgressRef.current = false
-    }, 0)
   }, [])
 
   useEffect(() => {
@@ -123,6 +121,7 @@ export function useGridAutocompleteState({
     } else if (!optionMouseDownRef.current) {
       // Only close when there is no pending option click; if there is one,
       // onChange will reset optionMouseDownRef and handle cleanup itself.
+      popupClickInProgressRef.current = false
       setMenuIsOpen(false)
       inputRef.current?.blur()
     }
@@ -153,6 +152,7 @@ export function useGridAutocompleteState({
       // not enough — close on deactivation too. Otherwise a deactivated cell
       // can leave a stale menu open that re-anchors and "moves" as the user
       // scrolls the grid, or stack up alongside the next cell's menu.
+      popupClickInProgressRef.current = false
       setMenuIsOpen(false)
       inputRef.current?.blur()
       onDeactivateRef.current?.()
@@ -178,6 +178,7 @@ export function useGridAutocompleteState({
   }, [])
 
   const handleMenuOpen = useCallback(() => {
+    popupClickInProgressRef.current = false
     setMenuIsOpen(true)
   }, [])
 
