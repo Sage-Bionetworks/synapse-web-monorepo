@@ -15,6 +15,14 @@ export type PortalSearchPageProps = {
   configs: (QueryWrapperPlotNavProps | SearchQueryWrapperPlotNavProps)[]
   searchPageTabs: PortalSearchTabConfig[]
   roleMapping?: Record<string, string>
+  /**
+   * Whether to hide the keyword-search (TextMatchesQueryFilter) chiclet in the
+   * "results filtered by" row. Defaults to true because removing the chiclet
+   * does not currently clear `SEARCH_TERM` from the URL nor the keyword input,
+   * which leaves the page in an inconsistent state. A portal can opt back in
+   * by passing `hideKeywordSearchPill={false}`.
+   */
+  hideKeywordSearchPill?: boolean
 }
 
 function getQueryCount(queryResultBundleJSON: string) {
@@ -26,7 +34,13 @@ function getQueryCount(queryResultBundleJSON: string) {
 }
 
 export function PortalSearchPage(props: PortalSearchPageProps) {
-  const { selectedTabIndex, configs, searchPageTabs, roleMapping } = props
+  const {
+    selectedTabIndex,
+    configs,
+    searchPageTabs,
+    roleMapping,
+    hideKeywordSearchPill = true,
+  } = props
   // Note: Files does not currently enable FTS
   const [searchPageTabsState, setSearchPageTabsState] = useState<
     PortalSearchTabConfig[]
@@ -113,7 +127,7 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
             const key = `searchResultTab-${selectedTabIndex}-${index}`
             const sharedProps = {
               isVisible: selectedTabIndex == index,
-              hideKeywordSearchPill: configs.length === 1,
+              hideKeywordSearchPill,
               onQueryResultBundleChange: (newQueryResultBundleJSON: string) => {
                 onQueryResultBundleChange(
                   index,
