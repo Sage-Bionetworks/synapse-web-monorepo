@@ -33,7 +33,6 @@ import {
 import {
   linkedTopicCardConfiguration,
   topicsCardSchema,
-  topicsColumnLinks,
 } from '@/config/synapseConfigs/topics'
 import { linkedDataSetCardConfiguration } from '@/config/synapseConfigs/datasets'
 import { manifestColumnLinks } from '@/config/synapseConfigs/manifest'
@@ -213,7 +212,6 @@ export default function TopicDetailsPage() {
             secondaryLabelLimit: 6,
             isHeader: true,
             headerCardVariant: 'HeaderCardV2',
-            labelLinkConfig: topicsColumnLinks,
           }}
         />
       }
