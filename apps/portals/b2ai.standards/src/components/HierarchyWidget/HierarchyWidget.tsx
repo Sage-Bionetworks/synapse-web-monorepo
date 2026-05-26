@@ -275,7 +275,10 @@ function Row({ row, name, getHref, onToggle, onAlsoUnderClick }: RowProps) {
         padding: '1px 0',
         minHeight: 22,
         whiteSpace: 'nowrap',
-        background: row.isChosen ? COLORS.anchorBg : depthTint(row.renderDepth),
+        background:
+          row.isChosen || row.hiddenChosen
+            ? COLORS.anchorBg
+            : depthTint(row.renderDepth),
       }}
     >
       {row.rails.map((kind, idx) => (
@@ -315,6 +318,31 @@ function Row({ row, name, getHref, onToggle, onAlsoUnderClick }: RowProps) {
           }}
         >
           {name}
+        </Box>
+      )}
+      {row.hiddenChosen && (
+        <Box
+          component="span"
+          sx={{
+            fontSize: 11,
+            color: '#92400e',
+            fontStyle: 'italic',
+            ml: '6px',
+          }}
+        >
+          chosen topic at:{' '}
+          <Box
+            component="span"
+            onClick={() => onAlsoUnderClick(row.hiddenChosen!.targetPosIdx)}
+            title="Click to reveal the chosen topic"
+            sx={{
+              cursor: 'pointer',
+              textDecoration: 'underline dotted',
+              '&:hover': { textDecoration: 'underline', color: '#7c2d12' },
+            }}
+          >
+            {row.hiddenChosen.path}
+          </Box>
         </Box>
       )}
       {row.alsoUnderPaths.length > 0 && (

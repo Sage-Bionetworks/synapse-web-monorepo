@@ -109,6 +109,11 @@ export type AlsoUnderLink = {
   // the other parent). Clicking this link should add this to forceVisible.
 }
 
+export type HiddenChosenLink = {
+  path: string // slash-joined names from this row down to the hidden chosen copy
+  targetPosIdx: number // posIdx of the hidden chosen copy — click to reveal it
+}
+
 export type DecoratedRow = {
   posIndex: number
   posKey: string
@@ -119,6 +124,10 @@ export type DecoratedRow = {
   isChosen: boolean
   alsoUnderPaths: AlsoUnderLink[]
   rails: RailKind[]
+  // If chosen is hidden but has a copy in this row's subtree, the closest
+  // visible ancestor of that copy gets a link to it. Only the first such copy
+  // is tracked per row (keeps the UI simple).
+  hiddenChosen?: HiddenChosenLink
 }
 
 export function decorateRows(
@@ -241,6 +250,34 @@ export function decorateRows(
       alsoUnderPaths,
       rails,
     })
+  }
+
+  // If chosen is completely hidden, attach a single "chosen topic at: <path>"
+  // link to the closest visible ancestor of the FIRST hidden chosen copy (in
+  // unfolding/DFS order). One link total. If any copy of chosen is currently
+  // visible, skip — alsoUnder links on the visible copy reveal the others.
+  const chosenCopies = posIdxsByNodeId.get(chosenNodeId) ?? []
+  const anyChosenVisible = chosenCopies.some(p => visible.has(p))
+  if (!anyChosenVisible && chosenCopies.length > 0) {
+    const chosenPos = chosenCopies[0]
+    let cursor = unfolding[chosenPos].parentIdx
+    while (cursor >= 0 && !visible.has(cursor)) {
+      cursor = unfolding[cursor].parentIdx
+    }
+    if (cursor >= 0) {
+      const ancestorRow = decorated.find(r => r.posIndex === cursor)
+      if (ancestorRow) {
+        // Path: names from just below the visible ancestor down to (and
+        // including) the chosen copy.
+        const fullChain = ancestorPath(chosenPos, unfolding, cursor)
+        const pathStr = fullChain
+          .map(
+            i => graph.node(unfolding[i].nodeId)?.name ?? unfolding[i].nodeId,
+          )
+          .join('/')
+        ancestorRow.hiddenChosen = { path: pathStr, targetPosIdx: chosenPos }
+      }
+    }
   }
 
   return decorated
