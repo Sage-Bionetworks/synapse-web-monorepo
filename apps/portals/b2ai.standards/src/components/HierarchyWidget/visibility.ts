@@ -1,5 +1,5 @@
 import type { Graph, UnfoldingRow } from './graph'
-import type { RailKind, ToggleState } from '../TopicHierarchyShared'
+import type { RailKind, ToggleState } from './TopicHierarchyShared'
 
 // State:
 //   forceVisible: posIndexes pinned visible (chosen + ancestors clicked in the

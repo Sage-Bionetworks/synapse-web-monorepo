@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { TOPIC_TABLE_COLUMN_CONSTS as T } from '@/config/resources'
 import HierarchyWidget, { type Node } from './HierarchyWidget'
-import { topicHref } from '../TopicHierarchyShared'
+import { topicHref } from './TopicHierarchyShared'
 
 export type TopicRow = Record<string, string | null>
 

@@ -1,12 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link as RouterLink } from 'react-router'
 import { Box, Collapse } from '@mui/material'
-import {
-  COLORS,
-  RailCell,
-  TogglePill,
-  depthTint,
-} from '../TopicHierarchyShared'
+import { COLORS, RailCell, TogglePill, depthTint } from './TopicHierarchyShared'
 import { buildGraph, fullUnfolding, type Node } from './graph'
 import {
   ancestorPath,
