@@ -309,4 +309,121 @@ describe('useGridAutocompleteState', () => {
     })
     expect(result.current.menuIsOpen).toBe(false)
   })
+
+  describe('popup indicator', () => {
+    it('suppresses auto-open when focus becomes true during the indicator click', () => {
+      // The indicator click both (a) promotes the cell to grid focus — which
+      // would trigger our focus effect to open the menu — and (b) lets MUI's
+      // own onClick toggle the menu. Without the guard, our effect opens it
+      // first, then MUI closes it immediately (it was already open) — flicker.
+      // The guard skips the auto-open so MUI owns the transition via onOpen.
+      const { result, rerender } = renderHook(
+        ({ active, focus }) => useGridAutocompleteState({ active, focus }),
+        { initialProps: { active: true, focus: false } },
+      )
+
+      Object.defineProperty(result.current.inputRef, 'current', {
+        value: {
+          focus: vi.fn(),
+          blur: vi.fn(),
+          addEventListener: vi.fn(),
+          removeEventListener: vi.fn(),
+        },
+        writable: true,
+      })
+
+      // mousedown fires before the grid promotes the cell to focus state
+      act(() => {
+        result.current.handlePopupIndicatorMouseDown()
+      })
+
+      // grid promotes cell to edit mode (triggered by the same click)
+      act(() => {
+        rerender({ active: true, focus: true })
+      })
+
+      // guard prevented auto-open so MUI can control the state via its own onClick
+      expect(result.current.menuIsOpen).toBe(false)
+
+      // MUI fires onOpen → handleMenuOpen opens the menu
+      act(() => {
+        result.current.handleMenuOpen()
+      })
+      expect(result.current.menuIsOpen).toBe(true)
+    })
+
+    it('clears the guard via handleMenuOpen so the next focus transition auto-opens normally', () => {
+      const { result, rerender } = renderHook(
+        ({ active, focus }) => useGridAutocompleteState({ active, focus }),
+        { initialProps: { active: true, focus: false } },
+      )
+
+      Object.defineProperty(result.current.inputRef, 'current', {
+        value: {
+          focus: vi.fn(),
+          blur: vi.fn(),
+          addEventListener: vi.fn(),
+          removeEventListener: vi.fn(),
+        },
+        writable: true,
+      })
+
+      act(() => {
+        result.current.handlePopupIndicatorMouseDown()
+      })
+
+      // MUI fires onOpen — this clears the guard
+      act(() => {
+        result.current.handleMenuOpen()
+      })
+
+      // Focus drops and re-enters; the guard is gone so auto-open fires normally
+      act(() => {
+        rerender({ active: true, focus: false })
+      })
+      act(() => {
+        rerender({ active: true, focus: true })
+      })
+      expect(result.current.menuIsOpen).toBe(true)
+    })
+
+    it('is stable across re-renders', () => {
+      const { result, rerender } = renderHook(
+        ({ active, focus }) => useGridAutocompleteState({ active, focus }),
+        { initialProps: { active: false, focus: false } },
+      )
+
+      const firstRef = result.current.handlePopupIndicatorMouseDown
+
+      act(() => {
+        rerender({ active: true, focus: true })
+      })
+
+      expect(result.current.handlePopupIndicatorMouseDown).toBe(firstRef)
+    })
+
+    it('closes a menu opened while focus=false when the cell deactivates', () => {
+      // Clicking the popup indicator on an active-only cell opens the menu
+      // without promoting to focus. If the user then clicks elsewhere the
+      // active effect must close the menu — otherwise a stale menu stays open
+      // and re-anchors as the user scrolls.
+      const { result, rerender } = renderHook(
+        ({ active, focus }) => useGridAutocompleteState({ active, focus }),
+        { initialProps: { active: true, focus: false } },
+      )
+
+      // Simulate MUI opening the menu via the popup indicator while the cell
+      // is active-only; focus has not been promoted to edit mode.
+      act(() => {
+        result.current.handleMenuOpen()
+      })
+      expect(result.current.menuIsOpen).toBe(true)
+
+      // User clicks elsewhere — cell deactivates without ever entering focus.
+      act(() => {
+        rerender({ active: false, focus: false })
+      })
+      expect(result.current.menuIsOpen).toBe(false)
+    })
+  })
 })
