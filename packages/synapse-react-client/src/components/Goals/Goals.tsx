@@ -14,6 +14,7 @@ export type GoalsProps = {
   entityId: string
   isAssetIcon?: boolean // If true, the asset will be used as an icon instead of a background image.
   linkText?: string
+  itemsPerRow?: number
 }
 
 export type GoalsDataProps = {
@@ -39,7 +40,7 @@ enum ExpectedColumns {
 const GOALS_DESKTOP_MIN_BREAKPOINT = 1200
 
 export function Goals(props: GoalsProps) {
-  const { entityId, isAssetIcon = false, linkText } = props
+  const { entityId, isAssetIcon = false, linkText, itemsPerRow = 3 } = props
   const showDesktop = useShowDesktop(GOALS_DESKTOP_MIN_BREAKPOINT)
   const queryBundleRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -131,6 +132,13 @@ export function Goals(props: GoalsProps) {
   }
 
   if (showDesktop) {
+    // Each card has margin:10px (20px horizontal) from .Goals__Card CSS.
+    // flex-basis must be the content width only; total row = N*(flex-basis+20) + (N-1)*gap.
+    // Subtract 0.5px epsilon to absorb sub-pixel rounding and prevent wrapping.
+    const horizontalMarginPerCard = 20
+    const cardWidth = `calc((100% - ${
+      itemsPerRow * horizontalMarginPerCard + (itemsPerRow - 1) * 7
+    }px) / ${itemsPerRow} - 0.5px)`
     return (
       <Box
         className={`Goals`}
@@ -138,12 +146,17 @@ export function Goals(props: GoalsProps) {
           display: 'flex',
           flexWrap: 'wrap',
           gap: '7px',
-          alignItems: 'stretch',
           justifyContent: 'center',
+          alignItems: 'stretch',
         }}
       >
         {goalsDataProps.map((props, index) => (
-          <GoalsDesktop key={index} {...props} linkText={linkText} />
+          <GoalsDesktop
+            key={index}
+            {...props}
+            linkText={linkText}
+            cardWidth={cardWidth}
+          />
         ))}
       </Box>
     )

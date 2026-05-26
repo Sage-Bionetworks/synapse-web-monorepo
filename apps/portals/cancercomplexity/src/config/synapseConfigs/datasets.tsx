@@ -64,7 +64,6 @@ export const datasetSchema: TableToGenericCardMapping = {
     },
   },
   secondaryLabels: [
-    'externalLink',
     'overallDesign',
     'tumorType',
     'tissue',
@@ -72,6 +71,8 @@ export const datasetSchema: TableToGenericCardMapping = {
     'species',
     'fileFormats',
     'consortium',
+    'sourceRepository',
+    'externalLink',
   ],
   dataTypeIconNames: 'dataType',
   // override Download List to use downloadSynId
@@ -103,20 +104,23 @@ export const datasetCardConfiguration: CardConfiguration = {
       isMarkdown: false,
       URLColumnName: 'publicationTitle',
       matchColumnName: 'publicationTitle',
-      baseURL: 'Explore/Publications/DetailsPage',
+      baseURL: 'Explore/Publications',
+      urlParamStyle: 'path-segment',
     },
     {
       isMarkdown: false,
       matchColumnName: 'grantName',
       URLColumnName: 'grantName',
-      baseURL: 'Explore/Grants/DetailsPage',
+      baseURL: 'Explore/Grants',
+      urlParamStyle: 'path-segment',
     },
   ],
   titleLinkConfig: {
     isMarkdown: false,
-    baseURL: 'Explore/Datasets/DetailsPage',
+    baseURL: 'Explore/Datasets',
     URLColumnName: 'datasetId',
     matchColumnName: 'datasetId',
+    urlParamStyle: 'path-segment',
   },
   columnIconOptions: columnIconConfigs,
 }
@@ -127,7 +131,7 @@ export const datasetsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   shouldDeepLink: true,
   name: 'Datasets',
   sql: datasetsSql,
-  columnAliases,
+  columnAliases: { ...columnAliases, externalLink: 'Source Repository Link' },
   hideDownload: true,
   initialExpandedFacetControls: ['assay', 'species', 'tissue', 'theme'],
   searchConfiguration: {

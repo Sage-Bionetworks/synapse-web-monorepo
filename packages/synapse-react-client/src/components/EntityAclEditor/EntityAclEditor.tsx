@@ -404,6 +404,16 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
           }
         />
       )}
+      {/* Create / delete local sharing settings button */}
+      {!isAfterUpload &&
+        !isProject &&
+        entityBundle.permissions.canEnableInheritance && (
+          <CreateOrDeleteLocalSharingSettingsButton
+            isInherited={updatedIsInherited}
+            setIsInherited={setUpdatedIsInherited}
+          />
+        )}
+      {error && <Alert severity="error">{error.message}</Alert>}
       <AclEditor
         isInherited={updatedIsInherited}
         canEdit={getCanEditResourceAccess(
@@ -444,16 +454,6 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
         onNotifyCheckboxChange={setNotifyNewAdditions}
         showAddRemovePublicButton={true}
       />
-      {/* Create / delete local sharing settings button */}
-      {!isAfterUpload &&
-        !isProject &&
-        entityBundle.permissions.canEnableInheritance && (
-          <CreateOrDeleteLocalSharingSettingsButton
-            isInherited={updatedIsInherited}
-            setIsInherited={setUpdatedIsInherited}
-          />
-        )}
-      {error && <Alert severity="error">{error.message}</Alert>}
     </Stack>
   )
 })

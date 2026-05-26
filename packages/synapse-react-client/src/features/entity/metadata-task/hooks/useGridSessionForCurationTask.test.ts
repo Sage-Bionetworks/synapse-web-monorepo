@@ -24,6 +24,8 @@ const mockExistingGridSession = {
 }
 const mockNewGridSession = { sessionId: MOCK_NEW_SESSION_ID }
 
+let mockCreateGridSession: ReturnType<typeof vi.fn>
+
 const bundleWithActiveSession = createMockTaskBundle({
   status: {
     taskId: 123,
@@ -51,8 +53,11 @@ beforeEach(() => {
     mutateAsync: vi.fn().mockResolvedValue({}),
   } as any)
 
+  mockCreateGridSession = vi
+    .fn()
+    .mockResolvedValue({ gridSession: mockNewGridSession })
   vi.mocked(gridSessionModule.useCreateGridSession).mockReturnValue({
-    mutateAsync: vi.fn().mockResolvedValue({ gridSession: mockNewGridSession }),
+    mutateAsync: mockCreateGridSession,
   } as any)
 })
 
@@ -147,7 +152,7 @@ describe('useGridSessionForCurationTask', () => {
   })
 
   describe('when task has no active session', () => {
-    it('creates a new session and links it to the task via updateCurationTaskStatus', async () => {
+    it('creates a new session with SOURCE_BENEFACTOR authorization and links it to the task via updateCurationTaskStatus', async () => {
       const mockUpdateStatus = vi.fn().mockResolvedValue({})
       vi.mocked(curationTaskModule.useUpdateCurationTaskStatus).mockReturnValue(
         { mutateAsync: mockUpdateStatus } as any,
@@ -163,6 +168,11 @@ describe('useGridSessionForCurationTask', () => {
 
       expect(returnValue.gridSession).toEqual(mockNewGridSession)
       expect(returnValue.gridSessionOwnerMatchesTaskAssignee).toBe(true)
+      expect(mockCreateGridSession).toHaveBeenCalledWith(
+        expect.objectContaining({
+          authorizationMode: 'SOURCE_BENEFACTOR',
+        }),
+      )
       expect(mockUpdateStatus).toHaveBeenCalledWith(
         expect.objectContaining({
           executionDetails: expect.objectContaining({

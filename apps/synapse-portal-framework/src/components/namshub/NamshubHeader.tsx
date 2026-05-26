@@ -41,7 +41,7 @@ function NamshubHomePageHeader() {
         <SectionLayout title="Events" centerTitle>
           <RssFeedCards
             url="https://nhdcc.wpenginepowered.com"
-            itemsToShow={2}
+            itemsToShow={3}
             allowCategories={[]}
             viewAllNewsButtonText="View All Events"
           />

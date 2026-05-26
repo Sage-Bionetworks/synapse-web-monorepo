@@ -56,12 +56,16 @@ export type SearchQueryWrapperPlotNavProps = SearchQueryWrapperPlotNavOwnProps &
     | 'helpConfiguration'
     | 'hideCopyToClipboard'
     | 'hideVisualizationsControl'
+    | 'hideSearchBarControl'
+    | 'defaultShowSearchBar'
   > &
   Pick<TopLevelControlsProps, 'name' | 'hideQueryCount'> & {
     /** Optional initial query parameters. Only selectedFacets, additionalFilters, limit, and offset are used. */
     initQueryRequest?: SearchQueryWrapperProps['initQueryRequest']
     /** Called when the query result bundle changes (e.g. to report result counts to a parent). */
     onQueryResultBundleChange?: SearchQueryWrapperProps['onQueryResultBundleChange']
+    /** Whether the URL should update when the query is modified (deep linking). */
+    shouldDeepLink?: SearchQueryWrapperProps['shouldDeepLink']
   }
 
 /**
@@ -98,6 +102,7 @@ export default function SearchQueryWrapperPlotNav(
     onQueryResultBundleChange,
     searchIndexId,
     autocompleteFieldName,
+    shouldDeepLink,
   } = props
 
   const getSuggestions = useGetSuggestionsForSearchIndex(
@@ -134,6 +139,7 @@ export default function SearchQueryWrapperPlotNav(
       initQueryRequest={initQueryRequest}
       isInfinite={isInfinite}
       onQueryResultBundleChange={onQueryResultBundleChange}
+      shouldDeepLink={shouldDeepLink}
     >
       <Suspense fallback={<QueryWrapperLoadingScreen />}>
         <QueryVisualizationWrapper
@@ -144,8 +150,8 @@ export default function SearchQueryWrapperPlotNav(
           visibleColumnCount={props.visibleColumnCount}
           defaultShowPlots={props.defaultShowPlots}
           hideCopyToClipboard={props.hideCopyToClipboard}
-          hideSearchBarControl={false}
-          defaultShowSearchBar={true}
+          hideSearchBarControl={props.hideSearchBarControl ?? false}
+          defaultShowSearchBar={props.defaultShowSearchBar ?? true}
           showLastUpdatedOn={props.showLastUpdatedOn}
           noContentPlaceholderType={
             props.noContentPlaceholderType ??
@@ -172,6 +178,8 @@ export default function SearchQueryWrapperPlotNav(
             searchConfiguration={{
               ftsConfig: {
                 textMatchesMode: 'NATURAL_LANGUAGE',
+                minSearchQueryLength: 1,
+                replaceExistingFilter: true,
                 getSuggestions: autocompleteFieldName
                   ? getSuggestions
                   : undefined,

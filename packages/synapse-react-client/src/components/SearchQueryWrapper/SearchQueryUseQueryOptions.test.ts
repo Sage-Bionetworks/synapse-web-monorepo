@@ -454,7 +454,7 @@ describe('searchQueryResultsToQueryResultBundle', () => {
     expect(result.queryResult?.queryResults.tableId).toBe('syn99999')
   })
 
-  it('forwards the facets from the search results as-is', () => {
+  it('forwards the facets from the search results as-is when no columnModels are provided', () => {
     const facets = [
       {
         concreteType:
@@ -476,6 +476,111 @@ describe('searchQueryResultsToQueryResultBundle', () => {
       MINIMAL_SEARCH_INDEX_QUERY,
     )
     expect(result.facets).toEqual(facets)
+  })
+
+  it('reorders facets to match the columnModels order', () => {
+    const facetOrgan = {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.FacetColumnResultValues' as const,
+      columnName: 'organ',
+      facetType: 'enumeration' as const,
+      facetValues: [{ value: 'Brain', count: 5, isSelected: false }],
+    }
+    const facetConsortium = {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.FacetColumnResultValues' as const,
+      columnName: 'consortium',
+      facetType: 'enumeration' as const,
+      facetValues: [{ value: 'HTAN', count: 3, isSelected: false }],
+    }
+    const facetAge = {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.FacetColumnResultRange' as const,
+      columnName: 'age',
+      facetType: 'range' as const,
+      columnMin: '0',
+      columnMax: '100',
+    }
+    // Server returns facets in a different order than columnModels
+    const results: SearchQueryResults = {
+      concreteType: 'org.sagebionetworks.repo.model.search.SearchQueryResults',
+      totalHits: 5,
+      hits: [],
+      selectColumns: [],
+      facets: [facetOrgan, facetConsortium, facetAge],
+    }
+    // columnModels order: consortium → age → organ
+    const columnModels = [
+      {
+        id: 'c1',
+        name: 'consortium',
+        columnType: 'STRING' as const,
+        facetType: 'enumeration' as const,
+      },
+      {
+        id: 'c2',
+        name: 'age',
+        columnType: 'INTEGER' as const,
+        facetType: 'range' as const,
+      },
+      {
+        id: 'c3',
+        name: 'organ',
+        columnType: 'STRING' as const,
+        facetType: 'enumeration' as const,
+      },
+    ]
+    const result = searchQueryResultsToQueryResultBundle(
+      results,
+      MINIMAL_SEARCH_INDEX_QUERY,
+      columnModels,
+    )
+    expect(result.facets?.map(f => f.columnName)).toEqual([
+      'consortium',
+      'age',
+      'organ',
+    ])
+  })
+
+  it('appends facets with no matching columnModel at the end', () => {
+    const facetKnown = {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.FacetColumnResultValues' as const,
+      columnName: 'consortium',
+      facetType: 'enumeration' as const,
+      facetValues: [],
+    }
+    const facetUnknown = {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.FacetColumnResultValues' as const,
+      columnName: 'unknownColumn',
+      facetType: 'enumeration' as const,
+      facetValues: [],
+    }
+    const results: SearchQueryResults = {
+      concreteType: 'org.sagebionetworks.repo.model.search.SearchQueryResults',
+      totalHits: 2,
+      hits: [],
+      selectColumns: [],
+      facets: [facetUnknown, facetKnown],
+    }
+    const columnModels = [
+      {
+        id: 'c1',
+        name: 'consortium',
+        columnType: 'STRING' as const,
+        facetType: 'enumeration' as const,
+      },
+    ]
+    const result = searchQueryResultsToQueryResultBundle(
+      results,
+      MINIMAL_SEARCH_INDEX_QUERY,
+      columnModels,
+    )
+    expect(result.facets?.map(f => f.columnName)).toEqual([
+      'consortium',
+      'unknownColumn',
+    ])
   })
 
   it('produces undefined queryResult when there are no hits and no headers', () => {

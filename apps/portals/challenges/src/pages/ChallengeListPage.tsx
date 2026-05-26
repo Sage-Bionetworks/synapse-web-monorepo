@@ -1,24 +1,34 @@
 import { allChallenges } from '@/config/synapseConfig/allChallenges'
-import { Box, Typography } from '@mui/material'
+import { Typography } from '@mui/material'
 import React from 'react'
 import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import styles from './ChallengeListPage.module.scss'
 
 const ChallengeListPage = (): React.ReactNode => {
   return (
     <>
-      <Box px="60px" py="20px" display="flex" justifyContent="center">
-        <Typography
-          variant="h3"
-          fontWeight="700"
-          color="black"
-          lineHeight="80px"
-        >
-          OpenChallenges
+      <div className={styles.banner}>
+        <img
+          className={styles.bannerLeft}
+          src="/openChallengesBannerLeft.svg"
+        />
+        <img
+          className={styles.bannerRight}
+          src="/openChallengesBannerRight.svg"
+        />
+      </div>
+      <div className={styles.titleSection}>
+        <img
+          className={styles.titleSectionVectors}
+          src="/openChallengesVectors.svg"
+        />
+        <Typography variant="h3" className={styles.title}>
+          Open Challenges
         </Typography>
-      </Box>
-      <Box px="80px">
+      </div>
+      <div className={styles.content}>
         <QueryWrapperPlotNav {...allChallenges} />
-      </Box>
+      </div>
     </>
   )
 }

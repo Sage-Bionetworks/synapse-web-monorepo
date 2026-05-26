@@ -8,7 +8,13 @@ import {
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
 import { Provider } from 'jotai'
-import { PropsWithChildren, useCallback, useEffect, useMemo } from 'react'
+import {
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react'
 import { useDeepCompareMemoize } from 'use-deep-compare-effect'
 import {
   QueryContextProvider,
@@ -61,6 +67,8 @@ export type SearchQueryWrapperProps = PropsWithChildren<{
   /** If onQueryResultBundleChange is set, it will be called whenever the query result bundle changes */
   onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
   isInfinite?: boolean
+  /** Whether the URL should update when the query is modified (deep linking). */
+  shouldDeepLink?: boolean
 }>
 
 /**
@@ -82,11 +90,17 @@ function SearchQueryResultBundleChangeNotifier({
     Omit<QueryResultBundle, 'queryResult'>
   >
   const { data } = useQuery(queryOpts)
+  // Use a ref so we always call the latest callback without including it in the
+  // effect dependency array. Including a frequently-recreated callback in deps
+  // causes the effect to re-fire on every render, creating an infinite loop when
+  // the parent updates state inside the callback.
+  const onQueryResultBundleChangeRef = useRef(onQueryResultBundleChange)
+  onQueryResultBundleChangeRef.current = onQueryResultBundleChange
   useEffect(() => {
     if (data) {
-      onQueryResultBundleChange(JSON.stringify(data))
+      onQueryResultBundleChangeRef.current(JSON.stringify(data))
     }
-  }, [data, onQueryResultBundleChange])
+  }, [data])
   return null
 }
 
@@ -105,6 +119,7 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
     onQueryResultBundleChange,
     isInfinite = false,
     searchIndexId,
+    shouldDeepLink = false,
   } = props
 
   const { keyFactory, accessToken } = useSynapseContext()
@@ -150,6 +165,7 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
   const immutableTableQueryResult = useImmutableTableQuery({
     initQueryRequest,
     onQueryChange,
+    shouldDeepLink,
   })
 
   const {
@@ -230,7 +246,7 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
   // the full context object. QueryWrapper.tsx has the same issue; fix both together in a follow-up.
   const context: QueryContextType = useDeepCompareMemoize({
     isInfinite,
-    entityId: undefined,
+    entityId: synapseId,
     versionNumber: undefined,
     nextQueryRequest,
     currentQueryRequest,

@@ -71,7 +71,7 @@ const participantsTableId =
 export const individualsViewQueryWrapperPlotNavProps: QueryWrapperPlotNavProps =
   {
     rgbIndex,
-    name: 'Participants',
+    name: 'Cohort Discovery',
     visibleColumnCount: 10,
     facetsToPlot: ['Sex', 'dataTypes', 'Assays', 'Diagnosis', 'fileFormat'],
     isRowSelectionVisible: true,
