@@ -7,6 +7,7 @@ import {
   ColumnModel,
   FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
   FacetColumnRangeRequest,
+  FacetColumnResultRange,
   FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
   FacetColumnValuesRequest,
   QueryBundleRequest,
@@ -37,6 +38,7 @@ import {
   UseSuspenseQueryOptions,
 } from '@tanstack/react-query'
 import { omit } from 'lodash-es'
+import dayjs from 'dayjs'
 import { useCallback, useMemo } from 'react'
 import { KeyFactory } from '@/synapse-queries/KeyFactory'
 
@@ -84,9 +86,11 @@ export function toSearchIndexQuery(
   searchIndexId: string,
   columnModels?: ColumnModel[],
 ): SearchIndexQuery {
-  // Build facetRequests from ColumnModels that have a facetType defined
+  // Build facetRequests from ColumnModels that have a facetType of 'enumeration'.
+  // Range columns are excluded: the Search API's FacetRequest only supports terms aggregations
+  // and cannot produce the min/max stats needed for FacetColumnResultRange.
   const facetRequests: FacetRequest[] | undefined = columnModels
-    ?.filter(cm => cm.facetType != null)
+    ?.filter(cm => cm.facetType === 'enumeration')
     .map(cm => {
       const facetReq: FacetRequest = { columnName: cm.name, maxValueCount: 100 }
       if (cm.facetSortConfig) {
@@ -116,18 +120,33 @@ export function toSearchIndexQuery(
       )
       .map(f => ({ key: f.columnName, values: f.facetValues }))
 
-  // Build rangeFilters from range selectedFacets
+  // Build rangeFilters from range selectedFacets.
+  // DATE columns: the Range UI component emits formatted dates ("YYYY-MM-DD") but the
+  // Search API (OpenSearch) expects unix millisecond timestamps. Convert here.
   const rangeFilters: SearchKeyRange[] | undefined =
     queryBundleRequest.query.selectedFacets
       ?.filter(
         (f): f is FacetColumnRangeRequest =>
           f.concreteType === FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
       )
-      .map(f => ({
-        key: f.columnName,
-        min: f.min,
-        max: f.max,
-      }))
+      .map(f => {
+        const columnType = columnModels?.find(
+          cm => cm.name === f.columnName,
+        )?.columnType
+        const toApiValue = (v: string | undefined): string | undefined => {
+          if (!v || columnType !== 'DATE') return v
+          // Convert "YYYY-MM-DD" → unix ms; leave already-numeric values untouched
+          if (/^\d{4}-\d{2}-\d{2}$/.test(v)) {
+            return String(dayjs(v).valueOf())
+          }
+          return v
+        }
+        return {
+          key: f.columnName,
+          min: toApiValue(f.min),
+          max: toApiValue(f.max),
+        }
+      })
 
   // Extract queryText by concatenating all TextMatchesQueryFilter searchExpression values
   const textMatchesExpressions = queryBundleRequest.query.additionalFilters
@@ -229,24 +248,70 @@ export function searchQueryResultsToQueryResultBundle(
         }
       : undefined
 
-  // Reorder facets to match the columnModels order so downstream components
-  // (e.g. FacetFilterControls) render facets in the expected column order.
   const rawFacets = results.facets as QueryResultBundle['facets']
-  const orderedFacets =
-    columnModels && rawFacets
-      ? [
-          ...rawFacets
-            .filter(f => columnModels.some(cm => cm.name === f.columnName))
-            .sort(
-              (a, b) =>
-                columnModels.findIndex(cm => cm.name === a.columnName) -
-                columnModels.findIndex(cm => cm.name === b.columnName),
-            ),
-          ...rawFacets.filter(
-            f => !columnModels.some(cm => cm.name === f.columnName),
+
+  // Synthesize FacetColumnResultRange for range-type DATE/DOUBLE/INTEGER columns. The Search API's
+  // FacetRequest only produces terms aggregations and cannot return min/max stats, so these
+  // entries will never appear in results.facets. columnMin/columnMax are empty strings
+  // (unavailable from the server); selectedMin/selectedMax are derived from the query's
+  // rangeFilters so any applied range filter is still reflected in the UI.
+  // Note: for INTEGER columns the RangeSlider requires real bounds, so the UI falls back to a
+  // plain Range number input when columnMin/columnMax are absent.
+  const syntheticRangeFacets: FacetColumnResultRange[] = (columnModels ?? [])
+    .filter(
+      cm =>
+        cm.facetType === 'range' &&
+        (cm.columnType === 'DATE' ||
+          cm.columnType === 'DOUBLE' ||
+          cm.columnType === 'INTEGER') &&
+        !(rawFacets ?? []).some(f => f.columnName === cm.name),
+    )
+    .map(cm => {
+      const rangeFilter = query.searchQuery?.rangeFilters?.find(
+        rf => rf.key === cm.name,
+      )
+      // rangeFilters carry unix ms for DATE columns (converted in toSearchIndexQuery).
+      // Convert back to "YYYY-MM-DD" so the Range UI component can display them.
+      const toDisplayValue = (v: string | undefined): string | undefined => {
+        if (!v || cm.columnType !== 'DATE') return v
+        if (/^\d+$/.test(v)) {
+          return dayjs(parseInt(v)).format('YYYY-MM-DD')
+        }
+        return v
+      }
+      return {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.FacetColumnResultRange' as const,
+        facetType: 'range' as const,
+        columnName: cm.name,
+        columnMin: '',
+        columnMax: '',
+        selectedMin: toDisplayValue(rangeFilter?.min),
+        selectedMax: toDisplayValue(rangeFilter?.max),
+      }
+    })
+
+  const allFacets: NonNullable<QueryResultBundle['facets']> = [
+    ...(rawFacets ?? []),
+    ...syntheticRangeFacets,
+  ]
+
+  // Reorder all facets to match the columnModels order so downstream components
+  // (e.g. FacetFilterControls) render facets in the expected column order.
+  const orderedFacets: QueryResultBundle['facets'] = columnModels
+    ? [
+        ...allFacets
+          .filter(f => columnModels.some(cm => cm.name === f.columnName))
+          .sort(
+            (a, b) =>
+              columnModels.findIndex(cm => cm.name === a.columnName) -
+              columnModels.findIndex(cm => cm.name === b.columnName),
           ),
-        ]
-      : rawFacets
+        ...allFacets.filter(
+          f => !columnModels.some(cm => cm.name === f.columnName),
+        ),
+      ]
+    : allFacets
 
   return {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
