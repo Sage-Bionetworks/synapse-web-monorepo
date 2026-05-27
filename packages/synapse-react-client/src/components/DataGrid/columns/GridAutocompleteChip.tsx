@@ -4,14 +4,15 @@ import { memo, useMemo } from 'react'
 import { castCellValueToString } from './AutocompleteColumn'
 import { AutocompleteMultipleEnumOption } from './AutocompleteMultipleEnumColumn'
 
-const GRID_AUTOCOMPLETE_CHIP_BASE_SX: SxProps<Theme> = {
+const GRID_AUTOCOMPLETE_CHIP_BASE_SX = {
   fontSize: '0.75rem',
   height: '24px',
   margin: '1px',
   flexShrink: 0,
-}
+} as const
 
-export interface GridAutocompleteChipProps extends Omit<ChipProps, 'label'> {
+export interface GridAutocompleteChipProps
+  extends Omit<ChipProps, 'label' | 'sx'> {
   option: AutocompleteMultipleEnumOption
   active?: boolean
 }
@@ -19,7 +20,6 @@ export interface GridAutocompleteChipProps extends Omit<ChipProps, 'label'> {
 function GridAutocompleteChipInner({
   option,
   active = false,
-  sx: sxProp,
   ...chipProps
 }: GridAutocompleteChipProps) {
   const label = useMemo(() => castCellValueToString(option), [option])
@@ -27,9 +27,8 @@ function GridAutocompleteChipInner({
     () => ({
       ...GRID_AUTOCOMPLETE_CHIP_BASE_SX,
       maxWidth: active ? 'none' : '120px',
-      ...sxProp,
     }),
-    [active, sxProp],
+    [active],
   )
   return <Chip {...chipProps} label={label} sx={sx} />
 }
@@ -48,10 +47,9 @@ function areGridAutocompleteChipPropsEqual(
     prev.onDelete === next.onDelete &&
     prev.disabled === next.disabled &&
     prev.tabIndex === next.tabIndex &&
-    (prev as Record<string, unknown>)['data-tag-index'] ===
-      (next as Record<string, unknown>)['data-tag-index'] &&
-    prev.className === next.className &&
-    prev.sx === next.sx
+    (prev as { 'data-tag-index'?: number })['data-tag-index'] ===
+      (next as { 'data-tag-index'?: number })['data-tag-index'] &&
+    prev.className === next.className
   )
 }
 
