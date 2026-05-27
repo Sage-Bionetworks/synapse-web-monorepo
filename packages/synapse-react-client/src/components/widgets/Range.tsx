@@ -45,7 +45,7 @@ export function Range(props: RangeProps): React.ReactNode {
     type: ControlType = 'number',
   ) => {
     // Treat null, undefined, and empty string as "no value" — one-sided ranges are always valid
-    if (min == null || min === '' || max == null || max === '') {
+    if (isEmpty(min) || isEmpty(max)) {
       setError(false)
       return true
     }
