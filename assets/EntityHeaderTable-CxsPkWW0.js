@@ -1,1 +1,0 @@
-import{n as e}from"./chunk-jRWAZmH_.js";import{n as t,t as n}from"./EntityHeaderTable-XGWi_P2x.js";var r,i=e((()=>{t(),r=n}));export{i as n,r as t};
