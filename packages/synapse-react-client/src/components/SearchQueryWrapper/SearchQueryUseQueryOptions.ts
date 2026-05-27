@@ -263,7 +263,8 @@ export function searchQueryResultsToQueryResultBundle(
         cm.facetType === 'range' &&
         (cm.columnType === 'DATE' ||
           cm.columnType === 'DOUBLE' ||
-          cm.columnType === 'INTEGER'),
+          cm.columnType === 'INTEGER') &&
+        !(rawFacets ?? []).some(f => f.columnName === cm.name),
     )
     .map(cm => {
       const rangeFilter = query.searchQuery?.rangeFilters?.find(

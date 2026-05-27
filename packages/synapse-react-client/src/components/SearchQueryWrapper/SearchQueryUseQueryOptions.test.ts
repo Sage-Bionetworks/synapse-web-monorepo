@@ -587,21 +587,15 @@ describe('searchQueryResultsToQueryResultBundle', () => {
       facetType: 'enumeration' as const,
       facetValues: [{ value: 'HTAN', count: 3, isSelected: false }],
     }
-    const facetAge = {
-      concreteType:
-        'org.sagebionetworks.repo.model.table.FacetColumnResultRange' as const,
-      columnName: 'age',
-      facetType: 'range' as const,
-      columnMin: '0',
-      columnMax: '100',
-    }
-    // Server returns facets in a different order than columnModels
+    // Server returns facets in a different order than columnModels.
+    // Note: the server never returns FacetColumnResultRange; the age facet is synthesized
+    // from columnModels by searchQueryResultsToQueryResultBundle.
     const results: SearchQueryResults = {
       concreteType: 'org.sagebionetworks.repo.model.search.SearchQueryResults',
       totalHits: 5,
       hits: [],
       selectColumns: [],
-      facets: [facetOrgan, facetConsortium, facetAge],
+      facets: [facetOrgan, facetConsortium],
     }
     // columnModels order: consortium → age → organ
     const columnModels = [
@@ -805,40 +799,6 @@ describe('searchQueryResultsToQueryResultBundle', () => {
     expect(facet.facetType).toBe('range')
     expect(facet.columnMin).toBe('')
     expect(facet.columnMax).toBe('')
-  })
-
-  it('does not synthesize when a range facet for the column already exists in server results', () => {
-    const existingFacet: FacetColumnResultRange = {
-      concreteType:
-        'org.sagebionetworks.repo.model.table.FacetColumnResultRange',
-      facetType: 'range',
-      columnName: 'event_date',
-      columnMin: '1000000',
-      columnMax: '2000000',
-    }
-    const results: SearchQueryResults = {
-      concreteType: 'org.sagebionetworks.repo.model.search.SearchQueryResults',
-      totalHits: 0,
-      hits: [],
-      selectColumns: [],
-      facets: [existingFacet],
-    }
-    const result = searchQueryResultsToQueryResultBundle(
-      results,
-      MINIMAL_SEARCH_INDEX_QUERY,
-      [
-        {
-          id: 'c1',
-          name: 'event_date',
-          columnType: 'DATE',
-          facetType: 'range',
-        },
-      ],
-    )
-    expect(result.facets).toHaveLength(1)
-    expect((result.facets![0] as FacetColumnResultRange).columnMin).toBe(
-      '1000000',
-    )
   })
 
   it('converts unix millisecond rangeFilter values to YYYY-MM-DD for synthesized DATE facet selectedMin and selectedMax', () => {
