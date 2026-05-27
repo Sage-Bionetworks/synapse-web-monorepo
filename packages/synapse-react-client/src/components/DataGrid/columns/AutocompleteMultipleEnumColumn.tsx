@@ -121,9 +121,15 @@ function AutocompleteMultipleEnumCell({
     handleClose,
   } = useGridAutocompleteState({ active, stopEditing })
 
-  const safeRowData = createSafeRowData(rowData)
-  const optionsWithLabels = choices.map(createOptionFromValue)
-  const selectedOptions = safeRowData.map(createOptionFromValue)
+  const safeRowData = useMemo(() => createSafeRowData(rowData), [rowData])
+  const optionsWithLabels = useMemo(
+    () => choices.map(createOptionFromValue),
+    [choices],
+  )
+  const selectedOptions = useMemo(
+    () => safeRowData.map(createOptionFromValue),
+    [safeRowData],
+  )
   const effectiveLimitTags = active ? -1 : limitTags
 
   // Create tooltip content showing all values
@@ -211,6 +217,39 @@ function AutocompleteMultipleEnumCell({
     }
   }, [localInputState, colType, safeRowData])
 
+  // Per-index chip onDelete handlers. MUI's getTagProps recreates onDelete on
+  // every render (it closes over the current value array), which defeats
+  // memoization of GridAutocompleteChip. We provide our own stable function
+  // for each index that reads the latest rowData via refs at call time —
+  // identical to the chip's behavior, but without the per-render churn.
+  const rowDataRef = useRef(rowData)
+  useLayoutEffect(() => {
+    rowDataRef.current = rowData
+  })
+  const handleChangeRef = useRef(handleChange)
+  useLayoutEffect(() => {
+    handleChangeRef.current = handleChange
+  })
+  const chipDeleteFnsRef = useRef<Map<number, () => void>>(new Map())
+  const getChipDelete = useCallback((index: number) => {
+    let fn = chipDeleteFnsRef.current.get(index)
+    if (!fn) {
+      fn = () => {
+        const current = createSafeRowData(rowDataRef.current)
+        const next = current.filter((_, i) => i !== index)
+        // Route through handleChange so notifyOptionCommitted, menu cleanup,
+        // and clearValue substitution match the dropdown delete path.
+        handleChangeRef.current(
+          null as unknown as React.SyntheticEvent,
+          next.map(createOptionFromValue),
+          'removeOption',
+        )
+      }
+      chipDeleteFnsRef.current.set(index, fn)
+    }
+    return fn
+  }, [])
+
   return (
     <Tooltip
       title={tooltipContent}
@@ -261,7 +300,16 @@ function AutocompleteMultipleEnumCell({
           onBlur={handleBlur}
           renderValue={(tagValue, getTagProps) =>
             tagValue.map((option, index) => {
-              const { key, ...tagProps } = getTagProps({ index })
+              // Discard MUI's onDelete — its closure is rebuilt each render,
+              // which would defeat chip memoization. We pass our own stable
+              // per-index onDelete that reads the latest rowData via refs.
+              const {
+                key,
+                onDelete: _muiOnDelete,
+                ...tagProps
+              } = getTagProps({
+                index,
+              })
               const optionValue =
                 typeof option === 'string' ? option : option.value
               return (
@@ -269,6 +317,7 @@ function AutocompleteMultipleEnumCell({
                   key={key}
                   option={optionValue}
                   active={active}
+                  onDelete={getChipDelete(index)}
                   {...tagProps}
                 />
               )
