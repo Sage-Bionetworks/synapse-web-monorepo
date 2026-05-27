@@ -263,10 +263,7 @@ export function searchQueryResultsToQueryResultBundle(
         cm.facetType === 'range' &&
         (cm.columnType === 'DATE' ||
           cm.columnType === 'DOUBLE' ||
-          cm.columnType === 'INTEGER') &&
-        !(rawFacets ?? []).some(
-          f => f.columnName === cm.name && f.facetType === 'range',
-        ),
+          cm.columnType === 'INTEGER'),
     )
     .map(cm => {
       const rangeFilter = query.searchQuery?.rangeFilters?.find(
@@ -300,23 +297,20 @@ export function searchQueryResultsToQueryResultBundle(
 
   // Reorder all facets to match the columnModels order so downstream components
   // (e.g. FacetFilterControls) render facets in the expected column order.
-  const orderedFacets: QueryResultBundle['facets'] =
-    rawFacets == null && syntheticRangeFacets.length === 0
-      ? undefined
-      : columnModels
-      ? [
-          ...allFacets
-            .filter(f => columnModels.some(cm => cm.name === f.columnName))
-            .sort(
-              (a, b) =>
-                columnModels.findIndex(cm => cm.name === a.columnName) -
-                columnModels.findIndex(cm => cm.name === b.columnName),
-            ),
-          ...allFacets.filter(
-            f => !columnModels.some(cm => cm.name === f.columnName),
+  const orderedFacets: QueryResultBundle['facets'] = columnModels
+    ? [
+        ...allFacets
+          .filter(f => columnModels.some(cm => cm.name === f.columnName))
+          .sort(
+            (a, b) =>
+              columnModels.findIndex(cm => cm.name === a.columnName) -
+              columnModels.findIndex(cm => cm.name === b.columnName),
           ),
-        ]
-      : allFacets
+        ...allFacets.filter(
+          f => !columnModels.some(cm => cm.name === f.columnName),
+        ),
+      ]
+    : allFacets
 
   return {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
