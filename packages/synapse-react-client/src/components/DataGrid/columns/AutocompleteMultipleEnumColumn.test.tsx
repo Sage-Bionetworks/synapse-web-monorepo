@@ -923,6 +923,61 @@ describe('autocompleteMultipleEnumColumn', () => {
       ).toBeInTheDocument()
     })
 
+    it('uses the latest rowData when deleting a memoized chip (stale-closure regression)', async () => {
+      // GridAutocompleteChip is memoized and compares onDelete identity. To
+      // keep that identity stable across renders, AutocompleteMultipleEnumCell
+      // maintains a per-index onDelete map; each callback reads the latest
+      // rowData via a ref at click time.
+      //
+      // The naive alternative — passing MUI's getTagProps().onDelete straight
+      // through — would defeat memoization (fresh closure each render) and,
+      // if the chip were memoized anyway, would invoke a closure over the OLD
+      // value array, silently dropping any newly-appended value.
+      const mockSetRowData = vi.fn()
+      const mockStopEditing = vi.fn()
+      const TestCell = createTestCell(['a', 'b', 'c'], 'string')
+
+      const { rerender } = render(
+        <TestCell
+          rowData={['a', 'b']}
+          setRowData={mockSetRowData}
+          focus={true}
+          active={true}
+          stopEditing={mockStopEditing}
+        />,
+      )
+      expect(screen.getByText('a')).toBeInTheDocument()
+      expect(screen.getByText('b')).toBeInTheDocument()
+
+      // Append 'c'. Chips for 'a' and 'b' are memoized (same option, active,
+      // data-tag-index, and the per-index onDelete is identity-stable), so
+      // they skip re-rendering.
+      rerender(
+        <TestCell
+          rowData={['a', 'b', 'c']}
+          setRowData={mockSetRowData}
+          focus={true}
+          active={true}
+          stopEditing={mockStopEditing}
+        />,
+      )
+      expect(screen.getByText('c')).toBeInTheDocument()
+
+      // Click the X on the original 'a' chip. The stable onDelete reads the
+      // latest rowData via the parent's ref and removes 'a' from
+      // ['a', 'b', 'c'] → ['b', 'c']. A stale closure would yield ['b'],
+      // losing 'c'.
+      const chipA = screen.getByText('a').closest('.MuiChip-root')
+      expect(chipA).not.toBeNull()
+      const deleteIcon = chipA!.querySelector('[data-testid="CancelIcon"]')
+      expect(deleteIcon).not.toBeNull()
+      await userEvent.click(deleteIcon as HTMLElement)
+
+      await waitFor(() => {
+        expect(mockSetRowData).toHaveBeenCalledWith(['b', 'c'])
+      })
+    })
+
     it('commits a selected option when the grid deactivates the cell mid-click', async () => {
       // Regression: the dropdown renders in a portal outside the grid cell's DOM.
       // react-datasheet-grid sees the mousedown as an outside click and fires active=false
