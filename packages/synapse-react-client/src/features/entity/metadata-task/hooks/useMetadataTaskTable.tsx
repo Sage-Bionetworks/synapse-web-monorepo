@@ -32,6 +32,12 @@ function getColumns(canEdit: boolean) {
       enableSorting: false,
       enableColumnFilter: false,
     }),
+    columnHelper.accessor('task.taskId', {
+      header: props => <ColumnHeader {...props} title={'Task ID'} />,
+      cell: ({ getValue }) => <p>{getValue()}</p>,
+      enableSorting: false,
+      enableColumnFilter: false,
+    }),
     columnHelper.accessor('task.instructions', {
       header: props => <ColumnHeader {...props} title={'Instructions'} />,
       cell: ({ getValue }) => <p>{getValue()}</p>,
