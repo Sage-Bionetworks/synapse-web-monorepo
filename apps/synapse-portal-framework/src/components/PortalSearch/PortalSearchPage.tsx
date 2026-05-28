@@ -102,7 +102,6 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
         const key = `searchResultTab-${selectedTabIndex}-${index}`
         const sharedProps = {
           isVisible: selectedTabIndex == index,
-          hideTextMatchesQueryFilterPill: true,
           onQueryResultBundleChange: (newQueryResultBundleJSON: string) => {
             onQueryResultBundleChange(
               index,

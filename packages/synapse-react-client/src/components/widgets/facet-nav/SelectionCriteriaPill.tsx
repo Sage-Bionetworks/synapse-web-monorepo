@@ -1,11 +1,13 @@
-import { Close } from '@mui/icons-material'
+import { Close, LockOutlined } from '@mui/icons-material'
 import { Tooltip } from '@mui/material'
 
 export type SelectionCriteriaPillProps = {
   readonly key: string
   readonly innerText: string
   readonly tooltipText: string
-  readonly onRemoveFilter: () => void
+  readonly onRemoveFilter?: () => void
+  /** When true, the pill is shown without a remove button */
+  readonly isLocked?: boolean
 }
 
 /**
@@ -14,19 +16,30 @@ export type SelectionCriteriaPillProps = {
  * @constructor
  */
 function SelectionCriteriaPill(props: SelectionCriteriaPillProps) {
-  const { innerText, tooltipText, onRemoveFilter } = props
+  const { innerText, tooltipText, onRemoveFilter, isLocked } = props
 
   return (
     <Tooltip title={tooltipText} placement={'top'}>
-      <div className="SelectionCriteriaPill">
+      <div
+        className={`SelectionCriteriaPill${
+          isLocked ? ' SelectionCriteriaPill--locked' : ''
+        }`}
+      >
         <span>{innerText}</span>
-        <button
-          onClick={onRemoveFilter}
-          className="SelectionCriteriaPill__btnRemove"
-          title="deselect"
-        >
-          <Close />
-        </button>
+        {!isLocked && onRemoveFilter && (
+          <button
+            onClick={onRemoveFilter}
+            className="SelectionCriteriaPill__btnRemove"
+            title="deselect"
+          >
+            <Close />
+          </button>
+        )}
+        {isLocked && (
+          <span className="SelectionCriteriaPill__lockedIcon" aria-hidden>
+            <LockOutlined />
+          </span>
+        )}
       </div>
     </Tooltip>
   )
