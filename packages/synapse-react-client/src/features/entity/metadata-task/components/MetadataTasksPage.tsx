@@ -1,9 +1,13 @@
 import InfiniteTableLayout from '@/components/layout/InfiniteTableLayout'
 import StyledTanStackTable from '@/components/TanStackTable/StyledTanStackTable'
 import { useMetadataTaskTable } from '@/features/entity/metadata-task/hooks/useMetadataTaskTable'
-import { FormControlLabel, Stack, Switch } from '@mui/material'
+import { Button, FormControlLabel, Stack, Switch } from '@mui/material'
 import { useState } from 'react'
 import { ListCurationTaskRequest } from '@sage-bionetworks/synapse-client'
+import CreateOrUpdateCurationTaskDialog from './CreateOrUpdateCurationTaskDialog'
+import { displayToast } from '@/components/ToastMessage/ToastMessage'
+import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
+import { AddCircleTwoTone } from '@mui/icons-material'
 
 export type MetadataTaskTableProps = {
   projectId: string
@@ -21,6 +25,10 @@ export default function MetadataTasksPage(props: MetadataTaskTableProps) {
       projectId,
       assignedToMe: false,
     })
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+
+  const { data: permissions } = useGetEntityPermissions(projectId)
 
   const { table, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useMetadataTaskTable({
@@ -44,6 +52,26 @@ export default function MetadataTasksPage(props: MetadataTaskTableProps) {
           }
           label="View only tasks assigned to me"
         />
+        {permissions?.canAddChild && (
+          <>
+            <CreateOrUpdateCurationTaskDialog
+              projectId={projectId}
+              open={isDialogOpen}
+              onSuccess={() => {
+                displayToast('Curation task created successfully', 'success')
+                setIsDialogOpen(false)
+              }}
+              onCancel={() => setIsDialogOpen(false)}
+            />
+            <Button
+              variant="contained"
+              onClick={() => setIsDialogOpen(true)}
+              startIcon={<AddCircleTwoTone />}
+            >
+              Create Task
+            </Button>
+          </>
+        )}
       </Stack>
       <InfiniteTableLayout
         table={

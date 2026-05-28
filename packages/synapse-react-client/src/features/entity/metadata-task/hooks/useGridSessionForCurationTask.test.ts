@@ -152,18 +152,31 @@ describe('useGridSessionForCurationTask', () => {
   })
 
   describe('when task has no active session', () => {
-    it('creates a new session with SOURCE_BENEFACTOR authorization and links it to the task via updateCurationTaskStatus', async () => {
+    it('creates a new session with SOURCE_BENEFACTOR and links it to the task via updateCurationTaskStatus', async () => {
       const mockUpdateStatus = vi.fn().mockResolvedValue({})
       vi.mocked(curationTaskModule.useUpdateCurationTaskStatus).mockReturnValue(
         { mutateAsync: mockUpdateStatus } as any,
       )
+
+      const taskBundleWithAuthMode = createMockTaskBundle({
+        task: {
+          taskId: 123,
+          assigneePrincipalId: MOCK_CURATION_TASK_ASSIGNEE_PRINCIPAL_ID,
+          taskProperties: {
+            concreteType:
+              'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties',
+            fileViewId: 'syn999',
+            suggestedAuthorizationMode: 'SOURCE_BENEFACTOR',
+          },
+        },
+      })
 
       const { result } = renderHook(() => useGridSessionForCurationTask(), {
         wrapper: createWrapper(),
       })
 
       const returnValue = await act(() =>
-        result.current.mutateAsync(createMockTaskBundle()),
+        result.current.mutateAsync(taskBundleWithAuthMode),
       )
 
       expect(returnValue.gridSession).toEqual(mockNewGridSession)
@@ -171,6 +184,50 @@ describe('useGridSessionForCurationTask', () => {
       expect(mockCreateGridSession).toHaveBeenCalledWith(
         expect.objectContaining({
           authorizationMode: 'SOURCE_BENEFACTOR',
+        }),
+      )
+      expect(mockUpdateStatus).toHaveBeenCalledWith(
+        expect.objectContaining({
+          executionDetails: expect.objectContaining({
+            activeSessionId: MOCK_NEW_SESSION_ID,
+          }),
+        }),
+      )
+    })
+
+    it('creates a new session with SESSION_OWNER with the assignee as owner and links it to the task via updateCurationTaskStatus', async () => {
+      const mockUpdateStatus = vi.fn().mockResolvedValue({})
+      vi.mocked(curationTaskModule.useUpdateCurationTaskStatus).mockReturnValue(
+        { mutateAsync: mockUpdateStatus } as any,
+      )
+
+      const taskBundleWithAuthMode = createMockTaskBundle({
+        task: {
+          taskId: 123,
+          assigneePrincipalId: MOCK_CURATION_TASK_ASSIGNEE_PRINCIPAL_ID,
+          taskProperties: {
+            concreteType:
+              'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties',
+            fileViewId: 'syn999',
+            suggestedAuthorizationMode: 'SESSION_OWNER',
+          },
+        },
+      })
+
+      const { result } = renderHook(() => useGridSessionForCurationTask(), {
+        wrapper: createWrapper(),
+      })
+
+      const returnValue = await act(() =>
+        result.current.mutateAsync(taskBundleWithAuthMode),
+      )
+
+      expect(returnValue.gridSession).toEqual(mockNewGridSession)
+      expect(returnValue.gridSessionOwnerMatchesTaskAssignee).toBe(true)
+      expect(mockCreateGridSession).toHaveBeenCalledWith(
+        expect.objectContaining({
+          authorizationMode: 'SESSION_OWNER',
+          ownerPrincipalId: MOCK_CURATION_TASK_ASSIGNEE_PRINCIPAL_ID,
         }),
       )
       expect(mockUpdateStatus).toHaveBeenCalledWith(

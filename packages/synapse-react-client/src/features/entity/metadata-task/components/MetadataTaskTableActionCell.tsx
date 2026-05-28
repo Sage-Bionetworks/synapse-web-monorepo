@@ -1,11 +1,14 @@
+import { displayToast } from '@/components/ToastMessage'
 import { StickyNote2Outlined } from '@mui/icons-material'
-import { Button, Tooltip } from '@mui/material'
+import { Box, Button, Tooltip } from '@mui/material'
 import { TaskBundle } from '@sage-bionetworks/synapse-client'
+import { useState } from 'react'
 import useOpenCuratorFromTaskButton from '../hooks/useOpenCuratorButton'
 import {
-  OPEN_CURATOR_TOOLTIP_TITLE,
   OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE,
+  OPEN_CURATOR_TOOLTIP_TITLE,
 } from '../utils/constants'
+import CreateOrUpdateCurationTaskDialog from './CreateOrUpdateCurationTaskDialog'
 
 export const NO_TASK_ASSIGNEE_WARNING_DIALOG_TITLE = 'Task is Unassigned'
 
@@ -18,7 +21,9 @@ export default function MetadataTaskTableActionCell(props: {
   taskBundle: TaskBundle
   canEdit: boolean
 }) {
-  const { taskBundle } = props
+  const { canEdit, taskBundle } = props
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   const { hasPermission, isLoading, isPending, onClick } =
     useOpenCuratorFromTaskButton(taskBundle)
@@ -32,10 +37,32 @@ export default function MetadataTaskTableActionCell(props: {
   }
 
   return (
-    <>
-      <Tooltip title={tooltipTitle}>
-        <span>
+    <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
+      {canEdit && (
+        <>
+          <CreateOrUpdateCurationTaskDialog
+            projectId={taskBundle.task!.projectId!}
+            open={isDialogOpen}
+            task={taskBundle.task}
+            onSuccess={() => {
+              displayToast('Curation task updated successfully', 'success')
+              setIsDialogOpen(false)
+            }}
+            onCancel={() => setIsDialogOpen(false)}
+          />
           <Button
+            variant="outlined"
+            onClick={() => setIsDialogOpen(true)}
+            size={'small'}
+          >
+            Edit
+          </Button>
+        </>
+      )}
+      <Tooltip title={tooltipTitle}>
+        <div>
+          <Button
+            variant="contained"
             size={'small'}
             startIcon={<StickyNote2Outlined />}
             loading={isPending}
@@ -44,8 +71,8 @@ export default function MetadataTaskTableActionCell(props: {
           >
             Open Curator
           </Button>
-        </span>
+        </div>
       </Tooltip>
-    </>
+    </Box>
   )
 }

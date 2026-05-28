@@ -7,7 +7,6 @@ import {
   MOCK_CURATION_TASK_ID,
 } from '@/mocks/curation/mockCurationTask'
 import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
-import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
 import { getLinkToGridSession } from '@/utils/functions/getSynapseWebClientLink'
 import {
   CurationTask,
@@ -15,7 +14,6 @@ import {
   SynapseClientError,
   TaskBundle,
 } from '@sage-bionetworks/synapse-client'
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import type { UserEntityPermissions } from '@sage-bionetworks/synapse-types'
 import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query'
 import { act, renderHook, waitFor } from '@testing-library/react'
@@ -36,10 +34,6 @@ vi.mock('./useGridSessionForCurationTask', () => ({
   default: vi.fn(),
 }))
 
-vi.mock('@/synapse-queries/featureflags/useGetFeatureFlag', () => ({
-  useGetFeatureFlag: vi.fn(),
-}))
-
 vi.mock('@/utils/functions/getSynapseWebClientLink', () => ({
   getLinkToGridSession: vi.fn(),
 }))
@@ -57,7 +51,6 @@ const mockUseGridSessionForCurationTaskLegacy = vi.mocked(
 const mockUseGridSessionForCurationTask = vi.mocked(
   useGridSessionForCurationTask,
 )
-const mockUseGetFeatureFlag = vi.mocked(useGetFeatureFlag)
 const mockGetLinkToGridSession = vi.mocked(getLinkToGridSession)
 const mockUseGetEntityPermissions = vi.mocked(useGetEntityPermissions)
 
@@ -114,8 +107,22 @@ const createPermissionsQueryResult = (
     ...overrides,
   } as Partial<EntityPermissionsQueryResult> as EntityPermissionsQueryResult)
 
+// Default mock task bundle — no suggestedAuthorizationMode (legacy path)
 const mockTaskBundle = createMockTaskBundle()
 const mockCurationTask = mockTaskBundle.task!
+
+// Task bundle with suggestedAuthorizationMode set (task-linked path)
+const mockTaskBundleWithAuthMode = createMockTaskBundle({
+  task: {
+    ...mockTaskBundle.task!,
+    taskProperties: {
+      concreteType:
+        'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties',
+      fileViewId: MOCK_CURATION_TASK_FILE_VIEW_ID,
+      suggestedAuthorizationMode: 'SOURCE_BENEFACTOR',
+    },
+  },
+})
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -130,17 +137,12 @@ beforeEach(() => {
   mockUseGridSessionForCurationTask.mockReturnValue(
     createTaskLinkedMutationResult(),
   )
-  mockUseGetFeatureFlag.mockReturnValue(false)
   mockUseGetEntityPermissions.mockReturnValue(createPermissionsQueryResult())
   mockGetLinkToGridSession.mockReturnValue('mock-grid-url')
 })
 
 describe('useOpenCuratorFromTaskButton', () => {
-  describe('when CURATOR_LINK_TASK_TO_GRID_SESSION is disabled', () => {
-    beforeEach(() => {
-      mockUseGetFeatureFlag.mockImplementation(() => false)
-    })
-
+  describe('when suggestedAuthorizationMode is not set on the task', () => {
     it('requests a legacy grid session and opens it in a new tab when onClick is called', async () => {
       mockGetLinkToGridSession.mockReturnValue('https://example.org/grid')
       const windowOpenSpy = vi
@@ -252,13 +254,7 @@ describe('useOpenCuratorFromTaskButton', () => {
     })
   })
 
-  describe('when CURATOR_LINK_TASK_TO_GRID_SESSION is enabled', () => {
-    beforeEach(() => {
-      mockUseGetFeatureFlag.mockImplementation(
-        flag => flag === FeatureFlagEnum.CURATOR_LINK_TASK_TO_GRID_SESSION,
-      )
-    })
-
+  describe('when suggestedAuthorizationMode is defined on the task', () => {
     it('requests a task-linked grid session and opens it in a new tab when onClick is called', async () => {
       mockGetLinkToGridSession.mockReturnValue('https://example.org/grid')
       const windowOpenSpy = vi
@@ -266,14 +262,16 @@ describe('useOpenCuratorFromTaskButton', () => {
         .mockReturnValue(null as unknown as Window)
 
       const { result } = renderHook(() =>
-        useOpenCuratorFromTaskButton(mockTaskBundle),
+        useOpenCuratorFromTaskButton(mockTaskBundleWithAuthMode),
       )
 
       act(() => {
         result.current.onClick()
       })
 
-      expect(mockTaskLinkedMutateAsync).toHaveBeenCalledWith(mockTaskBundle)
+      expect(mockTaskLinkedMutateAsync).toHaveBeenCalledWith(
+        mockTaskBundleWithAuthMode,
+      )
       expect(mockLegacyMutateAsync).not.toHaveBeenCalled()
 
       await waitFor(() => {
@@ -299,7 +297,7 @@ describe('useOpenCuratorFromTaskButton', () => {
       )
 
       const { result } = renderHook(() =>
-        useOpenCuratorFromTaskButton(mockTaskBundle),
+        useOpenCuratorFromTaskButton(mockTaskBundleWithAuthMode),
       )
 
       act(() => {
@@ -333,7 +331,7 @@ describe('useOpenCuratorFromTaskButton', () => {
         .mockReturnValue(null as unknown as Window)
 
       const { result } = renderHook(() =>
-        useOpenCuratorFromTaskButton(mockTaskBundle),
+        useOpenCuratorFromTaskButton(mockTaskBundleWithAuthMode),
       )
 
       act(() => {
@@ -359,7 +357,7 @@ describe('useOpenCuratorFromTaskButton', () => {
       )
 
       const { result } = renderHook(() =>
-        useOpenCuratorFromTaskButton(mockTaskBundle),
+        useOpenCuratorFromTaskButton(mockTaskBundleWithAuthMode),
       )
 
       expect(result.current.isPending).toBe(true)

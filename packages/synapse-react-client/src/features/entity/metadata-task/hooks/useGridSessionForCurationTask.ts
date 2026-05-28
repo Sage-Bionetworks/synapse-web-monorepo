@@ -6,8 +6,10 @@ import {
 } from '@/synapse-queries/grid/useGridSession'
 import { useSynapseContext } from '@/utils'
 import {
+  AuthorizationMode,
   CreateGridRequest,
   GridSession,
+  GridSupportedTaskProperties,
   SynapseClientError,
   TaskBundle,
 } from '@sage-bionetworks/synapse-client'
@@ -81,14 +83,26 @@ export default function useGridSessionForCurationTask() {
         }
       }
       // Create a session and link it to the task
-      const taskProperties = task.taskProperties
+      const taskProperties = task.taskProperties as GridSupportedTaskProperties
       if (taskProperties == null) {
         throw new Error('CurationTask is missing taskProperties')
       }
 
+      const suggestedAuthorizationMode =
+        'suggestedAuthorizationMode' in taskProperties
+          ? taskProperties.suggestedAuthorizationMode
+          : undefined
+
+      let ownerPrincipalId: string | undefined = undefined
+      if (suggestedAuthorizationMode === AuthorizationMode.SESSION_OWNER) {
+        // TODO: Add collaboratorPrincipalIds once the server supports multiple owners.
+        ownerPrincipalId = task.assigneePrincipalId
+      }
+
       const createGridRequest: CreateGridRequest = {
         ...getCreateGridRequestForMetadataTask(task),
-        authorizationMode: 'SOURCE_BENEFACTOR',
+        authorizationMode: suggestedAuthorizationMode,
+        ownerPrincipalId,
       }
       const createGridResponse = await createGridSession(createGridRequest)
       const gridSession = createGridResponse.gridSession!
