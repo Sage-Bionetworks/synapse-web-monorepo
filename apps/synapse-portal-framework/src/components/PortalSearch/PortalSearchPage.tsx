@@ -75,7 +75,6 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
     },
     [searchPageTabsState, navigate, location.search],
   )
-
   // on search field value update, update the special search parameter SEARCH_TERM, which the QueryWrapperPlotNav will load as the search term
   return (
     <Box
