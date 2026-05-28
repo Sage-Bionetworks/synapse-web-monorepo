@@ -115,7 +115,7 @@ function getPillPropsFromQueryFilters(
   columnModels: ColumnModel[],
   queryVisualizationContext: QueryVisualizationContextType,
   lockedColumn?: LockedColumn,
-  hideKeywordSearchPill?: boolean,
+  hideTextMatchesQueryFilterPill?: boolean,
 ): SelectionCriteriaPillProps[] {
   return queryFilters.flatMap(queryFilter => {
     if (
@@ -138,7 +138,7 @@ function getPillPropsFromQueryFilters(
         queryVisualizationContext,
       )
     } else if (isTextMatchesQueryFilter(queryFilter)) {
-      if (hideKeywordSearchPill) return []
+      if (hideTextMatchesQueryFilterPill) return []
       return [getPillPropsFromTextMatchesQueryFilter(queryFilter, queryContext)]
     } else {
       console.log('Unknown query filter type', queryFilter)
@@ -285,7 +285,7 @@ function SelectionCriteriaPills() {
   const queryContext = useQueryContext()
   const lockedColumn = queryContext.lockedColumn
   const queryVisualizationContext = useQueryVisualizationContext()
-  const { hideKeywordSearchPill } = queryVisualizationContext
+  const { hideTextMatchesQueryFilterPill } = queryVisualizationContext
   const { currentQueryRequest } = queryContext
   const { data: queryMetadata } = useGetQueryMetadata()
 
@@ -295,7 +295,7 @@ function SelectionCriteriaPills() {
     queryMetadata?.columnModels || [],
     queryVisualizationContext,
     lockedColumn,
-    hideKeywordSearchPill,
+    hideTextMatchesQueryFilterPill,
   )
 
   const facetPillProps = getPillPropsFromFacetFilters(

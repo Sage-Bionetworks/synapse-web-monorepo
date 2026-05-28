@@ -36,7 +36,7 @@ export type QueryVisualizationContextType = {
   showFacetFilter: boolean
   setShowFacetFilter: Dispatch<SetStateAction<boolean>>
   hideSearchBarControl: boolean
-  hideKeywordSearchPill: boolean
+  hideTextMatchesQueryFilterPill: boolean
   showSearchBar: boolean
   setShowSearchBar: Dispatch<SetStateAction<boolean>>
   showDownloadConfirmation: boolean

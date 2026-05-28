@@ -14,7 +14,7 @@ import { DEFAULT_PAGE_SIZE } from 'synapse-react-client/utils/SynapseConstants'
 
 export type SearchParamAwareQueryWrapperPlotNavProps = {
   isVisible: boolean
-  hideKeywordSearchPill?: boolean
+  hideTextMatchesQueryFilterPill?: boolean
   onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
 } & (
   | { standaloneQueryWrapperProps: StandaloneQueryWrapperProps }
@@ -36,7 +36,7 @@ export function SearchParamAwareQueryWrapperPlotNav(
       <SearchParamAwareSearchQueryWrapperPlotNav
         isVisible={props.isVisible}
         config={props.searchQueryWrapperPlotNavProps}
-        hideKeywordSearchPill={props.hideKeywordSearchPill}
+        hideTextMatchesQueryFilterPill={props.hideTextMatchesQueryFilterPill}
         onQueryResultBundleChange={props.onQueryResultBundleChange}
       />
     )
@@ -45,7 +45,7 @@ export function SearchParamAwareQueryWrapperPlotNav(
     <SearchParamAwareStandaloneQueryWrapperPlotNav
       isVisible={props.isVisible}
       standaloneQueryWrapperProps={props.standaloneQueryWrapperProps}
-      hideKeywordSearchPill={props.hideKeywordSearchPill}
+      hideTextMatchesQueryFilterPill={props.hideTextMatchesQueryFilterPill}
       onQueryResultBundleChange={props.onQueryResultBundleChange}
     />
   )
@@ -60,12 +60,12 @@ export function SearchParamAwareQueryWrapperPlotNav(
 function SearchParamAwareSearchQueryWrapperPlotNav({
   isVisible,
   config,
-  hideKeywordSearchPill,
+  hideTextMatchesQueryFilterPill,
   onQueryResultBundleChange,
 }: {
   isVisible: boolean
   config: SearchQueryWrapperPlotNavProps
-  hideKeywordSearchPill?: boolean
+  hideTextMatchesQueryFilterPill?: boolean
   onQueryResultBundleChange?: (json: string) => void
 }) {
   const [searchParams] = useSearchParams()
@@ -95,7 +95,7 @@ function SearchParamAwareSearchQueryWrapperPlotNav({
       <SearchQueryWrapperPlotNav
         {...config}
         initQueryRequest={initQueryRequest}
-        hideKeywordSearchPill={hideKeywordSearchPill}
+        hideTextMatchesQueryFilterPill={hideTextMatchesQueryFilterPill}
         onQueryResultBundleChange={onQueryResultBundleChange}
         hideSearchBarControl={true}
         defaultShowSearchBar={false}
@@ -121,12 +121,12 @@ function SearchParamAwareSearchQueryWrapperPlotNav({
 function SearchParamAwareStandaloneQueryWrapperPlotNav({
   isVisible,
   standaloneQueryWrapperProps,
-  hideKeywordSearchPill,
+  hideTextMatchesQueryFilterPill,
   onQueryResultBundleChange,
 }: {
   isVisible: boolean
   standaloneQueryWrapperProps: StandaloneQueryWrapperProps
-  hideKeywordSearchPill?: boolean
+  hideTextMatchesQueryFilterPill?: boolean
   onQueryResultBundleChange?: (json: string) => void
 }) {
   const [searchParams] = useSearchParams()
@@ -161,7 +161,7 @@ function SearchParamAwareStandaloneQueryWrapperPlotNav({
         {...standaloneQueryWrapperProps}
         shouldDeepLink={false}
         query={query}
-        hideKeywordSearchPill={hideKeywordSearchPill}
+        hideTextMatchesQueryFilterPill={hideTextMatchesQueryFilterPill}
         onQueryResultBundleChange={onQueryResultBundleChange}
         hideCopyToClipboard={true}
         defaultShowPlots={false}

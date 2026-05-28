@@ -56,7 +56,7 @@ export type SearchQueryWrapperPlotNavProps = SearchQueryWrapperPlotNavOwnProps &
     | 'helpConfiguration'
     | 'hideCopyToClipboard'
     | 'hideVisualizationsControl'
-    | 'hideKeywordSearchPill'
+    | 'hideTextMatchesQueryFilterPill'
     | 'hideSearchBarControl'
     | 'defaultShowSearchBar'
   > &
@@ -152,7 +152,7 @@ export default function SearchQueryWrapperPlotNav(
           defaultShowPlots={props.defaultShowPlots}
           hideCopyToClipboard={props.hideCopyToClipboard}
           hideSearchBarControl={props.hideSearchBarControl ?? false}
-          hideKeywordSearchPill={props.hideKeywordSearchPill}
+          hideTextMatchesQueryFilterPill={props.hideTextMatchesQueryFilterPill}
           defaultShowSearchBar={props.defaultShowSearchBar ?? true}
           showLastUpdatedOn={props.showLastUpdatedOn}
           noContentPlaceholderType={
