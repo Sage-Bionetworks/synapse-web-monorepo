@@ -10,7 +10,7 @@ import useCsvUploadPreview, {
 } from '@/components/table/CsvPreview/useCsvUploadPreview'
 import Button from '@mui/material/Button'
 import { useCallback, useRef } from 'react'
-import useUploadCsvToTable from './useUploadCsvToTable'
+import useUploadCsvToExistingTable from './useUploadCsvToExistingTable'
 
 export type UpdateTableWithCsvDialogProps = {
   /** Whether the dialog is open */
@@ -38,8 +38,8 @@ export default function UpdateTableWithCsvDialog(
     onFileUploaded,
   } = useCsvUploadPreview()
 
-  const { mutate: uploadCsvToTable, isPending: isUploading } =
-    useUploadCsvToTable({
+  const { mutate: uploadCsvToExistingTable, isPending: isUploading } =
+    useUploadCsvToExistingTable({
       onSuccess() {
         onSuccess?.()
       },
@@ -52,12 +52,17 @@ export default function UpdateTableWithCsvDialog(
 
   const handleFinish = useCallback(() => {
     // table already exists; upload csv rows directly to table
-    uploadCsvToTable({
+    uploadCsvToExistingTable({
+      tableId,
       csvTableDescriptor,
       fileHandleId: uploadedFileHandleId!,
-      tableId,
     })
-  }, [tableId, csvTableDescriptor, uploadedFileHandleId, uploadCsvToTable])
+  }, [
+    tableId,
+    csvTableDescriptor,
+    uploadedFileHandleId,
+    uploadCsvToExistingTable,
+  ])
 
   const uploadStepContent = (
     <BasicFileHandleUpload

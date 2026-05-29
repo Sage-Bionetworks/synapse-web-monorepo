@@ -15,31 +15,24 @@ import { useCreateEntity } from '@/synapse-queries'
 import { useCreateColumnModels } from '@/synapse-queries/table/useColumnModel'
 import { useTableUpdateTransaction } from '@/synapse-queries/table/useTableUpdateTransaction'
 
-type CreateTableProps = {
+type CreateTableFromCsvProps = {
   parentId: string
   tableName: string
   columnModels: SetOptional<SynapseTypesColumnModel, 'id'>[]
-}
-
-type UploadCsvToTableProps = {
-  tableId?: string
   csvTableDescriptor: CsvTableDescriptor
   fileHandleId: string
-  createTableProps?: CreateTableProps
 }
 
 /**
- * Mutation hook that applies a CSV to a Synapse Table.
- * - If `tableId` is provided, uploads the CSV rows to the existing table.
- * - Otherwise, creates ColumnModels, creates a new TableEntity under `parentId`,
- *   then uploads the CSV rows.
+ * Mutation hook that creates a new Synapse Table from a CSV.
+ * Creates ColumnModels, creates the TableEntity, then uploads the CSV rows.
  */
-export default function useUploadCsvToTable(
+export default function useCreateTableFromCsv(
   options?: Omit<
     UseMutationOptions<
       TableUpdateTransactionResponse,
       SynapseClientError,
-      UploadCsvToTableProps
+      CreateTableFromCsvProps
     >,
     'mutationFn'
   >,
@@ -51,44 +44,36 @@ export default function useUploadCsvToTable(
   return useMutation<
     TableUpdateTransactionResponse,
     SynapseClientError,
-    UploadCsvToTableProps
+    CreateTableFromCsvProps
   >({
     ...options,
     mutationFn: async ({
+      parentId,
+      tableName,
+      columnModels,
       csvTableDescriptor,
       fileHandleId,
-      tableId,
-      createTableProps,
     }) => {
-      let resolvedTableId: string
+      const createdColumnModelResults = await createColumnModels(columnModels)
 
-      if (tableId) {
-        resolvedTableId = tableId
-      } else {
-        const { parentId, tableName, columnModels } = createTableProps!
-        const createdColumnModelResults = await createColumnModels(columnModels)
-
-        const entityToCreate: Entity = {
-          name: tableName,
-          parentId: parentId,
-          concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
-        }
-        ;(entityToCreate as Table)['columnIds'] = createdColumnModelResults.map(
-          cm => cm.id,
-        )
-
-        const newEntity = await createEntity(entityToCreate)
-
-        resolvedTableId = newEntity.id!
+      const entityToCreate: Entity = {
+        name: tableName,
+        parentId: parentId,
+        concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
       }
+      ;(entityToCreate as Table)['columnIds'] = createdColumnModelResults.map(
+        cm => cm.id,
+      )
+
+      const newEntity = await createEntity(entityToCreate)
 
       const tableUpdateRequest: TableUpdateTransactionRequest = {
         concreteType:
           'org.sagebionetworks.repo.model.table.TableUpdateTransactionRequest',
-        entityId: resolvedTableId,
+        entityId: newEntity.id!,
         changes: [
           {
-            tableId: resolvedTableId,
+            tableId: newEntity.id!,
             uploadFileHandleId: fileHandleId,
             csvTableDescriptor,
             concreteType:

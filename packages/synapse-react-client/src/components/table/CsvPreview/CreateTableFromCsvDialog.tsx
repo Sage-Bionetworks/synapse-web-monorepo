@@ -24,7 +24,7 @@ import { isUndefined, omitBy } from 'lodash-es'
 import { useCallback, useRef, useState } from 'react'
 import { SetOptional } from 'type-fest'
 import { ColumnModel as SynapseTypesColumnModel } from '@sage-bionetworks/synapse-types'
-import useUploadCsvToTable from './useUploadCsvToTable'
+import useCreateTableFromCsv from './useCreateTableFromCsv'
 
 export type CreateTableFromCsvDialogProps = {
   /** Whether the dialog is open */
@@ -61,8 +61,8 @@ export default function CreateTableFromCsvDialog(
   >([])
   const columnSchemaFormRef = useRef<SubmitHandle>(null)
 
-  const { mutate: uploadCsvToTable, isPending: isUploading } =
-    useUploadCsvToTable({
+  const { mutate: createTableFromCsv, isPending: isUploading } =
+    useCreateTableFromCsv({
       onSuccess() {
         onSuccess?.()
       },
@@ -75,14 +75,12 @@ export default function CreateTableFromCsvDialog(
 
   const handleFinish = useCallback(
     (columnModelsParam: SetOptional<SynapseTypesColumnModel, 'id'>[] = []) => {
-      uploadCsvToTable({
+      createTableFromCsv({
+        parentId,
+        tableName,
+        columnModels: columnModelsParam,
         csvTableDescriptor,
         fileHandleId: uploadedFileHandleId!,
-        createTableProps: {
-          parentId,
-          tableName,
-          columnModels: columnModelsParam,
-        },
       })
     },
     [
@@ -90,7 +88,7 @@ export default function CreateTableFromCsvDialog(
       tableName,
       csvTableDescriptor,
       uploadedFileHandleId,
-      uploadCsvToTable,
+      createTableFromCsv,
     ],
   )
 

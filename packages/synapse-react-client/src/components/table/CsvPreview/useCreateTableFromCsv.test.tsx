@@ -15,7 +15,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { act, renderHook } from '@testing-library/react'
 import { SetOptional } from 'type-fest'
-import useUploadCsvToTable from './useUploadCsvToTable'
+import useCreateTableFromCsv from './useCreateTableFromCsv'
 
 vi.mock('@/synapse-queries/table/useColumnModel', () => ({
   useCreateColumnModels: vi.fn(),
@@ -29,7 +29,7 @@ vi.mock('@/synapse-queries/table/useTableUpdateTransaction', () => ({
   useTableUpdateTransaction: vi.fn(),
 }))
 
-describe('useUploadCsvToTable', () => {
+describe('useCreateTableFromCsv', () => {
   const csvTableDescriptor: CsvTableDescriptor = {
     separator: ',',
     quoteCharacter: '"',
@@ -72,43 +72,7 @@ describe('useUploadCsvToTable', () => {
     vi.resetAllMocks()
   })
 
-  it('append flow: only calls tableTransaction when tableId is provided', async () => {
-    const tableId = 'syn123'
-    mockTableUpdateTransaction.mockResolvedValue(
-      {} as TableUpdateTransactionResponse,
-    )
-
-    const { result } = renderHook(() => useUploadCsvToTable(), {
-      wrapper: createWrapper(),
-    })
-
-    await act(async () => {
-      await result.current.mutateAsync({
-        tableId,
-        csvTableDescriptor,
-        fileHandleId,
-      })
-    })
-
-    expect(mockCreateColumnModels).not.toHaveBeenCalled()
-    expect(mockCreateEntity).not.toHaveBeenCalled()
-    expect(mockTableUpdateTransaction).toHaveBeenCalledWith({
-      concreteType:
-        'org.sagebionetworks.repo.model.table.TableUpdateTransactionRequest',
-      entityId: tableId,
-      changes: [
-        {
-          tableId,
-          uploadFileHandleId: fileHandleId,
-          csvTableDescriptor,
-          concreteType:
-            'org.sagebionetworks.repo.model.table.UploadToTableRequest',
-        },
-      ],
-    })
-  })
-
-  it('create flow: creates column models, entity, then runs the table transaction', async () => {
+  it('creates column models, entity, then runs the table transaction', async () => {
     const parentId = 'syn456'
     const tableName = 'My Table'
     const columnModels = [{ name: 'colA' }] as SetOptional<
@@ -126,15 +90,17 @@ describe('useUploadCsvToTable', () => {
       {} as TableUpdateTransactionResponse,
     )
 
-    const { result } = renderHook(() => useUploadCsvToTable(), {
+    const { result } = renderHook(() => useCreateTableFromCsv(), {
       wrapper: createWrapper(),
     })
 
     await act(async () => {
       await result.current.mutateAsync({
+        parentId,
+        tableName,
+        columnModels,
         csvTableDescriptor,
         fileHandleId,
-        createTableProps: { parentId, tableName, columnModels },
       })
     })
 
@@ -166,20 +132,18 @@ describe('useUploadCsvToTable', () => {
       new SynapseClientError(400, 'boom', expect.getState().currentTestName!),
     )
 
-    const { result } = renderHook(() => useUploadCsvToTable(), {
+    const { result } = renderHook(() => useCreateTableFromCsv(), {
       wrapper: createWrapper(),
     })
 
     await act(async () => {
       await expect(
         result.current.mutateAsync({
+          parentId: 'syn456',
+          tableName: 'My Table',
+          columnModels: [],
           csvTableDescriptor,
           fileHandleId,
-          createTableProps: {
-            parentId: 'syn456',
-            tableName: 'My Table',
-            columnModels: [],
-          },
         }),
       ).rejects.toThrow('boom')
     })
