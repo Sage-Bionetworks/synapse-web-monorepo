@@ -46,6 +46,10 @@
     margin: auto;
   }
 
+  &--locked {
+    padding: 5px 10px 5px 10px;
+  }
+
   &__btnRemove {
     color: var(--synapse-gray-900);
     border-radius: 100%;

@@ -23,7 +23,7 @@ describe('SelectionCriteriaPills', () => {
         onRemoveFilter: expect.any(Function),
       })
 
-      actual.onRemoveFilter()
+      actual.onRemoveFilter!()
       expect(mockQueryContext.removeQueryFilter).toHaveBeenCalledWith(
         queryFilter,
       )
@@ -46,7 +46,7 @@ describe('SelectionCriteriaPills', () => {
         tooltipText: 'Text matches: "foo"',
         onRemoveFilter: expect.any(Function),
       })
-      actual.onRemoveFilter()
+      actual.onRemoveFilter!()
       expect(mockQueryContext.removeQueryFilter).toHaveBeenCalledWith(
         queryFilter,
       )
@@ -69,10 +69,31 @@ describe('SelectionCriteriaPills', () => {
         tooltipText: 'Text matches: "foo bar"',
         onRemoveFilter: expect.any(Function),
       })
-      actual.onRemoveFilter()
+      actual.onRemoveFilter!()
       expect(mockQueryContext.removeQueryFilter).toHaveBeenCalledWith(
         queryFilter,
       )
+    })
+
+    test('isLocked=true omits onRemoveFilter and sets isLocked', () => {
+      const queryFilter: TextMatchesQueryFilter = {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.TextMatchesQueryFilter',
+        searchExpression: 'foo',
+      }
+      const mockQueryContext = { removeQueryFilter: vi.fn() }
+      const actual = getPillPropsFromTextMatchesQueryFilter(
+        queryFilter,
+        mockQueryContext as unknown as QueryContextType,
+        true,
+      )
+      expect(actual).toEqual({
+        key: `queryFilter-org.sagebionetworks.repo.model.table.TextMatchesQueryFilter-foo`,
+        innerText: 'foo',
+        tooltipText: 'Text matches: "foo"',
+        isLocked: true,
+      })
+      expect(actual.onRemoveFilter).toBeUndefined()
     })
   })
 })
