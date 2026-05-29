@@ -8,6 +8,9 @@ import {
 } from '@/components/file/upload/BasicFileHandleUpload'
 import { displayToast } from '@/components/ToastMessage/ToastMessage'
 import CsvPreviewWithOptions from '@/components/table/CsvPreview/CsvPreviewWithOptions'
+import useCsvUploadPreview, {
+  CsvUploadPreviewStep,
+} from '@/components/table/CsvPreview/useCsvUploadPreview'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import Accordion from '@mui/material/Accordion'
 import AccordionDetails from '@mui/material/AccordionDetails'
@@ -16,22 +19,12 @@ import Button from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import {
-  CsvTableDescriptor,
-  EntityType,
-  UploadToTablePreviewResult,
-} from '@sage-bionetworks/synapse-client'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import { isUndefined, omitBy } from 'lodash-es'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { SetOptional } from 'type-fest'
 import { ColumnModel as SynapseTypesColumnModel } from '@sage-bionetworks/synapse-types'
 import useUploadCsvToTable from './useUploadCsvToTable'
-
-enum CreateTableFromCsvDialogStep {
-  UPLOAD_CSV = 0,
-  COLUMN_PREVIEW = 1,
-  TABLE_NAME = 2,
-}
 
 export type CreateTableFromCsvDialogProps = {
   /** Whether the dialog is open */
@@ -48,22 +41,19 @@ export default function CreateTableFromCsvDialog(
   props: CreateTableFromCsvDialogProps,
 ) {
   const { open, onClose, parentId, onSuccess } = props
-  const [step, setStep] = useState(CreateTableFromCsvDialogStep.UPLOAD_CSV)
-  const [csvTableDescriptor, setCsvTableDescriptor] =
-    useState<CsvTableDescriptor>({
-      separator: ',',
-      quoteCharacter: '"',
-      escapeCharacter: '\\',
-      lineEnd: '\n',
-      isFirstLineHeader: true,
-    })
-  const [csvPreviewData, setCsvPreviewData] =
-    useState<UploadToTablePreviewResult | null>(null)
-  const [isLoadingPreview, setIsLoadingPreview] = useState(false)
 
-  const [uploadedFileHandleId, setUploadedFileHandleId] = useState<
-    string | null
-  >(null)
+  const {
+    step,
+    setStep,
+    csvTableDescriptor,
+    setCsvTableDescriptor,
+    uploadedFileHandleId,
+    csvPreviewData,
+    setCsvPreviewData,
+    isLoadingPreview,
+    setIsLoadingPreview,
+    onFileUploaded,
+  } = useCsvUploadPreview()
 
   const [tableName, setTableName] = useState('')
   const [columnModels, setColumnModels] = useState<
@@ -80,29 +70,6 @@ export default function CreateTableFromCsvDialog(
         displayToast(error.message, 'danger')
       },
     })
-
-  // Reset local state when dialog is closed
-  useEffect(() => {
-    if (!open) {
-      setStep(CreateTableFromCsvDialogStep.UPLOAD_CSV)
-      setUploadedFileHandleId(null)
-      setCsvPreviewData(null)
-      setTableName('')
-      setColumnModels([])
-      setCsvTableDescriptor({
-        separator: ',',
-        quoteCharacter: '"',
-        escapeCharacter: '\\',
-        lineEnd: '\n',
-        isFirstLineHeader: true,
-      })
-    }
-  }, [open])
-
-  const onFileUploaded = useCallback((fileHandleId: string) => {
-    setUploadedFileHandleId(fileHandleId)
-    setStep(CreateTableFromCsvDialogStep.COLUMN_PREVIEW)
-  }, [])
 
   const uploadRef = useRef<FileUploadHandle | null>(null)
 
@@ -147,8 +114,8 @@ export default function CreateTableFromCsvDialog(
         'id'
       >[],
     )
-    setStep(CreateTableFromCsvDialogStep.TABLE_NAME)
-  }, [csvPreviewData])
+    setStep(CsvUploadPreviewStep.TABLE_NAME)
+  }, [csvPreviewData, setStep])
 
   const uploadStepContent = (
     <BasicFileHandleUpload
@@ -208,12 +175,9 @@ export default function CreateTableFromCsvDialog(
       open={open}
       content={
         <>
-          {step === CreateTableFromCsvDialogStep.UPLOAD_CSV &&
-            uploadStepContent}
-          {step === CreateTableFromCsvDialogStep.COLUMN_PREVIEW &&
-            previewStepContent}
-          {step === CreateTableFromCsvDialogStep.TABLE_NAME &&
-            tableNameStepContent}
+          {step === CsvUploadPreviewStep.UPLOAD_CSV && uploadStepContent}
+          {step === CsvUploadPreviewStep.COLUMN_PREVIEW && previewStepContent}
+          {step === CsvUploadPreviewStep.TABLE_NAME && tableNameStepContent}
         </>
       }
       actions={
@@ -227,7 +191,7 @@ export default function CreateTableFromCsvDialog(
           >
             Cancel
           </Button>
-          {step === CreateTableFromCsvDialogStep.COLUMN_PREVIEW && (
+          {step === CsvUploadPreviewStep.COLUMN_PREVIEW && (
             <Button
               disabled={isLoadingPreview}
               variant={'contained'}
@@ -236,13 +200,11 @@ export default function CreateTableFromCsvDialog(
               Next
             </Button>
           )}
-          {step === CreateTableFromCsvDialogStep.TABLE_NAME && (
+          {step === CsvUploadPreviewStep.TABLE_NAME && (
             <>
               <Button
                 variant={'outlined'}
-                onClick={() =>
-                  setStep(CreateTableFromCsvDialogStep.COLUMN_PREVIEW)
-                }
+                onClick={() => setStep(CsvUploadPreviewStep.COLUMN_PREVIEW)}
               >
                 Back
               </Button>

@@ -5,18 +5,15 @@ import {
 } from '@/components/file/upload/BasicFileHandleUpload'
 import { ErrorBanner } from '@/components/index'
 import CsvPreviewWithOptions from '@/components/table/CsvPreview/CsvPreviewWithOptions'
+import useCsvUploadPreview, {
+  CsvUploadPreviewStep,
+} from '@/components/table/CsvPreview/useCsvUploadPreview'
 import Button from '@mui/material/Button'
 import {
   ColumnModel,
   CsvTableDescriptor,
-  UploadToTablePreviewResult,
 } from '@sage-bionetworks/synapse-client'
-import { useCallback, useEffect, useRef, useState } from 'react'
-
-enum CsvPreviewDialogStep {
-  UPLOAD_CSV = 0,
-  COLUMN_PREVIEW = 1,
-}
+import { useCallback, useRef } from 'react'
 
 export type CsvPreviewDialogProps = {
   /** Whether the dialog is open */
@@ -40,43 +37,18 @@ export type CsvPreviewDialogProps = {
 
 export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
   const { open, onClose, onConfirm, confirmIsPending, errorMessage } = props
-  const [step, setStep] = useState(CsvPreviewDialogStep.UPLOAD_CSV)
-  const [csvTableDescriptor, setCsvTableDescriptor] =
-    useState<CsvTableDescriptor>({
-      separator: ',',
-      quoteCharacter: '"',
-      escapeCharacter: '\\',
-      lineEnd: '\n',
-      isFirstLineHeader: true,
-    })
-  const [csvPreviewData, setCsvPreviewData] =
-    useState<UploadToTablePreviewResult | null>(null)
-  const [isLoadingPreview, setIsLoadingPreview] = useState(false)
 
-  const [uploadedFileHandleId, setUploadedFileHandleId] = useState<
-    string | null
-  >(null)
-
-  // Reset local state when dialog is closed
-  useEffect(() => {
-    if (!open) {
-      setStep(CsvPreviewDialogStep.UPLOAD_CSV)
-      setUploadedFileHandleId(null)
-      setCsvPreviewData(null)
-      setCsvTableDescriptor({
-        separator: ',',
-        quoteCharacter: '"',
-        escapeCharacter: '\\',
-        lineEnd: '\n',
-        isFirstLineHeader: true,
-      })
-    }
-  }, [open])
-
-  const onFileUploaded = useCallback((fileHandleId: string) => {
-    setUploadedFileHandleId(fileHandleId)
-    setStep(CsvPreviewDialogStep.COLUMN_PREVIEW)
-  }, [])
+  const {
+    step,
+    csvTableDescriptor,
+    setCsvTableDescriptor,
+    uploadedFileHandleId,
+    csvPreviewData,
+    setCsvPreviewData,
+    isLoadingPreview,
+    setIsLoadingPreview,
+    onFileUploaded,
+  } = useCsvUploadPreview()
 
   const uploadRef = useRef<FileUploadHandle | null>(null)
 
@@ -120,8 +92,8 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
       open={open}
       content={
         <>
-          {step === CsvPreviewDialogStep.UPLOAD_CSV && uploadStepContent}
-          {step === CsvPreviewDialogStep.COLUMN_PREVIEW && previewStepContent}
+          {step === CsvUploadPreviewStep.UPLOAD_CSV && uploadStepContent}
+          {step === CsvUploadPreviewStep.COLUMN_PREVIEW && previewStepContent}
           {errorMessage && <ErrorBanner error={errorMessage} />}
         </>
       }
@@ -136,7 +108,7 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
           >
             Cancel
           </Button>
-          {step === CsvPreviewDialogStep.COLUMN_PREVIEW && (
+          {step === CsvUploadPreviewStep.COLUMN_PREVIEW && (
             <Button
               disabled={isLoadingPreview}
               variant={'contained'}
