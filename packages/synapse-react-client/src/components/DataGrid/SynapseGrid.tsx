@@ -9,7 +9,7 @@ import { SkeletonTable } from '@/components/index'
 import { useGetEntity } from '@/synapse-queries/index'
 import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import { SmartToyTwoTone } from '@mui/icons-material'
-import { Box, Stack, Tooltip, Typography } from '@mui/material'
+import { Box, Stack, Tooltip, Typography, Alert } from '@mui/material'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import Grid from '@mui/material/Grid'
 import {
@@ -114,6 +114,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       connect,
       presignedUrl,
       hasSufficientData,
+      websocketError,
     } = useDataGridWebSocket({
       onGridReady: handleReplicaConnectionChange,
       onReplicaConnected: handleReplicaConnectionChange,
@@ -420,6 +421,16 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
 
           {session && (
             <>
+              {/* WebSocket Error */}
+              {websocketError && (
+                <Grid size={12}>
+                  <Alert severity="error">
+                    {typeof websocketError === 'string'
+                      ? websocketError
+                      : 'An error occurred while communicating with the server.'}
+                  </Alert>
+                </Grid>
+              )}
               {/* Grid Loading State */}
               {!hasSufficientData && (
                 <Grid size={12}>
