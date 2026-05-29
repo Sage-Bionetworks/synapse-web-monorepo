@@ -45,6 +45,9 @@ async function setUp(props: EntityViewScopeEditorModalProps) {
   const foldersCheckbox = screen.queryByRole('checkbox', { name: 'Folders' })
   const tablesCheckbox = screen.queryByRole('checkbox', { name: 'Tables' })
   const datasetsCheckbox = screen.queryByRole('checkbox', { name: 'Datasets' })
+  const dockerRepositoriesCheckbox = screen.queryByRole('checkbox', {
+    name: 'Docker Repositories',
+  })
 
   return {
     user,
@@ -57,6 +60,7 @@ async function setUp(props: EntityViewScopeEditorModalProps) {
     foldersCheckbox,
     tablesCheckbox,
     datasetsCheckbox,
+    dockerRepositoriesCheckbox,
   }
 }
 
@@ -85,6 +89,7 @@ describe('EntityViewScopeEditorModal tests', () => {
       foldersCheckbox,
       tablesCheckbox,
       datasetsCheckbox,
+      dockerRepositoriesCheckbox,
     } = await setUp({
       entityId: mockTableEntity.id,
       open: true,
@@ -97,18 +102,20 @@ describe('EntityViewScopeEditorModal tests', () => {
     expect(cancelButton).toBeVisible()
 
     const checkboxes = screen.getAllByRole('checkbox')
-    expect(checkboxes).toHaveLength(4)
+    expect(checkboxes).toHaveLength(5)
 
     expect(filesCheckbox).toBeInTheDocument()
     expect(foldersCheckbox).toBeInTheDocument()
     expect(tablesCheckbox).toBeInTheDocument()
     expect(datasetsCheckbox).toBeInTheDocument()
+    expect(dockerRepositoriesCheckbox).toBeInTheDocument()
 
     await waitFor(() => {
       expect(filesCheckbox).toBeChecked()
       expect(foldersCheckbox).toBeChecked()
       expect(tablesCheckbox).not.toBeChecked()
       expect(datasetsCheckbox).not.toBeChecked()
+      expect(dockerRepositoriesCheckbox).not.toBeChecked()
     })
   })
 

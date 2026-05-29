@@ -14,9 +14,12 @@ export type AridhiaConfig = {
 }
 
 export type PortalContextType = {
+  /** Portal key — e.g. "nf" → nf.synapse.org. */
+  portalKey: string
+  /** Portal display name (read from `import.meta.env.VITE_PORTAL_NAME` in the portal). */
   portalName: string
-  portalDescription?: string
-  portalKey?: string
+  /** Portal description, used as `<meta name="description">` etc. */
+  portalDescription: string
   routeConfig: RouteObject[]
   headerConfig: HomePageHeaderConfig
   footerConfig: FooterConfig
@@ -25,6 +28,7 @@ export type PortalContextType = {
   navbarConfig: NavbarConfig
   fileEntityPageConfig?: FileEntityPageConfig
   aridhiaConfig?: AridhiaConfig
+  /** Optional chat config — only set on portals that enable Synapse Chat. */
   synapseChatProps?: SynapseChatProps
 }
 

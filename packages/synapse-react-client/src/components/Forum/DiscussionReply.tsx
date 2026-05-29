@@ -21,6 +21,7 @@ import { REPLY_ID_PARAM_KEY } from './DiscussionConstants'
 export type DiscussionReplyProps = {
   reply: DiscussionReplyBundle
   isReplyAuthorModerator?: boolean
+  isForumModerator?: boolean
   onClickLink?: () => void
 }
 
@@ -33,7 +34,7 @@ const handleCopyLink = (id: string) => {
 }
 
 export function DiscussionReply(props: DiscussionReplyProps) {
-  const { reply, isReplyAuthorModerator = false } = props
+  const { reply, isReplyAuthorModerator = false, isForumModerator } = props
   const [showReplyModal, setShowReplyModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const { data: currentUserProfile } = useGetCurrentUserProfile()
@@ -118,7 +119,8 @@ export function DiscussionReply(props: DiscussionReplyProps) {
                         <IconSvg icon="edit" label={'Edit reply'} />
                       </button>
                     )}
-                    {entityBundle?.permissions.canModerate && (
+                    {(entityBundle?.permissions.canModerate ||
+                      isForumModerator) && (
                       <button onClick={() => setShowDeleteModal(true)}>
                         <IconSvg icon="delete" label={'Delete reply'} />
                       </button>

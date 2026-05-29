@@ -25,12 +25,13 @@ describe('EntityViewMaskEditor tests', () => {
     renderComponent({ value, onChange })
 
     const checkboxes = screen.getAllByRole('checkbox')
-    expect(checkboxes).toHaveLength(4)
+    expect(checkboxes).toHaveLength(5)
 
     expect(screen.getByLabelText('Files')).toBeChecked()
     expect(screen.getByLabelText('Folders')).toBeChecked()
     expect(screen.getByLabelText('Tables')).not.toBeChecked()
     expect(screen.getByLabelText('Datasets')).not.toBeChecked()
+    expect(screen.getByLabelText('Docker Repositories')).not.toBeChecked()
   })
   it('onChange works', async () => {
     const value = ENTITY_VIEW_TYPE_MASK_FILE | ENTITY_VIEW_TYPE_MASK_FOLDER
@@ -52,7 +53,8 @@ describe('EntityViewMaskEditor tests', () => {
   })
 
   it('Disables input if an unsupported mask value is passed', () => {
-    const value = ENTITY_VIEW_TYPE_MASK_FILE | ENTITY_VIEW_TYPE_MASK_DOCKER
+    // 0x02 is not a recognized mask bit
+    const value = ENTITY_VIEW_TYPE_MASK_FILE | 0x02
     const onChange = vi.fn()
     renderComponent({ value, onChange })
 
@@ -64,6 +66,7 @@ describe('EntityViewMaskEditor tests', () => {
     expect(screen.getByLabelText('Folders')).not.toBeChecked()
     expect(screen.getByLabelText('Tables')).not.toBeChecked()
     expect(screen.getByLabelText('Datasets')).not.toBeChecked()
+    expect(screen.getByLabelText('Docker Repositories')).not.toBeChecked()
 
     const alert = screen.getByRole('alert')
     within(alert).getByText(
@@ -79,11 +82,14 @@ describe('EntityViewMaskEditor tests', () => {
       ),
     ).toBe(true)
 
-    expect(isMaskSupportedInUI(ENTITY_VIEW_TYPE_MASK_DOCKER)).toBe(false)
     expect(
       isMaskSupportedInUI(
         ENTITY_VIEW_TYPE_MASK_FILE | ENTITY_VIEW_TYPE_MASK_DOCKER,
       ),
-    ).toBe(false)
+    ).toBe(true)
+
+    // 0x02 is not a recognized mask bit
+    expect(isMaskSupportedInUI(0x02)).toBe(false)
+    expect(isMaskSupportedInUI(ENTITY_VIEW_TYPE_MASK_FILE | 0x02)).toBe(false)
   })
 })

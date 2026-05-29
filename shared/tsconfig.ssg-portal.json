@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "rootDirs": ["${configDir}", "${configDir}/.react-router/types"],
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "noImplicitAny": false,
+    "types": ["vite/client", "node"]
+  },
+  "include": [
+    "${configDir}/src/**/*.tsx",
+    "${configDir}/src/**/*.ts",
+    "${configDir}/.react-router/types/**/*"
+  ],
+  "files": ["${configDir}/src/types.d.ts"]
+}

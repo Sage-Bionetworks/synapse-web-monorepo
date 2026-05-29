@@ -66,6 +66,8 @@ import {
   START_CHAT_ASYNC,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
+  SEARCH_QUERY_ASYNC_GET,
+  SEARCH_QUERY_ASYNC_START,
   TEAM,
   TEAM_ID_MEMBER_ID,
   TEAM_ID_MEMBER_ID_WITH_NOTIFICATION,
@@ -112,7 +114,10 @@ import {
   DoiAssociation,
   EntityType,
   ViewEntityType,
+  SearchIndexQuery,
+  SearchQueryResults,
 } from '@sage-bionetworks/synapse-client'
+import { SearchIndexQueryToJSON } from '@sage-bionetworks/synapse-client/generated/models/SearchIndexQuery'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import {
   ACCESS_TYPE,
@@ -580,6 +585,32 @@ export const getQueryTableAsyncJobResults = async (
   return getAsyncResultFromJobId<QueryBundleRequest, QueryResultBundle>(
     asyncJobId.token,
     TABLE_QUERY_ASYNC_GET(queryBundleRequest.entityId, asyncJobId.token),
+    accessToken,
+    setCurrentAsyncStatus,
+  )
+}
+
+/**
+ * @param searchQueryRequest
+ * @param accessToken
+ * @param setCurrentAsyncStatus
+ */
+export const getSearchQueryAsyncJobResults = async (
+  searchIndexQuery: SearchIndexQuery,
+  accessToken?: string,
+  setCurrentAsyncStatus?: (
+    result: AsynchronousJobStatus<SearchIndexQuery, SearchQueryResults>,
+  ) => void,
+): Promise<AsynchronousJobStatus<SearchIndexQuery, SearchQueryResults>> => {
+  const asyncJobId = await doPost<AsyncJobId>(
+    SEARCH_QUERY_ASYNC_START,
+    SearchIndexQueryToJSON(searchIndexQuery),
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
+  )
+  return getAsyncResultFromJobId<SearchIndexQuery, SearchQueryResults>(
+    asyncJobId.token,
+    SEARCH_QUERY_ASYNC_GET(asyncJobId.token),
     accessToken,
     setCurrentAsyncStatus,
   )

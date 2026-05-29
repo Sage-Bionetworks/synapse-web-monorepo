@@ -527,21 +527,32 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     <CardTypeAdornment schema={schema} data={data} />
   ) : null
 
+  let isRenderingIcon = true
+  if (isHeader && !imageFileHandleIdValue && !iconValue) {
+    // For header cards, if there is no image or explicit icon value, we don't show an icon at all
+    isRenderingIcon = false
+  }
   return (
     <GenericCard
       ref={ref}
       icon={
-        <GenericCardIcon
-          type={
-            useTypeColumnForIcon ? data[schema['type']] : genericCardSchema.type
-          }
-          useTypeForIcon={useTypeColumnForIcon}
-          thumbnailRequiresPadding={genericCardSchema.thumbnailRequiresPadding}
-          imageFileHandleId={imageFileHandleIdValue}
-          fileHandleAssociation={fileHandleAssociation}
-          iconOptions={iconOptions}
-          iconValue={iconValue}
-        />
+        isRenderingIcon ? (
+          <GenericCardIcon
+            type={
+              useTypeColumnForIcon
+                ? data[schema['type']]
+                : genericCardSchema.type
+            }
+            useTypeForIcon={useTypeColumnForIcon}
+            thumbnailRequiresPadding={
+              genericCardSchema.thumbnailRequiresPadding
+            }
+            imageFileHandleId={imageFileHandleIdValue}
+            fileHandleAssociation={fileHandleAssociation}
+            iconOptions={iconOptions}
+            iconValue={iconValue}
+          />
+        ) : undefined
       }
       isHeader={isHeader}
       sustainabilityScorecard={sustainabilityScorecard}

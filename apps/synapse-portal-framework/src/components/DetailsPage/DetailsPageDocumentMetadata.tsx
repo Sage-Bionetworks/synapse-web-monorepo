@@ -14,7 +14,7 @@ type DetailsPageDocumentMetadataProps = {
 
 function getCanonicalUrl(
   pathname: string,
-  portalKey: string | undefined,
+  portalKey: string,
   resourcePrimaryKey: string[],
   rowSet: RowSet,
   rowData: Row,

@@ -6,6 +6,8 @@ import {
 import { SchemaPropertiesMap } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import { s } from 'json-joy/lib/json-crdt-patch'
 import isEqual from 'lodash-es/isEqual'
+import { coerceModelCellValue } from './schemaAwarePasteValue'
+import { getEmptyValue } from './getEmptyValue'
 
 /**
  * Represents a change operation on the GridModel.
@@ -25,19 +27,12 @@ export function getDefaultValueForProperty(
   property: string,
   schemaPropertyInfo: SchemaPropertiesMap,
 ) {
-  let value
+  const info = schemaPropertyInfo[property]
   if (Object.hasOwn(row, property)) {
-    value = row[property]
-  } else {
-    // Inspect the schema. If the property is required, it should be `null`
-    // Otherwise, the property is optional. It should be undefined to be valid against the JSON Schema
-    if (schemaPropertyInfo[property]?.isRequired) {
-      value = null
-    } else {
-      value = undefined
-    }
+    return coerceModelCellValue(row[property], info)
   }
-  return value
+  // Property absent from the row: derive the schema-correct blank directly.
+  return getEmptyValue(info?.isRequired)
 }
 
 /**
@@ -79,9 +74,17 @@ export function applyModelChange(
         if (key.startsWith('_')) return // Skip internal properties like _rowId
         const colIndex = columnNames.indexOf(key)
         if (colIndex !== -1) {
+          // Coerce empty values (null/undefined/"") to the schema-correct blank
+          // so any path that reaches the model — paste, programmatic edits,
+          // etc. — produces a value the validator can describe with its
+          // standard "<value> is not a valid …" message format.
+          const coercedValue = coerceModelCellValue(
+            value,
+            schemaPropertyInfo[key],
+          )
           // Only write cells whose value actually changed to avoid stamping
           // the local replica's SID on unmodified cells.
-          if (isEqual(currentRowData?.[colIndex], value)) return
+          if (isEqual(currentRowData?.[colIndex], coercedValue)) return
           // Get the CRDT array of cell values for this row
           const rowVec = model.api.vec([
             'rows',
@@ -89,7 +92,7 @@ export function applyModelChange(
             'data',
           ])
           // Update the specific column with the new value
-          rowVec?.set([[colIndex, s.con(value)]])
+          rowVec?.set([[colIndex, s.con(coercedValue)]])
         }
       })
       break

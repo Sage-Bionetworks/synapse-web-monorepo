@@ -19,14 +19,12 @@ export enum FeatureFlagEnum {
   // If enabled, load the Crisp chat widget
   CRISP_CHAT = 'CRISP_CHAT',
 
-  // If enabled, show the Download Ineligible for Packaging Files button on the download cart page
-  DOWNLOAD_CART_INELIGIBLE_FILE_DOWNLOADS = 'DOWNLOAD_CART_INELIGIBLE_FILE_DOWNLOADS',
-
   // If enabled, show the SynapseChat dialog in portals
   PORTAL_CHAT = 'PORTAL_CHAT',
 
-  // If enabled, prevent users from opening Curator for a CurationTask which is unassigned
-  CURATOR_DISABLE_OPEN_FOR_UNASSIGNED_TASKS = 'CURATOR_DISABLE_OPEN_FOR_UNASSIGNED_TASKS',
+  // If enabled, opening Curator for a CurationTask uses or creates a GridSession linked to the task,
+  // with authorizationMode SOURCE_BENEFACTOR.
+  CURATOR_LINK_TASK_TO_GRID_SESSION = 'CURATOR_LINK_TASK_TO_GRID_SESSION',
 
   // If enabled, show the new version of the ADKP homepage
   ADKP_HOMEPAGE_V2 = 'ADKP_HOMEPAGE_V2',

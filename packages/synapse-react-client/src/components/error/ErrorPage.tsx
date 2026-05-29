@@ -11,11 +11,6 @@ import { DoiObjectType } from '@sage-bionetworks/synapse-client/generated/models
 export type ErrorPageProps = {
   type: SynapseErrorType
   message?: string // custom message to report
-  /** @deprecated use `id` and objectType: DoiObjectType.ENTITY */
-  entityId?: string
-  /** @deprecated use `version` and objectType: DoiObjectType.ENTITY */
-  entityVersion?: number
-
   /** The ID of the object that was attempted to be retrieved, which may be used to show a 'tombstone' */
   id?: string
   /** The version of the object that was attempted to be retrieved, which may be used to show a 'tombstone' */
@@ -101,17 +96,7 @@ type ErrorPageAction = {
 }
 
 function ErrorPage(props: ErrorPageProps) {
-  const {
-    type,
-    entityId = '',
-    entityVersion,
-    message,
-    gotoPlace,
-    id,
-    version,
-    objectType,
-    portalId,
-  } = props
+  const { type, message, gotoPlace, id, version, objectType, portalId } = props
   const [isSendMessageToAdminDialogOpen, setSendMessageToAdminDialogOpen] =
     useState<boolean>(false)
   const { isAuthenticated } = useSynapseContext()
@@ -147,7 +132,7 @@ function ErrorPage(props: ErrorPageProps) {
           onClick: () => gotoPlace('/LoginPlace:0'),
           description: ACCESS_DENIED_ANONYMOUS_ACTION_DESCRIPTION,
         })
-      } else if (entityId) {
+      } else if (id) {
         acts.push({
           linkText: CONTACT_US_LINK_TEXT,
           onClick: () =>
@@ -166,7 +151,7 @@ function ErrorPage(props: ErrorPageProps) {
       }
     }
     return acts
-  }, [type, isAuthenticated, entityId, gotoPlace])
+  }, [type, isAuthenticated, id, gotoPlace])
 
   const handleCloseDialog = useCallback(
     () => setSendMessageToAdminDialogOpen(false),
@@ -230,13 +215,6 @@ function ErrorPage(props: ErrorPageProps) {
               </Box>
             )
           })}
-          {entityId && (
-            <SynapseObjectDOIInfo
-              id={entityId}
-              version={entityVersion}
-              type={DoiObjectType.ENTITY}
-            />
-          )}
           {id && objectType && (
             <SynapseObjectDOIInfo
               id={id}
@@ -247,11 +225,11 @@ function ErrorPage(props: ErrorPageProps) {
           )}
         </Box>
       </Box>
-      {entityId && (
+      {id && objectType === DoiObjectType.ENTITY && (
         <SendMessageToEntityOwnerDialog
           isOpen={isSendMessageToAdminDialogOpen}
           onHide={handleCloseDialog}
-          entityId={entityId}
+          entityId={id}
         />
       )}
     </>

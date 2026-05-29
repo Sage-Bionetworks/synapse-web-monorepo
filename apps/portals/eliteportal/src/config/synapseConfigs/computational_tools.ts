@@ -52,7 +52,7 @@ const computationalToolsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   sql: computationalSql,
   cardConfiguration: computationalCardConfiguration,
   shouldDeepLink: true,
-  name: 'Computational Tools',
+  name: 'Tools',
   facetsToPlot: ['project'],
   searchConfiguration: defaultSearchConfiguration,
 }

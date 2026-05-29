@@ -3,6 +3,7 @@ import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { render, waitFor } from '@testing-library/react'
+import 'plotly.js-basic-dist'
 import MarkdownSynapse from '../MarkdownSynapse'
 
 const tableQueryResult: QueryResultBundle = {
@@ -45,7 +46,7 @@ describe('SynapsePlot', () => {
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
-  it.skip('renders', async () => {
+  it('renders', async () => {
     const { container } = render(
       <MarkdownSynapse
         markdown={
@@ -57,8 +58,9 @@ describe('SynapsePlot', () => {
       },
     )
 
-    await waitFor(() =>
-      expect(container.querySelector('.plotly')).not.toBeNull(),
+    await waitFor(
+      () => expect(container.querySelector('.plotly')).not.toBeNull(),
+      { timeout: 10_000 },
     )
   })
 })

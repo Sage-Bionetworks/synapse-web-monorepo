@@ -52,6 +52,9 @@
   &.SRC-portalCardHeader {
     color: white;
     margin-top: 0px;
+    h3 {
+      font-size: 24px !important;
+    }
     margin-bottom: 0px;
     background: var(--synapse-primary-action-color);
     @media (min-width: map.get(SRC.$breakpoints, 'medium')) {
@@ -102,6 +105,15 @@
     }
     .SRC-cardMetadata {
       background-color: inherit;
+    }
+    .SRC-imageThumbnail,
+    .SRC-cardThumbnail {
+      width: 100%;
+      max-width: 110px;
+      img {
+        width: 100%;
+        max-width: 110px;
+      }
     }
     @media (min-width: map.get(SRC.$breakpoints, 'medium')) {
       &.isAlignToLeftNav {
@@ -285,6 +297,9 @@
     padding-bottom: var(--baseline-grid);
     > * {
       margin-left: 15px;
+    }
+    > table {
+      margin-left: 0;
     }
 
     &.hasIcon {

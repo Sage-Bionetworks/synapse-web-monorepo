@@ -24,8 +24,6 @@ export const navbarConfig: NavbarConfig = {
       name: 'Explore',
       path: '/Explore',
       children: [
-        { name: 'Data', path: '/Explore/Data' },
-        { name: 'Cohort Builder', path: '/Explore/Cohort Builder/Individuals' },
         {
           name: 'Programs',
           path: '/Explore/Programs',
@@ -38,8 +36,14 @@ export const navbarConfig: NavbarConfig = {
           name: 'Studies',
           path: '/Explore/Studies',
         },
+        { name: 'Datasets', path: '/Explore/Datasets' },
+        { name: 'Files', path: '/Explore/Data' },
+        {
+          name: 'Cohort Discovery',
+          path: '/Explore/Cohort Builder/Individuals',
+        },
         { name: 'Publications', path: '/Explore/Publications' },
-        { name: 'Computational Tools', path: '/Explore/Computational Tools' },
+        { name: 'Tools', path: '/Explore/Computational Tools' },
         { name: 'People', path: '/Explore/People' },
       ],
     },
@@ -76,11 +80,6 @@ export const navbarConfig: NavbarConfig = {
     {
       name: 'News',
       path: 'https://news.eliteportal.org/',
-    },
-    {
-      name: 'Admin',
-      path: 'https://www.synapse.org/Synapse:syn27229419',
-      requiredTeamId: '3459311',
     },
   ],
   isPortalsDropdownEnabled: true,

@@ -3,6 +3,8 @@ import { Box, Stack, Typography } from '@mui/material'
 import HeaderSearchBox from '@/components/HeaderSearchBox'
 import { TypeAnimation } from 'react-type-animation'
 import styles from './AdknowledgeHeader.module.scss'
+import { WordPressLatestPostChip } from 'synapse-react-client/components/WordPress/WordPressLatestPostChip'
+
 const AdknowledgeHeader = (): React.ReactNode => {
   const searchPlaceholder = 'Search for...'
 
@@ -41,9 +43,11 @@ const AdknowledgeHeader = (): React.ReactNode => {
       </Typography>
     </Box>
   )
+
   return (
-    <header>
+    <header className={styles.adknowledgeHeader}>
       <Stack className={styles.adknowledgeHeaderStack}>
+        <WordPressLatestPostChip wordpressSiteUrl="https://news.adknowledgeportal.org" />
         <Box className={styles.adknowledgeHeaderContentBox}>{content}</Box>
         <HeaderSearchBox
           searchExampleTerms={searchExampleTerms}

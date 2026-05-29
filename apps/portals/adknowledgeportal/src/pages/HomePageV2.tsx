@@ -47,17 +47,19 @@ function HomePageInternal() {
       <AdknowledgeHeader />
       <SectionLayout
         ContainerProps={{
-          className: 'home-spacer',
+          sx: { marginBottom: '80px' },
         }}
       >
         <AdknowledgeCard {...contributeCard} />
       </SectionLayout>
       <SectionLayout
         ContainerProps={{
-          className: 'home-spacer',
+          sx: { marginBottom: '90px' },
         }}
       >
         <MailchimpSubscribeSection
+          headlineSx={{ color: 'var(--adkp-accent-color)' }}
+          background="linear-gradient(94deg, rgba(112, 110, 212, 0.04) 30.53%, rgba(198, 134, 230, 0.04) 76.86%)"
           headline="Stay informed about the latest AD/ADRD research"
           description="Subscribe to receive the AD Knowledge Portal monthly newsletter by e-mail, which provides information and updates related to the Portal. You can opt out at any time by using the unsubscribe link within the e-mail. We will not share your information with any third parties or use it for any other purposes."
           mailchimpUrl="https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&id=96b614587a"
@@ -75,7 +77,7 @@ function HomePageInternal() {
       </SectionLayout>
       <SectionLayout
         ContainerProps={{
-          className: 'home-spacer',
+          sx: { marginBottom: '240px' },
         }}
         title="Data Analysis Platform Integrations"
         subtitle="Analyze your data in a trusted research environment, integrated with the knowledge portal ecosystem."
@@ -101,15 +103,27 @@ function HomePageInternal() {
         title={'News Releases'}
         centerTitle={true}
         ContainerProps={{
+          sx: { marginBottom: '90px' },
+        }}
+        subtitle="Explore our newest datasets, tools, and resources for Alzheimer's disease research. Click on a release to dive into the data and start your exploration."
+      >
+        <div className={styles.newsSection}>
+          <FloatingBlobsBackground color1="#dcc9e4" color2="#cdc8dd" />
+          <WordPressNews
+            wordpressSiteUrl="https://news.adknowledgeportal.org"
+            showCategoryChips={false}
+            variant="adkp"
+          />
+        </div>
+      </SectionLayout>
+      <SectionLayout
+        title="Results Explorers"
+        subtitle="These explorers provide interactive tools and visualizations to navigate complex datasets, identify key trends, and gain deeper insights into the data on our portal."
+        centerTitle
+        ContainerProps={{
           className: 'home-spacer',
         }}
       >
-        <div style={{ position: 'relative', minHeight: '500px' }}>
-          <FloatingBlobsBackground color1="#dcc9e4" color2="#cdc8dd" />
-          <WordPressNews wordpressSiteUrl="https://news.adknowledgeportal.org" />
-        </div>
-      </SectionLayout>
-      <SectionLayout title="Results Explorers" centerTitle>
         <div className={styles.resultsExplorersContainer}>
           <AdknowledgeCard {...agoraCard} />
           <AdknowledgeCard {...modelADCard} />

@@ -118,6 +118,7 @@ const genericCardSchema: TableToGenericCardMapping = {
 }
 const genericCardSchemaHeader: TableToGenericCardMapping = {
   ...commonProps,
+  secondaryLabels: [labelOneColumnName],
 }
 const schema = {
   title: 0,

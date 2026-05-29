@@ -17,7 +17,13 @@
 .dataAnalysisIntegrationsLogoContainer {
   display: flex;
   justify-content: center;
-  margin-top: 50px;
+  margin-top: 80px;
   flex-wrap: wrap;
   gap: 75px;
+}
+
+.newsSection {
+  position: relative;
+  min-height: 500px;
+  isolation: isolate;
 }

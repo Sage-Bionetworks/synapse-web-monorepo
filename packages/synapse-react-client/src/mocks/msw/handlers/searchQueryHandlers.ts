@@ -1,0 +1,143 @@
+import {
+  SEARCH_QUERY_ASYNC_GET,
+  SEARCH_QUERY_ASYNC_START,
+} from '@/utils/APIConstants'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
+import {
+  SearchIndexQuery,
+  SearchQueryResults,
+  SearchSearchQuery,
+} from '@sage-bionetworks/synapse-client'
+import { cloneDeep } from 'lodash-es'
+import { HttpHandler } from 'msw'
+import { generateAsyncJobHandlers } from './asyncJobHandlers'
+import { mockSearchQueryResultBundle } from '@/mocks/mockSearchQueryData'
+import BasicMockedCrudService from '../util/BasicMockedCrudService'
+
+/**
+ * A key derived from a SearchIndexQuery, excluding pagination fields.
+ * Used to match registered bindings against incoming requests.
+ */
+type SearchIndexQueryKey = Omit<SearchIndexQuery, 'searchQuery'> & {
+  searchQuery?: Omit<SearchSearchQuery, 'limit' | 'offset'>
+}
+
+type SearchQueryBinding = {
+  id: string
+  queryKey: SearchIndexQueryKey
+  result: QueryResultBundle
+}
+
+const mockSearchQueryService = new BasicMockedCrudService<
+  SearchQueryBinding,
+  'id'
+>({
+  idField: 'id',
+  autoGenerateId: true,
+})
+
+function applyLimitOffset(
+  bundle: QueryResultBundle,
+  limit = 25,
+  offset = 0,
+): QueryResultBundle {
+  const result = cloneDeep(bundle)
+  if (result.queryResult?.queryResults.rows) {
+    result.queryResult.queryResults.rows =
+      result.queryResult.queryResults.rows.slice(offset, offset + limit)
+  }
+  return result
+}
+
+function processSearchRequest(
+  request: SearchIndexQuery,
+  baseBundle: QueryResultBundle,
+): QueryResultBundle {
+  return applyLimitOffset(
+    baseBundle,
+    request.searchQuery?.limit,
+    request.searchQuery?.offset,
+  )
+}
+
+/**
+ * Register a specific query binding for the mock search service.
+ * If a binding for the same query key (ignoring limit/offset) already exists, it is updated.
+ */
+export function registerSearchQueryResult(
+  queryKey: SearchIndexQueryKey,
+  result: QueryResultBundle,
+) {
+  const existing = mockSearchQueryService.getOneByField('queryKey', queryKey)
+  if (existing) {
+    mockSearchQueryService.update(existing.id, { ...existing, result })
+  } else {
+    mockSearchQueryService.create({ queryKey, result })
+  }
+}
+
+function getSearchQueryResult(request: SearchIndexQuery): QueryResultBundle {
+  const requestCopy = cloneDeep(request)
+  if (requestCopy.searchQuery) {
+    delete requestCopy.searchQuery.limit
+    delete requestCopy.searchQuery.offset
+  }
+  const queryKey = requestCopy as SearchIndexQueryKey
+
+  const binding = mockSearchQueryService.getOneByField('queryKey', queryKey)
+  const baseBundle = binding?.result ?? mockSearchQueryResultBundle
+
+  return processSearchRequest(request, baseBundle)
+}
+
+/**
+ * Adapts the QueryResultBundle mock result into the SearchQueryResults shape
+ * that the real SearchQueryServicesApi returns.
+ */
+function toSearchQueryResults(bundle: QueryResultBundle): SearchQueryResults {
+  const headers = bundle.queryResult?.queryResults.headers ?? []
+
+  const hits = (bundle.queryResult?.queryResults.rows ?? []).map(row => ({
+    rowId: row.rowId,
+    rowVersion: row.versionNumber,
+    fields: headers.map((header, i) => ({
+      name: header.name,
+      value: row.values[i] ?? undefined,
+    })),
+  }))
+
+  const selectColumns = headers.map(header => ({
+    name: header.name,
+    columnType: header.columnType,
+    id: header.id,
+  }))
+
+  return {
+    concreteType:
+      'org.sagebionetworks.repo.model.search.SearchQueryResults' as const,
+    totalHits: bundle.queryCount,
+    hits,
+    selectColumns,
+    facets: bundle.facets as SearchQueryResults['facets'],
+    offset: bundle.queryResult?.queryResults.rows?.length ? 0 : undefined,
+  }
+}
+
+/**
+ * Returns MSW handlers for the SearchQueryServicesApi endpoints.
+ * Uses the default mock data from mockSearchQueryData.ts unless overridden via registerSearchQueryResult().
+ */
+export function getHandlersForSearchQuery(
+  backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+): HttpHandler[] {
+  return generateAsyncJobHandlers<SearchIndexQuery, SearchQueryResults>(
+    SEARCH_QUERY_ASYNC_START,
+    tokenParam => SEARCH_QUERY_ASYNC_GET(tokenParam),
+    request => toSearchQueryResults(getSearchQueryResult(request)),
+    backendOrigin,
+  )
+}

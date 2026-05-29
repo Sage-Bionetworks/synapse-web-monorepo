@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="337" viewBox="0 0 1024 337">
+  <!-- Background -->
+  <rect width="1024" height="337" fill="#1a2a5e"/>
+
+  <!-- Deep background grid lines -->
+  <g stroke="#ffffff" stroke-opacity="0.04" stroke-width="1">
+    <line x1="0" y1="56" x2="1024" y2="56"/>
+    <line x1="0" y1="112" x2="1024" y2="112"/>
+    <line x1="0" y1="168" x2="1024" y2="168"/>
+    <line x1="0" y1="224" x2="1024" y2="224"/>
+    <line x1="0" y1="280" x2="1024" y2="280"/>
+    <line x1="128" y1="0" x2="128" y2="337"/>
+    <line x1="256" y1="0" x2="256" y2="337"/>
+    <line x1="384" y1="0" x2="384" y2="337"/>
+    <line x1="512" y1="0" x2="512" y2="337"/>
+    <line x1="640" y1="0" x2="640" y2="337"/>
+    <line x1="768" y1="0" x2="768" y2="337"/>
+    <line x1="896" y1="0" x2="896" y2="337"/>
+  </g>
+
+  <!-- Abstract network graph – nodes and edges -->
+  <!-- Edges (drawn first, behind nodes) -->
+  <g stroke="#76E9F0" stroke-opacity="0.18" stroke-width="1.5" fill="none">
+    <!-- hub → satellites -->
+    <line x1="780" y1="168" x2="680" y2="90"/>
+    <line x1="780" y1="168" x2="870" y2="80"/>
+    <line x1="780" y1="168" x2="920" y2="200"/>
+    <line x1="780" y1="168" x2="860" y2="265"/>
+    <line x1="780" y1="168" x2="680" y2="260"/>
+    <line x1="780" y1="168" x2="650" y2="180"/>
+    <!-- secondary connections -->
+    <line x1="680" y1="90" x2="870" y2="80"/>
+    <line x1="870" y1="80" x2="920" y2="200"/>
+    <line x1="920" y1="200" x2="860" y2="265"/>
+    <line x1="860" y1="265" x2="680" y2="260"/>
+    <line x1="680" y1="260" x2="650" y2="180"/>
+    <line x1="650" y1="180" x2="680" y2="90"/>
+    <!-- outer ring spurs -->
+    <line x1="870" y1="80" x2="940" y2="45"/>
+    <line x1="920" y1="200" x2="990" y2="195"/>
+    <line x1="860" y1="265" x2="900" y2="315"/>
+    <line x1="680" y1="260" x2="620" y2="305"/>
+    <line x1="650" y1="180" x2="580" y2="210"/>
+    <line x1="680" y1="90" x2="700" y2="40"/>
+    <!-- distant cluster -->
+    <line x1="580" y1="210" x2="520" y2="250"/>
+    <line x1="520" y1="250" x2="480" y2="195"/>
+    <line x1="480" y1="195" x2="540" y2="155"/>
+    <line x1="540" y1="155" x2="580" y2="210"/>
+  </g>
+
+  <!-- Glow rings on hub -->
+  <circle cx="780" cy="168" r="38" fill="none" stroke="#526bb6" stroke-opacity="0.25" stroke-width="28"/>
+  <circle cx="780" cy="168" r="22" fill="none" stroke="#526bb6" stroke-opacity="0.35" stroke-width="14"/>
+
+  <!-- Hub node -->
+  <circle cx="780" cy="168" r="12" fill="#76E9F0" fill-opacity="0.95"/>
+
+  <!-- Primary satellite nodes -->
+  <circle cx="680" cy="90"  r="7"  fill="#a8bfff"/>
+  <circle cx="870" cy="80"  r="7"  fill="#a8bfff"/>
+  <circle cx="920" cy="200" r="7"  fill="#a8bfff"/>
+  <circle cx="860" cy="265" r="7"  fill="#a8bfff"/>
+  <circle cx="680" cy="260" r="7"  fill="#a8bfff"/>
+  <circle cx="650" cy="180" r="7"  fill="#a8bfff"/>
+
+  <!-- Outer spur nodes -->
+  <circle cx="940" cy="45"  r="4.5" fill="#526bb6"/>
+  <circle cx="990" cy="195" r="4.5" fill="#526bb6"/>
+  <circle cx="900" cy="315" r="4.5" fill="#526bb6"/>
+  <circle cx="620" cy="305" r="4.5" fill="#526bb6"/>
+  <circle cx="580" cy="210" r="4.5" fill="#526bb6"/>
+  <circle cx="700" cy="40"  r="4.5" fill="#526bb6"/>
+
+  <!-- Distant cluster nodes -->
+  <circle cx="520" cy="250" r="5.5" fill="#7b93d1"/>
+  <circle cx="480" cy="195" r="5.5" fill="#7b93d1"/>
+  <circle cx="540" cy="155" r="5.5" fill="#7b93d1"/>
+
+  <!-- Decorative bar chart (bottom right corner) -->
+  <g fill="#ffffff" fill-opacity="0.07">
+    <rect x="958" y="220" width="14" height="100"/>
+    <rect x="978" y="245" width="14" height="75"/>
+    <rect x="998" y="200" width="14" height="120"/>
+  </g>
+
+  <!-- Decorative waveform (bottom strip) -->
+  <polyline
+    points="0,310 40,295 80,315 120,290 160,308 200,285 240,312 280,292 320,305 360,280 400,300 440,278 480,298 520,272 560,295 600,268 640,290 680,265 720,285 760,260 800,282 840,258 880,278 920,252 960,275 1000,248 1024,265"
+    fill="none"
+    stroke="#76E9F0"
+    stroke-opacity="0.22"
+    stroke-width="2"
+  />
+
+  <!-- Subtle left-side gradient overlay for text readability -->
+  <defs>
+    <linearGradient id="leftFade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#1a2a5e" stop-opacity="1"/>
+      <stop offset="45%"  stop-color="#1a2a5e" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#1a2a5e" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="337" fill="url(#leftFade)"/>
+</svg>

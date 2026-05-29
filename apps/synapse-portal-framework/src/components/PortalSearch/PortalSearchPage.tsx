@@ -1,17 +1,18 @@
 import { Box } from '@mui/material'
 import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
 import { PortalSearchTabConfig, PortalSearchTabs } from './PortalSearchTabs'
 import PortalFullTextSearchField from './PortalFullTextSearchField'
 import SearchParamAwareQueryWrapperPlotNav from './SearchParamAwareQueryWrapperPlotNav'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
-import type { StandaloneQueryWrapperProps } from 'synapse-react-client/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
+import type { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
+import { isSearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 export type PortalSearchPageProps = {
   selectedTabIndex?: number
-  configs: QueryWrapperPlotNavProps[]
+  configs: (QueryWrapperPlotNavProps | SearchQueryWrapperPlotNavProps)[]
   searchPageTabs: PortalSearchTabConfig[]
   roleMapping?: Record<string, string>
 }
@@ -74,12 +75,33 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
     },
     [searchPageTabsState, navigate, location.search],
   )
-  const searchParamAwareQueryWrapperProps: StandaloneQueryWrapperProps[] =
-    useMemo(() => {
-      return configs.map((config, index) => {
-        return {
-          ...config,
-          onQueryResultBundleChange: newQueryResultBundleJSON => {
+  // on search field value update, update the special search parameter SEARCH_TERM, which the QueryWrapperPlotNav will load as the search term
+  return (
+    <Box
+      sx={{
+        px: { xs: '10px', lg: '50px' },
+        pb: { xs: '10px', lg: '50px' },
+        pt: { xs: '10px', lg: '20px' },
+      }}
+    >
+      <PortalFullTextSearchField
+        disabled={selectedTabIndex == undefined}
+        path={location.pathname}
+      />
+      <Box
+        sx={{
+          pt: { xs: '10px', lg: '20px' },
+        }}
+      />
+      {configs.length !== 1 && selectedTabIndex != undefined && (
+        <PortalSearchTabs tabConfig={searchPageTabsState} />
+      )}
+
+      {configs.map((config, index) => {
+        const key = `searchResultTab-${selectedTabIndex}-${index}`
+        const sharedProps = {
+          isVisible: selectedTabIndex == index,
+          onQueryResultBundleChange: (newQueryResultBundleJSON: string) => {
             onQueryResultBundleChange(
               index,
               newQueryResultBundleJSON,
@@ -87,28 +109,23 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
             )
           },
         }
-      })
-    }, [configs, selectedTabIndex])
-
-  // on search field value update, update the special search parameter SEARCH_TERM, which the QueryWrapperPlotNav will load as the search term
-  return (
-    <Box sx={{ p: { xs: '10px', lg: '50px' } }}>
-      <PortalFullTextSearchField
-        disabled={selectedTabIndex == undefined}
-        path={location.pathname}
-      />
-      {selectedTabIndex != undefined && (
-        <PortalSearchTabs tabConfig={searchPageTabsState} />
-      )}
-      {searchParamAwareQueryWrapperProps.map(
-        (searchParamAwareQueryWrapperProps, index) => (
+        if (isSearchQueryWrapperPlotNavProps(config)) {
+          return (
+            <SearchParamAwareQueryWrapperPlotNav
+              key={key}
+              {...sharedProps}
+              searchQueryWrapperPlotNavProps={config}
+            />
+          )
+        }
+        return (
           <SearchParamAwareQueryWrapperPlotNav
-            key={`searchResultTab-${selectedTabIndex}-${index}`}
-            isVisible={selectedTabIndex == index}
-            standaloneQueryWrapperProps={searchParamAwareQueryWrapperProps}
+            key={key}
+            {...sharedProps}
+            standaloneQueryWrapperProps={config}
           />
-        ),
-      )}
+        )
+      })}
       {selectedTabIndex == undefined && (
         <Box
           sx={{

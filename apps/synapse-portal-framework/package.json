@@ -23,6 +23,7 @@
     "@mui/icons-material": "^7.1.1",
     "@mui/material": "^7.1.1",
     "@react-hookz/web": "^25.1.1",
+    "@react-router/dev": "^7.14.0",
     "@sage-bionetworks/synapse-client": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
     "@tanstack/react-query": "5.80.10",
@@ -40,7 +41,8 @@
     "react-switch": "^7.1.0",
     "react-type-animation": "^3.2.0",
     "sass": "^1.98.0",
-    "synapse-react-client": "workspace:*"
+    "synapse-react-client": "workspace:*",
+    "vite-config": "workspace:*"
   },
   "peerDependencies": {
     "react": ">=19.2.0",
@@ -90,7 +92,6 @@
     "url": "^0.11.4",
     "util": "^0.12.5",
     "vite": "^8.0.8",
-    "vite-config": "workspace:*",
     "vite-plugin-static-copy": "^4.0.1",
     "vitest": "^4.1.4",
     "whatwg-fetch": "^3.6.20"

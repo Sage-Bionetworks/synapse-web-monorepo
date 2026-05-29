@@ -1,3 +1,4 @@
+import RedirectWithQuery from '@sage-bionetworks/synapse-portal-framework/components/RedirectWithQuery'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
 import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
 import { RouteObject } from 'react-router'
@@ -12,8 +13,14 @@ const routes: RouteObject[] = [
         index: true,
         lazy: () => import('@/pages/HomePage').then(convertModuleToRouteObject),
       },
+      // PORTALS-4227: Currently, Explore is unlinked.  The nav bar Explore points to the Search route
       {
         path: 'Explore',
+        element: <RedirectWithQuery to="/Search" />,
+        // lazy: () => import('@/pages/Explore').then(convertModuleToRouteObject),
+      },
+      {
+        path: 'LegacyExplore',
         lazy: () => import('@/pages/Explore').then(convertModuleToRouteObject),
       },
       {

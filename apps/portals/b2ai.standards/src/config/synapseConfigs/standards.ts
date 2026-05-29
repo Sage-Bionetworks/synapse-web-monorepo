@@ -7,7 +7,9 @@ import {
   // dataSetExploreSql,
   standardsSql,
   DST_TABLE_COLUMN_CONSTS,
+  standardsSearchIndexId,
 } from '@/config/resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 export const standardsRgbIndex = 0
 export const standardsColumnLinks: LabelLinkConfig = [
@@ -60,3 +62,22 @@ export const standardsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
     ftsConfig: standardsFtsConfig,
   },
 }
+
+export const standardsSearchQueryWrapperPlotNavProps: SearchQueryWrapperPlotNavProps =
+  {
+    searchIndexId: standardsSearchIndexId,
+    autocompleteFieldName: 'name',
+    rgbIndex: standardsRgbIndex,
+    shouldDeepLink: true,
+    name: 'Standards',
+    columnAliases,
+    tableConfiguration: {
+      showDownloadColumn: false,
+      columnLinks: standardsColumnLinks,
+    },
+    facetsToPlot: ['topic'],
+    initialPlotTypeByFacetColumnName: { topic: 'BAR' },
+    hideTopLevelControls: false,
+    hideQueryCount: false,
+    hideCopyToClipboard: true,
+  }

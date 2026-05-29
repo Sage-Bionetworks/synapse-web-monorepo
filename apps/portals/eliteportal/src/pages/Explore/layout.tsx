@@ -5,13 +5,6 @@ function ExploreLayout() {
     <ExploreWrapper
       explorePaths={[
         {
-          path: 'Data',
-        },
-        {
-          displayName: 'Cohort Builder',
-          path: 'Cohort Builder',
-        },
-        {
           path: 'Programs',
         },
         {
@@ -21,9 +14,21 @@ function ExploreLayout() {
           path: 'Studies',
         },
         {
+          path: 'Datasets',
+        },
+        {
+          displayName: 'Files',
+          path: 'Data',
+        },
+        {
+          displayName: 'Cohort Discovery',
+          path: 'Cohort Builder',
+        },
+        {
           path: 'Publications',
         },
         {
+          displayName: 'Tools',
           path: 'Computational Tools',
         },
         {

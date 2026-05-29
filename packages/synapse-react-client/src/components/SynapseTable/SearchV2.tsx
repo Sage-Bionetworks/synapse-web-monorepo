@@ -62,6 +62,24 @@ export type FTSConfig = {
   textMatchesMode: TextMatchesMode
   distance?: number // In BOOLEAN mode, this operator tests whether two or more words all start within a specified distance from each other, measured in words.
   searchHelpURL?: string
+  /**
+   * Optional function to provide autocomplete suggestions for the search bar.
+   * When provided, the search input will show a dropdown of suggestions as the user types.
+   * @param searchText - The current text in the search input
+   * @returns A promise resolving to an array of suggestion strings
+   */
+  getSuggestions?: (searchText: string) => Promise<string[]>
+  /**
+   * Override the minimum number of characters required before a search is executed.
+   * Defaults to 3 (see PLFM-7011).
+   */
+  minSearchQueryLength?: number
+  /**
+   * When true, submitting a new search term replaces any existing TextMatchesQueryFilter
+   * in additionalFilters rather than appending a new one.
+   * Defaults to false (existing behaviour: filters accumulate).
+   */
+  replaceExistingFilter?: boolean
 }
 
 type InternalSearchProps = SearchV2Props & {

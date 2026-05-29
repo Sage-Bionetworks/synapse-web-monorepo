@@ -7,6 +7,7 @@ import projectsQueryWrapperPlotNavProps from './projects'
 import publications from './publications'
 import studiesQueryWrapperPlotNavProps from './studies'
 import { dataQueryWrapperPlotNavProps } from './data'
+import { datasetQueryWrapperPlotNavProps } from './datasets'
 
 export {
   projectsQueryWrapperPlotNavProps,
@@ -16,6 +17,7 @@ export {
   individualsViewQueryWrapperPlotNavProps,
   filesViewQueryWrapperPlotNavProps,
   dataQueryWrapperPlotNavProps,
+  datasetQueryWrapperPlotNavProps,
 }
 
 export default {
@@ -26,4 +28,5 @@ export default {
   individualsView: individualsViewQueryWrapperPlotNavProps,
   filesView: filesViewQueryWrapperPlotNavProps,
   data: dataQueryWrapperPlotNavProps,
+  datasets: datasetQueryWrapperPlotNavProps,
 }

@@ -128,7 +128,7 @@ describe('FileHandleContentRenderer tests', () => {
     })
     const errorBoundary = await screen.findByRole('alert')
     await within(errorBoundary).findByText(
-      /File size \(100.00 MB\) exceeds the maximum size that can be downloaded \(30.00 MB\)/,
+      /File size \(100\.0 MB\) exceeds the maximum size that can be downloaded \(30\.0 MB\)/,
     )
   })
 

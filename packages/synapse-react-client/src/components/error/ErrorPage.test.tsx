@@ -16,6 +16,7 @@ import ErrorPage, {
   SYNAPSE_DOWN_TITLE,
   SynapseErrorType,
 } from './ErrorPage'
+import { DoiObjectType } from '@sage-bionetworks/synapse-client'
 
 const mockGotoPlace = vi.fn()
 
@@ -52,7 +53,8 @@ describe('ErrorPage: basic functionality', () => {
 
     const props: ErrorPageProps = {
       type: SynapseErrorType.ACCESS_DENIED,
-      entityId: 'syn123',
+      id: 'syn123',
+      objectType: DoiObjectType.ENTITY,
       gotoPlace: mockGotoPlace,
     }
     const { user } = await setUp(props, true)
@@ -91,7 +93,8 @@ describe('ErrorPage: basic functionality', () => {
   it('403 error on an entity - anonymous test', async () => {
     const props: ErrorPageProps = {
       type: SynapseErrorType.ACCESS_DENIED,
-      entityId: 'syn123',
+      id: 'syn123',
+      objectType: DoiObjectType.ENTITY,
       gotoPlace: mockGotoPlace,
     }
     const { user } = await setUp(props, false)

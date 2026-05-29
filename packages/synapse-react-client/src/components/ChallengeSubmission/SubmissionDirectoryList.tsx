@@ -10,7 +10,7 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
-import { InfoTwoTone } from '@mui/icons-material'
+import { NotesTwoTone } from '@mui/icons-material'
 import { Box, Button, Radio, Typography } from '@mui/material'
 import { DataGrid, GridCellParams, GridColDef } from '@mui/x-data-grid'
 import { EntityType } from '@sage-bionetworks/synapse-client'
@@ -366,19 +366,63 @@ function SubmissionDirectoryList({
           variant="h6"
           sx={{ fontSize: '18px', lineHeight: '20px', fontWeight: 700 }}
         >
-          Your Submission Directory
+          {entityType === EntityType.file
+            ? 'Submit File'
+            : 'Submit Docker Image'}
         </Typography>
         <Box sx={{ display: 'flex' }}>
           <Typography
             variant="body1"
             sx={{ fontSize: '14px', color: '#71767F' }}
           >
-            Project SynID:{'  '}
+            Your Project SynID:{'  '}
             <Link to={{ pathname: PROJECT_URL }} target="_blank">
               {challengeProjectId}
             </Link>
           </Typography>
           <CopyToClipboardIcon value={PROJECT_URL} sx={{ marginTop: '-4px' }} />
+        </Box>
+      </Box>
+      <Box
+        sx={{
+          my: 3,
+          display: 'flex',
+        }}
+      >
+        <NotesTwoTone
+          sx={{
+            width: '16px',
+            height: '16px',
+            verticalAlign: 'text-bottom',
+          }}
+        />
+        <Box
+          sx={{
+            ml: 1,
+          }}
+        >
+          {entityType === EntityType.file && (
+            <>
+              Choose a prediction file from your submission directory below and
+              click "Submit Selection" to pick an evaluation queue. If you need
+              to add a new file, click "Upload File" first.
+            </>
+          )}
+          {entityType === EntityType.dockerrepo && (
+            <>
+              Choose a Docker image from your submission directory below and
+              click "Submit Selection" to pick an image version and evaluation
+              queue. If you need to upload a new image to your project (
+              <code>{challengeProjectId}</code>), see our{' '}
+              <Link
+                to="https://github.com/Sage-Bionetworks-Challenges/sample-model-templates#build-your-model"
+                target="_blank"
+              >
+                Docker model submission guide
+              </Link>{' '}
+              for command-line instructions on how to build and upload.
+            </>
+          )}
         </Box>
       </Box>
       <Box>
@@ -449,38 +493,6 @@ function SubmissionDirectoryList({
           Submit Selection
         </Button>
       </Box>
-      {entityType === EntityType.dockerrepo && (
-        <Box
-          sx={{
-            mt: 4,
-            display: 'flex',
-          }}
-        >
-          <InfoTwoTone
-            sx={{
-              width: '16px',
-              height: '16px',
-              verticalAlign: 'text-bottom',
-            }}
-          />
-
-          <Box
-            sx={{
-              ml: 2,
-            }}
-          >
-            To learn more about how to create and submit the Docker containers
-            using command line, see our{' '}
-            <Link
-              to="https://github.com/Sage-Bionetworks-Challenges/sample-model-templates#build-your-model"
-              target="_blank"
-            >
-              Docker model submission guide
-            </Link>
-            .
-          </Box>
-        </Box>
-      )}
       <ConfirmationDialog
         open={confirmOpen}
         title="File exists"

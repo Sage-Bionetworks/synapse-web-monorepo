@@ -15,7 +15,7 @@ export type CurationTaskCardProps = {
 
 function useUiForTask(taskBundle: TaskBundle) {
   const { onClick, isLoading, isPending, hasPermission } =
-    useOpenCuratorFromTaskButton(taskBundle.task!)
+    useOpenCuratorFromTaskButton(taskBundle)
 
   if (!taskBundle.task || !taskBundle.status) {
     throw new Error('Task bundle is missing required properties')
@@ -27,6 +27,7 @@ function useUiForTask(taskBundle: TaskBundle) {
       return {
         title: taskBundle.task.dataType,
         description: taskBundle.task.instructions ?? '',
+        taskId: taskBundle.task.taskId,
         principalIds: taskBundle.task.assigneePrincipalId
           ? [taskBundle.task.assigneePrincipalId]
           : [],
@@ -49,6 +50,7 @@ function useUiForTask(taskBundle: TaskBundle) {
   return {
     title: taskBundle.task.dataType,
     description: taskBundle.task.instructions ?? '',
+    taskId: taskBundle.task.taskId!,
     principalIds: taskBundle.task.assigneePrincipalId
       ? [taskBundle.task.assigneePrincipalId]
       : [],
@@ -80,6 +82,7 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
   const {
     title,
     description,
+    taskId,
     taskType,
     principalIds,
     buttonText,
@@ -96,6 +99,7 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
           <div className={styles.titleChipContainer}>
             <Typography variant="headline3">{title}</Typography>
             {taskType && <TaskTypeChip label={taskType} />}
+            {taskId && <TaskTypeChip label={`TaskId ${taskId}`} />}
           </div>
           <Typography variant="body1">{description}</Typography>
           <div className={styles.userChipContainer}>

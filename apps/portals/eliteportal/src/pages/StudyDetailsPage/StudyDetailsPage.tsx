@@ -16,6 +16,7 @@ import {
 } from '../../config/synapseConfigs/studies'
 import {
   STUDY_DETAILS_PAGE_DATA_TAB_PATH,
+  STUDY_DETAILS_PAGE_DATASETS_TAB_PATH,
   STUDY_DETAILS_PAGE_DETAILS_TAB_PATH,
 } from '@/config/routeConstants'
 
@@ -27,11 +28,17 @@ export const studyDetailsPageTabConfig: DetailsPageTabConfig[] = [
     tooltip: 'Description, methods, acknowledgements and related studies',
   },
   {
-    title: 'Study Data',
+    title: 'Study Files',
     path: STUDY_DETAILS_PAGE_DATA_TAB_PATH,
     iconName: 'database',
     tooltip: 'All of the Data generated within this study',
     iconClassName: 'tab-database',
+  },
+  {
+    title: 'Study Datasets',
+    path: STUDY_DETAILS_PAGE_DATASETS_TAB_PATH,
+    iconName: 'dataset',
+    tooltip: 'Datasets associated with this study',
   },
 ] satisfies DetailsPageTabConfig[]
 

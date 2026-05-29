@@ -47,10 +47,13 @@ function useGetPaginatedRowSet() {
     // Keep the previous data when fetching a new page. We will use `UseQueryResult.isPlaceholderData` to trigger a showing placeholder UI
     placeholderData: prevData => {
       if (prevData) {
+        const prevQuery = prevData.requestBody?.query
         // Check that only the page/sort changed; if the filters/sql changed, then don't hold on to the old data
+        // prevQuery may be undefined when the requestBody is not a QueryBundleRequest (e.g. SearchQueryWrapper)
         if (
+          prevQuery &&
           queryRequestsHaveSameTotalResults(
-            prevData.requestBody.query,
+            prevQuery,
             getCurrentQueryRequest().query,
           )
         ) {

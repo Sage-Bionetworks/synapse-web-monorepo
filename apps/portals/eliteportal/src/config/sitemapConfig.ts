@@ -2,7 +2,7 @@ import {
   DetailPageConfig,
   SitemapConfig,
 } from '@sage-bionetworks/synapse-portal-framework/sitemap/types'
-import { programsSql, projectsSql, studiesSql } from './resources'
+import { programsSql, projectsSql, studiesSql, datasetsSql } from './resources'
 
 const detailPages: DetailPageConfig[] = [
   {
@@ -19,6 +19,11 @@ const detailPages: DetailPageConfig[] = [
     path: 'Explore/Studies/DetailsPage',
     sql: studiesSql,
     primaryKeyColumn: 'studyKey',
+  },
+  {
+    path: 'Explore/Datasets/DetailsPage',
+    sql: datasetsSql,
+    primaryKeyColumn: 'id',
   },
 ]
 

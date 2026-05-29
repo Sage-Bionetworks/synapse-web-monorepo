@@ -73,7 +73,12 @@ function HackathonDetailsPage() {
       disableCanonicalUrl
     >
       <DetailsPageTabs tabConfig={tabConfig} />
-      <Outlet />
+      <Outlet
+        context={{
+          defaultTabPath:
+            HACKATHONS_DETAILS_PAGE_BACKGROUND_AND_RESULTS_TAB_PATH,
+        }}
+      />
     </DetailsPage>
   )
 }

@@ -38,6 +38,8 @@ export type QueryVisualizationWrapperProps = {
   defaultShowPlots?: boolean
   hideCopyToClipboard?: boolean
   hideSearchBarControl?: boolean
+  /** When true, the text matches filter pill is shown but cannot be removed. Defaults to true. */
+  lockTextMatchesQueryFilterPill?: boolean
   defaultShowSearchBar?: boolean
   showLastUpdatedOn?: boolean
   /** Default is INTERACTIVE */
@@ -72,6 +74,7 @@ export function QueryVisualizationWrapper(
     defaultShowPlots = true,
     hideCopyToClipboard = false,
     hideSearchBarControl = false,
+    lockTextMatchesQueryFilterPill = true,
     unitDescription = 'result',
     helpConfiguration,
     hasCustomPlots = false,
@@ -217,6 +220,7 @@ export function QueryVisualizationWrapper(
       showFacetFilter: hasFacetedSelectColumn ? showFacetFilter : false,
       setShowFacetFilter,
       hideSearchBarControl,
+      lockTextMatchesQueryFilterPill,
       showSearchBar,
       setShowSearchBar,
       showDownloadConfirmation,
@@ -249,6 +253,8 @@ export function QueryVisualizationWrapper(
       visibleColumns,
       hasCustomPlots,
       enabledExternalAnalysisPlatforms,
+      hideSearchBarControl,
+      lockTextMatchesQueryFilterPill,
     ],
   )
   /**

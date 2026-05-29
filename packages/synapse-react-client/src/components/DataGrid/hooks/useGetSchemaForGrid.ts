@@ -24,6 +24,7 @@ const { mergeArrayOfSchemaDefinitions } = createMerger({
 const shallowAllOfMerge = createShallowAllOfMerge(mergeArrayOfSchemaDefinitions)
 
 const GRID_ENTITY_READONLY_PROPERTIES = [
+  'name',
   'id',
   'createdBy',
   'createdOn',

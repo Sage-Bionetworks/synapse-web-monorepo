@@ -98,6 +98,10 @@ const StandardsHeader = (props: StandardsHeaderProps): React.ReactNode => {
           searchExampleTerms={searchExampleTerms}
           searchPlaceholder={searchPlaceholder}
           path="/Search"
+          searchIndexConfig={{
+            searchIndexId: 'syn74909093',
+            autocompleteFieldName: 'name',
+          }}
           sx={{
             flex: 1,
             '& > :first-child': {

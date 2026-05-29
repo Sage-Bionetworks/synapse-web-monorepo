@@ -1,5 +1,7 @@
 import { ExternalAnalysisPlatform } from 'synapse-react-client/components/SynapseTable/export/ExternalAnalysisPlatformsConstants'
 
+export const SYNAPSE_PORTAL_ID = '1005'
+
 export const datasetsSql = 'SELECT * FROM syn50913342'
 export const publicationsSql = 'SELECT * FROM syn16857542'
 export const studiesSql = 'SELECT * FROM syn52694652'
@@ -33,3 +35,16 @@ export const enabledAnalysisPlatforms: ExternalAnalysisPlatform[] = [
   'pluto',
   'terra',
 ]
+export const datasetsSearchIndexId = 'syn75081630'
+export const publicationsSearchIndexId = 'syn75081631'
+export const studiesSearchIndexId = 'syn75081633'
+export const initiativesSearchIndexId = 'syn75081635'
+export const toolsSearchIndexId = 'syn75081636'
+export const peopleSearchIndexId = 'syn75081637'
+export const fundersSearchIndexId = 'syn75081638'
+export const hackathonsSearchIndexId = 'syn75081639'
+export const observationsSearchIndexId = 'syn75081640'
+export const developmentPublicationsSearchIndexId = 'syn75081641'
+export const toolStudySearchIndexId = 'syn75081642'
+export const mutationsSearchIndexId = 'syn75081643'
+export const publicationsV2SearchIndexId = 'syn75081644'

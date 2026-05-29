@@ -74,6 +74,10 @@ export const TABLE_QUERY_ASYNC_GET = (
 export const ASYNCHRONOUS_JOB_TOKEN = (asyncJobToken: string) =>
   `${REPO}/asynchronous/job/${asyncJobToken}`
 
+export const SEARCH_QUERY_ASYNC_START = `${REPO}/search/query/async/start`
+export const SEARCH_QUERY_ASYNC_GET = (asyncJobToken: string) =>
+  `${REPO}/search/query/async/get/${asyncJobToken}`
+
 export const USER_PROFILE_ENDPOINT = `${REPO}/userProfile`
 
 export const SCHEMA = `${REPO}/schema`
@@ -182,6 +186,8 @@ export const FORUM_THREAD = (id: string) => `${FORUM}/${id}/threads`
 
 export const THREAD = `${REPO}/thread`
 export const THREAD_ID = (id: string) => `${THREAD}/${id}`
+export const THREAD_FOR_SUBMISSION = (submissionId: string | number) =>
+  `${THREAD}/submission/${submissionId}`
 export const THREAD_REPLIES = (id: string) => `${THREAD_ID(id)}/replies`
 
 export const AGENT = `${REPO}/agent`

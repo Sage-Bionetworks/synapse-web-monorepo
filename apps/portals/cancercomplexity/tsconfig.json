@@ -1,37 +1,13 @@
 {
-  "extends": "../../../shared/tsconfig.base.json",
+  "extends": "../../../shared/tsconfig.ssg-portal.json",
   "compilerOptions": {
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "noImplicitAny": false,
-    "types": [
-      "vite/client"
-    ],
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     }
   },
-  "include": [
-    "src/**/*.tsx",
-    "src/**/*.ts"
-  ],
-  "files": [
-    "src/types.d.ts"
-  ],
   "references": [
-    {
-      "path": "../../synapse-portal-framework"
-    },
-    {
-      "path": "../../../packages/synapse-react-client"
-    },
-    {
-      "path": "../../../packages/vite-config"
-    }
+    { "path": "../../synapse-portal-framework" },
+    { "path": "../../../packages/synapse-react-client" },
+    { "path": "../../../packages/vite-config" }
   ]
 }
