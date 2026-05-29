@@ -307,9 +307,8 @@ describe('ChangePasswordWithToken tests', () => {
 
     // Type the backup code and submit it
     const recoveryCode = '1234-5678-abcd-edcb'
-    const recoveryCodeTextbox = await screen.findByPlaceholderText(
-      'Enter backup code',
-    )
+    const recoveryCodeTextbox =
+      await screen.findByPlaceholderText('Enter backup code')
     await user.type(recoveryCodeTextbox, recoveryCode)
     await user.click(screen.getByRole('button', { name: 'Submit' }))
 

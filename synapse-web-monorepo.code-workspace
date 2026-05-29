@@ -6,13 +6,13 @@
 
   "folders": [
     {
-      "path": "."
-    }
+      "path": ".",
+    },
   ],
   "settings": {
     // General settings
     "typescript.tsdk": "node_modules/typescript/lib",
     // Vitest extension settings
-    "vitest.maximumConfigs": 99
-  }
+    "vitest.maximumConfigs": 99,
+  },
 }
