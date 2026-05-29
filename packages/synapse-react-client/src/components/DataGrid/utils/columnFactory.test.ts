@@ -16,9 +16,10 @@ vi.mock('../components/ColumnHeaderWithTooltip', () => ({
 }))
 
 vi.mock('@sage-bionetworks/react-datasheet-grid', async importActual => {
-  const actual = await importActual<
-    typeof import('@sage-bionetworks/react-datasheet-grid')
-  >()
+  const actual =
+    await importActual<
+      typeof import('@sage-bionetworks/react-datasheet-grid')
+    >()
   return {
     ...actual,
     keyColumn: vi.fn().mockImplementation(actual.keyColumn),

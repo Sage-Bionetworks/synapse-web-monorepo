@@ -421,7 +421,7 @@ export function getUseMutationMock<
           ({
             ...prevState,
             variables: vars,
-          } as UseMutationResult<TData, TError, TVariables>),
+          }) as UseMutationResult<TData, TError, TVariables>,
       )
     } else {
       console.warn(
@@ -470,11 +470,11 @@ export function getUseMutationMock<
 
       currentSetValue(
         prev =>
-          ({ ...successState, variables: prev.variables } as UseMutationResult<
+          ({ ...successState, variables: prev.variables }) as UseMutationResult<
             TData,
             TError,
             TVariables
-          >),
+          >,
       )
     } else {
       console.warn(
@@ -506,11 +506,11 @@ export function getUseMutationMock<
 
       currentSetValue(
         prev =>
-          ({ ...errorState, variables: prev.variables } as UseMutationResult<
+          ({ ...errorState, variables: prev.variables }) as UseMutationResult<
             TData,
             TError,
             TVariables
-          >),
+          >,
       )
     } else {
       console.warn(
@@ -542,11 +542,11 @@ export function getUseMutationMock<
 
       currentSetValue(
         prev =>
-          ({ ...pendingState, variables: prev.variables } as UseMutationResult<
+          ({ ...pendingState, variables: prev.variables }) as UseMutationResult<
             TData,
             TError,
             TVariables
-          >),
+          >,
       )
     } else {
       console.warn(

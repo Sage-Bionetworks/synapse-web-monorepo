@@ -560,9 +560,8 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     await renderComponent()
     await screen.findByText('requires scientific annotations', { exact: false })
 
-    const showStringArrayField = await screen.findByLabelText<HTMLInputElement>(
-      'showStringArray',
-    )
+    const showStringArrayField =
+      await screen.findByLabelText<HTMLInputElement>('showStringArray')
     await waitFor(() => {
       expect(showStringArrayField.value).toBe('true')
     })
@@ -601,9 +600,8 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     await renderComponent()
     await screen.findByText('requires scientific annotations', { exact: false })
 
-    const showStringArrayField = await screen.findByLabelText<HTMLInputElement>(
-      'showStringArray',
-    )
+    const showStringArrayField =
+      await screen.findByLabelText<HTMLInputElement>('showStringArray')
     await waitFor(() => {
       expect(showStringArrayField.value).toBe('true')
     })
