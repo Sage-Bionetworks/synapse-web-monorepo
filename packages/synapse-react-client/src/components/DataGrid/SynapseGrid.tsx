@@ -9,7 +9,7 @@ import { SkeletonTable } from '@/components/index'
 import { useGetEntity } from '@/synapse-queries/index'
 import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import { SmartToyTwoTone } from '@mui/icons-material'
-import { Box, Stack, Tooltip, Typography, Alert } from '@mui/material'
+import { Alert, Box, Button, Stack, Tooltip, Typography } from '@mui/material'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import Grid from '@mui/material/Grid'
 import {
@@ -421,18 +421,37 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
 
           {session && (
             <>
-              {/* WebSocket Error */}
+              {/* WebSocket Error — replaces the grid entirely */}
               {websocketError && (
                 <Grid size={12}>
-                  <Alert severity="error">
+                  <Alert
+                    severity="error"
+                    action={
+                      <Button
+                        color="inherit"
+                        size="small"
+                        onClick={() => window.location.reload()}
+                      >
+                        Refresh
+                      </Button>
+                    }
+                  >
                     {typeof websocketError === 'string'
                       ? websocketError
-                      : 'An error occurred while communicating with the server.'}
+                      : websocketError instanceof Error
+                      ? websocketError.message
+                      : typeof websocketError === 'object' &&
+                        websocketError !== null &&
+                        'message' in websocketError &&
+                        typeof (websocketError as { message: unknown })
+                          .message === 'string'
+                      ? (websocketError as { message: string }).message
+                      : 'An error occurred while communicating with the server. Please refresh the page to continue.'}
                   </Alert>
                 </Grid>
               )}
               {/* Grid Loading State */}
-              {!hasSufficientData && (
+              {!websocketError && !hasSufficientData && (
                 <Grid size={12}>
                   <h3>Setting up grid...</h3>
                   <div style={{ marginBottom: '10px' }}>
@@ -454,7 +473,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                 </Grid>
               )}
               {/* Grid */}
-              {hasSufficientData && (
+              {!websocketError && hasSufficientData && (
                 <>
                   <Grid size={12}>
                     <ValidationAlert
