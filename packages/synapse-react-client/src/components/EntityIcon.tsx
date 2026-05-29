@@ -22,6 +22,7 @@ const getIconTypeForEntity = (type: EntityType): IconName | '' => {
     case EntityType.materializedview:
     case EntityType.virtualtable:
     case EntityType.recordset:
+    case EntityType.searchindex:
       return type2SvgIconName[type]
     default:
       return ''

@@ -88,8 +88,8 @@ export const ElementWithTooltip = ({
   const tooltipTriggerContents = iconComponent
     ? iconComponent
     : image
-    ? getTooltipTriggerContents(image, imageColor, size)
-    : children || <></>
+      ? getTooltipTriggerContents(image, imageColor, size)
+      : children || <></>
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
