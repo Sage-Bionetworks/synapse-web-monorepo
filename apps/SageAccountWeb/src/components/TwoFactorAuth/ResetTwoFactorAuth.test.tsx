@@ -86,7 +86,7 @@ describe('ResetTwoFactorAuth', () => {
 
     await user.click(loginWithPasswordButton)
 
-    const passwordField = await screen.findByLabelText('Password')
+    const passwordField = screen.getByLabelText('Password', { exact: false })
     const disableTwoFactorAuthButton = screen.getByRole('button', {
       name: 'Disable Two-Factor Authentication',
     })
