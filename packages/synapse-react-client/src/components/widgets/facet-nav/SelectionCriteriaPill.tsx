@@ -1,4 +1,4 @@
-import { Close, LockOutlined } from '@mui/icons-material'
+import { Close } from '@mui/icons-material'
 import { Tooltip } from '@mui/material'
 
 export type SelectionCriteriaPillProps = {
@@ -34,11 +34,6 @@ function SelectionCriteriaPill(props: SelectionCriteriaPillProps) {
           >
             <Close />
           </button>
-        )}
-        {isLocked && (
-          <span className="SelectionCriteriaPill__lockedIcon" aria-hidden>
-            <LockOutlined />
-          </span>
         )}
       </div>
     </Tooltip>

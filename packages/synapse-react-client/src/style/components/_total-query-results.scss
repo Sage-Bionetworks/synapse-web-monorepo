@@ -47,7 +47,7 @@
   }
 
   &--locked {
-    padding-right: 10px;
+    padding: 5px 10px 5px 10px;
   }
 
   &__btnRemove {
@@ -58,19 +58,6 @@
     cursor: pointer;
     svg {
       font-size: 1.25rem;
-    }
-  }
-
-  &__lockedIcon {
-    color: var(--synapse-gray-900);
-    opacity: 0.5;
-    padding: 5px 0 5px 8px;
-    margin-left: 1px;
-    display: flex;
-    align-items: center;
-
-    svg {
-      font-size: 1rem;
     }
   }
 }
