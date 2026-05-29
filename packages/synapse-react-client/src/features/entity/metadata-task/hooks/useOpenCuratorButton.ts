@@ -34,9 +34,12 @@ export default function useOpenCuratorFromTaskButton(
 ): UseOpenCuratorFromTaskButtonReturn {
   const curationTask = taskBundle.task!
 
-  const isTaskLinkedSessionFlagEnabled = useGetFeatureFlag(
-    FeatureFlagEnum.CURATOR_LINK_TASK_TO_GRID_SESSION,
-  )
+  const isTaskLinkedSessionFlagEnabled =
+    useGetFeatureFlag(FeatureFlagEnum.CURATOR_LINK_TASK_TO_GRID_SESSION) &&
+    false // SWC-7835 - temporarily disable this feature flag
+  // We want to add an opt-in (PLFM-9686)
+  // Also the feature flag does not work because we did not bump synapse-client after adding the flag
+  // FeatureFlagEnum['CURATOR_LINK_TASK_TO_GRID_SESSION'] in the old version of synapse-client returns `undefined`.
 
   const {
     mutateAsync: getOrCreateLegacyGridSessionForUnassignedTask,
