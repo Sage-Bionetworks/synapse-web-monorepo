@@ -73,7 +73,7 @@
     "jsonpath-plus": "^10.3.0",
     "katex": "^0.16.22",
     "lodash-es": "^4.17.21",
-    "markdown-it": "^14.1.0",
+    "markdown-it": "^14.1.1",
     "markdown-it-br": "^1.0.0",
     "markdown-it-center-text": "^1.0.4",
     "markdown-it-inline-comments": "^1.0.1",
