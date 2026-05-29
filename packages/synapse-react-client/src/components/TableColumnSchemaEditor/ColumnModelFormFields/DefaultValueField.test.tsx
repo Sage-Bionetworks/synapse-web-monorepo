@@ -144,8 +144,9 @@ describe('DefaultValueField', () => {
 
     const multiValueDialog = await screen.findByRole('dialog')
 
-    const itemTextFields =
-      await within(multiValueDialog).findAllByRole('textbox')
+    const itemTextFields = await within(multiValueDialog).findAllByRole(
+      'textbox',
+    )
     expect(itemTextFields).toHaveLength(2)
     expect(itemTextFields[0]).toHaveValue('bar')
     expect(itemTextFields[1]).toHaveValue('baz')

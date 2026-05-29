@@ -7,8 +7,9 @@ import { synapseFetchWithRetry } from './util/synapseClientFetch'
 import { SynapseClientError } from './util/SynapseClientError'
 
 vi.mock('./util/synapseClientFetch', async importOriginal => {
-  const original =
-    await importOriginal<typeof import('./util/synapseClientFetch')>()
+  const original = await importOriginal<
+    typeof import('./util/synapseClientFetch')
+  >()
   return {
     ...original,
     synapseFetchWithRetry: vi

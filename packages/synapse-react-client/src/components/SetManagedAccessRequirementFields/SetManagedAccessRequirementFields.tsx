@@ -139,25 +139,29 @@ export const SetManagedAccessRequirementFields = forwardRef(
       onError: () => onError(),
     })
 
-    useImperativeHandle(ref, () => {
-      return {
-        save() {
-          if (updatedAr) {
-            const expirationPeriodOrErrorMessage =
-              getValidExpirationPeriodOrErrorMessage(expirationPeriodDays)
-            if (typeof expirationPeriodOrErrorMessage === 'string') {
-              setExpirationPeriodError(expirationPeriodOrErrorMessage)
-              onError()
-            } else {
-              updateAccessRequirement({
-                ...updatedAr,
-                expirationPeriod: expirationPeriodOrErrorMessage,
-              })
+    useImperativeHandle(
+      ref,
+      () => {
+        return {
+          save() {
+            if (updatedAr) {
+              const expirationPeriodOrErrorMessage =
+                getValidExpirationPeriodOrErrorMessage(expirationPeriodDays)
+              if (typeof expirationPeriodOrErrorMessage === 'string') {
+                setExpirationPeriodError(expirationPeriodOrErrorMessage)
+                onError()
+              } else {
+                updateAccessRequirement({
+                  ...updatedAr,
+                  expirationPeriod: expirationPeriodOrErrorMessage,
+                })
+              }
             }
-          }
-        },
-      }
-    }, [expirationPeriodDays, updatedAr, updateAccessRequirement, onError])
+          },
+        }
+      },
+      [expirationPeriodDays, updatedAr, updateAccessRequirement, onError],
+    )
 
     if (!updatedAr) {
       if (getArError) {

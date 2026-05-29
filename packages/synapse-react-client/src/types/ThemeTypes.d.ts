@@ -40,12 +40,12 @@ declare module '@mui/material/styles' {
     styledBackground?: string
   }
 
-  interface TypographyVariants extends RecordWithCustomVariantKeys<React.CSSProperties> {}
+  interface TypographyVariants
+    extends RecordWithCustomVariantKeys<React.CSSProperties> {}
 
   // allow configuration using `createTheme`
-  interface TypographyVariantsOptions extends RecordWithCustomVariantKeys<
-    React.CSSProperties | undefined
-  > {}
+  interface TypographyVariantsOptions
+    extends RecordWithCustomVariantKeys<React.CSSProperties | undefined> {}
 
   interface Palette {
     tertiary: Palette['primary']
@@ -84,5 +84,6 @@ declare module '@mui/material' {
 
 // Update the Typography's variant prop options
 declare module '@mui/material/Typography' {
-  interface TypographyPropsVariantOverrides extends RecordWithCustomVariantKeys<true> {}
+  interface TypographyPropsVariantOverrides
+    extends RecordWithCustomVariantKeys<true> {}
 }

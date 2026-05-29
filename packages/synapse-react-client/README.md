@@ -1,5 +1,5 @@
 [![npm version](https://badge.fury.io/js/synapse-react-client.svg)](https://badge.fury.io/js/synapse-react-client)
-[![code style: oxfmt](https://img.shields.io/badge/code_style-oxfmt-blue.svg?style=flat-square)](https://github.com/oxc-project/oxc)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
 ## Synapse React Client
 
@@ -69,10 +69,8 @@ For a list of variables you can override, see [`src/style/abstracts/_variables.s
 Override the variables by importing the SCSS in your project like so:
 
 ```scss
-@use 'synapse-react-client/dist/style/main.scss' with (
-  $primary-action-color: $-my-primary-color,
-  $secondary-action-color: $-my-secondary-color // ...any other overrides continue
-);
+@use 'synapse-react-client/dist/style/main.scss' with ($primary-action-color:
+      $-my-primary-color, $secondary-action-color: $-my-secondary-color, // ...any other overrides continue);
 @use 'synapse-react-client/dist/template_style/Index.scss';
 ```
 

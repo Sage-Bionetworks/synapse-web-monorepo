@@ -36,7 +36,7 @@ export const VerifyIdentify = (props: VerifyIdentifyProps): React.ReactNode => {
               <CheckIcon style={{ color: '#32A330', marginRight: '8px' }} />
               Profile linked successfully {/*verificationSubmission.orcid*/}
             </Typography>
-            {/* per Adam - they can unlink it from the account page, so we don't need this button here
+            {/* per Adam - they can unlink it from the account page, so we don't need this button here 
             <Button variant="text" onClick={() => setShowORCiDDialog(true)}>
               {' '}
               Unbind ORCiD{' '}

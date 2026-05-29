@@ -75,7 +75,7 @@ export function getAllActionsRequiredQueryFilters(
             isNumber(queryKeyItem.tableQueryBundleRequest.partMask) &&
             Boolean(
               queryKeyItem.tableQueryBundleRequest.partMask &
-              BUNDLE_MASK_ACTIONS_REQUIRED,
+                BUNDLE_MASK_ACTIONS_REQUIRED,
             )
           ) {
             return true

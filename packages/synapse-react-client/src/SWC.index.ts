@@ -64,7 +64,9 @@ const SynapseComponents = {
   ),
   AddToDownloadListConfirmationAlert: lazy(
     () =>
-      import('./components/download_list/AddToDownloadListConfirmationAlert/AddToDownloadListConfirmationAlert'),
+      import(
+        './components/download_list/AddToDownloadListConfirmationAlert/AddToDownloadListConfirmationAlert'
+      ),
   ),
   AvailableEvaluationQueueList: lazy(
     () =>
@@ -195,7 +197,9 @@ const SynapseComponents = {
   StatisticsPlot: lazy(() => import('./components/StatisticsPlot')),
   SubmissionViewScopeEditorModal: lazy(
     () =>
-      import('./components/SubmissionViewScopeEditor/SubmissionViewScopeEditorModal'),
+      import(
+        './components/SubmissionViewScopeEditor/SubmissionViewScopeEditorModal'
+      ),
   ),
   SubscriptionPage: lazy(() => import('./components/SubscriptionPage')),
   SynapseChat: lazy(() => import('./components/SynapseChat/SynapseChat')),
@@ -224,7 +228,9 @@ const SynapseComponents = {
   TrashCanList: lazy(() => import('./components/trash/TrashCanList')),
   UserAccessRequestHistoryPlace: lazy(
     () =>
-      import('./components/dataaccess/UserAccessRequestHistory/UserAccessRequestHistoryPlace'),
+      import(
+        './components/dataaccess/UserAccessRequestHistory/UserAccessRequestHistoryPlace'
+      ),
   ),
   UserCard: lazy(() => import('./components/UserCard/UserCard')),
   UserProfileLinks: lazy(

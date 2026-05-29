@@ -128,8 +128,8 @@ export default function SubmissionPage(props: SubmissionPageProps) {
     })
   const isRequester = Boolean(
     submission &&
-    currentUserProfile &&
-    isRequesterOnSubmission(currentUserProfile.ownerId, submission),
+      currentUserProfile &&
+      isRequesterOnSubmission(currentUserProfile.ownerId, submission),
   )
 
   const { data: accessApproval, isLoading: isLoadingAccessApproval } =

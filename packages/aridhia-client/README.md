@@ -82,10 +82,12 @@ const datasets = await datasetsApi.fairDatasetsGet({
 ### FAIR API Endpoints
 
 - **Workflows**
+
   - `GET /workflows/` - List all workflows
   - `GET /workflows/{code}` - Get workflow by code
 
 - **Datasets**
+
   - `GET /datasets/` - List all datasets (with filtering)
   - `GET /datasets/{code}` - Get dataset by code
   - `GET /datasets/{code}/settings` - Get dataset settings
@@ -98,6 +100,7 @@ const datasets = await datasetsApi.fairDatasetsGet({
 ### Workspaces API Endpoints
 
 - **Authentication**
+
   - `POST /authenticate` - Exchange third party token for Aridhia access token
     - Request body: `{ subject_token_type, subject_token_issuer, subject_token }`
     - Response: `{ access_token, expires_in, refresh_token, token_type, ... }`

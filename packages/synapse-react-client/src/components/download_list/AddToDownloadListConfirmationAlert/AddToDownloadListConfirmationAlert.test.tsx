@@ -96,8 +96,9 @@ async function setUp(expectedFileCount: number) {
   )
 
   await screen.findByTestId(DOWNLOAD_CONFIRMATION_UI_TEST_ID)
-  const downloadConfirmationUiPassedProps =
-    await waitForExpectedProps(expectedFileCount)
+  const downloadConfirmationUiPassedProps = await waitForExpectedProps(
+    expectedFileCount,
+  )
 
   return {
     component,

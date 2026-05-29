@@ -23,12 +23,14 @@ When implementing a Figma design in this repo, prefer semantic tokens over hardc
 Read these files to discover the current canonical values — do not rely on cached hex values in this document.
 
 - **CSS custom properties** — `packages/synapse-react-client/src/style/abstracts/_cssVariables.scss`
+
   - Grey scale: `--synapse-gray-100` through `--synapse-gray-1000`
   - Status colors: `--synapse-info`, `--synapse-success`, `--synapse-warning`, `--synapse-error`
   - Semantic action colors: `--synapse-primary-action-color`, `--synapse-secondary-action-color`, `--synapse-tertiary-action-color`
   - Primary/secondary/tertiary palette scales: `--synapse-primary-100` through `--synapse-primary-900`, etc.
 
 - **MUI palette** — `packages/synapse-react-client/src/theme/palette/Palettes.ts`
+
   - Default palette (`palette`) with primary, secondary, tertiary, grey, and status colors
   - Portal-specific palettes named `<portalName>Palette` (e.g. `adKnowledgePortalPalette`)
 

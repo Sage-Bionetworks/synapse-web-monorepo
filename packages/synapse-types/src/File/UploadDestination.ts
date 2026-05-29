@@ -26,7 +26,8 @@ export interface UploadDestination {
  *
  * https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/file/ExternalObjectStoreUploadDestination.html
  */
-export interface ExternalObjectStoreUploadDestination extends UploadDestination {
+export interface ExternalObjectStoreUploadDestination
+  extends UploadDestination {
   concreteType: 'org.sagebionetworks.repo.model.file.ExternalObjectStoreUploadDestination'
   /* endpoint URL of the S3 service (for example: 'https://s3.amazonaws.com') */
   endpointUrl: string
@@ -72,7 +73,8 @@ export type EXTERNAL_GOOGLE_CLOUD_UPLOAD_DESTINATION_CONCRETE_TYPE =
  *
  * https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/file/ExternalGoogleCloudUploadDestination.html
  */
-export interface ExternalGoogleCloudUploadDestination extends BaseKeyUploadDestination {
+export interface ExternalGoogleCloudUploadDestination
+  extends BaseKeyUploadDestination {
   concreteType: EXTERNAL_GOOGLE_CLOUD_UPLOAD_DESTINATION_CONCRETE_TYPE
   /* the bucket to use */
   bucket: string

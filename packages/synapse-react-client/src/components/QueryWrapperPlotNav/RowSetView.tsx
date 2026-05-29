@@ -58,30 +58,29 @@ export function RowSetView(props: RowSetViewProps) {
         {isLoading && (
           <QueryWrapperLoadingScreen progressMessage={progressMessage} />
         )}
-        {!isLoading &&
-          rowSet && (
-            // even after the rowSet is loaded, a child component may suspend
-            <Suspense
-              fallback={
-                <QueryWrapperLoadingScreen progressMessage={progressMessage} />
-              }
-            >
-              {tableConfiguration && (
-                <SynapseTable
-                  {...tableConfiguration}
-                  rowSet={rowSet}
-                  isLoadingNewPage={isLoadingNewPage}
-                />
-              )}
-              {cardConfiguration && (
-                <CardContainer
-                  {...cardConfiguration}
-                  rowSet={rowSet}
-                  multiCardList={multiCardList}
-                />
-              )}
-            </Suspense>
-          )}
+        {!isLoading && rowSet && (
+          // even after the rowSet is loaded, a child component may suspend
+          <Suspense
+            fallback={
+              <QueryWrapperLoadingScreen progressMessage={progressMessage} />
+            }
+          >
+            {tableConfiguration && (
+              <SynapseTable
+                {...tableConfiguration}
+                rowSet={rowSet}
+                isLoadingNewPage={isLoadingNewPage}
+              />
+            )}
+            {cardConfiguration && (
+              <CardContainer
+                {...cardConfiguration}
+                rowSet={rowSet}
+                multiCardList={multiCardList}
+              />
+            )}
+          </Suspense>
+        )}
         <Suspense fallback={<></>}>
           {!isInfinite && (
             <Box sx={{ mt: 2, textAlign: 'right' }}>

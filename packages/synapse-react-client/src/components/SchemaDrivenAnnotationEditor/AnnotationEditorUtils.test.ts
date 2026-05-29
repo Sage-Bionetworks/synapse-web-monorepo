@@ -389,39 +389,42 @@ describe('AnnotationEditorUtils tests', () => {
       })
     })
 
-    test.fails('ignores properties in definitions that are not top-level', () => {
-      const schema: JSONSchema7 = {
-        definitions: {
-          MyItemDefinition: {
-            type: 'object',
-            properties: {
-              ignoreMe: {
-                type: 'string',
+    test.fails(
+      'ignores properties in definitions that are not top-level',
+      () => {
+        const schema: JSONSchema7 = {
+          definitions: {
+            MyItemDefinition: {
+              type: 'object',
+              properties: {
+                ignoreMe: {
+                  type: 'string',
+                },
               },
             },
           },
-        },
-        properties: {
+          properties: {
+            myItems: {
+              type: 'array',
+              items: {
+                $ref: '#/definitions/MyItemDefinition',
+              },
+            },
+          },
+        }
+
+        const result = getPossibleTopLevelPropertiesInObjectSchema(schema)
+
+        expect(result).toEqual({
           myItems: {
             type: 'array',
             items: {
               $ref: '#/definitions/MyItemDefinition',
             },
           },
-        },
-      }
-
-      const result = getPossibleTopLevelPropertiesInObjectSchema(schema)
-
-      expect(result).toEqual({
-        myItems: {
-          type: 'array',
-          items: {
-            $ref: '#/definitions/MyItemDefinition',
-          },
-        },
-      })
-    })
+        })
+      },
+    )
   })
 
   test('getSchemaIdForConcreteType', () => {

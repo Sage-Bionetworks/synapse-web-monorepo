@@ -4,8 +4,8 @@ import { babel } from '@rollup/plugin-babel'
 import { readFileSync } from 'fs'
 
 const pkg = JSON.parse(readFileSync(new URL('package.json', import.meta.url)))
-const pkgName = 'markdown-it-container'
-const globalName = 'markdownitContainer'
+const pkgName = "markdown-it-container"
+const globalName = "markdownitContainer"
 
 const config_umd_full = {
   input: 'index.mjs',
@@ -19,14 +19,9 @@ const config_umd_full = {
         terser({
           mangle: false,
           compress: false,
-          format: {
-            comments: 'all',
-            beautify: true,
-            ascii_only: true,
-            indent_level: 2,
-          },
-        }),
-      ],
+          format: { comments: 'all', beautify: true, ascii_only: true, indent_level: 2 }
+        })
+      ]
     },
     {
       file: `dist/${pkgName}.min.js`,
@@ -34,33 +29,39 @@ const config_umd_full = {
       name: globalName,
       plugins: [
         terser({
-          format: { ascii_only: true },
-        }),
-      ],
-    },
+          format: { ascii_only: true }
+        })
+      ]
+    }
   ],
   plugins: [
     resolve(),
     babel({ babelHelpers: 'bundled' }),
     {
-      banner() {
+      banner () {
         return `/*! ${pkg.name} ${pkg.version} https://github.com/${pkg.repository} @license ${pkg.license} */`
-      },
-    },
-  ],
+      }
+    }
+  ]
 }
 
 const config_cjs_no_deps = {
   input: 'index.mjs',
   output: {
     file: 'dist/index.cjs.js',
-    format: 'cjs',
+    format: 'cjs'
   },
   external: Object.keys(pkg.dependencies || {}),
-  plugins: [resolve(), babel({ babelHelpers: 'bundled' })],
+  plugins: [
+    resolve(),
+    babel({ babelHelpers: 'bundled' })
+  ]
 }
 
-let config = [config_umd_full, config_cjs_no_deps]
+let config = [
+  config_umd_full,
+  config_cjs_no_deps
+]
 
 if (process.env.CJS_ONLY) config = [config_cjs_no_deps]
 

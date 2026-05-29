@@ -53,10 +53,8 @@ export type EntityBundleRequest = {
 /**
  * Maps the fields of an Entity bundle to the EntityBundleRequest field that is required to return that field
  */
-interface BundleFieldToRequestFieldMapping extends Record<
-  keyof _EntityBundle,
-  keyof EntityBundleRequest
-> {
+interface BundleFieldToRequestFieldMapping
+  extends Record<keyof _EntityBundle, keyof EntityBundleRequest> {
   entity: 'includeEntity'
   entityType: 'includeEntity'
   annotations: 'includeAnnotations'

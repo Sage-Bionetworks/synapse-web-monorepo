@@ -1,4 +1,4 @@
-/**
+/** 
  Metadata for a list page OAuth 2.0 clients
 https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/oauth/OAuthClientList.html
 */

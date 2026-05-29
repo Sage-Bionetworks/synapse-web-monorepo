@@ -49,6 +49,7 @@
     "path-browserify": "^1.0.1",
     "pluralize": "^8.0.0",
     "postcss-normalize": "^10.0.1",
+    "prettier": "^2.8.8",
     "process": "^0.11.10",
     "source-map-explorer": "^2.5.3",
     "stream-browserify": "^3.0.0",
@@ -88,6 +89,6 @@
     ]
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,yml,scss,css,md}": "oxfmt --write"
+    "*.{js,jsx,ts,tsx,json,yml,scss,css,md}": "prettier --config .prettierrc --write"
   }
 }

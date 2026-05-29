@@ -304,8 +304,9 @@ export function useCreateLockAccessRequirement(
 }
 
 function getAccessRequirementStatusQueryOptions<
-  T extends AccessRequirementStatus | ManagedACTAccessRequirementStatus =
-    AccessRequirementStatus,
+  T extends
+    | AccessRequirementStatus
+    | ManagedACTAccessRequirementStatus = AccessRequirementStatus,
 >(
   keyFactory: KeyFactory,
   accessToken: string,
@@ -323,8 +324,9 @@ function getAccessRequirementStatusQueryOptions<
 }
 
 export function useGetAccessRequirementStatus<
-  T extends AccessRequirementStatus | ManagedACTAccessRequirementStatus =
-    AccessRequirementStatus,
+  T extends
+    | AccessRequirementStatus
+    | ManagedACTAccessRequirementStatus = AccessRequirementStatus,
 >(
   accessRequirementId: string,
   options?: Partial<UseQueryOptions<T, SynapseClientError>>,
@@ -342,8 +344,9 @@ export function useGetAccessRequirementStatus<
 }
 
 export function useGetAccessRequirementStatuses<
-  T extends AccessRequirementStatus | ManagedACTAccessRequirementStatus =
-    AccessRequirementStatus,
+  T extends
+    | AccessRequirementStatus
+    | ManagedACTAccessRequirementStatus = AccessRequirementStatus,
 >(accessRequirementIds: string[]) {
   const { accessToken, keyFactory } = useSynapseContext()
 

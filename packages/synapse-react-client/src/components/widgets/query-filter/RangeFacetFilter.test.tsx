@@ -158,15 +158,17 @@ describe('RangeFacetFilter tests', () => {
 
     it('should set for Unannotated', async () => {
       init({ ...props, facetResult: notSetFacetResult })
-      const notAssignedOption =
-        await screen.findByLabelText<HTMLInputElement>('Not Assigned')
+      const notAssignedOption = await screen.findByLabelText<HTMLInputElement>(
+        'Not Assigned',
+      )
       expect(notAssignedOption.checked).toBe(true)
     })
 
     it('interval', async () => {
       init({ ...props, facetResult: rangeFacetResult })
-      const rangeOption =
-        await screen.findByLabelText<HTMLInputElement>('Range')
+      const rangeOption = await screen.findByLabelText<HTMLInputElement>(
+        'Range',
+      )
       expect(rangeOption.checked).toBe(true)
     })
   })
@@ -362,8 +364,9 @@ describe('RangeFacetFilter tests', () => {
       init()
 
       // Click "Range"
-      const rangeOption =
-        await screen.findByLabelText<HTMLInputElement>('Range')
+      const rangeOption = await screen.findByLabelText<HTMLInputElement>(
+        'Range',
+      )
       await userEvent.click(rangeOption)
 
       // Type into the min/max text boxes

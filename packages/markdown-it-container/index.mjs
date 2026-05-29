@@ -1,13 +1,13 @@
 // Process block-level custom containers
 //
-export default function container_plugin(md, name, options) {
+export default function container_plugin (md, name, options) {
   // Second param may be useful if you decide
   // to increase minimal allowed marker length
-  function validateDefault(params /*, markup */) {
+  function validateDefault (params/*, markup */) {
     return params.trim().split(' ', 2)[0] === name
   }
 
-  function renderDefault(tokens, idx, _options, env, slf) {
+  function renderDefault (tokens, idx, _options, env, slf) {
     // add a class to the opening tag
     if (tokens[idx].nesting === 1) {
       tokens[idx].attrJoin('class', name)
@@ -19,15 +19,15 @@ export default function container_plugin(md, name, options) {
   options = options || {}
 
   const min_markers = options.minMarkerCount || 3
-  const marker_str = options.marker || ':'
-  const end_marker_str = options.endMarker || marker_str
+  const marker_str  = options.marker || ':'
+  const end_marker_str  = options.endMarker || marker_str
   const end_marker_len = end_marker_str.length
   const marker_char = marker_str.charCodeAt(0)
-  const marker_len = marker_str.length
-  const validate = options.validate || validateDefault
-  const render = options.render || renderDefault
+  const marker_len  = marker_str.length
+  const validate    = options.validate || validateDefault
+  const render      = options.render || renderDefault
 
-  function container(state, startLine, endLine, silent) {
+  function container (state, startLine, endLine, silent) {
     let pos
     let auto_closed = false
     let start = state.bMarks[startLine] + state.tShift[startLine]
@@ -36,9 +36,7 @@ export default function container_plugin(md, name, options) {
     // Check out the first character quickly,
     // this should filter out most of non-containers
     //
-    if (marker_char !== state.src.charCodeAt(start)) {
-      return false
-    }
+    if (marker_char !== state.src.charCodeAt(start)) { return false }
 
     // Check out the rest of the marker string
     //
@@ -49,22 +47,16 @@ export default function container_plugin(md, name, options) {
     }
 
     const marker_count = Math.floor((pos - start) / marker_len)
-    if (marker_count < min_markers) {
-      return false
-    }
+    if (marker_count < min_markers) { return false }
     pos -= (pos - start) % marker_len
 
     const markup = state.src.slice(start, pos)
     const params = state.src.slice(pos, max)
-    if (!validate(params, markup)) {
-      return false
-    }
+    if (!validate(params, markup)) { return false }
 
     // Since start is found, we can report success here in validation mode
     //
-    if (silent) {
-      return true
-    }
+    if (silent) { return true }
 
     // Search for the end of the block
     //
@@ -88,9 +80,7 @@ export default function container_plugin(md, name, options) {
         break
       }
 
-      if (marker_char !== state.src.charCodeAt(start)) {
-        continue
-      }
+      if (marker_char !== state.src.charCodeAt(start)) { continue }
 
       if (state.sCount[nextLine] - state.blkIndent >= 4) {
         // closing fence should be indented less than 4 spaces
@@ -104,17 +94,13 @@ export default function container_plugin(md, name, options) {
       }
 
       // closing code fence must be at least as long as the opening one
-      if (Math.floor((pos - start) / end_marker_len) < marker_count) {
-        continue
-      }
+      if (Math.floor((pos - start) / end_marker_len) < marker_count) { continue }
 
       // make sure tail has spaces only
       pos -= (pos - start) % end_marker_len
       pos = state.skipSpaces(pos)
 
-      if (pos < max) {
-        continue
-      }
+      if (pos < max) { continue }
 
       // found!
       auto_closed = true
@@ -128,17 +114,17 @@ export default function container_plugin(md, name, options) {
     // this will prevent lazy continuations from ever going past our end marker
     state.lineMax = nextLine
 
-    const token_o = state.push('container_' + name + '_open', 'div', 1)
+    const token_o  = state.push('container_' + name + '_open', 'div', 1)
     token_o.markup = markup
-    token_o.block = true
-    token_o.info = params
-    token_o.map = [startLine, nextLine]
+    token_o.block  = true
+    token_o.info   = params
+    token_o.map    = [startLine, nextLine]
 
     state.md.block.tokenize(state, startLine + 1, nextLine)
 
-    const token_c = state.push('container_' + name + '_close', 'div', -1)
+    const token_c  = state.push('container_' + name + '_close', 'div', -1)
     token_c.markup = state.src.slice(start, pos)
-    token_c.block = true
+    token_c.block  = true
 
     state.parentType = old_parent
     state.lineMax = old_line_max
@@ -148,8 +134,8 @@ export default function container_plugin(md, name, options) {
   }
 
   md.block.ruler.before('fence', 'container_' + name, container, {
-    alt: ['paragraph', 'reference', 'blockquote', 'list'],
+    alt: ['paragraph', 'reference', 'blockquote', 'list']
   })
   md.renderer.rules['container_' + name + '_open'] = render
   md.renderer.rules['container_' + name + '_close'] = render
-}
+};

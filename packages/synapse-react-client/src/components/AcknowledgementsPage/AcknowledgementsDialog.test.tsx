@@ -93,8 +93,9 @@ describe('AcknowledgementsDialog', () => {
   })
 
   it('copies text to clipboard and shows toast when Copy to Clipboard is clicked', async () => {
-    const { copyStringToClipboard } =
-      await import('@/utils/functions/StringUtils')
+    const { copyStringToClipboard } = await import(
+      '@/utils/functions/StringUtils'
+    )
     const { displayToast } = await import('../ToastMessage')
     render(<AcknowledgementsDialog {...baseProps} />)
     const copyButton = screen.getByRole('button', {

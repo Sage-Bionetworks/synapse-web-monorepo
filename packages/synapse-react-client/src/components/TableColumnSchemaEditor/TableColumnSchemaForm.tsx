@@ -190,27 +190,31 @@ function TableColumnSchemaFormInternal(
     return result
   }, [readFormData])
 
-  useImperativeHandle(ref, () => {
-    return {
-      submit() {
-        const result = validateInternal()
-        if (result.success) {
-          onSubmit(result.data)
-        }
-      },
-      getEditedColumnModels() {
-        const result = validateInternal()
-        if (!result.success) {
-          throw new Error('Column models were not valid')
-        }
-        return result.data
-      },
-      validate() {
-        const result = validateInternal()
-        return result.success
-      },
-    }
-  }, [onSubmit, validateInternal])
+  useImperativeHandle(
+    ref,
+    () => {
+      return {
+        submit() {
+          const result = validateInternal()
+          if (result.success) {
+            onSubmit(result.data)
+          }
+        },
+        getEditedColumnModels() {
+          const result = validateInternal()
+          if (!result.success) {
+            throw new Error('Column models were not valid')
+          }
+          return result.data
+        },
+        validate() {
+          const result = validateInternal()
+          return result.success
+        },
+      }
+    },
+    [onSubmit, validateInternal],
+  )
 
   // Generic function to add a set of columns to the schema (e.g. default columns, annotation columns)
   const addColumnSet = useCallback(

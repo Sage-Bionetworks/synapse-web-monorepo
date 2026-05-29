@@ -318,7 +318,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
           }}
         >
           {isDefaultColumn ? (
-            ((columnModel as ColumnModelFormData).maximumSize ?? '')
+            (columnModel as ColumnModelFormData).maximumSize ?? ''
           ) : (
             <FieldWithRecommendedMinimum
               value={(columnModel as ColumnModelFormData).maximumSize ?? ''}
@@ -364,7 +364,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
           }}
         >
           {isDefaultColumn ? (
-            ((columnModel as ColumnModelFormData).maximumListLength ?? '')
+            (columnModel as ColumnModelFormData).maximumListLength ?? ''
           ) : (
             <FieldWithRecommendedMinimum
               value={

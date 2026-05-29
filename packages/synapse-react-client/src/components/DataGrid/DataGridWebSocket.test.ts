@@ -7,10 +7,9 @@ import { DataGridWebSocket } from './DataGridWebSocket'
 // Mock the compact codec to allow intercepting decode() in specific tests
 const mockDecode = vi.fn()
 vi.mock('json-joy/lib/json-crdt-patch/codec/compact', async importOriginal => {
-  const actual =
-    await importOriginal<
-      typeof import('json-joy/lib/json-crdt-patch/codec/compact')
-    >()
+  const actual = await importOriginal<
+    typeof import('json-joy/lib/json-crdt-patch/codec/compact')
+  >()
   return {
     ...actual,
     decode: (...args: unknown[]) => mockDecode(...args) as unknown,

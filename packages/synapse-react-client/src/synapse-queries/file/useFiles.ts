@@ -145,8 +145,9 @@ export function useGetProfileImage(
 ) {
   const { keyFactory } = useSynapseContext()
   const queryFn = async () => {
-    const presignedUrl =
-      await SynapseClient.getProfilePicPreviewPresignedUrl(userId)
+    const presignedUrl = await SynapseClient.getProfilePicPreviewPresignedUrl(
+      userId,
+    )
     if (presignedUrl) {
       // Fetch the presigned URL right away because it will expire
       const data = await fetch(presignedUrl, {

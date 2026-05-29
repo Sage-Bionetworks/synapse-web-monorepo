@@ -305,16 +305,16 @@ const icon = (result: CheckResult) =>
   result === CheckResult.Pass
     ? green('✅')
     : result === CheckResult.Fail
-      ? red('❌')
-      : yellow('❓')
+    ? red('❌')
+    : yellow('❓')
 
 const statusIcon = (status: PatchStatus) =>
   icon(
     status === PatchStatus.Patched
       ? CheckResult.Pass
       : status === PatchStatus.Vulnerable
-        ? CheckResult.Fail
-        : CheckResult.Unknown,
+      ? CheckResult.Fail
+      : CheckResult.Unknown,
   )
 
 function printOverrideFix(parentKey: string): void {
@@ -379,8 +379,8 @@ async function main() {
       status === PatchStatus.Vulnerable
         ? red(' VULNERABLE')
         : status === PatchStatus.Patched
-          ? green(' patched')
-          : yellow(' (version not parseable — may be vulnerable)')
+        ? green(' patched')
+        : yellow(' (version not parseable — may be vulnerable)')
     console.log(
       `  ${statusIcon(status)} ${bold(
         `${pkg}@${block.installedVersion}`,

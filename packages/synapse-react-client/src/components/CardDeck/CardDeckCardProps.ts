@@ -8,5 +8,5 @@ export type CardDeckCardProps = {
   titleIcon?: ReactNode /* icon to be displayed on the card */
   headerImage?: ReactNode /* header image to be displayed on the card */
   cardDeckType?: /* The type of card deck (cckp or b2ai...) */
-    'cckp' | 'b2ai' | 'b2ai-detail-card'
+  'cckp' | 'b2ai' | 'b2ai-detail-card'
 }

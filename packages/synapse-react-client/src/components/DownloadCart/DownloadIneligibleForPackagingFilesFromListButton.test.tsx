@@ -141,7 +141,7 @@ const mockFetch = vi
   .fn()
   .mockImplementation((input: string | Request, options?: RequestInit) => {
     const signal =
-      input instanceof Request ? input.signal : (options?.signal ?? undefined)
+      input instanceof Request ? input.signal : options?.signal ?? undefined
     return Promise.resolve(createHangingStreamResponse(signal))
   })
 global.fetch = mockFetch as unknown as typeof fetch

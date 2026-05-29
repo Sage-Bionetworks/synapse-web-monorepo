@@ -2,17 +2,31 @@
   "extends": "../../shared/tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "src",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
     "useUnknownInCatchVariables": false,
-    "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom"],
+    "types": [
+      "vite/client",
+      "vitest/globals",
+      "@testing-library/jest-dom"
+    ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/tests/setupTests.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/tests/setupTests.ts"
+  ],
   "references": [
     {
       "path": "../synapse-portal-framework"

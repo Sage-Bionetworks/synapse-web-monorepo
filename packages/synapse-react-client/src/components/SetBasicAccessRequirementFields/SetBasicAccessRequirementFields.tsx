@@ -87,13 +87,17 @@ export const SetBasicAccessRequirementFields = forwardRef(
       [onSave, onError, updateAccessRequirement],
     )
 
-    useImperativeHandle(ref, () => {
-      return {
-        save() {
-          if (updatedAr) onUpdateAccessRequirement(updatedAr, false)
-        },
-      }
-    }, [updatedAr, onUpdateAccessRequirement])
+    useImperativeHandle(
+      ref,
+      () => {
+        return {
+          save() {
+            if (updatedAr) onUpdateAccessRequirement(updatedAr, false)
+          },
+        }
+      },
+      [updatedAr, onUpdateAccessRequirement],
+    )
 
     if (!updatedAr) {
       if (getArError) {

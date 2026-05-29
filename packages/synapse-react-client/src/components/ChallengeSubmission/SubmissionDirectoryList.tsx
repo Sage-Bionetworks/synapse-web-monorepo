@@ -235,7 +235,7 @@ function SubmissionDirectoryList({
         id: entity.id!,
         name:
           entityType === EntityType.dockerrepo
-            ? (entity.repositoryName ?? entity.name)
+            ? entity.repositoryName ?? entity.name
             : entity.name,
         modifiedOn: formatDate(dayjs(entity.modifiedOn), 'MM/DD/YY'),
       })

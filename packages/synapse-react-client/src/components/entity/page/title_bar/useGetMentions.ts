@@ -76,7 +76,7 @@ export function mapEuropePMCResponseToCitingWorks(
         publisher: r.journalTitle,
         publicationYear: r.pubYear ? Number(r.pubYear) : undefined,
         // authors: r.authorList?.author?.map((a: EuropePMCAuthor) => a.fullName ?? `${a.firstName ?? ""} ${a.lastName ?? ""}`.trim()) ?? [],
-      }) as CitingWork,
+      } as CitingWork),
   )
 }
 

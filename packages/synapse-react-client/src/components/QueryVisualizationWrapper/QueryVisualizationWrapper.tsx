@@ -110,8 +110,9 @@ export function QueryVisualizationWrapper(
 
   const [showSqlEditor, setShowSqlEditor] = useState(false)
   const [showPlots, setShowPlots] = useState(defaultShowPlots)
-  const [showCopyToClipboard, setShowCopyToClipboard] =
-    useState(!hideCopyToClipboard)
+  const [showCopyToClipboard, setShowCopyToClipboard] = useState(
+    !hideCopyToClipboard,
+  )
   const [showFacetFilter, setShowFacetFilter] = useState(true)
 
   // The search bar and download confirmation should not be shown at the same time.

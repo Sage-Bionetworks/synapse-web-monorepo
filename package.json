@@ -33,7 +33,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^15.5.2",
     "nx": "22.6.3",
-    "oxfmt": "^0.52.0",
+    "prettier": "^2.8.8",
     "rimraf": "^6.1.2",
     "semver": "^7.7.4",
     "tsx": "^4.19.4",
@@ -44,10 +44,10 @@
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "eslint --fix",
-      "oxfmt --write"
+      "prettier --write"
     ],
     "*.{json,yml,scss,css,md}": [
-      "oxfmt --write"
+      "prettier --write"
     ]
   },
   "pnpm": {

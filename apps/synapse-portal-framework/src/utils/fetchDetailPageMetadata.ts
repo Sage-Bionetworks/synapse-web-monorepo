@@ -197,11 +197,11 @@ export async function preloadDetailPageMetadata(
 
         const title =
           titleIndex !== undefined && titleIndex >= 0
-            ? (row.values?.[titleIndex] ?? null)
+            ? row.values?.[titleIndex] ?? null
             : null
         const description =
           descriptionIndex !== undefined && descriptionIndex >= 0
-            ? (row.values?.[descriptionIndex] ?? null)
+            ? row.values?.[descriptionIndex] ?? null
             : null
 
         metadataCache.set(cacheKey(config, String(paramValue)), {
@@ -306,9 +306,9 @@ async function fetchDetailPageMetadataFromApi(
         )
       : -1
 
-    const title = titleIndex >= 0 ? (firstRow.values[titleIndex] ?? null) : null
+    const title = titleIndex >= 0 ? firstRow.values[titleIndex] ?? null : null
     const description =
-      descriptionIndex >= 0 ? (firstRow.values[descriptionIndex] ?? null) : null
+      descriptionIndex >= 0 ? firstRow.values[descriptionIndex] ?? null : null
 
     return { title, description }
   } catch (error) {

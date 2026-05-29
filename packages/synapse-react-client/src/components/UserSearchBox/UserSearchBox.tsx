@@ -87,11 +87,9 @@ function UserSearchBox(props: UserSearchBoxProps) {
   >(undefined)
 
   const controlledValue =
-    typeof valueProp === 'string' ? (resolvedControlledHeader ?? null) : null
+    typeof valueProp === 'string' ? resolvedControlledHeader ?? null : null
   const uncontrolledValue =
-    internalValue !== undefined
-      ? internalValue
-      : (defaultUserGroupHeader ?? null)
+    internalValue !== undefined ? internalValue : defaultUserGroupHeader ?? null
   const resolvedValue: UserGroupHeader | null = isControlled
     ? controlledValue
     : uncontrolledValue

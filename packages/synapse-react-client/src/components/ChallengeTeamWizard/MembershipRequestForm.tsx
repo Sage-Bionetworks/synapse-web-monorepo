@@ -54,20 +54,24 @@ export const MembershipRequestForm = forwardRef(function MembershipRequestForm(
     setMessage(value)
   }
 
-  useImperativeHandle(ref, () => {
-    return {
-      submit() {
-        if (userProfile) {
-          requestToJoinTeam({
-            teamId: teamId,
-            userId: userProfile.ownerId,
-            message: message,
-            expiresOn: undefined,
-          })
-        }
-      },
-    }
-  }, [message, requestToJoinTeam, teamId, userProfile])
+  useImperativeHandle(
+    ref,
+    () => {
+      return {
+        submit() {
+          if (userProfile) {
+            requestToJoinTeam({
+              teamId: teamId,
+              userId: userProfile.ownerId,
+              message: message,
+              expiresOn: undefined,
+            })
+          }
+        },
+      }
+    },
+    [message, requestToJoinTeam, teamId, userProfile],
+  )
 
   if (status === 'pending') {
     return (

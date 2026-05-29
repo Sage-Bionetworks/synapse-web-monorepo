@@ -222,8 +222,9 @@ describe('CombinedRangeFacetFilter tests', () => {
         ...props,
         facetResults: [minColumnNotSetFacetResult, maxColumnNotSetFacetResult],
       })
-      const notAssignedOption =
-        await screen.findByLabelText<HTMLInputElement>('Not Assigned')
+      const notAssignedOption = await screen.findByLabelText<HTMLInputElement>(
+        'Not Assigned',
+      )
       expect(notAssignedOption.checked).toBe(true)
     })
 
@@ -232,8 +233,9 @@ describe('CombinedRangeFacetFilter tests', () => {
         ...props,
         facetResults: [minRangeFacetResult, maxRangeFacetResult],
       })
-      const rangeOption =
-        await screen.findByLabelText<HTMLInputElement>('Range')
+      const rangeOption = await screen.findByLabelText<HTMLInputElement>(
+        'Range',
+      )
       expect(rangeOption.checked).toBe(true)
     })
   })

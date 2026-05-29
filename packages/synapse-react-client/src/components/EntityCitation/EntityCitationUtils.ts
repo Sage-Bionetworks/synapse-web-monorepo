@@ -43,7 +43,7 @@ export function useGetEntityDoiAssociation(
   const doiAssociation =
     projectId === entityId
       ? undefined
-      : (versionedDoiAssociation ?? versionlessDoiAssociation)
+      : versionedDoiAssociation ?? versionlessDoiAssociation
 
   return doiAssociation
 }

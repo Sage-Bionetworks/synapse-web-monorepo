@@ -3550,8 +3550,9 @@ export const searchAccessRequirements = (
  * @returns {AccessRequirementStatus}
  */
 export function getAccessRequirementStatus<
-  T extends AccessRequirementStatus | ManagedACTAccessRequirementStatus =
-    AccessRequirementStatus,
+  T extends
+    | AccessRequirementStatus
+    | ManagedACTAccessRequirementStatus = AccessRequirementStatus,
 >(accessToken: string | undefined, requirementId: string | number): Promise<T> {
   return doGet<T>(
     ACCESS_REQUIREMENT_STATUS(requirementId),

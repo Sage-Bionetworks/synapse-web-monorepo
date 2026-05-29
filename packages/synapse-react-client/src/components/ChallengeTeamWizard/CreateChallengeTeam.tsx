@@ -76,38 +76,42 @@ export const CreateChallengeTeam = forwardRef(function CreateChallengeTeam(
     errors,
   } = useCreateAndRegisterChallengeTeam()
 
-  useImperativeHandle(ref, () => {
-    return {
-      submit() {
-        if (!formDataIsValid) {
-          console.warn(
-            'Attempted to submit when form data was not valid. Nothing will happen.',
+  useImperativeHandle(
+    ref,
+    () => {
+      return {
+        submit() {
+          if (!formDataIsValid) {
+            console.warn(
+              'Attempted to submit when form data was not valid. Nothing will happen.',
+            )
+            return
+          }
+          createAndRegisterTeam(
+            team,
+            challengeId,
+            parsedInvitees,
+            invitationMessage,
           )
-          return
-        }
-        createAndRegisterTeam(
-          team,
-          challengeId,
-          parsedInvitees,
-          invitationMessage,
-        )
-          .then(([newTeam]) => {
-            onFinished(newTeam.id)
-          })
-          .catch(() => {
-            // The hook will return errors, so no need to handle them here
-          })
-      },
-    }
-  }, [
-    formDataIsValid,
-    parsedInvitees,
-    createAndRegisterTeam,
-    team,
-    challengeId,
-    invitationMessage,
-    onFinished,
-  ])
+            .then(([newTeam]) => {
+              onFinished(newTeam.id)
+            })
+            .catch(() => {
+              // The hook will return errors, so no need to handle them here
+            })
+        },
+      }
+    },
+    [
+      formDataIsValid,
+      parsedInvitees,
+      createAndRegisterTeam,
+      team,
+      challengeId,
+      invitationMessage,
+      onFinished,
+    ],
+  )
 
   return (
     <Box>

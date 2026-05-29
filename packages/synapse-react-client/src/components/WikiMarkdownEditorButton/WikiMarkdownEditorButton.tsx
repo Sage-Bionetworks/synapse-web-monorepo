@@ -126,7 +126,7 @@ export function WikiMarkdownEditorButton(props: WikiMarkdownEditorButtonProps) {
     }
   }
 
-  /* TODO - pass ownerId, objectType, wikiId directly to MarkdownSynapse after
+  /* TODO - pass ownerId, objectType, wikiId directly to MarkdownSynapse after 
   MarkdownSynapse is updated to fetch root WikiPages for ACCESS_REQUIREMENT object types.
   See https://sagebionetworks.jira.com/browse/SWC-6791. */
   const markdownSynapseProps = useMemo(() => {

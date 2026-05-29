@@ -21,7 +21,7 @@ export const FacetPlotsCardGridContainer: StyledComponent<BoxProps> = styled(
     gap: theme.spacing(2),
   },
   [theme.breakpoints.up('md')]: {
-    /*
+    /* 
     The grid is broken up into cards which have subcomponents that should be aligned
     Ideally we could use CSS Subgrid, but it is not widely supported as of the time of writing
     See https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout/Subgrid

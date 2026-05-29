@@ -16,8 +16,8 @@ export default function CertificationRequirement() {
   const requirementItemState: RequirementItemStatus = isLoading
     ? RequirementItemStatus.LOADING
     : userBundle?.isCertified
-      ? RequirementItemStatus.COMPLETE
-      : RequirementItemStatus.LOCKED
+    ? RequirementItemStatus.COMPLETE
+    : RequirementItemStatus.LOCKED
 
   return (
     <RequirementItem status={requirementItemState}>

@@ -163,7 +163,7 @@ describe('OAuthClientAclEditor', () => {
         ({
           data: undefined,
           isLoading: true,
-        }) as UseQueryResult<AccessControlList | null, SynapseClientError>,
+        } as UseQueryResult<AccessControlList | null, SynapseClientError>),
     )
     renderComponent({
       clientId: MOCK_OAUTH_CLIENT_ACL.id!,

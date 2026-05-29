@@ -13,7 +13,7 @@ export default class JsonRxResponseComplete<
   }
 
   public getPayload(): TPayload | undefined {
-    return this.payload
+    return this.payload;
   }
   constructor(subscriptionId: number, payload?: TPayload) {
     super(RESPONSE_COMPLETE_TYPE_CODE)

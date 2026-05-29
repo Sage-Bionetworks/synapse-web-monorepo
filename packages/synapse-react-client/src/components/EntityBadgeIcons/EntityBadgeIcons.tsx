@@ -31,7 +31,7 @@ export type EntityBadgeIconsProps = {
   entityId: string
   versionNumber?: number
   flexWrap?: // possible settings for flex-wrap
-    | 'wrap'
+  | 'wrap'
     | 'nowrap'
     | '-moz-initial'
     | 'inherit'

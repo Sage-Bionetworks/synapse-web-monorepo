@@ -5,7 +5,7 @@ import { useResolvedSynapseEntity } from './useResolvedSynapseEntity'
 
 function createGetColumnValue(values: Record<string, string | undefined>) {
   return (columnName?: string) =>
-    columnName ? (values[columnName] ?? undefined) : undefined
+    columnName ? values[columnName] ?? undefined : undefined
 }
 
 describe('useResolvedSynapseEntity', () => {

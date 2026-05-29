@@ -46,16 +46,13 @@ export function getCandidateDoiId(args: {
     portalDoiConfiguration
 
   const doiAttributes: Record<string, string> | undefined =
-    resourceIdKeyColumns?.reduce(
-      (acc, columnName) => {
-        const value = data[columnName]
-        if (value != null) {
-          acc[columnName] = value
-        }
-        return acc
-      },
-      {} as Record<string, string>,
-    )
+    resourceIdKeyColumns?.reduce((acc, columnName) => {
+      const value = data[columnName]
+      if (value != null) {
+        acc[columnName] = value
+      }
+      return acc
+    }, {} as Record<string, string>)
 
   if (!doiAttributes || Object.keys(doiAttributes).length === 0) {
     return undefined

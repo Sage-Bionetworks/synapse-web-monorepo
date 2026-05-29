@@ -105,7 +105,7 @@ All projects extend `shared/tsconfig.base.json` (strict mode). The root `tsconfi
 
 ### Pre-commit Hooks
 
-Husky runs ESLint + oxfmt (via lint-staged) on staged files before each commit.
+Husky runs ESLint + Prettier (via lint-staged) on staged files before each commit.
 
 ## Requirements
 

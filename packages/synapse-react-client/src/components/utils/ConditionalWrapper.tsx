@@ -6,8 +6,7 @@ import {
 } from 'react'
 
 type ConditionalWrapperProps<
-  TWrapper extends ComponentType<PropsWithChildren> =
-    ComponentType<PropsWithChildren>,
+  TWrapper extends ComponentType<PropsWithChildren> = ComponentType<PropsWithChildren>,
 > = {
   condition: boolean
   wrapper: TWrapper

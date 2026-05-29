@@ -29,7 +29,7 @@ import { ReadonlyDeep } from 'type-fest'
 
 type SearchState = {
   show: boolean
-  /*
+  /* 
     When the component is revealed in queryplotnav we want to focus on the input field and reveal the dropdown
     there is an issue where the method handleClickOutsideForm will override the state from componentDidUpdate
     so we track when componentDidUpdate just fired so that `show` is not overriden on the click event which

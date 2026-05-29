@@ -5,8 +5,8 @@ import type { IFilterXSSOptions } from 'xss'
 // xss is a CJS-only module; pull runtime values from the default import to
 // avoid "named export not found" errors in Vite dev mode (native ESM).
 const { safeAttrValue, escapeAttrValue } = xssLib as unknown as {
-  safeAttrValue: (typeof import('xss'))['safeAttrValue']
-  escapeAttrValue: (typeof import('xss'))['escapeAttrValue']
+  safeAttrValue: typeof import('xss')['safeAttrValue']
+  escapeAttrValue: typeof import('xss')['escapeAttrValue']
 }
 
 // allow list used by both the xss config and DOMPurify config

@@ -147,8 +147,9 @@ describe('SynapseNavDrawer tests', () => {
     await within(topButtonGroup).findByLabelText('Favorites')
     await within(topButtonGroup).findByLabelText('Teams')
     await within(topButtonGroup).findByLabelText('Challenges')
-    const downloadCartButton =
-      await within(topButtonGroup).findByLabelText('Download List')
+    const downloadCartButton = await within(topButtonGroup).findByLabelText(
+      'Download List',
+    )
     await within(downloadCartButton).findByText(`${numFilesInDownloadList}`)
     await within(topButtonGroup).findByLabelText('Trash Can')
     await within(topButtonGroup).findByLabelText('Search')
@@ -180,8 +181,9 @@ describe('SynapseNavDrawer tests', () => {
     await within(topButtonGroup).findByLabelText('Favorites')
     await within(topButtonGroup).findByLabelText('Teams')
     await within(topButtonGroup).findByLabelText('Challenges')
-    const downloadCartButton =
-      await within(topButtonGroup).findByLabelText('Download List')
+    const downloadCartButton = await within(topButtonGroup).findByLabelText(
+      'Download List',
+    )
     await within(downloadCartButton).findByText(`${numFilesInDownloadList}`)
     await within(topButtonGroup).findByLabelText('Trash Can')
     await within(topButtonGroup).findByLabelText('Search')

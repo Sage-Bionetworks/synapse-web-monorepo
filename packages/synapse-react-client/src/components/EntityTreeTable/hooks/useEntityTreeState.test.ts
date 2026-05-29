@@ -16,10 +16,9 @@ import { createWrapperAndQueryClient } from '@/testutils/TestingLibraryUtils'
 
 // Mock the query hooks
 vi.mock('@/synapse-queries', async () => {
-  const actual =
-    await vi.importActual<typeof import('@/synapse-queries')>(
-      '@/synapse-queries',
-    )
+  const actual = await vi.importActual<typeof import('@/synapse-queries')>(
+    '@/synapse-queries',
+  )
   return {
     ...actual,
     useGetEntityHeader: vi.fn(),
@@ -68,11 +67,11 @@ type ChildrenQueryResult = ReturnType<typeof useGetEntityChildren>
 
 const createHeaderQueryResult = (
   data: EntityHeader | undefined,
-): HeaderQueryResult => ({ data }) as HeaderQueryResult
+): HeaderQueryResult => ({ data } as HeaderQueryResult)
 
 const createChildrenQueryResult = (
   data: EntityChildrenResponse | undefined,
-): ChildrenQueryResult => ({ data }) as ChildrenQueryResult
+): ChildrenQueryResult => ({ data } as ChildrenQueryResult)
 
 const mockEntityHeader: EntityHeader = {
   id: 'syn123',
