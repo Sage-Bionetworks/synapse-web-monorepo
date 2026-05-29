@@ -4,7 +4,7 @@ import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { DEFAULT_PAGE_SIZE, VALUE_NOT_SET } from '@/utils/SynapseConstants'
-import { Collapse as MockCollapse } from '@mui/material'
+import { Collapse as MockCollapse, CollapseProps } from '@mui/material'
 import {
   ColumnModel,
   ColumnTypeEnum,
@@ -19,14 +19,15 @@ import { Suspense } from 'react'
 import { QueryContextType, QueryWrapper, useQueryContext } from '../../../index'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
 import { RangeValues } from '../Range'
-import RangeSlider from '../RangeSlider/RangeSlider'
+import RangeSlider, { RangeSliderProps } from '../RangeSlider/RangeSlider'
 import { RangeFacetFilter, RangeFacetFilterProps } from './RangeFacetFilter'
+import { RangeFacetFilterUI } from './RangeFacetFilterUI'
 
 let capturedOnApplyClicked: ((values: RangeValues) => void) | undefined
 
 vi.mock('../RangeSlider/RangeSlider', () => ({
   __esModule: true,
-  default: vi.fn((props: any) => {
+  default: vi.fn((props: RangeSliderProps) => {
     capturedOnApplyClicked = props.onApplyClicked
     return <div data-testid="RangeSlider"></div>
   }),
@@ -38,7 +39,7 @@ vi.mock(import('@mui/material'), async importOriginal => {
   const original = await importOriginal()
   return {
     ...original,
-    Collapse: vi.fn(props => (
+    Collapse: vi.fn((props: CollapseProps) => (
       <div data-testid="Collapse">{props.children}</div>
     )),
   }
@@ -414,5 +415,83 @@ describe('RangeFacetFilter tests', () => {
         ])
       })
     })
+  })
+})
+
+describe('RangeFacetFilterUI INTEGER without column bounds', () => {
+  it('renders a number Range input when columnMin and columnMax are absent', async () => {
+    render(
+      <RangeFacetFilterUI
+        label="Year"
+        facetResult={{}}
+        columnType="INTEGER"
+        onRangeValueSelected={vi.fn()}
+        onNotSetSelected={vi.fn()}
+        onAnySelected={vi.fn()}
+      />,
+      { wrapper: createWrapper() },
+    )
+    const rangeOption = screen.getByLabelText('Range')
+    await userEvent.click(rangeOption)
+    // Should show Range (number inputs), not RangeSlider
+    expect(screen.queryByTestId('RangeSlider')).not.toBeInTheDocument()
+    const minInput = screen.getByLabelText<HTMLInputElement>('min')
+    expect(minInput.type).toBe('number')
+  })
+
+  it('renders a number Range input when columnMin and columnMax are empty strings', async () => {
+    // Synthesized facets from SearchQueryWrapper use '' for unavailable bounds
+    render(
+      <RangeFacetFilterUI
+        label="Year"
+        facetResult={{ columnMin: '', columnMax: '' }}
+        columnType="INTEGER"
+        onRangeValueSelected={vi.fn()}
+        onNotSetSelected={vi.fn()}
+        onAnySelected={vi.fn()}
+      />,
+      { wrapper: createWrapper() },
+    )
+    const rangeOption = screen.getByLabelText('Range')
+    await userEvent.click(rangeOption)
+    expect(screen.queryByTestId('RangeSlider')).not.toBeInTheDocument()
+    const minInput = screen.getByLabelText<HTMLInputElement>('min')
+    expect(minInput.type).toBe('number')
+  })
+
+  it('renders a number Range input pre-filled when selectedMin and selectedMax are set', () => {
+    render(
+      <RangeFacetFilterUI
+        label="Year"
+        facetResult={{ selectedMin: '1997', selectedMax: '1999' }}
+        columnType="INTEGER"
+        onRangeValueSelected={vi.fn()}
+        onNotSetSelected={vi.fn()}
+        onAnySelected={vi.fn()}
+      />,
+      { wrapper: createWrapper() },
+    )
+    // selectedMin is set, so radio should already be on Range
+    const minInput = screen.getByLabelText<HTMLInputElement>('min')
+    expect(minInput.type).toBe('number')
+    expect(minInput.value).toBe('1997')
+  })
+
+  it('renders a RangeSlider when real columnMin and columnMax bounds are provided', async () => {
+    render(
+      <RangeFacetFilterUI
+        label="Year"
+        facetResult={{ columnMin: '1996', columnMax: '1999' }}
+        columnType="INTEGER"
+        onRangeValueSelected={vi.fn()}
+        onNotSetSelected={vi.fn()}
+        onAnySelected={vi.fn()}
+      />,
+      { wrapper: createWrapper() },
+    )
+    const rangeOption = screen.getByLabelText('Range')
+    await userEvent.click(rangeOption)
+    expect(screen.getByTestId('RangeSlider')).toBeInTheDocument()
+    expect(screen.queryByLabelText('min')).not.toBeInTheDocument()
   })
 })
