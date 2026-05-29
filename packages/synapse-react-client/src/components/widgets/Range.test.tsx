@@ -68,6 +68,20 @@ describe('Range input test', () => {
     expect(errorMessage.classList.contains('SRC-danger-color')).toBe(true)
   })
 
+  it('should allow applying when only min is filled', async () => {
+    renderComponent({ initialValues: undefined })
+    await userEvent.type(getInput('min'), '5')
+    await userEvent.click(screen.getByRole('button', { name: 'Apply' }))
+    expect(mockCallback).toHaveBeenCalledWith({ min: '5', max: undefined })
+  })
+
+  it('should allow applying when only max is filled', async () => {
+    renderComponent({ initialValues: undefined })
+    await userEvent.type(getInput('max'), '10')
+    await userEvent.click(screen.getByRole('button', { name: 'Apply' }))
+    expect(mockCallback).toHaveBeenCalledWith({ min: undefined, max: '10' })
+  })
+
   describe('date range', () => {
     const initialValues = {
       min: new Date(2019, 0, 4).toISOString(),
@@ -108,6 +122,35 @@ describe('Range input test', () => {
         'Min value should be less than max value',
       )
       expect(errorMessage.classList.contains('SRC-danger-color')).toBe(true)
+    })
+
+    it('should render with empty min when initialValues.min is undefined', () => {
+      renderComponent({
+        type: 'date',
+        initialValues: {
+          min: undefined,
+          max: new Date(2019, 9, 3).toISOString(),
+        },
+      })
+      expect(getInput('min').value).toBe('')
+      expect(getInput('max').value).toBe('2019-10-03')
+    })
+
+    it('should call callbackFn with only the filled value when min is not set', async () => {
+      renderComponent({
+        type: 'date',
+        initialValues: {
+          min: undefined,
+          max: new Date(2019, 9, 3).toISOString(),
+        },
+      })
+      await userEvent.click(screen.getByRole('button', { name: 'Apply' }))
+      await waitFor(() =>
+        expect(mockCallback).toHaveBeenCalledWith({
+          min: undefined,
+          max: '2019-10-03',
+        }),
+      )
     })
   })
 })

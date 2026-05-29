@@ -1,6 +1,7 @@
 import {
   FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
   FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+  FacetColumnResultRange,
   QueryBundleRequest,
   TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
@@ -8,6 +9,7 @@ import type {
   SearchIndexQuery,
   SearchQueryResults,
 } from '@sage-bionetworks/synapse-client'
+import dayjs from 'dayjs'
 import { describe, expect, it } from 'vitest'
 import {
   searchQueryResultsToQueryResultBundle,
@@ -124,6 +126,80 @@ describe('toSearchIndexQuery', () => {
     ])
   })
 
+  it('converts DATE range filter values from YYYY-MM-DD to unix milliseconds', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleRequest({
+        selectedFacets: [
+          {
+            concreteType: FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
+            columnName: 'event_date',
+            min: '2021-06-01',
+            max: '2021-12-31',
+          },
+        ],
+      }),
+      SEARCH_INDEX_ID,
+      [
+        {
+          id: 'c1',
+          name: 'event_date',
+          columnType: 'DATE',
+          facetType: 'range',
+        },
+      ],
+    )
+    const rf = result.searchQuery?.rangeFilters![0]
+    expect(rf?.min).toBe(String(dayjs('2021-06-01').valueOf()))
+    expect(rf?.max).toBe(String(dayjs('2021-12-31').valueOf()))
+  })
+
+  it('passes non-DATE range filter values through unchanged', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleRequest({
+        selectedFacets: [
+          {
+            concreteType: FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
+            columnName: 'year',
+            min: '1996',
+            max: '1999',
+          },
+        ],
+      }),
+      SEARCH_INDEX_ID,
+      [{ id: 'c1', name: 'year', columnType: 'INTEGER', facetType: 'range' }],
+    )
+    const rf = result.searchQuery?.rangeFilters![0]
+    expect(rf?.min).toBe('1996')
+    expect(rf?.max).toBe('1999')
+  })
+
+  it('keeps undefined range filter bounds as undefined without conversion', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleRequest({
+        selectedFacets: [
+          {
+            concreteType: FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
+            columnName: 'event_date',
+            min: undefined,
+            max: '2021-12-31',
+          },
+        ],
+      }),
+      SEARCH_INDEX_ID,
+      [
+        {
+          id: 'c1',
+          name: 'event_date',
+          columnType: 'DATE',
+          facetType: 'range',
+        },
+      ],
+    )
+    const rf = result.searchQuery?.rangeFilters![0]
+    expect(rf?.min).toBeUndefined()
+    expect(rf?.max).toBe(String(dayjs('2021-12-31').valueOf()))
+  })
+
   it('keeps enumeration and range selectedFacets separate', () => {
     const result = toSearchIndexQuery(
       makeQueryBundleRequest({
@@ -203,6 +279,24 @@ describe('toSearchIndexQuery', () => {
       [{ id: 'c1', name: 'description', columnType: 'STRING' }],
     )
     expect(result.searchQuery?.facetRequests).toBeUndefined()
+  })
+
+  it('excludes range-type columns from facetRequests, keeping only enumeration columns', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleRequest(),
+      SEARCH_INDEX_ID,
+      [
+        { id: 'c1', name: 'year', columnType: 'INTEGER', facetType: 'range' },
+        {
+          id: 'c2',
+          name: 'consortium',
+          columnType: 'STRING',
+          facetType: 'enumeration',
+        },
+      ],
+    )
+    expect(result.searchQuery?.facetRequests).toHaveLength(1)
+    expect(result.searchQuery?.facetRequests![0].columnName).toBe('consortium')
   })
 
   it('produces undefined facetRequests when columnModels is not provided', () => {
@@ -493,21 +587,15 @@ describe('searchQueryResultsToQueryResultBundle', () => {
       facetType: 'enumeration' as const,
       facetValues: [{ value: 'HTAN', count: 3, isSelected: false }],
     }
-    const facetAge = {
-      concreteType:
-        'org.sagebionetworks.repo.model.table.FacetColumnResultRange' as const,
-      columnName: 'age',
-      facetType: 'range' as const,
-      columnMin: '0',
-      columnMax: '100',
-    }
-    // Server returns facets in a different order than columnModels
+    // Server returns facets in a different order than columnModels.
+    // Note: the server never returns FacetColumnResultRange; the age facet is synthesized
+    // from columnModels by searchQueryResultsToQueryResultBundle.
     const results: SearchQueryResults = {
       concreteType: 'org.sagebionetworks.repo.model.search.SearchQueryResults',
       totalHits: 5,
       hits: [],
       selectColumns: [],
-      facets: [facetOrgan, facetConsortium, facetAge],
+      facets: [facetOrgan, facetConsortium],
     }
     // columnModels order: consortium → age → organ
     const columnModels = [
@@ -638,5 +726,151 @@ describe('searchQueryResultsToQueryResultBundle', () => {
     expect(rows[1].values).toEqual(['Beta'])
     expect(rows[1].rowId).toBe(2)
     expect(rows[1].versionNumber).toBe(3)
+  })
+
+  // ---- Synthetic FacetColumnResultRange for DATE / DOUBLE range columns ----
+
+  it('synthesizes a FacetColumnResultRange for DATE range columns absent from server results', () => {
+    const results: SearchQueryResults = {
+      concreteType: 'org.sagebionetworks.repo.model.search.SearchQueryResults',
+      totalHits: 0,
+      hits: [],
+      selectColumns: [],
+    }
+    const result = searchQueryResultsToQueryResultBundle(
+      results,
+      MINIMAL_SEARCH_INDEX_QUERY,
+      [
+        {
+          id: 'c1',
+          name: 'event_date',
+          columnType: 'DATE',
+          facetType: 'range',
+        },
+      ],
+    )
+    expect(result.facets).toHaveLength(1)
+    const facet = result.facets![0] as FacetColumnResultRange
+    expect(facet.columnName).toBe('event_date')
+    expect(facet.facetType).toBe('range')
+    expect(facet.columnMin).toBe('')
+    expect(facet.columnMax).toBe('')
+  })
+
+  it('synthesizes a FacetColumnResultRange for DOUBLE range columns absent from server results', () => {
+    const results: SearchQueryResults = {
+      concreteType: 'org.sagebionetworks.repo.model.search.SearchQueryResults',
+      totalHits: 0,
+      hits: [],
+      selectColumns: [],
+    }
+    const result = searchQueryResultsToQueryResultBundle(
+      results,
+      MINIMAL_SEARCH_INDEX_QUERY,
+      [
+        {
+          id: 'c1',
+          name: 'score',
+          columnType: 'DOUBLE',
+          facetType: 'range',
+        },
+      ],
+    )
+    expect(result.facets).toHaveLength(1)
+    expect(result.facets![0].columnName).toBe('score')
+    expect(result.facets![0].facetType).toBe('range')
+  })
+
+  it('synthesizes a FacetColumnResultRange for INTEGER range columns absent from server results', () => {
+    const results: SearchQueryResults = {
+      concreteType: 'org.sagebionetworks.repo.model.search.SearchQueryResults',
+      totalHits: 0,
+      hits: [],
+      selectColumns: [],
+    }
+    const result = searchQueryResultsToQueryResultBundle(
+      results,
+      MINIMAL_SEARCH_INDEX_QUERY,
+      [{ id: 'c1', name: 'year', columnType: 'INTEGER', facetType: 'range' }],
+    )
+    expect(result.facets).toHaveLength(1)
+    const facet = result.facets![0] as FacetColumnResultRange
+    expect(facet.columnName).toBe('year')
+    expect(facet.facetType).toBe('range')
+    expect(facet.columnMin).toBe('')
+    expect(facet.columnMax).toBe('')
+  })
+
+  it('converts unix millisecond rangeFilter values to YYYY-MM-DD for synthesized DATE facet selectedMin and selectedMax', () => {
+    const minMs = dayjs('2021-06-01').valueOf()
+    const maxMs = dayjs('2021-12-31').valueOf()
+    const query: SearchIndexQuery = {
+      ...MINIMAL_SEARCH_INDEX_QUERY,
+      searchQuery: {
+        rangeFilters: [
+          { key: 'event_date', min: String(minMs), max: String(maxMs) },
+        ],
+      },
+    }
+    const results: SearchQueryResults = {
+      concreteType: 'org.sagebionetworks.repo.model.search.SearchQueryResults',
+      totalHits: 0,
+      hits: [],
+      selectColumns: [],
+    }
+    const result = searchQueryResultsToQueryResultBundle(results, query, [
+      { id: 'c1', name: 'event_date', columnType: 'DATE', facetType: 'range' },
+    ])
+    const facet = result.facets![0] as FacetColumnResultRange
+    expect(facet.selectedMin).toBe('2021-06-01')
+    expect(facet.selectedMax).toBe('2021-12-31')
+  })
+
+  it('leaves selectedMin and selectedMax undefined when no matching rangeFilter exists in the query', () => {
+    const results: SearchQueryResults = {
+      concreteType: 'org.sagebionetworks.repo.model.search.SearchQueryResults',
+      totalHits: 0,
+      hits: [],
+      selectColumns: [],
+    }
+    const result = searchQueryResultsToQueryResultBundle(
+      results,
+      MINIMAL_SEARCH_INDEX_QUERY, // no rangeFilters
+      [
+        {
+          id: 'c1',
+          name: 'event_date',
+          columnType: 'DATE',
+          facetType: 'range',
+        },
+      ],
+    )
+    const facet = result.facets![0] as FacetColumnResultRange
+    expect(facet.selectedMin).toBeUndefined()
+    expect(facet.selectedMax).toBeUndefined()
+  })
+
+  it('supports one-sided synthesized ranges when only one rangeFilter bound is set', () => {
+    const maxMs = dayjs('2021-12-31').valueOf()
+    const query: SearchIndexQuery = {
+      ...MINIMAL_SEARCH_INDEX_QUERY,
+      searchQuery: {
+        rangeFilters: [
+          { key: 'event_date', min: undefined, max: String(maxMs) },
+        ],
+      },
+    }
+    const results: SearchQueryResults = {
+      concreteType: 'org.sagebionetworks.repo.model.search.SearchQueryResults',
+      totalHits: 0,
+      hits: [],
+      selectColumns: [],
+    }
+    const result = searchQueryResultsToQueryResultBundle(results, query, [
+      { id: 'c1', name: 'event_date', columnType: 'DATE', facetType: 'range' },
+    ])
+    const facet = result.facets![0] as FacetColumnResultRange
+    expect(facet.selectedMin).toBeUndefined()
+    expect(facet.selectedMax).toBe('2021-12-31')
   })
 })
