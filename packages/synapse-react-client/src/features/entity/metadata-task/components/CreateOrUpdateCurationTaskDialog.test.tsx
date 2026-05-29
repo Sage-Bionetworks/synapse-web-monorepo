@@ -189,7 +189,7 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
       })
     })
 
-    it('shows API error alert when create fails', () => {
+    it('shows API error alert when create fails', async () => {
       mockUseCreateCurationTask.mockReturnValue({
         mutate: mockCreateMutate,
         isPending: false,
@@ -197,9 +197,9 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
       } as any)
       renderCreateDialog()
       // Navigate to step 2 first
-      userEvent.click(screen.getByText('File-Based Metadata'))
+      await userEvent.click(screen.getByText('File-Based Metadata'))
       // Error is rendered in step 2 form
-      // (error from hook is rendered immediately since it's bound to hook state)
+      expect(screen.getByText('Something went wrong')).toBeInTheDocument()
     })
 
     it('EntityFinderModal sets field value on confirm', async () => {
@@ -207,7 +207,8 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
       await userEvent.click(screen.getByText('File-Based Metadata'))
 
       // The search icon button opens the entity finder for Upload Folder ID
-      const uploadFolderInput = screen.getByLabelText(/Upload Folder ID/i)
+      const uploadFolderInput =
+        screen.getByLabelText<HTMLInputElement>(/Upload Folder ID/i)
       // Click the search icon button (endAdornment)
       const container = uploadFolderInput.closest('.MuiTextField-root')!
       const searchBtn = within(container as HTMLElement).getByRole('button')
@@ -217,7 +218,9 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
       await userEvent.click(screen.getByTestId('entity-finder-confirm'))
 
       await waitFor(() => {
-        expect(screen.getByLabelText(/Upload Folder ID/i).value).toBe('syn42')
+        expect(
+          screen.getByLabelText<HTMLInputElement>(/Upload Folder ID/i).value,
+        ).toBe('syn42')
       })
     })
   })
@@ -241,20 +244,24 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
       renderEditDialog(fileBasedTask)
       expect(screen.getByText('Edit Curation Task')).toBeInTheDocument()
 
-      const dataTypeInput = screen.getByLabelText(/Task Name/i)
+      const dataTypeInput =
+        screen.getByLabelText<HTMLInputElement>(/Task Name/i)
       expect(dataTypeInput.value).toBe('Genomics')
 
-      const instructionsInput = screen.getByLabelText(/Instructions/i)
+      const instructionsInput =
+        screen.getByLabelText<HTMLInputElement>(/Instructions/i)
       expect(instructionsInput.value).toBe('Fill all fields.')
     })
 
     it('renders TaskProperties fields as disabled in edit mode', () => {
       renderEditDialog(fileBasedTask)
-      const uploadFolderInput = screen.getByLabelText(/Upload Folder ID/i)
+      const uploadFolderInput =
+        screen.getByLabelText<HTMLInputElement>(/Upload Folder ID/i)
       expect(uploadFolderInput.disabled).toBe(true)
       expect(uploadFolderInput.value).toBe('syn100')
 
-      const fileViewInput = screen.getByLabelText(/File View ID/i)
+      const fileViewInput =
+        screen.getByLabelText<HTMLInputElement>(/File View ID/i)
       expect(fileViewInput.disabled).toBe(true)
       expect(fileViewInput.value).toBe(MOCK_CURATION_TASK_FILE_VIEW_ID)
     })
@@ -331,7 +338,8 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
         },
       }
       renderEditDialog(recordTask)
-      const recordSetInput = screen.getByLabelText(/Record Set ID/i)
+      const recordSetInput =
+        screen.getByLabelText<HTMLInputElement>(/Record Set ID/i)
       expect(recordSetInput.value).toBe('syn999')
       expect(recordSetInput.disabled).toBe(true)
     })

@@ -487,6 +487,11 @@ export default function CreateOrUpdateCurationTaskDialog(
         </Grid>
       </Grid>
 
+      {isEditMode && selectedConcreteType === null && (
+        <Alert severity="error">
+          This task has an unrecognized task type and cannot be edited here.
+        </Alert>
+      )}
       {authModeChanged && (
         <Alert severity="warning">
           Changing the Authorization Mode will clear the active session ID on
@@ -519,7 +524,11 @@ export default function CreateOrUpdateCurationTaskDialog(
           Back
         </Button>
       )}
-      <Button variant="contained" onClick={handleSave} disabled={isPending}>
+      <Button
+        variant="contained"
+        onClick={handleSave}
+        disabled={isPending || selectedConcreteType === null}
+      >
         Save
       </Button>
     </Stack>

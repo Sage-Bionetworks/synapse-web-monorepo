@@ -93,6 +93,12 @@ export default function useGridSessionForCurationTask() {
           ? taskProperties.suggestedAuthorizationMode
           : undefined
 
+      if (suggestedAuthorizationMode == null) {
+        throw new Error(
+          'CurationTask is missing suggestedAuthorizationMode in taskProperties',
+        )
+      }
+
       let ownerPrincipalId: string | undefined = undefined
       if (suggestedAuthorizationMode === AuthorizationMode.SESSION_OWNER) {
         // TODO: Add collaboratorPrincipalIds once the server supports multiple owners.

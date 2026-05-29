@@ -60,7 +60,7 @@ export default function MetadataTaskTableActionCell(props: {
         </>
       )}
       <Tooltip title={tooltipTitle}>
-        <div>
+        <span>
           <Button
             variant="contained"
             size={'small'}
@@ -71,7 +71,7 @@ export default function MetadataTaskTableActionCell(props: {
           >
             Open Curator
           </Button>
-        </div>
+        </span>
       </Tooltip>
     </Box>
   )
