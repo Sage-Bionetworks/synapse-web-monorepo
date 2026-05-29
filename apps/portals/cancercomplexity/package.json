@@ -63,7 +63,7 @@
     "generate-sitemap": "dotenv -- pnpm _generate-sitemap",
     "typegen": "react-router typegen",
     "type-check": "tsc --build",
-    "lint": "eslint src",
+    "lint": "oxlint src",
     "save-build-date": "mkdir -p public && date > public/build-date.txt"
   }
 }

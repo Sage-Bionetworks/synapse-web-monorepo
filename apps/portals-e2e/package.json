@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "clean": "rimraf coverage",
-    "lint": "eslint src",
+    "lint": "oxlint src",
     "type-check": "tsc",
     "_portal:build": "pnpm nx run ${PORTAL}:build",
     "portal:build": "dotenv -- pnpm _portal:build",
