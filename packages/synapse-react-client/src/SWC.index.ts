@@ -185,6 +185,12 @@ const SynapseComponents = {
   ReviewerDashboard: lazy(
     () => import('./components/dataaccess/ReviewerDashboard'),
   ),
+  SearchQueryWrapperPlotNav: lazy(
+    () =>
+      import(
+        './components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
+      ),
+  ),
   ShareThisPage: lazy(() => import('./components/ShareThisPage')),
   SkeletonButton: lazy(() => import('./components/Skeleton/SkeletonButton')),
   SqlDefinedTableEditorModal: lazy(
