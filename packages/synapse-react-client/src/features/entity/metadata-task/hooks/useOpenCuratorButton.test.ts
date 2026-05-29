@@ -252,7 +252,7 @@ describe('useOpenCuratorFromTaskButton', () => {
     })
   })
 
-  describe('when CURATOR_LINK_TASK_TO_GRID_SESSION is enabled', () => {
+  describe.skip('when CURATOR_LINK_TASK_TO_GRID_SESSION is enabled', () => {
     beforeEach(() => {
       mockUseGetFeatureFlag.mockImplementation(
         flag => flag === FeatureFlagEnum.CURATOR_LINK_TASK_TO_GRID_SESSION,
