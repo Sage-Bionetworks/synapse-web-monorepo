@@ -1867,6 +1867,12 @@ importers:
       '@aws-sdk/lib-storage':
         specifier: ^3.803.0
         version: 3.803.0(@aws-sdk/client-s3@3.1019.0)
+      '@dnd-kit/helpers':
+        specifier: ^0.4.0
+        version: 0.4.0
+      '@dnd-kit/react':
+        specifier: ^0.4.0
+        version: 0.4.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@emotion/react':
         specifier: ^11.14.0
         version: 11.14.0(@types/react@19.2.14)(react@19.2.5)
@@ -2945,6 +2951,30 @@ packages:
   '@cto.af/wtf8@0.0.4':
     resolution: {integrity: sha512-GbVy/i3DNrlp6klsqA7MatSERqp338xeWdMDHSGMxUKE19hC2Yk2dydLL0LtNC9Kjbb5bXbdwHHKa/mtnIRTZw==}
     engines: {node: '>=20'}
+
+  '@dnd-kit/abstract@0.4.0':
+    resolution: {integrity: sha512-loEEJxKT5oLOLeRBJVTO9qpgvvW/Qq902xO20v1JMbpANuN/NLurUdpxIwNpVz+RtOSyzznnbc7lO7psmOhc9A==}
+
+  '@dnd-kit/collision@0.4.0':
+    resolution: {integrity: sha512-oOHHUkH1h9Vl2m8TwLw/mPHA7Blf+s0PYcRoLNWNBVxDzugJKZo8WdpU58EMu9qkqyQGrR/YTOozGiMPhlqZ5Q==}
+
+  '@dnd-kit/dom@0.4.0':
+    resolution: {integrity: sha512-mJDKt0BtlHXetZyrvZXh6++aycleIbYWH/OVC4nlszDh8NvW7q8dfsxFllR5RtLKLcykLaI4o545Figfks/HZQ==}
+
+  '@dnd-kit/geometry@0.4.0':
+    resolution: {integrity: sha512-d1n+CU54V/qF/g792bmJK2oR4f5jOL7Pls2IfC+j9f5UBECpjsYbcPZ/krom/z8LgieqvMh1qrUkdcBjJJ7vpg==}
+
+  '@dnd-kit/helpers@0.4.0':
+    resolution: {integrity: sha512-9YOKevD6zOwKVvV4k3fQL//NF+UaN92sfqPpJhT0/7Jq5PLtfD+CTpzmFAjTt5o1qQpFj3xqjWnQl25ooW62wQ==}
+
+  '@dnd-kit/react@0.4.0':
+    resolution: {integrity: sha512-J2/N4CpQf98zJBZhMljDNsc+QR4VtUKU9BRO1+Di4OGaB1qafMC4qZ11xKXOkjw+d7h82FRSXmXCo0c8+VWaWg==}
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
+
+  '@dnd-kit/state@0.4.0':
+    resolution: {integrity: sha512-vVdwOY9VsYdMNa7Z0xQhTXlzHqCcCugGuoM1kzvZhnZ0tYVPRdmIhWfeO6Y2ZoN92JwYAyJRRNl4ICkEe2mneg==}
 
   '@emnapi/core@1.10.0':
     resolution: {integrity: sha512-yq6OkJ4p82CAfPl0u9mQebQHKPJkY7WrIuk205cTYnYe+k2Z8YBh11FrbRG/H6ihirqcacOgl2BIO8oyMQLeXw==}
@@ -4419,6 +4449,9 @@ packages:
 
   '@popperjs/core@2.11.8':
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
+
+  '@preact/signals-core@1.14.2':
+    resolution: {integrity: sha512-RZHdBj9ZF4n40Rp4jS052EHHjBWf96P9oNdXPfhQTovCuWY9iQn3Gq+gOTJSgBO9A/JBuPfMOWsSX/lIU9Pc/A==}
 
   '@react-google-maps/api@2.20.6':
     resolution: {integrity: sha512-frxkSHWbd36ayyxrEVopSCDSgJUT1tVKXvQld2IyzU3UnDuqqNA3AZE4/fCdqQb2/zBQx3nrWnZB1wBXDcrjcw==}
@@ -12515,6 +12548,50 @@ snapshots:
 
   '@cto.af/wtf8@0.0.4': {}
 
+  '@dnd-kit/abstract@0.4.0':
+    dependencies:
+      '@dnd-kit/geometry': 0.4.0
+      '@dnd-kit/state': 0.4.0
+      tslib: 2.8.1
+
+  '@dnd-kit/collision@0.4.0':
+    dependencies:
+      '@dnd-kit/abstract': 0.4.0
+      '@dnd-kit/geometry': 0.4.0
+      tslib: 2.8.1
+
+  '@dnd-kit/dom@0.4.0':
+    dependencies:
+      '@dnd-kit/abstract': 0.4.0
+      '@dnd-kit/collision': 0.4.0
+      '@dnd-kit/geometry': 0.4.0
+      '@dnd-kit/state': 0.4.0
+      tslib: 2.8.1
+
+  '@dnd-kit/geometry@0.4.0':
+    dependencies:
+      '@dnd-kit/state': 0.4.0
+      tslib: 2.8.1
+
+  '@dnd-kit/helpers@0.4.0':
+    dependencies:
+      '@dnd-kit/abstract': 0.4.0
+      tslib: 2.8.1
+
+  '@dnd-kit/react@0.4.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+    dependencies:
+      '@dnd-kit/abstract': 0.4.0
+      '@dnd-kit/dom': 0.4.0
+      '@dnd-kit/state': 0.4.0
+      react: 19.2.5
+      react-dom: 19.2.5(react@19.2.5)
+      tslib: 2.8.1
+
+  '@dnd-kit/state@0.4.0':
+    dependencies:
+      '@preact/signals-core': 1.14.2
+      tslib: 2.8.1
+
   '@emnapi/core@1.10.0':
     dependencies:
       '@emnapi/wasi-threads': 1.2.1
@@ -13904,6 +13981,8 @@ snapshots:
   '@polka/url@1.0.0-next.29': {}
 
   '@popperjs/core@2.11.8': {}
+
+  '@preact/signals-core@1.14.2': {}
 
   '@react-google-maps/api@2.20.6(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
@@ -15593,7 +15672,7 @@ snapshots:
       obug: 2.1.1
       std-env: 4.1.0
       tinyrainbow: 3.1.0
-      vitest: 4.1.5(@types/node@22.19.13)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(vite@8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
+      vitest: 4.1.5(@types/node@22.19.13)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@26.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@6.0.3))(vite@8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
 
   '@vitest/eslint-plugin@1.2.1(eslint@9.39.4)(typescript@6.0.3)(vitest@4.1.5)':
     dependencies:
@@ -15675,7 +15754,7 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.16
       tinyrainbow: 3.1.0
-      vitest: 4.1.5(@types/node@22.19.13)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@5.8.3))(vite@8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
+      vitest: 4.1.5(@types/node@22.19.13)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@26.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@6.0.3))(vite@8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
 
   '@vitest/utils@3.2.4':
     dependencies:
