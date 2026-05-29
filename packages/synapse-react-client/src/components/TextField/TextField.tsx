@@ -41,9 +41,6 @@ export default function TextField({
   const generatedId = useId()
   const id = idProp ?? generatedId
 
-  const mergedHtmlInput = maxCharacterCount
-    ? { ...slotProps?.htmlInput, maxLength: maxCharacterCount }
-    : slotProps?.htmlInput
   const currentLength = typeof value === 'string' ? value.length : 0
 
   const compositeLabel =
@@ -73,8 +70,11 @@ export default function TextField({
           },
         }}
         slotProps={{
-          formHelperText: slotProps?.formHelperText,
-          htmlInput: mergedHtmlInput,
+          ...slotProps,
+          htmlInput: {
+            maxLength: maxCharacterCount,
+            ...slotProps?.htmlInput,
+          },
           inputLabel: {
             className: styles.inputLabel,
             ...slotProps?.inputLabel,

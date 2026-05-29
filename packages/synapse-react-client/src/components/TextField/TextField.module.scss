@@ -1,12 +1,12 @@
-.inputLabel {
+.inputLabel:global(.MuiInputLabel-root) {
   // Override MUI's default absolute positioning so the label stays in document flow.
-  position: relative !important;
+  position: static;
 
   // Flex layout lets us reorder the three children:
   //   1. anonymous text node (label)  — order 0 (default)
   //   2. .MuiFormLabel-asterisk span  — order 1  (inline, same row)
   //   3. .description span            — order 2, flex-basis 100% (wraps to new row)
-  display: flex !important;
+  display: flex;
   flex-wrap: wrap;
   align-items: baseline;
 
