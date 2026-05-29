@@ -1,20 +1,27 @@
-.labelRow {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  margin-bottom: 4px;
-}
-
 .inputLabel {
+  // Override MUI's default absolute positioning so the label stays in document flow.
   position: relative !important;
-  font-weight: 700;
-  margin-bottom: 0;
-  pointer-events: unset;
+
+  // Flex layout lets us reorder the three children:
+  //   1. anonymous text node (label)  — order 0 (default)
+  //   2. .MuiFormLabel-asterisk span  — order 1  (inline, same row)
+  //   3. .description span            — order 2, flex-basis 100% (wraps to new row)
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: baseline;
+
+  :global(.MuiFormLabel-asterisk) {
+    order: 1;
+  }
 }
 
-.helperText {
+.description {
+  order: 2;
+  flex-basis: 100%;
   font-weight: 500;
+  // Explicit color prevents inheriting error/focused color from the parent InputLabel.
   color: var(--synapse-gray-600);
+  margin-top: 6px;
 }
 
 .charCount {

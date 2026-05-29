@@ -6,7 +6,7 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { Alert, Box, Typography } from '@mui/material'
+import { Alert, Box, Stack, Typography } from '@mui/material'
 import TextField from '../TextField'
 import { CreateTeamRequest, Team } from '@sage-bionetworks/synapse-types'
 import useCreateAndRegisterChallengeTeam from './useCreateAndRegisterChallengeTeam'
@@ -114,7 +114,7 @@ export const CreateChallengeTeam = forwardRef(function CreateChallengeTeam(
   )
 
   return (
-    <Box>
+    <Stack gap={2}>
       <Typography variant="body1" sx={{ lineHeight: '20px' }}>
         Create a new team for this Challenge!
       </Typography>
@@ -207,6 +207,6 @@ export const CreateChallengeTeam = forwardRef(function CreateChallengeTeam(
             ))}
         </Alert>
       )}
-    </Box>
+    </Stack>
   )
 })

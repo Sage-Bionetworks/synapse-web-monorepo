@@ -4,7 +4,6 @@ import { Navigate } from 'react-router'
 import { LeftRightPanel } from '../components/LeftRightPanel'
 import { ContinueButton } from '../components/ProfileValidation/ContinueButton'
 import { SourceAppLogo } from '../components/SourceApp'
-import { StyledFormControl } from '../components/StyledComponents'
 import { useSourceApp } from '../components/useSourceApp'
 import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
 import { useGetCurrentUserProfile } from 'synapse-react-client/synapse-queries/user/useUserBundle'
@@ -34,21 +33,15 @@ function CurrentAffiliationPage() {
         leftContent={
           <div>
             <SourceAppLogo sx={{ textAlign: 'center' }} />
-            <StyledFormControl
+            <TextField
               fullWidth
-              variant="standard"
-              margin="normal"
+              label={'Current Affiliation'}
+              id="company"
+              name="company"
+              onChange={event => setNewAffiliation(event.target.value)}
+              value={newAffiliation || ''}
               required
-            >
-              <TextField
-                fullWidth
-                label={'Current Affiliation'}
-                id="company"
-                name="company"
-                onChange={event => setNewAffiliation(event.target.value)}
-                value={newAffiliation || ''}
-              />
-            </StyledFormControl>
+            />
             <ContinueButton
               onClick={() => {
                 if (currentUserProfile) {
