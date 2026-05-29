@@ -24,7 +24,6 @@ import {
   Radio,
   RadioGroup,
   Stack,
-  TextField,
   Tooltip,
   Typography,
 } from '@mui/material'
@@ -37,6 +36,30 @@ import {
 import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 import { HelpTwoTone } from '@mui/icons-material'
+import {
+  AUTH_MODE_CHANGED_WARNING,
+  AUTH_MODE_NONE_TOOLTIP,
+  AUTH_MODE_SESSION_OWNER_TOOLTIP,
+  AUTH_MODE_SOURCE_BENEFACTOR_TOOLTIP,
+  ASSIGNEE_TOOLTIP,
+  COLLABORATORS_TOOLTIP,
+  CREATE_CURATION_TASK_DIALOG_TITLE,
+  EDIT_CURATION_TASK_DIALOG_TITLE,
+  FILE_BASED_TASK_DESCRIPTION,
+  FILE_BASED_TASK_TITLE,
+  FILE_VIEW_FINDER_PROMPT,
+  FILE_VIEW_FINDER_TITLE,
+  GENERIC_SAVE_ERROR_MESSAGE,
+  RECORD_BASED_TASK_DESCRIPTION,
+  RECORD_BASED_TASK_TITLE,
+  RECORD_SET_FINDER_PROMPT,
+  RECORD_SET_FINDER_TITLE,
+  SELECT_TASK_TYPE_DESCRIPTION,
+  UNRECOGNIZED_TASK_TYPE_ERROR,
+  UPLOAD_FOLDER_FINDER_PROMPT,
+  UPLOAD_FOLDER_FINDER_TITLE,
+} from '../utils/constants'
+import { TextField } from '@/components/TextField'
 
 export type CreateOrUpdateCurationTaskDialogProps = {
   open: boolean
@@ -117,7 +140,10 @@ function EntityIdTextField(props: {
   )
 }
 
-type CreateOrUpdateCurationTaskDialogStep = 'SELECT_TYPE' | 'FIELD_ENTRY'
+type CreateOrUpdateCurationTaskDialogStep =
+  | 'SELECT_TYPE'
+  | 'TYPE_SPECIFIC_FIELDS'
+  | 'COMMON_MUTABLE_FIELDS'
 
 export default function CreateOrUpdateCurationTaskDialog(
   props: CreateOrUpdateCurationTaskDialogProps,
@@ -125,9 +151,10 @@ export default function CreateOrUpdateCurationTaskDialog(
   const { open, onCancel, onSuccess, projectId, task } = props
   const isEditMode = task !== undefined
 
-  // In create mode: track which step we're on (1 = type selection, 2 = fields)
-  const [step, setStep] =
-    useState<CreateOrUpdateCurationTaskDialogStep>('SELECT_TYPE')
+  // In create mode: track which step we're on (1 = type selection, 2 = type-specific fields, 3 = common mutable fields)
+  const [step, setStep] = useState<CreateOrUpdateCurationTaskDialogStep>(() =>
+    task ? 'COMMON_MUTABLE_FIELDS' : 'SELECT_TYPE',
+  )
 
   // Derive initial concrete type from the existing task (null in create mode
   // until the user picks a type in step 1)
@@ -213,6 +240,12 @@ export default function CreateOrUpdateCurationTaskDialog(
   const isPending = isCreatePending || isUpdatePending
   const error = createError ?? updateError
 
+  const isTaskPropertiesValid =
+    (selectedConcreteType === FILE_BASED_CONCRETE_TYPE &&
+      uploadFolderId &&
+      fileViewId) ||
+    (selectedConcreteType === RECORD_BASED_CONCRETE_TYPE && recordSetId)
+
   function buildTaskPayload(): CurationTask {
     const suggestedAuthorizationMode =
       authorizationMode === 'NONE' ? undefined : authorizationMode
@@ -276,7 +309,7 @@ export default function CreateOrUpdateCurationTaskDialog(
           label={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
               <Typography variant="body1">None (Legacy)</Typography>
-              <Tooltip title="Sessions are not linked to this task — each user starts their own independent grid session. Without coordination, users may overwrite each other's annotations. Use this only to maintain existing tasks that predate session management, or if your workflow does not require collaboration.">
+              <Tooltip title={AUTH_MODE_NONE_TOOLTIP}>
                 <HelpTwoTone sx={{ color: 'grey.700' }} />
               </Tooltip>
             </Box>
@@ -288,7 +321,7 @@ export default function CreateOrUpdateCurationTaskDialog(
           label={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
               <Typography variant="body1">Session Owner</Typography>
-              <Tooltip title="The grid session is owned by the task assignee (or assignee team). Only the assignee or their team members can join, and the session includes only rows that the assignee has edit access to. Best suited for File Views that span entities with varied access permissions.">
+              <Tooltip title={AUTH_MODE_SESSION_OWNER_TOOLTIP}>
                 <HelpTwoTone sx={{ color: 'grey.700' }} />
               </Tooltip>
             </Box>
@@ -300,7 +333,7 @@ export default function CreateOrUpdateCurationTaskDialog(
           label={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
               <Typography variant="body1">Source Benefactor</Typography>
-              <Tooltip title="The grid session is accessible to any user with edit access to all benefactors of the source entities. The session includes all rows that the creating user has edit access to. Best suited for tasks that manage metadata across many entities with consistent permissions, such as a project-level File View.">
+              <Tooltip title={AUTH_MODE_SOURCE_BENEFACTOR_TOOLTIP}>
                 <HelpTwoTone sx={{ color: 'grey.700' }} />
               </Tooltip>
             </Box>
@@ -310,7 +343,27 @@ export default function CreateOrUpdateCurationTaskDialog(
     </FormControl>
   )
 
-  // ── Form fields (used in both step 2 create and edit mode) ──────────────
+  const assigneeField = (
+    <Box>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+        <InputLabel htmlFor="dlg-set-task-assignee">Assignee</InputLabel>
+        <Tooltip title={ASSIGNEE_TOOLTIP}>
+          <div>
+            <HelpTwoTone sx={{ color: 'grey.700' }} />
+          </div>
+        </Tooltip>
+      </Box>
+      <UserSearchBox
+        inputId="dlg-set-task-assignee"
+        key={open.toString()}
+        defaultValue={assigneePrincipalId}
+        onChange={id => setAssigneePrincipalId(id ?? undefined)}
+        typeFilter={TYPE_FILTER.ALL}
+      />
+    </Box>
+  )
+
+  // ── Form fields (used in both step 3 create and edit mode) ──────────────
   const commonFields = (
     <Stack gap={2}>
       <TextField
@@ -318,6 +371,8 @@ export default function CreateOrUpdateCurationTaskDialog(
         fullWidth
         value={dataType}
         onChange={e => setDataType(e.target.value)}
+        required
+        description="Specify the task name so that contributors know which task they should work on."
       />
       <TextField
         label="Instructions"
@@ -326,28 +381,13 @@ export default function CreateOrUpdateCurationTaskDialog(
         minRows={3}
         value={instructions}
         onChange={e => setInstructions(e.target.value)}
+        description="(Optional) Provide instructions on how to complete the task."
       />
-      <Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <InputLabel>Assignee</InputLabel>
-          <Tooltip title="The user or team assigned to this task. If using 'Session Owner' authorization mode, the assignee is the default owner of the grid session. For team assignees in 'Session Owner' mode, any team member can access the session.">
-            <div>
-              <HelpTwoTone sx={{ color: 'grey.700' }} />
-            </div>
-          </Tooltip>
-        </Box>
-        <UserSearchBox
-          key={open.toString()}
-          defaultValue={assigneePrincipalId}
-          onChange={id => setAssigneePrincipalId(id ?? undefined)}
-          typeFilter={TYPE_FILTER.ALL}
-        />
-      </Box>
       {/* TODO: Display the below 'collaborators' once multiple owners are supported */}
       <Box display="none">
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
           <InputLabel>Collaborators</InputLabel>
-          <Tooltip title='Collaborators can contribute to the grid session alongside the assignee. For "Session Owner" authorization mode, collaborators are added as additional owners of the session.'>
+          <Tooltip title={COLLABORATORS_TOOLTIP}>
             <div>
               <HelpTwoTone sx={{ color: 'grey.700' }} />
             </div>
@@ -415,16 +455,16 @@ export default function CreateOrUpdateCurationTaskDialog(
         value={uploadFolderId}
         onChange={setUploadFolderId}
         disabled={isEditMode}
-        finderTitle="Select Upload Folder"
-        finderPromptCopy="Select the folder where data files will be uploaded."
+        finderTitle={UPLOAD_FOLDER_FINDER_TITLE}
+        finderPromptCopy={UPLOAD_FOLDER_FINDER_PROMPT}
       />
       <EntityIdTextField
         label="File View ID"
         value={fileViewId}
         onChange={setFileViewId}
         disabled={isEditMode}
-        finderTitle="Select File View"
-        finderPromptCopy="Select the FileView used to create grid sessions for this task."
+        finderTitle={FILE_VIEW_FINDER_TITLE}
+        finderPromptCopy={FILE_VIEW_FINDER_PROMPT}
       />
     </Stack>
   )
@@ -435,104 +475,140 @@ export default function CreateOrUpdateCurationTaskDialog(
       value={recordSetId}
       onChange={setRecordSetId}
       disabled={isEditMode}
-      finderTitle="Select Record Set"
-      finderPromptCopy="Select the RecordSet used to start grid sessions for this task."
+      finderTitle={RECORD_SET_FINDER_TITLE}
+      finderPromptCopy={RECORD_SET_FINDER_PROMPT}
     />
   )
 
   // ── Step 1: Type selection ───────────────────────────────────────────────
   const step1Content = (
     <Stack gap={2}>
-      <Typography variant="body1">
-        Choose the type of data this curation task will manage. This cannot be
-        changed after the task is created.
-      </Typography>
+      <Typography variant="body1">{SELECT_TASK_TYPE_DESCRIPTION}</Typography>
       <WizardChoiceButtonGroup>
         <WizardChoiceButton
-          title="File-Based Metadata"
-          description="Contributors upload files to a designated folder. A FileView provides a grid session for curating metadata across those files."
+          title={FILE_BASED_TASK_TITLE}
+          description={FILE_BASED_TASK_DESCRIPTION}
           onClick={() => {
             setSelectedConcreteType(FILE_BASED_CONCRETE_TYPE)
-            setStep('FIELD_ENTRY')
+            setStep('TYPE_SPECIFIC_FIELDS')
           }}
         />
         <WizardChoiceButton
-          title="Record-Based Metadata"
-          description="Contributors work directly with a RecordSet (CSV) to curate structured record-based metadata."
+          title={RECORD_BASED_TASK_TITLE}
+          description={RECORD_BASED_TASK_DESCRIPTION}
           onClick={() => {
             setSelectedConcreteType(RECORD_BASED_CONCRETE_TYPE)
-            setStep('FIELD_ENTRY')
+            setStep('TYPE_SPECIFIC_FIELDS')
           }}
         />
       </WizardChoiceButtonGroup>
     </Stack>
   )
 
-  // ── Step 2 / edit form content ───────────────────────────────────────────
-  const formContent = (
+  // ── Step 2: Type-specific fields ───────────────────────────────────────────────
+  const step2Content = (
+    <Stack gap={2}>
+      {selectedConcreteType === FILE_BASED_CONCRETE_TYPE && fileBasedFields}
+      {selectedConcreteType === RECORD_BASED_CONCRETE_TYPE && recordBasedFields}
+    </Stack>
+  )
+
+  // ── Step 3 / edit form content ───────────────────────────────────────────
+  const step3Content = (
     <Stack gap={3}>
-      {/* Two-column responsive layout: left = entity + common fields, right = auth mode */}
       <Grid container spacing={3} alignItems="flex-start">
         <Grid size={{ xs: 12, sm: 6 }}>
           <Stack gap={2}>{commonFields}</Stack>
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
-          <Stack gap={2}>
-            {selectedConcreteType === FILE_BASED_CONCRETE_TYPE &&
-              fileBasedFields}
-            {selectedConcreteType === RECORD_BASED_CONCRETE_TYPE &&
-              recordBasedFields}
+          <Stack gap={3}>
+            {assigneeField}
             {authModeField}
           </Stack>
         </Grid>
       </Grid>
 
       {isEditMode && selectedConcreteType === null && (
-        <Alert severity="error">
-          This task has an unrecognized task type and cannot be edited here.
-        </Alert>
+        <Alert severity="error">{UNRECOGNIZED_TASK_TYPE_ERROR}</Alert>
       )}
       {authModeChanged && (
-        <Alert severity="warning">
-          Changing the Authorization Mode will clear the active session ID on
-          this task. Any in-progress grid session linked to this task will no
-          longer be associated with it.
-        </Alert>
+        <Alert severity="warning">{AUTH_MODE_CHANGED_WARNING}</Alert>
       )}
       {error && (
         <Alert severity="error">
-          {error.reason ?? 'An error occurred. Please try again.'}
+          {error.reason ?? GENERIC_SAVE_ERROR_MESSAGE}
         </Alert>
       )}
     </Stack>
   )
 
-  const isStep1 = !isEditMode && step === 'SELECT_TYPE'
+  const title = isEditMode
+    ? EDIT_CURATION_TASK_DIALOG_TITLE
+    : CREATE_CURATION_TASK_DIALOG_TITLE
 
-  const title = isEditMode ? 'Edit Curation Task' : 'Create Curation Task'
+  let dialogContent = null
+  switch (step) {
+    case 'SELECT_TYPE':
+      dialogContent = step1Content
+      break
+    case 'TYPE_SPECIFIC_FIELDS':
+      dialogContent = step2Content
+      break
+    case 'COMMON_MUTABLE_FIELDS':
+      dialogContent = step3Content
+      break
+  }
 
-  const dialogContent = isStep1 ? step1Content : formContent
-
-  const dialogActions = isStep1 ? undefined : (
-    <Stack direction="row" gap={1} justifyContent="flex-end" width="100%">
-      {!isEditMode && (
-        <Button
-          variant="outlined"
-          onClick={() => setStep('SELECT_TYPE')}
-          disabled={isPending}
-        >
-          Back
-        </Button>
-      )}
-      <Button
-        variant="contained"
-        onClick={handleSave}
-        disabled={isPending || selectedConcreteType === null}
-      >
-        Save
-      </Button>
-    </Stack>
-  )
+  let dialogActions = null
+  switch (step) {
+    case 'SELECT_TYPE':
+      dialogActions = null
+      break
+    case 'TYPE_SPECIFIC_FIELDS': {
+      dialogActions = (
+        <>
+          <Button
+            variant="outlined"
+            onClick={() => setStep('SELECT_TYPE')}
+            disabled={isPending}
+          >
+            Back
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => setStep('COMMON_MUTABLE_FIELDS')}
+            disabled={isPending || !isTaskPropertiesValid}
+          >
+            Next
+          </Button>
+        </>
+      )
+      break
+    }
+    case 'COMMON_MUTABLE_FIELDS': {
+      dialogActions = (
+        <>
+          {!isEditMode && (
+            <Button
+              variant="outlined"
+              onClick={() => setStep('TYPE_SPECIFIC_FIELDS')}
+              disabled={isPending}
+            >
+              Back
+            </Button>
+          )}
+          <Button
+            variant="contained"
+            onClick={handleSave}
+            disabled={isPending || selectedConcreteType === null}
+          >
+            Save
+          </Button>
+        </>
+      )
+      break
+    }
+  }
 
   return (
     <DialogBase
@@ -542,7 +618,11 @@ export default function CreateOrUpdateCurationTaskDialog(
       fullWidth
       onCancel={onCancel}
       content={dialogContent}
-      actions={dialogActions}
+      actions={
+        <Stack direction="row" gap={1} justifyContent="flex-end" width="100%">
+          {dialogActions}
+        </Stack>
+      }
     />
   )
 }

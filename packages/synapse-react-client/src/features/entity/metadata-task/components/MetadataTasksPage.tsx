@@ -64,11 +64,11 @@ export default function MetadataTasksPage(props: MetadataTaskTableProps) {
               onCancel={() => setIsDialogOpen(false)}
             />
             <Button
-              variant="contained"
+              variant="outlined"
               onClick={() => setIsDialogOpen(true)}
               startIcon={<AddCircleTwoTone />}
             >
-              Create Task
+              New Task
             </Button>
           </>
         )}
