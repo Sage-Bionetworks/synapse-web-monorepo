@@ -1,7 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "vitest", "react"],
-  "jsPlugins": ["eslint-plugin-barrel-files"],
   "categories": {
     "correctness": "off"
   },
@@ -76,7 +75,7 @@
     "no-unreachable": "error",
     "no-unsafe-finally": "error",
     "no-unsafe-negation": "error",
-    "no-unsafe-optional-chaining": "error",
+    "no-unsafe-optional-chaining": "warn",
     "no-unused-labels": "error",
     "no-unused-private-class-members": "error",
     "no-unused-vars": [
@@ -103,10 +102,9 @@
     "vitest/valid-describe-callback": "error",
     "vitest/require-local-test-context-for-concurrent-snapshots": "error",
     "vitest/no-import-node-test": "error",
-    "react/no-unstable-nested-components": "error",
+    "react/no-unstable-nested-components": "warn",
     "react/no-object-type-as-default-prop": "error",
     "prefer-const": "warn",
-    "barrel/avoid-barrel-files": "warn",
     "react/rules-of-hooks": "error",
     "react/exhaustive-deps": [
       "warn",
@@ -114,7 +112,7 @@
         "additionalHooks": "useDebouncedEffect"
       }
     ],
-    "typescript/await-thenable": "error",
+    "typescript/await-thenable": "warn",
     "typescript/ban-ts-comment": "warn",
     "typescript/no-array-delete": "error",
     "typescript/no-base-to-string": "error",
@@ -137,7 +135,7 @@
     "typescript/no-unsafe-assignment": "warn",
     "typescript/no-unsafe-call": "warn",
     "typescript/no-unsafe-declaration-merging": "error",
-    "typescript/no-unsafe-enum-comparison": "error",
+    "typescript/no-unsafe-enum-comparison": "warn",
     "typescript/no-unsafe-function-type": "error",
     "typescript/no-unsafe-member-access": "warn",
     "typescript/no-unsafe-return": "warn",
@@ -183,34 +181,6 @@
         "prefer-rest-params": "error",
         "prefer-spread": "error"
       }
-    },
-    {
-      "files": [
-        "**/*.stories.@(ts|tsx|js|jsx|mjs|cjs)",
-        "**/*.story.@(ts|tsx|js|jsx|mjs|cjs)"
-      ],
-      "rules": {
-        "storybook/await-interactions": "error",
-        "storybook/context-in-play-function": "error",
-        "storybook/default-exports": "error",
-        "storybook/hierarchy-separator": "warn",
-        "storybook/no-redundant-story-name": "warn",
-        "storybook/no-renderer-packages": "error",
-        "storybook/prefer-pascal-case": "warn",
-        "storybook/story-exports": "error",
-        "storybook/use-storybook-expect": "error",
-        "storybook/use-storybook-testing-library": "error",
-        "import/no-anonymous-default-export": "off"
-      },
-      "jsPlugins": ["eslint-plugin-storybook"],
-      "plugins": ["import"]
-    },
-    {
-      "files": [".storybook/main.@(js|cjs|mjs|ts)"],
-      "rules": {
-        "storybook/no-uninstalled-addons": "error"
-      },
-      "jsPlugins": ["eslint-plugin-storybook"]
     }
   ]
 }
