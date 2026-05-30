@@ -227,7 +227,7 @@
     "build": "vite build && tsc -p tsconfig.build.json",
     "storybook:build": "pnpm storybook build",
     "type-check": "tsc --build",
-    "lint": "eslint src",
+    "lint": "oxlint src",
     "watch:js": "tsc --watch"
   },
   "nx": {

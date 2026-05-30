@@ -185,9 +185,7 @@ const SynapseComponents = {
   ),
   SearchQueryWrapperPlotNav: lazy(
     () =>
-      import(
-        './components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
-      ),
+      import('./components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'),
   ),
   ShareThisPage: lazy(() => import('./components/ShareThisPage')),
   SkeletonButton: lazy(() => import('./components/Skeleton/SkeletonButton')),

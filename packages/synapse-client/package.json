@@ -42,7 +42,7 @@
     "build": "pnpm tsc --build",
     "type-check": "tsc --build",
     "test": "vitest",
-    "lint": "eslint src"
+    "lint": "oxlint src"
   },
   "nx": {
     "targets": {

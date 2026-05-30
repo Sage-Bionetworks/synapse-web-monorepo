@@ -59,7 +59,7 @@ add or change it.
     "preview": "vite preview",
     "typegen": "react-router typegen", // NEW
     "type-check": "tsc --build",
-    "lint": "eslint src",
+    "lint": "oxlint src",
     "build-sitemap-routes": "vite build --config sitemap.vite.config.ts && node build/sitemap-entry.mjs",
     "_generate-sitemap": "pnpm build-sitemap-routes && tsx ../../synapse-portal-framework/src/sitemap/cli.ts \"$VITE_PORTAL_KEY\" --config src/config/sitemapConfig.ts --routes build/sitemap-routes.json --output build/client",
     "generate-sitemap": "dotenv -- pnpm _generate-sitemap",

@@ -27,7 +27,7 @@
     "dist/"
   ],
   "scripts": {
-    "lint": "eslint index.mjs",
+    "lint": "oxlint index.mjs",
     "build": "rollup -c",
     "type-check": "tsc --build",
     "test": "pnpm lint && pnpm build && c8 --exclude dist --exclude test -r text -r html -r lcov mocha",
