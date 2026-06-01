@@ -141,8 +141,8 @@ function HomePageInternal() {
       />
       <ImageCardGridWithLinks
         sql={whatWeDoSql}
-        title="What We Do"
-        summaryText="The ELITE Portal provides rich multi-omic datasets, computational tools, publications, and resources that empower researchers to discover novel therapeutic targets of health and disease. Learn more about our research domains and tools."
+        title="Research Themes"
+        summaryText="Use our research themes to explore the scientific topics this portal supports and find the datasets, variables, and resources most relevant to your work. The ELITE Portal provides rich multi-omic datasets, computational tools, publications, and resources that empower researchers to discover novel therapeutic targets that advance healthy aging and longevity."
         columnCount={3}
         heightPx={245}
       />

@@ -96,37 +96,33 @@ export const PortalAclEditor = forwardRef(function PortalAclEditor(
     onError: (error: SynapseClientError) => onMutationError(error),
   })
 
-  useImperativeHandle(
-    ref,
-    () => {
-      return {
-        save() {
-          const updatedAcl: AccessControlList =
-            updateACLWithSRCResourceAccessList(originalAcl, resourceAccessList)
-          const aclIsUnchanged =
-            (originalAcl === null && updatedAcl == null) ||
-            // ignore properties that will change when the ACL is saved (etag, modifiedOn)
-            (isEqual(consolidatedOriginalResourceAccess, resourceAccessList) &&
-              originalAcl?.id === updatedAcl?.id)
+  useImperativeHandle(ref, () => {
+    return {
+      save() {
+        const updatedAcl: AccessControlList =
+          updateACLWithSRCResourceAccessList(originalAcl, resourceAccessList)
+        const aclIsUnchanged =
+          (originalAcl === null && updatedAcl == null) ||
+          // ignore properties that will change when the ACL is saved (etag, modifiedOn)
+          (isEqual(consolidatedOriginalResourceAccess, resourceAccessList) &&
+            originalAcl?.id === updatedAcl?.id)
 
-          if (aclIsUnchanged) {
-            // noop
-            onSaveComplete(true)
-          } else {
-            updateAcl(updatedAcl)
-          }
-        },
-      }
-    },
-    [
-      portalId,
-      originalAcl,
-      consolidatedOriginalResourceAccess,
-      resourceAccessList,
-      onSaveComplete,
-      updateAcl,
-    ],
-  )
+        if (aclIsUnchanged) {
+          // noop
+          onSaveComplete(true)
+        } else {
+          updateAcl(updatedAcl)
+        }
+      },
+    }
+  }, [
+    portalId,
+    originalAcl,
+    consolidatedOriginalResourceAccess,
+    resourceAccessList,
+    onSaveComplete,
+    updateAcl,
+  ])
 
   return (
     <Stack

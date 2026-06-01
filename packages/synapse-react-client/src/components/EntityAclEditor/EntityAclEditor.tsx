@@ -311,48 +311,44 @@ const EntityAclEditor = forwardRef(function EntityAclEditor(
     onCanSaveChange(canSave)
   }, [onCanSaveChange, canSave])
 
-  useImperativeHandle(
-    ref,
-    () => {
-      return {
-        save() {
-          if (canSave) {
-            // Check if the inheritance changed; if so, the ACL should be created/deleted
-            if (originalIsInherited != updatedIsInherited) {
-              if (updatedIsInherited) {
-                deleteAcl(entityId)
-              } else {
-                createAcl({
-                  id: entityId,
-                  resourceAccess: updatedResourceAccessList,
-                })
-              }
+  useImperativeHandle(ref, () => {
+    return {
+      save() {
+        if (canSave) {
+          // Check if the inheritance changed; if so, the ACL should be created/deleted
+          if (originalIsInherited != updatedIsInherited) {
+            if (updatedIsInherited) {
+              deleteAcl(entityId)
             } else {
-              // Inheritance did not change; update the ACL
-              updateAcl({
-                // ensure we get all fields from the original ACL, including the etag
-                ...entityBundle.accessControlList!,
+              createAcl({
+                id: entityId,
                 resourceAccess: updatedResourceAccessList,
               })
             }
           } else {
-            console.error('EntityAclEditor: save() called but canSave is false')
+            // Inheritance did not change; update the ACL
+            updateAcl({
+              // ensure we get all fields from the original ACL, including the etag
+              ...entityBundle.accessControlList!,
+              resourceAccess: updatedResourceAccessList,
+            })
           }
-        },
-      }
-    },
-    [
-      canSave,
-      createAcl,
-      deleteAcl,
-      entityBundle,
-      entityId,
-      originalIsInherited,
-      updateAcl,
-      updatedIsInherited,
-      updatedResourceAccessList,
-    ],
-  )
+        } else {
+          console.error('EntityAclEditor: save() called but canSave is false')
+        }
+      },
+    }
+  }, [
+    canSave,
+    createAcl,
+    deleteAcl,
+    entityBundle,
+    entityId,
+    originalIsInherited,
+    updateAcl,
+    updatedIsInherited,
+    updatedResourceAccessList,
+  ])
 
   return (
     <Stack

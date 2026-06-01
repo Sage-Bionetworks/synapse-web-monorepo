@@ -137,8 +137,8 @@ export function ForumThreadEditor(props: ForumThreadEditorProps) {
             isReply
               ? 'Edit Reply'
               : isExistingThread
-              ? 'Edit Thread'
-              : 'New Thread'
+                ? 'Edit Thread'
+                : 'New Thread'
           }
           content={editorContent}
           onConfirm={() => onSave(text, title)}

@@ -79,7 +79,7 @@ const createLegacyMutationResult = (
     isPending: false,
     data: undefined,
     ...overrides,
-  } as Partial<UseGridForTaskLegacyMutationResult> as UseGridForTaskLegacyMutationResult)
+  }) as Partial<UseGridForTaskLegacyMutationResult> as UseGridForTaskLegacyMutationResult
 
 const createTaskLinkedMutationResult = (
   overrides: Partial<UseGridForTaskMutationResult> = {},
@@ -89,7 +89,7 @@ const createTaskLinkedMutationResult = (
     isPending: false,
     data: undefined,
     ...overrides,
-  } as Partial<UseGridForTaskMutationResult> as UseGridForTaskMutationResult)
+  }) as Partial<UseGridForTaskMutationResult> as UseGridForTaskMutationResult
 
 type EntityPermissionsQueryResult = UseQueryResult<
   UserEntityPermissions | null,
@@ -105,7 +105,7 @@ const createPermissionsQueryResult = (
     status: 'success',
     isLoading: false,
     ...overrides,
-  } as Partial<EntityPermissionsQueryResult> as EntityPermissionsQueryResult)
+  }) as Partial<EntityPermissionsQueryResult> as EntityPermissionsQueryResult
 
 // Default mock task bundle — no suggestedAuthorizationMode (legacy path)
 const mockTaskBundle = createMockTaskBundle()

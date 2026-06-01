@@ -24,8 +24,8 @@ export default function ValidationRequirement() {
         isLoading
           ? RequirementItemStatus.LOADING
           : userBundle!.isVerified
-          ? RequirementItemStatus.COMPLETE
-          : RequirementItemStatus.LOCKED
+            ? RequirementItemStatus.COMPLETE
+            : RequirementItemStatus.LOCKED
       }
     >
       <Typography variant={'body1'}>
