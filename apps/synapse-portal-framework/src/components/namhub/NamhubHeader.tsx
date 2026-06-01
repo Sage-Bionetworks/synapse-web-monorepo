@@ -1,11 +1,11 @@
 // import { usePortalContext } from '@/components/PortalContext'
-import styles from './NamshubHeader.module.scss'
+import styles from './NamhubHeader.module.scss'
 import { Link, Stack } from '@mui/material'
-import { ReactComponent as HeaderImage } from './assets/namshub-header-background.svg'
+import { ReactComponent as HeaderImage } from './assets/namhub-header-background.svg'
 import { RssFeedCards } from 'synapse-react-client'
 import { SectionLayout } from '../SectionLayout'
 
-function NamshubHomePageHeader() {
+function NamhubHomePageHeader() {
   const title = (
     <>
       New Methods. <br /> New Discoveries.
@@ -51,4 +51,4 @@ function NamshubHomePageHeader() {
   )
 }
 
-export default NamshubHomePageHeader
+export default NamhubHomePageHeader

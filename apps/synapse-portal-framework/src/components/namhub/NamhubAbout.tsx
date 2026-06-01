@@ -1,10 +1,10 @@
 import { Stack, Typography } from '@mui/material'
-import styles from './NamshubAbout.module.scss'
-import { ReactComponent as AboutImage } from './assets/namshub-about.svg'
+import styles from './NamhubAbout.module.scss'
+import { ReactComponent as AboutImage } from './assets/namhub-about.svg'
 import { ColoredBulletListItem } from 'synapse-react-client'
 import { SectionLayout } from '../SectionLayout'
 
-function NamshubAbout() {
+function NamhubAbout() {
   return (
     <div className={styles.aboutContainer}>
       <div className={styles.aboutImageContainer}>
@@ -53,4 +53,4 @@ function NamshubAbout() {
   )
 }
 
-export default NamshubAbout
+export default NamhubAbout
