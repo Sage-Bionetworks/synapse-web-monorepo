@@ -1,6 +1,7 @@
 import AdknowledgeCard from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgeCard/AdknowledgeCard'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import MailchimpSubscribeSection from 'synapse-react-client/components/MailchimpSubscribeSection/MailchimpSubscribeSection'
+import DataExplorer from 'synapse-react-client/components/DataExplorer/DataExplorer'
 import AdknowledgeHeader from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgeHeader/AdknowledgeHeader'
 import { WordPressNews } from 'synapse-react-client/components/SynapseHomepageV2/WordPressNews'
 import FloatingBlobsBackground from 'synapse-react-client/components/SynapseHomepageV2/FloatingBlobsBackground'
@@ -42,9 +43,33 @@ function HomePageInternal() {
     Image: ContributeIcon,
   }
 
+  const dataExplorerTextSection = {
+    sql: 'syn75201966',
+    title: 'Our portal has more than a petabyte of data..',
+    buttonText: 'Explore Alzheimer’s Data',
+    subtitle: (
+      <>
+        <div style={{ marginBottom: '10px' }}>
+          Including over 265,000 files from 60+ assays and in 50+ different file
+          formats, from 175 studies.
+        </div>
+        Our data encompasses a wide range of modalities, ensuring comprehensive
+        coverage for in -depth Alzheimer's research and discovery.
+      </>
+    ),
+  }
+
   return (
     <div className="HomePageV2">
       <AdknowledgeHeader />
+      <SectionLayout
+        ContainerProps={{
+          className: 'home-spacer',
+        }}
+      >
+        <DataExplorer {...dataExplorerTextSection} />
+      </SectionLayout>
+
       <SectionLayout
         ContainerProps={{
           sx: { marginBottom: '80px' },
