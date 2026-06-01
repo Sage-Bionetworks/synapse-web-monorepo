@@ -49,7 +49,6 @@
     "path-browserify": "^1.0.1",
     "pluralize": "^8.0.0",
     "postcss-normalize": "^10.0.1",
-    "prettier": "^2.8.8",
     "process": "^0.11.10",
     "source-map-explorer": "^2.5.3",
     "stream-browserify": "^3.0.0",
@@ -61,7 +60,7 @@
     "util": "^0.12.5",
     "vite": "^8.0.8",
     "vite-config": "workspace:*",
-    "vite-plugin-node-polyfills": "^0.26.0",
+    "vite-plugin-node-polyfills": "^0.28.0",
     "vitest": "^4.1.4"
   },
   "scripts": {
@@ -69,7 +68,7 @@
     "start": "echo \"WARNING!: running pnpm start now causes Vite to point to the Synapse dev stack. To point to production, run pnpm start --mode=production\n\"; vite",
     "build": "vite build",
     "test": "vitest",
-    "lint": "eslint src",
+    "lint": "oxlint src",
     "type-check": "tsc --build"
   },
   "browserslist": {
@@ -89,6 +88,6 @@
     ]
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,yml,scss,css,md}": "prettier --config .prettierrc --write"
+    "*.{js,jsx,ts,tsx,json,yml,scss,css,md}": "oxfmt --write"
   }
 }

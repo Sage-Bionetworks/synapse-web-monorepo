@@ -8,7 +8,10 @@ describe('coverage', function () {
     const tok = markdownit()
       .use(container, 'fox', {
         marker: 'foo',
-        validate: function (p) { assert.equal(p, 'fox'); return 1 }
+        validate: function (p) {
+          assert.equal(p, 'fox')
+          return 1
+        },
       })
       .parse('foofoofoofox\ncontent\nfoofoofoofoo\n')
 

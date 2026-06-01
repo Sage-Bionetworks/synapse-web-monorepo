@@ -126,9 +126,8 @@ describe('SynapseClient tests', () => {
       }
 
       const mockFn = vi.fn().mockResolvedValueOnce(response)
-      const data = await SynapseClient.getAllOfNextPageTokenPaginatedService(
-        mockFn,
-      )
+      const data =
+        await SynapseClient.getAllOfNextPageTokenPaginatedService(mockFn)
       expect(data).toEqual(results)
       expect(mockFn).toHaveBeenCalledTimes(1)
       expect(mockFn).toHaveBeenNthCalledWith(1, undefined)
@@ -149,9 +148,8 @@ describe('SynapseClient tests', () => {
         .fn()
         .mockResolvedValueOnce(responsePage1)
         .mockResolvedValueOnce(responsePage2)
-      const data = await SynapseClient.getAllOfNextPageTokenPaginatedService(
-        mockFn,
-      )
+      const data =
+        await SynapseClient.getAllOfNextPageTokenPaginatedService(mockFn)
       expect(data).toEqual([...resultsPage1, ...resultsPage2]) // ['a', 'b', 'c']
       expect(mockFn).toHaveBeenCalledTimes(2)
       expect(mockFn).toHaveBeenNthCalledWith(1, undefined)

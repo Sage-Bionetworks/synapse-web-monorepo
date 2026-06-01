@@ -51,7 +51,7 @@
   "scripts": {
     "build": "vite build && tsc -p tsconfig.build.json",
     "clean": "rimraf coverage dist",
-    "lint": "eslint src",
+    "lint": "oxlint src",
     "test": "vitest",
     "type-check": "tsc --build"
   },

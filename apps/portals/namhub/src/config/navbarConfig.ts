@@ -11,6 +11,10 @@ export const navbarConfig: NavbarConfig = {
       path: 'https://nhdcc.wpenginepowered.com/',
     },
     {
+      name: 'Help',
+      path: 'https://help.namhub.org/help',
+    },
+    {
       name: 'Admin',
       path: 'https://www.synapse.org/Synapse:syn74360399/wiki/640276',
       requiredTeamId: '3582968',
