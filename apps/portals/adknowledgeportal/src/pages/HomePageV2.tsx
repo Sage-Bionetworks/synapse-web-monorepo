@@ -19,7 +19,7 @@ function HomePageInternal() {
   const agoraCard = {
     Image: AgoraIcon,
     description:
-      "Explore our vast collection of Alzheimer's disease data, tools, and resources to accelerate your research and drive new discoveries.",
+      "Explore evidence about the role of human genes in Alzheimer's Disease using interactive tools and data visualizations.",
     buttonText: 'Explore Agora',
     buttonLink: 'https://agora.adknowledgeportal.org',
   }
@@ -27,7 +27,7 @@ function HomePageInternal() {
   const modelADCard = {
     Image: ModelADIcon,
     description:
-      "Explore our vast collection of Alzheimer's disease data, tools, and resources to accelerate your research and drive new discoveries.",
+      'Discover, compare, and analyze next-generation mouse models of Alzheimer’s Disease generated, characterized, and validated by the MODEL-AD Consortium.',
     buttonText: 'Explore MODEL-AD',
     buttonLink: 'https://www.model-ad.org',
   }
@@ -125,8 +125,8 @@ function HomePageInternal() {
         }}
       >
         <div className={styles.resultsExplorersContainer}>
-          <AdknowledgeCard {...agoraCard} />
           <AdknowledgeCard {...modelADCard} />
+          <AdknowledgeCard {...agoraCard} />
         </div>
       </SectionLayout>
     </div>
