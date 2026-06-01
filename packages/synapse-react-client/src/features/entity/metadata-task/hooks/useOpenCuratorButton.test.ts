@@ -129,7 +129,6 @@ beforeEach(() => {
   mockLegacyMutateAsync.mockResolvedValue({ sessionId: 'session-123' })
   mockTaskLinkedMutateAsync.mockResolvedValue({
     gridSession: { sessionId: 'session-123' },
-    gridSessionOwnerMatchesTaskAssignee: true,
   })
   mockUseGridSessionForCurationTaskLegacy.mockReturnValue(
     createLegacyMutationResult(),

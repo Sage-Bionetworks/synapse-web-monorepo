@@ -20,7 +20,6 @@ import taskHasAssignee from '../utils/taskHasAssignee'
 
 export type UseGridSessionForCurationTaskResult = {
   gridSession: GridSession
-  gridSessionOwnerMatchesTaskAssignee: boolean
 }
 
 /**
@@ -65,14 +64,8 @@ export default function useGridSessionForCurationTask() {
             staleTime: 0,
           })
 
-          const assigneeMatchesGridSessionOwner =
-            hasAssignee &&
-            gridSession.ownerPrincipalId == task.assigneePrincipalId
-
           return {
             gridSession,
-            gridSessionOwnerMatchesTaskAssignee:
-              assigneeMatchesGridSessionOwner,
           }
         } catch (e) {
           if (e instanceof SynapseClientError && e.status === 404) {
@@ -139,7 +132,6 @@ export default function useGridSessionForCurationTask() {
       // Since we just created the session, the user must have access, and the owner must match the assignee (if there is one).
       return {
         gridSession,
-        gridSessionOwnerMatchesTaskAssignee: hasAssignee,
       }
     },
   })

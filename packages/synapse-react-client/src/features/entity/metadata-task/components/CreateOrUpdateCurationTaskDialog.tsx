@@ -1,7 +1,9 @@
 import { DialogBase } from '@/components/DialogBase'
-import { EntityFinderModal } from '@/components/EntityFinder/EntityFinderModal'
+import EntityIdTextField from '@/components/EntityFinder/EntityIdTextField'
 import { FinderScope } from '@/components/EntityFinder/tree/EntityTree'
 import { VersionSelectionType } from '@/components/EntityFinder/VersionSelectionType'
+import { TextField } from '@/components/TextField'
+import UserOrTeamBadge from '@/components/UserOrTeamBadge/UserOrTeamBadge'
 import UserSearchBox from '@/components/UserSearchBox/UserSearchBox'
 import WizardChoiceButton from '@/components/WizardChoiceButton/WizardChoiceButton'
 import WizardChoiceButtonGroup from '@/components/WizardChoiceButton/WizardChoiceButtonGroup'
@@ -9,8 +11,9 @@ import {
   useCreateCurationTask,
   useUpdateCurationTask,
 } from '@/synapse-queries/curation/task/useCurationTask'
+import { EntityTypeGroup } from '@/utils/functions/EntityTypeUtils'
+import { HelpTwoTone } from '@mui/icons-material'
 import Close from '@mui/icons-material/Close'
-import SearchOutlined from '@mui/icons-material/SearchOutlined'
 import {
   Alert,
   Box,
@@ -27,21 +30,20 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
-import UserOrTeamBadge from '@/components/UserOrTeamBadge/UserOrTeamBadge'
 import {
   CurationTask,
+  EntityType,
   FileBasedMetadataTaskPropertiesConcreteTypeEnum,
   RecordBasedMetadataTaskPropertiesConcreteTypeEnum,
 } from '@sage-bionetworks/synapse-client'
 import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
-import { HelpTwoTone } from '@mui/icons-material'
 import {
+  ASSIGNEE_TOOLTIP,
   AUTH_MODE_CHANGED_WARNING,
   AUTH_MODE_NONE_TOOLTIP,
   AUTH_MODE_SESSION_OWNER_TOOLTIP,
   AUTH_MODE_SOURCE_BENEFACTOR_TOOLTIP,
-  ASSIGNEE_TOOLTIP,
   COLLABORATORS_TOOLTIP,
   CREATE_CURATION_TASK_DIALOG_TITLE,
   EDIT_CURATION_TASK_DIALOG_TITLE,
@@ -59,7 +61,6 @@ import {
   UPLOAD_FOLDER_FINDER_PROMPT,
   UPLOAD_FOLDER_FINDER_TITLE,
 } from '../utils/constants'
-import { TextField } from '@/components/TextField'
 
 export type CreateOrUpdateCurationTaskDialogProps = {
   open: boolean
@@ -86,58 +87,6 @@ function toAuthorizationModeOption(
 ): AuthorizationModeOption {
   if (value === 'SESSION_OWNER' || value === 'SOURCE_BENEFACTOR') return value
   return 'NONE'
-}
-
-function EntityIdTextField(props: {
-  label: string
-  value: string
-  onChange: (value: string) => void
-  disabled?: boolean
-  finderTitle: string
-  finderPromptCopy: string
-}) {
-  const { label, value, onChange, disabled, finderTitle, finderPromptCopy } =
-    props
-  const [showEntityFinder, setShowEntityFinder] = useState(false)
-  return (
-    <>
-      <EntityFinderModal
-        configuration={{
-          initialScope: FinderScope.ALL_PROJECTS,
-          initialContainer: 'root',
-          selectMultiple: false,
-          treeOnly: false,
-          versionSelection: VersionSelectionType.DISALLOWED,
-        }}
-        show={showEntityFinder}
-        onCancel={() => setShowEntityFinder(false)}
-        title={finderTitle}
-        promptCopy={finderPromptCopy}
-        onConfirm={selected => {
-          onChange(selected[0].targetId)
-          setShowEntityFinder(false)
-        }}
-        confirmButtonCopy="Select"
-      />
-      <TextField
-        label={label}
-        type="text"
-        fullWidth
-        value={value}
-        disabled={disabled}
-        onChange={e => onChange(e.target.value)}
-        slotProps={{
-          input: {
-            endAdornment: !disabled && (
-              <IconButton onClick={() => setShowEntityFinder(true)}>
-                <SearchOutlined />
-              </IconButton>
-            ),
-          },
-        }}
-      />
-    </>
-  )
 }
 
 type CreateOrUpdateCurationTaskDialogStep =
@@ -188,13 +137,13 @@ export default function CreateOrUpdateCurationTaskDialog(
   const [uploadFolderId, setUploadFolderId] = useState(() => {
     const tp = task?.taskProperties
     return tp?.concreteType === FILE_BASED_CONCRETE_TYPE
-      ? tp.uploadFolderId ?? ''
+      ? (tp.uploadFolderId ?? '')
       : ''
   })
   const [fileViewId, setFileViewId] = useState(() => {
     const tp = task?.taskProperties
     return tp?.concreteType === FILE_BASED_CONCRETE_TYPE
-      ? tp.fileViewId ?? ''
+      ? (tp.fileViewId ?? '')
       : ''
   })
 
@@ -202,7 +151,7 @@ export default function CreateOrUpdateCurationTaskDialog(
   const [recordSetId, setRecordSetId] = useState(() => {
     const tp = task?.taskProperties
     return tp?.concreteType === RECORD_BASED_CONCRETE_TYPE
-      ? tp.recordSetId ?? ''
+      ? (tp.recordSetId ?? '')
       : ''
   })
 
@@ -453,18 +402,42 @@ export default function CreateOrUpdateCurationTaskDialog(
       <EntityIdTextField
         label="Upload Folder ID"
         value={uploadFolderId}
+        description="Select the Synapse folder where files will be uploaded for this task."
         onChange={setUploadFolderId}
         disabled={isEditMode}
-        finderTitle={UPLOAD_FOLDER_FINDER_TITLE}
-        finderPromptCopy={UPLOAD_FOLDER_FINDER_PROMPT}
+        entityFinderModalProps={{
+          title: UPLOAD_FOLDER_FINDER_TITLE,
+          promptCopy: UPLOAD_FOLDER_FINDER_PROMPT,
+          confirmButtonCopy: 'Select',
+          configuration: {
+            initialScope: FinderScope.ALL_PROJECTS,
+            initialContainer: 'root',
+            selectMultiple: false,
+            treeOnly: false,
+            versionSelection: VersionSelectionType.DISALLOWED,
+            selectableTypes: EntityTypeGroup.CONTAINER,
+          },
+        }}
       />
       <EntityIdTextField
         label="File View ID"
         value={fileViewId}
+        description="Select the Synapse file view that includes all files that should have curated metadata. If this task is used in Curator, this file view will determine which files are included."
         onChange={setFileViewId}
         disabled={isEditMode}
-        finderTitle={FILE_VIEW_FINDER_TITLE}
-        finderPromptCopy={FILE_VIEW_FINDER_PROMPT}
+        entityFinderModalProps={{
+          title: FILE_VIEW_FINDER_TITLE,
+          promptCopy: FILE_VIEW_FINDER_PROMPT,
+          confirmButtonCopy: 'Select',
+          configuration: {
+            initialScope: FinderScope.ALL_PROJECTS,
+            initialContainer: 'root',
+            selectMultiple: false,
+            treeOnly: false,
+            versionSelection: VersionSelectionType.DISALLOWED,
+            selectableTypes: [EntityType.entityview],
+          },
+        }}
       />
     </Stack>
   )
@@ -473,10 +446,22 @@ export default function CreateOrUpdateCurationTaskDialog(
     <EntityIdTextField
       label="Record Set ID"
       value={recordSetId}
+      description="Select the Synapse record set that should be used for this task."
       onChange={setRecordSetId}
       disabled={isEditMode}
-      finderTitle={RECORD_SET_FINDER_TITLE}
-      finderPromptCopy={RECORD_SET_FINDER_PROMPT}
+      entityFinderModalProps={{
+        title: RECORD_SET_FINDER_TITLE,
+        promptCopy: RECORD_SET_FINDER_PROMPT,
+        confirmButtonCopy: 'Select',
+        configuration: {
+          initialScope: FinderScope.ALL_PROJECTS,
+          initialContainer: 'root',
+          selectMultiple: false,
+          treeOnly: false,
+          versionSelection: VersionSelectionType.DISALLOWED,
+          selectableTypes: [EntityType.recordset],
+        },
+      }}
     />
   )
 
