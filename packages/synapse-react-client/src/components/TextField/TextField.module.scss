@@ -19,6 +19,7 @@
   order: 2;
   flex-basis: 100%;
   font-weight: 500;
+  text-wrap: wrap;
   // Explicit color prevents inheriting error/focused color from the parent InputLabel.
   color: var(--synapse-gray-600);
   margin-top: 6px;
