@@ -7,15 +7,21 @@ import {
 } from '@mui/material'
 import { StyledComponent } from '@emotion/styled'
 
-/* bootstrap-like label/text inputs
- usage:
-        <StyledFormControl fullWidth variant="standard" margin="normal">
-          <InputLabel shrink htmlFor="someinput">
-            labelText
-          </InputLabel>
-          <InputBase id="someinput"/>
-        </StyledFormControl>
-*/
+/**
+ * Provides bootstrap-like label/text inputs for a MUI FormControl.
+ *
+ * This should not be used with components that provide their own FormControl, such as TextField.
+ *
+ * @example
+ * ```tsx
+ *       <StyledFormControl fullWidth variant="standard" margin="normal">
+ *         <InputLabel shrink htmlFor="someinput">
+ *           labelText
+ *         </InputLabel>
+ *         <InputBase id="someinput"/>
+ *       </StyledFormControl>
+ * ```
+ */
 export const StyledFormControl: StyledComponent<FormControlProps> = styled(
   FormControl,
   {
@@ -23,6 +29,7 @@ export const StyledFormControl: StyledComponent<FormControlProps> = styled(
   },
 )(({ theme }) => ({
   '& label': {
+    position: 'static',
     fontSize: '14px',
     transform: 'none',
   },

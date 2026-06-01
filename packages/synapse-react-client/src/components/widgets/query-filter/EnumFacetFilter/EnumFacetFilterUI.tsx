@@ -26,6 +26,8 @@ export type RenderedFacetValue<TValue = string> = Omit<
 }
 
 export type EnumFacetFilterUIProps<TValue = string> = {
+  /* The ID of the corresponding label, for testing and accessibility */
+  labelId?: string
   /* The title of the faceted column to be displayed */
   facetTitle: string
   /* List of all facet values and information associated with each value */
@@ -60,6 +62,7 @@ export default function EnumFacetFilterUI<TValue = string>(
   props: EnumFacetFilterUIProps<TValue>,
 ) {
   const {
+    labelId,
     filterIsActive,
     containerAs = 'Collapsible',
     dropdownType = 'Icon',
@@ -292,6 +295,7 @@ export default function EnumFacetFilterUI<TValue = string>(
         dropdownType={dropdownType}
         menuText={menuText}
         filterIsActive={filterIsActive}
+        labelId={labelId}
       >
         {content}
       </EnumFacetFilterDropdown>

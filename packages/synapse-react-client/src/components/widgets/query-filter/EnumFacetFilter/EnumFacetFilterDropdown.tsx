@@ -15,15 +15,17 @@ export type EnumFacetFilterDropdownProps = PropsWithChildren<{
   menuText: string
   filterIsActive: boolean
   dropdownType?: 'Icon' | 'SelectBox'
+  labelId?: string
 }>
 
 function EnumFacetFilterSelectBox(
   props: Omit<EnumFacetFilterDropdownProps, 'dropdownType'>,
 ) {
-  const { menuText, children } = props
+  const { menuText, children, labelId } = props
 
   return (
     <Select
+      labelId={labelId}
       className={'EnumFacetFilter EnumFacetFilterSelect'}
       value={menuText}
       renderValue={() => menuText}
