@@ -15,7 +15,6 @@ const DEFAULT_CSV_TABLE_DESCRIPTOR: CsvTableDescriptor = {
 export enum CsvUploadPreviewStep {
   UPLOAD_CSV = 0,
   COLUMN_PREVIEW = 1,
-  TABLE_NAME = 2,
 }
 
 /**

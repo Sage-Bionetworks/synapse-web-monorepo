@@ -31,6 +31,10 @@ export type CsvPreviewWithOptionsProps = {
   onIsLoadingChange?: (isLoading: boolean) => void
 }
 
+/**
+ * Displays a CSV preview table with expandable parsing options.
+ * For upload/preview flows, prefer useCsvUploadPreview with CsvUploadPreviewContent.
+ */
 export default function CsvPreviewWithOptions({
   fileHandleId,
   csvTableDescriptor,

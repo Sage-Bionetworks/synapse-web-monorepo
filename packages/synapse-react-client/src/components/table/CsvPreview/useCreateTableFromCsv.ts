@@ -39,7 +39,7 @@ export default function useCreateTableFromCsv(
 ) {
   const { mutateAsync: createColumnModels } = useCreateColumnModels()
   const { mutateAsync: createEntity } = useCreateEntity()
-  const { mutateAsync: tableTransaction } = useTableUpdateTransaction()
+  const { mutateAsync: updateTableInTransaction } = useTableUpdateTransaction()
 
   return useMutation<
     TableUpdateTransactionResponse,
@@ -82,7 +82,7 @@ export default function useCreateTableFromCsv(
         ],
       }
 
-      return tableTransaction(tableUpdateRequest)
+      return updateTableInTransaction(tableUpdateRequest)
     },
   })
 }
