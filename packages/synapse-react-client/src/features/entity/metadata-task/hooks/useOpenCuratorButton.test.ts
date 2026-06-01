@@ -108,19 +108,22 @@ const createPermissionsQueryResult = (
   }) as Partial<EntityPermissionsQueryResult> as EntityPermissionsQueryResult
 
 // Default mock task bundle — no suggestedAuthorizationMode (legacy path)
-const mockTaskBundle = createMockTaskBundle()
-const mockCurationTask = mockTaskBundle.task!
+const mockTaskBundleNoAuthMode = createMockTaskBundle({
+  taskProperties: {
+    concreteType:
+      'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties',
+    fileViewId: MOCK_CURATION_TASK_FILE_VIEW_ID,
+    suggestedAuthorizationMode: undefined,
+  },
+})
+const mockCurationTask = mockTaskBundleNoAuthMode.task!
 
 // Task bundle with suggestedAuthorizationMode set (task-linked path)
 const mockTaskBundleWithAuthMode = createMockTaskBundle({
-  task: {
-    ...mockTaskBundle.task!,
-    taskProperties: {
-      concreteType:
-        'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties',
-      fileViewId: MOCK_CURATION_TASK_FILE_VIEW_ID,
-      suggestedAuthorizationMode: 'SOURCE_BENEFACTOR',
-    },
+  ...mockTaskBundleNoAuthMode.task!,
+  taskProperties: {
+    ...mockTaskBundleNoAuthMode.task?.taskProperties!,
+    suggestedAuthorizationMode: 'SOURCE_BENEFACTOR',
   },
 })
 
@@ -149,7 +152,7 @@ describe('useOpenCuratorFromTaskButton', () => {
         .mockReturnValue(null as unknown as Window)
 
       const { result } = renderHook(() =>
-        useOpenCuratorFromTaskButton(mockTaskBundle),
+        useOpenCuratorFromTaskButton(mockTaskBundleNoAuthMode),
       )
 
       act(() => {
@@ -183,7 +186,7 @@ describe('useOpenCuratorFromTaskButton', () => {
       mockLegacyMutateAsync.mockRejectedValue(new Error(errorMessage))
 
       const { result } = renderHook(() =>
-        useOpenCuratorFromTaskButton(mockTaskBundle),
+        useOpenCuratorFromTaskButton(mockTaskBundleNoAuthMode),
       )
 
       act(() => {
@@ -219,7 +222,7 @@ describe('useOpenCuratorFromTaskButton', () => {
         .mockReturnValue(null as unknown as Window)
 
       const { result } = renderHook(() =>
-        useOpenCuratorFromTaskButton(mockTaskBundle),
+        useOpenCuratorFromTaskButton(mockTaskBundleNoAuthMode),
       )
 
       act(() => {
@@ -246,7 +249,7 @@ describe('useOpenCuratorFromTaskButton', () => {
       )
 
       const { result } = renderHook(() =>
-        useOpenCuratorFromTaskButton(mockTaskBundle),
+        useOpenCuratorFromTaskButton(mockTaskBundleNoAuthMode),
       )
 
       expect(result.current.isPending).toBe(true)
@@ -371,7 +374,7 @@ describe('useOpenCuratorFromTaskButton', () => {
     )
 
     const { result } = renderHook(() =>
-      useOpenCuratorFromTaskButton(mockTaskBundle),
+      useOpenCuratorFromTaskButton(mockTaskBundleNoAuthMode),
     )
 
     expect(result.current.hasPermission).toBe(true)
@@ -388,7 +391,7 @@ describe('useOpenCuratorFromTaskButton', () => {
     )
 
     const { result } = renderHook(() =>
-      useOpenCuratorFromTaskButton(mockTaskBundle),
+      useOpenCuratorFromTaskButton(mockTaskBundleNoAuthMode),
     )
 
     expect(result.current.hasPermission).toBe(false)
@@ -405,7 +408,7 @@ describe('useOpenCuratorFromTaskButton', () => {
     )
 
     const { result } = renderHook(() =>
-      useOpenCuratorFromTaskButton(mockTaskBundle),
+      useOpenCuratorFromTaskButton(mockTaskBundleNoAuthMode),
     )
 
     expect(result.current.isLoading).toBe(true)

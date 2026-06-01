@@ -15,6 +15,10 @@ import {
   RecordBasedMetadataTaskPropertiesConcreteTypeEnum,
 } from '@sage-bionetworks/synapse-client'
 import CreateOrUpdateCurationTaskDialog from './CreateOrUpdateCurationTaskDialog'
+import {
+  FILE_BASED_TASK_TITLE,
+  RECORD_BASED_TASK_TITLE,
+} from '../utils/constants'
 
 vi.mock('@/synapse-queries/curation/task/useCurationTask', () => ({
   useCreateCurationTask: vi.fn(),
@@ -116,41 +120,66 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
     it('renders step 1 type selection on open', () => {
       renderCreateDialog()
       expect(screen.getByText('Create Curation Task')).toBeInTheDocument()
-      expect(screen.getByText('File-Based Metadata')).toBeInTheDocument()
-      expect(screen.getByText('Record-Based Metadata')).toBeInTheDocument()
+      expect(screen.getByText(FILE_BASED_TASK_TITLE)).toBeInTheDocument()
+      expect(screen.getByText(RECORD_BASED_TASK_TITLE)).toBeInTheDocument()
     })
 
-    it('clicking File-Based Metadata advances to step 2', async () => {
+    it('clicking File-Based Data advances to step 2', async () => {
       renderCreateDialog()
-      await userEvent.click(screen.getByText('File-Based Metadata'))
-      // Step 2 shows the form fields
+      await userEvent.click(screen.getByText(FILE_BASED_TASK_TITLE))
+      // Step 2 shows only type-specific fields
       expect(screen.getByLabelText(/Upload Folder ID/i)).toBeInTheDocument()
       expect(screen.getByLabelText(/File View ID/i)).toBeInTheDocument()
-      expect(screen.getByLabelText(/Task Name/i)).toBeInTheDocument()
+      // Task Name (and others) are in step 3
+      expect(screen.queryByLabelText(/Task Name/i)).not.toBeInTheDocument()
     })
 
-    it('clicking Record-Based Metadata advances to step 2', async () => {
+    it('clicking Records-Based Data advances to step 2', async () => {
       renderCreateDialog()
-      await userEvent.click(screen.getByText('Record-Based Metadata'))
+      await userEvent.click(screen.getByText(RECORD_BASED_TASK_TITLE))
       expect(screen.getByLabelText(/Record Set ID/i)).toBeInTheDocument()
       expect(
         screen.queryByLabelText(/Upload Folder ID/i),
       ).not.toBeInTheDocument()
     })
 
-    it('clicking Back returns to step 1', async () => {
+    it('clicking Back from step 2 returns to step 1', async () => {
       renderCreateDialog()
-      await userEvent.click(screen.getByText('File-Based Metadata'))
+      await userEvent.click(screen.getByText(FILE_BASED_TASK_TITLE))
       await userEvent.click(screen.getByRole('button', { name: /back/i }))
-      expect(screen.getByText('File-Based Metadata')).toBeInTheDocument()
+      expect(screen.getByText(FILE_BASED_TASK_TITLE)).toBeInTheDocument()
+    })
+
+    it('clicking Next advances from step 2 to step 3', async () => {
+      renderCreateDialog()
+      await userEvent.click(screen.getByText(FILE_BASED_TASK_TITLE))
+      await userEvent.type(screen.getByLabelText(/Upload Folder ID/i), 'syn10')
+      await userEvent.type(screen.getByLabelText(/File View ID/i), 'syn20')
+      await userEvent.click(screen.getByRole('button', { name: /next/i }))
+      // Step 3 shows common fields
+      expect(screen.getByLabelText(/Task Name/i)).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument()
+    })
+
+    it('clicking Back from step 3 returns to step 2 in create mode', async () => {
+      renderCreateDialog()
+      await userEvent.click(screen.getByText(FILE_BASED_TASK_TITLE))
+      await userEvent.type(screen.getByLabelText(/Upload Folder ID/i), 'syn10')
+      await userEvent.type(screen.getByLabelText(/File View ID/i), 'syn20')
+      await userEvent.click(screen.getByRole('button', { name: /next/i }))
+      await userEvent.click(screen.getByRole('button', { name: /back/i }))
+      expect(screen.getByLabelText(/Upload Folder ID/i)).toBeInTheDocument()
     })
 
     it('Save calls createTask with file-based payload', async () => {
       renderCreateDialog()
-      await userEvent.click(screen.getByText('File-Based Metadata'))
+      await userEvent.click(screen.getByText(FILE_BASED_TASK_TITLE))
 
       await userEvent.type(screen.getByLabelText(/Upload Folder ID/i), 'syn10')
       await userEvent.type(screen.getByLabelText(/File View ID/i), 'syn20')
+
+      // Advance to step 3 (common fields)
+      await userEvent.click(screen.getByRole('button', { name: /next/i }))
       await userEvent.type(screen.getByLabelText(/Task Name/i), 'Proteomics')
 
       await userEvent.click(screen.getByRole('button', { name: /save/i }))
@@ -172,8 +201,11 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
 
     it('Save calls createTask with record-based payload', async () => {
       renderCreateDialog()
-      await userEvent.click(screen.getByText('Record-Based Metadata'))
+      await userEvent.click(screen.getByText(RECORD_BASED_TASK_TITLE))
       await userEvent.type(screen.getByLabelText(/Record Set ID/i), 'syn30')
+
+      // Advance to step 3 (common fields)
+      await userEvent.click(screen.getByRole('button', { name: /next/i }))
 
       await userEvent.click(screen.getByRole('button', { name: /save/i }))
 
@@ -196,15 +228,18 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
         error: { reason: 'Something went wrong' },
       } as any)
       renderCreateDialog()
-      // Navigate to step 2 first
-      await userEvent.click(screen.getByText('File-Based Metadata'))
-      // Error is rendered in step 2 form
+      // Navigate through step 2 to step 3 where errors are rendered
+      await userEvent.click(screen.getByText(FILE_BASED_TASK_TITLE))
+      await userEvent.type(screen.getByLabelText(/Upload Folder ID/i), 'syn10')
+      await userEvent.type(screen.getByLabelText(/File View ID/i), 'syn20')
+      await userEvent.click(screen.getByRole('button', { name: /next/i }))
+      // Error is rendered in step 3
       expect(screen.getByText('Something went wrong')).toBeInTheDocument()
     })
 
     it('EntityFinderModal sets field value on confirm', async () => {
       renderCreateDialog()
-      await userEvent.click(screen.getByText('File-Based Metadata'))
+      await userEvent.click(screen.getByText(FILE_BASED_TASK_TITLE))
 
       // The search icon button opens the entity finder for Upload Folder ID
       const uploadFolderInput =
@@ -253,17 +288,14 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
       expect(instructionsInput.value).toBe('Fill all fields.')
     })
 
-    it('renders TaskProperties fields as disabled in edit mode', () => {
+    it('does not render TaskProperties fields in edit mode', () => {
       renderEditDialog(fileBasedTask)
-      const uploadFolderInput =
-        screen.getByLabelText<HTMLInputElement>(/Upload Folder ID/i)
-      expect(uploadFolderInput.disabled).toBe(true)
-      expect(uploadFolderInput.value).toBe('syn100')
-
-      const fileViewInput =
-        screen.getByLabelText<HTMLInputElement>(/File View ID/i)
-      expect(fileViewInput.disabled).toBe(true)
-      expect(fileViewInput.value).toBe(MOCK_CURATION_TASK_FILE_VIEW_ID)
+      // Edit mode starts at step 3 (COMMON_MUTABLE_FIELDS);
+      // type-specific fields are in step 2 and are not shown
+      expect(
+        screen.queryByLabelText(/Upload Folder ID/i),
+      ).not.toBeInTheDocument()
+      expect(screen.queryByLabelText(/File View ID/i)).not.toBeInTheDocument()
     })
 
     it('does not render Back button in edit mode', () => {
@@ -328,7 +360,7 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
       expect(screen.getByText('Update failed')).toBeInTheDocument()
     })
 
-    it('record-based task pre-fills recordSetId', () => {
+    it('does not render record-based task properties fields in edit mode', () => {
       const recordTask: CurationTask = {
         taskId: 200,
         projectId: 'syn123',
@@ -338,10 +370,9 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
         },
       }
       renderEditDialog(recordTask)
-      const recordSetInput =
-        screen.getByLabelText<HTMLInputElement>(/Record Set ID/i)
-      expect(recordSetInput.value).toBe('syn999')
-      expect(recordSetInput.disabled).toBe(true)
+      // Edit mode starts at step 3 (COMMON_MUTABLE_FIELDS);
+      // type-specific fields are in step 2 and are not shown
+      expect(screen.queryByLabelText(/Record Set ID/i)).not.toBeInTheDocument()
     })
   })
 })

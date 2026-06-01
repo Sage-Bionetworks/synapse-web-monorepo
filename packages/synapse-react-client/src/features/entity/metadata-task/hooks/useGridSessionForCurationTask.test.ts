@@ -26,8 +26,9 @@ const mockNewGridSession = { sessionId: MOCK_NEW_SESSION_ID }
 
 let mockCreateGridSession: ReturnType<typeof vi.fn>
 
-const bundleWithActiveSession = createMockTaskBundle({
-  status: {
+const bundleWithActiveSession = createMockTaskBundle(
+  {},
+  {
     taskId: 123,
     etag: 'etag-1',
     executionDetails: {
@@ -36,7 +37,7 @@ const bundleWithActiveSession = createMockTaskBundle({
         'org.sagebionetworks.repo.model.curation.execution.GridExecutionDetails',
     },
   },
-})
+)
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -137,15 +138,13 @@ describe('useGridSessionForCurationTask', () => {
       )
 
       const taskBundleWithAuthMode = createMockTaskBundle({
-        task: {
-          taskId: 123,
-          assigneePrincipalId: MOCK_CURATION_TASK_ASSIGNEE_PRINCIPAL_ID,
-          taskProperties: {
-            concreteType:
-              'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties',
-            fileViewId: 'syn999',
-            suggestedAuthorizationMode: 'SOURCE_BENEFACTOR',
-          },
+        taskId: 123,
+        assigneePrincipalId: MOCK_CURATION_TASK_ASSIGNEE_PRINCIPAL_ID,
+        taskProperties: {
+          concreteType:
+            'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties',
+          fileViewId: 'syn999',
+          suggestedAuthorizationMode: 'SOURCE_BENEFACTOR',
         },
       })
 
@@ -179,15 +178,13 @@ describe('useGridSessionForCurationTask', () => {
       )
 
       const taskBundleWithAuthMode = createMockTaskBundle({
-        task: {
-          taskId: 123,
-          assigneePrincipalId: MOCK_CURATION_TASK_ASSIGNEE_PRINCIPAL_ID,
-          taskProperties: {
-            concreteType:
-              'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties',
-            fileViewId: 'syn999',
-            suggestedAuthorizationMode: 'SESSION_OWNER',
-          },
+        taskId: 123,
+        assigneePrincipalId: MOCK_CURATION_TASK_ASSIGNEE_PRINCIPAL_ID,
+        taskProperties: {
+          concreteType:
+            'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties',
+          fileViewId: 'syn999',
+          suggestedAuthorizationMode: 'SESSION_OWNER',
         },
       })
 
@@ -236,7 +233,18 @@ describe('useGridSessionForCurationTask', () => {
       })
 
       await expect(
-        result.current.mutateAsync(createMockTaskBundle()),
+        result.current.mutateAsync(
+          createMockTaskBundle({
+            taskId: 123,
+            assigneePrincipalId: MOCK_CURATION_TASK_ASSIGNEE_PRINCIPAL_ID,
+            taskProperties: {
+              concreteType:
+                'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties',
+              fileViewId: 'syn999',
+              suggestedAuthorizationMode: 'SOURCE_BENEFACTOR',
+            },
+          }),
+        ),
       ).rejects.toThrow(/please refresh and try again/i)
 
       expect(mockDeleteSession).toHaveBeenCalledWith(MOCK_NEW_SESSION_ID)
@@ -266,8 +274,8 @@ describe('useGridSessionForCurationTask', () => {
 
     it('throws when task is missing taskProperties', async () => {
       const taskWithNoProperties = createMockTaskBundle({
-        task: { taskId: 123 } as any,
-      })
+        taskProperties: undefined,
+      } as any)
 
       const { result } = renderHook(() => useGridSessionForCurationTask(), {
         wrapper: createWrapper(),
