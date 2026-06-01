@@ -16,7 +16,6 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { OPEN_CURATOR_LINK_TASK_CONFLICT_ERROR_MESSAGE } from '../utils/constants'
 import { getCreateGridRequestForMetadataTask } from '../utils/getCreateGridRequestForMetadataTask'
-import taskHasAssignee from '../utils/taskHasAssignee'
 
 export type UseGridSessionForCurationTaskResult = {
   gridSession: GridSession
@@ -49,8 +48,6 @@ export default function useGridSessionForCurationTask() {
       if (!task || !status) {
         throw new Error('CurationTaskBundle is missing task or status')
       }
-
-      const hasAssignee = taskHasAssignee(task)
 
       const gridSessionId = status?.executionDetails?.activeSessionId
       if (gridSessionId) {
