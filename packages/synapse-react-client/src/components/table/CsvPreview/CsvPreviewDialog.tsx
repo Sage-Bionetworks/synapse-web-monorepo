@@ -1,10 +1,6 @@
 import { DialogBase } from '@/components/DialogBase'
-import {
-  BasicFileHandleUpload,
-  FileUploadHandle,
-} from '@/components/file/upload/BasicFileHandleUpload'
 import { ErrorBanner } from '@/components/index'
-import CsvPreviewWithOptions from '@/components/table/CsvPreview/CsvPreviewWithOptions'
+import CsvUploadPreviewContent from '@/components/table/CsvPreview/CsvUploadPreviewContent'
 import useCsvUploadPreview, {
   CsvUploadPreviewStep,
 } from '@/components/table/CsvPreview/useCsvUploadPreview'
@@ -13,7 +9,7 @@ import {
   ColumnModel,
   CsvTableDescriptor,
 } from '@sage-bionetworks/synapse-client'
-import { useCallback, useRef } from 'react'
+import { useCallback } from 'react'
 
 export type CsvPreviewDialogProps = {
   /** Whether the dialog is open */
@@ -38,51 +34,28 @@ export type CsvPreviewDialogProps = {
 export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
   const { open, onClose, onConfirm, confirmIsPending, errorMessage } = props
 
-  const {
-    step,
-    csvTableDescriptor,
-    setCsvTableDescriptor,
-    uploadedFileHandleId,
-    csvPreviewData,
-    setCsvPreviewData,
-    isLoadingPreview,
-    setIsLoadingPreview,
-    onFileUploaded,
-  } = useCsvUploadPreview()
-
-  const uploadRef = useRef<FileUploadHandle | null>(null)
+  const csvUploadPreviewWorkflow = useCsvUploadPreview()
 
   const handlePreviewConfirm = useCallback(() => {
-    const suggestedColumns = csvPreviewData?.suggestedColumns
+    const suggestedColumns =
+      csvUploadPreviewWorkflow.csvPreviewData?.suggestedColumns
     if (!suggestedColumns) {
       return
     }
 
-    if (uploadedFileHandleId != null) {
-      onConfirm(uploadedFileHandleId, suggestedColumns, csvTableDescriptor)
+    if (csvUploadPreviewWorkflow.uploadedFileHandleId != null) {
+      onConfirm(
+        csvUploadPreviewWorkflow.uploadedFileHandleId,
+        suggestedColumns,
+        csvUploadPreviewWorkflow.csvTableDescriptor,
+      )
     }
-  }, [csvPreviewData, onConfirm, uploadedFileHandleId, csvTableDescriptor])
-
-  const uploadStepContent = (
-    <BasicFileHandleUpload
-      ref={uploadRef}
-      allowMultipleUpload={false}
-      onFileUploadComplete={fileHandleId => {
-        onFileUploaded(fileHandleId)
-      }}
-      disableDragAndDrop={true}
-    />
-  )
-
-  const previewStepContent = (
-    <CsvPreviewWithOptions
-      fileHandleId={uploadedFileHandleId}
-      csvTableDescriptor={csvTableDescriptor}
-      onCsvTableDescriptorChange={setCsvTableDescriptor}
-      onCsvPreviewDataChange={setCsvPreviewData}
-      onIsLoadingChange={setIsLoadingPreview}
-    />
-  )
+  }, [
+    csvUploadPreviewWorkflow.csvPreviewData,
+    csvUploadPreviewWorkflow.uploadedFileHandleId,
+    csvUploadPreviewWorkflow.csvTableDescriptor,
+    onConfirm,
+  ])
 
   return (
     <DialogBase
@@ -92,8 +65,7 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
       open={open}
       content={
         <>
-          {step === CsvUploadPreviewStep.UPLOAD_CSV && uploadStepContent}
-          {step === CsvUploadPreviewStep.COLUMN_PREVIEW && previewStepContent}
+          <CsvUploadPreviewContent workflow={csvUploadPreviewWorkflow} />
           {errorMessage && <ErrorBanner error={errorMessage} />}
         </>
       }
@@ -101,16 +73,17 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
         <>
           <Button
             variant={'outlined'}
-            disabled={isLoadingPreview}
+            disabled={csvUploadPreviewWorkflow.isLoadingPreview}
             onClick={() => {
               onClose()
             }}
           >
             Cancel
           </Button>
-          {step === CsvUploadPreviewStep.COLUMN_PREVIEW && (
+          {csvUploadPreviewWorkflow.step ===
+            CsvUploadPreviewStep.COLUMN_PREVIEW && (
             <Button
-              disabled={isLoadingPreview}
+              disabled={csvUploadPreviewWorkflow.isLoadingPreview}
               variant={'contained'}
               onClick={handlePreviewConfirm}
               loading={confirmIsPending}

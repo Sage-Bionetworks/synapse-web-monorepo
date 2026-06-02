@@ -29,7 +29,7 @@ export default function UpdateTableWithCsvDialog(
   props: UpdateTableWithCsvDialogProps,
 ) {
   const { open, onClose, tableId, onSuccess } = props
-  const csvUploadWorkflow = useCsvUploadPreview()
+  const csvUploadPreviewWorkflow = useCsvUploadPreview()
 
   const { mutate: uploadCsvToExistingTable, isPending: isUploading } =
     useUploadCsvToExistingTable({
@@ -45,14 +45,14 @@ export default function UpdateTableWithCsvDialog(
     // table already exists; upload csv rows directly to table
     uploadCsvToExistingTable({
       tableId,
-      csvTableDescriptor: csvUploadWorkflow.csvTableDescriptor,
-      fileHandleId: csvUploadWorkflow.uploadedFileHandleId!,
+      csvTableDescriptor: csvUploadPreviewWorkflow.csvTableDescriptor,
+      fileHandleId: csvUploadPreviewWorkflow.uploadedFileHandleId!,
     })
   }, [
     uploadCsvToExistingTable,
     tableId,
-    csvUploadWorkflow.csvTableDescriptor,
-    csvUploadWorkflow.uploadedFileHandleId,
+    csvUploadPreviewWorkflow.csvTableDescriptor,
+    csvUploadPreviewWorkflow.uploadedFileHandleId,
   ])
 
   return (
@@ -61,21 +61,22 @@ export default function UpdateTableWithCsvDialog(
       title={'Upload CSV'}
       onCancel={onClose}
       open={open}
-      content={<CsvUploadPreviewContent workflow={csvUploadWorkflow} />}
+      content={<CsvUploadPreviewContent workflow={csvUploadPreviewWorkflow} />}
       actions={
         <>
           <Button
             variant={'outlined'}
-            disabled={csvUploadWorkflow.isLoadingPreview}
+            disabled={csvUploadPreviewWorkflow.isLoadingPreview}
             onClick={() => {
               onClose()
             }}
           >
             Cancel
           </Button>
-          {csvUploadWorkflow.step === CsvUploadPreviewStep.COLUMN_PREVIEW && (
+          {csvUploadPreviewWorkflow.step ===
+            CsvUploadPreviewStep.COLUMN_PREVIEW && (
             <Button
-              disabled={csvUploadWorkflow.isLoadingPreview}
+              disabled={csvUploadPreviewWorkflow.isLoadingPreview}
               variant={'contained'}
               onClick={handleFinish}
               loading={isUploading}
