@@ -26,7 +26,7 @@ export default function useUploadCsvToExistingTable(
     'mutationFn'
   >,
 ) {
-  const { mutateAsync: tableTransaction } = useTableUpdateTransaction()
+  const { mutateAsync: updateTableInTransaction } = useTableUpdateTransaction()
 
   return useMutation<
     TableUpdateTransactionResponse,
@@ -50,7 +50,7 @@ export default function useUploadCsvToExistingTable(
         ],
       }
 
-      return tableTransaction(tableUpdateRequest)
+      return updateTableInTransaction(tableUpdateRequest)
     },
   })
 }
