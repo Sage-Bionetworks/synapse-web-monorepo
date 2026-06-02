@@ -64,6 +64,10 @@ export const standardsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
     // DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_NAMES, // Vast majority of values are currently 'Not Assigned', making the facet not useful. Re-add in the future if more values are annotated.
   ],
   initialPlotTypeByFacetColumnName: { topic: 'BAR' },
+  // `topic` is kept in standardsSql only for the facet/plot above; the
+  // displayed Topics column comes from `concerns_data_topic` rendered by
+  // TopicLinks. Hide the raw names column from the table view.
+  hiddenColumns: ['topic'],
   searchConfiguration: {
     ftsConfig: standardsFtsConfig,
   },

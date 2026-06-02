@@ -115,8 +115,7 @@ export const manifestSql = `
     data_part_description,
     standards_and_tools_links,
     uses_data_substrates_links,
-    concerns_data_topics_doc_links,
-    concerns_data_topics_links,
+    ${MANIFEST_COLUMN_CONSTS.CONCERNS_DATA_TOPICS},
     anatomy_links
   FROM ${tableInfo.Manifest.id}
 `
