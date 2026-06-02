@@ -23,7 +23,7 @@ import BasicMockedCrudService from '../util/BasicMockedCrudService'
  * Used to match registered bindings against incoming requests.
  */
 type SearchIndexQueryKey = Omit<SearchIndexQuery, 'searchQuery'> & {
-  searchQuery?: Omit<SearchSearchQuery, 'limit' | 'offset'>
+  searchQuery?: Omit<SearchSearchQuery, 'size' | 'from'>
 }
 
 type SearchQueryBinding = {
@@ -59,8 +59,8 @@ function processSearchRequest(
 ): QueryResultBundle {
   return applyLimitOffset(
     baseBundle,
-    request.searchQuery?.limit,
-    request.searchQuery?.offset,
+    request.searchQuery?.size,
+    request.searchQuery?.from,
   )
 }
 
@@ -83,8 +83,8 @@ export function registerSearchQueryResult(
 function getSearchQueryResult(request: SearchIndexQuery): QueryResultBundle {
   const requestCopy = cloneDeep(request)
   if (requestCopy.searchQuery) {
-    delete requestCopy.searchQuery.limit
-    delete requestCopy.searchQuery.offset
+    delete requestCopy.searchQuery.size
+    delete requestCopy.searchQuery.from
   }
   const queryKey = requestCopy as SearchIndexQueryKey
 
@@ -122,7 +122,6 @@ function toSearchQueryResults(bundle: QueryResultBundle): SearchQueryResults {
     totalHits: bundle.queryCount,
     hits,
     selectColumns,
-    facets: bundle.facets as SearchQueryResults['facets'],
     offset: bundle.queryResult?.queryResults.rows?.length ? 0 : undefined,
   }
 }

@@ -26,8 +26,8 @@ export const mockSearchIndexEntityData: MockEntityData = {
 export const mockSearchIndexQuery: SearchIndexQuery = {
   concreteType: 'org.sagebionetworks.repo.model.search.table.SearchIndexQuery',
   searchQuery: {
-    limit: 25,
-    offset: 0,
+    size: 25,
+    from: 0,
   },
 }
 
