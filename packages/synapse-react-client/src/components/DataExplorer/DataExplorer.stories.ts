@@ -51,7 +51,7 @@ export default meta
 
 type Story = StoryObj<typeof meta>
 
-export const ADKPHomepage: Story = {
+export const Default: Story = {
   parameters: {
     chromatic: { viewports: [600, 1200] },
     msw: {
@@ -75,5 +75,8 @@ export const ADKPHomepage: Story = {
     subtitle: 'Some more text',
     buttonText: 'Button text',
     buttonLink: '',
+    explorePath: '/Explore/Studies',
+    exploreQuerySql: 'SELECT * FROM syn17083367',
+    filterColumnName: 'DataType_All',
   },
 }

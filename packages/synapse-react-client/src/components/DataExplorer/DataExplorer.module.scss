@@ -15,13 +15,13 @@
 
 .dataExplorerTextContainer {
   gap: 16px;
-  flex: 0 0 40%;
-  max-width: 40%;
+  flex: 0 0 30%;
+  max-width: 30%;
 }
 
 .dataExplorerContainer {
   display: flex;
-  padding: 40px;
+  padding: 40px 0;
   align-items: flex-start;
   gap: 60px;
   flex: 1 0 0;
@@ -42,9 +42,10 @@
   font-size: 19.8px;
   font-weight: 400;
   line-height: 26.4px;
-  white-space: nowrap;
-  overflow: hidden;
+  flex: 0 1 auto;
   min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .dataRowInner {
@@ -102,9 +103,10 @@
 }
 
 .dataRowNamePill {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 8px;
+  flex: 1 1 0;
   min-width: 0;
 }
 
@@ -120,6 +122,7 @@
   font-size: 14px;
   font-weight: 400;
   line-height: 24px; /* 171.429% */
+  flex-shrink: 0;
 }
 
 .viewCta {
@@ -135,7 +138,7 @@
   opacity: 0;
   white-space: nowrap;
   color: var(--synapse-primary-action-color, #4d558d);
-  background: linear-gradient(to right, transparent, #fff 75%);
+  background: linear-gradient(to right, transparent, #fff 25%, #fff 100%);
   border-radius: 0 2px 2px 0;
   transition: opacity 200ms ease;
 }
