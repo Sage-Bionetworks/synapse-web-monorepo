@@ -1,4 +1,4 @@
-name: 'Deploy NAMs Hub portal'
+name: 'Deploy NAM Hub portal'
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - '.github/**' # temporarily track GH Actions changes to test
-      - 'apps/portals/namshub/**'
+      - 'apps/portals/namhub/**'
       - 'apps/synapse-portal-framework/**'
       - 'packages/synapse-react-client/**'
 
@@ -18,5 +18,5 @@ jobs:
       contents: read
     uses: ./.github/workflows/build-and-deploy-portal.yml
     with:
-      portal-name: namshub
+      portal-name: namhub
       branch-or-tag: main

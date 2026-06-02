@@ -17,7 +17,7 @@
     "clean": "rimraf ./dist && rimraf *.tsbuildinfo",
     "build": "vite build",
     "type-check": "tsc --build",
-    "lint": "eslint src/*",
+    "lint": "oxlint src/*",
     "test": "vitest",
     "coverage": "vitest --coverage",
     "prepublishOnly": "pnpm install && pnpm nx run markdown-it-synapse-table:build"

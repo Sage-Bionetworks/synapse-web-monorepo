@@ -61,10 +61,8 @@ $wrapper-width: 955px;
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  background: linear-gradient(
-      rgba(255, 255, 255, 0.7),
-      rgba(255, 255, 255, 0.7)
-    ),
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)),
     url('https://s3.amazonaws.com/static.synapse.org/images/SynapseLoginPageBackground.svg');
   background-size: cover;
   &.with-account-setting {

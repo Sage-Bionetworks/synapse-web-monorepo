@@ -139,9 +139,7 @@ export function getDefaultPrimaryKey(
 export function isEntityViewOrDatasetOrCollection(entity: Entity): boolean {
   return Boolean(
     entity &&
-      (isEntityView(entity) ||
-        isDataset(entity) ||
-        isDatasetCollection(entity)),
+    (isEntityView(entity) || isDataset(entity) || isDatasetCollection(entity)),
   )
 }
 

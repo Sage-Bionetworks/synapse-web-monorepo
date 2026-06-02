@@ -117,51 +117,44 @@ export const AccessRequirementAclEditor = forwardRef(
       onError: error => onMutationError(error),
     })
 
-    useImperativeHandle(
-      ref,
-      () => {
-        return {
-          save() {
-            const updatedAcl: AccessControlList | null =
-              resourceAccessList.length === 0
-                ? null
-                : {
-                    ...originalAcl,
-                    id: originalAcl?.id || accessRequirementId,
-                    resourceAccess: resourceAccessList,
-                  }
-            const aclIsUnchanged =
-              (originalAcl === null && updatedAcl == null) ||
-              // ignore properties that will change when the ACL is saved (etag, modifiedOn)
-              (isEqual(
-                consolidatedOriginalResourceAccess,
-                resourceAccessList,
-              ) &&
-                originalAcl?.id === updatedAcl?.id)
+    useImperativeHandle(ref, () => {
+      return {
+        save() {
+          const updatedAcl: AccessControlList | null =
+            resourceAccessList.length === 0
+              ? null
+              : {
+                  ...originalAcl,
+                  id: originalAcl?.id || accessRequirementId,
+                  resourceAccess: resourceAccessList,
+                }
+          const aclIsUnchanged =
+            (originalAcl === null && updatedAcl == null) ||
+            // ignore properties that will change when the ACL is saved (etag, modifiedOn)
+            (isEqual(consolidatedOriginalResourceAccess, resourceAccessList) &&
+              originalAcl?.id === updatedAcl?.id)
 
-            if (aclIsUnchanged) {
-              // noop
-              onSaveComplete(true)
-            } else if (originalAcl === null && updatedAcl !== null) {
-              createAcl(updatedAcl)
-            } else if (updatedAcl === null) {
-              deleteAcl(accessRequirementId)
-            } else {
-              updateAcl(updatedAcl)
-            }
-          },
-        }
-      },
-      [
-        accessRequirementId,
-        originalAcl,
-        resourceAccessList,
-        createAcl,
-        deleteAcl,
-        onSaveComplete,
-        updateAcl,
-      ],
-    )
+          if (aclIsUnchanged) {
+            // noop
+            onSaveComplete(true)
+          } else if (originalAcl === null && updatedAcl !== null) {
+            createAcl(updatedAcl)
+          } else if (updatedAcl === null) {
+            deleteAcl(accessRequirementId)
+          } else {
+            updateAcl(updatedAcl)
+          }
+        },
+      }
+    }, [
+      accessRequirementId,
+      originalAcl,
+      resourceAccessList,
+      createAcl,
+      deleteAcl,
+      onSaveComplete,
+      updateAcl,
+    ])
 
     return (
       <Stack

@@ -1,16 +1,16 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 
-function OmicsProfilesInHumans() {
+function TranslationalScience() {
   return (
-    <SectionLayout title={'Omics Profiles in Humans'}>
+    <SectionLayout title={'Translational Science and Intervention'}>
       <Markdown
         ownerId="syn27229419"
-        wikiId="630616"
+        wikiId="630612"
         loadingSkeletonRowCount={15}
       />
     </SectionLayout>
   )
 }
 
-export default OmicsProfilesInHumans
+export default TranslationalScience

@@ -1,9 +1,9 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 
-function AIModels() {
+function BiologicalAging() {
   return (
-    <SectionLayout title={'AI/ML Models'}>
+    <SectionLayout title={'Measuring Biological Aging'}>
       <Markdown
         ownerId="syn27229419"
         wikiId="630613"
@@ -13,4 +13,4 @@ function AIModels() {
   )
 }
 
-export default AIModels
+export default BiologicalAging

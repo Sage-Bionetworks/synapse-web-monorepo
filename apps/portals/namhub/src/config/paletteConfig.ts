@@ -1,5 +1,5 @@
 import Palettes from 'synapse-react-client/theme/palette/Palettes'
 
-const palette = Palettes.namshubPortalPalette
+const palette = Palettes.namhubPortalPalette
 
 export default palette

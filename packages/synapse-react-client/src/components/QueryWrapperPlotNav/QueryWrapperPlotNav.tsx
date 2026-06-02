@@ -108,6 +108,7 @@ type QueryWrapperPlotNavOwnProps = {
     | 'hideSearchBarControl'
     | 'hideVisualizationsControl'
     | 'enabledExternalAnalysisPlatforms'
+    | 'lockTextMatchesQueryFilterPill'
   > &
   Pick<QueryContextType, 'combineRangeFacetConfig'>
 
@@ -397,6 +398,7 @@ export default function QueryWrapperPlotNav(props: QueryWrapperPlotNavProps) {
             (props.defaultShowSearchBox || isFullTextSearchEnabled) &&
             !props.hideSearchBarControl
           }
+          lockTextMatchesQueryFilterPill={props.lockTextMatchesQueryFilterPill}
           hideSearchBarControl={props.hideSearchBarControl}
           showLastUpdatedOn={showLastUpdatedOn}
           noContentPlaceholderType={NoContentPlaceholderType.INTERACTIVE}

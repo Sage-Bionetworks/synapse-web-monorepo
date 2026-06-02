@@ -185,8 +185,8 @@ export function canTableQueryBeAddedToDownloadList<T extends Table = Table>(
 
   return Boolean(
     entityColumnId ||
-      (entity &&
-        ((isEntityView(entity) && isFileView(entity)) || isDataset(entity))),
+    (entity &&
+      ((isEntityView(entity) && isFileView(entity)) || isDataset(entity))),
   )
 }
 

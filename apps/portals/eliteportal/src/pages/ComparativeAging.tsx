@@ -1,16 +1,16 @@
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 
-function IPSCs() {
+function ComparativeAging() {
   return (
-    <SectionLayout title={'IPSCs'}>
+    <SectionLayout title={'Cross-species and Comparative Aging'}>
       <Markdown
         ownerId="syn27229419"
-        wikiId="630614"
+        wikiId="630611"
         loadingSkeletonRowCount={15}
       />
     </SectionLayout>
   )
 }
 
-export default IPSCs
+export default ComparativeAging
