@@ -38,6 +38,12 @@ enum CreateTableFromCsvStep {
   TABLE_NAME = 1,
 }
 
+/**
+ * A multi-step modal wizard used to create a Synapse Table entity from a uploaded CSV file.
+ * * It manages two primary phases:
+ * 1. CSV Upload & Preview: Displays data preview and infers suggested column models.
+ * 2. Table Configuration: Sets table name and allows schema customization.
+ */
 export default function CreateTableFromCsvDialog(
   props: CreateTableFromCsvDialogProps,
 ) {
