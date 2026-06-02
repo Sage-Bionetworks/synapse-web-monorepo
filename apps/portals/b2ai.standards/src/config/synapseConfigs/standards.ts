@@ -1,4 +1,5 @@
 import IsMatureIconMap from '@/components/IsMatureIconMap'
+import TopicLinks from '@/components/TopicLinks'
 import type { LabelLinkConfig } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import columnAliases from '@/config/columnAliases'
@@ -40,6 +41,11 @@ export const standardsColumnLinks: LabelLinkConfig = [
     isMapValueToReactNodeConfig: true,
     Component: IsMatureIconMap,
   },
+  {
+    matchColumnName: DST_TABLE_COLUMN_CONSTS.CONCERNS_DATA_TOPIC,
+    isMapValueToReactNodeConfig: true,
+    Component: TopicLinks,
+  },
 ]
 
 export const standardsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
@@ -77,6 +83,10 @@ export const standardsSearchQueryWrapperPlotNavProps: SearchQueryWrapperPlotNavP
     },
     facetsToPlot: ['topic'],
     initialPlotTypeByFacetColumnName: { topic: 'BAR' },
+    // `topic` is kept in the SearchIndex SQL only for the facet/plot above;
+    // the displayed Topics column comes from `concerns_data_topic` rendered
+    // by TopicLinks. Hide the raw names column from the table view.
+    hiddenColumns: ['topic'],
     hideTopLevelControls: false,
     hideQueryCount: false,
     hideCopyToClipboard: true,

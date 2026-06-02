@@ -138,12 +138,22 @@ export function QueryVisualizationWrapper(
     [getCurrentQueryRequest],
   )
 
+  const hiddenColumns = props.hiddenColumns
   useEffect(() => {
     // SWC-6030: If sql changes, reset what columns are visible
+    const hidden = new Set(hiddenColumns ?? [])
     setVisibleColumns(
-      selectColumns.slice(0, visibleColumnCount).map(el => el.name),
+      selectColumns
+        .filter(el => !hidden.has(el.name))
+        .slice(0, visibleColumnCount)
+        .map(el => el.name),
     )
-  }, [selectColumns, lastQueryRequest.query.sql, visibleColumnCount])
+  }, [
+    selectColumns,
+    lastQueryRequest.query.sql,
+    visibleColumnCount,
+    hiddenColumns,
+  ])
 
   const getColumnDisplayName = useCallback(
     (columnName: string, jsonPath?: string) => {

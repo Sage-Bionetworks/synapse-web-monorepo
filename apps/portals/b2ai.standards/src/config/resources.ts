@@ -185,6 +185,7 @@ export const standardsSql = `
         , category
         , collections
         , aiAppMarkdown
+        , ${DST_TABLE_COLUMN_CONSTS.CONCERNS_DATA_TOPIC}
         , topic
         , dataTypes
         , ${DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_LINKS}
@@ -220,7 +221,7 @@ export const standardsDetailsPageSQL = `
             collections,
             AIApplicationJSON,
             aiApplicationCount,
-            topic,
+            ${DST_TABLE_COLUMN_CONSTS.CONCERNS_DATA_TOPIC},
             dataTypes,
             ${DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_NAMES},
             ${DST_TABLE_COLUMN_CONSTS.RESPONSIBLE_ORG_LINKS} as SDO,
@@ -236,6 +237,14 @@ export const standardsFtsConfig: FTSConfig = {
   textMatchesMode: 'BOOLEAN',
   distance: 50,
 }
+
+// Minimal column consts for the raw DataTopic table (used for cheap id→name
+// lookups from cells in other tables).
+export const DATA_TOPIC_COLUMN_CONSTS: ColumnConsts & { NAME: string } = {
+  ID: 'id',
+  NAME: 'name',
+} as const
+tableInfo.DataTopic.columnConsts = DATA_TOPIC_COLUMN_CONSTS
 
 export const TOPIC_TABLE_COLUMN_CONSTS: ColumnConsts & {
   NAME: string

@@ -15,7 +15,7 @@ export default {
   standardName: 'Name of Standard',
   isOpen: 'Is Open?',
   registration: 'Requires Registration?',
-  topic: 'Topics',
+  [DST_TABLE_COLUMN_CONSTS.CONCERNS_DATA_TOPIC]: 'Topics',
 
   [ORG_TABLE_COLUMN_CONSTS.NAME]: 'Name',
   [ORG_TABLE_COLUMN_CONSTS.ROR_ID]: 'ROR ID',

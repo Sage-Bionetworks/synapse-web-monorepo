@@ -48,6 +48,7 @@ export type SearchQueryWrapperPlotNavProps = SearchQueryWrapperPlotNavOwnProps &
     QueryVisualizationWrapperProps,
     | 'defaultShowPlots'
     | 'visibleColumnCount'
+    | 'hiddenColumns'
     | 'columnAliases'
     | 'rgbIndex'
     | 'showLastUpdatedOn'
@@ -148,6 +149,7 @@ export default function SearchQueryWrapperPlotNav(
           columnAliases={props.columnAliases}
           helpConfiguration={helpConfiguration}
           visibleColumnCount={props.visibleColumnCount}
+          hiddenColumns={props.hiddenColumns}
           defaultShowPlots={props.defaultShowPlots}
           hideCopyToClipboard={props.hideCopyToClipboard}
           hideSearchBarControl={props.hideSearchBarControl ?? false}
