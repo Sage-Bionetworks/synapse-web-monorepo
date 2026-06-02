@@ -290,6 +290,7 @@ function detailSections({
               searchConfiguration={{
                 ftsConfig: standardsFtsConfig,
               }}
+              hiddenColumns={['topic']}
               shouldDeepLink={false}
               hideQueryCount={true}
               hideDownload={true}
@@ -324,6 +325,7 @@ function detailSections({
               searchConfiguration={{
                 ftsConfig: standardsFtsConfig,
               }}
+              hiddenColumns={['topic']}
               shouldDeepLink={false}
               hideQueryCount={true}
               hideDownload={true}

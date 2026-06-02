@@ -137,6 +137,7 @@ export default function TopicDetailsPage() {
           searchConfiguration={{
             ftsConfig: standardsFtsConfig,
           }}
+          hiddenColumns={['topic']}
           shouldDeepLink={false}
           hideQueryCount={true}
           hideDownload={true}
