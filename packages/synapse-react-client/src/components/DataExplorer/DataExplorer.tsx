@@ -142,6 +142,7 @@ export default function DataExplorer({
           const dataType = row.values[datatypeColIndex] ?? ''
           const hexColor = row.values[hexColorColIndex] ?? undefined
           const rowUrl = rowUrls[index]
+          const fileCount = row.values[fileCountColIndex] ?? ''
           return (
             <a key={row.rowId} className={styles.dataRow} href={rowUrl}>
               <div className={styles.dataRowInner}>
@@ -161,9 +162,9 @@ export default function DataExplorer({
                     <Typography className={styles.dataRowTitle}>
                       {dataType}
                     </Typography>
-                    <div className={styles.fileCount}>
-                      {row.values[fileCountColIndex] ?? '10'}
-                    </div>
+                    {fileCount && (
+                      <div className={styles.fileCount}>{fileCount}</div>
+                    )}
                   </div>
                 </div>
                 {rowUrl && (
