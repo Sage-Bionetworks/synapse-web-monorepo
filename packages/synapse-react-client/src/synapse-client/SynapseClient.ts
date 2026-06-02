@@ -218,7 +218,6 @@ import {
   EvaluationSubmission as EvaluationSubmission,
   FavoriteSortBy,
   FavoriteSortDirection,
-  FeatureFlags,
   FileEntity,
   FileHandle,
   FileHandleAssociateType,
@@ -362,6 +361,7 @@ import {
 } from './SynapseClientUtils'
 import { OAuth2State } from '@/utils/types/OAuth2State'
 import { getCookieDomain } from '@/utils/AppUtils/AppUtils'
+import { FeatureFlags } from '@/utils/featureflag/FeatureFlags'
 
 // Max size file that we will allow the caller to read into memory (5MB)
 const MAX_JS_FILE_DOWNLOAD_SIZE = 5242880

@@ -18,6 +18,30 @@ import {
   UseQueryOptions,
 } from '@tanstack/react-query'
 
+export function useCreateCurationTask(
+  options?: Partial<
+    UseMutationOptions<CurationTask, SynapseClientError, CurationTask>
+  >,
+) {
+  const { synapseClient, keyFactory } = useSynapseContext()
+  const queryClient = useQueryClient()
+  return useMutation({
+    ...options,
+    mutationFn: curationTask =>
+      synapseClient.curationTaskServicesClient.postRepoV1CurationTask({
+        curationTask,
+      }),
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries({
+        queryKey: keyFactory.getAllCurationTaskListKey(),
+      })
+      if (options?.onSuccess) {
+        options.onSuccess(data, variables, context)
+      }
+    },
+  })
+}
+
 export function useGetCurationTask<TData = CurationTask>(
   taskId: number,
   options?: Partial<UseQueryOptions<CurationTask, SynapseClientError, TData>>,

@@ -34,10 +34,8 @@ const createMockCurationTasksResponse = (taskCount: number = 0) => ({
           {
             bundlePage: Array.from({ length: taskCount }, (_, i) =>
               createMockTaskBundle({
-                task: {
-                  taskId: i,
-                  assigneePrincipalId: MOCK_USER_ID.toString(),
-                },
+                taskId: i,
+                assigneePrincipalId: MOCK_USER_ID.toString(),
               }),
             ),
           },
