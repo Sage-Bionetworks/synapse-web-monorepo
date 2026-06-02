@@ -32,6 +32,7 @@ import {
 } from '@mui/material'
 import {
   CurationTask,
+  CurationTaskProperties,
   EntityType,
   FileBasedMetadataTaskPropertiesConcreteTypeEnum,
   RecordBasedMetadataTaskPropertiesConcreteTypeEnum,
@@ -47,16 +48,21 @@ import {
   COLLABORATORS_TOOLTIP,
   CREATE_CURATION_TASK_DIALOG_TITLE,
   EDIT_CURATION_TASK_DIALOG_TITLE,
+  FILE_BASED_FILE_VIEW_INPUT_DESCRIPTION,
   FILE_BASED_TASK_DESCRIPTION,
   FILE_BASED_TASK_TITLE,
+  FILE_BASED_UPLOAD_FOLDER_INPUT_DESCRIPTION,
   FILE_VIEW_FINDER_PROMPT,
   FILE_VIEW_FINDER_TITLE,
   GENERIC_SAVE_ERROR_MESSAGE,
+  RECORD_BASED_RECORD_SET_INPUT_DESCRIPTION,
   RECORD_BASED_TASK_DESCRIPTION,
   RECORD_BASED_TASK_TITLE,
   RECORD_SET_FINDER_PROMPT,
   RECORD_SET_FINDER_TITLE,
   SELECT_TASK_TYPE_DESCRIPTION,
+  TASK_INSTRUCTIONS_INPUT_DESCRIPTION,
+  TASK_NAME_INPUT_DESCRIPTION,
   UNRECOGNIZED_TASK_TYPE_ERROR,
   UPLOAD_FOLDER_FINDER_PROMPT,
   UPLOAD_FOLDER_FINDER_TITLE,
@@ -69,10 +75,6 @@ export type CreateOrUpdateCurationTaskDialogProps = {
   projectId: string
   task?: CurationTask
 }
-
-type TaskPropertiesConcreteType =
-  | typeof FileBasedMetadataTaskPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_metadata_FileBasedMetadataTaskProperties
-  | typeof RecordBasedMetadataTaskPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_metadata_RecordBasedMetadataTaskProperties
 
 const FILE_BASED_CONCRETE_TYPE =
   FileBasedMetadataTaskPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_metadata_FileBasedMetadataTaskProperties
@@ -94,6 +96,9 @@ type CreateOrUpdateCurationTaskDialogStep =
   | 'TYPE_SPECIFIC_FIELDS'
   | 'COMMON_MUTABLE_FIELDS'
 
+/**
+ * Dialog component that guides a user through creating a new CurationTask or editing an existing one.
+ */
 export default function CreateOrUpdateCurationTaskDialog(
   props: CreateOrUpdateCurationTaskDialogProps,
 ) {
@@ -107,13 +112,14 @@ export default function CreateOrUpdateCurationTaskDialog(
 
   // Derive initial concrete type from the existing task (null in create mode
   // until the user picks a type in step 1)
-  const [selectedConcreteType, setSelectedConcreteType] =
-    useState<TaskPropertiesConcreteType | null>(() => {
-      const ct = task?.taskProperties?.concreteType
-      if (ct === FILE_BASED_CONCRETE_TYPE || ct === RECORD_BASED_CONCRETE_TYPE)
-        return ct
-      return null
-    })
+  const [selectedConcreteType, setSelectedConcreteType] = useState<
+    CurationTaskProperties['concreteType'] | null
+  >(() => {
+    const ct = task?.taskProperties?.concreteType
+    if (ct === FILE_BASED_CONCRETE_TYPE || ct === RECORD_BASED_CONCRETE_TYPE)
+      return ct
+    return null
+  })
 
   // Common task fields — lazily initialized from the existing task
   const [dataType, setDataType] = useState(() => task?.dataType ?? '')
@@ -321,7 +327,7 @@ export default function CreateOrUpdateCurationTaskDialog(
         value={dataType}
         onChange={e => setDataType(e.target.value)}
         required
-        description="Specify the task name so that contributors know which task they should work on."
+        description={TASK_NAME_INPUT_DESCRIPTION}
       />
       <TextField
         label="Instructions"
@@ -330,7 +336,7 @@ export default function CreateOrUpdateCurationTaskDialog(
         minRows={3}
         value={instructions}
         onChange={e => setInstructions(e.target.value)}
-        description="(Optional) Provide instructions on how to complete the task."
+        description={TASK_INSTRUCTIONS_INPUT_DESCRIPTION}
       />
       {/* TODO: Display the below 'collaborators' once multiple owners are supported */}
       <Box display="none">
@@ -402,7 +408,7 @@ export default function CreateOrUpdateCurationTaskDialog(
       <EntityIdTextField
         label="Upload Folder ID"
         value={uploadFolderId}
-        description="Select the Synapse folder where files will be uploaded for this task."
+        description={FILE_BASED_UPLOAD_FOLDER_INPUT_DESCRIPTION}
         onChange={setUploadFolderId}
         disabled={isEditMode}
         entityFinderModalProps={{
@@ -422,7 +428,7 @@ export default function CreateOrUpdateCurationTaskDialog(
       <EntityIdTextField
         label="File View ID"
         value={fileViewId}
-        description="Select the Synapse file view that includes all files that should have curated metadata. If this task is used in Curator, this file view will determine which files are included."
+        description={FILE_BASED_FILE_VIEW_INPUT_DESCRIPTION}
         onChange={setFileViewId}
         disabled={isEditMode}
         entityFinderModalProps={{
@@ -446,7 +452,7 @@ export default function CreateOrUpdateCurationTaskDialog(
     <EntityIdTextField
       label="Record Set ID"
       value={recordSetId}
-      description="Select the Synapse record set that should be used for this task."
+      description={RECORD_BASED_RECORD_SET_INPUT_DESCRIPTION}
       onChange={setRecordSetId}
       disabled={isEditMode}
       entityFinderModalProps={{

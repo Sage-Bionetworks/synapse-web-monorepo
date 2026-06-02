@@ -8,6 +8,7 @@ import CreateOrUpdateCurationTaskDialog from './CreateOrUpdateCurationTaskDialog
 import { displayToast } from '@/components/ToastMessage/ToastMessage'
 import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 import { AddCircleTwoTone } from '@mui/icons-material'
+import { useGlobalIsEditingContext } from '@/utils/context/GlobalIsEditingContext'
 
 export type MetadataTaskTableProps = {
   projectId: string
@@ -27,6 +28,7 @@ export default function MetadataTasksPage(props: MetadataTaskTableProps) {
     })
 
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const { setIsEditing } = useGlobalIsEditingContext()
 
   const { data: permissions } = useGetEntityPermissions(projectId)
 
@@ -55,17 +57,25 @@ export default function MetadataTasksPage(props: MetadataTaskTableProps) {
         {permissions?.canAddChild && (
           <>
             <CreateOrUpdateCurationTaskDialog
+              key={String(isDialogOpen)}
               projectId={projectId}
               open={isDialogOpen}
               onSuccess={() => {
                 displayToast('Curation task created successfully', 'success')
                 setIsDialogOpen(false)
+                setIsEditing(false)
               }}
-              onCancel={() => setIsDialogOpen(false)}
+              onCancel={() => {
+                setIsDialogOpen(false)
+                setIsEditing(false)
+              }}
             />
             <Button
               variant="outlined"
-              onClick={() => setIsDialogOpen(true)}
+              onClick={() => {
+                setIsDialogOpen(true)
+                setIsEditing(true)
+              }}
               startIcon={<AddCircleTwoTone />}
             >
               New Task

@@ -9,6 +9,7 @@ import {
   OPEN_CURATOR_TOOLTIP_TITLE,
 } from '../utils/constants'
 import CreateOrUpdateCurationTaskDialog from './CreateOrUpdateCurationTaskDialog'
+import { useGlobalIsEditingContext } from '@/utils/context/GlobalIsEditingContext'
 
 export const NO_TASK_ASSIGNEE_WARNING_DIALOG_TITLE = 'Task is Unassigned'
 
@@ -24,6 +25,7 @@ export default function MetadataTaskTableActionCell(props: {
   const { canEdit, taskBundle } = props
 
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const { setIsEditing } = useGlobalIsEditingContext()
 
   const { hasPermission, isLoading, isPending, onClick } =
     useOpenCuratorFromTaskButton(taskBundle)
@@ -41,18 +43,26 @@ export default function MetadataTaskTableActionCell(props: {
       {canEdit && (
         <>
           <CreateOrUpdateCurationTaskDialog
+            key={String(isDialogOpen)}
             projectId={taskBundle.task!.projectId!}
             open={isDialogOpen}
             task={taskBundle.task}
             onSuccess={() => {
               displayToast('Curation task updated successfully', 'success')
               setIsDialogOpen(false)
+              setIsEditing(false)
             }}
-            onCancel={() => setIsDialogOpen(false)}
+            onCancel={() => {
+              setIsDialogOpen(false)
+              setIsEditing(false)
+            }}
           />
           <Button
             variant="outlined"
-            onClick={() => setIsDialogOpen(true)}
+            onClick={() => {
+              setIsDialogOpen(true)
+              setIsEditing(true)
+            }}
             size={'small'}
           >
             Edit

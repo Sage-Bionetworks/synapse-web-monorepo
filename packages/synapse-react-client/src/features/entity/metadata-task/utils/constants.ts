@@ -21,9 +21,17 @@ export const FILE_BASED_TASK_TITLE = 'File-Based Data'
 export const FILE_BASED_TASK_DESCRIPTION =
   'Data consists of files uploaded to Synapse.\nRequirements: A schema for this data type exists in the system, the files have been uploaded to a Synapse folder, and a FileView has been created containing these files.'
 
+export const FILE_BASED_UPLOAD_FOLDER_INPUT_DESCRIPTION =
+  'Select the Synapse folder where files will be uploaded for this task.'
+export const FILE_BASED_FILE_VIEW_INPUT_DESCRIPTION =
+  'Select the Synapse file view that includes all files that should have curated metadata. If this task is used in Curator, this file view will determine which files are included.'
+
 export const RECORD_BASED_TASK_TITLE = 'Records-Based Data'
 export const RECORD_BASED_TASK_DESCRIPTION =
   'Data consists of a CSV containing records as individual rows.\nRequirements: A schema for this data type exists in the system.'
+
+export const RECORD_BASED_RECORD_SET_INPUT_DESCRIPTION =
+  'Select the Synapse record set that should be used for this task.'
 
 export const AUTH_MODE_NONE_TOOLTIP =
   "Sessions are not linked to this task — each user starts their own independent grid session. Without coordination, users may overwrite each other's annotations. Use this only to maintain existing tasks that predate session management, or if your workflow does not require collaboration."
@@ -31,6 +39,11 @@ export const AUTH_MODE_SESSION_OWNER_TOOLTIP =
   'The grid session is owned by the task assignee (or assignee team). Only the assignee or their team members can join, and the session includes only rows that the assignee has edit access to. Best suited for File Views that span entities with varied access permissions.'
 export const AUTH_MODE_SOURCE_BENEFACTOR_TOOLTIP =
   'The grid session is accessible to any user with edit access to all benefactors of the source entities. The session includes all rows that the creating user has edit access to. Best suited for tasks that manage metadata across many entities with consistent permissions, such as a project-level File View.'
+
+export const TASK_NAME_INPUT_DESCRIPTION =
+  'Specify the task name so that contributors know which task they should work on.'
+export const TASK_INSTRUCTIONS_INPUT_DESCRIPTION =
+  '(Optional) Provide instructions on how to complete the task.'
 
 export const ASSIGNEE_TOOLTIP =
   "The user or team assigned to this task. If using 'Session Owner' authorization mode, the assignee is the default owner of the grid session. For team assignees in 'Session Owner' mode, any team member can access the session."

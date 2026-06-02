@@ -1,4 +1,4 @@
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
   useCreateCurationTask,
@@ -9,11 +9,8 @@ import {
   MOCK_CURATION_TASK_ID,
   MOCK_CURATION_TASK_FILE_VIEW_ID,
 } from '@/mocks/curation/mockCurationTask'
-import {
-  CurationTask,
-  FileBasedMetadataTaskPropertiesConcreteTypeEnum,
-  RecordBasedMetadataTaskPropertiesConcreteTypeEnum,
-} from '@sage-bionetworks/synapse-client'
+import { CurationTask } from '@sage-bionetworks/synapse-client'
+import { EntityIdTextFieldProps } from '@/components/EntityFinder/EntityIdTextField'
 import CreateOrUpdateCurationTaskDialog from './CreateOrUpdateCurationTaskDialog'
 import {
   FILE_BASED_TASK_TITLE,
@@ -43,32 +40,16 @@ vi.mock('@/components/UserSearchBox/UserSearchBox', () => ({
   ),
 }))
 
-vi.mock('@/components/EntityFinder/EntityFinderModal', () => ({
-  EntityFinderModal: ({
-    show,
-    onConfirm,
-    title,
-  }: {
-    show: boolean
-    onConfirm: (selected: { targetId: string }[]) => void
-    title: string
-  }) =>
-    show ? (
-      <div data-testid="entity-finder-modal" data-title={title}>
-        <button
-          onClick={() => onConfirm([{ targetId: 'syn42' }])}
-          data-testid="entity-finder-confirm"
-        >
-          Select
-        </button>
-      </div>
-    ) : null,
+vi.mock('@/components/EntityFinder/EntityIdTextField', () => ({
+  default: ({ label, value, onChange, disabled }: EntityIdTextFieldProps) => (
+    <input
+      aria-label={label}
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      disabled={disabled ?? false}
+    />
+  ),
 }))
-
-const FILE_BASED_CONCRETE_TYPE =
-  FileBasedMetadataTaskPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_metadata_FileBasedMetadataTaskProperties
-const RECORD_BASED_CONCRETE_TYPE =
-  RecordBasedMetadataTaskPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_metadata_RecordBasedMetadataTaskProperties
 
 const mockUseCreateCurationTask = vi.mocked(useCreateCurationTask)
 const mockUseUpdateCurationTask = vi.mocked(useUpdateCurationTask)
@@ -189,11 +170,12 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
           expect.objectContaining({
             projectId: 'syn123',
             dataType: 'Proteomics',
-            taskProperties: expect.objectContaining({
-              concreteType: FILE_BASED_CONCRETE_TYPE,
+            taskProperties: {
+              concreteType:
+                'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties',
               uploadFolderId: 'syn10',
               fileViewId: 'syn20',
-            }),
+            },
           }),
         )
       })
@@ -212,10 +194,11 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
       await waitFor(() => {
         expect(mockCreateMutate).toHaveBeenCalledWith(
           expect.objectContaining({
-            taskProperties: expect.objectContaining({
-              concreteType: RECORD_BASED_CONCRETE_TYPE,
+            taskProperties: {
+              concreteType:
+                'org.sagebionetworks.repo.model.curation.metadata.RecordBasedMetadataTaskProperties',
               recordSetId: 'syn30',
-            }),
+            },
           }),
         )
       })
@@ -236,28 +219,6 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
       // Error is rendered in step 3
       expect(screen.getByText('Something went wrong')).toBeInTheDocument()
     })
-
-    it('EntityFinderModal sets field value on confirm', async () => {
-      renderCreateDialog()
-      await userEvent.click(screen.getByText(FILE_BASED_TASK_TITLE))
-
-      // The search icon button opens the entity finder for Upload Folder ID
-      const uploadFolderInput =
-        screen.getByLabelText<HTMLInputElement>(/Upload Folder ID/i)
-      // Click the search icon button (endAdornment)
-      const container = uploadFolderInput.closest('.MuiTextField-root')!
-      const searchBtn = within(container as HTMLElement).getByRole('button')
-      await userEvent.click(searchBtn)
-
-      await screen.findByTestId('entity-finder-modal')
-      await userEvent.click(screen.getByTestId('entity-finder-confirm'))
-
-      await waitFor(() => {
-        expect(
-          screen.getByLabelText<HTMLInputElement>(/Upload Folder ID/i).value,
-        ).toBe('syn42')
-      })
-    })
   })
 
   describe('Edit mode', () => {
@@ -268,7 +229,8 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
       instructions: 'Fill all fields.',
       assigneePrincipalId: MOCK_CURATION_TASK_ASSIGNEE_PRINCIPAL_ID,
       taskProperties: {
-        concreteType: FILE_BASED_CONCRETE_TYPE,
+        concreteType:
+          'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties',
         uploadFolderId: 'syn100',
         fileViewId: MOCK_CURATION_TASK_FILE_VIEW_ID,
         suggestedAuthorizationMode: 'SESSION_OWNER',
@@ -365,7 +327,8 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
         taskId: 200,
         projectId: 'syn123',
         taskProperties: {
-          concreteType: RECORD_BASED_CONCRETE_TYPE,
+          concreteType:
+            'org.sagebionetworks.repo.model.curation.metadata.RecordBasedMetadataTaskProperties',
           recordSetId: 'syn999',
         },
       }
