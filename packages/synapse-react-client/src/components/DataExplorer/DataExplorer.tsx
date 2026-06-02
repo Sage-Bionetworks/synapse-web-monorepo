@@ -88,7 +88,7 @@ export default function DataExplorer({
 
     Promise.all(
       dataRows.map(row => {
-        const dataType = row.values[datatypeColIndex]
+        const dataType = row.values[datatypeColIndex]?.trim()
         if (!dataType) return Promise.resolve(explorePath)
         return generateEncodedPathAndQueryForSelectedFacetURL(
           explorePath,
