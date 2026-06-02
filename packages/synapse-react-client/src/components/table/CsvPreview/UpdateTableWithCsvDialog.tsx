@@ -19,6 +19,12 @@ export type UpdateTableWithCsvDialogProps = {
   onSuccess?: () => void
 }
 
+/**
+ * A dialog used to upload CSV data to an existing Synapse Table entity.
+ * It handles a single-phase workflow:
+ * 1. CSV Upload & Preview: Displays data preview and applies the rows directly
+ * to the target table upon confirmation.
+ */
 export default function UpdateTableWithCsvDialog(
   props: UpdateTableWithCsvDialogProps,
 ) {
