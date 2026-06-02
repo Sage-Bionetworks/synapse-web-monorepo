@@ -6,7 +6,7 @@ import AdknowledgeHeader from '@sage-bionetworks/synapse-portal-framework/compon
 import { WordPressNews } from 'synapse-react-client/components/SynapseHomepageV2/WordPressNews'
 import FloatingBlobsBackground from 'synapse-react-client/components/SynapseHomepageV2/FloatingBlobsBackground'
 import AdknowledgePrograms from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgePrograms/AdknowledgePrograms'
-import { programsSql } from '@/config/resources'
+import { dataTypeSql, exploreQuerySql, programsSql } from '@/config/resources'
 import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
 import { ReactComponent as CavaticaLogo } from '../assets/cavatica.svg'
 import { ReactComponent as TerraLogo } from '../assets/terra.svg'
@@ -15,6 +15,8 @@ import { ReactComponent as ContributeIcon } from '../assets/contribution.svg'
 import { ReactComponent as AgoraIcon } from '../assets/agora.svg'
 import { ReactComponent as ModelADIcon } from '../assets/modelAD.svg'
 import styles from './HomePageV2.module.scss'
+
+const FILTER_COLUMN_NAME = 'DataType_All'
 
 function HomePageInternal() {
   const agoraCard = {
@@ -44,9 +46,10 @@ function HomePageInternal() {
   }
 
   const dataExplorerTextSection = {
-    sql: 'syn75201966',
+    sql: dataTypeSql,
     title: 'Our portal has more than a petabyte of data..',
     buttonText: 'Explore Alzheimer’s Data',
+    buttonLink: '/Explore/Data',
     subtitle: (
       <>
         <div style={{ marginBottom: '10px' }}>
@@ -54,9 +57,12 @@ function HomePageInternal() {
           formats, from 175 studies.
         </div>
         Our data encompasses a wide range of modalities, ensuring comprehensive
-        coverage for in -depth Alzheimer's research and discovery.
+        coverage for in-depth Alzheimer's research and discovery.
       </>
     ),
+    explorePath: '/Explore/Studies',
+    exploreQuerySql,
+    filterColumnName: FILTER_COLUMN_NAME,
   }
 
   return (
