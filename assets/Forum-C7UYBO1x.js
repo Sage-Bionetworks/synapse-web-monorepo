@@ -1,1 +1,0 @@
-import{n as e}from"./chunk-jRWAZmH_.js";import{n as t}from"./DiscussionThread-DaOy4L7r.js";import{n}from"./ForumPage-CoSJasSH.js";var r=e((()=>{t(),n()}));export{r as t};
