@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link as RouterLink } from 'react-router'
-import { Box, Collapse } from '@mui/material'
+import { Box, Collapse, Snackbar } from '@mui/material'
 import { COLORS, RailCell, TogglePill, depthTint } from './TopicHierarchyShared'
 import { buildGraph, fullUnfolding, type Node } from './graph'
 import {
@@ -48,6 +48,7 @@ export default function HierarchyWidget({
   const [expanded, setExpanded] = useState<ExpandedSet>(
     () => initState.expanded,
   )
+  const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null)
 
   // Reset on chosen change.
   useEffect(() => {
@@ -169,6 +170,17 @@ export default function HierarchyWidget({
   }
 
   function handleBreadcrumbClick(posIdx: number) {
+    // If the target is already visible, clicking the breadcrumb would have
+    // no visible effect. Surface a transient note instead, and leave
+    // forceVisible alone — the breadcrumb stays clickable, so the user can
+    // re-click to pin it if a later collapse hides the target.
+    if (visible.has(posIdx)) {
+      const path = ancestorPath(posIdx, unfolding)
+        .map(i => graph.node(unfolding[i].nodeId)?.name ?? unfolding[i].nodeId)
+        .join('/')
+      setSnackbarMessage(`${path} is already shown`)
+      return
+    }
     setForceVisible(prev => addTo(prev, posIdx))
   }
 
@@ -242,6 +254,13 @@ export default function HierarchyWidget({
           />
         </Collapse>
       ))}
+      <Snackbar
+        open={snackbarMessage !== null}
+        autoHideDuration={3000}
+        onClose={() => setSnackbarMessage(null)}
+        message={snackbarMessage}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      />
     </Box>
   )
 }
