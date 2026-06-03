@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { LinearProgress } from '@mui/material'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { ErrorBanner } from 'synapse-react-client/components/error/ErrorBanner'
@@ -60,8 +61,9 @@ export default function TopicDetailsPage() {
   // Fetch the entire DataTopic_denormalized table once. It's small (~52 rows)
   // and the hierarchy widget needs the whole thing; the rest of the page reads
   // the row for the current topic from this same result.
-  const queryBundleRequest = getQueryBundleRequestWithIdFilter(
-    'DataTopic_denormalized',
+  const queryBundleRequest = useMemo(
+    () => getQueryBundleRequestWithIdFilter('DataTopic_denormalized'),
+    [],
   )
   const {
     data: topics = [],

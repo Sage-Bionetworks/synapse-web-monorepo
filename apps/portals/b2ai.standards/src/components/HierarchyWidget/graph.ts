@@ -88,6 +88,9 @@ export function fullUnfolding(graph: Graph): UnfoldingRow[] {
     pathToParent: string[],
     parentIdx: number,
   ) {
+    // The DataTopic DAG isn't supposed to contain cycles, but if one slips
+    // through skip the recursive descent so we don't blow the stack.
+    if (pathToParent.includes(id)) return
     const myIdx = out.length
     out.push({ nodeId: id, depth, pathToParent, parentIdx })
     const nextPath = [...pathToParent, id]

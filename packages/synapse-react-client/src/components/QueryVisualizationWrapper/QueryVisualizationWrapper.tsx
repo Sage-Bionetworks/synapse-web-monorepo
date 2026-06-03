@@ -140,10 +140,13 @@ export function QueryVisualizationWrapper(
     [getCurrentQueryRequest],
   )
 
-  const hiddenColumns = props.hiddenColumns
+  // Deep-compare-memoize so callers passing a fresh array literal
+  // (e.g. `hiddenColumns={['topic']}`) don't reset visible columns on every
+  // parent render.
+  const hiddenColumns = useDeepCompareMemoize(props.hiddenColumns ?? [])
   useEffect(() => {
     // SWC-6030: If sql changes, reset what columns are visible
-    const hidden = new Set(hiddenColumns ?? [])
+    const hidden = new Set(hiddenColumns)
     setVisibleColumns(
       selectColumns
         .filter(el => !hidden.has(el.name))

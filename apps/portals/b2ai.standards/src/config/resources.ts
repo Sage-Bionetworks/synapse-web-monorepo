@@ -250,7 +250,6 @@ export const TOPIC_TABLE_COLUMN_CONSTS: ColumnConsts & {
   DESCRIPTION: string
 } = {
   ID: 'id',
-  // CATEGORY: 'category',
   NAME: 'name',
   DESCRIPTION: 'description',
   SUBCLASS_OF: 'subclassOf',

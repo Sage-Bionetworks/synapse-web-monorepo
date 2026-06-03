@@ -9,7 +9,7 @@ export const topicsCardSchema: TableToGenericCardMapping = {
   type: SynapseConstants.DATASET,
   title: T.NAME,
   description: T.DESCRIPTION,
-  secondaryLabels: [T.CATEGORY, T.EDAM_ID, T.MESH_ID, T.NCIT_ID],
+  secondaryLabels: [T.EDAM_ID, T.MESH_ID, T.NCIT_ID],
 }
 
 // For showing other topics as cards (e.g., a Related Topics section that links
