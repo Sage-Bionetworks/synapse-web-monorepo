@@ -155,13 +155,12 @@ describe('autocompleteMultipleEnumColumn', () => {
         />,
       )
 
-      // Open the dropdown and navigate into it with the keyboard
-      const dropdownButton = screen.getByRole('button', { name: /open/i })
-      await userEvent.click(dropdownButton)
+      // Menu auto-opens on focus=true.
       expect(
         await screen.findByRole('option', { name: 'option1' }),
       ).toBeInTheDocument()
 
+      // Navigate into the list with the keyboard
       await userEvent.keyboard('{ArrowDown}')
       await userEvent.keyboard('{ArrowDown}')
 
@@ -244,9 +243,7 @@ describe('autocompleteMultipleEnumColumn', () => {
         />,
       )
 
-      // Open the dropdown and explicitly select an option
-      const dropdownButton = screen.getByRole('button', { name: /open/i })
-      await userEvent.click(dropdownButton)
+      // Menu auto-opens on focus=true; explicitly select an option.
       const option = await screen.findByRole('option', { name: 'option2' })
       await userEvent.click(option)
 
@@ -793,10 +790,12 @@ describe('autocompleteMultipleEnumColumn', () => {
 
       const TestCell = createTestCell(choices, 'string')
 
+      // First-click state: active only. The dropdown button is the path used
+      // to open the menu before promoting the cell to focus state.
       const mockCellProps: Partial<AutocompleteMultipleEnumCellProps> = {
         rowData: ['option1'],
         setRowData: mockSetRowData,
-        focus: true,
+        focus: false,
         active: true,
         stopEditing: mockStopEditing,
       }
@@ -833,11 +832,7 @@ describe('autocompleteMultipleEnumColumn', () => {
         <TestCell {...(mockCellProps as AutocompleteMultipleEnumCellProps)} />,
       )
 
-      // Click the dropdown arrow button
-      const dropdownButton = screen.getByRole('button', { name: /open/i })
-      await userEvent.click(dropdownButton)
-
-      // Select option2
+      // Menu auto-opens on focus=true; select option2 directly.
       const option2 = await screen.findByRole('option', { name: 'option2' })
       await userEvent.click(option2)
 
@@ -847,7 +842,7 @@ describe('autocompleteMultipleEnumColumn', () => {
       })
     })
 
-    it('should close the dropdown menu when active becomes false', async () => {
+    it('should close the dropdown menu when focus becomes false', async () => {
       const mockSetRowData = vi.fn()
       const mockStopEditing = vi.fn()
       const choices = ['option1', 'option2']
@@ -866,11 +861,7 @@ describe('autocompleteMultipleEnumColumn', () => {
         <TestCell {...(mockCellProps as AutocompleteMultipleEnumCellProps)} />,
       )
 
-      // Open dropdown
-      const dropdownButton = screen.getByRole('button', { name: /open/i })
-      await userEvent.click(dropdownButton)
-
-      // Verify options are displayed
+      // Menu auto-opens on focus=true.
       expect(
         await screen.findByRole('option', { name: 'option1' }),
       ).toBeInTheDocument()
@@ -909,11 +900,7 @@ describe('autocompleteMultipleEnumColumn', () => {
         <TestCell {...(mockCellProps as AutocompleteMultipleEnumCellProps)} />,
       )
 
-      // Open dropdown
-      const dropdownButton = screen.getByRole('button', { name: /open/i })
-      await userEvent.click(dropdownButton)
-
-      // Select first option
+      // Menu auto-opens on focus=true; select first option.
       const option1 = await screen.findByRole('option', { name: 'option1' })
       await userEvent.click(option1)
 
@@ -945,8 +932,7 @@ describe('autocompleteMultipleEnumColumn', () => {
         />,
       )
 
-      // Open the dropdown
-      await userEvent.click(screen.getByRole('button', { name: /open/i }))
+      // Menu auto-opens on focus=true.
       await screen.findByRole('listbox')
       const option = screen.getByRole('option', { name: 'option2' })
 

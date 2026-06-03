@@ -243,7 +243,8 @@ describe('AutocompleteColumn', () => {
       rowData: 'option1',
       setRowData: mockSetRowData,
       choices: ['option1', 'option2'],
-      focus: true,
+      // First-click state: active only, not yet in edit mode.
+      focus: false,
       active: true,
       stopEditing: mockStopEditing,
     }
@@ -270,13 +271,14 @@ describe('AutocompleteColumn', () => {
     })
   })
 
-  it('should close the dropdown menu when active becomes false', async () => {
+  it('should close the dropdown menu when focus becomes false', async () => {
     const mockSetRowData = vi.fn()
     const mockStopEditing = vi.fn()
     const mockCellProps: Partial<AutocompleteCellProps> = {
       rowData: 'option1',
       setRowData: mockSetRowData,
       choices: ['option1', 'option2'],
+      // Edit-mode state: focus=true auto-opens the dropdown.
       focus: true,
       active: true,
       stopEditing: mockStopEditing,
@@ -286,11 +288,7 @@ describe('AutocompleteColumn', () => {
       <AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />,
     )
 
-    // Open dropdown
-    const dropdownButton = screen.getByRole('button', { name: /open/i })
-    await userEvent.click(dropdownButton)
-
-    // Verify options are displayed
+    // Menu auto-opens on focus=true.
     expect(
       await screen.findByRole('option', { name: 'option1' }),
     ).toBeInTheDocument()
@@ -338,8 +336,7 @@ describe('AutocompleteColumn', () => {
         <AutocompleteCell {...(activeProps as AutocompleteCellProps)} />,
       )
 
-      // Open the dropdown
-      await userEvent.click(screen.getByRole('button', { name: /open/i }))
+      // Menu auto-opens on focus=true.
       await screen.findByRole('listbox')
       const option = screen.getByRole('option', { name: 'option2' })
 
@@ -389,10 +386,9 @@ describe('AutocompleteColumn', () => {
         <AutocompleteCell {...(activeProps as AutocompleteCellProps)} />,
       )
 
-      const input = screen.getByRole('combobox')
+      screen.getByRole('combobox')
 
-      // Open the dropdown
-      await userEvent.click(input)
+      // Menu auto-opens on focus=true.
       expect(
         await screen.findByRole('option', { name: 'option1' }),
       ).toBeInTheDocument()
