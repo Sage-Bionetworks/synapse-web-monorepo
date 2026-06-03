@@ -87,7 +87,7 @@ type TogglePillProps = {
 }
 export function TogglePill({ state, count, title, onClick }: TogglePillProps) {
   if (state === 'leaf') return null
-  const arrow = state === 'expanded' ? '▼' : state === 'partial' ? '◐' : '▶'
+  const arrow = state === 'expanded' ? '▼' : state === 'partial' ? '▷' : '▶'
   const isPartial = state === 'partial'
   const isExpanded = state === 'expanded'
   const isDisabled = state === 'disabled'
@@ -107,14 +107,14 @@ export function TogglePill({ state, count, title, onClick }: TogglePillProps) {
         borderColor: isPartial
           ? COLORS.partialBorder
           : isExpanded
-          ? 'rgba(0,0,0,0.25)'
-          : COLORS.toggleBorder,
+            ? 'rgba(0,0,0,0.25)'
+            : COLORS.toggleBorder,
         borderRadius: '3px',
         background: isPartial
           ? COLORS.partial
           : isExpanded
-          ? 'rgba(255,255,255,0.9)'
-          : COLORS.toggleBg,
+            ? 'rgba(255,255,255,0.9)'
+            : COLORS.toggleBg,
         color: isPartial ? COLORS.partialText : COLORS.toggleText,
         fontSize: '10px',
         lineHeight: 1,
