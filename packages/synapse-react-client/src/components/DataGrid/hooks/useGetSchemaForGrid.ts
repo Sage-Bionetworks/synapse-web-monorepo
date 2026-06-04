@@ -37,6 +37,13 @@ const GRID_ENTITY_READONLY_PROPERTIES = [
   'type',
   'currentVersion',
   'benefactorId',
+  'dataFileHandleId',
+  'dataFileName',
+  'dataFileSizeBytes',
+  'dataFileMD5Hex',
+  'dataFileConcreteType',
+  'dataFileBucket',
+  'dataFileKey',
 ]
 
 /**
