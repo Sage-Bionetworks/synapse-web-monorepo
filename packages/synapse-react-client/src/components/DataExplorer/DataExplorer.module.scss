@@ -13,7 +13,9 @@
 }
 
 .dataExplorerButton {
-  width: fit-content;
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    width: fit-content;
+  }
 }
 
 .dataExplorerTextContainer {
@@ -50,13 +52,17 @@
 
 .dataRowTitle {
   color: var(--synapse-primary-action-color, #4d558d);
-  font-size: 19.8px;
+  font-size: 16px;
   font-weight: 400;
   line-height: 26.4px;
   flex: 0 1 auto;
   min-width: 0;
   overflow-wrap: break-word;
   word-break: break-word;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    font-size: 19.8px;
+  }
 }
 
 .dataRowInner {
