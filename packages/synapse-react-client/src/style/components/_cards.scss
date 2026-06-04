@@ -272,6 +272,10 @@
       gap: 30px;
     }
 
+    &.SRC-cardContent--ctaRight {
+      max-width: none;
+    }
+
     .SRC-cardTitleAreaDetails {
       display: flex;
       flex: 0 0 25%;

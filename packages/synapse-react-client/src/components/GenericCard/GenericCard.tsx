@@ -186,7 +186,9 @@ export const GenericCard = forwardRef(function GenericCard(
     <div style={style} ref={ref} className={'SRC-portalCard'}>
       <div className={'SRC-portalCardMain'}>
         {icon}
-        <div className="SRC-cardContent">
+        <div
+          className={`SRC-cardContent ${ctaLinkPosition === 'right' ? 'SRC-cardContent--ctaRight' : ''}`}
+        >
           {cardTopButtons && (
             <Box
               sx={{
@@ -261,7 +263,7 @@ export const GenericCard = forwardRef(function GenericCard(
               </div>
             )}
             {ctaLinkPosition === 'right' && ctaLinkConfig && (
-              <div>{ctaLinks}</div>
+              <Box sx={{ flexShrink: 0, marginLeft: 'auto' }}>{ctaLinks}</Box>
             )}
           </Box>
         </div>
