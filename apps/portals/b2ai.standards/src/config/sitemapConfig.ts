@@ -5,6 +5,7 @@ import {
 import {
   standardsDetailsPageSQL,
   organizationDetailsPageSQL,
+  topicDetailsPageSQL,
 } from './resources'
 
 const detailPages: DetailPageConfig[] = [
@@ -16,6 +17,11 @@ const detailPages: DetailPageConfig[] = [
   {
     path: 'Explore/Organization/DetailsPage',
     sql: organizationDetailsPageSQL,
+    primaryKeyColumn: 'id',
+  },
+  {
+    path: 'Explore/DataTopic/DetailsPage',
+    sql: topicDetailsPageSQL,
     primaryKeyColumn: 'id',
   },
 ]

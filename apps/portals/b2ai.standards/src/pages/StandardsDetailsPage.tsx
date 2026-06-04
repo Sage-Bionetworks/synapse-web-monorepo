@@ -37,7 +37,7 @@ export const standardsCardSchema: TableToGenericCardMapping = {
   secondaryLabels: [
     'category',
     'collections',
-    'topic',
+    DST_TABLE_COLUMN_CONSTS.CONCERNS_DATA_TOPIC,
     'dataTypes',
     'aiApplicationCount',
     // DST_TABLE_COLUMN_NAMES.RESPONSIBLE_ORGANIZATION,
