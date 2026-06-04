@@ -277,6 +277,9 @@ importers:
 
   apps/portals/adknowledgeportal:
     dependencies:
+      '@mui/icons-material':
+        specifier: ^7.1.1
+        version: 7.1.1(@mui/material@7.1.1(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(@types/react@19.2.14)(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@types/react@19.2.14)(react@19.2.5)
       '@mui/material':
         specifier: ^7.1.1
         version: 7.1.1(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(@types/react@19.2.14)(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -13184,7 +13187,7 @@ snapshots:
 
   '@mui/icons-material@7.1.1(@mui/material@7.1.1(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(@types/react@19.2.14)(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@types/react@19.2.14)(react@19.2.5)':
     dependencies:
-      '@babel/runtime': 7.28.6
+      '@babel/runtime': 7.29.7
       '@mui/material': 7.1.1(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(@emotion/styled@11.14.0(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.5))(@types/react@19.2.14)(react@19.2.5))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       react: 19.2.5
     optionalDependencies:
@@ -15520,7 +15523,7 @@ snapshots:
       obug: 2.1.1
       std-env: 4.1.0
       tinyrainbow: 3.1.0
-      vitest: 4.1.5(@types/node@22.19.13)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@26.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@6.0.3))(vite@8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
+      vitest: 4.1.5(@types/node@22.19.13)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@6.0.3))(vite@8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
 
   '@vitest/expect@3.2.4':
     dependencies:
@@ -15592,7 +15595,7 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.16
       tinyrainbow: 3.1.0
-      vitest: 4.1.5(@types/node@22.19.13)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@26.1.0)(msw@2.10.2(@types/node@22.19.13)(typescript@6.0.3))(vite@8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
+      vitest: 4.1.5(@types/node@22.19.13)(@vitest/coverage-v8@4.1.5)(@vitest/ui@4.1.5)(jsdom@29.0.1)(msw@2.10.2(@types/node@22.19.13)(typescript@6.0.3))(vite@8.0.10(@types/node@22.19.13)(esbuild@0.27.7)(sass@1.98.0)(terser@5.42.0)(tsx@4.19.4)(yaml@2.7.1))
 
   '@vitest/utils@3.2.4':
     dependencies:
@@ -20497,7 +20500,7 @@ snapshots:
 
   rtl-css-js@1.16.1:
     dependencies:
-      '@babel/runtime': 7.28.6
+      '@babel/runtime': 7.29.7
 
   run-applescript@7.1.0: {}
 

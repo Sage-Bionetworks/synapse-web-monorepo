@@ -27,3 +27,22 @@
   min-height: 500px;
   isolation: isolate;
 }
+
+.consortiaAndRepositoriesCards {
+  :global(.SRC-portalCard) {
+    border-radius: 5px;
+    border: 1px solid var(--UI-Gray-400, #dfe2e6);
+    background: var(--Colors-white, #fff);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+    h3 {
+      color: var(--adkp-accent-color);
+    }
+  }
+  :global(.SRC-imageThumbnail) {
+    display: flex;
+    align-items: center;
+  }
+  :global(.SRC-portalCard .SRC-cardContent .SRC-cardTitleArea--ctaRight) a {
+    font-weight: 400;
+  }
+}

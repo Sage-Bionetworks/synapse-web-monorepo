@@ -1,3 +1,6 @@
+@use 'sass:map';
+@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+
 .dataExplorerTitle:global(.MuiTypography-root) {
   color: var(--data-explorer-title-color, var(--synapse-primary-action-color));
   font-size: 36px;
@@ -15,8 +18,11 @@
 
 .dataExplorerTextContainer {
   gap: 16px;
-  flex: 0 0 30%;
-  max-width: 30%;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    flex: 0 0 30%;
+    max-width: 30%;
+  }
 }
 
 .dataExplorerContainer {
@@ -25,6 +31,11 @@
   align-items: flex-start;
   gap: 60px;
   flex: 1 0 0;
+  flex-direction: column;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    flex-direction: row;
+  }
 }
 
 .dataContainer {
@@ -68,8 +79,11 @@
   border-radius: 3.3px;
   border: 1px solid transparent;
   text-decoration: none !important;
-  transition: background-color 200ms ease, border-color 200ms ease,
-    box-shadow 200ms ease, transform 200ms ease;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease,
+    transform 200ms ease;
 
   &:hover {
     background-color: #fff;

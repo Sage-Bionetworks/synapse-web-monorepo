@@ -14,6 +14,7 @@ export const programsSql = 'SELECT * FROM syn17024173'
 export const dataTypeSql = 'SELECT * FROM syn75201966'
 export const exploreQuerySql =
   'SELECT * FROM syn17083367 ORDER BY isFeatured DESC'
+export const consortiaAndRepositoriesSql = 'SELECT * FROM syn75213437'
 
 export const experimentalModelsSql =
   'select * from syn22219805 ORDER BY isFeatured DESC'

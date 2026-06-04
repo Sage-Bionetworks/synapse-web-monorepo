@@ -6,7 +6,12 @@ import AdknowledgeHeader from '@sage-bionetworks/synapse-portal-framework/compon
 import { WordPressNews } from 'synapse-react-client/components/SynapseHomepageV2/WordPressNews'
 import FloatingBlobsBackground from 'synapse-react-client/components/SynapseHomepageV2/FloatingBlobsBackground'
 import AdknowledgePrograms from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgePrograms/AdknowledgePrograms'
-import { dataTypeSql, exploreQuerySql, programsSql } from '@/config/resources'
+import {
+  consortiaAndRepositoriesSql,
+  dataTypeSql,
+  exploreQuerySql,
+  programsSql,
+} from '@/config/resources'
 import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
 import { ReactComponent as CavaticaLogo } from '../assets/cavatica.svg'
 import { ReactComponent as TerraLogo } from '../assets/terra.svg'
@@ -15,6 +20,8 @@ import { ReactComponent as ContributeIcon } from '../assets/contribution.svg'
 import { ReactComponent as AgoraIcon } from '../assets/agora.svg'
 import { ReactComponent as ModelADIcon } from '../assets/modelAD.svg'
 import styles from './HomePageV2.module.scss'
+import { CardContainerLogic } from 'synapse-react-client'
+import { consortiaAndRepositoriesCardConfig } from '@/config/synapseConfigs/consortiaAndRepositories'
 
 const FILTER_COLUMN_NAME = 'DataType_All'
 
@@ -158,6 +165,19 @@ function HomePageInternal() {
         <div className={styles.resultsExplorersContainer}>
           <AdknowledgeCard {...modelADCard} />
           <AdknowledgeCard {...agoraCard} />
+        </div>
+      </SectionLayout>
+      <SectionLayout
+        title="Related Consortia and Repositories"
+        subtitle="Discover the resources that are part of the AD Knowledge Portal, each contributing unique data and expertise to accelerate Alzheimer's research and improve patient outcomes."
+        centerTitle
+        ContainerProps={{ className: 'home-spacer' }}
+      >
+        <div className={styles.consortiaAndRepositoriesCards}>
+          <CardContainerLogic
+            cardConfiguration={consortiaAndRepositoriesCardConfig}
+            sql={consortiaAndRepositoriesSql}
+          />
         </div>
       </SectionLayout>
     </div>
