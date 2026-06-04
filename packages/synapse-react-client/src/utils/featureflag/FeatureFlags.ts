@@ -24,4 +24,7 @@ export enum FeatureFlagEnum {
 
   // If enabled, show the new version of the ADKP homepage
   ADKP_HOMEPAGE_V2 = 'ADKP_HOMEPAGE_V2',
+
+  // If enabled, shows a "New Task" button on the metadata tasks page
+  CURATION_TASK_PAGE_SHOW_NEW_TASK_BUTTON = 'CURATION_TASK_PAGE_SHOW_NEW_TASK_BUTTON',
 }

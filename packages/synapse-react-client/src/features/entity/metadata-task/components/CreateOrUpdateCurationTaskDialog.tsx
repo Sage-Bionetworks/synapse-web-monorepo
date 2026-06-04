@@ -42,8 +42,11 @@ import { useState } from 'react'
 import {
   ASSIGNEE_TOOLTIP,
   AUTH_MODE_CHANGED_WARNING,
+  AUTH_MODE_NONE_TITLE,
   AUTH_MODE_NONE_TOOLTIP,
+  AUTH_MODE_SESSION_OWNER_TITLE,
   AUTH_MODE_SESSION_OWNER_TOOLTIP,
+  AUTH_MODE_SOURCE_BENEFACTOR_TITLE,
   AUTH_MODE_SOURCE_BENEFACTOR_TOOLTIP,
   COLLABORATORS_TOOLTIP,
   CREATE_CURATION_TASK_DIALOG_TITLE,
@@ -263,7 +266,7 @@ export default function CreateOrUpdateCurationTaskDialog(
           control={<Radio />}
           label={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Typography variant="body1">None (Legacy)</Typography>
+              <Typography variant="body1">{AUTH_MODE_NONE_TITLE}</Typography>
               <Tooltip title={AUTH_MODE_NONE_TOOLTIP}>
                 <HelpTwoTone sx={{ color: 'grey.700' }} />
               </Tooltip>
@@ -275,7 +278,9 @@ export default function CreateOrUpdateCurationTaskDialog(
           control={<Radio />}
           label={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Typography variant="body1">Session Owner</Typography>
+              <Typography variant="body1">
+                {AUTH_MODE_SESSION_OWNER_TITLE}
+              </Typography>
               <Tooltip title={AUTH_MODE_SESSION_OWNER_TOOLTIP}>
                 <HelpTwoTone sx={{ color: 'grey.700' }} />
               </Tooltip>
@@ -287,7 +292,9 @@ export default function CreateOrUpdateCurationTaskDialog(
           control={<Radio />}
           label={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Typography variant="body1">Source Benefactor</Typography>
+              <Typography variant="body1">
+                {AUTH_MODE_SOURCE_BENEFACTOR_TITLE}
+              </Typography>
               <Tooltip title={AUTH_MODE_SOURCE_BENEFACTOR_TOOLTIP}>
                 <HelpTwoTone sx={{ color: 'grey.700' }} />
               </Tooltip>
