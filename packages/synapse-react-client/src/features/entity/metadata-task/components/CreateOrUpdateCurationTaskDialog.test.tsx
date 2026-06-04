@@ -13,6 +13,7 @@ import { CurationTask } from '@sage-bionetworks/synapse-client'
 import { EntityIdTextFieldProps } from '@/components/EntityFinder/EntityIdTextField'
 import CreateOrUpdateCurationTaskDialog from './CreateOrUpdateCurationTaskDialog'
 import {
+  AUTH_MODE_SOURCE_BENEFACTOR_TITLE,
   FILE_BASED_TASK_TITLE,
   RECORD_BASED_TASK_TITLE,
 } from '../utils/constants'
@@ -276,7 +277,9 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
       ).not.toBeInTheDocument()
 
       // Change to SOURCE_BENEFACTOR
-      await userEvent.click(screen.getByLabelText(/Source Benefactor/i))
+      await userEvent.click(
+        screen.getByLabelText(AUTH_MODE_SOURCE_BENEFACTOR_TITLE),
+      )
 
       await waitFor(() => {
         expect(
