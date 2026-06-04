@@ -1,6 +1,7 @@
 import InfiniteTableLayout from '@/components/layout/InfiniteTableLayout'
 import StyledTanStackTable from '@/components/TanStackTable/StyledTanStackTable'
 import { useMetadataTaskTable } from '@/features/entity/metadata-task/hooks/useMetadataTaskTable'
+import { useGetFeatureFlag } from '@/synapse-queries/index'
 import { Button, FormControlLabel, Stack, Switch } from '@mui/material'
 import { useState } from 'react'
 import { ListCurationTaskRequest } from '@sage-bionetworks/synapse-client'
@@ -9,6 +10,7 @@ import { displayToast } from '@/components/ToastMessage/ToastMessage'
 import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 import { AddCircleTwoTone } from '@mui/icons-material'
 import { useGlobalIsEditingContext } from '@/utils/context/GlobalIsEditingContext'
+import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 
 export type MetadataTaskTableProps = {
   projectId: string
@@ -37,6 +39,10 @@ export default function MetadataTasksPage(props: MetadataTaskTableProps) {
       listCurationTaskRequest,
     })
 
+  const showNewTaskButton = useGetFeatureFlag(
+    FeatureFlagEnum.CURATION_TASK_PAGE_SHOW_NEW_TASK_BUTTON,
+  )
+
   return (
     <Stack>
       <Stack direction="row" justifyContent="flex-end">
@@ -54,7 +60,7 @@ export default function MetadataTasksPage(props: MetadataTaskTableProps) {
           }
           label="View only tasks assigned to me"
         />
-        {permissions?.canAddChild && (
+        {showNewTaskButton && permissions?.canAddChild && (
           <>
             <CreateOrUpdateCurationTaskDialog
               key={String(isDialogOpen)}
