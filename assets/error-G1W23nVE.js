@@ -1,0 +1,1 @@
+import{n as e}from"./chunk-jRWAZmH_.js";import{xc as t}from"./iframe-BKPYB09_.js";var n=e((()=>{t()}));export{n as t};
