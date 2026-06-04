@@ -1,5 +1,5 @@
 @use 'sass:map';
-@use 'synapse-react-client/style/abstracts/variables' as SrcVariables;
+@use '../../style/abstracts/variables' as SrcVariables;
 
 .dataExplorerTitle:global(.MuiTypography-root) {
   color: var(--data-explorer-title-color, var(--synapse-primary-action-color));
