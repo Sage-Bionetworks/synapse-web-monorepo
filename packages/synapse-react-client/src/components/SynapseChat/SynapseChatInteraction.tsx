@@ -123,8 +123,8 @@ export function SynapseChatInteraction({
       const chatElement = doc.querySelector('chat')
       return {
         textContent: chatElement
-          ? chatElement.textContent ?? ''
-          : doc.body.textContent ?? '',
+          ? (chatElement.textContent ?? '')
+          : (doc.body.textContent ?? ''),
         guidePrompts: extractedGuidePrompts,
       }
     } catch (e) {

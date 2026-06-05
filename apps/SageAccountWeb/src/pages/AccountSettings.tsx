@@ -8,13 +8,12 @@ import {
   ListItemButton,
   MenuItem,
   Paper,
-  TextField,
+  Stack,
   Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material'
 import {
-  FeatureFlagEnum,
   UserBundle,
   UserProfile,
   VerificationState,
@@ -29,7 +28,6 @@ import { ConfigureEmail } from '../components/ConfigureEmail'
 import { ProfileAvatar } from '../components/ProfileAvatar'
 import { ORCiDButton } from '../components/ProfileValidation/ORCiDButton'
 import { UnbindORCiDDialog } from '../components/ProfileValidation/UnbindORCiD'
-import { StyledFormControl } from '../components/StyledComponents'
 import AccountSettingsTopBar from '../components/AccountSettingsTopBar'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
@@ -44,6 +42,8 @@ import TwoFactorAuthSettingsPanel from 'synapse-react-client/components/Authenti
 import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
 import CookiePreferencesDialog from 'synapse-react-client/components/CookiesNotification/CookiePreferencesDialog'
 import { SYNAPSE_REALM } from 'synapse-react-client/utils/SynapseConstants'
+import { TextField } from 'synapse-react-client/components/TextField/index'
+import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
 
 function CompletionStatus({ isComplete }: { isComplete: boolean | undefined }) {
   return (
@@ -236,7 +236,6 @@ const AccountSettings = (): React.ReactNode => {
 
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-  const formControlMargin = isMobile ? 'dense' : 'normal'
 
   return (
     <div className="account-settings-page">
@@ -284,12 +283,7 @@ const AccountSettings = (): React.ReactNode => {
                   }}
                 />
                 <form onChange={markFormDirty}>
-                  <StyledFormControl
-                    fullWidth
-                    variant="standard"
-                    margin={formControlMargin}
-                    required
-                  >
+                  <Stack gap={isMobile ? 2 : 3}>
                     <TextField
                       label={'Username'}
                       id="username"
@@ -298,12 +292,6 @@ const AccountSettings = (): React.ReactNode => {
                       onChange={e => setUsername(e.target.value)}
                       value={username}
                     />
-                  </StyledFormControl>
-                  <StyledFormControl
-                    fullWidth
-                    variant="standard"
-                    margin={formControlMargin}
-                  >
                     <TextField
                       label={'First name'}
                       id="firstName"
@@ -312,12 +300,6 @@ const AccountSettings = (): React.ReactNode => {
                       onChange={e => setFirstName(e.target.value)}
                       value={firstName}
                     />
-                  </StyledFormControl>
-                  <StyledFormControl
-                    fullWidth
-                    variant="standard"
-                    margin={formControlMargin}
-                  >
                     <TextField
                       label={'Last name'}
                       id="lastName"
@@ -326,12 +308,6 @@ const AccountSettings = (): React.ReactNode => {
                       onChange={e => setLastName(e.target.value)}
                       value={lastName}
                     />
-                  </StyledFormControl>
-                  <StyledFormControl
-                    fullWidth
-                    variant="standard"
-                    margin={formControlMargin}
-                  >
                     <TextField
                       label={'Current position'}
                       id="position"
@@ -340,12 +316,6 @@ const AccountSettings = (): React.ReactNode => {
                       onChange={e => setPosition(e.target.value)}
                       value={position}
                     />
-                  </StyledFormControl>
-                  <StyledFormControl
-                    fullWidth
-                    variant="standard"
-                    margin={formControlMargin}
-                  >
                     <TextField
                       label={'Industry'}
                       id="industry"
@@ -354,12 +324,6 @@ const AccountSettings = (): React.ReactNode => {
                       onChange={e => setIndustry(e.target.value)}
                       value={industry}
                     />
-                  </StyledFormControl>
-                  <StyledFormControl
-                    fullWidth
-                    variant="standard"
-                    margin={formControlMargin}
-                  >
                     <TextField
                       label={'Website'}
                       id="website"
@@ -368,12 +332,6 @@ const AccountSettings = (): React.ReactNode => {
                       onChange={e => setUrl(e.target.value)}
                       value={url}
                     />
-                  </StyledFormControl>
-                  <StyledFormControl
-                    fullWidth
-                    variant="standard"
-                    margin={formControlMargin}
-                  >
                     <TextField
                       label={'City, Country'}
                       id="location"
@@ -382,39 +340,32 @@ const AccountSettings = (): React.ReactNode => {
                       onChange={e => setLocation(e.target.value)}
                       value={location}
                     />
-                  </StyledFormControl>
-                  <StyledFormControl
-                    fullWidth
-                    variant="standard"
-                    margin={formControlMargin}
-                  >
                     <RORInstitutionField
                       onChange={value => setCompany(value)}
                       value={company || ''}
                     />
-                  </StyledFormControl>
-                  <TextField
-                    fullWidth
-                    margin={formControlMargin}
-                    label="Bio"
-                    id="bio"
-                    name="bio"
-                    multiline
-                    rows={5}
-                    onChange={e => setBio(e.target.value)}
-                    value={bio}
-                  />
-                  <div className="primary-button-container">
-                    <Button
-                      onClick={() => {
-                        updateUserProfile()
-                      }}
-                      disabled={!changeInForm}
-                      variant="contained"
-                    >
-                      Save Changes
-                    </Button>
-                  </div>
+                    <TextField
+                      fullWidth
+                      label="Bio"
+                      id="bio"
+                      name="bio"
+                      multiline
+                      rows={5}
+                      onChange={e => setBio(e.target.value)}
+                      value={bio}
+                    />
+                    <div className="primary-button-container">
+                      <Button
+                        onClick={() => {
+                          updateUserProfile()
+                        }}
+                        disabled={!changeInForm}
+                        variant="contained"
+                      >
+                        Save Changes
+                      </Button>
+                    </div>
+                  </Stack>
                 </form>
               </Paper>
               <Paper
@@ -441,31 +392,24 @@ const AccountSettings = (): React.ReactNode => {
                 className="account-setting-panel main-panel"
               >
                 <Typography variant={'headline2'}>Date/Time Format</Typography>
-                <StyledFormControl
+                <TextField
+                  label={'Choose a format'}
+                  id="timezone-select"
+                  value={isUTCTimeStaged}
                   fullWidth
-                  variant="standard"
-                  margin={formControlMargin}
-                  sx={{ marginBottom: '10px' }}
+                  select
+                  disabled={!cookiePreferences.functionalAllowed}
+                  onChange={event => {
+                    setUTCTimeStaged(event.target.value)
+                  }}
                 >
-                  <TextField
-                    label={'Choose a format'}
-                    id="timezone-select"
-                    value={isUTCTimeStaged}
-                    fullWidth
-                    select
-                    disabled={!cookiePreferences.functionalAllowed}
-                    onChange={event => {
-                      setUTCTimeStaged(event.target.value)
-                    }}
-                  >
-                    <MenuItem value="false" sx={{ fontSize: '14px' }}>
-                      Local
-                    </MenuItem>
-                    <MenuItem value="true" sx={{ fontSize: '14px' }}>
-                      UTC
-                    </MenuItem>
-                  </TextField>
-                </StyledFormControl>
+                  <MenuItem value="false" sx={{ fontSize: '14px' }}>
+                    Local
+                  </MenuItem>
+                  <MenuItem value="true" sx={{ fontSize: '14px' }}>
+                    UTC
+                  </MenuItem>
+                </TextField>
                 <div className="primary-button-container">
                   <Button
                     disabled={isUTCTimeStaged === isUTCTime}

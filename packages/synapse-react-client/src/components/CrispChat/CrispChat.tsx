@@ -1,6 +1,6 @@
 import './CrispTypes'
 import React, { useEffect } from 'react'
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
+import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { useGetFeatureFlag } from '@/synapse-queries'
 
 // Ensure script is only loaded once

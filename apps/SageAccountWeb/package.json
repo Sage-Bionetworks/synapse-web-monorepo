@@ -53,7 +53,6 @@
     "msw": "^2.10.2",
     "path-browserify": "^1.0.1",
     "pluralize": "^8.0.0",
-    "prettier": "^2.8.8",
     "process": "^0.11.10",
     "source-map-explorer": "^2.5.3",
     "stream-browserify": "^3.0.0",
@@ -63,9 +62,9 @@
     "type-fest": "^4.41.0",
     "typescript": "6.0.3",
     "util": "^0.12.5",
-    "vite": "^8.0.8",
+    "vite": "^8.0.16",
     "vite-config": "workspace:*",
-    "vite-plugin-node-polyfills": "^0.26.0",
+    "vite-plugin-node-polyfills": "^0.28.0",
     "vitest": "^4.1.4",
     "vitest-when": "^0.10.0",
     "whatwg-fetch": "^3.6.20"
@@ -95,7 +94,7 @@
     ]
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,yml,scss,css,md}": "prettier --config .prettierrc --write"
+    "*.{js,jsx,ts,tsx,json,yml,scss,css,md}": "oxfmt --write"
   },
   "nx": {
     "targets": {

@@ -1,6 +1,6 @@
 import { useGetEntityBundle, useGetFeatureFlag } from '@/synapse-queries'
 import { Box, Divider, Link, Stack, Typography } from '@mui/material'
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
+import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { ReactNode, useState } from 'react'
 import AddConditionsForUseButton from '../../../AccessRequirement/AddConditionsForUseButton/AddConditionsForUseButton'
 import { useGetEntityTitleBarProperties } from './useGetEntityTitleBarProperties'

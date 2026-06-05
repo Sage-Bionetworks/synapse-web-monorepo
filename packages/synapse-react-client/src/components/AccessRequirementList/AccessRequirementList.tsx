@@ -172,19 +172,19 @@ export default function AccessRequirementList(
     'subjectId' in props
       ? props.subjectId
       : isShowingRequirementsForEntity
-      ? props.entityId
-      : isShowingRequirementsForTeam
-      ? props.teamId
-      : undefined
+        ? props.entityId
+        : isShowingRequirementsForTeam
+          ? props.teamId
+          : undefined
 
   const subjectType =
     'subjectType' in props
       ? props.subjectType
       : isShowingRequirementsForEntity
-      ? RestrictableObjectType.ENTITY
-      : isShowingRequirementsForTeam
-      ? RestrictableObjectType.TEAM
-      : undefined
+        ? RestrictableObjectType.ENTITY
+        : isShowingRequirementsForTeam
+          ? RestrictableObjectType.TEAM
+          : undefined
 
   let { dialogTitle = 'Data Access Request' } = props
   const { isAuthenticated } = useSynapseContext()

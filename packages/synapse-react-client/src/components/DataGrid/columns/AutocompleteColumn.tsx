@@ -119,8 +119,10 @@ export function AutocompleteCell({
     notifyOptionCommitted,
     handleMenuOpen,
     handleClose,
+    handlePopupIndicatorMouseDown,
   } = useGridAutocompleteState({
     active,
+    focus,
     stopEditing,
     onDeactivate: () => {
       if (localInputState !== rowDataAsString) {
@@ -136,12 +138,15 @@ export function AutocompleteCell({
     },
   })
 
-  // When not actively being edited, sync localInputState with rowData (e.g. after cut)
+  // Sync localInputState with rowData whenever the cell isn't being edited.
+  // Covers: deletes/cuts from active-but-not-focused state, Escape (grid flips
+  // focus=false while active stays true, so the gate must allow this case),
+  // and post-commit cleanup after the cell exits edit mode.
   useEffect(() => {
-    if (!focus && !active) {
+    if (!focus) {
       setLocalInputState(rowDataAsString)
     }
-  }, [focus, active, rowDataAsString])
+  }, [focus, rowDataAsString])
 
   const hasValue = !isNil(rowData) && rowData !== ''
 
@@ -232,6 +237,7 @@ export function AutocompleteCell({
       blurOnSelect={true}
       slotProps={{
         listbox: { onMouseDown: handleListboxMouseDown },
+        popupIndicator: { onMouseDown: handlePopupIndicatorMouseDown },
       }}
       renderInput={params => <TextField {...params} inputRef={inputRef} />}
       sx={autocompleteSx}

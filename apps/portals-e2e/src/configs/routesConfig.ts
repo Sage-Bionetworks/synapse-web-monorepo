@@ -7,7 +7,7 @@ export type Portal =
   | 'digitalhealth'
   | 'eliteportal'
   | 'genie'
-  | 'namshub'
+  | 'namhub'
   | 'nf'
   | 'stopadportal'
 
@@ -44,7 +44,7 @@ const routesConfig: RouteConfig = {
     buttons: ['About', 'Explore', 'Data Access', 'Sign In'],
     links: ['Analysis Platforms', 'Help', 'News'],
   },
-  namshub: {
+  namhub: {
     buttons: ['Sign In'],
     links: ['Events'],
   },

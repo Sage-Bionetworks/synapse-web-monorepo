@@ -113,9 +113,8 @@ export function QueryVisualizationWrapper(
 
   const [showSqlEditor, setShowSqlEditor] = useState(false)
   const [showPlots, setShowPlots] = useState(defaultShowPlots)
-  const [showCopyToClipboard, setShowCopyToClipboard] = useState(
-    !hideCopyToClipboard,
-  )
+  const [showCopyToClipboard, setShowCopyToClipboard] =
+    useState(!hideCopyToClipboard)
   const [showFacetFilter, setShowFacetFilter] = useState(true)
 
   // The search bar and download confirmation should not be shown at the same time.
@@ -141,12 +140,25 @@ export function QueryVisualizationWrapper(
     [getCurrentQueryRequest],
   )
 
+  // Deep-compare-memoize so callers passing a fresh array literal
+  // (e.g. `hiddenColumns={['topic']}`) don't reset visible columns on every
+  // parent render.
+  const hiddenColumns = useDeepCompareMemoize(props.hiddenColumns ?? [])
   useEffect(() => {
     // SWC-6030: If sql changes, reset what columns are visible
+    const hidden = new Set(hiddenColumns)
     setVisibleColumns(
-      selectColumns.slice(0, visibleColumnCount).map(el => el.name),
+      selectColumns
+        .filter(el => !hidden.has(el.name))
+        .slice(0, visibleColumnCount)
+        .map(el => el.name),
     )
-  }, [selectColumns, lastQueryRequest.query.sql, visibleColumnCount])
+  }, [
+    selectColumns,
+    lastQueryRequest.query.sql,
+    visibleColumnCount,
+    hiddenColumns,
+  ])
 
   const getColumnDisplayName = useCallback(
     (columnName: string, jsonPath?: string) => {

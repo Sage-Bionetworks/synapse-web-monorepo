@@ -430,7 +430,7 @@ export function getSearchQueryUseQueryOptions(
         const offset =
           typeof context.pageParam === 'string'
             ? parseInt(context.pageParam)
-            : context.pageParam ?? 0
+            : (context.pageParam ?? 0)
         const requestForPage: SearchIndexQuery = {
           ...rowDataQuery,
           searchQuery: {

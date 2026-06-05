@@ -167,9 +167,9 @@ export function SynapseTable(props: SynapseTableProps) {
 
   const isShowingAccessColumn: boolean = Boolean(
     showAccessColumn &&
-      entity &&
-      ((isEntityViewOrDatasetOrCollection(entity) && allRowsHaveId(rowSet)) ||
-        fileIdColumnName),
+    entity &&
+    ((isEntityViewOrDatasetOrCollection(entity) && allRowsHaveId(rowSet)) ||
+      fileIdColumnName),
   )
   const rowsAreDownloadable =
     entity &&
@@ -182,8 +182,8 @@ export function SynapseTable(props: SynapseTableProps) {
 
   const isShowingAddToV2DownloadListColumn: boolean = Boolean(
     rowsAreDownloadable &&
-      !hideAddToDownloadListColumn &&
-      !isRowSelectionVisible,
+    !hideAddToDownloadListColumn &&
+    !isRowSelectionVisible,
   )
   const rowEntityIDColumnIndex = fileIdColumnName
     ? rowSet.headers.findIndex(col => col.name == fileIdColumnName)
@@ -276,8 +276,8 @@ export function SynapseTable(props: SynapseTableProps) {
         )
         return Boolean(
           selectColumn &&
-            /* JSON handles its own overflow*/
-            selectColumn.columnType !== ColumnTypeEnum.JSON,
+          /* JSON handles its own overflow*/
+          selectColumn.columnType !== ColumnTypeEnum.JSON,
         )
       },
     },
