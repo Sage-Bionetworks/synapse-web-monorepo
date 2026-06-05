@@ -1,0 +1,1 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";function t(e,t){if(e==null)return``;let r=Math.floor(Math.log(e)/Math.log(1024)),i=t??Math.max(0,r-1);return e==0&&`0 Bytes`||(e/1024**r).toFixed(i)+` `+n[r]}var n,r=e((()=>{n=[`Bytes`,`KB`,`MB`,`GB`,`TB`,`PB`,`EB`,`ZB`,`YB`]}));export{r as n,t};

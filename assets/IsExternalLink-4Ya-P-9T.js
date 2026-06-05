@@ -1,0 +1,1 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";function t(e){try{let t=new URL(e);return typeof window<`u`?t.origin!==window.location.origin:!0}catch{return!1}}var n=e((()=>{}));export{t as n,n as t};

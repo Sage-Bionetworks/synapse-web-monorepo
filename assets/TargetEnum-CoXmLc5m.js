@@ -1,0 +1,1 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";var t,n=e((()=>{t=function(e){return e.CURRENT_WINDOW=`_self`,e.NEW_WINDOW=`_blank`,e.PARENT_FRAME=`_parent`,e.FULL_WINDOW_BODY=`_top`,e}({})}));export{n,t};

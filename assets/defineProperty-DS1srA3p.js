@@ -1,0 +1,1 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{n as t,t as n}from"./toPropertyKey-DylyTjMw.js";function r(e,n,r){return(n=t(n))in e?Object.defineProperty(e,n,{value:r,enumerable:!0,configurable:!0,writable:!0}):e[n]=r,e}var i=e((()=>{n()}));export{i as n,r as t};
