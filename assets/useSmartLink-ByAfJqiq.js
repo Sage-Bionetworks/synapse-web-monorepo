@@ -1,0 +1,1 @@
+import{n as e}from"./chunk-jRWAZmH_.js";import{Ho as t,Mo as n,jo as r}from"./iframe-DPwX-8AX.js";import{n as i,t as a}from"./IsExternalLink-C2qMzEEl.js";function o(e,r){let a=t(),o=e?i(e):!1;return e&&a&&!o?{component:n,to:e}:{component:e?`a`:void 0,href:e,target:r??(o?`_blank`:void 0),rel:o?`noopener noreferrer`:void 0}}var s=e((()=>{r(),a()}));export{o as n,s as t};
