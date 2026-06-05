@@ -41,7 +41,6 @@
     ],
     "*.{json,yml,scss,css,md}": [
       "oxfmt --write"
-      "prettier --write"
     ],
     ".github/workflows/*.{yml,yaml}": [
       "./bin/actionlint"
