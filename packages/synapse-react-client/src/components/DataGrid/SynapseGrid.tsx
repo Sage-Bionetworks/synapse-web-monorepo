@@ -9,7 +9,7 @@ import { SkeletonTable } from '@/components/index'
 import { useGetEntity } from '@/synapse-queries/index'
 import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import { SmartToyTwoTone } from '@mui/icons-material'
-import { Alert, Box, Button, Stack, Tooltip, Typography } from '@mui/material'
+import { Box, Stack, Tooltip, Typography } from '@mui/material'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import Grid from '@mui/material/Grid'
 import {
@@ -44,6 +44,8 @@ import { useRemoteSelections } from './hooks/useRemoteSelections'
 import { enrichRowsWithChangeInfo } from './utils/enrichRowsWithChangeInfo'
 import CertificationRequirement from '@/components/AccessRequirementList/RequirementItem/CertificationRequirement'
 import { ValidationAlert } from './components/ValidationAlert'
+import { SynapseErrorBoundary } from '@/components/error/ErrorBanner'
+import { useErrorHandler } from 'react-error-boundary'
 
 export type SynapseGridProps = {
   agentRegistrationId?: string
@@ -55,7 +57,7 @@ export type SynapseGridHandle = {
   loadExistingSession: (sessionId: string) => void
 }
 
-const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
+const SynapseGridInner = forwardRef<SynapseGridHandle, SynapseGridProps>(
   ({ agentRegistrationId, showDebugInfo = false }, ref) => {
     const [session, setSession] = useState<GridSession | null>(null)
     const [replicaId, setReplicaId] = useState<number | null>(null)
@@ -120,6 +122,8 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       onReplicaConnected: handleReplicaConnectionChange,
       onReplicaDisconnected: handleReplicaConnectionChange,
     })
+
+    useErrorHandler(websocketError)
 
     const websocketInstanceRef = useRef<typeof websocketInstance | null>(null)
 
@@ -421,37 +425,8 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
 
           {session && (
             <>
-              {/* WebSocket Error — replaces the grid entirely */}
-              {websocketError && (
-                <Grid size={12}>
-                  <Alert
-                    severity="error"
-                    action={
-                      <Button
-                        color="inherit"
-                        size="small"
-                        onClick={() => window.location.reload()}
-                      >
-                        Refresh
-                      </Button>
-                    }
-                  >
-                    {typeof websocketError === 'string'
-                      ? websocketError
-                      : websocketError instanceof Error
-                      ? websocketError.message
-                      : typeof websocketError === 'object' &&
-                        websocketError !== null &&
-                        'message' in websocketError &&
-                        typeof (websocketError as { message: unknown })
-                          .message === 'string'
-                      ? (websocketError as { message: string }).message
-                      : 'An error occurred while communicating with the server. Please refresh the page to continue.'}
-                  </Alert>
-                </Grid>
-              )}
               {/* Grid Loading State */}
-              {!websocketError && !hasSufficientData && (
+              {!hasSufficientData && (
                 <Grid size={12}>
                   <h3>Setting up grid...</h3>
                   <div style={{ marginBottom: '10px' }}>
@@ -473,7 +448,7 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
                 </Grid>
               )}
               {/* Grid */}
-              {!websocketError && hasSufficientData && (
+              {hasSufficientData && (
                 <>
                   <Grid size={12}>
                     <ValidationAlert
@@ -587,6 +562,14 @@ const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
       </div>
     )
   },
+)
+
+const SynapseGrid = forwardRef<SynapseGridHandle, SynapseGridProps>(
+  (props, ref) => (
+    <SynapseErrorBoundary>
+      <SynapseGridInner {...props} ref={ref} />
+    </SynapseErrorBoundary>
+  ),
 )
 
 export default SynapseGrid
