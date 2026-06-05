@@ -25,7 +25,7 @@ export type GridAgentChatProps = {
 export function GridAgentChat({
   gridSessionId,
   usersReplicaId,
-  chatbotName = 'Grid Assistant',
+  chatbotName = 'Curie',
   initialMessage,
   open,
   onClose,
