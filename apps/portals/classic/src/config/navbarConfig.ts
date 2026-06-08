@@ -15,6 +15,7 @@ export const navbarConfig: NavbarConfig = {
           path: '/Explore/Studies',
         },
         { name: 'Publications', path: '/Explore/Publications' },
+        { name: 'Metadata', path: '/Explore/Metadata' },
       ],
     },
     {
