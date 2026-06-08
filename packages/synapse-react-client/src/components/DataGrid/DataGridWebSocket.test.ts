@@ -592,6 +592,33 @@ describe('DataGridWebSocket', () => {
         'something went wrong',
       )
     })
+
+    it('calls onError with the payload on "error" notification', () => {
+      const onError = vi.fn()
+      vi.spyOn(console, 'warn').mockImplementation(() => {})
+      vi.spyOn(console, 'debug').mockImplementation(() => {})
+      vi.spyOn(console, 'log').mockImplementation(() => {})
+      const { mockSocket } = createDataGridWebSocket({ onError })
+
+      mockSocket.simulateMessage([8, 'error', 'something went wrong'])
+
+      expect(onError).toHaveBeenCalledTimes(1)
+      expect(onError).toHaveBeenCalledWith('something went wrong')
+    })
+
+    it('calls onError with an object payload on "error" notification', () => {
+      const onError = vi.fn()
+      vi.spyOn(console, 'warn').mockImplementation(() => {})
+      vi.spyOn(console, 'debug').mockImplementation(() => {})
+      vi.spyOn(console, 'log').mockImplementation(() => {})
+      const { mockSocket } = createDataGridWebSocket({ onError })
+
+      const errorPayload = { code: 500, message: 'Internal error' }
+      mockSocket.simulateMessage([8, 'error', errorPayload])
+
+      expect(onError).toHaveBeenCalledTimes(1)
+      expect(onError).toHaveBeenCalledWith(errorPayload)
+    })
   })
 
   describe('messageHandler — unknown messages', () => {
