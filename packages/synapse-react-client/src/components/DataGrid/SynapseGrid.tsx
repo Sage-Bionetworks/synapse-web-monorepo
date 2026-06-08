@@ -474,7 +474,7 @@ function SynapseGridInner({
                       onClick={() => setChatOpen(true)}
                       startIcon={<SmartToyTwoTone />}
                     >
-                      Open chat
+                      Open Curie
                     </GridMenuButton>
                     <GridAgentChat
                       agentRegistrationId={agentRegistrationId}
