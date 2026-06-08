@@ -1,4 +1,4 @@
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
+import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
 import {
   Box,
   Stack,

@@ -1,6 +1,6 @@
 {
   "name": "@sage-bionetworks/synapse-client",
-  "version": "0.0.15",
+  "version": "0.0.18",
   "description": "",
   "type": "module",
   "module": "./dist/index.js",
@@ -28,13 +28,13 @@
     "tsx": "^4.19.4",
     "typescript": "6.0.3",
     "undici": "^6.24.0",
-    "vite": "^8.0.8",
+    "vite": "^8.0.16",
     "vite-config": "workspace:*",
     "vitest": "^4.1.4"
   },
   "scripts": {
     "clean": "rimraf ./dist && rimraf *.tsbuildinfo",
-    "format-spec": "prettier --write src/spec/openapispecification.json",
+    "format-spec": "oxfmt --write src/spec/openapispecification.json",
     "get-spec:staging": "npx tsx src/codegen/downloadSpec.ts --stack staging && pnpm format-spec",
     "get-spec:production": "npx tsx src/codegen/downloadSpec.ts --stack production && pnpm format-spec",
     "get-spec": "pnpm get-spec:production",
@@ -42,7 +42,7 @@
     "build": "pnpm tsc --build",
     "type-check": "tsc --build",
     "test": "vitest",
-    "lint": "eslint src"
+    "lint": "oxlint src"
   },
   "nx": {
     "targets": {

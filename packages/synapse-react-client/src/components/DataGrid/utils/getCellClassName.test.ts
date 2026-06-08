@@ -14,7 +14,7 @@ describe('getCellClassName', () => {
     ({
       __cellValidationResults: validationResults,
       __validationStatus: validationStatus,
-    } as DataGridRow)
+    }) as DataGridRow
 
   const createMockColumns = (): Column[] => [
     { id: 'col1' } as Column,
@@ -31,7 +31,7 @@ describe('getCellClassName', () => {
     ({
       min: { row: minRow, col: minCol },
       max: { row: maxRow, col: maxCol },
-    } as SelectionWithId)
+    }) as SelectionWithId
 
   it('returns undefined when no classes should be applied', () => {
     const result = getCellClassName({

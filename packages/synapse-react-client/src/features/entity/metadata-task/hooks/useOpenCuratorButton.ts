@@ -1,9 +1,9 @@
 import { displayToast } from '@/components'
 import { useGetEntityPermissions } from '@/synapse-queries'
 import {
-  CurationTask,
   GridSession,
   SynapseClientError,
+  TaskBundle,
 } from '@sage-bionetworks/synapse-client'
 import { useCallback } from 'react'
 import {
@@ -11,6 +11,7 @@ import {
   OPEN_CURATOR_UNAUTHORIZED_ERROR_MESSAGE,
 } from '../utils/constants'
 import { getGridSourceIdForTask } from '../utils/getGridSourceIdForTask'
+import useGridSessionForCurationTask from './useGridSessionForCurationTask'
 import useGridSessionForCurationTask_legacy from './useGridSessionForCurationTask_legacy'
 import { getLinkToGridSession } from '@/utils/functions/getSynapseWebClientLink'
 
@@ -27,12 +28,27 @@ function openGridSessionInNewWindow(gridSessionId: string, taskId: number) {
 }
 
 export default function useOpenCuratorFromTaskButton(
-  curationTask: CurationTask,
+  taskBundle: TaskBundle,
 ): UseOpenCuratorFromTaskButtonReturn {
+  const curationTask = taskBundle.task!
+
+  const taskProperties = curationTask.taskProperties
+  const suggestedAuthorizationMode =
+    taskProperties != null && 'suggestedAuthorizationMode' in taskProperties
+      ? taskProperties.suggestedAuthorizationMode
+      : undefined
+
+  const useTaskLinkedSession = suggestedAuthorizationMode != null
+
   const {
     mutateAsync: getOrCreateLegacyGridSessionForUnassignedTask,
-    isPending: openGridIsPending,
+    isPending: legacyOpenGridIsPending,
   } = useGridSessionForCurationTask_legacy()
+
+  const {
+    mutateAsync: getOrCreateTaskLinkedGridSession,
+    isPending: taskLinkedOpenGridIsPending,
+  } = useGridSessionForCurationTask()
 
   const gridSourceEntityId = getGridSourceIdForTask(curationTask)
   const {
@@ -45,9 +61,14 @@ export default function useOpenCuratorFromTaskButton(
   const openNewOrExistingCuratorSession = useCallback(async () => {
     let gridSession: GridSession
     try {
-      gridSession = await getOrCreateLegacyGridSessionForUnassignedTask({
-        curationTask,
-      })
+      if (useTaskLinkedSession) {
+        const result = await getOrCreateTaskLinkedGridSession(taskBundle)
+        gridSession = result.gridSession
+      } else {
+        gridSession = await getOrCreateLegacyGridSessionForUnassignedTask({
+          curationTask,
+        })
+      }
       openGridSessionInNewWindow(gridSession.sessionId!, curationTask.taskId!)
     } catch (error) {
       if (error instanceof SynapseClientError && error.status === 403) {
@@ -64,7 +85,13 @@ export default function useOpenCuratorFromTaskButton(
         })
       }
     }
-  }, [curationTask, getOrCreateLegacyGridSessionForUnassignedTask])
+  }, [
+    curationTask,
+    taskBundle,
+    useTaskLinkedSession,
+    getOrCreateLegacyGridSessionForUnassignedTask,
+    getOrCreateTaskLinkedGridSession,
+  ])
 
   const handleClickOpenCurator = useCallback(() => {
     void openNewOrExistingCuratorSession()
@@ -73,7 +100,9 @@ export default function useOpenCuratorFromTaskButton(
   return {
     hasPermission,
     isLoading: isLoadingEntityPermissions,
-    isPending: openGridIsPending,
+    isPending: useTaskLinkedSession
+      ? taskLinkedOpenGridIsPending
+      : legacyOpenGridIsPending,
     onClick: handleClickOpenCurator,
   }
 }

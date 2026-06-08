@@ -6,17 +6,19 @@ import {
 } from '@/synapse-queries/grid/useGridSession'
 import { useSynapseContext } from '@/utils'
 import {
+  AuthorizationMode,
+  CreateGridRequest,
   GridSession,
+  GridSupportedTaskProperties,
   SynapseClientError,
   TaskBundle,
 } from '@sage-bionetworks/synapse-client'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { OPEN_CURATOR_LINK_TASK_CONFLICT_ERROR_MESSAGE } from '../utils/constants'
 import { getCreateGridRequestForMetadataTask } from '../utils/getCreateGridRequestForMetadataTask'
-import taskHasAssignee from '../utils/taskHasAssignee'
 
 export type UseGridSessionForCurationTaskResult = {
   gridSession: GridSession
-  gridSessionOwnerMatchesTaskAssignee: boolean
 }
 
 /**
@@ -47,8 +49,6 @@ export default function useGridSessionForCurationTask() {
         throw new Error('CurationTaskBundle is missing task or status')
       }
 
-      const hasAssignee = taskHasAssignee(task)
-
       const gridSessionId = status?.executionDetails?.activeSessionId
       if (gridSessionId) {
         try {
@@ -61,14 +61,8 @@ export default function useGridSessionForCurationTask() {
             staleTime: 0,
           })
 
-          const assigneeMatchesGridSessionOwner =
-            hasAssignee &&
-            gridSession.ownerPrincipalId == task.assigneePrincipalId
-
           return {
             gridSession,
-            gridSessionOwnerMatchesTaskAssignee:
-              assigneeMatchesGridSessionOwner,
           }
         } catch (e) {
           if (e instanceof SynapseClientError && e.status === 404) {
@@ -79,12 +73,33 @@ export default function useGridSessionForCurationTask() {
         }
       }
       // Create a session and link it to the task
-      const taskProperties = task.taskProperties
+      const taskProperties = task.taskProperties as GridSupportedTaskProperties
       if (taskProperties == null) {
         throw new Error('CurationTask is missing taskProperties')
       }
 
-      const createGridRequest = getCreateGridRequestForMetadataTask(task)
+      const suggestedAuthorizationMode =
+        'suggestedAuthorizationMode' in taskProperties
+          ? taskProperties.suggestedAuthorizationMode
+          : undefined
+
+      if (suggestedAuthorizationMode == null) {
+        throw new Error(
+          'CurationTask is missing suggestedAuthorizationMode in taskProperties',
+        )
+      }
+
+      let ownerPrincipalId: string | undefined = undefined
+      if (suggestedAuthorizationMode === AuthorizationMode.SESSION_OWNER) {
+        // TODO: Add collaboratorPrincipalIds once the server supports multiple owners.
+        ownerPrincipalId = task.assigneePrincipalId
+      }
+
+      const createGridRequest: CreateGridRequest = {
+        ...getCreateGridRequestForMetadataTask(task),
+        authorizationMode: suggestedAuthorizationMode,
+        ownerPrincipalId,
+      }
       const createGridResponse = await createGridSession(createGridRequest)
       const gridSession = createGridResponse.gridSession!
 
@@ -104,9 +119,7 @@ export default function useGridSessionForCurationTask() {
           // etag mismatch -- possible race condition.
           // Delete the session we just created to avoid orphaned sessions, and throw an error to notify the user that they may need to refresh and try again.
           await deleteGridSession(gridSession.sessionId!)
-          throw new Error(
-            'Failed to link Grid session to Curation Task. The task was updated since it was last retrieved. Please refresh and try again.',
-          )
+          throw new Error(OPEN_CURATOR_LINK_TASK_CONFLICT_ERROR_MESSAGE)
         } else {
           // Rethrow any other error
           throw e
@@ -116,7 +129,6 @@ export default function useGridSessionForCurationTask() {
       // Since we just created the session, the user must have access, and the owner must match the assignee (if there is one).
       return {
         gridSession,
-        gridSessionOwnerMatchesTaskAssignee: hasAssignee,
       }
     },
   })

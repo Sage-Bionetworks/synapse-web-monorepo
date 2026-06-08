@@ -4,6 +4,7 @@ import { DatePicker } from '@mui/x-date-pickers'
 import { Box, Button, TextField } from '@mui/material'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import isEmpty from 'lodash-es/isEmpty'
 
 type ControlType = 'number' | 'date'
 
@@ -27,8 +28,12 @@ export function Range(props: RangeProps): React.ReactNode {
     props.type === 'number' && props.initialValues
       ? props.initialValues
       : (props.initialValues && {
-          min: dayjs(props.initialValues.min).format('YYYY-MM-DD'),
-          max: dayjs(props.initialValues.max).format('YYYY-MM-DD'),
+          min: props.initialValues.min
+            ? dayjs(props.initialValues.min).format('YYYY-MM-DD')
+            : undefined,
+          max: props.initialValues.max
+            ? dayjs(props.initialValues.max).format('YYYY-MM-DD')
+            : undefined,
         }) || {
           min: undefined,
           max: undefined,
@@ -40,12 +45,8 @@ export function Range(props: RangeProps): React.ReactNode {
 
     type: ControlType = 'number',
   ) => {
-    if (
-      min === null ||
-      min === undefined ||
-      max === null ||
-      max === undefined
-    ) {
+    // Treat null, undefined, and empty string as "no value" — one-sided ranges are always valid
+    if (isEmpty(min) || isEmpty(max)) {
       setError(false)
       return true
     }
@@ -69,7 +70,11 @@ export function Range(props: RangeProps): React.ReactNode {
     type: ControlType = 'number',
   ) => {
     if (isValid(values, type)) {
-      callBackFn(values)
+      // Normalize empty strings to undefined so downstream code receives clean absent values
+      callBackFn({
+        min: values.min === '' ? undefined : values.min,
+        max: values.max === '' ? undefined : values.max,
+      })
     }
   }
 
@@ -105,6 +110,7 @@ export function Range(props: RangeProps): React.ReactNode {
                 }}
                 slotProps={{
                   textField: {
+                    error: false,
                     inputProps: {
                       'aria-label': 'min',
                     },
@@ -130,6 +136,7 @@ export function Range(props: RangeProps): React.ReactNode {
                 }}
                 slotProps={{
                   textField: {
+                    error: false,
                     inputProps: {
                       'aria-label': 'max',
                     },

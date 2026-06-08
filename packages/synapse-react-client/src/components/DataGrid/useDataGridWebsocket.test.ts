@@ -49,20 +49,18 @@ type MockWebSocketInstance = MockWebSocketConfig & {
 }
 
 vi.mock('./DataGridWebSocket', () => ({
-  DataGridWebSocket: vi
-    .fn()
-    .mockImplementation(function (
-      this: MockWebSocketInstance,
-      config: MockWebSocketConfig,
-      _instance?: unknown,
-    ): MockWebSocketInstance {
-      return {
-        ...config,
-        socket: { readyState: WebSocket.OPEN },
-        sendPatch: vi.fn(),
-        disconnect: vi.fn(),
-      }
-    }),
+  DataGridWebSocket: vi.fn().mockImplementation(function (
+    this: MockWebSocketInstance,
+    config: MockWebSocketConfig,
+    _instance?: unknown,
+  ): MockWebSocketInstance {
+    return {
+      ...config,
+      socket: { readyState: WebSocket.OPEN },
+      sendPatch: vi.fn(),
+      disconnect: vi.fn(),
+    }
+  }),
 }))
 
 const MockDataGridWebSocket = vi.mocked(DataGridWebSocket)
@@ -85,7 +83,7 @@ const createEstablishHookState = () =>
     presignedUrl: currentPresignedUrl,
     reset: mockResetEstablishWebsocketConnection,
     clearPresignedUrl: mockClearPresignedUrl,
-  } as unknown as ReturnType<typeof useEstablishWebsocketConnection>)
+  }) as unknown as ReturnType<typeof useEstablishWebsocketConnection>
 
 const createDeferred = <T>() => {
   let resolve: (value: T | PromiseLike<T>) => void

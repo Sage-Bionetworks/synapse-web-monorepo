@@ -75,7 +75,7 @@ const exploreConfig: ExploreConfig = {
     // TODO: uncomment after route is finalized and source tables are OPEN_DATA
     // cards: ['Publications', 'Contributors', 'External Resources'],
   },
-  namshub: {},
+  namhub: {},
 }
 
 export default exploreConfig

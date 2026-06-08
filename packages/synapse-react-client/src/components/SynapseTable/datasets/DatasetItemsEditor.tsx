@@ -407,8 +407,8 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
 
   const hasChangedSinceLastSave = Boolean(
     datasetOnServer &&
-      datasetToUpdate &&
-      !isEqual(datasetOnServer, datasetToUpdate),
+    datasetToUpdate &&
+    !isEqual(datasetOnServer, datasetToUpdate),
   )
 
   const {

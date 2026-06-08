@@ -1,5 +1,6 @@
 :root {
   --adkp-accent-color: #684b84;
+  --data-explorer-title-color: var(--adkp-accent-color);
   --adkp-button-gradient: linear-gradient(180deg, #443471 0%, #5a488f 100%);
   --adkp-button-border-color: #32243f;
   --Brand-dark: #1f3042;
@@ -29,11 +30,8 @@ body:has(.HomePageV2) #footer.footer--adkp {
   }
 
   .footer-bottom {
-    background: linear-gradient(
-        0deg,
-        rgba(0, 0, 0, 0.15) 0%,
-        rgba(0, 0, 0, 0.15) 100%
-      ),
+    background:
+      linear-gradient(0deg, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.15) 100%),
       linear-gradient(91deg, #7761b7 5.34%, #9067b6 24.31%, #816dc8 91.15%);
   }
 

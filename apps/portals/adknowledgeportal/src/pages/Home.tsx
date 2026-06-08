@@ -1,5 +1,5 @@
 import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
+import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
 import HomePageV2 from './HomePageV2'
 import HomePageV1 from './HomePageV1'
 

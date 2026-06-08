@@ -91,6 +91,7 @@ function getPillPropsFromColumnQueryFilter(
 export function getPillPropsFromTextMatchesQueryFilter(
   queryFilter: TextMatchesQueryFilter,
   queryContext: QueryContextType,
+  isLocked?: boolean,
 ): SelectionCriteriaPillProps {
   let innerText = queryFilter.searchExpression
   if (queryFilter.searchMode == 'BOOLEAN') {
@@ -103,9 +104,13 @@ export function getPillPropsFromTextMatchesQueryFilter(
     key: `queryFilter-${queryFilter.concreteType}-${queryFilter.searchExpression}`,
     innerText,
     tooltipText: `Text matches: "${innerText}"`,
-    onRemoveFilter: () => {
-      queryContext.removeQueryFilter(queryFilter)
-    },
+    ...(isLocked
+      ? { isLocked: true }
+      : {
+          onRemoveFilter: () => {
+            queryContext.removeQueryFilter(queryFilter)
+          },
+        }),
   }
 }
 
@@ -115,6 +120,7 @@ function getPillPropsFromQueryFilters(
   columnModels: ColumnModel[],
   queryVisualizationContext: QueryVisualizationContextType,
   lockedColumn?: LockedColumn,
+  lockTextMatchesQueryFilterPill?: boolean,
 ): SelectionCriteriaPillProps[] {
   return queryFilters.flatMap(queryFilter => {
     if (
@@ -137,7 +143,13 @@ function getPillPropsFromQueryFilters(
         queryVisualizationContext,
       )
     } else if (isTextMatchesQueryFilter(queryFilter)) {
-      return [getPillPropsFromTextMatchesQueryFilter(queryFilter, queryContext)]
+      return [
+        getPillPropsFromTextMatchesQueryFilter(
+          queryFilter,
+          queryContext,
+          lockTextMatchesQueryFilterPill,
+        ),
+      ]
     } else {
       console.log('Unknown query filter type', queryFilter)
       return []
@@ -283,6 +295,7 @@ function SelectionCriteriaPills() {
   const queryContext = useQueryContext()
   const lockedColumn = queryContext.lockedColumn
   const queryVisualizationContext = useQueryVisualizationContext()
+  const { lockTextMatchesQueryFilterPill } = queryVisualizationContext
   const { currentQueryRequest } = queryContext
   const { data: queryMetadata } = useGetQueryMetadata()
 
@@ -292,6 +305,7 @@ function SelectionCriteriaPills() {
     queryMetadata?.columnModels || [],
     queryVisualizationContext,
     lockedColumn,
+    lockTextMatchesQueryFilterPill,
   )
 
   const facetPillProps = getPillPropsFromFacetFilters(

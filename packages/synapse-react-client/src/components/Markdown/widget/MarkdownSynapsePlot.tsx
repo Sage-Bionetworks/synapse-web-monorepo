@@ -16,7 +16,7 @@ export type MarkdownSynapsePlotProps = {
 }
 
 const toBoolean = (v?: string, fallbackValue?: boolean) => {
-  return v ? v.toLowerCase() == 'true' : fallbackValue ?? false
+  return v ? v.toLowerCase() == 'true' : (fallbackValue ?? false)
 }
 
 export const MarkdownSynapsePlot = (

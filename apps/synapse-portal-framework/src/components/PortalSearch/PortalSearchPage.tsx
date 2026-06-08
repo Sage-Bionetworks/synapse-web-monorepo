@@ -81,64 +81,51 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
       sx={{
         px: { xs: '10px', lg: '50px' },
         pb: { xs: '10px', lg: '50px' },
-        pt: configs.length === 1 ? 0 : { xs: '10px', lg: '50px' },
+        pt: { xs: '10px', lg: '20px' },
       }}
     >
-      {configs.length !== 1 && (
-        <PortalFullTextSearchField
-          disabled={selectedTabIndex == undefined}
-          path={location.pathname}
-        />
-      )}
+      <PortalFullTextSearchField
+        disabled={selectedTabIndex == undefined}
+        path={location.pathname}
+      />
+      <Box
+        sx={{
+          pt: { xs: '10px', lg: '20px' },
+        }}
+      />
       {configs.length !== 1 && selectedTabIndex != undefined && (
         <PortalSearchTabs tabConfig={searchPageTabsState} />
       )}
-      <Box sx={{ position: 'relative' }}>
-        {configs.length === 1 && (
-          <Box
-            sx={{
-              position: 'absolute',
-              top: 0,
-              left: { xs: '-10px', lg: '-50px' },
-              right: { xs: '-10px', lg: '-50px' },
-              height: '60px',
-              backgroundColor: 'var(--synapse-gray-200)',
-              zIndex: 0,
-            }}
-          />
-        )}
-        <Box sx={{ position: 'relative', zIndex: 1 }}>
-          {configs.map((config, index) => {
-            const key = `searchResultTab-${selectedTabIndex}-${index}`
-            const sharedProps = {
-              isVisible: selectedTabIndex == index,
-              onQueryResultBundleChange: (newQueryResultBundleJSON: string) => {
-                onQueryResultBundleChange(
-                  index,
-                  newQueryResultBundleJSON,
-                  selectedTabIndex,
-                )
-              },
-            }
-            if (isSearchQueryWrapperPlotNavProps(config)) {
-              return (
-                <SearchParamAwareQueryWrapperPlotNav
-                  key={key}
-                  {...sharedProps}
-                  searchQueryWrapperPlotNavProps={config}
-                />
-              )
-            }
-            return (
-              <SearchParamAwareQueryWrapperPlotNav
-                key={key}
-                {...sharedProps}
-                standaloneQueryWrapperProps={config}
-              />
+
+      {configs.map((config, index) => {
+        const key = `searchResultTab-${selectedTabIndex}-${index}`
+        const sharedProps = {
+          isVisible: selectedTabIndex == index,
+          onQueryResultBundleChange: (newQueryResultBundleJSON: string) => {
+            onQueryResultBundleChange(
+              index,
+              newQueryResultBundleJSON,
+              selectedTabIndex,
             )
-          })}
-        </Box>
-      </Box>
+          },
+        }
+        if (isSearchQueryWrapperPlotNavProps(config)) {
+          return (
+            <SearchParamAwareQueryWrapperPlotNav
+              key={key}
+              {...sharedProps}
+              searchQueryWrapperPlotNavProps={config}
+            />
+          )
+        }
+        return (
+          <SearchParamAwareQueryWrapperPlotNav
+            key={key}
+            {...sharedProps}
+            standaloneQueryWrapperProps={config}
+          />
+        )
+      })}
       {selectedTabIndex == undefined && (
         <Box
           sx={{

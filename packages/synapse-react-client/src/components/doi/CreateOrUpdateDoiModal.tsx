@@ -341,7 +341,7 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
       {doiCanBeAppliedToVersion && (
         <StyledFormControl className="limit-type" fullWidth sx={{ my: 2 }}>
           <InputLabel
-            htmlFor="doi-version-select"
+            id="doi-version-select"
             sx={{
               display: 'flex',
               alignItems: 'center',
@@ -358,7 +358,7 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
             </MarkdownPopover>
           </InputLabel>
           <Select
-            id="doi-version-select"
+            labelId="doi-version-select"
             value={selectedVersionNumber ?? -1}
             onChange={e => {
               if (e.target.value === -1) {

@@ -21,6 +21,11 @@ const tableInfo: TableInfoMap = {
   },
   DataSubstrate: { name: 'DataSubstrate', id: 'syn63096834' },
   DataTopic: { name: 'DataTopic', id: 'syn63096835' },
+  // Requires Synapse login to access until public-access approval lands.
+  DataTopic_denormalized: {
+    name: 'DataTopic_denormalized',
+    id: 'syn75081383',
+  },
   // Organization: { name: 'Organization', id: 'syn63096836.31' },
   Organization_denormalized: {
     name: 'Organization',
@@ -110,8 +115,7 @@ export const manifestSql = `
     data_part_description,
     standards_and_tools_links,
     uses_data_substrates_links,
-    concerns_data_topics_doc_links,
-    concerns_data_topics_links,
+    ${MANIFEST_COLUMN_CONSTS.CONCERNS_DATA_TOPICS},
     anatomy_links
   FROM ${tableInfo.Manifest.id}
 `
@@ -130,6 +134,7 @@ export const DATASET_DENORMALIZED_COLUMN_CONSTS: ColumnConsts = {
   PRODUCED_BY: 'producedBy',
   PRODUCED_BY_ORG_ID: 'producedByOrgId',
   TOPICS: 'topics',
+  TOPIC_IDS: 'topicIds',
   SUBSTRATES: 'substrates',
   SUBSTRATES_JSON: 'substrates_json',
 }
@@ -179,6 +184,7 @@ export const standardsSql = `
         , category
         , collections
         , aiAppMarkdown
+        , ${DST_TABLE_COLUMN_CONSTS.CONCERNS_DATA_TOPIC}
         , topic
         , dataTypes
         , ${DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_LINKS}
@@ -214,7 +220,7 @@ export const standardsDetailsPageSQL = `
             collections,
             AIApplicationJSON,
             aiApplicationCount,
-            topic,
+            ${DST_TABLE_COLUMN_CONSTS.CONCERNS_DATA_TOPIC},
             dataTypes,
             ${DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_NAMES},
             ${DST_TABLE_COLUMN_CONSTS.RESPONSIBLE_ORG_LINKS} as SDO,
@@ -230,6 +236,46 @@ export const standardsFtsConfig: FTSConfig = {
   textMatchesMode: 'BOOLEAN',
   distance: 50,
 }
+
+// Minimal column consts for the raw DataTopic table (used for cheap id→name
+// lookups from cells in other tables).
+export const DATA_TOPIC_COLUMN_CONSTS: ColumnConsts & { NAME: string } = {
+  ID: 'id',
+  NAME: 'name',
+} as const
+tableInfo.DataTopic.columnConsts = DATA_TOPIC_COLUMN_CONSTS
+
+export const TOPIC_TABLE_COLUMN_CONSTS: ColumnConsts & {
+  NAME: string
+  DESCRIPTION: string
+} = {
+  ID: 'id',
+  NAME: 'name',
+  DESCRIPTION: 'description',
+  SUBCLASS_OF: 'subclassOf',
+  RELATED_TO: 'relatedTo',
+  EDAM_ID: 'edamId',
+  MESH_ID: 'meshId',
+  NCIT_ID: 'ncitId',
+  // JSON-array columns from DataTopic_denormalized. Each element has {id, name}.
+  // Counts are obtained via length of the parsed array.
+  PARENT_TOPICS_JSON: 'parentTopicsJson',
+  CHILD_TOPICS_JSON: 'childTopicsJson',
+  RELATED_TOPICS_JSON: 'relatedTopicsJson',
+  STANDARDS_JSON: 'standardsJson',
+  DATASETS_JSON: 'datasetsJson',
+  MANIFEST_DATA_PARTS_JSON: 'manifestDataPartsJson',
+} as const
+tableInfo.DataTopic_denormalized.columnConsts = TOPIC_TABLE_COLUMN_CONSTS
+
+// SELECT everything from DataTopic_denormalized — the table is small (~50 rows)
+// so the whole thing is loaded once and the hierarchy widget operates on it
+// in-memory.
+export const topicDetailsPageSQL = `SELECT ${Object.values(
+  TOPIC_TABLE_COLUMN_CONSTS,
+).join(', ')} FROM ${tableInfo.DataTopic_denormalized.id}`
+tableInfo.DataTopic_denormalized.queries ??= {}
+tableInfo.DataTopic_denormalized.queries.detailsSQL = topicDetailsPageSQL
 
 export function getTableInfo(tableName: string): TableInfo {
   const tinfo = tableInfo[tableName]
