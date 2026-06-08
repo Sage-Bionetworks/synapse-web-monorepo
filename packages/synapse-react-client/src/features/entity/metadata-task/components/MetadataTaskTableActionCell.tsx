@@ -56,6 +56,10 @@ export default function MetadataTaskTableActionCell(props: {
               setIsDialogOpen(false)
               setIsEditing(false)
             }}
+            onDeleteSuccess={() => {
+              setIsDialogOpen(false)
+              setIsEditing(false)
+            }}
           />
           <Button
             variant="outlined"
