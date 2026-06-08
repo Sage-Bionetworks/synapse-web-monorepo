@@ -482,7 +482,7 @@ function SynapseGridInner({
                       onClose={() => setChatOpen(false)}
                       gridSessionId={session.sessionId!}
                       usersReplicaId={replicaId!}
-                      chatbotName="Grid Assistant"
+                      chatbotName="Curie"
                     />
                     {session.sourceEntityId && (
                       <UploadCsvToGridButton
