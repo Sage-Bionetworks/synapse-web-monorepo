@@ -13,6 +13,10 @@ vi.mock('./DeleteCurationTaskButton', () => ({
   default: () => <button>Delete task</button>,
 }))
 
+vi.mock('./CreateOrUpdateCurationTaskDialog', () => ({
+  default: () => null,
+}))
+
 const mockUseOpenCuratorFromTaskButton = vi.mocked(useOpenCuratorFromTaskButton)
 const mockOnClick = vi.fn()
 

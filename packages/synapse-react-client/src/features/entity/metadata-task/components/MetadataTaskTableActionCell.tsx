@@ -26,7 +26,6 @@ export default function MetadataTaskTableActionCell(props: {
   const { taskBundle, canEdit } = props
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const { setIsEditing } = useGlobalIsEditingContext()
-  const curationTask = taskBundle.task!
 
   const { hasPermission, isLoading, isPending, onClick } =
     useOpenCuratorFromTaskButton(taskBundle)
@@ -55,6 +54,10 @@ export default function MetadataTaskTableActionCell(props: {
                 setIsEditing(false)
               }}
               onCancel={() => {
+                setIsDialogOpen(false)
+                setIsEditing(false)
+              }}
+              onDeleteSuccess={() => {
                 setIsDialogOpen(false)
                 setIsEditing(false)
               }}
