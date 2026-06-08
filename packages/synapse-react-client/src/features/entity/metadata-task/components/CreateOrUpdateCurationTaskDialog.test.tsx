@@ -5,6 +5,7 @@ import {
   useDeleteCurationTask,
   useUpdateCurationTask,
 } from '@/synapse-queries/curation/task/useCurationTask'
+import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 import {
   MOCK_CURATION_TASK_ASSIGNEE_PRINCIPAL_ID,
   MOCK_CURATION_TASK_ID,
@@ -24,6 +25,10 @@ vi.mock('@/synapse-queries/curation/task/useCurationTask', () => ({
   useCreateCurationTask: vi.fn(),
   useUpdateCurationTask: vi.fn(),
   useDeleteCurationTask: vi.fn(),
+}))
+
+vi.mock('@/synapse-queries/entity/useEntity', () => ({
+  useGetEntityPermissions: vi.fn(),
 }))
 
 vi.mock('@/components/UserSearchBox/UserSearchBox', () => ({
@@ -58,6 +63,7 @@ vi.mock('@/components/EntityFinder/EntityIdTextField', () => ({
 const mockUseCreateCurationTask = vi.mocked(useCreateCurationTask)
 const mockUseUpdateCurationTask = vi.mocked(useUpdateCurationTask)
 const mockUseDeleteCurationTask = vi.mocked(useDeleteCurationTask)
+const mockUseGetEntityPermissions = vi.mocked(useGetEntityPermissions)
 
 const mockCreateMutate = vi.fn()
 const mockUpdateMutate = vi.fn()
@@ -112,6 +118,9 @@ beforeEach(() => {
       error: null,
     } as any
   })
+  mockUseGetEntityPermissions.mockReturnValue({
+    data: { canDelete: true },
+  } as any)
 })
 
 describe('CreateOrUpdateCurationTaskDialog', () => {
@@ -378,6 +387,16 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
         expect(
           screen.getByRole('button', { name: /^delete$/i }),
         ).toBeInTheDocument()
+      })
+
+      it('does not render the Delete button when onDeleteSuccess is provided but canDelete permission is false', () => {
+        mockUseGetEntityPermissions.mockReturnValue({
+          data: { canDelete: false },
+        } as any)
+        renderEditDialog(fileBasedTask, { onDeleteSuccess: vi.fn() })
+        expect(
+          screen.queryByRole('button', { name: /^delete$/i }),
+        ).not.toBeInTheDocument()
       })
 
       it('opens the confirmation dialog when Delete is clicked', async () => {
