@@ -78,6 +78,8 @@ import {
   UPLOAD_FOLDER_FINDER_PROMPT,
   UPLOAD_FOLDER_FINDER_TITLE,
 } from '../utils/constants'
+import noop from 'lodash-es/noop'
+import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 
 export type CreateOrUpdateCurationTaskDialogProps = {
   open: boolean
@@ -118,9 +120,21 @@ type CreateOrUpdateCurationTaskDialogStep =
 export default function CreateOrUpdateCurationTaskDialog(
   props: CreateOrUpdateCurationTaskDialogProps,
 ) {
-  const { open, onCancel, onSuccess, onDeleteSuccess, projectId, task } = props
+  const {
+    open,
+    onCancel,
+    onSuccess,
+    onDeleteSuccess = noop,
+    projectId,
+    task,
+  } = props
   const isEditMode = task !== undefined
-  const canDelete = isEditMode && task?.taskId != null && !!onDeleteSuccess
+  const { data: permissions } = useGetEntityPermissions(projectId)
+  const canDelete =
+    permissions?.canDelete &&
+    isEditMode &&
+    task?.taskId != null &&
+    props.onDeleteSuccess != null
 
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
 
@@ -216,7 +230,7 @@ export default function CreateOrUpdateCurationTaskDialog(
       onSuccess: () => {
         displayToast(DELETE_CURATION_TASK_SUCCESS_TOAST, 'success')
         setShowDeleteConfirmation(false)
-        onDeleteSuccess?.()
+        onDeleteSuccess()
       },
       onError: err => {
         displayToast(
@@ -657,7 +671,7 @@ export default function CreateOrUpdateCurationTaskDialog(
             width="100%"
           >
             <Box>
-              {canDelete && step === 'COMMON_MUTABLE_FIELDS' && (
+              {canDelete && (
                 <Button
                   variant="outlined"
                   color="error"
@@ -674,31 +688,29 @@ export default function CreateOrUpdateCurationTaskDialog(
           </Stack>
         }
       />
-      {canDelete && (
-        <ConfirmationDialog
-          title={DELETE_CURATION_TASK_DIALOG_TITLE}
-          open={showDeleteConfirmation}
-          content={
-            <Stack gap={2}>
-              <Typography variant="body1">
-                {DELETE_CURATION_TASK_CONFIRMATION_PROMPT}
-              </Typography>
-              <Alert severity="warning">
-                {DELETE_CURATION_TASK_GRID_SESSION_WARNING}
-              </Alert>
-            </Stack>
-          }
-          confirmButtonProps={{
-            children: 'Delete',
-            color: 'error',
-            loading: isDeletePending,
-          }}
-          onConfirm={() => {
-            if (task?.taskId != null) deleteTask(task.taskId)
-          }}
-          onCancel={() => setShowDeleteConfirmation(false)}
-        />
-      )}
+      <ConfirmationDialog
+        title={DELETE_CURATION_TASK_DIALOG_TITLE}
+        open={showDeleteConfirmation}
+        content={
+          <Stack gap={2}>
+            <Typography variant="body1">
+              {DELETE_CURATION_TASK_CONFIRMATION_PROMPT}
+            </Typography>
+            <Alert severity="warning">
+              {DELETE_CURATION_TASK_GRID_SESSION_WARNING}
+            </Alert>
+          </Stack>
+        }
+        confirmButtonProps={{
+          children: 'Delete',
+          color: 'error',
+          loading: isDeletePending,
+        }}
+        onConfirm={() => {
+          if (task?.taskId != null) deleteTask(task.taskId)
+        }}
+        onCancel={() => setShowDeleteConfirmation(false)}
+      />
     </>
   )
 }
