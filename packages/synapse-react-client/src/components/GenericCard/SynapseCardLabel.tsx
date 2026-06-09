@@ -275,7 +275,7 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
                 selectColumns,
                 columnModels,
               )
-              if (overrideHrefIndex) {
+              if (overrideHrefIndex != null) {
                 const overrideHrefData = rowData[overrideHrefIndex]
                 if (overrideHrefData) {
                   if (cardLink.overrideLinkURLColumnTransform) {
