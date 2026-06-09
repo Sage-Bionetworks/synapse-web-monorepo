@@ -293,9 +293,8 @@ function RenderMarkdown(props: {
   }, [markdown, renderInline])
 
   // Parse the markup into React elements. This uses html-react-parser, which
-  // is isomorphic (native DOMParser in the browser, htmlparser2 during
-  // SSR/SSG prerender) and produces `domhandler` nodes in both environments,
-  // so there is no dependency on `DOMParser`/`Node`/`HTMLElement` globals.
+  // is isomorphic and produces `domhandler` nodes in both environments,
+  // so there is no dependency on `DOMParser`/`Node`/`HTMLElement` browser globals.
   const content = useMemo(() => {
     if (markup.length > 0) {
       const nodes = htmlToDOM(markup)
