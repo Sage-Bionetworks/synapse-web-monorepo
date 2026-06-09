@@ -1,14 +1,26 @@
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import { TargetEnum } from 'synapse-react-client/utils/html/TargetEnum'
 import { instrumentsSql } from '../resources'
 
 const instrumentsPlotNavProps: QueryWrapperPlotNavProps = {
   sql: instrumentsSql,
   //   name: 'Instruments',
   fileIdColumnName: 'id',
+  columnAliases: { study: 'On Synapse' },
   tableConfiguration: {
     showAccessColumn: true,
     showDownloadColumn: false,
     hideAddToDownloadListColumn: true,
+    columnLinks: [
+      {
+        matchColumnName: 'studyName',
+        isMarkdown: false,
+        overrideLinkURLColumnName: 'study',
+        overrideLinkURLColumnTransform: study =>
+          `/Explore/Studies/DetailsPage?study=${encodeURIComponent(study)}`,
+        target: TargetEnum.CURRENT_WINDOW,
+      },
+    ],
   },
 }
 

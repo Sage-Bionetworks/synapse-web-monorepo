@@ -46,7 +46,7 @@ function StudyDetailsPage() {
         />
       }
       sql={studiesSql}
-      resourcePrimaryKey={['id']}
+      resourcePrimaryKey={['study']}
     >
       <DetailsPageTabs tabConfig={studyDetailsPageTabs} />
       <Outlet />
