@@ -32,6 +32,7 @@ import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
 import { SynapseTableConfiguration } from '../SynapseTable'
 import SearchV2, { SearchV2Props } from '../SynapseTable/SearchV2'
 import SqlEditor from '../SynapseTable/SqlEditor'
+import QueryFilterBuilder from '../SynapseTable/QueryFilterBuilder'
 import TopLevelControls, {
   TopLevelControlsProps,
   CustomControl,
@@ -139,6 +140,7 @@ export type QueryWrapperPlotNavContentsProps = Pick<
   | 'initialLimit'
   | 'initialPlotTypeByFacetColumnName'
   | 'hideTopLevelControls'
+  | 'hideQueryFilterBuilderControl'
 > & {
   isFullTextSearchEnabled: boolean
   remount?: () => void
@@ -167,6 +169,7 @@ export function QueryWrapperPlotNavContents(
     initialLimit,
     initialPlotTypeByFacetColumnName,
     hideTopLevelControls,
+    hideQueryFilterBuilderControl,
   } = props
   const queryContext = useQueryContext()
   const [showExportMetadata, setShowExportMetadata] = useState(false)
@@ -244,6 +247,9 @@ export function QueryWrapperPlotNavContents(
                       !isFaceted || hideVisualizationsControl
                     }
                     hideSqlEditorControl={hideSqlEditorControl}
+                    hideQueryFilterBuilderControl={
+                      hideQueryFilterBuilderControl
+                    }
                     cavaticaConnectAccountURL={cavaticaConnectAccountURL}
                     remount={remount}
                     customControls={customControls}
@@ -277,6 +283,7 @@ export function QueryWrapperPlotNavContents(
                   initialPlotTypeByFacetColumnName
                 }
               />
+              <QueryFilterBuilder />
               <RowSetView
                 tableConfiguration={tableConfiguration}
                 hideDownload={hideDownload}

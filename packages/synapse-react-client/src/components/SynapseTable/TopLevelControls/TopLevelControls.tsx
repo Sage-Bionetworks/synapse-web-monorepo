@@ -47,6 +47,7 @@ export type TopLevelControlsProps = {
   hideFacetFilterControl?: boolean
   hideQueryCount?: boolean
   hideSqlEditorControl?: boolean
+  hideQueryFilterBuilderControl?: boolean
   customControls?: CustomControl[]
   showColumnSelection?: boolean
   cavaticaConnectAccountURL?: string
@@ -90,6 +91,7 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
     hideFacetFilterControl = false,
     hideQueryCount = false,
     hideSqlEditorControl = true,
+    hideQueryFilterBuilderControl = true,
     customControls,
     cavaticaConnectAccountURL,
     remount,
@@ -121,6 +123,7 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
     hideSearchBarControl,
     setShowPlots,
     setShowSqlEditor,
+    setShowQueryFilterBuilder,
     showFacetFilter,
     setShowFacetFilter,
   } = useQueryVisualizationContext()
@@ -317,6 +320,15 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
               callbackFn={() => setShowSqlEditor(value => !value)}
               darkTheme={true}
               icon={SQL_EDITOR}
+            />
+          )}
+
+          {!hideQueryFilterBuilderControl && (
+            <ElementWithTooltip
+              tooltipText={'Show / Hide the Query Filter Builder'}
+              callbackFn={() => setShowQueryFilterBuilder(value => !value)}
+              darkTheme={true}
+              image={{ icon: 'addConditions' }}
             />
           )}
 

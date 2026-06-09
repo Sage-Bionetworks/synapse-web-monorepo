@@ -27,6 +27,7 @@
       }
       .download-confirmation,
       .PlotsContainer,
+      .QueryFilterBuilder,
       .QueryWrapperFullTextSearchInput,
       .QueryWrapperSearchInput,
       .QueryWrapperSqlEditorInput,
@@ -89,8 +90,11 @@
   .PlotsContainer {
     grid-row: 9 / span 1;
   }
-  .RowSetView {
+  .QueryFilterBuilder {
     grid-row: 10 / span 1;
+  }
+  .RowSetView {
+    grid-row: 11 / span 1;
   }
 
   &.isHidingTopLevelControls {
