@@ -6,7 +6,10 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
-import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
+import {
+  FacetColumnResultValues,
+  QueryResultBundle,
+} from '@sage-bionetworks/synapse-types'
 import {
   SearchIndexQuery,
   SearchQueryResults,
@@ -122,6 +125,25 @@ function toSearchQueryResults(bundle: QueryResultBundle): SearchQueryResults {
     totalHits: bundle.queryCount,
     hits,
     selectColumns,
+    // Convert FacetColumnResultValues[] → aggregationResults (OpenSearch terms agg shape)
+    // so that searchQueryResultsToQueryResultBundle can parse facet data from mock responses.
+    aggregationResults: Object.fromEntries(
+      (bundle.facets ?? [])
+        .filter(
+          (f): f is FacetColumnResultValues =>
+            f.concreteType ===
+            'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
+        )
+        .map(f => [
+          f.columnName,
+          {
+            buckets: (f.facetValues ?? []).map(fv => ({
+              key: fv.value,
+              doc_count: fv.count,
+            })),
+          },
+        ]),
+    ),
     offset: bundle.queryResult?.queryResults.rows?.length ? 0 : undefined,
   }
 }
