@@ -2,8 +2,10 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
   useCreateCurationTask,
+  useDeleteCurationTask,
   useUpdateCurationTask,
 } from '@/synapse-queries/curation/task/useCurationTask'
+import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 import {
   MOCK_CURATION_TASK_ASSIGNEE_PRINCIPAL_ID,
   MOCK_CURATION_TASK_ID,
@@ -14,6 +16,7 @@ import { EntityIdTextFieldProps } from '@/components/EntityFinder/EntityIdTextFi
 import CreateOrUpdateCurationTaskDialog from './CreateOrUpdateCurationTaskDialog'
 import {
   AUTH_MODE_SOURCE_BENEFACTOR_TITLE,
+  DELETE_CURATION_TASK_DIALOG_TITLE,
   FILE_BASED_TASK_TITLE,
   RECORD_BASED_TASK_TITLE,
 } from '../utils/constants'
@@ -21,6 +24,11 @@ import {
 vi.mock('@/synapse-queries/curation/task/useCurationTask', () => ({
   useCreateCurationTask: vi.fn(),
   useUpdateCurationTask: vi.fn(),
+  useDeleteCurationTask: vi.fn(),
+}))
+
+vi.mock('@/synapse-queries/entity/useEntity', () => ({
+  useGetEntityPermissions: vi.fn(),
 }))
 
 vi.mock('@/components/UserSearchBox/UserSearchBox', () => ({
@@ -54,9 +62,14 @@ vi.mock('@/components/EntityFinder/EntityIdTextField', () => ({
 
 const mockUseCreateCurationTask = vi.mocked(useCreateCurationTask)
 const mockUseUpdateCurationTask = vi.mocked(useUpdateCurationTask)
+const mockUseDeleteCurationTask = vi.mocked(useDeleteCurationTask)
+const mockUseGetEntityPermissions = vi.mocked(useGetEntityPermissions)
 
 const mockCreateMutate = vi.fn()
 const mockUpdateMutate = vi.fn()
+const mockDeleteMutate = vi.fn()
+// Capture the options passed to useDeleteCurationTask so tests can invoke onSuccess
+let lastDeleteOptions: Parameters<typeof useDeleteCurationTask>[0] | undefined
 
 const defaultProps = {
   open: true,
@@ -83,8 +96,10 @@ function renderEditDialog(task: CurationTask, props = {}) {
 
 beforeEach(() => {
   vi.clearAllMocks()
+  lastDeleteOptions = undefined
   mockCreateMutate.mockResolvedValue({})
   mockUpdateMutate.mockResolvedValue({})
+  mockDeleteMutate.mockResolvedValue(undefined)
   mockUseCreateCurationTask.mockReturnValue({
     mutate: mockCreateMutate,
     isPending: false,
@@ -94,6 +109,17 @@ beforeEach(() => {
     mutate: mockUpdateMutate,
     isPending: false,
     error: null,
+  } as any)
+  mockUseDeleteCurationTask.mockImplementation(options => {
+    lastDeleteOptions = options
+    return {
+      mutate: mockDeleteMutate,
+      isPending: false,
+      error: null,
+    } as any
+  })
+  mockUseGetEntityPermissions.mockReturnValue({
+    data: { canDelete: true },
   } as any)
 })
 
@@ -220,6 +246,13 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
       // Error is rendered in step 3
       expect(screen.getByText('Something went wrong')).toBeInTheDocument()
     })
+
+    it('does not render the Delete button', () => {
+      renderCreateDialog({ onDeleteSuccess: vi.fn() })
+      expect(
+        screen.queryByRole('button', { name: /^delete$/i }),
+      ).not.toBeInTheDocument()
+    })
   })
 
   describe('Edit mode', () => {
@@ -339,6 +372,75 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
       // Edit mode starts at step 3 (COMMON_MUTABLE_FIELDS);
       // type-specific fields are in step 2 and are not shown
       expect(screen.queryByLabelText(/Record Set ID/i)).not.toBeInTheDocument()
+    })
+
+    describe('Delete', () => {
+      it('does not render the Delete button when onDeleteSuccess is not provided', () => {
+        renderEditDialog(fileBasedTask)
+        expect(
+          screen.queryByRole('button', { name: /^delete$/i }),
+        ).not.toBeInTheDocument()
+      })
+
+      it('renders the Delete button when onDeleteSuccess is provided', () => {
+        renderEditDialog(fileBasedTask, { onDeleteSuccess: vi.fn() })
+        expect(
+          screen.getByRole('button', { name: /^delete$/i }),
+        ).toBeInTheDocument()
+      })
+
+      it('does not render the Delete button when onDeleteSuccess is provided but canDelete permission is false', () => {
+        mockUseGetEntityPermissions.mockReturnValue({
+          data: { canDelete: false },
+        } as any)
+        renderEditDialog(fileBasedTask, { onDeleteSuccess: vi.fn() })
+        expect(
+          screen.queryByRole('button', { name: /^delete$/i }),
+        ).not.toBeInTheDocument()
+      })
+
+      it('opens the confirmation dialog when Delete is clicked', async () => {
+        renderEditDialog(fileBasedTask, { onDeleteSuccess: vi.fn() })
+        await userEvent.click(screen.getByRole('button', { name: /^delete$/i }))
+        expect(
+          screen.getByText(DELETE_CURATION_TASK_DIALOG_TITLE),
+        ).toBeInTheDocument()
+        expect(
+          screen.getByText(
+            /any grid sessions associated with this task will also be deleted/i,
+          ),
+        ).toBeInTheDocument()
+      })
+
+      it('calls deleteCurationTask with the task ID when confirmed', async () => {
+        renderEditDialog(fileBasedTask, { onDeleteSuccess: vi.fn() })
+        await userEvent.click(screen.getByRole('button', { name: /^delete$/i }))
+        // Confirm in the nested ConfirmationDialog
+        const confirmButtons = screen.getAllByRole('button', {
+          name: /^delete$/i,
+        })
+        await userEvent.click(confirmButtons[confirmButtons.length - 1])
+        await waitFor(() => {
+          expect(mockDeleteMutate).toHaveBeenCalledWith(MOCK_CURATION_TASK_ID)
+        })
+      })
+
+      it('does not call deleteCurationTask when the confirmation is cancelled', async () => {
+        renderEditDialog(fileBasedTask, { onDeleteSuccess: vi.fn() })
+        await userEvent.click(screen.getByRole('button', { name: /^delete$/i }))
+        await userEvent.click(screen.getByRole('button', { name: /cancel/i }))
+        expect(mockDeleteMutate).not.toHaveBeenCalled()
+      })
+
+      it('calls onDeleteSuccess when the delete mutation succeeds', () => {
+        const onDeleteSuccess = vi.fn()
+        renderEditDialog(fileBasedTask, { onDeleteSuccess })
+
+        // Simulate the mutation succeeding
+        lastDeleteOptions?.onSuccess?.(undefined, MOCK_CURATION_TASK_ID, {})
+
+        expect(onDeleteSuccess).toHaveBeenCalledTimes(1)
+      })
     })
   })
 })
