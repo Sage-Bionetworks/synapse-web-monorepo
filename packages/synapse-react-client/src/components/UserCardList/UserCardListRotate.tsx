@@ -18,7 +18,7 @@ import {
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
 import { QueryClient, useQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { LoadingUserCardMedium } from '../UserCard/UserCardMedium'
 import UserCardList from './UserCardList'
 
@@ -146,20 +146,32 @@ export function UserCardListRotate({
     queryFn: () => SynapseClient.getFullQueryTableResults(request, accessToken),
   })
 
-  const userIds = useMemo(() => {
-    const ids = extractUserIdsFromBundle(queryResultBundle)
-    return getDisplayIds(ids, count, storageUidKey)
-  }, [queryResultBundle, count, storageUidKey])
+  const [userIdsToShow, setUserIdsToShow] = useState<string[]>([])
+  const allIds = extractUserIdsFromBundle(queryResultBundle)
+
+  if (userIdsToShow.length === 0 && allIds.length > 0) {
+    setUserIdsToShow(allIds.slice(0, count))
+  }
+
+  // Not ideal to use an effect, but this ensures this is isomorphic for SSG
+  // while ensuring a new set of IDs is shown after client rendering takes over.
+  const hasMounted = useRef(false)
+  useEffect(() => {
+    if (!hasMounted.current) {
+      hasMounted.current = true
+      setUserIdsToShow(getDisplayIds(allIds, count, storageUidKey))
+    }
+  }, [allIds, count, storageUidKey])
 
   return (
     <div className="UserCardListRotate">
       {isPending && <LoadingUserCardMedium />}
-      {!isPending && userIds.length === 0 && (
+      {!isPending && userIdsToShow.length === 0 && (
         <p className="font-italic">No one was found.</p>
       )}
-      {!isPending && userIds.length > 0 && (
+      {!isPending && userIdsToShow.length > 0 && (
         <UserCardList
-          list={userIds}
+          list={userIdsToShow}
           size={size}
           rowSet={
             useQueryResultUserData
