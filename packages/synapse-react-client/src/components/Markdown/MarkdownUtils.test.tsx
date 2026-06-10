@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { isBlockLevelElement, fixInvalidNesting } from './MarkdownUtils'
+import {
+  Element as DomElement,
+  Text as DomText,
+  htmlToDOM,
+  type DOMNode,
+} from 'html-react-parser'
 
 vi.mock('./widget/MarkdownSynapsePlot', () => ({
   default: vi
@@ -7,130 +13,147 @@ vi.mock('./widget/MarkdownSynapsePlot', () => ({
     .mockReturnValue(<figure data-testid={'MarkdownSynapsePlot'}></figure>),
 }))
 
+/**
+ * Build a `domhandler` element node (the node type produced by
+ * `html-react-parser`'s `htmlToDOM` and consumed by `fixInvalidNesting`),
+ * wiring up parent references so the tree mirrors a parsed document.
+ */
+function el(
+  name: string,
+  attribs: Record<string, string> = {},
+  children: DOMNode[] = [],
+): DomElement {
+  const element = new DomElement(name, attribs, children)
+  children.forEach(child => {
+    child.parent = element
+  })
+  return element
+}
+
+function txt(data: string): DomText {
+  return new DomText(data)
+}
+
+/** Collect all element nodes in the tree (depth-first). */
+function allElements(nodes: DOMNode[]): DomElement[] {
+  const result: DomElement[] = []
+  const walk = (ns: DOMNode[]) => {
+    ns.forEach(node => {
+      if (node instanceof DomElement) {
+        result.push(node)
+        walk(node.children as DOMNode[])
+      }
+    })
+  }
+  walk(nodes)
+  return result
+}
+
+const findByTag = (nodes: DOMNode[], tag: string) =>
+  allElements(nodes).filter(e => e.name.toLowerCase() === tag)
+
+const findByAttrib = (nodes: DOMNode[], attr: string) =>
+  allElements(nodes).filter(e => attr in e.attribs)
+
 describe('MarkdownUtils DOM', () => {
   describe('isBlockLevelElement', () => {
     it('should return true for standard block elements', () => {
-      const p = document.createElement('p')
-      const div = document.createElement('div')
-      const h1 = document.createElement('h1')
-
-      expect(isBlockLevelElement(p)).toBe(true)
-      expect(isBlockLevelElement(div)).toBe(true)
-      expect(isBlockLevelElement(h1)).toBe(true)
+      expect(isBlockLevelElement(el('p'))).toBe(true)
+      expect(isBlockLevelElement(el('div'))).toBe(true)
+      expect(isBlockLevelElement(el('h1'))).toBe(true)
     })
 
     it('should return true for block Synapse widgets (data-widgetparams)', () => {
-      const widget = document.createElement('div')
-      widget.setAttribute('data-widgetparams', 'entitypreview?entityId=syn123')
+      const widget = el('div', {
+        'data-widgetparams': 'entitypreview?entityId=syn123',
+      })
 
       expect(isBlockLevelElement(widget)).toBe(true)
     })
 
     it('should return false for inline Synapse widgets (badge)', () => {
-      const widget = document.createElement('span')
-      widget.setAttribute('data-widgetparams', 'badge?alias=test')
+      const widget = el('span', { 'data-widgetparams': 'badge?alias=test' })
 
       expect(isBlockLevelElement(widget)).toBe(false)
     })
 
     it('should return false for inline elements', () => {
-      const span = document.createElement('span')
-      const textNode = document.createTextNode('Hello world')
-
-      expect(isBlockLevelElement(span)).toBe(false)
-      expect(isBlockLevelElement(textNode)).toBe(false)
+      expect(isBlockLevelElement(el('span'))).toBe(false)
+      expect(isBlockLevelElement(txt('Hello world'))).toBe(false)
     })
   })
 
   describe('fixInvalidNesting', () => {
     it('should swap <p> for <div> when it contains a block descendant', () => {
       // p > div
-      const p = document.createElement('p')
-      const inner = document.createElement('div')
-      inner.textContent = 'block'
-      p.appendChild(inner)
-      const container = document.createElement('div')
-      container.appendChild(p)
+      const p = el('p', {}, [el('div', {}, [txt('block')])])
+      const container = el('div', {}, [p])
 
       fixInvalidNesting(container)
 
-      expect(container.querySelector('p')).toBeNull()
-      expect(container.querySelector('div')).not.toBeNull()
+      expect(findByTag([container], 'p')).toHaveLength(0)
+      expect(findByTag([container], 'div').length).toBeGreaterThan(0)
     })
 
     it('should swap <a> for <div> when it contains a block descendant', () => {
       // a > div
-      const a = document.createElement('a')
-      a.setAttribute('href', 'https://synapse.org')
-      const inner = document.createElement('div')
-      inner.textContent = 'block'
-      a.appendChild(inner)
-      const container = document.createElement('div')
-      container.appendChild(a)
+      const a = el('a', { href: 'https://synapse.org' }, [
+        el('div', {}, [txt('block')]),
+      ])
+      const container = el('div', {}, [a])
 
       fixInvalidNesting(container)
 
-      expect(container.querySelector('a')).toBeNull()
-      const result = container.querySelector('[href]')
-      expect(result?.getAttribute('href')).toBe('https://synapse.org')
+      expect(findByTag([container], 'a')).toHaveLength(0)
+      const result = findByAttrib([container], 'href')
+      expect(result[0]?.attribs['href']).toBe('https://synapse.org')
     })
 
     it('should swap <button> for <div> when it contains a nested button', () => {
       // button > button
-      const outerButton = document.createElement('button')
-      const innerButton = document.createElement('button')
-      innerButton.textContent = 'Nested'
-      outerButton.appendChild(innerButton)
-
-      const container = document.createElement('div')
-      container.appendChild(outerButton)
+      const outerButton = el('button', {}, [el('button', {}, [txt('Nested')])])
+      const container = el('div', {}, [outerButton])
 
       fixInvalidNesting(container)
 
-      expect(container.querySelector('div')).not.toBeNull()
+      expect(findByTag([container], 'div').length).toBeGreaterThan(0)
 
-      const buttons = container.querySelectorAll('button')
+      const buttons = findByTag([container], 'button')
       expect(buttons).toHaveLength(1)
-      expect(buttons[0].textContent).toBe('Nested')
+      expect((buttons[0].children[0] as DomText).data).toBe('Nested')
     })
 
     it('should recursively fix nested violations', () => {
       // p > span > div
-      const p = document.createElement('p')
-      p.className = 'outer'
-      const span = document.createElement('span')
-      const inner = document.createElement('div')
-      inner.textContent = 'block'
-      span.appendChild(inner)
-      p.appendChild(span)
-      const container = document.createElement('div')
-      container.appendChild(p)
+      const p = el('p', { class: 'outer' }, [
+        el('span', {}, [el('div', {}, [txt('block')])]),
+      ])
+      const container = el('div', {}, [p])
 
       fixInvalidNesting(container)
 
       // The outer <p> should now be a <div>
-      const outer = container.querySelector('.outer')
-      expect(outer?.tagName.toLowerCase()).toBe('div')
+      const outer = findByAttrib([container], 'class').find(
+        e => e.attribs['class'] === 'outer',
+      )
+      expect(outer?.name.toLowerCase()).toBe('div')
     })
 
     it('should preserve all attributes during swap', () => {
       // p > div
-      const p = document.createElement('p')
-      p.id = 'main'
-      p.className = 'foo'
-      p.setAttribute('data-test', 'bar')
-      const inner = document.createElement('div')
-      inner.textContent = 'block'
-      p.appendChild(inner)
-      const container = document.createElement('div')
-      container.appendChild(p)
+      const p = el('p', { id: 'main', class: 'foo', 'data-test': 'bar' }, [
+        el('div', {}, [txt('block')]),
+      ])
+      const container = el('div', {}, [p])
 
       fixInvalidNesting(container)
 
-      const result = container.querySelector('#main')
-      expect(result?.tagName.toLowerCase()).toBe('div')
-      expect(result?.className).toBe('foo')
-      expect(result?.getAttribute('data-test')).toBe('bar')
+      const result = findByAttrib([container], 'id').find(
+        e => e.attribs['id'] === 'main',
+      )
+      expect(result?.name.toLowerCase()).toBe('div')
+      expect(result?.attribs['class']).toBe('foo')
+      expect(result?.attribs['data-test']).toBe('bar')
     })
 
     it('should preserve intentional whitespace but strip invalid table whitespace', () => {
@@ -139,55 +162,53 @@ describe('MarkdownUtils DOM', () => {
     <p>Word<span> </span>Word</p>
     <table>  <tr><td>Test</td></tr>  </table>
   `
-      const doc = new DOMParser().parseFromString(html, 'text/html')
-
-      fixInvalidNesting(doc.body)
+      const nodes = htmlToDOM(html)
+      nodes.forEach(node => fixInvalidNesting(node))
 
       // intentional whitespace is preserved
-      const p = doc.body.querySelector('p')
-      expect(p?.textContent).toBe('Word Word')
-      expect(doc.body.querySelector('span')?.textContent).toBe(' ')
+      const span = findByTag(nodes, 'span')[0]
+      expect((span.children[0] as DomText).data).toBe(' ')
 
       // whitespace in table is stripped
-      const tr = doc.body.querySelector('tr')!
+      const tr = findByTag(nodes, 'tr')[0]
       // tr should only have one child (the <td>), no whitespace text nodes
-      expect(tr.childNodes).toHaveLength(1)
-      expect(tr.firstChild?.nodeName.toLowerCase()).toBe('td')
+      expect(tr.children).toHaveLength(1)
+      expect((tr.children[0] as DomElement).name.toLowerCase()).toBe('td')
     })
 
     it('should swap <p> for <div> when it contains a block widget', () => {
       // p > span[data-widgetparams]
-      const doc = new DOMParser().parseFromString(
-        '<p><span data-widgetparams="plot?synapseId=syn123"></span></p>',
-        'text/html',
-      )
+      const p = el('p', {}, [
+        el('span', { 'data-widgetparams': 'plot?synapseId=syn123' }),
+      ])
+      const container = el('div', {}, [p])
 
-      fixInvalidNesting(doc.body)
+      fixInvalidNesting(container)
 
-      expect(doc.body.querySelector('p')).toBeNull()
-      expect(doc.body.querySelector('[data-widgetparams]')).not.toBeNull()
+      expect(findByTag([container], 'p')).toHaveLength(0)
+      expect(findByAttrib([container], 'data-widgetparams').length).toBe(1)
     })
 
     it('should not swap <p> for a badge widget (inline widget)', () => {
-      const doc = new DOMParser().parseFromString(
-        '<p><span data-widgetparams="badge?alias=jsmith"></span></p>',
-        'text/html',
-      )
+      const p = el('p', {}, [
+        el('span', { 'data-widgetparams': 'badge?alias=jsmith' }),
+      ])
+      const container = el('div', {}, [p])
 
-      fixInvalidNesting(doc.body)
+      fixInvalidNesting(container)
 
-      expect(doc.body.querySelector('p')).not.toBeNull()
+      expect(findByTag([container], 'p').length).toBe(1)
     })
 
     it('should not modify valid inline nesting', () => {
       // p > span
-      const html = '<p>Just some <span>text</span></p>'
-      const doc = new DOMParser().parseFromString(html, 'text/html')
+      const p = el('p', {}, [txt('Just some '), el('span', {}, [txt('text')])])
+      const container = el('div', {}, [p])
 
-      fixInvalidNesting(doc.body)
+      fixInvalidNesting(container)
 
-      expect(doc.body.querySelector('p')).not.toBeNull()
-      expect(doc.body.querySelector('span')).not.toBeNull()
+      expect(findByTag([container], 'p').length).toBe(1)
+      expect(findByTag([container], 'span').length).toBe(1)
     })
   })
 })

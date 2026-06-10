@@ -19,6 +19,7 @@ import {
   TextMatchesQueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import type {
+  DslQuery,
   SearchIndexQuery,
   SearchQueryResults,
   SearchSearchQuery,
@@ -209,7 +210,7 @@ export function toSearchIndexQuery(
     .map(s => ({ [s.column]: s.direction.toLowerCase() }))
 
   const searchQuery: SearchSearchQuery = {
-    query,
+    query: query as unknown as DslQuery,
     aggregations,
     sort: sortEntries?.length ? sortEntries : undefined,
     size: queryBundleRequest.query.limit,
@@ -563,9 +564,11 @@ export function useGetSuggestionsForSearchIndex(
               searchIndexId,
               searchQuery: {
                 query: {
-                  match_bool_prefix: { [autocompleteFieldName]: trimmed },
+                  match_bool_prefix: {
+                    [autocompleteFieldName]: { query: trimmed },
+                  },
                 },
-                _source: [autocompleteFieldName],
+                _source: { includes: [autocompleteFieldName] },
               },
             },
           },

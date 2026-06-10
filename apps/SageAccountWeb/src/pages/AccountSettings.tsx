@@ -14,7 +14,6 @@ import {
   useTheme,
 } from '@mui/material'
 import {
-  FeatureFlagEnum,
   UserBundle,
   UserProfile,
   VerificationState,
@@ -44,6 +43,7 @@ import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseCon
 import CookiePreferencesDialog from 'synapse-react-client/components/CookiesNotification/CookiePreferencesDialog'
 import { SYNAPSE_REALM } from 'synapse-react-client/utils/SynapseConstants'
 import { TextField } from 'synapse-react-client/components/TextField/index'
+import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
 
 function CompletionStatus({ isComplete }: { isComplete: boolean | undefined }) {
   return (

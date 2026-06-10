@@ -22,10 +22,9 @@ export enum FeatureFlagEnum {
   // If enabled, show the SynapseChat dialog in portals
   PORTAL_CHAT = 'PORTAL_CHAT',
 
-  // If enabled, opening Curator for a CurationTask uses or creates a GridSession linked to the task,
-  // with authorizationMode SOURCE_BENEFACTOR.
-  CURATOR_LINK_TASK_TO_GRID_SESSION = 'CURATOR_LINK_TASK_TO_GRID_SESSION',
-
   // If enabled, show the new version of the ADKP homepage
   ADKP_HOMEPAGE_V2 = 'ADKP_HOMEPAGE_V2',
+
+  // If enabled, shows a "New Task" button on the metadata tasks page
+  CURATION_TASK_PAGE_SHOW_NEW_TASK_BUTTON = 'CURATION_TASK_PAGE_SHOW_NEW_TASK_BUTTON',
 }
