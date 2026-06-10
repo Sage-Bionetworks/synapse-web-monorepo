@@ -19,11 +19,13 @@ import {
   TextMatchesQueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import type {
+  Aggregation,
   DslQuery,
   SearchIndexQuery,
   SearchQueryResults,
   SearchSearchQuery,
   SynapseClientError,
+  TermsAggregation,
 } from '@sage-bionetworks/synapse-client'
 import {
   InfiniteData,
@@ -37,11 +39,10 @@ import { useCallback, useMemo } from 'react'
 import { KeyFactory } from '@/synapse-queries/KeyFactory'
 
 // ─── Local OpenSearch DSL types ─────────────────────────────────────────────
-// Narrow typings for the OpenSearch structures we build (query DSL, aggregations,
-// sort) and parse (aggregation results). These are intentionally minimal – only
-// the fields we actually produce/consume are declared.
-
-type TermsAgg = { field: string; size: number; order?: Record<string, string> }
+// Narrow typings for the OpenSearch structures we build (query DSL, sort) and
+// parse (aggregation results). These are intentionally minimal – only the fields
+// we actually produce/consume are declared. Aggregation types use the generated
+// Aggregation/TermsAggregation types from @sage-bionetworks/synapse-client.
 
 type FilterClause =
   | { terms: Record<string, string[]> }
@@ -114,7 +115,7 @@ export function toSearchIndexQuery(
   const aggregationEntries = columnModels
     ?.filter(cm => cm.facetType === 'enumeration')
     .map(cm => {
-      const termsAgg: TermsAgg = { field: cm.name, size: 100 }
+      const termsAgg: TermsAggregation = { field: cm.name, size: 100 }
       if (cm.facetSortConfig?.property != null) {
         // Map FacetColumnSortProperty ('VALUE'|'FREQUENCY') → OpenSearch order key ('_key'|'_count')
         const orderKey =
@@ -123,7 +124,7 @@ export function toSearchIndexQuery(
           cm.facetSortConfig.direction === 'DESC' ? 'desc' : 'asc'
         termsAgg.order = { [orderKey]: orderDir }
       }
-      return [cm.name, { terms: termsAgg }] as const
+      return [cm.name, { terms: termsAgg }] as [string, Aggregation]
     })
   const aggregations =
     aggregationEntries && aggregationEntries.length > 0
