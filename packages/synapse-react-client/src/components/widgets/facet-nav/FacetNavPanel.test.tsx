@@ -109,8 +109,8 @@ describe('FacetNavPanel tests', () => {
     const panel = await screen.findByRole('figure')
     expect(panel).toHaveClass('FacetNavPanel--expanded')
 
-    await within(panel).findByText('Chart Type')
-    await within(panel).findByText('Filter All Data By')
+    await within(panel).findByRole('combobox', { name: 'Chart Type' })
+    await within(panel).findByRole('combobox', { name: 'Filter All Data By' })
 
     const panelBody = await within(panel).findByRole('graphics-object')
     expect(panelBody).toHaveClass('FacetNavPanel__body')

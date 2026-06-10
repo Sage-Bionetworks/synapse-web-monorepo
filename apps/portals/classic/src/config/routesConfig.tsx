@@ -35,6 +35,13 @@ const routes: RouteObject[] = [
                 convertModuleToRouteObject,
               ),
           },
+          {
+            path: 'Metadata',
+            lazy: () =>
+              import('@/pages/Explore/metadata').then(
+                convertModuleToRouteObject,
+              ),
+          },
         ],
       },
       {

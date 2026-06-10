@@ -119,7 +119,8 @@ function AutocompleteMultipleEnumCell({
     notifyOptionCommitted,
     handleMenuOpen,
     handleClose,
-  } = useGridAutocompleteState({ active, stopEditing })
+    handlePopupIndicatorMouseDown,
+  } = useGridAutocompleteState({ active, focus, stopEditing })
 
   const safeRowData = createSafeRowData(rowData)
   const optionsWithLabels = choices.map(createOptionFromValue)
@@ -257,6 +258,7 @@ function AutocompleteMultipleEnumCell({
           disableCloseOnSelect={choices.length > 1}
           slotProps={{
             listbox: { onMouseDown: handleListboxMouseDown },
+            popupIndicator: { onMouseDown: handlePopupIndicatorMouseDown },
           }}
           onBlur={handleBlur}
           renderValue={(tagValue, getTagProps) =>

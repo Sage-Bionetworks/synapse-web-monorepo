@@ -1,9 +1,16 @@
 import InfiniteTableLayout from '@/components/layout/InfiniteTableLayout'
 import StyledTanStackTable from '@/components/TanStackTable/StyledTanStackTable'
 import { useMetadataTaskTable } from '@/features/entity/metadata-task/hooks/useMetadataTaskTable'
-import { FormControlLabel, Stack, Switch } from '@mui/material'
+import { useGetFeatureFlag } from '@/synapse-queries/index'
+import { Button, FormControlLabel, Stack, Switch } from '@mui/material'
 import { useState } from 'react'
 import { ListCurationTaskRequest } from '@sage-bionetworks/synapse-client'
+import CreateOrUpdateCurationTaskDialog from './CreateOrUpdateCurationTaskDialog'
+import { displayToast } from '@/components/ToastMessage/ToastMessage'
+import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
+import { AddCircleTwoTone } from '@mui/icons-material'
+import { useGlobalIsEditingContext } from '@/utils/context/GlobalIsEditingContext'
+import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 
 export type MetadataTaskTableProps = {
   projectId: string
@@ -22,10 +29,19 @@ export default function MetadataTasksPage(props: MetadataTaskTableProps) {
       assignedToMe: false,
     })
 
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const { setIsEditing } = useGlobalIsEditingContext()
+
+  const { data: permissions } = useGetEntityPermissions(projectId)
+
   const { table, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
     useMetadataTaskTable({
       listCurationTaskRequest,
     })
+
+  const showNewTaskButton = useGetFeatureFlag(
+    FeatureFlagEnum.CURATION_TASK_PAGE_SHOW_NEW_TASK_BUTTON,
+  )
 
   return (
     <Stack>
@@ -44,6 +60,34 @@ export default function MetadataTasksPage(props: MetadataTaskTableProps) {
           }
           label="View only tasks assigned to me"
         />
+        {showNewTaskButton && permissions?.canAddChild && (
+          <>
+            <CreateOrUpdateCurationTaskDialog
+              key={String(isDialogOpen)}
+              projectId={projectId}
+              open={isDialogOpen}
+              onSuccess={() => {
+                displayToast('Curation task created successfully', 'success')
+                setIsDialogOpen(false)
+                setIsEditing(false)
+              }}
+              onCancel={() => {
+                setIsDialogOpen(false)
+                setIsEditing(false)
+              }}
+            />
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setIsDialogOpen(true)
+                setIsEditing(true)
+              }}
+              startIcon={<AddCircleTwoTone />}
+            >
+              New Task
+            </Button>
+          </>
+        )}
       </Stack>
       <InfiniteTableLayout
         table={

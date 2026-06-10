@@ -23,7 +23,6 @@ import { BackButton } from '@/components/BackButton'
 import { EmailConfirmationPage } from '@/components/EmailConfirmationPage'
 import { SourceAppLogo } from '@/components/SourceApp'
 import {
-  StyledFormControl,
   StyledInnerContainer,
   StyledOuterContainer,
 } from '@/components/StyledComponents'
@@ -153,11 +152,6 @@ const RegisterAccount1 = (): React.ReactNode => {
       )
     }
   }, [appContext.signedToken])
-
-  const formControlSx = {
-    marginTop: '0px',
-    marginBottom: '10px',
-  }
 
   const buttonSx = {
     width: '100%',
@@ -321,42 +315,33 @@ const RegisterAccount1 = (): React.ReactNode => {
                   )}
                   {page === Pages.EMAIL_REGISTRATION && (
                     <div className="EmailAddressUI">
-                      <StyledFormControl
+                      <TextField
+                        label={'Email address'}
                         fullWidth
-                        variant="standard"
-                        margin="normal"
-                        sx={formControlSx}
-                      >
-                        <TextField
-                          label={'Email address'}
-                          fullWidth
-                          id="emailAddress"
-                          name="emailAddress"
-                          required
-                          onChange={e =>
-                            setEmail(
-                              e.target.value ?? membershipInvitationEmail,
-                            )
+                        id="emailAddress"
+                        name="emailAddress"
+                        required
+                        onChange={e =>
+                          setEmail(e.target.value ?? membershipInvitationEmail)
+                        }
+                        value={email || ''}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter') {
+                            void onSendRegistrationInfo(e)
                           }
-                          value={email || ''}
-                          onKeyDown={e => {
-                            if (e.key === 'Enter') {
-                              void onSendRegistrationInfo(e)
-                            }
-                          }}
-                        />
-                        {!!membershipInvitationEmail &&
-                          membershipInvitationEmail !== email && (
-                            <Typography
-                              variant="smallText1"
-                              sx={{ color: theme.palette.error.main }}
-                            >
-                              Changing your email address will affect any items
-                              that have been shared with you. You can add
-                              additional email addresses after account creation.
-                            </Typography>
-                          )}
-                      </StyledFormControl>
+                        }}
+                      />
+                      {!!membershipInvitationEmail &&
+                        membershipInvitationEmail !== email && (
+                          <Typography
+                            variant="smallText1"
+                            sx={{ color: theme.palette.error.main }}
+                          >
+                            Changing your email address will affect any items
+                            that have been shared with you. You can add
+                            additional email addresses after account creation.
+                          </Typography>
+                        )}
                       <Button
                         sx={buttonSx}
                         variant="contained"
@@ -372,34 +357,27 @@ const RegisterAccount1 = (): React.ReactNode => {
                   )}
                   {page === Pages.OAUTH_REGISTRATION && (
                     <div>
-                      <StyledFormControl
+                      <TextField
                         fullWidth
-                        variant="standard"
-                        margin="normal"
-                        sx={formControlSx}
-                      >
-                        <TextField
-                          fullWidth
-                          label={'Username'}
-                          id="username"
-                          name="username"
-                          required
-                          error={!!usernameInvalidReason}
-                          helperText={usernameInvalidReason}
-                          onChange={e => {
-                            setUsername(e.target.value)
-                          }}
-                          value={username || ''}
-                          onKeyDown={e => {
-                            if (e.key === 'Enter') {
-                              e.preventDefault()
-                              void onSignUpWithOAuthProvider(
-                                oauthRegistrationProvider,
-                              )
-                            }
-                          }}
-                        />
-                      </StyledFormControl>
+                        label={'Username'}
+                        id="username"
+                        name="username"
+                        required
+                        error={!!usernameInvalidReason}
+                        helperText={usernameInvalidReason}
+                        onChange={e => {
+                          setUsername(e.target.value)
+                        }}
+                        value={username || ''}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault()
+                            void onSignUpWithOAuthProvider(
+                              oauthRegistrationProvider,
+                            )
+                          }
+                        }}
+                      />
                       <Button
                         sx={buttonSx}
                         variant="contained"

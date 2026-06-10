@@ -48,6 +48,7 @@ export type SearchQueryWrapperPlotNavProps = SearchQueryWrapperPlotNavOwnProps &
     QueryVisualizationWrapperProps,
     | 'defaultShowPlots'
     | 'visibleColumnCount'
+    | 'hiddenColumns'
     | 'columnAliases'
     | 'rgbIndex'
     | 'showLastUpdatedOn'
@@ -56,6 +57,7 @@ export type SearchQueryWrapperPlotNavProps = SearchQueryWrapperPlotNavOwnProps &
     | 'helpConfiguration'
     | 'hideCopyToClipboard'
     | 'hideVisualizationsControl'
+    | 'lockTextMatchesQueryFilterPill'
     | 'hideSearchBarControl'
     | 'defaultShowSearchBar'
   > &
@@ -148,9 +150,11 @@ export default function SearchQueryWrapperPlotNav(
           columnAliases={props.columnAliases}
           helpConfiguration={helpConfiguration}
           visibleColumnCount={props.visibleColumnCount}
+          hiddenColumns={props.hiddenColumns}
           defaultShowPlots={props.defaultShowPlots}
           hideCopyToClipboard={props.hideCopyToClipboard}
           hideSearchBarControl={props.hideSearchBarControl ?? false}
+          lockTextMatchesQueryFilterPill={props.lockTextMatchesQueryFilterPill}
           defaultShowSearchBar={props.defaultShowSearchBar ?? true}
           showLastUpdatedOn={props.showLastUpdatedOn}
           noContentPlaceholderType={

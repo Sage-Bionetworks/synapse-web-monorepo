@@ -96,6 +96,7 @@ type QueryWrapperPlotNavOwnProps = {
     QueryVisualizationWrapperProps,
     | 'defaultShowPlots'
     | 'visibleColumnCount'
+    | 'hiddenColumns'
     | 'columnAliases'
     | 'rgbIndex'
     | 'showLastUpdatedOn'
@@ -107,6 +108,7 @@ type QueryWrapperPlotNavOwnProps = {
     | 'hideSearchBarControl'
     | 'hideVisualizationsControl'
     | 'enabledExternalAnalysisPlatforms'
+    | 'lockTextMatchesQueryFilterPill'
   > &
   Pick<QueryContextType, 'combineRangeFacetConfig'>
 
@@ -389,12 +391,14 @@ export default function QueryWrapperPlotNav(props: QueryWrapperPlotNavProps) {
           columnAliases={props.columnAliases}
           helpConfiguration={helpConfiguration}
           visibleColumnCount={props.visibleColumnCount}
+          hiddenColumns={props.hiddenColumns}
           defaultShowPlots={props.defaultShowPlots}
           hideCopyToClipboard={props.hideCopyToClipboard}
           defaultShowSearchBar={
             (props.defaultShowSearchBox || isFullTextSearchEnabled) &&
             !props.hideSearchBarControl
           }
+          lockTextMatchesQueryFilterPill={props.lockTextMatchesQueryFilterPill}
           hideSearchBarControl={props.hideSearchBarControl}
           showLastUpdatedOn={showLastUpdatedOn}
           noContentPlaceholderType={NoContentPlaceholderType.INTERACTIVE}

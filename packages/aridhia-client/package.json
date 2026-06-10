@@ -38,17 +38,17 @@
     "tsx": "^4.19.4",
     "typescript": "6.0.3",
     "undici": "^6.24.0",
-    "vite": "^8.0.8",
+    "vite": "^8.0.16",
     "vite-config": "workspace:*",
     "vitest": "^4.1.4"
   },
   "scripts": {
     "clean": "rimraf ./dist && rimraf *.tsbuildinfo",
-    "format-spec": "prettier --write src/spec/fair-api.json",
+    "format-spec": "oxfmt --write src/spec/fair-api.json",
     "generate": "rimraf src/generated && openapi-generator-cli generate -i src/spec/fair-api.json -c config.json -o src/generated",
     "build": "pnpm tsc --build",
     "test": "vitest",
-    "lint": "eslint src"
+    "lint": "oxlint src"
   },
   "nx": {
     "targets": {

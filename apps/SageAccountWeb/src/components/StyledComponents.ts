@@ -1,13 +1,6 @@
-import {
-  BoxProps,
-  Paper,
-  PaperProps,
-  styled,
-  FormControlProps,
-} from '@mui/material'
+import { BoxProps, Paper, PaperProps, styled } from '@mui/material'
 import { StyledComponent } from '@emotion/styled'
 import { StyledOuterContainer as _StyledOuterContainer } from 'synapse-react-client/components/styled/LeftRightPanel'
-import { StyledFormControl as _StyledFormControl } from 'synapse-react-client/components/styled/StyledFormControl'
 
 export const StyledOuterContainer: StyledComponent<BoxProps> =
   _StyledOuterContainer
@@ -42,6 +35,3 @@ export const StyledInnerContainer: StyledComponent<PaperProps> = styled(Paper, {
     backgroundColor: '#F1F3F5',
   },
 }))
-
-export const StyledFormControl: StyledComponent<FormControlProps> =
-  _StyledFormControl

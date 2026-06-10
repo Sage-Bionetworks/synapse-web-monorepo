@@ -25,6 +25,7 @@ import EnumFacetFilterUI, { RenderedFacetValue } from './EnumFacetFilterUI'
 import { getAllIsSelected, valueToLabel } from './EnumFacetFilterUtils'
 
 export type EnumFacetFilterProps = {
+  labelId?: string
   facet: FacetColumnResultValues
   containerAs?: 'Collapsible' | 'Dropdown'
   dropdownType?: 'Icon' | 'SelectBox'
@@ -39,6 +40,7 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
     dropdownType = 'Icon',
     hideCollapsible = false,
     defaultShowAllValues = false,
+    labelId,
   } = props
   const {
     nextQueryRequest,
@@ -181,6 +183,7 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
 
   return (
     <EnumFacetFilterUI
+      labelId={labelId}
       facetTitle={getColumnDisplayName(facet.columnName, facet.jsonPath)}
       filterIsActive={!allIsSelected}
       facetValues={displayedFacetValues}

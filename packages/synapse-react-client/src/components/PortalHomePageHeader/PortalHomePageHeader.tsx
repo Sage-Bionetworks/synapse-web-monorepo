@@ -5,7 +5,7 @@ export type PortalHomePageHeaderProps = {
   backgroundCss: string // background of entire header
   buttonLink?: string
   title: React.ReactNode
-  subTitle: React.ReactNode
+  subTitle?: React.ReactNode
   description: React.ReactNode
   backgroundMp4?: string
   backgroundMp4Css?: string // while video is loading, what should the background color be?
@@ -72,17 +72,19 @@ const PortalHomePageHeader = ({
         >
           {title}
         </Typography>
-        <Typography
-          variant="headline3"
-          sx={{
-            fontSize: '24px',
-            fontWeight: '400',
-            lineHeight: '160%',
-            color: 'grey.1000',
-          }}
-        >
-          {subTitle}
-        </Typography>
+        {subTitle && (
+          <Typography
+            variant="headline3"
+            sx={{
+              fontSize: '24px',
+              fontWeight: '400',
+              lineHeight: '160%',
+              color: 'grey.1000',
+            }}
+          >
+            {subTitle}
+          </Typography>
+        )}
         <Typography
           sx={{ fontSize: '18px', lineHeight: '140%', color: 'grey.900' }}
         >

@@ -81,12 +81,12 @@ function ToolDetailsPage() {
             title: 'Related Publications',
 
             element: (
-              <DetailsPageContextConsumer columnName={'publicationIds'}>
+              <DetailsPageContextConsumer columnName={'PubmedId'}>
                 {({ value }) => (
                   <CardContainerLogic
                     cardConfiguration={publicationCardProps}
                     sql={publicationsSql}
-                    searchParams={{ id: value! }}
+                    searchParams={{ PubmedId: value! }}
                     sqlOperator={ColumnSingleValueFilterOperator.IN}
                   />
                 )}

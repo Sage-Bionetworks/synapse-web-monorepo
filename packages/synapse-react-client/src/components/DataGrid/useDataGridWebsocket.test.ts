@@ -49,20 +49,18 @@ type MockWebSocketInstance = MockWebSocketConfig & {
 }
 
 vi.mock('./DataGridWebSocket', () => ({
-  DataGridWebSocket: vi
-    .fn()
-    .mockImplementation(function (
-      this: MockWebSocketInstance,
-      config: MockWebSocketConfig,
-      _instance?: unknown,
-    ): MockWebSocketInstance {
-      return {
-        ...config,
-        socket: { readyState: WebSocket.OPEN },
-        sendPatch: vi.fn(),
-        disconnect: vi.fn(),
-      }
-    }),
+  DataGridWebSocket: vi.fn().mockImplementation(function (
+    this: MockWebSocketInstance,
+    config: MockWebSocketConfig,
+    _instance?: unknown,
+  ): MockWebSocketInstance {
+    return {
+      ...config,
+      socket: { readyState: WebSocket.OPEN },
+      sendPatch: vi.fn(),
+      disconnect: vi.fn(),
+    }
+  }),
 }))
 
 const MockDataGridWebSocket = vi.mocked(DataGridWebSocket)
@@ -85,7 +83,7 @@ const createEstablishHookState = () =>
     presignedUrl: currentPresignedUrl,
     reset: mockResetEstablishWebsocketConnection,
     clearPresignedUrl: mockClearPresignedUrl,
-  } as unknown as ReturnType<typeof useEstablishWebsocketConnection>)
+  }) as unknown as ReturnType<typeof useEstablishWebsocketConnection>
 
 const createDeferred = <T>() => {
   let resolve: (value: T | PromiseLike<T>) => void
@@ -525,6 +523,28 @@ describe('useDataGridWebSocket', () => {
       expect(result.current.isSyncing).toBe(false)
       expect(mockEstablishWebsocketConnection).toHaveBeenCalledTimes(2)
     })
+  })
+
+  it('should surface websocketError when the server sends an error notification', async () => {
+    const { result } = renderHook(() => useDataGridWebSocket(), {
+      wrapper: createWrapper(),
+    })
+
+    act(() => {
+      result.current.connect(50, 'error-notif-session')
+    })
+
+    await waitFor(() => {
+      expect(result.current.websocketInstance).not.toBeNull()
+    })
+
+    expect(result.current.websocketError).toBeNull()
+
+    act(() => {
+      MockDataGridWebSocket.mock.lastCall![0].onError!('something went wrong')
+    })
+
+    expect(result.current.websocketError).toBe('something went wrong')
   })
 
   it('should disconnect the websocket on unmount without clearing the model', async () => {

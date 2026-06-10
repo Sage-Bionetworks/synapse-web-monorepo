@@ -7,7 +7,7 @@ import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types
 import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 
 function StudyMetadataTab() {
-  const { value: studyName } = useDetailsPageContext('studyName')
+  const { value: study } = useDetailsPageContext('study')
 
   return (
     <DetailsPageContent
@@ -35,8 +35,8 @@ function StudyMetadataTab() {
               rgbIndex={8}
               shouldDeepLink={false}
               sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-              lockedColumn={{ columnName: 'studyName', value: studyName }}
-              searchParams={{ studyName }}
+              lockedColumn={{ columnName: 'study', value: study }}
+              searchParams={{ study }}
               hideQueryCount
             />
           ),
@@ -50,8 +50,8 @@ function StudyMetadataTab() {
               rgbIndex={8}
               shouldDeepLink={false}
               sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-              lockedColumn={{ columnName: 'studyName', value: studyName }}
-              searchParams={{ studyName }}
+              lockedColumn={{ columnName: 'study', value: study }}
+              searchParams={{ study }}
               hideQueryCount
             />
           ),

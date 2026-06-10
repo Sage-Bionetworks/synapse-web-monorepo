@@ -1,0 +1,156 @@
+.dataExplorerTitle:global(.MuiTypography-root) {
+  color: var(--data-explorer-title-color, var(--synapse-primary-action-color));
+  font-size: 36px;
+  line-height: 40px; /* 111.111% */
+  margin-bottom: 10px;
+}
+
+.dataExplorerSubtitle:global(.MuiTypography-root) {
+  line-height: 140%;
+}
+
+.dataExplorerButton {
+  width: fit-content;
+}
+
+.dataExplorerTextContainer {
+  gap: 16px;
+  flex: 0 0 30%;
+  max-width: 30%;
+}
+
+.dataExplorerContainer {
+  display: flex;
+  padding: 40px 0;
+  align-items: flex-start;
+  gap: 60px;
+  flex: 1 0 0;
+}
+
+.dataContainer {
+  display: inline-grid;
+  row-gap: 8px;
+  column-gap: 8px;
+  flex: 1 1 60%;
+  min-width: 0;
+  grid-template-rows: repeat(9, fit-content(100%));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.dataRowTitle {
+  color: var(--synapse-primary-action-color, #4d558d);
+  font-size: 19.8px;
+  font-weight: 400;
+  line-height: 26.4px;
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.dataRowInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  min-width: 0;
+}
+
+.dataRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8.8px 26.4px;
+  min-height: 66.6px;
+  gap: 17.6px;
+  justify-self: stretch;
+  position: relative;
+  border-radius: 3.3px;
+  border: 1px solid transparent;
+  text-decoration: none !important;
+  transition: background-color 200ms ease, border-color 200ms ease,
+    box-shadow 200ms ease, transform 200ms ease;
+
+  &:hover {
+    background-color: #fff;
+    border-color: #e1e1e1;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+    transform: scale(1.1);
+    z-index: 1;
+    .viewCta {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
+}
+
+.dataRowLeft {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  flex: 1;
+}
+
+.iconContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 49px;
+  height: 49px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dataRowNamePill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.fileCount {
+  display: flex;
+  padding: 4px 8px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 80px;
+  border: 1px solid #d8d5e0;
+  color: #787090;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 24px; /* 171.429% */
+  flex-shrink: 0;
+}
+
+.viewCta {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: inline-flex;
+  align-items: center;
+  padding-right: 26.4px;
+  padding-left: 40px;
+  gap: 4px;
+  opacity: 0;
+  white-space: nowrap;
+  color: var(--synapse-primary-action-color, #4d558d);
+  background: linear-gradient(to right, transparent, #fff 25%, #fff 100%);
+  border-radius: 0 2px 2px 0;
+  transition: opacity 200ms ease;
+}
+
+.viewCtaText {
+  color: var(--synapse-primary-action-color, #4d558d);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 26.4px; /* 165% */
+}
+
+.viewCtaIcon:global(.MuiSvgIcon-root) {
+  font-size: 24px;
+  color: var(--synapse-primary-action-color, #5a488f);
+}

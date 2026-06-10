@@ -49,6 +49,7 @@ type DataGridWebSocketConstructorArgs = {
   onReplicaDisconnected?: () => void
   onSyncStart?: () => void
   onSyncEnd?: () => void
+  onError?: (error: unknown) => void
   maxPayloadSizeBytes?: number
   socket?: WebSocket
   model?: GridModel | null
@@ -78,6 +79,7 @@ export class DataGridWebSocket {
   private onReplicaDisconnected: () => void
   private onSyncStart: () => void
   private onSyncEnd: () => void
+  private onError: (error: unknown) => void
 
   constructor(args: DataGridWebSocketConstructorArgs) {
     const {
@@ -90,6 +92,7 @@ export class DataGridWebSocket {
       onReplicaDisconnected,
       onSyncStart,
       onSyncEnd,
+      onError,
       maxPayloadSizeBytes,
       socket,
       model,
@@ -109,6 +112,7 @@ export class DataGridWebSocket {
     this.onReplicaDisconnected = onReplicaDisconnected ?? noop
     this.onSyncStart = onSyncStart ?? noop
     this.onSyncEnd = onSyncEnd ?? noop
+    this.onError = onError ?? noop
 
     // Restore existing model if provided
     if (model) {
@@ -272,6 +276,7 @@ export class DataGridWebSocket {
 
       case 'error':
         console.warn('Error from server:', message.getPayload())
+        this.onError(message.getPayload())
         break
 
       case 'new-patch':

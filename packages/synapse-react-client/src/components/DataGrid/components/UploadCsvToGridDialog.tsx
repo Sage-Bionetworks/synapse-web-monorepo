@@ -50,6 +50,7 @@ export default function UploadCsvToGridDialog(
 
   return (
     <CsvPreviewDialog
+      key={String(open)}
       open={open}
       onClose={onClose}
       onConfirm={(fileHandleId, schema, csvDescriptor) => {

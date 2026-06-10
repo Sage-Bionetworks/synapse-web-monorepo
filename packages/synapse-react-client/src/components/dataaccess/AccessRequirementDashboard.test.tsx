@@ -106,9 +106,8 @@ describe('AccessRequirementDashboard tests', () => {
 
   it('Updates the URL search parameters when updating relatedProjectId', async () => {
     const { user } = renderComponent()
-    const relatedProjectInput = await screen.findByLabelText(
-      'Filter by Project',
-    )
+    const relatedProjectInput =
+      await screen.findByLabelText('Filter by Project')
     await user.type(relatedProjectInput, RELATED_PROJECT_ID)
 
     await waitFor(() =>

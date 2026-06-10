@@ -1,12 +1,10 @@
 import { displayToast } from '@/components'
 import { useGetEntityPermissions } from '@/synapse-queries'
-import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
 import {
   GridSession,
   SynapseClientError,
   TaskBundle,
 } from '@sage-bionetworks/synapse-client'
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
 import { useCallback } from 'react'
 import {
   OPEN_CURATOR_ERROR_TITLE,
@@ -34,9 +32,13 @@ export default function useOpenCuratorFromTaskButton(
 ): UseOpenCuratorFromTaskButtonReturn {
   const curationTask = taskBundle.task!
 
-  const isTaskLinkedSessionFlagEnabled = useGetFeatureFlag(
-    FeatureFlagEnum.CURATOR_LINK_TASK_TO_GRID_SESSION,
-  )
+  const taskProperties = curationTask.taskProperties
+  const suggestedAuthorizationMode =
+    taskProperties != null && 'suggestedAuthorizationMode' in taskProperties
+      ? taskProperties.suggestedAuthorizationMode
+      : undefined
+
+  const useTaskLinkedSession = suggestedAuthorizationMode != null
 
   const {
     mutateAsync: getOrCreateLegacyGridSessionForUnassignedTask,
@@ -59,7 +61,7 @@ export default function useOpenCuratorFromTaskButton(
   const openNewOrExistingCuratorSession = useCallback(async () => {
     let gridSession: GridSession
     try {
-      if (isTaskLinkedSessionFlagEnabled) {
+      if (useTaskLinkedSession) {
         const result = await getOrCreateTaskLinkedGridSession(taskBundle)
         gridSession = result.gridSession
       } else {
@@ -86,7 +88,7 @@ export default function useOpenCuratorFromTaskButton(
   }, [
     curationTask,
     taskBundle,
-    isTaskLinkedSessionFlagEnabled,
+    useTaskLinkedSession,
     getOrCreateLegacyGridSessionForUnassignedTask,
     getOrCreateTaskLinkedGridSession,
   ])
@@ -98,7 +100,7 @@ export default function useOpenCuratorFromTaskButton(
   return {
     hasPermission,
     isLoading: isLoadingEntityPermissions,
-    isPending: isTaskLinkedSessionFlagEnabled
+    isPending: useTaskLinkedSession
       ? taskLinkedOpenGridIsPending
       : legacyOpenGridIsPending,
     onClick: handleClickOpenCurator,
