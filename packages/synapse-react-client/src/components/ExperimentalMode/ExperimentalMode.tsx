@@ -1,10 +1,8 @@
-import { isInSynapseExperimentalMode } from '@/synapse-client/SynapseClient'
 import { EXPERIMENTAL_MODE_COOKIE } from '@/utils/SynapseConstants'
 import { InfoOutlined } from '@mui/icons-material'
 import { Box, IconButton, Tooltip, Typography, useTheme } from '@mui/material'
-import { useEffect, useState } from 'react'
 import Switch from 'react-switch'
-import UniversalCookies from 'universal-cookie'
+import { useCookieValue } from '@react-hookz/web/useCookieValue/index.js'
 
 const EXPERIMENTAL_MODE_SWITCH_ID = 'experimental-mode'
 const experimentalModeText =
@@ -14,20 +12,7 @@ export type ExperimentalModeProps = {
   onExperimentalModeToggle?: (newValue: boolean) => void
 }
 function ExperimentalMode({ onExperimentalModeToggle }: ExperimentalModeProps) {
-  const [isExperimentalModeOn, setIsExperimentalModeOn] =
-    useState<boolean>(false)
-  let mounted = true
   const theme = useTheme()
-  useEffect(() => {
-    if (mounted) {
-      if (isInSynapseExperimentalMode()) {
-        setIsExperimentalModeOn(true)
-      }
-    }
-    return () => {
-      mounted = false
-    }
-  }, [])
 
   const getExperimentalModeCookieOptions = () => {
     const hostname = window.location.hostname.toLowerCase()
@@ -37,23 +22,25 @@ function ExperimentalMode({ onExperimentalModeToggle }: ExperimentalModeProps) {
     }
   }
 
+  const [
+    experimentalModeCookie,
+    setExperimentalModeCookie,
+    removeExperimentalModeCookie,
+  ] = useCookieValue(
+    EXPERIMENTAL_MODE_COOKIE,
+    getExperimentalModeCookieOptions(),
+  )
+
   const createExperimentalModeCookie = () => {
-    const cookies = new UniversalCookies()
-    cookies.set(
-      EXPERIMENTAL_MODE_COOKIE,
-      'true',
-      getExperimentalModeCookieOptions(),
-    )
-    setIsExperimentalModeOn(true)
+    setExperimentalModeCookie('true')
+
     if (onExperimentalModeToggle) {
       onExperimentalModeToggle(true)
     }
   }
 
   const deleteExperimentalModeCookie = () => {
-    const cookies = new UniversalCookies()
-    cookies.remove(EXPERIMENTAL_MODE_COOKIE, getExperimentalModeCookieOptions())
-    setIsExperimentalModeOn(false)
+    removeExperimentalModeCookie()
     if (onExperimentalModeToggle) {
       onExperimentalModeToggle(false)
     }
@@ -84,9 +71,9 @@ function ExperimentalMode({ onExperimentalModeToggle }: ExperimentalModeProps) {
         onColor={theme.palette.secondary.main}
         checkedIcon={false}
         uncheckedIcon={false}
-        checked={isExperimentalModeOn}
+        checked={experimentalModeCookie === 'true'}
         onChange={
-          isExperimentalModeOn
+          experimentalModeCookie === 'true'
             ? deleteExperimentalModeCookie
             : createExperimentalModeCookie
         }

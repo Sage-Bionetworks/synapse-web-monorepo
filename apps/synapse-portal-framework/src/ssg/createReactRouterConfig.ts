@@ -100,7 +100,7 @@ export function createReactRouterConfig(
 
         return [...staticPaths, ...dynamicRoutes]
       },
-      unstable_concurrency: concurrency,
+      concurrency,
     },
   } satisfies Config
 }
