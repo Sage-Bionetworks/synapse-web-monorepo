@@ -1,13 +1,13 @@
 import { Portal } from './routesConfig'
 
-export type BannerType = 'cookies' | 'survey'
+export type BannerType = 'cookies' | 'survey' | 'surveyDialog'
 
 type BannerConfig = Record<Portal, BannerType[]>
 
 // lists the full width alerts displayed on each Portal,
 // ...in the order in which the banners should be dismissed
 const bannerConfig: BannerConfig = {
-  adknowledgeportal: ['cookies'],
+  adknowledgeportal: ['cookies', 'surveyDialog'],
   arkportal: ['cookies'],
   bsmn: ['cookies'],
   cancercomplexity: ['cookies'],

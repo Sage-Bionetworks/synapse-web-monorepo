@@ -61,6 +61,14 @@ export const AUTH_MODE_CHANGED_WARNING =
   'Changing the Authorization Mode will clear the active session ID on this task. Any in-progress grid session linked to this task will no longer be associated with it.'
 export const GENERIC_SAVE_ERROR_MESSAGE = 'An error occurred. Please try again.'
 
+export const DELETE_CURATION_TASK_DIALOG_TITLE = 'Delete Task'
+export const DELETE_CURATION_TASK_CONFIRMATION_PROMPT =
+  'Are you sure you want to delete this task? This action cannot be undone.'
+export const DELETE_CURATION_TASK_GRID_SESSION_WARNING =
+  'Any grid sessions associated with this task will also be deleted.'
+export const DELETE_CURATION_TASK_SUCCESS_TOAST = 'Task deleted successfully'
+export const DELETE_CURATION_TASK_ERROR_TOAST_PREFIX = 'Error deleting task: '
+
 export const UPLOAD_FOLDER_FINDER_TITLE = 'Select Upload Folder'
 export const UPLOAD_FOLDER_FINDER_PROMPT =
   'Select the folder where data files will be uploaded.'

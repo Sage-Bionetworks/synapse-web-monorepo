@@ -12,8 +12,8 @@ export const studyCardConfiguration: CardConfiguration = {
   titleLinkConfig: {
     isMarkdown: false,
     baseURL: 'Explore/Studies/DetailsPage',
-    URLColumnName: 'id',
-    matchColumnName: 'id',
+    URLColumnName: 'study',
+    matchColumnName: 'study',
     target: TargetEnum.CURRENT_WINDOW,
   },
   labelLinkConfig: [

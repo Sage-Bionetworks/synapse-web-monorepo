@@ -1,11 +1,11 @@
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import { TargetEnum } from 'synapse-react-client/utils/html/TargetEnum'
-import { instrumentsSql } from '../resources'
+import { metadataSql } from '../resources'
 
-const instrumentsPlotNavProps: QueryWrapperPlotNavProps = {
-  sql: instrumentsSql,
-  //   name: 'Instruments',
-  fileIdColumnName: 'id',
+const metadataPlotNavProps: QueryWrapperPlotNavProps = {
+  sql: metadataSql,
+  name: 'Metadata',
+  shouldDeepLink: true,
   columnAliases: { study: 'On Synapse' },
   tableConfiguration: {
     showAccessColumn: true,
@@ -16,7 +16,7 @@ const instrumentsPlotNavProps: QueryWrapperPlotNavProps = {
         matchColumnName: 'studyName',
         isMarkdown: false,
         overrideLinkURLColumnName: 'study',
-        overrideLinkURLColumnTransform: study =>
+        overrideLinkURLColumnTransform: (study: string) =>
           `/Explore/Studies/DetailsPage?study=${encodeURIComponent(study)}`,
         target: TargetEnum.CURRENT_WINDOW,
       },
@@ -24,4 +24,4 @@ const instrumentsPlotNavProps: QueryWrapperPlotNavProps = {
   },
 }
 
-export default instrumentsPlotNavProps
+export default metadataPlotNavProps

@@ -474,7 +474,7 @@ function SynapseGridInner({
                       onClick={() => setChatOpen(true)}
                       startIcon={<SmartToyTwoTone />}
                     >
-                      Open chat
+                      Open Curie
                     </GridMenuButton>
                     <GridAgentChat
                       agentRegistrationId={agentRegistrationId}
@@ -482,7 +482,7 @@ function SynapseGridInner({
                       onClose={() => setChatOpen(false)}
                       gridSessionId={session.sessionId!}
                       usersReplicaId={replicaId!}
-                      chatbotName="Grid Assistant"
+                      chatbotName="Curie"
                     />
                     {session.sourceEntityId && (
                       <UploadCsvToGridButton
