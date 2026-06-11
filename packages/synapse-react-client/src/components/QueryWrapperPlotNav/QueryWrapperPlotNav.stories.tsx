@@ -495,7 +495,7 @@ export const TableWithRange: Story = {
 }
 
 /**
- * Demonstrates the advanced query filter builder powered by @svar-ui/react-filter.
+ * Demonstrates the advanced query filter builder.
  * Click the "Add Conditions" icon in the top-right control bar to toggle the builder.
  * Build a filter using AND/OR rules, then click "Apply Filter" to update the query SQL.
  */
