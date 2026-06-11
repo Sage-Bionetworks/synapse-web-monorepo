@@ -1,7 +1,7 @@
 import { Locator, Page, expect, test } from '@playwright/test'
 import { defaultExpectTimeout } from '../playwright.config'
 import exploreConfig from './configs/exploreConfig'
-import { dismissBanners } from './helpers/banners'
+import { dismissBanners, dismissModalBanners } from './helpers/banners'
 import { getPortal } from './helpers/portalInfo'
 import { tagTestTitle } from './helpers/setup'
 
@@ -12,6 +12,8 @@ const goToExploreTab = async (page: Page, exploreTab: string) => {
     await test.step('navigate to explore page', async () => {
       await page.goto(`/Explore/${exploreTab}`, { waitUntil: 'load' })
     })
+
+    await dismissModalBanners(page)
 
     await test.step('explore page has loaded', async () => {
       await expect(

@@ -1,6 +1,7 @@
 import { Page, expect, test } from '@playwright/test'
 import { viewports } from '../playwright.config'
 import routesConfig from './configs/routesConfig'
+import { dismissModalBanners } from './helpers/banners'
 import { getPortal, getPortalTitle } from './helpers/portalInfo'
 import { tagTestTitle } from './helpers/setup'
 
@@ -29,6 +30,7 @@ test.describe('Homepage', () => {
 
   test(tagTestTitle('has expanded nav'), async ({ page }) => {
     await page.goto('/')
+    await dismissModalBanners(page)
     await expect(page.getByText('MENU')).not.toBeVisible()
     await expectNavRoutesAreVisible(page)
   })
@@ -38,6 +40,7 @@ test.describe('Homepage', () => {
 
     test(tagTestTitle('has collapsed nav'), async ({ page }) => {
       await page.goto('/')
+      await dismissModalBanners(page)
       const menu = page.getByText('MENU')
       await expect(menu).toBeVisible()
       await menu.click()
