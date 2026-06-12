@@ -36,7 +36,6 @@ import { CustomControlButton } from '../CustomControls/CustomControlButton'
 import { useSynapseContext } from '@/utils'
 import { SignInRequiredModal } from '@/components/SignInRequiredModal/SignInRequiredModal'
 import { SEND_TO_ANALYSIS_PLATFORM_SIGN_IN_MESSAGE } from '../SynapseTableUtils'
-import { SEARCH_QUERY_WRAPPER_SYNTHETIC_ENTITY_ID } from '../../SearchQueryWrapper/SearchQueryWrapper'
 
 const SEND_TO_ANALYSIS_PLATFORM_BUTTON_ID =
   'SendToAnalysisPlatformTopLevelControlButton'
@@ -102,6 +101,7 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
     getInitQueryRequest,
     getCurrentQueryRequest,
     hasResettableFilters,
+    isSearchIndex,
   } = useQueryContext()
   const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
   const { data: queryMetadata } = useGetQueryMetadata()
@@ -192,7 +192,7 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
               <Typography variant="sectionTitle" role="heading">
                 {name}{' '}
                 {!hideQueryCount &&
-                  (entityId === SEARCH_QUERY_WRAPPER_SYNTHETIC_ENTITY_ID ? (
+                  (isSearchIndex ? (
                     queryMetadata?.queryCount !== undefined ? (
                       `(${queryMetadata.queryCount.toLocaleString()})`
                     ) : null

@@ -84,6 +84,14 @@ export type QueryContextType = {
   getRowDataQueryOptionsForPage?: (
     pageNumber: number,
   ) => TableQueryUseQueryOptions['rowDataQueryOptions']
+
+  /**
+   * True when this QueryContext is backed by the Search API (SearchQueryWrapper) rather than
+   * the standard Table Query API. Used by consumers such as TopLevelControls to show the
+   * count from queryMetadata.queryCount directly instead of issuing a separate SQL-based
+   * QueryCount request.
+   */
+  isSearchIndex?: boolean
 }
 
 /**
