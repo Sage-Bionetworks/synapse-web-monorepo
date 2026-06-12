@@ -1,0 +1,1 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{m as t,n,t as r}from"./development-d0gZPMR5.js";import{n as i,t as a}from"./IsExternalLink-4Ya-P-9T.js";function o(e,r){let a=t(),o=e?i(e):!1;return e&&a&&!o?{component:n,to:e}:{component:e?`a`:void 0,href:e,target:r??(o?`_blank`:void 0),rel:o?`noopener noreferrer`:void 0}}var s=e((()=>{r(),a()}));export{o as n,s as t};
