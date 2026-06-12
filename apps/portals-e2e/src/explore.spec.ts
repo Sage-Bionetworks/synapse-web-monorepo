@@ -447,7 +447,10 @@ const expectTable = async (page: Page, exploreTab: string) => {
       })
 
       await test.step('confirm rows shown matches page count or total rows', async () => {
-        const rowsPerPageText = await page.getByRole('combobox').textContent()
+        const rowsPerPageText = await page
+          .getByRole('combobox')
+          .filter({ hasText: /per page/ })
+          .textContent()
         const rowsPerPage = parseInt(rowsPerPageText!.split(' ')[0])
         await expect(rows).toHaveCount(
           // add one for the header row
