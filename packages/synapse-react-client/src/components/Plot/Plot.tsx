@@ -2,10 +2,7 @@ import { PlotParams } from 'react-plotly.js'
 import createPlotlyComponent from './safe-react-plotly-factory'
 import { lazy, Suspense } from 'react'
 
-// We want to bundle browser-compatible code, but use ESM (`"type": "module"` in package.json) when we use Node (e.g. tests).
-// esbuild (used by Vite in development mode) has a quirk where this will cause packages react-plotly.js/factory to be
-// imported in 'node mode', which breaks imports in the browser.
-// For further explanation and source of workaround, see: https://github.com/evanw/esbuild/issues/2480#issuecomment-1970337003
+// Lazy-load plotly.js since it is very large!
 export const safeESModule = <T,>(a: T | { default: T }): T => {
   const b = a as any
   return b.__esModule || b[Symbol.toStringTag] === 'Module' ? b.default : b
