@@ -2,7 +2,11 @@ import type { CardConfiguration } from 'synapse-react-client/components/CardCont
 import type { LabelLinkConfig } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import { experimentalModelsSql } from '../resources'
+import {
+  experimentalModelsSearchIndexId,
+  experimentalModelsSql,
+} from '../resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 
 // https://sagebionetworks.jira.com/wiki/spaces/PS/pages/1254293523/AMP-AD+Experimental+Models+Schema
@@ -156,4 +160,24 @@ export const experimentalToolsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps
 
 export const EXPERIMENTAL_MODELS_COLUMN_NAMES = {
   GRANT: 'grant',
+}
+
+export const experimentalModelsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'Experimental Models',
+  shouldDeepLink: false,
+  cardConfiguration: experimentalToolsCardConfiguration,
+  facetsToPlot: [
+    'modelType',
+    'targetedGenes',
+    'backgroundStrain',
+    'contributor',
+    'grant',
+    'program',
+    'toolType',
+  ],
+  searchIndexId: experimentalModelsSearchIndexId,
+  autocompleteFieldName: 'name',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }

@@ -2,7 +2,8 @@ import type { CardConfiguration } from 'synapse-react-client/components/CardCont
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
-import { computationalSql } from '../resources'
+import { computationalSearchIndexId, computationalSql } from '../resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 import { PROGRAM_TABLE_COLUMN_NAMES } from './programs'
 
 export const COMPUTATIONAL_TOOLS_COLUMN_NAMES = {
@@ -52,3 +53,15 @@ export const computationalToolsQueryWrapperPlotNavProps: QueryWrapperPlotNavProp
       ],
     },
   }
+
+export const computationalToolsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'Computational Tools',
+  shouldDeepLink: false,
+  cardConfiguration: computationalCardConfiguration,
+  facetsToPlot: ['grant', 'program', 'softwareType'],
+  searchIndexId: computationalSearchIndexId,
+  autocompleteFieldName: 'name',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
+}

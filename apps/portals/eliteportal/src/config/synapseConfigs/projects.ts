@@ -1,7 +1,12 @@
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import { defaultSearchConfiguration, projectsSql } from '../resources'
+import {
+  defaultSearchConfiguration,
+  projectsSearchIndexId,
+  projectsSql,
+} from '../resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 import { TargetEnum } from 'synapse-react-client/utils/html/TargetEnum'
 
 const rgbIndex = 4
@@ -49,6 +54,18 @@ const projectsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
     // 'Program',
   ],
   searchConfiguration: defaultSearchConfiguration,
+}
+
+export const projectsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'Projects',
+  shouldDeepLink: false,
+  cardConfiguration: projectCardConfiguration,
+  facetsToPlot: ['institutions', 'principalInvestigators'],
+  searchIndexId: projectsSearchIndexId,
+  autocompleteFieldName: 'name',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }
 
 export default projectsQueryWrapperPlotNavProps

@@ -47,3 +47,17 @@ export const enabledAnalysisPlatforms: ExternalAnalysisPlatform[] = [
   'terra',
   'adworkbench',
 ]
+
+export const peopleSearchIndexId = 'syn75418928'
+export const projectsSearchIndexId = 'syn75418929'
+export const programsSearchIndexId = 'syn75418930'
+export const publicationsSearchIndexId = 'syn75418933'
+export const topPublicationsSearchIndexId = 'syn75418934'
+export const studiesSearchIndexId = 'syn75418935'
+export const speciesSearchIndexId = 'syn75418937'
+export const computationalSearchIndexId = 'syn75418938'
+export const upsetPlotSearchIndexId = 'syn75418939'
+export const partnersSearchIndexId = 'syn75418942'
+export const partnersOrderedSearchIndexId = 'syn75418943'
+export const whatWeDoSearchIndexId = 'syn75418944'
+export const featuredResearchSearchIndexId = 'syn75418945'
