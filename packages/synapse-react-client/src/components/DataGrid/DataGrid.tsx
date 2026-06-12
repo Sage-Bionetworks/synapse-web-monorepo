@@ -258,7 +258,7 @@ export default function DataGrid(props: DataGridProps) {
         ref={gridRef}
         value={rowValues}
         columns={colValues}
-        autoAddRow={!entityIsView}
+        autoAddRow={false}
         disableSmartDelete
         addRowsComponent={addRowsComponent}
         contextMenuComponent={contextMenuComponent}
