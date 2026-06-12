@@ -19,11 +19,10 @@ import {
   VerificationState,
   VerificationStateEnum,
 } from '@sage-bionetworks/synapse-types'
-import React from 'react'
+import React, { useCallback } from 'react'
 import { RefObject, useEffect, useRef, useState } from 'react'
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router'
 import RORInstitutionField from 'synapse-react-client/components/RORInstitutionField/RORInstitutionField'
-import UniversalCookies from 'universal-cookie'
 import { ConfigureEmail } from '../components/ConfigureEmail'
 import { ProfileAvatar } from '../components/ProfileAvatar'
 import { ORCiDButton } from '../components/ProfileValidation/ORCiDButton'
@@ -44,6 +43,7 @@ import CookiePreferencesDialog from 'synapse-react-client/components/CookiesNoti
 import { SYNAPSE_REALM } from 'synapse-react-client/utils/SynapseConstants'
 import { TextField } from 'synapse-react-client/components/TextField/index'
 import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
+import { useCookieValue } from '@react-hookz/web/useCookieValue/index.js'
 
 function CompletionStatus({ isComplete }: { isComplete: boolean | undefined }) {
   return (
@@ -104,25 +104,32 @@ const AccountSettings = (): React.ReactNode => {
   const { data: currentRealm } = useGetCurrentRealm({
     select: realm => realm.id,
   })
-  const [isUTCTime, setUTCTime] = useState<string>(
-    SynapseClient.getUseUtcTimeFromCookie().toString(),
-  )
-  const [isUTCTimeStaged, setUTCTimeStaged] = useState<string>(isUTCTime)
   const handleChangesFn = (val: string) => {
     navigate(`/authenticated/${val}`)
   }
-  useEffect(() => {
-    const cookies = new UniversalCookies()
-    const current = new Date()
-    const nextYear = new Date()
-    nextYear.setFullYear(current.getFullYear() + 1)
-    const hostname = window.location.hostname.toLowerCase()
-    cookies.set(SynapseConstants.DATETIME_UTC_COOKIE_KEY, isUTCTime, {
+
+  const [isUTCTimeFormValue, setUTCTimeFormValue] = useState<string>('false')
+  const [isUtcTimeCookie, setIsUtcTimeCookie] = useCookieValue(
+    SynapseConstants.DATETIME_UTC_COOKIE_KEY,
+    {
       path: '/',
-      expires: nextYear,
-      domain: hostname.endsWith('.synapse.org') ? 'synapse.org' : undefined,
-    })
-  }, [isUTCTime])
+      domain:
+        typeof window !== 'undefined' &&
+        window.location.hostname.toLowerCase().endsWith('.synapse.org')
+          ? 'synapse.org'
+          : undefined,
+      expires: 365,
+    },
+  )
+
+  // Instantiate the form with the cookie
+  useEffect(() => {
+    setUTCTimeFormValue(isUtcTimeCookie === 'true' ? 'true' : 'false')
+  }, [isUtcTimeCookie])
+
+  const confirmChangeUtcTimeCookie = useCallback(() => {
+    setIsUtcTimeCookie(isUTCTimeFormValue)
+  }, [setIsUtcTimeCookie, isUTCTimeFormValue])
 
   const markFormDirty = () => setChangeInForm(true)
   const credentialButtonSX = {
@@ -395,12 +402,12 @@ const AccountSettings = (): React.ReactNode => {
                 <TextField
                   label={'Choose a format'}
                   id="timezone-select"
-                  value={isUTCTimeStaged}
+                  value={isUTCTimeFormValue}
                   fullWidth
                   select
                   disabled={!cookiePreferences.functionalAllowed}
                   onChange={event => {
-                    setUTCTimeStaged(event.target.value)
+                    setUTCTimeFormValue(event.target.value)
                   }}
                 >
                   <MenuItem value="false" sx={{ fontSize: '14px' }}>
@@ -412,10 +419,10 @@ const AccountSettings = (): React.ReactNode => {
                 </TextField>
                 <div className="primary-button-container">
                   <Button
-                    disabled={isUTCTimeStaged === isUTCTime}
+                    disabled={isUTCTimeFormValue === isUtcTimeCookie}
                     variant="contained"
                     sx={{ credentialButtonSX }}
-                    onClick={() => setUTCTime(isUTCTimeStaged)}
+                    onClick={() => confirmChangeUtcTimeCookie()}
                   >
                     Update Preference
                   </Button>

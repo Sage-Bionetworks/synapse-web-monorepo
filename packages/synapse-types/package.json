@@ -29,8 +29,8 @@
     "prepublishOnly": "pnpm install && pnpm nx run @sage-bionetworks/synapse-types:build"
   },
   "devDependencies": {
-    "@types/node": "^22.19.13",
-    "rimraf": "^6.1.2",
+    "@types/node": "^22.19.20",
+    "rimraf": "^6.1.3",
     "typescript": "6.0.3"
   }
 }

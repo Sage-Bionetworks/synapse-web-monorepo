@@ -306,7 +306,7 @@ exports[`JSONTableCellRenderer > handles complex array case 1`] = `
       >
         <div>
           <span
-            style="color: rgb(110, 110, 110); display: inline-block; font-size: 12px; margin-right: 3px; user-select: none; transform: rotateZ(0deg);"
+            style="color: rgb(110, 110, 110); display: inline-block; font-size: 12px; margin-right: 3px; user-select: none; -webkit-transform: rotateZ(0deg); transform: rotateZ(0deg);"
           >
             ▶
           </span>
@@ -391,7 +391,7 @@ exports[`JSONTableCellRenderer > handles complex object case 1`] = `
       >
         <div>
           <span
-            style="color: rgb(110, 110, 110); display: inline-block; font-size: 12px; margin-right: 3px; user-select: none; transform: rotateZ(0deg);"
+            style="color: rgb(110, 110, 110); display: inline-block; font-size: 12px; margin-right: 3px; user-select: none; -webkit-transform: rotateZ(0deg); transform: rotateZ(0deg);"
           >
             ▶
           </span>

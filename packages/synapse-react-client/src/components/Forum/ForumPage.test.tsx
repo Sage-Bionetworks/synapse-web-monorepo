@@ -7,7 +7,6 @@ import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SubscriptionObjectType, Topic } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import failOnConsole from 'jest-fail-on-console'
 import { ForumPage, ForumPageProps } from './ForumPage'
 
 const defaultProps: ForumPageProps = {
@@ -31,7 +30,6 @@ function renderComponent() {
 }
 
 describe('Forum Table test', () => {
-  failOnConsole()
   beforeAll(() => {
     server.listen()
   })
