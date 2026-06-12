@@ -1,4 +1,9 @@
 import { NavbarConfig } from '@sage-bionetworks/synapse-portal-framework/components/navbar/Navbar'
+import Navbar from '@sage-bionetworks/synapse-portal-framework/components/navbar/Navbar'
+
+export default function EliteNavbar() {
+  return <Navbar layout={'with-sticky-search'} />
+}
 
 export const navbarConfig: NavbarConfig = {
   routes: [
@@ -83,4 +88,6 @@ export const navbarConfig: NavbarConfig = {
     },
   ],
   isPortalsDropdownEnabled: true,
+  NavbarComponent: EliteNavbar,
+  // stickyNavBackgroundColor: '#',
 }

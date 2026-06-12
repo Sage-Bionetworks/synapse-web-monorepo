@@ -17,10 +17,6 @@
 .stack {
   gap: 30px;
   border-radius: 6px;
-
-  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
-    min-width: 660px;
-  }
 }
 
 .exampleTermsContainer {

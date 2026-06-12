@@ -163,7 +163,7 @@ const CancerComplexityHeader = (): React.ReactNode => {
             sx={{
               margin: 0,
               flex: 1,
-              padding: { xs: '40px', lg: '40px 80px' },
+              padding: { xs: '40px' },
             }}
           >
             {content}

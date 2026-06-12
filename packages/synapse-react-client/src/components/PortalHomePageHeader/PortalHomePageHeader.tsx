@@ -10,6 +10,8 @@ export type PortalHomePageHeaderProps = {
   backgroundMp4?: string
   backgroundMp4Css?: string // while video is loading, what should the background color be?
   textAreaWidth?: string // default is 746px.  used for md and up screen sizes
+  /** Optional content to render in the right half of the header. When provided, the left text area shrinks to share space. */
+  rightContent?: React.ReactNode
 }
 
 const PortalHomePageHeader = ({
@@ -21,6 +23,7 @@ const PortalHomePageHeader = ({
   backgroundMp4,
   backgroundMp4Css,
   textAreaWidth = '746px',
+  rightContent,
 }: PortalHomePageHeaderProps): React.ReactNode => {
   return (
     <Box
@@ -53,69 +56,98 @@ const PortalHomePageHeader = ({
           Your browser does not support the video tag.
         </Box>
       )}
-      <Stack
+      <Box
         sx={{
-          alignItems: 'flex-start',
-          padding: { xs: '40px', md: '40px 0' },
-          gap: '24px',
-          width: { sm: '100%', md: textAreaWidth },
+          display: 'flex',
+          flexDirection: { xs: 'column', md: 'row' },
+          alignItems: { xs: 'stretch', md: 'center' },
+          gap: '40px',
+          minWidth: 0,
+          overflow: 'hidden',
         }}
       >
-        <Typography
-          variant="headline2"
+        <Stack
           sx={{
-            fontWeight: 300,
-            lineHeight: '130%',
-            fontSize: { xs: '36px', md: '42px' },
-            color: 'grey.1000',
+            alignItems: 'flex-start',
+            padding: { xs: '40px', md: '40px 0' },
+            gap: '24px',
+            width: rightContent ? undefined : { sm: '100%', md: textAreaWidth },
+            flex: rightContent ? 1 : undefined,
+            minWidth: 0,
           }}
         >
-          {title}
-        </Typography>
-        {subTitle && (
           <Typography
-            variant="headline3"
+            variant="headline2"
             sx={{
-              fontSize: '24px',
-              fontWeight: '400',
-              lineHeight: '160%',
+              fontWeight: 300,
+              lineHeight: '130%',
+              fontSize: { xs: '36px', md: '42px' },
               color: 'grey.1000',
             }}
           >
-            {subTitle}
+            {title}
           </Typography>
-        )}
-        <Typography
-          sx={{ fontSize: '18px', lineHeight: '140%', color: 'grey.900' }}
-        >
-          {description}
-        </Typography>
-        {buttonLink && (
-          <Button
-            href={buttonLink}
-            target="_blank"
-            variant="contained"
-            role="button"
-            sx={theme => ({
-              whiteSpace: 'nowrap',
-              alignSelf: 'flex-start',
-              padding: '6px 24px',
-              fontWeight: 600,
-              boxShadow:
-                '0px 16px 16px 0px rgba(0, 0, 0, 0.10), 0px 4px 4px 0px rgba(0, 0, 0, 0.10), 0px 1px 1px 0px rgba(0, 0, 0, 0.10)',
-              '&:hover': {
+          {subTitle && (
+            <Typography
+              variant="headline3"
+              sx={{
+                fontSize: '24px',
+                fontWeight: '400',
+                lineHeight: '160%',
+                color: 'grey.1000',
+              }}
+            >
+              {subTitle}
+            </Typography>
+          )}
+          <Typography
+            sx={{ fontSize: '18px', lineHeight: '140%', color: 'grey.900' }}
+          >
+            {description}
+          </Typography>
+          {buttonLink && (
+            <Button
+              href={buttonLink}
+              target="_blank"
+              variant="contained"
+              role="button"
+              sx={theme => ({
+                whiteSpace: 'nowrap',
+                alignSelf: 'flex-start',
+                padding: '6px 24px',
+                fontWeight: 600,
                 boxShadow:
                   '0px 16px 16px 0px rgba(0, 0, 0, 0.10), 0px 4px 4px 0px rgba(0, 0, 0, 0.10), 0px 1px 1px 0px rgba(0, 0, 0, 0.10)',
-              },
-              [theme.breakpoints.down('sm')]: {
-                width: '100%',
-              },
-            })}
+                '&:hover': {
+                  boxShadow:
+                    '0px 16px 16px 0px rgba(0, 0, 0, 0.10), 0px 4px 4px 0px rgba(0, 0, 0, 0.10), 0px 1px 1px 0px rgba(0, 0, 0, 0.10)',
+                },
+                [theme.breakpoints.down('sm')]: {
+                  width: '100%',
+                },
+              })}
+            >
+              Learn more
+            </Button>
+          )}
+        </Stack>
+        {rightContent && (
+          <Box
+            sx={{
+              flexShrink: 0,
+              width: { xs: '100%', md: '45%' },
+              display: 'flex',
+              alignItems: 'center',
+              padding: { xs: '0 40px 40px', md: '40px 0' },
+              // Strip any default padding from the rightContent root element
+              // (e.g. HeaderSearchBox applies padding: 40px via its SCSS .root class)
+              '& > *': { padding: '0 !important' },
+            }}
           >
-            Learn more
-          </Button>
+            {rightContent}
+          </Box>
         )}
-      </Stack>
+      </Box>
     </Box>
   )
 }

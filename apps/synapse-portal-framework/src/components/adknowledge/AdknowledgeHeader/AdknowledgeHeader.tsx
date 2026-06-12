@@ -54,6 +54,7 @@ const AdknowledgeHeader = (): React.ReactNode => {
           searchPlaceholder={searchPlaceholder}
           path="/Search"
           variant="v2"
+          sx={{ '& > *': { minWidth: '660px' } }}
         />
       </Stack>
     </header>

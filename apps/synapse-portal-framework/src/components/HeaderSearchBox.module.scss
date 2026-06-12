@@ -3,10 +3,6 @@
 .root {
   padding: 40px;
   width: 100%;
-
-  @media (min-width: 1200px) {
-    padding: 40px 80px 40px 0;
-  }
 }
 
 .stack {
@@ -14,10 +10,6 @@
   gap: 30px;
   border-radius: 6px;
   backdrop-filter: blur(15px);
-
-  @media (min-width: 1200px) {
-    min-width: 660px;
-  }
 }
 
 .searchRow {

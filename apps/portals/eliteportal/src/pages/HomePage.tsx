@@ -8,6 +8,7 @@ import ELGettingStarted from '@sage-bionetworks/synapse-portal-framework/compone
 import ElNewsletterSection from '@sage-bionetworks/synapse-portal-framework/components/eliteportal/ELNewsletterSection'
 import ELSupportedByNIH from '@sage-bionetworks/synapse-portal-framework/components/eliteportal/ELSupportedByNIH'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
+import HeaderSearchBox from '@sage-bionetworks/synapse-portal-framework/components/HeaderSearchBox'
 import { TypeAnimation } from 'react-type-animation'
 import FeaturedDataTabs from 'synapse-react-client/components/FeaturedDataTabs/FeaturedDataTabs'
 import FeaturedResearch from 'synapse-react-client/components/FeaturedResearch/FeaturedResearch'
@@ -134,6 +135,25 @@ function HomePageInternal() {
         description={description}
         backgroundMp4={headerbackgroundvideo}
         backgroundMp4Css="#024472"
+        rightContent={
+          <HeaderSearchBox
+            searchExampleTerms={[
+              'whole genome sequencing',
+              'LLFS',
+              'RNAseq',
+              'proteomics aging',
+              'APOE cognitive aging',
+              'epigenetics',
+              'open access',
+              'longevity intervention',
+              'GWAS',
+              'healthspan',
+            ]}
+            searchPlaceholder="Search for longevity and aging data and resources"
+            path="/Search"
+            sx={{ '& > *': { backgroundColor: '#B8CCE2' } }}
+          />
+        }
       />
       <ImageCardGridWithLinks
         sql={whatWeDoSql}
