@@ -15,7 +15,10 @@ function ExperimentalMode({ onExperimentalModeToggle }: ExperimentalModeProps) {
   const theme = useTheme()
 
   const getExperimentalModeCookieOptions = () => {
-    const hostname = window.location.hostname.toLowerCase()
+    const hostname =
+      typeof window !== 'undefined'
+        ? window.location.hostname.toLowerCase()
+        : ''
     return {
       path: '/',
       domain: hostname.endsWith('.synapse.org') ? 'synapse.org' : undefined,
