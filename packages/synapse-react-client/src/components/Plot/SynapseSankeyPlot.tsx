@@ -1,33 +1,11 @@
-import React, { lazy, Suspense } from 'react'
+import React from 'react'
 import { useGetFullTableQueryResults } from '@/synapse-queries'
 import { SynapseConstants } from '@/utils'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
 import { Skeleton } from '@mui/material'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import type { Data, Layout, SankeyData } from 'plotly.js'
-import { PlotParams } from 'react-plotly.js'
-import createPlotlyComponent from './safe-react-plotly-factory'
-
-// Lazy-load the full plotly.js bundle (not the basic dist) since Sankey is not
-// included in plotly.js-basic-dist.
-const safeESModule = <T,>(a: T | { default: T }): T => {
-  const b = a as any
-  return b.__esModule || b[Symbol.toStringTag] === 'Module' ? b.default : b
-}
-
-const LazyLoadedSankeyPlot = lazy(async () => {
-  const Plotly = await import('plotly.js')
-  const plotly = safeESModule(Plotly)
-  return { default: createPlotlyComponent(plotly) }
-})
-
-function SankeyPlot(props: PlotParams) {
-  return (
-    <Suspense>
-      <LazyLoadedSankeyPlot {...props} />
-    </Suspense>
-  )
-}
+import { PlotFullBundle } from './Plot'
 
 export type SynapseSankeyPlotProps = {
   /** SQL query whose first column provides node labels and second column provides link values */
@@ -109,7 +87,7 @@ export const SynapseSankeyPlot = (
   }
 
   return (
-    <SankeyPlot
+    <PlotFullBundle
       style={{ width: '100%', height: '450px' }}
       layout={layout}
       data={sankeyData as Data[]}
