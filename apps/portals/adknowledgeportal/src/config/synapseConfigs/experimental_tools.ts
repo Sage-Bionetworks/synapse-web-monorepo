@@ -166,7 +166,7 @@ export const experimentalModelsSearch: SearchQueryWrapperPlotNavProps = {
   rgbIndex,
   name: 'Experimental Models',
   shouldDeepLink: false,
-  cardConfiguration: experimentalToolsCardConfiguration,
+  tableConfiguration: experimentalDetailsTableConfiguration,
   facetsToPlot: [
     'modelType',
     'targetedGenes',
@@ -176,6 +176,9 @@ export const experimentalModelsSearch: SearchQueryWrapperPlotNavProps = {
     'program',
     'toolType',
   ],
+  columnAliases: {
+    mouseModelReport: 'Model Report Card',
+  },
   searchIndexId: experimentalModelsSearchIndexId,
   autocompleteFieldName: 'name',
   hideTopLevelControls: false,

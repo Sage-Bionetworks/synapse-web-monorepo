@@ -111,7 +111,7 @@ export const targetEnablingResourcesSearch: SearchQueryWrapperPlotNavProps = {
   rgbIndex,
   name: 'Target Enabling Resources',
   shouldDeepLink: false,
-  cardConfiguration: targetEnablingResourcesCardConfiguration,
+  tableConfiguration: targetEnablingResourcesTableConfiguration,
   facetsToPlot: [
     'category',
     'target',
