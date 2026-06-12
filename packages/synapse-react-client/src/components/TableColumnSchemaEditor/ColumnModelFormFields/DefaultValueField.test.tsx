@@ -117,6 +117,7 @@ describe('DefaultValueField', () => {
     act(() => {
       mockDateTimePickerPassedProps.onChange!(dayjs(1710399900000), {
         validationError: null,
+        source: 'unknown',
       })
     })
 

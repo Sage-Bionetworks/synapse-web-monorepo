@@ -192,7 +192,6 @@
     "https-browserify": "^1.0.0",
     "identity-obj-proxy": "^3.0.0",
     "jest-environment-jsdom": "^29.7.0",
-    "jest-fail-on-console": "^3.3.4",
     "jsdom": "^26.1.0",
     "memfs": "^3.5.3",
     "msw": "^2.14.6",
