@@ -6,7 +6,6 @@ import { CardContainerLogic } from 'synapse-react-client/components/CardContaine
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TimelinePlot } from 'synapse-react-client/components/TimelinePlot/TimelinePlot'
 import DynamicFormModal from 'synapse-react-client/components/DynamicForm/DynamicFormModal'
-import Markdown from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 
 function ToolDetailsPageObservationsTab() {
   return (
@@ -54,7 +53,20 @@ function ToolDetailsPageObservationsTab() {
         {
           id: 'Share Your Observation',
           title: 'Share Your Observation',
-          element: <Markdown ownerId="syn26338068" wikiId={'629946'} />,
+          element: (
+            <p>
+              To submit an observation about this tool, please follow the steps
+              outlined{' '}
+              <a
+                href="https://nf.synapse.org/Research%20Tools%20Central/Submit%20Observation"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                here
+              </a>
+              .
+            </p>
+          ),
         },
         {
           id: 'DynamicFormModal',

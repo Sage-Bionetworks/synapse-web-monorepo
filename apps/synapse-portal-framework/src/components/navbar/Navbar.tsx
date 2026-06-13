@@ -19,6 +19,7 @@ import NavLink from '../NavLink'
 import NavUserLink from '../NavUserLink'
 import { usePortalContext } from '../PortalContext'
 import { DropdownNavButton } from './DropdownNavButton'
+import { PortalFullTextSearchField } from '../PortalSearch/PortalFullTextSearchField'
 
 type SynapseSettingLink = {
   text: string
@@ -34,6 +35,8 @@ export type NavbarConfig = {
     children?: { name: string; path: string }[]
   }[]
   isPortalsDropdownEnabled: boolean
+  /** When set, renders a compact search field in the Navbar pointing to this path. */
+  searchPath?: string
 }
 
 const synapseQuickLinks: SynapseSettingLink[] = [
@@ -63,7 +66,7 @@ export default function Navbar() {
   const { isAuthenticated } = useSynapseContext()
   const navigate = useNavigate()
   const { data: userProfile } = useGetCurrentUserProfile()
-  const { isPortalsDropdownEnabled } = navbarConfig
+  const { isPortalsDropdownEnabled, searchPath } = navbarConfig
   const [showMenu, setShowMenu] = useState(false)
   const navRef = useRef<HTMLElement>(null)
 
@@ -163,6 +166,24 @@ export default function Navbar() {
             </>
           </NavLink>
         </div>
+        {searchPath && (
+          <Box
+            sx={{
+              marginLeft: 'auto',
+              px: { xs: 0, md: 2 },
+              display: { xs: 'none', md: 'flex' },
+              alignItems: 'center',
+              width: 280,
+              flexShrink: 0,
+            }}
+          >
+            <PortalFullTextSearchField
+              path={searchPath}
+              placeholder="Search…"
+              size="small"
+            />
+          </Box>
+        )}
         <div
           className="nav-mobile-menu-btn mb-open"
           onClick={() => {

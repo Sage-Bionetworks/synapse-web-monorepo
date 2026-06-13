@@ -1,7 +1,15 @@
-#header,
+/* Hero section uses light gradient (NFHero component) — no background override needed */
 #footer {
   background-color: var(--synapse-primary-action-color);
   background-blend-mode: multiply;
+}
+
+/* Allow the navbar search field to expand between the logo and nav links */
+.nav-logo-container {
+  flex-basis: auto;
+}
+.nav-link-container {
+  flex-basis: auto;
 }
 .InitiativeCardList {
   .SRC-portalCardMain {

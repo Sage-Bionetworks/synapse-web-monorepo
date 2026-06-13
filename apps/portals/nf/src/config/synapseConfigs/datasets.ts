@@ -5,10 +5,10 @@ import { datasetsSql } from '../resources'
 import { columnAliases as sharedColumnAliases } from './commonProps'
 import { studyColumnIconConfigs } from './studies'
 
-export const newDatasetsSql = `${datasetsSql} order by ROW_ID desc limit 3`
+export const newDatasetsSql = `${datasetsSql} order by datasetSizeInBytes desc limit 3`
 export const datasetsRgbIndex = 8
 
-const columnAliases = {
+export const columnAliases = {
   ...sharedColumnAliases,
   studyId: 'Study Name',
 }

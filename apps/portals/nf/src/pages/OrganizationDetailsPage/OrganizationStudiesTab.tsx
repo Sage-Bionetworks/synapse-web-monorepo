@@ -1,14 +1,12 @@
-import { datasetsSql } from '@/config/resources'
-import {
-  columnAliases as datasetColumnAliases,
-  datasetCardConfiguration,
-} from '@/config/synapseConfigs/datasets'
+import { studiesSql } from '@/config/resources'
+import { columnAliases } from '@/config/synapseConfigs/commonProps'
+import { studyCardConfiguration } from '@/config/synapseConfigs/studies'
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 
-function OrganizationDataTab() {
+function OrganizationStudiesTab() {
   const { value: fundingAgency } = useDetailsPageContext('fundingAgency')
 
   if (fundingAgency == null) {
@@ -19,37 +17,37 @@ function OrganizationDataTab() {
     <DetailsPageContent
       content={[
         {
-          id: 'Datasets',
-          title: 'Datasets',
+          id: 'Studies',
+          title: 'Studies',
           element: (
             <QueryWrapperPlotNav
-              rgbIndex={8}
+              rgbIndex={5}
               shouldDeepLink={false}
               defaultShowPlots={true}
-              sql={datasetsSql}
+              name="Funded Studies"
+              sql={studiesSql}
+              cardConfiguration={studyCardConfiguration}
               visibleColumnCount={7}
               sqlOperator={ColumnSingleValueFilterOperator.LIKE}
-              cardConfiguration={datasetCardConfiguration}
-              name="Datasets"
-              columnAliases={datasetColumnAliases}
+              columnAliases={columnAliases}
               facetsToPlot={[
-                'dataType',
+                'dataStatus',
+                'studyStatus',
                 'diseaseFocus',
-                'measurementTechnique',
+                'dataType',
               ]}
               searchConfiguration={{
                 searchable: [
-                  'title',
-                  'description',
                   'studyName',
+                  'studyLeads',
+                  'institutions',
                   'diseaseFocus',
                   'manifestation',
-                  'funder',
                 ],
               }}
-              searchParams={{ funder: fundingAgency }}
+              searchParams={{ fundingAgency }}
               lockedColumn={{
-                columnName: 'funder',
+                columnName: 'fundingAgency',
                 value: fundingAgency,
               }}
               hideQueryCount
@@ -57,8 +55,8 @@ function OrganizationDataTab() {
           ),
         },
       ]}
-    ></DetailsPageContent>
+    />
   )
 }
 
-export default OrganizationDataTab
+export default OrganizationStudiesTab

@@ -1,14 +1,12 @@
-import { datasetsSql } from '@/config/resources'
-import {
-  columnAliases as datasetColumnAliases,
-  datasetCardConfiguration,
-} from '@/config/synapseConfigs/datasets'
+import { publicationsSql } from '@/config/resources'
+import { columnAliases } from '@/config/synapseConfigs/commonProps'
+import { publicationsCardConfiguration } from '@/config/synapseConfigs/publications'
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 
-function OrganizationDataTab() {
+function OrganizationPublicationsTab() {
   const { value: fundingAgency } = useDetailsPageContext('fundingAgency')
 
   if (fundingAgency == null) {
@@ -19,37 +17,37 @@ function OrganizationDataTab() {
     <DetailsPageContent
       content={[
         {
-          id: 'Datasets',
-          title: 'Datasets',
+          id: 'Publications',
+          title: 'Publications',
           element: (
             <QueryWrapperPlotNav
-              rgbIndex={8}
+              rgbIndex={0}
               shouldDeepLink={false}
               defaultShowPlots={true}
-              sql={datasetsSql}
-              visibleColumnCount={7}
+              sql={publicationsSql}
               sqlOperator={ColumnSingleValueFilterOperator.LIKE}
-              cardConfiguration={datasetCardConfiguration}
-              name="Datasets"
-              columnAliases={datasetColumnAliases}
-              facetsToPlot={[
-                'dataType',
+              cardConfiguration={publicationsCardConfiguration}
+              columnAliases={columnAliases}
+              facetsToPlot={['year', 'diseaseFocus', 'manifestation']}
+              availableFacets={[
+                'year',
                 'diseaseFocus',
-                'measurementTechnique',
+                'manifestation',
+                'journal',
               ]}
               searchConfiguration={{
                 searchable: [
                   'title',
-                  'description',
+                  'author',
+                  'journal',
+                  'year',
                   'studyName',
                   'diseaseFocus',
-                  'manifestation',
-                  'funder',
                 ],
               }}
-              searchParams={{ funder: fundingAgency }}
+              searchParams={{ fundingAgency }}
               lockedColumn={{
-                columnName: 'funder',
+                columnName: 'fundingAgency',
                 value: fundingAgency,
               }}
               hideQueryCount
@@ -57,8 +55,8 @@ function OrganizationDataTab() {
           ),
         },
       ]}
-    ></DetailsPageContent>
+    />
   )
 }
 
-export default OrganizationDataTab
+export default OrganizationPublicationsTab

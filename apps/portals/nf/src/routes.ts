@@ -132,6 +132,7 @@ export default [
           ),
         ],
       ),
+      route('Organizations', 'pages/Organizations.tsx'),
       route(
         'Organizations/:abbreviation',
         'pages/OrganizationDetailsPage/OrganizationDetailsPage.tsx',
@@ -148,8 +149,20 @@ export default [
             'pages/OrganizationDetailsPage/OrganizationDetailsTab.tsx',
           ),
           route(
-            'Data',
+            'Studies',
+            'pages/OrganizationDetailsPage/OrganizationStudiesTab.tsx',
+          ),
+          route(
+            'Datasets',
             'pages/OrganizationDetailsPage/OrganizationDataTab.tsx',
+          ),
+          route(
+            'Publications',
+            'pages/OrganizationDetailsPage/OrganizationPublicationsTab.tsx',
+          ),
+          route(
+            'Analytics',
+            'pages/OrganizationDetailsPage/OrganizationAnalyticsTab.tsx',
           ),
         ],
       ),
@@ -170,6 +183,12 @@ export default [
         'Organizations/DetailsPage',
         'pages/LegacyOrganizationRedirect.tsx',
       ),
+
+      // About section
+      route('About/Our-Mission', 'pages/OurMissionPage.tsx'),
+
+      // News & community aggregator
+      route('News', 'pages/News.tsx'),
 
       // PORTALS-2277: Redirect renamed "Hackathon Projects" → "Hackathon"
       route(
