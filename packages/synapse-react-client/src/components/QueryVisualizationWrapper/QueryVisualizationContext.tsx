@@ -36,6 +36,8 @@ export type QueryVisualizationContextType = {
   showFacetFilter: boolean
   setShowFacetFilter: Dispatch<SetStateAction<boolean>>
   hideSearchBarControl: boolean
+  /** When true, the text matches filter pill is shown but cannot be removed. Defaults to true. */
+  lockTextMatchesQueryFilterPill: boolean
   showSearchBar: boolean
   setShowSearchBar: Dispatch<SetStateAction<boolean>>
   showDownloadConfirmation: boolean

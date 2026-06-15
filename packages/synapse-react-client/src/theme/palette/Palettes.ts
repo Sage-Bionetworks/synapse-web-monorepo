@@ -119,7 +119,7 @@ export const elPortalPalette: PaletteOptions = {
   secondary: generatePalette('#39AC97'),
 }
 
-export const namshubPortalPalette: PaletteOptions = {
+export const namhubPortalPalette: PaletteOptions = {
   ...palette,
   primary: generatePalette('#526BB6'),
   secondary: generatePalette('#526BB6'),
@@ -222,5 +222,5 @@ export default {
   ampalsPalette,
   classicPalette,
   arcusbioPalette,
-  namshubPortalPalette,
+  namhubPortalPalette,
 }

@@ -26,7 +26,15 @@ import markdownitSynapsePlugin from 'markdown-it-synapse'
 import markdownitSynapseHeading from 'markdown-it-synapse-heading'
 import markdownitMath from 'markdown-it-synapse-math'
 import markdownitSynapseTable from 'markdown-it-synapse-table'
-import { JSX, useEffect, useMemo, useRef } from 'react'
+import { ComponentProps, ElementType, useEffect, useMemo, useRef } from 'react'
+import {
+  htmlToDOM,
+  domToReact,
+  attributesToProps,
+  Element as DomElement,
+  type DOMNode,
+  type HTMLReactParserOptions,
+} from 'html-react-parser'
 import { ErrorBanner } from '../error/ErrorBanner'
 import { SkeletonTable } from '../Skeleton'
 import MarkdownWidget from './MarkdownWidget'
@@ -161,6 +169,105 @@ function MapParamsToMarkdownWidget(props: {
 }
 
 /**
+ * Builds the `html-react-parser` options used to convert the parsed markdown
+ * HTML tree into React elements.
+ *
+ * The `replace` callback handles the Synapse-specific cases (widgets, and the
+ * elements we render via MUI `Typography`/`Link`); every other element falls
+ * through to html-react-parser's default conversion, which maps attributes
+ * (e.g. `class` -> `className`, inline `style` string -> object), handles void
+ * elements, and assigns React keys to sibling elements.
+ *
+ * @param markdown The original (post-processing) markup string, forwarded to
+ * widgets that need the full markup (e.g. table of contents).
+ */
+function getParserOptions(markdown: string): HTMLReactParserOptions {
+  const options: HTMLReactParserOptions = {
+    replace: domNode => {
+      if (!(domNode instanceof DomElement)) {
+        // Text/comment nodes use default handling.
+        return
+      }
+
+      const widgetParams = domNode.attribs['data-widgetparams']
+      if (widgetParams) {
+        // Synapse widget
+        return (
+          <MapParamsToMarkdownWidget
+            widgetParams={widgetParams}
+            originalMarkup={markdown}
+          />
+        )
+      }
+
+      const tag = domNode.name.toLowerCase()
+      // attributesToProps remaps `class` -> `className`, parses the inline
+      // `style` string into an object, etc.
+      const props = attributesToProps(domNode.attribs) as ComponentProps<
+        typeof Typography
+      >
+      const children = domToReact(domNode.children as DOMNode[], options)
+
+      switch (tag) {
+        case 'p':
+        case 'span':
+        case 'ol':
+        case 'ul':
+          return (
+            <Typography
+              variant={'body1'}
+              {...props}
+              component={tag as ElementType}
+            >
+              {children}
+            </Typography>
+          )
+        case 'h1':
+          return (
+            <Typography
+              variant={'headline1'}
+              {...props}
+              component={tag as ElementType}
+            >
+              {children}
+            </Typography>
+          )
+        case 'h2':
+          return (
+            <Typography
+              variant={'headline2'}
+              {...props}
+              component={tag as ElementType}
+            >
+              {children}
+            </Typography>
+          )
+        case 'h3':
+          return (
+            <Typography
+              variant={'headline3'}
+              {...props}
+              component={tag as ElementType}
+            >
+              {children}
+            </Typography>
+          )
+        case 'a':
+          return (
+            <Link {...props} component={tag as ElementType}>
+              {children}
+            </Link>
+          )
+        default:
+          // Let html-react-parser render the element with default handling.
+          return
+      }
+    },
+  }
+  return options
+}
+
+/**
  * Component that process all the markdown and transforms it to the appropriate Synapse widgets.
  *
  * @returns JSX of the markdown into widgets
@@ -185,20 +292,22 @@ function RenderMarkdown(props: {
     return markup
   }, [markdown, renderInline])
 
-  const processedDocuments = useMemo(() => {
+  // Parse the markup into React elements. This uses html-react-parser, which
+  // is isomorphic and produces `domhandler` nodes in both environments,
+  // so there is no dependency on `DOMParser`/`Node`/`HTMLElement` browser globals.
+  const content = useMemo(() => {
     if (markup.length > 0) {
-      const domParser = new DOMParser()
-      const document = domParser.parseFromString(markup, 'text/html')
-
-      fixInvalidNesting(document.body)
-
-      return document.body
+      const nodes = htmlToDOM(markup)
+      // Fix invalid HTML nesting (e.g. block elements inside <p>) before
+      // converting to React.
+      nodes.forEach(node => fixInvalidNesting(node))
+      return domToReact(nodes, getParserOptions(markup))
     }
     return null
   }, [markup])
 
-  if (processedDocuments) {
-    return <RecursiveRender element={processedDocuments} markdown={markup} />
+  if (content) {
+    return <>{content}</>
   }
 
   if (!isLoading && showPlaceholderIfNoWikiContent && markup === '') {
@@ -210,145 +319,6 @@ function RenderMarkdown(props: {
   }
 
   return
-}
-
-/**
- * recursiveRender will render react tree from HTML tree
- *
- * @param {Node} element This will be either a text Node or an HTMLElement
- * @param {string} markdown The original markdown, its kept as a special case for the table of contents widget
- * @returns {*}
- */
-
-function RecursiveRender(props: { element: Node; markdown: string }) {
-  const { element, markdown } = props
-  /*
-    Recursively render the html tree created from the markdown, there are a few cases:
-    1. element is Node and is text in which case it is simply rendered
-    2. element is an HTMLElement and is: a self closing tag, has no children (e.g. <br>), or its a synapse widget and is
-    rendered accordingly
-    3. element is an HTMLElement and has children so we loop through its childNodes, recurively render those, and then render its own tag
-    as the parent of those child nodes. Note - childNodes was specifically chosen over .children because text Nodes
-    would not come through .children
-  */
-  if (element.nodeType === Node.TEXT_NODE) {
-    // case 1.
-    return <>{element.textContent}</>
-  } else if (
-    element.nodeType === Node.ELEMENT_NODE &&
-    element instanceof HTMLElement
-  ) {
-    const Tag: keyof JSX.IntrinsicElements =
-      element.tagName.toLowerCase() as keyof JSX.IntrinsicElements
-    const widgetParams = element.getAttribute('data-widgetparams')
-
-    if (widgetParams) {
-      // case 2
-      // process widget
-      return (
-        <MapParamsToMarkdownWidget
-          widgetParams={widgetParams}
-          originalMarkup={markdown}
-        />
-      )
-    }
-    // manually add on props, depending on what comes through the markdown their could
-    // be unforseen issues with attributes being misnamed according to what react will respect
-    // e.g. class instead of className
-    const attributes = element.attributes
-    const rawProps: Record<string, string> = {}
-    for (let i = 0; i < attributes.length; i++) {
-      let name = ''
-      let value = ''
-      const attribute = attributes.item(i)
-      if (attribute) {
-        name = attribute.name
-        value = attribute.value
-      }
-      if (name && value) {
-        rawProps[name] = value
-      }
-    }
-
-    const { style: styleString, class: className, ...props } = rawProps
-    // Remap class to className
-    props.className = className
-    if (styleString) {
-      // React expects the `style` prop to be an object, not a string, so use
-      // the all-caps STYLE to pass the style string as a custom attribute
-      props.STYLE = styleString
-    }
-
-    if (element.childNodes.length === 0) {
-      // case 2
-      // e.g. self closing tag like <br/> or <img>
-      return <Tag {...props} />
-    }
-
-    // case 3
-    // recursively render children
-    const children = Array.from(element.childNodes).map((el, index) => {
-      return <RecursiveRender key={index} element={el} markdown={markdown} />
-    })
-    // Render tagName as parent element of the children below
-    switch (Tag) {
-      case 'p':
-        return (
-          <Typography variant={'body1'} {...props} component={Tag}>
-            {children}
-          </Typography>
-        )
-      case 'span':
-        return (
-          <Typography variant={'body1'} {...props} component={Tag}>
-            {children}
-          </Typography>
-        )
-      case 'h1':
-        return (
-          <Typography variant={'headline1'} {...props} component={Tag}>
-            {children}
-          </Typography>
-        )
-      case 'h2':
-        return (
-          <Typography variant={'headline2'} {...props} component={Tag}>
-            {children}
-          </Typography>
-        )
-      case 'h3':
-        return (
-          <Typography variant={'headline3'} {...props} component={Tag}>
-            {children}
-          </Typography>
-        )
-      case 'ol':
-        return (
-          <Typography variant={'body1'} {...props} component={Tag}>
-            {children}
-          </Typography>
-        )
-      case 'ul':
-        return (
-          <Typography variant={'body1'} {...props} component={Tag}>
-            {children}
-          </Typography>
-        )
-      case 'a':
-        return (
-          <Link {...props} component={Tag}>
-            {children}
-          </Link>
-        )
-      default:
-        if (Tag === 'body') {
-          // The component ultimately wraps this content, so if the tag is 'body', just render the children.
-          return children
-        }
-        return <Tag {...props}>{children}</Tag>
-    }
-  }
-  return null
 }
 
 /**

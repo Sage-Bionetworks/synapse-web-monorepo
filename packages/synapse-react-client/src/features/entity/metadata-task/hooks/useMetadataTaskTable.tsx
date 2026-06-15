@@ -32,6 +32,12 @@ function getColumns(canEdit: boolean) {
       enableSorting: false,
       enableColumnFilter: false,
     }),
+    columnHelper.accessor('task.taskId', {
+      header: props => <ColumnHeader {...props} title={'Task ID'} />,
+      cell: ({ getValue }) => <p>{getValue()}</p>,
+      enableSorting: false,
+      enableColumnFilter: false,
+    }),
     columnHelper.accessor('task.instructions', {
       header: props => <ColumnHeader {...props} title={'Instructions'} />,
       cell: ({ getValue }) => <p>{getValue()}</p>,
@@ -103,9 +109,11 @@ export function useMetadataTaskTable(opts: UseMetadataTaskTableOptions) {
     [data],
   )
 
+  const columns = useMemo(() => getColumns(canEditTasks), [canEditTasks])
+
   const table: Table<TaskBundle> = useReactTable<TaskBundle>({
     data: tasks,
-    columns: getColumns(canEditTasks),
+    columns,
     getRowId: row => String(row.task!.taskId!),
     getCoreRowModel: getCoreRowModel(),
     columnResizeMode: 'onChange',

@@ -17,8 +17,8 @@ $color-change-own-agent: #13c2c2; // teal
 $color-change-other-user: #1677ff; // blue
 $color-change-other-agent: #9254de; // purple
 // Remote selection palette (8 colors, semi-transparent tints)
-$remote-selection-colors: #1677ff, #52c41a, #fa8c16, #eb2f96, #13c2c2, #9254de,
-  #f5222d, #faad14;
+$remote-selection-colors:
+  #1677ff, #52c41a, #fa8c16, #eb2f96, #13c2c2, #9254de, #f5222d, #faad14;
 
 // Input styles
 .dsg-input {

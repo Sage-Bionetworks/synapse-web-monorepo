@@ -20,7 +20,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { useQuery } from '@tanstack/react-query'
 import type Plotly from 'plotly.js-basic-dist'
-import { useMemo, useState } from 'react'
+import { useId, useMemo, useState } from 'react'
 import { getContrastColorPalette } from '../../ColorGradient/ColorGradient'
 import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
 import loadingScreen from '../../LoadingScreen/LoadingScreen'
@@ -353,11 +353,16 @@ function FacetNavPanel(props: FacetNavPanelProps) {
     enabled: !!facetToPlot,
   })
 
+  const chartSelectionInputLabelId = useId()
+  const filterByInputLabelId = useId()
+
   /* rendering functions */
   const chartSelectionToggle = (
     <StyledFormControl fullWidth>
-      <InputLabel>Chart Type</InputLabel>
+      <InputLabel id={chartSelectionInputLabelId}>Chart Type</InputLabel>
       <Select
+        labelId={chartSelectionInputLabelId}
+        label="Chart Type"
         value={plotType}
         onChange={e => {
           onSetPlotType(e.target.value as PlotType)
@@ -414,6 +419,7 @@ function FacetNavPanel(props: FacetNavPanelProps) {
             >
               <StyledFormControl>
                 <InputLabel
+                  id={filterByInputLabelId}
                   sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
                 >
                   <span>Filter All Data By</span>
@@ -422,6 +428,7 @@ function FacetNavPanel(props: FacetNavPanelProps) {
                   </Tooltip>
                 </InputLabel>
                 <EnumFacetFilter
+                  labelId={filterByInputLabelId}
                   facet={facetToPlot}
                   containerAs="Dropdown"
                   dropdownType="SelectBox"

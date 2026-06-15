@@ -140,6 +140,7 @@ const mockQueryVisualizationContext: QueryVisualizationContextType = {
   showSearchBar: false,
   showSqlEditor: false,
   hideSearchBarControl: false,
+  lockTextMatchesQueryFilterPill: true,
 }
 const mockExportToCavatica = vi.fn()
 const mockExportToTerra = vi.fn()

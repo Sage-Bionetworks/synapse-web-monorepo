@@ -51,6 +51,7 @@ const mockQueryVisualizationContext: QueryVisualizationContextType = {
   showSqlEditor: false,
   unitDescription: '',
   hideSearchBarControl: false,
+  lockTextMatchesQueryFilterPill: true,
 }
 
 const mockUseQueryVisualizationContext = vi

@@ -25,7 +25,7 @@
   "scripts": {
     "type-check": "tsc --build",
     "build": "vite build && tsc -p tsconfig.build.json",
-    "lint": "eslint src/*",
+    "lint": "oxlint src/*",
     "test": "vitest",
     "coverage": "vitest --coverage",
     "prepublishOnly": "pnpm install && pnpm nx run markdown-it-synapse:build"
@@ -41,15 +41,15 @@
   "license": "MIT",
   "devDependencies": {
     "@types/markdown-it": "^13.0.9",
-    "@types/node": "^22.19.13",
-    "@vitest/coverage-v8": "^4.1.4",
-    "@vitest/ui": "^4.1.4",
-    "markdown-it": "^14.1.0",
+    "@types/node": "^22.19.20",
+    "@vitest/coverage-v8": "^4.1.8",
+    "@vitest/ui": "^4.1.8",
+    "markdown-it": "^14.2.0",
     "markdown-it-testgen": "~0.1.6",
     "typescript": "6.0.3",
-    "vite": "^8.0.8",
+    "vite": "^8.0.16",
     "vite-config": "workspace:*",
-    "vitest": "^4.1.4"
+    "vitest": "^4.1.8"
   },
   "directories": {
     "test": "test"

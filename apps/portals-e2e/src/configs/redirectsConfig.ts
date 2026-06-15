@@ -63,7 +63,7 @@ const redirectsConfig: RedirectsConfig = {
   digitalhealth: [],
   eliteportal: [],
   genie: [],
-  namshub: [],
+  namhub: [],
   nf: [
     // Studies (tabbed; default tab = Details)
     [

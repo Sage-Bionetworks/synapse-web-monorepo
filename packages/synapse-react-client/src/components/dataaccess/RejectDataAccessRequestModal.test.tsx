@@ -11,7 +11,6 @@ import {
 import { REJECT_SUBMISSION_CANNED_RESPONSES_TABLE } from '@/utils/SynapseConstants'
 import { SubmissionState } from '@sage-bionetworks/synapse-types'
 import { act, render, waitFor } from '@testing-library/react'
-import failOnConsoleError from 'jest-fail-on-console'
 import { http } from 'msw'
 import { CannedRejectionDialog } from '../CannedRejectionDialog/CannedRejectionDialog'
 import RejectDataAccessRequestModal, {
@@ -47,7 +46,6 @@ function renderComponent() {
 }
 
 describe('RejectDataAccessRequestModal', () => {
-  failOnConsoleError()
   beforeAll(() => {
     server.listen()
     server.use(

@@ -1,6 +1,6 @@
 import SynapseClient from '@/synapse-client'
 import { SynapseClientError, useSynapseContext } from '@/utils'
-import { FeatureFlagEnum, FeatureFlags } from '@sage-bionetworks/synapse-types'
+import { FeatureFlagEnum, FeatureFlags } from '@/utils/featureflag/FeatureFlags'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 
 export function useGetFeatureFlag(

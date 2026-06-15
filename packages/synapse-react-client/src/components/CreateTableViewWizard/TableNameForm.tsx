@@ -1,6 +1,6 @@
 import { useGetFeatureFlag } from '@/synapse-queries'
 import { TextField } from '@mui/material'
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
+import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { Dispatch, SetStateAction } from 'react'
 
 type TableNameFormProps = {
