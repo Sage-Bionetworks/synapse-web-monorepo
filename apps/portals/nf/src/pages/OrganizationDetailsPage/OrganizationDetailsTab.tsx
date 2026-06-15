@@ -5,7 +5,7 @@ import { Box, Paper, Slider, Typography } from '@mui/material'
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 import QueryCount from 'synapse-react-client/components/QueryCount/QueryCount'
-import { SynapseCrossTabBarPlot } from 'synapse-react-client/components/Plot/SynapseCrossTabBarPlot'
+import { SynapsePlot } from 'synapse-react-client/components/Plot/SynapsePlot'
 import { SynapseResearchNetworkPlot } from 'synapse-react-client/components/Plot/SynapsePublicationNetworkPlot'
 import { SynapseMultiSeriesTimeSeriesPlot } from 'synapse-react-client/components/Plot/SynapseMultiSeriesTimeSeriesPlot'
 
@@ -196,13 +196,19 @@ function OrganizationDetailsTab() {
                 projects are predominantly Under Embargo, while completed
                 projects show a substantial proportion of Available data.
               </Typography>
-              <SynapseCrossTabBarPlot
-                sql={pipelineSql}
-                xAxisTitle="Count"
-                yAxisTitle="Project Status"
-                rowOrder={STUDY_STATUS_ORDER}
-                groupOrder={DATA_STATUS_ORDER}
-                height={240}
+              <SynapsePlot
+                synapsePlotWidgetParams={{
+                  query: pipelineSql,
+                  type: 'bar',
+                  xtitle: { text: 'Count' },
+                  ytitle: { text: 'Project Status' },
+                  crossTabConfig: {
+                    rowOrder: STUDY_STATUS_ORDER,
+                    groupOrder: DATA_STATUS_ORDER,
+                    height: 240,
+                    orientation: 'h',
+                  },
+                }}
               />
             </Box>
           ),

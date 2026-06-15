@@ -3,9 +3,7 @@ import type { ThemesPlotProps } from './ThemesPlot'
 import { UpsetPlot } from './UpsetPlot'
 import type { UpsetPlotProps } from './UpsetPlot'
 import { SynapsePlot } from './SynapsePlot'
-import type { SynapsePlotProps } from './SynapsePlot'
-import { SynapseCrossTabBarPlot } from './SynapseCrossTabBarPlot'
-import type { SynapseCrossTabBarPlotProps } from './SynapseCrossTabBarPlot'
+import type { SynapsePlotProps, CrossTabConfig } from './SynapsePlot'
 import { SynapsePublicationNetworkPlot } from './SynapsePublicationNetworkPlot'
 import type { SynapsePublicationNetworkPlotProps } from './SynapsePublicationNetworkPlot'
 import type { ClickCallbackParams } from './types'
@@ -17,8 +15,7 @@ export {
   UpsetPlotProps,
   SynapsePlot,
   SynapsePlotProps,
-  SynapseCrossTabBarPlot,
-  SynapseCrossTabBarPlotProps,
+  CrossTabConfig,
   SynapsePublicationNetworkPlot,
   SynapsePublicationNetworkPlotProps,
   ClickCallbackParams,
