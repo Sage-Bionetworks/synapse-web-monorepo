@@ -159,7 +159,7 @@ function HomePageInternal() {
         subtitle="These explorers provide interactive tools and visualizations to navigate complex datasets, identify key trends, and gain deeper insights into the data on our portal."
         centerTitle
         ContainerProps={{
-          className: 'home-spacer',
+          sx: { marginBottom: '130px' },
         }}
       >
         <div className={styles.resultsExplorersContainer}>
