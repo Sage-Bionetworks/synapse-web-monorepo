@@ -26,6 +26,7 @@ export function ColumnHeaderWithTooltip({
 }: ColumnHeaderWithTooltipProps) {
   return (
     <Box
+      data-column-id={name}
       sx={{
         display: 'grid',
         gridTemplateColumns: 'minmax(0, 1fr) auto',
