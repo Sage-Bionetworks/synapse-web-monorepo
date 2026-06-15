@@ -58,38 +58,48 @@ describe('toSearchIndexQuery', () => {
     expect(result.searchIndexId).toBe('syn99999')
   })
 
-  it('forwards limit and offset from the query', () => {
+  it('forwards limit and offset from the query as size and from', () => {
     const result = toSearchIndexQuery(
       makeQueryBundleRequest({ limit: 10, offset: 20 }),
       SEARCH_INDEX_ID,
     )
-    expect(result.searchQuery?.limit).toBe(10)
-    expect(result.searchQuery?.offset).toBe(20)
+    expect(result.searchQuery?.size).toBe(10)
+    expect(result.searchQuery?.from).toBe(20)
   })
 
-  it('sets queryType to MULTI_MATCH', () => {
+  it('produces a match_all query when no query text or filters are provided', () => {
     const result = toSearchIndexQuery(makeQueryBundleRequest(), SEARCH_INDEX_ID)
-    expect(result.searchQuery?.queryType).toBe('MULTI_MATCH')
+    expect(result.searchQuery?.query).toEqual({ match_all: {} })
   })
 
-  it('sets fuzziness to AUTO', () => {
-    const result = toSearchIndexQuery(makeQueryBundleRequest(), SEARCH_INDEX_ID)
-    expect(result.searchQuery?.fuzziness).toBe('AUTO')
+  it('uses fuzziness AUTO in the multi_match clause when query text is present', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleRequest({
+        additionalFilters: [
+          {
+            concreteType: TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+            searchExpression: 'test',
+          },
+        ],
+      }),
+      SEARCH_INDEX_ID,
+    )
+    expect(result.searchQuery?.query).toMatchObject({
+      multi_match: { fuzziness: 'AUTO' },
+    })
   })
 
-  it('produces no termsFilters, rangeFilters, facetRequests, or sort when the query is empty', () => {
+  it('produces match_all query, no aggregations, and no sort when the query is empty', () => {
     const result = toSearchIndexQuery(makeQueryBundleRequest(), SEARCH_INDEX_ID)
     const q = result.searchQuery!
-    expect(q.termsFilters).toBeUndefined()
-    expect(q.rangeFilters).toBeUndefined()
-    expect(q.facetRequests).toBeUndefined()
+    expect(q.query).toEqual({ match_all: {} })
+    expect(q.aggregations).toBeUndefined()
     expect(q.sort).toBeUndefined()
-    expect(q.queryText).toBeUndefined()
   })
 
-  // ---- selectedFacets → termsFilters / rangeFilters ---
+  // ---- selectedFacets → query DSL filter clauses ---
 
-  it('maps enumeration selectedFacets to termsFilters', () => {
+  it('maps enumeration selectedFacets to terms filter clauses in the query DSL', () => {
     const result = toSearchIndexQuery(
       makeQueryBundleRequest({
         selectedFacets: [
@@ -102,12 +112,12 @@ describe('toSearchIndexQuery', () => {
       }),
       SEARCH_INDEX_ID,
     )
-    expect(result.searchQuery?.termsFilters).toEqual([
-      { key: 'consortium', values: ['HTAN', 'CPTAC'] },
-    ])
+    expect(result.searchQuery?.query).toMatchObject({
+      bool: { filter: [{ terms: { consortium: ['HTAN', 'CPTAC'] } }] },
+    })
   })
 
-  it('maps range selectedFacets to rangeFilters', () => {
+  it('maps range selectedFacets to range filter clauses in the query DSL', () => {
     const result = toSearchIndexQuery(
       makeQueryBundleRequest({
         selectedFacets: [
@@ -121,9 +131,13 @@ describe('toSearchIndexQuery', () => {
       }),
       SEARCH_INDEX_ID,
     )
-    expect(result.searchQuery?.rangeFilters).toEqual([
-      { key: 'modified_on', min: '1000000', max: '2000000' },
-    ])
+    expect(result.searchQuery?.query).toMatchObject({
+      bool: {
+        filter: [
+          { range: { modified_on: { gte: '1000000', lte: '2000000' } } },
+        ],
+      },
+    })
   })
 
   it('converts DATE range filter values from YYYY-MM-DD to unix milliseconds', () => {
@@ -148,9 +162,20 @@ describe('toSearchIndexQuery', () => {
         },
       ],
     )
-    const rf = result.searchQuery?.rangeFilters![0]
-    expect(rf?.min).toBe(String(dayjs('2021-06-01').valueOf()))
-    expect(rf?.max).toBe(String(dayjs('2021-12-31').valueOf()))
+    expect(result.searchQuery?.query).toMatchObject({
+      bool: {
+        filter: [
+          {
+            range: {
+              event_date: {
+                gte: String(dayjs('2021-06-01').valueOf()),
+                lte: String(dayjs('2021-12-31').valueOf()),
+              },
+            },
+          },
+        ],
+      },
+    })
   })
 
   it('passes non-DATE range filter values through unchanged', () => {
@@ -168,9 +193,11 @@ describe('toSearchIndexQuery', () => {
       SEARCH_INDEX_ID,
       [{ id: 'c1', name: 'year', columnType: 'INTEGER', facetType: 'range' }],
     )
-    const rf = result.searchQuery?.rangeFilters![0]
-    expect(rf?.min).toBe('1996')
-    expect(rf?.max).toBe('1999')
+    expect(result.searchQuery?.query).toMatchObject({
+      bool: {
+        filter: [{ range: { year: { gte: '1996', lte: '1999' } } }],
+      },
+    })
   })
 
   it('keeps undefined range filter bounds as undefined without conversion', () => {
@@ -195,9 +222,26 @@ describe('toSearchIndexQuery', () => {
         },
       ],
     )
-    const rf = result.searchQuery?.rangeFilters![0]
-    expect(rf?.min).toBeUndefined()
-    expect(rf?.max).toBe(String(dayjs('2021-12-31').valueOf()))
+    // Only lte should be present; gte should be absent
+    expect(result.searchQuery?.query).toMatchObject({
+      bool: {
+        filter: [
+          {
+            range: {
+              event_date: { lte: String(dayjs('2021-12-31').valueOf()) },
+            },
+          },
+        ],
+      },
+    })
+    const rangeClause = (
+      result.searchQuery?.query as {
+        bool: {
+          filter: Array<{ range: { event_date: Record<string, unknown> } }>
+        }
+      }
+    )?.bool?.filter?.[0]?.range?.event_date
+    expect(rangeClause).not.toHaveProperty('gte')
   })
 
   it('keeps enumeration and range selectedFacets separate', () => {
@@ -219,13 +263,33 @@ describe('toSearchIndexQuery', () => {
       }),
       SEARCH_INDEX_ID,
     )
-    expect(result.searchQuery?.termsFilters).toHaveLength(1)
-    expect(result.searchQuery?.rangeFilters).toHaveLength(1)
+    // Both filter clauses should appear in the bool.filter array
+    expect(
+      (result.searchQuery?.query as { bool: { filter: unknown[] } })?.bool
+        ?.filter,
+    ).toHaveLength(2)
   })
 
-  // ---- additionalFilters → queryText ---
+  // ---- additionalFilters → query DSL ---
 
-  it('concatenates TextMatchesQueryFilter searchExpressions into queryText', () => {
+  it('sets the query to multi_match when only a TextMatchesQueryFilter is present', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleRequest({
+        additionalFilters: [
+          {
+            concreteType: TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+            searchExpression: 'glioblastoma brain',
+          },
+        ],
+      }),
+      SEARCH_INDEX_ID,
+    )
+    expect(result.searchQuery?.query).toMatchObject({
+      multi_match: { query: 'glioblastoma brain' },
+    })
+  })
+
+  it('concatenates TextMatchesQueryFilter searchExpressions into a single multi_match query', () => {
     const result = toSearchIndexQuery(
       makeQueryBundleRequest({
         additionalFilters: [
@@ -241,20 +305,49 @@ describe('toSearchIndexQuery', () => {
       }),
       SEARCH_INDEX_ID,
     )
-    expect(result.searchQuery?.queryText).toBe('glioblastoma brain')
+    expect(result.searchQuery?.query).toMatchObject({
+      multi_match: { query: 'glioblastoma brain' },
+    })
   })
 
-  it('produces undefined queryText when no TextMatchesQueryFilter is present', () => {
+  it('produces match_all query when no TextMatchesQueryFilter is present', () => {
     const result = toSearchIndexQuery(
       makeQueryBundleRequest({ additionalFilters: [] }),
       SEARCH_INDEX_ID,
     )
-    expect(result.searchQuery?.queryText).toBeUndefined()
+    expect(result.searchQuery?.query).toEqual({ match_all: {} })
   })
 
-  // ---- columnModels → facetRequests ---
+  it('wraps text + filter queries in a bool.must + bool.filter clause', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleRequest({
+        additionalFilters: [
+          {
+            concreteType: TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+            searchExpression: 'glioblastoma',
+          },
+        ],
+        selectedFacets: [
+          {
+            concreteType: FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+            columnName: 'organ',
+            facetValues: ['Brain'],
+          },
+        ],
+      }),
+      SEARCH_INDEX_ID,
+    )
+    expect(result.searchQuery?.query).toMatchObject({
+      bool: {
+        must: [{ multi_match: { query: 'glioblastoma' } }],
+        filter: [{ terms: { organ: ['Brain'] } }],
+      },
+    })
+  })
 
-  it('builds facetRequests from columnModels that have a facetType', () => {
+  // ---- columnModels → aggregations ---
+
+  it('builds aggregations from columnModels that have facetType enumeration', () => {
     const result = toSearchIndexQuery(
       makeQueryBundleRequest(),
       SEARCH_INDEX_ID,
@@ -268,20 +361,20 @@ describe('toSearchIndexQuery', () => {
         { id: 'c2', name: 'description', columnType: 'STRING' }, // no facetType → excluded
       ],
     )
-    expect(result.searchQuery?.facetRequests).toHaveLength(1)
-    expect(result.searchQuery?.facetRequests![0].columnName).toBe('consortium')
+    expect(Object.keys(result.searchQuery?.aggregations ?? {})).toHaveLength(1)
+    expect(result.searchQuery?.aggregations?.['consortium']).toBeDefined()
   })
 
-  it('excludes columnModels without a facetType from facetRequests', () => {
+  it('excludes columnModels without a facetType from aggregations', () => {
     const result = toSearchIndexQuery(
       makeQueryBundleRequest(),
       SEARCH_INDEX_ID,
       [{ id: 'c1', name: 'description', columnType: 'STRING' }],
     )
-    expect(result.searchQuery?.facetRequests).toBeUndefined()
+    expect(result.searchQuery?.aggregations).toBeUndefined()
   })
 
-  it('excludes range-type columns from facetRequests, keeping only enumeration columns', () => {
+  it('excludes range-type columns from aggregations, keeping only enumeration columns', () => {
     const result = toSearchIndexQuery(
       makeQueryBundleRequest(),
       SEARCH_INDEX_ID,
@@ -295,16 +388,16 @@ describe('toSearchIndexQuery', () => {
         },
       ],
     )
-    expect(result.searchQuery?.facetRequests).toHaveLength(1)
-    expect(result.searchQuery?.facetRequests![0].columnName).toBe('consortium')
+    expect(Object.keys(result.searchQuery?.aggregations ?? {})).toHaveLength(1)
+    expect(result.searchQuery?.aggregations?.['consortium']).toBeDefined()
   })
 
-  it('produces undefined facetRequests when columnModels is not provided', () => {
+  it('produces undefined aggregations when columnModels is not provided', () => {
     const result = toSearchIndexQuery(makeQueryBundleRequest(), SEARCH_INDEX_ID)
-    expect(result.searchQuery?.facetRequests).toBeUndefined()
+    expect(result.searchQuery?.aggregations).toBeUndefined()
   })
 
-  it('maps facetSortConfig.property VALUE → sortField KEY', () => {
+  it('maps facetSortConfig.property VALUE → OpenSearch order key _key (ascending)', () => {
     const result = toSearchIndexQuery(
       makeQueryBundleRequest(),
       SEARCH_INDEX_ID,
@@ -318,10 +411,12 @@ describe('toSearchIndexQuery', () => {
         },
       ],
     )
-    expect(result.searchQuery?.facetRequests![0].sortField).toBe('KEY')
+    expect(
+      result.searchQuery?.aggregations?.['consortium']?.terms?.order,
+    ).toEqual({ _key: 'asc' })
   })
 
-  it('maps facetSortConfig.property FREQUENCY → sortField COUNT', () => {
+  it('maps facetSortConfig.property FREQUENCY DESC → OpenSearch order key _count descending', () => {
     const result = toSearchIndexQuery(
       makeQueryBundleRequest(),
       SEARCH_INDEX_ID,
@@ -335,13 +430,14 @@ describe('toSearchIndexQuery', () => {
         },
       ],
     )
-    expect(result.searchQuery?.facetRequests![0].sortField).toBe('COUNT')
-    expect(result.searchQuery?.facetRequests![0].sortDirection).toBe('DESC')
+    expect(
+      result.searchQuery?.aggregations?.['consortium']?.terms?.order,
+    ).toEqual({ _count: 'desc' })
   })
 
   // ---- query.sort → sort ---
 
-  it('maps query.sort SortItem[] to SearchSortField[]', () => {
+  it('maps query.sort SortItem[] to OpenSearch sort objects', () => {
     const result = toSearchIndexQuery(
       makeQueryBundleRequest({
         sort: [
@@ -352,8 +448,8 @@ describe('toSearchIndexQuery', () => {
       SEARCH_INDEX_ID,
     )
     expect(result.searchQuery?.sort).toEqual([
-      { columnName: 'name', direction: 'ASC' },
-      { columnName: 'modified_on', direction: 'DESC' },
+      { name: 'asc' },
+      { modified_on: 'desc' },
     ])
   })
 
@@ -367,9 +463,7 @@ describe('toSearchIndexQuery', () => {
       }),
       SEARCH_INDEX_ID,
     )
-    expect(result.searchQuery?.sort).toEqual([
-      { columnName: 'modified_on', direction: 'DESC' },
-    ])
+    expect(result.searchQuery?.sort).toEqual([{ modified_on: 'desc' }])
   })
 
   it('produces undefined sort when all entries have empty direction', () => {
@@ -548,54 +642,43 @@ describe('searchQueryResultsToQueryResultBundle', () => {
     expect(result.queryResult?.queryResults.tableId).toBe('syn99999')
   })
 
-  it('forwards the facets from the search results as-is when no columnModels are provided', () => {
-    const facets = [
-      {
-        concreteType:
-          'org.sagebionetworks.repo.model.table.FacetColumnResultValues' as const,
-        columnName: 'organ',
-        facetType: 'enumeration' as const,
-        facetValues: [{ value: 'Brain', count: 5, isSelected: false }],
-      },
-    ]
+  it('parses aggregationResults into FacetColumnResultValues when no columnModels are provided', () => {
     const results: SearchQueryResults = {
       concreteType: 'org.sagebionetworks.repo.model.search.SearchQueryResults',
       totalHits: 5,
       hits: [],
       selectColumns: [],
-      facets,
+      aggregationResults: {
+        organ: { buckets: [{ key: 'Brain', doc_count: 5 }] },
+      },
     }
     const result = searchQueryResultsToQueryResultBundle(
       results,
       MINIMAL_SEARCH_INDEX_QUERY,
     )
-    expect(result.facets).toEqual(facets)
+    expect(result.facets).toHaveLength(1)
+    expect(result.facets![0]).toMatchObject({
+      concreteType:
+        'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
+      columnName: 'organ',
+      facetType: 'enumeration',
+      facetValues: [{ value: 'Brain', count: 5, isSelected: false }],
+    })
   })
 
   it('reorders facets to match the columnModels order', () => {
-    const facetOrgan = {
-      concreteType:
-        'org.sagebionetworks.repo.model.table.FacetColumnResultValues' as const,
-      columnName: 'organ',
-      facetType: 'enumeration' as const,
-      facetValues: [{ value: 'Brain', count: 5, isSelected: false }],
-    }
-    const facetConsortium = {
-      concreteType:
-        'org.sagebionetworks.repo.model.table.FacetColumnResultValues' as const,
-      columnName: 'consortium',
-      facetType: 'enumeration' as const,
-      facetValues: [{ value: 'HTAN', count: 3, isSelected: false }],
-    }
-    // Server returns facets in a different order than columnModels.
-    // Note: the server never returns FacetColumnResultRange; the age facet is synthesized
-    // from columnModels by searchQueryResultsToQueryResultBundle.
+    // Server aggregations come in a different order than columnModels.
+    // Note: range columns (age) are synthesized by searchQueryResultsToQueryResultBundle;
+    // they are not returned in aggregationResults.
     const results: SearchQueryResults = {
       concreteType: 'org.sagebionetworks.repo.model.search.SearchQueryResults',
       totalHits: 5,
       hits: [],
       selectColumns: [],
-      facets: [facetOrgan, facetConsortium],
+      aggregationResults: {
+        organ: { buckets: [{ key: 'Brain', doc_count: 5 }] },
+        consortium: { buckets: [{ key: 'HTAN', doc_count: 3 }] },
+      },
     }
     // columnModels order: consortium → age → organ
     const columnModels = [
@@ -631,26 +714,16 @@ describe('searchQueryResultsToQueryResultBundle', () => {
   })
 
   it('appends facets with no matching columnModel at the end', () => {
-    const facetKnown = {
-      concreteType:
-        'org.sagebionetworks.repo.model.table.FacetColumnResultValues' as const,
-      columnName: 'consortium',
-      facetType: 'enumeration' as const,
-      facetValues: [],
-    }
-    const facetUnknown = {
-      concreteType:
-        'org.sagebionetworks.repo.model.table.FacetColumnResultValues' as const,
-      columnName: 'unknownColumn',
-      facetType: 'enumeration' as const,
-      facetValues: [],
-    }
     const results: SearchQueryResults = {
       concreteType: 'org.sagebionetworks.repo.model.search.SearchQueryResults',
       totalHits: 2,
       hits: [],
       selectColumns: [],
-      facets: [facetUnknown, facetKnown],
+      // 'unknownColumn' has no matching columnModel; 'consortium' does
+      aggregationResults: {
+        unknownColumn: { buckets: [] },
+        consortium: { buckets: [] },
+      },
     }
     const columnModels = [
       {
@@ -801,32 +874,7 @@ describe('searchQueryResultsToQueryResultBundle', () => {
     expect(facet.columnMax).toBe('')
   })
 
-  it('converts unix millisecond rangeFilter values to YYYY-MM-DD for synthesized DATE facet selectedMin and selectedMax', () => {
-    const minMs = dayjs('2021-06-01').valueOf()
-    const maxMs = dayjs('2021-12-31').valueOf()
-    const query: SearchIndexQuery = {
-      ...MINIMAL_SEARCH_INDEX_QUERY,
-      searchQuery: {
-        rangeFilters: [
-          { key: 'event_date', min: String(minMs), max: String(maxMs) },
-        ],
-      },
-    }
-    const results: SearchQueryResults = {
-      concreteType: 'org.sagebionetworks.repo.model.search.SearchQueryResults',
-      totalHits: 0,
-      hits: [],
-      selectColumns: [],
-    }
-    const result = searchQueryResultsToQueryResultBundle(results, query, [
-      { id: 'c1', name: 'event_date', columnType: 'DATE', facetType: 'range' },
-    ])
-    const facet = result.facets![0] as FacetColumnResultRange
-    expect(facet.selectedMin).toBe('2021-06-01')
-    expect(facet.selectedMax).toBe('2021-12-31')
-  })
-
-  it('leaves selectedMin and selectedMax undefined when no matching rangeFilter exists in the query', () => {
+  it('reads selectedMin and selectedMax from selectedFacets for DATE range columns', () => {
     const results: SearchQueryResults = {
       concreteType: 'org.sagebionetworks.repo.model.search.SearchQueryResults',
       totalHits: 0,
@@ -835,7 +883,39 @@ describe('searchQueryResultsToQueryResultBundle', () => {
     }
     const result = searchQueryResultsToQueryResultBundle(
       results,
-      MINIMAL_SEARCH_INDEX_QUERY, // no rangeFilters
+      MINIMAL_SEARCH_INDEX_QUERY,
+      [
+        {
+          id: 'c1',
+          name: 'event_date',
+          columnType: 'DATE',
+          facetType: 'range',
+        },
+      ],
+      [
+        {
+          concreteType: FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
+          columnName: 'event_date',
+          min: '2021-06-01',
+          max: '2021-12-31',
+        },
+      ],
+    )
+    const facet = result.facets![0] as FacetColumnResultRange
+    expect(facet.selectedMin).toBe('2021-06-01')
+    expect(facet.selectedMax).toBe('2021-12-31')
+  })
+
+  it('leaves selectedMin and selectedMax undefined when no selectedFacets are provided', () => {
+    const results: SearchQueryResults = {
+      concreteType: 'org.sagebionetworks.repo.model.search.SearchQueryResults',
+      totalHits: 0,
+      hits: [],
+      selectColumns: [],
+    }
+    const result = searchQueryResultsToQueryResultBundle(
+      results,
+      MINIMAL_SEARCH_INDEX_QUERY,
       [
         {
           id: 'c1',
@@ -850,25 +930,33 @@ describe('searchQueryResultsToQueryResultBundle', () => {
     expect(facet.selectedMax).toBeUndefined()
   })
 
-  it('supports one-sided synthesized ranges when only one rangeFilter bound is set', () => {
-    const maxMs = dayjs('2021-12-31').valueOf()
-    const query: SearchIndexQuery = {
-      ...MINIMAL_SEARCH_INDEX_QUERY,
-      searchQuery: {
-        rangeFilters: [
-          { key: 'event_date', min: undefined, max: String(maxMs) },
-        ],
-      },
-    }
+  it('supports one-sided synthesized ranges when only one selectedFacets bound is set', () => {
     const results: SearchQueryResults = {
       concreteType: 'org.sagebionetworks.repo.model.search.SearchQueryResults',
       totalHits: 0,
       hits: [],
       selectColumns: [],
     }
-    const result = searchQueryResultsToQueryResultBundle(results, query, [
-      { id: 'c1', name: 'event_date', columnType: 'DATE', facetType: 'range' },
-    ])
+    const result = searchQueryResultsToQueryResultBundle(
+      results,
+      MINIMAL_SEARCH_INDEX_QUERY,
+      [
+        {
+          id: 'c1',
+          name: 'event_date',
+          columnType: 'DATE',
+          facetType: 'range',
+        },
+      ],
+      [
+        {
+          concreteType: FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
+          columnName: 'event_date',
+          min: undefined,
+          max: '2021-12-31',
+        },
+      ],
+    )
     const facet = result.facets![0] as FacetColumnResultRange
     expect(facet.selectedMin).toBeUndefined()
     expect(facet.selectedMax).toBe('2021-12-31')
