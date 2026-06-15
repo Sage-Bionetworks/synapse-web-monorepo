@@ -1,5 +1,5 @@
 import { Box, IconButton, Tooltip } from '@mui/material'
-import { HelpTwoTone, PushPin, PushPinOutlined } from '@mui/icons-material'
+import { PushPin, PushPinOutlined } from '@mui/icons-material'
 import { TOOLTIP_DELAY_SHOW } from '@/components/SynapseTable/SynapseTableConstants'
 
 type ColumnHeaderWithTooltipProps = {
@@ -11,8 +11,9 @@ type ColumnHeaderWithTooltipProps = {
 }
 
 /**
- * Renders a column header with an optional help icon showing the column description.
- * Adopts the help icon pattern from ColumnHeader for consistent UX.
+ * Renders a column header. When a description is provided, hovering the column
+ * name shows it as a native tooltip; otherwise the column name is shown (useful
+ * for truncated headers). An optional pin icon is shown on the right.
  */
 export function ColumnHeaderWithTooltip({
   name,
@@ -41,24 +42,13 @@ export function ColumnHeaderWithTooltip({
           whiteSpace: 'nowrap',
           minWidth: 0,
         }}
-        title={name} // Native tooltip for truncated text
+        title={description || name}
       >
         {name}
       </Box>
 
       {/* Icons area - fixed size, never shrinks */}
       <Box sx={{ display: 'flex', gap: 0.5, flexShrink: 0 }}>
-        {description && (
-          <Tooltip
-            title={description}
-            placement="top"
-            enterNextDelay={TOOLTIP_DELAY_SHOW}
-          >
-            <IconButton size="small" color="inherit">
-              <HelpTwoTone fontSize="inherit" />
-            </IconButton>
-          </Tooltip>
-        )}
         {showPinIcon && onTogglePin && (
           <Tooltip
             title={isPinned ? 'Unpin column' : 'Pin column'}
