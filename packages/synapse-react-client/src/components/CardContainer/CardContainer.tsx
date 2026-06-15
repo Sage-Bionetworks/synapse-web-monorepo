@@ -120,9 +120,12 @@ function CardContainerInternal(props: CardContainerProps) {
   if (type === MEDIUM_USER_CARD) {
     // Hard coding ownerId as a column name containing the user profile ownerId
     // for each row, grab the column with the ownerId
-    const userIdColumnIndex = rowSet.headers.findIndex(
-      el => el.columnType === ColumnTypeEnum.USERID,
-    )
+    const userIdColumnName = queryMetadata.columnModels?.find(
+      cm => cm.columnType === ColumnTypeEnum.USERID,
+    )?.name
+    const userIdColumnIndex = userIdColumnName
+      ? rowSet.headers.findIndex(el => el.name === userIdColumnName)
+      : -1
     if (userIdColumnIndex === -1) {
       throw Error(
         'Type MEDIUM_USER_CARD specified but no columnType USERID found',

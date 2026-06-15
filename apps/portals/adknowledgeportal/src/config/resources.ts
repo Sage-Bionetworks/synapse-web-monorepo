@@ -35,6 +35,15 @@ export const targetEnablingResourcesDetailsPageSql =
 export const cavaticaConnectAccountURL =
   'https://help.adknowledgeportal.org/apd/CAVATICA.4271145000.html'
 
+export const computationalSearchIndexId = 'syn75418908'
+export const peopleSearchIndexId = 'syn75418911'
+export const projectsSearchIndexId = 'syn75418912'
+export const publicationsSearchIndexId = 'syn75418913'
+export const studiesSearchIndexId = 'syn75418915'
+export const programsSearchIndexId = 'syn75418917'
+export const experimentalModelsSearchIndexId = 'syn75418918'
+export const targetEnablingResourcesSearchIndexId = 'syn75418925'
+
 export const enabledAnalysisPlatforms: ExternalAnalysisPlatform[] = [
   'cavatica',
   'terra',
