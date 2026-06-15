@@ -10,10 +10,12 @@ import headerSvg from '../config/style/header.svg?url'
 import CardGridWithLinks from 'synapse-react-client/components/CardGridWithLinks/CardGridWithLinks'
 import GoalsV3 from 'synapse-react-client/components/GoalsV3/GoalsV3'
 import PortalFeaturedPartners from 'synapse-react-client/components/PortalFeaturedPartners/PortalFeaturedPartners'
+import SynapseSankeyPlot from 'synapse-react-client/components/Plot/SynapseSankeyPlot'
 import {
   datasetsSql,
   goalsTableEntityId,
   partnersSql,
+  sankeyPlotSql,
 } from '@/config/resources'
 import { ReactComponent as DatasetsIcon } from '../../src/config/style/datasets.svg'
 import { ReactComponent as FilesIcon } from '../../src/config/style/files.svg'
@@ -139,6 +141,7 @@ export default function HomePage() {
             projects: ProjectsIcon,
           }}
         />
+        <SynapseSankeyPlot sql={sankeyPlotSql} rootLabel="All Datasets" />
       </SectionLayout>
       {/* <AMPALSExploreTheData sql={upsetPlotSql} /> */}
       <HowToAccessData />
