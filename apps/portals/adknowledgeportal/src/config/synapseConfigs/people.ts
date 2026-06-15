@@ -36,7 +36,7 @@ export const peopleSearch: SearchQueryWrapperPlotNavProps = {
     type: SynapseConstants.MEDIUM_USER_CARD,
   },
   searchIndexId: peopleSearchIndexId,
-  autocompleteFieldName: 'firstName',
+  // autocompleteFieldName: 'lastName',
   hideTopLevelControls: false,
   hideQueryCount: false,
 }
