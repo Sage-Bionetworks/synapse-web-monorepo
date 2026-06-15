@@ -1,6 +1,8 @@
-import { Box, Container, Typography } from '@mui/material'
+import { Box, Container, Skeleton, Typography } from '@mui/material'
 import { Link } from 'react-router'
-import QueryCount from 'synapse-react-client/components/QueryCount/QueryCount'
+import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
+import { parseEntityIdFromSqlStatement } from 'synapse-react-client/utils/functions/SqlFunctions'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import {
   datasetsSql,
   filesSql,
@@ -8,6 +10,26 @@ import {
   studiesSql,
   toolsSql,
 } from '../config/resources'
+
+function StatCount({ sql }: { sql: string }) {
+  const entityId = parseEntityIdFromSqlStatement(sql)
+  const { data } = useGetQueryResultBundle({
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    query: { sql },
+    entityId,
+    partMask: SynapseConstants.BUNDLE_MASK_QUERY_COUNT,
+  })
+  const count = data?.queryCount?.toLocaleString()
+  if (!count)
+    return (
+      <Skeleton
+        variant="text"
+        width={64}
+        sx={{ fontSize: 'inherit', display: 'inline-block' }}
+      />
+    )
+  return <>{count}</>
+}
 
 const STATS = [
   { label: 'Studies', sql: studiesSql, href: '/Explore/Studies' },
@@ -71,7 +93,7 @@ export default function NFStatsBanner() {
                   fontVariantNumeric: 'tabular-nums',
                 }}
               >
-                <QueryCount parens={false} query={{ sql }} />
+                <StatCount sql={sql} />
               </Typography>
               <Typography
                 sx={{

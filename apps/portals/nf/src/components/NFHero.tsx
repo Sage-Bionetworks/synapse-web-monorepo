@@ -71,7 +71,7 @@ export default function NFHero() {
                 mb: 2.5,
               }}
             >
-              Open data for NF research
+              Your home for NF research
             </Typography>
             <Typography
               variant="body1"

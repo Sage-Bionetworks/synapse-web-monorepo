@@ -33,10 +33,9 @@ const SOURCES: NewsSource[] = [
     name: 'NF-OSI Updates',
     description:
       'Portal announcements, new datasets, feature releases, and open science initiatives from the NF Open Science Initiative.',
-    url: 'https://github.com/nf-osi',
+    url: 'https://sagebionetworks.us7.list-manage.com/subscribe?u=b146de537186191a9d2110f3a&id=063befda5a',
     category: 'portal',
     social: [
-      { platform: 'GitHub', url: 'https://github.com/nf-osi' },
       {
         platform: 'Newsletter',
         url: 'https://sagebionetworks.us7.list-manage.com/subscribe?u=b146de537186191a9d2110f3a&id=063befda5a',
@@ -50,7 +49,8 @@ const SOURCES: NewsSource[] = [
     url: 'https://www.ctf.org/news/',
     category: 'funder',
     social: [
-      { platform: 'Blog', url: 'https://www.ctf.org/news/' },
+      { platform: 'Website', url: 'https://www.ctf.org/' },
+      { platform: 'News', url: 'https://www.ctf.org/news/' },
       { platform: 'Twitter/X', url: 'https://twitter.com/ctf_org' },
     ],
   },
@@ -58,9 +58,13 @@ const SOURCES: NewsSource[] = [
     name: 'Neurofibromatosis Therapeutic Acceleration Program (NTAP)',
     description:
       'Accelerating development of therapies for NF1-related tumors through academic-industry partnerships.',
-    url: 'https://www.ntap.us.com/news',
+    url: 'https://www.n-tap.org/who-we-are/news',
     category: 'funder',
-    social: [{ platform: 'News', url: 'https://www.ntap.us.com/news' }],
+    social: [
+      { platform: 'Website', url: 'https://www.n-tap.org/' },
+      { platform: 'News', url: 'https://www.n-tap.org/who-we-are/news' },
+      { platform: 'Twitter/X', url: 'https://x.com/ntapresearch' },
+    ],
   },
   {
     name: 'Gilbert Family Foundation (GFF)',
@@ -76,18 +80,22 @@ const SOURCES: NewsSource[] = [
     name: 'NF Research Initiative (NFRI)',
     description:
       'Coordinating NF research funding and accelerating discovery across the NF spectrum.',
-    url: 'https://nfresearch.org/',
+    url: 'https://www.nfresearch-childrens.org/news',
     category: 'funder',
-    social: [{ platform: 'Website', url: 'https://nfresearch.org/' }],
+    social: [
+      { platform: 'Website', url: 'https://www.nfresearch-childrens.org/' },
+      { platform: 'News', url: 'https://www.nfresearch-childrens.org/news' },
+    ],
   },
   {
     name: 'Sage Bionetworks',
     description:
       'Sage Bionetworks operates Synapse, the collaborative data platform underlying the NF Data Portal, and supports open science infrastructure for NF research.',
-    url: 'https://sagebionetworks.org/news/',
+    url: 'https://blog.synapse.org/',
     category: 'research',
     social: [
-      { platform: 'Blog', url: 'https://sagebionetworks.org/news/' },
+      { platform: 'Website', url: 'https://sagebionetworks.org/' },
+      { platform: 'Blog', url: 'https://blog.synapse.org/' },
       { platform: 'Twitter/X', url: 'https://twitter.com/sagebio' },
     ],
   },
@@ -105,7 +113,10 @@ const SOURCES: NewsSource[] = [
       'Regional NF advocacy and patient support sharing research updates.',
     url: 'https://www.nfmidwest.org/news/',
     category: 'community',
-    social: [{ platform: 'News', url: 'https://www.nfmidwest.org/news/' }],
+    social: [
+      { platform: 'Website', url: 'https://www.nfmidwest.org/' },
+      { platform: 'News', url: 'https://www.nfmidwest.org/news/' },
+    ],
   },
 ]
 
@@ -360,17 +371,16 @@ export default function News() {
         </Box>
 
         <Box sx={{ mt: 6, textAlign: 'center' }}>
-          <Typography variant="body2" sx={{ color: '#8A9BB0' }}>
+          <Typography variant="body1" sx={{ color: '#8A9BB0' }}>
             Know a resource that should be listed here?{' '}
             <Link
-              href="https://github.com/nf-osi/nf-metadata-dictionary/issues"
+              href="https://sagebionetworks.jira.com/servicedesk/customer/portal/2"
               target="_blank"
               underline="hover"
               sx={{ color: '#125e81' }}
             >
-              Open an issue on GitHub
-            </Link>{' '}
-            or reach out via the NF-OSI newsletter.
+              Contact us
+            </Link>
           </Typography>
         </Box>
       </Container>

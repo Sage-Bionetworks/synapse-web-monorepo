@@ -4,12 +4,23 @@
   background-blend-mode: multiply;
 }
 
-/* Allow the navbar search field to expand between the logo and nav links */
+/* Logo shrinks to content width; search box's margin-left:auto pushes everything right */
 .nav-logo-container {
   flex-basis: auto;
 }
 .nav-link-container {
   flex-basis: auto;
+}
+
+/* Hide the navbar search box when the nav collapses to mobile grid (≤1280px).
+   MUI md=900px doesn't match the nav collapse point, so we suppress it here. */
+@media screen and (max-width: 1280px) {
+  .nav.top-nav
+    > *:not(.nav-logo-container):not(.nav-mobile-menu-btn):not(
+      .nav-link-container
+    ) {
+    display: none !important;
+  }
 }
 .InitiativeCardList {
   .SRC-portalCardMain {
