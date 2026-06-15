@@ -1,7 +1,7 @@
-import { peopleQueryWrapperPlotNavProps } from '@/config/synapseConfigs'
+import { peopleSearch } from '@/config/synapseConfigs'
 import { portalMetadata } from '@/config/portalMetadata'
 import { createStaticMeta } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/index'
+import SearchQueryWrapperPlotNav from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 export const meta = createStaticMeta(
   { title: 'Explore People' },
@@ -9,6 +9,6 @@ export const meta = createStaticMeta(
 )
 
 function ExplorePeople() {
-  return <QueryWrapperPlotNav {...peopleQueryWrapperPlotNavProps} />
+  return <SearchQueryWrapperPlotNav {...peopleSearch} shouldDeepLink={true} />
 }
 export default ExplorePeople
