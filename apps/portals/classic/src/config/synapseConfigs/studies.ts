@@ -1,7 +1,12 @@
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import { defaultSearchConfiguration, studiesSql } from '../resources'
+import {
+  defaultSearchConfiguration,
+  studiesSearchIndexId,
+  studiesSql,
+} from '../resources'
 import { TargetEnum } from 'synapse-react-client/utils/html/TargetEnum'
 
 export const studiesRgbIndex = 0
@@ -57,6 +62,18 @@ const studiesQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   shouldDeepLink: true,
   cardConfiguration: studyCardConfiguration,
   searchConfiguration: defaultSearchConfiguration,
+}
+
+export const studiesSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex: studiesRgbIndex,
+  columnAliases: studyColumnAliases,
+  name: 'Studies',
+  shouldDeepLink: false,
+  searchIndexId: studiesSearchIndexId,
+  autocompleteFieldName: 'studyName',
+  cardConfiguration: studyCardConfiguration,
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }
 
 export default studiesQueryWrapperPlotNavProps

@@ -1,7 +1,12 @@
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import { defaultSearchConfiguration, publicationsSql } from '../resources'
+import {
+  defaultSearchConfiguration,
+  publicationsSearchIndexId,
+  publicationsSql,
+} from '../resources'
 
 const rgbIndex = 5
 
@@ -24,6 +29,18 @@ const publicationsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   facetsToPlot: ['Program', 'Year', 'Grant', 'Journal'],
   cardConfiguration: publicationCardProps,
   searchConfiguration: defaultSearchConfiguration,
+}
+
+export const publicationsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'Publications',
+  shouldDeepLink: false,
+  searchIndexId: publicationsSearchIndexId,
+  autocompleteFieldName: 'dataFileName',
+  cardConfiguration: publicationCardProps,
+  facetsToPlot: ['Program', 'Year', 'Grant', 'Journal'],
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }
 
 export default publicationsQueryWrapperPlotNavProps
