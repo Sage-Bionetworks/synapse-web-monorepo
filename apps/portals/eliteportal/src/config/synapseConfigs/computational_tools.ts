@@ -3,7 +3,12 @@ import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/Q
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import { TargetEnum } from 'synapse-react-client/utils/html/TargetEnum'
-import { computationalSql, defaultSearchConfiguration } from '../resources'
+import {
+  computationalSearchIndexId,
+  computationalSql,
+  defaultSearchConfiguration,
+} from '../resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 const computationalSchema: TableToGenericCardMapping = {
   type: SynapseConstants.COMPUTATIONAL,
@@ -55,6 +60,18 @@ const computationalToolsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   name: 'Tools',
   facetsToPlot: ['project'],
   searchConfiguration: defaultSearchConfiguration,
+}
+
+export const computationalToolsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'Tools',
+  shouldDeepLink: false,
+  cardConfiguration: computationalCardConfiguration,
+  facetsToPlot: ['project'],
+  searchIndexId: computationalSearchIndexId,
+  autocompleteFieldName: 'name',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }
 
 export default computationalToolsQueryWrapperPlotNavProps

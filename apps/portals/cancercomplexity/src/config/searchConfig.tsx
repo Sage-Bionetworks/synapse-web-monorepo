@@ -46,10 +46,10 @@ export const roleMapping: Record<
 }
 
 export const portalSearchPageConfigs = [
-  cckpConfigs.grants,
-  cckpConfigs.people,
-  cckpConfigs.publications,
-  cckpConfigs.datasets,
-  cckpConfigs.tools,
-  cckpConfigs.education,
+  cckpConfigs.grantsSearch,
+  cckpConfigs.peopleSearch,
+  cckpConfigs.publicationsSearch,
+  cckpConfigs.datasetsSearch,
+  cckpConfigs.toolsSearch,
+  cckpConfigs.educationSearch,
 ]

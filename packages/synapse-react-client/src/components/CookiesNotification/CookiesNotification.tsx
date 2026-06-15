@@ -13,10 +13,10 @@ import {
 import React from 'react'
 import { Link, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
-import UniversalCookies from 'universal-cookie'
 import FullWidthAlert from '../FullWidthAlert'
 import CookiePreferencesDialog from './CookiePreferencesDialog'
 import styles from './CookiesNotification.module.scss'
+import { useCookieValue } from '@react-hookz/web/useCookieValue/index.js'
 
 export const alertConfig = {
   title: 'Our site uses cookies.',
@@ -59,10 +59,14 @@ const CookiesNotification = (
   const [, setCookiePreferences] = useCookiePreferences()
 
   const [notificationDismissed, setNotificationDismissed] = useState(true)
+
+  const [notificationDismissedCookie] = useCookieValue(
+    COOKIES_AGREEMENT_COOKIE_KEY,
+  )
+
   useEffect(() => {
-    const cookies = new UniversalCookies()
-    setNotificationDismissed(!!cookies.get(COOKIES_AGREEMENT_COOKIE_KEY))
-  }, [])
+    setNotificationDismissed(!!notificationDismissedCookie)
+  }, [notificationDismissedCookie])
 
   const [isCookiePrefsDialogVisible, setIsCookiePrefsDialogVisible] =
     useState(false)

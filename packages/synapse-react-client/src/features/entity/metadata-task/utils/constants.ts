@@ -33,12 +33,17 @@ export const RECORD_BASED_TASK_DESCRIPTION =
 export const RECORD_BASED_RECORD_SET_INPUT_DESCRIPTION =
   'Select the Synapse record set that should be used for this task.'
 
+export const AUTH_MODE_NONE_TITLE = 'Work independently'
 export const AUTH_MODE_NONE_TOOLTIP =
-  "Sessions are not linked to this task — each user starts their own independent grid session. Without coordination, users may overwrite each other's annotations. Use this only to maintain existing tasks that predate session management, or if your workflow does not require collaboration."
+  'This is the legacy behavior. Each contributor works on their own view of the data, based on what they personally have permission to edit. Without coordination, users may overwrite each other’s annotations.'
+
+export const AUTH_MODE_SESSION_OWNER_TITLE = 'Share with assignees only'
 export const AUTH_MODE_SESSION_OWNER_TOOLTIP =
-  'The grid session is owned by the task assignee (or assignee team). Only the assignee or their team members can join, and the session includes only rows that the assignee has edit access to. Best suited for File Views that span entities with varied access permissions.'
+  'The assigned user or team works together in one shared grid session. Only those assignees can join, and they’ll only see rows that every assignee has permission to edit.'
+
+export const AUTH_MODE_SOURCE_BENEFACTOR_TITLE = 'Share with all editors'
 export const AUTH_MODE_SOURCE_BENEFACTOR_TOOLTIP =
-  'The grid session is accessible to any user with edit access to all benefactors of the source entities. The session includes all rows that the creating user has edit access to. Best suited for tasks that manage metadata across many entities with consistent permissions, such as a project-level File View.'
+  'Contributors work together in one shared grid session. Anyone who has edit access to the task’s data can join and edit the rows available in the session.'
 
 export const TASK_NAME_INPUT_DESCRIPTION =
   'Specify the task name so that contributors know which task they should work on.'
@@ -55,6 +60,14 @@ export const UNRECOGNIZED_TASK_TYPE_ERROR =
 export const AUTH_MODE_CHANGED_WARNING =
   'Changing the Authorization Mode will clear the active session ID on this task. Any in-progress grid session linked to this task will no longer be associated with it.'
 export const GENERIC_SAVE_ERROR_MESSAGE = 'An error occurred. Please try again.'
+
+export const DELETE_CURATION_TASK_DIALOG_TITLE = 'Delete Task'
+export const DELETE_CURATION_TASK_CONFIRMATION_PROMPT =
+  'Are you sure you want to delete this task? This action cannot be undone.'
+export const DELETE_CURATION_TASK_GRID_SESSION_WARNING =
+  'Any grid sessions associated with this task will also be deleted.'
+export const DELETE_CURATION_TASK_SUCCESS_TOAST = 'Task deleted successfully'
+export const DELETE_CURATION_TASK_ERROR_TOAST_PREFIX = 'Error deleting task: '
 
 export const UPLOAD_FOLDER_FINDER_TITLE = 'Select Upload Folder'
 export const UPLOAD_FOLDER_FINDER_PROMPT =

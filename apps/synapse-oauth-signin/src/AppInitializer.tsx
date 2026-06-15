@@ -1,20 +1,22 @@
-import { PropsWithChildren, useCallback, useMemo } from 'react'
+import { PropsWithChildren, useCallback } from 'react'
 import { useSearchParams } from 'react-router'
 import { ApplicationSessionManager } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionManager'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { useFramebuster } from 'synapse-react-client/utils/AppUtils/AppUtils'
-import UniversalCookies from 'universal-cookie'
 import { OAuthClientError } from './OAuthClientError'
 import { handleErrorRedirect } from './URLUtils'
 import useGoogleAnalytics from 'synapse-react-client/utils/analytics/useGoogleAnalytics'
+import { useCookieValue } from '@react-hookz/web/useCookieValue/index.js'
 
 function AppInitializer(props: PropsWithChildren<Record<string, unknown>>) {
   useGoogleAnalytics()
   const [searchParams] = useSearchParams()
-  const cookies = useMemo(() => new UniversalCookies(), [])
-  const accountSitePrompted =
-    cookies.get(SynapseConstants.ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY) ==
-    'true' // short-lived cookie
+
+  const [accountSitePromptedCookie] = useCookieValue(
+    SynapseConstants.ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY,
+  )
+
+  const accountSitePrompted = accountSitePromptedCookie === 'true' // short-lived cookie
   const prompt = accountSitePrompted ? 'none' : searchParams.get('prompt')
 
   let maxAge = undefined

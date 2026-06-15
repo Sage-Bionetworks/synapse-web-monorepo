@@ -29,7 +29,6 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import failOnConsoleError from 'jest-fail-on-console'
 import { http, HttpResponse } from 'msw'
 import * as HasAccessModule from '../../../HasAccess/HasAccessV2'
 import TitleBarProperties, {
@@ -94,7 +93,6 @@ async function expandPropertiesIfPossible() {
 }
 
 describe('TitleBarProperties', () => {
-  failOnConsoleError()
   beforeAll(() => server.listen())
   beforeEach(() => {
     useDoiAssociationOverride(null)

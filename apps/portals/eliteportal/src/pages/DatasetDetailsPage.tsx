@@ -85,7 +85,7 @@ function DatasetDetailsPage() {
             title: 'Publications',
             id: 'Publications',
             element: (
-              <DetailsPageContextConsumer columnName={'publicationIds'}>
+              <DetailsPageContextConsumer columnName={'PubmedId'}>
                 {({ value }) => (
                   <CardContainerLogic
                     cardConfiguration={publicationCardProps}
@@ -95,7 +95,7 @@ function DatasetDetailsPage() {
                         {
                           concreteType:
                             'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-                          columnName: 'id',
+                          columnName: 'PubmedId',
                           operator: ColumnSingleValueFilterOperator.IN,
                           values: value!.split(',').map(v => v.trim()),
                         },

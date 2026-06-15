@@ -18,7 +18,6 @@ import { CssBaseline } from '@mui/material'
 import type { PaletteOptions } from '@mui/material/styles'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState, type ReactNode } from 'react'
-import { CookiesProvider } from 'react-cookie'
 import { Outlet } from 'react-router'
 import { ThemeProvider } from 'synapse-react-client/theme/ThemeProvider'
 import { DocumentMetadataProvider } from 'synapse-react-client/utils/context/DocumentMetadataContext'
@@ -54,16 +53,14 @@ export default function PortalRoot(props: PortalRootProps) {
 
   return (
     <PortalContextProvider value={portalContext}>
-      <CookiesProvider>
-        <ThemeProvider theme={{ palette }}>
-          <CssBaseline />
-          <QueryClientProvider client={queryClient}>
-            <DocumentMetadataProvider defaultTitle={portalContext.portalName}>
-              {children ?? <Outlet />}
-            </DocumentMetadataProvider>
-          </QueryClientProvider>
-        </ThemeProvider>
-      </CookiesProvider>
+      <ThemeProvider theme={{ palette }}>
+        <CssBaseline />
+        <QueryClientProvider client={queryClient}>
+          <DocumentMetadataProvider defaultTitle={portalContext.portalName}>
+            {children ?? <Outlet />}
+          </DocumentMetadataProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
     </PortalContextProvider>
   )
 }

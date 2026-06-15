@@ -37,7 +37,6 @@ configs, etc.) carry real content.
 "@tanstack/react-query": "^5.80.7",
 "isbot": "^5",
 "jsdom": "^28.1.0",
-"react-cookie": "^7.2.2",
 
 // devDependencies
 "@react-router/dev": "^7.14.0",

@@ -1,9 +1,12 @@
-import { targetEnablingResourcesQueryWrapperPlotNavProps } from '@/config/synapseConfigs/target_enabling_resources'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import { targetEnablingResourcesSearch } from '@/config/synapseConfigs/target_enabling_resources'
+import SearchQueryWrapperPlotNav from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 function ExploreTargetEnablingResources() {
   return (
-    <QueryWrapperPlotNav {...targetEnablingResourcesQueryWrapperPlotNavProps} />
+    <SearchQueryWrapperPlotNav
+      {...targetEnablingResourcesSearch}
+      shouldDeepLink={true}
+    />
   )
 }
 

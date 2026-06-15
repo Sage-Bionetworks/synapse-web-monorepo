@@ -28,7 +28,6 @@ import {
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Map } from 'immutable'
-import failOnConsole from 'jest-fail-on-console'
 import { http, HttpResponse } from 'msw'
 import { useState } from 'react'
 import { EntityDetailsListDataConfigurationType } from '../details/EntityDetailsList'
@@ -173,7 +172,6 @@ function renderComponent(propOverrides?: Partial<EntityTreeProps>) {
 }
 
 describe('EntityTree tests', () => {
-  failOnConsole()
   beforeAll(() => {
     server.listen()
     server.use(

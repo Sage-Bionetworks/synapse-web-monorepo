@@ -525,6 +525,28 @@ describe('useDataGridWebSocket', () => {
     })
   })
 
+  it('should surface websocketError when the server sends an error notification', async () => {
+    const { result } = renderHook(() => useDataGridWebSocket(), {
+      wrapper: createWrapper(),
+    })
+
+    act(() => {
+      result.current.connect(50, 'error-notif-session')
+    })
+
+    await waitFor(() => {
+      expect(result.current.websocketInstance).not.toBeNull()
+    })
+
+    expect(result.current.websocketError).toBeNull()
+
+    act(() => {
+      MockDataGridWebSocket.mock.lastCall![0].onError!('something went wrong')
+    })
+
+    expect(result.current.websocketError).toBe('something went wrong')
+  })
+
   it('should disconnect the websocket on unmount without clearing the model', async () => {
     const { result, unmount } = renderHook(() => useDataGridWebSocket(), {
       wrapper: createWrapper(),

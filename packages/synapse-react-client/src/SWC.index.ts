@@ -80,6 +80,9 @@ const SynapseComponents = {
   CreateOrUpdateDoiModal: lazy(
     () => import('./components/doi/CreateOrUpdateDoiModal'),
   ),
+  CreateTableFromCsvDialog: lazy(
+    () => import('./components/table/CsvPreview/CreateTableFromCsvDialog'),
+  ),
   CreateTableViewWizard: lazy(
     () => import('./components/CreateTableViewWizard/CreateTableViewWizard'),
   ),
@@ -226,6 +229,9 @@ const SynapseComponents = {
       import('./components/TableColumnSchemaEditor/TableColumnSchemaEditor'),
   ),
   TrashCanList: lazy(() => import('./components/trash/TrashCanList')),
+  UpdateTableWithCsvDialog: lazy(
+    () => import('./components/table/CsvPreview/UpdateTableWithCsvDialog'),
+  ),
   UserAccessRequestHistoryPlace: lazy(
     () =>
       import('./components/dataaccess/UserAccessRequestHistory/UserAccessRequestHistoryPlace'),

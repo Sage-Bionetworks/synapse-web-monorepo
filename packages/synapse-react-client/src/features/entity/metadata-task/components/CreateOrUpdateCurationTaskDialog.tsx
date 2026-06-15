@@ -1,14 +1,17 @@
+import { ConfirmationDialog } from '@/components/ConfirmationDialog'
 import { DialogBase } from '@/components/DialogBase'
 import EntityIdTextField from '@/components/EntityFinder/EntityIdTextField'
 import { FinderScope } from '@/components/EntityFinder/tree/EntityTree'
 import { VersionSelectionType } from '@/components/EntityFinder/VersionSelectionType'
 import { TextField } from '@/components/TextField'
+import { displayToast } from '@/components/ToastMessage'
 import UserOrTeamBadge from '@/components/UserOrTeamBadge/UserOrTeamBadge'
 import UserSearchBox from '@/components/UserSearchBox/UserSearchBox'
 import WizardChoiceButton from '@/components/WizardChoiceButton/WizardChoiceButton'
 import WizardChoiceButtonGroup from '@/components/WizardChoiceButton/WizardChoiceButtonGroup'
 import {
   useCreateCurationTask,
+  useDeleteCurationTask,
   useUpdateCurationTask,
 } from '@/synapse-queries/curation/task/useCurationTask'
 import { EntityTypeGroup } from '@/utils/functions/EntityTypeUtils'
@@ -42,11 +45,19 @@ import { useState } from 'react'
 import {
   ASSIGNEE_TOOLTIP,
   AUTH_MODE_CHANGED_WARNING,
+  AUTH_MODE_NONE_TITLE,
   AUTH_MODE_NONE_TOOLTIP,
+  AUTH_MODE_SESSION_OWNER_TITLE,
   AUTH_MODE_SESSION_OWNER_TOOLTIP,
+  AUTH_MODE_SOURCE_BENEFACTOR_TITLE,
   AUTH_MODE_SOURCE_BENEFACTOR_TOOLTIP,
   COLLABORATORS_TOOLTIP,
   CREATE_CURATION_TASK_DIALOG_TITLE,
+  DELETE_CURATION_TASK_CONFIRMATION_PROMPT,
+  DELETE_CURATION_TASK_DIALOG_TITLE,
+  DELETE_CURATION_TASK_ERROR_TOAST_PREFIX,
+  DELETE_CURATION_TASK_GRID_SESSION_WARNING,
+  DELETE_CURATION_TASK_SUCCESS_TOAST,
   EDIT_CURATION_TASK_DIALOG_TITLE,
   FILE_BASED_FILE_VIEW_INPUT_DESCRIPTION,
   FILE_BASED_TASK_DESCRIPTION,
@@ -67,11 +78,18 @@ import {
   UPLOAD_FOLDER_FINDER_PROMPT,
   UPLOAD_FOLDER_FINDER_TITLE,
 } from '../utils/constants'
+import noop from 'lodash-es/noop'
+import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 
 export type CreateOrUpdateCurationTaskDialogProps = {
   open: boolean
   onCancel: () => void
   onSuccess: (task: CurationTask) => void
+  /**
+   * Called after the task has been deleted from the dialog (edit mode only).
+   * Parent is responsible for closing the dialog and any related cleanup.
+   */
+  onDeleteSuccess?: () => void
   projectId: string
   task?: CurationTask
 }
@@ -102,8 +120,23 @@ type CreateOrUpdateCurationTaskDialogStep =
 export default function CreateOrUpdateCurationTaskDialog(
   props: CreateOrUpdateCurationTaskDialogProps,
 ) {
-  const { open, onCancel, onSuccess, projectId, task } = props
+  const {
+    open,
+    onCancel,
+    onSuccess,
+    onDeleteSuccess = noop,
+    projectId,
+    task,
+  } = props
   const isEditMode = task !== undefined
+  const { data: permissions } = useGetEntityPermissions(projectId)
+  const canDelete =
+    permissions?.canDelete &&
+    isEditMode &&
+    task?.taskId != null &&
+    props.onDeleteSuccess != null
+
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
 
   // In create mode: track which step we're on (1 = type selection, 2 = type-specific fields, 3 = common mutable fields)
   const [step, setStep] = useState<CreateOrUpdateCurationTaskDialogStep>(() =>
@@ -192,7 +225,22 @@ export default function CreateOrUpdateCurationTaskDialog(
     },
   })
 
-  const isPending = isCreatePending || isUpdatePending
+  const { mutate: deleteTask, isPending: isDeletePending } =
+    useDeleteCurationTask({
+      onSuccess: () => {
+        displayToast(DELETE_CURATION_TASK_SUCCESS_TOAST, 'success')
+        setShowDeleteConfirmation(false)
+        onDeleteSuccess()
+      },
+      onError: err => {
+        displayToast(
+          DELETE_CURATION_TASK_ERROR_TOAST_PREFIX + err.message,
+          'danger',
+        )
+      },
+    })
+
+  const isPending = isCreatePending || isUpdatePending || isDeletePending
   const error = createError ?? updateError
 
   const isTaskPropertiesValid =
@@ -263,7 +311,7 @@ export default function CreateOrUpdateCurationTaskDialog(
           control={<Radio />}
           label={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Typography variant="body1">None (Legacy)</Typography>
+              <Typography variant="body1">{AUTH_MODE_NONE_TITLE}</Typography>
               <Tooltip title={AUTH_MODE_NONE_TOOLTIP}>
                 <HelpTwoTone sx={{ color: 'grey.700' }} />
               </Tooltip>
@@ -275,7 +323,9 @@ export default function CreateOrUpdateCurationTaskDialog(
           control={<Radio />}
           label={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Typography variant="body1">Session Owner</Typography>
+              <Typography variant="body1">
+                {AUTH_MODE_SESSION_OWNER_TITLE}
+              </Typography>
               <Tooltip title={AUTH_MODE_SESSION_OWNER_TOOLTIP}>
                 <HelpTwoTone sx={{ color: 'grey.700' }} />
               </Tooltip>
@@ -287,7 +337,9 @@ export default function CreateOrUpdateCurationTaskDialog(
           control={<Radio />}
           label={
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Typography variant="body1">Source Benefactor</Typography>
+              <Typography variant="body1">
+                {AUTH_MODE_SOURCE_BENEFACTOR_TITLE}
+              </Typography>
               <Tooltip title={AUTH_MODE_SOURCE_BENEFACTOR_TOOLTIP}>
                 <HelpTwoTone sx={{ color: 'grey.700' }} />
               </Tooltip>
@@ -602,18 +654,63 @@ export default function CreateOrUpdateCurationTaskDialog(
   }
 
   return (
-    <DialogBase
-      open={open}
-      title={title}
-      maxWidth="md"
-      fullWidth
-      onCancel={onCancel}
-      content={dialogContent}
-      actions={
-        <Stack direction="row" gap={1} justifyContent="flex-end" width="100%">
-          {dialogActions}
-        </Stack>
-      }
-    />
+    <>
+      <DialogBase
+        open={open}
+        title={title}
+        maxWidth="md"
+        fullWidth
+        onCancel={onCancel}
+        content={dialogContent}
+        actions={
+          <Stack
+            direction="row"
+            gap={1}
+            justifyContent="space-between"
+            alignItems="center"
+            width="100%"
+          >
+            <Box>
+              {canDelete && (
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => setShowDeleteConfirmation(true)}
+                  disabled={isPending}
+                >
+                  Delete
+                </Button>
+              )}
+            </Box>
+            <Stack direction="row" gap={1}>
+              {dialogActions}
+            </Stack>
+          </Stack>
+        }
+      />
+      <ConfirmationDialog
+        title={DELETE_CURATION_TASK_DIALOG_TITLE}
+        open={showDeleteConfirmation}
+        content={
+          <Stack gap={2}>
+            <Typography variant="body1">
+              {DELETE_CURATION_TASK_CONFIRMATION_PROMPT}
+            </Typography>
+            <Alert severity="warning">
+              {DELETE_CURATION_TASK_GRID_SESSION_WARNING}
+            </Alert>
+          </Stack>
+        }
+        confirmButtonProps={{
+          children: 'Delete',
+          color: 'error',
+          loading: isDeletePending,
+        }}
+        onConfirm={() => {
+          if (task?.taskId != null) deleteTask(task.taskId)
+        }}
+        onCancel={() => setShowDeleteConfirmation(false)}
+      />
+    </>
   )
 }
