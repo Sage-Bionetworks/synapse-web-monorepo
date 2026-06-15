@@ -8,6 +8,7 @@ import {
   FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
   FacetColumnRangeRequest,
   FacetColumnResultRange,
+  FacetColumnResultValues,
   FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
   FacetColumnValuesRequest,
   QueryBundleRequest,
@@ -18,18 +19,13 @@ import {
   TextMatchesQueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import type {
-  FacetRequest,
-  KeyValues,
+  Aggregation,
+  DslQuery,
   SearchIndexQuery,
-  SearchKeyRange,
   SearchQueryResults,
   SearchSearchQuery,
-  SearchSortField,
   SynapseClientError,
-} from '@sage-bionetworks/synapse-client'
-import {
-  FacetRequestSortDirectionEnum as FacetRequestSortDirectionEnumValues,
-  FacetRequestSortFieldEnum as FacetRequestSortFieldEnumValues,
+  TermsAggregation,
 } from '@sage-bionetworks/synapse-client'
 import {
   InfiniteData,
@@ -41,6 +37,33 @@ import { omit } from 'lodash-es'
 import dayjs from 'dayjs'
 import { useCallback, useMemo } from 'react'
 import { KeyFactory } from '@/synapse-queries/KeyFactory'
+
+// ─── Local OpenSearch DSL types ─────────────────────────────────────────────
+// Narrow typings for the OpenSearch structures we build (query DSL, sort) and
+// parse (aggregation results). These are intentionally minimal – only the fields
+// we actually produce/consume are declared. Aggregation types use the generated
+// Aggregation/TermsAggregation types from @sage-bionetworks/synapse-client.
+
+type FilterClause =
+  | { terms: Record<string, string[]> }
+  | { range: Record<string, { gte?: string; lte?: string }> }
+
+type MultiMatchClause = { multi_match: { query: string; fuzziness: string } }
+
+type BoolQuery = {
+  bool: {
+    must?: [MultiMatchClause]
+    filter?: FilterClause[]
+  }
+}
+
+type SearchQueryDSL =
+  | MultiMatchClause
+  | { match_all: Record<never, never> }
+  | BoolQuery
+
+type OpenSearchBucket = { key: unknown; doc_count: number }
+type OpenSearchTermsAgg = { buckets?: OpenSearchBucket[] }
 
 /**
  * TanStack Query options for the SearchQueryServicesApi, mirroring TableQueryUseQueryOptions
@@ -73,12 +96,13 @@ export type SearchTableQueryUseQueryOptions = {
  * that can be sent to the SearchQueryServicesApi.
  *
  * Mapping:
- *  - columnModels (facetType defined) → facetRequests (columns to aggregate as facets, with optional sort config)
- *  - query.selectedFacets (enumeration) → termsFilters (IN-clause filters)
- *  - query.selectedFacets (range) → rangeFilters (range filters)
- *  - query.sort → sort (SortItem { column, direction } → SearchSortField { columnName, direction })
- *  - query.limit → limit
- *  - query.offset → offset
+ *  - columnModels (facetType 'enumeration') → aggregations (OpenSearch terms aggregations)
+ *  - query.selectedFacets (enumeration) → query.bool.filter terms clauses
+ *  - query.selectedFacets (range) → query.bool.filter range clauses
+ *  - query.additionalFilters (TextMatchesQueryFilter) → multi_match query clause
+ *  - query.sort → sort (SortItem { column, direction } → [{ column: 'asc'|'desc' }])
+ *  - query.limit → size
+ *  - query.offset → from
  *  - partMask → dropped (SearchIndexQuery has no bitmask concept)
  */
 export function toSearchIndexQuery(
@@ -86,67 +110,66 @@ export function toSearchIndexQuery(
   searchIndexId: string,
   columnModels?: ColumnModel[],
 ): SearchIndexQuery {
-  // Build facetRequests from ColumnModels that have a facetType of 'enumeration'.
-  // Range columns are excluded: the Search API's FacetRequest only supports terms aggregations
-  // and cannot produce the min/max stats needed for FacetColumnResultRange.
-  const facetRequests: FacetRequest[] | undefined = columnModels
+  // Build aggregations from ColumnModels that have facetType 'enumeration'.
+  // Range columns are excluded: we synthesize FacetColumnResultRange entries client-side.
+  const aggregationEntries = columnModels
     ?.filter(cm => cm.facetType === 'enumeration')
     .map(cm => {
-      const facetReq: FacetRequest = { columnName: cm.name, maxValueCount: 100 }
-      if (cm.facetSortConfig) {
-        // Map FacetColumnSortProperty ('FREQUENCY'|'VALUE') → FacetRequestSortFieldEnum ('COUNT'|'KEY')
-        if (cm.facetSortConfig.property != null) {
-          facetReq.sortField =
-            cm.facetSortConfig.property === 'VALUE'
-              ? FacetRequestSortFieldEnumValues.KEY
-              : FacetRequestSortFieldEnumValues.COUNT
-        }
-        if (cm.facetSortConfig.direction != null) {
-          facetReq.sortDirection =
-            cm.facetSortConfig.direction === 'ASC'
-              ? FacetRequestSortDirectionEnumValues.ASC
-              : FacetRequestSortDirectionEnumValues.DESC
-        }
+      const termsAgg: TermsAggregation = { field: cm.name, size: 100 }
+      if (cm.facetSortConfig?.property != null) {
+        // Map FacetColumnSortProperty ('VALUE'|'FREQUENCY') → OpenSearch order key ('_key'|'_count')
+        const orderKey =
+          cm.facetSortConfig.property === 'VALUE' ? '_key' : '_count'
+        const orderDir =
+          cm.facetSortConfig.direction === 'DESC' ? 'desc' : 'asc'
+        termsAgg.order = { [orderKey]: orderDir }
       }
-      return facetReq
+      return [cm.name, { terms: termsAgg }] as [string, Aggregation]
+    })
+  const aggregations =
+    aggregationEntries && aggregationEntries.length > 0
+      ? Object.fromEntries(aggregationEntries)
+      : undefined
+
+  // Build filter clauses from enumeration selectedFacets
+  const filterClauses: FilterClause[] = []
+
+  queryBundleRequest.query.selectedFacets
+    ?.filter(
+      (f): f is FacetColumnValuesRequest =>
+        f.concreteType === FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+    )
+    .forEach(f => {
+      filterClauses.push({ terms: { [f.columnName]: f.facetValues ?? [] } })
     })
 
-  // Build termsFilters from enumeration selectedFacets
-  const termsFilters: KeyValues[] | undefined =
-    queryBundleRequest.query.selectedFacets
-      ?.filter(
-        (f): f is FacetColumnValuesRequest =>
-          f.concreteType === FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
-      )
-      .map(f => ({ key: f.columnName, values: f.facetValues }))
-
-  // Build rangeFilters from range selectedFacets.
-  // DATE columns: the Range UI component emits formatted dates ("YYYY-MM-DD") but the
-  // Search API (OpenSearch) expects unix millisecond timestamps. Convert here.
-  const rangeFilters: SearchKeyRange[] | undefined =
-    queryBundleRequest.query.selectedFacets
-      ?.filter(
-        (f): f is FacetColumnRangeRequest =>
-          f.concreteType === FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
-      )
-      .map(f => {
-        const columnType = columnModels?.find(
-          cm => cm.name === f.columnName,
-        )?.columnType
-        const toApiValue = (v: string | undefined): string | undefined => {
-          if (!v || columnType !== 'DATE') return v
-          // Convert "YYYY-MM-DD" → unix ms; leave already-numeric values untouched
-          if (/^\d{4}-\d{2}-\d{2}$/.test(v)) {
-            return String(dayjs(v).valueOf())
-          }
-          return v
+  // Build range filter clauses from range selectedFacets.
+  // DATE columns: the Range UI emits formatted dates ("YYYY-MM-DD") but OpenSearch
+  // expects unix millisecond timestamps. Convert here.
+  queryBundleRequest.query.selectedFacets
+    ?.filter(
+      (f): f is FacetColumnRangeRequest =>
+        f.concreteType === FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
+    )
+    .forEach(f => {
+      const columnType = columnModels?.find(
+        cm => cm.name === f.columnName,
+      )?.columnType
+      const toApiValue = (v: string | undefined): string | undefined => {
+        if (!v || columnType !== 'DATE') return v
+        // Convert "YYYY-MM-DD" → unix ms; leave already-numeric values untouched
+        if (/^\d{4}-\d{2}-\d{2}$/.test(v)) {
+          return String(dayjs(v).valueOf())
         }
-        return {
-          key: f.columnName,
-          min: toApiValue(f.min),
-          max: toApiValue(f.max),
-        }
-      })
+        return v
+      }
+      const rangeClause: { gte?: string; lte?: string } = {}
+      const min = toApiValue(f.min)
+      const max = toApiValue(f.max)
+      if (min !== undefined) rangeClause.gte = min
+      if (max !== undefined) rangeClause.lte = max
+      filterClauses.push({ range: { [f.columnName]: rangeClause } })
+    })
 
   // Extract queryText by concatenating all TextMatchesQueryFilter searchExpression values
   const textMatchesExpressions = queryBundleRequest.query.additionalFilters
@@ -161,25 +184,38 @@ export function toSearchIndexQuery(
       ? textMatchesExpressions.join(' ')
       : undefined
 
-  // Map SortItem[] (column + direction) → SearchSortField[] (columnName + direction),
+  // Build the OpenSearch query DSL
+  let query: SearchQueryDSL
+  if (queryText && filterClauses.length > 0) {
+    query = {
+      bool: {
+        must: [{ multi_match: { query: queryText, fuzziness: 'AUTO' } }],
+        filter: filterClauses,
+      },
+    }
+  } else if (queryText) {
+    query = { multi_match: { query: queryText, fuzziness: 'AUTO' } }
+  } else if (filterClauses.length > 0) {
+    query = { bool: { filter: filterClauses } }
+  } else {
+    query = { match_all: {} }
+  }
+
+  // Map SortItem[] → OpenSearch sort shape: [{ columnName: 'asc'|'desc' }, ...]
   // filtering out entries with no direction (which mean "remove sort").
-  const sort: SearchSortField[] | undefined = queryBundleRequest.query.sort
+  const sortEntries = queryBundleRequest.query.sort
     ?.filter(
       (s): s is SortItem & { direction: 'ASC' | 'DESC' } =>
         s.direction === 'ASC' || s.direction === 'DESC',
     )
-    .map(s => ({ columnName: s.column, direction: s.direction }))
+    .map(s => ({ [s.column]: s.direction.toLowerCase() }))
 
   const searchQuery: SearchSearchQuery = {
-    facetRequests: facetRequests?.length ? facetRequests : undefined,
-    termsFilters: termsFilters?.length ? termsFilters : undefined,
-    rangeFilters: rangeFilters?.length ? rangeFilters : undefined,
-    queryText,
-    queryType: 'MULTI_MATCH',
-    fuzziness: 'AUTO',
-    sort: sort?.length ? sort : undefined,
-    limit: queryBundleRequest.query.limit,
-    offset: queryBundleRequest.query.offset,
+    query: query as unknown as DslQuery,
+    aggregations,
+    sort: sortEntries?.length ? sortEntries : undefined,
+    size: queryBundleRequest.query.limit,
+    from: queryBundleRequest.query.offset,
   }
 
   return {
@@ -197,12 +233,13 @@ export function toSearchIndexQuery(
  * Mapping:
  *  - totalHits → queryCount
  *  - hits → queryResult.queryResults (rows derived from hit.rowId/rowVersion/fields)
- *  - facets → facets (same FacetColumnResult type)
+ *  - aggregationResults → facets (parsed from opaque OpenSearch aggregation JSON)
  */
 export function searchQueryResultsToQueryResultBundle(
   results: SearchQueryResults | undefined,
   query: SearchIndexQuery,
   columnModels?: ColumnModel[],
+  selectedFacets?: (FacetColumnValuesRequest | FacetColumnRangeRequest)[],
 ): QueryResultBundle {
   if (!results) {
     return {
@@ -248,13 +285,44 @@ export function searchQueryResultsToQueryResultBundle(
         }
       : undefined
 
-  const rawFacets = results.facets as QueryResultBundle['facets']
+  // Parse aggregationResults (opaque OpenSearch terms aggregation JSON) into
+  // FacetColumnResultValues. Each key in aggregationResults corresponds to a column name
+  // whose aggregation was requested in toSearchIndexQuery. The value is an OpenSearch
+  // terms aggregation response: { buckets: [{ key: unknown, doc_count: number }] }.
+  // We cast once via `unknown` to attach our narrow local type and avoid unsafe-access lint.
+  const aggregationResults = results.aggregationResults as unknown as Record<
+    string,
+    OpenSearchTermsAgg
+  > | null
+  const rawFacets: FacetColumnResultValues[] = Object.entries(
+    aggregationResults ?? {},
+  ).map(([columnName, agg]) => {
+    const selectedValues =
+      selectedFacets
+        ?.filter(
+          (f): f is FacetColumnValuesRequest =>
+            f.concreteType ===
+              FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE &&
+            f.columnName === columnName,
+        )
+        .flatMap(f => f.facetValues ?? []) ?? []
+    return {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.FacetColumnResultValues' as const,
+      facetType: 'enumeration' as const,
+      columnName,
+      facetValues: (agg.buckets ?? []).map(b => ({
+        value: String(b.key),
+        count: b.doc_count,
+        isSelected: selectedValues.includes(String(b.key)),
+      })),
+    }
+  })
 
-  // Synthesize FacetColumnResultRange for range-type DATE/DOUBLE/INTEGER columns. The Search API's
-  // FacetRequest only produces terms aggregations and cannot return min/max stats, so these
-  // entries will never appear in results.facets. columnMin/columnMax are empty strings
-  // (unavailable from the server); selectedMin/selectedMax are derived from the query's
-  // rangeFilters so any applied range filter is still reflected in the UI.
+  // Synthesize FacetColumnResultRange for range-type DATE/DOUBLE/INTEGER columns. The Search
+  // API's aggregations only produce terms (enumeration) results; range stats are unavailable
+  // server-side. columnMin/columnMax are left empty; selectedMin/selectedMax are taken
+  // directly from selectedFacets so any applied range filter is still reflected in the UI.
   // Note: for INTEGER columns the RangeSlider requires real bounds, so the UI falls back to a
   // plain Range number input when columnMin/columnMax are absent.
   const syntheticRangeFacets: FacetColumnResultRange[] = (columnModels ?? [])
@@ -264,21 +332,14 @@ export function searchQueryResultsToQueryResultBundle(
         (cm.columnType === 'DATE' ||
           cm.columnType === 'DOUBLE' ||
           cm.columnType === 'INTEGER') &&
-        !(rawFacets ?? []).some(f => f.columnName === cm.name),
+        !rawFacets.some(f => f.columnName === cm.name),
     )
     .map(cm => {
-      const rangeFilter = query.searchQuery?.rangeFilters?.find(
-        rf => rf.key === cm.name,
+      const rangeFilter = selectedFacets?.find(
+        (f): f is FacetColumnRangeRequest =>
+          f.concreteType === FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE &&
+          f.columnName === cm.name,
       )
-      // rangeFilters carry unix ms for DATE columns (converted in toSearchIndexQuery).
-      // Convert back to "YYYY-MM-DD" so the Range UI component can display them.
-      const toDisplayValue = (v: string | undefined): string | undefined => {
-        if (!v || cm.columnType !== 'DATE') return v
-        if (/^\d+$/.test(v)) {
-          return dayjs(parseInt(v)).format('YYYY-MM-DD')
-        }
-        return v
-      }
       return {
         concreteType:
           'org.sagebionetworks.repo.model.table.FacetColumnResultRange' as const,
@@ -286,8 +347,8 @@ export function searchQueryResultsToQueryResultBundle(
         columnName: cm.name,
         columnMin: '',
         columnMax: '',
-        selectedMin: toDisplayValue(rangeFilter?.min),
-        selectedMax: toDisplayValue(rangeFilter?.max),
+        selectedMin: rangeFilter?.min,
+        selectedMax: rangeFilter?.max,
       }
     })
 
@@ -338,11 +399,11 @@ export function getSearchQueryUseQueryOptions(
     ...baseQuery,
     searchQuery: {
       ...baseQuery.searchQuery,
-      // Omit facetRequests from the row data query: facet aggregations are only needed
-      // in the metadata query (which requests FACETS). Removing facetRequests here keeps
-      // the row data query key stable while column models are loading, preventing an
-      // unnecessary re-fetch (and a brief loading flash) when column models first arrive.
-      facetRequests: undefined,
+      // Omit aggregations from the row data query: facet aggregations are only needed
+      // in the metadata query. Removing them here keeps the row data query key stable
+      // while column models are loading, preventing an unnecessary re-fetch (and a brief
+      // loading flash) when column models first arrive.
+      aggregations: undefined,
     },
     // Request SELECT_COLUMNS so headers are available for row rendering.
     // HITS is returned by default even when responseParts is specified.
@@ -353,8 +414,8 @@ export function getSearchQueryUseQueryOptions(
     // Request all opt-in parts needed for the metadata response:
     // TOTAL_HITS → queryCount (drives tab count / spinner resolution)
     // SELECT_COLUMNS → column headers for the table
-    // FACETS → facet aggregations for FacetFilterControls / plots
-    responseParts: new Set(['TOTAL_HITS', 'SELECT_COLUMNS', 'FACETS'] as const),
+    // Aggregation results are returned automatically when aggregations is set on the query.
+    responseParts: new Set(['TOTAL_HITS', 'SELECT_COLUMNS'] as const),
   }
 
   // Convert responseParts Set → sorted array for query key building.
@@ -383,6 +444,9 @@ export function getSearchQueryUseQueryOptions(
         asyncStatus.responseBody,
         query,
         columnModels,
+        queryBundleRequest.query.selectedFacets as
+          | (FacetColumnValuesRequest | FacetColumnRangeRequest)[]
+          | undefined,
       ),
     }
   }
@@ -435,7 +499,7 @@ export function getSearchQueryUseQueryOptions(
           ...rowDataQuery,
           searchQuery: {
             ...rowDataQuery.searchQuery,
-            offset,
+            from: offset,
           },
         }
         return fetchAndConvert(requestForPage)
@@ -478,9 +542,8 @@ export function getSearchQueryUseQueryOptions(
  * using the synchronous `POST /search/autocomplete` endpoint.
  *
  * The query is built from the current `searchIndexId` and `autocompleteFieldName`:
- *  - `searchQuery.queryText` is set to the user-entered search text
- *  - `searchQuery.queryFields` is set to `[autocompleteFieldName]` so the server
- *    only returns values for that single field
+ *  - `searchQuery.query` is a `match_bool_prefix` clause scoped to `autocompleteFieldName`
+ *  - `searchQuery._source` is set to `[autocompleteFieldName]` so only that field is returned
  *
  * When `autocompleteFieldName` is undefined, the returned callback immediately returns `[]`.
  */
@@ -498,14 +561,15 @@ export function useGetSuggestionsForSearchIndex(
       const results =
         await synapseClient.searchManagementServicesClient.postRepoV1SearchAutocomplete(
           {
-            searchIndexQuery: {
-              concreteType:
-                'org.sagebionetworks.repo.model.search.table.SearchIndexQuery' as const,
+            searchAutocompleteRequest: {
               searchIndexId,
               searchQuery: {
-                queryText: trimmed,
-                queryFields: [autocompleteFieldName],
-                returnFields: [autocompleteFieldName],
+                query: {
+                  match_bool_prefix: {
+                    [autocompleteFieldName]: { query: trimmed },
+                  },
+                },
+                _source: { includes: [autocompleteFieldName] },
               },
             },
           },

@@ -117,7 +117,6 @@ import {
   SearchIndexQuery,
   SearchQueryResults,
 } from '@sage-bionetworks/synapse-client'
-import { SearchIndexQueryToJSON } from '@sage-bionetworks/synapse-client/generated/models/SearchIndexQuery'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import {
   ACCESS_TYPE,
@@ -602,9 +601,20 @@ export const getSearchQueryAsyncJobResults = async (
     result: AsynchronousJobStatus<SearchIndexQuery, SearchQueryResults>,
   ) => void,
 ): Promise<AsynchronousJobStatus<SearchIndexQuery, SearchQueryResults>> => {
+  // The generated DslQuery/BoolQuery ToJSON
+  // functions strip any field not in their interface (e.g. `terms`, `range` inside
+  // bool.filter), producing empty objects and breaking filter clauses.
+  // Only `responseParts` (a Set) needs manual conversion; everything else is a
+  // plain JSON-serializable value.
+  const serialized = {
+    ...searchIndexQuery,
+    responseParts: searchIndexQuery.responseParts
+      ? [...searchIndexQuery.responseParts]
+      : undefined,
+  }
   const asyncJobId = await doPost<AsyncJobId>(
     SEARCH_QUERY_ASYNC_START,
-    SearchIndexQueryToJSON(searchIndexQuery),
+    serialized,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )

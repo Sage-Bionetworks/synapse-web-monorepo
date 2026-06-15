@@ -183,6 +183,16 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
       unitDescription,
     )
 
+  const queryCountDisplay = !hideQueryCount ? (
+    isSearchIndex ? (
+      queryMetadata?.queryCount !== undefined ? (
+        `(${queryMetadata.queryCount.toLocaleString()})`
+      ) : null
+    ) : (
+      <QueryCount query={unfilteredResultsQuery} parens={true} />
+    )
+  ) : null
+
   return (
     <div className={`TopLevelControls`} data-testid="TopLevelControls">
       <div>
@@ -190,15 +200,7 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
           {name && (
             <>
               <Typography variant="sectionTitle" role="heading">
-                {name}{' '}
-                {!hideQueryCount &&
-                  (isSearchIndex ? (
-                    queryMetadata?.queryCount !== undefined ? (
-                      `(${queryMetadata.queryCount.toLocaleString()})`
-                    ) : null
-                  ) : (
-                    <QueryCount query={unfilteredResultsQuery} parens={true} />
-                  ))}
+                {name} {queryCountDisplay}
               </Typography>
               {!hideQueryCount && entity && (
                 <MissingQueryResultsWarning entity={entity} />

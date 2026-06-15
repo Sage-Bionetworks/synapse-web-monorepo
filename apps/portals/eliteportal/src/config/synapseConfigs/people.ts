@@ -34,7 +34,7 @@ export const peopleSearch: SearchQueryWrapperPlotNavProps = {
   },
   facetsToPlot: ['institution', 'grant'],
   searchIndexId: peopleSearchIndexId,
-  autocompleteFieldName: 'firstName',
+  // autocompleteFieldName: 'lastName',
   hideTopLevelControls: false,
   hideQueryCount: false,
 }

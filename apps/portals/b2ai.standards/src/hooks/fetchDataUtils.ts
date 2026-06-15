@@ -55,9 +55,7 @@ export function getRowsAsObjects(data: QueryResultBundle) {
   return rowsAsObjects
 }
 
-export function useFetchRowsAsObjects(
-  queryBundleRequest: QueryBundleRequest,
-) {
+export function useFetchRowsAsObjects(queryBundleRequest: QueryBundleRequest) {
   return useGetQueryResultBundle(queryBundleRequest, {
     select: getRowsAsObjects,
   })

@@ -6,7 +6,10 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
-import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
+import {
+  FacetColumnResultValues,
+  QueryResultBundle,
+} from '@sage-bionetworks/synapse-types'
 import {
   SearchIndexQuery,
   SearchQueryResults,
@@ -23,7 +26,7 @@ import BasicMockedCrudService from '../util/BasicMockedCrudService'
  * Used to match registered bindings against incoming requests.
  */
 type SearchIndexQueryKey = Omit<SearchIndexQuery, 'searchQuery'> & {
-  searchQuery?: Omit<SearchSearchQuery, 'limit' | 'offset'>
+  searchQuery?: Omit<SearchSearchQuery, 'size' | 'from'>
 }
 
 type SearchQueryBinding = {
@@ -59,8 +62,8 @@ function processSearchRequest(
 ): QueryResultBundle {
   return applyLimitOffset(
     baseBundle,
-    request.searchQuery?.limit,
-    request.searchQuery?.offset,
+    request.searchQuery?.size,
+    request.searchQuery?.from,
   )
 }
 
@@ -83,8 +86,8 @@ export function registerSearchQueryResult(
 function getSearchQueryResult(request: SearchIndexQuery): QueryResultBundle {
   const requestCopy = cloneDeep(request)
   if (requestCopy.searchQuery) {
-    delete requestCopy.searchQuery.limit
-    delete requestCopy.searchQuery.offset
+    delete requestCopy.searchQuery.size
+    delete requestCopy.searchQuery.from
   }
   const queryKey = requestCopy as SearchIndexQueryKey
 
@@ -122,7 +125,25 @@ function toSearchQueryResults(bundle: QueryResultBundle): SearchQueryResults {
     totalHits: bundle.queryCount,
     hits,
     selectColumns,
-    facets: bundle.facets as SearchQueryResults['facets'],
+    // Convert FacetColumnResultValues[] → aggregationResults (OpenSearch terms agg shape)
+    // so that searchQueryResultsToQueryResultBundle can parse facet data from mock responses.
+    aggregationResults: Object.fromEntries(
+      (bundle.facets ?? [])
+        .filter(
+          (f): f is FacetColumnResultValues =>
+            f.concreteType ===
+            'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
+        )
+        .map(f => [
+          f.columnName,
+          {
+            buckets: (f.facetValues ?? []).map(fv => ({
+              key: fv.value,
+              doc_count: fv.count,
+            })),
+          },
+        ]),
+    ),
     offset: bundle.queryResult?.queryResults.rows?.length ? 0 : undefined,
   }
 }
