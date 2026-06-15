@@ -7,6 +7,7 @@ import FullContextProvider, {
 import { SynapseContextType } from '@/utils/context/SynapseContext'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactNode } from 'react'
+import { createTestIsEditingStore } from './IsEditingStoreTestUtils'
 
 type RtlWrapperProps = {
   children?: ReactNode
@@ -32,6 +33,7 @@ export const createWrapperAndQueryClient = (
           synapseContext={wrapperProps}
           queryClient={queryClient}
           applicationSessionContext={MOCK_APPLICATION_SESSION_CONTEXT}
+          isEditingStore={createTestIsEditingStore()}
         >
           {children}
         </FullContextProvider>

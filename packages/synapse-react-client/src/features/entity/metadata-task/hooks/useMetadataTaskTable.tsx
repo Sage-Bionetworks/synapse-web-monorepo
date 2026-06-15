@@ -109,9 +109,11 @@ export function useMetadataTaskTable(opts: UseMetadataTaskTableOptions) {
     [data],
   )
 
+  const columns = useMemo(() => getColumns(canEditTasks), [canEditTasks])
+
   const table: Table<TaskBundle> = useReactTable<TaskBundle>({
     data: tasks,
-    columns: getColumns(canEditTasks),
+    columns,
     getRowId: row => String(row.task!.taskId!),
     getCoreRowModel: getCoreRowModel(),
     columnResizeMode: 'onChange',

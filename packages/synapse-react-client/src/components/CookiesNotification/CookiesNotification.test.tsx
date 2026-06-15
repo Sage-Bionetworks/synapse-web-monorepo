@@ -6,10 +6,9 @@ import {
 } from '@/utils/hooks/useCookiePreferences'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import UniversalCookies from 'universal-cookie'
 import CookiesNotification, { alertConfig } from './CookiesNotification'
+import Cookies from 'js-cookie'
 
-const cookies = new UniversalCookies()
 const mockOnCloseFn = vi.fn()
 function renderComponent(wrapperProps?: SynapseContextType) {
   const component = render(<CookiesNotification onClose={mockOnCloseFn} />, {
@@ -24,7 +23,7 @@ describe('CookiesNotification', () => {
     vi.clearAllMocks()
   })
   afterEach(() => {
-    cookies.remove(COOKIES_AGREEMENT_COOKIE_KEY)
+    Cookies.remove(COOKIES_AGREEMENT_COOKIE_KEY)
   })
 
   it('displays alert and allows user to accept all cookies', async () => {
@@ -40,8 +39,8 @@ describe('CookiesNotification', () => {
     await user.click(acceptButton)
 
     expect(alert).not.toBeInTheDocument()
-    const cookiePreference = cookies.get(
-      COOKIES_AGREEMENT_COOKIE_KEY,
+    const cookiePreference = JSON.parse(
+      Cookies.get(COOKIES_AGREEMENT_COOKIE_KEY)!,
     ) as CookiePreference
     expect(cookiePreference).toBeDefined()
     expect(cookiePreference.analyticsAllowed).toBe(true)
@@ -61,8 +60,8 @@ describe('CookiesNotification', () => {
     await user.click(disableAllButton)
 
     expect(alert).not.toBeInTheDocument()
-    const cookiePreference = cookies.get(
-      COOKIES_AGREEMENT_COOKIE_KEY,
+    const cookiePreference = JSON.parse(
+      Cookies.get(COOKIES_AGREEMENT_COOKIE_KEY)!,
     ) as CookiePreference
     expect(cookiePreference).toBeDefined()
     expect(cookiePreference.analyticsAllowed).toBe(false)
@@ -94,7 +93,7 @@ describe('CookiesNotification', () => {
       analyticsAllowed: true,
       functionalAllowed: true,
     }
-    cookies.set(COOKIES_AGREEMENT_COOKIE_KEY, cookiePrefence)
+    Cookies.set(COOKIES_AGREEMENT_COOKIE_KEY, JSON.stringify(cookiePrefence))
     renderComponent()
     await waitFor(() => {
       expect(screen.queryByRole('alert')).not.toBeInTheDocument()
