@@ -1,8 +1,8 @@
-import { programsQueryWrapperPlotNavProps } from '@/config/synapseConfigs/programs'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/index'
+import { programsSearch } from '@/config/synapseConfigs/programs'
+import SearchQueryWrapperPlotNav from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 function ExplorePrograms() {
-  return <QueryWrapperPlotNav {...programsQueryWrapperPlotNavProps} />
+  return <SearchQueryWrapperPlotNav {...programsSearch} shouldDeepLink={true} />
 }
 
 export default ExplorePrograms

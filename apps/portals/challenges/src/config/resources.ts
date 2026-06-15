@@ -9,3 +9,15 @@ export const homeNewChallengesSql = `SELECT * FROM syn71324868 WHERE landingPage
 export const homeAllChallengesSql = `SELECT * FROM syn71324868 WHERE landingPageSection HAS('all')`
 export const homePopularChallengesSql = `SELECT * FROM syn71324868 WHERE landingPageSection HAS('popular')`
 export const homeOpenChallengesSql = `SELECT * FROM syn71324868 WHERE landingPageSection HAS('external')`
+
+export const challengeProjectsSearchIndexId = 'syn75465128'
+export const partnersSearchIndexId = 'syn75465129'
+export const metricsSearchIndexId = 'syn75465130'
+export const featuredTeamSearchIndexId = 'syn75465131'
+export const getInvolvedSearchIndexId = 'syn75465132'
+export const newsSearchIndexId = 'syn75465134'
+export const allChallengesSearchIndexId = 'syn75465136'
+export const homeNewChallengesSearchIndexId = 'syn75465139'
+export const homeAllChallengesSearchIndexId = 'syn75465140'
+export const homePopularChallengesSearchIndexId = 'syn75465141'
+export const homeOpenChallengesSearchIndexId = 'syn75465142'

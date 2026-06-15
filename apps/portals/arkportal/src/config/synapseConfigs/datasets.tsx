@@ -6,7 +6,8 @@ import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/Q
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../columnAliases'
-import { datasetsSql } from '../resources'
+import { datasetsSearchIndexId, datasetsSql } from '../resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 import { citationBoilerplateText } from './commonProps'
 
 const rgbIndex = 0
@@ -62,4 +63,17 @@ export const datasetCardConfiguration: CardConfiguration = {
     Publication: publicationDataSvg,
     'Experimental Data': experimentalDataSvg,
   },
+}
+
+export const datasetsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'Datasets',
+  shouldDeepLink: false,
+  cardConfiguration: datasetCardConfiguration,
+  columnAliases,
+  facetsToPlot: ['program', 'project', 'datasetType', 'assay'],
+  searchIndexId: datasetsSearchIndexId,
+  autocompleteFieldName: 'name',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }
