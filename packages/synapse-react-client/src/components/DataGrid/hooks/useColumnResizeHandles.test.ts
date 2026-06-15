@@ -31,6 +31,41 @@ describe('useColumnResizeHandles', () => {
     return cell
   }
 
+  // Mirrors the DOM produced by ColumnHeaderWithTooltip: a root div with
+  // data-column-id, a text span that may include an asterisk (*) for required
+  // columns, and an optional icons span.  textContent will be "Column A*" so
+  // any code that still reads textContent would fail to match the column id.
+  const createMockCellWithDataAttribute = (
+    columnName: string,
+    isRequired: boolean = false,
+    width: number = 150,
+  ) => {
+    const cell = document.createElement('div')
+    cell.className = 'dsg-cell'
+
+    const headerRoot = document.createElement('div')
+    headerRoot.dataset.columnId = columnName
+
+    const textSpan = document.createElement('span')
+    textSpan.textContent = columnName
+    headerRoot.appendChild(textSpan)
+
+    if (isRequired) {
+      const asterisk = document.createElement('span')
+      asterisk.textContent = '*'
+      headerRoot.appendChild(asterisk)
+    }
+
+    cell.appendChild(headerRoot)
+
+    Object.defineProperty(cell, 'offsetWidth', {
+      value: width,
+      configurable: true,
+    })
+    Object.defineProperty(cell, 'offsetLeft', { value: 0, configurable: true })
+    return cell
+  }
+
   // Helper to trigger ResizeObserver callback and initialize handles
   const triggerInitialization = () => {
     if (resizeObserverCallback && mockWrapperRef.current) {
@@ -1052,6 +1087,50 @@ describe('useColumnResizeHandles', () => {
       }).not.toThrow()
 
       expect(document.querySelectorAll('.column-resize-handle')).toHaveLength(0)
+    })
+
+    it('creates handles for required columns whose textContent includes an asterisk', () => {
+      // Regression: ColumnHeaderWithTooltip appends a "*" span for required
+      // columns, changing the cell textContent from "Column A" to "Column A*".
+      // syncHandles must use data-column-id instead of textContent so the
+      // column lookup succeeds.
+
+      // Replace the plain-text cells with ColumnHeaderWithTooltip-style cells
+      // where one column is required (textContent will be "Column A*").
+      while (mockHeaderRow.children.length > 1) {
+        mockHeaderRow.removeChild(mockHeaderRow.lastChild!)
+      }
+      mockHeaderRow.appendChild(
+        createMockCellWithDataAttribute('Column A', true, 150),
+      )
+      mockHeaderRow.appendChild(
+        createMockCellWithDataAttribute('Column B', false, 200),
+      )
+
+      const colValues: Column[] = [
+        { id: 'Column A', title: 'Column A' } as Column,
+        { id: 'Column B', title: 'Column B' } as Column,
+      ]
+
+      renderHook(() =>
+        useColumnResizeHandles({
+          wrapperRef: mockWrapperRef,
+          colValues,
+          onColumnResize: mockOnColumnResize,
+        }),
+      )
+
+      triggerInitialization()
+
+      const handles = document.querySelectorAll<HTMLElement>(
+        '.column-resize-handle',
+      )
+      // Both columns should get a handle; previously "Column A" was skipped
+      // because "Column A*" !== "Column A".
+      expect(handles).toHaveLength(2)
+      const names = Array.from(handles).map(h => h.dataset.columnName)
+      expect(names).toContain('Column A')
+      expect(names).toContain('Column B')
     })
 
     it('should handle missing header row', () => {
