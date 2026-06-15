@@ -1,11 +1,11 @@
-import { toolsQueryWrapperPlotNavProps } from '@/config/synapseConfigs'
+import { toolsSearch } from '@/config/synapseConfigs'
 import { portalMetadata } from '@/config/portalMetadata'
 import { createStaticMeta } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/index'
+import SearchQueryWrapperPlotNav from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 export const meta = createStaticMeta({ title: 'Explore Tools' }, portalMetadata)
 
 function ExploreTools() {
-  return <QueryWrapperPlotNav {...toolsQueryWrapperPlotNavProps} />
+  return <SearchQueryWrapperPlotNav {...toolsSearch} shouldDeepLink={true} />
 }
 export default ExploreTools
