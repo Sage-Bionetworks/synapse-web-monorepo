@@ -55,4 +55,5 @@ export const projectsSearch: SearchQueryWrapperPlotNavProps = {
   autocompleteFieldName: 'Full Project Name',
   hideTopLevelControls: false,
   hideQueryCount: false,
+  defaultShowSearchBar: false,
 }

@@ -40,4 +40,5 @@ export const datasetCollectionsSearch: SearchQueryWrapperPlotNavProps = {
   autocompleteFieldName: 'Title',
   hideTopLevelControls: false,
   hideQueryCount: false,
+  defaultShowSearchBar: false,
 }

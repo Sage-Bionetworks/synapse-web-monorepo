@@ -69,7 +69,9 @@ export const datasetsSearch: SearchQueryWrapperPlotNavProps = {
   rgbIndex,
   name: 'Datasets',
   shouldDeepLink: false,
-  cardConfiguration: datasetCardConfiguration,
+  tableConfiguration: {
+    columnLinks: datasetColumnLinks,
+  },
   columnAliases,
   facetsToPlot: ['program', 'project', 'datasetType', 'assay'],
   searchIndexId: datasetsSearchIndexId,

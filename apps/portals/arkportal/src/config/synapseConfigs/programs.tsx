@@ -62,4 +62,5 @@ export const programsSearch: SearchQueryWrapperPlotNavProps = {
   autocompleteFieldName: 'Program',
   hideTopLevelControls: false,
   hideQueryCount: false,
+  defaultShowSearchBar: false,
 }
