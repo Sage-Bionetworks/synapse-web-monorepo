@@ -5,6 +5,7 @@ import { TOOLTIP_DELAY_SHOW } from '@/components/SynapseTable/SynapseTableConsta
 type ColumnHeaderWithTooltipProps = {
   name: string
   description?: string
+  isRequired?: boolean
   showPinIcon?: boolean
   isPinned?: boolean
   onTogglePin?: () => void
@@ -18,6 +19,7 @@ type ColumnHeaderWithTooltipProps = {
 export function ColumnHeaderWithTooltip({
   name,
   description,
+  isRequired = false,
   showPinIcon = false,
   isPinned = false,
   onTogglePin,
@@ -45,6 +47,11 @@ export function ColumnHeaderWithTooltip({
         title={description || name}
       >
         {name}
+        {isRequired && (
+          <Box component="span" sx={{ color: 'error.main', ml: 0.25 }}>
+            *
+          </Box>
+        )}
       </Box>
 
       {/* Icons area - fixed size, never shrinks */}
