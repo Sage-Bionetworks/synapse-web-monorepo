@@ -2,6 +2,7 @@ import React from 'react'
 import { Box, Typography, Button } from '@mui/material'
 import HeaderSearchBox from '@sage-bionetworks/synapse-portal-framework/components/HeaderSearchBox'
 import { FTSConfig } from 'synapse-react-client/components/SynapseTable/SearchV2'
+import { standardsSearchIndexConfig } from '@/config/synapseConfigs/searchConfig'
 
 export type StandardsHeaderProps = {
   sql: string
@@ -98,10 +99,7 @@ const StandardsHeader = (props: StandardsHeaderProps): React.ReactNode => {
           searchExampleTerms={searchExampleTerms}
           searchPlaceholder={searchPlaceholder}
           path="/Search"
-          searchIndexConfig={{
-            searchIndexId: 'syn74909093',
-            autocompleteFieldName: 'name',
-          }}
+          searchIndexConfig={standardsSearchIndexConfig}
           sx={{
             flex: 1,
             '& > :first-child': {
