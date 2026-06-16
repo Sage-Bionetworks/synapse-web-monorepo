@@ -1,6 +1,15 @@
 import type { MetaDescriptor } from 'react-router'
-import { Box, Button, Container, Link, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Container,
+  Link,
+  Skeleton,
+  Typography,
+} from '@mui/material'
 import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import FundersLogoRow from '../components/FundersLogoRow'
 import {
   newDatasetsSql,
@@ -13,6 +22,70 @@ import {
 } from '../config/synapseConfigs/tools'
 import NFStatsBanner from '../components/NFStatsBanner'
 import NFHero from '../components/NFHero'
+
+const TOP_TOOLS_USAGE_SQL =
+  'SELECT resourceId, COUNT(publicationId) AS pubCount FROM syn26486841 GROUP BY resourceId ORDER BY pubCount DESC'
+const ELIGIBLE_TOOLS_SQL =
+  'SELECT resourceId FROM syn26486807 WHERE funderId IS NOT NULL'
+
+function TopToolsByPublications() {
+  const { data: usageData, isLoading: usageLoading } = useGetQueryResultBundle({
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    query: { sql: TOP_TOOLS_USAGE_SQL },
+    entityId: 'syn26486841',
+    partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+  })
+  const { data: eligibleData, isLoading: eligibleLoading } =
+    useGetQueryResultBundle({
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+      query: { sql: ELIGIBLE_TOOLS_SQL },
+      entityId: 'syn26486807',
+      partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+    })
+
+  if (usageLoading || eligibleLoading) {
+    return (
+      <Box
+        sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}
+      >
+        {[0, 1, 2].map(i => (
+          <Skeleton
+            key={i}
+            variant="rectangular"
+            height={200}
+            sx={{ borderRadius: 2 }}
+          />
+        ))}
+      </Box>
+    )
+  }
+
+  const eligibleIds = new Set(
+    eligibleData?.queryResult?.queryResults?.rows
+      ?.map(row => row.values?.[0])
+      .filter((v): v is string => Boolean(v)),
+  )
+
+  const ids = usageData?.queryResult?.queryResults?.rows
+    ?.map(row => row.values?.[0])
+    .filter((v): v is string => v != null && v !== '' && eligibleIds.has(v))
+    .slice(0, 3)
+
+  const sql =
+    ids && ids.length > 0
+      ? `SELECT * FROM syn51730943 WHERE resourceId IN (${ids
+          .map(id => `'${id}'`)
+          .join(', ')})`
+      : newToolsSql
+
+  return (
+    <CardContainerLogic
+      initialLimit={3}
+      sql={sql}
+      cardConfiguration={toolsCardConfiguration}
+    />
+  )
+}
 
 export function meta(): MetaDescriptor[] {
   const portalDescription = import.meta.env.VITE_PORTAL_DESCRIPTION
@@ -143,11 +216,7 @@ export default function HomePage() {
             </Typography>
             <SectionCTA href="/Explore/Tools">View all tools</SectionCTA>
           </Box>
-          <CardContainerLogic
-            initialLimit={3}
-            sql={newToolsSql}
-            cardConfiguration={toolsCardConfiguration}
-          />
+          <TopToolsByPublications />
         </Container>
       </Box>
 
