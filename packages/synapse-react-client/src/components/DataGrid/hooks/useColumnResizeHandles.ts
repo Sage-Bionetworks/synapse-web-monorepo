@@ -234,7 +234,8 @@ class ColumnResizeManager {
       // Prefer the data-column-id attribute set by ColumnHeaderWithTooltip over
       // textContent, which can include extra characters (e.g. the required "*").
       const columnId =
-        cellElement.querySelector('[data-column-id]')?.dataset.columnId ??
+        cellElement.querySelector<HTMLElement>('[data-column-id]')?.dataset
+          .columnId ??
         cellElement.textContent?.trim() ??
         ''
 
