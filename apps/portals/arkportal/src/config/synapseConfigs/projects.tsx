@@ -3,7 +3,8 @@ import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/Q
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../columnAliases'
-import { projectsSql } from '../resources'
+import { projectsSearchIndexId, projectsSql } from '../resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 export const projectsRgbIndex = 9
 
@@ -42,4 +43,17 @@ export const projectsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   columnAliases,
   facetsToPlot: [],
   defaultShowPlots: false,
+}
+
+export const projectsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex: projectsRgbIndex,
+  name: 'Projects',
+  shouldDeepLink: false,
+  cardConfiguration: projectsCardConfiguration,
+  columnAliases,
+  searchIndexId: projectsSearchIndexId,
+  autocompleteFieldName: 'Full Project Name',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
+  defaultShowSearchBar: false,
 }

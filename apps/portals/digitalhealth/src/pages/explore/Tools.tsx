@@ -1,8 +1,8 @@
-import { toolsQueryWrapperPlotNavProps } from '@/config/synapseConfigs/index'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/index'
+import { toolsSearch } from '@/config/synapseConfigs/index'
+import SearchQueryWrapperPlotNav from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 function ExploreTools() {
-  return <QueryWrapperPlotNav {...toolsQueryWrapperPlotNavProps} />
+  return <SearchQueryWrapperPlotNav {...toolsSearch} shouldDeepLink={true} />
 }
 
 export default ExploreTools
