@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { useGetFullTableQueryResults } from '@/synapse-queries'
 import { SynapseConstants } from '@/utils'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
@@ -115,14 +115,22 @@ export const SynapsePlot = (props: SynapsePlotProps): React.ReactNode => {
   const { data: queryData, isLoading } =
     useGetFullTableQueryResults(queryRequest)
 
-  // ── Cross-tab pivot (3-column SQL → stacked bar) ──────────────────────
-  const crossTabTraces = useMemo((): Data[] | null => {
-    if (!crossTabConfig || !queryData) return null
+  const skeletonHeight = height ?? (crossTabConfig ? 280 : 200)
+  if (isLoading) {
+    return <Skeleton width={'100%'} height={skeletonHeight} />
+  }
+  if (!queryData) {
+    return <></>
+  }
+
+  // ── Cross-tab render (3-column SQL → stacked bar pivot) ───────────────
+  if (crossTabConfig) {
     const {
       rowOrder,
       groupOrder,
       groupColors,
       orientation = 'h',
+      height: ctHeight = 280,
     } = crossTabConfig
     const rows = queryData.queryResult?.queryResults?.rows ?? []
     const rowSet = new Set<string>()
@@ -140,11 +148,11 @@ export const SynapsePlot = (props: SynapsePlotProps): React.ReactNode => {
     })
     const rowLabels = orderLabels([...rowSet], rowOrder)
     const groupLabels = orderLabels([...groupSet], groupOrder)
-    const colorFor = (group: string, idx: number): string =>
-      groupColors?.[group] ??
-      CROSSTAB_DEFAULT_COLORS[group] ??
+    const colorFor = (g: string, idx: number): string =>
+      groupColors?.[g] ??
+      CROSSTAB_DEFAULT_COLORS[g] ??
       CROSSTAB_FALLBACK_PALETTE[idx % CROSSTAB_FALLBACK_PALETTE.length]
-    return groupLabels.map((group, gi) => {
+    const traces: Data[] = groupLabels.map((group, gi) => {
       const groupCounts = rowLabels.map(row => counts[row]?.[group] ?? 0)
       return orientation === 'h'
         ? {
@@ -165,19 +173,6 @@ export const SynapsePlot = (props: SynapsePlotProps): React.ReactNode => {
             hovertemplate: `<b>${group}</b>: %{y}<extra>%{x}</extra>`,
           }
     })
-  }, [crossTabConfig, queryData])
-
-  const skeletonHeight = height ?? (crossTabConfig ? 280 : 200)
-  if (isLoading) {
-    return <Skeleton width={'100%'} height={skeletonHeight} />
-  }
-  if (!queryData) {
-    return <></>
-  }
-
-  // ── Cross-tab render ───────────────────────────────────────────────────
-  if (crossTabConfig && crossTabTraces) {
-    const { orientation = 'h', height: ctHeight = 280 } = crossTabConfig
     const { title, xtitle, ytitle, displayModeBar } =
       props.synapsePlotWidgetParams
     const layout: Partial<Plotly.Layout> = {
@@ -202,7 +197,7 @@ export const SynapsePlot = (props: SynapsePlotProps): React.ReactNode => {
     }
     return (
       <Plot
-        data={crossTabTraces}
+        data={traces}
         layout={layout}
         config={{ displayModeBar: displayModeBar ?? false, responsive: true }}
         style={{ width: '100%', height: height ?? ctHeight }}
