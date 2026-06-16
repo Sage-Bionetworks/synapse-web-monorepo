@@ -3,7 +3,6 @@ import { useGetEntity } from '@/synapse-queries'
 import { SQL_EDITOR } from '@/utils/SynapseConstants'
 import { Button, Divider, Tooltip, Typography } from '@mui/material'
 import {
-  Query,
   QueryBundleRequest,
   QueryResultBundle,
   Row,
@@ -11,11 +10,10 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { useAtomValue } from 'jotai'
 import { cloneDeep } from 'lodash-es'
-import { ReactNode, useMemo, useState } from 'react'
+import { ReactNode, useState } from 'react'
 import IconSvg from '../../IconSvg'
 import MissingQueryResultsWarning from '../../MissingQueryResultsWarning/MissingQueryResultsWarning'
 import { useQueryContext } from '../../QueryContext'
-import QueryCount from '../../QueryCount/QueryCount'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import {
   isRowSelectionVisibleAtom,
@@ -98,14 +96,11 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
   const {
     entityId,
     versionNumber,
-    getInitQueryRequest,
     getCurrentQueryRequest,
     hasResettableFilters,
-    isSearchIndex,
   } = useQueryContext()
   const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
   const { data: queryMetadata } = useGetQueryMetadata()
-  const { lockedColumn } = useQueryContext()
   const isRowSelectionVisible = useAtomValue(isRowSelectionVisibleAtom)
   const selectedRows = useSelectedRowsAtomValue()
   const hasSelectedRows = useHasSelectedRowsAtomValue()
@@ -131,27 +126,6 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
 
   const [hasRecentlyCopiedToClipboard, setHasRecentlyCopiedToClipboard] =
     useState(false)
-
-  /**
-   * We show the total number of results that would be shown if the user removed their filters.
-   * To do this, we have to create a query that captures those results.
-   */
-  const unfilteredResultsQuery: Query = useMemo(() => {
-    const initQueryRequest = getInitQueryRequest()
-    return {
-      sql: initQueryRequest.query.sql,
-      selectedFacets: (initQueryRequest.query.selectedFacets ?? []).filter(
-        facet => facet.columnName === lockedColumn?.columnName,
-      ),
-      additionalFilters: (
-        initQueryRequest.query.additionalFilters ?? []
-      ).filter(qf =>
-        'columnName' in qf
-          ? qf['columnName'] === lockedColumn?.columnName
-          : true,
-      ),
-    }
-  }, [getInitQueryRequest, lockedColumn?.columnName])
 
   /**
    * Handles the toggle of a column select, this will cause the table to
@@ -183,15 +157,10 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
       unitDescription,
     )
 
-  const queryCountDisplay = !hideQueryCount ? (
-    isSearchIndex ? (
-      queryMetadata?.queryCount !== undefined ? (
-        `(${queryMetadata.queryCount.toLocaleString()})`
-      ) : null
-    ) : (
-      <QueryCount query={unfilteredResultsQuery} parens={true} />
-    )
-  ) : null
+  const queryCountDisplay =
+    !hideQueryCount && queryMetadata?.queryCount !== undefined
+      ? `(${queryMetadata.queryCount.toLocaleString()})`
+      : null
 
   return (
     <div className={`TopLevelControls`} data-testid="TopLevelControls">
