@@ -15,15 +15,22 @@ const NOOP_SQL = [
   'SELECT year FROM syn16857542 LIMIT 0',
   'SELECT yearProcessed FROM syn50913342 LIMIT 0',
   'SELECT studyName FROM syn51730943 LIMIT 0',
-] as const
+  'SELECT publicationDateUnix FROM syn26486839 LIMIT 0',
+]
 
 export type SeriesConfig = {
   /**
    * SQL returning either:
    *   - 2 columns: period label + count (aggregate query with GROUP BY), OR
    *   - 1 column: period label per row (raw query; rows are counted client-side)
+   * Omit when providing `data` directly.
    */
-  sql: string
+  sql?: string
+  /**
+   * Pre-computed period → count map. When provided, bypasses the SQL query.
+   * Useful for client-side joins (e.g. cross-referencing two tables).
+   */
+  data?: Map<string, number>
   label: string
   /** Bar fill colour */
   color: string
@@ -127,32 +134,42 @@ export const SynapseMultiSeriesTimeSeriesPlot = (
     mode = 'faceted',
   } = props
 
-  // Always call exactly 3 hooks
+  // Always call exactly 4 hooks
   const s0 = series[0]
   const s1 = series[1]
   const s2 = series[2]
+  const s3 = series[3]
 
   const { data: d0, isLoading: l0 } = useGetFullTableQueryResults(
     buildRequest(s0?.sql ?? NOOP_SQL[0], s0?.additionalFilters),
-    { enabled: !!s0?.sql },
+    { enabled: !!s0?.sql && !s0?.data },
   )
   const { data: d1, isLoading: l1 } = useGetFullTableQueryResults(
     buildRequest(s1?.sql ?? NOOP_SQL[1], s1?.additionalFilters),
-    { enabled: !!s1?.sql },
+    { enabled: !!s1?.sql && !s1?.data },
   )
   const { data: d2, isLoading: l2 } = useGetFullTableQueryResults(
     buildRequest(s2?.sql ?? NOOP_SQL[2], s2?.additionalFilters),
-    { enabled: !!s2?.sql },
+    { enabled: !!s2?.sql && !s2?.data },
+  )
+  const { data: d3, isLoading: l3 } = useGetFullTableQueryResults(
+    buildRequest(s3?.sql ?? NOOP_SQL[3], s3?.additionalFilters),
+    { enabled: !!s3?.sql && !s3?.data },
   )
 
-  const isLoading = (!!s0?.sql && l0) || (!!s1?.sql && l1) || (!!s2?.sql && l2)
+  const isLoading =
+    (!!s0?.sql && !s0?.data && l0) ||
+    (!!s1?.sql && !s1?.data && l1) ||
+    (!!s2?.sql && !s2?.data && l2) ||
+    (!!s3?.sql && !s3?.data && l3)
 
   const plotData = useMemo(() => {
-    const activeSeries = [s0, s1, s2].filter(Boolean)
+    const activeSeries = [s0, s1, s2, s3].filter(Boolean)
     const maps = [
-      s0?.sql ? parseSeriesData(d0) : new Map<string, number>(),
-      s1?.sql ? parseSeriesData(d1) : new Map<string, number>(),
-      s2?.sql ? parseSeriesData(d2) : new Map<string, number>(),
+      s0?.data ?? (s0?.sql ? parseSeriesData(d0) : new Map<string, number>()),
+      s1?.data ?? (s1?.sql ? parseSeriesData(d1) : new Map<string, number>()),
+      s2?.data ?? (s2?.sql ? parseSeriesData(d2) : new Map<string, number>()),
+      s3?.data ?? (s3?.sql ? parseSeriesData(d3) : new Map<string, number>()),
     ]
 
     // Union of all years, sorted chronologically
@@ -165,7 +182,7 @@ export const SynapseMultiSeriesTimeSeriesPlot = (
     })
 
     return { activeSeries, maps, periods }
-  }, [d0, d1, d2, s0, s1, s2])
+  }, [d0, d1, d2, d3, s0, s1, s2, s3])
 
   if (isLoading) {
     return (

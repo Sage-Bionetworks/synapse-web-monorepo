@@ -249,6 +249,17 @@ export type SynapseResearchNetworkPlotProps = {
    */
   studyStatsSql?: string
   /**
+   * Pre-computed stats rows (alternative to studyStatsSql).
+   * Allows the caller to do a client-side join (e.g. syn55259224 + syn52694652)
+   * without requiring a Synapse INNER JOIN. Takes precedence over studyStatsSql.
+   */
+  studyStatsRows?: Array<{
+    studyName: string
+    n_unique_users: number
+    n_downloads: number
+    egress_size_in_gb: number
+  }>
+  /**
    * SQL returning studyName, colorAttr.
    * Enables the color-by-attribute toggle chip.
    */
@@ -295,6 +306,7 @@ export const SynapseResearchNetworkPlot = (
     maxStudies = Infinity,
     height = 560,
     studyStatsSql,
+    studyStatsRows,
     studyColorSql,
     studyColorLabel,
   } = props
@@ -349,10 +361,9 @@ export const SynapseResearchNetworkPlot = (
     { enabled: !!studyColorSql },
   )
 
-  // effectiveSizeMetric: 'resources' when no stats SQL provided
-  const effectiveSizeMetric: SizeMetric = studyStatsSql
-    ? sizeMetric
-    : 'resources'
+  const hasStats =
+    !!studyStatsSql || (studyStatsRows != null && studyStatsRows.length > 0)
+  const effectiveSizeMetric: SizeMetric = hasStats ? sizeMetric : 'resources'
 
   // Derive colorAttrMap (study → attr) and attrColorMap (attr → color) from colorData.
   // Kept in a separate memo so toggling colorByAttr doesn't re-run the heavy layout memo.
@@ -387,17 +398,29 @@ export const SynapseResearchNetworkPlot = (
       string,
       { users: number; downloads: number; egress: number }
     >()
-    ;(statsData?.queryResult?.queryResults?.rows ?? []).forEach(row => {
-      const study = parseListValue(String(row.values?.[0] ?? ''))
-        .trim()
-        .toLowerCase()
-      if (!study || study === 'null') return
-      statsMap.set(study, {
-        users: Number(row.values?.[1] ?? 0) || 0,
-        downloads: Number(row.values?.[2] ?? 0) || 0,
-        egress: Number(row.values?.[3] ?? 0) || 0,
+    if (studyStatsRows) {
+      studyStatsRows.forEach(row => {
+        const study = row.studyName.trim().toLowerCase()
+        if (!study || study === 'null') return
+        statsMap.set(study, {
+          users: row.n_unique_users,
+          downloads: row.n_downloads,
+          egress: row.egress_size_in_gb,
+        })
       })
-    })
+    } else {
+      ;(statsData?.queryResult?.queryResults?.rows ?? []).forEach(row => {
+        const study = parseListValue(String(row.values?.[0] ?? ''))
+          .trim()
+          .toLowerCase()
+        if (!study || study === 'null') return
+        statsMap.set(study, {
+          users: Number(row.values?.[1] ?? 0) || 0,
+          downloads: Number(row.values?.[2] ?? 0) || 0,
+          egress: Number(row.values?.[3] ?? 0) || 0,
+        })
+      })
+    }
 
     const rawByType: Record<ResourceType, Array<[string, string]>> = {
       publication: [],
@@ -611,11 +634,13 @@ export const SynapseResearchNetworkPlot = (
       tool: { x: [], y: [], labels: [], studyLabels: [] },
     }
     const seenCrossKeys = new Set<string>()
-    const crossNodes = {
-      x: [] as number[],
-      y: [] as number[],
-      labels: [] as string[],
-      studyLabels: [] as string[],
+    const crossNodesByType: Record<
+      ResourceType,
+      { x: number[]; y: number[]; labels: string[]; studyLabels: string[] }
+    > = {
+      publication: { x: [], y: [], labels: [], studyLabels: [] },
+      dataset: { x: [], y: [], labels: [], studyLabels: [] },
+      tool: { x: [], y: [], labels: [], studyLabels: [] },
     }
 
     sortedStudies.forEach(([study, typeMap]) => {
@@ -630,10 +655,10 @@ export const SynapseResearchNetworkPlot = (
           if (crossStudySet.has(key)) {
             if (!seenCrossKeys.has(key)) {
               seenCrossKeys.add(key)
-              crossNodes.x.push(pos[0])
-              crossNodes.y.push(pos[1])
-              crossNodes.labels.push(r)
-              crossNodes.studyLabels.push(studyLabel)
+              crossNodesByType[type].x.push(pos[0])
+              crossNodesByType[type].y.push(pos[1])
+              crossNodesByType[type].labels.push(r)
+              crossNodesByType[type].studyLabels.push(studyLabel)
             }
           } else {
             resourceNodesByType[type].x.push(pos[0])
@@ -661,7 +686,7 @@ export const SynapseResearchNetworkPlot = (
     return {
       studyBubbles,
       resourceNodesByType,
-      crossNodes,
+      crossNodesByType,
       crossEdgeX,
       crossEdgeY,
       crossStudySet,
@@ -672,6 +697,7 @@ export const SynapseResearchNetworkPlot = (
     dsData,
     toolData,
     statsData,
+    studyStatsRows,
     maxStudies,
     activeTypes,
     effectiveSizeMetric,
@@ -706,7 +732,7 @@ export const SynapseResearchNetworkPlot = (
 
   const {
     resourceNodesByType,
-    crossNodes,
+    crossNodesByType,
     crossEdgeX,
     crossEdgeY,
     crossStudySet,
@@ -774,27 +800,33 @@ export const SynapseResearchNetworkPlot = (
         }
       }),
 
-    // Cross-study resource nodes (red diamonds, outside bubbles)
-    {
-      type: 'scatter' as const,
-      mode: 'markers' as const,
-      x: crossNodes.x,
-      y: crossNodes.y,
-      marker: {
-        size: 12,
-        color: CROSS_COLOR,
-        symbol: 'diamond',
-        opacity: 1,
-        line: { width: 1, color: '#fff' },
-      },
-      text: crossNodes.labels,
-      customdata: crossNodes.studyLabels,
-      hovertemplate:
-        '<b>%{text}</b><br><i>In: %{customdata}</i><extra></extra>',
-      showlegend: false,
-    },
+    // Cross-study resource nodes: type's shape + red colour so shape encodes type
+    ...availableTypes
+      .filter(t => activeTypes.has(t))
+      .map(type => {
+        const n = crossNodesByType[type]
+        return {
+          type: 'scatter' as const,
+          mode: 'markers' as const,
+          x: n.x,
+          y: n.y,
+          marker: {
+            size: TYPE_CONFIG[type].size + 3,
+            color: CROSS_COLOR,
+            symbol: TYPE_CONFIG[type].symbol,
+            opacity: 1,
+            line: { width: 1.5, color: '#fff' },
+          },
+          text: n.labels,
+          customdata: n.studyLabels,
+          hovertemplate:
+            '<b>%{text}</b><br><i>In: %{customdata}</i><extra></extra>',
+          showlegend: false,
+        }
+      }),
 
-    // Small coloured dots at bubble centres for hover / orientation
+    // Coloured dots at bubble centres — hover target for the whole bubble via
+    // hoverdistance in layout (larger invisible hit area than the rendered dot)
     {
       type: 'scatter' as const,
       mode: 'markers' as const,
@@ -861,9 +893,9 @@ export const SynapseResearchNetworkPlot = (
             y: [] as number[],
             name: `Multi-study (${crossStudySet.size})`,
             marker: {
-              size: 12,
+              size: 10,
               color: CROSS_COLOR,
-              symbol: 'diamond' as const,
+              symbol: 'square' as const,
             },
             showlegend: true,
           },
@@ -897,6 +929,7 @@ export const SynapseResearchNetworkPlot = (
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
     dragmode: 'pan' as const,
+    hoverdistance: 80,
   }
 
   return (
@@ -939,7 +972,7 @@ export const SynapseResearchNetworkPlot = (
         )}
 
         {/* Bubble size metric */}
-        {studyStatsSql && (
+        {(studyStatsSql || studyStatsRows != null) && (
           <Box sx={{ mb: 2.5 }}>
             <SidebarLabel>Bubble size</SidebarLabel>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
@@ -956,7 +989,7 @@ export const SynapseResearchNetworkPlot = (
                 />
               ))}
             </Box>
-            {!statsLoading && statsData == null && (
+            {!statsLoading && !!studyStatsSql && statsData == null && (
               <Typography
                 variant="caption"
                 sx={{
@@ -1040,6 +1073,8 @@ export const SynapseResearchNetworkPlot = (
           sx={{ fontSize: '0.68rem', lineHeight: 1.4, display: 'block' }}
         >
           Each bubble = one study
+          <br />
+          Red = shared by 2+ studies
           <br />
           Scroll to zoom · drag to pan
           <br />

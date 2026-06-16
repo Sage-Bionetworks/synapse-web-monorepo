@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Box, Chip, Container, Slider, Typography } from '@mui/material'
 import { SynapseResearchNetworkPlot } from 'synapse-react-client/components/Plot/SynapsePublicationNetworkPlot'
+import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
+import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 
 const FUNDERS = [
   { key: 'CTF', label: 'CTF' },
@@ -39,6 +41,7 @@ export default function ResearchOutputNetworkSection() {
 
   const pubSql = buildPubSql(selectedFunder, committedYear)
   const dsSql = buildDsSql(selectedFunder, committedYear)
+  const toolSql = 'SELECT studyName, resourceName FROM syn51730943'
 
   // All funders: color by funder to distinguish CTF/NTAP/GFF.
   // Single funder selected: color by initiative (funder is already implicit from the filter).
@@ -50,6 +53,70 @@ export default function ResearchOutputNetworkSection() {
   function toggleFunder(key: string) {
     setSelectedFunder(prev => (prev === key ? null : key))
   }
+
+  // Open-access usage stats (no login required)
+  const { data: statsProjectData } = useGetQueryResultBundle({
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    query: {
+      sql: 'SELECT project_id, n_downloads, n_unique_users, egress_size_in_b, export_date FROM syn55259224',
+    },
+    entityId: 'syn55259224',
+    partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+  })
+  const { data: studyMapData } = useGetQueryResultBundle({
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    query: { sql: 'SELECT studyId, studyName FROM syn52694652' },
+    entityId: 'syn52694652',
+    partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+  })
+
+  const studyStatsRows = useMemo(() => {
+    if (!statsProjectData || !studyMapData) return undefined
+    const idToName = new Map<string, string>()
+    ;(studyMapData.queryResult?.queryResults?.rows ?? []).forEach(row => {
+      const studyId = String(row.values?.[0] ?? '').trim()
+      const studyName = String(row.values?.[1] ?? '').trim()
+      if (studyId && studyId !== 'null' && studyName && studyName !== 'null')
+        idToName.set(studyId, studyName)
+    })
+    const latestByProject = new Map<
+      string,
+      { downloads: number; users: number; egressB: number; exportDate: number }
+    >()
+    ;(statsProjectData.queryResult?.queryResults?.rows ?? []).forEach(row => {
+      const projectId = String(row.values?.[0] ?? '').trim()
+      if (!projectId || projectId === 'null') return
+      const downloads = Number(row.values?.[1] ?? 0) || 0
+      const users = Number(row.values?.[2] ?? 0) || 0
+      const egressB = Number(row.values?.[3] ?? 0) || 0
+      const exportDate = Number(row.values?.[4] ?? 0) || 0
+      const existing = latestByProject.get(projectId)
+      if (!existing || exportDate > existing.exportDate)
+        latestByProject.set(projectId, {
+          downloads,
+          users,
+          egressB,
+          exportDate,
+        })
+    })
+    const rows: Array<{
+      studyName: string
+      n_unique_users: number
+      n_downloads: number
+      egress_size_in_gb: number
+    }> = []
+    latestByProject.forEach((stats, projectId) => {
+      const studyName = idToName.get(projectId)
+      if (!studyName) return
+      rows.push({
+        studyName,
+        n_unique_users: stats.users,
+        n_downloads: stats.downloads,
+        egress_size_in_gb: stats.egressB / 1_000_000_000,
+      })
+    })
+    return rows
+  }, [statsProjectData, studyMapData])
 
   return (
     <Box sx={{ bgcolor: '#fff', py: { xs: 5, md: 7 } }}>
@@ -66,12 +133,14 @@ export default function ResearchOutputNetworkSection() {
             Our Research Network
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-            Shows the publications and datasets produced by NF studies on the
-            portal. Only studies with at least one linked publication or dataset
-            are shown. Resources associated with more than one study are
-            highlighted in red — these links reflect study acknowledgements, not
-            necessarily data re-use. Filter by funder or drag the slider to
-            explore how the network grew over time.
+            Shows the publications, datasets, and tools produced by NF studies
+            on the portal. Only studies with at least one linked resource are
+            shown. Resources associated with more than one study are highlighted
+            in red — these links reflect study acknowledgements, not necessarily
+            data re-use. Filter by funder or drag the slider to explore how the
+            network grew over time. Bubble size metrics (unique users,
+            downloads, egress) reflect all-time totals and are not affected by
+            the year filter.
           </Typography>
         </Box>
 
@@ -139,7 +208,8 @@ export default function ResearchOutputNetworkSection() {
         <SynapseResearchNetworkPlot
           publicationSql={pubSql}
           datasetSql={dsSql}
-          studyStatsSql="SELECT studyName, n_unique_users, n_downloads, egress_size_in_gb FROM syn55719099"
+          toolSql={toolSql}
+          studyStatsRows={studyStatsRows}
           studyColorSql={colorSql}
           studyColorLabel={colorLabel}
           height={600}
