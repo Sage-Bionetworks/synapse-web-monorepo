@@ -277,7 +277,6 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
     fileVersionColumnName: undefined,
     fileNameColumnName: undefined,
     getRowDataQueryOptionsForPage,
-    isSearchIndex: true,
   })
 
   return (
