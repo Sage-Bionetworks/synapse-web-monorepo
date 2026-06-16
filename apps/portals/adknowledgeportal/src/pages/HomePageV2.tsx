@@ -22,6 +22,7 @@ import { ReactComponent as ModelADIcon } from '../assets/modelAD.svg'
 import styles from './HomePageV2.module.scss'
 import { CardContainerLogic } from 'synapse-react-client'
 import { consortiaAndRepositoriesCardConfig } from '@/config/synapseConfigs/consortiaAndRepositories'
+import { Button } from '@mui/material'
 
 const FILTER_COLUMN_NAME = 'DataType_All'
 
@@ -71,6 +72,17 @@ function HomePageInternal() {
     exploreQuerySql,
     filterColumnName: FILTER_COLUMN_NAME,
   }
+
+  const helpButtons = [
+    {
+      text: 'Our Service Desk',
+      link: 'https://help.adknowledgeportal.org/apd/',
+    },
+    {
+      text: 'Ask in our Forum',
+      link: 'https://www.synapse.org/Synapse:syn2580853/discussion/default',
+    },
+  ]
 
   return (
     <div className="HomePageV2">
@@ -171,13 +183,34 @@ function HomePageInternal() {
         title="Related Consortia and Repositories"
         subtitle="Discover the resources that are part of the AD Knowledge Portal, each contributing unique data and expertise to accelerate Alzheimer's research and improve patient outcomes."
         centerTitle
-        ContainerProps={{ className: 'home-spacer' }}
+        ContainerProps={{
+          sx: { marginBottom: '140px' },
+        }}
       >
         <div className={styles.consortiaAndRepositoriesCards}>
           <CardContainerLogic
             cardConfiguration={consortiaAndRepositoriesCardConfig}
             sql={consortiaAndRepositoriesSql}
           />
+        </div>
+      </SectionLayout>
+      <SectionLayout
+        title="Have Questions?"
+        subtitle="Have questions about our data or tools? Visit the our Service Desk to review our documentation, or use our forum for support."
+        centerTitle
+      >
+        <div className={styles.helpButtonsContainer}>
+          {helpButtons.map(({ text, link }) => (
+            <Button
+              key={text}
+              href={link}
+              variant="contained"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {text}
+            </Button>
+          ))}
         </div>
       </SectionLayout>
     </div>
