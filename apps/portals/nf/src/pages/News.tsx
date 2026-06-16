@@ -102,7 +102,7 @@ const SOURCES: NewsSource[] = [
   {
     name: 'NF Network',
     description:
-      'Community hub for the NF research community, sharing protocols, datasets, and collaborative opportunities.',
+      'Leading NF Advocacy, Building NF Community — a patient advocacy group dedicated to improving outcomes for people living with neurofibromatosis.',
     url: 'https://nfnetwork.org/',
     category: 'community',
     social: [{ platform: 'Website', url: 'https://nfnetwork.org/' }],
@@ -110,7 +110,7 @@ const SOURCES: NewsSource[] = [
   {
     name: 'NF Midwest',
     description:
-      'Regional NF advocacy and patient support sharing research updates.',
+      'No One Fights Alone with Neurofibromatosis or Schwannomatosis — a patient support group serving the Midwest region with community, education, and advocacy.',
     url: 'https://www.nfmidwest.org/news/',
     category: 'community',
     social: [

@@ -456,15 +456,22 @@ function OrganizationDataGrowthSection({
       <SynapseMultiSeriesTimeSeriesPlot
         series={[
           {
-            sql: pubsByYearSql,
-            label: 'Publications',
-            color: 'hsl(203, 43%, 44%)',
-          },
-          { sql: dsByYearSql, label: 'Datasets', color: 'hsl(183, 38%, 43%)' },
-          {
             sql: studiesByYearSql,
             label: 'Studies',
             color: 'hsl(30, 55%, 48%)',
+            symbol: 'circle',
+          },
+          {
+            sql: dsByYearSql,
+            label: 'Datasets',
+            color: 'hsl(183, 38%, 43%)',
+            symbol: 'square',
+          },
+          {
+            sql: pubsByYearSql,
+            label: 'Publications',
+            color: 'hsl(203, 43%, 44%)',
+            symbol: 'diamond',
           },
           ...(toolsTimeSeriesData != null
             ? [
@@ -472,6 +479,7 @@ function OrganizationDataGrowthSection({
                   data: toolsTimeSeriesData,
                   label: 'Tools',
                   color: 'hsl(262, 47%, 45%)',
+                  symbol: 'triangle-up',
                 },
               ]
             : []),

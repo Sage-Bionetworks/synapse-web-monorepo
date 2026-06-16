@@ -34,6 +34,8 @@ export type SeriesConfig = {
   label: string
   /** Bar fill colour */
   color: string
+  /** Plotly marker symbol (e.g. 'circle', 'square', 'diamond', 'triangle-up'). */
+  symbol?: string
   additionalFilters?: QueryFilter[]
 }
 
@@ -224,7 +226,7 @@ export const SynapseMultiSeriesTimeSeriesPlot = (
         x: periods,
         y: cumulative,
         line: { color: s.color, width: 2.5 },
-        marker: { color: s.color, size: 5 },
+        marker: { color: s.color, size: 7, symbol: s.symbol ?? 'circle' },
         hovertemplate: `<b>%{x}</b>: %{y} total<extra>${s.label}</extra>`,
       }
     })
@@ -304,7 +306,11 @@ export const SynapseMultiSeriesTimeSeriesPlot = (
                   x: periods,
                   y: cumulative,
                   line: { color: cumulativeColor, width: 2 },
-                  marker: { color: cumulativeColor, size: 4 },
+                  marker: {
+                    color: cumulativeColor,
+                    size: 6,
+                    symbol: s.symbol ?? 'circle',
+                  },
                   yaxis: 'y2' as const,
                   hovertemplate: `<b>%{x}</b>: %{y} total<extra>Cumulative</extra>`,
                 },

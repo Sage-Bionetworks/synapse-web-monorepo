@@ -7,6 +7,7 @@ import {
   organizationCardSchema,
   organizationDetailsPageLinkConfig,
 } from '@/config/synapseConfigs/organizations'
+import { iconOptions } from '@/config/synapseConfigs/iconOptions'
 
 export default function Organizations() {
   return (
@@ -53,18 +54,34 @@ export default function Organizations() {
         </Container>
       </Box>
 
+      {/* Override SRC-cardThumbnail sizing to match SRC-imageThumbnail so local
+          PNG logos render at full width. Required because iconOptions renders
+          via the cardThumbnail path, which defaults to 15% / img 50%. */}
       <SectionLayout>
-        <CardContainerLogic
-          sql={fundersSql}
-          cardConfiguration={{
-            type: SynapseConstants.GENERIC_CARD,
-            titleLinkConfig: organizationDetailsPageLinkConfig,
-            genericCardSchema: {
-              ...organizationCardSchema,
-              imageFileHandleColumnName: 'cardLogo',
+        <Box
+          sx={{
+            '& .SRC-cardThumbnail': {
+              width: '25% !important',
+              maxWidth: '215px !important',
+              verticalAlign: 'top !important',
+              pr: '15px !important',
+              '& img': {
+                width: '100% !important',
+                display: 'block !important',
+              },
             },
           }}
-        />
+        >
+          <CardContainerLogic
+            sql={fundersSql}
+            cardConfiguration={{
+              type: SynapseConstants.GENERIC_CARD,
+              titleLinkConfig: organizationDetailsPageLinkConfig,
+              genericCardSchema: organizationCardSchema,
+              iconOptions,
+            }}
+          />
+        </Box>
       </SectionLayout>
     </Box>
   )

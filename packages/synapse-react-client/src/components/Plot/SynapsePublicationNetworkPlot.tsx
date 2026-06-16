@@ -39,7 +39,7 @@ const TYPE_CONFIG: Record<
   publication: {
     label: 'Publications',
     color: '#7AAEC8',
-    symbol: 'circle',
+    symbol: 'diamond',
     size: 9,
   },
   dataset: { label: 'Datasets', color: '#5BB247', symbol: 'square', size: 10 },
@@ -47,6 +47,8 @@ const TYPE_CONFIG: Record<
 }
 
 const CROSS_COLOR = '#E0473D'
+// All resource node types share one colour; shape is the sole type differentiator
+const RESOURCE_NODE_COLOR = '#6888a8'
 const ALL_TYPES: ResourceType[] = ['publication', 'dataset', 'tool']
 
 type SizeMetric = 'users' | 'downloads' | 'egress' | 'resources'
@@ -112,7 +114,8 @@ function goldenSpiral(
   r: number,
 ): [number, number][] {
   if (n === 0) return []
-  if (n === 1) return [[cx, cy]]
+  // Offset single resources so they don't sit exactly on the center dot
+  if (n === 1) return [[cx + r * 0.38, cy]]
   const phi = Math.PI * (3 - Math.sqrt(5))
   return Array.from({ length: n }, (_, i) => {
     const ri = Math.sqrt((i + 0.5) / n) * r * 0.82
@@ -292,6 +295,50 @@ function SidebarLabel({ children }: { children: React.ReactNode }) {
     >
       {children}
     </Typography>
+  )
+}
+
+function ShapeLegendIcon({
+  symbol,
+  color,
+  size = 12,
+}: {
+  symbol: string
+  color: string
+  size?: number
+}) {
+  const h = size / 2
+  const p = 1
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox={`0 0 ${size} ${size}`}
+      style={{ flexShrink: 0 }}
+    >
+      {symbol === 'circle' && <circle cx={h} cy={h} r={h - p} fill={color} />}
+      {symbol === 'square' && (
+        <rect
+          x={p}
+          y={p}
+          width={size - 2 * p}
+          height={size - 2 * p}
+          fill={color}
+        />
+      )}
+      {symbol === 'diamond' && (
+        <polygon
+          points={`${h},${p} ${size - p},${h} ${h},${size - p} ${p},${h}`}
+          fill={color}
+        />
+      )}
+      {symbol === 'triangle-up' && (
+        <polygon
+          points={`${h},${p} ${size - p},${size - p} ${p},${size - p}`}
+          fill={color}
+        />
+      )}
+    </svg>
   )
 }
 
@@ -730,13 +777,8 @@ export const SynapseResearchNetworkPlot = (
     )
   }
 
-  const {
-    resourceNodesByType,
-    crossNodesByType,
-    crossEdgeX,
-    crossEdgeY,
-    crossStudySet,
-  } = graphData
+  const { resourceNodesByType, crossNodesByType, crossEdgeX, crossEdgeY } =
+    graphData
   const studyBubbles = effectiveStudyBubbles
 
   // Study bubbles as Plotly shapes (data-coordinate circles, scale with zoom)
@@ -788,7 +830,7 @@ export const SynapseResearchNetworkPlot = (
           y: n.y,
           marker: {
             size: TYPE_CONFIG[type].size,
-            color: TYPE_CONFIG[type].color,
+            color: RESOURCE_NODE_COLOR,
             symbol: TYPE_CONFIG[type].symbol,
             opacity: 0.85,
             line: { width: 0.5, color: '#fff' },
@@ -867,40 +909,6 @@ export const SynapseResearchNetworkPlot = (
       hovertemplate: '<b>%{text}</b><br>%{customdata}<extra></extra>',
       showlegend: false,
     },
-
-    // Dummy traces for Plotly built-in legend
-    ...availableTypes
-      .filter(t => activeTypes.has(t))
-      .map(type => ({
-        type: 'scatter' as const,
-        mode: 'markers' as const,
-        x: [] as number[],
-        y: [] as number[],
-        name: TYPE_CONFIG[type].label,
-        marker: {
-          size: TYPE_CONFIG[type].size,
-          color: TYPE_CONFIG[type].color,
-          symbol: TYPE_CONFIG[type].symbol,
-        },
-        showlegend: true,
-      })),
-    ...(crossStudySet.size > 0
-      ? [
-          {
-            type: 'scatter' as const,
-            mode: 'markers' as const,
-            x: [] as number[],
-            y: [] as number[],
-            name: `Multi-study (${crossStudySet.size})`,
-            marker: {
-              size: 10,
-              color: CROSS_COLOR,
-              symbol: 'square' as const,
-            },
-            showlegend: true,
-          },
-        ]
-      : []),
   ]
 
   const layout: Partial<Layout> = {
@@ -917,15 +925,8 @@ export const SynapseResearchNetworkPlot = (
       showticklabels: false,
       scaleanchor: 'x',
     },
-    showlegend: true,
-    legend: {
-      orientation: 'h' as const,
-      x: 0.5,
-      xanchor: 'center' as const,
-      y: -0.06,
-      font: { size: 11, color: '#354A63' },
-    },
-    margin: { t: 24, b: 56, l: 16, r: 16 },
+    showlegend: false,
+    margin: { t: 24, b: 16, l: 16, r: 16 },
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
     dragmode: 'pan' as const,
@@ -947,22 +948,31 @@ export const SynapseResearchNetworkPlot = (
                 return (
                   <Chip
                     key={type}
-                    label={cfg.label}
+                    label={
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 0.75,
+                        }}
+                      >
+                        <ShapeLegendIcon
+                          symbol={cfg.symbol}
+                          color={isActive ? '#fff' : RESOURCE_NODE_COLOR}
+                          size={11}
+                        />
+                        {cfg.label}
+                      </Box>
+                    }
                     size="small"
                     clickable
                     onClick={() => toggleType(type)}
+                    color={isActive ? 'primary' : 'default'}
+                    variant={isActive ? 'filled' : 'outlined'}
                     sx={{
                       justifyContent: 'flex-start',
                       fontWeight: 600,
                       fontSize: '0.75rem',
-                      bgcolor: isActive ? cfg.color : 'transparent',
-                      color: isActive ? '#fff' : cfg.color,
-                      borderColor: cfg.color,
-                      border: '1.5px solid',
-                      '&:hover': {
-                        bgcolor: isActive ? cfg.color : `${cfg.color}18`,
-                        opacity: 0.9,
-                      },
                     }}
                   />
                 )
@@ -1073,8 +1083,6 @@ export const SynapseResearchNetworkPlot = (
           sx={{ fontSize: '0.68rem', lineHeight: 1.4, display: 'block' }}
         >
           Each bubble = one study
-          <br />
-          Red = shared by 2+ studies
           <br />
           Scroll to zoom · drag to pan
           <br />

@@ -26,7 +26,7 @@ import NFHero from '../components/NFHero'
 const TOP_TOOLS_USAGE_SQL =
   'SELECT resourceId, COUNT(publicationId) AS pubCount FROM syn26486841 GROUP BY resourceId ORDER BY pubCount DESC'
 const ELIGIBLE_TOOLS_SQL =
-  'SELECT resourceId FROM syn26486807 WHERE funderId IS NOT NULL'
+  'SELECT resourceId FROM syn51734076 WHERE publicationId IS NOT NULL AND funderId IS NOT NULL'
 
 function TopToolsByPublications() {
   const { data: usageData, isLoading: usageLoading } = useGetQueryResultBundle({
@@ -39,7 +39,7 @@ function TopToolsByPublications() {
     useGetQueryResultBundle({
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
       query: { sql: ELIGIBLE_TOOLS_SQL },
-      entityId: 'syn26486807',
+      entityId: 'syn51734076',
       partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
     })
 
@@ -66,17 +66,33 @@ function TopToolsByPublications() {
       .filter((v): v is string => Boolean(v)),
   )
 
-  const ids = usageData?.queryResult?.queryResults?.rows
-    ?.map(row => row.values?.[0])
-    .filter((v): v is string => v != null && v !== '' && eligibleIds.has(v))
-    .slice(0, 3)
+  // Keep pubCount alongside id so tied tools share the same CASE rank
+  const rankedIds =
+    usageData?.queryResult?.queryResults?.rows
+      ?.map(row => ({
+        id: String(row.values?.[0] ?? '').trim(),
+        count: Number(row.values?.[1] ?? 0),
+      }))
+      .filter(({ id }) => id !== '' && id !== 'null' && eligibleIds.has(id))
+      .slice(0, 3) ?? []
 
-  const sql =
-    ids && ids.length > 0
-      ? `SELECT * FROM syn51730943 WHERE resourceId IN (${ids
-          .map(id => `'${id}'`)
-          .join(', ')})`
-      : newToolsSql
+  const ids = rankedIds.map(({ id }) => id)
+
+  let sql = newToolsSql
+  if (ids.length > 0) {
+    // Tools with equal pubCount get the same CASE rank; resourceName ASC breaks the tie
+    const caseWhen = rankedIds
+      .map(({ id, count }) => {
+        const rank = rankedIds.filter(x => x.count > count).length
+        return `WHEN '${id}' THEN ${rank}`
+      })
+      .join(' ')
+    sql = `SELECT * FROM syn51730943 WHERE resourceId IN (${ids
+      .map(id => `'${id}'`)
+      .join(', ')}) ORDER BY CASE resourceId ${caseWhen} ELSE ${
+      ids.length
+    } END, resourceName ASC`
+  }
 
   return (
     <CardContainerLogic

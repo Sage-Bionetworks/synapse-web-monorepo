@@ -146,19 +146,22 @@ export default function OurMissionPage() {
           <SynapseMultiSeriesTimeSeriesPlot
             series={[
               {
-                sql: PUB_BY_YEAR_SQL,
-                label: 'Publications',
-                color: 'hsl(203, 43%, 44%)',
+                sql: STUDY_BY_YEAR_SQL,
+                label: 'Studies',
+                color: 'hsl(30, 55%, 48%)',
+                symbol: 'circle',
               },
               {
                 sql: DS_BY_YEAR_SQL,
                 label: 'Datasets',
                 color: 'hsl(183, 38%, 43%)',
+                symbol: 'square',
               },
               {
-                sql: STUDY_BY_YEAR_SQL,
-                label: 'Studies',
-                color: 'hsl(30, 55%, 48%)',
+                sql: PUB_BY_YEAR_SQL,
+                label: 'Publications',
+                color: 'hsl(203, 43%, 44%)',
+                symbol: 'diamond',
               },
             ]}
             periodLabel="Year"
