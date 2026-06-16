@@ -199,7 +199,7 @@ function HomePageInternal() {
         subtitle="Have questions about our data or tools? Visit the our Service Desk to review our documentation, or use our forum for support."
         centerTitle
       >
-        <div className={styles.helpButtons}>
+        <div className={styles.helpButtonsContainer}>
           {helpButtons.map(({ text, link }) => (
             <Button
               key={text}
@@ -207,7 +207,6 @@ function HomePageInternal() {
               variant="contained"
               target="_blank"
               rel="noopener noreferrer"
-              className={styles.helpButton}
             >
               {text}
             </Button>
