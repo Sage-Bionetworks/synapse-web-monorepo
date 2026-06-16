@@ -52,10 +52,16 @@ type MultiMatchClause = { multi_match: { query: string; fuzziness: string } }
 
 type BoolQuery = {
   bool: {
-    must?: [MultiMatchClause]
+    must?: MultiMatchClause[] | FilterClause[]
     filter?: FilterClause[]
   }
 }
+
+// post_filter / per-facet aggregation filter: a single FilterClause, match_all, or AND of many.
+type SelectionFilter =
+  | FilterClause
+  | { match_all: Record<never, never> }
+  | { bool: { must: FilterClause[] } }
 
 type SearchQueryDSL =
   | MultiMatchClause
@@ -96,14 +102,21 @@ export type SearchTableQueryUseQueryOptions = {
  * that can be sent to the SearchQueryServicesApi.
  *
  * Mapping:
- *  - columnModels (facetType 'enumeration') → aggregations (OpenSearch terms aggregations)
- *  - query.selectedFacets (enumeration) → query.bool.filter terms clauses
- *  - query.selectedFacets (range) → query.bool.filter range clauses
+ *  - columnModels (facetType 'enumeration') → aggregations (OpenSearch terms or filter-wrapped aggregations)
+ *  - query.selectedFacets (enumeration) → post_filter (terms clauses) + per-facet filter aggregations
+ *  - query.selectedFacets (range)       → post_filter (range clauses) + included in all per-facet aggregation filters
  *  - query.additionalFilters (TextMatchesQueryFilter) → multi_match query clause
  *  - query.sort → sort (SortItem { column, direction } → [{ column: 'asc'|'desc' }])
  *  - query.limit → size
  *  - query.offset → from
  *  - partMask → dropped (SearchIndexQuery has no bitmask concept)
+ *
+ * Per-facet filter bucketing (OpenSearch "faceted search" pattern):
+ *   When any facet selections are active, each enum aggregation is wrapped in an OpenSearch
+ *   filter aggregation whose filter is the AND of all OTHER selections (its own selection is
+ *   dropped so the column stays wide). post_filter = AND of ALL selections, narrowing hits/total
+ *   only. This lets each selected facet column show the full set of option counts while all
+ *   other columns narrow to the selection — in a single request.
  */
 export function toSearchIndexQuery(
   queryBundleRequest: QueryBundleRequest,
@@ -112,24 +125,8 @@ export function toSearchIndexQuery(
 ): SearchIndexQuery {
   // Build aggregations from ColumnModels that have facetType 'enumeration'.
   // Range columns are excluded: we synthesize FacetColumnResultRange entries client-side.
-  const aggregationEntries = columnModels
-    ?.filter(cm => cm.facetType === 'enumeration')
-    .map(cm => {
-      const termsAgg: TermsAggregation = { field: cm.name, size: 100 }
-      if (cm.facetSortConfig?.property != null) {
-        // Map FacetColumnSortProperty ('VALUE'|'FREQUENCY') → OpenSearch order key ('_key'|'_count')
-        const orderKey =
-          cm.facetSortConfig.property === 'VALUE' ? '_key' : '_count'
-        const orderDir =
-          cm.facetSortConfig.direction === 'DESC' ? 'desc' : 'asc'
-        termsAgg.order = { [orderKey]: orderDir }
-      }
-      return [cm.name, { terms: termsAgg }] as [string, Aggregation]
-    })
-  const aggregations =
-    aggregationEntries && aggregationEntries.length > 0
-      ? Object.fromEntries(aggregationEntries)
-      : undefined
+  // Aggregations are built lazily after filterClauses is populated so the per-facet
+  // filter wrapping logic has access to all active selections.
 
   // Build filter clauses from enumeration selectedFacets
   const filterClauses: FilterClause[] = []
@@ -184,22 +181,71 @@ export function toSearchIndexQuery(
       ? textMatchesExpressions.join(' ')
       : undefined
 
-  // Build the OpenSearch query DSL
+  // Build the OpenSearch query DSL (text search only; facet selections go to post_filter).
   let query: SearchQueryDSL
-  if (queryText && filterClauses.length > 0) {
-    query = {
-      bool: {
-        must: [{ multi_match: { query: queryText, fuzziness: 'AUTO' } }],
-        filter: filterClauses,
-      },
-    }
-  } else if (queryText) {
+  if (queryText) {
     query = { multi_match: { query: queryText, fuzziness: 'AUTO' } }
-  } else if (filterClauses.length > 0) {
-    query = { bool: { filter: filterClauses } }
   } else {
     query = { match_all: {} }
   }
+
+  // post_filter narrows hits/total by ALL active facet selections without affecting the
+  // aggregation counts. Each enum aggregation independently applies a per-facet filter
+  // (see aggregationEntries below) so each column stays wide for its own selection while
+  // all other columns narrow.
+  let postFilter: SelectionFilter | undefined
+  if (filterClauses.length === 1) {
+    postFilter = filterClauses[0]
+  } else if (filterClauses.length > 1) {
+    postFilter = { bool: { must: filterClauses } }
+  }
+
+  // Build aggregations. When selections are active, wrap each terms aggregation in an
+  // OpenSearch filter aggregation whose filter is ALL selections EXCEPT the one for this
+  // column. That keeps the column's own options wide while the others narrow.
+  const aggregationEntries = columnModels
+    ?.filter(cm => cm.facetType === 'enumeration')
+    .map(cm => {
+      const termsAgg: TermsAggregation = { field: cm.name, size: 100 }
+      if (cm.facetSortConfig?.property != null) {
+        // Map FacetColumnSortProperty ('VALUE'|'FREQUENCY') → OpenSearch order key ('_key'|'_count')
+        const orderKey =
+          cm.facetSortConfig.property === 'VALUE' ? '_key' : '_count'
+        const orderDir =
+          cm.facetSortConfig.direction === 'DESC' ? 'desc' : 'asc'
+        termsAgg.order = { [orderKey]: orderDir }
+      }
+
+      if (filterClauses.length === 0) {
+        // Baseline (no selections): plain terms aggregation, no wrapping needed.
+        return [cm.name, { terms: termsAgg }] as [string, Aggregation]
+      }
+
+      // Per-facet filter bucketing: exclude this column's own selection from the filter
+      // so it stays wide, while all other active selections narrow the counts.
+      const otherClauses = filterClauses.filter(clause => {
+        if ('terms' in clause) return !(cm.name in clause.terms)
+        if ('range' in clause) return !(cm.name in clause.range)
+        return true
+      })
+      const aggFilter: SelectionFilter =
+        otherClauses.length === 0
+          ? { match_all: {} }
+          : otherClauses.length === 1
+            ? otherClauses[0]
+            : { bool: { must: otherClauses } }
+      return [
+        cm.name,
+        {
+          filter: aggFilter,
+          aggregations: { [cm.name]: { terms: termsAgg } },
+        } as unknown as Aggregation,
+      ] as [string, Aggregation]
+    })
+  const aggregations =
+    aggregationEntries && aggregationEntries.length > 0
+      ? Object.fromEntries(aggregationEntries)
+      : undefined
 
   // Map SortItem[] → OpenSearch sort shape: [{ columnName: 'asc'|'desc' }, ...]
   // filtering out entries with no direction (which mean "remove sort").
@@ -212,6 +258,7 @@ export function toSearchIndexQuery(
 
   const searchQuery: SearchSearchQuery = {
     query: query as unknown as DslQuery,
+    post_filter: postFilter ? (postFilter as unknown as DslQuery) : undefined,
     aggregations,
     sort: sortEntries?.length ? sortEntries : undefined,
     size: queryBundleRequest.query.limit,
@@ -285,18 +332,29 @@ export function searchQueryResultsToQueryResultBundle(
         }
       : undefined
 
-  // Parse aggregationResults (opaque OpenSearch terms aggregation JSON) into
-  // FacetColumnResultValues. Each key in aggregationResults corresponds to a column name
-  // whose aggregation was requested in toSearchIndexQuery. The value is an OpenSearch
-  // terms aggregation response: { buckets: [{ key: unknown, doc_count: number }] }.
-  // We cast once via `unknown` to attach our narrow local type and avoid unsafe-access lint.
+  // Parse aggregationResults (opaque OpenSearch aggregation JSON) into FacetColumnResultValues.
+  // Each key in aggregationResults corresponds to a column name whose aggregation was requested
+  // in toSearchIndexQuery. Two response shapes are possible:
+  //
+  //   Plain terms (no active selections):
+  //     { buckets: [{ key: unknown, doc_count: number }] }
+  //
+  //   Filter-wrapped terms (per-facet filter bucketing, selections active):
+  //     { doc_count: number, [columnName]: { buckets: [...] } }
+  //
+  // We detect the shape by checking for a nested [columnName] property with buckets.
   const aggregationResults = results.aggregationResults as unknown as Record<
     string,
-    OpenSearchTermsAgg
+    OpenSearchTermsAgg | Record<string, OpenSearchTermsAgg>
   > | null
   const rawFacets: FacetColumnResultValues[] = Object.entries(
     aggregationResults ?? {},
   ).map(([columnName, agg]) => {
+    // Resolve the actual terms result: nested under [columnName] for filter-wrapped,
+    // or the agg itself for plain terms.
+    const nested = (agg as Record<string, OpenSearchTermsAgg>)[columnName]
+    const termsAgg: OpenSearchTermsAgg =
+      nested?.buckets !== undefined ? nested : (agg as OpenSearchTermsAgg)
     const selectedValues =
       selectedFacets
         ?.filter(
@@ -311,7 +369,7 @@ export function searchQueryResultsToQueryResultBundle(
         'org.sagebionetworks.repo.model.table.FacetColumnResultValues' as const,
       facetType: 'enumeration' as const,
       columnName,
-      facetValues: (agg.buckets ?? []).map(b => ({
+      facetValues: (termsAgg.buckets ?? []).map(b => ({
         value: String(b.key),
         count: b.doc_count,
         isSelected: selectedValues.includes(String(b.key)),
