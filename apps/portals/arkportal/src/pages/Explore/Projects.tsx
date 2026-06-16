@@ -1,8 +1,8 @@
-import { projectsQueryWrapperPlotNavProps } from '@/config/synapseConfigs/projects'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/index'
+import { projectsSearch } from '@/config/synapseConfigs/projects'
+import SearchQueryWrapperPlotNav from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 function ExploreProjects() {
-  return <QueryWrapperPlotNav {...projectsQueryWrapperPlotNavProps} />
+  return <SearchQueryWrapperPlotNav {...projectsSearch} shouldDeepLink={true} />
 }
 
 export default ExploreProjects

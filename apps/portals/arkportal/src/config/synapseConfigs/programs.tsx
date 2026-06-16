@@ -4,7 +4,8 @@ import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/Q
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../columnAliases'
-import { programSql } from '../resources'
+import { programSearchIndexId, programSql } from '../resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 export const programsRgbIndex = 9
 
@@ -49,4 +50,17 @@ export const programsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   columnAliases,
   facetsToPlot: [],
   defaultShowPlots: false,
+}
+
+export const programsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex: programsRgbIndex,
+  name: 'Programs',
+  shouldDeepLink: false,
+  cardConfiguration: programsCardConfiguration,
+  columnAliases,
+  searchIndexId: programSearchIndexId,
+  autocompleteFieldName: 'Program',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
+  defaultShowSearchBar: false,
 }

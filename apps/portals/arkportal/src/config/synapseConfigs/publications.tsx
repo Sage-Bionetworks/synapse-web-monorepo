@@ -3,7 +3,8 @@ import type { CardConfiguration } from 'synapse-react-client/components/CardCont
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import columnAliases from '../columnAliases'
-import { publicationsSql } from '../resources'
+import { publicationsSearchIndexId, publicationsSql } from '../resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 export const publicationsCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
@@ -60,6 +61,18 @@ const publications: QueryWrapperPlotNavProps = {
       'publicationType',
     ],
   },
+}
+
+export const publicationsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex: 0,
+  name: 'Publications',
+  shouldDeepLink: false,
+  cardConfiguration: publicationsCardConfiguration,
+  columnAliases: { ...columnAliases, associatedDataset: 'Dataset' },
+  searchIndexId: publicationsSearchIndexId,
+  autocompleteFieldName: 'title',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }
 
 export default publications

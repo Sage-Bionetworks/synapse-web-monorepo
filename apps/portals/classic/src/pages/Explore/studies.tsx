@@ -1,8 +1,8 @@
-import studiesQueryWrapperPlotNavProps from '@/config/synapseConfigs/studies'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import { studiesSearch } from '@/config/synapseConfigs/studies'
+import SearchQueryWrapperPlotNav from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 function exploreStudies() {
-  return <QueryWrapperPlotNav {...studiesQueryWrapperPlotNavProps} />
+  return <SearchQueryWrapperPlotNav {...studiesSearch} shouldDeepLink={true} />
 }
 
 export default exploreStudies

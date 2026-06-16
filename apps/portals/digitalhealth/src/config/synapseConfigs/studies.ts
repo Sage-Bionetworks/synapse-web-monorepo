@@ -1,10 +1,11 @@
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TargetEnum } from 'synapse-react-client/utils/html/TargetEnum'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../columnAliases'
-import { studySql } from '../resources'
+import { studySearchIndexId, studySql } from '../resources'
 import { iconOptions } from './iconOptions'
 
 export const studiesRgbIndex = 9
@@ -84,4 +85,27 @@ export const studiesQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
       'study',
     ],
   },
+}
+
+export const studiesSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex: studiesRgbIndex,
+  name: 'Collections',
+  shouldDeepLink: false,
+  searchIndexId: studySearchIndexId,
+  autocompleteFieldName: 'study',
+  cardConfiguration: studiesCardConfiguration,
+  columnAliases,
+  facetsToPlot: [
+    'collectionType',
+    'deviceLocation',
+    'devicePlatform',
+    'deviceType',
+    'diagnosis',
+    'digitalAssessmentCategory',
+    'intervention',
+    'reportedOutcome',
+    'sensorType',
+  ],
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }

@@ -12,7 +12,7 @@ type TableInfoMap = Record<string, Partial<TableInfo>>
 const tableInfo: TableInfoMap = {
   DST_denormalized: {
     name: 'DST_denormalized',
-    id: 'syn65676531.87', // current version of DST_denormalized
+    id: 'syn65676531.93', // current version of DST_denormalized
   },
   DataSet: { name: 'DataSet', id: 'syn66330217' },
   DataSet_denormalized: {

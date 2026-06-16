@@ -3,11 +3,13 @@ import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/Q
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../columnAliases'
-import { datasetsSql } from '../resources'
+import { datasetsSearchIndexId, datasetsSql } from '../resources'
 import { citationBoilerplateText } from './commonProps'
 import { columnIconConfigs } from './commonProps'
 import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 import { Chip } from '@mui/material'
+
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 const rgbIndex = 0
 
@@ -140,4 +142,16 @@ export const datasetsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
       distance: 3,
     },
   },
+}
+
+export const datasetsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'Datasets',
+  shouldDeepLink: false,
+  cardConfiguration: datasetCardConfiguration,
+  columnAliases: { ...columnAliases, externalLink: 'Source Repository Link' },
+  searchIndexId: datasetsSearchIndexId,
+  autocompleteFieldName: 'datasetName',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }
