@@ -1,5 +1,6 @@
 import tools from '@/config/synapseConfigs/tools'
 import { createStaticMeta } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
+import { Navigate, useSearchParams } from 'react-router'
 import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 
 export const meta = createStaticMeta(
@@ -8,6 +9,16 @@ export const meta = createStaticMeta(
 )
 
 function ExploreTools() {
+  const [searchParams] = useSearchParams()
+  const resourceId = searchParams.get('resourceId')
+  if (resourceId) {
+    return (
+      <Navigate
+        to={`/Explore/Tools/${encodeURIComponent(resourceId)}`}
+        replace
+      />
+    )
+  }
   return <QueryWrapperPlotNav {...tools} />
 }
 
