@@ -9,12 +9,15 @@ import SearchParamAwareQueryWrapperPlotNav from './SearchParamAwareQueryWrapperP
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import type { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 import { isSearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
+import { useGetSuggestionsForSearchIndex } from 'synapse-react-client/components/SearchQueryWrapper/SearchQueryUseQueryOptions'
+import { SearchIndexConfig } from '../../types/portal-util-types'
 
 export type PortalSearchPageProps = {
   selectedTabIndex?: number
   configs: (QueryWrapperPlotNavProps | SearchQueryWrapperPlotNavProps)[]
   searchPageTabs: PortalSearchTabConfig[]
   roleMapping?: Record<string, string>
+  searchIndexConfig?: SearchIndexConfig
 }
 
 function getQueryCount(queryResultBundleJSON: string) {
@@ -26,7 +29,13 @@ function getQueryCount(queryResultBundleJSON: string) {
 }
 
 export function PortalSearchPage(props: PortalSearchPageProps) {
-  const { selectedTabIndex, configs, searchPageTabs, roleMapping } = props
+  const {
+    selectedTabIndex,
+    configs,
+    searchPageTabs,
+    roleMapping,
+    searchIndexConfig,
+  } = props
   // Note: Files does not currently enable FTS
   const [searchPageTabsState, setSearchPageTabsState] = useState<
     PortalSearchTabConfig[]
@@ -75,6 +84,10 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
     },
     [searchPageTabsState, navigate, location.search],
   )
+  const getSuggestions = useGetSuggestionsForSearchIndex(
+    searchIndexConfig?.searchIndexId ?? '',
+    searchIndexConfig?.autocompleteFieldName,
+  )
   // on search field value update, update the special search parameter SEARCH_TERM, which the QueryWrapperPlotNav will load as the search term
   return (
     <Box
@@ -87,6 +100,7 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
       <PortalFullTextSearchField
         disabled={selectedTabIndex == undefined}
         path={location.pathname}
+        getSuggestions={searchIndexConfig ? getSuggestions : undefined}
       />
       <Box
         sx={{
