@@ -7,6 +7,7 @@ const variablesPlotNavProps: QueryWrapperPlotNavProps = {
   //   name: 'Variables',
   fileIdColumnName: 'id',
   columnAliases: { study: 'On Synapse' },
+  defaultShowPlots: false,
   tableConfiguration: {
     showAccessColumn: true,
     showDownloadColumn: false,
