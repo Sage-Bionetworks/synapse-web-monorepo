@@ -74,6 +74,7 @@ export const studiesSearch: SearchQueryWrapperPlotNavProps = {
   cardConfiguration: studyCardConfiguration,
   hideTopLevelControls: false,
   hideQueryCount: false,
+  defaultShowPlots: false,
 }
 
 export default studiesQueryWrapperPlotNavProps

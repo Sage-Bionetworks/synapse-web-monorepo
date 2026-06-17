@@ -48,3 +48,10 @@
     font-weight: 400;
   }
 }
+
+.helpButtonsContainer {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 40px;
+}
