@@ -41,6 +41,7 @@ export const publicationsSearch: SearchQueryWrapperPlotNavProps = {
   facetsToPlot: ['Program', 'Year', 'Grant', 'Journal'],
   hideTopLevelControls: false,
   hideQueryCount: false,
+  defaultShowPlots: false,
 }
 
 export default publicationsQueryWrapperPlotNavProps
