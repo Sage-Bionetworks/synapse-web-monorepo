@@ -395,10 +395,10 @@ export const SynapseSankeyPlot = (
   const endColor = theme.palette.primary.dark
   const textColor = theme.palette.text.primary
 
-  const rowHeight = hasRightFlow ? BUTTERFLY_ROW_HEIGHT : ROW_HEIGHT
-  const nodePadding = hasRightFlow ? BUTTERFLY_NODE_PADDING : NODE_PADDING
+  // viewH feeds the SVG viewBox, so it lives at component scope; the remaining
+  // spacing is derived inside the layout memo below.
   const gutterTop = hasRightFlow ? BUTTERFLY_GUTTER_TOP : GUTTER_Y
-  const gutterRight = hasRightFlow ? BUTTERFLY_GUTTER_RIGHT : GUTTER_RIGHT
+  const rowHeight = hasRightFlow ? BUTTERFLY_ROW_HEIGHT : ROW_HEIGHT
   const viewH = Math.max(320, gutterTop + GUTTER_Y + rows.length * rowHeight)
 
   // Build and lay out the graph. Memoized so hovering (which only changes
@@ -478,6 +478,8 @@ export const SynapseSankeyPlot = (
         : []),
     ]
 
+    const nodePadding = hasRightFlow ? BUTTERFLY_NODE_PADDING : NODE_PADDING
+    const gutterRight = hasRightFlow ? BUTTERFLY_GUTTER_RIGHT : GUTTER_RIGHT
     const layout = d3Sankey<NodeDatum, LinkDatum>()
       .nodeWidth(NODE_WIDTH)
       .nodePadding(nodePadding)
@@ -507,9 +509,7 @@ export const SynapseSankeyPlot = (
     endColor,
     theme.palette.primary.main,
     viewH,
-    nodePadding,
     gutterTop,
-    gutterRight,
   ])
 
   if (isLoading) {
@@ -575,6 +575,9 @@ export const SynapseSankeyPlot = (
       : {}
   const endProps = (fire: (() => void) | undefined): InteractiveProps =>
     fire ? { cursor: 'pointer', onClick: fire } : {}
+  // The "datasets" (left) handler fires for a center node and its left flow.
+  const categoryFire = (name: string) =>
+    onCategoryClick ? () => onCategoryClick(name) : undefined
 
   return (
     <div className={classNames(styles.root, { [styles.rootVisible]: visible })}>
@@ -645,17 +648,12 @@ export const SynapseSankeyPlot = (
         <g>
           {graph.nodes.map((node, i) => {
             const sourceIndex = (node.index ?? 1) - 1
-            const props =
+            const clickProps =
               node.kind === 'leftEnd'
                 ? endProps(onRootClick)
                 : node.kind === 'rightEnd'
                   ? endProps(onRightEndClick)
-                  : flowProps(
-                      sourceIndex,
-                      onCategoryClick
-                        ? () => onCategoryClick(node.name)
-                        : undefined,
-                    )
+                  : flowProps(sourceIndex, categoryFire(node.name))
             return (
               <rect
                 key={i}
@@ -672,7 +670,7 @@ export const SynapseSankeyPlot = (
                 onMouseEnter={() =>
                   setHovered(node.kind === 'source' ? sourceIndex : null)
                 }
-                {...props}
+                {...clickProps}
               />
             )
           })}
@@ -707,9 +705,7 @@ export const SynapseSankeyPlot = (
             )
           }
           const sourceIndex = (node.index ?? 1) - 1
-          const fire = onCategoryClick
-            ? () => onCategoryClick(node.name)
-            : undefined
+          const fire = categoryFire(node.name)
           if (hasRightFlow) {
             return (
               <SankeyCenterLabel
