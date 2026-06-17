@@ -51,6 +51,13 @@ function makeAsyncStatusWithRows(
 ): AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle> {
   return {
     jobState: 'COMPLETE',
+    jobCanceling: false,
+    etag: 'etag',
+    jobId: 'job1',
+    startedByUserId: 1,
+    startedOn: '2024-01-01T00:00:00.000Z',
+    changedOn: '2024-01-01T00:00:00.000Z',
+    runtimeMS: 0,
     responseBody: {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
       queryCount,
