@@ -140,7 +140,7 @@ function SankeyEndFigure(props: {
         fontSize={10}
         fontWeight={600}
         letterSpacing={1.2}
-        fill={theme.palette.grey[600]}
+        fill={theme.palette.grey[700]}
       >
         {node.name.toUpperCase()}
       </text>
@@ -233,7 +233,7 @@ function SankeyCategoryLabel(props: {
         y={cy + 13}
         fontSize={11}
         fontWeight={500}
-        fill={theme.palette.grey[600]}
+        fill={theme.palette.grey[700]}
         className={styles.tabularNums}
       >
         {(pct * 100).toFixed(1)}%
@@ -281,6 +281,8 @@ function SankeyCenterLabel(props: {
         fontSize={13}
         fontWeight={600}
         fill={theme.palette.text.primary}
+        stroke={theme.palette.background.paper}
+        className={styles.haloText}
       >
         {node.name}
       </text>
@@ -289,9 +291,10 @@ function SankeyCenterLabel(props: {
         y={topY - 6}
         textAnchor="middle"
         fontSize={11}
-        fontWeight={500}
-        fill={theme.palette.grey[600]}
-        className={styles.tabularNums}
+        fontWeight={600}
+        fill={theme.palette.text.secondary}
+        stroke={theme.palette.background.paper}
+        className={classNames(styles.tabularNums, styles.haloText)}
       >
         {`${leftValue.toLocaleString()} ${unitLabel} · ${rightValue.toLocaleString()} ${rightUnitLabel}`}
       </text>
@@ -636,6 +639,28 @@ export const SynapseSankeyPlot = (
               />
             )
           })}
+        </g>
+
+        {/* A slow light sweep travels along each ribbon (source -> target) for a
+            subtle sense of flow. pathLength normalizes the dash across ribbons
+            of different lengths; pointer-events are disabled so it never
+            intercepts hover/click, and it is suppressed under
+            prefers-reduced-motion (see the stylesheet). */}
+        <g fill="none">
+          {graph.links.map((link, i) => (
+            <path
+              key={i}
+              d={linkPath(link) ?? undefined}
+              pathLength={100}
+              stroke={theme.palette.background.paper}
+              strokeWidth={Math.max(1.5, (link.width ?? 1) * 0.5)}
+              strokeOpacity={
+                focusIndex === null || focusIndex === link.sourceIndex ? 0.5 : 0
+              }
+              className={styles.flow}
+              style={{ animationDelay: `${i * 0.12}s` }}
+            />
+          ))}
         </g>
 
         {/* Nodes */}
