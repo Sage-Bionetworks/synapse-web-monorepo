@@ -104,12 +104,13 @@ const COUNT_COLUMN_W = 70
 const BAR_TRACK_W = 64
 const BAR_HEIGHT = 4.5
 // Butterfly mode needs more vertical room per row for the center labels, which
-// sit in the padding gap above each node, plus a wider right gutter for the
-// second end figure.
+// sit in the padding gap above each node. The left/right gutters are equal so
+// the center column lands at the SVG's horizontal center (aligning the center
+// labels with the centered title), with room for an end figure on each side.
 const BUTTERFLY_ROW_HEIGHT = 64
 const BUTTERFLY_NODE_PADDING = 56
 const BUTTERFLY_GUTTER_TOP = 44
-const BUTTERFLY_GUTTER_RIGHT = 200
+const BUTTERFLY_GUTTER_X = 160
 
 const midY = (node: LaidOutNode) => ((node.y0 ?? 0) + (node.y1 ?? 0)) / 2
 const midX = (node: LaidOutNode) => ((node.x0 ?? 0) + (node.x1 ?? 0)) / 2
@@ -479,13 +480,15 @@ export const SynapseSankeyPlot = (
     ]
 
     const nodePadding = hasRightFlow ? BUTTERFLY_NODE_PADDING : NODE_PADDING
-    const gutterRight = hasRightFlow ? BUTTERFLY_GUTTER_RIGHT : GUTTER_RIGHT
+    // Symmetric gutters in butterfly mode center the column layout.
+    const gutterLeft = hasRightFlow ? BUTTERFLY_GUTTER_X : GUTTER_LEFT
+    const gutterRight = hasRightFlow ? BUTTERFLY_GUTTER_X : GUTTER_RIGHT
     const layout = d3Sankey<NodeDatum, LinkDatum>()
       .nodeWidth(NODE_WIDTH)
       .nodePadding(nodePadding)
       .nodeSort(null) // preserve query order top-to-bottom
       .extent([
-        [GUTTER_LEFT, gutterTop],
+        [gutterLeft, gutterTop],
         [VIEW_W - gutterRight, viewH - GUTTER_Y],
       ])
 
