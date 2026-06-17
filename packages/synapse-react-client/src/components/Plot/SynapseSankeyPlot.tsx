@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useMemo, useState } from 'react'
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { useGetFullTableQueryResults } from '@/synapse-queries'
 import { SynapseConstants } from '@/utils'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
@@ -10,18 +10,41 @@ import {
   type SankeyNode as D3SankeyNode,
 } from 'd3-sankey'
 import tinycolor from 'tinycolor2'
+import classNames from 'classnames'
+import styles from './SynapseSankeyPlot.module.scss'
 
 export type SynapseSankeyPlotProps = {
-  /** SQL query whose first column provides node labels and second column provides link values */
+  /** SQL query providing the node labels and link values (see labelColumn/valueColumn) */
   sql: string
   /** Label for the root node that links to every row returned by the query */
   rootLabel: string
   /** Optional plot title */
   title?: string
   /**
+   * Column supplying each category's label. Either a column name (matched
+   * against the query result headers) or a zero-based index. Defaults to the
+   * first column.
+   */
+  labelColumn?: string | number
+  /**
+   * Column supplying each link's value. Either a column name or a zero-based
+   * index. Defaults to the second column.
+   */
+  valueColumn?: string | number
+  /**
+   * Noun for the root total caption, e.g. "datasets" renders "datasets total".
+   * Defaults to "items".
+   */
+  unitLabel?: string
+  /**
+   * Phrase describing the breakdown, used in the chart's accessible label,
+   * e.g. "by source" renders "All Datasets broken down by source".
+   */
+  breakdownLabel?: string
+  /**
    * Invoked with a category's label when its flow, node, or label is clicked.
-   * When provided, categories become interactive (pointer cursor, keyboard
-   * focusable). Use it to deep-link to a filtered view of that category.
+   * When provided, categories become interactive (pointer cursor). Use it to
+   * deep-link to a filtered view of that category.
    */
   onCategoryClick?: (categoryLabel: string) => void
 }
@@ -30,6 +53,7 @@ export type SynapseSankeyPlotProps = {
 type NodeDatum = { name: string; value: number; color: string; isRoot: boolean }
 type LinkDatum = { value: number }
 type LaidOutNode = D3SankeyNode<NodeDatum, LinkDatum>
+type InteractiveProps = { cursor?: 'pointer'; onClick?: () => void }
 
 // Coordinate space of the SVG. The rendered width is capped at VIEW_W (see the
 // wrapper's maxWidth) so one viewBox unit ≈ one CSS pixel and text renders at
@@ -43,13 +67,152 @@ const GUTTER_Y = 22
 const NODE_WIDTH = 13
 const NODE_PADDING = 34
 const ROW_HEIGHT = 46
+// Horizontal gap between a node and its adjacent label/figure.
+const LABEL_GAP = 14
+// Category row: a fixed-width column reserved for the count, so the share
+// micro-bar always starts at the same x regardless of the number's length.
+const COUNT_COLUMN_W = 70
+const BAR_TRACK_W = 64
+const BAR_HEIGHT = 4.5
+
 const viewHeightFor = (categoryCount: number) =>
   Math.max(320, 2 * GUTTER_Y + categoryCount * ROW_HEIGHT)
+const midY = (node: LaidOutNode) => ((node.y0 ?? 0) + (node.y1 ?? 0)) / 2
+
+// The editorial figure beside the root node: an eyebrow label, the total, and a
+// caption (e.g. "datasets total").
+function SankeyRootFigure(props: {
+  node: LaidOutNode
+  total: number
+  unitLabel: string
+}): React.ReactNode {
+  const { node, total, unitLabel } = props
+  const theme = useTheme()
+  const cy = midY(node)
+  const x = (node.x0 ?? 0) - LABEL_GAP
+  return (
+    <g>
+      <text
+        x={x}
+        y={cy - 22}
+        textAnchor="end"
+        fontSize={10}
+        fontWeight={600}
+        letterSpacing={1.2}
+        fill={theme.palette.grey[600]}
+      >
+        {node.name.toUpperCase()}
+      </text>
+      <text
+        x={x}
+        y={cy + 6}
+        textAnchor="end"
+        fontSize={26}
+        fontWeight={600}
+        fill={theme.palette.primary.dark}
+        className={styles.tabularNums}
+      >
+        {total.toLocaleString()}
+      </text>
+      <text
+        x={x}
+        y={cy + 23}
+        textAnchor="end"
+        fontSize={11}
+        fontWeight={500}
+        fill={theme.palette.text.secondary}
+      >
+        {`${unitLabel} total`}
+      </text>
+    </g>
+  )
+}
+
+// A category row's label: name, count, share micro-bar, and percentage.
+function SankeyCategoryLabel(props: {
+  node: LaidOutNode
+  total: number
+  opacity: number
+  onMouseEnter: () => void
+  interactiveProps: InteractiveProps
+}): React.ReactNode {
+  const { node, total, opacity, onMouseEnter, interactiveProps } = props
+  const theme = useTheme()
+  const cy = midY(node)
+  const x = (node.x1 ?? 0) + LABEL_GAP
+  const value = node.value ?? 0
+  const pct = total > 0 ? value / total : 0
+  const barX = x + COUNT_COLUMN_W
+  const barY = cy + 6
+  return (
+    <g
+      opacity={opacity}
+      className={styles.categoryLabel}
+      onMouseEnter={onMouseEnter}
+      {...interactiveProps}
+    >
+      <text
+        x={x}
+        y={cy - 4}
+        fontSize={13}
+        fontWeight={600}
+        fill={theme.palette.text.primary}
+      >
+        {node.name}
+      </text>
+      <text
+        x={x}
+        y={cy + 14}
+        fontSize={13}
+        fontWeight={600}
+        fill={node.color}
+        className={styles.tabularNums}
+      >
+        {value.toLocaleString()}
+      </text>
+      <rect
+        x={barX}
+        y={barY}
+        width={BAR_TRACK_W}
+        height={BAR_HEIGHT}
+        rx={BAR_HEIGHT / 2}
+        fill={theme.palette.grey[300]}
+      />
+      <rect
+        x={barX}
+        y={barY}
+        width={BAR_TRACK_W * pct}
+        height={BAR_HEIGHT}
+        rx={BAR_HEIGHT / 2}
+        fill={node.color}
+      />
+      <text
+        x={barX + BAR_TRACK_W + 7}
+        y={cy + 13}
+        fontSize={11}
+        fontWeight={500}
+        fill={theme.palette.grey[600]}
+        className={styles.tabularNums}
+      >
+        {(pct * 100).toFixed(1)}%
+      </text>
+    </g>
+  )
+}
 
 export const SynapseSankeyPlot = (
   props: SynapseSankeyPlotProps,
 ): React.ReactNode => {
-  const { sql, rootLabel, title, onCategoryClick } = props
+  const {
+    sql,
+    rootLabel,
+    title,
+    labelColumn,
+    valueColumn,
+    unitLabel = 'items',
+    breakdownLabel,
+    onCategoryClick,
+  } = props
   const theme = useTheme()
   const gradientPrefix = useId()
 
@@ -63,6 +226,16 @@ export const SynapseSankeyPlot = (
   useEffect(() => {
     const id = requestAnimationFrame(() => setVisible(true))
     return () => cancelAnimationFrame(id)
+  }, [])
+  // Timer that briefly emphasizes a clicked flow before invoking the handler.
+  // Held in a ref so it can be cleared on unmount and replaced on rapid clicks.
+  const clickTimer = useRef<number | undefined>(undefined)
+  useEffect(() => {
+    return () => {
+      if (clickTimer.current !== undefined) {
+        window.clearTimeout(clickTimer.current)
+      }
+    }
   }, [])
 
   const queryRequest: QueryBundleRequest = {
@@ -81,6 +254,26 @@ export const SynapseSankeyPlot = (
     () => queryData?.queryResult?.queryResults.rows ?? [],
     [queryData],
   )
+
+  // Resolve the label/value columns (by name or index) against the result
+  // headers, falling back to the first two columns.
+  const { labelIndex, valueIndex } = useMemo(() => {
+    const headers = queryData?.queryResult?.queryResults.headers ?? []
+    const resolve = (col: string | number | undefined, fallback: number) => {
+      if (typeof col === 'number') {
+        return col
+      }
+      if (typeof col === 'string') {
+        const idx = headers.findIndex(h => h.name === col)
+        return idx >= 0 ? idx : fallback
+      }
+      return fallback
+    }
+    return {
+      labelIndex: resolve(labelColumn, 0),
+      valueIndex: resolve(valueColumn, 1),
+    }
+  }, [queryData, labelColumn, valueColumn])
 
   // Theme-derived palette: the root node uses the dark primary color; category
   // nodes step through a light-to-dark sweep of the primary color so they stay
@@ -107,12 +300,15 @@ export const SynapseSankeyPlot = (
             .mix(gradientStart, gradientEnd, (index / (rows.length - 1)) * 100)
             .toHexString()
 
-    const total = rows.reduce((sum, row) => sum + Number(row.values[1] ?? 0), 0)
+    const total = rows.reduce(
+      (sum, row) => sum + Number(row.values[valueIndex] ?? 0),
+      0,
+    )
     const nodes: NodeDatum[] = [
       { name: rootLabel, value: total, color: rootColor, isRoot: true },
       ...rows.map((row, index) => ({
-        name: String(row.values[0] ?? ''),
-        value: Number(row.values[1] ?? 0),
+        name: String(row.values[labelIndex] ?? ''),
+        value: Number(row.values[valueIndex] ?? 0),
         color: categoryColor(index),
         isRoot: false,
       })),
@@ -121,7 +317,7 @@ export const SynapseSankeyPlot = (
       (row, index) => ({
         source: 0,
         target: index + 1,
-        value: Number(row.values[1] ?? 0),
+        value: Number(row.values[valueIndex] ?? 0),
       }),
     )
 
@@ -138,7 +334,15 @@ export const SynapseSankeyPlot = (
       nodes: nodes.map(d => ({ ...d })),
       links: links.map(d => ({ ...d })),
     })
-  }, [rows, rootLabel, rootColor, theme.palette.primary.main, viewH])
+  }, [
+    rows,
+    labelIndex,
+    valueIndex,
+    rootLabel,
+    rootColor,
+    theme.palette.primary.main,
+    viewH,
+  ])
 
   if (isLoading) {
     return <Skeleton width={'100%'} height={'500px'} />
@@ -181,10 +385,23 @@ export const SynapseSankeyPlot = (
     if (!onCategoryClick) {
       return
     }
+    if (clickTimer.current !== undefined) {
+      window.clearTimeout(clickTimer.current)
+    }
     setClicked(categoryIndex)
-    window.setTimeout(() => onCategoryClick(label), 320)
+    clickTimer.current = window.setTimeout(() => {
+      clickTimer.current = undefined
+      // Clear the transient emphasis before invoking the handler so the chart
+      // returns to its resting state for consumers whose handler doesn't
+      // navigate away (and unmount) the component.
+      setClicked(null)
+      onCategoryClick(label)
+    }, 320)
   }
-  const interactiveProps = (categoryIndex: number, label: string) =>
+  const interactiveProps = (
+    categoryIndex: number,
+    label: string,
+  ): InteractiveProps =>
     onCategoryClick
       ? {
           cursor: 'pointer',
@@ -193,42 +410,22 @@ export const SynapseSankeyPlot = (
       : {}
 
   return (
-    <div
-      style={{
-        opacity: visible ? 1 : 0,
-        transition: 'opacity 0.6s ease',
-        width: '100%',
-        marginTop: 48,
-      }}
-    >
+    <div className={classNames(styles.root, { [styles.rootVisible]: visible })}>
       {title && (
-        <div
-          style={{
-            fontFamily,
-            fontWeight: 600,
-            fontSize: 20,
-            textAlign: 'center',
-            color: textColor,
-            marginBottom: 12,
-          }}
-        >
+        <div className={styles.title} style={{ fontFamily, color: textColor }}>
           {title}
         </div>
       )}
       <svg
         viewBox={`0 0 ${VIEW_W} ${viewH}`}
         role="img"
-        aria-label={`${rootLabel} broken down by source`}
-        style={{
-          fontFamily,
-          display: 'block',
-          overflow: 'visible',
-          width: '100%',
-          maxWidth: VIEW_W,
-          height: 'auto',
-          margin: '0 auto',
-          outline: 'none',
-        }}
+        aria-label={
+          breakdownLabel
+            ? `${rootLabel} broken down ${breakdownLabel}`
+            : `${rootLabel} breakdown`
+        }
+        className={styles.svg}
+        style={{ fontFamily, maxWidth: VIEW_W }}
         onMouseLeave={() => setHovered(null)}
       >
         <defs>
@@ -262,10 +459,7 @@ export const SynapseSankeyPlot = (
                 stroke={`url(#${gradientPrefix}-grad-${i})`}
                 strokeWidth={clicked === i ? baseWidth * 1.25 : baseWidth}
                 strokeOpacity={linkOpacity(i)}
-                style={{
-                  transition:
-                    'stroke-opacity 0.25s ease, stroke-width 0.25s ease',
-                }}
+                className={styles.ribbon}
                 onMouseEnter={() => setHovered(i)}
                 {...interactiveProps(i, target.name)}
               />
@@ -287,7 +481,7 @@ export const SynapseSankeyPlot = (
               fillOpacity={nodeOpacity(node)}
               stroke={theme.palette.background.paper}
               strokeWidth={1}
-              style={{ transition: 'fill-opacity 0.25s ease' }}
+              className={styles.node}
               onMouseEnter={() =>
                 setHovered(node.isRoot ? null : (node.index ?? 1) - 1)
               }
@@ -300,107 +494,26 @@ export const SynapseSankeyPlot = (
 
         {/* Labels */}
         {graph.nodes.map((node, i) => {
-          const cy = ((node.y0 ?? 0) + (node.y1 ?? 0)) / 2
           if (node.isRoot) {
-            const x = (node.x0 ?? 0) - 14
             return (
-              <g key={`lab-${i}`}>
-                <text
-                  x={x}
-                  y={cy - 22}
-                  textAnchor="end"
-                  fontSize={10}
-                  fontWeight={600}
-                  letterSpacing={1.2}
-                  fill={theme.palette.grey[600]}
-                >
-                  {node.name.toUpperCase()}
-                </text>
-                <text
-                  x={x}
-                  y={cy + 6}
-                  textAnchor="end"
-                  fontSize={26}
-                  fontWeight={600}
-                  fill={theme.palette.primary.dark}
-                  style={{ fontVariantNumeric: 'tabular-nums' }}
-                >
-                  {total.toLocaleString()}
-                </text>
-                <text
-                  x={x}
-                  y={cy + 23}
-                  textAnchor="end"
-                  fontSize={11}
-                  fontWeight={500}
-                  fill={theme.palette.text.secondary}
-                >
-                  datasets total
-                </text>
-              </g>
+              <SankeyRootFigure
+                key={`lab-${i}`}
+                node={node}
+                total={total}
+                unitLabel={unitLabel}
+              />
             )
           }
           const categoryIndex = (node.index ?? 1) - 1
-          const x = (node.x1 ?? 0) + 14
-          const pct = total > 0 ? (node.value ?? 0) / total : 0
-          const numStr = (node.value ?? 0).toLocaleString()
-          const trackW = 64
-          const barX = x + numStr.length * 7.5 + 10
-          const barY = cy + 6
           return (
-            <g
+            <SankeyCategoryLabel
               key={`lab-${i}`}
+              node={node}
+              total={total}
               opacity={labelOpacity(categoryIndex)}
-              style={{ transition: 'opacity 0.2s ease' }}
               onMouseEnter={() => setHovered(categoryIndex)}
-              {...interactiveProps(categoryIndex, node.name)}
-            >
-              <text
-                x={x}
-                y={cy - 4}
-                fontSize={13}
-                fontWeight={600}
-                fill={textColor}
-              >
-                {node.name}
-              </text>
-              <text
-                x={x}
-                y={cy + 14}
-                fontSize={13}
-                fontWeight={600}
-                fill={node.color}
-                style={{ fontVariantNumeric: 'tabular-nums' }}
-              >
-                {numStr}
-              </text>
-              <rect
-                x={barX}
-                y={barY}
-                width={trackW}
-                height={4.5}
-                rx={2.25}
-                fill={theme.palette.grey[300]}
-              />
-              <rect
-                x={barX}
-                y={barY}
-                width={trackW * pct}
-                height={4.5}
-                rx={2.25}
-                fill={node.color}
-              />
-              <text
-                x={barX + trackW + 7}
-                y={cy + 13}
-                fontSize={11}
-                fontWeight={500}
-                fill={theme.palette.grey[600]}
-                style={{ fontVariantNumeric: 'tabular-nums' }}
-              >
-                {(pct * 100).toFixed(1)}%
-              </text>
-            </g>
+              interactiveProps={interactiveProps(categoryIndex, node.name)}
+            />
           )
         })}
       </svg>

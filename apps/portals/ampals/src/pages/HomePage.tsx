@@ -166,6 +166,8 @@ export default function HomePage() {
         <SynapseSankeyPlot
           sql={sankeyPlotSql}
           rootLabel="All Datasets"
+          unitLabel="datasets"
+          breakdownLabel="by source"
           onCategoryClick={handleSankeySourceClick}
         />
       </SectionLayout>
