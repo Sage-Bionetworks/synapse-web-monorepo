@@ -4,7 +4,7 @@ export const navbarConfig: NavbarConfig = {
   routes: [
     {
       name: 'About',
-      path: '/#About New Approach Methodologies Hub',
+      path: 'https://help.namhub.org/help/about',
     },
     {
       name: 'Events',
