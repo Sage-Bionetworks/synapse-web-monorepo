@@ -24,11 +24,33 @@ import AMPALSDevelopedBySage from '@sage-bionetworks/synapse-portal-framework/co
 import { Query } from '@sage-bionetworks/synapse-types'
 import { generateCompressedQueryURL } from 'synapse-react-client/utils/functions/deepLinkingUtils'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
 
 export default function HomePage() {
+  const navigate = useNavigate()
   const [geoUrl, setGeoUrl] = useState<string>('')
   const [nygcUrl, setNygcUrl] = useState<string>('')
   const [barmadaUrl, setBarmadaUrl] = useState<string>('')
+
+  // Deep-link a Sankey source to the Datasets page, pre-filtered on that source.
+  const handleSankeySourceClick = (source: string) => {
+    const initQuery: Query = { sql: datasetsSql }
+    const query: Query = {
+      sql: datasetsSql,
+      limit: 25,
+      selectedFacets: [
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+          columnName: 'source',
+          facetValues: [source],
+        },
+      ],
+    }
+    generateCompressedQueryURL('/Explore/Datasets', 0, query, initQuery).then(
+      url => navigate(url),
+    )
+  }
 
   useEffect(() => {
     const initQuery: Query = {
@@ -141,7 +163,11 @@ export default function HomePage() {
             projects: ProjectsIcon,
           }}
         />
-        <SynapseSankeyPlot sql={sankeyPlotSql} rootLabel="All Datasets" />
+        <SynapseSankeyPlot
+          sql={sankeyPlotSql}
+          rootLabel="All Datasets"
+          onCategoryClick={handleSankeySourceClick}
+        />
       </SectionLayout>
       {/* <AMPALSExploreTheData sql={upsetPlotSql} /> */}
       <HowToAccessData />
