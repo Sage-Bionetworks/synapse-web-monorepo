@@ -641,28 +641,6 @@ export const SynapseSankeyPlot = (
           })}
         </g>
 
-        {/* A slow light sweep travels along each ribbon (source -> target) for a
-            subtle sense of flow. pathLength normalizes the dash across ribbons
-            of different lengths; pointer-events are disabled so it never
-            intercepts hover/click, and it is suppressed under
-            prefers-reduced-motion (see the stylesheet). */}
-        <g fill="none">
-          {graph.links.map((link, i) => (
-            <path
-              key={i}
-              d={linkPath(link) ?? undefined}
-              pathLength={100}
-              stroke={theme.palette.background.paper}
-              strokeWidth={Math.max(1.5, (link.width ?? 1) * 0.5)}
-              strokeOpacity={
-                focusIndex === null || focusIndex === link.sourceIndex ? 0.5 : 0
-              }
-              className={styles.flow}
-              style={{ animationDelay: `${i * 0.12}s` }}
-            />
-          ))}
-        </g>
-
         {/* Nodes */}
         <g>
           {graph.nodes.map((node, i) => {

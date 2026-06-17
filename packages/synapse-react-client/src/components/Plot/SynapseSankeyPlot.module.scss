@@ -56,29 +56,7 @@
   stroke-linejoin: round;
 }
 
-// A short, soft highlight that drifts along each ribbon for a subtle sense of
-// flow. pathLength=100 is set on the path, so the dash units are percentages.
-@keyframes sankeyFlow {
-  from {
-    stroke-dashoffset: 0;
-  }
-  to {
-    stroke-dashoffset: -100;
-  }
-}
-
-.flow {
-  pointer-events: none;
-  stroke-linecap: round;
-  stroke-dasharray: 14 86;
-  animation: sankeyFlow 4s linear infinite;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .flow {
-    animation: none;
-    opacity: 0;
-  }
   .root {
     transition: none;
   }
