@@ -130,6 +130,74 @@ describe('SynapseSankeyPlot', () => {
     expect(categoryLabel.closest('g')).not.toHaveAttribute('cursor', 'pointer')
   })
 
+  describe('butterfly mode (right flow)', () => {
+    // source, dataset count, file count
+    const butterflyBundle = bundleWithColumns(
+      [{ name: 'source' }, { name: 'datasets' }, { name: 'files' }],
+      [
+        ['Gene Expression Omnibus', '40', '120'],
+        ['NYGC ALS Consortium', '10', '30'],
+      ],
+    )
+
+    const butterflyProps = {
+      rightValueColumn: 2,
+      rightLabel: 'All Files',
+      rightUnitLabel: 'files',
+      unitLabel: 'datasets',
+    }
+
+    it('renders a right end node with the summed file total and per-source counts', async () => {
+      getResultsSpy.mockResolvedValue(butterflyBundle)
+      renderComponent(butterflyProps)
+
+      await screen.findByRole('img')
+
+      // Right end figure: eyebrow + summed file total (120 + 30) + caption.
+      expect(screen.getByText('ALL FILES')).toBeInTheDocument()
+      expect(screen.getByText('150')).toBeInTheDocument()
+      expect(screen.getByText('files total')).toBeInTheDocument()
+
+      // Center label shows both counts for the source.
+      expect(screen.getByText('40 datasets · 120 files')).toBeInTheDocument()
+    })
+
+    it('navigates immediately (no swell delay) when the left end node is clicked', async () => {
+      const user = userEvent.setup()
+      const onRootClick = vi.fn()
+      getResultsSpy.mockResolvedValue(butterflyBundle)
+      renderComponent({ ...butterflyProps, onRootClick })
+
+      const leftEnd = await screen.findByText('ALL DATASETS')
+      await user.click(leftEnd)
+
+      expect(onRootClick).toHaveBeenCalledTimes(1)
+    })
+
+    it('invokes onRightCategoryClick with the source label when a right flow is clicked', async () => {
+      const user = userEvent.setup()
+      const onRightCategoryClick = vi.fn()
+      getResultsSpy.mockResolvedValue(butterflyBundle)
+      const { container } = renderComponent({
+        ...butterflyProps,
+        onRightCategoryClick,
+      })
+
+      await screen.findByRole('img')
+
+      // Links are emitted left flows first, then right flows. With two sources,
+      // path index 2 is the first source's right (files) ribbon.
+      const ribbons = container.querySelectorAll('path')
+      await user.click(ribbons[2])
+
+      await waitFor(() =>
+        expect(onRightCategoryClick).toHaveBeenCalledWith(
+          'Gene Expression Omnibus',
+        ),
+      )
+    })
+  })
+
   it('renders nothing when the query returns no rows', async () => {
     getResultsSpy.mockResolvedValue(
       bundleWithColumns([{ name: 'source' }, { name: 'count' }], []),

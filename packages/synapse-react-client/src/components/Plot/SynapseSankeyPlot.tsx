@@ -16,7 +16,7 @@ import styles from './SynapseSankeyPlot.module.scss'
 export type SynapseSankeyPlotProps = {
   /** SQL query providing the node labels and link values (see labelColumn/valueColumn) */
   sql: string
-  /** Label for the root node that links to every row returned by the query */
+  /** Label for the left end node that links to every row returned by the query */
   rootLabel: string
   /** Optional plot title */
   title?: string
@@ -32,8 +32,8 @@ export type SynapseSankeyPlotProps = {
    */
   valueColumn?: string | number
   /**
-   * Noun for the root total caption, e.g. "datasets" renders "datasets total".
-   * Defaults to "items".
+   * Noun for the left end total caption, e.g. "datasets" renders
+   * "datasets total". Defaults to "items".
    */
   unitLabel?: string
   /**
@@ -42,24 +42,53 @@ export type SynapseSankeyPlotProps = {
    */
   breakdownLabel?: string
   /**
-   * Invoked with a category's label when its flow, node, or label is clicked.
-   * When provided, categories become interactive (pointer cursor). Use it to
-   * deep-link to a filtered view of that category.
+   * Invoked with a category's label when its left flow, center node, or label
+   * is clicked. When provided, those become interactive (pointer cursor).
    */
   onCategoryClick?: (categoryLabel: string) => void
+  /** Invoked when the left end node (rootLabel) is clicked. */
+  onRootClick?: () => void
+  /**
+   * Enables "butterfly" mode: a second value per category drawn as a mirrored
+   * flow from each center node to a right end node. Either a column name or a
+   * zero-based index (defaults to the third column when a right end is shown).
+   */
+  rightValueColumn?: string | number
+  /** Label for the right end node (butterfly mode). Defaults to "Files". */
+  rightLabel?: string
+  /** Noun for the right end total caption, e.g. "files". Defaults to "items". */
+  rightUnitLabel?: string
+  /** Invoked with a category's label when its right flow is clicked. */
+  onRightCategoryClick?: (categoryLabel: string) => void
+  /** Invoked when the right end node (rightLabel) is clicked. */
+  onRightEndClick?: () => void
 }
 
 // Datum shapes for the d3-sankey graph.
-type NodeDatum = { name: string; value: number; color: string; isRoot: boolean }
-type LinkDatum = { value: number }
+type NodeKind = 'leftEnd' | 'source' | 'rightEnd'
+type NodeDatum = {
+  name: string
+  value: number
+  color: string
+  kind: NodeKind
+  // Raw per-source counts, used by the butterfly center labels.
+  leftValue?: number
+  rightValue?: number
+}
+type LinkDatum = {
+  value: number
+  // Zero-based index of the center (source) node this link belongs to.
+  sourceIndex: number
+  side: 'left' | 'right'
+}
 type LaidOutNode = D3SankeyNode<NodeDatum, LinkDatum>
 type InteractiveProps = { cursor?: 'pointer'; onClick?: () => void }
 
 // Coordinate space of the SVG. The rendered width is capped at VIEW_W (see the
 // wrapper's maxWidth) so one viewBox unit ≈ one CSS pixel and text renders at
 // its intended size instead of being magnified on wide containers. Generous
-// left/right gutters leave unclipped room for the root figure and category
-// labels. The height grows with the number of categories so rows stay legible.
+// gutters leave unclipped room for the end figures and labels. The height grows
+// with the number of categories so rows stay legible.
 const VIEW_W = 920
 const GUTTER_LEFT = 124
 const GUTTER_RIGHT = 286
@@ -74,28 +103,40 @@ const LABEL_GAP = 14
 const COUNT_COLUMN_W = 70
 const BAR_TRACK_W = 64
 const BAR_HEIGHT = 4.5
+// Butterfly mode needs more vertical room per row for the center labels, which
+// sit in the padding gap above each node, plus a wider right gutter for the
+// second end figure.
+const BUTTERFLY_ROW_HEIGHT = 64
+const BUTTERFLY_NODE_PADDING = 56
+const BUTTERFLY_GUTTER_TOP = 44
+const BUTTERFLY_GUTTER_RIGHT = 200
 
-const viewHeightFor = (categoryCount: number) =>
-  Math.max(320, 2 * GUTTER_Y + categoryCount * ROW_HEIGHT)
 const midY = (node: LaidOutNode) => ((node.y0 ?? 0) + (node.y1 ?? 0)) / 2
+const midX = (node: LaidOutNode) => ((node.x0 ?? 0) + (node.x1 ?? 0)) / 2
 
-// The editorial figure beside the root node: an eyebrow label, the total, and a
-// caption (e.g. "datasets total").
-function SankeyRootFigure(props: {
+// The editorial figure beside an end node: an eyebrow label, the total, and a
+// caption (e.g. "datasets total"). Mirrored for the right end.
+function SankeyEndFigure(props: {
   node: LaidOutNode
   total: number
   unitLabel: string
+  align: 'left' | 'right'
+  onMouseEnter: () => void
+  interactiveProps: InteractiveProps
 }): React.ReactNode {
-  const { node, total, unitLabel } = props
+  const { node, total, unitLabel, align, onMouseEnter, interactiveProps } =
+    props
   const theme = useTheme()
   const cy = midY(node)
-  const x = (node.x0 ?? 0) - LABEL_GAP
+  const x =
+    align === 'left' ? (node.x0 ?? 0) - LABEL_GAP : (node.x1 ?? 0) + LABEL_GAP
+  const textAnchor = align === 'left' ? 'end' : 'start'
   return (
-    <g>
+    <g onMouseEnter={onMouseEnter} {...interactiveProps}>
       <text
         x={x}
         y={cy - 22}
-        textAnchor="end"
+        textAnchor={textAnchor}
         fontSize={10}
         fontWeight={600}
         letterSpacing={1.2}
@@ -106,7 +147,7 @@ function SankeyRootFigure(props: {
       <text
         x={x}
         y={cy + 6}
-        textAnchor="end"
+        textAnchor={textAnchor}
         fontSize={26}
         fontWeight={600}
         fill={theme.palette.primary.dark}
@@ -117,7 +158,7 @@ function SankeyRootFigure(props: {
       <text
         x={x}
         y={cy + 23}
-        textAnchor="end"
+        textAnchor={textAnchor}
         fontSize={11}
         fontWeight={500}
         fill={theme.palette.text.secondary}
@@ -128,7 +169,8 @@ function SankeyRootFigure(props: {
   )
 }
 
-// A category row's label: name, count, share micro-bar, and percentage.
+// Hub-and-spoke category label (single value): name, count, share bar, percent,
+// placed to the right of the center node.
 function SankeyCategoryLabel(props: {
   node: LaidOutNode
   total: number
@@ -200,6 +242,63 @@ function SankeyCategoryLabel(props: {
   )
 }
 
+// Butterfly center label: the source name and both counts, centered above the
+// node (the only clear space between the left and right flows).
+function SankeyCenterLabel(props: {
+  node: LaidOutNode
+  leftValue: number
+  rightValue: number
+  unitLabel: string
+  rightUnitLabel: string
+  opacity: number
+  onMouseEnter: () => void
+  interactiveProps: InteractiveProps
+}): React.ReactNode {
+  const {
+    node,
+    leftValue,
+    rightValue,
+    unitLabel,
+    rightUnitLabel,
+    opacity,
+    onMouseEnter,
+    interactiveProps,
+  } = props
+  const theme = useTheme()
+  const cx = midX(node)
+  const topY = node.y0 ?? 0
+  return (
+    <g
+      opacity={opacity}
+      className={styles.categoryLabel}
+      onMouseEnter={onMouseEnter}
+      {...interactiveProps}
+    >
+      <text
+        x={cx}
+        y={topY - 20}
+        textAnchor="middle"
+        fontSize={13}
+        fontWeight={600}
+        fill={theme.palette.text.primary}
+      >
+        {node.name}
+      </text>
+      <text
+        x={cx}
+        y={topY - 6}
+        textAnchor="middle"
+        fontSize={11}
+        fontWeight={500}
+        fill={theme.palette.grey[600]}
+        className={styles.tabularNums}
+      >
+        {`${leftValue.toLocaleString()} ${unitLabel} · ${rightValue.toLocaleString()} ${rightUnitLabel}`}
+      </text>
+    </g>
+  )
+}
+
 export const SynapseSankeyPlot = (
   props: SynapseSankeyPlotProps,
 ): React.ReactNode => {
@@ -212,14 +311,23 @@ export const SynapseSankeyPlot = (
     unitLabel = 'items',
     breakdownLabel,
     onCategoryClick,
+    onRootClick,
+    rightValueColumn,
+    rightLabel = 'Files',
+    rightUnitLabel = 'items',
+    onRightCategoryClick,
+    onRightEndClick,
   } = props
   const theme = useTheme()
   const gradientPrefix = useId()
 
-  // Index of the flow currently focused (null = nothing focused). Drives the
-  // focus/dim hover interaction.
+  const hasRightFlow = rightValueColumn !== undefined
+
+  // Index of the center node currently focused (null = nothing focused). Drives
+  // the focus/dim hover interaction; shared by both flows of a source.
   const [hovered, setHovered] = useState<number | null>(null)
-  // Index of the flow that was clicked; briefly emphasized before redirecting.
+  // Index of the center node that was clicked; briefly emphasized before the
+  // handler fires.
   const [clicked, setClicked] = useState<number | null>(null)
   // One-time gentle fade-in on mount.
   const [visible, setVisible] = useState(false)
@@ -256,8 +364,8 @@ export const SynapseSankeyPlot = (
   )
 
   // Resolve the label/value columns (by name or index) against the result
-  // headers, falling back to the first two columns.
-  const { labelIndex, valueIndex } = useMemo(() => {
+  // headers, falling back to the first columns.
+  const { labelIndex, valueIndex, rightValueIndex } = useMemo(() => {
     const headers = queryData?.queryResult?.queryResults.headers ?? []
     const resolve = (col: string | number | undefined, fallback: number) => {
       if (typeof col === 'number') {
@@ -272,22 +380,27 @@ export const SynapseSankeyPlot = (
     return {
       labelIndex: resolve(labelColumn, 0),
       valueIndex: resolve(valueColumn, 1),
+      rightValueIndex: hasRightFlow ? resolve(rightValueColumn, 2) : -1,
     }
-  }, [queryData, labelColumn, valueColumn])
+  }, [queryData, labelColumn, valueColumn, rightValueColumn, hasRightFlow])
 
-  // Theme-derived palette: the root node uses the dark primary color; category
-  // nodes step through a light-to-dark sweep of the primary color so they stay
+  // Theme-derived palette: end nodes use the dark primary color; category nodes
+  // step through a light-to-dark sweep of the primary color so they stay
   // on-brand while remaining distinguishable (even when a portal's primary and
   // secondary colors are identical).
   const fontFamily = theme.typography.fontFamily ?? 'inherit'
-  const rootColor = theme.palette.primary.dark
+  const endColor = theme.palette.primary.dark
   const textColor = theme.palette.text.primary
 
-  const viewH = viewHeightFor(rows.length)
+  const rowHeight = hasRightFlow ? BUTTERFLY_ROW_HEIGHT : ROW_HEIGHT
+  const nodePadding = hasRightFlow ? BUTTERFLY_NODE_PADDING : NODE_PADDING
+  const gutterTop = hasRightFlow ? BUTTERFLY_GUTTER_TOP : GUTTER_Y
+  const gutterRight = hasRightFlow ? BUTTERFLY_GUTTER_RIGHT : GUTTER_RIGHT
+  const viewH = Math.max(320, gutterTop + GUTTER_Y + rows.length * rowHeight)
 
   // Build and lay out the graph. Memoized so hovering (which only changes
   // opacity) doesn't recompute the layout.
-  const graph = useMemo(() => {
+  const graphResult = useMemo(() => {
     if (rows.length === 0) {
       return null
     }
@@ -300,59 +413,111 @@ export const SynapseSankeyPlot = (
             .mix(gradientStart, gradientEnd, (index / (rows.length - 1)) * 100)
             .toHexString()
 
-    const total = rows.reduce(
-      (sum, row) => sum + Number(row.values[valueIndex] ?? 0),
-      0,
-    )
+    const sources = rows.map((row, index) => ({
+      name: String(row.values[labelIndex] ?? ''),
+      leftValue: Number(row.values[valueIndex] ?? 0),
+      rightValue: hasRightFlow ? Number(row.values[rightValueIndex] ?? 0) : 0,
+      color: categoryColor(index),
+    }))
+    const totalLeft = sources.reduce((sum, s) => sum + s.leftValue, 0)
+    const totalRight = sources.reduce((sum, s) => sum + s.rightValue, 0)
+    const rightEndIndex = sources.length + 1
+
+    // d3-sankey scales every ribbon by a single value→thickness factor. When the
+    // two flows differ in magnitude (e.g. ~25 datasets vs thousands of files),
+    // the smaller side collapses to hairlines. Scale the left flow so both
+    // halves sum to the same total — ribbon widths then read as each side's
+    // share. The real counts are preserved on the node data for the labels.
+    const leftScale =
+      hasRightFlow && totalLeft > 0 && totalRight > 0
+        ? totalRight / totalLeft
+        : 1
+    const linkValue = (value: number, side: 'left' | 'right') =>
+      side === 'left' ? value * leftScale : value
+
     const nodes: NodeDatum[] = [
-      { name: rootLabel, value: total, color: rootColor, isRoot: true },
-      ...rows.map((row, index) => ({
-        name: String(row.values[labelIndex] ?? ''),
-        value: Number(row.values[valueIndex] ?? 0),
-        color: categoryColor(index),
-        isRoot: false,
+      { name: rootLabel, value: totalLeft, color: endColor, kind: 'leftEnd' },
+      ...sources.map(s => ({
+        name: s.name,
+        value: s.leftValue,
+        color: s.color,
+        kind: 'source' as const,
+        leftValue: s.leftValue,
+        rightValue: s.rightValue,
       })),
+      ...(hasRightFlow
+        ? [
+            {
+              name: rightLabel,
+              value: totalRight,
+              color: endColor,
+              kind: 'rightEnd' as const,
+            },
+          ]
+        : []),
     ]
-    const links: ({ source: number; target: number } & LinkDatum)[] = rows.map(
-      (row, index) => ({
+    const links: ({ source: number; target: number } & LinkDatum)[] = [
+      ...sources.map((s, index) => ({
         source: 0,
         target: index + 1,
-        value: Number(row.values[valueIndex] ?? 0),
-      }),
-    )
+        value: linkValue(s.leftValue, 'left'),
+        sourceIndex: index,
+        side: 'left' as const,
+      })),
+      ...(hasRightFlow
+        ? sources.map((s, index) => ({
+            source: index + 1,
+            target: rightEndIndex,
+            value: linkValue(s.rightValue, 'right'),
+            sourceIndex: index,
+            side: 'right' as const,
+          }))
+        : []),
+    ]
 
     const layout = d3Sankey<NodeDatum, LinkDatum>()
       .nodeWidth(NODE_WIDTH)
-      .nodePadding(NODE_PADDING)
+      .nodePadding(nodePadding)
       .nodeSort(null) // preserve query order top-to-bottom
       .extent([
-        [GUTTER_LEFT, GUTTER_Y],
-        [VIEW_W - GUTTER_RIGHT, viewH - GUTTER_Y],
+        [GUTTER_LEFT, gutterTop],
+        [VIEW_W - gutterRight, viewH - GUTTER_Y],
       ])
 
-    return layout({
-      nodes: nodes.map(d => ({ ...d })),
-      links: links.map(d => ({ ...d })),
-    })
+    return {
+      graph: layout({
+        nodes: nodes.map(d => ({ ...d })),
+        links: links.map(d => ({ ...d })),
+      }),
+      // Real (unscaled) totals for the end-node figures.
+      totalLeft,
+      totalRight,
+    }
   }, [
     rows,
     labelIndex,
     valueIndex,
+    rightValueIndex,
+    hasRightFlow,
     rootLabel,
-    rootColor,
+    rightLabel,
+    endColor,
     theme.palette.primary.main,
     viewH,
+    nodePadding,
+    gutterTop,
+    gutterRight,
   ])
 
   if (isLoading) {
     return <Skeleton width={'100%'} height={'500px'} />
   }
-  if (!graph) {
+  if (!graphResult) {
     return <></>
   }
 
+  const { graph, totalLeft, totalRight } = graphResult
   const linkPath = sankeyLinkHorizontal<NodeDatum, LinkDatum>()
-  const total = graph.nodes.find(n => n.isRoot)?.value ?? 0
 
   // The clicked flow takes precedence over the hovered one for emphasis.
   const focusIndex = clicked ?? hovered
@@ -361,53 +526,52 @@ export const SynapseSankeyPlot = (
   const dimNode = clicked !== null ? 0.1 : 0.16
   const dimLabel = clicked !== null ? 0.15 : 0.32
 
-  // Opacity helpers for the focus/dim interaction.
-  const linkOpacity = (linkIndex: number) =>
+  // Opacity helpers for the focus/dim interaction. Both flows of a focused
+  // source share its center-node index.
+  const linkOpacity = (sourceIndex: number) =>
     focusIndex === null
       ? 0.6
-      : linkIndex === focusIndex
+      : sourceIndex === focusIndex
         ? clicked !== null
           ? 1
           : 0.95
         : dimLink
   const nodeOpacity = (node: LaidOutNode) =>
-    focusIndex === null || node.isRoot || node.index === focusIndex + 1
+    focusIndex === null ||
+    node.kind !== 'source' ||
+    (node.index ?? 1) - 1 === focusIndex
       ? 1
       : dimNode
-  const labelOpacity = (categoryIndex: number) =>
-    focusIndex === null || focusIndex === categoryIndex ? 1 : dimLabel
+  const labelOpacity = (sourceIndex: number) =>
+    focusIndex === null || focusIndex === sourceIndex ? 1 : dimLabel
 
-  // When a click handler is supplied, categories become interactive. Clicking
-  // briefly emphasizes the chosen flow (a quick "swell") and then redirects, so
-  // the navigation feels intentional. No tabIndex/role here: those make the
-  // browser draw a focus outline box around the SVG shape on click.
-  const handleActivate = (categoryIndex: number, label: string) => {
-    if (!onCategoryClick) {
-      return
-    }
+  // Clicking a center flow briefly emphasizes it (a quick "swell") and then
+  // fires the handler, so the navigation feels intentional. No tabIndex/role:
+  // those make the browser draw a focus outline box around the SVG shape.
+  const activate = (sourceIndex: number, fire: () => void) => {
     if (clickTimer.current !== undefined) {
       window.clearTimeout(clickTimer.current)
     }
-    setClicked(categoryIndex)
+    setClicked(sourceIndex)
     clickTimer.current = window.setTimeout(() => {
       clickTimer.current = undefined
       // Clear the transient emphasis before invoking the handler so the chart
       // returns to its resting state for consumers whose handler doesn't
       // navigate away (and unmount) the component.
       setClicked(null)
-      onCategoryClick(label)
+      fire()
     }, 320)
   }
-  const interactiveProps = (
-    categoryIndex: number,
-    label: string,
+  // Center flows swell on click; end nodes navigate immediately.
+  const flowProps = (
+    sourceIndex: number,
+    fire: (() => void) | undefined,
   ): InteractiveProps =>
-    onCategoryClick
-      ? {
-          cursor: 'pointer',
-          onClick: () => handleActivate(categoryIndex, label),
-        }
+    fire
+      ? { cursor: 'pointer', onClick: () => activate(sourceIndex, fire) }
       : {}
+  const endProps = (fire: (() => void) | undefined): InteractiveProps =>
+    fire ? { cursor: 'pointer', onClick: fire } : {}
 
   return (
     <div className={classNames(styles.root, { [styles.rootVisible]: visible })}>
@@ -450,18 +614,25 @@ export const SynapseSankeyPlot = (
         {/* Ribbons */}
         <g fill="none">
           {graph.links.map((link, i) => {
-            const target = link.target as LaidOutNode
+            const sourceNode = (
+              link.side === 'left' ? link.target : link.source
+            ) as LaidOutNode
             const baseWidth = Math.max(1, link.width ?? 1)
+            const handler =
+              link.side === 'left' ? onCategoryClick : onRightCategoryClick
+            const fire = handler ? () => handler(sourceNode.name) : undefined
             return (
               <path
                 key={i}
                 d={linkPath(link) ?? undefined}
                 stroke={`url(#${gradientPrefix}-grad-${i})`}
-                strokeWidth={clicked === i ? baseWidth * 1.25 : baseWidth}
-                strokeOpacity={linkOpacity(i)}
+                strokeWidth={
+                  clicked === link.sourceIndex ? baseWidth * 1.25 : baseWidth
+                }
+                strokeOpacity={linkOpacity(link.sourceIndex)}
                 className={styles.ribbon}
-                onMouseEnter={() => setHovered(i)}
-                {...interactiveProps(i, target.name)}
+                onMouseEnter={() => setHovered(link.sourceIndex)}
+                {...flowProps(link.sourceIndex, fire)}
               />
             )
           })}
@@ -469,50 +640,96 @@ export const SynapseSankeyPlot = (
 
         {/* Nodes */}
         <g>
-          {graph.nodes.map((node, i) => (
-            <rect
-              key={i}
-              x={node.x0}
-              y={node.y0}
-              width={(node.x1 ?? 0) - (node.x0 ?? 0)}
-              height={Math.max(1, (node.y1 ?? 0) - (node.y0 ?? 0))}
-              rx={4}
-              fill={node.color}
-              fillOpacity={nodeOpacity(node)}
-              stroke={theme.palette.background.paper}
-              strokeWidth={1}
-              className={styles.node}
-              onMouseEnter={() =>
-                setHovered(node.isRoot ? null : (node.index ?? 1) - 1)
-              }
-              {...(node.isRoot
-                ? {}
-                : interactiveProps((node.index ?? 1) - 1, node.name))}
-            />
-          ))}
+          {graph.nodes.map((node, i) => {
+            const sourceIndex = (node.index ?? 1) - 1
+            const props =
+              node.kind === 'leftEnd'
+                ? endProps(onRootClick)
+                : node.kind === 'rightEnd'
+                  ? endProps(onRightEndClick)
+                  : flowProps(
+                      sourceIndex,
+                      onCategoryClick
+                        ? () => onCategoryClick(node.name)
+                        : undefined,
+                    )
+            return (
+              <rect
+                key={i}
+                x={node.x0}
+                y={node.y0}
+                width={(node.x1 ?? 0) - (node.x0 ?? 0)}
+                height={Math.max(1, (node.y1 ?? 0) - (node.y0 ?? 0))}
+                rx={4}
+                fill={node.color}
+                fillOpacity={nodeOpacity(node)}
+                stroke={theme.palette.background.paper}
+                strokeWidth={1}
+                className={styles.node}
+                onMouseEnter={() =>
+                  setHovered(node.kind === 'source' ? sourceIndex : null)
+                }
+                {...props}
+              />
+            )
+          })}
         </g>
 
         {/* Labels */}
         {graph.nodes.map((node, i) => {
-          if (node.isRoot) {
+          if (node.kind === 'leftEnd') {
             return (
-              <SankeyRootFigure
+              <SankeyEndFigure
                 key={`lab-${i}`}
                 node={node}
-                total={total}
+                total={totalLeft}
                 unitLabel={unitLabel}
+                align="left"
+                onMouseEnter={() => setHovered(null)}
+                interactiveProps={endProps(onRootClick)}
               />
             )
           }
-          const categoryIndex = (node.index ?? 1) - 1
+          if (node.kind === 'rightEnd') {
+            return (
+              <SankeyEndFigure
+                key={`lab-${i}`}
+                node={node}
+                total={totalRight}
+                unitLabel={rightUnitLabel}
+                align="right"
+                onMouseEnter={() => setHovered(null)}
+                interactiveProps={endProps(onRightEndClick)}
+              />
+            )
+          }
+          const sourceIndex = (node.index ?? 1) - 1
+          const fire = onCategoryClick
+            ? () => onCategoryClick(node.name)
+            : undefined
+          if (hasRightFlow) {
+            return (
+              <SankeyCenterLabel
+                key={`lab-${i}`}
+                node={node}
+                leftValue={node.leftValue ?? 0}
+                rightValue={node.rightValue ?? 0}
+                unitLabel={unitLabel}
+                rightUnitLabel={rightUnitLabel}
+                opacity={labelOpacity(sourceIndex)}
+                onMouseEnter={() => setHovered(sourceIndex)}
+                interactiveProps={flowProps(sourceIndex, fire)}
+              />
+            )
+          }
           return (
             <SankeyCategoryLabel
               key={`lab-${i}`}
               node={node}
-              total={total}
-              opacity={labelOpacity(categoryIndex)}
-              onMouseEnter={() => setHovered(categoryIndex)}
-              interactiveProps={interactiveProps(categoryIndex, node.name)}
+              total={totalLeft}
+              opacity={labelOpacity(sourceIndex)}
+              onMouseEnter={() => setHovered(sourceIndex)}
+              interactiveProps={flowProps(sourceIndex, fire)}
             />
           )
         })}
