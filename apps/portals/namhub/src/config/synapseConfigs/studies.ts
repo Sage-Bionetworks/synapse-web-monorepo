@@ -8,7 +8,7 @@ const type = SynapseConstants.GENERIC_CARD
 const rgbIndex = 5
 
 const columnAliases = {
-  studyId: 'On Synapse',
+  studyId: 'Open project space',
   NAMsTechFocus: 'NAMs Tech Focus',
 }
 
@@ -21,6 +21,7 @@ export const studyCardConfiguration: CardConfiguration = {
     subTitle: 'studyLeads',
     includeShareButton: true,
     secondaryLabels: [
+      'studyId',
       'diseaseFocus',
       'NAMsTechFocus',
       'modelTypeDesc',
@@ -30,7 +31,6 @@ export const studyCardConfiguration: CardConfiguration = {
       'studyDoi',
       'synapseProjectId',
       'alternateName',
-      'studyId',
     ],
   },
   secondaryLabelLimit: 20,
