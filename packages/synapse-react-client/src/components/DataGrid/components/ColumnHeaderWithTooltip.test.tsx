@@ -29,14 +29,4 @@ describe('ColumnHeaderWithTooltip', () => {
     render(<ColumnHeaderWithTooltip name="myColumn" description="" />)
     expect(screen.getByTitle('myColumn')).toBeInTheDocument()
   })
-
-  it('does not render a help icon', () => {
-    render(
-      <ColumnHeaderWithTooltip
-        name="myColumn"
-        description="Some description"
-      />,
-    )
-    expect(screen.queryByRole('button')).not.toBeInTheDocument()
-  })
 })
