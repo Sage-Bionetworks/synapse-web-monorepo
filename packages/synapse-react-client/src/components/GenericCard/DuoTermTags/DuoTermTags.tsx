@@ -1,7 +1,26 @@
 import { Box, Chip, Tooltip, Typography } from '@mui/material'
 import { alpha, Theme } from '@mui/material/styles'
-import MoneyOffOutlinedIcon from '@mui/icons-material/MoneyOffOutlined'
-import { DuoCategory, resolveDuoTerm } from './duoTerms'
+import type { SvgIconComponent } from '@mui/icons-material'
+import ScienceOutlined from '@mui/icons-material/ScienceOutlined'
+import MedicalServicesOutlined from '@mui/icons-material/MedicalServicesOutlined'
+import CoronavirusOutlined from '@mui/icons-material/CoronavirusOutlined'
+import LockOpenOutlined from '@mui/icons-material/LockOpenOutlined'
+import GroupsOutlined from '@mui/icons-material/GroupsOutlined'
+import HealingOutlined from '@mui/icons-material/HealingOutlined'
+import MoneyOffOutlined from '@mui/icons-material/MoneyOffOutlined'
+import BiotechOutlined from '@mui/icons-material/BiotechOutlined'
+import ArticleOutlined from '@mui/icons-material/ArticleOutlined'
+import HandshakeOutlined from '@mui/icons-material/HandshakeOutlined'
+import GavelOutlined from '@mui/icons-material/GavelOutlined'
+import PublicOutlined from '@mui/icons-material/PublicOutlined'
+import HourglassEmptyOutlined from '@mui/icons-material/HourglassEmptyOutlined'
+import ScheduleOutlined from '@mui/icons-material/ScheduleOutlined'
+import PersonOutlined from '@mui/icons-material/PersonOutlined'
+import AssignmentOutlined from '@mui/icons-material/AssignmentOutlined'
+import ApartmentOutlined from '@mui/icons-material/ApartmentOutlined'
+import ReplayOutlined from '@mui/icons-material/ReplayOutlined'
+import HelpOutline from '@mui/icons-material/HelpOutline'
+import { DuoCategory, DuoTerm, resolveDuoTerm } from './duoTerms'
 
 /** Display variants under comparison for DESIGN-1740. */
 export type DuoTagVariant = 'codeName' | 'compact' | 'badge'
@@ -14,36 +33,60 @@ export type DuoTermTagsProps = {
   variant?: DuoTagVariant
 }
 
-// Per-category chip styling. Commercial-use restriction is emphasized since
-// that is the headline concern from the external feedback.
+// An icon per DUO code, keyed by code so the meaning reads at a glance.
+const DUO_ICONS: Record<string, SvgIconComponent> = {
+  'DUO:0000042': ScienceOutlined, // General Research Use
+  'DUO:0000006': MedicalServicesOutlined, // Health/Medical/Biomedical
+  'DUO:0000007': CoronavirusOutlined, // Disease Specific
+  'DUO:0000004': LockOpenOutlined, // No Restriction
+  'DUO:0000011': GroupsOutlined, // Population Origins/Ancestry
+  'DUO:0000043': HealingOutlined, // Clinical Care Use
+  'DUO:0000018': MoneyOffOutlined, // Not For Profit / non-commercial
+  'DUO:0000016': BiotechOutlined, // Genetic Studies Only
+  'DUO:0000019': ArticleOutlined, // Publication Required
+  'DUO:0000020': HandshakeOutlined, // Collaboration Required
+  'DUO:0000021': GavelOutlined, // Ethics Approval Required
+  'DUO:0000022': PublicOutlined, // Geographical Restriction
+  'DUO:0000024': HourglassEmptyOutlined, // Publication Moratorium
+  'DUO:0000025': ScheduleOutlined, // Time Limit on Use
+  'DUO:0000026': PersonOutlined, // User Specific Restriction
+  'DUO:0000027': AssignmentOutlined, // Project Specific Restriction
+  'DUO:0000028': ApartmentOutlined, // Institution Specific Restriction
+  'DUO:0000029': ReplayOutlined, // Return to Database/Resource
+}
+
+const termIcon = (term: DuoTerm) => {
+  const Icon = DUO_ICONS[term.code] ?? HelpOutline
+  return <Icon />
+}
+
+// Color carries meaning: green = a use you may make, amber = a condition/
+// obligation, red = commercial use prohibited (the headline concern). All
+// terms are colored — none are bland — so the distinction is intentional.
 const chipSx = (category: DuoCategory) => {
   switch (category) {
     case 'commercial':
       return {
-        bgcolor: 'warning.main',
-        color: 'warning.contrastText',
+        bgcolor: (theme: Theme) => alpha(theme.palette.error.main, 0.14),
+        color: 'error.dark',
         fontWeight: 700,
-        '& .MuiChip-icon': { color: 'warning.contrastText' },
+        '& .MuiChip-icon': { color: 'error.dark' },
       }
     case 'restriction':
       return {
-        bgcolor: 'transparent',
-        color: 'text.secondary',
-        border: (theme: Theme) => `1px solid ${theme.palette.divider}`,
+        bgcolor: (theme: Theme) => alpha(theme.palette.warning.main, 0.18),
+        color: 'warning.dark',
+        '& .MuiChip-icon': { color: 'warning.dark' },
       }
     case 'permission':
     default:
       return {
-        bgcolor: (theme: Theme) => alpha(theme.palette.primary.main, 0.1),
-        color: 'primary.dark',
+        bgcolor: (theme: Theme) => alpha(theme.palette.success.main, 0.15),
+        color: 'success.dark',
+        '& .MuiChip-icon': { color: 'success.dark' },
       }
   }
 }
-
-// Only the commercial-use restriction carries an icon — a generic "lock" on
-// PUB / IRB / US etc. is misleading, so other terms rely on color + label.
-const categoryIcon = (category: DuoCategory) =>
-  category === 'commercial' ? <MoneyOffOutlinedIcon /> : undefined
 
 export default function DuoTermTags(props: DuoTermTagsProps) {
   const { terms, accessType, variant = 'codeName' } = props
@@ -51,7 +94,8 @@ export default function DuoTermTags(props: DuoTermTagsProps) {
     return null
   }
   const resolved = terms.map(resolveDuoTerm)
-  // Show restrictions first so the limiting conditions read at a glance.
+  // Show the commercial restriction first, then other conditions, then
+  // permissions, so limiting conditions read at a glance.
   const order: Record<DuoCategory, number> = {
     commercial: 0,
     restriction: 1,
@@ -79,7 +123,7 @@ export default function DuoTermTags(props: DuoTermTagsProps) {
           >
             <Chip
               size="small"
-              icon={categoryIcon(t.category)}
+              icon={termIcon(t)}
               label={t.abbr}
               sx={{ ...chipSx(t.category), fontWeight: 600 }}
             />
@@ -95,7 +139,7 @@ export default function DuoTermTags(props: DuoTermTagsProps) {
         <Tooltip key={i} title={t.description}>
           <Chip
             size="small"
-            icon={categoryIcon(t.category)}
+            icon={termIcon(t)}
             label={
               <>
                 <Box component="span" sx={{ fontWeight: 700 }}>
