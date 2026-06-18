@@ -1,11 +1,12 @@
 import { useCookiePreferences } from 'synapse-react-client/utils/hooks/useCookiePreferences'
+import { getCookieDomain } from 'synapse-react-client/utils/AppUtils/index'
+import Cookies from 'js-cookie'
 import React from 'react'
 import { useEffect, useState, ComponentType, SVGProps } from 'react'
 import {
   Box,
   Button,
   Dialog,
-  DialogActions,
   DialogContent,
   IconButton,
   Typography,
@@ -13,7 +14,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close'
 
 export type SurveyDialogProps = {
-  localStorageKey: string
+  cookieKey: string
   Svg: ComponentType<SVGProps<SVGSVGElement>>
   title: string
   description: React.ReactNode
@@ -21,33 +22,55 @@ export type SurveyDialogProps = {
   surveyButtonText?: string
 }
 
+const MAX_EXPIRATION_DAYS = 400
+const ASK_ME_LATER_EXPIRATION_DAYS = 1
+
 const SurveyDialog = (props: SurveyDialogProps): React.ReactNode => {
   const {
-    localStorageKey,
+    cookieKey,
     Svg,
     title,
     description,
     surveyURL,
-    surveyButtonText = 'Take Survey',
+    surveyButtonText = 'Start Survey',
   } = props
   const [cookiePreferences] = useCookiePreferences()
   const [showDialog, setShowDialog] = useState(false)
 
   useEffect(() => {
-    setShowDialog(localStorage.getItem(localStorageKey) === null)
-  }, [localStorageKey])
+    setShowDialog(Cookies.get(cookieKey) === undefined)
+  }, [cookieKey])
 
-  const handleClose = () => {
+  const dismiss = (expirationDays: number) => {
     if (cookiePreferences.functionalAllowed) {
-      localStorage.setItem(localStorageKey, 'true')
+      Cookies.set(cookieKey, 'true', {
+        expires: expirationDays,
+        path: '/',
+        domain: getCookieDomain(),
+      })
     }
     setShowDialog(false)
   }
 
+  const handleAskMeLater = () => {
+    dismiss(ASK_ME_LATER_EXPIRATION_DAYS)
+  }
+  const handleNoThanks = () => {
+    dismiss(MAX_EXPIRATION_DAYS)
+  }
+  const handleStartSurvey = () => {
+    dismiss(MAX_EXPIRATION_DAYS)
+  }
+
   return (
-    <Dialog open={showDialog} onClose={handleClose} maxWidth="md" fullWidth>
+    <Dialog
+      open={showDialog}
+      onClose={handleAskMeLater}
+      maxWidth="md"
+      fullWidth
+    >
       <IconButton
-        onClick={handleClose}
+        onClick={handleAskMeLater}
         size="small"
         sx={{ position: 'absolute', top: 8, right: 8 }}
         aria-label="Close survey dialog"
@@ -55,7 +78,12 @@ const SurveyDialog = (props: SurveyDialogProps): React.ReactNode => {
         <CloseIcon fontSize="small" />
       </IconButton>
       <DialogContent
-        sx={{ pt: 4, pb: 1, borderTop: 'none', borderBottom: 'none' }}
+        sx={{
+          pt: 4,
+          pb: 1,
+          borderTop: 'none',
+          borderBottom: 'none',
+        }}
       >
         <Box sx={{ mx: '140px', mb: 3 }}>
           <Svg width="100%" height="auto" style={{ display: 'block' }} />
@@ -67,17 +95,31 @@ const SurveyDialog = (props: SurveyDialogProps): React.ReactNode => {
           {description}
         </Typography>
       </DialogContent>
-      <DialogActions sx={{ px: 3, pb: 2 }}>
+      <Box sx={{ display: 'flex' }}>
+        <Button
+          variant="contained"
+          onClick={handleNoThanks}
+          sx={{ mr: 'auto' }}
+        >
+          No Thanks
+        </Button>
+        <Button
+          variant="contained"
+          onClick={handleAskMeLater}
+          sx={{ marginRight: '20px' }}
+        >
+          Ask Me Later
+        </Button>
         <Button
           variant="contained"
           href={surveyURL}
           target="_blank"
           rel="noopener noreferrer"
-          onClick={handleClose}
+          onClick={handleStartSurvey}
         >
           {surveyButtonText}
         </Button>
-      </DialogActions>
+      </Box>
     </Dialog>
   )
 }
