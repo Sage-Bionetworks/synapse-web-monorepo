@@ -97,6 +97,36 @@ export type SearchTableQueryUseQueryOptions = {
   >
 }
 
+export function getNextPageParamForSearchQueryResults(
+  lastPage: AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle>,
+  allPages: AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle>[],
+): number | string | undefined {
+  const rowsInLastPage =
+    lastPage.responseBody?.queryResult?.queryResults.rows?.length ?? 0
+  const requestedPageSize = lastPage.requestBody?.searchQuery?.size
+  const totalRows = lastPage.responseBody?.queryCount
+  const fetchedRows = allPages.reduce(
+    (acc, page) =>
+      acc + (page.responseBody?.queryResult?.queryResults.rows?.length ?? 0),
+    0,
+  )
+
+  if (rowsInLastPage === 0) {
+    return undefined
+  }
+
+  // A short page means we've reached the end, even when total hits is missing or stale.
+  if (requestedPageSize != null && rowsInLastPage < requestedPageSize) {
+    return undefined
+  }
+
+  if (totalRows != null && fetchedRows >= totalRows) {
+    return undefined
+  }
+
+  return fetchedRows
+}
+
 /**
  * Converts a QueryBundleRequest (used internally for state management) into a SearchIndexQuery
  * that can be sent to the SearchQueryServicesApi.
@@ -536,17 +566,7 @@ export function getSearchQueryUseQueryOptions(
         lastPage: AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle>,
         allPages: AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle>[],
       ): number | string | undefined => {
-        const totalRows = lastPage.responseBody?.queryCount
-        const fetchedRows = allPages.reduce(
-          (acc, page) =>
-            acc +
-            (page.responseBody?.queryResult?.queryResults.rows?.length ?? 0),
-          0,
-        )
-        if (totalRows != null && fetchedRows >= totalRows) {
-          return undefined
-        }
-        return fetchedRows
+        return getNextPageParamForSearchQueryResults(lastPage, allPages)
       },
       queryFn: (context: { pageParam?: number | string }) => {
         const offset =

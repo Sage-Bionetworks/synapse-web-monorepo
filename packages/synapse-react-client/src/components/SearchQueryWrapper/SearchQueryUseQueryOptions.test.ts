@@ -1,8 +1,10 @@
 import {
+  AsynchronousJobStatus,
   FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
   FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
   FacetColumnResultRange,
   QueryBundleRequest,
+  QueryResultBundle,
   TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
 import type {
@@ -12,6 +14,7 @@ import type {
 import dayjs from 'dayjs'
 import { describe, expect, it } from 'vitest'
 import {
+  getNextPageParamForSearchQueryResults,
   searchQueryResultsToQueryResultBundle,
   toSearchIndexQuery,
 } from './SearchQueryUseQueryOptions'
@@ -40,6 +43,98 @@ const MINIMAL_SEARCH_INDEX_QUERY: SearchIndexQuery = {
   concreteType: 'org.sagebionetworks.repo.model.search.table.SearchIndexQuery',
   searchIndexId: SEARCH_INDEX_ID,
 }
+
+function makeAsyncStatusWithRows(
+  rowCount: number,
+  queryCount?: number,
+  size?: number,
+): AsynchronousJobStatus<SearchIndexQuery, QueryResultBundle> {
+  return {
+    jobState: 'COMPLETE',
+    jobCanceling: false,
+    etag: 'etag',
+    jobId: 'job1',
+    startedByUserId: 1,
+    startedOn: '2024-01-01T00:00:00.000Z',
+    changedOn: '2024-01-01T00:00:00.000Z',
+    runtimeMS: 0,
+    responseBody: {
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
+      queryCount,
+      queryResult: {
+        concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
+        queryResults: {
+          concreteType: 'org.sagebionetworks.repo.model.table.RowSet',
+          tableId: 'syn1',
+          etag: 'etag',
+          headers: [],
+          rows: Array.from({ length: rowCount }).map((_, i) => ({
+            rowId: i,
+            values: [],
+          })),
+        },
+      },
+    },
+    requestBody: {
+      concreteType:
+        'org.sagebionetworks.repo.model.search.table.SearchIndexQuery',
+      searchIndexId: SEARCH_INDEX_ID,
+      searchQuery: {
+        size,
+      },
+    },
+  }
+}
+
+describe('getNextPageParamForSearchQueryResults', () => {
+  it('returns undefined when the last page has fewer rows than the requested page size', () => {
+    const firstPage = makeAsyncStatusWithRows(25, undefined, 25)
+    const lastPage = makeAsyncStatusWithRows(7, undefined, 25)
+
+    const result = getNextPageParamForSearchQueryResults(lastPage, [
+      firstPage,
+      lastPage,
+    ])
+
+    expect(result).toBeUndefined()
+  })
+
+  it('returns undefined when the last page is empty', () => {
+    const firstPage = makeAsyncStatusWithRows(25, undefined, 25)
+    const lastPage = makeAsyncStatusWithRows(0, undefined, 25)
+
+    const result = getNextPageParamForSearchQueryResults(lastPage, [
+      firstPage,
+      lastPage,
+    ])
+
+    expect(result).toBeUndefined()
+  })
+
+  it('returns undefined when fetched rows already meet queryCount', () => {
+    const firstPage = makeAsyncStatusWithRows(25, 30, 25)
+    const lastPage = makeAsyncStatusWithRows(5, 30, 25)
+
+    const result = getNextPageParamForSearchQueryResults(lastPage, [
+      firstPage,
+      lastPage,
+    ])
+
+    expect(result).toBeUndefined()
+  })
+
+  it('returns the next offset when another full page is possible', () => {
+    const firstPage = makeAsyncStatusWithRows(25, 100, 25)
+    const lastPage = makeAsyncStatusWithRows(25, 100, 25)
+
+    const result = getNextPageParamForSearchQueryResults(lastPage, [
+      firstPage,
+      lastPage,
+    ])
+
+    expect(result).toBe(50)
+  })
+})
 
 // ---------------------------------------------------------------------------
 // toSearchIndexQuery
