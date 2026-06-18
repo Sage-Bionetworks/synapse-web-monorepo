@@ -164,7 +164,7 @@ export type TableToGenericCardMapping = {
 }
 
 /** Candidate locations for DUO tags on the card (see DESIGN-1740). */
-export type DuoPlacement = 'footer' | 'titleRight' | 'actions' | 'icon'
+export type DuoPlacement = 'header' | 'belowTitle' | 'actions' | 'metadata'
 
 export type TableRowGenericCardProps = {
   /** The schema that maps a table result to the GenericCard UI */
@@ -332,7 +332,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     )
   }, [genericCardSchema, data, schema])
   const duoPlacement: DuoPlacement =
-    genericCardSchema.dataUseModifiersPlacement ?? 'footer'
+    genericCardSchema.dataUseModifiersPlacement ?? 'belowTitle'
   const duoAt = (placement: DuoPlacement) =>
     duoPlacement === placement ? duoContent : null
 
@@ -430,6 +430,14 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   }[] = []
   const { secondaryLabels = [] } = genericCardSchema
   const customLabelConfig = genericCardSchema.customSecondaryLabelConfig
+
+  // DUO tags rendered as a metadata row (alongside "How to download", size, …).
+  if (duoPlacement === 'metadata' && duoContent) {
+    values.push({
+      columnDisplayName: 'Data Usage Restrictions',
+      value: duoContent,
+    })
+  }
 
   // PORTALS-3549 - if a DOI exists or can be created by the current user, show it
   if (
@@ -598,16 +606,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   return (
     <GenericCard
       ref={ref}
-      icon={
-        duoAt('icon') ? (
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25 }}>
-            {iconNode}
-            {duoAt('icon')}
-          </Box>
-        ) : (
-          iconNode
-        )
-      }
+      icon={iconNode}
       isHeader={isHeader}
       sustainabilityScorecard={sustainabilityScorecard}
       headerCardVariant={headerCardVariant}
@@ -615,7 +614,17 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       title={title}
       subtitle={subTitle}
       titleLinkConfiguration={{ target, href }}
-      cardTypeAdornment={resolvedCardTypeAdornment}
+      cardTypeAdornment={
+        duoAt('header') ? (
+          <>
+            {resolvedCardTypeAdornment}
+            {duoAt('header')}
+          </>
+        ) : (
+          resolvedCardTypeAdornment
+        )
+      }
+      belowTitleContent={duoAt('belowTitle')}
       titleAsFileHandleLinkConfiguration={
         !titleLinkConfig &&
         titleColumnType === ColumnTypeEnum.FILEHANDLEID &&
@@ -630,16 +639,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
         resolvedCtaLinkConfigs.length > 0 ? resolvedCtaLinkConfigs : undefined
       }
       ctaLinkPosition={ctaLinkPosition}
-      titleAreaRightContent={
-        duoAt('titleRight') ? (
-          <>
-            {duoAt('titleRight')}
-            {resolvedTitleAreaRightContent}
-          </>
-        ) : (
-          resolvedTitleAreaRightContent
-        )
-      }
+      titleAreaRightContent={resolvedTitleAreaRightContent}
       description={description}
       descriptionSubTitle={descriptionSubTitle}
       descriptionConfig={descriptionConfig}
@@ -649,7 +649,6 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       useStylesForDisplayedImage={Boolean(imageFileHandleIdValue)}
       cardTopContent={
         <>
-          {duoAt('footer')}
           {resolvedDownloadCartSynIdValue && (
             <Collapse in={showDownloadConfirmation}>
               <EntityDownloadConfirmation

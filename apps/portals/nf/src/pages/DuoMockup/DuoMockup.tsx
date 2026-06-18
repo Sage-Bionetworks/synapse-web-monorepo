@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react'
 import {
   Box,
-  Card,
   Container,
   Stack,
   ToggleButton,
@@ -10,16 +9,19 @@ import {
 } from '@mui/material'
 import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
+import GenericCard from 'synapse-react-client/components/GenericCard/GenericCard'
+import { GenericCardIcon } from 'synapse-react-client/components/GenericCard/GenericCardIcon'
 import DuoTermTags, {
   DuoTagVariant,
 } from 'synapse-react-client/components/GenericCard/DuoTermTags/DuoTermTags'
+import { ALL_DUO_TERMS } from 'synapse-react-client/components/GenericCard/DuoTermTags/duoTerms'
 import type { DuoPlacement } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import { datasetsSql } from '@/config/resources'
 import { columnAliases } from '@/config/synapseConfigs/commonProps'
 import { datasetCardConfiguration } from '@/config/synapseConfigs/datasets'
 
 // A couple of representative real dataset cards that carry DUO terms.
-const SQL = `${datasetsSql} WHERE dataUseModifiers IS NOT NULL LIMIT 3`
+const SQL = `${datasetsSql} WHERE dataUseModifiers IS NOT NULL LIMIT 2`
 
 const VARIANTS: { value: DuoTagVariant; label: string }[] = [
   { value: 'codeName', label: 'Code + name' },
@@ -28,15 +30,48 @@ const VARIANTS: { value: DuoTagVariant; label: string }[] = [
 ]
 
 const PLACEMENTS: { value: DuoPlacement; label: string }[] = [
-  { value: 'footer', label: 'Top of footer (current)' },
-  { value: 'titleRight', label: 'Right of title' },
+  { value: 'belowTitle', label: 'Below title' },
+  { value: 'header', label: 'With dataset header' },
   { value: 'actions', label: 'With download buttons' },
-  { value: 'icon', label: 'Under the icon' },
+  { value: 'metadata', label: 'In metadata section' },
+]
+
+// Synthetic examples so every DUO code (and a few multi-code datasets) is shown.
+type Example = {
+  title: string
+  description: string
+  terms: string[]
+  access: string
+}
+const MULTI_EXAMPLES: Example[] = [
+  {
+    title: 'Example — biomedical, non-commercial, publication required',
+    description:
+      'A dataset carrying several conditions at once, including a commercial-use restriction.',
+    terms: [
+      'Health or Medical or Biomedical Research',
+      'Not For Profit Use Only',
+      'Publication Required',
+    ],
+    access: 'Controlled Access',
+  },
+  {
+    title: 'Example — disease-specific with access conditions',
+    description:
+      'Disease-specific research with ethics approval, geographic, and collaboration requirements.',
+    terms: [
+      'Disease Specific Research',
+      'Ethics Approval Required',
+      'Geographical Restriction',
+      'Collaboration Required',
+    ],
+    access: 'Controlled Access',
+  },
 ]
 
 export default function DuoMockup() {
   const [variant, setVariant] = useState<DuoTagVariant>('codeName')
-  const [placement, setPlacement] = useState<DuoPlacement>('titleRight')
+  const [placement, setPlacement] = useState<DuoPlacement>('belowTitle')
 
   const cardConfiguration = useMemo<CardConfiguration>(
     () => ({
@@ -52,6 +87,48 @@ export default function DuoMockup() {
     [variant, placement],
   )
 
+  const examples: Example[] = useMemo(
+    () => [
+      ...MULTI_EXAMPLES,
+      ...ALL_DUO_TERMS.map(t => ({
+        title: t.name,
+        description: t.description,
+        terms: [t.name],
+        access:
+          t.category === 'permission' ? 'Public Access' : 'Controlled Access',
+      })),
+    ],
+    [],
+  )
+
+  // Place the DUO tags into the same card slot the real card uses for each
+  // placement option, so the synthetic examples match the live cards.
+  const renderExample = (ex: Example, i: number) => {
+    const duo = (
+      <DuoTermTags terms={ex.terms} accessType={ex.access} variant={variant} />
+    )
+    const labels = [
+      ...(placement === 'metadata'
+        ? [{ columnDisplayName: 'Data Usage Restrictions', value: duo }]
+        : []),
+      { columnDisplayName: 'Assay', value: 'RNA-seq' },
+      { columnDisplayName: 'Species', value: 'Homo sapiens' },
+    ]
+    return (
+      <GenericCard
+        key={i}
+        type="DATASET"
+        title={ex.title}
+        description={ex.description}
+        icon={<GenericCardIcon type="DATASET" useTypeForIcon />}
+        labels={labels}
+        cardTypeAdornment={placement === 'header' ? duo : undefined}
+        belowTitleContent={placement === 'belowTitle' ? duo : undefined}
+        cardTopButtons={placement === 'actions' ? duo : undefined}
+      />
+    )
+  }
+
   return (
     <Container maxWidth="lg" sx={{ py: 5 }}>
       <Typography variant="h3" sx={{ mb: 1 }}>
@@ -59,15 +136,15 @@ export default function DuoMockup() {
       </Typography>
       <Typography variant="body1" sx={{ color: 'text.secondary', mb: 3 }}>
         Surfacing Data Use Ontology terms (from <code>dataUseModifiers</code>)
-        as EGA-style labelled codes, on the real NF dataset card. Switch the
-        display style and the location to compare (DESIGN-1740 / PORTALS-4282).
+        as EGA-style labelled codes on the NF dataset card. Switch the display
+        style and the location to compare (DESIGN-1740 / PORTALS-4282).
         Commercial-use restrictions are emphasized.
       </Typography>
 
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         gap={3}
-        sx={{ mb: 3, flexWrap: 'wrap' }}
+        sx={{ mb: 4, flexWrap: 'wrap' }}
       >
         <Box>
           <Typography variant="smallText1" sx={{ fontWeight: 600 }}>
@@ -109,40 +186,26 @@ export default function DuoMockup() {
         </Box>
       </Stack>
 
-      <Card variant="outlined" sx={{ mb: 4, p: 2 }}>
-        <Typography
-          variant="caption"
-          sx={{
-            color: 'text.secondary',
-            fontWeight: 600,
-            display: 'block',
-            mb: 1,
-          }}
-        >
-          Reference — every tag type in this style, including the commercial-use
-          restriction (NCU), which most NF datasets don&apos;t currently carry
-        </Typography>
-        <DuoTermTags
-          terms={[
-            'General Research Use',
-            'Health or Medical or Biomedical Research',
-            'Not For Profit Use Only',
-            'Publication Required',
-            'Ethics Approval Required',
-            'User Specific Restriction',
-          ]}
-          accessType="Controlled Access"
-          variant={variant}
+      <Typography variant="sectionTitle" sx={{ display: 'block', mb: 1 }}>
+        Live dataset cards
+      </Typography>
+      <Box sx={{ mb: 4 }}>
+        <CardContainerLogic
+          key={`${variant}-${placement}`}
+          sql={SQL}
+          columnAliases={columnAliases}
+          cardConfiguration={cardConfiguration}
         />
-      </Card>
+      </Box>
 
-      {/* Real dataset cards as the base. key forces a clean re-render on change. */}
-      <CardContainerLogic
-        key={`${variant}-${placement}`}
-        sql={SQL}
-        columnAliases={columnAliases}
-        cardConfiguration={cardConfiguration}
-      />
+      <Typography variant="sectionTitle" sx={{ display: 'block', mb: 1 }}>
+        Every DUO code (synthetic examples)
+      </Typography>
+      <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
+        One card per DUO term, plus a couple of datasets with multiple terms.
+        Commercial-use restriction (NCU) shown in the emphasized style.
+      </Typography>
+      <Stack gap={2}>{examples.map(renderExample)}</Stack>
     </Container>
   )
 }

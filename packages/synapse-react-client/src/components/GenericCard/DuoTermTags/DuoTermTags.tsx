@@ -1,6 +1,5 @@
 import { Box, Chip, Tooltip, Typography } from '@mui/material'
 import { alpha, Theme } from '@mui/material/styles'
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import MoneyOffOutlinedIcon from '@mui/icons-material/MoneyOffOutlined'
 import { DuoCategory, resolveDuoTerm } from './duoTerms'
 
@@ -41,15 +40,10 @@ const chipSx = (category: DuoCategory) => {
   }
 }
 
-const categoryIcon = (category: DuoCategory) => {
-  if (category === 'commercial') {
-    return <MoneyOffOutlinedIcon />
-  }
-  if (category === 'restriction') {
-    return <LockOutlinedIcon />
-  }
-  return undefined
-}
+// Only the commercial-use restriction carries an icon — a generic "lock" on
+// PUB / IRB / US etc. is misleading, so other terms rely on color + label.
+const categoryIcon = (category: DuoCategory) =>
+  category === 'commercial' ? <MoneyOffOutlinedIcon /> : undefined
 
 export default function DuoTermTags(props: DuoTermTagsProps) {
   const { terms, accessType, variant = 'codeName' } = props

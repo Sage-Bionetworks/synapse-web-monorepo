@@ -156,6 +156,9 @@ const TERMS: DuoTerm[] = [
   },
 ]
 
+/** All known DUO terms, in canonical order (for demos/legends). */
+export const ALL_DUO_TERMS: readonly DuoTerm[] = TERMS
+
 /**
  * Parse a `dataUseModifiers` cell into a list of term names. The column is a
  * STRING_LIST, returned as a JSON-array string (e.g. `["General Research Use"]`).
