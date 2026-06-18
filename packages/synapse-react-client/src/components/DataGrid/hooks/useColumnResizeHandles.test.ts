@@ -31,13 +31,12 @@ describe('useColumnResizeHandles', () => {
     return cell
   }
 
-  // Mirrors the DOM produced by ColumnHeaderWithTooltip: a root div with
-  // data-column-id, a text span that may include an asterisk (*) for required
-  // columns, and an optional icons span.  textContent will be "Column A*" so
-  // any code that still reads textContent would fail to match the column id.
+  // Creates a header cell whose data-column-id differs from its visible
+  // textContent, verifying that the hook uses the attribute for column lookup
+  // rather than textContent.
   const createMockCellWithDataAttribute = (
     columnName: string,
-    isRequired: boolean = false,
+    displayText: string,
     width: number = 150,
   ) => {
     const cell = document.createElement('div')
@@ -47,14 +46,8 @@ describe('useColumnResizeHandles', () => {
     headerRoot.dataset.columnId = columnName
 
     const textSpan = document.createElement('span')
-    textSpan.textContent = columnName
+    textSpan.textContent = displayText
     headerRoot.appendChild(textSpan)
-
-    if (isRequired) {
-      const asterisk = document.createElement('span')
-      asterisk.textContent = '*'
-      headerRoot.appendChild(asterisk)
-    }
 
     cell.appendChild(headerRoot)
 
@@ -1089,22 +1082,23 @@ describe('useColumnResizeHandles', () => {
       expect(document.querySelectorAll('.column-resize-handle')).toHaveLength(0)
     })
 
-    it('creates handles for required columns whose textContent includes an asterisk', () => {
-      // Regression: ColumnHeaderWithTooltip appends a "*" span for required
-      // columns, changing the cell textContent from "Column A" to "Column A*".
-      // syncHandles must use data-column-id instead of textContent so the
-      // column lookup succeeds.
-
-      // Replace the plain-text cells with ColumnHeaderWithTooltip-style cells
-      // where one column is required (textContent will be "Column A*").
+    it('creates handles when a cell has a data-column-id that does not match its textContent', () => {
+      // syncHandles must use data-column-id for column lookup, not textContent.
+      // If it fell back to textContent the findIndex call would fail and no
+      // handle would be created for that column.
       while (mockHeaderRow.children.length > 1) {
         mockHeaderRow.removeChild(mockHeaderRow.lastChild!)
       }
+      // 'Column A' id, but visible text is something else entirely
       mockHeaderRow.appendChild(
-        createMockCellWithDataAttribute('Column A', true, 150),
+        createMockCellWithDataAttribute(
+          'Column A',
+          'Displayed differently',
+          150,
+        ),
       )
       mockHeaderRow.appendChild(
-        createMockCellWithDataAttribute('Column B', false, 200),
+        createMockCellWithDataAttribute('Column B', 'Also different', 200),
       )
 
       const colValues: Column[] = [
@@ -1125,8 +1119,6 @@ describe('useColumnResizeHandles', () => {
       const handles = document.querySelectorAll<HTMLElement>(
         '.column-resize-handle',
       )
-      // Both columns should get a handle; previously "Column A" was skipped
-      // because "Column A*" !== "Column A".
       expect(handles).toHaveLength(2)
       const names = Array.from(handles).map(h => h.dataset.columnName)
       expect(names).toContain('Column A')
