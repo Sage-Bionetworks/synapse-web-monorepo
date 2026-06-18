@@ -47,6 +47,10 @@ export const datasetCardConfiguration: CardConfiguration = {
       'visualizeDataOn',
     ],
     dataTypeIconNames: 'dataType',
+    // DESIGN-1740 / PORTALS-4282: surface Data Use Ontology terms on the card.
+    dataUseModifiersColumnName: 'dataUseModifiers',
+    accessTypeColumnName: 'accessType',
+    dataUseModifiersVariant: 'codeName',
     synapseEntityConfig: {
       id: {
         source: 'rowId',

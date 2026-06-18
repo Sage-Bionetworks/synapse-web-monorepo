@@ -46,6 +46,8 @@ import ShareThisPage, {
 import { SustainabilityScorecardProps } from '../SustainabilityScorecard/SustainabilityScorecard'
 import GenericCard from './GenericCard'
 import GenericCardActionButton from './GenericCardActionButton'
+import DuoTermTags, { DuoTagVariant } from './DuoTermTags/DuoTermTags'
+import { parseDuoModifiers } from './DuoTermTags/duoTerms'
 import { PortalDOIConfiguration } from './PortalDOI/PortalDOIConfiguration'
 import { SynapseCardLabel } from './SynapseCardLabel'
 import { useResolvedSynapseEntity } from './useResolvedSynapseEntity'
@@ -147,6 +149,16 @@ export type TableToGenericCardMapping = {
   downloadCartSynId?: string
   /** Configuration to display a DOI, as well as the ability to create one for users with such permission */
   portalDoiConfiguration?: PortalDOIConfiguration
+  /**
+   * Column name of a STRING_LIST of Data Use Ontology (DUO) term names. When
+   * set, the terms are rendered as DUO tags on the card (commercial-use
+   * restrictions emphasized).
+   */
+  dataUseModifiersColumnName?: string
+  /** Column name providing the access type (e.g. "Controlled Access"), shown by the 'badge' DUO variant. */
+  accessTypeColumnName?: string
+  /** DUO tag display variant. @default 'codeName' */
+  dataUseModifiersVariant?: DuoTagVariant
 }
 
 export type TableRowGenericCardProps = {
@@ -293,6 +305,27 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     },
     [schema, data],
   )
+
+  // DUO (Data Use Ontology) tags, when a dataUseModifiers column is configured.
+  const duoContent = useMemo(() => {
+    const col = genericCardSchema.dataUseModifiersColumnName
+    if (!col) {
+      return undefined
+    }
+    const terms = parseDuoModifiers(data[schema[col]])
+    if (terms.length === 0) {
+      return undefined
+    }
+    const accessCol = genericCardSchema.accessTypeColumnName
+    const accessType = accessCol ? data[schema[accessCol]] : undefined
+    return (
+      <DuoTermTags
+        terms={terms}
+        accessType={accessType}
+        variant={genericCardSchema.dataUseModifiersVariant}
+      />
+    )
+  }, [genericCardSchema, data, schema])
 
   const resolvedTitleAreaRightContent = useMemo(() => {
     const { titleAreaDetails } = genericCardSchema
@@ -593,18 +626,21 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       secondaryLabelLimit={secondaryLabelLimit}
       useStylesForDisplayedImage={Boolean(imageFileHandleIdValue)}
       cardTopContent={
-        resolvedDownloadCartSynIdValue && (
-          <Collapse in={showDownloadConfirmation}>
-            <EntityDownloadConfirmation
-              entityId={resolvedDownloadCartSynIdValue}
-              versionNumber={resolvedDownloadCartVersionNumber}
-              handleClose={() => setShowDownloadConfirmation(false)}
-              onIsLoadingChange={isLoading => {
-                setDownloadButtonLoading(isLoading)
-              }}
-            />
-          </Collapse>
-        )
+        <>
+          {duoContent}
+          {resolvedDownloadCartSynIdValue && (
+            <Collapse in={showDownloadConfirmation}>
+              <EntityDownloadConfirmation
+                entityId={resolvedDownloadCartSynIdValue}
+                versionNumber={resolvedDownloadCartVersionNumber}
+                handleClose={() => setShowDownloadConfirmation(false)}
+                onIsLoadingChange={isLoading => {
+                  setDownloadButtonLoading(isLoading)
+                }}
+              />
+            </Collapse>
+          )}
+        </>
       }
       renderedIconList={
         // If the portal configs has columnIconOptions.columns.dataType option
