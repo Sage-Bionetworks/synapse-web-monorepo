@@ -370,9 +370,10 @@ export function searchQueryResultsToQueryResultBundle(
   //     { buckets: [{ key: unknown, doc_count: number }] }
   //
   //   Filter-wrapped terms (per-facet filter bucketing, selections active):
-  //     { doc_count: number, [columnName]: { buckets: [...] } }
+  //     { doc_count: number, "sterms#columnName": { buckets: [...] } }
   //
-  // We detect the shape by checking for a nested [columnName] property with buckets.
+  // We detect the shape by checking for a nested "sterms#columnName" property with buckets.
+  // OpenSearch prefixes the aggregation type to the name in the response (e.g. "sterms#Program").
   const aggregationResults = results.aggregationResults as unknown as Record<
     string,
     OpenSearchTermsAgg | Record<string, OpenSearchTermsAgg>
@@ -380,9 +381,12 @@ export function searchQueryResultsToQueryResultBundle(
   const rawFacets: FacetColumnResultValues[] = Object.entries(
     aggregationResults ?? {},
   ).map(([columnName, agg]) => {
-    // Resolve the actual terms result: nested under [columnName] for filter-wrapped,
-    // or the agg itself for plain terms.
-    const nested = (agg as Record<string, OpenSearchTermsAgg>)[columnName]
+    // Resolve the actual terms result: OpenSearch prefixes the agg type when it is
+    // nested inside a filter aggregation, producing a "sterms#columnName" key.
+    // Fall back to a direct [columnName] match (defensive), then to the agg itself
+    // for the plain (no-selection) terms shape.
+    const aggRecord = agg as Record<string, OpenSearchTermsAgg>
+    const nested = aggRecord[`sterms#${columnName}`] ?? aggRecord[columnName]
     const termsAgg: OpenSearchTermsAgg =
       nested?.buckets !== undefined ? nested : (agg as OpenSearchTermsAgg)
     const selectedValues =

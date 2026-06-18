@@ -920,9 +920,10 @@ describe('searchQueryResultsToQueryResultBundle', () => {
     })
   })
 
-  it('parses filter-wrapped aggregation results (nested [columnName].buckets shape)', () => {
-    // This is the response shape returned by the server when filter aggregation
-    // wrapping is used (per-facet filter bucketing, i.e. when selections are active).
+  it('parses filter-wrapped aggregation results (nested sterms#columnName shape)', () => {
+    // This is the actual response shape returned by OpenSearch when filter aggregation
+    // wrapping is used. OpenSearch prefixes the aggregation type to the name in the
+    // response key, producing e.g. "sterms#Program" instead of "Program".
     const results: SearchQueryResults = {
       concreteType: 'org.sagebionetworks.repo.model.search.SearchQueryResults',
       totalHits: 320,
@@ -932,7 +933,7 @@ describe('searchQueryResultsToQueryResultBundle', () => {
         // category: wide (own selection dropped) → filter wrapper with match_all
         category: {
           doc_count: 782,
-          category: {
+          'sterms#category': {
             buckets: [
               { key: 'Biomedical Standard', doc_count: 320 },
               { key: 'Ontology or Vocabulary', doc_count: 179 },
@@ -942,7 +943,7 @@ describe('searchQueryResultsToQueryResultBundle', () => {
         // mature: narrowed to the category selection
         mature: {
           doc_count: 320,
-          mature: {
+          'sterms#mature': {
             buckets: [
               { key: 'Is Not Mature', doc_count: 287 },
               { key: 'Is Mature', doc_count: 33 },
