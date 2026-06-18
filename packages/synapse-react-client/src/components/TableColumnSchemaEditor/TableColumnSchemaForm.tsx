@@ -278,7 +278,7 @@ function TableColumnSchemaFormInternal(
   // Put the errors into a map of columnModelIndex -> errors
   const errorsByColumnModel = useMemo(() => {
     if (validationErrors) {
-      return groupBy(validationErrors.errors, e => e.path[0])
+      return groupBy(validationErrors.issues, e => e.path[0])
     }
     return {}
   }, [validationErrors])

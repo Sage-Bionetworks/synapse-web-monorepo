@@ -2,17 +2,20 @@ import { ColumnModel, ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
 import {
   canHaveMaxListLength,
   canHaveSize,
-  MAX_LIST_LENGTH,
+  DISALLOWED_DEFAULT_VALUE_COLUMN_TYPES,
+  getMaxListLengthForType,
+  MAX_COLUMN_NAME_LENGTH,
+  MAX_ENUM_VALUES,
   MAX_STRING_SIZE,
 } from '../TableColumnSchemaEditorUtils'
-import { type SafeParseReturnType, z } from 'zod'
+import { z, ZodType } from 'zod'
 import { SetOptional } from 'type-fest'
 import { getDefaultValueValidator } from './DefaultValueValidator'
 import getEnumValuesValidator from './EnumValuesValidator'
 import { optionalStringSchema } from './OptionalStringSchema'
 import { omit } from 'lodash-es'
 
-const facetTypeSchema = z.union([z.literal('enumeration'), z.literal('range')])
+const facetTypeSchema = z.enum(['enumeration', 'range'])
 
 const facetColumnSortConfigSchema = z.object({
   property: z.enum(['FREQUENCY', 'VALUE']).optional(),
@@ -20,51 +23,74 @@ const facetColumnSortConfigSchema = z.object({
 })
 
 const columnModelBaseZodSchema = z.object({
-  name: z.string().min(1, { message: 'Name is required' }),
-  columnType: z.nativeEnum(ColumnTypeEnum),
+  name: z
+    .string()
+    .min(1, { message: 'Name is required' })
+    .max(MAX_COLUMN_NAME_LENGTH, {
+      message: `Name must be ${MAX_COLUMN_NAME_LENGTH} characters or fewer`,
+    }),
+  columnType: z.enum(ColumnTypeEnum),
 })
 
-export const jsonSubColumnModelZodSchema = columnModelBaseZodSchema.merge(
-  z.object({
-    jsonPath: z.string().startsWith('$'),
-    facetType: facetTypeSchema,
-  }),
-)
+export const jsonSubColumnModelZodSchema = columnModelBaseZodSchema.extend({
+  jsonPath: z.string().startsWith('$'),
+  facetType: facetTypeSchema,
+})
 
 /**
  * Zod schema whose shape represents a ColumnModel. This unrefined schema is saved in this "intermediate" state so
- * that it can be extended with `.merge` to create an inferred type that can applied to form data.
+ * that it can be extended to create an inferred type that can applied to form data.
  */
-const unrefinedColumnModelSchema = columnModelBaseZodSchema.merge(
-  z.object({
-    id: z.string().optional(),
-    defaultValue: z.union([z.string(), z.array(z.any())]).optional(),
-    maximumSize: z
-      .union([optionalStringSchema, z.number()])
-      .pipe(
-        z.coerce.number().finite().int().min(1).max(MAX_STRING_SIZE).optional(),
-      ),
-    maximumListLength: z
-      .union([optionalStringSchema, z.number()])
-      .pipe(
-        z.coerce.number().finite().int().min(1).max(MAX_LIST_LENGTH).optional(),
-      ),
-    enumValues: z
-      .array(
-        z
-          .union([
-            z.string(),
-            // enumValues is allowed on INTEGER type, but the backend stores them as strings, so allow passing integers
-            z.number().int(),
-          ])
-          .pipe(z.coerce.string()),
-      )
-      .optional(),
-    jsonSubColumns: z.array(jsonSubColumnModelZodSchema).optional(),
-    facetType: facetTypeSchema.optional(),
-    facetSortConfig: facetColumnSortConfigSchema.optional(),
-  }),
-)
+const unrefinedColumnModelSchema = columnModelBaseZodSchema.extend({
+  id: z.string().optional(),
+  defaultValue: z.union([z.string(), z.array(z.any())]).optional(),
+  maximumSize: z
+    .union([optionalStringSchema, z.number()])
+    // Convert string input to a number before validating
+    .transform(v => (typeof v === 'string' ? Number(v) : v))
+    .pipe(z.number().int().min(1).max(MAX_STRING_SIZE).optional()),
+  maximumListLength: z
+    .union([optionalStringSchema, z.number()])
+    .transform(v => (typeof v === 'string' ? Number(v) : v))
+    .pipe(z.number().int().min(1).optional()),
+  enumValues: z
+    .array(
+      z
+        .union([
+          z.string(),
+          // enumValues is allowed on INTEGER type, but the backend stores them as strings, so allow passing integers
+          z.number().int(),
+        ])
+        .pipe(z.coerce.string()),
+    )
+    .max(MAX_ENUM_VALUES, {
+      message: `A column may have at most ${MAX_ENUM_VALUES} enumeration values`,
+    })
+    .optional(),
+  jsonSubColumns: z.array(jsonSubColumnModelZodSchema).optional(),
+  facetType: facetTypeSchema.optional(),
+  facetSortConfig: facetColumnSortConfigSchema.optional(),
+})
+
+/**
+ * Runs a field-specific sub-validator against a value, forwarding any issues to the parent
+ * context (re-pathed to `path`). Returns the transformed value, or undefined if validation failed.
+ */
+function parseSubField<T>(
+  value: unknown,
+  schema: ZodType<T | undefined>,
+  path: string,
+  ctx: z.RefinementCtx,
+): T | undefined {
+  const result = schema.safeParse(value)
+  if (result.success) {
+    return result.data
+  }
+  result.error.issues.forEach(issue => {
+    ctx.addIssue({ ...issue, path: [path] })
+  })
+  return undefined
+}
 
 /**
  * Zod schema to validate a column model. The provided data is coerced and transformed to match the ColumnModel type.
@@ -85,6 +111,26 @@ export const columnModelZodSchema = unrefinedColumnModelSchema
       path: ['maximumListLength'],
     },
   )
+  .superRefine((data, ctx) => {
+    if (
+      data.maximumListLength == null ||
+      !canHaveMaxListLength(data.columnType)
+    ) {
+      // Either no list length is set, or a previous refinement already rejected it
+      return
+    }
+    const maxListLength = getMaxListLengthForType(
+      data.columnType,
+      data.maximumSize,
+    )
+    if (data.maximumListLength > maxListLength) {
+      ctx.addIssue({
+        code: 'custom',
+        message: `Maximum list length must not exceed ${maxListLength} for this column type and element size`,
+        path: ['maximumListLength'],
+      })
+    }
+  })
   .refine(
     data => {
       if (data.jsonSubColumns != null) {
@@ -97,65 +143,70 @@ export const columnModelZodSchema = unrefinedColumnModelSchema
       path: ['columnType'],
     },
   )
+  .refine(
+    data => {
+      // An empty string or empty array is treated as "no default value" (see the defaultValue transform below)
+      const hasDefaultValue =
+        data.defaultValue != null &&
+        data.defaultValue !== '' &&
+        !(Array.isArray(data.defaultValue) && data.defaultValue.length === 0)
+      return (
+        !hasDefaultValue ||
+        !DISALLOWED_DEFAULT_VALUE_COLUMN_TYPES.includes(data.columnType)
+      )
+    },
+    {
+      message: 'A default value is not allowed for this column type',
+      path: ['defaultValue'],
+    },
+  )
   .transform((data, ctx) => {
-    if (data.defaultValue != null) {
-      // Validate and transform the defaultValue based on the columnType
-      const defaultValueSchema = getDefaultValueValidator(data.columnType)
-      const result = defaultValueSchema.safeParse(data.defaultValue)
-      let transformedValue: string | undefined
-      if (result.success) {
-        transformedValue = result.data
-      } else {
-        result.error.issues.forEach(issue => {
-          ctx.addIssue({ ...issue, path: ['defaultValue'] })
-        })
-        transformedValue = undefined
-      }
-      return { ...data, defaultValue: transformedValue }
+    // Validate and transform the defaultValue based on the columnType
+    if (data.defaultValue == null) {
+      return omit(data, 'defaultValue')
     }
-    return omit(data, 'defaultValue')
+    return {
+      ...data,
+      defaultValue: parseSubField(
+        data.defaultValue,
+        getDefaultValueValidator(data.columnType),
+        'defaultValue',
+        ctx,
+      ),
+    }
   })
   .transform((data, ctx) => {
-    // NOTE: This is the same set of steps as the `defaultValue` transform
-    // We may be able to refactor this, but it is challenging to do so without breaking the schema's inferred type
-    if (data.enumValues != null) {
-      // Validate and transform the defaultValue based on the columnType
-      const enumValuesSchema = getEnumValuesValidator(data.columnType)
-      const result = enumValuesSchema.safeParse(data.enumValues)
-      let transformedValue: string[] | undefined
-      if (result.success) {
-        transformedValue = result.data
-      } else {
-        result.error.issues.forEach(issue => {
-          ctx.addIssue({ ...issue, path: ['enumValues'] })
-        })
-        transformedValue = undefined
-      }
-      return { ...data, enumValues: transformedValue }
+    // Validate and transform the enumValues based on the columnType
+    if (data.enumValues == null) {
+      return omit(data, 'enumValues')
     }
-    return omit(data, 'enumValues')
+    return {
+      ...data,
+      enumValues: parseSubField(
+        data.enumValues,
+        getEnumValuesValidator(data.columnType),
+        'enumValues',
+        ctx,
+      ),
+    }
   })
 
 export const columnModelFormDataZodSchema = z.array(columnModelZodSchema)
 
-const jsonSubColumnModelFormDataSchema = jsonSubColumnModelZodSchema.merge(
-  z.object({
-    isSelected: z.boolean(),
-  }),
-)
+const jsonSubColumnModelFormDataSchema = jsonSubColumnModelZodSchema.extend({
+  isSelected: z.boolean(),
+})
 
 export type JsonSubColumnModelFormData = z.input<
   typeof jsonSubColumnModelFormDataSchema
 >
 
 // Use the "unrefined" schema since we can extend it with form-only fields
-const _columnModelFormDataSchema = unrefinedColumnModelSchema.merge(
-  z.object({
-    isSelected: z.boolean(),
-    isOriginallyDefaultColumn: z.boolean(),
-    jsonSubColumns: z.array(jsonSubColumnModelFormDataSchema).optional(),
-  }),
-)
+const _columnModelFormDataSchema = unrefinedColumnModelSchema.extend({
+  isSelected: z.boolean(),
+  isOriginallyDefaultColumn: z.boolean(),
+  jsonSubColumns: z.array(jsonSubColumnModelFormDataSchema).optional(),
+})
 
 /**
  * Type that represents possible form input data for a ColumnModel.
@@ -168,12 +219,6 @@ export function validateColumnModelFormData(
     ColumnModelFormData,
     'isOriginallyDefaultColumn' | 'isSelected'
   >[],
-): SafeParseReturnType<
-  SetOptional<
-    ColumnModelFormData,
-    'isOriginallyDefaultColumn' | 'isSelected'
-  >[],
-  SetOptional<ColumnModel, 'id'>[]
-> {
+): z.ZodSafeParseResult<SetOptional<ColumnModel, 'id'>[]> {
   return columnModelFormDataZodSchema.safeParse(formData)
 }
