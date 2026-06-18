@@ -41,6 +41,9 @@ export default [
       ),
       route('test-init-error', 'pages/TestInitError.tsx'),
 
+      // DESIGN-1740 / PORTALS-4282: DUO annotation display mockup
+      route('DUO Mockup', 'pages/DuoMockup/DuoMockup.tsx'),
+
       // Index — HomePage
       index('pages/HomePage.tsx'),
 

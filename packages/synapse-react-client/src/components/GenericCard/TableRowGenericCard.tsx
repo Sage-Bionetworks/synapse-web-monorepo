@@ -159,7 +159,12 @@ export type TableToGenericCardMapping = {
   accessTypeColumnName?: string
   /** DUO tag display variant. @default 'codeName' */
   dataUseModifiersVariant?: DuoTagVariant
+  /** Where DUO tags are placed on the card. @default 'footer' */
+  dataUseModifiersPlacement?: DuoPlacement
 }
+
+/** Candidate locations for DUO tags on the card (see DESIGN-1740). */
+export type DuoPlacement = 'footer' | 'titleRight' | 'actions' | 'icon'
 
 export type TableRowGenericCardProps = {
   /** The schema that maps a table result to the GenericCard UI */
@@ -326,6 +331,10 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       />
     )
   }, [genericCardSchema, data, schema])
+  const duoPlacement: DuoPlacement =
+    genericCardSchema.dataUseModifiersPlacement ?? 'footer'
+  const duoAt = (placement: DuoPlacement) =>
+    duoPlacement === placement ? duoContent : null
 
   const resolvedTitleAreaRightContent = useMemo(() => {
     const { titleAreaDetails } = genericCardSchema
@@ -573,27 +582,31 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     // For header cards, if there is no image or explicit icon value, we don't show an icon at all
     isRenderingIcon = false
   }
+  const iconNode = isRenderingIcon ? (
+    <GenericCardIcon
+      type={
+        useTypeColumnForIcon ? data[schema['type']] : genericCardSchema.type
+      }
+      useTypeForIcon={useTypeColumnForIcon}
+      thumbnailRequiresPadding={genericCardSchema.thumbnailRequiresPadding}
+      imageFileHandleId={imageFileHandleIdValue}
+      fileHandleAssociation={fileHandleAssociation}
+      iconOptions={iconOptions}
+      iconValue={iconValue}
+    />
+  ) : undefined
   return (
     <GenericCard
       ref={ref}
       icon={
-        isRenderingIcon ? (
-          <GenericCardIcon
-            type={
-              useTypeColumnForIcon
-                ? data[schema['type']]
-                : genericCardSchema.type
-            }
-            useTypeForIcon={useTypeColumnForIcon}
-            thumbnailRequiresPadding={
-              genericCardSchema.thumbnailRequiresPadding
-            }
-            imageFileHandleId={imageFileHandleIdValue}
-            fileHandleAssociation={fileHandleAssociation}
-            iconOptions={iconOptions}
-            iconValue={iconValue}
-          />
-        ) : undefined
+        duoAt('icon') ? (
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25 }}>
+            {iconNode}
+            {duoAt('icon')}
+          </Box>
+        ) : (
+          iconNode
+        )
       }
       isHeader={isHeader}
       sustainabilityScorecard={sustainabilityScorecard}
@@ -617,7 +630,16 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
         resolvedCtaLinkConfigs.length > 0 ? resolvedCtaLinkConfigs : undefined
       }
       ctaLinkPosition={ctaLinkPosition}
-      titleAreaRightContent={resolvedTitleAreaRightContent}
+      titleAreaRightContent={
+        duoAt('titleRight') ? (
+          <>
+            {duoAt('titleRight')}
+            {resolvedTitleAreaRightContent}
+          </>
+        ) : (
+          resolvedTitleAreaRightContent
+        )
+      }
       description={description}
       descriptionSubTitle={descriptionSubTitle}
       descriptionConfig={descriptionConfig}
@@ -627,7 +649,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       useStylesForDisplayedImage={Boolean(imageFileHandleIdValue)}
       cardTopContent={
         <>
-          {duoContent}
+          {duoAt('footer')}
           {resolvedDownloadCartSynIdValue && (
             <Collapse in={showDownloadConfirmation}>
               <EntityDownloadConfirmation
@@ -661,7 +683,8 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
         )
       }
       cardTopButtons={
-        <Box sx={{ display: 'flex', gap: 1 }}>
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+          {duoAt('actions')}
           {croissantButton}
           {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart */}
           {resolvedDownloadCartSynIdValue && (
