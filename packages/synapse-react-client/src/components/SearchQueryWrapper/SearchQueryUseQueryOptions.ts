@@ -230,7 +230,7 @@ export function toSearchIndexQuery(
     postFilter = { bool: { must: filterClauses } }
   }
 
-  // Build aggregations. When selections are active, wrap each terms aggregation in an
+  // Build aggregations. When selections are active, wrap each term's aggregation in an
   // OpenSearch filter aggregation whose filter is ALL selections EXCEPT the one for this
   // column. That keeps the column's own options wide while the others narrow.
   const aggregationEntries = columnModels
