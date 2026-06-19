@@ -123,7 +123,15 @@ export default function DuoTermTags(props: DuoTermTagsProps) {
     .sort((a, b) => ORDER[a.category] - ORDER[b.category])
 
   return (
-    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: 0.75,
+        minWidth: 0,
+        maxWidth: '100%',
+      }}
+    >
       {sorted.map((t, i) => {
         const url = duoRegistryUrl(t)
         return (
@@ -156,9 +164,14 @@ export default function DuoTermTags(props: DuoTermTagsProps) {
               size="small"
               icon={termIcon(t)}
               label={t.name}
-              // Cap the width; long names truncate with an ellipsis (the full
-              // name + definition are in the tooltip above).
-              sx={{ ...chipSx(t.category), maxWidth: MAX_CHIP_WIDTH }}
+              // Cap the width but never exceed the container, so the chip
+              // truncates with an ellipsis instead of overflowing (e.g. in the
+              // narrow facet sidebar). Full name + definition are in the tooltip.
+              sx={{
+                ...chipSx(t.category),
+                maxWidth: `min(${MAX_CHIP_WIDTH}px, 100%)`,
+                minWidth: 0,
+              }}
             />
           </Tooltip>
         )
