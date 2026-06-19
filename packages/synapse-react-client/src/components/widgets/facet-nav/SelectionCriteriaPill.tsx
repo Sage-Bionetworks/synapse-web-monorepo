@@ -1,10 +1,17 @@
 import { Close } from '@mui/icons-material'
 import { Tooltip } from '@mui/material'
+import { ReactNode } from 'react'
 
 export type SelectionCriteriaPillProps = {
   readonly key: string
   readonly innerText: string
   readonly tooltipText: string
+  /**
+   * Optional custom node to render in place of the plain-text label (e.g. DUO
+   * tags). The node is expected to carry its own tooltip, so the pill's own
+   * tooltip is suppressed when this is provided.
+   */
+  readonly renderedInnerText?: ReactNode
   readonly onRemoveFilter?: () => void
   /** When true, the pill is shown without a remove button */
   readonly isLocked?: boolean
@@ -16,26 +23,41 @@ export type SelectionCriteriaPillProps = {
  * @constructor
  */
 function SelectionCriteriaPill(props: SelectionCriteriaPillProps) {
-  const { innerText, tooltipText, onRemoveFilter, isLocked } = props
+  const {
+    innerText,
+    tooltipText,
+    renderedInnerText,
+    onRemoveFilter,
+    isLocked,
+  } = props
+
+  const pill = (
+    <div
+      className={`SelectionCriteriaPill${
+        isLocked ? ' SelectionCriteriaPill--locked' : ''
+      }${renderedInnerText != null ? ' SelectionCriteriaPill--custom' : ''}`}
+    >
+      <span>{renderedInnerText ?? innerText}</span>
+      {!isLocked && onRemoveFilter && (
+        <button
+          onClick={onRemoveFilter}
+          className="SelectionCriteriaPill__btnRemove"
+          title="deselect"
+        >
+          <Close />
+        </button>
+      )}
+    </div>
+  )
+
+  // A custom rendered node provides its own tooltip; avoid nesting tooltips.
+  if (renderedInnerText != null) {
+    return pill
+  }
 
   return (
     <Tooltip title={tooltipText} placement={'top'}>
-      <div
-        className={`SelectionCriteriaPill${
-          isLocked ? ' SelectionCriteriaPill--locked' : ''
-        }`}
-      >
-        <span>{innerText}</span>
-        {!isLocked && onRemoveFilter && (
-          <button
-            onClick={onRemoveFilter}
-            className="SelectionCriteriaPill__btnRemove"
-            title="deselect"
-          >
-            <Close />
-          </button>
-        )}
-      </div>
+      {pill}
     </Tooltip>
   )
 }

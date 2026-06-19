@@ -188,7 +188,8 @@ function getPillPropsFromFacetFilters(
     const columnModel = columnModels.find(
       cm => cm.name === selectedFacet.columnName,
     )
-    const { getColumnDisplayName, getDisplayValue } = queryVisualizationContext
+    const { getColumnDisplayName, getDisplayValue, renderFacetValue } =
+      queryVisualizationContext
     if (isFacetColumnValuesRequest(selectedFacet)) {
       // If there are more than _n_ values, consolidate to one pill
       if (
@@ -221,6 +222,10 @@ function getPillPropsFromFacetFilters(
         return {
           key: `facet-${selectedFacet.concreteType}-${selectedFacet.columnName}-${facetValue}`,
           innerText: innerText,
+          renderedInnerText: renderFacetValue?.(
+            selectedFacet.columnName,
+            facetValue,
+          ),
           tooltipText: `${getColumnDisplayName(
             selectedFacet.columnName,
             selectedFacet.jsonPath,
