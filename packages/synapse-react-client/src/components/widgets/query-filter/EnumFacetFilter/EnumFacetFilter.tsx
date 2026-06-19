@@ -51,7 +51,8 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
   } = useQueryContext()
 
   const { data: queryMetadata } = useSuspenseGetQueryMetadata()
-  const { getColumnDisplayName } = useQueryVisualizationContext()
+  const { getColumnDisplayName, renderFacetValue } =
+    useQueryVisualizationContext()
 
   const currentSelectedFacet: FacetColumnValuesRequest | undefined =
     useMemo(() => {
@@ -128,6 +129,12 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
   const displayedFacetValues: RenderedFacetValue[] = useMemo(() => {
     const renderedFacetValues = facet.facetValues.map(
       (facetValue: FacetColumnResultValueCount): RenderedFacetValue => {
+        const displayText = valueToLabel(
+          facetValue,
+          userGroupHeaders,
+          entityHeaders,
+          evaluations,
+        )
         return {
           ...facetValue,
           // Selected status should be based on the 'nextQuery', not the result data
@@ -135,12 +142,8 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
           isSelected:
             currentSelectedFacet?.facetValues.includes(facetValue.value) ??
             false,
-          displayText: valueToLabel(
-            facetValue,
-            userGroupHeaders,
-            entityHeaders,
-            evaluations,
-          ),
+          displayText,
+          renderedLabel: renderFacetValue?.(facet.columnName, facetValue.value),
         }
       },
     )
@@ -169,12 +172,14 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
     return [...sortedValues, ...valueNotSetFacetArray]
   }, [
     facet.facetValues,
+    facet.columnName,
     columnModel,
     currentSelectedFacet?.facetValues,
     userGroupHeaders,
     entityHeaders,
     evaluations,
     isNumberColumnType,
+    renderFacetValue,
   ])
 
   if (!columnModel) {

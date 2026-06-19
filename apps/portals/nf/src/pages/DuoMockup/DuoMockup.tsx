@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Container, Stack, Typography } from '@mui/material'
+import { Box, Container, Stack, Typography } from '@mui/material'
 import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
 import GenericCard from 'synapse-react-client/components/GenericCard/GenericCard'
@@ -82,6 +82,17 @@ export default function DuoMockup() {
         amber = use limit); hover a tag for its definition and ontology code
         (DESIGN-1740 / PORTALS-4282).
       </Typography>
+
+      <Typography variant="sectionTitle" sx={{ display: 'block', mb: 1 }}>
+        All DUO values
+      </Typography>
+      <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
+        Every term in the vocabulary, rendered together. Long names truncate
+        with “…” and show the full name + definition on hover.
+      </Typography>
+      <Box sx={{ mb: 4 }}>
+        <DuoTermTags terms={ALL_DUO_TERMS.map(t => t.code)} />
+      </Box>
 
       <Typography variant="sectionTitle" sx={{ display: 'block', mb: 1 }}>
         Live dataset cards

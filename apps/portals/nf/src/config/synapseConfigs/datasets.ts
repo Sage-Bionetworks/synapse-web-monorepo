@@ -5,6 +5,14 @@ import { datasetsSearchIndexId, datasetsSql } from '../resources'
 import { columnAliases as sharedColumnAliases } from './commonProps'
 import { studyColumnIconConfigs } from './studies'
 import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
+import { createElement } from 'react'
+import DuoTermTags from 'synapse-react-client/components/GenericCard/DuoTermTags/DuoTermTags'
+
+// Render the "Data Use Modifiers" facet values as DUO tags (PORTALS-4282).
+const renderDuoFacetValue = (columnName: string, value: string) =>
+  columnName === 'dataUseModifiers'
+    ? createElement(DuoTermTags, { terms: [value] })
+    : undefined
 
 export const newDatasetsSql = `${datasetsSql} order by ROW_ID desc limit 3`
 export const datasetsRgbIndex = 8
@@ -84,6 +92,7 @@ const datasets: QueryWrapperPlotNavProps = {
   cardConfiguration: datasetCardConfiguration,
   name: 'Datasets',
   columnAliases,
+  renderFacetValue: renderDuoFacetValue,
   searchConfiguration: {
     searchable: [
       'title',
@@ -102,6 +111,7 @@ export const datasetsSearch: SearchQueryWrapperPlotNavProps = {
   shouldDeepLink: false,
   cardConfiguration: datasetCardConfiguration,
   columnAliases,
+  renderFacetValue: renderDuoFacetValue,
   searchIndexId: datasetsSearchIndexId,
   autocompleteFieldName: 'title',
   hideTopLevelControls: false,

@@ -1,8 +1,9 @@
 import { Box, Checkbox, FormControlLabel, Radio } from '@mui/material'
+import { ReactNode } from 'react'
 
 type EnumFacetFilterOptionProps = {
   readonly id: string
-  readonly label: string
+  readonly label: ReactNode
   readonly count?: number
   readonly isDropdown: boolean
   readonly checked: boolean

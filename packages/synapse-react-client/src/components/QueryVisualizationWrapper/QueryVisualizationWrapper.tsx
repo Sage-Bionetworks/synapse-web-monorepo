@@ -33,6 +33,8 @@ export type QueryVisualizationWrapperProps = {
   unitDescription?: string
   /** Mapping from column name to the name that should be shown for the column */
   columnAliases?: Record<string, string>
+  /** Optional custom renderer for enumeration facet values (see context). */
+  renderFacetValue?: (columnName: string, value: string) => ReactNode
   visibleColumnCount?: number
   hiddenColumns?: string[]
   defaultShowPlots?: boolean
@@ -223,6 +225,7 @@ export function QueryVisualizationWrapper(
       showLastUpdatedOn: props.showLastUpdatedOn,
       getColumnDisplayName,
       getDisplayValue,
+      renderFacetValue: props.renderFacetValue,
       getHelpText,
       NoContentPlaceholder,
       isShowingExportToAnalysisPlatformModal:
@@ -253,6 +256,7 @@ export function QueryVisualizationWrapper(
       isShowingExportToAnalysisPlatformModal,
       props.rgbIndex,
       props.showLastUpdatedOn,
+      props.renderFacetValue,
       setShowDownloadConfirmation,
       setShowSearchBar,
       showCopyToClipboard,

@@ -101,6 +101,10 @@ const chipSx = (category: DuoCategory) => {
   }
 }
 
+// Cap chip width so long term names don't blow out narrow contexts (e.g. the
+// facet sidebar); the full name is available via the tooltip.
+const MAX_CHIP_WIDTH = 220
+
 // Primary use first (the dataset's purpose), then the conditions that limit it.
 const ORDER: Record<DuoCategory, number> = {
   permission: 0,
@@ -152,7 +156,9 @@ export default function DuoTermTags(props: DuoTermTagsProps) {
               size="small"
               icon={termIcon(t)}
               label={t.name}
-              sx={chipSx(t.category)}
+              // Cap the width; long names truncate with an ellipsis (the full
+              // name + definition are in the tooltip above).
+              sx={{ ...chipSx(t.category), maxWidth: MAX_CHIP_WIDTH }}
             />
           </Tooltip>
         )

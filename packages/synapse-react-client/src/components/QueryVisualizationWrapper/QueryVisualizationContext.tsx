@@ -23,6 +23,12 @@ export type QueryVisualizationContextType = {
   getHelpText: (columnName: string, jsonPath?: string) => string | undefined
   /** Given a cell value and a column type, returns the displayed value for the data */
   getDisplayValue: (value: string, columnType: ColumnType) => string
+  /**
+   * Optional custom renderer for enumeration facet values, keyed by column. When
+   * it returns a node for a (columnName, value), that node replaces the plain
+   * text label in the facet filter. Returning undefined falls back to the text.
+   */
+  renderFacetValue?: (columnName: string, value: string) => ReactNode
   /** React node to display in place of cards/table when there are no results. */
   NoContentPlaceholder: () => ReactNode
   /** The set of external analysis platforms where this component allows users to export data. If this list is empty, then
