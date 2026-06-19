@@ -1,5 +1,4 @@
-import { Close } from '@mui/icons-material'
-import { Tooltip } from '@mui/material'
+import { Chip, Tooltip } from '@mui/material'
 import { ReactNode } from 'react'
 
 export type SelectionCriteriaPillProps = {
@@ -16,6 +15,17 @@ export type SelectionCriteriaPillProps = {
   readonly onRemoveFilter?: () => void
   /** When true, the pill is shown without a remove button */
   readonly isLocked?: boolean
+}
+
+// Neutral styling for plain-value pills, matching the (colored) DUO chips'
+// shape and size so all active-filter pills are visually consistent. The delete
+// icon inherits the text color and brightens on hover.
+const neutralChipSx = {
+  bgcolor: 'var(--synapse-secondary-action-color-alpha-10)',
+  color: 'var(--synapse-text-color-dark)',
+  '&:hover': { bgcolor: 'var(--synapse-secondary-action-color-alpha-20)' },
+  '& .MuiChip-deleteIcon': { color: 'inherit', opacity: 0.7 },
+  '& .MuiChip-deleteIcon:hover': { color: 'inherit', opacity: 1 },
 }
 
 /**
@@ -37,34 +47,21 @@ function SelectionCriteriaPill(props: SelectionCriteriaPillProps) {
   // pill chrome, tooltip, or separate remove button.
   if (renderedInnerText != null) {
     return (
-      <div className="SelectionCriteriaPill SelectionCriteriaPill--custom">
+      <span className="SelectionCriteriaPill SelectionCriteriaPill--custom">
         {renderedInnerText}
-      </div>
+      </span>
     )
   }
 
-  const pill = (
-    <div
-      className={`SelectionCriteriaPill${
-        isLocked ? ' SelectionCriteriaPill--locked' : ''
-      }`}
-    >
-      <span>{innerText}</span>
-      {!isLocked && onRemoveFilter && (
-        <button
-          onClick={onRemoveFilter}
-          className="SelectionCriteriaPill__btnRemove"
-          title="deselect"
-        >
-          <Close />
-        </button>
-      )}
-    </div>
-  )
-
   return (
     <Tooltip title={tooltipText} placement={'top'}>
-      {pill}
+      <Chip
+        className="SelectionCriteriaPill"
+        size="small"
+        label={innerText}
+        onDelete={!isLocked ? onRemoveFilter : undefined}
+        sx={neutralChipSx}
+      />
     </Tooltip>
   )
 }
