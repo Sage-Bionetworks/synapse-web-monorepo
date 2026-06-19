@@ -1,29 +1,32 @@
-// Data Use Ontology (DUO) vocabulary used by the mockup. The NF datasets table
-// stores `dataUseModifiers` as human-readable term names; this maps each to its
-// DUO code + EGA-style abbreviation and a coarse category so the UI can
-// emphasize restrictions (especially commercial-use ones).
+// Data Use Ontology (DUO) vocabulary, plus Sage's DUO-Plus extensions.
 //
-// Mockup data only — if this display approach is adopted, the canonical list
-// should come from the DUO ontology rather than this hand-maintained table.
+// Source of truth for codes/labels: Sage-Bionetworks/governanceDUO
+// (`metadata structure.md`), which mirrors the GA4GH DUO term set and adds
+// Sage's "DUOplus" modifiers. Datasets are annotated with the ontology code
+// (e.g. DUO:0000042); the displayed tag is derived from that code here, so the
+// annotation and the display can evolve independently.
 
-export type DuoCategory = 'permission' | 'restriction' | 'commercial'
+export type DuoCategory = 'permission' | 'commercial' | 'obligation' | 'limit'
 
 export type DuoTerm = {
+  /** Ontology code, e.g. "DUO:0000042". DUO-Plus terms use a "DUOplus#" code. */
   code: string
+  /** Short abbreviation (shown in tooltips). */
   abbr: string
+  /** Full human-readable name (the visible tag label). */
   name: string
   category: DuoCategory
-  description: string
+  definition: string
 }
 
 const TERMS: DuoTerm[] = [
-  // Primary permissions
+  // --- Permitted use (what research the data may be used for) ---
   {
     code: 'DUO:0000042',
     abbr: 'GRU',
     name: 'General Research Use',
     category: 'permission',
-    description:
+    definition:
       'Use is allowed for any research purpose, including methods development and population/ancestry research.',
   },
   {
@@ -31,7 +34,7 @@ const TERMS: DuoTerm[] = [
     abbr: 'HMB',
     name: 'Health or Medical or Biomedical Research',
     category: 'permission',
-    description:
+    definition:
       'Use is allowed for health, medical, or biomedical research purposes.',
   },
   {
@@ -39,129 +42,191 @@ const TERMS: DuoTerm[] = [
     abbr: 'DS',
     name: 'Disease Specific Research',
     category: 'permission',
-    description:
-      'Use is allowed for research into a specified disease or condition.',
-  },
-  {
-    code: 'DUO:0000004',
-    abbr: 'NRES',
-    name: 'No Restriction',
-    category: 'permission',
-    description: 'No restrictions on use.',
+    definition:
+      'Use is allowed for research into the specified disease or condition.',
   },
   {
     code: 'DUO:0000011',
     abbr: 'POA',
-    name: 'Population Origins or Ancestry Research',
+    name: 'Population Origins or Ancestry Research Only',
     category: 'permission',
-    description: 'Use is allowed for population origins or ancestry research.',
+    definition:
+      'Use is limited to population origins or ancestry research only.',
   },
   {
     code: 'DUO:0000043',
     abbr: 'CC',
     name: 'Clinical Care Use',
     category: 'permission',
-    description: 'Use is allowed for clinical care purposes.',
+    definition: 'Use is allowed for clinical care purposes.',
   },
-  // Commercial-use restriction (the headline concern)
+  {
+    code: 'DUO:0000004',
+    abbr: 'NRES',
+    name: 'No Restriction',
+    category: 'permission',
+    definition: 'No restrictions on use; data is available under open access.',
+  },
+
+  // --- Commercial-use restriction ---
+  {
+    code: 'DUO:0000046',
+    abbr: 'NCU',
+    name: 'Non-Commercial Use Only',
+    category: 'commercial',
+    definition: 'Use is limited to non-commercial purposes.',
+  },
   {
     code: 'DUO:0000018',
-    abbr: 'NCU',
-    name: 'Not For Profit Use Only',
+    abbr: 'NPUNCU',
+    name: 'Not-for-Profit, Non-Commercial Use Only',
     category: 'commercial',
-    description:
-      'Use is limited to not-for-profit organizations and not-for-profit use; commercial use is prohibited.',
+    definition:
+      'Use is limited to not-for-profit organizations for non-commercial purposes.',
   },
-  // Other restrictions / obligations
   {
-    code: 'DUO:0000016',
-    abbr: 'GSO',
-    name: 'Genetic Studies Only',
-    category: 'restriction',
-    description: 'Use is limited to genetic studies only.',
+    code: 'DUO:0000045',
+    abbr: 'NPU',
+    name: 'Not-for-Profit Organisation Use Only',
+    category: 'commercial',
+    definition: 'Use is limited to not-for-profit organizations.',
   },
+
+  // --- Obligations (things the requester must do) ---
   {
     code: 'DUO:0000019',
     abbr: 'PUB',
     name: 'Publication Required',
-    category: 'restriction',
-    description:
-      'Requesters must agree to make results of use publicly available.',
+    category: 'obligation',
+    definition:
+      'Requestor agrees to make results of studies using the data available to the larger scientific community.',
   },
   {
     code: 'DUO:0000020',
     abbr: 'COL',
     name: 'Collaboration Required',
-    category: 'restriction',
-    description:
-      'Requesters must agree to collaborate with the primary study investigators.',
+    category: 'obligation',
+    definition:
+      'Requestor agrees to collaborate with the primary study investigator(s).',
   },
   {
     code: 'DUO:0000021',
     abbr: 'IRB',
     name: 'Ethics Approval Required',
-    category: 'restriction',
-    description:
-      'Requesters must provide documentation of local ethics/IRB approval.',
-  },
-  {
-    code: 'DUO:0000022',
-    abbr: 'GS',
-    name: 'Geographical Restriction',
-    category: 'restriction',
-    description: 'Use is limited to within a specified geographic region.',
-  },
-  {
-    code: 'DUO:0000024',
-    abbr: 'MOR',
-    name: 'Publication Moratorium',
-    category: 'restriction',
-    description: 'Requesters must not publish results until a specified date.',
-  },
-  {
-    code: 'DUO:0000025',
-    abbr: 'TS',
-    name: 'Time Limit on Use',
-    category: 'restriction',
-    description: 'Use is approved for a specified period of time.',
-  },
-  {
-    code: 'DUO:0000026',
-    abbr: 'US',
-    name: 'User Specific Restriction',
-    category: 'restriction',
-    description: 'Use is limited to specified, approved users.',
-  },
-  {
-    code: 'DUO:0000027',
-    abbr: 'PS',
-    name: 'Project Specific Restriction',
-    category: 'restriction',
-    description: 'Use is limited to a specified, approved project.',
-  },
-  {
-    code: 'DUO:0000028',
-    abbr: 'IS',
-    name: 'Institution Specific Restriction',
-    category: 'restriction',
-    description: 'Use is limited to specified, approved institutions.',
+    category: 'obligation',
+    definition:
+      'Requestor must provide documentation of local IRB/ethics approval.',
   },
   {
     code: 'DUO:0000029',
     abbr: 'RTN',
     name: 'Return to Database or Resource',
-    category: 'restriction',
-    description:
-      'Requesters must return derived/enriched data to the resource.',
+    category: 'obligation',
+    definition:
+      'Requestor must return derived/enriched data to the database or resource.',
+  },
+  {
+    // Sage DUO-Plus extension (no GA4GH ontology id).
+    code: 'DUOplus7',
+    abbr: 'ATTR',
+    name: 'Attribution Required',
+    category: 'obligation',
+    definition:
+      'Requestor must provide the specified attribution/acknowledgement statement when using the data. (Sage DUO-Plus extension.)',
+  },
+
+  // --- Use limits (narrow who / where / when / what kind of research) ---
+  {
+    code: 'DUO:0000026',
+    abbr: 'US',
+    name: 'User Specific Restriction',
+    category: 'limit',
+    definition: 'Use is limited to specified, approved users.',
+  },
+  {
+    code: 'DUO:0000027',
+    abbr: 'PS',
+    name: 'Project Specific Restriction',
+    category: 'limit',
+    definition: 'Use is limited to a specified, approved project.',
+  },
+  {
+    code: 'DUO:0000028',
+    abbr: 'IS',
+    name: 'Institution Specific Restriction',
+    category: 'limit',
+    definition: 'Use is limited to specified, approved institutions.',
+  },
+  {
+    code: 'DUO:0000022',
+    abbr: 'GS',
+    name: 'Geographical Restriction',
+    category: 'limit',
+    definition: 'Use is limited to within a specified geographic region.',
+  },
+  {
+    code: 'DUO:0000025',
+    abbr: 'TS',
+    name: 'Time Limit on Use',
+    category: 'limit',
+    definition: 'Use is approved for a specified period of time.',
+  },
+  {
+    code: 'DUO:0000024',
+    abbr: 'MOR',
+    name: 'Publication Moratorium',
+    category: 'limit',
+    definition: 'Requestor must not publish results until a specified date.',
+  },
+  {
+    code: 'DUO:0000016',
+    abbr: 'GSO',
+    name: 'Genetic Studies Only',
+    category: 'limit',
+    definition: 'Use is limited to genetic studies only.',
+  },
+  {
+    code: 'DUO:0000015',
+    abbr: 'NMDS',
+    name: 'No General Methods Research',
+    category: 'limit',
+    definition: 'Use for general methods development research is prohibited.',
+  },
+  {
+    code: 'DUO:0000044',
+    abbr: 'NPOA',
+    name: 'Population Origins or Ancestry Research Prohibited',
+    category: 'limit',
+    definition:
+      'Use for population origins or ancestry research is prohibited.',
+  },
+  {
+    code: 'DUO:0000012',
+    abbr: 'RS',
+    name: 'Research Specific Restrictions',
+    category: 'limit',
+    definition:
+      'Use is limited to the specific research type(s) described by the data provider.',
   },
 ]
 
-/** All known DUO terms, in canonical order (for demos/legends). */
+/** All known terms, in canonical (category) order — for demos/legends. */
 export const ALL_DUO_TERMS: readonly DuoTerm[] = TERMS
 
 /**
- * Parse a `dataUseModifiers` cell into a list of term names. The column is a
- * STRING_LIST, returned as a JSON-array string (e.g. `["General Research Use"]`).
+ * Link to the term's definition in Bioregistry (GA4GH DUO terms only;
+ * DUO-Plus extensions have no registry entry).
+ */
+export function duoRegistryUrl(term: DuoTerm): string | undefined {
+  return term.code.startsWith('DUO:')
+    ? `https://bioregistry.io/${term.code.toLowerCase()}`
+    : undefined
+}
+
+/**
+ * Parse a `dataUseModifiers` cell into a list of values. The column is a
+ * STRING_LIST, returned as a JSON-array string (e.g. `["General Research Use"]`
+ * or, once migrated, `["DUO:0000042"]`).
  */
 export function parseDuoModifiers(raw: string | null | undefined): string[] {
   if (!raw) {
@@ -182,20 +247,19 @@ const normalize = (s: string) =>
     .trim()
 
 const BY_NAME = new Map(TERMS.map(t => [normalize(t.name), t]))
-// A few common phrasings that don't match the canonical names verbatim.
+const BY_CODE = new Map(TERMS.map(t => [t.code.toUpperCase(), t]))
+// A few alternate phrasings seen in the data that don't match the names above.
 const ALIASES: Record<string, string> = {
-  'non commercial use only': 'DUO:0000018',
+  'not for profit non commercial use only': 'DUO:0000018',
   'not for profit use only': 'DUO:0000018',
-  'not for profit organisation use only': 'DUO:0000018',
-  'health medical biomedical research': 'DUO:0000006',
-  'health medical biomedical': 'DUO:0000006',
+  'non commercial use only': 'DUO:0000046',
+  'population origins or ancestry research': 'DUO:0000011',
 }
-const BY_CODE = new Map(TERMS.map(t => [t.code, t]))
 
 /**
- * Resolve a raw `dataUseModifiers` value (a DUO term name, or sometimes a code)
- * to a known DuoTerm. Unknown values fall back to a neutral restriction tag
- * built from the raw text so nothing is silently dropped.
+ * Resolve a raw `dataUseModifiers` value (an ontology code like DUO:0000042, a
+ * DUOplus# code, or a term name) to a known DuoTerm. Unknown values fall back
+ * to a neutral "limit" tag built from the raw text so nothing is dropped.
  */
 export function resolveDuoTerm(raw: string): DuoTerm {
   const value = raw.trim()
@@ -204,11 +268,11 @@ export function resolveDuoTerm(raw: string): DuoTerm {
     return byCode
   }
   const key = normalize(value)
-  const match = BY_NAME.get(key) ?? BY_CODE.get(ALIASES[key] ?? '')
+  const match =
+    BY_NAME.get(key) ?? BY_CODE.get(ALIASES[key]?.toUpperCase() ?? '')
   if (match) {
     return match
   }
-  // Unknown term: abbreviate from initials, treat as a restriction to be safe.
   const abbr = value
     .split(/\s+/)
     .map(w => w[0]?.toUpperCase() ?? '')
@@ -218,7 +282,7 @@ export function resolveDuoTerm(raw: string): DuoTerm {
     code: '',
     abbr: abbr || '?',
     name: value,
-    category: 'restriction',
-    description: value,
+    category: 'limit',
+    definition: value,
   }
 }

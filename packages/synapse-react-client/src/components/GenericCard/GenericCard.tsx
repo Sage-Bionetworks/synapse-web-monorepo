@@ -89,10 +89,6 @@ export type GenericCardProps = {
    */
   titleAreaRightContent?: React.ReactNode
   /**
-   * Optional content to render directly below the title (above the description).
-   */
-  belowTitleContent?: React.ReactNode
-  /**
    * Character count threshold for truncating description
    * @default 400
    */
@@ -131,7 +127,6 @@ export const GenericCard = forwardRef(function GenericCard(
     sustainabilityScorecard,
     cardTypeAdornment,
     titleAreaRightContent,
-    belowTitleContent,
     charCountCutoff,
   } = props
 
@@ -248,9 +243,6 @@ export const GenericCard = forwardRef(function GenericCard(
                   )}
                 </h3>
               </div>
-              {belowTitleContent && (
-                <Box sx={{ mt: '8px' }}>{belowTitleContent}</Box>
-              )}
               {subtitle && <div className="SRC-author">{subtitle}</div>}
               <CollapsibleDescription
                 description={description}

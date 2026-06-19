@@ -46,7 +46,7 @@ import ShareThisPage, {
 import { SustainabilityScorecardProps } from '../SustainabilityScorecard/SustainabilityScorecard'
 import GenericCard from './GenericCard'
 import GenericCardActionButton from './GenericCardActionButton'
-import DuoTermTags, { DuoTagVariant } from './DuoTermTags/DuoTermTags'
+import DuoTermTags from './DuoTermTags/DuoTermTags'
 import { parseDuoModifiers } from './DuoTermTags/duoTerms'
 import { PortalDOIConfiguration } from './PortalDOI/PortalDOIConfiguration'
 import { SynapseCardLabel } from './SynapseCardLabel'
@@ -150,21 +150,12 @@ export type TableToGenericCardMapping = {
   /** Configuration to display a DOI, as well as the ability to create one for users with such permission */
   portalDoiConfiguration?: PortalDOIConfiguration
   /**
-   * Column name of a STRING_LIST of Data Use Ontology (DUO) term names. When
-   * set, the terms are rendered as DUO tags on the card (commercial-use
-   * restrictions emphasized).
+   * Column name of a STRING_LIST of Data Use Ontology (DUO) values (ontology
+   * codes or term names). When set, the values are rendered as DUO tags in a
+   * "Data Usage Restrictions" row in the card's metadata section.
    */
   dataUseModifiersColumnName?: string
-  /** Column name providing the access type (e.g. "Controlled Access"), shown by the 'badge' DUO variant. */
-  accessTypeColumnName?: string
-  /** DUO tag display variant. @default 'codeName' */
-  dataUseModifiersVariant?: DuoTagVariant
-  /** Where DUO tags are placed on the card. @default 'footer' */
-  dataUseModifiersPlacement?: DuoPlacement
 }
-
-/** Candidate locations for DUO tags on the card (see DESIGN-1740). */
-export type DuoPlacement = 'header' | 'belowTitle' | 'actions' | 'metadata'
 
 export type TableRowGenericCardProps = {
   /** The schema that maps a table result to the GenericCard UI */
@@ -312,6 +303,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   )
 
   // DUO (Data Use Ontology) tags, when a dataUseModifiers column is configured.
+  // Rendered as a "Data Usage Restrictions" row in the metadata section.
   const duoContent = useMemo(() => {
     const col = genericCardSchema.dataUseModifiersColumnName
     if (!col) {
@@ -321,20 +313,8 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     if (terms.length === 0) {
       return undefined
     }
-    const accessCol = genericCardSchema.accessTypeColumnName
-    const accessType = accessCol ? data[schema[accessCol]] : undefined
-    return (
-      <DuoTermTags
-        terms={terms}
-        accessType={accessType}
-        variant={genericCardSchema.dataUseModifiersVariant}
-      />
-    )
+    return <DuoTermTags terms={terms} />
   }, [genericCardSchema, data, schema])
-  const duoPlacement: DuoPlacement =
-    genericCardSchema.dataUseModifiersPlacement ?? 'belowTitle'
-  const duoAt = (placement: DuoPlacement) =>
-    duoPlacement === placement ? duoContent : null
 
   const resolvedTitleAreaRightContent = useMemo(() => {
     const { titleAreaDetails } = genericCardSchema
@@ -432,7 +412,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   const customLabelConfig = genericCardSchema.customSecondaryLabelConfig
 
   // DUO tags rendered as a metadata row (alongside "How to download", size, …).
-  if (duoPlacement === 'metadata' && duoContent) {
+  if (duoContent) {
     values.push({
       columnDisplayName: 'Data Usage Restrictions',
       value: duoContent,
@@ -614,17 +594,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       title={title}
       subtitle={subTitle}
       titleLinkConfiguration={{ target, href }}
-      cardTypeAdornment={
-        duoAt('header') ? (
-          <>
-            {resolvedCardTypeAdornment}
-            {duoAt('header')}
-          </>
-        ) : (
-          resolvedCardTypeAdornment
-        )
-      }
-      belowTitleContent={duoAt('belowTitle')}
+      cardTypeAdornment={resolvedCardTypeAdornment}
       titleAsFileHandleLinkConfiguration={
         !titleLinkConfig &&
         titleColumnType === ColumnTypeEnum.FILEHANDLEID &&
@@ -683,7 +653,6 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       }
       cardTopButtons={
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          {duoAt('actions')}
           {croissantButton}
           {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart */}
           {resolvedDownloadCartSynIdValue && (
