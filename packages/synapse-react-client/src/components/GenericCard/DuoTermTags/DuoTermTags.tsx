@@ -33,6 +33,12 @@ import {
 export type DuoTermTagsProps = {
   /** Raw `dataUseModifiers` values (ontology codes or term names). */
   terms: string[]
+  /**
+   * Cap each tag's width and truncate long names with an ellipsis (full name in
+   * the tooltip). Intended for narrow contexts like the facet sidebar; cards
+   * have room to show the full value, so this is off by default.
+   */
+  truncate?: boolean
 }
 
 // An icon per code so the meaning reads at a glance.
@@ -114,7 +120,7 @@ const ORDER: Record<DuoCategory, number> = {
 }
 
 export default function DuoTermTags(props: DuoTermTagsProps) {
-  const { terms } = props
+  const { terms, truncate = false } = props
   if (!terms || terms.length === 0) {
     return null
   }
@@ -164,13 +170,15 @@ export default function DuoTermTags(props: DuoTermTagsProps) {
               size="small"
               icon={termIcon(t)}
               label={t.name}
-              // Cap the width but never exceed the container, so the chip
-              // truncates with an ellipsis instead of overflowing (e.g. in the
-              // narrow facet sidebar). Full name + definition are in the tooltip.
+              // In narrow contexts (facet), cap the width but never exceed the
+              // container so the chip truncates with an ellipsis instead of
+              // overflowing. On cards the full name is shown.
               sx={{
                 ...chipSx(t.category),
-                maxWidth: `min(${MAX_CHIP_WIDTH}px, 100%)`,
                 minWidth: 0,
+                ...(truncate
+                  ? { maxWidth: `min(${MAX_CHIP_WIDTH}px, 100%)` }
+                  : {}),
               }}
             />
           </Tooltip>

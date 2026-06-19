@@ -88,8 +88,8 @@ export default function DuoMockup() {
         All DUO values
       </Typography>
       <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-        Every term in the vocabulary, rendered together. Long names truncate
-        with “…” and show the full name + definition on hover.
+        Every term in the vocabulary, rendered together with full names (as on
+        cards). Hover a tag for its definition and ontology code.
       </Typography>
       <Box sx={{ mb: 4 }}>
         <DuoTermTags terms={ALL_DUO_TERMS.map(t => t.code)} />
@@ -125,7 +125,7 @@ export default function DuoMockup() {
             isDropdown={false}
             checked={false}
             count={(i * 7) % 130}
-            label={<DuoTermTags terms={[t.code]} />}
+            label={<DuoTermTags terms={[t.code]} truncate />}
             onChange={() => {}}
             onHover={() => {}}
           />

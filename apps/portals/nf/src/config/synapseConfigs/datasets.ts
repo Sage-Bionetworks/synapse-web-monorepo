@@ -11,7 +11,7 @@ import DuoTermTags from 'synapse-react-client/components/GenericCard/DuoTermTags
 // Render the "Data Use Modifiers" facet values as DUO tags (PORTALS-4282).
 const renderDuoFacetValue = (columnName: string, value: string) =>
   columnName === 'dataUseModifiers'
-    ? createElement(DuoTermTags, { terms: [value] })
+    ? createElement(DuoTermTags, { terms: [value], truncate: true })
     : undefined
 
 export const newDatasetsSql = `${datasetsSql} order by ROW_ID desc limit 3`
