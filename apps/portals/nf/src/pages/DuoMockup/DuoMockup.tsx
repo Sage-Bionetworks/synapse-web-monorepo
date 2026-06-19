@@ -6,6 +6,7 @@ import GenericCard from 'synapse-react-client/components/GenericCard/GenericCard
 import { GenericCardIcon } from 'synapse-react-client/components/GenericCard/GenericCardIcon'
 import DuoTermTags from 'synapse-react-client/components/GenericCard/DuoTermTags/DuoTermTags'
 import { ALL_DUO_TERMS } from 'synapse-react-client/components/GenericCard/DuoTermTags/duoTerms'
+import { EnumFacetFilterOption } from 'synapse-react-client/components/widgets/query-filter/EnumFacetFilter/EnumFacetFilterOption'
 import { datasetsSql } from '@/config/resources'
 import { columnAliases } from '@/config/synapseConfigs/commonProps'
 import { datasetCardConfiguration } from '@/config/synapseConfigs/datasets'
@@ -92,6 +93,43 @@ export default function DuoMockup() {
       </Typography>
       <Box sx={{ mb: 4 }}>
         <DuoTermTags terms={ALL_DUO_TERMS.map(t => t.code)} />
+      </Box>
+
+      <Typography variant="sectionTitle" sx={{ display: 'block', mb: 1 }}>
+        Facet preview (sidebar width)
+      </Typography>
+      <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
+        The same tags rendered through the real facet option at a typical filter
+        sidebar width, to check the truncation cutoff in that narrow context.
+      </Typography>
+      <Box
+        sx={{
+          mb: 4,
+          width: 320,
+          p: 2,
+          border: theme => `1px solid ${theme.palette.divider}`,
+          borderRadius: 1,
+        }}
+      >
+        <Typography
+          variant="smallText1"
+          sx={{ fontWeight: 600, mb: 1, display: 'block' }}
+        >
+          Data Use Modifiers
+        </Typography>
+        {ALL_DUO_TERMS.map((t, i) => (
+          <EnumFacetFilterOption
+            key={t.code}
+            id={t.code}
+            inputType="checkbox"
+            isDropdown={false}
+            checked={false}
+            count={(i * 7) % 130}
+            label={<DuoTermTags terms={[t.code]} />}
+            onChange={() => {}}
+            onHover={() => {}}
+          />
+        ))}
       </Box>
 
       <Typography variant="sectionTitle" sx={{ display: 'block', mb: 1 }}>
