@@ -1,5 +1,6 @@
 import { Box, Chip, Link, Tooltip } from '@mui/material'
 import { alpha, Theme } from '@mui/material/styles'
+import type { ReactNode } from 'react'
 import type { SvgIconComponent } from '@mui/icons-material'
 import ScienceOutlined from '@mui/icons-material/ScienceOutlined'
 import MedicalServicesOutlined from '@mui/icons-material/MedicalServicesOutlined'
@@ -198,4 +199,31 @@ export default function DuoTermTags(props: DuoTermTagsProps) {
       })}
     </Box>
   )
+}
+
+/**
+ * Builds a `renderFacetValue` function (for `QueryVisualizationWrapper`) that
+ * renders the given DUO column's enumeration facet values — and its
+ * active-filter pills — as DUO tags. Other columns fall through to the default
+ * text rendering.
+ *
+ * This is the standardized DUO facet/pill renderer: portals only need to
+ * declare the DUO column (via the card schema's `dataUseModifiersColumnName`)
+ * rather than each defining their own handler. In the facet sidebar the tags
+ * truncate; in the active-filter pill (where `onRemove` is supplied) the tag is
+ * the removable chip itself, shown with its full name and a delete icon.
+ */
+export function createDuoFacetValueRenderer(duoColumnName: string) {
+  return (
+    columnName: string,
+    value: string,
+    options?: { onRemove?: () => void },
+  ): ReactNode =>
+    columnName === duoColumnName ? (
+      <DuoTermTags
+        terms={[value]}
+        truncate={!options?.onRemove}
+        onDelete={options?.onRemove}
+      />
+    ) : undefined
 }

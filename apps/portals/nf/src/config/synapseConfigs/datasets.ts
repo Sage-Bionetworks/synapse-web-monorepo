@@ -5,24 +5,6 @@ import { datasetsSearchIndexId, datasetsSql } from '../resources'
 import { columnAliases as sharedColumnAliases } from './commonProps'
 import { studyColumnIconConfigs } from './studies'
 import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
-import { createElement } from 'react'
-import DuoTermTags from 'synapse-react-client/components/GenericCard/DuoTermTags/DuoTermTags'
-
-// Render the "Data Use Modifiers" facet values as DUO tags (PORTALS-4282).
-// In the facet sidebar the chips truncate; in the active-filter pills the chip
-// is the removable pill itself (full value, with a delete icon).
-const renderDuoFacetValue = (
-  columnName: string,
-  value: string,
-  options?: { onRemove?: () => void },
-) =>
-  columnName === 'dataUseModifiers'
-    ? createElement(DuoTermTags, {
-        terms: [value],
-        truncate: !options?.onRemove,
-        onDelete: options?.onRemove,
-      })
-    : undefined
 
 export const newDatasetsSql = `${datasetsSql} order by ROW_ID desc limit 3`
 export const datasetsRgbIndex = 8
@@ -102,7 +84,6 @@ const datasets: QueryWrapperPlotNavProps = {
   cardConfiguration: datasetCardConfiguration,
   name: 'Datasets',
   columnAliases,
-  renderFacetValue: renderDuoFacetValue,
   searchConfiguration: {
     searchable: [
       'title',
@@ -121,7 +102,6 @@ export const datasetsSearch: SearchQueryWrapperPlotNavProps = {
   shouldDeepLink: false,
   cardConfiguration: datasetCardConfiguration,
   columnAliases,
-  renderFacetValue: renderDuoFacetValue,
   searchIndexId: datasetsSearchIndexId,
   autocompleteFieldName: 'title',
   hideTopLevelControls: false,

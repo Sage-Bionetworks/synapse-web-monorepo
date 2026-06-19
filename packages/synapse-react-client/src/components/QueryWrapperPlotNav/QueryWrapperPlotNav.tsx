@@ -391,6 +391,10 @@ export default function QueryWrapperPlotNav(props: QueryWrapperPlotNavProps) {
           rgbIndex={props.rgbIndex}
           columnAliases={props.columnAliases}
           renderFacetValue={props.renderFacetValue}
+          dataUseModifiersColumnName={
+            props.cardConfiguration?.genericCardSchema
+              ?.dataUseModifiersColumnName
+          }
           helpConfiguration={helpConfiguration}
           visibleColumnCount={props.visibleColumnCount}
           hiddenColumns={props.hiddenColumns}
