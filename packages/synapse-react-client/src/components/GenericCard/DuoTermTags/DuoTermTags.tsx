@@ -83,7 +83,6 @@ const chipSx = (category: DuoCategory) => {
       return {
         bgcolor: (theme: Theme) => alpha(theme.palette.error.main, 0.14),
         color: 'error.dark',
-        fontWeight: 700,
         '& .MuiChip-icon': { color: 'error.dark' },
       }
     case 'obligation':
