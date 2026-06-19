@@ -50,18 +50,15 @@
     padding: 5px 10px 5px 10px;
   }
 
-  // When the pill wraps a custom rendered node (e.g. DUO tags), the node
-  // supplies its own colored background — drop the grey pill chrome so it reads
-  // as a single chip with a remove button instead of a chip-in-a-pill.
+  // When a custom rendered node (e.g. a DUO chip) is the pill, it supplies its
+  // own background, tooltip, and remove icon. Drop all of the grey pill chrome
+  // so it reads as just the chip, aligned with the other pills' spacing.
   &--custom {
     padding-left: 0;
+    border-radius: 0;
     background-color: transparent;
     &:hover {
       background-color: transparent;
-    }
-    span {
-      display: inline-flex;
-      align-items: center;
     }
   }
 

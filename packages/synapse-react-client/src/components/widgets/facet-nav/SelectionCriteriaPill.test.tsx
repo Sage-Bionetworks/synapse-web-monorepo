@@ -35,21 +35,16 @@ describe('SelectionCriteriaPill', () => {
     ).toBeInTheDocument()
   })
 
-  test('still shows the remove button for a custom node when not locked', () => {
-    let removed = false
+  test('does not render its own remove button for a custom node (the node owns removal)', () => {
     render(
       <SelectionCriteriaPill
         key="k"
         innerText="Non-Commercial Use Only"
         tooltipText="tt"
         renderedInnerText={<span>DUO chip</span>}
-        onRemoveFilter={() => {
-          removed = true
-        }}
+        onRemoveFilter={() => {}}
       />,
     )
-    const removeBtn = screen.getByTitle('deselect')
-    removeBtn.click()
-    expect(removed).toBe(true)
+    expect(screen.queryByTitle('deselect')).toBeNull()
   })
 })

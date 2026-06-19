@@ -8,8 +8,9 @@ export type SelectionCriteriaPillProps = {
   readonly tooltipText: string
   /**
    * Optional custom node to render in place of the plain-text label (e.g. DUO
-   * tags). The node is expected to carry its own tooltip, so the pill's own
-   * tooltip is suppressed when this is provided.
+   * tags). The node is expected to be self-contained — carrying its own tooltip
+   * and its own remove affordance — so the pill's tooltip, chrome, and remove
+   * button are all suppressed when this is provided.
    */
   readonly renderedInnerText?: ReactNode
   readonly onRemoveFilter?: () => void
@@ -31,13 +32,24 @@ function SelectionCriteriaPill(props: SelectionCriteriaPillProps) {
     isLocked,
   } = props
 
+  // A self-contained custom node (e.g. a DUO chip) is the whole pill: it carries
+  // its own background, tooltip, and remove icon, so render it bare without the
+  // pill chrome, tooltip, or separate remove button.
+  if (renderedInnerText != null) {
+    return (
+      <div className="SelectionCriteriaPill SelectionCriteriaPill--custom">
+        {renderedInnerText}
+      </div>
+    )
+  }
+
   const pill = (
     <div
       className={`SelectionCriteriaPill${
         isLocked ? ' SelectionCriteriaPill--locked' : ''
-      }${renderedInnerText != null ? ' SelectionCriteriaPill--custom' : ''}`}
+      }`}
     >
-      <span>{renderedInnerText ?? innerText}</span>
+      <span>{innerText}</span>
       {!isLocked && onRemoveFilter && (
         <button
           onClick={onRemoveFilter}
@@ -49,11 +61,6 @@ function SelectionCriteriaPill(props: SelectionCriteriaPillProps) {
       )}
     </div>
   )
-
-  // A custom rendered node provides its own tooltip; avoid nesting tooltips.
-  if (renderedInnerText != null) {
-    return pill
-  }
 
   return (
     <Tooltip title={tooltipText} placement={'top'}>

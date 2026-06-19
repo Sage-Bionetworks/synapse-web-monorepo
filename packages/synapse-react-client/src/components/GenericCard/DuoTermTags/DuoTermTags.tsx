@@ -39,6 +39,12 @@ export type DuoTermTagsProps = {
    * have room to show the full value, so this is off by default.
    */
   truncate?: boolean
+  /**
+   * When provided, each chip renders a delete icon that calls this handler.
+   * Used where the chip itself is a removable pill (e.g. the active-filter
+   * "selected criteria" pills).
+   */
+  onDelete?: () => void
 }
 
 // An icon per code so the meaning reads at a glance.
@@ -120,7 +126,7 @@ const ORDER: Record<DuoCategory, number> = {
 }
 
 export default function DuoTermTags(props: DuoTermTagsProps) {
-  const { terms, truncate = false } = props
+  const { terms, truncate = false, onDelete } = props
   if (!terms || terms.length === 0) {
     return null
   }
@@ -170,12 +176,18 @@ export default function DuoTermTags(props: DuoTermTagsProps) {
               size="small"
               icon={termIcon(t)}
               label={t.name}
+              // Render a delete icon only when there's a single chip to remove;
+              // a shared handler across multiple chips would be ambiguous.
+              onDelete={onDelete && sorted.length === 1 ? onDelete : undefined}
               // In narrow contexts (facet), cap the width but never exceed the
               // container so the chip truncates with an ellipsis instead of
               // overflowing. On cards the full name is shown.
               sx={{
                 ...chipSx(t.category),
                 minWidth: 0,
+                // Keep the delete icon tinted to match the chip's category.
+                '& .MuiChip-deleteIcon': { color: 'inherit', opacity: 0.7 },
+                '& .MuiChip-deleteIcon:hover': { opacity: 1 },
                 ...(truncate
                   ? { maxWidth: `min(${MAX_CHIP_WIDTH}px, 100%)` }
                   : {}),

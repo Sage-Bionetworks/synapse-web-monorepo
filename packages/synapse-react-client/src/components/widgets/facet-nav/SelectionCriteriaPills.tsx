@@ -225,6 +225,14 @@ function getPillPropsFromFacetFilters(
           renderedInnerText: renderFacetValue?.(
             selectedFacet.columnName,
             facetValue,
+            {
+              onRemove: () => {
+                queryContext.removeValueFromSelectedFacet(
+                  selectedFacet,
+                  facetValue,
+                )
+              },
+            },
           ),
           tooltipText: `${getColumnDisplayName(
             selectedFacet.columnName,

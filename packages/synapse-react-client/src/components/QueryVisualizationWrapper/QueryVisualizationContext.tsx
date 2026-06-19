@@ -26,9 +26,16 @@ export type QueryVisualizationContextType = {
   /**
    * Optional custom renderer for enumeration facet values, keyed by column. When
    * it returns a node for a (columnName, value), that node replaces the plain
-   * text label in the facet filter. Returning undefined falls back to the text.
+   * text label in the facet filter and the active-filter ("selected criteria")
+   * pills. Returning undefined falls back to the text. The optional `onRemove`
+   * is provided in the pill context so the rendered node can own its own remove
+   * affordance (e.g. a chip delete icon) in place of the pill's remove button.
    */
-  renderFacetValue?: (columnName: string, value: string) => ReactNode
+  renderFacetValue?: (
+    columnName: string,
+    value: string,
+    options?: { onRemove?: () => void },
+  ) => ReactNode
   /** React node to display in place of cards/table when there are no results. */
   NoContentPlaceholder: () => ReactNode
   /** The set of external analysis platforms where this component allows users to export data. If this list is empty, then
