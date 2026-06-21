@@ -1,5 +1,4 @@
 import { Box, Chip, Link, Tooltip } from '@mui/material'
-import { alpha, Theme } from '@mui/material/styles'
 import type { ReactNode } from 'react'
 import type { SvgIconComponent } from '@mui/icons-material'
 import ScienceOutlined from '@mui/icons-material/ScienceOutlined'
@@ -81,37 +80,14 @@ const termIcon = (term: DuoTerm) => {
   return <Icon />
 }
 
-// Color carries meaning: green = a use you may make, red = commercial use
-// prohibited, blue = an action the requester must take, amber = a limit on
-// who/where/when/what. Every term is colored.
-const chipSx = (category: DuoCategory) => {
-  switch (category) {
-    case 'permission':
-      return {
-        bgcolor: (theme: Theme) => alpha(theme.palette.success.main, 0.15),
-        color: 'success.dark',
-        '& .MuiChip-icon': { color: 'success.dark' },
-      }
-    case 'commercial':
-      return {
-        bgcolor: (theme: Theme) => alpha(theme.palette.error.main, 0.14),
-        color: 'error.dark',
-        '& .MuiChip-icon': { color: 'error.dark' },
-      }
-    case 'obligation':
-      return {
-        bgcolor: (theme: Theme) => alpha(theme.palette.info.main, 0.14),
-        color: 'info.dark',
-        '& .MuiChip-icon': { color: 'info.dark' },
-      }
-    case 'limit':
-    default:
-      return {
-        bgcolor: (theme: Theme) => alpha(theme.palette.warning.main, 0.18),
-        color: 'warning.dark',
-        '& .MuiChip-icon': { color: 'warning.dark' },
-      }
-  }
+// Per design guidance, the tags are not color-coded by category. They use a
+// single neutral, theme-driven tint (the portal's secondary action color),
+// matching the plain filter pills; meaning is conveyed by the icon, label, and
+// tooltip rather than color.
+const chipSx = {
+  bgcolor: 'var(--synapse-secondary-action-color-alpha-10)',
+  color: 'var(--synapse-text-color-dark)',
+  '& .MuiChip-icon': { color: 'inherit' },
 }
 
 // Cap chip width so long term names don't blow out narrow contexts (e.g. the
@@ -184,9 +160,9 @@ export default function DuoTermTags(props: DuoTermTagsProps) {
               // container so the chip truncates with an ellipsis instead of
               // overflowing. On cards the full name is shown.
               sx={{
-                ...chipSx(t.category),
+                ...chipSx,
                 minWidth: 0,
-                // Keep the delete icon tinted to match the chip's category.
+                // Keep the delete icon tinted to match the chip text.
                 '& .MuiChip-deleteIcon': { color: 'inherit', opacity: 0.7 },
                 '& .MuiChip-deleteIcon:hover': { opacity: 1 },
                 ...(truncate

@@ -8,11 +8,10 @@ import DuoTermTags from './DuoTermTags'
 import { ALL_DUO_TERMS } from './duoTerms'
 
 /**
- * Renders Data Use Ontology (DUO) `dataUseModifiers` values as labelled,
- * color-coded tags. Color carries meaning: green = a permitted use, red = a
- * commercial-use restriction, blue = an obligation the requester must meet,
- * amber = a limit on who/where/when/what. Each tag has an icon and a tooltip
- * with the term's definition and a link to its ontology entry.
+ * Renders Data Use Ontology (DUO) `dataUseModifiers` values as labelled tags.
+ * The tags use a single neutral, theme-driven color (not color-coded by
+ * category); meaning is conveyed by the icon, label, and a tooltip with the
+ * term's definition and a link to its ontology entry.
  *
  * The same renderer is used in three places: dataset cards (full names), the
  * "Data Use Modifiers" facet (truncated to fit the sidebar), and the
