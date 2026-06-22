@@ -11,28 +11,43 @@ import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/
 
 const rgbIndex = 0
 
+const datasetParticipantCountPlotConfig: QueryWrapperSynapsePlotProps = {
+  title: 'Dataset Participant Count',
+  query:
+    'SELECT name, participant_count FROM syn66496326 WHERE participant_count > 0 ORDER BY participant_count DESC',
+  type: 'bar',
+  horizontal: true,
+  // xtitle: 'Participant Count',
+  // ytitle: 'Dataset',
+  showlegend: false,
+  hideYAxisTickLabels: true,
+  hideXAxisTickLabels: true,
+}
+
 const datasetItemCountPlotConfig: QueryWrapperSynapsePlotProps = {
   title: 'Dataset Item Count',
   query:
-    'SELECT name, datasetItemCount FROM syn66496326 ORDER BY datasetItemCount DESC',
+    'SELECT name, datasetItemCount FROM syn66496326 WHERE datasetItemCount > 0 ORDER BY datasetItemCount DESC',
   type: 'bar',
   horizontal: true,
-  xtitle: 'Item Count',
-  ytitle: 'Dataset',
+  // xtitle: 'Item Count',
+  // ytitle: 'Dataset',
   showlegend: false,
   hideYAxisTickLabels: true,
+  hideXAxisTickLabels: true,
 }
 
 const datasetSizePlotConfig: QueryWrapperSynapsePlotProps = {
   title: 'Dataset Size',
   query:
-    'SELECT name, datasetSizeInBytes FROM syn66496326 ORDER BY datasetSizeInBytes DESC',
+    'SELECT name, datasetSizeInBytes FROM syn66496326 WHERE datasetSizeInBytes > 0 ORDER BY datasetSizeInBytes DESC',
   type: 'bar',
   horizontal: true,
-  xtitle: 'Size (bytes)',
-  ytitle: 'Dataset',
+  // xtitle: 'Size (bytes)',
+  // ytitle: 'Dataset',
   showlegend: false,
   hideYAxisTickLabels: true,
+  hideXAxisTickLabels: true,
 }
 
 export const datasetColumnLinks: LabelLinkConfig = [
@@ -102,9 +117,15 @@ export const datasetsSearch: SearchQueryWrapperPlotNavProps = {
   shouldDeepLink: false,
   cardConfiguration: datasetCardConfiguration,
   columnAliases,
-  facetsToPlot: ['program', 'project', 'datasetType', 'assay'],
+  facetsToPlot: ['diseaseSubtype', 'assay'],
   searchIndexId: datasetsSearchIndexId,
   autocompleteFieldName: 'name',
   hideTopLevelControls: false,
   hideQueryCount: false,
+  customPlots: [
+    datasetItemCountPlotConfig,
+    datasetSizePlotConfig,
+    datasetParticipantCountPlotConfig,
+  ],
+  initialPlotTypeByFacetColumnName: { diseaseSubtype: 'BAR' },
 }
