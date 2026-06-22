@@ -17,11 +17,11 @@ const datasetParticipantCountPlotConfig: QueryWrapperSynapsePlotProps = {
     'SELECT name, participant_count FROM syn66496326 WHERE participant_count > 0 ORDER BY participant_count DESC',
   type: 'bar',
   horizontal: true,
-  // xtitle: 'Participant Count',
+  xtitle: 'Participant Count (log scale)',
   // ytitle: 'Dataset',
+  xaxistype: 'log',
   showlegend: false,
   hideYAxisTickLabels: true,
-  hideXAxisTickLabels: true,
   fullWidth: false,
   footnote:
     'Participant counts are reported per dataset and may include the same individuals across datasets; counts cannot be summed. Cross-study deduplication is in progress.',
