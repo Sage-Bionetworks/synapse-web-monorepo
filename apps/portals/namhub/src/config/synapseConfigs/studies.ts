@@ -8,7 +8,7 @@ const type = SynapseConstants.GENERIC_CARD
 const rgbIndex = 5
 
 const columnAliases = {
-  studyId: 'On Synapse',
+  studyId: 'Open project space',
   NAMsTechFocus: 'NAMs Tech Focus',
 }
 
@@ -23,14 +23,10 @@ export const studyCardConfiguration: CardConfiguration = {
     secondaryLabels: [
       'diseaseFocus',
       'NAMsTechFocus',
-      'modelTypeDesc',
-      'fundingAgency',
       'institution',
-      'grantId',
       'studyDoi',
       'synapseProjectId',
       'alternateName',
-      'studyId',
     ],
   },
   secondaryLabelLimit: 20,
@@ -49,14 +45,10 @@ const studiesQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
       'summary',
       'studyLeads',
       'diseaseFocus',
-      'fundingAgency',
       'institution',
       'NAMsTechFocus',
-      'modelTypeDesc',
-      'grantId',
       'alternateName',
       'studyDoi',
-      'studyId',
     ],
   },
 }

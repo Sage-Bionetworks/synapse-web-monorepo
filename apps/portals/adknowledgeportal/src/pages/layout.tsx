@@ -13,7 +13,7 @@ export function Layout() {
         }
       />
       <SurveyDialog
-        localStorageKey="adkp-survey-dialog-dismissed"
+        cookieKey="adkp-survey-dialog-dismissed"
         Svg={SurveyDialogImage}
         title="Help Us Improve the ADKP Ecosystem!"
         description={

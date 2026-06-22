@@ -31,6 +31,34 @@ describe('useColumnResizeHandles', () => {
     return cell
   }
 
+  // Creates a header cell whose data-column-id differs from its visible
+  // textContent, verifying that the hook uses the attribute for column lookup
+  // rather than textContent.
+  const createMockCellWithDataAttribute = (
+    columnName: string,
+    displayText: string,
+    width: number = 150,
+  ) => {
+    const cell = document.createElement('div')
+    cell.className = 'dsg-cell'
+
+    const headerRoot = document.createElement('div')
+    headerRoot.dataset.columnId = columnName
+
+    const textSpan = document.createElement('span')
+    textSpan.textContent = displayText
+    headerRoot.appendChild(textSpan)
+
+    cell.appendChild(headerRoot)
+
+    Object.defineProperty(cell, 'offsetWidth', {
+      value: width,
+      configurable: true,
+    })
+    Object.defineProperty(cell, 'offsetLeft', { value: 0, configurable: true })
+    return cell
+  }
+
   // Helper to trigger ResizeObserver callback and initialize handles
   const triggerInitialization = () => {
     if (resizeObserverCallback && mockWrapperRef.current) {
@@ -1052,6 +1080,49 @@ describe('useColumnResizeHandles', () => {
       }).not.toThrow()
 
       expect(document.querySelectorAll('.column-resize-handle')).toHaveLength(0)
+    })
+
+    it('creates handles when a cell has a data-column-id that does not match its textContent', () => {
+      // syncHandles must use data-column-id for column lookup, not textContent.
+      // If it fell back to textContent the findIndex call would fail and no
+      // handle would be created for that column.
+      while (mockHeaderRow.children.length > 1) {
+        mockHeaderRow.removeChild(mockHeaderRow.lastChild!)
+      }
+      // 'Column A' id, but visible text is something else entirely
+      mockHeaderRow.appendChild(
+        createMockCellWithDataAttribute(
+          'Column A',
+          'Displayed differently',
+          150,
+        ),
+      )
+      mockHeaderRow.appendChild(
+        createMockCellWithDataAttribute('Column B', 'Also different', 200),
+      )
+
+      const colValues: Column[] = [
+        { id: 'Column A', title: 'Column A' } as Column,
+        { id: 'Column B', title: 'Column B' } as Column,
+      ]
+
+      renderHook(() =>
+        useColumnResizeHandles({
+          wrapperRef: mockWrapperRef,
+          colValues,
+          onColumnResize: mockOnColumnResize,
+        }),
+      )
+
+      triggerInitialization()
+
+      const handles = document.querySelectorAll<HTMLElement>(
+        '.column-resize-handle',
+      )
+      expect(handles).toHaveLength(2)
+      const names = Array.from(handles).map(h => h.dataset.columnName)
+      expect(names).toContain('Column A')
+      expect(names).toContain('Column B')
     })
 
     it('should handle missing header row', () => {

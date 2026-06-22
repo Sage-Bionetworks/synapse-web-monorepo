@@ -28,11 +28,12 @@ export default function HomePage() {
   const [nygcUrl, setNygcUrl] = useState<string>('')
   const [barmadaUrl, setBarmadaUrl] = useState<string>('')
 
-  // Deep-link to an Explore page pre-filtered to a single source value.
-  const navigateToSourceFiltered = (
+  // Deep-link to an Explore page pre-filtered to a single facet value.
+  const navigateToFiltered = (
     path: string,
     sql: string,
-    source: string,
+    columnName: string,
+    value: string,
   ) => {
     const initQuery: Query = { sql }
     const query: Query = {
@@ -42,8 +43,8 @@ export default function HomePage() {
         {
           concreteType:
             'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
-          columnName: 'source',
-          facetValues: [source],
+          columnName,
+          facetValues: [value],
         },
       ],
     }
@@ -54,10 +55,11 @@ export default function HomePage() {
 
   // Sankey: center node / left flow -> datasets for that source.
   const handleSankeySourceClick = (source: string) =>
-    navigateToSourceFiltered('/Explore/Datasets', datasetsSql, source)
-  // Sankey: right flow -> files for that source.
+    navigateToFiltered('/Explore/Datasets', datasetsSql, 'source', source)
+  // Sankey: right flow -> files for that source. The files table records the
+  // originating group as "contributor", not "source".
   const handleSankeyFilesClick = (source: string) =>
-    navigateToSourceFiltered('/Explore/Files', filesSql, source)
+    navigateToFiltered('/Explore/Files', filesSql, 'contributor', source)
   // Sankey end nodes -> the unfiltered Explore pages.
   const handleAllDatasetsClick = () => {
     navigate('/Explore/Datasets')

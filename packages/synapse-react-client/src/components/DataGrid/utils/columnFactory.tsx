@@ -143,6 +143,7 @@ function createBaseColumn(config: ColumnConfig, columnImpl: any) {
       <ColumnHeaderWithTooltip
         name={config.columnName}
         description={config.description}
+        isRequired={config.isRequired}
         showPinIcon={config.showPinIcon}
         isPinned={config.isPinned}
         onTogglePin={config.onTogglePin}
