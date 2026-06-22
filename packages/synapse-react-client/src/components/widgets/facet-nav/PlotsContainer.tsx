@@ -270,9 +270,16 @@ function PlotsContainer(props: PlotsContainerProps) {
               return (
                 <div
                   className={
-                    plotUiState.plotType === 'BAR'
-                      ? 'PlotsContainer__row__item--full-width'
-                      : undefined
+                    [
+                      isCustomPlot
+                        ? 'PlotsContainer__row__item--custom'
+                        : undefined,
+                      isCustomPlot && customPlotProps?.fullWidth
+                        ? 'PlotsContainer__row__item--full-width'
+                        : undefined,
+                    ]
+                      .filter(Boolean)
+                      .join(' ') || undefined
                   }
                   style={{
                     minWidth: '435px',

@@ -29,6 +29,8 @@ export type SynapsePlotWidgetParams = {
   hoverinfo?: Plotly.PlotData['hoverinfo'] // sets the hover info
   hideYAxisTickLabels?: boolean // hides the y-axis tick labels
   hideXAxisTickLabels?: boolean // hides the x-axis tick labels
+  footnote?: string // optional text displayed below the plot
+  fullWidth?: boolean // forces the plot to take up the full container width
 }
 
 // QueryWrapperPlotNav customPlot parameters, undefined otherwise
@@ -59,6 +61,7 @@ export const SynapsePlot = (props: SynapsePlotProps): React.ReactNode => {
   }
   const { data: queryData, isLoading } =
     useGetFullTableQueryResults(queryRequest)
+
   if (isLoading) {
     return <Skeleton width={'100%'} height={'200px'} />
   }
@@ -79,6 +82,7 @@ export const SynapsePlot = (props: SynapsePlotProps): React.ReactNode => {
     hoverinfo,
     hideYAxisTickLabels,
     hideXAxisTickLabels,
+    footnote,
   } = props.synapsePlotWidgetParams
 
   const config: Partial<Plotly.Config> = {
@@ -88,6 +92,7 @@ export const SynapsePlot = (props: SynapsePlotProps): React.ReactNode => {
     showlegend: showlegend,
     title,
     barmode: barmode,
+    ...(footnote && { margin: { b: 40 } }),
   }
   if (xtitle || hideXAxisTickLabels) {
     layout.xaxis = {
@@ -164,6 +169,7 @@ export const SynapsePlot = (props: SynapsePlotProps): React.ReactNode => {
       data={plotData}
       config={config}
       onClick={onPlotClick}
+      useResizeHandler={true}
     />
   )
 }

@@ -1,6 +1,7 @@
 .FacetNavPanel {
   --facetNavPanel-btn-padding: 3px;
   --facetNavPanel-btn-margin: 0 1px;
+  height: 100%;
   &--expanded .main-svg,
   .main-svg {
     // https://sagebionetworks.jira.com/browse/PORTALS-1454
@@ -62,6 +63,7 @@
   }
   &__body {
     padding: 20px 0;
+    height: 100%;
   }
 
   &--expanded {

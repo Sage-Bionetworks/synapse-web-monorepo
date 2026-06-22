@@ -22,6 +22,9 @@ const datasetParticipantCountPlotConfig: QueryWrapperSynapsePlotProps = {
   showlegend: false,
   hideYAxisTickLabels: true,
   hideXAxisTickLabels: true,
+  fullWidth: false,
+  footnote:
+    'Participant counts are reported per dataset and may include the same individuals across datasets; counts cannot be summed. Cross-study deduplication is in progress.',
 }
 
 const datasetItemCountPlotConfig: QueryWrapperSynapsePlotProps = {
@@ -35,6 +38,7 @@ const datasetItemCountPlotConfig: QueryWrapperSynapsePlotProps = {
   showlegend: false,
   hideYAxisTickLabels: true,
   hideXAxisTickLabels: true,
+  fullWidth: false,
 }
 
 const datasetSizePlotConfig: QueryWrapperSynapsePlotProps = {
@@ -48,6 +52,7 @@ const datasetSizePlotConfig: QueryWrapperSynapsePlotProps = {
   showlegend: false,
   hideYAxisTickLabels: true,
   hideXAxisTickLabels: true,
+  fullWidth: false,
 }
 
 export const datasetColumnLinks: LabelLinkConfig = [

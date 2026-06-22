@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { Typography } from '@mui/material'
 import { SynapsePlot } from '../Plot'
 import { QueryContextType, useQueryContext } from '../QueryContext'
 import {
@@ -36,7 +37,7 @@ export default function QueryWrapperSynapsePlot(
 ) {
   const queryContext = useQueryContext()
   const { currentQueryRequest } = queryContext
-  const { title, onCustomPlotClick, onHide } = props
+  const { title, footnote, onCustomPlotClick, onHide } = props
   const { showPlots } = useQueryVisualizationContext()
 
   const widgetParamsMapped: SynapsePlotWidgetParams = useMemo(() => {
@@ -66,6 +67,14 @@ export default function QueryWrapperSynapsePlot(
             synapsePlotWidgetParams={widgetParamsMapped}
             customPlotParams={customPlotParams}
           />
+          {footnote && (
+            <Typography
+              variant="body1Italic"
+              sx={{ display: 'block', mt: 1, px: 1 }}
+            >
+              {footnote}
+            </Typography>
+          )}
         </>
       )}
     </div>
