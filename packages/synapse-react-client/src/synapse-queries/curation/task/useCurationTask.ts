@@ -116,9 +116,11 @@ export function useUpdateCurationTaskStatus(
         { taskId: taskStatus.taskId!, taskStatus },
       ),
     onSuccess: (data, variables, context) => {
-      // Invalidate both the status query and the task query using the ID key
       queryClient.invalidateQueries({
         queryKey: keyFactory.getCurationTaskIdKey(variables.taskId!),
+      })
+      queryClient.invalidateQueries({
+        queryKey: keyFactory.getAllCurationTaskListKey(),
       })
 
       if (options?.onSuccess) {
