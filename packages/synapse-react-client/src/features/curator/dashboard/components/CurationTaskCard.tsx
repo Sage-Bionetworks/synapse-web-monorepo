@@ -3,7 +3,10 @@ import CreateOrUpdateCurationTaskDialog from '@/features/entity/metadata-task/co
 import useOpenCuratorFromTaskButton from '@/features/entity/metadata-task/hooks/useOpenCuratorButton'
 import { OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE } from '@/features/entity/metadata-task/utils/constants'
 import { Box, Button, Card, Chip, Divider, Typography } from '@mui/material'
-import { TaskBundle } from '@sage-bionetworks/synapse-client'
+import {
+  TaskBundle,
+  TaskStatusStateEnum,
+} from '@sage-bionetworks/synapse-client'
 import classNames from 'classnames'
 import styles from './CurationTaskCard.module.scss'
 import NextStepButton from './NextStepButton'
@@ -36,6 +39,7 @@ function useUiForTask(taskBundle: TaskBundle) {
           : [],
         buttonText: 'Open Curator',
         taskType: 'Curate Data',
+        statusState: taskBundle.status.state,
         onClickNextStep: onClick,
         isLoading,
         isPending,
@@ -59,6 +63,7 @@ function useUiForTask(taskBundle: TaskBundle) {
       : [],
     buttonText: 'Continue',
     taskType: '',
+    statusState: taskBundle.status.state,
     onClickNextStep: () => {
       displayToast('No action defined for this task type', 'danger', {
         title: 'Unexpected Error',
@@ -77,6 +82,29 @@ function TaskTypeChip(props: { label: string }) {
   )
 }
 
+const STATUS_CHIP_CONFIG: Record<
+  TaskStatusStateEnum,
+  { label: string; backgroundColor: string }
+> = {
+  NOT_STARTED: { label: 'Not Started', backgroundColor: '#EAECEE' },
+  IN_PROGRESS: { label: 'In Progress', backgroundColor: '#FFF3CD' },
+  COMPLETED: { label: 'Completed', backgroundColor: '#C8E6C9' },
+  CANCELED: { label: 'Canceled', backgroundColor: '#FFCCBC' },
+}
+
+function TaskStatusChip(props: { state: TaskStatusStateEnum | undefined }) {
+  const { state } = props
+  if (!state) return null
+  const { label, backgroundColor } = STATUS_CHIP_CONFIG[state]
+  return (
+    <Chip
+      size="small"
+      sx={{ fontWeight: 600, backgroundColor }}
+      label={label}
+    />
+  )
+}
+
 /**
  * Card component for displaying a curation task on the curator dashboard. Shows relevant information about the task and includes a button to proceed to the next step in the workflow.
  */
@@ -89,6 +117,7 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
     taskType,
     principalIds,
     buttonText,
+    statusState,
     onClickNextStep,
     hasPermission,
     isLoading,
@@ -124,6 +153,9 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
             ))}
           </div>
         </div>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <TaskStatusChip state={statusState} />
+        </Box>
         <Divider
           orientation="vertical"
           flexItem
