@@ -88,6 +88,7 @@
 
   // Primary / Secondary / Tertiary Action Colors
   --synapse-primary-action-color: #{v.$primary-action-color};
+  --synapse-focus-color: var(--synapse-primary-action-color);
   --synapse-primary-bgcolor-rgba: #{v.$primary-bgcolor-rgba};
   --synapse-secondary-action-color: #{v.$secondary-action-color};
   --synapse-tertiary-action-color: #{v.$tertiary-action-color};
