@@ -1,13 +1,16 @@
 import { displayToast } from '@/components'
+import CreateOrUpdateCurationTaskDialog from '@/features/entity/metadata-task/components/CreateOrUpdateCurationTaskDialog'
 import useOpenCuratorFromTaskButton from '@/features/entity/metadata-task/hooks/useOpenCuratorButton'
 import { OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE } from '@/features/entity/metadata-task/utils/constants'
-import { Card, Chip, Divider, Typography } from '@mui/material'
+import { Box, Button, Card, Chip, Divider, Typography } from '@mui/material'
 import { TaskBundle } from '@sage-bionetworks/synapse-client'
 import classNames from 'classnames'
 import styles from './CurationTaskCard.module.scss'
 import NextStepButton from './NextStepButton'
 import sharedStyles from './shared.module.scss'
 import UserOrTeamChip from './UserOrTeamChip'
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
+import { useState } from 'react'
 
 export type CurationTaskCardProps = {
   taskBundle: TaskBundle
@@ -92,6 +95,8 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
     isPending,
   } = useUiForTask(taskBundle)
 
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+
   return (
     <Card className={classNames(sharedStyles.card, styles.card)}>
       <div className={styles.cardContent}>
@@ -99,9 +104,20 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
           <div className={styles.titleChipContainer}>
             <Typography variant="headline3">{title}</Typography>
             {taskType && <TaskTypeChip label={taskType} />}
-            {taskId && <TaskTypeChip label={`TaskId ${taskId}`} />}
+            <Button
+              sx={{ display: 'flex' }}
+              onClick={() => setIsSettingsOpen(true)}
+              aria-label="Task settings"
+            >
+              <SettingsOutlinedIcon />
+            </Button>
           </div>
-          <Typography variant="body1">{description}</Typography>
+          <Box sx={{ display: 'flex', gap: 6 }}>
+            <Typography variant="body1">{description}</Typography>
+            {taskId && (
+              <Typography variant="body1">Task ID: {taskId}</Typography>
+            )}
+          </Box>
           <div className={styles.userChipContainer}>
             {principalIds.map(principalId => (
               <UserOrTeamChip key={principalId} principalId={principalId} />
@@ -130,6 +146,14 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
           loading={isPending}
         />
       </div>
+      <CreateOrUpdateCurationTaskDialog
+        open={isSettingsOpen}
+        onCancel={() => setIsSettingsOpen(false)}
+        onSuccess={() => setIsSettingsOpen(false)}
+        onDeleteSuccess={() => setIsSettingsOpen(false)}
+        projectId={taskBundle.task?.projectId ?? ''}
+        task={taskBundle.task}
+      />
     </Card>
   )
 }
