@@ -1,7 +1,7 @@
 import CreateOrUpdateCurationTaskDialog from '@/features/entity/metadata-task/components/CreateOrUpdateCurationTaskDialog'
 import useOpenCuratorFromTaskButton from '@/features/entity/metadata-task/hooks/useOpenCuratorButton'
 import { createMockTaskBundle } from '@/mocks/curation/mockCurationTask'
-import { CurationTask } from '@sage-bionetworks/synapse-client'
+import { CurationTask, TaskBundle } from '@sage-bionetworks/synapse-client'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach } from 'vitest'
@@ -51,8 +51,8 @@ const mockTaskBundle = createMockTaskBundle({
   dataType: 'Test Data Type',
 })
 
-const renderComponent = () =>
-  render(<CurationTaskCard taskBundle={mockTaskBundle} />)
+const renderComponent = (taskBundle: TaskBundle = mockTaskBundle) =>
+  render(<CurationTaskCard taskBundle={taskBundle} />)
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -129,5 +129,42 @@ describe('CurationTaskCard', () => {
     await user.click(screen.getByRole('button', { name: /delete/i }))
 
     expect(screen.queryByTestId('settings-dialog')).not.toBeInTheDocument()
+  })
+
+  describe('status chip', () => {
+    it('shows "Not Started" when status state is NOT_STARTED', () => {
+      renderComponent(
+        createMockTaskBundle({ projectId: 'syn123' }, { state: 'NOT_STARTED' }),
+      )
+      expect(screen.getByText('Not Started')).toBeInTheDocument()
+    })
+
+    it('shows "In Progress" when status state is IN_PROGRESS', () => {
+      renderComponent(
+        createMockTaskBundle({ projectId: 'syn123' }, { state: 'IN_PROGRESS' }),
+      )
+      expect(screen.getByText('In Progress')).toBeInTheDocument()
+    })
+
+    it('shows "Completed" when status state is COMPLETED', () => {
+      renderComponent(
+        createMockTaskBundle({ projectId: 'syn123' }, { state: 'COMPLETED' }),
+      )
+      expect(screen.getByText('Completed')).toBeInTheDocument()
+    })
+
+    it('shows "Canceled" when status state is CANCELED', () => {
+      renderComponent(
+        createMockTaskBundle({ projectId: 'syn123' }, { state: 'CANCELED' }),
+      )
+      expect(screen.getByText('Canceled')).toBeInTheDocument()
+    })
+
+    it('shows no status chip when state is undefined', () => {
+      renderComponent(createMockTaskBundle({ projectId: 'syn123' }))
+      expect(
+        screen.queryByText(/not started|in progress|completed|canceled/i),
+      ).not.toBeInTheDocument()
+    })
   })
 })
