@@ -61,6 +61,12 @@ export const AUTH_MODE_CHANGED_WARNING =
   'Changing the Authorization Mode will clear the active session ID on this task. Any in-progress grid session linked to this task will no longer be associated with it.'
 export const GENERIC_SAVE_ERROR_MESSAGE = 'An error occurred. Please try again.'
 
+export const TASK_STATUS_INPUT_LABEL = 'Status'
+export const TASK_STATUS_NOT_STARTED_LABEL = 'Not Started'
+export const TASK_STATUS_IN_PROGRESS_LABEL = 'In Progress'
+export const TASK_STATUS_COMPLETED_LABEL = 'Completed'
+export const TASK_STATUS_CANCELED_LABEL = 'Canceled'
+
 export const DELETE_CURATION_TASK_DIALOG_TITLE = 'Delete Task'
 export const DELETE_CURATION_TASK_CONFIRMATION_PROMPT =
   'Are you sure you want to delete this task? This action cannot be undone.'
