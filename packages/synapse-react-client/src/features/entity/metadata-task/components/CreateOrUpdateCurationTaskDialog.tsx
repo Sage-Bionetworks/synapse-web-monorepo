@@ -12,7 +12,9 @@ import WizardChoiceButtonGroup from '@/components/WizardChoiceButton/WizardChoic
 import {
   useCreateCurationTask,
   useDeleteCurationTask,
+  useGetCurationTaskStatus,
   useUpdateCurationTask,
+  useUpdateCurationTaskStatus,
 } from '@/synapse-queries/curation/task/useCurationTask'
 import { EntityTypeGroup } from '@/utils/functions/EntityTypeUtils'
 import { HelpTwoTone } from '@mui/icons-material'
@@ -27,8 +29,10 @@ import {
   Grid,
   IconButton,
   InputLabel,
+  MenuItem,
   Radio,
   RadioGroup,
+  Select,
   Stack,
   Tooltip,
   Typography,
@@ -39,6 +43,7 @@ import {
   EntityType,
   FileBasedMetadataTaskPropertiesConcreteTypeEnum,
   RecordBasedMetadataTaskPropertiesConcreteTypeEnum,
+  TaskStatusStateEnum,
 } from '@sage-bionetworks/synapse-client'
 import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
@@ -53,6 +58,11 @@ import {
   AUTH_MODE_SOURCE_BENEFACTOR_TOOLTIP,
   COLLABORATORS_TOOLTIP,
   CREATE_CURATION_TASK_DIALOG_TITLE,
+  TASK_STATUS_CANCELED_LABEL,
+  TASK_STATUS_COMPLETED_LABEL,
+  TASK_STATUS_IN_PROGRESS_LABEL,
+  TASK_STATUS_INPUT_LABEL,
+  TASK_STATUS_NOT_STARTED_LABEL,
   DELETE_CURATION_TASK_CONFIRMATION_PROMPT,
   DELETE_CURATION_TASK_DIALOG_TITLE,
   DELETE_CURATION_TASK_ERROR_TOAST_PREFIX,
@@ -205,6 +215,17 @@ export default function CreateOrUpdateCurationTaskDialog(
     string | null
   >(null)
 
+  // Task status (edit mode only)
+  const { data: currentTaskStatus, isFetching: isStatusFetching } =
+    useGetCurationTaskStatus(task?.taskId ?? 0, {
+      enabled: isEditMode && task?.taskId != null,
+    })
+  // undefined = user hasn't changed the status yet
+  const [pendingStatusState, setPendingStatusState] = useState<
+    TaskStatusStateEnum | undefined
+  >(undefined)
+  const displayedStatusState = pendingStatusState ?? currentTaskStatus?.state
+
   const {
     mutate: createTask,
     isPending: isCreatePending,
@@ -219,11 +240,13 @@ export default function CreateOrUpdateCurationTaskDialog(
     mutate: updateTask,
     isPending: isUpdatePending,
     error: updateError,
-  } = useUpdateCurationTask({
-    onSuccess: updated => {
-      onSuccess(updated)
-    },
-  })
+  } = useUpdateCurationTask()
+
+  const {
+    mutate: updateTaskStatus,
+    isPending: isStatusUpdatePending,
+    error: statusUpdateError,
+  } = useUpdateCurationTaskStatus()
 
   const { mutate: deleteTask, isPending: isDeletePending } =
     useDeleteCurationTask({
@@ -240,8 +263,12 @@ export default function CreateOrUpdateCurationTaskDialog(
       },
     })
 
-  const isPending = isCreatePending || isUpdatePending || isDeletePending
-  const error = createError ?? updateError
+  const isPending =
+    isCreatePending ||
+    isUpdatePending ||
+    isDeletePending ||
+    isStatusUpdatePending
+  const error = createError ?? updateError ?? statusUpdateError
 
   const isTaskPropertiesValid =
     (selectedConcreteType === FILE_BASED_CONCRETE_TYPE &&
@@ -289,7 +316,21 @@ export default function CreateOrUpdateCurationTaskDialog(
   function handleSave() {
     const payload = buildTaskPayload()
     if (isEditMode) {
-      updateTask(payload)
+      const statusChanged =
+        pendingStatusState !== undefined &&
+        pendingStatusState !== currentTaskStatus?.state
+      updateTask(payload, {
+        onSuccess: updatedTask => {
+          if (statusChanged && currentTaskStatus != null) {
+            updateTaskStatus(
+              { ...currentTaskStatus, state: pendingStatusState },
+              { onSuccess: () => onSuccess(updatedTask) },
+            )
+          } else {
+            onSuccess(updatedTask)
+          }
+        },
+      })
     } else {
       createTask(payload)
     }
@@ -565,6 +606,35 @@ export default function CreateOrUpdateCurationTaskDialog(
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
           <Stack gap={3}>
+            {isEditMode && (
+              <FormControl fullWidth>
+                <InputLabel id="dlg-task-status-label">
+                  {TASK_STATUS_INPUT_LABEL}
+                </InputLabel>
+                <Select
+                  labelId="dlg-task-status-label"
+                  value={displayedStatusState ?? ''}
+                  label={TASK_STATUS_INPUT_LABEL}
+                  disabled={isStatusFetching}
+                  onChange={e =>
+                    setPendingStatusState(e.target.value as TaskStatusStateEnum)
+                  }
+                >
+                  <MenuItem value={TaskStatusStateEnum.NOT_STARTED}>
+                    {TASK_STATUS_NOT_STARTED_LABEL}
+                  </MenuItem>
+                  <MenuItem value={TaskStatusStateEnum.IN_PROGRESS}>
+                    {TASK_STATUS_IN_PROGRESS_LABEL}
+                  </MenuItem>
+                  <MenuItem value={TaskStatusStateEnum.COMPLETED}>
+                    {TASK_STATUS_COMPLETED_LABEL}
+                  </MenuItem>
+                  <MenuItem value={TaskStatusStateEnum.CANCELED}>
+                    {TASK_STATUS_CANCELED_LABEL}
+                  </MenuItem>
+                </Select>
+              </FormControl>
+            )}
             {assigneeField}
             {authModeField}
           </Stack>
