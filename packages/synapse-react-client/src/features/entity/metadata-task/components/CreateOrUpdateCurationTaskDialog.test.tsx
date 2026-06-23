@@ -3,7 +3,9 @@ import userEvent from '@testing-library/user-event'
 import {
   useCreateCurationTask,
   useDeleteCurationTask,
+  useGetCurationTaskStatus,
   useUpdateCurationTask,
+  useUpdateCurationTaskStatus,
 } from '@/synapse-queries/curation/task/useCurationTask'
 import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 import {
@@ -19,12 +21,16 @@ import {
   DELETE_CURATION_TASK_DIALOG_TITLE,
   FILE_BASED_TASK_TITLE,
   RECORD_BASED_TASK_TITLE,
+  TASK_STATUS_IN_PROGRESS_LABEL,
+  TASK_STATUS_INPUT_LABEL,
 } from '../utils/constants'
 
 vi.mock('@/synapse-queries/curation/task/useCurationTask', () => ({
   useCreateCurationTask: vi.fn(),
   useUpdateCurationTask: vi.fn(),
   useDeleteCurationTask: vi.fn(),
+  useGetCurationTaskStatus: vi.fn(),
+  useUpdateCurationTaskStatus: vi.fn(),
 }))
 
 vi.mock('@/synapse-queries/entity/useEntity', () => ({
@@ -63,11 +69,14 @@ vi.mock('@/components/EntityFinder/EntityIdTextField', () => ({
 const mockUseCreateCurationTask = vi.mocked(useCreateCurationTask)
 const mockUseUpdateCurationTask = vi.mocked(useUpdateCurationTask)
 const mockUseDeleteCurationTask = vi.mocked(useDeleteCurationTask)
+const mockUseGetCurationTaskStatus = vi.mocked(useGetCurationTaskStatus)
+const mockUseUpdateCurationTaskStatus = vi.mocked(useUpdateCurationTaskStatus)
 const mockUseGetEntityPermissions = vi.mocked(useGetEntityPermissions)
 
 const mockCreateMutate = vi.fn()
 const mockUpdateMutate = vi.fn()
 const mockDeleteMutate = vi.fn()
+const mockUpdateStatusMutate = vi.fn()
 // Capture the options passed to useDeleteCurationTask so tests can invoke onSuccess
 let lastDeleteOptions: Parameters<typeof useDeleteCurationTask>[0] | undefined
 
@@ -118,6 +127,19 @@ beforeEach(() => {
       error: null,
     } as any
   })
+  mockUseGetCurationTaskStatus.mockReturnValue({
+    data: {
+      taskId: MOCK_CURATION_TASK_ID,
+      state: 'NOT_STARTED',
+      etag: 'etag1',
+    },
+    isFetching: false,
+  } as any)
+  mockUseUpdateCurationTaskStatus.mockReturnValue({
+    mutate: mockUpdateStatusMutate,
+    isPending: false,
+    error: null,
+  } as any)
   mockUseGetEntityPermissions.mockReturnValue({
     data: { canDelete: true },
   } as any)
@@ -344,8 +366,40 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
             taskId: MOCK_CURATION_TASK_ID,
             dataType: 'Proteomics',
           }),
+          expect.objectContaining({ onSuccess: expect.any(Function) }),
         )
       })
+    })
+
+    it('chains updateTaskStatus after updateTask when status is changed', async () => {
+      renderEditDialog(fileBasedTask)
+
+      // Open the Status dropdown and select "In Progress"
+      await userEvent.click(
+        screen.getByRole('combobox', { name: TASK_STATUS_INPUT_LABEL }),
+      )
+      await userEvent.click(
+        screen.getByRole('option', { name: TASK_STATUS_IN_PROGRESS_LABEL }),
+      )
+
+      await userEvent.click(screen.getByRole('button', { name: /save/i }))
+
+      await waitFor(() => {
+        expect(mockUpdateMutate).toHaveBeenCalled()
+      })
+
+      // Simulate updateTask succeeding to trigger the status update chain
+      const [, { onSuccess: taskOnSuccess }] = mockUpdateMutate.mock.calls[0]
+      taskOnSuccess(fileBasedTask)
+
+      await waitFor(() => {
+        expect(mockUpdateStatusMutate).toHaveBeenCalledWith(
+          expect.objectContaining({ state: 'IN_PROGRESS' }),
+          expect.objectContaining({ onSuccess: expect.any(Function) }),
+        )
+      })
+      // onSuccess (close dialog) is deferred until the status update also succeeds
+      expect(defaultProps.onSuccess).not.toHaveBeenCalled()
     })
 
     it('shows API error alert when update fails', () => {
