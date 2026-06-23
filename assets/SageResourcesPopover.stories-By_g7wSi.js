@@ -1,0 +1,3 @@
+import{o as e,u as t}from"./preload-helper-CsHsquCd.js";import{t as n}from"./react-BXiJfEW5.js";import{t as r}from"./jsx-runtime-l3w3GfrB.js";import{n as i,t as a}from"./SageResourcesPopover-Bcafmxll.js";var o,s,c,l,u;e((()=>{o=t(n(),1),i(),s=r(),c={title:`Home Page/SageResources`,component:a,render:function(e){let[t,n]=(0,o.useState)(null);return(0,s.jsxs)(s.Fragment,{children:[(0,s.jsx)(`a`,{onClick:e=>n(e.currentTarget),children:`Show portals`}),(0,s.jsx)(a,{anchorEl:t,onClose:()=>{n(null)}})]})}},l={args:{}},l.parameters={...l.parameters,docs:{...l.parameters?.docs,source:{originalSource:`{
+  args: {}
+}`,...l.parameters?.docs?.source}}},u=[`SageResourcesPopoverDemo`]}))();export{l as SageResourcesPopoverDemo,u as __namedExportsOrder,c as default};
