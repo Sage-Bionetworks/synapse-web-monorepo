@@ -5,7 +5,7 @@ function ApprovedAccessRequests() {
   return (
     <AMPALSResearchPageLayout
       headerTitle="Approved Access Requests"
-      sidebarTitle="IDU statements"
+      sidebarTitle="Intended Data Use Statements"
     >
       <MarkdownSynapse
         ownerId="syn64892175"
