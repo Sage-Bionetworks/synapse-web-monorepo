@@ -1,12 +1,18 @@
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { TaskStatusStateEnum } from '@sage-bionetworks/synapse-client'
 import { Meta, StoryObj } from '@storybook/react-vite'
+import { http, HttpResponse } from 'msw'
 import CurationTaskCard, { CurationTaskCardProps } from './CurationTaskCard'
 
 const meta = {
   title: 'Curator/Dashboard/CurationTaskCard',
   component: CurationTaskCard,
+  parameters: { stack: 'mock' },
 } satisfies Meta<CurationTaskCardProps>
 export default meta
+
+const CAN_EDIT_PROJECT_ID = 'syn123'
+const CANNOT_EDIT_PROJECT_ID = 'syn456'
 
 const baseTask = {
   dataType: 'metadata_clinical',
@@ -20,22 +26,44 @@ const baseTask = {
   },
 }
 
-export const Demo: StoryObj<{ state: TaskStatusStateEnum }> = {
-  argTypes: {
-    state: {
-      control: 'select',
-      options: Object.values(TaskStatusStateEnum),
+export const Demo: StoryObj<{ state: TaskStatusStateEnum; canEdit: boolean }> =
+  {
+    argTypes: {
+      state: {
+        control: 'select',
+        options: Object.values(TaskStatusStateEnum),
+      },
+      canEdit: {
+        control: 'boolean',
+      },
     },
-  },
-  args: {
-    state: TaskStatusStateEnum.NOT_STARTED,
-  },
-  render: ({ state }) => (
-    <CurationTaskCard
-      taskBundle={{
-        task: baseTask,
-        status: { state },
-      }}
-    />
-  ),
-}
+    args: {
+      state: TaskStatusStateEnum.NOT_STARTED,
+      canEdit: true,
+    },
+    parameters: {
+      msw: {
+        handlers: [
+          http.get(
+            `${MOCK_REPO_ORIGIN}/repo/v1/entity/:entityId/permissions`,
+            ({ params }) =>
+              HttpResponse.json(
+                { canEdit: params.entityId === CAN_EDIT_PROJECT_ID },
+                { status: 200 },
+              ),
+          ),
+        ],
+      },
+    },
+    render: ({ state, canEdit }) => (
+      <CurationTaskCard
+        taskBundle={{
+          task: {
+            ...baseTask,
+            projectId: canEdit ? CAN_EDIT_PROJECT_ID : CANNOT_EDIT_PROJECT_ID,
+          },
+          status: { state },
+        }}
+      />
+    ),
+  }
