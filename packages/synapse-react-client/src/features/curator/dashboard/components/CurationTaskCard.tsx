@@ -2,6 +2,7 @@ import { displayToast } from '@/components'
 import CreateOrUpdateCurationTaskDialog from '@/features/entity/metadata-task/components/CreateOrUpdateCurationTaskDialog'
 import useOpenCuratorFromTaskButton from '@/features/entity/metadata-task/hooks/useOpenCuratorButton'
 import { OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE } from '@/features/entity/metadata-task/utils/constants'
+import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 import { Box, Button, Card, Chip, Divider, Typography } from '@mui/material'
 import {
   TaskBundle,
@@ -126,6 +127,11 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
 
+  const { data: permissions } = useGetEntityPermissions(
+    taskBundle.task?.projectId ?? '',
+  )
+  const canEdit = permissions?.canEdit ?? false
+
   return (
     <Card className={classNames(sharedStyles.card, styles.card)}>
       <div className={styles.cardContent}>
@@ -133,13 +139,15 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
           <div className={styles.titleChipContainer}>
             <Typography variant="headline3">{title}</Typography>
             {taskType && <TaskTypeChip label={taskType} />}
-            <Button
-              sx={{ display: 'flex' }}
-              onClick={() => setIsSettingsOpen(true)}
-              aria-label="Task settings"
-            >
-              <SettingsOutlinedIcon />
-            </Button>
+            {canEdit && (
+              <Button
+                sx={{ display: 'flex' }}
+                onClick={() => setIsSettingsOpen(true)}
+                aria-label="Task settings"
+              >
+                <SettingsOutlinedIcon />
+              </Button>
+            )}
           </div>
           <Box sx={{ display: 'flex', gap: 6 }}>
             <Typography variant="body1">{description}</Typography>
