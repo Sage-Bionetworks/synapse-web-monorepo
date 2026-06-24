@@ -1,6 +1,7 @@
 import CreateOrUpdateCurationTaskDialog from '@/features/entity/metadata-task/components/CreateOrUpdateCurationTaskDialog'
 import useOpenCuratorFromTaskButton from '@/features/entity/metadata-task/hooks/useOpenCuratorButton'
 import { createMockTaskBundle } from '@/mocks/curation/mockCurationTask'
+import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 import { CurationTask, TaskBundle } from '@sage-bionetworks/synapse-client'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -41,10 +42,15 @@ vi.mock('./UserOrTeamChip', () => ({
   default: () => null,
 }))
 
+vi.mock('@/synapse-queries/entity/useEntity', () => ({
+  useGetEntityPermissions: vi.fn(),
+}))
+
 const mockUseOpenCuratorFromTaskButton = vi.mocked(useOpenCuratorFromTaskButton)
 const mockCreateOrUpdateCurationTaskDialog = vi.mocked(
   CreateOrUpdateCurationTaskDialog,
 )
+const mockUseGetEntityPermissions = vi.mocked(useGetEntityPermissions)
 
 const mockTaskBundle = createMockTaskBundle({
   projectId: 'syn123',
@@ -62,14 +68,27 @@ beforeEach(() => {
     isPending: false,
     onClick: vi.fn(),
   })
+  mockUseGetEntityPermissions.mockReturnValue({
+    data: { canEdit: true },
+  } as any)
 })
 
 describe('CurationTaskCard', () => {
-  it('renders the task settings button', () => {
+  it('renders the task settings button when the user can edit', () => {
     renderComponent()
     expect(
       screen.getByRole('button', { name: /task settings/i }),
     ).toBeInTheDocument()
+  })
+
+  it('does not render the task settings button when the user cannot edit', () => {
+    mockUseGetEntityPermissions.mockReturnValue({
+      data: { canEdit: false },
+    } as any)
+    renderComponent()
+    expect(
+      screen.queryByRole('button', { name: /task settings/i }),
+    ).not.toBeInTheDocument()
   })
 
   it('does not show the settings dialog on initial render', () => {
