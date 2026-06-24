@@ -7,7 +7,7 @@ function ResourcesForResearchers() {
     <AMPALSResearchPageLayout
       headerTitle="Resources"
       headerImageURL={researcherResourcesHeaderSlat}
-      sidebarTitle="Resources for ALS researchers"
+      sidebarTitle="Data Access Instructions"
     >
       <MarkdownSynapse
         ownerId="syn64892175"
