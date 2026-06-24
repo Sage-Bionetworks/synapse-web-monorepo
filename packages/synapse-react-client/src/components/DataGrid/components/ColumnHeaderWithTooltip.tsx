@@ -13,7 +13,7 @@ type ColumnHeaderWithTooltipProps = {
 }
 
 const UPSERT_KEY_TOOLTIP_TEXT =
-  'This property field is the primary key. It is used to match the existing rows when applying updates. If a value already exists the row is updated; if not, a new row is added.  If multiple primary keys are defined, all primary key values must match for an existing row to be updated.'
+  'This property field is the primary key. It is used to match the existing rows when applying updates. If a value already exists the row is updated; if not, a new row is added. If multiple primary keys are defined, all primary key values must match for an existing row to be updated.'
 
 /**
  * Renders a column header. When a description is provided, hovering the column
