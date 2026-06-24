@@ -149,6 +149,7 @@ function createBaseColumn(config: ColumnConfig, columnImpl: any) {
         name={config.columnName}
         description={config.description}
         isRequired={config.isRequired}
+        isUpsertKey={config.isUpsertKey}
         showPinIcon={config.showPinIcon}
         isPinned={config.isPinned}
         onTogglePin={config.onTogglePin}
