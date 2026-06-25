@@ -6,7 +6,12 @@ import AdknowledgeHeader from '@sage-bionetworks/synapse-portal-framework/compon
 import { WordPressNews } from 'synapse-react-client/components/SynapseHomepageV2/WordPressNews'
 import FloatingBlobsBackground from 'synapse-react-client/components/SynapseHomepageV2/FloatingBlobsBackground'
 import AdknowledgePrograms from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgePrograms/AdknowledgePrograms'
-import { dataTypeSql, exploreQuerySql, programsSql } from '@/config/resources'
+import {
+  consortiaAndRepositoriesSql,
+  dataTypeSql,
+  exploreQuerySql,
+  programsSql,
+} from '@/config/resources'
 import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
 import { ReactComponent as CavaticaLogo } from '../assets/cavatica.svg'
 import { ReactComponent as TerraLogo } from '../assets/terra.svg'
@@ -15,6 +20,9 @@ import { ReactComponent as ContributeIcon } from '../assets/contribution.svg'
 import { ReactComponent as AgoraIcon } from '../assets/agora.svg'
 import { ReactComponent as ModelADIcon } from '../assets/modelAD.svg'
 import styles from './HomePageV2.module.scss'
+import { CardContainerLogic } from 'synapse-react-client'
+import { consortiaAndRepositoriesCardConfig } from '@/config/synapseConfigs/consortiaAndRepositories'
+import { Button } from '@mui/material'
 
 const FILTER_COLUMN_NAME = 'DataType_All'
 
@@ -50,20 +58,23 @@ function HomePageInternal() {
     title: 'Our portal has more than a petabyte of data..',
     buttonText: 'Explore Alzheimer’s Data',
     buttonLink: '/Explore/Data',
-    subtitle: (
-      <>
-        <div style={{ marginBottom: '10px' }}>
-          Including over 265,000 files from 60+ assays and in 50+ different file
-          formats, from 175 studies.
-        </div>
-        Our data encompasses a wide range of modalities, ensuring comprehensive
-        coverage for in-depth Alzheimer's research and discovery.
-      </>
-    ),
+    subtitle:
+      "Our data encompasses a wide range of modalities, ensuring comprehensive coverage for in-depth Alzheimer's research and discovery.",
     explorePath: '/Explore/Studies',
     exploreQuerySql,
     filterColumnName: FILTER_COLUMN_NAME,
   }
+
+  const helpButtons = [
+    {
+      text: 'Service Desk',
+      link: 'https://help.adknowledgeportal.org/apd/',
+    },
+    {
+      text: 'Discussion Forum',
+      link: 'https://www.synapse.org/Synapse:syn2580853/discussion/default',
+    },
+  ]
 
   return (
     <div className="HomePageV2">
@@ -152,12 +163,46 @@ function HomePageInternal() {
         subtitle="These explorers provide interactive tools and visualizations to navigate complex datasets, identify key trends, and gain deeper insights into the data on our portal."
         centerTitle
         ContainerProps={{
-          className: 'home-spacer',
+          sx: { marginBottom: '130px' },
         }}
       >
         <div className={styles.resultsExplorersContainer}>
           <AdknowledgeCard {...modelADCard} />
           <AdknowledgeCard {...agoraCard} />
+        </div>
+      </SectionLayout>
+      <SectionLayout
+        title="Related Consortia and Repositories"
+        subtitle="Learn more about our partners within the AD/ADRD research ecosystem!"
+        centerTitle
+        ContainerProps={{
+          sx: { marginBottom: '140px' },
+        }}
+      >
+        <div className={styles.consortiaAndRepositoriesCards}>
+          <CardContainerLogic
+            cardConfiguration={consortiaAndRepositoriesCardConfig}
+            sql={consortiaAndRepositoriesSql}
+          />
+        </div>
+      </SectionLayout>
+      <SectionLayout
+        title="Questions or Feedback?"
+        subtitle="Have questions or feedback to share with us? Contact the team behind the AD Knowledge Portal through our Service Desk, or post your question in the public Discussion Forum where our community can learn together."
+        centerTitle
+      >
+        <div className={styles.helpButtonsContainer}>
+          {helpButtons.map(({ text, link }) => (
+            <Button
+              key={text}
+              href={link}
+              variant="contained"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {text}
+            </Button>
+          ))}
         </div>
       </SectionLayout>
     </div>

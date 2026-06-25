@@ -15,7 +15,7 @@ import { GoalsV2 } from 'synapse-react-client/components/GoalsV2/GoalsV2'
 import ImageCardGridWithLinks from 'synapse-react-client/components/ImageCardGridWithLinks/ImageCardGridWithLinks'
 import PortalFeaturedPartners from 'synapse-react-client/components/PortalFeaturedPartners/PortalFeaturedPartners'
 import PortalFeatureHighlights from 'synapse-react-client/components/PortalFeatureHighlights/PortalFeatureHighlights'
-import PortalHomePageHeader from 'synapse-react-client/components/PortalHomePageHeader/PortalHomePageHeader'
+import ELITEHeader from '@sage-bionetworks/synapse-portal-framework/components/eliteportal/ELITEHeader'
 import PortalSectionHeader from 'synapse-react-client/components/PortalSectionHeader/PortalSectionHeader'
 import RecentPublicationsGrid from 'synapse-react-client/components/RecentPublicationsGrid/RecentPublicationsGrid'
 import { UpsetPlot } from 'synapse-react-client/components/Plot/UpsetPlot'
@@ -128,7 +128,7 @@ function HomePageInternal() {
   )
   return (
     <>
-      <PortalHomePageHeader
+      <ELITEHeader
         backgroundCss={`linear-gradient(90deg, #024472 45.5%, rgba(2, 68, 114, 0.00) 100%)`}
         title={title}
         description={description}

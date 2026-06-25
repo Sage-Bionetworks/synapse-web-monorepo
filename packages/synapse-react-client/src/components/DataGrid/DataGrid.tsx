@@ -37,6 +37,7 @@ type DataGridProps = {
   handleChange: (newValue: DataGridRow[], operations: Operation[]) => void
   handleSelectionChange: (opts: { selection: SelectionWithId | null }) => void
   remoteSelections?: readonly RemoteSelection[]
+  upsertKey?: string[]
 }
 
 /**
@@ -57,6 +58,7 @@ export default function DataGrid(props: DataGridProps) {
     handleChange,
     handleSelectionChange,
     remoteSelections,
+    upsertKey,
   } = props
 
   // Move columnWidths state into DataGrid
@@ -136,6 +138,7 @@ export default function DataGrid(props: DataGridProps) {
         columnWidths,
         pinnedColumnsSet,
         handleTogglePin,
+        upsertKey,
       ),
     [
       columnNames,
@@ -144,6 +147,7 @@ export default function DataGrid(props: DataGridProps) {
       columnWidths,
       pinnedColumnsSet,
       handleTogglePin,
+      upsertKey,
     ],
   )
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null)
@@ -258,7 +262,7 @@ export default function DataGrid(props: DataGridProps) {
         ref={gridRef}
         value={rowValues}
         columns={colValues}
-        autoAddRow={!entityIsView}
+        autoAddRow={false}
         disableSmartDelete
         addRowsComponent={addRowsComponent}
         contextMenuComponent={contextMenuComponent}

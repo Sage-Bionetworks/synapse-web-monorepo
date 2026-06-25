@@ -1,7 +1,7 @@
-import { allChallenges } from '@/config/synapseConfig/allChallenges'
+import { allChallengesSearch } from '@/config/synapseConfig/allChallenges'
 import { Typography } from '@mui/material'
 import React from 'react'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import SearchQueryWrapperPlotNav from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 import styles from './ChallengeListPage.module.scss'
 
 const ChallengeListPage = (): React.ReactNode => {
@@ -27,7 +27,10 @@ const ChallengeListPage = (): React.ReactNode => {
         </Typography>
       </div>
       <div className={styles.content}>
-        <QueryWrapperPlotNav {...allChallenges} />
+        <SearchQueryWrapperPlotNav
+          {...allChallengesSearch}
+          shouldDeepLink={true}
+        />
       </div>
     </>
   )

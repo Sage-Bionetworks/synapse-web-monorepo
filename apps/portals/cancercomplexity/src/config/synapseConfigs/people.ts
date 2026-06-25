@@ -3,7 +3,8 @@ import type { CardConfiguration } from 'synapse-react-client/components/CardCont
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
-import { peopleSql } from '../resources'
+import { peopleSearchIndexId, peopleSql } from '../resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 const rgbIndex = 3
 
@@ -62,4 +63,16 @@ export const peopleQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
       'workingGroupParticipation',
     ],
   },
+}
+
+export const peopleSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'People',
+  shouldDeepLink: false,
+  cardConfiguration: peopleCardConfiguration,
+  facetsToPlot: ['consortium', 'grantNumber'],
+  searchIndexId: peopleSearchIndexId,
+  autocompleteFieldName: 'name',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }

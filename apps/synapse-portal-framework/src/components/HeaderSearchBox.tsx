@@ -28,11 +28,7 @@ import { useChatDialogContext } from './ChatDialogContext'
 import { useSynapseContext } from 'synapse-react-client'
 import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
 import { useGetSuggestionsForSearchIndex } from 'synapse-react-client/components/SearchQueryWrapper/SearchQueryUseQueryOptions'
-
-type SearchIndexConfig = {
-  searchIndexId: string
-  autocompleteFieldName: string
-}
+import { SearchIndexConfig } from '../types/portal-util-types'
 
 type HeaderSearchBoxProps = {
   searchPlaceholder?: string

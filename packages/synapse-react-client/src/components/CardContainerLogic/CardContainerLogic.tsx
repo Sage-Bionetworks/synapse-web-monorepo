@@ -77,6 +77,8 @@ export type CTACardLink = {
   text: string
   // column name to use for href
   link: string
+  // icon to display after link text
+  endIcon?: React.ReactNode
 }
 
 export type DescriptionConfig = {

@@ -1,6 +1,7 @@
 import {
   portalSearchPageConfigs,
   searchPageTabs,
+  standardsSearchIndexConfig,
 } from '@/config/synapseConfigs/searchConfig'
 import ResourceSearchPage from '@sage-bionetworks/synapse-portal-framework/components/PortalSearch/ResourceSearchPage'
 
@@ -9,6 +10,7 @@ function Search() {
     <ResourceSearchPage
       portalSearchPageConfigs={portalSearchPageConfigs}
       searchPageTabs={searchPageTabs}
+      searchIndexConfig={standardsSearchIndexConfig}
     />
   )
 }

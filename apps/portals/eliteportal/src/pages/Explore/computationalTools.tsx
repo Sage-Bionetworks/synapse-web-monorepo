@@ -1,7 +1,12 @@
-import computationalToolsQueryWrapperPlotNavProps from '@/config/synapseConfigs/computational_tools'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import { computationalToolsSearch } from '@/config/synapseConfigs/computational_tools'
+import SearchQueryWrapperPlotNav from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 function ExploreComputationalTools() {
-  return <QueryWrapperPlotNav {...computationalToolsQueryWrapperPlotNavProps} />
+  return (
+    <SearchQueryWrapperPlotNav
+      {...computationalToolsSearch}
+      shouldDeepLink={true}
+    />
+  )
 }
 export default ExploreComputationalTools

@@ -5,7 +5,8 @@ import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/Q
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../columnAliases'
-import { datasetsSql } from '../resources'
+import { datasetsSearchIndexId, datasetsSql } from '../resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 const rgbIndex = 0
 export const datasetColumnLinks: LabelLinkConfig = [
@@ -66,4 +67,21 @@ export const datasetCardConfiguration: CardConfiguration = {
   },
 
   labelLinkConfig: datasetColumnLinks,
+}
+
+export const datasetsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'Datasets',
+  shouldDeepLink: false,
+  columnAliases,
+  facetsToPlot: ['program', 'project', 'datasetType', 'assay'],
+  searchIndexId: datasetsSearchIndexId,
+  autocompleteFieldName: 'name',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
+  tableConfiguration: {
+    columnLinks: datasetColumnLinks,
+    showAccessColumn: false, // use custom access column instead
+    customColumns: [ampAlsAccessColumn],
+  },
 }

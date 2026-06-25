@@ -2,7 +2,8 @@ import type { CardConfiguration } from 'synapse-react-client/components/CardCont
 import type { CardContainerLogicProps } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
-import { programsSql } from '../resources'
+import { programsSearchIndexId, programsSql } from '../resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 export const programsRgbIndex = 9
 
@@ -36,4 +37,15 @@ export const programsCardConfiguration: CardConfiguration = {
 export const programsCardContainerLogicProps: CardContainerLogicProps = {
   sql: programsSql,
   cardConfiguration: programsCardConfiguration,
+}
+
+export const programsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex: programsRgbIndex,
+  name: 'Programs',
+  shouldDeepLink: false,
+  cardConfiguration: programsCardConfiguration,
+  searchIndexId: programsSearchIndexId,
+  autocompleteFieldName: 'Program',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }

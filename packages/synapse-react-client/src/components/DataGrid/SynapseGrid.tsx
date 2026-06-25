@@ -191,6 +191,12 @@ function SynapseGridInner({
     entityData?.concreteType ===
     'org.sagebionetworks.repo.model.table.EntityView'
 
+  // If grid source entity is a recordSet, get its upsert key(s)
+  // from the entity bundle
+  const upsertKey = !entityIsView
+    ? (entityData as { upsertKey?: string[] } | undefined)?.upsertKey
+    : []
+
   // Process schema properties once
   const schemaPropertiesInfo = useMemo(() => {
     return getSchemaPropertiesInfo(jsonSchema ?? null)
@@ -474,7 +480,7 @@ function SynapseGridInner({
                       onClick={() => setChatOpen(true)}
                       startIcon={<SmartToyTwoTone />}
                     >
-                      Open chat
+                      Open Curie
                     </GridMenuButton>
                     <GridAgentChat
                       agentRegistrationId={agentRegistrationId}
@@ -482,7 +488,7 @@ function SynapseGridInner({
                       onClose={() => setChatOpen(false)}
                       gridSessionId={session.sessionId!}
                       usersReplicaId={replicaId!}
-                      chatbotName="Grid Assistant"
+                      chatbotName="Curie"
                     />
                     {session.sourceEntityId && (
                       <UploadCsvToGridButton
@@ -519,6 +525,7 @@ function SynapseGridInner({
                     handleChange={handleChange}
                     handleSelectionChange={handleSelectionChange}
                     remoteSelections={remoteSelections}
+                    upsertKey={upsertKey}
                   />
                 </Grid>
               </>

@@ -7,6 +7,7 @@ const instrumentsPlotNavProps: QueryWrapperPlotNavProps = {
   //   name: 'Instruments',
   fileIdColumnName: 'id',
   columnAliases: { study: 'On Synapse' },
+  defaultShowPlots: false,
   tableConfiguration: {
     showAccessColumn: true,
     showDownloadColumn: false,

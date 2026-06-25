@@ -1,13 +1,19 @@
 import dataQueryWrapperPlotNavProps from './data'
-import { publicationsQueryWrapperPlotNavProps } from './publications'
-import { studiesQueryWrapperPlotNavProps } from './studies'
-import { toolsQueryWrapperPlotNavProps } from './tools'
+import {
+  publicationsQueryWrapperPlotNavProps,
+  publicationsSearch,
+} from './publications'
+import { studiesQueryWrapperPlotNavProps, studiesSearch } from './studies'
+import { toolsQueryWrapperPlotNavProps, toolsSearch } from './tools'
 
 export {
   publicationsQueryWrapperPlotNavProps,
+  publicationsSearch,
   studiesQueryWrapperPlotNavProps,
+  studiesSearch,
   dataQueryWrapperPlotNavProps,
   toolsQueryWrapperPlotNavProps,
+  toolsSearch,
 }
 
 export default {

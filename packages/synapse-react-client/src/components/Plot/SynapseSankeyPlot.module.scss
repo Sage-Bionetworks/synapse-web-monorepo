@@ -1,0 +1,63 @@
+// Layout/chrome for SynapseSankeyPlot. Theme-derived values (font family,
+// colors) stay inline in the component so the chart adopts each portal's MUI
+// palette; only the static structure and transitions live here.
+
+.root {
+  width: 100%;
+  margin-top: 48px;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.rootVisible {
+  opacity: 1;
+}
+
+.title {
+  font-weight: 600;
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.svg {
+  display: block;
+  overflow: visible;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+  outline: none;
+}
+
+.ribbon {
+  transition:
+    stroke-opacity 0.25s ease,
+    stroke-width 0.25s ease;
+}
+
+.node {
+  transition: fill-opacity 0.25s ease;
+}
+
+.categoryLabel {
+  transition: opacity 0.2s ease;
+}
+
+.tabularNums {
+  font-variant-numeric: tabular-nums;
+}
+
+// White halo behind label text so it stays legible where it crosses a ribbon.
+// The stroke color is set inline from the theme background; paint-order draws
+// the stroke first (behind the fill).
+.haloText {
+  paint-order: stroke;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    transition: none;
+  }
+}

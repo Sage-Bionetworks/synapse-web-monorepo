@@ -3,6 +3,13 @@ import { MOCK_USER_ID } from '../user/mock_user_profile'
 
 const queryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
+  columnModels: [
+    { id: '124219', name: 'firstName', columnType: 'STRING' },
+    { id: '124220', name: 'lastName', columnType: 'STRING' },
+    { id: '124221', name: 'institution', columnType: 'STRING' },
+    { id: '124214', name: 'ownerID', columnType: 'USERID' },
+    { id: '151844', name: 'Program', columnType: 'STRING_LIST' },
+  ],
   queryResult: {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
     queryResults: {

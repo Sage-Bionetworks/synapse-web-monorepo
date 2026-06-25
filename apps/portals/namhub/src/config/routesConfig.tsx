@@ -12,6 +12,20 @@ const routes: RouteObject[] = [
         index: true,
         lazy: () => import('@/pages/HomePage').then(convertModuleToRouteObject),
       },
+      {
+        path: 'Explore',
+        lazy: () =>
+          import('@/pages/Explore/layout').then(convertModuleToRouteObject),
+        children: [
+          {
+            path: 'Studies',
+            lazy: () =>
+              import('@/pages/Explore/studies').then(
+                convertModuleToRouteObject,
+              ),
+          },
+        ],
+      },
     ],
   },
 ]

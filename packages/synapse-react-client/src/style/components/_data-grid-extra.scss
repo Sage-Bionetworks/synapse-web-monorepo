@@ -154,7 +154,13 @@ $remote-selection-colors:
 }
 
 // Header & selection styles
-.dsg-cell-header.header-cell-required {
+.dsg-cell-header:not(.dsg-cell-gutter) {
+  background-color: #dbdde1;
+  font-weight: bold;
+  color: black;
+}
+
+.dsg-cell-header.header-upsert-key {
   background-color: #395979;
   color: white;
   font-weight: bold;
