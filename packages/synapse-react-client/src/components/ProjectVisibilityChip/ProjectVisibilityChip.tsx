@@ -50,15 +50,26 @@ function ProjectVisibilityChipUI({ visibility }: ProjectVisibilityChipProps) {
         display: 'flex',
         padding: '4px 8px',
         alignItems: 'center',
+        gap: '6px',
         borderRadius: '7px',
         width: 'fit-content',
         backgroundColor: VISIBILITY_LABELS[visibility].color,
+        '& .MuiChip-icon': {
+          marginLeft: '0px',
+          marginRight: '0px',
+        },
+        '& .MuiChip-label': {
+          px: 0,
+        },
       }}
       icon={VISIBILITY_LABELS[visibility].icon}
       label={
         <Typography
           variant="body2"
-          sx={{ lineHeight: '12px', letterSpacing: '-0.06px' }}
+          sx={{
+            lineHeight: '12px',
+            letterSpacing: '-0.06px',
+          }}
         >
           {VISIBILITY_LABELS[visibility].label}
         </Typography>
@@ -74,7 +85,7 @@ export default function ProjectVisibilityChip({
     data: entityBundle,
     isLoading: isLoadingEntityBundle,
     isError: isErrorEntityBundle,
-  } = useGetEntityBundle(entityId)
+  } = useGetEntityBundle(entityId, undefined, { includeBenefactorACL: true })
   const {
     data: realmPrincipals,
     isLoading: isLoadingRealmPrincipals,
