@@ -110,12 +110,12 @@ beforeEach(() => {
   mockUpdateMutate.mockResolvedValue({})
   mockDeleteMutate.mockResolvedValue(undefined)
   mockUseCreateCurationTask.mockReturnValue({
-    mutate: mockCreateMutate,
+    mutateAsync: mockCreateMutate,
     isPending: false,
     error: null,
   } as any)
   mockUseUpdateCurationTask.mockReturnValue({
-    mutate: mockUpdateMutate,
+    mutateAsync: mockUpdateMutate,
     isPending: false,
     error: null,
   } as any)
@@ -136,7 +136,7 @@ beforeEach(() => {
     isFetching: false,
   } as any)
   mockUseUpdateCurationTaskStatus.mockReturnValue({
-    mutate: mockUpdateStatusMutate,
+    mutateAsync: mockUpdateStatusMutate,
     isPending: false,
     error: null,
   } as any)
@@ -255,7 +255,7 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
 
     it('shows API error alert when create fails', async () => {
       mockUseCreateCurationTask.mockReturnValue({
-        mutate: mockCreateMutate,
+        mutateAsync: mockCreateMutate,
         isPending: false,
         error: { reason: 'Something went wrong' },
       } as any)
@@ -366,15 +366,45 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
             taskId: MOCK_CURATION_TASK_ID,
             dataType: 'Proteomics',
           }),
-          expect.objectContaining({ onSuccess: expect.any(Function) }),
         )
       })
     })
 
-    it('chains updateTaskStatus after updateTask when status is changed', async () => {
+    it('skips updateTask and only calls updateTaskStatus when only status is changed', async () => {
       renderEditDialog(fileBasedTask)
 
-      // Open the Status dropdown and select "In Progress"
+      // Change only the status — no task field changes
+      await userEvent.click(
+        screen.getByRole('combobox', { name: TASK_STATUS_INPUT_LABEL }),
+      )
+      await userEvent.click(
+        screen.getByRole('option', { name: TASK_STATUS_IN_PROGRESS_LABEL }),
+      )
+
+      await userEvent.click(screen.getByRole('button', { name: /save/i }))
+
+      await waitFor(() => {
+        expect(mockUpdateMutate).not.toHaveBeenCalled()
+        expect(mockUpdateStatusMutate).toHaveBeenCalledWith(
+          expect.objectContaining({ state: 'IN_PROGRESS' }),
+        )
+      })
+    })
+
+    it('chains updateTaskStatus after updateTask and passes updated etag when both change', async () => {
+      const updatedEtag = 'new-etag-from-server'
+      mockUpdateMutate.mockResolvedValue({
+        ...fileBasedTask,
+        etag: updatedEtag,
+      })
+      renderEditDialog(fileBasedTask)
+
+      // Change a task field
+      const dataTypeInput = screen.getByLabelText(/Task Name/i)
+      await userEvent.clear(dataTypeInput)
+      await userEvent.type(dataTypeInput, 'Proteomics')
+
+      // Change status
       await userEvent.click(
         screen.getByRole('combobox', { name: TASK_STATUS_INPUT_LABEL }),
       )
@@ -386,25 +416,18 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
 
       await waitFor(() => {
         expect(mockUpdateMutate).toHaveBeenCalled()
-      })
-
-      // Simulate updateTask succeeding to trigger the status update chain
-      const [, { onSuccess: taskOnSuccess }] = mockUpdateMutate.mock.calls[0]
-      taskOnSuccess(fileBasedTask)
-
-      await waitFor(() => {
         expect(mockUpdateStatusMutate).toHaveBeenCalledWith(
-          expect.objectContaining({ state: 'IN_PROGRESS' }),
-          expect.objectContaining({ onSuccess: expect.any(Function) }),
+          expect.objectContaining({ state: 'IN_PROGRESS', etag: updatedEtag }),
+        )
+        expect(defaultProps.onSuccess).toHaveBeenCalledWith(
+          expect.objectContaining({ etag: updatedEtag }),
         )
       })
-      // onSuccess (close dialog) is deferred until the status update also succeeds
-      expect(defaultProps.onSuccess).not.toHaveBeenCalled()
     })
 
     it('shows API error alert when update fails', () => {
       mockUseUpdateCurationTask.mockReturnValue({
-        mutate: mockUpdateMutate,
+        mutateAsync: mockUpdateMutate,
         isPending: false,
         error: { reason: 'Update failed' },
       } as any)
