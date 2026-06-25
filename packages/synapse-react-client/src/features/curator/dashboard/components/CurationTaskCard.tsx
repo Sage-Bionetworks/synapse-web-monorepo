@@ -3,7 +3,7 @@ import CreateOrUpdateCurationTaskDialog from '@/features/entity/metadata-task/co
 import useOpenCuratorFromTaskButton from '@/features/entity/metadata-task/hooks/useOpenCuratorButton'
 import { OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE } from '@/features/entity/metadata-task/utils/constants'
 import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
-import { Box, Button, Card, Chip, Divider, Typography } from '@mui/material'
+import { Box, Card, Chip, Divider, IconButton, Typography } from '@mui/material'
 import {
   TaskBundle,
   TaskStatusStateEnum,
@@ -140,16 +140,15 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
             <Typography variant="headline3">{title}</Typography>
             {taskType && <TaskTypeChip label={taskType} />}
             {canEdit && (
-              <Button
-                sx={{ display: 'flex' }}
+              <IconButton
                 onClick={() => setIsSettingsOpen(true)}
                 aria-label="Task settings"
               >
                 <SettingsOutlinedIcon />
-              </Button>
+              </IconButton>
             )}
           </div>
-          <Box sx={{ display: 'flex', gap: 6 }}>
+          <Box sx={{ display: 'flex', gap: 4 }}>
             <Typography variant="body1">{description}</Typography>
             {taskId && (
               <Typography variant="body1">Task ID: {taskId}</Typography>
@@ -187,6 +186,7 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
         />
       </div>
       <CreateOrUpdateCurationTaskDialog
+        key={String(isSettingsOpen)}
         open={isSettingsOpen}
         onCancel={() => setIsSettingsOpen(false)}
         onSuccess={() => setIsSettingsOpen(false)}

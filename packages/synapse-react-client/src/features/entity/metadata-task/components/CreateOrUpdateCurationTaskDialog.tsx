@@ -90,6 +90,7 @@ import {
 } from '../utils/constants'
 import noop from 'lodash-es/noop'
 import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
+import { StyledFormControl } from '@/components/styled'
 
 export type CreateOrUpdateCurationTaskDialogProps = {
   open: boolean
@@ -607,7 +608,7 @@ export default function CreateOrUpdateCurationTaskDialog(
         <Grid size={{ xs: 12, sm: 6 }}>
           <Stack gap={3}>
             {isEditMode && (
-              <FormControl fullWidth>
+              <StyledFormControl fullWidth>
                 <InputLabel id="dlg-task-status-label">
                   {TASK_STATUS_INPUT_LABEL}
                 </InputLabel>
@@ -633,7 +634,7 @@ export default function CreateOrUpdateCurationTaskDialog(
                     {TASK_STATUS_CANCELED_LABEL}
                   </MenuItem>
                 </Select>
-              </FormControl>
+              </StyledFormControl>
             )}
             {assigneeField}
             {authModeField}
