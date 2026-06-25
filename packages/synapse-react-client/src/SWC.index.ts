@@ -174,6 +174,9 @@ const SynapseComponents = {
   ProjectDataAvailability: lazy(
     () => import('./components/ProjectStorage/ProjectDataAvailability'),
   ),
+  ProjectVisibilityChip: lazy(
+    () => import('./components/ProjectVisibilityChip/ProjectVisibilityChip'),
+  ),
   ProvenanceGraph: lazy(
     () => import('./components/ProvenanceGraph/ProvenanceGraph'),
   ),
