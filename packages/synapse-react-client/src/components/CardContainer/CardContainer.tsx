@@ -133,7 +133,7 @@ export function CardContainer(props: CardContainerProps) {
   if (type === MEDIUM_USER_CARD) {
     // Hard coding ownerId as a column name containing the user profile ownerId
     // for each row, grab the column with the ownerId
-    const userIdColumnName = queryMetadata.columnModels?.find(
+    const userIdColumnName = queryMetadata?.columnModels?.find(
       cm => cm.columnType === ColumnTypeEnum.USERID,
     )?.name
     const userIdColumnIndex = userIdColumnName
