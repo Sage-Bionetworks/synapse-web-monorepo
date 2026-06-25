@@ -1,5 +1,6 @@
 import { GridModel } from '@/components/DataGrid/DataGridTypes'
 import { useCRDTModelView } from '@/components/DataGrid/useCRDTModelView'
+import { normalizeWebsocketError } from '@/components/DataGrid/utils/normalizeWebsocketError'
 import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react'
 import { DataGridWebSocket } from './DataGridWebSocket'
 import { useEstablishWebsocketConnection } from '@/synapse-queries/grid/useEstablishWebsocketConnection'
@@ -211,7 +212,10 @@ export function useDataGridWebSocket(options?: UseDataGridWebSocketOptions) {
       onSyncStart: () => dispatch({ type: 'SYNC_STARTED' }),
       onSyncEnd: () => dispatch({ type: 'SYNC_ENDED' }),
       onError: (error: unknown) =>
-        dispatch({ type: 'WEBSOCKET_ERROR', payload: error }),
+        dispatch({
+          type: 'WEBSOCKET_ERROR',
+          payload: normalizeWebsocketError(error),
+        }),
     }),
     [
       handleModelCreate,

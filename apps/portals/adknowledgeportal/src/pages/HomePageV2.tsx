@@ -58,16 +58,8 @@ function HomePageInternal() {
     title: 'Our portal has more than a petabyte of data..',
     buttonText: 'Explore Alzheimer’s Data',
     buttonLink: '/Explore/Data',
-    subtitle: (
-      <>
-        <div style={{ marginBottom: '10px' }}>
-          Including over 265,000 files from 60+ assays and in 50+ different file
-          formats, from 175 studies.
-        </div>
-        Our data encompasses a wide range of modalities, ensuring comprehensive
-        coverage for in-depth Alzheimer's research and discovery.
-      </>
-    ),
+    subtitle:
+      "Our data encompasses a wide range of modalities, ensuring comprehensive coverage for in-depth Alzheimer's research and discovery.",
     explorePath: '/Explore/Studies',
     exploreQuerySql,
     filterColumnName: FILTER_COLUMN_NAME,
@@ -75,11 +67,11 @@ function HomePageInternal() {
 
   const helpButtons = [
     {
-      text: 'Our Service Desk',
+      text: 'Service Desk',
       link: 'https://help.adknowledgeportal.org/apd/',
     },
     {
-      text: 'Ask in our Forum',
+      text: 'Discussion Forum',
       link: 'https://www.synapse.org/Synapse:syn2580853/discussion/default',
     },
   ]
@@ -181,7 +173,7 @@ function HomePageInternal() {
       </SectionLayout>
       <SectionLayout
         title="Related Consortia and Repositories"
-        subtitle="Discover the resources that are part of the AD Knowledge Portal, each contributing unique data and expertise to accelerate Alzheimer's research and improve patient outcomes."
+        subtitle="Learn more about our partners within the AD/ADRD research ecosystem!"
         centerTitle
         ContainerProps={{
           sx: { marginBottom: '140px' },
@@ -195,8 +187,8 @@ function HomePageInternal() {
         </div>
       </SectionLayout>
       <SectionLayout
-        title="Have Questions?"
-        subtitle="Have questions about our data or tools? Visit the our Service Desk to review our documentation, or use our forum for support."
+        title="Questions or Feedback?"
+        subtitle="Have questions or feedback to share with us? Contact the team behind the AD Knowledge Portal through our Service Desk, or post your question in the public Discussion Forum where our community can learn together."
         centerTitle
       >
         <div className={styles.helpButtonsContainer}>

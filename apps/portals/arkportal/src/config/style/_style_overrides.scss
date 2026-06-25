@@ -1,3 +1,8 @@
+// Accessible keyboard focus-ring color. See PORTALS-4277.
+:root {
+  --synapse-focus-color: #ac7058;
+}
+
 #header {
   height: fit-content;
   background-image: none;

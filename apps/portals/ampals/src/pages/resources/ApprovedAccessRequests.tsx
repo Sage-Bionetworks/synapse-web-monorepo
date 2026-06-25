@@ -1,21 +1,24 @@
 import AMPALSResearchPageLayout from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSResearchPageLayout'
-import researcherResourcesHeaderSlat from '@/assets/researcher_resources_slat.png'
 import { MarkdownSynapse } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 
-function ResourcesForResearchers() {
+function ApprovedAccessRequests() {
   return (
     <AMPALSResearchPageLayout
-      headerTitle="Resources"
-      headerImageURL={researcherResourcesHeaderSlat}
-      sidebarTitle="Data Access Instructions"
+      headerTitle="Approved Access Requests"
+      sidebarTitle="Intended Data Use Statements"
     >
       <MarkdownSynapse
         ownerId="syn64892175"
-        wikiId="631452"
+        wikiId="641026"
+        loadingSkeletonRowCount={50}
+      />
+      <MarkdownSynapse
+        ownerId="syn64892175"
+        wikiId="641027"
         loadingSkeletonRowCount={50}
       />
     </AMPALSResearchPageLayout>
   )
 }
 
-export default ResourcesForResearchers
+export default ApprovedAccessRequests

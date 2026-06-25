@@ -91,6 +91,7 @@ type ColumnConfig = {
   showPinIcon?: boolean
   isPinned?: boolean
   onTogglePin?: () => void
+  isUpsertKey?: boolean
   /**
    * Optional column-level schema info. When provided, paste behavior coerces
    * empty pasted cells to the schema-correct blank (undefined for optional
@@ -100,8 +101,12 @@ type ColumnConfig = {
   schemaPropertyInfo?: SchemaPropertyInfo
 }
 
-function getHeaderClassName(isRequired: boolean): string {
-  return isRequired ? 'header-cell-required' : 'header-cell'
+function getHeaderClassName(isRequired: boolean, isUpsertKey: boolean): string {
+  return isUpsertKey
+    ? 'header-upsert-key'
+    : isRequired
+      ? 'header-cell-required'
+      : 'header-cell'
 }
 
 function createDeleteValue(columnName: string, isRequired?: boolean) {
@@ -144,12 +149,16 @@ function createBaseColumn(config: ColumnConfig, columnImpl: any) {
         name={config.columnName}
         description={config.description}
         isRequired={config.isRequired}
+        isUpsertKey={config.isUpsertKey}
         showPinIcon={config.showPinIcon}
         isPinned={config.isPinned}
         onTogglePin={config.onTogglePin}
       />
     ),
-    headerClassName: getHeaderClassName(config.isRequired),
+    headerClassName: getHeaderClassName(
+      config.isRequired,
+      !!config.isUpsertKey,
+    ),
     minWidth: width,
     basis: width,
     grow: 0,
