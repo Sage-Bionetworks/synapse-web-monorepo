@@ -27,7 +27,7 @@ const VISIBILITY_LABELS: Record<
   { label: string; color: string; icon: React.ReactElement }
 > = {
   PRIVATE: {
-    label: 'Private',
+    label: 'Private Project',
     color: '#FAC3C3',
     icon: <LockOutlinedIcon sx={iconStyles} />,
   },
@@ -37,7 +37,7 @@ const VISIBILITY_LABELS: Record<
     icon: <VisibilityOutlinedIcon sx={iconStyles} />,
   },
   PUBLIC: {
-    label: 'Public',
+    label: 'Public Project',
     color: '#D4EFD4',
     icon: <LanguageOutlinedIcon sx={iconStyles} />,
   },
