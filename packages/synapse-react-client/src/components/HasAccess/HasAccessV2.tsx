@@ -57,30 +57,7 @@ export function HasAccessV2(props: HasAccessProps) {
   const iconContainer = useMemo(() => {
     return restrictionUiTypeValue ===
       RestrictionUiType.AccessBlockedToAnonymous ? (
-      <Button
-        sx={buttonSx}
-        className={SRC_SIGN_IN_CLASS}
-        onClick={ev => {
-          if (ev.isTrusted) {
-            /*
-                There is a tricky problem - 
-                The portals listens to click events for buttons with the class SRC_SIGN_IN_CLASS set, it listens to this event
-                so that it can display the login modal.
-
-                This button has an svg inside of it which is problematic because more often than not clicking this button will 
-                instead click that svg. The event listener in the portals will break as a result.
-
-                Though the svg may get the actual click event, because of event bubbling this button will get its onClick called.
-                Once onClick is called we can manually dispatch an event off of this button. This does pose a problem, we end up in a 
-                infinite loop because this button keeps dispatching click events, so we can use the isTrusted to recognize if onClick was
-                triggered programmatically or by user click. Lastly, using { bubbles: true } ensures the event bubbles up to the document level.
-
-              */
-            const clickEvent = new MouseEvent('click', { bubbles: true })
-            ev.currentTarget.dispatchEvent(clickEvent)
-          }
-        }}
-      >
+      <Button sx={buttonSx} className={SRC_SIGN_IN_CLASS}>
         {icon}
       </Button>
     ) : (

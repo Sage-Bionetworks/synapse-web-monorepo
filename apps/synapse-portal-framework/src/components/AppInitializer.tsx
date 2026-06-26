@@ -32,30 +32,26 @@ function AppInitializer(props: AppInitializerProps) {
      * If this is an anchor with the SRC-SIGN-IN-CLASS CSS class, then go to One Sage to sign in.
      */
     function globalClickHandler(ev: MouseEvent) {
-      if (
-        ev.target instanceof HTMLButtonElement ||
-        ev.target instanceof HTMLAnchorElement
-      ) {
-        const el = ev.target as HTMLElement
-        if (el.classList.contains(SynapseConstants.SRC_SIGN_IN_CLASS)) {
-          storeRedirectURLForOneSageLoginAndGotoURL(oneSageURL.toString())
-        }
+      const target = ev.target as Element
+
+      // Use closest() so that clicks on child elements (e.g. SVG icons inside a
+      // button) still trigger sign-in when the button carries SRC_SIGN_IN_CLASS.
+      if (target.closest?.(`.${SynapseConstants.SRC_SIGN_IN_CLASS}`)) {
+        storeRedirectURLForOneSageLoginAndGotoURL(oneSageURL.toString())
       }
 
-      if (ev.target instanceof HTMLAnchorElement) {
-        const anchorElement = ev.target
-        if (anchorElement.href) {
-          const { hostname } = new URL(anchorElement.href)
-          if (
-            KNOWN_SYNAPSE_ORG_URLS.includes(hostname.toLowerCase()) ||
-            redirectInstructionsMap[anchorElement.href] ||
-            redirectInstructionsMap[hostname]
-          ) {
-            // && anchorElement.target !== '_blank') {  // should we skip the dialog if opening in a new window?
-            ev.preventDefault()
-            if (!redirectUrl) {
-              setRedirectUrl(anchorElement.href)
-            }
+      const anchorElement = target.closest?.('a')
+      if (anchorElement && anchorElement.href) {
+        const { hostname } = new URL(anchorElement.href)
+        if (
+          KNOWN_SYNAPSE_ORG_URLS.includes(hostname.toLowerCase()) ||
+          redirectInstructionsMap[anchorElement.href] ||
+          redirectInstructionsMap[hostname]
+        ) {
+          // && anchorElement.target !== '_blank') {  // should we skip the dialog if opening in a new window?
+          ev.preventDefault()
+          if (!redirectUrl) {
+            setRedirectUrl(anchorElement.href)
           }
         }
       }
