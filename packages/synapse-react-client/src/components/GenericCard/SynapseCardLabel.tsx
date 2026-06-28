@@ -153,9 +153,7 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
   }
 
   if ('resolveEntityName' in labelLink && labelLink.resolveEntityName && str) {
-    const { baseURL, URLColumnName } = labelLink
-    const href = `/${baseURL}?${URLColumnName}=${str}`
-    return <EntityLink entity={str} link={href} showIcon={false} />
+    return <EntityLink entity={str} showIcon={false} />
   }
 
   let labelContent: ReactNode
