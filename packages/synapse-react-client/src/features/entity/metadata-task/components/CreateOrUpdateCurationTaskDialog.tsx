@@ -58,11 +58,8 @@ import {
   AUTH_MODE_SOURCE_BENEFACTOR_TOOLTIP,
   COLLABORATORS_TOOLTIP,
   CREATE_CURATION_TASK_DIALOG_TITLE,
-  TASK_STATUS_CANCELED_LABEL,
-  TASK_STATUS_COMPLETED_LABEL,
-  TASK_STATUS_IN_PROGRESS_LABEL,
+  TASK_STATUS_CONFIG,
   TASK_STATUS_INPUT_LABEL,
-  TASK_STATUS_NOT_STARTED_LABEL,
   DELETE_CURATION_TASK_CONFIRMATION_PROMPT,
   DELETE_CURATION_TASK_DIALOG_TITLE,
   DELETE_CURATION_TASK_ERROR_TOAST_PREFIX,
@@ -618,18 +615,11 @@ export default function CreateOrUpdateCurationTaskDialog(
                     setPendingStatusState(e.target.value as TaskStatusStateEnum)
                   }
                 >
-                  <MenuItem value={TaskStatusStateEnum.NOT_STARTED}>
-                    {TASK_STATUS_NOT_STARTED_LABEL}
-                  </MenuItem>
-                  <MenuItem value={TaskStatusStateEnum.IN_PROGRESS}>
-                    {TASK_STATUS_IN_PROGRESS_LABEL}
-                  </MenuItem>
-                  <MenuItem value={TaskStatusStateEnum.COMPLETED}>
-                    {TASK_STATUS_COMPLETED_LABEL}
-                  </MenuItem>
-                  <MenuItem value={TaskStatusStateEnum.CANCELED}>
-                    {TASK_STATUS_CANCELED_LABEL}
-                  </MenuItem>
+                  {Object.values(TaskStatusStateEnum).map(state => (
+                    <MenuItem key={state} value={state}>
+                      {TASK_STATUS_CONFIG[state].label}
+                    </MenuItem>
+                  ))}
                 </Select>
               </StyledFormControl>
             )}

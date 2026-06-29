@@ -1,3 +1,5 @@
+import { TaskStatusStateEnum } from '@sage-bionetworks/synapse-client'
+
 export const OPEN_CURATOR_ERROR_TITLE =
   'An error occurred while trying to open Curator'
 export const OPEN_CURATOR_UNAUTHORIZED_ERROR_MESSAGE =
@@ -62,10 +64,16 @@ export const AUTH_MODE_CHANGED_WARNING =
 export const GENERIC_SAVE_ERROR_MESSAGE = 'An error occurred. Please try again.'
 
 export const TASK_STATUS_INPUT_LABEL = 'Status'
-export const TASK_STATUS_NOT_STARTED_LABEL = 'Not Started'
-export const TASK_STATUS_IN_PROGRESS_LABEL = 'In Progress'
-export const TASK_STATUS_COMPLETED_LABEL = 'Completed'
-export const TASK_STATUS_CANCELED_LABEL = 'Canceled'
+
+export const TASK_STATUS_CONFIG: Record<
+  TaskStatusStateEnum,
+  { label: string; backgroundColor: string }
+> = {
+  NOT_STARTED: { label: 'Not Started', backgroundColor: '#EAECEE' },
+  IN_PROGRESS: { label: 'In Progress', backgroundColor: '#FFF3CD' },
+  COMPLETED: { label: 'Completed', backgroundColor: '#C8E6C9' },
+  CANCELED: { label: 'Canceled', backgroundColor: '#FFCCBC' },
+}
 
 export const DELETE_CURATION_TASK_DIALOG_TITLE = 'Delete Task'
 export const DELETE_CURATION_TASK_CONFIRMATION_PROMPT =

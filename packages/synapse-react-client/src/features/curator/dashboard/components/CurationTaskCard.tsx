@@ -1,5 +1,6 @@
 import { displayToast } from '@/components'
 import CreateOrUpdateCurationTaskDialog from '@/features/entity/metadata-task/components/CreateOrUpdateCurationTaskDialog'
+import { TASK_STATUS_CONFIG } from '@/features/entity/metadata-task/utils/constants'
 import useOpenCuratorFromTaskButton from '@/features/entity/metadata-task/hooks/useOpenCuratorButton'
 import { OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE } from '@/features/entity/metadata-task/utils/constants'
 import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
@@ -91,20 +92,10 @@ function TaskTypeChip(props: { label: string }) {
   )
 }
 
-const STATUS_CHIP_CONFIG: Record<
-  TaskStatusStateEnum,
-  { label: string; backgroundColor: string }
-> = {
-  NOT_STARTED: { label: 'Not Started', backgroundColor: '#EAECEE' },
-  IN_PROGRESS: { label: 'In Progress', backgroundColor: '#FFF3CD' },
-  COMPLETED: { label: 'Completed', backgroundColor: '#C8E6C9' },
-  CANCELED: { label: 'Canceled', backgroundColor: '#FFCCBC' },
-}
-
 function TaskStatusChip(props: { state: TaskStatusStateEnum | undefined }) {
   const { state } = props
   if (!state) return null
-  const { label, backgroundColor } = STATUS_CHIP_CONFIG[state]
+  const { label, backgroundColor } = TASK_STATUS_CONFIG[state]
   return (
     <Chip
       size="small"

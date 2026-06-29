@@ -21,9 +21,10 @@ import {
   DELETE_CURATION_TASK_DIALOG_TITLE,
   FILE_BASED_TASK_TITLE,
   RECORD_BASED_TASK_TITLE,
-  TASK_STATUS_IN_PROGRESS_LABEL,
+  TASK_STATUS_CONFIG,
   TASK_STATUS_INPUT_LABEL,
 } from '../utils/constants'
+import { TaskStatusStateEnum } from '@sage-bionetworks/synapse-client'
 
 vi.mock('@/synapse-queries/curation/task/useCurationTask', () => ({
   useCreateCurationTask: vi.fn(),
@@ -378,7 +379,9 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
         screen.getByRole('combobox', { name: TASK_STATUS_INPUT_LABEL }),
       )
       await userEvent.click(
-        screen.getByRole('option', { name: TASK_STATUS_IN_PROGRESS_LABEL }),
+        screen.getByRole('option', {
+          name: TASK_STATUS_CONFIG[TaskStatusStateEnum.IN_PROGRESS].label,
+        }),
       )
 
       await userEvent.click(screen.getByRole('button', { name: /save/i }))
@@ -408,7 +411,9 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
         screen.getByRole('combobox', { name: TASK_STATUS_INPUT_LABEL }),
       )
       await userEvent.click(
-        screen.getByRole('option', { name: TASK_STATUS_IN_PROGRESS_LABEL }),
+        screen.getByRole('option', {
+          name: TASK_STATUS_CONFIG[TaskStatusStateEnum.IN_PROGRESS].label,
+        }),
       )
 
       await userEvent.click(screen.getByRole('button', { name: /save/i }))
