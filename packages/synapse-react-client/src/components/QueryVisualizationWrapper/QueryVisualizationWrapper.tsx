@@ -164,6 +164,7 @@ export function QueryVisualizationWrapper(
     (columnName: string, jsonPath?: string) => {
       // SWC-5982: if force-display-original-column-names is set, then just return the string
       const forceDisplayOriginalColumnName =
+        typeof localStorage !== 'undefined' &&
         localStorage.getItem('force-display-original-column-names') === 'true'
 
       if (!columnName || (forceDisplayOriginalColumnName && !jsonPath)) {

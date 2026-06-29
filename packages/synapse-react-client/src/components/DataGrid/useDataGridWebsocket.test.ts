@@ -547,6 +547,35 @@ describe('useDataGridWebSocket', () => {
     expect(result.current.websocketError).toBe('something went wrong')
   })
 
+  it('should store the normalized error in websocketError when the server sends an error payload', async () => {
+    const { result } = renderHook(() => useDataGridWebSocket(), {
+      wrapper: createWrapper(),
+    })
+
+    act(() => {
+      result.current.connect(51, 'server-error-session')
+    })
+
+    await waitFor(() => {
+      expect(result.current.websocketInstance).not.toBeNull()
+    })
+
+    act(() => {
+      MockDataGridWebSocket.mock.lastCall![0].onError!({
+        message: 'DataIntegrityViolationException',
+        code: 'Bad Request',
+        errno: 400,
+      })
+    })
+
+    // Normalization details are covered by normalizeWebsocketError.test.ts;
+    // here we just verify the hook stores the result of that util.
+    expect(result.current.websocketError).toBeInstanceOf(Error)
+    expect((result.current.websocketError as Error).message).toBe(
+      'DataIntegrityViolationException',
+    )
+  })
+
   it('should disconnect the websocket on unmount without clearing the model', async () => {
     const { result, unmount } = renderHook(() => useDataGridWebSocket(), {
       wrapper: createWrapper(),

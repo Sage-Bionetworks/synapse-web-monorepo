@@ -1,15 +1,19 @@
 import { Box, IconButton, Tooltip } from '@mui/material'
-import { PushPin, PushPinOutlined } from '@mui/icons-material'
+import { Key, PushPin, PushPinOutlined } from '@mui/icons-material'
 import { TOOLTIP_DELAY_SHOW } from '@/components/SynapseTable/SynapseTableConstants'
 
 type ColumnHeaderWithTooltipProps = {
   name: string
   description?: string
   isRequired?: boolean
+  isUpsertKey?: boolean
   showPinIcon?: boolean
   isPinned?: boolean
   onTogglePin?: () => void
 }
+
+const UPSERT_KEY_TOOLTIP_TEXT =
+  'This property field is the primary key. It is used to match the existing rows when applying updates. If a value already exists the row is updated; if not, a new row is added. If multiple primary keys are defined, all primary key values must match for an existing row to be updated.'
 
 /**
  * Renders a column header. When a description is provided, hovering the column
@@ -20,6 +24,7 @@ export function ColumnHeaderWithTooltip({
   name,
   description,
   isRequired = false,
+  isUpsertKey = false,
   showPinIcon = false,
   isPinned = false,
   onTogglePin,
@@ -56,7 +61,18 @@ export function ColumnHeaderWithTooltip({
       </Box>
 
       {/* Icons area - fixed size, never shrinks */}
-      <Box sx={{ display: 'flex', gap: 0.5, flexShrink: 0 }}>
+      <Box
+        sx={{ display: 'flex', gap: 0.5, flexShrink: 0, alignItems: 'center' }}
+      >
+        {isUpsertKey && (
+          <Tooltip
+            title={UPSERT_KEY_TOOLTIP_TEXT}
+            placement="top"
+            enterNextDelay={TOOLTIP_DELAY_SHOW}
+          >
+            <Key sx={{ fontSize: '1em' }} />
+          </Tooltip>
+        )}
         {showPinIcon && onTogglePin && (
           <Tooltip
             title={isPinned ? 'Unpin column' : 'Pin column'}

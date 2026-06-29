@@ -34,7 +34,7 @@ configs, etc.) carry real content.
 ```jsonc
 // dependencies
 "@react-router/node": "^7.14.0",
-"@tanstack/react-query": "^5.80.7",
+"@tanstack/react-query": "5.80.10",
 "isbot": "^5",
 "jsdom": "^28.1.0",
 
