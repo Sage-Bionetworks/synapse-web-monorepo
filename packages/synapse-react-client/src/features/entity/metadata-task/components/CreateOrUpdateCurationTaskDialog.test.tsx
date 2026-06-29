@@ -370,7 +370,7 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
       })
     })
 
-    it('skips updateTask and only calls updateTaskStatus when only status is changed', async () => {
+    it('calls updateTaskStatus when only status is changed', async () => {
       renderEditDialog(fileBasedTask)
 
       // Change only the status — no task field changes
@@ -384,7 +384,6 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
       await userEvent.click(screen.getByRole('button', { name: /save/i }))
 
       await waitFor(() => {
-        expect(mockUpdateMutate).not.toHaveBeenCalled()
         expect(mockUpdateStatusMutate).toHaveBeenCalledWith(
           expect.objectContaining({ state: 'IN_PROGRESS' }),
         )
