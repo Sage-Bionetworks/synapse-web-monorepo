@@ -158,10 +158,10 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
             )}
           </div>
           <Box sx={{ display: 'flex', gap: 4 }}>
-            {isLoading ? (
-              <Skeleton width={100} />
+            {bundle?.entity?.name ? (
+              <Typography variant="body1">{bundle.entity.name}</Typography>
             ) : (
-              <Typography variant="body1">{bundle?.entity?.name}</Typography>
+              <Skeleton width={100} />
             )}
             {taskId && (
               <Typography variant="body1">Task ID: {taskId}</Typography>
