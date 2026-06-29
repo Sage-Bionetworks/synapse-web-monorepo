@@ -700,7 +700,7 @@ export default function CreateOrUpdateCurationTaskDialog(
           )}
           <Button
             variant="contained"
-            onClick={() => void handleSave()}
+            onClick={() => void handleSave().catch(noop)}
             disabled={isPending || selectedConcreteType === null}
           >
             Save
