@@ -17,7 +17,7 @@ const datasetParticipantCountPlotConfig: QueryWrapperSynapsePlotProps = {
     'SELECT name, participant_count FROM syn66496326 WHERE participant_count > 0 ORDER BY participant_count DESC',
   type: 'bar',
   horizontal: true,
-  xtitle: 'Participant Count (log scale)',
+  xtitle: 'Participant Count',
   // ytitle: 'Dataset',
   xaxistype: 'log',
   showlegend: false,
