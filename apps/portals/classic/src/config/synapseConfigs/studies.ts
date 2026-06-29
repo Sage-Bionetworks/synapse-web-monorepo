@@ -71,6 +71,11 @@ export const studiesSearch: SearchQueryWrapperPlotNavProps = {
   shouldDeepLink: false,
   searchIndexId: studiesSearchIndexId,
   autocompleteFieldName: 'studyName',
+  initQueryRequest: {
+    query: {
+      sort: [{ column: 'metadataStatus', direction: 'ASC' }],
+    },
+  },
   cardConfiguration: studyCardConfiguration,
   hideTopLevelControls: false,
   hideQueryCount: false,
