@@ -128,7 +128,7 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
     buttonText,
     statusState,
     onClickNextStep,
-    hasPermission,
+    hasPermission: hasPermissionToOpenGrid,
     isLoading,
     isPending,
   } = useUiForTask(taskBundle)
