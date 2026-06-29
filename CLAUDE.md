@@ -107,6 +107,66 @@ All projects extend `shared/tsconfig.base.json` (strict mode). The root `tsconfi
 
 Husky runs ESLint + oxfmt (via lint-staged) on staged files before each commit.
 
+## Code review norms
+
+Recurring expectations from this repo's PR review history. Following them up front avoids review churn — reviewers ask for these repeatedly.
+
+### Tests
+
+- New components, hooks, and bug fixes get tests. A fix should include a test that captures the bug; a new behavior should include a test that exercises it (e.g. "add a test that the button is hidden when `canDelete` is false").
+- **Query priority (React Testing Library): prefer accessible queries — `getByRole`, `getByText`, `getByLabelText` — over `data-testid`.** Find banners, buttons, etc. by `role`; it's more robust and higher priority. Add a `data-testid` only when there's no accessible query, and delete test IDs that are no longer used.
+- For data-driven logic, prefer exhaustive tests that fail when a new case is added (e.g. iterate every `EntityType` and assert no throw) rather than spot-checking one value.
+- Don't stub `fetch` directly — mock at the network layer with MSW. Group Storybook MSW handlers as `Record<string, HttpHandler[]>` so a story can override one group.
+
+### Storybook
+
+- New components and new visual states get a Storybook story — do **not** commit throwaway demo HTML or one-off pages for visual testing. Demonstrate states (loading / empty / error, or different data like DUO values) with MSW mock responses.
+
+### React patterns
+
+- Prefer the `key` prop to reset component state instead of a `useEffect` that watches a prop and resets.
+- Run post-action logic in a callback, not an effect — e.g. a react-query mutation's `onSuccess`, not a `useEffect` watching the result.
+- Memoize objects passed to query hooks or children so references are stable across renders (`useMemo` for request objects) — don't build a new object inline on every render.
+- A `useQuery` result's `data` is possibly `undefined`; handle the loading/undefined state, don't assume it's always present.
+- `import React from 'react'` is unnecessary (automatic JSX runtime).
+
+### Types & the generated client
+
+- Use the generated type guards (e.g. `instanceOfOAuthIdentityProvider`) from `@sage-bionetworks/synapse-client` rather than hand-writing type-guard helpers.
+- Don't duplicate server-side enums/values that can drift out of sync (this caused a `FeatureFlagEnum` bug); keep one source of truth.
+
+### Reuse over duplication
+
+- Before adding a helper, component, or route, check whether one already exists and reuse it (e.g. `displayToast`, existing `parseX`/`href` helpers, shared routes). Reviewers frequently flag duplicated functions and components.
+- If a new component would closely duplicate an existing one (e.g. another plot like `SynapsePlot`), extend the existing component to cover the missing case rather than forking a near-copy.
+- Extract repeated style declarations into an SCSS module class or a shared `SxProps` constant instead of copy-pasting them.
+
+### Constants over hardcoded values
+
+- Pull magic numbers, repeated strings, and limits into named constants, and reference the **same** constant from both the component and its tests so they can't drift. Keep a single source of truth for repeated theme values.
+- Hardcoding is acceptable when there's genuinely no variation yet — don't over-parameterize prematurely. But hardcode _deliberately_: make the source obvious, and be wary of hardcoding data (counts, stats, page content) that a reader would expect to be query- or config-driven, and be ready to say where a value comes from.
+
+### Accessibility
+
+- Icon-only buttons need an `aria-label`; use MUI `IconButton` for interactive command-bar buttons.
+- Interactive non-button elements need `role` + `tabIndex={0}`.
+- For MUI `Select`, set/reference the `labelId` from the component (MUI a11y wants this direction).
+- Decorative images may use blank `alt`.
+
+### Module boundaries
+
+- No circular dependencies — the Vite (Rolldown) build is strict and will fail on cycles. Break a cycle by moving the shared constant/type into a neutral module.
+
+### PR hygiene
+
+- Reference the Jira ticket in the branch, PR title, and commit subject (`PORTALS-XXXX`, `SWC-XXXX`). Track follow-up or out-of-scope work in a new ticket instead of growing the PR.
+- When you fix something or adopt a convention, apply it consistently across every file the change touches — not just the first instance a reviewer points at.
+- Don't leave `console.*`, commented-out code, or other dead code in the diff.
+
+### Process & ownership
+
+- Whoever submits a change owns it going forward: maintainers will ask you to address future issues found in components you add or change, and to coordinate any required production updates. Factor this in before adding or expanding scope.
+
 ## Requirements
 
 - **Node:** >= 22, < 23
