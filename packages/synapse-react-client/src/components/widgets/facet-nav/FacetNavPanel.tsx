@@ -52,11 +52,7 @@ export type FacetNavPanelProps = {
 const maxLabelLength: number = 19
 
 // STACKED_HORIZONTAL_BAR corresponds to a bar chart where we just want to show the proportion (like a pie chart)
-export type PlotType =
-  | 'PIE'
-  | 'BAR'
-  | 'STACKED_HORIZONTAL_BAR'
-  | 'HORIZONTAL_BAR'
+export type PlotType = 'PIE' | 'BAR' | 'STACKED_HORIZONTAL_BAR'
 
 // Note: do NOT define layout as a module-level constant.
 // Plotly.js mutates the layout object it receives, and sharing one object across
@@ -174,10 +170,7 @@ export async function extractPlotDataArray(
       facet =>
         labels.find(label => label.facet === facet)?.label ?? facet.value,
     )
-  } else if (
-    plotType === 'STACKED_HORIZONTAL_BAR' ||
-    plotType === 'HORIZONTAL_BAR'
-  ) {
+  } else if (plotType === 'STACKED_HORIZONTAL_BAR') {
     x = counts
   }
 
@@ -186,11 +179,6 @@ export async function extractPlotDataArray(
     y = facetToPlot.facetValues.map(facet => facet.count)
   } else if (plotType === 'STACKED_HORIZONTAL_BAR') {
     y = Array(x?.length).fill('Proportional') // single value for every x value
-  } else if (plotType === 'HORIZONTAL_BAR') {
-    y = facetToPlot.facetValues.map(
-      facet =>
-        labels.find(label => label.facet === facet)?.label ?? facet.value,
-    )
   }
 
   const singleChartData: Plotly.Data = {
@@ -199,27 +187,20 @@ export async function extractPlotDataArray(
     text,
     x,
     y,
-    orientation:
-      plotType === 'STACKED_HORIZONTAL_BAR' || plotType === 'HORIZONTAL_BAR'
-        ? 'h'
-        : 'v',
+    orientation: plotType === 'STACKED_HORIZONTAL_BAR' ? 'h' : 'v',
     // @ts-expect-error
     facetEnumerationValues: facetToPlot.facetValues.map(
       facetValue => facetValue.value,
     ),
     name: facetToPlot.columnName,
     textposition:
-      plotType === 'STACKED_HORIZONTAL_BAR' ||
-      plotType === 'BAR' ||
-      plotType === 'HORIZONTAL_BAR'
+      plotType === 'STACKED_HORIZONTAL_BAR' || plotType === 'BAR'
         ? 'none'
         : 'inside',
     hovertemplate:
       plotType === 'PIE'
         ? '<b>%{text}</b><br>%{value} (%{percent})<br><extra></extra>'
-        : plotType === 'HORIZONTAL_BAR'
-          ? '<b>%{y}</b><br>%{x}<extra></extra>'
-          : '<b>%{text}: </b><br>%{value} <br><extra></extra>',
+        : '<b>%{text}: </b><br>%{value} <br><extra></extra>',
     textinfo: 'none',
     type: plotType === 'PIE' ? 'pie' : 'bar',
     pull:
@@ -287,7 +268,6 @@ export function getPlotStyle(
         quotient = 0.6
         break
       case 'STACKED_HORIZONTAL_BAR':
-      case 'HORIZONTAL_BAR':
         quotient = 1
         break
     }
@@ -352,8 +332,7 @@ function FacetNavPanel(props: FacetNavPanelProps) {
       annotations: [],
       margin: { l: 0, r: 0, b: 0, t: 0, pad: 0 },
       yaxis: {
-        // Show category labels on the y-axis for horizontal bar charts in modal view
-        visible: isModalView && plotType === 'HORIZONTAL_BAR',
+        visible: false,
         showgrid: false,
         automargin: true,
       },
@@ -405,7 +384,6 @@ function FacetNavPanel(props: FacetNavPanelProps) {
         }}
       >
         <MenuItem value={'BAR'}>Bar Chart</MenuItem>
-        <MenuItem value={'HORIZONTAL_BAR'}>Horizontal Bar Chart</MenuItem>
         <MenuItem value={'PIE'}>Pie Chart</MenuItem>
       </Select>
     </StyledFormControl>

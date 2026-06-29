@@ -136,5 +136,5 @@ export const datasetsSearch: SearchQueryWrapperPlotNavProps = {
     datasetSizePlotConfig,
     datasetParticipantCountPlotConfig,
   ],
-  initialPlotTypeByFacetColumnName: { diseaseSubtype: 'HORIZONTAL_BAR' },
+  initialPlotTypeByFacetColumnName: { diseaseSubtype: 'BAR' },
 }
