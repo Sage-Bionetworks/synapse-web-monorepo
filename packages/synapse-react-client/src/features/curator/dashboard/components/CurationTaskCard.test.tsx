@@ -1,10 +1,7 @@
 import CreateOrUpdateCurationTaskDialog from '@/features/entity/metadata-task/components/CreateOrUpdateCurationTaskDialog'
 import useOpenCuratorFromTaskButton from '@/features/entity/metadata-task/hooks/useOpenCuratorButton'
 import { createMockTaskBundle } from '@/mocks/curation/mockCurationTask'
-import {
-  useGetEntity,
-  useGetEntityPermissions,
-} from '@/synapse-queries/entity/useEntity'
+import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
 import { CurationTask, TaskBundle } from '@sage-bionetworks/synapse-client'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -45,17 +42,15 @@ vi.mock('./UserOrTeamChip', () => ({
   default: () => null,
 }))
 
-vi.mock('@/synapse-queries/entity/useEntity', () => ({
-  useGetEntityPermissions: vi.fn(),
-  useGetEntity: vi.fn(),
+vi.mock('@/synapse-queries/entity/useEntityBundle', () => ({
+  default: vi.fn(),
 }))
 
 const mockUseOpenCuratorFromTaskButton = vi.mocked(useOpenCuratorFromTaskButton)
 const mockCreateOrUpdateCurationTaskDialog = vi.mocked(
   CreateOrUpdateCurationTaskDialog,
 )
-const mockUseGetEntityPermissions = vi.mocked(useGetEntityPermissions)
-const mockUseGetEntity = vi.mocked(useGetEntity)
+const mockUseGetEntityBundle = vi.mocked(useGetEntityBundle)
 
 const mockTaskBundle = createMockTaskBundle({
   projectId: 'syn123',
@@ -73,12 +68,9 @@ beforeEach(() => {
     isPending: false,
     onClick: vi.fn(),
   })
-  mockUseGetEntityPermissions.mockReturnValue({
-    data: { canEdit: true },
-  } as unknown as ReturnType<typeof useGetEntityPermissions>)
-  mockUseGetEntity.mockReturnValue({ data: undefined } as unknown as ReturnType<
-    typeof useGetEntity
-  >)
+  mockUseGetEntityBundle.mockReturnValue({
+    data: { permissions: { canEdit: true } },
+  } as unknown as ReturnType<typeof useGetEntityBundle>)
 })
 
 describe('CurationTaskCard', () => {
@@ -90,9 +82,9 @@ describe('CurationTaskCard', () => {
   })
 
   it('does not render the task settings button when the user cannot edit', () => {
-    mockUseGetEntityPermissions.mockReturnValue({
-      data: { canEdit: false },
-    } as unknown as ReturnType<typeof useGetEntityPermissions>)
+    mockUseGetEntityBundle.mockReturnValue({
+      data: { permissions: { canEdit: false } },
+    } as unknown as ReturnType<typeof useGetEntityBundle>)
     renderComponent()
     expect(
       screen.queryByRole('button', { name: /task settings/i }),

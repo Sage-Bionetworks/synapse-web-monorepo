@@ -2,10 +2,7 @@ import { displayToast } from '@/components'
 import CreateOrUpdateCurationTaskDialog from '@/features/entity/metadata-task/components/CreateOrUpdateCurationTaskDialog'
 import useOpenCuratorFromTaskButton from '@/features/entity/metadata-task/hooks/useOpenCuratorButton'
 import { OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE } from '@/features/entity/metadata-task/utils/constants'
-import {
-  useGetEntity,
-  useGetEntityPermissions,
-} from '@/synapse-queries/entity/useEntity'
+import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
 import {
   Box,
   Button,
@@ -142,9 +139,11 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   const projectId = taskBundle.task?.projectId
-  const { data: permissions } = useGetEntityPermissions(projectId ?? '')
-  const { data: project } = useGetEntity(projectId)
-  const canEdit = permissions?.canEdit ?? false
+  const { data: bundle } = useGetEntityBundle(projectId, undefined, {
+    includeEntity: true,
+    includePermissions: true,
+  })
+  const canEdit = bundle?.permissions?.canEdit ?? false
 
   const onClickAction = hasPermission
     ? onClickNextStep
@@ -179,7 +178,7 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
             )}
           </div>
           <Box sx={{ display: 'flex', gap: 4 }}>
-            <Typography variant="body1">{project?.name}</Typography>
+            <Typography variant="body1">{bundle?.entity?.name}</Typography>
             {taskId && (
               <Typography variant="body1">Task ID: {taskId}</Typography>
             )}
