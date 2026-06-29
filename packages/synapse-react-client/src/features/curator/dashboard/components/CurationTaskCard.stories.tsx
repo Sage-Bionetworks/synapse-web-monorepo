@@ -44,13 +44,15 @@ export const Demo: StoryObj<{ state: TaskStatusStateEnum; canEdit: boolean }> =
     parameters: {
       msw: {
         handlers: [
-          http.get(
-            `${MOCK_REPO_ORIGIN}/repo/v1/entity/:entityId/permissions`,
-            ({ params }) =>
-              HttpResponse.json(
-                { canEdit: params.entityId === CAN_EDIT_PROJECT_ID },
-                { status: 200 },
-              ),
+          http.post(
+            `${MOCK_REPO_ORIGIN}/repo/v1/entity/:entityId/bundle2`,
+            ({ params }) => {
+              const canEdit = params.entityId === CAN_EDIT_PROJECT_ID
+              return HttpResponse.json({
+                entity: { name: 'Precision Drug Treatment Profiling' },
+                permissions: { canEdit },
+              })
+            },
           ),
         ],
       },
