@@ -89,6 +89,7 @@ describe('modelColsToGrid', () => {
       onTogglePin: undefined,
       showPinIcon: false,
       schemaPropertyInfo: schemaPropertiesInfo.status,
+      isUpsertKey: false,
     })
   })
 
@@ -117,6 +118,7 @@ describe('modelColsToGrid', () => {
       onTogglePin: undefined,
       showPinIcon: false,
       schemaPropertyInfo: undefined,
+      isUpsertKey: false,
     })
   })
 
@@ -151,6 +153,7 @@ describe('modelColsToGrid', () => {
       onTogglePin: undefined,
       showPinIcon: false,
       schemaPropertyInfo: schemaPropertiesInfo.partialColumn,
+      isUpsertKey: false,
     })
   })
 
@@ -191,6 +194,7 @@ describe('modelColsToGrid', () => {
       onTogglePin: undefined,
       showPinIcon: false,
       schemaPropertyInfo: schemaPropertiesInfo.complexColumn,
+      isUpsertKey: false,
     })
   })
 
@@ -225,6 +229,7 @@ describe('modelColsToGrid', () => {
       onTogglePin: undefined,
       showPinIcon: false,
       schemaPropertyInfo: schemaPropertiesInfo.undefinedTypeColumn,
+      isUpsertKey: false,
     })
   })
 
@@ -259,6 +264,7 @@ describe('modelColsToGrid', () => {
       onTogglePin: undefined,
       showPinIcon: false,
       schemaPropertyInfo: schemaPropertiesInfo.nullEnumColumn,
+      isUpsertKey: false,
     })
   })
 
@@ -312,6 +318,7 @@ describe('modelColsToGrid', () => {
       onTogglePin: undefined,
       showPinIcon: false,
       schemaPropertyInfo: schemaPropertiesInfo.id,
+      isUpsertKey: false,
     })
 
     expect((result[1] as any).mockConfig).toEqual({
@@ -329,6 +336,7 @@ describe('modelColsToGrid', () => {
       onTogglePin: undefined,
       showPinIcon: false,
       schemaPropertyInfo: schemaPropertiesInfo.tags,
+      isUpsertKey: false,
     })
 
     expect((result[2] as any).mockConfig).toEqual({
@@ -343,6 +351,7 @@ describe('modelColsToGrid', () => {
       onTogglePin: undefined,
       showPinIcon: false,
       schemaPropertyInfo: schemaPropertiesInfo.active,
+      isUpsertKey: false,
     })
 
     expect((result[3] as any).mockConfig).toEqual({
@@ -357,6 +366,7 @@ describe('modelColsToGrid', () => {
       onTogglePin: undefined,
       showPinIcon: false,
       schemaPropertyInfo: schemaPropertiesInfo.count,
+      isUpsertKey: false,
     })
   })
 
@@ -415,6 +425,7 @@ describe('modelColsToGrid', () => {
       onTogglePin: undefined,
       showPinIcon: false,
       schemaPropertyInfo: schemaPropertiesInfo.testColumn,
+      isUpsertKey: false,
     })
   })
 })
@@ -645,6 +656,18 @@ describe('modelColsToGrid - column pinning', () => {
     expect((result[0] as any).mockConfig.onTogglePin).toBeUndefined()
   })
 
+  it('should pass isUpsertKey: false for all columns when upsertKey is not provided', () => {
+    const result = modelColsToGrid(
+      columnNames,
+      columnOrder,
+      schemaPropertiesInfo,
+    )
+
+    result.forEach(col => {
+      expect((col as any).mockConfig.isUpsertKey).toBe(false)
+    })
+  })
+
   it('should show pin icon on first column even when columns are reordered', () => {
     const onTogglePin = vi.fn()
     const reorderedColumnOrder = [1, 0, 3, 2] // Different order
@@ -669,5 +692,82 @@ describe('modelColsToGrid - column pinning', () => {
     expect((result[1] as any).mockConfig.showPinIcon).toBe(false)
     expect((result[2] as any).mockConfig.showPinIcon).toBe(false)
     expect((result[3] as any).mockConfig.showPinIcon).toBe(false)
+  })
+})
+
+describe('modelColsToGrid - upsertKey', () => {
+  const columnNames = ['org', 'id', 'name', 'value']
+  const columnOrder = [0, 1, 2, 3]
+  const schemaPropertiesInfo: SchemaPropertiesMap = {
+    org: {
+      type: { type: 'string', isArray: false },
+      isRequired: true,
+      enumeratedValues: null,
+    },
+    id: {
+      type: { type: 'string', isArray: false },
+      isRequired: true,
+      enumeratedValues: null,
+    },
+    name: {
+      type: { type: 'string', isArray: false },
+      isRequired: false,
+      enumeratedValues: null,
+    },
+    value: {
+      type: { type: 'string', isArray: false },
+      isRequired: false,
+      enumeratedValues: null,
+    },
+  }
+
+  it('should set isUpsertKey: false for all columns when upsertKey is empty', () => {
+    const result = modelColsToGrid(
+      columnNames,
+      columnOrder,
+      schemaPropertiesInfo,
+      {},
+      new Set(),
+      undefined,
+      [],
+    )
+
+    result.forEach(col => {
+      expect((col as any).mockConfig.isUpsertKey).toBe(false)
+    })
+  })
+
+  it('should set isUpsertKey: true only on the matching column when upsertKey has one entry', () => {
+    const result = modelColsToGrid(
+      columnNames,
+      columnOrder,
+      schemaPropertiesInfo,
+      {},
+      new Set(),
+      undefined,
+      ['id'],
+    )
+
+    expect((result[0] as any).mockConfig.isUpsertKey).toBe(false) // org
+    expect((result[1] as any).mockConfig.isUpsertKey).toBe(true) // id
+    expect((result[2] as any).mockConfig.isUpsertKey).toBe(false) // name
+    expect((result[3] as any).mockConfig.isUpsertKey).toBe(false) // value
+  })
+
+  it('should set isUpsertKey: true on all matching columns when upsertKey has multiple entries', () => {
+    const result = modelColsToGrid(
+      columnNames,
+      columnOrder,
+      schemaPropertiesInfo,
+      {},
+      new Set(),
+      undefined,
+      ['org', 'id'],
+    )
+
+    expect((result[0] as any).mockConfig.isUpsertKey).toBe(true) // org
+    expect((result[1] as any).mockConfig.isUpsertKey).toBe(true) // id
+    expect((result[2] as any).mockConfig.isUpsertKey).toBe(false) // name
+    expect((result[3] as any).mockConfig.isUpsertKey).toBe(false) // value
   })
 })

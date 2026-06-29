@@ -1,5 +1,8 @@
 import LargeButton from '@/components/styled/LargeButton'
 import SynapseClient from '@/synapse-client'
+import { KeyFactory } from '@/synapse-queries/KeyFactory'
+import { tableQueryUseQueryDefaults } from '@/synapse-queries/entity/useGetQueryResultBundle'
+import { getUserProfilesWithProfilePicAttachedQueryOptions } from '@/synapse-queries/user/useUserBundle'
 import { SynapseConstants } from '@/utils'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import {
@@ -14,8 +17,8 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import { useState } from 'react'
-import { useDeepCompareEffectNoCheck } from 'use-deep-compare-effect'
+import { QueryClient, useQuery } from '@tanstack/react-query'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { LoadingUserCardMedium } from '../UserCard/UserCardMedium'
 import UserCardList from './UserCardList'
 
@@ -39,35 +42,78 @@ export const getDisplayIds = (
   ids: string[] = [],
   count: number = DEFAULT_DISPLAY_COUNT,
   storageUidKey: string,
-) => {
-  let storedIds: string[] = []
-  let newIds: string[] = []
-  const storedIdsStr = localStorage.getItem(storageUidKey)
-  if (storedIdsStr != null) {
-    storedIds = JSON.parse(storedIdsStr)
+): string[] => {
+  // Guard against SSR / Node.js environments where localStorage is unavailable
+  if (typeof localStorage === 'undefined') {
+    return ids.slice(0, count)
   }
-  if (!storedIds.length) {
-    // no stuff in storage
-    newIds = ids.slice(0, count)
-    localStorage.setItem(storageUidKey, JSON.stringify(newIds))
-    return newIds
-  } else {
-    // has stuff in storage
-    const filtered = ids.filter(item => !storedIds.includes(item))
-    if (filtered.length >= count) {
-      newIds = filtered.slice(0, count)
-      localStorage.setItem(
-        storageUidKey,
-        JSON.stringify(storedIds.concat(newIds)),
-      )
-      return newIds
-    } else {
-      localStorage.removeItem(storageUidKey)
-      const part = ids.slice(0, count - filtered.length)
-      localStorage.setItem(storageUidKey, JSON.stringify(part))
-      return filtered.concat(part)
-    }
+  const storedIdsJson = localStorage.getItem(storageUidKey)
+  const seenIds: string[] = storedIdsJson
+    ? (JSON.parse(storedIdsJson) as string[])
+    : []
+
+  if (!seenIds.length) {
+    const selected = ids.slice(0, count)
+    localStorage.setItem(storageUidKey, JSON.stringify(selected))
+    return selected
   }
+
+  const seenSet = new Set(seenIds)
+  const unseenIds = ids.filter(id => !seenSet.has(id))
+
+  if (unseenIds.length >= count) {
+    const selected = unseenIds.slice(0, count)
+    localStorage.setItem(
+      storageUidKey,
+      JSON.stringify([...seenIds, ...selected]),
+    )
+    return selected
+  }
+
+  // Not enough unseen IDs — reset and cycle back to the beginning
+  const fromStart = ids.slice(0, count - unseenIds.length)
+  localStorage.setItem(storageUidKey, JSON.stringify(fromStart))
+  return [...unseenIds, ...fromStart]
+}
+
+function buildRequest(
+  sql: string,
+  options?: {
+    selectedFacets?: FacetColumnRequest[]
+    searchParams?: Record<string, string>
+    sqlOperator?: SQLOperator
+    additionalFiltersSessionStorageKey?: string
+  },
+): QueryBundleRequest {
+  const entityId = parseEntityIdFromSqlStatement(sql)
+  const additionalFilters = getAdditionalFilters(
+    options?.searchParams,
+    options?.sqlOperator,
+    options?.additionalFiltersSessionStorageKey,
+  )
+  return {
+    partMask: SynapseConstants.BUNDLE_MASK_QUERY_RESULTS,
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    entityId,
+    query: {
+      sql,
+      additionalFilters,
+      selectedFacets: options?.selectedFacets,
+    },
+  }
+}
+
+function extractUserIdsFromBundle(
+  bundle: QueryResultBundle | undefined,
+): string[] {
+  if (!bundle?.queryResult?.queryResults.rows) return []
+  const ownerIdColumnIndex = bundle.queryResult.queryResults.headers.findIndex(
+    el => el.columnType === ColumnTypeEnum.USERID,
+  )
+  if (ownerIdColumnIndex === -1) return []
+  return bundle.queryResult.queryResults.rows
+    .map(d => d.values[ownerIdColumnIndex])
+    .filter((id): id is string => id !== null)
 }
 
 export function UserCardListRotate({
@@ -82,78 +128,59 @@ export function UserCardListRotate({
   sqlOperator,
   additionalFiltersSessionStorageKey,
 }: UserCardListRotateProps) {
-  const { accessToken } = useSynapseContext()
-  const [userIds, setUserIds] = useState<string[]>([])
-  const [queryData, setQueryData] = useState<QueryResultBundle>()
-  const [isLoading, setIsLoading] = useState<boolean>()
-  let mounted = true
+  const { accessToken, keyFactory } = useSynapseContext()
   const storageUidKey = `${STORED_UID_KEY}-${sql}-${JSON.stringify(
     selectedFacets,
   )}`
-  useDeepCompareEffectNoCheck(() => {
-    const fetchData = async function () {
-      setIsLoading(true)
-      const entityId = parseEntityIdFromSqlStatement(sql)
-      const additionalFilters = getAdditionalFilters(
-        searchParams,
-        sqlOperator,
-        additionalFiltersSessionStorageKey,
-      )
-      const partMask = SynapseConstants.BUNDLE_MASK_QUERY_RESULTS
-      const request: QueryBundleRequest = {
-        partMask,
-        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-        entityId,
-        query: {
-          sql,
-          additionalFilters,
-          selectedFacets,
-        },
-      }
 
-      const queryResultBundle = await SynapseClient.getFullQueryTableResults(
-        request,
-        accessToken,
-      )
-      const { queryResult } = queryResultBundle
-      if (queryResult?.queryResults.rows) {
-        // find the column that has the USER_ID in it.
-        const ownerIdColumnIndex = queryResult.queryResults.headers.findIndex(
-          el => el.columnType === ColumnTypeEnum.USERID,
-        )
-        const ids: string[] = queryResult.queryResults.rows
-          .map(d => d.values[ownerIdColumnIndex])
-          .filter((id): id is string => id !== null)
-        if (mounted) {
-          const newIds = getDisplayIds(ids, count, storageUidKey)
-          setUserIds(newIds)
-          if (useQueryResultUserData) {
-            setQueryData(queryResultBundle)
-          }
-          setIsLoading(false)
-        }
-      } else {
-        console.log('UserCardListRotate: Error getting data')
-      }
-    }
-    fetchData()
+  const request = buildRequest(sql, {
+    selectedFacets,
+    searchParams,
+    sqlOperator,
+    additionalFiltersSessionStorageKey,
+  })
 
-    return () => {
-      mounted = false
+  const { data: queryResultBundle, isPending } = useQuery({
+    ...tableQueryUseQueryDefaults,
+    queryKey: keyFactory.getFullTableQueryResultQueryKey(request, false),
+    queryFn: () => SynapseClient.getFullQueryTableResults(request, accessToken),
+  })
+
+  const [rotatedShownIds, setRotatedShownIds] = useState<string[]>([])
+  const allIds = useMemo(
+    () => extractUserIdsFromBundle(queryResultBundle),
+    [queryResultBundle],
+  )
+
+  const firstNIds = allIds.slice(0, count)
+
+  // Not ideal to use an effect, but this ensures this is isomorphic for SSG
+  // while ensuring a new set of IDs is shown after client rendering takes over.
+  const hasMounted = useRef(false)
+  useEffect(() => {
+    if (!hasMounted.current) {
+      hasMounted.current = true
+      setRotatedShownIds(getDisplayIds(allIds, count, storageUidKey))
     }
-  }, [sql, selectedFacets, count, accessToken, searchParams, sqlOperator])
+  }, [allIds, count, storageUidKey])
+
+  const renderedIds = rotatedShownIds.length > 0 ? rotatedShownIds : firstNIds
 
   return (
     <div className="UserCardListRotate">
-      {isLoading && <LoadingUserCardMedium />}
-      {!isLoading && userIds.length === 0 && (
+      {isPending && <LoadingUserCardMedium />}
+      {!isPending && renderedIds.length === 0 && (
         <p className="font-italic">No one was found.</p>
       )}
-      {!isLoading && userIds.length > 0 && (
+      {!isPending && renderedIds.length > 0 && (
         <UserCardList
-          list={userIds}
+          list={renderedIds}
           size={size}
-          rowSet={queryData?.queryResult?.queryResults}
+          rowSet={
+            useQueryResultUserData
+              ? queryResultBundle?.queryResult?.queryResults
+              : undefined
+          }
         />
       )}
       {summaryLink && summaryLinkText && (
@@ -168,3 +195,46 @@ export function UserCardListRotate({
 }
 
 export default UserCardListRotate
+
+/**
+ * Prefetches the UserCardListRotate table query and the user profiles it
+ * references into a QueryClient for use with HydrationBoundary. Uses anonymous
+ * access; warm-caches for unauthenticated users.
+ */
+export async function prefetchUserCardListRotate(
+  queryClient: QueryClient,
+  sql: string,
+  options?: {
+    selectedFacets?: FacetColumnRequest[]
+    searchParams?: Record<string, string>
+    sqlOperator?: SQLOperator
+    additionalFiltersSessionStorageKey?: string
+    count?: number
+  },
+): Promise<void> {
+  const keyFactory = new KeyFactory(undefined)
+  const request = buildRequest(sql, options)
+  const queryKey = keyFactory.getFullTableQueryResultQueryKey(request, false)
+  await queryClient.prefetchQuery({
+    ...tableQueryUseQueryDefaults,
+    queryKey,
+    queryFn: () => SynapseClient.getFullQueryTableResults(request, undefined),
+  })
+
+  const queryResultBundle =
+    queryClient.getQueryData<QueryResultBundle>(queryKey)
+  // During SSR localStorage is unavailable, so getDisplayIds falls back to
+  // slice(0, count). Match that here so prefetched profiles cover exactly the
+  // IDs the first render will request.
+  const principalIds = extractUserIdsFromBundle(queryResultBundle).slice(
+    0,
+    options?.count ?? DEFAULT_DISPLAY_COUNT,
+  )
+  if (principalIds.length > 0) {
+    await queryClient.prefetchQuery(
+      getUserProfilesWithProfilePicAttachedQueryOptions(principalIds, {
+        keyFactory,
+      }),
+    )
+  }
+}

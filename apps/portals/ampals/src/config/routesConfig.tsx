@@ -62,10 +62,22 @@ const routes: RouteObject[] = [
       },
       {
         path: 'Data Access',
-        lazy: () =>
-          import('@/pages/resources/ForResearchers').then(
-            convertModuleToRouteObject,
-          ),
+        children: [
+          {
+            path: 'Data Access Overview',
+            lazy: () =>
+              import('@/pages/resources/ForResearchers').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
+            path: 'Approved Access Requests',
+            lazy: () =>
+              import('@/pages/resources/ApprovedAccessRequests').then(
+                convertModuleToRouteObject,
+              ),
+          },
+        ],
       },
       {
         path: 'Resources',

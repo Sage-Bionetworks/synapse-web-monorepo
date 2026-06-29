@@ -1,1 +1,1 @@
-export const studiesSql = `SELECT * FROM syn75404711`
+export const studiesSql = `SELECT * FROM syn75904610`

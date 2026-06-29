@@ -191,6 +191,12 @@ function SynapseGridInner({
     entityData?.concreteType ===
     'org.sagebionetworks.repo.model.table.EntityView'
 
+  // If grid source entity is a recordSet, get its upsert key(s)
+  // from the entity bundle
+  const upsertKey = !entityIsView
+    ? (entityData as { upsertKey?: string[] } | undefined)?.upsertKey
+    : []
+
   // Process schema properties once
   const schemaPropertiesInfo = useMemo(() => {
     return getSchemaPropertiesInfo(jsonSchema ?? null)
@@ -519,6 +525,7 @@ function SynapseGridInner({
                     handleChange={handleChange}
                     handleSelectionChange={handleSelectionChange}
                     remoteSelections={remoteSelections}
+                    upsertKey={upsertKey}
                   />
                 </Grid>
               </>

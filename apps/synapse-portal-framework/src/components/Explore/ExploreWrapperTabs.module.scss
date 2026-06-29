@@ -20,4 +20,9 @@
   &:hover {
     border-bottom-color: var(--synapse-secondary-action-color);
   }
+  &:focus-visible,
+  &:global(.Mui-focusVisible) {
+    outline: 2px solid var(--synapse-focus-color);
+    outline-offset: -2px;
+  }
 }

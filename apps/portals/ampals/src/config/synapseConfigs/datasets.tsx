@@ -120,13 +120,17 @@ export const datasetsSearch: SearchQueryWrapperPlotNavProps = {
   rgbIndex,
   name: 'Datasets',
   shouldDeepLink: false,
-  cardConfiguration: datasetCardConfiguration,
   columnAliases,
   facetsToPlot: ['diseaseSubtype', 'assay'],
   searchIndexId: datasetsSearchIndexId,
   autocompleteFieldName: 'name',
   hideTopLevelControls: false,
   hideQueryCount: false,
+  tableConfiguration: {
+    columnLinks: datasetColumnLinks,
+    showAccessColumn: false, // use custom access column instead
+    customColumns: [ampAlsAccessColumn],
+  },
   customPlots: [
     datasetItemCountPlotConfig,
     datasetSizePlotConfig,
