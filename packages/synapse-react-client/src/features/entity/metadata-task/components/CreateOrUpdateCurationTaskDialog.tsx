@@ -610,7 +610,7 @@ export default function CreateOrUpdateCurationTaskDialog(
                   labelId="dlg-task-status-label"
                   value={displayedStatusState ?? ''}
                   label={TASK_STATUS_INPUT_LABEL}
-                  disabled={isStatusFetching}
+                  disabled={isStatusFetching || currentTaskStatus == null}
                   onChange={e =>
                     setPendingStatusState(e.target.value as TaskStatusStateEnum)
                   }
