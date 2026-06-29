@@ -3,7 +3,15 @@ import CreateOrUpdateCurationTaskDialog from '@/features/entity/metadata-task/co
 import useOpenCuratorFromTaskButton from '@/features/entity/metadata-task/hooks/useOpenCuratorButton'
 import { OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE } from '@/features/entity/metadata-task/utils/constants'
 import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
-import { Box, Card, Chip, Divider, IconButton, Typography } from '@mui/material'
+import {
+  Box,
+  Card,
+  Chip,
+  Divider,
+  IconButton,
+  Skeleton,
+  Typography,
+} from '@mui/material'
 import {
   TaskBundle,
   TaskStatusStateEnum,
@@ -136,12 +144,9 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
 
   function onClickAction() {
     if (hasPermissionToOpenGrid) {
-        onClickNextStep()
+      onClickNextStep()
     } else {
-        displayToast(
-          OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE,
-          'danger',
-        )
+      displayToast(OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE, 'danger')
     }
   }
 
@@ -162,7 +167,11 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
             )}
           </div>
           <Box sx={{ display: 'flex', gap: 4 }}>
-            <Typography variant="body1">{bundle?.entity?.name}</Typography>
+            {isLoading ? (
+              <Skeleton width={100} />
+            ) : (
+              <Typography variant="body1">{bundle?.entity?.name}</Typography>
+            )}
             {taskId && (
               <Typography variant="body1">Task ID: {taskId}</Typography>
             )}
