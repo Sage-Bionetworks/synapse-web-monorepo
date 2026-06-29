@@ -134,14 +134,16 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
   })
   const canEdit = bundle?.permissions?.canEdit ?? false
 
-  const onClickAction = hasPermission
-    ? onClickNextStep
-    : () => {
+  function onClickAction() {
+    if (hasPermissionToOpenGrid) {
+        onClickNextStep()
+    } else {
         displayToast(
           OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE,
           'danger',
         )
-      }
+    }
+  }
 
   return (
     <Card className={classNames(sharedStyles.card, styles.card)}>
