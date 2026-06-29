@@ -52,21 +52,18 @@ export type FacetNavPanelProps = {
 const maxLabelLength: number = 19
 
 // STACKED_HORIZONTAL_BAR corresponds to a bar chart where we just want to show the proportion (like a pie chart)
-export type PlotType = 'PIE' | 'BAR' | 'STACKED_HORIZONTAL_BAR'
+export type PlotType =
+  | 'PIE'
+  | 'BAR'
+  | 'STACKED_HORIZONTAL_BAR'
+  | 'HORIZONTAL_BAR'
 
-const layout: Partial<Plotly.Layout> = {
-  showlegend: false,
-  annotations: [],
-  margin: { l: 0, r: 0, b: 0, t: 0, pad: 0 },
-  yaxis: {
-    visible: false,
-    showgrid: false,
-  },
-  xaxis: {
-    visible: false,
-    showgrid: false,
-  },
-}
+// Note: do NOT define layout as a module-level constant.
+// Plotly.js mutates the layout object it receives, and sharing one object across
+// multiple chart instances causes cross-instance corruption (e.g. when the expand
+// modal mounts a second FacetNavPanel with the same layout object, Plotly's
+// mutations to the inner chart's layout will silently break the outer chart).
+// Instead, each component instance computes its own layout via useMemo.
 
 export type GraphData = {
   data: Plotly.Data[]
@@ -177,7 +174,10 @@ export async function extractPlotDataArray(
       facet =>
         labels.find(label => label.facet === facet)?.label ?? facet.value,
     )
-  } else if (plotType === 'STACKED_HORIZONTAL_BAR') {
+  } else if (
+    plotType === 'STACKED_HORIZONTAL_BAR' ||
+    plotType === 'HORIZONTAL_BAR'
+  ) {
     x = counts
   }
 
@@ -186,6 +186,11 @@ export async function extractPlotDataArray(
     y = facetToPlot.facetValues.map(facet => facet.count)
   } else if (plotType === 'STACKED_HORIZONTAL_BAR') {
     y = Array(x?.length).fill('Proportional') // single value for every x value
+  } else if (plotType === 'HORIZONTAL_BAR') {
+    y = facetToPlot.facetValues.map(
+      facet =>
+        labels.find(label => label.facet === facet)?.label ?? facet.value,
+    )
   }
 
   const singleChartData: Plotly.Data = {
@@ -194,20 +199,27 @@ export async function extractPlotDataArray(
     text,
     x,
     y,
-    orientation: plotType === 'STACKED_HORIZONTAL_BAR' ? 'h' : 'v',
+    orientation:
+      plotType === 'STACKED_HORIZONTAL_BAR' || plotType === 'HORIZONTAL_BAR'
+        ? 'h'
+        : 'v',
     // @ts-expect-error
     facetEnumerationValues: facetToPlot.facetValues.map(
       facetValue => facetValue.value,
     ),
     name: facetToPlot.columnName,
     textposition:
-      plotType === 'STACKED_HORIZONTAL_BAR' || plotType === 'BAR'
+      plotType === 'STACKED_HORIZONTAL_BAR' ||
+      plotType === 'BAR' ||
+      plotType === 'HORIZONTAL_BAR'
         ? 'none'
         : 'inside',
     hovertemplate:
       plotType === 'PIE'
         ? '<b>%{text}</b><br>%{value} (%{percent})<br><extra></extra>'
-        : '<b>%{text}: </b><br>%{value} <br><extra></extra>',
+        : plotType === 'HORIZONTAL_BAR'
+          ? '<b>%{y}</b><br>%{x}<extra></extra>'
+          : '<b>%{text}: </b><br>%{value} <br><extra></extra>',
     textinfo: 'none',
     type: plotType === 'PIE' ? 'pie' : 'bar',
     pull:
@@ -275,6 +287,7 @@ export function getPlotStyle(
         quotient = 0.6
         break
       case 'STACKED_HORIZONTAL_BAR':
+      case 'HORIZONTAL_BAR':
         quotient = 1
         break
     }
@@ -331,6 +344,29 @@ function FacetNavPanel(props: FacetNavPanelProps) {
   )
   const columnType = columnModel?.columnType as ColumnTypeEnum
 
+  // Each instance needs its own layout object — Plotly.js mutates it, so sharing
+  // a module-level constant across instances causes cross-chart corruption.
+  const plotLayout = useMemo<Partial<Plotly.Layout>>(
+    () => ({
+      showlegend: false,
+      annotations: [],
+      margin: { l: 0, r: 0, b: 0, t: 0, pad: 0 },
+      yaxis: {
+        // Show category labels on the y-axis for horizontal bar charts in modal view
+        visible: isModalView && plotType === 'HORIZONTAL_BAR',
+        showgrid: false,
+        automargin: true,
+      },
+      xaxis: {
+        // Show category labels on the x-axis for vertical bar charts in modal view
+        visible: isModalView && plotType === 'BAR',
+        showgrid: false,
+        automargin: true,
+      },
+    }),
+    [isModalView, plotType],
+  )
+
   const { data: plotData } = useQuery({
     queryKey: [
       'extractPlotDataArray',
@@ -369,6 +405,7 @@ function FacetNavPanel(props: FacetNavPanelProps) {
         }}
       >
         <MenuItem value={'BAR'}>Bar Chart</MenuItem>
+        <MenuItem value={'HORIZONTAL_BAR'}>Horizontal Bar Chart</MenuItem>
         <MenuItem value={'PIE'}>Pie Chart</MenuItem>
       </Select>
     </StyledFormControl>
@@ -449,7 +486,7 @@ function FacetNavPanel(props: FacetNavPanelProps) {
             <div ref={plotContainerRef}>
               <Plot
                 key={`${facetToPlot.columnName}-${facetToPlot.jsonPath}-${plotType}-${plotContainerMeasurements?.width}`}
-                layout={layout}
+                layout={plotLayout}
                 data={plotData?.data ?? []}
                 style={getPlotStyle(
                   plotContainerMeasurements?.width,
