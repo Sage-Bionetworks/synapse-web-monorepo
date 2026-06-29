@@ -3,16 +3,7 @@ import CreateOrUpdateCurationTaskDialog from '@/features/entity/metadata-task/co
 import useOpenCuratorFromTaskButton from '@/features/entity/metadata-task/hooks/useOpenCuratorButton'
 import { OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE } from '@/features/entity/metadata-task/utils/constants'
 import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
-import {
-  Box,
-  Button,
-  Card,
-  Chip,
-  Divider,
-  IconButton,
-  Link,
-  Typography,
-} from '@mui/material'
+import { Box, Card, Chip, Divider, IconButton, Typography } from '@mui/material'
 import {
   TaskBundle,
   TaskStatusStateEnum,
@@ -22,7 +13,6 @@ import styles from './CurationTaskCard.module.scss'
 import NextStepButton from './NextStepButton'
 import sharedStyles from './shared.module.scss'
 import UserOrTeamChip from './UserOrTeamChip'
-import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 import { useState } from 'react'
 
@@ -136,7 +126,6 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
   } = useUiForTask(taskBundle)
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
-  const [isExpanded, setIsExpanded] = useState(false)
 
   const projectId = taskBundle.task?.projectId
   const { data: bundle } = useGetEntityBundle(projectId, undefined, {
@@ -159,14 +148,7 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
       <div className={styles.cardContent}>
         <div className={styles.mainContent}>
           <div className={styles.titleChipContainer}>
-            <Link
-              component="button"
-              variant="headline3"
-              onClick={() => setIsExpanded(v => !v)}
-              sx={{ textAlign: 'left' }}
-            >
-              {title}
-            </Link>
+            <Typography variant="headline3">{title}</Typography>
             {taskType && <TaskTypeChip label={taskType} />}
             {canEdit && (
               <IconButton
@@ -183,45 +165,28 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
               <Typography variant="body1">Task ID: {taskId}</Typography>
             )}
           </Box>
+          <Typography variant="body1">{description}</Typography>
           <div className={styles.userChipContainer}>
             {principalIds.map(principalId => (
               <UserOrTeamChip key={principalId} principalId={principalId} />
             ))}
           </div>
-          {isExpanded && (
-            <div className={styles.expandedContent}>
-              <Typography variant="body1">{description}</Typography>
-              <Button
-                variant="contained"
-                fullWidth
-                onClick={onClickAction}
-                disabled={isLoading || isPending}
-                startIcon={<TableChartOutlinedIcon />}
-              >
-                {buttonText}
-              </Button>
-            </div>
-          )}
         </div>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <TaskStatusChip state={statusState} />
         </Box>
-        {!isExpanded && (
-          <>
-            <Divider
-              orientation="vertical"
-              flexItem
-              sx={{ display: { xs: 'none', md: 'block' } }}
-            />
-            <NextStepButton
-              className={styles.cardButton}
-              buttonText={buttonText}
-              onClick={onClickAction}
-              disabled={isLoading}
-              loading={isPending}
-            />
-          </>
-        )}
+        <Divider
+          orientation="vertical"
+          flexItem
+          sx={{ display: { xs: 'none', md: 'block' } }}
+        />
+        <NextStepButton
+          className={styles.cardButton}
+          buttonText={buttonText}
+          onClick={onClickAction}
+          disabled={isLoading}
+          loading={isPending}
+        />
       </div>
       <CreateOrUpdateCurationTaskDialog
         key={String(isSettingsOpen)}
