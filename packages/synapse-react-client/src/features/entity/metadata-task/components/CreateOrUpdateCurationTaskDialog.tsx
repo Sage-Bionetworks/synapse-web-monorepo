@@ -313,28 +313,13 @@ export default function CreateOrUpdateCurationTaskDialog(
   async function handleSave() {
     const payload = buildTaskPayload()
     if (isEditMode) {
-      const statusChanged =
+      const latestTask = await updateTask(payload)
+
+      if (
         pendingStatusState !== undefined &&
-        pendingStatusState !== currentTaskStatus?.state
-
-      // Only call updateTask when mutable task fields actually changed.
-      // This lets users who can only update status (not the task itself)
-      // save without hitting a 403 on the task PUT.
-      const taskFieldsChanged =
-        payload.dataType !== task.dataType ||
-        payload.instructions !== task.instructions ||
-        payload.assigneePrincipalId !== task.assigneePrincipalId ||
-        payload.taskProperties?.suggestedAuthorizationMode !==
-          task.taskProperties?.suggestedAuthorizationMode
-
-      let latestTask: CurationTask = task
-      if (taskFieldsChanged) {
-        latestTask = await updateTask(payload)
-      }
-
-      if (statusChanged && currentTaskStatus != null) {
-        // CurationTask and TaskStatus share the same etag. Use the etag from
-        // the latest task so the status PUT isn't rejected with a 412.
+        pendingStatusState !== currentTaskStatus?.state &&
+        currentTaskStatus != null
+      ) {
         await updateTaskStatus({
           ...currentTaskStatus,
           state: pendingStatusState,
