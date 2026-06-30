@@ -7,19 +7,29 @@ const startIconStyle = {
   '& .MuiButton-startIcon': { marginRight: '4px', marginLeft: 0 },
 }
 
+// Enforced fixed heights (height + minHeight + border-box) so every action button
+// is the same height regardless of its icon size or label, with content centered.
+const COMPACT_HEIGHT = '28px'
+const PILL_HEIGHT = '32px'
+
 /** The default compact style. */
 const CompactButton = styled(Button)({
-  height: '20px',
-  padding: '2px 8px',
+  height: COMPACT_HEIGHT,
+  minHeight: COMPACT_HEIGHT,
+  boxSizing: 'border-box',
+  padding: '0 8px',
   borderColor: 'grey.400',
   fontWeight: 700,
   lineHeight: '20px',
+  whiteSpace: 'nowrap',
   ...startIconStyle,
 })
 
 /** Pill style, matching the DatasetHostingButton chip (used when actionButtonStyle === 'chip'). */
 const PillButton = styled(Button)({
-  height: '32px',
+  height: PILL_HEIGHT,
+  minHeight: PILL_HEIGHT,
+  boxSizing: 'border-box',
   borderRadius: '16px',
   padding: '0 12px',
   borderColor: 'grey.400',

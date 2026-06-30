@@ -96,6 +96,9 @@ export function DatasetHostingButton(props: DatasetHostingButtonProps) {
       clickable: true,
       sx: {
         fontWeight: 700,
+        // Match the 32px height of the pill-style GenericCardActionButton so all
+        // chip-mode action buttons line up.
+        height: '32px',
         px: 0.5,
         textDecoration: 'none',
         maxWidth: MAX_WIDTH,
