@@ -83,6 +83,14 @@ export function DatasetHostingButton(props: DatasetHostingButtonProps) {
       fontWeight: 700,
       px: 0.5,
       textDecoration: 'none',
+      // Repository names can be long (e.g. "NCBI Gene Expression Omnibus (GEO)").
+      // Cap the chip width and ellipsize the label; the full text is in the tooltip.
+      maxWidth: '240px',
+      '& .MuiChip-label': {
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+      },
       // The `warning` palette only defines `main` (gold), so MUI's auto contrast
       // text is low-contrast; and as an anchor the chip would otherwise inherit the
       // browser's blue link color. Force a dark, readable label + icon on the gold.
