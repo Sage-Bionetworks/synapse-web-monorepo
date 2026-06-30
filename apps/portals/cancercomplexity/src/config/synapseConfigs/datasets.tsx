@@ -7,42 +7,10 @@ import { datasetsSearchIndexId, datasetsSql } from '../resources'
 import { citationBoilerplateText } from './commonProps'
 import { columnIconConfigs } from './commonProps'
 import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
-import { Chip } from '@mui/material'
 
 import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 const rgbIndex = 0
-
-function DatasetCardTypeAdornment({
-  schema,
-  data,
-}: {
-  schema: Record<string, number>
-  data: string[]
-}) {
-  const downloadType = data[schema['downloadType']]
-  if (!downloadType) return null
-  return <Chip label={downloadType} size="small" />
-}
-
-export function DatasetHeaderCardTypeAdornment({
-  schema,
-  data,
-}: {
-  schema: Record<string, number>
-  data: string[]
-}) {
-  const downloadType = data[schema['downloadType']]
-  if (!downloadType) return null
-  return (
-    <Chip
-      label={downloadType}
-      size="small"
-      variant="outlined"
-      sx={{ color: 'white', borderColor: 'white' }}
-    />
-  )
-}
 
 const CUSTOM_LABEL_KEY = 'HOW TO DOWNLOAD'
 const CUSTOM_LABEL_VALUE =
@@ -117,7 +85,6 @@ export const datasetCardConfiguration: CardConfiguration = {
   genericCardSchema: datasetSchema,
   secondaryLabelLimit: 4,
   sharePageLinkButtonProps: sharePageLinkButtonDetailPageProps,
-  CardTypeAdornment: DatasetCardTypeAdornment,
   labelLinkConfig: [
     {
       isMarkdown: true,
