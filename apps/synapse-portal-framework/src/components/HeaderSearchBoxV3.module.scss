@@ -27,11 +27,16 @@
 
 .searchField {
   border-radius: 30px;
-  border: 1px solid #eee;
+  // Resting border: a clear grey so the field reads against the near-white
+  // navbar (was #eee, which was too low-contrast). Focus stays primary blue.
+  border: 1px solid var(--synapse-gray-500);
 
   :global(.MuiInputBase-root) {
     border-radius: 30px;
     background: #fcfcfc;
+    // Size to half the navbar strip height (the v3 box lives in the sticky-search
+    // navbar). The default MUI small input (~40px) looks short against the strip.
+    height: calc(var(--synapse-nav-top-height) / 2);
   }
 
   :global(.MuiInputBase-input)::placeholder {
