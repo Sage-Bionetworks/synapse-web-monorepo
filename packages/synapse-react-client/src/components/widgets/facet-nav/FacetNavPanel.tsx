@@ -456,32 +456,43 @@ function FacetNavPanel(props: FacetNavPanelProps) {
             sx={{
               display: 'grid',
               gridTemplateColumns: '50% 50%',
-              alignItems: 'center',
+              // alignItems:stretch + height:100% propagate the body's flex:1
+              // height (set in SCSS) down into the plot container so useMeasure
+              // can read it and size the Plotly chart to fill available space.
+              alignItems: 'stretch',
+              height: '100%',
             }}
             role="graphics-object"
             className="FacetNavPanel__body"
           >
-            <div ref={plotContainerRef}>
+            <div ref={plotContainerRef} style={{ height: '100%' }}>
               <Plot
-                key={`${facetToPlot.columnName}-${facetToPlot.jsonPath}-${plotType}-${plotContainerMeasurements?.width}`}
+                key={`${facetToPlot.columnName}-${facetToPlot.jsonPath}-${plotType}-${plotContainerMeasurements?.width}-${plotContainerMeasurements?.height}`}
                 layout={plotLayout}
                 data={plotData?.data ?? []}
-                style={getPlotStyle(
-                  plotContainerMeasurements?.width,
-                  plotType,
-                  isModalView ? 300 : 150,
-                )}
+                style={{
+                  ...getPlotStyle(
+                    plotContainerMeasurements?.width,
+                    plotType,
+                    isModalView ? 300 : 150,
+                  ),
+                  ...(plotContainerMeasurements?.height
+                    ? { height: `${plotContainerMeasurements.height}px` }
+                    : {}),
+                }}
                 config={{ displayModeBar: false }}
                 onClick={evt =>
                   applyFacetFilter(evt, facetToPlot, applyChangesToGraphSlice)
                 }
               />
             </div>
-            <FacetPlotLegendList
-              labels={plotData?.labels}
-              colors={plotData?.colors}
-              isExpanded={isModalView}
-            />
+            <Box sx={{ alignSelf: 'center' }}>
+              <FacetPlotLegendList
+                labels={plotData?.labels}
+                colors={plotData?.colors}
+                isExpanded={isModalView}
+              />
+            </Box>
           </Box>
         </div>
       </>
