@@ -127,7 +127,7 @@ Recurring expectations from this repo's PR review history. Following them up fro
 - Prefer the `key` prop to reset component state instead of a `useEffect` that watches a prop and resets.
 - Run post-action logic in a callback, not an effect — e.g. a react-query mutation's `onSuccess`, not a `useEffect` watching the result.
 - Memoize objects passed to query hooks or children so references are stable across renders (`useMemo` for request objects) — don't build a new object inline on every render.
-- A `useQuery` result's `data` is possibly `undefined`; handle the loading/undefined state, don't assume it's always present.
+- A `useQuery` result's `data` is possibly `undefined`; handle the loading/undefined state, don't assume it's always present. Handle loading and error states explicitly by using the `isLoading`, and `error` values returned by `useQuery`.
 - `import React from 'react'` is unnecessary (automatic JSX runtime).
 
 ### Types & the generated client
