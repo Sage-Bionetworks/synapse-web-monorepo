@@ -91,21 +91,30 @@ const ORDER: Record<DuoCategory, number> = {
 // (linked to the registry when available), and definition.
 function duoTooltipTitle(t: DuoTerm): ReactNode {
   const url = duoRegistryUrl(t)
+  const hasMeta = Boolean(t.abbr || t.code)
   return (
     <>
       <strong>{t.name}</strong>
-      <br />
-      {t.abbr}
-      {t.code ? ' · ' : ''}
-      {url ? (
-        <Link href={url} target="_blank" rel="noopener" color="inherit">
-          {t.code}
-        </Link>
-      ) : (
-        t.code
+      {hasMeta && (
+        <>
+          <br />
+          {t.abbr}
+          {t.abbr && t.code ? ' · ' : ''}
+          {url ? (
+            <Link href={url} target="_blank" rel="noopener" color="inherit">
+              {t.code}
+            </Link>
+          ) : (
+            t.code
+          )}
+        </>
       )}
-      <br />
-      {t.definition}
+      {t.definition && t.definition !== t.name && (
+        <>
+          <br />
+          {t.definition}
+        </>
+      )}
     </>
   )
 }

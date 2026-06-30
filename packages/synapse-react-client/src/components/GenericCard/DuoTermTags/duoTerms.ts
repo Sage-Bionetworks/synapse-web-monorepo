@@ -248,13 +248,6 @@ const normalize = (s: string) =>
 
 const BY_NAME = new Map(TERMS.map(t => [normalize(t.name), t]))
 const BY_CODE = new Map(TERMS.map(t => [t.code.toUpperCase(), t]))
-// A few alternate phrasings seen in the data that don't match the names above.
-const ALIASES: Record<string, string> = {
-  'not for profit non commercial use only': 'DUO:0000018',
-  'not for profit use only': 'DUO:0000018',
-  'non commercial use only': 'DUO:0000046',
-  'population origins or ancestry research': 'DUO:0000011',
-}
 
 /**
  * Resolve a raw `dataUseModifiers` value (an ontology code like DUO:0000042, a
@@ -267,20 +260,16 @@ export function resolveDuoTerm(raw: string): DuoTerm {
   if (byCode) {
     return byCode
   }
-  const key = normalize(value)
-  const match =
-    BY_NAME.get(key) ?? BY_CODE.get(ALIASES[key]?.toUpperCase() ?? '')
+  const match = BY_NAME.get(normalize(value))
   if (match) {
     return match
   }
-  const abbr = value
-    .split(/\s+/)
-    .map(w => w[0]?.toUpperCase() ?? '')
-    .join('')
-    .slice(0, 4)
+  // Unknown value: present the raw text as-is. Don't fabricate an abbreviation —
+  // known terms carry a hard-coded abbr in TERMS; a guessed initialism would be
+  // arbitrary and potentially wrong.
   return {
     code: '',
-    abbr: abbr || '?',
+    abbr: '',
     name: value,
     category: 'limit',
     definition: value,
