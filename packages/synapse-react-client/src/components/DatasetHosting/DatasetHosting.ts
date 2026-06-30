@@ -39,10 +39,23 @@ export type DatasetHostingType =
    * flag that the rest must be obtained separately.
    */
   | 'mixed'
+  /**
+   * The dataset is a record/placeholder whose data is not downloadable through
+   * Synapse, and there is no external repository to send the user to either
+   * (unlike `external-access`). No download or link action is offered — the card
+   * just signals that the data isn't available for download.
+   */
+  | 'unavailable'
 
 export type DatasetHostingConfig = {
   /** Whether the dataset's files can be downloaded through Synapse clients. */
   downloadable: boolean
+  /**
+   * If true (and not downloadable), the primary action links out to an external
+   * repository (uses externalUrl). If false/absent and not downloadable, the card
+   * shows a non-actionable "not available" chip instead of a link.
+   */
+  isExternalLink?: boolean
   /**
    * Label shown on the chip-style action button. `{repository}` is substituted
    * with the repository name when provided; if the template references
@@ -53,16 +66,17 @@ export type DatasetHostingConfig = {
   labelWithoutRepository?: string
   /** Tooltip summarizing the hosting/download caveat. `{repository}` is substituted. */
   tooltip?: string
-  /** MUI Chip color used for the button. */
-  color: 'primary' | 'warning'
+  /** MUI Chip color used for the button. `default` = neutral/non-actionable. */
+  color: 'primary' | 'warning' | 'default'
   /**
    * Icon shown on the button, encoding where the data lives relative to Synapse:
    *  - `download`: native, stored in Synapse
    *  - `external`: hosted outside Synapse but still downloadable
    *  - `launch`: not downloadable here — the user leaves Synapse to access it
    *  - `mixed`: files live in more than one location
+   *  - `unavailable`: not available for download, with no external destination
    */
-  icon: 'download' | 'external' | 'launch' | 'mixed'
+  icon: 'download' | 'external' | 'launch' | 'mixed' | 'unavailable'
 }
 
 export const DATASET_HOSTING_CONFIG: Record<
@@ -95,6 +109,7 @@ export const DATASET_HOSTING_CONFIG: Record<
   },
   'external-access': {
     downloadable: false,
+    isExternalLink: true,
     label: 'Access at {repository}',
     labelWithoutRepository: 'Access externally',
     color: 'warning',
@@ -109,6 +124,14 @@ export const DATASET_HOSTING_CONFIG: Record<
     icon: 'mixed',
     tooltip:
       'Files in this dataset live in more than one location. Some download through Synapse; others are hosted externally and must be obtained separately from {repository}.',
+  },
+  unavailable: {
+    downloadable: false,
+    label: 'Not available for download',
+    color: 'default',
+    icon: 'unavailable',
+    tooltip:
+      'This dataset is indexed for discovery, but its data is not available for download through Synapse.',
   },
 }
 

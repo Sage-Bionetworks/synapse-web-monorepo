@@ -104,6 +104,12 @@ const EXAMPLES: Record<string, DatasetCardExample> = {
     description:
       'Processed expression and imaging files are downloadable from Synapse, while the raw germline sequencing for the same samples is controlled-access in dbGaP. Download retrieves the Synapse-available files; the rest is requested separately.',
   },
+  unavailable: {
+    hosting: 'unavailable',
+    title: 'NF Registry Cohort (Record Only)',
+    description:
+      'A discovery record describing a cohort whose data is not available for download through Synapse, with no external repository to link to. No download or access action is offered.',
+  },
 }
 
 const meta = {
@@ -326,6 +332,15 @@ export const ExternalAccessOnly: StoryObj = {
  */
 export const MixedSources: StoryObj = {
   render: () => renderDatasetCard(EXAMPLES.mixed),
+}
+
+/**
+ * A discovery record whose data is not downloadable through Synapse and has no
+ * external repository to link to (distinct from external-access). The card shows
+ * a neutral, non-actionable "Not available for download" chip — no download, no link.
+ */
+export const Unavailable: StoryObj = {
+  render: () => renderDatasetCard(EXAMPLES.unavailable),
 }
 
 /**

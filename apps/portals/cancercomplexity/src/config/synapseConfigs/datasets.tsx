@@ -79,6 +79,27 @@ export const datasetSchema: TableToGenericCardMapping = {
   dataTypeIconNames: 'dataType',
   // override Download List to use downloadSynId
   downloadCartSynId: 'downloadSynId',
+  // Hosting-aware download/access (shared with NF). CCKP classifies datasets via
+  // `downloadType`, mapped here to the hosting vocabulary:
+  //  - Synapse Hosted      → synapse (in Synapse storage)
+  //  - Synapse Indexed     → external-download (externally sourced, but indexed in
+  //                          Synapse and downloadable through the clients)
+  //  - Externally Hosted   → external-access (link-only; go to the source repo,
+  //                          incl. controlled-access dbGaP/EGA)
+  //  - Not Available...    → unavailable (record only, nothing to download/link)
+  // repository ← sourceRepository; externalUrl ← externalLink (a markdown link;
+  // the card extracts the href).
+  hostingConfig: {
+    hostingColumn: 'downloadType',
+    hostingValueMap: {
+      'Synapse Hosted': 'synapse',
+      'Synapse Indexed': 'external-download',
+      'Externally Hosted': 'external-access',
+      'Not Available for Download': 'unavailable',
+    },
+    repositoryColumn: 'sourceRepository',
+    externalUrlColumn: 'externalLink',
+  },
   synapseEntityConfig: {
     id: {
       source: 'column',

@@ -3,6 +3,7 @@ import GetAppTwoTone from '@mui/icons-material/GetAppTwoTone'
 import PublicOutlined from '@mui/icons-material/PublicOutlined'
 import OpenInNew from '@mui/icons-material/OpenInNew'
 import LayersOutlined from '@mui/icons-material/LayersOutlined'
+import BlockOutlined from '@mui/icons-material/BlockOutlined'
 import { TargetEnum } from '@/utils/html/TargetEnum'
 import {
   DATASET_HOSTING_CONFIG,
@@ -17,6 +18,7 @@ const ICONS = {
   external: PublicOutlined,
   launch: OpenInNew,
   mixed: LayersOutlined,
+  unavailable: BlockOutlined,
 } as const
 
 export type DatasetHostingButtonProps = {
@@ -101,7 +103,7 @@ export function DatasetHostingButton(props: DatasetHostingButtonProps) {
         disabled={downloadLoading}
       />
     )
-  } else {
+  } else if (config.isExternalLink) {
     // The external repository is the only access path, so require a URL to act.
     chip = (
       <Chip
@@ -113,6 +115,9 @@ export function DatasetHostingButton(props: DatasetHostingButtonProps) {
         disabled={!externalUrl}
       />
     )
+  } else {
+    // No action available (e.g. `unavailable`): a non-clickable, disabled chip.
+    chip = <Chip {...commonProps} clickable={false} disabled />
   }
 
   return tooltip ? (

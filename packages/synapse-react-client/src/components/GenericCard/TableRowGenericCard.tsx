@@ -37,6 +37,7 @@ import { useInView } from 'react-intersection-observer'
 import CitationPopover from '../CitationPopover'
 import {
   DATASET_HOSTING_CONFIG,
+  type DatasetHostingType,
   normalizeHosting,
 } from '../DatasetHosting/DatasetHosting'
 import DatasetHostingButton from '../DatasetHosting/DatasetHostingButton'
@@ -161,8 +162,15 @@ export type TableToGenericCardMapping = {
    * are unaffected.
    */
   hostingConfig?: {
-    /** Column holding the hosting type (see DatasetHostingType). Blank/unknown → `synapse`. */
+    /** Column holding the hosting type. Blank/unknown → `synapse`. */
     hostingColumn: string
+    /**
+     * Optional map from the column's raw values to hosting types, for columns that
+     * use portal-specific labels rather than the canonical vocabulary (e.g. CCKP's
+     * `downloadType`: "Synapse Indexed" → `external-download`). Values not in the
+     * map fall back to `normalizeHosting` (canonical value, or → `synapse`).
+     */
+    hostingValueMap?: Record<string, DatasetHostingType>
     /** Column holding the free-text external repository name (e.g. "GEO", "dbGaP"). */
     repositoryColumn?: string
     /** Column holding the external URL used for non-downloadable (external-access) datasets. */
@@ -411,14 +419,24 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   // Opt-in hosting-aware action: when the schema declares a hosting column, the
   // primary action is a DatasetHostingButton driven by the row's hosting value.
   const hostingConfig = genericCardSchema.hostingConfig
+  const rawHostingValue = hostingConfig
+    ? getColumnValue(hostingConfig.hostingColumn)
+    : undefined
   const hostingType = hostingConfig
-    ? normalizeHosting(getColumnValue(hostingConfig.hostingColumn))
+    ? (rawHostingValue && hostingConfig.hostingValueMap?.[rawHostingValue]) ||
+      normalizeHosting(rawHostingValue)
     : undefined
   const hostingRepository = hostingConfig?.repositoryColumn
     ? getColumnValue(hostingConfig.repositoryColumn)
     : undefined
-  const hostingExternalUrl = hostingConfig?.externalUrlColumn
+  const rawHostingExternalUrl = hostingConfig?.externalUrlColumn
     ? getColumnValue(hostingConfig.externalUrlColumn)
+    : undefined
+  // The externalUrl column may be a markdown link (e.g. CCKP's `externalLink`:
+  // "[label](https://...)") rather than a plain URL — extract the href if so.
+  const hostingExternalUrl = rawHostingExternalUrl
+    ? (rawHostingExternalUrl.match(/\]\(([^)]+)\)/)?.[1] ??
+      rawHostingExternalUrl)
     : undefined
   // Non-downloadable hosting (e.g. external-access) suppresses the Synapse
   // download flow entirely; everything else keeps the add-to-download-list behavior.
@@ -698,15 +716,16 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
           {/* Hosting-aware action (opt-in via schema.hostingConfig): downloadable
               hosting toggles the same add-to-download-list flow; non-downloadable
               hosting links out to the external repository instead. */}
-          {hostingConfig && resolvedDownloadCartSynIdValue && (
-            <DatasetHostingButton
-              hosting={hostingType}
-              repository={hostingRepository}
-              externalUrl={hostingExternalUrl}
-              onDownloadClick={() => setShowDownloadConfirmation(val => !val)}
-              downloadLoading={downloadButtonLoading}
-            />
-          )}
+          {hostingConfig &&
+            (resolvedDownloadCartSynIdValue || !hostingIsDownloadable) && (
+              <DatasetHostingButton
+                hosting={hostingType}
+                repository={hostingRepository}
+                externalUrl={hostingExternalUrl}
+                onDownloadClick={() => setShowDownloadConfirmation(val => !val)}
+                downloadLoading={downloadButtonLoading}
+              />
+            )}
           {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart */}
           {!hostingConfig && resolvedDownloadCartSynIdValue && (
             <GenericCardActionButton
