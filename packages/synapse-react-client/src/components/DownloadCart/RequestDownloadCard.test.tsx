@@ -11,7 +11,6 @@ import {
   ACCESS_TYPE,
   EntityBundle,
   ErrorResponse,
-  FeatureFlagEnum,
 } from '@sage-bionetworks/synapse-types'
 import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -22,6 +21,7 @@ import {
   RequestDownloadCard,
   RequestDownloadCardProps,
 } from './RequestDownloadCard'
+import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 
 vi.mock('../EntityAclEditor/EntityAclEditorModal', () => ({
   default: vi.fn(() => null),

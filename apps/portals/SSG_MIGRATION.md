@@ -34,10 +34,9 @@ configs, etc.) carry real content.
 ```jsonc
 // dependencies
 "@react-router/node": "^7.14.0",
-"@tanstack/react-query": "^5.80.7",
+"@tanstack/react-query": "5.80.10",
 "isbot": "^5",
 "jsdom": "^28.1.0",
-"react-cookie": "^7.2.2",
 
 // devDependencies
 "@react-router/dev": "^7.14.0",
@@ -59,12 +58,12 @@ add or change it.
     "preview": "vite preview",
     "typegen": "react-router typegen", // NEW
     "type-check": "tsc --build",
-    "lint": "eslint src",
+    "lint": "oxlint src",
     "build-sitemap-routes": "vite build --config sitemap.vite.config.ts && node build/sitemap-entry.mjs",
     "_generate-sitemap": "pnpm build-sitemap-routes && tsx ../../synapse-portal-framework/src/sitemap/cli.ts \"$VITE_PORTAL_KEY\" --config src/config/sitemapConfig.ts --routes build/sitemap-routes.json --output build/client",
     "generate-sitemap": "dotenv -- pnpm _generate-sitemap",
-    "save-build-date": "mkdir -p public && date > public/build-date.txt"
-  }
+    "save-build-date": "mkdir -p public && date > public/build-date.txt",
+  },
 }
 ```
 
@@ -78,15 +77,15 @@ add or change it.
         "dependsOn": ["^build"],
         "inputs": [
           "{projectRoot}/react-router.config.ts",
-          "{projectRoot}/src/routes.ts"
+          "{projectRoot}/src/routes.ts",
         ],
-        "outputs": ["{projectRoot}/.react-router/types"]
+        "outputs": ["{projectRoot}/.react-router/types"],
       },
       "type-check": {
-        "dependsOn": ["^build", "typegen"]
-      }
-    }
-  }
+        "dependsOn": ["^build", "typegen"],
+      },
+    },
+  },
 }
 ```
 
@@ -607,11 +606,48 @@ export default function LegacyStudyRedirect() {
 ```
 
 `paramName` must match the query parameter used in the old URL. Register the
-redirect route in `routes.ts`:
+redirect route(s) in `routes.ts` using the `legacyDetailsPageRoutes` helper,
+which emits one route per known tab plus a `:tab` fallback. Multiple entries
+are needed because react-router's path scoring ranks an all-static path
+(`Explore/Studies/DetailsPage/Details`, score 44) higher than a static-plus-
+dynamic path (`Explore/Studies/:studyId/Details`, score 37). A single splat
+route (`Explore/Studies/DetailsPage/*`, score 32) loses to the real
+`:studyId/<tab>` route, so the legacy URL would match the wrong page.
+
+For tabbed detail pages, pass `knownTabPaths`:
 
 ```ts
-route('Explore/Studies/DetailsPage', 'pages/LegacyStudyRedirect.tsx'),
+import { legacyDetailsPageRoutes } from '@sage-bionetworks/synapse-portal-framework/ssg/legacyDetailsPageRoutes'
+
+// inside the route table:
+...legacyDetailsPageRoutes({
+  basePath: 'Explore/Studies/DetailsPage',
+  file: 'pages/LegacyStudyRedirect.tsx',
+  idPrefix: 'legacy-study',
+  knownTabPaths: [
+    STUDY_DETAILS_PAGE_DETAILS_TAB_PATH,
+    STUDY_DETAILS_PAGE_DATASETS_TAB_PATH,
+    STUDY_DETAILS_PAGE_FILES_TAB_PATH,
+    STUDY_DETAILS_PAGE_ADDITIONAL_FILES_TAB_PATH,
+  ],
+}),
 ```
+
+For non-tabbed detail pages, omit `knownTabPaths`:
+
+```ts
+...legacyDetailsPageRoutes({
+  basePath: 'Explore/Datasets/DetailsPage',
+  file: 'pages/LegacyDatasetRedirect.tsx',
+  idPrefix: 'legacy-dataset',
+}),
+```
+
+The redirect component re-appends the tab segment after the promoted id, so
+`/Explore/Studies/DetailsPage/Details?studyId=syn123` lands at
+`/Explore/Studies/syn123/Details`. Unknown legacy tab names hit the `:tab`
+fallback and are recovered by the parent route's `DefaultTabWildcardRedirect`
+to the default tab.
 
 ---
 

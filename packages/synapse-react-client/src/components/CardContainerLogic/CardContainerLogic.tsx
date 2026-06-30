@@ -6,7 +6,6 @@ import {
   parseEntityIdFromSqlStatement,
   SQLOperator,
 } from '@/utils/functions/SqlFunctions'
-import { removeEmptyQueryParams } from '@/utils/functions/queryUtils'
 import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
 import {
   Query,
@@ -78,6 +77,8 @@ export type CTACardLink = {
   text: string
   // column name to use for href
   link: string
+  // icon to display after link text
+  endIcon?: React.ReactNode
 }
 
 export type DescriptionConfig = {
@@ -292,10 +293,10 @@ export async function prefetchCardContainerLogicData(
   const initQueryRequest: QueryBundleRequest = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId,
-    query: removeEmptyQueryParams({
+    query: {
       sql,
       limit: DEFAULT_PAGE_SIZE,
-    } as Query),
+    },
     partMask:
       SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
       SynapseConstants.BUNDLE_MASK_QUERY_COUNT |

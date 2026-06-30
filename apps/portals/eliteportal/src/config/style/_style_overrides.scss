@@ -1,3 +1,8 @@
+// Accessible keyboard focus-ring color. See PORTALS-4277.
+:root {
+  --synapse-focus-color: #2f8d7c;
+}
+
 #header,
 #footer {
   background-color: var(--synapse-primary-action-color);

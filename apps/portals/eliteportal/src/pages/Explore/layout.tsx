@@ -14,6 +14,9 @@ function ExploreLayout() {
           path: 'Studies',
         },
         {
+          path: 'Datasets',
+        },
+        {
           displayName: 'Files',
           path: 'Data',
         },

@@ -30,7 +30,7 @@ export function rowsAreIdentical(a: DataGridRow, b: DataGridRow): boolean {
     // Treat null, undefined, and empty string as equivalent
     const isNullish = (v: unknown) => v === null || v === undefined || v === ''
     if (isNullish(aVal) && isNullish(bVal)) continue
-    if (String(aVal) !== String(bVal)) return false
+    if (!Object.is(aVal, bVal)) return false
   }
   return true
 }

@@ -12,8 +12,13 @@ import {
   NFResourceType,
   RESOURCE_TYPE_KEY_CONFIGURATION,
 } from '../doiRedirector'
-import { studiesSql, SYNAPSE_PORTAL_ID } from '../resources'
+import {
+  studiesSearchIndexId,
+  studiesSql,
+  SYNAPSE_PORTAL_ID,
+} from '../resources'
 import { columnAliases } from './commonProps'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 export const newStudiesSql = `${studiesSql} order by ROW_ID desc limit 3`
 const type = SynapseConstants.GENERIC_CARD
@@ -158,6 +163,18 @@ const studies: QueryWrapperPlotNavProps = {
       'grantDOI',
     ],
   },
+}
+
+export const studiesSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'Studies',
+  shouldDeepLink: false,
+  cardConfiguration: studyCardConfiguration,
+  columnAliases,
+  searchIndexId: studiesSearchIndexId,
+  autocompleteFieldName: 'studyName',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }
 
 export default studies

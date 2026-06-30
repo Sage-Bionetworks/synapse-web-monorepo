@@ -20,6 +20,10 @@ const routes: RouteObject[] = [
         // lazy: () => import('@/pages/Explore').then(convertModuleToRouteObject),
       },
       {
+        path: 'LegacyExplore',
+        lazy: () => import('@/pages/Explore').then(convertModuleToRouteObject),
+      },
+      {
         path: 'Explore/Standard/DetailsPage',
         lazy: () =>
           import('@/pages/StandardsDetailsPage').then(
@@ -32,6 +36,11 @@ const routes: RouteObject[] = [
           import('@/pages/OrganizationDetailsPage').then(
             convertModuleToRouteObject,
           ),
+      },
+      {
+        path: 'Explore/DataTopic/DetailsPage',
+        lazy: () =>
+          import('@/pages/TopicDetailsPage').then(convertModuleToRouteObject),
       },
       {
         path: 'Search',

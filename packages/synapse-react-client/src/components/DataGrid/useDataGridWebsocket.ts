@@ -1,5 +1,6 @@
 import { GridModel } from '@/components/DataGrid/DataGridTypes'
 import { useCRDTModelView } from '@/components/DataGrid/useCRDTModelView'
+import { normalizeWebsocketError } from '@/components/DataGrid/utils/normalizeWebsocketError'
 import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react'
 import { DataGridWebSocket } from './DataGridWebSocket'
 import { useEstablishWebsocketConnection } from '@/synapse-queries/grid/useEstablishWebsocketConnection'
@@ -28,6 +29,7 @@ interface WebSocketState {
   websocketInstance: DataGridWebSocket | null
   connectionAttemptId: number | null
   connectionError: unknown
+  websocketError: unknown
 }
 
 // Action types
@@ -44,6 +46,7 @@ type WebSocketAction =
   | { type: 'SYNC_ENDED' }
   | { type: 'MODEL_CREATED'; payload: GridModel }
   | { type: 'CONNECTION_ERROR'; payload: unknown }
+  | { type: 'WEBSOCKET_ERROR'; payload: unknown }
 
 // Reducer function
 function websocketReducer(
@@ -128,6 +131,12 @@ function websocketReducer(
         isConnecting: false,
       }
 
+    case 'WEBSOCKET_ERROR':
+      return {
+        ...state,
+        websocketError: action.payload,
+      }
+
     default:
       return state
   }
@@ -143,6 +152,7 @@ export const initialWebSocketState: WebSocketState = {
   websocketInstance: null,
   connectionAttemptId: null,
   connectionError: null,
+  websocketError: null,
 }
 
 /**
@@ -201,6 +211,11 @@ export function useDataGridWebSocket(options?: UseDataGridWebSocketOptions) {
       onReplicaDisconnected: options?.onReplicaDisconnected,
       onSyncStart: () => dispatch({ type: 'SYNC_STARTED' }),
       onSyncEnd: () => dispatch({ type: 'SYNC_ENDED' }),
+      onError: (error: unknown) =>
+        dispatch({
+          type: 'WEBSOCKET_ERROR',
+          payload: normalizeWebsocketError(error),
+        }),
     }),
     [
       handleModelCreate,
@@ -352,6 +367,7 @@ export function useDataGridWebSocket(options?: UseDataGridWebSocketOptions) {
     presignedUrl,
     errorEstablishingWebsocketConnection:
       state.connectionError ?? errorEstablishingWebsocketConnection,
+    websocketError: state.websocketError,
     hasSufficientData: isModelRenderable(state.model),
   }
 }

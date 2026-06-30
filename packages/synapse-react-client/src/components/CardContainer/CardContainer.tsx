@@ -92,7 +92,8 @@ export function CardContainer(props: CardContainerProps) {
   } = props
   const { NoContentPlaceholder } = useQueryVisualizationContext()
   const queryContext = useQueryContext()
-  const { data: queryMetadata } = useGetQueryMetadata()
+  const { data: queryMetadata, isLoading: queryMetadataIsLoading } =
+    useGetQueryMetadata({ throwOnError: true })
   const queryVisualizationContext = useQueryVisualizationContext()
 
   const dataRows: Row[] = rowSet.rows
@@ -108,7 +109,7 @@ export function CardContainer(props: CardContainerProps) {
   // non-suspense query (with conditional rendering) instead of Suspense keeps
   // the cards inline in the prerendered HTML when data is already cached,
   // rather than forcing React 19 streaming to stash them in a hidden div.
-  if (!queryMetadata) {
+  if (queryMetadataIsLoading) {
     return (
       <div>
         {type === OBSERVATION_CARD && <LoadingObservationCard />}
@@ -132,9 +133,12 @@ export function CardContainer(props: CardContainerProps) {
   if (type === MEDIUM_USER_CARD) {
     // Hard coding ownerId as a column name containing the user profile ownerId
     // for each row, grab the column with the ownerId
-    const userIdColumnIndex = rowSet.headers.findIndex(
-      el => el.columnType === ColumnTypeEnum.USERID,
-    )
+    const userIdColumnName = queryMetadata?.columnModels?.find(
+      cm => cm.columnType === ColumnTypeEnum.USERID,
+    )?.name
+    const userIdColumnIndex = userIdColumnName
+      ? rowSet.headers.findIndex(el => el.name === userIdColumnName)
+      : -1
     if (userIdColumnIndex === -1) {
       throw Error(
         'Type MEDIUM_USER_CARD specified but no columnType USERID found',
@@ -156,7 +160,7 @@ export function CardContainer(props: CardContainerProps) {
           versionNumber: rowData.versionNumber,
           data: rowData.values,
           selectColumns: rowSet.headers,
-          columnModels: queryMetadata.columnModels,
+          columnModels: queryMetadata!.columnModels,
           tableEntityConcreteType:
             tableEntityConcreteType[0] && tableEntityConcreteType[0].type,
           tableId: rowSet.tableId,

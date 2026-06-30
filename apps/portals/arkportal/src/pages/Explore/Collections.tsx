@@ -1,11 +1,12 @@
-import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
-import { datasetCollectionsCardContainerLogicProps } from '@/config/synapseConfigs/datasetcollections'
+import SearchQueryWrapperPlotNav from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
+import { datasetCollectionsSearch } from '@/config/synapseConfigs/datasetcollections'
 
 function ExploreCollections() {
   return (
-    <div className={'CollectionList'}>
-      <CardContainerLogic {...datasetCollectionsCardContainerLogicProps} />
-    </div>
+    <SearchQueryWrapperPlotNav
+      {...datasetCollectionsSearch}
+      shouldDeepLink={true}
+    />
   )
 }
 export default ExploreCollections

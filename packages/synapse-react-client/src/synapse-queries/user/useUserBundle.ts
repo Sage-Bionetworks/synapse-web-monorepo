@@ -126,10 +126,24 @@ export function useGetUserProfile(
   options?: Partial<UseQueryOptions<UserProfile, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
+  // We store the profile in a session storage cache used by SWC
+  const sessionStorageCacheKey = `${principalId}_USER_PROFILE`
 
   return useQuery({
     ...options,
     ...getUserProfileQuery(principalId, { accessToken, keyFactory }),
+    queryFn: async () => {
+      const userProfile = await SynapseClient.getUserProfileById(
+        principalId,
+        accessToken,
+      )
+      // If the profile is re-fetched, save it to sessionStorage
+      sessionStorage.setItem(
+        sessionStorageCacheKey,
+        JSON.stringify(userProfile),
+      )
+      return userProfile
+    },
   })
 }
 

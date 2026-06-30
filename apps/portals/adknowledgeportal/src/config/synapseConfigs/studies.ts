@@ -6,7 +6,12 @@ import {
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import { studiesSql, SYNAPSE_PORTAL_ID } from '../resources'
+import {
+  studiesSearchIndexId,
+  studiesSql,
+  SYNAPSE_PORTAL_ID,
+} from '../resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 import { PortalDOIConfiguration } from 'synapse-react-client/components/GenericCard/PortalDOI/PortalDOIConfiguration'
 
 export const STUDY_TABLE_COLUMN_NAMES = {
@@ -99,4 +104,16 @@ export const studiesQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
       'Program',
     ],
   },
+}
+
+export const studiesSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex: studyRgbIndex,
+  name: 'Studies',
+  shouldDeepLink: false,
+  cardConfiguration: studyCardConfiguration,
+  columnAliases: studyColumnAliases,
+  searchIndexId: studiesSearchIndexId,
+  autocompleteFieldName: 'Study_Name',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }

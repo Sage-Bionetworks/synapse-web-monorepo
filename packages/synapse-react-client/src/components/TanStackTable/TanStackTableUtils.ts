@@ -23,8 +23,8 @@ export function getCommonPinningStyles(column: Column<any>): CSSProperties {
     boxShadow: isLastLeftPinnedColumn
       ? '-4px 0 4px -4px gray inset'
       : isFirstRightPinnedColumn
-      ? '4px 0 4px -4px gray inset'
-      : undefined,
+        ? '4px 0 4px -4px gray inset'
+        : undefined,
     left: isPinned === 'left' ? `${column.getStart('left')}px` : undefined,
     right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
     opacity: isPinned ? 0.95 : 1,

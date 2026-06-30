@@ -1,9 +1,10 @@
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import { datasetsSql } from '../resources'
+import { datasetsSearchIndexId, datasetsSql } from '../resources'
 import { columnAliases as sharedColumnAliases } from './commonProps'
 import { studyColumnIconConfigs } from './studies'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 export const newDatasetsSql = `${datasetsSql} order by ROW_ID desc limit 3`
 export const datasetsRgbIndex = 8
@@ -91,6 +92,18 @@ const datasets: QueryWrapperPlotNavProps = {
       'funder',
     ],
   },
+}
+
+export const datasetsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex: datasetsRgbIndex,
+  name: 'Datasets',
+  shouldDeepLink: false,
+  cardConfiguration: datasetCardConfiguration,
+  columnAliases,
+  searchIndexId: datasetsSearchIndexId,
+  autocompleteFieldName: 'title',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }
 
 export default datasets

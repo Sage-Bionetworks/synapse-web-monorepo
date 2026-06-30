@@ -44,7 +44,9 @@ enum ExpectedColumns {
 // PORTALS-2367
 const GOALS_DESKTOP_MIN_BREAKPOINT = 1200
 
-function buildGoalsQueryBundleRequest(entityId: string): QueryBundleRequest {
+export function buildGoalsQueryBundleRequest(
+  entityId: string,
+): QueryBundleRequest {
   return {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
     entityId,
@@ -125,6 +127,7 @@ export function Goals(props: GoalsProps) {
   }, [
     countSqlColumnIndex,
     goalAssets,
+    isAssetIcon,
     linkColumnIndex,
     queryResultBundle?.queryResult,
     summaryColumnIndex,

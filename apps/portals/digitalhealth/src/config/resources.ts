@@ -4,3 +4,7 @@ export const publicationSql =
 export const studySql =
   "SELECT * FROM syn21994974.13 WHERE dhPortalIndex = 'TRUE' ORDER BY 'study'"
 export const toolsSql = 'SELECT * FROM syn22014091.1 ORDER BY "softwareName"'
+
+export const publicationSearchIndexId = 'syn75465152'
+export const studySearchIndexId = 'syn75465153'
+export const toolsSearchIndexId = 'syn75465154'

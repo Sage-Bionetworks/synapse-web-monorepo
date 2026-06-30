@@ -1,6 +1,6 @@
 import { NavbarConfig } from '@sage-bionetworks/synapse-portal-framework/components/navbar/Navbar'
 import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
+import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
 import Navbar from '@sage-bionetworks/synapse-portal-framework/components/navbar/Navbar'
 
 export default function AdkpNavbar() {

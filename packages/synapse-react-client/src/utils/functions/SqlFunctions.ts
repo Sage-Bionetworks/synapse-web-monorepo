@@ -43,7 +43,7 @@ export const FTS_SEARCH_TERM = 'FTS_SEARCH_TERM'
 export const FTS_SEARCH_ROLE = 'FTS_SEARCH_ROLE'
 
 /**
- * Look in local storage for a set of QueryFilters to apply.  In addition, given the search params,
+ * Look in sessionStorage for a set of QueryFilters to apply.  In addition, given the search params,
  * generate a set of QueryFilters to narrow the query to view just related data.
  * May return null if a QueryFilter should not be added.
  * @param sql
@@ -56,11 +56,13 @@ export const getAdditionalFilters = (
   operator: SQLOperator = ColumnSingleValueFilterOperator.LIKE,
   sessionStorageKey?: string,
 ): QueryFilter[] | undefined => {
-  const sessionStorageQueryFiltersString = sessionStorageKey
-    ? sessionStorage.getItem(
-        QUERY_FILTERS_SESSION_STORAGE_KEY(sessionStorageKey),
-      )
-    : undefined
+  const hasSessionStorage = typeof sessionStorage !== 'undefined'
+  const sessionStorageQueryFiltersString =
+    hasSessionStorage && sessionStorageKey
+      ? sessionStorage.getItem(
+          QUERY_FILTERS_SESSION_STORAGE_KEY(sessionStorageKey),
+        )
+      : undefined
   let additionalFilters: QueryFilter[] = []
   if (sessionStorageQueryFiltersString) {
     additionalFilters = JSON.parse(

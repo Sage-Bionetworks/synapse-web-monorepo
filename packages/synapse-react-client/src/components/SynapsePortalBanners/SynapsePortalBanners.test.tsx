@@ -26,9 +26,10 @@ const defaultProps: SynapsePortalBannersProps = {
 }
 
 vi.mock('@/synapse-queries', async () => {
-  const actual = await vi.importActual<typeof import('@/synapse-queries')>(
-    '@/synapse-queries',
-  )
+  const actual =
+    await vi.importActual<typeof import('@/synapse-queries')>(
+      '@/synapse-queries',
+    )
   return {
     ...actual,
     useGetEntityPath: vi.fn(),
@@ -78,9 +79,8 @@ vi.mock('@/utils/hooks/useSourceAppConfigs', async () => {
 })
 
 vi.mock('@/utils/hooks', async () => {
-  const actual = await vi.importActual<typeof import('@/utils/hooks')>(
-    '@/utils/hooks',
-  )
+  const actual =
+    await vi.importActual<typeof import('@/utils/hooks')>('@/utils/hooks')
   return {
     ...actual,
     useSourceAppConfigs: vi.fn(),
@@ -158,7 +158,7 @@ const createEntityPathResult = (
     isLoading: false,
     isError: false,
     isSuccess: true,
-  } as unknown as ReturnType<typeof useGetEntityPath>)
+  }) as unknown as ReturnType<typeof useGetEntityPath>
 
 const createQueryBundleResult = (
   rows: TableRow[],
@@ -176,7 +176,7 @@ const createQueryBundleResult = (
     isLoading: false,
     isError: false,
     isSuccess: true,
-  } as unknown as ReturnType<typeof useGetQueryResultBundleWithAsyncStatus>)
+  }) as unknown as ReturnType<typeof useGetQueryResultBundleWithAsyncStatus>
 
 const createUndefinedQueryBundleResult = (): ReturnType<
   typeof useGetQueryResultBundleWithAsyncStatus
@@ -186,7 +186,7 @@ const createUndefinedQueryBundleResult = (): ReturnType<
     isLoading: false,
     isError: false,
     isSuccess: false,
-  } as unknown as ReturnType<typeof useGetQueryResultBundleWithAsyncStatus>)
+  }) as unknown as ReturnType<typeof useGetQueryResultBundleWithAsyncStatus>
 
 describe('SynapsePortalBanners', () => {
   beforeEach(() => {

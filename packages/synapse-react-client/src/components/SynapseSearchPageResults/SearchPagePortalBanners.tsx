@@ -52,7 +52,9 @@ export default function SearchPagePortalBanners({
 
   const rowSet = dataCatalogData?.responseBody?.queryResult?.queryResults
   const hasPortalBanners = !!rowSet && rowSet?.rows.length > 0
-  const appIds = rowSet?.rows.map(row => row.values[0]) as string[]
+  const appIds = rowSet?.rows
+    .map(row => row.values[0])
+    .filter((v): v is string => !!v) as string[]
 
   // Get source app configurations for the found portal app IDs
   const sourceAppConfigFilters: ColumnSingleValueQueryFilter[] =

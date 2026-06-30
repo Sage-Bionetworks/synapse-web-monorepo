@@ -1,4 +1,5 @@
 import IsMatureIconMap from '@/components/IsMatureIconMap'
+import TopicLinks from '@/components/TopicLinks'
 import type { LabelLinkConfig } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import columnAliases from '@/config/columnAliases'
@@ -7,6 +8,7 @@ import {
   // dataSetExploreSql,
   standardsSql,
   DST_TABLE_COLUMN_CONSTS,
+  standardsSearchIndexId,
 } from '@/config/resources'
 import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
@@ -39,6 +41,11 @@ export const standardsColumnLinks: LabelLinkConfig = [
     isMapValueToReactNodeConfig: true,
     Component: IsMatureIconMap,
   },
+  {
+    matchColumnName: DST_TABLE_COLUMN_CONSTS.CONCERNS_DATA_TOPIC,
+    isMapValueToReactNodeConfig: true,
+    Component: TopicLinks,
+  },
 ]
 
 export const standardsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
@@ -57,6 +64,10 @@ export const standardsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
     // DST_TABLE_COLUMN_CONSTS.RELEVANT_ORG_NAMES, // Vast majority of values are currently 'Not Assigned', making the facet not useful. Re-add in the future if more values are annotated.
   ],
   initialPlotTypeByFacetColumnName: { topic: 'BAR' },
+  // `topic` is kept in standardsSql only for the facet/plot above; the
+  // displayed Topics column comes from `concerns_data_topic` rendered by
+  // TopicLinks. Hide the raw names column from the table view.
+  hiddenColumns: ['topic'],
   searchConfiguration: {
     ftsConfig: standardsFtsConfig,
   },
@@ -64,7 +75,7 @@ export const standardsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
 
 export const standardsSearchQueryWrapperPlotNavProps: SearchQueryWrapperPlotNavProps =
   {
-    searchIndexId: 'syn74909093',
+    searchIndexId: standardsSearchIndexId,
     autocompleteFieldName: 'name',
     rgbIndex: standardsRgbIndex,
     shouldDeepLink: true,
@@ -76,6 +87,10 @@ export const standardsSearchQueryWrapperPlotNavProps: SearchQueryWrapperPlotNavP
     },
     facetsToPlot: ['topic'],
     initialPlotTypeByFacetColumnName: { topic: 'BAR' },
+    // `topic` is kept in the SearchIndex SQL only for the facet/plot above;
+    // the displayed Topics column comes from `concerns_data_topic` rendered
+    // by TopicLinks. Hide the raw names column from the table view.
+    hiddenColumns: ['topic'],
     hideTopLevelControls: false,
     hideQueryCount: false,
     hideCopyToClipboard: true,

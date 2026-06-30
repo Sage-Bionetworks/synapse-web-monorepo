@@ -28,11 +28,12 @@ type MergeReturn<
   TArgs extends any[],
   T1 extends SlotProps<TArgs>,
   T2 extends SlotProps<TArgs>,
-> = T1 extends SlotPropsFunction<TArgs>
-  ? SlotPropsFunction<TArgs>
-  : T2 extends SlotPropsFunction<TArgs>
-  ? SlotPropsFunction<TArgs>
-  : SlotPropsObject
+> =
+  T1 extends SlotPropsFunction<TArgs>
+    ? SlotPropsFunction<TArgs>
+    : T2 extends SlotPropsFunction<TArgs>
+      ? SlotPropsFunction<TArgs>
+      : SlotPropsObject
 
 /**
  * Merges two slot props objects or functions so that a complex hierarchy of components can safely expose slots of

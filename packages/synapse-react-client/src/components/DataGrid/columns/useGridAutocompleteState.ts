@@ -8,6 +8,7 @@ import {
 
 export type UseGridAutocompleteStateProps = {
   active: boolean
+  focus: boolean
   /**
    * `stopEditing` from react-datasheet-grid's CellProps. The hook ref-stabilizes
    * this internally, so callers can pass it directly without memoizing.
@@ -47,23 +48,34 @@ export type UseGridAutocompleteStateReturn = {
    * closes the menu, then stops editing without advancing to the next row.
    */
   handleClose: () => void
+  /** Pass to `slotProps.popupIndicator.onMouseDown` on the MUI Autocomplete. */
+  handlePopupIndicatorMouseDown: () => void
 }
 
 /**
  * Manages the shared focus/blur/menu state needed by grid autocomplete cell
  * components that are built on top of react-datasheet-grid.
  *
- * Both AutocompleteColumn and AutocompleteMultipleEnumColumn use the same
- * three-part pattern:
- *  1. When `active` becomes true → focus the input.
- *  2. When `active` becomes false with no pending option click → blur + close menu.
- *  3. The dropdown renders in a portal outside the grid cell. react-datasheet-grid
+ * Grid cell state is two-tiered: `active` is set on first click (cell is
+ * selected, but not editing), `focus` is set on second click (cell is in edit
+ * mode). This hook keeps browser focus and dropdown visibility tied to `focus`
+ * so the active-but-not-focused state doesn't show a caret or open the menu —
+ * Backspace/Delete and type-to-edit then fall through to the grid's defaults.
+ *
+ *  1. When `focus` becomes true → focus the input + open the menu.
+ *  2. When `focus` becomes false → blur + close the menu.
+ *  3. When `active` becomes false with no pending option click → run
+ *     `onDeactivate` to commit any uncommitted free-text. This is separate
+ *     from focus because Escape clears `focus` but keeps `active`, and we
+ *     should not commit on Escape.
+ *  4. The dropdown renders in a portal outside the grid cell. react-datasheet-grid
  *     sees the mousedown as an outside click and fires active=false before onClick
- *     → onChange. The `optionMouseDownRef` guard defers step 2 until the click
- *     completes and onChange resets the ref.
+ *     → onChange. The `optionMouseDownRef` guard defers steps 2 and 3 until the
+ *     click completes and onChange resets the ref.
  */
 export function useGridAutocompleteState({
   active,
+  focus,
   stopEditing,
   onDeactivate,
 }: UseGridAutocompleteStateProps): UseGridAutocompleteStateReturn {
@@ -88,17 +100,63 @@ export function useGridAutocompleteState({
     stopEditingRef.current = stopEditing
   })
 
+  // Tracks an in-flight popup-indicator click so the focus effect skips its
+  // auto-open. Without this, the indicator click both (a) promotes the cell to
+  // grid focus (our effect would open the menu) and (b) toggles via MUI's
+  // own onClick (which would then close because we just opened it) — flicker.
+  // Letting MUI handle the open via its onOpen avoids the dueling state.
+  // Cleared by handleMenuOpen (successful click) or by the focus/active effects
+  // when focus drops (abandoned press).
+  const popupClickInProgressRef = useRef(false)
+  const handlePopupIndicatorMouseDown = useCallback(() => {
+    popupClickInProgressRef.current = true
+  }, [])
+
   useEffect(() => {
-    if (active) {
+    if (focus) {
       inputRef.current?.focus()
+      if (!popupClickInProgressRef.current) {
+        setMenuIsOpen(true)
+      }
     } else if (!optionMouseDownRef.current) {
       // Only close when there is no pending option click; if there is one,
       // onChange will reset optionMouseDownRef and handle cleanup itself.
+      popupClickInProgressRef.current = false
+      setMenuIsOpen(false)
+      inputRef.current?.blur()
+    }
+  }, [focus])
+
+  // Defense in depth for the caret: when grid focus is false, MUI may still
+  // route browser focus to the <input> (e.g. multi-mode chip-area clicks,
+  // popup indicator clicks). Intercept any focus that lands on the input
+  // while we're not in edit mode and blur it, so no caret blinks after the
+  // last chip or inside the input.
+  useEffect(() => {
+    if (focus) return
+    const input = inputRef.current
+    if (!input) return
+    const handleFocus = () => {
+      input.blur()
+    }
+    input.addEventListener('focus', handleFocus)
+    return () => {
+      input.removeEventListener('focus', handleFocus)
+    }
+  }, [focus])
+
+  useEffect(() => {
+    if (!active && !optionMouseDownRef.current) {
+      // Menus can be opened with grid focus=false (e.g. clicking the popup
+      // indicator on a freshly-activated cell), so the focus effect alone is
+      // not enough — close on deactivation too. Otherwise a deactivated cell
+      // can leave a stale menu open that re-anchors and "moves" as the user
+      // scrolls the grid, or stack up alongside the next cell's menu.
+      popupClickInProgressRef.current = false
       setMenuIsOpen(false)
       inputRef.current?.blur()
       onDeactivateRef.current?.()
     }
-    // Intentionally only re-runs when `active` changes.
   }, [active])
 
   const handleListboxMouseDown = useCallback((event: React.MouseEvent) => {
@@ -120,6 +178,7 @@ export function useGridAutocompleteState({
   }, [])
 
   const handleMenuOpen = useCallback(() => {
+    popupClickInProgressRef.current = false
     setMenuIsOpen(true)
   }, [])
 
@@ -140,5 +199,6 @@ export function useGridAutocompleteState({
     notifyOptionCommitted,
     handleMenuOpen,
     handleClose,
+    handlePopupIndicatorMouseDown,
   }
 }

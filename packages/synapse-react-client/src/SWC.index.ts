@@ -64,9 +64,7 @@ const SynapseComponents = {
   ),
   AddToDownloadListConfirmationAlert: lazy(
     () =>
-      import(
-        './components/download_list/AddToDownloadListConfirmationAlert/AddToDownloadListConfirmationAlert'
-      ),
+      import('./components/download_list/AddToDownloadListConfirmationAlert/AddToDownloadListConfirmationAlert'),
   ),
   AvailableEvaluationQueueList: lazy(
     () =>
@@ -81,6 +79,9 @@ const SynapseComponents = {
   ),
   CreateOrUpdateDoiModal: lazy(
     () => import('./components/doi/CreateOrUpdateDoiModal'),
+  ),
+  CreateTableFromCsvDialog: lazy(
+    () => import('./components/table/CsvPreview/CreateTableFromCsvDialog'),
   ),
   CreateTableViewWizard: lazy(
     () => import('./components/CreateTableViewWizard/CreateTableViewWizard'),
@@ -173,6 +174,9 @@ const SynapseComponents = {
   ProjectDataAvailability: lazy(
     () => import('./components/ProjectStorage/ProjectDataAvailability'),
   ),
+  ProjectVisibilityChip: lazy(
+    () => import('./components/ProjectVisibilityChip/ProjectVisibilityChip'),
+  ),
   ProvenanceGraph: lazy(
     () => import('./components/ProvenanceGraph/ProvenanceGraph'),
   ),
@@ -184,6 +188,10 @@ const SynapseComponents = {
   ),
   ReviewerDashboard: lazy(
     () => import('./components/dataaccess/ReviewerDashboard'),
+  ),
+  SearchQueryWrapperPlotNav: lazy(
+    () =>
+      import('./components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'),
   ),
   ShareThisPage: lazy(() => import('./components/ShareThisPage')),
   SkeletonButton: lazy(() => import('./components/Skeleton/SkeletonButton')),
@@ -197,9 +205,7 @@ const SynapseComponents = {
   StatisticsPlot: lazy(() => import('./components/StatisticsPlot')),
   SubmissionViewScopeEditorModal: lazy(
     () =>
-      import(
-        './components/SubmissionViewScopeEditor/SubmissionViewScopeEditorModal'
-      ),
+      import('./components/SubmissionViewScopeEditor/SubmissionViewScopeEditorModal'),
   ),
   SubscriptionPage: lazy(() => import('./components/SubscriptionPage')),
   SynapseChat: lazy(() => import('./components/SynapseChat/SynapseChat')),
@@ -226,11 +232,12 @@ const SynapseComponents = {
       import('./components/TableColumnSchemaEditor/TableColumnSchemaEditor'),
   ),
   TrashCanList: lazy(() => import('./components/trash/TrashCanList')),
+  UpdateTableWithCsvDialog: lazy(
+    () => import('./components/table/CsvPreview/UpdateTableWithCsvDialog'),
+  ),
   UserAccessRequestHistoryPlace: lazy(
     () =>
-      import(
-        './components/dataaccess/UserAccessRequestHistory/UserAccessRequestHistoryPlace'
-      ),
+      import('./components/dataaccess/UserAccessRequestHistory/UserAccessRequestHistoryPlace'),
   ),
   UserCard: lazy(() => import('./components/UserCard/UserCard')),
   UserProfileLinks: lazy(

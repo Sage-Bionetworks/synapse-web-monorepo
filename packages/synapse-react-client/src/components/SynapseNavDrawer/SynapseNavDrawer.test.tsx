@@ -34,10 +34,8 @@ const createMockCurationTasksResponse = (taskCount: number = 0) => ({
           {
             bundlePage: Array.from({ length: taskCount }, (_, i) =>
               createMockTaskBundle({
-                task: {
-                  taskId: i,
-                  assigneePrincipalId: MOCK_USER_ID.toString(),
-                },
+                taskId: i,
+                assigneePrincipalId: MOCK_USER_ID.toString(),
               }),
             ),
           },
@@ -147,9 +145,8 @@ describe('SynapseNavDrawer tests', () => {
     await within(topButtonGroup).findByLabelText('Favorites')
     await within(topButtonGroup).findByLabelText('Teams')
     await within(topButtonGroup).findByLabelText('Challenges')
-    const downloadCartButton = await within(topButtonGroup).findByLabelText(
-      'Download List',
-    )
+    const downloadCartButton =
+      await within(topButtonGroup).findByLabelText('Download List')
     await within(downloadCartButton).findByText(`${numFilesInDownloadList}`)
     await within(topButtonGroup).findByLabelText('Trash Can')
     await within(topButtonGroup).findByLabelText('Search')
@@ -181,9 +178,8 @@ describe('SynapseNavDrawer tests', () => {
     await within(topButtonGroup).findByLabelText('Favorites')
     await within(topButtonGroup).findByLabelText('Teams')
     await within(topButtonGroup).findByLabelText('Challenges')
-    const downloadCartButton = await within(topButtonGroup).findByLabelText(
-      'Download List',
-    )
+    const downloadCartButton =
+      await within(topButtonGroup).findByLabelText('Download List')
     await within(downloadCartButton).findByText(`${numFilesInDownloadList}`)
     await within(topButtonGroup).findByLabelText('Trash Can')
     await within(topButtonGroup).findByLabelText('Search')

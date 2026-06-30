@@ -2,6 +2,7 @@ import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-conf
 import { RouteObject } from 'react-router'
 import {
   STUDY_DETAILS_PAGE_DATA_TAB_PATH,
+  STUDY_DETAILS_PAGE_DATASETS_TAB_PATH,
   STUDY_DETAILS_PAGE_DETAILS_TAB_PATH,
 } from './routeConstants'
 import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
@@ -147,7 +148,19 @@ const routes: RouteObject[] = [
             lazy: () =>
               import('@/pages/Explore/people').then(convertModuleToRouteObject),
           },
+          {
+            path: 'Datasets',
+            lazy: () =>
+              import('@/pages/Explore/datasets').then(
+                convertModuleToRouteObject,
+              ),
+          },
         ],
+      },
+      {
+        path: 'Explore/Datasets/DetailsPage',
+        lazy: () =>
+          import('@/pages/DatasetDetailsPage').then(convertModuleToRouteObject),
       },
       {
         path: 'Explore/Computational Tools/DetailsPage',
@@ -191,6 +204,13 @@ const routes: RouteObject[] = [
                 convertModuleToRouteObject,
               ),
           },
+          {
+            path: STUDY_DETAILS_PAGE_DATASETS_TAB_PATH,
+            lazy: () =>
+              import('@/pages/StudyDetailsPage/StudyDatasetsTab').then(
+                convertModuleToRouteObject,
+              ),
+          },
         ],
       },
       {
@@ -215,36 +235,90 @@ const routes: RouteObject[] = [
         lazy: () => import('@/pages/Overview').then(convertModuleToRouteObject),
       },
       {
+        path: 'Comparative Aging',
+        lazy: () =>
+          import('@/pages/ComparativeAging').then(convertModuleToRouteObject),
+      },
+      {
+        // TODO: Remove deprecated route once external references are updated
         path: 'Comparative Biology',
         lazy: () =>
-          import('@/pages/ComparativeBiology').then(convertModuleToRouteObject),
+          import('@/pages/ComparativeAging').then(convertModuleToRouteObject),
       },
       {
+        path: 'Longevity Resilience',
+        lazy: () =>
+          import('@/pages/LongevityResilience').then(
+            convertModuleToRouteObject,
+          ),
+      },
+      {
+        // TODO: Remove deprecated route once external references are updated
         path: 'Omics Profiles in Humans',
         lazy: () =>
-          import('@/pages/OmicsProfilesInHumans').then(
+          import('@/pages/LongevityResilience').then(
             convertModuleToRouteObject,
           ),
       },
       {
+        path: 'Translational Science',
+        lazy: () =>
+          import('@/pages/TranslationalScience').then(
+            convertModuleToRouteObject,
+          ),
+      },
+      {
+        // TODO: Remove deprecated route once external references are updated
         path: 'Translational Approaches',
         lazy: () =>
-          import('@/pages/TranslationalApproaches').then(
+          import('@/pages/TranslationalScience').then(
             convertModuleToRouteObject,
           ),
       },
       {
+        path: 'Biological Aging',
+        lazy: () =>
+          import('@/pages/BiologicalAging').then(convertModuleToRouteObject),
+      },
+      {
+        // TODO: Remove deprecated route once external references are updated
         path: 'AI Models',
-        lazy: () => import('@/pages/AIModels').then(convertModuleToRouteObject),
+        lazy: () =>
+          import('@/pages/BiologicalAging').then(convertModuleToRouteObject),
       },
       {
+        path: 'Healthspan',
+        lazy: () =>
+          import('@/pages/Healthspan').then(convertModuleToRouteObject),
+      },
+      {
+        // TODO: Remove deprecated route once external references are updated
         path: 'IPSCs',
-        lazy: () => import('@/pages/IPSCs').then(convertModuleToRouteObject),
+        lazy: () =>
+          import('@/pages/Healthspan').then(convertModuleToRouteObject),
       },
       {
+        path: 'Cognitive Resilience',
+        lazy: () =>
+          import('@/pages/CognitiveResilience').then(
+            convertModuleToRouteObject,
+          ),
+      },
+      {
+        // TODO: Remove deprecated route once external references are updated
         path: 'Organoids',
         lazy: () =>
-          import('@/pages/Organoids').then(convertModuleToRouteObject),
+          import('@/pages/CognitiveResilience').then(
+            convertModuleToRouteObject,
+          ),
+      },
+      {
+        path: 'Search',
+        lazy: () => import('@/pages/Search').then(convertModuleToRouteObject),
+      },
+      {
+        path: 'Search/:resourceType',
+        lazy: () => import('@/pages/Search').then(convertModuleToRouteObject),
       },
     ],
   },

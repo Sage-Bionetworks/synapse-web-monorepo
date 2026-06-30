@@ -1,6 +1,7 @@
 import { BlockingLoader } from '@/components/LoadingScreen/LoadingScreen'
 import { PropsWithChildren } from 'react'
 import { useApplicationSessionContext } from './ApplicationSessionContext'
+import { SynapseErrorBoundary } from '@/components/error/ErrorBanner'
 
 export type SessionInitializedGuardProps = PropsWithChildren<{
   /** Optional hint text to display while waiting for session initialization */
@@ -8,11 +9,16 @@ export type SessionInitializedGuardProps = PropsWithChildren<{
 }>
 
 /**
- * SessionInitializedGuard waits for session initialization to complete before
- * rendering its children. This component displays a loading screen while the
- * session is being initialized. This is useful for components that need to ensure
- * the session state is ready before making any queries or performing operations
- * that depend on authentication status.
+ * SessionInitializedGuard displays a loading screen while the session is being
+ * initialized. This is useful for components that need to ensure the session state
+ * is ready before making any queries or performing operations that depend on
+ * authentication status.
+ *
+ * For SSG compatibility, the children are rendered within an error boundary that
+ * is keyed on the session initialization state. This allows any SSG-prefetched data
+ * to be rendered in the static HTML and be hydration-stable on the client, while
+ * still showing a loading overlay in client-mode until the session manager finishes
+ * its initial check.
  *
  * @example
  * ```tsx
@@ -34,7 +40,9 @@ export function SessionInitializedGuard(props: SessionInitializedGuardProps) {
       {!hasInitializedSession && (
         <BlockingLoader show={true} hintText={hintText} />
       )}
-      {children}
+      <SynapseErrorBoundary resetKeys={[hasInitializedSession]}>
+        {children}
+      </SynapseErrorBoundary>
     </>
   )
 }

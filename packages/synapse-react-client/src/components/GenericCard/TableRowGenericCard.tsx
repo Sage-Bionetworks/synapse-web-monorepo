@@ -229,6 +229,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     headerCardVariant,
     titleLinkConfig,
     ctaLinkConfig,
+    ctaLinkPosition,
     labelLinkConfig,
     descriptionConfig,
     columnIconOptions,
@@ -503,7 +504,14 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
         rowId,
       )
       return {
-        text: config.text,
+        text: config.endIcon ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {config.text}
+            {config.endIcon}
+          </div>
+        ) : (
+          config.text
+        ),
         href,
         target,
       }
@@ -575,6 +583,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       ctaLinkConfig={
         resolvedCtaLinkConfigs.length > 0 ? resolvedCtaLinkConfigs : undefined
       }
+      ctaLinkPosition={ctaLinkPosition}
       titleAreaRightContent={resolvedTitleAreaRightContent}
       description={description}
       descriptionSubTitle={descriptionSubTitle}

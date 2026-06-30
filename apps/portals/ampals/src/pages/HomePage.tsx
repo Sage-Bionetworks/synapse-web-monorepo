@@ -8,25 +8,65 @@ import { RssFeedCards } from 'synapse-react-client/components/RssFeedCards/RssFe
 // import columnAliases from '../config/columnAliases'
 import headerSvg from '../config/style/header.svg?url'
 import CardGridWithLinks from 'synapse-react-client/components/CardGridWithLinks/CardGridWithLinks'
-import GoalsV3 from 'synapse-react-client/components/GoalsV3/GoalsV3'
 import PortalFeaturedPartners from 'synapse-react-client/components/PortalFeaturedPartners/PortalFeaturedPartners'
+import SynapseSankeyPlot from 'synapse-react-client/components/Plot/SynapseSankeyPlot'
 import {
   datasetsSql,
-  goalsTableEntityId,
+  filesSql,
   partnersSql,
+  sankeyPlotSql,
 } from '@/config/resources'
-import { ReactComponent as DatasetsIcon } from '../../src/config/style/datasets.svg'
-import { ReactComponent as FilesIcon } from '../../src/config/style/files.svg'
-import { ReactComponent as ProjectsIcon } from '../../src/config/style/projects.svg'
 import AMPALSDevelopedBySage from '@sage-bionetworks/synapse-portal-framework/components/ampals/AMPALSDevelopedBySage'
 import { Query } from '@sage-bionetworks/synapse-types'
 import { generateCompressedQueryURL } from 'synapse-react-client/utils/functions/deepLinkingUtils'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router'
 
 export default function HomePage() {
+  const navigate = useNavigate()
   const [geoUrl, setGeoUrl] = useState<string>('')
   const [nygcUrl, setNygcUrl] = useState<string>('')
   const [barmadaUrl, setBarmadaUrl] = useState<string>('')
+
+  // Deep-link to an Explore page pre-filtered to a single facet value.
+  const navigateToFiltered = (
+    path: string,
+    sql: string,
+    columnName: string,
+    value: string,
+  ) => {
+    const initQuery: Query = { sql }
+    const query: Query = {
+      sql,
+      limit: 25,
+      selectedFacets: [
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
+          columnName,
+          facetValues: [value],
+        },
+      ],
+    }
+    generateCompressedQueryURL(path, 0, query, initQuery).then(url =>
+      navigate(url),
+    )
+  }
+
+  // Sankey: center node / left flow -> datasets for that source.
+  const handleSankeySourceClick = (source: string) =>
+    navigateToFiltered('/Explore/Datasets', datasetsSql, 'source', source)
+  // Sankey: right flow -> files for that source. The files table records the
+  // originating group as "contributor", not "source".
+  const handleSankeyFilesClick = (source: string) =>
+    navigateToFiltered('/Explore/Files', filesSql, 'contributor', source)
+  // Sankey end nodes -> the unfiltered Explore pages.
+  const handleAllDatasetsClick = () => {
+    navigate('/Explore/Datasets')
+  }
+  const handleAllFilesClick = () => {
+    navigate('/Explore/Files')
+  }
 
   useEffect(() => {
     const initQuery: Query = {
@@ -131,13 +171,18 @@ export default function HomePage() {
           },
         }}
       >
-        <GoalsV3
-          entityId={goalsTableEntityId}
-          svgComponentMap={{
-            datasets: DatasetsIcon,
-            files: FilesIcon,
-            projects: ProjectsIcon,
-          }}
+        <SynapseSankeyPlot
+          sql={sankeyPlotSql}
+          rootLabel="All Datasets"
+          unitLabel="datasets"
+          breakdownLabel="by source"
+          onCategoryClick={handleSankeySourceClick}
+          onRootClick={handleAllDatasetsClick}
+          rightValueColumn={2}
+          rightLabel="All Files"
+          rightUnitLabel="files"
+          onRightCategoryClick={handleSankeyFilesClick}
+          onRightEndClick={handleAllFilesClick}
         />
       </SectionLayout>
       {/* <AMPALSExploreTheData sql={upsetPlotSql} /> */}

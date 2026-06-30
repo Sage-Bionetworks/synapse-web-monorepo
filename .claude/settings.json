@@ -1,8 +1,4 @@
 {
-  "enabledPlugins": {
-    "skill-creator@claude-plugins-official": true,
-    "claude-md-management@claude-plugins-official": true
-  },
   "hooks": {
     "WorktreeCreate": [
       {
@@ -36,5 +32,10 @@
         ]
       }
     ]
+  },
+  "enabledPlugins": {
+    "skill-creator@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true,
+    "figma@claude-plugins-official": true
   }
 }

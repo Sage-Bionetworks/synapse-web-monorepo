@@ -58,6 +58,16 @@ export const navbarConfig: NavbarConfig = {
     {
       name: 'Data Access',
       path: '/Data Access',
+      children: [
+        {
+          name: 'Data Access Overview',
+          path: '/Data Access/Data Access Overview',
+        },
+        {
+          name: 'Approved Access Requests',
+          path: '/Data Access/Approved Access Requests',
+        },
+      ],
     },
     {
       name: 'Contribute Data',

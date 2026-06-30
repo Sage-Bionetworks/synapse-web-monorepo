@@ -117,7 +117,6 @@ import {
   SearchIndexQuery,
   SearchQueryResults,
 } from '@sage-bionetworks/synapse-client'
-import { SearchIndexQueryToJSON } from '@sage-bionetworks/synapse-client/generated/models/SearchIndexQuery'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import {
   ACCESS_TYPE,
@@ -218,7 +217,6 @@ import {
   EvaluationSubmission as EvaluationSubmission,
   FavoriteSortBy,
   FavoriteSortDirection,
-  FeatureFlags,
   FileEntity,
   FileHandle,
   FileHandleAssociateType,
@@ -353,7 +351,7 @@ import { JSONSchema7 } from 'json-schema'
 import { memoize } from 'lodash-es'
 import SparkMD5 from 'spark-md5'
 import { SetOptional } from 'type-fest'
-import UniversalCookies from 'universal-cookie'
+import Cookies from 'js-cookie'
 import { delay, doDelete, doGet, doPost, doPut } from './HttpClient'
 import {
   allowNotFoundError,
@@ -362,6 +360,7 @@ import {
 } from './SynapseClientUtils'
 import { OAuth2State } from '@/utils/types/OAuth2State'
 import { getCookieDomain } from '@/utils/AppUtils/AppUtils'
+import { FeatureFlags } from '@/utils/featureflag/FeatureFlags'
 
 // Max size file that we will allow the caller to read into memory (5MB)
 const MAX_JS_FILE_DOWNLOAD_SIZE = 5242880
@@ -602,9 +601,20 @@ export const getSearchQueryAsyncJobResults = async (
     result: AsynchronousJobStatus<SearchIndexQuery, SearchQueryResults>,
   ) => void,
 ): Promise<AsynchronousJobStatus<SearchIndexQuery, SearchQueryResults>> => {
+  // The generated DslQuery/BoolQuery ToJSON
+  // functions strip any field not in their interface (e.g. `terms`, `range` inside
+  // bool.filter), producing empty objects and breaking filter clauses.
+  // Only `responseParts` (a Set) needs manual conversion; everything else is a
+  // plain JSON-serializable value.
+  const serialized = {
+    ...searchIndexQuery,
+    responseParts: searchIndexQuery.responseParts
+      ? [...searchIndexQuery.responseParts]
+      : undefined,
+  }
   const asyncJobId = await doPost<AsyncJobId>(
     SEARCH_QUERY_ASYNC_START,
-    SearchIndexQueryToJSON(searchIndexQuery),
+    serialized,
     accessToken,
     BackendDestinationEnum.REPO_ENDPOINT,
   )
@@ -2033,8 +2043,7 @@ export const updateWikiPage = (
 
 export const isInSynapseExperimentalMode = (): boolean => {
   // bang bang, you're a boolean!
-  const cookies = new UniversalCookies()
-  return !!cookies.get(SynapseConstants.EXPERIMENTAL_MODE_COOKIE)
+  return !!Cookies.get(SynapseConstants.EXPERIMENTAL_MODE_COOKIE)
 }
 
 /**
@@ -2047,16 +2056,14 @@ export const setAccessTokenCookie = async (
   token: string | undefined,
 ): Promise<void> => {
   if (isOutsideSynapseOrg()) {
-    const cookies = new UniversalCookies()
     if (!token) {
-      cookies.remove(ACCESS_TOKEN_COOKIE_KEY, { path: '/' })
-      // See - https://github.com/reactivestack/cookies/issues/189
+      Cookies.remove(ACCESS_TOKEN_COOKIE_KEY, { path: '/' })
       await delay(100)
     } else {
       // sets cookie
-      cookies.set(ACCESS_TOKEN_COOKIE_KEY, token, {
+      Cookies.set(ACCESS_TOKEN_COOKIE_KEY, token, {
         // expires in 10 days (see SWC-6190)
-        maxAge: 60 * 60 * 24 * 10,
+        expires: 10,
         path: '/',
         domain: getCookieDomain(),
       })
@@ -2082,8 +2089,7 @@ export const getAccessTokenFromCookie = async (): Promise<
   string | undefined
 > => {
   if (isOutsideSynapseOrg()) {
-    const cookies = new UniversalCookies()
-    return Promise.resolve(cookies.get(ACCESS_TOKEN_COOKIE_KEY) as string)
+    return Promise.resolve(Cookies.get(ACCESS_TOKEN_COOKIE_KEY) as string)
   }
   return doGet<string>(
     '/Portal/sessioncookie?validate=true',
@@ -2094,8 +2100,7 @@ export const getAccessTokenFromCookie = async (): Promise<
 }
 
 export const getUseUtcTimeFromCookie = () => {
-  const cookies = new UniversalCookies()
-  return cookies.get(DATETIME_UTC_COOKIE_KEY) === 'true'
+  return Cookies.get(DATETIME_UTC_COOKIE_KEY) === 'true'
 }
 
 export const getPrincipalAliasRequest = (
@@ -3550,9 +3555,8 @@ export const searchAccessRequirements = (
  * @returns {AccessRequirementStatus}
  */
 export function getAccessRequirementStatus<
-  T extends
-    | AccessRequirementStatus
-    | ManagedACTAccessRequirementStatus = AccessRequirementStatus,
+  T extends AccessRequirementStatus | ManagedACTAccessRequirementStatus =
+    AccessRequirementStatus,
 >(accessToken: string | undefined, requirementId: string | number): Promise<T> {
   return doGet<T>(
     ACCESS_REQUIREMENT_STATUS(requirementId),

@@ -34,12 +34,16 @@
   border-radius: 100px;
   border: 1px solid #e4e4e4;
   background: #fff;
-  box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.05), 0 1px 1px 0 rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 4px 4px 0 rgba(0, 0, 0, 0.05),
+    0 1px 1px 0 rgba(0, 0, 0, 0.05);
 
   :global(.MuiInputBase-root) {
     border: 1px solid #e4e4e4;
     border-radius: 100px;
-    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.05), 0 1px 1px 0 rgba(0, 0, 0, 0.05);
+    box-shadow:
+      0 4px 4px 0 rgba(0, 0, 0, 0.05),
+      0 1px 1px 0 rgba(0, 0, 0, 0.05);
   }
 
   :global(.MuiInputBase-input)::placeholder {

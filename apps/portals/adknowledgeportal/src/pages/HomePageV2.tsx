@@ -1,11 +1,17 @@
 import AdknowledgeCard from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgeCard/AdknowledgeCard'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import MailchimpSubscribeSection from 'synapse-react-client/components/MailchimpSubscribeSection/MailchimpSubscribeSection'
+import DataExplorer from 'synapse-react-client/components/DataExplorer/DataExplorer'
 import AdknowledgeHeader from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgeHeader/AdknowledgeHeader'
 import { WordPressNews } from 'synapse-react-client/components/SynapseHomepageV2/WordPressNews'
 import FloatingBlobsBackground from 'synapse-react-client/components/SynapseHomepageV2/FloatingBlobsBackground'
 import AdknowledgePrograms from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgePrograms/AdknowledgePrograms'
-import { programsSql } from '@/config/resources'
+import {
+  consortiaAndRepositoriesSql,
+  dataTypeSql,
+  exploreQuerySql,
+  programsSql,
+} from '@/config/resources'
 import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
 import { ReactComponent as CavaticaLogo } from '../assets/cavatica.svg'
 import { ReactComponent as TerraLogo } from '../assets/terra.svg'
@@ -14,12 +20,17 @@ import { ReactComponent as ContributeIcon } from '../assets/contribution.svg'
 import { ReactComponent as AgoraIcon } from '../assets/agora.svg'
 import { ReactComponent as ModelADIcon } from '../assets/modelAD.svg'
 import styles from './HomePageV2.module.scss'
+import { CardContainerLogic } from 'synapse-react-client'
+import { consortiaAndRepositoriesCardConfig } from '@/config/synapseConfigs/consortiaAndRepositories'
+import { Button } from '@mui/material'
+
+const FILTER_COLUMN_NAME = 'DataType_All'
 
 function HomePageInternal() {
   const agoraCard = {
     Image: AgoraIcon,
     description:
-      "Explore our vast collection of Alzheimer's disease data, tools, and resources to accelerate your research and drive new discoveries.",
+      "Explore evidence about the role of human genes in Alzheimer's Disease using interactive tools and data visualizations.",
     buttonText: 'Explore Agora',
     buttonLink: 'https://agora.adknowledgeportal.org',
   }
@@ -27,7 +38,7 @@ function HomePageInternal() {
   const modelADCard = {
     Image: ModelADIcon,
     description:
-      "Explore our vast collection of Alzheimer's disease data, tools, and resources to accelerate your research and drive new discoveries.",
+      'Discover, compare, and analyze next-generation mouse models of Alzheimer’s Disease generated, characterized, and validated by the MODEL-AD Consortium.',
     buttonText: 'Explore MODEL-AD',
     buttonLink: 'https://www.model-ad.org',
   }
@@ -42,9 +53,40 @@ function HomePageInternal() {
     Image: ContributeIcon,
   }
 
+  const dataExplorerTextSection = {
+    sql: dataTypeSql,
+    title: 'Our portal has more than a petabyte of data..',
+    buttonText: 'Explore Alzheimer’s Data',
+    buttonLink: '/Explore/Data',
+    subtitle:
+      "Our data encompasses a wide range of modalities, ensuring comprehensive coverage for in-depth Alzheimer's research and discovery.",
+    explorePath: '/Explore/Studies',
+    exploreQuerySql,
+    filterColumnName: FILTER_COLUMN_NAME,
+  }
+
+  const helpButtons = [
+    {
+      text: 'Service Desk',
+      link: 'https://help.adknowledgeportal.org/apd/',
+    },
+    {
+      text: 'Discussion Forum',
+      link: 'https://www.synapse.org/Synapse:syn2580853/discussion/default',
+    },
+  ]
+
   return (
     <div className="HomePageV2">
       <AdknowledgeHeader />
+      <SectionLayout
+        ContainerProps={{
+          className: 'home-spacer',
+        }}
+      >
+        <DataExplorer {...dataExplorerTextSection} />
+      </SectionLayout>
+
       <SectionLayout
         ContainerProps={{
           sx: { marginBottom: '80px' },
@@ -121,12 +163,46 @@ function HomePageInternal() {
         subtitle="These explorers provide interactive tools and visualizations to navigate complex datasets, identify key trends, and gain deeper insights into the data on our portal."
         centerTitle
         ContainerProps={{
-          className: 'home-spacer',
+          sx: { marginBottom: '130px' },
         }}
       >
         <div className={styles.resultsExplorersContainer}>
-          <AdknowledgeCard {...agoraCard} />
           <AdknowledgeCard {...modelADCard} />
+          <AdknowledgeCard {...agoraCard} />
+        </div>
+      </SectionLayout>
+      <SectionLayout
+        title="Related Consortia and Repositories"
+        subtitle="Learn more about our partners within the AD/ADRD research ecosystem!"
+        centerTitle
+        ContainerProps={{
+          sx: { marginBottom: '140px' },
+        }}
+      >
+        <div className={styles.consortiaAndRepositoriesCards}>
+          <CardContainerLogic
+            cardConfiguration={consortiaAndRepositoriesCardConfig}
+            sql={consortiaAndRepositoriesSql}
+          />
+        </div>
+      </SectionLayout>
+      <SectionLayout
+        title="Questions or Feedback?"
+        subtitle="Have questions or feedback to share with us? Contact the team behind the AD Knowledge Portal through our Service Desk, or post your question in the public Discussion Forum where our community can learn together."
+        centerTitle
+      >
+        <div className={styles.helpButtonsContainer}>
+          {helpButtons.map(({ text, link }) => (
+            <Button
+              key={text}
+              href={link}
+              variant="contained"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {text}
+            </Button>
+          ))}
         </div>
       </SectionLayout>
     </div>

@@ -157,6 +157,7 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
       sql: SEARCH_QUERY_WRAPPER_SYNTHETIC_SQL,
       selectedFacets: initQueryRequestFromProps.query?.selectedFacets,
       additionalFilters: initQueryRequestFromProps.query?.additionalFilters,
+      sort: initQueryRequestFromProps.query?.sort,
       limit: initQueryRequestFromProps.query?.limit,
       offset: initQueryRequestFromProps.query?.offset,
     },
@@ -246,7 +247,7 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
   // the full context object. QueryWrapper.tsx has the same issue; fix both together in a follow-up.
   const context: QueryContextType = useDeepCompareMemoize({
     isInfinite,
-    entityId: undefined,
+    entityId: synapseId,
     versionNumber: undefined,
     nextQueryRequest,
     currentQueryRequest,

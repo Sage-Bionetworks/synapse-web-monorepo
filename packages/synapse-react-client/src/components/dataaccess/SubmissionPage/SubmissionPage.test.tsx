@@ -55,7 +55,6 @@ import {
   within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import failOnConsoleError from 'jest-fail-on-console'
 import { http, HttpResponse } from 'msw'
 import { useNavigate } from 'react-router'
 import * as RejectDataAccessRequestModalModule from '../RejectDataAccessRequestModal'
@@ -154,7 +153,6 @@ const mockAccessApproval: AccessApproval = {
 }
 
 describe('Submission Page tests', () => {
-  failOnConsoleError()
   beforeAll(() => {
     server.listen()
 

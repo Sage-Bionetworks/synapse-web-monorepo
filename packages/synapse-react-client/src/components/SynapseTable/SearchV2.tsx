@@ -29,7 +29,7 @@ import { ReadonlyDeep } from 'type-fest'
 
 type SearchState = {
   show: boolean
-  /* 
+  /*
     When the component is revealed in queryplotnav we want to focus on the input field and reveal the dropdown
     there is an issue where the method handleClickOutsideForm will override the state from componentDidUpdate
     so we track when componentDidUpdate just fired so that `show` is not overriden on the click event which
@@ -69,6 +69,17 @@ export type FTSConfig = {
    * @returns A promise resolving to an array of suggestion strings
    */
   getSuggestions?: (searchText: string) => Promise<string[]>
+  /**
+   * Override the minimum number of characters required before a search is executed.
+   * Defaults to 3 (see PLFM-7011).
+   */
+  minSearchQueryLength?: number
+  /**
+   * When true, submitting a new search term replaces any existing TextMatchesQueryFilter
+   * in additionalFilters rather than appending a new one.
+   * Defaults to false (existing behaviour: filters accumulate).
+   */
+  replaceExistingFilter?: boolean
 }
 
 type InternalSearchProps = SearchV2Props & {

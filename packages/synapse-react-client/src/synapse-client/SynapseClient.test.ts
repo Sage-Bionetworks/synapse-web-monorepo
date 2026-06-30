@@ -1,7 +1,7 @@
 import { ACCESS_TOKEN_COOKIE_KEY } from '@/utils/SynapseConstants'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { PaginatedResults } from '@sage-bionetworks/synapse-types'
-import UniversalCookies from 'universal-cookie'
+import Cookies from 'js-cookie'
 import * as HttpClient from './HttpClient'
 import type { FunctionReturningPaginatedResults } from './SynapseClient'
 import * as SynapseClient from './SynapseClient'
@@ -21,14 +21,14 @@ describe('SynapseClient tests', () => {
   describe('getAccessTokenFromCookie', () => {
     it('No cookie outside of *.synapse.org', async () => {
       isOutsideSynapseOrgSpy.mockReturnValue(true)
-      new UniversalCookies().remove(ACCESS_TOKEN_COOKIE_KEY, { path: '/' })
+      Cookies.remove(ACCESS_TOKEN_COOKIE_KEY, { path: '/' })
       window.location.assign('http://localhost:3000/')
       expect(await SynapseClient.getAccessTokenFromCookie()).toBeUndefined()
     })
     it('Has cookie outside of *.synapse.org', async () => {
       isOutsideSynapseOrgSpy.mockReturnValue(true)
       const token = 'fake-token'
-      new UniversalCookies().set(ACCESS_TOKEN_COOKIE_KEY, token, {
+      Cookies.set(ACCESS_TOKEN_COOKIE_KEY, token, {
         path: '/',
       })
       window.location.assign('http://localhost:3000/')
@@ -126,9 +126,8 @@ describe('SynapseClient tests', () => {
       }
 
       const mockFn = vi.fn().mockResolvedValueOnce(response)
-      const data = await SynapseClient.getAllOfNextPageTokenPaginatedService(
-        mockFn,
-      )
+      const data =
+        await SynapseClient.getAllOfNextPageTokenPaginatedService(mockFn)
       expect(data).toEqual(results)
       expect(mockFn).toHaveBeenCalledTimes(1)
       expect(mockFn).toHaveBeenNthCalledWith(1, undefined)
@@ -149,9 +148,8 @@ describe('SynapseClient tests', () => {
         .fn()
         .mockResolvedValueOnce(responsePage1)
         .mockResolvedValueOnce(responsePage2)
-      const data = await SynapseClient.getAllOfNextPageTokenPaginatedService(
-        mockFn,
-      )
+      const data =
+        await SynapseClient.getAllOfNextPageTokenPaginatedService(mockFn)
       expect(data).toEqual([...resultsPage1, ...resultsPage2]) // ['a', 'b', 'c']
       expect(mockFn).toHaveBeenCalledTimes(2)
       expect(mockFn).toHaveBeenNthCalledWith(1, undefined)

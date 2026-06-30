@@ -10,6 +10,9 @@ function ExploreLayout() {
         {
           path: 'Publications',
         },
+        {
+          path: 'Metadata',
+        },
       ]}
     />
   )

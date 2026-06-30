@@ -132,7 +132,11 @@ export function PortalFullTextSearchField({
                   ...params.InputProps,
                   startAdornment,
                 },
-                htmlInput: params.inputProps,
+                htmlInput: {
+                  ...params.inputProps,
+                  type: 'search',
+                  'data-lpignore': 'true',
+                },
               }}
             />
           )}
@@ -160,6 +164,10 @@ export function PortalFullTextSearchField({
       slotProps={{
         input: {
           startAdornment,
+        },
+        htmlInput: {
+          type: 'search',
+          'data-lpignore': 'true',
         },
       }}
     />

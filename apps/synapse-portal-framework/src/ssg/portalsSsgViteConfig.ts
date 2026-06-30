@@ -49,7 +49,7 @@ export function createPortalsSsgViteConfig(
           ...reactPlugins({ skipReactPlugin: true }),
         ],
         ssr: {
-          noExternal: [/^@mui\//, /^@emotion\//],
+          noExternal: [/^@mui\//, /^@emotion\//, 'use-deep-compare-effect'],
           optimizeDeps: {
             include: ['@emotion/*', '@mui/*'],
           },

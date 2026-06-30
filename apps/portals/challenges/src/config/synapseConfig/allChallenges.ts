@@ -3,8 +3,9 @@ import { CardConfiguration } from 'synapse-react-client/components/CardContainer
 import { CardLink } from 'synapse-react-client/components/CardContainer/CardLink'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import { allChallengesSql } from '../resources'
+import { allChallengesSearchIndexId, allChallengesSql } from '../resources'
 
 const allChallengesSchema: TableToGenericCardMapping = {
   type: SynapseConstants.CHALLENGE,
@@ -71,6 +72,22 @@ const allChallengesCardConfiguration: CardConfiguration = {
 export const allChallenges: QueryWrapperPlotNavProps = {
   shouldDeepLink: true,
   sql: allChallengesSql,
+  cardConfiguration: allChallengesCardConfiguration,
+  name: 'Challenges',
+  hideTopLevelControls: true,
+  defaultShowPlots: false,
+  facetsToPlot: ['startYear', 'organizingCommunity', 'platform', 'status'],
+  columnAliases: {
+    metadataCompletenessTier: 'Metadata Completeness',
+    startYear: `Challenges by Year`,
+  },
+  initialPlotTypeByFacetColumnName: { startYear: 'BAR' },
+}
+
+export const allChallengesSearch: SearchQueryWrapperPlotNavProps = {
+  shouldDeepLink: false,
+  searchIndexId: allChallengesSearchIndexId,
+  autocompleteFieldName: 'title',
   cardConfiguration: allChallengesCardConfiguration,
   name: 'Challenges',
   hideTopLevelControls: true,
