@@ -14,7 +14,6 @@ const dismissBannerConfig: Record<BannerType, DismissBannerConfig> = {
     bodyText: 'Our site uses cookies',
     closeButtonText: 'Disable All',
   },
-  survey: { bodyText: 'survey', closeButtonLabel: 'Close' },
   surveyDialog: {
     bodyText: 'survey',
     closeButtonLabel: 'Close survey dialog',
