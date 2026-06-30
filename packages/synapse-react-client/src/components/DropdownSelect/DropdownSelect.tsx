@@ -44,7 +44,6 @@ export default function DropdownSelect(props: DropdownSelectProps) {
     buttonGroupAriaLabel,
     onButtonClick,
     buttonText,
-    sx,
     anchorRef: externalAnchorRef,
     ...rest
   } = props
@@ -89,9 +88,6 @@ export default function DropdownSelect(props: DropdownSelectProps) {
         variant={variant}
         ref={anchorRef}
         aria-label="split button"
-        sx={{
-          ...sx,
-        }}
         {...rest}
       >
         <Button

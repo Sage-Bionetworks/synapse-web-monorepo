@@ -1,8 +1,9 @@
-import { Box, ButtonProps, SxProps } from '@mui/material'
+import { Box, ButtonProps, SxProps, Theme } from '@mui/material'
 import { ComplexMenu, ComplexMenuButtonProps } from '../../../menu/ComplexMenu'
 import IconSvg, { IconName } from '../../../IconSvg/IconSvg'
 import { DropdownMenuItem, DropdownMenuProps } from '../../../menu/DropdownMenu'
 import { MouseEvent } from 'react'
+import { SystemStyleObject } from '@mui/system'
 
 // Represents the two types of dropdown menus that will be displayed on the entity page
 type EntityActionMenuDropdownMenuType = 'DOWNLOAD' | 'PRIMARY'
@@ -44,7 +45,7 @@ export type EntityActionMenuLayout = {
   primaryMenuText: string
   primaryMenuEndIcon: IconName
   primaryMenuEndIconSx?: SxProps
-  menuButtonSx?: SxProps
+  menuButtonSx?: SystemStyleObject<Theme>
 }
 
 export type EntityActionMenuProps = {
@@ -232,20 +233,15 @@ export default function EntityActionMenu(props: EntityActionMenuProps) {
     ),
   }
 
-  // Optional per-layout style overrides applied to every action button (e.g. a
-  // different border color for entity pages vs the project header).
-  const menuButtonOverrides = (layout.menuButtonSx ?? {}) as unknown as Record<
-    string,
-    unknown
-  >
-
   return (
     <Box
       sx={{
         '& .MuiButton-root': {
           borderRadius: '6px',
           fontWeight: 540,
-          ...menuButtonOverrides,
+          // Optional per-layout overrides (e.g. a different border color for
+          // entity pages vs the project header).
+          ...(layout.menuButtonSx ?? {}),
         },
         '& .MuiButton-root .MuiTypography-root': {
           fontWeight: 540,
