@@ -118,6 +118,7 @@ export default function SearchQueryWrapperPlotNav(
       query: {
         selectedFacets: initQueryRequestFromProps?.query?.selectedFacets,
         additionalFilters: initQueryRequestFromProps?.query?.additionalFilters,
+        sort: initQueryRequestFromProps?.query?.sort,
         limit: initQueryRequestFromProps?.query?.limit ?? DEFAULT_PAGE_SIZE,
         offset: initQueryRequestFromProps?.query?.offset ?? 0,
       },

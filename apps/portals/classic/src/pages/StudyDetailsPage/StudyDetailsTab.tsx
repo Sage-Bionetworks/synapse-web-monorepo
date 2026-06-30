@@ -19,7 +19,7 @@ function StudyDetailsTab() {
         {
           title: 'Study Description',
           id: 'StudyDescription',
-          element: <MarkdownSynapseFromColumnData columnName={'id'} />,
+          element: <MarkdownSynapseFromColumnData columnName={'study'} />,
         },
         {
           title: 'Acknowledgement',
@@ -57,7 +57,7 @@ function StudyDetailsTab() {
                       {
                         concreteType:
                           'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-                        columnName: 'id',
+                        columnName: 'study',
                         operator: ColumnSingleValueFilterOperator.IN,
                         values: relatedStudiesArray,
                       },
