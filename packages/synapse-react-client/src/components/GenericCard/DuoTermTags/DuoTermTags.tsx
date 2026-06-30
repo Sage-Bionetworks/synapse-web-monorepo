@@ -1,6 +1,6 @@
-import { Box, Chip, Link, SvgIcon, Tooltip } from '@mui/material'
+import { Box, Link, SvgIcon } from '@mui/material'
 import type { SvgIconProps } from '@mui/material'
-import type { ComponentType, ReactNode } from 'react'
+import type { ComponentType, ReactElement, ReactNode } from 'react'
 import ScienceOutlined from '@mui/icons-material/ScienceOutlined'
 import MedicalServicesOutlined from '@mui/icons-material/MedicalServicesOutlined'
 import CoronavirusOutlined from '@mui/icons-material/CoronavirusOutlined'
@@ -28,22 +28,12 @@ import {
   duoRegistryUrl,
   resolveDuoTerm,
 } from './duoTerms'
+import FacetValueChip from '@/components/widgets/facet-nav/FacetValueChip'
+import type { RenderedFacetValueChip } from '@/components/QueryVisualizationWrapper/QueryVisualizationContext'
 
 export type DuoTermTagsProps = {
   /** Raw `dataUseModifiers` values (ontology codes or term names). */
   terms: string[]
-  /**
-   * Cap each tag's width and truncate long names with an ellipsis (full name in
-   * the tooltip). Intended for narrow contexts like the facet sidebar; cards
-   * have room to show the full value, so this is off by default.
-   */
-  truncate?: boolean
-  /**
-   * When provided, each chip renders a delete icon that calls this handler.
-   * Used where the chip itself is a removable pill (e.g. the active-filter
-   * "selected criteria" pills).
-   */
-  onDelete?: () => void
 }
 
 // `@mui/icons-material` (the classic Material Icons set) has no DNA/helix glyph,
@@ -84,24 +74,10 @@ const DUO_ICONS: Record<string, ComponentType> = {
   'DUO:0000012': RuleOutlined, // Research Specific Restrictions
 }
 
-const termIcon = (term: DuoTerm) => {
+const termIcon = (term: DuoTerm): ReactElement => {
   const Icon = DUO_ICONS[term.code] ?? HelpOutline
   return <Icon />
 }
-
-// Per design guidance, the tags are not color-coded by category. They use a
-// single neutral, theme-driven tint (the portal's secondary action color),
-// matching the plain filter pills; meaning is conveyed by the icon, label, and
-// tooltip rather than color.
-const chipSx = {
-  bgcolor: 'var(--synapse-secondary-action-color-alpha-10)',
-  color: 'var(--synapse-text-color-dark)',
-  '& .MuiChip-icon': { color: 'inherit' },
-}
-
-// Cap chip width so long term names don't blow out narrow contexts (e.g. the
-// facet sidebar); the full name is available via the tooltip.
-const MAX_CHIP_WIDTH = 220
 
 // Primary use first (the dataset's purpose), then the conditions that limit it.
 const ORDER: Record<DuoCategory, number> = {
@@ -111,8 +87,32 @@ const ORDER: Record<DuoCategory, number> = {
   limit: 3,
 }
 
+// The rich tooltip for a DUO term: full name, abbreviation, ontology code
+// (linked to the registry when available), and definition.
+function duoTooltipTitle(t: DuoTerm): ReactNode {
+  const url = duoRegistryUrl(t)
+  return (
+    <>
+      <strong>{t.name}</strong>
+      <br />
+      {t.abbr}
+      {t.code ? ' · ' : ''}
+      {url ? (
+        <Link href={url} target="_blank" rel="noopener" color="inherit">
+          {t.code}
+        </Link>
+      ) : (
+        t.code
+      )}
+      <br />
+      {t.definition}
+    </>
+  )
+}
+
+/** Renders a dataset's DUO data-use modifiers as a row of chips (used on cards). */
 export default function DuoTermTags(props: DuoTermTagsProps) {
-  const { terms, truncate = false, onDelete } = props
+  const { terms } = props
   if (!terms || terms.length === 0) {
     return null
   }
@@ -130,85 +130,40 @@ export default function DuoTermTags(props: DuoTermTagsProps) {
         maxWidth: '100%',
       }}
     >
-      {sorted.map((t, i) => {
-        const url = duoRegistryUrl(t)
-        return (
-          <Tooltip
-            key={i}
-            title={
-              <>
-                <strong>{t.name}</strong>
-                <br />
-                {t.abbr}
-                {t.code ? ' · ' : ''}
-                {url ? (
-                  <Link
-                    href={url}
-                    target="_blank"
-                    rel="noopener"
-                    color="inherit"
-                  >
-                    {t.code}
-                  </Link>
-                ) : (
-                  t.code
-                )}
-                <br />
-                {t.definition}
-              </>
-            }
-          >
-            <Chip
-              size="small"
-              icon={termIcon(t)}
-              label={t.name}
-              // Render a delete icon only when there's a single chip to remove;
-              // a shared handler across multiple chips would be ambiguous.
-              onDelete={onDelete && sorted.length === 1 ? onDelete : undefined}
-              // In narrow contexts (facet), cap the width but never exceed the
-              // container so the chip truncates with an ellipsis instead of
-              // overflowing. On cards the full name is shown.
-              sx={{
-                ...chipSx,
-                minWidth: 0,
-                // Keep the delete icon tinted to match the chip text.
-                '& .MuiChip-deleteIcon': { color: 'inherit', opacity: 0.7 },
-                '& .MuiChip-deleteIcon:hover': { opacity: 1 },
-                ...(truncate
-                  ? { maxWidth: `min(${MAX_CHIP_WIDTH}px, 100%)` }
-                  : {}),
-              }}
-            />
-          </Tooltip>
-        )
-      })}
+      {sorted.map((t, i) => (
+        <FacetValueChip
+          key={i}
+          label={t.name}
+          icon={termIcon(t)}
+          tooltipTitle={duoTooltipTitle(t)}
+        />
+      ))}
     </Box>
   )
 }
 
 /**
  * Builds a `renderFacetValue` function (for `QueryVisualizationWrapper`) that
- * renders the given DUO column's enumeration facet values — and its
- * active-filter pills — as DUO tags. Other columns fall through to the default
- * text rendering.
+ * returns the chip content for the given DUO column's enumeration facet values
+ * — used by both the facet sidebar and the active-filter pills, which render it
+ * through the shared `FacetValueChip`. Other columns fall through to text.
  *
- * This is the standardized DUO facet/pill renderer: portals only need to
- * declare the DUO column (via the card schema's `dataUseModifiersColumnName`)
- * rather than each defining their own handler. In the facet sidebar the tags
- * truncate; in the active-filter pill (where `onRemove` is supplied) the tag is
- * the removable chip itself, shown with its full name and a delete icon.
+ * Portals only need to declare the DUO column (via the card schema's
+ * `dataUseModifiersColumnName`) rather than each defining their own handler.
  */
 export function createDuoFacetValueRenderer(duoColumnName: string) {
   return (
     columnName: string,
     value: string,
-    options?: { onRemove?: () => void },
-  ): ReactNode =>
-    columnName === duoColumnName ? (
-      <DuoTermTags
-        terms={[value]}
-        truncate={!options?.onRemove}
-        onDelete={options?.onRemove}
-      />
-    ) : undefined
+  ): RenderedFacetValueChip | undefined => {
+    if (columnName !== duoColumnName) {
+      return undefined
+    }
+    const t = resolveDuoTerm(value)
+    return {
+      value: t.name,
+      icon: termIcon(t),
+      tooltipTitle: duoTooltipTitle(t),
+    }
+  }
 }

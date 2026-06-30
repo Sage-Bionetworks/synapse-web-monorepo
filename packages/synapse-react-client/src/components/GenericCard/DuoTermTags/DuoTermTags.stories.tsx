@@ -4,8 +4,24 @@ import { GenericCard } from '@/components/GenericCard/GenericCard'
 import { GenericCardIcon } from '@/components/GenericCard/GenericCardIcon'
 import { EnumFacetFilterOption } from '@/components/widgets/query-filter/EnumFacetFilter/EnumFacetFilterOption'
 import SelectionCriteriaPill from '@/components/widgets/facet-nav/SelectionCriteriaPill'
-import DuoTermTags from './DuoTermTags'
+import FacetValueChip from '@/components/widgets/facet-nav/FacetValueChip'
+import DuoTermTags, { createDuoFacetValueRenderer } from './DuoTermTags'
 import { ALL_DUO_TERMS } from './duoTerms'
+
+// Build a DUO value's chip content (icon + label + tooltip) the way the facet
+// sidebar and active-filter pills do, then render it through the shared chip.
+const renderDuoFacetValue = createDuoFacetValueRenderer('duo')
+function duoChip(code: string, truncate = false) {
+  const content = renderDuoFacetValue('duo', code)!
+  return (
+    <FacetValueChip
+      label={content.value}
+      icon={content.icon}
+      tooltipTitle={content.tooltipTitle}
+      truncate={truncate}
+    />
+  )
+}
 
 /**
  * Renders Data Use Ontology (DUO) `dataUseModifiers` values as labelled tags.
@@ -67,7 +83,7 @@ export const TruncatedForFacetSidebar: Story = {
           isDropdown={false}
           checked={false}
           count={(i * 7) % 130}
-          label={<DuoTermTags terms={[t.code]} truncate />}
+          label={duoChip(t.code, true)}
           onChange={() => {}}
           onHover={() => {}}
         />
@@ -139,17 +155,18 @@ export const AsActiveFilterPills: Story = {
         className="TotalQueryResults__selections"
         style={{ display: 'flex', flexWrap: 'wrap' }}
       >
-        {['DUO:0000006', 'DUO:0000042', 'DUO:0000046'].map(code => (
-          <SelectionCriteriaPill
-            key={code}
-            innerText={code}
-            tooltipText=""
-            renderedInnerText={
-              <DuoTermTags terms={[code]} onDelete={() => {}} />
-            }
-            onRemoveFilter={() => {}}
-          />
-        ))}
+        {['DUO:0000006', 'DUO:0000042', 'DUO:0000046'].map(code => {
+          const content = renderDuoFacetValue('duo', code)!
+          return (
+            <SelectionCriteriaPill
+              key={code}
+              innerText={content.value}
+              icon={content.icon}
+              tooltipText={content.tooltipTitle}
+              onRemoveFilter={() => {}}
+            />
+          )
+        })}
         <SelectionCriteriaPill
           key="year"
           innerText="2022"

@@ -13,6 +13,7 @@ import { createDuoFacetValueRenderer } from '../GenericCard/DuoTermTags/DuoTermT
 import {
   QueryVisualizationContextProvider,
   QueryVisualizationContextType,
+  RenderedFacetValueChip,
 } from './QueryVisualizationContext'
 
 // By default, show no external analysis platforms.
@@ -38,8 +39,7 @@ export type QueryVisualizationWrapperProps = {
   renderFacetValue?: (
     columnName: string,
     value: string,
-    options?: { onRemove?: () => void },
-  ) => ReactNode
+  ) => RenderedFacetValueChip | undefined
   /**
    * Column name of a STRING_LIST of Data Use Ontology (DUO) values. When set,
    * that column's facet values and active-filter pills are automatically

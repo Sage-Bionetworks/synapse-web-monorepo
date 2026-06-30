@@ -1,10 +1,11 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, test, expect, vi } from 'vitest'
+import { SvgIcon } from '@mui/material'
 import SelectionCriteriaPill from './SelectionCriteriaPill'
 
 describe('SelectionCriteriaPill', () => {
-  test('renders the plain innerText as a chip by default', () => {
+  test('renders the label as a chip', () => {
     render(
       <SelectionCriteriaPill
         key="k"
@@ -13,8 +14,7 @@ describe('SelectionCriteriaPill', () => {
       />,
     )
     expect(screen.getByText('Non-Commercial Use Only')).toBeInTheDocument()
-    // No custom node => the standard chip pill (no custom modifier).
-    expect(document.querySelector('.SelectionCriteriaPill--custom')).toBeNull()
+    expect(document.querySelector('.SelectionCriteriaPill')).toBeInTheDocument()
   })
 
   test('renders a delete icon that removes the filter when not locked', async () => {
@@ -47,35 +47,33 @@ describe('SelectionCriteriaPill', () => {
     expect(document.querySelector('.MuiChip-deleteIcon')).toBeNull()
   })
 
-  test('renders a custom node in place of innerText and drops the pill chrome', () => {
+  test('renders a leading icon alongside the label when provided', () => {
     render(
       <SelectionCriteriaPill
         key="k"
         innerText="Non-Commercial Use Only"
         tooltipText="Data Use Modifiers: Non-Commercial Use Only"
-        renderedInnerText={<span data-testid="duo-tag">DUO chip</span>}
+        icon={<SvgIcon data-testid="duo-icon" />}
       />,
     )
-    // The custom node is rendered...
-    expect(screen.getByTestId('duo-tag')).toBeInTheDocument()
-    // ...the plain text is not...
-    expect(screen.queryByText('Non-Commercial Use Only')).toBeNull()
-    // ...and the pill drops its chrome so the node reads as the chip.
-    expect(
-      document.querySelector('.SelectionCriteriaPill--custom'),
-    ).toBeInTheDocument()
+    expect(screen.getByTestId('duo-icon')).toBeInTheDocument()
+    expect(screen.getByText('Non-Commercial Use Only')).toBeInTheDocument()
   })
 
-  test('does not render its own delete icon for a custom node (the node owns removal)', () => {
+  test('owns the remove button even for a value with a custom icon', async () => {
+    const onRemoveFilter = vi.fn()
     render(
       <SelectionCriteriaPill
         key="k"
         innerText="Non-Commercial Use Only"
         tooltipText="tt"
-        renderedInnerText={<span>DUO chip</span>}
-        onRemoveFilter={() => {}}
+        icon={<SvgIcon data-testid="duo-icon" />}
+        onRemoveFilter={onRemoveFilter}
       />,
     )
-    expect(document.querySelector('.MuiChip-deleteIcon')).toBeNull()
+    const deleteIcon = document.querySelector('.MuiChip-deleteIcon')
+    expect(deleteIcon).toBeInTheDocument()
+    await userEvent.click(deleteIcon!)
+    expect(onRemoveFilter).toHaveBeenCalledTimes(1)
   })
 })

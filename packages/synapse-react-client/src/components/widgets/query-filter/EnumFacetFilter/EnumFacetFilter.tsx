@@ -23,6 +23,7 @@ import { useSuspenseGetQueryMetadata } from '../../../QueryWrapper/useGetQueryMe
 import { EnumFacetFilterSkeleton } from './EnumFacetFilterSkeleton'
 import EnumFacetFilterUI, { RenderedFacetValue } from './EnumFacetFilterUI'
 import { getAllIsSelected, valueToLabel } from './EnumFacetFilterUtils'
+import FacetValueChip from '../../facet-nav/FacetValueChip'
 
 export type EnumFacetFilterProps = {
   labelId?: string
@@ -143,7 +144,20 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
             currentSelectedFacet?.facetValues.includes(facetValue.value) ??
             false,
           displayText,
-          renderedLabel: renderFacetValue?.(facet.columnName, facetValue.value),
+          renderedLabel: (() => {
+            const rendered = renderFacetValue?.(
+              facet.columnName,
+              facetValue.value,
+            )
+            return rendered ? (
+              <FacetValueChip
+                label={rendered.value}
+                icon={rendered.icon}
+                tooltipTitle={rendered.tooltipTitle}
+                truncate
+              />
+            ) : undefined
+          })(),
         }
       },
     )

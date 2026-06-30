@@ -4,11 +4,27 @@ import {
   createContext,
   Dispatch,
   PropsWithChildren,
+  ReactElement,
   ReactNode,
   SetStateAction,
   useContext,
 } from 'react'
 import { ExternalAnalysisPlatform } from '../SynapseTable/export/ExternalAnalysisPlatformsConstants'
+
+/**
+ * Structured rendering for a single facet value, returned by `renderFacetValue`.
+ * Consumers (the facet sidebar, active-filter pills) render this through the
+ * shared `FacetValueChip`, so styling, tooltip, and the remove affordance stay
+ * consistent and live in one place rather than in each renderer.
+ */
+export type RenderedFacetValueChip = {
+  /** The chip label. */
+  value: ReactNode
+  /** Optional tooltip content. */
+  tooltipTitle?: ReactNode
+  /** Optional leading icon. */
+  icon?: ReactElement
+}
 
 export type QueryVisualizationContextType = {
   columnsToShowInTable: string[]
@@ -25,17 +41,14 @@ export type QueryVisualizationContextType = {
   getDisplayValue: (value: string, columnType: ColumnType) => string
   /**
    * Optional custom renderer for enumeration facet values, keyed by column. When
-   * it returns a node for a (columnName, value), that node replaces the plain
-   * text label in the facet filter and the active-filter ("selected criteria")
-   * pills. Returning undefined falls back to the text. The optional `onRemove`
-   * is provided in the pill context so the rendered node can own its own remove
-   * affordance (e.g. a chip delete icon) in place of the pill's remove button.
+   * it returns structured content for a (columnName, value), that content is
+   * rendered as a chip in the facet filter and the active-filter ("selected
+   * criteria") pills. Returning undefined falls back to the plain text label.
    */
   renderFacetValue?: (
     columnName: string,
     value: string,
-    options?: { onRemove?: () => void },
-  ) => ReactNode
+  ) => RenderedFacetValueChip | undefined
   /** React node to display in place of cards/table when there are no results. */
   NoContentPlaceholder: () => ReactNode
   /** The set of external analysis platforms where this component allows users to export data. If this list is empty, then

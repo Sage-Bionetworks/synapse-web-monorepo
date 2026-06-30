@@ -178,130 +178,132 @@ function getPillPropsFromFacetFilters(
   queryVisualizationContext: QueryVisualizationContextType,
   lockedColumn?: LockedColumn,
 ): SelectionCriteriaPillProps[] {
-  return selectedFacets.flatMap(selectedFacet => {
-    if (
-      selectedFacet.columnName.toLowerCase() ===
-      lockedColumn?.columnName?.toLowerCase()
-    ) {
-      return []
-    }
-    const columnModel = columnModels.find(
-      cm => cm.name === selectedFacet.columnName,
-    )
-    const { getColumnDisplayName, getDisplayValue, renderFacetValue } =
-      queryVisualizationContext
-    if (isFacetColumnValuesRequest(selectedFacet)) {
-      // If there are more than _n_ values, consolidate to one pill
+  return selectedFacets.flatMap(
+    (selectedFacet): SelectionCriteriaPillProps[] => {
       if (
-        selectedFacet.facetValues.length >
-          MAX_VALUES_IN_FILTER_FOR_INDIVIDUAL_PILLS ||
-        !columnModel
+        selectedFacet.columnName.toLowerCase() ===
+        lockedColumn?.columnName?.toLowerCase()
       ) {
-        const text = `${pluralize(
-          getColumnDisplayName(
+        return []
+      }
+      const columnModel = columnModels.find(
+        cm => cm.name === selectedFacet.columnName,
+      )
+      const { getColumnDisplayName, getDisplayValue, renderFacetValue } =
+        queryVisualizationContext
+      if (isFacetColumnValuesRequest(selectedFacet)) {
+        // If there are more than _n_ values, consolidate to one pill
+        if (
+          selectedFacet.facetValues.length >
+            MAX_VALUES_IN_FILTER_FOR_INDIVIDUAL_PILLS ||
+          !columnModel
+        ) {
+          const text = `${pluralize(
+            getColumnDisplayName(
+              selectedFacet.columnName,
+              selectedFacet.jsonPath,
+            ),
+          )} (${selectedFacet.facetValues.length.toLocaleString()})`
+          return [
+            {
+              key: `facet-${selectedFacet.concreteType}-${selectedFacet.columnName}`,
+              innerText: text,
+              tooltipText: text,
+              onRemoveFilter: () => {
+                queryContext.removeSelectedFacet(selectedFacet)
+              },
+            },
+          ]
+        }
+
+        // otherwise render one pill per value
+
+        return selectedFacet.facetValues.map(facetValue => {
+          const innerText = getDisplayValue(facetValue, columnModel.columnType)
+          // A custom renderer (e.g. DUO) supplies structured chip content; the
+          // pill renders it through the shared chip and owns the remove button.
+          const rendered = renderFacetValue?.(
             selectedFacet.columnName,
-            selectedFacet.jsonPath,
-          ),
-        )} (${selectedFacet.facetValues.length.toLocaleString()})`
+            facetValue,
+          )
+          return {
+            key: `facet-${selectedFacet.concreteType}-${selectedFacet.columnName}-${facetValue}`,
+            innerText: rendered ? rendered.value : innerText,
+            icon: rendered?.icon,
+            tooltipText: rendered
+              ? rendered.tooltipTitle
+              : `${getColumnDisplayName(
+                  selectedFacet.columnName,
+                  selectedFacet.jsonPath,
+                )}: ${innerText}`,
+            onRemoveFilter: () => {
+              queryContext.removeValueFromSelectedFacet(
+                selectedFacet,
+                facetValue,
+              )
+            },
+          }
+        })
+      } else if (isFacetColumnRangeRequest(selectedFacet)) {
+        // Include a single pill for both facet filters if a combined range facet filter config is defined
+        const { combineRangeFacetConfig } = queryContext
+        if (
+          combineRangeFacetConfig &&
+          (selectedFacet.columnName == combineRangeFacetConfig.minFacetColumn ||
+            selectedFacet.columnName == combineRangeFacetConfig.maxFacetColumn)
+        ) {
+          if (
+            selectedFacet.columnName == combineRangeFacetConfig.minFacetColumn
+          ) {
+            return []
+          } else {
+            // find the min facet also
+            const maxFacet = selectedFacet
+            const minFacet = selectedFacets.find(
+              v => v.columnName == combineRangeFacetConfig.minFacetColumn,
+            ) as FacetColumnRangeRequest
+            const innerText = getRangeFacetInnerText(maxFacet.min, minFacet.max)
+            return [
+              {
+                key: `facet-${selectedFacet.concreteType}-${selectedFacet.columnName}-${innerText}`,
+                innerText: innerText,
+                tooltipText: `${combineRangeFacetConfig.label}: ${innerText}`,
+                onRemoveFilter: () => {
+                  // Remove both facets on pill click
+                  queryContext.removeSelectedFacet([minFacet, maxFacet])
+                },
+              },
+            ]
+          }
+        }
+
+        const innerText = getRangeFacetInnerText(
+          selectedFacet.min,
+          selectedFacet.max,
+        )
+
         return [
           {
-            key: `facet-${selectedFacet.concreteType}-${selectedFacet.columnName}`,
-            innerText: text,
-            tooltipText: text,
+            key: `facet-${selectedFacet.concreteType}-${selectedFacet.columnName}-${selectedFacet.min}-${selectedFacet.max}`,
+            innerText: innerText,
+            tooltipText: `${getColumnDisplayName(
+              selectedFacet.columnName,
+              selectedFacet.jsonPath,
+            )}: ${innerText}`,
             onRemoveFilter: () => {
               queryContext.removeSelectedFacet(selectedFacet)
             },
           },
         ]
+      } else {
+        console.log(
+          'Unknown facet type',
+          (selectedFacet as unknown as FacetColumnRequest).concreteType,
+        )
+        return []
       }
-
-      // otherwise render one pill per value
-
-      return selectedFacet.facetValues.map(facetValue => {
-        const innerText = getDisplayValue(facetValue, columnModel.columnType)
-        return {
-          key: `facet-${selectedFacet.concreteType}-${selectedFacet.columnName}-${facetValue}`,
-          innerText: innerText,
-          renderedInnerText: renderFacetValue?.(
-            selectedFacet.columnName,
-            facetValue,
-            {
-              onRemove: () => {
-                queryContext.removeValueFromSelectedFacet(
-                  selectedFacet,
-                  facetValue,
-                )
-              },
-            },
-          ),
-          tooltipText: `${getColumnDisplayName(
-            selectedFacet.columnName,
-            selectedFacet.jsonPath,
-          )}: ${innerText}`,
-          onRemoveFilter: () => {
-            queryContext.removeValueFromSelectedFacet(selectedFacet, facetValue)
-          },
-        }
-      })
-    } else if (isFacetColumnRangeRequest(selectedFacet)) {
-      // Include a single pill for both facet filters if a combined range facet filter config is defined
-      const { combineRangeFacetConfig } = queryContext
-      if (
-        combineRangeFacetConfig &&
-        (selectedFacet.columnName == combineRangeFacetConfig.minFacetColumn ||
-          selectedFacet.columnName == combineRangeFacetConfig.maxFacetColumn)
-      ) {
-        if (
-          selectedFacet.columnName == combineRangeFacetConfig.minFacetColumn
-        ) {
-          return []
-        } else {
-          // find the min facet also
-          const maxFacet = selectedFacet
-          const minFacet = selectedFacets.find(
-            v => v.columnName == combineRangeFacetConfig.minFacetColumn,
-          ) as FacetColumnRangeRequest
-          const innerText = getRangeFacetInnerText(maxFacet.min, minFacet.max)
-          return [
-            {
-              key: `facet-${selectedFacet.concreteType}-${selectedFacet.columnName}-${innerText}`,
-              innerText: innerText,
-              tooltipText: `${combineRangeFacetConfig.label}: ${innerText}`,
-              onRemoveFilter: () => {
-                // Remove both facets on pill click
-                queryContext.removeSelectedFacet([minFacet, maxFacet])
-              },
-            },
-          ]
-        }
-      }
-
-      const innerText = getRangeFacetInnerText(
-        selectedFacet.min,
-        selectedFacet.max,
-      )
-
-      return [
-        {
-          key: `facet-${selectedFacet.concreteType}-${selectedFacet.columnName}-${selectedFacet.min}-${selectedFacet.max}`,
-          innerText: innerText,
-          tooltipText: `${getColumnDisplayName(
-            selectedFacet.columnName,
-            selectedFacet.jsonPath,
-          )}: ${innerText}`,
-          onRemoveFilter: () => {
-            queryContext.removeSelectedFacet(selectedFacet)
-          },
-        },
-      ]
-    } else {
-      console.log(
-        'Unknown facet type',
-        (selectedFacet as unknown as FacetColumnRequest).concreteType,
-      )
-      return []
-    }
-  })
+    },
+  )
 }
 
 function SelectionCriteriaPills() {
