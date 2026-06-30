@@ -107,6 +107,11 @@ All projects extend `shared/tsconfig.base.json` (strict mode). The root `tsconfi
 
 Husky runs ESLint + oxfmt (via lint-staged) on staged files before each commit.
 
+## Comments
+
+Default to no comment. Code should be self-explanatory through clear naming and structure; a comment is a last resort for genuinely non-obvious intent — a subtle invariant, a workaround for external behavior, or a "why this and not the obvious thing" that the code can't express on its own. Never comment to restate what the code does, and don't narrate routine logic. It is always useful to document regex patterns - i.e. what they are intended to match. When in doubt, leave it out. 
+Never write "historical context" comments in a refactor — e.g. `// previously this used X`, `// changed from the old approach`, `// no longer does Y`. Once a PR merges, the old behavior is irrelevant and lives in git history. Comment what the code does now, not what it used to do.
+
 ## Code review norms
 
 Recurring expectations from this repo's PR review history. Following them up front avoids review churn — reviewers ask for these repeatedly.
