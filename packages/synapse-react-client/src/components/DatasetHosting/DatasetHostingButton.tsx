@@ -5,6 +5,8 @@ import OpenInNew from '@mui/icons-material/OpenInNew'
 import LayersOutlined from '@mui/icons-material/LayersOutlined'
 import BlockOutlined from '@mui/icons-material/BlockOutlined'
 import { TargetEnum } from '@/utils/html/TargetEnum'
+import GenericCardActionButton from '../GenericCard/GenericCardActionButton'
+import { useCardActionButtonStyle } from '../GenericCard/CardActionButtonStyleContext'
 import {
   DATASET_HOSTING_CONFIG,
   DatasetHostingConfig,
@@ -48,93 +50,140 @@ function resolveLabel(
   return fillRepository(config.label, repository) ?? config.label
 }
 
+const MAX_WIDTH = '260px'
+
+const ELLIPSIS = {
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  minWidth: 0,
+} as const
+
 /**
- * A single chip-style button that both communicates how a dataset is hosted and
- * performs the right action for it:
- *  - downloadable datasets → a "Download" / "Download from {repository}" chip that
- *    triggers the download flow (the hosting caveat lives in the tooltip)
- *  - non-downloadable datasets (e.g. dbGaP/EGA) → an "Access at {repository}" chip
- *    that links out to the external repository
+ * The primary hosting-aware action for a dataset. It communicates how the dataset
+ * is hosted and performs the right action: downloadable types trigger the download
+ * flow; non-downloadable external types link out ("Access at {repository}"); and
+ * `unavailable` is a non-actionable indicator.
  *
- * Collapsing the badge and the action into one control keeps the card uncluttered
- * and guarantees a non-downloadable dataset never shows a download affordance that
- * wouldn't work. The same control governs cards and detail headers.
+ * Its appearance follows the nearest `CardActionButtonStyleContext`:
+ *  - `'chip'`   → a colored pill Chip
+ *  - `'button'` → the standard outlined GenericCardActionButton (default)
+ *
+ * Repository names can be long, so the label is capped and ellipsized in both
+ * modes, with the full text in the tooltip.
  */
 export function DatasetHostingButton(props: DatasetHostingButtonProps) {
   const { hosting, repository, externalUrl, onDownloadClick, downloadLoading } =
     props
+  const buttonStyle = useCardActionButtonStyle()
   const config = DATASET_HOSTING_CONFIG[normalizeHosting(hosting)]
 
   const label = resolveLabel(config, repository)
   const tooltip = fillRepository(config.tooltip, repository)
   const Icon = ICONS[config.icon]
-  const icon = downloadLoading ? (
-    <CircularProgress size={14} color="inherit" />
-  ) : (
-    <Icon sx={{ fontSize: '16px' }} />
-  )
 
-  const commonProps = {
-    label,
-    icon,
-    color: config.color,
-    clickable: true,
-    sx: {
-      fontWeight: 700,
-      px: 0.5,
-      textDecoration: 'none',
-      // Repository names can be long (e.g. "NCBI Gene Expression Omnibus (GEO)").
-      // Cap the chip width and ellipsize the label; the full text is in the tooltip.
-      maxWidth: '240px',
-      '& .MuiChip-label': {
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
+  let control: React.ReactNode
+  if (buttonStyle === 'chip') {
+    const icon = downloadLoading ? (
+      <CircularProgress size={14} color="inherit" />
+    ) : (
+      <Icon sx={{ fontSize: '16px' }} />
+    )
+    const commonProps = {
+      label,
+      icon,
+      color: config.color,
+      clickable: true,
+      sx: {
+        fontWeight: 700,
+        px: 0.5,
+        textDecoration: 'none',
+        maxWidth: MAX_WIDTH,
+        '& .MuiChip-label': ELLIPSIS,
+        // The `warning` palette only defines `main` (gold); force readable dark
+        // text + icon (and avoid the anchor's blue link color).
+        ...(config.color === 'warning' && {
+          color: 'rgba(0, 0, 0, 0.87)',
+          '& .MuiChip-label': { ...ELLIPSIS, color: 'rgba(0, 0, 0, 0.87)' },
+          '& .MuiChip-icon': { color: 'rgba(0, 0, 0, 0.87)' },
+        }),
       },
-      // The `warning` palette only defines `main` (gold), so MUI's auto contrast
-      // text is low-contrast; and as an anchor the chip would otherwise inherit the
-      // browser's blue link color. Force a dark, readable label + icon on the gold.
-      ...(config.color === 'warning' && {
-        color: 'rgba(0, 0, 0, 0.87)',
-        '& .MuiChip-label': { color: 'rgba(0, 0, 0, 0.87)' },
-        '& .MuiChip-icon': { color: 'rgba(0, 0, 0, 0.87)' },
-      }),
-    },
-  } as const
+    } as const
 
-  let chip
-  if (config.downloadable) {
-    chip = (
-      <Chip
-        {...commonProps}
-        onClick={onDownloadClick}
-        disabled={downloadLoading}
-      />
-    )
-  } else if (config.isExternalLink) {
-    // The external repository is the only access path, so require a URL to act.
-    chip = (
-      <Chip
-        {...commonProps}
-        component="a"
-        href={externalUrl}
-        target={TargetEnum.NEW_WINDOW}
-        rel="noopener noreferrer"
-        disabled={!externalUrl}
-      />
-    )
+    if (config.downloadable) {
+      control = (
+        <Chip
+          {...commonProps}
+          onClick={onDownloadClick}
+          disabled={downloadLoading}
+        />
+      )
+    } else if (config.isExternalLink) {
+      control = (
+        <Chip
+          {...commonProps}
+          component="a"
+          href={externalUrl}
+          target={TargetEnum.NEW_WINDOW}
+          rel="noopener noreferrer"
+          disabled={!externalUrl}
+        />
+      )
+    } else {
+      control = <Chip {...commonProps} clickable={false} disabled />
+    }
   } else {
-    // No action available (e.g. `unavailable`): a non-clickable, disabled chip.
-    chip = <Chip {...commonProps} clickable={false} disabled />
+    // Button style: the standard outlined action button.
+    const startIcon = <Icon sx={{ fontSize: '16px' }} />
+    const labelEl = <span style={ELLIPSIS}>{label}</span>
+    const sx = { maxWidth: MAX_WIDTH }
+
+    if (config.downloadable) {
+      control = (
+        <GenericCardActionButton
+          variant="outlined"
+          startIcon={startIcon}
+          onClick={onDownloadClick}
+          loading={downloadLoading}
+          sx={sx}
+        >
+          {labelEl}
+        </GenericCardActionButton>
+      )
+    } else if (config.isExternalLink && externalUrl) {
+      control = (
+        <GenericCardActionButton
+          variant="outlined"
+          href={externalUrl}
+          target={TargetEnum.NEW_WINDOW}
+          rel="noopener noreferrer"
+          startIcon={startIcon}
+          sx={sx}
+        >
+          {labelEl}
+        </GenericCardActionButton>
+      )
+    } else {
+      control = (
+        <GenericCardActionButton
+          variant="outlined"
+          disabled
+          startIcon={startIcon}
+          sx={sx}
+        >
+          {labelEl}
+        </GenericCardActionButton>
+      )
+    }
   }
 
   return tooltip ? (
     <Tooltip title={tooltip} arrow placement="top">
-      {/* span lets the tooltip work even when the chip is disabled */}
-      <span>{chip}</span>
+      {/* span lets the tooltip work even when the control is disabled */}
+      <span>{control}</span>
     </Tooltip>
   ) : (
-    chip
+    control
   )
 }
 

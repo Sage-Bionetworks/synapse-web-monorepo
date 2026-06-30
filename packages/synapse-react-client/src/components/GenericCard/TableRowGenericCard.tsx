@@ -50,6 +50,7 @@ import ShareThisPage, {
   ShareThisPageProps,
 } from '../ShareThisPage/ShareThisPage'
 import { SustainabilityScorecardProps } from '../SustainabilityScorecard/SustainabilityScorecard'
+import { CardActionButtonStyleContext } from './CardActionButtonStyleContext'
 import GenericCard from './GenericCard'
 import GenericCardActionButton from './GenericCardActionButton'
 import DuoTermTags from './DuoTermTags/DuoTermTags'
@@ -272,6 +273,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     columnIconOptions,
     CardTypeAdornment,
     charCountCutoff,
+    actionButtonStyle = 'button',
   } = props
 
   const {
@@ -711,44 +713,48 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
         )
       }
       cardTopButtons={
-        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          {croissantButton}
-          {/* Hosting-aware action (opt-in via schema.hostingConfig): downloadable
+        <CardActionButtonStyleContext.Provider value={actionButtonStyle}>
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+            {croissantButton}
+            {/* Hosting-aware action (opt-in via schema.hostingConfig): downloadable
               hosting toggles the same add-to-download-list flow; non-downloadable
               hosting links out to the external repository instead. */}
-          {hostingConfig &&
-            (resolvedDownloadCartSynIdValue || !hostingIsDownloadable) && (
-              <DatasetHostingButton
-                hosting={hostingType}
-                repository={hostingRepository}
-                externalUrl={hostingExternalUrl}
-                onDownloadClick={() => setShowDownloadConfirmation(val => !val)}
-                downloadLoading={downloadButtonLoading}
+            {hostingConfig &&
+              (resolvedDownloadCartSynIdValue || !hostingIsDownloadable) && (
+                <DatasetHostingButton
+                  hosting={hostingType}
+                  repository={hostingRepository}
+                  externalUrl={hostingExternalUrl}
+                  onDownloadClick={() =>
+                    setShowDownloadConfirmation(val => !val)
+                  }
+                  downloadLoading={downloadButtonLoading}
+                />
+              )}
+            {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart */}
+            {!hostingConfig && resolvedDownloadCartSynIdValue && (
+              <GenericCardActionButton
+                onClick={() => setShowDownloadConfirmation(val => !val)}
+                variant="outlined"
+                startIcon={<GetAppTwoTone sx={{ height: '12px' }} />}
+                loading={downloadButtonLoading}
+              >
+                Download
+              </GenericCardActionButton>
+            )}
+            {includeCitation && doiValue && (
+              <CitationPopover
+                title={title}
+                doi={doiValue}
+                boilerplateText={citationBoilerplateText}
+                defaultCitationFormat={defaultCitationFormat}
               />
             )}
-          {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart */}
-          {!hostingConfig && resolvedDownloadCartSynIdValue && (
-            <GenericCardActionButton
-              onClick={() => setShowDownloadConfirmation(val => !val)}
-              variant="outlined"
-              startIcon={<GetAppTwoTone sx={{ height: '12px' }} />}
-              loading={downloadButtonLoading}
-            >
-              Download
-            </GenericCardActionButton>
-          )}
-          {includeCitation && doiValue && (
-            <CitationPopover
-              title={title}
-              doi={doiValue}
-              boilerplateText={citationBoilerplateText}
-              defaultCitationFormat={defaultCitationFormat}
-            />
-          )}
-          {includeShareButton && isHeader && (
-            <ShareThisPage {...sharePageLinkButtonProps} />
-          )}
-        </Box>
+            {includeShareButton && isHeader && (
+              <ShareThisPage {...sharePageLinkButtonProps} />
+            )}
+          </Box>
+        </CardActionButtonStyleContext.Provider>
       }
     />
   )

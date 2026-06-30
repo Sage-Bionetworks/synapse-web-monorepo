@@ -20,6 +20,7 @@ const CUSTOM_LABEL_VALUE =
 
 export const datasetCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
+  actionButtonStyle: 'chip',
   genericCardSchema: {
     type: SynapseConstants.DATASET,
     title: 'title',

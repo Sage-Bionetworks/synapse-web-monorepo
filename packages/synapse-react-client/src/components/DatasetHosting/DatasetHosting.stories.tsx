@@ -11,6 +11,10 @@ import {
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { GenericCard } from '../GenericCard/GenericCard'
 import { GenericCardIcon } from '../GenericCard/GenericCardIcon'
+import {
+  CardActionButtonStyle,
+  CardActionButtonStyleContext,
+} from '../GenericCard/CardActionButtonStyleContext'
 import { CardLabel } from '../row_renderers/utils/CardFooter'
 import * as SynapseConstants from '@/utils/SynapseConstants'
 import {
@@ -42,7 +46,10 @@ type DatasetCardExample = {
   description: string
 }
 
-function renderDatasetCard(example: DatasetCardExample) {
+function renderDatasetCard(
+  example: DatasetCardExample,
+  actionButtonStyle: CardActionButtonStyle = 'chip',
+) {
   const labels: CardLabel[] = [
     { columnDisplayName: 'Disease Focus', value: 'Neurofibromatosis type 1' },
     { columnDisplayName: 'Assay', value: 'RNA-seq' },
@@ -50,21 +57,25 @@ function renderDatasetCard(example: DatasetCardExample) {
   ]
 
   return (
-    <GenericCard
-      type={SynapseConstants.DATASET}
-      title={example.title}
-      description={example.description}
-      icon={<GenericCardIcon type={SynapseConstants.DATASET} useTypeForIcon />}
-      cardTopButtons={
-        <DatasetHostingButton
-          hosting={example.hosting}
-          repository={example.repository}
-          externalUrl={example.externalUrl}
-          onDownloadClick={() => {}}
-        />
-      }
-      labels={labels}
-    />
+    <CardActionButtonStyleContext.Provider value={actionButtonStyle}>
+      <GenericCard
+        type={SynapseConstants.DATASET}
+        title={example.title}
+        description={example.description}
+        icon={
+          <GenericCardIcon type={SynapseConstants.DATASET} useTypeForIcon />
+        }
+        cardTopButtons={
+          <DatasetHostingButton
+            hosting={example.hosting}
+            repository={example.repository}
+            externalUrl={example.externalUrl}
+            onDownloadClick={() => {}}
+          />
+        }
+        labels={labels}
+      />
+    </CardActionButtonStyleContext.Provider>
   )
 }
 
@@ -289,6 +300,26 @@ export const AllFlavors: StoryObj = {
           </Box>
         )
       })}
+    </Stack>
+  ),
+}
+
+/**
+ * The same hosting types rendered with `actionButtonStyle: 'button'` — the default,
+ * compact `GenericCardActionButton` look. Portals choose `'chip'` (above) or
+ * `'button'` (here) per card configuration.
+ */
+export const ButtonStyle: StoryObj = {
+  render: () => (
+    <Stack gap={4} sx={{ maxWidth: 900 }}>
+      {Object.values(EXAMPLES).map(example => (
+        <Box key={example.hosting}>
+          <Typography variant="overline" sx={{ fontWeight: 700 }}>
+            {example.hosting}
+          </Typography>
+          {renderDatasetCard(example, 'button')}
+        </Box>
+      ))}
     </Stack>
   ),
 }
