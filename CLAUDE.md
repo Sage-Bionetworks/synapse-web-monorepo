@@ -133,13 +133,13 @@ Recurring expectations from this repo's PR review history. Following them up fro
 ### Types & the generated client
 
 - Use the generated type guards (e.g. `instanceOfOAuthIdentityProvider`) from `@sage-bionetworks/synapse-client` rather than hand-writing type-guard helpers.
-- Don't duplicate server-side enums/values that can drift out of sync (this caused a `FeatureFlagEnum` bug); keep one source of truth.
+- Prefer using the generated enums/values when possible. Some components use the legacy manually-maintained types in `@sage-bionetworks/synapse-types`. Use these only when necessary for compatibility.
 
 ### Reuse over duplication
 
 - Before adding a helper, component, or route, check whether one already exists and reuse it (e.g. `displayToast`, existing `parseX`/`href` helpers, shared routes). Reviewers frequently flag duplicated functions and components.
 - If a new component would closely duplicate an existing one (e.g. another plot like `SynapsePlot`), extend the existing component to cover the missing case rather than forking a near-copy.
-- Extract repeated style declarations into an SCSS module class or a shared `SxProps` constant instead of copy-pasting them.
+- Extract repeated style declarations into an SCSS module class (preferred) or a shared `SxProps` constant (MUI-only) instead of copy-pasting them.
 
 ### Constants over hardcoded values
 
@@ -148,7 +148,7 @@ Recurring expectations from this repo's PR review history. Following them up fro
 
 ### Accessibility
 
-- Icon-only buttons need an `aria-label`; use MUI `IconButton` for interactive command-bar buttons.
+- Icon-only buttons need an `aria-label` or a MUI `Tooltip`; use MUI `IconButton` for interactive command-bar buttons.
 - Interactive non-button elements need `role` + `tabIndex={0}`.
 - For MUI `Select`, set/reference the `labelId` from the component (MUI a11y wants this direction).
 - Decorative images may use blank `alt`.
@@ -156,6 +156,7 @@ Recurring expectations from this repo's PR review history. Following them up fro
 ### Module boundaries
 
 - No circular dependencies — the Vite (Rolldown) build is strict and will fail on cycles. Break a cycle by moving the shared constant/type into a neutral module.
+- Avoid referencing, creating, or extending barrel files unless necessary.
 
 ### PR hygiene
 
