@@ -19,6 +19,8 @@ export type EntityPageTitleBarProps = {
   onActMemberClickAddConditionsForUse: () => void
 }
 
+const FAVORITE_BUTTON_ICON_COLOR = '#9EAAB7'
+
 /**
  * The EntityPageTitleBar component is shown on every Entity page in Synapse, and shows an Entity's metadata and
  * provides controls to view and manipulate the Entity.
@@ -44,7 +46,8 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
       <Box
         sx={{
           padding: '20px 40px',
-          backgroundColor: 'grey.100',
+          backgroundColor: '#EAF0F5',
+          borderRadius: '5px',
         }}
       >
         <Stack
@@ -66,7 +69,15 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
                 variant: 'circular',
               }}
             >
-              <Avatar sx={{ bgcolor: 'grey.300', height: 48, width: 48 }}>
+              <Avatar
+                sx={{
+                  bgcolor: '#497097',
+                  height: 48,
+                  width: 48,
+                  borderRadius: '3px',
+                }}
+                variant={'square'}
+              >
                 {bundle?.entityType && (
                   <IconSvg
                     icon={
@@ -75,7 +86,7 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
                         : 'file'
                     }
                     wrap={false}
-                    sx={{ color: 'grey.700' }}
+                    // sx={{ color: 'grey.700' }}
                   />
                 )}
               </Avatar>
@@ -94,7 +105,10 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
                   </Typography>
                 </ConditionalWrapper>
                 {bundle?.entity?.id && (
-                  <FavoriteButton entityId={bundle.entity.id} />
+                  <FavoriteButton
+                    entityId={bundle.entity.id}
+                    iconColor={FAVORITE_BUTTON_ICON_COLOR}
+                  />
                 )}
               </Stack>
               <EntityTitleBarVersionInfo

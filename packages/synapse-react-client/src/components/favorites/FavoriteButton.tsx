@@ -11,6 +11,7 @@ import IconSvg from '../IconSvg/IconSvg'
 export type FavoriteButtonProps = {
   /* The entity for which to show a favorite button */
   entityId: string
+  iconColor?: string
 }
 
 /**
@@ -18,7 +19,7 @@ export type FavoriteButtonProps = {
  * added to/removed from their favorites
  */
 export default function FavoriteButton(props: FavoriteButtonProps) {
-  const { entityId } = props
+  const { entityId, iconColor } = props
   const { isAuthenticated } = useSynapseContext()
   const { isFavorite, isLoading } = useIsFavorite(entityId)
   const { mutate: onAddFavorite, isPending: isAddingFavorite } =
@@ -54,7 +55,7 @@ export default function FavoriteButton(props: FavoriteButtonProps) {
             <IconSvg
               icon={isFavorite ? 'fav' : 'favOutline'}
               sx={{
-                color: 'tertiary.main',
+                color: iconColor ? iconColor : 'tertiary.main',
                 width: '21px',
                 height: '21px',
               }}
