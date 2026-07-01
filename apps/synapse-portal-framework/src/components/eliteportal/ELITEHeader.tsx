@@ -21,7 +21,6 @@ const ELITEHeader = ({
     <header id="header">
       <Box
         sx={{
-          background: backgroundCss,
           position: 'relative',
           display: 'flex',
           flexDirection: { xs: 'column', lg: 'row' },
@@ -52,11 +51,24 @@ const ELITEHeader = ({
             Your browser does not support the video tag.
           </Box>
         )}
+        {/* Gradient overlay sits above the video but below content */}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            background: backgroundCss,
+            zIndex: 1,
+            pointerEvents: 'none',
+          }}
+        />
         <Box
           sx={{
             flex: 1,
             padding: { xs: '40px', lg: '40px 80px' },
-            zIndex: 1,
+            zIndex: 2,
           }}
         >
           <Typography
@@ -92,7 +104,7 @@ const ELITEHeader = ({
           path="/Search"
           sx={{
             flex: 1,
-            zIndex: 1,
+            zIndex: 2,
             '& > :first-child': {
               background: 'rgba(184, 204, 226, 0.60)',
             },
