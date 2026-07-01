@@ -1,5 +1,5 @@
 import { ExternalAnalysisPlatform } from 'synapse-react-client/components/SynapseTable/export/ExternalAnalysisPlatformsConstants'
-import type { SearchQueryConfig } from 'synapse-react-client/components'
+import type { SearchQueryConfig } from 'synapse-react-client/components/SearchQueryWrapper/SearchQueryUseQueryOptions'
 
 export const SYNAPSE_PORTAL_ID = '1005'
 
