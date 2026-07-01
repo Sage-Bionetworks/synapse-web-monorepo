@@ -3,7 +3,9 @@ import userEvent from '@testing-library/user-event'
 import {
   useCreateCurationTask,
   useDeleteCurationTask,
+  useGetCurationTaskStatus,
   useUpdateCurationTask,
+  useUpdateCurationTaskStatus,
 } from '@/synapse-queries/curation/task/useCurationTask'
 import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 import {
@@ -19,12 +21,17 @@ import {
   DELETE_CURATION_TASK_DIALOG_TITLE,
   FILE_BASED_TASK_TITLE,
   RECORD_BASED_TASK_TITLE,
+  TASK_STATUS_CONFIG,
+  TASK_STATUS_INPUT_LABEL,
 } from '../utils/constants'
+import { TaskStatusStateEnum } from '@sage-bionetworks/synapse-client'
 
 vi.mock('@/synapse-queries/curation/task/useCurationTask', () => ({
   useCreateCurationTask: vi.fn(),
   useUpdateCurationTask: vi.fn(),
   useDeleteCurationTask: vi.fn(),
+  useGetCurationTaskStatus: vi.fn(),
+  useUpdateCurationTaskStatus: vi.fn(),
 }))
 
 vi.mock('@/synapse-queries/entity/useEntity', () => ({
@@ -63,11 +70,14 @@ vi.mock('@/components/EntityFinder/EntityIdTextField', () => ({
 const mockUseCreateCurationTask = vi.mocked(useCreateCurationTask)
 const mockUseUpdateCurationTask = vi.mocked(useUpdateCurationTask)
 const mockUseDeleteCurationTask = vi.mocked(useDeleteCurationTask)
+const mockUseGetCurationTaskStatus = vi.mocked(useGetCurationTaskStatus)
+const mockUseUpdateCurationTaskStatus = vi.mocked(useUpdateCurationTaskStatus)
 const mockUseGetEntityPermissions = vi.mocked(useGetEntityPermissions)
 
 const mockCreateMutate = vi.fn()
 const mockUpdateMutate = vi.fn()
 const mockDeleteMutate = vi.fn()
+const mockUpdateStatusMutate = vi.fn()
 // Capture the options passed to useDeleteCurationTask so tests can invoke onSuccess
 let lastDeleteOptions: Parameters<typeof useDeleteCurationTask>[0] | undefined
 
@@ -101,12 +111,12 @@ beforeEach(() => {
   mockUpdateMutate.mockResolvedValue({})
   mockDeleteMutate.mockResolvedValue(undefined)
   mockUseCreateCurationTask.mockReturnValue({
-    mutate: mockCreateMutate,
+    mutateAsync: mockCreateMutate,
     isPending: false,
     error: null,
   } as any)
   mockUseUpdateCurationTask.mockReturnValue({
-    mutate: mockUpdateMutate,
+    mutateAsync: mockUpdateMutate,
     isPending: false,
     error: null,
   } as any)
@@ -118,6 +128,19 @@ beforeEach(() => {
       error: null,
     } as any
   })
+  mockUseGetCurationTaskStatus.mockReturnValue({
+    data: {
+      taskId: MOCK_CURATION_TASK_ID,
+      state: 'NOT_STARTED',
+      etag: 'etag1',
+    },
+    isFetching: false,
+  } as any)
+  mockUseUpdateCurationTaskStatus.mockReturnValue({
+    mutateAsync: mockUpdateStatusMutate,
+    isPending: false,
+    error: null,
+  } as any)
   mockUseGetEntityPermissions.mockReturnValue({
     data: { canDelete: true },
   } as any)
@@ -233,7 +256,7 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
 
     it('shows API error alert when create fails', async () => {
       mockUseCreateCurationTask.mockReturnValue({
-        mutate: mockCreateMutate,
+        mutateAsync: mockCreateMutate,
         isPending: false,
         error: { reason: 'Something went wrong' },
       } as any)
@@ -348,9 +371,67 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
       })
     })
 
+    it('calls updateTaskStatus when only status is changed', async () => {
+      renderEditDialog(fileBasedTask)
+
+      // Change only the status — no task field changes
+      await userEvent.click(
+        screen.getByRole('combobox', { name: TASK_STATUS_INPUT_LABEL }),
+      )
+      await userEvent.click(
+        screen.getByRole('option', {
+          name: TASK_STATUS_CONFIG[TaskStatusStateEnum.IN_PROGRESS].label,
+        }),
+      )
+
+      await userEvent.click(screen.getByRole('button', { name: /save/i }))
+
+      await waitFor(() => {
+        expect(mockUpdateStatusMutate).toHaveBeenCalledWith(
+          expect.objectContaining({ state: 'IN_PROGRESS' }),
+        )
+      })
+    })
+
+    it('chains updateTaskStatus after updateTask and passes updated etag when both change', async () => {
+      const updatedEtag = 'new-etag-from-server'
+      mockUpdateMutate.mockResolvedValue({
+        ...fileBasedTask,
+        etag: updatedEtag,
+      })
+      renderEditDialog(fileBasedTask)
+
+      // Change a task field
+      const dataTypeInput = screen.getByLabelText(/Task Name/i)
+      await userEvent.clear(dataTypeInput)
+      await userEvent.type(dataTypeInput, 'Proteomics')
+
+      // Change status
+      await userEvent.click(
+        screen.getByRole('combobox', { name: TASK_STATUS_INPUT_LABEL }),
+      )
+      await userEvent.click(
+        screen.getByRole('option', {
+          name: TASK_STATUS_CONFIG[TaskStatusStateEnum.IN_PROGRESS].label,
+        }),
+      )
+
+      await userEvent.click(screen.getByRole('button', { name: /save/i }))
+
+      await waitFor(() => {
+        expect(mockUpdateMutate).toHaveBeenCalled()
+        expect(mockUpdateStatusMutate).toHaveBeenCalledWith(
+          expect.objectContaining({ state: 'IN_PROGRESS', etag: updatedEtag }),
+        )
+        expect(defaultProps.onSuccess).toHaveBeenCalledWith(
+          expect.objectContaining({ etag: updatedEtag }),
+        )
+      })
+    })
+
     it('shows API error alert when update fails', () => {
       mockUseUpdateCurationTask.mockReturnValue({
-        mutate: mockUpdateMutate,
+        mutateAsync: mockUpdateMutate,
         isPending: false,
         error: { reason: 'Update failed' },
       } as any)

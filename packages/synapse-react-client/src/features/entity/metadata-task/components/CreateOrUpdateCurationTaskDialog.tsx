@@ -12,7 +12,9 @@ import WizardChoiceButtonGroup from '@/components/WizardChoiceButton/WizardChoic
 import {
   useCreateCurationTask,
   useDeleteCurationTask,
+  useGetCurationTaskStatus,
   useUpdateCurationTask,
+  useUpdateCurationTaskStatus,
 } from '@/synapse-queries/curation/task/useCurationTask'
 import { EntityTypeGroup } from '@/utils/functions/EntityTypeUtils'
 import { HelpTwoTone } from '@mui/icons-material'
@@ -27,8 +29,10 @@ import {
   Grid,
   IconButton,
   InputLabel,
+  MenuItem,
   Radio,
   RadioGroup,
+  Select,
   Stack,
   Tooltip,
   Typography,
@@ -39,6 +43,7 @@ import {
   EntityType,
   FileBasedMetadataTaskPropertiesConcreteTypeEnum,
   RecordBasedMetadataTaskPropertiesConcreteTypeEnum,
+  TaskStatusStateEnum,
 } from '@sage-bionetworks/synapse-client'
 import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
@@ -53,6 +58,8 @@ import {
   AUTH_MODE_SOURCE_BENEFACTOR_TOOLTIP,
   COLLABORATORS_TOOLTIP,
   CREATE_CURATION_TASK_DIALOG_TITLE,
+  TASK_STATUS_CONFIG,
+  TASK_STATUS_INPUT_LABEL,
   DELETE_CURATION_TASK_CONFIRMATION_PROMPT,
   DELETE_CURATION_TASK_DIALOG_TITLE,
   DELETE_CURATION_TASK_ERROR_TOAST_PREFIX,
@@ -80,6 +87,7 @@ import {
 } from '../utils/constants'
 import noop from 'lodash-es/noop'
 import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
+import { StyledFormControl } from '@/components/styled'
 
 export type CreateOrUpdateCurationTaskDialogProps = {
   open: boolean
@@ -205,25 +213,34 @@ export default function CreateOrUpdateCurationTaskDialog(
     string | null
   >(null)
 
-  const {
-    mutate: createTask,
-    isPending: isCreatePending,
-    error: createError,
-  } = useCreateCurationTask({
-    onSuccess: created => {
-      onSuccess(created)
-    },
-  })
+  // Task status (edit mode only)
+  const { data: currentTaskStatus, isFetching: isStatusFetching } =
+    useGetCurationTaskStatus(task?.taskId ?? 0, {
+      enabled: isEditMode && task?.taskId != null,
+    })
+  // undefined = user hasn't changed the status yet
+  const [pendingStatusState, setPendingStatusState] = useState<
+    TaskStatusStateEnum | undefined
+  >(undefined)
+  const displayedStatusState = pendingStatusState ?? currentTaskStatus?.state
 
   const {
-    mutate: updateTask,
+    mutateAsync: createTask,
+    isPending: isCreatePending,
+    error: createError,
+  } = useCreateCurationTask()
+
+  const {
+    mutateAsync: updateTask,
     isPending: isUpdatePending,
     error: updateError,
-  } = useUpdateCurationTask({
-    onSuccess: updated => {
-      onSuccess(updated)
-    },
-  })
+  } = useUpdateCurationTask()
+
+  const {
+    mutateAsync: updateTaskStatus,
+    isPending: isStatusUpdatePending,
+    error: statusUpdateError,
+  } = useUpdateCurationTaskStatus()
 
   const { mutate: deleteTask, isPending: isDeletePending } =
     useDeleteCurationTask({
@@ -240,8 +257,12 @@ export default function CreateOrUpdateCurationTaskDialog(
       },
     })
 
-  const isPending = isCreatePending || isUpdatePending || isDeletePending
-  const error = createError ?? updateError
+  const isPending =
+    isCreatePending ||
+    isUpdatePending ||
+    isDeletePending ||
+    isStatusUpdatePending
+  const error = createError ?? updateError ?? statusUpdateError
 
   const isTaskPropertiesValid =
     (selectedConcreteType === FILE_BASED_CONCRETE_TYPE &&
@@ -286,12 +307,27 @@ export default function CreateOrUpdateCurationTaskDialog(
     }
   }
 
-  function handleSave() {
+  async function handleSave() {
     const payload = buildTaskPayload()
     if (isEditMode) {
-      updateTask(payload)
+      const latestTask = await updateTask(payload)
+
+      if (
+        pendingStatusState !== undefined &&
+        pendingStatusState !== currentTaskStatus?.state &&
+        currentTaskStatus != null
+      ) {
+        await updateTaskStatus({
+          ...currentTaskStatus,
+          state: pendingStatusState,
+          etag: latestTask.etag,
+        })
+      }
+
+      onSuccess(latestTask)
     } else {
-      createTask(payload)
+      const created = await createTask(payload)
+      onSuccess(created)
     }
   }
 
@@ -565,6 +601,28 @@ export default function CreateOrUpdateCurationTaskDialog(
         </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
           <Stack gap={3}>
+            {isEditMode && (
+              <StyledFormControl fullWidth>
+                <InputLabel id="dlg-task-status-label">
+                  {TASK_STATUS_INPUT_LABEL}
+                </InputLabel>
+                <Select
+                  labelId="dlg-task-status-label"
+                  value={displayedStatusState ?? ''}
+                  label={TASK_STATUS_INPUT_LABEL}
+                  disabled={isStatusFetching || currentTaskStatus == null}
+                  onChange={e =>
+                    setPendingStatusState(e.target.value as TaskStatusStateEnum)
+                  }
+                >
+                  {Object.values(TaskStatusStateEnum).map(state => (
+                    <MenuItem key={state} value={state}>
+                      {TASK_STATUS_CONFIG[state].label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </StyledFormControl>
+            )}
             {assigneeField}
             {authModeField}
           </Stack>
@@ -642,7 +700,8 @@ export default function CreateOrUpdateCurationTaskDialog(
           )}
           <Button
             variant="contained"
-            onClick={handleSave}
+            // errors surfaced via react-query error state
+            onClick={() => void handleSave().catch(noop)}
             disabled={isPending || selectedConcreteType === null}
           >
             Save
