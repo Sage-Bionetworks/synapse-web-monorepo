@@ -8,8 +8,8 @@ import FacetValueChip from '@/components/widgets/facet-nav/FacetValueChip'
 import DuoTermTags, { createDuoFacetValueRenderer } from './DuoTermTags'
 import { ALL_DUO_TERMS } from './duoTerms'
 
-// Build a DUO value's chip content (icon + label + tooltip) the way the facet
-// sidebar and active-filter pills do, then render it through the shared chip.
+// Renders a DUO facet value the way the facet sidebar does: the shared chip,
+// truncated, with the tooltip placed to the right (matching EnumFacetFilter).
 const renderDuoFacetValue = createDuoFacetValueRenderer('duo')
 function DuoChip(props: { code: string; truncate?: boolean }) {
   const { code, truncate = false } = props
@@ -19,6 +19,7 @@ function DuoChip(props: { code: string; truncate?: boolean }) {
       label={content.label}
       icon={content.icon}
       tooltipTitle={content.tooltipTitle}
+      placement="right"
       truncate={truncate}
     />
   )
