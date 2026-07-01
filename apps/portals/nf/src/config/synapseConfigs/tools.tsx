@@ -86,6 +86,17 @@ export const toolsSearch: SearchQueryWrapperPlotNavProps = {
   autocompleteFieldName: 'resourceName',
   hideTopLevelControls: false,
   hideQueryCount: false,
+  searchQueryConfig: {
+    queryStrategy: 'MULTI_MATCH_BEST_FIELDS',
+    fieldBoosts: {
+      resourceName: 5,
+      synonyms: 4,
+      rrid: 4,
+      targetAntigen: 2,
+      diseaseType: 1,
+      description: 1,
+    },
+  },
 }
 
 export default tools
