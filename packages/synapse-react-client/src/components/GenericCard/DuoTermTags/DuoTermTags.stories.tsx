@@ -84,7 +84,7 @@ export const TruncatedForFacetSidebar: Story = {
           isDropdown={false}
           checked={false}
           count={(i * 7) % 130}
-          label={duoChip(t.code, true)}
+          label={<DuoChip code={t.code} truncate={true} />}
           onChange={() => {}}
           onHover={() => {}}
         />
