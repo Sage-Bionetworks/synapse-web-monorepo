@@ -700,6 +700,7 @@ export default function CreateOrUpdateCurationTaskDialog(
           )}
           <Button
             variant="contained"
+            // errors surfaced via react-query error state
             onClick={() => void handleSave().catch(noop)}
             disabled={isPending || selectedConcreteType === null}
           >
