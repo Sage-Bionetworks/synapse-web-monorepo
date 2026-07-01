@@ -46,6 +46,8 @@ export type EntityActionMenuLayout = {
   primaryMenuEndIcon: IconName
   primaryMenuEndIconSx?: SxProps
   menuButtonSx?: SystemStyleObject<Theme>
+  /* Optional MUI button variant for the "Download Options" dropdown button. Default 'outlined'. */
+  downloadMenuVariant?: ButtonProps['variant']
 }
 
 export type EntityActionMenuProps = {
@@ -203,6 +205,7 @@ export default function EntityActionMenu(props: EntityActionMenuProps) {
     dropdownButtonText: 'Download Options',
     convertSingleItemToButton: true,
     renderMenuIfNoItems: false,
+    variant: layout.downloadMenuVariant,
     buttonTooltip: menuConfiguration.DOWNLOAD.tooltipText,
     buttonProps: {
       disabled: menuConfiguration.DOWNLOAD.disabled,
@@ -233,15 +236,22 @@ export default function EntityActionMenu(props: EntityActionMenuProps) {
     ),
   }
 
+  const menuButtonSx = layout.menuButtonSx ?? {}
+
   return (
     <Box
       sx={{
         '& .MuiButton-root': {
           borderRadius: '6px',
           fontWeight: 540,
-          // Optional per-layout overrides (e.g. a different border color for
-          // entity pages vs the project header).
-          ...(layout.menuButtonSx ?? {}),
+          padding: '10px 12px',
+        },
+        // Optional per-layout overrides (e.g. background/border color for entity
+        // menu buttons).
+        '& .MuiButton-outlined': menuButtonSx,
+        '& .MuiButton-text': {
+          ...menuButtonSx,
+          backgroundColor: 'transparent',
         },
         '& .MuiButton-root .MuiTypography-root': {
           fontWeight: 540,

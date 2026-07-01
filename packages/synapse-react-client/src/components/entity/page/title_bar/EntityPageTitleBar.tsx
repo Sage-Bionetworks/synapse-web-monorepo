@@ -53,6 +53,7 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
         <Stack
           sx={{
             flexDirection: { xs: 'column', sm: 'row' },
+            alignItems: 'center',
           }}
         >
           <Stack
@@ -86,7 +87,6 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
                         : 'file'
                     }
                     wrap={false}
-                    // sx={{ color: 'grey.700' }}
                   />
                 )}
               </Avatar>
