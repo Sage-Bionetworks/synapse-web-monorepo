@@ -151,9 +151,10 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
             )
             return rendered ? (
               <FacetValueChip
-                label={rendered.value}
+                label={rendered.label}
                 icon={rendered.icon}
                 tooltipTitle={rendered.tooltipTitle}
+                placement="right"
                 truncate
               />
             ) : undefined

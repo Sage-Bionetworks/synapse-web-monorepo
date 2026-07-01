@@ -11,12 +11,12 @@ import { ALL_DUO_TERMS } from './duoTerms'
 // Build a DUO value's chip content (icon + label + tooltip) the way the facet
 // sidebar and active-filter pills do, then render it through the shared chip.
 const renderDuoFacetValue = createDuoFacetValueRenderer('duo')
-function DuoChip(props: {code: string, truncate?: boolean}) {
+function DuoChip(props: { code: string; truncate?: boolean }) {
   const { code, truncate = false } = props
   const content = renderDuoFacetValue('duo', code)!
   return (
     <FacetValueChip
-      label={content.value}
+      label={content.label}
       icon={content.icon}
       tooltipTitle={content.tooltipTitle}
       truncate={truncate}
@@ -161,7 +161,7 @@ export const AsActiveFilterPills: Story = {
           return (
             <SelectionCriteriaPill
               key={code}
-              innerText={content.value}
+              label={content.label}
               icon={content.icon}
               tooltipText={content.tooltipTitle}
               onRemoveFilter={() => {}}
@@ -170,7 +170,7 @@ export const AsActiveFilterPills: Story = {
         })}
         <SelectionCriteriaPill
           key="year"
-          innerText="2022"
+          label="2022"
           tooltipText="Year Processed: 2022"
           onRemoveFilter={() => {}}
         />

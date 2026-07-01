@@ -1,5 +1,5 @@
 import { Box, Link } from '@mui/material'
-import type { ComponentType, ReactElement, ReactNode } from 'react'
+import type { ComponentType, ReactNode } from 'react'
 import GeneticsIcon from '@/assets/icons/GeneticsIcon'
 import ScienceOutlined from '@mui/icons-material/ScienceOutlined'
 import MedicalServicesOutlined from '@mui/icons-material/MedicalServicesOutlined'
@@ -64,7 +64,7 @@ const DUO_ICONS: Record<string, ComponentType> = {
   'DUO:0000012': RuleOutlined, // Research Specific Restrictions
 }
 
-const termIcon = (term: DuoTerm): ReactElement => {
+const termIcon = (term: DuoTerm): ReactNode => {
   const Icon = DUO_ICONS[term.code] ?? HelpOutline
   return <Icon />
 }
@@ -160,7 +160,7 @@ export function createDuoFacetValueRenderer(duoColumnName: string) {
     }
     const t = resolveDuoTerm(value)
     return {
-      value: t.name,
+      label: t.name,
       icon: termIcon(t),
       tooltipTitle: duoTooltipTitle(t),
     }

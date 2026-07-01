@@ -9,7 +9,7 @@ describe('SelectionCriteriaPill', () => {
     render(
       <SelectionCriteriaPill
         key="k"
-        innerText="Non-Commercial Use Only"
+        label="Non-Commercial Use Only"
         tooltipText="Data Use Modifiers: Non-Commercial Use Only"
       />,
     )
@@ -22,7 +22,7 @@ describe('SelectionCriteriaPill', () => {
     render(
       <SelectionCriteriaPill
         key="k"
-        innerText="Aaron Kujawa"
+        label="Aaron Kujawa"
         tooltipText="Creator: Aaron Kujawa"
         onRemoveFilter={onRemoveFilter}
       />,
@@ -38,7 +38,7 @@ describe('SelectionCriteriaPill', () => {
     render(
       <SelectionCriteriaPill
         key="k"
-        innerText="Aaron Kujawa"
+        label="Aaron Kujawa"
         tooltipText="Creator: Aaron Kujawa"
         onRemoveFilter={() => {}}
         isLocked
@@ -51,7 +51,7 @@ describe('SelectionCriteriaPill', () => {
     render(
       <SelectionCriteriaPill
         key="k"
-        innerText="Non-Commercial Use Only"
+        label="Non-Commercial Use Only"
         tooltipText="Data Use Modifiers: Non-Commercial Use Only"
         icon={<SvgIcon data-testid="duo-icon" />}
       />,
@@ -65,7 +65,7 @@ describe('SelectionCriteriaPill', () => {
     render(
       <SelectionCriteriaPill
         key="k"
-        innerText="Non-Commercial Use Only"
+        label="Non-Commercial Use Only"
         tooltipText="tt"
         icon={<SvgIcon data-testid="duo-icon" />}
         onRemoveFilter={onRemoveFilter}

@@ -1,13 +1,16 @@
 import { Chip, Tooltip } from '@mui/material'
+import type { TooltipProps } from '@mui/material'
 import { ReactElement, ReactNode } from 'react'
 
 export type FacetValueChipProps = {
   /** The chip label. */
   label: ReactNode
   /** Optional leading icon. */
-  icon?: ReactElement
+  icon?: ReactNode
   /** Optional tooltip content. When set, the chip is wrapped in a Tooltip. */
   tooltipTitle?: ReactNode
+  /** Tooltip placement. @default 'top' */
+  placement?: TooltipProps['placement']
   /** When provided, the chip shows a delete/remove button that calls this. */
   onDelete?: () => void
   /** Cap the width and truncate long labels with an ellipsis (full text in tooltip). */
@@ -32,16 +35,25 @@ const chipSx = {
 /**
  * The shared chip used to render a facet value (or DUO term) consistently
  * wherever it appears: in the facet sidebar, as an active-filter pill, and on
- * cards. Owning the icon, tooltip (placement fixed here), and delete affordance
- * in one place keeps the styling identical across those contexts.
+ * cards. Owning the icon, tooltip, and delete affordance in one place keeps the
+ * styling identical across those contexts.
  */
 export default function FacetValueChip(props: FacetValueChipProps) {
-  const { label, icon, tooltipTitle, onDelete, truncate, className } = props
+  const {
+    label,
+    icon,
+    tooltipTitle,
+    placement = 'top',
+    onDelete,
+    truncate,
+    className,
+  } = props
   const chip = (
     <Chip
       className={className}
       size="small"
-      icon={icon}
+      // MUI Chip's `icon` expects a ReactElement; the public prop is ReactNode.
+      icon={icon as ReactElement | undefined}
       label={label}
       onDelete={onDelete}
       sx={{
@@ -51,7 +63,7 @@ export default function FacetValueChip(props: FacetValueChipProps) {
     />
   )
   return tooltipTitle ? (
-    <Tooltip title={tooltipTitle} placement="top">
+    <Tooltip title={tooltipTitle} placement={placement}>
       {chip}
     </Tooltip>
   ) : (

@@ -4,7 +4,6 @@ import {
   createContext,
   Dispatch,
   PropsWithChildren,
-  ReactElement,
   ReactNode,
   SetStateAction,
   useContext,
@@ -19,11 +18,11 @@ import { ExternalAnalysisPlatform } from '../SynapseTable/export/ExternalAnalysi
  */
 export type RenderedFacetValueChip = {
   /** The chip label. */
-  value: ReactNode
+  label: ReactNode
   /** Optional tooltip content. */
   tooltipTitle?: ReactNode
   /** Optional leading icon. */
-  icon?: ReactElement
+  icon?: ReactNode
 }
 
 export type QueryVisualizationContextType = {

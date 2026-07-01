@@ -53,7 +53,7 @@ function getPillPropsFromColumnQueryFilter(
     return [
       {
         key: `queryFilter-${queryFilter.concreteType}-${queryFilter.columnName}`,
-        innerText: text,
+        label: text,
         tooltipText: text,
         onRemoveFilter: () => {
           queryContext.removeQueryFilter(queryFilter)
@@ -79,7 +79,7 @@ function getPillPropsFromColumnQueryFilter(
     )}: ${filterValue}`
     return {
       key: `queryFilter-${queryFilter.concreteType}-${queryFilter.columnName}-${value}`,
-      innerText: text,
+      label: text,
       tooltipText: text,
       onRemoveFilter: () => {
         queryContext.removeValueFromQueryFilter(queryFilter, value)
@@ -102,7 +102,7 @@ export function getPillPropsFromTextMatchesQueryFilter(
 
   return {
     key: `queryFilter-${queryFilter.concreteType}-${queryFilter.searchExpression}`,
-    innerText,
+    label: innerText,
     tooltipText: `Text matches: "${innerText}"`,
     ...(isLocked
       ? { isLocked: true }
@@ -207,7 +207,7 @@ function getPillPropsFromFacetFilters(
           return [
             {
               key: `facet-${selectedFacet.concreteType}-${selectedFacet.columnName}`,
-              innerText: text,
+              label: text,
               tooltipText: text,
               onRemoveFilter: () => {
                 queryContext.removeSelectedFacet(selectedFacet)
@@ -228,7 +228,7 @@ function getPillPropsFromFacetFilters(
           )
           return {
             key: `facet-${selectedFacet.concreteType}-${selectedFacet.columnName}-${facetValue}`,
-            innerText: rendered ? rendered.value : innerText,
+            label: rendered ? rendered.label : innerText,
             icon: rendered?.icon,
             tooltipText: rendered
               ? rendered.tooltipTitle
@@ -266,7 +266,7 @@ function getPillPropsFromFacetFilters(
             return [
               {
                 key: `facet-${selectedFacet.concreteType}-${selectedFacet.columnName}-${innerText}`,
-                innerText: innerText,
+                label: innerText,
                 tooltipText: `${combineRangeFacetConfig.label}: ${innerText}`,
                 onRemoveFilter: () => {
                   // Remove both facets on pill click
@@ -285,7 +285,7 @@ function getPillPropsFromFacetFilters(
         return [
           {
             key: `facet-${selectedFacet.concreteType}-${selectedFacet.columnName}-${selectedFacet.min}-${selectedFacet.max}`,
-            innerText: innerText,
+            label: innerText,
             tooltipText: `${getColumnDisplayName(
               selectedFacet.columnName,
               selectedFacet.jsonPath,

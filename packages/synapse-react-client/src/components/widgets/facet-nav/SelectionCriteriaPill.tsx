@@ -1,13 +1,13 @@
-import { ReactElement, ReactNode } from 'react'
+import { ReactNode } from 'react'
 import FacetValueChip from './FacetValueChip'
 
 export type SelectionCriteriaPillProps = {
   readonly key: string
   /** The chip label (plain text, or structured content from `renderFacetValue`). */
-  readonly innerText: ReactNode
+  readonly label: ReactNode
   readonly tooltipText?: ReactNode
   /** Optional leading icon (e.g. for a DUO term). */
-  readonly icon?: ReactElement
+  readonly icon?: ReactNode
   readonly onRemoveFilter?: () => void
   /** When true, the pill is shown without a remove button */
   readonly isLocked?: boolean
@@ -20,11 +20,11 @@ export type SelectionCriteriaPillProps = {
  * appear.
  */
 function SelectionCriteriaPill(props: SelectionCriteriaPillProps) {
-  const { innerText, tooltipText, icon, onRemoveFilter, isLocked } = props
+  const { label, tooltipText, icon, onRemoveFilter, isLocked } = props
   return (
     <FacetValueChip
       className="SelectionCriteriaPill"
-      label={innerText}
+      label={label}
       icon={icon}
       tooltipTitle={tooltipText}
       onDelete={!isLocked ? onRemoveFilter : undefined}
