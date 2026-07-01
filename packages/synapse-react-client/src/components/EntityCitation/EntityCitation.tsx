@@ -126,6 +126,17 @@ const EntityCitation = ({
           anchorRef={citationButtonRef}
           sx={{
             width: { xs: '100%', sm: 'initial' },
+            '& .MuiButtonGroup-firstButton': {
+              borderTopLeftRadius: '6px',
+              borderBottomLeftRadius: '6px',
+            },
+            '& .MuiButtonGroup-lastButton': {
+              borderTopRightRadius: '6px',
+              borderBottomRightRadius: '6px',
+            },
+            '& .MuiButton-root': {
+              fontWeight: 540,
+            },
           }}
           buttonText="Cite as..."
           variant="outlined"
@@ -149,6 +160,8 @@ const EntityCitation = ({
           disabled={isEntityLoading && isProjectLoading}
           sx={{
             width: { xs: '100%', sm: 'initial' },
+            borderRadius: '6px',
+            fontWeight: 540,
           }}
           variant="outlined"
           startIcon={<DoubleQuotes width={18} height={18} />}

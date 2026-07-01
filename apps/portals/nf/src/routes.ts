@@ -26,7 +26,7 @@ import {
 export default [
   // Top-level providers layout (ThemeProvider, QueryClientProvider, etc.)
   layout('pages/PortalRoot.tsx', [
-    // Root layout route — App shell (Navbar, Footer, SurveyToast, etc.)
+    // Root layout route — App shell (Navbar, Footer, etc.)
     route('/', 'pages/RootApp.tsx', [
       // sharedRoutes equivalents
       route('*', 'pages/ErrorPage.tsx'),

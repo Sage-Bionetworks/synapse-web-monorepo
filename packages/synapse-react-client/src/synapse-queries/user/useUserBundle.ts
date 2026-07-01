@@ -1,5 +1,6 @@
 import SynapseClient from '@/synapse-client'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { getUserProfileWithProfilePicAttached } from '@/utils/functions/getUserData'
 import {
   USER_BUNDLE_MASK_IS_ACT_MEMBER,
   USER_BUNDLE_MASK_IS_AR_REVIEWER,
@@ -24,6 +25,10 @@ import {
   useSuspenseQuery,
 } from '@tanstack/react-query'
 import type { SynapseQueriesContext } from '../types'
+
+export type UserProfileWithProfilePicList = {
+  list: UserProfile[]
+}
 
 export function useGetNotificationEmail(
   options?: Partial<UseQueryOptions<NotificationEmail, SynapseClientError>>,
@@ -123,7 +128,6 @@ export function useGetUserProfile(
   const { accessToken, keyFactory } = useSynapseContext()
   // We store the profile in a session storage cache used by SWC
   const sessionStorageCacheKey = `${principalId}_USER_PROFILE`
-  const cachedValue = sessionStorage.getItem(sessionStorageCacheKey)
 
   return useQuery({
     ...options,
@@ -140,10 +144,35 @@ export function useGetUserProfile(
       )
       return userProfile
     },
-    // Use the sessionStorage cache to pre-populate profile data.
-    placeholderData: cachedValue
-      ? (JSON.parse(cachedValue) as UserProfile)
-      : options?.placeholderData,
+  })
+}
+
+export function getUserProfilesWithProfilePicAttachedQueryOptions(
+  principalIds: string[],
+  context: Pick<SynapseQueriesContext, 'keyFactory'>,
+) {
+  return queryOptions<UserProfileWithProfilePicList, SynapseClientError>({
+    queryKey:
+      context.keyFactory.getUserProfilesWithProfilePicAttachedQueryKey(
+        principalIds,
+      ),
+    queryFn: () => getUserProfileWithProfilePicAttached(principalIds),
+  })
+}
+
+export function useGetUserProfilesWithProfilePicAttached(
+  principalIds: string[],
+  options?: Partial<
+    UseQueryOptions<UserProfileWithProfilePicList, SynapseClientError>
+  >,
+) {
+  const { keyFactory } = useSynapseContext()
+  return useQuery({
+    ...getUserProfilesWithProfilePicAttachedQueryOptions(principalIds, {
+      keyFactory,
+    }),
+    enabled: principalIds.length > 0,
+    ...options,
   })
 }
 

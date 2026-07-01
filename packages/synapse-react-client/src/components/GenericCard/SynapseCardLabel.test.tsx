@@ -70,6 +70,35 @@ describe('SynapseCardLabel tests', () => {
     )
   })
 
+  test('resolveEntityName links to the entity on Synapse.org', () => {
+    const value = 'syn1234567'
+    render(
+      <SynapseCardLabel
+        value={value}
+        labelLink={{
+          isMarkdown: false,
+          baseURL: 'Explore/Studies',
+          URLColumnName: 'studyId',
+          matchColumnName: 'studyId',
+          resolveEntityName: true,
+        }}
+        isHeader={false}
+        selectColumns={selectColumns}
+        columnModels={undefined}
+        columnName={'studyId'}
+        rowData={[]}
+      />,
+      { wrapper: createWrapper() },
+    )
+    const link = screen.getByTestId('EntityLink')
+    expect(link.getAttribute('href')).toEqual(
+      `https://www.synapse.org/Synapse:${value}`,
+    )
+    const entityLinkProps = mockEntityLink.mock.calls[0][0]
+    expect(entityLinkProps.entity).toEqual(value)
+    expect(entityLinkProps.link).toBeUndefined()
+  })
+
   test('works with a header', () => {
     const value = 'syn1234567'
     const { container } = render(

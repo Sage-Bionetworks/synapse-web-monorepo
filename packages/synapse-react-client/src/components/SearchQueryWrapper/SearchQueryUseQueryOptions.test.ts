@@ -192,9 +192,9 @@ describe('toSearchIndexQuery', () => {
     expect(q.sort).toBeUndefined()
   })
 
-  // ---- selectedFacets → query DSL filter clauses ---
+  // ---- selectedFacets → post_filter ---
 
-  it('maps enumeration selectedFacets to terms filter clauses in the query DSL', () => {
+  it('moves enumeration selectedFacets into post_filter instead of query.bool.filter', () => {
     const result = toSearchIndexQuery(
       makeQueryBundleRequest({
         selectedFacets: [
@@ -207,12 +207,15 @@ describe('toSearchIndexQuery', () => {
       }),
       SEARCH_INDEX_ID,
     )
-    expect(result.searchQuery?.query).toMatchObject({
-      bool: { filter: [{ terms: { consortium: ['HTAN', 'CPTAC'] } }] },
+    // The query itself should be match_all (no filter in the query)
+    expect(result.searchQuery?.query).toEqual({ match_all: {} })
+    // The facet selection should appear in post_filter
+    expect(result.searchQuery?.post_filter).toMatchObject({
+      terms: { consortium: ['HTAN', 'CPTAC'] },
     })
   })
 
-  it('maps range selectedFacets to range filter clauses in the query DSL', () => {
+  it('moves range selectedFacets into post_filter', () => {
     const result = toSearchIndexQuery(
       makeQueryBundleRequest({
         selectedFacets: [
@@ -226,16 +229,13 @@ describe('toSearchIndexQuery', () => {
       }),
       SEARCH_INDEX_ID,
     )
-    expect(result.searchQuery?.query).toMatchObject({
-      bool: {
-        filter: [
-          { range: { modified_on: { gte: '1000000', lte: '2000000' } } },
-        ],
-      },
+    expect(result.searchQuery?.query).toEqual({ match_all: {} })
+    expect(result.searchQuery?.post_filter).toMatchObject({
+      range: { modified_on: { gte: '1000000', lte: '2000000' } },
     })
   })
 
-  it('converts DATE range filter values from YYYY-MM-DD to unix milliseconds', () => {
+  it('converts DATE range filter values from YYYY-MM-DD to unix milliseconds in post_filter', () => {
     const result = toSearchIndexQuery(
       makeQueryBundleRequest({
         selectedFacets: [
@@ -257,23 +257,17 @@ describe('toSearchIndexQuery', () => {
         },
       ],
     )
-    expect(result.searchQuery?.query).toMatchObject({
-      bool: {
-        filter: [
-          {
-            range: {
-              event_date: {
-                gte: String(dayjs('2021-06-01').valueOf()),
-                lte: String(dayjs('2021-12-31').valueOf()),
-              },
-            },
-          },
-        ],
+    expect(result.searchQuery?.post_filter).toMatchObject({
+      range: {
+        event_date: {
+          gte: String(dayjs('2021-06-01').valueOf()),
+          lte: String(dayjs('2021-12-31').valueOf()),
+        },
       },
     })
   })
 
-  it('passes non-DATE range filter values through unchanged', () => {
+  it('passes non-DATE range filter values through unchanged into post_filter', () => {
     const result = toSearchIndexQuery(
       makeQueryBundleRequest({
         selectedFacets: [
@@ -288,10 +282,8 @@ describe('toSearchIndexQuery', () => {
       SEARCH_INDEX_ID,
       [{ id: 'c1', name: 'year', columnType: 'INTEGER', facetType: 'range' }],
     )
-    expect(result.searchQuery?.query).toMatchObject({
-      bool: {
-        filter: [{ range: { year: { gte: '1996', lte: '1999' } } }],
-      },
+    expect(result.searchQuery?.post_filter).toMatchObject({
+      range: { year: { gte: '1996', lte: '1999' } },
     })
   })
 
@@ -318,28 +310,20 @@ describe('toSearchIndexQuery', () => {
       ],
     )
     // Only lte should be present; gte should be absent
-    expect(result.searchQuery?.query).toMatchObject({
-      bool: {
-        filter: [
-          {
-            range: {
-              event_date: { lte: String(dayjs('2021-12-31').valueOf()) },
-            },
-          },
-        ],
+    expect(result.searchQuery?.post_filter).toMatchObject({
+      range: {
+        event_date: { lte: String(dayjs('2021-12-31').valueOf()) },
       },
     })
     const rangeClause = (
-      result.searchQuery?.query as {
-        bool: {
-          filter: Array<{ range: { event_date: Record<string, unknown> } }>
-        }
+      result.searchQuery?.post_filter as {
+        range: { event_date: Record<string, unknown> }
       }
-    )?.bool?.filter?.[0]?.range?.event_date
+    )?.range?.event_date
     expect(rangeClause).not.toHaveProperty('gte')
   })
 
-  it('keeps enumeration and range selectedFacets separate', () => {
+  it('combines multiple selectedFacets into a bool.must post_filter', () => {
     const result = toSearchIndexQuery(
       makeQueryBundleRequest({
         selectedFacets: [
@@ -358,11 +342,19 @@ describe('toSearchIndexQuery', () => {
       }),
       SEARCH_INDEX_ID,
     )
-    // Both filter clauses should appear in the bool.filter array
+    // Both filter clauses should appear in post_filter.bool.must
     expect(
-      (result.searchQuery?.query as { bool: { filter: unknown[] } })?.bool
-        ?.filter,
+      (
+        result.searchQuery?.post_filter as {
+          bool: { must: unknown[] }
+        }
+      )?.bool?.must,
     ).toHaveLength(2)
+  })
+
+  it('produces undefined post_filter when there are no selectedFacets', () => {
+    const result = toSearchIndexQuery(makeQueryBundleRequest(), SEARCH_INDEX_ID)
+    expect(result.searchQuery?.post_filter).toBeUndefined()
   })
 
   // ---- additionalFilters → query DSL ---
@@ -413,7 +405,7 @@ describe('toSearchIndexQuery', () => {
     expect(result.searchQuery?.query).toEqual({ match_all: {} })
   })
 
-  it('wraps text + filter queries in a bool.must + bool.filter clause', () => {
+  it('keeps text search in the query and moves facet selection to post_filter', () => {
     const result = toSearchIndexQuery(
       makeQueryBundleRequest({
         additionalFilters: [
@@ -432,11 +424,13 @@ describe('toSearchIndexQuery', () => {
       }),
       SEARCH_INDEX_ID,
     )
+    // Text search stays in the query field
     expect(result.searchQuery?.query).toMatchObject({
-      bool: {
-        must: [{ multi_match: { query: 'glioblastoma' } }],
-        filter: [{ terms: { organ: ['Brain'] } }],
-      },
+      multi_match: { query: 'glioblastoma' },
+    })
+    // Facet selection moves to post_filter
+    expect(result.searchQuery?.post_filter).toMatchObject({
+      terms: { organ: ['Brain'] },
     })
   })
 
@@ -528,6 +522,171 @@ describe('toSearchIndexQuery', () => {
     expect(
       result.searchQuery?.aggregations?.['consortium']?.terms?.order,
     ).toEqual({ _count: 'desc' })
+  })
+
+  // ---- per-facet filter-wrapped aggregations (selections active) ---
+
+  it('wraps each enum aggregation in a filter agg when selections are active', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleRequest({
+        selectedFacets: [
+          {
+            concreteType: FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+            columnName: 'category',
+            facetValues: ['Biomedical Standard'],
+          },
+        ],
+      }),
+      SEARCH_INDEX_ID,
+      [
+        {
+          id: 'c1',
+          name: 'category',
+          columnType: 'STRING',
+          facetType: 'enumeration',
+        },
+        {
+          id: 'c2',
+          name: 'mature',
+          columnType: 'STRING',
+          facetType: 'enumeration',
+        },
+      ],
+    )
+    const aggs = result.searchQuery?.aggregations as Record<string, unknown>
+
+    // The selected column's own agg gets match_all (stays wide)
+    expect(aggs?.['category']).toMatchObject({
+      filter: { match_all: {} },
+      aggregations: { category: { terms: { field: 'category' } } },
+    })
+
+    // Unselected columns get the selection as their filter (narrowed)
+    expect(aggs?.['mature']).toMatchObject({
+      filter: { terms: { category: ['Biomedical Standard'] } },
+      aggregations: { mature: { terms: { field: 'mature' } } },
+    })
+  })
+
+  it('uses plain terms aggregations (no filter wrapping) when there are no selections', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleRequest(),
+      SEARCH_INDEX_ID,
+      [
+        {
+          id: 'c1',
+          name: 'category',
+          columnType: 'STRING',
+          facetType: 'enumeration',
+        },
+      ],
+    )
+    // No filter wrapper — just plain terms
+    expect(result.searchQuery?.aggregations?.['category']).toMatchObject({
+      terms: { field: 'category' },
+    })
+    expect(
+      (
+        result.searchQuery?.aggregations?.['category'] as Record<
+          string,
+          unknown
+        >
+      )?.filter,
+    ).toBeUndefined()
+  })
+
+  it('builds a bool.must filter for columns with multiple other active selections', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleRequest({
+        selectedFacets: [
+          {
+            concreteType: FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+            columnName: 'category',
+            facetValues: ['Biomedical Standard'],
+          },
+          {
+            concreteType: FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+            columnName: 'mature',
+            facetValues: ['Is Not Mature'],
+          },
+        ],
+      }),
+      SEARCH_INDEX_ID,
+      [
+        {
+          id: 'c1',
+          name: 'category',
+          columnType: 'STRING',
+          facetType: 'enumeration',
+        },
+        {
+          id: 'c2',
+          name: 'mature',
+          columnType: 'STRING',
+          facetType: 'enumeration',
+        },
+        {
+          id: 'c3',
+          name: 'topic',
+          columnType: 'STRING',
+          facetType: 'enumeration',
+        },
+      ],
+    )
+    const aggs = result.searchQuery?.aggregations as Record<string, unknown>
+
+    // category's filter = only mature selection (drops own)
+    expect(aggs?.['category']).toMatchObject({
+      filter: { terms: { mature: ['Is Not Mature'] } },
+    })
+
+    // mature's filter = only category selection (drops own)
+    expect(aggs?.['mature']).toMatchObject({
+      filter: { terms: { category: ['Biomedical Standard'] } },
+    })
+
+    // topic (unselected) filter = bool.must of both selections
+    expect(aggs?.['topic']).toMatchObject({
+      filter: {
+        bool: {
+          must: [
+            { terms: { category: ['Biomedical Standard'] } },
+            { terms: { mature: ['Is Not Mature'] } },
+          ],
+        },
+      },
+    })
+  })
+
+  it('includes range filter clauses in the aggregation filter for all enum columns', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleRequest({
+        selectedFacets: [
+          {
+            concreteType: FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
+            columnName: 'age',
+            min: '0',
+            max: '100',
+          },
+        ],
+      }),
+      SEARCH_INDEX_ID,
+      [
+        {
+          id: 'c1',
+          name: 'organ',
+          columnType: 'STRING',
+          facetType: 'enumeration',
+        },
+      ],
+    )
+    // The range filter for 'age' should appear in the organ aggregation's filter
+    expect(
+      (result.searchQuery?.aggregations as Record<string, unknown>)?.['organ'],
+    ).toMatchObject({
+      filter: { range: { age: { gte: '0', lte: '100' } } },
+      aggregations: { organ: { terms: { field: 'organ' } } },
+    })
   })
 
   // ---- query.sort → sort ---
@@ -758,6 +917,71 @@ describe('searchQueryResultsToQueryResultBundle', () => {
       columnName: 'organ',
       facetType: 'enumeration',
       facetValues: [{ value: 'Brain', count: 5, isSelected: false }],
+    })
+  })
+
+  it('parses filter-wrapped aggregation results (nested sterms#columnName shape)', () => {
+    // This is the actual response shape returned by OpenSearch when filter aggregation
+    // wrapping is used. OpenSearch prefixes the aggregation type to the name in the
+    // response key, producing e.g. "sterms#Program" instead of "Program".
+    const results: SearchQueryResults = {
+      concreteType: 'org.sagebionetworks.repo.model.search.SearchQueryResults',
+      totalHits: 320,
+      hits: [],
+      selectColumns: [],
+      aggregationResults: {
+        // category: wide (own selection dropped) → filter wrapper with match_all
+        category: {
+          doc_count: 782,
+          'sterms#category': {
+            buckets: [
+              { key: 'Biomedical Standard', doc_count: 320 },
+              { key: 'Ontology or Vocabulary', doc_count: 179 },
+            ],
+          },
+        },
+        // mature: narrowed to the category selection
+        mature: {
+          doc_count: 320,
+          'sterms#mature': {
+            buckets: [
+              { key: 'Is Not Mature', doc_count: 287 },
+              { key: 'Is Mature', doc_count: 33 },
+            ],
+          },
+        },
+      },
+    }
+    const result = searchQueryResultsToQueryResultBundle(
+      results,
+      MINIMAL_SEARCH_INDEX_QUERY,
+      undefined,
+      [
+        {
+          concreteType: FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+          columnName: 'category',
+          facetValues: ['Biomedical Standard'],
+        },
+      ],
+    )
+    expect(result.facets).toHaveLength(2)
+
+    const categoryFacet = result.facets!.find(f => f.columnName === 'category')
+    expect(categoryFacet).toMatchObject({
+      facetType: 'enumeration',
+      facetValues: [
+        { value: 'Biomedical Standard', count: 320, isSelected: true },
+        { value: 'Ontology or Vocabulary', count: 179, isSelected: false },
+      ],
+    })
+
+    const matureFacet = result.facets!.find(f => f.columnName === 'mature')
+    expect(matureFacet).toMatchObject({
+      facetType: 'enumeration',
+      facetValues: [
+        { value: 'Is Not Mature', count: 287, isSelected: false },
+        { value: 'Is Mature', count: 33, isSelected: false },
+      ],
     })
   })
 
