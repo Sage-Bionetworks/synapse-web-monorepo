@@ -1,0 +1,1 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{S as t,q as n,t as r}from"./dist-BetIPYbs.js";function i(e){if(e.length===0)return;let r=e[0],i=t.CREATED_ON;return r.id===`createdOn`?i=t.CREATED_ON:r.id===`modifiedOn`&&(i=t.MODIFIED_ON),[{field:i,direction:r.desc?n.DESC:n.ASC}]}var a=e((()=>{r()}));export{a as n,i as t};
