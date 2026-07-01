@@ -131,6 +131,7 @@ import {
   StrikethroughS,
   Subscript,
   Superscript,
+  Support,
   SyncTwoTone,
   TableChartTwoTone,
   TableRows,
@@ -250,6 +251,7 @@ export const IconStrings = [
   'close',
   'cross',
   'verticalEllipsis',
+  'support',
   'sync',
   'clipboard',
   'clipboardCheck',
@@ -577,6 +579,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <Image {...otherProps} />
     case 'superscript':
       return <Superscript {...otherProps} />
+    case 'support':
+      return <Support {...otherProps} />
     case 'subscript':
       return <Subscript {...otherProps} />
     case 'edit':

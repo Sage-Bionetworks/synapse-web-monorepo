@@ -1,14 +1,29 @@
-import { Box, Button, Typography, useMediaQuery, useTheme } from '@mui/material'
+import {
+  Box,
+  Button,
+  ButtonProps,
+  SxProps,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material'
 import { DropdownMenu, DropdownMenuProps } from './DropdownMenu'
 import { IconSvgButton, IconSvgButtonProps } from '../IconSvgButton'
 import IconSvg from '../IconSvg'
 
+export type ComplexMenuButtonProps = Omit<IconSvgButtonProps, 'icon'> & {
+  icon?: IconSvgButtonProps['icon']
+  variant?: ButtonProps['variant']
+  text?: string
+  iconSx?: SxProps
+}
+
 export type ComplexMenuProps = {
   /*
-   * Configuration for IconButtons. Each entry corresponds to one button.
-   * See the IconButtonConfiguration type for more info.
+   * Configuration for buttons. Each entry corresponds to one button.
+   * See the ComplexMenuButtonProps type for more info.
    */
-  iconButtons?: IconSvgButtonProps[]
+  iconButtons?: ComplexMenuButtonProps[]
   /*
    * Configuration for DropdownMenus. Each entry corresponds to one dropdown menu button, which
    * itself can contain multiple groups of items.
@@ -38,8 +53,41 @@ export function ComplexMenu(props: ComplexMenuProps) {
         },
       })}
     >
-      {iconButtons.map(iconButton =>
-        isSmallScreen && iconButton.tooltipText ? (
+      {iconButtons.map(iconButton => {
+        if (iconButton.variant != null) {
+          const label = iconButton.text ?? iconButton.tooltipText
+          return (
+            <Box
+              key={label}
+              sx={theme => ({
+                [theme.breakpoints.down('sm')]: {
+                  width: '100%',
+                  '.MuiButton-root': { width: '100%' },
+                },
+              })}
+            >
+              <Button
+                variant={iconButton.variant}
+                startIcon={
+                  iconButton.icon ? (
+                    <IconSvg
+                      icon={iconButton.icon}
+                      wrap={false}
+                      fontSize={'inherit'}
+                      sx={iconButton.iconSx}
+                    />
+                  ) : undefined
+                }
+                onClick={iconButton.onClick}
+                href={iconButton.href}
+                disabled={iconButton.disabled}
+              >
+                <Typography variant="buttonLink">{label}</Typography>
+              </Button>
+            </Box>
+          )
+        }
+        return isSmallScreen && iconButton.tooltipText ? (
           <Box
             sx={{
               width: '100%',
@@ -51,7 +99,7 @@ export function ComplexMenu(props: ComplexMenuProps) {
               startIcon={
                 <IconSvg
                   key={iconButton.tooltipText}
-                  icon={iconButton.icon}
+                  icon={iconButton.icon!}
                   wrap={false}
                   fontSize={'inherit'}
                 />
@@ -68,9 +116,13 @@ export function ComplexMenu(props: ComplexMenuProps) {
             </Button>
           </Box>
         ) : (
-          <IconSvgButton key={iconButton.tooltipText} {...iconButton} />
-        ),
-      )}
+          <IconSvgButton
+            key={iconButton.tooltipText}
+            {...iconButton}
+            icon={iconButton.icon!}
+          />
+        )
+      })}
       {dropdownMenus.map(
         (menuProps, index) =>
           menuProps.items &&
