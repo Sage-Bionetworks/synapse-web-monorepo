@@ -17,6 +17,7 @@ import {
   getNextPageParamForSearchQueryResults,
   searchQueryResultsToQueryResultBundle,
   toSearchIndexQuery,
+  type SearchQueryConfig,
 } from './SearchQueryUseQueryOptions'
 
 const SEARCH_INDEX_ID = 'syn60001'
@@ -1279,5 +1280,191 @@ describe('searchQueryResultsToQueryResultBundle', () => {
     const facet = result.facets![0] as FacetColumnResultRange
     expect(facet.selectedMin).toBeUndefined()
     expect(facet.selectedMax).toBe('2021-12-31')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// toSearchIndexQuery – searchQueryConfig
+// ---------------------------------------------------------------------------
+
+describe('toSearchIndexQuery – searchQueryConfig', () => {
+  const queryBundleWithText = makeQueryBundleRequest({
+    additionalFilters: [
+      {
+        concreteType: TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+        searchExpression: 'schwann',
+      },
+    ],
+  })
+
+  it('omitting searchQueryConfig keeps the default MULTI_MATCH behavior (fuzziness AUTO, no fields)', () => {
+    const result = toSearchIndexQuery(queryBundleWithText, SEARCH_INDEX_ID)
+    expect(result.searchQuery?.query).toEqual({
+      multi_match: { query: 'schwann', fuzziness: 'AUTO' },
+    })
+  })
+
+  it('MULTI_MATCH strategy is identical to the default', () => {
+    const result = toSearchIndexQuery(
+      queryBundleWithText,
+      SEARCH_INDEX_ID,
+      undefined,
+      {
+        queryStrategy: 'MULTI_MATCH',
+      },
+    )
+    expect(result.searchQuery?.query).toEqual({
+      multi_match: { query: 'schwann', fuzziness: 'AUTO' },
+    })
+  })
+
+  it('MULTI_MATCH_BEST_FIELDS with field boosts emits type best_fields and fields array', () => {
+    const config: SearchQueryConfig = {
+      queryStrategy: 'MULTI_MATCH_BEST_FIELDS',
+      fieldBoosts: { resourceName: 5, synonyms: 4, rrid: 4 },
+    }
+    const result = toSearchIndexQuery(
+      queryBundleWithText,
+      SEARCH_INDEX_ID,
+      undefined,
+      config,
+    )
+    expect(result.searchQuery?.query).toEqual({
+      multi_match: {
+        query: 'schwann',
+        type: 'best_fields',
+        fields: ['resourceName^5', 'synonyms^4', 'rrid^4'],
+      },
+    })
+  })
+
+  it('MULTI_MATCH_BEST_FIELDS without field boosts emits no fields key', () => {
+    const result = toSearchIndexQuery(
+      queryBundleWithText,
+      SEARCH_INDEX_ID,
+      undefined,
+      {
+        queryStrategy: 'MULTI_MATCH_BEST_FIELDS',
+      },
+    )
+    expect(result.searchQuery?.query).toEqual({
+      multi_match: { query: 'schwann', type: 'best_fields' },
+    })
+  })
+
+  it('MULTI_MATCH_CROSS_FIELDS with field boosts emits type cross_fields', () => {
+    const result = toSearchIndexQuery(
+      queryBundleWithText,
+      SEARCH_INDEX_ID,
+      undefined,
+      {
+        queryStrategy: 'MULTI_MATCH_CROSS_FIELDS',
+        fieldBoosts: { resourceName: 5, description: 1 },
+      },
+    )
+    expect(result.searchQuery?.query).toEqual({
+      multi_match: {
+        query: 'schwann',
+        type: 'cross_fields',
+        fields: ['resourceName^5', 'description'],
+      },
+    })
+  })
+
+  it('SIMPLE_QUERY_STRING emits a simple_query_string clause with field boosts', () => {
+    const result = toSearchIndexQuery(
+      queryBundleWithText,
+      SEARCH_INDEX_ID,
+      undefined,
+      {
+        queryStrategy: 'SIMPLE_QUERY_STRING',
+        fieldBoosts: { resourceName: 5, synonyms: 4 },
+      },
+    )
+    expect(result.searchQuery?.query).toEqual({
+      simple_query_string: {
+        query: 'schwann',
+        fields: ['resourceName^5', 'synonyms^4'],
+      },
+    })
+  })
+
+  it('SIMPLE_QUERY_STRING without field boosts emits no fields key', () => {
+    const result = toSearchIndexQuery(
+      queryBundleWithText,
+      SEARCH_INDEX_ID,
+      undefined,
+      {
+        queryStrategy: 'SIMPLE_QUERY_STRING',
+      },
+    )
+    expect(result.searchQuery?.query).toEqual({
+      simple_query_string: { query: 'schwann' },
+    })
+  })
+
+  it('PHRASE_PREFIX emits type phrase_prefix', () => {
+    const result = toSearchIndexQuery(
+      queryBundleWithText,
+      SEARCH_INDEX_ID,
+      undefined,
+      {
+        queryStrategy: 'PHRASE_PREFIX',
+      },
+    )
+    expect(result.searchQuery?.query).toEqual({
+      multi_match: { query: 'schwann', type: 'phrase_prefix' },
+    })
+  })
+
+  it('BOOSTED_FUZZY with field boosts emits fuzziness AUTO', () => {
+    const result = toSearchIndexQuery(
+      queryBundleWithText,
+      SEARCH_INDEX_ID,
+      undefined,
+      {
+        queryStrategy: 'BOOSTED_FUZZY',
+        fieldBoosts: { resourceName: 5, synonyms: 4 },
+      },
+    )
+    expect(result.searchQuery?.query).toEqual({
+      multi_match: {
+        query: 'schwann',
+        fields: ['resourceName^5', 'synonyms^4'],
+        fuzziness: 'AUTO',
+      },
+    })
+  })
+
+  it('explicit fuzziness overrides the per-strategy default', () => {
+    const result = toSearchIndexQuery(
+      queryBundleWithText,
+      SEARCH_INDEX_ID,
+      undefined,
+      {
+        queryStrategy: 'MULTI_MATCH',
+        fuzziness: '1',
+      },
+    )
+    expect(result.searchQuery?.query).toEqual({
+      multi_match: { query: 'schwann', fuzziness: '1' },
+    })
+  })
+
+  it('a boost of 1 renders as the bare field name with no ^ suffix', () => {
+    const result = toSearchIndexQuery(
+      queryBundleWithText,
+      SEARCH_INDEX_ID,
+      undefined,
+      {
+        queryStrategy: 'MULTI_MATCH_BEST_FIELDS',
+        fieldBoosts: { resourceName: 5, description: 1 },
+      },
+    )
+    const clause = result.searchQuery?.query as {
+      multi_match: { fields: string[] }
+    }
+    expect(clause.multi_match.fields).toContain('description')
+    expect(clause.multi_match.fields).not.toContain('description^1')
   })
 })

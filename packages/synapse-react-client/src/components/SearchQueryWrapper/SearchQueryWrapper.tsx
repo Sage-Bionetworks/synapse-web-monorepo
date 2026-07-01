@@ -24,6 +24,7 @@ import {
 import {
   getSearchQueryUseQueryOptions,
   useSearchQueryUseQueryOptions,
+  SearchQueryConfig,
 } from './SearchQueryUseQueryOptions'
 import { TableQueryUseQueryOptions } from '../QueryWrapper/TableQueryUseQueryOptions'
 import useHasFacetedSelectColumn from '../QueryWrapper/useHasFacetedSelectColumn'
@@ -69,6 +70,8 @@ export type SearchQueryWrapperProps = PropsWithChildren<{
   isInfinite?: boolean
   /** Whether the URL should update when the query is modified (deep linking). */
   shouldDeepLink?: boolean
+  /** OpenSearch query strategy and field-boost configuration. */
+  searchQueryConfig?: SearchQueryConfig
 }>
 
 /**
@@ -120,6 +123,7 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
     isInfinite = false,
     searchIndexId,
     shouldDeepLink = false,
+    searchQueryConfig,
   } = props
 
   const { keyFactory, accessToken } = useSynapseContext()
@@ -201,6 +205,7 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
     currentQueryRequest as QueryBundleRequest,
     searchIndexId,
     synapseId,
+    searchQueryConfig,
   ) as unknown as TableQueryUseQueryOptions
 
   const hasFacetedSelectColumn = useHasFacetedSelectColumn(
@@ -228,6 +233,7 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
           accessToken,
           searchIndexId,
           columnModels,
+          searchQueryConfig,
         ) as unknown as TableQueryUseQueryOptions
       ).rowDataQueryOptions
     },
@@ -237,6 +243,7 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
       accessToken,
       searchIndexId,
       columnModels,
+      searchQueryConfig,
     ],
   )
 
