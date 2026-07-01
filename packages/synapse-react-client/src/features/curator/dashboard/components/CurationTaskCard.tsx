@@ -167,7 +167,9 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
               <Typography variant="body1">Task ID: {taskId}</Typography>
             )}
           </Box>
-          <Typography variant="body1">{description}</Typography>
+          {description && (
+            <Typography variant="body1">{description}</Typography>
+          )}
           <div className={styles.userChipContainer}>
             {principalIds.map(principalId => (
               <UserOrTeamChip key={principalId} principalId={principalId} />
