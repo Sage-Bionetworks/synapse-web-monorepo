@@ -18,7 +18,7 @@ const datasetParticipantCountPlotConfig: QueryWrapperSynapsePlotProps = {
   type: 'bar',
   horizontal: true,
   // xtitle: 'Participant Count',
-  // ytitle: 'Dataset',
+  ytitle: 'Dataset',
   xaxistype: 'log',
   showlegend: false,
   hideYAxisTickLabels: true,
@@ -34,10 +34,10 @@ const datasetItemCountPlotConfig: QueryWrapperSynapsePlotProps = {
   type: 'bar',
   horizontal: true,
   // xtitle: 'Item Count',
-  // ytitle: 'Dataset',
+  ytitle: 'Dataset',
   showlegend: false,
   hideYAxisTickLabels: true,
-  hideXAxisTickLabels: true,
+  hideXAxisTickLabels: false,
   fullWidth: false,
 }
 
@@ -48,10 +48,10 @@ const datasetSizePlotConfig: QueryWrapperSynapsePlotProps = {
   type: 'bar',
   horizontal: true,
   // xtitle: 'Size (bytes)',
-  // ytitle: 'Dataset',
+  ytitle: 'Dataset',
   showlegend: false,
   hideYAxisTickLabels: true,
-  hideXAxisTickLabels: true,
+  hideXAxisTickLabels: false,
   fullWidth: false,
 }
 

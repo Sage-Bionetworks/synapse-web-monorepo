@@ -54,13 +54,6 @@ const maxLabelLength: number = 19
 // STACKED_HORIZONTAL_BAR corresponds to a bar chart where we just want to show the proportion (like a pie chart)
 export type PlotType = 'PIE' | 'BAR' | 'STACKED_HORIZONTAL_BAR'
 
-// Note: do NOT define layout as a module-level constant.
-// Plotly.js mutates the layout object it receives, and sharing one object across
-// multiple chart instances causes cross-instance corruption (e.g. when the expand
-// modal mounts a second FacetNavPanel with the same layout object, Plotly's
-// mutations to the inner chart's layout will silently break the outer chart).
-// Instead, each component instance computes its own layout via useMemo.
-
 export type GraphData = {
   data: Plotly.Data[]
   labels: FacetWithLabel[]
@@ -324,8 +317,11 @@ function FacetNavPanel(props: FacetNavPanelProps) {
   )
   const columnType = columnModel?.columnType as ColumnTypeEnum
 
-  // Each instance needs its own layout object — Plotly.js mutates it, so sharing
-  // a module-level constant across instances causes cross-chart corruption.
+  // Plotly.js mutates the layout object it receives, so each component instance
+  // must have its own layout object. Sharing a single object across instances
+  // (e.g. when the expand modal mounts a second FacetNavPanel) causes Plotly's
+  // mutations on one chart to silently corrupt the other. Use useMemo to
+  // produce a fresh layout object per instance — do NOT hoist this to module scope.
   const plotLayout = useMemo<Partial<Plotly.Layout>>(
     () => ({
       showlegend: false,
