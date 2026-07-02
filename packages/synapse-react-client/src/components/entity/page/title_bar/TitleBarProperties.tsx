@@ -2,14 +2,11 @@ import { useGetEntityBundle, useGetFeatureFlag } from '@/synapse-queries'
 import { Box, Divider, Link, Stack, Typography } from '@mui/material'
 import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { ReactNode, useState } from 'react'
-import AddConditionsForUseButton from '../../../AccessRequirement/AddConditionsForUseButton/AddConditionsForUseButton'
 import { useGetEntityTitleBarProperties } from './useGetEntityTitleBarProperties'
 
 export type TitleBarPropertiesProps = {
   entityId: string
   versionNumber?: number
-  /* Callback invoked when an ACT member clicks "Add Conditions for Use". */
-  onActMemberClickAddConditionsForUse: () => void
 }
 
 type PropertyProps = {
@@ -44,7 +41,7 @@ function Property(props: PropertyProps) {
  * The TitleBarProperties component displays a tabular view of the entity metadata on the Entity page.
  */
 export default function TitleBarProperties(props: TitleBarPropertiesProps) {
-  const { entityId, versionNumber, onActMemberClickAddConditionsForUse } = props
+  const { entityId, versionNumber } = props
 
   // We don't need the entire bundle, but it's fetched for the rest of the title bar and useGetEntityTitleBarProperties below, so the cache will be hot.
   const { data: bundle } = useGetEntityBundle(entityId, versionNumber)
@@ -113,10 +110,6 @@ export default function TitleBarProperties(props: TitleBarPropertiesProps) {
             </Link>
           )}
         </Stack>
-        <AddConditionsForUseButton
-          entityId={entityId}
-          onACTMemberClick={onActMemberClickAddConditionsForUse}
-        />
       </Stack>
       {showAllProperties && (
         <Box sx={{ pt: '20px' }}>
