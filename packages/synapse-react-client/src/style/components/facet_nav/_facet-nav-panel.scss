@@ -1,6 +1,13 @@
 .FacetNavPanel {
   --facetNavPanel-btn-padding: 3px;
   --facetNavPanel-btn-margin: 0 1px;
+  height: 100%;
+  // Flex column so the body can fill the remaining space after the header
+  // using flex:1 (externally determined height, not content-driven). Without
+  // this, height:100% on the body creates an infinite growth loop because the
+  // chart height feeds back into the panel height.
+  display: flex;
+  flex-direction: column;
   &--expanded .main-svg,
   .main-svg {
     // https://sagebionetworks.jira.com/browse/PORTALS-1454
@@ -62,6 +69,10 @@
   }
   &__body {
     padding: 20px 0;
+    // Fill the remaining height after the header without overflowing. flex:1
+    // + min-height:0 are the flex equivalents of "fill remaining space".
+    flex: 1;
+    min-height: 0;
   }
 
   &--expanded {

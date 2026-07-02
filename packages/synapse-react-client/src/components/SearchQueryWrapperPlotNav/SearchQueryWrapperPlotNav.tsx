@@ -184,6 +184,7 @@ export default function SearchQueryWrapperPlotNav(
             hideSqlEditorControl={true}
             hideVisualizationsControl={props.hideVisualizationsControl}
             initialLimit={props.initialLimit}
+            customPlots={props.customPlots}
             initialPlotTypeByFacetColumnName={
               props.initialPlotTypeByFacetColumnName
             }

@@ -54,20 +54,6 @@ const maxLabelLength: number = 19
 // STACKED_HORIZONTAL_BAR corresponds to a bar chart where we just want to show the proportion (like a pie chart)
 export type PlotType = 'PIE' | 'BAR' | 'STACKED_HORIZONTAL_BAR'
 
-const layout: Partial<Plotly.Layout> = {
-  showlegend: false,
-  annotations: [],
-  margin: { l: 0, r: 0, b: 0, t: 0, pad: 0 },
-  yaxis: {
-    visible: false,
-    showgrid: false,
-  },
-  xaxis: {
-    visible: false,
-    showgrid: false,
-  },
-}
-
 export type GraphData = {
   data: Plotly.Data[]
   labels: FacetWithLabel[]
@@ -331,6 +317,31 @@ function FacetNavPanel(props: FacetNavPanelProps) {
   )
   const columnType = columnModel?.columnType as ColumnTypeEnum
 
+  // Plotly.js mutates the layout object it receives, so each component instance
+  // must have its own layout object. Sharing a single object across instances
+  // (e.g. when the expand modal mounts a second FacetNavPanel) causes Plotly's
+  // mutations on one chart to silently corrupt the other. Use useMemo to
+  // produce a fresh layout object per instance — do NOT hoist this to module scope.
+  const plotLayout = useMemo<Partial<Plotly.Layout>>(
+    () => ({
+      showlegend: false,
+      annotations: [],
+      margin: { l: 0, r: 0, b: 0, t: 0, pad: 0 },
+      yaxis: {
+        visible: plotType === 'BAR',
+        showgrid: false,
+        automargin: true,
+      },
+      xaxis: {
+        // Show category labels on the x-axis for vertical bar charts in modal view
+        visible: isModalView && plotType === 'BAR',
+        showgrid: false,
+        automargin: true,
+      },
+    }),
+    [isModalView, plotType],
+  )
+
   const { data: plotData } = useQuery({
     queryKey: [
       'extractPlotDataArray',
@@ -441,32 +452,43 @@ function FacetNavPanel(props: FacetNavPanelProps) {
             sx={{
               display: 'grid',
               gridTemplateColumns: '50% 50%',
-              alignItems: 'center',
+              // alignItems:stretch + height:100% propagate the body's flex:1
+              // height (set in SCSS) down into the plot container so useMeasure
+              // can read it and size the Plotly chart to fill available space.
+              alignItems: 'stretch',
+              height: '100%',
             }}
             role="graphics-object"
             className="FacetNavPanel__body"
           >
-            <div ref={plotContainerRef}>
+            <div ref={plotContainerRef} style={{ height: '100%' }}>
               <Plot
-                key={`${facetToPlot.columnName}-${facetToPlot.jsonPath}-${plotType}-${plotContainerMeasurements?.width}`}
-                layout={layout}
+                key={`${facetToPlot.columnName}-${facetToPlot.jsonPath}-${plotType}-${plotContainerMeasurements?.width}-${plotContainerMeasurements?.height}`}
+                layout={plotLayout}
                 data={plotData?.data ?? []}
-                style={getPlotStyle(
-                  plotContainerMeasurements?.width,
-                  plotType,
-                  isModalView ? 300 : 150,
-                )}
+                style={{
+                  ...getPlotStyle(
+                    plotContainerMeasurements?.width,
+                    plotType,
+                    isModalView ? 300 : 150,
+                  ),
+                  ...(plotContainerMeasurements?.height
+                    ? { height: `${plotContainerMeasurements.height}px` }
+                    : {}),
+                }}
                 config={{ displayModeBar: false }}
                 onClick={evt =>
                   applyFacetFilter(evt, facetToPlot, applyChangesToGraphSlice)
                 }
               />
             </div>
-            <FacetPlotLegendList
-              labels={plotData?.labels}
-              colors={plotData?.colors}
-              isExpanded={isModalView}
-            />
+            <Box sx={{ alignSelf: 'center' }}>
+              <FacetPlotLegendList
+                labels={plotData?.labels}
+                colors={plotData?.colors}
+                isExpanded={isModalView}
+              />
+            </Box>
           </Box>
         </div>
       </>
