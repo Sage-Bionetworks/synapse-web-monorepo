@@ -328,7 +328,7 @@ function FacetNavPanel(props: FacetNavPanelProps) {
       annotations: [],
       margin: { l: 0, r: 0, b: 0, t: 0, pad: 0 },
       yaxis: {
-        visible: false,
+        visible: plotType === 'BAR',
         showgrid: false,
         automargin: true,
       },
