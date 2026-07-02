@@ -24,6 +24,7 @@ export const datasetQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   defaultShowPlots: false,
   tableConfiguration: {
     columnLinks: datasetColumnLinks,
+    showAccessColumn: true,
   },
 }
 
