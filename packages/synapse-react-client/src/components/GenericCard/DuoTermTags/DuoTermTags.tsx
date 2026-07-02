@@ -162,7 +162,7 @@ export function createDuoFacetValueRenderer(duoColumnName: string) {
     const t = resolveDuoTerm(value)
     return {
       label: t.name,
-      icon: termIcon(t),
+      icon: <TermIcon term={t} />,
       tooltipTitle: duoTooltipTitle(t),
     }
   }
