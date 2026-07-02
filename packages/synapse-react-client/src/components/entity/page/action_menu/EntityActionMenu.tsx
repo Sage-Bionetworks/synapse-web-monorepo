@@ -48,7 +48,6 @@ export type EntityActionMenuLayout = {
   primaryMenuEndIcon: IconName
   primaryMenuEndIconSx?: SxProps
   menuButtonSx?: SystemStyleObject<Theme>
-  /* Optional MUI button variant for the "Download Options" dropdown button. Default 'outlined'. */
   downloadMenuVariant?: ButtonProps['variant']
   primaryMenuVariant?: ButtonProps['variant']
 }

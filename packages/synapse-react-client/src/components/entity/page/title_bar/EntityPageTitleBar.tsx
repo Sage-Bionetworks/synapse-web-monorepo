@@ -20,6 +20,8 @@ export type EntityPageTitleBarProps = {
 }
 
 export const FAVORITE_BUTTON_ICON_COLOR = '#9EAAB7'
+const TITLE_BAR_BACKGROUND_COLOR = '#EAF0F5'
+const AVATAR_BACKGROUND_COLOR = '#497097'
 
 /**
  * The EntityPageTitleBar component is shown on every Entity page in Synapse, and shows an Entity's metadata and
@@ -46,7 +48,7 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
       <Box
         sx={{
           padding: '20px 40px',
-          backgroundColor: '#EAF0F5',
+          backgroundColor: TITLE_BAR_BACKGROUND_COLOR,
           borderRadius: '5px',
         }}
       >
@@ -72,7 +74,7 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
             >
               <Avatar
                 sx={{
-                  bgcolor: '#497097',
+                  bgcolor: AVATAR_BACKGROUND_COLOR,
                   height: 48,
                   width: 48,
                   borderRadius: '3px',
