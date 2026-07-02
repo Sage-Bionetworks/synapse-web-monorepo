@@ -5,6 +5,8 @@ import { DropdownMenuItem, DropdownMenuProps } from '../../../menu/DropdownMenu'
 import { MouseEvent } from 'react'
 import { SystemStyleObject } from '@mui/system'
 
+const outlinedButtonHoverBackgroundColor = 'rgba(0, 0, 0, 0.01)'
+
 // Represents the two types of dropdown menus that will be displayed on the entity page
 type EntityActionMenuDropdownMenuType = 'DOWNLOAD' | 'PRIMARY'
 
@@ -48,6 +50,7 @@ export type EntityActionMenuLayout = {
   menuButtonSx?: SystemStyleObject<Theme>
   /* Optional MUI button variant for the "Download Options" dropdown button. Default 'outlined'. */
   downloadMenuVariant?: ButtonProps['variant']
+  primaryMenuVariant?: ButtonProps['variant']
 }
 
 export type EntityActionMenuProps = {
@@ -221,6 +224,7 @@ export default function EntityActionMenu(props: EntityActionMenuProps) {
     dropdownButtonText: layout.primaryMenuText,
     convertSingleItemToButton: true,
     renderMenuIfNoItems: false,
+    variant: layout.primaryMenuVariant,
     buttonProps: {
       endIcon: (
         <IconSvg
@@ -248,10 +252,23 @@ export default function EntityActionMenu(props: EntityActionMenuProps) {
         },
         // Optional per-layout overrides (e.g. background/border color for entity
         // menu buttons).
-        '& .MuiButton-outlined': menuButtonSx,
+        '& .MuiButton-outlined': {
+          ...menuButtonSx,
+
+          '&:hover': {
+            ...menuButtonSx,
+            backgroundColor: outlinedButtonHoverBackgroundColor,
+          },
+        },
         '& .MuiButton-text': {
           ...menuButtonSx,
           backgroundColor: 'transparent',
+
+          '&:hover': {
+            ...menuButtonSx,
+            backgroundColor: outlinedButtonHoverBackgroundColor,
+            textDecoration: 'none',
+          },
         },
         '& .MuiButton-root .MuiTypography-root': {
           fontWeight: 540,

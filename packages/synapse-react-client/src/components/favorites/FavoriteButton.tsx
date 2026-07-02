@@ -55,7 +55,9 @@ export default function FavoriteButton(props: FavoriteButtonProps) {
             <IconSvg
               icon={isFavorite ? 'fav' : 'favOutline'}
               sx={{
-                color: iconColor ? iconColor : 'tertiary.main',
+                color: isFavorite
+                  ? 'tertiary.main'
+                  : (iconColor ?? 'tertiary.main'),
                 width: '21px',
                 height: '21px',
               }}

@@ -86,6 +86,16 @@ export function EntityTitleBarVersionInfo(
   }
   return (
     <Box sx={{ marginTop: '3px' }}>
+      <Tooltip title={'Click to show version history'} placement={'top'}>
+        <Link
+          onClick={toggleShowVersionHistory}
+          variant="smallText1"
+          sx={{ fontWeight: 400 }}
+        >
+          {versionNumberDisplay}
+        </Link>
+      </Tooltip>
+      {fullVersionLabel && versionNumberDisplay && forwardSlash}
       <Tooltip title={fullVersionLabel} placement={'bottom'}>
         <Typography
           component={'span'}
@@ -97,16 +107,6 @@ export function EntityTitleBarVersionInfo(
         >
           {truncatedVersionLabel}
         </Typography>
-      </Tooltip>
-      {fullVersionLabel && versionNumberDisplay && forwardSlash}
-      <Tooltip title={'Click to show version history'} placement={'top'}>
-        <Link
-          onClick={toggleShowVersionHistory}
-          variant="smallText1"
-          sx={{ fontWeight: 400 }}
-        >
-          {versionNumberDisplay}
-        </Link>
       </Tooltip>
       {versionComment && forwardSlash}
       <Typography

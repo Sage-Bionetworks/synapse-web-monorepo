@@ -1,5 +1,8 @@
 import ConditionalWrapper from '@/components/utils/ConditionalWrapper'
-import { useGetEntityBundle } from '@/synapse-queries'
+import {
+  useGetEntityBundle,
+  useIsCurrentUserACTMember,
+} from '@/synapse-queries'
 import { isDockerRepository } from '@/utils/types/IsType'
 import { Avatar, Box, Skeleton, Stack, Typography } from '@mui/material'
 import FavoriteButton from '../../../favorites/FavoriteButton'
@@ -9,6 +12,8 @@ import EntityActionMenu, {
 } from '../action_menu/EntityActionMenu'
 import { EntityTitleBarVersionInfo } from './EntityTitleBarVersionInfo'
 import TitleBarProperties from './TitleBarProperties'
+import ImposeRestrictionDialog from '@/components/AccessRequirement/ImposeRestrictionDialog/ImposeRestrictionDialog'
+import { useCallback, useMemo, useState } from 'react'
 
 export type EntityPageTitleBarProps = {
   entityId: string
@@ -19,14 +24,59 @@ export type EntityPageTitleBarProps = {
   onActMemberClickAddConditionsForUse: () => void
 }
 
-const FAVORITE_BUTTON_ICON_COLOR = '#9EAAB7'
+export const FAVORITE_BUTTON_ICON_COLOR = '#9EAAB7'
 
 /**
  * The EntityPageTitleBar component is shown on every Entity page in Synapse, and shows an Entity's metadata and
  * provides controls to view and manipulate the Entity.
  */
 export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
-  const { entityId, versionNumber, entityActionMenuProps } = props
+  const {
+    entityId,
+    versionNumber,
+    entityActionMenuProps,
+    onActMemberClickAddConditionsForUse,
+  } = props
+
+  const { data: isACTMember } = useIsCurrentUserACTMember()
+  const [openDialog, setOpenDialog] = useState(false)
+
+  // Determines the workflow when clicking "Add Conditions for Use"
+  const handleAddConditionsForUse = useCallback(() => {
+    if (isACTMember) {
+      onActMemberClickAddConditionsForUse()
+    } else {
+      setOpenDialog(true)
+    }
+  }, [isACTMember, onActMemberClickAddConditionsForUse])
+
+  // Create immutable copy of entityActionMenuProps with overridden onClick for "Add Conditions for Use"
+  const resolvedEntityActionMenuProps = useMemo<
+    EntityActionMenuProps | undefined
+  >(() => {
+    if (!entityActionMenuProps) return undefined
+
+    const { actionConfiguration } = entityActionMenuProps
+    const conditionsForUseAction =
+      actionConfiguration?.['ADD_CONDITIONS_FOR_USE']
+
+    // If the specific action doesn't exist, return the original reference
+    if (!conditionsForUseAction) {
+      return entityActionMenuProps
+    }
+
+    // Override the click handler cleanly
+    return {
+      ...entityActionMenuProps,
+      actionConfiguration: {
+        ...actionConfiguration,
+        ADD_CONDITIONS_FOR_USE: {
+          ...conditionsForUseAction,
+          onClick: handleAddConditionsForUse,
+        },
+      },
+    }
+  }, [entityActionMenuProps, handleAddConditionsForUse])
 
   const toggleShowVersionHistory =
     entityActionMenuProps?.actionConfiguration['SHOW_VERSION_HISTORY']?.onClick
@@ -118,12 +168,17 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
               />
             </Box>
           </Stack>
-          {entityActionMenuProps && (
-            <EntityActionMenu {...entityActionMenuProps} />
+          {resolvedEntityActionMenuProps && (
+            <EntityActionMenu {...resolvedEntityActionMenuProps} />
           )}
         </Stack>
       </Box>
       <TitleBarProperties {...props} />
+      <ImposeRestrictionDialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        entityId={entityId}
+      />
     </div>
   )
 }
