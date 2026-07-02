@@ -5,6 +5,8 @@ import { DropdownMenuItem, DropdownMenuProps } from '../../../menu/DropdownMenu'
 import { MouseEvent } from 'react'
 import { SystemStyleObject } from '@mui/system'
 
+const outlinedButtonHoverBackgroundColor = 'rgba(0, 0, 0, 0.01)'
+
 // Represents the two types of dropdown menus that will be displayed on the entity page
 type EntityActionMenuDropdownMenuType = 'DOWNLOAD' | 'PRIMARY'
 
@@ -46,6 +48,8 @@ export type EntityActionMenuLayout = {
   primaryMenuEndIcon: IconName
   primaryMenuEndIconSx?: SxProps
   menuButtonSx?: SystemStyleObject<Theme>
+  downloadMenuVariant?: ButtonProps['variant']
+  primaryMenuVariant?: ButtonProps['variant']
 }
 
 export type EntityActionMenuProps = {
@@ -203,6 +207,7 @@ export default function EntityActionMenu(props: EntityActionMenuProps) {
     dropdownButtonText: 'Download Options',
     convertSingleItemToButton: true,
     renderMenuIfNoItems: false,
+    variant: layout.downloadMenuVariant,
     buttonTooltip: menuConfiguration.DOWNLOAD.tooltipText,
     buttonProps: {
       disabled: menuConfiguration.DOWNLOAD.disabled,
@@ -218,6 +223,7 @@ export default function EntityActionMenu(props: EntityActionMenuProps) {
     dropdownButtonText: layout.primaryMenuText,
     convertSingleItemToButton: true,
     renderMenuIfNoItems: false,
+    variant: layout.primaryMenuVariant,
     buttonProps: {
       endIcon: (
         <IconSvg
@@ -233,15 +239,35 @@ export default function EntityActionMenu(props: EntityActionMenuProps) {
     ),
   }
 
+  const menuButtonSx = layout.menuButtonSx ?? {}
+
   return (
     <Box
       sx={{
         '& .MuiButton-root': {
           borderRadius: '6px',
           fontWeight: 540,
-          // Optional per-layout overrides (e.g. a different border color for
-          // entity pages vs the project header).
-          ...(layout.menuButtonSx ?? {}),
+          padding: '10px 12px',
+        },
+        // Optional per-layout overrides (e.g. background/border color for entity
+        // menu buttons).
+        '& .MuiButton-outlined': {
+          ...menuButtonSx,
+
+          '&:hover': {
+            ...menuButtonSx,
+            backgroundColor: outlinedButtonHoverBackgroundColor,
+          },
+        },
+        '& .MuiButton-text': {
+          ...menuButtonSx,
+          backgroundColor: 'transparent',
+
+          '&:hover': {
+            ...menuButtonSx,
+            backgroundColor: outlinedButtonHoverBackgroundColor,
+            textDecoration: 'none',
+          },
         },
         '& .MuiButton-root .MuiTypography-root': {
           fontWeight: 540,
