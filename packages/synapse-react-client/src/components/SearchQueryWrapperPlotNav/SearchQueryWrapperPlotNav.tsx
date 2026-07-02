@@ -50,6 +50,7 @@ export type SearchQueryWrapperPlotNavProps = SearchQueryWrapperPlotNavOwnProps &
     | 'visibleColumnCount'
     | 'hiddenColumns'
     | 'columnAliases'
+    | 'renderFacetValue'
     | 'rgbIndex'
     | 'showLastUpdatedOn'
     | 'noContentPlaceholderType'
@@ -152,6 +153,11 @@ export default function SearchQueryWrapperPlotNav(
           unitDescription={unitDescription}
           rgbIndex={props.rgbIndex}
           columnAliases={props.columnAliases}
+          renderFacetValue={props.renderFacetValue}
+          dataUseModifiersColumnName={
+            props.cardConfiguration?.genericCardSchema
+              ?.dataUseModifiersColumnName
+          }
           helpConfiguration={helpConfiguration}
           visibleColumnCount={props.visibleColumnCount}
           hiddenColumns={props.hiddenColumns}

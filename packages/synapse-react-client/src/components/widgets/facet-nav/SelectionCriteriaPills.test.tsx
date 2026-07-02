@@ -18,7 +18,7 @@ describe('SelectionCriteriaPills', () => {
       )
       expect(actual).toEqual({
         key: `queryFilter-org.sagebionetworks.repo.model.table.TextMatchesQueryFilter-foo`,
-        innerText: 'foo',
+        label: 'foo',
         tooltipText: 'Text matches: "foo"',
         onRemoveFilter: expect.any(Function),
       })
@@ -42,7 +42,7 @@ describe('SelectionCriteriaPills', () => {
       )
       expect(actual).toEqual({
         key: `queryFilter-org.sagebionetworks.repo.model.table.TextMatchesQueryFilter-foo`,
-        innerText: 'foo',
+        label: 'foo',
         tooltipText: 'Text matches: "foo"',
         onRemoveFilter: expect.any(Function),
       })
@@ -65,7 +65,7 @@ describe('SelectionCriteriaPills', () => {
       )
       expect(actual).toEqual({
         key: `queryFilter-org.sagebionetworks.repo.model.table.TextMatchesQueryFilter-"foo bar" @3`,
-        innerText: 'foo bar',
+        label: 'foo bar',
         tooltipText: 'Text matches: "foo bar"',
         onRemoveFilter: expect.any(Function),
       })
@@ -89,7 +89,7 @@ describe('SelectionCriteriaPills', () => {
       )
       expect(actual).toEqual({
         key: `queryFilter-org.sagebionetworks.repo.model.table.TextMatchesQueryFilter-foo`,
-        innerText: 'foo',
+        label: 'foo',
         tooltipText: 'Text matches: "foo"',
         isLocked: true,
       })

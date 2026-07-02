@@ -46,6 +46,8 @@ import ShareThisPage, {
 import { SustainabilityScorecardProps } from '../SustainabilityScorecard/SustainabilityScorecard'
 import GenericCard from './GenericCard'
 import GenericCardActionButton from './GenericCardActionButton'
+import DuoTermTags from './DuoTermTags/DuoTermTags'
+import { parseDuoModifiers } from './DuoTermTags/duoTerms'
 import { PortalDOIConfiguration } from './PortalDOI/PortalDOIConfiguration'
 import { SynapseCardLabel } from './SynapseCardLabel'
 import { useResolvedSynapseEntity } from './useResolvedSynapseEntity'
@@ -147,6 +149,12 @@ export type TableToGenericCardMapping = {
   downloadCartSynId?: string
   /** Configuration to display a DOI, as well as the ability to create one for users with such permission */
   portalDoiConfiguration?: PortalDOIConfiguration
+  /**
+   * Column name of a STRING_LIST of Data Use Ontology (DUO) values (ontology
+   * codes or term names). When set, the values are rendered as DUO tags in a
+   * "Data Usage Restrictions" row in the card's metadata section.
+   */
+  dataUseModifiersColumnName?: string
 }
 
 export type TableRowGenericCardProps = {
@@ -294,6 +302,20 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     [schema, data],
   )
 
+  // DUO (Data Use Ontology) tags, when a dataUseModifiers column is configured.
+  // Rendered as a "Data Usage Restrictions" row in the metadata section.
+  const duoContent = useMemo(() => {
+    const col = genericCardSchema.dataUseModifiersColumnName
+    if (!col) {
+      return undefined
+    }
+    const terms = parseDuoModifiers(data[schema[col]])
+    if (terms.length === 0) {
+      return undefined
+    }
+    return <DuoTermTags terms={terms} />
+  }, [genericCardSchema, data, schema])
+
   const resolvedTitleAreaRightContent = useMemo(() => {
     const { titleAreaDetails } = genericCardSchema
     if (!titleAreaDetails) return undefined
@@ -388,6 +410,14 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   }[] = []
   const { secondaryLabels = [] } = genericCardSchema
   const customLabelConfig = genericCardSchema.customSecondaryLabelConfig
+
+  // DUO tags rendered as a metadata row (alongside "How to download", size, …).
+  if (duoContent) {
+    values.push({
+      columnDisplayName: 'Data Usage Restrictions',
+      value: duoContent,
+    })
+  }
 
   // PORTALS-3549 - if a DOI exists or can be created by the current user, show it
   if (
@@ -540,28 +570,23 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     // For header cards, if there is no image or explicit icon value, we don't show an icon at all
     isRenderingIcon = false
   }
+  const iconNode = isRenderingIcon ? (
+    <GenericCardIcon
+      type={
+        useTypeColumnForIcon ? data[schema['type']] : genericCardSchema.type
+      }
+      useTypeForIcon={useTypeColumnForIcon}
+      thumbnailRequiresPadding={genericCardSchema.thumbnailRequiresPadding}
+      imageFileHandleId={imageFileHandleIdValue}
+      fileHandleAssociation={fileHandleAssociation}
+      iconOptions={iconOptions}
+      iconValue={iconValue}
+    />
+  ) : undefined
   return (
     <GenericCard
       ref={ref}
-      icon={
-        isRenderingIcon ? (
-          <GenericCardIcon
-            type={
-              useTypeColumnForIcon
-                ? data[schema['type']]
-                : genericCardSchema.type
-            }
-            useTypeForIcon={useTypeColumnForIcon}
-            thumbnailRequiresPadding={
-              genericCardSchema.thumbnailRequiresPadding
-            }
-            imageFileHandleId={imageFileHandleIdValue}
-            fileHandleAssociation={fileHandleAssociation}
-            iconOptions={iconOptions}
-            iconValue={iconValue}
-          />
-        ) : undefined
-      }
+      icon={iconNode}
       isHeader={isHeader}
       sustainabilityScorecard={sustainabilityScorecard}
       headerCardVariant={headerCardVariant}
@@ -593,18 +618,20 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       secondaryLabelLimit={secondaryLabelLimit}
       useStylesForDisplayedImage={Boolean(imageFileHandleIdValue)}
       cardTopContent={
-        resolvedDownloadCartSynIdValue && (
-          <Collapse in={showDownloadConfirmation}>
-            <EntityDownloadConfirmation
-              entityId={resolvedDownloadCartSynIdValue}
-              versionNumber={resolvedDownloadCartVersionNumber}
-              handleClose={() => setShowDownloadConfirmation(false)}
-              onIsLoadingChange={isLoading => {
-                setDownloadButtonLoading(isLoading)
-              }}
-            />
-          </Collapse>
-        )
+        <>
+          {resolvedDownloadCartSynIdValue && (
+            <Collapse in={showDownloadConfirmation}>
+              <EntityDownloadConfirmation
+                entityId={resolvedDownloadCartSynIdValue}
+                versionNumber={resolvedDownloadCartVersionNumber}
+                handleClose={() => setShowDownloadConfirmation(false)}
+                onIsLoadingChange={isLoading => {
+                  setDownloadButtonLoading(isLoading)
+                }}
+              />
+            </Collapse>
+          )}
+        </>
       }
       renderedIconList={
         // If the portal configs has columnIconOptions.columns.dataType option
@@ -625,7 +652,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
         )
       }
       cardTopButtons={
-        <Box sx={{ display: 'flex', gap: 1 }}>
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
           {croissantButton}
           {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart */}
           {resolvedDownloadCartSynIdValue && (
