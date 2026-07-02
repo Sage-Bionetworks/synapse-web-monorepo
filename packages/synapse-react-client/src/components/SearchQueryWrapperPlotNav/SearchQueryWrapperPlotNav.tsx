@@ -69,6 +69,8 @@ export type SearchQueryWrapperPlotNavProps = SearchQueryWrapperPlotNavOwnProps &
     onQueryResultBundleChange?: SearchQueryWrapperProps['onQueryResultBundleChange']
     /** Whether the URL should update when the query is modified (deep linking). */
     shouldDeepLink?: SearchQueryWrapperProps['shouldDeepLink']
+    /** OpenSearch query strategy and field-boost configuration. Forwarded to SearchQueryWrapper. */
+    searchQueryConfig?: SearchQueryWrapperProps['searchQueryConfig']
   }
 
 /**
@@ -144,6 +146,7 @@ export default function SearchQueryWrapperPlotNav(
       isInfinite={isInfinite}
       onQueryResultBundleChange={onQueryResultBundleChange}
       shouldDeepLink={shouldDeepLink}
+      searchQueryConfig={props.searchQueryConfig}
     >
       <Suspense fallback={<QueryWrapperLoadingScreen />}>
         <QueryVisualizationWrapper

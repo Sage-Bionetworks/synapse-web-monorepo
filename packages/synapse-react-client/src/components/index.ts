@@ -63,6 +63,10 @@ export * from './QueryWrapper'
 export * from './QueryWrapperPlotNav'
 export { SearchQueryWrapper } from './SearchQueryWrapper/SearchQueryWrapper'
 export type { SearchQueryWrapperProps } from './SearchQueryWrapper/SearchQueryWrapper'
+export type {
+  SearchQueryConfig,
+  SearchQueryStrategy,
+} from './SearchQueryWrapper/SearchQueryUseQueryOptions'
 export {
   default as SearchQueryWrapperPlotNav,
   isSearchQueryWrapperPlotNavProps,
