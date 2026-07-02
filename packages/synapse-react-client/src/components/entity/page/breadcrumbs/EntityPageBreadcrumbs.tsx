@@ -25,7 +25,6 @@ const ENTITY_PAGE_MAX_BREADCRUMB_LENGTH = 32
 const entityPageBreadcrumbStyle: SxProps = {
   marginTop: '0px',
   padding: '10px 40px',
-  backgroundColor: 'grey.200',
   ['& .MuiLink-root']: {
     color: 'text.secondary',
     letterSpacing: 0,
