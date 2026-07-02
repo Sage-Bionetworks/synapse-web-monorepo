@@ -64,7 +64,8 @@ const DUO_ICONS: Record<string, ComponentType> = {
   'DUO:0000012': RuleOutlined, // Research Specific Restrictions
 }
 
-const termIcon = (term: DuoTerm): ReactNode => {
+const TermIcon = (props: {term: DuoTerm}): ReactNode => {
+  const  { term } = props
   const Icon = DUO_ICONS[term.code] ?? HelpOutline
   return <Icon />
 }
