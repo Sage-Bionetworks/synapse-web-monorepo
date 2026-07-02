@@ -44,11 +44,50 @@ import { KeyFactory } from '@/synapse-queries/KeyFactory'
 // we actually produce/consume are declared. Aggregation types use the generated
 // Aggregation/TermsAggregation types from @sage-bionetworks/synapse-client.
 
+export type SearchQueryStrategy =
+  | 'MULTI_MATCH'
+  | 'MULTI_MATCH_BEST_FIELDS'
+  | 'MULTI_MATCH_CROSS_FIELDS'
+  | 'SIMPLE_QUERY_STRING'
+  | 'PHRASE_PREFIX'
+  | 'BOOSTED_FUZZY'
+
+export type SearchQueryConfig = {
+  /**
+   * Which OpenSearch query clause to emit when the user has typed a search term.
+   * Defaults to 'MULTI_MATCH' (all fields, fuzziness AUTO — today's behavior).
+   */
+  queryStrategy?: SearchQueryStrategy
+  /**
+   * Per-field relevance multipliers. Serialized to the OpenSearch `fields` array
+   * as e.g. `["resourceName^5", "synonyms^4"]`. When omitted, all fields are
+   * queried at equal weight.
+   */
+  fieldBoosts?: Record<string, number>
+  /**
+   * Fuzziness override. Overrides the per-strategy default. Leave undefined to
+   * use each strategy's natural default (AUTO for MULTI_MATCH/BOOSTED_FUZZY,
+   * none for the rest).
+   */
+  fuzziness?: string
+}
+
 type FilterClause =
   | { terms: Record<string, string[]> }
   | { range: Record<string, { gte?: string; lte?: string }> }
 
-type MultiMatchClause = { multi_match: { query: string; fuzziness: string } }
+type MultiMatchClause = {
+  multi_match: {
+    query: string
+    fuzziness?: string
+    type?: 'best_fields' | 'cross_fields' | 'phrase_prefix'
+    fields?: string[]
+  }
+}
+
+type SimpleQueryStringClause = {
+  simple_query_string: { query: string; fields?: string[] }
+}
 
 type BoolQuery = {
   bool: {
@@ -65,8 +104,77 @@ type SelectionFilter =
 
 type SearchQueryDSL =
   | MultiMatchClause
+  | SimpleQueryStringClause
   | { match_all: Record<never, never> }
   | BoolQuery
+
+function resolveFields(
+  fieldBoosts: Record<string, number> | undefined,
+): string[] | undefined {
+  if (!fieldBoosts) return undefined
+  return Object.entries(fieldBoosts).map(([field, boost]) =>
+    boost === 1 ? field : `${field}^${boost}`,
+  )
+}
+
+function buildQueryClause(
+  queryText: string,
+  config: SearchQueryConfig = {},
+): MultiMatchClause | SimpleQueryStringClause {
+  const { queryStrategy = 'MULTI_MATCH', fieldBoosts, fuzziness } = config
+  const fields = resolveFields(fieldBoosts)
+
+  switch (queryStrategy) {
+    case 'SIMPLE_QUERY_STRING':
+      return {
+        simple_query_string: {
+          query: queryText,
+          ...(fields ? { fields } : {}),
+        },
+      }
+    case 'MULTI_MATCH_BEST_FIELDS':
+      return {
+        multi_match: {
+          query: queryText,
+          type: 'best_fields',
+          ...(fields ? { fields } : {}),
+          ...(fuzziness ? { fuzziness } : {}),
+        },
+      }
+    case 'MULTI_MATCH_CROSS_FIELDS':
+      return {
+        multi_match: {
+          query: queryText,
+          type: 'cross_fields',
+          ...(fields ? { fields } : {}),
+          ...(fuzziness ? { fuzziness } : {}),
+        },
+      }
+    case 'PHRASE_PREFIX':
+      return {
+        multi_match: {
+          query: queryText,
+          type: 'phrase_prefix',
+          ...(fields ? { fields } : {}),
+        },
+      }
+    case 'BOOSTED_FUZZY':
+      return {
+        multi_match: {
+          query: queryText,
+          ...(fields ? { fields } : {}),
+          fuzziness: fuzziness ?? 'AUTO',
+        },
+      }
+    default: // 'MULTI_MATCH'
+      return {
+        multi_match: {
+          query: queryText,
+          fuzziness: fuzziness ?? 'AUTO',
+        },
+      }
+  }
+}
 
 type OpenSearchBucket = { key: unknown; doc_count: number }
 type OpenSearchTermsAgg = { buckets?: OpenSearchBucket[] }
@@ -152,6 +260,7 @@ export function toSearchIndexQuery(
   queryBundleRequest: QueryBundleRequest,
   searchIndexId: string,
   columnModels?: ColumnModel[],
+  searchQueryConfig?: SearchQueryConfig,
 ): SearchIndexQuery {
   // Build aggregations from ColumnModels that have facetType 'enumeration'.
   // Range columns are excluded: we synthesize FacetColumnResultRange entries client-side.
@@ -214,7 +323,7 @@ export function toSearchIndexQuery(
   // Build the OpenSearch query DSL (text search only; facet selections go to post_filter).
   let query: SearchQueryDSL
   if (queryText) {
-    query = { multi_match: { query: queryText, fuzziness: 'AUTO' } }
+    query = buildQueryClause(queryText, searchQueryConfig)
   } else {
     query = { match_all: {} }
   }
@@ -481,11 +590,13 @@ export function getSearchQueryUseQueryOptions(
   accessToken: string | undefined,
   searchIndexId: string,
   columnModels?: ColumnModel[],
+  searchQueryConfig?: SearchQueryConfig,
 ): SearchTableQueryUseQueryOptions {
   const baseQuery: SearchIndexQuery = toSearchIndexQuery(
     queryBundleRequest,
     searchIndexId,
     columnModels,
+    searchQueryConfig,
   )
   const rowDataQuery: SearchIndexQuery = {
     ...baseQuery,
@@ -679,6 +790,7 @@ export function useSearchQueryUseQueryOptions(
   queryBundleRequest: QueryBundleRequest,
   searchIndexId: string,
   synapseId?: string,
+  searchQueryConfig?: SearchQueryConfig,
 ): SearchTableQueryUseQueryOptions {
   const { keyFactory, accessToken } = useSynapseContext()
 
@@ -695,7 +807,15 @@ export function useSearchQueryUseQueryOptions(
         accessToken,
         searchIndexId,
         columnModels,
+        searchQueryConfig,
       ),
-    [keyFactory, accessToken, queryBundleRequest, searchIndexId, columnModels],
+    [
+      keyFactory,
+      accessToken,
+      queryBundleRequest,
+      searchIndexId,
+      columnModels,
+      searchQueryConfig,
+    ],
   )
 }
