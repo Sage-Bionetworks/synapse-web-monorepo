@@ -64,8 +64,8 @@ const DUO_ICONS: Record<string, ComponentType> = {
   'DUO:0000012': RuleOutlined, // Research Specific Restrictions
 }
 
-const TermIcon = (props: {term: DuoTerm}): ReactNode => {
-  const  { term } = props
+const TermIcon = (props: { term: DuoTerm }): ReactNode => {
+  const { term } = props
   const Icon = DUO_ICONS[term.code] ?? HelpOutline
   return <Icon />
 }
@@ -134,7 +134,7 @@ export default function DuoTermTags(props: DuoTermTagsProps) {
         <FacetValueChip
           key={i}
           label={t.name}
-          icon={termIcon(t)}
+          icon={<TermIcon term={t} />}
           tooltipTitle={duoTooltipTitle(t)}
         />
       ))}
