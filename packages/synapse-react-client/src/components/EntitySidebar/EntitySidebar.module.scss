@@ -1,0 +1,46 @@
+$sidebar-header-color: #616972;
+$sidebar-property-title-color: #747d88;
+$sidebar-property-value-color: #4d535a;
+
+.content {
+  width: 320px;
+  padding: 24px;
+}
+
+.sidebarHeader:global(.MuiTypography-root) {
+  font-size: 14px;
+  color: $sidebar-header-color;
+  font-weight: 540;
+  line-height: 20px; /* 142.857% */
+}
+
+.divider {
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+
+.propertyValue:global(.MuiTypography-root) {
+  color: $sidebar-property-value-color;
+  font-style: normal;
+  font-weight: 440;
+  line-height: 20px; /* 142.857% */
+}
+
+.propertyTitle:global(.MuiTypography-root) {
+  color: $sidebar-property-title-color;
+  font-size: 12px;
+  line-height: 12px; /* 100% */
+}
+
+.propertiesContainer {
+  padding: 12px 0;
+  gap: 12px;
+}
+
+.propertyRow {
+  gap: 4px;
+}
+
+.drawer:global(.MuiDrawer-root .MuiPaper-root) {
+  border-left: none;
+}

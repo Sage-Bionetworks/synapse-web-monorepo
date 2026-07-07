@@ -16,7 +16,6 @@ import { CitationsDialog } from './CitationsDialog'
 import { maxCitationCount, useDataCiteUsage } from './useDataCiteUsage'
 import { useGetMentions } from './useGetMentions'
 import Linkify from '@/components/GenericCard/Linkify'
-
 export type EntityProperty = {
   key: string
   title: string
@@ -112,7 +111,8 @@ export function useGetEntityTitleBarProperties(
     {
       key: 'id',
       title: 'SynID',
-      value: <CopyToClipboardString value={entityId} />,
+      // value: <CopyToClipboardString value={entityId} />,
+      value: entityId,
     },
     {
       key: 'access',
@@ -133,11 +133,7 @@ export function useGetEntityTitleBarProperties(
     doi && {
       key: 'doi',
       title: 'DOI',
-      value: (
-        <Link href={doi} rel={'noopener noreferrer'} target={'_blank'}>
-          {doi}
-        </Link>
-      ),
+      value: <CopyToClipboardString value={doi} href={doi} />,
     },
     isDoiUsage && {
       key: 'citations',
