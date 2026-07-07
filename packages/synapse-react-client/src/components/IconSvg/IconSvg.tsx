@@ -56,6 +56,7 @@ import {
   ArrowDropDownTwoTone,
   ArrowDropUpTwoTone,
   ArrowForward,
+  ArticleOutlined,
   ArticleTwoTone,
   AssessmentTwoTone,
   AssignmentOutlined,
@@ -72,6 +73,7 @@ import {
   Code,
   ContentCopyTwoTone,
   CreateNewFolderTwoTone,
+  DashboardOutlined,
   DashboardTwoTone,
   DeleteSweepTwoTone,
   DeleteTwoTone,
@@ -82,6 +84,7 @@ import {
   FactCheckTwoTone,
   FilterAltTwoTone,
   FlagTwoTone,
+  FolderOutlined,
   FolderTwoTone,
   FormatBold,
   FormatItalic,
@@ -100,6 +103,7 @@ import {
   LanguageTwoTone,
   LayersTwoTone,
   LinkOffTwoTone,
+  LinkOutlined,
   LinkTwoTone,
   ListTwoTone,
   LockOpenTwoTone,
@@ -133,12 +137,15 @@ import {
   Superscript,
   Support,
   SyncTwoTone,
+  TableChartOutlined,
   TableChartTwoTone,
   TableRows,
+  TableViewOutlined,
   TableViewTwoTone,
   Title,
   UploadTwoTone,
   ViewAgendaTwoTone,
+  ViewColumnOutlined,
   ViewColumnTwoTone,
   VisibilityOffTwoTone,
   VisibilityTwoTone,
@@ -169,8 +176,10 @@ export const IconStrings = [
   'clock',
   'code',
   'columns',
+  'columnsOutlined',
   'openInNewWindow',
   'dashboard',
+  'dashboardOutlined',
   'delete',
   'deleteSweep',
   'filter',
@@ -223,15 +232,19 @@ export const IconStrings = [
   'file',
   'fileOutlined',
   'folder',
+  'folderOutlined',
   'link',
   'linkOff',
+  'linkOutlined',
   'table',
+  'tableOutlined',
   'tableRows',
   'share',
   'public',
   'people',
   'entityview',
   'submissionview',
+  'submissionviewOutlined',
   'challenge',
   'discussion',
   'dataset',
@@ -292,6 +305,7 @@ export const IconStrings = [
   'google24',
   'openInFull',
   'tableview',
+  'tableviewOutlined',
   'fileWithShield',
   'baseline',
   'rosetteRibbon',
@@ -368,6 +382,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <Code {...otherProps} />
     case 'columns':
       return <ViewColumnTwoTone {...otherProps} />
+    case 'columnsOutlined':
+      return <ViewColumnOutlined {...otherProps} />
     case 'circle':
       return <RadioButtonUncheckedTwoTone {...otherProps} />
     case 'checkCircle':
@@ -376,6 +392,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <CreateVersion {...otherProps} />
     case 'dashboard':
       return <DashboardTwoTone {...otherProps} />
+    case 'dashboardOutlined':
+      return <DashboardOutlined {...otherProps} />
     case 'delete':
       return <DeleteTwoTone {...otherProps} />
     case 'deleteSweep':
@@ -507,20 +525,30 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <InsertDriveFileOutlined {...otherProps} />
     case 'folder':
       return <FolderTwoTone {...otherProps} />
+    case 'folderOutlined':
+      return <FolderOutlined {...otherProps} />
     case 'newFolder':
       return <CreateNewFolderTwoTone {...otherProps} />
     case 'link':
       return <LinkTwoTone {...otherProps} />
     case 'linkOff':
       return <LinkOffTwoTone {...otherProps} />
+    case 'linkOutlined':
+      return <LinkOutlined {...otherProps} />
     case 'table':
       return <TableChartTwoTone {...otherProps} />
+    case 'tableOutlined':
+      return <TableChartOutlined {...otherProps} />
     case 'tableview':
       return <TableViewTwoTone {...otherProps} />
+    case 'tableViewOutlined':
+      return <TableViewOutlined {...otherProps} />
     case 'entityview':
       return <ListTwoTone {...otherProps} />
     case 'submissionview':
       return <ArticleTwoTone {...otherProps} />
+    case 'submissionviewOutlined':
+      return <ArticleOutlined {...otherProps} />
     case 'challenge':
       return <AssessmentTwoTone {...otherProps} />
     case 'discussion':
@@ -710,6 +738,23 @@ export const type2SvgIconName: Record<EntityType, IconName> = {
   datasetcollection: 'datasetcollection',
   recordset: 'fileWithShield',
   searchindex: 'search',
+}
+
+export const type2SvgIconNameOutlined: Record<EntityType, IconName> = {
+  file: 'fileOutlined',
+  project: 'dashboardOutlined',
+  folder: 'folderOutlined',
+  table: 'tableOutlined',
+  link: 'linkOutlined',
+  entityview: 'actionKey',
+  materializedview: 'tableviewOutlined',
+  virtualtable: 'columnsOutlined',
+  dockerrepo: 'docker',
+  submissionview: 'submissionviewOutlined',
+  dataset: 'dataset',
+  datasetcollection: 'datasetcollection',
+  recordset: 'fileWithShield',
+  searchindex: 'searchOutlined',
 }
 
 export default IconSvg

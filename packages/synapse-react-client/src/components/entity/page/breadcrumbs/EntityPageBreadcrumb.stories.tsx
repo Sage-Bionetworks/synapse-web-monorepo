@@ -29,6 +29,7 @@ export const Demo: Story = {
         onClick: preventDefaultHandler,
         text: 'Root folder',
         href: 'Synapse:syn123',
+        entityType: 'folder',
       },
       {
         onClick: preventDefaultHandler,

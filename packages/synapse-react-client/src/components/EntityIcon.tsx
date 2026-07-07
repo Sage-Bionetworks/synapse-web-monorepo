@@ -5,9 +5,15 @@ import IconSvg, {
   IconName,
   IconSvgProps,
   type2SvgIconName,
+  type2SvgIconNameOutlined,
 } from './IconSvg/IconSvg'
 
-const getIconTypeForEntity = (type: EntityType): IconName | '' => {
+const getIconTypeForEntity = (
+  type: EntityType,
+  variant: 'twoTone' | 'outlined' = 'twoTone',
+): IconName | '' => {
+  const map =
+    variant === 'outlined' ? type2SvgIconNameOutlined : type2SvgIconName
   switch (type) {
     case EntityType.project:
     case EntityType.folder:
@@ -23,7 +29,7 @@ const getIconTypeForEntity = (type: EntityType): IconName | '' => {
     case EntityType.virtualtable:
     case EntityType.recordset:
     case EntityType.searchindex:
-      return type2SvgIconName[type]
+      return map[type]
     default:
       return ''
   }
@@ -35,6 +41,7 @@ type EntityTypeIconProps = {
   className?: string
   includeTooltip?: boolean
   wrap?: boolean
+  variant?: 'twoTone' | 'outlined'
 }
 
 export function EntityTypeIcon(
@@ -46,12 +53,13 @@ export function EntityTypeIcon(
     className,
     includeTooltip = true,
     wrap = true,
+    variant = 'twoTone',
     ...rest
   } = props
   if (!type) {
     return <></>
   }
-  const iconType = getIconTypeForEntity(type)
+  const iconType = getIconTypeForEntity(type, variant)
   if (iconType === '') {
     console.warn('Could not retrieve icon for Entity with type: ', type)
     return <Fragment />
