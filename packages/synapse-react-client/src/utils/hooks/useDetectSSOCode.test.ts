@@ -348,7 +348,7 @@ describe('useDetectSSOCode tests', () => {
         )
         expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
         expect(onSignInComplete).not.toHaveBeenCalled()
-        // eslint-disable-next-line @typescript-eslint/unbound-method
+        // oxlint-disable-next-line @typescript-eslint/unbound-method
         expect(window.location.replace).toHaveBeenCalledWith(
           'http://localhost:3000/register1',
         )

@@ -19,20 +19,20 @@ describe('deepLinkingUtils', () => {
     })
 
     // Mock window.location
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
     delete (window as any).location
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    // oxlint-disable-next-line @typescript-eslint/no-unsafe-assignment
     window.location = {
       ...originalLocation,
       pathname: '/test',
       search: '',
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     } as any
   })
 
   afterEach(() => {
     vi.clearAllMocks()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
     window.location = originalLocation as any
   })
 

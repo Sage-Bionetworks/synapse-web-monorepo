@@ -1,4 +1,4 @@
-/* eslint-disable no-useless-escape */
+/* oxlint-disable no-useless-escape */
 
 // Process ${widgetname?param1=1&param2=2}
 
@@ -642,7 +642,7 @@ function init_markdown_it(
         token: state.tokens.length - 1,
 
         // Token level.
-        // @ts-ignore
+        // @ts-expect-error
         level: state.level,
 
         // If this delimiter is matched as a valid opener, `end` will be

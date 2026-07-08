@@ -105,7 +105,7 @@ function SubmissionDirectoryList({
     }
     // TODO: Temporary useEffect hook to remove onSuccess QueryOption for @tanstack/react-query v5
     // Refactor this component to remove this effect.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [headerResults])
 
   function getPageHeaders() {
@@ -125,7 +125,7 @@ function SubmissionDirectoryList({
 
   useEffect(() => {
     reset()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [entityType, pageSize])
 
   const queries = useGetEntities(getPageHeaders())

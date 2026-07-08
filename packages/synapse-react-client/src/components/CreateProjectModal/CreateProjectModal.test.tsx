@@ -204,7 +204,7 @@ describe('CreateProjectModal tests', () => {
 
       expect(mockUpdateEntityACL).toHaveBeenCalledWith(
         expect.objectContaining({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          // oxlint-disable-next-line @typescript-eslint/no-unsafe-assignment
           resourceAccess: expect.arrayContaining([
             expect.objectContaining({
               principalId: MOCK_PUBLIC_PRINCIPAL_ID,
@@ -235,7 +235,7 @@ describe('CreateProjectModal tests', () => {
 
       expect(mockUpdateEntityACL).toHaveBeenCalledWith(
         expect.objectContaining({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          // oxlint-disable-next-line @typescript-eslint/no-unsafe-assignment
           resourceAccess: expect.arrayContaining([
             expect.objectContaining({
               principalId: MOCK_PUBLIC_PRINCIPAL_ID,
