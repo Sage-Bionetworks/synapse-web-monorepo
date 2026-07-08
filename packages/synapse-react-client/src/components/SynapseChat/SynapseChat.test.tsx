@@ -72,11 +72,11 @@ describe('SynapseChat - suggestedPrompts', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     mockUseCreateAgentSession.mockReturnValue(idleMutation as any)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     mockUseUpdateAgentSession.mockReturnValue(idleMutation as any)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     mockUseGetChatAgentTraceEvents.mockReturnValue({ data: undefined } as any)
     mockUseChatState.mockReturnValue(defaultMockChatState)
   })

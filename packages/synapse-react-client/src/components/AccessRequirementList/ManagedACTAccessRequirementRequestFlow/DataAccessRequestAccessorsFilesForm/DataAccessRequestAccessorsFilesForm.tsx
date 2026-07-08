@@ -270,7 +270,7 @@ export default function DataAccessRequestAccessorsFilesForm(
       }
     }
     // Intentionally only re-synchronize state when server state changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [dataAccessRequest])
 
   function getDataAccessRequestWithLocalState(): Request | Renewal {

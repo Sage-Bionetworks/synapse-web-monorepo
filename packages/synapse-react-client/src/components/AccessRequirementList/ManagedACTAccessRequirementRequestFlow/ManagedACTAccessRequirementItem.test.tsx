@@ -30,7 +30,7 @@ async function renderComponent(
 ) {
   let renderReturn
   // We must await asynchronous events for our assertions to pass
-  // eslint-disable-next-line @typescript-eslint/require-await
+  // oxlint-disable-next-line @typescript-eslint/require-await
   await act(async () => {
     renderReturn = render(<ManagedACTAccessRequirementItem {...props} />, {
       wrapper: createWrapper(wrapperProps),

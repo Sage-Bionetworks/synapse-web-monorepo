@@ -73,23 +73,9 @@ pnpm build
 
 ### Test Setup
 
-Tests use **Vitest** with jsdom. Each package has a `vite.config.ts` that uses the shared `ConfigBuilder` from `packages/vite-config`. Test setup files are at `src/testutils/vitest.setup.ts` (synapse-react-client) and `src/vitest.setup.ts` (synapse-client).
+Tests use **Vitest** with jsdom. Each package has a `vite.config.ts`. When possible, the config uses shared utilities from `packages/vite-config`. Test setup files are at `src/testutils/vitest.setup.ts` (synapse-react-client) and `src/vitest.setup.ts` (synapse-client).
 
 Coverage reports are written to `./coverage/report/index.html`.
-
-### Vite Config Pattern
-
-All packages compose their Vite config using `ConfigBuilder`:
-
-```typescript
-import { ConfigBuilder } from '@sage-bionetworks/vite-config'
-
-const config = new ConfigBuilder()
-  .setIncludeVitestConfig(true)
-  .setIncludeReactConfig(true)
-  .setIncludeLibraryConfig(true, { except: ['...external deps...'] })
-  .build()
-```
 
 ### CSS/Theming
 
@@ -105,11 +91,23 @@ All projects extend `shared/tsconfig.base.json` (strict mode). The root `tsconfi
 
 ### Pre-commit Hooks
 
-Husky runs ESLint + oxfmt (via lint-staged) on staged files before each commit.
+Husky runs oxlint + oxfmt (via lint-staged) on staged files before each commit.
+
+## Tools and Technologies
+
+These are the standard tools and technologies that are used by multiple packages in this repository. For each of these tools, you can check `package.json` to verify the version of the tool that is running.
+
+- TypeScript
+- Vite
+- vitest
+- oxlint
+- oxfmt
+- react-router
+- MUI
 
 ## Comments
 
-Default to no comment. Code should be self-explanatory through clear naming and structure; a comment is a last resort for genuinely non-obvious intent — a subtle invariant, a workaround for external behavior, or a "why this and not the obvious thing" that the code can't express on its own. Never comment to restate what the code does, and don't narrate routine logic. It is always useful to document regex patterns - i.e. what they are intended to match. When in doubt, leave it out. 
+Default to no comment. Code should be self-explanatory through clear naming and structure; a comment is a last resort for genuinely non-obvious intent — a subtle invariant, a workaround for external behavior, or a "why this and not the obvious thing" that the code can't express on its own. Never comment to restate what the code does, and don't narrate routine logic. It is always useful to document regex patterns - i.e. what they are intended to match. When in doubt, leave it out.
 Never write "historical context" comments in a refactor — e.g. `// previously this used X`, `// changed from the old approach`, `// no longer does Y`. Once a PR merges, the old behavior is irrelevant and lives in git history. Comment what the code does now, not what it used to do.
 
 ## Code review norms

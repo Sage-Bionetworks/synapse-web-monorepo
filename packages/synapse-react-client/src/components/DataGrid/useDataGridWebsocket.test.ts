@@ -266,11 +266,11 @@ describe('useDataGridWebSocket', () => {
       expect(result.current.websocketInstance).not.toBe(firstInstance)
     })
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+    // oxlint-disable-next-line @typescript-eslint/unbound-method
     expect(firstInstance.disconnect).toHaveBeenCalled()
     expect(result.current.websocketInstance).not.toBe(firstInstance)
     // Second instance should not be disconnected yet
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+    // oxlint-disable-next-line @typescript-eslint/unbound-method
     expect(result.current.websocketInstance?.disconnect).not.toHaveBeenCalled()
   })
 
@@ -608,7 +608,7 @@ describe('useDataGridWebSocket', () => {
     })
 
     await waitFor(() => {
-      // eslint-disable-next-line @typescript-eslint/unbound-method
+      // oxlint-disable-next-line @typescript-eslint/unbound-method
       expect(result.current.websocketInstance?.disconnect).toHaveBeenCalled()
     })
   })
