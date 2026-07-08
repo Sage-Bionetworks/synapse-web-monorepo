@@ -133,7 +133,7 @@ export function useGetEntityTitleBarProperties(
     doi && {
       key: 'doi',
       title: 'DOI',
-      value: <CopyToClipboardString value={doi} href={doi} />,
+      value: <CopyToClipboardString value={doi} href={doi} useRoundedIcon />,
     },
     isDoiUsage && {
       key: 'citations',

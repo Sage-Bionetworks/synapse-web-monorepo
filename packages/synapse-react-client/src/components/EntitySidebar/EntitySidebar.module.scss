@@ -44,3 +44,22 @@ $sidebar-property-value-color: #4d535a;
 .drawer:global(.MuiDrawer-root .MuiPaper-root) {
   border-left: none;
 }
+
+.toggleButton:global(.MuiButtonBase-root) {
+  display: flex;
+  gap: 8px;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.toggleButtonText:global(.MuiTypography-root) {
+  color: $sidebar-header-color;
+  font-weight: 440;
+  line-height: 20px; /* 142.857% */
+}
+
+.icon {
+  color: $sidebar-header-color;
+}

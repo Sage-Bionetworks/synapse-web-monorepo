@@ -3,6 +3,7 @@ import Box from '@mui/material/Box'
 import Drawer from '@mui/material/Drawer'
 import Button from '@mui/material/Button'
 import Divider from '@mui/material/Divider'
+import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight'
 import { Stack, Typography } from '@mui/material'
 import { useGetEntityTitleBarProperties } from '@/components/entity/page/title_bar/useGetEntityTitleBarProperties'
 import styles from './EntitySidebar.module.scss'
@@ -21,8 +22,14 @@ export default function EntitySidebar(props: EntitySidebarProps) {
 
   return (
     <div>
-      <Button onClick={() => setOpen(prev => !prev)}>
-        {open ? 'Collapse' : 'Expand'} Sidebar
+      <Button
+        onClick={() => setOpen(prev => !prev)}
+        className={styles.toggleButton}
+      >
+        <Typography variant="smallText1" className={styles.toggleButtonText}>
+          {open ? 'Collapse' : 'Expand'} Sidebar
+        </Typography>
+        <KeyboardDoubleArrowRightIcon className={styles.icon} />
       </Button>
       <Drawer
         anchor="right"

@@ -17,13 +17,19 @@ export type CopyToClipboardStringProps = {
    * addition to the copy icon. Defaults to rendering the value as plain text.
    */
   href?: string
+  useRoundedIcon?: boolean
 }
 
 /**
- * Displays a string and a "Copy to Clipboard" icon, that, when clicked, will copy the contents of the string to the clipboard.
+ * Displays a string or link and a "Copy to Clipboard" icon, that, when clicked, will copy the contents of the string to the clipboard.
  */
 export function CopyToClipboardString(props: CopyToClipboardStringProps) {
-  const { value, typographyVariant = 'smallText1', href } = props
+  const {
+    value,
+    typographyVariant = 'smallText1',
+    href,
+    useRoundedIcon = false,
+  } = props
   const [tooltipText, setTooltipText] = useState('Copy to clipboard')
 
   const copyToClipboard = (event: SyntheticEvent) => {
@@ -63,7 +69,11 @@ export function CopyToClipboardString(props: CopyToClipboardStringProps) {
           style={{ cursor: 'pointer' }}
           onClick={copyToClipboard}
         >
-          <IconSvg icon="contentCopy" wrap={false} sx={{ width: '16px' }} />
+          <IconSvg
+            icon={useRoundedIcon ? 'contentCopyRounded' : 'contentCopy'}
+            wrap={false}
+            sx={{ width: '16px' }}
+          />
         </span>
       </Tooltip>
     </Stack>
