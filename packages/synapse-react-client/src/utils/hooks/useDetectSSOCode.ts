@@ -241,7 +241,7 @@ export default function useDetectSSOCode(
       }
     }
     // Intentionally only monitoring initialization of the session -- only running on mount after the session detection has completed since this uses URL params that come from a redirect
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [isInitializingSession])
 
   return { isLoading }

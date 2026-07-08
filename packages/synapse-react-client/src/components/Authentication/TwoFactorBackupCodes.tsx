@@ -56,7 +56,7 @@ export default function TwoFactorBackupCodes(props: TwoFactorBackupCodesProps) {
       generateCodes()
     }
     // Run on mount only
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const { visibleOnPrintClassName, hiddenOnPrintClassName } =

@@ -85,7 +85,7 @@ export default function useUpdateAcl(
 
   useEffect(() => {
     onChange(resourceAccessList)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [resourceAccessList])
 
   const addResourceAccessItem = useCallback(

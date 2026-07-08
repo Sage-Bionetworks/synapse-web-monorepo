@@ -117,7 +117,7 @@ const RegisterAccount1 = (): React.ReactNode => {
       setPage(Pages.EMAIL_REGISTRATION)
     }
     // Initialize the email address field with the email query parameter, but allow the user to change it or register using OAuth
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // If this is the Arcus app, skip the "choose registration" page and go straight to OAuth registration

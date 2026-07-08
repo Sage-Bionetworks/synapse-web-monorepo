@@ -108,7 +108,7 @@ pnpm info <parent> versions --json
 pnpm info <parent>@latest dependencies --json | grep <vulnerable-package>
 ```
 
-**Before applying a parent update, check for breaking changes** — especially for major version bumps or core tools (eslint, vite, storybook, typescript-eslint):
+**Before applying a parent update, check for breaking changes** — especially for major version bumps or core tools (typescript, oxlint, vite, storybook):
 
 ```bash
 # Check the changelog or release notes
@@ -206,7 +206,7 @@ Document:
 Scope tests to the impact:
 
 - **Production dep changed** → `pnpm nx run <affected-package>:test`
-- **Dev tooling dep** (eslint, vitest, rollup, storybook) → `pnpm lint` and/or a quick test run
+- **Dev tooling dep** (oxlint, vitest, rollup, storybook) → `pnpm lint` and/or a quick test run
 - **CLI tool dep** (openapi-generator-cli, etc.) → run the relevant generate/build command
 
 If tests fail, check: API breaking change in the updated package, accidentally too-broad override bumping a major version, or pre-existing failure on `main`.

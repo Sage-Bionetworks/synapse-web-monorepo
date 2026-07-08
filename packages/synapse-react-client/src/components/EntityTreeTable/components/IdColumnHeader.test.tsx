@@ -118,11 +118,11 @@ const createMockHeaderContext = (): HeaderContext<
   EntityBundleRow,
   unknown
 > => ({
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
   table: mockTable as any,
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
   header: { id: 'test-header', colSpan: 1, isPlaceholder: false } as any,
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
   column: { id: 'test-column', columnDef: {} } as any,
 })
 
@@ -164,7 +164,7 @@ describe('IdColumnHeader', () => {
 
     const headerContext = {
       ...createMockHeaderContext(),
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
       table: emptyTable as any,
     }
 
@@ -198,7 +198,7 @@ describe('IdColumnHeader', () => {
 
     const headerContext = {
       ...createMockHeaderContext(),
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
       table: loadMoreTable as any,
     }
 
@@ -226,7 +226,7 @@ describe('IdColumnHeader', () => {
 
     const headerContext = {
       ...createMockHeaderContext(),
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
       table: mixedTable as any,
     }
 

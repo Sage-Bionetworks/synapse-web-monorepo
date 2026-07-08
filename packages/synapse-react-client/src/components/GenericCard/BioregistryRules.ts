@@ -1,4 +1,4 @@
-/* eslint-disable no-useless-escape */
+/* oxlint-disable no-useless-escape */
 // This file is auto-generated. Do not edit manually.
 // Generated from bioregistry.io API based on collection.yaml
 

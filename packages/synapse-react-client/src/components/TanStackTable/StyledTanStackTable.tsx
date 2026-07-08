@@ -142,7 +142,7 @@ export default function StyledTanStackTable<
     }
     return colSizes
     // Intentionally limit the dependencies to only recompute when the column sizes change
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [
     table.getState().columnSizingInfo,
     table.getState().columnSizing,

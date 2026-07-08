@@ -17,7 +17,7 @@ const timelineProps: TimelinePlotProps = {
 
 async function renderTimeline(props: TimelinePlotProps = timelineProps) {
   let component
-  // eslint-disable-next-line @typescript-eslint/require-await
+  // oxlint-disable-next-line @typescript-eslint/require-await
   await act(async () => {
     component = render(<TimelinePlot {...props} />, {
       wrapper: createWrapper(),

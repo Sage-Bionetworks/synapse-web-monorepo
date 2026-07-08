@@ -3,8 +3,6 @@ import markdownit from 'markdown-it'
 
 import container from '../index.mjs'
 
-/* eslint-env mocha */
-
 describe('api', function () {
   it('renderer', function () {
     const res = markdownit()

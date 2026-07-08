@@ -173,7 +173,7 @@ export function AdditionalPropertiesSchemaField<
     }
 
     onNextPropertyTypeUpdate()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [nextPropertyType])
 
   /**
@@ -201,7 +201,7 @@ export function AdditionalPropertiesSchemaField<
     coerceDataAndUpdateWidget()
     // Don't add other properties to dependency array because we don't want to automatically coerce input
     // i.e. Only coerce data when the type changes, which should only be on mount or when the user explicitly chooses a new type.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [propertyType])
 
   const itemsSchema = getSchemaForPropertyType(propertyType)

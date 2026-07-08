@@ -77,9 +77,9 @@ export function StorybookComponentWrapper(props: {
   // Subscribe to the framework-agnostic SynapseSessionManager for token/auth state
   // These methods are bound in the SynapseSessionManager constructor, so they are safe to pass directly.
   const sessionState: SessionState = useSyncExternalStore(
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+    // oxlint-disable-next-line @typescript-eslint/unbound-method
     sessionManager.subscribe,
-    // eslint-disable-next-line @typescript-eslint/unbound-method
+    // oxlint-disable-next-line @typescript-eslint/unbound-method
     sessionManager.getSnapshot,
   )
 

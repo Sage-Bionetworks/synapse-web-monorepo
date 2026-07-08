@@ -335,7 +335,7 @@ export function CannedRejectionDialog(props: CannedRejectionDialogProps) {
       setEmailText(defaultEmailMessage)
     }
     // Specifically fire on update to just selectedRowIds
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedRowIds])
 
   // If fetching/processing the table fails, gracefully fall back to just show the email template
