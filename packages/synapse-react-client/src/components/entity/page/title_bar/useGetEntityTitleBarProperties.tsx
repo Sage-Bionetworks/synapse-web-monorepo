@@ -16,6 +16,7 @@ import { CitationsDialog } from './CitationsDialog'
 import { maxCitationCount, useDataCiteUsage } from './useDataCiteUsage'
 import { useGetMentions } from './useGetMentions'
 import Linkify from '@/components/GenericCard/Linkify'
+
 export type EntityProperty = {
   key: string
   title: string
