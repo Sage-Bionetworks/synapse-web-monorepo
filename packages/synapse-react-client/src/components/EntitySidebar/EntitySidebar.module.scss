@@ -7,8 +7,11 @@ $sidebar-property-value-color: #4d535a;
 .panel {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
   position: relative;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    align-items: flex-end;
+  }
 }
 
 .content {

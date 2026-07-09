@@ -28,26 +28,15 @@ import {
   VersionableEntity,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
-import * as HasAccessModule from '../../../HasAccess/HasAccessV2'
-import TitleBarProperties, {
-  TitleBarPropertiesProps,
-} from './TitleBarProperties'
-import * as UseGetEntityPropertiesModule from './useGetEntityTitleBarProperties'
+import * as HasAccessModule from '@/components/HasAccess/HasAccessV2'
+import EntitySidebar from './EntitySidebar'
 
 const HAS_ACCESS_V2_DATA_TEST_ID = 'mock-has-access-v2'
 
 vi.spyOn(HasAccessModule, 'HasAccessV2').mockImplementation(() => (
   <span data-testid={HAS_ACCESS_V2_DATA_TEST_ID}></span>
 ))
-
-const useGetEntityTitleBarPropertiesSpy = vi.spyOn(
-  UseGetEntityPropertiesModule,
-  'useGetEntityTitleBarProperties',
-)
-
-const mockOnActClick = vi.fn()
 
 function useEntityBundleOverride(bundle: EntityBundle) {
   server.use(
@@ -73,26 +62,13 @@ function useDoiAssociationOverride(doiAssociation: DoiAssociation | null) {
   )
 }
 
-function renderComponent(propOverrides?: Partial<TitleBarPropertiesProps>) {
-  return render(
-    <TitleBarProperties
-      entityId={mockFileEntity.id}
-      onActMemberClickAddConditionsForUse={mockOnActClick}
-      {...propOverrides}
-    />,
-    { wrapper: createWrapper() },
-  )
+function renderComponent() {
+  return render(<EntitySidebar entityId={mockFileEntity.id} />, {
+    wrapper: createWrapper(),
+  })
 }
 
-async function expandPropertiesIfPossible() {
-  try {
-    await userEvent.click(await screen.findByText(/\d+ more properties/))
-  } catch (e) {
-    // add a comment to ignore empty block error
-  }
-}
-
-describe('TitleBarProperties', () => {
+describe('EntitySidebar', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
     useDoiAssociationOverride(null)
@@ -103,104 +79,21 @@ describe('TitleBarProperties', () => {
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
-  describe('Show/Hide properties', () => {
-    it('Shows all properties if there are 6 or less', async () => {
-      // Mock useGetEntityTitleBarProperties to return 6 properties
-      useGetEntityTitleBarPropertiesSpy.mockImplementation(() => {
-        const properties = []
-        for (let i = 1; i <= 6; i++) {
-          properties.push({
-            key: i.toString(),
-            title: `Property ${i}`,
-            value: `Value ${i}`,
-          })
-        }
-        return properties
-      })
-
-      renderComponent()
-
-      for (let i = 1; i <= 6; i++) {
-        await screen.findByText(`Property ${i}`)
-        await screen.findByText(`Value ${i}`)
-      }
-      expect(screen.queryByText(/\d+ more properties/)).not.toBeInTheDocument()
-      expect(screen.queryByText(/Hide properties/)).not.toBeInTheDocument()
-    })
-    it('Shows 4 properties and can expand to show more if there are > 6', async () => {
-      // Mock useGetEntityTitleBarProperties to return 8 properties
-      useGetEntityTitleBarPropertiesSpy.mockImplementation(() => {
-        const properties = []
-        for (let i = 1; i <= 8; i++) {
-          properties.push({
-            key: i.toString(),
-            title: `Property ${i}`,
-            value: `Value ${i}`,
-          })
-        }
-        return properties
-      })
-
-      renderComponent()
-
-      // Properties 1-4 should be visible
-      for (let i = 1; i <= 4; i++) {
-        await screen.findByText(`Property ${i}`)
-        await screen.findByText(`Value ${i}`)
-      }
-
-      // Properties 5-8 should not be visible
-      for (let i = 5; i <= 8; i++) {
-        expect(screen.queryByText(`Property ${i}`)).not.toBeInTheDocument()
-        expect(screen.queryByText(`Value ${i}`)).not.toBeInTheDocument()
-      }
-
-      const showMore = await screen.findByText(/4 more properties/)
-      await userEvent.click(showMore)
-
-      // Properties 1-8 should be visible
-      for (let i = 1; i <= 8; i++) {
-        await screen.findByText(`Property ${i}`)
-        await screen.findByText(`Value ${i}`)
-      }
-
-      const hide = await screen.findByText('Hide properties')
-      await userEvent.click(hide)
-
-      // Once again, properties 1-4 should remain visible
-      for (let i = 1; i <= 4; i++) {
-        await screen.findByText(`Property ${i}`)
-        await screen.findByText(`Value ${i}`)
-      }
-
-      // ...and properties 5-8 should not be visible
-      for (let i = 5; i <= 8; i++) {
-        expect(screen.queryByText(`Property ${i}`)).not.toBeInTheDocument()
-        expect(screen.queryByText(`Value ${i}`)).not.toBeInTheDocument()
-      }
-    })
-  })
   describe('Displays individual properties', () => {
-    beforeEach(() => {
-      useGetEntityTitleBarPropertiesSpy.mockRestore()
-    })
     it('SynID', async () => {
       renderComponent()
-      await expandPropertiesIfPossible()
 
       await screen.findByText(`SynID`)
       await screen.findByText(mockFileEntity.id)
     })
     it('HasAccess', async () => {
       renderComponent()
-      await expandPropertiesIfPossible()
 
       await screen.findByText(`Access`)
       await screen.findByTestId(HAS_ACCESS_V2_DATA_TEST_ID)
     })
     it('File size', async () => {
       renderComponent()
-      await expandPropertiesIfPossible()
 
       await screen.findByText(`Size`)
       await screen.findByText(
@@ -209,7 +102,6 @@ describe('TitleBarProperties', () => {
     })
     it('File handle storage location', async () => {
       renderComponent()
-      await expandPropertiesIfPossible()
 
       await screen.findByText(`Storage Location`)
       await screen.findByText('Synapse Storage')
@@ -228,7 +120,6 @@ describe('TitleBarProperties', () => {
         ],
       })
       renderComponent()
-      await expandPropertiesIfPossible()
 
       await screen.findByText(`Storage Location`)
       await screen.findByText(
@@ -253,7 +144,6 @@ describe('TitleBarProperties', () => {
         ],
       })
       renderComponent()
-      await expandPropertiesIfPossible()
 
       await screen.findByText('Endpoint')
       await screen.findByText(endpointUrl)
@@ -275,7 +165,6 @@ describe('TitleBarProperties', () => {
         fileHandles: [fileHandle],
       })
       renderComponent()
-      await expandPropertiesIfPossible()
 
       await screen.findByText('URL')
       const link = await screen.findByRole('link', { name: externalUrl })
@@ -288,7 +177,6 @@ describe('TitleBarProperties', () => {
 
     it('File handle md5', async () => {
       renderComponent()
-      await expandPropertiesIfPossible()
 
       await screen.findByText(`MD5`)
       await screen.findByText(mockFileHandle.contentMd5!)
@@ -300,7 +188,6 @@ describe('TitleBarProperties', () => {
         fileName,
       })
       renderComponent()
-      await expandPropertiesIfPossible()
 
       await screen.findByText(`Alias`)
       await screen.findByText('Name when downloaded will be:')
@@ -312,8 +199,8 @@ describe('TitleBarProperties', () => {
         fileName: mockFileEntity.entity.name,
       })
       renderComponent()
-      await expandPropertiesIfPossible()
 
+      await screen.findByText(mockFileEntity.id)
       expect(screen.queryByText(`Alias`)).not.toBeInTheDocument()
     })
     it('DOI', async () => {
@@ -322,7 +209,6 @@ describe('TitleBarProperties', () => {
         doiAssociation: mockDoiAssociation,
       })
       renderComponent()
-      await expandPropertiesIfPossible()
 
       await screen.findByText(`DOI`)
       await screen.findByText(`https://doi.org/${mockDoiAssociation.doiUri}`)
@@ -340,7 +226,6 @@ describe('TitleBarProperties', () => {
       // A non-version-specific DOI exists
       useDoiAssociationOverride(mockDoiAssociation)
       renderComponent()
-      await expandPropertiesIfPossible()
 
       await screen.findByText(`DOI`)
       await screen.findByText(`https://doi.org/${mockDoiAssociation.doiUri}`)
@@ -359,8 +244,8 @@ describe('TitleBarProperties', () => {
       // A non-version-specific DOI exists
       useDoiAssociationOverride(mockDoiAssociation)
       renderComponent()
-      await expandPropertiesIfPossible()
 
+      await screen.findByText(mockFileEntity.id)
       expect(screen.queryByText(`DOI`)).not.toBeInTheDocument()
       expect(
         screen.queryByText(`https://doi.org/${mockDoiAssociation.doiUri}`),
@@ -390,7 +275,6 @@ describe('TitleBarProperties', () => {
       )
 
       renderComponent()
-      await expandPropertiesIfPossible()
 
       await screen.findByText(`Items`)
       await screen.findByText((55).toLocaleString())
@@ -407,7 +291,6 @@ describe('TitleBarProperties', () => {
       })
 
       renderComponent()
-      await expandPropertiesIfPossible()
 
       await screen.findByText('Storage Location')
       await screen.findByText('Synapse Storage')
@@ -420,7 +303,6 @@ describe('TitleBarProperties', () => {
       })
 
       renderComponent()
-      await expandPropertiesIfPossible()
 
       await screen.findByText('Upload Destination')
       await screen.findByText('Synapse Storage')
@@ -428,7 +310,6 @@ describe('TitleBarProperties', () => {
     it('Dataset items', async () => {
       useEntityBundleOverride(mockDataset.bundle)
       renderComponent()
-      await expandPropertiesIfPossible()
 
       await screen.findByText(`Items`)
       await screen.findByText(mockDataset.entity.items!.length.toString())
