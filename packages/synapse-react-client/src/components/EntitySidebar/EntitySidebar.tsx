@@ -82,6 +82,7 @@ export default function EntitySidebar(props: EntitySidebarProps) {
         orientation={isMobile ? 'vertical' : 'horizontal'}
         timeout={{ enter: 200, exit: 200 }}
         unmountOnExit
+        className={styles.collapseContainer}
       >
         {sidebarContent}
       </Collapse>
