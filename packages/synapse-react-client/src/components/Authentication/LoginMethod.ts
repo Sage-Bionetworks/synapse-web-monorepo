@@ -24,7 +24,7 @@ export function getLoginMethodFriendlyName(loginMethod: LoginMethod) {
     case LOGIN_METHOD_OAUTH2_GOOGLE:
       return 'Google'
     case LOGIN_METHOD_OAUTH2_NIH_RESEARCHER_AUTH_SERVICE:
-      return 'Researcher Auth Service (RAS)'
+      return 'Researcher Auth Service'
     case LOGIN_METHOD_OAUTH2_ORCID:
       return 'ORCiD'
     case LOGIN_METHOD_EMAIL:

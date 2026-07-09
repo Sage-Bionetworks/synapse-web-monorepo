@@ -21,7 +21,12 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import React, { useCallback } from 'react'
 import { RefObject, useEffect, useRef, useState } from 'react'
-import { Link as RouterLink, useLocation, useNavigate } from 'react-router'
+import {
+  Link as RouterLink,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from 'react-router'
 import RORInstitutionField from 'synapse-react-client/components/RORInstitutionField/RORInstitutionField'
 import { ConfigureEmail } from '../components/ConfigureEmail'
 import { ProfileAvatar } from '../components/ProfileAvatar'
@@ -45,8 +50,6 @@ import { SYNAPSE_REALM } from 'synapse-react-client/utils/SynapseConstants'
 import { TextField } from 'synapse-react-client/components/TextField/index'
 import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
 import { useCookieValue } from '@react-hookz/web/useCookieValue/index.js'
-import { useSourceApp } from '../components/useSourceApp'
-
 const AMPALS_SOURCE_APP_ID = 'ampals'
 
 function CompletionStatus({ isComplete }: { isComplete: boolean | undefined }) {
@@ -105,7 +108,8 @@ const AccountSettings = (): React.ReactNode => {
 
   const { clearSession } = useApplicationSessionContext()
   const showWebhooks = useGetFeatureFlag(FeatureFlagEnum.WEBHOOKS_UI)
-  const sourceApp = useSourceApp()
+  const [searchParams] = useSearchParams()
+  const isAmpalSourceApp = searchParams.get('appId') === AMPALS_SOURCE_APP_ID
   const { data: currentRealm } = useGetCurrentRealm({
     select: realm => realm.id,
   })
@@ -549,7 +553,7 @@ const AccountSettings = (): React.ReactNode => {
                     />
                   </div>
                 )}
-                {sourceApp.appId === AMPALS_SOURCE_APP_ID && (
+                {isAmpalSourceApp && (
                   <div className="credential-partition">
                     <h4>NIH Researcher Auth Service (RAS)</h4>
                     <p>
