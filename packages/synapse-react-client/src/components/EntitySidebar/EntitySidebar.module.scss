@@ -1,4 +1,4 @@
-$sidebar-header-color: #616972;
+$sidebar-text-primary: #616972;
 $sidebar-property-title-color: #747d88;
 $sidebar-property-value-color: #4d535a;
 @use 'sass:map';
@@ -25,7 +25,7 @@ $sidebar-property-value-color: #4d535a;
 
 .sidebarHeader:global(.MuiTypography-root) {
   font-size: 14px;
-  color: $sidebar-header-color;
+  color: $sidebar-text-primary;
   font-weight: 540;
   line-height: 20px; /* 142.857% */
 }
@@ -79,11 +79,11 @@ $sidebar-property-value-color: #4d535a;
 }
 
 .toggleButtonText:global(.MuiTypography-root) {
-  color: $sidebar-header-color;
+  color: $sidebar-text-primary;
   font-weight: 440;
   line-height: 20px; /* 142.857% */
 }
 
 .icon {
-  color: $sidebar-header-color;
+  color: $sidebar-text-primary;
 }
