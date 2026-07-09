@@ -25,7 +25,7 @@ export default function EntitySidebar(props: EntitySidebarProps) {
   const { entityId, versionNumber } = props
 
   const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
 
   const { entityBundle } = useGetEntityMetadata(entityId, versionNumber)
 
@@ -81,8 +81,6 @@ export default function EntitySidebar(props: EntitySidebarProps) {
         in={open}
         orientation={isMobile ? 'vertical' : 'horizontal'}
         timeout={{ enter: 200, exit: 200 }}
-        unmountOnExit
-        className={styles.collapseContainer}
       >
         {sidebarContent}
       </Collapse>
