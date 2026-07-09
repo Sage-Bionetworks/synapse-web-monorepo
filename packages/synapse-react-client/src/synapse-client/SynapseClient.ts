@@ -4402,6 +4402,26 @@ export const bindOAuthProviderToAccount = async (
 }
 
 /**
+ * Bind an external identity (e.g. NIH RAS) to a Synapse account via the identity endpoint.
+ * Unlike ORCiD, RAS does not provide an alias, so this uses /auth/v1/oauth2/identity.
+ * https://rest-docs.synapse.org/rest/POST/oauth2/identity.html
+ */
+export const bindExternalIdentityToAccount = async (
+  provider: string,
+  authenticationCode: string | number,
+  redirectUrl: string,
+  endpoint: BackendDestinationEnum = BackendDestinationEnum.REPO_ENDPOINT,
+): Promise<void> => {
+  const accessToken = await getAccessTokenFromCookie()
+  return doPost(
+    '/auth/v1/oauth2/identity',
+    { provider, authenticationCode, redirectUrl },
+    accessToken,
+    endpoint,
+  )
+}
+
+/**
  * Remove an alias associated with an account via the OAuth mechanism.
  * http://rest-docs.synapse.org/rest/DELETE/oauth2/alias.html
  * @param provider

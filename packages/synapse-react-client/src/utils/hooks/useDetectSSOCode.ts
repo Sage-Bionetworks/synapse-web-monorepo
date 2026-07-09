@@ -1,4 +1,5 @@
 import {
+  bindExternalIdentityToAccount,
   bindOAuthProviderToAccount,
   getRootURL,
   oAuthRegisterAccountStep2,
@@ -154,6 +155,26 @@ export default function useDetectSSOCode(
             }
           }
           bindOAuthProviderToAccount(
+            provider,
+            code,
+            redirectUrl,
+            BackendDestinationEnum.REPO_ENDPOINT,
+          )
+            .then(onSignInComplete)
+            .catch(onFailure)
+            .finally(() => setIsLoading(false))
+        } else if (
+          OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE == provider &&
+          isAuthenticated
+        ) {
+          // RAS does not provide an alias, so bind via the identity endpoint
+          const onFailure = (err: SynapseClientError) => {
+            console.error('Error binding NIH RAS identity to account: ', err)
+            if (onError) {
+              onError(err.reason)
+            }
+          }
+          bindExternalIdentityToAccount(
             provider,
             code,
             redirectUrl,
