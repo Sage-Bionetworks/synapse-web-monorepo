@@ -47,7 +47,9 @@ export function ComplexMenu(props: ComplexMenuProps) {
         display: 'flex',
         alignItems: 'center',
         gap: '10px',
-        [theme.breakpoints.down('sm')]: {
+        flexWrap: 'wrap',
+        justifyContent: 'flex-end',
+        [theme.breakpoints.down('md')]: {
           flexDirection: 'column',
           paddingTop: '10px',
         },
@@ -60,7 +62,7 @@ export function ComplexMenu(props: ComplexMenuProps) {
             <Box
               key={label}
               sx={theme => ({
-                [theme.breakpoints.down('sm')]: {
+                [theme.breakpoints.down('md')]: {
                   width: '100%',
                   '.MuiButton-root': { width: '100%' },
                 },
@@ -129,7 +131,7 @@ export function ComplexMenu(props: ComplexMenuProps) {
           menuProps.items.length > 0 && (
             <Box
               sx={theme => ({
-                [theme.breakpoints.down('sm')]: {
+                [theme.breakpoints.down('md')]: {
                   width: '100%',
                   '.MuiButton-root': { width: '100%' },
                 },
