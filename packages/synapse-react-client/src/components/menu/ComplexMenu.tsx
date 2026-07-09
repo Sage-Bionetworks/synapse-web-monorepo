@@ -47,6 +47,8 @@ export function ComplexMenu(props: ComplexMenuProps) {
         display: 'flex',
         alignItems: 'center',
         gap: '10px',
+        flexWrap: 'wrap',
+        justifyContent: 'flex-end',
         [theme.breakpoints.down('md')]: {
           flexDirection: 'column',
           paddingTop: '10px',
