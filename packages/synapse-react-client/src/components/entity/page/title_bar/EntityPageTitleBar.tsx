@@ -55,7 +55,7 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
       >
         <Stack
           sx={{
-            flexDirection: { xs: 'column', sm: 'row' },
+            flexDirection: { xs: 'column', md: 'row' },
             alignItems: 'center',
           }}
         >
