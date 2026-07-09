@@ -1,12 +1,20 @@
 import { useState } from 'react'
-import Box from '@mui/material/Box'
-import Drawer from '@mui/material/Drawer'
-import Button from '@mui/material/Button'
-import Divider from '@mui/material/Divider'
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight'
-import { Stack, Typography } from '@mui/material'
+import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft'
+import {
+  Box,
+  Button,
+  Divider,
+  Collapse,
+  Stack,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material'
 import { useGetEntityTitleBarProperties } from '@/components/entity/page/title_bar/useGetEntityTitleBarProperties'
 import styles from './EntitySidebar.module.scss'
+import useGetEntityMetadata from '@/utils/hooks/useGetEntityMetadata'
+import { entityTypeToFriendlyName } from '@/utils/functions/EntityTypeUtils'
 
 type EntitySidebarProps = {
   entityId: string
@@ -16,12 +24,46 @@ type EntitySidebarProps = {
 export default function EntitySidebar(props: EntitySidebarProps) {
   const { entityId, versionNumber } = props
 
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+
+  const { entityBundle } = useGetEntityMetadata(entityId, versionNumber)
+
+  const friendlyName = entityBundle
+    ? entityTypeToFriendlyName(entityBundle.entityType)
+    : ''
+
   const properties = useGetEntityTitleBarProperties(entityId, versionNumber)
 
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(true)
+
+  const sidebarContent = (
+    <Box className={styles.content}>
+      <Typography variant="overline" className={styles.sidebarHeader}>
+        About this {friendlyName}
+      </Typography>
+      <Divider className={styles.divider} />
+      <Stack className={styles.propertiesContainer}>
+        {properties.map(property => (
+          <Stack key={property.key} className={styles.propertyRow}>
+            <Typography className={styles.propertyTitle}>
+              {property.title}
+            </Typography>
+            <Typography
+              className={styles.propertyValue}
+              variant="smallText1"
+              component="div"
+            >
+              {property.value}
+            </Typography>
+          </Stack>
+        ))}
+      </Stack>
+    </Box>
+  )
 
   return (
-    <div>
+    <Box className={styles.panel}>
       <Button
         onClick={() => setOpen(prev => !prev)}
         className={styles.toggleButton}
@@ -29,37 +71,20 @@ export default function EntitySidebar(props: EntitySidebarProps) {
         <Typography variant="smallText1" className={styles.toggleButtonText}>
           {open ? 'Collapse' : 'Expand'} Sidebar
         </Typography>
-        <KeyboardDoubleArrowRightIcon className={styles.icon} />
+        {open ? (
+          <KeyboardDoubleArrowRightIcon className={styles.icon} />
+        ) : (
+          <KeyboardDoubleArrowLeftIcon className={styles.icon} />
+        )}
       </Button>
-      <Drawer
-        anchor="right"
-        variant="persistent"
-        open={open}
-        className={styles.drawer}
+      <Collapse
+        in={open}
+        orientation={isMobile ? 'vertical' : 'horizontal'}
+        timeout={{ enter: 200, exit: 200 }}
+        unmountOnExit
       >
-        <Box className={styles.content} role="presentation">
-          <Typography variant="overline" className={styles.sidebarHeader}>
-            About this file
-          </Typography>
-          <Divider className={styles.divider} />
-          <Stack className={styles.propertiesContainer}>
-            {properties.map(property => (
-              <Stack key={property.key} className={styles.propertyRow}>
-                <Typography className={styles.propertyTitle}>
-                  {property.title}
-                </Typography>
-                <Typography
-                  className={styles.propertyValue}
-                  variant="smallText1"
-                  component="div"
-                >
-                  {property.value}
-                </Typography>
-              </Stack>
-            ))}
-          </Stack>
-        </Box>
-      </Drawer>
-    </div>
+        {sidebarContent}
+      </Collapse>
+    </Box>
   )
 }

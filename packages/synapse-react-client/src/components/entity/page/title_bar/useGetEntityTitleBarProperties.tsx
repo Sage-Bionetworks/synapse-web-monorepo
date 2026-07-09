@@ -111,8 +111,7 @@ export function useGetEntityTitleBarProperties(
     {
       key: 'id',
       title: 'SynID',
-      // value: <CopyToClipboardString value={entityId} />,
-      value: entityId,
+      value: <CopyToClipboardString value={entityId} />,
     },
     {
       key: 'access',
