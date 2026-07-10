@@ -6,6 +6,7 @@ import {
   setAccessTokenCookie,
 } from '@/synapse-client'
 import { OAuth2State } from '@/utils/types'
+import { OAuthValidationRequestProviderEnum } from '@sage-bionetworks/synapse-client'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { LoginResponse } from '@sage-bionetworks/synapse-types'
@@ -178,7 +179,7 @@ export default function useDetectSSOCode(
           synapseClient.authenticationServicesClient
             .postAuthV1Oauth2Identity({
               oAuthValidationRequest: {
-                provider,
+                provider: provider as OAuthValidationRequestProviderEnum,
                 authenticationCode: String(code),
                 redirectUrl,
               },
