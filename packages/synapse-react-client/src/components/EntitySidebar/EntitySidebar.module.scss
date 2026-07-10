@@ -1,0 +1,87 @@
+$sidebar-text-primary: #616972;
+$sidebar-property-title-color: #747d88;
+$sidebar-property-value-color: #4d535a;
+@use 'sass:map';
+@use '../../style/abstracts/variables' as SrcVariables;
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.content {
+  width: 320px;
+  margin-top: 40px;
+  padding: 0 32px 0 0;
+
+  @media (max-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px 32px 0 32px;
+  }
+}
+
+.sidebarHeader:global(.MuiTypography-root) {
+  font-size: 14px;
+  color: $sidebar-text-primary;
+  font-weight: 540;
+  line-height: 20px; /* 142.857% */
+}
+
+.divider {
+  margin-top: 8px;
+  margin-bottom: 16px;
+}
+
+.propertyValue:global(.MuiTypography-root) {
+  color: $sidebar-property-value-color;
+  font-style: normal;
+  font-weight: 440;
+  line-height: 20px; /* 142.857% */
+}
+
+.propertyTitle:global(.MuiTypography-root) {
+  color: $sidebar-property-title-color;
+  font-size: 12px;
+  line-height: 12px; /* 100% */
+}
+
+.propertiesContainer {
+  padding: 12px 0;
+  gap: 12px;
+}
+
+.propertyRow {
+  gap: 4px;
+}
+
+.toggleButton:global(.MuiButtonBase-root) {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  top: 0;
+  right: 0;
+  white-space: nowrap;
+  align-self: flex-start;
+  position: absolute;
+
+  @media (max-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    position: static;
+    margin: 10px 0 0 20px;
+  }
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.toggleButtonText:global(.MuiTypography-root) {
+  color: $sidebar-text-primary;
+  font-weight: 440;
+  line-height: 20px; /* 142.857% */
+}
+
+.icon {
+  color: $sidebar-text-primary;
+}
