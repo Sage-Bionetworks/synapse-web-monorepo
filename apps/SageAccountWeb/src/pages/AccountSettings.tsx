@@ -109,7 +109,7 @@ const AccountSettings = (): React.ReactNode => {
   const { clearSession } = useApplicationSessionContext()
   const showWebhooks = useGetFeatureFlag(FeatureFlagEnum.WEBHOOKS_UI)
   const [searchParams] = useSearchParams()
-  const isAmpalSourceApp = searchParams.get('appId') === AMPALS_SOURCE_APP_ID
+  const isAmpAlsSourceApp = searchParams.get('appId') === AMPALS_SOURCE_APP_ID
   const { data: currentRealm } = useGetCurrentRealm({
     select: realm => realm.id,
   })
@@ -553,7 +553,7 @@ const AccountSettings = (): React.ReactNode => {
                     />
                   </div>
                 )}
-                {isAmpalSourceApp && (
+                {isAmpAlsSourceApp && (
                   <div className="credential-partition">
                     <h4>NIH Researcher Auth Service (RAS)</h4>
                     <p>
