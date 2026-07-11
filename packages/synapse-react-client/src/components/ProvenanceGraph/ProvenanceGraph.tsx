@@ -1,7 +1,7 @@
 import SynapseClient from '@/synapse-client'
 import { useGetEntityHeaders } from '@/synapse-queries'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { CircularProgress, Typography, Box, Button, Stack } from '@mui/material'
+import { CircularProgress, Typography, Button, Stack } from '@mui/material'
 import {
   Activity,
   EntityHeader,
@@ -61,6 +61,11 @@ export const EDIT_PROVENANCE_TEXT = 'Edit Provenance'
 export const NO_PROVENANCE_TITLE = 'No provenance data'
 const NO_PROVENANCE_MESSAGE =
   'We don’t have any provenance information for this file yet.'
+const NO_PROVENANCE_TEXT_COLOR = '#3B4046'
+const PROVENANCE_BACKGROUND_COLOR = '#F9F9FA'
+const EDIT_PROVENANCE_BUTTON_TEXT_COLOR = '#4D535A'
+const EDIT_PROVENANCE_BUTTON_BORDER_COLOR = '#9EAAB7'
+const EDIT_PROVENANCE_BUTTON_BACKGROUND_COLOR = 'rgba(255, 255, 255, 0.60)'
 
 /**
  * Renders a Provenance Graph for a set of entities.
@@ -425,7 +430,7 @@ const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
       style={{
         width: '100%',
         height: containerHeight,
-        backgroundColor: '#F9F9FA',
+        backgroundColor: PROVENANCE_BACKGROUND_COLOR,
         padding: '15px',
       }}
     >
@@ -441,7 +446,7 @@ const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
         >
           <Typography
             sx={{
-              color: '#3B4046',
+              color: NO_PROVENANCE_TEXT_COLOR,
               fontSize: '16px',
               lineHeight: '24px',
               fontWeight: 540,
@@ -452,7 +457,7 @@ const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
           </Typography>
           <Typography
             sx={{
-              color: '#3B4046',
+              color: NO_PROVENANCE_TEXT_COLOR,
               fontSize: '14px',
               lineHeight: '20px',
               fontWeight: 440,
@@ -465,9 +470,10 @@ const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
               variant="outlined"
               sx={{
                 borderRadius: '6px',
-                border: '1px solid #9EAAB7',
-                background: 'rgba(255, 255, 255, 0.60)',
-                color: '#4D535A',
+                border: '1px solid',
+                borderColor: EDIT_PROVENANCE_BUTTON_BORDER_COLOR,
+                background: EDIT_PROVENANCE_BUTTON_BACKGROUND_COLOR,
+                color: EDIT_PROVENANCE_BUTTON_TEXT_COLOR,
                 fontWeight: 540,
                 lineHeight: '12px' /* 100% */,
                 letterSpacing: '-0.24px',
