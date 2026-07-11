@@ -1,5 +1,9 @@
 import SynapseClient from '@/synapse-client'
 import { useGetEntityHeaders } from '@/synapse-queries'
+import {
+  entityTypeToFriendlyName,
+  getEntityTypeFromHeader,
+} from '@/utils/functions/EntityTypeUtils'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { CircularProgress, Typography, Button, Stack } from '@mui/material'
 import {
@@ -59,8 +63,8 @@ const MAX_ACTIVITY_EXPAND_NODES = 400
 const DEFAULT_ZOOM = 0.85
 export const EDIT_PROVENANCE_TEXT = 'Edit Provenance'
 export const NO_PROVENANCE_TITLE = 'No provenance data'
-const NO_PROVENANCE_MESSAGE =
-  'We don’t have any provenance information for this file yet.'
+const NO_PROVENANCE_MESSAGE = (entityTypeName: string) =>
+  `We don’t have any provenance information for this ${entityTypeName} yet.`
 const NO_PROVENANCE_TEXT_COLOR = '#3B4046'
 const PROVENANCE_BACKGROUND_COLOR = '#F9F9FA'
 const EDIT_PROVENANCE_BUTTON_TEXT_COLOR = '#4D535A'
@@ -122,6 +126,11 @@ const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
     )
   }
   const rootEntityHeaders = rootEntityHeadersPage?.results
+  const entityTypeName = rootEntityHeaders?.[0]
+    ? entityTypeToFriendlyName(
+        getEntityTypeFromHeader(rootEntityHeaders[0]),
+      ).toLowerCase()
+    : 'entity'
   const [initializedPosition, setInitializedPosition] = useState<boolean>(false)
 
   // Get the react flow instance so we attempt to properly center the view.
@@ -463,7 +472,7 @@ const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
               fontWeight: 440,
             }}
           >
-            {NO_PROVENANCE_MESSAGE}
+            {NO_PROVENANCE_MESSAGE(entityTypeName)}
           </Typography>
           {onEditProvenanceClicked && (
             <Button
