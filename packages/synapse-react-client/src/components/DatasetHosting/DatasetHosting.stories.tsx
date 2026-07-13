@@ -22,21 +22,21 @@ import {
   DatasetHostingType,
   fillRepository,
 } from './DatasetHosting'
-import { DatasetHostingButton } from './DatasetHostingButton'
+import { DatasetDownloadButton } from './DatasetDownloadButton'
 
 /**
- * Demonstrates how a single chip-style action button differentiates the four ways
- * NF (and other portals) host data, giving users a predictable experience. The
- * button text + tooltip carry everything — there is no separate badge.
- *
- *  1. `synapse`            — Sage-managed storage. "Download". No caveat.
- *  2. `external-cloud`     — Third-party cloud bucket. "Download" w/ cloud icon;
- *                            tooltip warns the files could be removed.
- *  3. `external-download`  — GEO/ENA etc. "Download from GEO"; tooltip warns it
- *                            routes through an external server and may be slow.
- *  4. `external-access`    — dbGaP/EGA placeholders. NOT downloadable — the button
- *                            becomes "Access at dbGaP" (warning color) and links out.
+ * Demonstrates how the dataset action button adapts to the six ways NF (and other
+ * portals) host data, giving users a predictable experience. `hosting` only
+ * modulates the standard download affordance — for downloadable datasets the button
+ * is the shared `EntityDownloadButton` (Add to Download List / Programmatic Access /
+ * Export Table); non-downloadable types link out or are non-actionable. The button
+ * text, icon, and tooltip carry the hosting signal — there is no separate badge.
  */
+
+// A mock dataset id/name so the downloadable button can render the shared
+// EntityDownloadButton in Storybook.
+const MOCK_DATASET_ID = 'syn123'
+const MOCK_DATASET_NAME = 'Example NF dataset'
 
 type DatasetCardExample = {
   hosting: DatasetHostingType
@@ -66,11 +66,12 @@ function renderDatasetCard(
           <GenericCardIcon type={SynapseConstants.DATASET} useTypeForIcon />
         }
         cardTopButtons={
-          <DatasetHostingButton
+          <DatasetDownloadButton
+            entityId={MOCK_DATASET_ID}
+            name={example.title}
             hosting={example.hosting}
             repository={example.repository}
             externalUrl={example.externalUrl}
-            onDownloadClick={() => {}}
           />
         }
         labels={labels}
@@ -125,26 +126,26 @@ const EXAMPLES: Record<string, DatasetCardExample> = {
 
 const meta = {
   title: 'Explore/DatasetHosting',
-  component: DatasetHostingButton,
+  component: DatasetDownloadButton,
   parameters: {
     layout: 'padded',
     docs: {
       description: {
         component: [
-          'A single chip-style action button that both communicates **how a dataset is hosted** and performs the correct action for it. There is no separate badge — the button text, color, icon, and tooltip carry all the signal.',
+          'The dataset action button both communicates **how a dataset is hosted** and performs the correct action for it. `hosting` only modulates the standard download affordance — it never invents a parallel download path.',
           '',
           'A dataset card is driven by three annotation values:',
           '',
-          '- **`hosting`** — a *controlled vocabulary* with exactly four values (`synapse`, `external-cloud`, `external-download`, `external-access`). This is the only field that changes behavior: downloadable vs. external link, color, icon, and tooltip wording. A blank/unknown value falls back to `synapse` (plain Download).',
-          '- **`repository`** — *free text*, whatever the curator enters (e.g. `GEO`, `dbGaP`, `Zenodo`, `Smith Lab Server`). Used only as the display label in the chip/tooltip; it does **not** affect behavior.',
+          '- **`hosting`** — a *controlled vocabulary* (`synapse`, `external-cloud`, `external-download`, `external-access`, `mixed`, `unavailable`). This is the only field that changes behavior: whether the shared download control is shown, or an external link, or a disabled indicator, plus the icon and tooltip wording. A blank/unknown value falls back to `synapse`.',
+          '- **`repository`** — *free text* (e.g. `GEO`, `dbGaP`, `Zenodo`). Used only as the display label in the button/tooltip; it does **not** affect behavior.',
           '- **`externalUrl`** — *free text*, the link target for non-downloadable (`external-access`) datasets.',
           '',
-          'See the **Overview** story for the model at a glance, **AllFlavors** for the four hosting types on real cards, and **FreeTextRepository** to confirm any repository string renders verbatim.',
+          'For downloadable types the button is the shared `EntityDownloadButton`, so the download options (Add to Download List, Programmatic Access, Export Table) and behavior are identical across portals.',
         ].join('\n'),
       },
     },
   },
-} satisfies Meta<typeof DatasetHostingButton>
+} satisfies Meta<typeof DatasetDownloadButton>
 export default meta
 
 const MODEL_ROWS: {
@@ -155,7 +156,7 @@ const MODEL_ROWS: {
 }[] = [
   {
     field: 'hosting',
-    kind: 'Controlled (4 values)',
+    kind: 'Controlled (6 values)',
     affectsBehavior: 'Yes — the only field that does',
     example: 'external-download',
   },
@@ -185,8 +186,8 @@ export const Overview: StoryObj = {
           Dataset hosting — data model
         </Typography>
         <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-          One chip-style button per dataset communicates how it is hosted and
-          performs the right action. It is driven by three annotation values:
+          One button per dataset communicates how it is hosted and performs the
+          right action. It is driven by three annotation values:
         </Typography>
       </Box>
       <Table size="small">
@@ -224,7 +225,7 @@ export const Overview: StoryObj = {
           variant="body1"
           sx={{ display: 'block', mb: 1, fontWeight: 700 }}
         >
-          The four hosting values
+          The six hosting values
         </Typography>
         <Table size="small">
           <TableHead>
@@ -254,7 +255,9 @@ export const Overview: StoryObj = {
                   </TableCell>
                   <TableCell>{config.downloadable ? 'Yes' : 'No'}</TableCell>
                   <TableCell>
-                    <DatasetHostingButton
+                    <DatasetDownloadButton
+                      entityId={MOCK_DATASET_ID}
+                      name={MOCK_DATASET_NAME}
                       hosting={key}
                       repository={
                         config.label.includes('{repository}')
@@ -262,7 +265,6 @@ export const Overview: StoryObj = {
                           : undefined
                       }
                       externalUrl="https://example.org/"
-                      onDownloadClick={() => {}}
                     />
                   </TableCell>
                 </TableRow>
@@ -275,7 +277,7 @@ export const Overview: StoryObj = {
   ),
 }
 
-/** All four dataset flavors stacked, each annotated with what the user sees and why. */
+/** All six dataset flavors stacked, each annotated with what the user sees and why. */
 export const AllFlavors: StoryObj = {
   render: () => (
     <Stack gap={4} sx={{ maxWidth: 900 }}>
@@ -324,119 +326,22 @@ export const ButtonStyle: StoryObj = {
   ),
 }
 
-/**
- * When a portal offers **both** a direct download and an add-to-cart flow, supply
- * both `onDownloadClick` and `onAddToCartClick`. The control becomes a split
- * button: the main click performs `primaryAction` (add-to-cart by default, the
- * shared-cart flow CCKP encourages) and the caret opens a menu with both actions.
- * Providing only one callback keeps the single-button behavior shown elsewhere.
- *
- * Only downloadable hosting types split; `external-access` stays a link-out and
- * `unavailable` stays non-actionable regardless of the callbacks.
- */
-export const SplitDownloadAndCart: StoryObj = {
-  render: () => {
-    const cases: {
-      label: string
-      style: CardActionButtonStyle
-      primaryAction: 'download' | 'cart'
-      hosting: DatasetHostingType
-      repository?: string
-      loading?: boolean
-    }[] = [
-      {
-        label: 'chip · cart primary',
-        style: 'chip',
-        primaryAction: 'cart',
-        hosting: 'synapse',
-      },
-      {
-        label: 'chip · download primary',
-        style: 'chip',
-        primaryAction: 'download',
-        hosting: 'synapse',
-      },
-      {
-        label: 'chip · external-download (GEO)',
-        style: 'chip',
-        primaryAction: 'cart',
-        hosting: 'external-download',
-        repository: 'GEO',
-      },
-      {
-        label: 'chip · loading',
-        style: 'chip',
-        primaryAction: 'cart',
-        hosting: 'synapse',
-        loading: true,
-      },
-      {
-        label: 'button · cart primary',
-        style: 'button',
-        primaryAction: 'cart',
-        hosting: 'synapse',
-      },
-      {
-        label: 'button · download primary',
-        style: 'button',
-        primaryAction: 'download',
-        hosting: 'synapse',
-      },
-      {
-        label: 'button · external-download (GEO)',
-        style: 'button',
-        primaryAction: 'cart',
-        hosting: 'external-download',
-        repository: 'GEO',
-      },
-      {
-        label: 'button · loading',
-        style: 'button',
-        primaryAction: 'cart',
-        hosting: 'synapse',
-        loading: true,
-      },
-    ]
-    return (
-      <Stack gap={3} sx={{ maxWidth: 720 }}>
-        {cases.map(c => (
-          <Box key={c.label}>
-            <Typography variant="overline" sx={{ fontWeight: 700 }}>
-              {c.label}
-            </Typography>
-            <CardActionButtonStyleContext.Provider value={c.style}>
-              <DatasetHostingButton
-                hosting={c.hosting}
-                repository={c.repository}
-                primaryAction={c.primaryAction}
-                onDownloadClick={() => {}}
-                onAddToCartClick={() => {}}
-                downloadLoading={c.loading}
-              />
-            </CardActionButtonStyleContext.Provider>
-          </Box>
-        ))}
-      </Stack>
-    )
-  },
-}
-
 export const SynapseHosted: StoryObj = {
   render: () => renderDatasetCard(EXAMPLES.synapse),
 }
 
 /**
- * A dataset whose `hostingType` annotation is blank (the common case for legacy /
- * Synapse-hosted rows). It falls back to the default `synapse` treatment: a plain
- * Download button — identical to `SynapseHosted`.
+ * A dataset whose `hosting` annotation is blank (the common case for legacy /
+ * Synapse-hosted rows). It falls back to the default `synapse` treatment: the
+ * standard Download control — identical to `SynapseHosted`.
  */
 export const BlankHosting: StoryObj = {
   render: () =>
     renderDatasetCard({
       hosting: '' as DatasetHostingType,
-      title: 'Legacy NF Dataset (no hostingType annotation)',
+      title: 'Legacy NF Dataset (no hosting annotation)',
       description:
-        'This row has no hostingType value. The card treats it as Synapse-hosted: a standard Download button.',
+        'This row has no hosting value. The card treats it as Synapse-hosted: the standard Download control.',
     }),
 }
 
@@ -465,7 +370,7 @@ export const MixedSources: StoryObj = {
 /**
  * A discovery record whose data is not downloadable through Synapse and has no
  * external repository to link to (distinct from external-access). The card shows
- * a neutral, non-actionable "Not available for download" chip — no download, no link.
+ * a neutral, non-actionable "Not available for download" button — no download, no link.
  */
 export const Unavailable: StoryObj = {
   render: () => renderDatasetCard(EXAMPLES.unavailable),
@@ -486,11 +391,12 @@ export const FreeTextRepository: StoryObj = {
         <Stack direction="row" gap={2} flexWrap="wrap" alignItems="center">
           {['GEO', 'ENA', 'Zenodo', 'figshare', 'Smith Lab Server'].map(
             repository => (
-              <DatasetHostingButton
+              <DatasetDownloadButton
                 key={repository}
+                entityId={MOCK_DATASET_ID}
+                name={MOCK_DATASET_NAME}
                 hosting="external-download"
                 repository={repository}
-                onDownloadClick={() => {}}
               />
             ),
           )}
@@ -502,8 +408,9 @@ export const FreeTextRepository: StoryObj = {
         </Typography>
         <Stack direction="row" gap={2} flexWrap="wrap" alignItems="center">
           {['dbGaP', 'EGA', 'JGA', 'Some Other Archive'].map(repository => (
-            <DatasetHostingButton
+            <DatasetDownloadButton
               key={repository}
+              name={MOCK_DATASET_NAME}
               hosting="external-access"
               repository={repository}
               externalUrl="https://example.org/"
@@ -516,11 +423,13 @@ export const FreeTextRepository: StoryObj = {
           No repository provided — graceful generic label
         </Typography>
         <Stack direction="row" gap={2} flexWrap="wrap" alignItems="center">
-          <DatasetHostingButton
+          <DatasetDownloadButton
+            entityId={MOCK_DATASET_ID}
+            name={MOCK_DATASET_NAME}
             hosting="external-download"
-            onDownloadClick={() => {}}
           />
-          <DatasetHostingButton
+          <DatasetDownloadButton
+            name={MOCK_DATASET_NAME}
             hosting="external-access"
             externalUrl="https://example.org/"
           />
@@ -530,31 +439,40 @@ export const FreeTextRepository: StoryObj = {
   ),
 }
 
-/** The chip-style buttons on their own, across every hosting type. */
+/** The buttons on their own, across every hosting type. */
 export const Buttons: StoryObj = {
   render: () => (
     <Stack direction="row" gap={2} alignItems="center" flexWrap="wrap">
-      <DatasetHostingButton hosting="synapse" onDownloadClick={() => {}} />
-      <DatasetHostingButton
-        hosting="external-cloud"
-        onDownloadClick={() => {}}
+      <DatasetDownloadButton
+        entityId={MOCK_DATASET_ID}
+        name={MOCK_DATASET_NAME}
+        hosting="synapse"
       />
-      <DatasetHostingButton
+      <DatasetDownloadButton
+        entityId={MOCK_DATASET_ID}
+        name={MOCK_DATASET_NAME}
+        hosting="external-cloud"
+      />
+      <DatasetDownloadButton
+        entityId={MOCK_DATASET_ID}
+        name={MOCK_DATASET_NAME}
         hosting="external-download"
         repository="GEO"
-        onDownloadClick={() => {}}
       />
-      <DatasetHostingButton
+      <DatasetDownloadButton
+        entityId={MOCK_DATASET_ID}
+        name={MOCK_DATASET_NAME}
         hosting="external-download"
         repository="ENA"
-        onDownloadClick={() => {}}
       />
-      <DatasetHostingButton
+      <DatasetDownloadButton
+        name={MOCK_DATASET_NAME}
         hosting="external-access"
         repository="dbGaP"
         externalUrl="https://www.ncbi.nlm.nih.gov/gap/"
       />
-      <DatasetHostingButton
+      <DatasetDownloadButton
+        name={MOCK_DATASET_NAME}
         hosting="external-access"
         repository="EGA"
         externalUrl="https://ega-archive.org/"

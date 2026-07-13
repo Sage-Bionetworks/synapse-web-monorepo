@@ -32,7 +32,7 @@ import {
   SelectColumn,
   Table,
 } from '@sage-bionetworks/synapse-types'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import CitationPopover from '../CitationPopover'
 import {
@@ -40,7 +40,7 @@ import {
   type DatasetHostingType,
   normalizeHosting,
 } from '../DatasetHosting/DatasetHosting'
-import DatasetHostingButton from '../DatasetHosting/DatasetHostingButton'
+import DatasetDownloadButton from '../DatasetHosting/DatasetDownloadButton'
 import { EntityDownloadConfirmation } from '../EntityDownloadConfirmation'
 import { HeaderCardVariant } from '../HeaderCard'
 import IconList from '../IconList'
@@ -156,10 +156,10 @@ export type TableToGenericCardMapping = {
   downloadCartSynId?: string
   /**
    * Opt-in configuration for hosting-aware download/access. When `hostingColumn`
-   * is provided, the card's primary action becomes a `DatasetHostingButton` driven
-   * by the row's hosting value: downloadable hosting types keep the add-to-download-list
-   * behavior, while non-downloadable types (e.g. external-access) swap to a link to
-   * the external repository instead of a download. Other portals that don't set this
+   * is provided, the card's primary action becomes a `DatasetDownloadButton` driven
+   * by the row's hosting value: downloadable hosting types show the standard dataset
+   * download options, while non-downloadable types (e.g. external-access) swap to a
+   * link to the external repository instead. Other portals that don't set this
    * are unaffected.
    */
   hostingConfig?: {
@@ -419,7 +419,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   }
 
   // Opt-in hosting-aware action: when the schema declares a hosting column, the
-  // primary action is a DatasetHostingButton driven by the row's hosting value.
+  // primary action is a DatasetDownloadButton driven by the row's hosting value.
   const hostingConfig = genericCardSchema.hostingConfig
   const rawHostingValue = hostingConfig
     ? getColumnValue(hostingConfig.hostingColumn)
@@ -445,6 +445,9 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   const hostingIsDownloadable = hostingType
     ? DATASET_HOSTING_CONFIG[hostingType].downloadable
     : true
+  // Portal target for the DatasetDownloadButton's download-confirmation dialog, so
+  // it renders in the card's top content region rather than inline in the button row.
+  const datasetDownloadConfirmationRef = useRef<HTMLDivElement>(null)
 
   // Transform the row to a record of (columnName, value) pairs for compatibility with getCandidateDoiId
   const dataAsRecord: Record<string, string | null> = useMemo(
@@ -680,7 +683,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       useStylesForDisplayedImage={Boolean(imageFileHandleIdValue)}
       cardTopContent={
         <>
-          {resolvedDownloadCartSynIdValue && hostingIsDownloadable && (
+          {!hostingConfig && resolvedDownloadCartSynIdValue && (
             <Collapse in={showDownloadConfirmation}>
               <EntityDownloadConfirmation
                 entityId={resolvedDownloadCartSynIdValue}
@@ -692,6 +695,8 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
               />
             </Collapse>
           )}
+          {/* DatasetDownloadButton (hosting path) portals its confirmation here. */}
+          {hostingConfig && <div ref={datasetDownloadConfirmationRef} />}
         </>
       }
       renderedIconList={
@@ -717,18 +722,17 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
             {croissantButton}
             {/* Hosting-aware action (opt-in via schema.hostingConfig): downloadable
-              hosting toggles the same add-to-download-list flow; non-downloadable
-              hosting links out to the external repository instead. */}
+              hosting shows the standard dataset download options; non-downloadable
+              hosting links out to the external repository or is non-actionable. */}
             {hostingConfig &&
               (resolvedDownloadCartSynIdValue || !hostingIsDownloadable) && (
-                <DatasetHostingButton
+                <DatasetDownloadButton
+                  entityId={resolvedDownloadCartSynIdValue}
+                  name={title}
                   hosting={hostingType}
                   repository={hostingRepository}
                   externalUrl={hostingExternalUrl}
-                  onDownloadClick={() =>
-                    setShowDownloadConfirmation(val => !val)
-                  }
-                  downloadLoading={downloadButtonLoading}
+                  downloadConfirmationContainer={datasetDownloadConfirmationRef}
                 />
               )}
             {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart */}

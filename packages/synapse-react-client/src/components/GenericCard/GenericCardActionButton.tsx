@@ -25,7 +25,7 @@ const CompactButton = styled(Button)({
   ...startIconStyle,
 })
 
-/** Pill style, matching the DatasetHostingButton chip (used when actionButtonStyle === 'chip'). */
+/** Pill style, used when actionButtonStyle === 'chip'. */
 const PillButton = styled(Button)({
   height: PILL_HEIGHT,
   minHeight: PILL_HEIGHT,

@@ -5,7 +5,7 @@ export {
 } from './DatasetHosting'
 export type { DatasetHostingType, DatasetHostingConfig } from './DatasetHosting'
 export {
-  DatasetHostingButton,
-  default as DatasetHostingButtonDefault,
-} from './DatasetHostingButton'
-export type { DatasetHostingButtonProps } from './DatasetHostingButton'
+  DatasetDownloadButton,
+  default as DatasetDownloadButtonDefault,
+} from './DatasetDownloadButton'
+export type { DatasetDownloadButtonProps } from './DatasetDownloadButton'

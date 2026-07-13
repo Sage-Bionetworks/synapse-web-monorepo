@@ -15,6 +15,7 @@ import {
   Typography,
 } from '@mui/material'
 import {
+  ElementType,
   KeyboardEvent,
   MouseEvent,
   SyntheticEvent,
@@ -57,6 +58,9 @@ export type DropdownMenuProps = {
   buttonProps?: ButtonProps
   /* Optional MUI button variant for the dropdown button (and the single-item button). Default 'outlined'. */
   variant?: ButtonProps['variant']
+  /* Optional component to render the trigger (and single-item) button, so callers
+   * can restyle it (e.g. a card's chip-shaped action button). Default MUI Button. */
+  ButtonComponent?: ElementType
   /* If true, will render a single action as a standalone button. Default true. */
   convertSingleItemToButton?: boolean
   /* If true, nothing will be rendered if no actions are passed. Default false. */
@@ -75,6 +79,7 @@ export function DropdownMenu(props: DropdownMenuProps) {
     renderMenuIfNoItems = false,
     buttonProps = {},
     variant = 'outlined',
+    ButtonComponent = Button,
   } = props
 
   const dropdownMenuId = useId()
@@ -92,7 +97,7 @@ export function DropdownMenu(props: DropdownMenuProps) {
     // If one action is in the menu, show it as a button
     const menuItem = items.flat()[0]
     return (
-      <Button
+      <ButtonComponent
         component={'href' in menuItem ? 'a' : 'button'}
         title={menuItem.tooltipText}
         variant={variant}
@@ -101,9 +106,10 @@ export function DropdownMenu(props: DropdownMenuProps) {
         onClick={'onClick' in menuItem ? menuItem.onClick : undefined}
         disabled={menuItem.disabled}
         endIcon={menuItem.icon && <IconSvg icon={menuItem.icon} wrap={false} />}
+        {...buttonProps}
       >
         <Typography variant={'buttonLink'}>{menuItem.text}</Typography>
-      </Button>
+      </ButtonComponent>
     )
   }
 
@@ -142,7 +148,7 @@ export function DropdownMenu(props: DropdownMenuProps) {
         placement={'top'}
       >
         <span>
-          <Button
+          <ButtonComponent
             variant={variant}
             ref={anchorRef}
             id={`composition-button-${dropdownMenuId}`}
@@ -155,7 +161,7 @@ export function DropdownMenu(props: DropdownMenuProps) {
             {...buttonProps}
           >
             <Typography variant={'buttonLink'}>{dropdownButtonText}</Typography>
-          </Button>
+          </ButtonComponent>
         </span>
       </Tooltip>
       <Popper
