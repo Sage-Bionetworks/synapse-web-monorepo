@@ -59,9 +59,10 @@ export const datasetCardConfiguration: CardConfiguration = {
       },
     },
     // Hosting-aware download/access. Driven by dataset annotation columns:
-    //  - `hosting`: controlled vocabulary (synapse | external-cloud |
-    //    external-download | external-access). Blank/unknown → synapse (standard
-    //    Download), so this is inert until datasets are annotated.
+    //  - `hosting`: controlled vocabulary — synapse | external-cloud |
+    //    external-download | external-access | mixed | unavailable. Blank/unknown
+    //    → synapse (standard Download), so this is inert until datasets are
+    //    annotated (annotation/schema work lives in nf-metadata-dictionary).
     //  - `repository`: free-text external repo name shown in the label/tooltip.
     //  - `externalUrl`: link target for non-downloadable (external-access) datasets.
     hostingConfig: {
