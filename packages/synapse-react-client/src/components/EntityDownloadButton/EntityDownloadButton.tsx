@@ -336,6 +336,8 @@ export function EntityDownloadButton(props: {
   ButtonComponent?: ElementType
   /** Extra props merged onto the trigger button (e.g. a custom startIcon). */
   buttonProps?: ButtonProps
+  /** Omit the "Export Table" action (e.g. dataset cards, where it's not useful). */
+  hideExportTable?: boolean
 }) {
   // get the appropriate version number for the entity
   const { latestVersionNumber } = useGetLatestVersionNumber(
@@ -442,6 +444,12 @@ export function EntityDownloadButton(props: {
 
   // Create download menu items
   const downloadActions = getDownloadActionsForEntityType(props.entityType)
+    .map(actionGroup =>
+      props.hideExportTable
+        ? actionGroup.filter(action => action !== DownloadAction.exportTable)
+        : actionGroup,
+    )
+    .filter(actionGroup => actionGroup.length > 0)
   const downloadMenuItems = downloadActions.map(actionGroup =>
     actionGroup.map(action =>
       getMenuItemForAction(

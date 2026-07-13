@@ -109,6 +109,7 @@ export function DatasetDownloadButton(props: DatasetDownloadButtonProps) {
         name={name}
         entityType={EntityType.dataset}
         disabled={disabled}
+        hideExportTable
         downloadConfirmationContainer={downloadConfirmationContainer}
         dropdownButtonText={label}
         buttonTooltip={tooltip}
