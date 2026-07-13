@@ -324,6 +324,103 @@ export const ButtonStyle: StoryObj = {
   ),
 }
 
+/**
+ * When a portal offers **both** a direct download and an add-to-cart flow, supply
+ * both `onDownloadClick` and `onAddToCartClick`. The control becomes a split
+ * button: the main click performs `primaryAction` (add-to-cart by default, the
+ * shared-cart flow CCKP encourages) and the caret opens a menu with both actions.
+ * Providing only one callback keeps the single-button behavior shown elsewhere.
+ *
+ * Only downloadable hosting types split; `external-access` stays a link-out and
+ * `unavailable` stays non-actionable regardless of the callbacks.
+ */
+export const SplitDownloadAndCart: StoryObj = {
+  render: () => {
+    const cases: {
+      label: string
+      style: CardActionButtonStyle
+      primaryAction: 'download' | 'cart'
+      hosting: DatasetHostingType
+      repository?: string
+      loading?: boolean
+    }[] = [
+      {
+        label: 'chip · cart primary',
+        style: 'chip',
+        primaryAction: 'cart',
+        hosting: 'synapse',
+      },
+      {
+        label: 'chip · download primary',
+        style: 'chip',
+        primaryAction: 'download',
+        hosting: 'synapse',
+      },
+      {
+        label: 'chip · external-download (GEO)',
+        style: 'chip',
+        primaryAction: 'cart',
+        hosting: 'external-download',
+        repository: 'GEO',
+      },
+      {
+        label: 'chip · loading',
+        style: 'chip',
+        primaryAction: 'cart',
+        hosting: 'synapse',
+        loading: true,
+      },
+      {
+        label: 'button · cart primary',
+        style: 'button',
+        primaryAction: 'cart',
+        hosting: 'synapse',
+      },
+      {
+        label: 'button · download primary',
+        style: 'button',
+        primaryAction: 'download',
+        hosting: 'synapse',
+      },
+      {
+        label: 'button · external-download (GEO)',
+        style: 'button',
+        primaryAction: 'cart',
+        hosting: 'external-download',
+        repository: 'GEO',
+      },
+      {
+        label: 'button · loading',
+        style: 'button',
+        primaryAction: 'cart',
+        hosting: 'synapse',
+        loading: true,
+      },
+    ]
+    return (
+      <Stack gap={3} sx={{ maxWidth: 720 }}>
+        {cases.map(c => (
+          <Box key={c.label}>
+            <Typography variant="overline" sx={{ fontWeight: 700 }}>
+              {c.label}
+            </Typography>
+            <CardActionButtonStyleContext.Provider value={c.style}>
+              <DatasetHostingButton
+                hosting={c.hosting}
+                repository={c.repository}
+                primaryAction={c.primaryAction}
+                onDownloadClick={() => {}}
+                onAddToCartClick={() => {}}
+                downloadLoading={c.loading}
+              />
+            </CardActionButtonStyleContext.Provider>
+          </Box>
+        ))}
+      </Stack>
+    )
+  },
+}
+
 export const SynapseHosted: StoryObj = {
   render: () => renderDatasetCard(EXAMPLES.synapse),
 }
