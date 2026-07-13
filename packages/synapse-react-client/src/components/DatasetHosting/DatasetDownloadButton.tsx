@@ -1,4 +1,4 @@
-import { Tooltip } from '@mui/material'
+import { Tooltip, Typography } from '@mui/material'
 import GetAppTwoTone from '@mui/icons-material/GetAppTwoTone'
 import PublicOutlined from '@mui/icons-material/PublicOutlined'
 import OpenInNew from '@mui/icons-material/OpenInNew'
@@ -55,13 +55,23 @@ function resolveLabel(
   return fillRepository(config.label, repository) ?? config.label
 }
 
-const MAX_WIDTH = '260px'
+const MAX_WIDTH = '320px'
 
 const ELLIPSIS = {
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
   minWidth: 0,
+} as const
+
+// The composed labels ("Download from GEO", "Access at dbGaP") are already
+// sentence-cased, so opt out of the theme button's capitalize transform. `color:
+// inherit` lets the label take the button's color so text and icon always match
+// (the buttonLink typography would otherwise force its own dark color).
+const LABEL_SX = {
+  ...ELLIPSIS,
+  textTransform: 'none',
+  color: 'inherit',
 } as const
 
 /**
@@ -106,12 +116,21 @@ export function DatasetDownloadButton(props: DatasetDownloadButtonProps) {
         buttonProps={{
           startIcon: <Icon sx={{ fontSize: '16px' }} />,
           endIcon: <ArrowDropDown />,
-          sx: { maxWidth: MAX_WIDTH, '& .MuiTypography-root': ELLIPSIS },
+          sx: {
+            maxWidth: MAX_WIDTH,
+            textTransform: 'none',
+            '& .MuiTypography-root': LABEL_SX,
+          },
         }}
       />
     )
   }
 
+  const labelEl = (
+    <Typography variant="buttonLink" sx={LABEL_SX}>
+      {label}
+    </Typography>
+  )
   const control: ReactNode =
     config.isExternalLink && externalUrl ? (
       <GenericCardActionButton
@@ -120,18 +139,25 @@ export function DatasetDownloadButton(props: DatasetDownloadButtonProps) {
         target={TargetEnum.NEW_WINDOW}
         rel="noopener noreferrer"
         startIcon={<Icon sx={{ fontSize: '16px' }} />}
-        sx={{ maxWidth: MAX_WIDTH }}
+        sx={{
+          maxWidth: MAX_WIDTH,
+          textTransform: 'none',
+          // As an <a>, a visited link would otherwise darken to primary.dark
+          // (theme rule), making it look different from the button-rendered
+          // download actions. Keep the resting color consistent.
+          '&:visited': { color: 'primary.main' },
+        }}
       >
-        <span style={ELLIPSIS}>{label}</span>
+        {labelEl}
       </GenericCardActionButton>
     ) : (
       <GenericCardActionButton
         variant="outlined"
         disabled
         startIcon={<Icon sx={{ fontSize: '16px' }} />}
-        sx={{ maxWidth: MAX_WIDTH }}
+        sx={{ maxWidth: MAX_WIDTH, textTransform: 'none' }}
       >
-        <span style={ELLIPSIS}>{label}</span>
+        {labelEl}
       </GenericCardActionButton>
     )
 

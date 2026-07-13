@@ -87,6 +87,7 @@ export function DropdownMenu(props: DropdownMenuProps) {
   const anchorRef = useRef<HTMLButtonElement>(null)
 
   const numberOfMenuItems = items.flat().length
+  const anyItemHasIcon = items.flat().some(item => Boolean(item.icon))
 
   if (!renderMenuIfNoItems && numberOfMenuItems === 0) {
     // Hide menu if no actions will be in the menu
@@ -231,25 +232,29 @@ export function DropdownMenu(props: DropdownMenuProps) {
                                 }
                               }}
                             >
-                              <ListItemIcon
-                                style={{
-                                  // MUI has specified a more specific minWidth for ListItemIcon inside a MenuList than
-                                  // we can create with sx, so apply an inline style for this property only.
-                                  minWidth: '30px',
-                                }}
-                              >
-                                {item.icon && (
-                                  <IconSvg
-                                    icon={item.icon}
-                                    sx={{
-                                      width: '17px',
-                                      height: '17px',
-                                      ...item.iconSx,
-                                    }}
-                                    wrap={false}
-                                  />
-                                )}
-                              </ListItemIcon>
+                              {/* Only reserve the icon gutter when some item actually has an
+                  icon, so icon-less menus don't show empty left padding. */}
+                              {anyItemHasIcon && (
+                                <ListItemIcon
+                                  style={{
+                                    // MUI has specified a more specific minWidth for ListItemIcon inside a MenuList than
+                                    // we can create with sx, so apply an inline style for this property only.
+                                    minWidth: '30px',
+                                  }}
+                                >
+                                  {item.icon && (
+                                    <IconSvg
+                                      icon={item.icon}
+                                      sx={{
+                                        width: '17px',
+                                        height: '17px',
+                                        ...item.iconSx,
+                                      }}
+                                      wrap={false}
+                                    />
+                                  )}
+                                </ListItemIcon>
+                              )}
                               <ListItemText
                                 sx={{ marginTop: 0 }}
                                 slotProps={{

@@ -237,7 +237,10 @@ export const Overview: StoryObj = {
                 <strong>Downloadable?</strong>
               </TableCell>
               <TableCell>
-                <strong>Button</strong>
+                <strong>Button style</strong>
+              </TableCell>
+              <TableCell>
+                <strong>Chip style</strong>
               </TableCell>
             </TableRow>
           </TableHead>
@@ -248,25 +251,30 @@ export const Overview: StoryObj = {
               ) as (keyof typeof DATASET_HOSTING_CONFIG)[]
             ).map(key => {
               const config = DATASET_HOSTING_CONFIG[key]
+              const repository = config.label.includes('{repository}')
+                ? key === 'external-access'
+                  ? 'dbGaP'
+                  : 'GEO'
+                : undefined
+              const button = (style: CardActionButtonStyle) => (
+                <CardActionButtonStyleContext.Provider value={style}>
+                  <DatasetDownloadButton
+                    entityId={MOCK_DATASET_ID}
+                    name={MOCK_DATASET_NAME}
+                    hosting={key}
+                    repository={repository}
+                    externalUrl="https://example.org/"
+                  />
+                </CardActionButtonStyleContext.Provider>
+              )
               return (
                 <TableRow key={key}>
                   <TableCell>
                     <code>{key}</code>
                   </TableCell>
                   <TableCell>{config.downloadable ? 'Yes' : 'No'}</TableCell>
-                  <TableCell>
-                    <DatasetDownloadButton
-                      entityId={MOCK_DATASET_ID}
-                      name={MOCK_DATASET_NAME}
-                      hosting={key}
-                      repository={
-                        config.label.includes('{repository}')
-                          ? 'GEO'
-                          : undefined
-                      }
-                      externalUrl="https://example.org/"
-                    />
-                  </TableCell>
+                  <TableCell>{button('button')}</TableCell>
+                  <TableCell>{button('chip')}</TableCell>
                 </TableRow>
               )
             })}
@@ -279,6 +287,7 @@ export const Overview: StoryObj = {
 
 /** All six dataset flavors stacked, each annotated with what the user sees and why. */
 export const AllFlavors: StoryObj = {
+  name: 'All Flavors - Chip Style',
   render: () => (
     <Stack gap={4} sx={{ maxWidth: 900 }}>
       {Object.values(EXAMPLES).map(example => {
@@ -312,6 +321,7 @@ export const AllFlavors: StoryObj = {
  * `'button'` (here) per card configuration.
  */
 export const ButtonStyle: StoryObj = {
+  name: 'All Flavors - Button Style',
   render: () => (
     <Stack gap={4} sx={{ maxWidth: 900 }}>
       {Object.values(EXAMPLES).map(example => (
@@ -435,48 +445,6 @@ export const FreeTextRepository: StoryObj = {
           />
         </Stack>
       </Box>
-    </Stack>
-  ),
-}
-
-/** The buttons on their own, across every hosting type. */
-export const Buttons: StoryObj = {
-  render: () => (
-    <Stack direction="row" gap={2} alignItems="center" flexWrap="wrap">
-      <DatasetDownloadButton
-        entityId={MOCK_DATASET_ID}
-        name={MOCK_DATASET_NAME}
-        hosting="synapse"
-      />
-      <DatasetDownloadButton
-        entityId={MOCK_DATASET_ID}
-        name={MOCK_DATASET_NAME}
-        hosting="external-cloud"
-      />
-      <DatasetDownloadButton
-        entityId={MOCK_DATASET_ID}
-        name={MOCK_DATASET_NAME}
-        hosting="external-download"
-        repository="GEO"
-      />
-      <DatasetDownloadButton
-        entityId={MOCK_DATASET_ID}
-        name={MOCK_DATASET_NAME}
-        hosting="external-download"
-        repository="ENA"
-      />
-      <DatasetDownloadButton
-        name={MOCK_DATASET_NAME}
-        hosting="external-access"
-        repository="dbGaP"
-        externalUrl="https://www.ncbi.nlm.nih.gov/gap/"
-      />
-      <DatasetDownloadButton
-        name={MOCK_DATASET_NAME}
-        hosting="external-access"
-        repository="EGA"
-        externalUrl="https://ega-archive.org/"
-      />
     </Stack>
   ),
 }
