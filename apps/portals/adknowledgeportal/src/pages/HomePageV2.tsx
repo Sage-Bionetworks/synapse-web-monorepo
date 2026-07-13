@@ -68,7 +68,7 @@ function HomePageInternal() {
   const helpButtons = [
     {
       text: 'Service Desk',
-      link: 'https://help.adknowledgeportal.org/apd/',
+      link: 'https://sagebionetworks.jira.com/servicedesk/customer/portal/12',
     },
     {
       text: 'Discussion Forum',
