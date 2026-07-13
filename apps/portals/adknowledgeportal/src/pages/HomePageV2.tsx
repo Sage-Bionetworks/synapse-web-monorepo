@@ -30,16 +30,14 @@ function HomePageInternal() {
   const agoraCard = {
     Image: AgoraIcon,
     description:
-      "Explore evidence about the role of human genes in Alzheimer's Disease using interactive tools and data visualizations.",
-    buttonText: 'Explore Agora',
+      'Explore nominated drug targets and high-dimensional human transcriptomic, proteomic, and metabolomic evidence for whether or not genes are associated with Alzheimer’s Disease (AD).',
     buttonLink: 'https://agora.adknowledgeportal.org',
   }
 
   const modelADCard = {
     Image: ModelADIcon,
     description:
-      'Discover, compare, and analyze next-generation mouse models of Alzheimer’s Disease generated, characterized, and validated by the MODEL-AD Consortium.',
-    buttonText: 'Explore MODEL-AD',
+      "Explore next-generation mouse models of Alzheimer's Disease (AD) generated, characterized, and validated by the MODEL-AD consortium.",
     buttonLink: 'https://www.model-ad.org',
   }
 
