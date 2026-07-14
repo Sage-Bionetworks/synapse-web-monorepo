@@ -1,4 +1,4 @@
-import { Button, Stack, Typography } from '@mui/material'
+import { Button, Link, Stack, Typography } from '@mui/material'
 import styles from './AdknowledgeCard.module.scss'
 
 type AdknowledgeCardProps = {
@@ -16,8 +16,9 @@ function AdknowledgeCard({
   buttonText,
   buttonLink,
 }: AdknowledgeCardProps) {
-  return (
-    <Stack className={styles.adknowledgeCardContainer}>
+  const renderCardAsLink = buttonLink && !buttonText
+  const cardContent = (
+    <>
       {Image && <Image />}
       <div className={styles.textContainer}>
         {title && (
@@ -47,7 +48,21 @@ function AdknowledgeCard({
           {buttonText}
         </Button>
       )}
-    </Stack>
+    </>
+  )
+
+  return renderCardAsLink ? (
+    <Link
+      className={`${styles.adknowledgeCardContainer} ${renderCardAsLink ? styles.linkCard : ''}`}
+      href={buttonLink}
+      target="_blank"
+      rel="noopener noreferrer"
+      underline="none"
+    >
+      {cardContent}
+    </Link>
+  ) : (
+    <Stack className={styles.adknowledgeCardContainer}>{cardContent}</Stack>
   )
 }
 
