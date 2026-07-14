@@ -34,9 +34,10 @@
   :global(.MuiInputBase-root) {
     border-radius: 30px;
     background: #fcfcfc;
-    // Size to half the navbar strip height (the v3 box lives in the sticky-search
-    // navbar). The default MUI small input (~40px) looks short against the strip.
-    height: calc(var(--synapse-nav-top-height) / 2);
+    // The default MUI small input (~40px) looks short against the navbar strip.
+    // Fixed rather than derived from --synapse-nav-top-height, which doubles at
+    // the mobile breakpoint and would overflow the mobile navbar grid.
+    height: 44px;
   }
 
   :global(.MuiInputBase-input)::placeholder {
