@@ -37,7 +37,7 @@ describe('basic tests', () => {
 
   it('displays featured tool cards from a Synapse Table', async () => {
     // We must await asynchronous events for our assertions to pass
-    // eslint-disable-next-line @typescript-eslint/require-await
+    // oxlint-disable-next-line @typescript-eslint/require-await
     const { container } = await act(async () => init())
     await waitFor(() => {
       expect(container.querySelector('.FeaturedToolCard')).toBeDefined()

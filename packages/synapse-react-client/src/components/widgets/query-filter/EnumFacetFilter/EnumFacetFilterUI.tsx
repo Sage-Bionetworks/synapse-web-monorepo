@@ -6,7 +6,7 @@ import {
   TextField,
   Tooltip,
 } from '@mui/material'
-import { useMemo, useRef, useState } from 'react'
+import { ReactNode, useMemo, useRef, useState } from 'react'
 import { FacetColumnResultValueCount } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../../../IconSvg/IconSvg'
 import { FacetFilterHeader } from '../FacetFilterHeader'
@@ -23,6 +23,8 @@ export type RenderedFacetValue<TValue = string> = Omit<
   value: TValue
   /* Text displayed for the option, and also used to filter in search */
   displayText: string
+  /* Optional custom node to render in place of the plain-text label. */
+  renderedLabel?: ReactNode
 }
 
 export type EnumFacetFilterUIProps<TValue = string> = {
@@ -212,7 +214,8 @@ export default function EnumFacetFilterUI<TValue = string>(
       </div>
       <div>
         {facetValuesToShow.map((facetValueAndCount, index: number) => {
-          const { isSelected, displayText, value, count } = facetValueAndCount
+          const { isSelected, displayText, renderedLabel, value, count } =
+            facetValueAndCount
 
           return (
             <EnumFacetFilterOption
@@ -222,7 +225,7 @@ export default function EnumFacetFilterUI<TValue = string>(
                 removeWhitespace(String(value)),
                 index,
               ].join('-')}
-              label={displayText}
+              label={renderedLabel ?? displayText}
               count={count}
               isDropdown={isDropdown}
               checked={isSelected}

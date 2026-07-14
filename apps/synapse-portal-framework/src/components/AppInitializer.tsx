@@ -62,7 +62,7 @@ function AppInitializer(props: AppInitializerProps) {
     return () => {
       window.removeEventListener('click', globalClickHandler)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- run only on mount
+    // oxlint-disable-next-line react-hooks/exhaustive-deps -- run only on mount
   }, [cookiePreferences])
 
   return (

@@ -56,7 +56,7 @@ const defaultProps: SchemaDrivenAnnotationEditorProps = {
 async function renderComponent(wrapperProps?: SynapseContextType) {
   let result: RenderResult
   // We must await asynchronous events for our assertions to pass
-  // eslint-disable-next-line @typescript-eslint/require-await
+  // oxlint-disable-next-line @typescript-eslint/require-await
   await act(async () => {
     result = render(<SchemaDrivenAnnotationEditor {...defaultProps} />, {
       wrapper: createWrapper(wrapperProps),

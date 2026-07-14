@@ -143,7 +143,7 @@ function useSynchronizeQueryWithUrl(
       })
     }
     // should only run on mount, or if the component index changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [componentIndex])
 
   // If `shouldDeepLink` is true, synchronize the URL

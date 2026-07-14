@@ -14,6 +14,7 @@ import * as EntityActionMenuModule from '../action_menu/EntityActionMenu'
 import { EntityActionMenuProps } from '../action_menu/EntityActionMenu'
 import EntityPageTitleBar, {
   EntityPageTitleBarProps,
+  FAVORITE_BUTTON_ICON_COLOR,
 } from './EntityPageTitleBar'
 import * as TitleBarVersionInfoModule from './EntityTitleBarVersionInfo'
 import * as TitleBarPropertiesModule from './TitleBarProperties'
@@ -120,6 +121,7 @@ describe('Entity Page Title Bar', () => {
     await screen.findByTestId(FAVORITE_BUTTON_TEST_ID)
     expect(FavoriteButtonModule.default).toHaveBeenRenderedWithProps({
       entityId: defaultProps.entityId,
+      iconColor: FAVORITE_BUTTON_ICON_COLOR,
     })
   })
   it('Shows version info component', async () => {

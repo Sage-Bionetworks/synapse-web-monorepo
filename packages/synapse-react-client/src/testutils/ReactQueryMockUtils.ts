@@ -625,11 +625,11 @@ export function getUseMutationMock<
  * @deprecated Use {@link getUseMutationMock} instead, which provides utilities to dynamically change the state of the mock hook.
  */
 export function getUseMutationIdleMock<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   TData = any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   TError = any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   TVariables = any,
 >(data?: TData) {
   return {
@@ -656,11 +656,11 @@ export function getUseMutationIdleMock<
  * @deprecated Use {@link getUseMutationMock} instead, which provides utilities to dynamically change the state of the mock hook.
  */
 export function getUseMutationPendingMock<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   TData = any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   TError = any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   TVariables = any,
 >(data?: TData, variables?: TVariables) {
   return {

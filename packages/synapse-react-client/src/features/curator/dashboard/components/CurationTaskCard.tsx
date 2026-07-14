@@ -1,13 +1,29 @@
 import { displayToast } from '@/components'
+import CreateOrUpdateCurationTaskDialog from '@/features/entity/metadata-task/components/CreateOrUpdateCurationTaskDialog'
+import { TASK_STATUS_CONFIG } from '@/features/entity/metadata-task/utils/constants'
 import useOpenCuratorFromTaskButton from '@/features/entity/metadata-task/hooks/useOpenCuratorButton'
 import { OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE } from '@/features/entity/metadata-task/utils/constants'
-import { Card, Chip, Divider, Typography } from '@mui/material'
-import { TaskBundle } from '@sage-bionetworks/synapse-client'
+import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
+import {
+  Box,
+  Card,
+  Chip,
+  Divider,
+  IconButton,
+  Skeleton,
+  Typography,
+} from '@mui/material'
+import {
+  TaskBundle,
+  TaskStatusStateEnum,
+} from '@sage-bionetworks/synapse-client'
 import classNames from 'classnames'
 import styles from './CurationTaskCard.module.scss'
 import NextStepButton from './NextStepButton'
 import sharedStyles from './shared.module.scss'
 import UserOrTeamChip from './UserOrTeamChip'
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
+import { useState } from 'react'
 
 export type CurationTaskCardProps = {
   taskBundle: TaskBundle
@@ -33,6 +49,7 @@ function useUiForTask(taskBundle: TaskBundle) {
           : [],
         buttonText: 'Open Curator',
         taskType: 'Curate Data',
+        statusState: taskBundle.status.state,
         onClickNextStep: onClick,
         isLoading,
         isPending,
@@ -56,6 +73,7 @@ function useUiForTask(taskBundle: TaskBundle) {
       : [],
     buttonText: 'Continue',
     taskType: '',
+    statusState: taskBundle.status.state,
     onClickNextStep: () => {
       displayToast('No action defined for this task type', 'danger', {
         title: 'Unexpected Error',
@@ -74,6 +92,19 @@ function TaskTypeChip(props: { label: string }) {
   )
 }
 
+function TaskStatusChip(props: { state: TaskStatusStateEnum | undefined }) {
+  const { state } = props
+  if (!state) return null
+  const { label, backgroundColor } = TASK_STATUS_CONFIG[state]
+  return (
+    <Chip
+      size="small"
+      sx={{ fontWeight: 600, backgroundColor }}
+      label={label}
+    />
+  )
+}
+
 /**
  * Card component for displaying a curation task on the curator dashboard. Shows relevant information about the task and includes a button to proceed to the next step in the workflow.
  */
@@ -86,11 +117,29 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
     taskType,
     principalIds,
     buttonText,
+    statusState,
     onClickNextStep,
-    hasPermission,
+    hasPermission: hasPermissionToOpenGrid,
     isLoading,
     isPending,
   } = useUiForTask(taskBundle)
+
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+
+  const projectId = taskBundle.task?.projectId
+  const { data: bundle } = useGetEntityBundle(projectId, undefined, {
+    includeEntity: true,
+    includePermissions: true,
+  })
+  const canEdit = bundle?.permissions?.canEdit ?? false
+
+  function onClickAction() {
+    if (hasPermissionToOpenGrid) {
+      onClickNextStep()
+    } else {
+      displayToast(OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE, 'danger')
+    }
+  }
 
   return (
     <Card className={classNames(sharedStyles.card, styles.card)}>
@@ -99,15 +148,37 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
           <div className={styles.titleChipContainer}>
             <Typography variant="headline3">{title}</Typography>
             {taskType && <TaskTypeChip label={taskType} />}
-            {taskId && <TaskTypeChip label={`TaskId ${taskId}`} />}
+            {canEdit && (
+              <IconButton
+                onClick={() => setIsSettingsOpen(true)}
+                aria-label="Task settings"
+              >
+                <SettingsOutlinedIcon />
+              </IconButton>
+            )}
           </div>
-          <Typography variant="body1">{description}</Typography>
+          <Box sx={{ display: 'flex', gap: 4 }}>
+            {bundle?.entity?.name ? (
+              <Typography variant="body1">{bundle.entity.name}</Typography>
+            ) : (
+              <Skeleton width={100} />
+            )}
+            {taskId && (
+              <Typography variant="body1">Task ID: {taskId}</Typography>
+            )}
+          </Box>
+          {description && (
+            <Typography variant="body1">{description}</Typography>
+          )}
           <div className={styles.userChipContainer}>
             {principalIds.map(principalId => (
               <UserOrTeamChip key={principalId} principalId={principalId} />
             ))}
           </div>
         </div>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <TaskStatusChip state={statusState} />
+        </Box>
         <Divider
           orientation="vertical"
           flexItem
@@ -116,20 +187,20 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
         <NextStepButton
           className={styles.cardButton}
           buttonText={buttonText}
-          onClick={
-            hasPermission
-              ? onClickNextStep
-              : () => {
-                  displayToast(
-                    OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE,
-                    'danger',
-                  )
-                }
-          }
+          onClick={onClickAction}
           disabled={isLoading}
           loading={isPending}
         />
       </div>
+      <CreateOrUpdateCurationTaskDialog
+        key={String(isSettingsOpen)}
+        open={isSettingsOpen}
+        onCancel={() => setIsSettingsOpen(false)}
+        onSuccess={() => setIsSettingsOpen(false)}
+        onDeleteSuccess={() => setIsSettingsOpen(false)}
+        projectId={projectId ?? ''}
+        task={taskBundle.task}
+      />
     </Card>
   )
 }

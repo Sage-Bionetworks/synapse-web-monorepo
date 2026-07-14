@@ -24,40 +24,16 @@
   }
 }
 
+// Each active-filter pill is an MUI Chip (or, for custom values like DUO, a chip
+// supplied by the renderer). The chips carry their own shape, size, color, and
+// delete icon; this rule only provides spacing between them as they wrap.
 .SelectionCriteriaPill {
-  padding-left: 10px;
+  margin: 0 5px 5px 0;
+}
+
+// A custom rendered value (e.g. a DUO chip) is wrapped in an inline-flex span so
+// it aligns with the neighboring chips.
+.SelectionCriteriaPill--custom {
   display: inline-flex;
-  justify-content: center;
-  border-radius: 20px;
-  line-height: 100%;
-  cursor: default;
-  background-color: var(--synapse-secondary-action-color-alpha-10);
-  color: var(--synapse-text-color-dark);
-  font-weight: normal;
-  margin: 5px;
-  margin-left: 0;
-  &:hover {
-    background-color: var(--synapse-secondary-action-color-alpha-20);
-  }
-  &:hover &__btnRemove {
-    background-color: var(--synapse-secondary-action-color-alpha-50);
-  }
-  span {
-    margin: auto;
-  }
-
-  &--locked {
-    padding: 5px 10px 5px 10px;
-  }
-
-  &__btnRemove {
-    color: var(--synapse-gray-900);
-    border-radius: 100%;
-    padding: 3px;
-    margin-left: 1px;
-    cursor: pointer;
-    svg {
-      font-size: 1.25rem;
-    }
-  }
+  align-items: center;
 }

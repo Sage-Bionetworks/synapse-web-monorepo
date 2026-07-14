@@ -28,7 +28,7 @@
     }
   },
   "devDependencies": {
-    "@openapitools/openapi-generator-cli": "^2.35.0",
+    "@openapitools/openapi-generator-cli": "^2.39.0",
     "@types/lodash-es": "^4.17.12",
     "@vitest/ui": "^4.1.8",
     "lodash-es": "^4.18.1",

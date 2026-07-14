@@ -74,7 +74,7 @@ const defaultProps: ResearchProjectFormProps = {
 async function renderComponent(props: ResearchProjectFormProps) {
   let component
   // We must await asynchronous events for our assertions to pass
-  // eslint-disable-next-line @typescript-eslint/require-await
+  // oxlint-disable-next-line @typescript-eslint/require-await
   await act(async () => {
     component = render(<ResearchProjectForm {...props} />, {
       wrapper: createWrapper(),

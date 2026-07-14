@@ -1,8 +1,9 @@
 import { Box, Checkbox, FormControlLabel, Radio } from '@mui/material'
+import { ReactNode } from 'react'
 
 type EnumFacetFilterOptionProps = {
   readonly id: string
-  readonly label: string
+  readonly label: ReactNode
   readonly count?: number
   readonly isDropdown: boolean
   readonly checked: boolean
@@ -46,6 +47,11 @@ export function EnumFacetFilterOption(props: EnumFacetFilterOptionProps) {
         className="EnumFacetFilter__checkbox"
         sx={{
           overflowWrap: 'anywhere',
+          // Let the label shrink so the count stays in a consistent column
+          // (and custom node labels can truncate rather than overflow the row).
+          flex: 1,
+          minWidth: 0,
+          '& .MuiFormControlLabel-label': { minWidth: 0, overflow: 'hidden' },
         }}
         onClick={event => event.stopPropagation()}
         onChange={(_event, newValue) => {
@@ -59,12 +65,18 @@ export function EnumFacetFilterOption(props: EnumFacetFilterOptionProps) {
       {count != null && (
         <>
           {isDropdown && (
-            <span className="EnumFacetFilter__count">
+            <span
+              className="EnumFacetFilter__count"
+              style={{ flexShrink: 0, marginLeft: 8 }}
+            >
               ({count.toLocaleString()})
             </span>
           )}
           {!isDropdown && (
-            <div className="EnumFacetFilter__count">
+            <div
+              className="EnumFacetFilter__count"
+              style={{ flexShrink: 0, marginLeft: 8 }}
+            >
               {count.toLocaleString()}
             </div>
           )}

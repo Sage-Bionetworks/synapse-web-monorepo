@@ -1,42 +1,34 @@
-import { Close } from '@mui/icons-material'
-import { Tooltip } from '@mui/material'
+import { ReactNode } from 'react'
+import FacetValueChip from './FacetValueChip'
 
 export type SelectionCriteriaPillProps = {
   readonly key: string
-  readonly innerText: string
-  readonly tooltipText: string
+  /** The chip label (plain text, or structured content from `renderFacetValue`). */
+  readonly label: ReactNode
+  readonly tooltipText?: ReactNode
+  /** Optional leading icon (e.g. for a DUO term). */
+  readonly icon?: ReactNode
   readonly onRemoveFilter?: () => void
   /** When true, the pill is shown without a remove button */
   readonly isLocked?: boolean
 }
 
 /**
- * Renders a pill or chicklet to represent a Synapse Table Query filter/selection criterion.
- * @param props
- * @constructor
+ * Renders a pill/chicklet representing a Synapse Table Query filter/selection
+ * criterion. Delegates to the shared `FacetValueChip` so the chip, icon,
+ * tooltip, and remove affordance are styled identically wherever facet values
+ * appear.
  */
 function SelectionCriteriaPill(props: SelectionCriteriaPillProps) {
-  const { innerText, tooltipText, onRemoveFilter, isLocked } = props
-
+  const { label, tooltipText, icon, onRemoveFilter, isLocked } = props
   return (
-    <Tooltip title={tooltipText} placement={'top'}>
-      <div
-        className={`SelectionCriteriaPill${
-          isLocked ? ' SelectionCriteriaPill--locked' : ''
-        }`}
-      >
-        <span>{innerText}</span>
-        {!isLocked && onRemoveFilter && (
-          <button
-            onClick={onRemoveFilter}
-            className="SelectionCriteriaPill__btnRemove"
-            title="deselect"
-          >
-            <Close />
-          </button>
-        )}
-      </div>
-    </Tooltip>
+    <FacetValueChip
+      className="SelectionCriteriaPill"
+      label={label}
+      icon={icon}
+      tooltipTitle={tooltipText}
+      onDelete={!isLocked ? onRemoveFilter : undefined}
+    />
   )
 }
 

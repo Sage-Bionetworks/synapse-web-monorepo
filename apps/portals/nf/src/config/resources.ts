@@ -1,4 +1,5 @@
 import { ExternalAnalysisPlatform } from 'synapse-react-client/components/SynapseTable/export/ExternalAnalysisPlatformsConstants'
+import type { SearchQueryConfig } from 'synapse-react-client/components/SearchQueryWrapper/SearchQueryUseQueryOptions'
 
 export const SYNAPSE_PORTAL_ID = '1005'
 
@@ -40,6 +41,17 @@ export const publicationsSearchIndexId = 'syn75081631'
 export const studiesSearchIndexId = 'syn75081633'
 export const initiativesSearchIndexId = 'syn75081635'
 export const toolsSearchIndexId = 'syn75081636'
+export const toolsSearchQueryConfig: SearchQueryConfig = {
+  queryStrategy: 'MULTI_MATCH_BEST_FIELDS',
+  fieldBoosts: {
+    resourceName: 5,
+    synonyms: 4,
+    rrid: 4,
+    targetAntigen: 2,
+    diseaseType: 1,
+    description: 1,
+  },
+}
 export const peopleSearchIndexId = 'syn75081637'
 export const fundersSearchIndexId = 'syn75081638'
 export const hackathonsSearchIndexId = 'syn75081639'

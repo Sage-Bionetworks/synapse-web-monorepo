@@ -55,6 +55,8 @@ export type DropdownMenuProps = {
   buttonTooltip?: string
   /* Any additional props to pass to the dropdown menu button. */
   buttonProps?: ButtonProps
+  /* Optional MUI button variant for the dropdown button (and the single-item button). Default 'outlined'. */
+  variant?: ButtonProps['variant']
   /* If true, will render a single action as a standalone button. Default true. */
   convertSingleItemToButton?: boolean
   /* If true, nothing will be rendered if no actions are passed. Default false. */
@@ -72,6 +74,7 @@ export function DropdownMenu(props: DropdownMenuProps) {
     convertSingleItemToButton = true,
     renderMenuIfNoItems = false,
     buttonProps = {},
+    variant = 'outlined',
   } = props
 
   const dropdownMenuId = useId()
@@ -92,7 +95,7 @@ export function DropdownMenu(props: DropdownMenuProps) {
       <Button
         component={'href' in menuItem ? 'a' : 'button'}
         title={menuItem.tooltipText}
-        variant="outlined"
+        variant={variant}
         href={'href' in menuItem ? menuItem.href : undefined}
         rel={'href' in menuItem ? 'noopener noreferrer' : undefined}
         onClick={'onClick' in menuItem ? menuItem.onClick : undefined}
@@ -140,7 +143,7 @@ export function DropdownMenu(props: DropdownMenuProps) {
       >
         <span>
           <Button
-            variant="outlined"
+            variant={variant}
             ref={anchorRef}
             id={`composition-button-${dropdownMenuId}`}
             aria-controls={

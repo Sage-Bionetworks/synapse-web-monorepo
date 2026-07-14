@@ -1,6 +1,6 @@
 import { Portal } from './routesConfig'
 
-export type BannerType = 'cookies' | 'survey' | 'surveyDialog'
+export type BannerType = 'cookies' | 'surveyDialog'
 
 type BannerConfig = Record<Portal, BannerType[]>
 
@@ -15,7 +15,7 @@ const bannerConfig: BannerConfig = {
   digitalhealth: ['cookies'],
   eliteportal: ['cookies'],
   namhub: ['cookies'],
-  nf: ['cookies', 'survey'],
+  nf: ['cookies'],
   stopadportal: ['cookies'],
   genie: ['cookies'],
 }

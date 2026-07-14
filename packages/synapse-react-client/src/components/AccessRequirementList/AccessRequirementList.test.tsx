@@ -28,7 +28,7 @@ describe('AccessRequirementList tests', () => {
 
   async function init(props: AccessRequirementListProps) {
     // We must await asynchronous events for our assertions to pass
-    // eslint-disable-next-line @typescript-eslint/require-await
+    // oxlint-disable-next-line @typescript-eslint/require-await
     await act(async () => {
       render(<AccessRequirementList {...props} />, {
         wrapper: createWrapper(),

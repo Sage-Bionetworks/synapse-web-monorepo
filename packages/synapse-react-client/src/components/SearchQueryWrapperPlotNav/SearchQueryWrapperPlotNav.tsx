@@ -50,6 +50,7 @@ export type SearchQueryWrapperPlotNavProps = SearchQueryWrapperPlotNavOwnProps &
     | 'visibleColumnCount'
     | 'hiddenColumns'
     | 'columnAliases'
+    | 'renderFacetValue'
     | 'rgbIndex'
     | 'showLastUpdatedOn'
     | 'noContentPlaceholderType'
@@ -68,6 +69,8 @@ export type SearchQueryWrapperPlotNavProps = SearchQueryWrapperPlotNavOwnProps &
     onQueryResultBundleChange?: SearchQueryWrapperProps['onQueryResultBundleChange']
     /** Whether the URL should update when the query is modified (deep linking). */
     shouldDeepLink?: SearchQueryWrapperProps['shouldDeepLink']
+    /** OpenSearch query strategy and field-boost configuration. Forwarded to SearchQueryWrapper. */
+    searchQueryConfig?: SearchQueryWrapperProps['searchQueryConfig']
   }
 
 /**
@@ -143,12 +146,18 @@ export default function SearchQueryWrapperPlotNav(
       isInfinite={isInfinite}
       onQueryResultBundleChange={onQueryResultBundleChange}
       shouldDeepLink={shouldDeepLink}
+      searchQueryConfig={props.searchQueryConfig}
     >
       <Suspense fallback={<QueryWrapperLoadingScreen />}>
         <QueryVisualizationWrapper
           unitDescription={unitDescription}
           rgbIndex={props.rgbIndex}
           columnAliases={props.columnAliases}
+          renderFacetValue={props.renderFacetValue}
+          dataUseModifiersColumnName={
+            props.cardConfiguration?.genericCardSchema
+              ?.dataUseModifiersColumnName
+          }
           helpConfiguration={helpConfiguration}
           visibleColumnCount={props.visibleColumnCount}
           hiddenColumns={props.hiddenColumns}
@@ -175,6 +184,7 @@ export default function SearchQueryWrapperPlotNav(
             hideSqlEditorControl={true}
             hideVisualizationsControl={props.hideVisualizationsControl}
             initialLimit={props.initialLimit}
+            customPlots={props.customPlots}
             initialPlotTypeByFacetColumnName={
               props.initialPlotTypeByFacetColumnName
             }

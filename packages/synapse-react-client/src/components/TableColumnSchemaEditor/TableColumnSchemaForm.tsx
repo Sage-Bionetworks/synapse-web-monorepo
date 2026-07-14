@@ -177,7 +177,7 @@ function TableColumnSchemaFormInternal(
       })
     }
     // Don't re-run if initial data changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoadingDefaultColumns])
 
   const validateInternal = useCallback(() => {

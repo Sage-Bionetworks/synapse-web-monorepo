@@ -1,9 +1,11 @@
-import { SxProps } from '@mui/material'
-import { ComplexMenu } from '../../../menu/ComplexMenu'
+import { Box, ButtonProps, SxProps, Theme } from '@mui/material'
+import { ComplexMenu, ComplexMenuButtonProps } from '../../../menu/ComplexMenu'
 import IconSvg, { IconName } from '../../../IconSvg/IconSvg'
 import { DropdownMenuItem, DropdownMenuProps } from '../../../menu/DropdownMenu'
-import { IconSvgButtonProps } from '../../../IconSvgButton'
 import { MouseEvent } from 'react'
+import { SystemStyleObject } from '@mui/system'
+
+const outlinedButtonHoverBackgroundColor = 'rgba(0, 0, 0, 0.01)'
 
 // Represents the two types of dropdown menus that will be displayed on the entity page
 type EntityActionMenuDropdownMenuType = 'DOWNLOAD' | 'PRIMARY'
@@ -35,6 +37,7 @@ export type ActionViewProps = {
   icon?: IconName
   textSx?: SxProps
   iconSx?: SxProps
+  variant?: ButtonProps['variant']
 }
 
 export type EntityActionMenuLayout = {
@@ -43,7 +46,10 @@ export type EntityActionMenuLayout = {
   primaryMenuActions: ActionViewProps[][]
   primaryMenuText: string
   primaryMenuEndIcon: IconName
-  menuButtonSx?: SxProps
+  primaryMenuEndIconSx?: SxProps
+  menuButtonSx?: SystemStyleObject<Theme>
+  downloadMenuVariant?: ButtonProps['variant']
+  primaryMenuVariant?: ButtonProps['variant']
 }
 
 export type EntityActionMenuProps = {
@@ -166,39 +172,46 @@ export default function EntityActionMenu(props: EntityActionMenuProps) {
     )
   }
 
-  // Map button actions to an IconButtonConfiguration and omit non-visible actions
-  const iconButtonConfigs: IconSvgButtonProps[] = layout.buttonActions.reduce(
-    (acc: IconSvgButtonProps[], buttonViewProps: ActionViewProps) => {
-      const configForAction = actionConfiguration[buttonViewProps.action]
-      if (configForAction && configForAction.visible) {
-        let onClick = configForAction.onClick
-        if (onClick == null && !configForAction.href) {
-          console.warn(`No handler registered for ${buttonViewProps.action}`)
-          onClick = () => {
+  // Map button actions to a button configuration and omit non-visible actions
+  const iconButtonConfigs: ComplexMenuButtonProps[] =
+    layout.buttonActions.reduce(
+      (acc: ComplexMenuButtonProps[], buttonViewProps: ActionViewProps) => {
+        const configForAction = actionConfiguration[buttonViewProps.action]
+        if (configForAction && configForAction.visible) {
+          let onClick = configForAction.onClick
+          if (onClick == null && !configForAction.href) {
             console.warn(`No handler registered for ${buttonViewProps.action}`)
+            onClick = () => {
+              console.warn(
+                `No handler registered for ${buttonViewProps.action}`,
+              )
+            }
           }
+          acc.push({
+            icon: buttonViewProps.icon as IconName,
+            onClick: onClick,
+            tooltipText: configForAction.text,
+            text: configForAction.text,
+            variant: buttonViewProps.variant,
+            iconSx: buttonViewProps.iconSx,
+            disabled: configForAction.disabled,
+            href: configForAction.href,
+          })
         }
-        acc.push({
-          icon: buttonViewProps.icon as IconName,
-          onClick: onClick,
-          tooltipText: configForAction.text,
-          disabled: configForAction.disabled,
-          href: configForAction.href,
-        })
-      }
-      return acc
-    },
-    [],
-  )
+        return acc
+      },
+      [],
+    )
 
   const downloadMenuConfig: DropdownMenuProps = {
     dropdownButtonText: 'Download Options',
     convertSingleItemToButton: true,
     renderMenuIfNoItems: false,
+    variant: layout.downloadMenuVariant,
     buttonTooltip: menuConfiguration.DOWNLOAD.tooltipText,
     buttonProps: {
       disabled: menuConfiguration.DOWNLOAD.disabled,
-      endIcon: <IconSvg icon={'download'} wrap={false} />,
+      endIcon: <IconSvg icon={'expandMore'} wrap={false} />,
     },
     items: mapAndFilterMenuGroups(
       layout.downloadMenuActions,
@@ -210,8 +223,15 @@ export default function EntityActionMenu(props: EntityActionMenuProps) {
     dropdownButtonText: layout.primaryMenuText,
     convertSingleItemToButton: true,
     renderMenuIfNoItems: false,
+    variant: layout.primaryMenuVariant,
     buttonProps: {
-      endIcon: <IconSvg icon={layout.primaryMenuEndIcon} wrap={false} />,
+      endIcon: (
+        <IconSvg
+          icon={layout.primaryMenuEndIcon}
+          wrap={false}
+          sx={layout.primaryMenuEndIconSx}
+        />
+      ),
     },
     items: mapAndFilterMenuGroups(
       layout.primaryMenuActions,
@@ -219,11 +239,46 @@ export default function EntityActionMenu(props: EntityActionMenuProps) {
     ),
   }
 
+  const menuButtonSx = layout.menuButtonSx ?? {}
+
   return (
-    <ComplexMenu
-      iconButtons={iconButtonConfigs}
-      dropdownMenus={[downloadMenuConfig, primaryMenuConfig]}
-    />
+    <Box
+      sx={{
+        '& .MuiButton-root': {
+          borderRadius: '6px',
+          fontWeight: 540,
+          padding: '10px 12px',
+        },
+        // Optional per-layout overrides (e.g. background/border color for entity
+        // menu buttons).
+        '& .MuiButton-outlined': {
+          ...menuButtonSx,
+
+          '&:hover': {
+            ...menuButtonSx,
+            backgroundColor: outlinedButtonHoverBackgroundColor,
+          },
+        },
+        '& .MuiButton-text': {
+          ...menuButtonSx,
+          backgroundColor: 'transparent',
+
+          '&:hover': {
+            ...menuButtonSx,
+            backgroundColor: outlinedButtonHoverBackgroundColor,
+            textDecoration: 'none',
+          },
+        },
+        '& .MuiButton-root .MuiTypography-root': {
+          fontWeight: 540,
+        },
+      }}
+    >
+      <ComplexMenu
+        iconButtons={iconButtonConfigs}
+        dropdownMenus={[primaryMenuConfig, downloadMenuConfig]}
+      />
+    </Box>
   )
 }
 

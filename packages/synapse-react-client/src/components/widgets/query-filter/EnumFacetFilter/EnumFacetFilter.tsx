@@ -23,6 +23,7 @@ import { useSuspenseGetQueryMetadata } from '../../../QueryWrapper/useGetQueryMe
 import { EnumFacetFilterSkeleton } from './EnumFacetFilterSkeleton'
 import EnumFacetFilterUI, { RenderedFacetValue } from './EnumFacetFilterUI'
 import { getAllIsSelected, valueToLabel } from './EnumFacetFilterUtils'
+import FacetValueChip from '../../facet-nav/FacetValueChip'
 
 export type EnumFacetFilterProps = {
   labelId?: string
@@ -51,7 +52,8 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
   } = useQueryContext()
 
   const { data: queryMetadata } = useSuspenseGetQueryMetadata()
-  const { getColumnDisplayName } = useQueryVisualizationContext()
+  const { getColumnDisplayName, renderFacetValue } =
+    useQueryVisualizationContext()
 
   const currentSelectedFacet: FacetColumnValuesRequest | undefined =
     useMemo(() => {
@@ -128,6 +130,12 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
   const displayedFacetValues: RenderedFacetValue[] = useMemo(() => {
     const renderedFacetValues = facet.facetValues.map(
       (facetValue: FacetColumnResultValueCount): RenderedFacetValue => {
+        const displayText = valueToLabel(
+          facetValue,
+          userGroupHeaders,
+          entityHeaders,
+          evaluations,
+        )
         return {
           ...facetValue,
           // Selected status should be based on the 'nextQuery', not the result data
@@ -135,12 +143,22 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
           isSelected:
             currentSelectedFacet?.facetValues.includes(facetValue.value) ??
             false,
-          displayText: valueToLabel(
-            facetValue,
-            userGroupHeaders,
-            entityHeaders,
-            evaluations,
-          ),
+          displayText,
+          renderedLabel: (() => {
+            const rendered = renderFacetValue?.(
+              facet.columnName,
+              facetValue.value,
+            )
+            return rendered ? (
+              <FacetValueChip
+                label={rendered.label}
+                icon={rendered.icon}
+                tooltipTitle={rendered.tooltipTitle}
+                placement="right"
+                truncate
+              />
+            ) : undefined
+          })(),
         }
       },
     )
@@ -169,12 +187,14 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
     return [...sortedValues, ...valueNotSetFacetArray]
   }, [
     facet.facetValues,
+    facet.columnName,
     columnModel,
     currentSelectedFacet?.facetValues,
     userGroupHeaders,
     entityHeaders,
     evaluations,
     isNumberColumnType,
+    renderFacetValue,
   ])
 
   if (!columnModel) {

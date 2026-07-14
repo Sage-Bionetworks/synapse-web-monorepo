@@ -18,6 +18,12 @@
   height: var(--synapse-header-height-with-sticky-search);
   box-shadow: none;
 
+  .Download-Link {
+    .SRC-primary-text-color svg {
+      color: var(--sticky-nav-color, #fff);
+    }
+  }
+
   .nav-logo-and-search-container {
     display: flex;
     width: 100%;
