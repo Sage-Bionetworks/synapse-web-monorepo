@@ -8,7 +8,21 @@ import { WordPressLatestPostChip } from 'synapse-react-client/components/WordPre
 const AdknowledgeHeader = (): React.ReactNode => {
   const searchPlaceholder = 'Search for...'
 
-  const searchExampleTerms = ['ROSMAP', 'RNASeq Harmonization']
+  const searchExampleTerms = [
+    'MODEL-AD',
+    'AMP-AD',
+    'ROSMAP',
+    'Diverse Cohorts',
+    'SEA-AD',
+    'snRNAseq',
+    'WGS',
+    'Spatial Transcriptomics',
+    'Proteomics',
+    'Metabolomics',
+    'LOAD',
+    'Harmonized Datasets',
+    'Target Validation',
+  ]
 
   const alternatingText = [
     "Alzheimer's Disease",
