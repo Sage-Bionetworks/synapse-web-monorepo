@@ -5,7 +5,10 @@ export const navbarConfig: NavbarConfig = {
     {
       name: 'Explore',
       path: '/Explore',
-      children: [{ name: 'Studies', path: '/Explore/Studies' }],
+      children: [
+        { name: 'Studies', path: '/Explore/Studies' },
+        { name: 'Datasets', path: '/Explore/Datasets' },
+      ],
     },
     {
       name: 'About',
