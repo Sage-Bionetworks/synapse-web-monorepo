@@ -46,10 +46,9 @@ function HomePageInternal() {
   const contributeCard = {
     title: 'Participate in the Community Data Contribution Program',
     description:
-      "The AD Community Contribution program welcomes researchers, citizen scientists, and data enthusiasts to share their unique findings, datasets, and analytical tools, fostering a collaborative environment to accelerate discoveries in Alzheimer's research.",
-    buttonText: 'Contribute Data as a Community Member',
-    buttonLink:
-      'https://sagebionetworks.jira.com/servicedesk/customer/portal/12/group/34/create/829',
+      "Through the AD Community Data Contribution Program (CDCP), our team at Sage Bionetworks can provide the infrastructure, governance, and curation services necessary to make your data truly FAIR within the AD Knowledge Portal. Contribute your unique findings, datasets, and computational tools to accelerate discoveries in Alzheimer's research!",
+    buttonText: 'Learn More',
+    buttonLink: '/Contribute',
     Image: ContributeIcon,
   }
 
