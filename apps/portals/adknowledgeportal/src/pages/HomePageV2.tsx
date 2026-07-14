@@ -107,7 +107,7 @@ function HomePageInternal() {
       </SectionLayout>
       <SectionLayout
         title="Programs"
-        subtitle="These initiatives accelerate breakthroughs by producing, curating, and providing access to extensive datasets and resources relevant to AD/ADRD. Delve into program-specific data to drive forward your own research."
+        subtitle="The AD Knowledge Portal is your gateway to extensive datasets and resources from NIA-supported Alzheimer's disease and related dementia programs. Dive into program-specific data to accelerate your research."
         centerTitle
         ContainerProps={{
           className: 'home-spacer',

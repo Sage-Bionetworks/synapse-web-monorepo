@@ -23,6 +23,7 @@ type HexGridProps = {
   titleColName: string
   imageColName: string
   descriptionColName: string
+  isVisibleColName?: string
   onRowClick?: (rowData: HexRowData) => void
 }
 
@@ -31,6 +32,7 @@ function HexGrid({
   titleColName,
   imageColName,
   descriptionColName,
+  isVisibleColName,
   onRowClick,
 }: HexGridProps) {
   const entityId = parseEntityIdFromSqlStatement(sql)
@@ -54,11 +56,17 @@ function HexGrid({
 
   const descColIndex = getFieldIndex(descriptionColName, queryResultBundle)
 
+  const toShowColIndex = getFieldIndex(isVisibleColName, queryResultBundle)
+
+  const filteredDataRows = isVisibleColName
+    ? dataRows.filter(row => row.values[toShowColIndex] === 'true')
+    : dataRows
+
   return (
     <div className={styles.hexSlat}>
       <div className={styles.gridWrapper}>
         <ul className={styles.hexGrid}>
-          {dataRows.map(row => (
+          {filteredDataRows.map(row => (
             <ButtonBase
               component="li"
               key={row.rowId}
