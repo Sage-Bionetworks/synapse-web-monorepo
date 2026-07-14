@@ -25,6 +25,10 @@
   gap: 20px;
   align-items: center;
 
+  :global(.MuiInputBase-root) {
+    height: 48px;
+  }
+
   @media (max-width: 899px) {
     flex-direction: column;
   }
