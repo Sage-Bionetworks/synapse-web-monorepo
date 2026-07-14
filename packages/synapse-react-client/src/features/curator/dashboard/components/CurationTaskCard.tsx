@@ -125,6 +125,7 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
   } = useUiForTask(taskBundle)
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const projectId = taskBundle.task?.projectId
   const { data: bundle } = useGetEntityBundle(projectId, undefined, {
@@ -144,9 +145,21 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
   return (
     <Card className={classNames(sharedStyles.card, styles.card)}>
       <div className={styles.cardContent}>
-        <div className={styles.mainContent}>
+        <div className={styles.mainContent} style={{ flex: 1 }}>
           <div className={styles.titleChipContainer}>
-            <Typography variant="headline3">{title}</Typography>
+            <Typography
+              variant="headline3"
+              onClick={() => setIsExpanded(!isExpanded)}
+              sx={{
+                cursor: 'pointer',
+                color: 'primary.main',
+                '&:hover': {
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              {title}
+            </Typography>
             {taskType && <TaskTypeChip label={taskType} />}
             {canEdit && (
               <IconButton
@@ -167,9 +180,6 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
               <Typography variant="body1">Task ID: {taskId}</Typography>
             )}
           </Box>
-          {description && (
-            <Typography variant="body1">{description}</Typography>
-          )}
           <div className={styles.userChipContainer}>
             {principalIds.map(principalId => (
               <UserOrTeamChip key={principalId} principalId={principalId} />
@@ -179,19 +189,42 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <TaskStatusChip state={statusState} />
         </Box>
-        <Divider
-          orientation="vertical"
-          flexItem
-          sx={{ display: { xs: 'none', md: 'block' } }}
-        />
-        <NextStepButton
-          className={styles.cardButton}
-          buttonText={buttonText}
-          onClick={onClickAction}
-          disabled={isLoading}
-          loading={isPending}
-        />
+        {!isExpanded && (
+          <NextStepButton
+            className={styles.cardButton}
+            buttonText={buttonText}
+            onClick={onClickAction}
+            disabled={isLoading}
+            loading={isPending}
+            expanded={false}
+          />
+        )}
       </div>
+      {isExpanded && (
+        <Box
+          sx={{
+            backgroundColor: '#fff',
+            padding: 2,
+            margin: 2,
+            borderRadius: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+          }}
+        >
+          {description && (
+            <Typography variant="body1">{description}</Typography>
+          )}
+          <NextStepButton
+            className={styles.cardButton}
+            buttonText={buttonText}
+            onClick={onClickAction}
+            disabled={isLoading}
+            loading={isPending}
+            expanded={true}
+          />
+        </Box>
+      )}
       <CreateOrUpdateCurationTaskDialog
         key={String(isSettingsOpen)}
         open={isSettingsOpen}
