@@ -190,14 +190,21 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
           <TaskStatusChip state={statusState} />
         </Box>
         {!isExpanded && (
-          <NextStepButton
-            className={styles.cardButton}
-            buttonText={buttonText}
-            onClick={onClickAction}
-            disabled={isLoading}
-            loading={isPending}
-            expanded={false}
-          />
+          <>
+            <Divider
+              orientation="vertical"
+              flexItem
+              sx={{ display: { xs: 'none', md: 'block' } }}
+            />
+            <NextStepButton
+              className={styles.cardButton}
+              buttonText={buttonText}
+              onClick={onClickAction}
+              disabled={isLoading}
+              loading={isPending}
+              expanded={false}
+            />
+          </>
         )}
       </div>
       {isExpanded && (
