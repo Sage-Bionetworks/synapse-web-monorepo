@@ -36,13 +36,6 @@
       justify-content: space-between;
       align-items: center;
       padding: 16px 40px;
-
-      // The default MUI small input (~40px) looks short against the desktop
-      // strip. Only tall here: on mobile the box is stacked above the MENU
-      // link, where a taller box would push MENU down.
-      .MuiInputBase-root {
-        height: 44px;
-      }
     }
 
     .nav-link-container {
@@ -85,11 +78,14 @@
       flex-direction: row;
       flex-wrap: wrap;
       align-items: stretch;
+      // Pack the logo/search and MENU lines to the top instead of stretching
+      // free space between them, so the search box and MENU stay close.
+      align-content: flex-start;
       height: var(--synapse-header-height-with-sticky-search);
 
       .mb-open,
       .mb-close {
-        padding: 24px 18px 0 18px;
+        padding: 12px 18px 0 18px;
       }
     }
 
