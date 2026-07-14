@@ -174,7 +174,14 @@ const HeaderCardClassic = forwardRef(function HeaderCardClassic(
                   {icon}
                 </Box>
               )}
-              {subTitle && <div className="SRC-author">{subTitle}</div>}
+              {subTitle && (
+                <div
+                  className="SRC-author"
+                  style={{ fontStyle: 'italic', marginBottom: '10px' }}
+                >
+                  {subTitle}
+                </div>
+              )}
               <CollapsibleDescription
                 description={description}
                 descriptionSubTitle={descriptionSubTitle}
