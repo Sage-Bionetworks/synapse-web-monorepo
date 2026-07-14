@@ -186,4 +186,54 @@ describe('CurationTaskCard', () => {
       ).not.toBeInTheDocument()
     })
   })
+
+  describe('expanded state', () => {
+    it('hides instructions by default', () => {
+      const taskWithInstructions = createMockTaskBundle({
+        projectId: 'syn123',
+        dataType: 'Test Data Type',
+        instructions: 'Test instructions',
+      })
+      renderComponent(taskWithInstructions)
+      expect(screen.queryByText('Test instructions')).not.toBeInTheDocument()
+    })
+
+    it('shows instructions when title is clicked', async () => {
+      const user = userEvent.setup()
+      const taskWithInstructions = createMockTaskBundle({
+        projectId: 'syn123',
+        dataType: 'Test Data Type',
+        instructions: 'Test instructions',
+      })
+      renderComponent(taskWithInstructions)
+
+      const title = screen.getByText('Test Data Type')
+      await user.click(title)
+
+      expect(screen.getByText('Test instructions')).toBeInTheDocument()
+    })
+
+    it('toggles expanded state when title is clicked', async () => {
+      const user = userEvent.setup()
+      const taskWithInstructions = createMockTaskBundle({
+        projectId: 'syn123',
+        dataType: 'Test Data Type',
+        instructions: 'Test instructions',
+      })
+      renderComponent(taskWithInstructions)
+
+      const title = screen.getByText('Test Data Type')
+
+      // Initially collapsed
+      expect(screen.queryByText('Test instructions')).not.toBeInTheDocument()
+
+      // Click to expand
+      await user.click(title)
+      expect(screen.getByText('Test instructions')).toBeInTheDocument()
+
+      // Click to collapse
+      await user.click(title)
+      expect(screen.queryByText('Test instructions')).not.toBeInTheDocument()
+    })
+  })
 })
