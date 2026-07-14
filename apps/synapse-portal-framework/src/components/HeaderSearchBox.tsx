@@ -1,4 +1,3 @@
-import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
 import {
   Box,
   Stack,
@@ -26,7 +25,6 @@ import {
 } from 'synapse-react-client/utils/functions/SqlFunctions'
 import { useChatDialogContext } from './ChatDialogContext'
 import { useSynapseContext } from 'synapse-react-client'
-import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
 import { useGetSuggestionsForSearchIndex } from 'synapse-react-client/components/SearchQueryWrapper/SearchQueryUseQueryOptions'
 import { SearchIndexConfig } from '../types/portal-util-types'
 
@@ -34,6 +32,7 @@ type HeaderSearchBoxProps = {
   searchPlaceholder?: string
   searchExampleTerms?: string[]
   hideChatOption?: boolean
+  isChatEnabled?: boolean
   // in practice, either set the path or callback.
   path?: string // redirect to this path with the search term in the search params
   callback?: (searchString: string) => void // call back this function with the search term
@@ -53,6 +52,7 @@ const HeaderSearchBox = ({
   variant = 'default',
   searchIndexConfig,
   hideChatOption = false,
+  isChatEnabled = false,
 }: HeaderSearchBoxProps): React.ReactNode => {
   const styles = {
     ...defaultStyles,
@@ -67,7 +67,6 @@ const HeaderSearchBox = ({
   const { isAuthenticated } = useSynapseContext()
   const chatDialogContext = useChatDialogContext()
   const isChatAvailable = chatDialogContext?.isChatAvailable
-  const isChatEnabled = useGetFeatureFlag(FeatureFlagEnum.PORTAL_CHAT)
   const showChatOption =
     isAuthenticated &&
     chatDialogContext &&

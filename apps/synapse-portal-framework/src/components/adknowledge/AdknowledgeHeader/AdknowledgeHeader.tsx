@@ -1,6 +1,8 @@
 import React from 'react'
 import { Box, Stack, Typography } from '@mui/material'
 import HeaderSearchBox from '@/components/HeaderSearchBox'
+import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
+import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
 import { TypeAnimation } from 'react-type-animation'
 import styles from './AdknowledgeHeader.module.scss'
 import { WordPressLatestPostChip } from 'synapse-react-client/components/WordPress/WordPressLatestPostChip'
@@ -68,6 +70,7 @@ const AdknowledgeHeader = (): React.ReactNode => {
           searchPlaceholder={searchPlaceholder}
           path="/Search"
           variant="v2"
+          isChatEnabled={useGetFeatureFlag(FeatureFlagEnum.PORTAL_CHAT)}
         />
       </Stack>
     </header>

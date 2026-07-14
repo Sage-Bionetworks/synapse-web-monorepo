@@ -1,6 +1,8 @@
 import React from 'react'
 import { Box, Typography } from '@mui/material'
 import HeaderSearchBox from '../HeaderSearchBox'
+import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
+import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
 
 type ELITEHeaderProps = {
   backgroundCss: string
@@ -102,6 +104,7 @@ const ELITEHeader = ({
           ]}
           searchPlaceholder="Search for longevity and aging data and resources"
           path="/Search"
+          isChatEnabled={useGetFeatureFlag(FeatureFlagEnum.PORTAL_CHAT)}
           sx={{
             flex: 1,
             zIndex: 2,
