@@ -10,6 +10,7 @@ export type WordPressPost = {
   date: string
   link: string
   title: { rendered: string }
+  excerpt: { rendered: string }
   categories: number[]
 }
 

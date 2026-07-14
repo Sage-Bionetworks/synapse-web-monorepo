@@ -30,6 +30,8 @@ export function WordPressNews({
     return <></>
   }
 
+  console.log('posts', posts)
+
   return (
     <Box
       className={`${styles.container}${
