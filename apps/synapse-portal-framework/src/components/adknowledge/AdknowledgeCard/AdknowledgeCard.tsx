@@ -1,5 +1,7 @@
-import { Button, Link, Stack, Typography } from '@mui/material'
+import { Button, Stack, Typography, Link as MuiLink } from '@mui/material'
 import styles from './AdknowledgeCard.module.scss'
+import { isExternalLink } from 'synapse-react-client/utils/functions/IsExternalLink'
+import { Link as RouterLink } from 'react-router'
 
 type AdknowledgeCardProps = {
   title?: React.ReactNode
@@ -16,7 +18,9 @@ function AdknowledgeCard({
   buttonText,
   buttonLink,
 }: AdknowledgeCardProps) {
+  const isExternal = isExternalLink(buttonLink ?? '')
   const renderCardAsLink = buttonLink && !buttonText
+
   const cardContent = (
     <>
       {Image && <Image />}
@@ -40,10 +44,15 @@ function AdknowledgeCard({
       </div>
       {buttonLink && buttonText && (
         <Button
+          component={isExternal ? MuiLink : RouterLink}
           variant="contained"
-          href={buttonLink}
-          target="_blank"
-          rel="noopener noreferrer"
+          {...(isExternal
+            ? {
+                href: buttonLink,
+                target: '_blank',
+                rel: 'noopener noreferrer',
+              }
+            : { to: buttonLink })}
         >
           {buttonText}
         </Button>
@@ -52,7 +61,7 @@ function AdknowledgeCard({
   )
 
   return renderCardAsLink ? (
-    <Link
+    <MuiLink
       className={`${styles.adknowledgeCardContainer} ${renderCardAsLink ? styles.linkCard : ''}`}
       href={buttonLink}
       target="_blank"
@@ -60,7 +69,7 @@ function AdknowledgeCard({
       underline="none"
     >
       {cardContent}
-    </Link>
+    </MuiLink>
   ) : (
     <Stack className={styles.adknowledgeCardContainer}>{cardContent}</Stack>
   )
