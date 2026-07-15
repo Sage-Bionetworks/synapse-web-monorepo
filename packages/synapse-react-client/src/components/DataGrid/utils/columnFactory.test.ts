@@ -207,28 +207,6 @@ describe('columnFactory', () => {
       expect(headerProps.description).toBeUndefined()
     })
 
-    it('should set required header class when isRequired is true', () => {
-      const config = {
-        columnName: 'name',
-        typeInfo: { type: 'string', isArray: false },
-        enumeratedValues: [],
-        isRequired: true,
-      }
-
-      const column = createColumn(config)
-    })
-
-    it('should set normal header class when isRequired is false', () => {
-      const config = {
-        columnName: 'name',
-        typeInfo: { type: 'string', isArray: false },
-        enumeratedValues: [],
-        isRequired: false,
-      }
-
-      const column = createColumn(config)
-    })
-
     describe('Custom Width Support', () => {
       it('should use customWidth when provided', () => {
         const config = {

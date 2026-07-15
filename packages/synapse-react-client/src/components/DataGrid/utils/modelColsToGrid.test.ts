@@ -497,31 +497,6 @@ describe('modelColsToGrid integration', () => {
       const columnName = columnNames[columnOrder[index]]
       expect(column.title).toBe(columnName)
     })
-
-    // Test individual column creation for specific types
-    const idColumn = createColumn({
-      columnName: 'id',
-      typeInfo: { type: 'string', isArray: false },
-      enumeratedValues: [],
-      isRequired: true,
-    })
-
-    const tagsColumn = createColumn({
-      columnName: 'tags',
-      typeInfo: {
-        type: 'string',
-        isArray: true,
-      },
-      enumeratedValues: ['frontend', 'backend', 'mobile'],
-      isRequired: false,
-    })
-
-    const statusColumn = createColumn({
-      columnName: 'status',
-      typeInfo: { type: 'string', isArray: false },
-      enumeratedValues: ['active', 'inactive', 'pending'],
-      isRequired: true,
-    })
   })
 })
 
