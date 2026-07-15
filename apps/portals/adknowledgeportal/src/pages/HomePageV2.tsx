@@ -38,7 +38,7 @@ function HomePageInternal() {
     Image: ModelADIcon,
     description:
       "Explore next-generation mouse models of Alzheimer's Disease (AD) generated, characterized, and validated by the MODEL-AD consortium.",
-    buttonLink: 'https://www.model-ad.org',
+    buttonLink: 'https://modeladexplorer.org',
   }
 
   const contributeCard = {
