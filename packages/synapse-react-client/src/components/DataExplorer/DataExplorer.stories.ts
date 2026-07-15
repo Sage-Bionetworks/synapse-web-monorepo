@@ -59,6 +59,8 @@ const mockStudiesFacetResult: QueryResultBundle = {
         { value: 'Immunoassay', count: 28, isSelected: false },
         { value: 'Metabolomics', count: 27, isSelected: false },
         { value: 'Clinical', count: 10, isSelected: false },
+        { value: 'Raw Data', count: 4, isSelected: false },
+        { value: 'Imaging', count: 62, isSelected: false },
       ],
     },
   ],
