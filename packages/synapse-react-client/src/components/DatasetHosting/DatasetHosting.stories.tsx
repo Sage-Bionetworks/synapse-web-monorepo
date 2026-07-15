@@ -9,6 +9,7 @@ import {
   Typography,
 } from '@mui/material'
 import { Meta, StoryObj } from '@storybook/react-vite'
+import { useRef } from 'react'
 import { GenericCard } from '../GenericCard/GenericCard'
 import { GenericCardIcon } from '../GenericCard/GenericCardIcon'
 import {
@@ -22,7 +23,10 @@ import {
   DatasetHostingType,
   fillRepository,
 } from './DatasetHosting'
-import { DatasetDownloadButton } from './DatasetDownloadButton'
+import {
+  DatasetDownloadButton,
+  DatasetDownloadButtonProps,
+} from './DatasetDownloadButton'
 
 /**
  * Demonstrates how the dataset action button adapts to the six ways NF (and other
@@ -46,10 +50,34 @@ type DatasetCardExample = {
   description: string
 }
 
-function renderDatasetCard(
-  example: DatasetCardExample,
-  actionButtonStyle: CardActionButtonStyle = 'chip',
+// Wraps a bare DatasetDownloadButton with a confirmation container, so the
+// download-confirmation dialog (e.g. the unauthenticated "Please Sign In" banner)
+// renders in-flow beneath the button instead of overlapping neighboring content.
+function DemoDownloadButton(
+  props: Omit<DatasetDownloadButtonProps, 'downloadConfirmationContainer'>,
 ) {
+  const confirmationRef = useRef<HTMLDivElement>(null)
+  return (
+    <>
+      <DatasetDownloadButton
+        {...props}
+        downloadConfirmationContainer={confirmationRef}
+      />
+      <div ref={confirmationRef} />
+    </>
+  )
+}
+
+function DatasetCardDemo(props: {
+  example: DatasetCardExample
+  actionButtonStyle?: CardActionButtonStyle
+}) {
+  const { example, actionButtonStyle = 'chip' } = props
+  // The card's download-confirmation dialog portals here, mirroring how the real
+  // card (TableRowGenericCard) targets its footer — otherwise the unauthenticated
+  // "Please Sign In" banner renders inline and overlaps the absolutely-positioned
+  // card header.
+  const confirmationRef = useRef<HTMLDivElement>(null)
   const labels: CardLabel[] = [
     { columnDisplayName: 'Disease Focus', value: 'Neurofibromatosis type 1' },
     { columnDisplayName: 'Assay', value: 'RNA-seq' },
@@ -72,11 +100,22 @@ function renderDatasetCard(
             hosting={example.hosting}
             repository={example.repository}
             externalUrl={example.externalUrl}
+            downloadConfirmationContainer={confirmationRef}
           />
         }
         labels={labels}
       />
+      <div ref={confirmationRef} />
     </CardActionButtonStyleContext.Provider>
+  )
+}
+
+function renderDatasetCard(
+  example: DatasetCardExample,
+  actionButtonStyle: CardActionButtonStyle = 'chip',
+) {
+  return (
+    <DatasetCardDemo example={example} actionButtonStyle={actionButtonStyle} />
   )
 }
 
@@ -258,7 +297,7 @@ export const Overview: StoryObj = {
                 : undefined
               const button = (style: CardActionButtonStyle) => (
                 <CardActionButtonStyleContext.Provider value={style}>
-                  <DatasetDownloadButton
+                  <DemoDownloadButton
                     entityId={MOCK_DATASET_ID}
                     name={MOCK_DATASET_NAME}
                     hosting={key}
@@ -401,7 +440,7 @@ export const FreeTextRepository: StoryObj = {
         <Stack direction="row" gap={2} flexWrap="wrap" alignItems="center">
           {['GEO', 'ENA', 'Zenodo', 'figshare', 'Smith Lab Server'].map(
             repository => (
-              <DatasetDownloadButton
+              <DemoDownloadButton
                 key={repository}
                 entityId={MOCK_DATASET_ID}
                 name={MOCK_DATASET_NAME}
@@ -418,7 +457,7 @@ export const FreeTextRepository: StoryObj = {
         </Typography>
         <Stack direction="row" gap={2} flexWrap="wrap" alignItems="center">
           {['dbGaP', 'EGA', 'JGA', 'Some Other Archive'].map(repository => (
-            <DatasetDownloadButton
+            <DemoDownloadButton
               key={repository}
               name={MOCK_DATASET_NAME}
               hosting="external-access"
@@ -433,12 +472,12 @@ export const FreeTextRepository: StoryObj = {
           No repository provided — graceful generic label
         </Typography>
         <Stack direction="row" gap={2} flexWrap="wrap" alignItems="center">
-          <DatasetDownloadButton
+          <DemoDownloadButton
             entityId={MOCK_DATASET_ID}
             name={MOCK_DATASET_NAME}
             hosting="external-download"
           />
-          <DatasetDownloadButton
+          <DemoDownloadButton
             name={MOCK_DATASET_NAME}
             hosting="external-access"
             externalUrl="https://example.org/"
