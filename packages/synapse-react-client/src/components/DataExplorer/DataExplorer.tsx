@@ -123,7 +123,7 @@ export default function DataExplorer({
     filterColumnName,
   ])
 
-  const studyCountByDataType = (dataType: string) => {
+  const getFacetCount = (dataType: string) => {
     const [facet] = getFacets(
       facetQueryResultBundle,
       filterColumnName ? [filterColumnName] : [],
@@ -133,13 +133,12 @@ export default function DataExplorer({
       ?.count
   }
 
-  // Sort by order column ascending, then by study count descending
+  // Sort by order column ascending, then by facet count descending
   const sortedRows = orderBy(
     dataRows,
     [
       row => Number(row.values[orderColIndex] ?? Number.MAX_SAFE_INTEGER),
-      row =>
-        studyCountByDataType(row.values[datatypeColIndex]?.trim() ?? '') ?? 0,
+      row => getFacetCount(row.values[datatypeColIndex]?.trim() ?? '') ?? 0,
     ],
     ['asc', 'desc'],
   )
@@ -181,7 +180,7 @@ export default function DataExplorer({
           const dataType = row.values[datatypeColIndex]?.trim() ?? ''
           const hexColor = row.values[hexColorColIndex] ?? undefined
           const rowUrl = rowUrls[dataType]
-          const fileCount = studyCountByDataType(dataType)
+          const facetCount = getFacetCount(dataType)
           return (
             <a key={dataType} className={styles.dataRow} href={rowUrl}>
               <div className={styles.dataRowInner}>
@@ -201,8 +200,8 @@ export default function DataExplorer({
                     <Typography className={styles.dataRowTitle}>
                       {dataType}
                     </Typography>
-                    {fileCount && (
-                      <div className={styles.fileCount}>{fileCount}</div>
+                    {facetCount && (
+                      <div className={styles.facetCount}>{facetCount}</div>
                     )}
                   </div>
                 </div>
