@@ -1,20 +1,9 @@
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
-import type { LabelLinkConfig } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { datasetsSql } from '../resources'
 
 const rgbIndex = 5
-
-export const datasetColumnLinks: LabelLinkConfig = [
-  {
-    isMarkdown: false,
-    baseURL: 'Explore/Datasets/DetailsPage',
-    URLColumnName: 'id',
-    matchColumnName: 'name',
-    overrideValueWithRowID: true,
-  },
-]
 
 export const datasetCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
@@ -36,11 +25,9 @@ const datasetsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   sql: datasetsSql,
   name: 'Datasets',
   shouldDeepLink: true,
+  cardConfiguration: datasetCardConfiguration,
+  columnAliases: { projectId: 'Project' },
   defaultShowPlots: false,
-  tableConfiguration: {
-    columnLinks: datasetColumnLinks,
-    showAccessColumn: true,
-  },
 }
 
 export default datasetsQueryWrapperPlotNavProps
