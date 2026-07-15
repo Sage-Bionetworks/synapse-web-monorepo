@@ -72,13 +72,12 @@ export function ColumnHeaderWithTooltip({
           >
             <Box
               component="span"
-              className="upsert-key-icon"
               sx={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: '#395979',
-                color: 'white',
+                backgroundColor: 'primary.main',
+                color: 'primary.contrastText',
                 borderRadius: '50%',
                 width: '1.25em',
                 height: '1.25em',
