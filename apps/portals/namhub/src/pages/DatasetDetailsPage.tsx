@@ -36,7 +36,7 @@ function DatasetDetailsPage() {
             element: id ? (
               <QueryWrapperPlotNav
                 rgbIndex={5}
-                sql={`SELECT * FROM syn${id}`}
+                sql={`SELECT * FROM ${id}`}
                 visibleColumnCount={7}
                 tableConfiguration={{
                   showAccessColumn: true,
