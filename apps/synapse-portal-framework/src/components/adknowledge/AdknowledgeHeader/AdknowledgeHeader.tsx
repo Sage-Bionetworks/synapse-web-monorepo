@@ -25,12 +25,11 @@ const AdknowledgeHeader = (): React.ReactNode => {
   ]
 
   const alternatingText = [
-    "Alzheimer's Disease",
-    'Aging',
     'Dementia',
     'Brain Aging',
     'AD Model Systems',
     'Drug Development',
+    "Alzheimer's Disease",
   ]
 
   const content = (
