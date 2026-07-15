@@ -72,6 +72,7 @@ import {
   Clear,
   CloseTwoTone,
   Code,
+  ContentCopyRounded,
   ContentCopyTwoTone,
   CreateNewFolderTwoTone,
   DashboardOutlined,
@@ -211,6 +212,7 @@ export const IconStrings = [
   'chromatin',
   'clinical',
   'contentCopy',
+  'contentCopyRounded',
   'data',
   'dataLocked',
   'geneExpression',
@@ -484,6 +486,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <Clinical {...otherProps} />
     case 'contentCopy':
       return <ContentCopyTwoTone {...otherProps} />
+    case 'contentCopyRounded':
+      return <ContentCopyRounded {...otherProps} />
     case 'data':
       return <Data {...otherProps} />
     case 'dataLocked':

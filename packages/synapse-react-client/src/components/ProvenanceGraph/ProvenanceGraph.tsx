@@ -1,7 +1,11 @@
 import SynapseClient from '@/synapse-client'
 import { useGetEntityHeaders } from '@/synapse-queries'
+import {
+  entityTypeToFriendlyName,
+  getEntityTypeFromHeader,
+} from '@/utils/functions/EntityTypeUtils'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { CircularProgress } from '@mui/material'
+import { CircularProgress, Typography, Button, Stack } from '@mui/material'
 import {
   Activity,
   EntityHeader,
@@ -52,10 +56,20 @@ export type ProvenanceProps = {
   initialEdges?: Edge[]
   onNodesChangedListener?: (nodes: Node[]) => void
   onEdgesChangedListener?: (edges: Edge[]) => void
+  onEditProvenanceClicked?: () => void
 }
 
 const MAX_ACTIVITY_EXPAND_NODES = 400
 const DEFAULT_ZOOM = 0.85
+export const EDIT_PROVENANCE_TEXT = 'Edit Provenance'
+export const NO_PROVENANCE_TITLE = 'No provenance data'
+const NO_PROVENANCE_MESSAGE = (entityTypeName: string) =>
+  `We don’t have any provenance information for this ${entityTypeName} yet.`
+const NO_PROVENANCE_TEXT_COLOR = '#3B4046'
+const PROVENANCE_BACKGROUND_COLOR = '#F9F9FA'
+const EDIT_PROVENANCE_BUTTON_TEXT_COLOR = '#4D535A'
+const EDIT_PROVENANCE_BUTTON_BORDER_COLOR = '#9EAAB7'
+const EDIT_PROVENANCE_BUTTON_BACKGROUND_COLOR = 'rgba(255, 255, 255, 0.60)'
 
 /**
  * Renders a Provenance Graph for a set of entities.
@@ -72,6 +86,7 @@ const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
     initialEdges = [],
     onNodesChangedListener,
     onEdgesChangedListener,
+    onEditProvenanceClicked,
   } = props
   const { accessToken } = useSynapseContext()
   const [tempNodes, setTempNodes] = useState<Node[]>(initialNodes)
@@ -79,12 +94,27 @@ const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
   const [nodes, setNodes] = useNodesState([])
   const [edges, setEdges] = useEdgesState([])
   const [clickedNode, setClickedNode] = useState<Node>()
+  const [initialBuildComplete, setInitialBuildComplete] =
+    useState<boolean>(false)
   const handleError = useErrorHandler()
 
   const { data: rootEntityHeadersPage, isSuccess } = useGetEntityHeaders(
     rootEntityRefs,
     { throwOnError: true },
   )
+
+  const PROVENANCE_NODE_TYPES = [
+    NodeType.ENTITY_PLACEHOLDER,
+    NodeType.EXTERNAL,
+    NodeType.ACTIVITY,
+    NodeType.EXPAND,
+  ]
+  const hasProvenanceNodes = nodes.some(node =>
+    PROVENANCE_NODE_TYPES.includes((node.data as ProvenanceNodeData).type),
+  )
+
+  const showNoProvenance = initialBuildComplete && !hasProvenanceNodes
+
   if (
     isSuccess &&
     rootEntityHeadersPage &&
@@ -96,6 +126,11 @@ const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
     )
   }
   const rootEntityHeaders = rootEntityHeadersPage?.results
+  const entityTypeName = rootEntityHeaders?.[0]
+    ? entityTypeToFriendlyName(
+        getEntityTypeFromHeader(rootEntityHeaders[0]),
+      ).toLowerCase()
+    : 'entity'
   const [initializedPosition, setInitializedPosition] = useState<boolean>(false)
 
   // Get the react flow instance so we attempt to properly center the view.
@@ -290,6 +325,7 @@ const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
       Promise.allSettled(addAndExpandPromises).finally(() => {
         setTempNodes(nodesCopy)
         setTempEdges(edgesCopy)
+        setInitialBuildComplete(true)
       })
     }
   }, [
@@ -400,22 +436,82 @@ const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
     <div
       className="ProvenanceWidget"
       role="graphics-doc" //https://www.w3.org/wiki/SVG_Accessibility/ARIA_roles_for_charts#Document_Roles
-      style={{ width: '100%', height: containerHeight }}
+      style={{
+        width: '100%',
+        height: containerHeight,
+        backgroundColor: PROVENANCE_BACKGROUND_COLOR,
+        padding: '15px',
+      }}
     >
-      <ReactFlow
-        defaultViewport={{ x: 0, y: 0, zoom: DEFAULT_ZOOM }}
-        nodes={nodes}
-        edges={edges}
-        onNodeClick={onClickNode}
-        // onNodesChange={onNodesChange}  // SWC-6804: When the nodes/edges are updated (expanded) the graph is already re-rendered.
-        // onEdgesChange={onEdgesChange}  // Specifying these callbacks causes an infinite re-rendering loop.
-        attributionPosition="bottom-right"
-        onConnect={undefined}
-        zoomOnScroll={false}
-        onPaneScroll={onPaneScrollFunction}
-      >
-        <Controls />
-      </ReactFlow>
+      {showNoProvenance ? (
+        <Stack
+          sx={{
+            display: 'flex',
+            height: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+            textAlign: 'center',
+          }}
+        >
+          <Typography
+            sx={{
+              color: NO_PROVENANCE_TEXT_COLOR,
+              fontSize: '16px',
+              lineHeight: '24px',
+              fontWeight: 540,
+              marginBottom: '12px',
+            }}
+          >
+            {NO_PROVENANCE_TITLE}
+          </Typography>
+          <Typography
+            sx={{
+              color: NO_PROVENANCE_TEXT_COLOR,
+              fontSize: '14px',
+              lineHeight: '20px',
+              fontWeight: 440,
+            }}
+          >
+            {NO_PROVENANCE_MESSAGE(entityTypeName)}
+          </Typography>
+          {onEditProvenanceClicked && (
+            <Button
+              variant="outlined"
+              sx={{
+                borderRadius: '6px',
+                border: '1px solid',
+                borderColor: EDIT_PROVENANCE_BUTTON_BORDER_COLOR,
+                background: EDIT_PROVENANCE_BUTTON_BACKGROUND_COLOR,
+                color: EDIT_PROVENANCE_BUTTON_TEXT_COLOR,
+                fontWeight: 540,
+                lineHeight: '12px' /* 100% */,
+                letterSpacing: '-0.24px',
+                marginTop: '20px',
+                height: '28px',
+                padding: '8px',
+              }}
+              onClick={onEditProvenanceClicked}
+            >
+              {EDIT_PROVENANCE_TEXT}
+            </Button>
+          )}
+        </Stack>
+      ) : (
+        <ReactFlow
+          defaultViewport={{ x: 0, y: 0, zoom: DEFAULT_ZOOM }}
+          nodes={nodes}
+          edges={edges}
+          onNodeClick={onClickNode}
+          // onNodesChange={onNodesChange}  // SWC-6804: When the nodes/edges are updated (expanded) the graph is already re-rendered.
+          // onEdgesChange={onEdgesChange}  // Specifying these callbacks causes an infinite re-rendering loop.
+          attributionPosition="bottom-right"
+          onConnect={undefined}
+          zoomOnScroll={false}
+          onPaneScroll={onPaneScrollFunction}
+        >
+          <Controls />
+        </ReactFlow>
+      )}
     </div>
   )
 }

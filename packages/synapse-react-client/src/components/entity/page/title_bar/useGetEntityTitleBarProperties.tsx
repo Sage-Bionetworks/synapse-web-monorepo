@@ -133,11 +133,7 @@ export function useGetEntityTitleBarProperties(
     doi && {
       key: 'doi',
       title: 'DOI',
-      value: (
-        <Link href={doi} rel={'noopener noreferrer'} target={'_blank'}>
-          {doi}
-        </Link>
-      ),
+      value: <CopyToClipboardString value={doi} href={doi} useRoundedIcon />,
     },
     isDoiUsage && {
       key: 'citations',

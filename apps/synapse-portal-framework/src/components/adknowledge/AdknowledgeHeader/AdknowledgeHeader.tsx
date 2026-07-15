@@ -1,6 +1,8 @@
 import React from 'react'
 import { Box, Stack, Typography } from '@mui/material'
 import HeaderSearchBox from '@/components/HeaderSearchBox'
+import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
+import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
 import { TypeAnimation } from 'react-type-animation'
 import styles from './AdknowledgeHeader.module.scss'
 import { WordPressLatestPostChip } from 'synapse-react-client/components/WordPress/WordPressLatestPostChip'
@@ -8,15 +10,28 @@ import { WordPressLatestPostChip } from 'synapse-react-client/components/WordPre
 const AdknowledgeHeader = (): React.ReactNode => {
   const searchPlaceholder = 'Search for...'
 
-  const searchExampleTerms = ['ROSMAP', 'RNASeq Harmonization']
+  const searchExampleTerms = [
+    'MODEL-AD',
+    'AMP-AD',
+    'ROSMAP',
+    'Diverse Cohorts',
+    'SEA-AD',
+    'snRNAseq',
+    'WGS',
+    'Spatial Transcriptomics',
+    'Proteomics',
+    'Metabolomics',
+    'LOAD',
+    'Harmonized Datasets',
+    'Target Validation',
+  ]
 
   const alternatingText = [
-    "Alzheimer's Disease",
-    'Aging',
     'Dementia',
     'Brain Aging',
     'AD Model Systems',
     'Drug Development',
+    "Alzheimer's Disease",
   ]
 
   const content = (
@@ -54,6 +69,7 @@ const AdknowledgeHeader = (): React.ReactNode => {
           searchPlaceholder={searchPlaceholder}
           path="/Search"
           variant="v2"
+          isChatEnabled={useGetFeatureFlag(FeatureFlagEnum.PORTAL_CHAT)}
         />
       </Stack>
     </header>

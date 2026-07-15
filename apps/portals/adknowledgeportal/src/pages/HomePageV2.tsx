@@ -30,26 +30,23 @@ function HomePageInternal() {
   const agoraCard = {
     Image: AgoraIcon,
     description:
-      "Explore evidence about the role of human genes in Alzheimer's Disease using interactive tools and data visualizations.",
-    buttonText: 'Explore Agora',
+      'Explore nominated drug targets and high-dimensional human transcriptomic, proteomic, and metabolomic evidence for whether or not genes are associated with Alzheimer’s Disease (AD).',
     buttonLink: 'https://agora.adknowledgeportal.org',
   }
 
   const modelADCard = {
     Image: ModelADIcon,
     description:
-      'Discover, compare, and analyze next-generation mouse models of Alzheimer’s Disease generated, characterized, and validated by the MODEL-AD Consortium.',
-    buttonText: 'Explore MODEL-AD',
+      "Explore next-generation mouse models of Alzheimer's Disease (AD) generated, characterized, and validated by the MODEL-AD consortium.",
     buttonLink: 'https://www.model-ad.org',
   }
 
   const contributeCard = {
     title: 'Participate in the Community Data Contribution Program',
     description:
-      "The AD Community Contribution program welcomes researchers, citizen scientists, and data enthusiasts to share their unique findings, datasets, and analytical tools, fostering a collaborative environment to accelerate discoveries in Alzheimer's research.",
-    buttonText: 'Contribute Data as a Community Member',
-    buttonLink:
-      'https://sagebionetworks.jira.com/servicedesk/customer/portal/12/group/34/create/829',
+      "Through the AD Community Data Contribution Program (CDCP), our team at Sage Bionetworks can provide the infrastructure, governance, and curation services necessary to make your data truly FAIR within the AD Knowledge Portal. Contribute your unique findings, datasets, and computational tools to accelerate discoveries in Alzheimer's research!",
+    buttonText: 'Learn More',
+    buttonLink: '/Contribute',
     Image: ContributeIcon,
   }
 
@@ -68,7 +65,7 @@ function HomePageInternal() {
   const helpButtons = [
     {
       text: 'Service Desk',
-      link: 'https://help.adknowledgeportal.org/apd/',
+      link: 'https://sagebionetworks.jira.com/servicedesk/customer/portal/12',
     },
     {
       text: 'Discussion Forum',
@@ -109,7 +106,7 @@ function HomePageInternal() {
       </SectionLayout>
       <SectionLayout
         title="Programs"
-        subtitle="These initiatives accelerate breakthroughs by producing, curating, and providing access to extensive datasets and resources relevant to AD/ADRD. Delve into program-specific data to drive forward your own research."
+        subtitle="The AD Knowledge Portal is your gateway to extensive datasets and resources from NIA-supported Alzheimer's disease and related dementia programs. Dive into program-specific data to accelerate your research."
         centerTitle
         ContainerProps={{
           className: 'home-spacer',
@@ -173,7 +170,7 @@ function HomePageInternal() {
       </SectionLayout>
       <SectionLayout
         title="Related Consortia and Repositories"
-        subtitle="Learn more about our partners within the AD/ADRD research ecosystem!"
+        subtitle="Grounded in truly open science and radical collaboration, the AD Knowledge Portal bridges data silos by integrating with a broad network of consortia and repositories. Each contributes unique data and expertise needed to drive discovery in Alzheimer's Disease research."
         centerTitle
         ContainerProps={{
           sx: { marginBottom: '140px' },
