@@ -7,6 +7,9 @@ function ExploreLayout() {
         {
           path: 'Studies',
         },
+        {
+          path: 'Datasets',
+        },
       ]}
     />
   )

@@ -1,11 +1,9 @@
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import { studiesSql } from '../resources'
+import { rgbIndex, studiesSql } from '../resources'
 
 const type = SynapseConstants.GENERIC_CARD
-
-const rgbIndex = 5
 
 const columnAliases = {
   studyId: 'Open project space',
