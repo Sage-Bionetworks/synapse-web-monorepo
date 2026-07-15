@@ -102,11 +102,7 @@ type ColumnConfig = {
 }
 
 function getHeaderClassName(isRequired: boolean, isUpsertKey: boolean): string {
-  return isUpsertKey
-    ? 'header-upsert-key'
-    : isRequired
-      ? 'header-cell-required'
-      : 'header-cell'
+  return isRequired || isUpsertKey ? 'header-cell-required' : 'header-cell'
 }
 
 function createDeleteValue(columnName: string, isRequired?: boolean) {
