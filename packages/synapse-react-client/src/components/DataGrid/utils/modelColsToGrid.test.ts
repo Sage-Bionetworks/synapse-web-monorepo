@@ -7,7 +7,6 @@ import { modelColsToGrid } from './modelColsToGrid'
 vi.mock('./columnFactory', () => ({
   createColumn: vi.fn(config => ({
     title: config.columnName,
-    headerClassName: '',
     mockConfig: config,
   })),
 }))
@@ -506,7 +505,6 @@ describe('modelColsToGrid integration', () => {
       enumeratedValues: [],
       isRequired: true,
     })
-    expect(idColumn.headerClassName).toBe('')
 
     const tagsColumn = createColumn({
       columnName: 'tags',
@@ -517,7 +515,6 @@ describe('modelColsToGrid integration', () => {
       enumeratedValues: ['frontend', 'backend', 'mobile'],
       isRequired: false,
     })
-    expect(tagsColumn.headerClassName).toBe('')
 
     const statusColumn = createColumn({
       columnName: 'status',
@@ -525,7 +522,6 @@ describe('modelColsToGrid integration', () => {
       enumeratedValues: ['active', 'inactive', 'pending'],
       isRequired: true,
     })
-    expect(statusColumn.headerClassName).toBe('')
   })
 })
 

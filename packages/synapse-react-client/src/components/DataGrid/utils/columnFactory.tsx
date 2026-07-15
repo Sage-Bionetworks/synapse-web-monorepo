@@ -101,10 +101,6 @@ type ColumnConfig = {
   schemaPropertyInfo?: SchemaPropertyInfo
 }
 
-function getHeaderClassName(): string {
-  return ''
-}
-
 function createDeleteValue(columnName: string, isRequired?: boolean) {
   return ({ rowData }: { rowData: Record<string, unknown> }) => ({
     ...rowData,
@@ -151,7 +147,6 @@ function createBaseColumn(config: ColumnConfig, columnImpl: any) {
         onTogglePin={config.onTogglePin}
       />
     ),
-    headerClassName: getHeaderClassName(),
     minWidth: width,
     basis: width,
     grow: 0,

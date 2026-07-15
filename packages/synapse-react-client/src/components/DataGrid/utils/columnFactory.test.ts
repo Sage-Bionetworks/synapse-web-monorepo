@@ -110,7 +110,6 @@ describe('columnFactory', () => {
       const headerProps = getHeaderProps(column.title)
       expect(headerProps.name).toBe('tags')
       expect(headerProps.description).toBeUndefined()
-      expect(column.headerClassName).toBe('')
     })
 
     it('should create a boolean column for boolean type', () => {
@@ -127,7 +126,6 @@ describe('columnFactory', () => {
       const headerProps = getHeaderProps(column.title)
       expect(headerProps.name).toBe('isActive')
       expect(headerProps.description).toBeUndefined()
-      expect(column.headerClassName).toBe('')
     })
 
     it('should create a date-time column for string type and date-time format', () => {
@@ -144,7 +142,6 @@ describe('columnFactory', () => {
       const headerProps = getHeaderProps(column.title)
       expect(headerProps.name).toBe('isActive')
       expect(headerProps.description).toBeUndefined()
-      expect(column.headerClassName).toBe('')
     })
 
     it('should create a number column for number type', () => {
@@ -161,7 +158,6 @@ describe('columnFactory', () => {
       const headerProps = getHeaderProps(column.title)
       expect(headerProps.name).toBe('count')
       expect(headerProps.description).toBeUndefined()
-      expect(column.headerClassName).toBe('')
     })
 
     it('should create a number column for integer type', () => {
@@ -177,7 +173,6 @@ describe('columnFactory', () => {
       const headerProps = getHeaderProps(column.title)
       expect(headerProps.name).toBe('age')
       expect(headerProps.description).toBeUndefined()
-      expect(column.headerClassName).toBe('')
     })
 
     it('should create an enumerated column when enumeratedValues are provided', () => {
@@ -194,7 +189,6 @@ describe('columnFactory', () => {
       const headerProps = getHeaderProps(column.title)
       expect(headerProps.name).toBe('status')
       expect(headerProps.description).toBeUndefined()
-      expect(column.headerClassName).toBe('')
     })
 
     it('should create a text column as default', () => {
@@ -211,7 +205,6 @@ describe('columnFactory', () => {
       const headerProps = getHeaderProps(column.title)
       expect(headerProps.name).toBe('description')
       expect(headerProps.description).toBeUndefined()
-      expect(column.headerClassName).toBe('')
     })
 
     it('should set required header class when isRequired is true', () => {
@@ -223,8 +216,6 @@ describe('columnFactory', () => {
       }
 
       const column = createColumn(config)
-
-      expect(column.headerClassName).toBe('')
     })
 
     it('should set normal header class when isRequired is false', () => {
@@ -236,8 +227,6 @@ describe('columnFactory', () => {
       }
 
       const column = createColumn(config)
-
-      expect(column.headerClassName).toBe('')
     })
 
     describe('Custom Width Support', () => {
@@ -403,7 +392,6 @@ describe('columnFactory', () => {
         expect(column.basis).toBe(180)
         expect(column.grow).toBe(0)
         expect(column.shrink).toBe(0)
-        expect(column.headerClassName).toBe('')
       })
     })
 
