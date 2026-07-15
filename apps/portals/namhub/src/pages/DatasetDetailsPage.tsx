@@ -4,8 +4,11 @@ import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-por
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
-import { datasetsSql } from '@/config/resources'
-import { datasetCardConfiguration } from '@/config/synapseConfigs/datasets'
+import { datasetsSql, rgbIndex } from '@/config/resources'
+import {
+  datasetCardConfiguration,
+  datasetColumnAliases,
+} from '@/config/synapseConfigs/datasets'
 
 function DatasetDetailsPage() {
   const { id } = useGetPortalComponentSearchParams()
@@ -20,6 +23,7 @@ function DatasetDetailsPage() {
           }}
           sql={datasetsSql}
           searchParams={{ id }}
+          columnAliases={datasetColumnAliases}
         />
       }
       sql={datasetsSql}
@@ -35,7 +39,7 @@ function DatasetDetailsPage() {
             id: 'Files',
             element: id ? (
               <QueryWrapperPlotNav
-                rgbIndex={5}
+                rgbIndex={rgbIndex}
                 sql={`SELECT * FROM ${id}`}
                 visibleColumnCount={7}
                 tableConfiguration={{
