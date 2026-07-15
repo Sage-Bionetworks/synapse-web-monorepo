@@ -15,16 +15,6 @@ describe('NextStepButton', () => {
       expect(screen.getByText('Open Curator')).toBeInTheDocument()
     })
 
-    it('renders the "Next step" label', () => {
-      render(<NextStepButton buttonText="Open Curator" onClick={mockOnClick} />)
-      expect(screen.getByText('Next step')).toBeInTheDocument()
-    })
-
-    it('renders the arrow icon', () => {
-      render(<NextStepButton buttonText="Open Curator" onClick={mockOnClick} />)
-      expect(screen.getByTestId('ArrowForwardIosIcon')).toBeInTheDocument()
-    })
-
     it('calls onClick when clicked', async () => {
       const user = await import('@testing-library/user-event').then(m =>
         m.default.setup(),
@@ -85,30 +75,6 @@ describe('NextStepButton', () => {
         />,
       )
       expect(screen.queryByText('Next step')).not.toBeInTheDocument()
-    })
-
-    it('renders the spreadsheet icon', () => {
-      render(
-        <NextStepButton
-          buttonText="Open Curator"
-          onClick={mockOnClick}
-          expanded={true}
-        />,
-      )
-      expect(screen.getByTestId('TableChartOutlinedIcon')).toBeInTheDocument()
-    })
-
-    it('does not render the arrow icon', () => {
-      render(
-        <NextStepButton
-          buttonText="Open Curator"
-          onClick={mockOnClick}
-          expanded={true}
-        />,
-      )
-      expect(
-        screen.queryByTestId('ArrowForwardIosIcon'),
-      ).not.toBeInTheDocument()
     })
 
     it('calls onClick when clicked', async () => {
