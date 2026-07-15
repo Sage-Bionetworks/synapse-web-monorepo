@@ -19,8 +19,8 @@ function AdknowledgeCard({
   buttonLink,
 }: AdknowledgeCardProps) {
   const isExternal = isExternalLink(buttonLink ?? '')
-
   const renderCardAsLink = buttonLink && !buttonText
+
   const cardContent = (
     <>
       {Image && <Image />}
