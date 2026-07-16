@@ -10,6 +10,7 @@ export type WordPressNewsProps = {
   /** Number of posts to display. Defaults to 10. */
   postCount?: number
   showCategoryChips?: boolean
+  showDescription?: boolean
   variant?: 'adkp'
 }
 
@@ -17,6 +18,7 @@ export function WordPressNews({
   wordpressSiteUrl,
   postCount = 10,
   showCategoryChips = true,
+  showDescription = false,
   variant,
 }: WordPressNewsProps) {
   const { data: posts } = useWordPressPosts(wordpressSiteUrl, postCount)
@@ -29,8 +31,6 @@ export function WordPressNews({
   if (!posts || posts.length === 0) {
     return <></>
   }
-
-  console.log('posts', posts)
 
   return (
     <Box
@@ -45,6 +45,7 @@ export function WordPressNews({
           post={post}
           categoryName={categoryMap.get(post.categories[0])}
           showCategoryChip={showCategoryChips}
+          showDescription={showDescription}
         />
       ))}
     </Box>

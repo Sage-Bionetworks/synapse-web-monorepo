@@ -24,12 +24,14 @@ export type WordPressNewsItemProps = {
   post: WordPressPost
   categoryName: string | undefined
   showCategoryChip?: boolean
+  showDescription?: boolean
 }
 
 export function WordPressNewsItem({
   post,
   categoryName,
   showCategoryChip = true,
+  showDescription = false,
 }: WordPressNewsItemProps) {
   return (
     <Box
@@ -49,6 +51,13 @@ export function WordPressNewsItem({
         <Typography variant="body1" className={styles.itemMeta}>
           {dayjs(post.date).fromNow()}
         </Typography>
+        {showDescription && (
+          <Typography
+            variant="body1"
+            className={styles.itemDescription}
+            dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }}
+          />
+        )}
       </Box>
       <Box className={styles.itemAction}>
         {categoryName && showCategoryChip && (

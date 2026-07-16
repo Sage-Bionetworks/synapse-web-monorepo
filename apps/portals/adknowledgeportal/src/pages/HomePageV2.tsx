@@ -154,6 +154,7 @@ function HomePageInternal() {
           <WordPressNews
             wordpressSiteUrl="https://news.adknowledgeportal.org"
             showCategoryChips={false}
+            showDescription={true}
             variant="adkp"
             postCount={6}
           />
