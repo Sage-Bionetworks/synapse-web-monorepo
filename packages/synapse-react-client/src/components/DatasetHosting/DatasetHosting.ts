@@ -71,12 +71,13 @@ export type DatasetHostingConfig = {
   /**
    * Icon shown on the button, encoding where the data lives relative to Synapse:
    *  - `download`: native, stored in Synapse
+   *  - `cloud`: third-party managed cloud bucket
    *  - `external`: hosted outside Synapse but still downloadable
    *  - `launch`: not downloadable here — the user leaves Synapse to access it
    *  - `mixed`: files live in more than one location
    *  - `unavailable`: not available for download, with no external destination
    */
-  icon: 'download' | 'external' | 'launch' | 'mixed' | 'unavailable'
+  icon: 'download' | 'cloud' | 'external' | 'launch' | 'mixed' | 'unavailable'
 }
 
 export const DATASET_HOSTING_CONFIG: Record<
@@ -94,7 +95,7 @@ export const DATASET_HOSTING_CONFIG: Record<
     downloadable: true,
     label: 'Download',
     color: 'primary',
-    icon: 'external',
+    icon: 'cloud',
     tooltip:
       'Files are stored in a cloud bucket maintained by a third party. They download the same way as Synapse-hosted files, but the bucket owner could remove them in the future.',
   },

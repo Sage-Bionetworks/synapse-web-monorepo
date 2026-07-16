@@ -15,7 +15,6 @@ import {
   Typography,
 } from '@mui/material'
 import {
-  ElementType,
   KeyboardEvent,
   MouseEvent,
   SyntheticEvent,
@@ -58,9 +57,6 @@ export type DropdownMenuProps = {
   buttonProps?: ButtonProps
   /* Optional MUI button variant for the dropdown button (and the single-item button). Default 'outlined'. */
   variant?: ButtonProps['variant']
-  /* Optional component to render the trigger (and single-item) button, so callers
-   * can restyle it (e.g. a card's chip-shaped action button). Default MUI Button. */
-  ButtonComponent?: ElementType
   /* If true, will render a single action as a standalone button. Default true. */
   convertSingleItemToButton?: boolean
   /* If true, nothing will be rendered if no actions are passed. Default false. */
@@ -79,7 +75,6 @@ export function DropdownMenu(props: DropdownMenuProps) {
     renderMenuIfNoItems = false,
     buttonProps = {},
     variant = 'outlined',
-    ButtonComponent = Button,
   } = props
 
   const dropdownMenuId = useId()
@@ -87,7 +82,6 @@ export function DropdownMenu(props: DropdownMenuProps) {
   const anchorRef = useRef<HTMLButtonElement>(null)
 
   const numberOfMenuItems = items.flat().length
-  const anyItemHasIcon = items.flat().some(item => Boolean(item.icon))
 
   if (!renderMenuIfNoItems && numberOfMenuItems === 0) {
     // Hide menu if no actions will be in the menu
@@ -98,7 +92,7 @@ export function DropdownMenu(props: DropdownMenuProps) {
     // If one action is in the menu, show it as a button
     const menuItem = items.flat()[0]
     return (
-      <ButtonComponent
+      <Button
         component={'href' in menuItem ? 'a' : 'button'}
         title={menuItem.tooltipText}
         variant={variant}
@@ -107,10 +101,9 @@ export function DropdownMenu(props: DropdownMenuProps) {
         onClick={'onClick' in menuItem ? menuItem.onClick : undefined}
         disabled={menuItem.disabled}
         endIcon={menuItem.icon && <IconSvg icon={menuItem.icon} wrap={false} />}
-        {...buttonProps}
       >
         <Typography variant={'buttonLink'}>{menuItem.text}</Typography>
-      </ButtonComponent>
+      </Button>
     )
   }
 
@@ -149,7 +142,7 @@ export function DropdownMenu(props: DropdownMenuProps) {
         placement={'top'}
       >
         <span>
-          <ButtonComponent
+          <Button
             variant={variant}
             ref={anchorRef}
             id={`composition-button-${dropdownMenuId}`}
@@ -162,7 +155,7 @@ export function DropdownMenu(props: DropdownMenuProps) {
             {...buttonProps}
           >
             <Typography variant={'buttonLink'}>{dropdownButtonText}</Typography>
-          </ButtonComponent>
+          </Button>
         </span>
       </Tooltip>
       <Popper
@@ -232,29 +225,25 @@ export function DropdownMenu(props: DropdownMenuProps) {
                                 }
                               }}
                             >
-                              {/* Only reserve the icon gutter when some item actually has an
-                  icon, so icon-less menus don't show empty left padding. */}
-                              {anyItemHasIcon && (
-                                <ListItemIcon
-                                  style={{
-                                    // MUI has specified a more specific minWidth for ListItemIcon inside a MenuList than
-                                    // we can create with sx, so apply an inline style for this property only.
-                                    minWidth: '30px',
-                                  }}
-                                >
-                                  {item.icon && (
-                                    <IconSvg
-                                      icon={item.icon}
-                                      sx={{
-                                        width: '17px',
-                                        height: '17px',
-                                        ...item.iconSx,
-                                      }}
-                                      wrap={false}
-                                    />
-                                  )}
-                                </ListItemIcon>
-                              )}
+                              <ListItemIcon
+                                style={{
+                                  // MUI has specified a more specific minWidth for ListItemIcon inside a MenuList than
+                                  // we can create with sx, so apply an inline style for this property only.
+                                  minWidth: '30px',
+                                }}
+                              >
+                                {item.icon && (
+                                  <IconSvg
+                                    icon={item.icon}
+                                    sx={{
+                                      width: '17px',
+                                      height: '17px',
+                                      ...item.iconSx,
+                                    }}
+                                    wrap={false}
+                                  />
+                                )}
+                              </ListItemIcon>
                               <ListItemText
                                 sx={{ marginTop: 0 }}
                                 slotProps={{

@@ -15,13 +15,12 @@ import {
 import { useDirectDownloadHandler } from '@/utils/hooks/useDirectDownloadHandler'
 import { isFileEntity } from '@/utils/types/IsType'
 import { DownloadOutlined as DownloadIcon } from '@mui/icons-material'
-import { ButtonProps } from '@mui/material'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   FileHandleAssociateType,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
-import { ElementType, RefObject, useState } from 'react'
+import { RefObject, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { displayFilesWereAddedToDownloadListSuccess } from '../download_list/DownloadConfirmationUtils'
 import { EntityDownloadConfirmation } from '../EntityDownloadConfirmation'
@@ -328,16 +327,6 @@ export function EntityDownloadButton(props: {
   entityType: EntityType
   downloadConfirmationContainer?: RefObject<HTMLElement | null>
   disabled?: boolean
-  /** Text for the trigger button. Defaults to "Download". */
-  dropdownButtonText?: string
-  /** Tooltip for the trigger button. Defaults to "Download options for this entity". */
-  buttonTooltip?: string
-  /** Component used to render the trigger button (e.g. a card's chip-styled action button). */
-  ButtonComponent?: ElementType
-  /** Extra props merged onto the trigger button (e.g. a custom startIcon). */
-  buttonProps?: ButtonProps
-  /** Omit the "Export Table" action (e.g. dataset cards, where it's not useful). */
-  hideExportTable?: boolean
 }) {
   // get the appropriate version number for the entity
   const { latestVersionNumber } = useGetLatestVersionNumber(
@@ -444,12 +433,6 @@ export function EntityDownloadButton(props: {
 
   // Create download menu items
   const downloadActions = getDownloadActionsForEntityType(props.entityType)
-    .map(actionGroup =>
-      props.hideExportTable
-        ? actionGroup.filter(action => action !== DownloadAction.exportTable)
-        : actionGroup,
-    )
-    .filter(actionGroup => actionGroup.length > 0)
   const downloadMenuItems = downloadActions.map(actionGroup =>
     actionGroup.map(action =>
       getMenuItemForAction(
@@ -488,16 +471,12 @@ export function EntityDownloadButton(props: {
     <>
       <DropdownMenu
         items={downloadMenuItems}
-        dropdownButtonText={props.dropdownButtonText ?? 'Download'}
-        buttonTooltip={
-          props.buttonTooltip ?? 'Download options for this entity'
-        }
-        ButtonComponent={props.ButtonComponent}
+        dropdownButtonText="Download"
+        buttonTooltip="Download options for this entity"
         buttonProps={{
           variant: 'outlined',
           startIcon: <DownloadIcon />,
           disabled: props.disabled || downloadConfirmationLoading,
-          ...props.buttonProps,
         }}
       />
       {downloadConfirmation &&

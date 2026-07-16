@@ -729,6 +729,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
                 <DatasetDownloadButton
                   entityId={resolvedDownloadCartSynIdValue}
                   name={title}
+                  version={resolvedDownloadCartVersionNumber}
                   hosting={hostingType}
                   repository={hostingRepository}
                   externalUrl={hostingExternalUrl}

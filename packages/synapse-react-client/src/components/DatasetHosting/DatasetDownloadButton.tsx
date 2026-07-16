@@ -4,12 +4,13 @@ import PublicOutlined from '@mui/icons-material/PublicOutlined'
 import OpenInNew from '@mui/icons-material/OpenInNew'
 import LayersOutlined from '@mui/icons-material/LayersOutlined'
 import BlockOutlined from '@mui/icons-material/BlockOutlined'
-import ArrowDropDown from '@mui/icons-material/ArrowDropDown'
-import { ReactNode, RefObject } from 'react'
-import { EntityType } from '@sage-bionetworks/synapse-client'
+import AssuredWorkloadOutlined from '@mui/icons-material/AssuredWorkloadOutlined'
+import { ReactNode, RefObject, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { TargetEnum } from '@/utils/html/TargetEnum'
+import { useSynapseContext } from '@/utils'
 import GenericCardActionButton from '../GenericCard/GenericCardActionButton'
-import { EntityDownloadButton } from '../EntityDownloadButton/EntityDownloadButton'
+import { EntityDownloadConfirmation } from '../EntityDownloadConfirmation'
 import {
   DATASET_HOSTING_CONFIG,
   DatasetHostingConfig,
@@ -20,17 +21,22 @@ import {
 
 const ICONS = {
   download: GetAppTwoTone,
+  cloud: AssuredWorkloadOutlined,
   external: PublicOutlined,
   launch: OpenInNew,
   mixed: LayersOutlined,
   unavailable: BlockOutlined,
 } as const
 
+const SIGN_IN_TOOLTIP = 'Please sign in to add files to your download list'
+
 export type DatasetDownloadButtonProps = {
-  /** The dataset entity id (synId); required to offer download options. */
+  /** The dataset entity id (synId); required to offer the download action. */
   entityId?: string
-  /** The dataset name, shown in the download dialogs. */
+  /** The dataset name, shown in the download confirmation. */
   name: string
+  /** The dataset version to add to the download list, if any. */
+  version?: number
   /**
    * The dataset's hosting type. Accepts a raw annotation value (possibly blank,
    * null, or unrecognized); anything unrecognized is treated as `synapse`.
@@ -41,7 +47,7 @@ export type DatasetDownloadButtonProps = {
   /** Destination for the action when the dataset is not downloadable (e.g. dbGaP/EGA). */
   externalUrl?: string
   disabled?: boolean
-  /** Portal target for the download-confirmation dialog (see EntityDownloadButton). */
+  /** Portal target for the download-confirmation dialog (see EntityDownloadConfirmation). */
   downloadConfirmationContainer?: RefObject<HTMLElement | null>
 }
 
@@ -66,8 +72,7 @@ const ELLIPSIS = {
 
 // The composed labels ("Download from GEO", "Access at dbGaP") are already
 // sentence-cased, so opt out of the theme button's capitalize transform. `color:
-// inherit` lets the label take the button's color so text and icon always match
-// (the buttonLink typography would otherwise force its own dark color).
+// inherit` lets the label take the button's color so text and icon always match.
 const LABEL_SX = {
   ...ELLIPSIS,
   textTransform: 'none',
@@ -77,9 +82,9 @@ const LABEL_SX = {
 /**
  * The hosting-aware primary action for a dataset. `hosting` only modulates the
  * standard download affordance; it never invents a parallel download path:
- *  - downloadable types render the shared {@link EntityDownloadButton} — identical
- *    options (Add to Download List, Programmatic Access, Export Table) and behavior
- *    across portals — with the hosting label/icon and the caveat in the tooltip
+ *  - downloadable types add the dataset to the user's download list (the only
+ *    download path); when signed out, the button is disabled and its tooltip says
+ *    so, rather than opening a confirmation with a sign-in prompt
  *  - `external-access` swaps in an "Access at {repository}" link-out
  *  - `unavailable` is a disabled, non-actionable indicator
  *
@@ -90,52 +95,83 @@ export function DatasetDownloadButton(props: DatasetDownloadButtonProps) {
   const {
     entityId,
     name,
+    version,
     hosting,
     repository,
     externalUrl,
     disabled,
     downloadConfirmationContainer,
   } = props
+  const { isAuthenticated } = useSynapseContext()
   const config = DATASET_HOSTING_CONFIG[normalizeHosting(hosting)]
 
   const label = resolveLabel(config, repository)
-  const tooltip = fillRepository(config.tooltip, repository)
+  const caveat = fillRepository(config.tooltip, repository)
   const Icon = ICONS[config.icon]
 
-  if (config.downloadable && entityId) {
-    return (
-      <EntityDownloadButton
-        entityId={entityId}
-        name={name}
-        entityType={EntityType.dataset}
-        disabled={disabled}
-        hideExportTable
-        downloadConfirmationContainer={downloadConfirmationContainer}
-        dropdownButtonText={label}
-        buttonTooltip={tooltip}
-        ButtonComponent={GenericCardActionButton}
-        buttonProps={{
-          startIcon: <Icon sx={{ fontSize: '16px' }} />,
-          endIcon: <ArrowDropDown />,
-          sx: {
-            maxWidth: MAX_WIDTH,
-            textTransform: 'none',
-            '& .MuiTypography-root': LABEL_SX,
-          },
-        }}
-      />
-    )
-  }
+  const [showConfirmation, setShowConfirmation] = useState(false)
+  const [isAdding, setIsAdding] = useState(false)
 
   const labelEl = (
     <Typography variant="buttonLink" sx={LABEL_SX}>
       {label}
     </Typography>
   )
+  // Every card's button shows the same visible label ("Download"), so include the
+  // dataset name in the accessible name to distinguish them for screen readers.
+  const ariaLabel = `${label}, ${name}`
+
+  // Downloadable: a single button that adds the dataset to the download list.
+  if (config.downloadable && entityId) {
+    const canDownload = isAuthenticated && !disabled
+    // When signed out, the button itself signals the requirement; we never open
+    // the confirmation (which would otherwise show its own sign-in prompt).
+    const tooltip = !isAuthenticated ? SIGN_IN_TOOLTIP : caveat
+    const button = (
+      <GenericCardActionButton
+        variant="outlined"
+        aria-label={ariaLabel}
+        startIcon={<Icon sx={{ fontSize: '16px' }} />}
+        onClick={() => setShowConfirmation(value => !value)}
+        disabled={!canDownload || isAdding}
+        sx={{ maxWidth: MAX_WIDTH, textTransform: 'none' }}
+      >
+        {labelEl}
+      </GenericCardActionButton>
+    )
+    const confirmation =
+      showConfirmation && canDownload ? (
+        <EntityDownloadConfirmation
+          entityId={entityId}
+          versionNumber={version}
+          onIsLoadingChange={setIsAdding}
+          handleClose={() => setShowConfirmation(false)}
+        />
+      ) : null
+    return (
+      <>
+        {tooltip ? (
+          <Tooltip title={tooltip} arrow placement="top">
+            {/* span lets the tooltip work even when the button is disabled */}
+            <span>{button}</span>
+          </Tooltip>
+        ) : (
+          button
+        )}
+        {confirmation &&
+          (downloadConfirmationContainer?.current
+            ? createPortal(confirmation, downloadConfirmationContainer.current)
+            : confirmation)}
+      </>
+    )
+  }
+
+  // Not downloadable: link out to the external repository, or a disabled indicator.
   const control: ReactNode =
     config.isExternalLink && externalUrl ? (
       <GenericCardActionButton
         variant="outlined"
+        aria-label={ariaLabel}
         href={externalUrl}
         target={TargetEnum.NEW_WINDOW}
         rel="noopener noreferrer"
@@ -144,8 +180,7 @@ export function DatasetDownloadButton(props: DatasetDownloadButtonProps) {
           maxWidth: MAX_WIDTH,
           textTransform: 'none',
           // As an <a>, a visited link would otherwise darken to primary.dark
-          // (theme rule), making it look different from the button-rendered
-          // download actions. Keep the resting color consistent.
+          // (theme rule); keep the resting color consistent with the buttons.
           '&:visited': { color: 'primary.main' },
         }}
       >
@@ -154,6 +189,7 @@ export function DatasetDownloadButton(props: DatasetDownloadButtonProps) {
     ) : (
       <GenericCardActionButton
         variant="outlined"
+        aria-label={ariaLabel}
         disabled
         startIcon={<Icon sx={{ fontSize: '16px' }} />}
         sx={{ maxWidth: MAX_WIDTH, textTransform: 'none' }}
@@ -162,8 +198,8 @@ export function DatasetDownloadButton(props: DatasetDownloadButtonProps) {
       </GenericCardActionButton>
     )
 
-  return tooltip ? (
-    <Tooltip title={tooltip} arrow placement="top">
+  return caveat ? (
+    <Tooltip title={caveat} arrow placement="top">
       {/* span lets the tooltip work even when the control is disabled */}
       <span>{control}</span>
     </Tooltip>
