@@ -13,6 +13,13 @@ export const datasetCardConfiguration: CardConfiguration = {
     title: 'name',
     type: SynapseConstants.DATASET,
     secondaryLabels: ['createdOn', 'projectId'],
+    includeCitation: true,
+    synapseEntityConfig: {
+      id: {
+        source: 'column',
+        columnName: 'id',
+      },
+    },
   },
   titleLinkConfig: {
     isMarkdown: false,
