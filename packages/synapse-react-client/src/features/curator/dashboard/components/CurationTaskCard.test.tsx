@@ -3,7 +3,7 @@ import useOpenCuratorFromTaskButton from '@/features/entity/metadata-task/hooks/
 import { createMockTaskBundle } from '@/mocks/curation/mockCurationTask'
 import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
 import { CurationTask, TaskBundle } from '@sage-bionetworks/synapse-client'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach } from 'vitest'
 import CurationTaskCard from './CurationTaskCard'
@@ -195,7 +195,8 @@ describe('CurationTaskCard', () => {
         instructions: 'Test instructions',
       })
       renderComponent(taskWithInstructions)
-      expect(screen.queryByText('Test instructions')).not.toBeInTheDocument()
+      const instructions = screen.queryByText('Test instructions')
+      expect(instructions).not.toBeVisible()
     })
 
     it('shows instructions when title is clicked', async () => {
@@ -210,7 +211,8 @@ describe('CurationTaskCard', () => {
       const title = screen.getByText('Test Data Type')
       await user.click(title)
 
-      expect(screen.getByText('Test instructions')).toBeInTheDocument()
+      const instructions = screen.getByText('Test instructions')
+      expect(instructions).toBeVisible()
     })
 
     it('toggles expanded state when title is clicked', async () => {
@@ -223,17 +225,20 @@ describe('CurationTaskCard', () => {
       renderComponent(taskWithInstructions)
 
       const title = screen.getByText('Test Data Type')
+      const instructions = screen.getByText('Test instructions')
 
       // Initially collapsed
-      expect(screen.queryByText('Test instructions')).not.toBeInTheDocument()
+      expect(instructions).not.toBeVisible()
 
       // Click to expand
       await user.click(title)
-      expect(screen.getByText('Test instructions')).toBeInTheDocument()
+      expect(instructions).toBeVisible()
 
       // Click to collapse
       await user.click(title)
-      expect(screen.queryByText('Test instructions')).not.toBeInTheDocument()
+      await waitFor(() => {
+        expect(instructions).not.toBeVisible()
+      })
     })
   })
 })
