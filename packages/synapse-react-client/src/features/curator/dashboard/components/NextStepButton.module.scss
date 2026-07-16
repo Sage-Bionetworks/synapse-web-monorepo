@@ -55,3 +55,31 @@
     }
   }
 }
+
+.expandedButton {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 24px;
+  background-color: var(--synapse-primary-action-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:disabled {
+    pointer-events: all;
+    opacity: 0.5;
+  }
+
+  &:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+
+  &:active:not(:disabled) {
+    opacity: 0.8;
+  }
+}

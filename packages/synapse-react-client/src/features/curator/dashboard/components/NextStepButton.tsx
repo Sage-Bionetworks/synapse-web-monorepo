@@ -1,5 +1,5 @@
 import styles from './NextStepButton.module.scss'
-import { Typography, useTheme } from '@mui/material'
+import { Button, Typography } from '@mui/material'
 import { ArrowForwardIos, TableChartOutlined } from '@mui/icons-material'
 import { SynapseSpinner } from '@/components/LoadingScreen/LoadingScreen'
 import classNames from 'classnames'
@@ -19,37 +19,23 @@ type NextStepButtonProps = {
  */
 export default function NextStepButton(props: NextStepButtonProps) {
   const { className, buttonText, onClick, disabled, loading, expanded } = props
-  const theme = useTheme()
 
   if (expanded) {
     return (
-      <button
-        type="button"
-        className={classNames(styles.button, className)}
+      <Button
+        className={classNames(styles.expandedButton, className)}
         onClick={onClick}
         disabled={disabled || loading}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '8px',
-          width: '100%',
-          backgroundColor: theme.palette.primary.main,
-          color: 'white',
-          border: 'none',
-          padding: '12px 24px',
-          borderRadius: '4px',
-          cursor: 'pointer',
-        }}
+        startIcon={<TableChartOutlined sx={{ fontSize: 20 }} />}
+        sx={{ width: '100%' }}
       >
-        <TableChartOutlined sx={{ fontSize: 20 }} />
         <Typography
           variant="buttonLink"
           sx={{ color: 'inherit', fontWeight: 700 }}
         >
           {buttonText}
         </Typography>
-      </button>
+      </Button>
     )
   }
 
