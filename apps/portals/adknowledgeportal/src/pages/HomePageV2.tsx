@@ -52,7 +52,8 @@ function HomePageInternal() {
 
   const dataExplorerTextSection = {
     sql: dataTypeSql,
-    title: 'Our portal has more than a petabyte of data..',
+    facetSql: exploreQuerySql,
+    title: 'More than a petabyte of multiomic data...',
     buttonText: 'Explore Alzheimer’s Data',
     buttonLink: '/Explore/Data',
     subtitle:
