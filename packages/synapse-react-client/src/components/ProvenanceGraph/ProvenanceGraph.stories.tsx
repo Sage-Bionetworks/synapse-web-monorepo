@@ -30,6 +30,20 @@ export const NoProvenanceGraph: Story = {
       },
     ],
     containerHeight: '500px',
+    onEditProvenanceClicked: undefined,
+  },
+}
+
+export const NoProvenanceGraphCanEdit: Story = {
+  args: {
+    onEditProvenanceClicked: () => {},
+    entityRefs: [
+      {
+        targetId: 'syn8075918',
+        targetVersionNumber: undefined,
+      },
+    ],
+    containerHeight: '500px',
   },
 }
 

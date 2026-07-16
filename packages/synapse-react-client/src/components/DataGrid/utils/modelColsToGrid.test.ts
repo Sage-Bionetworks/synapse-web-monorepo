@@ -7,7 +7,6 @@ import { modelColsToGrid } from './modelColsToGrid'
 vi.mock('./columnFactory', () => ({
   createColumn: vi.fn(config => ({
     title: config.columnName,
-    headerClassName: config.isRequired ? 'header-cell-required' : 'header-cell',
     mockConfig: config,
   })),
 }))
@@ -498,34 +497,6 @@ describe('modelColsToGrid integration', () => {
       const columnName = columnNames[columnOrder[index]]
       expect(column.title).toBe(columnName)
     })
-
-    // Test individual column creation for specific types
-    const idColumn = createColumn({
-      columnName: 'id',
-      typeInfo: { type: 'string', isArray: false },
-      enumeratedValues: [],
-      isRequired: true,
-    })
-    expect(idColumn.headerClassName).toBe('header-cell-required')
-
-    const tagsColumn = createColumn({
-      columnName: 'tags',
-      typeInfo: {
-        type: 'string',
-        isArray: true,
-      },
-      enumeratedValues: ['frontend', 'backend', 'mobile'],
-      isRequired: false,
-    })
-    expect(tagsColumn.headerClassName).toBe('header-cell')
-
-    const statusColumn = createColumn({
-      columnName: 'status',
-      typeInfo: { type: 'string', isArray: false },
-      enumeratedValues: ['active', 'inactive', 'pending'],
-      isRequired: true,
-    })
-    expect(statusColumn.headerClassName).toBe('header-cell-required')
   })
 })
 

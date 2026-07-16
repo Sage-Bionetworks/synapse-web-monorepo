@@ -11,8 +11,38 @@ import {
 } from '@/utils/functions/getEndpoint'
 import { Activity } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
-import ProvenanceGraph, { ProvenanceProps } from './ProvenanceGraph'
+import ProvenanceGraph, {
+  ProvenanceProps,
+  EDIT_PROVENANCE_TEXT,
+  NO_PROVENANCE_TITLE,
+} from './ProvenanceGraph'
+
+const noProvenanceRefs = [
+  {
+    targetId: mockFileEntityData.id,
+    targetVersionNumber: mockFileEntityData.entity.versionNumber,
+  },
+]
+
+function useNoActivity() {
+  server.use(
+    http.get(
+      `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ACTIVITY_FOR_ENTITY(
+        mockFileEntityData.id,
+        `${mockFileEntityData.entity.versionNumber}`,
+      )}`,
+      () => {
+        const response: SynapseApiResponse<Activity> = {
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+          reason: `No activity for ${mockFileEntityData.id}`,
+        }
+        return HttpResponse.json(response, { status: 404 })
+      },
+    ),
+  )
+}
 
 function renderComponent(props: ProvenanceProps) {
   return render(<ProvenanceGraph {...props} />, { wrapper: createWrapper() })
@@ -84,5 +114,31 @@ describe('ProvenanceGraph', () => {
     expect(fileEntityNode).toBeDefined() // found entity node
     const activityNode = await screen.findByText(mockActivity.name)
     expect(activityNode).toBeDefined() // found activity node
+  })
+
+  test('shows the Edit Provenance button and fires the callback when the user can edit', async () => {
+    useNoActivity()
+    const onEditProvenanceClicked = vi.fn()
+    renderComponent({
+      entityRefs: noProvenanceRefs,
+      containerHeight: '500px',
+      onEditProvenanceClicked,
+    })
+
+    const button = await screen.findByRole('button', {
+      name: EDIT_PROVENANCE_TEXT,
+    })
+    await userEvent.click(button)
+    expect(onEditProvenanceClicked).toHaveBeenCalledTimes(1)
+  })
+
+  test('hides the Edit Provenance button when no edit callback is provided', async () => {
+    useNoActivity()
+    renderComponent({ entityRefs: noProvenanceRefs, containerHeight: '500px' })
+    await screen.findByText(NO_PROVENANCE_TITLE)
+
+    expect(
+      screen.queryByRole('button', { name: EDIT_PROVENANCE_TEXT }),
+    ).not.toBeInTheDocument()
   })
 })

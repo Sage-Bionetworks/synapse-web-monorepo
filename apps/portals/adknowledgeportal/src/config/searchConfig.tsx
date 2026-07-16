@@ -7,6 +7,8 @@ import { experimentalModelsSearch } from '@/config/synapseConfigs/experimental_t
 import { computationalToolsSearch } from '@/config/synapseConfigs/computational_tools'
 import { targetEnablingResourcesSearch } from '@/config/synapseConfigs/target_enabling_resources'
 
+// if searching without specifying a tab, use the defaultSearchTab
+export const defaultSearchTabIndex = 0
 export const searchPageTabs = [
   {
     title: 'Studies',

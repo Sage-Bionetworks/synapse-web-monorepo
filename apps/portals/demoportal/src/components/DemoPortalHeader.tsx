@@ -3,6 +3,8 @@ import { Box, Typography } from '@mui/material'
 import { TypeAnimation } from 'react-type-animation'
 import { visuallyHidden } from 'synapse-react-client'
 import HeaderSearchBox from '@sage-bionetworks/synapse-portal-framework/components/HeaderSearchBox'
+import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
+import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
 import { usePortalContext } from '@sage-bionetworks/synapse-portal-framework/components/PortalContext'
 
 type DemoPortalHeaderProps = {
@@ -105,6 +107,7 @@ const DemoPortalHeader = (props: DemoPortalHeaderProps): React.ReactNode => {
           searchExampleTerms={searchExampleTerms}
           searchPlaceholder={searchPlaceholder}
           path="/Search"
+          isChatEnabled={useGetFeatureFlag(FeatureFlagEnum.PORTAL_CHAT)}
           sx={{
             flex: 1,
             '& > :first-child': {

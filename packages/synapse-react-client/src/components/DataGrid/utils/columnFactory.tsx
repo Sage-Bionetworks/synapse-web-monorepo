@@ -101,14 +101,6 @@ type ColumnConfig = {
   schemaPropertyInfo?: SchemaPropertyInfo
 }
 
-function getHeaderClassName(isRequired: boolean, isUpsertKey: boolean): string {
-  return isUpsertKey
-    ? 'header-upsert-key'
-    : isRequired
-      ? 'header-cell-required'
-      : 'header-cell'
-}
-
 function createDeleteValue(columnName: string, isRequired?: boolean) {
   return ({ rowData }: { rowData: Record<string, unknown> }) => ({
     ...rowData,
@@ -154,10 +146,6 @@ function createBaseColumn(config: ColumnConfig, columnImpl: any) {
         isPinned={config.isPinned}
         onTogglePin={config.onTogglePin}
       />
-    ),
-    headerClassName: getHeaderClassName(
-      config.isRequired,
-      !!config.isUpsertKey,
     ),
     minWidth: width,
     basis: width,
