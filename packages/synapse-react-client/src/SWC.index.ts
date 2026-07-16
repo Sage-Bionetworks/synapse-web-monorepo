@@ -90,8 +90,10 @@ const SynapseComponents = {
     () => import('./components/entity/page/CreatedByModifiedBy'),
   ),
   CsvPreview: lazy(() => import('./components/table/CsvPreview/CsvPreview')),
-  CuratorDashboard: lazy(
-    () => import('./features/curator/dashboard/CuratorDashboard'),
+  CuratorDashboard: lazy(() =>
+    import('./features/curator/dashboard/CuratorDashboardRouter').then(
+      module => ({ default: module.CuratorDashboardRouter }),
+    ),
   ),
   DatasetItemsEditor: lazy(
     () => import('./components/SynapseTable/datasets/DatasetItemsEditor'),
