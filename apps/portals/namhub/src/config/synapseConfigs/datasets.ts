@@ -14,6 +14,7 @@ export const datasetCardConfiguration: CardConfiguration = {
     type: SynapseConstants.DATASET,
     secondaryLabels: ['createdOn', 'projectId'],
     includeCitation: true,
+    defaultCitationFormat: 'nature',
     synapseEntityConfig: {
       id: {
         source: 'column',
