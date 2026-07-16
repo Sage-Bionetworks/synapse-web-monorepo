@@ -152,7 +152,8 @@ export type TableToGenericCardMapping = {
   /**
    * Column name of a STRING_LIST of Data Use Ontology (DUO) values (ontology
    * codes or term names). When set, the values are rendered as DUO tags in a
-   * "Data Usage Restrictions" row in the card's metadata section.
+   * metadata row labeled with the column's display name, so the card matches the
+   * corresponding facet.
    */
   dataUseModifiersColumnName?: string
 }
@@ -303,7 +304,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   )
 
   // DUO (Data Use Ontology) tags, when a dataUseModifiers column is configured.
-  // Rendered as a "Data Usage Restrictions" row in the metadata section.
+  // Rendered as a metadata row labeled with the column's display name.
   const duoContent = useMemo(() => {
     const col = genericCardSchema.dataUseModifiersColumnName
     if (!col) {
@@ -412,9 +413,14 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   const customLabelConfig = genericCardSchema.customSecondaryLabelConfig
 
   // DUO tags rendered as a metadata row (alongside "How to download", size, …).
-  if (duoContent) {
+  // Label it with the DUO column's display name so the card row matches the
+  // facet exactly (respecting any column alias) rather than a hardcoded string.
+  if (duoContent && genericCardSchema.dataUseModifiersColumnName) {
     values.push({
-      columnDisplayName: 'Data Usage Restrictions',
+      columnName: genericCardSchema.dataUseModifiersColumnName,
+      columnDisplayName: getColumnDisplayName(
+        genericCardSchema.dataUseModifiersColumnName,
+      ),
       value: duoContent,
     })
   }
