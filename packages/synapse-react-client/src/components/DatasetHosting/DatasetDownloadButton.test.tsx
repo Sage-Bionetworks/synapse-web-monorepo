@@ -1,6 +1,8 @@
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { describe, expect, test } from 'vitest'
+import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import { DatasetDownloadButton } from './DatasetDownloadButton'
 
 describe('DatasetDownloadButton', () => {
@@ -14,14 +16,20 @@ describe('DatasetDownloadButton', () => {
       expect(screen.queryByRole('link')).not.toBeInTheDocument()
     })
 
-    test('disables the button when signed out (no confirmation popup)', () => {
+    test('signed out: button stays clickable and flips to a red sign-in CTA', async () => {
       render(
         <DatasetDownloadButton entityId="syn123" name="Ds" hosting="synapse" />,
         { wrapper: createWrapper({ isAuthenticated: false }) },
       )
-      expect(
-        screen.getByRole('button', { name: 'Download, Ds' }),
-      ).toBeDisabled()
+      const button = screen.getByRole('button', { name: 'Download, Ds' })
+      expect(button).toBeEnabled()
+
+      await userEvent.click(button)
+      const cta = screen.getByRole('button', {
+        name: 'Sign in to download, Ds',
+      })
+      // Carries the app-wide sign-in class so clicking opens the sign-in modal.
+      expect(cta).toHaveClass(SRC_SIGN_IN_CLASS)
     })
 
     test('labels the button with the repository for external-download', () => {

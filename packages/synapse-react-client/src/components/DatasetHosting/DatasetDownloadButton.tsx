@@ -5,9 +5,11 @@ import OpenInNew from '@mui/icons-material/OpenInNew'
 import LayersOutlined from '@mui/icons-material/LayersOutlined'
 import BlockOutlined from '@mui/icons-material/BlockOutlined'
 import AssuredWorkloadOutlined from '@mui/icons-material/AssuredWorkloadOutlined'
+import LoginOutlined from '@mui/icons-material/LoginOutlined'
 import { ReactNode, RefObject, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { TargetEnum } from '@/utils/html/TargetEnum'
+import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import { useSynapseContext } from '@/utils'
 import GenericCardActionButton from '../GenericCard/GenericCardActionButton'
 import { EntityDownloadConfirmation } from '../EntityDownloadConfirmation'
@@ -27,8 +29,6 @@ const ICONS = {
   mixed: LayersOutlined,
   unavailable: BlockOutlined,
 } as const
-
-const SIGN_IN_TOOLTIP = 'Please sign in to add files to your download list'
 
 export type DatasetDownloadButtonProps = {
   /** The dataset entity id (synId); required to offer the download action. */
@@ -111,6 +111,7 @@ export function DatasetDownloadButton(props: DatasetDownloadButtonProps) {
 
   const [showConfirmation, setShowConfirmation] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
+  const [signInPrompt, setSignInPrompt] = useState(false)
 
   const labelEl = (
     <Typography variant="buttonLink" sx={LABEL_SX}>
@@ -123,36 +124,63 @@ export function DatasetDownloadButton(props: DatasetDownloadButtonProps) {
 
   // Downloadable: a single button that adds the dataset to the download list.
   if (config.downloadable && entityId) {
-    const canDownload = isAuthenticated && !disabled
-    // When signed out, the button itself signals the requirement; we never open
-    // the confirmation (which would otherwise show its own sign-in prompt).
-    const tooltip = !isAuthenticated ? SIGN_IN_TOOLTIP : caveat
+    // Signed out: keep the button clickable as a call to action rather than
+    // greying it out. The first click flips it to a red "Sign in to download"
+    // prompt that opens the app's sign-in modal (SRC_SIGN_IN_CLASS).
+    if (!isAuthenticated) {
+      const PromptIcon = signInPrompt ? LoginOutlined : Icon
+      const promptLabel = signInPrompt ? 'Sign in to download' : label
+      const button = (
+        <GenericCardActionButton
+          variant="outlined"
+          color={signInPrompt ? 'error' : 'primary'}
+          aria-label={`${promptLabel}, ${name}`}
+          className={signInPrompt ? SRC_SIGN_IN_CLASS : undefined}
+          startIcon={<PromptIcon sx={{ fontSize: '16px' }} />}
+          onClick={() => setSignInPrompt(true)}
+          sx={{ maxWidth: MAX_WIDTH, textTransform: 'none' }}
+        >
+          <Typography variant="buttonLink" sx={LABEL_SX}>
+            {promptLabel}
+          </Typography>
+        </GenericCardActionButton>
+      )
+      // Before the prompt, keep the hosting caveat tooltip; once prompting, the
+      // red label is the notice, so no tooltip.
+      return !signInPrompt && caveat ? (
+        <Tooltip title={caveat} arrow placement="top">
+          <span>{button}</span>
+        </Tooltip>
+      ) : (
+        button
+      )
+    }
+
+    // Signed in: add the dataset to the download list.
     const button = (
       <GenericCardActionButton
         variant="outlined"
         aria-label={ariaLabel}
         startIcon={<Icon sx={{ fontSize: '16px' }} />}
         onClick={() => setShowConfirmation(value => !value)}
-        disabled={!canDownload || isAdding}
+        disabled={disabled || isAdding}
         sx={{ maxWidth: MAX_WIDTH, textTransform: 'none' }}
       >
         {labelEl}
       </GenericCardActionButton>
     )
-    const confirmation =
-      showConfirmation && canDownload ? (
-        <EntityDownloadConfirmation
-          entityId={entityId}
-          versionNumber={version}
-          onIsLoadingChange={setIsAdding}
-          handleClose={() => setShowConfirmation(false)}
-        />
-      ) : null
+    const confirmation = showConfirmation ? (
+      <EntityDownloadConfirmation
+        entityId={entityId}
+        versionNumber={version}
+        onIsLoadingChange={setIsAdding}
+        handleClose={() => setShowConfirmation(false)}
+      />
+    ) : null
     return (
       <>
-        {tooltip ? (
-          <Tooltip title={tooltip} arrow placement="top">
-            {/* span lets the tooltip work even when the button is disabled */}
+        {caveat ? (
+          <Tooltip title={caveat} arrow placement="top">
             <span>{button}</span>
           </Tooltip>
         ) : (

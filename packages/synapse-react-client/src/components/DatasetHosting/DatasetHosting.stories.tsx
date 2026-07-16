@@ -182,7 +182,7 @@ const meta = {
           '- **`repository`** — *free text* (e.g. `GEO`, `dbGaP`, `Zenodo`). Used only as the display label in the button/tooltip; it does **not** affect behavior.',
           '- **`externalUrl`** — *free text*, the link target for non-downloadable (`external-access`) datasets.',
           '',
-          'For downloadable types the button adds the dataset to the download list (the only download path); signed-out users get a disabled button whose tooltip explains sign-in is required.',
+          'For downloadable types the button adds the dataset to the download list (the only download path); signed-out users get a clickable button that flips to a red "Sign in to download" call-to-action opening the sign-in modal.',
         ].join('\n'),
       },
     },
@@ -379,9 +379,10 @@ export const ButtonStyle: StoryObj = {
 }
 
 /**
- * Signed out: the download button is disabled and its tooltip explains that
- * sign-in is required — no confirmation popup / sign-in banner. External-access
- * (a plain link-out) and unavailable are unaffected by auth.
+ * Signed out: the download button stays clickable; clicking it flips the button
+ * to a red "Sign in to download" call-to-action (which opens the sign-in modal in
+ * the app), rather than greying out. External-access (a plain link-out) and
+ * unavailable are unaffected by auth.
  */
 export const SignedOut: StoryObj = {
   args: { isAuthenticated: false },
