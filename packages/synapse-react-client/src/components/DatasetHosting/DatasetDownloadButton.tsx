@@ -137,7 +137,16 @@ export function DatasetDownloadButton(props: DatasetDownloadButtonProps) {
           aria-label={`${promptLabel}, ${name}`}
           className={signInPrompt ? SRC_SIGN_IN_CLASS : undefined}
           startIcon={<PromptIcon sx={{ fontSize: '16px' }} />}
-          onClick={() => setSignInPrompt(true)}
+          onClick={event => {
+            if (!signInPrompt) {
+              // Swallow this first click: React adds SRC_SIGN_IN_CLASS during the
+              // flush, before the event bubbles to the window-level sign-in
+              // handler, which would otherwise fire on this same click. The next
+              // click on the red CTA bubbles through and triggers sign-in.
+              event.stopPropagation()
+              setSignInPrompt(true)
+            }
+          }}
           sx={{ maxWidth: MAX_WIDTH, textTransform: 'none' }}
         >
           <Typography variant="buttonLink" sx={LABEL_SX}>

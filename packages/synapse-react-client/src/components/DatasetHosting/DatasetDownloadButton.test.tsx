@@ -1,7 +1,7 @@
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import { DatasetDownloadButton } from './DatasetDownloadButton'
 
@@ -30,6 +30,35 @@ describe('DatasetDownloadButton', () => {
       })
       // Carries the app-wide sign-in class so clicking opens the sign-in modal.
       expect(cta).toHaveClass(SRC_SIGN_IN_CLASS)
+    })
+
+    test('signed out: the first click does not reach the window sign-in handler; the second does', async () => {
+      // The app registers a window-level click handler for SRC_SIGN_IN_CLASS.
+      // The first click must only flip to the CTA (not sign in); the second click
+      // on the CTA must bubble through to the handler.
+      const windowClick = vi.fn()
+      window.addEventListener('click', windowClick)
+      try {
+        render(
+          <DatasetDownloadButton
+            entityId="syn123"
+            name="Ds"
+            hosting="synapse"
+          />,
+          { wrapper: createWrapper({ isAuthenticated: false }) },
+        )
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Download, Ds' }),
+        )
+        expect(windowClick).not.toHaveBeenCalled()
+
+        await userEvent.click(
+          screen.getByRole('button', { name: 'Sign in to download, Ds' }),
+        )
+        expect(windowClick).toHaveBeenCalledTimes(1)
+      } finally {
+        window.removeEventListener('click', windowClick)
+      }
     })
 
     test('labels the button with the repository for external-download', () => {
