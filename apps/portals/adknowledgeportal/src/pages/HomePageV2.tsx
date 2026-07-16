@@ -6,6 +6,7 @@ import AdknowledgeHeader from '@sage-bionetworks/synapse-portal-framework/compon
 import { WordPressNews } from 'synapse-react-client/components/SynapseHomepageV2/WordPressNews'
 import FloatingBlobsBackground from 'synapse-react-client/components/SynapseHomepageV2/FloatingBlobsBackground'
 import AdknowledgePrograms from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgePrograms/AdknowledgePrograms'
+import AdknowledgePlatformIntegrations from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgePlatformIntegrations/AdknowledgePlatformIntegrations'
 import {
   consortiaAndRepositoriesSql,
   dataTypeSql,
@@ -13,9 +14,6 @@ import {
   programsSql,
 } from '@/config/resources'
 import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
-import { ReactComponent as CavaticaLogo } from '../assets/cavatica.svg'
-import { ReactComponent as TerraLogo } from '../assets/terra.svg'
-import { ReactComponent as ADDILogo } from '../assets/addi.svg'
 import { ReactComponent as ContributeIcon } from '../assets/contribution.svg'
 import { ReactComponent as AgoraIcon } from '../assets/agora.svg'
 import { ReactComponent as ModelADIcon } from '../assets/modelAD.svg'
@@ -123,21 +121,7 @@ function HomePageInternal() {
         subtitle="Analyze your data in a trusted research environment, integrated with the knowledge portal ecosystem."
         centerTitle
       >
-        <div className={styles.dataAnalysisIntegrationsLogoContainer}>
-          <a
-            href="https://www.alzheimersdata.org/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <ADDILogo />
-          </a>
-          <a href="https://www.cavatica.org/" target="_blank" rel="noreferrer">
-            <CavaticaLogo />
-          </a>
-          <a href="https://terra.bio/" target="_blank" rel="noreferrer">
-            <TerraLogo />
-          </a>
-        </div>
+        <AdknowledgePlatformIntegrations />
       </SectionLayout>
       <SectionLayout
         title={'News Releases'}
