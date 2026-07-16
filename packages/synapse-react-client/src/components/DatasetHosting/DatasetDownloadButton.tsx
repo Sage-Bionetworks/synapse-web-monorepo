@@ -83,8 +83,8 @@ const LABEL_SX = {
  * The hosting-aware primary action for a dataset. `hosting` only modulates the
  * standard download affordance; it never invents a parallel download path:
  *  - downloadable types add the dataset to the user's download list (the only
- *    download path); when signed out, the button is disabled and its tooltip says
- *    so, rather than opening a confirmation with a sign-in prompt
+ *    download path); when signed out, the button stays clickable and flips to a
+ *    red "Sign in to download" call-to-action that opens the app's sign-in modal
  *  - `external-access` swaps in an "Access at {repository}" link-out
  *  - `unavailable` is a disabled, non-actionable indicator
  *
