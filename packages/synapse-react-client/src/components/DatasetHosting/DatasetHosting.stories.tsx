@@ -166,6 +166,9 @@ const EXAMPLES: Record<string, DatasetCardExample> = {
 const meta = {
   title: 'Explore/DatasetHosting',
   component: DatasetDownloadButton,
+  // Downloadable datasets require sign-in to add to the download list; default the
+  // stories to authenticated so the buttons show their normal (enabled) state.
+  args: { isAuthenticated: true },
   parameters: {
     layout: 'padded',
     docs: {
@@ -179,12 +182,12 @@ const meta = {
           '- **`repository`** — *free text* (e.g. `GEO`, `dbGaP`, `Zenodo`). Used only as the display label in the button/tooltip; it does **not** affect behavior.',
           '- **`externalUrl`** — *free text*, the link target for non-downloadable (`external-access`) datasets.',
           '',
-          'For downloadable types the button is the shared `EntityDownloadButton`, so the download options (Add to Download List, Programmatic Access, Export Table) and behavior are identical across portals.',
+          'For downloadable types the button adds the dataset to the download list (the only download path); signed-out users get a disabled button whose tooltip explains sign-in is required.',
         ].join('\n'),
       },
     },
   },
-} satisfies Meta<typeof DatasetDownloadButton>
+} satisfies Meta<DatasetDownloadButtonProps & { isAuthenticated: boolean }>
 export default meta
 
 const MODEL_ROWS: {
@@ -371,6 +374,29 @@ export const ButtonStyle: StoryObj = {
           {renderDatasetCard(example, 'button')}
         </Box>
       ))}
+    </Stack>
+  ),
+}
+
+/**
+ * Signed out: the download button is disabled and its tooltip explains that
+ * sign-in is required — no confirmation popup / sign-in banner. External-access
+ * (a plain link-out) and unavailable are unaffected by auth.
+ */
+export const SignedOut: StoryObj = {
+  args: { isAuthenticated: false },
+  render: () => (
+    <Stack gap={4} sx={{ maxWidth: 900 }}>
+      {[EXAMPLES.synapse, EXAMPLES.externalAccess, EXAMPLES.unavailable].map(
+        example => (
+          <Box key={example.hosting}>
+            <Typography variant="overline" sx={{ fontWeight: 700 }}>
+              {example.hosting}
+            </Typography>
+            {renderDatasetCard(example)}
+          </Box>
+        ),
+      )}
     </Stack>
   ),
 }
