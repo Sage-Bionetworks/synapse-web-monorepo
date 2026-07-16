@@ -9,7 +9,7 @@ async function fetchWordPressPosts(
   url.searchParams.set('per_page', String(postCount))
   url.searchParams.set('orderby', 'date')
   url.searchParams.set('order', 'desc')
-  url.searchParams.set('_fields', 'id,date,link,title,categories')
+  url.searchParams.set('_fields', 'id,date,link,title,excerpt,categories')
   const response = await fetch(url.toString())
   if (!response.ok) {
     throw new Error(`Failed to fetch WordPress posts: ${response.statusText}`)

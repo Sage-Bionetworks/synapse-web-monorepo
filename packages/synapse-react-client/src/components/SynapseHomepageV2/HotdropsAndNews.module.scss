@@ -78,6 +78,8 @@
 }
 
 .adkpVariant {
+  background-color: transparent !important;
+
   .item:hover {
     background: linear-gradient(
       91deg,
@@ -87,7 +89,8 @@
     );
 
     .itemTitle,
-    .itemMeta {
+    .itemMeta,
+    .itemDescription {
       color: #fff;
     }
   }

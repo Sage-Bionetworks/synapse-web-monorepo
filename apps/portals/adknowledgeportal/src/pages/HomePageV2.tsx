@@ -124,19 +124,21 @@ function HomePageInternal() {
         <AdknowledgePlatformIntegrations />
       </SectionLayout>
       <SectionLayout
-        title={'News Releases'}
+        title={'New Releases'}
         centerTitle={true}
         ContainerProps={{
           sx: { marginBottom: '90px' },
         }}
-        subtitle="Explore our newest datasets, tools, and resources for Alzheimer's disease research. Click on a release to dive into the data and start your exploration."
+        subtitle="Explore monthly data and feature releases. Click on a release to learn what's new!"
       >
         <div className={styles.newsSection}>
           <FloatingBlobsBackground color1="#dcc9e4" color2="#cdc8dd" />
           <WordPressNews
             wordpressSiteUrl="https://news.adknowledgeportal.org"
             showCategoryChips={false}
+            showDescription={true}
             variant="adkp"
+            postCount={6}
           />
         </div>
       </SectionLayout>
