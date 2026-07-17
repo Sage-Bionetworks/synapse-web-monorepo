@@ -22,8 +22,6 @@ import { CardContainerLogic } from 'synapse-react-client'
 import { consortiaAndRepositoriesCardConfig } from '@/config/synapseConfigs/consortiaAndRepositories'
 import { Button } from '@mui/material'
 
-const FILTER_COLUMN_NAME = 'DataType_All'
-
 function HomePageInternal() {
   const agoraCard = {
     Image: AgoraIcon,
@@ -58,7 +56,6 @@ function HomePageInternal() {
       "Our data encompasses a wide range of modalities, ensuring comprehensive coverage for in-depth Alzheimer's research and discovery.",
     explorePath: '/Explore/Studies',
     exploreQuerySql,
-    filterColumnName: FILTER_COLUMN_NAME,
   }
 
   const helpButtons = [
