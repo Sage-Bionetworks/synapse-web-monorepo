@@ -10,7 +10,7 @@ import PortalsDoiIdSerializer from '@sage-bionetworks/synapse-portal-framework/u
  *  3. Add a case to the switch statement in the doiRedirectConfig function.
  */
 
-export type ADKPResourceType = 'STUDY' | 'HOMEPAGE'
+export type AMPALSResourceType = 'HOMEPAGE'
 
 /** This configuration defines how each resource type maps to its DOI ID.
  * Once DOIs have been created for a particular resource type, that resource type's key (including order) CANNOT CHANGE
@@ -19,11 +19,10 @@ export type ADKPResourceType = 'STUDY' | 'HOMEPAGE'
  * `as const` provides additional type safety in the `doiRedirector` function.
  */
 export const RESOURCE_TYPE_KEY_CONFIGURATION = {
-  STUDY: ['Study'],
   HOMEPAGE: [],
-} as const satisfies Record<ADKPResourceType, string[]>
+} as const satisfies Record<AMPALSResourceType, string[]>
 
-export const doiSerializer = new PortalsDoiIdSerializer<ADKPResourceType>({
+export const doiSerializer = new PortalsDoiIdSerializer<AMPALSResourceType>({
   resourceTypeOrderedRequiredAttributes: RESOURCE_TYPE_KEY_CONFIGURATION,
 })
 
@@ -32,16 +31,10 @@ export const doiSerializer = new PortalsDoiIdSerializer<ADKPResourceType>({
  * @param resourceType the type of the portal resource
  * @param resourceAttributes the attributes of the portal resource that comprise its key
  */
-export const doiRedirector: PortalResourceRedirector<ADKPResourceType> = (
-  resourceType: ADKPResourceType,
-  resourceAttributes: Record<
-    (typeof RESOURCE_TYPE_KEY_CONFIGURATION)[typeof resourceType][number],
-    string
-  >,
+export const doiRedirector: PortalResourceRedirector<AMPALSResourceType> = (
+  resourceType: AMPALSResourceType,
 ) => {
   switch (resourceType) {
-    case 'STUDY':
-      return `/Explore/Studies/DetailsPage/StudyDetails?Study=${resourceAttributes.Study}`
     case 'HOMEPAGE':
       return '/'
     default:

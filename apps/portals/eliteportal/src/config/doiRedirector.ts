@@ -10,7 +10,7 @@ import PortalsDoiIdSerializer from '@sage-bionetworks/synapse-portal-framework/u
  *  3. Add a case to the switch statement in the doiRedirectConfig function.
  */
 
-export type ELITEResourceType = 'STUDY'
+export type ELITEResourceType = 'STUDY' | 'HOMEPAGE'
 
 /** This configuration defines how each resource type maps to its DOI ID.
  * Once DOIs have been created for a particular resource type, that resource type's key (including order) CANNOT CHANGE
@@ -20,6 +20,7 @@ export type ELITEResourceType = 'STUDY'
  */
 export const RESOURCE_TYPE_KEY_CONFIGURATION = {
   STUDY: ['studyKey'],
+  HOMEPAGE: [],
 } as const satisfies Record<ELITEResourceType, string[]>
 
 export const doiSerializer = new PortalsDoiIdSerializer<ELITEResourceType>({
@@ -41,6 +42,8 @@ export const doiRedirector: PortalResourceRedirector<ELITEResourceType> = (
   switch (resourceType) {
     case 'STUDY':
       return `/Explore/Studies/DetailsPage/StudyDetails?studyKey=${resourceAttributes.studyKey}`
+    case 'HOMEPAGE':
+      return '/'
     default:
       throw new Error(
         `Resource type ${resourceType} not supported in this portal.`,

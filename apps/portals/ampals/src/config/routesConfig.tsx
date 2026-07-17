@@ -4,6 +4,8 @@ import { RouteObject } from 'react-router'
 //import header images for Resources pages
 import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
 import RepositoryUnderReviewAlert from '@sage-bionetworks/synapse-portal-framework/components/RepositoryUnderReviewAlert'
+import { getDoiRedirectRoute } from '@sage-bionetworks/synapse-portal-framework/shared-config/DoiRedirectRoute'
+import { doiRedirector, doiSerializer } from '@/config/doiRedirector'
 
 //TO DO: help page button url(s), remove first child h2 padding-top or find some other fix, add input for header images
 
@@ -18,6 +20,10 @@ const routes: RouteObject[] = [
     ),
     children: [
       ...sharedRoutes,
+      getDoiRedirectRoute({
+        redirector: doiRedirector,
+        deserializer: doiSerializer,
+      }),
       {
         index: true,
         lazy: () => import('@/pages/HomePage').then(convertModuleToRouteObject),
