@@ -986,6 +986,122 @@ describe('searchQueryResultsToQueryResultBundle', () => {
     })
   })
 
+  it('parses filter-wrapped aggregation results with lterms# prefix (INTEGER enumeration column)', () => {
+    // OpenSearch uses "lterms" (long terms) as the aggregation type prefix for integer fields,
+    // not "sterms" (string terms). When a selection is active on any facet, all aggregations
+    // are filter-wrapped and the nested key becomes "lterms#columnName". This test covers
+    // the bug where INTEGER enumeration facets would collapse to empty after any selection.
+    const results: SearchQueryResults = {
+      concreteType: 'org.sagebionetworks.repo.model.search.SearchQueryResults',
+      totalHits: 70,
+      hits: [],
+      selectColumns: [],
+      aggregationResults: {
+        // researchTheme is a STRING column — sterms prefix
+        researchTheme: {
+          doc_count: 70,
+          'sterms#researchTheme': {
+            buckets: [
+              { key: 'Drug Resistance', doc_count: 40 },
+              { key: 'Metastasis', doc_count: 30 },
+            ],
+          },
+        },
+        // publicationYear is an INTEGER column — lterms prefix
+        publicationYear: {
+          doc_count: 100,
+          'lterms#publicationYear': {
+            buckets: [
+              { key: 2022, doc_count: 35 },
+              { key: 2023, doc_count: 35 },
+            ],
+          },
+        },
+      },
+    }
+    const result = searchQueryResultsToQueryResultBundle(
+      results,
+      MINIMAL_SEARCH_INDEX_QUERY,
+      undefined,
+      [
+        {
+          concreteType: FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+          columnName: 'researchTheme',
+          facetValues: ['Drug Resistance'],
+        },
+      ],
+    )
+    expect(result.facets).toHaveLength(2)
+
+    const yearFacet = result.facets!.find(
+      f => f.columnName === 'publicationYear',
+    )
+    expect(yearFacet).toMatchObject({
+      facetType: 'enumeration',
+      facetValues: [
+        { value: '2022', count: 35, isSelected: false },
+        { value: '2023', count: 35, isSelected: false },
+      ],
+    })
+
+    const themeFacet = result.facets!.find(
+      f => f.columnName === 'researchTheme',
+    )
+    expect(themeFacet).toMatchObject({
+      facetType: 'enumeration',
+      facetValues: [
+        { value: 'Drug Resistance', count: 40, isSelected: true },
+        { value: 'Metastasis', count: 30, isSelected: false },
+      ],
+    })
+  })
+
+  it('marks selected values on INTEGER enumeration facets correctly when lterms# prefix is present', () => {
+    // When the user selects year 2022, the publicationYear aggregation has match_all filter
+    // (stays wide). The lterms#publicationYear key must still be resolved so that 2022 can
+    // be marked isSelected: true and 2023 remains available for multi-select.
+    const results: SearchQueryResults = {
+      concreteType: 'org.sagebionetworks.repo.model.search.SearchQueryResults',
+      totalHits: 35,
+      hits: [],
+      selectColumns: [],
+      aggregationResults: {
+        publicationYear: {
+          doc_count: 100,
+          'lterms#publicationYear': {
+            buckets: [
+              { key: 2022, doc_count: 35 },
+              { key: 2023, doc_count: 35 },
+            ],
+          },
+        },
+      },
+    }
+    const result = searchQueryResultsToQueryResultBundle(
+      results,
+      MINIMAL_SEARCH_INDEX_QUERY,
+      undefined,
+      [
+        {
+          concreteType: FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+          columnName: 'publicationYear',
+          facetValues: ['2022'],
+        },
+      ],
+    )
+
+    const yearFacet = result.facets!.find(
+      f => f.columnName === 'publicationYear',
+    )
+    expect(yearFacet).toMatchObject({
+      facetType: 'enumeration',
+      facetValues: [
+        { value: '2022', count: 35, isSelected: true },
+        { value: '2023', count: 35, isSelected: false },
+      ],
+    })
+  })
+
   it('reorders facets to match the columnModels order', () => {
     // Server aggregations come in a different order than columnModels.
     // Note: range columns (age) are synthesized by searchQueryResultsToQueryResultBundle;

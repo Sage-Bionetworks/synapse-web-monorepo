@@ -479,10 +479,11 @@ export function searchQueryResultsToQueryResultBundle(
   //     { buckets: [{ key: unknown, doc_count: number }] }
   //
   //   Filter-wrapped terms (per-facet filter bucketing, selections active):
-  //     { doc_count: number, "sterms#columnName": { buckets: [...] } }
+  //     { doc_count: number, "<type>#columnName": { buckets: [...] } }
   //
-  // We detect the shape by checking for a nested "sterms#columnName" property with buckets.
-  // OpenSearch prefixes the aggregation type to the name in the response (e.g. "sterms#Program").
+  // OpenSearch prefixes the aggregation type to the name in the response. The prefix depends
+  // on the field type: "sterms" for string fields, "lterms" for long/integer fields, etc.
+  // We detect the shape by looking for any "type#columnName" key with a buckets property.
   const aggregationResults = results.aggregationResults as unknown as Record<
     string,
     OpenSearchTermsAgg | Record<string, OpenSearchTermsAgg>
@@ -495,7 +496,16 @@ export function searchQueryResultsToQueryResultBundle(
     // Fall back to a direct [columnName] match (defensive), then to the agg itself
     // for the plain (no-selection) terms shape.
     const aggRecord = agg as Record<string, OpenSearchTermsAgg>
-    const nested = aggRecord[`sterms#${columnName}`] ?? aggRecord[columnName]
+    // OpenSearch prefixes the aggregation type to the name when nested inside a filter
+    // aggregation. For string fields this is "sterms#columnName"; for long/integer fields
+    // it is "lterms#columnName". Rather than hardcoding known prefixes, look for any key
+    // ending in "#columnName" so that future numeric types (e.g. double) also work.
+    const nestedKey = Object.keys(aggRecord).find(key =>
+      key.endsWith(`#${columnName}`),
+    )
+    const nested =
+      (nestedKey !== undefined ? aggRecord[nestedKey] : undefined) ??
+      aggRecord[columnName]
     const termsAgg: OpenSearchTermsAgg =
       nested?.buckets !== undefined ? nested : (agg as OpenSearchTermsAgg)
     const selectedValues =
