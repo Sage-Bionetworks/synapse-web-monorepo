@@ -4,7 +4,11 @@ import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-por
 import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
-import { datasetsSql, rgbIndex } from '@/config/resources'
+import {
+  datasetsSql,
+  enabledAnalysisPlatforms,
+  rgbIndex,
+} from '@/config/resources'
 import {
   datasetCardConfiguration,
   datasetColumnAliases,
@@ -48,6 +52,12 @@ function DatasetDetailsPage() {
                 }}
                 shouldDeepLink={false}
                 defaultShowPlots={false}
+                enabledExternalAnalysisPlatforms={enabledAnalysisPlatforms}
+                isRowSelectionVisible={true}
+                rowSelectionPrimaryKey={['id']}
+                fileIdColumnName="id"
+                fileNameColumnName="name"
+                fileVersionColumnName="currentVersion"
               />
             ) : null,
           },
