@@ -1,0 +1,11 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{Tn as t,kn as n}from"./synapse-client-C78uix2S.js";import{n as r,t as i}from"./iframe-6nQ1vfCk.js";import{n as a,t as o}from"./SubscriptionPage-DBbshPt9.js";var s,c,l;e((()=>{r(),n(),a(),s={title:`Synapse/Following/SubscriptionPage`,component:o,parameters:{stack:`mock`}},c={name:`SubscriptionPage`,args:{},parameters:{msw:{handlers:{...i(t)}}}},c.parameters={...c.parameters,docs:{...c.parameters?.docs,source:{originalSource:`{
+  name: 'SubscriptionPage',
+  args: {},
+  parameters: {
+    msw: {
+      handlers: {
+        ...getHandlers(MOCK_REPO_ORIGIN)
+      }
+    }
+  }
+}`,...c.parameters?.docs?.source}}},l=[`Demo`]}))();export{c as Demo,l as __namedExportsOrder,s as default};
