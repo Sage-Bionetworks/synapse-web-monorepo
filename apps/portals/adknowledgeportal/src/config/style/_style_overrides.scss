@@ -3,6 +3,7 @@
   --data-explorer-title-color: var(--adkp-accent-color);
   --adkp-button-gradient: linear-gradient(180deg, #443471 0%, #5a488f 100%);
   --adkp-button-border-color: #32243f;
+  --portal-nav-underline-color: #fff;
   --Brand-dark: #1f3042;
 }
 
@@ -11,11 +12,11 @@
   background-color: var(--synapse-primary-action-color);
 }
 
-body:has(.HomePageV2) {
+body {
   background-color: #faf9fa;
 }
 
-body:has(.HomePageV2) #footer.footer--adkp {
+#footer.footer--adkp {
   .footer-main {
     background: linear-gradient(
       91deg,
@@ -71,20 +72,18 @@ footer {
   }
 }
 
-.HomePageV2 {
-  h2.title {
-    color: var(--adkp-accent-color);
-    font-size: 36px;
-    font-style: normal;
-    font-weight: 600;
-    line-height: 62px; /* 172.222% */
-    text-transform: none;
-    margin: 0;
-  }
+h2.title {
+  color: var(--adkp-accent-color);
+  font-size: 36px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 62px; /* 172.222% */
+  text-transform: none;
+  margin: 0;
+}
 
-  p.center-title {
-    max-width: 650px;
-    margin-left: auto;
-    margin-right: auto;
-  }
+p.center-title {
+  max-width: 650px;
+  margin-left: auto;
+  margin-right: auto;
 }
