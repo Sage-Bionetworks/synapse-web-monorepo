@@ -61,14 +61,14 @@ $sidebar-collapse-breakpoint: 1200px;
   flex-direction: row;
   gap: 8px;
   top: 0;
-  right: 0;
+  right: 32px;
   white-space: nowrap;
   align-self: flex-start;
   position: absolute;
 
   @media (max-width: $sidebar-collapse-breakpoint) {
     position: static;
-    margin: 10px 0 0 20px;
+    margin: 10px 0 0 32px;
   }
 
   &:hover {
