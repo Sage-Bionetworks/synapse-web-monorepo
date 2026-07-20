@@ -88,6 +88,7 @@ import {
 import noop from 'lodash-es/noop'
 import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 import { StyledFormControl } from '@/components/styled'
+import { instanceOfGridSupportedTaskProperties } from '../utils/types'
 
 export type CreateOrUpdateCurationTaskDialogProps = {
   open: boolean
@@ -171,9 +172,14 @@ export default function CreateOrUpdateCurationTaskDialog(
     string | undefined
   >(() => task?.assigneePrincipalId)
 
-  const initialAuthMode = toAuthorizationModeOption(
-    task?.taskProperties?.suggestedAuthorizationMode,
-  )
+  const initialAuthMode =
+    task?.taskProperties &&
+    instanceOfGridSupportedTaskProperties(task?.taskProperties)
+      ? toAuthorizationModeOption(
+          task?.taskProperties?.suggestedAuthorizationMode,
+        )
+      : 'NONE'
+
   const [authorizationMode, setAuthorizationMode] =
     useState<AuthorizationModeOption>(initialAuthMode)
   // Track the original value to detect unsaved changes
@@ -206,7 +212,12 @@ export default function CreateOrUpdateCurationTaskDialog(
   const [collaboratorPrincipalIds, setCollaboratorPrincipalIds] = useState<
     string[]
   >(() => {
-    const ids = task?.taskProperties?.collaboratorPrincipalIds
+    const ids =
+      task &&
+      task.taskProperties &&
+      instanceOfGridSupportedTaskProperties(task.taskProperties)
+        ? task.taskProperties.collaboratorPrincipalIds
+        : undefined
     return ids ?? []
   })
   const [pendingCollaboratorId, setPendingCollaboratorId] = useState<

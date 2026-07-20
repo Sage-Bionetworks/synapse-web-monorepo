@@ -1,6 +1,6 @@
 import {
   CreateGridRequest,
-  CurationTask,
+  GridSupportedTaskProperties,
 } from '@sage-bionetworks/synapse-client'
 
 /**
@@ -9,11 +9,10 @@ import {
  * @returns A CreateGridRequest object.
  */
 export function getCreateGridRequestForMetadataTask(
-  task: CurationTask,
+  taskProperties: GridSupportedTaskProperties,
 ): CreateGridRequest {
-  const taskProperties = task.taskProperties
   if (!taskProperties) {
-    throw new Error('CurationTask is missing taskProperties')
+    throw new Error('taskProperties is required')
   }
 
   switch (taskProperties.concreteType) {
