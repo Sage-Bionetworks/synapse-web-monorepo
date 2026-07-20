@@ -1,8 +1,8 @@
 $sidebar-text-primary: #616972;
 $sidebar-property-title-color: #747d88;
 $sidebar-property-value-color: #4d535a;
-@use 'sass:map';
-@use '../../style/abstracts/variables' as SrcVariables;
+// MUI `lg` breakpoint
+$sidebar-collapse-breakpoint: 1200px;
 
 .panel {
   display: flex;
@@ -15,7 +15,7 @@ $sidebar-property-value-color: #4d535a;
   margin-top: 40px;
   padding: 0 32px 0 0;
 
-  @media (max-width: map.get(SrcVariables.$breakpoints, 'large')) {
+  @media (max-width: $sidebar-collapse-breakpoint) {
     width: 100%;
     margin-top: 10px;
     padding: 10px 32px 0 32px;
@@ -61,14 +61,14 @@ $sidebar-property-value-color: #4d535a;
   flex-direction: row;
   gap: 8px;
   top: 0;
-  right: 0;
+  right: 32px;
   white-space: nowrap;
   align-self: flex-start;
   position: absolute;
 
-  @media (max-width: map.get(SrcVariables.$breakpoints, 'large')) {
+  @media (max-width: $sidebar-collapse-breakpoint) {
     position: static;
-    margin: 10px 0 0 20px;
+    margin: 10px 0 0 32px;
   }
 
   &:hover {
