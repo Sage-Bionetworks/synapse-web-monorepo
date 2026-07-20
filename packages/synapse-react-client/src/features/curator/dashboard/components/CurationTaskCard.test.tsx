@@ -3,7 +3,7 @@ import useOpenCuratorFromTaskButton from '@/features/entity/metadata-task/hooks/
 import { createMockTaskBundle } from '@/mocks/curation/mockCurationTask'
 import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
 import { CurationTask, TaskBundle } from '@sage-bionetworks/synapse-client'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach } from 'vitest'
 import CurationTaskCard from './CurationTaskCard'
@@ -184,6 +184,61 @@ describe('CurationTaskCard', () => {
       expect(
         screen.queryByText(/not started|in progress|completed|canceled/i),
       ).not.toBeInTheDocument()
+    })
+  })
+
+  describe('expanded state', () => {
+    it('hides instructions by default', () => {
+      const taskWithInstructions = createMockTaskBundle({
+        projectId: 'syn123',
+        dataType: 'Test Data Type',
+        instructions: 'Test instructions',
+      })
+      renderComponent(taskWithInstructions)
+      const instructions = screen.queryByText('Test instructions')
+      expect(instructions).not.toBeVisible()
+    })
+
+    it('shows instructions when title is clicked', async () => {
+      const user = userEvent.setup()
+      const taskWithInstructions = createMockTaskBundle({
+        projectId: 'syn123',
+        dataType: 'Test Data Type',
+        instructions: 'Test instructions',
+      })
+      renderComponent(taskWithInstructions)
+
+      const title = screen.getByText('Test Data Type')
+      await user.click(title)
+
+      const instructions = screen.getByText('Test instructions')
+      expect(instructions).toBeVisible()
+    })
+
+    it('toggles expanded state when title is clicked', async () => {
+      const user = userEvent.setup()
+      const taskWithInstructions = createMockTaskBundle({
+        projectId: 'syn123',
+        dataType: 'Test Data Type',
+        instructions: 'Test instructions',
+      })
+      renderComponent(taskWithInstructions)
+
+      const title = screen.getByText('Test Data Type')
+      const instructions = screen.getByText('Test instructions')
+
+      // Initially collapsed
+      expect(instructions).not.toBeVisible()
+
+      // Click to expand
+      await user.click(title)
+      expect(instructions).toBeVisible()
+
+      // Click to collapse
+      await user.click(title)
+      await waitFor(() => {
+        expect(instructions).not.toBeVisible()
+      })
     })
   })
 })
