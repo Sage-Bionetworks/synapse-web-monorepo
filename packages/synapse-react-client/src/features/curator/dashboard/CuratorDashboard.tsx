@@ -30,7 +30,6 @@ export function CuratorDashboardContent() {
     fetchNextPage,
   } = useGetCurationTasksInfinite({
     assignedToMe: true,
-    // @ts-expect-error taskIds parameter will be added to API
     taskIds,
   })
 
