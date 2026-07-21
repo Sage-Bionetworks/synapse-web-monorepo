@@ -55,6 +55,24 @@ function useUiForTask(taskBundle: TaskBundle) {
         isPending,
         hasPermission,
       }
+    case 'org.sagebionetworks.repo.model.curation.execution.SampleSheetGenerationExecutionProperties':
+      return {
+        title: taskBundle.task.dataType,
+        description: taskBundle.task.instructions ?? '',
+        taskId: taskBundle.task.taskId,
+        principalIds: taskBundle.task.assigneePrincipalId
+          ? [taskBundle.task.assigneePrincipalId]
+          : [],
+        buttonText: 'Start (Run Agent)',
+        taskType: 'Compute',
+        statusState: taskBundle.status.state,
+        onClickNextStep: () => {
+          displayToast('Coming soon!', 'info')
+        },
+        isLoading,
+        isPending,
+        hasPermission,
+      }
     default: {
       console.error(
         'No UI implemented for task type: ' +

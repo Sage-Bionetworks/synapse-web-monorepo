@@ -2,6 +2,7 @@ import {
   CurationTask,
   GridSession,
   SynapseClientError,
+  GridSupportedTaskProperties,
 } from '@sage-bionetworks/synapse-client'
 import { useMutation } from '@tanstack/react-query'
 import { getCreateGridRequestForMetadataTask } from '../utils/getCreateGridRequestForMetadataTask'
@@ -25,10 +26,13 @@ export default function useGridSessionForCurationTask_legacy() {
     { curationTask: CurationTask }
   >({
     mutationFn: async ({ curationTask }) => {
-      const gridSourceId = getGridSourceIdForTask(curationTask)
+      const gridSourceId = getGridSourceIdForTask(
+        curationTask.taskProperties as GridSupportedTaskProperties,
+      )
 
-      const createGridRequest =
-        getCreateGridRequestForMetadataTask(curationTask)
+      const createGridRequest = getCreateGridRequestForMetadataTask(
+        curationTask.taskProperties as GridSupportedTaskProperties,
+      )
       return await getOrCreateGridSession({
         sourceId: gridSourceId,
         createRequest: createGridRequest,
