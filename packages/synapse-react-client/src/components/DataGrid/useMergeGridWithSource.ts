@@ -3,6 +3,7 @@ import {
   EntityType,
   GridRecordSetExportResponse,
   SynchronizeGridResponse,
+  SyncType,
   TableUpdateTransactionResponse,
 } from '@sage-bionetworks/synapse-client'
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
@@ -20,7 +21,7 @@ export type MergeGridWithSource = {
   /** The type of the source entity. This is only used for client-side logic. */
   sourceEntityType?: EntityType
   /** The type of synchronization to perform. Only valid for types supported by the Synchronize service. */
-  syncType?: 'PULL' | 'PULL_PUSH' // TODO: Use native type
+  syncType?: SyncType
 }
 
 export type MergeGridResult =
