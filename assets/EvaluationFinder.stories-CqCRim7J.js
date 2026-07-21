@@ -1,0 +1,4 @@
+import{o as e,u as t}from"./preload-helper-CsHsquCd.js";import{t as n}from"./react-BXiJfEW5.js";import{An as r}from"./TextField-DshmLCH7.js";import{t as i}from"./jsx-runtime-l3w3GfrB.js";import{t as a}from"./esm-CeuVXgHQ.js";import{n as o,t as s}from"./EvaluationFinder-BKao9zE2.js";var c,l,u,d,f;e((()=>{a(),c=t(n(),1),o(),l=i(),u={title:`Synapse/Evaluation Finder`,component:s,decorators:[e=>(0,l.jsx)(r,{sx:{mx:`auto`,p:4,maxWidth:`720px`},children:(0,l.jsx)(e,{})})],render:function(e){let[t,n]=(0,c.useState)([]);return(0,l.jsx)(s,{...e,selectedIds:t,onChange:n})}},d={name:`Evaluation Finder`,args:{}},d.parameters={...d.parameters,docs:{...d.parameters?.docs,source:{originalSource:`{
+  name: 'Evaluation Finder',
+  args: {}
+}`,...d.parameters?.docs?.source}}},f=[`Demo`]}))();export{d as Demo,f as __namedExportsOrder,u as default};
