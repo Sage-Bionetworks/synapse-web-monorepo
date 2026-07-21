@@ -155,12 +155,22 @@ const routes: RouteObject[] = [
                 convertModuleToRouteObject,
               ),
           },
+          {
+            path: 'Models',
+            lazy: () =>
+              import('@/pages/Explore/models').then(convertModuleToRouteObject),
+          },
         ],
       },
       {
         path: 'Explore/Datasets/DetailsPage',
         lazy: () =>
           import('@/pages/DatasetDetailsPage').then(convertModuleToRouteObject),
+      },
+      {
+        path: 'Explore/Models/DetailsPage',
+        lazy: () =>
+          import('@/pages/ModelDetailsPage').then(convertModuleToRouteObject),
       },
       {
         path: 'Explore/Computational Tools/DetailsPage',

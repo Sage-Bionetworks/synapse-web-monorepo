@@ -18,6 +18,7 @@ export const studiesSql =
   'SELECT * FROM syn51523775 ORDER BY isFeatured DESC, dataStatus ASC, studyName ASC'
 export const speciesSql = 'SELECT * FROM syn53406593 ORDER BY ItemOrder'
 export const computationalSql = 'SELECT * FROM syn51469335'
+export const modelsSql = 'SELECT * FROM syn75107951'
 export const upsetPlotSql = 'SELECT individualID, dataType from syn51581771'
 export const cohortBuilderSql = 'SELECT * FROM syn52234652'
 export const cohortBuilderFilesSql = 'SELECT * FROM syn52234677'

@@ -42,6 +42,7 @@ export const navbarConfig: NavbarConfig = {
           path: '/Explore/Studies',
         },
         { name: 'Datasets', path: '/Explore/Datasets' },
+        { name: 'Models', path: '/Explore/Models' },
         { name: 'Files', path: '/Explore/Data' },
         {
           name: 'Cohort Discovery',

@@ -8,6 +8,7 @@ import publications, { publicationsSearch } from './publications'
 import studiesQueryWrapperPlotNavProps, { studiesSearch } from './studies'
 import { dataQueryWrapperPlotNavProps } from './data'
 import { datasetQueryWrapperPlotNavProps } from './datasets'
+import modelsQueryWrapperPlotNavProps from './models'
 
 export {
   projectsQueryWrapperPlotNavProps,
@@ -22,6 +23,7 @@ export {
   filesViewQueryWrapperPlotNavProps,
   dataQueryWrapperPlotNavProps,
   datasetQueryWrapperPlotNavProps,
+  modelsQueryWrapperPlotNavProps,
 }
 
 export default {
@@ -37,4 +39,5 @@ export default {
   filesView: filesViewQueryWrapperPlotNavProps,
   data: dataQueryWrapperPlotNavProps,
   datasets: datasetQueryWrapperPlotNavProps,
+  models: modelsQueryWrapperPlotNavProps,
 }
