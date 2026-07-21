@@ -767,6 +767,7 @@ export function DetailsView(props: DetailsViewProps) {
               }
             },
           }}
+          striped
         />
       )}
       {isLoading && (

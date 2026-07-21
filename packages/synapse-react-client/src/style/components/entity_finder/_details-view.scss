@@ -33,16 +33,6 @@
   height: 45px;
   transition: background-color 200ms ease-in;
 
-  // Select odd rows (data-index ends in an odd number)
-  // Don't use nth child because the virtual rows can switch indicies, causing style to flip for the same cell
-  &[data-index$='1'],
-  &[data-index$='3'],
-  &[data-index$='5'],
-  &[data-index$='7'],
-  &[data-index$='9'] {
-    background: var(--synapse-background-color-gray);
-  }
-
   &[aria-disabled='false'][aria-selected='false']:hover {
     @include EntityFinder.hover();
   }

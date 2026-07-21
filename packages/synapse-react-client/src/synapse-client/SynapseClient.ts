@@ -3719,21 +3719,17 @@ export async function getAllOfNextPageTokenPaginatedService<T>(
   const results: T[] = []
 
   while (existsMoreData) {
-    try {
-      const data = await fn(nextPageToken)
-      // Some object models use `results`, others use `page`
-      if ('results' in data) {
-        results.push(...data.results)
-      } else if ('page' in data) {
-        results.push(...data.page)
-      }
-      nextPageToken = data.nextPageToken
+    const data = await fn(nextPageToken)
+    // Some object models use `results`, others use `page`
+    if ('results' in data) {
+      results.push(...data.results)
+    } else if ('page' in data) {
+      results.push(...data.page)
+    }
+    nextPageToken = data.nextPageToken
 
-      if (!nextPageToken) {
-        existsMoreData = false
-      }
-    } catch (e) {
-      throw Error(`Error on getting paginated results ${e}`)
+    if (!nextPageToken) {
+      existsMoreData = false
     }
   }
 
