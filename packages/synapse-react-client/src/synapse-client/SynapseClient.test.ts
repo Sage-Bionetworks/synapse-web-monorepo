@@ -155,5 +155,17 @@ describe('SynapseClient tests', () => {
       expect(mockFn).toHaveBeenNthCalledWith(1, undefined)
       expect(mockFn).toHaveBeenNthCalledWith(2, 'nextPageToken')
     })
+
+    it('propagates the original error unchanged, rather than wrapping it', async () => {
+      // Preserving the original error's identity matters: callers may rely on its type (e.g.
+      // SynapseClientError's `.reason`) for error UI, or need to distinguish a genuine failure
+      // from a cancelled fetch (e.g. an AbortError).
+      const originalError = new Error('Something went wrong')
+      const mockFn = vi.fn().mockRejectedValueOnce(originalError)
+
+      await expect(
+        SynapseClient.getAllOfNextPageTokenPaginatedService(mockFn),
+      ).rejects.toBe(originalError)
+    })
   })
 })

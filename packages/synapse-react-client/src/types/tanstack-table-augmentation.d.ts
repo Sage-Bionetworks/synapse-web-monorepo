@@ -1,6 +1,8 @@
 import '@tanstack/react-table'
 import { RowData } from '@tanstack/react-table'
 import { RowSet } from '@sage-bionetworks/synapse-types'
+import { JsonSchemaVersionInfo } from '@sage-bionetworks/synapse-client'
+import { VersionSelectionType } from '@/components/JsonSchema/JsonSchemaPicker/VersionSelectionType'
 
 // Type that represents an enumerated value that can be passed to a column to render a filter control
 type ColumnFilterEnumValue<TValue = unknown> = {
@@ -19,6 +21,17 @@ declare module '@tanstack/react-table' {
 
     /** Can be used to dynamically add class names to the tr element */
     getRowClassNames?: (row: Row<TData>) => string
+
+    /**
+     * Used by JsonSchemaPicker's version column to read/report the currently selected schema
+     * version without requiring the column definitions themselves to change identity (which would
+     * cause the version cell to remount, losing in-progress version pagination).
+     */
+    jsonSchemaVersionSelection?: {
+      versionSelectionType: VersionSelectionType
+      selectedVersionInfo: JsonSchemaVersionInfo | undefined
+      onVersionChange: (versionInfo: JsonSchemaVersionInfo | undefined) => void
+    }
   }
 
   interface ColumnMeta<TData extends RowData, TValue> {
