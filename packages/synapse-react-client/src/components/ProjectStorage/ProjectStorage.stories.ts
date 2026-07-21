@@ -27,7 +27,6 @@ type Story = StoryObj<typeof meta>
 export const ProjectDataUnderLimit: Story = {
   args: {
     projectId: UNDER_LIMIT_PROJECT_ID,
-    sx: { backgroundColor: '#375574' },
   },
   parameters: {
     stack: 'mock',
@@ -44,7 +43,6 @@ export const ProjectDataUnderLimit: Story = {
 export const ProjectDataOverLimit: Story = {
   args: {
     projectId: OVER_LIMIT_PROJECT_ID,
-    sx: { backgroundColor: '#375574' },
   },
 
   parameters: {

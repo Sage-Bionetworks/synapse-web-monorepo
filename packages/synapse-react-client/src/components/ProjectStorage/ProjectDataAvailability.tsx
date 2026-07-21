@@ -3,20 +3,22 @@ import { useProjectStorageUsage } from '@/synapse-queries'
 import { spreadSx } from '@/theme/spreadSx'
 import { useSynapseContext } from '@/utils'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
-import { SAGE_OFFERINGS_HELP_URL } from '@/utils/SynapseConstants'
-import { Box, SxProps, Tooltip, Typography } from '@mui/material'
+import { Box, SxProps, Tooltip, Typography, Divider } from '@mui/material'
 import React from 'react'
-import HelpPopover from '../HelpPopover'
 
 export type ProjectDataAvailabilityProps = {
   projectId?: string
   sx?: SxProps
+  showBottomDivider?: boolean
 }
-const usageBarWidth = 142 //px
+const textColor = '#576077'
+const trackColor = '#DEE0E5'
+const fillColor = '#38756A'
 
 export function ProjectDataAvailability({
   projectId,
   sx,
+  showBottomDivider = false,
 }: ProjectDataAvailabilityProps): React.ReactNode {
   const { isAuthenticated } = useSynapseContext()
   const { data } = useProjectStorageUsage(projectId!, {
@@ -34,9 +36,9 @@ export function ProjectDataAvailability({
   if (maxAllowedFileBytes == 0) {
     return <></>
   }
-  const usageBarFilledPx = Math.min(
-    Math.round((sumFileBytes / maxAllowedFileBytes) * usageBarWidth),
-    usageBarWidth,
+  const usagePercent = Math.min(
+    Math.round((sumFileBytes / maxAllowedFileBytes) * 100),
+    100,
   )
   const friendlySumFileBytes = calculateFriendlyFileSize(sumFileBytes, 1)
   const friendlyMaxAllowedFileBytes = calculateFriendlyFileSize(
@@ -49,10 +51,9 @@ export function ProjectDataAvailability({
         {
           display: 'flex',
           flexDirection: 'column',
-          width: '210px',
+          width: '100%',
           fontFamily: 'DM Sans',
-          color: 'white',
-          px: '10px',
+          color: textColor,
         },
         sx,
       )}
@@ -61,28 +62,19 @@ export function ProjectDataAvailability({
         sx={{
           display: 'flex',
           flexDirection: 'row',
-          gap: '5px',
+          marginBottom: '10px',
         }}
       >
         <Typography
           sx={{
             // match current styles in Project metadata
-            fontWeight: 700,
-            fontSize: '16px',
+            fontWeight: 500,
+            fontSize: '12px',
+            textTransform: 'uppercase',
           }}
         >
           Data Availability{' '}
-        </Typography>{' '}
-        <HelpPopover
-          containerSx={{
-            fontSize: '12px',
-          }}
-          markdownText="Hosting Plan Options:
-- Basic Plan: Free, for sharing small datasets (<100GB) with self-service setup. No direct support.
-- Self-Managed Plan: Ideal for data longevity, FAIR principles, and NIH compliance. Includes consultation services and data access management tools.
-- Data Coordination Plan: For large, multi-institutional projects, with personalized consulting, data curation, and a custom data portal."
-          helpUrl={SAGE_OFFERINGS_HELP_URL}
-        />
+        </Typography>
       </Box>
       {synapseStorageUsage.maxAllowedFileBytes && (
         <Tooltip
@@ -91,48 +83,54 @@ export function ProjectDataAvailability({
           <Box
             sx={{
               display: 'flex',
-              flexDirection: 'row',
-              gap: '5px',
-              alignItems: 'center',
+              flexDirection: 'column',
+              gap: '8px',
             }}
           >
-            <Typography
-              variant="body1"
-              sx={{
-                fontSize: '12px',
-              }}
-            >
-              0
-            </Typography>
-            {/* Progress Bar */}
             <Box
               sx={{
-                width: `${usageBarWidth}px`,
-                height: '4px',
-                backgroundColor: 'white',
-                borderRadius: '50px',
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
               }}
             >
+              {/* Progress Bar */}
               <Box
                 sx={{
-                  width: `${usageBarFilledPx}px`,
-                  height: '4px',
-                  backgroundColor: '#EDC766',
+                  width: '100%',
+                  height: '6px',
+                  backgroundColor: trackColor,
                   borderRadius: '50px',
                 }}
-              ></Box>
+              >
+                <Box
+                  sx={{
+                    width: `${usagePercent}%`,
+                    height: '6px',
+                    backgroundColor: fillColor,
+                    borderRadius: '50px',
+                  }}
+                ></Box>
+              </Box>
             </Box>
             <Typography
-              variant="body1"
+              variant="body2"
               sx={{
-                fontSize: '12px',
-                whiteSpace: 'nowrap',
+                color: textColor,
               }}
             >
-              {friendlyMaxAllowedFileBytes}
+              {`${usagePercent}% of ${friendlyMaxAllowedFileBytes}`}
             </Typography>
           </Box>
         </Tooltip>
+      )}
+      {showBottomDivider && (
+        <Divider
+          sx={{
+            mt: '16px',
+            borderColor: 'rgba(226, 228, 234, 0.50)',
+          }}
+        />
       )}
     </Box>
   )
