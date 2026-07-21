@@ -493,3 +493,35 @@ export const TableWithRange: Story = {
     enabledExternalAnalysisPlatforms: [],
   },
 }
+
+/**
+ * Demonstrates the advanced query filter builder.
+ * Click the "Add Conditions" icon in the top-right control bar to toggle the builder.
+ * Build a filter using AND/OR rules, then click "Apply Filter" to update the query SQL.
+ */
+export const WithQueryFilterBuilder: Story = {
+  args: {
+    sql: 'SELECT * FROM syn11346063',
+    name: 'Query Filter Builder Demo',
+    tableConfiguration: {
+      showAccessColumn: true,
+    },
+    searchConfiguration: {
+      searchable: [
+        'study',
+        'dataType',
+        'assay',
+        'organ',
+        'tissue',
+        'species',
+        'diagnosis',
+        'sex',
+      ],
+    },
+    shouldDeepLink: false,
+    visibleColumnCount: 8,
+    rgbIndex: 1,
+    hideQueryFilterBuilderControl: false,
+    hideSqlEditorControl: true,
+  },
+}

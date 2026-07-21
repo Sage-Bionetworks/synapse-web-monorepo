@@ -15,6 +15,8 @@ import {
   QueryVisualizationContextType,
   RenderedFacetValueChip,
 } from './QueryVisualizationContext'
+import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
+import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 
 // By default, show no external analysis platforms.
 const DEFAULT_ENABLED_ANALYSIS_PLATFORMS: ExternalAnalysisPlatform[] = []
@@ -138,6 +140,12 @@ export function QueryVisualizationWrapper(
   )
 
   const [showSqlEditor, setShowSqlEditor] = useState(false)
+  const isQueryFilterBuilderEnabledByDefault = useGetFeatureFlag(
+    FeatureFlagEnum.QUERY_FILTER_BUILDER,
+  )
+  const [showQueryFilterBuilder, setShowQueryFilterBuilder] = useState(
+    isQueryFilterBuilderEnabledByDefault,
+  )
   const [showPlots, setShowPlots] = useState(defaultShowPlots)
   const [showCopyToClipboard, setShowCopyToClipboard] =
     useState(!hideCopyToClipboard)
@@ -267,6 +275,8 @@ export function QueryVisualizationWrapper(
       setShowDownloadConfirmation,
       showSqlEditor,
       setShowSqlEditor,
+      showQueryFilterBuilder,
+      setShowQueryFilterBuilder,
       showPlots: hasCustomPlots || hasFacetedSelectColumn ? showPlots : false,
       setShowPlots,
       showCopyToClipboard,
@@ -288,6 +298,7 @@ export function QueryVisualizationWrapper(
       showDownloadConfirmation,
       showFacetFilter,
       showPlots,
+      showQueryFilterBuilder,
       showSearchBar,
       showSqlEditor,
       unitDescription,

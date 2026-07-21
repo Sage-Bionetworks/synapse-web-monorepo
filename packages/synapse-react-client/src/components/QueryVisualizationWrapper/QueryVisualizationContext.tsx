@@ -69,6 +69,8 @@ export type QueryVisualizationContextType = {
   setShowDownloadConfirmation: Dispatch<SetStateAction<boolean>>
   showSqlEditor: boolean
   setShowSqlEditor: Dispatch<SetStateAction<boolean>>
+  showQueryFilterBuilder: boolean
+  setShowQueryFilterBuilder: Dispatch<SetStateAction<boolean>>
   showCopyToClipboard: boolean
   setShowCopyToClipboard: Dispatch<SetStateAction<boolean>>
   showPlots: boolean

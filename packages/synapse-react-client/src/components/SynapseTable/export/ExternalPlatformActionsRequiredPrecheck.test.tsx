@@ -133,6 +133,8 @@ const mockQueryVisualizationContext: QueryVisualizationContextType = {
   setShowPlots: vi.fn(),
   setShowSearchBar: vi.fn(),
   setShowSqlEditor: vi.fn(),
+  showQueryFilterBuilder: false,
+  setShowQueryFilterBuilder: vi.fn(),
   showCopyToClipboard: false,
   showDownloadConfirmation: false,
   showFacetFilter: false,

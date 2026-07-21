@@ -24,4 +24,7 @@ export enum FeatureFlagEnum {
 
   // If enabled, shows a "New Task" button on the metadata tasks page
   CURATION_TASK_PAGE_SHOW_NEW_TASK_BUTTON = 'CURATION_TASK_PAGE_SHOW_NEW_TASK_BUTTON',
+
+  // If enabled, show the advanced query filter builder by default in QueryWrapperPlotNav
+  QUERY_FILTER_BUILDER = 'QUERY_FILTER_BUILDER',
 }
