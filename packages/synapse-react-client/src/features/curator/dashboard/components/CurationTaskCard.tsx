@@ -110,6 +110,11 @@ function TaskTypeChip(props: { label: string }) {
   )
 }
 
+/**
+ * A chip to display CurationTask status.
+ *
+ * See {@link https://www.figma.com/design/0oPm5lLSUva8kyfVNMS6FA/Sage-Style---Component-Library--SDS-?node-id=4942-1129&m=dev}
+ */
 function TaskStatusChip(props: { state: TaskStatusStateEnum | undefined }) {
   const { state } = props
   if (!state) return null
