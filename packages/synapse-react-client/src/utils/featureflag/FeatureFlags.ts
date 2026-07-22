@@ -22,9 +22,9 @@ export enum FeatureFlagEnum {
   // If enabled, show the SynapseChat dialog in portals
   PORTAL_CHAT = 'PORTAL_CHAT',
 
-  // If enabled, show the new version of the ADKP homepage
-  ADKP_HOMEPAGE_V2 = 'ADKP_HOMEPAGE_V2',
-
   // If enabled, shows a "New Task" button on the metadata tasks page
   CURATION_TASK_PAGE_SHOW_NEW_TASK_BUTTON = 'CURATION_TASK_PAGE_SHOW_NEW_TASK_BUTTON',
+
+  // If enabled, Curator allows users to synchronize (merge) a grid session with the source RecordSet. If disabled, legacy behavior will be used, which overwrites the RecordSet with the grid session data.
+  ENABLE_RECORDSET_SYNCHRONIZATION = 'ENABLE_RECORDSET_SYNCHRONIZATION',
 }

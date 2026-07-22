@@ -36,6 +36,7 @@ type Props = {
   /* Invoked when password login is selected */
   onPasswordLoginSelected?: () => void
   realm?: Realm
+  showRASLogin?: boolean
 }
 
 export default function LoginForm(props: Props) {
@@ -65,6 +66,7 @@ export default function LoginForm(props: Props) {
     ),
     onPasswordLoginSelected = noop,
     realm,
+    showRASLogin,
   } = props
 
   return (
@@ -79,6 +81,7 @@ export default function LoginForm(props: Props) {
           ssoRedirectUrl={ssoRedirectUrl}
           state={ssoState}
           realm={realm}
+          showRASLogin={showRASLogin}
         />
       )}
       {step === 'USERNAME_PASSWORD' && (

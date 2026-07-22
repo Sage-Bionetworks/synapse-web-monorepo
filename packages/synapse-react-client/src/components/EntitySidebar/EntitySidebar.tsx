@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight'
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft'
 import {
@@ -15,6 +15,7 @@ import { useGetEntityTitleBarProperties } from '@/components/entity/page/title_b
 import styles from './EntitySidebar.module.scss'
 import useGetEntityMetadata from '@/utils/hooks/useGetEntityMetadata'
 import { entityTypeToFriendlyName } from '@/utils/functions/EntityTypeUtils'
+import { ENTITY_SIDEBAR_STATE_LOCALSTORAGE_KEY } from '@/utils/SynapseConstants'
 
 type EntitySidebarProps = {
   entityId: string
@@ -35,7 +36,16 @@ export default function EntitySidebar(props: EntitySidebarProps) {
 
   const properties = useGetEntityTitleBarProperties(entityId, versionNumber)
 
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(() => {
+    const savedState = localStorage.getItem(
+      ENTITY_SIDEBAR_STATE_LOCALSTORAGE_KEY,
+    )
+    return savedState !== null ? savedState === 'true' : true
+  })
+
+  useEffect(() => {
+    localStorage.setItem(ENTITY_SIDEBAR_STATE_LOCALSTORAGE_KEY, String(open))
+  }, [open])
 
   const sidebarContent = (
     <Box className={styles.content}>
@@ -78,6 +88,7 @@ export default function EntitySidebar(props: EntitySidebarProps) {
         )}
       </Button>
       <Collapse
+        key={isMobile ? 'vertical' : 'horizontal'}
         in={open}
         orientation={isMobile ? 'vertical' : 'horizontal'}
         timeout={{ enter: 200, exit: 200 }}

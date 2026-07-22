@@ -48,7 +48,6 @@ import {
 import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 import {
-  ASSIGNEE_TOOLTIP,
   AUTH_MODE_CHANGED_WARNING,
   AUTH_MODE_NONE_TITLE,
   AUTH_MODE_NONE_TOOLTIP,
@@ -88,6 +87,7 @@ import {
 import noop from 'lodash-es/noop'
 import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 import { StyledFormControl } from '@/components/styled'
+import { instanceOfGridSupportedTaskProperties } from '../utils/types'
 
 export type CreateOrUpdateCurationTaskDialogProps = {
   open: boolean
@@ -171,9 +171,14 @@ export default function CreateOrUpdateCurationTaskDialog(
     string | undefined
   >(() => task?.assigneePrincipalId)
 
-  const initialAuthMode = toAuthorizationModeOption(
-    task?.taskProperties?.suggestedAuthorizationMode,
-  )
+  const initialAuthMode =
+    task?.taskProperties &&
+    instanceOfGridSupportedTaskProperties(task?.taskProperties)
+      ? toAuthorizationModeOption(
+          task?.taskProperties?.suggestedAuthorizationMode,
+        )
+      : 'NONE'
+
   const [authorizationMode, setAuthorizationMode] =
     useState<AuthorizationModeOption>(initialAuthMode)
   // Track the original value to detect unsaved changes
@@ -206,7 +211,12 @@ export default function CreateOrUpdateCurationTaskDialog(
   const [collaboratorPrincipalIds, setCollaboratorPrincipalIds] = useState<
     string[]
   >(() => {
-    const ids = task?.taskProperties?.collaboratorPrincipalIds
+    const ids =
+      task &&
+      task.taskProperties &&
+      instanceOfGridSupportedTaskProperties(task.taskProperties)
+        ? task.taskProperties.collaboratorPrincipalIds
+        : undefined
     return ids ?? []
   })
   const [pendingCollaboratorId, setPendingCollaboratorId] = useState<
@@ -390,11 +400,6 @@ export default function CreateOrUpdateCurationTaskDialog(
     <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
         <InputLabel htmlFor="dlg-set-task-assignee">Assignee</InputLabel>
-        <Tooltip title={ASSIGNEE_TOOLTIP}>
-          <div>
-            <HelpTwoTone sx={{ color: 'grey.700' }} />
-          </div>
-        </Tooltip>
       </Box>
       <UserSearchBox
         inputId="dlg-set-task-assignee"

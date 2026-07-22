@@ -5,6 +5,8 @@ import {
   TwoFactorAuthErrorResponse,
 } from '@sage-bionetworks/synapse-types'
 import { renderHook as _renderHook, waitFor } from '@testing-library/react'
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { OAuth2State, SynapseClient } from '../../index'
 import { BackendDestinationEnum } from '../functions'
 import {
@@ -60,11 +62,16 @@ const mockBindOAuthProviderToAccount = vi.spyOn(
   SynapseClient,
   'bindOAuthProviderToAccount',
 )
+const mockPostAuthV1Oauth2Identity = vi.spyOn(
+  MOCK_CONTEXT_VALUE.synapseClient.authenticationServicesClient,
+  'postAuthV1Oauth2Identity',
+)
 
 describe('useDetectSSOCode tests', () => {
   function renderHook(options: UseDetectSSOCodeOptions) {
-    return _renderHook(() =>
-      useDetectSSOCode({ ...options, isInitializingSession: false }),
+    return _renderHook(
+      () => useDetectSSOCode({ ...options, isInitializingSession: false }),
+      { wrapper: createWrapper() },
     )
   }
 
@@ -84,6 +91,7 @@ describe('useDetectSSOCode tests', () => {
     expect(mockOAuthSessionRequest).not.toHaveBeenCalled()
     expect(mockOAuthRegisterAccountStep2).not.toHaveBeenCalled()
     expect(mockBindOAuthProviderToAccount).not.toHaveBeenCalled()
+    expect(mockPostAuthV1Oauth2Identity).not.toHaveBeenCalled()
     expect(onSignInComplete).not.toHaveBeenCalled()
     expect(hookReturn.result.current.isLoading).toBe(false)
   })
@@ -199,7 +207,75 @@ describe('useDetectSSOCode tests', () => {
     consoleSpy.mockReset()
   })
 
-  test.each(Object.values(OAUTH2_PROVIDERS))(
+  it('Handles NIH RAS identity binding to existing account if user is authenticated', async () => {
+    const encodedState = encodeAndStoreState(buildOAuthState())
+    history.replaceState(
+      {},
+      '',
+      `/?code=${authorizationCode}&provider=${OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE}&state=${encodedState}`,
+    )
+    mockPostAuthV1Oauth2Identity.mockResolvedValue(undefined)
+
+    const hookReturn = renderHook({
+      onSignInComplete,
+      isAuthenticated: true,
+      isInitializingSession: false,
+    })
+    expect(hookReturn.result.current.isLoading).toBe(true)
+
+    await waitFor(() => {
+      expect(mockPostAuthV1Oauth2Identity).toHaveBeenCalledWith({
+        oAuthValidationRequest: {
+          provider: OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE,
+          authenticationCode: authorizationCode,
+          redirectUrl: `http://localhost:3000/?provider=${OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE}`,
+        },
+      })
+      expect(mockBindOAuthProviderToAccount).not.toHaveBeenCalled()
+      expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
+      expect(onSignInComplete).toHaveBeenCalled()
+      expect(hookReturn.result.current.isLoading).toBe(false)
+    })
+  })
+
+  it('Handles NIH RAS identity binding failure', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const encodedState = encodeAndStoreState(buildOAuthState())
+    history.replaceState(
+      {},
+      '',
+      `/?code=${authorizationCode}&provider=${OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE}&state=${encodedState}`,
+    )
+    const mockOnError = vi.fn()
+    const error = new SynapseClientError(
+      400,
+      'some reason',
+      expect.getState().currentTestName!,
+    )
+    mockPostAuthV1Oauth2Identity.mockRejectedValue(error)
+
+    const hookReturn = renderHook({
+      onSignInComplete,
+      onError: mockOnError,
+      isAuthenticated: true,
+      isInitializingSession: false,
+    })
+    expect(hookReturn.result.current.isLoading).toBe(true)
+
+    await waitFor(() => {
+      expect(mockPostAuthV1Oauth2Identity).toHaveBeenCalled()
+      expect(mockOnError).toHaveBeenCalledWith(error.reason)
+      expect(onSignInComplete).not.toHaveBeenCalled()
+      expect(hookReturn.result.current.isLoading).toBe(false)
+    })
+    consoleSpy.mockReset()
+  })
+
+  const LOGIN_PROVIDERS = Object.values(OAUTH2_PROVIDERS).filter(
+    p => p !== OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE,
+  )
+
+  test.each(LOGIN_PROVIDERS)(
     'Handles successful login with %s',
     async provider => {
       const encodedState = encodeAndStoreState(buildOAuthState())
@@ -237,7 +313,7 @@ describe('useDetectSSOCode tests', () => {
     },
   )
 
-  test.each(Object.values(OAUTH2_PROVIDERS))(
+  test.each(LOGIN_PROVIDERS)(
     'Handles 2fa scenario on login with %s',
     async provider => {
       const encodedState = encodeAndStoreState(buildOAuthState())
@@ -273,7 +349,7 @@ describe('useDetectSSOCode tests', () => {
     },
   )
 
-  test.each(Object.values(OAUTH2_PROVIDERS))(
+  test.each(LOGIN_PROVIDERS)(
     'Handles 2fa scenario on login with %s where a twoFaResetToken is passed in state',
     async provider => {
       const state = buildOAuthState({ twoFaResetToken: 'asdf' })
@@ -313,7 +389,7 @@ describe('useDetectSSOCode tests', () => {
     },
   )
 
-  test.each(Object.values(OAUTH2_PROVIDERS))(
+  test.each(LOGIN_PROVIDERS)(
     'Redirects to account registration on failed login with %s where the status is 404',
     async provider => {
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
@@ -358,7 +434,7 @@ describe('useDetectSSOCode tests', () => {
     },
   )
 
-  test.each(Object.values(OAUTH2_PROVIDERS))(
+  test.each(LOGIN_PROVIDERS)(
     'Handles other error on login with %s',
     async provider => {
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})

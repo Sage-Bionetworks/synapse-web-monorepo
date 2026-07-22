@@ -55,6 +55,12 @@
 
       .nav-button {
         color: var(--sticky-nav-color, #fff);
+        &:hover {
+          border-bottom-color: var(
+            --portal-nav-underline-color,
+            var(--synapse-secondary-action-color)
+          );
+        }
       }
 
       .user-loggedIn svg {

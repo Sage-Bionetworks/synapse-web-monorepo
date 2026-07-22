@@ -6,12 +6,14 @@ import {
   setAccessTokenCookie,
 } from '@/synapse-client'
 import { OAuth2State } from '@/utils/types'
+import { OAuthValidationRequestProviderEnum } from '@sage-bionetworks/synapse-client'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { LoginResponse } from '@sage-bionetworks/synapse-types'
 import { useEffect, useMemo, useState } from 'react'
 import { BackendDestinationEnum } from '../functions'
 import { CSRF_TOKEN_STORAGE_KEY, OAUTH2_PROVIDERS } from '../SynapseConstants'
+import { useSynapseContext } from '../context/SynapseContext'
 import { useOneSageURL } from './useOneSageURL'
 
 function safeLocalStorageGetItem(key: string): string | null {
@@ -73,6 +75,7 @@ export default function useDetectSSOCode(
     isAuthenticated,
   } = opts
   const redirectURL = getRootURL()
+  const { synapseClient } = useSynapseContext()
   // 'code' handling (from SSO) should be preformed on the root page, and then redirect to original route.
   // Use 'http://localhost/' as a placeholder during SSR (no browser URL available).
   // Since there is no 'code' or 'provider' in this placeholder URL, the rest of the hook is a no-op.
@@ -159,6 +162,28 @@ export default function useDetectSSOCode(
             redirectUrl,
             BackendDestinationEnum.REPO_ENDPOINT,
           )
+            .then(onSignInComplete)
+            .catch(onFailure)
+            .finally(() => setIsLoading(false))
+        } else if (
+          OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE == provider &&
+          isAuthenticated
+        ) {
+          // RAS does not provide an alias, so bind via the identity endpoint
+          const onFailure = (err: SynapseClientError) => {
+            console.error('Error binding NIH RAS identity to account: ', err)
+            if (onError) {
+              onError(err.reason)
+            }
+          }
+          synapseClient.authenticationServicesClient
+            .postAuthV1Oauth2Identity({
+              oAuthValidationRequest: {
+                provider: provider as OAuthValidationRequestProviderEnum,
+                authenticationCode: String(code),
+                redirectUrl,
+              },
+            })
             .then(onSignInComplete)
             .catch(onFailure)
             .finally(() => setIsLoading(false))
