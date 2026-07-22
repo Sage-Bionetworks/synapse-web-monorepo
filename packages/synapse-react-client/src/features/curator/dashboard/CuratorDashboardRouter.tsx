@@ -19,8 +19,10 @@ export type CuratorDashboardRouterProps = PropsWithChildren<{
  * A router wrapper for the CuratorDashboard, which applies a router around the component to support using react-router APIs
  * from within the dashboard.
  */
-export function CuratorDashboardRouter(props: CuratorDashboardRouterProps) {
-  const { routerBaseName = '/curator/dashboard', useMemoryRouter = false } =
+export default function CuratorDashboardRouter(
+  props: CuratorDashboardRouterProps,
+) {
+  const { routerBaseName = '/curator/dashboard:0', useMemoryRouter = false } =
     props
 
   const routes: RouteObject[] = useMemo(

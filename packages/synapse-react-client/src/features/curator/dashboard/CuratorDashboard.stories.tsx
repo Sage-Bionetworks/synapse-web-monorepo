@@ -12,5 +12,8 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Dashboard: Story = {
-  args: {},
+  args: {
+    useMemoryRouter: true,
+    routerBaseName: '/',
+  },
 }
