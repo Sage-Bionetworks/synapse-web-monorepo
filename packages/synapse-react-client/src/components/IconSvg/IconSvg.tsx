@@ -9,6 +9,7 @@ import FileWithShield from '@/assets/icons/FileWithShield'
 import MultiFile from '@/assets/icons/MultiFile'
 import UnpackagableFile from '@/assets/icons/UnpackagableFile'
 import HandWithMoney from '@/assets/icons/HandWithMoney'
+import { NIHIcon } from '@/assets/icons/NIHIcon'
 import { ORCIDIcon } from '@/assets/icons/ORCIDIcon'
 import OpenBook from '@/assets/icons/OpenBook'
 import Podium from '@/assets/icons/Podium'
@@ -302,6 +303,7 @@ export const IconStrings = [
   'addConditions',
   'sortUp',
   'sortDown',
+  'nih',
   'orcid',
   'tasks',
   'google24',
@@ -643,6 +645,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <Sort {...otherProps} />
     case 'google24':
       return <GoogleIcon24 {...otherProps} />
+    case 'nih':
+      return <NIHIcon {...otherProps} />
     case 'orcid':
       return <ORCIDIcon {...otherProps} />
     case 'tasks':
