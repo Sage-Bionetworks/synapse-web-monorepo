@@ -71,6 +71,8 @@ export const TASK_STATUS_CONFIG: Record<
 > = {
   NOT_STARTED: { label: 'Not Started', backgroundColor: '#EAECEE' },
   IN_PROGRESS: { label: 'In Progress', backgroundColor: '#FFF3CD' },
+  EXECUTING: { label: 'Executing', backgroundColor: '#FFF3CD' },
+  IN_REVIEW: { label: 'Needs Review', backgroundColor: '#B8CCFF' },
   COMPLETED: { label: 'Completed', backgroundColor: '#C8E6C9' },
   CANCELED: { label: 'Canceled', backgroundColor: '#FFCCBC' },
 }

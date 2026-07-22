@@ -109,8 +109,8 @@ export const arkPortalPalette: PaletteOptions = {
 
 export const adKnowledgePortalPalette: PaletteOptions = {
   ...palette,
-  primary: generatePalette('#4d5491'),
-  secondary: generatePalette('#2f8e94'),
+  primary: generatePalette('#5A488F'),
+  secondary: generatePalette('#5A488F'),
 }
 
 export const elPortalPalette: PaletteOptions = {

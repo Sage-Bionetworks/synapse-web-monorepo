@@ -1,7 +1,8 @@
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import { datasetsSql, rgbIndex } from '../resources'
+import { datasetsSearchIndexId, datasetsSql, rgbIndex } from '../resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 export const datasetColumnAliases: Record<string, string> = {
   projectId: 'Project',
@@ -13,6 +14,14 @@ export const datasetCardConfiguration: CardConfiguration = {
     title: 'name',
     type: SynapseConstants.DATASET,
     secondaryLabels: ['createdOn', 'projectId'],
+    includeCitation: true,
+    defaultCitationFormat: 'nature',
+    synapseEntityConfig: {
+      id: {
+        source: 'column',
+        columnName: 'id',
+      },
+    },
   },
   titleLinkConfig: {
     isMarkdown: false,
@@ -33,3 +42,16 @@ const datasetsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
 }
 
 export default datasetsQueryWrapperPlotNavProps
+
+export const datasetsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'Datasets',
+  shouldDeepLink: false,
+  cardConfiguration: datasetCardConfiguration,
+  columnAliases: datasetColumnAliases,
+  searchIndexId: datasetsSearchIndexId,
+  autocompleteFieldName: 'name',
+  defaultShowPlots: false,
+  hideTopLevelControls: false,
+  hideQueryCount: false,
+}

@@ -3,11 +3,11 @@ import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framewor
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import instrumentsPlotNavProps from '@/config/synapseConfigs/instruments'
 import variablesPlotNavProps from '@/config/synapseConfigs/variables'
-import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types'
 import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 
 function StudyMetadataTab() {
-  const { value: study } = useDetailsPageContext('study')
+  const { value: instruments } = useDetailsPageContext('Instruments')
+  const { value: variables } = useDetailsPageContext('Variables')
 
   return (
     <DetailsPageContent
@@ -26,36 +26,40 @@ function StudyMetadataTab() {
             <MarkdownSynapseFromColumnData columnName={'studyMetadata'} />
           ),
         },
-        {
-          title: 'Instruments',
-          id: 'Instruments',
-          element: (
-            <QueryWrapperPlotNav
-              {...instrumentsPlotNavProps}
-              rgbIndex={8}
-              shouldDeepLink={false}
-              sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-              lockedColumn={{ columnName: 'study', value: study }}
-              searchParams={{ study }}
-              hideQueryCount
-            />
-          ),
-        },
-        {
-          title: 'Variables',
-          id: 'Variables',
-          element: (
-            <QueryWrapperPlotNav
-              {...variablesPlotNavProps}
-              rgbIndex={8}
-              shouldDeepLink={false}
-              sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-              lockedColumn={{ columnName: 'study', value: study }}
-              searchParams={{ study }}
-              hideQueryCount
-            />
-          ),
-        },
+        ...(instruments
+          ? [
+              {
+                title: 'Instruments',
+                id: 'Instruments',
+                element: (
+                  <QueryWrapperPlotNav
+                    {...instrumentsPlotNavProps}
+                    sql={`SELECT * FROM ${instruments}`}
+                    rgbIndex={8}
+                    shouldDeepLink={false}
+                    hideQueryCount
+                  />
+                ),
+              },
+            ]
+          : []),
+        ...(variables
+          ? [
+              {
+                title: 'Variables',
+                id: 'Variables',
+                element: (
+                  <QueryWrapperPlotNav
+                    {...variablesPlotNavProps}
+                    sql={`SELECT * FROM ${variables}`}
+                    rgbIndex={8}
+                    shouldDeepLink={false}
+                    hideQueryCount
+                  />
+                ),
+              },
+            ]
+          : []),
       ]}
     />
   )

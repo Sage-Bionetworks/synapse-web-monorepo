@@ -1,9 +1,7 @@
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import { TargetEnum } from 'synapse-react-client/utils/html/TargetEnum'
-import { variablesSql } from '../resources'
 
-const variablesPlotNavProps: QueryWrapperPlotNavProps = {
-  sql: variablesSql,
+const variablesPlotNavProps: Omit<QueryWrapperPlotNavProps, 'sql'> = {
   //   name: 'Variables',
   fileIdColumnName: 'id',
   columnAliases: { study: 'On Synapse' },

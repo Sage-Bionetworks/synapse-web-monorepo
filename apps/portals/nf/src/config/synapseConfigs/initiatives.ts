@@ -17,6 +17,17 @@ export const initiativeCardConfiguration: CardConfiguration = {
     link: 'website',
     imageFileHandleColumnName: 'image',
   },
+  titleLinkConfig: {
+    matchColumnName: 'initiative',
+    isMarkdown: false,
+    baseURL: 'Explore/Initiatives',
+    URLColumnName: 'initiative',
+    urlParamStyle: 'path-segment',
+  },
+  ctaLinkConfig: {
+    text: 'Visit Website',
+    link: 'website',
+  },
 }
 
 const initiatives: QueryWrapperPlotNavProps = {
@@ -24,20 +35,7 @@ const initiatives: QueryWrapperPlotNavProps = {
   defaultShowPlots: false,
   shouldDeepLink: true,
   sql: initiativesSql,
-  cardConfiguration: {
-    ...initiativeCardConfiguration,
-    titleLinkConfig: {
-      matchColumnName: 'initiative',
-      isMarkdown: false,
-      baseURL: 'Explore/Initiatives',
-      URLColumnName: 'initiative',
-      urlParamStyle: 'path-segment',
-    },
-    ctaLinkConfig: {
-      text: 'Visit Website',
-      link: 'website',
-    },
-  },
+  cardConfiguration: initiativeCardConfiguration,
   name: 'Initiatives',
   columnAliases,
   searchConfiguration: {

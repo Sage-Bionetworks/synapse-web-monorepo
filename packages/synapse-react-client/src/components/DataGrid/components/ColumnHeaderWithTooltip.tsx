@@ -70,7 +70,21 @@ export function ColumnHeaderWithTooltip({
             placement="top"
             enterNextDelay={TOOLTIP_DELAY_SHOW}
           >
-            <Key sx={{ fontSize: '1em' }} />
+            <Box
+              component="span"
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'primary.main',
+                color: 'primary.contrastText',
+                borderRadius: '50%',
+                width: '1.25em',
+                height: '1.25em',
+              }}
+            >
+              <Key sx={{ fontSize: '1em' }} />
+            </Box>
           </Tooltip>
         )}
         {showPinIcon && onTogglePin && (
