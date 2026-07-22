@@ -1,3 +1,5 @@
+import EditCurationTaskPage from '@/features/entity/metadata-task/create-task/EditCurationTaskPage'
+import CuratorDashboardContent from './CuratorDashboard'
 import { PropsWithChildren, useMemo } from 'react'
 import {
   createBrowserRouter,
@@ -6,10 +8,9 @@ import {
   RouterProvider,
 } from 'react-router'
 import { RouterProvider as DOMRouterProvider } from 'react-router/dom'
-import { CuratorDashboardContent } from './CuratorDashboard'
 
 export type CuratorDashboardRouterProps = PropsWithChildren<{
-  /** Used to determine the base path for the component. Default is /curator/dashboard */
+  /** Used to determine the base path for the component. Default is CuratorDashboard:0 */
   routerBaseName?: string
   /** If true use a MemoryRouter, which prevents the browser URL from updating. For testing purposes only. */
   useMemoryRouter?: boolean
@@ -22,14 +23,17 @@ export type CuratorDashboardRouterProps = PropsWithChildren<{
 export default function CuratorDashboardRouter(
   props: CuratorDashboardRouterProps,
 ) {
-  const { routerBaseName = '/curator/dashboard:0', useMemoryRouter = false } =
+  const { routerBaseName = '/CuratorDashboard:0', useMemoryRouter = false } =
     props
 
   const routes: RouteObject[] = useMemo(
     () => [
       {
         path: '/',
-        element: <CuratorDashboardContent />,
+        children: [
+          { index: true, element: <CuratorDashboardContent /> },
+          { path: 'edit/:taskId', element: <EditCurationTaskPage /> },
+        ],
       },
     ],
     [],
