@@ -7,8 +7,21 @@ import { useMemo } from 'react'
 import CurationTaskCard from './components/CurationTaskCard'
 import sharedStyles from './components/shared.module.scss'
 import SWCPageLayout from '@/components/layout/SWCPageLayout'
+import { useSearchParams } from 'react-router'
+import { GRID_PAGE_TASK_ID_QUERY_PARAM } from '@/utils/SynapseConstants'
 
-export default function CuratorDashboard() {
+export function CuratorDashboardContent() {
+  const [searchParams] = useSearchParams()
+  const taskIdParam = searchParams.get(GRID_PAGE_TASK_ID_QUERY_PARAM)
+
+  const taskIds = useMemo(() => {
+    if (!taskIdParam) return undefined
+    return taskIdParam
+      .split(',')
+      .map(id => parseInt(id, 10))
+      .filter(id => !isNaN(id))
+  }, [taskIdParam])
+
   const {
     data: curationTasks,
     isLoading,
@@ -17,6 +30,7 @@ export default function CuratorDashboard() {
     fetchNextPage,
   } = useGetCurationTasksInfinite({
     assignedToMe: true,
+    taskIds,
   })
 
   const tasks = useMemo(() => {

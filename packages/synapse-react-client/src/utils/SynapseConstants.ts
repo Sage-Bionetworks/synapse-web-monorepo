@@ -221,7 +221,7 @@ export const SYNAPSE_DOCS_SHARING_SETTINGS_PERMISSIONS_CONDITIONS_FOR_USE_URL =
 // Grid Page URL Query Parameters
 export const GRID_PAGE_SESSION_ID_QUERY_PARAM = 'sessionId'
 export const GRID_PAGE_AGENT_REGISTRATION_ID_QUERY_PARAM = 'agentRegistrationId'
-export const GRID_PAGE_TASK_ID_QUERY_PARAM = 'taskId'
+export const GRID_PAGE_TASK_ID_QUERY_PARAM = 'taskIds'
 
 // Search Page URL Query Parameters
 export const SEARCH_PAGE_QUERY_PARAM = 'query'

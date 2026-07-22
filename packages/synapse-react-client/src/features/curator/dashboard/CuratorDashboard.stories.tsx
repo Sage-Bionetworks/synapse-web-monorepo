@@ -1,16 +1,18 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
-import CuratorDashboard from './CuratorDashboard'
+import CuratorDashboardRouter from './CuratorDashboardRouter'
 
 const meta = {
   title: 'Curator/Dashboard',
-  component: CuratorDashboard,
+  component: CuratorDashboardRouter,
   parameters: {
     requireLogin: true,
   },
-} satisfies Meta<typeof CuratorDashboard>
+  args: {
+    useMemoryRouter: true,
+    routerBaseName: '/',
+  },
+} satisfies Meta<typeof CuratorDashboardRouter>
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Dashboard: Story = {
-  args: {},
-}
+export const Dashboard: Story = {}
