@@ -187,7 +187,8 @@ export default function useDetectSSOCode(
           OAUTH2_PROVIDERS.GOOGLE == provider ||
           OAUTH2_PROVIDERS.ORCID == provider ||
           OAUTH2_PROVIDERS.ARCUS == provider ||
-          OAUTH2_PROVIDERS.SAGE_BIONETWORKS == provider
+          OAUTH2_PROVIDERS.SAGE_BIONETWORKS == provider ||
+          OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE == provider
         ) {
           const onSuccess = (
             response: LoginResponse | TwoFactorAuthErrorResponse | null,
@@ -219,6 +220,20 @@ export default function useDetectSSOCode(
           }
           const onFailure = (err: SynapseClientError) => {
             if (err.status === 404) {
+              if (OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE == provider) {
+                // RAS cannot create a Synapse account (no alias). Surface an
+                // explicit error instead of redirecting to registration.
+                console.error(
+                  'No Synapse account is linked to this NIH RAS identity: ',
+                  err,
+                )
+                if (onError) {
+                  onError(
+                    'No Synapse account is linked to this NIH RAS identity. Sign in to Synapse and link your NIH RAS identity from your account settings.',
+                  )
+                }
+                return
+              }
               // Synapse account not found, send to registration page
               window.location.replace(registerAccountUrl)
             }
