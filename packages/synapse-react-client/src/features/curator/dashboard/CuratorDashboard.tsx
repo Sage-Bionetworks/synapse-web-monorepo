@@ -5,10 +5,13 @@ import { Typography } from '@mui/material'
 import Stack from '@mui/material/Stack'
 import { useMemo } from 'react'
 import CurationTaskCard from './components/CurationTaskCard'
+import CuratorDashboardRouter, {
+  CuratorDashboardRouterProps,
+} from './components/CuratorDashboardRouter'
 import sharedStyles from './components/shared.module.scss'
 import SWCPageLayout from '@/components/layout/SWCPageLayout'
 
-export default function CuratorDashboard() {
+export function CuratorDashboardInternal() {
   const {
     data: curationTasks,
     isLoading,
@@ -51,4 +54,13 @@ export default function CuratorDashboard() {
       </Stack>
     </SWCPageLayout>
   )
+}
+
+export type CuratorDashboardProps = CuratorDashboardRouterProps
+
+/**
+ * The Curator Dashboard, with included routing logic for the page-based edit flow for curation tasks.
+ */
+export default function CuratorDashboard(props: CuratorDashboardProps) {
+  return <CuratorDashboardRouter {...props} />
 }
