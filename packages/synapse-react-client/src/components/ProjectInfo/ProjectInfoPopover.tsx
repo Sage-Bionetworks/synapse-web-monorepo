@@ -97,20 +97,13 @@ export default function ProjectInfoPopover(props: ProjectInfoProps) {
       slotProps={{
         paper: {
           square: true,
-          sx: theme => ({
+          sx: {
             width: '240px',
             position: 'relative',
             mt: '6px',
             borderRadius: '3px',
             border: `1px solid ${POPOVER_BORDER_COLOR}`,
-            [theme.breakpoints.down('sm')]: {
-              maxWidth: '100%',
-              maxHeight: '100%',
-              top: '0 !important',
-              left: '0 !important',
-              bottom: '0 !important',
-            },
-          }),
+          },
         },
       }}
     >
