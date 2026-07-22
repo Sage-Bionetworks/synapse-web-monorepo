@@ -4,6 +4,7 @@ import ProjectInfoPopover from './ProjectInfoPopover'
 import { useGetDOIAssociation } from '@/synapse-queries/doi/useDOI'
 import { DoiObjectType } from '@sage-bionetworks/synapse-client'
 import useGetEntityMetadata from '@/utils/hooks/useGetEntityMetadata'
+import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined'
 
 const PROJECT_INFO_BUTTON_PADDING = '10px 12px'
 
@@ -59,6 +60,7 @@ export default function ProjectInfo(props: ProjectInfoProps) {
       <Button
         aria-describedby={id}
         onClick={handleButtonClick}
+        startIcon={<ArticleOutlinedIcon />}
         sx={{
           width: { xs: '100%', sm: 'initial' },
           borderRadius: '6px',
