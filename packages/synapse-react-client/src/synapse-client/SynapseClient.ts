@@ -113,6 +113,7 @@ import {
   SynapseClient as SynapseOpenAPIClient,
   DoiAssociation,
   EntityType,
+  OAuthValidationRequestProviderEnum,
   ViewEntityType,
   SearchIndexQuery,
   SearchQueryResults,
@@ -795,6 +796,27 @@ export const oAuthSessionRequest = (
       endpoint,
     ),
   )
+}
+
+/**
+ * Bind an OAuth identity to the authenticated user's account without an alias.
+ * Used for providers like NIH RAS that do not supply an alias.
+ * https://rest-docs.synapse.org/rest/POST/oauth2/identity.html
+ */
+export const oAuthIdentityRequest = (
+  provider: OAuthValidationRequestProviderEnum,
+  authenticationCode: string,
+  redirectUrl: string,
+): Promise<void> => {
+  return new SynapseOpenAPIClient({
+    basePath: getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+  }).authenticationServicesClient.postAuthV1Oauth2Identity({
+    oAuthValidationRequest: {
+      provider,
+      authenticationCode,
+      redirectUrl,
+    },
+  })
 }
 
 /**
