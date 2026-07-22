@@ -48,7 +48,6 @@ import {
 import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 import {
-  ASSIGNEE_TOOLTIP,
   AUTH_MODE_CHANGED_WARNING,
   AUTH_MODE_NONE_TITLE,
   AUTH_MODE_NONE_TOOLTIP,
@@ -401,11 +400,6 @@ export default function CreateOrUpdateCurationTaskDialog(
     <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
         <InputLabel htmlFor="dlg-set-task-assignee">Assignee</InputLabel>
-        <Tooltip title={ASSIGNEE_TOOLTIP}>
-          <div>
-            <HelpTwoTone sx={{ color: 'grey.700' }} />
-          </div>
-        </Tooltip>
       </Box>
       <UserSearchBox
         inputId="dlg-set-task-assignee"
