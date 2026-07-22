@@ -7,7 +7,7 @@ import CurationTaskCard, { CurationTaskCardProps } from './CurationTaskCard'
 const meta = {
   title: 'Curator/Dashboard/CurationTaskCard',
   component: CurationTaskCard,
-  parameters: { stack: 'mock' },
+  parameters: { stack: 'mock', withRouter: true },
 } satisfies Meta<CurationTaskCardProps>
 export default meta
 

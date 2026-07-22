@@ -245,14 +245,3 @@ export const DELETE_CURATION_TASK_GRID_SESSION_WARNING =
   'Any grid sessions associated with this task will also be deleted.'
 export const DELETE_CURATION_TASK_SUCCESS_TOAST = 'Task deleted successfully'
 export const DELETE_CURATION_TASK_ERROR_TOAST_PREFIX = 'Error deleting task: '
-
-// The following constants are consumed by the legacy CreateOrUpdateCurationTaskDialog, which is
-// removed in a follow-up PR. They are retained here so the dialog continues to compile until then.
-export const CREATE_CURATION_TASK_DIALOG_TITLE = 'Create Curation Task'
-export const EDIT_CURATION_TASK_DIALOG_TITLE = 'Edit Curation Task'
-export const SELECT_TASK_TYPE_DESCRIPTION =
-  'Choose the type of data this curation task will manage. This cannot be changed after the task is created.'
-export const COLLABORATORS_TOOLTIP =
-  'Collaborators can contribute to the grid session alongside the assignee. For "Session Owner" authorization mode, collaborators are added as additional owners of the session.'
-export const UNRECOGNIZED_TASK_TYPE_ERROR =
-  'This task has an unrecognized task type and cannot be edited here.'

@@ -1,5 +1,4 @@
 import { displayToast } from '@/components'
-import CreateOrUpdateCurationTaskDialog from '@/features/entity/metadata-task/components/CreateOrUpdateCurationTaskDialog'
 import { TASK_STATUS_CONFIG } from '@/features/entity/metadata-task/utils/constants'
 import useOpenCuratorFromTaskButton from '@/features/entity/metadata-task/hooks/useOpenCuratorButton'
 import { OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE } from '@/features/entity/metadata-task/utils/constants'
@@ -14,10 +13,15 @@ import {
   Typography,
 } from '@mui/material'
 import {
+  FileBasedMetadataTaskPropertiesConcreteTypeEnum,
+  RecordBasedMetadataTaskPropertiesConcreteTypeEnum,
+  RecordSetGenerationExecutionPropertiesConcreteTypeEnum,
+  SampleSheetGenerationExecutionPropertiesConcreteTypeEnum,
   TaskBundle,
   TaskStatusStateEnum,
 } from '@sage-bionetworks/synapse-client'
 import classNames from 'classnames'
+import { useNavigate } from 'react-router'
 import styles from './CurationTaskCard.module.scss'
 import NextStepButton from './NextStepButton'
 import sharedStyles from './shared.module.scss'
@@ -38,8 +42,8 @@ function useUiForTask(taskBundle: TaskBundle) {
   }
 
   switch (taskBundle.task?.taskProperties?.concreteType) {
-    case 'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties':
-    case 'org.sagebionetworks.repo.model.curation.metadata.RecordBasedMetadataTaskProperties':
+    case FileBasedMetadataTaskPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_metadata_FileBasedMetadataTaskProperties:
+    case RecordBasedMetadataTaskPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_metadata_RecordBasedMetadataTaskProperties:
       return {
         title: taskBundle.task.dataType,
         description: taskBundle.task.instructions ?? '',
@@ -55,8 +59,8 @@ function useUiForTask(taskBundle: TaskBundle) {
         isPending,
         hasPermission,
       }
-    case 'org.sagebionetworks.repo.model.curation.execution.SampleSheetGenerationExecutionProperties':
-    case 'org.sagebionetworks.repo.model.curation.execution.RecordSetGenerationExecutionProperties':
+    case SampleSheetGenerationExecutionPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_execution_SampleSheetGenerationExecutionProperties:
+    case RecordSetGenerationExecutionPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_execution_RecordSetGenerationExecutionProperties:
       return {
         title: taskBundle.task.dataType,
         description: taskBundle.task.instructions ?? '',
@@ -148,7 +152,7 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
     isPending,
   } = useUiForTask(taskBundle)
 
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const navigate = useNavigate()
   const [isExpanded, setIsExpanded] = useState(false)
 
   const projectId = taskBundle.task?.projectId
@@ -181,7 +185,7 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
             {taskType && <TaskTypeChip label={taskType} />}
             {canEdit && (
               <IconButton
-                onClick={() => setIsSettingsOpen(true)}
+                onClick={() => void navigate(`edit/${taskId}`)}
                 aria-label="Task settings"
               >
                 <SettingsOutlinedIcon />
@@ -240,15 +244,6 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
           />
         </div>
       </Collapse>
-      <CreateOrUpdateCurationTaskDialog
-        key={String(isSettingsOpen)}
-        open={isSettingsOpen}
-        onCancel={() => setIsSettingsOpen(false)}
-        onSuccess={() => setIsSettingsOpen(false)}
-        onDeleteSuccess={() => setIsSettingsOpen(false)}
-        projectId={projectId ?? ''}
-        task={taskBundle.task}
-      />
     </Card>
   )
 }
