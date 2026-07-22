@@ -14,6 +14,7 @@ export type ProjectDataAvailabilityProps = {
 const textColor = '#576077'
 const trackColor = '#DEE0E5'
 const fillColor = '#38756A'
+const MIN_VISIBLE_USAGE_PERCENT = 0.5
 
 export function ProjectDataAvailability({
   projectId,
@@ -36,10 +37,21 @@ export function ProjectDataAvailability({
   if (maxAllowedFileBytes == 0) {
     return <></>
   }
-  const usagePercent = Math.min(
-    Math.round((sumFileBytes / maxAllowedFileBytes) * 100),
-    100,
-  )
+  const rawUsagePercent = (sumFileBytes / maxAllowedFileBytes) * 100
+  const boundedUsagePercent = Math.min(rawUsagePercent, 100)
+
+  const usagePercentLabel =
+    sumFileBytes === 0
+      ? '0%'
+      : rawUsagePercent < 1
+        ? '<1%'
+        : `${Math.round(rawUsagePercent)}%`
+
+  const usageBarPercent =
+    sumFileBytes === 0
+      ? 0
+      : Math.max(boundedUsagePercent, MIN_VISIBLE_USAGE_PERCENT)
+
   const friendlySumFileBytes = calculateFriendlyFileSize(sumFileBytes, 1)
   const friendlyMaxAllowedFileBytes = calculateFriendlyFileSize(
     maxAllowedFileBytes,
@@ -105,7 +117,7 @@ export function ProjectDataAvailability({
               >
                 <Box
                   sx={{
-                    width: `${usagePercent}%`,
+                    width: `${usageBarPercent}%`,
                     height: '6px',
                     backgroundColor: fillColor,
                     borderRadius: '50px',
@@ -119,7 +131,7 @@ export function ProjectDataAvailability({
                 color: textColor,
               }}
             >
-              {`${usagePercent}% of ${friendlyMaxAllowedFileBytes}`}
+              {`${usagePercentLabel} of ${friendlyMaxAllowedFileBytes}`}
             </Typography>
           </Box>
         </Tooltip>
