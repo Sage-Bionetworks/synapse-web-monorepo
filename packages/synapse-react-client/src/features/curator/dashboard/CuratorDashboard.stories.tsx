@@ -1,9 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { CuratorDashboard } from './CuratorDashboard'
+import CuratorDashboardRouter from './CuratorDashboardRouter'
 
 const meta = {
   title: 'Curator/Dashboard',
-  component: CuratorDashboard,
+  component: CuratorDashboardRouter,
   parameters: {
     requireLogin: true,
   },
