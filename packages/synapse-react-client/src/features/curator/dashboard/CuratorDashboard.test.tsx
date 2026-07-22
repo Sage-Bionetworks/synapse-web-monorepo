@@ -31,7 +31,7 @@ interface RenderOptions {
 }
 
 const renderWithRouter = (options: RenderOptions = {}) => {
-  const { initialEntry = '/?taskId=' } = options
+  const { initialEntry = '/?taskIds=' } = options
 
   const routes: RouteObject[] = [
     {
@@ -98,7 +98,7 @@ describe('CuratorDashboard', () => {
         fetchNextPage: vi.fn(),
       } as any)
 
-      renderWithRouter({ initialEntry: '/?taskId=123' })
+      renderWithRouter({ initialEntry: '/?taskIds=123' })
 
       await waitFor(() => {
         expect(mockUseGetCurationTasksInfinite).toHaveBeenCalledWith(
@@ -142,7 +142,7 @@ describe('CuratorDashboard', () => {
         fetchNextPage: vi.fn(),
       } as any)
 
-      renderWithRouter({ initialEntry: '/?taskId=123,456' })
+      renderWithRouter({ initialEntry: '/?taskIds=123,456' })
 
       await waitFor(() => {
         expect(mockUseGetCurationTasksInfinite).toHaveBeenCalledWith(
