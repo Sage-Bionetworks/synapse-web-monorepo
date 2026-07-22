@@ -1,6 +1,7 @@
 import {
   bindOAuthProviderToAccount,
   getRootURL,
+  oAuthIdentityRequest,
   oAuthRegisterAccountStep2,
   oAuthSessionRequest,
   setAccessTokenCookie,
@@ -13,7 +14,6 @@ import { LoginResponse } from '@sage-bionetworks/synapse-types'
 import { useEffect, useMemo, useState } from 'react'
 import { BackendDestinationEnum } from '../functions'
 import { CSRF_TOKEN_STORAGE_KEY, OAUTH2_PROVIDERS } from '../SynapseConstants'
-import { useSynapseContext } from '../context/SynapseContext'
 import { useOneSageURL } from './useOneSageURL'
 
 function safeLocalStorageGetItem(key: string): string | null {
@@ -75,7 +75,6 @@ export default function useDetectSSOCode(
     isAuthenticated,
   } = opts
   const redirectURL = getRootURL()
-  const { synapseClient } = useSynapseContext()
   // 'code' handling (from SSO) should be preformed on the root page, and then redirect to original route.
   // Use 'http://localhost/' as a placeholder during SSR (no browser URL available).
   // Since there is no 'code' or 'provider' in this placeholder URL, the rest of the hook is a no-op.
@@ -176,14 +175,11 @@ export default function useDetectSSOCode(
               onError(err.reason)
             }
           }
-          synapseClient.authenticationServicesClient
-            .postAuthV1Oauth2Identity({
-              oAuthValidationRequest: {
-                provider: provider as OAuthValidationRequestProviderEnum,
-                authenticationCode: String(code),
-                redirectUrl,
-              },
-            })
+          oAuthIdentityRequest(
+            provider as OAuthValidationRequestProviderEnum,
+            String(code),
+            redirectUrl,
+          )
             .then(onSignInComplete)
             .catch(onFailure)
             .finally(() => setIsLoading(false))

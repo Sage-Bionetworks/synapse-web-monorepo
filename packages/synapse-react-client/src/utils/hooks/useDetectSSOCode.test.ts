@@ -5,7 +5,6 @@ import {
   TwoFactorAuthErrorResponse,
 } from '@sage-bionetworks/synapse-types'
 import { renderHook as _renderHook, waitFor } from '@testing-library/react'
-import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { OAuth2State, SynapseClient } from '../../index'
 import { BackendDestinationEnum } from '../functions'
@@ -63,8 +62,8 @@ const mockBindOAuthProviderToAccount = vi.spyOn(
   'bindOAuthProviderToAccount',
 )
 const mockPostAuthV1Oauth2Identity = vi.spyOn(
-  MOCK_CONTEXT_VALUE.synapseClient.authenticationServicesClient,
-  'postAuthV1Oauth2Identity',
+  SynapseClient,
+  'oAuthIdentityRequest',
 )
 
 describe('useDetectSSOCode tests', () => {
@@ -224,13 +223,11 @@ describe('useDetectSSOCode tests', () => {
     expect(hookReturn.result.current.isLoading).toBe(true)
 
     await waitFor(() => {
-      expect(mockPostAuthV1Oauth2Identity).toHaveBeenCalledWith({
-        oAuthValidationRequest: {
-          provider: OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE,
-          authenticationCode: authorizationCode,
-          redirectUrl: `http://localhost:3000/?provider=${OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE}`,
-        },
-      })
+      expect(mockPostAuthV1Oauth2Identity).toHaveBeenCalledWith(
+        OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE,
+        authorizationCode,
+        `http://localhost:3000/?provider=${OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE}`,
+      )
       expect(mockBindOAuthProviderToAccount).not.toHaveBeenCalled()
       expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
       expect(onSignInComplete).toHaveBeenCalled()
