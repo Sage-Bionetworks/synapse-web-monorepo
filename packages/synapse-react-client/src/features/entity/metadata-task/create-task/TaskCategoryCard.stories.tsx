@@ -1,6 +1,7 @@
 import { Chip, Stack } from '@mui/material'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import TaskCategoryCard from './TaskCategoryCard'
+import { ReactComponent as CurateDataIllustration } from '@/assets/illustrations/curate_data_illustration.svg'
 
 const meta = {
   title: 'Synapse/Entity/MetadataTask/TaskCategoryCard',
@@ -20,6 +21,14 @@ export const Default: Story = {
   args: {
     title: 'Compute Data',
     onClick: () => alert('Selected Compute Data'),
+  },
+}
+
+export const WithIllustration: Story = {
+  args: {
+    title: 'Curate Data',
+    Illustration: CurateDataIllustration,
+    onClick: () => alert('Selected Curate Data'),
   },
 }
 

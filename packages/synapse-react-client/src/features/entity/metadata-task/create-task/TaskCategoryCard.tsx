@@ -1,15 +1,11 @@
 import { InsertPhotoOutlined } from '@mui/icons-material'
 import { Card, CardActionArea, Stack, Typography } from '@mui/material'
-import { ReactNode } from 'react'
+import { ComponentType, ReactNode, SVGProps } from 'react'
 
 export type TaskCategoryCardProps = {
   title: string
-  /**
-   * URL of an exported illustration asset matching the Figma card art. The Figma MCP can only return
-   * raster/expiring URLs for these illustrations, so this is left undefined (rendering a placeholder
-   * icon) until the real assets are exported from Figma and imported into the codebase.
-   */
-  illustrationSrc?: string
+  /** Illustration for the card art, imported as a React component via SVGR. */
+  Illustration?: ComponentType<SVGProps<SVGSVGElement>>
   disabled?: boolean
   /** e.g. a "Coming soon" chip for a category that isn't implemented yet. */
   badge?: ReactNode
@@ -25,7 +21,7 @@ const ILLUSTRATION_HEIGHT = 160
  * area above a dark, centered title footer.
  */
 export default function TaskCategoryCard(props: TaskCategoryCardProps) {
-  const { title, illustrationSrc, disabled = false, badge, onClick } = props
+  const { title, Illustration, disabled = false, badge, onClick } = props
 
   return (
     <Card
@@ -55,12 +51,10 @@ export default function TaskCategoryCard(props: TaskCategoryCardProps) {
             bgcolor: 'grey.200',
           }}
         >
-          {illustrationSrc ? (
-            <Stack
-              component="img"
-              src={illustrationSrc}
-              alt=""
-              sx={{ maxHeight: '80%', maxWidth: '80%' }}
+          {Illustration ? (
+            <Illustration
+              style={{ maxHeight: '80%', maxWidth: '80%' }}
+              aria-hidden
             />
           ) : (
             <InsertPhotoOutlined sx={{ fontSize: 48, color: 'grey.400' }} />
