@@ -7,6 +7,10 @@ const meta = {
   parameters: {
     requireLogin: true,
   },
+  args: {
+    useMemoryRouter: true,
+    routerBaseName: '/',
+  },
 } satisfies Meta<typeof CuratorDashboard>
 export default meta
 type Story = StoryObj<typeof meta>

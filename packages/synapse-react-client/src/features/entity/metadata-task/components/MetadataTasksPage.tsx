@@ -5,12 +5,13 @@ import { useGetFeatureFlag } from '@/synapse-queries/index'
 import { Button, FormControlLabel, Stack, Switch } from '@mui/material'
 import { useState } from 'react'
 import { ListCurationTaskRequest } from '@sage-bionetworks/synapse-client'
-import CreateOrUpdateCurationTaskDialog from './CreateOrUpdateCurationTaskDialog'
-import { displayToast } from '@/components/ToastMessage/ToastMessage'
 import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 import { AddCircleTwoTone } from '@mui/icons-material'
-import { useGlobalIsEditingContext } from '@/utils/context/GlobalIsEditingContext'
 import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
+import { useNavigate } from 'react-router'
+import MetadataTasksPageRouter, {
+  MetadataTasksPageRouterProps,
+} from './MetadataTasksPageRouter'
 
 export type MetadataTaskTableProps = {
   projectId: string
@@ -18,19 +19,15 @@ export type MetadataTaskTableProps = {
 
 /**
  * Displays a list of metadata curation tasks for a particular project, with actions that can be performed on each task.
- * @param props
- * @constructor
  */
-export default function MetadataTasksPage(props: MetadataTaskTableProps) {
+function MetadataTasksPageInternal(props: MetadataTaskTableProps) {
   const { projectId } = props
+  const navigate = useNavigate()
   const [listCurationTaskRequest, setListCurationTaskRequest] =
     useState<ListCurationTaskRequest>({
       projectId,
       assignedToMe: false,
     })
-
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const { setIsEditing } = useGlobalIsEditingContext()
 
   const { data: permissions } = useGetEntityPermissions(projectId)
 
@@ -61,32 +58,13 @@ export default function MetadataTasksPage(props: MetadataTaskTableProps) {
           label="View only tasks assigned to me"
         />
         {showNewTaskButton && permissions?.canAddChild && (
-          <>
-            <CreateOrUpdateCurationTaskDialog
-              key={String(isDialogOpen)}
-              projectId={projectId}
-              open={isDialogOpen}
-              onSuccess={() => {
-                displayToast('Curation task created successfully', 'success')
-                setIsDialogOpen(false)
-                setIsEditing(false)
-              }}
-              onCancel={() => {
-                setIsDialogOpen(false)
-                setIsEditing(false)
-              }}
-            />
-            <Button
-              variant="outlined"
-              onClick={() => {
-                setIsDialogOpen(true)
-                setIsEditing(true)
-              }}
-              startIcon={<AddCircleTwoTone />}
-            >
-              New Task
-            </Button>
-          </>
+          <Button
+            variant="outlined"
+            onClick={() => void navigate('create')}
+            startIcon={<AddCircleTwoTone />}
+          >
+            New Task
+          </Button>
         )}
       </Stack>
       <InfiniteTableLayout
@@ -107,3 +85,16 @@ export default function MetadataTasksPage(props: MetadataTaskTableProps) {
     </Stack>
   )
 }
+
+export type MetadataTasksPageProps = MetadataTaskTableProps &
+  Omit<MetadataTasksPageRouterProps, 'projectId'>
+
+/**
+ * A page that displays a project's metadata curation tasks, with included routing logic for the
+ * create/edit task pages.
+ */
+export default function MetadataTasksPage(props: MetadataTasksPageProps) {
+  return <MetadataTasksPageRouter {...props} />
+}
+
+export { MetadataTasksPageInternal }

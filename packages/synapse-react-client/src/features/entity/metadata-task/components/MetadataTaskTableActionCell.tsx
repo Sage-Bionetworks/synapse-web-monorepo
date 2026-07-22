@@ -1,17 +1,12 @@
-import { displayToast } from '@/components/ToastMessage'
 import { StickyNote2Outlined } from '@mui/icons-material'
 import { Box, Button, Tooltip } from '@mui/material'
 import { TaskBundle } from '@sage-bionetworks/synapse-client'
-import { useState } from 'react'
+import { useNavigate } from 'react-router'
 import useOpenCuratorFromTaskButton from '../hooks/useOpenCuratorButton'
 import {
   OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE,
   OPEN_CURATOR_TOOLTIP_TITLE,
 } from '../utils/constants'
-import CreateOrUpdateCurationTaskDialog from './CreateOrUpdateCurationTaskDialog'
-import { useGlobalIsEditingContext } from '@/utils/context/GlobalIsEditingContext'
-
-export const NO_TASK_ASSIGNEE_WARNING_DIALOG_TITLE = 'Task is Unassigned'
 
 /**
  * Handles rendering the 'Actions' cell in the Metadata Task table, which provides buttons for the user
@@ -23,9 +18,7 @@ export default function MetadataTaskTableActionCell(props: {
   canEdit: boolean
 }) {
   const { canEdit, taskBundle } = props
-
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const { setIsEditing } = useGlobalIsEditingContext()
+  const navigate = useNavigate()
 
   const { hasPermission, isLoading, isPending, onClick } =
     useOpenCuratorFromTaskButton(taskBundle)
@@ -41,37 +34,13 @@ export default function MetadataTaskTableActionCell(props: {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
       {canEdit && (
-        <>
-          <CreateOrUpdateCurationTaskDialog
-            key={String(isDialogOpen)}
-            projectId={taskBundle.task!.projectId!}
-            open={isDialogOpen}
-            task={taskBundle.task}
-            onSuccess={() => {
-              displayToast('Curation task updated successfully', 'success')
-              setIsDialogOpen(false)
-              setIsEditing(false)
-            }}
-            onCancel={() => {
-              setIsDialogOpen(false)
-              setIsEditing(false)
-            }}
-            onDeleteSuccess={() => {
-              setIsDialogOpen(false)
-              setIsEditing(false)
-            }}
-          />
-          <Button
-            variant="outlined"
-            onClick={() => {
-              setIsDialogOpen(true)
-              setIsEditing(true)
-            }}
-            size={'small'}
-          >
-            Edit
-          </Button>
-        </>
+        <Button
+          variant="outlined"
+          onClick={() => void navigate(`edit/${taskBundle.task!.taskId}`)}
+          size={'small'}
+        >
+          Edit
+        </Button>
       )}
       <Tooltip title={tooltipTitle}>
         <span>
