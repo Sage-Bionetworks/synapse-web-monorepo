@@ -1921,6 +1921,7 @@
       "post": {
         "tags": ["Grid Services"],
         "operationId": "post-/repo/v1/grid/export/recordset/async/start",
+        "deprecated": true,
         "parameters": [],
         "requestBody": {
           "content": {
@@ -1951,6 +1952,7 @@
       "get": {
         "tags": ["Grid Services"],
         "operationId": "get-/repo/v1/grid/export/recordset/async/get/{asyncToken}",
+        "deprecated": true,
         "parameters": [
           {
             "name": "asyncToken",
@@ -4082,6 +4084,34 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/org.sagebionetworks.repo.model.educ.EDucTemplatePage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/repo/v1/eDuc/template/{templateId}/validation": {
+      "get": {
+        "tags": ["Data Access Services"],
+        "operationId": "get-/repo/v1/eDuc/template/{templateId}/validation",
+        "parameters": [
+          {
+            "name": "templateId",
+            "in": "path",
+            "required": true,
+            "description": "- The DocuSign template ID to validate.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "The validation result indicating whether the template is valid.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.educ.EDucTemplateValidationResult"
                 }
               }
             }
@@ -19953,7 +19983,7 @@
       },
       "org.sagebionetworks.repo.model.search.table.SearchIndexState": {
         "type": "string",
-        "enum": ["CREATING", "ACTIVE", "FAILED"]
+        "enum": ["CREATING", "ACTIVE", "FAILED", "WAITING_FOR_SOURCE"]
       },
       "org.sagebionetworks.repo.model.auth.TwoFactorAuthResetRequest": {
         "type": "object",
@@ -20704,7 +20734,9 @@
               "PORTAL",
               "OAUTH_CLIENT",
               "GRID_SESSION",
-              "RECORDSET"
+              "RECORDSET",
+              "SEARCH_INDEX",
+              "SOURCE_DEPENDENCY_EVENT"
             ]
           },
           "dataType": {
@@ -23830,6 +23862,33 @@
         ],
         "required": ["bucket", "concreteType"],
         "discriminator": { "propertyName": "concreteType" }
+      },
+      "org.sagebionetworks.repo.model.curation.execution.RecordSetGenerationExecutionProperties": {
+        "type": "object",
+        "properties": {
+          "concreteType": {
+            "type": "string",
+            "description": "Indicates which implementation of CurationTaskProperties this object represents. Possible values include: 'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties' and 'org.sagebionetworks.repo.model.curation.metadata.RecordBasedMetadataTaskProperties'.",
+            "enum": [
+              "org.sagebionetworks.repo.model.curation.execution.RecordSetGenerationExecutionProperties"
+            ]
+          },
+          "folderId": {
+            "type": "string",
+            "description": "The Synapse ID of the Folder whose direct-child FileEntities provide the source files to be transformed. The contents of every direct-child FileEntity are read into the processing session, so the Folder may contain at most 20 direct-child FileEntities; the task fails if this limit is exceeded."
+          },
+          "instructions": {
+            "type": "string",
+            "description": "Free-text instructions from the data manager describing how the input files should be transformed to produce the output CSV. These are treated as data-transformation guidance only, never as commands that can change the output target or access other resources."
+          },
+          "destinationTaskId": {
+            "type": "integer",
+            "description": "The ID of the record-based CurationTask whose RecordSet will receive the generated CSV as a new version. The JSON Schema bound to that RecordSet defines the format of the generated output CSV.",
+            "format": "int32"
+          }
+        },
+        "description": "The input parameters for a RecordSet generation task. These configure the folder of source FileEntities, the transformation instructions, and the destination RecordSet for the generated CSV.",
+        "required": ["concreteType"]
       },
       "org.sagebionetworks.repo.model.migration.MigrationType": {
         "type": "string",
@@ -29987,6 +30046,20 @@
         },
         "description": "Identifies both the field and direction for a single sort operation"
       },
+      "org.sagebionetworks.repo.model.educ.EDucTemplateValidationResult": {
+        "type": "object",
+        "properties": {
+          "isValid": {
+            "type": "boolean",
+            "description": "True if the template meets all requirements for use with Synapse"
+          },
+          "reason": {
+            "type": "string",
+            "description": "If the template is not valid, an explanation of what is missing or incorrect"
+          }
+        },
+        "description": "Result of validating a DocuSign template for use with Synapse eDUC"
+      },
       "org.sagebionetworks.repo.model.table.PartialRowSet": {
         "type": "object",
         "properties": {
@@ -30367,7 +30440,9 @@
               "PORTAL",
               "OAUTH_CLIENT",
               "GRID_SESSION",
-              "RECORDSET"
+              "RECORDSET",
+              "SEARCH_INDEX",
+              "SOURCE_DEPENDENCY_EVENT"
             ]
           },
           "timestamp": {
@@ -30426,7 +30501,9 @@
               "PORTAL",
               "OAUTH_CLIENT",
               "GRID_SESSION",
-              "RECORDSET"
+              "RECORDSET",
+              "SEARCH_INDEX",
+              "SOURCE_DEPENDENCY_EVENT"
             ]
           },
           "pathIds": {
@@ -31145,7 +31222,7 @@
           "state": {
             "type": "string",
             "description": "The state of a search index's OpenSearch index.",
-            "enum": ["CREATING", "ACTIVE", "FAILED"]
+            "enum": ["CREATING", "ACTIVE", "FAILED", "WAITING_FOR_SOURCE"]
           },
           "changedOn": {
             "type": "string",
@@ -32182,6 +32259,9 @@
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.curation.metadata.RecordBasedMetadataTaskProperties"
           },
           {
+            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.curation.execution.RecordSetGenerationExecutionProperties"
+          },
+          {
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.curation.execution.SampleSheetGenerationExecutionProperties"
           },
           {
@@ -32504,6 +32584,40 @@
         "description": "In order to download a file the user will need to enable two factor authentication.",
         "required": ["concreteType"]
       },
+      "org.sagebionetworks.repo.model.curation.execution.RecordSetGenerationExecutionDetails": {
+        "type": "object",
+        "properties": {
+          "concreteType": {
+            "type": "string",
+            "description": "Indicates which implementation of TaskExecutionDetails this object represents.",
+            "enum": [
+              "org.sagebionetworks.repo.model.curation.execution.RecordSetGenerationExecutionDetails"
+            ]
+          },
+          "asyncJobId": {
+            "type": "string",
+            "description": "The ID of the async job currently executing this task. Set when execution starts; cleared on completion or failure."
+          },
+          "startedBy": {
+            "type": "string",
+            "description": "The principal ID of the user who started the execution."
+          },
+          "startedOn": {
+            "type": "string",
+            "description": "When the execution was started."
+          },
+          "errorMessage": {
+            "type": "string",
+            "description": "If execution failed, the error description."
+          },
+          "errorDetails": {
+            "type": "string",
+            "description": "If execution failed, additional error details."
+          }
+        },
+        "description": "Execution details for RecordSet generation via a multi-agent system. The concrete type routes execution to the RecordSet generation sub-worker; the input parameters are carried by the task's RecordSetGenerationExecutionProperties.",
+        "required": ["concreteType"]
+      },
       "org.sagebionetworks.repo.model.RestrictableObjectDescriptorResponse": {
         "type": "object",
         "properties": {
@@ -32597,7 +32711,9 @@
               "PORTAL",
               "OAUTH_CLIENT",
               "GRID_SESSION",
-              "RECORDSET"
+              "RECORDSET",
+              "SEARCH_INDEX",
+              "SOURCE_DEPENDENCY_EVENT"
             ]
           },
           "idList": {
@@ -32947,7 +33063,9 @@
               "PORTAL",
               "OAUTH_CLIENT",
               "GRID_SESSION",
-              "RECORDSET"
+              "RECORDSET",
+              "SEARCH_INDEX",
+              "SOURCE_DEPENDENCY_EVENT"
             ]
           },
           "timestamp": {
@@ -33409,6 +33527,9 @@
           },
           {
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.curation.execution.GridExecutionDetails"
+          },
+          {
+            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.curation.execution.RecordSetGenerationExecutionDetails"
           }
         ],
         "required": ["concreteType"],
@@ -33564,7 +33685,9 @@
               "PORTAL",
               "OAUTH_CLIENT",
               "GRID_SESSION",
-              "RECORDSET"
+              "RECORDSET",
+              "SEARCH_INDEX",
+              "SOURCE_DEPENDENCY_EVENT"
             ]
           },
           "timestamp": {
@@ -35519,7 +35642,9 @@
               "PORTAL",
               "OAUTH_CLIENT",
               "GRID_SESSION",
-              "RECORDSET"
+              "RECORDSET",
+              "SEARCH_INDEX",
+              "SOURCE_DEPENDENCY_EVENT"
             ]
           },
           "timestamp": {
@@ -35738,7 +35863,9 @@
               "PORTAL",
               "OAUTH_CLIENT",
               "GRID_SESSION",
-              "RECORDSET"
+              "RECORDSET",
+              "SEARCH_INDEX",
+              "SOURCE_DEPENDENCY_EVENT"
             ]
           },
           "timestamp": {
@@ -36298,7 +36425,9 @@
               "PORTAL",
               "OAUTH_CLIENT",
               "GRID_SESSION",
-              "RECORDSET"
+              "RECORDSET",
+              "SEARCH_INDEX",
+              "SOURCE_DEPENDENCY_EVENT"
             ]
           },
           "timestamp": {
@@ -37313,7 +37442,9 @@
           "PORTAL",
           "OAUTH_CLIENT",
           "GRID_SESSION",
-          "RECORDSET"
+          "RECORDSET",
+          "SEARCH_INDEX",
+          "SOURCE_DEPENDENCY_EVENT"
         ]
       },
       "org.sagebionetworks.repo.model.agent.TableDescription": {
@@ -38127,7 +38258,9 @@
               "PORTAL",
               "OAUTH_CLIENT",
               "GRID_SESSION",
-              "RECORDSET"
+              "RECORDSET",
+              "SEARCH_INDEX",
+              "SOURCE_DEPENDENCY_EVENT"
             ]
           },
           "timestamp": {
@@ -38588,7 +38721,9 @@
               "PORTAL",
               "OAUTH_CLIENT",
               "GRID_SESSION",
-              "RECORDSET"
+              "RECORDSET",
+              "SEARCH_INDEX",
+              "SOURCE_DEPENDENCY_EVENT"
             ]
           },
           "targetId": {
@@ -39458,13 +39593,9 @@
             "description": "The ID of the file-based CurationTask (with FileBasedMetadataTaskProperties) whose FileView provides the source annotations.",
             "format": "int32"
           },
-          "targetSchemaId": {
-            "type": "string",
-            "description": "The $id of the JSON Schema defining the target sample sheet format."
-          },
           "destinationTaskId": {
             "type": "integer",
-            "description": "The ID of the record-based CurationTask whose RecordSet will receive the generated sample sheet.",
+            "description": "The ID of the record-based CurationTask whose RecordSet will receive the generated sample sheet as a new version. The JSON Schema bound to that RecordSet defines the target sample sheet format.",
             "format": "int32"
           }
         },
@@ -41654,7 +41785,9 @@
               "PORTAL",
               "OAUTH_CLIENT",
               "GRID_SESSION",
-              "RECORDSET"
+              "RECORDSET",
+              "SEARCH_INDEX",
+              "SOURCE_DEPENDENCY_EVENT"
             ]
           }
         },
@@ -41715,7 +41848,9 @@
               "PORTAL",
               "OAUTH_CLIENT",
               "GRID_SESSION",
-              "RECORDSET"
+              "RECORDSET",
+              "SEARCH_INDEX",
+              "SOURCE_DEPENDENCY_EVENT"
             ]
           },
           "id": {
@@ -41820,7 +41955,9 @@
               "PORTAL",
               "OAUTH_CLIENT",
               "GRID_SESSION",
-              "RECORDSET"
+              "RECORDSET",
+              "SEARCH_INDEX",
+              "SOURCE_DEPENDENCY_EVENT"
             ]
           },
           "objectVersion": {
@@ -42832,6 +42969,10 @@
           "lastUpdatedOn": {
             "type": "string",
             "description": "Timestamp of when the status was last updated."
+          },
+          "dueDate": {
+            "type": "string",
+            "description": "Timestamp by which the task should be completed. Null if no due date has been set."
           },
           "etag": {
             "type": "string",
@@ -44619,7 +44760,9 @@
               "PORTAL",
               "OAUTH_CLIENT",
               "GRID_SESSION",
-              "RECORDSET"
+              "RECORDSET",
+              "SEARCH_INDEX",
+              "SOURCE_DEPENDENCY_EVENT"
             ]
           },
           "timestamp": {
@@ -45781,7 +45924,9 @@
               "PORTAL",
               "OAUTH_CLIENT",
               "GRID_SESSION",
-              "RECORDSET"
+              "RECORDSET",
+              "SEARCH_INDEX",
+              "SOURCE_DEPENDENCY_EVENT"
             ]
           },
           "timestamp": {
@@ -46698,7 +46843,9 @@
               "PORTAL",
               "OAUTH_CLIENT",
               "GRID_SESSION",
-              "RECORDSET"
+              "RECORDSET",
+              "SEARCH_INDEX",
+              "SOURCE_DEPENDENCY_EVENT"
             ]
           },
           "timestamp": {
@@ -47303,6 +47450,9 @@
         "oneOf": [
           {
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.curation.execution.SampleSheetGenerationExecutionDetails"
+          },
+          {
+            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.curation.execution.RecordSetGenerationExecutionDetails"
           }
         ],
         "required": ["concreteType"],
