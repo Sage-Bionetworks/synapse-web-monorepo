@@ -1,15 +1,11 @@
+import FieldDescription from '@/components/FieldDescription'
 import { StyledFormControl } from '@/components/styled'
 import { HelpTwoTone } from '@mui/icons-material'
 import {
   Alert,
   Box,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
   InputLabel,
   MenuItem,
-  Radio,
-  RadioGroup,
   Select,
   Stack,
   Tooltip,
@@ -24,13 +20,10 @@ import noop from 'lodash-es/noop'
 import { useState } from 'react'
 import {
   AUTH_MODE_CHANGED_WARNING,
+  AUTH_MODE_CONFIG,
+  AUTH_MODE_INPUT_DESCRIPTION,
   AUTH_MODE_INPUT_LABEL,
-  AUTH_MODE_NONE_TITLE,
-  AUTH_MODE_NONE_TOOLTIP,
-  AUTH_MODE_SESSION_OWNER_TITLE,
-  AUTH_MODE_SESSION_OWNER_TOOLTIP,
-  AUTH_MODE_SOURCE_BENEFACTOR_TITLE,
-  AUTH_MODE_SOURCE_BENEFACTOR_TOOLTIP,
+  AUTH_MODE_OPTIONS,
   CURATE_TASK_TYPE_CONFIG,
   CURATE_TASK_TYPE_INPUT_LABEL,
   CURATE_TASK_TYPE_OPTIONS,
@@ -288,58 +281,33 @@ export default function CurateTaskForm(props: CurateTaskFormProps) {
           />
         )}
 
-        <FormControl>
-          <FormLabel>{AUTH_MODE_INPUT_LABEL}</FormLabel>
-          <RadioGroup
+        <StyledFormControl fullWidth>
+          <InputLabel id="curate-task-auth-mode-label">
+            {AUTH_MODE_INPUT_LABEL}
+          </InputLabel>
+          <FieldDescription>{AUTH_MODE_INPUT_DESCRIPTION}</FieldDescription>
+          <Select
+            labelId="curate-task-auth-mode-label"
+            label={AUTH_MODE_INPUT_LABEL}
             value={authorizationMode}
-            onChange={(_e, v) =>
-              setAuthorizationMode(v as AuthorizationModeOption)
+            onChange={e =>
+              setAuthorizationMode(e.target.value as AuthorizationModeOption)
             }
           >
-            <FormControlLabel
-              value="NONE"
-              control={<Radio />}
-              label={
+            {AUTH_MODE_OPTIONS.map(mode => (
+              <MenuItem key={mode} value={mode}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                   <Typography variant="body1">
-                    {AUTH_MODE_NONE_TITLE}
+                    {AUTH_MODE_CONFIG[mode].label}
                   </Typography>
-                  <Tooltip title={AUTH_MODE_NONE_TOOLTIP}>
+                  <Tooltip title={AUTH_MODE_CONFIG[mode].tooltip}>
                     <HelpTwoTone sx={{ color: 'grey.700' }} />
                   </Tooltip>
                 </Box>
-              }
-            />
-            <FormControlLabel
-              value="SESSION_OWNER"
-              control={<Radio />}
-              label={
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <Typography variant="body1">
-                    {AUTH_MODE_SESSION_OWNER_TITLE}
-                  </Typography>
-                  <Tooltip title={AUTH_MODE_SESSION_OWNER_TOOLTIP}>
-                    <HelpTwoTone sx={{ color: 'grey.700' }} />
-                  </Tooltip>
-                </Box>
-              }
-            />
-            <FormControlLabel
-              value="SOURCE_BENEFACTOR"
-              control={<Radio />}
-              label={
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <Typography variant="body1">
-                    {AUTH_MODE_SOURCE_BENEFACTOR_TITLE}
-                  </Typography>
-                  <Tooltip title={AUTH_MODE_SOURCE_BENEFACTOR_TOOLTIP}>
-                    <HelpTwoTone sx={{ color: 'grey.700' }} />
-                  </Tooltip>
-                </Box>
-              }
-            />
-          </RadioGroup>
-        </FormControl>
+              </MenuItem>
+            ))}
+          </Select>
+        </StyledFormControl>
 
         {authModeChanged && (
           <Alert severity="warning">{AUTH_MODE_CHANGED_WARNING}</Alert>

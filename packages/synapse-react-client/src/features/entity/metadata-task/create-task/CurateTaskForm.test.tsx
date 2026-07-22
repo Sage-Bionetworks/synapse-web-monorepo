@@ -251,7 +251,7 @@ describe('CurateTaskForm', () => {
       )
     })
 
-    it('sets suggestedAuthorizationMode from the selected Authorization Mode radio', async () => {
+    it('sets suggestedAuthorizationMode from the selected Authorization Mode', async () => {
       mockCreateMutateAsync.mockResolvedValue({
         taskId: MOCK_CURATION_TASK_ID,
       } as CurationTask)
@@ -262,7 +262,12 @@ describe('CurateTaskForm', () => {
       await user.type(screen.getByLabelText(/upload folder id/i), 'syn1')
       await user.type(screen.getByLabelText(/file view id/i), 'syn2')
       await user.click(
-        screen.getByRole('radio', { name: /share with assignees only/i }),
+        screen.getByRole('combobox', { name: /authorization mode/i }),
+      )
+      await user.click(
+        await screen.findByRole('option', {
+          name: /share with assignees only/i,
+        }),
       )
       await user.click(screen.getByRole('button', { name: /create/i }))
 
@@ -308,8 +313,8 @@ describe('CurateTaskForm', () => {
       )
       expect(screen.getByLabelText(/record set id/i)).toHaveValue('syn999')
       expect(
-        screen.getByRole('radio', { name: /share with assignees only/i }),
-      ).toBeChecked()
+        screen.getByRole('combobox', { name: /authorization mode/i }),
+      ).toHaveTextContent(/share with assignees only/i)
       expect(screen.queryByLabelText(/^project$/i)).not.toBeInTheDocument()
     })
 
@@ -391,7 +396,10 @@ describe('CurateTaskForm', () => {
       ).not.toBeInTheDocument()
 
       await user.click(
-        screen.getByRole('radio', { name: /work independently/i }),
+        screen.getByRole('combobox', { name: /authorization mode/i }),
+      )
+      await user.click(
+        await screen.findByRole('option', { name: /work independently/i }),
       )
 
       expect(

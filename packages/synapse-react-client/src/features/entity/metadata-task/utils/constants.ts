@@ -120,6 +120,8 @@ export const CURATE_TASK_TYPE_CONFIG: Record<
 }
 
 export const AUTH_MODE_INPUT_LABEL = 'Authorization Mode'
+export const AUTH_MODE_INPUT_DESCRIPTION =
+  'Choose how contributors share access to the grid session for this task.'
 export const AUTH_MODE_NONE_TITLE = 'Work independently'
 export const AUTH_MODE_NONE_TOOLTIP =
   'This is the legacy behavior. Each contributor works on their own view of the data, based on what they personally have permission to edit. Without coordination, users may overwrite each other’s annotations.'
@@ -131,6 +133,32 @@ export const AUTH_MODE_SESSION_OWNER_TOOLTIP =
 export const AUTH_MODE_SOURCE_BENEFACTOR_TITLE = 'Share with all editors'
 export const AUTH_MODE_SOURCE_BENEFACTOR_TOOLTIP =
   'Contributors work together in one shared grid session. Anyone who has edit access to the task’s data can join and edit the rows available in the session.'
+
+/** The authorization mode options, in the order they should be presented in the selector. */
+export const AUTH_MODE_OPTIONS = [
+  'NONE',
+  'SESSION_OWNER',
+  'SOURCE_BENEFACTOR',
+] as const
+
+/**
+ * Config for the authorization mode options. Centralized here so labels/tooltips can be changed
+ * easily without hunting through the form components.
+ */
+export const AUTH_MODE_CONFIG: Record<
+  (typeof AUTH_MODE_OPTIONS)[number],
+  { label: string; tooltip: string }
+> = {
+  NONE: { label: AUTH_MODE_NONE_TITLE, tooltip: AUTH_MODE_NONE_TOOLTIP },
+  SESSION_OWNER: {
+    label: AUTH_MODE_SESSION_OWNER_TITLE,
+    tooltip: AUTH_MODE_SESSION_OWNER_TOOLTIP,
+  },
+  SOURCE_BENEFACTOR: {
+    label: AUTH_MODE_SOURCE_BENEFACTOR_TITLE,
+    tooltip: AUTH_MODE_SOURCE_BENEFACTOR_TOOLTIP,
+  },
+}
 
 export const AUTH_MODE_CHANGED_WARNING =
   'Changing the Authorization Mode will clear the active session ID on this task. Any in-progress grid session linked to this task will no longer be associated with it.'
@@ -161,8 +189,8 @@ export const TASK_DUE_DATE_INPUT_DESCRIPTION =
 export const TASK_INSTRUCTIONS_INPUT_DESCRIPTION =
   'Provide any details the assignee needs to complete the task.'
 
-export const ASSIGNEE_TOOLTIP =
-  "The user or team assigned to this task. If using 'Session Owner' authorization mode, the assignee is the default owner of the grid session. For team assignees in 'Session Owner' mode, any team member can access the session."
+export const ASSIGNEE_INPUT_DESCRIPTION =
+  'List the person or team responsible for completing the task.'
 
 export const SAMPLE_SHEET_INPUT_TASK_ID_LABEL = 'Input Task ID'
 export const SAMPLE_SHEET_INPUT_TASK_ID_DESCRIPTION =

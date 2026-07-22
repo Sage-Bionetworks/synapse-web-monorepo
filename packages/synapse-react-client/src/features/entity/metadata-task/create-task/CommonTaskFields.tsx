@@ -1,10 +1,10 @@
+import FieldDescription from '@/components/FieldDescription'
 import { TextField } from '@/components/TextField'
 import UserSearchBox from '@/components/UserSearchBox/UserSearchBox'
-import { HelpTwoTone } from '@mui/icons-material'
-import { Box, InputLabel, Stack, Tooltip } from '@mui/material'
+import { Box, InputLabel, Stack } from '@mui/material'
 import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import {
-  ASSIGNEE_TOOLTIP,
+  ASSIGNEE_INPUT_DESCRIPTION,
   TASK_DUE_DATE_INPUT_DESCRIPTION,
   TASK_DUE_DATE_INPUT_LABEL,
   TASK_INSTRUCTIONS_INPUT_DESCRIPTION,
@@ -49,6 +49,7 @@ export default function CommonTaskFields(props: CommonTaskFieldsProps) {
         value={dataType}
         onChange={e => onDataTypeChange(e.target.value)}
         description={TASK_NAME_INPUT_DESCRIPTION}
+        placeholder="Enter name"
       />
       <TextField
         label={TASK_DUE_DATE_INPUT_LABEL}
@@ -70,16 +71,8 @@ export default function CommonTaskFields(props: CommonTaskFieldsProps) {
         description={TASK_INSTRUCTIONS_INPUT_DESCRIPTION}
       />
       <Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-          <InputLabel htmlFor={ASSIGNEE_INPUT_ID} required>
-            Assignee
-          </InputLabel>
-          <Tooltip title={ASSIGNEE_TOOLTIP}>
-            <div>
-              <HelpTwoTone sx={{ color: 'grey.700' }} />
-            </div>
-          </Tooltip>
-        </Box>
+        <InputLabel htmlFor={ASSIGNEE_INPUT_ID}>Assignee</InputLabel>
+        <FieldDescription>{ASSIGNEE_INPUT_DESCRIPTION}</FieldDescription>
         <UserSearchBox
           inputId={ASSIGNEE_INPUT_ID}
           value={assigneePrincipalId ?? null}

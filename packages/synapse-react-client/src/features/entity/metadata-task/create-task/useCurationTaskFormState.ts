@@ -122,8 +122,7 @@ export function useCurationTaskFormState(args: UseCurationTaskFormStateArgs) {
     isDeletePending
   const error = createError ?? updateError ?? statusUpdateError
 
-  const isCommonFieldsValid =
-    !!dataType.trim() && !!instructions.trim() && !!assigneePrincipalId
+  const isCommonFieldsValid = !!dataType.trim() && !!instructions.trim()
   const isProjectValid = !showProjectSelector || !!selectedProjectId.trim()
 
   /**
