@@ -8,7 +8,7 @@ import ProjectDataAvailability from '../ProjectStorage'
 
 const POPOVER_BORDER_COLOR = '#B7BFC9'
 
-export type ProjectInfoPopOverProps = {
+export type ProjectInfoPopoverProps = {
   doi?: string
   projectStorageLocation?: string
   projectId: string
@@ -20,7 +20,7 @@ type Property = {
   value?: ReactElement | ReactNode
 }
 
-export type ProjectInfoProps = ProjectInfoPopOverProps &
+export type ProjectInfoProps = ProjectInfoPopoverProps &
   Pick<PopoverProps, 'anchorEl' | 'open' | 'id' | 'onClose'>
 
 const propertyRow = ({ title, value }: Property, isLoading?: boolean) => (
