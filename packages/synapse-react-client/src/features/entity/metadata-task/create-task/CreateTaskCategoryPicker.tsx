@@ -5,6 +5,8 @@ import {
   SELECT_TASK_CATEGORY_DESCRIPTION,
 } from '../utils/constants'
 import TaskCategoryCard from './TaskCategoryCard'
+import curateDataImg from '@/assets/illustrations/curate_data_illustration.svg?no-inline'
+import computeImg from '@/assets/illustrations/compute_illustration.svg?no-inline'
 
 export type CreateTaskCategoryPickerProps = {
   onSelectCompute: () => void
@@ -32,10 +34,12 @@ export default function CreateTaskCategoryPicker(
       >
         <TaskCategoryCard
           title={CURATE_TASK_CATEGORY_TITLE}
+          illustrationSrc={curateDataImg}
           onClick={onSelectCurate}
         />
         <TaskCategoryCard
           title={COMPUTE_TASK_CATEGORY_TITLE}
+          illustrationSrc={computeImg}
           onClick={onSelectCompute}
         />
       </Stack>
