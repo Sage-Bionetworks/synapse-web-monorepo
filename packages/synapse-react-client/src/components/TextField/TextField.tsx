@@ -6,6 +6,7 @@ import {
   Typography,
 } from '@mui/material'
 import styles from './TextField.module.scss'
+import FieldDescription from '@/components/FieldDescription'
 import { ReactNode, useId } from 'react'
 
 export type TextFieldProps = MuiTextFieldProps & {
@@ -48,7 +49,9 @@ export default function TextField({
       <>
         {label}
         {description != null && (
-          <span className={styles.description}>{description}</span>
+          <FieldDescription className={styles.description}>
+            {description}
+          </FieldDescription>
         )}
       </>
     ) : undefined
