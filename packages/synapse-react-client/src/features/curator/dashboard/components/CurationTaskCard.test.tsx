@@ -1,42 +1,18 @@
-import CreateOrUpdateCurationTaskDialog from '@/features/entity/metadata-task/components/CreateOrUpdateCurationTaskDialog'
 import useOpenCuratorFromTaskButton from '@/features/entity/metadata-task/hooks/useOpenCuratorButton'
 import { createMockTaskBundle } from '@/mocks/curation/mockCurationTask'
 import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
-import { CurationTask, TaskBundle } from '@sage-bionetworks/synapse-client'
+import { TaskBundle } from '@sage-bionetworks/synapse-client'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useNavigate } from 'react-router'
 import { beforeEach } from 'vitest'
 import CurationTaskCard from './CurationTaskCard'
+
+vi.mock('react-router')
 
 vi.mock('@/features/entity/metadata-task/hooks/useOpenCuratorButton', () => ({
   default: vi.fn(),
 }))
-
-vi.mock(
-  '@/features/entity/metadata-task/components/CreateOrUpdateCurationTaskDialog',
-  () => ({
-    default: vi.fn(
-      ({
-        open,
-        onCancel,
-        onSuccess,
-        onDeleteSuccess,
-      }: {
-        open: boolean
-        onCancel: () => void
-        onSuccess: (task: CurationTask) => void
-        onDeleteSuccess: () => void
-      }) =>
-        open ? (
-          <div data-testid="settings-dialog">
-            <button onClick={onCancel}>Cancel</button>
-            <button onClick={() => onSuccess({} as CurationTask)}>Save</button>
-            <button onClick={onDeleteSuccess}>Delete</button>
-          </div>
-        ) : null,
-    ),
-  }),
-)
 
 vi.mock('./UserOrTeamChip', () => ({
   default: () => null,
@@ -47,10 +23,8 @@ vi.mock('@/synapse-queries/entity/useEntityBundle', () => ({
 }))
 
 const mockUseOpenCuratorFromTaskButton = vi.mocked(useOpenCuratorFromTaskButton)
-const mockCreateOrUpdateCurationTaskDialog = vi.mocked(
-  CreateOrUpdateCurationTaskDialog,
-)
 const mockUseGetEntityBundle = vi.mocked(useGetEntityBundle)
+const mockNavigate = vi.fn()
 
 const mockTaskBundle = createMockTaskBundle({
   projectId: 'syn123',
@@ -62,6 +36,7 @@ const renderComponent = (taskBundle: TaskBundle = mockTaskBundle) =>
 
 beforeEach(() => {
   vi.clearAllMocks()
+  vi.mocked(useNavigate).mockReturnValue(mockNavigate)
   mockUseOpenCuratorFromTaskButton.mockReturnValue({
     hasPermission: true,
     isLoading: false,
@@ -91,63 +66,15 @@ describe('CurationTaskCard', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('does not show the settings dialog on initial render', () => {
-    renderComponent()
-    expect(screen.queryByTestId('settings-dialog')).not.toBeInTheDocument()
-  })
-
-  it('opens the settings dialog when the settings button is clicked', async () => {
+  it('navigates to the edit route for the task when the settings button is clicked', async () => {
     const user = userEvent.setup()
     renderComponent()
 
     await user.click(screen.getByRole('button', { name: /task settings/i }))
 
-    expect(screen.getByTestId('settings-dialog')).toBeInTheDocument()
-  })
-
-  it('passes the task to the dialog so it opens in edit mode', () => {
-    renderComponent()
-
-    const props = mockCreateOrUpdateCurationTaskDialog.mock.calls[0][0]
-    expect(props.task).toEqual(mockTaskBundle.task)
-  })
-
-  it('passes the projectId from the task to the dialog', () => {
-    renderComponent()
-
-    const props = mockCreateOrUpdateCurationTaskDialog.mock.calls[0][0]
-    expect(props.projectId).toBe('syn123')
-  })
-
-  it('closes the settings dialog when onCancel is called', async () => {
-    const user = userEvent.setup()
-    renderComponent()
-
-    await user.click(screen.getByRole('button', { name: /task settings/i }))
-    expect(screen.getByTestId('settings-dialog')).toBeInTheDocument()
-
-    await user.click(screen.getByRole('button', { name: /cancel/i }))
-    expect(screen.queryByTestId('settings-dialog')).not.toBeInTheDocument()
-  })
-
-  it('closes the settings dialog when onSuccess is called', async () => {
-    const user = userEvent.setup()
-    renderComponent()
-
-    await user.click(screen.getByRole('button', { name: /task settings/i }))
-    await user.click(screen.getByRole('button', { name: /save/i }))
-
-    expect(screen.queryByTestId('settings-dialog')).not.toBeInTheDocument()
-  })
-
-  it('closes the settings dialog when onDeleteSuccess is called', async () => {
-    const user = userEvent.setup()
-    renderComponent()
-
-    await user.click(screen.getByRole('button', { name: /task settings/i }))
-    await user.click(screen.getByRole('button', { name: /delete/i }))
-
-    expect(screen.queryByTestId('settings-dialog')).not.toBeInTheDocument()
+    expect(mockNavigate).toHaveBeenCalledWith(
+      `edit/${mockTaskBundle.task!.taskId}`,
+    )
   })
 
   describe('status chip', () => {
