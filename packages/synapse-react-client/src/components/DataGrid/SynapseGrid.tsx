@@ -2,7 +2,7 @@ import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/Grid
 import UploadCsvToGridButton from '@/components/DataGrid/components/UploadCsvToGridButton'
 import ExportCsvFromGridButton from '@/components/DataGrid/components/ExportCsvFromGridButton'
 import useGetSchemaForGrid from '@/components/DataGrid/hooks/useGetSchemaForGrid'
-import MergeGridWithSourceTableButton from '@/components/DataGrid/MergeGridWithSourceTableButton'
+import SyncGridWithSourceButton from '@/components/DataGrid/SyncGridWithSourceButton'
 import computeReplicaSelectionModel from '@/components/DataGrid/utils/computeReplicaSelectionModel'
 import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
 import { SkeletonTable } from '@/components/index'
@@ -505,10 +505,7 @@ function SynapseGridInner({
                       />
                     )}
                     {session.sourceEntityId && (
-                      <MergeGridWithSourceTableButton
-                        sourceEntityId={session.sourceEntityId}
-                        gridSessionId={session.sessionId!}
-                      />
+                      <SyncGridWithSourceButton gridSession={session} />
                     )}
                   </Stack>
                 </Grid>
