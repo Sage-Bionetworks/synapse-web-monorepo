@@ -24,6 +24,7 @@ import sharedStyles from './shared.module.scss'
 import UserOrTeamChip from './UserOrTeamChip'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 import { useState } from 'react'
+import dayjs from 'dayjs'
 
 export type CurationTaskCardProps = {
   taskBundle: TaskBundle
@@ -129,6 +130,31 @@ function TaskStatusChip(props: { state: TaskStatusStateEnum | undefined }) {
   )
 }
 
+function DueDateChip(props: { dueDate: string | undefined }) {
+  const { dueDate } = props
+  if (!dueDate) return null
+
+  const dueDateObj = dayjs(dueDate)
+  const today = dayjs()
+  const daysUntilDue = dueDateObj.diff(today, 'day')
+  const formattedDate = dueDateObj.format('MM/DD/YY')
+
+  let backgroundColor = '#E0E0E0'
+  if (daysUntilDue < 0) {
+    backgroundColor = '#FFCDD2'
+  } else if (daysUntilDue < 30) {
+    backgroundColor = '#FFF9C4'
+  }
+
+  return (
+    <Chip
+      size="small"
+      sx={{ fontWeight: 600, backgroundColor }}
+      label={`Due ${formattedDate}`}
+    />
+  )
+}
+
 /**
  * Card component for displaying a curation task on the curator dashboard. Shows relevant information about the task and includes a button to proceed to the next step in the workflow.
  */
@@ -206,6 +232,7 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
         </div>
         <div className={styles.statusContainer}>
           <TaskStatusChip state={statusState} />
+          <DueDateChip dueDate={taskBundle.status?.dueDate} />
         </div>
         {!isExpanded && (
           <>
