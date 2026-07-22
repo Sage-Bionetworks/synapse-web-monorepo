@@ -9,6 +9,7 @@ import EntityActionMenu, {
 } from '../action_menu/EntityActionMenu'
 import { EntityTitleBarVersionInfo } from './EntityTitleBarVersionInfo'
 import TitleBarProperties from './TitleBarProperties'
+import CopyToClipboardString from '@/components/CopyToClipboardString/CopyToClipboardString'
 
 export type EntityPageTitleBarProps = {
   entityId: string
@@ -76,9 +77,13 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
               <Avatar
                 sx={{
                   bgcolor: AVATAR_BACKGROUND_COLOR,
-                  height: 48,
-                  width: 48,
+                  height: 68,
+                  width: 68,
                   borderRadius: '3px',
+                  svg: {
+                    height: '36px',
+                    width: '36px',
+                  },
                 }}
                 variant={'square'}
               >
@@ -122,6 +127,7 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
                 versionNumber={versionNumber}
                 toggleShowVersionHistory={toggleShowVersionHistory}
               />
+              <CopyToClipboardString value={entityId} useRoundedIcon />
             </Box>
           </Stack>
           {entityActionMenuProps && (
