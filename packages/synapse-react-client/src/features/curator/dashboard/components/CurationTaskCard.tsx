@@ -56,6 +56,7 @@ function useUiForTask(taskBundle: TaskBundle) {
         hasPermission,
       }
     case 'org.sagebionetworks.repo.model.curation.execution.SampleSheetGenerationExecutionProperties':
+    case 'org.sagebionetworks.repo.model.curation.execution.RecordSetGenerationExecutionProperties':
       return {
         title: taskBundle.task.dataType,
         description: taskBundle.task.instructions ?? '',
