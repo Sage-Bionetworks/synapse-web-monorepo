@@ -1,6 +1,6 @@
 import { Button } from '@mui/material'
 import { useState } from 'react'
-import ProjectInfoPopoverContent from './ProjectInfoPopoverContent'
+import ProjectInfoPopover from './ProjectInfoPopover'
 import { useGetDOIAssociation } from '@/synapse-queries/doi/useDOI'
 import { DoiObjectType } from '@sage-bionetworks/synapse-client'
 import useGetEntityMetadata from '@/utils/hooks/useGetEntityMetadata'
@@ -42,7 +42,7 @@ export default function ProjectInfo(props: ProjectInfoProps) {
   }
 
   const popover = (
-    <ProjectInfoPopoverContent
+    <ProjectInfoPopover
       id={id}
       projectId={projectId}
       open={open}

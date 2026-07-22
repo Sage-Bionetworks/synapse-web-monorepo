@@ -27,6 +27,7 @@ type Story = StoryObj<typeof meta>
 export const ProjectDataUnderLimit: Story = {
   args: {
     projectId: UNDER_LIMIT_PROJECT_ID,
+    sx: { width: 210 },
   },
   parameters: {
     stack: 'mock',
@@ -43,6 +44,7 @@ export const ProjectDataUnderLimit: Story = {
 export const ProjectDataOverLimit: Story = {
   args: {
     projectId: OVER_LIMIT_PROJECT_ID,
+    sx: { width: 210 },
   },
 
   parameters: {
@@ -58,7 +60,7 @@ export const ProjectDataOverLimit: Story = {
 }
 
 export const ProjectDataStorageNotSet: Story = {
-  args: { projectId: 'syn31415123' },
+  args: { projectId: 'syn31415123', sx: { width: 210 } },
   parameters: {
     stack: 'mock',
     msw: {

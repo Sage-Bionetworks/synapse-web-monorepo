@@ -6,7 +6,9 @@ import styles from './ProjectInfo.module.scss'
 import CopyToClipboardString from '../CopyToClipboardString/CopyToClipboardString'
 import ProjectDataAvailability from '../ProjectStorage'
 
-export type ProjectInfoPopOverContentProps = {
+const POPOVER_BORDER_COLOR = '#B7BFC9'
+
+export type ProjectInfoPopOverProps = {
   doi?: string
   projectStorageLocation?: string
   projectId: string
@@ -18,7 +20,7 @@ type Property = {
   value?: ReactElement | ReactNode
 }
 
-export type ProjectInfoProps = ProjectInfoPopOverContentProps &
+export type ProjectInfoProps = ProjectInfoPopOverProps &
   Pick<PopoverProps, 'anchorEl' | 'open' | 'id' | 'onClose'>
 
 const propertyRow = ({ title, value }: Property, isLoading?: boolean) => (
@@ -36,7 +38,7 @@ const propertyRow = ({ title, value }: Property, isLoading?: boolean) => (
   </>
 )
 
-export default function ProjectInfoPopoverContent(props: ProjectInfoProps) {
+export default function ProjectInfoPopovert(props: ProjectInfoProps) {
   const {
     anchorEl,
     open,
@@ -77,10 +79,10 @@ export default function ProjectInfoPopoverContent(props: ProjectInfoProps) {
 
   return (
     <Popover
-      aria-label="Citation options"
+      aria-label="Project information"
       role="dialog"
       id={id}
-      elevation={9}
+      elevation={3}
       open={open}
       anchorEl={anchorEl}
       onClose={onClose}
@@ -98,6 +100,9 @@ export default function ProjectInfoPopoverContent(props: ProjectInfoProps) {
           sx: theme => ({
             width: '240px',
             position: 'relative',
+            mt: '6px',
+            borderRadius: '3px',
+            border: `1px solid ${POPOVER_BORDER_COLOR}`,
             [theme.breakpoints.down('sm')]: {
               maxWidth: '100%',
               maxHeight: '100%',
