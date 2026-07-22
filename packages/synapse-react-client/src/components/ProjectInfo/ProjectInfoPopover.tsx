@@ -38,7 +38,7 @@ const propertyRow = ({ title, value }: Property, isLoading?: boolean) => (
   </>
 )
 
-export default function ProjectInfoPopovert(props: ProjectInfoProps) {
+export default function ProjectInfoPopover(props: ProjectInfoProps) {
   const {
     anchorEl,
     open,
