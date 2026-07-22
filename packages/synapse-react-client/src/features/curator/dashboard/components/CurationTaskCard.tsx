@@ -55,6 +55,24 @@ function useUiForTask(taskBundle: TaskBundle) {
         isPending,
         hasPermission,
       }
+    case 'org.sagebionetworks.repo.model.curation.execution.SampleSheetGenerationExecutionProperties':
+      return {
+        title: taskBundle.task.dataType,
+        description: taskBundle.task.instructions ?? '',
+        taskId: taskBundle.task.taskId,
+        principalIds: taskBundle.task.assigneePrincipalId
+          ? [taskBundle.task.assigneePrincipalId]
+          : [],
+        buttonText: 'Start (Run Agent)',
+        taskType: 'Compute',
+        statusState: taskBundle.status.state,
+        onClickNextStep: () => {
+          displayToast('Coming soon!', 'info')
+        },
+        isLoading,
+        isPending,
+        hasPermission,
+      }
     default: {
       console.error(
         'No UI implemented for task type: ' +
@@ -92,6 +110,11 @@ function TaskTypeChip(props: { label: string }) {
   )
 }
 
+/**
+ * A chip to display CurationTask status.
+ *
+ * See {@link https://www.figma.com/design/0oPm5lLSUva8kyfVNMS6FA/Sage-Style---Component-Library--SDS-?node-id=4942-1129&m=dev}
+ */
 function TaskStatusChip(props: { state: TaskStatusStateEnum | undefined }) {
   const { state } = props
   if (!state) return null
