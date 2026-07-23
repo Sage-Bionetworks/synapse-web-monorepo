@@ -1,8 +1,9 @@
 import styles from './NextStepButton.module.scss'
-import { Button, Typography } from '@mui/material'
+import { Button, Tooltip, Typography } from '@mui/material'
 import { ArrowForwardIos, TableChartOutlined } from '@mui/icons-material'
 import { SynapseSpinner } from '@/components/LoadingScreen/LoadingScreen'
 import classNames from 'classnames'
+import { ReactElement } from 'react'
 
 type NextStepButtonProps = {
   className?: string
@@ -11,6 +12,23 @@ type NextStepButtonProps = {
   disabled?: boolean
   loading?: boolean
   expanded?: boolean
+  /** When provided, wraps the button in a tooltip. Useful to explain a disabled state. */
+  tooltip?: string
+}
+
+/**
+ * Wraps the button in a Tooltip when tooltip text is provided. A disabled MUI button does not fire
+ * pointer events, so the button is wrapped in a focusable span so the tooltip remains discoverable.
+ */
+function withTooltip(button: ReactElement, tooltip: string | undefined) {
+  if (!tooltip) {
+    return button
+  }
+  return (
+    <Tooltip title={tooltip}>
+      <span style={{ display: 'inline-flex' }}>{button}</span>
+    </Tooltip>
+  )
 }
 
 /**
@@ -18,10 +36,18 @@ type NextStepButtonProps = {
  * Displays an arrow icon or loading spinner when appropriate.
  */
 export default function NextStepButton(props: NextStepButtonProps) {
-  const { className, buttonText, onClick, disabled, loading, expanded } = props
+  const {
+    className,
+    buttonText,
+    onClick,
+    disabled,
+    loading,
+    expanded,
+    tooltip,
+  } = props
 
   if (expanded) {
-    return (
+    return withTooltip(
       <Button
         className={classNames(styles.expandedButton, className)}
         onClick={onClick}
@@ -35,11 +61,12 @@ export default function NextStepButton(props: NextStepButtonProps) {
         >
           {buttonText}
         </Typography>
-      </Button>
+      </Button>,
+      tooltip,
     )
   }
 
-  return (
+  return withTooltip(
     <button
       type="button"
       className={classNames(styles.button, className)}
@@ -65,6 +92,7 @@ export default function NextStepButton(props: NextStepButtonProps) {
       ) : (
         <ArrowForwardIos className={styles.icon} />
       )}
-    </button>
+    </button>,
+    tooltip,
   )
 }

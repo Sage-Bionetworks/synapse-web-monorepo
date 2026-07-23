@@ -24,6 +24,10 @@ vi.mock('./UserOrTeamChip', () => ({
   default: () => null,
 }))
 
+vi.mock('./ExecutableTaskCard', () => ({
+  default: () => <div data-testid="executable-task-card" />,
+}))
+
 vi.mock('@/synapse-queries/entity/useEntityBundle', () => ({
   default: vi.fn(),
 }))
@@ -88,10 +92,6 @@ describe('CurationTaskCard', () => {
       FileBasedMetadataTaskPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_metadata_FileBasedMetadataTaskProperties,
       RecordBasedMetadataTaskPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_metadata_RecordBasedMetadataTaskProperties,
     ]
-    const computeTypes = [
-      SampleSheetGenerationExecutionPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_execution_SampleSheetGenerationExecutionProperties,
-      RecordSetGenerationExecutionPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_execution_RecordSetGenerationExecutionProperties,
-    ]
 
     it.each(curateTypes)(
       'shows the "Curate Data" chip for curate type %s',
@@ -105,9 +105,16 @@ describe('CurationTaskCard', () => {
         expect(screen.getByText('Curate Data')).toBeInTheDocument()
       },
     )
+  })
+
+  describe('dispatch by task type', () => {
+    const computeTypes = [
+      SampleSheetGenerationExecutionPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_execution_SampleSheetGenerationExecutionProperties,
+      RecordSetGenerationExecutionPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_execution_RecordSetGenerationExecutionProperties,
+    ]
 
     it.each(computeTypes)(
-      'shows the "Compute" chip for compute type %s',
+      'renders the executable task card for compute type %s',
       concreteType => {
         renderComponent(
           createMockTaskBundle({
@@ -115,9 +122,24 @@ describe('CurationTaskCard', () => {
             taskProperties: { concreteType } as any,
           }),
         )
-        expect(screen.getByText('Compute')).toBeInTheDocument()
+        expect(screen.getByTestId('executable-task-card')).toBeInTheDocument()
       },
     )
+
+    it.each([
+      FileBasedMetadataTaskPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_metadata_FileBasedMetadataTaskProperties,
+      RecordBasedMetadataTaskPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_metadata_RecordBasedMetadataTaskProperties,
+    ])('renders the grid task card for curate type %s', concreteType => {
+      renderComponent(
+        createMockTaskBundle({
+          projectId: 'syn123',
+          taskProperties: { concreteType } as any,
+        }),
+      )
+      expect(
+        screen.getByRole('button', { name: /open curator/i }),
+      ).toBeInTheDocument()
+    })
   })
 
   describe('status chip', () => {
