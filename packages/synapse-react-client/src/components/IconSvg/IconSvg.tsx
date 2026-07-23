@@ -6,6 +6,7 @@ import Baseline from '@/assets/icons/Baseline'
 import ClappingHands from '@/assets/icons/ClappingHands'
 import CreateVersion from '@/assets/icons/CreateVersion'
 import FileWithShield from '@/assets/icons/FileWithShield'
+import FileCopy from '@/assets/icons/FileCopy'
 import MultiFile from '@/assets/icons/MultiFile'
 import UnpackagableFile from '@/assets/icons/UnpackagableFile'
 import HandWithMoney from '@/assets/icons/HandWithMoney'
@@ -213,6 +214,7 @@ export const IconStrings = [
   'clinical',
   'contentCopy',
   'contentCopyRounded',
+  'fileCopy',
   'data',
   'dataLocked',
   'geneExpression',
@@ -321,6 +323,7 @@ export const IconStrings = [
   'handWithMoney',
   'threeStars',
   'multiFile',
+
   'publicVisibility',
   'openVisibility',
   'privateVisibility',
@@ -488,6 +491,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <ContentCopyTwoTone {...otherProps} />
     case 'contentCopyRounded':
       return <ContentCopyRounded {...otherProps} />
+    case 'fileCopy':
+      return <FileCopy {...otherProps} />
     case 'data':
       return <Data {...otherProps} />
     case 'dataLocked':

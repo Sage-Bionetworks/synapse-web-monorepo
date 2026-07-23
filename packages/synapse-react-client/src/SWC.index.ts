@@ -110,6 +110,7 @@ const SynapseComponents = {
     () => import('./components/EntityBadgeIcons/EntityBadgeIcons'),
   ),
   EntityCitation: lazy(() => import('./components/EntityCitation')),
+  ProjectInfo: lazy(() => import('./components/ProjectInfo/ProjectInfo')),
   EntityFinder: lazy(() => import('./components/EntityFinder/EntityFinder')),
   EntityForm: lazy(() => import('./components/EntityForm/EntityForm')),
   EntityHeaderTable: lazy(() => import('./components/EntityHeaderTable')),

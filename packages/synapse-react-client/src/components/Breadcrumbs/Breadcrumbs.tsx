@@ -7,10 +7,8 @@ import {
   Typography,
   Box,
 } from '@mui/material'
-import { EntityType } from '@sage-bionetworks/synapse-client'
 import { MouseEventHandler } from 'react'
 import { Link as RouterLink } from 'react-router'
-import EntityTypeIcon from '../EntityIcon'
 
 export type BreadcrumbItem = {
   /* The text to show in the breadcrumb item. Strings > 25 characters will be truncated */
@@ -23,8 +21,6 @@ export type BreadcrumbItem = {
   href?: string
   /* Event handler fired when the link is clicked */
   onClick?: MouseEventHandler
-  /* If defined, show an icon for this entity type */
-  entityType?: EntityType
 }
 
 type BreadcrumbsProps = {
@@ -48,7 +44,7 @@ const BREADCRUMB_SEPARATOR = (
 )
 
 export function Breadcrumbs(props: BreadcrumbsProps) {
-  const { items, sx, maxBreadcrumbLength, iconVariant } = props
+  const { items, sx, maxBreadcrumbLength } = props
   return (
     <MuiBreadcrumbs
       separator={BREADCRUMB_SEPARATOR}
@@ -68,9 +64,6 @@ export function Breadcrumbs(props: BreadcrumbsProps) {
             sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
             key={index}
           >
-            {data.entityType && (
-              <EntityTypeIcon type={data.entityType} variant={iconVariant} />
-            )}
             <Tooltip title={tooltipText} placement="top">
               <Typography variant={'breadcrumb1'}>
                 {data.current ? (
