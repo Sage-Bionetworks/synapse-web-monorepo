@@ -1,5 +1,5 @@
 import { ConfirmationDialog } from '@/components/ConfirmationDialog'
-import { Button, Stack } from '@mui/material'
+import { Button, Divider, Stack } from '@mui/material'
 import {
   DELETE_CURATION_TASK_CONFIRMATION_PROMPT,
   DELETE_CURATION_TASK_DIALOG_TITLE,
@@ -45,7 +45,13 @@ export default function TaskFormActions(props: TaskFormActionsProps) {
 
   return (
     <>
-      <Stack direction="row" gap={1} justifyContent="space-between">
+      <Divider />
+      <Stack
+        direction="row"
+        gap={1}
+        justifyContent="space-between"
+        sx={{ mb: 2 }}
+      >
         <Stack direction="row" gap={1}>
           {canDelete && (
             <Button
