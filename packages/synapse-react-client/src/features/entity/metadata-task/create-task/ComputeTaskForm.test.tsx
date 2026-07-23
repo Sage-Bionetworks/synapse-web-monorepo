@@ -97,10 +97,10 @@ const SAMPLE_SHEET_TYPE =
 const RECORD_SET_TYPE =
   RecordSetGenerationExecutionPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_execution_RecordSetGenerationExecutionProperties
 
-// The date a user picks in the native date input, and its independently-computed UTC-midnight
-// epoch-ms encoding (Date.UTC(2030, 0, 1) === 1893456000000) as the backend stores it.
+// The date a user picks in the native date input, and its UTC-midnight ISO 8601 encoding as the
+// backend stores it.
 const DUE_DATE_INPUT = '2030-01-01'
-const DUE_DATE_EPOCH_MS = '1893456000000'
+const DUE_DATE_ISO = '2030-01-01T00:00:00.000Z'
 
 const mockCreateMutateAsync = vi.fn()
 const mockUpdateMutateAsync = vi.fn()
@@ -304,7 +304,7 @@ describe('ComputeTaskForm', () => {
       )
     })
 
-    it('applies the due date to the auto-created status as a UTC epoch-ms timestamp', async () => {
+    it('applies the due date to the auto-created status as a UTC ISO 8601 timestamp', async () => {
       mockCreateMutateAsync.mockResolvedValue({
         taskId: MOCK_CURATION_TASK_ID,
       } as CurationTask)
@@ -325,7 +325,7 @@ describe('ComputeTaskForm', () => {
       expect(mockUpdateStatusMutateAsync).toHaveBeenCalledWith(
         expect.objectContaining({
           taskId: MOCK_CURATION_TASK_ID,
-          dueDate: DUE_DATE_EPOCH_MS,
+          dueDate: DUE_DATE_ISO,
         }),
       )
     })
@@ -383,7 +383,7 @@ describe('ComputeTaskForm', () => {
         data: {
           taskId: editTask.taskId,
           state: 'NOT_STARTED',
-          dueDate: DUE_DATE_EPOCH_MS,
+          dueDate: DUE_DATE_ISO,
         },
         isFetching: false,
       } as any)
@@ -441,7 +441,7 @@ describe('ComputeTaskForm', () => {
         data: {
           taskId: editTask.taskId,
           state: 'NOT_STARTED',
-          dueDate: DUE_DATE_EPOCH_MS,
+          dueDate: DUE_DATE_ISO,
         },
         isFetching: false,
       } as any)
@@ -463,7 +463,7 @@ describe('ComputeTaskForm', () => {
         data: {
           taskId: editTask.taskId,
           state: 'NOT_STARTED',
-          dueDate: DUE_DATE_EPOCH_MS,
+          dueDate: DUE_DATE_ISO,
           etag: 'status-etag',
         },
         isFetching: false,
@@ -519,7 +519,7 @@ describe('ComputeTaskForm', () => {
         data: {
           taskId: editTask.taskId,
           state: 'NOT_STARTED',
-          dueDate: DUE_DATE_EPOCH_MS,
+          dueDate: DUE_DATE_ISO,
           etag: 'stale-etag',
         },
         isFetching: false,
@@ -536,12 +536,12 @@ describe('ComputeTaskForm', () => {
       await user.type(dueDateInput, '2031-02-02')
       await user.click(screen.getByRole('button', { name: /^save$/i }))
 
-      // The new due date is persisted as its UTC-midnight epoch-ms encoding
-      // (Date.UTC(2031, 1, 2) === 1927756800000), using the freshly bumped shared etag.
+      // The new due date is persisted as its UTC-midnight ISO 8601 encoding, using the freshly
+      // bumped shared etag.
       expect(mockUpdateStatusMutateAsync).toHaveBeenCalledWith(
         expect.objectContaining({
           etag: 'bumped-etag',
-          dueDate: '1927756800000',
+          dueDate: '2031-02-02T00:00:00.000Z',
         }),
       )
     })

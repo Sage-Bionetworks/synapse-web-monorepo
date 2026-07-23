@@ -18,7 +18,7 @@ import {
   DELETE_CURATION_TASK_ERROR_TOAST_PREFIX,
   DELETE_CURATION_TASK_SUCCESS_TOAST,
 } from '../utils/constants'
-import { dueDateInputToEpochMs, epochMsToDueDateInput } from '../utils/dueDate'
+import { dueDateInputToIso, isoToDueDateInput } from '../utils/dueDate'
 
 export type UseCurationTaskFormStateArgs = {
   /**
@@ -71,14 +71,14 @@ export function useCurationTaskFormState(args: UseCurationTaskFormStateArgs) {
   >(undefined)
   const displayedStatusState = pendingStatusState ?? currentTaskStatus?.state
   // `pendingDueDate` and `displayedDueDate` are always the native date input's `YYYY-MM-DD` string.
-  // The backend stores `TaskStatus.dueDate` as a unix-millisecond timestamp string, so the fetched
-  // value is converted for display and the entered value is converted back on write.
+  // The backend stores `TaskStatus.dueDate` as an ISO 8601 date-time string, so the fetched value is
+  // converted for display and the entered value is converted back on write.
   const [pendingDueDate, setPendingDueDate] = useState<string | undefined>(
     undefined,
   )
   const displayedDueDate =
     pendingDueDate ??
-    (isEditMode ? epochMsToDueDateInput(currentTaskStatus?.dueDate) : '')
+    (isEditMode ? isoToDueDateInput(currentTaskStatus?.dueDate) : '')
 
   const { data: permissions } = useGetEntityPermissions(effectiveProjectId, {
     enabled: !!effectiveProjectId,
@@ -141,7 +141,7 @@ export function useCurationTaskFormState(args: UseCurationTaskFormStateArgs) {
   async function submitTaskAndStatus(
     payload: CurationTask,
   ): Promise<CurationTask> {
-    const dueDateEpochMs = dueDateInputToEpochMs(displayedDueDate)
+    const dueDateIso = dueDateInputToIso(displayedDueDate)
 
     if (isEditMode) {
       const latestTask = await updateTask(payload)
@@ -151,7 +151,7 @@ export function useCurationTaskFormState(args: UseCurationTaskFormStateArgs) {
         pendingStatusState !== currentTaskStatus?.state
       const dueDateChanged =
         pendingDueDate !== undefined &&
-        dueDateEpochMs !== (currentTaskStatus?.dueDate ?? undefined)
+        dueDateIso !== (currentTaskStatus?.dueDate ?? undefined)
       if ((statusStateChanged || dueDateChanged) && currentTaskStatus != null) {
         // The task and its status share an etag, and the preceding `updateTask` bumped it; the
         // status update must use the etag returned by that update, not the stale fetched one. When
@@ -162,7 +162,7 @@ export function useCurationTaskFormState(args: UseCurationTaskFormStateArgs) {
           state: pendingStatusState ?? currentTaskStatus.state,
           dueDate:
             pendingDueDate !== undefined
-              ? dueDateEpochMs
+              ? dueDateIso
               : currentTaskStatus.dueDate,
           etag: latestTask.etag,
         })
@@ -173,7 +173,7 @@ export function useCurationTaskFormState(args: UseCurationTaskFormStateArgs) {
 
     const created = await createTask(payload)
 
-    if (dueDateEpochMs && created.taskId != null) {
+    if (dueDateIso && created.taskId != null) {
       // TODO(PLFM-9839): replace this best-effort status write with a single service that creates
       // the task and its status atomically. Until then, the task is created first and the due date
       // is applied to the auto-created status in a separate call; a failure there must not strand a
@@ -188,7 +188,7 @@ export function useCurationTaskFormState(args: UseCurationTaskFormStateArgs) {
         await updateTaskStatus({
           ...status,
           taskId: created.taskId,
-          dueDate: dueDateEpochMs,
+          dueDate: dueDateIso,
         })
       } catch {
         displayToast(CREATE_TASK_STATUS_NOT_SAVED_WARNING, 'warning')

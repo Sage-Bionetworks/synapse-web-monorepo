@@ -1,6 +1,7 @@
 import EditCurationTaskPage from '@/features/entity/metadata-task/create-task/EditCurationTaskPage'
 import CuratorDashboardContent from './CuratorDashboard'
 import { PropsWithChildren, useMemo } from 'react'
+import { Outlet } from 'react-router'
 import {
   createBrowserRouter,
   createMemoryRouter,
@@ -8,6 +9,7 @@ import {
   RouterProvider,
 } from 'react-router'
 import { RouterProvider as DOMRouterProvider } from 'react-router/dom'
+import SWCPageLayout from '@/components/layout/SWCPageLayout'
 
 export type CuratorDashboardRouterProps = PropsWithChildren<{
   /** Used to determine the base path for the component. Default is CuratorDashboard:0 */
@@ -30,6 +32,13 @@ export default function CuratorDashboardRouter(
     () => [
       {
         path: '/',
+        element: (
+          <SWCPageLayout header={{ title: 'Curator Dashboard' }}>
+            <div className="pageContent" style={{ marginTop: '2rem' }}>
+              <Outlet />
+            </div>
+          </SWCPageLayout>
+        ),
         children: [
           { index: true, element: <CuratorDashboardContent /> },
           { path: 'edit/:taskId', element: <EditCurationTaskPage /> },

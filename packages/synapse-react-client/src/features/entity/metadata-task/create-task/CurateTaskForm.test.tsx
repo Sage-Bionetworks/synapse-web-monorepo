@@ -97,10 +97,10 @@ const FILE_BASED_TYPE =
 const RECORD_BASED_TYPE =
   RecordBasedMetadataTaskPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_metadata_RecordBasedMetadataTaskProperties
 
-// The date a user picks in the native date input, and its independently-computed UTC-midnight
-// epoch-ms encoding (Date.UTC(2030, 0, 1) === 1893456000000) as the backend stores it.
+// The date a user picks in the native date input, and its UTC-midnight ISO 8601 encoding as the
+// backend stores it.
 const DUE_DATE_INPUT = '2030-01-01'
-const DUE_DATE_EPOCH_MS = '1893456000000'
+const DUE_DATE_ISO = '2030-01-01T00:00:00.000Z'
 
 const mockCreateMutateAsync = vi.fn()
 const mockUpdateMutateAsync = vi.fn()
@@ -263,7 +263,7 @@ describe('CurateTaskForm', () => {
       )
     })
 
-    it('applies the due date to the auto-created status as a UTC epoch-ms timestamp', async () => {
+    it('applies the due date to the auto-created status as a UTC ISO 8601 timestamp', async () => {
       mockCreateMutateAsync.mockResolvedValue({
         taskId: MOCK_CURATION_TASK_ID,
       } as CurationTask)
@@ -284,7 +284,7 @@ describe('CurateTaskForm', () => {
       expect(mockUpdateStatusMutateAsync).toHaveBeenCalledWith(
         expect.objectContaining({
           taskId: MOCK_CURATION_TASK_ID,
-          dueDate: DUE_DATE_EPOCH_MS,
+          dueDate: DUE_DATE_ISO,
         }),
       )
     })
@@ -370,7 +370,7 @@ describe('CurateTaskForm', () => {
         data: {
           taskId: editTask.taskId,
           state: 'NOT_STARTED',
-          dueDate: DUE_DATE_EPOCH_MS,
+          dueDate: DUE_DATE_ISO,
         },
         isFetching: false,
       } as any)
@@ -417,7 +417,7 @@ describe('CurateTaskForm', () => {
         data: {
           taskId: editTask.taskId,
           state: 'NOT_STARTED',
-          dueDate: DUE_DATE_EPOCH_MS,
+          dueDate: DUE_DATE_ISO,
         },
         isFetching: false,
       } as any)
@@ -439,7 +439,7 @@ describe('CurateTaskForm', () => {
         data: {
           taskId: editTask.taskId,
           state: 'NOT_STARTED',
-          dueDate: DUE_DATE_EPOCH_MS,
+          dueDate: DUE_DATE_ISO,
           etag: 'status-etag',
         },
         isFetching: false,

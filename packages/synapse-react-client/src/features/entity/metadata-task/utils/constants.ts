@@ -19,7 +19,6 @@ export const OPEN_CURATOR_LINK_TASK_CONFLICT_ERROR_MESSAGE =
 
 // Create/Edit Curation Task pages (see `create-task/`)
 
-export const CREATE_CURATION_TASK_PAGE_TITLE = 'Create New Task'
 export const EDIT_CURATION_TASK_PAGE_TITLE = 'Edit Task'
 export const EDIT_CURATION_TASK_PAGE_DESCRIPTION =
   'Update the details for this task.'
