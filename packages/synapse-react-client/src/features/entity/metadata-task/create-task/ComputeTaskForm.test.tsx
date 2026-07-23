@@ -16,7 +16,10 @@ import {
   SampleSheetGenerationExecutionPropertiesConcreteTypeEnum,
 } from '@sage-bionetworks/synapse-client'
 import { displayToast } from '@/components/ToastMessage/ToastMessage'
-import { CREATE_TASK_STATUS_NOT_SAVED_WARNING } from '../utils/constants'
+import {
+  COMPUTE_TASK_TYPE_CONFIG,
+  CREATE_TASK_STATUS_NOT_SAVED_WARNING,
+} from '../utils/constants'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import ComputeTaskForm from './ComputeTaskForm'
@@ -177,7 +180,12 @@ describe('ComputeTaskForm', () => {
         screen.getByRole('combobox', { name: /compute task type/i }),
       )
       await user.click(
-        await screen.findByRole('option', { name: /record set generation/i }),
+        await screen.findByRole('option', {
+          name: COMPUTE_TASK_TYPE_CONFIG[
+            RecordSetGenerationExecutionPropertiesConcreteTypeEnum
+              .org_sagebionetworks_repo_model_curation_execution_RecordSetGenerationExecutionProperties
+          ].label,
+        }),
       )
 
       expect(screen.queryByLabelText(/input task id/i)).not.toBeInTheDocument()

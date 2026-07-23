@@ -65,9 +65,9 @@ export const COMPUTE_TASK_TYPE_CONFIG: Record<
     },
   [RecordSetGenerationExecutionPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_execution_RecordSetGenerationExecutionProperties]:
     {
-      label: 'Record Set Generation',
+      label: 'Document Processing',
       description:
-        'Transforms files in a folder into a generated CSV, written to a record-based task.',
+        'Processes files in a folder to generate a CSV. The CSV is defined by a record-based task.',
     },
 }
 
