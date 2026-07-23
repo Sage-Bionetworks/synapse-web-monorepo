@@ -4,9 +4,11 @@ import {
   Collapse,
   Divider,
   IconButton,
+  Link,
   Skeleton,
   Typography,
 } from '@mui/material'
+import HelpOutline from '@mui/icons-material/HelpOutline'
 import {
   TaskBundle,
   TaskStatusStateEnum,
@@ -176,9 +178,23 @@ export default function CurationTaskCardLayout(
       </div>
       <Collapse in={isExpanded}>
         <div className={styles.expandedContent}>
-          {description && (
-            <Typography variant="body1">{description}</Typography>
-          )}
+          <div className={styles.expandedTopRow}>
+            {description && (
+              <Typography variant="body1">{description}</Typography>
+            )}
+            <Link
+              href="https://docs.synapse.org/synapse-docs/managing-metadata-with-curator"
+              target="_blank"
+              rel="noopener noreferrer"
+              color="text.primary"
+              underline="hover"
+              className={styles.helpLink}
+              sx={{ fontWeight: 400 }}
+            >
+              <HelpOutline className={styles.helpIcon} />
+              Have questions or need help?
+            </Link>
+          </div>
           {renderActionButton({ expanded: true })}
         </div>
       </Collapse>

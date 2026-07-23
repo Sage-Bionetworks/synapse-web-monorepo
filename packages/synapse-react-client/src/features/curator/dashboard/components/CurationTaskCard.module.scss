@@ -64,6 +64,26 @@
   gap: 16px;
 }
 
+.expandedTopRow {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.helpLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.helpIcon {
+  font-size: 16px !important;
+}
+
 .userChipContainer {
   display: flex;
   flex-direction: row;
