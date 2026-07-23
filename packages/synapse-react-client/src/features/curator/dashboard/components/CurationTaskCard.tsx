@@ -25,6 +25,10 @@ import UserOrTeamChip from './UserOrTeamChip'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 import { useState } from 'react'
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import { parseDueDate } from '@/features/entity/metadata-task/utils/dueDate'
+
+dayjs.extend(utc)
 
 export type CurationTaskCardProps = {
   taskBundle: TaskBundle
@@ -132,11 +136,10 @@ function TaskStatusChip(props: { state: TaskStatusStateEnum | undefined }) {
 
 function DueDateChip(props: { dueDate: string | undefined }) {
   const { dueDate } = props
-  if (!dueDate) return null
+  const dueDateObj = parseDueDate(dueDate)
+  if (!dueDateObj) return null
 
-  const dueDateObj = dayjs(dueDate)
-  const today = dayjs()
-  const daysUntilDue = dueDateObj.diff(today, 'day')
+  const daysUntilDue = dueDateObj.diff(dayjs.utc().startOf('day'), 'day')
   const formattedDate = dueDateObj.format('MM/DD/YY')
 
   let backgroundColor = '#E0E0E0'

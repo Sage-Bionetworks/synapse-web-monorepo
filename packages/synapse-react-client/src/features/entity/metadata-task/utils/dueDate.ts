@@ -1,4 +1,4 @@
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import utc from 'dayjs/plugin/utc'
 
@@ -36,4 +36,18 @@ export function epochMsToDueDateInput(dueDate: string | undefined): string {
     return dueDate
   }
   return dayjs.utc(Number(dueDate)).format(DUE_DATE_INPUT_FORMAT)
+}
+
+/**
+ * The `dueDate` as a UTC-anchored dayjs, or `null` when absent/unparseable. Anchoring to UTC (the same
+ * as {@link epochMsToDueDateInput}) means the calendar date shown matches the date the user picked,
+ * regardless of the viewer's timezone. Accepts both the backend's unix-millisecond string and a legacy
+ * `YYYY-MM-DD` value.
+ */
+export function parseDueDate(dueDate: string | undefined): Dayjs | null {
+  const asInput = epochMsToDueDateInput(dueDate)
+  if (!asInput) {
+    return null
+  }
+  return dayjs.utc(asInput, DUE_DATE_INPUT_FORMAT, true)
 }

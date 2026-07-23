@@ -88,6 +88,7 @@ import noop from 'lodash-es/noop'
 import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 import { StyledFormControl } from '@/components/styled'
 import { instanceOfGridSupportedTaskProperties } from '../utils/types'
+import { dueDateInputToEpochMs, epochMsToDueDateInput } from '../utils/dueDate'
 
 export type CreateOrUpdateCurationTaskDialogProps = {
   open: boolean
@@ -240,11 +241,10 @@ export default function CreateOrUpdateCurationTaskDialog(
   )
   const displayedDueDate =
     pendingDueDate ??
-    (isEditMode && currentTaskStatus?.dueDate
-      ? currentTaskStatus.dueDate.split('T')[0]
-      : '')
-  const originalDueDateForComparison =
-    currentTaskStatus?.dueDate?.split('T')[0] ?? ''
+    (isEditMode ? epochMsToDueDateInput(currentTaskStatus?.dueDate) : '')
+  const originalDueDateForComparison = epochMsToDueDateInput(
+    currentTaskStatus?.dueDate,
+  )
 
   const {
     mutateAsync: createTask,
@@ -342,13 +342,13 @@ export default function CreateOrUpdateCurationTaskDialog(
         pendingDueDate !== originalDueDateForComparison
 
       if ((statusStateChanged || dueDateChanged) && currentTaskStatus != null) {
-        const dueDateToSend = displayedDueDate
-          ? `${displayedDueDate}T00:00:00.000Z`
-          : undefined
         await updateTaskStatus({
           ...currentTaskStatus,
           state: pendingStatusState ?? currentTaskStatus.state,
-          dueDate: dueDateToSend,
+          dueDate:
+            pendingDueDate !== undefined
+              ? dueDateInputToEpochMs(displayedDueDate)
+              : currentTaskStatus.dueDate,
           etag: latestTask.etag,
         })
       }

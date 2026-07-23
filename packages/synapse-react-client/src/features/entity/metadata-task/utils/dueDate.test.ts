@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import { dueDateInputToEpochMs, epochMsToDueDateInput } from './dueDate'
+import {
+  dueDateInputToEpochMs,
+  epochMsToDueDateInput,
+  parseDueDate,
+} from './dueDate'
 
 // Known-good literals computed independently via Date.UTC(...):
 //   Date.UTC(2030, 0, 1) === 1893456000000
@@ -56,6 +60,37 @@ describe('dueDate round-trip is stable regardless of the host timezone', () => {
       const epochMs = dueDateInputToEpochMs(JAN_1_2030_INPUT)
       expect(epochMs).toBe(JAN_1_2030_EPOCH_MS)
       expect(epochMsToDueDateInput(epochMs)).toBe(JAN_1_2030_INPUT)
+    },
+  )
+})
+
+describe('parseDueDate', () => {
+  it('parses the backend epoch-ms string to a UTC-anchored calendar date', () => {
+    const parsed = parseDueDate(JAN_1_2030_EPOCH_MS)
+    expect(parsed).not.toBeNull()
+    expect(parsed!.format('YYYY-MM-DD')).toBe(JAN_1_2030_INPUT)
+  })
+
+  it('parses a legacy YYYY-MM-DD value', () => {
+    const parsed = parseDueDate(JAN_1_2030_INPUT)
+    expect(parsed).not.toBeNull()
+    expect(parsed!.format('YYYY-MM-DD')).toBe(JAN_1_2030_INPUT)
+  })
+
+  it('returns null when the due date is absent', () => {
+    expect(parseDueDate(undefined)).toBeNull()
+    expect(parseDueDate('')).toBeNull()
+  })
+
+  it.each(['UTC', 'America/Los_Angeles', 'Asia/Tokyo', 'Pacific/Kiritimati'])(
+    'shows the same calendar date in %s',
+    tz => {
+      const originalTz = process.env.TZ
+      process.env.TZ = tz
+      expect(parseDueDate(JAN_1_2030_EPOCH_MS)!.format('MM/DD/YY')).toBe(
+        '01/01/30',
+      )
+      process.env.TZ = originalTz
     },
   )
 })
