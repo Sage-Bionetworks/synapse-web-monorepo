@@ -803,13 +803,17 @@ export const oAuthSessionRequest = (
  * Used for providers like NIH RAS that do not supply an alias.
  * https://rest-docs.synapse.org/rest/POST/oauth2/identity.html
  */
-export const oAuthIdentityRequest = (
+export const oAuthIdentityRequest = async (
   provider: OAuthValidationRequestProviderEnum,
   authenticationCode: string,
   redirectUrl: string,
 ): Promise<void> => {
+  // Web app may not have discovered the access token by this point in init.
+  // Look for the access token ourselves before binding.
+  const accessToken = await getAccessTokenFromCookie()
   return new SynapseOpenAPIClient({
     basePath: getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+    accessToken,
   }).authenticationServicesClient.postAuthV1Oauth2Identity({
     oAuthValidationRequest: {
       provider,

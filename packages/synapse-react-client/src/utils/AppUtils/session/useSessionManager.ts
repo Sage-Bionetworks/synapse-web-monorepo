@@ -9,6 +9,7 @@ import {
   useSyncExternalStore,
 } from 'react'
 import { useNavigate } from 'react-router'
+import { displayToast } from '../../../components/ToastMessage'
 import useDetectSSOCode from '../../hooks/useDetectSSOCode'
 import { restoreLastPlace } from '../AppUtils'
 import { ApplicationSessionContextType } from './ApplicationSessionContext'
@@ -138,8 +139,10 @@ export function useSessionManager(
       }
     },
     onError: (err: unknown) => {
-      // Throw the error so it propagates to an error boundary
-      throw err
+      // Surface SSO errors as a toast. Throwing here would only produce an
+      // unhandled promise rejection because onError is invoked from a .catch().
+      const message = err instanceof Error ? err.message : String(err)
+      displayToast(message, 'danger', { title: 'Sign-in error' })
     },
     isInitializingSession: !sessionState.hasInitializedSession,
     isAuthenticated: sessionState.isAuthenticated,
