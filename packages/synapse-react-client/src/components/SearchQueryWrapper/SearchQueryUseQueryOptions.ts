@@ -585,13 +585,15 @@ export function searchQueryResultsToQueryResultBundle(
       ]
     : allFacets
 
+  const maxScore = results.hits?.[0]?.score
   return {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
     queryCount: results.totalHits,
     selectColumns: headers,
     queryResult,
     facets: orderedFacets,
-  }
+    ...(maxScore !== undefined && { maxScore }),
+  } as QueryResultBundle
 }
 
 export function getSearchQueryUseQueryOptions(
@@ -624,11 +626,18 @@ export function getSearchQueryUseQueryOptions(
   }
   const metadataQuery: SearchIndexQuery = {
     ...baseQuery,
+    searchQuery: {
+      ...baseQuery.searchQuery,
+      // Fetch only 1 hit: we need just the top hit's score for tab auto-selection.
+      // Aggregation counts are independent of size.
+      size: 1,
+    },
     // Request all opt-in parts needed for the metadata response:
+    // HITS → exposes the top hit's relevance score for tab auto-selection
     // TOTAL_HITS → queryCount (drives tab count / spinner resolution)
     // SELECT_COLUMNS → column headers for the table
     // Aggregation results are returned automatically when aggregations is set on the query.
-    responseParts: new Set(['TOTAL_HITS', 'SELECT_COLUMNS'] as const),
+    responseParts: new Set(['HITS', 'TOTAL_HITS', 'SELECT_COLUMNS'] as const),
   }
 
   // Convert responseParts Set → sorted array for query key building.
