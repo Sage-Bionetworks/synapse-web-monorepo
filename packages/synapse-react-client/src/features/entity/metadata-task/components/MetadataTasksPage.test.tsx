@@ -6,12 +6,11 @@ import MetadataTasksPage from './MetadataTasksPage'
 
 import { useGetCurationTasksInfinite } from '@/synapse-queries/curation/task/useCurationTask'
 import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
+import useGetEntityBundleDirect from '@/synapse-queries/entity/useEntityBundle'
 import { useGetEntityBundle, useGetFeatureFlag } from '@/synapse-queries/index'
 
 const MOCK_PROJECT_ID = 'syn1'
 
-// Keep the real table hook + components, but stub the data-fetching hooks so the
-// test is deterministic and offline.
 vi.mock(
   '@/synapse-queries/curation/task/useCurationTask',
   async origImport => ({
@@ -51,6 +50,11 @@ vi.mock('@/synapse-queries/entity/useEntity', async origImport => ({
   useGetEntityPermissions: vi.fn(),
 }))
 
+// CurationTaskCardLayout imports useGetEntityBundle directly from this path
+vi.mock('@/synapse-queries/entity/useEntityBundle', () => ({
+  default: vi.fn(),
+}))
+
 // The "Open Curator" button hook makes its own permission requests; stub it.
 vi.mock('../hooks/useOpenCuratorButton', () => ({
   default: vi.fn(() => ({
@@ -75,6 +79,7 @@ const mockTaskBundle = createMockTaskBundle({
 
 const mockUseGetCurationTasksInfinite = vi.mocked(useGetCurationTasksInfinite)
 const mockUseGetEntityBundle = vi.mocked(useGetEntityBundle)
+const mockUseGetEntityBundleDirect = vi.mocked(useGetEntityBundleDirect)
 const mockUseGetFeatureFlag = vi.mocked(useGetFeatureFlag)
 const mockUseGetEntityPermissions = vi.mocked(useGetEntityPermissions)
 
@@ -99,10 +104,13 @@ beforeEach(async () => {
     isLoading: false,
   } as any)
 
-  // canEdit drives the per-row "Edit" button (via useMetadataTaskTable)
+  // canEdit drives the task settings button in CurationTaskCardLayout
   mockUseGetEntityBundle.mockReturnValue({
     data: { permissions: { canEdit: true } },
     isLoading: false,
+  } as any)
+  mockUseGetEntityBundleDirect.mockReturnValue({
+    data: { permissions: { canEdit: true } },
   } as any)
 
   mockUseGetEntityPermissions.mockReturnValue({
@@ -124,30 +132,30 @@ function renderComponent() {
 }
 
 describe('MetadataTasksPage', () => {
-  // Regression test for SWC-7835: clicking "Edit" set the global editing state,
-  // which re-rendered the page. With non-memoized table columns, every row cell
-  // remounted (flexRender treats the inline cell fn as a component type),
-  // discarding the just-set navigation state and requiring a second click to
-  // navigate. This test fails if column identity becomes unstable again.
-  it('navigates to the edit page on the first click of the row Edit button', async () => {
+  it('renders a card for each task in the list', async () => {
+    renderComponent()
+
+    expect(await screen.findByText('Test Data Type')).toBeInTheDocument()
+  })
+
+  it('navigates to the edit page when the task settings button is clicked', async () => {
     const user = userEvent.setup()
     renderComponent()
 
-    const editButton = await screen.findByRole('button', { name: /^edit$/i })
-    await user.click(editButton)
+    await user.click(
+      await screen.findByRole('button', { name: /task settings/i }),
+    )
 
-    const heading = await screen.findByRole('heading', { name: /edit task/i })
-    expect(heading).toBeInTheDocument()
+    expect(
+      await screen.findByRole('heading', { name: /edit task/i }),
+    ).toBeInTheDocument()
   })
 
   it('navigates to the create-task flow when "New Task" is clicked', async () => {
     const user = userEvent.setup()
     renderComponent()
 
-    const newTaskButton = await screen.findByRole('button', {
-      name: /new task/i,
-    })
-    await user.click(newTaskButton)
+    await user.click(await screen.findByRole('button', { name: /new task/i }))
 
     await screen.findByText('Select Category for New Task')
     expect(
@@ -159,11 +167,49 @@ describe('MetadataTasksPage', () => {
     mockUseGetFeatureFlag.mockReturnValue(false)
     renderComponent()
 
-    expect(
-      await screen.findByRole('button', { name: /^edit$/i }),
-    ).toBeInTheDocument()
+    expect(await screen.findByText('Test Data Type')).toBeInTheDocument()
     expect(
       screen.queryByRole('button', { name: /new task/i }),
     ).not.toBeInTheDocument()
+  })
+
+  it('does not show the "New Task" button when the user cannot add child entities', async () => {
+    mockUseGetEntityPermissions.mockReturnValue({
+      data: { canAddChild: false },
+    } as any)
+    renderComponent()
+
+    expect(await screen.findByText('Test Data Type')).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /new task/i }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('passes assignedToMe: true to the task query when the filter switch is toggled on', async () => {
+    const user = userEvent.setup()
+    renderComponent()
+
+    await screen.findByText('Test Data Type')
+    await user.click(
+      screen.getByRole('switch', { name: /view only tasks assigned to me/i }),
+    )
+
+    expect(mockUseGetCurationTasksInfinite).toHaveBeenLastCalledWith(
+      expect.objectContaining({ assignedToMe: true }),
+    )
+  })
+
+  it('shows "No Results" when the task list is empty', async () => {
+    mockUseGetCurationTasksInfinite.mockReturnValue({
+      data: { pages: [{ bundlePage: [] }] },
+      hasNextPage: false,
+      fetchNextPage: vi.fn(),
+      isFetchingNextPage: false,
+      isLoading: false,
+    } as any)
+
+    renderComponent()
+
+    expect(await screen.findByText('No Results')).toBeInTheDocument()
   })
 })
