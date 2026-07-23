@@ -21,13 +21,9 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import React, { useCallback } from 'react'
 import { RefObject, useEffect, useRef, useState } from 'react'
-import {
-  Link as RouterLink,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from 'react-router'
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router'
 import RORInstitutionField from 'synapse-react-client/components/RORInstitutionField/RORInstitutionField'
+import { useSourceAppId } from '../components/useSourceApp'
 import { ConfigureEmail } from '../components/ConfigureEmail'
 import { ProfileAvatar } from '../components/ProfileAvatar'
 import { ORCiDButton } from '../components/ProfileValidation/ORCiDButton'
@@ -108,8 +104,7 @@ const AccountSettings = (): React.ReactNode => {
 
   const { clearSession } = useApplicationSessionContext()
   const showWebhooks = useGetFeatureFlag(FeatureFlagEnum.WEBHOOKS_UI)
-  const [searchParams] = useSearchParams()
-  const isAmpAlsSourceApp = searchParams.get('appId') === AMPALS_SOURCE_APP_ID
+  const isAmpAlsSourceApp = useSourceAppId() === AMPALS_SOURCE_APP_ID
   const { data: currentRealm } = useGetCurrentRealm({
     select: realm => realm.id,
   })
