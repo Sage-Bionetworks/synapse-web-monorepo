@@ -1,0 +1,8 @@
+.description {
+  display: block;
+  font-weight: 500;
+  text-wrap: wrap;
+  // Explicit color prevents inheriting error/focused color from a parent label.
+  color: var(--synapse-gray-600);
+  margin-top: 6px;
+}

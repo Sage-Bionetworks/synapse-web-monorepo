@@ -10,6 +10,7 @@ import {
   CreateGridRequest,
   GridSession,
   GridSupportedTaskProperties,
+  instanceOfGridExecutionDetails,
   SynapseClientError,
   TaskBundle,
 } from '@sage-bionetworks/synapse-client'
@@ -48,8 +49,11 @@ export default function useGridSessionForCurationTask() {
       if (!task || !status) {
         throw new Error('CurationTaskBundle is missing task or status')
       }
-
-      const gridSessionId = status?.executionDetails?.activeSessionId
+      const gridSessionId =
+        status?.executionDetails != null &&
+        instanceOfGridExecutionDetails(status.executionDetails)
+          ? status.executionDetails.activeSessionId
+          : undefined
       if (gridSessionId) {
         try {
           // Verify the session is still active before returning it
@@ -96,7 +100,7 @@ export default function useGridSessionForCurationTask() {
       }
 
       const createGridRequest: CreateGridRequest = {
-        ...getCreateGridRequestForMetadataTask(task),
+        ...getCreateGridRequestForMetadataTask(taskProperties),
         authorizationMode: suggestedAuthorizationMode,
         ownerPrincipalId,
       }

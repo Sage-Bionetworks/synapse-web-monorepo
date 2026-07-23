@@ -5,9 +5,9 @@ import useOpenCuratorFromTaskButton from '@/features/entity/metadata-task/hooks/
 import { OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE } from '@/features/entity/metadata-task/utils/constants'
 import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
 import {
-  Box,
   Card,
   Chip,
+  Collapse,
   Divider,
   IconButton,
   Skeleton,
@@ -55,6 +55,25 @@ function useUiForTask(taskBundle: TaskBundle) {
         isPending,
         hasPermission,
       }
+    case 'org.sagebionetworks.repo.model.curation.execution.SampleSheetGenerationExecutionProperties':
+    case 'org.sagebionetworks.repo.model.curation.execution.RecordSetGenerationExecutionProperties':
+      return {
+        title: taskBundle.task.dataType,
+        description: taskBundle.task.instructions ?? '',
+        taskId: taskBundle.task.taskId,
+        principalIds: taskBundle.task.assigneePrincipalId
+          ? [taskBundle.task.assigneePrincipalId]
+          : [],
+        buttonText: 'Start (Run Agent)',
+        taskType: 'Compute',
+        statusState: taskBundle.status.state,
+        onClickNextStep: () => {
+          displayToast('Coming soon!', 'info')
+        },
+        isLoading,
+        isPending,
+        hasPermission,
+      }
     default: {
       console.error(
         'No UI implemented for task type: ' +
@@ -92,6 +111,11 @@ function TaskTypeChip(props: { label: string }) {
   )
 }
 
+/**
+ * A chip to display CurationTask status.
+ *
+ * See {@link https://www.figma.com/design/0oPm5lLSUva8kyfVNMS6FA/Sage-Style---Component-Library--SDS-?node-id=4942-1129&m=dev}
+ */
 function TaskStatusChip(props: { state: TaskStatusStateEnum | undefined }) {
   const { state } = props
   if (!state) return null
@@ -125,6 +149,7 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
   } = useUiForTask(taskBundle)
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const projectId = taskBundle.task?.projectId
   const { data: bundle } = useGetEntityBundle(projectId, undefined, {
@@ -146,7 +171,13 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
       <div className={styles.cardContent}>
         <div className={styles.mainContent}>
           <div className={styles.titleChipContainer}>
-            <Typography variant="headline3">{title}</Typography>
+            <Typography
+              variant="headline3"
+              className={styles.title}
+              onClick={() => setIsExpanded(!isExpanded)}
+            >
+              {title}
+            </Typography>
             {taskType && <TaskTypeChip label={taskType} />}
             {canEdit && (
               <IconButton
@@ -157,7 +188,7 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
               </IconButton>
             )}
           </div>
-          <Box sx={{ display: 'flex', gap: 4 }}>
+          <div className={styles.entityInfo}>
             {bundle?.entity?.name ? (
               <Typography variant="body1">{bundle.entity.name}</Typography>
             ) : (
@@ -166,32 +197,49 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
             {taskId && (
               <Typography variant="body1">Task ID: {taskId}</Typography>
             )}
-          </Box>
-          {description && (
-            <Typography variant="body1">{description}</Typography>
-          )}
+          </div>
           <div className={styles.userChipContainer}>
             {principalIds.map(principalId => (
               <UserOrTeamChip key={principalId} principalId={principalId} />
             ))}
           </div>
         </div>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <div className={styles.statusContainer}>
           <TaskStatusChip state={statusState} />
-        </Box>
-        <Divider
-          orientation="vertical"
-          flexItem
-          sx={{ display: { xs: 'none', md: 'block' } }}
-        />
-        <NextStepButton
-          className={styles.cardButton}
-          buttonText={buttonText}
-          onClick={onClickAction}
-          disabled={isLoading}
-          loading={isPending}
-        />
+        </div>
+        {!isExpanded && (
+          <>
+            <Divider
+              orientation="vertical"
+              flexItem
+              sx={{ display: { xs: 'none', md: 'block' } }}
+            />
+            <NextStepButton
+              className={styles.cardButton}
+              buttonText={buttonText}
+              onClick={onClickAction}
+              disabled={isLoading}
+              loading={isPending}
+              expanded={false}
+            />
+          </>
+        )}
       </div>
+      <Collapse in={isExpanded}>
+        <div className={styles.expandedContent}>
+          {description && (
+            <Typography variant="body1">{description}</Typography>
+          )}
+          <NextStepButton
+            className={styles.cardButton}
+            buttonText={buttonText}
+            onClick={onClickAction}
+            disabled={isLoading}
+            loading={isPending}
+            expanded={true}
+          />
+        </div>
+      </Collapse>
       <CreateOrUpdateCurationTaskDialog
         key={String(isSettingsOpen)}
         open={isSettingsOpen}

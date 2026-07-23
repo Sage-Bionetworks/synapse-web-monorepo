@@ -16,13 +16,10 @@
 }
 
 .description {
+  // Layout only; visual styling lives in FieldDescription. Reorders the description below
+  // the label/asterisk row within the flex InputLabel.
   order: 2;
   flex-basis: 100%;
-  font-weight: 500;
-  text-wrap: wrap;
-  // Explicit color prevents inheriting error/focused color from the parent InputLabel.
-  color: var(--synapse-gray-600);
-  margin-top: 6px;
 }
 
 .charCount {

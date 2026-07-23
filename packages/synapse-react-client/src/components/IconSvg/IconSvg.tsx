@@ -6,9 +6,11 @@ import Baseline from '@/assets/icons/Baseline'
 import ClappingHands from '@/assets/icons/ClappingHands'
 import CreateVersion from '@/assets/icons/CreateVersion'
 import FileWithShield from '@/assets/icons/FileWithShield'
+import FileCopy from '@/assets/icons/FileCopy'
 import MultiFile from '@/assets/icons/MultiFile'
 import UnpackagableFile from '@/assets/icons/UnpackagableFile'
 import HandWithMoney from '@/assets/icons/HandWithMoney'
+import { NIHIcon } from '@/assets/icons/NIHIcon'
 import { ORCIDIcon } from '@/assets/icons/ORCIDIcon'
 import OpenBook from '@/assets/icons/OpenBook'
 import Podium from '@/assets/icons/Podium'
@@ -212,6 +214,7 @@ export const IconStrings = [
   'clinical',
   'contentCopy',
   'contentCopyRounded',
+  'fileCopy',
   'data',
   'dataLocked',
   'geneExpression',
@@ -302,6 +305,7 @@ export const IconStrings = [
   'addConditions',
   'sortUp',
   'sortDown',
+  'nih',
   'orcid',
   'tasks',
   'google24',
@@ -319,6 +323,7 @@ export const IconStrings = [
   'handWithMoney',
   'threeStars',
   'multiFile',
+
   'publicVisibility',
   'openVisibility',
   'privateVisibility',
@@ -486,6 +491,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <ContentCopyTwoTone {...otherProps} />
     case 'contentCopyRounded':
       return <ContentCopyRounded {...otherProps} />
+    case 'fileCopy':
+      return <FileCopy {...otherProps} />
     case 'data':
       return <Data {...otherProps} />
     case 'dataLocked':
@@ -643,6 +650,8 @@ function IconMapping(props: { icon: string } & SvgIconProps) {
       return <Sort {...otherProps} />
     case 'google24':
       return <GoogleIcon24 {...otherProps} />
+    case 'nih':
+      return <NIHIcon {...otherProps} />
     case 'orcid':
       return <ORCIDIcon {...otherProps} />
     case 'tasks':
