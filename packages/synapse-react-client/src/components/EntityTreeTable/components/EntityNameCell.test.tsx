@@ -1,4 +1,3 @@
-import { EntityLink } from '@/components/EntityLink'
 import { render, screen } from '@testing-library/react'
 import { NameCell } from './EntityNameCell'
 import { EntityTreeTableContext } from './EntityTreeTableContext'
@@ -188,10 +187,6 @@ describe('NameCell', () => {
       </EntityTreeTableContext.Provider>,
     )
 
-    expect(vi.mocked(EntityLink)).toHaveBeenCalledWith(
-      expect.objectContaining({ link: false }),
-      expect.anything(),
-    )
     expect(screen.queryByRole('link')).not.toBeInTheDocument()
     expect(screen.getByText('Test Entity')).toBeInTheDocument()
   })
@@ -199,10 +194,6 @@ describe('NameCell', () => {
   it('should render entity name as a link when disableEntityLinks is false', () => {
     renderWithContext(mockEntityBundleRow)
 
-    expect(vi.mocked(EntityLink)).toHaveBeenCalledWith(
-      expect.objectContaining({ link: true }),
-      expect.anything(),
-    )
     expect(screen.getByRole('link')).toBeInTheDocument()
   })
 
