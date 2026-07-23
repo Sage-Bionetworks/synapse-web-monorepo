@@ -3,7 +3,7 @@ import { Button, Tooltip, Typography } from '@mui/material'
 import { ArrowForwardIos, TableChartOutlined } from '@mui/icons-material'
 import { SynapseSpinner } from '@/components/LoadingScreen/LoadingScreen'
 import classNames from 'classnames'
-import { ReactElement } from 'react'
+import { PropsWithChildren } from 'react'
 
 type NextStepButtonProps = {
   className?: string
@@ -20,13 +20,16 @@ type NextStepButtonProps = {
  * Wraps the button in a Tooltip when tooltip text is provided. A disabled MUI button does not fire
  * pointer events, so the button is wrapped in a focusable span so the tooltip remains discoverable.
  */
-function withTooltip(button: ReactElement, tooltip: string | undefined) {
-  if (!tooltip) {
-    return button
+function OptionalButtonTooltip(
+  props: PropsWithChildren<{ title: string | undefined }>,
+) {
+  const { children, title } = props
+  if (!title) {
+    return children
   }
   return (
-    <Tooltip title={tooltip}>
-      <span style={{ display: 'inline-flex' }}>{button}</span>
+    <Tooltip title={title}>
+      <span style={{ display: 'inline-flex' }}>{children}</span>
     </Tooltip>
   )
 }
@@ -47,52 +50,54 @@ export default function NextStepButton(props: NextStepButtonProps) {
   } = props
 
   if (expanded) {
-    return withTooltip(
-      <Button
-        className={classNames(styles.expandedButton, className)}
-        onClick={onClick}
-        disabled={disabled || loading}
-        startIcon={<TableChartOutlined sx={{ fontSize: 20 }} />}
-        sx={{ width: '100%' }}
-      >
-        <Typography
-          variant="buttonLink"
-          sx={{ color: 'inherit', fontWeight: 700 }}
+    return (
+      <OptionalButtonTooltip title={tooltip}>
+        <Button
+          className={classNames(styles.expandedButton, className)}
+          onClick={onClick}
+          disabled={disabled || loading}
+          startIcon={<TableChartOutlined sx={{ fontSize: 20 }} />}
+          sx={{ width: '100%' }}
         >
-          {buttonText}
-        </Typography>
-      </Button>,
-      tooltip,
+          <Typography
+            variant="buttonLink"
+            sx={{ color: 'inherit', fontWeight: 700 }}
+          >
+            {buttonText}
+          </Typography>
+        </Button>
+      </OptionalButtonTooltip>
     )
   }
 
-  return withTooltip(
-    <button
-      type="button"
-      className={classNames(styles.button, className)}
-      onClick={onClick}
-      disabled={disabled || loading}
-    >
-      <div className={styles.buttonText}>
-        <Typography className={styles.buttonTextSub} variant="body1">
-          Next step
-        </Typography>
-        <Typography
-          className={styles.buttonTextMain}
-          variant="buttonLink"
-          color="primary"
-          fontWeight={700}
-          align="left"
-        >
-          {buttonText}
-        </Typography>
-      </div>
-      {loading ? (
-        <SynapseSpinner size={30} />
-      ) : (
-        <ArrowForwardIos className={styles.icon} />
-      )}
-    </button>,
-    tooltip,
+  return (
+    <OptionalButtonTooltip title={tooltip}>
+      <button
+        type="button"
+        className={classNames(styles.button, className)}
+        onClick={onClick}
+        disabled={disabled || loading}
+      >
+        <div className={styles.buttonText}>
+          <Typography className={styles.buttonTextSub} variant="body1">
+            Next step
+          </Typography>
+          <Typography
+            className={styles.buttonTextMain}
+            variant="buttonLink"
+            color="primary"
+            fontWeight={700}
+            align="left"
+          >
+            {buttonText}
+          </Typography>
+        </div>
+        {loading ? (
+          <SynapseSpinner size={30} />
+        ) : (
+          <ArrowForwardIos className={styles.icon} />
+        )}
+      </button>
+    </OptionalButtonTooltip>
   )
 }
