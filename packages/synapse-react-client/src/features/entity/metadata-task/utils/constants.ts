@@ -19,7 +19,6 @@ export const OPEN_CURATOR_LINK_TASK_CONFLICT_ERROR_MESSAGE =
 
 // Create/Edit Curation Task pages (see `create-task/`)
 
-export const CREATE_CURATION_TASK_PAGE_TITLE = 'Create New Task'
 export const EDIT_CURATION_TASK_PAGE_TITLE = 'Edit Task'
 export const EDIT_CURATION_TASK_PAGE_DESCRIPTION =
   'Update the details for this task.'
@@ -66,9 +65,9 @@ export const COMPUTE_TASK_TYPE_CONFIG: Record<
     },
   [RecordSetGenerationExecutionPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_execution_RecordSetGenerationExecutionProperties]:
     {
-      label: 'Record Set Generation',
+      label: 'Document Processing',
       description:
-        'Transforms files in a folder into a generated CSV, written to a record-based task.',
+        'Processes files in a folder to generate a CSV. The CSV is defined by a record-based task.',
     },
 }
 
@@ -245,6 +244,9 @@ export const DELETE_CURATION_TASK_GRID_SESSION_WARNING =
   'Any grid sessions associated with this task will also be deleted.'
 export const DELETE_CURATION_TASK_SUCCESS_TOAST = 'Task deleted successfully'
 export const DELETE_CURATION_TASK_ERROR_TOAST_PREFIX = 'Error deleting task: '
+
+export const CREATE_TASK_STATUS_NOT_SAVED_WARNING =
+  'The task was created, but its due date and status could not be saved. You can set them by editing the task.'
 
 // The following constants are consumed by the legacy CreateOrUpdateCurationTaskDialog, which is
 // removed in a follow-up PR. They are retained here so the dialog continues to compile until then.

@@ -14,9 +14,11 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import { useState } from 'react'
 import {
+  CREATE_TASK_STATUS_NOT_SAVED_WARNING,
   DELETE_CURATION_TASK_ERROR_TOAST_PREFIX,
   DELETE_CURATION_TASK_SUCCESS_TOAST,
 } from '../utils/constants'
+import { dueDateInputToIso, isoToDueDateInput } from '../utils/dueDate'
 
 export type UseCurationTaskFormStateArgs = {
   /**
@@ -68,11 +70,15 @@ export function useCurationTaskFormState(args: UseCurationTaskFormStateArgs) {
     TaskStatusStateEnum | undefined
   >(undefined)
   const displayedStatusState = pendingStatusState ?? currentTaskStatus?.state
+  // `pendingDueDate` and `displayedDueDate` are always the native date input's `YYYY-MM-DD` string.
+  // The backend stores `TaskStatus.dueDate` as an ISO 8601 date-time string, so the fetched value is
+  // converted for display and the entered value is converted back on write.
   const [pendingDueDate, setPendingDueDate] = useState<string | undefined>(
     undefined,
   )
   const displayedDueDate =
-    pendingDueDate ?? (isEditMode ? (currentTaskStatus?.dueDate ?? '') : '')
+    pendingDueDate ??
+    (isEditMode ? isoToDueDateInput(currentTaskStatus?.dueDate) : '')
 
   const { data: permissions } = useGetEntityPermissions(effectiveProjectId, {
     enabled: !!effectiveProjectId,
@@ -135,6 +141,8 @@ export function useCurationTaskFormState(args: UseCurationTaskFormStateArgs) {
   async function submitTaskAndStatus(
     payload: CurationTask,
   ): Promise<CurationTask> {
+    const dueDateIso = dueDateInputToIso(displayedDueDate)
+
     if (isEditMode) {
       const latestTask = await updateTask(payload)
 
@@ -143,14 +151,19 @@ export function useCurationTaskFormState(args: UseCurationTaskFormStateArgs) {
         pendingStatusState !== currentTaskStatus?.state
       const dueDateChanged =
         pendingDueDate !== undefined &&
-        pendingDueDate !== (currentTaskStatus?.dueDate ?? '')
+        dueDateIso !== (currentTaskStatus?.dueDate ?? undefined)
       if ((statusStateChanged || dueDateChanged) && currentTaskStatus != null) {
         // The task and its status share an etag, and the preceding `updateTask` bumped it; the
-        // status update must use the etag returned by that update, not the stale fetched one.
+        // status update must use the etag returned by that update, not the stale fetched one. When
+        // the user didn't touch the due date, preserve the stored value verbatim rather than the
+        // re-encoded one, so a status-only edit can never blank out or rewrite an existing due date.
         await updateTaskStatus({
           ...currentTaskStatus,
           state: pendingStatusState ?? currentTaskStatus.state,
-          dueDate: displayedDueDate || undefined,
+          dueDate:
+            pendingDueDate !== undefined
+              ? dueDateIso
+              : currentTaskStatus.dueDate,
           etag: latestTask.etag,
         })
       }
@@ -160,18 +173,26 @@ export function useCurationTaskFormState(args: UseCurationTaskFormStateArgs) {
 
     const created = await createTask(payload)
 
-    if (displayedDueDate && created.taskId != null) {
-      // A CurationTask's TaskStatus is created automatically server-side; fetch it so the due date
-      // can be applied to it. The freshly-fetched status carries the current shared etag.
-      const status =
-        await synapseClient.curationTaskServicesClient.getRepoV1CurationTaskTaskIdStatus(
-          { taskId: created.taskId },
-        )
-      await updateTaskStatus({
-        ...status,
-        taskId: created.taskId,
-        dueDate: displayedDueDate,
-      })
+    if (dueDateIso && created.taskId != null) {
+      // TODO(PLFM-9839): replace this best-effort status write with a single service that creates
+      // the task and its status atomically. Until then, the task is created first and the due date
+      // is applied to the auto-created status in a separate call; a failure there must not strand a
+      // created task or surface as a hard error (which would tempt the user to re-create the task).
+      try {
+        // A CurationTask's TaskStatus is created automatically server-side; fetch it so the due date
+        // can be applied to it. The freshly-fetched status carries the current shared etag.
+        const status =
+          await synapseClient.curationTaskServicesClient.getRepoV1CurationTaskTaskIdStatus(
+            { taskId: created.taskId },
+          )
+        await updateTaskStatus({
+          ...status,
+          taskId: created.taskId,
+          dueDate: dueDateIso,
+        })
+      } catch {
+        displayToast(CREATE_TASK_STATUS_NOT_SAVED_WARNING, 'warning')
+      }
     }
 
     return created

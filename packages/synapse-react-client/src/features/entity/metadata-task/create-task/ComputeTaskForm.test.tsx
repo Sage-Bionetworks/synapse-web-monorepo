@@ -15,6 +15,11 @@ import {
   RecordSetGenerationExecutionPropertiesConcreteTypeEnum,
   SampleSheetGenerationExecutionPropertiesConcreteTypeEnum,
 } from '@sage-bionetworks/synapse-client'
+import { displayToast } from '@/components/ToastMessage/ToastMessage'
+import {
+  COMPUTE_TASK_TYPE_CONFIG,
+  CREATE_TASK_STATUS_NOT_SAVED_WARNING,
+} from '../utils/constants'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import ComputeTaskForm from './ComputeTaskForm'
@@ -27,16 +32,20 @@ vi.mock('@/synapse-queries/curation/task/useCurationTask', () => ({
   useUpdateCurationTaskStatus: vi.fn(),
 }))
 
+vi.mock('@/components/ToastMessage/ToastMessage')
+
 vi.mock('@/synapse-queries/entity/useEntity', () => ({
   useGetEntityPermissions: vi.fn(),
 }))
+
+const mockGetStatus = vi.hoisted(() => vi.fn())
 
 vi.mock('@/utils/index', async origImport => ({
   ...(await origImport<typeof import('@/utils/index')>()),
   useSynapseContext: vi.fn(() => ({
     synapseClient: {
       curationTaskServicesClient: {
-        getRepoV1CurationTaskTaskIdStatus: vi.fn(),
+        getRepoV1CurationTaskTaskIdStatus: mockGetStatus,
       },
     },
   })),
@@ -84,11 +93,17 @@ const mockUseDeleteCurationTask = vi.mocked(useDeleteCurationTask)
 const mockUseGetCurationTaskStatus = vi.mocked(useGetCurationTaskStatus)
 const mockUseUpdateCurationTaskStatus = vi.mocked(useUpdateCurationTaskStatus)
 const mockUseGetEntityPermissions = vi.mocked(useGetEntityPermissions)
+const mockDisplayToast = vi.mocked(displayToast)
 
 const SAMPLE_SHEET_TYPE =
   SampleSheetGenerationExecutionPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_execution_SampleSheetGenerationExecutionProperties
 const RECORD_SET_TYPE =
   RecordSetGenerationExecutionPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_execution_RecordSetGenerationExecutionProperties
+
+// The date a user picks in the native date input, and its UTC-midnight ISO 8601 encoding as the
+// backend stores it.
+const DUE_DATE_INPUT = '2030-01-01'
+const DUE_DATE_ISO = '2030-01-01T00:00:00.000Z'
 
 const mockCreateMutateAsync = vi.fn()
 const mockUpdateMutateAsync = vi.fn()
@@ -165,7 +180,12 @@ describe('ComputeTaskForm', () => {
         screen.getByRole('combobox', { name: /compute task type/i }),
       )
       await user.click(
-        await screen.findByRole('option', { name: /record set generation/i }),
+        await screen.findByRole('option', {
+          name: COMPUTE_TASK_TYPE_CONFIG[
+            RecordSetGenerationExecutionPropertiesConcreteTypeEnum
+              .org_sagebionetworks_repo_model_curation_execution_RecordSetGenerationExecutionProperties
+          ].label,
+        }),
       )
 
       expect(screen.queryByLabelText(/input task id/i)).not.toBeInTheDocument()
@@ -291,6 +311,63 @@ describe('ComputeTaskForm', () => {
         expect.objectContaining({ taskId: MOCK_CURATION_TASK_ID }),
       )
     })
+
+    it('applies the due date to the auto-created status as a UTC ISO 8601 timestamp', async () => {
+      mockCreateMutateAsync.mockResolvedValue({
+        taskId: MOCK_CURATION_TASK_ID,
+      } as CurationTask)
+      mockGetStatus.mockResolvedValue({
+        taskId: MOCK_CURATION_TASK_ID,
+        state: 'NOT_STARTED',
+        etag: 'status-etag',
+      })
+      const user = userEvent.setup()
+      render(<ComputeTaskForm projectId="syn123" onCreated={vi.fn()} />)
+
+      // fillRequiredCommonFields types DUE_DATE_INPUT into the due date field.
+      await fillRequiredCommonFields()
+      await user.type(screen.getByLabelText(/input task id/i), '1')
+      await user.type(screen.getByLabelText(/destination task id/i), '2')
+      await user.click(screen.getByRole('button', { name: /create/i }))
+
+      expect(mockUpdateStatusMutateAsync).toHaveBeenCalledWith(
+        expect.objectContaining({
+          taskId: MOCK_CURATION_TASK_ID,
+          dueDate: DUE_DATE_ISO,
+        }),
+      )
+    })
+
+    it('treats the task as created when the status update fails, warning the user without duplicating the task', async () => {
+      mockCreateMutateAsync.mockResolvedValue({
+        taskId: MOCK_CURATION_TASK_ID,
+      } as CurationTask)
+      mockGetStatus.mockResolvedValue({
+        taskId: MOCK_CURATION_TASK_ID,
+        state: 'NOT_STARTED',
+        etag: 'status-etag',
+      })
+      mockUpdateStatusMutateAsync.mockRejectedValue(
+        new Error('Invalid due date'),
+      )
+      const onCreated = vi.fn()
+      const user = userEvent.setup()
+      render(<ComputeTaskForm projectId="syn123" onCreated={onCreated} />)
+
+      await fillRequiredCommonFields()
+      await user.type(screen.getByLabelText(/input task id/i), '1')
+      await user.type(screen.getByLabelText(/destination task id/i), '2')
+      await user.click(screen.getByRole('button', { name: /create/i }))
+
+      expect(mockCreateMutateAsync).toHaveBeenCalledTimes(1)
+      expect(onCreated).toHaveBeenCalledWith(
+        expect.objectContaining({ taskId: MOCK_CURATION_TASK_ID }),
+      )
+      expect(mockDisplayToast).toHaveBeenCalledWith(
+        CREATE_TASK_STATUS_NOT_SAVED_WARNING,
+        'warning',
+      )
+    })
   })
 
   describe('edit mode', () => {
@@ -314,12 +391,15 @@ describe('ComputeTaskForm', () => {
         data: {
           taskId: editTask.taskId,
           state: 'NOT_STARTED',
-          dueDate: '2030-01-01',
+          dueDate: DUE_DATE_ISO,
         },
         isFetching: false,
       } as any)
       render(<ComputeTaskForm task={editTask} />)
 
+      expect(screen.getByLabelText(/task due date/i)).toHaveValue(
+        DUE_DATE_INPUT,
+      )
       expect(screen.getByLabelText(/task name/i)).toHaveValue('Existing Task')
       expect(screen.getByLabelText(/^instructions/i)).toHaveValue(
         'Existing instructions',
@@ -369,7 +449,7 @@ describe('ComputeTaskForm', () => {
         data: {
           taskId: editTask.taskId,
           state: 'NOT_STARTED',
-          dueDate: '2030-01-01',
+          dueDate: DUE_DATE_ISO,
         },
         isFetching: false,
       } as any)
@@ -391,7 +471,7 @@ describe('ComputeTaskForm', () => {
         data: {
           taskId: editTask.taskId,
           state: 'NOT_STARTED',
-          dueDate: '2030-01-01',
+          dueDate: DUE_DATE_ISO,
           etag: 'status-etag',
         },
         isFetching: false,
@@ -401,7 +481,7 @@ describe('ComputeTaskForm', () => {
       render(<ComputeTaskForm task={editTask} onSaved={vi.fn()} />)
 
       const dueDateInput = screen.getByLabelText(/task due date/i)
-      expect(dueDateInput).toHaveValue('2030-01-01')
+      expect(dueDateInput).toHaveValue(DUE_DATE_INPUT)
       await user.clear(dueDateInput)
       expect(dueDateInput).toHaveValue('')
 
@@ -412,12 +492,42 @@ describe('ComputeTaskForm', () => {
       )
     })
 
+    it('preserves the stored due date verbatim when only the status state is changed', async () => {
+      const OPAQUE_STORED_DUE_DATE = 'legacy-unparseable-value'
+      mockUseGetCurationTaskStatus.mockReturnValue({
+        data: {
+          taskId: editTask.taskId,
+          state: 'NOT_STARTED',
+          dueDate: OPAQUE_STORED_DUE_DATE,
+          etag: 'status-etag',
+        },
+        isFetching: false,
+      } as any)
+      mockUpdateMutateAsync.mockResolvedValue({ ...editTask, etag: 'etag-2' })
+      const user = userEvent.setup()
+      render(<ComputeTaskForm task={editTask} onSaved={vi.fn()} />)
+
+      await user.click(screen.getByRole('combobox', { name: /^status$/i }))
+      await user.click(
+        await screen.findByRole('option', { name: /in progress/i }),
+      )
+      await user.click(screen.getByRole('button', { name: /^save$/i }))
+
+      // The user never touched the due date field, so its stored value must not be rewritten or cleared.
+      expect(mockUpdateStatusMutateAsync).toHaveBeenCalledWith(
+        expect.objectContaining({
+          state: 'IN_PROGRESS',
+          dueDate: OPAQUE_STORED_DUE_DATE,
+        }),
+      )
+    })
+
     it('updates the status using the etag returned by the task update (shared, freshly bumped etag)', async () => {
       mockUseGetCurationTaskStatus.mockReturnValue({
         data: {
           taskId: editTask.taskId,
           state: 'NOT_STARTED',
-          dueDate: '2030-01-01',
+          dueDate: DUE_DATE_ISO,
           etag: 'stale-etag',
         },
         isFetching: false,
@@ -434,8 +544,13 @@ describe('ComputeTaskForm', () => {
       await user.type(dueDateInput, '2031-02-02')
       await user.click(screen.getByRole('button', { name: /^save$/i }))
 
+      // The new due date is persisted as its UTC-midnight ISO 8601 encoding, using the freshly
+      // bumped shared etag.
       expect(mockUpdateStatusMutateAsync).toHaveBeenCalledWith(
-        expect.objectContaining({ etag: 'bumped-etag' }),
+        expect.objectContaining({
+          etag: 'bumped-etag',
+          dueDate: '2031-02-02T00:00:00.000Z',
+        }),
       )
     })
 

@@ -1,5 +1,3 @@
-import { useGlobalIsEditingContext } from '@/utils/context/GlobalIsEditingContext'
-import { useEffect } from 'react'
 import {
   Navigate,
   Outlet,
@@ -9,13 +7,14 @@ import {
   useParams,
 } from 'react-router'
 import {
+  BACK_TO_ALL_TASKS_LABEL,
   CREATE_COMPUTE_TASK_PAGE_TITLE,
   CREATE_CURATE_TASK_PAGE_TITLE,
-  CREATE_CURATION_TASK_PAGE_TITLE,
   FILL_IN_COMPUTE_TASK_DETAILS_DESCRIPTION,
   FILL_IN_CURATE_TASK_DETAILS_DESCRIPTION,
 } from '../utils/constants'
-import { Typography } from '@mui/material'
+import { ArrowBack } from '@mui/icons-material'
+import { Button } from '@mui/material'
 import ComputeTaskForm from './ComputeTaskForm'
 import CreateTaskCategoryPicker from './CreateTaskCategoryPicker'
 import CreateTaskConfirmation from './CreateTaskConfirmation'
@@ -44,13 +43,24 @@ function ConfirmationRouteRenderer(props: { onExit: () => void }) {
  * Layout for the steps that share the generic "Create New Task" header (the category picker and the
  * confirmation screen). The compute form step renders its own more specific centered title/subtitle
  * instead (see `ComputeTaskForm`'s `pageTitle`/`pageDescription` props below), so it isn't nested here.
+ *
+ * When `onExit` is provided, a top-left "Back to All Tasks" button is shown above the title, matching
+ * the one on the form steps (see `TaskFormHeader`).
  */
-function CreateTaskLayout() {
+function CreateTaskLayout(props: { onExit?: () => void }) {
+  const { onExit } = props
   return (
     <>
-      <Typography variant="headline1" component="h1">
-        {CREATE_CURATION_TASK_PAGE_TITLE}
-      </Typography>
+      {onExit && (
+        <Button
+          variant="text"
+          startIcon={<ArrowBack />}
+          onClick={onExit}
+          sx={{ alignSelf: 'flex-start' }}
+        >
+          {BACK_TO_ALL_TASKS_LABEL}
+        </Button>
+      )}
       <Outlet />
     </>
   )
@@ -68,16 +78,10 @@ export default function CreateCurationTaskFlow(
 ) {
   const { projectId, onExit } = props
   const navigate = useNavigate()
-  const { setIsEditing } = useGlobalIsEditingContext()
-
-  useEffect(() => {
-    setIsEditing(true)
-    return () => setIsEditing(false)
-  }, [setIsEditing])
 
   return (
     <Routes>
-      <Route element={<CreateTaskLayout />}>
+      <Route element={<CreateTaskLayout onExit={onExit} />}>
         <Route
           index
           element={
@@ -87,6 +91,8 @@ export default function CreateCurationTaskFlow(
             />
           }
         />
+      </Route>
+      <Route element={<CreateTaskLayout />}>
         <Route
           path="confirmation/:taskId"
           element={<ConfirmationRouteRenderer onExit={onExit} />}

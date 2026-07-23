@@ -1,8 +1,7 @@
 import { createMockTaskBundle } from '@/mocks/curation/mockCurationTask'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { render, screen, within } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { EDIT_CURATION_TASK_DIALOG_TITLE } from '../utils/constants'
 import MetadataTasksPage from './MetadataTasksPage'
 
 import { useGetCurationTasksInfinite } from '@/synapse-queries/curation/task/useCurationTask'
@@ -20,8 +19,23 @@ vi.mock(
       typeof import('@/synapse-queries/curation/task/useCurationTask')
     >()),
     useGetCurationTasksInfinite: vi.fn(),
-    useCreateCurationTask: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
-    useUpdateCurationTask: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
+    useGetCurationTask: vi.fn(),
+    useGetCurationTaskStatus: vi.fn(() => ({
+      data: undefined,
+      isFetching: false,
+    })),
+    useCreateCurationTask: vi.fn(() => ({
+      mutateAsync: vi.fn(),
+      isPending: false,
+    })),
+    useUpdateCurationTask: vi.fn(() => ({
+      mutateAsync: vi.fn(),
+      isPending: false,
+    })),
+    useUpdateCurationTaskStatus: vi.fn(() => ({
+      mutateAsync: vi.fn(),
+      isPending: false,
+    })),
     useDeleteCurationTask: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
   }),
 )
@@ -47,27 +61,37 @@ vi.mock('../hooks/useOpenCuratorButton', () => ({
   })),
 }))
 
-// The edit dialog renders a UserSearchBox (assignee) that fetches over the
+// The create/edit forms render a UserSearchBox (assignee) that fetches over the
 // network. It is irrelevant to this test, so stub it.
 vi.mock('@/components/UserSearchBox/UserSearchBox', () => ({
   default: () => <div data-testid="mock-user-search-box" />,
 }))
+
+const mockTaskBundle = createMockTaskBundle({
+  projectId: MOCK_PROJECT_ID,
+  dataType: 'Test Data Type',
+  instructions: 'Test instructions',
+})
 
 const mockUseGetCurationTasksInfinite = vi.mocked(useGetCurationTasksInfinite)
 const mockUseGetEntityBundle = vi.mocked(useGetEntityBundle)
 const mockUseGetFeatureFlag = vi.mocked(useGetFeatureFlag)
 const mockUseGetEntityPermissions = vi.mocked(useGetEntityPermissions)
 
-beforeEach(() => {
+beforeEach(async () => {
   vi.clearAllMocks()
+
+  const { useGetCurationTask } =
+    await import('@/synapse-queries/curation/task/useCurationTask')
+  vi.mocked(useGetCurationTask).mockReturnValue({
+    data: mockTaskBundle.task,
+    isLoading: false,
+    error: null,
+  } as any)
 
   mockUseGetCurationTasksInfinite.mockReturnValue({
     data: {
-      pages: [
-        {
-          bundlePage: [createMockTaskBundle({ projectId: MOCK_PROJECT_ID })],
-        },
-      ],
+      pages: [{ bundlePage: [mockTaskBundle] }],
     },
     hasNextPage: false,
     fetchNextPage: vi.fn(),
@@ -82,38 +106,64 @@ beforeEach(() => {
   } as any)
 
   mockUseGetEntityPermissions.mockReturnValue({
-    data: { canEdit: true, canDelete: false },
+    data: { canEdit: true, canDelete: false, canAddChild: true },
   } as any)
 
-  mockUseGetFeatureFlag.mockReturnValue(false)
+  mockUseGetFeatureFlag.mockReturnValue(true)
 })
 
 function renderComponent() {
-  return render(<MetadataTasksPage projectId={MOCK_PROJECT_ID} />, {
-    wrapper: createWrapper(),
-  })
+  return render(
+    <MetadataTasksPage
+      projectId={MOCK_PROJECT_ID}
+      useMemoryRouter
+      routerBaseName="/"
+    />,
+    { wrapper: createWrapper() },
+  )
 }
 
 describe('MetadataTasksPage', () => {
   // Regression test for SWC-7835: clicking "Edit" set the global editing state,
   // which re-rendered the page. With non-memoized table columns, every row cell
   // remounted (flexRender treats the inline cell fn as a component type),
-  // discarding the just-set `isDialogOpen` and requiring a second click to open
-  // the dialog. This test fails if column identity becomes unstable again.
-  it('opens the edit dialog on the first click of the row Edit button', async () => {
+  // discarding the just-set navigation state and requiring a second click to
+  // navigate. This test fails if column identity becomes unstable again.
+  it('navigates to the edit page on the first click of the row Edit button', async () => {
     const user = userEvent.setup()
     renderComponent()
 
-    // The edit dialog should not be open initially.
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-
-    const editButton = await screen.findByRole('button', { name: /edit/i })
+    const editButton = await screen.findByRole('button', { name: /^edit$/i })
     await user.click(editButton)
 
-    // A single click must open the dialog.
-    const dialog = await screen.findByRole('dialog')
+    const heading = await screen.findByRole('heading', { name: /edit task/i })
+    expect(heading).toBeInTheDocument()
+  })
+
+  it('navigates to the create-task flow when "New Task" is clicked', async () => {
+    const user = userEvent.setup()
+    renderComponent()
+
+    const newTaskButton = await screen.findByRole('button', {
+      name: /new task/i,
+    })
+    await user.click(newTaskButton)
+
+    await screen.findByText('Select Category for New Task')
     expect(
-      within(dialog).getByText(EDIT_CURATION_TASK_DIALOG_TITLE),
+      screen.getByRole('button', { name: /compute data/i }),
     ).toBeInTheDocument()
+  })
+
+  it('does not show the "New Task" button when the feature flag is off', async () => {
+    mockUseGetFeatureFlag.mockReturnValue(false)
+    renderComponent()
+
+    expect(
+      await screen.findByRole('button', { name: /^edit$/i }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /new task/i }),
+    ).not.toBeInTheDocument()
   })
 })

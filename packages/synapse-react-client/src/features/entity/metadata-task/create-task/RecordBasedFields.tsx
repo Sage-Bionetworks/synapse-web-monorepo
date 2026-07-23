@@ -30,6 +30,7 @@ export default function RecordBasedFields(props: RecordBasedFieldsProps) {
       description={RECORD_BASED_RECORD_SET_INPUT_DESCRIPTION}
       onChange={recordSetId => onChange({ ...value, recordSetId })}
       disabled={disabled}
+      required
       entityFinderModalProps={{
         title: RECORD_SET_FINDER_TITLE,
         promptCopy: RECORD_SET_FINDER_PROMPT,

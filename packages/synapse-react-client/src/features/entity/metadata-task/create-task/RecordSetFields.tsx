@@ -43,6 +43,7 @@ export default function RecordSetFields(props: RecordSetFieldsProps) {
         value={value.folderId}
         onChange={folderId => onChange({ ...value, folderId })}
         description={RECORD_SET_FOLDER_ID_DESCRIPTION}
+        required
         entityFinderModalProps={{
           title: RECORD_SET_FOLDER_FINDER_TITLE,
           promptCopy: RECORD_SET_FOLDER_FINDER_PROMPT,
