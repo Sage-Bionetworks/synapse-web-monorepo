@@ -1,0 +1,10 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{pn as t}from"./TextField-DshmLCH7.js";import{t as n}from"./jsx-runtime-l3w3GfrB.js";import{D as r,ln as i,t as a}from"./esm-CeuVXgHQ.js";import{Ot as o,b as s,p as c,x as l}from"./constants-NzWHIRYA.js";function u(e){let{taskId:n,onDone:a}=e;return(0,d.jsxs)(r,{gap:3,alignItems:`flex-start`,children:[(0,d.jsx)(t,{variant:`headline3`,component:`h3`,children:l}),(0,d.jsx)(t,{variant:`body1`,children:s}),(0,d.jsxs)(t,{variant:`body1`,children:[`Task ID: `,n]}),(0,d.jsx)(i,{variant:`contained`,onClick:a,children:c})]})}var d,f=e((()=>{a(),o(),d=n();try{u.displayName=`CreateTaskConfirmation`,u.__docgenInfo={description:`Step 3 of the create-task flow: a simple confirmation shown after the task has been created (the task
+is created on the step-2-to-step-3 transition, so by the time this renders it already exists).
+
+TODO: Link directly to the new task in the task list once it can be filtered by task ID
+(see \`ListCurationTaskRequest.taskIds\`).`,displayName:`CreateTaskConfirmation`,filePath:`/home/runner/work/synapse-web-monorepo/synapse-web-monorepo/packages/synapse-react-client/src/features/entity/metadata-task/create-task/CreateTaskConfirmation.tsx`,methods:[],props:{taskId:{defaultValue:null,declarations:[{fileName:`synapse-react-client/src/features/entity/metadata-task/create-task/CreateTaskConfirmation.tsx`,name:`TypeLiteral`}],description:``,name:`taskId`,required:!0,tags:{},type:{name:`number`}},onDone:{defaultValue:null,declarations:[{fileName:`synapse-react-client/src/features/entity/metadata-task/create-task/CreateTaskConfirmation.tsx`,name:`TypeLiteral`}],description:``,name:`onDone`,required:!0,tags:{},type:{name:`() => void`}}},tags:{}}}catch{}})),p,m,h;e((()=>{f(),p={title:`Synapse/Entity/MetadataTask/CreateTaskConfirmation`,component:u},m={args:{taskId:12345,onDone:()=>alert(`Done!`)}},m.parameters={...m.parameters,docs:{...m.parameters?.docs,source:{originalSource:`{
+  args: {
+    taskId: 12345,
+    onDone: () => alert('Done!')
+  }
+}`,...m.parameters?.docs?.source}}},h=[`Default`]}))();export{m as Default,h as __namedExportsOrder,p as default};
