@@ -1,4 +1,4 @@
-import { CuratorDashboardContent } from './CuratorDashboard'
+import CuratorDashboardContent from './CuratorDashboard'
 import { useGetCurationTasksInfinite } from '@/synapse-queries/curation/task/useCurationTask'
 import { createMockTaskBundle } from '@/mocks/curation/mockCurationTask'
 import { render, screen, waitFor } from '@testing-library/react'
