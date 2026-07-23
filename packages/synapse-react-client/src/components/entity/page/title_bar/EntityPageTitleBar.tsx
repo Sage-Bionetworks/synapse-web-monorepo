@@ -127,7 +127,17 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
                 versionNumber={versionNumber}
                 toggleShowVersionHistory={toggleShowVersionHistory}
               />
-              <CopyToClipboardString value={entityId} useRoundedIcon />
+              <CopyToClipboardString
+                value={entityId}
+                icon="rounded"
+                sx={{
+                  '& .MuiTypography-root': {
+                    color: '#4D535A',
+                    fontWeight: 440,
+                    lineHeight: '20px',
+                  },
+                }}
+              />
             </Box>
           </Stack>
           {entityActionMenuProps && (
