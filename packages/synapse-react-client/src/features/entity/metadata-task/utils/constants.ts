@@ -246,6 +246,9 @@ export const DELETE_CURATION_TASK_GRID_SESSION_WARNING =
 export const DELETE_CURATION_TASK_SUCCESS_TOAST = 'Task deleted successfully'
 export const DELETE_CURATION_TASK_ERROR_TOAST_PREFIX = 'Error deleting task: '
 
+export const CREATE_TASK_STATUS_NOT_SAVED_WARNING =
+  'The task was created, but its due date and status could not be saved. You can set them by editing the task.'
+
 // The following constants are consumed by the legacy CreateOrUpdateCurationTaskDialog, which is
 // removed in a follow-up PR. They are retained here so the dialog continues to compile until then.
 export const CREATE_CURATION_TASK_DIALOG_TITLE = 'Create Curation Task'

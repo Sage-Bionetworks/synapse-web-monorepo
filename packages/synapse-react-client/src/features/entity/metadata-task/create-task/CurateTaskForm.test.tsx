@@ -15,6 +15,8 @@ import {
   FileBasedMetadataTaskPropertiesConcreteTypeEnum,
   RecordBasedMetadataTaskPropertiesConcreteTypeEnum,
 } from '@sage-bionetworks/synapse-client'
+import { displayToast } from '@/components/ToastMessage/ToastMessage'
+import { CREATE_TASK_STATUS_NOT_SAVED_WARNING } from '../utils/constants'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import CurateTaskForm from './CurateTaskForm'
@@ -27,16 +29,20 @@ vi.mock('@/synapse-queries/curation/task/useCurationTask', () => ({
   useUpdateCurationTaskStatus: vi.fn(),
 }))
 
+vi.mock('@/components/ToastMessage/ToastMessage')
+
 vi.mock('@/synapse-queries/entity/useEntity', () => ({
   useGetEntityPermissions: vi.fn(),
 }))
+
+const mockGetStatus = vi.hoisted(() => vi.fn())
 
 vi.mock('@/utils/index', async origImport => ({
   ...(await origImport<typeof import('@/utils/index')>()),
   useSynapseContext: vi.fn(() => ({
     synapseClient: {
       curationTaskServicesClient: {
-        getRepoV1CurationTaskTaskIdStatus: vi.fn(),
+        getRepoV1CurationTaskTaskIdStatus: mockGetStatus,
       },
     },
   })),
@@ -84,11 +90,17 @@ const mockUseDeleteCurationTask = vi.mocked(useDeleteCurationTask)
 const mockUseGetCurationTaskStatus = vi.mocked(useGetCurationTaskStatus)
 const mockUseUpdateCurationTaskStatus = vi.mocked(useUpdateCurationTaskStatus)
 const mockUseGetEntityPermissions = vi.mocked(useGetEntityPermissions)
+const mockDisplayToast = vi.mocked(displayToast)
 
 const FILE_BASED_TYPE =
   FileBasedMetadataTaskPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_metadata_FileBasedMetadataTaskProperties
 const RECORD_BASED_TYPE =
   RecordBasedMetadataTaskPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_metadata_RecordBasedMetadataTaskProperties
+
+// The date a user picks in the native date input, and its independently-computed UTC-midnight
+// epoch-ms encoding (Date.UTC(2030, 0, 1) === 1893456000000) as the backend stores it.
+const DUE_DATE_INPUT = '2030-01-01'
+const DUE_DATE_EPOCH_MS = '1893456000000'
 
 const mockCreateMutateAsync = vi.fn()
 const mockUpdateMutateAsync = vi.fn()
@@ -251,6 +263,63 @@ describe('CurateTaskForm', () => {
       )
     })
 
+    it('applies the due date to the auto-created status as a UTC epoch-ms timestamp', async () => {
+      mockCreateMutateAsync.mockResolvedValue({
+        taskId: MOCK_CURATION_TASK_ID,
+      } as CurationTask)
+      mockGetStatus.mockResolvedValue({
+        taskId: MOCK_CURATION_TASK_ID,
+        state: 'NOT_STARTED',
+        etag: 'status-etag',
+      })
+      const user = userEvent.setup()
+      render(<CurateTaskForm projectId="syn123" onCreated={vi.fn()} />)
+
+      // fillRequiredCommonFields types DUE_DATE_INPUT into the due date field.
+      await fillRequiredCommonFields()
+      await user.type(screen.getByLabelText(/upload folder id/i), 'syn1')
+      await user.type(screen.getByLabelText(/file view id/i), 'syn2')
+      await user.click(screen.getByRole('button', { name: /create/i }))
+
+      expect(mockUpdateStatusMutateAsync).toHaveBeenCalledWith(
+        expect.objectContaining({
+          taskId: MOCK_CURATION_TASK_ID,
+          dueDate: DUE_DATE_EPOCH_MS,
+        }),
+      )
+    })
+
+    it('treats the task as created when the status update fails, warning the user without duplicating the task', async () => {
+      mockCreateMutateAsync.mockResolvedValue({
+        taskId: MOCK_CURATION_TASK_ID,
+      } as CurationTask)
+      mockGetStatus.mockResolvedValue({
+        taskId: MOCK_CURATION_TASK_ID,
+        state: 'NOT_STARTED',
+        etag: 'status-etag',
+      })
+      mockUpdateStatusMutateAsync.mockRejectedValue(
+        new Error('Invalid due date'),
+      )
+      const onCreated = vi.fn()
+      const user = userEvent.setup()
+      render(<CurateTaskForm projectId="syn123" onCreated={onCreated} />)
+
+      await fillRequiredCommonFields()
+      await user.type(screen.getByLabelText(/upload folder id/i), 'syn1')
+      await user.type(screen.getByLabelText(/file view id/i), 'syn2')
+      await user.click(screen.getByRole('button', { name: /create/i }))
+
+      expect(mockCreateMutateAsync).toHaveBeenCalledTimes(1)
+      expect(onCreated).toHaveBeenCalledWith(
+        expect.objectContaining({ taskId: MOCK_CURATION_TASK_ID }),
+      )
+      expect(mockDisplayToast).toHaveBeenCalledWith(
+        CREATE_TASK_STATUS_NOT_SAVED_WARNING,
+        'warning',
+      )
+    })
+
     it('sets suggestedAuthorizationMode from the selected Authorization Mode', async () => {
       mockCreateMutateAsync.mockResolvedValue({
         taskId: MOCK_CURATION_TASK_ID,
@@ -301,12 +370,15 @@ describe('CurateTaskForm', () => {
         data: {
           taskId: editTask.taskId,
           state: 'NOT_STARTED',
-          dueDate: '2030-01-01',
+          dueDate: DUE_DATE_EPOCH_MS,
         },
         isFetching: false,
       } as any)
       render(<CurateTaskForm task={editTask} />)
 
+      expect(screen.getByLabelText(/task due date/i)).toHaveValue(
+        DUE_DATE_INPUT,
+      )
       expect(screen.getByLabelText(/task name/i)).toHaveValue('Existing Task')
       expect(screen.getByLabelText(/^instructions/i)).toHaveValue(
         'Existing instructions',
@@ -345,7 +417,7 @@ describe('CurateTaskForm', () => {
         data: {
           taskId: editTask.taskId,
           state: 'NOT_STARTED',
-          dueDate: '2030-01-01',
+          dueDate: DUE_DATE_EPOCH_MS,
         },
         isFetching: false,
       } as any)
@@ -367,7 +439,7 @@ describe('CurateTaskForm', () => {
         data: {
           taskId: editTask.taskId,
           state: 'NOT_STARTED',
-          dueDate: '2030-01-01',
+          dueDate: DUE_DATE_EPOCH_MS,
           etag: 'status-etag',
         },
         isFetching: false,
@@ -377,7 +449,7 @@ describe('CurateTaskForm', () => {
       render(<CurateTaskForm task={editTask} onSaved={vi.fn()} />)
 
       const dueDateInput = screen.getByLabelText(/task due date/i)
-      expect(dueDateInput).toHaveValue('2030-01-01')
+      expect(dueDateInput).toHaveValue(DUE_DATE_INPUT)
       await user.clear(dueDateInput)
 
       await user.click(screen.getByRole('button', { name: /^save$/i }))
