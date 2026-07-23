@@ -164,7 +164,7 @@ const SynapseComponents = {
   IconSvg: lazy(() => import('./components/IconSvg/IconSvg')),
   MetadataTasksPage: lazy(
     () =>
-      import('./features/entity/metadata-task/components/MetadataTasksPage'),
+      import('./features/entity/metadata-task/components/MetadataTasksPageRouter'),
   ),
   OAuthManagement: lazy(
     () => import('./components/OAuthClientManagement/OAuthManagement'),

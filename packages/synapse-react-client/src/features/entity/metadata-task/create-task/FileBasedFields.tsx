@@ -35,6 +35,7 @@ export default function FileBasedFields(props: FileBasedFieldsProps) {
         description={FILE_BASED_UPLOAD_FOLDER_INPUT_DESCRIPTION}
         onChange={uploadFolderId => onChange({ ...value, uploadFolderId })}
         disabled={disabled}
+        required
         entityFinderModalProps={{
           title: UPLOAD_FOLDER_FINDER_TITLE,
           promptCopy: UPLOAD_FOLDER_FINDER_PROMPT,
@@ -55,6 +56,7 @@ export default function FileBasedFields(props: FileBasedFieldsProps) {
         description={FILE_BASED_FILE_VIEW_INPUT_DESCRIPTION}
         onChange={fileViewId => onChange({ ...value, fileViewId })}
         disabled={disabled}
+        required
         entityFinderModalProps={{
           title: FILE_VIEW_FINDER_TITLE,
           promptCopy: FILE_VIEW_FINDER_PROMPT,
