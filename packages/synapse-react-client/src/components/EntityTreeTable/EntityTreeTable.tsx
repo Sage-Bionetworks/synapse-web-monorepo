@@ -23,6 +23,8 @@ type EntityTreeTableProps = {
   enableSorting?: boolean
   /** Callback when an entity is clicked. If not provided, defaults to opening Synapse.org page. */
   onEntityIdClicked?: (entityId: string) => void
+  /** When true, entity names in the table are rendered as plain text instead of links. Defaults to false. */
+  disableEntityLinks?: boolean
 }
 
 export type EntityBundleRow = {
@@ -42,6 +44,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
   showRootNode = true,
   enableSorting = true,
   onEntityIdClicked,
+  disableEntityLinks = false,
 }) => {
   // Use hook for state management and data initialization
   const {
@@ -149,6 +152,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
           },
           nextPageTokens,
           onEntityIdClicked,
+          disableEntityLinks,
         }}
       >
         {isTreeEmpty ? (

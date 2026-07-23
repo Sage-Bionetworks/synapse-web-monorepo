@@ -6,6 +6,7 @@ export type EntityTreeTableContextType = {
   loadMoreChildren: (parentId: string, pageToken?: string) => void
   nextPageTokens: Record<string, string | undefined>
   onEntityIdClicked?: (entityId: string) => void
+  disableEntityLinks?: boolean
 }
 
 export const EntityTreeTableContext = React.createContext<
