@@ -24,6 +24,7 @@ export const FAVORITE_BUTTON_ICON_COLOR = '#9EAAB7'
 const TITLE_BAR_BACKGROUND_COLOR = '#EAF0F5'
 const AVATAR_BACKGROUND_COLOR = '#497097'
 const TITLE_NAME_COLOR = '#33373D'
+const SYN_ID_COLOR = '#4D535A'
 
 /**
  * The EntityPageTitleBar component is shown on every Entity page in Synapse, and shows an Entity's metadata and
@@ -132,7 +133,7 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
                 icon="rounded"
                 sx={{
                   '& .MuiTypography-root': {
-                    color: '#4D535A',
+                    color: SYN_ID_COLOR,
                     fontWeight: 440,
                     lineHeight: '20px',
                   },
