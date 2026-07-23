@@ -8,7 +8,7 @@ import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
 import { SkeletonTable } from '@/components/index'
 import { useGetEntity } from '@/synapse-queries/index'
 import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
-import { SmartToyTwoTone } from '@mui/icons-material'
+import { HelpOutline, SmartToyTwoTone } from '@mui/icons-material'
 import { Box, Stack, Tooltip, Typography } from '@mui/material'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import Grid from '@mui/material/Grid'
@@ -458,13 +458,26 @@ function SynapseGridInner({
                     spacing={1}
                     sx={{ justifyContent: 'flex-end' }}
                   >
+                    <GridMenuButton
+                      variant="outlined"
+                      startIcon={<HelpOutline />}
+                      onClick={() =>
+                        window.open(
+                          'https://docs.synapse.org/synapse-docs/managing-metadata-with-curator',
+                          '_blank',
+                          'noopener,noreferrer',
+                        )
+                      }
+                      sx={{ mr: 'auto' }}
+                    >
+                      Help and Instructions
+                    </GridMenuButton>
                     {(!hasCompletedInitialSync || isSyncing) && (
                       <Box
                         sx={{
                           display: 'flex',
                           alignItems: 'center',
                           gap: 1,
-                          mr: 'auto',
                         }}
                       >
                         <SynapseSpinner size={16} margin="0" />
