@@ -1,11 +1,11 @@
 import InfiniteTableLayout from '@/components/layout/InfiniteTableLayout'
-import StyledTanStackTable from '@/components/TanStackTable/StyledTanStackTable'
-import { useMetadataTaskTable } from '@/features/entity/metadata-task/hooks/useMetadataTaskTable'
+import CurationTaskCard from '@/features/curator/dashboard/components/CurationTaskCard'
+import { useGetCurationTasksInfinite } from '@/synapse-queries/curation/task/useCurationTask'
 import { useGetFeatureFlag } from '@/synapse-queries/index'
-import { Button, FormControlLabel, Stack, Switch } from '@mui/material'
-import { useState } from 'react'
-import { ListCurationTaskRequest } from '@sage-bionetworks/synapse-client'
 import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
+import { Button, FormControlLabel, Stack, Switch } from '@mui/material'
+import { useMemo, useState } from 'react'
+import { ListCurationTaskRequest } from '@sage-bionetworks/synapse-client'
 import { AddCircleTwoTone } from '@mui/icons-material'
 import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { useNavigate } from 'react-router'
@@ -31,10 +31,13 @@ function MetadataTasksPageInternal(props: MetadataTaskTableProps) {
 
   const { data: permissions } = useGetEntityPermissions(projectId)
 
-  const { table, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
-    useMetadataTaskTable({
-      listCurationTaskRequest,
-    })
+  const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
+    useGetCurationTasksInfinite(listCurationTaskRequest)
+
+  const tasks = useMemo(
+    () => data?.pages.flatMap(page => page.bundlePage ?? []) ?? [],
+    [data],
+  )
 
   const showNewTaskButton = useGetFeatureFlag(
     FeatureFlagEnum.CURATION_TASK_PAGE_SHOW_NEW_TASK_BUTTON,
@@ -69,17 +72,19 @@ function MetadataTasksPageInternal(props: MetadataTaskTableProps) {
       </Stack>
       <InfiniteTableLayout
         table={
-          <StyledTanStackTable
-            table={table}
-            styledTableContainerProps={{ sx: { my: 2 } }}
-          />
+          <Stack gap={3} sx={{ my: 2 }}>
+            {tasks.map(taskBundle => (
+              <CurationTaskCard
+                key={taskBundle.task?.taskId}
+                taskBundle={taskBundle}
+              />
+            ))}
+          </Stack>
         }
         isLoading={isLoading}
-        isEmpty={!isLoading && table.getRowModel().rows.length === 0}
+        isEmpty={!isLoading && tasks.length === 0}
         hasNextPage={hasNextPage}
-        onFetchNextPageClicked={() => {
-          fetchNextPage()
-        }}
+        onFetchNextPageClicked={() => void fetchNextPage()}
         isFetchingNextPage={isFetchingNextPage}
       />
     </Stack>
