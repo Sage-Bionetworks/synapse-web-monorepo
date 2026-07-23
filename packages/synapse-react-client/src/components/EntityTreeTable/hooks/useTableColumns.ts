@@ -17,8 +17,12 @@ import {
   ModifiedOnColumnHeader,
 } from '../components/ColumnHeaders'
 import { EntityBadgeIconsCell } from '../components/EntityBadgeIconsCell'
+import { CheckboxCell } from '../components/CheckboxCell'
 
-export const useTableColumns = (enableSorting: boolean) => {
+export const useTableColumns = (
+  enableSorting: boolean,
+  showCheckboxColumn = false,
+) => {
   // Responsive design hooks
   const theme = useTheme()
   const isXtraLarge = useMediaQuery(theme.breakpoints.up('xl'))
@@ -26,16 +30,28 @@ export const useTableColumns = (enableSorting: boolean) => {
 
   // Table columns
   const columns = useMemo<ColumnDef<EntityBundleRow>[]>(() => {
-    const baseColumns: ColumnDef<EntityBundleRow>[] = [
-      {
-        accessorKey: 'entityHeader.name',
-        id: 'name',
-        header: NameColumnHeader,
-        cell: NameCell,
-        enableSorting: enableSorting,
-        size: 450, // Default width for Name column
-      },
-    ]
+    const baseColumns: ColumnDef<EntityBundleRow>[] = []
+
+    if (showCheckboxColumn) {
+      baseColumns.push({
+        id: 'select',
+        header: '',
+        cell: CheckboxCell,
+        enableSorting: false,
+        size: 45,
+        minSize: 45,
+        maxSize: 45,
+      })
+    }
+
+    baseColumns.push({
+      accessorKey: 'entityHeader.name',
+      id: 'name',
+      header: NameColumnHeader,
+      cell: NameCell,
+      enableSorting: enableSorting,
+      size: 450, // Default width for Name column
+    })
     if (isMediumAndUp) {
       baseColumns.push({
         id: 'badges',
@@ -106,7 +122,7 @@ export const useTableColumns = (enableSorting: boolean) => {
     })
 
     return baseColumns
-  }, [enableSorting, isXtraLarge, isMediumAndUp])
+  }, [enableSorting, isXtraLarge, isMediumAndUp, showCheckboxColumn])
 
   return columns
 }
