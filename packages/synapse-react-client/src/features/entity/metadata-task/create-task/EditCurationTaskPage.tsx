@@ -1,8 +1,6 @@
 import { ErrorBanner } from '@/components/error/ErrorBanner'
 import { SynapseSpinner } from '@/components/LoadingScreen/LoadingScreen'
 import { useGetCurationTask } from '@/synapse-queries/curation/task/useCurationTask'
-import { useGlobalIsEditingContext } from '@/utils/context/GlobalIsEditingContext'
-import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import {
   EDIT_CURATION_TASK_PAGE_DESCRIPTION,
@@ -22,12 +20,6 @@ export default function EditCurationTaskPage() {
   const { taskId } = useParams<{ taskId: string }>()
   const parsedTaskId = taskId ? Number(taskId) : undefined
   const navigate = useNavigate()
-  const { setIsEditing } = useGlobalIsEditingContext()
-
-  useEffect(() => {
-    setIsEditing(true)
-    return () => setIsEditing(false)
-  }, [setIsEditing])
 
   const {
     data: task,

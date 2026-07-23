@@ -149,10 +149,7 @@ describe('MetadataTasksPage', () => {
     })
     await user.click(newTaskButton)
 
-    const heading = await screen.findByRole('heading', {
-      name: /create new task/i,
-    })
-    expect(heading).toBeInTheDocument()
+    await screen.findByText('Select Category for New Task')
     expect(
       screen.getByRole('button', { name: /compute data/i }),
     ).toBeInTheDocument()

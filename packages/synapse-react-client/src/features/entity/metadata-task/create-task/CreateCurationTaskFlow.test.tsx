@@ -164,6 +164,15 @@ describe('CreateCurationTaskFlow', () => {
     expect(screen.queryByText(/task list page/i)).not.toBeInTheDocument()
   })
 
+  it('shows a "Back to All Tasks" button on the category picker that calls onExit', async () => {
+    const user = userEvent.setup()
+    const { onExit } = renderFlow()
+
+    await user.click(screen.getByRole('button', { name: /back to all tasks/i }))
+
+    expect(onExit).toHaveBeenCalled()
+  })
+
   it('shows a "Back to All Tasks" button on the compute form that calls onExit', async () => {
     const user = userEvent.setup()
     const { onExit } = renderFlow()
