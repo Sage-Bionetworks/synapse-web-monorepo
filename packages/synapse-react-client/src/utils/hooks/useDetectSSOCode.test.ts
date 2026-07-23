@@ -5,7 +5,6 @@ import {
   TwoFactorAuthErrorResponse,
 } from '@sage-bionetworks/synapse-types'
 import { renderHook as _renderHook, waitFor } from '@testing-library/react'
-import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { OAuth2State, SynapseClient } from '../../index'
 import { BackendDestinationEnum } from '../functions'
@@ -63,8 +62,8 @@ const mockBindOAuthProviderToAccount = vi.spyOn(
   'bindOAuthProviderToAccount',
 )
 const mockPostAuthV1Oauth2Identity = vi.spyOn(
-  MOCK_CONTEXT_VALUE.synapseClient.authenticationServicesClient,
-  'postAuthV1Oauth2Identity',
+  SynapseClient,
+  'oAuthIdentityRequest',
 )
 
 describe('useDetectSSOCode tests', () => {
@@ -224,13 +223,11 @@ describe('useDetectSSOCode tests', () => {
     expect(hookReturn.result.current.isLoading).toBe(true)
 
     await waitFor(() => {
-      expect(mockPostAuthV1Oauth2Identity).toHaveBeenCalledWith({
-        oAuthValidationRequest: {
-          provider: OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE,
-          authenticationCode: authorizationCode,
-          redirectUrl: `http://localhost:3000/?provider=${OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE}`,
-        },
-      })
+      expect(mockPostAuthV1Oauth2Identity).toHaveBeenCalledWith(
+        OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE,
+        authorizationCode,
+        `http://localhost:3000/?provider=${OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE}`,
+      )
       expect(mockBindOAuthProviderToAccount).not.toHaveBeenCalled()
       expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
       expect(onSignInComplete).toHaveBeenCalled()
@@ -265,6 +262,83 @@ describe('useDetectSSOCode tests', () => {
     await waitFor(() => {
       expect(mockPostAuthV1Oauth2Identity).toHaveBeenCalled()
       expect(mockOnError).toHaveBeenCalledWith(error.reason)
+      expect(onSignInComplete).not.toHaveBeenCalled()
+      expect(hookReturn.result.current.isLoading).toBe(false)
+    })
+    consoleSpy.mockReset()
+  })
+
+  it('Logs in an unauthenticated user via NIH RAS if their RAS identity was previously bound', async () => {
+    const encodedState = encodeAndStoreState(buildOAuthState())
+    history.replaceState(
+      {},
+      '',
+      `/?code=${authorizationCode}&provider=${OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE}&state=${encodedState}`,
+    )
+    mockOAuthSessionRequest.mockResolvedValue(successfulLoginResponse)
+    mockSetAccessTokenCookie.mockResolvedValue(undefined)
+
+    const hookReturn = renderHook({
+      onSignInComplete,
+      isInitializingSession: false,
+      isAuthenticated: false,
+    })
+    expect(hookReturn.result.current.isLoading).toBe(true)
+
+    await waitFor(() => {
+      expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
+        OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE,
+        authorizationCode,
+        `http://localhost:3000/?provider=${OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE}`,
+        BackendDestinationEnum.REPO_ENDPOINT,
+      )
+      expect(mockPostAuthV1Oauth2Identity).not.toHaveBeenCalled()
+      expect(mockSetAccessTokenCookie).toHaveBeenCalledWith(
+        successfulLoginResponse.accessToken,
+      )
+      expect(onSignInComplete).toHaveBeenCalled()
+      expect(hookReturn.result.current.isLoading).toBe(false)
+    })
+  })
+
+  it('Surfaces an explicit error (and does not redirect to registration) when unauthenticated NIH RAS login returns 404', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+    const encodedState = encodeAndStoreState(buildOAuthState())
+    history.replaceState(
+      {},
+      '',
+      `/?code=${authorizationCode}&provider=${OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE}&state=${encodedState}`,
+    )
+    const notFoundError = new SynapseClientError(
+      404,
+      'not found',
+      expect.getState().currentTestName!,
+    )
+    mockOAuthSessionRequest.mockRejectedValue(notFoundError)
+    const mockOnError = vi.fn()
+
+    const hookReturn = renderHook({
+      onSignInComplete,
+      onError: mockOnError,
+      isInitializingSession: false,
+      isAuthenticated: false,
+    })
+    expect(hookReturn.result.current.isLoading).toBe(true)
+
+    await waitFor(() => {
+      expect(mockOAuthSessionRequest).toHaveBeenCalledWith(
+        OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE,
+        authorizationCode,
+        `http://localhost:3000/?provider=${OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE}`,
+        BackendDestinationEnum.REPO_ENDPOINT,
+      )
+      // Must not redirect to registration — RAS cannot create a Synapse account.
+      // oxlint-disable-next-line @typescript-eslint/unbound-method
+      expect(window.location.replace).not.toHaveBeenCalled()
+      expect(mockOnError).toHaveBeenCalledWith(
+        expect.stringContaining('No Synapse account is linked'),
+      )
+      expect(mockSetAccessTokenCookie).not.toHaveBeenCalled()
       expect(onSignInComplete).not.toHaveBeenCalled()
       expect(hookReturn.result.current.isLoading).toBe(false)
     })

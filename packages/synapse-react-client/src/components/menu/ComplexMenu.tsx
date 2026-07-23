@@ -51,7 +51,6 @@ export function ComplexMenu(props: ComplexMenuProps) {
         justifyContent: 'flex-end',
         [theme.breakpoints.down('md')]: {
           flexDirection: 'column',
-          paddingTop: '10px',
         },
       })}
     >

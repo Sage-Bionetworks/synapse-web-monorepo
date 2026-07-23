@@ -1,5 +1,4 @@
 import { displayToast } from '@/components'
-import CreateOrUpdateCurationTaskDialog from '@/features/entity/metadata-task/components/CreateOrUpdateCurationTaskDialog'
 import { TASK_STATUS_CONFIG } from '@/features/entity/metadata-task/utils/constants'
 import useOpenCuratorFromTaskButton from '@/features/entity/metadata-task/hooks/useOpenCuratorButton'
 import { OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE } from '@/features/entity/metadata-task/utils/constants'
@@ -18,12 +17,14 @@ import {
   TaskStatusStateEnum,
 } from '@sage-bionetworks/synapse-client'
 import classNames from 'classnames'
+import { useNavigate } from 'react-router'
 import styles from './CurationTaskCard.module.scss'
 import NextStepButton from './NextStepButton'
 import sharedStyles from './shared.module.scss'
 import UserOrTeamChip from './UserOrTeamChip'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 import { useState } from 'react'
+import dayjs from 'dayjs'
 
 export type CurationTaskCardProps = {
   taskBundle: TaskBundle
@@ -55,8 +56,8 @@ function useUiForTask(taskBundle: TaskBundle) {
         isPending,
         hasPermission,
       }
-    case 'org.sagebionetworks.repo.model.curation.execution.SampleSheetGenerationExecutionProperties':
     case 'org.sagebionetworks.repo.model.curation.execution.RecordSetGenerationExecutionProperties':
+    case 'org.sagebionetworks.repo.model.curation.execution.SampleSheetGenerationExecutionProperties':
       return {
         title: taskBundle.task.dataType,
         description: taskBundle.task.instructions ?? '',
@@ -129,6 +130,31 @@ function TaskStatusChip(props: { state: TaskStatusStateEnum | undefined }) {
   )
 }
 
+function DueDateChip(props: { dueDate: string | undefined }) {
+  const { dueDate } = props
+  if (!dueDate) return null
+
+  const dueDateObj = dayjs(dueDate)
+  const today = dayjs()
+  const daysUntilDue = dueDateObj.diff(today, 'day')
+  const formattedDate = dueDateObj.format('MM/DD/YY')
+
+  let backgroundColor = '#E0E0E0'
+  if (daysUntilDue < 0) {
+    backgroundColor = '#FFCDD2'
+  } else if (daysUntilDue < 30) {
+    backgroundColor = '#FFF9C4'
+  }
+
+  return (
+    <Chip
+      size="small"
+      sx={{ fontWeight: 600, backgroundColor }}
+      label={`Due ${formattedDate}`}
+    />
+  )
+}
+
 /**
  * Card component for displaying a curation task on the curator dashboard. Shows relevant information about the task and includes a button to proceed to the next step in the workflow.
  */
@@ -148,7 +174,7 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
     isPending,
   } = useUiForTask(taskBundle)
 
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const navigate = useNavigate()
   const [isExpanded, setIsExpanded] = useState(false)
 
   const projectId = taskBundle.task?.projectId
@@ -181,7 +207,7 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
             {taskType && <TaskTypeChip label={taskType} />}
             {canEdit && (
               <IconButton
-                onClick={() => setIsSettingsOpen(true)}
+                onClick={() => void navigate(`edit/${taskId}`)}
                 aria-label="Task settings"
               >
                 <SettingsOutlinedIcon />
@@ -206,6 +232,7 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
         </div>
         <div className={styles.statusContainer}>
           <TaskStatusChip state={statusState} />
+          <DueDateChip dueDate={taskBundle.status?.dueDate} />
         </div>
         {!isExpanded && (
           <>
@@ -240,15 +267,6 @@ export default function CurationTaskCard(props: CurationTaskCardProps) {
           />
         </div>
       </Collapse>
-      <CreateOrUpdateCurationTaskDialog
-        key={String(isSettingsOpen)}
-        open={isSettingsOpen}
-        onCancel={() => setIsSettingsOpen(false)}
-        onSuccess={() => setIsSettingsOpen(false)}
-        onDeleteSuccess={() => setIsSettingsOpen(false)}
-        projectId={projectId ?? ''}
-        task={taskBundle.task}
-      />
     </Card>
   )
 }

@@ -10,7 +10,7 @@ import SWCPageLayout from '@/components/layout/SWCPageLayout'
 import { useSearchParams } from 'react-router'
 import { GRID_PAGE_TASK_ID_QUERY_PARAM } from '@/utils/SynapseConstants'
 
-export function CuratorDashboardContent() {
+export default function CuratorDashboardContent() {
   const [searchParams] = useSearchParams()
   const taskIdParam = searchParams.get(GRID_PAGE_TASK_ID_QUERY_PARAM)
 
