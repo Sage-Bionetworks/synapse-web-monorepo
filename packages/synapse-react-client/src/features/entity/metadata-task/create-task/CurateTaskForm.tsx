@@ -14,57 +14,33 @@ import {
 import {
   CurationTask,
   FileBasedMetadataTaskPropertiesConcreteTypeEnum,
-  TaskStatusStateEnum,
 } from '@sage-bionetworks/synapse-client'
 import noop from 'lodash-es/noop'
-import { useState } from 'react'
 import {
   AUTH_MODE_CHANGED_WARNING,
   AUTH_MODE_CONFIG,
   AUTH_MODE_INPUT_DESCRIPTION,
   AUTH_MODE_INPUT_LABEL,
   AUTH_MODE_OPTIONS,
+  CURATE_TASK_DISABLED_STATUS_STATES,
   CURATE_TASK_TYPE_CONFIG,
   CURATE_TASK_TYPE_INPUT_LABEL,
   CURATE_TASK_TYPE_OPTIONS,
-  DEFAULT_CURATE_TASK_TYPE,
   GENERIC_SAVE_ERROR_MESSAGE,
-  TASK_STATUS_CONFIG,
-  TASK_STATUS_INPUT_LABEL,
 } from '../utils/constants'
-import {
-  CurateTaskConcreteType,
-  getCurateTaskConcreteType,
-  instanceOfGridSupportedTaskProperties,
-} from '../utils/types'
 import CommonTaskFields from './CommonTaskFields'
 import FileBasedFields from './FileBasedFields'
 import ProjectSelectorField from './ProjectSelectorField'
 import RecordBasedFields from './RecordBasedFields'
 import TaskFormActions from './TaskFormActions'
 import TaskFormHeader from './TaskFormHeader'
+import TaskStatusField from './TaskStatusField'
+import { useCurateTypeFields } from './useCurateTypeFields'
 import { useCurationTaskFormState } from './useCurationTaskFormState'
 import {
   AuthorizationModeOption,
   buildCurateTaskPayload,
-  FileBasedFieldsValue,
-  RecordBasedFieldsValue,
 } from './utils/buildCurateTaskPayload'
-
-const EMPTY_FILE_BASED_VALUE: FileBasedFieldsValue = {
-  uploadFolderId: '',
-  fileViewId: '',
-}
-const EMPTY_RECORD_BASED_VALUE: RecordBasedFieldsValue = {
-  recordSetId: '',
-}
-
-function toAuthorizationModeOption(
-  value: string | undefined,
-): AuthorizationModeOption {
-  if (value === 'SESSION_OWNER' || value === 'SOURCE_BENEFACTOR') return value
-  return 'NONE'
-}
 
 export type CurateTaskFormProps = {
   /**
@@ -122,55 +98,13 @@ export default function CurateTaskForm(props: CurateTaskFormProps) {
   const form = useCurationTaskFormState({ projectId, task, onDeleted })
   const { isEditMode } = form
 
-  const existingCurateConcreteType = getCurateTaskConcreteType(
-    task?.taskProperties,
-  )
+  const typeFields = useCurateTypeFields({
+    taskProperties: task?.taskProperties,
+    isEditMode,
+  })
 
-  const [selectedConcreteType, setSelectedConcreteType] =
-    useState<CurateTaskConcreteType>(
-      () => existingCurateConcreteType ?? DEFAULT_CURATE_TASK_TYPE,
-    )
-
-  const [fileBasedValue, setFileBasedValue] = useState<FileBasedFieldsValue>(
-    () => {
-      const tp = task?.taskProperties
-      if (tp?.concreteType === CURATE_TASK_TYPE_OPTIONS[0]) {
-        return {
-          uploadFolderId: tp.uploadFolderId ?? '',
-          fileViewId: tp.fileViewId ?? '',
-        }
-      }
-      return EMPTY_FILE_BASED_VALUE
-    },
-  )
-  const [recordBasedValue, setRecordBasedValue] =
-    useState<RecordBasedFieldsValue>(() => {
-      const tp = task?.taskProperties
-      if (tp?.concreteType === CURATE_TASK_TYPE_OPTIONS[1]) {
-        return { recordSetId: tp.recordSetId ?? '' }
-      }
-      return EMPTY_RECORD_BASED_VALUE
-    })
-
-  const initialAuthorizationMode = toAuthorizationModeOption(
-    instanceOfGridSupportedTaskProperties(task?.taskProperties)
-      ? task.taskProperties.suggestedAuthorizationMode
-      : undefined,
-  )
-  const [authorizationMode, setAuthorizationMode] = useState(
-    initialAuthorizationMode,
-  )
-
-  const isTypeSpecificValid =
-    selectedConcreteType === CURATE_TASK_TYPE_OPTIONS[0]
-      ? !!fileBasedValue.uploadFolderId.trim() &&
-        !!fileBasedValue.fileViewId.trim()
-      : !!recordBasedValue.recordSetId.trim()
   const isValid =
-    form.isCommonFieldsValid && form.isProjectValid && isTypeSpecificValid
-
-  const authModeChanged =
-    isEditMode && authorizationMode !== initialAuthorizationMode
+    form.isCommonFieldsValid && form.isProjectValid && typeFields.isValid
 
   async function handleSubmit() {
     const payload = buildCurateTaskPayload({
@@ -180,10 +114,8 @@ export default function CurateTaskForm(props: CurateTaskFormProps) {
       instructions: form.instructions,
       assigneePrincipalId: form.assigneePrincipalId,
       curateTypeFields: {
-        concreteType: selectedConcreteType,
-        authorizationMode,
-        fileBased: fileBasedValue,
-        recordBased: recordBasedValue,
+        ...typeFields.state,
+        authorizationMode: typeFields.authorizationMode,
       },
     })
 
@@ -211,9 +143,9 @@ export default function CurateTaskForm(props: CurateTaskFormProps) {
           <Select
             labelId="curate-task-type-label"
             label={CURATE_TASK_TYPE_INPUT_LABEL}
-            value={selectedConcreteType}
+            value={typeFields.state.concreteType}
             disabled={isEditMode}
-            onChange={e => setSelectedConcreteType(e.target.value)}
+            onChange={e => typeFields.setConcreteType(e.target.value)}
           >
             {CURATE_TASK_TYPE_OPTIONS.map(concreteType => (
               <MenuItem key={concreteType} value={concreteType}>
@@ -242,41 +174,26 @@ export default function CurateTaskForm(props: CurateTaskFormProps) {
         />
 
         {isEditMode && (
-          <StyledFormControl fullWidth>
-            <InputLabel id="curate-task-status-label">
-              {TASK_STATUS_INPUT_LABEL}
-            </InputLabel>
-            <Select
-              labelId="curate-task-status-label"
-              value={form.displayedStatusState ?? ''}
-              label={TASK_STATUS_INPUT_LABEL}
-              disabled={form.isStatusFetching || form.currentTaskStatus == null}
-              onChange={e =>
-                form.setPendingStatusState(
-                  e.target.value as TaskStatusStateEnum,
-                )
-              }
-            >
-              {Object.values(TaskStatusStateEnum).map(state => (
-                <MenuItem key={state} value={state}>
-                  {TASK_STATUS_CONFIG[state].label}
-                </MenuItem>
-              ))}
-            </Select>
-          </StyledFormControl>
+          <TaskStatusField
+            labelId="curate-task-status-label"
+            value={form.displayedStatusState}
+            onChange={form.setPendingStatusState}
+            disabled={form.isStatusFetching || form.currentTaskStatus == null}
+            disabledStates={CURATE_TASK_DISABLED_STATUS_STATES}
+          />
         )}
 
-        {selectedConcreteType ===
+        {typeFields.state.concreteType ===
         FileBasedMetadataTaskPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_metadata_FileBasedMetadataTaskProperties ? (
           <FileBasedFields
-            value={fileBasedValue}
-            onChange={setFileBasedValue}
+            value={typeFields.state.value}
+            onChange={typeFields.setValue}
             disabled={isEditMode}
           />
         ) : (
           <RecordBasedFields
-            value={recordBasedValue}
-            onChange={setRecordBasedValue}
+            value={typeFields.state.value}
+            onChange={typeFields.setValue}
             disabled={isEditMode}
           />
         )}
@@ -289,9 +206,11 @@ export default function CurateTaskForm(props: CurateTaskFormProps) {
           <Select
             labelId="curate-task-auth-mode-label"
             label={AUTH_MODE_INPUT_LABEL}
-            value={authorizationMode}
+            value={typeFields.authorizationMode}
             onChange={e =>
-              setAuthorizationMode(e.target.value as AuthorizationModeOption)
+              typeFields.setAuthorizationMode(
+                e.target.value as AuthorizationModeOption,
+              )
             }
           >
             {AUTH_MODE_OPTIONS.map(mode => (
@@ -309,7 +228,7 @@ export default function CurateTaskForm(props: CurateTaskFormProps) {
           </Select>
         </StyledFormControl>
 
-        {authModeChanged && (
+        {typeFields.authModeChanged && (
           <Alert severity="warning">{AUTH_MODE_CHANGED_WARNING}</Alert>
         )}
         {form.error && (

@@ -164,12 +164,14 @@ describe('CurateTaskForm', () => {
       ).toHaveTextContent(/file-based data/i)
     })
 
-    it('shows File-Based fields by default, and switches to Records-Based fields when the type is changed', async () => {
+    it('shows File-Based fields by default, and switches to Records-Based fields when the type is changed, resetting the value when switched back', async () => {
       const user = userEvent.setup()
       render(<CurateTaskForm projectId="syn123" />)
 
       expect(screen.getByLabelText(/upload folder id/i)).toBeInTheDocument()
       expect(screen.queryByLabelText(/record set id/i)).not.toBeInTheDocument()
+
+      await user.type(screen.getByLabelText(/upload folder id/i), 'syn1')
 
       await user.click(
         screen.getByRole('combobox', { name: /curate task type/i }),
@@ -182,6 +184,16 @@ describe('CurateTaskForm', () => {
         screen.queryByLabelText(/upload folder id/i),
       ).not.toBeInTheDocument()
       expect(screen.getByLabelText(/record set id/i)).toBeInTheDocument()
+
+      // Switching back to File-Based Data resets its value rather than retaining what was previously
+      // entered -- the form only owns one active concrete-type value at a time.
+      await user.click(
+        screen.getByRole('combobox', { name: /curate task type/i }),
+      )
+      await user.click(
+        await screen.findByRole('option', { name: /file-based data/i }),
+      )
+      expect(screen.getByLabelText(/upload folder id/i)).toHaveValue('')
     })
 
     it('shows the project selector only when no projectId is supplied', () => {
@@ -395,6 +407,24 @@ describe('CurateTaskForm', () => {
       expect(
         screen.getByRole('combobox', { name: /curate task type/i }),
       ).toHaveAttribute('aria-disabled', 'true')
+    })
+
+    it('disables the EXECUTING status option, but leaves CANCELED selectable', async () => {
+      mockUseGetCurationTaskStatus.mockReturnValue({
+        data: { taskId: editTask.taskId, state: 'NOT_STARTED' },
+        isFetching: false,
+      } as any)
+      const user = userEvent.setup()
+      render(<CurateTaskForm task={editTask} />)
+
+      await user.click(screen.getByRole('combobox', { name: /^status$/i }))
+
+      expect(
+        await screen.findByRole('option', { name: /^executing$/i }),
+      ).toHaveAttribute('aria-disabled', 'true')
+      expect(
+        screen.getByRole('option', { name: /^canceled$/i }),
+      ).not.toHaveAttribute('aria-disabled', 'true')
     })
 
     it('shows a Delete button when the user has permission, and deletes on confirmation', async () => {

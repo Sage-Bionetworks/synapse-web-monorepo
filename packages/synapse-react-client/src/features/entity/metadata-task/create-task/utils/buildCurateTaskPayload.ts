@@ -3,31 +3,30 @@ import {
   CurationTaskProperties,
   FileBasedMetadataTaskPropertiesConcreteTypeEnum,
   FileBasedMetadataTaskPropertiesSuggestedAuthorizationModeEnum,
+  RecordBasedMetadataTaskPropertiesConcreteTypeEnum,
 } from '@sage-bionetworks/synapse-client'
-import {
-  CurateTaskConcreteType,
-  instanceOfGridSupportedTaskProperties,
-} from '../../utils/types'
+import { instanceOfGridSupportedTaskProperties } from '../../utils/types'
+import { FileBasedFieldsValue } from '../FileBasedFields'
+import { RecordBasedFieldsValue } from '../RecordBasedFields'
 
 /** Null represents the "Legacy" / unset option for suggestedAuthorizationMode. */
 export type AuthorizationModeOption =
   | FileBasedMetadataTaskPropertiesSuggestedAuthorizationModeEnum
   | 'NONE'
 
-export type FileBasedFieldsValue = {
-  uploadFolderId: string
-  fileViewId: string
-}
+/** A form's active Curate Data type-specific value, as a discriminated union keyed by `concreteType`. */
+export type CurateTypeState =
+  | {
+      concreteType: FileBasedMetadataTaskPropertiesConcreteTypeEnum
+      value: FileBasedFieldsValue
+    }
+  | {
+      concreteType: RecordBasedMetadataTaskPropertiesConcreteTypeEnum
+      value: RecordBasedFieldsValue
+    }
 
-export type RecordBasedFieldsValue = {
-  recordSetId: string
-}
-
-export type CurateTypeFields = {
-  concreteType: CurateTaskConcreteType
+export type CurateTypeFields = CurateTypeState & {
   authorizationMode: AuthorizationModeOption
-  fileBased: FileBasedFieldsValue
-  recordBased: RecordBasedFieldsValue
 }
 
 export type BuildCurateTaskPayloadArgs = {
@@ -80,26 +79,28 @@ function buildCurateTaskProperties(
   fields: CurateTypeFields,
   collaboratorPrincipalIds: string[] | undefined,
 ): CurationTaskProperties {
-  const { concreteType, authorizationMode, fileBased, recordBased } = fields
+  const { authorizationMode } = fields
   const suggestedAuthorizationMode =
     authorizationMode === 'NONE' ? undefined : authorizationMode
 
   if (
-    concreteType ===
-    FileBasedMetadataTaskPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_metadata_FileBasedMetadataTaskProperties
+    fields.concreteType ===
+    RecordBasedMetadataTaskPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_metadata_RecordBasedMetadataTaskProperties
   ) {
+    const { concreteType, value } = fields
     return {
       concreteType,
-      uploadFolderId: fileBased.uploadFolderId.trim() || undefined,
-      fileViewId: fileBased.fileViewId.trim() || undefined,
+      recordSetId: value.recordSetId.trim() || undefined,
       suggestedAuthorizationMode,
       collaboratorPrincipalIds,
     }
   }
 
+  const { concreteType, value } = fields
   return {
     concreteType,
-    recordSetId: recordBased.recordSetId.trim() || undefined,
+    uploadFolderId: value.uploadFolderId.trim() || undefined,
+    fileViewId: value.fileViewId.trim() || undefined,
     suggestedAuthorizationMode,
     collaboratorPrincipalIds,
   }

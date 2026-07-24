@@ -18,8 +18,7 @@ describe('buildComputeTaskPayload', () => {
       assigneePrincipalId: '456',
       computeTypeFields: {
         concreteType: SAMPLE_SHEET_TYPE,
-        sampleSheet: { inputTaskId: '1', destinationTaskId: '2' },
-        recordSet: { folderId: '', instructions: '', destinationTaskId: '' },
+        value: { inputTaskId: '1', destinationTaskId: '2' },
       },
     })
 
@@ -44,8 +43,7 @@ describe('buildComputeTaskPayload', () => {
       assigneePrincipalId: '456',
       computeTypeFields: {
         concreteType: RECORD_SET_TYPE,
-        sampleSheet: { inputTaskId: '', destinationTaskId: '' },
-        recordSet: {
+        value: {
           folderId: 'syn999',
           instructions: 'Transform the files',
           destinationTaskId: '3',
@@ -69,8 +67,7 @@ describe('buildComputeTaskPayload', () => {
       assigneePrincipalId: undefined,
       computeTypeFields: {
         concreteType: SAMPLE_SHEET_TYPE,
-        sampleSheet: { inputTaskId: '', destinationTaskId: 'not-a-number' },
-        recordSet: { folderId: '', instructions: '', destinationTaskId: '' },
+        value: { inputTaskId: '', destinationTaskId: 'not-a-number' },
       },
     })
 

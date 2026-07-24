@@ -7,7 +7,20 @@ import {
   RECORD_SET_FINDER_PROMPT,
   RECORD_SET_FINDER_TITLE,
 } from '../utils/constants'
-import { RecordBasedFieldsValue } from './utils/buildCurateTaskPayload'
+
+export type RecordBasedFieldsValue = {
+  recordSetId: string
+}
+
+export const EMPTY_RECORD_BASED_VALUE: RecordBasedFieldsValue = {
+  recordSetId: '',
+}
+
+export function isRecordBasedFieldsValueValid(
+  value: RecordBasedFieldsValue,
+): boolean {
+  return !!value.recordSetId.trim()
+}
 
 export type RecordBasedFieldsProps = {
   value: RecordBasedFieldsValue

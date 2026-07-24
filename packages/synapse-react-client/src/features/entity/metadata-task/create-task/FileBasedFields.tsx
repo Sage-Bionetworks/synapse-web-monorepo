@@ -11,7 +11,22 @@ import {
   UPLOAD_FOLDER_FINDER_PROMPT,
   UPLOAD_FOLDER_FINDER_TITLE,
 } from '../utils/constants'
-import { FileBasedFieldsValue } from './utils/buildCurateTaskPayload'
+
+export type FileBasedFieldsValue = {
+  uploadFolderId: string
+  fileViewId: string
+}
+
+export const EMPTY_FILE_BASED_VALUE: FileBasedFieldsValue = {
+  uploadFolderId: '',
+  fileViewId: '',
+}
+
+export function isFileBasedFieldsValueValid(
+  value: FileBasedFieldsValue,
+): boolean {
+  return !!value.uploadFolderId.trim() && !!value.fileViewId.trim()
+}
 
 export type FileBasedFieldsProps = {
   value: FileBasedFieldsValue

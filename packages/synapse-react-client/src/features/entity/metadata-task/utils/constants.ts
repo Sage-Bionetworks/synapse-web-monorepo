@@ -1,10 +1,14 @@
 import {
   FileBasedMetadataTaskPropertiesConcreteTypeEnum,
   RecordBasedMetadataTaskPropertiesConcreteTypeEnum,
+  RecordSetGenerationExecutionDetailsConcreteTypeEnum,
   RecordSetGenerationExecutionPropertiesConcreteTypeEnum,
+  SampleSheetGenerationExecutionDetailsConcreteTypeEnum,
   SampleSheetGenerationExecutionPropertiesConcreteTypeEnum,
+  TaskExecutionDetails,
   TaskStatusStateEnum,
 } from '@sage-bionetworks/synapse-client'
+import { ComputeTaskConcreteType } from './types'
 
 export const OPEN_CURATOR_ERROR_TITLE =
   'An error occurred while trying to open Curator'
@@ -237,6 +241,19 @@ export const TASK_STATUS_CONFIG: Record<
   CANCELED: { label: 'Canceled', backgroundColor: '#FFCCBC' },
 }
 
+/**
+ * Do not allow users to manually set task state to one of these values (controlled by the system)
+ */
+export const COMPUTE_TASK_DISABLED_STATUS_STATES = [
+  TaskStatusStateEnum.EXECUTING,
+  TaskStatusStateEnum.CANCELED,
+]
+
+/** Curate tasks have no automatic EXECUTING transition, but it remains a system-controlled state. */
+export const CURATE_TASK_DISABLED_STATUS_STATES = [
+  TaskStatusStateEnum.EXECUTING,
+]
+
 export const DELETE_CURATION_TASK_DIALOG_TITLE = 'Delete Task'
 export const DELETE_CURATION_TASK_CONFIRMATION_PROMPT =
   'Are you sure you want to delete this task? This action cannot be undone.'
@@ -258,3 +275,24 @@ export const COLLABORATORS_TOOLTIP =
   'Collaborators can contribute to the grid session alongside the assignee. For "Session Owner" authorization mode, collaborators are added as additional owners of the session.'
 export const UNRECOGNIZED_TASK_TYPE_ERROR =
   'This task has an unrecognized task type and cannot be edited here.'
+
+/**
+ * The `TaskStatus.executionDetails` value to set when creating a Compute task of each concrete type.
+ * Both concrete `TaskExecutionDetails` types require only `concreteType` -- the remaining fields
+ * (`asyncJobId`, `startedBy`, `startedOn`, `errorMessage`, `errorDetails`) are server-managed.
+ */
+export const COMPUTE_TASK_EXECUTION_DETAILS: Record<
+  ComputeTaskConcreteType,
+  TaskExecutionDetails
+> = {
+  [SampleSheetGenerationExecutionPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_execution_SampleSheetGenerationExecutionProperties]:
+    {
+      concreteType:
+        SampleSheetGenerationExecutionDetailsConcreteTypeEnum.org_sagebionetworks_repo_model_curation_execution_SampleSheetGenerationExecutionDetails,
+    },
+  [RecordSetGenerationExecutionPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_execution_RecordSetGenerationExecutionProperties]:
+    {
+      concreteType:
+        RecordSetGenerationExecutionDetailsConcreteTypeEnum.org_sagebionetworks_repo_model_curation_execution_RecordSetGenerationExecutionDetails,
+    },
+}
