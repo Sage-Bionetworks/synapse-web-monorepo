@@ -2,48 +2,28 @@ import { StyledFormControl } from '@/components/styled'
 import { Alert, InputLabel, MenuItem, Select, Stack } from '@mui/material'
 import {
   CurationTask,
-  TaskStatusStateEnum,
+  SampleSheetGenerationExecutionPropertiesConcreteTypeEnum,
 } from '@sage-bionetworks/synapse-client'
 import noop from 'lodash-es/noop'
-import { useState } from 'react'
 import {
+  COMPUTE_TASK_DISABLED_STATUS_STATES,
+  COMPUTE_TASK_EXECUTION_DETAILS,
   COMPUTE_TASK_TYPE_CONFIG,
   COMPUTE_TASK_TYPE_INPUT_LABEL,
   COMPUTE_TASK_TYPE_OPTIONS,
-  DEFAULT_COMPUTE_TASK_TYPE,
   EDIT_TASK_UNRECOGNIZED_TYPE_MESSAGE,
   GENERIC_SAVE_ERROR_MESSAGE,
-  TASK_STATUS_CONFIG,
-  TASK_STATUS_INPUT_LABEL,
 } from '../utils/constants'
-import {
-  ComputeTaskConcreteType,
-  getComputeTaskConcreteType,
-  instanceOfGridSupportedTaskProperties,
-} from '../utils/types'
 import CommonTaskFields from './CommonTaskFields'
 import ProjectSelectorField from './ProjectSelectorField'
 import RecordSetFields from './RecordSetFields'
 import SampleSheetFields from './SampleSheetFields'
 import TaskFormActions from './TaskFormActions'
 import TaskFormHeader from './TaskFormHeader'
+import TaskStatusField from './TaskStatusField'
+import { useComputeTypeFields } from './useComputeTypeFields'
 import { useCurationTaskFormState } from './useCurationTaskFormState'
-import {
-  buildComputeTaskPayload,
-  RecordSetFieldsValue,
-  SampleSheetFieldsValue,
-} from './utils/buildComputeTaskPayload'
-import { isValidTaskIdInput } from './utils/taskIdValidation'
-
-const EMPTY_SAMPLE_SHEET_VALUE: SampleSheetFieldsValue = {
-  inputTaskId: '',
-  destinationTaskId: '',
-}
-const EMPTY_RECORD_SET_VALUE: RecordSetFieldsValue = {
-  folderId: '',
-  instructions: '',
-  destinationTaskId: '',
-}
+import { buildComputeTaskPayload } from './utils/buildComputeTaskPayload'
 
 export type ComputeTaskFormProps = {
   /**
@@ -101,59 +81,13 @@ export default function ComputeTaskForm(props: ComputeTaskFormProps) {
   const form = useCurationTaskFormState({ projectId, task, onDeleted })
   const { isEditMode } = form
 
-  const existingComputeConcreteType = getComputeTaskConcreteType(
-    task?.taskProperties,
-  )
+  const typeFields = useComputeTypeFields({
+    taskProperties: task?.taskProperties,
+    isEditMode,
+  })
 
-  // Whether the type-specific fields (and type selector) should render at all. False when editing a task
-  // whose category isn't one of the two Compute Data types (e.g. a legacy Curate Data task).
-  const showTypeSection =
-    !isEditMode || existingComputeConcreteType !== undefined
-  const showUnrecognizedTypeWarning =
-    isEditMode &&
-    existingComputeConcreteType === undefined &&
-    !instanceOfGridSupportedTaskProperties(task?.taskProperties)
-
-  const [selectedConcreteType, setSelectedConcreteType] =
-    useState<ComputeTaskConcreteType>(
-      () => existingComputeConcreteType ?? DEFAULT_COMPUTE_TASK_TYPE,
-    )
-
-  const [sampleSheetValue, setSampleSheetValue] =
-    useState<SampleSheetFieldsValue>(() => {
-      const tp = task?.taskProperties
-      if (tp?.concreteType === COMPUTE_TASK_TYPE_OPTIONS[0]) {
-        return {
-          inputTaskId: tp.inputTaskId?.toString() ?? '',
-          destinationTaskId: tp.destinationTaskId?.toString() ?? '',
-        }
-      }
-      return EMPTY_SAMPLE_SHEET_VALUE
-    })
-  const [recordSetValue, setRecordSetValue] = useState<RecordSetFieldsValue>(
-    () => {
-      const tp = task?.taskProperties
-      if (tp?.concreteType === COMPUTE_TASK_TYPE_OPTIONS[1]) {
-        return {
-          folderId: tp.folderId ?? '',
-          instructions: tp.instructions ?? '',
-          destinationTaskId: tp.destinationTaskId?.toString() ?? '',
-        }
-      }
-      return EMPTY_RECORD_SET_VALUE
-    },
-  )
-
-  const isTypeSpecificValid =
-    !showTypeSection ||
-    (selectedConcreteType === COMPUTE_TASK_TYPE_OPTIONS[0]
-      ? isValidTaskIdInput(sampleSheetValue.inputTaskId) &&
-        isValidTaskIdInput(sampleSheetValue.destinationTaskId)
-      : !!recordSetValue.folderId.trim() &&
-        !!recordSetValue.instructions.trim() &&
-        isValidTaskIdInput(recordSetValue.destinationTaskId))
   const isValid =
-    form.isCommonFieldsValid && form.isProjectValid && isTypeSpecificValid
+    form.isCommonFieldsValid && form.isProjectValid && typeFields.isValid
 
   async function handleSubmit() {
     const payload = buildComputeTaskPayload({
@@ -162,16 +96,15 @@ export default function ComputeTaskForm(props: ComputeTaskFormProps) {
       dataType: form.dataType,
       instructions: form.instructions,
       assigneePrincipalId: form.assigneePrincipalId,
-      computeTypeFields: showTypeSection
-        ? {
-            concreteType: selectedConcreteType,
-            sampleSheet: sampleSheetValue,
-            recordSet: recordSetValue,
-          }
+      computeTypeFields: typeFields.showTypeSection
+        ? typeFields.state
         : undefined,
     })
 
-    const result = await form.submitTaskAndStatus(payload)
+    const result = await form.submitTaskAndStatus(payload, {
+      initialExecutionDetails:
+        COMPUTE_TASK_EXECUTION_DETAILS[typeFields.state.concreteType],
+    })
     if (isEditMode) {
       onSaved?.(result)
     } else {
@@ -188,7 +121,7 @@ export default function ComputeTaskForm(props: ComputeTaskFormProps) {
       />
 
       <Stack gap={3} sx={{ width: '100%', maxWidth: 700, mx: 'auto' }}>
-        {showTypeSection && (
+        {typeFields.showTypeSection && (
           <StyledFormControl fullWidth>
             <InputLabel id="compute-task-type-label">
               {COMPUTE_TASK_TYPE_INPUT_LABEL}
@@ -196,9 +129,9 @@ export default function ComputeTaskForm(props: ComputeTaskFormProps) {
             <Select
               labelId="compute-task-type-label"
               label={COMPUTE_TASK_TYPE_INPUT_LABEL}
-              value={selectedConcreteType}
+              value={typeFields.state.concreteType}
               disabled={isEditMode}
-              onChange={e => setSelectedConcreteType(e.target.value)}
+              onChange={e => typeFields.setConcreteType(e.target.value)}
             >
               {COMPUTE_TASK_TYPE_OPTIONS.map(concreteType => (
                 <MenuItem key={concreteType} value={concreteType}>
@@ -228,44 +161,30 @@ export default function ComputeTaskForm(props: ComputeTaskFormProps) {
         />
 
         {isEditMode && (
-          <StyledFormControl fullWidth>
-            <InputLabel id="compute-task-status-label">
-              {TASK_STATUS_INPUT_LABEL}
-            </InputLabel>
-            <Select
-              labelId="compute-task-status-label"
-              value={form.displayedStatusState ?? ''}
-              label={TASK_STATUS_INPUT_LABEL}
-              disabled={form.isStatusFetching || form.currentTaskStatus == null}
-              onChange={e =>
-                form.setPendingStatusState(
-                  e.target.value as TaskStatusStateEnum,
-                )
-              }
-            >
-              {Object.values(TaskStatusStateEnum).map(state => (
-                <MenuItem key={state} value={state}>
-                  {TASK_STATUS_CONFIG[state].label}
-                </MenuItem>
-              ))}
-            </Select>
-          </StyledFormControl>
+          <TaskStatusField
+            labelId="compute-task-status-label"
+            value={form.displayedStatusState}
+            onChange={form.setPendingStatusState}
+            disabled={form.isStatusFetching || form.currentTaskStatus == null}
+            disabledStates={COMPUTE_TASK_DISABLED_STATUS_STATES}
+          />
         )}
 
-        {showTypeSection &&
-          (selectedConcreteType === COMPUTE_TASK_TYPE_OPTIONS[0] ? (
+        {typeFields.showTypeSection &&
+          (typeFields.state.concreteType ===
+          SampleSheetGenerationExecutionPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_execution_SampleSheetGenerationExecutionProperties ? (
             <SampleSheetFields
-              value={sampleSheetValue}
-              onChange={setSampleSheetValue}
+              value={typeFields.state.value}
+              onChange={typeFields.setValue}
             />
           ) : (
             <RecordSetFields
-              value={recordSetValue}
-              onChange={setRecordSetValue}
+              value={typeFields.state.value}
+              onChange={typeFields.setValue}
             />
           ))}
 
-        {showUnrecognizedTypeWarning && (
+        {typeFields.showUnrecognizedTypeWarning && (
           <Alert severity="warning">
             {EDIT_TASK_UNRECOGNIZED_TYPE_MESSAGE}
           </Alert>

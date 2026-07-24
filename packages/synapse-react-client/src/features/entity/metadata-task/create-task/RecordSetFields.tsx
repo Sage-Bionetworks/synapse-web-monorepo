@@ -15,8 +15,29 @@ import {
   RECORD_SET_INSTRUCTIONS_LABEL,
   TASK_ID_FIELD_INVALID_ERROR_MESSAGE,
 } from '../utils/constants'
-import { RecordSetFieldsValue } from './utils/buildComputeTaskPayload'
 import { isValidTaskIdInput } from './utils/taskIdValidation'
+
+export type RecordSetFieldsValue = {
+  folderId: string
+  instructions: string
+  destinationTaskId: string
+}
+
+export const EMPTY_RECORD_SET_VALUE: RecordSetFieldsValue = {
+  folderId: '',
+  instructions: '',
+  destinationTaskId: '',
+}
+
+export function isRecordSetFieldsValueValid(
+  value: RecordSetFieldsValue,
+): boolean {
+  return (
+    !!value.folderId.trim() &&
+    !!value.instructions.trim() &&
+    isValidTaskIdInput(value.destinationTaskId)
+  )
+}
 
 export type RecordSetFieldsProps = {
   value: RecordSetFieldsValue

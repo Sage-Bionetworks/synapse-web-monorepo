@@ -2,26 +2,22 @@ import {
   CurationTask,
   CurationTaskProperties,
   RecordSetGenerationExecutionPropertiesConcreteTypeEnum,
+  SampleSheetGenerationExecutionPropertiesConcreteTypeEnum,
 } from '@sage-bionetworks/synapse-client'
-import { ComputeTaskConcreteType } from '../../utils/types'
+import { RecordSetFieldsValue } from '../RecordSetFields'
+import { SampleSheetFieldsValue } from '../SampleSheetFields'
 import { parseTaskIdInput } from './taskIdValidation'
 
-export type SampleSheetFieldsValue = {
-  inputTaskId: string
-  destinationTaskId: string
-}
-
-export type RecordSetFieldsValue = {
-  folderId: string
-  instructions: string
-  destinationTaskId: string
-}
-
-export type ComputeTypeFields = {
-  concreteType: ComputeTaskConcreteType
-  sampleSheet: SampleSheetFieldsValue
-  recordSet: RecordSetFieldsValue
-}
+/** A form's active Compute Data type-specific value, as a discriminated union keyed by `concreteType`. */
+export type ComputeTypeFields =
+  | {
+      concreteType: SampleSheetGenerationExecutionPropertiesConcreteTypeEnum
+      value: SampleSheetFieldsValue
+    }
+  | {
+      concreteType: RecordSetGenerationExecutionPropertiesConcreteTypeEnum
+      value: RecordSetFieldsValue
+    }
 
 export type BuildComputeTaskPayloadArgs = {
   /** The task being edited, if any. Server-managed fields (taskId, etag, etc.) are carried over. */
@@ -71,23 +67,23 @@ export function buildComputeTaskPayload(
 function buildComputeTaskProperties(
   fields: ComputeTypeFields,
 ): CurationTaskProperties {
-  const { concreteType, sampleSheet, recordSet } = fields
-
   if (
-    concreteType ===
+    fields.concreteType ===
     RecordSetGenerationExecutionPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_execution_RecordSetGenerationExecutionProperties
   ) {
+    const { concreteType, value } = fields
     return {
       concreteType,
-      folderId: recordSet.folderId.trim() || undefined,
-      instructions: recordSet.instructions.trim() || undefined,
-      destinationTaskId: parseTaskIdInput(recordSet.destinationTaskId),
+      folderId: value.folderId.trim() || undefined,
+      instructions: value.instructions.trim() || undefined,
+      destinationTaskId: parseTaskIdInput(value.destinationTaskId),
     }
   }
 
+  const { concreteType, value } = fields
   return {
     concreteType,
-    inputTaskId: parseTaskIdInput(sampleSheet.inputTaskId),
-    destinationTaskId: parseTaskIdInput(sampleSheet.destinationTaskId),
+    inputTaskId: parseTaskIdInput(value.inputTaskId),
+    destinationTaskId: parseTaskIdInput(value.destinationTaskId),
   }
 }

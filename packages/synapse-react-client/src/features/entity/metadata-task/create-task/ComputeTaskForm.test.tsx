@@ -167,7 +167,7 @@ describe('ComputeTaskForm', () => {
       ).toHaveTextContent(/sample sheet generation/i)
     })
 
-    it('shows Sample Sheet fields by default, and switches to Record Set fields when the type is changed', async () => {
+    it('shows Sample Sheet fields by default, and switches to Record Set fields when the type is changed, resetting the value when switched back', async () => {
       const user = userEvent.setup()
       render(<ComputeTaskForm projectId="syn123" />)
 
@@ -175,6 +175,8 @@ describe('ComputeTaskForm', () => {
       expect(
         screen.queryByLabelText(/agent instructions/i),
       ).not.toBeInTheDocument()
+
+      await user.type(screen.getByLabelText(/input task id/i), '1')
 
       await user.click(
         screen.getByRole('combobox', { name: /compute task type/i }),
@@ -190,6 +192,18 @@ describe('ComputeTaskForm', () => {
 
       expect(screen.queryByLabelText(/input task id/i)).not.toBeInTheDocument()
       expect(screen.getByLabelText(/agent instructions/i)).toBeInTheDocument()
+
+      // Switching back to Sample Sheet Generation resets its value rather than retaining what was
+      // previously entered -- the form only owns one active concrete-type value at a time.
+      await user.click(
+        screen.getByRole('combobox', { name: /compute task type/i }),
+      )
+      await user.click(
+        await screen.findByRole('option', {
+          name: COMPUTE_TASK_TYPE_CONFIG[SAMPLE_SHEET_TYPE].label,
+        }),
+      )
+      expect(screen.getByLabelText(/input task id/i)).toHaveValue('')
     })
 
     it('shows the project selector only when no projectId is supplied', () => {
@@ -252,10 +266,15 @@ describe('ComputeTaskForm', () => {
       expect(screen.getByRole('button', { name: /create/i })).toBeEnabled()
     })
 
-    it('does not touch task status when created without a due date', async () => {
+    it('sets executionDetails on the auto-created status even without a due date, since a Compute task always needs it to route execution', async () => {
       mockCreateMutateAsync.mockResolvedValue({
         taskId: MOCK_CURATION_TASK_ID,
       } as CurationTask)
+      mockGetStatus.mockResolvedValue({
+        taskId: MOCK_CURATION_TASK_ID,
+        state: 'NOT_STARTED',
+        etag: 'status-etag',
+      })
       const user = userEvent.setup()
       render(<ComputeTaskForm projectId="syn123" />)
 
@@ -267,7 +286,15 @@ describe('ComputeTaskForm', () => {
       await user.click(screen.getByRole('button', { name: /create/i }))
 
       expect(mockCreateMutateAsync).toHaveBeenCalled()
-      expect(mockUpdateStatusMutateAsync).not.toHaveBeenCalled()
+      expect(mockUpdateStatusMutateAsync).toHaveBeenCalledWith(
+        expect.objectContaining({
+          dueDate: undefined,
+          executionDetails: {
+            concreteType:
+              'org.sagebionetworks.repo.model.curation.execution.SampleSheetGenerationExecutionDetails',
+          },
+        }),
+      )
     })
 
     it('keeps Create disabled when a task ID field is not a positive integer', async () => {
@@ -312,7 +339,7 @@ describe('ComputeTaskForm', () => {
       )
     })
 
-    it('applies the due date to the auto-created status as a UTC ISO 8601 timestamp', async () => {
+    it('applies the due date to the auto-created status as a UTC ISO 8601 timestamp, alongside executionDetails', async () => {
       mockCreateMutateAsync.mockResolvedValue({
         taskId: MOCK_CURATION_TASK_ID,
       } as CurationTask)
@@ -334,6 +361,49 @@ describe('ComputeTaskForm', () => {
         expect.objectContaining({
           taskId: MOCK_CURATION_TASK_ID,
           dueDate: DUE_DATE_ISO,
+          executionDetails: {
+            concreteType:
+              'org.sagebionetworks.repo.model.curation.execution.SampleSheetGenerationExecutionDetails',
+          },
+        }),
+      )
+    })
+
+    it('sets a RecordSetGenerationExecutionDetails executionDetails when creating a Record Set Generation task', async () => {
+      mockCreateMutateAsync.mockResolvedValue({
+        taskId: MOCK_CURATION_TASK_ID,
+      } as CurationTask)
+      mockGetStatus.mockResolvedValue({
+        taskId: MOCK_CURATION_TASK_ID,
+        state: 'NOT_STARTED',
+        etag: 'status-etag',
+      })
+      const user = userEvent.setup()
+      render(<ComputeTaskForm projectId="syn123" />)
+
+      await user.click(
+        screen.getByRole('combobox', { name: /compute task type/i }),
+      )
+      await user.click(
+        await screen.findByRole('option', {
+          name: COMPUTE_TASK_TYPE_CONFIG[RECORD_SET_TYPE].label,
+        }),
+      )
+
+      await user.type(screen.getByLabelText(/task name/i), 'My Task')
+      await user.type(screen.getByLabelText(/^instructions/i), 'Do it')
+      await user.click(screen.getByTestId('user-search-box'))
+      await user.type(screen.getByLabelText(/source folder/i), 'syn999')
+      await user.type(screen.getByLabelText(/agent instructions/i), 'Do it')
+      await user.type(screen.getByLabelText(/destination task id/i), '2')
+      await user.click(screen.getByRole('button', { name: /create/i }))
+
+      expect(mockUpdateStatusMutateAsync).toHaveBeenCalledWith(
+        expect.objectContaining({
+          executionDetails: {
+            concreteType:
+              'org.sagebionetworks.repo.model.curation.execution.RecordSetGenerationExecutionDetails',
+          },
         }),
       )
     })
@@ -414,6 +484,24 @@ describe('ComputeTaskForm', () => {
       render(<ComputeTaskForm task={editTask} />)
       expect(
         screen.getByRole('combobox', { name: /compute task type/i }),
+      ).toHaveAttribute('aria-disabled', 'true')
+    })
+
+    it('disables the EXECUTING and CANCELED status options, since a user must not be able to manually select into either', async () => {
+      mockUseGetCurationTaskStatus.mockReturnValue({
+        data: { taskId: editTask.taskId, state: 'NOT_STARTED' },
+        isFetching: false,
+      } as any)
+      const user = userEvent.setup()
+      render(<ComputeTaskForm task={editTask} />)
+
+      await user.click(screen.getByRole('combobox', { name: /^status$/i }))
+
+      expect(
+        await screen.findByRole('option', { name: /^executing$/i }),
+      ).toHaveAttribute('aria-disabled', 'true')
+      expect(
+        screen.getByRole('option', { name: /^canceled$/i }),
       ).toHaveAttribute('aria-disabled', 'true')
     })
 

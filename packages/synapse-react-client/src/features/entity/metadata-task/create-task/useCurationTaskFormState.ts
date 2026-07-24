@@ -10,6 +10,7 @@ import { displayToast } from '@/components/ToastMessage'
 import { useSynapseContext } from '@/utils/index'
 import {
   CurationTask,
+  TaskExecutionDetails,
   TaskStatusStateEnum,
 } from '@sage-bionetworks/synapse-client'
 import { useState } from 'react'
@@ -133,13 +134,15 @@ export function useCurationTaskFormState(args: UseCurationTaskFormStateArgs) {
 
   /**
    * Persists `payload` as either a create or an update (based on edit mode), then reconciles the
-   * task's `TaskStatus` (state + due date). Returns the persisted task. On create, the status is
-   * fetched (it is created server-side automatically) and patched only when a due date was entered.
-   * On update, the status is written only when the state or due date changed; clearing the due date
-   * (empty string) is a valid change and persists as an absent due date.
+   * task's `TaskStatus` (state + due date + `options.initialExecutionDetails`). Returns the persisted
+   * task. On create, the status is fetched (it is created server-side automatically) and patched when
+   * a due date was entered or `options.initialExecutionDetails` was supplied. On update, the status is
+   * written only when the state or due date changed; clearing the due date (empty string) is a valid
+   * change and persists as an absent due date. `initialExecutionDetails` is never backfilled on edit.
    */
   async function submitTaskAndStatus(
     payload: CurationTask,
+    options?: { initialExecutionDetails?: TaskExecutionDetails },
   ): Promise<CurationTask> {
     const dueDateIso = dueDateInputToIso(displayedDueDate)
 
@@ -173,7 +176,10 @@ export function useCurationTaskFormState(args: UseCurationTaskFormStateArgs) {
 
     const created = await createTask(payload)
 
-    if (dueDateIso && created.taskId != null) {
+    if (
+      (dueDateIso || options?.initialExecutionDetails) &&
+      created.taskId != null
+    ) {
       // TODO(PLFM-9839): replace this best-effort status write with a single service that creates
       // the task and its status atomically. Until then, the task is created first and the due date
       // is applied to the auto-created status in a separate call; a failure there must not strand a
@@ -189,6 +195,7 @@ export function useCurationTaskFormState(args: UseCurationTaskFormStateArgs) {
           ...status,
           taskId: created.taskId,
           dueDate: dueDateIso,
+          executionDetails: options?.initialExecutionDetails,
         })
       } catch {
         displayToast(CREATE_TASK_STATUS_NOT_SAVED_WARNING, 'warning')

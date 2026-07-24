@@ -7,8 +7,26 @@ import {
   SAMPLE_SHEET_INPUT_TASK_ID_LABEL,
   TASK_ID_FIELD_INVALID_ERROR_MESSAGE,
 } from '../utils/constants'
-import { SampleSheetFieldsValue } from './utils/buildComputeTaskPayload'
 import { isValidTaskIdInput } from './utils/taskIdValidation'
+
+export type SampleSheetFieldsValue = {
+  inputTaskId: string
+  destinationTaskId: string
+}
+
+export const EMPTY_SAMPLE_SHEET_VALUE: SampleSheetFieldsValue = {
+  inputTaskId: '',
+  destinationTaskId: '',
+}
+
+export function isSampleSheetFieldsValueValid(
+  value: SampleSheetFieldsValue,
+): boolean {
+  return (
+    isValidTaskIdInput(value.inputTaskId) &&
+    isValidTaskIdInput(value.destinationTaskId)
+  )
+}
 
 export type SampleSheetFieldsProps = {
   value: SampleSheetFieldsValue

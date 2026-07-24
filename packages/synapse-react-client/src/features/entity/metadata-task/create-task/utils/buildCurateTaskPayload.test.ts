@@ -19,8 +19,7 @@ describe('buildCurateTaskPayload', () => {
       curateTypeFields: {
         concreteType: FILE_BASED_TYPE,
         authorizationMode: 'NONE',
-        fileBased: { uploadFolderId: 'syn1', fileViewId: 'syn2' },
-        recordBased: { recordSetId: '' },
+        value: { uploadFolderId: 'syn1', fileViewId: 'syn2' },
       },
     })
 
@@ -48,8 +47,7 @@ describe('buildCurateTaskPayload', () => {
       curateTypeFields: {
         concreteType: RECORD_BASED_TYPE,
         authorizationMode: 'NONE',
-        fileBased: { uploadFolderId: '', fileViewId: '' },
-        recordBased: { recordSetId: 'syn3' },
+        value: { recordSetId: 'syn3' },
       },
     })
 
@@ -70,8 +68,7 @@ describe('buildCurateTaskPayload', () => {
       curateTypeFields: {
         concreteType: FILE_BASED_TYPE,
         authorizationMode: 'SESSION_OWNER',
-        fileBased: { uploadFolderId: 'syn1', fileViewId: 'syn2' },
-        recordBased: { recordSetId: '' },
+        value: { uploadFolderId: 'syn1', fileViewId: 'syn2' },
       },
     })
 
@@ -100,8 +97,7 @@ describe('buildCurateTaskPayload', () => {
       curateTypeFields: {
         concreteType: FILE_BASED_TYPE,
         authorizationMode: 'NONE',
-        fileBased: { uploadFolderId: 'syn1', fileViewId: 'syn2' },
-        recordBased: { recordSetId: '' },
+        value: { uploadFolderId: 'syn1', fileViewId: 'syn2' },
       },
     })
 
@@ -119,8 +115,7 @@ describe('buildCurateTaskPayload', () => {
       curateTypeFields: {
         concreteType: FILE_BASED_TYPE,
         authorizationMode: 'NONE',
-        fileBased: { uploadFolderId: '  ', fileViewId: '' },
-        recordBased: { recordSetId: '' },
+        value: { uploadFolderId: '  ', fileViewId: '' },
       },
     })
 
