@@ -29,7 +29,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
       - name: Publish to Chromatic
-        uses: chromaui/action@1cfa065cbdab28f6ca3afaeb3d761383076a35aa # v11.29.0
+        uses: chromaui/action@d92ea1ce501f70e8c34745b2c7888648150a368a # v17.2.0
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           workingDir: packages/synapse-react-client
