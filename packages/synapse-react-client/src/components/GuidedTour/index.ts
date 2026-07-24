@@ -8,6 +8,12 @@ export type {
   TourEndResult,
 } from './TourTypes'
 export {
+  TOUR_TARGET_EXPLORE_CHARTS,
+  TOUR_TARGET_EXPLORE_FACET_FILTERS,
+  TOUR_TARGET_EXPLORE_RESULTS,
+  TOUR_TARGET_EXPLORE_TOP_CONTROLS,
+} from './tourTargets'
+export {
   getGuidedTourStorageKey,
   useTourCompletionState,
 } from './useTourCompletionState'

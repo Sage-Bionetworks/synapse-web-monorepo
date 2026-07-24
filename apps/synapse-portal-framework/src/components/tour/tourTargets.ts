@@ -10,9 +10,6 @@ export const TOUR_TARGET_PORTAL_SEARCH = 'portal-search'
 /** The tab strip at the top of the Explore pages (ExploreWrapper) */
 export const TOUR_TARGET_EXPLORE_TABS = 'explore-tabs'
 
-/** The Explore page content area: facets, plots, and results table */
-export const TOUR_TARGET_EXPLORE_CONTENT = 'explore-content'
-
 /** Target name of a top-level navbar item, keyed by its NavbarConfig route name */
 export function navTourId(routeName: string): string {
   return `nav-${routeName}`

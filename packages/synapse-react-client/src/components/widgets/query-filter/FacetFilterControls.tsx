@@ -24,6 +24,7 @@ import { FacetFilterControlsSkeleton } from './FacetFilterSkeleton'
 import { getDefaultShownFacetFilters } from './FacetFilterUtils'
 import JsonColumnFacetFilters from './JsonColumnFacetFilters'
 import { RangeFacetFilter } from './RangeFacetFilter'
+import { TOUR_TARGET_EXPLORE_FACET_FILTERS } from '@/components/GuidedTour/tourTargets'
 
 export type FacetFilterControlsProps = {
   /* The set of faceted column names that should be shown in the Facet controls. If undefined, all faceted columns with
@@ -219,7 +220,10 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
   )
 
   return (
-    <div className={`FacetFilterControls`}>
+    <div
+      className={`FacetFilterControls`}
+      data-tour={TOUR_TARGET_EXPLORE_FACET_FILTERS}
+    >
       <div>
         <FacetFilterHeader
           label={'Available Filters'}

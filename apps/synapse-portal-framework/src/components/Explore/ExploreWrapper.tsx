@@ -13,10 +13,7 @@ import { useDocumentMetadata } from 'synapse-react-client/utils/context/Document
 import { matchPath } from 'react-router'
 import React from 'react'
 import { usePortalContext } from '@/components/PortalContext'
-import {
-  TOUR_TARGET_EXPLORE_CONTENT,
-  TOUR_TARGET_EXPLORE_TABS,
-} from '@/components/tour/tourTargets'
+import { TOUR_TARGET_EXPLORE_TABS } from '@/components/tour/tourTargets'
 
 function RouteMatchedOrientationBanner(props: {
   route: ExplorePageRoute
@@ -106,7 +103,6 @@ export default function ExploreWrapper(
         )}
       </Box>
       <Box
-        data-tour={TOUR_TARGET_EXPLORE_CONTENT}
         sx={{
           ...RESPONSIVE_SIDE_PADDING,
           ['.TopLevelControls, .TotalQueryResults.hasFilters']: {
