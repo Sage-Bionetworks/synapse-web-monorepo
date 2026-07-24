@@ -6,8 +6,8 @@ import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 import { CurationTask } from '@sage-bionetworks/synapse-client'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter, Route, Routes } from 'react-router'
-import CreateCurationTaskFlow from './CreateCurationTaskFlow'
+import { createMemoryRouter, RouteObject, RouterProvider } from 'react-router'
+import { getCurationTaskFlowRoutes } from './curationTaskFlowRoutes'
 
 vi.mock('@/synapse-queries/curation/task/useCurationTask', () => ({
   useCreateCurationTask: vi.fn(),
@@ -83,20 +83,37 @@ beforeEach(() => {
   mockUseGetEntityPermissions.mockReturnValue({ data: undefined } as any)
 })
 
-function renderFlow(onExit = vi.fn()) {
-  render(
-    <MemoryRouter initialEntries={['/']}>
-      <CreateCurationTaskFlow projectId="syn123" onExit={onExit} />
-    </MemoryRouter>,
-  )
-  return { onExit }
+/**
+ * Builds a host router that reproduces the real mounting structure used by
+ * `MetadataTasksPageRouter`: an index route (the task list) as a sibling of a `create` route whose
+ * children are the create-task-flow routes.
+ */
+function renderHostRouter(initialPath = '/create') {
+  const routes: RouteObject[] = [
+    {
+      path: '/',
+      children: [
+        { index: true, element: <div>Task List Page</div> },
+        {
+          path: 'create',
+          children: getCurationTaskFlowRoutes({
+            projectId: 'syn123',
+            exitPath: '/',
+          }),
+        },
+      ],
+    },
+  ]
+  const router = createMemoryRouter(routes, { initialEntries: [initialPath] })
+  render(<RouterProvider router={router} />)
+  return { router }
 }
 
-describe('CreateCurationTaskFlow', () => {
-  it('walks through category picker -> compute form -> confirmation, creating the task on the step-2-to-step-3 transition', async () => {
-    mockCreateMutateAsync.mockResolvedValue({ taskId: 42 } as CurationTask)
+describe('getCurationTaskFlowRoutes', () => {
+  it('walks through category picker -> compute form -> confirmation, landing on a real confirmation URL', async () => {
+    mockCreateMutateAsync.mockResolvedValue({ taskId: 6852 } as CurationTask)
     const user = userEvent.setup()
-    const { onExit } = renderFlow()
+    const { router } = renderHostRouter()
 
     // Step 1: category picker
     await user.click(screen.getByRole('button', { name: /compute data/i }))
@@ -112,46 +129,39 @@ describe('CreateCurationTaskFlow', () => {
 
     expect(mockCreateMutateAsync).toHaveBeenCalled()
 
-    // Step 3: confirmation
-    expect(await screen.findByText(/task id: 42/i)).toBeInTheDocument()
+    // Step 3: confirmation -- this is the exact scenario that used to 404 (see
+    // https://github.com/Sage-Bionetworks/synapseWeb -- relative `navigate` from a route nested
+    // under a data-router `create/*` splat resolved to the wrong URL).
+    expect(await screen.findByText(/task id: 6852/i)).toBeInTheDocument()
+    expect(router.state.location.pathname).toBe('/create/confirmation/6852')
 
     await user.click(screen.getByRole('button', { name: /back to all tasks/i }))
-    expect(onExit).toHaveBeenCalled()
+    expect(await screen.findByText(/task list page/i)).toBeInTheDocument()
+  })
+
+  it('walks through category picker -> curate form -> confirmation, landing on a real confirmation URL', async () => {
+    mockCreateMutateAsync.mockResolvedValue({ taskId: 43 } as CurationTask)
+    const user = userEvent.setup()
+    const { router } = renderHostRouter()
+
+    await user.click(screen.getByRole('button', { name: /curate data/i }))
+
+    await user.type(await screen.findByLabelText(/task name/i), 'My Task')
+    await user.type(screen.getByLabelText(/task due date/i), '2030-01-01')
+    await user.type(screen.getByLabelText(/^instructions/i), 'Do it')
+    await user.click(screen.getByTestId('user-search-box'))
+    await user.type(screen.getByLabelText(/upload folder id/i), 'syn1')
+    await user.type(screen.getByLabelText(/file view id/i), 'syn2')
+    await user.click(screen.getByRole('button', { name: /create/i }))
+
+    expect(mockCreateMutateAsync).toHaveBeenCalled()
+    expect(await screen.findByText(/task id: 43/i)).toBeInTheDocument()
+    expect(router.state.location.pathname).toBe('/create/confirmation/43')
   })
 
   it('returns to the category picker when Back is clicked from the compute form', async () => {
     const user = userEvent.setup()
-    renderFlow()
-
-    await user.click(screen.getByRole('button', { name: /compute data/i }))
-    await screen.findByLabelText(/task name/i)
-
-    await user.click(screen.getByRole('button', { name: /^back$/i }))
-
-    expect(
-      await screen.findByRole('button', { name: /compute data/i }),
-    ).toBeInTheDocument()
-  })
-
-  it("returns to the category picker when Back is clicked from the compute form, even when nested under a host router's create/* route", async () => {
-    // Reproduces the real app's mounting structure (see MetadataTasksPageRouter): the flow is
-    // rendered inside a host router's `create/*` route, sibling to the task list at the router's
-    // index. A naive relative `navigate('..')` from the compute form overshoots past the flow's own
-    // category picker and lands on the host's task list instead.
-    const user = userEvent.setup()
-    render(
-      <MemoryRouter initialEntries={['/create']}>
-        <Routes>
-          <Route index element={<div>Task List Page</div>} />
-          <Route
-            path="create/*"
-            element={
-              <CreateCurationTaskFlow projectId="syn123" onExit={vi.fn()} />
-            }
-          />
-        </Routes>
-      </MemoryRouter>,
-    )
+    renderHostRouter()
 
     await user.click(screen.getByRole('button', { name: /compute data/i }))
     await screen.findByLabelText(/task name/i)
@@ -164,59 +174,50 @@ describe('CreateCurationTaskFlow', () => {
     expect(screen.queryByText(/task list page/i)).not.toBeInTheDocument()
   })
 
-  it('shows a "Back to All Tasks" button on the category picker that calls onExit', async () => {
+  it('shows a "Back to All Tasks" button on the category picker that exits to the host route', async () => {
     const user = userEvent.setup()
-    const { onExit } = renderFlow()
+    renderHostRouter()
 
     await user.click(screen.getByRole('button', { name: /back to all tasks/i }))
 
-    expect(onExit).toHaveBeenCalled()
+    expect(await screen.findByText(/task list page/i)).toBeInTheDocument()
   })
 
-  it('shows a "Back to All Tasks" button on the compute form that calls onExit', async () => {
+  it('shows a "Back to All Tasks" button on the compute form that exits to the host route', async () => {
     const user = userEvent.setup()
-    const { onExit } = renderFlow()
+    renderHostRouter()
 
     await user.click(screen.getByRole('button', { name: /compute data/i }))
     await screen.findByLabelText(/task name/i)
 
     await user.click(screen.getByRole('button', { name: /back to all tasks/i }))
 
-    expect(onExit).toHaveBeenCalled()
+    expect(await screen.findByText(/task list page/i)).toBeInTheDocument()
   })
 
-  it('shows a "Back to All Tasks" button on the curate form that calls onExit', async () => {
+  it('shows a "Back to All Tasks" button on the curate form that exits to the host route', async () => {
     const user = userEvent.setup()
-    const { onExit } = renderFlow()
+    renderHostRouter()
 
     await user.click(screen.getByRole('button', { name: /curate data/i }))
     await screen.findByLabelText(/task name/i)
 
     await user.click(screen.getByRole('button', { name: /back to all tasks/i }))
 
-    expect(onExit).toHaveBeenCalled()
+    expect(await screen.findByText(/task list page/i)).toBeInTheDocument()
   })
 
-  it('walks through category picker -> curate form -> confirmation, creating the task on the step-2-to-step-3 transition', async () => {
-    mockCreateMutateAsync.mockResolvedValue({ taskId: 43 } as CurationTask)
-    const user = userEvent.setup()
-    renderFlow()
+  it('shows the confirmation screen directly when the URL is loaded fresh', async () => {
+    renderHostRouter('/create/confirmation/6852')
 
-    // Step 1: category picker
-    await user.click(screen.getByRole('button', { name: /curate data/i }))
+    expect(await screen.findByText(/task id: 6852/i)).toBeInTheDocument()
+  })
 
-    // Step 2: curate form
-    await user.type(await screen.findByLabelText(/task name/i), 'My Task')
-    await user.type(screen.getByLabelText(/task due date/i), '2030-01-01')
-    await user.type(screen.getByLabelText(/^instructions/i), 'Do it')
-    await user.click(screen.getByTestId('user-search-box'))
-    await user.type(screen.getByLabelText(/upload folder id/i), 'syn1')
-    await user.type(screen.getByLabelText(/file view id/i), 'syn2')
-    await user.click(screen.getByRole('button', { name: /create/i }))
+  it('redirects back to the category picker for an invalid taskId', async () => {
+    renderHostRouter('/create/confirmation/not-a-number')
 
-    expect(mockCreateMutateAsync).toHaveBeenCalled()
-
-    // Step 3: confirmation
-    expect(await screen.findByText(/task id: 43/i)).toBeInTheDocument()
+    expect(
+      await screen.findByRole('button', { name: /compute data/i }),
+    ).toBeInTheDocument()
   })
 })

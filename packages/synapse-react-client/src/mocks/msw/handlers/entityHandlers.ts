@@ -10,7 +10,13 @@ import {
 } from '@/utils/APIConstants'
 import { normalizeSynPrefix } from '@/utils/functions/EntityTypeUtils'
 import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
+import {
+  BindSchemaToEntityRequest,
   ErrorResponse,
+  JsonSchemaObjectBinding,
   UploadDestination,
 } from '@sage-bionetworks/synapse-client'
 import {
@@ -130,6 +136,44 @@ export function getVersionedEntityBundleHandler(
   )
 }
 
+/**
+ * Bind a JSON Schema to an entity (`PUT .../entity/{id}/schema/binding`).
+ * @param status HTTP status to return; pass a 4xx/5xx value to exercise the error path.
+ * @param reason Error message returned when `status` indicates an error.
+ */
+export function putEntitySchemaBindingHandler({
+  backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+  status = 201,
+  reason = 'Mock service worker error binding schema',
+}: {
+  backendOrigin?: string
+  status?: number
+  reason?: string
+} = {}) {
+  return http.put<{ entityId: string }, BindSchemaToEntityRequest>(
+    `${backendOrigin}${ENTITY_SCHEMA_BINDING(':entityId')}`,
+    async ({ request }) => {
+      if (status >= 400) {
+        const errorResponse: SynapseApiResponse<JsonSchemaObjectBinding> = {
+          concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+          reason,
+        }
+        return HttpResponse.json(errorResponse, { status })
+      }
+
+      const body = await request.json()
+      const response: JsonSchemaObjectBinding = {
+        ...mockSchemaBinding,
+        jsonSchemaVersionInfo: {
+          ...mockSchemaBinding.jsonSchemaVersionInfo,
+          $id: body.schema$id ?? mockSchemaBinding.jsonSchemaVersionInfo.$id,
+        },
+      }
+      return HttpResponse.json(response, { status })
+    },
+  )
+}
+
 export const getEntityHandlers = (backendOrigin: string) => [
   /**
    * Create a new entity
@@ -231,6 +275,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
   http.get(`${backendOrigin}${ENTITY_SCHEMA_BINDING(':entityId')}`, () => {
     return HttpResponse.json(mockSchemaBinding, { status: 200 })
   }),
+  putEntitySchemaBindingHandler({ backendOrigin }),
   http.get(
     `${backendOrigin}${ENTITY_JSON(':entityId')}`,
 

@@ -1,4 +1,4 @@
-import CreateCurationTaskFlow from '@/features/entity/metadata-task/create-task/CreateCurationTaskFlow'
+import { getCurationTaskFlowRoutes } from '@/features/entity/metadata-task/create-task/curationTaskFlowRoutes'
 import EditCurationTaskPage from '@/features/entity/metadata-task/create-task/EditCurationTaskPage'
 import { PropsWithChildren, useMemo } from 'react'
 import {
@@ -6,7 +6,6 @@ import {
   createMemoryRouter,
   RouteObject,
   RouterProvider,
-  useNavigate,
 } from 'react-router'
 import { RouterProvider as DOMRouterProvider } from 'react-router/dom'
 import { MetadataTasksPageInternal } from './MetadataTasksPage'
@@ -21,16 +20,6 @@ export type MetadataTasksPageRouterProps = PropsWithChildren<{
   /** If true use a MemoryRouter, which prevents the browser URL from updating. For testing purposes only. */
   useMemoryRouter?: boolean
 }>
-
-function CreateRouteRenderer(props: { projectId: string }) {
-  const navigate = useNavigate()
-  return (
-    <CreateCurationTaskFlow
-      projectId={props.projectId}
-      onExit={() => void navigate('/')}
-    />
-  )
-}
 
 /**
  * A router wrapper for `MetadataTasksPage`, which applies a router around the page content to support
@@ -51,8 +40,8 @@ export default function MetadataTasksPageRouter(
             element: <MetadataTasksPageInternal projectId={projectId} />,
           },
           {
-            path: 'create/*',
-            element: <CreateRouteRenderer projectId={projectId} />,
+            path: 'create',
+            children: getCurationTaskFlowRoutes({ projectId, exitPath: '/' }),
           },
           {
             path: 'edit/:taskId',
