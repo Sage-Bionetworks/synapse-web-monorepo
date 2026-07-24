@@ -97,6 +97,45 @@ export const RECORD_BASED_TASK_DESCRIPTION =
 export const RECORD_BASED_RECORD_SET_INPUT_DESCRIPTION =
   'Select the Synapse record set that should be used for this task.'
 
+export const RECORD_SET_MODE_PICK_EXISTING_LABEL = 'Pick existing RecordSet'
+export const RECORD_SET_MODE_CREATE_NEW_LABEL = 'Create new RecordSet'
+
+export const CREATE_RECORD_SET_PANEL_TITLE = 'Create a new RecordSet'
+
+export const CREATE_RECORD_SET_PARENT_LABEL = 'Parent'
+export const CREATE_RECORD_SET_PARENT_DESCRIPTION =
+  'Select the Synapse project or folder that should contain the new RecordSet.'
+export const CREATE_RECORD_SET_PARENT_FINDER_TITLE = 'Select Parent'
+export const CREATE_RECORD_SET_PARENT_FINDER_PROMPT =
+  'Select the project or folder that should contain the new RecordSet.'
+
+export const CREATE_RECORD_SET_SCHEMA_ID_LABEL = 'JSON Schema $id'
+export const CREATE_RECORD_SET_SCHEMA_ID_DESCRIPTION =
+  'Enter the $id of the JSON Schema that should be bound to the new RecordSet. Its top-level properties will become the columns of the RecordSet.'
+
+export const CREATE_RECORD_SET_NAME_LABEL = 'RecordSet Name'
+export const CREATE_RECORD_SET_NAME_DESCRIPTION =
+  'Enter a name for the new RecordSet.'
+
+export const CREATE_RECORD_SET_COLUMNS_LABEL = 'Columns'
+export const CREATE_RECORD_SET_COLUMNS_DESCRIPTION =
+  'These are the top-level properties of the JSON Schema, derived automatically. Select one or more rows and use the arrows to reorder them.'
+export const CREATE_RECORD_SET_COLUMNS_EMPTY_MESSAGE =
+  'Enter a JSON Schema $id above to derive the columns for this RecordSet.'
+export const CREATE_RECORD_SET_COLUMNS_AWAITING_UPSERT_KEY_MESSAGE =
+  'Select an upsert key above to see the column order.'
+
+export const CREATE_RECORD_SET_UPSERT_KEY_LABEL = 'Upsert Key'
+export const CREATE_RECORD_SET_UPSERT_KEY_DESCRIPTION =
+  'Choose one or more columns that uniquely identify a record. When a later import contains a matching key, that row is treated as an update instead of a new record. Selected columns are moved to the front of the column list.'
+
+export const CREATE_RECORD_SET_SUBMIT_BUTTON_LABEL = 'Create RecordSet'
+export const CREATE_RECORD_SET_SUCCESS_TITLE = 'RecordSet Created'
+export const CREATE_RECORD_SET_RESET_BUTTON_LABEL =
+  'Create a different RecordSet'
+export const CREATE_RECORD_SET_ERROR_MESSAGE =
+  'An error occurred while creating the RecordSet. Please try again.'
+
 /**
  * Config for the two supported Curate Data task types. Centralized here so that labels/descriptions
  * can be changed easily without hunting through the form components.

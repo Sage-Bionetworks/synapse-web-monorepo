@@ -71,7 +71,7 @@ export function getDefaultJsonSubColumnFormData(): JsonSubColumnModelFormData {
  * @param predicate a function that returns true if the item should be moved up
  * @returns - a new array with the reordered items
  */
-function moveSelectedItemsUp<T = unknown>(
+export function moveSelectedItemsUp<T = unknown>(
   arr: T[],
   predicate: (item: T) => boolean,
 ) {
@@ -101,7 +101,7 @@ function moveSelectedItemsUp<T = unknown>(
  * @param predicate a function that returns true if the item should be moved down
  * @returns - a new array with the reordered items
  */
-function moveSelectedItemsDown<T = unknown>(
+export function moveSelectedItemsDown<T = unknown>(
   arr: T[],
   predicate: (item: T) => boolean,
 ) {
