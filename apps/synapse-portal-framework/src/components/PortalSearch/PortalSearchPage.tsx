@@ -28,6 +28,13 @@ function getQueryCount(queryResultBundleJSON: string) {
   return queryCount
 }
 
+function getMaxScore(queryResultBundleJSON: string): number | undefined {
+  const bundle = JSON.parse(queryResultBundleJSON) as QueryResultBundle & {
+    maxScore?: number
+  }
+  return bundle.maxScore
+}
+
 export function PortalSearchPage(props: PortalSearchPageProps) {
   const {
     selectedTabIndex,
@@ -51,8 +58,17 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
       selectedTabIndex?: number,
     ) => {
       const newCount = getQueryCount(newQueryResultBundleJSON)
+      const newScore = getMaxScore(newQueryResultBundleJSON)
+      let didChange = false
       if (searchPageTabsState[tabIndex].count !== newCount) {
         searchPageTabsState[tabIndex].count = newCount
+        didChange = true
+      }
+      if (searchPageTabsState[tabIndex].score !== newScore) {
+        searchPageTabsState[tabIndex].score = newScore
+        didChange = true
+      }
+      if (didChange) {
         setSearchPageTabsState([...searchPageTabsState])
       }
       // PORTALS-3382: If no tab is selected and all counts have been set, then redirect to the item with the highest count
@@ -69,14 +85,17 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
             search: location.search,
           })
         } else {
-          // Navigate to the tab that has the highest count.
-          // Explicitly initialize the accumulator ("max") to the first element (searchPageTabs[0]). "max" will never be null
-          const maxCountTab = searchPageTabs.reduce(
-            (max, tab) => (tab.count! > max.count! ? tab : max),
-            searchPageTabs[0],
-          )
+          // Navigate to the tab with the highest relevance score.
+          // Fall back to the first tab if no tab has a score (e.g. no results or search not yet performed).
+          const maxScoreTab = searchPageTabs.reduce<
+            PortalSearchTabConfig | undefined
+          >((best, tab) => {
+            if (tab.score === undefined) return best
+            if (best === undefined || best.score === undefined) return tab
+            return tab.score > best.score ? tab : best
+          }, undefined)
           navigate({
-            pathname: `/Search/${maxCountTab.path}`,
+            pathname: `/Search/${(maxScoreTab ?? searchPageTabs[0]).path}`,
             search: location.search,
           })
         }
