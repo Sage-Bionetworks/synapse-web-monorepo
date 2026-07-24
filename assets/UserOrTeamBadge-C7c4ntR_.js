@@ -1,0 +1,1 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{n as t,t as n}from"./UserOrTeamBadge-B3E6-4-E.js";var r,i=e((()=>{t(),r=n}));export{i as n,r as t};
