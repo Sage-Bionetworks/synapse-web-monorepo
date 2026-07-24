@@ -21,7 +21,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.11",
-    "@mui/material": "^7.3.11",
+    "@mui/material": "^9.1.1",
     "@react-hookz/web": "^25.2.0",
     "@react-router/dev": "^7.17.0",
     "@sage-bionetworks/synapse-client": "workspace:*",

@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@mui/material": "^7.3.11",
+    "@mui/material": "^9.1.1",
     "@react-router/node": "^7.17.0",
     "@sage-bionetworks/synapse-portal-framework": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
