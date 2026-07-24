@@ -20,6 +20,7 @@ import HeaderSearchBox from '../HeaderSearchBox'
 import NavLink from '../NavLink'
 import NavUserLink from '../NavUserLink'
 import { usePortalContext } from '../PortalContext'
+import { navTourId } from '../tour/tourTargets'
 import { DropdownNavButton } from './DropdownNavButton'
 
 export type NavbarLayout = 'default' | 'with-sticky-search'
@@ -72,7 +73,11 @@ function ConditionalNavRoute({
 
   if (route.children) {
     return (
-      <DropdownNavButton route={route} onClickedNavLink={onClickedNavLink}>
+      <DropdownNavButton
+        route={route}
+        dataTourId={navTourId(route.name)}
+        onClickedNavLink={onClickedNavLink}
+      >
         {route.name}
       </DropdownNavButton>
     )
@@ -82,6 +87,7 @@ function ConditionalNavRoute({
     <NavLink
       to={route.path}
       className="nav-button-container nav-button center-content"
+      dataTourId={navTourId(route.name)}
     >
       {route.name}
     </NavLink>
@@ -451,6 +457,7 @@ export default function Navbar({ layout: layoutProp }: NavbarProps = {}) {
                 <DropdownNavButton
                   route={route}
                   key={route.path}
+                  dataTourId={navTourId(route.name)}
                   onClickedNavLink={() => {
                     setShowMenu(false)
                   }}
@@ -464,6 +471,7 @@ export default function Navbar({ layout: layoutProp }: NavbarProps = {}) {
                 to={route.path}
                 key={route.path}
                 className={'nav-button-container nav-button center-content'}
+                dataTourId={navTourId(route.name)}
               >
                 {route.name}
               </NavLink>

@@ -6,7 +6,7 @@ import {
 } from '@/types/portal-config'
 import { createContext, PropsWithChildren, useContext } from 'react'
 import { RouteObject } from 'react-router'
-import { SynapseChatProps } from 'synapse-react-client'
+import { GuidedTourConfig, SynapseChatProps } from 'synapse-react-client'
 import { NavbarConfig } from './navbar/Navbar'
 
 export type AridhiaConfig = {
@@ -30,6 +30,8 @@ export type PortalContextType = {
   aridhiaConfig?: AridhiaConfig
   /** Optional chat config — only set on portals that enable Synapse Chat. */
   synapseChatProps?: SynapseChatProps
+  /** Optional guided tour — only set on portals that configure one. Rendered by <PortalTour />. */
+  tourConfig?: GuidedTourConfig
 }
 
 export const PortalContext = createContext<PortalContextType | undefined>(
