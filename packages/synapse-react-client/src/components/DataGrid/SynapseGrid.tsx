@@ -461,13 +461,9 @@ function SynapseGridInner({
                     <GridMenuButton
                       variant="outlined"
                       startIcon={<HelpOutline />}
-                      onClick={() =>
-                        window.open(
-                          'https://docs.synapse.org/synapse-docs/managing-metadata-with-curator',
-                          '_blank',
-                          'noopener,noreferrer',
-                        )
-                      }
+                      href="https://docs.synapse.org/synapse-docs/managing-metadata-with-curator"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       sx={{ mr: 'auto' }}
                     >
                       Help and Instructions
