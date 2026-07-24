@@ -5,6 +5,7 @@ import { Study } from './Study'
 import { ToolClinical } from './ToolClinical'
 import { ToolComputational } from './ToolComputational'
 import { ToolExperimental } from './ToolExperimental'
+import { Model } from './Model'
 import { Database } from './Database'
 import { Explore } from './Explore'
 import { Search } from './Search'
@@ -30,6 +31,7 @@ export {
   ToolClinical,
   ToolComputational,
   ToolExperimental,
+  Model,
   Database,
   Explore,
   Search,

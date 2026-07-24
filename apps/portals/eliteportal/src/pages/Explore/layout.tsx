@@ -17,6 +17,9 @@ function ExploreLayout() {
           path: 'Datasets',
         },
         {
+          path: 'Models',
+        },
+        {
           displayName: 'Files',
           path: 'Data',
         },
