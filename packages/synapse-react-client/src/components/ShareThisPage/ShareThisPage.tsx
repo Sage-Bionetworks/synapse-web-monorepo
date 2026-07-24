@@ -1,5 +1,4 @@
 import {
-  Button,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -8,6 +7,7 @@ import {
   Input,
   Box,
 } from '@mui/material'
+import GenericCardActionButton from '../GenericCard/GenericCardActionButton'
 import React from 'react'
 import { useEffect, useState } from 'react'
 import CloseIcon from '@mui/icons-material/Close'
@@ -83,13 +83,13 @@ const ShareThisPage = ({
   return (
     <div>
       {renderAs === 'button' && (
-        <Button
+        <GenericCardActionButton
           variant="outlined"
           startIcon={<ShareTwoTone className={styles.shareIcon} />}
           onClick={handleOpen}
         >
           Share
-        </Button>
+        </GenericCardActionButton>
       )}
 
       <Dialog

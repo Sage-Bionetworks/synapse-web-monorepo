@@ -1,4 +1,5 @@
 import { CardLink } from '@/components/CardContainer/CardLink'
+import { CardActionButtonStyle } from '@/components/GenericCard/CardActionButtonStyleContext'
 import {
   ColumnIconConfigs,
   CTACardLink,
@@ -96,6 +97,13 @@ export type CommonCardProps = {
    * @default 400
    */
   charCountCutoff?: number
+  /**
+   * Visual style for the card's action buttons (Download/hosting, Cite As,
+   * Croissant, Share): `'button'` (default, compact) or `'chip'` (pill-shaped,
+   * with the hosting action as a colored chip).
+   * @default 'button'
+   */
+  actionButtonStyle?: CardActionButtonStyle
 }
 
 export type CardConfiguration = CommonCardProps &

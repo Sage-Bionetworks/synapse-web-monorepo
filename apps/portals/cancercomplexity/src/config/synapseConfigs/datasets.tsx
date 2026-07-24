@@ -7,42 +7,10 @@ import { datasetsSearchIndexId, datasetsSql } from '../resources'
 import { citationBoilerplateText } from './commonProps'
 import { columnIconConfigs } from './commonProps'
 import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
-import { Chip } from '@mui/material'
 
 import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 const rgbIndex = 0
-
-function DatasetCardTypeAdornment({
-  schema,
-  data,
-}: {
-  schema: Record<string, number>
-  data: string[]
-}) {
-  const downloadType = data[schema['downloadType']]
-  if (!downloadType) return null
-  return <Chip label={downloadType} size="small" />
-}
-
-export function DatasetHeaderCardTypeAdornment({
-  schema,
-  data,
-}: {
-  schema: Record<string, number>
-  data: string[]
-}) {
-  const downloadType = data[schema['downloadType']]
-  if (!downloadType) return null
-  return (
-    <Chip
-      label={downloadType}
-      size="small"
-      variant="outlined"
-      sx={{ color: 'white', borderColor: 'white' }}
-    />
-  )
-}
 
 const CUSTOM_LABEL_KEY = 'HOW TO DOWNLOAD'
 const CUSTOM_LABEL_VALUE =
@@ -79,6 +47,27 @@ export const datasetSchema: TableToGenericCardMapping = {
   dataTypeIconNames: 'dataType',
   // override Download List to use downloadSynId
   downloadCartSynId: 'downloadSynId',
+  // Hosting-aware download/access (shared with NF). CCKP classifies datasets via
+  // `downloadType`, mapped here to the hosting vocabulary:
+  //  - Synapse Hosted      → synapse (in Synapse storage)
+  //  - Synapse Indexed     → external-download (externally sourced, but indexed in
+  //                          Synapse and downloadable through the clients)
+  //  - Externally Hosted   → external-access (link-only; go to the source repo,
+  //                          incl. controlled-access dbGaP/EGA)
+  //  - Not Available...    → unavailable (record only, nothing to download/link)
+  // repository ← sourceRepository; externalUrl ← externalLink (a markdown link;
+  // the card extracts the href).
+  hostingConfig: {
+    hostingColumn: 'downloadType',
+    hostingValueMap: {
+      'Synapse Hosted': 'synapse',
+      'Synapse Indexed': 'external-download',
+      'Externally Hosted': 'external-access',
+      'Not Available for Download': 'unavailable',
+    },
+    repositoryColumn: 'sourceRepository',
+    externalUrlColumn: 'externalLink',
+  },
   synapseEntityConfig: {
     id: {
       source: 'column',
@@ -96,7 +85,6 @@ export const datasetCardConfiguration: CardConfiguration = {
   genericCardSchema: datasetSchema,
   secondaryLabelLimit: 4,
   sharePageLinkButtonProps: sharePageLinkButtonDetailPageProps,
-  CardTypeAdornment: DatasetCardTypeAdornment,
   labelLinkConfig: [
     {
       isMarkdown: true,
