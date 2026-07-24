@@ -82,7 +82,7 @@ export type ComputeTaskFormProps = {
 
 /**
  * The create/edit form for a Compute Data curation task. Used as step 2 of the create wizard
- * (`CreateCurationTaskFlow`) and directly by `EditCurationTaskPage`.
+ * (`getCurationTaskFlowRoutes`) and directly by `EditCurationTaskPage`.
  */
 export default function ComputeTaskForm(props: ComputeTaskFormProps) {
   const {

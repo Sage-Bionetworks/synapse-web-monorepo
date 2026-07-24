@@ -103,7 +103,7 @@ export type CurateTaskFormProps = {
 
 /**
  * The create/edit form for a Curate Data curation task (File-Based / Records-Based). Used as the
- * `curate` step of the create wizard (`CreateCurationTaskFlow`) and directly by `EditCurationTaskPage`.
+ * `curate` step of the create wizard (`getCurationTaskFlowRoutes`) and directly by `EditCurationTaskPage`.
  */
 export default function CurateTaskForm(props: CurateTaskFormProps) {
   const {
