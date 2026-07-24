@@ -1115,4 +1115,25 @@ export class KeyFactory {
   public getAsyncJobStatusQueryKey(jobId: string) {
     return this.getKey('asyncJobStatus', jobId)
   }
+
+  public getListOrganizationsQueryKey() {
+    return this.getKey('jsonSchema', 'organization', 'list')
+  }
+
+  public getListJsonSchemasQueryKey(organizationName: string) {
+    return this.getKey('jsonSchema', 'list', organizationName)
+  }
+
+  public getListJsonSchemaVersionsQueryKey(
+    organizationName: string,
+    schemaName: string,
+  ) {
+    return this.getKey(
+      'jsonSchema',
+      'version',
+      'list',
+      organizationName,
+      schemaName,
+    )
+  }
 }
