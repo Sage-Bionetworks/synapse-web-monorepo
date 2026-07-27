@@ -2,6 +2,7 @@ import CuratorDashboardContent from './CuratorDashboard'
 import { useGetCurationTasksInfinite } from '@/synapse-queries/curation/task/useCurationTask'
 import { createMockTaskBundle } from '@/mocks/curation/mockCurationTask'
 import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { RouterProvider, createMemoryRouter, RouteObject } from 'react-router'
 import { beforeEach, describe, it, expect, vi } from 'vitest'
 
@@ -150,6 +151,102 @@ describe('CuratorDashboard', () => {
             taskIds: [123, 456],
             assignedToMe: true,
           }),
+        )
+      })
+    })
+  })
+
+  describe('assignedToMe search parameter', () => {
+    it('defaults to assignedToMe: true when not set in the URL', async () => {
+      mockUseGetCurationTasksInfinite.mockReturnValue({
+        data: { pages: [] },
+        isLoading: false,
+        hasNextPage: false,
+        isFetchingNextPage: false,
+        fetchNextPage: vi.fn(),
+      } as any)
+
+      renderWithRouter({ initialEntry: '/' })
+
+      await waitFor(() => {
+        expect(mockUseGetCurationTasksInfinite).toHaveBeenCalledWith(
+          expect.objectContaining({ assignedToMe: true }),
+        )
+      })
+    })
+
+    it('respects assignedToMe: false when explicitly set in the URL', async () => {
+      mockUseGetCurationTasksInfinite.mockReturnValue({
+        data: { pages: [] },
+        isLoading: false,
+        hasNextPage: false,
+        isFetchingNextPage: false,
+        fetchNextPage: vi.fn(),
+      } as any)
+
+      renderWithRouter({ initialEntry: '/?assignedToMe=false' })
+
+      await waitFor(() => {
+        expect(mockUseGetCurationTasksInfinite).toHaveBeenCalledWith(
+          expect.objectContaining({ assignedToMe: false }),
+        )
+      })
+    })
+  })
+
+  describe('filtered task banner', () => {
+    it('shows the banner when taskIds are present in the URL', async () => {
+      mockUseGetCurationTasksInfinite.mockReturnValue({
+        data: { pages: [{ bundlePage: [mockTaskBundle1] }] },
+        isLoading: false,
+        hasNextPage: false,
+        isFetchingNextPage: false,
+        fetchNextPage: vi.fn(),
+      } as any)
+
+      renderWithRouter({ initialEntry: '/?taskIds=123' })
+
+      expect(await screen.findByRole('alert')).toHaveTextContent(
+        'Showing 1 filtered task',
+      )
+    })
+
+    it('does not show the banner when taskIds are not present in the URL', () => {
+      mockUseGetCurationTasksInfinite.mockReturnValue({
+        data: { pages: [] },
+        isLoading: false,
+        hasNextPage: false,
+        isFetchingNextPage: false,
+        fetchNextPage: vi.fn(),
+      } as any)
+
+      renderWithRouter({ initialEntry: '/' })
+
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    })
+
+    it('removes the taskIds filter and hides the banner when "Clear filter" is clicked', async () => {
+      const user = userEvent.setup()
+      mockUseGetCurationTasksInfinite.mockReturnValue({
+        data: { pages: [{ bundlePage: [mockTaskBundle1] }] },
+        isLoading: false,
+        hasNextPage: false,
+        isFetchingNextPage: false,
+        fetchNextPage: vi.fn(),
+      } as any)
+
+      renderWithRouter({ initialEntry: '/?taskIds=123' })
+
+      await user.click(
+        await screen.findByRole('button', { name: /clear filter/i }),
+      )
+
+      await waitFor(() => {
+        expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+      })
+      await waitFor(() => {
+        expect(mockUseGetCurationTasksInfinite).toHaveBeenLastCalledWith(
+          expect.objectContaining({ taskIds: undefined }),
         )
       })
     })
