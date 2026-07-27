@@ -223,6 +223,9 @@ export const GRID_PAGE_SESSION_ID_QUERY_PARAM = 'sessionId'
 export const GRID_PAGE_AGENT_REGISTRATION_ID_QUERY_PARAM = 'agentRegistrationId'
 export const GRID_PAGE_TASK_ID_QUERY_PARAM = 'taskIds'
 
+// Curation Task List URL Query Parameters
+export const CURATION_TASK_LIST_ASSIGNED_TO_ME_QUERY_PARAM = 'assignedToMe'
+
 // Search Page URL Query Parameters
 export const SEARCH_PAGE_QUERY_PARAM = 'query'
 

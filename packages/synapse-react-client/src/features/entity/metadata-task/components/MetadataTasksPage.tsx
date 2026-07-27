@@ -1,11 +1,12 @@
 import InfiniteTableLayout from '@/components/layout/InfiniteTableLayout'
 import CurationTaskCard from '@/features/curator/dashboard/components/CurationTaskCard'
+import FilteredByTaskIdsBanner from '@/features/curator/dashboard/components/FilteredByTaskIdsBanner'
 import { useGetCurationTasksInfinite } from '@/synapse-queries/curation/task/useCurationTask'
 import { useGetFeatureFlag } from '@/synapse-queries/index'
 import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
+import { useCurationTaskListFilters } from '@/utils/hooks/useCurationTaskListFilters'
 import { Button, FormControlLabel, Stack, Switch } from '@mui/material'
-import { useMemo, useState } from 'react'
-import { ListCurationTaskRequest } from '@sage-bionetworks/synapse-client'
+import { useMemo } from 'react'
 import { AddCircleTwoTone } from '@mui/icons-material'
 import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { useNavigate } from 'react-router'
@@ -23,16 +24,18 @@ export type MetadataTaskTableProps = {
 function MetadataTasksPageInternal(props: MetadataTaskTableProps) {
   const { projectId } = props
   const navigate = useNavigate()
-  const [listCurationTaskRequest, setListCurationTaskRequest] =
-    useState<ListCurationTaskRequest>({
-      projectId,
-      assignedToMe: false,
-    })
+  const {
+    request,
+    taskIds,
+    assignedToMe,
+    setAssignedToMe,
+    clearTaskIdsFilter,
+  } = useCurationTaskListFilters({ projectId })
 
   const { data: permissions } = useGetEntityPermissions(projectId)
 
   const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
-    useGetCurationTasksInfinite(listCurationTaskRequest)
+    useGetCurationTasksInfinite(request)
 
   const tasks = useMemo(
     () => data?.pages.flatMap(page => page.bundlePage ?? []) ?? [],
@@ -49,12 +52,9 @@ function MetadataTasksPageInternal(props: MetadataTaskTableProps) {
         <FormControlLabel
           control={
             <Switch
-              checked={!!listCurationTaskRequest.assignedToMe}
+              checked={assignedToMe}
               onChange={(_e, checked) => {
-                setListCurationTaskRequest(prev => ({
-                  ...prev,
-                  assignedToMe: checked,
-                }))
+                setAssignedToMe(checked)
               }}
             />
           }
@@ -70,6 +70,7 @@ function MetadataTasksPageInternal(props: MetadataTaskTableProps) {
           </Button>
         )}
       </Stack>
+      <FilteredByTaskIdsBanner taskIds={taskIds} onClear={clearTaskIdsFilter} />
       <InfiniteTableLayout
         table={
           <Stack gap={3} sx={{ my: 2 }}>

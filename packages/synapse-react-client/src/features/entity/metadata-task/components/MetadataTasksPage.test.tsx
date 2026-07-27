@@ -1,8 +1,11 @@
 import { createMockTaskBundle } from '@/mocks/curation/mockCurationTask'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import MetadataTasksPage from './MetadataTasksPage'
+import { RouteObject, RouterProvider, createMemoryRouter } from 'react-router'
+import MetadataTasksPage, {
+  MetadataTasksPageInternal,
+} from './MetadataTasksPage'
 
 import { useGetCurationTasksInfinite } from '@/synapse-queries/curation/task/useCurationTask'
 import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
@@ -131,6 +134,23 @@ function renderComponent() {
   )
 }
 
+function renderInternalWithRouter(initialEntry = '/') {
+  const routes: RouteObject[] = [
+    {
+      path: '/',
+      element: <MetadataTasksPageInternal projectId={MOCK_PROJECT_ID} />,
+    },
+  ]
+
+  const router = createMemoryRouter(routes, {
+    initialEntries: [initialEntry],
+  })
+
+  return render(<RouterProvider router={router} />, {
+    wrapper: createWrapper(),
+  })
+}
+
 describe('MetadataTasksPage', () => {
   it('renders a card for each task in the list', async () => {
     renderComponent()
@@ -211,5 +231,90 @@ describe('MetadataTasksPage', () => {
     renderComponent()
 
     expect(await screen.findByText('No Results')).toBeInTheDocument()
+  })
+
+  describe('taskIds search parameter', () => {
+    it('passes taskIds parsed from the URL to the task query', async () => {
+      renderInternalWithRouter('/?taskIds=123,456')
+
+      await waitFor(() => {
+        expect(mockUseGetCurationTasksInfinite).toHaveBeenLastCalledWith(
+          expect.objectContaining({
+            projectId: MOCK_PROJECT_ID,
+            taskIds: [123, 456],
+          }),
+        )
+      })
+    })
+
+    it('shows the filtered task banner when taskIds are present', async () => {
+      renderInternalWithRouter('/?taskIds=123')
+
+      expect(await screen.findByRole('alert')).toHaveTextContent(
+        'Showing 1 filtered task',
+      )
+    })
+
+    it('does not show the filtered task banner when taskIds are absent', async () => {
+      renderInternalWithRouter('/')
+
+      await screen.findByText('Test Data Type')
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    })
+
+    it('removes the taskIds filter and hides the banner when "Clear filter" is clicked', async () => {
+      const user = userEvent.setup()
+      renderInternalWithRouter('/?taskIds=123')
+
+      await user.click(
+        await screen.findByRole('button', { name: /clear filter/i }),
+      )
+
+      await waitFor(() => {
+        expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+      })
+      await waitFor(() => {
+        expect(mockUseGetCurationTasksInfinite).toHaveBeenLastCalledWith(
+          expect.objectContaining({ taskIds: undefined }),
+        )
+      })
+    })
+  })
+
+  describe('assignedToMe search parameter', () => {
+    it('pre-checks the switch and passes assignedToMe: true when set in the URL', async () => {
+      renderInternalWithRouter('/?assignedToMe=true')
+
+      expect(
+        await screen.findByRole('switch', {
+          name: /view only tasks assigned to me/i,
+        }),
+      ).toBeChecked()
+      expect(mockUseGetCurationTasksInfinite).toHaveBeenLastCalledWith(
+        expect.objectContaining({ assignedToMe: true }),
+      )
+    })
+
+    it('adds assignedToMe=true to the URL when the switch is toggled on', async () => {
+      const user = userEvent.setup()
+      renderInternalWithRouter('/')
+
+      await screen.findByText('Test Data Type')
+      await user.click(
+        screen.getByRole('switch', { name: /view only tasks assigned to me/i }),
+      )
+
+      expect(mockUseGetCurationTasksInfinite).toHaveBeenLastCalledWith(
+        expect.objectContaining({ assignedToMe: true }),
+      )
+
+      await user.click(
+        screen.getByRole('switch', { name: /view only tasks assigned to me/i }),
+      )
+
+      expect(mockUseGetCurationTasksInfinite).toHaveBeenLastCalledWith(
+        expect.objectContaining({ assignedToMe: false }),
+      )
+    })
   })
 })
