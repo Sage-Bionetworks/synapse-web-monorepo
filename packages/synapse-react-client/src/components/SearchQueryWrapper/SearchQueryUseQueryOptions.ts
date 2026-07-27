@@ -117,12 +117,36 @@ function resolveFields(
   )
 }
 
+/**
+ * Returns true if the query text contains at least one double-quoted phrase
+ * (e.g. `"cancer genomics"`). OpenSearch `multi_match` does not understand the
+ * `"phrase"` operator — only `simple_query_string` does — so callers use this
+ * to route quoted queries appropriately.
+ */
+function containsQuotedPhrase(text: string): boolean {
+  // Match a pair of double-quotes enclosing at least one non-quote character.
+  return /"[^"]+"/u.test(text)
+}
+
 function buildQueryClause(
   queryText: string,
   config: SearchQueryConfig = {},
 ): MultiMatchClause | SimpleQueryStringClause {
   const { queryStrategy = 'MULTI_MATCH', fieldBoosts, fuzziness } = config
   const fields = resolveFields(fieldBoosts)
+
+  // When the query text contains a double-quoted phrase (e.g. "cancer genomics"),
+  // multi_match cannot honour the phrase operator — only simple_query_string can.
+  // Route directly to simple_query_string so phrase matching works regardless of
+  // the configured strategy.
+  if (containsQuotedPhrase(queryText)) {
+    return {
+      simple_query_string: {
+        query: queryText,
+        ...(fields ? { fields } : {}),
+      },
+    }
+  }
 
   switch (queryStrategy) {
     case 'SIMPLE_QUERY_STRING':
