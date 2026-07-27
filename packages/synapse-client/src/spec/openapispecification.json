@@ -4234,6 +4234,34 @@
         }
       }
     },
+    "/repo/v1/dataAccessRequest/{requestId}/preview": {
+      "get": {
+        "tags": ["Data Access Services"],
+        "operationId": "get-/repo/v1/dataAccessRequest/{requestId}/preview",
+        "parameters": [
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "description": "- The ID of the data access request.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "The file handle ID for the preview PDF.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/org.sagebionetworks.repo.model.educ.EDucFileHandleId"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/repo/v1/dataAccessRequest/{requestId}/signature": {
       "post": {
         "tags": ["Data Access Services"],
@@ -9597,7 +9625,7 @@
             "name": "mask",
             "in": "query",
             "required": true,
-            "description": "integer flag defining which components to include in the bundle\n \n ,<p>, This integer is used as a bit-string of flags to specify which parts to include \n  in the UserBundle. The mask is defined as follows:\n ,<ul>,\n ,<li>,\tUserProfile  = 0x1 ,<\/li>,\n ,<li>, ORCID  = 0x2 ,<\/li>,\n ,<li>, VerificationSubmission  = 0x4 ,<\/li>,\n ,<li>, IsCertified = 0x8 ,<\/li>,\n ,<li>, Is Verified  = 0x10 ,<\/li>,\n ,<li>, Is ACT Member = 0x20 ,<\/li>,\n ,<li>, Is AR Reviewer = 0x40 ,<\/li>,\n ,<\/ul>,\n ,<\/p>",
+            "description": "integer flag defining which components to include in the bundle\n \n ,<p>, This integer is used as a bit-string of flags to specify which parts to include \n  in the UserBundle. The mask is defined as follows:\n ,<ul>,\n ,<li>,\tUserProfile  = 0x1 ,<\/li>,\n ,<li>, ORCID  = 0x2 ,<\/li>,\n ,<li>, VerificationSubmission  = 0x4 ,<\/li>,\n ,<li>, IsCertified = 0x8 ,<\/li>,\n ,<li>, Is Verified  = 0x10 ,<\/li>,\n ,<li>, Is ACT Member = 0x20 ,<\/li>,\n ,<li>, Is AR Reviewer = 0x40 ,<\/li>,\n ,<li>, Identity Providers = 0x80 ,<\/li>,\n ,<\/ul>,\n ,<\/p>",
             "schema": { "type": "integer" }
           }
         ],
@@ -9653,7 +9681,7 @@
             "name": "mask",
             "in": "query",
             "required": true,
-            "description": "integer flag defining which components to include in the bundle\n \n ,<p>, This integer is used as a bit-string of flags to specify which parts to include \n  in the UserBundle. The mask is defined as follows:\n ,<ul>,\n ,<li>,\tUserProfile  = 0x1 ,<\/li>,\n ,<li>, ORCID  = 0x2 ,<\/li>,\n ,<li>, VerificationSubmission  = 0x4 ,<\/li>,\n ,<li>, IsCertified = 0x8 ,<\/li>,\n ,<li>, Is Verified  = 0x10 ,<\/li>,\n ,<li>, Is ACT Member = 0x20 ,<\/li>,\n ,<li>, Is AR Reviewer = 0x40 ,<\/li>,\n ,<\/ul>,\n ,<\/p>",
+            "description": "integer flag defining which components to include in the bundle\n \n ,<p>, This integer is used as a bit-string of flags to specify which parts to include \n  in the UserBundle. The mask is defined as follows:\n ,<ul>,\n ,<li>,\tUserProfile  = 0x1 ,<\/li>,\n ,<li>, ORCID  = 0x2 ,<\/li>,\n ,<li>, VerificationSubmission  = 0x4 ,<\/li>,\n ,<li>, IsCertified = 0x8 ,<\/li>,\n ,<li>, Is Verified  = 0x10 ,<\/li>,\n ,<li>, Is ACT Member = 0x20 ,<\/li>,\n ,<li>, Is AR Reviewer = 0x40 ,<\/li>,\n ,<li>, Identity Providers = 0x80 ,<\/li>,\n ,<\/ul>,\n ,<\/p>",
             "schema": { "type": "integer" }
           },
           {
@@ -23875,7 +23903,7 @@
           },
           "folderId": {
             "type": "string",
-            "description": "The Synapse ID of the Folder whose direct-child FileEntities provide the source files to be transformed. The contents of every direct-child FileEntity are read into the processing session, so the Folder may contain at most 20 direct-child FileEntities; the task fails if this limit is exceeded."
+            "description": "The Synapse ID of the Folder whose direct-child FileEntities provide the source files to be transformed. The contents of every direct-child FileEntity are read into the processing session, subject to these limits: the Folder may contain at most 20 direct-child FileEntities; the task fails if this count is exceeded. Each source file must be one that can be read into the session: the user running the task must be able to download it, its type must be one of PDF, CSV, TXT, or JSON, and it must be no larger than 100 MB. A file that does not meet these per-file limits cannot be added to the session, and the task fails if such a file is required for the transformation."
           },
           "instructions": {
             "type": "string",
@@ -25149,6 +25177,7 @@
         "type": "string",
         "enum": [
           "created",
+          "draft",
           "sent",
           "delivered",
           "completed",
@@ -29226,6 +29255,7 @@
             "description": "The status of a data access request",
             "enum": [
               "created",
+              "draft",
               "sent",
               "delivered",
               "completed",
@@ -32270,6 +32300,53 @@
         ],
         "required": ["concreteType"],
         "discriminator": { "propertyName": "concreteType" }
+      },
+      "org.sagebionetworks.repo.model.agent.SessionFileMetadata": {
+        "type": "object",
+        "properties": {
+          "entityId": {
+            "type": "string",
+            "description": "The Synapse ID of the file that was described (e.g. 'syn123')."
+          },
+          "fileHandleAssociation": {
+            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.file.FileHandleAssociation",
+            "description": "Describes an association of a FileHandle with another object."
+          },
+          "canDownload": {
+            "type": "boolean",
+            "description": "True if the user has permission to download this file. When false, the file cannot be added to a session and the file-handle content fields are null."
+          },
+          "isSupportedType": {
+            "type": "boolean",
+            "description": "True if the file's type is one that can be added to a session (PDF, CSV, TXT, or JSON). Null if the user cannot download the file."
+          },
+          "isWithinSizeLimit": {
+            "type": "boolean",
+            "description": "True if the file is small enough to be added to a session. Null if the user cannot download the file."
+          },
+          "canAddToSession": {
+            "type": "boolean",
+            "description": "True only if the file can be added to a session: the user can download it, it is backed by S3 storage, its type is supported, and it is within the size limit."
+          },
+          "fileName": {
+            "type": "string",
+            "description": "The name of the file. Null if the user cannot download the file."
+          },
+          "contentType": {
+            "type": "string",
+            "description": "The content type of the file. Null if the user cannot download the file."
+          },
+          "contentSizeBytes": {
+            "type": "integer",
+            "description": "The size of the file in bytes. Null if the user cannot download the file.",
+            "format": "int32"
+          },
+          "reason": {
+            "type": "string",
+            "description": "A human-readable explanation of why the file cannot be added to a session, when canAddToSession is false. Null when the file can be added."
+          }
+        },
+        "description": "Metadata and code-interpreter-session eligibility for a single Synapse file (a FileEntity or RecordSet). Used by an agent to decide whether a file can be added to a session before attempting to add it, and to obtain the fileHandleAssociation that identifies the file when adding it. The file-handle contents (fileName, contentType, contentSizeBytes) and the derived isSupportedType/isWithinSizeLimit flags can only be read when the user can download the file, so they are null when canDownload is false."
       },
       "org.sagebionetworks.repo.model.table.TableUpdateRequest": {
         "type": "object",
@@ -40389,6 +40466,20 @@
         },
         "description": "Result of a FileHandleCopyRequest."
       },
+      "org.sagebionetworks.repo.model.agent.SessionFileMetadataBatch": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.agent.SessionFileMetadata",
+              "description": "Metadata and code-interpreter-session eligibility for a single Synapse file (a FileEntity or RecordSet). Used by an agent to decide whether a file can be added to a session before attempting to add it, and to obtain the fileHandleAssociation that identifies the file when adding it. The file-handle contents (fileName, contentType, contentSizeBytes) and the derived isSupportedType/isWithinSizeLimit flags can only be read when the user can download the file, so they are null when canDownload is false."
+            },
+            "description": "The per-file metadata, in the same order as the requested files."
+          }
+        },
+        "description": "The session-eligibility metadata for a batch of Synapse files, one result per requested file, in request order."
+      },
       "org.sagebionetworks.repo.model.search.query.FacetTopN": {
         "type": "object",
         "properties": {
@@ -42834,6 +42925,7 @@
             "type": "string",
             "description": "Status of a DUC envelope",
             "enum": [
+              "draft",
               "sent",
               "delivered",
               "completed",
@@ -46491,6 +46583,7 @@
       "org.sagebionetworks.repo.model.educ.EDucStatusEnum": {
         "type": "string",
         "enum": [
+          "draft",
           "sent",
           "delivered",
           "completed",
@@ -47818,6 +47911,14 @@
           "isARReviewer": {
             "type": "boolean",
             "description": "true iff the user has permissions to review data access submissions on at least one access requirement (This is always true for an ACT member)"
+          },
+          "identityProviders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.auth.IdentityProvider",
+              "description": "Interface for an identity provider"
+            },
+            "description": "The identity providers linked to this user's account"
           }
         },
         "description": "JSON schema for UserProfile POJO"
