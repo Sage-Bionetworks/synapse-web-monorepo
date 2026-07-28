@@ -13,6 +13,8 @@ export type MergeGridWithRecordSetInput = {
 
 /**
  * Query mutation hook for exporting a grid session back into a RecordSet.
+ *
+ * @deprecated This is a legacy method for overwriting a RecordSet with data from a Grid. Use `useSynchronizeGridSession` instead.
  */
 export default function useMergeGridWithRecordSet(
   options?: Omit<

@@ -10,6 +10,7 @@ export type EntityIdTextFieldProps = {
   onChange: (value: string) => void
   description?: string
   disabled?: boolean
+  required?: boolean
   entityFinderModalProps: Omit<
     EntityFinderModalProps,
     'show' | 'onConfirm' | 'onCancel'
@@ -28,6 +29,7 @@ function EntityIdTextField(props: EntityIdTextFieldProps) {
     description,
     onChange,
     disabled,
+    required,
     entityFinderModalProps,
   } = props
   const [showEntityFinder, setShowEntityFinder] = useState(false)
@@ -47,6 +49,7 @@ function EntityIdTextField(props: EntityIdTextFieldProps) {
         description={description}
         type="text"
         fullWidth
+        required={required}
         value={value}
         disabled={disabled}
         onChange={e => onChange(e.target.value)}

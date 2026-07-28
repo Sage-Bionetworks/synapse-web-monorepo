@@ -9,6 +9,7 @@ import EntityActionMenu, {
 } from '../action_menu/EntityActionMenu'
 import { EntityTitleBarVersionInfo } from './EntityTitleBarVersionInfo'
 import TitleBarProperties from './TitleBarProperties'
+import CopyToClipboardString from '@/components/CopyToClipboardString/CopyToClipboardString'
 
 export type EntityPageTitleBarProps = {
   entityId: string
@@ -23,6 +24,7 @@ export const FAVORITE_BUTTON_ICON_COLOR = '#9EAAB7'
 const TITLE_BAR_BACKGROUND_COLOR = '#EAF0F5'
 const AVATAR_BACKGROUND_COLOR = '#497097'
 const TITLE_NAME_COLOR = '#33373D'
+const SYN_ID_COLOR = '#4D535A'
 
 /**
  * The EntityPageTitleBar component is shown on every Entity page in Synapse, and shows an Entity's metadata and
@@ -76,9 +78,13 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
               <Avatar
                 sx={{
                   bgcolor: AVATAR_BACKGROUND_COLOR,
-                  height: 48,
-                  width: 48,
+                  height: 68,
+                  width: 68,
                   borderRadius: '3px',
+                  svg: {
+                    height: '36px',
+                    width: '36px',
+                  },
                 }}
                 variant={'square'}
               >
@@ -121,6 +127,17 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
                 entityId={entityId}
                 versionNumber={versionNumber}
                 toggleShowVersionHistory={toggleShowVersionHistory}
+              />
+              <CopyToClipboardString
+                value={entityId}
+                icon="rounded"
+                sx={{
+                  '& .MuiTypography-root': {
+                    color: SYN_ID_COLOR,
+                    fontWeight: 440,
+                    lineHeight: '20px',
+                  },
+                }}
               />
             </Box>
           </Stack>

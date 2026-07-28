@@ -1584,3 +1584,94 @@ describe('toSearchIndexQuery – searchQueryConfig', () => {
     expect(clause.multi_match.fields).not.toContain('description^1')
   })
 })
+
+// ---------------------------------------------------------------------------
+// toSearchIndexQuery – exact phrase matching (double-quoted queries)
+// ---------------------------------------------------------------------------
+
+describe('toSearchIndexQuery – exact phrase matching', () => {
+  function makeQueryBundleWithText(searchExpression: string) {
+    return makeQueryBundleRequest({
+      additionalFilters: [
+        {
+          concreteType: TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+          searchExpression,
+        },
+      ],
+    })
+  }
+
+  it('a fully-quoted phrase always emits simple_query_string regardless of strategy', () => {
+    const strategies = [
+      undefined,
+      'MULTI_MATCH',
+      'MULTI_MATCH_BEST_FIELDS',
+      'MULTI_MATCH_CROSS_FIELDS',
+      'PHRASE_PREFIX',
+      'BOOSTED_FUZZY',
+      'SIMPLE_QUERY_STRING',
+    ] as const
+
+    for (const queryStrategy of strategies) {
+      const result = toSearchIndexQuery(
+        makeQueryBundleWithText('"cancer genomics"'),
+        SEARCH_INDEX_ID,
+        undefined,
+        queryStrategy ? { queryStrategy } : undefined,
+      )
+      expect(result.searchQuery?.query).toEqual({
+        simple_query_string: { query: '"cancer genomics"' },
+      })
+    }
+  })
+
+  it('a mixed phrase+term query emits simple_query_string', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('"cancer genomics" atlas'),
+      SEARCH_INDEX_ID,
+    )
+    expect(result.searchQuery?.query).toEqual({
+      simple_query_string: { query: '"cancer genomics" atlas' },
+    })
+  })
+
+  it('field boosts are preserved when routing to simple_query_string for a phrase query', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('"exact phrase"'),
+      SEARCH_INDEX_ID,
+      undefined,
+      {
+        queryStrategy: 'BOOSTED_FUZZY',
+        fieldBoosts: { resourceName: 5, synonyms: 4 },
+      },
+    )
+    expect(result.searchQuery?.query).toEqual({
+      simple_query_string: {
+        query: '"exact phrase"',
+        fields: ['resourceName^5', 'synonyms^4'],
+      },
+    })
+  })
+
+  it('an unquoted query is NOT routed to simple_query_string by the phrase-detection path', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('cancer genomics'),
+      SEARCH_INDEX_ID,
+    )
+    // Should use the default MULTI_MATCH path, not simple_query_string
+    expect(result.searchQuery?.query).toEqual({
+      multi_match: { query: 'cancer genomics', fuzziness: 'AUTO' },
+    })
+  })
+
+  it('a query with only an empty pair of double-quotes is NOT treated as a phrase', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('""'),
+      SEARCH_INDEX_ID,
+    )
+    // "" contains no inner characters → falls through to the normal strategy
+    expect(result.searchQuery?.query).toEqual({
+      multi_match: { query: '""', fuzziness: 'AUTO' },
+    })
+  })
+})

@@ -54,6 +54,30 @@ describe('NextStepButton', () => {
     })
   })
 
+  describe('tooltip', () => {
+    it('shows the tooltip text on hover when a tooltip is provided', async () => {
+      const user = await import('@testing-library/user-event').then(m =>
+        m.default.setup(),
+      )
+      render(
+        <NextStepButton
+          buttonText="View Result"
+          onClick={mockOnClick}
+          disabled={true}
+          tooltip="Destination task is missing"
+        />,
+      )
+
+      await user.hover(screen.getByText('View Result'))
+
+      expect(
+        await screen.findByRole('tooltip', {
+          name: 'Destination task is missing',
+        }),
+      ).toBeInTheDocument()
+    })
+  })
+
   describe('expanded mode (expanded={true})', () => {
     it('renders the button text', () => {
       render(

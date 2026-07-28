@@ -91,7 +91,7 @@ const SynapseComponents = {
   ),
   CsvPreview: lazy(() => import('./components/table/CsvPreview/CsvPreview')),
   CuratorDashboard: lazy(
-    () => import('./features/curator/dashboard/CuratorDashboard'),
+    () => import('./features/curator/dashboard/CuratorDashboardRouter'),
   ),
   DatasetItemsEditor: lazy(
     () => import('./components/SynapseTable/datasets/DatasetItemsEditor'),
@@ -110,6 +110,7 @@ const SynapseComponents = {
     () => import('./components/EntityBadgeIcons/EntityBadgeIcons'),
   ),
   EntityCitation: lazy(() => import('./components/EntityCitation')),
+  ProjectInfo: lazy(() => import('./components/ProjectInfo/ProjectInfo')),
   EntityFinder: lazy(() => import('./components/EntityFinder/EntityFinder')),
   EntityForm: lazy(() => import('./components/EntityForm/EntityForm')),
   EntityHeaderTable: lazy(() => import('./components/EntityHeaderTable')),
@@ -163,7 +164,7 @@ const SynapseComponents = {
   IconSvg: lazy(() => import('./components/IconSvg/IconSvg')),
   MetadataTasksPage: lazy(
     () =>
-      import('./features/entity/metadata-task/components/MetadataTasksPage'),
+      import('./features/entity/metadata-task/components/MetadataTasksPageRouter'),
   ),
   OAuthManagement: lazy(
     () => import('./components/OAuthClientManagement/OAuthManagement'),

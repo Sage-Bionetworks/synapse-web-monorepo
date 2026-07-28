@@ -87,6 +87,16 @@ describe('EntityIdTextField', () => {
     expect(screen.getByRole('button')).toBeInTheDocument()
   })
 
+  it('marks the field as required when required is true', () => {
+    renderComponent({ required: true })
+    expect(screen.getByLabelText(/Upload Folder ID/i)).toBeRequired()
+  })
+
+  it('does not mark the field as required by default', () => {
+    renderComponent()
+    expect(screen.getByLabelText(/Upload Folder ID/i)).not.toBeRequired()
+  })
+
   it('does not show the search button when disabled', () => {
     renderComponent({ disabled: true })
     expect(screen.queryByRole('button')).not.toBeInTheDocument()

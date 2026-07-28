@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material'
-import { useNavigate, useRevalidator } from 'react-router'
+import { useNavigate, useRevalidator, useSearchParams } from 'react-router'
 import { backButtonSx } from '../components/BackButton.js'
 import { SourceAppDescription, SourceAppLogo } from '../components/SourceApp.js'
 import {
@@ -48,6 +48,7 @@ function LoginPage(props: LoginPageProps) {
   const { revalidate } = useRevalidator()
   const navigate = useNavigate()
   const sourceApp = useSourceApp()
+  const [searchParams] = useSearchParams()
 
   const {
     lastLoginDateState,
@@ -108,6 +109,7 @@ function LoginPage(props: LoginPageProps) {
                 twoFactorAuthenticationRequired={twoFactorAuthSSOErrorResponse}
                 twoFactorAuthResetUri={`${window.location.origin}/${RESET_2FA_ROUTE}?${RESET_2FA_SIGNED_TOKEN_PARAM}=`}
                 realm={sourceApp?.defaultRealm}
+                showRASLogin={searchParams.get('appId') === 'ampals'}
               />
             </Box>
           </Box>

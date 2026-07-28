@@ -48,7 +48,6 @@ import {
 import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 import {
-  ASSIGNEE_TOOLTIP,
   AUTH_MODE_CHANGED_WARNING,
   AUTH_MODE_NONE_TITLE,
   AUTH_MODE_NONE_TOOLTIP,
@@ -89,6 +88,7 @@ import noop from 'lodash-es/noop'
 import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 import { StyledFormControl } from '@/components/styled'
 import { instanceOfGridSupportedTaskProperties } from '../utils/types'
+import { dueDateInputToIso, isoToDueDateInput } from '../utils/dueDate'
 
 export type CreateOrUpdateCurationTaskDialogProps = {
   open: boolean
@@ -235,6 +235,17 @@ export default function CreateOrUpdateCurationTaskDialog(
   >(undefined)
   const displayedStatusState = pendingStatusState ?? currentTaskStatus?.state
 
+  // Due date (edit mode only, stored on TaskStatus)
+  const [pendingDueDate, setPendingDueDate] = useState<string | undefined>(
+    undefined,
+  )
+  const displayedDueDate =
+    pendingDueDate ??
+    (isEditMode ? isoToDueDateInput(currentTaskStatus?.dueDate) : '')
+  const originalDueDateForComparison = isoToDueDateInput(
+    currentTaskStatus?.dueDate,
+  )
+
   const {
     mutateAsync: createTask,
     isPending: isCreatePending,
@@ -323,14 +334,21 @@ export default function CreateOrUpdateCurationTaskDialog(
     if (isEditMode) {
       const latestTask = await updateTask(payload)
 
-      if (
+      const statusStateChanged =
         pendingStatusState !== undefined &&
-        pendingStatusState !== currentTaskStatus?.state &&
-        currentTaskStatus != null
-      ) {
+        pendingStatusState !== currentTaskStatus?.state
+      const dueDateChanged =
+        pendingDueDate !== undefined &&
+        pendingDueDate !== originalDueDateForComparison
+
+      if ((statusStateChanged || dueDateChanged) && currentTaskStatus != null) {
         await updateTaskStatus({
           ...currentTaskStatus,
-          state: pendingStatusState,
+          state: pendingStatusState ?? currentTaskStatus.state,
+          dueDate:
+            pendingDueDate !== undefined
+              ? dueDateInputToIso(displayedDueDate)
+              : currentTaskStatus.dueDate,
           etag: latestTask.etag,
         })
       }
@@ -401,11 +419,6 @@ export default function CreateOrUpdateCurationTaskDialog(
     <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
         <InputLabel htmlFor="dlg-set-task-assignee">Assignee</InputLabel>
-        <Tooltip title={ASSIGNEE_TOOLTIP}>
-          <div>
-            <HelpTwoTone sx={{ color: 'grey.700' }} />
-          </div>
-        </Tooltip>
       </Box>
       <UserSearchBox
         inputId="dlg-set-task-assignee"
@@ -633,6 +646,19 @@ export default function CreateOrUpdateCurationTaskDialog(
                   ))}
                 </Select>
               </StyledFormControl>
+            )}
+            {isEditMode && (
+              <Box>
+                <TextField
+                  label="Due Date"
+                  fullWidth
+                  type="date"
+                  value={displayedDueDate}
+                  onChange={e => setPendingDueDate(e.target.value)}
+                  disabled={isStatusFetching}
+                  slotProps={{ inputLabel: { shrink: true } }}
+                />
+              </Box>
             )}
             {assigneeField}
             {authModeField}

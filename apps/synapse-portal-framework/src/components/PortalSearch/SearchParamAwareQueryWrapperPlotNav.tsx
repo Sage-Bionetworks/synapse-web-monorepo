@@ -94,6 +94,7 @@ function SearchParamAwareSearchQueryWrapperPlotNav({
         onQueryResultBundleChange={onQueryResultBundleChange}
         hideSearchBarControl={true}
         defaultShowSearchBar={false}
+        defaultShowPlots={false}
       />
     )
   }

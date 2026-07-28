@@ -4,6 +4,7 @@ import {
   Tooltip,
   Typography,
   TypographyProps,
+  SxProps,
 } from '@mui/material'
 import { SyntheticEvent, useState } from 'react'
 import IconSvg from '../IconSvg/IconSvg'
@@ -17,8 +18,15 @@ export type CopyToClipboardStringProps = {
    * addition to the copy icon. Defaults to rendering the value as plain text.
    */
   href?: string
-  useRoundedIcon?: boolean
+  icon?: 'default' | 'rounded' | 'fileCopy'
+  sx?: SxProps
 }
+
+const ICON_MAP = {
+  default: 'contentCopy',
+  rounded: 'contentCopyRounded',
+  fileCopy: 'fileCopy',
+} as const
 
 /**
  * Displays a string or link and a "Copy to Clipboard" icon, that, when clicked, will copy the contents of the string to the clipboard.
@@ -28,7 +36,8 @@ export function CopyToClipboardString(props: CopyToClipboardStringProps) {
     value,
     typographyVariant = 'smallText1',
     href,
-    useRoundedIcon = false,
+    icon = 'default',
+    sx,
   } = props
   const [tooltipText, setTooltipText] = useState('Copy to clipboard')
 
@@ -40,6 +49,9 @@ export function CopyToClipboardString(props: CopyToClipboardStringProps) {
     })
   }
 
+  const selectedIcon = ICON_MAP[icon] ?? ICON_MAP.default
+  const iconSize = icon === 'fileCopy' ? '18px' : '16px'
+
   return (
     <Stack
       direction={'row'}
@@ -47,6 +59,7 @@ export function CopyToClipboardString(props: CopyToClipboardStringProps) {
       sx={{
         alignItems: 'center',
         display: 'inline-flex',
+        ...sx,
       }}
     >
       {href ? (
@@ -70,9 +83,9 @@ export function CopyToClipboardString(props: CopyToClipboardStringProps) {
           onClick={copyToClipboard}
         >
           <IconSvg
-            icon={useRoundedIcon ? 'contentCopyRounded' : 'contentCopy'}
+            icon={selectedIcon}
             wrap={false}
-            sx={{ width: '16px' }}
+            sx={{ width: iconSize, height: iconSize }}
           />
         </span>
       </Tooltip>
