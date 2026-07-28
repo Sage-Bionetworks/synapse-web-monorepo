@@ -1,8 +1,44 @@
 import { NavbarConfig } from '@sage-bionetworks/synapse-portal-framework/components/navbar/Navbar'
 import Navbar from '@sage-bionetworks/synapse-portal-framework/components/navbar/Navbar'
+import {
+  PortalContextProvider,
+  usePortalContext,
+} from '@sage-bionetworks/synapse-portal-framework/components/PortalContext'
+import { useMemo } from 'react'
+import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
+import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
+
+const MODELS_NAV_PATH = '/Explore/Models'
 
 export default function EliteNavbar() {
-  return <Navbar layout={'with-sticky-search'} />
+  const portalContext = usePortalContext()
+  const showModels = useGetFeatureFlag(FeatureFlagEnum.ELITE_PORTAL_MODELS)
+
+  const contextValue = useMemo(() => {
+    if (showModels) return portalContext
+    return {
+      ...portalContext,
+      navbarConfig: {
+        ...portalContext.navbarConfig,
+        routes: portalContext.navbarConfig.routes.map(route =>
+          route.children
+            ? {
+                ...route,
+                children: route.children.filter(
+                  child => child.path !== MODELS_NAV_PATH,
+                ),
+              }
+            : route,
+        ),
+      },
+    }
+  }, [portalContext, showModels])
+
+  return (
+    <PortalContextProvider value={contextValue}>
+      <Navbar layout={'with-sticky-search'} />
+    </PortalContextProvider>
+  )
 }
 
 export const navbarConfig: NavbarConfig = {
