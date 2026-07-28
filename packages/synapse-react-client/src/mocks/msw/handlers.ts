@@ -12,6 +12,7 @@ import getAllChallengeHandlers from './handlers/challengeHandlers'
 import { getDataAccessRequestHandlers } from './handlers/dataAccessRequestHandlers'
 import { getDiscussionHandlers } from './handlers/discussionHandlers'
 import { getDoiHandler } from './handlers/doiHandlers'
+import { getEDucTemplateHandlers } from './handlers/eDucTemplateHandlers'
 import { getEntityHandlers } from './handlers/entityHandlers'
 import { getEvaluationHandlers } from './handlers/evaluationHandlers'
 import { getFeatureFlagsOverride } from './handlers/featureFlagHandlers'
@@ -67,6 +68,7 @@ export function getHandlersForStorybook(
     accessRequirement: getAllAccessRequirementHandlers(backendOrigin),
     accessRequirementAcl: getAllAccessRequirementAclHandlers(backendOrigin),
     dataAccessRequest: getDataAccessRequestHandlers(backendOrigin),
+    eDucTemplate: getEDucTemplateHandlers(backendOrigin),
     researchProject: getResearchProjectHandlers(backendOrigin),
     file: getFileHandlers(backendOrigin),
     grid: getGridHandlers(backendOrigin),
