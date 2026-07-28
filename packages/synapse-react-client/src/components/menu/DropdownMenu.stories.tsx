@@ -58,7 +58,7 @@ export const DropdownMenuWithConditionalNote: Story = {
     buttonProps: {
       endIcon: <IconSvg icon="verticalEllipsis" wrap={false} />,
     },
-    showConditionalNote: true,
+    showFileAccessRequestNotice: true,
     paperSx: {
       padding: '12px 16px',
       width: '279px',

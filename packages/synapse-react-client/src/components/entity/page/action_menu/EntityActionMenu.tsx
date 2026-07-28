@@ -14,7 +14,7 @@ type EntityActionMenuDropdownMenuConfiguration = {
   visible: boolean
   tooltipText?: string
   disabled?: boolean
-  showConditionalNote?: boolean
+  showFileAccessRequestNotice?: boolean
 }
 
 export type ActionConfiguration = {
@@ -209,8 +209,8 @@ export default function EntityActionMenu(props: EntityActionMenuProps) {
     convertSingleItemToButton: true,
     renderMenuIfNoItems: false,
     variant: layout.downloadMenuVariant,
-    showConditionalNote:
-      menuConfiguration.DOWNLOAD.showConditionalNote ?? false,
+    showFileAccessRequestNotice:
+      menuConfiguration.DOWNLOAD.showFileAccessRequestNotice ?? false,
     paperSx: {
       borderRadius: '5px',
       border: '1px solid #E2E4EA',

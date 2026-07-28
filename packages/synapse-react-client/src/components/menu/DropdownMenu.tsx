@@ -25,7 +25,7 @@ import {
 } from 'react'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
 
-const conditionalNote = (
+const fileAccessRequestNotice = (
   <Box
     sx={{
       backgroundColor: '#EAF0F5',
@@ -95,8 +95,8 @@ export type DropdownMenuProps = {
   renderMenuIfNoItems?: boolean
   paperSx?: SxProps
   elevation?: number
-  /* If true, will show a note at the bottom of the menu. Default false. */
-  showConditionalNote?: boolean
+  /* If true, shows the file access request notice at the bottom of the menu. Default false. */
+  showFileAccessRequestNotice?: boolean
 }
 
 /**
@@ -113,7 +113,7 @@ export function DropdownMenu(props: DropdownMenuProps) {
     variant = 'outlined',
     paperSx,
     elevation,
-    showConditionalNote = false,
+    showFileAccessRequestNotice = false,
   } = props
 
   const dropdownMenuId = useId()
@@ -303,10 +303,10 @@ export function DropdownMenu(props: DropdownMenuProps) {
                       ]
                     })}
                   </MenuList>
-                  {showConditionalNote && (
+                  {showFileAccessRequestNotice && (
                     <>
                       {numberOfMenuItems > 0 && <Divider />}
-                      {conditionalNote}
+                      {fileAccessRequestNotice}
                     </>
                   )}
                 </Box>
