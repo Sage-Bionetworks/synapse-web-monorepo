@@ -4,29 +4,18 @@ import {
   useUpdateAgentSession,
 } from '@/synapse-queries/chat/useChat'
 import { useSynapseContext } from '@/utils'
-import { ArrowUpward } from '@mui/icons-material'
-import {
-  Alert,
-  Box,
-  Chip,
-  IconButton,
-  List,
-  Stack,
-  TextField,
-  Typography,
-  useTheme,
-} from '@mui/material'
-import { Color } from '@mui/material/styles'
+import { Alert, Box, Chip, List, Stack, Typography } from '@mui/material'
 import { GridAgentSessionContext } from '@sage-bionetworks/synapse-client'
 import {
   AgentAccessLevel,
   AgentSession,
   TraceEvent,
 } from '@sage-bionetworks/synapse-types'
-import { KeyboardEventHandler, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { SkeletonParagraph } from '../Skeleton'
 import { displayToast } from '../ToastMessage'
 import AccessLevelMenu from './AccessLevelMenu'
+import { ChatInputArea } from './components/ChatInputArea/ChatInputArea'
 import SynapseChatInteraction from './SynapseChatInteraction'
 import SynapseChatMessage from './SynapseChatMessage'
 
@@ -101,7 +90,6 @@ export function SynapseChat({
         'danger',
       ),
   })
-  const theme = useTheme()
   const [agentAccessLevel, setAgentAccessLevel] = useState<AgentAccessLevel>(
     sessionContext
       ? AgentAccessLevel.WRITE_YOUR_PRIVATE_DATA
@@ -165,26 +153,11 @@ export function SynapseChat({
     }
   }, [agentSession, initialMessage, initialMessageProcessed, sendChat])
 
-  const handleSendMessage = () => {
-    if (userChatTextfieldValue.trim()) {
-      sendChat(userChatTextfieldValue.trim())
-      setUserChatTextfieldValue('')
-    }
+  const handleSend = (message: string) => {
+    sendChat(message)
+    setUserChatTextfieldValue('')
   }
 
-  const isDisabled =
-    !agentSession || !userChatTextfieldValue || !!pendingMessage
-
-  const handleKeyDown: KeyboardEventHandler<HTMLDivElement> = event => {
-    if (!isDisabled && event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault()
-      handleSendMessage()
-    }
-  }
-
-  const sendMessageButtonColor = (
-    theme.palette.secondary as unknown as Color
-  )[300]
   if (createAgentSessionError) {
     return (
       <Alert severity={'error'} sx={{ my: 2 }}>
@@ -303,54 +276,19 @@ export function SynapseChat({
               ))}
             </Stack>
           )}
-        <Box
-          component="form"
-          sx={{
-            pt: '8px',
-            mt: '5px',
-            pb: '10px',
-            position: 'sticky',
-            borderTop: '1px solid',
-            borderColor: 'grey.400',
-          }}
-          onSubmit={handleSendMessage}
-        >
-          <TextField
-            fullWidth
+        <Box sx={{ mt: '5px' }}>
+          <ChatInputArea
             value={userChatTextfieldValue}
-            onChange={e => setUserChatTextfieldValue(e.target.value)}
-            onKeyDown={handleKeyDown}
+            onValueChange={setUserChatTextfieldValue}
+            onSend={handleSend}
             placeholder={`Message ${chatbotName}`}
-            slotProps={{
-              input: {
-                sx: { borderRadius: 96.6 },
-                endAdornment: (
-                  <IconButton
-                    disabled={isDisabled}
-                    onClick={handleSendMessage}
-                    sx={{
-                      ml: '7px',
-                      mr: '-8px',
-                      color: sendMessageButtonColor,
-                      borderStyle: 'solid',
-                      borderWidth: isDisabled ? '1px' : '2px',
-                      borderColor: isDisabled ? 'gray' : sendMessageButtonColor,
-                    }}
-                  >
-                    <ArrowUpward />
-                  </IconButton>
-                ),
-              },
-            }}
+            disabled={!agentSession || !!pendingMessage}
           />
-          <Typography
-            variant="smallText1"
-            sx={{ pt: '8px', textAlign: 'center' }}
-          >
-            {chatbotName} can make mistakes.
-          </Typography>
         </Box>
       </Box>
+      <Typography variant="smallText1" sx={{ pt: '8px', textAlign: 'center' }}>
+        {chatbotName} can make mistakes.
+      </Typography>
     </Box>
   )
 }
