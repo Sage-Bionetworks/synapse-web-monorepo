@@ -20,6 +20,12 @@ export const modelSchema: TableToGenericCardMapping = {
   ],
 }
 
+export const modelColumnAliases: Record<string, string> = {
+  model_type: 'Model Type',
+  model_use_conditions: 'Model Use Conditions',
+  funded_by: 'Funded By',
+}
+
 export const modelCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: modelSchema,
@@ -35,6 +41,7 @@ const modelsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   rgbIndex,
   sql: modelsSql,
   cardConfiguration: modelCardConfiguration,
+  columnAliases: modelColumnAliases,
   shouldDeepLink: true,
   name: 'Models',
   facetsToPlot: ['model_type', 'license', 'funded_by'],

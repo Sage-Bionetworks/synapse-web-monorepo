@@ -6,7 +6,10 @@ import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types
 import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
 import RowDataTable from 'synapse-react-client/components/RowDataTable/RowDataTable'
 import { modelsSql } from '../config/resources'
-import { modelCardConfiguration } from '../config/synapseConfigs/models'
+import {
+  modelCardConfiguration,
+  modelColumnAliases,
+} from '../config/synapseConfigs/models'
 
 const COLUMN_ALIASES: Record<string, string> = {
   model_id: 'Model ID',
@@ -101,6 +104,7 @@ function ModelDetailsPage() {
     <DetailsPage
       header={
         <CardContainerLogic
+          columnAliases={modelColumnAliases}
           cardConfiguration={{
             ...modelCardConfiguration,
             titleLinkConfig: undefined,
