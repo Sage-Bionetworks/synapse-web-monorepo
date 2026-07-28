@@ -11,8 +11,10 @@ import {
   USER_BUNDLE_MASK_VERIFICATION_SUBMISSION,
 } from '@/utils/SynapseConstants'
 import {
+  AccessRequestListRequest,
   AddToDownloadListStatsRequest,
   DiscussionSearchRequest,
+  EDucTemplateListRequest,
   EntityLookupRequest,
   GetRepoV1DoiAssociationRequest,
   GetRepoV1DoiRequest,
@@ -203,6 +205,8 @@ const ACCESS_REQUIREMENT_QUERY_KEY = 'accessRequirement'
 const ROOT_WIKI_PAGE_KEY_QUERY_KEY = 'rootWikiPageKey'
 const WIKI_PAGE_QUERY_KEY = 'wikiPage'
 const DATA_ACCESS_SUBMISSION_QUERY_KEY = 'dataAccessSubmission'
+const DATA_ACCESS_REQUEST_QUERY_KEY = 'dataAccessRequest'
+const EDUC_TEMPLATE_QUERY_KEY = 'eDucTemplate'
 
 /**
  * Returns a react-query Query Key.
@@ -594,6 +598,59 @@ export class KeyFactory {
     request?: SubmissionInfoPageRequest,
   ) {
     return this.getKey('approvedSubmissionInfo', request)
+  }
+
+  // Returns key that can be used to invalidate all data access request queries
+  public getDataAccessRequestQueryKey() {
+    return this.getKey(DATA_ACCESS_REQUEST_QUERY_KEY)
+  }
+
+  public listDataAccessRequestsQueryKey(params?: AccessRequestListRequest) {
+    return this.getKey(DATA_ACCESS_REQUEST_QUERY_KEY, 'list', params)
+  }
+
+  public getDataAccessRequestPreviewQueryKey(requestId: string) {
+    return this.getKey(
+      DATA_ACCESS_REQUEST_QUERY_KEY,
+      requestId,
+      'signature',
+      'preview',
+    )
+  }
+
+  public getDataAccessRequestSignatureQueryKey(requestId: string) {
+    return this.getKey(DATA_ACCESS_REQUEST_QUERY_KEY, requestId, 'signature')
+  }
+
+  public getDataAccessRequestSignatureStatusQueryKey(requestId: string) {
+    return this.getKey(
+      DATA_ACCESS_REQUEST_QUERY_KEY,
+      requestId,
+      'signature',
+      'status',
+    )
+  }
+
+  public getDataAccessRequestSignatureFileHandleIdQueryKey(requestId: string) {
+    return this.getKey(
+      DATA_ACCESS_REQUEST_QUERY_KEY,
+      requestId,
+      'signature',
+      'filehandleId',
+    )
+  }
+
+  // Returns key that can be used to invalidate all eDUC template queries
+  public getEDucTemplateQueryKey() {
+    return this.getKey(EDUC_TEMPLATE_QUERY_KEY)
+  }
+
+  public listEDucTemplatesQueryKey(params?: EDucTemplateListRequest) {
+    return this.getKey(EDUC_TEMPLATE_QUERY_KEY, 'list', params)
+  }
+
+  public getEDucTemplateValidationQueryKey(templateId: string) {
+    return this.getKey(EDUC_TEMPLATE_QUERY_KEY, templateId, 'validation')
   }
 
   public getValidationSchemaQueryKey(schema$id: string) {
