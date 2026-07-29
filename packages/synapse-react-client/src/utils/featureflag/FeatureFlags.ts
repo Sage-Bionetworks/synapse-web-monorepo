@@ -27,4 +27,7 @@ export enum FeatureFlagEnum {
 
   // If enabled, Curator allows users to synchronize (merge) a grid session with the source RecordSet. If disabled, legacy behavior will be used, which overwrites the RecordSet with the grid session data.
   ENABLE_RECORDSET_SYNCHRONIZATION = 'ENABLE_RECORDSET_SYNCHRONIZATION',
+
+  // If enabled, show the Models section in the ELITE portal (nav item, Explore tab, and Search tab)
+  ELITE_PORTAL_MODELS = 'ELITE_PORTAL_MODELS',
 }

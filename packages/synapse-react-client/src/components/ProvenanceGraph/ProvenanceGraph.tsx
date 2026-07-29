@@ -66,7 +66,6 @@ export const NO_PROVENANCE_TITLE = 'No provenance data'
 const NO_PROVENANCE_MESSAGE = (entityTypeName: string) =>
   `We don’t have any provenance information for this ${entityTypeName} yet.`
 const NO_PROVENANCE_TEXT_COLOR = '#3B4046'
-const PROVENANCE_BACKGROUND_COLOR = '#F9F9FA'
 const EDIT_PROVENANCE_BUTTON_TEXT_COLOR = '#4D535A'
 const EDIT_PROVENANCE_BUTTON_BORDER_COLOR = '#9EAAB7'
 const EDIT_PROVENANCE_BUTTON_BACKGROUND_COLOR = 'rgba(255, 255, 255, 0.60)'
@@ -439,8 +438,6 @@ const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
       style={{
         width: '100%',
         height: containerHeight,
-        backgroundColor: PROVENANCE_BACKGROUND_COLOR,
-        padding: '15px',
       }}
     >
       {showNoProvenance ? (
