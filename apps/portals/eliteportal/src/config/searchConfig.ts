@@ -3,6 +3,7 @@ import { programsSearch } from '@/config/synapseConfigs/programs'
 import { projectsSearch } from '@/config/synapseConfigs/projects'
 import { studiesSearch } from '@/config/synapseConfigs/studies'
 import { datasetQueryWrapperPlotNavProps } from '@/config/synapseConfigs/datasets'
+import modelsQueryWrapperPlotNavProps from '@/config/synapseConfigs/models'
 import { publicationsSearch } from '@/config/synapseConfigs/publications'
 import { computationalToolsSearch } from '@/config/synapseConfigs/computational_tools'
 import { peopleSearch } from '@/config/synapseConfigs/people'
@@ -24,6 +25,10 @@ export const searchPageTabs = [
   {
     title: 'Datasets',
     path: 'Datasets',
+  },
+  {
+    title: 'Models',
+    path: 'Models',
   },
   {
     title: 'Files',
@@ -48,6 +53,7 @@ export const portalSearchPageConfigs = [
   projectsSearch,
   studiesSearch,
   { ...datasetQueryWrapperPlotNavProps, name: 'Datasets' },
+  { ...modelsQueryWrapperPlotNavProps, name: 'Models' },
   dataQueryWrapperPlotNavProps,
   publicationsSearch,
   { ...computationalToolsSearch, name: 'Tools' },
