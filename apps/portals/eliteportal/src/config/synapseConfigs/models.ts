@@ -8,7 +8,7 @@ const rgbIndex = 5
 
 export const modelSchema: TableToGenericCardMapping = {
   type: SynapseConstants.MODEL,
-  title: 'model_summary',
+  title: 'model_name',
   subTitle: 'developers',
   description: 'model_description',
   secondaryLabels: [
