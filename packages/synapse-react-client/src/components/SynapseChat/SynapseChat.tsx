@@ -6,17 +6,12 @@ import {
 import { useSynapseContext } from '@/utils'
 import { Alert, Box, Chip, List, Stack, Typography } from '@mui/material'
 import { GridAgentSessionContext } from '@sage-bionetworks/synapse-client'
-import {
-  AgentAccessLevel,
-  AgentSession,
-  TraceEvent,
-} from '@sage-bionetworks/synapse-types'
-import { useEffect, useState } from 'react'
+import { AgentAccessLevel, AgentSession } from '@sage-bionetworks/synapse-types'
+import { useEffect, useRef, useState } from 'react'
 import { SkeletonParagraph } from '../Skeleton'
 import { displayToast } from '../ToastMessage'
 import AccessLevelMenu from './AccessLevelMenu'
 import { ChatInputArea } from './components/ChatInputArea/ChatInputArea'
-import SynapseChatInteraction from './SynapseChatInteraction'
 import SynapseChatMessage from './SynapseChatMessage'
 import { SmartToyTwoTone } from '@mui/icons-material'
 import { UserCard } from '../UserCard/UserCard'
@@ -68,17 +63,6 @@ export type SynapseChatProps = {
   agentAvatar?: React.ReactNode
 }
 
-export type ChatInteraction = {
-  userMessage: string
-  chatResponseText?: string
-  chatErrorReason?: string
-  chatResponseTrace?: TraceEventWithFriendlyMessage[]
-}
-
-export type TraceEventWithFriendlyMessage = {
-  friendlyMessage?: string
-} & TraceEvent
-
 export function SynapseChat({
   initialMessage,
   agentRegistrationId,
@@ -125,7 +109,17 @@ export function SynapseChat({
 
   const internalChatState = useChatState(agentSession, onChatResponse)
   const chatState = externalChatState ?? internalChatState
-  const { pendingMessage, chatJobIds, sendChat } = chatState
+  const { interactions, isAwaitingResponse, sendChat } = chatState
+
+  // Only interactions added after this component instance mounted should play the entry
+  // animation. Callers may lift state so history survives a `Dialog` closing, but the
+  // `Dialog` unmounts its children, so every reopen would otherwise re-animate the whole
+  // conversation.
+  const presentAtMountRef = useRef<Set<string> | undefined>(undefined)
+  if (presentAtMountRef.current === undefined) {
+    presentAtMountRef.current = new Set(interactions.map(i => i.id))
+  }
+  const presentAtMount = presentAtMountRef.current
 
   // Keep track of the text that the user is currently typing into the textfield
   const [userChatTextfieldValue, setUserChatTextfieldValue] = useState('')
@@ -254,28 +248,22 @@ export function SynapseChat({
                 />
               )
             })} */}
-            {chatJobIds.map(jobId => {
+            {interactions.map((interaction, index) => {
+              const isLast = index === interactions.length - 1
               return (
                 <SynapseChatMessage
                   agentAvatar={agentAvatar}
                   userAvatar={userAvatar}
-                  key={jobId}
-                  chatJobId={jobId}
+                  key={interaction.id}
+                  userMessage={interaction.userMessage}
+                  chatJobId={interaction.jobId}
                   onSendChat={sendChat}
+                  scrollIntoView={isLast}
+                  animateEntry={!presentAtMount.has(interaction.id)}
+                  isAwaitingResponse={isAwaitingResponse}
                 />
               )
             })}
-            {pendingMessage && (
-              <SynapseChatInteraction
-                agentAvatar={agentAvatar}
-                userAvatar={userAvatar}
-                userMessage={pendingMessage}
-                chatResponseText={''}
-                chatErrorReason={''}
-                scrollIntoView
-                onSendChat={sendChat}
-              />
-            )}
           </List>
         </Box>
       )}
@@ -288,8 +276,7 @@ export function SynapseChat({
       >
         {suggestedPrompts &&
           suggestedPrompts.length > 0 &&
-          chatJobIds.length === 0 &&
-          !pendingMessage && (
+          interactions.length === 0 && (
             <Stack
               direction="row"
               spacing={1}
@@ -313,7 +300,7 @@ export function SynapseChat({
             onValueChange={setUserChatTextfieldValue}
             onSend={handleSend}
             placeholder={`Message ${chatbotName}`}
-            disabled={!agentSession || !!pendingMessage}
+            disabled={!agentSession || isAwaitingResponse}
           />
         </Box>
       </Box>

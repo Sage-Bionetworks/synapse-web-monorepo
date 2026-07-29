@@ -18,6 +18,7 @@ import {
 import { TraceEvent } from '@sage-bionetworks/synapse-types'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
+import styles from './SynapseChatInteraction.module.scss'
 
 export type SynapseChatInteractionProps = {
   userMessage: string
@@ -28,6 +29,10 @@ export type SynapseChatInteractionProps = {
   onSendChat?: (message: string) => void
   agentAvatar: React.ReactNode
   userAvatar: React.ReactNode
+  /** Whether to play the fade/rise-in entry animation for this interaction on mount. */
+  animateEntry?: boolean
+  /** Whether a turn is currently in flight; gates the guide-prompt chips so they can't bypass the composer. */
+  isAwaitingResponse?: boolean
 }
 
 // Show tool calls in the trace. Useful for development. We may want to show them to users in the future.
@@ -58,21 +63,31 @@ export function SynapseChatInteraction({
   onSendChat,
   agentAvatar,
   userAvatar,
+  animateEntry = false,
+  isAwaitingResponse = false,
 }: SynapseChatInteractionProps) {
   const theme = useTheme()
-  const ref = useRef<HTMLLIElement | null>(null)
+  const userMessageRef = useRef<HTMLLIElement | null>(null)
+  const responseRef = useRef<HTMLLIElement | null>(null)
   const [showTrace, setShowTrace] = useState(false)
 
-  useEffect(() => {
-    // on mount, scroll into view if instructed
-    if (scrollIntoView) {
-      if (ref.current) {
-        ref.current.scrollIntoView({ behavior: 'smooth' })
-      }
-    }
-  }, [ref, scrollIntoView])
-
   const isLoading = !chatResponseText && !chatErrorReason
+
+  useEffect(() => {
+    // on mount, scroll into view if instructed. This brings the "Thinking..." row to the top so
+    // the answer's opening lines are usually visible as soon as it starts streaming in.
+    if (scrollIntoView) {
+      userMessageRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [scrollIntoView])
+
+  useEffect(() => {
+    // once the response (or an error) arrives, scroll all the way to the bottom so the full
+    // answer - which may be taller than the viewport - is brought into view.
+    if (scrollIntoView && !isLoading) {
+      responseRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    }
+  }, [scrollIntoView, isLoading])
 
   const traceMessages = useMemo(
     () =>
@@ -135,7 +150,7 @@ export function SynapseChatInteraction({
   return (
     <>
       <ListItem
-        ref={ref}
+        ref={userMessageRef}
         sx={{
           alignSelf: 'flex-end',
           maxWidth: '82%',
@@ -150,6 +165,7 @@ export function SynapseChatInteraction({
         }}
       >
         <Box
+          className={animateEntry ? styles.entryAnimation : undefined}
           sx={{
             p: '4px 14px',
             backgroundColor: '#F3F6F7',
@@ -161,6 +177,7 @@ export function SynapseChatInteraction({
         <Box sx={{ marginTop: '4px' }}>{userAvatar}</Box>
       </ListItem>
       <ListItem
+        ref={responseRef}
         sx={{
           display: 'grid',
           gridTemplateColumns: '50px auto',
@@ -238,22 +255,27 @@ export function SynapseChatInteraction({
               </Collapse>
             )}
           </Box>
-          {textContent && <MarkdownSynapse markdown={textContent} />}
-          {onSendChat && guidePrompts.length > 0 && (
-            <Stack direction="row" flexWrap="wrap" gap={1} mt={1}>
-              {guidePrompts.map(prompt => (
-                <Tooltip key={prompt} title={prompt}>
-                  <Chip
-                    label={prompt}
-                    variant="outlined"
-                    color="primary"
-                    clickable
-                    onClick={() => onSendChat(prompt)}
-                    sx={{ maxWidth: 200 }}
-                  />
-                </Tooltip>
-              ))}
-            </Stack>
+          {(textContent || (onSendChat && guidePrompts.length > 0)) && (
+            <Box className={animateEntry ? styles.entryAnimation : undefined}>
+              {textContent && <MarkdownSynapse markdown={textContent} />}
+              {onSendChat && guidePrompts.length > 0 && (
+                <Stack direction="row" flexWrap="wrap" gap={1} mt={1}>
+                  {guidePrompts.map(prompt => (
+                    <Tooltip key={prompt} title={prompt}>
+                      <Chip
+                        label={prompt}
+                        variant="outlined"
+                        color="primary"
+                        clickable
+                        disabled={isAwaitingResponse}
+                        onClick={() => onSendChat(prompt)}
+                        sx={{ maxWidth: 200 }}
+                      />
+                    </Tooltip>
+                  ))}
+                </Stack>
+              )}
+            </Box>
           )}
         </Box>
       </ListItem>

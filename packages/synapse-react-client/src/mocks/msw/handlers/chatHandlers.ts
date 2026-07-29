@@ -47,7 +47,7 @@ export const getChatbotHandlers = (
     },
   ),
   //Async job to send chat message to the agent
-  generateAsyncJobHandlers<AgentChatRequest, AgentChatResponse>(
+  ...generateAsyncJobHandlers<AgentChatRequest, AgentChatResponse>(
     START_CHAT_ASYNC,
     tokenParam => GET_CHAT_ASYNC(tokenParam),
     mockAgentChatResponse,

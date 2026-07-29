@@ -22,8 +22,8 @@ const mockSendChat = vi.fn()
 
 const defaultMockChatState = {
   sendChat: mockSendChat,
-  pendingMessage: null,
-  chatJobIds: [],
+  interactions: [],
+  isAwaitingResponse: false,
 }
 
 const idleMutation = {
@@ -135,7 +135,8 @@ describe('SynapseChat - suggestedPrompts', () => {
   it('chips are hidden while a message is pending', () => {
     const pendingChatState = {
       ...defaultMockChatState,
-      pendingMessage: 'waiting...',
+      interactions: [{ id: '0', userMessage: 'waiting...' }],
+      isAwaitingResponse: true,
     }
     renderComponent({
       suggestedPrompts: mockPrompts,
@@ -150,7 +151,10 @@ describe('SynapseChat - suggestedPrompts', () => {
   })
 
   it('chips are hidden after a conversation has started', () => {
-    const activeChatState = { ...defaultMockChatState, chatJobIds: ['job-1'] }
+    const activeChatState = {
+      ...defaultMockChatState,
+      interactions: [{ id: '0', userMessage: 'hi', jobId: 'job-1' }],
+    }
     renderComponent({
       suggestedPrompts: mockPrompts,
       externalChatState: activeChatState,
@@ -161,6 +165,16 @@ describe('SynapseChat - suggestedPrompts', () => {
         screen.queryByRole('button', { name: prompt }),
       ).not.toBeInTheDocument()
     })
+  })
+
+  it('disables the send button while awaiting a response', async () => {
+    const { user } = renderComponent({
+      externalChatState: { ...defaultMockChatState, isAwaitingResponse: true },
+    })
+
+    await user.type(screen.getByRole('textbox'), 'hello')
+
+    expect(screen.getByRole('button', { name: 'Send message' })).toBeDisabled()
   })
 
   it('text input is present alongside pills', () => {
