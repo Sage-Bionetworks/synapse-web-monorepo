@@ -142,6 +142,47 @@ describe('CurationTaskCard', () => {
     })
   })
 
+  describe('due date chip', () => {
+    it('shows a neutral color when the task is COMPLETED even if the due date has passed', () => {
+      renderComponent(
+        createMockTaskBundle(
+          { projectId: 'syn123' },
+          { state: 'COMPLETED', dueDate: '2000-01-01' },
+        ),
+      )
+      const chip = screen
+        .getByText(/due/i)
+        .closest('.MuiChip-root') as HTMLElement
+      expect(chip).toHaveStyle({ backgroundColor: '#E0E0E0' })
+    })
+
+    it('shows a neutral color when the task is CANCELED even if the due date has passed', () => {
+      renderComponent(
+        createMockTaskBundle(
+          { projectId: 'syn123' },
+          { state: 'CANCELED', dueDate: '2000-01-01' },
+        ),
+      )
+      const chip = screen
+        .getByText(/due/i)
+        .closest('.MuiChip-root') as HTMLElement
+      expect(chip).toHaveStyle({ backgroundColor: '#E0E0E0' })
+    })
+
+    it('shows an overdue color when the due date has passed and the task is not complete', () => {
+      renderComponent(
+        createMockTaskBundle(
+          { projectId: 'syn123' },
+          { state: 'IN_PROGRESS', dueDate: '2000-01-01' },
+        ),
+      )
+      const chip = screen
+        .getByText(/due/i)
+        .closest('.MuiChip-root') as HTMLElement
+      expect(chip).toHaveStyle({ backgroundColor: '#FFCDD2' })
+    })
+  })
+
   describe('status chip', () => {
     it('shows "Not Started" when status state is NOT_STARTED', () => {
       renderComponent(
