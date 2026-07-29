@@ -1,17 +1,24 @@
+import CertificationRequirement from '@/components/AccessRequirementList/RequirementItem/CertificationRequirement'
+import ExportCsvFromGridButton from '@/components/DataGrid/components/ExportCsvFromGridButton'
 import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
 import UploadCsvToGridButton from '@/components/DataGrid/components/UploadCsvToGridButton'
-import ExportCsvFromGridButton from '@/components/DataGrid/components/ExportCsvFromGridButton'
 import useGetSchemaForGrid from '@/components/DataGrid/hooks/useGetSchemaForGrid'
 import SyncGridWithSourceButton from '@/components/DataGrid/SyncGridWithSourceButton'
 import computeReplicaSelectionModel from '@/components/DataGrid/utils/computeReplicaSelectionModel'
 import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
+import { SynapseErrorBoundary } from '@/components/error/ErrorBanner'
 import { SkeletonTable } from '@/components/index'
+import { useGetCurrentUserBundle } from '@/synapse-queries'
+import { useListGridReplicas } from '@/synapse-queries/grid/useGridSession'
 import { useGetEntity } from '@/synapse-queries/index'
 import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
-import { HelpOutline, SmartToyTwoTone } from '@mui/icons-material'
+import { HelpOutline } from '@mui/icons-material'
 import { Box, Stack, Tooltip, Typography } from '@mui/material'
-import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import Grid from '@mui/material/Grid'
+import {
+  DataSheetGridRef,
+  SelectionWithId,
+} from '@sage-bionetworks/react-datasheet-grid'
 import {
   CreateGridRequest,
   GridSession,
@@ -26,26 +33,22 @@ import {
   useRef,
   useState,
 } from 'react'
-import { DataSheetGridRef } from '@sage-bionetworks/react-datasheet-grid'
-import { SelectionWithId } from '@sage-bionetworks/react-datasheet-grid'
+import { useErrorHandler } from 'react-error-boundary'
+import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import GridAgentChat from '../SynapseChat/GridAgentChat'
+import { ValidationAlert } from './components/ValidationAlert'
 import DataGrid from './DataGrid'
 import { DataGridRow, GridModel, Operation } from './DataGridTypes'
+import { useGridReplicaUsers } from './hooks/useGridReplicaUsers'
 import { useGridUndoRedo } from './hooks/useGridUndoRedo'
+import { useRemoteSelections } from './hooks/useRemoteSelections'
 import { StartGridSession, StartGridSessionHandle } from './StartGridSession'
 import { useDataGridWebSocket } from './useDataGridWebsocket'
 import { applyModelChange, ModelChange } from './utils/applyModelChange'
 import { removeNoOpOperations } from './utils/DataGridUtils'
-import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
-import { useGetCurrentUserBundle } from '@/synapse-queries'
-import { useListGridReplicas } from '@/synapse-queries/grid/useGridSession'
-import { useGridReplicaUsers } from './hooks/useGridReplicaUsers'
-import { useRemoteSelections } from './hooks/useRemoteSelections'
 import { enrichRowsWithChangeInfo } from './utils/enrichRowsWithChangeInfo'
-import CertificationRequirement from '@/components/AccessRequirementList/RequirementItem/CertificationRequirement'
-import { ValidationAlert } from './components/ValidationAlert'
-import { SynapseErrorBoundary } from '@/components/error/ErrorBanner'
-import { useErrorHandler } from 'react-error-boundary'
+import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
+import CurieAvatarHead from '@/assets/mui_components/CurieAvatarHead'
 
 export type SynapseGridProps = {
   agentRegistrationId?: string
@@ -487,7 +490,7 @@ function SynapseGridInner({
                     <GridMenuButton
                       variant={'outlined'}
                       onClick={() => setChatOpen(true)}
-                      startIcon={<SmartToyTwoTone />}
+                      startIcon={<CurieAvatarHead />}
                     >
                       Open Curie
                     </GridMenuButton>

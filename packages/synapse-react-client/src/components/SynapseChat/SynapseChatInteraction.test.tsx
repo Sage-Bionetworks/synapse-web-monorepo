@@ -6,6 +6,8 @@ import SynapseChatInteraction, {
 
 const defaultProps: SynapseChatInteractionProps = {
   userMessage: 'hello world',
+  agentAvatar: <div />,
+  userAvatar: <div />,
 }
 
 function renderComponent(props?: Partial<SynapseChatInteractionProps>) {

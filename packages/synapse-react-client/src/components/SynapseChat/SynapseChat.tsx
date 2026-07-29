@@ -18,6 +18,25 @@ import AccessLevelMenu from './AccessLevelMenu'
 import { ChatInputArea } from './components/ChatInputArea/ChatInputArea'
 import SynapseChatInteraction from './SynapseChatInteraction'
 import SynapseChatMessage from './SynapseChatMessage'
+import { SmartToyTwoTone } from '@mui/icons-material'
+import { UserCard } from '../UserCard/UserCard'
+import { useApplicationSessionContext } from '@/utils/AppUtils'
+
+const DEFAULT_AVATAR = (
+  <Box
+    sx={{
+      p: '3px',
+      borderRadius: '50%',
+      borderStyle: 'solid',
+      borderWidth: '1px',
+      borderColor: 'grey.300',
+      mt: '10px',
+      height: '31px',
+    }}
+  >
+    <SmartToyTwoTone sx={{ color: 'secondary.main' }} />
+  </Box>
+)
 
 export type SynapseChatProps = {
   initialMessage?: string //optional initial message
@@ -45,6 +64,8 @@ export type SynapseChatProps = {
   onChatResponse?: (responseText: string) => void
   /** Optional list of prompt suggestions shown as clickable pills above the text input */
   suggestedPrompts?: string[]
+  /** Optional custom avatar for the chatbot agent */
+  agentAvatar?: React.ReactNode
 }
 
 export type ChatInteraction = {
@@ -62,6 +83,7 @@ export function SynapseChat({
   initialMessage,
   agentRegistrationId,
   chatbotName = 'SynapseChat',
+  agentAvatar = DEFAULT_AVATAR,
   hideTitle = false,
   textboxPositionOffset = '0px',
   sessionContext,
@@ -73,6 +95,11 @@ export function SynapseChat({
   suggestedPrompts,
 }: SynapseChatProps) {
   const { accessToken } = useSynapseContext()
+  const { userId } = useApplicationSessionContext()
+
+  const userAvatar = (
+    <UserCard ownerId={userId} size="AVATAR" avatarSize="MEDIUM" />
+  )
   const [localAgentSession, setLocalAgentSession] = useState<AgentSession>()
   const agentSession = externalSession ?? localAgentSession
   const setAgentSession = setExternalSession ?? setLocalAgentSession
@@ -230,6 +257,8 @@ export function SynapseChat({
             {chatJobIds.map(jobId => {
               return (
                 <SynapseChatMessage
+                  agentAvatar={agentAvatar}
+                  userAvatar={userAvatar}
                   key={jobId}
                   chatJobId={jobId}
                   onSendChat={sendChat}
@@ -238,6 +267,8 @@ export function SynapseChat({
             })}
             {pendingMessage && (
               <SynapseChatInteraction
+                agentAvatar={agentAvatar}
+                userAvatar={userAvatar}
                 userMessage={pendingMessage}
                 chatResponseText={''}
                 chatErrorReason={''}
