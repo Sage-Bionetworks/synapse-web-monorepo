@@ -1,4 +1,7 @@
 import React from 'react'
+import { EntityType } from '@sage-bionetworks/synapse-client'
+import { TreeNode } from '../hooks/useEntityTreeState'
+
 export type EntityTreeTableContextType = {
   expanded: Record<string, boolean>
   loadingIds: Set<string>
@@ -6,6 +9,14 @@ export type EntityTreeTableContextType = {
   loadMoreChildren: (parentId: string, pageToken?: string) => void
   nextPageTokens: Record<string, string | undefined>
   onEntityIdClicked?: (entityId: string) => void
+  selectedIds?: Set<string>
+  onToggleSelection?: (
+    entityId: string,
+    entityType: EntityType,
+    versionNumber: number | undefined,
+  ) => void
+  disableEntityLinks?: boolean
+  tree?: Record<string, TreeNode>
 }
 
 export const EntityTreeTableContext = React.createContext<
