@@ -60,9 +60,7 @@ export function useCurationTaskFormState(args: UseCurationTaskFormStateArgs) {
     string | undefined
   >(() => task?.assigneePrincipalId)
 
-  // Task status (edit mode only). `dueDate` also lives on TaskStatus, so it's collected here even in
-  // create mode (where there's no status to fetch yet -- it's applied to the auto-created status
-  // immediately after the task itself is created, see `submitTaskAndStatus`).
+  // Task status (edit mode only, for the status state field).
   const { data: currentTaskStatus, isFetching: isStatusFetching } =
     useGetCurationTaskStatus(task?.taskId ?? 0, {
       enabled: isEditMode && task?.taskId != null,
@@ -72,14 +70,13 @@ export function useCurationTaskFormState(args: UseCurationTaskFormStateArgs) {
   >(undefined)
   const displayedStatusState = pendingStatusState ?? currentTaskStatus?.state
   // `pendingDueDate` and `displayedDueDate` are always the native date input's `YYYY-MM-DD` string.
-  // The backend stores `TaskStatus.dueDate` as an ISO 8601 date-time string, so the fetched value is
+  // `CurationTask.dueDate` is stored as an ISO 8601 date-time string, so the fetched value is
   // converted for display and the entered value is converted back on write.
   const [pendingDueDate, setPendingDueDate] = useState<string | undefined>(
     undefined,
   )
   const displayedDueDate =
-    pendingDueDate ??
-    (isEditMode ? isoToDueDateInput(currentTaskStatus?.dueDate) : '')
+    pendingDueDate ?? (isEditMode ? isoToDueDateInput(task?.dueDate) : '')
 
   const { data: permissions } = useGetEntityPermissions(effectiveProjectId, {
     enabled: !!effectiveProjectId,
@@ -134,39 +131,36 @@ export function useCurationTaskFormState(args: UseCurationTaskFormStateArgs) {
 
   /**
    * Persists `payload` as either a create or an update (based on edit mode), then reconciles the
-   * task's `TaskStatus` (state + due date + `options.initialExecutionDetails`). Returns the persisted
-   * task. On create, the status is fetched (it is created server-side automatically) and patched when
-   * a due date was entered or `options.initialExecutionDetails` was supplied. On update, the status is
-   * written only when the state or due date changed; clearing the due date (empty string) is a valid
-   * change and persists as an absent due date. `initialExecutionDetails` is never backfilled on edit.
+   * task's `TaskStatus` (state + `options.initialExecutionDetails`). Returns the persisted task.
+   * `dueDate` is included directly in the task payload. On create, the status is fetched (it is
+   * created server-side automatically) and patched only when `options.initialExecutionDetails` is
+   * supplied. On update, the status is written only when the state changed.
+   * `initialExecutionDetails` is never backfilled on edit.
    */
   async function submitTaskAndStatus(
     payload: CurationTask,
     options?: { initialExecutionDetails?: TaskExecutionDetails },
   ): Promise<CurationTask> {
-    const dueDateIso = dueDateInputToIso(displayedDueDate)
-
     if (isEditMode) {
-      const latestTask = await updateTask(payload)
+      // When the user hasn't changed the due date, pass the task's stored value through verbatim so
+      // a state-only edit can never blank out or re-encode an existing due date.
+      const latestTask = await updateTask({
+        ...payload,
+        dueDate:
+          pendingDueDate !== undefined
+            ? dueDateInputToIso(pendingDueDate)
+            : task?.dueDate,
+      })
 
       const statusStateChanged =
         pendingStatusState !== undefined &&
         pendingStatusState !== currentTaskStatus?.state
-      const dueDateChanged =
-        pendingDueDate !== undefined &&
-        dueDateIso !== (currentTaskStatus?.dueDate ?? undefined)
-      if ((statusStateChanged || dueDateChanged) && currentTaskStatus != null) {
+      if (statusStateChanged && currentTaskStatus != null) {
         // The task and its status share an etag, and the preceding `updateTask` bumped it; the
-        // status update must use the etag returned by that update, not the stale fetched one. When
-        // the user didn't touch the due date, preserve the stored value verbatim rather than the
-        // re-encoded one, so a status-only edit can never blank out or rewrite an existing due date.
+        // status update must use the etag returned by that update, not the stale fetched one.
         await updateTaskStatus({
           ...currentTaskStatus,
           state: pendingStatusState ?? currentTaskStatus.state,
-          dueDate:
-            pendingDueDate !== undefined
-              ? dueDateIso
-              : currentTaskStatus.dueDate,
           etag: latestTask.etag,
         })
       }
@@ -174,19 +168,17 @@ export function useCurationTaskFormState(args: UseCurationTaskFormStateArgs) {
       return latestTask
     }
 
-    const created = await createTask(payload)
+    const created = await createTask({
+      ...payload,
+      dueDate: dueDateInputToIso(displayedDueDate),
+    })
 
-    if (
-      (dueDateIso || options?.initialExecutionDetails) &&
-      created.taskId != null
-    ) {
+    if (options?.initialExecutionDetails && created.taskId != null) {
       // TODO(PLFM-9839): replace this best-effort status write with a single service that creates
-      // the task and its status atomically. Until then, the task is created first and the due date
-      // is applied to the auto-created status in a separate call; a failure there must not strand a
-      // created task or surface as a hard error (which would tempt the user to re-create the task).
+      // the task and its status atomically. Until then, execution details are applied to the
+      // auto-created status in a separate call; a failure must not strand the created task or
+      // surface as a hard error (which would tempt the user to re-create the task).
       try {
-        // A CurationTask's TaskStatus is created automatically server-side; fetch it so the due date
-        // can be applied to it. The freshly-fetched status carries the current shared etag.
         const status =
           await synapseClient.curationTaskServicesClient.getRepoV1CurationTaskTaskIdStatus(
             { taskId: created.taskId },
@@ -194,8 +186,7 @@ export function useCurationTaskFormState(args: UseCurationTaskFormStateArgs) {
         await updateTaskStatus({
           ...status,
           taskId: created.taskId,
-          dueDate: dueDateIso,
-          executionDetails: options?.initialExecutionDetails,
+          executionDetails: options.initialExecutionDetails,
         })
       } catch {
         displayToast(CREATE_TASK_STATUS_NOT_SAVED_WARNING, 'warning')

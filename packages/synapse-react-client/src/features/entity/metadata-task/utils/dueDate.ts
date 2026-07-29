@@ -9,7 +9,7 @@ const DUE_DATE_INPUT_FORMAT = 'YYYY-MM-DD'
 
 /**
  * A native `<input type="date">` produces a bare `YYYY-MM-DD` calendar date with no timezone, but the
- * backend's `TaskStatus.dueDate` is an ISO 8601 date-time string. Both conversions here anchor the
+ * backend's `CurationTask.dueDate` is an ISO 8601 date-time string. Both conversions here anchor the
  * calendar date to UTC midnight so the date a user picks is the date every other user sees, regardless
  * of their timezone. Returns `undefined` for an empty or malformed input so the caller can persist an
  * absent due date.
