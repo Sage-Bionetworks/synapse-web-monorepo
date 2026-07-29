@@ -20,7 +20,7 @@ const breadcrumbTextStyle: SxProps = {
 
 const entityPageBreadcrumbStyle: SxProps = {
   marginTop: '0px',
-  padding: '10px 32px',
+  padding: '20px 32px',
   ['& .MuiTypography-root']: breadcrumbTextStyle,
   ['& .MuiLink-root']: {
     '&:visited': {
