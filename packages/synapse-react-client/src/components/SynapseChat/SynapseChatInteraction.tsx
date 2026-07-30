@@ -2,11 +2,7 @@ import { SynapseSpinner } from '@/components/LoadingScreen/LoadingScreen'
 import extractMessageFromTraceEvent, {
   TraceMessage,
 } from '@/components/SynapseChat/extractMessageFromTraceEvent'
-import {
-  KeyboardArrowDown,
-  KeyboardArrowRight,
-  SmartToyTwoTone,
-} from '@mui/icons-material'
+import { KeyboardArrowDown, KeyboardArrowRight } from '@mui/icons-material'
 import {
   Alert,
   Box,
@@ -19,7 +15,6 @@ import {
   Tooltip,
   useTheme,
 } from '@mui/material'
-import { Color } from '@mui/material/styles'
 import { TraceEvent } from '@sage-bionetworks/synapse-types'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
@@ -31,6 +26,8 @@ export type SynapseChatInteractionProps = {
   scrollIntoView?: boolean
   chatErrorReason?: string
   onSendChat?: (message: string) => void
+  agentAvatar: React.ReactNode
+  userAvatar: React.ReactNode
 }
 
 // Show tool calls in the trace. Useful for development. We may want to show them to users in the future.
@@ -59,6 +56,8 @@ export function SynapseChatInteraction({
   chatResponseTrace,
   scrollIntoView = false,
   onSendChat,
+  agentAvatar,
+  userAvatar,
 }: SynapseChatInteractionProps) {
   const theme = useTheme()
   const ref = useRef<HTMLLIElement | null>(null)
@@ -139,45 +138,43 @@ export function SynapseChatInteraction({
         ref={ref}
         sx={{
           alignSelf: 'flex-end',
-          backgroundColor: (theme.palette.secondary as unknown as Color)[100],
-          borderRadius: '24px',
-          maxWidth: '70%',
-          display: 'block',
+          maxWidth: '82%',
           mb: '5px',
-          p: '8px 12px',
           wordWrap: 'break-word',
           width: 'auto',
+          display: 'grid',
+          gridTemplateColumns: 'auto auto',
+          columnGap: '16px',
+          alignItems: 'start',
+          justifyItems: 'end',
         }}
       >
-        <ListItemText primary={userMessage} />
+        <Box
+          sx={{
+            p: '4px 14px',
+            backgroundColor: '#F3F6F7',
+            borderRadius: '8px',
+          }}
+        >
+          <ListItemText primary={userMessage} />
+        </Box>
+        <Box sx={{ marginTop: '4px' }}>{userAvatar}</Box>
       </ListItem>
       <ListItem
         sx={{
           display: 'grid',
           gridTemplateColumns: '50px auto',
-          columnGap: '0px',
+          columnGap: '16px',
           justifyItems: 'center',
           alignItems: 'start',
           p: '0px',
+          padding: '10px',
         }}
       >
-        <Box
-          sx={{
-            p: '3px',
-            mt: '10px',
-            height: '31px',
-            borderRadius: '50%',
-            borderStyle: 'solid',
-            borderWidth: '1px',
-            borderColor: 'grey.300',
-          }}
-        >
-          <SmartToyTwoTone sx={{ color: 'secondary.main' }} />
-        </Box>
+        {agentAvatar}
         <Box
           sx={{
             borderRadius: '10px',
-            padding: '10px',
             maxWidth: '100%',
             overflow: 'auto',
           }}
