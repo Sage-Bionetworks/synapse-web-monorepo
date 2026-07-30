@@ -18,6 +18,7 @@ import {
 } from '../components/ColumnHeaders'
 import { EntityBadgeIconsCell } from '../components/EntityBadgeIconsCell'
 import { CheckboxCell } from '../components/CheckboxCell'
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd'
 
 export const useTableColumns = (
   enableSorting: boolean,
@@ -116,7 +117,12 @@ export const useTableColumns = (
     baseColumns.push({
       id: 'download',
       header: 'Download',
-      cell: AddFileToDownloadListCell,
+      cell: props => (
+        <AddFileToDownloadListCell
+          {...props}
+          downloadIcon={<PlaylistAddIcon />}
+        />
+      ),
       enableSorting: false,
       size: 90,
     })

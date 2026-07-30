@@ -67,6 +67,8 @@ export const NameCell: React.FC<CellContext<EntityBundleRow, unknown>> = ({
           entity={entityHeader}
           link={!disableEntityLinks}
           onEntityIdClicked={onEntityIdClicked}
+          iconColor="#4D535A"
+          iconVariant="outlined"
         />
       </Box>
     </Box>

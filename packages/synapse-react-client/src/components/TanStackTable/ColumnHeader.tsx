@@ -5,11 +5,19 @@ import IconSvg from '../IconSvg'
 import { ReactNode, useCallback } from 'react'
 import { ColumnHeaderEnumFilter } from './ColumnHeaderEnumFilter'
 
+type SortIconRendererParams = {
+  isSorted: 'asc' | 'desc' | false
+}
+
 type ColumnHeaderProps = {
   title?: string
   helpText?: ReactNode
   additionalButtons?: ReactNode
   wrap?: boolean
+  sortIconRenderer?: (params: SortIconRendererParams) => ReactNode
+  iconPlacement?: 'left' | 'right'
+  iconColor?: string
+  iconSize?: string | number
 
   // TODO: Replace with props that can be passed to a reusable filter control
   filterControl?: ReactNode
@@ -29,6 +37,10 @@ export default function ColumnHeader<TData = unknown, TValue = unknown>(
     helpText,
     filterControl: filterControlFromProps,
     additionalButtons,
+    sortIconRenderer,
+    iconPlacement = 'right',
+    iconColor,
+    iconSize,
   } = props
 
   const getFilterControl = useCallback(() => {
@@ -48,6 +60,7 @@ export default function ColumnHeader<TData = unknown, TValue = unknown>(
   }, [column, filterControlFromProps, title])
 
   const filterControl = getFilterControl()
+  const isSorted = column.getIsSorted()
 
   return (
     <Box
@@ -55,7 +68,9 @@ export default function ColumnHeader<TData = unknown, TValue = unknown>(
         display: 'flex',
         alignContent: 'center',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        ...(iconPlacement === 'right' && {
+          justifyContent: 'space-between',
+        }),
         overflow: 'hidden',
         minWidth: 0,
       }}
@@ -77,7 +92,7 @@ export default function ColumnHeader<TData = unknown, TValue = unknown>(
           display: 'flex',
           alignItems: 'center',
           height: '22px',
-          ml: 2,
+          ml: iconPlacement === 'left' ? 1 : 2,
           gap: 0.25,
         }}
       >
@@ -99,14 +114,20 @@ export default function ColumnHeader<TData = unknown, TValue = unknown>(
               onKeyPress={() => column.toggleSorting()}
               onClick={() => column.toggleSorting()}
             >
-              <IconSvg
-                icon={column.getIsSorted() === 'asc' ? 'sortUp' : 'sortDown'}
-                wrap={false}
-                sx={{
-                  color: column.getIsSorted() ? 'primary.main' : 'grey.700',
-                  backgroundColor: 'none',
-                }}
-              />
+              {sortIconRenderer ? (
+                sortIconRenderer({ isSorted })
+              ) : (
+                <IconSvg
+                  icon={isSorted === 'asc' ? 'sortUp' : 'sortDown'}
+                  wrap={false}
+                  sx={{
+                    color:
+                      iconColor ?? (isSorted ? 'primary.main' : 'grey.700'),
+                    backgroundColor: 'none',
+                    ...(iconSize && { fontSize: iconSize }),
+                  }}
+                />
+              )}
             </IconButton>
           </Tooltip>
         )}

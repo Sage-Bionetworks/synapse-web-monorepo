@@ -6,12 +6,14 @@ import { displayToast } from './ToastMessage/ToastMessage'
 
 export type CopyToClipboardIconProps = IconButtonProps & {
   value: string
+  icon?: 'contentCopy' | 'contentCopyRounded'
   sizePx?: number
 }
 
 export function CopyToClipboardIcon({
   value,
   sizePx = 16,
+  icon = 'contentCopy',
   ...props
 }: CopyToClipboardIconProps) {
   const ref = createRef<HTMLButtonElement>()
@@ -35,7 +37,7 @@ export function CopyToClipboardIcon({
         aria-label="Copy to clipboard"
       >
         <IconSvg
-          icon="contentCopy"
+          icon={icon}
           wrap={false}
           fontSize={'inherit'}
           sx={
