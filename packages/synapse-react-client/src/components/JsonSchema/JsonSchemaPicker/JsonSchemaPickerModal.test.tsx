@@ -4,16 +4,10 @@ import {
 } from '@/mocks/jsonschema/mockJsonSchemaListing'
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { mockVirtualizedTableLayout } from '@/testutils/VirtualizedTableTestUtils'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { JsonSchemaPickerModal } from './JsonSchemaPickerModal'
-
-// @tanstack/react-virtual requires layout metrics that JSDOM does not compute, and JSDOM's
-// ResizeObserver polyfill eventually "corrects" measured sizes to 0. See
-// JsonSchemaPicker.test.tsx for a fuller explanation of both workarounds.
-Object.defineProperty(HTMLElement.prototype, 'offsetHeight', { value: 800 })
-Object.defineProperty(HTMLElement.prototype, 'offsetWidth', { value: 800 })
-const originalResizeObserver = window.ResizeObserver
 
 function renderModal(
   props: Partial<
@@ -43,21 +37,26 @@ async function selectSchema(schemaName: string) {
   await userEvent.click(option)
 
   const table = await screen.findByRole('table')
-  const row = (await within(table).findByText(schemaName)).closest('tr')!
-  await userEvent.click(within(row).getByRole('checkbox'))
+  await within(table).findByText(schemaName)
+  const row = within(table)
+    .getAllByRole('row')
+    .find(row => within(row).queryByText(schemaName))!
+  await userEvent.click(
+    within(row).getByRole('checkbox', { name: `Select ${schemaName}` }),
+  )
   return row
 }
 
 describe('JsonSchemaPickerModal', () => {
+  let restoreVirtualizedTableLayout: () => void
   beforeAll(() => {
     server.listen()
-    // @ts-expect-error -- intentionally disabling for this suite
-    window.ResizeObserver = undefined
+    restoreVirtualizedTableLayout = mockVirtualizedTableLayout()
   })
   afterEach(() => server.resetHandlers())
   afterAll(() => {
     server.close()
-    window.ResizeObserver = originalResizeObserver
+    restoreVirtualizedTableLayout()
   })
 
   it('renders the default title and confirm button copy', () => {
@@ -107,6 +106,51 @@ describe('JsonSchemaPickerModal', () => {
 
     expect(onCancel).toHaveBeenCalledTimes(1)
     expect(onConfirm).not.toHaveBeenCalled()
+  })
+
+  it('does not carry a selection across a cancel and reopen', async () => {
+    const { rerender, onConfirm, onCancel } = renderModal()
+
+    await selectSchema(MOCK_MULTI_VERSION_SCHEMA_NAME)
+    const confirmButton = screen.getByRole('button', {
+      name: 'Add Selected Schema',
+    })
+    await waitFor(() => expect(confirmButton).toBeEnabled(), { timeout: 3000 })
+
+    rerender(
+      <JsonSchemaPickerModal
+        open={false}
+        onConfirm={onConfirm}
+        onCancel={onCancel}
+      />,
+    )
+    rerender(
+      <JsonSchemaPickerModal open onConfirm={onConfirm} onCancel={onCancel} />,
+    )
+
+    expect(
+      screen.getByRole('button', { name: 'Add Selected Schema' }),
+    ).toBeDisabled()
+  })
+
+  it('enables the confirm button immediately when opened with an initialSelected', () => {
+    renderModal({
+      initialSelected: {
+        $id: `${MOCK_ORGANIZATION_SAGEBIONETWORKS_NAME}-${MOCK_MULTI_VERSION_SCHEMA_NAME}-1.1.0`,
+        versionInfo: {
+          organizationName: MOCK_ORGANIZATION_SAGEBIONETWORKS_NAME,
+          schemaId: '103',
+          schemaName: MOCK_MULTI_VERSION_SCHEMA_NAME,
+          versionId: '2',
+          $id: `${MOCK_ORGANIZATION_SAGEBIONETWORKS_NAME}-${MOCK_MULTI_VERSION_SCHEMA_NAME}-1.1.0`,
+          semanticVersion: '1.1.0',
+        },
+      },
+    })
+
+    expect(
+      screen.getByRole('button', { name: 'Add Selected Schema' }),
+    ).toBeEnabled()
   })
 
   it('supports custom title and confirm button copy', () => {

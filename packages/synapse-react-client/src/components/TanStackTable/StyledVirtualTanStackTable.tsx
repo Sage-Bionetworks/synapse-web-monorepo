@@ -28,11 +28,16 @@ type StyledVirtualTanStackTableProps<T = unknown> = Omit<
 // The last digit of a `data-index` that identifies an odd row, e.g. matches indices 1, 3, 11, 23.
 const ODD_ROW_LAST_DIGITS = [1, 3, 5, 7, 9]
 
-const stripedRowsSx = (theme: Theme) => ({
-  [ODD_ROW_LAST_DIGITS.map(digit => `&[data-index$="${digit}"]`).join(', ')]: {
-    backgroundColor: theme.palette.grey[100],
+const stripedRowsSx = {
+  // Exclude selected rows so this doesn't outrank a caller's own `[aria-selected="true"]`
+  // background rule (emotion's `sx` classes are more specific than a single class+attribute
+  // selector, e.g. EntityFinder's `.EntityFinderDetailsViewRow[aria-selected='true']`).
+  [ODD_ROW_LAST_DIGITS.map(
+    digit => `&[data-index$="${digit}"]:not([aria-selected="true"])`,
+  ).join(', ')]: {
+    backgroundColor: 'var(--synapse-background-color-gray)',
   },
-})
+}
 
 // Context to pass the row virtualizer to the Tr component
 const RowVirtualizerContext = React.createContext<
@@ -106,15 +111,13 @@ export default function StyledVirtualTanStackTable<T = unknown>(
                 width: '100%',
               },
             },
-            striped &&
-              ((theme: Theme) => ({ 'tbody > tr': stripedRowsSx(theme) })),
+            striped && { 'tbody > tr': stripedRowsSx },
             styledTableContainerProps?.sx,
           ]
             .flat()
             .filter(Boolean) as SxProps<Theme>,
           onScroll: e => onTableContainerScroll(e.target),
         }}
-        {...styledTableContainerProps}
         slots={{
           Tr: VirtualizedTr,
         }}

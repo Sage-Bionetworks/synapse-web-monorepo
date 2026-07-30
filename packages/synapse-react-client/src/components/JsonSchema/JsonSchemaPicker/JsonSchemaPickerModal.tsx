@@ -23,6 +23,20 @@ export type JsonSchemaPickerModalProps = {
  * {@link VersionSelectionType}, a version of that schema).
  */
 export function JsonSchemaPickerModal(props: JsonSchemaPickerModalProps) {
+  const { open, ...rest } = props
+
+  // Keyed by `open` so that `selected` (declared below) is discarded whenever the dialog
+  // transitions between open and closed, rather than surviving a cancel-then-reopen.
+  return (
+    <JsonSchemaPickerModalDialog
+      key={open ? 'open' : 'closed'}
+      open={open}
+      {...rest}
+    />
+  )
+}
+
+function JsonSchemaPickerModalDialog(props: JsonSchemaPickerModalProps) {
   const {
     open,
     onConfirm,
@@ -35,7 +49,7 @@ export function JsonSchemaPickerModal(props: JsonSchemaPickerModalProps) {
   } = props
 
   const [selected, setSelected] = useState<JsonSchemaSelection | undefined>(
-    undefined,
+    initialSelected,
   )
 
   return (
@@ -52,7 +66,6 @@ export function JsonSchemaPickerModal(props: JsonSchemaPickerModalProps) {
       onCancel={onCancel}
       content={
         <JsonSchemaPicker
-          key={open ? 'open' : 'closed'}
           defaultOrganizationName={defaultOrganizationName}
           versionSelectionType={versionSelectionType}
           initialSelected={initialSelected}

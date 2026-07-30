@@ -65,7 +65,7 @@ describe('useJsonSchemaOrganizations', () => {
     expect(result.current.organizationOptions).toEqual([SAGEBIONETWORKS_ORG])
   })
 
-  it('applies defaultOrganizationName exactly once, and does not reapply it after the list changes again', async () => {
+  it('applies defaultOrganizationName exactly once, and does not reapply it after the selection is cleared', async () => {
     postRepoV1SchemaOrganizationListSpy.mockResolvedValueOnce({
       page: [SAGEBIONETWORKS_ORG, EXAMPLE_ORG],
     })

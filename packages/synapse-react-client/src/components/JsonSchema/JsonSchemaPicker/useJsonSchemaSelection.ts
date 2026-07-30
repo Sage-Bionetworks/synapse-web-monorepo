@@ -76,8 +76,7 @@ export function useJsonSchemaSelection(params: UseJsonSchemaSelectionParams) {
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>(() => {
     const initialSchemaId = initialSelected?.versionInfo
-      ? (initialSelected.versionInfo.schemaId ??
-        initialSelected.versionInfo.schemaName)
+      ? getSchemaId(initialSelected.versionInfo)
       : undefined
     return initialSchemaId ? { [initialSchemaId]: true } : {}
   })
@@ -85,13 +84,17 @@ export function useJsonSchemaSelection(params: UseJsonSchemaSelectionParams) {
     JsonSchemaVersionInfo | undefined
   >(initialSelected?.versionInfo)
 
-  // Mirror the state above so the async continuation in handleRowSelectionChange (below) can
-  // check the *current* selection when its fetch resolves, rather than the (possibly stale)
-  // values closed over at the time the fetch was kicked off.
+  // Mirror rowSelection so handleRowSelectionChange (below) can apply a functional updater
+  // against the *current* selection, rather than the (possibly stale) value closed over at
+  // render time.
   const rowSelectionRef = useRef(rowSelection)
   rowSelectionRef.current = rowSelection
-  const selectedVersionInfoRef = useRef(selectedVersionInfo)
-  selectedVersionInfoRef.current = selectedVersionInfo
+
+  // Identifies the most recent row-selection or manual-version-pick request, which ensures
+  // that only the latest invocation applies a state change. This is necessary because the
+  // "auto-select latest version" depends on a network request, and the user may have manually
+  // invoked a different selection before the request resolves.
+  const requestIdRef = useRef(0)
 
   const selectedSchema = useMemo(() => {
     const id = Object.keys(rowSelection).find(key => rowSelection[key])
@@ -111,13 +114,18 @@ export function useJsonSchemaSelection(params: UseJsonSchemaSelectionParams) {
   const handleVersionChange = (
     versionInfo: JsonSchemaVersionInfo | undefined,
   ) => {
+    // Invalidate any in-flight "auto-select latest version" fetch -- this manual pick wins.
+    requestIdRef.current++
     applyVersionSelection(selectedSchema, versionInfo)
   }
 
   const handleRowSelectionChange: OnChangeFn<
     RowSelectionState
   > = updaterOrValue => {
-    const newRowSelection = functionalUpdate(updaterOrValue, rowSelection)
+    const newRowSelection = functionalUpdate(
+      updaterOrValue,
+      rowSelectionRef.current,
+    )
     const newSelectedId = Object.keys(newRowSelection).find(
       key => newRowSelection[key],
     )
@@ -131,11 +139,12 @@ export function useJsonSchemaSelection(params: UseJsonSchemaSelectionParams) {
       resolveSelection(newSelectedSchema, undefined, versionSelectionType),
     )
 
+    const requestId = ++requestIdRef.current
+
     if (
       newSelectedSchema &&
       versionSelectionType === VersionSelectionType.REQUIRED
     ) {
-      const schemaId = getSchemaId(newSelectedSchema)
       void queryClient
         .fetchQuery(
           getJsonSchemaVersionsQuery(
@@ -145,11 +154,9 @@ export function useJsonSchemaSelection(params: UseJsonSchemaSelectionParams) {
           ),
         )
         .then(versions => {
-          const stillSelected = rowSelectionRef.current[schemaId] === true
-          const noManualPickYet = selectedVersionInfoRef.current == null
           // The API returns versions lowest-to-highest, so the latest is the last element.
           const latest = versions.at(-1)
-          if (stillSelected && noManualPickYet && latest) {
+          if (requestIdRef.current === requestId && latest) {
             // Apply against the schema this fetch was for -- not `selectedSchema`, whose
             // closure here is fixed to this render and may be stale by the time this resolves.
             applyVersionSelection(newSelectedSchema, latest)

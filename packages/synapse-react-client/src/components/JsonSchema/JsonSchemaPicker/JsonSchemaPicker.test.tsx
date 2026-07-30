@@ -10,6 +10,7 @@ import {
 } from '@/mocks/jsonschema/mockJsonSchemaListing'
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { mockVirtualizedTableLayout } from '@/testutils/VirtualizedTableTestUtils'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -18,23 +19,8 @@ import {
   ListOrganizationsRequest,
 } from '@sage-bionetworks/synapse-client'
 import { http, HttpResponse } from 'msw'
-import {
-  JsonSchemaPicker,
-  JsonSchemaSelection,
-  LATEST_OPTION_VALUE,
-} from './JsonSchemaPicker'
+import { JsonSchemaPicker, JsonSchemaSelection } from './JsonSchemaPicker'
 import { VersionSelectionType } from './VersionSelectionType'
-
-// @tanstack/react-virtual requires layout metrics that JSDOM does not compute.
-// See https://github.com/TanStack/virtual/issues/641#issuecomment-2851908893
-Object.defineProperty(HTMLElement.prototype, 'offsetHeight', { value: 800 })
-Object.defineProperty(HTMLElement.prototype, 'offsetWidth', { value: 800 })
-
-// JSDOM's ResizeObserver polyfill eventually "corrects" measured element sizes to 0 (since JSDOM
-// never performs real layout), which would make @tanstack/react-virtual stop rendering any rows.
-// Disabling it makes the virtualizer fall back to the (stubbed, stable) offsetHeight/offsetWidth
-// above for the lifetime of the test.
-const originalResizeObserver = window.ResizeObserver
 
 const postRepoV1SchemaListSpy = vi.spyOn(
   MOCK_CONTEXT_VALUE.synapseClient.jsonSchemaServicesClient,
@@ -66,16 +52,53 @@ async function selectOrganization(name: string) {
   await userEvent.click(option)
 }
 
+/**
+ * Finds the row for a given schema name, waiting for it to appear. Scopes to `table`'s data
+ * rows only (excluding the header row) by requiring a checkbox, since a row's accessible name
+ * (used by `getByRole('row', { name })`) isn't reliable across browsers/jsdom for rows containing
+ * multiple cells of arbitrary content.
+ */
+async function findSchemaRow(
+  table: HTMLElement,
+  schemaName: string,
+): Promise<HTMLElement> {
+  await within(table).findByText(schemaName)
+  const row = getDataRows(table).find(row =>
+    within(row).queryByText(schemaName),
+  )
+  if (!row) {
+    throw new Error(`Could not find a row for schema "${schemaName}"`)
+  }
+  return row
+}
+
+function getDataRows(table: HTMLElement): HTMLElement[] {
+  return within(table)
+    .getAllByRole('row')
+    .filter(row => within(row).queryAllByRole('checkbox').length > 0)
+}
+
+async function selectSchemaRow(
+  table: HTMLElement,
+  schemaName: string,
+): Promise<HTMLElement> {
+  const row = await findSchemaRow(table, schemaName)
+  await userEvent.click(
+    within(row).getByRole('checkbox', { name: `Select ${schemaName}` }),
+  )
+  return row
+}
+
 describe('JsonSchemaPicker', () => {
+  let restoreVirtualizedTableLayout: () => void
   beforeAll(() => {
     server.listen()
-    // @ts-expect-error -- intentionally disabling for this suite, see comment above
-    window.ResizeObserver = undefined
+    restoreVirtualizedTableLayout = mockVirtualizedTableLayout()
   })
   afterEach(() => server.resetHandlers())
   afterAll(() => {
     server.close()
-    window.ResizeObserver = originalResizeObserver
+    restoreVirtualizedTableLayout()
   })
   beforeEach(() => {
     vi.clearAllMocks()
@@ -188,20 +211,18 @@ describe('JsonSchemaPicker', () => {
     await selectOrganization(MOCK_ORGANIZATION_SAGEBIONETWORKS_NAME)
 
     const table = await screen.findByRole('table')
-    const tbody = table.querySelector('tbody')!
 
     // Page 2 (NullVersionSchema) should eventually load in as well, alongside page 1's schemas
     await waitFor(() => {
-      const rows = within(tbody).getAllByRole('row')
-      expect(rows).toHaveLength(4)
+      expect(getDataRows(table)).toHaveLength(4)
     })
-    expect(within(tbody).getByText('repo.model.FileEntity')).toBeInTheDocument()
-    expect(within(tbody).getByText('repo.model.Project')).toBeInTheDocument()
+    expect(within(table).getByText('repo.model.FileEntity')).toBeInTheDocument()
+    expect(within(table).getByText('repo.model.Project')).toBeInTheDocument()
     expect(
-      within(tbody).getByText(MOCK_MULTI_VERSION_SCHEMA_NAME),
+      within(table).getByText(MOCK_MULTI_VERSION_SCHEMA_NAME),
     ).toBeInTheDocument()
     expect(
-      within(tbody).getByText(MOCK_NULL_VERSION_SCHEMA_NAME),
+      within(table).getByText(MOCK_NULL_VERSION_SCHEMA_NAME),
     ).toBeInTheDocument()
   })
 
@@ -273,10 +294,10 @@ describe('JsonSchemaPicker', () => {
     await selectOrganization(MOCK_ORGANIZATION_SAGEBIONETWORKS_NAME)
     const table = await screen.findByRole('table')
 
-    const multiVersionRow = (
-      await within(table).findByText(MOCK_MULTI_VERSION_SCHEMA_NAME)
-    ).closest('tr')!
-    await userEvent.click(within(multiVersionRow).getByRole('checkbox'))
+    const multiVersionRow = await selectSchemaRow(
+      table,
+      MOCK_MULTI_VERSION_SCHEMA_NAME,
+    )
 
     const alert = await within(multiVersionRow).findByRole('alert')
     within(alert).getByText('Something went wrong')
@@ -306,10 +327,10 @@ describe('JsonSchemaPicker', () => {
     await selectOrganization(MOCK_ORGANIZATION_SAGEBIONETWORKS_NAME)
     const table = await screen.findByRole('table')
 
-    const multiVersionRow = (
-      await within(table).findByText(MOCK_MULTI_VERSION_SCHEMA_NAME)
-    ).closest('tr')!
-    await userEvent.click(within(multiVersionRow).getByRole('checkbox'))
+    const multiVersionRow = await selectSchemaRow(
+      table,
+      MOCK_MULTI_VERSION_SCHEMA_NAME,
+    )
 
     // The whole (multi-page) fetch is a single query, so a failure on page 2 fails the fetch as
     // a whole (no partial data survives) -- the row shows an error, not a partial dropdown.
@@ -328,19 +349,23 @@ describe('JsonSchemaPicker', () => {
     await selectOrganization(MOCK_ORGANIZATION_SAGEBIONETWORKS_NAME)
     const table = await screen.findByRole('table')
 
-    const fileEntityRow = (
-      await within(table).findByText('repo.model.FileEntity')
-    ).closest('tr')!
-    const projectRow = (
-      await within(table).findByText('repo.model.Project')
-    ).closest('tr')!
+    const fileEntityRow = await findSchemaRow(table, 'repo.model.FileEntity')
+    const projectRow = await findSchemaRow(table, 'repo.model.Project')
 
-    await userEvent.click(within(fileEntityRow).getByRole('checkbox'))
+    await userEvent.click(
+      within(fileEntityRow).getByRole('checkbox', {
+        name: 'Select repo.model.FileEntity',
+      }),
+    )
     await waitFor(() =>
       expect(within(fileEntityRow).getByRole('checkbox')).toBeChecked(),
     )
 
-    await userEvent.click(within(projectRow).getByRole('checkbox'))
+    await userEvent.click(
+      within(projectRow).getByRole('checkbox', {
+        name: 'Select repo.model.Project',
+      }),
+    )
 
     await waitFor(() => {
       expect(within(projectRow).getByRole('checkbox')).toBeChecked()
@@ -356,20 +381,29 @@ describe('JsonSchemaPicker', () => {
     await selectOrganization(MOCK_ORGANIZATION_SAGEBIONETWORKS_NAME)
     const table = await screen.findByRole('table')
 
-    const multiVersionRow = (
-      await within(table).findByText(MOCK_MULTI_VERSION_SCHEMA_NAME)
-    ).closest('tr')!
+    const multiVersionRow = await findSchemaRow(
+      table,
+      MOCK_MULTI_VERSION_SCHEMA_NAME,
+    )
 
     expect(
       within(multiVersionRow).queryByRole('combobox'),
     ).not.toBeInTheDocument()
 
-    await userEvent.click(within(multiVersionRow).getByRole('checkbox'))
+    await userEvent.click(
+      within(multiVersionRow).getByRole('checkbox', {
+        name: `Select ${MOCK_MULTI_VERSION_SCHEMA_NAME}`,
+      }),
+    )
 
     const versionSelect = await within(multiVersionRow).findByRole('combobox')
-    await waitFor(() => expect(versionSelect).toHaveValue('3'), {
-      timeout: 3000,
-    })
+    await waitFor(
+      () =>
+        expect(
+          within(versionSelect).getByRole('option', { selected: true }),
+        ).toHaveTextContent('2.0.0'),
+      { timeout: 3000 },
+    )
 
     await waitFor(() => {
       const lastCall = onSelectionChange.mock.calls.at(-1)?.[0] as
@@ -403,15 +437,17 @@ describe('JsonSchemaPicker', () => {
     await selectOrganization(MOCK_ORGANIZATION_SAGEBIONETWORKS_NAME)
     const table = await screen.findByRole('table')
 
-    const multiVersionRow = (
-      await within(table).findByText(MOCK_MULTI_VERSION_SCHEMA_NAME)
-    ).closest('tr')!
-
-    await userEvent.click(within(multiVersionRow).getByRole('checkbox'))
+    const multiVersionRow = await selectSchemaRow(
+      table,
+      MOCK_MULTI_VERSION_SCHEMA_NAME,
+    )
 
     const versionSelect = await within(multiVersionRow).findByRole('combobox')
     await waitFor(
-      () => expect(versionSelect).toHaveValue(LATEST_OPTION_VALUE),
+      () =>
+        expect(
+          within(versionSelect).getByRole('option', { selected: true }),
+        ).toHaveTextContent('Latest'),
       {
         timeout: 3000,
       },
@@ -424,11 +460,10 @@ describe('JsonSchemaPicker', () => {
     await selectOrganization(MOCK_ORGANIZATION_SAGEBIONETWORKS_NAME)
     const table = await screen.findByRole('table')
 
-    const nullVersionRow = (
-      await within(table).findByText(MOCK_NULL_VERSION_SCHEMA_NAME)
-    ).closest('tr')!
-
-    await userEvent.click(within(nullVersionRow).getByRole('checkbox'))
+    const nullVersionRow = await selectSchemaRow(
+      table,
+      MOCK_NULL_VERSION_SCHEMA_NAME,
+    )
 
     const versionSelect = await within(nullVersionRow).findByRole('combobox')
     await waitFor(
@@ -438,5 +473,24 @@ describe('JsonSchemaPicker', () => {
         ).toBeInTheDocument(),
       { timeout: 3000 },
     )
+  })
+
+  it('renders no version <Select> when a schema resolves to no versions', async () => {
+    renderPicker({ versionSelectionType: VersionSelectionType.REQUIRED })
+
+    await selectOrganization(MOCK_ORGANIZATION_SAGEBIONETWORKS_NAME)
+    const table = await screen.findByRole('table')
+
+    // The MSW handler returns an empty page for any schema name it doesn't otherwise recognize.
+    const fileEntityRow = await selectSchemaRow(table, 'repo.model.FileEntity')
+
+    await waitFor(() =>
+      expect(
+        within(fileEntityRow).queryByRole('progressbar'),
+      ).not.toBeInTheDocument(),
+    )
+    expect(
+      within(fileEntityRow).queryByRole('combobox'),
+    ).not.toBeInTheDocument()
   })
 })

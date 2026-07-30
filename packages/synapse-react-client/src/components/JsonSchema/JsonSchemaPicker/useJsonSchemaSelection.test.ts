@@ -1,5 +1,5 @@
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
-import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { createWrapperAndQueryClient } from '@/testutils/TestingLibraryUtils'
 import {
   JsonSchemaInfo,
   JsonSchemaVersionInfo,
@@ -59,6 +59,8 @@ function renderSelectionHook(
   }> = {},
 ) {
   const onSelectionChange = vi.fn()
+  const { wrapperFn, queryClient } = createWrapperAndQueryClient()
+  const fetchQuerySpy = vi.spyOn(queryClient, 'fetchQuery')
   const result = renderHook(
     ({ schemas, versionSelectionType, initialSelected }) =>
       useJsonSchemaSelection({
@@ -73,10 +75,10 @@ function renderSelectionHook(
         versionSelectionType: VersionSelectionType.REQUIRED,
         ...props,
       },
-      wrapper: createWrapper(),
+      wrapper: wrapperFn,
     },
   )
-  return { ...result, onSelectionChange }
+  return { ...result, onSelectionChange, fetchQuerySpy }
 }
 
 function selectSchema(
@@ -106,8 +108,14 @@ function mockVersionsFetchPending() {
   return (versions: JsonSchemaVersionInfo[]) => resolve({ page: versions })
 }
 
-async function flushMicrotasks() {
-  await new Promise(resolve => setTimeout(resolve, 10))
+/**
+ * Awaits the promise returned by the given `queryClient.fetchQuery` call
+ */
+async function awaitFetchQueryCall(
+  fetchQuerySpy: ReturnType<typeof vi.spyOn>,
+  callIndex = 0,
+) {
+  await fetchQuerySpy.mock.results[callIndex]?.value
 }
 
 describe('useJsonSchemaSelection', () => {
@@ -171,7 +179,7 @@ describe('useJsonSchemaSelection', () => {
 
   it('REQUIRED: a manual pick made before the auto-fetch resolves wins, and the stale fetch result is discarded', async () => {
     const resolveFetch = mockVersionsFetchPending()
-    const { result, onSelectionChange } = renderSelectionHook({
+    const { result, onSelectionChange, fetchQuerySpy } = renderSelectionHook({
       versionSelectionType: VersionSelectionType.REQUIRED,
     })
 
@@ -181,7 +189,7 @@ describe('useJsonSchemaSelection', () => {
     })
 
     resolveFetch([VERSION_1, VERSION_2])
-    await flushMicrotasks()
+    await act(() => awaitFetchQueryCall(fetchQuerySpy))
 
     expect(result.current.selectedVersionInfo).toEqual(VERSION_1)
     expect(onSelectionChange).toHaveBeenLastCalledWith({
@@ -192,7 +200,7 @@ describe('useJsonSchemaSelection', () => {
 
   it('REQUIRED: selecting a different schema before the auto-fetch resolves discards the stale result', async () => {
     const resolveFetchForA = mockVersionsFetchPending()
-    const { result, onSelectionChange } = renderSelectionHook({
+    const { result, onSelectionChange, fetchQuerySpy } = renderSelectionHook({
       versionSelectionType: VersionSelectionType.REQUIRED,
     })
 
@@ -201,7 +209,8 @@ describe('useJsonSchemaSelection', () => {
     selectSchema(result, SCHEMA_B)
 
     resolveFetchForA([VERSION_1, VERSION_2])
-    await flushMicrotasks()
+    // Await the fetch for A specifically (call 0) -- the fetch for B (call 1) is still pending.
+    await act(() => awaitFetchQueryCall(fetchQuerySpy, 0))
 
     expect(result.current.selectedSchema).toEqual(SCHEMA_B)
     expect(result.current.selectedVersionInfo).toBeUndefined()

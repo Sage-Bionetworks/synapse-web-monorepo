@@ -4,8 +4,8 @@
 export enum VersionSelectionType {
   /**
    * A specific, numbered semantic version must be selected. This is the default. Use this when
-   * the consumer needs a version reference that will not silently change as new versions of the
-   * schema are published.
+   * the consumer needs a reference to a specific version of the schema, rather than "whichever
+   * version is newest."
    */
   REQUIRED = 'REQUIRED',
   /**

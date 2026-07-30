@@ -3716,15 +3716,11 @@ export const getAllOfPaginatedService = async <T>(
   const results: T[] = []
 
   while (existsMoreData) {
-    try {
-      const data = await fn(limit, offset)
-      results.push(...data.results)
-      offset += data.results.length
-      if (data.results.length < limit) {
-        existsMoreData = false
-      }
-    } catch (e) {
-      throw Error(`Error on getting paginated results ${e}`)
+    const data = await fn(limit, offset)
+    results.push(...data.results)
+    offset += data.results.length
+    if (data.results.length < limit) {
+      existsMoreData = false
     }
   }
 

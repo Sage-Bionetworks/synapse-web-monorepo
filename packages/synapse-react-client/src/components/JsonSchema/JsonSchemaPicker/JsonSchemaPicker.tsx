@@ -1,6 +1,6 @@
-import { CheckBoxCell } from '@/components/EntityHeaderTable/EntityHeaderTableCellRenderers'
 import StyledVirtualTanStackTable from '@/components/TanStackTable/StyledVirtualTanStackTable'
 import ColumnHeader from '@/components/TanStackTable/ColumnHeader'
+import { useFetchNextPageOnScrollToBottom } from '@/components/TanStackTable/useFetchNextPageOnScrollToBottom'
 import {
   useListJsonSchemasInfinite,
   useListJsonSchemaVersions,
@@ -9,6 +9,7 @@ import { formatDate } from '@/utils/functions/DateFormatter'
 import {
   Alert,
   Autocomplete,
+  Checkbox,
   CircularProgress,
   Select,
   TextField,
@@ -22,15 +23,18 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import {
   CellContext,
-  ColumnDef,
   createColumnHelper,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import dayjs from 'dayjs'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import styles from './JsonSchemaPicker.module.scss'
+import {
+  JsonSchemaVersionSelectionContext,
+  useJsonSchemaVersionSelectionContext,
+} from './JsonSchemaVersionSelectionContext'
 import {
   LOADING_ORGANIZATIONS_OPTION,
   useJsonSchemaOrganizations,
@@ -68,6 +72,12 @@ export type JsonSchemaPickerProps = {
 }
 
 export const LATEST_OPTION_VALUE = '__LATEST__'
+
+// Estimated row height (px) for the virtualizer, used before a row has actually been measured.
+const ESTIMATED_ROW_HEIGHT_PX = 48
+// Number of rows to render outside the visible viewport, above and below, so scrolling doesn't
+// momentarily show blank space before the virtualizer catches up.
+const VIRTUALIZER_OVERSCAN = 5
 
 const filterOrganizationOptions = createFilterOptions<Organization>()
 
@@ -124,8 +134,12 @@ function JsonSchemaVersionSelect(props: JsonSchemaVersionSelectProps) {
     )
   }
 
-  if (isLoading || versions.length === 0) {
+  if (isLoading) {
     return <CircularProgress size={16} aria-label="Loading versions" />
+  }
+
+  if (versions.length === 0) {
+    return null
   }
 
   const showLatestOption =
@@ -160,6 +174,12 @@ function JsonSchemaVersionSelect(props: JsonSchemaVersionSelectProps) {
         }
       }}
     >
+      {versionSelectionType === VersionSelectionType.REQUIRED &&
+        !selectedVersionInfo && (
+          // A version is required but none has resolved yet (the auto-select-latest fetch
+          // above is still in flight)
+          <option value="" disabled />
+        )}
       {showLatestOption && <option value={LATEST_OPTION_VALUE}>Latest</option>}
       {versions.map(version => (
         <option
@@ -173,12 +193,30 @@ function JsonSchemaVersionSelect(props: JsonSchemaVersionSelectProps) {
   )
 }
 
-// Cell renderer wrapper for the version column, transforming props to use JsonSchemaVersionSelect
+/**
+ * Renders the row-selection checkbox for a schema row. Unlike the shared `CheckBoxCell`
+ * (`EntityHeaderTableCellRenderers`), this gives the checkbox an accessible name, since there's
+ * no visible label identifying which row a bare checkbox belongs to.
+ */
+function SchemaSelectCell(context: CellContext<JsonSchemaInfo, unknown>) {
+  const { row } = context
+  return (
+    <Checkbox
+      checked={row.getIsSelected()}
+      disabled={!row.getCanSelect()}
+      indeterminate={row.getIsSomeSelected()}
+      onClick={row.getToggleSelectedHandler()}
+      slotProps={{
+        input: {
+          'aria-label': `Select ${row.original.schemaName}`,
+        },
+      }}
+    />
+  )
+}
+
 function VersionColumnCell(context: CellContext<JsonSchemaInfo, unknown>) {
-  const meta = context.table.options.meta?.jsonSchemaVersionSelection
-  if (!meta) {
-    return null
-  }
+  const meta = useJsonSchemaVersionSelectionContext()
   const isSelected = context.row.getIsSelected()
   return (
     <JsonSchemaVersionSelect
@@ -193,23 +231,23 @@ function VersionColumnCell(context: CellContext<JsonSchemaInfo, unknown>) {
 
 const columnHelper = createColumnHelper<JsonSchemaInfo>()
 
-const STATIC_COLUMNS: ColumnDef<JsonSchemaInfo, any>[] = [
-  {
+const STATIC_COLUMNS = [
+  columnHelper.display({
     id: 'select',
     header: '',
-    cell: CheckBoxCell,
+    cell: SchemaSelectCell,
     maxSize: 50,
-  },
+  }),
   columnHelper.accessor('schemaName', {
     header: props => <ColumnHeader {...props} title="Schema Name" />,
     enableColumnFilter: false,
     enableSorting: false,
   }),
-  {
+  columnHelper.display({
     id: 'version',
     header: props => <ColumnHeader {...props} title="Version" />,
     cell: VersionColumnCell,
-  },
+  }),
   columnHelper.accessor('createdOn', {
     header: props => <ColumnHeader {...props} title="Created on" />,
     enableColumnFilter: false,
@@ -267,13 +305,11 @@ export function JsonSchemaPicker(props: JsonSchemaPickerProps) {
     initialSelected,
   })
 
-  const tableMeta = useMemo(
+  const versionSelectionContextValue = useMemo(
     () => ({
-      jsonSchemaVersionSelection: {
-        versionSelectionType,
-        selectedVersionInfo,
-        onVersionChange: handleVersionChange,
-      },
+      versionSelectionType,
+      selectedVersionInfo,
+      onVersionChange: handleVersionChange,
     }),
     [versionSelectionType, selectedVersionInfo, handleVersionChange],
   )
@@ -282,8 +318,7 @@ export function JsonSchemaPicker(props: JsonSchemaPickerProps) {
     data: schemas,
     columns: STATIC_COLUMNS,
     state: { rowSelection },
-    meta: tableMeta,
-    getRowId: row => getSchemaId(row),
+    getRowId: getSchemaId,
     enableRowSelection: true,
     enableMultiRowSelection: false,
     onRowSelectionChange: handleRowSelectionChange,
@@ -293,32 +328,18 @@ export function JsonSchemaPicker(props: JsonSchemaPickerProps) {
   const tableContainerRef = useRef<HTMLDivElement>(null)
   const rowVirtualizer = useVirtualizer({
     count: schemas.length,
-    estimateSize: () => 48,
+    estimateSize: () => ESTIMATED_ROW_HEIGHT_PX,
     getScrollElement: () => tableContainerRef.current,
-    overscan: 5,
+    overscan: VIRTUALIZER_OVERSCAN,
   })
 
-  // Called on scroll, and after data/callback changes, to fetch more schemas as the user
-  // approaches the bottom of the table.
-  const fetchMoreOnBottomReached = useCallback(
-    (containerRefElement?: HTMLDivElement | null) => {
-      if (containerRefElement) {
-        const { scrollHeight, scrollTop, clientHeight } = containerRefElement
-        if (
-          scrollHeight - scrollTop - clientHeight < 500 &&
-          !isFetchingNextSchemasPage &&
-          hasNextSchemasPage
-        ) {
-          void fetchNextSchemasPage()
-        }
-      }
-    },
-    [fetchNextSchemasPage, isFetchingNextSchemasPage, hasNextSchemasPage],
-  )
-
-  useEffect(() => {
-    fetchMoreOnBottomReached(tableContainerRef.current)
-  }, [schemas, fetchMoreOnBottomReached])
+  const fetchMoreOnBottomReached = useFetchNextPageOnScrollToBottom({
+    containerRef: tableContainerRef,
+    hasNextPage: hasNextSchemasPage,
+    isFetchingNextPage: isFetchingNextSchemasPage,
+    fetchNextPage: fetchNextSchemasPage,
+    data: schemas,
+  })
 
   return (
     <div className={styles.jsonSchemaPicker}>
@@ -398,18 +419,27 @@ export function JsonSchemaPicker(props: JsonSchemaPickerProps) {
         !isLoadingSchemas &&
         !isSchemasError &&
         schemas.length > 0 && (
-          <StyledVirtualTanStackTable<JsonSchemaInfo>
-            table={table}
-            rowVirtualizer={rowVirtualizer}
-            striped
-            styledTableContainerProps={{
-              ref: tableContainerRef,
-              className: styles.schemaTableContainer,
-            }}
-            onTableContainerScroll={target =>
-              fetchMoreOnBottomReached(target as HTMLDivElement)
-            }
-          />
+          <JsonSchemaVersionSelectionContext.Provider
+            value={versionSelectionContextValue}
+          >
+            <StyledVirtualTanStackTable<JsonSchemaInfo>
+              table={table}
+              rowVirtualizer={rowVirtualizer}
+              striped
+              styledTableContainerProps={{
+                ref: tableContainerRef,
+                className: styles.schemaTableContainer,
+              }}
+              onTableContainerScroll={target =>
+                fetchMoreOnBottomReached(target as HTMLDivElement)
+              }
+              slotProps={{
+                Tr: ({ tableRow }) => ({
+                  'aria-selected': tableRow?.getIsSelected() ?? false,
+                }),
+              }}
+            />
+          </JsonSchemaVersionSelectionContext.Provider>
         )}
     </div>
   )

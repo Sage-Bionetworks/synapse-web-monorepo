@@ -25,20 +25,14 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
-import {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import {
   BlockingLoader,
   SynapseSpinner,
 } from '../../../LoadingScreen/LoadingScreen'
 import ColumnHeader from '../../../TanStackTable/ColumnHeader'
 import StyledVirtualTanStackTable from '../../../TanStackTable/StyledVirtualTanStackTable'
+import { useFetchNextPageOnScrollToBottom } from '../../../TanStackTable/useFetchNextPageOnScrollToBottom'
 import { EntityFinderHeader } from '../../EntityFinderHeader'
 import { EntitySelectionMapType } from '../../useEntitySelection'
 import { VersionSelectionType } from '../../VersionSelectionType'
@@ -701,29 +695,13 @@ export function DetailsView(props: DetailsViewProps) {
   }
 
   //called on scroll and possibly on mount to fetch more data as the user scrolls and reaches bottom of table
-  const fetchMoreOnBottomReached = useCallback(
-    (containerRefElement?: HTMLDivElement | null) => {
-      if (containerRefElement) {
-        const { scrollHeight, scrollTop, clientHeight } = containerRefElement
-
-        //once the user has scrolled within 500px of the bottom of the table, fetch more data if we can
-        if (
-          scrollHeight - scrollTop - clientHeight < 500 &&
-          !isFetchingNextPage &&
-          hasNextPage &&
-          fetchNextPage
-        ) {
-          void fetchNextPage()
-        }
-      }
-    },
-    [fetchNextPage, isFetchingNextPage, hasNextPage],
-  )
-
-  //a check on mount and after a fetch to see if the table is already scrolled to the bottom and immediately needs to fetch more data
-  useEffect(() => {
-    fetchMoreOnBottomReached(tableContainerRef.current)
-  }, [entities, fetchMoreOnBottomReached])
+  const fetchMoreOnBottomReached = useFetchNextPageOnScrollToBottom({
+    containerRef: tableContainerRef,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    data: entities,
+  })
 
   return (
     <div className="EntityFinderDetailsView">

@@ -8,14 +8,15 @@ import { Meta, StoryObj } from '@storybook/react-vite'
 import { http, HttpResponse } from 'msw'
 import { JsonSchemaPickerModal } from './JsonSchemaPickerModal'
 import { VersionSelectionType } from './VersionSelectionType'
+import { fn } from 'storybook/test'
 
 const meta = {
   title: 'Synapse/JsonSchema/JsonSchemaPickerModal',
   component: JsonSchemaPickerModal,
   args: {
     open: true,
-    onConfirm: () => {},
-    onCancel: () => {},
+    onConfirm: fn(),
+    onCancel: fn(),
   },
   parameters: {
     stack: 'mock',
@@ -30,20 +31,17 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {}
 
-export const EmptyOrganizationPlaceholder: Story = {
-  name: 'No Organization Selected (Placeholder)',
-  args: {},
-}
-
 export const Loading: Story = {
   parameters: {
     msw: {
-      handlers: [
-        http.post(
-          `${MOCK_REPO_ORIGIN}/repo/v1/schema/organization/list`,
-          () => new Promise<never>(() => {}),
-        ),
-      ],
+      handlers: {
+        organizations: [
+          http.post(
+            `${MOCK_REPO_ORIGIN}/repo/v1/schema/organization/list`,
+            () => new Promise<never>(() => {}),
+          ),
+        ],
+      },
     },
   },
 }
@@ -51,14 +49,18 @@ export const Loading: Story = {
 export const ErrorState: Story = {
   parameters: {
     msw: {
-      handlers: [
-        http.post(`${MOCK_REPO_ORIGIN}/repo/v1/schema/organization/list`, () =>
-          HttpResponse.json(
-            { reason: 'Unable to load organizations' },
-            { status: 500 },
+      handlers: {
+        organizations: [
+          http.post(
+            `${MOCK_REPO_ORIGIN}/repo/v1/schema/organization/list`,
+            () =>
+              HttpResponse.json(
+                { reason: 'Unable to load organizations' },
+                { status: 500 },
+              ),
           ),
-        ),
-      ],
+        ],
+      },
     },
   },
 }

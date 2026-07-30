@@ -71,7 +71,9 @@ export function getHandlersForStorybook(
     researchProject: getResearchProjectHandlers(backendOrigin),
     file: getFileHandlers(backendOrigin),
     grid: getGridHandlers(backendOrigin),
-    jsonSchemaListing: getJsonSchemaListingHandlers(backendOrigin),
+    jsonSchemaListing: Object.values(
+      getJsonSchemaListingHandlers(backendOrigin),
+    ).flat(),
     discussion: getDiscussionHandlers(backendOrigin),
     subscription: getSubscriptionHandlers(backendOrigin),
     evaluation: getEvaluationHandlers(backendOrigin),
