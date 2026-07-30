@@ -4,7 +4,13 @@ import { ReactComponent as CurieAvatarHeadSvg } from '../illustrations/curie_ava
 
 const CurieAvatarHead = (props: SvgIconProps): React.ReactNode => {
   return (
-    <SvgIcon width="40" height="33" viewBox="0 0 40 33" {...props}>
+    <SvgIcon
+      height="32"
+      width="40"
+      viewBox="0 0 40 32"
+      overflow="visible"
+      {...props}
+    >
       <CurieAvatarHeadSvg />
     </SvgIcon>
   )
