@@ -81,7 +81,7 @@ export function useUpdateAgentSession(
 
 export function useSendChatMessageToAgent(
   options?: UseMutationOptions<
-    AgentChatResponse,
+    AsynchronousJobStatus<AgentChatRequest, AgentChatResponse>,
     SynapseClientError,
     AgentChatRequest
   >,
@@ -95,6 +95,7 @@ export function useSendChatMessageToAgent(
     SynapseClientError,
     AgentChatRequest
   >({
+    ...options,
     mutationFn: (request: AgentChatRequest) => {
       return SynapseClient.getAgentChatAsyncJobResults(
         request,
@@ -104,7 +105,7 @@ export function useSendChatMessageToAgent(
     },
     onSuccess: (data, variables, ctx) => {
       if (options?.onSuccess && data.responseBody) {
-        options.onSuccess(data.responseBody, variables, ctx)
+        options.onSuccess(data, variables, ctx)
       }
     },
     onError: (err, variables, ctx) => {
