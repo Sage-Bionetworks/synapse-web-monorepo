@@ -3,13 +3,19 @@ import {
   mockAgentSession,
   mockChatJobStatus,
 } from '@/mocks/chat/mockChat'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
 import { server } from '@/mocks/msw/server'
+import SynapseClient from '@/synapse-client'
 import { createWrapperAndQueryClient } from '@/testutils/TestingLibraryUtils'
 import { ASYNCHRONOUS_JOB_TOKEN, START_CHAT_ASYNC } from '@/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
+import {
+  FileHandleAssociateType,
+  FileHandleAssociation,
+} from '@sage-bionetworks/synapse-types'
 import { renderHook, waitFor } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
 import { useChatState } from './useChatState'
@@ -17,10 +23,30 @@ import { useChatState } from './useChatState'
 const JOB_ID = 'chat-job-1'
 const backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
+const mockAttachment: FileHandleAssociation = {
+  fileHandleId: '9999999',
+  associateObjectId: '9999999',
+  associateObjectType: FileHandleAssociateType.MessageAttachment,
+}
+
 describe('useChatState', () => {
   beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
+  afterEach(() => {
+    server.resetHandlers()
+    vi.restoreAllMocks()
+  })
   afterAll(() => server.close())
+
+  it('throws when there is no agent session', () => {
+    const { wrapperFn } = createWrapperAndQueryClient()
+    const { result } = renderHook(() => useChatState(undefined), {
+      wrapper: wrapperFn,
+    })
+
+    expect(() => result.current.sendChat('hello')).toThrow(
+      'No agent session available to send chat message.',
+    )
+  })
 
   it('shows the user message immediately, keeps the same interaction id once the job is registered, and clears isAwaitingResponse once the turn settles', async () => {
     // The job stays PROCESSING for one poll before completing, giving a real window in which the
@@ -67,5 +93,81 @@ describe('useChatState', () => {
     // isAwaitingResponse becomes false once the job leaves PROCESSING.
     await waitFor(() => expect(result.current.isAwaitingResponse).toBe(false))
     expect(result.current.interactions[0].id).toBe(id)
+  })
+
+  it('sends chatText/sessionId/enableTrace without an attachments field when no attachments are given', async () => {
+    const getAgentChatAsyncJobResults = vi
+      .spyOn(SynapseClient, 'getAgentChatAsyncJobResults')
+      .mockReturnValue(new Promise(() => {}))
+    const { wrapperFn } = createWrapperAndQueryClient()
+    const { result } = renderHook(() => useChatState(mockAgentSession), {
+      wrapper: wrapperFn,
+    })
+
+    result.current.sendChat('hello')
+
+    await waitFor(() =>
+      expect(getAgentChatAsyncJobResults).toHaveBeenCalledExactlyOnceWith(
+        {
+          concreteType: 'org.sagebionetworks.repo.model.agent.AgentChatRequest',
+          chatText: 'hello',
+          sessionId: mockAgentSession.sessionId,
+          enableTrace: true,
+        },
+        MOCK_ACCESS_TOKEN,
+        expect.any(Function),
+      ),
+    )
+  })
+
+  it('includes attachments on the request when provided', async () => {
+    const getAgentChatAsyncJobResults = vi
+      .spyOn(SynapseClient, 'getAgentChatAsyncJobResults')
+      .mockReturnValue(new Promise(() => {}))
+    const { wrapperFn } = createWrapperAndQueryClient()
+    const { result } = renderHook(() => useChatState(mockAgentSession), {
+      wrapper: wrapperFn,
+    })
+
+    result.current.sendChat('hello', [mockAttachment])
+
+    await waitFor(() =>
+      expect(getAgentChatAsyncJobResults).toHaveBeenCalledExactlyOnceWith(
+        {
+          concreteType: 'org.sagebionetworks.repo.model.agent.AgentChatRequest',
+          chatText: 'hello',
+          sessionId: mockAgentSession.sessionId,
+          enableTrace: true,
+          attachments: [mockAttachment],
+        },
+        MOCK_ACCESS_TOKEN,
+        expect.any(Function),
+      ),
+    )
+  })
+
+  it('omits the attachments field when given an empty array', async () => {
+    const getAgentChatAsyncJobResults = vi
+      .spyOn(SynapseClient, 'getAgentChatAsyncJobResults')
+      .mockReturnValue(new Promise(() => {}))
+    const { wrapperFn } = createWrapperAndQueryClient()
+    const { result } = renderHook(() => useChatState(mockAgentSession), {
+      wrapper: wrapperFn,
+    })
+
+    result.current.sendChat('hello', [])
+
+    await waitFor(() =>
+      expect(getAgentChatAsyncJobResults).toHaveBeenCalledExactlyOnceWith(
+        {
+          concreteType: 'org.sagebionetworks.repo.model.agent.AgentChatRequest',
+          chatText: 'hello',
+          sessionId: mockAgentSession.sessionId,
+          enableTrace: true,
+        },
+        MOCK_ACCESS_TOKEN,
+        expect.any(Function),
+      ),
+    )
   })
 })

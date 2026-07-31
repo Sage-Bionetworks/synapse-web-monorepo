@@ -6,9 +6,11 @@ import { SynapseClientError, useSynapseContext } from '@/utils'
 import {
   AgentChatRequest,
   AgentChatResponse,
-  AgentSession,
-  AsynchronousJobStatus,
   CreateAgentSessionRequest,
+  AgentSession,
+} from '@sage-bionetworks/synapse-client'
+import {
+  AsynchronousJobStatus,
   SessionHistoryRequest,
   SessionHistoryResponse,
   TraceEventsRequest,
@@ -33,7 +35,7 @@ export function useCreateAgentSession(
     CreateAgentSessionRequest
   >,
 ) {
-  const { accessToken } = useSynapseContext()
+  const { synapseClient } = useSynapseContext()
 
   return useMutation<
     AgentSession,
@@ -41,7 +43,9 @@ export function useCreateAgentSession(
     CreateAgentSessionRequest
   >({
     mutationFn: (request: CreateAgentSessionRequest) =>
-      SynapseClient.createAgentSession(request, accessToken),
+      synapseClient.agentChatServicesClient.postRepoV1AgentSession({
+        createAgentSessionRequest: request,
+      }),
     onSuccess: async (newAgentSession, variables, ctx) => {
       if (options?.onSuccess) {
         await options.onSuccess(newAgentSession, variables, ctx)
