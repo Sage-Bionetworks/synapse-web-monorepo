@@ -40,7 +40,9 @@ export function GridAgentChat({
   // Storing state for the chat session here preserves chat history while the dialog is opened and closed.
   const [agentSession, setAgentSession] = useState<AgentSession | undefined>()
   const chatState = useChatState(agentSession)
-  const useGridAgentV2 = useGetFeatureFlag(FeatureFlagEnum.GRID_AGENT_V2) // TODO: remove this once the feature flag is fully rolled out
+
+  // Feature flag to enable the new Grid Agent V2 functionality (multi-agent and attachment support).
+  const useGridAgentV2 = useGetFeatureFlag(FeatureFlagEnum.GRID_AGENT_V2)
 
   // Create session context for grid sessions
   const sessionContext: GridAgentSessionContext = {
