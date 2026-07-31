@@ -1,8 +1,13 @@
 import SynapseChatInteraction from '@/components/SynapseChat/SynapseChatInteraction'
 import usePollAsynchronousJob from '@/synapse-queries/asynchronous/usePollAsynchronousJob'
 import { useGetChatAgentTraceEvents } from '@/synapse-queries/chat/useChat'
-import { AgentChatResponse, TraceEvent } from '@sage-bionetworks/synapse-types'
+import {
+  AgentChatRequest,
+  AgentChatResponse,
+} from '@sage-bionetworks/synapse-client'
+import { TraceEvent } from '@sage-bionetworks/synapse-types'
 import { useCallback, useEffect, useState } from 'react'
+import { ChatAttachment } from './utils/types'
 
 function useTraceEvent(chatJobId: string | undefined, enabled: boolean) {
   const [traceEvents, setTraceEvents] = useState<TraceEvent[]>([])
@@ -51,6 +56,12 @@ type SynapseChatMessageProps = {
   scrollIntoView?: boolean
   animateEntry?: boolean
   isAwaitingResponse?: boolean
+  /**
+   * Attachments sent with this message. This information is not available in any API request/response
+   * until the job has finished processing, so this prop is used to optimistically render the attachment
+   * chips in the message bubble until the response arrives.
+   */
+  pendingAttachments?: ChatAttachment[]
 }
 
 export default function SynapseChatMessage(props: SynapseChatMessageProps) {
@@ -63,9 +74,11 @@ export default function SynapseChatMessage(props: SynapseChatMessageProps) {
     scrollIntoView,
     animateEntry,
     isAwaitingResponse,
+    pendingAttachments,
   } = props
   const { data: asyncJobStatus } = usePollAsynchronousJob(chatJobId)
 
+  const chatRequest = asyncJobStatus?.requestBody as AgentChatRequest
   const chatResponse = asyncJobStatus?.responseBody as
     | AgentChatResponse
     | undefined
@@ -76,6 +89,25 @@ export default function SynapseChatMessage(props: SynapseChatMessageProps) {
     !!chatJobId &&
     (!asyncJobStatus?.jobState || asyncJobStatus.jobState == 'PROCESSING')
   const { traceEvents } = useTraceEvent(chatJobId, enableTrace)
+
+  const attachments =
+    chatRequest?.attachments?.map(attachment => {
+      const fileHandleId = attachment.fileHandleId!
+      const status = chatResponse?.attachmentStatuses?.find(
+        s => s.fileHandleId === fileHandleId,
+      )
+      const pending = pendingAttachments?.find(
+        a => a.fileHandleId === fileHandleId,
+      )
+      // Prefer the server-resolved metadata once the job's response arrives. Fall back to what
+      // was optimistically sent (`pending`) so the chip doesn't lose its filename between the
+      // job being registered and its response arriving.
+      return {
+        fileHandleId,
+        fileName: status?.fileName ?? pending?.fileName,
+        contentType: status?.contentType ?? pending?.contentType,
+      }
+    }) ?? pendingAttachments
 
   return (
     <SynapseChatInteraction
@@ -89,6 +121,8 @@ export default function SynapseChatMessage(props: SynapseChatMessageProps) {
       scrollIntoView={scrollIntoView}
       animateEntry={animateEntry}
       isAwaitingResponse={isAwaitingResponse}
+      attachments={attachments}
+      attachmentStatuses={chatResponse?.attachmentStatuses}
     />
   )
 }

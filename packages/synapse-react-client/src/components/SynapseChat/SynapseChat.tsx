@@ -5,12 +5,17 @@ import {
 } from '@/synapse-queries/chat/useChat'
 import { useSynapseContext } from '@/utils'
 import { Alert, Box, Chip, List, Stack, Typography } from '@mui/material'
-import { GridAgentSessionContext } from '@sage-bionetworks/synapse-client'
-import { AgentAccessLevel, AgentSession } from '@sage-bionetworks/synapse-types'
+import {
+  AgentSession,
+  FileHandleAssociateType,
+  GridAgentSessionContext,
+} from '@sage-bionetworks/synapse-client'
+import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
 import { useEffect, useRef, useState } from 'react'
 import { SkeletonParagraph } from '../Skeleton'
 import { displayToast } from '../ToastMessage'
 import AccessLevelMenu from './AccessLevelMenu'
+import { ChatAttachment } from './utils/types'
 import { ChatInputArea } from './components/ChatInputArea/ChatInputArea'
 import SynapseChatMessage from './SynapseChatMessage'
 import { SmartToyTwoTone } from '@mui/icons-material'
@@ -61,6 +66,11 @@ export type SynapseChatProps = {
   suggestedPrompts?: string[]
   /** Optional custom avatar for the chatbot agent */
   agentAvatar?: React.ReactNode
+  /**
+   * Whether to allow the user to attach local files to their chat message.
+   * @default false
+   */
+  allowAttachments?: boolean
 }
 
 export function SynapseChat({
@@ -77,6 +87,7 @@ export function SynapseChat({
   showAccessLevelMenu = true,
   onChatResponse,
   suggestedPrompts,
+  allowAttachments = false,
 }: SynapseChatProps) {
   const { accessToken } = useSynapseContext()
   const { userId } = useApplicationSessionContext()
@@ -124,6 +135,14 @@ export function SynapseChat({
   // Keep track of the text that the user is currently typing into the textfield
   const [userChatTextfieldValue, setUserChatTextfieldValue] = useState('')
   const [initialMessageProcessed, setInitialMessageProcessed] = useState(false)
+
+  // A copy of the attachments sent with the optimistic/pending interaction, so it can still show
+  // rich (name/type) chips after ChatInputArea has cleared its own attachment state. Once the
+  // interaction gains a jobId, SynapseChatMessage renders its attachments from the polled async
+  // job's requestBody instead (see below), so this value is simply overwritten on the next send.
+  const [lastSentAttachments, setLastSentAttachments] = useState<
+    ChatAttachment[]
+  >([])
 
   // Restore chat session history, if exists.
   // TODO: currently only a single page is restored.  Add support for multiple pages (and detect the user scrolling up to restore the next page of results older)
@@ -174,9 +193,24 @@ export function SynapseChat({
     }
   }, [agentSession, initialMessage, initialMessageProcessed, sendChat])
 
-  const handleSend = (message: string) => {
-    sendChat(message)
+  const handleSend = (message: string, attachments: ChatAttachment[]) => {
+    sendChat(
+      message,
+      attachments.length
+        ? attachments.map(attachment => ({
+            fileHandleId: attachment.fileHandleId,
+            // The backend short-circuits the FileHandleAssociation auth check for a user's own
+            // uploaded file handle, so associateObjectId/associateObjectType are effectively
+            // unused here. FileHandleAssociateType has no dedicated value for "the uploader's
+            // own bare file handle", so this stubs associateObjectId to the fileHandleId itself
+            // and picks an arbitrary existing enum value.
+            associateObjectId: attachment.fileHandleId,
+            associateObjectType: FileHandleAssociateType.MessageAttachment,
+          }))
+        : undefined,
+    )
     setUserChatTextfieldValue('')
+    setLastSentAttachments(attachments)
   }
 
   if (createAgentSessionError) {
@@ -221,7 +255,7 @@ export function SynapseChat({
             setAgentAccessLevel(newAccessLevel)
             updateAgentSession({
               agentAccessLevel: newAccessLevel,
-              sessionId: agentSession!.sessionId,
+              sessionId: agentSession!.sessionId!,
             })
           }}
         />
@@ -250,6 +284,9 @@ export function SynapseChat({
             })} */}
             {interactions.map((interaction, index) => {
               const isLast = index === interactions.length - 1
+              // The interaction has no jobId until the async job is registered; until then,
+              // show the attachments the user just sent rather than waiting on the polled job.
+              const isPending = interaction.jobId == null
               return (
                 <SynapseChatMessage
                   agentAvatar={agentAvatar}
@@ -261,6 +298,9 @@ export function SynapseChat({
                   scrollIntoView={isLast}
                   animateEntry={!presentAtMount.has(interaction.id)}
                   isAwaitingResponse={isAwaitingResponse}
+                  pendingAttachments={
+                    isPending ? lastSentAttachments : undefined
+                  }
                 />
               )
             })}
@@ -301,6 +341,7 @@ export function SynapseChat({
             onSend={handleSend}
             placeholder={`Message ${chatbotName}`}
             disabled={!agentSession || isAwaitingResponse}
+            allowAttachments={allowAttachments}
           />
         </Box>
       </Box>

@@ -1,11 +1,12 @@
 import { useSendChatMessageToAgent } from '@/synapse-queries/chat/useChat'
 import { useSynapseContext } from '@/utils'
 import {
+  AgentSession,
   AgentChatRequest,
   AgentChatResponse,
-  AgentSession,
-  AsynchronousJobStatus,
-} from '@sage-bionetworks/synapse-types'
+  FileHandleAssociation,
+} from '@sage-bionetworks/synapse-client'
+import { AsynchronousJobStatus } from '@sage-bionetworks/synapse-types'
 import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useMemo, useRef, useState } from 'react'
 
@@ -19,7 +20,7 @@ export type ChatInteraction = {
 }
 
 export type ChatState = {
-  sendChat: (message: string) => void
+  sendChat: (message: string, attachments?: FileHandleAssociation[]) => void
   interactions: ChatInteraction[]
   isAwaitingResponse: boolean
 }
@@ -41,7 +42,7 @@ export function useChatState(
           const id = String(nextInteractionId.current++)
           setInteractions(prev => [
             ...prev,
-            { id, userMessage: newChatMessage.chatText },
+            { id, userMessage: newChatMessage.chatText! },
           ])
         },
         onSuccess: response => {
@@ -79,14 +80,16 @@ export function useChatState(
     )
 
   const sendChat = useCallback(
-    (message: string) => {
+    (message: string, attachments?: FileHandleAssociation[]) => {
       if (!agentSession?.sessionId) {
         throw new Error('No agent session available to send chat message.')
       }
       sendChatMessageToAgent({
+        concreteType: 'org.sagebionetworks.repo.model.agent.AgentChatRequest',
         chatText: message,
         sessionId: agentSession.sessionId,
         enableTrace: true,
+        ...(attachments && attachments.length > 0 ? { attachments } : {}),
       })
     },
     [agentSession?.sessionId, sendChatMessageToAgent],

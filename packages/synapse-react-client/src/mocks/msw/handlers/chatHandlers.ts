@@ -21,9 +21,31 @@ import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import {
   AgentChatRequest,
   AgentChatResponse,
-} from '@sage-bionetworks/synapse-types'
+} from '@sage-bionetworks/synapse-client'
 import { http, HttpResponse } from 'msw'
 import { generateAsyncJobHandlers } from './asyncJobHandlers'
+
+function buildMockChatResponse(request: AgentChatRequest): AgentChatResponse {
+  if (!request.attachments || request.attachments.length === 0) {
+    return mockAgentChatResponse
+  }
+  return {
+    ...mockAgentChatResponse,
+    attachmentStatuses: request.attachments.map((attachment, index) =>
+      index === 0
+        ? {
+            fileHandleId: attachment.fileHandleId,
+            status: 'FAILED',
+            failureCode: 'UNSUPPORTED_TYPE',
+            failureMessage: 'This file type is not supported.',
+          }
+        : {
+            fileHandleId: attachment.fileHandleId,
+            status: 'STAGED',
+          },
+    ),
+  }
+}
 
 let traceCallCount = 0
 export const getChatbotHandlers = (
@@ -50,7 +72,7 @@ export const getChatbotHandlers = (
   ...generateAsyncJobHandlers<AgentChatRequest, AgentChatResponse>(
     START_CHAT_ASYNC,
     tokenParam => GET_CHAT_ASYNC(tokenParam),
-    mockAgentChatResponse,
+    buildMockChatResponse,
     backendOrigin,
   ),
 
@@ -67,13 +89,4 @@ export const getChatbotHandlers = (
     } else
       return HttpResponse.json(mockEmptyTraceEventsResponse, { status: 201 })
   }),
-  // generateAsyncJobHandlers(
-  //   START_CHAT_ASYNC,
-  //   tokenParam => GET_CHAT_ASYNC(tokenParam),
-  //   {
-  //     reason: 'Failed to respond, timed out for example',
-  //   },
-  //   backendOrigin,
-  //   400
-  // )
 ]
