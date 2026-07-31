@@ -204,6 +204,14 @@ $remote-selection-colors:
   position: relative;
 }
 
+// SWC-7911 - Locking horizontal scroll while
+// a cell is in edit mode keeps the column mounted so the blur path always runs.
+// Horizontal scroll is restored as soon as the user exits edit mode (Tab/Enter)
+// since the :has selector no longer matches.
+.dsg-container:has(.dsg-input:focus) {
+  overflow-x: hidden;
+}
+
 // Column resize handle styles
 .column-resize-handle {
   position: absolute;

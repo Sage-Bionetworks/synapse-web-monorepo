@@ -240,7 +240,6 @@ const COLUMN_FACTORIES = {
 
     return {
       ...createBaseColumn(config, columnImpl),
-      cellClassName: 'MuiInputBase-input',
     }
   },
 }
