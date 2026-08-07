@@ -1,10 +1,10 @@
 import { EntityAnnotationKey } from '@/components/entity/metadata/EntityAnnotationKey'
 import { useGetJson } from '@/synapse-queries/entity/useEntity'
-import { useGetSchema } from '@/synapse-queries/entity/useSchema'
+import { useGetSchema } from '@/synapse-queries/jsonschema/useSchema'
 import {
   useGetSchemaBinding,
   useGetValidationResults,
-} from '@/synapse-queries/entity/useEntityBoundSchema'
+} from '@/synapse-queries/jsonschema/useEntityBoundSchema'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { isISOTimestamp } from '@/utils/functions/DateTimeUtils'
 import {

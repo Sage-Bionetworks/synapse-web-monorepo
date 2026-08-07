@@ -3716,15 +3716,11 @@ export const getAllOfPaginatedService = async <T>(
   const results: T[] = []
 
   while (existsMoreData) {
-    try {
-      const data = await fn(limit, offset)
-      results.push(...data.results)
-      offset += data.results.length
-      if (data.results.length < limit) {
-        existsMoreData = false
-      }
-    } catch (e) {
-      throw Error(`Error on getting paginated results ${e}`)
+    const data = await fn(limit, offset)
+    results.push(...data.results)
+    offset += data.results.length
+    if (data.results.length < limit) {
+      existsMoreData = false
     }
   }
 
@@ -3745,21 +3741,17 @@ export async function getAllOfNextPageTokenPaginatedService<T>(
   const results: T[] = []
 
   while (existsMoreData) {
-    try {
-      const data = await fn(nextPageToken)
-      // Some object models use `results`, others use `page`
-      if ('results' in data) {
-        results.push(...data.results)
-      } else if ('page' in data) {
-        results.push(...data.page)
-      }
-      nextPageToken = data.nextPageToken
+    const data = await fn(nextPageToken)
+    // Some object models use `results`, others use `page`
+    if ('results' in data) {
+      results.push(...data.results)
+    } else if ('page' in data) {
+      results.push(...data.page)
+    }
+    nextPageToken = data.nextPageToken
 
-      if (!nextPageToken) {
-        existsMoreData = false
-      }
-    } catch (e) {
-      throw Error(`Error on getting paginated results ${e}`)
+    if (!nextPageToken) {
+      existsMoreData = false
     }
   }
 
