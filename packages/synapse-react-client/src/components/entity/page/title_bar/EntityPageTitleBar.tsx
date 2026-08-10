@@ -108,7 +108,7 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
                 <ConditionalWrapper condition={isLoading} wrapper={Skeleton}>
                   <Typography
                     variant={'headline2'}
-                    sx={{ color: 'redesignGrey.950', fontWeight: 540 }}
+                    sx={{ color: 'greyV2.950', fontWeight: 540 }}
                   >
                     {name ?? 'Name not set'}
                   </Typography>
@@ -116,7 +116,7 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
                 {bundle?.entity?.id && (
                   <FavoriteButton
                     entityId={bundle.entity.id}
-                    iconColor={'redesignGrey.400'}
+                    iconColor={'greyV2.400'}
                   />
                 )}
               </Stack>
@@ -130,7 +130,7 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
                 icon="rounded"
                 sx={{
                   '& .MuiTypography-root': {
-                    color: 'redesignGrey.800',
+                    color: 'greyV2.800',
                     fontWeight: 440,
                     lineHeight: '20px',
                   },

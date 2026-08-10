@@ -449,7 +449,7 @@ const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
         >
           <Typography
             sx={{
-              color: 'redesignGrey.900',
+              color: 'greyV2.900',
               fontSize: '16px',
               lineHeight: '24px',
               fontWeight: 540,
@@ -460,7 +460,7 @@ const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
           </Typography>
           <Typography
             sx={{
-              color: 'redesignGrey.900',
+              color: 'greyV2.900',
               fontSize: '14px',
               lineHeight: '20px',
               fontWeight: 440,
@@ -474,9 +474,9 @@ const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
               sx={{
                 borderRadius: '6px',
                 border: '1px solid',
-                borderColor: 'redesignGrey.400',
+                borderColor: 'greyV2.400',
                 background: EDIT_PROVENANCE_BUTTON_BACKGROUND_COLOR,
-                color: 'redesignGrey.800',
+                color: 'greyV2.800',
                 fontWeight: 540,
                 lineHeight: '12px' /* 100% */,
                 letterSpacing: '-0.24px',

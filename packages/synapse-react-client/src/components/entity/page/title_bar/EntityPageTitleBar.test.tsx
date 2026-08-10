@@ -126,7 +126,7 @@ describe('Entity Page Title Bar', () => {
     await screen.findByTestId(FAVORITE_BUTTON_TEST_ID)
     expect(FavoriteButtonModule.default).toHaveBeenRenderedWithProps({
       entityId: defaultProps.entityId,
-      iconColor: 'redesignGrey.400',
+      iconColor: 'greyV2.400',
     })
   })
   it('Shows version info component', async () => {

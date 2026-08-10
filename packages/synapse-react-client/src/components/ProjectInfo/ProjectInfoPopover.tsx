@@ -101,7 +101,7 @@ export default function ProjectInfoPopover(props: ProjectInfoProps) {
             mt: '6px',
             borderRadius: '3px',
             border: '1px solid',
-            borderColor: 'redesignGrey.300',
+            borderColor: 'greyV2.300',
           },
         },
       }}

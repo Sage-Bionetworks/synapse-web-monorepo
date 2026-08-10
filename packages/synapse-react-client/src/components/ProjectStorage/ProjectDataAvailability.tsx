@@ -110,7 +110,7 @@ export function ProjectDataAvailability({
                 sx={{
                   width: '100%',
                   height: '6px',
-                  backgroundColor: 'redesignGrey.200',
+                  backgroundColor: 'greyV2.200',
                   borderRadius: '50px',
                 }}
               >

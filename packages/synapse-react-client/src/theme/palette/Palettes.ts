@@ -76,7 +76,7 @@ export const palette: PaletteOptions = {
     200: '#f1f3f5',
     100: '#fbfbfc',
   },
-  redesignGrey: {
+  greyV2: {
     50: '#f9f9fa',
     100: '#eceef1',
     200: '#dee0e5',

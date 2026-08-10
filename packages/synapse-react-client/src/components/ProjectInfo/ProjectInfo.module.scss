@@ -1,7 +1,7 @@
 $project-info-property-container-title: #16181e;
 
 .propertyTitle:global(.MuiTypography-root) {
-  color: var(--synapse-redesign-gray-600);
+  color: var(--synapse-v2-gray-600);
   font-size: 12px;
   font-weight: 400;
   line-height: 14px; /* 100% */
@@ -9,7 +9,7 @@ $project-info-property-container-title: #16181e;
 }
 
 .propertyValue:global(.MuiTypography-root) {
-  color: var(--synapse-redesign-gray-800);
+  color: var(--synapse-v2-gray-800);
   font-size: 14px;
   font-weight: 500;
   line-height: 20px; /* 142.857% */

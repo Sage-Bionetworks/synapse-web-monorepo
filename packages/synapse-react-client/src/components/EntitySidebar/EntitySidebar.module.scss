@@ -21,7 +21,7 @@ $sidebar-collapse-breakpoint: 1200px;
 
 .sidebarHeader:global(.MuiTypography-root) {
   font-size: 14px;
-  color: var(--synapse-redesign-gray-700);
+  color: var(--synapse-v2-gray-700);
   font-weight: 540;
   line-height: 20px; /* 142.857% */
 }
@@ -32,14 +32,14 @@ $sidebar-collapse-breakpoint: 1200px;
 }
 
 .propertyValue:global(.MuiTypography-root) {
-  color: var(--synapse-redesign-gray-800);
+  color: var(--synapse-v2-gray-800);
   font-style: normal;
   font-weight: 440;
   line-height: 20px; /* 142.857% */
 }
 
 .propertyTitle:global(.MuiTypography-root) {
-  color: var(--synapse-redesign-gray-600);
+  color: var(--synapse-v2-gray-600);
   font-size: 12px;
   line-height: 12px; /* 100% */
 }
@@ -74,11 +74,11 @@ $sidebar-collapse-breakpoint: 1200px;
 }
 
 .toggleButtonText:global(.MuiTypography-root) {
-  color: var(--synapse-redesign-gray-700);
+  color: var(--synapse-v2-gray-700);
   font-weight: 440;
   line-height: 20px; /* 142.857% */
 }
 
 .icon {
-  color: var(--synapse-redesign-gray-700);
+  color: var(--synapse-v2-gray-700);
 }

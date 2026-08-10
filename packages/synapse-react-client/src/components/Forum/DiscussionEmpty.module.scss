@@ -1,5 +1,5 @@
 .title:global(.MuiTypography-root) {
-  color: var(--synapse-redesign-gray-900);
+  color: var(--synapse-v2-gray-900);
   font-size: 16px;
   font-weight: 540;
   line-height: 24px; /* 150% */
@@ -8,7 +8,7 @@
 }
 
 .subtitle:global(.MuiTypography-root) {
-  color: var(--synapse-redesign-gray-900);
+  color: var(--synapse-v2-gray-900);
   font-size: 14px;
   font-weight: 440;
   line-height: 20px; /* 142.857% */
@@ -16,7 +16,7 @@
 }
 
 .button:global(.MuiButton-root) {
-  color: var(--synapse-redesign-gray-800);
+  color: var(--synapse-v2-gray-800);
   font-size: 12px;
   font-weight: 540;
   line-height: 12px; /* 100% */

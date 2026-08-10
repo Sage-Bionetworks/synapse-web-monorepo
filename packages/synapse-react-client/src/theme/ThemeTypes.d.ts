@@ -50,7 +50,7 @@ declare module '@mui/material/styles' {
 
   interface Palette {
     tertiary: Palette['primary']
-    redesignGrey: Palette['grey']
+    greyV2: Palette['grey']
     /* Neutral is same as grey, but provides a full palette so it can be used for components like buttons.
        This is necessary because the builtin grey cannot be overridden for this purpose. */
     neutral: Palette['primary']
@@ -61,7 +61,7 @@ declare module '@mui/material/styles' {
 
   interface PaletteOptions {
     tertiary: PaletteOptions['primary']
-    redesignGrey: PaletteOptions['grey']
+    greyV2: PaletteOptions['grey']
     /* Neutral is same as grey, but provides a full palette so it can be used for components like buttons.
        This is necessary because the builtin grey cannot be overridden for this purpose. */
     neutral: PaletteOptions['primary']
