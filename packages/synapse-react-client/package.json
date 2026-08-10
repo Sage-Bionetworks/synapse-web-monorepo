@@ -36,7 +36,7 @@
     "@emotion/styled": "^11.14.1",
     "@hyperjump/json-schema": "^1.17.6",
     "@mui/icons-material": "^7.3.11",
-    "@mui/material": "^7.3.11",
+    "@mui/material": "^9.1.1",
     "@mui/system": "^7.3.11",
     "@mui/utils": "^7.3.11",
     "@mui/x-data-grid": "^8.29.0",
