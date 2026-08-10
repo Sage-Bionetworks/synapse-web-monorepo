@@ -16,10 +16,10 @@ function getLastRenderedOnChange(): (value: Dayjs | string | null) => void {
 }
 
 function renderCell(props: Partial<DateTimeCellProps>) {
+  const defaults = { rowData: null, setRowData: vi.fn() }
   render(
     <DateTimeCell
-      rowData={null}
-      setRowData={vi.fn()}
+      {...(defaults as unknown as DateTimeCellProps)}
       {...(props as DateTimeCellProps)}
     />,
   )
