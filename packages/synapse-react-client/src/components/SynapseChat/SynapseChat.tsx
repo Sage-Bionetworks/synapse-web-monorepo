@@ -200,12 +200,12 @@ export function SynapseChat({
         ? attachments.map(attachment => ({
             fileHandleId: attachment.fileHandleId,
             // The backend short-circuits the FileHandleAssociation auth check for a user's own
-            // uploaded file handle, so associateObjectId/associateObjectType are effectively
-            // unused here. FileHandleAssociateType has no dedicated value for "the uploader's
+            // uploaded file handle, so associateObjectId/associateObjectType are not totally
+            // accurate here. FileHandleAssociateType has no dedicated value for "the uploader's
             // own bare file handle", so this stubs associateObjectId to the fileHandleId itself
-            // and picks an arbitrary existing enum value.
+            // and the FileEntity associate type, which supports the short-circuit path.
             associateObjectId: attachment.fileHandleId,
-            associateObjectType: FileHandleAssociateType.MessageAttachment,
+            associateObjectType: FileHandleAssociateType.FileEntity,
           }))
         : undefined,
     )

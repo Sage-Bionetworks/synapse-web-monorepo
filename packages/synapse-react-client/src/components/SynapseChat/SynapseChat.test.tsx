@@ -287,7 +287,7 @@ describe('SynapseChat - allowAttachments', () => {
     const [message, attachments] = mockSendChat.mock.calls[0]
     expect(message).toBe('hello')
     expect(attachments).toHaveLength(1)
-    expect(attachments[0].associateObjectType).toBe('MessageAttachment')
+    expect(attachments[0].associateObjectType).toBe('FileEntity')
     // The uploader's own bare file handle is referenced by id; see buildChatAttachmentAssociation.
     expect(attachments[0].associateObjectId).toBe(attachments[0].fileHandleId)
     expect(screen.getByRole('textbox')).toHaveValue('')
