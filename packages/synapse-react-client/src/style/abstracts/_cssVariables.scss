@@ -71,6 +71,19 @@
   --synapse-gray-200: #f1f3f5;
   --synapse-gray-100: #fbfbfc;
 
+  // Redesign greyscale colors
+  --synapse-redesign-gray-50: #f9f9fa;
+  --synapse-redesign-gray-100: #eceef1;
+  --synapse-redesign-gray-200: #dee0e5;
+  --synapse-redesign-gray-300: #b7bfc9;
+  --synapse-redesign-gray-400: #9eaab7;
+  --synapse-redesign-gray-500: #87929e;
+  --synapse-redesign-gray-600: #747d88;
+  --synapse-redesign-gray-700: #616972;
+  --synapse-redesign-gray-800: #4d535a;
+  --synapse-redesign-gray-900: #3b4046;
+  --synapse-redesign-gray-950: #33373d;
+
   // scss stuff that cannot be referenced - breakpoints, computation
   // if it doesn't change per app and is constant, it can stay here
 
