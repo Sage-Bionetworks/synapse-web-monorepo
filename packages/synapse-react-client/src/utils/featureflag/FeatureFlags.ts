@@ -30,4 +30,7 @@ export enum FeatureFlagEnum {
 
   // If enabled, show the Models section in the ELITE portal (nav item, Explore tab, and Search tab)
   ELITE_PORTAL_MODELS = 'ELITE_PORTAL_MODELS',
+
+  // If enabled, use Grid Agent V2 which supports multi-agent and chat attachments
+  GRID_AGENT_V2 = 'GRID_AGENT_V2',
 }

@@ -1,0 +1,16 @@
+.chip {
+  position: relative;
+}
+
+.removeBadge:global(.MuiButtonBase-root) {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  opacity: 0;
+  transition: opacity 100ms;
+}
+
+.chip:hover .removeBadge,
+.chip:focus-within .removeBadge {
+  opacity: 1;
+}

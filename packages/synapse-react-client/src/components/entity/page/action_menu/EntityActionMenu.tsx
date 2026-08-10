@@ -14,6 +14,7 @@ type EntityActionMenuDropdownMenuConfiguration = {
   visible: boolean
   tooltipText?: string
   disabled?: boolean
+  showFileAccessRequestNotice?: boolean
 }
 
 export type ActionConfiguration = {
@@ -208,6 +209,15 @@ export default function EntityActionMenu(props: EntityActionMenuProps) {
     convertSingleItemToButton: true,
     renderMenuIfNoItems: false,
     variant: layout.downloadMenuVariant,
+    showFileAccessRequestNotice:
+      menuConfiguration.DOWNLOAD.showFileAccessRequestNotice ?? false,
+    paperSx: {
+      borderRadius: '5px',
+      border: '1px solid #E2E4EA',
+      width: '279px',
+      padding: '12px 16px',
+    },
+    elevation: 3,
     buttonTooltip: menuConfiguration.DOWNLOAD.tooltipText,
     buttonProps: {
       disabled: menuConfiguration.DOWNLOAD.disabled,

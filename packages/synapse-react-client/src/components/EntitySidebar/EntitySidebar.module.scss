@@ -12,7 +12,7 @@ $sidebar-collapse-breakpoint: 1200px;
 
 .content {
   width: 320px;
-  margin-top: 40px;
+  margin-top: 64px;
   padding: 0 32px 0 0;
 
   @media (max-width: $sidebar-collapse-breakpoint) {
@@ -60,7 +60,7 @@ $sidebar-collapse-breakpoint: 1200px;
   display: flex;
   flex-direction: row;
   gap: 8px;
-  top: 0;
+  top: 14px;
   right: 32px;
   white-space: nowrap;
   align-self: flex-start;

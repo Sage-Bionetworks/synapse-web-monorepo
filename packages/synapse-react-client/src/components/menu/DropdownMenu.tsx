@@ -13,6 +13,7 @@ import {
   SxProps,
   Tooltip,
   Typography,
+  Box,
 } from '@mui/material'
 import {
   KeyboardEvent,
@@ -23,6 +24,37 @@ import {
   useState,
 } from 'react'
 import IconSvg, { IconName } from '../IconSvg/IconSvg'
+
+const fileAccessRequestNotice = (
+  <Box
+    sx={{
+      backgroundColor: '#EAF0F5',
+      color: '#3B4046',
+      padding: '6px 8px',
+      borderRadius: '3px',
+      marginTop: '8px',
+    }}
+  >
+    <Typography
+      sx={{
+        fontSize: '14px',
+        fontWeight: '440',
+        lineHeight: '20px',
+        letterSpacing: '-0.07px',
+      }}
+    >
+      <span
+        style={{
+          fontWeight: '700',
+        }}
+      >
+        Note:{' '}
+      </span>
+      You can add this file to your download list, but you must make an access
+      request before downloading.
+    </Typography>
+  </Box>
+)
 
 /**
  * Defines a configuration for a particular dropdown menu item
@@ -61,6 +93,10 @@ export type DropdownMenuProps = {
   convertSingleItemToButton?: boolean
   /* If true, nothing will be rendered if no actions are passed. Default false. */
   renderMenuIfNoItems?: boolean
+  paperSx?: SxProps
+  elevation?: number
+  /* If true, shows the file access request notice at the bottom of the menu. Default false. */
+  showFileAccessRequestNotice?: boolean
 }
 
 /**
@@ -75,6 +111,9 @@ export function DropdownMenu(props: DropdownMenuProps) {
     renderMenuIfNoItems = false,
     buttonProps = {},
     variant = 'outlined',
+    paperSx,
+    elevation,
+    showFileAccessRequestNotice = false,
   } = props
 
   const dropdownMenuId = useId()
@@ -171,98 +210,106 @@ export function DropdownMenu(props: DropdownMenuProps) {
       >
         {({ TransitionProps }) => (
           <Fade {...TransitionProps}>
-            <Paper>
+            <Paper elevation={elevation} sx={{ ...paperSx }}>
               <ClickAwayListener onClickAway={handleClose}>
-                <MenuList
-                  autoFocusItem={open}
-                  id={`composition-menu-${dropdownMenuId}`}
-                  aria-labelledby={`composition-button-${dropdownMenuId}`}
-                  onKeyDown={handleListKeyDown}
-                >
-                  {items.map((itemGroup, index, array) => {
-                    return [
-                      itemGroup.map(item => {
-                        return (
-                          <Tooltip
-                            key={item.text}
-                            title={item.tooltipText}
-                            placement={'left'}
-                          >
-                            <MenuItem
-                              // Always make the component an anchor in case href is defined.
-                              component="a"
-                              sx={{
-                                // Override the anchor-specific state styles, we don't want it to look like an anchor
-                                '&:hover': {
-                                  color: 'unset',
-                                },
-                                '&:focus': {
-                                  color: 'unset',
-                                  textDecoration: 'unset',
-                                },
-                              }}
-                              disabled={item.disabled}
-                              href={'href' in item ? item.href : undefined}
-                              rel={
-                                'href' in item
-                                  ? 'noopener noreferrer'
-                                  : undefined
-                              }
-                              // Allow pointer events on disabled item so tooltip works.
-                              style={{ pointerEvents: 'auto' }}
-                              onClick={(e: MouseEvent) => {
-                                /*
-                                 * Must check if the item is disabled because we set
-                                 * `pointer-events: 'auto'`
-                                 */
-                                if (
-                                  !item.disabled &&
-                                  'onClick' in item &&
-                                  item.onClick
-                                ) {
-                                  setOpen(false)
-                                  item.onClick(e)
-                                }
-                              }}
+                <Box>
+                  <MenuList
+                    autoFocusItem={open}
+                    id={`composition-menu-${dropdownMenuId}`}
+                    aria-labelledby={`composition-button-${dropdownMenuId}`}
+                    onKeyDown={handleListKeyDown}
+                  >
+                    {items.map((itemGroup, index, array) => {
+                      return [
+                        itemGroup.map(item => {
+                          return (
+                            <Tooltip
+                              key={item.text}
+                              title={item.tooltipText}
+                              placement={'left'}
                             >
-                              <ListItemIcon
-                                style={{
-                                  // MUI has specified a more specific minWidth for ListItemIcon inside a MenuList than
-                                  // we can create with sx, so apply an inline style for this property only.
-                                  minWidth: '30px',
+                              <MenuItem
+                                // Always make the component an anchor in case href is defined.
+                                component="a"
+                                sx={{
+                                  // Override the anchor-specific state styles, we don't want it to look like an anchor
+                                  '&:hover': {
+                                    color: 'unset',
+                                  },
+                                  '&:focus': {
+                                    color: 'unset',
+                                    textDecoration: 'unset',
+                                  },
+                                }}
+                                disabled={item.disabled}
+                                href={'href' in item ? item.href : undefined}
+                                rel={
+                                  'href' in item
+                                    ? 'noopener noreferrer'
+                                    : undefined
+                                }
+                                // Allow pointer events on disabled item so tooltip works.
+                                style={{ pointerEvents: 'auto' }}
+                                onClick={(e: MouseEvent) => {
+                                  /*
+                                   * Must check if the item is disabled because we set
+                                   * `pointer-events: 'auto'`
+                                   */
+                                  if (
+                                    !item.disabled &&
+                                    'onClick' in item &&
+                                    item.onClick
+                                  ) {
+                                    setOpen(false)
+                                    item.onClick(e)
+                                  }
                                 }}
                               >
                                 {item.icon && (
-                                  <IconSvg
-                                    icon={item.icon}
-                                    sx={{
-                                      width: '17px',
-                                      height: '17px',
-                                      ...item.iconSx,
+                                  <ListItemIcon
+                                    style={{
+                                      // MUI has specified a more specific minWidth for ListItemIcon inside a MenuList than
+                                      // we can create with sx, so apply an inline style for this property only.
+                                      minWidth: '30px',
                                     }}
-                                    wrap={false}
-                                  />
+                                  >
+                                    <IconSvg
+                                      icon={item.icon}
+                                      sx={{
+                                        width: '17px',
+                                        height: '17px',
+                                        ...item.iconSx,
+                                      }}
+                                      wrap={false}
+                                    />
+                                  </ListItemIcon>
                                 )}
-                              </ListItemIcon>
-                              <ListItemText
-                                sx={{ marginTop: 0 }}
-                                slotProps={{
-                                  primary: {
-                                    variant: 'smallText1',
-                                    sx: item.textSx,
-                                  },
-                                }}
-                              >
-                                {item.text}
-                              </ListItemText>
-                            </MenuItem>
-                          </Tooltip>
-                        )
-                      }),
-                      index < array.length - 1 && <Divider />,
-                    ]
-                  })}
-                </MenuList>
+                                <ListItemText
+                                  sx={{ marginTop: 0 }}
+                                  slotProps={{
+                                    primary: {
+                                      variant: 'smallText1',
+                                      sx: item.textSx,
+                                    },
+                                  }}
+                                >
+                                  {item.text}
+                                </ListItemText>
+                              </MenuItem>
+                            </Tooltip>
+                          )
+                        }),
+                        index < array.length - 1 && <Divider />,
+                      ]
+                    })}
+                  </MenuList>
+                  {showFileAccessRequestNotice && (
+                    <>
+                      {numberOfMenuItems > 0 && <Divider />}
+                      {fileAccessRequestNotice}
+                    </>
+                  )}
+                </Box>
               </ClickAwayListener>
             </Paper>
           </Fade>
