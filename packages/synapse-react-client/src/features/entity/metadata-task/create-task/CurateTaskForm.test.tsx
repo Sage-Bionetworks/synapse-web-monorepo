@@ -15,8 +15,6 @@ import {
   FileBasedMetadataTaskPropertiesConcreteTypeEnum,
   RecordBasedMetadataTaskPropertiesConcreteTypeEnum,
 } from '@sage-bionetworks/synapse-client'
-import { displayToast } from '@/components/ToastMessage/ToastMessage'
-import { CREATE_TASK_STATUS_NOT_SAVED_WARNING } from '../utils/constants'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import CurateTaskForm from './CurateTaskForm'
@@ -90,7 +88,6 @@ const mockUseDeleteCurationTask = vi.mocked(useDeleteCurationTask)
 const mockUseGetCurationTaskStatus = vi.mocked(useGetCurationTaskStatus)
 const mockUseUpdateCurationTaskStatus = vi.mocked(useUpdateCurationTaskStatus)
 const mockUseGetEntityPermissions = vi.mocked(useGetEntityPermissions)
-const mockDisplayToast = vi.mocked(displayToast)
 
 const FILE_BASED_TYPE =
   FileBasedMetadataTaskPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_metadata_FileBasedMetadataTaskProperties
@@ -275,15 +272,10 @@ describe('CurateTaskForm', () => {
       )
     })
 
-    it('applies the due date to the auto-created status as a UTC ISO 8601 timestamp', async () => {
+    it('includes the due date in the task payload on create', async () => {
       mockCreateMutateAsync.mockResolvedValue({
         taskId: MOCK_CURATION_TASK_ID,
       } as CurationTask)
-      mockGetStatus.mockResolvedValue({
-        taskId: MOCK_CURATION_TASK_ID,
-        state: 'NOT_STARTED',
-        etag: 'status-etag',
-      })
       const user = userEvent.setup()
       render(<CurateTaskForm projectId="syn123" onCreated={vi.fn()} />)
 
@@ -293,43 +285,10 @@ describe('CurateTaskForm', () => {
       await user.type(screen.getByLabelText(/file view id/i), 'syn2')
       await user.click(screen.getByRole('button', { name: /create/i }))
 
-      expect(mockUpdateStatusMutateAsync).toHaveBeenCalledWith(
-        expect.objectContaining({
-          taskId: MOCK_CURATION_TASK_ID,
-          dueDate: DUE_DATE_ISO,
-        }),
+      expect(mockCreateMutateAsync).toHaveBeenCalledWith(
+        expect.objectContaining({ dueDate: DUE_DATE_ISO }),
       )
-    })
-
-    it('treats the task as created when the status update fails, warning the user without duplicating the task', async () => {
-      mockCreateMutateAsync.mockResolvedValue({
-        taskId: MOCK_CURATION_TASK_ID,
-      } as CurationTask)
-      mockGetStatus.mockResolvedValue({
-        taskId: MOCK_CURATION_TASK_ID,
-        state: 'NOT_STARTED',
-        etag: 'status-etag',
-      })
-      mockUpdateStatusMutateAsync.mockRejectedValue(
-        new Error('Invalid due date'),
-      )
-      const onCreated = vi.fn()
-      const user = userEvent.setup()
-      render(<CurateTaskForm projectId="syn123" onCreated={onCreated} />)
-
-      await fillRequiredCommonFields()
-      await user.type(screen.getByLabelText(/upload folder id/i), 'syn1')
-      await user.type(screen.getByLabelText(/file view id/i), 'syn2')
-      await user.click(screen.getByRole('button', { name: /create/i }))
-
-      expect(mockCreateMutateAsync).toHaveBeenCalledTimes(1)
-      expect(onCreated).toHaveBeenCalledWith(
-        expect.objectContaining({ taskId: MOCK_CURATION_TASK_ID }),
-      )
-      expect(mockDisplayToast).toHaveBeenCalledWith(
-        CREATE_TASK_STATUS_NOT_SAVED_WARNING,
-        'warning',
-      )
+      expect(mockUpdateStatusMutateAsync).not.toHaveBeenCalled()
     })
 
     it('sets suggestedAuthorizationMode from the selected Authorization Mode', async () => {
@@ -370,6 +329,7 @@ describe('CurateTaskForm', () => {
       dataType: 'Existing Task',
       instructions: 'Existing instructions',
       assigneePrincipalId: MOCK_CURATION_TASK_ASSIGNEE_PRINCIPAL_ID,
+      dueDate: DUE_DATE_ISO,
       taskProperties: {
         concreteType: RECORD_BASED_TYPE,
         recordSetId: 'syn999',
@@ -378,14 +338,6 @@ describe('CurateTaskForm', () => {
     }
 
     it('prefills fields from the existing task and hides the project selector', () => {
-      mockUseGetCurationTaskStatus.mockReturnValue({
-        data: {
-          taskId: editTask.taskId,
-          state: 'NOT_STARTED',
-          dueDate: DUE_DATE_ISO,
-        },
-        isFetching: false,
-      } as any)
       render(<CurateTaskForm task={editTask} />)
 
       expect(screen.getByLabelText(/task due date/i)).toHaveValue(
@@ -443,14 +395,6 @@ describe('CurateTaskForm', () => {
     })
 
     it('saves the task via updateTask and calls onSaved', async () => {
-      mockUseGetCurationTaskStatus.mockReturnValue({
-        data: {
-          taskId: editTask.taskId,
-          state: 'NOT_STARTED',
-          dueDate: DUE_DATE_ISO,
-        },
-        isFetching: false,
-      } as any)
       mockUpdateMutateAsync.mockResolvedValue(editTask)
       const onSaved = vi.fn()
       const user = userEvent.setup()
@@ -459,21 +403,15 @@ describe('CurateTaskForm', () => {
       await user.click(screen.getByRole('button', { name: /^save$/i }))
 
       expect(mockUpdateMutateAsync).toHaveBeenCalledWith(
-        expect.objectContaining({ taskId: MOCK_CURATION_TASK_ID }),
+        expect.objectContaining({
+          taskId: MOCK_CURATION_TASK_ID,
+          dueDate: DUE_DATE_ISO,
+        }),
       )
       expect(onSaved).toHaveBeenCalledWith(editTask)
     })
 
-    it('clears the due date on the status when the user removes an existing due date', async () => {
-      mockUseGetCurationTaskStatus.mockReturnValue({
-        data: {
-          taskId: editTask.taskId,
-          state: 'NOT_STARTED',
-          dueDate: DUE_DATE_ISO,
-          etag: 'status-etag',
-        },
-        isFetching: false,
-      } as any)
+    it('clears the due date on the task when the user removes an existing due date', async () => {
       mockUpdateMutateAsync.mockResolvedValue({ ...editTask, etag: 'etag-2' })
       const user = userEvent.setup()
       render(<CurateTaskForm task={editTask} onSaved={vi.fn()} />)
@@ -484,9 +422,10 @@ describe('CurateTaskForm', () => {
 
       await user.click(screen.getByRole('button', { name: /^save$/i }))
 
-      expect(mockUpdateStatusMutateAsync).toHaveBeenCalledWith(
+      expect(mockUpdateMutateAsync).toHaveBeenCalledWith(
         expect.objectContaining({ dueDate: undefined }),
       )
+      expect(mockUpdateStatusMutateAsync).not.toHaveBeenCalled()
     })
 
     it('shows a warning when the Authorization Mode is changed', async () => {
