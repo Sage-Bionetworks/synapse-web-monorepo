@@ -2,11 +2,7 @@ import { SynapseSpinner } from '@/components/LoadingScreen/LoadingScreen'
 import extractMessageFromTraceEvent, {
   TraceMessage,
 } from '@/components/SynapseChat/extractMessageFromTraceEvent'
-import {
-  KeyboardArrowDown,
-  KeyboardArrowRight,
-  SmartToyTwoTone,
-} from '@mui/icons-material'
+import { KeyboardArrowDown, KeyboardArrowRight } from '@mui/icons-material'
 import {
   Alert,
   Box,
@@ -19,10 +15,26 @@ import {
   Tooltip,
   useTheme,
 } from '@mui/material'
-import { Color } from '@mui/material/styles'
 import { TraceEvent } from '@sage-bionetworks/synapse-types'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
+import styles from './SynapseChatInteraction.module.scss'
+import {
+  AttachmentStripItem,
+  ChatAttachmentStrip,
+} from './components/ChatAttachmentStrip/ChatAttachmentStrip'
+import { AgentChatAttachmentStatus } from '@sage-bionetworks/synapse-client'
+
+/**
+ * A chat attachment to display on a sent/pending turn. Only `fileHandleId` is guaranteed --
+ * `fileName`/`contentType` are omitted for a restored/polled turn, where only the fileHandleId
+ * that was sent to the server is known (see SynapseChatMessage).
+ */
+export type SynapseChatInteractionAttachment = {
+  fileHandleId: string
+  fileName?: string
+  contentType?: string
+}
 
 export type SynapseChatInteractionProps = {
   userMessage: string
@@ -31,6 +43,16 @@ export type SynapseChatInteractionProps = {
   scrollIntoView?: boolean
   chatErrorReason?: string
   onSendChat?: (message: string) => void
+  agentAvatar: React.ReactNode
+  userAvatar: React.ReactNode
+  /** Whether to play the fade/rise-in entry animation for this interaction on mount. */
+  animateEntry?: boolean
+  /** Whether a turn is currently in flight; gates the guide-prompt chips so they can't bypass the composer. */
+  isAwaitingResponse?: boolean
+  /** Attachments the user sent with this message, if any. */
+  attachments?: SynapseChatInteractionAttachment[]
+  /** Server-reported outcome of staging each attachment, if available (see AgentChatResponseWithAttachmentStatuses). */
+  attachmentStatuses?: AgentChatAttachmentStatus[]
 }
 
 // Show tool calls in the trace. Useful for development. We may want to show them to users in the future.
@@ -59,21 +81,35 @@ export function SynapseChatInteraction({
   chatResponseTrace,
   scrollIntoView = false,
   onSendChat,
+  agentAvatar,
+  userAvatar,
+  animateEntry = false,
+  isAwaitingResponse = false,
+  attachments,
+  attachmentStatuses,
 }: SynapseChatInteractionProps) {
   const theme = useTheme()
-  const ref = useRef<HTMLLIElement | null>(null)
+  const userMessageRef = useRef<HTMLLIElement | null>(null)
+  const responseRef = useRef<HTMLLIElement | null>(null)
   const [showTrace, setShowTrace] = useState(false)
 
-  useEffect(() => {
-    // on mount, scroll into view if instructed
-    if (scrollIntoView) {
-      if (ref.current) {
-        ref.current.scrollIntoView({ behavior: 'smooth' })
-      }
-    }
-  }, [ref, scrollIntoView])
-
   const isLoading = !chatResponseText && !chatErrorReason
+
+  useEffect(() => {
+    // on mount, scroll into view if instructed. This brings the "Thinking..." row to the top so
+    // the answer's opening lines are usually visible as soon as it starts streaming in.
+    if (scrollIntoView) {
+      userMessageRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [scrollIntoView])
+
+  useEffect(() => {
+    // once the response (or an error) arrives, scroll all the way to the bottom so the full
+    // answer - which may be taller than the viewport - is brought into view.
+    if (scrollIntoView && !isLoading) {
+      responseRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    }
+  }, [scrollIntoView, isLoading])
 
   const traceMessages = useMemo(
     () =>
@@ -133,51 +169,73 @@ export function SynapseChatInteraction({
     }
   }, [chatResponseText])
 
+  const attachmentItems: AttachmentStripItem[] = useMemo(
+    () =>
+      (attachments ?? []).map(attachment => {
+        const status = attachmentStatuses?.find(
+          s => s.fileHandleId === attachment.fileHandleId,
+        )
+        return {
+          fileHandleId: attachment.fileHandleId,
+          label: attachment.fileName ?? attachment.fileHandleId,
+          contentType: attachment.contentType,
+          status: status?.status === 'FAILED' ? 'failed' : 'default',
+          errorMessage: status?.failureMessage,
+        }
+      }),
+    [attachments, attachmentStatuses],
+  )
+
   return (
     <>
       <ListItem
-        ref={ref}
+        ref={userMessageRef}
         sx={{
           alignSelf: 'flex-end',
-          backgroundColor: (theme.palette.secondary as unknown as Color)[100],
-          borderRadius: '24px',
-          maxWidth: '70%',
-          display: 'block',
+          maxWidth: '82%',
           mb: '5px',
-          p: '8px 12px',
           wordWrap: 'break-word',
           width: 'auto',
+          display: 'grid',
+          gridTemplateColumns: 'auto auto',
+          columnGap: '16px',
+          alignItems: 'start',
+          justifyItems: 'end',
         }}
       >
-        <ListItemText primary={userMessage} />
+        <Box
+          className={animateEntry ? styles.entryAnimation : undefined}
+          sx={{
+            p: '4px 14px',
+            backgroundColor: '#F3F6F7',
+            borderRadius: '8px',
+          }}
+        >
+          <ListItemText primary={userMessage} />
+        </Box>
+        <Box sx={{ marginTop: '4px' }}>{userAvatar}</Box>
       </ListItem>
+      {attachmentItems.length > 0 && (
+        <ListItem sx={{ display: 'block', p: '0px', mb: '5px' }}>
+          <ChatAttachmentStrip items={attachmentItems} wrap />
+        </ListItem>
+      )}
       <ListItem
+        ref={responseRef}
         sx={{
           display: 'grid',
           gridTemplateColumns: '50px auto',
-          columnGap: '0px',
+          columnGap: '16px',
           justifyItems: 'center',
           alignItems: 'start',
           p: '0px',
+          padding: '10px',
         }}
       >
-        <Box
-          sx={{
-            p: '3px',
-            mt: '10px',
-            height: '31px',
-            borderRadius: '50%',
-            borderStyle: 'solid',
-            borderWidth: '1px',
-            borderColor: 'grey.300',
-          }}
-        >
-          <SmartToyTwoTone sx={{ color: 'secondary.main' }} />
-        </Box>
+        {agentAvatar}
         <Box
           sx={{
             borderRadius: '10px',
-            padding: '10px',
             maxWidth: '100%',
             overflow: 'auto',
           }}
@@ -241,22 +299,27 @@ export function SynapseChatInteraction({
               </Collapse>
             )}
           </Box>
-          {textContent && <MarkdownSynapse markdown={textContent} />}
-          {onSendChat && guidePrompts.length > 0 && (
-            <Stack direction="row" flexWrap="wrap" gap={1} mt={1}>
-              {guidePrompts.map(prompt => (
-                <Tooltip key={prompt} title={prompt}>
-                  <Chip
-                    label={prompt}
-                    variant="outlined"
-                    color="primary"
-                    clickable
-                    onClick={() => onSendChat(prompt)}
-                    sx={{ maxWidth: 200 }}
-                  />
-                </Tooltip>
-              ))}
-            </Stack>
+          {(textContent || (onSendChat && guidePrompts.length > 0)) && (
+            <Box className={animateEntry ? styles.entryAnimation : undefined}>
+              {textContent && <MarkdownSynapse markdown={textContent} />}
+              {onSendChat && guidePrompts.length > 0 && (
+                <Stack direction="row" flexWrap="wrap" gap={1} mt={1}>
+                  {guidePrompts.map(prompt => (
+                    <Tooltip key={prompt} title={prompt}>
+                      <Chip
+                        label={prompt}
+                        variant="outlined"
+                        color="primary"
+                        clickable
+                        disabled={isAwaitingResponse}
+                        onClick={() => onSendChat(prompt)}
+                        sx={{ maxWidth: 200 }}
+                      />
+                    </Tooltip>
+                  ))}
+                </Stack>
+              )}
+            </Box>
           )}
         </Box>
       </ListItem>

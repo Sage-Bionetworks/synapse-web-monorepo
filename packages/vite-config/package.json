@@ -39,7 +39,7 @@
     "@rolldown/plugin-babel": "^0.2.3",
     "@svgr/plugin-jsx": "^8.1.0",
     "@vitejs/plugin-react": "^6.0.2",
-    "svgo": "^3.3.3",
+    "svgo": "^3.3.4",
     "typescript": "6.0.3",
     "vite": "^8.0.16",
     "vite-plugin-dts": "^4.5.4",

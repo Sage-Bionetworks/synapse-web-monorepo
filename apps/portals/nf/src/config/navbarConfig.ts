@@ -69,6 +69,10 @@ export const navbarConfig: NavbarConfig = {
       children: [
         { name: 'News', path: 'https://news.nfdataportal.org/' },
         {
+          name: 'Roadmap',
+          path: 'https://nfosi-community-tools.vercel.app/roadmap',
+        },
+        {
           name: 'NF-OSI',
           path: 'https://help.nf.synapse.org/nf-data-portal-documentation/about',
         },
