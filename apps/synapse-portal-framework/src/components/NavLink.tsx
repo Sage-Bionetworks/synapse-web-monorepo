@@ -19,9 +19,12 @@ type Props = {
   style?: CSSProperties
   children: ReactNode
   target?: string
+  /** Tags the link as a guided tour target (rendered as the data-tour attribute) */
+  dataTourId?: string
 }
 export default function NavLink(props: Props) {
-  const { to, children, target, onClick, className, id, style } = props
+  const { to, children, target, onClick, className, id, style, dataTourId } =
+    props
   const smartLinkProps = useSmartLink(to, target)
 
   return (
@@ -31,6 +34,7 @@ export default function NavLink(props: Props) {
       className={className}
       id={id}
       style={style}
+      data-tour={dataTourId}
     >
       {children}
     </MuiLink>

@@ -14,6 +14,7 @@ import FacetNavPanel, {
 } from '../facet-nav/FacetNavPanel'
 import { PlotsContainerSkeleton } from './PlotsContainerSkeleton'
 import useFacetPlots, { getFacets } from './useFacetPlots'
+import { TOUR_TARGET_EXPLORE_CHARTS } from '@/components/GuidedTour/tourTargets'
 
 const DEFAULT_VISIBLE_PLOTS = 2
 type ShowMoreState = 'MORE' | 'LESS' | 'NONE'
@@ -263,6 +264,7 @@ function PlotsContainer(props: PlotsContainerProps) {
           className={`PlotsContainer ${showPlotVisualization ? '' : 'hidden'} ${
             showMoreButtonState === 'LESS' ? 'less' : ''
           }`}
+          data-tour={TOUR_TARGET_EXPLORE_CHARTS}
         >
           <div className="PlotsContainer__row" role="list">
             {plotUiStateArray.map(plotUiState => {

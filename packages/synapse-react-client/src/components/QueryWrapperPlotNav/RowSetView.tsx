@@ -11,6 +11,7 @@ import { Box } from '@mui/material'
 import { TablePagination } from '../SynapseTable/TablePagination'
 import { ViewMoreQueryResultsButton } from '../QueryWrapper/ViewMoreQueryResultsButton'
 import { useRowSet } from './UseRowSet'
+import { TOUR_TARGET_EXPLORE_RESULTS } from '@/components/GuidedTour/tourTargets'
 
 export type RowSetViewProps = {
   tableConfiguration?: SynapseTableConfiguration
@@ -54,7 +55,7 @@ export function RowSetView(props: RowSetViewProps) {
 
   return (
     <SynapseErrorBoundary>
-      <div className={`RowSetView`}>
+      <div className={`RowSetView`} data-tour={TOUR_TARGET_EXPLORE_RESULTS}>
         {isLoading && (
           <QueryWrapperLoadingScreen progressMessage={progressMessage} />
         )}

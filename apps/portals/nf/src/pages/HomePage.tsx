@@ -2,6 +2,7 @@ import NFHeader from '@sage-bionetworks/synapse-portal-framework/components/nf/N
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import { createQueryClientForLoader } from '@sage-bionetworks/synapse-portal-framework/utils/createQueryClientForLoader'
 import { mergeMeta } from '@sage-bionetworks/synapse-portal-framework/utils/mergeMeta'
+import { ContainerProps } from '@mui/material'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import type { MetaArgs, MetaDescriptor } from 'react-router'
 import { useLoaderData } from 'react-router'
@@ -22,6 +23,10 @@ import {
 } from 'synapse-react-client/components/UserCardList/UserCardListRotate'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { fundersSql, peopleSql, topProjectsSql } from '../config/resources'
+import {
+  TOUR_TARGET_HOME_GOALS,
+  TOUR_TARGET_HOME_NEW_STUDIES,
+} from '../config/tourConfig'
 import { columnAliases } from '../config/synapseConfigs/commonProps'
 import {
   organizationCardSchema,
@@ -107,7 +112,12 @@ export default function HomePage() {
       <SectionLayout
         title={'Resource Overview'}
         centerTitle
-        ContainerProps={{ className: 'home-spacer' }}
+        ContainerProps={
+          {
+            className: 'home-spacer',
+            'data-tour': TOUR_TARGET_HOME_GOALS,
+          } as ContainerProps
+        }
       >
         <Goals entityId={GOALS_ENTITY_ID} />
       </SectionLayout>
@@ -115,7 +125,12 @@ export default function HomePage() {
         <SectionLayout
           title={'New Studies'}
           centerTitle
-          ContainerProps={{ className: 'home-spacer' }}
+          ContainerProps={
+            {
+              className: 'home-spacer',
+              'data-tour': TOUR_TARGET_HOME_NEW_STUDIES,
+            } as ContainerProps
+          }
         >
           <CardContainerLogic
             initialLimit={STUDIES_INITIAL_LIMIT}

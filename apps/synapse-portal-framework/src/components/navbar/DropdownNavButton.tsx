@@ -13,8 +13,20 @@ import { MouseEvent, useState } from 'react'
 import { useMatch } from 'react-router'
 import NavLink from '../NavLink'
 
-export function DropdownNavButton(props) {
-  const { route, onClickedNavLink } = props
+type DropdownNavButtonProps = {
+  route: {
+    name: string
+    path: string
+    children?: { name: string; path: string }[]
+  }
+  onClickedNavLink: () => void
+  /** Tags the desktop dropdown button as a guided tour target */
+  dataTourId?: string
+  children?: React.ReactNode
+}
+
+export function DropdownNavButton(props: DropdownNavButtonProps) {
+  const { route, onClickedNavLink, dataTourId } = props
   const match = useMatch({ path: route.path, end: route.path === '/' })
   const theme = useTheme()
   const isSmallView = useMediaQuery(theme.breakpoints.down('lg'))
@@ -28,7 +40,7 @@ export function DropdownNavButton(props) {
     setAnchorEl(null)
   }
 
-  const navLinkChildItems = route.children.map(childRoute => {
+  const navLinkChildItems = (route.children ?? []).map(childRoute => {
     return (
       <MenuItem
         key={childRoute.path}
@@ -121,6 +133,7 @@ export function DropdownNavButton(props) {
             className={`nav-button-container nav-button center-content ${
               match ? 'active' : ''
             }`}
+            data-tour={dataTourId}
             onClick={handleClick}
             endIcon={<ExpandMoreIcon />}
             sx={{

@@ -34,6 +34,7 @@ import { CustomControlButton } from '../CustomControls/CustomControlButton'
 import { useSynapseContext } from '@/utils'
 import { SignInRequiredModal } from '@/components/SignInRequiredModal/SignInRequiredModal'
 import { SEND_TO_ANALYSIS_PLATFORM_SIGN_IN_MESSAGE } from '../SynapseTableUtils'
+import { TOUR_TARGET_EXPLORE_TOP_CONTROLS } from '@/components/GuidedTour/tourTargets'
 
 const SEND_TO_ANALYSIS_PLATFORM_BUTTON_ID =
   'SendToAnalysisPlatformTopLevelControlButton'
@@ -163,7 +164,11 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
       : null
 
   return (
-    <div className={`TopLevelControls`} data-testid="TopLevelControls">
+    <div
+      className={`TopLevelControls`}
+      data-testid="TopLevelControls"
+      data-tour={TOUR_TARGET_EXPLORE_TOP_CONTROLS}
+    >
       <div>
         <div className="TopLevelControls__querycount">
           {name && (

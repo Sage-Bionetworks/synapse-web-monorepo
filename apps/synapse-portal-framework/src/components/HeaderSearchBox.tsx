@@ -25,6 +25,7 @@ import {
 } from 'synapse-react-client/utils/functions/SqlFunctions'
 import { useChatDialogContext } from './ChatDialogContext'
 import { useSynapseContext } from 'synapse-react-client'
+import { TOUR_TARGET_PORTAL_SEARCH } from './tour/tourTargets'
 import { useGetSuggestionsForSearchIndex } from 'synapse-react-client/components/SearchQueryWrapper/SearchQueryUseQueryOptions'
 import { SearchIndexConfig } from '../types/portal-util-types'
 
@@ -106,7 +107,7 @@ const HeaderSearchBox = ({
   }
 
   return (
-    <Box className={styles.root} sx={sx}>
+    <Box className={styles.root} sx={sx} data-tour={TOUR_TARGET_PORTAL_SEARCH}>
       <Stack className={styles.stack}>
         <Box className={styles.searchRow}>
           {showChatOption ? (

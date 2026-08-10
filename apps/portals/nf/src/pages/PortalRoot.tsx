@@ -6,6 +6,7 @@ import logoHeaderConfig from '../config/logoHeaderConfig'
 import logoFooterConfig from '../config/logoFooterConfig'
 import headerConfig from '../config/headerConfig'
 import synapseChatConfig from '@/config/synapseChatConfig'
+import tourConfig from '@/config/tourConfig'
 
 // KaTeX CSS is not included in the SRC style bundle since it includes many large font files.
 import 'katex/dist/katex.css'
@@ -24,6 +25,7 @@ export default function NfPortalRoot() {
       logoHeaderConfig={logoHeaderConfig}
       logoFooterConfig={logoFooterConfig}
       synapseChatProps={synapseChatConfig}
+      tourConfig={tourConfig}
     />
   )
 }
