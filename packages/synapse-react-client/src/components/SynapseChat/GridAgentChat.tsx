@@ -1,10 +1,15 @@
 import { useChatState } from '@/components/SynapseChat/useChatState'
-import { GridAgentSessionContext } from '@sage-bionetworks/synapse-client'
-import { AgentAccessLevel, AgentSession } from '@sage-bionetworks/synapse-types'
+import {
+  AgentSession,
+  GridAgentSessionContext,
+} from '@sage-bionetworks/synapse-client'
+import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 import DraggableDialog from '../DraggableDialog/DraggableDialog'
 import { SynapseChat } from './index'
 import { ReactComponent as CurieAvatarHead } from '@/assets/illustrations/curie_avatar_head.svg'
+import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
+import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 
 const suggestedPrompts = [
   'Help me fill this out',
@@ -36,12 +41,16 @@ export function GridAgentChat({
   const [agentSession, setAgentSession] = useState<AgentSession | undefined>()
   const chatState = useChatState(agentSession)
 
+  // Feature flag to enable the new Grid Agent V2 functionality (multi-agent and attachment support).
+  const useGridAgentV2 = useGetFeatureFlag(FeatureFlagEnum.GRID_AGENT_V2)
+
   // Create session context for grid sessions
   const sessionContext: GridAgentSessionContext = {
     concreteType:
       'org.sagebionetworks.repo.model.agent.GridAgentSessionContext',
     gridSessionId,
     usersReplicaId,
+    experimental: useGridAgentV2,
   }
 
   return (
@@ -61,6 +70,7 @@ export function GridAgentChat({
         setExternalSession={setAgentSession}
         externalChatState={chatState}
         suggestedPrompts={suggestedPrompts}
+        allowAttachments={useGridAgentV2}
       />
     </DraggableDialog>
   )

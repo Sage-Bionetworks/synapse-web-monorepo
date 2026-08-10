@@ -1,7 +1,22 @@
+import { Add } from '@mui/icons-material'
 import ArrowUpward from '@mui/icons-material/ArrowUpward'
-import { Box, IconButton, TextareaAutosize } from '@mui/material'
-import { FormEventHandler, KeyboardEventHandler } from 'react'
+import { Box, IconButton, TextareaAutosize, Tooltip } from '@mui/material'
+import {
+  FormEventHandler,
+  KeyboardEventHandler,
+  useMemo,
+  useState,
+} from 'react'
+import {
+  AddFilesDialog,
+  ALLOWED_FILE_TYPES_LABEL,
+} from '../AddFilesDialog/AddFilesDialog'
+import {
+  AttachmentStripItem,
+  ChatAttachmentStrip,
+} from '../ChatAttachmentStrip/ChatAttachmentStrip'
 import styles from './ChatInputArea.module.scss'
+import { ChatAttachment } from '../../utils/types'
 
 /** Max number of visible rows the textarea grows to before it scrolls internally. */
 export const MAX_CHAT_INPUT_ROWS = 6
@@ -9,10 +24,12 @@ export const MAX_CHAT_INPUT_ROWS = 6
 export type ChatInputAreaProps = {
   value: string
   onValueChange: (value: string) => void
-  onSend: (message: string) => void
+  onSend: (message: string, attachments: ChatAttachment[]) => void
   placeholder?: string
   /** No session yet, or a response is in flight. */
   disabled?: boolean
+  /** @default false */
+  allowAttachments?: boolean
 }
 
 const actionButtonSx = {
@@ -35,14 +52,22 @@ export function ChatInputArea({
   onSend,
   placeholder,
   disabled = false,
+  allowAttachments = false,
 }: ChatInputAreaProps) {
-  const isSendDisabled = disabled || !value.trim()
+  const [pendingAttachments, setPendingAttachments] = useState<
+    ChatAttachment[]
+  >([])
+  const [isAddFilesDialogOpen, setIsAddFilesDialogOpen] = useState(false)
+  const [isUploadingAttachments, setIsUploadingAttachments] = useState(false)
+
+  const isSendDisabled = disabled || !value.trim() || isUploadingAttachments
 
   const submit = () => {
     if (isSendDisabled) {
       return
     }
-    onSend(value.trim())
+    onSend(value.trim(), pendingAttachments)
+    setPendingAttachments([])
   }
 
   const handleFormSubmit: FormEventHandler<HTMLFormElement> = event => {
@@ -59,9 +84,29 @@ export function ChatInputArea({
     }
   }
 
+  const attachmentItems: AttachmentStripItem[] = useMemo(
+    () =>
+      pendingAttachments.map(attachment => ({
+        fileHandleId: attachment.fileHandleId,
+        label: attachment.fileName,
+        contentType: attachment.contentType,
+      })),
+    [pendingAttachments],
+  )
+
   return (
     <>
       <Box component="form" className={styles.card} onSubmit={handleFormSubmit}>
+        {allowAttachments && (
+          <ChatAttachmentStrip
+            items={attachmentItems}
+            onRemove={fileHandleId =>
+              setPendingAttachments(prev =>
+                prev.filter(a => a.fileHandleId !== fileHandleId),
+              )
+            }
+          />
+        )}
         <TextareaAutosize
           className={styles.textarea}
           minRows={1}
@@ -72,6 +117,22 @@ export function ChatInputArea({
           placeholder={placeholder}
         />
         <div className={styles.actions}>
+          {allowAttachments && (
+            <Tooltip
+              title={`Upload files (${ALLOWED_FILE_TYPES_LABEL})`}
+              placement="left"
+            >
+              <IconButton
+                type="button"
+                aria-label="Add files"
+                disabled={disabled}
+                onClick={() => setIsAddFilesDialogOpen(true)}
+                sx={actionButtonSx}
+              >
+                <Add />
+              </IconButton>
+            </Tooltip>
+          )}
           <IconButton
             type="submit"
             aria-label="Send message"
@@ -82,6 +143,19 @@ export function ChatInputArea({
           </IconButton>
         </div>
       </Box>
+      {allowAttachments && (
+        <AddFilesDialog
+          open={isAddFilesDialogOpen}
+          onClose={() => setIsAddFilesDialogOpen(false)}
+          currentAttachmentCount={pendingAttachments.length}
+          onAttachmentUploaded={attachment =>
+            setPendingAttachments(prev => [...prev, attachment])
+          }
+          onUploadStateChange={state =>
+            setIsUploadingAttachments(state === 'UPLOADING')
+          }
+        />
+      )}
     </>
   )
 }
