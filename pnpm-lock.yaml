@@ -1686,8 +1686,8 @@ importers:
         specifier: 6.0.3
         version: 6.0.3
       undici:
-        specifier: ^6.26.0
-        version: 6.27.0
+        specifier: ^6.28.0
+        version: 6.28.0
       vite:
         specifier: ^8.0.16
         version: 8.0.16(@types/node@22.19.20)(esbuild@0.28.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0)
@@ -1830,8 +1830,8 @@ importers:
         specifier: 6.0.3
         version: 6.0.3
       undici:
-        specifier: ^6.26.0
-        version: 6.27.0
+        specifier: ^6.28.0
+        version: 6.28.0
       vite:
         specifier: ^8.0.16
         version: 8.0.16(@types/node@22.19.20)(esbuild@0.28.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0)
@@ -4446,6 +4446,7 @@ packages:
   '@plotly/mapbox-gl@1.13.4':
     resolution: {integrity: sha512-sR3/Pe5LqT/fhYgp4rT4aSFf1rTsxMbGiH6Hojc7PH36ny5Bn17iVFUjpzycafETURuFbLZUfjODO8LvSI+5zQ==}
     engines: {node: '>=6.4.0'}
+    deprecated: This package is deprecated as of August 2026. plotly.js v4 uses MapLibre for map traces — see https://github.com/maplibre/maplibre-gl-js.
 
   '@plotly/point-cluster@3.1.9':
     resolution: {integrity: sha512-MwaI6g9scKf68Orpr1pHZ597pYx9uP8UEFXLPbsCmuw3a84obwz6pnMXGc90VhgDNeNiLEdlmuK7CPo+5PIxXw==}
@@ -8112,6 +8113,10 @@ packages:
     resolution: {integrity: sha512-CY6crGq313MX8GkwvB7tzgp99vjQxY1++5y10/BKN/GUfHqWaOGQMNZkBvqSzsZKWk/ijwHlWzzkLulsGHhjWQ==}
     hasBin: true
 
+  js-yaml@4.3.1:
+    resolution: {integrity: sha512-CY6crGq313MX8GkwvB7tzgp99vjQxY1++5y10/BKN/GUfHqWaOGQMNZkBvqSzsZKWk/ijwHlWzzkLulsGHhjWQ==}
+    hasBin: true
+
   jsdom@20.0.3:
     resolution: {integrity: sha512-SYhBvTh89tTfCD/CRdSOm13mOBa42iTaTyfyEWBdKcGdPxPtLFBXuHR8XHb33YNYaP+lLbmSvBTsnoesCNJEsQ==}
     engines: {node: '>=14'}
@@ -10515,8 +10520,8 @@ packages:
   undici-types@7.27.2:
     resolution: {integrity: sha512-cH9f42mHuljpNuoS47sWDDWXVxWnJgYCzHVUlr3tn7+HVx0L6QSO+VG5qgzT4kXkR2K8ZsReaT5bupam6RNAEQ==}
 
-  undici@6.27.0:
-    resolution: {integrity: sha512-YmfV3YnEDzXRC5lZ2jWtWWHKGUm1zIt8AhesR1tens+HTNv+YZlN/dp6G727LOvMJ8xjP9Be7Y2Sdr96LDm+pg==}
+  undici@6.28.0:
+    resolution: {integrity: sha512-LIY910g9TI13YS95lrMFrs8Rm/u/irgHeTWoKCoteeJ04CUJ92eEfj0rVn+7VKMPBpUPiUoBKfhNyLI23EE/KA==}
     engines: {node: '>=18.17'}
 
   undici@7.29.0:
@@ -16977,6 +16982,10 @@ snapshots:
     dependencies:
       argparse: 2.0.1
 
+  js-yaml@4.3.1:
+    dependencies:
+      argparse: 2.0.1
+
   jsdom@20.0.3:
     dependencies:
       abab: 2.0.6
@@ -19973,7 +19982,7 @@ snapshots:
 
   undici-types@7.27.2: {}
 
-  undici@6.27.0: {}
+  undici@6.28.0: {}
 
   undici@7.29.0: {}
 
