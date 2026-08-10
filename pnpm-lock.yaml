@@ -4,6 +4,18 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    '@react-router/dev':
+      specifier: ^7.18.0
+      version: 7.18.2
+    '@react-router/node':
+      specifier: ^7.18.0
+      version: 7.18.2
+    react-router:
+      specifier: ^7.18.0
+      version: 7.18.2
+
 overrides:
   '@types/react': 19.2.14
   '@types/react-dom': 19.2.3
@@ -14,7 +26,6 @@ overrides:
   '@nx/devkit@22.0.3>minimatch': 9.0.9
   mocha@10.8.2>serialize-javascript: 7.0.5
   '@nestjs/core@11.1.17>path-to-regexp': 8.4.0
-  react-router: ^7.18.0
   axios: ^1.18.0
   form-data: ^4.0.6
   brace-expansion@^1.1.0: 1.1.18
@@ -144,7 +155,7 @@ importers:
         specifier: ^5.5.7
         version: 5.5.7(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react-router:
-        specifier: ^7.18.0
+        specifier: 'catalog:'
         version: 7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       sass:
         specifier: ^1.100.0
@@ -313,7 +324,7 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
       react-router:
-        specifier: ^7.18.0
+        specifier: 'catalog:'
         version: 7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       synapse-react-client:
         specifier: workspace:*
@@ -374,7 +385,7 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
       react-router:
-        specifier: ^7.18.0
+        specifier: 'catalog:'
         version: 7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       synapse-react-client:
         specifier: workspace:*
@@ -438,7 +449,7 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
       react-router:
-        specifier: ^7.18.0
+        specifier: 'catalog:'
         version: 7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       synapse-react-client:
         specifier: workspace:*
@@ -496,7 +507,7 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
       react-router:
-        specifier: ^7.18.0
+        specifier: 'catalog:'
         version: 7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       synapse-react-client:
         specifier: workspace:*
@@ -560,7 +571,7 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
       react-router:
-        specifier: ^7.18.0
+        specifier: 'catalog:'
         version: 7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       synapse-react-client:
         specifier: workspace:*
@@ -615,7 +626,7 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
       react-router:
-        specifier: ^7.18.0
+        specifier: 'catalog:'
         version: 7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       synapse-react-client:
         specifier: workspace:*
@@ -655,8 +666,8 @@ importers:
         specifier: ^7.3.11
         version: 7.3.11(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.7))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.7))(@types/react@19.2.14)(react@19.2.7))(@types/react@19.2.14)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@react-router/node':
-        specifier: ^7.17.0
-        version: 7.17.0(react-router@7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(typescript@6.0.3)
+        specifier: 'catalog:'
+        version: 7.18.2(react-router@7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(typescript@6.0.3)
       '@sage-bionetworks/synapse-portal-framework':
         specifier: workspace:*
         version: link:../../synapse-portal-framework
@@ -682,7 +693,7 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
       react-router:
-        specifier: ^7.18.0
+        specifier: 'catalog:'
         version: 7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       synapse-react-client:
         specifier: workspace:*
@@ -692,8 +703,8 @@ importers:
         version: 8.0.16(@types/node@22.19.20)(esbuild@0.28.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0)
     devDependencies:
       '@react-router/dev':
-        specifier: ^7.17.0
-        version: 7.17.0(@types/node@22.19.20)(babel-plugin-macros@3.1.0)(lightningcss@1.32.0)(react-router@7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.16(@types/node@22.19.20)(esbuild@0.28.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(yaml@2.9.0)
+        specifier: 'catalog:'
+        version: 7.18.2(@types/node@22.19.20)(babel-plugin-macros@3.1.0)(lightningcss@1.32.0)(react-router@7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.16(@types/node@22.19.20)(esbuild@0.28.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(yaml@2.9.0)
       '@types/node':
         specifier: ^22.19.20
         version: 22.19.20
@@ -749,7 +760,7 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
       react-router:
-        specifier: ^7.18.0
+        specifier: 'catalog:'
         version: 7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       synapse-react-client:
         specifier: workspace:*
@@ -816,7 +827,7 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
       react-router:
-        specifier: ^7.18.0
+        specifier: 'catalog:'
         version: 7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react-type-animation:
         specifier: ^3.2.0
@@ -874,7 +885,7 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
       react-router:
-        specifier: ^7.18.0
+        specifier: 'catalog:'
         version: 7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react-type-animation:
         specifier: ^3.2.0
@@ -932,7 +943,7 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
       react-router:
-        specifier: ^7.18.0
+        specifier: 'catalog:'
         version: 7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       synapse-react-client:
         specifier: workspace:*
@@ -999,7 +1010,7 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
       react-router:
-        specifier: ^7.18.0
+        specifier: 'catalog:'
         version: 7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react-type-animation:
         specifier: ^3.2.0
@@ -1057,7 +1068,7 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
       react-router:
-        specifier: ^7.18.0
+        specifier: 'catalog:'
         version: 7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       synapse-react-client:
         specifier: workspace:*
@@ -1112,7 +1123,7 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
       react-router:
-        specifier: ^7.18.0
+        specifier: 'catalog:'
         version: 7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       synapse-react-client:
         specifier: workspace:*
@@ -1155,8 +1166,8 @@ importers:
         specifier: ^7.3.11
         version: 7.3.11(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.7))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@19.2.14)(react@19.2.7))(@types/react@19.2.14)(react@19.2.7))(@types/react@19.2.14)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@react-router/node':
-        specifier: ^7.17.0
-        version: 7.17.0(react-router@7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(typescript@6.0.3)
+        specifier: 'catalog:'
+        version: 7.18.2(react-router@7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(typescript@6.0.3)
       '@sage-bionetworks/synapse-portal-framework':
         specifier: workspace:*
         version: link:../../synapse-portal-framework
@@ -1185,7 +1196,7 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
       react-router:
-        specifier: ^7.18.0
+        specifier: 'catalog:'
         version: 7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       synapse-react-client:
         specifier: workspace:*
@@ -1195,8 +1206,8 @@ importers:
         version: 8.0.16(@types/node@22.19.20)(esbuild@0.28.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0)
     devDependencies:
       '@react-router/dev':
-        specifier: ^7.17.0
-        version: 7.17.0(@types/node@22.19.20)(babel-plugin-macros@3.1.0)(lightningcss@1.32.0)(react-router@7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.16(@types/node@22.19.20)(esbuild@0.28.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(yaml@2.9.0)
+        specifier: 'catalog:'
+        version: 7.18.2(@types/node@22.19.20)(babel-plugin-macros@3.1.0)(lightningcss@1.32.0)(react-router@7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.16(@types/node@22.19.20)(esbuild@0.28.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(yaml@2.9.0)
       '@types/node':
         specifier: ^22.19.20
         version: 22.19.20
@@ -1249,7 +1260,7 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
       react-router:
-        specifier: ^7.18.0
+        specifier: 'catalog:'
         version: 7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       synapse-react-client:
         specifier: workspace:*
@@ -1322,7 +1333,7 @@ importers:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
       react-router:
-        specifier: ^7.18.0
+        specifier: 'catalog:'
         version: 7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       sass:
         specifier: ^1.100.0
@@ -1467,7 +1478,7 @@ importers:
         specifier: ^25.2.0
         version: 25.2.0(js-cookie@3.0.8)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@react-router/dev':
-        specifier: ^7.18.0
+        specifier: 'catalog:'
         version: 7.18.2(@types/node@22.19.20)(babel-plugin-macros@3.1.0)(lightningcss@1.32.0)(react-router@7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.16(@types/node@22.19.20)(esbuild@0.28.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(yaml@2.9.0)
       '@sage-bionetworks/synapse-client':
         specifier: workspace:*
@@ -1509,7 +1520,7 @@ importers:
         specifier: ^2.6.0
         version: 2.6.0(plotly.js@2.34.0(mapbox-gl@1.13.3))(react@19.2.7)
       react-router:
-        specifier: ^7.18.0
+        specifier: 'catalog:'
         version: 7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react-switch:
         specifier: ^7.1.0
@@ -2059,7 +2070,7 @@ importers:
         specifier: ^4.2.7
         version: 4.2.7(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react-router:
-        specifier: ^7.18.0
+        specifier: 'catalog:'
         version: 7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react-select:
         specifier: ^5.10.2
@@ -4545,30 +4556,6 @@ packages:
       js-cookie:
         optional: true
 
-  '@react-router/dev@7.17.0':
-    resolution: {integrity: sha512-+ITMmv/1xUB+QF6ehCCOIVBNBDuKIEE+3JKCt+kTBvxDTk1s49qHbtCA4TzJYge41pNRGtFIiy5VAksLSVJheg==}
-    engines: {node: '>=20.0.0'}
-    hasBin: true
-    peerDependencies:
-      '@react-router/serve': ^7.17.0
-      '@vitejs/plugin-rsc': ~0.5.21
-      react-router: ^7.18.0
-      react-server-dom-webpack: ^19.2.3
-      typescript: ^5.1.0 || ^6.0.0
-      vite: ^5.1.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
-      wrangler: ^3.28.2 || ^4.0.0
-    peerDependenciesMeta:
-      '@react-router/serve':
-        optional: true
-      '@vitejs/plugin-rsc':
-        optional: true
-      react-server-dom-webpack:
-        optional: true
-      typescript:
-        optional: true
-      wrangler:
-        optional: true
-
   '@react-router/dev@7.18.2':
     resolution: {integrity: sha512-EHd0nt6JzrrJzIQLD0VkomLQ5mRaaVdnvYmY86s2OHSiPvlRIFT4mftn1xzahDgmV1qDEf5lqSs3Yqr0tGELBg==}
     engines: {node: '>=20.0.0'}
@@ -4576,7 +4563,7 @@ packages:
     peerDependencies:
       '@react-router/serve': ^7.18.2
       '@vitejs/plugin-rsc': ~0.5.21
-      react-router: ^7.18.0
+      react-router: ^7.18.2
       react-server-dom-webpack: ^19.2.3
       typescript: ^5.1.0 || ^6.0.0
       vite: ^5.1.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
@@ -4593,21 +4580,11 @@ packages:
       wrangler:
         optional: true
 
-  '@react-router/node@7.17.0':
-    resolution: {integrity: sha512-RYR47qM9gJ8zV8Ntial5Rkgcst2YnwWXt0Ai34FezzkDK6AILpxpVatEzFEhNRwbSh6JO6iweY7XhfM4/K5dBA==}
-    engines: {node: '>=20.0.0'}
-    peerDependencies:
-      react-router: ^7.18.0
-      typescript: ^5.1.0 || ^6.0.0
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-
   '@react-router/node@7.18.2':
     resolution: {integrity: sha512-9+F7rRfNU+E+IwdpV/060m7RulaiI337WG+7nbbvcYoDGDe9BLhFmRzGSEXaZ/32nt+ABUTpbNMAQjxkJog/bg==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
-      react-router: ^7.18.0
+      react-router: 7.18.2
       typescript: ^5.1.0 || ^6.0.0
     peerDependenciesMeta:
       typescript:
@@ -13244,55 +13221,6 @@ snapshots:
     optionalDependencies:
       js-cookie: 3.0.8
 
-  '@react-router/dev@7.17.0(@types/node@22.19.20)(babel-plugin-macros@3.1.0)(lightningcss@1.32.0)(react-router@7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.16(@types/node@22.19.20)(esbuild@0.28.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(yaml@2.9.0)':
-    dependencies:
-      '@babel/core': 7.29.7
-      '@babel/generator': 7.29.7
-      '@babel/parser': 7.29.7
-      '@babel/plugin-syntax-jsx': 7.29.7(@babel/core@7.29.7)
-      '@babel/preset-typescript': 7.29.7(@babel/core@7.29.7)
-      '@babel/traverse': 7.29.7
-      '@babel/types': 7.29.7
-      '@react-router/node': 7.17.0(react-router@7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(typescript@6.0.3)
-      '@remix-run/node-fetch-server': 0.13.3
-      arg: 5.0.2
-      babel-dead-code-elimination: 1.0.12
-      chokidar: 4.0.3
-      dedent: 1.7.2(babel-plugin-macros@3.1.0)
-      es-module-lexer: 1.7.0
-      exit-hook: 2.2.1
-      isbot: 5.1.42
-      jsesc: 3.0.2
-      lodash: 4.18.1
-      p-map: 7.0.4
-      pathe: 1.1.2
-      picocolors: 1.1.1
-      pkg-types: 2.3.1
-      prettier: 3.8.3
-      react-refresh: 0.14.2
-      react-router: 7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      semver: 7.8.3
-      tinyglobby: 0.2.17
-      valibot: 1.4.1(typescript@6.0.3)
-      vite: 8.0.16(@types/node@22.19.20)(esbuild@0.28.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0)
-      vite-node: 3.2.4(@types/node@22.19.20)(lightningcss@1.32.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0)
-    optionalDependencies:
-      typescript: 6.0.3
-    transitivePeerDependencies:
-      - '@types/node'
-      - babel-plugin-macros
-      - jiti
-      - less
-      - lightningcss
-      - sass
-      - sass-embedded
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
-      - tsx
-      - yaml
-
   '@react-router/dev@7.18.2(@types/node@22.19.20)(babel-plugin-macros@3.1.0)(lightningcss@1.32.0)(react-router@7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(typescript@6.0.3)(vite@8.0.16(@types/node@22.19.20)(esbuild@0.28.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(yaml@2.9.0)':
     dependencies:
       '@babel/core': 7.29.7
@@ -13341,13 +13269,6 @@ snapshots:
       - terser
       - tsx
       - yaml
-
-  '@react-router/node@7.17.0(react-router@7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(typescript@6.0.3)':
-    dependencies:
-      '@mjackson/node-fetch-server': 0.2.0
-      react-router: 7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-    optionalDependencies:
-      typescript: 6.0.3
 
   '@react-router/node@7.18.2(react-router@7.18.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(typescript@6.0.3)':
     dependencies:
