@@ -1,0 +1,23 @@
+.accessAndPermissionsContainer {
+  padding: 12px 0;
+}
+
+.accessAndPermissionsRow {
+  display: flex;
+}
+
+.signInButton:global(.MuiButton-root),
+.accessButton:global(.MuiButton-root),
+.sharingSettingsButton:global(.MuiButton-root) {
+  height: 28px;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.accessButton {
+}
+
+.sharingSettingsButton {
+  border: 1px solid #9eaab7;
+  background: rgba(255, 255, 255, 0.6);
+}

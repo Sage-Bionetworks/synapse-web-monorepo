@@ -76,11 +76,11 @@ export default function EntitySidebar(props: EntitySidebarProps) {
         <Typography variant="overline" className={styles.sidebarHeader}>
           ACCESS & PERMISSIONS FOR THIS {friendlyName}
         </Typography>
+        <Divider className={styles.divider} />
         <AccessAndPermissions
           entityId={entityId}
           versionNumber={versionNumber}
         />
-        <Divider className={styles.divider} />
       </div>
     </Stack>
   )
