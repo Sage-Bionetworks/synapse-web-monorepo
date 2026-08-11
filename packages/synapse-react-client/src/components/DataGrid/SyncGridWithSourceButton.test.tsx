@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useGetEntity } from '@/synapse-queries'
-import { useGetSchemaBinding } from '@/synapse-queries/entity/useEntityBoundSchema'
+import { useGetSchemaBinding } from '@/synapse-queries/jsonschema/useEntityBoundSchema'
 import { useGetFeatureFlag } from '@/synapse-queries/featureflags'
 import { displayToast } from '@/components/ToastMessage/ToastMessage'
 import { mockSchemaBinding } from '@/mocks/mockSchema'
@@ -28,7 +28,7 @@ import useMergeGridWithSource, {
 } from './useMergeGridWithSource'
 
 vi.mock('@/synapse-queries')
-vi.mock('@/synapse-queries/entity/useEntityBoundSchema')
+vi.mock('@/synapse-queries/jsonschema/useEntityBoundSchema')
 vi.mock('@/synapse-queries/featureflags')
 vi.mock('./useMergeGridWithSource')
 vi.mock('@/components/ToastMessage/ToastMessage', () => ({
