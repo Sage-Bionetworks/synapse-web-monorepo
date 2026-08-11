@@ -285,10 +285,11 @@ describe('ComputeTaskForm', () => {
       await user.type(screen.getByLabelText(/destination task id/i), '2')
       await user.click(screen.getByRole('button', { name: /create/i }))
 
-      expect(mockCreateMutateAsync).toHaveBeenCalled()
+      expect(mockCreateMutateAsync).toHaveBeenCalledWith(
+        expect.not.objectContaining({ dueDate: expect.any(String) }),
+      )
       expect(mockUpdateStatusMutateAsync).toHaveBeenCalledWith(
         expect.objectContaining({
-          dueDate: undefined,
           executionDetails: {
             concreteType:
               'org.sagebionetworks.repo.model.curation.execution.SampleSheetGenerationExecutionDetails',
@@ -339,7 +340,7 @@ describe('ComputeTaskForm', () => {
       )
     })
 
-    it('applies the due date to the auto-created status as a UTC ISO 8601 timestamp, alongside executionDetails', async () => {
+    it('includes the due date in the task payload and executionDetails in the status on create', async () => {
       mockCreateMutateAsync.mockResolvedValue({
         taskId: MOCK_CURATION_TASK_ID,
       } as CurationTask)
@@ -357,15 +358,20 @@ describe('ComputeTaskForm', () => {
       await user.type(screen.getByLabelText(/destination task id/i), '2')
       await user.click(screen.getByRole('button', { name: /create/i }))
 
+      expect(mockCreateMutateAsync).toHaveBeenCalledWith(
+        expect.objectContaining({ dueDate: DUE_DATE_ISO }),
+      )
       expect(mockUpdateStatusMutateAsync).toHaveBeenCalledWith(
         expect.objectContaining({
           taskId: MOCK_CURATION_TASK_ID,
-          dueDate: DUE_DATE_ISO,
           executionDetails: {
             concreteType:
               'org.sagebionetworks.repo.model.curation.execution.SampleSheetGenerationExecutionDetails',
           },
         }),
+      )
+      expect(mockUpdateStatusMutateAsync).toHaveBeenCalledWith(
+        expect.not.objectContaining({ dueDate: expect.any(String) }),
       )
     })
 
@@ -448,6 +454,7 @@ describe('ComputeTaskForm', () => {
       dataType: 'Existing Task',
       instructions: 'Existing instructions',
       assigneePrincipalId: MOCK_CURATION_TASK_ASSIGNEE_PRINCIPAL_ID,
+      dueDate: DUE_DATE_ISO,
       taskProperties: {
         concreteType: RECORD_SET_TYPE,
         folderId: 'syn999',
@@ -457,14 +464,6 @@ describe('ComputeTaskForm', () => {
     }
 
     it('prefills fields from the existing task and hides the project selector', () => {
-      mockUseGetCurationTaskStatus.mockReturnValue({
-        data: {
-          taskId: editTask.taskId,
-          state: 'NOT_STARTED',
-          dueDate: DUE_DATE_ISO,
-        },
-        isFetching: false,
-      } as any)
       render(<ComputeTaskForm task={editTask} />)
 
       expect(screen.getByLabelText(/task due date/i)).toHaveValue(
@@ -533,14 +532,6 @@ describe('ComputeTaskForm', () => {
     })
 
     it('saves the task via updateTask and calls onSaved', async () => {
-      mockUseGetCurationTaskStatus.mockReturnValue({
-        data: {
-          taskId: editTask.taskId,
-          state: 'NOT_STARTED',
-          dueDate: DUE_DATE_ISO,
-        },
-        isFetching: false,
-      } as any)
       mockUpdateMutateAsync.mockResolvedValue(editTask)
       const onSaved = vi.fn()
       const user = userEvent.setup()
@@ -549,21 +540,15 @@ describe('ComputeTaskForm', () => {
       await user.click(screen.getByRole('button', { name: /^save$/i }))
 
       expect(mockUpdateMutateAsync).toHaveBeenCalledWith(
-        expect.objectContaining({ taskId: MOCK_CURATION_TASK_ID }),
+        expect.objectContaining({
+          taskId: MOCK_CURATION_TASK_ID,
+          dueDate: DUE_DATE_ISO,
+        }),
       )
       expect(onSaved).toHaveBeenCalledWith(editTask)
     })
 
-    it('clears the due date on the status when the user removes an existing due date', async () => {
-      mockUseGetCurationTaskStatus.mockReturnValue({
-        data: {
-          taskId: editTask.taskId,
-          state: 'NOT_STARTED',
-          dueDate: DUE_DATE_ISO,
-          etag: 'status-etag',
-        },
-        isFetching: false,
-      } as any)
+    it('clears the due date on the task when the user removes an existing due date', async () => {
       mockUpdateMutateAsync.mockResolvedValue({ ...editTask, etag: 'etag-2' })
       const user = userEvent.setup()
       render(<ComputeTaskForm task={editTask} onSaved={vi.fn()} />)
@@ -575,25 +560,30 @@ describe('ComputeTaskForm', () => {
 
       await user.click(screen.getByRole('button', { name: /^save$/i }))
 
-      expect(mockUpdateStatusMutateAsync).toHaveBeenCalledWith(
+      expect(mockUpdateMutateAsync).toHaveBeenCalledWith(
         expect.objectContaining({ dueDate: undefined }),
       )
+      expect(mockUpdateStatusMutateAsync).not.toHaveBeenCalled()
     })
 
-    it('preserves the stored due date verbatim when only the status state is changed', async () => {
+    it('preserves the stored due date verbatim in the task update when only the status state is changed', async () => {
       const OPAQUE_STORED_DUE_DATE = 'legacy-unparseable-value'
       mockUseGetCurationTaskStatus.mockReturnValue({
         data: {
           taskId: editTask.taskId,
           state: 'NOT_STARTED',
-          dueDate: OPAQUE_STORED_DUE_DATE,
           etag: 'status-etag',
         },
         isFetching: false,
       } as any)
       mockUpdateMutateAsync.mockResolvedValue({ ...editTask, etag: 'etag-2' })
       const user = userEvent.setup()
-      render(<ComputeTaskForm task={editTask} onSaved={vi.fn()} />)
+      render(
+        <ComputeTaskForm
+          task={{ ...editTask, dueDate: OPAQUE_STORED_DUE_DATE }}
+          onSaved={vi.fn()}
+        />,
+      )
 
       await user.click(screen.getByRole('combobox', { name: /^status$/i }))
       await user.click(
@@ -601,12 +591,12 @@ describe('ComputeTaskForm', () => {
       )
       await user.click(screen.getByRole('button', { name: /^save$/i }))
 
-      // The user never touched the due date field, so its stored value must not be rewritten or cleared.
+      // The user never touched the due date field, so the task's stored value must pass through verbatim.
+      expect(mockUpdateMutateAsync).toHaveBeenCalledWith(
+        expect.objectContaining({ dueDate: OPAQUE_STORED_DUE_DATE }),
+      )
       expect(mockUpdateStatusMutateAsync).toHaveBeenCalledWith(
-        expect.objectContaining({
-          state: 'IN_PROGRESS',
-          dueDate: OPAQUE_STORED_DUE_DATE,
-        }),
+        expect.objectContaining({ state: 'IN_PROGRESS' }),
       )
     })
 
@@ -615,7 +605,6 @@ describe('ComputeTaskForm', () => {
         data: {
           taskId: editTask.taskId,
           state: 'NOT_STARTED',
-          dueDate: DUE_DATE_ISO,
           etag: 'stale-etag',
         },
         isFetching: false,
@@ -627,17 +616,18 @@ describe('ComputeTaskForm', () => {
       const user = userEvent.setup()
       render(<ComputeTaskForm task={editTask} onSaved={vi.fn()} />)
 
-      const dueDateInput = screen.getByLabelText(/task due date/i)
-      await user.clear(dueDateInput)
-      await user.type(dueDateInput, '2031-02-02')
+      await user.click(screen.getByRole('combobox', { name: /^status$/i }))
+      await user.click(
+        await screen.findByRole('option', { name: /in progress/i }),
+      )
       await user.click(screen.getByRole('button', { name: /^save$/i }))
 
-      // The new due date is persisted as its UTC-midnight ISO 8601 encoding, using the freshly
-      // bumped shared etag.
+      // The task and its status share an etag; the status update must use the one returned by
+      // the preceding updateTask call, not the stale fetched one.
       expect(mockUpdateStatusMutateAsync).toHaveBeenCalledWith(
         expect.objectContaining({
           etag: 'bumped-etag',
-          dueDate: '2031-02-02T00:00:00.000Z',
+          state: 'IN_PROGRESS',
         }),
       )
     })
