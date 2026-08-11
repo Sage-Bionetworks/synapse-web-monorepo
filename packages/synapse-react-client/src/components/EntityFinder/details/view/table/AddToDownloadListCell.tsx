@@ -9,10 +9,13 @@ import { displayFilesWereAddedToDownloadListSuccess } from '../../../../download
 import IconSvg from '../../../../IconSvg/IconSvg'
 import { displayToast } from '../../../../ToastMessage/index'
 
+type AddToDownloadListCellProps = {
+  downloadIcon?: React.ReactNode
+}
 export function AddFileToDownloadListCell<T extends EntityIdAndVersionNumber>(
-  props: CellContext<T, unknown>,
+  props: CellContext<T, unknown> & AddToDownloadListCellProps,
 ) {
-  const { row } = props
+  const { row, downloadIcon } = props
   const { entityId, versionNumber } = row.original
   const { data: bundle } = useGetEntityBundle(entityId, versionNumber)
 
@@ -51,7 +54,7 @@ export function AddFileToDownloadListCell<T extends EntityIdAndVersionNumber>(
             event.stopPropagation()
           }}
         >
-          <IconSvg icon="download" />
+          {downloadIcon ?? <IconSvg icon="download" />}
         </IconButton>
       </Tooltip>
     </Box>

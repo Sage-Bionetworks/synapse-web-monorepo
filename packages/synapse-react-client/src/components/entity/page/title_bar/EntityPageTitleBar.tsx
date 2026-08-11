@@ -20,11 +20,8 @@ export type EntityPageTitleBarProps = {
   onActMemberClickAddConditionsForUse: () => void
 }
 
-export const FAVORITE_BUTTON_ICON_COLOR = '#9EAAB7'
 const TITLE_BAR_BACKGROUND_COLOR = '#EAF0F5'
 const AVATAR_BACKGROUND_COLOR = '#497097'
-const TITLE_NAME_COLOR = '#33373D'
-const SYN_ID_COLOR = '#4D535A'
 
 /**
  * The EntityPageTitleBar component is shown on every Entity page in Synapse, and shows an Entity's metadata and
@@ -111,7 +108,7 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
                 <ConditionalWrapper condition={isLoading} wrapper={Skeleton}>
                   <Typography
                     variant={'headline2'}
-                    sx={{ color: TITLE_NAME_COLOR, fontWeight: 540 }}
+                    sx={{ color: 'greyV2.950', fontWeight: 540 }}
                   >
                     {name ?? 'Name not set'}
                   </Typography>
@@ -119,7 +116,7 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
                 {bundle?.entity?.id && (
                   <FavoriteButton
                     entityId={bundle.entity.id}
-                    iconColor={FAVORITE_BUTTON_ICON_COLOR}
+                    iconColor={'greyV2.400'}
                   />
                 )}
               </Stack>
@@ -133,7 +130,7 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
                 icon="rounded"
                 sx={{
                   '& .MuiTypography-root': {
-                    color: SYN_ID_COLOR,
+                    color: 'greyV2.800',
                     fontWeight: 440,
                     lineHeight: '20px',
                   },

@@ -12,7 +12,6 @@ export type ProjectDataAvailabilityProps = {
   showBottomDivider?: boolean
 }
 const textColor = '#576077'
-const trackColor = '#DEE0E5'
 const fillColor = '#38756A'
 const MIN_VISIBLE_USAGE_PERCENT = 0.5
 
@@ -111,7 +110,7 @@ export function ProjectDataAvailability({
                 sx={{
                   width: '100%',
                   height: '6px',
-                  backgroundColor: trackColor,
+                  backgroundColor: 'greyV2.200',
                   borderRadius: '50px',
                 }}
               >

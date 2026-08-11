@@ -235,16 +235,12 @@ export default function CreateOrUpdateCurationTaskDialog(
   >(undefined)
   const displayedStatusState = pendingStatusState ?? currentTaskStatus?.state
 
-  // Due date (edit mode only, stored on TaskStatus)
+  // Due date (stored on CurationTask)
   const [pendingDueDate, setPendingDueDate] = useState<string | undefined>(
     undefined,
   )
   const displayedDueDate =
-    pendingDueDate ??
-    (isEditMode ? isoToDueDateInput(currentTaskStatus?.dueDate) : '')
-  const originalDueDateForComparison = isoToDueDateInput(
-    currentTaskStatus?.dueDate,
-  )
+    pendingDueDate ?? (isEditMode ? isoToDueDateInput(task?.dueDate) : '')
 
   const {
     mutateAsync: createTask,
@@ -325,6 +321,12 @@ export default function CreateOrUpdateCurationTaskDialog(
       dataType: dataType || undefined,
       instructions: instructions || undefined,
       assigneePrincipalId: assigneePrincipalId || undefined,
+      // When the user hasn't changed the due date, pass the task's stored value through verbatim so
+      // a field-only edit can never blank out or re-encode an existing due date.
+      dueDate:
+        pendingDueDate !== undefined
+          ? dueDateInputToIso(pendingDueDate)
+          : task?.dueDate,
       taskProperties,
     }
   }
@@ -337,18 +339,12 @@ export default function CreateOrUpdateCurationTaskDialog(
       const statusStateChanged =
         pendingStatusState !== undefined &&
         pendingStatusState !== currentTaskStatus?.state
-      const dueDateChanged =
-        pendingDueDate !== undefined &&
-        pendingDueDate !== originalDueDateForComparison
-
-      if ((statusStateChanged || dueDateChanged) && currentTaskStatus != null) {
+      if (statusStateChanged && currentTaskStatus != null) {
+        // The task and its status share an etag, and the preceding `updateTask` bumped it; the
+        // status update must use the etag returned by that update, not the stale fetched one.
         await updateTaskStatus({
           ...currentTaskStatus,
           state: pendingStatusState ?? currentTaskStatus.state,
-          dueDate:
-            pendingDueDate !== undefined
-              ? dueDateInputToIso(displayedDueDate)
-              : currentTaskStatus.dueDate,
           etag: latestTask.etag,
         })
       }

@@ -24,7 +24,7 @@ export function DateTimeCell({
       onChange={(newValue: string | Dayjs | null) => {
         if (newValue == null) {
           setRowData(null)
-        } else if (colType === 'number') {
+        } else if (colType === 'number' || colType === 'integer') {
           // Assume unix millisecond timestamp
           setRowData(dayjs(newValue).valueOf())
         } else {

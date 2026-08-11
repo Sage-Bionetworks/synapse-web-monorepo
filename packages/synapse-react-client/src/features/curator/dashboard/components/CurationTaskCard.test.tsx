@@ -146,8 +146,8 @@ describe('CurationTaskCard', () => {
     it('shows a neutral color when the task is COMPLETED even if the due date has passed', () => {
       renderComponent(
         createMockTaskBundle(
-          { projectId: 'syn123' },
-          { state: 'COMPLETED', dueDate: '2000-01-01' },
+          { projectId: 'syn123', dueDate: '2000-01-01' },
+          { state: 'COMPLETED' },
         ),
       )
       const chip = screen
@@ -159,8 +159,8 @@ describe('CurationTaskCard', () => {
     it('shows a neutral color when the task is CANCELED even if the due date has passed', () => {
       renderComponent(
         createMockTaskBundle(
-          { projectId: 'syn123' },
-          { state: 'CANCELED', dueDate: '2000-01-01' },
+          { projectId: 'syn123', dueDate: '2000-01-01' },
+          { state: 'CANCELED' },
         ),
       )
       const chip = screen
@@ -172,8 +172,8 @@ describe('CurationTaskCard', () => {
     it('shows an overdue color when the due date has passed and the task is not complete', () => {
       renderComponent(
         createMockTaskBundle(
-          { projectId: 'syn123' },
-          { state: 'IN_PROGRESS', dueDate: '2000-01-01' },
+          { projectId: 'syn123', dueDate: '2000-01-01' },
+          { state: 'IN_PROGRESS' },
         ),
       )
       const chip = screen

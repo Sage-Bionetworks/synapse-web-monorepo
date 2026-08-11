@@ -172,7 +172,7 @@ export default function CurationTaskCardLayout(
         <div className={styles.statusContainer}>
           <TaskStatusChip state={taskBundle.status?.state} />
           <DueDateChip
-            dueDate={taskBundle.status?.dueDate}
+            dueDate={taskBundle.task?.dueDate}
             taskState={taskBundle.status?.state}
           />
         </div>
