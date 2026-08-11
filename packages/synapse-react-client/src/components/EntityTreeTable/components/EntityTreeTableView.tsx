@@ -19,6 +19,7 @@ export const EntityTreeTableView: React.FC<EntityTreeTableViewProps> = ({
         table={table}
         styledTableContainerProps={{
           className,
+          noBackgroundColor: true,
         }}
         fullWidth={true}
         slots={{

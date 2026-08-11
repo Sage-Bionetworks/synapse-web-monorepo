@@ -1,8 +1,5 @@
-$text-color: #3b4046;
-$button-text-color: #4d535a;
-
 .title:global(.MuiTypography-root) {
-  color: $text-color;
+  color: var(--synapse-v2-gray-900);
   font-size: 16px;
   font-weight: 540;
   line-height: 24px; /* 150% */
@@ -11,7 +8,7 @@ $button-text-color: #4d535a;
 }
 
 .subtitle:global(.MuiTypography-root) {
-  color: $text-color;
+  color: var(--synapse-v2-gray-900);
   font-size: 14px;
   font-weight: 440;
   line-height: 20px; /* 142.857% */
@@ -19,7 +16,7 @@ $button-text-color: #4d535a;
 }
 
 .button:global(.MuiButton-root) {
-  color: $button-text-color;
+  color: var(--synapse-v2-gray-800);
   font-size: 12px;
   font-weight: 540;
   line-height: 12px; /* 100% */
