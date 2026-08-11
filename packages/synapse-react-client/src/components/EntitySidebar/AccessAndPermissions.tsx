@@ -37,11 +37,15 @@ function AccessAndPermissions({
     true,
   )
 
-  const { data: restrictionInformation } = useGetRestrictionInformation({
-    restrictableObjectType: RestrictableObjectType.ENTITY,
-    objectId: entityId,
-  })
-  const { data: entityBundle } = useGetEntityBundle(entityId, versionNumber)
+  const { data: restrictionInformation, isLoading: isLoadingRestrictionInfo } =
+    useGetRestrictionInformation({
+      restrictableObjectType: RestrictableObjectType.ENTITY,
+      objectId: entityId,
+    })
+  const { data: entityBundle, isLoading: isLoadingEntityBundle } =
+    useGetEntityBundle(entityId, versionNumber)
+
+  const isLoading = isLoadingRestrictionInfo || isLoadingEntityBundle
 
   const canView = entityBundle?.permissions.canView
   const canDownload = entityBundle?.permissions.canDownload
@@ -52,14 +56,14 @@ function AccessAndPermissions({
 
   const showAccessButton = restrictionLevel !== RestrictionLevel.OPEN
   const accessButtonText = hasUnmetAccessRequirement
-    ? 'Request Access'
+    ? 'Request to download'
     : 'View Terms'
   const accessButtonVariant = hasUnmetAccessRequirement
     ? 'contained'
     : 'outlined'
 
-  const checkIcon = <CheckCircleRoundedIcon sx={{ color: 'green' }} />
-  const blockIcon = <BlockFlippedIcon sx={{ color: 'red' }} />
+  const checkIcon = <CheckCircleRoundedIcon sx={{ color: '#3E8379' }} />
+  const blockIcon = <BlockFlippedIcon sx={{ color: '#D42322' }} />
 
   const downloadIcon =
     canDownload && !hasUnmetAccessRequirement ? checkIcon : blockIcon
@@ -74,26 +78,34 @@ function AccessAndPermissions({
     downloadText = 'You can download'
   }
 
+  const viewText = canView ? 'You can view metadata' : "You can't view metadata"
+
   return (
     <Stack className={styles.accessAndPermissionsContainer}>
-      {isAuthenticated && (
+      {isAuthenticated && !isLoading && (
         <>
           <Box className={styles.accessAndPermissionsRow}>
             {canView ? checkIcon : blockIcon}
-            <Typography>
-              {canView ? 'You can view metadata' : "You can't view metadata"}
+            <Typography
+              className={`${styles.accessAndPermissionsText}${!canView ? ` ${styles.accessAndPermissionsBlockedTextColor}` : ''}`}
+            >
+              {viewText}
             </Typography>
           </Box>
           <Box className={styles.accessAndPermissionsRow}>
             {downloadIcon}
-            <Typography>{downloadText}</Typography>
+            <Typography
+              className={`${styles.accessAndPermissionsText}${downloadIcon === blockIcon ? ` ${styles.accessAndPermissionsBlockedTextColor}` : ''}`}
+            >
+              {downloadText}
+            </Typography>
           </Box>
         </>
       )}
-      <Box>
+      <Box className={styles.buttonContainer}>
         {showAccessButton && (
           <Button
-            className={styles.accessButton}
+            className={`${styles.button} ${accessButtonVariant === 'outlined' ? styles.outlinedButton : ''}`}
             variant={accessButtonVariant}
             onClick={handleGetAccess}
           >
@@ -102,7 +114,7 @@ function AccessAndPermissions({
         )}
         {isAuthenticated ? (
           <Button
-            className={styles.sharingSettingsButton}
+            className={`${styles.button} ${styles.outlinedButton}`}
             variant="outlined"
             onClick={() => setShowSharingSettings(true)}
           >
@@ -110,7 +122,7 @@ function AccessAndPermissions({
           </Button>
         ) : (
           <Button
-            className={styles.signInButton}
+            className={styles.button}
             variant="contained"
             onClick={() => {
               storeRedirectURLForOneSageLoginAndGotoURL(oneSageUrl.toString())
