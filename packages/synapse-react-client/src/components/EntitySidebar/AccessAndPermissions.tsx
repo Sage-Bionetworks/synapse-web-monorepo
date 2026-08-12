@@ -65,8 +65,10 @@ function AccessAndPermissions({
     ? 'contained'
     : 'outlined'
 
-  const checkIcon = <CheckCircleRoundedIcon sx={{ color: '#3E8379' }} />
-  const blockIcon = <BlockFlippedIcon sx={{ color: '#D42322' }} />
+  const checkIcon = (
+    <CheckCircleRoundedIcon className={styles.checkCircleIcon} />
+  )
+  const blockIcon = <BlockFlippedIcon className={styles.blockIcon} />
 
   const downloadIcon =
     canDownload && !hasUnmetAccessRequirement ? checkIcon : blockIcon
