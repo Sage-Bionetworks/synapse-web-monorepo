@@ -54,7 +54,10 @@ function AccessAndPermissions({
     restrictionInformation?.hasUnmetAccessRequirement
   const restrictionLevel = restrictionInformation?.restrictionLevel
 
-  const showAccessButton = restrictionLevel !== RestrictionLevel.OPEN
+  const showAccessButton =
+    !isLoadingRestrictionInfo &&
+    restrictionLevel !== undefined &&
+    restrictionLevel !== RestrictionLevel.OPEN
   const accessButtonText = hasUnmetAccessRequirement
     ? 'Request to download'
     : 'View Terms'

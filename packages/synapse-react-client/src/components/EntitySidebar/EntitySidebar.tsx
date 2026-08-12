@@ -54,7 +54,7 @@ export default function EntitySidebar(props: EntitySidebarProps) {
         <Typography variant="overline" className={styles.sidebarHeader}>
           About this {friendlyName}
         </Typography>
-        <Divider className={styles.divider} />
+        <Divider />
         <Stack className={styles.propertiesContainer}>
           {properties.map(property => (
             <Stack key={property.key} className={styles.propertyRow}>
@@ -76,7 +76,7 @@ export default function EntitySidebar(props: EntitySidebarProps) {
         <Typography variant="overline" className={styles.sidebarHeader}>
           ACCESS & PERMISSIONS FOR THIS {friendlyName}
         </Typography>
-        <Divider className={styles.divider} />
+        <Divider />
         <AccessAndPermissions
           entityId={entityId}
           versionNumber={versionNumber}
