@@ -115,11 +115,21 @@ export const SetManagedAccessRequirementFields = forwardRef(
       return undefined
     }, [updatedAr?.ducTemplateFileHandleId, updatedAr?.id])
 
-    const { data: eDucTemplatePage, isLoading: isLoadingEDucTemplates } =
-      useListEDucTemplates()
+    const {
+      data: eDucTemplateData,
+      isLoading: isLoadingEDucTemplates,
+      hasNextPage: hasNextEDucTemplatePage,
+      fetchNextPage: fetchNextEDucTemplatePage,
+    } = useListEDucTemplates()
+    // Auto-fetch all pages so the dropdown always shows the complete template list.
+    useEffect(() => {
+      if (hasNextEDucTemplatePage) {
+        void fetchNextEDucTemplatePage()
+      }
+    }, [hasNextEDucTemplatePage, fetchNextEDucTemplatePage])
     const eDucTemplates = useMemo(
-      () => eDucTemplatePage?.results ?? [],
-      [eDucTemplatePage],
+      () => eDucTemplateData?.pages.flatMap(page => page.results ?? []) ?? [],
+      [eDucTemplateData],
     )
     const selectedEDucTemplate = useMemo(
       () =>
