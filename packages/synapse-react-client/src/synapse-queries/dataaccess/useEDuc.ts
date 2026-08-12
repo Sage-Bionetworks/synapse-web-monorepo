@@ -11,6 +11,10 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
+  InfiniteData,
+  QueryKey,
+  useInfiniteQuery,
+  UseInfiniteQueryOptions,
   useMutation,
   UseMutationOptions,
   useQuery,
@@ -19,22 +23,41 @@ import {
 } from '@tanstack/react-query'
 
 /**
- * List the eDUC templates registered in DocuSign.
+ * List the eDUC templates registered in DocuSign (all pages).
  * @see POST /repo/v1/eDuc/template
  */
-export function useListEDucTemplates(
-  request: EDucTemplateListRequest = {},
-  options?: Partial<UseQueryOptions<EDucTemplatePage, SynapseClientError>>,
+export function useListEDucTemplates<TData = InfiniteData<EDucTemplatePage>>(
+  request: Omit<EDucTemplateListRequest, 'nextPageToken'> = {},
+  options?: Partial<
+    UseInfiniteQueryOptions<
+      EDucTemplatePage,
+      SynapseClientError,
+      TData,
+      QueryKey,
+      EDucTemplatePage['nextPageToken']
+    >
+  >,
 ) {
   const { keyFactory, synapseClient } = useSynapseContext()
 
-  return useQuery({
+  return useInfiniteQuery<
+    EDucTemplatePage,
+    SynapseClientError,
+    TData,
+    QueryKey,
+    EDucTemplatePage['nextPageToken']
+  >({
     ...options,
     queryKey: keyFactory.listEDucTemplatesQueryKey(request),
-    queryFn: () =>
+    queryFn: context =>
       synapseClient.dataAccessServicesClient.postRepoV1EDucTemplate({
-        eDucTemplateListRequest: request,
+        eDucTemplateListRequest: {
+          ...request,
+          nextPageToken: context.pageParam,
+        },
       }),
+    initialPageParam: undefined,
+    getNextPageParam: page => page.nextPageToken,
   })
 }
 
