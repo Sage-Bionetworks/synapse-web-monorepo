@@ -11,7 +11,6 @@ import { DoiObjectType, EntityType } from '@sage-bionetworks/synapse-client'
 import { EntityRefCollectionView } from '@sage-bionetworks/synapse-types'
 import { ReactNode, useState } from 'react'
 import CopyToClipboardString from '../../../CopyToClipboardString/CopyToClipboardString'
-import { HasAccessV2 } from '../../../HasAccess/HasAccessV2'
 import { CitationsDialog } from './CitationsDialog'
 import { maxCitationCount, useDataCiteUsage } from './useDataCiteUsage'
 import { useGetMentions } from './useGetMentions'
@@ -113,11 +112,6 @@ export function useGetEntityTitleBarProperties(
       key: 'id',
       title: 'SynID',
       value: <CopyToClipboardString value={entityId} />,
-    },
-    {
-      key: 'access',
-      title: 'Access',
-      value: <HasAccessV2 entityId={entityId} />,
     },
     size && { key: 'fileSize', title: 'Size', value: size },
     containerItems != null && {

@@ -1,0 +1,58 @@
+.accessAndPermissionsContainer {
+  padding: 12px 0;
+  display: flex;
+  gap: 8px;
+}
+
+.checkCircleIcon {
+  color: #3e8379;
+}
+
+.blockIcon {
+  color: #d42322;
+}
+
+.accessAndPermissionsRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.buttonContainer {
+  display: flex;
+  gap: 8px;
+}
+
+.accessAndPermissionsText.accessAndPermissionsBlockedTextColor:global(
+    .MuiTypography-root
+  ) {
+  color: var(--synapse-v2-gray-500);
+}
+
+.accessAndPermissionsText:global(.MuiTypography-root) {
+  color: var(--synapse-v2-gray-800);
+  font-size: 14px;
+  font-weight: 440;
+  line-height: 20px; /* 142.857% */
+  letter-spacing: -0.07px;
+}
+
+.button:global(.MuiButton-root) {
+  font-size: 12px;
+  font-weight: 540;
+  line-height: 12px; /* 100% */
+  letter-spacing: -0.24px;
+  height: 28px;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.outlinedButton:global(.MuiButton-root) {
+  color: var(--synapse-v2-gray-800);
+  border: 1px solid var(--synapse-v2-gray-400);
+  background: rgba(255, 255, 255, 0.6);
+
+  &:hover {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+  }
+}

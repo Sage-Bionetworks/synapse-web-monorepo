@@ -11,6 +11,7 @@ $sidebar-collapse-breakpoint: 1200px;
   width: 320px;
   margin-top: 64px;
   padding: 0 32px 0 0;
+  gap: 12px;
 
   @media (max-width: $sidebar-collapse-breakpoint) {
     width: 100%;
@@ -24,11 +25,6 @@ $sidebar-collapse-breakpoint: 1200px;
   color: var(--synapse-v2-gray-700);
   font-weight: 540;
   line-height: 20px; /* 142.857% */
-}
-
-.divider {
-  margin-top: 8px;
-  margin-bottom: 16px;
 }
 
 .propertyValue:global(.MuiTypography-root) {
