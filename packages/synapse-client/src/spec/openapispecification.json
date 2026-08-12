@@ -21961,6 +21961,10 @@
           "taskProperties": {
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.curation.CurationTaskProperties",
             "description": "The properties of a CurationTask"
+          },
+          "dueDate": {
+            "type": "string",
+            "description": "Timestamp by which the task should be completed. Null if no due date has been set."
           }
         },
         "description": "The CurationTask provides instructions for a Data Contributor on how data or metadata of a specific type should be both added to a project and curated. There should be a CurationTask for each type of data/metadata to be contributed to a project. There are currently two categories of curation tasks: file-based metadata collection and record-based metadata collection. For each category there will be a concrete implementation of this interface. This interfaces defines the common fields of all CurationTasks."
@@ -23682,6 +23686,20 @@
         "type": "string",
         "enum": ["ROW", "COLUMN", "SEARCH"]
       },
+      "org.sagebionetworks.repo.model.agent.AddFilesToSessionRequest": {
+        "type": "object",
+        "properties": {
+          "files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.agent.SessionFileToAdd",
+              "description": "A single file to add to the code interpreter session, pairing the fileHandleAssociation that identifies the file's content with the session path where it should appear."
+            },
+            "description": "The files to add, each pairing a fileHandleAssociation (from the get-files-metadata tool) with the session path where it should appear."
+          }
+        },
+        "description": "Request to copy one or more Synapse files into the code interpreter session so they can be inspected or processed."
+      },
       "org.sagebionetworks.repo.model.educ.EDucTemplate": {
         "type": "object",
         "properties": {
@@ -24860,6 +24878,14 @@
           "responseText": {
             "type": "string",
             "description": "The agent's text response to the user's request"
+          },
+          "attachmentStatuses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.agent.AgentChatAttachmentStatus",
+              "description": "The processing outcome for a single chat attachment. Attachments are processed in the same order as the request's AgentChatRequest.attachments, and one status is returned per attachment in that order."
+            },
+            "description": "Per-attachment processing results, in the same order as the request's attachments. Present only when the request included attachments."
           }
         },
         "description": "The response to an agent chat request.",
@@ -26955,6 +26981,20 @@
         ],
         "required": ["concreteType"],
         "discriminator": { "propertyName": "concreteType" }
+      },
+      "org.sagebionetworks.repo.model.agent.SessionFileToAdd": {
+        "type": "object",
+        "properties": {
+          "fileHandleAssociation": {
+            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.file.FileHandleAssociation",
+            "description": "Describes an association of a FileHandle with another object."
+          },
+          "sessionPath": {
+            "type": "string",
+            "description": "The path where the file should appear in the session filesystem (e.g. 'entity_metadata_specialist/data.csv')."
+          }
+        },
+        "description": "A single file to add to the code interpreter session, pairing the fileHandleAssociation that identifies the file's content with the session path where it should appear."
       },
       "org.sagebionetworks.repo.model.versionInfo.SynapseVersionInfo": {
         "type": "object",
@@ -31972,10 +32012,10 @@
             ]
           },
           "value": {
-            "description": "A filter used to select rows based on a specific column's cell value. Use operators like 'EQUALS' or 'LIKE' with the 'value' property for standard comparisons. The 'IS_NULL' operator can be used to find `null` values. The `IS_UNDEFINED` operator can be used to find `undefined` values. When using IN or NOT_IN operators, `value` should be an array of values to compare against. When using either 'LIKE' or 'NOT_LIKE', the wildcard character: '%' is used to represents zero or more characters, and '_' is used to represent a single character."
+            "description": "A filter used to select rows based on a specific column's cell value. The value is matched by its type: for 'EQUALS', 'NOT_EQUALS', the ordering operators, and 'LIKE'/'NOT_LIKE', provide a scalar value to match a scalar cell (e.g. 'Alpha'), or a JSON array value to match a multi-value LIST cell exactly (e.g. ['Alpha','Beta']). The 'IS_NULL' operator can be used to find `null` values. The `IS_UNDEFINED` operator can be used to find `undefined` values. When using IN or NOT_IN operators, `value` should be an array of candidate values, matching a row when the cell equals any of them. When using either 'LIKE' or 'NOT_LIKE', the wildcard character: '%' is used to represents zero or more characters, and '_' is used to represent a single character."
           }
         },
-        "description": "A filter used to select rows based on cell values. For example, to handle a user request like 'find all rows where the Project column is Alpha', you would set 'columnName' to 'Project', 'operator' to 'EQUALS', and 'value' to ['Alpha']",
+        "description": "A filter used to select rows based on cell values. For example, to handle a user request like 'find all rows where the Project column is Alpha', you would set 'columnName' to 'Project', 'operator' to 'EQUALS', and 'value' to 'Alpha'",
         "required": ["concreteType"]
       },
       "org.sagebionetworks.repo.model.oauth.OAuthProvider": {
@@ -32835,6 +32875,17 @@
         "description": "Change user account's password by verifying the current password",
         "required": ["concreteType"]
       },
+      "org.sagebionetworks.repo.model.agent.AgentChatAttachmentFailureCode": {
+        "type": "string",
+        "enum": [
+          "NOT_FOUND",
+          "UNAUTHORIZED",
+          "EXCEEDS_SIZE_LIMIT",
+          "UNSUPPORTED_TYPE",
+          "TOO_MANY_ATTACHMENTS",
+          "UNKNOWN_ERROR"
+        ]
+      },
       "org.sagebionetworks.repo.model.dataaccess.AccessApprovalNotificationRequest": {
         "type": "object",
         "properties": {
@@ -33240,6 +33291,10 @@
             "type": "integer",
             "description": "The replica ID issued to the user's agent.",
             "format": "int32"
+          },
+          "experimental": {
+            "type": "boolean",
+            "description": "Optional. When true, this grid session is processed by the experimental Curie multi-agent supervisor instead of the default agent. Default value is false."
           }
         },
         "description": "Additional context provided for grid agent chat sessions.",
@@ -33262,6 +33317,10 @@
           }
         },
         "description": "Metadata for an image in a Docker Repository:  A digest and optional tag."
+      },
+      "org.sagebionetworks.repo.model.agent.AgentChatAttachmentState": {
+        "type": "string",
+        "enum": ["STAGED", "FAILED"]
       },
       "org.sagebionetworks.repo.model.SubmissionTeam": {
         "type": "object",
@@ -33580,6 +33639,14 @@
           "enableTrace": {
             "type": "boolean",
             "description": "Optional. When trace is enabled, the agent will include information about its decision process and the functions/tools it will use to process this request. Default value is false."
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.file.FileHandleAssociation",
+              "description": "Describes an association of a FileHandle with another object."
+            },
+            "description": "Optional. Existing Synapse files to attach to this message; each is a FileHandleAssociation the user must be authorized to download. Attached files are staged into the agent's code interpreter session and remain available for the rest of the conversation. Limits: a session may hold at most 20 attached files in total across all of its messages; each file must be <= 100 MB and one of the approved content types (text/plain, application/pdf, text/csv, application/json). Only honored for experimental grid (Curie) sessions; sending attachments to any other session type is rejected."
           }
         },
         "description": "Send a chat message to the Synapse chat agent",
@@ -34944,6 +35011,17 @@
           }
         },
         "description": "JSON schema for the REST Resource List POJO"
+      },
+      "org.sagebionetworks.repo.model.agent.GetFilesMetadataRequest": {
+        "type": "object",
+        "properties": {
+          "entityIds": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "The FileEntity or RecordSet IDs to describe (e.g. 'syn123' or 'syn123.5')."
+          }
+        },
+        "description": "Request to describe the session-eligibility metadata for one or more Synapse files (each a FileEntity or RecordSet)."
       },
       "org.sagebionetworks.repo.model.auth.RealmPrincipal": {
         "type": "object",
@@ -36520,6 +36598,16 @@
         "description": "Object used to propagate table status changes",
         "required": ["concreteType"]
       },
+      "org.sagebionetworks.repo.model.agent.RunPythonRequest": {
+        "type": "object",
+        "properties": {
+          "script": {
+            "type": "string",
+            "description": "The Python script to execute. This is a JSON string value, so any control characters within the script must be escaped: newlines as '\\n', tabs as '\\t', and double quotes as '\\\"'."
+          }
+        },
+        "description": "Request to execute a Python script in the current code interpreter session."
+      },
       "org.sagebionetworks.repo.model.RestrictionInformationBatchResponse": {
         "type": "object",
         "properties": {
@@ -38079,6 +38167,77 @@
         },
         "description": "Request body for listing the user webhooks."
       },
+      "org.sagebionetworks.repo.model.agent.AgentChatAttachmentStatus": {
+        "type": "object",
+        "properties": {
+          "fileHandleId": {
+            "type": "string",
+            "description": "The file handle id of the attachment."
+          },
+          "associateObjectId": {
+            "type": "string",
+            "description": "The ID of the object associated with the file."
+          },
+          "associateObjectType": {
+            "type": "string",
+            "description": "Enumeration of all possible objects types that can be associated with a file.",
+            "enum": [
+              "FileEntity",
+              "TableEntity",
+              "WikiAttachment",
+              "WikiMarkdown",
+              "UserProfileAttachment",
+              "MessageAttachment",
+              "TeamAttachment",
+              "SubmissionAttachment",
+              "VerificationSubmission",
+              "AccessRequirementAttachment",
+              "DataAccessRequestAttachment",
+              "DataAccessSubmissionAttachment",
+              "FormData"
+            ]
+          },
+          "fileName": {
+            "type": "string",
+            "description": "The resolved name of the file. Null when the file could not be staged."
+          },
+          "sessionPath": {
+            "type": "string",
+            "description": "The path where the file was staged in the code interpreter session. Null when the file could not be staged."
+          },
+          "contentType": {
+            "type": "string",
+            "description": "The resolved content type of the file. Null when the file could not be staged."
+          },
+          "contentSizeBytes": {
+            "type": "integer",
+            "description": "The size of the file in bytes. Null when the file could not be staged.",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string",
+            "description": "Whether the attachment was staged into the agent's session.",
+            "enum": ["STAGED", "FAILED"]
+          },
+          "failureMessage": {
+            "type": "string",
+            "description": "Human-readable failure reason. Null when the status is STAGED."
+          },
+          "failureCode": {
+            "type": "string",
+            "description": "The failure code when the status is FAILED. Null when the status is STAGED.",
+            "enum": [
+              "NOT_FOUND",
+              "UNAUTHORIZED",
+              "EXCEEDS_SIZE_LIMIT",
+              "UNSUPPORTED_TYPE",
+              "TOO_MANY_ATTACHMENTS",
+              "UNKNOWN_ERROR"
+            ]
+          }
+        },
+        "description": "The processing outcome for a single chat attachment. Attachments are processed in the same order as the request's AgentChatRequest.attachments, and one status is returned per attachment in that order."
+      },
       "org.sagebionetworks.repo.model.search.KeyRange": {
         "type": "object",
         "properties": {
@@ -38455,6 +38614,20 @@
         },
         "description": "Use this filter for simple requests to find all 'valid' or 'invalid' rows based on their overall validation status.",
         "required": ["concreteType"]
+      },
+      "org.sagebionetworks.repo.model.grid.update.GridUpdatePreviewResponse": {
+        "type": "object",
+        "properties": {
+          "previewRows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/org.sagebionetworks.repo.model.grid.query.result.Row",
+              "description": "A single row of a grid query result."
+            },
+            "description": "A bounded sample (up to 10 rows per update in the batch) of the rows the update would affect. Each row shows the full resulting cell values as they would appear after the update: cells the update does not touch are carried through unchanged, a cell cleared to null appears as an explicit null, and a cell set to undefined is omitted entirely."
+          }
+        },
+        "description": "A preview of a grid update operation: a bounded sample of the rows that would be changed and how each would look afterward, computed without applying any change."
       },
       "org.sagebionetworks.repo.model.download.DownloadListManifestResponse": {
         "type": "object",
@@ -43061,10 +43234,6 @@
           "lastUpdatedOn": {
             "type": "string",
             "description": "Timestamp of when the status was last updated."
-          },
-          "dueDate": {
-            "type": "string",
-            "description": "Timestamp by which the task should be completed. Null if no due date has been set."
           },
           "etag": {
             "type": "string",

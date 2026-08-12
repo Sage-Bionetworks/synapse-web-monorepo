@@ -53,19 +53,27 @@ function TaskStatusChip(props: { state: TaskStatusStateEnum | undefined }) {
   )
 }
 
-function DueDateChip(props: { dueDate: string | undefined }) {
-  const { dueDate } = props
+function DueDateChip(props: {
+  dueDate: string | undefined
+  taskState: TaskStatusStateEnum | undefined
+}) {
+  const { dueDate, taskState } = props
   const dueDateObj = parseDueDate(dueDate)
   if (!dueDateObj) return null
 
-  const daysUntilDue = dueDateObj.diff(dayjs.utc().startOf('day'), 'day')
   const formattedDate = dueDateObj.format('MM/DD/YY')
+  const isTerminal =
+    taskState === TaskStatusStateEnum.COMPLETED ||
+    taskState === TaskStatusStateEnum.CANCELED
 
   let backgroundColor = '#E0E0E0'
-  if (daysUntilDue < 0) {
-    backgroundColor = '#FFCDD2'
-  } else if (daysUntilDue < 30) {
-    backgroundColor = '#FFF9C4'
+  if (!isTerminal) {
+    const daysUntilDue = dueDateObj.diff(dayjs.utc().startOf('day'), 'day')
+    if (daysUntilDue < 0) {
+      backgroundColor = '#FFCDD2'
+    } else if (daysUntilDue < 30) {
+      backgroundColor = '#FFF9C4'
+    }
   }
 
   return (
@@ -163,7 +171,10 @@ export default function CurationTaskCardLayout(
         </div>
         <div className={styles.statusContainer}>
           <TaskStatusChip state={taskBundle.status?.state} />
-          <DueDateChip dueDate={taskBundle.status?.dueDate} />
+          <DueDateChip
+            dueDate={taskBundle.task?.dueDate}
+            taskState={taskBundle.status?.state}
+          />
         </div>
         {!isExpanded && (
           <>

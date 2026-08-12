@@ -10,26 +10,25 @@ type EntityPageBreadcrumbsProps = {
 }
 
 const ENTITY_PAGE_MAX_BREADCRUMB_LENGTH = 32
-const ENTITY_PAGE_TEXT_COLOR = '#4D535A'
 
 const breadcrumbTextStyle: SxProps = {
   fontWeight: 440,
   lineHeight: '20px',
-  color: ENTITY_PAGE_TEXT_COLOR,
+  color: 'greyV2.800',
 }
 
 const entityPageBreadcrumbStyle: SxProps = {
   marginTop: '0px',
-  padding: '10px 32px',
+  padding: '20px 32px',
   ['& .MuiTypography-root']: breadcrumbTextStyle,
   ['& .MuiLink-root']: {
     '&:visited': {
-      color: ENTITY_PAGE_TEXT_COLOR,
+      color: 'greyV2.800',
     },
   },
   ['& .MuiSvgIcon-root']: {
     fontWeight: '300',
-    color: ENTITY_PAGE_TEXT_COLOR,
+    color: 'greyV2.800',
   },
 }
 

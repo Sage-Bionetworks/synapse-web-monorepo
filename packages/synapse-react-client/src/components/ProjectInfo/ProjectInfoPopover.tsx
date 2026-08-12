@@ -6,8 +6,6 @@ import styles from './ProjectInfo.module.scss'
 import CopyToClipboardString from '../CopyToClipboardString/CopyToClipboardString'
 import ProjectDataAvailability from '../ProjectStorage'
 
-const POPOVER_BORDER_COLOR = '#B7BFC9'
-
 export type ProjectInfoPopoverProps = {
   doi?: string
   projectStorageLocation?: string
@@ -102,7 +100,8 @@ export default function ProjectInfoPopover(props: ProjectInfoProps) {
             position: 'relative',
             mt: '6px',
             borderRadius: '3px',
-            border: `1px solid ${POPOVER_BORDER_COLOR}`,
+            border: '1px solid',
+            borderColor: 'greyV2.300',
           },
         },
       }}

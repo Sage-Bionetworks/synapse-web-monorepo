@@ -86,6 +86,7 @@ const AccountSettings = (): React.ReactNode => {
   const [termsOfUse, setTermsOfUse] = useState<boolean>()
   const [showUnbindORCiDDialog, setShowUnbindORCiDDialog] =
     useState<boolean>(false)
+  const [isRASLinked, setIsRASLinked] = useState<boolean>(false)
   const navigate = useNavigate()
   const profileInformationRef = useRef<HTMLDivElement>(null)
   const changePasswordRef = useRef<HTMLDivElement>(null)
@@ -154,6 +155,14 @@ const AccountSettings = (): React.ReactNode => {
     setVerified(bundle.isVerified)
     setOrcid(bundle.ORCID)
     setIsCertified(bundle.isCertified)
+    setIsRASLinked(
+      bundle.identityProviders?.some(
+        p =>
+          p.concreteType ===
+            'org.sagebionetworks.repo.model.auth.OAuthIdentityProvider' &&
+          p.provider === 'NIH_RESEARCHER_AUTH_SERVICE',
+      ) ?? false,
+    )
     const stateHistory = bundle.verificationSubmission?.stateHistory
     const currentState = stateHistory
       ? stateHistory[stateHistory.length - 1]
@@ -168,7 +177,8 @@ const AccountSettings = (): React.ReactNode => {
         SynapseConstants.USER_BUNDLE_MASK_USER_PROFILE |
         SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED |
         SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
-        SynapseConstants.USER_BUNDLE_MASK_VERIFICATION_SUBMISSION
+        SynapseConstants.USER_BUNDLE_MASK_VERIFICATION_SUBMISSION |
+        SynapseConstants.USER_BUNDLE_MASK_IDENTITY_PROVIDERS
       const bundle: UserBundle = await SynapseClient.getMyUserBundle(
         mask,
         accessToken,
@@ -551,18 +561,21 @@ const AccountSettings = (): React.ReactNode => {
                 {isAmpAlsSourceApp && (
                   <div className="credential-partition">
                     <h4>NIH Researcher Auth Service (RAS)</h4>
+                    <CompletionStatus isComplete={isRASLinked} />
                     <p>
                       <i>
                         Linking your NIH account allows you to sign in using
                         your NIH credentials.
                       </i>
                     </p>
-                    <div className="primary-button-container">
-                      <RASButton
-                        sx={credentialButtonSX}
-                        redirectAfter={`${SynapseClient.getRootURL()}authenticated/myaccount`}
-                      />
-                    </div>
+                    {!isRASLinked && (
+                      <div className="primary-button-container">
+                        <RASButton
+                          sx={credentialButtonSX}
+                          redirectAfter={`${SynapseClient.getRootURL()}authenticated/myaccount`}
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
                 <div className="credential-partition">

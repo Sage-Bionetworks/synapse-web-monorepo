@@ -54,6 +54,7 @@ export const OBSERVATION_CARD = 'observation_card'
 export const RELEASE_CARD = 'release_card'
 export const COMPUTATIONAL: string = 'computational'
 export const COMPUTATIONAL_TOOL: string = 'computational tool'
+export const MODEL: string = 'model'
 export const EXPERIMENTAL: string = 'experimental'
 export const EXPERIMENTAL_TOOL: string = 'experimental tool'
 export const CLINICAL: string = 'clinical'
@@ -120,6 +121,7 @@ export const USER_BUNDLE_MASK_IS_CERTIFIED = 0x8
 export const USER_BUNDLE_MASK_IS_VERIFIED = 0x10
 export const USER_BUNDLE_MASK_IS_ACT_MEMBER = 0x20
 export const USER_BUNDLE_MASK_IS_AR_REVIEWER = 0x40
+export const USER_BUNDLE_MASK_IDENTITY_PROVIDERS = 0x80
 // SessionStorage keys for info from ids
 export const USER_PROFILE_STORAGE_KEY = 'INFO_FROM_IDS_USER_PROFILE'
 export const ENTITY_HEADER_STORAGE_KEY = 'INFO_FROM_IDS_ENTITY_HEADER'

@@ -18,6 +18,14 @@
     overflow: hidden;
     text-overflow: ellipsis;
 
+    button svg {
+      color: var(--synapse-v2-gray-900);
+    }
+
+    a {
+      text-decoration: none;
+    }
+
     > * {
       display: flex;
       align-items: center;
@@ -26,5 +34,15 @@
 
   th {
     font-weight: 600;
+    color: var(--synapse-v2-gray-900);
+    border-bottom: 1px solid var(--synapse-v2-gray-100);
+
+    button svg {
+      color: var(--synapse-v2-gray-900);
+    }
+  }
+
+  table th {
+    border-right: none;
   }
 }

@@ -18,6 +18,7 @@ import { getEvaluationHandlers } from './handlers/evaluationHandlers'
 import { getFeatureFlagsOverride } from './handlers/featureFlagHandlers'
 import { getFileHandlers } from './handlers/fileHandlers'
 import { getGridHandlers } from './handlers/gridHandlers'
+import { getJsonSchemaListingHandlers } from './handlers/jsonSchemaListingHandlers'
 import { getMessageHandlers } from './handlers/messageHandlers'
 import { getPersonalAccessTokenHandlers } from './handlers/personalAccessTokenHandlers'
 import { getResearchProjectHandlers } from './handlers/researchProjectHandlers'
@@ -72,6 +73,9 @@ export function getHandlersForStorybook(
     researchProject: getResearchProjectHandlers(backendOrigin),
     file: getFileHandlers(backendOrigin),
     grid: getGridHandlers(backendOrigin),
+    jsonSchemaListing: Object.values(
+      getJsonSchemaListingHandlers(backendOrigin),
+    ).flat(),
     discussion: getDiscussionHandlers(backendOrigin),
     subscription: getSubscriptionHandlers(backendOrigin),
     evaluation: getEvaluationHandlers(backendOrigin),

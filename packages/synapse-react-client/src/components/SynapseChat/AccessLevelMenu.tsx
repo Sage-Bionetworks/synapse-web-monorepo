@@ -45,6 +45,7 @@ export function AccessLevelMenu({
       </Typography>
       <DropdownSelect
         variant={'outlined'}
+        buttonGroupAriaLabel={'Access Level Menu'}
         options={options}
         selectedIndex={selectedIndex}
         setSelectedIndex={index => {

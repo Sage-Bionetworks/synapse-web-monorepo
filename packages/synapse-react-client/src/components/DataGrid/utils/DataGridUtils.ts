@@ -13,7 +13,7 @@ export const parseQueryInput = (input: string): QueryInput => {
     return { type: 'sql', input: trimmedInput }
   } else if (SYNAPSE_ENTITY_ID_REGEX.test(trimmedInput)) {
     return { type: 'recordSetId', input: trimmedInput }
-  } else if (/^[A-Za-z]\w*=+$/.test(trimmedInput)) {
+  } else if (/^[A-Za-z]\w*=*$/.test(trimmedInput)) {
     return { type: 'sessionId', input: trimmedInput }
   }
   return { type: 'unknown', input: trimmedInput }
