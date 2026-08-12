@@ -1,11 +1,19 @@
 import { useChatState } from '@/components/SynapseChat/useChatState'
-import { mockAgentSession, mockChatAttachment } from '@/mocks/chat/mockChat'
+import {
+  mockAgentChatRequest,
+  mockAgentSession,
+  mockChatAttachment,
+  mockChatJobStatus,
+} from '@/mocks/chat/mockChat'
+import usePollAsynchronousJob from '@/synapse-queries/asynchronous/usePollAsynchronousJob'
 import {
   useCreateAgentSession,
   useGetChatAgentTraceEvents,
   useUpdateAgentSession,
 } from '@/synapse-queries/chat/useChat'
+import { getUseQuerySuccessMock } from '@/testutils/ReactQueryMockUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { FileHandleAssociateType } from '@sage-bionetworks/synapse-client'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
@@ -15,6 +23,9 @@ import {
 import { SynapseChat, SynapseChatProps } from './SynapseChat'
 
 vi.mock('@/synapse-queries/chat/useChat')
+vi.mock('@/synapse-queries/asynchronous/usePollAsynchronousJob', () => ({
+  default: vi.fn(),
+}))
 vi.mock('@/components/SynapseChat/useChatState')
 vi.mock('./components/AddFilesDialog/AddFilesDialog', () => ({
   AddFilesDialog: vi.fn(),
@@ -24,6 +35,7 @@ vi.mock('./components/AddFilesDialog/AddFilesDialog', () => ({
 const mockUseCreateAgentSession = vi.mocked(useCreateAgentSession)
 const mockUseUpdateAgentSession = vi.mocked(useUpdateAgentSession)
 const mockUseGetChatAgentTraceEvents = vi.mocked(useGetChatAgentTraceEvents)
+const mockUsePollAsynchronousJob = vi.mocked(usePollAsynchronousJob)
 const mockUseChatState = vi.mocked(useChatState)
 const mockAddFilesDialog = vi.mocked(AddFilesDialog)
 
@@ -68,10 +80,16 @@ const defaultProps: SynapseChatProps = {
 
 function renderComponent(props?: Partial<SynapseChatProps>) {
   const user = userEvent.setup()
-  render(<SynapseChat {...defaultProps} {...props} />, {
+  const { rerender } = render(<SynapseChat {...defaultProps} {...props} />, {
     wrapper: createWrapper(),
   })
-  return { user }
+  return {
+    user,
+    // Re-renders with the same defaults, so a test can advance the mocked props (e.g. once the
+    // interaction gains a jobId) without remounting and losing SynapseChat's own internal state.
+    rerender: (newProps?: Partial<SynapseChatProps>) =>
+      rerender(<SynapseChat {...defaultProps} {...props} {...newProps} />),
+  }
 }
 
 describe('SynapseChat - suggestedPrompts', () => {
@@ -87,6 +105,8 @@ describe('SynapseChat - suggestedPrompts', () => {
     mockUseUpdateAgentSession.mockReturnValue(idleMutation as any)
     // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     mockUseGetChatAgentTraceEvents.mockReturnValue({ data: undefined } as any)
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+    mockUsePollAsynchronousJob.mockReturnValue({ data: undefined } as any)
     mockUseChatState.mockReturnValue(defaultMockChatState)
   })
 
@@ -209,6 +229,8 @@ describe('SynapseChat - allowAttachments', () => {
     mockUseUpdateAgentSession.mockReturnValue(idleMutation as any)
     // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     mockUseGetChatAgentTraceEvents.mockReturnValue({ data: undefined } as any)
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+    mockUsePollAsynchronousJob.mockReturnValue({ data: undefined } as any)
     mockUseChatState.mockReturnValue(defaultMockChatState)
     mockAddFilesDialog.mockImplementation(
       ({ open, onAttachmentUploaded }: AddFilesDialogProps) => (
@@ -303,7 +325,7 @@ describe('SynapseChat - allowAttachments', () => {
     expect(mockSendChat).toHaveBeenCalledExactlyOnceWith('hello', undefined)
   })
 
-  it('shows a rich attachment chip on the pending message once sent, since the polled async job (which only reports the bare fileHandleId) is not yet registered', async () => {
+  it('shows a rich attachment chip on the pending message once sent, before the interaction has a jobId', async () => {
     // sendChat is mocked and does not itself append an interaction, so seed one pending
     // interaction (no jobId yet) via externalChatState to stand in for the one `useChatState`
     // would add in onMutate.
@@ -325,8 +347,76 @@ describe('SynapseChat - allowAttachments', () => {
 
     // The composer's own inline chip is cleared on send (see the "clears both" test above), but
     // the pending turn in the message list should still show a rich chip, via SynapseChat's
-    // lastSentAttachments state, until the interaction gains a jobId and SynapseChatMessage
-    // takes over from the polled async job's requestBody.
+    // lastSentAttachments state.
     expect(screen.getByText('report.pdf')).toBeInTheDocument()
+  })
+
+  it('keeps showing the filename once the interaction gains a jobId, while the job is still PROCESSING', async () => {
+    // The chat request's requestBody.attachments (a FileHandleAssociation) never carries a
+    // filename, so once the job is registered, SynapseChatMessage can only resolve the filename
+    // from the server's attachmentStatuses (not yet available while PROCESSING) or from the
+    // pendingAttachments that SynapseChat keeps supplying for the last interaction.
+    mockAddFilesDialog.mockImplementation(
+      ({ open, onAttachmentUploaded }: AddFilesDialogProps) => (
+        <>
+          {open && (
+            <button
+              onClick={() =>
+                onAttachmentUploaded(
+                  mockChatAttachment({
+                    fileHandleId: '4242424',
+                    fileName: 'report.pdf',
+                  }),
+                )
+              }
+            >
+              Simulate attachment uploaded
+            </button>
+          )}
+        </>
+      ),
+    )
+    const { user, rerender } = renderComponent({ allowAttachments: true })
+
+    await user.click(screen.getByRole('button', { name: 'Add files' }))
+    await user.click(
+      screen.getByRole('button', { name: 'Simulate attachment uploaded' }),
+    )
+    await user.type(screen.getByRole('textbox'), 'hello')
+    await user.click(screen.getByRole('button', { name: 'Send message' }))
+
+    // The async job has now been registered (jobId assigned), but has not finished processing --
+    // the response, and thus attachmentStatuses, is not yet available.
+    mockUsePollAsynchronousJob.mockReturnValue(
+      getUseQuerySuccessMock(
+        mockChatJobStatus({
+          jobId: 'job-1',
+          jobState: 'PROCESSING',
+          responseBody: undefined,
+          requestBody: {
+            ...mockAgentChatRequest,
+            attachments: [
+              {
+                fileHandleId: '4242424',
+                associateObjectId: '4242424',
+                associateObjectType: FileHandleAssociateType.FileEntity,
+              },
+            ],
+          },
+        }),
+        // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      ) as any,
+    )
+    rerender({
+      allowAttachments: true,
+      externalChatState: {
+        ...defaultMockChatState,
+        interactions: [{ id: '0', userMessage: 'hello', jobId: 'job-1' }],
+        isAwaitingResponse: true,
+      },
+    })
+
+    expect(screen.getByText('report.pdf')).toBeInTheDocument()
+    expect(screen.queryByText('4242424')).not.toBeInTheDocument()
   })
 })
