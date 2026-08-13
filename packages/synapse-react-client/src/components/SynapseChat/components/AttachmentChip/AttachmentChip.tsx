@@ -100,13 +100,6 @@ export function AttachmentChip({
           onClick={onRemove}
           size="small"
           className={styles.removeBadge}
-          sx={{
-            border: '1px solid',
-            borderColor: 'grey.300',
-            backgroundColor: 'white',
-            width: '16px',
-            height: '16px',
-          }}
         >
           <CloseIcon sx={{ fontSize: '10px' }} />
         </IconButton>

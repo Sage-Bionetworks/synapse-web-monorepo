@@ -3,8 +3,12 @@
 $chip-min-width: 140px;
 
 .strip {
+  --remove-button-offset-x: 8px;
+  --remove-button-offset-y: 5px;
+
   display: flex;
-  gap: 10px;
+  column-gap: calc(10px - var(--remove-button-offset-x));
+  row-gap: calc(10px - var(--remove-button-offset-y));
   overflow-x: auto;
 }
 
