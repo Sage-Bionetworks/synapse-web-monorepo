@@ -1,6 +1,7 @@
 import CertificationRequirement from '@/components/AccessRequirementList/RequirementItem/CertificationRequirement'
 import ExportCsvFromGridButton from '@/components/DataGrid/components/ExportCsvFromGridButton'
 import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
+import ReorderColumnsButton from '@/components/DataGrid/components/ReorderColumnsButton'
 import UploadCsvToGridButton from '@/components/DataGrid/components/UploadCsvToGridButton'
 import useGetSchemaForGrid from '@/components/DataGrid/hooks/useGetSchemaForGrid'
 import SyncGridWithSourceButton from '@/components/DataGrid/SyncGridWithSourceButton'
@@ -339,6 +340,16 @@ function SynapseGridInner({
     [],
   )
 
+  const handleReorderColumns = useCallback(
+    (newColumnOrder: number[]) => {
+      if (!model) return
+      applyAndCommitChanges(model, [
+        { type: 'REORDER_COLUMNS', newColumnOrder },
+      ])
+    },
+    [model, applyAndCommitChanges],
+  )
+
   if (!isLoading && !userBundle?.isCertified) {
     return <CertificationRequirement />
   }
@@ -487,6 +498,12 @@ function SynapseGridInner({
                     )}
                     {undoUI}
                     {redoUI}
+                    <ReorderColumnsButton
+                      columnNames={modelSnapshot?.columnNames ?? []}
+                      columnOrder={modelSnapshot?.columnOrder ?? []}
+                      jsonSchema={jsonSchema}
+                      onReorder={handleReorderColumns}
+                    />
                     <GridMenuButton
                       variant={'outlined'}
                       onClick={() => setChatOpen(true)}
