@@ -40,6 +40,7 @@ import * as UserSearchBoxModule from '../../../UserSearchBox/UserSearchBox'
 import * as AccessRequirementListUtils from '../../AccessRequirementListUtils'
 import DataAccessRequestAccessorsFilesForm, {
   DataAccessRequestAccessorsFilesFormProps,
+  EDUC_COLLABORATOR_LIMIT,
 } from './DataAccessRequestAccessorsFilesForm'
 
 const MARKDOWN_SYNAPSE_TEST_ID = 'MarkdownSynapseContent'
@@ -681,6 +682,93 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
             .value,
         ).toBe('prefilled@example.edu')
       })
+    })
+
+    it('hides the user search and shows a warning when at the collaborator limit', async () => {
+      const cappedAccessorChanges: AccessorChange[] = Array.from(
+        { length: EDUC_COLLABORATOR_LIMIT },
+        (_, i) => ({
+          userId: String(2000 + i),
+          type: AccessType.GAIN_ACCESS,
+        }),
+      )
+      mockGetDataRequestForUpdate.mockResolvedValue({
+        ...MOCK_DATA_ACCESS_REQUEST,
+        accessorChanges: cappedAccessorChanges,
+      })
+
+      renderComponent(eDucProps)
+
+      await screen.findByRole('alert')
+      expect(screen.getByRole('alert')).toHaveTextContent(
+        new RegExp(`maximum of ${EDUC_COLLABORATOR_LIMIT} collaborators`, 'i'),
+      )
+      expect(screen.queryByTestId('UserSearchBox-MOCK')).not.toBeInTheDocument()
+    })
+
+    it('still shows the user search when one below the collaborator limit', async () => {
+      const nearCapAccessorChanges: AccessorChange[] = Array.from(
+        { length: EDUC_COLLABORATOR_LIMIT - 1 },
+        (_, i) => ({
+          userId: String(2000 + i),
+          type: AccessType.GAIN_ACCESS,
+        }),
+      )
+      mockGetDataRequestForUpdate.mockResolvedValue({
+        ...MOCK_DATA_ACCESS_REQUEST,
+        accessorChanges: nearCapAccessorChanges,
+      })
+
+      renderComponent(eDucProps)
+
+      await screen.findByTestId('UserSearchBox-MOCK')
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    })
+
+    it('does not cap collaborators when the AR is not eDUC', async () => {
+      const manyAccessorChanges: AccessorChange[] = Array.from(
+        { length: EDUC_COLLABORATOR_LIMIT + 5 },
+        (_, i) => ({
+          userId: String(2000 + i),
+          type: AccessType.GAIN_ACCESS,
+        }),
+      )
+      mockGetDataRequestForUpdate.mockResolvedValue({
+        ...MOCK_DATA_ACCESS_REQUEST,
+        accessorChanges: manyAccessorChanges,
+      })
+
+      renderComponent(defaultProps)
+
+      await screen.findByTestId('UserSearchBox-MOCK')
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    })
+
+    it('shows "Continue" and calls onEDucContinue instead of submitting when onEDucContinue is set', async () => {
+      mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
+      const mockOnEDucContinue = vi.fn()
+      const { user } = renderComponent({
+        ...eDucProps,
+        onEDucContinue: mockOnEDucContinue,
+      })
+
+      const nameField = await screen.findByLabelText(
+        /First and last names of your Signing Official/i,
+      )
+      const emailField = screen.getByLabelText(
+        /Institutional Email of your Signing Official/i,
+      )
+      await user.type(nameField, 'Jane Smith')
+      await user.type(emailField, 'jane@example.edu')
+
+      const continueButton = await screen.findByRole('button', {
+        name: 'Continue',
+      })
+      await waitFor(() => expect(continueButton).toBeEnabled())
+      await user.click(continueButton)
+
+      await waitFor(() => expect(mockOnEDucContinue).toHaveBeenCalledTimes(1))
+      expect(mockCreateSubmission).not.toHaveBeenCalled()
     })
   })
 })

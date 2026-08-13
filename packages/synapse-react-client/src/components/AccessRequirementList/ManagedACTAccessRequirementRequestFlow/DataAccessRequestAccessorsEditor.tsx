@@ -1,5 +1,6 @@
 import { useGetCurrentUserProfile } from '@/synapse-queries'
 import {
+  Alert,
   Button,
   FormControlLabel,
   Radio,
@@ -28,6 +29,8 @@ export type DataAccessRequestAccessorsEditorProps = {
   isRenewal: boolean
   /* Text to show to inform the user about requirements accessors may need to meet */
   helpText: ReactNode
+  /* Optional cap on the number of collaborators the user may add (excludes the submitter, who is auto-added) */
+  collaboratorLimit?: number
 }
 
 /**
@@ -36,8 +39,15 @@ export type DataAccessRequestAccessorsEditorProps = {
 export default function DataAccessRequestAccessorsEditor(
   props: DataAccessRequestAccessorsEditorProps,
 ) {
-  const { accessorChanges, onChange, isRenewal, helpText } = props
+  const { accessorChanges, onChange, isRenewal, helpText, collaboratorLimit } =
+    props
   const { data: user } = useGetCurrentUserProfile()
+
+  // The submitter (current user) is auto-added and does not count toward the collaborator limit.
+  const isAtCollaboratorLimit =
+    collaboratorLimit !== undefined &&
+    accessorChanges.filter(ac => ac.userId !== user?.ownerId).length >=
+      collaboratorLimit
 
   const onSelectUserCallback = (
     id: string | null,
@@ -47,13 +57,21 @@ export default function DataAccessRequestAccessorsEditor(
       onChange(previousValue => {
         const currentAccessorIds = previousValue.map(ac => ac.userId)
         // if user is not already in the accessor list (prevent duplicates in accessor list)
-        if (!currentAccessorIds.includes(ugh.ownerId)) {
-          const selectedAccessor: AccessorChange = {
-            userId: ugh.ownerId,
-            type: AccessType.GAIN_ACCESS,
-          }
-          previousValue.push(selectedAccessor)
+        if (currentAccessorIds.includes(ugh.ownerId)) {
+          return previousValue
         }
+        if (
+          collaboratorLimit !== undefined &&
+          previousValue.filter(ac => ac.userId !== user?.ownerId).length >=
+            collaboratorLimit
+        ) {
+          return previousValue
+        }
+        const selectedAccessor: AccessorChange = {
+          userId: ugh.ownerId,
+          type: AccessType.GAIN_ACCESS,
+        }
+        previousValue.push(selectedAccessor)
         return previousValue
       })
     }
@@ -98,17 +116,25 @@ export default function DataAccessRequestAccessorsEditor(
       >
         {helpText}
       </Typography>
-      <UserSearchBox
-        inputId={'requesters'}
-        typeFilter={TYPE_FILTER.USERS_ONLY}
-        onChange={onSelectUserCallback}
-        filterPredicate={userGroupHeader =>
-          !accessorChanges
-            .map(ac => ac.userId)
-            .includes(userGroupHeader.ownerId)
-        }
-        value={null}
-      />
+      {isAtCollaboratorLimit && (
+        <Alert severity="warning" sx={{ mb: 1 }}>
+          You have reached the maximum of {collaboratorLimit} collaborators for
+          this request. Remove a collaborator to add another.
+        </Alert>
+      )}
+      {!isAtCollaboratorLimit && (
+        <UserSearchBox
+          inputId={'requesters'}
+          typeFilter={TYPE_FILTER.USERS_ONLY}
+          onChange={onSelectUserCallback}
+          filterPredicate={userGroupHeader =>
+            !accessorChanges
+              .map(ac => ac.userId)
+              .includes(userGroupHeader.ownerId)
+          }
+          value={null}
+        />
+      )}
       <Stack sx={{ my: 1, gap: 1 }}>
         {accessorChanges.map((ac, i) => {
           return (
