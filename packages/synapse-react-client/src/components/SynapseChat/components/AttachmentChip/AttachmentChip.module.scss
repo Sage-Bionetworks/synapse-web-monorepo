@@ -1,11 +1,21 @@
 .chip {
   position: relative;
+  margin-top: var(--remove-button-offset-y, 5px);
+  margin-left: var(--remove-button-offset-x, 8px);
 }
 
 .removeBadge:global(.MuiButtonBase-root) {
+  border: 1px solid var(--synapse-gray-300);
+  background-color: white;
+  width: 16px;
+  height: 16px;
+  &:hover {
+    background-color: var(--synapse-gray-100);
+  }
+
   position: absolute;
-  top: -6px;
-  left: -6px;
+  top: calc(-1 * var(--remove-button-offset-y, 5px));
+  left: calc(-1 * var(--remove-button-offset-x, 8px));
   opacity: 0;
   transition: opacity 100ms;
 }
