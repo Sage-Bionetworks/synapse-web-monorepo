@@ -175,7 +175,6 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
       setShowConfirmationScreen(true)
       return
     }
-    setShowConfirmationScreen(false)
     let updatedResearchProject: ResearchProject
     try {
       updatedResearchProject = await updateResearchProject({
@@ -186,7 +185,7 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
         intendedDataUseStatement: intendedDataUseStatement || undefined,
       })
     } catch {
-      // Error is surfaced via useUpdateResearchProject's onError handler.
+      setShowConfirmationScreen(false)
       return
     }
     if (isEDucEnabled && existingDarRef.current) {
@@ -204,6 +203,7 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
           principalInvestigator: nextPi,
         } as Request | Renewal)
       } catch {
+        setShowConfirmationScreen(false)
         return
       }
     }

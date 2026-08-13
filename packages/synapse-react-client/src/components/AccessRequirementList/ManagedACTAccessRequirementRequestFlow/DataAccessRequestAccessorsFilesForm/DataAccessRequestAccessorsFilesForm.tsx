@@ -193,6 +193,9 @@ export default function DataAccessRequestAccessorsFilesForm(
     updateDataAccessRequestIsPending ||
     submitDataAccessRequestIsPending
 
+  const disableSubmitButton =
+    submitDataAccessRequestIsPending || (isEDucEnabled && (!soName || !soEmail))
+
   /**
    * This effect comprises a collection of updates we should immediately apply to a data access request.
    */
@@ -697,10 +700,7 @@ export default function DataAccessRequestAccessorsFilesForm(
         </Button>
         <Button
           variant="contained"
-          disabled={
-            submitDataAccessRequestIsPending ||
-            (isEDucEnabled && (!soName || !soEmail))
-          }
+          disabled={disableSubmitButton}
           onClick={() => {
             handleSubmit()
           }}
