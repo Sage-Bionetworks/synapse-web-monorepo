@@ -81,7 +81,13 @@ export default function DataAccessRequestAccessorsEditor(
   return (
     <>
       <Typography variant={'headline3'} sx={{ mt: 4, mb: 2 }}>
-        Data Requesters
+        Collaborators
+      </Typography>
+      <Typography variant={'body1'} sx={{ mb: 1 }}>
+        List the Synapse usernames of all collaborators at your institution
+        included in this data access request. Each collaborator must have a
+        Synapse account and be able to receive messages at their registered
+        email address.
       </Typography>
       <Typography
         component={'div'}
