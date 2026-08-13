@@ -43,6 +43,7 @@ import IconSvg from '../../../IconSvg/IconSvg'
 import DataAccessRequestAccessorsEditor, {
   DataAccessRequestAccessorsEditorProps,
 } from '../DataAccessRequestAccessorsEditor'
+import { longFieldLabelSx } from '../styles'
 import DocumentTemplate from '../DocumentTemplate'
 import ManagedACTAccessRequirementFormWikiWrapper from '../ManagedACTAccessRequirementFormWikiWrapper'
 import { UploadDocumentField } from '../UploadDocumentField'
@@ -445,7 +446,7 @@ export default function DataAccessRequestAccessorsFilesForm(
             }}
             onSubmit={e => e.preventDefault()}
           >
-            <Typography variant={'body1'} sx={{ mb: 2 }}>
+            <Typography variant={'body1'} sx={{ mb: 2, fontSize: '16px' }}>
               Please provide the information below to submit the request for
               access.
             </Typography>
@@ -455,7 +456,10 @@ export default function DataAccessRequestAccessorsFilesForm(
                 <Typography variant={'headline3'} sx={{ mb: 2 }}>
                   Signing Official
                 </Typography>
-                <Typography variant={'body1'} sx={{ mb: 2 }}>
+                <Typography
+                  variant={'body1'}
+                  sx={{ ...longFieldLabelSx, mb: 2 }}
+                >
                   The signing official is a member of your institution with
                   oversight authority who is NOT part of the study team (i.e.,
                   not the Project Lead, not a Data Requester or Collaborator,
@@ -532,12 +536,19 @@ export default function DataAccessRequestAccessorsFilesForm(
                 <Typography variant={'headline3'} sx={{ mt: 4, mb: 2 }}>
                   Fill out and upload a Data Use Certificate
                 </Typography>
-                <Typography variant={'body1'} sx={{ my: 2 }}>
+                <Typography
+                  variant={'body1'}
+                  sx={{ ...longFieldLabelSx, my: 2 }}
+                >
                   You must download and fill out a Data Use Certificate (DUC).
                   Be sure to upload the completed DUC below once you&apos;ve
                   completed it.
                 </Typography>
-                <Typography variant={'body1'} component={'ol'}>
+                <Typography
+                  variant={'body1'}
+                  component={'ol'}
+                  sx={longFieldLabelSx}
+                >
                   <li>Download the DUC template file.</li>
                   <li>
                     Fill out the DUC template, following the instructions in the
@@ -571,7 +582,10 @@ export default function DataAccessRequestAccessorsFilesForm(
                 <Typography variant={'headline3'} sx={{ my: 2 }}>
                   IRB Approval
                 </Typography>
-                <Typography variant={'body1'} sx={{ my: 2 }}>
+                <Typography
+                  variant={'body1'}
+                  sx={{ ...longFieldLabelSx, my: 2 }}
+                >
                   Upload a signed IRB letter on institutional letterhead. The
                   letter must include the names of all the datasets requested,
                   as well as the names of the data requesters above. Use the
@@ -601,7 +615,10 @@ export default function DataAccessRequestAccessorsFilesForm(
                   <Typography variant={'headline3'} sx={{ my: 2 }}>
                     Upload other required documents
                   </Typography>
-                  <Typography variant={'body1'} sx={{ my: 2 }}>
+                  <Typography
+                    variant={'body1'}
+                    sx={{ ...longFieldLabelSx, my: 2 }}
+                  >
                     You must upload other required documents. Please review the
                     instructions to gain data access to determine which
                     documents must also be uploaded.

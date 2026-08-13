@@ -17,6 +17,7 @@ import { ReactNode } from 'react'
 import IconSvg from '../../IconSvg/IconSvg'
 import { UserBadge } from '../../UserCard/UserBadge'
 import UserSearchBox from '../../UserSearchBox/UserSearchBox'
+import { longFieldLabelSx } from './styles'
 
 export type DataAccessRequestAccessorsEditorProps = {
   /* The current set of accessor changes for a data access request */
@@ -83,7 +84,7 @@ export default function DataAccessRequestAccessorsEditor(
       <Typography variant={'headline3'} sx={{ mt: 4, mb: 2 }}>
         Collaborators
       </Typography>
-      <Typography variant={'body1'} sx={{ mb: 1 }}>
+      <Typography variant={'body1'} sx={{ ...longFieldLabelSx, mb: 1 }}>
         List the Synapse usernames of all collaborators at your institution
         included in this data access request. Each collaborator must have a
         Synapse account and be able to receive messages at their registered
@@ -92,7 +93,7 @@ export default function DataAccessRequestAccessorsEditor(
       <Typography
         component={'div'}
         variant={'body1'}
-        sx={{ mb: 1 }}
+        sx={{ ...longFieldLabelSx, mb: 1 }}
         className={'requester-label'}
       >
         {helpText}
