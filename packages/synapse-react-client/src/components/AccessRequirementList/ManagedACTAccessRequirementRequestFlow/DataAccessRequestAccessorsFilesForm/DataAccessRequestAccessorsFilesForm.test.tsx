@@ -675,12 +675,13 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
         expect(
           screen.getByLabelText(
             /First and last names of your Signing Official/i,
-          ).value,
-        ).toBe('Pre-filled Official')
+          ),
+        ).toHaveValue('Pre-filled Official')
         expect(
-          screen.getByLabelText(/Institutional Email of your Signing Official/i)
-            .value,
-        ).toBe('prefilled@example.edu')
+          screen.getByLabelText(
+            /Institutional Email of your Signing Official/i,
+          ),
+        ).toHaveValue('prefilled@example.edu')
       })
     })
 

@@ -716,6 +716,7 @@ export default function DataAccessRequestAccessorsFilesForm(
         </Button>
         <Button
           variant="contained"
+          loading={submitDataAccessRequestIsPending}
           disabled={disableSubmitButton}
           onClick={() => {
             handleSubmit()
