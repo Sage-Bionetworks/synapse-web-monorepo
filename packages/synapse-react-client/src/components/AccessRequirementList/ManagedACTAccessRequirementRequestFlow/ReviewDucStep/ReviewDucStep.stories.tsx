@@ -1,6 +1,5 @@
 import { mockManagedACTAccessRequirement } from '@/mocks/accessRequirement/mockAccessRequirements'
 import { MOCK_DATA_ACCESS_REQUEST } from '@/mocks/dataaccess/MockDataAccessRequest'
-import { MOCK_FOLDER_ID } from '@/mocks/entity/mockEntity'
 import { getAccessRequirementHandlers } from '@/mocks/msw/handlers/accessRequirementHandlers'
 import { getDataAccessRequestHandlers } from '@/mocks/msw/handlers/dataAccessRequestHandlers'
 import { getUserProfileHandlers } from '@/mocks/msw/handlers/userProfileHandlers'
@@ -8,10 +7,7 @@ import { getWikiHandlers } from '@/mocks/msw/handlers/wikiHandlers'
 import { MOCK_USER_ID, MOCK_USER_ID_2 } from '@/mocks/user/mock_user_profile'
 import { ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE } from '@/utils/APIConstants'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
-import {
-  AccessType,
-  RestrictableObjectType,
-} from '@sage-bionetworks/synapse-types'
+import { AccessType } from '@sage-bionetworks/synapse-types'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { http, HttpResponse } from 'msw'
 import ReviewDucStep from './ReviewDucStep'
@@ -73,7 +69,5 @@ export const ReviewDuc: Story = {
   name: 'Review / Create a DUC step',
   args: {
     managedACTAccessRequirement: eDucManagedACTAccessRequirement,
-    subjectId: MOCK_FOLDER_ID,
-    subjectType: RestrictableObjectType.ENTITY,
   },
 }

@@ -1,14 +1,9 @@
-import {
-  useGetDataAccessRequestForUpdate,
-  useSubmitDataAccessRequest,
-} from '@/synapse-queries'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import { useGetDataAccessRequestForUpdate } from '@/synapse-queries'
 import { ExpandMore } from '@mui/icons-material'
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Alert,
   Box,
   Button,
   DialogActions,
@@ -18,11 +13,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import {
-  ManagedACTAccessRequirement,
-  RestrictableObjectType,
-} from '@sage-bionetworks/synapse-types'
-import { useState } from 'react'
+import { ManagedACTAccessRequirement } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../../../IconSvg/IconSvg'
 import { UserBadge } from '../../../UserCard/UserBadge'
 import ManagedACTAccessRequirementFormWikiWrapper from '../ManagedACTAccessRequirementFormWikiWrapper'
@@ -30,11 +21,13 @@ import { longFieldLabelSx } from '../styles'
 
 export type ReviewDucStepProps = {
   managedACTAccessRequirement: ManagedACTAccessRequirement
-  subjectId: string
-  subjectType: RestrictableObjectType
   onHide: () => void
   onBackClicked: () => void
-  onSubmissionCreated: (submissionId: string) => void
+  /**
+   * Called when the user clicks "Create a DUC". The parent advances to the eDUC preview step
+   * (PORTALS-4377), where the generated document is displayed for review before signing.
+   */
+  onCreateDuc: () => void
 }
 
 /**
@@ -42,16 +35,8 @@ export type ReviewDucStepProps = {
  * Lets the user confirm their collaborators, PI, and Signing Official before generating the DUC.
  */
 export default function ReviewDucStep(props: ReviewDucStepProps) {
-  const {
-    managedACTAccessRequirement,
-    subjectId,
-    subjectType,
-    onHide,
-    onBackClicked,
-    onSubmissionCreated,
-  } = props
-
-  const [error, setError] = useState<string | undefined>()
+  const { managedACTAccessRequirement, onHide, onBackClicked, onCreateDuc } =
+    props
 
   const { data: dataAccessRequest, isLoading } =
     useGetDataAccessRequestForUpdate(String(managedACTAccessRequirement.id), {
@@ -59,32 +44,9 @@ export default function ReviewDucStep(props: ReviewDucStepProps) {
       throwOnError: true,
     })
 
-  const { mutate: submit, isPending: isSubmitting } =
-    useSubmitDataAccessRequest({
-      onSuccess: submission => {
-        onSubmissionCreated(submission.submissionId)
-      },
-      onError: (e: SynapseClientError) => {
-        setError(e.reason)
-      },
-    })
-
   const accessorChanges = dataAccessRequest?.accessorChanges ?? []
   const pi = dataAccessRequest?.principalInvestigator
   const so = dataAccessRequest?.signingOfficial
-
-  const handleCreateDuc = () => {
-    if (!dataAccessRequest) return
-    submit({
-      request: {
-        requestId: dataAccessRequest.id,
-        requestEtag: dataAccessRequest.etag,
-        subjectId,
-        subjectType,
-      },
-      accessRequirementId: String(managedACTAccessRequirement.id),
-    })
-  }
 
   return (
     <>
@@ -230,30 +192,19 @@ export default function ReviewDucStep(props: ReviewDucStepProps) {
             </Accordion>
           </Box>
         </ManagedACTAccessRequirementFormWikiWrapper>
-        {error && (
-          <Alert severity={'error'} sx={{ mt: 2 }}>
-            <strong>Sorry, there is an error creating your DUC.</strong>
-            <br />
-            {error}
-          </Alert>
-        )}
       </DialogContent>
       <DialogActions>
-        <Button
-          variant={'outlined'}
-          disabled={isSubmitting}
-          onClick={onBackClicked}
-        >
+        <Button variant={'outlined'} onClick={onBackClicked}>
           Back
         </Button>
         <Box sx={{ flexGrow: 1 }} />
-        <Button variant={'outlined'} disabled={isSubmitting} onClick={onHide}>
+        <Button variant={'outlined'} onClick={onHide}>
           Cancel
         </Button>
         <Button
           variant={'contained'}
-          disabled={isLoading || isSubmitting}
-          onClick={handleCreateDuc}
+          disabled={isLoading}
+          onClick={onCreateDuc}
         >
           Create a DUC
         </Button>
