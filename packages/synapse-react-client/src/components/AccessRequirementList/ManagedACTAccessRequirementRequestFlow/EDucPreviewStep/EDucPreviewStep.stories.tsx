@@ -51,6 +51,10 @@ export const Preview: Story = {
   name: 'eDUC preview step',
   args: {
     managedACTAccessRequirement: eDucManagedACTAccessRequirement,
+    // The real pdf.js viewer is not served in Storybook, so point the iframe at a public
+    // sample PDF that the browser can render directly.
+    previewSrcOverride:
+      'https://www.rd.usda.gov/sites/default/files/pdf-sample_0.pdf',
   },
 }
 

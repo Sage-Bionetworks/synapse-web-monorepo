@@ -3,7 +3,6 @@ import {
   useGetDataAccessRequestPreview,
 } from '@/synapse-queries'
 import SynapseClient from '@/synapse-client'
-import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import {
   Alert,
   Box,
@@ -19,6 +18,7 @@ import {
 } from '@mui/material'
 import { ManagedACTAccessRequirement } from '@sage-bionetworks/synapse-types'
 import { ReactNode } from 'react'
+import { useFetchBlobUrl } from '@/utils/hooks/useFetchBlobUrl'
 import IconSvg from '../../../IconSvg/IconSvg'
 import { longFieldLabelSx } from '../styles'
 
@@ -30,6 +30,12 @@ export type EDucPreviewStepProps = {
   onBackClicked: () => void
   onSendForSignature: () => void
   onManualUpload: () => void
+  /**
+   * Optional iframe `src` override for demos and stories. When set, replaces the pdf.js viewer
+   * URL that is normally built from the eDUC preview file handle. Production callers should not
+   * set this.
+   */
+  previewSrcOverride?: string
 }
 
 /**
@@ -45,6 +51,7 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
     onBackClicked,
     onSendForSignature,
     onManualUpload,
+    previewSrcOverride,
   } = props
 
   const { data: dataAccessRequest, isLoading: isLoadingDar } =
@@ -61,10 +68,18 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
     enabled: Boolean(dataAccessRequest?.id),
   })
 
-  const isLoading =
-    isLoadingDar || (Boolean(dataAccessRequest?.id) && isLoadingPreview)
   const previewFileHandleId = previewFileHandle?.fileHandleId
-  const actionsDisabled = isLoading || !previewFileHandleId
+  const { blobUrl, error: blobError } = useFetchBlobUrl(
+    previewSrcOverride || !previewFileHandleId
+      ? undefined
+      : SynapseClient.getPortalFileHandleServletUrl(previewFileHandleId),
+  )
+
+  const isLoading =
+    isLoadingDar ||
+    (Boolean(dataAccessRequest?.id) && isLoadingPreview) ||
+    (!previewSrcOverride && !!previewFileHandleId && !blobUrl && !blobError)
+  const actionsDisabled = isLoading || (!previewSrcOverride && !blobUrl)
 
   return (
     <>
@@ -95,24 +110,23 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
             data-testid={'EDucPreviewStep-loading'}
           />
         )}
-        {!isLoading && previewError && (
+        {!isLoading && (previewError || blobError) && (
           <Alert severity={'error'}>
             <strong>Sorry, we couldn&apos;t load your DUC preview.</strong>
             <br />
-            {previewError.reason}
+            {previewError?.reason ?? blobError?.message}
           </Alert>
         )}
-        {!isLoading && !previewError && previewFileHandleId && (
-          <iframe
-            title={'eDUC preview'}
-            src={`${getEndpoint(
-              BackendDestinationEnum.PORTAL_ENDPOINT,
-            )}pdf.js/web/viewer.html?file=${encodeURIComponent(
-              SynapseClient.getPortalFileHandleServletUrl(previewFileHandleId),
-            )}`}
-            style={{ border: 0, width: '100%', height: PDF_PREVIEW_HEIGHT }}
-          />
-        )}
+        {!isLoading &&
+          !previewError &&
+          !blobError &&
+          (previewSrcOverride || blobUrl) && (
+            <iframe
+              title={'eDUC preview'}
+              src={previewSrcOverride ?? blobUrl}
+              style={{ border: 0, width: '100%', height: PDF_PREVIEW_HEIGHT }}
+            />
+          )}
 
         <Box
           sx={{
