@@ -11,10 +11,12 @@ import {
   IconButton,
   Link,
   Stack,
+  TextField,
   Typography,
 } from '@mui/material'
 import { deepEquals } from '@rjsf/utils'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
+import isEmpty from 'lodash-es/isEmpty'
 import {
   AccessorChange,
   AccessType,
@@ -25,6 +27,7 @@ import {
   Renewal,
   Request,
   RestrictableObjectType,
+  SigningOfficial,
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
 import { ReactNode, useEffect, useState } from 'react'
@@ -40,14 +43,16 @@ import IconSvg from '../../../IconSvg/IconSvg'
 import DataAccessRequestAccessorsEditor, {
   DataAccessRequestAccessorsEditorProps,
 } from '../DataAccessRequestAccessorsEditor'
+import { longFieldLabelSx } from '../styles'
 import DocumentTemplate from '../DocumentTemplate'
 import ManagedACTAccessRequirementFormWikiWrapper from '../ManagedACTAccessRequirementFormWikiWrapper'
 import { UploadDocumentField } from '../UploadDocumentField'
 
 function AccessorRequirementHelpText(props: {
   managedACTAccessRequirement: ManagedACTAccessRequirement
+  isEDucEnabled: boolean
 }) {
-  const { managedACTAccessRequirement } = props
+  const { managedACTAccessRequirement, isEDucEnabled } = props
   let link: string = ''
   let msg: string = ''
 
@@ -69,7 +74,7 @@ function AccessorRequirementHelpText(props: {
   }
   return (
     <>
-      {managedACTAccessRequirement.isDUCRequired ? (
+      {managedACTAccessRequirement.isDUCRequired && !isEDucEnabled ? (
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', py: 1 }}>
           <NewReleasesOutlined sx={{ color: 'error.main' }} />
           <div>
@@ -138,11 +143,14 @@ export default function DataAccessRequestAccessorsFilesForm(
   const { isAuthenticated } = useSynapseContext()
   const { data: user } = useGetCurrentUserProfile({ enabled: isAuthenticated })
   const [alert, setAlert] = useState<AlertProps | undefined>()
+  const isEDucEnabled = Boolean(managedACTAccessRequirement.eDucTemplateId)
   const [accessorChanges, setAccessorChanges] = useState<
     AccessorChange[] | undefined
   >()
   const [summaryOfUse, setSummaryOfUse] = useState<string | undefined>()
   const [publication, setPublication] = useState<string | undefined>()
+  const [soName, setSoName] = useState<string>('')
+  const [soEmail, setSoEmail] = useState<string>('')
 
   const { data: dataAccessRequest, isLoading: isLoadingGetDataAccessRequest } =
     useGetDataAccessRequestForUpdate(String(managedACTAccessRequirement.id), {
@@ -184,6 +192,9 @@ export default function DataAccessRequestAccessorsFilesForm(
     isLoadingGetDataAccessRequest ||
     updateDataAccessRequestIsPending ||
     submitDataAccessRequestIsPending
+
+  const disableSubmitButton =
+    submitDataAccessRequestIsPending || (isEDucEnabled && (!soName || !soEmail))
 
   /**
    * This effect comprises a collection of updates we should immediately apply to a data access request.
@@ -268,19 +279,36 @@ export default function DataAccessRequestAccessorsFilesForm(
       ) {
         setSummaryOfUse(dataAccessRequest.summaryOfUse)
       }
+      if (isEDucEnabled) {
+        const so = dataAccessRequest.signingOfficial
+        if (isEmpty(soName) && so?.name) {
+          setSoName(so.name)
+        }
+        if (isEmpty(soEmail) && so?.institutionalEmail) {
+          setSoEmail(so.institutionalEmail)
+        }
+      }
     }
     // Intentionally only re-synchronize state when server state changes
     // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [dataAccessRequest])
 
   function getDataAccessRequestWithLocalState(): Request | Renewal {
-    return {
+    const base = {
       ...dataAccessRequest,
-      // append local state to the request
       accessorChanges: accessorChanges,
       publication,
       summaryOfUse,
     } as Request | Renewal
+    if (isEDucEnabled) {
+      const nextSo: SigningOfficial = {
+        ...dataAccessRequest?.signingOfficial,
+        name: soName || undefined,
+        institutionalEmail: soEmail || undefined,
+      }
+      return { ...base, signingOfficial: nextSo }
+    }
+    return base
   }
 
   async function handleSubmit() {
@@ -421,10 +449,54 @@ export default function DataAccessRequestAccessorsFilesForm(
             }}
             onSubmit={e => e.preventDefault()}
           >
-            <Typography variant={'body1'} sx={{ mb: 2 }}>
+            <Typography variant={'body1'} sx={{ mb: 2, fontSize: '16px' }}>
               Please provide the information below to submit the request for
               access.
             </Typography>
+
+            {isEDucEnabled && (
+              <>
+                <Typography variant={'headline3'} sx={{ mb: 2 }}>
+                  Signing Official
+                </Typography>
+                <Typography
+                  variant={'body1'}
+                  sx={{ ...longFieldLabelSx, mb: 2 }}
+                >
+                  The signing official is a member of your institution with
+                  oversight authority who is NOT part of the study team (i.e.,
+                  not the Project Lead, not a Data Requester or Collaborator,
+                  and not the Principal Investigator). They do not need a
+                  Synapse account but must be able to receive messages at the
+                  email address provided below.
+                </Typography>
+                <TextField
+                  id="so-name"
+                  label="First and last names of your Signing Official"
+                  placeholder="First and last name of signing official, ex: John Smith"
+                  fullWidth
+                  type="text"
+                  disabled={isLoading}
+                  value={soName}
+                  required
+                  onChange={e => setSoName(e.target.value)}
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  id="so-email"
+                  label="Institutional Email of your Signing Official"
+                  type="email"
+                  placeholder="Individual with signing authority, e.g. jane.smith@institution.edu"
+                  fullWidth
+                  disabled={isLoading}
+                  value={soEmail}
+                  required
+                  onChange={e => setSoEmail(e.target.value)}
+                  sx={{ mb: 2 }}
+                />
+                <Divider sx={{ my: 4 }} />
+              </>
+            )}
 
             {dataAccessRequest && user && (
               <DataAccessRequestAccessorsEditor
@@ -434,18 +506,19 @@ export default function DataAccessRequestAccessorsFilesForm(
                 helpText={
                   <AccessorRequirementHelpText
                     managedACTAccessRequirement={managedACTAccessRequirement}
+                    isEDucEnabled={isEDucEnabled}
                   />
                 }
               />
             )}
 
-            {(managedACTAccessRequirement?.isDUCRequired ||
+            {((managedACTAccessRequirement?.isDUCRequired && !isEDucEnabled) ||
               managedACTAccessRequirement?.isIRBApprovalRequired ||
               managedACTAccessRequirement?.areOtherAttachmentsRequired) && (
               <Divider sx={{ my: 4 }} />
             )}
-            {/* DUC */}
-            {managedACTAccessRequirement?.isDUCRequired && (
+            {/* DUC — hidden for eDUC ARs, which handle DUC via the eDUC flow */}
+            {managedACTAccessRequirement?.isDUCRequired && !isEDucEnabled && (
               <>
                 {managedACTAccessRequirement?.ducTemplateFileHandleId && (
                   <DocumentTemplate
@@ -466,12 +539,19 @@ export default function DataAccessRequestAccessorsFilesForm(
                 <Typography variant={'headline3'} sx={{ mt: 4, mb: 2 }}>
                   Fill out and upload a Data Use Certificate
                 </Typography>
-                <Typography variant={'body1'} sx={{ my: 2 }}>
+                <Typography
+                  variant={'body1'}
+                  sx={{ ...longFieldLabelSx, my: 2 }}
+                >
                   You must download and fill out a Data Use Certificate (DUC).
                   Be sure to upload the completed DUC below once you&apos;ve
                   completed it.
                 </Typography>
-                <Typography variant={'body1'} component={'ol'}>
+                <Typography
+                  variant={'body1'}
+                  component={'ol'}
+                  sx={longFieldLabelSx}
+                >
                   <li>Download the DUC template file.</li>
                   <li>
                     Fill out the DUC template, following the instructions in the
@@ -505,7 +585,10 @@ export default function DataAccessRequestAccessorsFilesForm(
                 <Typography variant={'headline3'} sx={{ my: 2 }}>
                   IRB Approval
                 </Typography>
-                <Typography variant={'body1'} sx={{ my: 2 }}>
+                <Typography
+                  variant={'body1'}
+                  sx={{ ...longFieldLabelSx, my: 2 }}
+                >
                   Upload a signed IRB letter on institutional letterhead. The
                   letter must include the names of all the datasets requested,
                   as well as the names of the data requesters above. Use the
@@ -535,7 +618,10 @@ export default function DataAccessRequestAccessorsFilesForm(
                   <Typography variant={'headline3'} sx={{ my: 2 }}>
                     Upload other required documents
                   </Typography>
-                  <Typography variant={'body1'} sx={{ my: 2 }}>
+                  <Typography
+                    variant={'body1'}
+                    sx={{ ...longFieldLabelSx, my: 2 }}
+                  >
                     You must upload other required documents. Please review the
                     instructions to gain data access to determine which
                     documents must also be uploaded.
@@ -614,7 +700,8 @@ export default function DataAccessRequestAccessorsFilesForm(
         </Button>
         <Button
           variant="contained"
-          disabled={submitDataAccessRequestIsPending}
+          loading={submitDataAccessRequestIsPending}
+          disabled={disableSubmitButton}
           onClick={() => {
             handleSubmit()
           }}

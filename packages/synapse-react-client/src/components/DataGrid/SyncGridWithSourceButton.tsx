@@ -4,7 +4,7 @@ import useMergeGridWithSource, {
 } from '@/components/DataGrid/useMergeGridWithSource'
 import { displayToast } from '@/components/index'
 import { useGetEntity } from '@/synapse-queries'
-import { useGetSchemaBinding } from '@/synapse-queries/entity/useEntityBoundSchema'
+import { useGetSchemaBinding } from '@/synapse-queries/jsonschema/useEntityBoundSchema'
 import { useGetFeatureFlag } from '@/synapse-queries/featureflags'
 import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'

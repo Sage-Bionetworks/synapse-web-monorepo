@@ -1,16 +1,19 @@
 import {
   useGetAccessRequirements,
+  useListEDucTemplates,
   useUpdateAccessRequirement,
 } from '@/synapse-queries'
 import { DAY_IN_MS } from '@/utils/SynapseConstants'
 import {
   Alert,
+  Autocomplete,
   Box,
   Checkbox,
   FormControlLabel,
   TextField,
   Typography,
 } from '@mui/material'
+import { EDucTemplate } from '@sage-bionetworks/synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   FileHandleAssociateType,
@@ -111,6 +114,30 @@ export const SetManagedAccessRequirementFields = forwardRef(
       }
       return undefined
     }, [updatedAr?.ducTemplateFileHandleId, updatedAr?.id])
+
+    const {
+      data: eDucTemplateData,
+      isLoading: isLoadingEDucTemplates,
+      hasNextPage: hasNextEDucTemplatePage,
+      fetchNextPage: fetchNextEDucTemplatePage,
+    } = useListEDucTemplates()
+    // Auto-fetch all pages so the dropdown always shows the complete template list.
+    useEffect(() => {
+      if (hasNextEDucTemplatePage) {
+        void fetchNextEDucTemplatePage()
+      }
+    }, [hasNextEDucTemplatePage, fetchNextEDucTemplatePage])
+    const eDucTemplates = useMemo(
+      () => eDucTemplateData?.pages.flatMap(page => page.results ?? []) ?? [],
+      [eDucTemplateData],
+    )
+    const selectedEDucTemplate = useMemo(
+      () =>
+        eDucTemplates.find(
+          template => template.templateId === updatedAr?.eDucTemplateId,
+        ) ?? null,
+      [eDucTemplates, updatedAr?.eDucTemplateId],
+    )
 
     const uploadDucTemplateCallback = (data: UploadCallbackResp) => {
       if (data.resp && data.success && updatedAr) {
@@ -238,6 +265,31 @@ export const SetManagedAccessRequirementFields = forwardRef(
                   </Alert>
                 )}
               </SynapseErrorBoundary>
+              <Box sx={{ mt: 2 }}>
+                <Autocomplete<EDucTemplate>
+                  id="eDucTemplate"
+                  options={eDucTemplates}
+                  loading={isLoadingEDucTemplates}
+                  value={selectedEDucTemplate}
+                  onChange={(_event, template) =>
+                    setUpdatedAr({
+                      ...updatedAr,
+                      eDucTemplateId: template?.templateId,
+                    })
+                  }
+                  getOptionLabel={template => template.name ?? ''}
+                  isOptionEqualToValue={(option, value) =>
+                    option.templateId === value.templateId
+                  }
+                  renderInput={params => (
+                    <TextField
+                      {...params}
+                      label="eDUC template (electronic signing)"
+                      helperText="Optional. Select a DocuSign template to enable the eDUC signing flow for this Access Requirement."
+                    />
+                  )}
+                />
+              </Box>
               <FormControlLabel
                 label="IRB approval is required."
                 checked={updatedAr.isIRBApprovalRequired}

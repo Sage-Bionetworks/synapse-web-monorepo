@@ -16,6 +16,7 @@ import styles from './EntitySidebar.module.scss'
 import useGetEntityMetadata from '@/utils/hooks/useGetEntityMetadata'
 import { entityTypeToFriendlyName } from '@/utils/functions/EntityTypeUtils'
 import { ENTITY_SIDEBAR_STATE_LOCALSTORAGE_KEY } from '@/utils/SynapseConstants'
+import AccessAndPermissions from './AccessAndPermissions'
 
 type EntitySidebarProps = {
   entityId: string
@@ -48,28 +49,40 @@ export default function EntitySidebar(props: EntitySidebarProps) {
   }, [open])
 
   const sidebarContent = (
-    <Box className={styles.content}>
-      <Typography variant="overline" className={styles.sidebarHeader}>
-        About this {friendlyName}
-      </Typography>
-      <Divider className={styles.divider} />
-      <Stack className={styles.propertiesContainer}>
-        {properties.map(property => (
-          <Stack key={property.key} className={styles.propertyRow}>
-            <Typography className={styles.propertyTitle}>
-              {property.title}
-            </Typography>
-            <Typography
-              className={styles.propertyValue}
-              variant="smallText1"
-              component="div"
-            >
-              {property.value}
-            </Typography>
-          </Stack>
-        ))}
-      </Stack>
-    </Box>
+    <Stack className={styles.content}>
+      <div>
+        <Typography variant="overline" className={styles.sidebarHeader}>
+          About this {friendlyName}
+        </Typography>
+        <Divider />
+        <Stack className={styles.propertiesContainer}>
+          {properties.map(property => (
+            <Stack key={property.key} className={styles.propertyRow}>
+              <Typography className={styles.propertyTitle}>
+                {property.title}
+              </Typography>
+              <Typography
+                className={styles.propertyValue}
+                variant="smallText1"
+                component="div"
+              >
+                {property.value}
+              </Typography>
+            </Stack>
+          ))}
+        </Stack>
+      </div>
+      <div>
+        <Typography variant="overline" className={styles.sidebarHeader}>
+          ACCESS & PERMISSIONS FOR THIS {friendlyName}
+        </Typography>
+        <Divider />
+        <AccessAndPermissions
+          entityId={entityId}
+          versionNumber={versionNumber}
+        />
+      </div>
+    </Stack>
   )
 
   return (

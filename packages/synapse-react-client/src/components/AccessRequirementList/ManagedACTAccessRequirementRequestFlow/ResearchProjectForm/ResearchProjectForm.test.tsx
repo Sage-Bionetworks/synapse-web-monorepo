@@ -2,6 +2,7 @@ import {
   mockManagedACTAccessRequirement,
   mockManagedACTAccessRequirementWikiPageKey,
 } from '@/mocks/accessRequirement/mockAccessRequirements'
+import { MOCK_DATA_ACCESS_REQUEST } from '@/mocks/dataaccess/MockDataAccessRequest'
 import {
   MOCK_EMPTY_RESEARCH_PROJECT,
   MOCK_RESEARCH_PROJECT,
@@ -20,6 +21,7 @@ import {
 import userEvent, { UserEvent } from '@testing-library/user-event'
 import * as SynapseClient from '@/synapse-client/SynapseClient'
 import MarkdownSynapse from '../../../Markdown/MarkdownSynapse'
+import * as UserSearchBoxModule from '../../../UserSearchBox/UserSearchBox'
 import * as AccessRequirementListUtils from '../../AccessRequirementListUtils'
 import ResearchProjectForm, {
   ResearchProjectFormProps,
@@ -52,6 +54,17 @@ const mockSaveResearchProject = vi
       ...submitted,
     }),
   )
+
+const mockGetDataAccessRequestForUpdate = vi
+  .spyOn(SynapseClient, 'getDataAccessRequestForUpdate')
+  .mockImplementation(() => Promise.resolve(MOCK_DATA_ACCESS_REQUEST))
+const mockUpdateDataAccessRequest = vi
+  .spyOn(SynapseClient, 'updateDataAccessRequest')
+  .mockImplementation(submitted => Promise.resolve(submitted))
+
+const mockedUserSearchBox = vi
+  .spyOn(UserSearchBoxModule, 'default')
+  .mockImplementation(() => <div data-testid={'UserSearchBox-MOCK'}></div>)
 
 vi.spyOn(SynapseClient, 'getWikiPageKeyForAccessRequirement').mockResolvedValue(
   mockManagedACTAccessRequirementWikiPageKey,
@@ -428,5 +441,111 @@ describe('ResearchProjectForm', { timeout: 30_000 }, () => {
         objectType: mockManagedACTAccessRequirementWikiPageKey.ownerObjectType,
       }),
     )
+  })
+
+  describe('when the AR has an eDucTemplateId', () => {
+    const eDucTemplateId = 'template-abc-123'
+    const eDucAr = {
+      ...mockManagedACTAccessRequirement,
+      isIDURequired: false,
+      eDucTemplateId,
+    }
+
+    beforeEach(() => {
+      // Restore the default mock impl in case a previous test replaced it.
+      mockSaveResearchProject.mockImplementation(submitted =>
+        Promise.resolve({
+          id: CREATED_RESEARCH_PROJECT_ID,
+          ...submitted,
+        }),
+      )
+    })
+
+    it('renders the Synapse PI user selector and PI email input', async () => {
+      await setUp({
+        ...defaultProps,
+        managedACTAccessRequirement: eDucAr,
+      })
+      expect(screen.getByTestId('UserSearchBox-MOCK')).toBeInTheDocument()
+      expect(
+        screen.getByLabelText(
+          'Institutional Email of your Project Lead or PI',
+          { exact: false },
+        ),
+      ).toBeInTheDocument()
+    })
+
+    it('blocks Save & Continue until PI user + email are provided', async () => {
+      const { user, projectLeadInput, institutionInput, saveChangesButton } =
+        await setUp({
+          ...defaultProps,
+          managedACTAccessRequirement: eDucAr,
+        })
+
+      await user.type(projectLeadInput, 'Jane Doe')
+      await user.type(institutionInput, 'My Institution')
+      expect(saveChangesButton).toBeDisabled()
+
+      const piEmailInput = screen.getByLabelText(
+        'Institutional Email of your Project Lead or PI',
+        { exact: false },
+      )
+      await user.type(piEmailInput, 'pi@example.edu')
+      // still disabled: no PI user selected
+      expect(saveChangesButton).toBeDisabled()
+
+      // Simulate selecting a PI Synapse user
+      act(() => {
+        mockedUserSearchBox.mock.lastCall![0].onChange!('9999', {} as never)
+      })
+
+      await waitFor(() => expect(saveChangesButton).not.toBeDisabled())
+    })
+
+    it('saves institution + PI on the DAR when the user clicks Save & Continue', async () => {
+      const { user, projectLeadInput, institutionInput } = await setUp({
+        ...defaultProps,
+        managedACTAccessRequirement: eDucAr,
+      })
+
+      await waitFor(() =>
+        expect(mockGetDataAccessRequestForUpdate).toHaveBeenCalled(),
+      )
+
+      await user.type(projectLeadInput, 'Jane Doe')
+      await user.type(institutionInput, 'My Institution')
+      await user.type(
+        screen.getByLabelText(
+          'Institutional Email of your Project Lead or PI',
+          { exact: false },
+        ),
+        'pi@example.edu',
+      )
+      act(() => {
+        mockedUserSearchBox.mock.lastCall![0].onChange!('9999', {} as never)
+      })
+
+      await waitFor(() =>
+        expect(
+          screen.getByRole('button', { name: 'Save and Continue' }),
+        ).not.toBeDisabled(),
+      )
+      await clickSaveAndContinue(user)
+
+      await waitFor(() => {
+        expect(mockUpdateDataAccessRequest).toHaveBeenCalledWith(
+          expect.objectContaining({
+            id: MOCK_DATA_ACCESS_REQUEST.id,
+            institution: 'My Institution',
+            principalInvestigator: {
+              userId: '9999',
+              name: 'Jane Doe',
+              institutionalEmail: 'pi@example.edu',
+            },
+          }),
+          MOCK_ACCESS_TOKEN,
+        )
+      })
+    })
   })
 })

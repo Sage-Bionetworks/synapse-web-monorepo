@@ -4,6 +4,19 @@
  */
 import { AccessorChange } from './AccessorChange'
 
+export interface PrincipalInvestigator {
+  userId?: string
+  name?: string
+  title?: string
+  institutionalEmail?: string
+}
+
+export interface SigningOfficial {
+  name?: string
+  title?: string
+  institutionalEmail?: string
+}
+
 export interface RequestInterface {
   id: string
   accessRequirementId: string
@@ -18,6 +31,12 @@ export interface RequestInterface {
   accessorChanges: AccessorChange[]
   etag: string
   concreteType: string
+  /* The institution of the collaborators. Used by the eDUC signing flow. */
+  institution?: string
+  /* Principal Investigator information. Used by the eDUC signing flow. */
+  principalInvestigator?: PrincipalInvestigator
+  /* Signing Official information. Used by the eDUC signing flow. */
+  signingOfficial?: SigningOfficial
 }
 
 export interface Request extends RequestInterface {

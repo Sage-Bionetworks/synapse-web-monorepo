@@ -586,4 +586,102 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
       expect(mockOnBackClicked).toHaveBeenCalled()
     })
   })
+
+  describe('when the AR has an eDucTemplateId', () => {
+    const eDucProps: DataAccessRequestAccessorsFilesFormProps = {
+      ...defaultProps,
+      managedACTAccessRequirement: {
+        ...mockManagedACTAccessRequirement,
+        eDucTemplateId: 'educ-template-123',
+      },
+    }
+
+    it('renders Signing Official name and email fields', async () => {
+      mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
+      renderComponent(eDucProps)
+
+      await screen.findByLabelText(
+        /First and last names of your Signing Official/i,
+      )
+      await screen.findByLabelText(
+        /Institutional Email of your Signing Official/i,
+      )
+    })
+
+    it('keeps Submit disabled until SO name and email are provided', async () => {
+      mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
+      const { user } = renderComponent(eDucProps)
+
+      const submitButton = await screen.findByRole('button', { name: 'Submit' })
+      expect(submitButton).toBeDisabled()
+
+      const nameField = screen.getByLabelText(
+        /First and last names of your Signing Official/i,
+      )
+      const emailField = screen.getByLabelText(
+        /Institutional Email of your Signing Official/i,
+      )
+
+      await user.type(nameField, 'Jane Smith')
+      expect(submitButton).toBeDisabled()
+
+      await user.type(emailField, 'jane@example.edu')
+      await waitFor(() => expect(submitButton).toBeEnabled())
+    })
+
+    it('includes signingOfficial in the saved DAR on Submit', async () => {
+      mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
+      const { user } = renderComponent(eDucProps)
+
+      const nameField = await screen.findByLabelText(
+        /First and last names of your Signing Official/i,
+      )
+      const emailField = screen.getByLabelText(
+        /Institutional Email of your Signing Official/i,
+      )
+
+      await user.type(nameField, 'Jane Smith')
+      await user.type(emailField, 'jane@example.edu')
+
+      const submitButton = await screen.findByRole('button', { name: 'Submit' })
+      await waitFor(() => expect(submitButton).toBeEnabled())
+      await user.click(submitButton)
+
+      await waitFor(() => {
+        const lastCall = mockUpdateDataAccessRequest.mock.calls.filter(
+          call => call[0].signingOfficial,
+        )
+        expect(lastCall.length).toBeGreaterThan(0)
+        const savedRequest = lastCall[lastCall.length - 1][0]
+        expect(savedRequest.signingOfficial).toMatchObject({
+          name: 'Jane Smith',
+          institutionalEmail: 'jane@example.edu',
+        })
+      })
+    })
+
+    it('prefills SO fields from existing DAR', async () => {
+      mockGetDataRequestForUpdate.mockResolvedValue({
+        ...MOCK_DATA_ACCESS_REQUEST,
+        signingOfficial: {
+          name: 'Pre-filled Official',
+          institutionalEmail: 'prefilled@example.edu',
+        },
+      })
+      renderComponent(eDucProps)
+
+      await waitFor(() => {
+        expect(
+          screen.getByLabelText(
+            /First and last names of your Signing Official/i,
+          ),
+        ).toHaveValue('Pre-filled Official')
+        expect(
+          screen.getByLabelText(
+            /Institutional Email of your Signing Official/i,
+          ),
+        ).toHaveValue('prefilled@example.edu')
+      })
+    })
+  })
 })
