@@ -10,10 +10,38 @@ import {
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, within } from '@testing-library/react'
+import { useMeasure } from '@react-hookz/web'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import QueryWrapper from '../../QueryWrapper'
 import FacetNavPanel, { FacetNavPanelProps } from './FacetNavPanel'
 import { truncate } from './FacetPlotLegendUtils'
+
+let mockPlotContainerMeasurements: { width?: number; height?: number } = {
+  width: 400,
+  height: 200,
+}
+
+vi.mock('@react-hookz/web', async () => {
+  const actual =
+    await vi.importActual<typeof import('@react-hookz/web')>('@react-hookz/web')
+
+  return {
+    ...actual,
+    useMeasure: vi.fn(),
+  }
+})
+
+const mockUseMeasure = vi.mocked(useMeasure)
+
+vi.mock('../../Plot/Plot', () => {
+  const MockPlot = (props: { style?: React.CSSProperties }) => (
+    <div data-testid="facet-nav-plot" style={props.style} />
+  )
+
+  return {
+    default: MockPlot,
+  }
+})
 
 const mockApplyCallback = vi.fn(() => null)
 const mockHideCallback = vi.fn(() => null)
@@ -76,6 +104,14 @@ function renderComponent(overrides?: FacetNavPanelProps) {
 describe('FacetNavPanel tests', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
+    mockPlotContainerMeasurements = {
+      width: 400,
+      height: 200,
+    }
+    mockUseMeasure.mockReturnValue([
+      mockPlotContainerMeasurements,
+      vi.fn(),
+    ] as any)
     registerTableQueryResult(request.query, testData)
   })
   afterEach(() => server.restoreHandlers())
@@ -122,5 +158,35 @@ describe('FacetNavPanel tests', () => {
     expect(truncate('', 5)).toEqual('')
     expect(truncate('123456789', 5)).toEqual('1234…')
     expect(truncate('12345', 5)).toEqual('12345')
+  })
+
+  it('should render the plot only after a non-zero width is measured', async () => {
+    mockPlotContainerMeasurements = {
+      width: 0,
+      height: 200,
+    }
+    mockUseMeasure.mockReturnValue([
+      mockPlotContainerMeasurements,
+      vi.fn(),
+    ] as any)
+
+    const firstRender = renderComponent()
+    await screen.findByRole('figure')
+    expect(screen.queryByTestId('facet-nav-plot')).not.toBeInTheDocument()
+
+    firstRender.unmount()
+
+    mockPlotContainerMeasurements = {
+      width: 250.5,
+      height: 200,
+    }
+    mockUseMeasure.mockReturnValue([
+      mockPlotContainerMeasurements,
+      vi.fn(),
+    ] as any)
+
+    renderComponent()
+    await screen.findByRole('figure')
+    expect(await screen.findByTestId('facet-nav-plot')).toBeInTheDocument()
   })
 })
