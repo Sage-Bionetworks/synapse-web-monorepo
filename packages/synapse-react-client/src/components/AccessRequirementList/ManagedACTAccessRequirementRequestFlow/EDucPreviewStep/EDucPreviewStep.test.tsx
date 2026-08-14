@@ -13,6 +13,13 @@ import MarkdownSynapse from '../../../Markdown/MarkdownSynapse'
 import * as AccessRequirementListUtils from '../../AccessRequirementListUtils'
 import EDucPreviewStep, { EDucPreviewStepProps } from './EDucPreviewStep'
 
+vi.mock('@/utils/hooks/useFetchBlobUrl', () => ({
+  useFetchBlobUrl: vi.fn().mockReturnValue({
+    blobUrl: 'blob:mockBlobUrl',
+    error: undefined,
+  }),
+}))
+
 vi.mock('../../../Markdown/MarkdownSynapse', () => ({
   __esModule: true,
   default: vi.fn(),
@@ -83,7 +90,7 @@ describe('EDucPreviewStep', () => {
     await screen.findByTestId('EDucPreviewStep-loading')
   })
 
-  it('renders the pdf.js iframe when the preview loads successfully', async () => {
+  it('renders the iframe when the preview loads successfully', async () => {
     server.use(
       http.get(previewEndpoint, () =>
         HttpResponse.json(
@@ -95,10 +102,7 @@ describe('EDucPreviewStep', () => {
     renderComponent()
 
     const iframe = await screen.findByTitle('eDUC preview')
-    expect(iframe.getAttribute('src')).toMatch(/pdf\.js\/web\/viewer\.html/)
-    expect(iframe.getAttribute('src')).toMatch(
-      /fileHandleId%3Dpreview-file-handle-456/,
-    )
+    expect(iframe).toHaveAttribute('src', 'blob:mockBlobUrl')
   })
 
   it('shows an error alert when the preview query fails', async () => {

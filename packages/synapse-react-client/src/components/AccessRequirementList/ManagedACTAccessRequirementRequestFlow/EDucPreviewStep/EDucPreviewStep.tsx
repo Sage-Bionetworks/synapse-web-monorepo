@@ -31,16 +31,15 @@ export type EDucPreviewStepProps = {
   onSendForSignature: () => void
   onManualUpload: () => void
   /**
-   * Optional iframe `src` override for demos and stories. When set, replaces the pdf.js viewer
-   * URL that is normally built from the eDUC preview file handle. Production callers should not
-   * set this.
+   * Optional iframe `src` override for demos and stories. When set, the blob fetch is skipped
+   * and this URL is used directly as the iframe src. Production callers should not set this.
    */
   previewSrcOverride?: string
 }
 
 /**
  * Wizard step shown after the "Review / Create a DUC" step (PORTALS-4414).
- * Displays the generated eDUC document in a pdf.js viewer iframe so the user can review it
+ * Displays the generated eDUC document in an iframe so the user can review it
  * before sending it for electronic signature (PORTALS-4378) or manually printing and
  * uploading a signed PDF (PORTALS-4379).
  */

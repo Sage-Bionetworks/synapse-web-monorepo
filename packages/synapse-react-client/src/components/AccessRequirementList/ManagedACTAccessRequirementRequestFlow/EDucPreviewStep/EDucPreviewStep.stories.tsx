@@ -14,7 +14,7 @@ const eDucManagedACTAccessRequirement = {
   eDucTemplateId: 'template-abc-123',
 }
 
-// pdf.js will attempt to load a file from Synapse; the story renders the chrome around it.
+// The story renders the chrome around the iframe; the iframe src is overridden via previewSrcOverride.
 const previewHandler = http.get(
   `${MOCK_REPO_ORIGIN}/repo/v1/dataAccessRequest/${MOCK_DATA_ACCESS_REQUEST.id}/preview`,
   () =>
@@ -51,7 +51,7 @@ export const Preview: Story = {
   name: 'eDUC preview step',
   args: {
     managedACTAccessRequirement: eDucManagedACTAccessRequirement,
-    // The real pdf.js viewer is not served in Storybook, so point the iframe at a public
+    // The real portal servlet is not served in Storybook, so point the iframe at a public
     // sample PDF that the browser can render directly.
     previewSrcOverride:
       'https://www.rd.usda.gov/sites/default/files/pdf-sample_0.pdf',
