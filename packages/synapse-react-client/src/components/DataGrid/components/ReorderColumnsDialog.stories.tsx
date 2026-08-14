@@ -31,3 +31,9 @@ export const AlreadyInDefaultOrder: Story = {
     columnOrder: [1, 2, 0, 3],
   },
 }
+
+export const WithUpsertKey: Story = {
+  args: {
+    upsertKey: ['name'],
+  },
+}

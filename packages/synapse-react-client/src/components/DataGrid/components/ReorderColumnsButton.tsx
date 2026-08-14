@@ -1,6 +1,6 @@
 import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
 import ReorderColumnsDialog from '@/components/DataGrid/components/ReorderColumnsDialog'
-import { SwapVert } from '@mui/icons-material'
+import { SwapHoriz } from '@mui/icons-material'
 import { JSONSchema7 } from 'json-schema'
 import { useState } from 'react'
 
@@ -8,11 +8,12 @@ export type ReorderColumnsButtonProps = {
   columnNames: string[]
   columnOrder: number[]
   jsonSchema: JSONSchema7 | undefined
+  upsertKey?: string[]
   onReorder: (newColumnOrder: number[]) => void
 }
 
 export default function ReorderColumnsButton(props: ReorderColumnsButtonProps) {
-  const { columnNames, columnOrder, jsonSchema, onReorder } = props
+  const { columnNames, columnOrder, jsonSchema, upsertKey, onReorder } = props
 
   const [showDialog, setShowDialog] = useState(false)
 
@@ -25,6 +26,7 @@ export default function ReorderColumnsButton(props: ReorderColumnsButtonProps) {
           columnNames={columnNames}
           columnOrder={columnOrder}
           jsonSchema={jsonSchema}
+          upsertKey={upsertKey}
           onSave={newColumnOrder => {
             onReorder(newColumnOrder)
             setShowDialog(false)
@@ -34,7 +36,7 @@ export default function ReorderColumnsButton(props: ReorderColumnsButtonProps) {
       )}
       <GridMenuButton
         variant="outlined"
-        startIcon={<SwapVert />}
+        startIcon={<SwapHoriz />}
         onClick={() => setShowDialog(true)}
         disabled={columnOrder.length < 2}
       >

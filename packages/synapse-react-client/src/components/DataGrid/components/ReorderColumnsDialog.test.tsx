@@ -120,4 +120,25 @@ describe('ReorderColumnsDialog', () => {
     expect(getListItemNames()).toEqual(['a', 'b', 'c'])
     expect(resetButton).toBeDisabled()
   })
+
+  it('moves upsert key columns to the front when reset to the default order', async () => {
+    const user = userEvent.setup()
+    render(
+      <ReorderColumnsDialog
+        open
+        columnNames={columnNames}
+        columnOrder={columnOrder}
+        jsonSchema={jsonSchema}
+        upsertKey={['c']}
+        onSave={vi.fn()}
+        onCancel={vi.fn()}
+      />,
+    )
+
+    await user.click(
+      screen.getByRole('button', { name: 'Reset to Default Order' }),
+    )
+
+    expect(getListItemNames()).toEqual(['c', 'a', 'b'])
+  })
 })

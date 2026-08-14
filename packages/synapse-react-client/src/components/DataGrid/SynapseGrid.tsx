@@ -472,16 +472,7 @@ function SynapseGridInner({
                     spacing={1}
                     sx={{ justifyContent: 'flex-end' }}
                   >
-                    <GridMenuButton
-                      variant="outlined"
-                      startIcon={<HelpOutline />}
-                      href="https://docs.synapse.org/synapse-docs/managing-metadata-with-curator"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      sx={{ mr: 'auto' }}
-                    >
-                      Help and Instructions
-                    </GridMenuButton>
+                    {/* Keep this sync indicator first in the stack, otherwise it will cause other buttons to shift */}
                     {(!hasCompletedInitialSync || isSyncing) && (
                       <Box
                         sx={{
@@ -496,12 +487,23 @@ function SynapseGridInner({
                         </Typography>
                       </Box>
                     )}
+                    <GridMenuButton
+                      variant="outlined"
+                      startIcon={<HelpOutline />}
+                      href="https://docs.synapse.org/synapse-docs/managing-metadata-with-curator"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      sx={{ mr: 'auto' }}
+                    >
+                      Help and Instructions
+                    </GridMenuButton>
                     {undoUI}
                     {redoUI}
                     <ReorderColumnsButton
                       columnNames={modelSnapshot?.columnNames ?? []}
                       columnOrder={modelSnapshot?.columnOrder ?? []}
                       jsonSchema={jsonSchema}
+                      upsertKey={upsertKey}
                       onReorder={handleReorderColumns}
                     />
                     <GridMenuButton

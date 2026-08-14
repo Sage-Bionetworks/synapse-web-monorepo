@@ -19,6 +19,7 @@ export type ReorderColumnsDialogProps = {
   columnNames: string[]
   columnOrder: number[]
   jsonSchema: JSONSchema7 | undefined
+  upsertKey?: string[]
   onSave: (newColumnOrder: number[]) => void
   onCancel: () => void
 }
@@ -31,13 +32,21 @@ function moveItem(order: number[], from: number, to: number): number[] {
 }
 
 export default function ReorderColumnsDialog(props: ReorderColumnsDialogProps) {
-  const { open, columnNames, columnOrder, jsonSchema, onSave, onCancel } = props
+  const {
+    open,
+    columnNames,
+    columnOrder,
+    jsonSchema,
+    upsertKey,
+    onSave,
+    onCancel,
+  } = props
 
   const [workingOrder, setWorkingOrder] = useState<number[]>(columnOrder)
 
   const defaultOrder = useMemo(
-    () => computeDefaultColumnOrder(columnNames, jsonSchema),
-    [columnNames, jsonSchema],
+    () => computeDefaultColumnOrder(columnNames, jsonSchema, upsertKey),
+    [columnNames, jsonSchema, upsertKey],
   )
 
   return (
