@@ -30,6 +30,8 @@ import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/Synaps
 import {
   AccessorChange,
   AccessType,
+  Renewal,
+  Request,
   RestrictableObjectType,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
@@ -98,13 +100,15 @@ const mockGetDataRequestForUpdate = vi.spyOn(
   'getDataAccessRequestForUpdate',
 )
 
+function respondToUpdateWithUpdatedObject(req: Request | Renewal) {
+  // Update the 'GET' mock to return the updated object
+  mockGetDataRequestForUpdate.mockResolvedValue(req)
+  return Promise.resolve(req)
+}
+
 const mockUpdateDataAccessRequest = vi
   .spyOn(SynapseClient, 'updateDataAccessRequest')
-  .mockImplementation(req => {
-    // Update the 'GET' mock to return the updated object
-    mockGetDataRequestForUpdate.mockResolvedValue(req)
-    return Promise.resolve(req)
-  })
+  .mockImplementation(respondToUpdateWithUpdatedObject)
 
 vi.spyOn(SynapseClient, 'getFiles').mockResolvedValue({ requestedFiles: [] })
 
@@ -597,6 +601,13 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
       },
     }
 
+    beforeEach(() => {
+      // Restore the default mock impl in case a previous test replaced it.
+      mockUpdateDataAccessRequest.mockImplementation(
+        respondToUpdateWithUpdatedObject,
+      )
+    })
+
     it('renders Signing Official name and email fields', async () => {
       mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
       renderComponent(eDucProps)
@@ -770,6 +781,69 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
 
       await waitFor(() => expect(mockOnEDucContinue).toHaveBeenCalledTimes(1))
       expect(mockCreateSubmission).not.toHaveBeenCalled()
+    })
+
+    it('keeps the Signing Official fields enabled while the request is updated in the background', async () => {
+      mockGetDataRequestForUpdate.mockResolvedValue({
+        ...MOCK_DATA_ACCESS_REQUEST,
+        accessorChanges: [],
+      })
+      // The update never resolves, so the mutation remains pending
+      mockUpdateDataAccessRequest.mockImplementation(
+        () => new Promise(() => {}),
+      )
+
+      const { user } = renderComponent(eDucProps)
+
+      const nameField = await screen.findByLabelText(
+        /First and last names of your Signing Official/i,
+      )
+      const emailField = screen.getByLabelText(
+        /Institutional Email of your Signing Official/i,
+      )
+
+      // The pending background update adds the current user as an accessor
+      await waitFor(() =>
+        expect(mockUpdateDataAccessRequest).toHaveBeenCalled(),
+      )
+
+      expect(nameField).toBeEnabled()
+      expect(emailField).toBeEnabled()
+      await user.type(nameField, 'Jane Smith')
+      expect(nameField).toHaveValue('Jane Smith')
+    })
+
+    it('does not repeatedly update the request when the server response omits the applied changes', async () => {
+      // Simulate a server that does not persist the accessorChanges we send. Each response is a distinct object, as
+      // it would be over the wire, so the applied changes are not visible to the next render.
+      let etag = 0
+      mockGetDataRequestForUpdate.mockImplementation(() =>
+        Promise.resolve({
+          ...MOCK_DATA_ACCESS_REQUEST,
+          accessorChanges: [],
+          etag: String(etag),
+        }),
+      )
+      mockUpdateDataAccessRequest.mockImplementation(req =>
+        Promise.resolve({ ...req, accessorChanges: [], etag: String(++etag) }),
+      )
+
+      renderComponent(eDucProps)
+
+      await screen.findByLabelText(
+        /First and last names of your Signing Official/i,
+      )
+      await waitFor(() =>
+        expect(mockUpdateDataAccessRequest).toHaveBeenCalled(),
+      )
+      // Give the effect a chance to re-fire in response to the refetched request
+      await waitFor(() =>
+        expect(mockGetDataRequestForUpdate.mock.calls.length).toBeGreaterThan(
+          1,
+        ),
+      )
+
+      expect(mockUpdateDataAccessRequest).toHaveBeenCalledTimes(1)
     })
   })
 })
