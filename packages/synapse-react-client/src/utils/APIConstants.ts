@@ -214,6 +214,8 @@ export const ACCESS_APPROVAL_BY_ID = (id: string | number) =>
 export const DATA_ACCESS_REQUEST = `${REPO}/dataAccessRequest`
 export const DATA_ACCESS_REQUEST_SUBMISSION = (id: string | number) =>
   `${DATA_ACCESS_REQUEST}/${id}/submission`
+export const DATA_ACCESS_REQUEST_SIGNATURE = (id: string | number) =>
+  `${DATA_ACCESS_REQUEST}/${id}/signature`
 export const ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE = (
   accessRequirementId: string | number,
 ) =>

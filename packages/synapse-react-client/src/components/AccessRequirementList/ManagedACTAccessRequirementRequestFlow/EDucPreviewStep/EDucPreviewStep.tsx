@@ -1,6 +1,7 @@
 import {
   useGetDataAccessRequestForUpdate,
   useGetDataAccessRequestPreview,
+  useInitiateDataAccessRequestSignature,
 } from '@/synapse-queries'
 import SynapseClient from '@/synapse-client'
 import {
@@ -74,11 +75,27 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
       : SynapseClient.getPortalFileHandleServletUrl(previewFileHandleId),
   )
 
+  const {
+    mutate: initiateSignature,
+    isPending: isSendingForSignature,
+    error: sendForSignatureError,
+    reset: resetSendForSignature,
+  } = useInitiateDataAccessRequestSignature({
+    onSuccess: () => onSendForSignature(),
+  })
+
   const isLoading =
     isLoadingDar ||
     (Boolean(dataAccessRequest?.id) && isLoadingPreview) ||
     (!previewSrcOverride && !!previewFileHandleId && !blobUrl && !blobError)
-  const actionsDisabled = isLoading || (!previewSrcOverride && !blobUrl)
+  const actionsDisabled =
+    isLoading || (!previewSrcOverride && !blobUrl) || isSendingForSignature
+
+  const handleSendForSignature = () => {
+    if (!dataAccessRequest?.id) return
+    resetSendForSignature()
+    initiateSignature(dataAccessRequest.id)
+  }
 
   return (
     <>
@@ -144,9 +161,11 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
               <Button
                 variant={'contained'}
                 disabled={actionsDisabled}
-                onClick={onSendForSignature}
+                onClick={handleSendForSignature}
               >
-                Send for electronic signature
+                {isSendingForSignature
+                  ? 'Sending...'
+                  : 'Send for electronic signature'}
               </Button>
             }
           />
@@ -167,6 +186,15 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
             }
           />
         </Box>
+        {sendForSignatureError && (
+          <Alert severity={'error'} sx={{ mt: 2 }}>
+            <strong>
+              Sorry, we couldn&apos;t send your DUC for electronic signature.
+            </strong>
+            <br />
+            {sendForSignatureError.reason}
+          </Alert>
+        )}
       </DialogContent>
       <DialogActions>
         <Button variant={'outlined'} onClick={onBackClicked}>
