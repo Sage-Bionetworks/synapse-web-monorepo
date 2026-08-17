@@ -32,9 +32,15 @@ import {
   SelectColumn,
   Table,
 } from '@sage-bionetworks/synapse-types'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import CitationPopover from '../CitationPopover'
+import {
+  DATASET_HOSTING_CONFIG,
+  type DatasetHostingType,
+  normalizeHosting,
+} from '../DatasetHosting/DatasetHosting'
+import DatasetDownloadButton from '../DatasetHosting/DatasetDownloadButton'
 import { EntityDownloadConfirmation } from '../EntityDownloadConfirmation'
 import { HeaderCardVariant } from '../HeaderCard'
 import IconList from '../IconList'
@@ -44,6 +50,7 @@ import ShareThisPage, {
   ShareThisPageProps,
 } from '../ShareThisPage/ShareThisPage'
 import { SustainabilityScorecardProps } from '../SustainabilityScorecard/SustainabilityScorecard'
+import { CardActionButtonStyleContext } from './CardActionButtonStyleContext'
 import GenericCard from './GenericCard'
 import GenericCardActionButton from './GenericCardActionButton'
 import DuoTermTags from './DuoTermTags/DuoTermTags'
@@ -147,6 +154,29 @@ export type TableToGenericCardMapping = {
   synapseEntityConfig?: SynapseEntityConfig
   /** The column name whose data contains a synId that can be used to show a button to add the corresponding entity to the download cart. */
   downloadCartSynId?: string
+  /**
+   * Opt-in configuration for hosting-aware download/access. When `hostingColumn`
+   * is provided, the card's primary action becomes a `DatasetDownloadButton` driven
+   * by the row's hosting value: downloadable hosting types show the standard dataset
+   * download options, while non-downloadable types (e.g. external-access) swap to a
+   * link to the external repository instead. Other portals that don't set this
+   * are unaffected.
+   */
+  hostingConfig?: {
+    /** Column holding the hosting type. Blank/unknown → `synapse`. */
+    hostingColumn: string
+    /**
+     * Optional map from the column's raw values to hosting types, for columns that
+     * use portal-specific labels rather than the canonical vocabulary (e.g. CCKP's
+     * `downloadType`: "Synapse Indexed" → `external-download`). Values not in the
+     * map fall back to `normalizeHosting` (canonical value, or → `synapse`).
+     */
+    hostingValueMap?: Record<string, DatasetHostingType>
+    /** Column holding the free-text external repository name (e.g. "GEO", "dbGaP"). */
+    repositoryColumn?: string
+    /** Column holding the external URL used for non-downloadable (external-access) datasets. */
+    externalUrlColumn?: string
+  }
   /** Configuration to display a DOI, as well as the ability to create one for users with such permission */
   portalDoiConfiguration?: PortalDOIConfiguration
   /**
@@ -244,6 +274,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     columnIconOptions,
     CardTypeAdornment,
     charCountCutoff,
+    actionButtonStyle = 'button',
   } = props
 
   const {
@@ -388,6 +419,37 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     resolvedDownloadCartVersionNumber = reference?.targetVersionNumber
   }
 
+  // Opt-in hosting-aware action: when the schema declares a hosting column, the
+  // primary action is a DatasetDownloadButton driven by the row's hosting value.
+  const hostingConfig = genericCardSchema.hostingConfig
+  const rawHostingValue = hostingConfig
+    ? getColumnValue(hostingConfig.hostingColumn)
+    : undefined
+  const hostingType = hostingConfig
+    ? (rawHostingValue && hostingConfig.hostingValueMap?.[rawHostingValue]) ||
+      normalizeHosting(rawHostingValue)
+    : undefined
+  const hostingRepository = hostingConfig?.repositoryColumn
+    ? getColumnValue(hostingConfig.repositoryColumn)
+    : undefined
+  const rawHostingExternalUrl = hostingConfig?.externalUrlColumn
+    ? getColumnValue(hostingConfig.externalUrlColumn)
+    : undefined
+  // The externalUrl column may be a markdown link (e.g. CCKP's `externalLink`:
+  // "[label](https://...)") rather than a plain URL — extract the href if so.
+  const hostingExternalUrl = rawHostingExternalUrl
+    ? (rawHostingExternalUrl.match(/\]\(([^)]+)\)/)?.[1] ??
+      rawHostingExternalUrl)
+    : undefined
+  // Non-downloadable hosting (e.g. external-access) suppresses the Synapse
+  // download flow entirely; everything else keeps the add-to-download-list behavior.
+  const hostingIsDownloadable = hostingType
+    ? DATASET_HOSTING_CONFIG[hostingType].downloadable
+    : true
+  // Portal target for the DatasetDownloadButton's download-confirmation dialog, so
+  // it renders in the card's top content region rather than inline in the button row.
+  const datasetDownloadConfirmationRef = useRef<HTMLDivElement>(null)
+
   // Transform the row to a record of (columnName, value) pairs for compatibility with getCandidateDoiId
   const dataAsRecord: Record<string, string | null> = useMemo(
     () => mapRowToRecord(data, schema),
@@ -443,10 +505,12 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     })
   }
 
-  // Overwrite the 'HOW TO DOWNLOAD' link if a synapse ID is available
+  // Overwrite the 'HOW TO DOWNLOAD' link if a synapse ID is available — but not
+  // for non-downloadable hosting (e.g. external-access), where adding to the
+  // Synapse download list wouldn't work; fall back to the static guidance instead.
   if (customLabelConfig?.isVisible(schema, data)) {
     const { key, value } = customLabelConfig
-    if (resolvedDownloadCartSynIdValue) {
+    if (resolvedDownloadCartSynIdValue && hostingIsDownloadable) {
       values.push({
         columnDisplayName: 'HOW TO DOWNLOAD',
         value: (
@@ -625,7 +689,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       useStylesForDisplayedImage={Boolean(imageFileHandleIdValue)}
       cardTopContent={
         <>
-          {resolvedDownloadCartSynIdValue && (
+          {!hostingConfig && resolvedDownloadCartSynIdValue && (
             <Collapse in={showDownloadConfirmation}>
               <EntityDownloadConfirmation
                 entityId={resolvedDownloadCartSynIdValue}
@@ -637,6 +701,8 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
               />
             </Collapse>
           )}
+          {/* DatasetDownloadButton (hosting path) portals its confirmation here. */}
+          {hostingConfig && <div ref={datasetDownloadConfirmationRef} />}
         </>
       }
       renderedIconList={
@@ -658,31 +724,48 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
         )
       }
       cardTopButtons={
-        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-          {croissantButton}
-          {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart */}
-          {resolvedDownloadCartSynIdValue && (
-            <GenericCardActionButton
-              onClick={() => setShowDownloadConfirmation(val => !val)}
-              variant="outlined"
-              startIcon={<GetAppTwoTone sx={{ height: '12px' }} />}
-              loading={downloadButtonLoading}
-            >
-              Download
-            </GenericCardActionButton>
-          )}
-          {includeCitation && doiValue && (
-            <CitationPopover
-              title={title}
-              doi={doiValue}
-              boilerplateText={citationBoilerplateText}
-              defaultCitationFormat={defaultCitationFormat}
-            />
-          )}
-          {includeShareButton && isHeader && (
-            <ShareThisPage {...sharePageLinkButtonProps} />
-          )}
-        </Box>
+        <CardActionButtonStyleContext.Provider value={actionButtonStyle}>
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+            {croissantButton}
+            {/* Hosting-aware action (opt-in via schema.hostingConfig): downloadable
+              hosting shows the standard dataset download options; non-downloadable
+              hosting links out to the external repository or is non-actionable. */}
+            {hostingConfig &&
+              (resolvedDownloadCartSynIdValue || !hostingIsDownloadable) && (
+                <DatasetDownloadButton
+                  entityId={resolvedDownloadCartSynIdValue}
+                  name={title}
+                  version={resolvedDownloadCartVersionNumber}
+                  hosting={hostingType}
+                  repository={hostingRepository}
+                  externalUrl={hostingExternalUrl}
+                  downloadConfirmationContainer={datasetDownloadConfirmationRef}
+                />
+              )}
+            {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart */}
+            {!hostingConfig && resolvedDownloadCartSynIdValue && (
+              <GenericCardActionButton
+                onClick={() => setShowDownloadConfirmation(val => !val)}
+                variant="outlined"
+                startIcon={<GetAppTwoTone sx={{ height: '12px' }} />}
+                loading={downloadButtonLoading}
+              >
+                Download
+              </GenericCardActionButton>
+            )}
+            {includeCitation && doiValue && (
+              <CitationPopover
+                title={title}
+                doi={doiValue}
+                boilerplateText={citationBoilerplateText}
+                defaultCitationFormat={defaultCitationFormat}
+              />
+            )}
+            {includeShareButton && isHeader && (
+              <ShareThisPage {...sharePageLinkButtonProps} />
+            )}
+          </Box>
+        </CardActionButtonStyleContext.Provider>
       }
     />
   )
