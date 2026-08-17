@@ -43,3 +43,11 @@ export const WithColumnRemoval: Story = {
     canRemoveColumns: true,
   },
 }
+
+export const WithPreviouslyRemovedColumn: Story = {
+  args: {
+    // 'notes' (identity index 3) was already removed and saved in a prior session
+    columnOrder: [0, 1, 2],
+    canRemoveColumns: true,
+  },
+}
