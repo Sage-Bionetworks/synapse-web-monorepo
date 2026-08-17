@@ -48,6 +48,9 @@ import DocumentTemplate from '../DocumentTemplate'
 import ManagedACTAccessRequirementFormWikiWrapper from '../ManagedACTAccessRequirementFormWikiWrapper'
 import { UploadDocumentField } from '../UploadDocumentField'
 
+// PORTALS-4376: eDUC DARs cap total accessors at 100 (submitter + PI + 97 collaborators + 1 slack).
+export const EDUC_COLLABORATOR_LIMIT = 97
+
 function AccessorRequirementHelpText(props: {
   managedACTAccessRequirement: ManagedACTAccessRequirement
   isEDucEnabled: boolean
@@ -111,6 +114,11 @@ export type DataAccessRequestAccessorsFilesFormProps = {
   onCancel: (modifiedDataAccessRequest: Request | Renewal) => void
   /** Callback invoked when the 'Back' action button is clicked */
   onBackClicked: () => void
+  /**
+   * When set (used for eDUC ARs), clicking the primary action saves the DAR and invokes this callback
+   * instead of creating a submission. Submission happens later in the eDUC flow.
+   */
+  onEDucContinue?: () => void
 }
 
 export type AlertProps = {
@@ -139,6 +147,7 @@ export default function DataAccessRequestAccessorsFilesForm(
     researchProjectId,
     onCancel,
     onBackClicked,
+    onEDucContinue,
   } = props
   const { isAuthenticated } = useSynapseContext()
   const { data: user } = useGetCurrentUserProfile({ enabled: isAuthenticated })
@@ -317,6 +326,10 @@ export default function DataAccessRequestAccessorsFilesForm(
       const requestObject = await updateRequestAsync(
         getDataAccessRequestWithLocalState(),
       )
+      if (onEDucContinue) {
+        onEDucContinue()
+        return
+      }
       // Create a submission and attach the request
       submit({
         request: {
@@ -503,6 +516,9 @@ export default function DataAccessRequestAccessorsFilesForm(
                 accessorChanges={accessorChanges || []}
                 onChange={onAccessorChange}
                 isRenewal={isRenewal}
+                collaboratorLimit={
+                  isEDucEnabled ? EDUC_COLLABORATOR_LIMIT : undefined
+                }
                 helpText={
                   <AccessorRequirementHelpText
                     managedACTAccessRequirement={managedACTAccessRequirement}
@@ -706,7 +722,7 @@ export default function DataAccessRequestAccessorsFilesForm(
             handleSubmit()
           }}
         >
-          Submit
+          {onEDucContinue ? 'Continue' : 'Submit'}
         </Button>
       </DialogActions>
     </>

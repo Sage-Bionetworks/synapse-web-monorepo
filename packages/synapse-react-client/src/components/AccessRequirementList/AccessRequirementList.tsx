@@ -42,6 +42,7 @@ import CancelRequestDataAccess from './ManagedACTAccessRequirementRequestFlow/Ca
 import DataAccessRequestAccessorsFilesForm from './ManagedACTAccessRequirementRequestFlow/DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 import RequestDataAccessSuccess from './ManagedACTAccessRequirementRequestFlow/RequestDataAccessSuccess'
 import ResearchProjectForm from './ManagedACTAccessRequirementRequestFlow/ResearchProjectForm/ResearchProjectForm'
+import ReviewDucStep from './ManagedACTAccessRequirementRequestFlow/ReviewDucStep/ReviewDucStep'
 import AuthenticatedRequirement from './RequirementItem/AuthenticatedRequirement'
 import CertificationRequirement from './RequirementItem/CertificationRequirement'
 import TwoFactorAuthEnabledRequirement from './RequirementItem/TwoFactorAuthEnabledRequirement'
@@ -136,6 +137,7 @@ enum RequestDataStep {
   PROMPT_CANCEL = 3,
   PROMPT_LOGIN = 4,
   COMPLETE = 5,
+  REVIEW_DUC = 6,
 }
 
 export type RequestDataStepCallbackArgs = {
@@ -337,6 +339,7 @@ export default function AccessRequirementList(
     [
       RequestDataStep.UPDATE_ACCESSORS_AND_FILES,
       RequestDataStep.UPDATE_RESEARCH_PROJECT,
+      RequestDataStep.REVIEW_DUC,
     ].includes(requestDataStep) && canShowManagedACTWikiInWizard
       ? 'xl'
       : 'md'
@@ -380,6 +383,34 @@ export default function AccessRequirementList(
             requestDataStepCallback({
               step: RequestDataStep.UPDATE_RESEARCH_PROJECT,
             })
+          }}
+          onEDucContinue={
+            managedACTAccessRequirement?.eDucTemplateId
+              ? () => {
+                  requestDataStepCallback({
+                    step: RequestDataStep.REVIEW_DUC,
+                  })
+                }
+              : undefined
+          }
+        />
+      )
+      break
+    case RequestDataStep.REVIEW_DUC:
+      renderContent = (
+        <ReviewDucStep
+          managedACTAccessRequirement={managedACTAccessRequirement!}
+          subjectId={subjectId ?? ''}
+          subjectType={subjectType ?? RestrictableObjectType.ENTITY}
+          onHide={onHide}
+          onBackClicked={() => {
+            requestDataStepCallback({
+              step: RequestDataStep.UPDATE_ACCESSORS_AND_FILES,
+            })
+          }}
+          onSubmissionCreated={submissionId => {
+            requestDataStepCallback({ step: RequestDataStep.COMPLETE })
+            onSubmissionCreated(submissionId)
           }}
         />
       )
