@@ -278,10 +278,6 @@ export const SetManagedAccessRequirementFields = forwardRef(
                     setUpdatedAr({
                       ...updatedAr,
                       eDucTemplateId: template?.templateId,
-                      // mutually exclusive with file upload
-                      ...(template
-                        ? { ducTemplateFileHandleId: undefined }
-                        : {}),
                     })
                   }
                   getOptionLabel={template => template.name ?? ''}
