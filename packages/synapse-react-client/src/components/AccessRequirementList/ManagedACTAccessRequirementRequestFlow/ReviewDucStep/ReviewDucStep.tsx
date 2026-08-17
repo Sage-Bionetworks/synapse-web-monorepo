@@ -112,11 +112,6 @@ export default function ReviewDucStep(props: ReviewDucStepProps) {
                   Your collaborators:
                 </Typography>
                 <Stack sx={{ mb: 3, gap: 1 }}>
-                  {accessorChanges.length === 0 && !isLoading && (
-                    <Typography variant={'body1'} sx={longFieldLabelSx}>
-                      No collaborators added.
-                    </Typography>
-                  )}
                   {accessorChanges.map(ac => (
                     <UserBadge
                       key={ac.userId}

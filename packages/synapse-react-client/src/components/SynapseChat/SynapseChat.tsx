@@ -136,10 +136,12 @@ export function SynapseChat({
   const [userChatTextfieldValue, setUserChatTextfieldValue] = useState('')
   const [initialMessageProcessed, setInitialMessageProcessed] = useState(false)
 
-  // A copy of the attachments sent with the optimistic/pending interaction, so it can still show
-  // rich (name/type) chips after ChatInputArea has cleared its own attachment state. Once the
-  // interaction gains a jobId, SynapseChatMessage renders its attachments from the polled async
-  // job's requestBody instead (see below), so this value is simply overwritten on the next send.
+  // A copy of the attachments sent with the last interaction, so it can still show rich
+  // (name/type) chips after ChatInputArea has cleared its own attachment state. This is passed to
+  // the last interaction for its entire lifetime -- sent, then processing, then completed -- as a
+  // fallback filename source, since the request body (FileHandleAssociation) never carries a
+  // filename and the server-resolved filename (attachmentStatuses) only arrives once the job
+  // completes. It's simply overwritten on the next send.
   const [lastSentAttachments, setLastSentAttachments] = useState<
     ChatAttachment[]
   >([])
@@ -284,9 +286,6 @@ export function SynapseChat({
             })} */}
             {interactions.map((interaction, index) => {
               const isLast = index === interactions.length - 1
-              // The interaction has no jobId until the async job is registered; until then,
-              // show the attachments the user just sent rather than waiting on the polled job.
-              const isPending = interaction.jobId == null
               return (
                 <SynapseChatMessage
                   agentAvatar={agentAvatar}
@@ -299,7 +298,10 @@ export function SynapseChat({
                   animateEntry={!presentAtMount.has(interaction.id)}
                   isAwaitingResponse={isAwaitingResponse}
                   pendingAttachments={
-                    isPending ? lastSentAttachments : undefined
+                    // Only one interaction can be in flight at a time (the composer is disabled
+                    // while isAwaitingResponse), so lastSentAttachments always corresponds to
+                    // whichever interaction is last.
+                    isLast ? lastSentAttachments : undefined
                   }
                 />
               )

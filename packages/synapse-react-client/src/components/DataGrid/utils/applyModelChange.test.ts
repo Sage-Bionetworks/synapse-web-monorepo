@@ -564,6 +564,53 @@ describe('applyModelChange', () => {
     expect(snapshot.selection['A']).toEqual(selA)
     expect(snapshot.selection['B']).toEqual(selB)
   })
+
+  it('REORDER_COLUMNS replaces columnOrder with the new order', () => {
+    const model = createModel()
+    model.api.arr(['columnOrder'])?.ins(0, [s.con(0), s.con(1)])
+
+    applyModelChange(
+      model,
+      { type: 'REORDER_COLUMNS', newColumnOrder: [1, 0] },
+      schemaPropertyInfo,
+    )
+
+    const snapshot = model.api.getSnapshot()
+    expect(snapshot.columnOrder).toEqual([1, 0])
+    expect(snapshot.columnNames).toEqual(['col1', 'col2'])
+  })
+
+  it('REORDER_COLUMNS does not affect row data, only display order', () => {
+    const model = createModel()
+    model.api.arr(['columnOrder'])?.ins(0, [s.con(0), s.con(1)])
+
+    applyModelChange(
+      model,
+      { type: 'CREATE', rowIndex: 0, rowData: { col1: 'a', col2: 'b' } },
+      schemaPropertyInfo,
+    )
+    applyModelChange(
+      model,
+      { type: 'REORDER_COLUMNS', newColumnOrder: [1, 0] },
+      schemaPropertyInfo,
+    )
+
+    const snapshot = model.api.getSnapshot()
+    expect(snapshot.rows[0].data).toEqual(['a', 'b'])
+    expect(snapshot.columnOrder).toEqual([1, 0])
+  })
+
+  it('REORDER_COLUMNS handles an initially empty columnOrder', () => {
+    const model = createModel()
+
+    applyModelChange(
+      model,
+      { type: 'REORDER_COLUMNS', newColumnOrder: [0, 1] },
+      schemaPropertyInfo,
+    )
+
+    expect(model.api.getSnapshot().columnOrder).toEqual([0, 1])
+  })
 })
 
 describe('getDefaultValueForProperty', () => {

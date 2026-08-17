@@ -50,6 +50,8 @@ export type FacetNavPanelProps = {
 }
 
 const maxLabelLength: number = 19
+export const MAX_PLOT_HEIGHT_PX = 150
+export const MAX_EXPANDED_PLOT_HEIGHT_PX = 300
 
 // STACKED_HORIZONTAL_BAR corresponds to a bar chart where we just want to show the proportion (like a pie chart)
 export type PlotType = 'PIE' | 'BAR' | 'STACKED_HORIZONTAL_BAR'
@@ -300,6 +302,12 @@ function FacetNavPanel(props: FacetNavPanelProps) {
     useMeasure<HTMLDivElement>()
   const { getColumnDisplayName } = useQueryVisualizationContext()
 
+  // Wait for a non-zero measured width before rendering the plot.
+  // Round width to avoid rebuilds from small pixel fluctuations.
+  const plotWidth = plotContainerMeasurements?.width
+    ? Math.round(plotContainerMeasurements.width)
+    : undefined
+
   const [showModal, setShowModal] = useState(false)
 
   const plotTitle = getColumnDisplayName(
@@ -452,35 +460,30 @@ function FacetNavPanel(props: FacetNavPanelProps) {
             sx={{
               display: 'grid',
               gridTemplateColumns: '50% 50%',
-              // alignItems:stretch + height:100% propagate the body's flex:1
-              // height (set in SCSS) down into the plot container so useMeasure
-              // can read it and size the Plotly chart to fill available space.
-              alignItems: 'stretch',
-              height: '100%',
+              alignItems: 'center',
             }}
             role="graphics-object"
             className="FacetNavPanel__body"
           >
-            <div ref={plotContainerRef} style={{ height: '100%' }}>
-              <Plot
-                key={`${facetToPlot.columnName}-${facetToPlot.jsonPath}-${plotType}-${plotContainerMeasurements?.width}-${plotContainerMeasurements?.height}`}
-                layout={plotLayout}
-                data={plotData?.data ?? []}
-                style={{
-                  ...getPlotStyle(
-                    plotContainerMeasurements?.width,
+            <div ref={plotContainerRef}>
+              {plotWidth !== undefined && (
+                <Plot
+                  key={`${facetToPlot.columnName}-${facetToPlot.jsonPath}-${plotType}-${plotWidth}`}
+                  layout={plotLayout}
+                  data={plotData?.data ?? []}
+                  style={getPlotStyle(
+                    plotWidth,
                     plotType,
-                    isModalView ? 300 : 150,
-                  ),
-                  ...(plotContainerMeasurements?.height
-                    ? { height: `${plotContainerMeasurements.height}px` }
-                    : {}),
-                }}
-                config={{ displayModeBar: false }}
-                onClick={evt =>
-                  applyFacetFilter(evt, facetToPlot, applyChangesToGraphSlice)
-                }
-              />
+                    isModalView
+                      ? MAX_EXPANDED_PLOT_HEIGHT_PX
+                      : MAX_PLOT_HEIGHT_PX,
+                  )}
+                  config={{ displayModeBar: false }}
+                  onClick={evt =>
+                    applyFacetFilter(evt, facetToPlot, applyChangesToGraphSlice)
+                  }
+                />
+              )}
             </div>
             <Box sx={{ alignSelf: 'center' }}>
               <FacetPlotLegendList

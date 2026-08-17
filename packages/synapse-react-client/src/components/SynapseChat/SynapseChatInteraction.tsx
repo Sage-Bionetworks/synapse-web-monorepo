@@ -27,8 +27,9 @@ import { AgentChatAttachmentStatus } from '@sage-bionetworks/synapse-client'
 
 /**
  * A chat attachment to display on a sent/pending turn. Only `fileHandleId` is guaranteed --
- * `fileName`/`contentType` are omitted for a restored/polled turn, where only the fileHandleId
- * that was sent to the server is known (see SynapseChatMessage).
+ * `fileName`/`contentType` are omitted for a turn restored from history, where only the
+ * fileHandleId that was sent to the server is known, with no in-session upload record to fall
+ * back on (see SynapseChatMessage).
  */
 export type SynapseChatInteractionAttachment = {
   fileHandleId: string
