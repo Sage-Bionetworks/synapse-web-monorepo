@@ -82,9 +82,7 @@ describe('EDucPreviewStep', () => {
   })
 
   it('shows a loading skeleton while the preview is loading', async () => {
-    server.use(
-      http.get(previewEndpoint, () => new Promise<HttpResponse>(() => {})),
-    )
+    server.use(http.get(previewEndpoint, () => new Promise<never>(() => {})))
     renderComponent()
 
     await screen.findByTestId('EDucPreviewStep-loading')
