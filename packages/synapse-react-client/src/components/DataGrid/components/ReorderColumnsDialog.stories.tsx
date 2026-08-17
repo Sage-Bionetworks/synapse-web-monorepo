@@ -37,3 +37,9 @@ export const WithUpsertKey: Story = {
     upsertKey: ['name'],
   },
 }
+
+export const WithColumnRemoval: Story = {
+  args: {
+    canRemoveColumns: true,
+  },
+}

@@ -1,6 +1,6 @@
 import { ConfirmationDialog } from '@/components/ConfirmationDialog'
 import { computeDefaultColumnOrder } from '@/components/DataGrid/utils/computeDefaultColumnOrder'
-import { North, RestartAlt, South } from '@mui/icons-material'
+import { DeleteOutline, North, RestartAlt, South } from '@mui/icons-material'
 import {
   Box,
   Button,
@@ -9,6 +9,7 @@ import {
   ListItem,
   ListItemText,
   Stack,
+  Typography,
 } from '@mui/material'
 import { JSONSchema7 } from 'json-schema'
 import isEqual from 'lodash-es/isEqual'
@@ -20,6 +21,8 @@ export type ReorderColumnsDialogProps = {
   columnOrder: number[]
   jsonSchema: JSONSchema7 | undefined
   upsertKey?: string[]
+  /** Recordset-sourced grids only -- views do not support hiding/removing columns from display. */
+  canRemoveColumns?: boolean
   onSave: (newColumnOrder: number[]) => void
   onCancel: () => void
 }
@@ -38,6 +41,7 @@ export default function ReorderColumnsDialog(props: ReorderColumnsDialogProps) {
     columnOrder,
     jsonSchema,
     upsertKey,
+    canRemoveColumns = false,
     onSave,
     onCancel,
   } = props
@@ -55,6 +59,12 @@ export default function ReorderColumnsDialog(props: ReorderColumnsDialogProps) {
       title="Reorder Columns"
       content={
         <Box>
+          {canRemoveColumns && (
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+              Removed columns are hidden from the grid, but their data is
+              preserved.
+            </Typography>
+          )}
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
             <Button
               variant="text"
@@ -74,6 +84,20 @@ export default function ReorderColumnsDialog(props: ReorderColumnsDialogProps) {
                   divider
                   secondaryAction={
                     <Stack direction="row" spacing={0.5}>
+                      {canRemoveColumns && (
+                        <IconButton
+                          aria-label={`Remove ${columnName}`}
+                          size="small"
+                          disabled={workingOrder.length <= 1}
+                          onClick={() =>
+                            setWorkingOrder(order =>
+                              order.filter(index => index !== colIndex),
+                            )
+                          }
+                        >
+                          <DeleteOutline fontSize="small" />
+                        </IconButton>
+                      )}
                       <IconButton
                         aria-label={`Move ${columnName} up`}
                         size="small"

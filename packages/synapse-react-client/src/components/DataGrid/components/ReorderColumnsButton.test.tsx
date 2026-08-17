@@ -95,4 +95,42 @@ describe('ReorderColumnsButton', () => {
       screen.getByRole('button', { name: /reorder columns/i }),
     ).toBeDisabled()
   })
+
+  it('does not show remove buttons when canRemoveColumns is not set', async () => {
+    const user = userEvent.setup()
+    render(
+      <ReorderColumnsButton
+        columnNames={columnNames}
+        columnOrder={columnOrder}
+        jsonSchema={jsonSchema}
+        onReorder={vi.fn()}
+      />,
+    )
+
+    await user.click(screen.getByRole('button', { name: /reorder columns/i }))
+
+    expect(
+      screen.queryByRole('button', { name: 'Remove a' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('shows remove buttons and removes a column when canRemoveColumns is true', async () => {
+    const user = userEvent.setup()
+    const onReorder = vi.fn()
+    render(
+      <ReorderColumnsButton
+        columnNames={columnNames}
+        columnOrder={columnOrder}
+        jsonSchema={jsonSchema}
+        canRemoveColumns
+        onReorder={onReorder}
+      />,
+    )
+
+    await user.click(screen.getByRole('button', { name: /reorder columns/i }))
+    await user.click(screen.getByRole('button', { name: 'Remove a' }))
+    await user.click(screen.getByRole('button', { name: 'Save' }))
+
+    expect(onReorder).toHaveBeenCalledWith([1])
+  })
 })

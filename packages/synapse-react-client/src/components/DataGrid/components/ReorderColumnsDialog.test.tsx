@@ -141,4 +141,63 @@ describe('ReorderColumnsDialog', () => {
 
     expect(getListItemNames()).toEqual(['c', 'a', 'b'])
   })
+
+  it('does not show remove buttons when canRemoveColumns is not set', () => {
+    render(
+      <ReorderColumnsDialog
+        open
+        columnNames={columnNames}
+        columnOrder={columnOrder}
+        jsonSchema={jsonSchema}
+        onSave={vi.fn()}
+        onCancel={vi.fn()}
+      />,
+    )
+
+    expect(
+      screen.queryByRole('button', { name: 'Remove b' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('removes a column from the working order and saves without it', async () => {
+    const user = userEvent.setup()
+    const onSave = vi.fn()
+    render(
+      <ReorderColumnsDialog
+        open
+        columnNames={columnNames}
+        columnOrder={columnOrder}
+        jsonSchema={jsonSchema}
+        canRemoveColumns
+        onSave={onSave}
+        onCancel={vi.fn()}
+      />,
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Remove a' }))
+    expect(getListItemNames()).toEqual(['b', 'c'])
+
+    await user.click(screen.getByRole('button', { name: 'Save' }))
+    expect(onSave).toHaveBeenCalledWith([0, 2])
+  })
+
+  it('disables removing the last remaining column', async () => {
+    const user = userEvent.setup()
+    render(
+      <ReorderColumnsDialog
+        open
+        columnNames={columnNames}
+        columnOrder={columnOrder}
+        jsonSchema={jsonSchema}
+        canRemoveColumns
+        onSave={vi.fn()}
+        onCancel={vi.fn()}
+      />,
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Remove b' }))
+    await user.click(screen.getByRole('button', { name: 'Remove a' }))
+
+    expect(screen.getByRole('button', { name: 'Remove c' })).toBeDisabled()
+  })
 })
