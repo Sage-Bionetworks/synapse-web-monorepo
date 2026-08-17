@@ -1,0 +1,1 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";var t,n=e((()=>{t={fontSize:`14px`,fontWeight:400}}));export{t as n,n as t};
