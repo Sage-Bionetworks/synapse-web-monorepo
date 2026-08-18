@@ -77,6 +77,11 @@ export default function ReorderColumnsDialog(props: ReorderColumnsDialogProps) {
   const isAtDefault =
     isEqual(workingOrder, defaultOrder) && removedColumnIndices.length === 0
 
+  // Only columns that aren't part of the JSON schema can be removed -- schema-defined
+  // columns are required for validation/upsert and shouldn't be hidden from the grid.
+  const isSchemaColumn = (columnName: string) =>
+    !!jsonSchema?.properties && Object.hasOwn(jsonSchema.properties, columnName)
+
   return (
     <ConfirmationDialog
       open={open}
@@ -85,8 +90,7 @@ export default function ReorderColumnsDialog(props: ReorderColumnsDialogProps) {
         <Box>
           {canRemoveColumns && (
             <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-              Removed columns are hidden from the grid, but their data is
-              preserved.
+              Only columns that are not part of the schema can be removed.
             </Typography>
           )}
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
@@ -127,19 +131,21 @@ export default function ReorderColumnsDialog(props: ReorderColumnsDialogProps) {
                             <RestoreFromTrash fontSize="small" />
                           </IconButton>
                         ) : (
-                          <IconButton
-                            aria-label={`Remove ${columnName}`}
-                            size="small"
-                            disabled={activeColumnCount <= 1}
-                            onClick={() =>
-                              setRemovedColumnIndices(indices => [
-                                ...indices,
-                                colIndex,
-                              ])
-                            }
-                          >
-                            <DeleteOutline fontSize="small" />
-                          </IconButton>
+                          !isSchemaColumn(columnName) && (
+                            <IconButton
+                              aria-label={`Remove ${columnName}`}
+                              size="small"
+                              disabled={activeColumnCount <= 1}
+                              onClick={() =>
+                                setRemovedColumnIndices(indices => [
+                                  ...indices,
+                                  colIndex,
+                                ])
+                              }
+                            >
+                              <DeleteOutline fontSize="small" />
+                            </IconButton>
+                          )
                         ))}
                       <IconButton
                         aria-label={`Move ${columnName} up`}

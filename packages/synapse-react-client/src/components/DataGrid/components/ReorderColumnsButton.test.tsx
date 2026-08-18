@@ -6,9 +6,9 @@ import ReorderColumnsButton from './ReorderColumnsButton'
 describe('ReorderColumnsButton', () => {
   const columnNames = ['a', 'b']
   const columnOrder = [0, 1]
+  // 'a' is not part of the schema, so it's the only column removable by default
   const jsonSchema: JSONSchema7 = {
     properties: {
-      a: { type: 'string' },
       b: { type: 'string' },
     },
   }
