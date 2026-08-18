@@ -43,6 +43,7 @@ import DataAccessRequestAccessorsFilesForm from './ManagedACTAccessRequirementRe
 import RequestDataAccessSuccess from './ManagedACTAccessRequirementRequestFlow/RequestDataAccessSuccess'
 import ResearchProjectForm from './ManagedACTAccessRequirementRequestFlow/ResearchProjectForm/ResearchProjectForm'
 import ReviewDucStep from './ManagedACTAccessRequirementRequestFlow/ReviewDucStep/ReviewDucStep'
+import EDucPreviewStep from './ManagedACTAccessRequirementRequestFlow/EDucPreviewStep/EDucPreviewStep'
 import AuthenticatedRequirement from './RequirementItem/AuthenticatedRequirement'
 import CertificationRequirement from './RequirementItem/CertificationRequirement'
 import TwoFactorAuthEnabledRequirement from './RequirementItem/TwoFactorAuthEnabledRequirement'
@@ -138,6 +139,7 @@ enum RequestDataStep {
   PROMPT_LOGIN = 4,
   COMPLETE = 5,
   REVIEW_DUC = 6,
+  EDUC_PREVIEW = 7,
 }
 
 export type RequestDataStepCallbackArgs = {
@@ -340,6 +342,7 @@ export default function AccessRequirementList(
       RequestDataStep.UPDATE_ACCESSORS_AND_FILES,
       RequestDataStep.UPDATE_RESEARCH_PROJECT,
       RequestDataStep.REVIEW_DUC,
+      RequestDataStep.EDUC_PREVIEW,
     ].includes(requestDataStep) && canShowManagedACTWikiInWizard
       ? 'xl'
       : 'md'
@@ -400,17 +403,33 @@ export default function AccessRequirementList(
       renderContent = (
         <ReviewDucStep
           managedACTAccessRequirement={managedACTAccessRequirement!}
-          subjectId={subjectId ?? ''}
-          subjectType={subjectType ?? RestrictableObjectType.ENTITY}
           onHide={onHide}
           onBackClicked={() => {
             requestDataStepCallback({
               step: RequestDataStep.UPDATE_ACCESSORS_AND_FILES,
             })
           }}
-          onSubmissionCreated={submissionId => {
+          onCreateDuc={() => {
+            requestDataStepCallback({ step: RequestDataStep.EDUC_PREVIEW })
+          }}
+        />
+      )
+      break
+    case RequestDataStep.EDUC_PREVIEW:
+      renderContent = (
+        <EDucPreviewStep
+          managedACTAccessRequirement={managedACTAccessRequirement!}
+          onHide={onHide}
+          onBackClicked={() => {
+            requestDataStepCallback({ step: RequestDataStep.REVIEW_DUC })
+          }}
+          // TODO PORTALS-4378: replace with the electronic-signature step.
+          onSendForSignature={() => {
             requestDataStepCallback({ step: RequestDataStep.COMPLETE })
-            onSubmissionCreated(submissionId)
+          }}
+          // TODO PORTALS-4379: replace with the manual print-and-upload step.
+          onManualUpload={() => {
+            requestDataStepCallback({ step: RequestDataStep.COMPLETE })
           }}
         />
       )

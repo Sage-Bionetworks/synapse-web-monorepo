@@ -30,7 +30,7 @@ import {
   SigningOfficial,
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import {
   useGetCurrentUserProfile,
   useGetDataAccessRequestForUpdate,
@@ -160,6 +160,7 @@ export default function DataAccessRequestAccessorsFilesForm(
   const [publication, setPublication] = useState<string | undefined>()
   const [soName, setSoName] = useState<string>('')
   const [soEmail, setSoEmail] = useState<string>('')
+  const hasAppliedImmediateUpdates = useRef(false)
 
   const { data: dataAccessRequest, isLoading: isLoadingGetDataAccessRequest } =
     useGetDataAccessRequestForUpdate(String(managedACTAccessRequirement.id), {
@@ -202,6 +203,13 @@ export default function DataAccessRequestAccessorsFilesForm(
     updateDataAccessRequestIsPending ||
     submitDataAccessRequestIsPending
 
+  /**
+   * Fields backed by local state are not synced with the server until the request is submitted, so an in-flight
+   * background update to the request must not block the user from editing them.
+   */
+  const disableLocalStateFields =
+    isLoadingGetDataAccessRequest || submitDataAccessRequestIsPending
+
   const disableSubmitButton =
     submitDataAccessRequestIsPending || (isEDucEnabled && (!soName || !soEmail))
 
@@ -209,7 +217,7 @@ export default function DataAccessRequestAccessorsFilesForm(
    * This effect comprises a collection of updates we should immediately apply to a data access request.
    */
   useEffect(() => {
-    if (dataAccessRequest && user) {
+    if (dataAccessRequest && user && !hasAppliedImmediateUpdates.current) {
       let shouldUpdate = false
 
       // Attach the researchProjectId to the request
@@ -254,6 +262,9 @@ export default function DataAccessRequestAccessorsFilesForm(
       }
 
       if (shouldUpdate) {
+        // Only attempt these updates once. If the server does not echo back a value we applied here, retrying would
+        // loop indefinitely, leaving the form perpetually in a pending state.
+        hasAppliedImmediateUpdates.current = true
         updateRequestAsync(dataAccessRequest)
       }
     }
@@ -489,7 +500,7 @@ export default function DataAccessRequestAccessorsFilesForm(
                   placeholder="First and last name of signing official, ex: John Smith"
                   fullWidth
                   type="text"
-                  disabled={isLoading}
+                  disabled={disableLocalStateFields}
                   value={soName}
                   required
                   onChange={e => setSoName(e.target.value)}
@@ -501,7 +512,7 @@ export default function DataAccessRequestAccessorsFilesForm(
                   type="email"
                   placeholder="Individual with signing authority, e.g. jane.smith@institution.edu"
                   fullWidth
-                  disabled={isLoading}
+                  disabled={disableLocalStateFields}
                   value={soEmail}
                   required
                   onChange={e => setSoEmail(e.target.value)}

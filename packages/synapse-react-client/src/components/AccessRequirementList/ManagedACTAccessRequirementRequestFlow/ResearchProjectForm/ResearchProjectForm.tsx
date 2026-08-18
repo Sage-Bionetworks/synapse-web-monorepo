@@ -199,6 +199,9 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
       try {
         await updateDataAccessRequest({
           ...existingDar,
+          // The DAR is fetched before the ResearchProject exists, so it may not have an id yet
+          researchProjectId:
+            existingDar.researchProjectId ?? updatedResearchProject.id,
           institution: institution,
           principalInvestigator: nextPi,
         } as Request | Renewal)
@@ -291,20 +294,6 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
                   },
                 }}
               />
-              <TextField
-                id={'institution'}
-                label={'Your Institution'}
-                placeholder={
-                  'Full, unabbreviated name of the institution you are affiliated with'
-                }
-                fullWidth
-                type="text"
-                disabled={isLoading}
-                value={institution}
-                required
-                onChange={e => setInstitution(e.target.value)}
-              />
-
               {isEDucEnabled && (
                 <Box sx={{ mb: '20px' }}>
                   <Typography
@@ -340,6 +329,20 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
                   />
                 </Box>
               )}
+
+              <TextField
+                id={'institution'}
+                label={'Your Institution'}
+                placeholder={
+                  'Full, unabbreviated name of the institution you are affiliated with'
+                }
+                fullWidth
+                type="text"
+                disabled={isLoading}
+                value={institution}
+                required
+                onChange={e => setInstitution(e.target.value)}
+              />
 
               {managedACTAccessRequirement.isIDURequired && (
                 <TextFieldWithWordLimit
