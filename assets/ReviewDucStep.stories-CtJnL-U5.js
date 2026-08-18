@@ -1,8 +1,0 @@
-import{o as e}from"./preload-helper-CsHsquCd.js";import{_ as t,i as n,t as r}from"./core-CI8DLeHF.js";import{P as i,_n as a,t as o}from"./dist-DIvCtTVI.js";import{Ct as s,En as c,Mn as l,On as u}from"./synapse-client-Bq-D85Gh.js";import{r as d,t as f}from"./mock_user_profile-BgSYjn5K.js";import{i as p,u as m}from"./mockAccessRequirements-DrG-L53F.js";import{At as h,G as g,K as _,Ot as v,_t as y,a as b,bt as x,d as S,f as C,o as w,vt as T,yt as E}from"./iframe--j8AQ9lF.js";import{n as D,t as O}from"./ReviewDucStep-zoOP5LUb.js";var k,A,j,M,N;e((()=>{p(),x(),_(),h(),T(),C(),w(),d(),c(),l(),o(),r(),D(),k={...m,eDucTemplateId:`template-abc-123`},A={...E,accessorChanges:[{userId:`999`,type:a.GAIN_ACCESS},{userId:String(f),type:a.GAIN_ACCESS}],principalInvestigator:{userId:`999`,name:`Dr. Jane Smith`,institutionalEmail:`jane.smith@example.edu`},signingOfficial:{name:`John Official`,institutionalEmail:`john.official@example.edu`}},j={title:`Governance/Data Access Request Flow/Managed Access Requirement/Step 2b - Review DUC`,component:O,parameters:{stack:`mock`,chromatic:{viewports:[600,1200]},msw:{handlers:[n.get(`${u}${s(k.id)}`,()=>t.json(A,{status:200})),...S(u),...b(u),...v(u),...y(u)]}}},M={name:`Review / Create a DUC step`,args:{managedACTAccessRequirement:k,subjectId:g,subjectType:i.ENTITY}},M.parameters={...M.parameters,docs:{...M.parameters?.docs,source:{originalSource:`{
-  name: 'Review / Create a DUC step',
-  args: {
-    managedACTAccessRequirement: eDucManagedACTAccessRequirement,
-    subjectId: MOCK_FOLDER_ID,
-    subjectType: RestrictableObjectType.ENTITY
-  }
-}`,...M.parameters?.docs?.source}}},N=[`ReviewDuc`]}))();export{M as ReviewDuc,N as __namedExportsOrder,j as default};
