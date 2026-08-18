@@ -70,9 +70,8 @@ export function StorybookComponentWrapper(props: {
   const currentStack: SynapseStack = (storybookContext.globals.stack ||
     storybookContext.parameters.stack) as SynapseStack
 
-  useEffect(() => {
-    overrideEndpoint(currentStack)
-  }, [currentStack])
+  // Set endpoint synchronously so SynapseContextProvider picks up the correct basePath on first render.
+  overrideEndpoint(currentStack)
 
   // Subscribe to the framework-agnostic SynapseSessionManager for token/auth state
   // These methods are bound in the SynapseSessionManager constructor, so they are safe to pass directly.
