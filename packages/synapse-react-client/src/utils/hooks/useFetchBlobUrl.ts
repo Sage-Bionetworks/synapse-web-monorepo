@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useCreateUrlForData } from './usePreFetchResource'
 
 /**
  * Fetches a URL with credentials and returns a blob object URL.
@@ -8,31 +9,26 @@ export function useFetchBlobUrl(url: string | undefined): {
   blobUrl: string | undefined
   error: Error | undefined
 } {
-  const [blobUrl, setBlobUrl] = useState<string | undefined>()
-  const [error, setError] = useState<Error | undefined>()
+  const { data: blob, error } = useQuery({
+    queryKey: ['useFetchBlobUrl', url],
+    queryFn: async () => {
+      const response = await fetch(url!, { credentials: 'include' })
+      return response.blob()
+    },
+    enabled: !!url,
+    // Fetched blobs should not be refetched automatically since the URL may expire.
+    staleTime: Infinity,
+  })
 
-  useEffect(() => {
-    if (!url) return
+  const blobUrl = useCreateUrlForData(blob)
 
-    const controller = new AbortController()
-    let objectUrl: string | undefined
-
-    fetch(url, { credentials: 'include', signal: controller.signal })
-      .then(r => r.blob())
-      .then(blob => {
-        objectUrl = URL.createObjectURL(blob)
-        setBlobUrl(objectUrl)
-      })
-      .catch(e => {
-        if (e instanceof Error && e.name === 'AbortError') return
-        setError(e instanceof Error ? e : new Error(String(e)))
-      })
-
-    return () => {
-      controller.abort()
-      if (objectUrl) URL.revokeObjectURL(objectUrl)
-    }
-  }, [url])
-
-  return { blobUrl, error }
+  return {
+    blobUrl,
+    error:
+      error instanceof Error
+        ? error
+        : error != null
+          ? new Error(String(error))
+          : undefined,
+  }
 }
