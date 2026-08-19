@@ -3,8 +3,16 @@ import {
   useListEDucTemplates,
 } from '@/synapse-queries'
 import { formatDate } from '@/utils/functions/DateFormatter'
-import { CheckCircleTwoTone, ErrorTwoTone } from '@mui/icons-material'
-import { Alert, Box, Button, Skeleton, Typography } from '@mui/material'
+import { CheckCircleTwoTone, ErrorTwoTone, Replay } from '@mui/icons-material'
+import {
+  Alert,
+  Box,
+  Button,
+  IconButton,
+  Skeleton,
+  Tooltip,
+  Typography,
+} from '@mui/material'
 import { EDucTemplate } from '@sage-bionetworks/synapse-client'
 import {
   createColumnHelper,
@@ -61,7 +69,7 @@ function ValidationCell(props: { templateId: string | undefined }) {
   const { templateId } = props
   const [enabled, setEnabled] = useState(false)
 
-  const { data, error, isFetching } = useGetEDucTemplateValidation(
+  const { data, error, isFetching, refetch } = useGetEDucTemplateValidation(
     templateId ?? '',
     { enabled: enabled && Boolean(templateId) },
   )
@@ -95,6 +103,17 @@ function ValidationCell(props: { templateId: string | undefined }) {
         <Typography variant={'smallText1'} sx={{ color: 'error.main' }}>
           {error.reason}
         </Typography>
+        <Tooltip title={'Re-validate'}>
+          <IconButton
+            size={'small'}
+            onClick={() => {
+              refetch()
+            }}
+            aria-label={'Re-validate'}
+          >
+            <Replay fontSize={'small'} />
+          </IconButton>
+        </Tooltip>
       </Box>
     )
   }
@@ -104,6 +123,17 @@ function ValidationCell(props: { templateId: string | undefined }) {
       <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}>
         <CheckCircleTwoTone color={'success'} fontSize={'small'} />
         <Typography variant={'smallText1'}>Valid</Typography>
+        <Tooltip title={'Re-validate'}>
+          <IconButton
+            size={'small'}
+            onClick={() => {
+              refetch()
+            }}
+            aria-label={'Re-validate'}
+          >
+            <Replay fontSize={'small'} />
+          </IconButton>
+        </Tooltip>
       </Box>
     )
   }
@@ -114,6 +144,17 @@ function ValidationCell(props: { templateId: string | undefined }) {
       <Typography variant={'smallText1'} sx={{ color: 'error.main' }}>
         {data?.reason ?? 'Invalid'}
       </Typography>
+      <Tooltip title={'Re-validate'}>
+        <IconButton
+          size={'small'}
+          onClick={() => {
+            refetch()
+          }}
+          aria-label={'Re-validate'}
+        >
+          <Replay fontSize={'small'} />
+        </IconButton>
+      </Tooltip>
     </Box>
   )
 }
