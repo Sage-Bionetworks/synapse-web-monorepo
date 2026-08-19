@@ -67,21 +67,21 @@ const columns = [
 
 function ValidationCell(props: { templateId: string | undefined }) {
   const { templateId } = props
-  const [enabled, setEnabled] = useState(false)
+  const [hasRequestedValidation, setHasRequestedValidation] = useState(false)
 
   const { data, error, isFetching, refetch } = useGetEDucTemplateValidation(
     templateId ?? '',
-    { enabled: enabled && Boolean(templateId) },
+    { enabled: hasRequestedValidation && Boolean(templateId) },
   )
 
   if (!templateId) return null
 
-  if (!enabled) {
+  if (!hasRequestedValidation) {
     return (
       <Button
         variant={'outlined'}
         size={'small'}
-        onClick={() => setEnabled(true)}
+        onClick={() => setHasRequestedValidation(true)}
       >
         Validate
       </Button>
