@@ -22,9 +22,10 @@ export const programsCardConfiguration: CardConfiguration = {
   genericCardSchema: programSchema,
   titleLinkConfig: {
     isMarkdown: false,
-    baseURL: 'Explore/Programs/DetailsPage',
+    baseURL: 'Explore/Programs',
     URLColumnName: 'Program',
     matchColumnName: 'Program',
+    urlParamStyle: 'path-segment',
   },
   labelLinkConfig: [
     {

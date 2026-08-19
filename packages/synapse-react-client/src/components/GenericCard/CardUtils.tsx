@@ -1,5 +1,8 @@
 import { CardLink } from '@/components/CardContainer/CardLink'
-import { isTableEntity } from '@/utils/functions/EntityTypeUtils'
+import {
+  isTableEntity,
+  normalizeSynPrefix,
+} from '@/utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import {
   convertDoiToLink,
@@ -131,7 +134,10 @@ export function getCardLinkHref(
       )
     } else if ('baseURL' in cardLink) {
       const { baseURL, URLColumnName, urlParamStyle = 'query-param' } = cardLink
-      const value = overrideValueWithRowID ? `syn${rowId}` : data[indexInData]
+      const value =
+        overrideValueWithRowID && rowId != null
+          ? normalizeSynPrefix(String(rowId))
+          : data[indexInData]
       if (value) {
         // value is defined!
         if (urlParamStyle === 'path-segment') {
