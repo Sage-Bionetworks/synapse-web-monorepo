@@ -31,7 +31,6 @@ import {
 import { useState } from 'react'
 import IconSvg from '../../../IconSvg/IconSvg'
 import { UserBadge } from '../../../UserCard/UserBadge'
-import ManagedACTAccessRequirementFormWikiWrapper from '../ManagedACTAccessRequirementFormWikiWrapper'
 import { UploadDocumentField } from '../UploadDocumentField'
 import { longFieldLabelSx } from '../styles'
 
@@ -128,8 +127,13 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
 
   const handleUpload = (resp: UploadCallbackResp) => {
     if (!resp.success || !resp.resp || !dataAccessRequest) {
-      if (resp.error) {
-        setUpdateError(resp.error.reason)
+      const errorObj = resp.error as { reason?: unknown } | undefined
+      const reason =
+        errorObj && typeof errorObj.reason === 'string'
+          ? errorObj.reason
+          : undefined
+      if (reason) {
+        setUpdateError(reason)
       }
       return
     }
@@ -169,169 +173,156 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
         </Stack>
       </DialogTitle>
       <DialogContent>
-        <ManagedACTAccessRequirementFormWikiWrapper
-          managedACTAccessRequirementId={String(managedACTAccessRequirement.id)}
-        >
-          <Box>
-            <Typography variant={'headline3'} sx={{ mb: 2 }}>
-              Submit a signed PDF instead of e-signatures
-            </Typography>
-            <Typography variant={'body1'} sx={{ ...longFieldLabelSx, mb: 2 }}>
-              Instead of signing the Data Use Certificate (DUC) using DocuSign,
-              you can download the DUC as a PDF and then upload it after it has
-              been signed by your collaborators, your project lead, and your
-              Signing Official.
-            </Typography>
-            <Typography variant={'body1'} sx={{ ...longFieldLabelSx, mb: 3 }}>
-              However, we recommend using e-signatures, as it is usually faster,
-              and prevents common errors which can result in your request being
-              rejected.
-            </Typography>
+        <Box>
+          <Typography variant={'headline3'} sx={{ mb: 2 }}>
+            Submit a signed PDF instead of e-signatures
+          </Typography>
+          <Typography variant={'body1'} sx={{ ...longFieldLabelSx, mb: 2 }}>
+            Instead of signing the Data Use Certificate (DUC) using DocuSign,
+            you can download the DUC as a PDF and then upload it after it has
+            been signed by your collaborators, your project lead, and your
+            Signing Official.
+          </Typography>
+          <Typography variant={'body1'} sx={{ ...longFieldLabelSx, mb: 3 }}>
+            However, we recommend using e-signatures, as it is usually faster,
+            and prevents common errors which can result in your request being
+            rejected.
+          </Typography>
 
-            <Accordion
-              defaultExpanded={false}
-              disableGutters
-              sx={{
-                boxShadow: 'none',
-                borderTop: '1px solid',
-                borderBottom: '1px solid',
-                borderColor: 'grey.300',
-                '&:before': { display: 'none' },
-                mb: 3,
-              }}
+          <Accordion
+            defaultExpanded={false}
+            disableGutters
+            sx={{
+              boxShadow: 'none',
+              borderTop: '1px solid',
+              borderBottom: '1px solid',
+              borderColor: 'grey.300',
+              '&:before': { display: 'none' },
+              mb: 3,
+            }}
+          >
+            <AccordionSummary
+              expandIcon={<ExpandMore />}
+              aria-controls="review-collaborators-content"
+              id="review-collaborators-header"
             >
-              <AccordionSummary
-                expandIcon={<ExpandMore />}
-                aria-controls="review-collaborators-content"
-                id="review-collaborators-header"
-              >
-                <Typography variant={'headline3'}>
-                  Review your list of collaborators
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Stack sx={{ gap: 1 }}>
-                  {accessorChanges.length === 0 && !isLoadingDar && (
-                    <Typography variant={'body1'} sx={longFieldLabelSx}>
-                      No collaborators added.
-                    </Typography>
-                  )}
-                  {accessorChanges.map(ac => (
-                    <UserBadge
-                      key={ac.userId}
-                      userId={ac.userId}
-                      showAccountLevelIcon={true}
-                      disableLink={true}
-                      showFullName={true}
-                    />
-                  ))}
-                </Stack>
-              </AccordionDetails>
-            </Accordion>
-
-            <Typography variant={'headline3'} sx={{ mb: 2 }}>
-              Instructions
-            </Typography>
-            <Stack
-              direction={{ xs: 'column', md: 'row' }}
-              sx={{ gap: 4, alignItems: 'flex-start' }}
-            >
-              <Box sx={{ flex: 1 }}>
-                <Typography variant={'body1'} sx={{ fontWeight: 700, mb: 1 }}>
-                  Step 1. Download your Data Use Certificate
-                </Typography>
-                <Typography
-                  variant={'body1'}
-                  sx={{ ...longFieldLabelSx, mb: 2 }}
-                >
-                  As a first step, you will need to download a PDF of the Data
-                  Use Certificate with the names of your Collaborators and
-                  Signing Official. Make sure the names are correct and complete
-                  before downloading.
-                </Typography>
-                <Typography
-                  variant={'body1'}
-                  sx={{ ...longFieldLabelSx, mb: 2 }}
-                >
-                  If needed, you can modify the printed list of collaborators by
-                  adding or removing names on the paper copy before uploading.
-                </Typography>
-                {previewError ? (
-                  <Alert severity={'error'}>
-                    <strong>
-                      Sorry, we couldn&apos;t prepare your DUC for download.
-                    </strong>
-                    <br />
-                    {previewError.reason}
-                  </Alert>
-                ) : (
-                  <Button
-                    component="a"
-                    href={downloadHref ?? undefined}
-                    target="_blank"
-                    rel="noopener"
-                    variant={'outlined'}
-                    disabled={isDownloadDisabled}
-                    endIcon={<IconSvg icon={'download'} wrap={false} />}
-                  >
-                    Download DUC for Signatures
-                  </Button>
+              <Typography variant={'headline3'}>
+                Review your list of collaborators
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Stack sx={{ gap: 1 }}>
+                {accessorChanges.length === 0 && !isLoadingDar && (
+                  <Typography variant={'body1'} sx={longFieldLabelSx}>
+                    No collaborators added.
+                  </Typography>
                 )}
-              </Box>
-              <Box sx={{ flex: 1 }}>
-                <Typography variant={'body1'} sx={{ fontWeight: 700, mb: 1 }}>
-                  Step 2. Fill out and upload a Data Use Certificate
-                </Typography>
-                <Typography
-                  variant={'body1'}
-                  sx={{ ...longFieldLabelSx, mb: 2 }}
-                >
-                  You must download and fill out a Data Use Certificate (DUC).
-                  Be sure to upload the completed DUC below.
-                </Typography>
-                <Typography
-                  variant={'body1'}
-                  component={'ol'}
-                  sx={{ ...longFieldLabelSx, mb: 2, pl: 3 }}
-                >
-                  <li>Download the DUC document.</li>
-                  <li>
-                    Fill out the DUC, following the instructions in the PDF.
-                  </li>
-                  <li>
-                    Upload the completed certificate using the button below:
-                  </li>
-                </Typography>
-                {isLoadingDar ? (
-                  <Skeleton variant={'rectangular'} width={200} height={36} />
-                ) : (
-                  <UploadDocumentField
-                    id={'signed-duc'}
-                    documentName={'Signed DUC'}
-                    isLoading={isUpdating}
-                    uploadCallback={handleUpload}
-                    fileHandleAssociations={signedDucFileHandleAssociations}
+                {accessorChanges.map(ac => (
+                  <UserBadge
+                    key={ac.userId}
+                    userId={ac.userId}
+                    showAccountLevelIcon={true}
+                    disableLink={true}
+                    showFullName={true}
                   />
-                )}
-              </Box>
-            </Stack>
+                ))}
+              </Stack>
+            </AccordionDetails>
+          </Accordion>
 
-            {updateError && (
-              <Alert severity={'error'} sx={{ mt: 2 }}>
-                <strong>Sorry, we couldn&apos;t save your uploaded DUC.</strong>
-                <br />
-                {updateError}
-              </Alert>
-            )}
-            {submitError && (
-              <Alert severity={'error'} sx={{ mt: 2 }}>
-                <strong>Sorry, we couldn&apos;t submit your request.</strong>
-                <br />
-                {submitError}
-              </Alert>
-            )}
-          </Box>
-        </ManagedACTAccessRequirementFormWikiWrapper>
+          <Typography variant={'headline3'} sx={{ mb: 2 }}>
+            Instructions
+          </Typography>
+          <Stack
+            direction={{ xs: 'column', md: 'row' }}
+            sx={{ gap: 4, alignItems: 'flex-start' }}
+          >
+            <Box sx={{ flex: 1 }}>
+              <Typography variant={'body1'} sx={{ fontWeight: 700, mb: 1 }}>
+                Step 1. Download your Data Use Certificate
+              </Typography>
+              <Typography variant={'body1'} sx={{ ...longFieldLabelSx, mb: 2 }}>
+                As a first step, you will need to download a PDF of the Data Use
+                Certificate with the names of your Collaborators and Signing
+                Official. Make sure the names are correct and complete before
+                downloading.
+              </Typography>
+              <Typography variant={'body1'} sx={{ ...longFieldLabelSx, mb: 2 }}>
+                If needed, you can modify the printed list of collaborators by
+                adding or removing names on the paper copy before uploading.
+              </Typography>
+              {previewError ? (
+                <Alert severity={'error'}>
+                  <strong>
+                    Sorry, we couldn&apos;t prepare your DUC for download.
+                  </strong>
+                  <br />
+                  {previewError.reason}
+                </Alert>
+              ) : (
+                <Button
+                  component="a"
+                  href={downloadHref ?? undefined}
+                  target="_blank"
+                  rel="noopener"
+                  variant={'outlined'}
+                  disabled={isDownloadDisabled}
+                  endIcon={<IconSvg icon={'download'} wrap={false} />}
+                >
+                  Download DUC for Signatures
+                </Button>
+              )}
+            </Box>
+            <Box sx={{ flex: 1 }}>
+              <Typography variant={'body1'} sx={{ fontWeight: 700, mb: 1 }}>
+                Step 2. Fill out and upload a Data Use Certificate
+              </Typography>
+              <Typography variant={'body1'} sx={{ ...longFieldLabelSx, mb: 2 }}>
+                You must download and fill out a Data Use Certificate (DUC). Be
+                sure to upload the completed DUC below.
+              </Typography>
+              <Typography
+                variant={'body1'}
+                component={'ol'}
+                sx={{ ...longFieldLabelSx, mb: 2, pl: 3 }}
+              >
+                <li>Download the DUC document.</li>
+                <li>
+                  Fill out the DUC, following the instructions in the PDF.
+                </li>
+                <li>
+                  Upload the completed certificate using the button below:
+                </li>
+              </Typography>
+              {isLoadingDar ? (
+                <Skeleton variant={'rectangular'} width={200} height={36} />
+              ) : (
+                <UploadDocumentField
+                  id={'signed-duc'}
+                  documentName={'Signed DUC'}
+                  isLoading={isUpdating}
+                  uploadCallback={handleUpload}
+                  fileHandleAssociations={signedDucFileHandleAssociations}
+                />
+              )}
+            </Box>
+          </Stack>
+
+          {updateError && (
+            <Alert severity={'error'} sx={{ mt: 2 }}>
+              <strong>Sorry, we couldn&apos;t save your uploaded DUC.</strong>
+              <br />
+              {updateError}
+            </Alert>
+          )}
+          {submitError && (
+            <Alert severity={'error'} sx={{ mt: 2 }}>
+              <strong>Sorry, we couldn&apos;t submit your request.</strong>
+              <br />
+              {submitError}
+            </Alert>
+          )}
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button variant={'outlined'} onClick={onBackClicked}>

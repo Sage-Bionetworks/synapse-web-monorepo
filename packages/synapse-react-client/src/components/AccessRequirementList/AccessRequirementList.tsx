@@ -345,7 +345,6 @@ export default function AccessRequirementList(
       RequestDataStep.UPDATE_RESEARCH_PROJECT,
       RequestDataStep.REVIEW_DUC,
       RequestDataStep.EDUC_PREVIEW,
-      RequestDataStep.MANUAL_UPLOAD_DUC,
     ].includes(requestDataStep) && canShowManagedACTWikiInWizard
       ? 'xl'
       : 'md'
