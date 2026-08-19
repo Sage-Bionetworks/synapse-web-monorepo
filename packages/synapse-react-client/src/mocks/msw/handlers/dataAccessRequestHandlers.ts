@@ -1,6 +1,7 @@
 import {
   ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE,
   DATA_ACCESS_REQUEST,
+  DATA_ACCESS_REQUEST_SIGNATURE,
   DATA_ACCESS_REQUEST_SUBMISSION,
 } from '@/utils/APIConstants'
 import { Renewal, Request } from '@sage-bionetworks/synapse-types'
@@ -92,5 +93,9 @@ export function getDataAccessRequestHandlers(backendOrigin: string) {
         return HttpResponse.json({}, { status: 201 })
       },
     ),
+
+    http.post(`${backendOrigin}${DATA_ACCESS_REQUEST_SIGNATURE(':id')}`, () => {
+      return HttpResponse.json({ quota: 5, remaining: 4 }, { status: 200 })
+    }),
   ]
 }

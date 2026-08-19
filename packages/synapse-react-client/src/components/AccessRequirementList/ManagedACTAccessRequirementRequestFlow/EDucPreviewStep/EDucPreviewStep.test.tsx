@@ -67,6 +67,16 @@ function renderComponent(props: EDucPreviewStepProps = defaultProps) {
 }
 
 const previewEndpoint = `*/repo/v1/dataAccessRequest/${MOCK_DATA_ACCESS_REQUEST.id}/preview`
+const signatureEndpoint = `*/repo/v1/dataAccessRequest/${MOCK_DATA_ACCESS_REQUEST.id}/signature`
+
+function successfulPreviewHandler() {
+  return http.get(previewEndpoint, () =>
+    HttpResponse.json(
+      { fileHandleId: 'preview-file-handle-456' },
+      { status: 200 },
+    ),
+  )
+}
 
 describe('EDucPreviewStep', () => {
   beforeAll(() => server.listen())
@@ -89,14 +99,7 @@ describe('EDucPreviewStep', () => {
   })
 
   it('renders the iframe when the preview loads successfully', async () => {
-    server.use(
-      http.get(previewEndpoint, () =>
-        HttpResponse.json(
-          { fileHandleId: 'preview-file-handle-456' },
-          { status: 200 },
-        ),
-      ),
-    )
+    server.use(successfulPreviewHandler())
     renderComponent()
 
     const iframe = await screen.findByTitle('eDUC preview')
@@ -116,14 +119,7 @@ describe('EDucPreviewStep', () => {
   })
 
   it('invokes onBackClicked when Back is clicked', async () => {
-    server.use(
-      http.get(previewEndpoint, () =>
-        HttpResponse.json(
-          { fileHandleId: 'preview-file-handle-456' },
-          { status: 200 },
-        ),
-      ),
-    )
+    server.use(successfulPreviewHandler())
     const { user } = renderComponent()
 
     const backButton = await screen.findByRole('button', { name: 'Back' })
@@ -132,12 +128,34 @@ describe('EDucPreviewStep', () => {
     expect(mockOnBackClicked).toHaveBeenCalledTimes(1)
   })
 
-  it('invokes onSendForSignature when the Send button is clicked', async () => {
+  it('initiates signature routing and invokes onSendForSignature on success', async () => {
+    let signatureCallCount = 0
     server.use(
-      http.get(previewEndpoint, () =>
+      successfulPreviewHandler(),
+      http.post(signatureEndpoint, () => {
+        signatureCallCount += 1
+        return HttpResponse.json({ quota: 5, remaining: 4 }, { status: 200 })
+      }),
+    )
+    const { user } = renderComponent()
+
+    const sendButton = await screen.findByRole('button', {
+      name: 'Send for electronic signature',
+    })
+    await waitFor(() => expect(sendButton).toBeEnabled())
+    await user.click(sendButton)
+
+    await waitFor(() => expect(mockOnSendForSignature).toHaveBeenCalledTimes(1))
+    expect(signatureCallCount).toBe(1)
+  })
+
+  it('shows an error alert and does not advance when signature routing fails', async () => {
+    server.use(
+      successfulPreviewHandler(),
+      http.post(signatureEndpoint, () =>
         HttpResponse.json(
-          { fileHandleId: 'preview-file-handle-456' },
-          { status: 200 },
+          { reason: 'Required field "institutionalEmail" is missing.' },
+          { status: 400 },
         ),
       ),
     )
@@ -149,18 +167,15 @@ describe('EDucPreviewStep', () => {
     await waitFor(() => expect(sendButton).toBeEnabled())
     await user.click(sendButton)
 
-    expect(mockOnSendForSignature).toHaveBeenCalledTimes(1)
+    await screen.findByText(/couldn't send your DUC for electronic signature/i)
+    expect(
+      screen.getByText('Required field "institutionalEmail" is missing.'),
+    ).toBeInTheDocument()
+    expect(mockOnSendForSignature).not.toHaveBeenCalled()
   })
 
   it('invokes onManualUpload when the Manually print button is clicked', async () => {
-    server.use(
-      http.get(previewEndpoint, () =>
-        HttpResponse.json(
-          { fileHandleId: 'preview-file-handle-456' },
-          { status: 200 },
-        ),
-      ),
-    )
+    server.use(successfulPreviewHandler())
     const { user } = renderComponent()
 
     const uploadButton = await screen.findByRole('button', {

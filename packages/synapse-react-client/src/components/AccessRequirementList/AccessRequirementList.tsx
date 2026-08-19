@@ -423,7 +423,7 @@ export default function AccessRequirementList(
           onBackClicked={() => {
             requestDataStepCallback({ step: RequestDataStep.REVIEW_DUC })
           }}
-          // TODO PORTALS-4378: replace with the electronic-signature step.
+          // TODO PORTALS-4380: replace with the signature-in-progress step.
           onSendForSignature={() => {
             requestDataStepCallback({ step: RequestDataStep.COMPLETE })
           }}
