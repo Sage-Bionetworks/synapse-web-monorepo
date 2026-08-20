@@ -222,6 +222,8 @@ export const ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE = (
   `${ACCESS_REQUIREMENT_BY_ID(accessRequirementId)}/dataAccessRequestForUpdate`
 
 export const EDUC_TEMPLATE = `${REPO}/eDuc/template`
+export const EDUC_TEMPLATE_VALIDATION = (templateId: string) =>
+  `${EDUC_TEMPLATE}/${templateId}/validation`
 
 export const RESEARCH_PROJECT = `${REPO}/researchProject`
 export const ACCESS_REQUIREMENT_RESEARCH_PROJECT_FOR_UPDATE = (
