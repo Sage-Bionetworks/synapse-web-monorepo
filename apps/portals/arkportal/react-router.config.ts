@@ -7,4 +7,6 @@ import { metadataConfig as projectsMetadata } from './src/pages/ProjectDetailsPa
 export default createReactRouterConfig({
   sitemapConfig,
   metadataConfigs: [datasetsMetadata, programsMetadata, projectsMetadata],
+  /* Not enabling additionalPreloads yet because ARK currently has no Croissant mappings in syn65903895. This avoids prefetching ~256 unused files. Re-enable once ARK dataset mappings are added */
+  //additionalPreloads: [preloadAllCroissantMetadata]
 })
