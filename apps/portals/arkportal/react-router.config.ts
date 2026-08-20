@@ -8,5 +8,4 @@ import { metadataConfig as projectsMetadata } from './src/pages/ProjectDetailsPa
 export default createReactRouterConfig({
   sitemapConfig,
   metadataConfigs: [datasetsMetadata, programsMetadata, projectsMetadata],
-  additionalPreloads: [preloadAllCroissantMetadata],
 })
