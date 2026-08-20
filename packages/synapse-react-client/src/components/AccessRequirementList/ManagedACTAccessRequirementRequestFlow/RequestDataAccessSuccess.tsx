@@ -30,7 +30,7 @@ export default function RequestDataAccessSuccess(
         >
           Your Data Access Request Has Been Submitted
           <Box sx={{ flexGrow: 1 }} />
-          <IconButton onClick={onHide}>
+          <IconButton aria-label={'Close'} onClick={onHide}>
             <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
           </IconButton>
         </Stack>

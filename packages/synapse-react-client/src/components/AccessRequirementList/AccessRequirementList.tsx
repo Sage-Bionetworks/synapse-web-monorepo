@@ -44,6 +44,7 @@ import RequestDataAccessSuccess from './ManagedACTAccessRequirementRequestFlow/R
 import ResearchProjectForm from './ManagedACTAccessRequirementRequestFlow/ResearchProjectForm/ResearchProjectForm'
 import ReviewDucStep from './ManagedACTAccessRequirementRequestFlow/ReviewDucStep/ReviewDucStep'
 import EDucPreviewStep from './ManagedACTAccessRequirementRequestFlow/EDucPreviewStep/EDucPreviewStep'
+import ManualUploadDucStep from './ManagedACTAccessRequirementRequestFlow/ManualUploadDucStep/ManualUploadDucStep'
 import AuthenticatedRequirement from './RequirementItem/AuthenticatedRequirement'
 import CertificationRequirement from './RequirementItem/CertificationRequirement'
 import TwoFactorAuthEnabledRequirement from './RequirementItem/TwoFactorAuthEnabledRequirement'
@@ -140,6 +141,7 @@ enum RequestDataStep {
   COMPLETE = 5,
   REVIEW_DUC = 6,
   EDUC_PREVIEW = 7,
+  MANUAL_UPLOAD_DUC = 8,
 }
 
 export type RequestDataStepCallbackArgs = {
@@ -427,9 +429,27 @@ export default function AccessRequirementList(
           onSendForSignature={() => {
             requestDataStepCallback({ step: RequestDataStep.COMPLETE })
           }}
-          // TODO PORTALS-4379: replace with the manual print-and-upload step.
           onManualUpload={() => {
+            requestDataStepCallback({
+              step: RequestDataStep.MANUAL_UPLOAD_DUC,
+            })
+          }}
+        />
+      )
+      break
+    case RequestDataStep.MANUAL_UPLOAD_DUC:
+      renderContent = (
+        <ManualUploadDucStep
+          managedACTAccessRequirement={managedACTAccessRequirement!}
+          subjectId={subjectId ?? ''}
+          subjectType={subjectType ?? RestrictableObjectType.ENTITY}
+          onHide={onHide}
+          onBackClicked={() => {
+            requestDataStepCallback({ step: RequestDataStep.EDUC_PREVIEW })
+          }}
+          onSubmissionCreated={submissionId => {
             requestDataStepCallback({ step: RequestDataStep.COMPLETE })
+            onSubmissionCreated(submissionId)
           }}
         />
       )
