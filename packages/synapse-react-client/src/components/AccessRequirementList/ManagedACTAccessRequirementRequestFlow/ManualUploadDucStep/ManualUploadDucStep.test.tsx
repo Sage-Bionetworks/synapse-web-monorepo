@@ -128,10 +128,10 @@ describe('ManualUploadDucStep', () => {
     ).toBeInTheDocument()
   })
 
-  it('renders a collapsed "Review your list of collaborators" panel by default', async () => {
+  it('renders a collapsed collaborators & signing official panel by default', async () => {
     renderComponent()
     const summary = await screen.findByRole('button', {
-      name: /Review your list of collaborators/i,
+      name: /Review your collaborators & signing official/i,
     })
     expect(summary).toHaveAttribute('aria-expanded', 'false')
   })
@@ -139,7 +139,7 @@ describe('ManualUploadDucStep', () => {
   it('expands the collaborators panel and lists accessors', async () => {
     const { user } = renderComponent()
     const summary = await screen.findByRole('button', {
-      name: /Review your list of collaborators/i,
+      name: /Review your collaborators & signing official/i,
     })
     await user.click(summary)
     await waitFor(() =>

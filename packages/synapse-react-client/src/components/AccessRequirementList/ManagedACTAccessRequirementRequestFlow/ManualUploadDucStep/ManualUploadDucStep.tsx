@@ -6,11 +6,7 @@ import {
   useVoidDataAccessRequestSignature,
 } from '@/synapse-queries'
 import SynapseClient from '@/synapse-client'
-import { ExpandMore } from '@mui/icons-material'
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Alert,
   Box,
   Button,
@@ -31,7 +27,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 import IconSvg from '../../../IconSvg/IconSvg'
-import { UserBadge } from '../../../UserCard/UserBadge'
+import { ReviewCollaboratorsAndSigningOfficialAccordion } from '../ReviewCollaboratorsAndSigningOfficialAccordion'
 import { UploadDocumentField } from '../UploadDocumentField'
 import { longFieldLabelSx } from '../styles'
 
@@ -113,6 +109,8 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
     })
 
   const accessorChanges = dataAccessRequest?.accessorChanges ?? []
+  const pi = dataAccessRequest?.principalInvestigator
+  const so = dataAccessRequest?.signingOfficial
   const signedDucFileHandleId = dataAccessRequest?.ducFileHandleId
   const signedDucFileHandleAssociations: FileHandleAssociation[] =
     signedDucFileHandleId && dataAccessRequest?.id
@@ -214,46 +212,14 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
             rejected.
           </Typography>
 
-          <Accordion
-            defaultExpanded={false}
-            disableGutters
-            sx={{
-              boxShadow: 'none',
-              borderTop: '1px solid',
-              borderBottom: '1px solid',
-              borderColor: 'grey.300',
-              '&:before': { display: 'none' },
-              mb: 3,
-            }}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMore />}
-              aria-controls="review-collaborators-content"
-              id="review-collaborators-header"
-            >
-              <Typography variant={'headline3'}>
-                Review your list of collaborators
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Stack sx={{ gap: 1 }}>
-                {accessorChanges.length === 0 && !isLoadingDar && (
-                  <Typography variant={'body1'} sx={longFieldLabelSx}>
-                    No collaborators added.
-                  </Typography>
-                )}
-                {accessorChanges.map(ac => (
-                  <UserBadge
-                    key={ac.userId}
-                    userId={ac.userId}
-                    showAccountLevelIcon={true}
-                    disableLink={true}
-                    showFullName={true}
-                  />
-                ))}
-              </Stack>
-            </AccordionDetails>
-          </Accordion>
+          <Box sx={{ mb: 3 }}>
+            <ReviewCollaboratorsAndSigningOfficialAccordion
+              accessorChanges={accessorChanges}
+              principalInvestigator={pi}
+              signingOfficial={so}
+              isLoading={isLoadingDar}
+            />
+          </Box>
 
           <Typography variant={'headline3'} sx={{ mb: 2 }}>
             Instructions

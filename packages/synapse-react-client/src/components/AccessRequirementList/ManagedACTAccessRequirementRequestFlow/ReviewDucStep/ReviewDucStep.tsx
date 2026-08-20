@@ -1,9 +1,5 @@
 import { useGetDataAccessRequestForUpdate } from '@/synapse-queries'
-import { ExpandMore } from '@mui/icons-material'
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Box,
   Button,
   DialogActions,
@@ -15,8 +11,8 @@ import {
 } from '@mui/material'
 import { ManagedACTAccessRequirement } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../../../IconSvg/IconSvg'
-import { UserBadge } from '../../../UserCard/UserBadge'
 import ManagedACTAccessRequirementFormWikiWrapper from '../ManagedACTAccessRequirementFormWikiWrapper'
+import { ReviewCollaboratorsAndSigningOfficialAccordion } from '../ReviewCollaboratorsAndSigningOfficialAccordion'
 import { longFieldLabelSx } from '../styles'
 
 export type ReviewDucStepProps = {
@@ -85,106 +81,12 @@ export default function ReviewDucStep(props: ReviewDucStepProps) {
               Official.
             </Typography>
 
-            <Accordion
-              defaultExpanded={false}
-              disableGutters
-              sx={{
-                boxShadow: 'none',
-                border: '1px solid',
-                borderColor: 'grey.300',
-                '&:before': { display: 'none' },
-              }}
-            >
-              <AccordionSummary
-                expandIcon={<ExpandMore />}
-                aria-controls="review-collaborators-so-content"
-                id="review-collaborators-so-header"
-              >
-                <Typography variant={'headline3'}>
-                  Review your collaborators & signing official
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Typography
-                  variant={'body1'}
-                  sx={{ ...longFieldLabelSx, fontWeight: 700, mb: 1 }}
-                >
-                  Your collaborators:
-                </Typography>
-                <Stack sx={{ mb: 3, gap: 1 }}>
-                  {accessorChanges.map(ac => (
-                    <UserBadge
-                      key={ac.userId}
-                      userId={ac.userId}
-                      showAccountLevelIcon={true}
-                      disableLink={true}
-                      showFullName={true}
-                    />
-                  ))}
-                </Stack>
-
-                <Typography
-                  variant={'body1'}
-                  sx={{ ...longFieldLabelSx, fontWeight: 700, mb: 1 }}
-                >
-                  Your Project Lead or PI:
-                </Typography>
-                <Typography
-                  variant={'body1'}
-                  sx={{ ...longFieldLabelSx, mb: 1 }}
-                >
-                  Your Project Lead or PI will also receive access to the
-                  requested data.
-                </Typography>
-                <Box sx={{ mb: 3 }}>
-                  {pi?.userId && (
-                    <UserBadge
-                      userId={pi.userId}
-                      showAccountLevelIcon={true}
-                      disableLink={true}
-                      showFullName={true}
-                    />
-                  )}
-                  {pi?.name && (
-                    <Typography variant={'body1'} sx={longFieldLabelSx}>
-                      {pi.name}
-                    </Typography>
-                  )}
-                  {pi?.institutionalEmail && (
-                    <Typography variant={'body1'} sx={longFieldLabelSx}>
-                      {pi.institutionalEmail}
-                    </Typography>
-                  )}
-                </Box>
-
-                <Typography
-                  variant={'body1'}
-                  sx={{ ...longFieldLabelSx, fontWeight: 700, mb: 1 }}
-                >
-                  Your signing official:
-                </Typography>
-                <Typography
-                  variant={'body1'}
-                  sx={{ ...longFieldLabelSx, mb: 1 }}
-                >
-                  A member of your institution who is NOT part of the study team
-                  (i.e., not the Project Lead, not a Data Requester or
-                  Collaborator, and not the Project Lead or PI).
-                </Typography>
-                <Box>
-                  {so?.name && (
-                    <Typography variant={'body1'} sx={longFieldLabelSx}>
-                      {so.name}
-                    </Typography>
-                  )}
-                  {so?.institutionalEmail && (
-                    <Typography variant={'body1'} sx={longFieldLabelSx}>
-                      {so.institutionalEmail}
-                    </Typography>
-                  )}
-                </Box>
-              </AccordionDetails>
-            </Accordion>
+            <ReviewCollaboratorsAndSigningOfficialAccordion
+              accessorChanges={accessorChanges}
+              principalInvestigator={pi}
+              signingOfficial={so}
+              isLoading={isLoading}
+            />
           </Box>
         </ManagedACTAccessRequirementFormWikiWrapper>
       </DialogContent>
