@@ -3,6 +3,7 @@ import {
   useGetDataAccessRequestPreview,
   useSubmitDataAccessRequest,
   useUpdateDataAccessRequest,
+  useVoidDataAccessRequestSignature,
 } from '@/synapse-queries'
 import SynapseClient from '@/synapse-client'
 import { ExpandMore } from '@mui/icons-material'
@@ -65,11 +66,14 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
     downloadHrefOverride,
   } = props
 
-  const { data: dataAccessRequest, isLoading: isLoadingDar } =
-    useGetDataAccessRequestForUpdate(String(managedACTAccessRequirement.id), {
-      staleTime: Infinity,
-      throwOnError: true,
-    })
+  const {
+    data: dataAccessRequest,
+    isLoading: isLoadingDar,
+    refetch: refetchDar,
+  } = useGetDataAccessRequestForUpdate(String(managedACTAccessRequirement.id), {
+    staleTime: Infinity,
+    throwOnError: true,
+  })
 
   const {
     data: previewFileHandle,
@@ -97,6 +101,11 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
     onError: e => setUpdateError(e.reason),
   })
 
+  const { mutateAsync: voidSignatureAsync, isPending: isVoidingSignature } =
+    useVoidDataAccessRequestSignature({
+      onError: e => setUpdateError(e.reason),
+    })
+
   const { mutate: submit, isPending: isSubmitting } =
     useSubmitDataAccessRequest({
       onSuccess: submission => onSubmissionCreated(submission.submissionId),
@@ -123,9 +132,10 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
     !dataAccessRequest ||
     !signedDucFileHandleId ||
     isUpdating ||
+    isVoidingSignature ||
     isSubmitting
 
-  const handleUpload = (resp: UploadCallbackResp) => {
+  const handleUpload = async (resp: UploadCallbackResp) => {
     if (!resp.success || !resp.resp || !dataAccessRequest) {
       const errorObj = resp.error as { reason?: unknown } | undefined
       const reason =
@@ -138,8 +148,23 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
       return
     }
     setUpdateError(undefined)
+    // Only void a prior eDUC signature routing if one was actually sent. If the user ejected
+    // from EDucPreviewStep before sending for signature, there's nothing to void.
+    const hasSignatureEnvelope = Boolean(
+      dataAccessRequest.eDucSignatureEnvelopeId,
+    )
+    let latestDar = dataAccessRequest
+    if (hasSignatureEnvelope) {
+      try {
+        await voidSignatureAsync(dataAccessRequest.id)
+      } catch {
+        return
+      }
+      const refreshed = await refetchDar()
+      latestDar = refreshed.data ?? dataAccessRequest
+    }
     updateRequest({
-      ...dataAccessRequest,
+      ...latestDar,
       ducFileHandleId: resp.resp.fileHandleId,
     })
   }
@@ -300,8 +325,10 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
                 <UploadDocumentField
                   id={'signed-duc'}
                   documentName={'Signed DUC'}
-                  isLoading={isUpdating}
-                  uploadCallback={handleUpload}
+                  isLoading={isUpdating || isVoidingSignature}
+                  uploadCallback={resp => {
+                    handleUpload(resp)
+                  }}
                   fileHandleAssociations={signedDucFileHandleAssociations}
                 />
               )}

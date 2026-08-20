@@ -37,6 +37,8 @@ export interface RequestInterface {
   principalInvestigator?: PrincipalInvestigator
   /* Signing Official information. Used by the eDUC signing flow. */
   signingOfficial?: SigningOfficial
+  /* DocuSign envelope ID for the routed eDUC. Set when the request has been sent for e-signature. */
+  eDucSignatureEnvelopeId?: string
 }
 
 export interface Request extends RequestInterface {
