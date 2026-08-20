@@ -13,13 +13,15 @@ import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   DATA_ACCESS_REQUEST,
+  DATA_ACCESS_REQUEST_PREVIEW,
   DATA_ACCESS_REQUEST_SUBMISSION,
 } from '@/utils/APIConstants'
 import {
   AccessType,
   RestrictableObjectType,
+  UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import MarkdownSynapse from '../../../Markdown/MarkdownSynapse'
@@ -27,6 +29,18 @@ import * as AccessRequirementListUtils from '../../AccessRequirementListUtils'
 import ManualUploadDucStep, {
   ManualUploadDucStepProps,
 } from './ManualUploadDucStep'
+
+// Capture the uploadCallback prop so tests can fire it directly.
+let capturedUploadCallback: ((resp: UploadCallbackResp) => void) | undefined
+
+vi.mock('../UploadDocumentField', () => ({
+  UploadDocumentField: vi.fn(
+    (props: { uploadCallback: (resp: UploadCallbackResp) => void }) => {
+      capturedUploadCallback = props.uploadCallback
+      return null
+    },
+  ),
+}))
 
 vi.mock('../../../Markdown/MarkdownSynapse', () => ({
   __esModule: true,
@@ -87,7 +101,7 @@ function renderComponent(props: Partial<ManualUploadDucStepProps> = {}) {
   return { user, component }
 }
 
-const previewEndpoint = `*/repo/v1/dataAccessRequest/${MOCK_DATA_ACCESS_REQUEST.id}/preview`
+const previewEndpoint = `*${DATA_ACCESS_REQUEST_PREVIEW(MOCK_DATA_ACCESS_REQUEST.id)}`
 const updateEndpoint = `*${DATA_ACCESS_REQUEST}`
 const submissionEndpoint = `*${DATA_ACCESS_REQUEST_SUBMISSION(
   MOCK_DATA_ACCESS_REQUEST.id,
@@ -210,10 +224,7 @@ describe('ManualUploadDucStep', () => {
 
   it('invokes onHide when the close icon is clicked', async () => {
     const { user } = renderComponent()
-    const closeButton = await screen.findAllByRole('button')
-    // First button in the DialogTitle is the close IconButton.
-    const iconClose = closeButton.find(b => b.querySelector('svg'))
-    await user.click(iconClose!)
+    await user.click(await screen.findByRole('button', { name: 'Close' }))
     expect(mockOnHide).toHaveBeenCalledTimes(1)
   })
 
@@ -274,6 +285,38 @@ describe('ManualUploadDucStep', () => {
 
     await screen.findByText(/couldn't submit your request/i)
     expect(screen.getByText('Something went wrong')).toBeInTheDocument()
+    expect(mockOnSubmissionCreated).not.toHaveBeenCalled()
+  })
+
+  it('shows the save-error alert when the upload callback signals a failure', async () => {
+    renderComponent()
+    await screen.findByRole('button', { name: 'Submit Request' })
+    act(() => {
+      capturedUploadCallback!({
+        success: false,
+        error: { reason: 'File upload failed' },
+      })
+    })
+    await screen.findByText(/couldn't save your change/i)
+    expect(screen.getByText('File upload failed')).toBeInTheDocument()
+  })
+
+  it('shows the save-error alert when the pre-submit DAR persist fails', async () => {
+    mockGetDataRequestForUpdate.mockResolvedValue({
+      ...MOCK_DATA_ACCESS_REQUEST,
+      ducFileHandleId: 'signed-duc-987',
+    })
+    server.use(
+      http.post(updateEndpoint, () =>
+        HttpResponse.json({ reason: 'Server error' }, { status: 500 }),
+      ),
+    )
+    const { user } = renderComponent()
+    const submit = await screen.findByRole('button', { name: 'Submit Request' })
+    await waitFor(() => expect(submit).toBeEnabled())
+    await user.click(submit)
+    await screen.findByText(/couldn't save your change/i)
+    expect(screen.getByText('Server error')).toBeInTheDocument()
     expect(mockOnSubmissionCreated).not.toHaveBeenCalled()
   })
 })

@@ -4,6 +4,7 @@ import { getAccessRequirementHandlers } from '@/mocks/msw/handlers/accessRequire
 import { getDataAccessRequestHandlers } from '@/mocks/msw/handlers/dataAccessRequestHandlers'
 import { getUserProfileHandlers } from '@/mocks/msw/handlers/userProfileHandlers'
 import { getWikiHandlers } from '@/mocks/msw/handlers/wikiHandlers'
+import { DATA_ACCESS_REQUEST_PREVIEW } from '@/utils/APIConstants'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { http, HttpResponse } from 'msw'
@@ -16,7 +17,7 @@ const eDucManagedACTAccessRequirement = {
 
 // The story renders the chrome around the iframe; the iframe src is overridden via previewSrcOverride.
 const previewHandler = http.get(
-  `${MOCK_REPO_ORIGIN}/repo/v1/dataAccessRequest/${MOCK_DATA_ACCESS_REQUEST.id}/preview`,
+  `${MOCK_REPO_ORIGIN}${DATA_ACCESS_REQUEST_PREVIEW(MOCK_DATA_ACCESS_REQUEST.id)}`,
   () =>
     HttpResponse.json(
       { fileHandleId: 'mock-preview-file-handle-123' },
@@ -64,7 +65,7 @@ export const PreviewError: Story = {
     msw: {
       handlers: [
         http.get(
-          `${MOCK_REPO_ORIGIN}/repo/v1/dataAccessRequest/${MOCK_DATA_ACCESS_REQUEST.id}/preview`,
+          `${MOCK_REPO_ORIGIN}${DATA_ACCESS_REQUEST_PREVIEW(MOCK_DATA_ACCESS_REQUEST.id)}`,
           () =>
             HttpResponse.json(
               { reason: 'Preview could not be generated at this time.' },

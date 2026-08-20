@@ -86,26 +86,26 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
       ? SynapseClient.getPortalFileHandleServletUrl(previewFileHandleId)
       : undefined)
 
-  const [updateError, setUpdateError] = useState<string | undefined>()
-  const [submitError, setSubmitError] = useState<string | undefined>()
+  const [updateDarError, setUpdateDarError] = useState<string | undefined>()
+  const [submitDarError, setSubmitDarError] = useState<string | undefined>()
 
   const {
-    mutate: updateRequest,
-    mutateAsync: updateRequestAsync,
+    mutate: updateDar,
+    mutateAsync: updateDarAsync,
     isPending: isUpdating,
   } = useUpdateDataAccessRequest({
-    onError: e => setUpdateError(e.reason),
+    onError: e => setUpdateDarError(e.reason),
   })
 
   const { mutateAsync: voidSignatureAsync, isPending: isVoidingSignature } =
     useVoidDataAccessRequestSignature({
-      onError: e => setUpdateError(e.reason),
+      onError: e => setUpdateDarError(e.reason),
     })
 
   const { mutate: submit, isPending: isSubmitting } =
     useSubmitDataAccessRequest({
       onSuccess: submission => onSubmissionCreated(submission.submissionId),
-      onError: e => setSubmitError(e.reason),
+      onError: e => setSubmitDarError(e.reason),
     })
 
   const accessorChanges = dataAccessRequest?.accessorChanges ?? []
@@ -141,11 +141,11 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
           ? errorObj.reason
           : undefined
       if (reason) {
-        setUpdateError(reason)
+        setUpdateDarError(reason)
       }
       return
     }
-    setUpdateError(undefined)
+    setUpdateDarError(undefined)
     // Only void a prior eDUC signature routing if one was actually sent. If the user ejected
     // from EDucPreviewStep before sending for signature, there's nothing to void.
     const hasSignatureEnvelope = Boolean(
@@ -161,7 +161,7 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
       const refreshed = await refetchDar()
       latestDar = refreshed.data ?? dataAccessRequest
     }
-    updateRequest({
+    updateDar({
       ...latestDar,
       ducFileHandleId: resp.resp.fileHandleId,
     })
@@ -169,9 +169,9 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
 
   const handleSubmit = async () => {
     if (!dataAccessRequest) return
-    setSubmitError(undefined)
+    setSubmitDarError(undefined)
     // Persist the DAR once more so the submission uses the latest etag.
-    const latest = await updateRequestAsync(dataAccessRequest).catch(() => null)
+    const latest = await updateDarAsync(dataAccessRequest).catch(() => null)
     if (!latest) return
     submit({
       request: {
@@ -190,7 +190,7 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
         <Stack direction="row" sx={{ alignItems: 'center', gap: '5px' }}>
           Request Access
           <Box sx={{ flexGrow: 1 }} />
-          <IconButton onClick={onHide}>
+          <IconButton aria-label={'Close'} onClick={onHide}>
             <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
           </IconButton>
         </Stack>
@@ -301,18 +301,18 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
             </Box>
           </Stack>
 
-          {updateError && (
+          {updateDarError && (
             <Alert severity={'error'} sx={{ mt: 2 }}>
-              <strong>Sorry, we couldn&apos;t save your uploaded DUC.</strong>
+              <strong>Sorry, we couldn&apos;t save your change.</strong>
               <br />
-              {updateError}
+              {updateDarError}
             </Alert>
           )}
-          {submitError && (
+          {submitDarError && (
             <Alert severity={'error'} sx={{ mt: 2 }}>
               <strong>Sorry, we couldn&apos;t submit your request.</strong>
               <br />
-              {submitError}
+              {submitDarError}
             </Alert>
           )}
         </Box>
