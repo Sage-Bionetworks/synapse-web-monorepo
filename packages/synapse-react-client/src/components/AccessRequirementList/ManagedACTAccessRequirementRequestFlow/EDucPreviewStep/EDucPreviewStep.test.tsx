@@ -6,6 +6,7 @@ import { MOCK_DATA_ACCESS_REQUEST } from '@/mocks/dataaccess/MockDataAccessReque
 import { server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { DATA_ACCESS_REQUEST_SIGNATURE } from '@/utils/APIConstants'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
@@ -67,7 +68,7 @@ function renderComponent(props: EDucPreviewStepProps = defaultProps) {
 }
 
 const previewEndpoint = `*/repo/v1/dataAccessRequest/${MOCK_DATA_ACCESS_REQUEST.id}/preview`
-const signatureEndpoint = `*/repo/v1/dataAccessRequest/${MOCK_DATA_ACCESS_REQUEST.id}/signature`
+const signatureEndpoint = `*${DATA_ACCESS_REQUEST_SIGNATURE(MOCK_DATA_ACCESS_REQUEST.id)}`
 
 function successfulPreviewHandler() {
   return http.get(previewEndpoint, () =>
