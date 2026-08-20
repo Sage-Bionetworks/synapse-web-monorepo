@@ -28,6 +28,13 @@ export type CreateReactRouterConfigOptions = {
 }
 
 /**
+ * If future IDs include other path-breaking reserved characters, extend this function and add coverage.
+ */
+function encodePathSegment(id: string): string {
+  return id.replace(/\//g, '%2F')
+}
+
+/**
  * Builds a React Router framework-mode `Config` for an SSG portal.
  *
  * Encapsulates the portal-agnostic prerender pipeline: enumerate detail-page
@@ -73,7 +80,7 @@ export function createReactRouterConfig(
             continue
           }
           for (const id of result.ids) {
-            dynamicRoutes.push(`/${detailPage.path}/${id}`)
+            dynamicRoutes.push(`/${detailPage.path}/${encodePathSegment(id)}`)
           }
         }
 
