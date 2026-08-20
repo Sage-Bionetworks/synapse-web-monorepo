@@ -17,7 +17,23 @@ const CCKP_TOOL_NAME = 'Cytoscape'
 
 const redirectsConfig: RedirectsConfig = {
   adknowledgeportal: [],
-  arkportal: [],
+  arkportal: [
+    // Datasets (non-tabbed; param = id)
+    [
+      '/Explore/Datasets/DetailsPage?id=syn29837062',
+      '/Explore/Datasets/syn29837062',
+    ],
+    ['/Explore/Datasets/DetailsPage', '/Explore/Datasets'],
+
+    // Programs (non-tabbed; param = Program)
+    [
+      '/Explore/Programs/DetailsPage?Program=AMP AIM',
+      '/Explore/Programs/AMP%20AIM',
+    ],
+
+    // Projects (non-tabbed; param = Project)
+    ['/Explore/Projects/DetailsPage?Project=SLE', '/Explore/Projects/SLE'],
+  ],
   bsmn: [],
   cancercomplexity: [
     // Tools (tabbed; default tab = Details; param = toolName)
