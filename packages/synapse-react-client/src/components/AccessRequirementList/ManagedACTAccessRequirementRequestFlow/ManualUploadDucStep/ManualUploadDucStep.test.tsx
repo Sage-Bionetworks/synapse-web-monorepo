@@ -21,7 +21,7 @@ import {
   RestrictableObjectType,
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import MarkdownSynapse from '../../../Markdown/MarkdownSynapse'
@@ -30,15 +30,22 @@ import ManualUploadDucStep, {
   ManualUploadDucStepProps,
 } from './ManualUploadDucStep'
 
-// Capture the uploadCallback prop so tests can fire it directly.
-let capturedUploadCallback: ((resp: UploadCallbackResp) => void) | undefined
+// Controls what response the mock upload button fires; reset to success in beforeEach.
+let mockUploadResponse: UploadCallbackResp = {
+  success: true,
+  resp: { fileHandleId: 'new-file-123' },
+}
 
 vi.mock('../UploadDocumentField', () => ({
   UploadDocumentField: vi.fn(
-    (props: { uploadCallback: (resp: UploadCallbackResp) => void }) => {
-      capturedUploadCallback = props.uploadCallback
-      return null
-    },
+    (props: {
+      uploadCallback: (resp: UploadCallbackResp) => void
+      documentName: string
+    }) => (
+      <button onClick={() => props.uploadCallback(mockUploadResponse)}>
+        Upload {props.documentName}
+      </button>
+    ),
   ),
 }))
 
@@ -116,6 +123,10 @@ describe('ManualUploadDucStep', () => {
     mockOnHide.mockReset()
     mockOnBackClicked.mockReset()
     mockOnSubmissionCreated.mockReset()
+    mockUploadResponse = {
+      success: true,
+      resp: { fileHandleId: 'new-file-123' },
+    }
     mockGetDataRequestForUpdate.mockResolvedValue({
       ...MOCK_DATA_ACCESS_REQUEST,
       ducFileHandleId: undefined,
@@ -289,14 +300,14 @@ describe('ManualUploadDucStep', () => {
   })
 
   it('shows the save-error alert when the upload callback signals a failure', async () => {
-    renderComponent()
-    await screen.findByRole('button', { name: 'Submit Request' })
-    act(() => {
-      capturedUploadCallback!({
-        success: false,
-        error: { reason: 'File upload failed' },
-      })
-    })
+    mockUploadResponse = {
+      success: false,
+      error: { reason: 'File upload failed' },
+    }
+    const { user } = renderComponent()
+    await user.click(
+      await screen.findByRole('button', { name: /Upload Signed DUC/i }),
+    )
     await screen.findByText(/couldn't save your change/i)
     expect(screen.getByText('File upload failed')).toBeInTheDocument()
   })
