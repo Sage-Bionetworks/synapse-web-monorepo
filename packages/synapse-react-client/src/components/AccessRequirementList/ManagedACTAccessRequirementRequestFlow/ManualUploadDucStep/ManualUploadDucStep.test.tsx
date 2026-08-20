@@ -33,7 +33,7 @@ import ManualUploadDucStep, {
 // Controls what response the mock upload button fires; reset to success in beforeEach.
 let mockUploadResponse: UploadCallbackResp = {
   success: true,
-  resp: { fileHandleId: 'new-file-123' },
+  resp: { fileHandleId: 'new-file-123', fileName: 'signed-duc.pdf' },
 }
 
 vi.mock('../UploadDocumentField', () => ({
@@ -125,7 +125,7 @@ describe('ManualUploadDucStep', () => {
     mockOnSubmissionCreated.mockReset()
     mockUploadResponse = {
       success: true,
-      resp: { fileHandleId: 'new-file-123' },
+      resp: { fileHandleId: 'new-file-123', fileName: 'signed-duc.pdf' },
     }
     mockGetDataRequestForUpdate.mockResolvedValue({
       ...MOCK_DATA_ACCESS_REQUEST,
