@@ -26,6 +26,15 @@ const mockDarWithCollaborators = {
     { userId: String(MOCK_USER_ID), type: AccessType.GAIN_ACCESS },
     { userId: String(MOCK_USER_ID_2), type: AccessType.GAIN_ACCESS },
   ],
+  principalInvestigator: {
+    userId: String(MOCK_USER_ID),
+    name: 'Dr. Jane Smith',
+    institutionalEmail: 'jane.smith@example.edu',
+  },
+  signingOfficial: {
+    name: 'John Official',
+    institutionalEmail: 'john.official@example.edu',
+  },
   ducFileHandleId: undefined,
 }
 
