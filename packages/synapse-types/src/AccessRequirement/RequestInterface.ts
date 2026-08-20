@@ -25,7 +25,7 @@ export interface RequestInterface {
   modifiedOn: string
   createdBy: string
   modifiedBy: string
-  ducFileHandleId: string
+  ducFileHandleId?: string
   irbFileHandleId: string
   attachments?: string[]
   accessorChanges: AccessorChange[]
