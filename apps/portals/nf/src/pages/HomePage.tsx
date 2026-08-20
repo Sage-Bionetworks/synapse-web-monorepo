@@ -79,7 +79,7 @@ const STUDIES_INITIAL_LIMIT = 3
 const FEATURED_USER_CARD_SQL = `${peopleSql} where isFeatured=true`
 const FEATURED_USER_CARD_COUNT = 3
 
-const RSS_URL = 'https://news.nfdataportal.org'
+const RSS_URL = 'https://news.nf.synapse.org'
 const RSS_FILTER = { value: 'featured' }
 
 const GOALS_ENTITY_ID = 'syn23516796'
@@ -172,7 +172,9 @@ export default function HomePage() {
             url={RSS_URL}
             itemsToShow={3}
             allowCategories={[
-              'Newsletter',
+              'New Feature',
+              'Researcher Spotlight',
+              'Press Release',
               'Hackathon',
               'Publication',
               'Funding',
