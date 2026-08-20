@@ -34,6 +34,6 @@ export const dataQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
     ],
   },
   sql: dataSql,
-  shouldDeepLink: false,
+  shouldDeepLink: true,
   searchConfiguration: defaultSearchConfiguration,
 }
