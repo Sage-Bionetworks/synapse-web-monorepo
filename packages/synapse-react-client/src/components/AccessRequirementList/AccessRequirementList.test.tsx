@@ -11,6 +11,7 @@ import { AccessRequirement } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import AccessRequirementList, {
   AccessRequirementListProps,
+  RequestDataStep,
 } from './AccessRequirementList'
 import * as AccessRequirementListUtils from './AccessRequirementListUtils'
 
@@ -71,5 +72,28 @@ describe('AccessRequirementList tests', () => {
     await waitFor(() =>
       expect(screen.getAllByTestId('RequirementItem')).toHaveLength(8),
     )
+  })
+
+  it('opens directly at the initialWizardEntry step (bypassing the AR list)', async () => {
+    await init({
+      ...props,
+      initialWizardEntry: {
+        step: RequestDataStep.SIGNATURE_STATUS,
+        managedACTAccessRequirement: {
+          ...mockManagedACTAccessRequirement,
+          eDucTemplateId: 'template-abc-123',
+        },
+      },
+    })
+
+    // Wizard is showing the signature-status step, not the AR list.
+    await screen.findByRole('heading', {
+      name: /Sign a Data Use Certificate/i,
+    })
+    expect(screen.queryAllByTestId('RequirementItem')).toHaveLength(0)
+    // With direct entry there is no earlier wizard step, so Back is hidden.
+    expect(
+      screen.queryByRole('button', { name: 'Back' }),
+    ).not.toBeInTheDocument()
   })
 })
