@@ -43,6 +43,12 @@ export type SignatureStatusStepProps = {
   onHide: () => void
   onBackClicked: () => void
   onSubmissionCreated: (submissionId: string) => void
+  /**
+   * Optional href override for the "View DUC" link. When set, the preview file handle fetch
+   * is skipped and this URL is used directly. Used by stories and tests where the portal
+   * servlet is not available.
+   */
+  viewDucHrefOverride?: string
 }
 
 /**
@@ -58,6 +64,7 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
     onHide,
     onBackClicked,
     onSubmissionCreated,
+    viewDucHrefOverride,
   } = props
 
   const { data: dataAccessRequest, isLoading: isLoadingDar } =
@@ -86,13 +93,15 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
 
   const { data: previewFileHandle } = useGetDataAccessRequestPreview(
     requestId,
-    { enabled: Boolean(requestId) },
+    { enabled: Boolean(requestId) && !viewDucHrefOverride },
   )
-  const viewDucHref = previewFileHandle?.fileHandleId
-    ? SynapseClient.getPortalFileHandleServletUrl(
-        previewFileHandle.fileHandleId,
-      )
-    : undefined
+  const viewDucHref =
+    viewDucHrefOverride ??
+    (previewFileHandle?.fileHandleId
+      ? SynapseClient.getPortalFileHandleServletUrl(
+          previewFileHandle.fileHandleId,
+        )
+      : undefined)
 
   const { data: signedFileHandle } = useGetDataAccessRequestSignedFileHandleId(
     requestId,
@@ -116,6 +125,7 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
   const isSubmitDisabled =
     isLoadingDar ||
     isLoadingStatus ||
+    isRefetchingStatus ||
     !dataAccessRequest ||
     !allCollected ||
     !signedFileHandle?.fileHandleId ||

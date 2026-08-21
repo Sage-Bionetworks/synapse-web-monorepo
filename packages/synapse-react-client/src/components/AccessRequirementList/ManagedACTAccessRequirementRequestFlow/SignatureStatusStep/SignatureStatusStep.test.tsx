@@ -73,6 +73,7 @@ const partiallySignedStatus: EDucSignatureStatus = {
     { name: 'Alice Accessor', userId: String(MOCK_USER_ID), status: 'done' },
     { name: 'Bob Collaborator', userId: '3388889', status: 'pending' },
     { name: 'Cara Officer', status: 'pending' },
+    { name: 'Dan Declined', status: 'declined' },
   ],
 }
 
@@ -125,7 +126,7 @@ describe('SignatureStatusStep', () => {
     )
     renderComponent()
 
-    await screen.findByText(/1 out of 3 signatures collected/i)
+    await screen.findByText(/1 out of 4 signatures collected/i)
     await screen.findByText(/still waiting for signatures from/i)
 
     // Signer with a userId is linked to their Synapse profile in a new tab.
@@ -138,6 +139,10 @@ describe('SignatureStatusStep', () => {
 
     // Signer without a userId is rendered as plain text (no link).
     expect(screen.getByText('Cara Officer').tagName).not.toBe('A')
+
+    // Signers whose status is neither 'pending' nor 'done' show a status label.
+    expect(screen.getByText(/Dan Declined/)).toBeInTheDocument()
+    expect(screen.getByText(/\(declined\)/)).toBeInTheDocument()
 
     // The already-signed accessor is not listed as outstanding.
     expect(screen.queryByText('Alice Accessor')).not.toBeInTheDocument()
@@ -218,10 +223,27 @@ describe('SignatureStatusStep', () => {
       }),
     )
     const { user } = renderComponent()
-    await screen.findByText(/1 out of 3 signatures collected/i)
+    await screen.findByText(/1 out of 4 signatures collected/i)
     const initialCount = callCount
     await user.click(screen.getByRole('button', { name: /Refresh/i }))
     await waitFor(() => expect(callCount).toBeGreaterThan(initialCount))
+  })
+
+  it('renders the View DUC link using viewDucHrefOverride when provided', async () => {
+    server.use(
+      http.get(statusEndpoint, () =>
+        HttpResponse.json(partiallySignedStatus, { status: 200 }),
+      ),
+    )
+    renderComponent({
+      viewDucHrefOverride: 'https://example.com/mock-duc.pdf',
+    })
+    const viewDucLink = await screen.findByRole('link', { name: /View DUC/i })
+    expect(viewDucLink).toHaveAttribute(
+      'href',
+      'https://example.com/mock-duc.pdf',
+    )
+    expect(viewDucLink).toHaveAttribute('target', '_blank')
   })
 
   it('shows an error alert when the status query fails', async () => {

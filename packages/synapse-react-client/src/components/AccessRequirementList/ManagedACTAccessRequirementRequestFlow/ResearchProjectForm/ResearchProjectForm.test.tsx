@@ -592,5 +592,55 @@ describe('ResearchProjectForm', { timeout: 30_000 }, () => {
         )
       })
     })
+
+    it('prefills the project lead from the selected PI profile when the field is empty', async () => {
+      const mockGetUserProfileById = vi
+        .spyOn(SynapseClient, 'getUserProfileById')
+        .mockResolvedValue({
+          ownerId: '9999',
+          firstName: 'Jane',
+          lastName: 'Doe',
+        } as never)
+
+      const { projectLeadInput } = await setUp({
+        ...defaultProps,
+        managedACTAccessRequirement: eDucAr,
+      })
+      expect(projectLeadInput).toHaveValue('')
+
+      act(() => {
+        mockedUserSearchBox.mock.lastCall![0].onChange!('9999', {} as never)
+      })
+
+      await waitFor(() => expect(projectLeadInput).toHaveValue('Jane Doe'))
+      expect(mockGetUserProfileById).toHaveBeenCalledWith(
+        '9999',
+        MOCK_ACCESS_TOKEN,
+      )
+    })
+
+    it('does not overwrite a project lead the user has already typed', async () => {
+      vi.spyOn(SynapseClient, 'getUserProfileById').mockResolvedValue({
+        ownerId: '9999',
+        firstName: 'Jane',
+        lastName: 'Doe',
+      } as never)
+
+      const { user, projectLeadInput } = await setUp({
+        ...defaultProps,
+        managedACTAccessRequirement: eDucAr,
+      })
+      await user.type(projectLeadInput, 'My chosen name')
+
+      act(() => {
+        mockedUserSearchBox.mock.lastCall![0].onChange!('9999', {} as never)
+      })
+
+      // Give the profile query time to resolve and any prefill effect a chance to run.
+      await waitFor(() =>
+        expect(SynapseClient.getUserProfileById).toHaveBeenCalled(),
+      )
+      expect(projectLeadInput).toHaveValue('My chosen name')
+    })
   })
 })

@@ -53,6 +53,7 @@ const partiallySignedHandler = http.get(
             status: 'pending',
           },
           { name: 'Cara Officer', status: 'pending' },
+          { name: 'Dan Declined', status: 'declined' },
         ],
       },
       { status: 200 },
@@ -107,6 +108,8 @@ const meta: Meta<typeof SignatureStatusStep> = {
     managedACTAccessRequirement: eDucManagedACTAccessRequirement,
     subjectId: '9876543',
     subjectType: RestrictableObjectType.ENTITY,
+    viewDucHrefOverride:
+      'https://www.rd.usda.gov/sites/default/files/pdf-sample_0.pdf',
   },
 }
 
