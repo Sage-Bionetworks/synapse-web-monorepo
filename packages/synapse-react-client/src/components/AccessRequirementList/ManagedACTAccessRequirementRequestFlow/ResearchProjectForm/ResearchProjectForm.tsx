@@ -1,6 +1,7 @@
 import {
   useGetDataAccessRequestForUpdate,
   useGetResearchProject,
+  useGetUserProfile,
   useUpdateDataAccessRequest,
   useUpdateResearchProject,
 } from '@/synapse-queries'
@@ -122,6 +123,23 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
     existingDataAccessRequest?.principalInvestigator?.userId,
     existingDataAccessRequest?.principalInvestigator?.institutionalEmail,
   ])
+
+  const { data: piUserProfile } = useGetUserProfile(piUserId ?? '', {
+    enabled: Boolean(piUserId),
+  })
+
+  useEffect(() => {
+    if (!piUserProfile || !isEmpty(projectLead)) return
+    const fullName = [piUserProfile.firstName, piUserProfile.lastName]
+      .filter(Boolean)
+      .join(' ')
+      .trim()
+    if (fullName) {
+      setProjectLead(fullName)
+    }
+    // Only populate when projectLead is empty; do not overwrite user edits.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [piUserProfile])
 
   const { mutateAsync: updateResearchProject, isPending: updateIsPending } =
     useUpdateResearchProject({
