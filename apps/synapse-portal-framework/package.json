@@ -72,7 +72,7 @@
     "@vitest/utils": "^4.1.8",
     "assert": "^2.1.0",
     "buffer": "^6.0.3",
-    "dotenv": "^16.6.1",
+    "dotenv": "^17.4.2",
     "https-browserify": "^1.0.0",
     "identity-obj-proxy": "^3.0.0",
     "jsdom": "^26.1.0",
