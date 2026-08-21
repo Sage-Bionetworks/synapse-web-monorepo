@@ -218,6 +218,11 @@ export const DATA_ACCESS_REQUEST_SUBMISSION = (id: string | number) =>
   `${DATA_ACCESS_REQUEST}/${id}/submission`
 export const DATA_ACCESS_REQUEST_SIGNATURE = (id: string | number) =>
   `${DATA_ACCESS_REQUEST}/${id}/signature`
+export const DATA_ACCESS_REQUEST_SIGNATURE_STATUS = (id: string | number) =>
+  `${DATA_ACCESS_REQUEST}/${id}/signature/status`
+export const DATA_ACCESS_REQUEST_SIGNATURE_FILEHANDLE_ID = (
+  id: string | number,
+) => `${DATA_ACCESS_REQUEST}/${id}/signature/filehandleId`
 export const ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE = (
   accessRequirementId: string | number,
 ) =>
