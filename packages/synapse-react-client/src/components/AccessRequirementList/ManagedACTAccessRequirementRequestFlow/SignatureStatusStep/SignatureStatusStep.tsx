@@ -41,7 +41,12 @@ export type SignatureStatusStepProps = {
   subjectId: string
   subjectType: RestrictableObjectType
   onHide: () => void
-  onBackClicked: () => void
+  /**
+   * Called when the user clicks the Back button. When omitted, the Back button is hidden —
+   * used when the step is reached via direct entry (e.g. a deep-link route) rather than
+   * through the wizard flow, so there is no meaningful previous step to return to.
+   */
+  onBackClicked?: () => void
   onSubmissionCreated: (submissionId: string) => void
   /**
    * Optional href override for the "View DUC" link. When set, the preview file handle fetch
@@ -276,9 +281,11 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
         )}
       </DialogContent>
       <DialogActions>
-        <Button variant={'outlined'} onClick={onBackClicked}>
-          Back
-        </Button>
+        {onBackClicked && (
+          <Button variant={'outlined'} onClick={onBackClicked}>
+            Back
+          </Button>
+        )}
         <Box sx={{ flexGrow: 1 }} />
         <Button
           variant={'contained'}

@@ -203,6 +203,19 @@ describe('SignatureStatusStep', () => {
     expect(mockOnBackClicked).toHaveBeenCalledTimes(1)
   })
 
+  it('hides the Back button when onBackClicked is not provided', async () => {
+    server.use(
+      http.get(statusEndpoint, () =>
+        HttpResponse.json(partiallySignedStatus, { status: 200 }),
+      ),
+    )
+    renderComponent({ onBackClicked: undefined })
+    await screen.findByRole('button', { name: 'Submit' })
+    expect(
+      screen.queryByRole('button', { name: 'Back' }),
+    ).not.toBeInTheDocument()
+  })
+
   it('invokes onHide when the close icon is clicked', async () => {
     server.use(
       http.get(statusEndpoint, () =>
