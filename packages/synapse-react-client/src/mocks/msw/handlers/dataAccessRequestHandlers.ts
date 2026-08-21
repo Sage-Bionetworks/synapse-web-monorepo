@@ -103,7 +103,7 @@ export function getDataAccessRequestHandlers(backendOrigin: string) {
     http.get(
       `${backendOrigin}${DATA_ACCESS_REQUEST_SIGNATURE_STATUS(':id')}`,
       () => {
-        return HttpResponse.json(
+        return HttpResponse.json<EDucSignatureStatus>(
           {
             ducStatus: 'sent',
             includesRequestChanges: true,
