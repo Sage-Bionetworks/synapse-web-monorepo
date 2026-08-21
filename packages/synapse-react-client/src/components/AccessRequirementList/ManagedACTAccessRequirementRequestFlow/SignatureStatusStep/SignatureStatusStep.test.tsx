@@ -115,9 +115,6 @@ describe('SignatureStatusStep', () => {
     expect(
       screen.getByText(/Your DUC has been emailed to your Collaborators/i),
     ).toBeInTheDocument()
-    expect(
-      screen.getByText(/update the list of Collaborators by pressing/i),
-    ).toBeInTheDocument()
   })
 
   it('shows the count of collected signatures and lists outstanding signers', async () => {

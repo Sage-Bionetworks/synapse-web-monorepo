@@ -162,10 +162,12 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
           (including the Signing Official) have been collected, you can submit
           the Data Access Request.
         </Typography>
+        {/* TODO: restore once the backend precheck allows editing collaborators mid-signature (PORTALS-4380 notes).
         <Typography variant={'body1'} sx={{ ...longFieldLabelSx, mb: 3 }}>
           You can update the list of Collaborators by pressing{' '}
           <strong>Back</strong>.
         </Typography>
+        */}
 
         {isLoadingStatus && (
           <Skeleton
