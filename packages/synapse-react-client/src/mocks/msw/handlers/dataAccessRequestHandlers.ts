@@ -17,6 +17,7 @@ import {
   MOCK_DATA_ACCESS_REQUEST,
 } from '../../dataaccess/MockDataAccessRequest'
 import BasicMockedCrudService from '../util/BasicMockedCrudService'
+import { EDucSignatureStatus } from '@sage-bionetworks/synapse-client'
 
 const mockDataAccessRequestService = new BasicMockedCrudService<
   Request | Renewal,
