@@ -45,6 +45,7 @@ import ResearchProjectForm from './ManagedACTAccessRequirementRequestFlow/Resear
 import ReviewDucStep from './ManagedACTAccessRequirementRequestFlow/ReviewDucStep/ReviewDucStep'
 import EDucPreviewStep from './ManagedACTAccessRequirementRequestFlow/EDucPreviewStep/EDucPreviewStep'
 import ManualUploadDucStep from './ManagedACTAccessRequirementRequestFlow/ManualUploadDucStep/ManualUploadDucStep'
+import SignatureStatusStep from './ManagedACTAccessRequirementRequestFlow/SignatureStatusStep/SignatureStatusStep'
 import AuthenticatedRequirement from './RequirementItem/AuthenticatedRequirement'
 import CertificationRequirement from './RequirementItem/CertificationRequirement'
 import TwoFactorAuthEnabledRequirement from './RequirementItem/TwoFactorAuthEnabledRequirement'
@@ -142,6 +143,7 @@ enum RequestDataStep {
   REVIEW_DUC = 6,
   EDUC_PREVIEW = 7,
   MANUAL_UPLOAD_DUC = 8,
+  SIGNATURE_STATUS = 9,
 }
 
 export type RequestDataStepCallbackArgs = {
@@ -425,9 +427,8 @@ export default function AccessRequirementList(
           onBackClicked={() => {
             requestDataStepCallback({ step: RequestDataStep.REVIEW_DUC })
           }}
-          // TODO PORTALS-4380: replace with the signature-in-progress step.
           onSendForSignature={() => {
-            requestDataStepCallback({ step: RequestDataStep.COMPLETE })
+            requestDataStepCallback({ step: RequestDataStep.SIGNATURE_STATUS })
           }}
           onManualUpload={() => {
             requestDataStepCallback({
@@ -440,6 +441,23 @@ export default function AccessRequirementList(
     case RequestDataStep.MANUAL_UPLOAD_DUC:
       renderContent = (
         <ManualUploadDucStep
+          managedACTAccessRequirement={managedACTAccessRequirement!}
+          subjectId={subjectId ?? ''}
+          subjectType={subjectType ?? RestrictableObjectType.ENTITY}
+          onHide={onHide}
+          onBackClicked={() => {
+            requestDataStepCallback({ step: RequestDataStep.EDUC_PREVIEW })
+          }}
+          onSubmissionCreated={submissionId => {
+            requestDataStepCallback({ step: RequestDataStep.COMPLETE })
+            onSubmissionCreated(submissionId)
+          }}
+        />
+      )
+      break
+    case RequestDataStep.SIGNATURE_STATUS:
+      renderContent = (
+        <SignatureStatusStep
           managedACTAccessRequirement={managedACTAccessRequirement!}
           subjectId={subjectId ?? ''}
           subjectType={subjectType ?? RestrictableObjectType.ENTITY}
