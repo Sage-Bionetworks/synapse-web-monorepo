@@ -6,7 +6,7 @@ import { Meta, StoryObj } from '@storybook/react-vite'
 import { http, HttpResponse } from 'msw'
 import { InFlightEDucSignaturesTable } from './InFlightEDucSignaturesTable'
 
-const populatedList: AccessRequestList = {
+const page1: AccessRequestList = {
   results: [
     {
       requestId: '100',
@@ -27,6 +27,19 @@ const populatedList: AccessRequestList = {
       modifiedOn: '2026-08-19T10:00:00Z',
     },
     {
+      requestId: '199',
+      accessRequirementName: 'Legacy TOU (non-eDUC)',
+      isEDuc: false,
+      status: 'submitted',
+      modifiedOn: '2026-06-05T10:00:00Z',
+    },
+  ],
+  nextPageToken: 'page-2',
+}
+
+const page2: AccessRequestList = {
+  results: [
+    {
       requestId: '102',
       accessRequirementName: 'AMP-PD Data',
       isEDuc: true,
@@ -40,9 +53,19 @@ const populatedList: AccessRequestList = {
 
 const emptyList: AccessRequestList = { results: [] }
 
-function listHandler(response: AccessRequestList) {
-  return http.post(`${MOCK_REPO_ORIGIN}${DATA_ACCESS_REQUEST_LIST}`, () =>
-    HttpResponse.json(response, { status: 200 }),
+function paginatedListHandler(pages: AccessRequestList[]) {
+  return http.post<never, { nextPageToken?: string }>(
+    `${MOCK_REPO_ORIGIN}${DATA_ACCESS_REQUEST_LIST}`,
+    async ({ request }) => {
+      const body = await request.json()
+      const nextPageToken = body?.nextPageToken
+      if (!nextPageToken) {
+        return HttpResponse.json(pages[0], { status: 200 })
+      }
+      const index = Number(nextPageToken.replace(/^page-/, '')) - 1
+      const page = pages[index] ?? { results: [] }
+      return HttpResponse.json(page, { status: 200 })
+    },
   )
 }
 
@@ -64,11 +87,11 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const WithInFlightRequests: Story = {
-  name: 'With in-flight requests',
+  name: 'With in-flight requests (paginated)',
   parameters: {
     msw: {
       handlers: [
-        listHandler(populatedList),
+        paginatedListHandler([page1, page2]),
         ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
       ],
     },
@@ -80,7 +103,7 @@ export const Empty: Story = {
   parameters: {
     msw: {
       handlers: [
-        listHandler(emptyList),
+        paginatedListHandler([emptyList]),
         ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
       ],
     },

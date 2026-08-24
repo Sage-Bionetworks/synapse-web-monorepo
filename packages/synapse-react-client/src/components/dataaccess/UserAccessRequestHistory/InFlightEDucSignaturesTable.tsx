@@ -1,7 +1,7 @@
-import { useListUserDataAccessRequests } from '@/synapse-queries'
+import { SkeletonTable } from '@/components/Skeleton'
 import ColumnHeader from '@/components/TanStackTable/ColumnHeader'
 import StyledTanStackTable from '@/components/TanStackTable/StyledTanStackTable'
-import { SkeletonTable } from '@/components/Skeleton'
+import { useListUserDataAccessRequestsInfinite } from '@/synapse-queries'
 import { Alert, Box, Typography } from '@mui/material'
 import {
   AccessRequestSummary,
@@ -12,7 +12,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
 const IN_FLIGHT_STATUSES: readonly AccessRequestSummaryStatusEnum[] = [
   'sent',
@@ -59,24 +59,41 @@ const columns = [
 
 /**
  * Lists the requester's active eDUC signatures (routed / signed but not yet submitted).
- * Renders nothing when the filtered list is empty.
+ *
+ * Every page of `POST /dataAccessRequest/list` is fetched before rendering because filtering is
+ * done client-side pending PLFM-9907 (which will add an `isEDuc` server-side filter). Once
+ * server-side filtering ships, this can move to a standard InfiniteTableLayout with "Show More".
+ *
+ * Renders nothing when the fully-loaded, filtered list is empty.
  */
 export function InFlightEDucSignaturesTable() {
   const {
-    data: accessRequestList,
+    data: infiniteData,
     isLoading,
     error,
-  } = useListUserDataAccessRequests()
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  } = useListUserDataAccessRequestsInfinite()
+
+  // Auto-fetch remaining pages so client-side filtering sees the complete list.
+  useEffect(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      void fetchNextPage()
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
 
   const rows = useMemo(
     () =>
-      (accessRequestList?.results ?? []).filter(
-        summary =>
-          summary.isEDuc === true &&
-          summary.status !== undefined &&
-          (IN_FLIGHT_STATUSES as readonly string[]).includes(summary.status),
-      ),
-    [accessRequestList],
+      (infiniteData?.pages ?? [])
+        .flatMap(page => page.results ?? [])
+        .filter(
+          summary =>
+            summary.isEDuc === true &&
+            summary.status !== undefined &&
+            (IN_FLIGHT_STATUSES as readonly string[]).includes(summary.status),
+        ),
+    [infiniteData],
   )
 
   const table = useReactTable({
@@ -98,11 +115,12 @@ export function InFlightEDucSignaturesTable() {
     )
   }
 
-  if (isLoading) {
+  const isStillLoading = isLoading || hasNextPage || isFetchingNextPage
+  if (isStillLoading && rows.length === 0) {
     return <SkeletonTable numCols={columns.length} fullWidthCells />
   }
 
-  if (rows.length === 0) {
+  if (!isStillLoading && rows.length === 0) {
     return null
   }
 

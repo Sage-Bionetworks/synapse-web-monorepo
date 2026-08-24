@@ -104,6 +104,49 @@ export function useListUserDataAccessRequests(
 }
 
 /**
+ * Infinite-query variant of {@link useListUserDataAccessRequests} that paginates through every
+ * page via `nextPageToken`. Prefer this hook when the caller needs a complete list (for example,
+ * to filter results client-side across all pages).
+ * @see POST /repo/v1/dataAccessRequest/list
+ */
+export function useListUserDataAccessRequestsInfinite<
+  TData = InfiniteData<AccessRequestList>,
+>(
+  request: Omit<AccessRequestListRequest, 'nextPageToken'> = {},
+  options?: Partial<
+    UseInfiniteQueryOptions<
+      AccessRequestList,
+      SynapseClientError,
+      TData,
+      QueryKey,
+      AccessRequestList['nextPageToken']
+    >
+  >,
+) {
+  const { keyFactory, synapseClient } = useSynapseContext()
+
+  return useInfiniteQuery<
+    AccessRequestList,
+    SynapseClientError,
+    TData,
+    QueryKey,
+    AccessRequestList['nextPageToken']
+  >({
+    ...options,
+    queryKey: keyFactory.listDataAccessRequestsQueryKey(request),
+    queryFn: context =>
+      synapseClient.dataAccessServicesClient.postRepoV1DataAccessRequestList({
+        accessRequestListRequest: {
+          ...request,
+          nextPageToken: context.pageParam,
+        },
+      }),
+    initialPageParam: undefined,
+    getNextPageParam: page => page.nextPageToken,
+  })
+}
+
+/**
  * Retrieve the pre-signing preview of the eDUC for a data access request.
  * @see GET /repo/v1/dataAccessRequest/{requestId}/preview
  */
