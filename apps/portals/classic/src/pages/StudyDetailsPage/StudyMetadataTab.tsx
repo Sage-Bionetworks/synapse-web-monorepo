@@ -2,10 +2,17 @@ import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/c
 import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import instrumentsPlotNavProps from '@/config/synapseConfigs/instruments'
+import metadataPlotNavProps from '@/config/synapseConfigs/metadata'
 import variablesPlotNavProps from '@/config/synapseConfigs/variables'
+import {
+  COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+  ColumnSingleValueFilterOperator,
+} from '@sage-bionetworks/synapse-types'
 import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import { metadataSql } from '@/config/resources'
 
 function StudyMetadataTab() {
+  const { value: study } = useDetailsPageContext('study')
   const { value: instruments } = useDetailsPageContext('Instruments')
   const { value: variables } = useDetailsPageContext('Variables')
 
@@ -26,6 +33,34 @@ function StudyMetadataTab() {
             <MarkdownSynapseFromColumnData columnName={'studyMetadata'} />
           ),
         },
+        ...(study
+          ? [
+              {
+                title: 'Metadata',
+                id: 'Metadata',
+                element: (
+                  <QueryWrapperPlotNav
+                    {...metadataPlotNavProps}
+                    query={{
+                      sql: metadataSql,
+                      limit: 25,
+                      additionalFilters: [
+                        {
+                          concreteType:
+                            COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+                          columnName: 'study',
+                          operator: ColumnSingleValueFilterOperator.EQUAL,
+                          values: [study],
+                        },
+                      ],
+                    }}
+                    lockedColumn={{ columnName: 'study', value: study }}
+                    shouldDeepLink={false}
+                  />
+                ),
+              },
+            ]
+          : []),
         ...(instruments
           ? [
               {
