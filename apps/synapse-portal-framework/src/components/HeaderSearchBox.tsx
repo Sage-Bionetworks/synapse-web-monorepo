@@ -27,6 +27,8 @@ import { useChatDialogContext } from './ChatDialogContext'
 import { useSynapseContext } from 'synapse-react-client'
 import { useGetSuggestionsForSearchIndex } from 'synapse-react-client/components/SearchQueryWrapper/SearchQueryUseQueryOptions'
 import { SearchIndexConfig } from '../types/portal-util-types'
+import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
+import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
 
 type HeaderSearchBoxProps = {
   searchPlaceholder?: string
@@ -54,6 +56,10 @@ const HeaderSearchBox = ({
   hideChatOption = false,
   isChatEnabled = false,
 }: HeaderSearchBoxProps): React.ReactNode => {
+  const isCurieLauncherEnabled = useGetFeatureFlag(
+    FeatureFlagEnum.CURIE_CHAT_WIDGET,
+  )
+  const isPortalChatEnabled = useGetFeatureFlag(FeatureFlagEnum.PORTAL_CHAT)
   const styles = {
     ...defaultStyles,
     ...(variant === 'v2' ? v2Styles : {}),
@@ -105,11 +111,14 @@ const HeaderSearchBox = ({
     setRole(event.target.value)
   }
 
+  const canUseCurieLauncher =
+    isPortalChatEnabled && isCurieLauncherEnabled && !!isChatAvailable
+
   return (
     <Box className={styles.root} sx={sx}>
       <Stack className={styles.stack}>
         <Box className={styles.searchRow}>
-          {showChatOption ? (
+          {showChatOption && !canUseCurieLauncher ? (
             <FormControl className={styles.formControl}>
               <Select
                 className={styles.select}

@@ -5,6 +5,7 @@ import {
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import { PropsWithChildren } from 'react'
 import { SynapseContextProvider, SynapseContextType } from '../../context'
+import { useIsHydrated } from '../../hooks/useIsHydrated'
 import { ApplicationSessionContextProvider } from './ApplicationSessionContext'
 import { AuthenticationGuard } from './AuthenticationGuard'
 import { useSessionManager } from './useSessionManager'
@@ -60,6 +61,10 @@ export function ApplicationSessionManager(
     ...hookOptions,
     defaultRealm: defaultRealmId,
   })
+  // The experimental mode cookie cannot exist while prerendering, so reading it
+  // during the first hydrating render would be a hydration mismatch in every
+  // component that branches on a feature flag.
+  const isHydrated = useIsHydrated()
 
   return (
     <ApplicationSessionContextProvider context={sessionContext}>
@@ -67,7 +72,7 @@ export function ApplicationSessionManager(
         synapseContext={{
           accessToken: token,
           isAuthenticated: sessionContext.isAuthenticated,
-          isInExperimentalMode: isInSynapseExperimentalMode(),
+          isInExperimentalMode: isHydrated && isInSynapseExperimentalMode(),
           utcTime: getUseUtcTimeFromCookie(),
           downloadCartPageUrl,
           appId: appId,

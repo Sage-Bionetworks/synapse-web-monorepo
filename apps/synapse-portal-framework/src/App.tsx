@@ -13,6 +13,11 @@ import { usePortalContext } from './components/PortalContext'
 import { processResponseDocument } from './shared-config/synapseChatHelpers'
 import { useDocumentTitleFromRoutes } from './utils/useDocumentTitleFromRoutes'
 import { useTheme } from '@mui/material'
+import CurieChatWidget from './components/curie-chat-widget/CurieChatWidget'
+import {
+  ChatDialogVariant,
+  OpenChatOptions,
+} from './components/ChatDialogContext'
 
 export type AppProps = PropsWithChildren<{
   /** The default realm ID to use for the application */
@@ -31,10 +36,15 @@ export default function App(props: AppProps) {
   const [chatInitialMessage, setChatInitialMessage] = useState<
     string | undefined
   >(undefined)
-  const openChat = useCallback((initialMessage: string) => {
-    setChatInitialMessage(initialMessage)
-    setChatOpen(true)
-  }, [])
+  const [chatVariant, setChatVariant] = useState<ChatDialogVariant>('default')
+  const openChat = useCallback(
+    (initialMessage: string, options?: OpenChatOptions) => {
+      setChatInitialMessage(initialMessage)
+      setChatVariant(options?.variant ?? 'default')
+      setChatOpen(true)
+    },
+    [],
+  )
 
   const NavbarToRender = navbarConfig.NavbarComponent ?? Navbar
 
@@ -63,14 +73,19 @@ export default function App(props: AppProps) {
         {props.children}
         <Outlet />
       </main>
+      <CurieChatWidget />
       <Footer />
       {synapseChatProps && (
         <SynapsePortalChatDialog
           open={chatOpen}
+          variant={chatVariant}
           onClose={() => setChatOpen(false)}
           initialMessage={chatInitialMessage}
           onChatResponse={onChatResponse}
           {...synapseChatProps}
+          allowAttachments={
+            chatVariant === 'curie' || synapseChatProps.allowAttachments
+          }
         />
       )}
     </ChatDialogContext.Provider>

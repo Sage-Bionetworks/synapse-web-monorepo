@@ -20,6 +20,7 @@ export function SynapsePortalChatDialog({
       open={open}
       onClose={onClose}
       title={chatDialogProps.chatbotName || 'SynapseChat'}
+      variant={chatDialogProps.variant}
     >
       <SynapseChat
         hideTitle={true}

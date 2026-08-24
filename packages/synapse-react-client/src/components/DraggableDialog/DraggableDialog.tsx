@@ -14,12 +14,14 @@ import CloseIcon from '@mui/icons-material/Close'
 import { useRef, ReactNode, useEffect, useState } from 'react'
 import { useResizable } from '../ResizableContainer/hooks/useResizable'
 import { ResizableContainer } from '../ResizableContainer/ResizableContainer'
+import { ReactComponent as CurieLogo } from '../../assets/icons/curie-head.svg'
 
 type DraggableDialogProps = {
   open?: boolean
   onClose?: () => void
   children: ReactNode
   title?: ReactNode
+  variant?: 'default' | 'curie'
 }
 
 export default function DraggableDialog({
@@ -27,6 +29,7 @@ export default function DraggableDialog({
   onClose,
   title,
   children,
+  variant = 'default',
 }: DraggableDialogProps) {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
@@ -95,18 +98,44 @@ export default function DraggableDialog({
           cursor: 'move',
         }}
       >
-        <Typography variant="headline1">{title}</Typography>
+        {variant !== 'curie' && (
+          <Typography variant="headline1">{title}</Typography>
+        )}
         <Box sx={{ flexGrow: 1 }} />
         <IconButton onClick={onClose}>
-          <CloseIcon />
+          <CloseIcon
+            sx={
+              variant === 'curie'
+                ? { width: '16px', height: '16px' }
+                : undefined
+            }
+          />
         </IconButton>
       </Stack>
-      <Divider sx={{ mx: 2 }} />
+      {variant === 'curie' && (
+        <Box
+          sx={{
+            display: 'flex',
+            gap: '16px',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <CurieLogo />
+          <Typography>Hi! How can I help you today?</Typography>
+        </Box>
+      )}
+      {variant !== 'curie' && <Divider sx={{ mx: 2 }} />}
       <DialogContent
         sx={{
           height: '100%',
           maxWidth: '100%',
           padding: '16px',
+          ...(variant === 'curie' && {
+            borderTop: 'none',
+            borderBottom: 'none',
+            padding: '44px',
+          }),
         }}
       >
         {children}
