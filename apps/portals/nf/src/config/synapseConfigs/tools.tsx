@@ -18,28 +18,64 @@ export const toolsSchema: TableToGenericCardMapping = {
   subTitle: 'resourceType',
   description: 'description',
   secondaryLabels: [
+    // Universal
     'investigatorName',
     'institution',
     'rrid',
     'synonyms',
+    'latestPublicationDate',
+    'species',
+    // Shared across resource types since the LinkML migration (nf-osi/nf-research-tools-schema
+    // docs/MIGRATION.md) unified these into single columns -- replaces the old per-type
+    // cellLineDisease/animalModelDisease/diseaseType and modelofManifestation/
+    // animalModelOfManifestation names, none of which exist anymore.
+    'geneticDisorder',
+    'manifestation',
+    'organ',
+    'tumorType',
+    // Cell Line
     'cellLineCategory',
-    'cellLineDisease',
-    'modelofManifestation',
+    'tissue',
+    'resistance',
+    // Animal Model
     'backgroundStrain',
     'backgroundSubstrain',
-    'animalModelDisease',
-    'animalModelOfManifestation',
+    'animalState',
+    // Antibody
     'targetAntigen',
     'reactiveSpecies',
     'hostOrganism',
+    'conjugate',
+    // Genetic Reagent
+    'insertName',
+    'insertSpecies',
+    'vectorType',
+    'selectableMarker',
+    // Biobank
     'specimenTissueType',
     'specimenPreparationMethod',
-    'diseaseType',
-    'tumorType',
     'specimenFormat',
     'specimenType',
-    'latestPublicationDate',
-    'species',
+    // Patient-Derived Model
+    'pdmModelSystemType',
+    'pdmHostStrain',
+    'engraftmentSite',
+    // Organoid Protocol
+    'organoidType',
+    'organoidModelType',
+    'organoidDerivationSource',
+    'organoidCellTypes',
+    'cultureSystem',
+    // Computational Tool
+    'computationalToolType',
+    'computationalToolLanguage',
+    'computationalToolPlatformSupport',
+    'licenseType',
+    // Clinical Assessment Tool
+    'clinicalAssessmentType',
+    'clinicalAssessmentTargetPopulation',
+    'clinicalAssessmentDiseaseSpecific',
+    'availabilityStatus',
   ],
   includeShareButton: true,
 }
