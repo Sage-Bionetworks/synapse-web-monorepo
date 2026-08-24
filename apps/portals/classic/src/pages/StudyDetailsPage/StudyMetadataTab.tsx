@@ -41,6 +41,7 @@ function StudyMetadataTab() {
                 element: (
                   <QueryWrapperPlotNav
                     {...metadataPlotNavProps}
+                    name={undefined}
                     query={{
                       sql: metadataSql,
                       limit: 25,
