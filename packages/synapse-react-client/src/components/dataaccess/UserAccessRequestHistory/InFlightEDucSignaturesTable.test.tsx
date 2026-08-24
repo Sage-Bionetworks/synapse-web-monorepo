@@ -1,43 +1,40 @@
-import { useListUserDataAccessRequestsInfinite } from '@/synapse-queries'
-import { getUseInfiniteQueryMock } from '@/testutils/ReactQueryMockUtils'
+import { useListAllUserDataAccessRequests } from '@/synapse-queries'
+import { getUseQueryMock } from '@/testutils/ReactQueryMockUtils'
 import {
-  AccessRequestList,
+  AccessRequestSummary,
   SynapseClientError,
 } from '@sage-bionetworks/synapse-client'
-import { act, render, screen, waitFor, within } from '@testing-library/react'
+import { act, render, screen, within } from '@testing-library/react'
 import { InFlightEDucSignaturesTable } from './InFlightEDucSignaturesTable'
 
 vi.mock('@/synapse-queries', () => ({
-  useListUserDataAccessRequestsInfinite: vi.fn(),
+  useListAllUserDataAccessRequests: vi.fn(),
 }))
 
-const mockUseListUserDataAccessRequestsInfinite = vi.mocked(
-  useListUserDataAccessRequestsInfinite,
+const mockUseListAllUserDataAccessRequests = vi.mocked(
+  useListAllUserDataAccessRequests,
 )
 
 describe('InFlightEDucSignaturesTable', () => {
-  const { mock, setSuccess, setError, mockFetchNextPage } =
-    getUseInfiniteQueryMock<AccessRequestList, SynapseClientError>()
+  const { mock, setSuccess, setError, setLoading } = getUseQueryMock<
+    AccessRequestSummary[],
+    SynapseClientError
+  >()
 
   beforeEach(() => {
-    mockFetchNextPage.mockClear()
-    mockUseListUserDataAccessRequestsInfinite.mockImplementation(mock)
+    mockUseListAllUserDataAccessRequests.mockImplementation(mock)
   })
 
   it('renders nothing when the fully-loaded, filtered list is empty', () => {
     const { container } = render(<InFlightEDucSignaturesTable />)
     act(() => {
       setSuccess([
-        {
-          results: [
-            // Non-eDUC is ignored.
-            { requestId: '1', isEDuc: false, status: 'sent' },
-            // eDUC past submission is ignored.
-            { requestId: '2', isEDuc: true, status: 'submitted' },
-            // Draft eDUC has not been routed for signature yet.
-            { requestId: '3', isEDuc: true, status: 'draft' },
-          ],
-        },
+        // Non-eDUC is ignored.
+        { requestId: '1', isEDuc: false, status: 'sent' },
+        // eDUC past submission is ignored.
+        { requestId: '2', isEDuc: true, status: 'submitted' },
+        // Draft eDUC has not been routed for signature yet.
+        { requestId: '3', isEDuc: true, status: 'draft' },
       ])
     })
     expect(container).toBeEmptyDOMElement()
@@ -48,39 +45,35 @@ describe('InFlightEDucSignaturesTable', () => {
     act(() => {
       setSuccess([
         {
-          results: [
-            {
-              requestId: '10',
-              accessRequirementName: 'Requirement A',
-              isEDuc: true,
-              status: 'sent',
-              signaturesAcquired: 2,
-              signaturesRequested: 5,
-            },
-            {
-              requestId: '11',
-              accessRequirementName: 'Requirement B',
-              isEDuc: true,
-              status: 'delivered',
-              signaturesAcquired: 4,
-              signaturesRequested: 5,
-            },
-            {
-              requestId: '12',
-              accessRequirementName: 'Requirement C',
-              isEDuc: true,
-              status: 'completed',
-              signaturesAcquired: 5,
-              signaturesRequested: 5,
-            },
-            // Non-eDUC row is filtered out.
-            {
-              requestId: '13',
-              accessRequirementName: 'Requirement D',
-              isEDuc: false,
-              status: 'sent',
-            },
-          ],
+          requestId: '10',
+          accessRequirementName: 'Requirement A',
+          isEDuc: true,
+          status: 'sent',
+          signaturesAcquired: 2,
+          signaturesRequested: 5,
+        },
+        {
+          requestId: '11',
+          accessRequirementName: 'Requirement B',
+          isEDuc: true,
+          status: 'delivered',
+          signaturesAcquired: 4,
+          signaturesRequested: 5,
+        },
+        {
+          requestId: '12',
+          accessRequirementName: 'Requirement C',
+          isEDuc: true,
+          status: 'completed',
+          signaturesAcquired: 5,
+          signaturesRequested: 5,
+        },
+        // Non-eDUC row is filtered out.
+        {
+          requestId: '13',
+          accessRequirementName: 'Requirement D',
+          isEDuc: false,
+          status: 'sent',
         },
       ])
     })
@@ -108,53 +101,11 @@ describe('InFlightEDucSignaturesTable', () => {
     expect(row3Cells[2]).toHaveTextContent('Ready to submit')
   })
 
-  it('auto-fetches subsequent pages while hasNextPage is true', async () => {
+  it('shows a skeleton loader while the request list is loading', () => {
     render(<InFlightEDucSignaturesTable />)
     act(() => {
-      setSuccess([{ results: [], nextPageToken: 'page-2' }], true)
+      setLoading()
     })
-    await waitFor(() => expect(mockFetchNextPage).toHaveBeenCalled())
-  })
-
-  it('aggregates in-flight rows across all fetched pages', () => {
-    render(<InFlightEDucSignaturesTable />)
-    act(() => {
-      setSuccess([
-        {
-          results: [
-            // No in-flight rows on this page.
-            { requestId: '1', isEDuc: false, status: 'sent' },
-          ],
-        },
-        {
-          results: [
-            {
-              requestId: '20',
-              accessRequirementName: 'Requirement Late',
-              isEDuc: true,
-              status: 'sent',
-              signaturesAcquired: 1,
-              signaturesRequested: 3,
-            },
-          ],
-        },
-      ])
-    })
-
-    // The row from page 2 is visible even though page 1 had no in-flight rows.
-    const rows = within(screen.getByRole('table')).getAllByRole('row')
-    expect(rows).toHaveLength(2) // header + 1 data row
-    expect(within(rows[1]).getAllByRole('cell')[0]).toHaveTextContent(
-      'Requirement Late',
-    )
-  })
-
-  it('shows a skeleton loader while more pages are still being fetched', () => {
-    render(<InFlightEDucSignaturesTable />)
-    act(() => {
-      setSuccess([{ results: [], nextPageToken: 'page-2' }], true)
-    })
-    // No matching rows yet AND another page is coming: show skeleton, not the empty state.
     expect(screen.queryByRole('table')).not.toBeInTheDocument()
     expect(
       screen.queryByRole('heading', { name: /In-flight eDUC signatures/i }),
