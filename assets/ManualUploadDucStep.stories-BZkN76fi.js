@@ -1,0 +1,9 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{_ as t,i as n,t as r}from"./core-CI8DLeHF.js";import{P as i,_n as a,t as o}from"./dist-DIvCtTVI.js";import{Ct as s,Ln as c,Nn as l,jn as u}from"./synapse-client-DLEPPQHq.js";import{r as d,t as f}from"./mock_user_profile-BgSYjn5K.js";import{i as p,u as m}from"./mockAccessRequirements-DrG-L53F.js";import{At as h,Mt as g,St as _,a as v,bt as y,d as b,f as x,o as S,xt as C,yt as w}from"./iframe-D9LF-DAA.js";import{n as T,t as E}from"./ManualUploadDucStep-Bss2QZ87.js";var D,O,k,A,j;e((()=>{p(),_(),g(),y(),x(),S(),d(),u(),c(),o(),r(),T(),D={...m,eDucTemplateId:`template-abc-123`},O={...C,accessorChanges:[{userId:`999`,type:a.GAIN_ACCESS},{userId:String(f),type:a.GAIN_ACCESS}],principalInvestigator:{userId:`999`,name:`Dr. Jane Smith`,institutionalEmail:`jane.smith@example.edu`},signingOfficial:{name:`John Official`,institutionalEmail:`john.official@example.edu`},ducFileHandleId:void 0},k={title:`Governance/Data Access Request Flow/Managed Access Requirement/Step 2d - Manual Upload DUC`,component:E,parameters:{stack:`mock`,chromatic:{viewports:[600,1200]},msw:{handlers:[n.get(`${l}${s(D.id)}`,()=>t.json(O,{status:200})),...b(l),...v(l),...h(l),...w(l)]}}},A={name:`Manual print & upload DUC step`,args:{managedACTAccessRequirement:D,subjectId:`9876543`,subjectType:i.ENTITY,downloadHrefOverride:`https://www.rd.usda.gov/sites/default/files/pdf-sample_0.pdf`}},A.parameters={...A.parameters,docs:{...A.parameters?.docs,source:{originalSource:`{
+  name: 'Manual print & upload DUC step',
+  args: {
+    managedACTAccessRequirement: eDucManagedACTAccessRequirement,
+    subjectId: '9876543',
+    subjectType: RestrictableObjectType.ENTITY,
+    downloadHrefOverride: 'https://www.rd.usda.gov/sites/default/files/pdf-sample_0.pdf'
+  }
+}`,...A.parameters?.docs?.source}}},j=[`ManualUpload`]}))();export{A as ManualUpload,j as __namedExportsOrder,k as default};
