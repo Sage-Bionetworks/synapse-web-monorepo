@@ -1,18 +1,38 @@
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import {
+  DetailsPageContextConsumer,
+  useDetailsPageContext,
+} from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import { MarkdownSynapseFromColumnData } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/markdown/MarkdownSynapseFromColumnData'
 import instrumentsPlotNavProps from '@/config/synapseConfigs/instruments'
-import metadataPlotNavProps from '@/config/synapseConfigs/metadata'
 import variablesPlotNavProps from '@/config/synapseConfigs/variables'
-import {
-  COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE_VALUE,
-  ColumnSingleValueFilterOperator,
-} from '@sage-bionetworks/synapse-types'
+import RowDataTable from 'synapse-react-client/components/RowDataTable/RowDataTable'
+import { unCamelCase } from 'synapse-react-client/utils/functions/unCamelCase'
+import { SkeletonTable } from 'synapse-react-client/components/Skeleton/SkeletonTable'
 import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
-import { metadataSql } from '@/config/resources'
+
+const HEADER_CARD_COLUMNS = new Set([
+  'study',
+  'studyName',
+  'studyFocus',
+  'studyDescription',
+  'metadataStatus',
+  'measuredConstruct',
+  'measureType',
+  'constructDomain',
+  'instrumentName',
+  'diseaseFocus',
+  'primaryHealthFocus',
+  'grantNumber',
+  'studyID',
+  'studyMetadata',
+  'Acknowledgement',
+  'Instruments',
+  'Variables',
+  'metadataType',
+])
 
 function StudyMetadataTab() {
-  const { value: study } = useDetailsPageContext('study')
   const { value: instruments } = useDetailsPageContext('Instruments')
   const { value: variables } = useDetailsPageContext('Variables')
 
@@ -33,35 +53,33 @@ function StudyMetadataTab() {
             <MarkdownSynapseFromColumnData columnName={'studyMetadata'} />
           ),
         },
-        ...(study
-          ? [
-              {
-                title: 'Metadata',
-                id: 'Metadata',
-                element: (
-                  <QueryWrapperPlotNav
-                    {...metadataPlotNavProps}
-                    name={undefined}
-                    query={{
-                      sql: metadataSql,
-                      limit: 25,
-                      additionalFilters: [
-                        {
-                          concreteType:
-                            COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE_VALUE,
-                          columnName: 'study',
-                          operator: ColumnSingleValueFilterOperator.EQUAL,
-                          values: [study],
-                        },
-                      ],
-                    }}
-                    lockedColumn={{ columnName: 'study', value: study }}
-                    shouldDeepLink={false}
+        {
+          title: 'Metadata',
+          id: 'Metadata',
+          element: (
+            <DetailsPageContextConsumer>
+              {({ context }) => {
+                if (!context.rowData || !context.rowSet) {
+                  return <SkeletonTable numRows={4} numCols={1} />
+                }
+                const displayedColumns = context.rowSet.headers
+                  .map(h => h.name)
+                  .filter(name => !HEADER_CARD_COLUMNS.has(name))
+                const columnAliases = Object.fromEntries(
+                  displayedColumns.map(name => [name, unCamelCase(name)]),
+                )
+                return (
+                  <RowDataTable
+                    rowData={context.rowData.values ?? []}
+                    headers={context.rowSet.headers}
+                    displayedColumns={displayedColumns}
+                    columnAliases={columnAliases}
                   />
-                ),
-              },
-            ]
-          : []),
+                )
+              }}
+            </DetailsPageContextConsumer>
+          ),
+        },
         ...(instruments
           ? [
               {
