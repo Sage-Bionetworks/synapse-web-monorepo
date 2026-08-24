@@ -55,7 +55,7 @@ const CURIE_AVATAR = (
       justifyContent: 'center',
     }}
   >
-    <CurieAvatarHead width={22} height="auto" />
+    <CurieAvatarHead height="100%" />
   </Box>
 )
 
