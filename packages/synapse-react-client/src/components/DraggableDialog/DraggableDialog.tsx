@@ -14,7 +14,6 @@ import CloseIcon from '@mui/icons-material/Close'
 import { useRef, ReactNode, useEffect, useState } from 'react'
 import { useResizable } from '../ResizableContainer/hooks/useResizable'
 import { ResizableContainer } from '../ResizableContainer/ResizableContainer'
-import { ReactComponent as CurieLogo } from '../../assets/icons/curie-head.svg'
 
 type DraggableDialogProps = {
   open?: boolean
@@ -112,19 +111,6 @@ export default function DraggableDialog({
           />
         </IconButton>
       </Stack>
-      {variant === 'curie' && (
-        <Box
-          sx={{
-            display: 'flex',
-            gap: '16px',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <CurieLogo />
-          <Typography>Hi! How can I help you today?</Typography>
-        </Box>
-      )}
       {variant !== 'curie' && <Divider sx={{ mx: 2 }} />}
       <DialogContent
         sx={{

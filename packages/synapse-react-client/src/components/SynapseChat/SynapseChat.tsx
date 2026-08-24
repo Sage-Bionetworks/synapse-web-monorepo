@@ -22,6 +22,7 @@ import { SmartToyTwoTone } from '@mui/icons-material'
 import { UserCard } from '../UserCard/UserCard'
 import { useApplicationSessionContext } from '@/utils/AppUtils'
 import { ReactComponent as CurieAvatarHead } from '@/assets/illustrations/curie_avatar_head.svg'
+import { ReactComponent as CurieLogo } from '@/assets/icons/curie-head.svg'
 
 const DEFAULT_AVATAR = (
   <Box
@@ -254,7 +255,7 @@ export function SynapseChat({
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'space-between',
+        justifyContent: variant === 'curie' ? 'flex-start' : 'space-between',
         maxWidth: '1100px',
         mx: 'auto',
         height: '100%',
@@ -310,6 +311,19 @@ export function SynapseChat({
                 />
               )
             })} */}
+            {variant === 'curie' && interactions.length === 0 && (
+              <Box
+                sx={{
+                  display: 'flex',
+                  gap: '16px',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <CurieLogo />
+                <Typography>Hi! How can I help you today?</Typography>
+              </Box>
+            )}
             {interactions.map((interaction, index) => {
               const isLast = index === interactions.length - 1
               return (
