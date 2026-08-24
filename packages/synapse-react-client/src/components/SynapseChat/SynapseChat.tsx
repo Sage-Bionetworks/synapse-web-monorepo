@@ -373,9 +373,6 @@ export function SynapseChat({
             }
             disabled={!agentSession || isAwaitingResponse}
             allowAttachments={allowAttachments}
-            attachmentButtonLabel={
-              variant === 'curie' ? 'Upload Document' : undefined
-            }
           />
         </Box>
       </Box>

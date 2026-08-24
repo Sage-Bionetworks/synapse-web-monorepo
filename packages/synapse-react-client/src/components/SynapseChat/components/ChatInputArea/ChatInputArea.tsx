@@ -1,12 +1,6 @@
 import { Add } from '@mui/icons-material'
 import ArrowUpward from '@mui/icons-material/ArrowUpward'
-import {
-  Box,
-  Button,
-  IconButton,
-  TextareaAutosize,
-  Tooltip,
-} from '@mui/material'
+import { Box, IconButton, TextareaAutosize, Tooltip } from '@mui/material'
 import {
   FormEventHandler,
   KeyboardEventHandler,
@@ -36,8 +30,6 @@ export type ChatInputAreaProps = {
   disabled?: boolean
   /** @default false */
   allowAttachments?: boolean
-  /** Optional text label for the attachment action. Falls back to icon-only when unset. */
-  attachmentButtonLabel?: string
 }
 
 const actionButtonSx = {
@@ -46,13 +38,6 @@ const actionButtonSx = {
   border: '1px solid',
   borderColor: 'grey.300',
   borderRadius: '1px',
-}
-
-const attachmentTextButtonSx = {
-  ...actionButtonSx,
-  color: 'var(--synapse-gray-800)',
-  fontWeight: 700,
-  lineHeight: '20px',
 }
 
 /**
@@ -68,7 +53,6 @@ export function ChatInputArea({
   placeholder,
   disabled = false,
   allowAttachments = false,
-  attachmentButtonLabel,
 }: ChatInputAreaProps) {
   const [pendingAttachments, setPendingAttachments] = useState<
     ChatAttachment[]
@@ -138,27 +122,15 @@ export function ChatInputArea({
               title={`Upload files (${ALLOWED_FILE_TYPES_LABEL})`}
               placement="left"
             >
-              {attachmentButtonLabel ? (
-                <Button
-                  type="button"
-                  variant="outlined"
-                  disabled={disabled}
-                  onClick={() => setIsAddFilesDialogOpen(true)}
-                  sx={attachmentTextButtonSx}
-                >
-                  {attachmentButtonLabel}
-                </Button>
-              ) : (
-                <IconButton
-                  type="button"
-                  aria-label="Add files"
-                  disabled={disabled}
-                  onClick={() => setIsAddFilesDialogOpen(true)}
-                  sx={actionButtonSx}
-                >
-                  <Add />
-                </IconButton>
-              )}
+              <IconButton
+                type="button"
+                aria-label="Add files"
+                disabled={disabled}
+                onClick={() => setIsAddFilesDialogOpen(true)}
+                sx={actionButtonSx}
+              >
+                <Add />
+              </IconButton>
             </Tooltip>
           )}
           <IconButton
