@@ -22,6 +22,12 @@ import { createMemoryRouter, RouterProvider } from 'react-router'
 vi.mock('@/utils/functions/DateFormatter')
 vi.mock('@/synapse-queries/dataaccess/useDataAccessSubmission')
 vi.mock('@/components/UserOrTeamBadge/UserOrTeamBadge')
+vi.mock(
+  '@/components/dataaccess/UserAccessRequestHistory/InFlightEDucSignaturesTable',
+  () => ({
+    InFlightEDucSignaturesTable: () => null,
+  }),
+)
 
 vi.mocked(formatDate).mockReturnValue('mock formatted date')
 vi.mocked(UserOrTeamBadge).mockImplementation(() => (

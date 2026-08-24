@@ -212,6 +212,7 @@ export const ACCESS_APPROVAL_BY_ID = (id: string | number) =>
   `${ACCESS_APPROVAL}/${id}`
 
 export const DATA_ACCESS_REQUEST = `${REPO}/dataAccessRequest`
+export const DATA_ACCESS_REQUEST_LIST = `${DATA_ACCESS_REQUEST}/list`
 export const DATA_ACCESS_REQUEST_PREVIEW = (id: string | number) =>
   `${DATA_ACCESS_REQUEST}/${id}/preview`
 export const DATA_ACCESS_REQUEST_SUBMISSION = (id: string | number) =>

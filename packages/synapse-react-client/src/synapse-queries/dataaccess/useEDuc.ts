@@ -1,7 +1,9 @@
+import { getAllOfNextPageTokenPaginatedService } from '@/synapse-client/SynapseClient'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import {
   AccessRequestList,
   AccessRequestListRequest,
+  AccessRequestSummary,
   EDucFileHandleId,
   EDucSignatureQuota,
   EDucSignatureStatus,
@@ -100,6 +102,49 @@ export function useListUserDataAccessRequests(
       synapseClient.dataAccessServicesClient.postRepoV1DataAccessRequestList({
         accessRequestListRequest: request,
       }),
+  })
+}
+
+/**
+ * List _all_ data access requests that the calling user created or participates in, walking every
+ * page of `POST /repo/v1/dataAccessRequest/list` via `nextPageToken` inside the queryFn. Returns
+ * the flattened list of {@link AccessRequestSummary}.
+ *
+ * Prefer this hook over {@link useListUserDataAccessRequests} when the caller needs the complete
+ * list (for example, to filter results client-side). This avoids the render-per-page cascade of
+ * `useInfiniteQuery` at the cost of a slightly longer initial load.
+ *
+ * @see POST /repo/v1/dataAccessRequest/list
+ */
+export function useListAllUserDataAccessRequests(
+  request: Omit<AccessRequestListRequest, 'nextPageToken'> = {},
+  options?: Partial<
+    UseQueryOptions<AccessRequestSummary[], SynapseClientError>
+  >,
+) {
+  const { keyFactory, synapseClient } = useSynapseContext()
+
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.listAllDataAccessRequestsQueryKey(request),
+    queryFn: () =>
+      getAllOfNextPageTokenPaginatedService<AccessRequestSummary>(
+        async nextPageToken => {
+          const response =
+            await synapseClient.dataAccessServicesClient.postRepoV1DataAccessRequestList(
+              {
+                accessRequestListRequest: {
+                  ...request,
+                  nextPageToken: nextPageToken ?? undefined,
+                },
+              },
+            )
+          return {
+            results: response.results ?? [],
+            nextPageToken: response.nextPageToken,
+          }
+        },
+      ),
   })
 }
 
