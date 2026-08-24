@@ -83,9 +83,6 @@ export default function App(props: AppProps) {
           initialMessage={chatInitialMessage}
           onChatResponse={onChatResponse}
           {...synapseChatProps}
-          allowAttachments={
-            chatVariant === 'curie' || synapseChatProps.allowAttachments
-          }
         />
       )}
     </ChatDialogContext.Provider>
