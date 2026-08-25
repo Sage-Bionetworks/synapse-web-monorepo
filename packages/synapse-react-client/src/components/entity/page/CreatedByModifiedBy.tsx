@@ -113,7 +113,7 @@ export function CreatedByModifiedBy(props: CreatedByModifiedByProps) {
     <Box
       sx={theme => ({
         bgcolor: 'grey.100',
-        py: '10px',
+        p: '10px',
         [theme.breakpoints.down('sm')]: {
           p: '24px 40px',
         },
