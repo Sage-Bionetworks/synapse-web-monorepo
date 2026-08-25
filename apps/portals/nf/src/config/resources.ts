@@ -27,6 +27,7 @@ export const vendorSql = `SELECT vendorName as "Vendor", vendorUrl as "Vendor Ur
 export const catalogNumberSql = `SELECT catalogNumber as "Catalog Number", catalogNumberURL as "Catalog Number URL" FROM syn51735470 WHERE catalogNumber IS NOT NULL`
 export const toolApplicationsSql = `SELECT applications as "Tool Applications" FROM syn26486840 WHERE applications IS NOT NULL`
 export const toolStudySql = `SELECT * FROM syn26461958`
+export const toolDatasetSql = `SELECT * FROM syn16859448`
 export const mutationsSql =
   'SELECT externalMutationID, alleleType, mutationType, mutationMethod, affectedGeneSymbol, affectedGeneName, sequenceVariation, proteinVariation, animalModelMutation, humanClinVarMutation, chromosome FROM syn51750823'
 export const publicationsV2Sql = 'SELECT * FROM syn51735450'
