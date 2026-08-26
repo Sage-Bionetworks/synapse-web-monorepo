@@ -25,23 +25,13 @@ export const toolsSchema: TableToGenericCardMapping = {
     'synonyms',
     'latestPublicationDate',
     'species',
-    // Shared across resource types since the LinkML migration (nf-osi/nf-research-tools-schema
-    // docs/MIGRATION.md) unified these into single columns -- replaces the old per-type
-    // cellLineDisease/animalModelDisease/diseaseType and modelofManifestation/
-    // animalModelOfManifestation names, none of which exist anymore.
+    'availability',
+    // Shared across resource types
     'geneticDisorder',
     'manifestation',
     'organ',
     'tissue',
-    // Unified across CellLine/OrganoidProtocol/PatientDerivedModel
-    // (nf-osi/nf-research-tools-schema#262, disambiguated by resourceType) --
-    // replaces tumorType (superseded by manifestation above) and the
-    // per-type pdmModelSystemType/organoidModelType aliases.
     'modelType',
-    // Unified across all 9 resource types (nf-osi/nf-research-tools-schema#262)
-    // -- replaces the Clinical Assessment Tool-only availabilityStatus below
-    // ("License Required" folded into "Contact Developer").
-    'availability',
     // Cell Line
     'cellLineCategory',
     'resistance',
@@ -66,10 +56,7 @@ export const toolsSchema: TableToGenericCardMapping = {
     // Patient-Derived Model
     'pdmHostStrain',
     'engraftmentSite',
-    // Organoid Protocol -- organoidType replaced by the shared 'organ'
-    // above (nf-osi/nf-research-tools-schema#262: same concept, phrased
-    // adjectivally -- Cerebral/Intestinal/Cardiac/Retinal/Pancreatic map
-    // 1:1 onto Brain/Intestine/Heart/Eye/Pancreas).
+    // Organoid Protocol
     'organoidDerivationSource',
     'organoidCellTypes',
     'cultureSystem',
