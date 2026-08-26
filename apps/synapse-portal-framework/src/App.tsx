@@ -13,7 +13,7 @@ import { usePortalContext } from './components/PortalContext'
 import { processResponseDocument } from './shared-config/synapseChatHelpers'
 import { useDocumentTitleFromRoutes } from './utils/useDocumentTitleFromRoutes'
 import { useTheme } from '@mui/material'
-import CurieChatWidget from './components/curie-chat-widget/CurieChatWidget'
+import CurieChatDialogLauncher from './components/curie-chat-widget/CurieChatWidget'
 import {
   ChatDialogVariant,
   OpenChatOptions,
@@ -73,7 +73,7 @@ export default function App(props: AppProps) {
         {props.children}
         <Outlet />
       </main>
-      <CurieChatWidget />
+      <CurieChatDialogLauncher />
       <Footer />
       {synapseChatProps && (
         <SynapsePortalChatDialog

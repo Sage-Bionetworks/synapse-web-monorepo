@@ -7,7 +7,7 @@ import { storeRedirectURLForOneSageLoginAndGotoURL } from 'synapse-react-client/
 import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
 import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
 import { useChatDialogContext } from '../ChatDialogContext'
-import CurieChatWidget from './CurieChatWidget'
+import CurieChatDialogLauncher from './CurieChatWidget'
 
 vi.mock('synapse-react-client', () => ({
   useSynapseContext: vi.fn(),
@@ -41,7 +41,7 @@ function setFeatureFlags(portalChat: boolean, curieLauncher: boolean) {
   })
 }
 
-describe('CurieChatWidget', () => {
+describe('CurieChatDialogLauncher', () => {
   const oneSageUrl = new URL('https://onesage.example.org/login')
   const openChat = vi.fn()
 
@@ -60,7 +60,7 @@ describe('CurieChatWidget', () => {
     } as never)
     setFeatureFlags(false, true)
 
-    render(<CurieChatWidget />)
+    render(<CurieChatDialogLauncher />)
 
     expect(
       screen.queryByRole('button', { name: /open curie chat/i }),
@@ -77,7 +77,7 @@ describe('CurieChatWidget', () => {
     })
     setFeatureFlags(true, true)
 
-    render(<CurieChatWidget />)
+    render(<CurieChatDialogLauncher />)
 
     expect(
       screen.queryByRole('button', { name: /open curie chat/i }),
@@ -91,7 +91,7 @@ describe('CurieChatWidget', () => {
     } as never)
     setFeatureFlags(true, true)
 
-    render(<CurieChatWidget />)
+    render(<CurieChatDialogLauncher />)
 
     await user.click(screen.getByRole('button', { name: /open curie chat/i }))
 
@@ -108,7 +108,7 @@ describe('CurieChatWidget', () => {
     } as never)
     setFeatureFlags(true, true)
 
-    render(<CurieChatWidget />)
+    render(<CurieChatDialogLauncher />)
 
     await user.click(screen.getByRole('button', { name: /open curie chat/i }))
 

@@ -7,7 +7,7 @@ import { storeRedirectURLForOneSageLoginAndGotoURL } from 'synapse-react-client/
 import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
 import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
 
-function CurieChatWidget() {
+function CurieChatDialogLauncher() {
   const { isAuthenticated } = useSynapseContext()
   const chatDialogContext = useChatDialogContext()
   const oneSageUrl = useOneSageURL()
@@ -48,4 +48,4 @@ function CurieChatWidget() {
   )
 }
 
-export default CurieChatWidget
+export default CurieChatDialogLauncher
