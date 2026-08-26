@@ -20,7 +20,7 @@ const mockUseImportCsvIntoGrid = vi.mocked(useImportCsvIntoGrid)
 describe('UploadCsvToGridDialog', () => {
   describe('Component tests', () => {
     const fhId = 'somefilehandleid'
-    const schema = [{ id: 'colId123', type: ColumnType.STRING }]
+    const schema = [{ name: 'colId123', columnType: ColumnType.STRING }]
     const descriptor = {
       separator: ',',
       quoteCharacter: '"',
@@ -40,6 +40,7 @@ describe('UploadCsvToGridDialog', () => {
           open={true}
           onClose={onClose}
           onComplete={onComplete}
+          schemaPropertiesInfo={{}}
         />,
       )
 
@@ -67,6 +68,43 @@ describe('UploadCsvToGridDialog', () => {
         csvDescriptor: descriptor,
         schema: schema,
       })
+    })
+
+    it('restores STRING type for a column the grid schema already types as a string, even when the CSV preview suggests ENTITYID', async () => {
+      const mutate = vi.fn()
+      mockUseImportCsvIntoGrid.mockReturnValue({ mutate } as any)
+
+      render(
+        <UploadCsvToGridDialog
+          gridSessionId={gridSessionId}
+          open={true}
+          onClose={vi.fn()}
+          onComplete={vi.fn()}
+          schemaPropertiesInfo={{
+            entityId: {
+              type: { type: 'string', isArray: false },
+              isRequired: false,
+              enumeratedValues: null,
+            },
+          }}
+        />,
+      )
+
+      await screen.findByTestId('CsvPreviewDialog')
+
+      act(() => {
+        mockCsvPreviewDialog.mock.lastCall![0].onConfirm(
+          fhId,
+          [{ name: 'entityId', columnType: ColumnType.ENTITYID }],
+          descriptor,
+        )
+      })
+
+      expect(mutate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          schema: [{ name: 'entityId', columnType: ColumnType.STRING }],
+        }),
+      )
     })
   })
 

@@ -525,6 +525,7 @@ function SynapseGridInner({
                       <UploadCsvToGridButton
                         sourceEntityId={session.sourceEntityId}
                         gridSessionId={session.sessionId!}
+                        schemaPropertiesInfo={schemaPropertiesInfo}
                       />
                     )}
                     {session.sessionId && (
