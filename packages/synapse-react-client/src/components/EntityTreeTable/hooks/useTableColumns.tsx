@@ -51,7 +51,7 @@ export const useTableColumns = (
       header: NameColumnHeader,
       cell: NameCell,
       enableSorting: enableSorting,
-      size: 450, // Default width for Name column
+      size: 600,
     })
     if (isMediumAndUp) {
       baseColumns.push({
@@ -59,13 +59,15 @@ export const useTableColumns = (
         header: '',
         cell: EntityBadgeIconsCell,
         enableSorting: false,
-        size: 120, // Default width for Badges column
+        enableResizing: false,
+        size: 120,
       })
       baseColumns.push({
         id: 'id',
         header: IdColumnHeader,
         cell: IdCell,
         enableSorting: false,
+        size: 110,
       })
     }
     if (isXtraLarge) {
@@ -75,6 +77,7 @@ export const useTableColumns = (
         header: CreatedOnColumnHeader,
         cell: CreatedOnCell,
         enableSorting: enableSorting,
+        size: 130,
       })
     }
 
@@ -85,6 +88,7 @@ export const useTableColumns = (
         header: ModifiedOnColumnHeader,
         cell: ModifiedOnCell,
         enableSorting: enableSorting,
+        size: 130,
       })
     }
 
@@ -94,6 +98,7 @@ export const useTableColumns = (
         header: 'Modified By',
         cell: ModifiedByCell,
         enableSorting: false,
+        size: 130,
       })
     }
 
@@ -103,6 +108,7 @@ export const useTableColumns = (
         header: 'Size',
         cell: FileEntitySizeCell,
         enableSorting: false,
+        size: 80,
       })
     }
     if (isXtraLarge) {
