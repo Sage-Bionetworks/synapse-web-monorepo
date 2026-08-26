@@ -73,7 +73,7 @@ export function ApplicationSessionManager(
           accessToken: token,
           isAuthenticated: sessionContext.isAuthenticated,
           isInExperimentalMode: isHydrated && isInSynapseExperimentalMode(),
-          utcTime: getUseUtcTimeFromCookie(),
+          utcTime: isHydrated && getUseUtcTimeFromCookie(),
           downloadCartPageUrl,
           appId: appId,
         }}
