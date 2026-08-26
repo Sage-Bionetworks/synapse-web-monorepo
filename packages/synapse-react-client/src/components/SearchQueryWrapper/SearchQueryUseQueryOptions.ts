@@ -37,6 +37,7 @@ import { omit } from 'lodash-es'
 import dayjs from 'dayjs'
 import { useCallback, useMemo } from 'react'
 import { KeyFactory } from '@/synapse-queries/KeyFactory'
+import { SYNAPSE_ENTITY_ID_TOKEN_REGEX } from '@/utils/functions/RegularExpressions'
 
 // ─── Local OpenSearch DSL types ─────────────────────────────────────────────
 // Narrow typings for the OpenSearch structures we build (query DSL, sort) and
@@ -136,9 +137,7 @@ function containsQuotedPhrase(text: string): boolean {
  * `simple_query_string`, which does not apply fuzziness.
  */
 function containsSynapseId(text: string): boolean {
-  // `syn` followed by digits (optionally `.version`), on word boundaries so
-  // ordinary words like `synapse` or `synonyms` don't match.
-  return /\bsyn\d+(?:\.\d+)?\b/iu.test(text)
+  return SYNAPSE_ENTITY_ID_TOKEN_REGEX.test(text)
 }
 
 function buildQueryClause(
