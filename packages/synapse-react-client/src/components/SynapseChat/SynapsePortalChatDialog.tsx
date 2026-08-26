@@ -17,6 +17,7 @@ export function SynapsePortalChatDialog({
 }: SynapsePortalChatDialogProps) {
   return (
     <DraggableDialog
+      key={chatDialogProps.variant}
       open={open}
       onClose={onClose}
       title={chatDialogProps.chatbotName || 'SynapseChat'}

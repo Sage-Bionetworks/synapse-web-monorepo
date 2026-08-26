@@ -4,7 +4,15 @@ import {
   useUpdateAgentSession,
 } from '@/synapse-queries/chat/useChat'
 import { useSynapseContext } from '@/utils'
-import { Alert, Box, Chip, List, Stack, Typography } from '@mui/material'
+import {
+  Alert,
+  Box,
+  Chip,
+  List,
+  ListItem,
+  Stack,
+  Typography,
+} from '@mui/material'
 import {
   AgentSession,
   FileHandleAssociateType,
@@ -22,7 +30,8 @@ import { SmartToyTwoTone } from '@mui/icons-material'
 import { UserCard } from '../UserCard/UserCard'
 import { useApplicationSessionContext } from '@/utils/AppUtils'
 import { ReactComponent as CurieAvatarHead } from '@/assets/illustrations/curie_avatar_head.svg'
-import { ReactComponent as CurieLogo } from '@/assets/icons/curie-head.svg'
+
+const CURIE_GREETING = 'Hi! How can I help you today?'
 
 const DEFAULT_AVATAR = (
   <Box
@@ -43,20 +52,15 @@ const DEFAULT_AVATAR = (
 const CURIE_AVATAR = (
   <Box
     sx={{
-      p: '3px',
-      borderRadius: '50%',
-      borderStyle: 'solid',
-      borderWidth: '1px',
-      borderColor: 'grey.300',
       mt: '10px',
-      height: '31px',
-      width: '31px',
+      height: '30px',
+      width: '30px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
     }}
   >
-    <CurieAvatarHead height="100%" />
+    <CurieAvatarHead />
   </Box>
 )
 
@@ -148,6 +152,8 @@ export function SynapseChat({
   const internalChatState = useChatState(agentSession, onChatResponse)
   const chatState = externalChatState ?? internalChatState
   const { interactions, isAwaitingResponse, sendChat } = chatState
+
+  const showGreeting = variant === 'curie' && interactions.length === 0
 
   // Only interactions added after this component instance mounted should play the entry
   // animation. Callers may lift state so history survives a `Dialog` closing, but the
@@ -256,6 +262,7 @@ export function SynapseChat({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: variant === 'curie' ? 'flex-start' : 'space-between',
+        gap: variant === 'curie' ? '20px' : '0',
         maxWidth: '1100px',
         mx: 'auto',
         height: '100%',
@@ -291,14 +298,25 @@ export function SynapseChat({
       )}
       {!agentSession && <SkeletonParagraph numRows={10} />}
       {agentSession && (
-        <Box sx={{ flexGrow: 1, overflowY: 'auto', mb: 2 }}>
+        <Box
+          sx={{
+            flexGrow: 1,
+            overflowY: 'auto',
+            mb: variant === 'curie' ? 0 : 2,
+          }}
+        >
           <List
             sx={{
               flex: 1,
               overflowY: 'auto',
               pt: '20px',
+              ...(variant === 'curie' && { pt: 0, pb: 0, gap: '20px' }),
               display: 'flex',
               flexDirection: 'column',
+              ...(showGreeting && {
+                minHeight: '100%',
+                justifyContent: 'flex-end',
+              }),
             }}
           >
             {/* {sessionHistory &&
@@ -311,18 +329,22 @@ export function SynapseChat({
                 />
               )
             })} */}
-            {variant === 'curie' && interactions.length === 0 && (
-              <Box
+            {showGreeting && (
+              <ListItem
                 sx={{
-                  display: 'flex',
-                  gap: '16px',
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  display: 'grid',
+                  gridTemplateColumns: '50px auto',
+                  columnGap: '16px',
+                  justifyItems: 'start',
+                  alignItems: 'start',
+                  p: 0,
                 }}
               >
-                <CurieLogo />
-                <Typography>Hi! How can I help you today?</Typography>
-              </Box>
+                {resolvedAgentAvatar}
+                <Typography sx={{ justifySelf: 'start', mt: '14px' }}>
+                  {CURIE_GREETING}
+                </Typography>
+              </ListItem>
             )}
             {interactions.map((interaction, index) => {
               const isLast = index === interactions.length - 1
@@ -353,7 +375,7 @@ export function SynapseChat({
       <Box
         sx={{
           position: 'sticky',
-          bottom: textboxPositionOffset,
+          bottom: variant === 'curie' ? '0px' : textboxPositionOffset,
           backgroundColor: 'white',
         }}
       >

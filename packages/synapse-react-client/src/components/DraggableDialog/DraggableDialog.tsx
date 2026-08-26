@@ -15,6 +15,8 @@ import { useRef, ReactNode, useEffect, useState } from 'react'
 import { useResizable } from '../ResizableContainer/hooks/useResizable'
 import { ResizableContainer } from '../ResizableContainer/ResizableContainer'
 
+const CURIE_INITIAL_SIZE = 700
+
 type DraggableDialogProps = {
   open?: boolean
   onClose?: () => void
@@ -34,10 +36,13 @@ export default function DraggableDialog({
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const draggableRef = useRef<HTMLDivElement>(null)
   const [bounds, setBounds] = useState<DraggableBounds>()
-  const [position, setPosition] = useState({ x: 100, y: 100 })
+  const [position, setPosition] = useState({
+    x: 100,
+    y: variant === 'curie' ? 50 : 100,
+  })
   const { width, height, handleResizeStart } = useResizable({
     initialWidth: 600,
-    initialHeight: 500,
+    initialHeight: variant === 'curie' ? CURIE_INITIAL_SIZE : 500,
     minWidth: 300,
     minHeight: 200,
     maxWidth: 1200,
@@ -93,7 +98,7 @@ export default function DraggableDialog({
         gap="5px"
         className="drag-handle"
         sx={{
-          padding: '20px',
+          padding: variant === 'curie' ? '44px 44px 20px 44px' : '20px',
           cursor: 'move',
         }}
       >
@@ -120,7 +125,7 @@ export default function DraggableDialog({
           ...(variant === 'curie' && {
             borderTop: 'none',
             borderBottom: 'none',
-            padding: '44px',
+            padding: variant === 'curie' ? '0 44px 44px 44px' : '44px',
           }),
         }}
       >
