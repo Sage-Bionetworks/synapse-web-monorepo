@@ -4,11 +4,14 @@ import {
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
 } from '@/mocks/accessRequirement/mockAccessRequirements'
+import { MOCK_DATA_ACCESS_REQUEST } from '@/mocks/dataaccess/MockDataAccessRequest'
 import mockFileEntityData from '@/mocks/entity/mockFileEntity'
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE } from '@/utils/APIConstants'
 import { AccessRequirement } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor } from '@testing-library/react'
+import { http, HttpResponse } from 'msw'
 import AccessRequirementList, {
   AccessRequirementListProps,
   RequestDataStep,
@@ -94,6 +97,70 @@ describe('AccessRequirementList tests', () => {
     // With direct entry there is no earlier wizard step, so Back is hidden.
     expect(
       screen.queryByRole('button', { name: 'Back' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('resumes at SIGNATURE_STATUS when the DAR already has a routed envelope', async () => {
+    const eDucAr = {
+      ...mockManagedACTAccessRequirement,
+      eDucTemplateId: 'template-abc-123',
+    }
+    server.use(
+      http.get(
+        `*${ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE(eDucAr.id)}`,
+        () =>
+          HttpResponse.json(
+            {
+              ...MOCK_DATA_ACCESS_REQUEST,
+              eDucSignatureEnvelopeId: 'docusign-envelope-abc',
+            },
+            { status: 200 },
+          ),
+      ),
+    )
+
+    await init({
+      ...props,
+      initialWizardEntry: {
+        step: RequestDataStep.UPDATE_RESEARCH_PROJECT,
+        managedACTAccessRequirement: eDucAr,
+      },
+    })
+
+    // Auto-resumes to SIGNATURE_STATUS because the DAR has an envelope routed.
+    await screen.findByText(/Sign a Data Use Certificate/i)
+  })
+
+  it('lands on the research project step when there is no routed envelope', async () => {
+    const eDucAr = {
+      ...mockManagedACTAccessRequirement,
+      eDucTemplateId: 'template-abc-123',
+    }
+    server.use(
+      http.get(
+        `*${ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE(eDucAr.id)}`,
+        () =>
+          HttpResponse.json(
+            { ...MOCK_DATA_ACCESS_REQUEST, eDucSignatureEnvelopeId: undefined },
+            { status: 200 },
+          ),
+      ),
+    )
+
+    await init({
+      ...props,
+      initialWizardEntry: {
+        step: RequestDataStep.UPDATE_RESEARCH_PROJECT,
+        managedACTAccessRequirement: eDucAr,
+      },
+    })
+
+    // Research project form appears — signature-status step is not shown.
+    await screen.findByLabelText(
+      /First and last names of your Project Lead or PI/i,
+    )
+    expect(
+      screen.queryByText(/Sign a Data Use Certificate/i),
     ).not.toBeInTheDocument()
   })
 })

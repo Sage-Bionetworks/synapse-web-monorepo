@@ -37,7 +37,10 @@ import { EntityLink } from '../EntityLink'
 import IconSvg from '../IconSvg/IconSvg'
 import UserOrTeamBadge from '../UserOrTeamBadge'
 import { AccessRequirementListItem } from './AccessRequirementListItem'
-import { useCanShowManagedACTWikiInWizard } from './AccessRequirementListUtils'
+import {
+  useAutoResumeSignatureStatusStep,
+  useCanShowManagedACTWikiInWizard,
+} from './AccessRequirementListUtils'
 import CancelRequestDataAccess from './ManagedACTAccessRequirementRequestFlow/CancelRequestDataAccess'
 import DataAccessRequestAccessorsFilesForm from './ManagedACTAccessRequirementRequestFlow/DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 import RequestDataAccessSuccess from './ManagedACTAccessRequirementRequestFlow/RequestDataAccessSuccess'
@@ -234,6 +237,14 @@ export default function AccessRequirementList(
   >()
 
   const canShowManagedACTWikiInWizard = useCanShowManagedACTWikiInWizard()
+
+  useAutoResumeSignatureStatusStep({
+    managedACTAccessRequirement,
+    requestDataStep,
+    researchProjectStep: RequestDataStep.UPDATE_RESEARCH_PROJECT,
+    signatureStatusStep: RequestDataStep.SIGNATURE_STATUS,
+    setRequestDataStep,
+  })
 
   const { data: fetchedRequirementsForTeam } = useGetAccessRequirementsForTeam(
     subjectId!,
