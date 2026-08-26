@@ -38,6 +38,10 @@ export const toolsSchema: TableToGenericCardMapping = {
     // replaces tumorType (superseded by manifestation above) and the
     // per-type pdmModelSystemType/organoidModelType aliases.
     'modelType',
+    // Unified across all 9 resource types (nf-osi/nf-research-tools-schema#262)
+    // -- replaces the Clinical Assessment Tool-only availabilityStatus below
+    // ("License Required" folded into "Contact Developer").
+    'availability',
     // Cell Line
     'cellLineCategory',
     'resistance',
@@ -62,8 +66,10 @@ export const toolsSchema: TableToGenericCardMapping = {
     // Patient-Derived Model
     'pdmHostStrain',
     'engraftmentSite',
-    // Organoid Protocol
-    'organoidType',
+    // Organoid Protocol -- organoidType replaced by the shared 'organ'
+    // above (nf-osi/nf-research-tools-schema#262: same concept, phrased
+    // adjectivally -- Cerebral/Intestinal/Cardiac/Retinal/Pancreatic map
+    // 1:1 onto Brain/Intestine/Heart/Eye/Pancreas).
     'organoidDerivationSource',
     'organoidCellTypes',
     'cultureSystem',
@@ -76,7 +82,6 @@ export const toolsSchema: TableToGenericCardMapping = {
     'clinicalAssessmentType',
     'clinicalAssessmentTargetPopulation',
     'clinicalAssessmentDiseaseSpecific',
-    'availabilityStatus',
   ],
   includeShareButton: true,
 }
