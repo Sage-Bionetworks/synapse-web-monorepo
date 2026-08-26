@@ -26,7 +26,6 @@ export const toolsSchema: TableToGenericCardMapping = {
     'latestPublicationDate',
     'species',
     'availability',
-    // Shared across resource types
     'geneticDisorder',
     'manifestation',
     'organ',
