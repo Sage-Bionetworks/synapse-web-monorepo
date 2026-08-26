@@ -32,10 +32,14 @@ export const toolsSchema: TableToGenericCardMapping = {
     'geneticDisorder',
     'manifestation',
     'organ',
-    'tumorType',
+    'tissue',
+    // Unified across CellLine/OrganoidProtocol/PatientDerivedModel
+    // (nf-osi/nf-research-tools-schema#262, disambiguated by resourceType) --
+    // replaces tumorType (superseded by manifestation above) and the
+    // per-type pdmModelSystemType/organoidModelType aliases.
+    'modelType',
     // Cell Line
     'cellLineCategory',
-    'tissue',
     'resistance',
     // Animal Model
     'backgroundStrain',
@@ -52,17 +56,14 @@ export const toolsSchema: TableToGenericCardMapping = {
     'vectorType',
     'selectableMarker',
     // Biobank
-    'specimenTissueType',
     'specimenPreparationMethod',
     'specimenFormat',
     'specimenType',
     // Patient-Derived Model
-    'pdmModelSystemType',
     'pdmHostStrain',
     'engraftmentSite',
     // Organoid Protocol
     'organoidType',
-    'organoidModelType',
     'organoidDerivationSource',
     'organoidCellTypes',
     'cultureSystem',
