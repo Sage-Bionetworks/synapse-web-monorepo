@@ -145,6 +145,39 @@ export function RangeFacetFilterUI(props: RangeFacetFilterProps) {
                   />
                 ))}
 
+              {columnType === 'DOUBLE' &&
+                (columnMin && columnMax ? (
+                  <RangeSlider
+                    key="RangeSlider"
+                    domain={[columnMin, columnMax]}
+                    initialValues={{
+                      min: parseFloat(currentMin ?? columnMin),
+                      max: parseFloat(currentMax ?? columnMax),
+                    }}
+                    // Fractional values are common for DOUBLE columns (e.g. an age in years
+                    // derived from a donor's age in months), so use a fine-grained step
+                    // rather than the integer step used for INTEGER columns.
+                    step={0.01}
+                    onApplyClicked={onRangeValueSelected}
+                  >
+                    {'>'}
+                  </RangeSlider>
+                ) : (
+                  <Range
+                    key="Range"
+                    type="number"
+                    initialValues={
+                      currentMin || currentMax
+                        ? {
+                            min: currentMin ? parseFloat(currentMin) : undefined,
+                            max: currentMax ? parseFloat(currentMax) : undefined,
+                          }
+                        : undefined
+                    }
+                    onApplyClicked={onRangeValueSelected}
+                  />
+                ))}
+
               {columnType === 'DATE' && (
                 <Range
                   key="Range"
@@ -162,21 +195,6 @@ export function RangeFacetFilterUI(props: RangeFacetFilterProps) {
                             (columnMax
                               ? dayjs(parseInt(columnMax)).toString()
                               : undefined),
-                        }
-                      : undefined
-                  }
-                  type={rangeType}
-                  onApplyClicked={onRangeValueSelected}
-                />
-              )}
-              {columnType === 'DOUBLE' && (
-                <Range
-                  key="Range"
-                  initialValues={
-                    currentMin || currentMax
-                      ? {
-                          min: currentMin ? parseFloat(currentMin) : undefined,
-                          max: currentMax ? parseFloat(currentMax) : undefined,
                         }
                       : undefined
                   }
