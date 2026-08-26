@@ -128,6 +128,19 @@ function containsQuotedPhrase(text: string): boolean {
   return /"[^"]+"/u.test(text)
 }
 
+/**
+ * Returns true if the query text contains a Synapse entity ID token
+ * (e.g. `syn12345` or `syn12345.4`). `multi_match` with fuzziness AUTO can match
+ * neighbouring IDs (e.g. `syn12345` → `syn12344`), which is almost never desired
+ * for identifier lookups. Callers use this to route ID-containing queries to
+ * `simple_query_string`, which does not apply fuzziness.
+ */
+function containsSynapseId(text: string): boolean {
+  // `syn` followed by digits (optionally `.version`), on word boundaries so
+  // ordinary words like `synapse` or `synonyms` don't match.
+  return /\bsyn\d+(?:\.\d+)?\b/iu.test(text)
+}
+
 function buildQueryClause(
   queryText: string,
   config: SearchQueryConfig = {},
@@ -135,11 +148,11 @@ function buildQueryClause(
   const { queryStrategy = 'MULTI_MATCH', fieldBoosts, fuzziness } = config
   const fields = resolveFields(fieldBoosts)
 
-  // When the query text contains a double-quoted phrase (e.g. "cancer genomics"),
-  // multi_match cannot honour the phrase operator — only simple_query_string can.
-  // Route directly to simple_query_string so phrase matching works regardless of
-  // the configured strategy.
-  if (containsQuotedPhrase(queryText)) {
+  // Route to simple_query_string when the query needs exact-token treatment:
+  //  - a double-quoted phrase (multi_match can't honour the phrase operator), or
+  //  - a Synapse entity ID (fuzziness would match neighbouring IDs).
+  // simple_query_string doesn't apply fuzziness by default, so both cases work.
+  if (containsQuotedPhrase(queryText) || containsSynapseId(queryText)) {
     return {
       simple_query_string: {
         query: queryText,
