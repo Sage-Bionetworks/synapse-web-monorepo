@@ -72,23 +72,6 @@ export function useGetEntityTitleBarProperties(
   const isTableLike = !!entity && isTable(entity)
   const friendlyName = bundle ? entityTypeToFriendlyName(bundle.entityType) : ''
 
-  // const queryBundleRequest = useMemo(
-  //   () => ({
-  //     entityId,
-  //     query: {
-  //       sql: `SELECT * FROM ${entityId}${versionNumber ? `.${versionNumber}` : ''} LIMIT 0`,
-  //     },
-  //     partMask: BUNDLE_MASK_LAST_UPDATED_ON,
-  //     concreteType:
-  //       'org.sagebionetworks.repo.model.table.QueryBundleRequest' as const,
-  //   }),
-  //   [entityId, versionNumber],
-  // )
-  // const { data: tableQueryResult } = useGetQueryResultBundleWithAsyncStatus(
-  //   queryBundleRequest,
-  //   { enabled: isTableLike },
-  // )
-
   const { data: tableQueryResult } = useGetQueryResultBundleWithAsyncStatus(
     {
       entityId,
