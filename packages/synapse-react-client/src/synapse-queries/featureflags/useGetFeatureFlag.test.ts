@@ -19,11 +19,11 @@ describe('useGetFeatureFlag', () => {
       server.use(
         getFeatureFlagsOverride({
           portalOrigin: PORTAL_ENDPOINT,
-          overrides: { [FeatureFlagEnum.DESCRIPTION_FIELD]: true },
+          overrides: { [FeatureFlagEnum.PORTAL_SEARCH_HEADER]: true },
         }),
       )
       const { result } = renderHook(
-        () => useGetFeatureFlag(FeatureFlagEnum.DESCRIPTION_FIELD),
+        () => useGetFeatureFlag(FeatureFlagEnum.PORTAL_SEARCH_HEADER),
         { wrapper: createWrapper({ isInExperimentalMode: false }) },
       )
       await waitFor(() => {
@@ -35,11 +35,11 @@ describe('useGetFeatureFlag', () => {
       server.use(
         getFeatureFlagsOverride({
           portalOrigin: PORTAL_ENDPOINT,
-          overrides: { [FeatureFlagEnum.DESCRIPTION_FIELD]: true },
+          overrides: { [FeatureFlagEnum.PORTAL_SEARCH_HEADER]: true },
         }),
       )
       const { result } = renderHook(
-        () => useGetFeatureFlag(FeatureFlagEnum.DESCRIPTION_FIELD),
+        () => useGetFeatureFlag(FeatureFlagEnum.PORTAL_SEARCH_HEADER),
         { wrapper: createWrapper({ isInExperimentalMode: true }) },
       )
       await waitFor(() => {
@@ -53,11 +53,11 @@ describe('useGetFeatureFlag', () => {
       server.use(
         getFeatureFlagsOverride({
           portalOrigin: PORTAL_ENDPOINT,
-          overrides: { [FeatureFlagEnum.DESCRIPTION_FIELD]: false },
+          overrides: { [FeatureFlagEnum.PORTAL_SEARCH_HEADER]: false },
         }),
       )
       const { result } = renderHook(
-        () => useGetFeatureFlag(FeatureFlagEnum.DESCRIPTION_FIELD),
+        () => useGetFeatureFlag(FeatureFlagEnum.PORTAL_SEARCH_HEADER),
         { wrapper: createWrapper({ isInExperimentalMode: false }) },
       )
       await waitFor(() => {
@@ -69,11 +69,11 @@ describe('useGetFeatureFlag', () => {
       server.use(
         getFeatureFlagsOverride({
           portalOrigin: PORTAL_ENDPOINT,
-          overrides: { [FeatureFlagEnum.DESCRIPTION_FIELD]: false },
+          overrides: { [FeatureFlagEnum.PORTAL_SEARCH_HEADER]: false },
         }),
       )
       const { result } = renderHook(
-        () => useGetFeatureFlag(FeatureFlagEnum.DESCRIPTION_FIELD),
+        () => useGetFeatureFlag(FeatureFlagEnum.PORTAL_SEARCH_HEADER),
         { wrapper: createWrapper({ isInExperimentalMode: true }) },
       )
       await waitFor(() => {
@@ -84,7 +84,7 @@ describe('useGetFeatureFlag', () => {
 
   describe('when the flag value is null/undefined (not set by the server)', () => {
     function setupHandlerWithoutFlag() {
-      // Return a flags object that omits DESCRIPTION_FIELD entirely
+      // Return a flags object that omits PORTAL_SEARCH_HEADER entirely
       server.use(
         http.get(`${PORTAL_ENDPOINT}/Portal/featureflags`, () => {
           return HttpResponse.json({}, { status: 200 })
@@ -95,7 +95,7 @@ describe('useGetFeatureFlag', () => {
     it('is disabled when not in experimental mode', async () => {
       setupHandlerWithoutFlag()
       const { result } = renderHook(
-        () => useGetFeatureFlag(FeatureFlagEnum.DESCRIPTION_FIELD),
+        () => useGetFeatureFlag(FeatureFlagEnum.PORTAL_SEARCH_HEADER),
         { wrapper: createWrapper({ isInExperimentalMode: false }) },
       )
       await waitFor(() => {
@@ -106,7 +106,7 @@ describe('useGetFeatureFlag', () => {
     it('is enabled when in experimental mode', async () => {
       setupHandlerWithoutFlag()
       const { result } = renderHook(
-        () => useGetFeatureFlag(FeatureFlagEnum.DESCRIPTION_FIELD),
+        () => useGetFeatureFlag(FeatureFlagEnum.PORTAL_SEARCH_HEADER),
         { wrapper: createWrapper({ isInExperimentalMode: true }) },
       )
       await waitFor(() => {

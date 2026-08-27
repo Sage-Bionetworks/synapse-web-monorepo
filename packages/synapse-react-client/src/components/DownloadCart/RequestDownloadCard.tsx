@@ -1,7 +1,6 @@
-import { useGetEntityBundle, useGetFeatureFlag } from '@/synapse-queries'
+import { useGetEntityBundle } from '@/synapse-queries'
 import { DOWNLOAD_PERMISSION_REQUIRED } from '@/utils/SynapseConstants'
 import { Alert, Button, Typography } from '@mui/material'
-import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { useState } from 'react'
 import EntityAclEditorModal from '../EntityAclEditor/EntityAclEditorModal'
 import { ActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
@@ -9,23 +8,16 @@ import { ActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
 export type RequestDownloadCardProps = {
   entityId: string
   count?: number
-  /** Invoked when a user clicks "View Sharing Settings" for a set of files that require the Download permission*/
+  /**
+   * @deprecated No longer used; the card now always opens an in-app sharing settings dialog.
+   * Prop is retained for backward compatibility with existing callers.
+   */
   onViewSharingSettingsClicked?: (benefactorId: string) => void
 }
 
-const DEFAULT_ON_VIEW_SHARING_SETTINGS_CLICKED = (benefactorEntityId =>
-  window.open(
-    `https://www.synapse.org/Synapse:${benefactorEntityId}`,
-    '_blank',
-  )) satisfies RequestDownloadCardProps['onViewSharingSettingsClicked']
-
 export const REQUEST_DOWNLOAD_TITLE = 'Download Permission Required'
 export function RequestDownloadCard(props: RequestDownloadCardProps) {
-  const {
-    entityId,
-    count,
-    onViewSharingSettingsClicked = DEFAULT_ON_VIEW_SHARING_SETTINGS_CLICKED,
-  } = props
+  const { entityId, count } = props
   const {
     data: entityBundle,
     isLoading,
@@ -39,10 +31,6 @@ export function RequestDownloadCard(props: RequestDownloadCardProps) {
   const [showSharingSettings, setShowSharingSettings] = useState(false)
 
   const hasDownloadPermission = Boolean(entityBundle?.permissions.canDownload)
-
-  const useReactACLEditor = useGetFeatureFlag(
-    FeatureFlagEnum.REACT_ENTITY_ACL_EDITOR,
-  )
 
   if (isError) {
     return <Alert severity={'error'}>{error.reason}</Alert>
@@ -72,13 +60,7 @@ export function RequestDownloadCard(props: RequestDownloadCardProps) {
           />
           <Button
             variant="outlined"
-            onClick={() => {
-              if (useReactACLEditor) {
-                setShowSharingSettings(true)
-              } else {
-                onViewSharingSettingsClicked(entityId)
-              }
-            }}
+            onClick={() => setShowSharingSettings(true)}
             disabled={hasDownloadPermission}
           >
             {hasDownloadPermission ? 'Complete' : 'View Sharing Settings'}
