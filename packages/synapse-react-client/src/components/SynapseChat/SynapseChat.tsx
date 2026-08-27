@@ -34,8 +34,7 @@ import { ReactComponent as CurieAvatarHead } from '@/assets/illustrations/curie_
 const CURIE_GREETING = 'Hi! How can I help you today?'
 
 const CURIE_ACCESS_LEVEL_SUFFIX: Record<AgentAccessLevel, string> = {
-  [AgentAccessLevel.PUBLICLY_ACCESSIBLE]:
-    ' and can only read public data in Synapse.',
+  [AgentAccessLevel.PUBLICLY_ACCESSIBLE]: ' and can only read public data.',
   [AgentAccessLevel.READ_YOUR_PRIVATE_DATA]:
     ' and can read your public and private data in Synapse on your behalf.',
   [AgentAccessLevel.WRITE_YOUR_PRIVATE_DATA]:
