@@ -167,10 +167,7 @@ export function Range(props: RangeProps): React.ReactNode {
                 })
               }
               slotProps={{
-                // step: 'any' allows decimal values (e.g. a fractional-year age) without
-                // the browser's native step-mismatch validation UI kicking in, since the
-                // default step for a number input is 1.
-                htmlInput: { 'aria-label': 'min', step: 'any' },
+                htmlInput: { 'aria-label': 'min' },
               }}
             />
           </Box>
@@ -186,7 +183,7 @@ export function Range(props: RangeProps): React.ReactNode {
                 })
               }
               slotProps={{
-                htmlInput: { 'aria-label': 'max', step: 'any' },
+                htmlInput: { 'aria-label': 'max' },
               }}
             />
           </Box>
