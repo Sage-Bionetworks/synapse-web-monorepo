@@ -17,7 +17,6 @@ import useGetEntityMetadata from '@/utils/hooks/useGetEntityMetadata'
 import { entityTypeToFriendlyName } from '@/utils/functions/EntityTypeUtils'
 import { ENTITY_SIDEBAR_STATE_LOCALSTORAGE_KEY } from '@/utils/SynapseConstants'
 import AccessAndPermissions from './AccessAndPermissions'
-import CreatedByModifiedBy from '../entity/page/CreatedByModifiedBy'
 
 type EntitySidebarProps = {
   entityId: string
@@ -83,7 +82,6 @@ export default function EntitySidebar(props: EntitySidebarProps) {
           versionNumber={versionNumber}
         />
       </div>
-      <CreatedByModifiedBy entityId={entityId} versionNumber={versionNumber} />
     </Stack>
   )
 

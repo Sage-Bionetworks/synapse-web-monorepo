@@ -16,7 +16,6 @@ import {
   Box,
   Breadcrumbs,
   Skeleton,
-  SxProps,
   Tooltip,
   Typography,
   useMediaQuery,
@@ -24,6 +23,13 @@ import {
 } from '@mui/material'
 import dayjs from 'dayjs'
 import { UserBadge } from '../../UserCard/UserBadge'
+import {
+  DATASET_CREATED_BY_TOOLTIP,
+  INFO_ICON_SX,
+  getTableLastRebuiltTooltip,
+  getTableModifiedOnAccessibleLabel,
+  getTableModifiedOnTooltip,
+} from './createdByModifiedByTooltips'
 
 export type CreatedByModifiedByProps = {
   entityId: string
@@ -68,46 +74,9 @@ export function CreatedByModifiedBy(props: CreatedByModifiedByProps) {
     ? entityTypeToFriendlyName(convertToEntityType(entity.concreteType))
     : ''
 
-  const datasetCreatedByTooltipText =
-    'This is the user who created this Dataset. ' +
-    'This may not be the same person who generated the files in this Dataset, or who originally uploaded these files to Synapse.'
-
-  const tableModifiedOnTooltipText = (
-    <>
-      <p>
-        This is when the configuration of this {friendlyName} was last changed.
-      </p>
-      <p>Configuration changes may be triggered by (for example):</p>
-      <ul>
-        <li>Editing the name of the {friendlyName}</li>
-        <li>Updating the schema used by the {friendlyName}</li>
-      </ul>
-      <p>
-        This does NOT reflect changes to the data displayed in the the{' '}
-        {friendlyName}.
-      </p>
-    </>
-  )
-  /*
-   If the tooltip text is a string, MUI automatically applies it to aria-label which is more accessible and testable.
-    Since this tooltip text is a ReactNode, let's manually create a short string to use for the aria-label.
-   */
-  const tableModifiedOnAccessibleLabel = `This is when the configuration of this ${friendlyName} was last changed.`
-
-  const tableLastUpdatedTooltipText =
-    `When data changes, the ${friendlyName} is rebuilt to reflect those changes. ` +
-    `This is the last time changes were made to the data.`
-
   const createdByTooltipId = `${entityIdWithVersion}-createdByTooltip`
   const modifiedByTooltipId = `${entityIdWithVersion}-modifiedByTooltip`
   const lastUpdatedTooltipId = `${entityIdWithVersion}-lastUpdatedTooltip`
-
-  const iconSx: SxProps = {
-    width: '16px',
-    height: '16px',
-    ml: '4px',
-    verticalAlign: 'text-bottom',
-  }
 
   return (
     <Box
@@ -141,9 +110,9 @@ export function CreatedByModifiedBy(props: CreatedByModifiedByProps) {
             {entity && isDataset(entity) && (
               <Tooltip
                 id={createdByTooltipId}
-                title={datasetCreatedByTooltipText}
+                title={DATASET_CREATED_BY_TOOLTIP}
               >
-                <InfoTwoTone sx={iconSx} />
+                <InfoTwoTone sx={INFO_ICON_SX} />
               </Tooltip>
             )}
           </Typography>
@@ -160,10 +129,10 @@ export function CreatedByModifiedBy(props: CreatedByModifiedByProps) {
             {entity && isTable(entity) && (
               <Tooltip
                 id={modifiedByTooltipId}
-                title={tableModifiedOnTooltipText}
-                aria-label={tableModifiedOnAccessibleLabel}
+                title={getTableModifiedOnTooltip(friendlyName)}
+                aria-label={getTableModifiedOnAccessibleLabel(friendlyName)}
               >
-                <InfoTwoTone sx={iconSx} />
+                <InfoTwoTone sx={INFO_ICON_SX} />
               </Tooltip>
             )}
           </Typography>
@@ -176,10 +145,10 @@ export function CreatedByModifiedBy(props: CreatedByModifiedByProps) {
           >
             {friendlyName} last rebuilt on {formatDate(dayjs(tableLastRebuilt))}
             <Tooltip
-              title={tableLastUpdatedTooltipText}
+              title={getTableLastRebuiltTooltip(friendlyName)}
               id={lastUpdatedTooltipId}
             >
-              <InfoTwoTone sx={iconSx} />
+              <InfoTwoTone sx={INFO_ICON_SX} />
             </Tooltip>
           </Typography>
         )}
