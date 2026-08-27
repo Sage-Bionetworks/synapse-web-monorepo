@@ -33,6 +33,14 @@ import { ReactComponent as CurieAvatarHead } from '@/assets/illustrations/curie_
 
 const CURIE_GREETING = 'Hi! How can I help you today?'
 
+const CURIE_ACCESS_LEVEL_SUFFIX: Record<AgentAccessLevel, string> = {
+  [AgentAccessLevel.PUBLICLY_ACCESSIBLE]: ' and can only read public data.',
+  [AgentAccessLevel.READ_YOUR_PRIVATE_DATA]:
+    ' and can read your public and private data in Synapse on your behalf.',
+  [AgentAccessLevel.WRITE_YOUR_PRIVATE_DATA]:
+    ' and can read and write your public and private data in Synapse on your behalf.',
+}
+
 const DEFAULT_AVATAR = (
   <Box
     sx={{
@@ -120,6 +128,8 @@ export function SynapseChat({
   const { accessToken } = useSynapseContext()
   const { userId } = useApplicationSessionContext()
 
+  const baseDisclaimerText = chatbotName + ' can make mistakes'
+
   const resolvedAgentAvatar =
     agentAvatar ?? (variant === 'curie' ? CURIE_AVATAR : DEFAULT_AVATAR)
 
@@ -154,6 +164,10 @@ export function SynapseChat({
   const { interactions, isAwaitingResponse, sendChat } = chatState
 
   const showGreeting = variant === 'curie' && interactions.length === 0
+
+  const curieAccessLevelSuffix =
+    variant === 'curie' ? CURIE_ACCESS_LEVEL_SUFFIX[agentAccessLevel] : ''
+  const disclaimerText = baseDisclaimerText + curieAccessLevelSuffix
 
   // Only interactions added after this component instance mounted should play the entry
   // animation. Callers may lift state so history survives a `Dialog` closing, but the
@@ -412,14 +426,9 @@ export function SynapseChat({
           />
         </Box>
       </Box>
-      {variant !== 'curie' && (
-        <Typography
-          variant="smallText1"
-          sx={{ pt: '8px', textAlign: 'center' }}
-        >
-          {chatbotName} can make mistakes.
-        </Typography>
-      )}
+      <Typography variant="smallText1" sx={{ pt: '8px', textAlign: 'center' }}>
+        {disclaimerText}
+      </Typography>
     </Box>
   )
 }
