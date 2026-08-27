@@ -290,7 +290,7 @@ export function useGetEntityTitleBarProperties(
     },
     tableLastRebuilt && {
       key: 'lastRebuilt',
-      title: 'Last Rebuilt',
+      title: 'Last Rebuilt On',
       value: (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {formatDate(dayjs(tableLastRebuilt))}
