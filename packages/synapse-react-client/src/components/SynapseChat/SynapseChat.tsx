@@ -33,6 +33,12 @@ import { ReactComponent as CurieAvatarHead } from '@/assets/illustrations/curie_
 
 const CURIE_GREETING = 'Hi! How can I help you today?'
 
+const CURIE_ACCESS_LEVEL_SUFFIX: Record<AgentAccessLevel, string> = {
+  [AgentAccessLevel.PUBLICLY_ACCESSIBLE]: ' and only reads public data.',
+  [AgentAccessLevel.READ_YOUR_PRIVATE_DATA]: '',
+  [AgentAccessLevel.WRITE_YOUR_PRIVATE_DATA]: '',
+}
+
 const DEFAULT_AVATAR = (
   <Box
     sx={{
@@ -157,9 +163,9 @@ export function SynapseChat({
 
   const showGreeting = variant === 'curie' && interactions.length === 0
 
-  const curiePublicAccessLevelMessage =
-    agentAccessLevel === AgentAccessLevel.PUBLICLY_ACCESSIBLE &&
-    ' and only reads public data.'
+  const curieAccessLevelSuffix =
+    variant === 'curie' ? CURIE_ACCESS_LEVEL_SUFFIX[agentAccessLevel] : ''
+  const disclaimerText = baseDisclaimerText + curieAccessLevelSuffix
 
   // Only interactions added after this component instance mounted should play the entry
   // animation. Callers may lift state so history survives a `Dialog` closing, but the
@@ -419,9 +425,7 @@ export function SynapseChat({
         </Box>
       </Box>
       <Typography variant="smallText1" sx={{ pt: '8px', textAlign: 'center' }}>
-        {variant === 'curie'
-          ? baseDisclaimerText + curiePublicAccessLevelMessage
-          : baseDisclaimerText}
+        {disclaimerText}
       </Typography>
     </Box>
   )
