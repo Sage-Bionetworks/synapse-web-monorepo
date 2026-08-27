@@ -120,6 +120,8 @@ export function SynapseChat({
   const { accessToken } = useSynapseContext()
   const { userId } = useApplicationSessionContext()
 
+  const baseDisclaimerText = chatbotName + ' can make mistakes'
+
   const resolvedAgentAvatar =
     agentAvatar ?? (variant === 'curie' ? CURIE_AVATAR : DEFAULT_AVATAR)
 
@@ -154,6 +156,10 @@ export function SynapseChat({
   const { interactions, isAwaitingResponse, sendChat } = chatState
 
   const showGreeting = variant === 'curie' && interactions.length === 0
+
+  const curiePublicAccessLevelMessage =
+    agentAccessLevel === AgentAccessLevel.PUBLICLY_ACCESSIBLE &&
+    ' and only reads public data.'
 
   // Only interactions added after this component instance mounted should play the entry
   // animation. Callers may lift state so history survives a `Dialog` closing, but the
@@ -412,14 +418,11 @@ export function SynapseChat({
           />
         </Box>
       </Box>
-      {variant !== 'curie' && (
-        <Typography
-          variant="smallText1"
-          sx={{ pt: '8px', textAlign: 'center' }}
-        >
-          {chatbotName} can make mistakes.
-        </Typography>
-      )}
+      <Typography variant="smallText1" sx={{ pt: '8px', textAlign: 'center' }}>
+        {variant === 'curie'
+          ? baseDisclaimerText + curiePublicAccessLevelMessage
+          : baseDisclaimerText}
+      </Typography>
     </Box>
   )
 }
