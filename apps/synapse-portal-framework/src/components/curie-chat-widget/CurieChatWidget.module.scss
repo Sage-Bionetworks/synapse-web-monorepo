@@ -1,0 +1,17 @@
+.widget {
+  z-index: 1050;
+  position: fixed;
+  right: 0;
+  bottom: var(--curie-widget-bottom, 8px);
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  line-height: 0;
+  cursor: pointer;
+}
+
+.curieLogo {
+  width: 70px;
+  height: 70px;
+}

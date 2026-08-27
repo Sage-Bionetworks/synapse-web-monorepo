@@ -1,3 +1,7 @@
+:root {
+  --curie-widget-bottom: 80px; /* leave room for the Atlassian JSD help launcher */
+}
+
 #header,
 #footer {
   background-blend-mode: multiply;

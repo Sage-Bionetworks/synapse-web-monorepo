@@ -1,7 +1,13 @@
 import { createContext, useContext } from 'react'
 
+export type ChatDialogVariant = 'default' | 'curie'
+
+export type OpenChatOptions = {
+  variant?: ChatDialogVariant
+}
+
 export type ChatDialogContextType = {
-  openChat: (initialMessage: string) => void
+  openChat: (initialMessage: string, options?: OpenChatOptions) => void
   isChatAvailable: boolean
 }
 
