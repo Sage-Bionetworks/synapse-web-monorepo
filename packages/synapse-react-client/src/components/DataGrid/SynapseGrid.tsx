@@ -62,6 +62,9 @@ export type SynapseGridHandle = {
   loadExistingSession: (sessionId: string) => void
 }
 
+// Stable reference so a missing modelSnapshot doesn't create a new array every render.
+const EMPTY_COLUMN_NAMES: string[] = []
+
 function SynapseGridInner({
   agentRegistrationId,
   showDebugInfo = false,
@@ -526,6 +529,9 @@ function SynapseGridInner({
                         sourceEntityId={session.sourceEntityId}
                         gridSessionId={session.sessionId!}
                         schemaPropertiesInfo={schemaPropertiesInfo}
+                        existingColumnNames={
+                          modelSnapshot?.columnNames ?? EMPTY_COLUMN_NAMES
+                        }
                       />
                     )}
                     {session.sessionId && (

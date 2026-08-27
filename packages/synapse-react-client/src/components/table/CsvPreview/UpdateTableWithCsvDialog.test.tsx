@@ -2,6 +2,7 @@ import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
 import { getTableTransactionHandlers } from '@/mocks/msw/handlers/tableQueryHandlers'
 import { server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
+import { useGetEntityBundle } from '@/synapse-queries/entity/useEntityBundle'
 import { useGetCsvPreview } from '@/synapse-queries/table/useGetCsvPreview'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { BasicFileHandleUpload } from '@/components/file/upload/BasicFileHandleUpload'
@@ -16,6 +17,9 @@ vi.mock('@/components/file/upload/BasicFileHandleUpload', () => ({
 }))
 vi.mock('@/synapse-queries/table/useGetCsvPreview', () => ({
   useGetCsvPreview: vi.fn(),
+}))
+vi.mock('@/synapse-queries/entity/useEntityBundle', () => ({
+  useGetEntityBundle: vi.fn(),
 }))
 
 const MOCK_FILE_HANDLE_ID = 'mock-file-handle-id'
@@ -37,6 +41,8 @@ vi.mocked(useGetCsvPreview).mockReturnValue({
   isLoading: false,
   error: null,
 } as any)
+
+vi.mocked(useGetEntityBundle).mockReturnValue({ data: undefined } as any)
 
 vi.spyOn(SynapseClient, 'createColumnModels')
 vi.spyOn(SynapseClient, 'createEntity')
@@ -96,5 +102,33 @@ describe('UpdateTableWithCsvDialog', () => {
       expect(createEntitySpy).not.toHaveBeenCalled()
       expect(onSuccess).toHaveBeenCalled()
     })
+  })
+
+  it('shows the existing table column type in the preview instead of a CSV-inferred type (e.g. entityId misclassified as ENTITYID)', async () => {
+    vi.mocked(useGetCsvPreview).mockReturnValue({
+      data: {
+        suggestedColumns: [{ name: 'entityId', columnType: 'ENTITYID' }],
+      },
+      isLoading: false,
+      error: null,
+    } as any)
+    vi.mocked(useGetEntityBundle).mockReturnValue({
+      data: {
+        tableBundle: {
+          columnModels: [{ name: 'entityId', columnType: 'STRING' }],
+        },
+      },
+    } as any)
+
+    const { user } = renderComponent({
+      open: true,
+      onClose: vi.fn(),
+      tableId: 'syn123',
+    })
+
+    await simulateFileUpload(user)
+
+    expect(screen.getByText(/\(STRING\)/)).toBeVisible()
+    expect(screen.queryByText(/\(ENTITYID\)/)).not.toBeInTheDocument()
   })
 })

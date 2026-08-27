@@ -11,12 +11,18 @@ export type UploadCsvToGridButtonProps = {
   sourceEntityId: string
   gridSessionId: string
   schemaPropertiesInfo: SchemaPropertiesMap
+  existingColumnNames: readonly string[]
 }
 
 export default function UploadCsvToGridButton(
   props: UploadCsvToGridButtonProps,
 ) {
-  const { sourceEntityId, gridSessionId, schemaPropertiesInfo } = props
+  const {
+    sourceEntityId,
+    gridSessionId,
+    schemaPropertiesInfo,
+    existingColumnNames,
+  } = props
 
   const [showDialog, setShowDialog] = useState(false)
 
@@ -42,6 +48,7 @@ export default function UploadCsvToGridButton(
           onClose={() => setShowDialog(false)}
           onComplete={() => setShowDialog(false)}
           schemaPropertiesInfo={schemaPropertiesInfo}
+          existingColumnNames={existingColumnNames}
         />
       )}
       <GridMenuButton
