@@ -29,10 +29,10 @@ function ExperimentalMode({ onExperimentalModeToggle }: ExperimentalModeProps) {
     experimentalModeCookie,
     setExperimentalModeCookie,
     removeExperimentalModeCookie,
-  ] = useCookieValue(
-    EXPERIMENTAL_MODE_COOKIE,
-    getExperimentalModeCookieOptions(),
-  )
+  ] = useCookieValue(EXPERIMENTAL_MODE_COOKIE, {
+    ...getExperimentalModeCookieOptions(),
+    initializeWithValue: false,
+  })
 
   const createExperimentalModeCookie = () => {
     setExperimentalModeCookie('true')

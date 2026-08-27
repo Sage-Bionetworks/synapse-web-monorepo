@@ -142,6 +142,22 @@ export const studyCardConfiguration: CardConfiguration = {
   columnIconOptions: studyColumnIconConfigs,
 }
 
+export const toolStudyCardConfiguration: CardConfiguration = {
+  type,
+  genericCardSchema: {
+    title: 'studyName',
+    type: SynapseConstants.STUDY,
+    secondaryLabels: ['studyId'],
+  },
+  titleLinkConfig: {
+    isMarkdown: false,
+    baseURL: 'Explore/Studies',
+    URLColumnName: 'studyId',
+    urlParamStyle: 'path-segment',
+    matchColumnName: 'studyId',
+  },
+}
+
 const studies: QueryWrapperPlotNavProps = {
   rgbIndex,
   sql: studiesSql,

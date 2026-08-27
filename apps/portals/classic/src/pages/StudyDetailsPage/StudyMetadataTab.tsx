@@ -12,23 +12,14 @@ import { SkeletonTable } from 'synapse-react-client/components/Skeleton/Skeleton
 import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 
 const HEADER_CARD_COLUMNS = new Set([
-  'study',
-  'studyName',
-  'studyFocus',
-  'studyDescription',
-  'metadataStatus',
-  'measuredConstruct',
-  'measureType',
-  'constructDomain',
+  'ackContent',
+  'Methods',
+  'RelatedStudies',
+  'AccessRequirements',
   'instrumentName',
-  'diseaseFocus',
-  'primaryHealthFocus',
-  'grantNumber',
-  'studyID',
+  'variableName',
   'studyMetadata',
   'Acknowledgement',
-  'Instruments',
-  'Variables',
   'metadataType',
 ])
 
