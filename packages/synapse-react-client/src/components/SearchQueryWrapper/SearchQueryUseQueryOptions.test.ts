@@ -19,6 +19,7 @@ import {
   toSearchIndexQuery,
   type SearchQueryConfig,
 } from './SearchQueryUseQueryOptions'
+import { VALUE_NOT_SET } from '@/utils/SynapseConstants'
 
 const SEARCH_INDEX_ID = 'syn60001'
 
@@ -322,6 +323,91 @@ describe('toSearchIndexQuery', () => {
       }
     )?.range?.event_date
     expect(rangeClause).not.toHaveProperty('gte')
+  })
+
+  it('translates a range facet "Not Assigned" selection into a must_not exists post_filter', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleRequest({
+        selectedFacets: [
+          {
+            concreteType: FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
+            columnName: 'age',
+            min: VALUE_NOT_SET,
+            max: VALUE_NOT_SET,
+          },
+        ],
+      }),
+      SEARCH_INDEX_ID,
+      [{ id: 'c1', name: 'age', columnType: 'INTEGER', facetType: 'range' }],
+    )
+    // Must be a "field missing" clause, NOT a range clause containing the sentinel string.
+    expect(result.searchQuery?.post_filter).toEqual({
+      bool: { must_not: [{ exists: { field: 'age' } }] },
+    })
+    expect(result.searchQuery?.post_filter).not.toHaveProperty('range')
+  })
+
+  it('translates "Not Assigned" for DATE range facets without applying date conversion', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleRequest({
+        selectedFacets: [
+          {
+            concreteType: FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
+            columnName: 'event_date',
+            min: VALUE_NOT_SET,
+            max: VALUE_NOT_SET,
+          },
+        ],
+      }),
+      SEARCH_INDEX_ID,
+      [
+        {
+          id: 'c1',
+          name: 'event_date',
+          columnType: 'DATE',
+          facetType: 'range',
+        },
+      ],
+    )
+    expect(result.searchQuery?.post_filter).toEqual({
+      bool: { must_not: [{ exists: { field: 'event_date' } }] },
+    })
+  })
+
+  it('excludes a "Not Assigned" range clause from its own column\'s aggregation filter', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleRequest({
+        selectedFacets: [
+          {
+            concreteType: FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
+            columnName: 'age',
+            min: VALUE_NOT_SET,
+            max: VALUE_NOT_SET,
+          },
+          {
+            concreteType: FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+            columnName: 'organ',
+            facetValues: ['Brain'],
+          },
+        ],
+      }),
+      SEARCH_INDEX_ID,
+      [
+        {
+          id: 'c1',
+          name: 'organ',
+          columnType: 'STRING',
+          facetType: 'enumeration',
+        },
+        { id: 'c2', name: 'age', columnType: 'INTEGER', facetType: 'range' },
+      ],
+    )
+    // organ aggregation should be filtered by the age "Not Assigned" clause (drops its own)
+    expect(
+      (result.searchQuery?.aggregations as Record<string, unknown>)?.['organ'],
+    ).toMatchObject({
+      filter: { bool: { must_not: [{ exists: { field: 'age' } }] } },
+    })
   })
 
   it('combines multiple selectedFacets into a bool.must post_filter', () => {

@@ -60,8 +60,15 @@ export function RangeFacetFilterUI(props: RangeFacetFilterProps) {
 
   const hasAnyValue = !selectedMin && !selectedMax
 
-  const currentMin = selectedMin || columnMin
-  const currentMax = selectedMax || columnMax
+  // Treat the "Not Assigned" sentinel as absent when computing initial Range values,
+  // so switching from "Not Assigned" → "Range" doesn't seed inputs with NaN.
+  const effectiveSelectedMin =
+    selectedMin === VALUE_NOT_SET ? undefined : selectedMin
+  const effectiveSelectedMax =
+    selectedMax === VALUE_NOT_SET ? undefined : selectedMax
+
+  const currentMin = effectiveSelectedMin || columnMin
+  const currentMax = effectiveSelectedMax || columnMax
 
   const rangeType = columnType === 'DOUBLE' ? 'number' : 'date'
 
@@ -83,7 +90,7 @@ export function RangeFacetFilterUI(props: RangeFacetFilterProps) {
   }
 
   const [radioValue, setRadioValue] = useState(
-    getRadioValue(currentMin ?? '', hasAnyValue),
+    getRadioValue(selectedMin ?? '', hasAnyValue),
   )
 
   return (
@@ -149,16 +156,19 @@ export function RangeFacetFilterUI(props: RangeFacetFilterProps) {
                 <Range
                   key="Range"
                   initialValues={
-                    selectedMin || selectedMax || columnMin || columnMax
+                    effectiveSelectedMin ||
+                    effectiveSelectedMax ||
+                    columnMin ||
+                    columnMax
                       ? {
                           // From the backend, selectedMin is a formatted date (like "2021-06-15"), but columnMin is a unix timestamp in millis (like "1624651794856")
                           min:
-                            selectedMin ??
+                            effectiveSelectedMin ??
                             (columnMin
                               ? dayjs(parseInt(columnMin)).toString()
                               : undefined),
                           max:
-                            selectedMax ??
+                            effectiveSelectedMax ??
                             (columnMax
                               ? dayjs(parseInt(columnMax)).toString()
                               : undefined),

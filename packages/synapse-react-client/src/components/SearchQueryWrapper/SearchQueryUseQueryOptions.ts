@@ -38,6 +38,7 @@ import dayjs from 'dayjs'
 import { useCallback, useMemo } from 'react'
 import { KeyFactory } from '@/synapse-queries/KeyFactory'
 import { SYNAPSE_ENTITY_ID_TOKEN_REGEX } from '@/utils/functions/RegularExpressions'
+import { VALUE_NOT_SET } from '@/utils/SynapseConstants'
 
 // ─── Local OpenSearch DSL types ─────────────────────────────────────────────
 // Narrow typings for the OpenSearch structures we build (query DSL, sort) and
@@ -76,6 +77,8 @@ export type SearchQueryConfig = {
 type FilterClause =
   | { terms: Record<string, string[]> }
   | { range: Record<string, { gte?: string; lte?: string }> }
+  // "Field is not set" — emitted when a range facet selects "Not Assigned".
+  | { bool: { must_not: [{ exists: { field: string } }] } }
 
 type MultiMatchClause = {
   multi_match: {
@@ -324,6 +327,16 @@ export function toSearchIndexQuery(
         f.concreteType === FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
     )
     .forEach(f => {
+      // "Not Assigned" selection: the RangeFacetFilter UI sets both bounds to
+      // VALUE_NOT_SET. Translate to an OpenSearch "field missing" clause rather
+      // than emitting the sentinel string as a range bound (which would fail
+      // with NumberFormatException on numeric/date fields).
+      if (f.min === VALUE_NOT_SET && f.max === VALUE_NOT_SET) {
+        filterClauses.push({
+          bool: { must_not: [{ exists: { field: f.columnName } }] },
+        })
+        return
+      }
       const columnType = columnModels?.find(
         cm => cm.name === f.columnName,
       )?.columnType
@@ -401,6 +414,9 @@ export function toSearchIndexQuery(
       const otherClauses = filterClauses.filter(clause => {
         if ('terms' in clause) return !(cm.name in clause.terms)
         if ('range' in clause) return !(cm.name in clause.range)
+        // "Not Assigned" range clause: identify by the field inside must_not.exists.
+        if ('bool' in clause)
+          return clause.bool.must_not[0]?.exists?.field !== cm.name
         return true
       })
       const aggFilter: SelectionFilter =
