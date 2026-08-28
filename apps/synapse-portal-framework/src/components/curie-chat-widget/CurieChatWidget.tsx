@@ -4,24 +4,15 @@ import { useSynapseContext } from 'synapse-react-client'
 import { useChatDialogContext } from '../ChatDialogContext'
 import { useOneSageURL } from 'synapse-react-client/utils/hooks/useOneSageURL'
 import { storeRedirectURLForOneSageLoginAndGotoURL } from 'synapse-react-client/utils/AppUtils/index'
-import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
-import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
+import { useIsCurieLauncherAvailable } from './useIsCurieLauncherAvailable'
 
 function CurieChatDialogLauncher() {
   const { isAuthenticated } = useSynapseContext()
   const chatDialogContext = useChatDialogContext()
   const oneSageUrl = useOneSageURL()
-  const isPortalChatEnabled = useGetFeatureFlag(FeatureFlagEnum.PORTAL_CHAT)
-  const isCurieLauncherEnabled = useGetFeatureFlag(
-    FeatureFlagEnum.CURIE_CHAT_WIDGET,
-  )
+  const canShowCurie = useIsCurieLauncherAvailable()
 
-  const canShowCurie =
-    isPortalChatEnabled &&
-    isCurieLauncherEnabled &&
-    !!chatDialogContext?.isChatAvailable
-
-  if (!canShowCurie) {
+  if (!canShowCurie || !chatDialogContext) {
     return null
   }
 
