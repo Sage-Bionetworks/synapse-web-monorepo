@@ -33,7 +33,7 @@ jobs:
           aws-region: us-east-1
           role-to-assume: arn:aws:iam::797640923903:role/sagebase-github-oidc-sage-bionetworks-web-monorepo-infra
           role-session-name: GitHubActions-${{ github.repository_owner }}-${{ github.event.repository.name }}-${{ github.run_id }}
-          role-duration-seconds: 1200
+          role-duration-seconds: 3600
       - name: build
         run: pnpm nx run ${{ inputs.portal-name }}:build
       - name: Get package path
