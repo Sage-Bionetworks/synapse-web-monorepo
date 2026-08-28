@@ -17,7 +17,10 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import { ManagedACTAccessRequirement } from '@sage-bionetworks/synapse-types'
+import {
+  FileHandleAssociateType,
+  ManagedACTAccessRequirement,
+} from '@sage-bionetworks/synapse-types'
 import { ReactNode } from 'react'
 import { useFetchBlobUrl } from '@/utils/hooks/useFetchBlobUrl'
 import IconSvg from '../../../IconSvg/IconSvg'
@@ -70,9 +73,13 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
 
   const previewFileHandleId = previewFileHandle?.fileHandleId
   const { blobUrl, error: blobError } = useFetchBlobUrl(
-    previewSrcOverride || !previewFileHandleId
+    previewSrcOverride || !previewFileHandleId || !dataAccessRequest?.id
       ? undefined
-      : SynapseClient.getPortalFileHandleServletUrl(previewFileHandleId),
+      : SynapseClient.getPortalFileHandleServletUrl(
+          previewFileHandleId,
+          dataAccessRequest.id,
+          FileHandleAssociateType.DataAccessRequestAttachment,
+        ),
   )
 
   const {
