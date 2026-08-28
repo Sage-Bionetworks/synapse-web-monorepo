@@ -24,4 +24,7 @@ export enum FeatureFlagEnum {
 
   // If enabled, show the Models section in the ELITE portal (nav item, Explore tab, and Search tab)
   ELITE_PORTAL_MODELS = 'ELITE_PORTAL_MODELS',
+
+  // Reserved for unit tests. Not configured in Stack Builder; do not use in production code.
+  TEST_ONLY = 'TEST_ONLY',
 }

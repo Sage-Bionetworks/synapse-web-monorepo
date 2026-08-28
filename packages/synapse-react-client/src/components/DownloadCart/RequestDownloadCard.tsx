@@ -8,11 +8,6 @@ import { ActionRequiredCard } from './ActionRequiredCard/ActionRequiredCard'
 export type RequestDownloadCardProps = {
   entityId: string
   count?: number
-  /**
-   * @deprecated No longer used; the card now always opens an in-app sharing settings dialog.
-   * Prop is retained for backward compatibility with existing callers.
-   */
-  onViewSharingSettingsClicked?: (benefactorId: string) => void
 }
 
 export const REQUEST_DOWNLOAD_TITLE = 'Download Permission Required'

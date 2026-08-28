@@ -78,7 +78,6 @@ type QueryWrapperPlotNavOwnProps = {
   defaultColumn?: string
   defaultShowSearchBox?: boolean
   lockedColumn?: QueryWrapperProps['lockedColumn']
-  onViewSharingSettingsClicked?: (benefactorId: string) => void
   initialLimit?: number
   hideTopLevelControls?: boolean
 } & Omit<TopLevelControlsProps, 'entityId'> &
