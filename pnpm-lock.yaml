@@ -2011,8 +2011,8 @@ importers:
         specifier: workspace:*
         version: link:../markdown-it-container
       '@sage-bionetworks/react-datasheet-grid':
-        specifier: 4.11.5-sage.8
-        version: 4.11.5-sage.8(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: workspace:*
+        version: link:../react-datasheet-grid
       '@sage-bionetworks/synapse-client':
         specifier: workspace:*
         version: link:../synapse-client
@@ -5027,11 +5027,6 @@ packages:
 
   '@rushstack/ts-command-line@5.3.9':
     resolution: {integrity: sha512-GIHqU+sRGQ3LGWAZu1O+9Yh++qwtyNIIGuNbcWHJjBTm2qRez0cwINUHZ+pQLR8UuzZDcMajrDaNbUYoaL/XtQ==}
-
-  '@sage-bionetworks/react-datasheet-grid@4.11.5-sage.8':
-    resolution: {integrity: sha512-3tTYFfyEGX93MRCcaJ3noUyvL1QqS4bvoWKPPQXJEG+KojjaU8nRfHByitjC3i14EYmbwlHQGR/Y/zZDucK20g==}
-    peerDependencies:
-      react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   '@sinclair/typebox@0.27.10':
     resolution: {integrity: sha512-MTBk/3jGLNB2tVxv6uLlFh1iu64iYOQ2PbdOSK3NW8JZsmlaOh2q6sdtKowBhfw8QFLmYNzTW4/oK4uATIi6ZA==}
@@ -13572,17 +13567,6 @@ snapshots:
       string-argv: 0.3.2
     transitivePeerDependencies:
       - '@types/node'
-
-  '@sage-bionetworks/react-datasheet-grid@4.11.5-sage.8(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
-    dependencies:
-      '@tanstack/react-virtual': 3.14.10(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      classnames: 2.5.1
-      fast-deep-equal: 3.1.3
-      react: 19.2.7
-      react-resize-detector: 10.0.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      throttle-debounce: 3.0.1
-    transitivePeerDependencies:
-      - react-dom
 
   '@sinclair/typebox@0.27.10': {}
 
