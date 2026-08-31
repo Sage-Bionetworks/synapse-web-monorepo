@@ -11,6 +11,8 @@ import { NavbarConfig } from './navbar/Navbar'
 
 export type AridhiaConfig = {
   apiBasePath?: string
+  /** `idp-id` registered with the target C-Path hub: `sage-prod` (prod) or `sage-dev` (C-Path dev hub). */
+  subjectTokenIssuer?: string
 }
 
 export type PortalContextType = {

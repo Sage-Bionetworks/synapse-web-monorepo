@@ -2,15 +2,14 @@
  * Example usage of the Aridhia Client
  *
  * This file demonstrates how to use the generated Aridhia API client
- * to interact with the FAIR and Workspaces APIs.
+ * to interact with the FAIR API.
  */
 
 import { Configuration } from './generated/runtime.js'
 import { AuthenticationApi } from './generated/apis/AuthenticationApi.js'
-import { WorkflowsApi } from './generated/apis/WorkflowsApi.js'
 import { DatasetsApi } from './generated/apis/DatasetsApi.js'
 import { RequestsApi } from './generated/apis/RequestsApi.js'
-import { WorkspaceApi } from './generated/apis/WorkspaceApi.js'
+import { WorkspacesApi } from './generated/apis/WorkspacesApi.js'
 
 // Example 1: Exchange third party token for Aridhia access token
 async function authenticateExample() {
@@ -36,33 +35,16 @@ async function authenticateExample() {
   return authResponse.access_token
 }
 
-// Example 2: List Workflows
-async function listWorkflowsExample(token: string) {
-  const workflowsApi = new WorkflowsApi(
-    new Configuration({
-      basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
-      accessToken: token,
-    }),
-  )
-
-  const workflows = await workflowsApi.fairWorkflowsGet({
-    enabled: true,
-  })
-
-  console.log('Workflows:', workflows.items)
-  return workflows
-}
-
-// Example 3: Get a specific workflow
+// Example 2: Get a specific workflow
 async function getWorkflowExample(token: string, workflowCode: string) {
-  const workflowsApi = new WorkflowsApi(
+  const requestsApi = new RequestsApi(
     new Configuration({
-      basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
+      basePath: 'https://gateway.westeurope.dap.c-path.org',
       accessToken: token,
     }),
   )
 
-  const workflow = await workflowsApi.fairWorkflowsCodeGet({
+  const workflow = await requestsApi.fairWorkflowsCodeGet({
     code: workflowCode,
   })
 
@@ -70,30 +52,11 @@ async function getWorkflowExample(token: string, workflowCode: string) {
   return workflow
 }
 
-// Example 4: List Datasets (with filtering)
-async function listDatasetsExample(token: string) {
-  const datasetsApi = new DatasetsApi(
-    new Configuration({
-      basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
-      accessToken: token,
-    }),
-  )
-
-  const datasets = await datasetsApi.fairDatasetsGet({
-    page: 1,
-    pageSize: 20,
-    requestable: true,
-  })
-
-  console.log('Datasets:', datasets.items)
-  return datasets
-}
-
-// Example 5: Get a specific dataset
+// Example 3: Get a specific dataset
 async function getDatasetExample(token: string, datasetCode: string) {
   const datasetsApi = new DatasetsApi(
     new Configuration({
-      basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
+      basePath: 'https://gateway.westeurope.dap.c-path.org',
       accessToken: token,
     }),
   )
@@ -106,11 +69,11 @@ async function getDatasetExample(token: string, datasetCode: string) {
   return dataset
 }
 
-// Example 6: Get dataset settings
+// Example 4: Get dataset settings
 async function getDatasetSettingsExample(token: string, datasetCode: string) {
   const datasetsApi = new DatasetsApi(
     new Configuration({
-      basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
+      basePath: 'https://gateway.westeurope.dap.c-path.org',
       accessToken: token,
     }),
   )
@@ -123,11 +86,89 @@ async function getDatasetSettingsExample(token: string, datasetCode: string) {
   return settings
 }
 
-// Example 7: Create a new request
+// Example 5: List a dataset's dictionaries
+async function getDatasetDictionariesExample(
+  token: string,
+  datasetCode: string,
+) {
+  const datasetsApi = new DatasetsApi(
+    new Configuration({
+      basePath: 'https://gateway.westeurope.dap.c-path.org',
+      accessToken: token,
+    }),
+  )
+
+  const dictionaries = await datasetsApi.fairDatasetsCodeDictionariesGet({
+    code: datasetCode,
+  })
+
+  console.log('Dataset Dictionaries:', dictionaries.items)
+  return dictionaries
+}
+
+// Example 6: List a dataset's workspace locations, then its workspaces at one location
+async function getDatasetWorkspacesExample(token: string, datasetCode: string) {
+  const datasetsApi = new DatasetsApi(
+    new Configuration({
+      basePath: 'https://gateway.westeurope.dap.c-path.org',
+      accessToken: token,
+    }),
+  )
+
+  const locations = await datasetsApi.fairDatasetsCodeWorkspacesLocationsGet({
+    code: datasetCode,
+  })
+
+  const firstLocation = locations.items?.[0]?.value
+  const workspaces = await datasetsApi.fairDatasetsCodeWorkspacesGet({
+    code: datasetCode,
+    location: firstLocation,
+  })
+
+  console.log('Dataset Workspaces:', workspaces.items)
+  return workspaces
+}
+
+// Example 7: Get a dataset's catalogue entry
+async function getDatasetCatalogueExample(token: string, datasetCode: string) {
+  const datasetsApi = new DatasetsApi(
+    new Configuration({
+      basePath: 'https://gateway.westeurope.dap.c-path.org',
+      accessToken: token,
+    }),
+  )
+
+  const catalogue = await datasetsApi.fairDatasetsCodeCatalogueGet({
+    code: datasetCode,
+  })
+
+  console.log('Dataset Catalogue:', catalogue)
+  return catalogue
+}
+
+// Example 8: Get the workspace request form definition
+async function getWorkspaceRequestFormExample(token: string) {
+  const workspacesApi = new WorkspacesApi(
+    new Configuration({
+      basePath: 'https://gateway.westeurope.dap.c-path.org',
+      accessToken: token,
+    }),
+  )
+
+  const forms = await workspacesApi.fairWorkspacesFormsCodeGet({
+    code: 'workspace_request',
+  })
+
+  const form = forms.items?.[0]
+  console.log('Workspace Request Form:', form)
+  return form
+}
+
+// Example 9: Create a new data access request
 async function createRequestExample(token: string) {
   const requestsApi = new RequestsApi(
     new Configuration({
-      basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
+      basePath: 'https://gateway.westeurope.dap.c-path.org',
       accessToken: token,
     }),
   )
@@ -142,6 +183,21 @@ async function createRequestExample(token: string) {
         project_description: 'Description of research',
         purpose: 'Research purposes',
       },
+      cohort: {
+        name: 'My cohort',
+        queries: [
+          {
+            name: 'My cohort query',
+            clauses: [
+              {
+                name: 'netflix_subjects',
+                dictionary: { code: 'netflix_subjects' },
+                filters: [],
+              },
+            ],
+          },
+        ],
+      },
     },
   })
 
@@ -149,11 +205,11 @@ async function createRequestExample(token: string) {
   return newRequest
 }
 
-// Example 8: List all requests
+// Example 10: List all requests
 async function listRequestsExample(token: string) {
   const requestsApi = new RequestsApi(
     new Configuration({
-      basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
+      basePath: 'https://gateway.westeurope.dap.c-path.org',
       accessToken: token,
     }),
   )
@@ -167,11 +223,11 @@ async function listRequestsExample(token: string) {
   return requests
 }
 
-// Example 9: Get a specific request
+// Example 11: Get a specific request
 async function getRequestExample(token: string, requestCode: string) {
   const requestsApi = new RequestsApi(
     new Configuration({
-      basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
+      basePath: 'https://gateway.westeurope.dap.c-path.org',
       accessToken: token,
     }),
   )
@@ -184,125 +240,48 @@ async function getRequestExample(token: string, requestCode: string) {
   return request
 }
 
-// Example 10: Search workspaces
-async function searchWorkspacesExample(token: string) {
-  const workspaceApi = new WorkspaceApi(
-    new Configuration({
-      basePath: 'https://workspaces.westus2.c-path-dev.aridhia.io',
-      accessToken: token,
-    }),
-  )
-
-  const workspaces = await workspaceApi.workspaceAdminWorkspaceSearchPost({
-    workspaceSearchRequest: {
-      query: 'my-workspace',
-    },
-  })
-
-  console.log('Workspaces:', workspaces)
-  return workspaces
-}
-
-// Example 11: Get workspace request form definition
-async function getWorkspaceFormExample(token: string) {
-  const workspaceApi = new WorkspaceApi(
-    new Configuration({
-      basePath: 'https://workspaces.westus2.c-path-dev.aridhia.io',
-      accessToken: token,
-    }),
-  )
-
-  const formDefinition =
-    await workspaceApi.workspaceAdminFormDefinitionWorkspaceRequestGet()
-
-  console.log('Form Definition:', formDefinition)
-  return formDefinition
-}
-
-// Example 12: Create a new workspace
-async function createWorkspaceExample(token: string) {
-  const workspaceApi = new WorkspaceApi(
-    new Configuration({
-      basePath: 'https://workspaces.westus2.c-path-dev.aridhia.io',
-      accessToken: token,
-    }),
-  )
-
-  const workspace = await workspaceApi.workspaceAdminWorkspacePost({
-    workspaceCreateRequest: {
-      name: 'My Research Workspace',
-      description: 'Workspace for data analysis',
-    },
-  })
-
-  console.log('Created Workspace:', workspace)
-  return workspace
-}
-
-// Example 13: Get upload token for a workspace
-async function getUploadTokenExample(token: string, workspaceUuid: string) {
-  const workspaceApi = new WorkspaceApi(
-    new Configuration({
-      basePath: 'https://workspaces.westus2.c-path-dev.aridhia.io',
-      accessToken: token,
-    }),
-  )
-
-  const uploadToken =
-    await workspaceApi.workspaceAdminWorkspaceUuidUploadTokenPost({
-      uuid: workspaceUuid,
-    })
-
-  console.log('Upload Token:', uploadToken)
-  return uploadToken
-}
-
 // Full workflow example
 async function fullWorkflowExample() {
   try {
     // Step 1: Authenticate
     const token = await authenticateExample()
 
-    // Step 2: List available workflows
-    await listWorkflowsExample(token!)
+    // Step 2: Get a dataset and its settings
+    const datasetCode = 'netflix'
+    const dataset = await getDatasetExample(token!, datasetCode)
+    const settings = await getDatasetSettingsExample(token!, datasetCode)
 
-    // Step 3: List requestable datasets
-    const datasets = await listDatasetsExample(token!)
-
-    // Step 4: Get dataset settings for a specific dataset
-    if (datasets.items && datasets.items.length > 0) {
-      const datasetCode = datasets.items[0].code!
-      await getDatasetSettingsExample(token!, datasetCode)
+    // Step 3: Get the dataset's workflow, if one is configured
+    if (settings.workflow_key) {
+      await getWorkflowExample(token!, settings.workflow_key)
     }
 
-    // Step 5: Create a data access request
+    // Step 4: Create a data access request
     const request = await createRequestExample(token!)
 
-    // Step 6: Check request status
+    // Step 5: Check request status
     if (request.code) {
       await getRequestExample(token!, request.code)
     }
 
-    // Step 7: Search for workspaces
-    await searchWorkspacesExample(token!)
+    return { dataset, settings, request }
   } catch (error) {
     console.error('Error in workflow:', error)
+    return undefined
   }
 }
 
 export {
   authenticateExample,
-  listWorkflowsExample,
   getWorkflowExample,
-  listDatasetsExample,
   getDatasetExample,
   getDatasetSettingsExample,
+  getDatasetDictionariesExample,
+  getDatasetWorkspacesExample,
+  getDatasetCatalogueExample,
+  getWorkspaceRequestFormExample,
   createRequestExample,
   listRequestsExample,
   getRequestExample,
-  searchWorkspacesExample,
-  getWorkspaceFormExample,
-  createWorkspaceExample,
-  getUploadTokenExample,
   fullWorkflowExample,
 }
