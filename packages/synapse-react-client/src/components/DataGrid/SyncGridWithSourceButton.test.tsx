@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useGetEntity } from '@/synapse-queries'
 import { useGetSchemaBinding } from '@/synapse-queries/jsonschema/useEntityBoundSchema'
-import { useGetFeatureFlag } from '@/synapse-queries/featureflags'
 import { displayToast } from '@/components/ToastMessage/ToastMessage'
 import { mockSchemaBinding } from '@/mocks/mockSchema'
 import {
@@ -29,7 +28,6 @@ import useMergeGridWithSource, {
 
 vi.mock('@/synapse-queries')
 vi.mock('@/synapse-queries/jsonschema/useEntityBoundSchema')
-vi.mock('@/synapse-queries/featureflags')
 vi.mock('./useMergeGridWithSource')
 vi.mock('@/components/ToastMessage/ToastMessage', () => ({
   displayToast: vi.fn(),
@@ -37,7 +35,6 @@ vi.mock('@/components/ToastMessage/ToastMessage', () => ({
 
 const mockUseGetEntity = vi.mocked(useGetEntity)
 const mockUseGetSchemaBinding = vi.mocked(useGetSchemaBinding)
-const mockUseGetFeatureFlag = vi.mocked(useGetFeatureFlag)
 const mockUseMergeGridWithSource = vi.mocked(useMergeGridWithSource)
 const mockDisplayToast = vi.mocked(displayToast)
 
@@ -96,7 +93,6 @@ describe('SyncGridWithSourceButton', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockUseGetSchemaBinding.mockReturnValue(getUseQuerySuccessMock(null))
-    mockUseGetFeatureFlag.mockReturnValue(false)
     mockUseMergeGridWithSource.mockReturnValue(getUseMutationIdleMock())
   })
 
@@ -151,7 +147,6 @@ describe('SyncGridWithSourceButton', () => {
   })
 
   it('renders "Import latest changes" and triggers a PULL when the RecordSet source has been updated', async () => {
-    mockUseGetFeatureFlag.mockReturnValue(true)
     mockUseGetEntity.mockReturnValue(
       getUseQuerySuccessMock(mockRecordSetEntity),
     )
@@ -180,8 +175,7 @@ describe('SyncGridWithSourceButton', () => {
     })
   })
 
-  it('renders "Sync changes" for an up-to-date RecordSet source once RecordSet sync is enabled', async () => {
-    mockUseGetFeatureFlag.mockReturnValue(true)
+  it('renders "Sync changes" for an up-to-date RecordSet source', async () => {
     const unchangedRecordSet = { ...mockRecordSetEntity, versionNumber: 1 }
     mockUseGetEntity.mockReturnValue(getUseQuerySuccessMock(unchangedRecordSet))
     mockUseGetSchemaBinding.mockReturnValue(
@@ -224,31 +218,6 @@ describe('SyncGridWithSourceButton', () => {
 
     expect(mockDisplayToast).toHaveBeenCalledWith(
       'Successfully synchronized changes.',
-      'success',
-    )
-  })
-
-  it('wires a successful "recordset_overwrite" mutation result to a success toast', () => {
-    mockUseGetEntity.mockReturnValue(
-      getUseQuerySuccessMock(mockRecordSetEntity),
-    )
-    const captureOnSuccess = captureOnSuccessHandler()
-
-    renderComponent({ sessionId: 'session-1', sourceEntityId: 'syn111' })
-
-    captureOnSuccess.current?.(
-      {
-        type: 'recordset_overwrite',
-        data: {
-          concreteType:
-            'org.sagebionetworks.repo.model.grid.GridRecordSetExportResponse',
-        },
-      },
-      { syncType: 'PULL_PUSH' },
-    )
-
-    expect(mockDisplayToast).toHaveBeenCalledWith(
-      'Successfully updated RecordSet.',
       'success',
     )
   })
@@ -308,31 +277,25 @@ describe('shouldPullBeforePush', () => {
 
 describe('getSyncButtonLabels', () => {
   it('prioritizes the PULL copy when shouldPull is true', () => {
-    expect(
-      getSyncButtonLabels(true, EntityType.recordset, true).buttonText,
-    ).toBe('Import latest changes')
+    expect(getSyncButtonLabels(true, EntityType.recordset).buttonText).toBe(
+      'Import latest changes',
+    )
   })
 
   it('returns table-specific copy for a table source when shouldPull is false', () => {
-    expect(getSyncButtonLabels(false, EntityType.table, false).buttonText).toBe(
+    expect(getSyncButtonLabels(false, EntityType.table).buttonText).toBe(
       'Apply changes',
     )
   })
 
-  it('returns "Apply changes" for a RecordSet source when RecordSet sync is disabled', () => {
-    expect(
-      getSyncButtonLabels(false, EntityType.recordset, false).buttonText,
-    ).toBe('Apply changes')
-  })
-
-  it('returns "Sync changes" for a RecordSet source once RecordSet sync is enabled', () => {
-    expect(
-      getSyncButtonLabels(false, EntityType.recordset, true).buttonText,
-    ).toBe('Sync changes')
+  it('returns "Sync changes" for a RecordSet source', () => {
+    expect(getSyncButtonLabels(false, EntityType.recordset).buttonText).toBe(
+      'Sync changes',
+    )
   })
 
   it('returns the default sync copy for a source with no known type when shouldPull is false', () => {
-    expect(getSyncButtonLabels(false, undefined, false).buttonText).toBe(
+    expect(getSyncButtonLabels(false, undefined).buttonText).toBe(
       'Sync changes',
     )
   })
@@ -341,8 +304,8 @@ describe('getSyncButtonLabels', () => {
   test.each(Object.values(EntityType))(
     'does not throw for EntityType: %s',
     entityType => {
-      expect(() => getSyncButtonLabels(false, entityType, false)).not.toThrow()
-      expect(() => getSyncButtonLabels(true, entityType, false)).not.toThrow()
+      expect(() => getSyncButtonLabels(false, entityType)).not.toThrow()
+      expect(() => getSyncButtonLabels(true, entityType)).not.toThrow()
     },
   )
 })

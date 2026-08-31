@@ -1,6 +1,4 @@
-import { useGetFeatureFlag } from '@/synapse-queries'
 import { TextField } from '@mui/material'
-import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { Dispatch, SetStateAction } from 'react'
 
 type TableNameFormProps = {
@@ -16,7 +14,6 @@ type TableNameFormProps = {
  */
 export default function TableNameForm(props: TableNameFormProps) {
   const { name, setName, description, setDescription } = props
-  const isFeatureEnabled = useGetFeatureFlag(FeatureFlagEnum.DESCRIPTION_FIELD)
   return (
     <>
       <TextField
@@ -28,19 +25,17 @@ export default function TableNameForm(props: TableNameFormProps) {
         }}
         fullWidth
       />
-      {isFeatureEnabled && (
-        <TextField
-          label={'Description'}
-          value={description}
-          onChange={e => {
-            setDescription(e.target.value || undefined)
-          }}
-          fullWidth
-          multiline
-          rows={3}
-          sx={{ my: 2 }}
-        />
-      )}
+      <TextField
+        label={'Description'}
+        value={description}
+        onChange={e => {
+          setDescription(e.target.value || undefined)
+        }}
+        fullWidth
+        multiline
+        rows={3}
+        sx={{ my: 2 }}
+      />
     </>
   )
 }

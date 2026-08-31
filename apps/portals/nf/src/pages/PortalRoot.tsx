@@ -24,6 +24,7 @@ export default function NfPortalRoot() {
       logoHeaderConfig={logoHeaderConfig}
       logoFooterConfig={logoFooterConfig}
       synapseChatProps={synapseChatConfig}
+      isCurieLauncherEnabled
     />
   )
 }

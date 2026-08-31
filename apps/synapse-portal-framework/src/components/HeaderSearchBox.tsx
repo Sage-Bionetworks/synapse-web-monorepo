@@ -27,8 +27,7 @@ import { useChatDialogContext } from './ChatDialogContext'
 import { useSynapseContext } from 'synapse-react-client'
 import { useGetSuggestionsForSearchIndex } from 'synapse-react-client/components/SearchQueryWrapper/SearchQueryUseQueryOptions'
 import { SearchIndexConfig } from '../types/portal-util-types'
-import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
-import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
+import { useIsCurieLauncherAvailable } from './curie-chat-widget/useIsCurieLauncherAvailable'
 
 type HeaderSearchBoxProps = {
   searchPlaceholder?: string
@@ -56,10 +55,6 @@ const HeaderSearchBox = ({
   hideChatOption = false,
   isChatEnabled = false,
 }: HeaderSearchBoxProps): React.ReactNode => {
-  const isCurieLauncherEnabled = useGetFeatureFlag(
-    FeatureFlagEnum.CURIE_CHAT_WIDGET,
-  )
-  const isPortalChatEnabled = useGetFeatureFlag(FeatureFlagEnum.PORTAL_CHAT)
   const styles = {
     ...defaultStyles,
     ...(variant === 'v2' ? v2Styles : {}),
@@ -72,6 +67,7 @@ const HeaderSearchBox = ({
   const location = useLocation()
   const { isAuthenticated } = useSynapseContext()
   const chatDialogContext = useChatDialogContext()
+  const canUseCurieLauncher = useIsCurieLauncherAvailable()
   const isChatAvailable = chatDialogContext?.isChatAvailable
   const showChatOption =
     isAuthenticated &&
@@ -110,9 +106,6 @@ const HeaderSearchBox = ({
   const handleChange = (event: SelectChangeEvent) => {
     setRole(event.target.value)
   }
-
-  const canUseCurieLauncher =
-    isPortalChatEnabled && isCurieLauncherEnabled && !!isChatAvailable
 
   return (
     <Box className={styles.root} sx={sx}>

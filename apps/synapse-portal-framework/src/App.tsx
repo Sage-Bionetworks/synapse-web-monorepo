@@ -95,7 +95,10 @@ export default function App(props: AppProps) {
         requireAuthentication={requireAuthentication}
       >
         {aridhiaConfig?.apiBasePath ? (
-          <AridhiaIntegration apiBasePath={aridhiaConfig.apiBasePath}>
+          <AridhiaIntegration
+            apiBasePath={aridhiaConfig.apiBasePath}
+            subjectTokenIssuer={aridhiaConfig.subjectTokenIssuer}
+          >
             {content}
           </AridhiaIntegration>
         ) : (

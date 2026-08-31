@@ -49,7 +49,6 @@ export default function ExternalPlatformActionsRequiredPrecheck(
 
   const {
     getCurrentQueryRequest,
-    onViewSharingSettingsClicked,
     hasResettableFilters,
     fileIdColumnName,
     fileVersionColumnName,
@@ -177,7 +176,6 @@ export default function ExternalPlatformActionsRequiredPrecheck(
         queryBundleRequest={queryFilteredBySelection}
         columnModels={queryMetadata?.columnModels ?? []}
         onNumberOfRequiredActionsChanged={setNumberOfRequiredActions}
-        onViewSharingSettingsClicked={onViewSharingSettingsClicked}
       />
       <Typography variant="body1" sx={{ fontWeight: 700, marginTop: '15px' }}>
         When completed, click “Send to {platform.name}“ to finish the process
