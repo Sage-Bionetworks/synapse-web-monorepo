@@ -228,8 +228,7 @@ function applyUpstreamDefectPatches(spec: OpenAPISpec): OpenAPISpec {
     const pointer = '#/components/schemas/RequestField'
     const schema = getByPointer(spec, pointer)
     const isDefect =
-      schema &&
-      schema.type === 'object' &&
+      schema?.type === 'object' &&
       schema.additionalProperties !== true &&
       Array.isArray(schema.required) &&
       schema.required.includes('key') &&
@@ -252,8 +251,7 @@ function applyUpstreamDefectPatches(spec: OpenAPISpec): OpenAPISpec {
     const pointer = '#/components/schemas/RequestMetadata'
     const schema = getByPointer(spec, pointer)
     const isDefect =
-      schema &&
-      schema.properties &&
+      schema?.properties &&
       typeof schema.properties === 'object' &&
       !('workspace_uuid' in schema.properties)
     if (!isDefect) {
@@ -324,8 +322,7 @@ function applyUpstreamDefectPatches(spec: OpenAPISpec): OpenAPISpec {
     const pointer = '#/components/schemas/WorkflowField'
     const schema = getByPointer(spec, pointer)
     const isDefect =
-      schema &&
-      schema.properties &&
+      schema?.properties &&
       typeof schema.properties === 'object' &&
       !('default_options' in schema.properties)
     if (!isDefect) {
@@ -341,8 +338,7 @@ function applyUpstreamDefectPatches(spec: OpenAPISpec): OpenAPISpec {
     const fieldItemSchema =
       schema?.properties?.workspace?.properties?.fields?.items
     const isDefect =
-      fieldItemSchema &&
-      fieldItemSchema.properties &&
+      fieldItemSchema?.properties &&
       typeof fieldItemSchema.properties === 'object' &&
       !('default_options' in fieldItemSchema.properties)
     if (!isDefect) {

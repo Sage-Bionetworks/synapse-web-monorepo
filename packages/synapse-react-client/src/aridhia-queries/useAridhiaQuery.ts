@@ -50,31 +50,38 @@ export class AridhiaError extends Error {
   }
 }
 
+/**
+ * Pulls a human-usable error string out of a `ResponseError`'s JSON body, preferring the
+ * gateway's `error` field and falling back to `message`. Returns `undefined` when the body
+ * isn't JSON, was already consumed, or carries neither field.
+ */
+async function extractResponseErrorText(
+  response: ResponseError['response'],
+): Promise<string | undefined> {
+  try {
+    const body: unknown = await response.clone().json()
+    if (!body || typeof body !== 'object') {
+      return undefined
+    }
+    const errorField = 'error' in body ? body.error : undefined
+    if (typeof errorField === 'string') {
+      return errorField
+    }
+    const messageField = 'message' in body ? body.message : undefined
+    return typeof messageField === 'string' ? messageField : undefined
+  } catch {
+    // Response body wasn't JSON (or was already consumed).
+    return undefined
+  }
+}
+
 async function toAridhiaError(error: unknown): Promise<AridhiaError> {
   if (error instanceof AridhiaError) {
     return error
   }
   if (error instanceof ResponseError) {
     const httpStatus = error.response.status
-    let bodyErrorText: string | undefined
-    try {
-      const body: unknown = await error.response.clone().json()
-      const errorField =
-        body && typeof body === 'object' && 'error' in body
-          ? body.error
-          : undefined
-      const messageField =
-        body && typeof body === 'object' && 'message' in body
-          ? body.message
-          : undefined
-      if (typeof errorField === 'string') {
-        bodyErrorText = errorField
-      } else if (typeof messageField === 'string') {
-        bodyErrorText = messageField
-      }
-    } catch {
-      // Response body wasn't JSON (or was already consumed) — fall through to 'unknown'.
-    }
+    const bodyErrorText = await extractResponseErrorText(error.response)
     if (
       bodyErrorText === 'invalid_token' ||
       bodyErrorText === 'invalid_issuer' ||
