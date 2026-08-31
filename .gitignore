@@ -4,6 +4,9 @@
 *.css
 *.css.map
 !styleguide.setup.css
+# react-datasheet-grid authors plain CSS rather than SCSS, so these are sources, not build output
+!packages/react-datasheet-grid/src/style.css
+!packages/react-datasheet-grid/example/src/index.css
 
 # dependencies
 node_modules/
