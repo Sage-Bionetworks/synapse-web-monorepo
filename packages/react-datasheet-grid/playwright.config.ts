@@ -22,6 +22,9 @@ export default defineConfig({
   webServer: {
     command: 'pnpm example:build && pnpm example:preview --port 4173',
     url: baseURL,
-    reuseExistingServer: !process.env.CI,
+    // Never reuse: the command bundles the app, so a server left over from an
+    // earlier run would silently serve stale code and tests would pass or fail
+    // against the wrong build.
+    reuseExistingServer: false,
   },
 })

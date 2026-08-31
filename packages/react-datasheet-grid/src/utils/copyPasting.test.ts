@@ -1,4 +1,4 @@
-import { test, expect, describe, vi } from 'vitest'
+import { test, expect, describe } from 'vitest'
 import {
   parseTextPlainData,
   parseTextHtmlData,
@@ -6,14 +6,6 @@ import {
   isPrintableUnicode,
   quoteTsvCell,
 } from './copyPasting'
-import { JSDOM } from 'jsdom'
-
-vi.mock('./domParser', () => ({
-  parseDom: (html: string) => {
-    const dom = new JSDOM(html)
-    return dom.window.document
-  },
-}))
 
 describe('parseTextHtmlData', () => {
   test('single empty cell GoogleSheet', () => {
@@ -90,6 +82,42 @@ describe('parseTextHtmlData', () => {
       ['<foo>', 'bar\nbaz'],
       ['foo"bar', 'foo/bar'],
     ])
+  })
+
+  test('does not leak the text of a <script> in a cell into the cell value', () => {
+    // textContent picks up the text of child <script>/<style> nodes, so
+    // copying a table from a page that inlines either would otherwise prepend
+    // that source to the pasted value. Sanitizing drops those elements first.
+    expect(
+      parseTextHtmlData(
+        '<table><tr><td><script>alert(1)</script>visible</td></tr></table>',
+      ),
+    ).toEqual([['visible']])
+  })
+
+  test('does not leak the text of a <style> in a cell into the cell value', () => {
+    expect(
+      parseTextHtmlData(
+        '<table><tr><td><style>td{color:red}</style>visible</td></tr></table>',
+      ),
+    ).toEqual([['visible']])
+  })
+
+  test('drops inline event handlers while keeping the cell text', () => {
+    expect(
+      parseTextHtmlData(
+        '<table><tr><td onmouseover="alert(1)">hover me</td>' +
+          '<td><img src="x" onerror="alert(2)">image</td></tr></table>',
+      ),
+    ).toEqual([['hover me', 'image']])
+  })
+
+  test('keeps <br> as a newline after sanitizing', () => {
+    // Sanitizing must not strip <br>: parseTextHtmlData converts it to \n so a
+    // multi-line cell survives a round trip through the clipboard.
+    expect(
+      parseTextHtmlData('<table><tr><td>line1<br>line2</td></tr></table>'),
+    ).toEqual([['line1\nline2']])
   })
 })
 
