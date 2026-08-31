@@ -3,6 +3,7 @@ import {
   DATA_ACCESS_REQUEST,
   DATA_ACCESS_REQUEST_SIGNATURE,
   DATA_ACCESS_REQUEST_SIGNATURE_FILEHANDLE_ID,
+  DATA_ACCESS_REQUEST_SIGNATURE_QUOTA,
   DATA_ACCESS_REQUEST_SIGNATURE_STATUS,
   DATA_ACCESS_REQUEST_SUBMISSION,
 } from '@/utils/APIConstants'
@@ -130,6 +131,13 @@ export function getDataAccessRequestHandlers(backendOrigin: string) {
           { fileHandleId: 'mock-signed-duc-file-handle' },
           { status: 200 },
         )
+      },
+    ),
+
+    http.get(
+      `${backendOrigin}${DATA_ACCESS_REQUEST_SIGNATURE_QUOTA(':id')}`,
+      () => {
+        return HttpResponse.json({ quota: 5, remaining: 4 }, { status: 200 })
       },
     ),
   ]
