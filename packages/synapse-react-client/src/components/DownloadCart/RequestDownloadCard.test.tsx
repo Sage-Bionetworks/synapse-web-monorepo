@@ -1,5 +1,4 @@
 import mockFileEntity from '@/mocks/entity/mockFileEntity'
-import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
 import { server } from '@/mocks/msw/server'
 import { MOCK_USER_ID_2 } from '@/mocks/user/mock_user_profile'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
@@ -21,7 +20,6 @@ import {
   RequestDownloadCard,
   RequestDownloadCardProps,
 } from './RequestDownloadCard'
-import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 
 vi.mock('../EntityAclEditor/EntityAclEditorModal', () => ({
   default: vi.fn(() => null),
@@ -30,11 +28,9 @@ vi.mock('../EntityAclEditor/EntityAclEditorModal', () => ({
 const mockEntityAclEditorModal = vi.mocked(EntityAclEditorModal)
 
 const ENTITY_ID = 'syn29218'
-const onViewSharingSettingsClicked = vi.fn()
 const defaultProps: RequestDownloadCardProps = {
   entityId: ENTITY_ID,
   count: 10,
-  onViewSharingSettingsClicked,
 }
 
 const setupEntityBundleResponse = (canDownload: boolean) => {
@@ -101,24 +97,6 @@ describe('RequestDownloadCard tests', () => {
   afterAll(() => server.close())
 
   it('Show a Request Download Card', async () => {
-    setupEntityBundleResponse(false)
-    renderComponent()
-    await screen.findByText(REQUEST_DOWNLOAD_TITLE)
-
-    const viewSharingSettingsButton = await screen.findByRole('button', {
-      name: 'View Sharing Settings',
-    })
-    await userEvent.click(viewSharingSettingsButton)
-    expect(onViewSharingSettingsClicked).toHaveBeenLastCalledWith(ENTITY_ID)
-  })
-
-  it('Shows the sharing settings dialog when the feature is enabled', async () => {
-    server.use(
-      getFeatureFlagsOverride({
-        portalOrigin: getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT),
-        overrides: { [FeatureFlagEnum.REACT_ENTITY_ACL_EDITOR]: true },
-      }),
-    )
     setupEntityBundleResponse(false)
     renderComponent()
     await screen.findByText(REQUEST_DOWNLOAD_TITLE)
