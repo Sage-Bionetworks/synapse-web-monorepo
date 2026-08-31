@@ -32,7 +32,8 @@ root.render(
       logoFooterConfig={logoFooterConfig}
       navbarConfig={navbarConfig}
       aridhiaConfig={{
-        apiBasePath: 'https://gateway.westeurope.dap.c-path.org',
+        apiBasePath: import.meta.env.VITE_ARIDHIA_GATEWAY_URL,
+        subjectTokenIssuer: import.meta.env.VITE_ARIDHIA_SUBJECT_TOKEN_ISSUER,
       }}
     />
   </StrictMode>,

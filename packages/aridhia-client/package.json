@@ -44,9 +44,9 @@
   },
   "scripts": {
     "clean": "rimraf ./dist && rimraf *.tsbuildinfo",
-    "format-spec": "oxfmt --write src/spec/fair-api.json",
-    "generate": "rimraf src/generated && openapi-generator-cli generate -i src/spec/fair-api.json -c config.json -o src/generated",
-    "build": "pnpm tsc --build",
+    "filter-spec": "tsx src/codegen/filterSpec.ts",
+    "generate": "rimraf src/generated && pnpm filter-spec && openapi-generator-cli generate -i src/generated/fair-api.json -c config.json -o src/generated",
+    "build": "rimraf dist tsconfig.tsbuildinfo && tsc --build",
     "test": "vitest",
     "lint": "oxlint src"
   },
@@ -54,7 +54,9 @@
     "targets": {
       "generate": {
         "inputs": [
-          "{projectRoot}/src/spec/fair-api.json",
+          "{projectRoot}/src/spec/fair-api-full.json",
+          "{projectRoot}/src/spec/gateway-api.json",
+          "{projectRoot}/src/codegen/filterSpec.ts",
           "{projectRoot}/package.json",
           "{projectRoot}/openapitools.json",
           "{projectRoot}/config.json"
@@ -70,7 +72,18 @@
       },
       "build": {
         "dependsOn": [
-          "generate"
+          "generate",
+          "^build"
+        ],
+        "inputs": [
+          "{projectRoot}/src/**/*.ts",
+          "!{projectRoot}/src/codegen/**/*",
+          "{projectRoot}/tsconfig.json",
+          "{projectRoot}/package.json"
+        ],
+        "outputs": [
+          "{projectRoot}/dist",
+          "{projectRoot}/tsconfig.tsbuildinfo"
         ]
       }
     }
