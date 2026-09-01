@@ -121,6 +121,7 @@ export default function useChangePasswordFormState(
     mutate: resetTwoFactorAuth,
     isSuccess: twoFactorAuthResetIsSuccess,
     isPending: twoFactorAuthResetIsPending,
+    error: twoFactorAuthResetError,
   } = useResetTwoFactorAuth()
 
   const beginTwoFactorAuthReset = useCallback(
@@ -188,6 +189,12 @@ export default function useChangePasswordFormState(
             password after clicking the link sent to your email address.
           </Alert>
         )}
+        {otpStep === 'DISABLE_2FA_PROMPT' && twoFactorAuthResetError && (
+          <Alert severity={'error'} sx={{ my: 2 }}>
+            Failed to reset two-factor authentication:{' '}
+            {twoFactorAuthResetError.reason}
+          </Alert>
+        )}
       </>
     )
   }, [
@@ -198,6 +205,7 @@ export default function useChangePasswordFormState(
     options?.hideReset2FA,
     otpStep,
     promptForTwoFactorAuth,
+    twoFactorAuthResetError,
     twoFactorAuthResetIsPending,
     twoFactorAuthResetIsSuccess,
     twoFactorAuthResetUri,
