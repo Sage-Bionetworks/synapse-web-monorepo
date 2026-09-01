@@ -41,13 +41,13 @@ const PillButton = styled(Button)({
  * Download). Its shape follows the nearest `CardActionButtonStyleContext`:
  * compact by default, or pill-shaped when the card opts into `'chip'`.
  */
-const GenericCardActionButton = ({
+const GenericCardActionButton = (({
   ref,
   ...props
 }: React.ComponentPropsWithRef<typeof Button>) => {
   const Styled =
     useCardActionButtonStyle() === 'chip' ? PillButton : CompactButton
   return <Styled ref={ref} {...props} />
-}
+}) as typeof Button
 
 export default GenericCardActionButton
