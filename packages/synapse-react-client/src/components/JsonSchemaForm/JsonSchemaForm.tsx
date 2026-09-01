@@ -18,6 +18,7 @@ import Form from '@rjsf/mui'
 import { GenericObjectType, RJSFSchema } from '@rjsf/utils'
 import validator from '@rjsf/validator-ajv8'
 import { Ref } from 'react'
+import styles from './JsonSchemaForm.module.scss'
 
 /**
  * Wrapper around react-jsonschema-form that supplies default styling/templates/widgets for
@@ -32,7 +33,7 @@ export function JsonSchemaForm<T = any>(
     <Form
       ref={props.formRef}
       validator={validator}
-      className="JsonSchemaForm"
+      className={styles.jsonSchemaForm}
       {...props}
       templates={{
         ArrayFieldDescriptionTemplate: ArrayFieldDescriptionTemplate,
