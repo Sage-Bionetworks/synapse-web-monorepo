@@ -25,8 +25,9 @@ export const datasetCardConfiguration: CardConfiguration = {
   },
   titleLinkConfig: {
     isMarkdown: false,
-    baseURL: 'Explore/Datasets/DetailsPage',
+    baseURL: 'Explore/Datasets',
     URLColumnName: 'id',
+    urlParamStyle: 'path-segment',
     matchColumnName: 'id',
   },
 }
