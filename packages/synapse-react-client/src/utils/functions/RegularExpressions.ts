@@ -53,3 +53,17 @@ export function parseSynId(synId: string): Reference | null {
     return synIdMatch
   }
 }
+
+/**
+ * Matches the href portion of a markdown link, e.g. `[label](https://example.com)`
+ * captures `https://example.com`.
+ */
+export const MARKDOWN_LINK_HREF_REGEX = /\]\(([^)]+)\)/
+
+/**
+ * Given a string that may be a markdown link (e.g. `[label](https://example.com)`),
+ * returns the extracted href. If the string is not a markdown link, returns it unchanged.
+ */
+export function extractMarkdownLinkHref(value: string): string {
+  return value.match(MARKDOWN_LINK_HREF_REGEX)?.[1] ?? value
+}
