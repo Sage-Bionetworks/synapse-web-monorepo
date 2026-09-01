@@ -590,7 +590,7 @@ describe('ChangePassword tests', () => {
     expect(otpInputs).toHaveLength(6)
   })
 
-  it('supports requesting 2FA reset using a password', async () => {
+  it('supports requesting 2FA reset using the current password', async () => {
     const userId = MOCK_USER_ID
     const twoFaToken = 'mock-2fa-token'
     server.use(
@@ -655,7 +655,8 @@ describe('ChangePassword tests', () => {
       expect(reset2faSpy).toHaveBeenCalledWith({
         userId: MOCK_USER_ID,
         twoFaResetEndpoint: expect.any(String),
-        // The current password must be used. A twoFaToken returned by the changePassword service cannot be used to reset 2FA.
+        // The current password must be used. A twoFaToken returned by the changePassword service cannot be used to
+        // reset 2FA: the 2fa/reset endpoint only accepts a twoFaToken minted for an AUTHENTICATION (login) challenge.
         password: currentPassword,
       })
 
