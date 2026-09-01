@@ -105,32 +105,14 @@ function conditionToApiFilter(
   if (columnName === null) return null
 
   switch (op) {
-    case 'is_any_of': {
-      if (values.length === 0) return null
-      // Multi-value list columns use HAS on ColumnMultiValueFunctionQueryFilter;
-      // single-value columns use IN on ColumnSingleValueQueryFilter.
-      if (isListColumn(columnType)) {
-        return makeMultiValueFilter(columnName, values)
-      }
-      return makeSingleValueFilter(
-        columnName,
-        ColumnSingleValueFilterOperator.IN,
-        values,
-      )
-    }
-    case 'is_all_of': {
-      if (values.length === 0) return null
-      return makeMultiValueFilter(columnName, values)
-    }
-    case 'between': {
-      if (rangeMin == null || rangeMin === '') return null
-      if (rangeMax == null || rangeMax === '') return null
-      return makeSingleValueFilter(
-        columnName,
-        ColumnSingleValueFilterOperator.BETWEEN,
-        [rangeMin, rangeMax],
-      )
-    }
+    case 'is_any_of':
+      return anyOfFilter(columnName, columnType, values)
+    case 'is_all_of':
+      return values.length === 0
+        ? null
+        : makeMultiValueFilter(columnName, values)
+    case 'between':
+      return betweenFilter(columnName, rangeMin, rangeMax)
     case 'gt':
       return rangeBoundFilter(
         columnName,
@@ -156,18 +138,16 @@ function conditionToApiFilter(
         ColumnSingleValueFilterOperator.LESS_THAN_OR_EQUAL,
       )
     case 'equal':
-      if (values.length === 0) return null
-      return makeSingleValueFilter(
+      return equalityFilter(
         columnName,
+        values,
         ColumnSingleValueFilterOperator.EQUAL,
-        [values[0]],
       )
     case 'not_equal':
-      if (values.length === 0) return null
-      return makeSingleValueFilter(
+      return equalityFilter(
         columnName,
+        values,
         ColumnSingleValueFilterOperator.NOT_EQUAL,
-        [values[0]],
       )
     case 'has_value':
       return makeSingleValueFilter(
@@ -182,38 +162,77 @@ function conditionToApiFilter(
         [],
       )
     case 'contains':
-      if (text == null || text === '') return null
-      return makeSingleValueFilter(
-        columnName,
-        ColumnSingleValueFilterOperator.LIKE,
-        [`%${escapeLike(text)}%`],
-      )
+      return likeFilter(columnName, text, escaped => `%${escaped}%`)
     case 'starts_with':
-      if (text == null || text === '') return null
-      return makeSingleValueFilter(
-        columnName,
-        ColumnSingleValueFilterOperator.LIKE,
-        [`${escapeLike(text)}%`],
-      )
+      return likeFilter(columnName, text, escaped => `${escaped}%`)
     case 'ends_with':
-      if (text == null || text === '') return null
-      return makeSingleValueFilter(
-        columnName,
-        ColumnSingleValueFilterOperator.LIKE,
-        [`%${escapeLike(text)}`],
-      )
+      return likeFilter(columnName, text, escaped => `%${escaped}`)
     case 'is_exactly':
-      if (text == null || text === '') return null
-      return makeSingleValueFilter(
-        columnName,
-        ColumnSingleValueFilterOperator.EQUAL,
-        [text],
-      )
+      return isBlank(text)
+        ? null
+        : makeSingleValueFilter(
+            columnName,
+            ColumnSingleValueFilterOperator.EQUAL,
+            [text!],
+          )
     default: {
       op satisfies never
       return null
     }
   }
+}
+
+function isBlank(value: string | null | undefined): boolean {
+  return value == null || value === ''
+}
+
+function anyOfFilter(
+  columnName: string,
+  columnType: string | null,
+  values: string[],
+): ColumnSingleValueQueryFilter | ColumnMultiValueFunctionQueryFilter | null {
+  if (values.length === 0) return null
+  if (isListColumn(columnType)) return makeMultiValueFilter(columnName, values)
+  return makeSingleValueFilter(
+    columnName,
+    ColumnSingleValueFilterOperator.IN,
+    values,
+  )
+}
+
+function betweenFilter(
+  columnName: string,
+  rangeMin: string | null,
+  rangeMax: string | null,
+): ColumnSingleValueQueryFilter | null {
+  if (isBlank(rangeMin) || isBlank(rangeMax)) return null
+  return makeSingleValueFilter(
+    columnName,
+    ColumnSingleValueFilterOperator.BETWEEN,
+    [rangeMin!, rangeMax!],
+  )
+}
+
+function equalityFilter(
+  columnName: string,
+  values: string[],
+  operator: ColumnSingleValueFilterOperator,
+): ColumnSingleValueQueryFilter | null {
+  if (values.length === 0) return null
+  return makeSingleValueFilter(columnName, operator, [values[0]])
+}
+
+function likeFilter(
+  columnName: string,
+  text: string | null,
+  wrap: (escapedText: string) => string,
+): ColumnSingleValueQueryFilter | null {
+  if (isBlank(text)) return null
+  return makeSingleValueFilter(
+    columnName,
+    ColumnSingleValueFilterOperator.LIKE,
+    [wrap(escapeLike(text!))],
+  )
 }
 
 function makeSingleValueFilter(
