@@ -15,7 +15,9 @@ import {
   FacetColumnRangeRequest,
   FacetColumnValuesRequest,
   FILE_ENTITY_CONCRETE_TYPE_VALUE,
+  FILTER_GROUP_CONCRETE_TYPE_VALUE,
   FileEntity,
+  FilterGroup,
   GOOGLE_CLOUD_FILE_HANDLE_CONCRETE_TYPE_VALUE,
   INVITEE_VERIFICATION_CONCRETE_TYPE_VALUE,
   InviteeVerificationSignedToken,
@@ -99,6 +101,9 @@ export const isColumnMultiValueFunctionQueryFilter =
   isTypeViaConcreteTypeFactory<ColumnMultiValueFunctionQueryFilter>(
     COLUMN_MULTI_VALUE_FUNCTION_QUERY_FILTER_CONCRETE_TYPE_VALUE,
   )
+export const isFilterGroup = isTypeViaConcreteTypeFactory<FilterGroup>(
+  FILTER_GROUP_CONCRETE_TYPE_VALUE,
+)
 export const isS3FileHandle = isTypeViaConcreteTypeFactory<S3FileHandle>(
   S3_FILE_HANDLE_CONCRETE_TYPE_VALUE,
 )
