@@ -228,11 +228,11 @@ export function SchemaDrivenAnnotationEditor(
   const showHasNoAnnotationsAlert = schema === null && formDataHasNoAnnotations
 
   return (
-    <div className="JsonSchemaFormContainer">
+    <>
       {isLoading ? (
-        <div className="LoadingPlaceholder">
+        <Box sx={{ display: 'flex', margin: '60px auto' }}>
           <SynapseSpinner size={30} />
-        </div>
+        </Box>
       ) : (
         <>
           {entityJson && schema && (
@@ -411,6 +411,6 @@ export function SchemaDrivenAnnotationEditor(
           )}
         </>
       )}
-    </div>
+    </>
   )
 }

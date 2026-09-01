@@ -386,19 +386,17 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
           </Select>
         </StyledFormControl>
       )}
-      <div className="JsonSchemaFormContainer">
-        <JsonSchemaForm
-          formRef={formRef}
-          disabled={isLoading || wasModifiedViaAPI}
-          schema={doiFormSchema}
-          formData={formData}
-          onChange={e => {
-            setFormData(e.formData)
-          }}
-          uiSchema={doiFormUiSchema}
-          showErrorList={false}
-        />
-      </div>
+      <JsonSchemaForm
+        formRef={formRef}
+        disabled={isLoading || wasModifiedViaAPI}
+        schema={doiFormSchema}
+        formData={formData}
+        onChange={e => {
+          setFormData(e.formData)
+        }}
+        uiSchema={doiFormUiSchema}
+        showErrorList={false}
+      />
       {doi && (
         <Alert severity={'warning'}>
           <Typography variant={'body1'}>
