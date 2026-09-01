@@ -19,7 +19,10 @@ import {
   isTableEntity,
 } from '@/utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
-import { parseSynId } from '@/utils/functions/RegularExpressions'
+import {
+  extractMarkdownLinkHref,
+  parseSynId,
+} from '@/utils/functions/RegularExpressions'
 import { getColumnIndex } from '@/utils/functions/SqlFunctions'
 import { TargetEnum } from '@/utils/html/TargetEnum'
 import * as SynapseConstants from '@/utils/SynapseConstants'
@@ -438,8 +441,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   // The externalUrl column may be a markdown link (e.g. CCKP's `externalLink`:
   // "[label](https://...)") rather than a plain URL — extract the href if so.
   const hostingExternalUrl = rawHostingExternalUrl
-    ? (rawHostingExternalUrl.match(/\]\(([^)]+)\)/)?.[1] ??
-      rawHostingExternalUrl)
+    ? extractMarkdownLinkHref(rawHostingExternalUrl)
     : undefined
   // Non-downloadable hosting (e.g. external-access) suppresses the Synapse
   // download flow entirely; everything else keeps the add-to-download-list behavior.

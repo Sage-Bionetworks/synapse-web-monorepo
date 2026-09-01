@@ -97,7 +97,7 @@ export const DATASET_HOSTING_CONFIG: Record<
     color: 'primary',
     icon: 'cloud',
     tooltip:
-      'Files are stored in a cloud bucket maintained by a third party. They download the same way as Synapse-hosted files, but the bucket owner could remove them in the future.',
+      'Files are stored in a cloud bucket maintained by a third party. They can be downloaded through Synapse, but the bucket owner could remove them in the future.',
   },
   'external-download': {
     downloadable: true,
@@ -116,7 +116,7 @@ export const DATASET_HOSTING_CONFIG: Record<
     color: 'warning',
     icon: 'launch',
     tooltip:
-      'These data are not downloadable through Synapse. Access is managed by {repository} and requires a separate application or process.',
+      'These data are not downloadable through Synapse. Access is managed by {repository} and may require a separate application or process.',
   },
   mixed: {
     downloadable: true,
@@ -124,7 +124,7 @@ export const DATASET_HOSTING_CONFIG: Record<
     color: 'primary',
     icon: 'mixed',
     tooltip:
-      'Files in this dataset live in more than one location. Some download through Synapse; others are hosted externally and must be obtained separately from {repository}.',
+      'Files in this dataset live in more than one location. Some can be downloaded through Synapse; others are hosted externally and must be obtained separately from {repository}.',
   },
   unavailable: {
     downloadable: false,

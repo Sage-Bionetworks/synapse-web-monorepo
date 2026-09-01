@@ -171,21 +171,6 @@ const meta = {
   args: { isAuthenticated: true },
   parameters: {
     layout: 'padded',
-    docs: {
-      description: {
-        component: [
-          'The dataset action button both communicates **how a dataset is hosted** and performs the correct action for it. `hosting` only modulates the standard download affordance — it never invents a parallel download path.',
-          '',
-          'A dataset card is driven by three annotation values:',
-          '',
-          '- **`hosting`** — a *controlled vocabulary* (`synapse`, `external-cloud`, `external-download`, `external-access`, `mixed`, `unavailable`). This is the only field that changes behavior: whether the shared download control is shown, or an external link, or a disabled indicator, plus the icon and tooltip wording. A blank/unknown value falls back to `synapse`.',
-          '- **`repository`** — *free text* (e.g. `GEO`, `dbGaP`, `Zenodo`). Used only as the display label in the button/tooltip; it does **not** affect behavior.',
-          '- **`externalUrl`** — *free text*, the link target for non-downloadable (`external-access`) datasets.',
-          '',
-          'For downloadable types the button adds the dataset to the download list (the only download path); signed-out users get a clickable button that flips to a red "Sign in to download" call-to-action opening the sign-in modal.',
-        ].join('\n'),
-      },
-    },
   },
 } satisfies Meta<DatasetDownloadButtonProps & { isAuthenticated: boolean }>
 export default meta
