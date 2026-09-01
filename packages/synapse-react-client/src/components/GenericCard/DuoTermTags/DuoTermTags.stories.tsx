@@ -95,8 +95,9 @@ export const TruncatedForFacetSidebar: Story = {
 }
 
 /**
- * On a dataset card, DUO terms appear as a "Data Usage Restrictions" row in the
- * metadata section, with full term names.
+ * On a dataset card, DUO terms appear as a metadata row labeled with the DUO
+ * column's display name (e.g. "Data Use Modifiers", matching the facet), with
+ * full term names.
  */
 export const OnADatasetCard: Story = {
   args: { terms: [] },
@@ -109,7 +110,7 @@ export const OnADatasetCard: Story = {
         icon={<GenericCardIcon type="DATASET" useTypeForIcon />}
         labels={[
           {
-            columnDisplayName: 'Data Usage Restrictions',
+            columnDisplayName: 'Data Use Modifiers',
             value: (
               <DuoTermTags terms={['DUO:0000006', 'DUO:0000046', 'DUOplus7']} />
             ),
@@ -125,7 +126,7 @@ export const OnADatasetCard: Story = {
         icon={<GenericCardIcon type="DATASET" useTypeForIcon />}
         labels={[
           {
-            columnDisplayName: 'Data Usage Restrictions',
+            columnDisplayName: 'Data Use Modifiers',
             value: (
               <DuoTermTags
                 terms={[

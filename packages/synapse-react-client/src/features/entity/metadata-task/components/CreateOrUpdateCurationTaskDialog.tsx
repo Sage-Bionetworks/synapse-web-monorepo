@@ -48,7 +48,6 @@ import {
 import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 import {
-  ASSIGNEE_TOOLTIP,
   AUTH_MODE_CHANGED_WARNING,
   AUTH_MODE_NONE_TITLE,
   AUTH_MODE_NONE_TOOLTIP,
@@ -88,6 +87,8 @@ import {
 import noop from 'lodash-es/noop'
 import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 import { StyledFormControl } from '@/components/styled'
+import { instanceOfGridSupportedTaskProperties } from '../utils/types'
+import { dueDateInputToIso, isoToDueDateInput } from '../utils/dueDate'
 
 export type CreateOrUpdateCurationTaskDialogProps = {
   open: boolean
@@ -171,9 +172,14 @@ export default function CreateOrUpdateCurationTaskDialog(
     string | undefined
   >(() => task?.assigneePrincipalId)
 
-  const initialAuthMode = toAuthorizationModeOption(
-    task?.taskProperties?.suggestedAuthorizationMode,
-  )
+  const initialAuthMode =
+    task?.taskProperties &&
+    instanceOfGridSupportedTaskProperties(task?.taskProperties)
+      ? toAuthorizationModeOption(
+          task?.taskProperties?.suggestedAuthorizationMode,
+        )
+      : 'NONE'
+
   const [authorizationMode, setAuthorizationMode] =
     useState<AuthorizationModeOption>(initialAuthMode)
   // Track the original value to detect unsaved changes
@@ -206,7 +212,12 @@ export default function CreateOrUpdateCurationTaskDialog(
   const [collaboratorPrincipalIds, setCollaboratorPrincipalIds] = useState<
     string[]
   >(() => {
-    const ids = task?.taskProperties?.collaboratorPrincipalIds
+    const ids =
+      task &&
+      task.taskProperties &&
+      instanceOfGridSupportedTaskProperties(task.taskProperties)
+        ? task.taskProperties.collaboratorPrincipalIds
+        : undefined
     return ids ?? []
   })
   const [pendingCollaboratorId, setPendingCollaboratorId] = useState<
@@ -223,6 +234,13 @@ export default function CreateOrUpdateCurationTaskDialog(
     TaskStatusStateEnum | undefined
   >(undefined)
   const displayedStatusState = pendingStatusState ?? currentTaskStatus?.state
+
+  // Due date (stored on CurationTask)
+  const [pendingDueDate, setPendingDueDate] = useState<string | undefined>(
+    undefined,
+  )
+  const displayedDueDate =
+    pendingDueDate ?? (isEditMode ? isoToDueDateInput(task?.dueDate) : '')
 
   const {
     mutateAsync: createTask,
@@ -303,6 +321,12 @@ export default function CreateOrUpdateCurationTaskDialog(
       dataType: dataType || undefined,
       instructions: instructions || undefined,
       assigneePrincipalId: assigneePrincipalId || undefined,
+      // When the user hasn't changed the due date, pass the task's stored value through verbatim so
+      // a field-only edit can never blank out or re-encode an existing due date.
+      dueDate:
+        pendingDueDate !== undefined
+          ? dueDateInputToIso(pendingDueDate)
+          : task?.dueDate,
       taskProperties,
     }
   }
@@ -312,14 +336,15 @@ export default function CreateOrUpdateCurationTaskDialog(
     if (isEditMode) {
       const latestTask = await updateTask(payload)
 
-      if (
+      const statusStateChanged =
         pendingStatusState !== undefined &&
-        pendingStatusState !== currentTaskStatus?.state &&
-        currentTaskStatus != null
-      ) {
+        pendingStatusState !== currentTaskStatus?.state
+      if (statusStateChanged && currentTaskStatus != null) {
+        // The task and its status share an etag, and the preceding `updateTask` bumped it; the
+        // status update must use the etag returned by that update, not the stale fetched one.
         await updateTaskStatus({
           ...currentTaskStatus,
-          state: pendingStatusState,
+          state: pendingStatusState ?? currentTaskStatus.state,
           etag: latestTask.etag,
         })
       }
@@ -390,11 +415,6 @@ export default function CreateOrUpdateCurationTaskDialog(
     <Box>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
         <InputLabel htmlFor="dlg-set-task-assignee">Assignee</InputLabel>
-        <Tooltip title={ASSIGNEE_TOOLTIP}>
-          <div>
-            <HelpTwoTone sx={{ color: 'grey.700' }} />
-          </div>
-        </Tooltip>
       </Box>
       <UserSearchBox
         inputId="dlg-set-task-assignee"
@@ -622,6 +642,19 @@ export default function CreateOrUpdateCurationTaskDialog(
                   ))}
                 </Select>
               </StyledFormControl>
+            )}
+            {isEditMode && (
+              <Box>
+                <TextField
+                  label="Due Date"
+                  fullWidth
+                  type="date"
+                  value={displayedDueDate}
+                  onChange={e => setPendingDueDate(e.target.value)}
+                  disabled={isStatusFetching}
+                  slotProps={{ inputLabel: { shrink: true } }}
+                />
+              </Box>
             )}
             {assigneeField}
             {authModeField}

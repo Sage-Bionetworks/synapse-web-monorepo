@@ -23,10 +23,12 @@ import React, { useCallback } from 'react'
 import { RefObject, useEffect, useRef, useState } from 'react'
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router'
 import RORInstitutionField from 'synapse-react-client/components/RORInstitutionField/RORInstitutionField'
+import { useSourceAppId } from '../components/useSourceApp'
 import { ConfigureEmail } from '../components/ConfigureEmail'
 import { ProfileAvatar } from '../components/ProfileAvatar'
 import { ORCiDButton } from '../components/ProfileValidation/ORCiDButton'
 import { UnbindORCiDDialog } from '../components/ProfileValidation/UnbindORCiD'
+import { RASButton } from '../components/RASButton'
 import AccountSettingsTopBar from '../components/AccountSettingsTopBar'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
@@ -44,6 +46,7 @@ import { SYNAPSE_REALM } from 'synapse-react-client/utils/SynapseConstants'
 import { TextField } from 'synapse-react-client/components/TextField/index'
 import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
 import { useCookieValue } from '@react-hookz/web/useCookieValue/index.js'
+const AMPALS_SOURCE_APP_ID = 'ampals'
 
 function CompletionStatus({ isComplete }: { isComplete: boolean | undefined }) {
   return (
@@ -83,6 +86,7 @@ const AccountSettings = (): React.ReactNode => {
   const [termsOfUse, setTermsOfUse] = useState<boolean>()
   const [showUnbindORCiDDialog, setShowUnbindORCiDDialog] =
     useState<boolean>(false)
+  const [isRASLinked, setIsRASLinked] = useState<boolean>(false)
   const navigate = useNavigate()
   const profileInformationRef = useRef<HTMLDivElement>(null)
   const changePasswordRef = useRef<HTMLDivElement>(null)
@@ -101,6 +105,7 @@ const AccountSettings = (): React.ReactNode => {
 
   const { clearSession } = useApplicationSessionContext()
   const showWebhooks = useGetFeatureFlag(FeatureFlagEnum.WEBHOOKS_UI)
+  const isAmpAlsSourceApp = useSourceAppId() === AMPALS_SOURCE_APP_ID
   const { data: currentRealm } = useGetCurrentRealm({
     select: realm => realm.id,
   })
@@ -150,6 +155,14 @@ const AccountSettings = (): React.ReactNode => {
     setVerified(bundle.isVerified)
     setOrcid(bundle.ORCID)
     setIsCertified(bundle.isCertified)
+    setIsRASLinked(
+      bundle.identityProviders?.some(
+        p =>
+          p.concreteType ===
+            'org.sagebionetworks.repo.model.auth.OAuthIdentityProvider' &&
+          p.provider === 'NIH_RESEARCHER_AUTH_SERVICE',
+      ) ?? false,
+    )
     const stateHistory = bundle.verificationSubmission?.stateHistory
     const currentState = stateHistory
       ? stateHistory[stateHistory.length - 1]
@@ -164,7 +177,8 @@ const AccountSettings = (): React.ReactNode => {
         SynapseConstants.USER_BUNDLE_MASK_USER_PROFILE |
         SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED |
         SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
-        SynapseConstants.USER_BUNDLE_MASK_VERIFICATION_SUBMISSION
+        SynapseConstants.USER_BUNDLE_MASK_VERIFICATION_SUBMISSION |
+        SynapseConstants.USER_BUNDLE_MASK_IDENTITY_PROVIDERS
       const bundle: UserBundle = await SynapseClient.getMyUserBundle(
         mask,
         accessToken,
@@ -542,6 +556,26 @@ const AccountSettings = (): React.ReactNode => {
                       orcid={orcid}
                       redirectAfter={`${SynapseClient.getRootURL()}authenticated/myaccount`}
                     />
+                  </div>
+                )}
+                {isAmpAlsSourceApp && (
+                  <div className="credential-partition">
+                    <h4>NIH Researcher Auth Service (RAS)</h4>
+                    <CompletionStatus isComplete={isRASLinked} />
+                    <p>
+                      <i>
+                        Linking your NIH account allows you to sign in using
+                        your NIH credentials.
+                      </i>
+                    </p>
+                    {!isRASLinked && (
+                      <div className="primary-button-container">
+                        <RASButton
+                          sx={credentialButtonSX}
+                          redirectAfter={`${SynapseClient.getRootURL()}authenticated/myaccount`}
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
                 <div className="credential-partition">

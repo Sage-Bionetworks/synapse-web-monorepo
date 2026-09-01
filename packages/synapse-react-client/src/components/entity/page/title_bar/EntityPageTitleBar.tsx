@@ -9,6 +9,7 @@ import EntityActionMenu, {
 } from '../action_menu/EntityActionMenu'
 import { EntityTitleBarVersionInfo } from './EntityTitleBarVersionInfo'
 import TitleBarProperties from './TitleBarProperties'
+import CopyToClipboardString from '@/components/CopyToClipboardString/CopyToClipboardString'
 
 export type EntityPageTitleBarProps = {
   entityId: string
@@ -19,10 +20,8 @@ export type EntityPageTitleBarProps = {
   onActMemberClickAddConditionsForUse: () => void
 }
 
-export const FAVORITE_BUTTON_ICON_COLOR = '#9EAAB7'
 const TITLE_BAR_BACKGROUND_COLOR = '#EAF0F5'
 const AVATAR_BACKGROUND_COLOR = '#497097'
-const TITLE_NAME_COLOR = '#33373D'
 
 /**
  * The EntityPageTitleBar component is shown on every Entity page in Synapse, and shows an Entity's metadata and
@@ -76,9 +75,13 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
               <Avatar
                 sx={{
                   bgcolor: AVATAR_BACKGROUND_COLOR,
-                  height: 48,
-                  width: 48,
+                  height: 68,
+                  width: 68,
                   borderRadius: '3px',
+                  svg: {
+                    height: '36px',
+                    width: '36px',
+                  },
                 }}
                 variant={'square'}
               >
@@ -105,7 +108,7 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
                 <ConditionalWrapper condition={isLoading} wrapper={Skeleton}>
                   <Typography
                     variant={'headline2'}
-                    sx={{ color: TITLE_NAME_COLOR, fontWeight: 540 }}
+                    sx={{ color: 'greyV2.950', fontWeight: 540 }}
                   >
                     {name ?? 'Name not set'}
                   </Typography>
@@ -113,7 +116,7 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
                 {bundle?.entity?.id && (
                   <FavoriteButton
                     entityId={bundle.entity.id}
-                    iconColor={FAVORITE_BUTTON_ICON_COLOR}
+                    iconColor={'greyV2.400'}
                   />
                 )}
               </Stack>
@@ -121,6 +124,17 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
                 entityId={entityId}
                 versionNumber={versionNumber}
                 toggleShowVersionHistory={toggleShowVersionHistory}
+              />
+              <CopyToClipboardString
+                value={entityId}
+                icon="rounded"
+                sx={{
+                  '& .MuiTypography-root': {
+                    color: 'greyV2.800',
+                    fontWeight: 440,
+                    lineHeight: '20px',
+                  },
+                }}
               />
             </Box>
           </Stack>

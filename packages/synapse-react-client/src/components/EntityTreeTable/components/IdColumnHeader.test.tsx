@@ -8,6 +8,7 @@ const mockCopyToClipboardIcon = vi.fn()
 
 interface CopyToClipboardIconProps {
   value: string
+  icon?: 'contentCopy' | 'contentCopyRounded'
   sizePx?: number
 }
 

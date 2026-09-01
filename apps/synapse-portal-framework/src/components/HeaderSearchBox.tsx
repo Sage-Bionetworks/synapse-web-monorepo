@@ -27,6 +27,7 @@ import { useChatDialogContext } from './ChatDialogContext'
 import { useSynapseContext } from 'synapse-react-client'
 import { useGetSuggestionsForSearchIndex } from 'synapse-react-client/components/SearchQueryWrapper/SearchQueryUseQueryOptions'
 import { SearchIndexConfig } from '../types/portal-util-types'
+import { useIsCurieLauncherAvailable } from './curie-chat-widget/useIsCurieLauncherAvailable'
 
 type HeaderSearchBoxProps = {
   searchPlaceholder?: string
@@ -66,6 +67,7 @@ const HeaderSearchBox = ({
   const location = useLocation()
   const { isAuthenticated } = useSynapseContext()
   const chatDialogContext = useChatDialogContext()
+  const canUseCurieLauncher = useIsCurieLauncherAvailable()
   const isChatAvailable = chatDialogContext?.isChatAvailable
   const showChatOption =
     isAuthenticated &&
@@ -109,7 +111,7 @@ const HeaderSearchBox = ({
     <Box className={styles.root} sx={sx}>
       <Stack className={styles.stack}>
         <Box className={styles.searchRow}>
-          {showChatOption ? (
+          {showChatOption && !canUseCurieLauncher ? (
             <FormControl className={styles.formControl}>
               <Select
                 className={styles.select}

@@ -1,0 +1,34 @@
+.title:global(.MuiTypography-root) {
+  color: var(--synapse-v2-gray-900);
+  font-size: 16px;
+  font-weight: 540;
+  line-height: 24px; /* 150% */
+  letter-spacing: -0.16px;
+  margin-bottom: 4px;
+}
+
+.subtitle:global(.MuiTypography-root) {
+  color: var(--synapse-v2-gray-900);
+  font-size: 14px;
+  font-weight: 440;
+  line-height: 20px; /* 142.857% */
+  letter-spacing: -0.07px;
+}
+
+.button:global(.MuiButton-root) {
+  color: var(--synapse-v2-gray-800);
+  font-size: 12px;
+  font-weight: 540;
+  line-height: 12px; /* 100% */
+  letter-spacing: -0.24px;
+  padding: 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.container {
+  align-items: center;
+  text-align: center;
+  gap: 24px;
+  padding: 40px 16px;
+}

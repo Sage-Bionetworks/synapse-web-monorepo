@@ -4,36 +4,79 @@ import {
   useUpdateAgentSession,
 } from '@/synapse-queries/chat/useChat'
 import { useSynapseContext } from '@/utils'
-import { ArrowUpward } from '@mui/icons-material'
 import {
   Alert,
   Box,
   Chip,
-  IconButton,
   List,
+  ListItem,
   Stack,
-  TextField,
   Typography,
-  useTheme,
 } from '@mui/material'
-import { Color } from '@mui/material/styles'
-import { GridAgentSessionContext } from '@sage-bionetworks/synapse-client'
 import {
-  AgentAccessLevel,
   AgentSession,
-  TraceEvent,
-} from '@sage-bionetworks/synapse-types'
-import { KeyboardEventHandler, useEffect, useState } from 'react'
+  FileHandleAssociateType,
+  GridAgentSessionContext,
+} from '@sage-bionetworks/synapse-client'
+import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
+import { useEffect, useRef, useState } from 'react'
 import { SkeletonParagraph } from '../Skeleton'
 import { displayToast } from '../ToastMessage'
 import AccessLevelMenu from './AccessLevelMenu'
-import SynapseChatInteraction from './SynapseChatInteraction'
+import { ChatAttachment } from './utils/types'
+import { ChatInputArea } from './components/ChatInputArea/ChatInputArea'
 import SynapseChatMessage from './SynapseChatMessage'
+import { SmartToyTwoTone } from '@mui/icons-material'
+import { UserCard } from '../UserCard/UserCard'
+import { useApplicationSessionContext } from '@/utils/AppUtils'
+import { ReactComponent as CurieAvatarHead } from '@/assets/illustrations/curie_avatar_head.svg'
+
+const CURIE_GREETING = 'Hi! How can I help you today?'
+
+const CURIE_ACCESS_LEVEL_SUFFIX: Record<AgentAccessLevel, string> = {
+  [AgentAccessLevel.PUBLICLY_ACCESSIBLE]: ' and can only read public data.',
+  [AgentAccessLevel.READ_YOUR_PRIVATE_DATA]:
+    ' and can read your public and private data in Synapse on your behalf.',
+  [AgentAccessLevel.WRITE_YOUR_PRIVATE_DATA]:
+    ' and can read and write your public and private data in Synapse on your behalf.',
+}
+
+const DEFAULT_AVATAR = (
+  <Box
+    sx={{
+      p: '3px',
+      borderRadius: '50%',
+      borderStyle: 'solid',
+      borderWidth: '1px',
+      borderColor: 'grey.300',
+      mt: '10px',
+      height: '31px',
+    }}
+  >
+    <SmartToyTwoTone sx={{ color: 'secondary.main' }} />
+  </Box>
+)
+
+const CURIE_AVATAR = (
+  <Box
+    sx={{
+      mt: '10px',
+      height: '30px',
+      width: '30px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}
+  >
+    <CurieAvatarHead />
+  </Box>
+)
 
 export type SynapseChatProps = {
   initialMessage?: string //optional initial message
   agentRegistrationId?: string // if provided, use this agent
   chatbotName?: string // optional name of this chatbot agent
+  variant?: 'default' | 'curie'
   hideTitle?: boolean
   textboxPositionOffset?: string // when embedded in a form, the textbox (form) stuck to the bottom may need to be offset due to container padding (dialog content for example!)
   /* optional session context for the agent session */
@@ -56,23 +99,21 @@ export type SynapseChatProps = {
   onChatResponse?: (responseText: string) => void
   /** Optional list of prompt suggestions shown as clickable pills above the text input */
   suggestedPrompts?: string[]
+  /** Optional custom avatar for the chatbot agent */
+  agentAvatar?: React.ReactNode
+  /**
+   * Whether to allow the user to attach local files to their chat message.
+   * @default false
+   */
+  allowAttachments?: boolean
 }
-
-export type ChatInteraction = {
-  userMessage: string
-  chatResponseText?: string
-  chatErrorReason?: string
-  chatResponseTrace?: TraceEventWithFriendlyMessage[]
-}
-
-export type TraceEventWithFriendlyMessage = {
-  friendlyMessage?: string
-} & TraceEvent
 
 export function SynapseChat({
   initialMessage,
   agentRegistrationId,
   chatbotName = 'SynapseChat',
+  variant = 'default',
+  agentAvatar,
   hideTitle = false,
   textboxPositionOffset = '0px',
   sessionContext,
@@ -82,8 +123,19 @@ export function SynapseChat({
   showAccessLevelMenu = true,
   onChatResponse,
   suggestedPrompts,
+  allowAttachments = false,
 }: SynapseChatProps) {
   const { accessToken } = useSynapseContext()
+  const { userId } = useApplicationSessionContext()
+
+  const baseDisclaimerText = chatbotName + ' can make mistakes'
+
+  const resolvedAgentAvatar =
+    agentAvatar ?? (variant === 'curie' ? CURIE_AVATAR : DEFAULT_AVATAR)
+
+  const userAvatar = (
+    <UserCard ownerId={userId} size="AVATAR" avatarSize="MEDIUM" />
+  )
   const [localAgentSession, setLocalAgentSession] = useState<AgentSession>()
   const agentSession = externalSession ?? localAgentSession
   const setAgentSession = setExternalSession ?? setLocalAgentSession
@@ -101,7 +153,6 @@ export function SynapseChat({
         'danger',
       ),
   })
-  const theme = useTheme()
   const [agentAccessLevel, setAgentAccessLevel] = useState<AgentAccessLevel>(
     sessionContext
       ? AgentAccessLevel.WRITE_YOUR_PRIVATE_DATA
@@ -110,11 +161,37 @@ export function SynapseChat({
 
   const internalChatState = useChatState(agentSession, onChatResponse)
   const chatState = externalChatState ?? internalChatState
-  const { pendingMessage, chatJobIds, sendChat } = chatState
+  const { interactions, isAwaitingResponse, sendChat } = chatState
+
+  const showGreeting = variant === 'curie' && interactions.length === 0
+
+  const curieAccessLevelSuffix =
+    variant === 'curie' ? CURIE_ACCESS_LEVEL_SUFFIX[agentAccessLevel] : ''
+  const disclaimerText = baseDisclaimerText + curieAccessLevelSuffix
+
+  // Only interactions added after this component instance mounted should play the entry
+  // animation. Callers may lift state so history survives a `Dialog` closing, but the
+  // `Dialog` unmounts its children, so every reopen would otherwise re-animate the whole
+  // conversation.
+  const presentAtMountRef = useRef<Set<string> | undefined>(undefined)
+  if (presentAtMountRef.current === undefined) {
+    presentAtMountRef.current = new Set(interactions.map(i => i.id))
+  }
+  const presentAtMount = presentAtMountRef.current
 
   // Keep track of the text that the user is currently typing into the textfield
   const [userChatTextfieldValue, setUserChatTextfieldValue] = useState('')
   const [initialMessageProcessed, setInitialMessageProcessed] = useState(false)
+
+  // A copy of the attachments sent with the last interaction, so it can still show rich
+  // (name/type) chips after ChatInputArea has cleared its own attachment state. This is passed to
+  // the last interaction for its entire lifetime -- sent, then processing, then completed -- as a
+  // fallback filename source, since the request body (FileHandleAssociation) never carries a
+  // filename and the server-resolved filename (attachmentStatuses) only arrives once the job
+  // completes. It's simply overwritten on the next send.
+  const [lastSentAttachments, setLastSentAttachments] = useState<
+    ChatAttachment[]
+  >([])
 
   // Restore chat session history, if exists.
   // TODO: currently only a single page is restored.  Add support for multiple pages (and detect the user scrolling up to restore the next page of results older)
@@ -165,26 +242,26 @@ export function SynapseChat({
     }
   }, [agentSession, initialMessage, initialMessageProcessed, sendChat])
 
-  const handleSendMessage = () => {
-    if (userChatTextfieldValue.trim()) {
-      sendChat(userChatTextfieldValue.trim())
-      setUserChatTextfieldValue('')
-    }
+  const handleSend = (message: string, attachments: ChatAttachment[]) => {
+    sendChat(
+      message,
+      attachments.length
+        ? attachments.map(attachment => ({
+            fileHandleId: attachment.fileHandleId,
+            // The backend short-circuits the FileHandleAssociation auth check for a user's own
+            // uploaded file handle, so associateObjectId/associateObjectType are not totally
+            // accurate here. FileHandleAssociateType has no dedicated value for "the uploader's
+            // own bare file handle", so this stubs associateObjectId to the fileHandleId itself
+            // and the FileEntity associate type, which supports the short-circuit path.
+            associateObjectId: attachment.fileHandleId,
+            associateObjectType: FileHandleAssociateType.FileEntity,
+          }))
+        : undefined,
+    )
+    setUserChatTextfieldValue('')
+    setLastSentAttachments(attachments)
   }
 
-  const isDisabled =
-    !agentSession || !userChatTextfieldValue || !!pendingMessage
-
-  const handleKeyDown: KeyboardEventHandler<HTMLDivElement> = event => {
-    if (!isDisabled && event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault()
-      handleSendMessage()
-    }
-  }
-
-  const sendMessageButtonColor = (
-    theme.palette.secondary as unknown as Color
-  )[300]
   if (createAgentSessionError) {
     return (
       <Alert severity={'error'} sx={{ my: 2 }}>
@@ -198,7 +275,8 @@ export function SynapseChat({
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'space-between',
+        justifyContent: variant === 'curie' ? 'flex-start' : 'space-between',
+        gap: variant === 'curie' ? '20px' : '0',
         maxWidth: '1100px',
         mx: 'auto',
         height: '100%',
@@ -220,28 +298,39 @@ export function SynapseChat({
           {chatbotName}
         </Typography>
       )}
-      {showAccessLevelMenu && (
+      {showAccessLevelMenu && variant !== 'curie' && (
         <AccessLevelMenu
           initAccessLevel={agentAccessLevel}
           onChange={newAccessLevel => {
             setAgentAccessLevel(newAccessLevel)
             updateAgentSession({
               agentAccessLevel: newAccessLevel,
-              sessionId: agentSession!.sessionId,
+              sessionId: agentSession!.sessionId!,
             })
           }}
         />
       )}
       {!agentSession && <SkeletonParagraph numRows={10} />}
       {agentSession && (
-        <Box sx={{ flexGrow: 1, overflowY: 'auto', mb: 2 }}>
+        <Box
+          sx={{
+            flexGrow: 1,
+            overflowY: 'auto',
+            mb: variant === 'curie' ? 0 : 2,
+          }}
+        >
           <List
             sx={{
               flex: 1,
               overflowY: 'auto',
               pt: '20px',
+              ...(variant === 'curie' && { pt: 0, pb: 0, gap: '20px' }),
               display: 'flex',
               flexDirection: 'column',
+              ...(showGreeting && {
+                minHeight: '100%',
+                justifyContent: 'flex-end',
+              }),
             }}
           >
             {/* {sessionHistory &&
@@ -254,38 +343,59 @@ export function SynapseChat({
                 />
               )
             })} */}
-            {chatJobIds.map(jobId => {
+            {showGreeting && (
+              <ListItem
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: '50px auto',
+                  columnGap: '16px',
+                  justifyItems: 'start',
+                  alignItems: 'start',
+                  p: 0,
+                }}
+              >
+                {resolvedAgentAvatar}
+                <Typography sx={{ justifySelf: 'start', mt: '14px' }}>
+                  {CURIE_GREETING}
+                </Typography>
+              </ListItem>
+            )}
+            {interactions.map((interaction, index) => {
+              const isLast = index === interactions.length - 1
               return (
                 <SynapseChatMessage
-                  key={jobId}
-                  chatJobId={jobId}
+                  agentAvatar={resolvedAgentAvatar}
+                  userAvatar={userAvatar}
+                  key={interaction.id}
+                  userMessage={interaction.userMessage}
+                  chatJobId={interaction.jobId}
+                  showLoadingIcon={variant !== 'curie'}
                   onSendChat={sendChat}
+                  scrollIntoView={isLast}
+                  animateEntry={!presentAtMount.has(interaction.id)}
+                  isAwaitingResponse={isAwaitingResponse}
+                  pendingAttachments={
+                    // Only one interaction can be in flight at a time (the composer is disabled
+                    // while isAwaitingResponse), so lastSentAttachments always corresponds to
+                    // whichever interaction is last.
+                    isLast ? lastSentAttachments : undefined
+                  }
                 />
               )
             })}
-            {pendingMessage && (
-              <SynapseChatInteraction
-                userMessage={pendingMessage}
-                chatResponseText={''}
-                chatErrorReason={''}
-                scrollIntoView
-                onSendChat={sendChat}
-              />
-            )}
           </List>
         </Box>
       )}
       <Box
         sx={{
           position: 'sticky',
-          bottom: textboxPositionOffset,
+          bottom: variant === 'curie' ? '0px' : textboxPositionOffset,
           backgroundColor: 'white',
         }}
       >
         {suggestedPrompts &&
           suggestedPrompts.length > 0 &&
-          chatJobIds.length === 0 &&
-          !pendingMessage && (
+          interactions.length === 0 && (
             <Stack
               direction="row"
               spacing={1}
@@ -303,54 +413,22 @@ export function SynapseChat({
               ))}
             </Stack>
           )}
-        <Box
-          component="form"
-          sx={{
-            pt: '8px',
-            mt: '5px',
-            pb: '10px',
-            position: 'sticky',
-            borderTop: '1px solid',
-            borderColor: 'grey.400',
-          }}
-          onSubmit={handleSendMessage}
-        >
-          <TextField
-            fullWidth
+        <Box sx={{ mt: '5px' }}>
+          <ChatInputArea
             value={userChatTextfieldValue}
-            onChange={e => setUserChatTextfieldValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={`Message ${chatbotName}`}
-            slotProps={{
-              input: {
-                sx: { borderRadius: 96.6 },
-                endAdornment: (
-                  <IconButton
-                    disabled={isDisabled}
-                    onClick={handleSendMessage}
-                    sx={{
-                      ml: '7px',
-                      mr: '-8px',
-                      color: sendMessageButtonColor,
-                      borderStyle: 'solid',
-                      borderWidth: isDisabled ? '1px' : '2px',
-                      borderColor: isDisabled ? 'gray' : sendMessageButtonColor,
-                    }}
-                  >
-                    <ArrowUpward />
-                  </IconButton>
-                ),
-              },
-            }}
+            onValueChange={setUserChatTextfieldValue}
+            onSend={handleSend}
+            placeholder={
+              variant === 'curie' ? 'Ask anything' : `Message ${chatbotName}`
+            }
+            disabled={!agentSession || isAwaitingResponse}
+            allowAttachments={allowAttachments}
           />
-          <Typography
-            variant="smallText1"
-            sx={{ pt: '8px', textAlign: 'center' }}
-          >
-            {chatbotName} can make mistakes.
-          </Typography>
         </Box>
       </Box>
+      <Typography variant="smallText1" sx={{ pt: '8px', textAlign: 'center' }}>
+        {disclaimerText}
+      </Typography>
     </Box>
   )
 }

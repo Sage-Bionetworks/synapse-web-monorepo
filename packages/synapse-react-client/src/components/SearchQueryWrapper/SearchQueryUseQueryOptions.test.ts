@@ -19,6 +19,7 @@ import {
   toSearchIndexQuery,
   type SearchQueryConfig,
 } from './SearchQueryUseQueryOptions'
+import { VALUE_NOT_SET } from '@/utils/SynapseConstants'
 
 const SEARCH_INDEX_ID = 'syn60001'
 
@@ -322,6 +323,91 @@ describe('toSearchIndexQuery', () => {
       }
     )?.range?.event_date
     expect(rangeClause).not.toHaveProperty('gte')
+  })
+
+  it('translates a range facet "Not Assigned" selection into a must_not exists post_filter', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleRequest({
+        selectedFacets: [
+          {
+            concreteType: FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
+            columnName: 'age',
+            min: VALUE_NOT_SET,
+            max: VALUE_NOT_SET,
+          },
+        ],
+      }),
+      SEARCH_INDEX_ID,
+      [{ id: 'c1', name: 'age', columnType: 'INTEGER', facetType: 'range' }],
+    )
+    // Must be a "field missing" clause, NOT a range clause containing the sentinel string.
+    expect(result.searchQuery?.post_filter).toEqual({
+      bool: { must_not: [{ exists: { field: 'age' } }] },
+    })
+    expect(result.searchQuery?.post_filter).not.toHaveProperty('range')
+  })
+
+  it('translates "Not Assigned" for DATE range facets without applying date conversion', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleRequest({
+        selectedFacets: [
+          {
+            concreteType: FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
+            columnName: 'event_date',
+            min: VALUE_NOT_SET,
+            max: VALUE_NOT_SET,
+          },
+        ],
+      }),
+      SEARCH_INDEX_ID,
+      [
+        {
+          id: 'c1',
+          name: 'event_date',
+          columnType: 'DATE',
+          facetType: 'range',
+        },
+      ],
+    )
+    expect(result.searchQuery?.post_filter).toEqual({
+      bool: { must_not: [{ exists: { field: 'event_date' } }] },
+    })
+  })
+
+  it('excludes a "Not Assigned" range clause from its own column\'s aggregation filter', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleRequest({
+        selectedFacets: [
+          {
+            concreteType: FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
+            columnName: 'age',
+            min: VALUE_NOT_SET,
+            max: VALUE_NOT_SET,
+          },
+          {
+            concreteType: FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+            columnName: 'organ',
+            facetValues: ['Brain'],
+          },
+        ],
+      }),
+      SEARCH_INDEX_ID,
+      [
+        {
+          id: 'c1',
+          name: 'organ',
+          columnType: 'STRING',
+          facetType: 'enumeration',
+        },
+        { id: 'c2', name: 'age', columnType: 'INTEGER', facetType: 'range' },
+      ],
+    )
+    // organ aggregation should be filtered by the age "Not Assigned" clause (drops its own)
+    expect(
+      (result.searchQuery?.aggregations as Record<string, unknown>)?.['organ'],
+    ).toMatchObject({
+      filter: { bool: { must_not: [{ exists: { field: 'age' } }] } },
+    })
   })
 
   it('combines multiple selectedFacets into a bool.must post_filter', () => {
@@ -986,6 +1072,122 @@ describe('searchQueryResultsToQueryResultBundle', () => {
     })
   })
 
+  it('parses filter-wrapped aggregation results with lterms# prefix (INTEGER enumeration column)', () => {
+    // OpenSearch uses "lterms" (long terms) as the aggregation type prefix for integer fields,
+    // not "sterms" (string terms). When a selection is active on any facet, all aggregations
+    // are filter-wrapped and the nested key becomes "lterms#columnName". This test covers
+    // the bug where INTEGER enumeration facets would collapse to empty after any selection.
+    const results: SearchQueryResults = {
+      concreteType: 'org.sagebionetworks.repo.model.search.SearchQueryResults',
+      totalHits: 70,
+      hits: [],
+      selectColumns: [],
+      aggregationResults: {
+        // researchTheme is a STRING column — sterms prefix
+        researchTheme: {
+          doc_count: 70,
+          'sterms#researchTheme': {
+            buckets: [
+              { key: 'Drug Resistance', doc_count: 40 },
+              { key: 'Metastasis', doc_count: 30 },
+            ],
+          },
+        },
+        // publicationYear is an INTEGER column — lterms prefix
+        publicationYear: {
+          doc_count: 100,
+          'lterms#publicationYear': {
+            buckets: [
+              { key: 2022, doc_count: 35 },
+              { key: 2023, doc_count: 35 },
+            ],
+          },
+        },
+      },
+    }
+    const result = searchQueryResultsToQueryResultBundle(
+      results,
+      MINIMAL_SEARCH_INDEX_QUERY,
+      undefined,
+      [
+        {
+          concreteType: FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+          columnName: 'researchTheme',
+          facetValues: ['Drug Resistance'],
+        },
+      ],
+    )
+    expect(result.facets).toHaveLength(2)
+
+    const yearFacet = result.facets!.find(
+      f => f.columnName === 'publicationYear',
+    )
+    expect(yearFacet).toMatchObject({
+      facetType: 'enumeration',
+      facetValues: [
+        { value: '2022', count: 35, isSelected: false },
+        { value: '2023', count: 35, isSelected: false },
+      ],
+    })
+
+    const themeFacet = result.facets!.find(
+      f => f.columnName === 'researchTheme',
+    )
+    expect(themeFacet).toMatchObject({
+      facetType: 'enumeration',
+      facetValues: [
+        { value: 'Drug Resistance', count: 40, isSelected: true },
+        { value: 'Metastasis', count: 30, isSelected: false },
+      ],
+    })
+  })
+
+  it('marks selected values on INTEGER enumeration facets correctly when lterms# prefix is present', () => {
+    // When the user selects year 2022, the publicationYear aggregation has match_all filter
+    // (stays wide). The lterms#publicationYear key must still be resolved so that 2022 can
+    // be marked isSelected: true and 2023 remains available for multi-select.
+    const results: SearchQueryResults = {
+      concreteType: 'org.sagebionetworks.repo.model.search.SearchQueryResults',
+      totalHits: 35,
+      hits: [],
+      selectColumns: [],
+      aggregationResults: {
+        publicationYear: {
+          doc_count: 100,
+          'lterms#publicationYear': {
+            buckets: [
+              { key: 2022, doc_count: 35 },
+              { key: 2023, doc_count: 35 },
+            ],
+          },
+        },
+      },
+    }
+    const result = searchQueryResultsToQueryResultBundle(
+      results,
+      MINIMAL_SEARCH_INDEX_QUERY,
+      undefined,
+      [
+        {
+          concreteType: FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+          columnName: 'publicationYear',
+          facetValues: ['2022'],
+        },
+      ],
+    )
+
+    const yearFacet = result.facets!.find(
+      f => f.columnName === 'publicationYear',
+    )
+    expect(yearFacet).toMatchObject({
+      facetType: 'enumeration',
+      facetValues: [
+        { value: '2022', count: 35, isSelected: true },
+        { value: '2023', count: 35, isSelected: false },
+      ],
+    })
+  })
+
   it('reorders facets to match the columnModels order', () => {
     // Server aggregations come in a different order than columnModels.
     // Note: range columns (age) are synthesized by searchQueryResultsToQueryResultBundle;
@@ -1466,5 +1668,225 @@ describe('toSearchIndexQuery – searchQueryConfig', () => {
     }
     expect(clause.multi_match.fields).toContain('description')
     expect(clause.multi_match.fields).not.toContain('description^1')
+  })
+})
+
+// ---------------------------------------------------------------------------
+// toSearchIndexQuery – exact phrase matching (double-quoted queries)
+// ---------------------------------------------------------------------------
+
+describe('toSearchIndexQuery – exact phrase matching', () => {
+  function makeQueryBundleWithText(searchExpression: string) {
+    return makeQueryBundleRequest({
+      additionalFilters: [
+        {
+          concreteType: TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+          searchExpression,
+        },
+      ],
+    })
+  }
+
+  it('a fully-quoted phrase always emits simple_query_string regardless of strategy', () => {
+    const strategies = [
+      undefined,
+      'MULTI_MATCH',
+      'MULTI_MATCH_BEST_FIELDS',
+      'MULTI_MATCH_CROSS_FIELDS',
+      'PHRASE_PREFIX',
+      'BOOSTED_FUZZY',
+      'SIMPLE_QUERY_STRING',
+    ] as const
+
+    for (const queryStrategy of strategies) {
+      const result = toSearchIndexQuery(
+        makeQueryBundleWithText('"cancer genomics"'),
+        SEARCH_INDEX_ID,
+        undefined,
+        queryStrategy ? { queryStrategy } : undefined,
+      )
+      expect(result.searchQuery?.query).toEqual({
+        simple_query_string: { query: '"cancer genomics"' },
+      })
+    }
+  })
+
+  it('a mixed phrase+term query emits simple_query_string', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('"cancer genomics" atlas'),
+      SEARCH_INDEX_ID,
+    )
+    expect(result.searchQuery?.query).toEqual({
+      simple_query_string: { query: '"cancer genomics" atlas' },
+    })
+  })
+
+  it('field boosts are preserved when routing to simple_query_string for a phrase query', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('"exact phrase"'),
+      SEARCH_INDEX_ID,
+      undefined,
+      {
+        queryStrategy: 'BOOSTED_FUZZY',
+        fieldBoosts: { resourceName: 5, synonyms: 4 },
+      },
+    )
+    expect(result.searchQuery?.query).toEqual({
+      simple_query_string: {
+        query: '"exact phrase"',
+        fields: ['resourceName^5', 'synonyms^4'],
+      },
+    })
+  })
+
+  it('an unquoted query is NOT routed to simple_query_string by the phrase-detection path', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('cancer genomics'),
+      SEARCH_INDEX_ID,
+    )
+    // Should use the default MULTI_MATCH path, not simple_query_string
+    expect(result.searchQuery?.query).toEqual({
+      multi_match: { query: 'cancer genomics', fuzziness: 'AUTO' },
+    })
+  })
+
+  it('a query with only an empty pair of double-quotes is NOT treated as a phrase', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('""'),
+      SEARCH_INDEX_ID,
+    )
+    // "" contains no inner characters → falls through to the normal strategy
+    expect(result.searchQuery?.query).toEqual({
+      multi_match: { query: '""', fuzziness: 'AUTO' },
+    })
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Synapse ID detection
+// ---------------------------------------------------------------------------
+
+describe('toSearchIndexQuery – Synapse ID detection', () => {
+  function makeQueryBundleWithText(searchExpression: string) {
+    return makeQueryBundleRequest({
+      additionalFilters: [
+        {
+          concreteType: TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+          searchExpression,
+        },
+      ],
+    })
+  }
+
+  it('a bare Synapse ID always emits simple_query_string regardless of strategy', () => {
+    const strategies = [
+      undefined,
+      'MULTI_MATCH',
+      'MULTI_MATCH_BEST_FIELDS',
+      'MULTI_MATCH_CROSS_FIELDS',
+      'PHRASE_PREFIX',
+      'BOOSTED_FUZZY',
+      'SIMPLE_QUERY_STRING',
+    ] as const
+
+    for (const queryStrategy of strategies) {
+      const result = toSearchIndexQuery(
+        makeQueryBundleWithText('syn12345'),
+        SEARCH_INDEX_ID,
+        undefined,
+        queryStrategy ? { queryStrategy } : undefined,
+      )
+      expect(result.searchQuery?.query).toEqual({
+        simple_query_string: { query: 'syn12345' },
+      })
+    }
+  })
+
+  it('an uppercase Synapse ID is detected (case-insensitive)', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('SYN12345'),
+      SEARCH_INDEX_ID,
+    )
+    expect(result.searchQuery?.query).toEqual({
+      simple_query_string: { query: 'SYN12345' },
+    })
+  })
+
+  it('a versioned Synapse ID (syn123.4) emits simple_query_string', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('syn12345.7'),
+      SEARCH_INDEX_ID,
+    )
+    expect(result.searchQuery?.query).toEqual({
+      simple_query_string: { query: 'syn12345.7' },
+    })
+  })
+
+  it('a Synapse ID mixed with free-text terms emits simple_query_string', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('syn12345 cancer'),
+      SEARCH_INDEX_ID,
+    )
+    expect(result.searchQuery?.query).toEqual({
+      simple_query_string: { query: 'syn12345 cancer' },
+    })
+  })
+
+  it('field boosts are preserved when routing to simple_query_string for a Synapse ID', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('syn12345'),
+      SEARCH_INDEX_ID,
+      undefined,
+      {
+        queryStrategy: 'BOOSTED_FUZZY',
+        fieldBoosts: { resourceName: 5, synonyms: 4 },
+      },
+    )
+    expect(result.searchQuery?.query).toEqual({
+      simple_query_string: {
+        query: 'syn12345',
+        fields: ['resourceName^5', 'synonyms^4'],
+      },
+    })
+  })
+
+  it('a word that starts with "syn" but is not an ID (e.g. "synapse") is NOT routed to simple_query_string', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('synapse'),
+      SEARCH_INDEX_ID,
+    )
+    expect(result.searchQuery?.query).toEqual({
+      multi_match: { query: 'synapse', fuzziness: 'AUTO' },
+    })
+  })
+
+  it('"synonyms" is NOT detected as a Synapse ID', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('synonyms'),
+      SEARCH_INDEX_ID,
+    )
+    expect(result.searchQuery?.query).toEqual({
+      multi_match: { query: 'synonyms', fuzziness: 'AUTO' },
+    })
+  })
+
+  it('"syn" with no digits is NOT detected as a Synapse ID', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('syn'),
+      SEARCH_INDEX_ID,
+    )
+    expect(result.searchQuery?.query).toEqual({
+      multi_match: { query: 'syn', fuzziness: 'AUTO' },
+    })
+  })
+
+  it('a Synapse ID embedded in a larger word (e.g. "asyn12345") is NOT detected', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('asyn12345'),
+      SEARCH_INDEX_ID,
+    )
+    expect(result.searchQuery?.query).toEqual({
+      multi_match: { query: 'asyn12345', fuzziness: 'AUTO' },
+    })
   })
 })

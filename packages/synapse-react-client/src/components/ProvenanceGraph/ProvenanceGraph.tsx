@@ -65,10 +65,6 @@ export const EDIT_PROVENANCE_TEXT = 'Edit Provenance'
 export const NO_PROVENANCE_TITLE = 'No provenance data'
 const NO_PROVENANCE_MESSAGE = (entityTypeName: string) =>
   `We don’t have any provenance information for this ${entityTypeName} yet.`
-const NO_PROVENANCE_TEXT_COLOR = '#3B4046'
-const PROVENANCE_BACKGROUND_COLOR = '#F9F9FA'
-const EDIT_PROVENANCE_BUTTON_TEXT_COLOR = '#4D535A'
-const EDIT_PROVENANCE_BUTTON_BORDER_COLOR = '#9EAAB7'
 const EDIT_PROVENANCE_BUTTON_BACKGROUND_COLOR = 'rgba(255, 255, 255, 0.60)'
 
 /**
@@ -439,8 +435,6 @@ const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
       style={{
         width: '100%',
         height: containerHeight,
-        backgroundColor: PROVENANCE_BACKGROUND_COLOR,
-        padding: '15px',
       }}
     >
       {showNoProvenance ? (
@@ -455,7 +449,7 @@ const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
         >
           <Typography
             sx={{
-              color: NO_PROVENANCE_TEXT_COLOR,
+              color: 'greyV2.900',
               fontSize: '16px',
               lineHeight: '24px',
               fontWeight: 540,
@@ -466,7 +460,7 @@ const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
           </Typography>
           <Typography
             sx={{
-              color: NO_PROVENANCE_TEXT_COLOR,
+              color: 'greyV2.900',
               fontSize: '14px',
               lineHeight: '20px',
               fontWeight: 440,
@@ -480,9 +474,9 @@ const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
               sx={{
                 borderRadius: '6px',
                 border: '1px solid',
-                borderColor: EDIT_PROVENANCE_BUTTON_BORDER_COLOR,
+                borderColor: 'greyV2.400',
                 background: EDIT_PROVENANCE_BUTTON_BACKGROUND_COLOR,
-                color: EDIT_PROVENANCE_BUTTON_TEXT_COLOR,
+                color: 'greyV2.800',
                 fontWeight: 540,
                 lineHeight: '12px' /* 100% */,
                 letterSpacing: '-0.24px',

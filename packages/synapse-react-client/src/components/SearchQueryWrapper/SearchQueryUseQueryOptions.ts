@@ -37,6 +37,8 @@ import { omit } from 'lodash-es'
 import dayjs from 'dayjs'
 import { useCallback, useMemo } from 'react'
 import { KeyFactory } from '@/synapse-queries/KeyFactory'
+import { SYNAPSE_ENTITY_ID_TOKEN_REGEX } from '@/utils/functions/RegularExpressions'
+import { VALUE_NOT_SET } from '@/utils/SynapseConstants'
 
 // ─── Local OpenSearch DSL types ─────────────────────────────────────────────
 // Narrow typings for the OpenSearch structures we build (query DSL, sort) and
@@ -75,6 +77,8 @@ export type SearchQueryConfig = {
 type FilterClause =
   | { terms: Record<string, string[]> }
   | { range: Record<string, { gte?: string; lte?: string }> }
+  // "Field is not set" — emitted when a range facet selects "Not Assigned".
+  | { bool: { must_not: [{ exists: { field: string } }] } }
 
 type MultiMatchClause = {
   multi_match: {
@@ -117,12 +121,47 @@ function resolveFields(
   )
 }
 
+/**
+ * Returns true if the query text contains at least one double-quoted phrase
+ * (e.g. `"cancer genomics"`). OpenSearch `multi_match` does not understand the
+ * `"phrase"` operator — only `simple_query_string` does — so callers use this
+ * to route quoted queries appropriately.
+ */
+function containsQuotedPhrase(text: string): boolean {
+  // Match a pair of double-quotes enclosing at least one non-quote character.
+  return /"[^"]+"/u.test(text)
+}
+
+/**
+ * Returns true if the query text contains a Synapse entity ID token
+ * (e.g. `syn12345` or `syn12345.4`). `multi_match` with fuzziness AUTO can match
+ * neighbouring IDs (e.g. `syn12345` → `syn12344`), which is almost never desired
+ * for identifier lookups. Callers use this to route ID-containing queries to
+ * `simple_query_string`, which does not apply fuzziness.
+ */
+function containsSynapseId(text: string): boolean {
+  return SYNAPSE_ENTITY_ID_TOKEN_REGEX.test(text)
+}
+
 function buildQueryClause(
   queryText: string,
   config: SearchQueryConfig = {},
 ): MultiMatchClause | SimpleQueryStringClause {
   const { queryStrategy = 'MULTI_MATCH', fieldBoosts, fuzziness } = config
   const fields = resolveFields(fieldBoosts)
+
+  // Route to simple_query_string when the query needs exact-token treatment:
+  //  - a double-quoted phrase (multi_match can't honour the phrase operator), or
+  //  - a Synapse entity ID (fuzziness would match neighbouring IDs).
+  // simple_query_string doesn't apply fuzziness by default, so both cases work.
+  if (containsQuotedPhrase(queryText) || containsSynapseId(queryText)) {
+    return {
+      simple_query_string: {
+        query: queryText,
+        ...(fields ? { fields } : {}),
+      },
+    }
+  }
 
   switch (queryStrategy) {
     case 'SIMPLE_QUERY_STRING':
@@ -288,6 +327,16 @@ export function toSearchIndexQuery(
         f.concreteType === FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
     )
     .forEach(f => {
+      // "Not Assigned" selection: the RangeFacetFilter UI sets both bounds to
+      // VALUE_NOT_SET. Translate to an OpenSearch "field missing" clause rather
+      // than emitting the sentinel string as a range bound (which would fail
+      // with NumberFormatException on numeric/date fields).
+      if (f.min === VALUE_NOT_SET && f.max === VALUE_NOT_SET) {
+        filterClauses.push({
+          bool: { must_not: [{ exists: { field: f.columnName } }] },
+        })
+        return
+      }
       const columnType = columnModels?.find(
         cm => cm.name === f.columnName,
       )?.columnType
@@ -365,6 +414,9 @@ export function toSearchIndexQuery(
       const otherClauses = filterClauses.filter(clause => {
         if ('terms' in clause) return !(cm.name in clause.terms)
         if ('range' in clause) return !(cm.name in clause.range)
+        // "Not Assigned" range clause: identify by the field inside must_not.exists.
+        if ('bool' in clause)
+          return clause.bool.must_not[0]?.exists?.field !== cm.name
         return true
       })
       const aggFilter: SelectionFilter =
@@ -479,10 +531,11 @@ export function searchQueryResultsToQueryResultBundle(
   //     { buckets: [{ key: unknown, doc_count: number }] }
   //
   //   Filter-wrapped terms (per-facet filter bucketing, selections active):
-  //     { doc_count: number, "sterms#columnName": { buckets: [...] } }
+  //     { doc_count: number, "<type>#columnName": { buckets: [...] } }
   //
-  // We detect the shape by checking for a nested "sterms#columnName" property with buckets.
-  // OpenSearch prefixes the aggregation type to the name in the response (e.g. "sterms#Program").
+  // OpenSearch prefixes the aggregation type to the name in the response. The prefix depends
+  // on the field type: "sterms" for string fields, "lterms" for long/integer fields, etc.
+  // We detect the shape by looking for any "type#columnName" key with a buckets property.
   const aggregationResults = results.aggregationResults as unknown as Record<
     string,
     OpenSearchTermsAgg | Record<string, OpenSearchTermsAgg>
@@ -495,7 +548,16 @@ export function searchQueryResultsToQueryResultBundle(
     // Fall back to a direct [columnName] match (defensive), then to the agg itself
     // for the plain (no-selection) terms shape.
     const aggRecord = agg as Record<string, OpenSearchTermsAgg>
-    const nested = aggRecord[`sterms#${columnName}`] ?? aggRecord[columnName]
+    // OpenSearch prefixes the aggregation type to the name when nested inside a filter
+    // aggregation. For string fields this is "sterms#columnName"; for long/integer fields
+    // it is "lterms#columnName". Rather than hardcoding known prefixes, look for any key
+    // ending in "#columnName" so that future numeric types (e.g. double) also work.
+    const nestedKey = Object.keys(aggRecord).find(key =>
+      key.endsWith(`#${columnName}`),
+    )
+    const nested =
+      (nestedKey !== undefined ? aggRecord[nestedKey] : undefined) ??
+      aggRecord[columnName]
     const termsAgg: OpenSearchTermsAgg =
       nested?.buckets !== undefined ? nested : (agg as OpenSearchTermsAgg)
     const selectedValues =
@@ -575,13 +637,15 @@ export function searchQueryResultsToQueryResultBundle(
       ]
     : allFacets
 
+  const maxScore = results.hits?.[0]?.score
   return {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
     queryCount: results.totalHits,
     selectColumns: headers,
     queryResult,
     facets: orderedFacets,
-  }
+    ...(maxScore !== undefined && { maxScore }),
+  } as QueryResultBundle
 }
 
 export function getSearchQueryUseQueryOptions(
@@ -614,11 +678,18 @@ export function getSearchQueryUseQueryOptions(
   }
   const metadataQuery: SearchIndexQuery = {
     ...baseQuery,
+    searchQuery: {
+      ...baseQuery.searchQuery,
+      // Fetch only 1 hit: we need just the top hit's score for tab auto-selection.
+      // Aggregation counts are independent of size.
+      size: 1,
+    },
     // Request all opt-in parts needed for the metadata response:
+    // HITS → exposes the top hit's relevance score for tab auto-selection
     // TOTAL_HITS → queryCount (drives tab count / spinner resolution)
     // SELECT_COLUMNS → column headers for the table
     // Aggregation results are returned automatically when aggregations is set on the query.
-    responseParts: new Set(['TOTAL_HITS', 'SELECT_COLUMNS'] as const),
+    responseParts: new Set(['HITS', 'TOTAL_HITS', 'SELECT_COLUMNS'] as const),
   }
 
   // Convert responseParts Set → sorted array for query key building.

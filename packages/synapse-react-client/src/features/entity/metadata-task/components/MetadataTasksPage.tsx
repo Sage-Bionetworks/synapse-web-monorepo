@@ -1,16 +1,18 @@
 import InfiniteTableLayout from '@/components/layout/InfiniteTableLayout'
-import StyledTanStackTable from '@/components/TanStackTable/StyledTanStackTable'
-import { useMetadataTaskTable } from '@/features/entity/metadata-task/hooks/useMetadataTaskTable'
+import CurationTaskCard from '@/features/curator/dashboard/components/CurationTaskCard'
+import FilteredByTaskIdsBanner from '@/features/curator/dashboard/components/FilteredByTaskIdsBanner'
+import { useGetCurationTasksInfinite } from '@/synapse-queries/curation/task/useCurationTask'
 import { useGetFeatureFlag } from '@/synapse-queries/index'
-import { Button, FormControlLabel, Stack, Switch } from '@mui/material'
-import { useState } from 'react'
-import { ListCurationTaskRequest } from '@sage-bionetworks/synapse-client'
-import CreateOrUpdateCurationTaskDialog from './CreateOrUpdateCurationTaskDialog'
-import { displayToast } from '@/components/ToastMessage/ToastMessage'
 import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
+import { useCurationTaskListFilters } from '@/utils/hooks/useCurationTaskListFilters'
+import { Button, FormControlLabel, Stack, Switch } from '@mui/material'
+import { useMemo } from 'react'
 import { AddCircleTwoTone } from '@mui/icons-material'
-import { useGlobalIsEditingContext } from '@/utils/context/GlobalIsEditingContext'
 import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
+import { useNavigate } from 'react-router'
+import MetadataTasksPageRouter, {
+  MetadataTasksPageRouterProps,
+} from './MetadataTasksPageRouter'
 
 export type MetadataTaskTableProps = {
   projectId: string
@@ -18,26 +20,27 @@ export type MetadataTaskTableProps = {
 
 /**
  * Displays a list of metadata curation tasks for a particular project, with actions that can be performed on each task.
- * @param props
- * @constructor
  */
-export default function MetadataTasksPage(props: MetadataTaskTableProps) {
+function MetadataTasksPageInternal(props: MetadataTaskTableProps) {
   const { projectId } = props
-  const [listCurationTaskRequest, setListCurationTaskRequest] =
-    useState<ListCurationTaskRequest>({
-      projectId,
-      assignedToMe: false,
-    })
-
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const { setIsEditing } = useGlobalIsEditingContext()
+  const navigate = useNavigate()
+  const {
+    request,
+    taskIds,
+    assignedToMe,
+    setAssignedToMe,
+    clearTaskIdsFilter,
+  } = useCurationTaskListFilters({ projectId })
 
   const { data: permissions } = useGetEntityPermissions(projectId)
 
-  const { table, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
-    useMetadataTaskTable({
-      listCurationTaskRequest,
-    })
+  const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
+    useGetCurationTasksInfinite(request)
+
+  const tasks = useMemo(
+    () => data?.pages.flatMap(page => page.bundlePage ?? []) ?? [],
+    [data],
+  )
 
   const showNewTaskButton = useGetFeatureFlag(
     FeatureFlagEnum.CURATION_TASK_PAGE_SHOW_NEW_TASK_BUTTON,
@@ -49,61 +52,55 @@ export default function MetadataTasksPage(props: MetadataTaskTableProps) {
         <FormControlLabel
           control={
             <Switch
-              checked={!!listCurationTaskRequest.assignedToMe}
+              checked={assignedToMe}
               onChange={(_e, checked) => {
-                setListCurationTaskRequest(prev => ({
-                  ...prev,
-                  assignedToMe: checked,
-                }))
+                setAssignedToMe(checked)
               }}
             />
           }
           label="View only tasks assigned to me"
         />
         {showNewTaskButton && permissions?.canAddChild && (
-          <>
-            <CreateOrUpdateCurationTaskDialog
-              key={String(isDialogOpen)}
-              projectId={projectId}
-              open={isDialogOpen}
-              onSuccess={() => {
-                displayToast('Curation task created successfully', 'success')
-                setIsDialogOpen(false)
-                setIsEditing(false)
-              }}
-              onCancel={() => {
-                setIsDialogOpen(false)
-                setIsEditing(false)
-              }}
-            />
-            <Button
-              variant="outlined"
-              onClick={() => {
-                setIsDialogOpen(true)
-                setIsEditing(true)
-              }}
-              startIcon={<AddCircleTwoTone />}
-            >
-              New Task
-            </Button>
-          </>
+          <Button
+            variant="outlined"
+            onClick={() => void navigate('create')}
+            startIcon={<AddCircleTwoTone />}
+          >
+            New Task
+          </Button>
         )}
       </Stack>
+      <FilteredByTaskIdsBanner taskIds={taskIds} onClear={clearTaskIdsFilter} />
       <InfiniteTableLayout
         table={
-          <StyledTanStackTable
-            table={table}
-            styledTableContainerProps={{ sx: { my: 2 } }}
-          />
+          <Stack gap={3} sx={{ my: 2 }}>
+            {tasks.map(taskBundle => (
+              <CurationTaskCard
+                key={taskBundle.task?.taskId}
+                taskBundle={taskBundle}
+              />
+            ))}
+          </Stack>
         }
         isLoading={isLoading}
-        isEmpty={!isLoading && table.getRowModel().rows.length === 0}
+        isEmpty={!isLoading && tasks.length === 0}
         hasNextPage={hasNextPage}
-        onFetchNextPageClicked={() => {
-          fetchNextPage()
-        }}
+        onFetchNextPageClicked={() => void fetchNextPage()}
         isFetchingNextPage={isFetchingNextPage}
       />
     </Stack>
   )
 }
+
+export type MetadataTasksPageProps = MetadataTaskTableProps &
+  Omit<MetadataTasksPageRouterProps, 'projectId'>
+
+/**
+ * A page that displays a project's metadata curation tasks, with included routing logic for the
+ * create/edit task pages.
+ */
+export default function MetadataTasksPage(props: MetadataTasksPageProps) {
+  return <MetadataTasksPageRouter {...props} />
+}
+
+export { MetadataTasksPageInternal }

@@ -1,12 +1,4 @@
 import { NavbarConfig } from '@sage-bionetworks/synapse-portal-framework/components/navbar/Navbar'
-import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
-import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
-import Navbar from '@sage-bionetworks/synapse-portal-framework/components/navbar/Navbar'
-
-export default function AdkpNavbar() {
-  const isV2 = useGetFeatureFlag(FeatureFlagEnum.ADKP_HOMEPAGE_V2)
-  return <Navbar layout={isV2 ? 'with-sticky-search' : 'default'} />
-}
 
 export const navbarConfig: NavbarConfig = {
   routes: [
@@ -63,6 +55,6 @@ export const navbarConfig: NavbarConfig = {
     },
   ],
   isPortalsDropdownEnabled: false,
-  NavbarComponent: AdkpNavbar,
+  layout: 'with-sticky-search',
   stickyNavBackgroundColor: '#5A488F',
 }

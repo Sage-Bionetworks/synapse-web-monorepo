@@ -1,7 +1,8 @@
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import { rgbIndex, studiesSql } from '../resources'
+import { rgbIndex, studiesSearchIndexId, studiesSql } from '../resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 const type = SynapseConstants.GENERIC_CARD
 
@@ -52,3 +53,15 @@ const studiesQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
 }
 
 export default studiesQueryWrapperPlotNavProps
+
+export const studiesSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'Studies',
+  shouldDeepLink: false,
+  cardConfiguration: studyCardConfiguration,
+  columnAliases,
+  searchIndexId: studiesSearchIndexId,
+  autocompleteFieldName: 'studyName',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
+}

@@ -21,6 +21,8 @@ import {
 import { http, HttpResponse } from 'msw'
 import { mockPaginatedEntityHeaders } from '../../entity/mockEntity'
 import {
+  MOCK_USER_ID,
+  MOCK_USER_PROFILE_IMAGE_URL,
   mockUserBundle,
   mockUserData,
   mockUserProfileData,
@@ -166,14 +168,21 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
   }),
 
   /**
-   * Return a 404 when fetching the profile image
+   * Return a presigned URL for the current mock user's profile image, and a 404 for every
+   * other user (i.e. they have no profile image).
    */
-  http.get(`${backendOrigin}${PROFILE_IMAGE_PREVIEW(':userId')}`, () => {
-    return HttpResponse.json(
-      { reason: 'user has no profile image' },
-      { status: 404 },
-    )
-  }),
+  http.get(
+    `${backendOrigin}${PROFILE_IMAGE_PREVIEW(':userId')}`,
+    ({ params }) => {
+      if (params.userId === String(MOCK_USER_ID)) {
+        return HttpResponse.json(MOCK_USER_PROFILE_IMAGE_URL, { status: 200 })
+      }
+      return HttpResponse.json(
+        { reason: 'Mock user has no profile image' },
+        { status: 404 },
+      )
+    },
+  ),
 
   http.get(`${backendOrigin}${NOTIFICATION_EMAIL}`, () => {
     return HttpResponse.json(

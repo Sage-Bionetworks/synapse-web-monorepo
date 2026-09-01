@@ -21,7 +21,8 @@ export const projectsCardConfiguration: CardConfiguration = {
   genericCardSchema: projectSchema,
   titleLinkConfig: {
     isMarkdown: false,
-    baseURL: 'Explore/Projects/DetailsPage',
+    baseURL: 'Explore/Projects',
+    urlParamStyle: 'path-segment',
     URLColumnName: 'Project',
     matchColumnName: 'Project',
   },

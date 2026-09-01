@@ -1,45 +1,31 @@
-import CreateOrUpdateCurationTaskDialog from '@/features/entity/metadata-task/components/CreateOrUpdateCurationTaskDialog'
 import useOpenCuratorFromTaskButton from '@/features/entity/metadata-task/hooks/useOpenCuratorButton'
 import { createMockTaskBundle } from '@/mocks/curation/mockCurationTask'
 import useGetEntityBundle from '@/synapse-queries/entity/useEntityBundle'
-import { CurationTask, TaskBundle } from '@sage-bionetworks/synapse-client'
-import { render, screen } from '@testing-library/react'
+import {
+  FileBasedMetadataTaskPropertiesConcreteTypeEnum,
+  RecordBasedMetadataTaskPropertiesConcreteTypeEnum,
+  RecordSetGenerationExecutionPropertiesConcreteTypeEnum,
+  SampleSheetGenerationExecutionPropertiesConcreteTypeEnum,
+  TaskBundle,
+} from '@sage-bionetworks/synapse-client'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useNavigate } from 'react-router'
 import { beforeEach } from 'vitest'
 import CurationTaskCard from './CurationTaskCard'
+
+vi.mock('react-router')
 
 vi.mock('@/features/entity/metadata-task/hooks/useOpenCuratorButton', () => ({
   default: vi.fn(),
 }))
 
-vi.mock(
-  '@/features/entity/metadata-task/components/CreateOrUpdateCurationTaskDialog',
-  () => ({
-    default: vi.fn(
-      ({
-        open,
-        onCancel,
-        onSuccess,
-        onDeleteSuccess,
-      }: {
-        open: boolean
-        onCancel: () => void
-        onSuccess: (task: CurationTask) => void
-        onDeleteSuccess: () => void
-      }) =>
-        open ? (
-          <div data-testid="settings-dialog">
-            <button onClick={onCancel}>Cancel</button>
-            <button onClick={() => onSuccess({} as CurationTask)}>Save</button>
-            <button onClick={onDeleteSuccess}>Delete</button>
-          </div>
-        ) : null,
-    ),
-  }),
-)
-
 vi.mock('./UserOrTeamChip', () => ({
   default: () => null,
+}))
+
+vi.mock('./ExecutableTaskCard', () => ({
+  default: () => <div data-testid="executable-task-card" />,
 }))
 
 vi.mock('@/synapse-queries/entity/useEntityBundle', () => ({
@@ -47,10 +33,8 @@ vi.mock('@/synapse-queries/entity/useEntityBundle', () => ({
 }))
 
 const mockUseOpenCuratorFromTaskButton = vi.mocked(useOpenCuratorFromTaskButton)
-const mockCreateOrUpdateCurationTaskDialog = vi.mocked(
-  CreateOrUpdateCurationTaskDialog,
-)
 const mockUseGetEntityBundle = vi.mocked(useGetEntityBundle)
+const mockNavigate = vi.fn()
 
 const mockTaskBundle = createMockTaskBundle({
   projectId: 'syn123',
@@ -62,6 +46,7 @@ const renderComponent = (taskBundle: TaskBundle = mockTaskBundle) =>
 
 beforeEach(() => {
   vi.clearAllMocks()
+  vi.mocked(useNavigate).mockReturnValue(mockNavigate)
   mockUseOpenCuratorFromTaskButton.mockReturnValue({
     hasPermission: true,
     isLoading: false,
@@ -91,63 +76,111 @@ describe('CurationTaskCard', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('does not show the settings dialog on initial render', () => {
-    renderComponent()
-    expect(screen.queryByTestId('settings-dialog')).not.toBeInTheDocument()
-  })
-
-  it('opens the settings dialog when the settings button is clicked', async () => {
+  it('navigates to the edit route for the task when the settings button is clicked', async () => {
     const user = userEvent.setup()
     renderComponent()
 
     await user.click(screen.getByRole('button', { name: /task settings/i }))
 
-    expect(screen.getByTestId('settings-dialog')).toBeInTheDocument()
+    expect(mockNavigate).toHaveBeenCalledWith(
+      `edit/${mockTaskBundle.task!.taskId}`,
+    )
   })
 
-  it('passes the task to the dialog so it opens in edit mode', () => {
-    renderComponent()
+  describe('task type chip', () => {
+    const curateTypes = [
+      FileBasedMetadataTaskPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_metadata_FileBasedMetadataTaskProperties,
+      RecordBasedMetadataTaskPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_metadata_RecordBasedMetadataTaskProperties,
+    ]
 
-    const props = mockCreateOrUpdateCurationTaskDialog.mock.calls[0][0]
-    expect(props.task).toEqual(mockTaskBundle.task)
+    it.each(curateTypes)(
+      'shows the "Curate Data" chip for curate type %s',
+      concreteType => {
+        renderComponent(
+          createMockTaskBundle({
+            projectId: 'syn123',
+            taskProperties: { concreteType } as any,
+          }),
+        )
+        expect(screen.getByText('Curate Data')).toBeInTheDocument()
+      },
+    )
   })
 
-  it('passes the projectId from the task to the dialog', () => {
-    renderComponent()
+  describe('dispatch by task type', () => {
+    const computeTypes = [
+      SampleSheetGenerationExecutionPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_execution_SampleSheetGenerationExecutionProperties,
+      RecordSetGenerationExecutionPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_execution_RecordSetGenerationExecutionProperties,
+    ]
 
-    const props = mockCreateOrUpdateCurationTaskDialog.mock.calls[0][0]
-    expect(props.projectId).toBe('syn123')
+    it.each(computeTypes)(
+      'renders the executable task card for compute type %s',
+      concreteType => {
+        renderComponent(
+          createMockTaskBundle({
+            projectId: 'syn123',
+            taskProperties: { concreteType } as any,
+          }),
+        )
+        expect(screen.getByTestId('executable-task-card')).toBeInTheDocument()
+      },
+    )
+
+    it.each([
+      FileBasedMetadataTaskPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_metadata_FileBasedMetadataTaskProperties,
+      RecordBasedMetadataTaskPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_metadata_RecordBasedMetadataTaskProperties,
+    ])('renders the grid task card for curate type %s', concreteType => {
+      renderComponent(
+        createMockTaskBundle({
+          projectId: 'syn123',
+          taskProperties: { concreteType } as any,
+        }),
+      )
+      expect(
+        screen.getByRole('button', { name: /open curator/i }),
+      ).toBeInTheDocument()
+    })
   })
 
-  it('closes the settings dialog when onCancel is called', async () => {
-    const user = userEvent.setup()
-    renderComponent()
+  describe('due date chip', () => {
+    it('shows a neutral color when the task is COMPLETED even if the due date has passed', () => {
+      renderComponent(
+        createMockTaskBundle(
+          { projectId: 'syn123', dueDate: '2000-01-01' },
+          { state: 'COMPLETED' },
+        ),
+      )
+      const chip = screen
+        .getByText(/due/i)
+        .closest('.MuiChip-root') as HTMLElement
+      expect(chip).toHaveStyle({ backgroundColor: '#E0E0E0' })
+    })
 
-    await user.click(screen.getByRole('button', { name: /task settings/i }))
-    expect(screen.getByTestId('settings-dialog')).toBeInTheDocument()
+    it('shows a neutral color when the task is CANCELED even if the due date has passed', () => {
+      renderComponent(
+        createMockTaskBundle(
+          { projectId: 'syn123', dueDate: '2000-01-01' },
+          { state: 'CANCELED' },
+        ),
+      )
+      const chip = screen
+        .getByText(/due/i)
+        .closest('.MuiChip-root') as HTMLElement
+      expect(chip).toHaveStyle({ backgroundColor: '#E0E0E0' })
+    })
 
-    await user.click(screen.getByRole('button', { name: /cancel/i }))
-    expect(screen.queryByTestId('settings-dialog')).not.toBeInTheDocument()
-  })
-
-  it('closes the settings dialog when onSuccess is called', async () => {
-    const user = userEvent.setup()
-    renderComponent()
-
-    await user.click(screen.getByRole('button', { name: /task settings/i }))
-    await user.click(screen.getByRole('button', { name: /save/i }))
-
-    expect(screen.queryByTestId('settings-dialog')).not.toBeInTheDocument()
-  })
-
-  it('closes the settings dialog when onDeleteSuccess is called', async () => {
-    const user = userEvent.setup()
-    renderComponent()
-
-    await user.click(screen.getByRole('button', { name: /task settings/i }))
-    await user.click(screen.getByRole('button', { name: /delete/i }))
-
-    expect(screen.queryByTestId('settings-dialog')).not.toBeInTheDocument()
+    it('shows an overdue color when the due date has passed and the task is not complete', () => {
+      renderComponent(
+        createMockTaskBundle(
+          { projectId: 'syn123', dueDate: '2000-01-01' },
+          { state: 'IN_PROGRESS' },
+        ),
+      )
+      const chip = screen
+        .getByText(/due/i)
+        .closest('.MuiChip-root') as HTMLElement
+      expect(chip).toHaveStyle({ backgroundColor: '#FFCDD2' })
+    })
   })
 
   describe('status chip', () => {
@@ -184,6 +217,61 @@ describe('CurationTaskCard', () => {
       expect(
         screen.queryByText(/not started|in progress|completed|canceled/i),
       ).not.toBeInTheDocument()
+    })
+  })
+
+  describe('expanded state', () => {
+    it('hides instructions by default', () => {
+      const taskWithInstructions = createMockTaskBundle({
+        projectId: 'syn123',
+        dataType: 'Test Data Type',
+        instructions: 'Test instructions',
+      })
+      renderComponent(taskWithInstructions)
+      const instructions = screen.queryByText('Test instructions')
+      expect(instructions).not.toBeVisible()
+    })
+
+    it('shows instructions when title is clicked', async () => {
+      const user = userEvent.setup()
+      const taskWithInstructions = createMockTaskBundle({
+        projectId: 'syn123',
+        dataType: 'Test Data Type',
+        instructions: 'Test instructions',
+      })
+      renderComponent(taskWithInstructions)
+
+      const title = screen.getByText('Test Data Type')
+      await user.click(title)
+
+      const instructions = screen.getByText('Test instructions')
+      expect(instructions).toBeVisible()
+    })
+
+    it('toggles expanded state when title is clicked', async () => {
+      const user = userEvent.setup()
+      const taskWithInstructions = createMockTaskBundle({
+        projectId: 'syn123',
+        dataType: 'Test Data Type',
+        instructions: 'Test instructions',
+      })
+      renderComponent(taskWithInstructions)
+
+      const title = screen.getByText('Test Data Type')
+      const instructions = screen.getByText('Test instructions')
+
+      // Initially collapsed
+      expect(instructions).not.toBeVisible()
+
+      // Click to expand
+      await user.click(title)
+      expect(instructions).toBeVisible()
+
+      // Click to collapse
+      await user.click(title)
+      await waitFor(() => {
+        expect(instructions).not.toBeVisible()
+      })
     })
   })
 })

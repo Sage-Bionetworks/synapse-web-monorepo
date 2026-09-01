@@ -1,110 +1,32 @@
-import { filesSql, studiesSql } from '@/config/resources'
-import { columnAliases } from '@/config/synapseConfigs/commonProps'
-import { datasetsRgbIndex } from '@/config/synapseConfigs/datasets'
-import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import {
+  TOOLS_DETAILS_PAGE_DATA_DATASETS_TAB_PATH,
+  TOOLS_DETAILS_PAGE_DATA_STUDIES_TAB_PATH,
+} from '@/config/routeConstants'
 import { DetailsPageTabs } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageTabs'
-import { ColumnMultiValueFunction } from '@sage-bionetworks/synapse-types'
-import { Outlet, RouteObject } from 'react-router'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import { Outlet } from 'react-router'
 
-export function ToolDetailsPageDataTabLayout() {
+function ToolDetailsPageDataTab() {
   return (
     <>
       <DetailsPageTabs
         tabConfig={[
           {
-            title: 'Files',
-            path: 'Files',
+            title: 'Datasets',
+            path: TOOLS_DETAILS_PAGE_DATA_DATASETS_TAB_PATH,
           },
           {
             title: 'Studies',
-            path: 'Studies',
+            path: TOOLS_DETAILS_PAGE_DATA_STUDIES_TAB_PATH,
           },
         ]}
       />
-      <Outlet />
+      <Outlet
+        context={{
+          defaultTabPath: TOOLS_DETAILS_PAGE_DATA_DATASETS_TAB_PATH,
+        }}
+      />
     </>
   )
 }
 
-export function ToolDetailsPageDataFilesTab() {
-  const { value: resourceId } = useDetailsPageContext('resourceId')
-
-  return (
-    <DetailsPageContent
-      hideMenu
-      content={[
-        {
-          id: 'dataFiles',
-          element: (
-            <QueryWrapperPlotNav
-              sqlOperator={ColumnMultiValueFunction.HAS}
-              rgbIndex={datasetsRgbIndex}
-              name="Files"
-              sql={filesSql}
-              visibleColumnCount={7}
-              tableConfiguration={{
-                showAccessColumn: true,
-                showDownloadColumn: true,
-              }}
-              shouldDeepLink={false}
-              columnAliases={columnAliases}
-              searchParams={{ Resource_id: resourceId! }}
-              lockedColumn={{ columnName: 'Resource_id', value: resourceId! }}
-              hideQueryCount
-            />
-          ),
-        },
-      ]}
-    />
-  )
-}
-
-export function ToolDetailsPageDataStudiesTab() {
-  const { value: resourceId } = useDetailsPageContext('resourceId')
-  // TODO: this is broken! The studies table (nor tools table) seems to have a column that references the other.
-  return (
-    <DetailsPageContent
-      hideMenu
-      content={[
-        {
-          id: 'dataStudies',
-          element: (
-            <QueryWrapperPlotNav
-              sqlOperator={ColumnMultiValueFunction.HAS}
-              rgbIndex={datasetsRgbIndex}
-              name="Studies"
-              sql={studiesSql}
-              visibleColumnCount={7}
-              tableConfiguration={{
-                showAccessColumn: true,
-                showDownloadColumn: true,
-              }}
-              shouldDeepLink={false}
-              columnAliases={columnAliases}
-              searchParams={{ Resource_id: resourceId! }}
-              lockedColumn={{ columnName: 'Resource_id', value: resourceId! }}
-              hideQueryCount
-            />
-          ),
-        },
-      ]}
-    />
-  )
-}
-
-export const toolDetailsPageDataTabRouteConfig: RouteObject = {
-  path: 'Data',
-  element: <ToolDetailsPageDataTabLayout />,
-  children: [
-    {
-      path: 'Files',
-      element: <ToolDetailsPageDataFilesTab />,
-    },
-    {
-      path: 'Studies',
-      element: <ToolDetailsPageDataStudiesTab />,
-    },
-  ],
-}
+export default ToolDetailsPageDataTab

@@ -5,7 +5,10 @@ import { displayToast } from '@/index'
 import { useUpdateCurationTask } from '@/synapse-queries/curation/task/useCurationTask'
 import { EditTwoTone } from '@mui/icons-material'
 import { Alert, Box, IconButton, Stack, Typography } from '@mui/material'
-import { TaskBundle } from '@sage-bionetworks/synapse-client'
+import {
+  instanceOfGridExecutionDetails,
+  TaskBundle,
+} from '@sage-bionetworks/synapse-client'
 import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import { useCallback, useState } from 'react'
 import taskHasAssignee from '../utils/taskHasAssignee'
@@ -77,24 +80,28 @@ export default function MetadataTasksTableAssigneeCell(
             onChange={principalId => setSelectedPrincipalId(principalId)}
             typeFilter={TYPE_FILTER.ALL}
           />
-          {taskBundle.status?.executionDetails?.activeSessionId && (
-            <Alert severity="warning">
-              This task has an active Curator session. If you change the
-              assignee, these effects could happen:
-              <ul>
-                <li>
-                  Current assignee(s) may lose access to the session, unsaved
-                  changes will be lost, and they may not be able to complete
-                  their work.
-                </li>
-                <li>
-                  New assignee(s) may not have permission to access the current
-                  session
-                </li>
-              </ul>
-              To avoid these issues, a data manager should create a new task.
-            </Alert>
-          )}
+          {taskBundle.status?.executionDetails &&
+            instanceOfGridExecutionDetails(
+              taskBundle.status?.executionDetails,
+            ) &&
+            taskBundle.status?.executionDetails?.activeSessionId && (
+              <Alert severity="warning">
+                This task has an active Curator session. If you change the
+                assignee, these effects could happen:
+                <ul>
+                  <li>
+                    Current assignee(s) may lose access to the session, unsaved
+                    changes will be lost, and they may not be able to complete
+                    their work.
+                  </li>
+                  <li>
+                    New assignee(s) may not have permission to access the
+                    current session
+                  </li>
+                </ul>
+                To avoid these issues, a data manager should create a new task.
+              </Alert>
+            )}
         </Stack>
       }
       confirmButtonProps={{

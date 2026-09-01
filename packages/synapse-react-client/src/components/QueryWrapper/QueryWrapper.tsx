@@ -36,7 +36,6 @@ export type QueryWrapperProps = PropsWithChildren<{
   /** Called when the query result rows change */
   onQueryResultBundleChange?: (newQueryResultBundleJson: string) => void
   lockedColumn?: LockedColumn
-  onViewSharingSettingsClicked?: (benefactorId: string) => void
   isRowSelectionVisible?: boolean
   /** The set of columns that defines a uniqueness constraint on the table for the purposes of filtering based on row selection.
    * Note that Synapse tables have no internal concept of a primary key.
@@ -76,7 +75,6 @@ function QueryWrapperInternalWithSession(props: QueryWrapperProps) {
     lockedColumn,
     componentIndex,
     shouldDeepLink,
-    onViewSharingSettingsClicked,
     isRowSelectionVisible: isRowSelectionVisibleFromProps = false,
     isRowSelectionUIFloating: isRowSelectionUIFloatingFromProps = true,
     rowSelectionPrimaryKey: rowSelectionPrimaryKeyFromProps,
@@ -189,7 +187,6 @@ function QueryWrapperInternalWithSession(props: QueryWrapperProps) {
     resetQuery,
     removeQueryFilter,
     removeValueFromQueryFilter,
-    onViewSharingSettingsClicked,
     addValueToSelectedFacet,
     combineRangeFacetConfig,
     setRangeFacetValue,

@@ -10,7 +10,9 @@ import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 import { getLinkToGridSession } from '@/utils/functions/getSynapseWebClientLink'
 import {
   CurationTask,
+  FileBasedMetadataTaskProperties,
   GridSession,
+  RecordBasedMetadataTaskProperties,
   SynapseClientError,
   TaskBundle,
 } from '@sage-bionetworks/synapse-client'
@@ -122,7 +124,9 @@ const mockCurationTask = mockTaskBundleNoAuthMode.task!
 const mockTaskBundleWithAuthMode = createMockTaskBundle({
   ...mockTaskBundleNoAuthMode.task!,
   taskProperties: {
-    ...mockTaskBundleNoAuthMode.task?.taskProperties!,
+    ...(mockTaskBundleNoAuthMode.task?.taskProperties as
+      | FileBasedMetadataTaskProperties
+      | RecordBasedMetadataTaskProperties),
     suggestedAuthorizationMode: 'SOURCE_BENEFACTOR',
   },
 })

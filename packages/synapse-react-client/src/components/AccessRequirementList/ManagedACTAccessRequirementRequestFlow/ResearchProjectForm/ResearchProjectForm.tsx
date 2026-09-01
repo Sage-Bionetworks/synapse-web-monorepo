@@ -1,5 +1,8 @@
 import {
+  useGetDataAccessRequestForUpdate,
   useGetResearchProject,
+  useGetUserProfile,
+  useUpdateDataAccessRequest,
   useUpdateResearchProject,
 } from '@/synapse-queries'
 import { InfoTwoTone } from '@mui/icons-material'
@@ -17,15 +20,20 @@ import {
 } from '@mui/material'
 import {
   ManagedACTAccessRequirement,
+  PrincipalInvestigator,
+  Renewal,
+  Request,
   ResearchProject,
+  TYPE_FILTER,
 } from '@sage-bionetworks/synapse-types'
 import isEmpty from 'lodash-es/isEmpty'
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useEffect, useRef, useState } from 'react'
 import HelpPopover from '../../../HelpPopover'
 import IconSvg from '../../../IconSvg/IconSvg'
 import TextFieldWithWordLimit, {
   getWordCount,
 } from '../../../TextField/TextFieldWithWordLimit'
+import UserSearchBox from '../../../UserSearchBox/UserSearchBox'
 import { AlertProps } from '../DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 import ManagedACTAccessRequirementFormWikiWrapper from '../ManagedACTAccessRequirementFormWikiWrapper'
 
@@ -44,10 +52,13 @@ export type ResearchProjectFormProps = {
  */
 export default function ResearchProjectForm(props: ResearchProjectFormProps) {
   const { onSave, managedACTAccessRequirement, onHide } = props
+  const isEDucEnabled = Boolean(managedACTAccessRequirement.eDucTemplateId)
   const [projectLead, setProjectLead] = useState<string>('')
   const [institution, setInstitution] = useState<string>('')
   const [intendedDataUseStatement, setIntendedDataUseStatement] =
     useState<string>('')
+  const [piUserId, setPiUserId] = useState<string | null>(null)
+  const [piEmail, setPiEmail] = useState<string>('')
   const [alert, setAlert] = useState<AlertProps | undefined>()
 
   const [showConfirmationScreen, setShowConfirmationScreen] = useState(false)
@@ -57,6 +68,18 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
       // Infinite staleTime ensures this won't be refetched unless explicitly invalidated by the mutation
       staleTime: Infinity,
     })
+
+  const {
+    data: existingDataAccessRequest,
+    isLoading: isLoadingDataAccessRequest,
+  } = useGetDataAccessRequestForUpdate(String(managedACTAccessRequirement.id), {
+    enabled: isEDucEnabled,
+    staleTime: Infinity,
+  })
+  const existingDarRef = useRef(existingDataAccessRequest)
+  useEffect(() => {
+    existingDarRef.current = existingDataAccessRequest
+  }, [existingDataAccessRequest])
 
   // Populate the form with existing data if it exists
   useEffect(() => {
@@ -82,15 +105,63 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
     // projectLead, or intendedDataUseStatement if they have been modified
   ])
 
-  const { mutate, isPending: updateIsPending } = useUpdateResearchProject({
-    onSuccess: data => {
-      if (onSave) {
-        onSave(data)
-      }
-    },
+  // Prefill eDUC-only PI fields from any previously-saved DAR values.
+  useEffect(() => {
+    if (!isEDucEnabled || !existingDataAccessRequest) return
+    const pi = existingDataAccessRequest.principalInvestigator
+    if (piUserId === null && pi?.userId) {
+      setPiUserId(pi.userId)
+    }
+    if (isEmpty(piEmail) && pi?.institutionalEmail) {
+      setPiEmail(pi.institutionalEmail)
+    }
+    // PORTALS-4375: initialize from existingDataAccessRequest, but do not reset
+    // fields once the user has interacted with them.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    isEDucEnabled,
+    existingDataAccessRequest?.principalInvestigator?.userId,
+    existingDataAccessRequest?.principalInvestigator?.institutionalEmail,
+  ])
+
+  const { data: piUserProfile } = useGetUserProfile(piUserId ?? '', {
+    enabled: Boolean(piUserId),
+  })
+
+  useEffect(() => {
+    if (!piUserProfile || !isEmpty(projectLead)) return
+    const fullName = [piUserProfile.firstName, piUserProfile.lastName]
+      .filter(Boolean)
+      .join(' ')
+      .trim()
+    if (fullName) {
+      setProjectLead(fullName)
+    }
+    // Only populate when projectLead is empty; do not overwrite user edits.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [piUserProfile])
+
+  const { mutateAsync: updateResearchProject, isPending: updateIsPending } =
+    useUpdateResearchProject({
+      onError: e => {
+        console.log(
+          'RequestDataAccessStep1: Error updating research project data: ',
+          e,
+        )
+        setAlert({
+          key: 'error',
+          message: getErrorMessage(e.reason),
+        })
+      },
+    })
+
+  const {
+    mutateAsync: updateDataAccessRequest,
+    isPending: updateDarIsPending,
+  } = useUpdateDataAccessRequest({
     onError: e => {
       console.log(
-        'RequestDataAccessStep1: Error updating research project data: ',
+        'RequestDataAccessStep1: Error updating data access request: ',
         e,
       )
       setAlert({
@@ -100,7 +171,11 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
     },
   })
 
-  const isLoading = isLoadingInitialData || updateIsPending
+  const isLoading =
+    isLoadingInitialData ||
+    (isEDucEnabled && isLoadingDataAccessRequest) ||
+    updateIsPending ||
+    updateDarIsPending
 
   const getErrorMessage = (reason: string = '') => {
     return (
@@ -112,25 +187,56 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
     )
   }
 
-  const handleSubmit = (e: FormEvent<HTMLElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLElement>) => {
     e.preventDefault()
     if (!showConfirmationScreen) {
       setShowConfirmationScreen(true)
-    } else {
-      mutate({
+      return
+    }
+    let updatedResearchProject: ResearchProject
+    try {
+      updatedResearchProject = await updateResearchProject({
         ...existingResearchProject,
         accessRequirementId: String(managedACTAccessRequirement.id),
         institution: institution,
         projectLead: projectLead,
         intendedDataUseStatement: intendedDataUseStatement || undefined,
       })
+    } catch {
       setShowConfirmationScreen(false)
+      return
+    }
+    if (isEDucEnabled && existingDarRef.current) {
+      const existingDar = existingDarRef.current
+      const nextPi: PrincipalInvestigator = {
+        ...existingDar.principalInvestigator,
+        userId: piUserId ?? undefined,
+        name: projectLead || undefined,
+        institutionalEmail: piEmail || undefined,
+      }
+      try {
+        await updateDataAccessRequest({
+          ...existingDar,
+          // The DAR is fetched before the ResearchProject exists, so it may not have an id yet
+          researchProjectId:
+            existingDar.researchProjectId ?? updatedResearchProject.id,
+          institution: institution,
+          principalInvestigator: nextPi,
+        } as Request | Renewal)
+      } catch {
+        setShowConfirmationScreen(false)
+        return
+      }
+    }
+    if (onSave) {
+      onSave(updatedResearchProject)
     }
   }
 
   const formIsValid =
     projectLead &&
     institution &&
+    (!isEDucEnabled || (piUserId && piEmail)) &&
     (!managedACTAccessRequirement.isIDURequired ||
       (intendedDataUseStatement &&
         getWordCount(intendedDataUseStatement) >=
@@ -150,7 +256,7 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
         >
           Request Access
           <Box sx={{ flexGrow: 1 }} />
-          <IconButton onClick={onHide}>
+          <IconButton aria-label={'Close'} onClick={onHide}>
             <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
           </IconButton>
         </Stack>
@@ -169,7 +275,9 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
           >
             <Box
               component={'form'}
-              onSubmit={handleSubmit}
+              onSubmit={e => {
+                void handleSubmit(e)
+              }}
               sx={{
                 '& .MuiTextField-root': {
                   marginBottom: '20px',
@@ -180,7 +288,7 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
                 id={'project-lead'}
                 label={
                   <Box sx={{ display: 'inline' }}>
-                    <span>First and last names of your project lead or PI</span>
+                    <span>First and last names of your Project Lead or PI</span>
                     <HelpPopover
                       Icon={InfoTwoTone}
                       containerSx={{ float: 'right' }}
@@ -204,6 +312,42 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
                   },
                 }}
               />
+              {isEDucEnabled && (
+                <Box sx={{ mb: '20px' }}>
+                  <Typography
+                    component="label"
+                    htmlFor="pi-user"
+                    variant="body1"
+                    sx={{ display: 'block', mb: 1 }}
+                  >
+                    Synapse username of your Project Lead or PI
+                    <Box component="span" sx={{ color: 'error.main' }}>
+                      {' '}
+                      *
+                    </Box>
+                  </Typography>
+                  <UserSearchBox
+                    inputId="pi-user"
+                    typeFilter={TYPE_FILTER.USERS_ONLY}
+                    value={piUserId}
+                    onChange={principalId => setPiUserId(principalId)}
+                    placeholder="Search Synapse for your Project Lead or PI"
+                  />
+                  <TextField
+                    id="pi-email"
+                    label="Institutional Email of your Project Lead or PI"
+                    type="email"
+                    placeholder="pi@example.edu"
+                    fullWidth
+                    disabled={isLoading}
+                    value={piEmail}
+                    required
+                    onChange={e => setPiEmail(e.target.value)}
+                    sx={{ mt: 2 }}
+                  />
+                </Box>
+              )}
+
               <TextField
                 id={'institution'}
                 label={'Your Institution'}
@@ -276,7 +420,9 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
           variant="contained"
           type="submit"
           disabled={isLoading || !formIsValid}
-          onClick={handleSubmit}
+          onClick={e => {
+            void handleSubmit(e)
+          }}
         >
           {updateIsPending ? 'Saving...' : 'Save and Continue'}
         </Button>

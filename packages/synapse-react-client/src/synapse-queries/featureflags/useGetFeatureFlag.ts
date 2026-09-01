@@ -16,5 +16,6 @@ export function useGetFeatureFlag(
     queryFn: () => SynapseClient.getFeatureFlags(),
   })
 
-  return isInExperimentalMode || !!featureFlags?.[featureFlag]
+  // true → always enabled; false → always disabled; null/undefined → follows experimental mode
+  return featureFlags?.[featureFlag] ?? isInExperimentalMode
 }

@@ -21,6 +21,7 @@ export type ModelChange =
       replicaId: string
       selection: ReplicaSelectionModel
     }
+  | { type: 'REORDER_COLUMNS'; newColumnOrder: number[] }
 
 export function getDefaultValueForProperty(
   row: DataGridRow,
@@ -106,6 +107,18 @@ export function applyModelChange(
         .obj(['selection'])
         .set({ [change.replicaId]: s.con(change.selection) })
 
+      break
+    }
+    case 'REORDER_COLUMNS': {
+      const columnOrderArr = model.api.arr(['columnOrder'])
+      const currentLength = columnOrderArr?.length() ?? 0
+      if (currentLength > 0) {
+        columnOrderArr?.del(0, currentLength)
+      }
+      columnOrderArr?.ins(
+        0,
+        change.newColumnOrder.map(index => s.con(index)),
+      )
       break
     }
   }

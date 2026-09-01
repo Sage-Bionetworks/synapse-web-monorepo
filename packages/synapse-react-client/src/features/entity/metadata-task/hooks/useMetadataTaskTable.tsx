@@ -1,5 +1,6 @@
 import ColumnHeader from '@/components/TanStackTable/ColumnHeader'
 import { getGridSourceIdForTask } from '@/features/entity/metadata-task/utils/getGridSourceIdForTask'
+import { instanceOfGridSupportedTaskProperties } from '@/features/entity/metadata-task/utils/types'
 import { useGetCurationTasksInfinite } from '@/synapse-queries/curation/task/useCurationTask'
 import { useGetEntityBundle } from '@/synapse-queries/index'
 import { formatDate } from '@/utils/functions/DateFormatter'
@@ -26,8 +27,17 @@ function getColumns(canEdit: boolean) {
     columnHelper.accessor('task.dataType', {
       header: props => <ColumnHeader {...props} title={'Task'} />,
       cell: ({ row, getValue }) => {
-        const entityId = getGridSourceIdForTask(row.original.task!)
-        return <Link href={getLinkToEntityPage(entityId)}>{getValue()}</Link>
+        if (
+          instanceOfGridSupportedTaskProperties(
+            row.original.task!.taskProperties!,
+          )
+        ) {
+          const entityId = getGridSourceIdForTask(
+            row.original.task!.taskProperties,
+          )
+          return <Link href={getLinkToEntityPage(entityId)}>{getValue()}</Link>
+        }
+        return <p>{getValue()}</p>
       },
       enableSorting: false,
       enableColumnFilter: false,

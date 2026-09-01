@@ -1,0 +1,39 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background: var(--synapse-white);
+  border: 1px solid var(--synapse-gray-300);
+  border-radius: 8px;
+  box-shadow:
+    0 6px 6px rgb(0 0 0 / 3%),
+    0 1px 1px rgb(0 0 0 / 3%);
+
+  &:has(textarea:focus) {
+    border-color: var(--synapse-primary-focus-border);
+    box-shadow:
+      0 6px 6px rgb(0 0 0 / 3%),
+      0 1px 1px rgb(0 0 0 / 3%),
+      0 0 0 0.1rem var(--synapse-primary-focus-shadow);
+  }
+}
+
+.textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+  resize: none;
+  background: transparent;
+  font: inherit;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+}

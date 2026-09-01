@@ -167,7 +167,7 @@ export function Range(props: RangeProps): React.ReactNode {
                 })
               }
               slotProps={{
-                htmlInput: { 'aria-label': 'min' },
+                htmlInput: { 'aria-label': 'min', autoComplete: 'off' },
               }}
             />
           </Box>
@@ -183,7 +183,7 @@ export function Range(props: RangeProps): React.ReactNode {
                 })
               }
               slotProps={{
-                htmlInput: { 'aria-label': 'max' },
+                htmlInput: { 'aria-label': 'max', autoComplete: 'off' },
               }}
             />
           </Box>

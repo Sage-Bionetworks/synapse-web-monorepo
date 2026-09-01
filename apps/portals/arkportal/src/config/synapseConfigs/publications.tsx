@@ -16,9 +16,10 @@ export const publicationsCardConfiguration: CardConfiguration = {
   labelLinkConfig: [
     {
       isMarkdown: false,
-      baseURL: 'Explore/Programs/DetailsPage',
+      baseURL: 'Explore/Programs',
       URLColumnName: 'Program',
       matchColumnName: 'program',
+      urlParamStyle: 'path-segment',
     },
     {
       isMarkdown: false,

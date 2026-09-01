@@ -1,9 +1,13 @@
 import { useChatState } from '@/components/SynapseChat/useChatState'
-import { GridAgentSessionContext } from '@sage-bionetworks/synapse-client'
-import { AgentAccessLevel, AgentSession } from '@sage-bionetworks/synapse-types'
+import {
+  AgentSession,
+  GridAgentSessionContext,
+} from '@sage-bionetworks/synapse-client'
+import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 import DraggableDialog from '../DraggableDialog/DraggableDialog'
 import { SynapseChat } from './index'
+import { ReactComponent as CurieAvatarHead } from '@/assets/illustrations/curie_avatar_head.svg'
 
 const suggestedPrompts = [
   'Help me fill this out',
@@ -41,11 +45,13 @@ export function GridAgentChat({
       'org.sagebionetworks.repo.model.agent.GridAgentSessionContext',
     gridSessionId,
     usersReplicaId,
+    experimental: true,
   }
 
   return (
     <DraggableDialog open={open} onClose={onClose} title={chatbotName}>
       <SynapseChat
+        agentAvatar={<CurieAvatarHead width={35} height="auto" />}
         agentRegistrationId={agentRegistrationId}
         chatbotName={chatbotName}
         initialMessage={initialMessage}
@@ -59,6 +65,7 @@ export function GridAgentChat({
         setExternalSession={setAgentSession}
         externalChatState={chatState}
         suggestedPrompts={suggestedPrompts}
+        allowAttachments={true}
       />
     </DraggableDialog>
   )

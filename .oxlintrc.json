@@ -21,7 +21,6 @@
   "ignorePatterns": [
     ".nx/",
     "**/generated/",
-    "**/codegen/",
     "**/build/",
     "**/dist/",
     "**/playwright-report/",

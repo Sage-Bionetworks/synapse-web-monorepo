@@ -24,7 +24,6 @@ type DataExplorerProps = {
   sql: string
   explorePath?: string
   exploreQuerySql?: string
-  filterColumnName?: string
   facetSql?: string
 }
 
@@ -33,8 +32,23 @@ enum ExpectedColumns {
   ICON = 'icon',
   HEX_COLOR = 'hexColor',
   ORDER = 'order',
+  COLUMN_NAME = 'columnName',
 }
 
+/**
+ * DataExplorer
+ *
+ * A reusable component that renders a list of data types/categories with associated icons.
+ * It drives navigation by linking each row to a pre-filtered exploration view.
+ *
+ * How it works:
+ * 1. `sql`: Fetches a configuration table defining the display categories,
+ *    their display order, hex colors, and icons.
+ * 2. `facetSql`: Fetches real-time counts for these categories from the actual
+ *    underlying data table.
+ * 3. Links are dynamically built to point to a target path (`explorePath`) pre-filtered to the
+ *    clicked category.
+ */
 export default function DataExplorer({
   sql,
   title,
@@ -43,7 +57,6 @@ export default function DataExplorer({
   buttonLink,
   explorePath,
   exploreQuerySql,
-  filterColumnName,
   facetSql,
 }: DataExplorerProps) {
   const hasTextSection = title || subtitle || buttonText
@@ -82,7 +95,7 @@ export default function DataExplorer({
 
   const { data: facetQueryResultBundle } = useGetQueryResultBundle(
     facetQueryRequest,
-    { enabled: Boolean(facetSql && filterColumnName) },
+    { enabled: Boolean(facetSql) },
   )
 
   const datatypeColIndex = getFieldIndex(
@@ -99,46 +112,69 @@ export default function DataExplorer({
 
   const orderColIndex = getFieldIndex(ExpectedColumns.ORDER, queryResultBundle)
 
+  const columnNameColIndex = getFieldIndex(
+    ExpectedColumns.COLUMN_NAME,
+    queryResultBundle,
+  )
+
+  // Key rows by columnName + dataType to prevent collisions when the same dataType appears in multiple columns.
+  const getRowKey = (dataType: string, columnName: string) =>
+    columnName ? `${columnName}::${dataType}` : dataType
+
   const [rowUrls, setRowUrls] = useState<Record<string, string>>({})
 
   useEffect(() => {
-    if (!explorePath || !filterColumnName || !exploreQuerySql) return
-
+    if (!explorePath || !exploreQuerySql) return
     Promise.all(
       dataRows.map(row => {
         const dataType = row.values[datatypeColIndex]?.trim() ?? ''
-        if (!dataType) return Promise.resolve([dataType, explorePath] as const)
+        const columnName = row.values[columnNameColIndex]?.trim() ?? ''
+        const rowKey = getRowKey(dataType, columnName)
+        if (!dataType || !columnName)
+          return Promise.resolve([rowKey, explorePath] as const)
         return generateEncodedPathAndQueryForSelectedFacetURL(
           explorePath,
           exploreQuerySql,
-          [{ facet: filterColumnName, facetValue: dataType }],
-        ).then(url => [dataType, url] as const)
+          [{ facet: columnName, facetValue: dataType }],
+        ).then(url => [rowKey, url] as const)
       }),
     ).then(entries => setRowUrls(Object.fromEntries(entries)))
   }, [
     dataRows,
     datatypeColIndex,
+    columnNameColIndex,
     explorePath,
     exploreQuerySql,
-    filterColumnName,
   ])
 
-  const getFacetCount = (dataType: string) => {
-    const [facet] = getFacets(
+  // Create a map of facet counts by column name and data type for quick lookup
+  const facetCountsByColumn = useMemo(() => {
+    const facets = getFacets(
       facetQueryResultBundle,
-      filterColumnName ? [filterColumnName] : [],
     ) as FacetColumnResultValues[]
+    const map = new Map<string, Map<string, number>>()
+    for (const facet of facets) {
+      map.set(
+        facet.columnName,
+        new Map(facet.facetValues.map(fv => [fv.value, fv.count])),
+      )
+    }
+    return map
+  }, [facetQueryResultBundle])
 
-    return facet?.facetValues.find(facetValue => facetValue.value === dataType)
-      ?.count
-  }
+  const getFacetCount = (dataType: string, columnName?: string) =>
+    columnName ? facetCountsByColumn.get(columnName)?.get(dataType) : undefined
 
   // Sort by order column ascending, then by facet count descending
   const sortedRows = orderBy(
     dataRows,
     [
       row => Number(row.values[orderColIndex] ?? Number.MAX_SAFE_INTEGER),
-      row => getFacetCount(row.values[datatypeColIndex]?.trim() ?? '') ?? 0,
+      row =>
+        getFacetCount(
+          row.values[datatypeColIndex]?.trim() ?? '',
+          row.values[columnNameColIndex]?.trim() ?? '',
+        ) ?? 0,
     ],
     ['asc', 'desc'],
   )
@@ -179,10 +215,15 @@ export default function DataExplorer({
         {sortedRows.map(row => {
           const dataType = row.values[datatypeColIndex]?.trim() ?? ''
           const hexColor = row.values[hexColorColIndex] ?? undefined
-          const rowUrl = rowUrls[dataType]
-          const facetCount = getFacetCount(dataType)
+          const columnName = row.values[columnNameColIndex]?.trim() ?? ''
+          const rowUrl = rowUrls[getRowKey(dataType, columnName)]
+          const facetCount = getFacetCount(dataType, columnName)
           return (
-            <a key={dataType} className={styles.dataRow} href={rowUrl}>
+            <a
+              key={getRowKey(dataType, columnName)}
+              className={styles.dataRow}
+              href={rowUrl}
+            >
               <div className={styles.dataRowInner}>
                 <div className={styles.dataRowLeft}>
                   <div

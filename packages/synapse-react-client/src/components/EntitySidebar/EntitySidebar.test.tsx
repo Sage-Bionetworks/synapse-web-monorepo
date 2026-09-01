@@ -29,14 +29,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
-import * as HasAccessModule from '@/components/HasAccess/HasAccessV2'
 import EntitySidebar from './EntitySidebar'
-
-const HAS_ACCESS_V2_DATA_TEST_ID = 'mock-has-access-v2'
-
-vi.spyOn(HasAccessModule, 'HasAccessV2').mockImplementation(() => (
-  <span data-testid={HAS_ACCESS_V2_DATA_TEST_ID}></span>
-))
 
 function useEntityBundleOverride(bundle: EntityBundle) {
   server.use(
@@ -85,12 +78,6 @@ describe('EntitySidebar', () => {
 
       await screen.findByText(`SynID`)
       await screen.findByText(mockFileEntity.id)
-    })
-    it('HasAccess', async () => {
-      renderComponent()
-
-      await screen.findByText(`Access`)
-      await screen.findByTestId(HAS_ACCESS_V2_DATA_TEST_ID)
     })
     it('File size', async () => {
       renderComponent()

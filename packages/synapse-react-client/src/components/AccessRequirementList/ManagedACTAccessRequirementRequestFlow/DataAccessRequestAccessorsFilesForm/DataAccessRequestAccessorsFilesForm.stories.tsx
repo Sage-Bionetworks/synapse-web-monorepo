@@ -65,3 +65,14 @@ export const Renewal: Story = {
     researchProjectId: MOCK_RESEARCH_PROJECT_ID,
   },
 }
+export const Step2EDucEnabled: Story = {
+  args: {
+    subjectId: MOCK_FOLDER_ID,
+    subjectType: RestrictableObjectType.ENTITY,
+    managedACTAccessRequirement: {
+      ...mockManagedACTAccessRequirement,
+      eDucTemplateId: 'educ-template-123',
+    },
+    researchProjectId: MOCK_RESEARCH_PROJECT_ID,
+  },
+}

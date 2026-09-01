@@ -9,7 +9,6 @@ const TABLE_ID = 'syn75201966'
 const STUDIES_TABLE_ID = 'syn17083367'
 const DATA_TYPE_SQL = `SELECT * FROM ${TABLE_ID}`
 const STUDIES_SQL = `SELECT * FROM ${STUDIES_TABLE_ID}`
-const FILTER_COLUMN_NAME = 'DataType_All'
 
 const mockDataExplorerQueryResult: QueryResultBundle = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
@@ -18,6 +17,7 @@ const mockDataExplorerQueryResult: QueryResultBundle = {
     { name: 'icon', columnType: 'FILEHANDLEID' },
     { name: 'hexColor', columnType: 'STRING' },
     { name: 'order', columnType: 'INTEGER' },
+    { name: 'columnName', columnType: 'STRING' },
   ],
   queryResult: {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
@@ -30,16 +30,34 @@ const mockDataExplorerQueryResult: QueryResultBundle = {
         { name: 'icon', columnType: 'FILEHANDLEID', id: '2' },
         { name: 'hexColor', columnType: 'STRING', id: '3' },
         { name: 'order', columnType: 'INTEGER', id: '4' },
+        { name: 'columnName', columnType: 'STRING', id: '5' },
       ],
       rows: [
-        { rowId: 1, values: ['Not Assigned', null, '#F59E0B', '3'] },
-        { rowId: 2, values: ['Clinical', null, '#8B5CF6', '1'] },
-        { rowId: 3, values: ['Immunoassay ', null, '#EF4444', '2'] },
-        { rowId: 4, values: ['Gene Expression', null, '#8B5CF6', '1'] },
-        { rowId: 6, values: ['Raw Data', null, '#EF4444', '2'] },
-        { rowId: 5, values: ['Metabolomics', null, '#F59E0B', '3'] },
-        { rowId: 6, values: ['Proteomics', null, '#EF4444', '2'] },
-        { rowId: 6, values: ['Imaging', null, '#EF4444', '2'] },
+        {
+          rowId: 1,
+          values: ['Clinical', null, '#718AC8', '4', 'DataType_All'],
+        },
+        {
+          rowId: 2,
+          values: ['Not Assigned', null, '#718AC8', '4', 'DataType_All'],
+        },
+        {
+          rowId: 3,
+          values: ['Gene Expression', null, '#EE986D', '3', 'DataType_All'],
+        },
+        {
+          rowId: 4,
+          values: ['Immunoassay ', null, '#EE986D', '3', 'DataType_All'],
+        },
+        {
+          rowId: 5,
+          values: ['Proteomics', null, '#EE986D', '3', 'DataType_All'],
+        },
+        { rowId: 6, values: ['Marmoset', null, '#8F65A4', '1', 'Species'] },
+        { rowId: 7, values: ['Human', null, '#8F65A4', '1', 'Species'] },
+        { rowId: 8, values: ['Mouse', null, '#8F65A4', '1', 'Species'] },
+        { rowId: 9, values: ['Brain', null, '#E4A33E', '2', 'specimenType'] },
+        { rowId: 10, values: ['Blood', null, '#E4A33E', '2', 'specimenType'] },
       ],
     },
   },
@@ -51,16 +69,34 @@ const mockStudiesFacetResult: QueryResultBundle = {
     {
       concreteType:
         'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
-      columnName: FILTER_COLUMN_NAME,
+      columnName: 'DataType_All',
       facetType: 'enumeration',
       facetValues: [
         { value: 'Gene Expression', count: 129, isSelected: false },
         { value: 'Proteomics', count: 42, isSelected: false },
         { value: 'Immunoassay', count: 28, isSelected: false },
-        { value: 'Metabolomics', count: 27, isSelected: false },
         { value: 'Clinical', count: 10, isSelected: false },
-        { value: 'Raw Data', count: 4, isSelected: false },
-        { value: 'Imaging', count: 62, isSelected: false },
+      ],
+    },
+    {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
+      columnName: 'Species',
+      facetType: 'enumeration',
+      facetValues: [
+        { value: 'Human', count: 116, isSelected: false },
+        { value: 'Mouse', count: 67, isSelected: false },
+        { value: 'Marmoset', count: 1, isSelected: false },
+      ],
+    },
+    {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
+      columnName: 'specimenType',
+      facetType: 'enumeration',
+      facetValues: [
+        { value: 'Brain', count: 150, isSelected: false },
+        { value: 'Blood', count: 30, isSelected: false },
       ],
     },
   ],
@@ -103,6 +139,5 @@ export const Default: Story = {
     buttonLink: '',
     explorePath: '/Explore/Studies',
     exploreQuerySql: STUDIES_SQL,
-    filterColumnName: FILTER_COLUMN_NAME,
   },
 }

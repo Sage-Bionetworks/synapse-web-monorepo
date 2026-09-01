@@ -1,6 +1,7 @@
 import { CardLink } from '@/components/CardContainer/CardLink'
 import { getValueOrMultiValue } from '@/components/GenericCard/CardUtils'
 import { formatDate } from '@/utils/functions/DateFormatter'
+import { normalizeSynPrefix } from '@/utils/functions/EntityTypeUtils'
 import { getColumnIndex } from '@/utils/functions/index'
 import { TargetEnum } from '@/utils/html/TargetEnum'
 import { Tooltip } from '@mui/material'
@@ -252,7 +253,10 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
         <p>
           {split.map((el, index) => {
             const cardLink = labelLink as CardLink
-            const elOrRowId = cardLink.overrideValueWithRowID ? rowId : el
+            const elOrRowId =
+              cardLink.overrideValueWithRowID && rowId
+                ? normalizeSynPrefix(rowId)
+                : el
             let href = ''
             if ('baseURL' in cardLink) {
               const {

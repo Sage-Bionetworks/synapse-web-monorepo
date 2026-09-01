@@ -1,10 +1,14 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
-import MetadataTasksPage from './MetadataTasksPage'
+import MetadataTasksPage, { MetadataTasksPageProps } from './MetadataTasksPage'
 
 const meta = {
   title: 'Synapse/Entity/MetadataTaskTable',
   component: MetadataTasksPage,
-} satisfies Meta
+  args: {
+    useMemoryRouter: true,
+    routerBaseName: '/',
+  },
+} satisfies Meta<MetadataTasksPageProps>
 export default meta
 type Story = StoryObj<typeof meta>
 

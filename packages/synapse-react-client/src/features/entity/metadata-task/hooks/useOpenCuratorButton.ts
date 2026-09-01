@@ -14,6 +14,7 @@ import { getGridSourceIdForTask } from '../utils/getGridSourceIdForTask'
 import useGridSessionForCurationTask from './useGridSessionForCurationTask'
 import useGridSessionForCurationTask_legacy from './useGridSessionForCurationTask_legacy'
 import { getLinkToGridSession } from '@/utils/functions/getSynapseWebClientLink'
+import { instanceOfGridSupportedTaskProperties } from '../utils/types'
 
 type UseOpenCuratorFromTaskButtonReturn = {
   isLoading: boolean
@@ -33,6 +34,12 @@ export default function useOpenCuratorFromTaskButton(
   const curationTask = taskBundle.task!
 
   const taskProperties = curationTask.taskProperties
+  if (!instanceOfGridSupportedTaskProperties(taskProperties)) {
+    throw new Error(
+      `Task properties are not supported for GridSession creation: ${taskProperties?.concreteType}`,
+    )
+  }
+
   const suggestedAuthorizationMode =
     taskProperties != null && 'suggestedAuthorizationMode' in taskProperties
       ? taskProperties.suggestedAuthorizationMode
@@ -50,7 +57,7 @@ export default function useOpenCuratorFromTaskButton(
     isPending: taskLinkedOpenGridIsPending,
   } = useGridSessionForCurationTask()
 
-  const gridSourceEntityId = getGridSourceIdForTask(curationTask)
+  const gridSourceEntityId = getGridSourceIdForTask(taskProperties)
   const {
     data: sourceEntityPermissions,
     isLoading: isLoadingEntityPermissions,

@@ -113,9 +113,12 @@ import {
   SynapseClient as SynapseOpenAPIClient,
   DoiAssociation,
   EntityType,
+  OAuthValidationRequestProviderEnum,
   ViewEntityType,
   SearchIndexQuery,
   SearchQueryResults,
+  AgentChatRequest,
+  AgentChatResponse,
 } from '@sage-bionetworks/synapse-client'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
 import {
@@ -145,8 +148,6 @@ import {
   AddPartResponse,
   AddToDownloadListRequest,
   AddToDownloadListResponse,
-  AgentChatRequest,
-  AgentChatResponse,
   AgentSession,
   AliasCheckRequest,
   AliasCheckResponse,
@@ -795,6 +796,31 @@ export const oAuthSessionRequest = (
       endpoint,
     ),
   )
+}
+
+/**
+ * Bind an OAuth identity to the authenticated user's account without an alias.
+ * Used for providers like NIH RAS that do not supply an alias.
+ * https://rest-docs.synapse.org/rest/POST/oauth2/identity.html
+ */
+export const oAuthIdentityRequest = async (
+  provider: OAuthValidationRequestProviderEnum,
+  authenticationCode: string,
+  redirectUrl: string,
+): Promise<void> => {
+  // Web app may not have discovered the access token by this point in init.
+  // Look for the access token ourselves before binding.
+  const accessToken = await getAccessTokenFromCookie()
+  return new SynapseOpenAPIClient({
+    basePath: getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+    accessToken,
+  }).authenticationServicesClient.postAuthV1Oauth2Identity({
+    oAuthValidationRequest: {
+      provider,
+      authenticationCode,
+      redirectUrl,
+    },
+  })
 }
 
 /**
@@ -3690,15 +3716,11 @@ export const getAllOfPaginatedService = async <T>(
   const results: T[] = []
 
   while (existsMoreData) {
-    try {
-      const data = await fn(limit, offset)
-      results.push(...data.results)
-      offset += data.results.length
-      if (data.results.length < limit) {
-        existsMoreData = false
-      }
-    } catch (e) {
-      throw Error(`Error on getting paginated results ${e}`)
+    const data = await fn(limit, offset)
+    results.push(...data.results)
+    offset += data.results.length
+    if (data.results.length < limit) {
+      existsMoreData = false
     }
   }
 
@@ -3719,21 +3741,17 @@ export async function getAllOfNextPageTokenPaginatedService<T>(
   const results: T[] = []
 
   while (existsMoreData) {
-    try {
-      const data = await fn(nextPageToken)
-      // Some object models use `results`, others use `page`
-      if ('results' in data) {
-        results.push(...data.results)
-      } else if ('page' in data) {
-        results.push(...data.page)
-      }
-      nextPageToken = data.nextPageToken
+    const data = await fn(nextPageToken)
+    // Some object models use `results`, others use `page`
+    if ('results' in data) {
+      results.push(...data.results)
+    } else if ('page' in data) {
+      results.push(...data.page)
+    }
+    nextPageToken = data.nextPageToken
 
-      if (!nextPageToken) {
-        existsMoreData = false
-      }
-    } catch (e) {
-      throw Error(`Error on getting paginated results ${e}`)
+    if (!nextPageToken) {
+      existsMoreData = false
     }
   }
 

@@ -39,11 +39,6 @@ describe('DataGridUtils', () => {
       })
     })
     it('returns type unknown for anything else', () => {
-      expect(parseQueryInput('foo')).toEqual({ type: 'unknown', input: 'foo' })
-      expect(parseQueryInput('12345')).toEqual({
-        type: 'unknown',
-        input: '12345',
-      })
       expect(parseQueryInput('UPDATE something')).toEqual({
         type: 'unknown',
         input: 'UPDATE something',

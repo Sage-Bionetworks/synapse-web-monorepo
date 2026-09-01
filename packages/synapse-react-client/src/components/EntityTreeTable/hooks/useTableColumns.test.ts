@@ -132,4 +132,24 @@ describe('useTableColumns', () => {
     rerender({ enableSorting: false })
     expect(result.current).not.toBe(firstResult)
   })
+
+  it('should prepend a select column when showCheckboxColumn is true', () => {
+    mockUseMediaQuery.mockImplementation(() => false)
+
+    const { result } = renderHook(() => useTableColumns(true, true))
+
+    const columnIds = result.current.map(col => col.id)
+    expect(columnIds[0]).toBe('select')
+    expect(result.current[0].size).toBe(45)
+    expect(result.current[0].enableSorting).toBe(false)
+  })
+
+  it('should not include a select column when showCheckboxColumn is false', () => {
+    mockUseMediaQuery.mockImplementation(() => false)
+
+    const { result } = renderHook(() => useTableColumns(true, false))
+
+    const columnIds = result.current.map(col => col.id)
+    expect(columnIds).not.toContain('select')
+  })
 })

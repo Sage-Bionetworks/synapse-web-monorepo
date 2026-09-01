@@ -1,8 +1,5 @@
-$sidebar-text-primary: #616972;
-$sidebar-property-title-color: #747d88;
-$sidebar-property-value-color: #4d535a;
-@use 'sass:map';
-@use '../../style/abstracts/variables' as SrcVariables;
+// MUI `lg` breakpoint
+$sidebar-collapse-breakpoint: 1200px;
 
 .panel {
   display: flex;
@@ -12,10 +9,11 @@ $sidebar-property-value-color: #4d535a;
 
 .content {
   width: 320px;
-  margin-top: 40px;
+  margin-top: 64px;
   padding: 0 32px 0 0;
+  gap: 12px;
 
-  @media (max-width: map.get(SrcVariables.$breakpoints, 'large')) {
+  @media (max-width: $sidebar-collapse-breakpoint) {
     width: 100%;
     margin-top: 10px;
     padding: 10px 32px 0 32px;
@@ -24,25 +22,20 @@ $sidebar-property-value-color: #4d535a;
 
 .sidebarHeader:global(.MuiTypography-root) {
   font-size: 14px;
-  color: $sidebar-text-primary;
+  color: var(--synapse-v2-gray-700);
   font-weight: 540;
   line-height: 20px; /* 142.857% */
 }
 
-.divider {
-  margin-top: 8px;
-  margin-bottom: 16px;
-}
-
 .propertyValue:global(.MuiTypography-root) {
-  color: $sidebar-property-value-color;
+  color: var(--synapse-v2-gray-800);
   font-style: normal;
   font-weight: 440;
   line-height: 20px; /* 142.857% */
 }
 
 .propertyTitle:global(.MuiTypography-root) {
-  color: $sidebar-property-title-color;
+  color: var(--synapse-v2-gray-600);
   font-size: 12px;
   line-height: 12px; /* 100% */
 }
@@ -60,15 +53,15 @@ $sidebar-property-value-color: #4d535a;
   display: flex;
   flex-direction: row;
   gap: 8px;
-  top: 0;
-  right: 0;
+  top: 14px;
+  right: 32px;
   white-space: nowrap;
   align-self: flex-start;
   position: absolute;
 
-  @media (max-width: map.get(SrcVariables.$breakpoints, 'large')) {
+  @media (max-width: $sidebar-collapse-breakpoint) {
     position: static;
-    margin: 10px 0 0 20px;
+    margin: 10px 0 0 32px;
   }
 
   &:hover {
@@ -77,11 +70,11 @@ $sidebar-property-value-color: #4d535a;
 }
 
 .toggleButtonText:global(.MuiTypography-root) {
-  color: $sidebar-text-primary;
+  color: var(--synapse-v2-gray-700);
   font-weight: 440;
   line-height: 20px; /* 142.857% */
 }
 
 .icon {
-  color: $sidebar-text-primary;
+  color: var(--synapse-v2-gray-700);
 }
