@@ -446,7 +446,7 @@ function newId(): string {
   ) {
     return crypto.randomUUID()
   }
-  // Fallback for environments without crypto.randomUUID (older jsdom, etc.).
+  // Monotonic counter is sufficient — QB ids are client-only React keys, not secrets.
   idCounter += 1
-  return `qb-${idCounter}-${Math.random().toString(36).slice(2, 10)}`
+  return `qb-${idCounter}`
 }
