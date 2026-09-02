@@ -210,6 +210,28 @@ export function useGetDataAccessRequestSignedFileHandleId(
 }
 
 /**
+ * Retrieve the current eDUC signature quota (total allowed and remaining) for a data access
+ * request. Used to preflight the "send for signature" action so it can be disabled when the
+ * user is at or over quota.
+ * @see GET /repo/v1/dataAccessRequest/{requestId}/signature/quota
+ */
+export function useGetDataAccessRequestSignatureQuota(
+  requestId: string,
+  options?: Partial<UseQueryOptions<EDucSignatureQuota, SynapseClientError>>,
+) {
+  const { keyFactory, synapseClient } = useSynapseContext()
+
+  return useQuery({
+    ...options,
+    queryKey: keyFactory.getDataAccessRequestSignatureQuotaQueryKey(requestId),
+    queryFn: () =>
+      synapseClient.dataAccessServicesClient.getRepoV1DataAccessRequestRequestIdSignatureQuota(
+        { requestId },
+      ),
+  })
+}
+
+/**
  * Initiate the DocuSign routing for a data access request's eDUC.
  * @see POST /repo/v1/dataAccessRequest/{requestId}/signature
  */
