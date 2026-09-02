@@ -3,10 +3,30 @@ import { test, expect, Page, Locator } from '@playwright/test'
 const LONG_VALUE = 'A very long first name that is much wider than the column'
 
 test.describe('cell expansion on focus', () => {
+  // Column widths are derived from a resize measurement throttled to 100ms, so
+  // the scrollable area can still change after the rows first paint. Tests here
+  // compare geometry before and after an interaction, so wait for two
+  // consecutive identical measurements before treating the layout as settled —
+  // otherwise a late measurement landing mid-test looks like the interaction
+  // changed the layout.
+  const waitForStableLayout = async (page: Page) => {
+    const container = page.locator('.dsg-container')
+    let previous = -1
+    await expect
+      .poll(async () => {
+        const current = await container.evaluate(el => el.scrollWidth)
+        const settled = current === previous
+        previous = current
+        return settled
+      })
+      .toBe(true)
+  }
+
   test.beforeEach(async ({ page }) => {
     await page.goto('/')
     await expect(page.locator('.dsg-container')).toBeVisible()
     await expect(page.locator('.dsg-row')).toHaveCount(5, { timeout: 5000 }) // header + 4 data rows
+    await waitForStableLayout(page)
   })
 
   // A plain CSS :not() selector rather than .filter({ hasNot: ... }) —
