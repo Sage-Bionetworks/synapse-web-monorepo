@@ -33,6 +33,7 @@ root.render(
       logoFooterConfig={logoFooterConfig}
       navbarConfig={navbarConfig}
       synapseChatProps={synapseChatConfig}
+      isCurieLauncherEnabled
     />
   </StrictMode>,
 )
