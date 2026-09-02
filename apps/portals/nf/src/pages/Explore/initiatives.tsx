@@ -10,7 +10,9 @@ export const meta = createStaticMeta(
 
 function ExploreInitiatives() {
   return (
-    <SearchQueryWrapperPlotNav {...initiativesSearch} shouldDeepLink={true} />
+    <div className="nf-initiatives-section">
+      <SearchQueryWrapperPlotNav {...initiativesSearch} shouldDeepLink={true} />
+    </div>
   )
 }
 
