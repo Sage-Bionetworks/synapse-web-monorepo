@@ -369,7 +369,13 @@ function singleValueToCondition(
       return { ...base, op: classified.op, text: classified.text }
     }
     default:
+      // Compile-time exhaustiveness guard; the log fires only if a new operator
+      // is added to ColumnSingleValueFilterOperator without a case here.
       filter.operator satisfies never
+      console.warn(
+        `singleValueToCondition: unrecognized filter operator, falling back to 'equal' for column "${filter.columnName}"`,
+        { operator: filter.operator },
+      )
       return { ...base, op: 'equal' }
   }
 }
