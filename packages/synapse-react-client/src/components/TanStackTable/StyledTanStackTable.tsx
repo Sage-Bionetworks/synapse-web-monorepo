@@ -3,6 +3,7 @@ import {
   StyledTableContainerProps,
 } from '@/components/styled/StyledTableContainer'
 import { Box } from '@mui/material'
+import { useForkRef } from '@mui/material/utils'
 import {
   ColumnSizingState,
   flexRender,
@@ -99,6 +100,15 @@ export default function StyledTanStackTable<
     handleBottomScroll,
   } = useSyncedTopScrollbar(tableRef, showTopScrollbar)
 
+  // Merge our own container ref/onScroll with any that the caller passed via
+  // styledTableContainerProps, rather than one clobbering the other.
+  const {
+    ref: callerContainerRef,
+    onScroll: callerOnScroll,
+    ...restContainerProps
+  } = styledTableContainerProps ?? {}
+  const mergedContainerRef = useForkRef(containerRef, callerContainerRef)
+
   // Track what columns+visibility combination was last measured so we know when
   // a re-measurement is needed (e.g. columns change or visibility is toggled).
   const columnVisibility = table.getState().columnVisibility
@@ -183,7 +193,6 @@ export default function StyledTanStackTable<
     ? MemoizedTableBody
     : TableBody
 
-  const callerOnScroll = styledTableContainerProps?.onScroll
   function handleContainerScroll(e: UIEvent<HTMLDivElement>) {
     callerOnScroll?.(e)
     if (showTopScrollbar) {
@@ -203,8 +212,8 @@ export default function StyledTanStackTable<
         </Box>
       )}
       <StyledTableContainer
-        {...styledTableContainerProps}
-        ref={containerRef}
+        {...restContainerProps}
+        ref={mergedContainerRef}
         onScroll={handleContainerScroll}
       >
         <Table
