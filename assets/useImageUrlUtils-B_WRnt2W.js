@@ -1,0 +1,1 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{Y as t,t as n}from"./dist-C7SMz8Oe.js";import{Xt as r,r as i}from"./useLogin-BAd3SrPv.js";var a,o=e((()=>{i(),n(),a=(e,n)=>r({associateObjectId:n,associateObjectType:t.TableEntity,fileHandleId:e||``},!1,{enabled:!!e})?.dataUrl}));export{a as n,o as t};
