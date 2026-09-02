@@ -1,6 +1,7 @@
 import {
   useGetDataAccessRequestForUpdate,
   useGetResearchProject,
+  useGetUserProfile,
   useUpdateDataAccessRequest,
   useUpdateResearchProject,
 } from '@/synapse-queries'
@@ -123,6 +124,23 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
     existingDataAccessRequest?.principalInvestigator?.institutionalEmail,
   ])
 
+  const { data: piUserProfile } = useGetUserProfile(piUserId ?? '', {
+    enabled: Boolean(piUserId),
+  })
+
+  useEffect(() => {
+    if (!piUserProfile || !isEmpty(projectLead)) return
+    const fullName = [piUserProfile.firstName, piUserProfile.lastName]
+      .filter(Boolean)
+      .join(' ')
+      .trim()
+    if (fullName) {
+      setProjectLead(fullName)
+    }
+    // Only populate when projectLead is empty; do not overwrite user edits.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [piUserProfile])
+
   const { mutateAsync: updateResearchProject, isPending: updateIsPending } =
     useUpdateResearchProject({
       onError: e => {
@@ -199,6 +217,9 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
       try {
         await updateDataAccessRequest({
           ...existingDar,
+          // The DAR is fetched before the ResearchProject exists, so it may not have an id yet
+          researchProjectId:
+            existingDar.researchProjectId ?? updatedResearchProject.id,
           institution: institution,
           principalInvestigator: nextPi,
         } as Request | Renewal)
@@ -235,7 +256,7 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
         >
           Request Access
           <Box sx={{ flexGrow: 1 }} />
-          <IconButton onClick={onHide}>
+          <IconButton aria-label={'Close'} onClick={onHide}>
             <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
           </IconButton>
         </Stack>
@@ -291,20 +312,6 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
                   },
                 }}
               />
-              <TextField
-                id={'institution'}
-                label={'Your Institution'}
-                placeholder={
-                  'Full, unabbreviated name of the institution you are affiliated with'
-                }
-                fullWidth
-                type="text"
-                disabled={isLoading}
-                value={institution}
-                required
-                onChange={e => setInstitution(e.target.value)}
-              />
-
               {isEDucEnabled && (
                 <Box sx={{ mb: '20px' }}>
                   <Typography
@@ -340,6 +347,20 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
                   />
                 </Box>
               )}
+
+              <TextField
+                id={'institution'}
+                label={'Your Institution'}
+                placeholder={
+                  'Full, unabbreviated name of the institution you are affiliated with'
+                }
+                fullWidth
+                type="text"
+                disabled={isLoading}
+                value={institution}
+                required
+                onChange={e => setInstitution(e.target.value)}
+              />
 
               {managedACTAccessRequirement.isIDURequired && (
                 <TextFieldWithWordLimit

@@ -26,6 +26,7 @@ import {
 import { createMemoryRouter } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
 import { SynapseToastContainer } from './ToastMessage'
+import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
 
 const storybookQueryClient = new QueryClient(defaultQueryClientConfig)
 
@@ -70,9 +71,8 @@ export function StorybookComponentWrapper(props: {
   const currentStack: SynapseStack = (storybookContext.globals.stack ||
     storybookContext.parameters.stack) as SynapseStack
 
-  useEffect(() => {
-    overrideEndpoint(currentStack)
-  }, [currentStack])
+  // Set endpoint synchronously so SynapseContextProvider picks up the correct basePath on first render.
+  overrideEndpoint(currentStack)
 
   // Subscribe to the framework-agnostic SynapseSessionManager for token/auth state
   // These methods are bound in the SynapseSessionManager constructor, so they are safe to pass directly.
@@ -149,6 +149,15 @@ export function StorybookComponentWrapper(props: {
     storybookContext.args.isAuthenticated,
   ])
 
+  const effectiveUserId: string | undefined = useMemo(() => {
+    if (currentStack === 'mock') {
+      return storybookContext.args.isAuthenticated
+        ? String(MOCK_USER_ID)
+        : undefined
+    }
+    return sessionState.userId
+  }, [sessionState.userId, currentStack, storybookContext.args.isAuthenticated])
+
   const refreshSession = useCallback(async () => {
     await sessionManager.refreshSession()
   }, [])
@@ -161,7 +170,7 @@ export function StorybookComponentWrapper(props: {
     () => ({
       token: effectiveToken,
       realmId: sessionState.realmId,
-      userId: sessionState.userId,
+      userId: effectiveUserId,
       isAuthenticated: effectiveIsAuthenticated,
       hasInitializedSession: sessionState.hasInitializedSession,
       refreshSession,
@@ -175,7 +184,7 @@ export function StorybookComponentWrapper(props: {
       effectiveToken,
       effectiveIsAuthenticated,
       sessionState.realmId,
-      sessionState.userId,
+      effectiveUserId,
       sessionState.hasInitializedSession,
       refreshSession,
       clearSession,

@@ -1,16 +1,18 @@
 import { mockFileHandle } from '@/mocks/mock_file_handle'
-import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '@/utils/functions/getEndpoint'
 import {
   FileHandleAssociateType,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import PdfPreview, { maxPdfSize, PdfPreviewProps } from './PdfPreview'
+
+vi.mock('@/utils/hooks/useFetchBlobUrl', () => ({
+  useFetchBlobUrl: vi.fn().mockReturnValue({
+    blobUrl: 'blob:mockBlobUrl',
+    error: undefined,
+  }),
+}))
 
 function renderComponent(props: PdfPreviewProps) {
   return render(<PdfPreview {...props} />, { wrapper: createWrapper() })
@@ -22,30 +24,16 @@ const mockFHA: FileHandleAssociation = {
   fileHandleId: mockFileHandle.id,
 }
 
-const expectedEncodedFhaUrl = encodeURIComponent(
-  SynapseClient.getPortalFileHandleServletUrl(
-    mockFHA.fileHandleId,
-    mockFHA.associateObjectId,
-    mockFHA.associateObjectType,
-  ),
-)
-const expectedIFrameSource = `${getEndpoint(
-  BackendDestinationEnum.PORTAL_ENDPOINT,
-)}pdf.js/web/viewer.html?file=${expectedEncodedFhaUrl}`
-
 describe('PDF Preview tests', () => {
-  it('PDF is rendered', async () => {
+  it('PDF is rendered', () => {
     const { container } = renderComponent({
       fileHandle: mockFileHandle,
       fileHandleAssociation: mockFHA,
     })
 
-    let frame: HTMLIFrameElement | null = null
-    await waitFor(() => {
-      frame = container.querySelector('iframe')
-      expect(frame).toBeDefined()
-      expect(frame).toHaveAttribute('src', expectedIFrameSource)
-    })
+    const frame = container.querySelector('iframe')
+    expect(frame).toBeInTheDocument()
+    expect(frame).toHaveAttribute('src', 'blob:mockBlobUrl')
   })
   it('PDF is not rendered if too large', async () => {
     renderComponent({

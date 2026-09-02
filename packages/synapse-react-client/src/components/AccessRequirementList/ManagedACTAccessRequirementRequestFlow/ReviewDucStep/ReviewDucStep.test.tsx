@@ -3,8 +3,6 @@ import {
   mockManagedACTAccessRequirementWikiPageKey,
 } from '@/mocks/accessRequirement/mockAccessRequirements'
 import { MOCK_DATA_ACCESS_REQUEST } from '@/mocks/dataaccess/MockDataAccessRequest'
-import { mockSubmittedSubmission } from '@/mocks/dataaccess/MockSubmission'
-import { MOCK_FILE_ENTITY_ID } from '@/mocks/entity/mockFileEntity'
 import {
   MOCK_USER_ID,
   MOCK_USER_ID_2,
@@ -12,11 +10,7 @@ import {
 } from '@/mocks/user/mock_user_profile'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import {
-  AccessType,
-  RestrictableObjectType,
-  SubmissionState,
-} from '@sage-bionetworks/synapse-types'
+import { AccessType } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import MarkdownSynapse from '../../../Markdown/MarkdownSynapse'
@@ -48,15 +42,6 @@ const mockGetDataRequestForUpdate = vi.spyOn(
   'getDataAccessRequestForUpdate',
 )
 
-const mockSubmitDataAccessRequest = vi
-  .spyOn(SynapseClient, 'submitDataAccessRequest')
-  .mockResolvedValue({
-    submissionId: mockSubmittedSubmission.id,
-    submittedBy: mockSubmittedSubmission.submittedBy,
-    state: SubmissionState.SUBMITTED,
-    modifiedOn: mockSubmittedSubmission.modifiedOn,
-  })
-
 vi.spyOn(SynapseClient, 'getWikiPageKeyForAccessRequirement').mockResolvedValue(
   mockManagedACTAccessRequirementWikiPageKey,
 )
@@ -67,18 +52,16 @@ vi.spyOn(
 
 const mockOnHide = vi.fn()
 const mockOnBackClicked = vi.fn()
-const mockOnSubmissionCreated = vi.fn()
+const mockOnCreateDuc = vi.fn()
 
 const defaultProps: ReviewDucStepProps = {
   managedACTAccessRequirement: {
     ...mockManagedACTAccessRequirement,
     eDucTemplateId: 'educ-template-123',
   },
-  subjectId: MOCK_FILE_ENTITY_ID,
-  subjectType: RestrictableObjectType.ENTITY,
   onHide: mockOnHide,
   onBackClicked: mockOnBackClicked,
-  onSubmissionCreated: mockOnSubmissionCreated,
+  onCreateDuc: mockOnCreateDuc,
 }
 
 function renderComponent(props: ReviewDucStepProps = defaultProps) {
@@ -93,8 +76,7 @@ describe('ReviewDucStep', () => {
   beforeEach(() => {
     mockOnHide.mockReset()
     mockOnBackClicked.mockReset()
-    mockOnSubmissionCreated.mockReset()
-    mockSubmitDataAccessRequest.mockClear()
+    mockOnCreateDuc.mockReset()
   })
 
   it('renders the "Sign a Data Use Certificate" heading and instructional text', async () => {
@@ -180,7 +162,7 @@ describe('ReviewDucStep', () => {
     expect(mockOnHide).toHaveBeenCalledTimes(1)
   })
 
-  it('submits the DAR and calls onSubmissionCreated when Create a DUC is clicked', async () => {
+  it('invokes onCreateDuc when Create a DUC is clicked', async () => {
     mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
     const { user } = renderComponent()
 
@@ -190,21 +172,6 @@ describe('ReviewDucStep', () => {
     await waitFor(() => expect(createButton).toBeEnabled())
     await user.click(createButton)
 
-    await waitFor(() => {
-      expect(mockSubmitDataAccessRequest).toHaveBeenCalledWith(
-        expect.objectContaining({
-          requestId: MOCK_DATA_ACCESS_REQUEST.id,
-          requestEtag: MOCK_DATA_ACCESS_REQUEST.etag,
-          subjectId: MOCK_FILE_ENTITY_ID,
-          subjectType: RestrictableObjectType.ENTITY,
-        }),
-        expect.anything(),
-      )
-    })
-    await waitFor(() =>
-      expect(mockOnSubmissionCreated).toHaveBeenCalledWith(
-        mockSubmittedSubmission.id,
-      ),
-    )
+    expect(mockOnCreateDuc).toHaveBeenCalledTimes(1)
   })
 })

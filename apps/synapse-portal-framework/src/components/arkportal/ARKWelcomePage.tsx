@@ -11,7 +11,7 @@ const ARKWelcomePage = (): React.ReactNode => {
       <Layout containerClassName="ARKWelcomePage">
         <div className="flexLayout">
           <div className="mainWelcomeContent">
-            <p style={{ fontSize: 50, fontWeight: 700 }}>
+            <p style={{ fontSize: 50, fontWeight: 700, lineHeight: 1.4 }}>
               Welcome to the ARK Portal
             </p>
             <div className="description">

@@ -4,7 +4,15 @@ import {
   useUpdateAgentSession,
 } from '@/synapse-queries/chat/useChat'
 import { useSynapseContext } from '@/utils'
-import { Alert, Box, Chip, List, Stack, Typography } from '@mui/material'
+import {
+  Alert,
+  Box,
+  Chip,
+  List,
+  ListItem,
+  Stack,
+  Typography,
+} from '@mui/material'
 import {
   AgentSession,
   FileHandleAssociateType,
@@ -21,6 +29,17 @@ import SynapseChatMessage from './SynapseChatMessage'
 import { SmartToyTwoTone } from '@mui/icons-material'
 import { UserCard } from '../UserCard/UserCard'
 import { useApplicationSessionContext } from '@/utils/AppUtils'
+import { ReactComponent as CurieAvatarHead } from '@/assets/illustrations/curie_avatar_head.svg'
+
+const CURIE_GREETING = 'Hi! How can I help you today?'
+
+const CURIE_ACCESS_LEVEL_SUFFIX: Record<AgentAccessLevel, string> = {
+  [AgentAccessLevel.PUBLICLY_ACCESSIBLE]: ' and can only read public data.',
+  [AgentAccessLevel.READ_YOUR_PRIVATE_DATA]:
+    ' and can read your public and private data in Synapse on your behalf.',
+  [AgentAccessLevel.WRITE_YOUR_PRIVATE_DATA]:
+    ' and can read and write your public and private data in Synapse on your behalf.',
+}
 
 const DEFAULT_AVATAR = (
   <Box
@@ -38,10 +57,26 @@ const DEFAULT_AVATAR = (
   </Box>
 )
 
+const CURIE_AVATAR = (
+  <Box
+    sx={{
+      mt: '10px',
+      height: '30px',
+      width: '30px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}
+  >
+    <CurieAvatarHead />
+  </Box>
+)
+
 export type SynapseChatProps = {
   initialMessage?: string //optional initial message
   agentRegistrationId?: string // if provided, use this agent
   chatbotName?: string // optional name of this chatbot agent
+  variant?: 'default' | 'curie'
   hideTitle?: boolean
   textboxPositionOffset?: string // when embedded in a form, the textbox (form) stuck to the bottom may need to be offset due to container padding (dialog content for example!)
   /* optional session context for the agent session */
@@ -77,7 +112,8 @@ export function SynapseChat({
   initialMessage,
   agentRegistrationId,
   chatbotName = 'SynapseChat',
-  agentAvatar = DEFAULT_AVATAR,
+  variant = 'default',
+  agentAvatar,
   hideTitle = false,
   textboxPositionOffset = '0px',
   sessionContext,
@@ -91,6 +127,11 @@ export function SynapseChat({
 }: SynapseChatProps) {
   const { accessToken } = useSynapseContext()
   const { userId } = useApplicationSessionContext()
+
+  const baseDisclaimerText = chatbotName + ' can make mistakes'
+
+  const resolvedAgentAvatar =
+    agentAvatar ?? (variant === 'curie' ? CURIE_AVATAR : DEFAULT_AVATAR)
 
   const userAvatar = (
     <UserCard ownerId={userId} size="AVATAR" avatarSize="MEDIUM" />
@@ -121,6 +162,12 @@ export function SynapseChat({
   const internalChatState = useChatState(agentSession, onChatResponse)
   const chatState = externalChatState ?? internalChatState
   const { interactions, isAwaitingResponse, sendChat } = chatState
+
+  const showGreeting = variant === 'curie' && interactions.length === 0
+
+  const curieAccessLevelSuffix =
+    variant === 'curie' ? CURIE_ACCESS_LEVEL_SUFFIX[agentAccessLevel] : ''
+  const disclaimerText = baseDisclaimerText + curieAccessLevelSuffix
 
   // Only interactions added after this component instance mounted should play the entry
   // animation. Callers may lift state so history survives a `Dialog` closing, but the
@@ -228,7 +275,8 @@ export function SynapseChat({
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'space-between',
+        justifyContent: variant === 'curie' ? 'flex-start' : 'space-between',
+        gap: variant === 'curie' ? '20px' : '0',
         maxWidth: '1100px',
         mx: 'auto',
         height: '100%',
@@ -250,7 +298,7 @@ export function SynapseChat({
           {chatbotName}
         </Typography>
       )}
-      {showAccessLevelMenu && (
+      {showAccessLevelMenu && variant !== 'curie' && (
         <AccessLevelMenu
           initAccessLevel={agentAccessLevel}
           onChange={newAccessLevel => {
@@ -264,14 +312,25 @@ export function SynapseChat({
       )}
       {!agentSession && <SkeletonParagraph numRows={10} />}
       {agentSession && (
-        <Box sx={{ flexGrow: 1, overflowY: 'auto', mb: 2 }}>
+        <Box
+          sx={{
+            flexGrow: 1,
+            overflowY: 'auto',
+            mb: variant === 'curie' ? 0 : 2,
+          }}
+        >
           <List
             sx={{
               flex: 1,
               overflowY: 'auto',
               pt: '20px',
+              ...(variant === 'curie' && { pt: 0, pb: 0, gap: '20px' }),
               display: 'flex',
               flexDirection: 'column',
+              ...(showGreeting && {
+                minHeight: '100%',
+                justifyContent: 'flex-end',
+              }),
             }}
           >
             {/* {sessionHistory &&
@@ -284,15 +343,33 @@ export function SynapseChat({
                 />
               )
             })} */}
+            {showGreeting && (
+              <ListItem
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: '50px auto',
+                  columnGap: '16px',
+                  justifyItems: 'start',
+                  alignItems: 'start',
+                  p: 0,
+                }}
+              >
+                {resolvedAgentAvatar}
+                <Typography sx={{ justifySelf: 'start', mt: '14px' }}>
+                  {CURIE_GREETING}
+                </Typography>
+              </ListItem>
+            )}
             {interactions.map((interaction, index) => {
               const isLast = index === interactions.length - 1
               return (
                 <SynapseChatMessage
-                  agentAvatar={agentAvatar}
+                  agentAvatar={resolvedAgentAvatar}
                   userAvatar={userAvatar}
                   key={interaction.id}
                   userMessage={interaction.userMessage}
                   chatJobId={interaction.jobId}
+                  showLoadingIcon={variant !== 'curie'}
                   onSendChat={sendChat}
                   scrollIntoView={isLast}
                   animateEntry={!presentAtMount.has(interaction.id)}
@@ -312,7 +389,7 @@ export function SynapseChat({
       <Box
         sx={{
           position: 'sticky',
-          bottom: textboxPositionOffset,
+          bottom: variant === 'curie' ? '0px' : textboxPositionOffset,
           backgroundColor: 'white',
         }}
       >
@@ -341,14 +418,16 @@ export function SynapseChat({
             value={userChatTextfieldValue}
             onValueChange={setUserChatTextfieldValue}
             onSend={handleSend}
-            placeholder={`Message ${chatbotName}`}
+            placeholder={
+              variant === 'curie' ? 'Ask anything' : `Message ${chatbotName}`
+            }
             disabled={!agentSession || isAwaitingResponse}
             allowAttachments={allowAttachments}
           />
         </Box>
       </Box>
       <Typography variant="smallText1" sx={{ pt: '8px', textAlign: 'center' }}>
-        {chatbotName} can make mistakes.
+        {disclaimerText}
       </Typography>
     </Box>
   )

@@ -25,7 +25,7 @@ export interface RequestInterface {
   modifiedOn: string
   createdBy: string
   modifiedBy: string
-  ducFileHandleId: string
+  ducFileHandleId?: string
   irbFileHandleId: string
   attachments?: string[]
   accessorChanges: AccessorChange[]
@@ -37,6 +37,8 @@ export interface RequestInterface {
   principalInvestigator?: PrincipalInvestigator
   /* Signing Official information. Used by the eDUC signing flow. */
   signingOfficial?: SigningOfficial
+  /* DocuSign envelope ID for the routed eDUC. Set when the request has been sent for e-signature. */
+  eDucSignatureEnvelopeId?: string
 }
 
 export interface Request extends RequestInterface {

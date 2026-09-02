@@ -1,0 +1,109 @@
+.jsonSchemaForm {
+  display: grid;
+  // We can't rearrange the order of the HTML elements, so we use grid rows to reorder them.
+  grid-template-rows: auto auto auto auto auto;
+  margin-bottom: 15px;
+
+  :global(.react-select-container) > :global(.form-control) {
+    height: 53.33px;
+  }
+
+  :global(.form-group.rjsf-field-array) {
+    margin-bottom: 0px;
+  }
+
+  :global(.form-control) {
+    height: unset;
+  }
+
+  :global(.MuiTextField-root):not(:global(.datetime-picker)) {
+    display: flex;
+  }
+
+  :global(.rjsf-array-item) :global(.LabelContainer) {
+    display: none !important;
+  }
+
+  > :global(.form-group) {
+    grid-row-start: 1;
+  }
+
+  > hr {
+    grid-row-start: 4;
+    width: 100%;
+  }
+
+  :global(.row) {
+    padding: 0px 10px;
+  }
+
+  :global(.rjsf-field-array) > :global(.field-description) {
+    margin-top: 0px;
+    margin-bottom: 8px;
+  }
+
+  :global(.rjsf-array-item) {
+    :global(.field-description) {
+      display: none;
+    }
+
+    :global(.HelpButton) {
+      display: none;
+    }
+
+    :global(.form-control),
+    :global(.react-select-container) {
+      grid-row-start: widget;
+    }
+
+    div {
+      grid-row-start: errors;
+    }
+  }
+
+  :global(.LabelContainer) {
+    display: flex;
+    label {
+      flex-grow: 1;
+      span:global(.required) {
+        color: var(--synapse-red-required);
+        margin-left: 2px;
+      }
+    }
+  }
+
+  select {
+    background-color: var(--synapse-gray-light);
+  }
+
+  :global(.rjsf-field-array)
+    > :global(.rjsf-array-item)
+    > label:global(.form-label) {
+    display: none;
+  }
+
+  :global(.HelpButton) {
+    float: right;
+    margin: 0 0 0.5rem;
+    cursor: pointer;
+  }
+
+  table:global(.FieldDescriptionTable) {
+    tr {
+      th,
+      td {
+        padding: 3px 0px;
+        vertical-align: middle;
+
+        :global(.field-description) {
+          margin-bottom: 0;
+        }
+      }
+      th {
+        padding-right: 25px;
+        font-weight: 400;
+        color: var(--synapse-text-color-disabled);
+      }
+    }
+  }
+}

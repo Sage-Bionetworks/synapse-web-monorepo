@@ -1,7 +1,6 @@
 import useMergeGridWithTable from './useMergeGridWithTable'
 import {
   EntityType,
-  GridRecordSetExportResponse,
   SynchronizeGridResponse,
   SyncType,
   TableUpdateTransactionResponse,
@@ -9,9 +8,6 @@ import {
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import { useSynchronizeGridSession } from '@/synapse-queries/grid/useGridSession'
-import useUnsafeLegacyExportAndOverwriteRecordSet from './useMergeGridWithRecordSet'
-import { useGetFeatureFlag } from '@/synapse-queries/featureflags'
-import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 
 export type MergeGridWithSource = {
   /** The ID of the grid session to merge with the source entity. */
@@ -26,11 +22,6 @@ export type MergeGridWithSource = {
 
 export type MergeGridResult =
   | { type: 'synchronize'; data: SynchronizeGridResponse }
-  | {
-      /** @deprecated */
-      type: 'recordset_overwrite'
-      data: GridRecordSetExportResponse
-    }
   | {
       type: 'tableUpdateTransaction'
       data: TableUpdateTransactionResponse
@@ -58,12 +49,6 @@ export default function useMergeGridWithSource(
   // As support for other types is added, the other hooks should be replaced.
   const syncGridWithSource = useSynchronizeGridSession()
   const mergeGridWithTable = useMergeGridWithTable()
-  const unsafeLegacyOverwriteRecordset =
-    useUnsafeLegacyExportAndOverwriteRecordSet()
-
-  const enableRecordSetSync = useGetFeatureFlag(
-    FeatureFlagEnum.ENABLE_RECORDSET_SYNCHRONIZATION,
-  )
 
   return useMutation<MergeGridResult, SynapseClientError, MergeGridWithSource>({
     ...options,
@@ -73,19 +58,12 @@ export default function useMergeGridWithSource(
       const isEntityView = sourceEntityType === EntityType.entityview
       const isRecordSet = sourceEntityType === EntityType.recordset
 
-      if (isEntityView || (isRecordSet && enableRecordSetSync)) {
+      if (isEntityView || isRecordSet) {
         const data = await syncGridWithSource.mutateAsync({
           gridSessionId,
           syncType,
         })
         return { type: 'synchronize', data }
-      } else if (isRecordSet) {
-        // Deprecated/legacy path: this will overwrite the RecordSet with the grid session data instead of merging/synchronizing, which is prone to data loss.
-        // Remove once we have confidence in the synch service for RecordSets.
-        const data = await unsafeLegacyOverwriteRecordset.mutateAsync({
-          gridSessionId,
-        })
-        return { type: 'recordset_overwrite', data }
       } else {
         const data = await mergeGridWithTable.mutateAsync({
           gridSessionId,

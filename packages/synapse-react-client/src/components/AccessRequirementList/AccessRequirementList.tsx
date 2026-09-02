@@ -43,6 +43,9 @@ import DataAccessRequestAccessorsFilesForm from './ManagedACTAccessRequirementRe
 import RequestDataAccessSuccess from './ManagedACTAccessRequirementRequestFlow/RequestDataAccessSuccess'
 import ResearchProjectForm from './ManagedACTAccessRequirementRequestFlow/ResearchProjectForm/ResearchProjectForm'
 import ReviewDucStep from './ManagedACTAccessRequirementRequestFlow/ReviewDucStep/ReviewDucStep'
+import EDucPreviewStep from './ManagedACTAccessRequirementRequestFlow/EDucPreviewStep/EDucPreviewStep'
+import ManualUploadDucStep from './ManagedACTAccessRequirementRequestFlow/ManualUploadDucStep/ManualUploadDucStep'
+import SignatureStatusStep from './ManagedACTAccessRequirementRequestFlow/SignatureStatusStep/SignatureStatusStep'
 import AuthenticatedRequirement from './RequirementItem/AuthenticatedRequirement'
 import CertificationRequirement from './RequirementItem/CertificationRequirement'
 import TwoFactorAuthEnabledRequirement from './RequirementItem/TwoFactorAuthEnabledRequirement'
@@ -66,6 +69,20 @@ export type AccessRequirementListProps = {
   customDialogActions?: ReactNode
   /* Optional callback invoked if a submission is created via this component */
   onSubmissionCreated?: (submissionId: string) => void
+  /**
+   * Optionally open the wizard directly at a specific ManagedACTAccessRequirement step instead of
+   * the default access requirement list. Useful for deep-link routes and for resuming an in-progress
+   * eDUC signature flow (jump straight to `RequestDataStep.SIGNATURE_STATUS`).
+   *
+   * The `managedACTAccessRequirement` is bundled with the step because every ManagedACT wizard step
+   * requires it — passing them together prevents entering a step with no AR selected.
+   *
+   * Does not affect the traditional-DUC (non-eDUC) flow, which is entered from the AR list.
+   */
+  initialWizardEntry?: {
+    step: RequestDataStep
+    managedACTAccessRequirement: ManagedACTAccessRequirement
+  }
 } & (
   | {
       /**
@@ -130,7 +147,7 @@ const isARUnsupported = (accessRequirement: AccessRequirement) => {
 /**
  * Represents a distinct screen in the wizard used to apply to a ManagedACTAccessRequirement
  */
-enum RequestDataStep {
+export enum RequestDataStep {
   SHOW_ALL_ARS = 0,
   UPDATE_RESEARCH_PROJECT = 1,
   UPDATE_ACCESSORS_AND_FILES = 2,
@@ -138,6 +155,9 @@ enum RequestDataStep {
   PROMPT_LOGIN = 4,
   COMPLETE = 5,
   REVIEW_DUC = 6,
+  EDUC_PREVIEW = 7,
+  MANUAL_UPLOAD_DUC = 8,
+  SIGNATURE_STATUS = 9,
 }
 
 export type RequestDataStepCallbackArgs = {
@@ -153,6 +173,15 @@ export type RequestDataStepCallbackArgs = {
  *
  * The component shows the user the approval status of each AR and provides a workflow for accepting the terms of or
  * creating a submission for any of the Access Requirements.
+ *
+ * ### Wizard entry
+ *
+ * By default the component opens on the AR list ({@link RequestDataStep.SHOW_ALL_ARS}) and the user
+ * navigates into the ManagedACT wizard by clicking Request Access on a specific AR.
+ *
+ * To open the wizard directly at a specific step (for example, to resume an in-progress eDUC signature
+ * flow or to serve a deep-link route), pass {@link AccessRequirementListProps.initialWizardEntry} with
+ * the target step and the {@link ManagedACTAccessRequirement} the wizard should operate on.
  */
 export default function AccessRequirementList(
   props: AccessRequirementListProps,
@@ -164,6 +193,7 @@ export default function AccessRequirementList(
     requestObjectName,
     customDialogActions,
     onSubmissionCreated = noop,
+    initialWizardEntry,
   } = props
 
   const isShowingRequirementsForEntity = 'entityId' in props
@@ -191,11 +221,13 @@ export default function AccessRequirementList(
   let { dialogTitle = 'Data Access Request' } = props
   const { isAuthenticated } = useSynapseContext()
   const [requestDataStep, setRequestDataStep] = useState<RequestDataStep>(
-    RequestDataStep.SHOW_ALL_ARS,
+    initialWizardEntry?.step ?? RequestDataStep.SHOW_ALL_ARS,
   )
   const oneSageURL = useOneSageURL()
   const [managedACTAccessRequirement, setManagedACTAccessRequirement] =
-    useState<ManagedACTAccessRequirement>()
+    useState<ManagedACTAccessRequirement | undefined>(
+      initialWizardEntry?.managedACTAccessRequirement,
+    )
   const [researchProjectId, setResearchProjectId] = useState<string>('')
   const [dataAccessRequest, setDataAccessRequest] = useState<
     Request | Renewal | undefined
@@ -340,6 +372,7 @@ export default function AccessRequirementList(
       RequestDataStep.UPDATE_ACCESSORS_AND_FILES,
       RequestDataStep.UPDATE_RESEARCH_PROJECT,
       RequestDataStep.REVIEW_DUC,
+      RequestDataStep.EDUC_PREVIEW,
     ].includes(requestDataStep) && canShowManagedACTWikiInWizard
       ? 'xl'
       : 'md'
@@ -400,14 +433,72 @@ export default function AccessRequirementList(
       renderContent = (
         <ReviewDucStep
           managedACTAccessRequirement={managedACTAccessRequirement!}
-          subjectId={subjectId ?? ''}
-          subjectType={subjectType ?? RestrictableObjectType.ENTITY}
           onHide={onHide}
           onBackClicked={() => {
             requestDataStepCallback({
               step: RequestDataStep.UPDATE_ACCESSORS_AND_FILES,
             })
           }}
+          onCreateDuc={() => {
+            requestDataStepCallback({ step: RequestDataStep.EDUC_PREVIEW })
+          }}
+        />
+      )
+      break
+    case RequestDataStep.EDUC_PREVIEW:
+      renderContent = (
+        <EDucPreviewStep
+          managedACTAccessRequirement={managedACTAccessRequirement!}
+          onHide={onHide}
+          onBackClicked={() => {
+            requestDataStepCallback({ step: RequestDataStep.REVIEW_DUC })
+          }}
+          onSendForSignature={() => {
+            requestDataStepCallback({ step: RequestDataStep.SIGNATURE_STATUS })
+          }}
+          onManualUpload={() => {
+            requestDataStepCallback({
+              step: RequestDataStep.MANUAL_UPLOAD_DUC,
+            })
+          }}
+        />
+      )
+      break
+    case RequestDataStep.MANUAL_UPLOAD_DUC:
+      renderContent = (
+        <ManualUploadDucStep
+          managedACTAccessRequirement={managedACTAccessRequirement!}
+          subjectId={subjectId ?? ''}
+          subjectType={subjectType ?? RestrictableObjectType.ENTITY}
+          onHide={onHide}
+          onBackClicked={() => {
+            requestDataStepCallback({ step: RequestDataStep.EDUC_PREVIEW })
+          }}
+          onSubmissionCreated={submissionId => {
+            requestDataStepCallback({ step: RequestDataStep.COMPLETE })
+            onSubmissionCreated(submissionId)
+          }}
+        />
+      )
+      break
+    case RequestDataStep.SIGNATURE_STATUS:
+      renderContent = (
+        <SignatureStatusStep
+          managedACTAccessRequirement={managedACTAccessRequirement!}
+          subjectId={subjectId ?? ''}
+          subjectType={subjectType ?? RestrictableObjectType.ENTITY}
+          onHide={onHide}
+          onBackClicked={
+            // When entered directly via initialWizardEntry there is no earlier wizard step to
+            // return to, so omit the callback and let the step hide its Back button.
+            initialWizardEntry
+              ? undefined
+              : () => {
+                  requestDataStepCallback({
+                    step: RequestDataStep.EDUC_PREVIEW,
+                  })
+                }
+          }
           onSubmissionCreated={submissionId => {
             requestDataStepCallback({ step: RequestDataStep.COMPLETE })
             onSubmissionCreated(submissionId)

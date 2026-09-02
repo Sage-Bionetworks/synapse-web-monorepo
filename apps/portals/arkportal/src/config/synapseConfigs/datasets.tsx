@@ -14,7 +14,8 @@ const rgbIndex = 0
 export const datasetColumnLinks: LabelLinkConfig = [
   {
     isMarkdown: false,
-    baseURL: 'Explore/Datasets/DetailsPage',
+    baseURL: 'Explore/Datasets',
+    urlParamStyle: 'path-segment',
     URLColumnName: 'id',
     matchColumnName: 'name',
     overrideValueWithRowID: true,
@@ -54,10 +55,11 @@ export const datasetCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: datasetSchema,
   titleLinkConfig: {
+    urlParamStyle: 'path-segment',
     isMarkdown: false,
     matchColumnName: 'id',
     URLColumnName: 'id',
-    baseURL: 'Explore/Datasets/DetailsPage',
+    baseURL: 'Explore/Datasets',
   },
   iconOptions: {
     Publication: publicationDataSvg,

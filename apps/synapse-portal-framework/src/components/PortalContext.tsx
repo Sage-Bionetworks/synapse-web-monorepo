@@ -11,6 +11,8 @@ import { NavbarConfig } from './navbar/Navbar'
 
 export type AridhiaConfig = {
   apiBasePath?: string
+  /** `idp-id` registered with the target C-Path hub: `sage-prod` (prod) or `sage-dev` (C-Path dev hub). */
+  subjectTokenIssuer?: string
 }
 
 export type PortalContextType = {
@@ -30,6 +32,11 @@ export type PortalContextType = {
   aridhiaConfig?: AridhiaConfig
   /** Optional chat config — only set on portals that enable Synapse Chat. */
   synapseChatProps?: SynapseChatProps
+  /**
+   * Opts the portal into the Curie chat launcher regardless of the
+   * PORTAL_CHAT/CURIE_CHAT_WIDGET feature flags.
+   */
+  isCurieLauncherEnabled?: boolean
 }
 
 export const PortalContext = createContext<PortalContextType | undefined>(

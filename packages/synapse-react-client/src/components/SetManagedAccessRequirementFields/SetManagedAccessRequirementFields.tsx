@@ -147,6 +147,7 @@ export const SetManagedAccessRequirementFields = forwardRef(
         setUpdatedAr({
           ...updatedAr,
           ducTemplateFileHandleId: uploadResponse.fileHandleId,
+          eDucTemplateId: undefined, // mutually exclusive with file upload
         })
       } else if (!data.success && data.error) {
         setUploadDucTemplateError(
@@ -249,6 +250,7 @@ export const SetManagedAccessRequirementFields = forwardRef(
                 <UploadDocumentField
                   id="duc"
                   isLoading={isUpdatingAccessRequirement}
+                  disabled={!updatedAr.isDUCRequired}
                   uploadCallback={resp => uploadDucTemplateCallback(resp)}
                   documentName="Template DUC"
                   fileHandleAssociations={
@@ -270,6 +272,7 @@ export const SetManagedAccessRequirementFields = forwardRef(
                   id="eDucTemplate"
                   options={eDucTemplates}
                   loading={isLoadingEDucTemplates}
+                  disabled={!updatedAr.isDUCRequired}
                   value={selectedEDucTemplate}
                   onChange={(_event, template) =>
                     setUpdatedAr({

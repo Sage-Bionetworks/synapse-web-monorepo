@@ -37,6 +37,8 @@ import { omit } from 'lodash-es'
 import dayjs from 'dayjs'
 import { useCallback, useMemo } from 'react'
 import { KeyFactory } from '@/synapse-queries/KeyFactory'
+import { SYNAPSE_ENTITY_ID_TOKEN_REGEX } from '@/utils/functions/RegularExpressions'
+import { VALUE_NOT_SET } from '@/utils/SynapseConstants'
 
 // ─── Local OpenSearch DSL types ─────────────────────────────────────────────
 // Narrow typings for the OpenSearch structures we build (query DSL, sort) and
@@ -75,6 +77,8 @@ export type SearchQueryConfig = {
 type FilterClause =
   | { terms: Record<string, string[]> }
   | { range: Record<string, { gte?: string; lte?: string }> }
+  // "Field is not set" — emitted when a range facet selects "Not Assigned".
+  | { bool: { must_not: [{ exists: { field: string } }] } }
 
 type MultiMatchClause = {
   multi_match: {
@@ -128,6 +132,17 @@ function containsQuotedPhrase(text: string): boolean {
   return /"[^"]+"/u.test(text)
 }
 
+/**
+ * Returns true if the query text contains a Synapse entity ID token
+ * (e.g. `syn12345` or `syn12345.4`). `multi_match` with fuzziness AUTO can match
+ * neighbouring IDs (e.g. `syn12345` → `syn12344`), which is almost never desired
+ * for identifier lookups. Callers use this to route ID-containing queries to
+ * `simple_query_string`, which does not apply fuzziness.
+ */
+function containsSynapseId(text: string): boolean {
+  return SYNAPSE_ENTITY_ID_TOKEN_REGEX.test(text)
+}
+
 function buildQueryClause(
   queryText: string,
   config: SearchQueryConfig = {},
@@ -135,11 +150,11 @@ function buildQueryClause(
   const { queryStrategy = 'MULTI_MATCH', fieldBoosts, fuzziness } = config
   const fields = resolveFields(fieldBoosts)
 
-  // When the query text contains a double-quoted phrase (e.g. "cancer genomics"),
-  // multi_match cannot honour the phrase operator — only simple_query_string can.
-  // Route directly to simple_query_string so phrase matching works regardless of
-  // the configured strategy.
-  if (containsQuotedPhrase(queryText)) {
+  // Route to simple_query_string when the query needs exact-token treatment:
+  //  - a double-quoted phrase (multi_match can't honour the phrase operator), or
+  //  - a Synapse entity ID (fuzziness would match neighbouring IDs).
+  // simple_query_string doesn't apply fuzziness by default, so both cases work.
+  if (containsQuotedPhrase(queryText) || containsSynapseId(queryText)) {
     return {
       simple_query_string: {
         query: queryText,
@@ -312,6 +327,16 @@ export function toSearchIndexQuery(
         f.concreteType === FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
     )
     .forEach(f => {
+      // "Not Assigned" selection: the RangeFacetFilter UI sets both bounds to
+      // VALUE_NOT_SET. Translate to an OpenSearch "field missing" clause rather
+      // than emitting the sentinel string as a range bound (which would fail
+      // with NumberFormatException on numeric/date fields).
+      if (f.min === VALUE_NOT_SET && f.max === VALUE_NOT_SET) {
+        filterClauses.push({
+          bool: { must_not: [{ exists: { field: f.columnName } }] },
+        })
+        return
+      }
       const columnType = columnModels?.find(
         cm => cm.name === f.columnName,
       )?.columnType
@@ -389,6 +414,9 @@ export function toSearchIndexQuery(
       const otherClauses = filterClauses.filter(clause => {
         if ('terms' in clause) return !(cm.name in clause.terms)
         if ('range' in clause) return !(cm.name in clause.range)
+        // "Not Assigned" range clause: identify by the field inside must_not.exists.
+        if ('bool' in clause)
+          return clause.bool.must_not[0]?.exists?.field !== cm.name
         return true
       })
       const aggFilter: SelectionFilter =

@@ -609,6 +609,12 @@ export class KeyFactory {
     return this.getKey(DATA_ACCESS_REQUEST_QUERY_KEY, 'list', params)
   }
 
+  public listAllDataAccessRequestsQueryKey(
+    params?: Omit<AccessRequestListRequest, 'nextPageToken'>,
+  ) {
+    return this.getKey(DATA_ACCESS_REQUEST_QUERY_KEY, 'list', 'all', params)
+  }
+
   public getDataAccessRequestPreviewQueryKey(requestId: string) {
     return this.getKey(
       DATA_ACCESS_REQUEST_QUERY_KEY,
@@ -637,6 +643,15 @@ export class KeyFactory {
       requestId,
       'signature',
       'filehandleId',
+    )
+  }
+
+  public getDataAccessRequestSignatureQuotaQueryKey(requestId: string) {
+    return this.getKey(
+      DATA_ACCESS_REQUEST_QUERY_KEY,
+      requestId,
+      'signature',
+      'quota',
     )
   }
 

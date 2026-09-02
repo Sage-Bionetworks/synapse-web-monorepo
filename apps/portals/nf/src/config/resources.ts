@@ -18,11 +18,16 @@ export const observationsSql = 'SELECT * FROM syn51735464'
 export const investigatorSql = `SELECT investigatorName as "firstName", ' ' as "lastName", institution, investigatorSynapseId as "USERID" FROM syn51734029 WHERE (investigatorName IS NOT NULL OR investigatorSynapseId IS NOT NULL)`
 export const developmentPublicationSql = `SELECT * FROM syn51735467`
 export const fundingAgencySql = `SELECT funderName as "Funding Agency" FROM syn51734076`
-export const usageRequirementsSql = `SELECT usageRequirements as "Usage Restrictions" FROM syn26450069 WHERE usageRequirements IS NOT NULL`
+// syn26450069 (the legacy Resource table) was retired in Phase 7 of the LinkML
+// migration (nf-osi/nf-research-tools-schema docs/MIGRATION.md) and is no longer
+// written to -- usageRequirements now lives on syn51730943 (the live, unified
+// Tool view) directly, same as every other tool.
+export const usageRequirementsSql = `SELECT usageRequirements as "Usage Restrictions" FROM syn51730943 WHERE usageRequirements IS NOT NULL`
 export const vendorSql = `SELECT vendorName as "Vendor", vendorUrl as "Vendor Url" FROM syn51735470 WHERE vendorName IS NOT NULL`
 export const catalogNumberSql = `SELECT catalogNumber as "Catalog Number", catalogNumberURL as "Catalog Number URL" FROM syn51735470 WHERE catalogNumber IS NOT NULL`
 export const toolApplicationsSql = `SELECT applications as "Tool Applications" FROM syn26486840 WHERE applications IS NOT NULL`
 export const toolStudySql = `SELECT * FROM syn26461958`
+export const toolDatasetSql = `SELECT * FROM syn16859448`
 export const mutationsSql =
   'SELECT externalMutationID, alleleType, mutationType, mutationMethod, affectedGeneSymbol, affectedGeneName, sequenceVariation, proteinVariation, animalModelMutation, humanClinVarMutation, chromosome FROM syn51750823'
 export const publicationsV2Sql = 'SELECT * FROM syn51735450'
@@ -48,7 +53,10 @@ export const toolsSearchQueryConfig: SearchQueryConfig = {
     synonyms: 4,
     rrid: 4,
     targetAntigen: 2,
-    diseaseType: 1,
+    // Was diseaseType (Biobank's pre-migration field name, dropped when it was unified
+    // into the shared geneticDisorder column across resource types) -- this boost was a
+    // silent no-op against a nonexistent field until fixed.
+    geneticDisorder: 1,
     description: 1,
   },
 }

@@ -18,28 +18,56 @@ export const toolsSchema: TableToGenericCardMapping = {
   subTitle: 'resourceType',
   description: 'description',
   secondaryLabels: [
+    // Universal
     'investigatorName',
     'institution',
     'rrid',
     'synonyms',
+    'latestPublicationDate',
+    'species',
+    'availability',
+    'geneticDisorder',
+    'manifestation',
+    'organ',
+    'tissue',
+    'modelType',
+    // Cell Line
     'cellLineCategory',
-    'cellLineDisease',
-    'modelofManifestation',
+    'resistance',
+    // Animal Model
     'backgroundStrain',
     'backgroundSubstrain',
-    'animalModelDisease',
-    'animalModelOfManifestation',
+    'animalState',
+    // Antibody
     'targetAntigen',
     'reactiveSpecies',
     'hostOrganism',
-    'specimenTissueType',
+    'conjugate',
+    // Genetic Reagent
+    'insertName',
+    'insertSpecies',
+    'vectorType',
+    'selectableMarker',
+    // Biobank
     'specimenPreparationMethod',
-    'diseaseType',
-    'tumorType',
     'specimenFormat',
     'specimenType',
-    'latestPublicationDate',
-    'species',
+    // Patient-Derived Model
+    'pdmHostStrain',
+    'engraftmentSite',
+    // Organoid Protocol
+    'organoidDerivationSource',
+    'organoidCellTypes',
+    'cultureSystem',
+    // Computational Tool
+    'computationalToolType',
+    'computationalToolLanguage',
+    'computationalToolPlatformSupport',
+    'licenseType',
+    // Clinical Assessment Tool
+    'clinicalAssessmentType',
+    'clinicalAssessmentTargetPopulation',
+    'clinicalAssessmentDiseaseSpecific',
   ],
   includeShareButton: true,
 }

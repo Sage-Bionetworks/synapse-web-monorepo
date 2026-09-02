@@ -6,6 +6,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
+import { InFlightEDucSignaturesTable } from './InFlightEDucSignaturesTable'
 import { UserAccessRequestHistoryTable } from './UserAccessRequestHistoryTable'
 
 type FaqItem = {
@@ -62,6 +63,7 @@ export function UserAccessRequestHistoryPage() {
           </div>
         </>
       )}
+      <InFlightEDucSignaturesTable />
       <UserAccessRequestHistoryTable />
     </Stack>
   )

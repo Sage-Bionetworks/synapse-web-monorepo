@@ -1,5 +1,8 @@
 import { server } from '@/mocks/msw/server'
-import { mockUserProfileData } from '@/mocks/user/mock_user_profile'
+import {
+  mockUserProfileData,
+  mockUserProfileData2,
+} from '@/mocks/user/mock_user_profile'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseConstants } from '@/utils'
 import { PROFILE_IMAGE_PREVIEW } from '@/utils/APIConstants'
@@ -98,16 +101,20 @@ describe('UserCard tests', () => {
     }
 
     it('creates a small avatar', async () => {
-      renderAvatar({ ...props, avatarSize: 'SMALL' })
+      renderAvatar({
+        ...props,
+        userProfile: mockUserProfileData2,
+        avatarSize: 'SMALL',
+      })
       const imageElement = await screen.findByRole('img')
-      // No profile pic fetched, so the avatar should have the first initial
-      await screen.findByText(firstName[0])
+      // This user has no profile pic mocked, so the avatar should have the first initial
+      await screen.findByText(mockUserProfileData2.firstName[0])
       expect(getComputedStyle(imageElement).width).toBe('20px')
       expect(imageElement.style.backgroundImage).toBe('')
     })
 
     it('avatar text pulls from username if no first name', async () => {
-      const userWithNoFirstName = cloneDeep(mockUserProfileData)
+      const userWithNoFirstName = cloneDeep(mockUserProfileData2)
       userWithNoFirstName.firstName = ''
       renderAvatar({
         ...props,
@@ -115,17 +122,21 @@ describe('UserCard tests', () => {
         avatarSize: 'SMALL',
       })
       const imageElement = await screen.findByRole('img')
-      // No profile pic fetched, so the avatar should have the first initial
-      await screen.findByText(mockUserProfileData.userName[0])
+      // This user has no profile pic mocked, so the avatar should have the first initial
+      await screen.findByText(mockUserProfileData2.userName![0])
       expect(getComputedStyle(imageElement).width).toBe('20px')
       expect(imageElement.style.backgroundImage).toBe('')
     })
 
     it('creates a large avatar', async () => {
-      renderAvatar({ ...props, avatarSize: 'LARGE' })
+      renderAvatar({
+        ...props,
+        userProfile: mockUserProfileData2,
+        avatarSize: 'LARGE',
+      })
       const imageElement = await screen.findByRole('img')
-      // No profile pic fetched, so the avatar should have the first initial
-      await screen.findByText(firstName[0])
+      // This user has no profile pic mocked, so the avatar should have the first initial
+      await screen.findByText(mockUserProfileData2.firstName[0])
       expect(getComputedStyle(imageElement).width).toBe('80px')
       expect(imageElement.style.backgroundImage).toBe('')
     })

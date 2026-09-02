@@ -1,14 +1,5 @@
+import { useGetDataAccessRequestForUpdate } from '@/synapse-queries'
 import {
-  useGetDataAccessRequestForUpdate,
-  useSubmitDataAccessRequest,
-} from '@/synapse-queries'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import { ExpandMore } from '@mui/icons-material'
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Alert,
   Box,
   Button,
   DialogActions,
@@ -18,23 +9,21 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import {
-  ManagedACTAccessRequirement,
-  RestrictableObjectType,
-} from '@sage-bionetworks/synapse-types'
-import { useState } from 'react'
+import { ManagedACTAccessRequirement } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../../../IconSvg/IconSvg'
-import { UserBadge } from '../../../UserCard/UserBadge'
 import ManagedACTAccessRequirementFormWikiWrapper from '../ManagedACTAccessRequirementFormWikiWrapper'
+import { ReviewCollaboratorsAndSigningOfficialAccordion } from '../ReviewCollaboratorsAndSigningOfficialAccordion'
 import { longFieldLabelSx } from '../styles'
 
 export type ReviewDucStepProps = {
   managedACTAccessRequirement: ManagedACTAccessRequirement
-  subjectId: string
-  subjectType: RestrictableObjectType
   onHide: () => void
   onBackClicked: () => void
-  onSubmissionCreated: (submissionId: string) => void
+  /**
+   * Called when the user clicks "Create a DUC". The parent advances to the eDUC preview step
+   * (PORTALS-4377), where the generated document is displayed for review before signing.
+   */
+  onCreateDuc: () => void
 }
 
 /**
@@ -42,16 +31,8 @@ export type ReviewDucStepProps = {
  * Lets the user confirm their collaborators, PI, and Signing Official before generating the DUC.
  */
 export default function ReviewDucStep(props: ReviewDucStepProps) {
-  const {
-    managedACTAccessRequirement,
-    subjectId,
-    subjectType,
-    onHide,
-    onBackClicked,
-    onSubmissionCreated,
-  } = props
-
-  const [error, setError] = useState<string | undefined>()
+  const { managedACTAccessRequirement, onHide, onBackClicked, onCreateDuc } =
+    props
 
   const { data: dataAccessRequest, isLoading } =
     useGetDataAccessRequestForUpdate(String(managedACTAccessRequirement.id), {
@@ -59,32 +40,9 @@ export default function ReviewDucStep(props: ReviewDucStepProps) {
       throwOnError: true,
     })
 
-  const { mutate: submit, isPending: isSubmitting } =
-    useSubmitDataAccessRequest({
-      onSuccess: submission => {
-        onSubmissionCreated(submission.submissionId)
-      },
-      onError: (e: SynapseClientError) => {
-        setError(e.reason)
-      },
-    })
-
   const accessorChanges = dataAccessRequest?.accessorChanges ?? []
   const pi = dataAccessRequest?.principalInvestigator
   const so = dataAccessRequest?.signingOfficial
-
-  const handleCreateDuc = () => {
-    if (!dataAccessRequest) return
-    submit({
-      request: {
-        requestId: dataAccessRequest.id,
-        requestEtag: dataAccessRequest.etag,
-        subjectId,
-        subjectType,
-      },
-      accessRequirementId: String(managedACTAccessRequirement.id),
-    })
-  }
 
   return (
     <>
@@ -92,7 +50,7 @@ export default function ReviewDucStep(props: ReviewDucStepProps) {
         <Stack direction="row" sx={{ alignItems: 'center', gap: '5px' }}>
           Request Access
           <Box sx={{ flexGrow: 1 }} />
-          <IconButton onClick={onHide}>
+          <IconButton aria-label={'Close'} onClick={onHide}>
             <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
           </IconButton>
         </Stack>
@@ -123,132 +81,27 @@ export default function ReviewDucStep(props: ReviewDucStepProps) {
               Official.
             </Typography>
 
-            <Accordion
-              defaultExpanded={false}
-              disableGutters
-              sx={{
-                boxShadow: 'none',
-                border: '1px solid',
-                borderColor: 'grey.300',
-                '&:before': { display: 'none' },
-              }}
-            >
-              <AccordionSummary
-                expandIcon={<ExpandMore />}
-                aria-controls="review-collaborators-so-content"
-                id="review-collaborators-so-header"
-              >
-                <Typography variant={'headline3'}>
-                  Review your collaborators & signing official
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Typography
-                  variant={'body1'}
-                  sx={{ ...longFieldLabelSx, fontWeight: 700, mb: 1 }}
-                >
-                  Your collaborators:
-                </Typography>
-                <Stack sx={{ mb: 3, gap: 1 }}>
-                  {accessorChanges.map(ac => (
-                    <UserBadge
-                      key={ac.userId}
-                      userId={ac.userId}
-                      showAccountLevelIcon={true}
-                      disableLink={true}
-                      showFullName={true}
-                    />
-                  ))}
-                </Stack>
-
-                <Typography
-                  variant={'body1'}
-                  sx={{ ...longFieldLabelSx, fontWeight: 700, mb: 1 }}
-                >
-                  Your Project Lead or PI:
-                </Typography>
-                <Typography
-                  variant={'body1'}
-                  sx={{ ...longFieldLabelSx, mb: 1 }}
-                >
-                  Your Project Lead or PI will also receive access to the
-                  requested data.
-                </Typography>
-                <Box sx={{ mb: 3 }}>
-                  {pi?.userId && (
-                    <UserBadge
-                      userId={pi.userId}
-                      showAccountLevelIcon={true}
-                      disableLink={true}
-                      showFullName={true}
-                    />
-                  )}
-                  {pi?.name && (
-                    <Typography variant={'body1'} sx={longFieldLabelSx}>
-                      {pi.name}
-                    </Typography>
-                  )}
-                  {pi?.institutionalEmail && (
-                    <Typography variant={'body1'} sx={longFieldLabelSx}>
-                      {pi.institutionalEmail}
-                    </Typography>
-                  )}
-                </Box>
-
-                <Typography
-                  variant={'body1'}
-                  sx={{ ...longFieldLabelSx, fontWeight: 700, mb: 1 }}
-                >
-                  Your signing official:
-                </Typography>
-                <Typography
-                  variant={'body1'}
-                  sx={{ ...longFieldLabelSx, mb: 1 }}
-                >
-                  A member of your institution who is NOT part of the study team
-                  (i.e., not the Project Lead, not a Data Requester or
-                  Collaborator, and not the Project Lead or PI).
-                </Typography>
-                <Box>
-                  {so?.name && (
-                    <Typography variant={'body1'} sx={longFieldLabelSx}>
-                      {so.name}
-                    </Typography>
-                  )}
-                  {so?.institutionalEmail && (
-                    <Typography variant={'body1'} sx={longFieldLabelSx}>
-                      {so.institutionalEmail}
-                    </Typography>
-                  )}
-                </Box>
-              </AccordionDetails>
-            </Accordion>
+            <ReviewCollaboratorsAndSigningOfficialAccordion
+              accessorChanges={accessorChanges}
+              principalInvestigator={pi}
+              signingOfficial={so}
+              isLoading={isLoading}
+            />
           </Box>
         </ManagedACTAccessRequirementFormWikiWrapper>
-        {error && (
-          <Alert severity={'error'} sx={{ mt: 2 }}>
-            <strong>Sorry, there is an error creating your DUC.</strong>
-            <br />
-            {error}
-          </Alert>
-        )}
       </DialogContent>
       <DialogActions>
-        <Button
-          variant={'outlined'}
-          disabled={isSubmitting}
-          onClick={onBackClicked}
-        >
+        <Button variant={'outlined'} onClick={onBackClicked}>
           Back
         </Button>
         <Box sx={{ flexGrow: 1 }} />
-        <Button variant={'outlined'} disabled={isSubmitting} onClick={onHide}>
+        <Button variant={'outlined'} onClick={onHide}>
           Cancel
         </Button>
         <Button
           variant={'contained'}
-          disabled={isLoading || isSubmitting}
-          onClick={handleCreateDuc}
+          disabled={isLoading}
+          onClick={onCreateDuc}
         >
           Create a DUC
         </Button>

@@ -127,7 +127,22 @@ export default [
             'Observations',
             'pages/ToolDetailsPage/ToolDetailsPageObservationsTab.tsx',
           ),
-          route('Data', 'pages/ToolDetailsPage/ToolDetailsPageDataTab.tsx'),
+          route('Data', 'pages/ToolDetailsPage/ToolDetailsPageDataTab.tsx', [
+            index('pages/DefaultTabIndexRedirect.tsx', {
+              id: 'tool-data-index',
+            }),
+            route('*', 'pages/DefaultTabWildcardRedirect.tsx', {
+              id: 'tool-data-wildcard',
+            }),
+            route(
+              'Datasets',
+              'pages/ToolDetailsPage/ToolDetailsPageDataDatasetsTab.tsx',
+            ),
+            route(
+              'Studies',
+              'pages/ToolDetailsPage/ToolDetailsPageDataStudiesTab.tsx',
+            ),
+          ]),
         ],
       ),
       route(

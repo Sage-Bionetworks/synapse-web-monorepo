@@ -4,7 +4,10 @@ import {
   getSuccessfulChangePasswordHandler,
 } from '@/mocks/msw/handlers/changePasswordHandlers'
 import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
-import { getResetTwoFactorAuthHandlers } from '@/mocks/msw/handlers/resetTwoFactorAuthHandlers'
+import {
+  getResetTwoFactorAuthBadRequestHandler,
+  getResetTwoFactorAuthHandlers,
+} from '@/mocks/msw/handlers/resetTwoFactorAuthHandlers'
 import { server } from '@/mocks/msw/server'
 import {
   MOCK_USER_ID,
@@ -587,7 +590,7 @@ describe('ChangePassword tests', () => {
     expect(otpInputs).toHaveLength(6)
   })
 
-  it('supports requesting 2FA reset using a password', async () => {
+  it('supports requesting 2FA reset using the current password', async () => {
     const userId = MOCK_USER_ID
     const twoFaToken = 'mock-2fa-token'
     server.use(
@@ -652,7 +655,8 @@ describe('ChangePassword tests', () => {
       expect(reset2faSpy).toHaveBeenCalledWith({
         userId: MOCK_USER_ID,
         twoFaResetEndpoint: expect.any(String),
-        // The current password must be used. A twoFaToken returned by the changePassword service cannot be used to reset 2FA.
+        // The current password must be used. A twoFaToken returned by the changePassword service cannot be used to
+        // reset 2FA: the 2fa/reset endpoint only accepts a twoFaToken minted for an AUTHENTICATION (login) challenge.
         password: currentPassword,
       })
 
@@ -660,5 +664,59 @@ describe('ChangePassword tests', () => {
       expect(newPasswordField).not.toBeInTheDocument()
       expect(confirmPasswordField).not.toBeInTheDocument()
     })
+  })
+
+  it('shows an error message when requesting 2FA reset fails', async () => {
+    const errorMessage = 'Password is incorrect.'
+
+    server.use(
+      getRequires2FAChangePasswordHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        MOCK_USER_ID,
+        'twoFaToken',
+      ),
+      getResetTwoFactorAuthBadRequestHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        errorMessage,
+      ),
+    )
+
+    const currentPassword = 'currentPassword'
+    const newPassword = 'newPassword'
+
+    const {
+      user,
+      currentPasswordField,
+      newPasswordField,
+      confirmPasswordField,
+      submitButton,
+    } = setUp()
+
+    await user.type(currentPasswordField, currentPassword)
+    await user.type(newPasswordField, newPassword)
+    await user.type(confirmPasswordField, newPassword)
+
+    await user.click(submitButton)
+
+    const show2FAResetOptionsButton = await screen.findByText(
+      BEGIN_RESET_2FA_BUTTON_TEXT,
+    )
+    await user.click(show2FAResetOptionsButton)
+
+    const sendResetEmailButton = await screen.findByRole('button', {
+      name: SEND_RESET_2FA_EMAIL_BUTTON_TEXT,
+    })
+
+    await user.click(sendResetEmailButton)
+
+    // The failure is surfaced to the user instead of being silently swallowed.
+    await screen.findByText(
+      `Failed to reset two-factor authentication: ${errorMessage}`,
+    )
+
+    // The confirmation text (shown on success) must NOT appear.
+    expect(
+      screen.queryByText(TWO_FACTOR_RESET_CONFIRMATION_TEXT),
+    ).not.toBeInTheDocument()
   })
 })
