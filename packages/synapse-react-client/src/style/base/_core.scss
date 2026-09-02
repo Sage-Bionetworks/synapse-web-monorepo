@@ -633,15 +633,6 @@ hr ~ .QueryWrapperPlotNav {
   tbody > tr > td {
     vertical-align: top;
   }
-
-  // Flip the scrollable container and its table so the browser renders the
-  // horizontal scrollbar at the top instead of the bottom. This container
-  // never scrolls vertically, so the flip only affects the horizontal scrollbar's position.
-  transform: scaleY(-1);
-
-  table {
-    transform: scaleY(-1);
-  }
 }
 
 .table > tbody > tr > td {
