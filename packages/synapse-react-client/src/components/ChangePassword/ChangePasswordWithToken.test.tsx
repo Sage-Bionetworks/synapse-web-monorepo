@@ -14,6 +14,7 @@ import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { noop } from 'lodash-es'
 import { MemoryRouter } from 'react-router'
+import { BEGIN_RESET_2FA_BUTTON_TEXT } from '../Authentication/OneTimePasswordForm'
 import * as ToastMessage from '../ToastMessage/ToastMessage'
 import ChangePasswordWithToken from './ChangePasswordWithToken'
 import { TWO_FACTOR_AUTH_CHANGE_PASSWORD_PROMPT } from './useChangePasswordFormState'
@@ -23,6 +24,7 @@ const mockDisplayToast = vi
   .mockImplementation(() => noop)
 
 const changePasswordSpy = vi.spyOn(SynapseClient, 'changePassword')
+const reset2faSpy = vi.spyOn(SynapseClient, 'resetTwoFactorAuth')
 
 const passwordResetSignedToken: PasswordResetSignedToken = {
   concreteType: 'org.sagebionetworks.repo.model.auth.PasswordResetSignedToken',
@@ -400,5 +402,52 @@ describe('ChangePasswordWithToken tests', () => {
     // The TOTP form should still be shown
     const otpInputs = await getTOTPInputs()
     expect(otpInputs).toHaveLength(6)
+  })
+
+  it('shows Service Desk recovery guidance instead of an interactive 2FA reset, since this flow has no credential the reset endpoint accepts', async () => {
+    const userId = MOCK_USER_ID
+    const twoFaToken = 'mock-2fa-token'
+    server.use(
+      // The first call will indicate that 2FA is required
+      getRequires2FAChangePasswordHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        userId,
+        twoFaToken,
+      ),
+    )
+
+    const newPassword = 'newPassword'
+
+    const { user, newPasswordField, confirmPasswordField, submitButton } =
+      setUp()
+
+    await user.type(newPasswordField, newPassword)
+    await user.type(confirmPasswordField, newPassword)
+
+    await user.click(submitButton)
+
+    // TOTP form should pop up
+    await getTOTPInputs()
+
+    // This flow authenticated via an emailed reset token: there's no current password to send,
+    // and the 2FA challenge token is scoped to PASSWORD_CHANGE, which the 2fa/reset endpoint
+    // rejects (it only accepts a token from an AUTHENTICATION/login challenge). The interactive
+    // "reset 2FA" option, which can never succeed here, must not be offered.
+    const revealGuidanceLink = await screen.findByText(
+      BEGIN_RESET_2FA_BUTTON_TEXT,
+    )
+
+    // Clicking it must not fire a request to the reset endpoint...
+    await user.click(revealGuidanceLink)
+    expect(reset2faSpy).not.toHaveBeenCalled()
+
+    // ...instead it reveals guidance pointing the user at the Synapse Service Desk.
+    const serviceDeskLink = await screen.findByRole('link', {
+      name: 'Synapse Service Desk',
+    })
+    expect(serviceDeskLink).toHaveAttribute(
+      'href',
+      'https://sagebionetworks.jira.com/servicedesk/customer/portal/9',
+    )
   })
 })
