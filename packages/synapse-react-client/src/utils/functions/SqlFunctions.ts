@@ -168,8 +168,13 @@ export const getAdditionalFilters = (
               return filter
             }
             default:
-              // exhaustive
+              // Compile-time exhaustiveness guard; the log fires only if a new
+              // operator is added to the union without a case here.
               operator satisfies never
+              console.warn(
+                `getAdditionalFilters: unrecognized SQL operator, skipping filter for key "${key}"`,
+                { operator },
+              )
               return undefined
           }
         })

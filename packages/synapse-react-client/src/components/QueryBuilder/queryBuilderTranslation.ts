@@ -176,7 +176,13 @@ function conditionToApiFilter(
             [text!],
           )
     default: {
+      // Compile-time exhaustiveness guard; the log fires only if a new op is
+      // added to QBConditionOp without a case here.
       op satisfies never
+      console.warn(
+        `conditionToApiFilter: unrecognized QB op, skipping condition for column "${columnName}"`,
+        { op },
+      )
       return null
     }
   }
