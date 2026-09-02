@@ -200,7 +200,7 @@
   .SRC-imageThumbnail {
     vertical-align: top;
     padding-right: 15px;
-    max-width: 215px;
+    max-width: 170px;
 
     @media (max-width: map.get(SRC.$breakpoints, 'medium')) {
       width: 0%;
@@ -208,7 +208,9 @@
     }
     @media (min-width: map.get(SRC.$breakpoints, 'medium')) {
       width: 25%;
-      display: inline-block;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     img {
