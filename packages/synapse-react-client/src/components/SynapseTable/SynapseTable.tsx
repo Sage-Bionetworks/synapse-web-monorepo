@@ -318,6 +318,7 @@ export function SynapseTable(props: SynapseTableProps) {
           table={table}
           fullWidth={false}
           autoColumnSizing={true}
+          showTopScrollbar={true}
         />
       </div>
     </SynapseTableContext.Provider>
