@@ -9,7 +9,7 @@ import {
   Row,
   Table,
 } from '@tanstack/react-table'
-import { useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { UIEvent, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { MemoizedTableBody, TableBody, TableBodyProps } from './TableBody'
 import {
   getColumnSizeCssVariable,
@@ -183,6 +183,14 @@ export default function StyledTanStackTable<
     ? MemoizedTableBody
     : TableBody
 
+  const callerOnScroll = styledTableContainerProps?.onScroll
+  function handleContainerScroll(e: UIEvent<HTMLDivElement>) {
+    callerOnScroll?.(e)
+    if (showTopScrollbar) {
+      handleBottomScroll(e)
+    }
+  }
+
   return (
     <>
       {showTopScrollbar && (
@@ -197,7 +205,7 @@ export default function StyledTanStackTable<
       <StyledTableContainer
         {...styledTableContainerProps}
         ref={containerRef}
-        onScroll={showTopScrollbar ? handleBottomScroll : undefined}
+        onScroll={handleContainerScroll}
       >
         <Table
           {...tableSlotProps}
