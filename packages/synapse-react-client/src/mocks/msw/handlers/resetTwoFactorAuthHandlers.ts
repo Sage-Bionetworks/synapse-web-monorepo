@@ -10,3 +10,18 @@ export function getResetTwoFactorAuthHandlers(backendOrigin: string) {
     }),
   ]
 }
+
+export function getResetTwoFactorAuthBadRequestHandler(
+  backendOrigin: string,
+  message: string,
+) {
+  return http.post(`${backendOrigin}/auth/v1/2fa/reset`, () => {
+    return HttpResponse.json(
+      {
+        concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+        reason: message,
+      },
+      { status: 400 },
+    )
+  })
+}

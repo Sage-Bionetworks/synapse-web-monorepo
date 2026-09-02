@@ -3,8 +3,16 @@
   background-color: var(--synapse-primary-action-color);
   background-blend-mode: multiply;
 }
-.InitiativeCardList {
-  .SRC-portalCardMain {
-    margin-left: 0px;
-  }
+
+.SRC-portalCard .SRC-imageThumbnail {
+  align-items: flex-start;
+  margin-left: 0;
+}
+
+.nf-partners-section .SRC-portalCard .SRC-imageThumbnail {
+  margin-top: calc(var(--baseline-grid) * 1.5);
+}
+
+.nf-initiatives-section .SRC-portalCard .SRC-portalCardMain {
+  margin-left: 0;
 }

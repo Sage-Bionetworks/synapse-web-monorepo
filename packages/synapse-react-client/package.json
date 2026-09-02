@@ -136,7 +136,7 @@
     }
   },
   "devDependencies": {
-    "@faker-js/faker": "^8.4.1",
+    "@faker-js/faker": "^10.5.0",
     "@googlemaps/jest-mocks": "^2.22.8",
     "@juggle/resize-observer": "^3.4.0",
     "@open-draft/deferred-promise": "^2.2.0",
