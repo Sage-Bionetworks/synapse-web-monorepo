@@ -4,14 +4,10 @@ import {
 } from '@/components/Breadcrumbs/Breadcrumbs'
 import { useListAllUserDataAccessRequests } from '@/synapse-queries'
 import { useGetAccessRequirements } from '@/synapse-queries/dataaccess/useAccessRequirements'
-import {
-  storeRedirectURLForOneSageLoginAndGotoURL,
-  useSynapseContext,
-} from '@/utils'
-import { useOneSageURL } from '@/utils/hooks'
+import { AuthenticationGuard } from '@/utils/AppUtils'
 import { Box } from '@mui/material'
 import { ManagedACTAccessRequirement } from '@sage-bionetworks/synapse-types'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import {
   createBrowserRouter,
   createMemoryRouter,
@@ -27,7 +23,6 @@ import { RouterProvider as DOMRouterProvider } from 'react-router/dom'
 import AccessRequirementList, {
   RequestDataStep,
 } from '../../AccessRequirementList/AccessRequirementList'
-import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
 import SubmissionPage from '../SubmissionPage/SubmissionPage'
 import {
   REQUEST_ID_PARAM,
@@ -54,27 +49,18 @@ function UserSubmissionPageRouteRenderer() {
 }
 
 /**
- * Deep-link route element for `/request/:requestId/signature`. Looks up the request in the
- * user's own access-request list, then mounts the signature-status wizard step for the AR.
- * Unauthenticated users are redirected to the OneSage login; requests that don't belong to the
- * user (or don't exist) redirect back to the history index.
+ * Deep-link route element for `/request/:requestId/signature`. Rendered inside
+ * `UserAccessRequestHistoryPage`'s `<Outlet />` so the page stays mounted while the dialog is open.
+ * Looks up the request in the user's own access-request list, then mounts the signature-status
+ * wizard step for the AR. Requests that don't belong to the user (or don't exist) redirect back
+ * to the history index. The surrounding `AuthenticationGuard` handles unauthenticated visitors.
  */
 function RequestSignatureRouteRenderer() {
   const { requestId } = useParams<{ [REQUEST_ID_PARAM]: string }>()
-  const { isAuthenticated } = useSynapseContext()
-  const oneSageURL = useOneSageURL()
   const navigate = useNavigate()
 
-  useEffect(() => {
-    if (isAuthenticated === false) {
-      storeRedirectURLForOneSageLoginAndGotoURL(oneSageURL.toString())
-    }
-  }, [isAuthenticated, oneSageURL])
-
   const { data: summaries, isLoading: isLoadingSummaries } =
-    useListAllUserDataAccessRequests(undefined, {
-      enabled: isAuthenticated === true,
-    })
+    useListAllUserDataAccessRequests()
   const summary = summaries?.find(s => s.requestId === requestId)
   const accessRequirementId = summary?.accessRequirementId
 
@@ -84,13 +70,10 @@ function RequestSignatureRouteRenderer() {
       { enabled: Boolean(accessRequirementId), staleTime: Infinity },
     )
 
-  if (isAuthenticated === false) {
-    // Effect above has already triggered the redirect; render nothing while it takes effect.
-    return null
-  }
-
+  // Wait for the summary + AR to load before mounting the dialog. `UserAccessRequestHistoryPage`
+  // renders its own skeletons in the meantime, so no visible spinner is needed here.
   if (isLoadingSummaries || (accessRequirementId && isLoadingAr)) {
-    return <SynapseSpinner size={40} />
+    return null
   }
 
   // Summary not found in the user's own requests, or its access requirement failed to load.
@@ -99,19 +82,16 @@ function RequestSignatureRouteRenderer() {
   }
 
   return (
-    <>
-      <UserAccessRequestHistoryPage />
-      <AccessRequirementList
-        renderAsModal
-        onHide={() => {
-          void navigate('/')
-        }}
-        initialWizardEntry={{
-          step: RequestDataStep.SIGNATURE_STATUS,
-          managedACTAccessRequirement: accessRequirement,
-        }}
-      />
-    </>
+    <AccessRequirementList
+      renderAsModal
+      onHide={() => {
+        void navigate('/')
+      }}
+      initialWizardEntry={{
+        step: RequestDataStep.SIGNATURE_STATUS,
+        managedACTAccessRequirement: accessRequirement,
+      }}
+    />
   )
 }
 
@@ -188,11 +168,20 @@ const routes: RouteObject[] = [
       {
         path: '/',
         children: [
-          { index: true, element: <UserAccessRequestHistoryPage /> },
           {
-            // Signature status deep link — no breadcrumbs, dialog overlays the history page.
-            path: `${USER_ACCESS_HISTORY_REQUEST_SUBPATH}/:${REQUEST_ID_PARAM}/${USER_ACCESS_HISTORY_REQUEST_SIGNATURE_SUBPATH}`,
-            element: <RequestSignatureRouteRenderer />,
+            // Keep the history page mounted across the index ↔ signature-deep-link transition.
+            element: <UserAccessRequestHistoryPage />,
+            children: [
+              { index: true, element: null },
+              {
+                path: `${USER_ACCESS_HISTORY_REQUEST_SUBPATH}/:${REQUEST_ID_PARAM}/${USER_ACCESS_HISTORY_REQUEST_SIGNATURE_SUBPATH}`,
+                element: (
+                  <AuthenticationGuard>
+                    <RequestSignatureRouteRenderer />
+                  </AuthenticationGuard>
+                ),
+              },
+            ],
           },
           {
             // Do not display the breadcrumbs on the `index` page
