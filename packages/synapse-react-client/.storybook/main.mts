@@ -69,9 +69,30 @@ const config: StorybookConfig = {
       plugins,
     })
 
+    // Alongside react-docgen-typescript (which handles .ts/.tsx), Storybook also
+    // registers the Babel-based react-docgen plugin to cover plain-JS
+    // components. Every component here is .tsx, so that plugin can only ever
+    // match a dependency's built .js output — and it excludes node_modules only,
+    // so a workspace dependency's dist/ is parsed as if it were our source. That
+    // overflows @babel/traverse's recursion on a single-file library bundle
+    // (@sage-bionetworks/react-datasheet-grid's dist/index.js). Drop it: it
+    // costs a full extra pass and can produce no docs for this package.
+    const withoutBabelDocgen = {
+      ...config,
+      plugins: (config.plugins ?? []).filter(
+        plugin =>
+          !(
+            plugin &&
+            typeof plugin === 'object' &&
+            'name' in plugin &&
+            plugin.name === 'storybook:react-docgen-plugin'
+          ),
+      ),
+    }
+
     // return the customized config
 
-    return mergeConfig(config, customStorybookConfig)
+    return mergeConfig(withoutBabelDocgen, customStorybookConfig)
   },
 }
 

@@ -35,6 +35,9 @@
     {
       "path": "../markdown-it-synapse-table"
     },
+    {
+      "path": "../react-datasheet-grid"
+    },
     { "path": "../vite-config" }
   ]
 }
