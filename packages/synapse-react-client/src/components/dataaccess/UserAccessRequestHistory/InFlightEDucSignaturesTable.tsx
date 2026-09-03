@@ -33,7 +33,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link as RouterLink } from 'react-router'
 import {
   USER_ACCESS_HISTORY_REQUEST_SIGNATURE_SUBPATH,
@@ -60,6 +60,7 @@ const columnHelper = createColumnHelper<AccessRequestSummary>()
 type ActionCallbacks = {
   onModify: (summary: AccessRequestSummary) => void
   onCancel: (summary: AccessRequestSummary) => void
+  modifyLoadingArId: string | undefined
 }
 
 function buildColumns(actions: ActionCallbacks) {
@@ -100,6 +101,9 @@ function buildColumns(actions: ActionCallbacks) {
         const summary = ctx.row.original
         const requestId = summary.requestId
         if (!requestId) return null
+        const isModifyLoading =
+          actions.modifyLoadingArId !== undefined &&
+          actions.modifyLoadingArId === summary.accessRequirementId
         return (
           <Stack
             direction={'column'}
@@ -112,10 +116,13 @@ function buildColumns(actions: ActionCallbacks) {
               component={'button'}
               type={'button'}
               onClick={() => actions.onModify(summary)}
-              disabled={!summary.accessRequirementId}
+              disabled={
+                !summary.accessRequirementId ||
+                actions.modifyLoadingArId !== undefined
+              }
               sx={{ textAlign: 'left' }}
             >
-              Modify Request
+              {isModifyLoading ? 'Loading…' : 'Modify Request'}
             </MuiLink>
             <MuiLink
               component={'button'}
@@ -155,6 +162,26 @@ export function InFlightEDucSignaturesTable() {
     AccessRequestSummary | undefined
   >()
 
+  const {
+    data: modifyAccessRequirement,
+    isFetching: isFetchingModifyAr,
+    error: modifyArError,
+  } = useGetAccessRequirements<ManagedACTAccessRequirement>(
+    modifyingArId ?? '',
+    { enabled: Boolean(modifyingArId), staleTime: Infinity },
+  )
+
+  // Bail out of the Modify flow if the AR fetch fails so the user isn't stuck on a disabled button.
+  useEffect(() => {
+    if (modifyArError && modifyingArId) {
+      displayToast(
+        `Sorry, we couldn't load your request. ${modifyArError.reason ?? ''}`.trim(),
+        'danger',
+      )
+      setModifyingArId(undefined)
+    }
+  }, [modifyArError, modifyingArId])
+
   const { mutate: voidSignature, isPending: isVoiding } =
     useVoidDataAccessRequestSignature({
       onSuccess: () => {
@@ -169,6 +196,8 @@ export function InFlightEDucSignaturesTable() {
       },
     })
 
+  const modifyLoadingArId = isFetchingModifyAr ? modifyingArId : undefined
+
   const columns = useMemo(
     () =>
       buildColumns({
@@ -178,8 +207,9 @@ export function InFlightEDucSignaturesTable() {
           }
         },
         onCancel: summary => setCancellingSummary(summary),
+        modifyLoadingArId,
       }),
-    [],
+    [modifyLoadingArId],
   )
 
   const rows = useMemo(
@@ -228,10 +258,14 @@ export function InFlightEDucSignaturesTable() {
         </Typography>
         <StyledTanStackTable table={table} fullWidth={true} />
       </Stack>
-      {modifyingArId && (
-        <ModifyRequestModal
-          accessRequirementId={modifyingArId}
-          onClose={() => setModifyingArId(undefined)}
+      {modifyAccessRequirement && (
+        <AccessRequirementList
+          renderAsModal
+          onHide={() => setModifyingArId(undefined)}
+          initialWizardEntry={{
+            step: RequestDataStep.UPDATE_RESEARCH_PROJECT,
+            managedACTAccessRequirement: modifyAccessRequirement,
+          }}
         />
       )}
       <Dialog
@@ -273,33 +307,5 @@ export function InFlightEDucSignaturesTable() {
         </DialogActions>
       </Dialog>
     </Box>
-  )
-}
-
-/**
- * Small helper that lazily fetches the AR for the row the user clicked "Modify Request" on,
- * then mounts the wizard at the research project step so the user can edit their DAR.
- */
-function ModifyRequestModal(props: {
-  accessRequirementId: string
-  onClose: () => void
-}) {
-  const { accessRequirementId, onClose } = props
-  const { data: accessRequirement } =
-    useGetAccessRequirements<ManagedACTAccessRequirement>(accessRequirementId, {
-      staleTime: Infinity,
-    })
-
-  if (!accessRequirement) return null
-
-  return (
-    <AccessRequirementList
-      renderAsModal
-      onHide={onClose}
-      initialWizardEntry={{
-        step: RequestDataStep.UPDATE_RESEARCH_PROJECT,
-        managedACTAccessRequirement: accessRequirement,
-      }}
-    />
   )
 }

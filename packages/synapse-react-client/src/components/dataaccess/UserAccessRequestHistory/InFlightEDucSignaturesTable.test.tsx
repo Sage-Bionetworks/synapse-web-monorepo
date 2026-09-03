@@ -204,6 +204,74 @@ describe('InFlightEDucSignaturesTable', () => {
     expect(props.initialWizardEntry?.step).toBeDefined()
   })
 
+  it('shows a loading state on the Modify button while the access requirement is fetching', async () => {
+    mockUseGetAccessRequirements.mockReturnValue({
+      data: undefined,
+      isFetching: true,
+    } as never)
+    const user = userEvent.setup()
+    renderWithRouter()
+    act(() => {
+      setListSuccess([
+        {
+          requestId: '10',
+          accessRequirementId: 'ar-1',
+          accessRequirementName: 'Requirement A',
+          isEDuc: true,
+          status: 'sent',
+        },
+      ])
+    })
+
+    const modifyButton = screen.getByRole('button', { name: 'Modify Request' })
+    await user.click(modifyButton)
+
+    const loadingButton = await screen.findByRole('button', {
+      name: 'Loading…',
+    })
+    expect(loadingButton).toBeDisabled()
+    // Wizard hasn't mounted yet because the AR is still loading.
+    expect(
+      screen.queryByTestId('MockAccessRequirementList'),
+    ).not.toBeInTheDocument()
+  })
+
+  it('toasts and bails out of the Modify flow when the access requirement fails to load', async () => {
+    mockUseGetAccessRequirements.mockReturnValue({
+      data: undefined,
+      error: { reason: 'boom' } as SynapseClientError,
+    } as never)
+    const user = userEvent.setup()
+    renderWithRouter()
+    act(() => {
+      setListSuccess([
+        {
+          requestId: '10',
+          accessRequirementId: 'ar-1',
+          accessRequirementName: 'Requirement A',
+          isEDuc: true,
+          status: 'sent',
+        },
+      ])
+    })
+
+    await user.click(screen.getByRole('button', { name: 'Modify Request' }))
+
+    await waitFor(() =>
+      expect(mockedDisplayToast).toHaveBeenCalledWith(
+        expect.stringContaining('boom'),
+        'danger',
+      ),
+    )
+    expect(
+      screen.queryByTestId('MockAccessRequirementList'),
+    ).not.toBeInTheDocument()
+    // Modify button is re-enabled so the user can retry.
+    expect(
+      screen.getByRole('button', { name: 'Modify Request' }),
+    ).not.toBeDisabled()
+  })
+
   it('voids the signature after confirming Cancel Request', async () => {
     const user = userEvent.setup()
     renderWithRouter()
