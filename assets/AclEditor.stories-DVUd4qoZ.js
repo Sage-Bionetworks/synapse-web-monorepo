@@ -1,0 +1,14 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{Zt as t,t as n}from"./dist-C7SMz8Oe.js";import{i as r}from"./mock_user_profile-DpGVXyMi.js";import{n as i,s as a}from"./mockTeam-DZuZbOA0.js";import{n as o,t as s}from"./AclEditor-DVloz-yY.js";var c,l,u,d;e((()=>{a(),r(),n(),o(),{fn:c}=__STORYBOOK_MODULE_TEST__,l={title:`Synapse/ACL Editor`,component:s,args:{availablePermissionLevels:[`CAN_REVIEW_SUBMISSIONS`,`IS_EXEMPTION_ELIGIBLE`],onAddPrincipalToAcl:c(),updateResourceAccessItem:c(),removeResourceAccessItem:c(),isLoading:!1,canEdit:!0,emptyText:`No permissions have been granted.`,showAddRemovePublicButton:!0,showNotifyCheckbox:!0}},u={args:{resourceAccessList:[{principalId:999,accessType:[t.REVIEW_SUBMISSIONS]},{principalId:i,accessType:[t.EXEMPTION_ELIGIBLE]}]},parameters:{stack:`mock`}},u.parameters={...u.parameters,docs:{...u.parameters?.docs,source:{originalSource:`{
+  args: {
+    resourceAccessList: [{
+      principalId: MOCK_USER_ID,
+      accessType: [ACCESS_TYPE.REVIEW_SUBMISSIONS]
+    }, {
+      principalId: MOCK_TEAM_ID,
+      accessType: [ACCESS_TYPE.EXEMPTION_ELIGIBLE]
+    }]
+  },
+  parameters: {
+    stack: 'mock'
+  }
+}`,...u.parameters?.docs?.source}}},d=[`Demo`]}))();export{u as Demo,d as __namedExportsOrder,l as default};
