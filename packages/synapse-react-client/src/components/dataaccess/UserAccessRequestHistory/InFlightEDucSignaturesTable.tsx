@@ -2,7 +2,7 @@ import { SkeletonTable } from '@/components/Skeleton'
 import ColumnHeader from '@/components/TanStackTable/ColumnHeader'
 import StyledTanStackTable from '@/components/TanStackTable/StyledTanStackTable'
 import { useListAllUserDataAccessRequests } from '@/synapse-queries'
-import { Alert, Box, Typography } from '@mui/material'
+import { Alert, Box, Typography, Stack } from '@mui/material'
 import {
   AccessRequestSummary,
   AccessRequestSummaryStatusEnum,
@@ -114,10 +114,16 @@ export function InFlightEDucSignaturesTable() {
 
   return (
     <Box>
-      <Typography variant={'headline2'} component={'h2'} gutterBottom>
-        In-flight eDUC signatures
-      </Typography>
-      <StyledTanStackTable table={table} fullWidth={true} />
+      <Stack
+        sx={{
+          gap: 2,
+        }}
+      >
+        <Typography variant="headline1" gutterBottom>
+          In-flight eDUC signatures
+        </Typography>
+        <StyledTanStackTable table={table} fullWidth={true} />
+      </Stack>
     </Box>
   )
 }

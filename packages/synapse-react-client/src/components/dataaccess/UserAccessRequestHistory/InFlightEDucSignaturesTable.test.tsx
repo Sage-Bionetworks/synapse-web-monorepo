@@ -78,7 +78,7 @@ describe('InFlightEDucSignaturesTable', () => {
       ])
     })
 
-    screen.getByRole('heading', { name: /In-flight eDUC signatures/i })
+    screen.getByText(/In-flight eDUC signatures/i)
     const table = screen.getByRole('table')
     const columnHeaders = within(table).getAllByRole('columnheader')
     expect(columnHeaders).toHaveLength(3)
@@ -108,7 +108,7 @@ describe('InFlightEDucSignaturesTable', () => {
     })
     expect(screen.queryByRole('table')).not.toBeInTheDocument()
     expect(
-      screen.queryByRole('heading', { name: /In-flight eDUC signatures/i }),
+      screen.queryByText(/In-flight eDUC signatures/i),
     ).not.toBeInTheDocument()
   })
 

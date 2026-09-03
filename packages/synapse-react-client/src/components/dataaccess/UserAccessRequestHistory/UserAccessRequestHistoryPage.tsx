@@ -34,6 +34,7 @@ export function UserAccessRequestHistoryPage() {
         gap: 2,
       }}
     >
+      <InFlightEDucSignaturesTable />
       <Typography variant="headline1" gutterBottom>
         History of your access requests
       </Typography>
@@ -63,7 +64,6 @@ export function UserAccessRequestHistoryPage() {
           </div>
         </>
       )}
-      <InFlightEDucSignaturesTable />
       <UserAccessRequestHistoryTable />
     </Stack>
   )
