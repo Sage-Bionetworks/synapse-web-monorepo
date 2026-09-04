@@ -4,12 +4,14 @@ import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { AccessRequestList } from '@sage-bionetworks/synapse-client'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { http, HttpResponse } from 'msw'
+import { createMemoryRouter, RouterProvider } from 'react-router'
 import { InFlightEDucSignaturesTable } from './InFlightEDucSignaturesTable'
 
 const page1: AccessRequestList = {
   results: [
     {
       requestId: '100',
+      accessRequirementId: '9602701',
       accessRequirementName: 'ROSMAP eDUC',
       isEDuc: true,
       status: 'sent',
@@ -19,6 +21,7 @@ const page1: AccessRequestList = {
     },
     {
       requestId: '101',
+      accessRequirementId: '9602702',
       accessRequirementName: 'MSSM Study Data',
       isEDuc: true,
       status: 'delivered',
@@ -28,6 +31,7 @@ const page1: AccessRequestList = {
     },
     {
       requestId: '199',
+      accessRequirementId: '9602703',
       accessRequirementName: 'Legacy TOU (non-eDUC)',
       isEDuc: false,
       status: 'submitted',
@@ -41,6 +45,7 @@ const page2: AccessRequestList = {
   results: [
     {
       requestId: '102',
+      accessRequirementId: '9602704',
       accessRequirementName: 'AMP-PD Data',
       isEDuc: true,
       status: 'completed',
@@ -73,6 +78,15 @@ const meta: Meta<typeof InFlightEDucSignaturesTable> = {
   title:
     'Governance/User Access Request History/InFlight eDUC Signatures Table',
   component: InFlightEDucSignaturesTable,
+  // The Actions column's "Review Signatures and Submit" is a react-router Link and needs router context.
+  decorators: [
+    Story => {
+      const router = createMemoryRouter([{ path: '/*', element: <Story /> }], {
+        initialEntries: ['/'],
+      })
+      return <RouterProvider router={router} />
+    },
+  ],
   parameters: {
     stack: 'mock',
     chromatic: { viewports: [600, 1200] },

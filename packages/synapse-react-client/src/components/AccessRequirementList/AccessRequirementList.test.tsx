@@ -106,10 +106,8 @@ describe('AccessRequirementList tests', () => {
       name: /Sign a Data Use Certificate/i,
     })
     expect(screen.queryAllByTestId('RequirementItem')).toHaveLength(0)
-    // With direct entry there is no earlier wizard step, so Back is hidden.
-    expect(
-      screen.queryByRole('button', { name: 'Back' }),
-    ).not.toBeInTheDocument()
+    // Back is available so the user can navigate to the research project step to modify.
+    expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument()
   })
 
   it('shows an info toast and closes the wizard when send-for-signature succeeds', async () => {

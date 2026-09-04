@@ -496,17 +496,15 @@ export default function AccessRequirementList(
           subjectId={subjectId ?? ''}
           subjectType={subjectType ?? RestrictableObjectType.ENTITY}
           onHide={onHide}
-          onBackClicked={
-            // When entered directly via initialWizardEntry there is no earlier wizard step to
-            // return to, so omit the callback and let the step hide its Back button.
-            initialWizardEntry
-              ? undefined
-              : () => {
-                  requestDataStepCallback({
-                    step: RequestDataStep.EDUC_PREVIEW,
-                  })
-                }
-          }
+          onBackClicked={() => {
+            // Back from SIGNATURE_STATUS returns to the research project step so the user can
+            // modify the request. EDUC_PREVIEW is skipped because Send-for-signature toasts and
+            // closes the wizard, so users only reach this step from the row-level "Review
+            // Signatures and Submit" entry point.
+            requestDataStepCallback({
+              step: RequestDataStep.UPDATE_RESEARCH_PROJECT,
+            })
+          }}
           onSubmissionCreated={submissionId => {
             requestDataStepCallback({ step: RequestDataStep.COMPLETE })
             onSubmissionCreated(submissionId)
