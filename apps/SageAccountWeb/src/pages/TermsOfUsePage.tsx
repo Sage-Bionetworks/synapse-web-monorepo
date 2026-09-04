@@ -1,11 +1,14 @@
 import { SyntheticEvent, useState } from 'react'
 import { SourceAppLogo } from '../components/SourceApp'
-import { Box, Button, useTheme } from '@mui/material'
+import { Box, Button } from '@mui/material'
 import {
+  DESKTOP_RIGHT_PANEL_TEST_ID,
+  getWideDesktopTwoColumnSx,
   StyledInnerContainer,
   StyledOuterContainer,
 } from '../components/StyledComponents'
-import { TermsOfUseRightPanelText } from '../components/TermsOfUseRightPanelText'
+import { TermsOfUseExplanationSection } from '../components/TermsOfUseExplanation'
+import { TermsOfUseMobileAccordion } from '../components/TermsOfUseMobileAccordion'
 import { TermsAndConditionsLink } from '../components/TermsAndConditionsLink'
 import { useSourceApp } from '../components/useSourceApp'
 import TermsAndConditions from 'synapse-react-client/components/TermsAndConditions/TermsAndConditions'
@@ -18,7 +21,6 @@ import { displayToast } from 'synapse-react-client/components/ToastMessage/Toast
 import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
 
 function TermsOfUsePage() {
-  const theme = useTheme()
   const [isLoading, setIsLoading] = useState(false)
   const [isFormComplete, setIsFormComplete] = useState(false)
   const [isDone, setIsDone] = useState(false)
@@ -74,16 +76,7 @@ function TermsOfUsePage() {
   }
   return (
     <StyledOuterContainer className="TermsOfUsePage">
-      <StyledInnerContainer
-        sx={{
-          width: '1200px',
-          '& > div:nth-of-type(1)': {
-            paddingTop: theme.spacing(10),
-            width: '750px',
-          },
-          '& > div:nth-of-type(2)': { paddingTop: theme.spacing(10) },
-        }}
-      >
+      <StyledInnerContainer sx={getWideDesktopTwoColumnSx}>
         <Box
           sx={{
             height: '100%',
@@ -95,6 +88,7 @@ function TermsOfUsePage() {
               <SourceAppLogo />
             </div>
             <div className={'terms-of-use-panel'}>
+              <TermsOfUseMobileAccordion />
               <TermsAndConditions
                 termsAndConditionsTableID={
                   import.meta.env.VITE_TERMS_AND_CONDITIONS_TABLE_ID
@@ -119,9 +113,12 @@ function TermsOfUsePage() {
             </div>
           </Box>
         </Box>
-        <Box>
+        <Box
+          data-testid={DESKTOP_RIGHT_PANEL_TEST_ID}
+          sx={{ display: { xs: 'none', md: 'block' } }}
+        >
           <Box sx={{ marginTop: '100px' }}>
-            <TermsOfUseRightPanelText />
+            <TermsOfUseExplanationSection />
           </Box>
         </Box>
       </StyledInnerContainer>

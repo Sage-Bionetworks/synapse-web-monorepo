@@ -1,4 +1,6 @@
 import {
+  DESKTOP_RIGHT_PANEL_TEST_ID,
+  getWideDesktopTwoColumnSx,
   StyledInnerContainer,
   StyledOuterContainer,
 } from '@/components/StyledComponents'
@@ -23,7 +25,7 @@ import { Navigate } from 'react-router'
 import { getSearchParam } from '../../URLUtils'
 import { BackButton } from '../BackButton'
 import { SourceAppLogo } from '../SourceApp'
-import { TermsOfUseRightPanelText } from '../TermsOfUseRightPanelText'
+import { TermsOfUseExplanationSection } from '../TermsOfUseExplanation'
 import { useSourceApp } from '../useSourceApp'
 import Attestation from './Attestation'
 import { ProfileFieldsEditor } from './ProfileFieldsEditor'
@@ -99,7 +101,7 @@ const STEP_CONTENT = [
     title: null,
     body: (
       <>
-        <TermsOfUseRightPanelText />
+        <TermsOfUseExplanationSection />
       </>
     ),
   },
@@ -455,15 +457,8 @@ function ProfileValidation() {
         <StyledInnerContainer
           sx={
             step === ValidationWizardStep.TERMS_AGREE
-              ? theme => ({
-                  width: '1200px',
-                  '& > div:nth-of-type(1)': {
-                    paddingTop: theme.spacing(10),
-                    width: '750px',
-                  },
-                  '& > div:nth-of-type(2)': { paddingTop: theme.spacing(10) },
-                })
-              : null
+              ? getWideDesktopTwoColumnSx
+              : undefined
           }
         >
           {verificationSubmission && (
@@ -485,7 +480,16 @@ function ProfileValidation() {
               />
             </Box>
           )}
-          <RightPanel stepNumber={step} />
+          <Box
+            data-testid={DESKTOP_RIGHT_PANEL_TEST_ID}
+            sx={
+              step === ValidationWizardStep.TERMS_AGREE
+                ? { display: { xs: 'none', md: 'block' } }
+                : undefined
+            }
+          >
+            <RightPanel stepNumber={step} />
+          </Box>
         </StyledInnerContainer>
       ) : (
         <ThankYou>

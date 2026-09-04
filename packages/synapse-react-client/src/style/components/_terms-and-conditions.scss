@@ -23,10 +23,11 @@
 
     > li {
       display: flex;
-      padding: 20px 0;
+      padding: 20px 16px;
       border: 1px solid var(--terms-accent-gray);
       margin-bottom: var(--terms-margin);
       opacity: 0.3;
+      gap: 8px;
 
       &.terms-enabled {
         opacity: 1;
@@ -42,8 +43,7 @@
       }
       .terms-checkbox {
         align-self: center;
-        text-align: right;
-        padding-right: 30px;
+        text-align: center;
         flex: 0 0 150px;
       }
       .terms-desc-content {
@@ -78,6 +78,28 @@
         background-color: #28a745;
         border: none;
         text-align: center;
+      }
+
+      // The 150px icon and checkbox columns leave too little room for the
+      // description on a narrow viewport, so the row overflows its
+      // `overflow: hidden` ancestor instead of scrolling. Keep this width in
+      // sync with MUI's `theme.breakpoints.down('md')`.
+      // See: SWC-7966
+      @media (max-width: 900px) {
+        .terms-icon {
+          display: none;
+        }
+        .terms-checkbox {
+          flex: 0;
+          white-space: nowrap;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+        .terms-circle {
+          margin-right: 0;
+        }
       }
     }
 
