@@ -16,6 +16,7 @@ import {
   MOCK_ARIDHIA_DATASET_CODE,
   MOCK_ARIDHIA_GATEWAY,
 } from '@/mocks/msw/handlers/aridhiaHandlers'
+import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
 import { server } from '@/mocks/msw/server'
 import {
   fillRjsfTextField,
@@ -23,8 +24,17 @@ import {
 } from '@/testutils/RjsfFormTestUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { AridhiaContextProvider } from '@/utils/context/AridhiaContext'
+import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { HttpResponse } from 'msw'
 import AridhiaAccessStatus from './AridhiaAccessStatus'
+
+function darFormFeatureFlagOverride(enabled: boolean) {
+  return getFeatureFlagsOverride({
+    portalOrigin: getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT),
+    overrides: { [FeatureFlagEnum.AMPALS_RDCA_DAP_FORM_ENABLED]: enabled },
+  })
+}
 
 // The tooltip text `AccessIcon` gives each state, which is also the icon's accessible name.
 const NO_ACCESS_ICON_NAME = 'You must request access to this restricted item.'
@@ -51,6 +61,7 @@ function renderStatus(url?: string) {
 
 function wizardHandlers() {
   return [
+    darFormFeatureFlagOverride(true),
     getAridhiaAuthenticateHandler(),
     getAridhiaRequestsHandler(),
     getAridhiaDatasetSettingsHandler(),
@@ -84,9 +95,13 @@ describe('AridhiaAccessStatus', () => {
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())
 
-  it('opens the request wizard in a dialog when no request exists for this dataset', async () => {
+  it('opens the request wizard in a dialog when no request exists for this dataset and the feature flag is enabled', async () => {
     const user = userEvent.setup()
-    server.use(getAridhiaAuthenticateHandler(), getAridhiaRequestsHandler())
+    server.use(
+      darFormFeatureFlagOverride(true),
+      getAridhiaAuthenticateHandler(),
+      getAridhiaRequestsHandler(),
+    )
     renderStatus()
 
     await findNoAccessIcon()
@@ -121,6 +136,28 @@ describe('AridhiaAccessStatus', () => {
       'href',
       'https://portal.rdca.c-path.org/datasets/sdtm_als1003',
     )
+  })
+
+  it('does not open the request wizard when the feature flag is disabled, and instead links out to the provided URL', async () => {
+    const user = userEvent.setup()
+    server.use(
+      darFormFeatureFlagOverride(false),
+      getAridhiaAuthenticateHandler(),
+      getAridhiaRequestsHandler(),
+    )
+    renderStatus('https://portal.rdca.c-path.org/datasets/sdtm_als1003')
+
+    await findNoAccessIcon()
+    expect(
+      screen.queryByRole('button', { name: 'Request data access' }),
+    ).not.toBeInTheDocument()
+    expect(screen.getByRole('link')).toHaveAttribute(
+      'href',
+      'https://portal.rdca.c-path.org/datasets/sdtm_als1003',
+    )
+
+    await user.click(screen.getByRole('link'))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 
   it('renders the wizard navigation buttons in a DialogActions footer, not inside the scrollable content', async () => {
