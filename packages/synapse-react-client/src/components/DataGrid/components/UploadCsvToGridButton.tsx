@@ -1,6 +1,7 @@
 import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
 import UploadCsvToGridDialog from '@/components/DataGrid/components/UploadCsvToGridDialog'
 import { useGetEntity } from '@/synapse-queries/index'
+import { SchemaPropertiesMap } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import { UploadTwoTone } from '@mui/icons-material'
 import Skeleton from '@mui/material/Skeleton'
 import { instanceOfRecordSet } from '@sage-bionetworks/synapse-client'
@@ -9,12 +10,19 @@ import { useState } from 'react'
 export type UploadCsvToGridButtonProps = {
   sourceEntityId: string
   gridSessionId: string
+  schemaPropertiesInfo: SchemaPropertiesMap
+  existingColumnNames: readonly string[]
 }
 
 export default function UploadCsvToGridButton(
   props: UploadCsvToGridButtonProps,
 ) {
-  const { sourceEntityId, gridSessionId } = props
+  const {
+    sourceEntityId,
+    gridSessionId,
+    schemaPropertiesInfo,
+    existingColumnNames,
+  } = props
 
   const [showDialog, setShowDialog] = useState(false)
 
@@ -39,6 +47,8 @@ export default function UploadCsvToGridButton(
           open={showDialog}
           onClose={() => setShowDialog(false)}
           onComplete={() => setShowDialog(false)}
+          schemaPropertiesInfo={schemaPropertiesInfo}
+          existingColumnNames={existingColumnNames}
         />
       )}
       <GridMenuButton

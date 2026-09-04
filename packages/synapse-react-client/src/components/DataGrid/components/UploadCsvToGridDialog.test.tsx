@@ -20,7 +20,7 @@ const mockUseImportCsvIntoGrid = vi.mocked(useImportCsvIntoGrid)
 describe('UploadCsvToGridDialog', () => {
   describe('Component tests', () => {
     const fhId = 'somefilehandleid'
-    const schema = [{ id: 'colId123', type: ColumnType.STRING }]
+    const schema = [{ name: 'colId123', columnType: ColumnType.STRING }]
     const descriptor = {
       separator: ',',
       quoteCharacter: '"',
@@ -40,6 +40,8 @@ describe('UploadCsvToGridDialog', () => {
           open={true}
           onClose={onClose}
           onComplete={onComplete}
+          schemaPropertiesInfo={{}}
+          existingColumnNames={[]}
         />,
       )
 
@@ -48,6 +50,8 @@ describe('UploadCsvToGridDialog', () => {
         open: true,
         onClose: expect.any(Function),
         onConfirm: expect.any(Function),
+        existingColumnSchema: {},
+        existingColumnNames: [],
       })
 
       act(() => {
@@ -67,6 +71,60 @@ describe('UploadCsvToGridDialog', () => {
         csvDescriptor: descriptor,
         schema: schema,
       })
+    })
+
+    it('forwards schemaPropertiesInfo to CsvPreviewDialog as existingColumnSchema, so the grid schema can override CSV-inferred types (e.g. entityId)', async () => {
+      const mutate = vi.fn()
+      mockUseImportCsvIntoGrid.mockReturnValue({ mutate } as any)
+      const schemaPropertiesInfo = {
+        requiredStringColumn: {
+          type: { type: 'string' as const, isArray: false },
+          isRequired: false,
+          enumeratedValues: null,
+        },
+      }
+
+      render(
+        <UploadCsvToGridDialog
+          gridSessionId={gridSessionId}
+          open={true}
+          onClose={vi.fn()}
+          onComplete={vi.fn()}
+          schemaPropertiesInfo={schemaPropertiesInfo}
+          existingColumnNames={[]}
+        />,
+      )
+
+      await screen.findByTestId('CsvPreviewDialog')
+      expect(mockCsvPreviewDialog).toHaveBeenRenderedWithProps(
+        expect.objectContaining({
+          existingColumnSchema: schemaPropertiesInfo,
+        }),
+      )
+    })
+
+    it('forwards existingColumnNames to CsvPreviewDialog, so RecordSet system columns not in the schema (e.g. entityId) are still treated as strings', async () => {
+      const mutate = vi.fn()
+      mockUseImportCsvIntoGrid.mockReturnValue({ mutate } as any)
+      const existingColumnNames = ['id', 'entityId', 'path']
+
+      render(
+        <UploadCsvToGridDialog
+          gridSessionId={gridSessionId}
+          open={true}
+          onClose={vi.fn()}
+          onComplete={vi.fn()}
+          schemaPropertiesInfo={{}}
+          existingColumnNames={existingColumnNames}
+        />,
+      )
+
+      await screen.findByTestId('CsvPreviewDialog')
+      expect(mockCsvPreviewDialog).toHaveBeenRenderedWithProps(
+        expect.objectContaining({
+          existingColumnNames,
+        }),
+      )
     })
   })
 

@@ -3,8 +3,10 @@ import { displayToast } from '@/components/ToastMessage/ToastMessage'
 import useCsvUploadPreview, {
   CsvUploadPreviewStep,
 } from '@/components/table/CsvPreview/useCsvUploadPreview'
+import { useGetEntityBundle } from '@/synapse-queries/entity/useEntityBundle'
+import { ColumnType } from '@sage-bionetworks/synapse-client'
 import Button from '@mui/material/Button'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 import useUploadCsvToExistingTable from './useUploadCsvToExistingTable'
 import CsvUploadPreviewContent from './CsvUploadPreviewContent'
 
@@ -30,6 +32,20 @@ export default function UpdateTableWithCsvDialog(
 ) {
   const { open, onClose, tableId, onSuccess } = props
   const csvUploadPreviewWorkflow = useCsvUploadPreview()
+
+  const { data: bundle } = useGetEntityBundle(tableId, undefined, {
+    includeTableBundle: true,
+  })
+
+  const existingColumnTypesByName = useMemo(() => {
+    const columnModels = bundle?.tableBundle?.columnModels ?? []
+    return Object.fromEntries(
+      columnModels.map(columnModel => [
+        columnModel.name,
+        columnModel.columnType as ColumnType,
+      ]),
+    )
+  }, [bundle?.tableBundle?.columnModels])
 
   const { mutate: uploadCsvToExistingTable, isPending: isUploading } =
     useUploadCsvToExistingTable({
@@ -61,7 +77,12 @@ export default function UpdateTableWithCsvDialog(
       title={'Upload CSV'}
       onCancel={onClose}
       open={open}
-      content={<CsvUploadPreviewContent workflow={csvUploadPreviewWorkflow} />}
+      content={
+        <CsvUploadPreviewContent
+          workflow={csvUploadPreviewWorkflow}
+          existingColumnTypesByName={existingColumnTypesByName}
+        />
+      }
       actions={
         <>
           <Button
