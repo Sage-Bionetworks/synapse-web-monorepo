@@ -7,6 +7,9 @@ import {
   getRestrictionUiTypeFromAridhiaRequest,
   findRequestForDataset,
 } from './aridhiaAccessStatusUtils'
+import { useState } from 'react'
+import { DialogBase } from '../DialogBase'
+import { useAridhiaDarWizardParts } from './DarWizard/AridhiaDarWizard'
 
 const buttonSx = { p: '0px', minWidth: 'unset' }
 
@@ -27,6 +30,16 @@ export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
   const { datasetCode, url } = props
   const { isAuthenticated } = useSynapseContext()
   const { data: requestsResponse, isLoading } = useGetAridhiaRequests()
+
+  const [requestDialogOpen, setRequestDialogOpen] = useState(false)
+  const { content: wizardContent, actions: wizardActions } =
+    useAridhiaDarWizardParts(
+      { datasetCode },
+      {
+        enabled: requestDialogOpen,
+        onClose: () => setRequestDialogOpen(false),
+      },
+    )
 
   if (!isAuthenticated) {
     return (
@@ -77,12 +90,34 @@ export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
 
   const icon = <AccessIcon restrictionUiType={restrictionUiType} />
 
-  // If URL provided, wrap icon in link
-  return url ? (
-    <a href={url} target="_blank" rel="noopener noreferrer">
-      {icon}
-    </a>
-  ) : (
-    icon
+  if (restrictionUiType === RestrictionUiType.Accessible) {
+    // Approved — keep the existing link-out to RDCA-DAP to access the data.
+    return url ? (
+      <a href={url} target="_blank" rel="noopener noreferrer">
+        {icon}
+      </a>
+    ) : (
+      icon
+    )
+  }
+
+  return (
+    <>
+      <Button
+        sx={buttonSx}
+        onClick={() => setRequestDialogOpen(true)}
+        aria-label="Request data access"
+      >
+        {icon}
+      </Button>
+      <DialogBase
+        open={requestDialogOpen}
+        onCancel={() => setRequestDialogOpen(false)}
+        maxWidth="md"
+        title="Request Data Access"
+        content={wizardContent}
+        actions={wizardActions}
+      />
+    </>
   )
 }

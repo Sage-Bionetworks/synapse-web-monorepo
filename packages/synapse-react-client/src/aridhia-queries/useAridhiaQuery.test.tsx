@@ -1,7 +1,11 @@
 import { PropsWithChildren } from 'react'
 import { act, renderHook, waitFor } from '@testing-library/react'
-import { http, HttpResponse } from 'msw'
 import { ResponseError } from '@sage-bionetworks/aridhia-client/generated/runtime'
+import {
+  getAridhiaAuthenticateHandler,
+  MOCK_ARIDHIA_AUTHENTICATION_REQUEST,
+  MOCK_ARIDHIA_GATEWAY,
+} from '@/mocks/msw/handlers/aridhiaHandlers'
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '@/utils/context/SynapseContext'
@@ -12,20 +16,6 @@ import {
   useAridhiaMutation,
   useAridhiaQuery,
 } from './useAridhiaQuery'
-const GATEWAY = 'https://mock-gateway.test'
-const AUTHENTICATION_REQUEST = {
-  subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
-  subject_token_issuer: 'sage-prod',
-}
-
-function authenticateHandler(
-  response: object = { access_token: 'mock-aridhia-token', expires_in: 300 },
-  status = 200,
-) {
-  return http.post(`${GATEWAY}/authenticate`, () =>
-    HttpResponse.json(response, { status }),
-  )
-}
 
 /** A `ResponseError` as the generated fetch client throws it, for exercising `toAridhiaError`. */
 function responseError(body: unknown, status: number) {
@@ -54,8 +44,8 @@ function renderAridhiaHook<T>(
       <Wrapper>
         {withAridhiaContext ? (
           <AridhiaContextProvider
-            apiBasePath={GATEWAY}
-            authenticationRequest={AUTHENTICATION_REQUEST}
+            apiBasePath={MOCK_ARIDHIA_GATEWAY}
+            authenticationRequest={MOCK_ARIDHIA_AUTHENTICATION_REQUEST}
           >
             {children}
           </AridhiaContextProvider>
@@ -73,7 +63,7 @@ describe('useAridhiaQuery', () => {
   afterAll(() => server.close())
 
   it('runs queryFn with a Configuration carrying the exchanged Aridhia token', async () => {
-    server.use(authenticateHandler())
+    server.use(getAridhiaAuthenticateHandler())
     const queryFn = vi.fn().mockResolvedValue('the-data')
 
     const { result } = renderAridhiaHook(() =>
@@ -83,7 +73,7 @@ describe('useAridhiaQuery', () => {
     await waitFor(() => expect(result.current.data).toBe('the-data'))
     expect(queryFn).toHaveBeenCalledTimes(1)
     const configuration = queryFn.mock.calls[0][0]
-    expect(configuration.basePath).toBe(GATEWAY)
+    expect(configuration.basePath).toBe(MOCK_ARIDHIA_GATEWAY)
     await expect(configuration.accessToken?.()).resolves.toBe(
       'mock-aridhia-token',
     )
@@ -116,7 +106,7 @@ describe('useAridhiaQuery', () => {
   })
 
   it('composes a caller-supplied enabled:false with the base prerequisite (never runs)', async () => {
-    server.use(authenticateHandler())
+    server.use(getAridhiaAuthenticateHandler())
     const queryFn = vi.fn()
 
     const { result } = renderAridhiaHook(() =>
@@ -144,7 +134,7 @@ describe('useAridhiaQuery', () => {
   })
 
   it('passes non-enabled options through to useQuery unmodified', async () => {
-    server.use(authenticateHandler())
+    server.use(getAridhiaAuthenticateHandler())
     const queryFn = vi.fn().mockResolvedValue('the-data')
 
     const { result } = renderAridhiaHook(() =>
@@ -156,7 +146,7 @@ describe('useAridhiaQuery', () => {
   })
 
   it('normalizes a thrown error into an AridhiaError instead of the raw error', async () => {
-    server.use(authenticateHandler())
+    server.use(getAridhiaAuthenticateHandler())
     const queryFn = vi.fn().mockRejectedValue(new Error('boom'))
 
     const { result } = renderAridhiaHook(() =>
@@ -175,7 +165,7 @@ describe('useAridhiaMutation', () => {
   afterAll(() => server.close())
 
   it('does not call mutationFn until mutate() is invoked', async () => {
-    server.use(authenticateHandler())
+    server.use(getAridhiaAuthenticateHandler())
     const mutationFn = vi.fn().mockResolvedValue('the-data')
 
     renderAridhiaHook(() => useAridhiaMutation(mutationFn))
@@ -184,7 +174,7 @@ describe('useAridhiaMutation', () => {
   })
 
   it('calls mutationFn with a Configuration and the mutate() variables', async () => {
-    server.use(authenticateHandler())
+    server.use(getAridhiaAuthenticateHandler())
     const mutationFn = vi.fn().mockResolvedValue('the-data')
 
     const { result } = renderAridhiaHook(() =>
@@ -198,7 +188,7 @@ describe('useAridhiaMutation', () => {
     await waitFor(() => expect(result.current.data).toBe('the-data'))
     expect(mutationFn).toHaveBeenCalledTimes(1)
     const [configuration, variables] = mutationFn.mock.calls[0]
-    expect(configuration.basePath).toBe(GATEWAY)
+    expect(configuration.basePath).toBe(MOCK_ARIDHIA_GATEWAY)
     expect(variables).toEqual({ code: 'ds-1' })
   })
 
@@ -221,7 +211,7 @@ describe('useAridhiaMutation', () => {
   })
 
   it('preserves caller-supplied onSuccess alongside the internal mutationFn wiring', async () => {
-    server.use(authenticateHandler())
+    server.use(getAridhiaAuthenticateHandler())
     const mutationFn = vi.fn().mockResolvedValue('the-data')
     const onSuccess = vi.fn()
 
@@ -249,7 +239,7 @@ describe('useAridhiaMutation', () => {
       const mutationFn = vi
         .fn()
         .mockRejectedValue(responseError({ error: code }, 401))
-      server.use(authenticateHandler())
+      server.use(getAridhiaAuthenticateHandler())
 
       const { result } = renderAridhiaHook(() => useAridhiaMutation(mutationFn))
 
@@ -266,7 +256,7 @@ describe('useAridhiaMutation', () => {
   )
 
   it('surfaces the server text verbatim for an unrecognized error body, still coded unknown', async () => {
-    server.use(authenticateHandler())
+    server.use(getAridhiaAuthenticateHandler())
     const mutationFn = vi
       .fn()
       .mockRejectedValue(
@@ -286,7 +276,7 @@ describe('useAridhiaMutation', () => {
   })
 
   it('surfaces the message from a nested { error: { status, message } } response body', async () => {
-    server.use(authenticateHandler())
+    server.use(getAridhiaAuthenticateHandler())
     const mutationFn = vi.fn().mockRejectedValue(
       responseError(
         {
@@ -316,7 +306,7 @@ describe('useAridhiaMutation', () => {
   })
 
   it('falls back to a generic message when the error response body is not JSON', async () => {
-    server.use(authenticateHandler())
+    server.use(getAridhiaAuthenticateHandler())
     const mutationFn = vi
       .fn()
       .mockRejectedValue(
@@ -336,7 +326,7 @@ describe('useAridhiaMutation', () => {
   })
 
   it('passes an AridhiaError thrown by mutationFn through unchanged', async () => {
-    server.use(authenticateHandler())
+    server.use(getAridhiaAuthenticateHandler())
     const thrown = new AridhiaError('invalid_token', 'already normalized', {
       httpStatus: 401,
       isEligibilityFailure: true,
