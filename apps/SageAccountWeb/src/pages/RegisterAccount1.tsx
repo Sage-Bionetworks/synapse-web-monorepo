@@ -23,6 +23,7 @@ import { BackButton } from '@/components/BackButton'
 import { EmailConfirmationPage } from '@/components/EmailConfirmationPage'
 import { SourceAppLogo } from '@/components/SourceApp'
 import {
+  getMobileBodyScrollSx,
   StyledInnerContainer,
   StyledOuterContainer,
 } from '@/components/StyledComponents'
@@ -251,7 +252,7 @@ const RegisterAccount1 = (): React.ReactNode => {
   return (
     <>
       <StyledOuterContainer className="RegisterAccount1">
-        <StyledInnerContainer>
+        <StyledInnerContainer sx={getMobileBodyScrollSx}>
           {page !== Pages.EMAIL_REGISTRATION_THANK_YOU && (
             <>
               <Box sx={{ py: 10, px: 8, height: '100%', position: 'relative' }}>
