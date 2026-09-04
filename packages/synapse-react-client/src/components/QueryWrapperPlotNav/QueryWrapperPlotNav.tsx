@@ -125,6 +125,8 @@ export type QueryWrapperPlotNavContentsProps = Pick<
   | 'availableFacets'
   | 'initialExpandedFacetControls'
   | 'hideDownload'
+  | 'hideAddToDownloadListMenuItem'
+  | 'hideProgrammaticOptionsMenuItem'
   | 'hideQueryCount'
   | 'hideSqlEditorControl'
   | 'hideVisualizationsControl'
@@ -155,6 +157,8 @@ export function QueryWrapperPlotNavContents(
     availableFacets,
     initialExpandedFacetControls,
     hideDownload,
+    hideAddToDownloadListMenuItem,
+    hideProgrammaticOptionsMenuItem,
     hideQueryCount,
     hideSqlEditorControl,
     hideVisualizationsControl,
@@ -238,6 +242,12 @@ export function QueryWrapperPlotNavContents(
                     showColumnSelection={tableConfiguration !== undefined}
                     name={name}
                     hideDownload={hideDownload}
+                    hideAddToDownloadListMenuItem={
+                      hideAddToDownloadListMenuItem
+                    }
+                    hideProgrammaticOptionsMenuItem={
+                      hideProgrammaticOptionsMenuItem
+                    }
                     hideQueryCount={hideQueryCount}
                     hideFacetFilterControl={!isFaceted}
                     hideVisualizationsControl={

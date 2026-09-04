@@ -8,6 +8,8 @@ const metadataPlotNavProps: QueryWrapperPlotNavProps = {
   shouldDeepLink: true,
   columnAliases: { study: 'On Synapse' },
   defaultShowPlots: false,
+  hideAddToDownloadListMenuItem: true,
+  hideProgrammaticOptionsMenuItem: true,
   tableConfiguration: {
     showAccessColumn: true,
     showDownloadColumn: false,
