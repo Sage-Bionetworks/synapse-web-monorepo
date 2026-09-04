@@ -8,10 +8,10 @@ import { SynapseContextType } from '@/utils/context/SynapseContext'
 import { AridhiaContextProvider } from '@/utils/context/AridhiaContext'
 import {
   AridhiaError,
+  toAridhiaError,
   useAridhiaMutation,
   useAridhiaQuery,
 } from './useAridhiaQuery'
-
 const GATEWAY = 'https://mock-gateway.test'
 const AUTHENTICATION_REQUEST = {
   subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
@@ -285,6 +285,36 @@ describe('useAridhiaMutation', () => {
     expect(error.message).toBe('cohort query is invalid')
   })
 
+  it('surfaces the message from a nested { error: { status, message } } response body', async () => {
+    server.use(authenticateHandler())
+    const mutationFn = vi.fn().mockRejectedValue(
+      responseError(
+        {
+          error: {
+            status: 400,
+            message:
+              'Request workspace configuration error: Workspace request prohibited',
+          },
+        },
+        400,
+      ),
+    )
+
+    const { result } = renderAridhiaHook(() => useAridhiaMutation(mutationFn))
+
+    act(() => {
+      result.current.mutate(undefined)
+    })
+
+    await waitFor(() => expect(result.current.isError).toBe(true))
+    const error = result.current.error as AridhiaError
+    expect(error.code).toBe('unknown')
+    expect(error.message).toBe(
+      'Request workspace configuration error: Workspace request prohibited',
+    )
+    expect(error.httpStatus).toBe(400)
+  })
+
   it('falls back to a generic message when the error response body is not JSON', async () => {
     server.use(authenticateHandler())
     const mutationFn = vi
@@ -344,5 +374,35 @@ describe('AridhiaError', () => {
 
     expect(error.httpStatus).toBe(401)
     expect(error.isEligibilityFailure).toBe(true)
+  })
+})
+
+describe('toAridhiaError', () => {
+  it('extracts nested error message from ResponseError', async () => {
+    const error = responseError(
+      {
+        error: {
+          status: 400,
+          message:
+            'Request workspace configuration error: Workspace request prohibited',
+        },
+      },
+      400,
+    )
+    const normalized = await toAridhiaError(error)
+    expect(normalized.message).toBe(
+      'Request workspace configuration error: Workspace request prohibited',
+    )
+    expect(normalized.httpStatus).toBe(400)
+  })
+
+  it('extracts message from plain object body', async () => {
+    const normalized = await toAridhiaError({
+      error: {
+        status: 400,
+        message: 'Direct object error message',
+      },
+    })
+    expect(normalized.message).toBe('Direct object error message')
   })
 })
