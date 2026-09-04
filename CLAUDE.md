@@ -125,14 +125,14 @@ Recurring expectations from this repo's PR review history. Following them up fro
 
 ### Tests
 
-- New components, hooks, and bug fixes get tests. A fix should include a test that captures the bug; a new behavior should include a test that exercises it (e.g. "add a test that the button is hidden when `canDelete` is false").
+- New components, hooks, and bug fixes get tests. A fix should include a test that captures the bug; a new behavior should include a test that exercises it (e.g. "add a test that the button is hidden when `canDelete` is false"). Tests are optional for purely presentational components with no logic (consider if such tests would be useful).
 - **Query priority (React Testing Library): prefer accessible queries — `getByRole`, `getByText`, `getByLabelText` — over `data-testid`.** Find banners, buttons, etc. by `role`; it's more robust and higher priority. Add a `data-testid` only when there's no accessible query, and delete test IDs that are no longer used.
 - For data-driven logic, prefer exhaustive tests that fail when a new case is added (e.g. iterate every `EntityType` and assert no throw) rather than spot-checking one value.
 - Don't stub `fetch` directly — mock at the network layer with MSW. Group Storybook MSW handlers as `Record<string, HttpHandler[]>` so a story can override one group.
 
 ### Storybook
 
-- New components and new visual states get a Storybook story — do **not** commit throwaway demo HTML or one-off pages for visual testing. Demonstrate states (loading / empty / error, or different data like DUO values) with MSW mock responses.
+- New components and new visual states MAY get a Storybook story. Stories should _always_ be used over throwaway demo HTML or one-off pages for visual testing. Demonstrate states (loading / empty / error, or different data) with MSW mock responses. Story files are especially encouraged for reusable components.
 
 ### React patterns
 
@@ -152,6 +152,7 @@ Recurring expectations from this repo's PR review history. Following them up fro
 - Before adding a helper, component, or route, check whether one already exists and reuse it (e.g. `displayToast`, existing `parseX`/`href` helpers, shared routes). Reviewers frequently flag duplicated functions and components.
 - If a new component would closely duplicate an existing one (e.g. another plot like `SynapsePlot`), extend the existing component to cover the missing case rather than forking a near-copy.
 - Extract repeated style declarations into an SCSS module class (preferred) or a shared `SxProps` constant (MUI-only) instead of copy-pasting them.
+- MSW handlers can often be reused between tests and stories; prefer putting these in the shared `src/mocks` directory to be re-used.
 
 ### Constants over hardcoded values
 

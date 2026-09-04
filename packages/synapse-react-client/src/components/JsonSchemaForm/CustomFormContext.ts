@@ -32,4 +32,14 @@ export interface CustomFormContext extends FormContextType {
    * If true, the SelectWidget (used for enums) allows free text input in addition to the enum values.
    */
   allowFreeSoloEnum?: boolean
+
+  /**
+   * Controls how `boolean` schema properties render.
+   *
+   * - `'yesNoSelect'` (default) — a Yes/No dropdown. Used by the annotations editor, where a
+   *   boolean annotation needs an explicit "unset" state distinct from false.
+   * - `'checkbox'` — a real checkbox (RJSF/MUI's own `CheckboxWidget`), for forms where the
+   *   source schema is a genuine yes/no toggle with no meaningful "unset" state.
+   */
+  booleanWidget?: 'yesNoSelect' | 'checkbox'
 }
