@@ -84,7 +84,7 @@ export const synapseClientFetch = async <TResponse>(
   let responseObject: TResponse | BaseError | string = responseBody
   try {
     // try to parse it as json
-    if (contentType && contentType.includes('application/json')) {
+    if (contentType?.includes('application/json')) {
       responseObject = JSON.parse(responseBody) as TResponse | BaseError
     }
   } catch (error) {

@@ -194,11 +194,7 @@ export function EntityTree(props: EntityTreeProps) {
   )
 
   const { data: initialContainerPath } = useGetEntityPath(initialContainer!, {
-    enabled: !!(
-      projectId &&
-      initialContainer &&
-      initialContainer.match(SYNAPSE_ENTITY_ID_REGEX)
-    ),
+    enabled: !!(projectId && initialContainer?.match(SYNAPSE_ENTITY_ID_REGEX)),
     refetchInterval: Infinity,
     throwOnError: true,
   })

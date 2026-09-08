@@ -236,7 +236,7 @@ function changeColumnModelType(
   let newColumnModelValue: ColumnModelFormData | JsonSubColumnModelFormData
 
   // Create a copy of the selected column model
-  if (prevState && prevState[columnModelIndex]) {
+  if (prevState?.[columnModelIndex]) {
     if (
       prevState[columnModelIndex].jsonSubColumns &&
       jsonSubColumnModelIndex !== undefined
@@ -293,7 +293,7 @@ function changeColumnModelType(
   }
 
   // Replace the value
-  if (prevState && prevState[columnModelIndex]) {
+  if (prevState?.[columnModelIndex]) {
     if (
       prevState[columnModelIndex].jsonSubColumns &&
       jsonSubColumnModelIndex !== undefined
@@ -339,7 +339,7 @@ function setColumnModelValue(
   prevState: ColumnModelFormData[],
 ) {
   const { columnModelIndex, jsonSubColumnModelIndex, value } = action
-  if (prevState && prevState[columnModelIndex]) {
+  if (prevState?.[columnModelIndex]) {
     if (
       prevState[columnModelIndex].jsonSubColumns &&
       jsonSubColumnModelIndex !== undefined
@@ -361,7 +361,7 @@ function toggleSelect(
   prevState: ColumnModelFormData[],
 ) {
   const { columnModelIndex, jsonSubColumnModelIndex } = action
-  if (prevState && prevState[columnModelIndex]) {
+  if (prevState?.[columnModelIndex]) {
     if (
       prevState[columnModelIndex].jsonSubColumns &&
       jsonSubColumnModelIndex !== undefined

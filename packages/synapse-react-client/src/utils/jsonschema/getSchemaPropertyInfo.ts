@@ -40,11 +40,7 @@ export function getSchemaPropertiesInfo(
       )
 
       // Check for nested enums in array items
-      if (
-        enumeratedValues.length === 0 &&
-        propertySchema &&
-        propertySchema.items
-      ) {
+      if (enumeratedValues.length === 0 && propertySchema?.items) {
         const itemsSchema = Array.isArray(propertySchema.items)
           ? propertySchema.items[0]
           : propertySchema.items

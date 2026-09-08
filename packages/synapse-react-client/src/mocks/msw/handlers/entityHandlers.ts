@@ -114,7 +114,7 @@ export function getVersionedEntityBundleHandler(
         const entityData = getMatchingMockEntity(entityId)
         if (entityData) {
           const bundle = entityData.bundle
-          if (entityData.versions && entityData.versions[versionNumber]) {
+          if (entityData.versions?.[versionNumber]) {
             response = {
               ...bundle,
               entity: entityData.versions[versionNumber],
@@ -189,7 +189,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
       }
 
       const entityData = getMatchingMockEntity(params.entityId as string)
-      if (entityData && entityData.versionInfo) {
+      if (entityData?.versionInfo) {
         response = { results: entityData.versionInfo }
         status = 200
       }
@@ -211,11 +211,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
       }
 
       const entityData = getMatchingMockEntity(params.entityId)
-      if (
-        entityData &&
-        entityData.versions &&
-        entityData.versions[requestedVersionNumber]
-      ) {
+      if (entityData?.versions?.[requestedVersionNumber]) {
         response = entityData.versions[
           requestedVersionNumber
         ] as VersionableEntity
@@ -295,7 +291,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
       }
       const entityData = getMatchingMockEntity(params.entityId as string)
 
-      if (entityData && entityData.path) {
+      if (entityData?.path) {
         response = entityData.path
         status = 200
       }

@@ -47,7 +47,7 @@ function TermsAndConditions({
 
   // update tcList when data changes (transform)
   useEffect(() => {
-    if (data && data.queryResult && data.queryResult.queryResults) {
+    if (data?.queryResult?.queryResults) {
       const { rows, headers } = data.queryResult.queryResults
       const iconColIndex = headers.findIndex(col => col.name === 'icon')
       const labelColIndex = headers.findIndex(col => col.name === 'label')

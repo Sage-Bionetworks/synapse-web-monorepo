@@ -9,7 +9,7 @@ function LastUpdatedOn() {
   const { showLastUpdatedOn } = useQueryVisualizationContext()
   const { data: queryMetadata } = useSuspenseGetQueryMetadata()
 
-  return showLastUpdatedOn && queryMetadata && queryMetadata.lastUpdatedOn ? (
+  return showLastUpdatedOn && queryMetadata?.lastUpdatedOn ? (
     <div
       style={{
         display: 'flex',

@@ -43,7 +43,7 @@ function usePrefetchFileHandleData(rowSet: RowSet) {
   let fileHandlesToPrefetch: FileHandleAssociation[] = []
 
   // Now add all IDs from the entity ID columns
-  if (entity && rowSet && queryMetadata && queryMetadata.selectColumns) {
+  if (entity && rowSet && queryMetadata?.selectColumns) {
     fileHandlesToPrefetch = rowSet.rows.reduce(
       (prev: FileHandleAssociation[], curr) => {
         fileHandleIdColumnIndices.forEach(index => {
