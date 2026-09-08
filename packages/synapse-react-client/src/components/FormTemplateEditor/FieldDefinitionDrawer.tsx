@@ -2,7 +2,6 @@ import {
   Alert,
   Box,
   Button,
-  Chip,
   Drawer,
   FormControlLabel,
   IconButton,
@@ -14,23 +13,28 @@ import {
 } from '@mui/material'
 import { Close as CloseIcon, Delete as DeleteIcon } from '@mui/icons-material'
 import { RJSFSchema } from '@rjsf/utils'
+import { useEffect, useState } from 'react'
 import { ChoiceOptionsEditor } from './ChoiceOptionsEditor'
 import {
   applyFieldType,
   detectFieldType,
   FIELD_TYPE_OPTIONS,
+  sanitizePropertyKey,
   SimpleFieldType,
 } from './schemaFieldUtils'
 
 export type FieldDefinitionDrawerProps = {
   open: boolean
   propertyKey: string | null
+  /** All property keys currently defined in the schema, including this one. */
+  existingKeys: Set<string>
   property: RJSFSchema | null
   isRequired: boolean
   /** True when this field is bound to one or more steps. Affects delete affordance. */
   isUsedInSteps: boolean
   onClose: () => void
   onUpdate: (patch: Partial<RJSFSchema>) => void
+  onRenameKey: (newKey: string) => void
   onReplace: (next: RJSFSchema) => void
   onChangeRequired: (isRequired: boolean) => void
   onRemove: () => void
@@ -43,17 +47,41 @@ export type FieldDefinitionDrawerProps = {
 export function FieldDefinitionDrawer({
   open,
   propertyKey,
+  existingKeys,
   property,
   isRequired,
   isUsedInSteps,
   onClose,
   onUpdate,
+  onRenameKey,
   onReplace,
   onChangeRequired,
   onRemove,
 }: FieldDefinitionDrawerProps) {
   const type = property ? detectFieldType(property) : null
   const isAdvanced = property !== null && type === null
+
+  // Local draft so keystrokes don't rename the property until the key is
+  // confirmed valid and unique; resets whenever a different field opens.
+  const [keyDraft, setKeyDraft] = useState(propertyKey ?? '')
+  useEffect(() => {
+    setKeyDraft(propertyKey ?? '')
+  }, [propertyKey])
+
+  const keyError =
+    keyDraft.length === 0
+      ? 'Required'
+      : keyDraft !== propertyKey && existingKeys.has(keyDraft)
+        ? 'Already used by another field'
+        : null
+
+  const commitKeyDraft = () => {
+    if (keyError || !propertyKey) {
+      setKeyDraft(propertyKey ?? '')
+      return
+    }
+    if (keyDraft !== propertyKey) onRenameKey(keyDraft)
+  }
 
   const handleChangeType = (next: SimpleFieldType) => {
     if (!property) return
@@ -80,11 +108,26 @@ export function FieldDefinitionDrawer({
         </Box>
 
         {propertyKey && (
-          <Chip
-            label={propertyKey}
+          <TextField
+            label="Property key"
+            value={keyDraft}
+            onChange={e => setKeyDraft(sanitizePropertyKey(e.target.value))}
+            onBlur={commitKeyDraft}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                commitKeyDraft()
+              }
+            }}
+            error={keyError !== null}
+            helperText={
+              keyError ??
+              'Identifies this field in the JSON Schema and submitted requests.'
+            }
             size="small"
-            variant="outlined"
-            sx={{ fontFamily: 'monospace', alignSelf: 'flex-start', mb: 2 }}
+            fullWidth
+            sx={{ mb: 2 }}
+            slotProps={{ input: { sx: { fontFamily: 'monospace' } } }}
           />
         )}
 
