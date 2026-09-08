@@ -4,18 +4,12 @@ import { Add as AddIcon } from '@mui/icons-material'
 import { RJSFSchema } from '@rjsf/utils'
 import { useMemo } from 'react'
 import { StepCard } from './StepCard'
-import { moveItem } from './utils'
-
-const EMPTY_STEP: FormTemplateStep = {
-  title: 'New Step',
-  description: '',
-  fields: [],
-}
+import { createEditableStep, EditableFormTemplateStep, moveItem } from './utils'
 
 export type FormStructurePanelProps = {
-  steps: FormTemplateStep[]
+  steps: EditableFormTemplateStep[]
   jsonSchema: RJSFSchema
-  onStepsChange: (next: FormTemplateStep[]) => void
+  onStepsChange: (next: EditableFormTemplateStep[]) => void
 }
 
 /**
@@ -60,7 +54,7 @@ export function FormStructurePanel({
   }
 
   const handleAddStep = () => {
-    onStepsChange([...steps, { ...EMPTY_STEP, fields: [] }])
+    onStepsChange([...steps, createEditableStep()])
   }
 
   const handleRemoveStep = (idx: number) => {
@@ -115,7 +109,7 @@ export function FormStructurePanel({
         ) : (
           steps.map((step, stepIdx) => (
             <StepCard
-              key={stepIdx}
+              key={step.uiKey}
               step={step}
               stepIndex={stepIdx}
               isFirst={stepIdx === 0}

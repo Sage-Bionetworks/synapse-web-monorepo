@@ -88,3 +88,14 @@ export function generatePropertyKey(
   }
   return key
 }
+
+/**
+ * Sanitize a manually-typed property key: strip characters that aren't
+ * valid in a JSON Schema property key used as a JS identifier, preserving
+ * the editor's casing (unlike `generatePropertyKey`, which derives a
+ * camelCase key from a display title).
+ */
+export function sanitizePropertyKey(raw: string): string {
+  const stripped = raw.replace(/[^A-Za-z0-9_]/g, '')
+  return /^[0-9]/.test(stripped) ? `_${stripped}` : stripped
+}

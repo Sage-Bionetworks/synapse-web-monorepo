@@ -26,15 +26,14 @@ import { RJSFSchema } from '@rjsf/utils'
 import { useState } from 'react'
 import { StepFieldRow, SLOT_SORTABLE_TYPE } from './StepFieldRow'
 import { FIELD_DRAG_TYPE } from './FieldLibraryRow'
-import { moveItem, normalizePointer } from './utils'
+import { EditableFormTemplateStep, moveItem, normalizePointer } from './utils'
 
 export const STEP_SORTABLE_GROUP = 'steps'
 export const STEP_SORTABLE_TYPE = 'step'
-export const STEP_ID_PREFIX = 'step:'
 export const SLOT_GROUP_PREFIX = 'slots:'
 
 export type StepCardProps = {
-  step: FormTemplateStep
+  step: EditableFormTemplateStep
   stepIndex: number
   isFirst: boolean
   isLast: boolean
@@ -67,7 +66,7 @@ export function StepCard({
 
   // Step is sortable within its group, and also accepts field drops to bind.
   const { ref, handleRef, isDragging, isDropTarget } = useSortable({
-    id: `${STEP_ID_PREFIX}${stepIndex}`,
+    id: `step:${step.uiKey}`,
     index: stepIndex,
     group: STEP_SORTABLE_GROUP,
     type: STEP_SORTABLE_TYPE,
@@ -196,8 +195,8 @@ export function StepCard({
               const key = pointerToKey(field.schemaPath)
               return (
                 <StepFieldRow
-                  key={`${field.schemaPath}-${fieldIdx}`}
-                  sortableId={`slot:${stepIndex}:${fieldIdx}`}
+                  key={field.schemaPath}
+                  sortableId={`slot:${field.schemaPath}`}
                   sortableIndex={fieldIdx}
                   sortableGroup={`${SLOT_GROUP_PREFIX}${stepIndex}`}
                   field={field}

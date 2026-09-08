@@ -2,7 +2,6 @@ import { DragDropProvider, DragEndEvent, DragOverlay } from '@dnd-kit/react'
 import { isSortable } from '@dnd-kit/react/sortable'
 import {
   FormTemplate,
-  FormTemplateStep,
   SubmissionContext,
 } from '@/utils/types/AccessRequirementFormTypes'
 import {
@@ -29,11 +28,15 @@ import { FormTemplatePreview } from './FormTemplatePreview'
 import { JsonSchemaBodyEditor } from './JsonSchemaBodyEditor'
 import {
   SLOT_GROUP_PREFIX,
-  STEP_ID_PREFIX,
   STEP_SORTABLE_GROUP,
   STEP_SORTABLE_TYPE,
 } from './StepCard'
 import { SLOT_SORTABLE_TYPE } from './StepFieldRow'
+import {
+  createEditableStep,
+  toEditableSteps,
+  toFormTemplateSteps,
+} from './utils'
 import {
   detectFieldType,
   fieldTypeLabel,
@@ -71,12 +74,6 @@ const EMPTY_SCHEMA: RJSFSchema = {
   required: [],
 }
 
-const EMPTY_STEP: FormTemplateStep = {
-  title: 'New Step',
-  description: '',
-  fields: [],
-}
-
 export function FormTemplateEditor({
   initialTemplate,
   initialJsonSchema,
@@ -87,8 +84,10 @@ export function FormTemplateEditor({
   const [jsonSchema, setJsonSchema] = useState<RJSFSchema>(
     initialJsonSchema ?? { ...EMPTY_SCHEMA },
   )
-  const [steps, setSteps] = useState<FormTemplateStep[]>(
-    initialTemplate?.steps ?? [{ ...EMPTY_STEP, fields: [] }],
+  const [steps, setSteps] = useState(() =>
+    initialTemplate
+      ? toEditableSteps(initialTemplate.steps)
+      : [createEditableStep()],
   )
   const [editingPropertyKey, setEditingPropertyKey] = useState<string | null>(
     null,
@@ -103,6 +102,11 @@ export function FormTemplateEditor({
     }
     return paths
   }, [steps])
+
+  const existingPropertyKeys = useMemo(
+    () => new Set(Object.keys((jsonSchema.properties ?? {}) as object)),
+    [jsonSchema.properties],
+  )
 
   /* ------------------------------------------------------------------------ */
   /* JSON Schema property mutations                                           */
@@ -134,6 +138,51 @@ export function FormTemplateEditor({
     setEditingPropertyKey(key)
   }, [jsonSchema.properties, writeProperties])
 
+  /**
+   * Rename a property's key, keeping it in sync everywhere it's referenced:
+   * the schema's `properties`/`required`, any step field bound to it (whose
+   * `schemaPath` embeds the key), and the drawer currently editing it.
+   */
+  const renamePropertyKey = useCallback(
+    (oldKey: string, newKey: string) => {
+      const properties = (jsonSchema.properties ?? {}) as Record<
+        string,
+        RJSFSchema
+      >
+      if (
+        newKey === oldKey ||
+        !(oldKey in properties) ||
+        newKey in properties
+      ) {
+        return
+      }
+      setJsonSchema(prev => {
+        const prevProps = (prev.properties ?? {}) as Record<string, RJSFSchema>
+        const nextProps: Record<string, RJSFSchema> = {}
+        for (const [k, v] of Object.entries(prevProps)) {
+          nextProps[k === oldKey ? newKey : k] = v
+        }
+        return {
+          ...prev,
+          properties: nextProps,
+          required: (prev.required ?? []).map(k => (k === oldKey ? newKey : k)),
+        }
+      })
+      setSteps(prev =>
+        prev.map(s => ({
+          ...s,
+          fields: s.fields.map(f =>
+            f.schemaPath === `/${oldKey}`
+              ? { ...f, schemaPath: `/${newKey}` }
+              : f,
+          ),
+        })),
+      )
+      setEditingPropertyKey(prevKey => (prevKey === oldKey ? newKey : prevKey))
+    },
+    [jsonSchema.properties],
+  )
+
   const handleUpdateProperty = useCallback(
     (key: string, patch: Partial<RJSFSchema>) => {
       setJsonSchema(prev => {
@@ -143,8 +192,24 @@ export function FormTemplateEditor({
         nextProps[key] = { ...(nextProps[key] ?? {}), ...patch }
         return { ...prev, properties: nextProps }
       })
+      // Keep the property key following the title — like a slug — for as
+      // long as it hasn't diverged from what the title would generate (i.e.
+      // until the editor manually overrides the key).
+      if (typeof patch.title === 'string') {
+        const properties = (jsonSchema.properties ?? {}) as Record<
+          string,
+          RJSFSchema
+        >
+        const otherKeys = new Set(
+          Object.keys(properties).filter(k => k !== key),
+        )
+        const currentTitle = properties[key]?.title ?? ''
+        if (generatePropertyKey(currentTitle, otherKeys) === key) {
+          renamePropertyKey(key, generatePropertyKey(patch.title, otherKeys))
+        }
+      }
     },
-    [],
+    [jsonSchema.properties, renamePropertyKey],
   )
 
   const handleReplaceProperty = useCallback((key: string, next: RJSFSchema) => {
@@ -204,15 +269,14 @@ export function FormTemplateEditor({
     // Case 1: bind a field from the library to a step (target is a step
     // sortable that accepts type 'field').
     if (source.type === FIELD_DRAG_TYPE) {
-      if (!target) return
-      const targetId = String(target.id)
-      if (!targetId.startsWith(STEP_ID_PREFIX)) return
+      if (!target || target.type !== STEP_SORTABLE_TYPE) return
       const propertyKey = String(
         (source.data as { propertyKey?: string } | undefined)?.propertyKey ??
           '',
       )
-      const stepIdx = parseInt(targetId.slice(STEP_ID_PREFIX.length), 10)
-      if (!propertyKey || !Number.isFinite(stepIdx)) return
+      const stepIdx = (target.data as { stepIndex?: number } | undefined)
+        ?.stepIndex
+      if (!propertyKey || typeof stepIdx !== 'number') return
       const path = `/${propertyKey}`
       setSteps(prev => {
         if (prev.some(s => s.fields.some(f => f.schemaPath === path))) {
@@ -279,7 +343,7 @@ export function FormTemplateEditor({
           semanticVersion:
             initialTemplate?.schemaRef.semanticVersion ?? '1.0.0',
         },
-        steps,
+        steps: toFormTemplateSteps(steps),
       },
       jsonSchema,
     })
@@ -291,9 +355,9 @@ export function FormTemplateEditor({
 
   const editingProperty: RJSFSchema | null =
     editingPropertyKey !== null
-      ? (jsonSchema.properties as Record<string, RJSFSchema> | undefined)?.[
+      ? ((jsonSchema.properties as Record<string, RJSFSchema> | undefined)?.[
           editingPropertyKey
-        ] ?? null
+        ] ?? null)
       : null
   const editingIsRequired =
     editingPropertyKey !== null &&
@@ -357,7 +421,7 @@ export function FormTemplateEditor({
                     semanticVersion:
                       initialTemplate?.schemaRef.semanticVersion ?? '1.0.0',
                   },
-                  steps,
+                  steps: toFormTemplateSteps(steps),
                   deprecated: false,
                   createdOn: '',
                   modifiedOn: '',
@@ -407,6 +471,7 @@ export function FormTemplateEditor({
         <FieldDefinitionDrawer
           open={editingPropertyKey !== null}
           propertyKey={editingPropertyKey}
+          existingKeys={existingPropertyKeys}
           property={editingProperty}
           isRequired={editingIsRequired}
           isUsedInSteps={editingIsUsedInSteps}
@@ -414,6 +479,10 @@ export function FormTemplateEditor({
           onUpdate={patch => {
             if (editingPropertyKey)
               handleUpdateProperty(editingPropertyKey, patch)
+          }}
+          onRenameKey={newKey => {
+            if (editingPropertyKey)
+              renamePropertyKey(editingPropertyKey, newKey)
           }}
           onReplace={next => {
             if (editingPropertyKey)
