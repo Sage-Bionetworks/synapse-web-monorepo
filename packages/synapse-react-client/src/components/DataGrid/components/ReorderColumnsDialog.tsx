@@ -1,5 +1,6 @@
 import { ConfirmationDialog } from '@/components/ConfirmationDialog'
 import { computeDefaultColumnOrder } from '@/components/DataGrid/utils/computeDefaultColumnOrder'
+import { collectTopLevelProperties } from '@/utils/jsonschema/collectTopLevelProperties'
 import {
   DeleteOutline,
   North,
@@ -79,8 +80,14 @@ export default function ReorderColumnsDialog(props: ReorderColumnsDialogProps) {
 
   // Only columns that aren't part of the JSON schema can be removed -- schema-defined
   // columns are required for validation/upsert and shouldn't be hidden from the grid.
+  // Properties inherited through $ref/allOf/etc. count, matching how the backend resolves
+  // a RecordSet's schema columns.
+  const schemaProperties = useMemo(
+    () => collectTopLevelProperties(jsonSchema),
+    [jsonSchema],
+  )
   const isSchemaColumn = (columnName: string) =>
-    !!jsonSchema?.properties && Object.hasOwn(jsonSchema.properties, columnName)
+    Object.hasOwn(schemaProperties, columnName)
 
   return (
     <ConfirmationDialog

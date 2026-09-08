@@ -53,3 +53,30 @@ export const WithPreviouslyRemovedColumn: Story = {
     canRemoveColumns: true,
   },
 }
+
+export const WithComposedSchema: Story = {
+  args: {
+    // Validation schemas returned by Synapse inline referenced schemas under `definitions` and
+    // compose them with allOf. Every column but 'comments' is schema-defined here, even though
+    // only 'notes' is declared in the schema's own top-level `properties`.
+    jsonSchema: {
+      definitions: {
+        Animal: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            age: { type: 'integer' },
+          },
+        },
+      },
+      properties: {
+        notes: { type: 'string' },
+      },
+      allOf: [
+        { $ref: '#/definitions/Animal' },
+        { properties: { species: { type: 'string' } } },
+      ],
+    },
+    canRemoveColumns: true,
+  },
+}

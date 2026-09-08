@@ -133,4 +133,26 @@ describe('ReorderColumnsButton', () => {
 
     expect(onReorder).toHaveBeenCalledWith([1])
   })
+
+  it('offers to remove only the column that is not in the schema', async () => {
+    const user = userEvent.setup()
+    render(
+      <ReorderColumnsButton
+        columnNames={columnNames}
+        columnOrder={columnOrder}
+        jsonSchema={jsonSchema}
+        canRemoveColumns
+        onReorder={vi.fn()}
+      />,
+    )
+
+    await user.click(screen.getByRole('button', { name: /reorder columns/i }))
+
+    // 'a' is an outdated column left over after a schema update, so it can be removed
+    expect(screen.getByRole('button', { name: 'Remove a' })).toBeInTheDocument()
+    // 'b' is still declared in the schema, so it cannot
+    expect(
+      screen.queryByRole('button', { name: 'Remove b' }),
+    ).not.toBeInTheDocument()
+  })
 })

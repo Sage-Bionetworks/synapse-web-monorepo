@@ -384,6 +384,67 @@ describe('ReorderColumnsDialog', () => {
     })
   })
 
+  describe('when the schema composes its properties via allOf/$ref', () => {
+    // Validation schemas returned by Synapse inline referenced schemas under `definitions` and
+    // compose them with allOf, so 'a' and 'b' are schema columns despite not being declared in
+    // the schema's own top-level `properties`.
+    const composedSchema: JSONSchema7 = {
+      definitions: {
+        Base: { type: 'object', properties: { a: { type: 'string' } } },
+      },
+      properties: { c: { type: 'string' } },
+      allOf: [{ $ref: '#/definitions/Base' }, { properties: { b: {} } }],
+    }
+
+    it('does not offer to remove inherited schema columns, only the column absent from the schema', () => {
+      render(
+        <ReorderColumnsDialog
+          open
+          columnNames={columnNames}
+          columnOrder={columnOrder}
+          jsonSchema={composedSchema}
+          canRemoveColumns
+          onSave={vi.fn()}
+          onCancel={vi.fn()}
+        />,
+      )
+
+      expect(
+        screen.queryByRole('button', { name: 'Remove a' }),
+      ).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('button', { name: 'Remove b' }),
+      ).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('button', { name: 'Remove c' }),
+      ).not.toBeInTheDocument()
+      expect(
+        screen.getByRole('button', { name: 'Remove extra' }),
+      ).toBeInTheDocument()
+    })
+
+    it('includes inherited schema columns in the default order', async () => {
+      const user = userEvent.setup()
+      render(
+        <ReorderColumnsDialog
+          open
+          columnNames={columnNames}
+          columnOrder={columnOrder}
+          jsonSchema={composedSchema}
+          onSave={vi.fn()}
+          onCancel={vi.fn()}
+        />,
+      )
+
+      await user.click(
+        screen.getByRole('button', { name: 'Reset to Default Order' }),
+      )
+
+      // The schema's own property ('c') comes first, then those composed in via allOf
+      expect(getListItemNames()).toEqual(['c', 'a', 'b', 'extra'])
+    })
+  })
+
   describe('when no columns are part of the schema', () => {
     const noSchemaColumnNames = ['x', 'y']
     const noSchemaColumnOrder = [0, 1]
