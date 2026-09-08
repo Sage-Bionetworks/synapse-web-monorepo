@@ -41,6 +41,10 @@ export const navbarConfig: NavbarConfig = {
       path: '/Contribute',
     },
     {
+      name: 'Research Ecosystem',
+      path: '/Research Ecosystem',
+    },
+    {
       name: 'News',
       path: 'https://news.adknowledgeportal.org/',
     },
