@@ -1,9 +1,9 @@
 import { useSortable } from '@dnd-kit/react/sortable'
 import {
   FormTemplateField,
+  FormTemplateFieldSubmissionContextEnum,
   FormTemplateStep,
-  SubmissionContext,
-} from '@/utils/types/AccessRequirementFormTypes'
+} from '@sage-bionetworks/synapse-client'
 import {
   Box,
   Collapse,
@@ -100,7 +100,8 @@ export function StepCard({
     const newField: FormTemplateField = {
       schemaPath: path,
       uiDefinition: {},
-      submissionContext: SubmissionContext.ALWAYS,
+      submissionContext: FormTemplateFieldSubmissionContextEnum.ALWAYS,
+      isPublic: false,
     }
     onChange({ fields: [...step.fields, newField] })
   }

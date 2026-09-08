@@ -3,11 +3,13 @@ import { useSortable } from '@dnd-kit/react/sortable'
 export const SLOT_SORTABLE_TYPE = 'slot'
 import {
   FormTemplateField,
-  SubmissionContext,
-} from '@/utils/types/AccessRequirementFormTypes'
+  FormTemplateFieldSubmissionContextEnum,
+} from '@sage-bionetworks/synapse-client'
 import {
   Box,
+  Checkbox,
   Collapse,
+  FormControlLabel,
   IconButton,
   MenuItem,
   Paper,
@@ -81,6 +83,8 @@ export function StepFieldRow({
   const displayLabel = resolvedProperty?.title || propertyKey
   const isFileField = type === 'file'
   const isUnresolved = !resolvedProperty
+  const submissionContext =
+    field.submissionContext ?? FormTemplateFieldSubmissionContextEnum.ALWAYS
 
   return (
     <Paper
@@ -129,10 +133,11 @@ export function StepFieldRow({
             {isUnresolved
               ? `Missing field: ${field.schemaPath}`
               : `${fieldTypeLabel(type)}${
-                  field.submissionContext !== SubmissionContext.ALWAYS
-                    ? ` · ${contextLabel(field.submissionContext)}`
+                  submissionContext !==
+                  FormTemplateFieldSubmissionContextEnum.ALWAYS
+                    ? ` · ${contextLabel(submissionContext)}`
                     : ''
-                }`}
+                }${field.isPublic ? ' · Public' : ''}`}
           </Typography>
         </Box>
         <IconButton size="small" disabled={isFirst} onClick={onMoveUp}>
@@ -147,57 +152,77 @@ export function StepFieldRow({
       </Box>
 
       <Collapse in={expanded} unmountOnExit>
-        <Stack direction="row" spacing={1} sx={{ pt: 1, pl: 4 }}>
-          <TextField
-            select
-            label="Submission context"
-            value={field.submissionContext}
-            onChange={e =>
-              onChange({
-                submissionContext: e.target.value as SubmissionContext,
-              })
-            }
-            size="small"
-            fullWidth
-          >
-            <MenuItem value={SubmissionContext.ALWAYS}>Always</MenuItem>
-            <MenuItem value={SubmissionContext.REQUEST_ONLY}>
-              Request only
-            </MenuItem>
-            <MenuItem value={SubmissionContext.RENEWAL_ONLY}>
-              Renewal only
-            </MenuItem>
-          </TextField>
-          {isFileField && (
+        <Stack spacing={1} sx={{ pt: 1, pl: 4 }}>
+          <Stack direction="row" spacing={1}>
             <TextField
-              label="Template file handle ID"
-              type="number"
-              value={field.templateFileHandleId ?? ''}
+              select
+              label="Submission context"
+              value={submissionContext}
               onChange={e =>
                 onChange({
-                  templateFileHandleId: e.target.value
-                    ? parseInt(e.target.value)
-                    : undefined,
+                  submissionContext: e.target
+                    .value as FormTemplateFieldSubmissionContextEnum,
                 })
               }
               size="small"
               fullWidth
-              helperText="Optional"
-            />
-          )}
+            >
+              <MenuItem value={FormTemplateFieldSubmissionContextEnum.ALWAYS}>
+                Always
+              </MenuItem>
+              <MenuItem
+                value={FormTemplateFieldSubmissionContextEnum.REQUEST_ONLY}
+              >
+                Request only
+              </MenuItem>
+              <MenuItem
+                value={FormTemplateFieldSubmissionContextEnum.RENEWAL_ONLY}
+              >
+                Renewal only
+              </MenuItem>
+            </TextField>
+            {isFileField && (
+              <TextField
+                label="Template file handle ID"
+                type="number"
+                value={field.templateFileHandleId ?? ''}
+                onChange={e =>
+                  onChange({
+                    templateFileHandleId: e.target.value || undefined,
+                  })
+                }
+                size="small"
+                fullWidth
+                helperText="Optional"
+              />
+            )}
+          </Stack>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={field.isPublic ?? false}
+                onChange={e => onChange({ isPublic: e.target.checked })}
+              />
+            }
+            label="Publicly viewable after approval"
+          />
+          <Typography variant="caption" color="text.secondary">
+            Answers appear in this AR's public submission info once a submission
+            is approved. Snapshotted at submit time.
+          </Typography>
         </Stack>
       </Collapse>
     </Paper>
   )
 }
 
-function contextLabel(ctx: SubmissionContext): string {
+function contextLabel(ctx: FormTemplateFieldSubmissionContextEnum): string {
   switch (ctx) {
-    case SubmissionContext.ALWAYS:
+    case FormTemplateFieldSubmissionContextEnum.ALWAYS:
       return 'Always'
-    case SubmissionContext.REQUEST_ONLY:
+    case FormTemplateFieldSubmissionContextEnum.REQUEST_ONLY:
       return 'Request only'
-    case SubmissionContext.RENEWAL_ONLY:
+    case FormTemplateFieldSubmissionContextEnum.RENEWAL_ONLY:
       return 'Renewal only'
   }
 }

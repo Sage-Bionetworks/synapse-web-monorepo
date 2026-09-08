@@ -1,9 +1,13 @@
 /**
  * Mock JSON Schema registry for the JSON Schema-based Access Requirements demo.
  *
- * Each FormTemplate pins exactly one registered JSON Schema (by `$id` +
- * `semanticVersion`). The schema is the data contract — it owns property
- * types, validation rules, and which properties are required.
+ * Each FormTemplate pins exactly one registered JSON Schema by `$id` (a
+ * single, immutable version string). The schema is the data contract — it
+ * owns property types, validation rules, and which properties are required.
+ *
+ * Institution, principal investigator, and signing official are first-class
+ * request fields collected outside the schema — they are not schema
+ * properties here.
  *
  * For the demo, we maintain an in-memory map keyed by `$id`. The
  * FormTemplateEditor lets ACT edit the schema body alongside the template in
@@ -19,17 +23,6 @@ export const mockGenomicsSchema: RJSFSchema = {
   type: 'object',
   title: 'Genomics Data Access Request',
   properties: {
-    institution: {
-      type: 'string',
-      title: 'Institution',
-      description:
-        'The name of the institution or organization you are affiliated with.',
-    },
-    projectLead: {
-      type: 'string',
-      title: 'Project Lead',
-      description: 'The name of the principal investigator or project lead.',
-    },
     intendedDataUse: {
       type: 'string',
       title: 'Intended Data Use Statement',
@@ -43,7 +36,7 @@ export const mockGenomicsSchema: RJSFSchema = {
         'I agree to abide by all terms and conditions for accessing this data.',
     },
   },
-  required: ['institution', 'projectLead', 'intendedDataUse', 'agreeToTerms'],
+  required: ['intendedDataUse', 'agreeToTerms'],
 }
 
 /** Clinical Trial DAR data contract — includes a file upload. */
@@ -52,12 +45,6 @@ export const mockClinicalSchema: RJSFSchema = {
   type: 'object',
   title: 'Clinical Trial Data Access Request',
   properties: {
-    institution: {
-      type: 'string',
-      title: 'Institution',
-      description:
-        'The name of the institution or organization you are affiliated with.',
-    },
     projectTitle: {
       type: 'string',
       title: 'Project Title',
@@ -83,7 +70,7 @@ export const mockClinicalSchema: RJSFSchema = {
       format: 'synapse-filehandle-id',
     },
   },
-  required: ['institution', 'projectTitle', 'signedDataUseAgreement'],
+  required: ['projectTitle', 'signedDataUseAgreement'],
 }
 
 /**

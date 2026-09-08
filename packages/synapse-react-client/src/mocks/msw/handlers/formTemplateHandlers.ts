@@ -1,4 +1,8 @@
-import { FormTemplate } from '@/utils/types/AccessRequirementFormTypes'
+import {
+  FormTemplate,
+  FormTemplateSearchRequest,
+  FormTemplateSearchResponse,
+} from '@sage-bionetworks/synapse-client'
 import { http, HttpResponse } from 'msw'
 import { mockFormTemplates } from '../../accessRequirement/mockFormTemplates'
 import BasicMockedCrudService from '../util/BasicMockedCrudService'
@@ -24,10 +28,6 @@ export const getFormTemplateHandlers = (
       ...body,
       etag: crypto.randomUUID(),
       versionNumber: 1,
-      createdOn: new Date().toISOString(),
-      modifiedOn: new Date().toISOString(),
-      createdBy: '1234567',
-      modifiedBy: '1234567',
       deprecated: body.deprecated ?? false,
     })
     return HttpResponse.json(created, { status: 201 })
@@ -42,8 +42,6 @@ export const getFormTemplateHandlers = (
         ...body,
         etag: crypto.randomUUID(),
         versionNumber: (body.versionNumber ?? 0) + 1,
-        modifiedOn: new Date().toISOString(),
-        modifiedBy: '1234567',
       })
       if (!updated) {
         return HttpResponse.json(
@@ -95,10 +93,7 @@ export const getFormTemplateHandlers = (
   http.post(
     `${backendOrigin}${FORM_TEMPLATE_BASE}/search`,
     async ({ request }) => {
-      const body = (await request.json()) as {
-        name?: string
-        includeDeprecated?: boolean
-      }
+      const body = (await request.json()) as FormTemplateSearchRequest
       let results = service.getAll()
 
       if (body.name) {
@@ -112,7 +107,11 @@ export const getFormTemplateHandlers = (
         results = results.filter(t => !t.deprecated)
       }
 
-      return HttpResponse.json({ results, nextPageToken: null })
+      const response: FormTemplateSearchResponse = {
+        results,
+        nextPageToken: undefined,
+      }
+      return HttpResponse.json(response)
     },
   ),
 ]

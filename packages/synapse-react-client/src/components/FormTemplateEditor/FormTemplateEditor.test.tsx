@@ -3,8 +3,8 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent, { UserEvent } from '@testing-library/user-event'
 import { FormTemplateEditor } from './FormTemplateEditor'
 
-function renderEditor() {
-  return render(<FormTemplateEditor onSave={vi.fn()} />, {
+function renderEditor(onSave = vi.fn()) {
+  return render(<FormTemplateEditor onSave={onSave} />, {
     wrapper: createWrapper(),
   })
 }
@@ -81,5 +81,42 @@ describe('FormTemplateEditor', () => {
     await user.clear(keyField)
     await user.type(keyField, 'my field!! 1')
     expect(keyField).toHaveValue('myfield1')
+  })
+
+  it('marks a field as public and includes isPublic in the saved template', async () => {
+    const user = userEvent.setup()
+    const onSave = vi.fn()
+    renderEditor(onSave)
+
+    await createField(user)
+    await user.click(screen.getByRole('button', { name: 'Close field editor' }))
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'New' })).toBeEnabled(),
+    )
+
+    await user.click(screen.getByRole('combobox', { name: 'Bind field' }))
+    await user.click(
+      await screen.findByRole('option', { name: 'New field (/newField)' }),
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Expand field' }))
+    await user.click(
+      screen.getByRole('checkbox', {
+        name: 'Publicly viewable after approval',
+      }),
+    )
+
+    await user.type(
+      screen.getByRole('textbox', { name: 'Internal Name' }),
+      'My Template',
+    )
+    await user.click(screen.getByRole('button', { name: 'Create Template' }))
+
+    expect(onSave.mock.lastCall![0].template.steps[0].fields[0]).toEqual({
+      schemaPath: '/newField',
+      uiDefinition: {},
+      submissionContext: 'ALWAYS',
+      isPublic: true,
+    })
   })
 })

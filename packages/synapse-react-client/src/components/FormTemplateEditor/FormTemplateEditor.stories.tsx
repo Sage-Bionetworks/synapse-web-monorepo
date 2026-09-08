@@ -35,9 +35,7 @@ export const CreateNewTemplate: Story = {}
 export const EditGenomicsTemplate: Story = {
   args: {
     initialTemplate: mockGenomicsTemplate,
-    initialJsonSchema: getMockJsonSchemaById(
-      mockGenomicsTemplate.schemaRef.$id,
-    ),
+    initialJsonSchema: getMockJsonSchemaById(mockGenomicsTemplate.schema$id),
   },
 }
 
@@ -49,8 +47,6 @@ export const EditGenomicsTemplate: Story = {
 export const EditClinicalTemplate: Story = {
   args: {
     initialTemplate: mockClinicalTemplate,
-    initialJsonSchema: getMockJsonSchemaById(
-      mockClinicalTemplate.schemaRef.$id,
-    ),
+    initialJsonSchema: getMockJsonSchemaById(mockClinicalTemplate.schema$id),
   },
 }

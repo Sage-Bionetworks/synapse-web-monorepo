@@ -1,7 +1,7 @@
 import {
   FormTemplateField,
-  SubmissionContext,
-} from '@/utils/types/AccessRequirementFormTypes'
+  FormTemplateFieldSubmissionContextEnum,
+} from '@sage-bionetworks/synapse-client'
 import {
   createEditableStep,
   moveItem,
@@ -51,17 +51,17 @@ describe('utils', () => {
       {
         schemaPath: '/a',
         uiDefinition: {},
-        submissionContext: SubmissionContext.ALWAYS,
+        submissionContext: FormTemplateFieldSubmissionContextEnum.ALWAYS,
       },
       {
         schemaPath: '/b',
         uiDefinition: {},
-        submissionContext: SubmissionContext.ALWAYS,
+        submissionContext: FormTemplateFieldSubmissionContextEnum.ALWAYS,
       },
       {
         schemaPath: '/c',
         uiDefinition: {},
-        submissionContext: SubmissionContext.ALWAYS,
+        submissionContext: FormTemplateFieldSubmissionContextEnum.ALWAYS,
       },
     ]
     it('moves an item down by one position', () => {

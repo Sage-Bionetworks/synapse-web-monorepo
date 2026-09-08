@@ -1,4 +1,4 @@
-import { FormTemplate } from '@/utils/types/AccessRequirementFormTypes'
+import { FormTemplate } from '@sage-bionetworks/synapse-client'
 import {
   Box,
   Button,
@@ -37,7 +37,7 @@ export function FormTemplateList({
     return templates.filter(
       t =>
         t.name.toLowerCase().includes(query) ||
-        t.schemaRef.$id.toLowerCase().includes(query),
+        t.schema$id.toLowerCase().includes(query),
     )
   }, [templates, searchQuery])
 
@@ -83,7 +83,6 @@ export function FormTemplateList({
             <TableRow>
               <TableCell>Name</TableCell>
               <TableCell>Schema</TableCell>
-              <TableCell>Schema Version</TableCell>
               <TableCell align="right">Steps</TableCell>
               <TableCell>Status</TableCell>
               <TableCell align="right">Actions</TableCell>
@@ -92,7 +91,7 @@ export function FormTemplateList({
           <TableBody>
             {filteredTemplates.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} align="center">
+                <TableCell colSpan={5} align="center">
                   <Typography
                     variant="body2"
                     color="text.secondary"
@@ -115,9 +114,8 @@ export function FormTemplateList({
                   <TableCell
                     sx={{ fontFamily: 'monospace', fontSize: '0.8rem' }}
                   >
-                    {template.schemaRef.$id}
+                    {template.schema$id}
                   </TableCell>
-                  <TableCell>{template.schemaRef.semanticVersion}</TableCell>
                   <TableCell align="right">{template.steps.length}</TableCell>
                   <TableCell>
                     {template.deprecated ? (

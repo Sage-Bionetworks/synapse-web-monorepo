@@ -1,10 +1,9 @@
+import DataAccessRequestAccessorsEditor from '@/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/DataAccessRequestAccessorsEditor'
+import DocumentTemplate from '@/components/AccessRequirementList/ManagedACTAccessRequirementRequestFlow/DocumentTemplate'
 import {
-  FormTemplate,
-  GenerateDataAccessSchemaResponse,
-  JsonSchemaAccessRequirement,
-  SubmissionRequestType,
-} from '@/utils/types/AccessRequirementFormTypes'
-import { generateDataAccessSchema } from '@/utils/jsonschema/generateDataAccessSchema'
+  DataAccessRequestType,
+  generateDataAccessSchema,
+} from '@/utils/jsonschema/generateDataAccessSchema'
 import {
   Alert,
   Box,
@@ -12,12 +11,25 @@ import {
   Chip,
   Paper,
   Snackbar,
+  Stack,
   Step,
   StepLabel,
   Stepper,
+  TextField,
   Typography,
 } from '@mui/material'
 import { RJSFSchema } from '@rjsf/utils'
+import validator from '@rjsf/validator-ajv8'
+import {
+  FormTemplate,
+  JsonSchemaAccessRequirement,
+  PrincipalInvestigator,
+  SigningOfficial,
+} from '@sage-bionetworks/synapse-client'
+import {
+  AccessorChange,
+  FileHandleAssociateType,
+} from '@sage-bionetworks/synapse-types'
 import { useMemo, useState } from 'react'
 import { DataAccessRequestStep } from './DataAccessRequestStep'
 
@@ -30,15 +42,15 @@ export type DataAccessRequestFormProps = {
   accessRequirement: JsonSchemaAccessRequirement
   /** The FormTemplate referenced by `accessRequirement.formTemplateRef`. */
   formTemplate: FormTemplate
-  /** The JSON Schema body the template's `schemaRef` resolves to. */
+  /** The JSON Schema body the template's `schema$id` resolves to. */
   jsonSchema: RJSFSchema
   /** Whether this is an initial REQUEST or a RENEWAL. Default REQUEST. */
-  requestType?: SubmissionRequestType
+  requestType?: DataAccessRequestType
   /**
-   * Optional initial submission data, e.g. loaded from a SchemaDataDraft.
-   * Keyed by the schema's top-level property names.
+   * Initial values for the schema-driven fields, e.g. loaded from a saved
+   * `Request.schemaData`.
    */
-  initialSubmissionData?: Record<string, unknown>
+  initialSchemaData?: Record<string, unknown>
 }
 
 export function DataAccessRequestForm({
@@ -46,28 +58,49 @@ export function DataAccessRequestForm({
   formTemplate,
   jsonSchema,
   requestType = 'REQUEST',
-  initialSubmissionData,
+  initialSchemaData,
 }: DataAccessRequestFormProps) {
   const [activeStep, setActiveStep] = useState(0)
   const [showSuccess, setShowSuccess] = useState(false)
+  const [errorMessages, setErrorMessages] = useState<string[]>([])
 
-  const schemaResponse: GenerateDataAccessSchemaResponse = useMemo(
+  // First-class request fields. These are NOT part of the JSON Schema; they
+  // are collected outside it per the revised design.
+  const [institution, setInstitution] = useState('')
+  const [principalInvestigator, setPrincipalInvestigator] =
+    useState<PrincipalInvestigator>({})
+  const [signingOfficial, setSigningOfficial] = useState<SigningOfficial>({})
+  const [accessorChanges, setAccessorChanges] = useState<AccessorChange[]>([])
+
+  const schemaResponse = useMemo(
     () => generateDataAccessSchema(formTemplate, jsonSchema, requestType),
     [formTemplate, jsonSchema, requestType],
   )
 
-  // Initialize per-step form data with any pre-filled values.
+  const stepLabels = useMemo(
+    () => [
+      'Requester Information',
+      ...schemaResponse.steps.map(
+        (step, i) => (step.jsonSchema.title as string) ?? `Step ${i + 1}`,
+      ),
+    ],
+    [schemaResponse],
+  )
+
+  // Initialize per-step form data with any pre-filled values. Steps are
+  // indexed independently of the fixed first-class section (index 0 in
+  // `activeStep`, but not represented in `formDataByStep`).
   const [formDataByStep, setFormDataByStep] = useState<
     Record<number, Record<string, unknown>>
   >(() => {
-    if (!initialSubmissionData) return {}
+    if (!initialSchemaData) return {}
     const byStep: Record<number, Record<string, unknown>> = {}
     schemaResponse.steps.forEach((step, idx) => {
       const props = step.jsonSchema.properties ?? {}
       const stepData: Record<string, unknown> = {}
       for (const propertyName of Object.keys(props)) {
-        if (propertyName in initialSubmissionData) {
-          stepData[propertyName] = initialSubmissionData[propertyName]
+        if (propertyName in initialSchemaData) {
+          stepData[propertyName] = initialSchemaData[propertyName]
         }
       }
       if (Object.keys(stepData).length > 0) {
@@ -77,17 +110,18 @@ export function DataAccessRequestForm({
     return byStep
   })
 
-  const currentStep = schemaResponse.steps[activeStep]
+  const currentGeneratedStep =
+    activeStep > 0 ? schemaResponse.steps[activeStep - 1] : undefined
 
   const handleStepDataChange = (data: Record<string, unknown>) => {
     setFormDataByStep(prev => ({
       ...prev,
-      [activeStep]: data,
+      [activeStep - 1]: data,
     }))
   }
 
   const handleNext = () => {
-    if (activeStep < schemaResponse.steps.length - 1) {
+    if (activeStep < stepLabels.length - 1) {
       setActiveStep(prev => prev + 1)
     }
   }
@@ -99,10 +133,49 @@ export function DataAccessRequestForm({
   }
 
   const handleSubmit = () => {
+    const messages: string[] = []
+    if (!institution.trim()) {
+      messages.push('Institution is required.')
+    }
+    if (!principalInvestigator.name?.trim()) {
+      messages.push('Principal investigator name is required.')
+    }
+    if (!principalInvestigator.institutionalEmail?.trim()) {
+      messages.push('Principal investigator email is required.')
+    }
+    if (!signingOfficial.name?.trim()) {
+      messages.push('Signing official name is required.')
+    }
+    if (!signingOfficial.institutionalEmail?.trim()) {
+      messages.push('Signing official email is required.')
+    }
+
+    schemaResponse.steps.forEach((step, i) => {
+      const { errors } = validator.validateFormData(
+        formDataByStep[i] ?? {},
+        step.jsonSchema,
+      )
+      errors.forEach(e => {
+        messages.push(`${e.property ?? ''} ${e.message ?? ''}`.trim())
+      })
+    })
+
+    if (messages.length > 0) {
+      setErrorMessages(messages)
+      return
+    }
+    setErrorMessages([])
     setShowSuccess(true)
   }
 
-  const isLastStep = activeStep === schemaResponse.steps.length - 1
+  const isLastStep = activeStep === stepLabels.length - 1
+  const showDucDownload =
+    accessRequirement.isDUCRequired &&
+    !!accessRequirement.ducTemplateFileHandleId
+  const showEDucNotice =
+    accessRequirement.isDUCRequired &&
+    !accessRequirement.ducTemplateFileHandleId &&
+    !!accessRequirement.eDucTemplateId
 
   return (
     <Paper sx={{ p: 3 }}>
@@ -124,24 +197,119 @@ export function DataAccessRequestForm({
         />
       </Box>
 
-      {schemaResponse.steps.length > 1 && (
-        <Stepper activeStep={activeStep} sx={{ mb: 3 }}>
-          {schemaResponse.steps.map((step, index) => (
-            <Step key={index}>
-              <StepLabel>
-                {(step.jsonSchema.title as string) ?? `Step ${index + 1}`}
-              </StepLabel>
-            </Step>
-          ))}
-        </Stepper>
+      <Stepper activeStep={activeStep} sx={{ mb: 3 }}>
+        {stepLabels.map((label, index) => (
+          <Step key={index}>
+            <StepLabel>{label}</StepLabel>
+          </Step>
+        ))}
+      </Stepper>
+
+      {activeStep === 0 ? (
+        <Stack spacing={2}>
+          <Typography variant="caption" color="text.secondary">
+            Collected as first-class request fields, not from the JSON Schema.
+          </Typography>
+          <TextField
+            label="Institution"
+            value={institution}
+            onChange={e => setInstitution(e.target.value)}
+            fullWidth
+          />
+          <Typography variant="headline3">Principal Investigator</Typography>
+          <TextField
+            label="Principal Investigator Name"
+            value={principalInvestigator.name ?? ''}
+            onChange={e =>
+              setPrincipalInvestigator(prev => ({
+                ...prev,
+                name: e.target.value,
+              }))
+            }
+            fullWidth
+          />
+          <TextField
+            label="Principal Investigator Institutional Email"
+            type="email"
+            value={principalInvestigator.institutionalEmail ?? ''}
+            onChange={e =>
+              setPrincipalInvestigator(prev => ({
+                ...prev,
+                institutionalEmail: e.target.value,
+              }))
+            }
+            fullWidth
+          />
+          <Typography variant="headline3">Signing Official</Typography>
+          <TextField
+            label="First and last names of your Signing Official"
+            placeholder="First and last name of signing official, ex: John Smith"
+            value={signingOfficial.name ?? ''}
+            onChange={e =>
+              setSigningOfficial(prev => ({ ...prev, name: e.target.value }))
+            }
+            fullWidth
+          />
+          <TextField
+            label="Institutional Email of your Signing Official"
+            type="email"
+            placeholder="Individual with signing authority, e.g. jane.smith@institution.edu"
+            value={signingOfficial.institutionalEmail ?? ''}
+            onChange={e =>
+              setSigningOfficial(prev => ({
+                ...prev,
+                institutionalEmail: e.target.value,
+              }))
+            }
+            fullWidth
+          />
+          <DataAccessRequestAccessorsEditor
+            accessorChanges={accessorChanges}
+            onChange={updater => setAccessorChanges(prev => [...updater(prev)])}
+            isRenewal={requestType === 'RENEWAL'}
+            helpText="List any collaborators at your institution who also need access to this data."
+          />
+          {showDucDownload && (
+            <DocumentTemplate
+              title="Download DUC Template"
+              description="As a first step, you will need to download the most current version of the Data Use Certificate."
+              fileHandleAssociation={{
+                fileHandleId: accessRequirement.ducTemplateFileHandleId!,
+                associateObjectType:
+                  FileHandleAssociateType.AccessRequirementAttachment,
+                associateObjectId: String(accessRequirement.id),
+              }}
+              downloadButtonText="Download DUC Template"
+            />
+          )}
+          {showEDucNotice && (
+            <Alert severity="info">
+              You will sign the Data Use Certificate electronically after
+              submitting this request.
+            </Alert>
+          )}
+        </Stack>
+      ) : (
+        currentGeneratedStep && (
+          <DataAccessRequestStep
+            step={currentGeneratedStep}
+            formData={formDataByStep[activeStep - 1] ?? {}}
+            onChange={handleStepDataChange}
+          />
+        )
       )}
 
-      {currentStep && (
-        <DataAccessRequestStep
-          step={currentStep}
-          formData={formDataByStep[activeStep] ?? {}}
-          onChange={handleStepDataChange}
-        />
+      {errorMessages.length > 0 && (
+        <Alert severity="error" sx={{ mt: 2 }}>
+          <Typography variant="body2" gutterBottom>
+            Please resolve the following before submitting:
+          </Typography>
+          <ul>
+            {errorMessages.map((message, i) => (
+              <li key={i}>{message}</li>
+            ))}
+          </ul>
+        </Alert>
       )}
 
       <Box
