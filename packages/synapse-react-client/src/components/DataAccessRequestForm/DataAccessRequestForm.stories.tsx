@@ -66,17 +66,16 @@ export const ClinicalTrialRenewal: Story = {
 }
 
 /**
- * Genomics AR with pre-filled data, simulating a SchemaDataDraft loaded for
- * a returning user.
+ * Genomics AR with pre-filled data, simulating a saved `Request.schemaData`
+ * loaded for a returning user.
  */
 export const WithDraftData: Story = {
   args: {
     accessRequirement: mockJsonSchemaAR1,
     formTemplate: mockGenomicsTemplate,
     jsonSchema: mockGenomicsSchema,
-    initialSubmissionData: {
-      institution: 'Sage Bionetworks',
-      projectLead: 'Dr. Jane Smith',
+    initialSchemaData: {
+      intendedDataUse: 'Reanalysis of publicly available genomic datasets.',
     },
   },
 }

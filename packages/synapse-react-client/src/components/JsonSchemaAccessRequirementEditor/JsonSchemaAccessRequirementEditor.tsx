@@ -2,7 +2,8 @@ import { FormTemplatePreview } from '@/components/FormTemplateEditor/FormTemplat
 import {
   FormTemplate,
   JsonSchemaAccessRequirement,
-} from '@/utils/types/AccessRequirementFormTypes'
+  JsonSchemaAccessRequirementConcreteTypeEnum,
+} from '@sage-bionetworks/synapse-client'
 import {
   Alert,
   Box,
@@ -17,6 +18,8 @@ import {
   IconButton,
   MenuItem,
   Paper,
+  Radio,
+  RadioGroup,
   TextField,
   Typography,
 } from '@mui/material'
@@ -61,15 +64,28 @@ export function JsonSchemaAccessRequirementEditor({
     initialAR?.isTwoFaRequired ?? false,
   )
 
+  const [isDUCRequired, setIsDUCRequired] = useState(
+    initialAR?.isDUCRequired ?? false,
+  )
+  const [ducMode, setDucMode] = useState<'MANUAL' | 'EDUC'>(
+    initialAR?.eDucTemplateId ? 'EDUC' : 'MANUAL',
+  )
+  const [ducTemplateFileHandleId, setDucTemplateFileHandleId] = useState(
+    initialAR?.ducTemplateFileHandleId ?? '',
+  )
+  const [eDucTemplateId, setEDucTemplateId] = useState(
+    initialAR?.eDucTemplateId ?? '',
+  )
+
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>(
-    initialAR?.formTemplateRef.templateId ?? '',
+    initialAR?.formTemplateRef?.templateId ?? '',
   )
   const [previewOpen, setPreviewOpen] = useState(false)
 
   const templateLookup = useMemo(() => {
     const map = new Map<string, FormTemplate>()
     for (const t of availableTemplates) {
-      map.set(t.id, t)
+      if (t.id) map.set(t.id, t)
     }
     return map
   }, [availableTemplates])
@@ -80,14 +96,16 @@ export function JsonSchemaAccessRequirementEditor({
 
   const selectedSchema = useMemo(() => {
     if (!selectedTemplate) return undefined
-    return resolveJsonSchema(selectedTemplate.schemaRef.$id)
+    return resolveJsonSchema(selectedTemplate.schema$id)
   }, [selectedTemplate, resolveJsonSchema])
 
   const handleSave = () => {
-    if (!selectedTemplate) return
+    if (!selectedTemplate?.id || selectedTemplate.versionNumber == null) return
     onSave({
       ...initialAR,
       name,
+      concreteType:
+        JsonSchemaAccessRequirementConcreteTypeEnum.org_sagebionetworks_repo_model_JsonSchemaAccessRequirement,
       formTemplateRef: {
         templateId: selectedTemplate.id,
         templateVersionNumber: selectedTemplate.versionNumber,
@@ -96,6 +114,15 @@ export function JsonSchemaAccessRequirementEditor({
       isCertifiedUserRequired,
       isValidatedProfileRequired,
       isTwoFaRequired,
+      isDUCRequired,
+      ducTemplateFileHandleId:
+        isDUCRequired && ducMode === 'MANUAL'
+          ? ducTemplateFileHandleId || undefined
+          : undefined,
+      eDucTemplateId:
+        isDUCRequired && ducMode === 'EDUC'
+          ? eDucTemplateId || undefined
+          : undefined,
     })
   }
 
@@ -172,6 +199,63 @@ export function JsonSchemaAccessRequirementEditor({
         <Divider sx={{ mb: 2 }} />
 
         <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+          Data Use Certificate
+        </Typography>
+
+        <Box sx={{ mb: 3 }}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={isDUCRequired}
+                onChange={e => setIsDUCRequired(e.target.checked)}
+                size="small"
+              />
+            }
+            label="Require a Data Use Certificate"
+          />
+          {isDUCRequired && (
+            <Box sx={{ pl: 4 }}>
+              <RadioGroup
+                value={ducMode}
+                onChange={(_e, value) => setDucMode(value as 'MANUAL' | 'EDUC')}
+              >
+                <FormControlLabel
+                  value="EDUC"
+                  control={<Radio size="small" />}
+                  label="Electronic DUC (eDUC)"
+                />
+                <FormControlLabel
+                  value="MANUAL"
+                  control={<Radio size="small" />}
+                  label="Uploaded DUC template"
+                />
+              </RadioGroup>
+              {ducMode === 'EDUC' ? (
+                <TextField
+                  label="eDUC template ID"
+                  value={eDucTemplateId}
+                  onChange={e => setEDucTemplateId(e.target.value)}
+                  size="small"
+                  fullWidth
+                  sx={{ mt: 1, maxWidth: 400 }}
+                />
+              ) : (
+                <TextField
+                  label="DUC template file handle ID"
+                  value={ducTemplateFileHandleId}
+                  onChange={e => setDucTemplateFileHandleId(e.target.value)}
+                  size="small"
+                  fullWidth
+                  sx={{ mt: 1, maxWidth: 400 }}
+                />
+              )}
+            </Box>
+          )}
+        </Box>
+
+        <Divider sx={{ mb: 2 }} />
+
+        <Typography variant="subtitle2" color="text.secondary" gutterBottom>
           Form Template
         </Typography>
 
@@ -190,15 +274,14 @@ export function JsonSchemaAccessRequirementEditor({
           </MenuItem>
           {availableTemplates.map(t => (
             <MenuItem key={t.id} value={t.id}>
-              {t.name} (v{t.versionNumber})
+              {t.name} (v{t.versionNumber ?? 1})
             </MenuItem>
           ))}
         </TextField>
 
         {selectedTemplate && (
           <Alert severity="info" variant="outlined" sx={{ mb: 2 }}>
-            Pinned schema: <code>{selectedTemplate.schemaRef.$id}</code> v
-            {selectedTemplate.schemaRef.semanticVersion}
+            Pinned schema: <code>{selectedTemplate.schema$id}</code>
             {!selectedSchema && (
               <Typography variant="body2" color="warning.main" sx={{ mt: 0.5 }}>
                 Schema body could not be resolved.

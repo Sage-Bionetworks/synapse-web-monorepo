@@ -1,10 +1,10 @@
 import { JsonSchemaForm } from '@/components/JsonSchemaForm/JsonSchemaForm'
-import { GenerateDataAccessSchemaStep } from '@/utils/types/AccessRequirementFormTypes'
+import { GeneratedFormStepForRjsf } from '@/utils/jsonschema/generateDataAccessSchema'
 import { Box, Typography } from '@mui/material'
 import { IChangeEvent } from '@rjsf/core'
 
 type DataAccessRequestStepProps = {
-  step: GenerateDataAccessSchemaStep
+  step: GeneratedFormStepForRjsf
   formData: Record<string, unknown>
   onChange: (data: Record<string, unknown>) => void
 }

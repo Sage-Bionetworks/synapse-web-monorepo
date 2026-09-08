@@ -1,11 +1,29 @@
 import { RJSFSchema, UiSchema } from '@rjsf/utils'
 import {
   FormTemplate,
-  GenerateDataAccessSchemaResponse,
-  GenerateDataAccessSchemaStep,
-  SubmissionContext,
-  SubmissionRequestType,
-} from '@/utils/types/AccessRequirementFormTypes'
+  FormTemplateFieldSubmissionContextEnum,
+  GenerateDataAccessSchemaFromAccessRequirementRequestTypeEnum,
+} from '@sage-bionetworks/synapse-client'
+
+/**
+ * `REQUEST` | `RENEWAL`. The generated models declare this enum once per
+ * request implementation; the unions are identical, so clients alias one.
+ */
+export type DataAccessRequestType =
+  GenerateDataAccessSchemaFromAccessRequirementRequestTypeEnum
+
+/**
+ * Client-side counterpart of the generated `GeneratedFormStep`. The generated
+ * `JsonSchema` model renames JSON Schema keywords that are reserved words in
+ * Java (`enum` -> `_enum`, `default` -> `_default`), which RJSF cannot render,
+ * so the rendering path keeps RJSF's own schema types.
+ */
+export type GeneratedFormStepForRjsf = {
+  jsonSchema: RJSFSchema
+  uiSchema: UiSchema
+}
+
+export type GeneratedFormSchemaForRjsf = { steps: GeneratedFormStepForRjsf[] }
 
 /**
  * Resolve a JSON Pointer (RFC 6901) into a JSON Schema, returning the
@@ -33,13 +51,16 @@ function resolveJsonPointer(
 
 /** Whether a field's submission context applies for the given requestType. */
 function fieldAppliesForContext(
-  context: SubmissionContext,
-  requestType: SubmissionRequestType,
+  context: FormTemplateFieldSubmissionContextEnum | undefined,
+  requestType: DataAccessRequestType,
 ): boolean {
-  if (context === SubmissionContext.ALWAYS) return true
-  if (context === SubmissionContext.REQUEST_ONLY)
+  const resolvedContext =
+    context ?? FormTemplateFieldSubmissionContextEnum.ALWAYS
+  if (resolvedContext === FormTemplateFieldSubmissionContextEnum.ALWAYS)
+    return true
+  if (resolvedContext === FormTemplateFieldSubmissionContextEnum.REQUEST_ONLY)
     return requestType === 'REQUEST'
-  if (context === SubmissionContext.RENEWAL_ONLY)
+  if (resolvedContext === FormTemplateFieldSubmissionContextEnum.RENEWAL_ONLY)
     return requestType === 'RENEWAL'
   return false
 }
@@ -55,13 +76,13 @@ function fieldAppliesForContext(
 export function generateDataAccessSchema(
   template: FormTemplate,
   schema: RJSFSchema,
-  requestType: SubmissionRequestType = 'REQUEST',
-): GenerateDataAccessSchemaResponse {
+  requestType: DataAccessRequestType = 'REQUEST',
+): GeneratedFormSchemaForRjsf {
   const requiredSet = new Set<string>(
     Array.isArray(schema.required) ? schema.required : [],
   )
 
-  const steps: GenerateDataAccessSchemaStep[] = []
+  const steps: GeneratedFormStepForRjsf[] = []
 
   for (const step of template.steps) {
     const properties: Record<string, RJSFSchema> = {}
@@ -82,7 +103,7 @@ export function generateDataAccessSchema(
         required.push(propertyName)
       }
       if (field.uiDefinition && Object.keys(field.uiDefinition).length > 0) {
-        uiSchema[propertyName] = { ...field.uiDefinition }
+        uiSchema[propertyName] = { ...(field.uiDefinition as UiSchema) }
       }
       uiOrder.push(propertyName)
     }

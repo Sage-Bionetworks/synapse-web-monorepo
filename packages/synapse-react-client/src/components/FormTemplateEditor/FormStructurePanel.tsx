@@ -1,4 +1,4 @@
-import { FormTemplateStep } from '@/utils/types/AccessRequirementFormTypes'
+import { FormTemplateStep } from '@sage-bionetworks/synapse-client'
 import { Alert, Box, Button, Paper, Stack, Typography } from '@mui/material'
 import { Add as AddIcon } from '@mui/icons-material'
 import { RJSFSchema } from '@rjsf/utils'

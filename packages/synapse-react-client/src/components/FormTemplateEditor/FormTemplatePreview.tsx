@@ -1,9 +1,9 @@
 import { JsonSchemaForm } from '@/components/JsonSchemaForm/JsonSchemaForm'
+import { FormTemplate } from '@sage-bionetworks/synapse-client'
 import {
-  FormTemplate,
-  GenerateDataAccessSchemaResponse,
-} from '@/utils/types/AccessRequirementFormTypes'
-import { generateDataAccessSchema } from '@/utils/jsonschema/generateDataAccessSchema'
+  generateDataAccessSchema,
+  GeneratedFormSchemaForRjsf,
+} from '@/utils/jsonschema/generateDataAccessSchema'
 import { Box, Paper, Step, StepLabel, Stepper, Typography } from '@mui/material'
 import { RJSFSchema } from '@rjsf/utils'
 import { useMemo, useState } from 'react'
@@ -24,7 +24,7 @@ export function FormTemplatePreview({
 }: FormTemplatePreviewProps) {
   const [activeStep, setActiveStep] = useState(0)
 
-  const schemaResponse: GenerateDataAccessSchemaResponse = useMemo(
+  const schemaResponse: GeneratedFormSchemaForRjsf = useMemo(
     () => generateDataAccessSchema(template, jsonSchema, 'REQUEST'),
     [template, jsonSchema],
   )

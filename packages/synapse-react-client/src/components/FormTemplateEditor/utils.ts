@@ -1,4 +1,4 @@
-import { FormTemplateStep } from '@/utils/types/AccessRequirementFormTypes'
+import { FormTemplateStep } from '@sage-bionetworks/synapse-client'
 import { RJSFSchema } from '@rjsf/utils'
 
 /** Move an item in an array by `direction`. Returns a new array. */

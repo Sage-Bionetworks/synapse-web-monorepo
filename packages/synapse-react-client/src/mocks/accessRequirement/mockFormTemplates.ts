@@ -1,43 +1,22 @@
 import {
   FormTemplate,
-  SubmissionContext,
-} from '@/utils/types/AccessRequirementFormTypes'
+  FormTemplateFieldSubmissionContextEnum,
+} from '@sage-bionetworks/synapse-client'
+import { MOCK_FILE_HANDLE_ID } from '@/mocks/mock_file_handle'
 import { mockClinicalSchema, mockGenomicsSchema } from './mockJsonSchemas'
 
-const now = new Date().toISOString()
-const actUserId = '1234567'
-
 /**
- * Renders the Genomics Data Access schema as a 3-step form:
- * About You → Research Use → Agreements.
+ * Renders the Genomics Data Access schema as a 2-step form: Research Use →
+ * Agreements. Institution and principal investigator are first-class
+ * request fields, not schema-driven steps.
  */
 export const mockGenomicsTemplate: FormTemplate = {
   id: 'template-1',
   name: 'Genomics DAR',
   etag: 'etag-template-1',
   versionNumber: 1,
-  schemaRef: {
-    $id: mockGenomicsSchema.$id as string,
-    semanticVersion: '1.0.0',
-  },
+  schema$id: mockGenomicsSchema.$id as string,
   steps: [
-    {
-      title: 'About You',
-      description:
-        'Please provide your personal and institutional information below.',
-      fields: [
-        {
-          schemaPath: '/institution',
-          uiDefinition: {},
-          submissionContext: SubmissionContext.ALWAYS,
-        },
-        {
-          schemaPath: '/projectLead',
-          uiDefinition: {},
-          submissionContext: SubmissionContext.ALWAYS,
-        },
-      ],
-    },
     {
       title: 'Research Use',
       description:
@@ -49,7 +28,8 @@ export const mockGenomicsTemplate: FormTemplate = {
             'ui:widget': 'textarea',
             'ui:options': { rows: 5 },
           },
-          submissionContext: SubmissionContext.ALWAYS,
+          submissionContext: FormTemplateFieldSubmissionContextEnum.ALWAYS,
+          isPublic: true,
         },
       ],
     },
@@ -61,56 +41,40 @@ export const mockGenomicsTemplate: FormTemplate = {
         {
           schemaPath: '/agreeToTerms',
           uiDefinition: {},
-          submissionContext: SubmissionContext.ALWAYS,
+          submissionContext: FormTemplateFieldSubmissionContextEnum.ALWAYS,
         },
       ],
     },
   ],
   deprecated: false,
-  createdOn: now,
-  modifiedOn: now,
-  createdBy: actUserId,
-  modifiedBy: actUserId,
 }
 
 /**
- * Renders the Clinical Trial Data Access schema as a 4-step form. Demonstrates
- * a file-upload field with a downloadable template, and a RENEWAL_ONLY field.
+ * Renders the Clinical Trial Data Access schema as a 2-step form: Project
+ * Details → Compliance. Demonstrates a file-upload field with a downloadable
+ * template, and a RENEWAL_ONLY field. Institution is a first-class request
+ * field, not a schema-driven step.
  */
 export const mockClinicalTemplate: FormTemplate = {
   id: 'template-2',
   name: 'Clinical Trial DAR',
   etag: 'etag-template-2',
   versionNumber: 1,
-  schemaRef: {
-    $id: mockClinicalSchema.$id as string,
-    semanticVersion: '1.0.0',
-  },
+  schema$id: mockClinicalSchema.$id as string,
   steps: [
-    {
-      title: 'About You',
-      description:
-        'Please provide your personal and institutional information below.',
-      fields: [
-        {
-          schemaPath: '/institution',
-          uiDefinition: {},
-          submissionContext: SubmissionContext.ALWAYS,
-        },
-      ],
-    },
     {
       title: 'Project Details',
       fields: [
         {
           schemaPath: '/projectTitle',
           uiDefinition: {},
-          submissionContext: SubmissionContext.ALWAYS,
+          submissionContext: FormTemplateFieldSubmissionContextEnum.ALWAYS,
+          isPublic: true,
         },
         {
           schemaPath: '/dataUsePurpose',
           uiDefinition: {},
-          submissionContext: SubmissionContext.ALWAYS,
+          submissionContext: FormTemplateFieldSubmissionContextEnum.ALWAYS,
         },
       ],
     },
@@ -121,22 +85,19 @@ export const mockClinicalTemplate: FormTemplate = {
         {
           schemaPath: '/irbApprovalNumber',
           uiDefinition: {},
-          submissionContext: SubmissionContext.RENEWAL_ONLY,
+          submissionContext:
+            FormTemplateFieldSubmissionContextEnum.RENEWAL_ONLY,
         },
         {
           schemaPath: '/signedDataUseAgreement',
           uiDefinition: {},
-          submissionContext: SubmissionContext.ALWAYS,
-          templateFileHandleId: 9876543210,
+          submissionContext: FormTemplateFieldSubmissionContextEnum.ALWAYS,
+          templateFileHandleId: MOCK_FILE_HANDLE_ID,
         },
       ],
     },
   ],
   deprecated: false,
-  createdOn: now,
-  modifiedOn: now,
-  createdBy: actUserId,
-  modifiedBy: actUserId,
 }
 
 export const mockFormTemplates: FormTemplate[] = [

@@ -2,8 +2,8 @@ import { DragDropProvider, DragEndEvent, DragOverlay } from '@dnd-kit/react'
 import { isSortable } from '@dnd-kit/react/sortable'
 import {
   FormTemplate,
-  SubmissionContext,
-} from '@/utils/types/AccessRequirementFormTypes'
+  FormTemplateFieldSubmissionContextEnum,
+} from '@sage-bionetworks/synapse-client'
 import {
   Accordion,
   AccordionDetails,
@@ -50,8 +50,8 @@ import {
  * (to the form template service) in one save action.
  */
 export type FormTemplateEditorSaveValue = {
-  template: Partial<FormTemplate>
-  /** The current JSON Schema body that the template's `schemaRef` resolves to. */
+  template: FormTemplate
+  /** The current JSON Schema body that the template's `schema$id` resolves to. */
   jsonSchema: RJSFSchema
 }
 
@@ -59,7 +59,7 @@ export type FormTemplateEditorProps = {
   /** Existing template to edit, or undefined for creating a new one. */
   initialTemplate?: FormTemplate
   /**
-   * The JSON Schema body the template's `schemaRef` resolves to. Required
+   * The JSON Schema body the template's `schema$id` resolves to. Required
    * when editing an existing template.
    */
   initialJsonSchema?: RJSFSchema
@@ -291,7 +291,9 @@ export function FormTemplateEditor({
                   {
                     schemaPath: path,
                     uiDefinition: {},
-                    submissionContext: SubmissionContext.ALWAYS,
+                    submissionContext:
+                      FormTemplateFieldSubmissionContextEnum.ALWAYS,
+                    isPublic: false,
                   },
                 ],
               }
@@ -338,16 +340,22 @@ export function FormTemplateEditor({
       template: {
         ...initialTemplate,
         name,
-        schemaRef: {
-          $id: (jsonSchema.$id as string) ?? '',
-          semanticVersion:
-            initialTemplate?.schemaRef.semanticVersion ?? '1.0.0',
-        },
+        schema$id: (jsonSchema.$id as string) ?? '',
         steps: toFormTemplateSteps(steps),
       },
       jsonSchema,
     })
   }
+
+  const previewTemplate: FormTemplate = useMemo(
+    () => ({
+      ...initialTemplate,
+      name,
+      schema$id: (jsonSchema.$id as string) ?? '',
+      steps: toFormTemplateSteps(steps),
+    }),
+    [initialTemplate, name, jsonSchema.$id, steps],
+  )
 
   /* ------------------------------------------------------------------------ */
   /* Render                                                                    */
@@ -411,23 +419,7 @@ export function FormTemplateEditor({
                 Live Preview
               </Typography>
               <FormTemplatePreview
-                template={{
-                  id: initialTemplate?.id ?? 'preview',
-                  name,
-                  etag: initialTemplate?.etag ?? '',
-                  versionNumber: initialTemplate?.versionNumber ?? 1,
-                  schemaRef: {
-                    $id: (jsonSchema.$id as string) ?? '',
-                    semanticVersion:
-                      initialTemplate?.schemaRef.semanticVersion ?? '1.0.0',
-                  },
-                  steps: toFormTemplateSteps(steps),
-                  deprecated: false,
-                  createdOn: '',
-                  modifiedOn: '',
-                  createdBy: '',
-                  modifiedBy: '',
-                }}
+                template={previewTemplate}
                 jsonSchema={jsonSchema}
               />
             </Box>

@@ -24,6 +24,8 @@ For more information and use case information, see [PSI-1](https://sagebionetwor
 - Requesters can save partial form progress and resume in a later session
 - Add a path to using schemas for existing Access Requirements/approvals (support a one-time migration step from the existing `ManagedACTAccessRequirement`)
 - Reviewer and submitter can export a PDF of the created submission (client side logic)
+- Expose publicly-disclosable information from approved submissions (functionality extending or similar to [POST /accessRequirement/{arId}/approvedSubmissionInfo](https://rest-docs.synapse.org/rest/POST/accessRequirement/requirementId/approvedSubmissionInfo.html))
+- Support [eDUC](https://sagebionetworks.jira.com/wiki/spaces/PLFM/pages/4600299533) workflows
 
 ### Non-Goals
 
@@ -47,16 +49,26 @@ This proposal extends the AR/DAR flow so ACT can attach a registered JSON Schema
 - `JsonSchemaAccessRequirement` is a new AR type that references a `FormTemplate` (by id and version). The template's pinned schema is the AR's data contract — there is no separate schema reference on the AR. Otherwise behaves like `ManagedACTAccessRequirement` (same accessor flow, expirations, approvals).
 - Schema generation service resolves the AR's `FormTemplate` and the schema it references, and emits a per-step (jsonSchema, uiSchema) bundle. The UI uses this bundle to render the form for requesters or as a read-only display for reviewers. The same service can render a draft template body to support previewing during template authoring.
 - Schema submission service accepts the requester's answers, validates them against the schema referenced by the AR's pinned template (filtered by the active `requestType`), and creates a Submission whose `schemaData` holds the validated payload.
-- Schema draft service lets requesters save partial form progress per (user, AR) and resume in a later session. Drafts hold unvalidated partial data; validation runs only at submit time.
-- For `JsonSchemaAccessRequirement`, `submissionData` (and its draft) replaces the existing `ResearchProject` snapshot — institution, project lead, intended-data-use, and any other previously-fixed fields are now expressed as schema properties. Reviewer UI for these submissions reads from `schemaData` instead of `researchProjectSnapshot`. The migration step (see below) copies existing `ResearchProject` data into `schemaData` for past submissions.
+- For `JsonSchemaAccessRequirement`, `submissionData` includes the schematized data submitted by the user. Fields not used by other services (e.g. research project, IDU statement, supplemental attachments, publications, summary of use) are no longer first-class properties. Equivalent functionality can now expressed as schema properties. Reviewer UI for these submissions reads from `schemaData` in addition to the first-class fields on the `Submission` object. The migration step (see below) does not modify past submissions, so the UI needs to support showing data from any field.
 
 ### Example Workflow
 
 ACT registers a JSON Schema in the existing schema registry that captures the data contract for an AR. They author a `FormTemplate` that pins to that schema and arranges its properties into one or more steps with UI hints. They preview the resulting form, save the template, and create a `JsonSchemaAccessRequirement` that references the template. Updating the form (renaming a step, regrouping fields, changing UI hints) is a single transactional update to the template; updating the data contract (changing types, adding/removing properties, changing validation) is a schema bump (which requires publishing a new template version pinned to the new schema). Updates to a template do not automatically cascade to ARs that reference it; ACT explicitly bumps an AR to a new template version.
 
-Requester side: When a user wants access to a resource gated by a `JsonSchemaAccessRequirement`, the client calls the schema generation service for that AR version. The response is a multi-step JSON Schema + UI Schema bundle. The user fills out the form one step at a time and submits. The submission service validates the payload against the schema pinned by the AR version and either creates the Submission or returns structured validation errors.
+Requester side: When a user wants access to a resource gated by a `JsonSchemaAccessRequirement`, the client calls the schema generation service for that AR version. The response is a multi-step JSON Schema + UI Schema bundle. The user fills out the form with their responses. Request data can be saved any time in the `RequestInterface` object using `POST /dataAccessRequest` (this is the existing flow for `ManagedACTAccessRequirement`s). Once ready to submit, the submission service validates the payload against the schema pinned by the AR version and either creates the Submission or returns validation errors.
 
-Reviewer side: A DAC reviewer opens a submission as they do today. The submission carries `schemaData` plus a reference to the AR version it was submitted against; the UI re-runs schema generation for that AR version to render a read-only form filled with the requester's answers. The reviewer adjudicates the submission the same as they would adjudicate a submission against a `ManagedACTAccessRequirement`.
+In our initial implementation, the validation errors will be unstructured; clients should do client-side validation to generate structured error messages. In the future, we can provide a validation service, if it is useful.
+
+Reviewer side: A reviewer opens a submission as they do today. The submission carries `schemaData` plus a reference to the AR version it was submitted against; the UI re-runs schema generation for that AR version to render a read-only form filled with the requester's answers. The reviewer adjudicates the submission the same as they would adjudicate a submission against a `ManagedACTAccessRequirement`.
+
+### First-class vs Schema-driven Fields
+
+In general, a field is kept first-class only if a server-side workflow or an external integration utilizes that field. This includes:
+
+- The [eDUC](https://sagebionetworks.jira.com/wiki/spaces/PLFM/pages/4600299533) workflow, including traditional DUC fallback (institution, principal investigator, signing official, ducFileHandleId, eDucSignatureEnvelopeId)
+- The accessor/renewal lifecycle (accessorChanges)
+
+Other fields become schema-driven. Reviewer UIs always render any present first-class fields in addition to schema fields; they must never infer that a schematized AR lacks first-class data (even those fields that are 'schematized', because an AR could be migrated from `ManagedACTAccessRequirement` to `JsonSchemaAccessRequirement`).
 
 ## API Design
 
@@ -64,22 +76,18 @@ We propose adding the following new services and new/changed objects.
 
 ### Services
 
-| Endpoint                                                         | Request Body                             | Response                         | Notes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Authorization Required |
-| ---------------------------------------------------------------- | ---------------------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------- |
-| POST /accessRequirement/formTemplate                             | FormTemplate                             | FormTemplate                     | Used to create a form template. The submitted body must include a `schemaRef` pointing to a registered JSON Schema version. At create time, the system validates that (1) every field slot's `schemaPath` resolves to a leaf property in the resolved schema, (2) every property declared `required` in the schema is covered by exactly one field slot, (3) no two field slots share the same `schemaPath`, and (4) each slot's UI hints are compatible with its target property's type/format. Validation failures return a structured error and no template is created.                                                                                                                                                                                                                                   | ACT only               |
-| POST /accessRequirement/formTemplate/{id}                        | FormTemplate                             | FormTemplate                     | Used to update a form template by its ID. Templates are versioned and immutable per version; any change creates a new version. The update is validated against the new body's `schemaRef` using the same rules as create. ARs that reference this template do **not** automatically roll forward; ACT explicitly bumps an AR by updating it to reference the new template version.                                                                                                                                                                                                                                                                                                                                                                                                                           | ACT only               |
-| GET /accessRequirement/formTemplate/{id}                         | None                                     | FormTemplate                     | Used to retrieve the latest version of a form template by its ID.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | None                   |
-| GET /accessRequirement/formTemplate/{id}/version/{versionNumber} | None                                     | FormTemplate                     | Used to retrieve a specific version of a form template.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | None                   |
-| POST /accessRequirement/formTemplate/search                      | FormTemplateSearchRequest                | FormTemplateSearchResponse       | Search all registered form templates in the system. Only the latest versions of templates are returned.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | None                   |
-| POST /dataAccessSubmission/schema/generate/async/start           | GenerateDataAccessSchemaRequestInterface | AsyncJobId                       | Given an Access Requirement ID and version (or a draft FormTemplate body for preview), generate the JSON Schema and UI Schema for the form, broken up by step.<br><br>The output is produced by resolving the source FormTemplate, resolving its referenced schema (with `$ref`s expanded), filtering field slots by `submissionContext` against the request's `requestType` (REQUEST or RENEWAL), and emitting one (jsonSchema, uiSchema) pair per step. Each step's jsonSchema slices the referenced schema to the properties targeted by that step's surviving field slots and preserves their `required` declarations (with required properties pruned if filtered out by context).                                                                                                                      | None                   |
-| GET /dataAccessSubmission/schema/generate/async/get/{asyncToken} | None                                     | GenerateDataAccessSchemaResponse |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | None                   |
-| POST /dataAccessSubmission/schema/submit/async/start             | SubmitSchemaDataRequest                  | AsyncJobId                       | Used to issue a submission using user-provided data that was filled in with the assistance of a schema. The server re-runs schema generation for the AR version using the request's `requestType` and validates `submissionData` against the resulting filtered schema (clients cannot bypass `required` properties by skipping a step or omitting a context-applicable property). If valid, the response includes the ID of the created submission. If invalid, no submission is created and the validation errors are returned.                                                                                                                                                                                                                                                                            | Authenticated only     |
-| GET /dataAccessSubmission/schema/submit/async/get/{asyncToken}   | None                                     | SubmitSchemaDataResponse         |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | Authenticated only     |
-| PUT /dataAccessSubmission/schema/draft                           | SchemaDataDraft                          | SchemaDataDraft                  | Create or update the calling user's draft for a given Access Requirement. At most one draft exists per (user, AR). Drafts are not validated against the schema — partial and invalid data is allowed so users can save progress mid-form. The draft is associated with a specific AR version; if the AR is bumped after the draft is created, clients are responsible for surfacing potential drift to the user.                                                                                                                                                                                                                                                                                                                                                                                             | Authenticated only     |
-| GET /dataAccessSubmission/schema/draft/{accessRequirementId}     | None                                     | SchemaDataDraft                  | Fetch the calling user's draft for the given AR, or 404 if none exists.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Authenticated only     |
-| DELETE /dataAccessSubmission/schema/draft/{accessRequirementId}  | None                                     | None                             | Delete the calling user's draft for the given AR. Drafts are also automatically deleted when a successful submission is created.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | Authenticated only     |
-| POST /accessRequirement/{id}/migrateToJsonSchema                 | None                                     | None                             | The `id` must be the ID of a ManagedACTAccessRequirement.<br><br>One-time step that registers a bootstrapped JSON Schema mirroring the existing ManagedACTAccessRequirement submission requirements, creates a corresponding bootstrapped FormTemplate, and converts the AR to a JsonSchemaAccessRequirement referencing the template. Past submissions against the AR are updated to include `schemaData` populated from each submission's existing `researchProjectSnapshot` (institution, project lead, IDU, etc.) and any other fixed fields covered by the bootstrapped schema. Rewriting historical submissions is audit-relevant and is logged accordingly.<br><br>This service initiates an eventual, asynchronous migration. The response is immediate, indicating only that migration has started. | ACT/Admin only         |
-|                                                                  |                                          |                                  |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |                        |
+| Endpoint                                                         | Request Body                             | Response                         | Notes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | Authorization Required |
+| ---------------------------------------------------------------- | ---------------------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| POST /accessRequirement/formTemplate                             | FormTemplate                             | FormTemplate                     | Used to create a form template. The submitted body must include a `schemaRef` pointing to a registered JSON Schema version. At create time, the system validates that (1) every field slot's `schemaPath` resolves to a leaf property in the resolved schema, (2) every property declared `required` in the schema is covered by exactly one field slot, (3) no two field slots share the same `schemaPath`, and (4) each slot's UI hints are compatible with its target property's type/format. Validation failures return an error and no template is created.                                                                                                                                                                                                                                                                                                                                   | ACT only               |
+| POST /accessRequirement/formTemplate/{id}                        | FormTemplate                             | FormTemplate                     | Used to update a form template by its ID. Templates are versioned and immutable per version; any change creates a new version. The update is validated against the new body's `schemaRef` using the same rules as create. ARs that reference this template do **not** automatically roll forward; ACT explicitly bumps an AR by updating it to reference the new template version.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | ACT only               |
+| GET /accessRequirement/formTemplate/{id}                         | None                                     | FormTemplate                     | Used to retrieve the latest version of a form template by its ID.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | None                   |
+| GET /accessRequirement/formTemplate/{id}/version/{versionNumber} | None                                     | FormTemplate                     | Used to retrieve a specific version of a form template.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | None                   |
+| POST /accessRequirement/formTemplate/search                      | FormTemplateSearchRequest                | FormTemplateSearchResponse       | Search all registered form templates in the system. Only the latest versions of templates are returned.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | None                   |
+| POST /dataAccessSubmission/schema/generate/async/start           | GenerateDataAccessSchemaRequestInterface | AsyncJobId                       | Given an Access Requirement ID and version (or a draft FormTemplate body for preview), generate the JSON Schema and UI Schema for the form, broken up by step. The output is produced by resolving the source FormTemplate, resolving its referenced schema (with `$ref`s expanded), filtering field slots by `submissionContext` against the request's `requestType` (REQUEST or RENEWAL), and emitting one (jsonSchema, uiSchema) pair per step. Each step's jsonSchema slices the referenced schema to the properties targeted by that step's surviving field slots and preserves their `required` declarations (with required properties pruned if filtered out by context).                                                                                                                                                                                                                   | None                   |
+| GET /dataAccessSubmission/schema/generate/async/get/{asyncToken} | None                                     | GenerateDataAccessSchemaResponse |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | None                   |
+| POST /accessRequirement/{id}/migrateToJsonSchema                 | None                                     | None                             | The `id` must be the ID of a ManagedACTAccessRequirement. One-time step that registers a bootstrapped JSON Schema mirroring the existing ManagedACTAccessRequirement submission requirements, creates a corresponding bootstrapped FormTemplate, and converts the AR to a JsonSchemaAccessRequirement referencing the template. Past submissions are not modified. This service initiates an eventual, asynchronous migration. The response is immediate, indicating only that migration has started.                                                                                                                                                                                                                                                                                                                                                                                              | ACT/Admin only         |
+| POST /accessRequirement/{id}/publicSubmissionInfo                | PublicSubmissionInfoPageRequest          | PublicSubmissionInfoPage         | Response is identical for all users (diverges from [the existing analogous service](https://rest-docs.synapse.org/rest/POST/accessRequirement/requirementId/approvedSubmissionInfo.html), which today displays private information to ACT). Only fields with their FormTemplateField's `isPublic` set to `true` are returned. accessorChanges and private answers are never included. For JsonSchemaAccessRequirements, a field is public is snapshotted at submit time from the FormTemplate version the submission was made against; flipping isPublic on a newer template version does not retroactively expose older submissions. This differs from how IDU statements are exposed today, which only depends on the current state of the `ManagedACTAccessRequirement.isIDUPublic`. This service will also support `ManagedACTAccessRequirement`, so clients can replace the existing service. | None                   |
+| POST /accessRequirement/{requirementId}/approvedSubmissionInfo   | SubmissionInfoPageRequest (no change)    | SubmissionInfoPage (no change)   | If called with a JsonSchemaAccessRequirement's ID, 400 will be returned with guidance to use POST /accessRequirement/{id}/publicSubmissionInfo (above)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | None                   |
 
 ### Objects
 
@@ -113,6 +121,7 @@ classDiagram
           schemaPath
           uiDefinition
           submissionContext
+          isPublic
       }
 
       JsonSchemaAccessRequirement "*" --> "1" FormTemplate : pins
@@ -216,6 +225,10 @@ classDiagram
     "templateFileHandleId": {
       "type": "integer",
       "description": "A Synapse FileHandle ID used to download a template file for this slot. Intended only for slots whose target schema property uses the `synapse-filehandle-id` format. The file can be downloaded using FileHandleAssociateType.AccessRequirementAttachment."
+    },
+    "isPublic": {
+      "type": "boolean",
+      "description": "When true, responses to this field will be publicly viewable after approval. Default is false."
     }
   },
   "required": ["schemaPath", "uiDefinition"]
@@ -406,181 +419,17 @@ The file can be downloaded via the file handle ID by using the existing `FileHan
 }
 ```
 
-`org.sagebionetworks.repo.model.dataaccess.schema.SubmitSchemaDataRequest`
+`org.sagebionetworks.repo.model.dataaccess.RequestInterface`
 
 ```json
 {
-  "title": "Submit Schema Data Request",
-  "description": "Request body to create a submission using user-provided data validated against the JSON Schema referenced by the AR's pinned FormTemplate.",
-  "implements": [
-    {
-      "$ref": "org.sagebionetworks.repo.model.asynch.AsynchronousRequestBody"
-    }
-  ],
+  "description": "This is the base interface that all Request implements.",
+  "type": "interface",
   "properties": {
-    "accessRequirement": {
-      "$ref": "org.sagebionetworks.repo.model.AccessRequirementReference",
-      "description": "The Access Requirement ID and version number for which a data access request should be created."
-    },
-    "requestType": {
-      "type": "string",
-      "enum": ["REQUEST", "RENEWAL"],
-      "description": "Whether this submission is an initial request or a renewal. Used to filter form template fields by their `submissionContext` and produce the schema against which `submissionData` is validated."
-    },
-    "submissionData": {
+    // ... existing properties
+    "schemaData": {
       "type": "object",
-      "description": "The data that the user provided. Must be valid against the JSON Schema referenced by the AR version's pinned FormTemplate, filtered by the active `requestType`. Property keys correspond to top-level property names defined in that schema."
-    },
-    "accessorChanges": {
-      "type": "array",
-      "description": "List of user changes. Users can only gain access via this submission flow.",
-      "items": {
-        "$ref": "org.sagebionetworks.repo.model.dataaccess.AccessorChange"
-      }
-    },
-    "subjectId": {
-      "type": "string",
-      "description": "The ID of the subject user interested in. This information will be used to help user navigate back to where they were to continue their work."
-    },
-    "subjectType": {
-      "$ref": "org.sagebionetworks.repo.model.RestrictableObjectType",
-      "description": "The type of the subject user interested in. This information will be used to help user navigate back to where they were to continue their work."
-    }
-  },
-  "required": [
-    "accessRequirement",
-    "requestType",
-    "submissionData",
-    "accessorChanges"
-  ]
-}
-```
-
-`org.sagebionetworks.repo.model.dataaccess.schema.SubmitSchemaDataResponse`
-
-```json
-{
-  "title": "Submit Schema Data Response",
-  "description": "Response body representing the result of a submit schema data request. A request either results in creation of a submission, or a set of schema validation errors.",
-  "implements": [
-    {
-      "$ref": "org.sagebionetworks.repo.model.asynch.AsynchronousResponseBody"
-    }
-  ],
-  "properties": {
-    "status": {
-      "$ref": "org.sagebionetworks.repo.model.dataaccess.schema.SubmitSchemaDataResultStatus"
-    },
-    "submissionId": {
-      "type": "string",
-      "description": "The data access submission ID that was created as a result of the request."
-    },
-    "validationErrors": {
-      "$ref": "org.sagebionetworks.repo.model.dataaccess.schema.SubmissionValidationResult",
-      "description": "The validation errors that were encountered that prevent creating submissions."
-    }
-  },
-  "required": ["status"]
-}
-```
-
-`org.sagebionetworks.repo.model.dataaccess.schema.SchemaDataDraft`
-
-```json
-{
-  "title": "Schema Data Draft",
-  "description": "A user's saved, in-progress submission for a JsonSchemaAccessRequirement. Drafts allow filling out a multi-step form across multiple sessions. At most one draft exists per (user, AR). Drafts hold partial, unvalidated data; validation runs only on submit.",
-  "properties": {
-    "accessRequirement": {
-      "$ref": "org.sagebionetworks.repo.model.AccessRequirementReference",
-      "description": "The AR ID and version this draft was started against. Used by clients to detect AR drift since the draft was created."
-    },
-    "requestType": {
-      "type": "string",
-      "enum": ["REQUEST", "RENEWAL"],
-      "description": "Whether this draft is for an initial request or a renewal."
-    },
-    "submissionData": {
-      "type": "object",
-      "description": "Partial submission data. Property keys correspond to top-level property names in the AR's pinned schema. Not validated against the schema until submit time."
-    },
-    "accessorChanges": {
-      "type": "array",
-      "description": "List of user changes captured so far.",
-      "items": {
-        "$ref": "org.sagebionetworks.repo.model.dataaccess.AccessorChange"
-      }
-    },
-    "subjectId": {
-      "type": "string",
-      "description": "The ID of the subject the user is interested in."
-    },
-    "subjectType": {
-      "$ref": "org.sagebionetworks.repo.model.RestrictableObjectType",
-      "description": "The type of the subject the user is interested in."
-    },
-    "modifiedOn": {
-      "type": "string",
-      "format": "date-time",
-      "description": "The last time this draft was saved."
-    }
-  },
-  "required": ["accessRequirement", "requestType"]
-}
-```
-
-`org.sagebionetworks.repo.model.dataaccess.schema.SubmitSchemaDataResultStatus`
-
-```json
-{
-  "title": "Submit Schema Data Result Status",
-  "description": "Status of a Submit Schema Data Response",
-  "type": "string",
-  "enum": [
-    {
-      "name": "SUCCESS",
-      "description": "A submission was successfully created using the attached data."
-    },
-    {
-      "name": "VALIDATION_ERROR",
-      "description": "Submitted data was invalid against the schema. No submission was created."
-    }
-  ]
-}
-```
-
-`org.sagebionetworks.repo.model.dataaccess.schema.SubmissionValidationResult`
-
-Note: all of these objects fields also exist in `org.sagebionetworks.repo.model.schema.ValidationResults`. We are likely to instead factor out an interface that describes these properties and reuse it in both implementations.
-
-```json
-{
-  "title": "Submission Validation Result",
-  "description": "Represents the JSON Schema validation results of a SubmitSchemaDataResponse.",
-  "properties": {
-    "isValid": {
-      "type": "boolean",
-      "description": "True if the object is currently valid according to the schema."
-    },
-    "validatedOn": {
-      "type": "string",
-      "format": "date-time",
-      "description": "The date-time this object was validated"
-    },
-    "validationErrorMessage": {
-      "type": "string",
-      "description": "If the object is not valid according to the schema, a simple one line error message will be provided."
-    },
-    "allValidationMessages": {
-      "description": "If the object is not valid according to the schema, a the flat list of error messages will be provided with one error message per sub-schema.",
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "validationException": {
-      "description": "If the object is not valid according to the schema, a recursive ValidationException will be provided that describes all violations in the sub-schema tree.",
-      "$ref": "org.sagebionetworks.repo.model.schema.ValidationException"
+      "description": "Request data that was provided using the associated JSON Schema."
     }
   }
 }
@@ -624,6 +473,31 @@ Note: all of these objects fields also exist in `org.sagebionetworks.repo.model.
 }
 ```
 
+`org.sagebionetworks.repo.model.HasDataUseCertificate`
+
+- interface factored out of `ManagedACTAccessRequirement` for reuse
+
+```json
+{
+  "title": "Has Data Use Certificate",
+  "description": "Describes an Access Requirement that may utilize a Data Use Certificate requirement.",
+  "properties": {
+    "isDUCRequired": {
+      "type": "boolean",
+      "description": "If true, then accessor needs to fill, sign, and submit a Data Use Certificate (DUC) to gain access to the data."
+    },
+    "ducTemplateFileHandleId": {
+      "type": "string",
+      "description": "If the Data Use Certificate (DUC) is required, creator of this requirement needs to upload a Data Use Certificate (DUC) template. Users have to download this template, fill out, sign and submit it."
+    },
+    "eDucTemplateId": {
+      "type": "string",
+      "description": "The ID of the electronic Data Use Certificate (eDUC) template to fill out for data access requests."
+    }
+  }
+}
+```
+
 `org.sagebionetworks.repo.model.JsonSchemaAccessRequirement`
 
 ```json
@@ -639,6 +513,9 @@ Note: all of these objects fields also exist in `org.sagebionetworks.repo.model.
     },
     {
       "$ref": "org.sagebionetworks.repo.model.HasExpiration"
+    },
+    {
+      "$ref": "org.sagebionetworks.repo.model.HasDataUseCertificate"
     }
   ],
   "properties": {
@@ -658,8 +535,9 @@ The submission already includes the `accessRequirementId` and `accessRequirement
 For submissions created against a `JsonSchemaAccessRequirement`:
 
 - `schemaData` carries the validated submission payload.
-- `requestId` is null — JsonSchema-based submissions do not use the legacy `Request` lifecycle. Drafts are managed via the schema draft service instead.
-- `researchProjectSnapshot` is null — its fields (institution, project lead, IDU, etc.) are now expressed as schema properties and live inside `schemaData`. The migration step backfills `schemaData` for historical ManagedACT submissions from their `researchProjectSnapshot`.
+- `requestId` is populated, and `schemaData` is snapshotted onto the `Submission` at submit-time.
+- `researchProjectSnapshot` is null — its fields (institution, project lead, IDU, etc.) are now expressed as schema properties and live inside `schemaData`.
+  - NOTE: The migration step will _not_ backfill `schemaData` for historical ManagedACT submissions. The reviewer UI should support showing the first class properties and/or `schemaData` regardless of AR type.
 
 ```json
 {
@@ -674,6 +552,105 @@ For submissions created against a `JsonSchemaAccessRequirement`:
 }
 ```
 
+`org.sagebionetworks.repo.model.dataaccess.schema.PublicSubmissionInfoPageRequest`
+
+```json
+{
+  "title": "Public Submission Info Page Request",
+  "description": "A request body to list publicly-disclosable information from approved submissions for a JsonSchemaAccessRequirement. Only fields whose FormTemplateField is marked isPublic (as of the FormTemplate version each submission was made against) are returned.",
+  "properties": {
+    "accessRequirementId": {
+      "type": "string",
+      "description": "The ID of the JsonSchemaAccessRequirement whose approved submissions should be listed."
+    },
+    "nextPageToken": {
+      "type": "string",
+      "description": "A token used to get the next page of a particular list request."
+    }
+  },
+  "required": ["accessRequirementId"]
+}
+```
+
+`org.sagebionetworks.repo.model.dataaccess.schema.PublicSubmissionInfoPage`
+
+```json
+{
+  "title": "Public Submission Info Page",
+  "description": "A single page of publicly-disclosable information from approved submissions. Field definitions are deduplicated by FormTemplate version (templateBundles) since many submissions typically share few template versions; each result row carries only its public values plus a reference to the applicable bundle.",
+  "properties": {
+    "templateBundles": {
+      "type": "array",
+      "description": "The form schema/UI bundles for each distinct FormTemplate version referenced by the results on this page. One entry per distinct template version. A result row is joined to its bundle by matching templateRef.",
+      "items": {
+        "$ref": "org.sagebionetworks.repo.model.dataaccess.schema.PublicSubmissionTemplateBundle"
+      }
+    },
+    "results": {
+      "type": "array",
+      "description": "The public submission info rows for this page.",
+      "items": {
+        "$ref": "org.sagebionetworks.repo.model.dataaccess.schema.PublicSubmissionInfo"
+      }
+    },
+    "nextPageToken": {
+      "type": "string",
+      "description": "A token used to get the next page of a particular list request."
+    }
+  },
+  "required": ["templateBundles", "results"]
+}
+```
+
+`org.sagebionetworks.repo.model.dataaccess.schema.PublicSubmissionTemplateBundle`
+
+```json
+{
+  "title": "Public Submission Template Bundle",
+  "description": "The rendered form schema and UI Schema for a single FormTemplate version, reused across all result rows that were submitted against that version. Reuses the same GenerateDataAccessSchemaResponse shape returned by the schema generation service so clients can render public submission info through the identical path as the live form. Includes definitions for all fields (both public and private); privacy is enforced solely by which values appear in each row's publicValues.",
+  "properties": {
+    "templateRef": {
+      "$ref": "org.sagebionetworks.repo.model.dataaccess.schema.FormTemplateReference",
+      "description": "The FormTemplate id and version this bundle describes."
+    },
+    "generatedSchema": {
+      "$ref": "org.sagebionetworks.repo.model.dataaccess.schema.GenerateDataAccessSchemaResponse",
+      "description": "The per-step (jsonSchema, uiSchema) bundle for this template version. The server performs no label/title computation; enum and oneOf label resolution is the client's responsibility."
+    }
+  },
+  "required": ["templateRef", "generatedSchema"]
+}
+```
+
+`org.sagebionetworks.repo.model.dataaccess.schema.PublicSubmissionInfo`
+
+```json
+{
+  "title": "Public Submission Info",
+  "description": "Publicly-disclosable information from a single approved submission. Contains only values whose FormTemplateField was marked isPublic as of the FormTemplate version this submission was made against (snapshot semantics: later changes to a template's isPublic flags do not retroactively affect this submission). Sensitive information such as accessorChanges is never included.",
+  "properties": {
+    "templateRef": {
+      "$ref": "org.sagebionetworks.repo.model.dataaccess.schema.FormTemplateReference",
+      "description": "The FormTemplate id and version this submission was made against. Used to locate the applicable bundle in templateBundles."
+    },
+    "publicValues": {
+      "type": "object",
+      "description": "A sparse map of the submission's public answers. Keys are top-level property names (schema paths) that were marked isPublic; values are the submitter's answers for those properties. Non-public properties are omitted entirely."
+    },
+    "submittedBy": {
+      "type": "string",
+      "description": "The ID of the user that submitted this submission."
+    },
+    "modifiedOn": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The date the submission was last modified."
+    }
+  },
+  "required": ["templateRef", "publicValues"]
+}
+```
+
 ### Sequence Diagram Examples
 
 ```mermaid
@@ -682,10 +659,12 @@ sequenceDiagram
     participant Schema as JSON Schema Service
     participant API as Synapse API
 
-    note over ACT, API: Step 1: Register the JSON Schema for the AR's data contract
+    note over ACT, API: Step 1: Register the JSON Schema for the AR's custom questions (e.g. intendedDataUse)
 
-    ACT->>Schema: POST /schema (existing service)<br/>{schema with institution, intendedDataUse, projectLead}
+    ACT->>Schema: POST /schema (existing service)<br/>{schema with intendedDataUse + custom fields}
     Schema-->>ACT: JsonSchemaVersionInfo<br/>{$id: "org.sagebionetworks.example.dar", semanticVersion: "1.0.0"}
+
+    note over ACT, API: Note: institution / PI / signing official are NOT in the schema
 
     note over ACT, API: Step 2 (optional): Preview the form before saving the template
 
@@ -699,14 +678,14 @@ sequenceDiagram
     ACT->>API: POST /accessRequirement/formTemplate<br/>{name, schemaRef, steps: [...]}
     API-->>ACT: FormTemplate {id: "T1", versionNumber: 1, ...}
 
-    note over ACT, API: Step 4: Create the AR referencing the template
+    note over ACT, API: Step 4: Create the AR referencing the template<br/>(DUC capability optional, via HasDataUseCertificate interface)
 
-    ACT->>API: POST /accessRequirement<br/>JsonSchemaAccessRequirement<br/>{formTemplateRef: {templateId: "T1", templateVersionNumber: 1}, ...}
+    ACT->>API: POST /accessRequirement<br/>JsonSchemaAccessRequirement<br/>{formTemplateRef: {templateId: "T1", templateVersionNumber: 1},<br/>isDUCRequired: true, eDucTemplateId: "D1", ...}
     API-->>ACT: JsonSchemaAccessRequirement {id: "9000", versionNumber: 1, ...}
 
-    note over ACT, API: A second AR can share the same template (N:1)
+    note over ACT, API: A second AR can share the same template (N:1)<br/>and may enable/disable DUC independently
 
-    ACT->>API: POST /accessRequirement<br/>JsonSchemaAccessRequirement<br/>{formTemplateRef: {templateId: "T1", templateVersionNumber: 1}, ...}
+    ACT->>API: POST /accessRequirement<br/>JsonSchemaAccessRequirement<br/>{formTemplateRef: {templateId: "T1", templateVersionNumber: 1},<br/>isDUCRequired: false, ...}
     API-->>ACT: JsonSchemaAccessRequirement {id: "9001", versionNumber: 1, ...}
 
     note over ACT, API: Later: update the form (relabel a step, add a UI hint)
@@ -736,7 +715,7 @@ sequenceDiagram
     UI->>API: GET /accessRequirement/9000/status
     API-->>UI: AccessRequirementStatus (unmet)
 
-    note over User, Worker: Step 2: Generate the form schema
+    note over User, Worker: Step 2: Generate the form schema (custom questions only)
 
     UI->>API: POST /dataAccessSubmission/schema/generate/async/start<br/>GenerateDataAccessSchemaFromAccessRequirement<br/>{accessRequirement: {accessRequirementId: "9000",<br/>accessRequirementVersionNumber: 2}}
     API->>Worker: dispatch job
@@ -749,33 +728,29 @@ sequenceDiagram
     UI->>API: GET /dataAccessSubmission/schema/generate/async/get/job-3
     API-->>UI: {steps: [{jsonSchema, uiSchema}, ...]}
 
-    note over User, Worker: Step 3: User fills out the form
+    note over User, Worker: Step 3: User fills out the wizard
 
-    UI->>User: Render form using jsonSchema + uiSchema (per step)
-    User->>UI: Fills in all fields step by step
+    UI->>User: Render fixed section (institution, PI, signing official, accessors)<br/>+ schema-driven steps (jsonSchema + uiSchema)
+    User->>UI: Fills first-class fields + custom fields step by step
 
-    note over User, Worker: Step 4: Submit
+    note over User, Worker: Step 4: Save draft = create/update the Request (resumable, one per user+AR)
 
-    UI->>API: POST /dataAccessSubmission/schema/submit/async/start<br/>SubmitSchemaDataRequest<br/>{accessRequirement: {accessRequirementId: "9000",<br/>accessRequirementVersionNumber: 2},<br/>submissionData: {institution, intendedDataUse, projectLead}}
-    API->>Worker: dispatch job
-    API-->>UI: AsyncJobId {token: "job-4"}
+    UI->>API: POST /dataAccessRequest (create-or-update)<br/>{accessRequirementId: "9000", institution, principalInvestigator,<br/>signingOfficial, accessorChanges, schemaData: {intendedDataUse, ...}}
+    API-->>UI: Request {id: "R1", etag, ...}
 
-    Worker->>Worker: Resolve AR 9000 v2 → schema S1
-    Worker->>Worker: Validate submissionData against S1
+    note over User, Worker: Step 5: (optional) choose eDUC or traditional DUC, then submit synchronously
+
+    UI->>API: POST /dataAccessRequest/R1/submission<br/>CreateSubmissionRequest {requestEtag}
 
     alt Validation succeeds
-        Worker->>Worker: Create Submission for AR 9000
-        Worker-->>API: SubmitSchemaDataResponse {status: SUCCESS}
-
-        UI->>API: GET /dataAccessSubmission/schema/submit/async/get/job-4
-        API-->>UI: {status: "SUCCESS", submissionId: "sub-1"}
+        API->>API: Resolve AR 9000 v2 → schema S1<br/>Validate Request.schemaData against S1
+        API->>API: Create Submission (requestId = R1,<br/>schemaData snapshotted, researchProjectSnapshot = null)
+        API-->>UI: SubmissionStatus {submissionId: "sub-1", state: SUBMITTED}
         UI->>User: Submission created successfully
     else Validation fails
-        Worker-->>API: SubmitSchemaDataResponse {status: VALIDATION_ERROR}
-
-        UI->>API: GET /dataAccessSubmission/schema/submit/async/get/job-4
-        API-->>UI: {status: "VALIDATION_ERROR",<br/>validationErrors: {isValid: false,<br/>validationException: {pointerToViolation: "...", ...}}}
-        UI->>User: Show inline validation errors on the form
+        API->>API: Validate Request.schemaData against S1 → invalid
+        API-->>UI: HTTP 400 {reason: "concatenated schema validation messages"}
+        UI->>User: Show inline validation errors (client-side, from RJSF)
     end
 ```
 
@@ -783,6 +758,8 @@ sequenceDiagram
 
 The following images are for demonstration purposes only and are subject to change. They may be out-of-date as this design is updated.
 ![[Pasted image 20260506134426.png]]
+
+Video Demonstration: a video demonstration was added to the Confluence source for this section; it is not recoverable as a static Markdown asset from this export. See the [Confluence page](https://sagebionetworks.jira.com/wiki/spaces/PLFM/pages/4585324546) for the video.
 
 ## Open Questions
 
@@ -793,7 +770,15 @@ The following images are for demonstration purposes only and are subject to chan
       - Should the submission be accepted for review by the system? Should we only allow submission against the latest version of the AR (forcing the user to restart)?
       - What about the case where the submission is created, but has not been reviewed, before the AR update?
       - How should the draft service surface drift? (Likely the UI compares the draft's `accessRequirement.accessRequirementVersionNumber` against the current AR version and warns the user, but the contract should be explicit.)
-- **Per-property publication policy**. The legacy `ManagedACTAccessRequirement.isIDUPublic` flag designated whether the IDU statement could be disclosed publicly. Under the schema-based model, individual schema properties (not just the IDU) could be flagged as publicly disclosable. Recommendation: treat this as out-of-scope for the REST API; the data should be retrieved from the data warehouse and exposed via a Synapse Table (similar to the data catalog and other similar data)
+
+### Preventing duplicate inputs for fields required by eDUC
+
+To support the eDUC flow, we must prompt for certain first-class fields, including PI name, PI email, institution, etc. Should these first-class form fields always be presented statically?
+
+Or must we design a way for the JSON Schema to somehow customize these fields? If the fields must be dynamically controlled by the schema, options include
+
+- eDUC-compatible ARs must include a `$ref` to a schema that describes the eDUC-required fields
+- eDUC-compatible ARs must use a JSON Schema that includes properties matching eDUC-required fields.
 
 ## Appendix
 
