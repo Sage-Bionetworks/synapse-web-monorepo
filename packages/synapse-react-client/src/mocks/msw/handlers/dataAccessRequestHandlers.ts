@@ -56,7 +56,7 @@ export function getDataAccessRequestHandlers(backendOrigin: string) {
           'accessRequirementId',
           params.id as string,
         )
-        if (response && response.requestId) {
+        if (response?.requestId) {
           const dataAccessRequest = mockDataAccessRequestService.getOneById(
             response.requestId,
           )

@@ -130,7 +130,7 @@ function useSynchronizeQueryWithUrl(
         componentIndex,
         initQueryRequest.query,
       ).then(queryRequestFromLink => {
-        if (queryRequestFromLink && queryRequestFromLink.query) {
+        if (queryRequestFromLink?.query) {
           setQuery(prevState => ({
             ...prevState,
             ...queryRequestFromLink,
