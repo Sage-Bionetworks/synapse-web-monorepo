@@ -65,7 +65,7 @@ export function DownloadOptions(props: DownloadOptionsProps) {
           key={'add-to-download-list'}
           title={
             disableDownload
-              ? 'A draft version of a dataset cannot be added to the Download Cart'
+              ? 'A draft version of a dataset cannot be added to the Download List'
               : null
           }
           placement="left"

@@ -1,7 +1,7 @@
 import { portalMetadata } from '@/config/portalMetadata'
-import hackathons from '@/config/synapseConfigs/hackathons'
+import { hackathonsSearch } from '@/config/synapseConfigs/hackathons'
 import { createStaticMeta } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import SearchQueryWrapperPlotNav from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 export const meta = createStaticMeta(
   { title: 'Explore Hackathon Projects' },
@@ -9,7 +9,9 @@ export const meta = createStaticMeta(
 )
 
 function ExploreHackathons() {
-  return <QueryWrapperPlotNav {...hackathons} />
+  return (
+    <SearchQueryWrapperPlotNav {...hackathonsSearch} shouldDeepLink={true} />
+  )
 }
 
 export default ExploreHackathons

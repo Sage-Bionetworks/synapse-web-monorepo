@@ -1,7 +1,6 @@
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
-import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import {
   ColumnSingleValueFilterOperator,
   ColumnMultiValueFunction,
@@ -18,9 +17,30 @@ import {
   projectSchema,
   projectsRgbIndex,
 } from '../config/synapseConfigs/projects'
+import { portalMetadata } from '@/config/portalMetadata'
+import { createDetailPageRouteExports } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
+import { useParams } from 'react-router'
+import { ErrorPage, SynapseErrorType } from 'synapse-react-client'
+import { metadataConfig } from './ProjectDetailsPage.config'
+
+export { metadataConfig }
+
+const _routeExports = createDetailPageRouteExports(
+  metadataConfig,
+  portalMetadata,
+)
+
+export const loader = _routeExports.loader
+export const clientLoader = _routeExports.clientLoader
+export const meta = _routeExports.meta
 
 function ProjectDetailsPage() {
-  const searchParams = useGetPortalComponentSearchParams()
+  const { Project } = useParams<{ Project: string }>()
+
+  if (!Project) {
+    return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
+  }
+
   return (
     <DetailsPage
       header={
@@ -38,12 +58,14 @@ function ProjectDetailsPage() {
           columnAliases={columnAliases}
           sql={projectsSql}
           sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
-          searchParams={searchParams}
+          searchParams={{ Project }}
         />
       }
       sql={projectsSql}
       sqlOperator={ColumnSingleValueFilterOperator.EQUAL}
       resourcePrimaryKey={['Project']}
+      searchParams={{ Project }}
+      disableCanonicalUrl
     >
       <DetailsPageContent
         content={[

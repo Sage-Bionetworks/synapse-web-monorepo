@@ -16,28 +16,30 @@ Data curation task management for Synapse. Enables two user types to collaborate
 ## File Organization
 
 - **`components/`** — UI components
-  - `MetadataTasksPage` — Main page displaying the task table with "View only assigned to me" filter (useful for both roles)
-  - `MetadataTaskTableActionCell` — Task row actions: **Open** (contributors edit data), **Curator** button (managers mark complete)
+  - `MetadataTasksPage` — Main page displaying the task table with "View only assigned to me" filter. Users with `canAddChild` permission on the project also see a **New Task** button that opens `CreateOrUpdateCurationTaskDialog` in create mode.
+  - `MetadataTaskTableActionCell` — Task row actions. Data managers (`canEdit`) see an **Edit** button (opens `CreateOrUpdateCurationTaskDialog` in edit mode). All users see the **Open** (curator) button to launch the grid session.
   - `MetadataTasksTableAssigneeCell` — Shows current assignee; **editable by managers only** to reassign tasks
+  - `CreateOrUpdateCurationTaskDialog` — Multi-step dialog for creating or editing curation tasks. In **create mode**: 3-step wizard — (1) choose task type (`FileBasedMetadataTaskProperties` or `RecordBasedMetadataTaskProperties`), (2) fill type-specific fields (entity IDs), (3) fill common mutable fields (task name, instructions, assignee, authorization mode, collaborators). In **edit mode**: opens directly at step 3 (common mutable fields only). Shows a warning when `suggestedAuthorizationMode` is changed in edit mode, since doing so clears the active linked grid session.
 - **`hooks/`** — Data fetching and state management
   - `useMetadataTaskTable` — TanStack Table instance with columns and data fetching
   - `useGetOrCreateGridSessionForSource` — Gets or creates a grid session for a task's data source
-  - `useGridSessionForCurationTask_legacy` — Used by `MetadataTaskTableActionCell` to get or create a grid session owned by the calling user. Does not link the session to the task or check assignee. Deprecated long-term (enables a data-loss scenario when multiple users create parallel sessions) but currently the only path used, since task-linked sessions caused unexpected assignee-gating behavior for users
-  - `useGridSessionForCurationTask` — Task-linked variant that tracks session ownership vs. task assignee. Not currently wired into the UI; retained for when task linking is revisited
+  - `useGridSessionForCurationTask_legacy` — Used when a task has no `suggestedAuthorizationMode` set. Gets or creates a grid session owned by the calling user. Does not link the session to the task. Deprecated long-term (enables a data-loss scenario when multiple users create parallel sessions).
+  - `useGridSessionForCurationTask` — Task-linked variant. Used by tasks that have `suggestedAuthorizationMode` set. Reads `suggestedAuthorizationMode` from `taskProperties` and uses it as the `authorizationMode` when creating a grid session. For `SESSION_OWNER` mode, sets `ownerPrincipalId` to the task's assignee. Throws if `suggestedAuthorizationMode` is absent.
 - **`utils/`** — Helper functions
   - `getGridSourceIdForTask` — Determines the entity ID to open for editing
   - `getLatestGridSessionForSource` — Finds the most recent grid session for a data source
   - `getCreateGridRequestForMetadataTask` — Builds the grid session creation payload
   - `taskHasAssignee` — Boolean check for assignment state
+  - `constants.ts` — String constants for UI labels, tooltips, and error/warning messages
 
 ## Key Pattern: Grid Session Lifecycle
 
-1. User opens a task → `useGridSessionForCurationTask_legacy` is called
-2. `useGetOrCreateGridSessionForSource` returns an existing session for the data source or creates one owned by the calling user
-3. Grid session ID is used to open the editing context (usually opens SWC)
-4. Subsequent tasks from the same source reuse the grid session
+The path taken when a user clicks **Open** depends on whether the task has `suggestedAuthorizationMode` set in `taskProperties`:
 
-The action cell only gates the **Open Curator** button on READ access to the source entity — no assignee check, no feature-flag branches, no warning dialogs. Task assignee is informational only.
+- **`suggestedAuthorizationMode` is set** → `useGridSessionForCurationTask` (task-linked path). The mode is passed directly as `authorizationMode` on the `CreateGridRequest`. For `SESSION_OWNER` mode, `ownerPrincipalId` is set to the task's assignee, scoping the session to that user. For `SOURCE_BENEFACTOR` mode, no owner is set.
+- **`suggestedAuthorizationMode` is absent** → `useGridSessionForCurationTask_legacy` (legacy path). Creates a session owned by the calling user; session is not linked to the task.
+
+The action cell gates the **Open** button on READ access to the source entity, but various other permission scenarios may block the user from accessing a grid session, depending on the session's authorization mode.
 
 ## Testing
 

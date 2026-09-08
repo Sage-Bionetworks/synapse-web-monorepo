@@ -79,7 +79,7 @@ const projectFilesStatsResponse: ProjectFilesStatisticsResponse = {
 async function renderComponent(props: StatisticsPlotProps) {
   let renderReturn: RenderResult<Queries, HTMLElement, HTMLElement> | undefined
   // We must await asynchronous events for our assertions to pass
-  // eslint-disable-next-line @typescript-eslint/require-await
+  // oxlint-disable-next-line @typescript-eslint/require-await
   await act(async () => {
     renderReturn = render(<StatisticsPlot {...props} />, {
       wrapper: createWrapper(),

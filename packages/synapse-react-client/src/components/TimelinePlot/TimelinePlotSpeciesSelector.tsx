@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useId } from 'react'
 import { StyledFormControl } from '@/components/styled'
 import { useGetFullTableQueryResults } from '@/synapse-queries'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions'
@@ -20,6 +20,8 @@ export const TimelinePlotSpeciesSelector = ({
   species,
   setSpecies,
 }: TimelinePlotSpeciesSelectorProps): React.ReactNode => {
+  const speciesLabelId = useId()
+
   const eventsTableId = parseEntityIdFromSqlStatement(sql)
   // Fetch the species
   const eventTableQuery = useGetFullTableQueryResults({
@@ -46,9 +48,10 @@ export const TimelinePlotSpeciesSelector = ({
   return (
     <Box>
       <StyledFormControl>
-        <InputLabel>Species</InputLabel>
+        <InputLabel id={speciesLabelId}>Species</InputLabel>
         <Select
           sx={{ marginLeft: '2px', marginBottom: '2px' }}
+          labelId={speciesLabelId}
           value={species}
           label="Species"
           onChange={event => {

@@ -3,6 +3,7 @@ import { ReactComponent as CohortBuilder } from './cohort_builder_illustration.s
 import { ReactComponent as DataAccessManagement } from './data_access_management_illustration.svg'
 import { ReactComponent as Datasets } from './datasets_illustration.svg'
 import { ReactComponent as Discussions } from './discussions_illustration.svg'
+import { ReactComponent as Discussions2 } from './discussions_illustration2.svg'
 import { ReactComponent as Docker } from './docker_illustration.svg'
 import { ReactComponent as Favorites } from './favorites_illustration.svg'
 import { ReactComponent as Files } from './files_illustration.svg'
@@ -24,6 +25,7 @@ const Illustrations = {
   DataAccessManagement,
   Datasets,
   Discussions,
+  Discussions2,
   Docker,
   Favorites,
   Files,

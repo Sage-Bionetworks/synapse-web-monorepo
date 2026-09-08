@@ -11,6 +11,7 @@ export { type TreeNode } from './hooks/useEntityTreeState'
 import { EntityTreeTableView } from './components/EntityTreeTableView'
 import { EntityTreeTableContext } from './components/EntityTreeTableContext'
 import NoContentAvailable from '../SynapseTable/NoContentAvailable'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 
 type EntityTreeTableProps = {
   /** The Synapse ID of the root entity to display */
@@ -23,6 +24,16 @@ type EntityTreeTableProps = {
   enableSorting?: boolean
   /** Callback when an entity is clicked. If not provided, defaults to opening Synapse.org page. */
   onEntityIdClicked?: (entityId: string) => void
+  /** Set of selected entity IDs. When provided, a checkbox column is shown. */
+  selectedIds?: Set<string>
+  /** Callback when a row's checkbox is toggled. */
+  onToggleSelection?: (
+    entityId: string,
+    entityType: EntityType,
+    versionNumber: number | undefined,
+  ) => void
+  /** When true, entity names in the table are rendered as plain text instead of links. Defaults to false. */
+  disableEntityLinks?: boolean
 }
 
 export type EntityBundleRow = {
@@ -42,6 +53,9 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
   showRootNode = true,
   enableSorting = true,
   onEntityIdClicked,
+  selectedIds,
+  onToggleSelection,
+  disableEntityLinks = false,
 }) => {
   // Use hook for state management and data initialization
   const {
@@ -83,7 +97,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
     )
 
   // Get table columns
-  const columns = useTableColumns(enableSorting)
+  const columns = useTableColumns(enableSorting, onToggleSelection != null)
 
   // Get table data
   const rows = useTableData(
@@ -149,6 +163,10 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
           },
           nextPageTokens,
           onEntityIdClicked,
+          selectedIds,
+          onToggleSelection,
+          disableEntityLinks,
+          tree,
         }}
       >
         {isTreeEmpty ? (

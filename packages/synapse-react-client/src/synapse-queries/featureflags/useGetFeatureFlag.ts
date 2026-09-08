@@ -1,6 +1,6 @@
 import SynapseClient from '@/synapse-client'
 import { SynapseClientError, useSynapseContext } from '@/utils'
-import { FeatureFlagEnum, FeatureFlags } from '@sage-bionetworks/synapse-types'
+import { FeatureFlagEnum, FeatureFlags } from '@/utils/featureflag/FeatureFlags'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 
 export function useGetFeatureFlag(
@@ -16,5 +16,6 @@ export function useGetFeatureFlag(
     queryFn: () => SynapseClient.getFeatureFlags(),
   })
 
-  return isInExperimentalMode || !!featureFlags?.[featureFlag]
+  // true → always enabled; false → always disabled; null/undefined → follows experimental mode
+  return featureFlags?.[featureFlag] ?? isInExperimentalMode
 }

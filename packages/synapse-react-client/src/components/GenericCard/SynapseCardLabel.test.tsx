@@ -70,6 +70,121 @@ describe('SynapseCardLabel tests', () => {
     )
   })
 
+  describe('overrideValueWithRowID', () => {
+    const ROW_ID = '29837062'
+
+    test('prefixes the row ID with "syn"', () => {
+      render(
+        <SynapseCardLabel
+          value={'Some Dataset Name'}
+          labelLink={{
+            isMarkdown: false,
+            baseURL: datasetBaseURL,
+            URLColumnName: DATASETS,
+            matchColumnName: 'dataset',
+            overrideValueWithRowID: true,
+          }}
+          isHeader={false}
+          selectColumns={selectColumns}
+          columnModels={undefined}
+          columnName={DATASETS}
+          rowData={[]}
+          rowId={ROW_ID}
+        />,
+        { wrapper: createWrapper() },
+      )
+
+      expect(screen.getByRole('link')).toHaveAttribute(
+        'href',
+        `/${datasetBaseURL}?${DATASETS}=syn${ROW_ID}`,
+      )
+    })
+
+    test('prefixes the row ID with "syn" for path-segment URLs', () => {
+      render(
+        <SynapseCardLabel
+          value={'Some Dataset Name'}
+          labelLink={{
+            isMarkdown: false,
+            baseURL: datasetBaseURL,
+            URLColumnName: DATASETS,
+            matchColumnName: 'dataset',
+            overrideValueWithRowID: true,
+            urlParamStyle: 'path-segment',
+          }}
+          isHeader={false}
+          selectColumns={selectColumns}
+          columnModels={undefined}
+          columnName={DATASETS}
+          rowData={[]}
+          rowId={ROW_ID}
+        />,
+        { wrapper: createWrapper() },
+      )
+
+      expect(screen.getByRole('link')).toHaveAttribute(
+        'href',
+        `/${datasetBaseURL}/syn${ROW_ID}`,
+      )
+    })
+
+    test('falls back to the label value when there is no row ID', () => {
+      const value = 'Some Dataset Name'
+      render(
+        <SynapseCardLabel
+          value={value}
+          labelLink={{
+            isMarkdown: false,
+            baseURL: datasetBaseURL,
+            URLColumnName: DATASETS,
+            matchColumnName: 'dataset',
+            overrideValueWithRowID: true,
+          }}
+          isHeader={false}
+          selectColumns={selectColumns}
+          columnModels={undefined}
+          columnName={DATASETS}
+          rowData={[]}
+        />,
+        { wrapper: createWrapper() },
+      )
+
+      expect(screen.getByRole('link')).toHaveAttribute(
+        'href',
+        `/${datasetBaseURL}?${DATASETS}=${value}`,
+      )
+    })
+  })
+
+  test('resolveEntityName links to the entity on Synapse.org', () => {
+    const value = 'syn1234567'
+    render(
+      <SynapseCardLabel
+        value={value}
+        labelLink={{
+          isMarkdown: false,
+          baseURL: 'Explore/Studies',
+          URLColumnName: 'studyId',
+          matchColumnName: 'studyId',
+          resolveEntityName: true,
+        }}
+        isHeader={false}
+        selectColumns={selectColumns}
+        columnModels={undefined}
+        columnName={'studyId'}
+        rowData={[]}
+      />,
+      { wrapper: createWrapper() },
+    )
+    const link = screen.getByTestId('EntityLink')
+    expect(link.getAttribute('href')).toEqual(
+      `https://www.synapse.org/Synapse:${value}`,
+    )
+    const entityLinkProps = mockEntityLink.mock.calls[0][0]
+    expect(entityLinkProps.entity).toEqual(value)
+    expect(entityLinkProps.link).toBeUndefined()
+  })
+
   test('works with a header', () => {
     const value = 'syn1234567'
     const { container } = render(

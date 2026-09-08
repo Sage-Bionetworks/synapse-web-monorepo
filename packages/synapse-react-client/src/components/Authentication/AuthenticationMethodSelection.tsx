@@ -5,6 +5,7 @@ import {
   LOGIN_METHOD_EMAIL,
   LOGIN_METHOD_OAUTH2_ARCUS,
   LOGIN_METHOD_OAUTH2_GOOGLE,
+  LOGIN_METHOD_OAUTH2_NIH_RESEARCHER_AUTH_SERVICE,
   LOGIN_METHOD_OAUTH2_ORCID,
   LOGIN_METHOD_OAUTH2_SAGE_BIONETWORKS,
   OAUTH2_PROVIDERS,
@@ -25,6 +26,7 @@ type AuthenticationMethodSelectionProps = {
   onSelectUsernameAndPassword: () => void
   state?: OAuth2State
   realm?: Realm
+  showRASLogin?: boolean
 }
 
 const csrfToken = generateCsrfToken()
@@ -43,6 +45,7 @@ export default function AuthenticationMethodSelection(
     onSelectUsernameAndPassword,
     state,
     realm,
+    showRASLogin,
   } = props
 
   const showArcusSSOButtonOnly = hasArcusProvider(realm)
@@ -89,6 +92,15 @@ export default function AuthenticationMethodSelection(
               onSSOSignIn(event, OAUTH2_PROVIDERS.ORCID)
             }}
           />
+          {showRASLogin && (
+            <LoginMethodButton
+              loginMethod={LOGIN_METHOD_OAUTH2_NIH_RESEARCHER_AUTH_SERVICE}
+              iconName="nih"
+              onClick={event => {
+                onSSOSignIn(event, OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE)
+              }}
+            />
+          )}
           <LoginMethodButton
             loginMethod={LOGIN_METHOD_EMAIL}
             iconName="email"

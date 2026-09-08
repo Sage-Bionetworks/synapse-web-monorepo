@@ -34,6 +34,7 @@ export type StandaloneLoginFormProps = {
   /* Invoked when password login is selected */
   onPasswordLoginSelected?: () => void
   realm?: Realm
+  showRASLogin?: boolean
 }
 
 export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
@@ -50,6 +51,7 @@ export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
     twoFactorAuthResetUri,
     onPasswordLoginSelected,
     realm,
+    showRASLogin,
   } = props
 
   const {
@@ -114,6 +116,7 @@ export default function StandaloneLoginForm(props: StandaloneLoginFormProps) {
         twoFactorAuthResetUri={twoFactorAuthResetUri}
         onPasswordLoginSelected={onPasswordLoginSelected}
         realm={realm}
+        showRASLogin={showRASLogin}
       />
     </Box>
   )

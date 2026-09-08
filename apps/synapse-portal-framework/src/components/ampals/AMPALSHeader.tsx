@@ -2,6 +2,8 @@ import React from 'react'
 import { Box, Typography } from '@mui/material'
 import HeaderSearchBox from '../HeaderSearchBox'
 import { usePortalContext } from '@/components/PortalContext'
+import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
+import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
 
 type AMPALSHeaderProps = {
   headerSvgURL: string
@@ -86,6 +88,7 @@ const AMPALSHeader = (props: AMPALSHeaderProps): React.ReactNode => {
           searchExampleTerms={searchExampleTerms}
           searchPlaceholder={searchPlaceholder}
           path="/Search"
+          isChatEnabled={useGetFeatureFlag(FeatureFlagEnum.PORTAL_CHAT)}
           sx={{
             flex: 1,
             '& > :first-child': {

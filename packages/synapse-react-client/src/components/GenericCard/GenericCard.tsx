@@ -47,6 +47,8 @@ export type GenericCardProps = {
   cardTopContent?: React.ReactNode
   /** Optional slot for adding action buttons to the top of the card */
   cardTopButtons?: React.ReactNode
+  /** Optional position of CTA link(s) */
+  ctaLinkPosition?: 'right'
   /** If true, a HeaderCard component will be rendered */
   isHeader?: boolean
   /** The variant of HeaderCard to render if `isHeader` is true */
@@ -120,6 +122,7 @@ export const GenericCard = forwardRef(function GenericCard(
     labels = EMPTY_CARD_LABEL_ARRAY,
     secondaryLabelLimit,
     ctaLinkConfig,
+    ctaLinkPosition,
     renderedIconList,
     sustainabilityScorecard,
     cardTypeAdornment,
@@ -167,11 +170,25 @@ export const GenericCard = forwardRef(function GenericCard(
     )
   }
 
+  const ctaLinks = ctaLinkConfig
+    ? (Array.isArray(ctaLinkConfig) ? ctaLinkConfig : [ctaLinkConfig]).map(
+        (config, index) =>
+          config.text &&
+          config.href && (
+            <SmartLink key={index} href={config.href} target={config.target}>
+              {config.text}
+            </SmartLink>
+          ),
+      )
+    : null
+
   return (
     <div style={style} ref={ref} className={'SRC-portalCard'}>
       <div className={'SRC-portalCardMain'}>
         {icon}
-        <div className="SRC-cardContent">
+        <div
+          className={`SRC-cardContent ${ctaLinkPosition === 'right' ? 'SRC-cardContent--ctaRight' : ''}`}
+        >
           {cardTopButtons && (
             <Box
               sx={{
@@ -197,7 +214,9 @@ export const GenericCard = forwardRef(function GenericCard(
             {cardTypeAdornment}
           </Stack>
           {renderedIconList}
-          <Box className="SRC-cardTitleArea">
+          <Box
+            className={`SRC-cardTitleArea ${ctaLinkPosition === 'right' ? 'SRC-cardTitleArea--ctaRight' : ''}`}
+          >
             <Box sx={{ flex: 1, minWidth: 0 }}>
               <div>
                 <h3
@@ -230,26 +249,11 @@ export const GenericCard = forwardRef(function GenericCard(
                 descriptionSubTitle={descriptionSubTitle}
                 descriptionConfig={descriptionConfig}
               />
-              {ctaLinkConfig && (
+              {ctaLinkConfig && ctaLinkPosition !== 'right' && (
                 <Box
                   sx={{ mt: '20px', display: 'flex', gap: 2, flexWrap: 'wrap' }}
                 >
-                  {(Array.isArray(ctaLinkConfig)
-                    ? ctaLinkConfig
-                    : [ctaLinkConfig]
-                  ).map(
-                    (config, index) =>
-                      config.text &&
-                      config.href && (
-                        <SmartLink
-                          key={index}
-                          href={config.href}
-                          target={config.target}
-                        >
-                          {config.text}
-                        </SmartLink>
-                      ),
-                  )}
+                  {ctaLinks}
                 </Box>
               )}
             </Box>
@@ -257,6 +261,9 @@ export const GenericCard = forwardRef(function GenericCard(
               <div className="SRC-cardTitleAreaDetails">
                 {titleAreaRightContent}
               </div>
+            )}
+            {ctaLinkPosition === 'right' && ctaLinkConfig && (
+              <Box sx={{ flexShrink: 0, marginLeft: 'auto' }}>{ctaLinks}</Box>
             )}
           </Box>
         </div>

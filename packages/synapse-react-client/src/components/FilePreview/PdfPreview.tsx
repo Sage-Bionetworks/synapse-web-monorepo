@@ -1,12 +1,11 @@
 import SynapseClient from '@/synapse-client'
-import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
-import { Alert } from '@mui/material'
+import { Alert, Skeleton } from '@mui/material'
 import {
   FileHandle,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
-import { useRef } from 'react'
+import { useFetchBlobUrl } from '@/utils/hooks/useFetchBlobUrl'
 
 export type PdfPreviewProps = {
   fileHandle: FileHandle
@@ -23,7 +22,16 @@ const friendlyMaxPdfSize = calculateFriendlyFileSize(maxPdfSize) // 30MB
  */
 export default function PdfPreview(props: PdfPreviewProps) {
   const { fileHandle, fileHandleAssociation: fha } = props
-  const frameEl = useRef(null)
+
+  const { blobUrl, error: blobError } = useFetchBlobUrl(
+    fileHandle.contentSize > maxPdfSize
+      ? undefined
+      : SynapseClient.getPortalFileHandleServletUrl(
+          fha.fileHandleId,
+          fha.associateObjectId,
+          fha.associateObjectType,
+        ),
+  )
 
   const friendlyFileSize = calculateFriendlyFileSize(fileHandle.contentSize)
   if (fileHandle.contentSize > maxPdfSize) {
@@ -34,21 +42,20 @@ export default function PdfPreview(props: PdfPreviewProps) {
       </Alert>
     )
   }
-  const fhaUrl = SynapseClient.getPortalFileHandleServletUrl(
-    fha.fileHandleId,
-    fha.associateObjectId,
-    fha.associateObjectType,
-  )
+
+  if (blobError) {
+    return (
+      <Alert severity="error" sx={{ marginBottom: '20px' }}>
+        The PDF preview could not be loaded: {blobError.message}
+      </Alert>
+    )
+  }
+
+  if (!blobUrl) {
+    return <Skeleton variant="rectangular" width="100%" height="800px" />
+  }
+
   return (
-    <>
-      <iframe
-        ref={frameEl}
-        src={`${getEndpoint(
-          BackendDestinationEnum.PORTAL_ENDPOINT,
-        )}pdf.js/web/viewer.html?file=${encodeURIComponent(fhaUrl)}`}
-        height="800px"
-        style={{ border: 0, width: '100%' }}
-      />
-    </>
+    <iframe src={blobUrl} height="800px" style={{ border: 0, width: '100%' }} />
   )
 }

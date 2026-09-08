@@ -6,6 +6,8 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
+import { Outlet } from 'react-router'
+import { InFlightEDucSignaturesTable } from './InFlightEDucSignaturesTable'
 import { UserAccessRequestHistoryTable } from './UserAccessRequestHistoryTable'
 
 type FaqItem = {
@@ -33,6 +35,7 @@ export function UserAccessRequestHistoryPage() {
         gap: 2,
       }}
     >
+      <InFlightEDucSignaturesTable />
       <Typography variant="headline1" gutterBottom>
         History of your access requests
       </Typography>
@@ -63,6 +66,8 @@ export function UserAccessRequestHistoryPage() {
         </>
       )}
       <UserAccessRequestHistoryTable />
+      {/* Mount point for nested deep-link routes (e.g. the signature-status dialog). */}
+      <Outlet />
     </Stack>
   )
 }

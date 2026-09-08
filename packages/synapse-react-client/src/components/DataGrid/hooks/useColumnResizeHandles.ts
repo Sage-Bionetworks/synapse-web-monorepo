@@ -231,14 +231,18 @@ class ColumnResizeManager {
 
       const cellElement = cell as HTMLElement
 
-      // Get the column name from the cell's text content
-      // This is more reliable than using DOM index with virtualization
-      const cellText = cellElement.textContent?.trim() || ''
+      // Prefer the data-column-id attribute set by ColumnHeaderWithTooltip over
+      // textContent, which can include extra characters (e.g. the required "*").
+      const columnId =
+        cellElement.querySelector<HTMLElement>('[data-column-id]')?.dataset
+          .columnId ??
+        cellElement.textContent?.trim() ??
+        ''
 
       // Find the actual column index in colValues by matching the id (column name)
       // Note: col.title may be a React element (e.g. ColumnHeaderWithTooltip), so we use col.id
       const actualColumnIndex = this.colValues.findIndex(
-        col => col.id === cellText,
+        col => col.id === columnId,
       )
 
       if (actualColumnIndex !== -1) {

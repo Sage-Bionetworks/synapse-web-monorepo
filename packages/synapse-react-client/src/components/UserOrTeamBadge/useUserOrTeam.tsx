@@ -153,8 +153,8 @@ export function useUserOrTeam(
       ? realmPrincipals?.authenticatedUsers === resolvedPrincipalId
         ? 'authenticatedUsers'
         : realmPrincipals?.publicGroup === resolvedPrincipalId
-        ? 'publicGroup'
-        : null
+          ? 'publicGroup'
+          : null
       : null
 
   const isPublicGroup = specialGroupType !== null

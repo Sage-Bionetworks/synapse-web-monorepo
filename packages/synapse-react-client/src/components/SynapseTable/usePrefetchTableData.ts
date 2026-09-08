@@ -267,30 +267,43 @@ export function usePrefetchResourcesInTable(rowSet: RowSet): {
  */
 export function usePrefetchTableRows(): (pageNumber: number) => Promise<void> {
   const { keyFactory, accessToken } = useSynapseContext()
-  const { currentQueryRequest } = useQueryContext()
+  const { currentQueryRequest, getRowDataQueryOptionsForPage } =
+    useQueryContext()
   const queryClient = useQueryClient()
 
   // locked column does not matter for row data
   const lockedColumn = undefined
   return useCallback(
     (pageNumber: number) => {
-      // Get the query for the next page
-      const queryWithUpdatedPage = transformQueryToGoToPage(
-        { type: 'goToPage', pageNumber },
-        cloneDeep(currentQueryRequest) as QueryBundleRequest,
-      )
-
-      // Transform the query into UseQueryOptions
-      const { rowDataQueryOptions } = getTableQueryUseQueryOptions(
-        queryWithUpdatedPage,
-        lockedColumn,
-        keyFactory,
-        accessToken,
-      )
+      let rowDataQueryOptions
+      if (getRowDataQueryOptionsForPage) {
+        // Use the context-provided factory (e.g. SearchQueryWrapper) to avoid calling
+        // the standard table query API with a synthetic entity ID.
+        rowDataQueryOptions = getRowDataQueryOptionsForPage(pageNumber)
+      } else {
+        // Standard table query path
+        const queryWithUpdatedPage = transformQueryToGoToPage(
+          { type: 'goToPage', pageNumber },
+          cloneDeep(currentQueryRequest) as QueryBundleRequest,
+        )
+        rowDataQueryOptions = getTableQueryUseQueryOptions(
+          queryWithUpdatedPage,
+          lockedColumn,
+          keyFactory,
+          accessToken,
+        ).rowDataQueryOptions
+      }
 
       // Finally, prefetch the data
       return queryClient.prefetchQuery(rowDataQueryOptions)
     },
-    [accessToken, currentQueryRequest, keyFactory, lockedColumn, queryClient],
+    [
+      accessToken,
+      currentQueryRequest,
+      getRowDataQueryOptionsForPage,
+      keyFactory,
+      lockedColumn,
+      queryClient,
+    ],
   )
 }

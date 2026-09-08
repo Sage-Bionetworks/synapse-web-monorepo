@@ -15,8 +15,7 @@ import SqlEditor from './SynapseTable/SqlEditor'
 export function QueryWrapperErrorBoundary({
   children,
 }: PropsWithChildren<Record<never, never>>) {
-  const { getCurrentQueryRequest, onViewSharingSettingsClicked } =
-    useQueryContext()
+  const { getCurrentQueryRequest } = useQueryContext()
   const { entityId } = useMemo(
     () => getCurrentQueryRequest(),
     [getCurrentQueryRequest],
@@ -33,10 +32,7 @@ export function QueryWrapperErrorBoundary({
         ) {
           return (
             <div className={`ErrorBannerWrapper`}>
-              <EntityActionsRequired
-                entityId={entityId}
-                onViewSharingSettingsClicked={onViewSharingSettingsClicked}
-              />
+              <EntityActionsRequired entityId={entityId} />
             </div>
           )
         }
@@ -47,7 +43,7 @@ export function QueryWrapperErrorBoundary({
           </div>
         )
       },
-      [entityId, isAuthenticated, onViewSharingSettingsClicked],
+      [entityId, isAuthenticated],
     )
 
   return (

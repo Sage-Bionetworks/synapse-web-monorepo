@@ -13,6 +13,11 @@ import { usePortalContext } from './components/PortalContext'
 import { processResponseDocument } from './shared-config/synapseChatHelpers'
 import { useDocumentTitleFromRoutes } from './utils/useDocumentTitleFromRoutes'
 import { useTheme } from '@mui/material'
+import CurieChatDialogLauncher from './components/curie-chat-widget/CurieChatWidget'
+import {
+  ChatDialogVariant,
+  OpenChatOptions,
+} from './components/ChatDialogContext'
 
 export type AppProps = PropsWithChildren<{
   /** The default realm ID to use for the application */
@@ -25,16 +30,23 @@ export default function App(props: AppProps) {
   const { defaultRealmId, requireAuthentication } = props
   useDocumentTitleFromRoutes()
   const { palette } = useTheme()
-  const { aridhiaConfig, synapseChatProps } = usePortalContext()
+  const { aridhiaConfig, synapseChatProps, navbarConfig } = usePortalContext()
   const navigate = useNavigate()
   const [chatOpen, setChatOpen] = useState(false)
   const [chatInitialMessage, setChatInitialMessage] = useState<
     string | undefined
   >(undefined)
-  const openChat = useCallback((initialMessage: string) => {
-    setChatInitialMessage(initialMessage)
-    setChatOpen(true)
-  }, [])
+  const [chatVariant, setChatVariant] = useState<ChatDialogVariant>('default')
+  const openChat = useCallback(
+    (initialMessage: string, options?: OpenChatOptions) => {
+      setChatInitialMessage(initialMessage)
+      setChatVariant(options?.variant ?? 'default')
+      setChatOpen(true)
+    },
+    [],
+  )
+
+  const NavbarToRender = navbarConfig.NavbarComponent ?? Navbar
 
   // Create onChatResponse handler that processes XML-based navigation directives
   // in the AI response. Defined here so it captures navigate from the Router context.
@@ -55,16 +67,18 @@ export default function App(props: AppProps) {
     >
       <meta name="theme-color" content={palette.primary.main} />
       <SynapseToastContainer />
-      <Navbar />
+      <NavbarToRender />
       <CookiesNotification />
       <main className="main">
         {props.children}
         <Outlet />
       </main>
+      <CurieChatDialogLauncher />
       <Footer />
       {synapseChatProps && (
         <SynapsePortalChatDialog
           open={chatOpen}
+          variant={chatVariant}
           onClose={() => setChatOpen(false)}
           initialMessage={chatInitialMessage}
           onChatResponse={onChatResponse}
@@ -81,7 +95,10 @@ export default function App(props: AppProps) {
         requireAuthentication={requireAuthentication}
       >
         {aridhiaConfig?.apiBasePath ? (
-          <AridhiaIntegration apiBasePath={aridhiaConfig.apiBasePath}>
+          <AridhiaIntegration
+            apiBasePath={aridhiaConfig.apiBasePath}
+            subjectTokenIssuer={aridhiaConfig.subjectTokenIssuer}
+          >
             {content}
           </AridhiaIntegration>
         ) : (

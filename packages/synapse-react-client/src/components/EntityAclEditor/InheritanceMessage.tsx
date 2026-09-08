@@ -79,7 +79,6 @@ export function InheritanceMessage(props: InheritanceMessageProps) {
         ) : (
           ''
         )}
-        and cannot be modified here.
       </Typography>
     )
   } else {

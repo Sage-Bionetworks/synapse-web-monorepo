@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { NavigateFunction } from 'react-router'
-import UniversalCookies from 'universal-cookie'
 import {
   ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY,
   LAST_PLACE_LOCALSTORAGE_KEY,
 } from '../SynapseConstants'
+import Cookies from 'js-cookie'
 
 export function storeLastPlace() {
   // save current route (so that we can go back here after SSO)
@@ -26,11 +26,10 @@ export const getCookieDomain = () => {
 
 export function storeRedirectURLForOneSageLoginAndGotoURL(href: string) {
   // save current URL in a cookie that One Sage will use to send you back to the correct page
-  const cookies = new UniversalCookies()
   const twoHoursFromNow = new Date()
   twoHoursFromNow.setTime(twoHoursFromNow.getTime() + 60 * 60 * 1000)
 
-  cookies.set(ONE_SAGE_REDIRECT_COOKIE_KEY, window.location.href, {
+  Cookies.set(ONE_SAGE_REDIRECT_COOKIE_KEY, window.location.href, {
     path: '/',
     domain: getCookieDomain(),
     expires: twoHoursFromNow,
@@ -42,27 +41,26 @@ export function storeRedirectURLForOneSageLoginAndGotoURL(href: string) {
 
 export function processRedirectURLInOneSage() {
   // PORTALS-3299 : Indicate that we have completed the login workflow (cookie expires in a minute) to break out of a cycle
-  const cookies = new UniversalCookies()
   const expireDate = new Date()
   expireDate.setMinutes(expireDate.getMinutes() + 1)
-  cookies.set(ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY, 'true', {
+  Cookies.set(ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY, 'true', {
     path: '/',
     expires: expireDate,
     domain: getCookieDomain(),
   })
 
-  if (cookies.get(ONE_SAGE_REDIRECT_COOKIE_KEY)) {
-    const href = cookies.get(ONE_SAGE_REDIRECT_COOKIE_KEY)
+  if (Cookies.get(ONE_SAGE_REDIRECT_COOKIE_KEY)) {
+    const href = Cookies.get(ONE_SAGE_REDIRECT_COOKIE_KEY)
     // instead of removing, set the expiration to 10 seconds to avoid race condition with SageAccountWeb LoggedInRedirector
     const tenSecondsFromNow = new Date()
     tenSecondsFromNow.setTime(tenSecondsFromNow.getTime() + 10 * 1000)
-    cookies.set(ONE_SAGE_REDIRECT_COOKIE_KEY, href, {
+    Cookies.set(ONE_SAGE_REDIRECT_COOKIE_KEY, href!, {
       path: '/',
       domain: getCookieDomain(),
       expires: tenSecondsFromNow,
     })
 
-    window.location.replace(href)
+    window.location.replace(href!)
     return true
   }
   //else

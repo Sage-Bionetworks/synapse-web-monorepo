@@ -1,5 +1,5 @@
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
-import { FeatureFlagEnum, FeatureFlags } from '@sage-bionetworks/synapse-types'
+import { FeatureFlagEnum, FeatureFlags } from '@/utils/featureflag/FeatureFlags'
 import { http, HttpResponse } from 'msw'
 
 const MOCK_FEATURE_FLAGS_VALUE: FeatureFlags = Object.values(

@@ -19,7 +19,10 @@ import {
   isTableEntity,
 } from '@/utils/functions/EntityTypeUtils'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
-import { parseSynId } from '@/utils/functions/RegularExpressions'
+import {
+  extractMarkdownLinkHref,
+  parseSynId,
+} from '@/utils/functions/RegularExpressions'
 import { getColumnIndex } from '@/utils/functions/SqlFunctions'
 import { TargetEnum } from '@/utils/html/TargetEnum'
 import * as SynapseConstants from '@/utils/SynapseConstants'
@@ -32,9 +35,15 @@ import {
   SelectColumn,
   Table,
 } from '@sage-bionetworks/synapse-types'
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import CitationPopover from '../CitationPopover'
+import {
+  DATASET_HOSTING_CONFIG,
+  type DatasetHostingType,
+  normalizeHosting,
+} from '../DatasetHosting/DatasetHosting'
+import DatasetDownloadButton from '../DatasetHosting/DatasetDownloadButton'
 import { EntityDownloadConfirmation } from '../EntityDownloadConfirmation'
 import { HeaderCardVariant } from '../HeaderCard'
 import IconList from '../IconList'
@@ -44,8 +53,11 @@ import ShareThisPage, {
   ShareThisPageProps,
 } from '../ShareThisPage/ShareThisPage'
 import { SustainabilityScorecardProps } from '../SustainabilityScorecard/SustainabilityScorecard'
+import { CardActionButtonStyleContext } from './CardActionButtonStyleContext'
 import GenericCard from './GenericCard'
 import GenericCardActionButton from './GenericCardActionButton'
+import DuoTermTags from './DuoTermTags/DuoTermTags'
+import { parseDuoModifiers } from './DuoTermTags/duoTerms'
 import { PortalDOIConfiguration } from './PortalDOI/PortalDOIConfiguration'
 import { SynapseCardLabel } from './SynapseCardLabel'
 import { useResolvedSynapseEntity } from './useResolvedSynapseEntity'
@@ -145,8 +157,38 @@ export type TableToGenericCardMapping = {
   synapseEntityConfig?: SynapseEntityConfig
   /** The column name whose data contains a synId that can be used to show a button to add the corresponding entity to the download cart. */
   downloadCartSynId?: string
+  /**
+   * Opt-in configuration for hosting-aware download/access. When `hostingColumn`
+   * is provided, the card's primary action becomes a `DatasetDownloadButton` driven
+   * by the row's hosting value: downloadable hosting types show the standard dataset
+   * download options, while non-downloadable types (e.g. external-access) swap to a
+   * link to the external repository instead. Other portals that don't set this
+   * are unaffected.
+   */
+  hostingConfig?: {
+    /** Column holding the hosting type. Blank/unknown → `synapse`. */
+    hostingColumn: string
+    /**
+     * Optional map from the column's raw values to hosting types, for columns that
+     * use portal-specific labels rather than the canonical vocabulary (e.g. CCKP's
+     * `downloadType`: "Synapse Indexed" → `external-download`). Values not in the
+     * map fall back to `normalizeHosting` (canonical value, or → `synapse`).
+     */
+    hostingValueMap?: Record<string, DatasetHostingType>
+    /** Column holding the free-text external repository name (e.g. "GEO", "dbGaP"). */
+    repositoryColumn?: string
+    /** Column holding the external URL used for non-downloadable (external-access) datasets. */
+    externalUrlColumn?: string
+  }
   /** Configuration to display a DOI, as well as the ability to create one for users with such permission */
   portalDoiConfiguration?: PortalDOIConfiguration
+  /**
+   * Column name of a STRING_LIST of Data Use Ontology (DUO) values (ontology
+   * codes or term names). When set, the values are rendered as DUO tags in a
+   * metadata row labeled with the column's display name, so the card matches the
+   * corresponding facet.
+   */
+  dataUseModifiersColumnName?: string
 }
 
 export type TableRowGenericCardProps = {
@@ -229,11 +271,13 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     headerCardVariant,
     titleLinkConfig,
     ctaLinkConfig,
+    ctaLinkPosition,
     labelLinkConfig,
     descriptionConfig,
     columnIconOptions,
     CardTypeAdornment,
     charCountCutoff,
+    actionButtonStyle = 'button',
   } = props
 
   const {
@@ -292,6 +336,20 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     },
     [schema, data],
   )
+
+  // DUO (Data Use Ontology) tags, when a dataUseModifiers column is configured.
+  // Rendered as a metadata row labeled with the column's display name.
+  const duoContent = useMemo(() => {
+    const col = genericCardSchema.dataUseModifiersColumnName
+    if (!col) {
+      return undefined
+    }
+    const terms = parseDuoModifiers(data[schema[col]])
+    if (terms.length === 0) {
+      return undefined
+    }
+    return <DuoTermTags terms={terms} />
+  }, [genericCardSchema, data, schema])
 
   const resolvedTitleAreaRightContent = useMemo(() => {
     const { titleAreaDetails } = genericCardSchema
@@ -364,6 +422,36 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     resolvedDownloadCartVersionNumber = reference?.targetVersionNumber
   }
 
+  // Opt-in hosting-aware action: when the schema declares a hosting column, the
+  // primary action is a DatasetDownloadButton driven by the row's hosting value.
+  const hostingConfig = genericCardSchema.hostingConfig
+  const rawHostingValue = hostingConfig
+    ? getColumnValue(hostingConfig.hostingColumn)
+    : undefined
+  const hostingType = hostingConfig
+    ? (rawHostingValue && hostingConfig.hostingValueMap?.[rawHostingValue]) ||
+      normalizeHosting(rawHostingValue)
+    : undefined
+  const hostingRepository = hostingConfig?.repositoryColumn
+    ? getColumnValue(hostingConfig.repositoryColumn)
+    : undefined
+  const rawHostingExternalUrl = hostingConfig?.externalUrlColumn
+    ? getColumnValue(hostingConfig.externalUrlColumn)
+    : undefined
+  // The externalUrl column may be a markdown link (e.g. CCKP's `externalLink`:
+  // "[label](https://...)") rather than a plain URL — extract the href if so.
+  const hostingExternalUrl = rawHostingExternalUrl
+    ? extractMarkdownLinkHref(rawHostingExternalUrl)
+    : undefined
+  // Non-downloadable hosting (e.g. external-access) suppresses the Synapse
+  // download flow entirely; everything else keeps the add-to-download-list behavior.
+  const hostingIsDownloadable = hostingType
+    ? DATASET_HOSTING_CONFIG[hostingType].downloadable
+    : true
+  // Portal target for the DatasetDownloadButton's download-confirmation dialog, so
+  // it renders in the card's top content region rather than inline in the button row.
+  const datasetDownloadConfirmationRef = useRef<HTMLDivElement>(null)
+
   // Transform the row to a record of (columnName, value) pairs for compatibility with getCandidateDoiId
   const dataAsRecord: Record<string, string | null> = useMemo(
     () => mapRowToRecord(data, schema),
@@ -388,6 +476,19 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   const { secondaryLabels = [] } = genericCardSchema
   const customLabelConfig = genericCardSchema.customSecondaryLabelConfig
 
+  // DUO tags rendered as a metadata row (alongside "How to download", size, …).
+  // Label it with the DUO column's display name so the card row matches the
+  // facet exactly (respecting any column alias) rather than a hardcoded string.
+  if (duoContent && genericCardSchema.dataUseModifiersColumnName) {
+    values.push({
+      columnName: genericCardSchema.dataUseModifiersColumnName,
+      columnDisplayName: getColumnDisplayName(
+        genericCardSchema.dataUseModifiersColumnName,
+      ),
+      value: duoContent,
+    })
+  }
+
   // PORTALS-3549 - if a DOI exists or can be created by the current user, show it
   if (
     showDoiCardLabel &&
@@ -406,10 +507,12 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     })
   }
 
-  // Overwrite the 'HOW TO DOWNLOAD' link if a synapse ID is available
+  // Overwrite the 'HOW TO DOWNLOAD' link if a synapse ID is available — but not
+  // for non-downloadable hosting (e.g. external-access), where adding to the
+  // Synapse download list wouldn't work; fall back to the static guidance instead.
   if (customLabelConfig?.isVisible(schema, data)) {
     const { key, value } = customLabelConfig
-    if (resolvedDownloadCartSynIdValue) {
+    if (resolvedDownloadCartSynIdValue && hostingIsDownloadable) {
       values.push({
         columnDisplayName: 'HOW TO DOWNLOAD',
         value: (
@@ -503,7 +606,14 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
         rowId,
       )
       return {
-        text: config.text,
+        text: config.endIcon ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            {config.text}
+            {config.endIcon}
+          </div>
+        ) : (
+          config.text
+        ),
         href,
         target,
       }
@@ -527,22 +637,28 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     <CardTypeAdornment schema={schema} data={data} />
   ) : null
 
+  let isRenderingIcon = true
+  if (isHeader && !imageFileHandleIdValue && !iconValue) {
+    // For header cards, if there is no image or explicit icon value, we don't show an icon at all
+    isRenderingIcon = false
+  }
+  const iconNode = isRenderingIcon ? (
+    <GenericCardIcon
+      type={
+        useTypeColumnForIcon ? data[schema['type']] : genericCardSchema.type
+      }
+      useTypeForIcon={useTypeColumnForIcon}
+      thumbnailRequiresPadding={genericCardSchema.thumbnailRequiresPadding}
+      imageFileHandleId={imageFileHandleIdValue}
+      fileHandleAssociation={fileHandleAssociation}
+      iconOptions={iconOptions}
+      iconValue={iconValue}
+    />
+  ) : undefined
   return (
     <GenericCard
       ref={ref}
-      icon={
-        <GenericCardIcon
-          type={
-            useTypeColumnForIcon ? data[schema['type']] : genericCardSchema.type
-          }
-          useTypeForIcon={useTypeColumnForIcon}
-          thumbnailRequiresPadding={genericCardSchema.thumbnailRequiresPadding}
-          imageFileHandleId={imageFileHandleIdValue}
-          fileHandleAssociation={fileHandleAssociation}
-          iconOptions={iconOptions}
-          iconValue={iconValue}
-        />
-      }
+      icon={iconNode}
       isHeader={isHeader}
       sustainabilityScorecard={sustainabilityScorecard}
       headerCardVariant={headerCardVariant}
@@ -564,6 +680,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       ctaLinkConfig={
         resolvedCtaLinkConfigs.length > 0 ? resolvedCtaLinkConfigs : undefined
       }
+      ctaLinkPosition={ctaLinkPosition}
       titleAreaRightContent={resolvedTitleAreaRightContent}
       description={description}
       descriptionSubTitle={descriptionSubTitle}
@@ -573,18 +690,22 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       secondaryLabelLimit={secondaryLabelLimit}
       useStylesForDisplayedImage={Boolean(imageFileHandleIdValue)}
       cardTopContent={
-        resolvedDownloadCartSynIdValue && (
-          <Collapse in={showDownloadConfirmation}>
-            <EntityDownloadConfirmation
-              entityId={resolvedDownloadCartSynIdValue}
-              versionNumber={resolvedDownloadCartVersionNumber}
-              handleClose={() => setShowDownloadConfirmation(false)}
-              onIsLoadingChange={isLoading => {
-                setDownloadButtonLoading(isLoading)
-              }}
-            />
-          </Collapse>
-        )
+        <>
+          {!hostingConfig && resolvedDownloadCartSynIdValue && (
+            <Collapse in={showDownloadConfirmation}>
+              <EntityDownloadConfirmation
+                entityId={resolvedDownloadCartSynIdValue}
+                versionNumber={resolvedDownloadCartVersionNumber}
+                handleClose={() => setShowDownloadConfirmation(false)}
+                onIsLoadingChange={isLoading => {
+                  setDownloadButtonLoading(isLoading)
+                }}
+              />
+            </Collapse>
+          )}
+          {/* DatasetDownloadButton (hosting path) portals its confirmation here. */}
+          {hostingConfig && <div ref={datasetDownloadConfirmationRef} />}
+        </>
       }
       renderedIconList={
         // If the portal configs has columnIconOptions.columns.dataType option
@@ -605,31 +726,48 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
         )
       }
       cardTopButtons={
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          {croissantButton}
-          {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart */}
-          {resolvedDownloadCartSynIdValue && (
-            <GenericCardActionButton
-              onClick={() => setShowDownloadConfirmation(val => !val)}
-              variant="outlined"
-              startIcon={<GetAppTwoTone sx={{ height: '12px' }} />}
-              loading={downloadButtonLoading}
-            >
-              Download
-            </GenericCardActionButton>
-          )}
-          {includeCitation && doiValue && (
-            <CitationPopover
-              title={title}
-              doi={doiValue}
-              boilerplateText={citationBoilerplateText}
-              defaultCitationFormat={defaultCitationFormat}
-            />
-          )}
-          {includeShareButton && isHeader && (
-            <ShareThisPage {...sharePageLinkButtonProps} />
-          )}
-        </Box>
+        <CardActionButtonStyleContext.Provider value={actionButtonStyle}>
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+            {croissantButton}
+            {/* Hosting-aware action (opt-in via schema.hostingConfig): downloadable
+              hosting shows the standard dataset download options; non-downloadable
+              hosting links out to the external repository or is non-actionable. */}
+            {hostingConfig &&
+              (resolvedDownloadCartSynIdValue || !hostingIsDownloadable) && (
+                <DatasetDownloadButton
+                  entityId={resolvedDownloadCartSynIdValue}
+                  name={title}
+                  version={resolvedDownloadCartVersionNumber}
+                  hosting={hostingType}
+                  repository={hostingRepository}
+                  externalUrl={hostingExternalUrl}
+                  downloadConfirmationContainer={datasetDownloadConfirmationRef}
+                />
+              )}
+            {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart */}
+            {!hostingConfig && resolvedDownloadCartSynIdValue && (
+              <GenericCardActionButton
+                onClick={() => setShowDownloadConfirmation(val => !val)}
+                variant="outlined"
+                startIcon={<GetAppTwoTone sx={{ height: '12px' }} />}
+                loading={downloadButtonLoading}
+              >
+                Download
+              </GenericCardActionButton>
+            )}
+            {includeCitation && doiValue && (
+              <CitationPopover
+                title={title}
+                doi={doiValue}
+                boilerplateText={citationBoilerplateText}
+                defaultCitationFormat={defaultCitationFormat}
+              />
+            )}
+            {includeShareButton && isHeader && (
+              <ShareThisPage {...sharePageLinkButtonProps} />
+            )}
+          </Box>
+        </CardActionButtonStyleContext.Provider>
       }
     />
   )

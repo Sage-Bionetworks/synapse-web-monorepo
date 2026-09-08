@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-empty-interface  */
-/* eslint-disable @typescript-eslint/no-empty-object-type */
+/* oxlint-disable @typescript-eslint/no-empty-interface  */
+/* oxlint-disable @typescript-eslint/no-empty-object-type */
 
 import '@mui/material/styles'
 
@@ -41,15 +41,16 @@ declare module '@mui/material/styles' {
     styledBackground?: string
   }
 
-  interface TypographyVariants
-    extends RecordWithCustomVariantKeys<React.CSSProperties> {}
+  interface TypographyVariants extends RecordWithCustomVariantKeys<React.CSSProperties> {}
 
   // allow configuration using `createTheme`
-  interface TypographyVariantsOptions
-    extends RecordWithCustomVariantKeys<React.CSSProperties | undefined> {}
+  interface TypographyVariantsOptions extends RecordWithCustomVariantKeys<
+    React.CSSProperties | undefined
+  > {}
 
   interface Palette {
     tertiary: Palette['primary']
+    greyV2: Palette['grey']
     /* Neutral is same as grey, but provides a full palette so it can be used for components like buttons.
        This is necessary because the builtin grey cannot be overridden for this purpose. */
     neutral: Palette['primary']
@@ -60,6 +61,7 @@ declare module '@mui/material/styles' {
 
   interface PaletteOptions {
     tertiary: PaletteOptions['primary']
+    greyV2: PaletteOptions['grey']
     /* Neutral is same as grey, but provides a full palette so it can be used for components like buttons.
        This is necessary because the builtin grey cannot be overridden for this purpose. */
     neutral: PaletteOptions['primary']
@@ -71,7 +73,8 @@ declare module '@mui/material/styles' {
 
 declare module '@mui/material' {
   interface Color {
-    // MUI doesn't go up to 1000 but our palette does
+    // MUI doesn't include these higher/extra shade keys, but our palette does.
+    [950]: string
     [1000]: string
   }
 
@@ -85,6 +88,5 @@ declare module '@mui/material' {
 
 // Update the Typography's variant prop options
 declare module '@mui/material/Typography' {
-  interface TypographyPropsVariantOverrides
-    extends RecordWithCustomVariantKeys<true> {}
+  interface TypographyPropsVariantOverrides extends RecordWithCustomVariantKeys<true> {}
 }

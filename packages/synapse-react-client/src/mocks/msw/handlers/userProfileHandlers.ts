@@ -21,6 +21,8 @@ import {
 import { http, HttpResponse } from 'msw'
 import { mockPaginatedEntityHeaders } from '../../entity/mockEntity'
 import {
+  MOCK_USER_ID,
+  MOCK_USER_PROFILE_IMAGE_URL,
   mockUserBundle,
   mockUserData,
   mockUserProfileData,
@@ -166,13 +168,35 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
   }),
 
   /**
-   * Return a 404 when fetching the profile image
+   * Return a presigned URL for the current mock user's profile image, and a 404 for every
+   * other user (i.e. they have no profile image).
    */
-  http.get(`${backendOrigin}${PROFILE_IMAGE_PREVIEW(':userId')}`, () => {
-    return HttpResponse.json(
-      { reason: 'user has no profile image' },
-      { status: 404 },
-    )
+  http.get(
+    `${backendOrigin}${PROFILE_IMAGE_PREVIEW(':userId')}`,
+    ({ params }) => {
+      if (params.userId === String(MOCK_USER_ID)) {
+        return HttpResponse.json(MOCK_USER_PROFILE_IMAGE_URL, { status: 200 })
+      }
+      return HttpResponse.json(
+        { reason: 'Mock user has no profile image' },
+        { status: 404 },
+      )
+    },
+  ),
+
+  /**
+   * `MOCK_USER_PROFILE_IMAGE_URL` is a "presigned URL" pointing to a real external image, to
+   * resemble a real Synapse presigned URL response. Intercept the actual fetch of that URL so
+   * tests don't depend on a live network call to a third party, which is slow and flaky in CI.
+   */
+  http.get(MOCK_USER_PROFILE_IMAGE_URL, () => {
+    // A minimal 1x1 transparent PNG
+    const onePixelPngBase64 =
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII='
+    const bytes = Uint8Array.from(atob(onePixelPngBase64), c => c.charCodeAt(0))
+    return HttpResponse.arrayBuffer(bytes.buffer, {
+      headers: { 'Content-Type': 'image/png' },
+    })
   }),
 
   http.get(`${backendOrigin}${NOTIFICATION_EMAIL}`, () => {

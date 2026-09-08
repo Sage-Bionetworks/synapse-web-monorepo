@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useRef } from 'react'
-import { atom, useAtom } from 'jotai'
-import UniversalCookies from 'universal-cookie'
+import { useCallback, useMemo } from 'react'
+import { useCookieValue } from '@react-hookz/web/useCookieValue/index.js'
+import Cookies from 'js-cookie'
 
 export type CookiePreference = {
   functionalAllowed: boolean
@@ -24,10 +24,7 @@ export const COOKIES_AGREEMENT_COOKIE_KEY =
  * This must only be called in a browser environment (not during SSR).
  */
 export const getCurrentCookiePreferences = (): CookiePreference => {
-  const cookies = new UniversalCookies()
-  const prefs = cookies.get(COOKIES_AGREEMENT_COOKIE_KEY, {
-    doNotParse: true,
-  }) as string | undefined
+  const prefs = Cookies.get(COOKIES_AGREEMENT_COOKIE_KEY)
   let cookiePreference = allowNone
   try {
     if (prefs != undefined) {
@@ -41,27 +38,38 @@ export const getCurrentCookiePreferences = (): CookiePreference => {
   return cookiePreference
 }
 
-// Initialize with allowNone so the atom is SSR-safe. The actual cookie value
-// is synced on the client via useEffect inside useCookiePreferences.
-const cookiePreferencesAtom = atom<CookiePreference>(allowNone)
-
 export const useCookiePreferences = (): [
   CookiePreference,
   (pref: CookiePreference) => void,
 ] => {
-  const [cookiePreferences, setCookiePreferencesAtomValue] = useAtom(
-    cookiePreferencesAtom,
+  const [cookieValue, setCookie, removeCookie] = useCookieValue(
+    COOKIES_AGREEMENT_COOKIE_KEY,
+    {
+      path: '/',
+      expires: 365,
+      domain:
+        typeof window !== 'undefined' &&
+        window.location.hostname.toLowerCase().endsWith('.synapse.org')
+          ? 'synapse.org'
+          : undefined,
+    },
   )
 
-  // On first client mount, sync the atom with the actual cookie value.
-  const hasSyncedRef = useRef(false)
-  useEffect(() => {
-    if (!hasSyncedRef.current) {
-      hasSyncedRef.current = true
-      const current = getCurrentCookiePreferences()
-      setCookiePreferencesAtomValue(current)
+  const cookiePreferences = useMemo(() => {
+    if (cookieValue) {
+      try {
+        return JSON.parse(cookieValue) as CookiePreference
+      } catch (err) {
+        console.error(
+          `Failed to parse CookiePreference from cookie value, falling back to allow none and deleting the cookie. value=${cookieValue}`,
+        )
+        removeCookie()
+        return allowNone
+      }
+    } else {
+      return allowNone
     }
-  }, [setCookiePreferencesAtomValue])
+  }, [cookieValue, removeCookie])
 
   const setCookiePreferences = useCallback(
     (prefs: CookiePreference) => {
@@ -70,20 +78,9 @@ export const useCookiePreferences = (): [
         sessionStorage.clear()
       }
 
-      const current = new Date()
-      const nextYear = new Date()
-      nextYear.setFullYear(current.getFullYear() + 1)
-      const hostname = window.location.hostname.toLowerCase()
-      const cookies = new UniversalCookies()
-      cookies.set(COOKIES_AGREEMENT_COOKIE_KEY, prefs, {
-        path: '/',
-        expires: nextYear,
-        domain: hostname.endsWith('.synapse.org') ? 'synapse.org' : undefined,
-      })
-
-      setCookiePreferencesAtomValue(prefs)
+      setCookie(JSON.stringify(prefs))
     },
-    [setCookiePreferencesAtomValue],
+    [setCookie],
   )
   return [cookiePreferences, setCookiePreferences]
 }

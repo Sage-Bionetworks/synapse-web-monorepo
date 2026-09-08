@@ -54,7 +54,7 @@ const mockLocation: Location = {
   pathname: '/',
   search: '',
   hash: '',
-  unstable_mask: undefined,
+  mask: undefined,
 }
 const mockUseApplicationSessionContext = vi.mocked(useApplicationSessionContext)
 const mockNavigate = vi.fn()

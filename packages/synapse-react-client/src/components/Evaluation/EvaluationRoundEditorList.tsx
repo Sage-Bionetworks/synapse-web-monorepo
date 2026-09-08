@@ -85,7 +85,7 @@ export function EvaluationRoundEditorList({
     },
     // we explicitly dont want to list setEvaluationRoundInputList nor setError as a dependency
     // if we do, the fetchEvaluationList will re-fetch from the backend on every new render
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
     [accessToken, evaluationId],
   )
 

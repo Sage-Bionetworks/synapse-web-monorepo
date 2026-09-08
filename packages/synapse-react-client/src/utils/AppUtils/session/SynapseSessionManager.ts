@@ -170,9 +170,8 @@ export class SynapseSessionManager {
 
     let realmPrincipals: RealmPrincipal | undefined
     try {
-      realmPrincipals = await SynapseSessionManager.getCurrentRealmPrincipals(
-        token,
-      )
+      realmPrincipals =
+        await SynapseSessionManager.getCurrentRealmPrincipals(token)
     } catch (error) {
       // Special handling for Terms of Service and 2FA errors - allow initialization to continue
       // so the app can prompt the user to complete the required action

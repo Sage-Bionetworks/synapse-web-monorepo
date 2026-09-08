@@ -67,7 +67,11 @@ export const navbarConfig: NavbarConfig = {
       name: 'About',
       path: '/About',
       children: [
-        { name: 'News', path: 'https://news.nfdataportal.org/' },
+        { name: 'News', path: 'https://news.nf.synapse.org/' },
+        {
+          name: 'Roadmap',
+          path: 'https://nfosi-community-tools.vercel.app/roadmap',
+        },
         {
           name: 'NF-OSI',
           path: 'https://help.nf.synapse.org/nf-data-portal-documentation/about',
@@ -86,11 +90,8 @@ export const navbarConfig: NavbarConfig = {
       name: 'Help',
       path: 'https://help.nf.synapse.org/nf-data-portal-documentation',
     },
-    {
-      name: 'Admin',
-      path: 'https://www.synapse.org/Synapse:syn26451327',
-      requiredTeamId: '3378999',
-    },
   ],
   isPortalsDropdownEnabled: true,
+  layout: 'with-sticky-search',
+  stickyNavBackgroundColor: '#3B4157',
 }

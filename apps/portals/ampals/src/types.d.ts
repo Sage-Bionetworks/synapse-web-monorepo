@@ -3,6 +3,9 @@ interface ImportMetaEnv {
   readonly VITE_PORTAL_NAME: string
   readonly VITE_PORTAL_DESCRIPTION: string
   readonly VITE_PORTAL_KEY: string
+  readonly VITE_ARIDHIA_GATEWAY_URL: string
+  readonly VITE_ARIDHIA_SUBJECT_TOKEN_ISSUER: string
+  readonly VITE_ARIDHIA_FAIR_PORTAL_URL: string
 }
 
 interface ImportMeta {

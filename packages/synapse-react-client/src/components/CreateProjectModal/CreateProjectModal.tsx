@@ -168,26 +168,28 @@ export function CreateProjectModal({
         id="projectInput"
         label="Project Name"
         required
-        helperText="Pick a unique title for your project"
+        description="Pick a unique title for your project"
         value={projectName}
         fullWidth
         onChange={event => {
           setProjectName(event.target.value)
         }}
-        inputProps={{
-          onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => {
-            if (event.key === 'Enter') {
-              if (projectName !== '') {
-                createProjectMutation.mutate()
+        slotProps={{
+          htmlInput: {
+            onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => {
+              if (event.key === 'Enter') {
+                if (projectName !== '') {
+                  createProjectMutation.mutate()
+                }
               }
-            }
+            },
           },
         }}
       />
       <TextField
         id="descriptionInput"
         label="Description"
-        helperText="(optional)"
+        description="(optional)"
         placeholder="Brief description of this project"
         multiline
         minRows={3}

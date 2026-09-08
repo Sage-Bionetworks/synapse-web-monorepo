@@ -3,7 +3,8 @@ import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/Q
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../columnAliases'
-import { toolsSql } from '../resources'
+import { toolsSearchIndexId, toolsSql } from '../resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 import { citationBoilerplateText } from './commonProps'
 import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 
@@ -39,7 +40,8 @@ export const toolsConfiguration: CardConfiguration = {
     isMarkdown: false,
     URLColumnName: 'toolName',
     matchColumnName: 'toolName',
-    baseURL: 'Explore/Tools/DetailsPage',
+    baseURL: 'Explore/Tools',
+    urlParamStyle: 'path-segment',
   },
   labelLinkConfig: [
     {
@@ -76,4 +78,16 @@ export const toolsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
       'outputData',
     ],
   },
+}
+
+export const toolsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'Tools',
+  shouldDeepLink: false,
+  cardConfiguration: toolsConfiguration,
+  columnAliases,
+  searchIndexId: toolsSearchIndexId,
+  autocompleteFieldName: 'toolName',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }

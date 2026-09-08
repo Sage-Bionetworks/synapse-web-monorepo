@@ -206,8 +206,8 @@ export function EntityFinder({
   const mainPanelClass = searchActive
     ? 'MainPanelSearch'
     : treeOnly
-    ? 'MainPanelSinglePane'
-    : 'MainPanelDualPane'
+      ? 'MainPanelSinglePane'
+      : 'MainPanelDualPane'
 
   const entityDetailsListProps: EntityDetailsListProps = {
     configuration: configFromTreeView,

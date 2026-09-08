@@ -281,7 +281,7 @@ export function Node(
       toggleExpand()
     }
     // Intentionally only toggle the expanded state when isSelected changes, otherwise the node cannot be un-expanded
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [isSelected])
 
   /**

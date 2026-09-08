@@ -16,9 +16,10 @@ vi.mock('../components/ColumnHeaderWithTooltip', () => ({
 }))
 
 vi.mock('@sage-bionetworks/react-datasheet-grid', async importActual => {
-  const actual = await importActual<
-    typeof import('@sage-bionetworks/react-datasheet-grid')
-  >()
+  const actual =
+    await importActual<
+      typeof import('@sage-bionetworks/react-datasheet-grid')
+    >()
   return {
     ...actual,
     keyColumn: vi.fn().mockImplementation(actual.keyColumn),
@@ -109,7 +110,6 @@ describe('columnFactory', () => {
       const headerProps = getHeaderProps(column.title)
       expect(headerProps.name).toBe('tags')
       expect(headerProps.description).toBeUndefined()
-      expect(column.headerClassName).toBe('header-cell-required')
     })
 
     it('should create a boolean column for boolean type', () => {
@@ -126,7 +126,6 @@ describe('columnFactory', () => {
       const headerProps = getHeaderProps(column.title)
       expect(headerProps.name).toBe('isActive')
       expect(headerProps.description).toBeUndefined()
-      expect(column.headerClassName).toBe('header-cell')
     })
 
     it('should create a date-time column for string type and date-time format', () => {
@@ -143,7 +142,6 @@ describe('columnFactory', () => {
       const headerProps = getHeaderProps(column.title)
       expect(headerProps.name).toBe('isActive')
       expect(headerProps.description).toBeUndefined()
-      expect(column.headerClassName).toBe('header-cell')
     })
 
     it('should create a number column for number type', () => {
@@ -160,7 +158,6 @@ describe('columnFactory', () => {
       const headerProps = getHeaderProps(column.title)
       expect(headerProps.name).toBe('count')
       expect(headerProps.description).toBeUndefined()
-      expect(column.headerClassName).toBe('header-cell-required')
     })
 
     it('should create a number column for integer type', () => {
@@ -176,7 +173,6 @@ describe('columnFactory', () => {
       const headerProps = getHeaderProps(column.title)
       expect(headerProps.name).toBe('age')
       expect(headerProps.description).toBeUndefined()
-      expect(column.headerClassName).toBe('header-cell')
     })
 
     it('should create an enumerated column when enumeratedValues are provided', () => {
@@ -193,7 +189,6 @@ describe('columnFactory', () => {
       const headerProps = getHeaderProps(column.title)
       expect(headerProps.name).toBe('status')
       expect(headerProps.description).toBeUndefined()
-      expect(column.headerClassName).toBe('header-cell-required')
     })
 
     it('should create a text column as default', () => {
@@ -210,33 +205,6 @@ describe('columnFactory', () => {
       const headerProps = getHeaderProps(column.title)
       expect(headerProps.name).toBe('description')
       expect(headerProps.description).toBeUndefined()
-      expect(column.headerClassName).toBe('header-cell')
-    })
-
-    it('should set required header class when isRequired is true', () => {
-      const config = {
-        columnName: 'name',
-        typeInfo: { type: 'string', isArray: false },
-        enumeratedValues: [],
-        isRequired: true,
-      }
-
-      const column = createColumn(config)
-
-      expect(column.headerClassName).toBe('header-cell-required')
-    })
-
-    it('should set normal header class when isRequired is false', () => {
-      const config = {
-        columnName: 'name',
-        typeInfo: { type: 'string', isArray: false },
-        enumeratedValues: [],
-        isRequired: false,
-      }
-
-      const column = createColumn(config)
-
-      expect(column.headerClassName).toBe('header-cell')
     })
 
     describe('Custom Width Support', () => {
@@ -402,7 +370,6 @@ describe('columnFactory', () => {
         expect(column.basis).toBe(180)
         expect(column.grow).toBe(0)
         expect(column.shrink).toBe(0)
-        expect(column.headerClassName).toBe('header-cell-required')
       })
     })
 

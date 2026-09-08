@@ -30,7 +30,7 @@ describe('basic tests', () => {
 
   it('displays news cards from a Synapse Table', async () => {
     // We must await asynchronous events for our assertions to pass
-    // eslint-disable-next-line @typescript-eslint/require-await
+    // oxlint-disable-next-line @typescript-eslint/require-await
     await act(async () => init())
     expect(container.querySelector('.FeedItem')).toBeDefined()
     expect(container.querySelectorAll('.FeedItem')).toHaveLength(3)

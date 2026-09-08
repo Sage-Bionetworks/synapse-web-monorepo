@@ -4,6 +4,7 @@ import { FileHandleAssociation } from '@sage-bionetworks/synapse-types'
 import { ReactNode } from 'react'
 import DirectDownloadButton from '../../DirectDownloadButton'
 import IconSvg from '../../IconSvg/IconSvg'
+import { longFieldLabelSx } from './styles'
 
 export type DownloadDocumentTemplateProps = {
   title: ReactNode
@@ -36,7 +37,7 @@ export default function DocumentTemplate(props: DownloadDocumentTemplateProps) {
       <Typography variant={'headline3'} sx={{ mt: 4, mb: 2 }}>
         {title}
       </Typography>
-      <Typography variant={'body1'} sx={{ my: 2 }}>
+      <Typography variant={'body1'} sx={{ ...longFieldLabelSx, my: 2 }}>
         {description}
       </Typography>
       <Typography variant={'body1'}>Download this file:</Typography>

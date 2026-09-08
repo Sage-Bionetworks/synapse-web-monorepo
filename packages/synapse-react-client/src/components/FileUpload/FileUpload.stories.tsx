@@ -10,15 +10,11 @@ const meta = {
       <FileUpload
         onComplete={resp => {
           if (resp.success) {
-            document.getElementById(
-              'demo-upload-file',
-            )!.textContent = `Your file "${
-              resp.resp!.fileName
-            }" upload is successful!`
+            document.getElementById('demo-upload-file')!.textContent =
+              `Your file "${resp.resp!.fileName}" upload is successful!`
           } else {
-            document.getElementById(
-              'demo-upload-file',
-            )!.textContent = `Your file upload is unsuccessful!`
+            document.getElementById('demo-upload-file')!.textContent =
+              `Your file upload is unsuccessful!`
           }
         }}
         {...args}

@@ -39,11 +39,6 @@ describe('DataGridUtils', () => {
       })
     })
     it('returns type unknown for anything else', () => {
-      expect(parseQueryInput('foo')).toEqual({ type: 'unknown', input: 'foo' })
-      expect(parseQueryInput('12345')).toEqual({
-        type: 'unknown',
-        input: '12345',
-      })
       expect(parseQueryInput('UPDATE something')).toEqual({
         type: 'unknown',
         input: 'UPDATE something',
@@ -75,6 +70,24 @@ describe('DataGridUtils', () => {
     it('returns false for different string representations', () => {
       const a: DataGridRow = { a: 1 }
       const b: DataGridRow = { a: '2' }
+      expect(rowsAreIdentical(a, b)).toBe(false)
+    })
+    it('does not conflate the literal string "null" with actual null', () => {
+      // Regression: source data encoding empty cells as the string "null"
+      // must remain distinct from a cleared (null) cell so that backspace
+      // produces an UPDATE rather than being filtered as a no-op.
+      const a: DataGridRow = { a: 'null' }
+      const b: DataGridRow = { a: null }
+      expect(rowsAreIdentical(a, b)).toBe(false)
+    })
+    it('does not conflate the literal string "undefined" with actual undefined', () => {
+      const a: DataGridRow = { a: 'undefined' }
+      const b: DataGridRow = { a: undefined }
+      expect(rowsAreIdentical(a, b)).toBe(false)
+    })
+    it('does not conflate numbers with their string representations', () => {
+      const a: DataGridRow = { a: 1 }
+      const b: DataGridRow = { a: '1' }
       expect(rowsAreIdentical(a, b)).toBe(false)
     })
   })

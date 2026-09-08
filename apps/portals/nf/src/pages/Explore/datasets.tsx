@@ -1,7 +1,7 @@
 import React from 'react'
-import datasets from '@/config/synapseConfigs/datasets'
+import { datasetsSearch } from '@/config/synapseConfigs/datasets'
 import { createStaticMeta } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import SearchQueryWrapperPlotNav from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 import { portalMetadata } from '@/config/portalMetadata'
 
 export const meta = createStaticMeta(
@@ -10,7 +10,7 @@ export const meta = createStaticMeta(
 )
 
 const ExploreDatasets = (): React.ReactNode => {
-  return <QueryWrapperPlotNav {...datasets} />
+  return <SearchQueryWrapperPlotNav {...datasetsSearch} shouldDeepLink={true} />
 }
 
 export default ExploreDatasets

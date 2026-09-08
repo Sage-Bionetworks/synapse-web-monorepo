@@ -1,6 +1,6 @@
 import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
 import { doubleSchema } from './DoubleSchema'
-import { z, ZodTypeAny } from 'zod'
+import { z, ZodType } from 'zod'
 import { dateTimeSchema } from './DatetimeSchema'
 import { booleanSchema } from './BooleanSchema'
 import { integerSchema } from './IntegerSchema'
@@ -11,23 +11,24 @@ const arraySerializedAsStringSchema = z.string().transform((data, ctx) => {
     const parsed = JSON.parse(data)
     if (!Array.isArray(parsed)) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: 'custom',
         message: 'Object was valid JSON, but was not an array',
       })
+      return z.NEVER
     }
     return parsed
   } catch (e) {
     ctx.addIssue({
-      code: z.ZodIssueCode.custom,
+      code: 'custom',
       message: 'Invalid JSON array',
     })
+    return z.NEVER
   }
-  return data
 })
 
 export default function getZodSchemaForColumnType(
   columnType: ColumnTypeEnum,
-): ZodTypeAny {
+): ZodType {
   if (columnType.endsWith('_LIST')) {
     const baseSchema = getZodSchemaForColumnType(
       columnType.replace('_LIST', '') as ColumnTypeEnum,
@@ -41,31 +42,24 @@ export default function getZodSchemaForColumnType(
 
   switch (columnType) {
     case ColumnTypeEnum.STRING:
+    case ColumnTypeEnum.LINK:
+    case ColumnTypeEnum.MEDIUMTEXT:
+    case ColumnTypeEnum.LARGETEXT:
       return z.coerce.string()
     case ColumnTypeEnum.BOOLEAN:
       return booleanSchema
     case ColumnTypeEnum.INTEGER:
+    case ColumnTypeEnum.FILEHANDLEID:
+    case ColumnTypeEnum.USERID:
+    case ColumnTypeEnum.EVALUATIONID:
+    case ColumnTypeEnum.SUBMISSIONID:
       return integerSchema
     case ColumnTypeEnum.DOUBLE:
       return doubleSchema
     case ColumnTypeEnum.DATE:
       return dateTimeSchema
-    case ColumnTypeEnum.FILEHANDLEID:
-      return integerSchema
     case ColumnTypeEnum.ENTITYID:
       return entityIdSchema
-    case ColumnTypeEnum.LINK:
-      return z.coerce.string()
-    case ColumnTypeEnum.MEDIUMTEXT:
-      return z.coerce.string()
-    case ColumnTypeEnum.LARGETEXT:
-      return z.coerce.string()
-    case ColumnTypeEnum.USERID:
-      return integerSchema
-    case ColumnTypeEnum.EVALUATIONID:
-      return integerSchema
-    case ColumnTypeEnum.SUBMISSIONID:
-      return integerSchema
     case ColumnTypeEnum.JSON:
       return z.string().refine(v => {
         try {

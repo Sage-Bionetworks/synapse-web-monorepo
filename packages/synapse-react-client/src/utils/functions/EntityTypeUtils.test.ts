@@ -90,6 +90,11 @@ const allEntityTypes: {
     concreteType: 'org.sagebionetworks.repo.model.RecordSet',
     friendlyName: 'Record Set',
   },
+  {
+    type: EntityType.searchindex,
+    concreteType: 'org.sagebionetworks.repo.model.search.table.SearchIndex',
+    friendlyName: 'Search Index',
+  },
 ]
 
 /**

@@ -5,7 +5,7 @@ import {
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
 import { useTableQueryUseQueryOptions } from './TableQueryUseQueryOptions'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 type UseOnQueryDataChangeOptions = {
   queryBundleRequest: QueryBundleRequest
@@ -48,10 +48,17 @@ export default function useOnQueryDataChange(
     }
   }, [queryMetadata, queryMetadataIsLoading, rowData, rowDataIsLoading])
 
+  // Use a ref so we always call the latest onChange without including it in the
+  // effect dependency array. Including a frequently-recreated callback in deps
+  // causes the effect to re-fire on every render, creating an infinite loop when
+  // the parent updates state inside the callback.
+  const onChangeRef = useRef(onChange)
+  onChangeRef.current = onChange
+
   // mergedData is sometimes undefined, which useDeepCompareEffect doesn't like, so use useDeepCompareEffectNoCheck instead
   useDeepCompareEffectNoCheck(() => {
-    if (mergedData && onChange) {
-      onChange(mergedData)
+    if (mergedData) {
+      onChangeRef.current(mergedData)
     }
-  }, [mergedData, onChange])
+  }, [mergedData])
 }

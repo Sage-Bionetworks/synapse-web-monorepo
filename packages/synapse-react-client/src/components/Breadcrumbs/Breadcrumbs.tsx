@@ -1,4 +1,3 @@
-import IconSvg from '@/components/IconSvg/IconSvg'
 import { truncateString } from '@/utils/functions/StringUtils'
 import {
   Breadcrumbs as MuiBreadcrumbs,
@@ -6,6 +5,7 @@ import {
   SxProps,
   Tooltip,
   Typography,
+  Box,
 } from '@mui/material'
 import { MouseEventHandler } from 'react'
 import { Link as RouterLink } from 'react-router'
@@ -30,17 +30,24 @@ type BreadcrumbsProps = {
   sx?: SxProps
   /** If defined, truncate individual item strings to be no longer than this value */
   maxBreadcrumbLength?: number
+  iconVariant?: 'twoTone' | 'outlined'
 }
 
-function BreadcrumbSeparator() {
-  return <IconSvg icon="chevronRight" />
-}
+const BREADCRUMB_SEPARATOR = (
+  <Box
+    sx={{
+      color: 'grey.400',
+    }}
+  >
+    /
+  </Box>
+)
 
 export function Breadcrumbs(props: BreadcrumbsProps) {
   const { items, sx, maxBreadcrumbLength } = props
   return (
     <MuiBreadcrumbs
-      separator={<BreadcrumbSeparator />}
+      separator={BREADCRUMB_SEPARATOR}
       itemsBeforeCollapse={2}
       itemsAfterCollapse={2}
       sx={sx}
@@ -53,24 +60,28 @@ export function Breadcrumbs(props: BreadcrumbsProps) {
 
         const tooltipText = displayedText !== data.text ? data.text : null
         return (
-          <Tooltip key={index} title={tooltipText} placement="top">
-            <Typography variant={'breadcrumb1'}>
-              {data.current ? (
-                displayedText
-              ) : (
-                <Link
-                  component={data.to ? RouterLink : Link}
-                  to={data.to}
-                  key={index}
-                  href={data.href}
-                  onClick={data.onClick}
-                  underline="hover"
-                >
-                  {displayedText}
-                </Link>
-              )}
-            </Typography>
-          </Tooltip>
+          <Box
+            sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+            key={index}
+          >
+            <Tooltip title={tooltipText} placement="top">
+              <Typography variant={'breadcrumb1'}>
+                {data.current ? (
+                  displayedText
+                ) : (
+                  <Link
+                    component={data.to ? RouterLink : Link}
+                    to={data.to}
+                    href={data.href}
+                    onClick={data.onClick}
+                    underline="hover"
+                  >
+                    {displayedText}
+                  </Link>
+                )}
+              </Typography>
+            </Tooltip>
+          </Box>
         )
       })}
     </MuiBreadcrumbs>

@@ -6,6 +6,8 @@ import {
 
 export const MOCK_USER_ID = 999
 export const MOCK_USER_NAME = 'myUserName'
+export const MOCK_USER_PROFILE_IMAGE_URL =
+  'https://upload.wikimedia.org/wikipedia/commons/9/95/Bufo-alvarius-coloradokr%C3%B6te.jpg'
 
 export const mockUserProfileData = {
   summary: 'My summary bio',

@@ -1,5 +1,6 @@
 import { useGetCurrentUserProfile } from '@/synapse-queries'
 import {
+  Alert,
   Button,
   FormControlLabel,
   Radio,
@@ -17,6 +18,7 @@ import { ReactNode } from 'react'
 import IconSvg from '../../IconSvg/IconSvg'
 import { UserBadge } from '../../UserCard/UserBadge'
 import UserSearchBox from '../../UserSearchBox/UserSearchBox'
+import { longFieldLabelSx } from './styles'
 
 export type DataAccessRequestAccessorsEditorProps = {
   /* The current set of accessor changes for a data access request */
@@ -27,6 +29,8 @@ export type DataAccessRequestAccessorsEditorProps = {
   isRenewal: boolean
   /* Text to show to inform the user about requirements accessors may need to meet */
   helpText: ReactNode
+  /* Optional cap on the number of collaborators the user may add (excludes the submitter, who is auto-added) */
+  collaboratorLimit?: number
 }
 
 /**
@@ -35,8 +39,15 @@ export type DataAccessRequestAccessorsEditorProps = {
 export default function DataAccessRequestAccessorsEditor(
   props: DataAccessRequestAccessorsEditorProps,
 ) {
-  const { accessorChanges, onChange, isRenewal, helpText } = props
+  const { accessorChanges, onChange, isRenewal, helpText, collaboratorLimit } =
+    props
   const { data: user } = useGetCurrentUserProfile()
+
+  // The submitter (current user) is auto-added and does not count toward the collaborator limit.
+  const isAtCollaboratorLimit =
+    collaboratorLimit !== undefined &&
+    accessorChanges.filter(ac => ac.userId !== user?.ownerId).length >=
+      collaboratorLimit
 
   const onSelectUserCallback = (
     id: string | null,
@@ -46,13 +57,21 @@ export default function DataAccessRequestAccessorsEditor(
       onChange(previousValue => {
         const currentAccessorIds = previousValue.map(ac => ac.userId)
         // if user is not already in the accessor list (prevent duplicates in accessor list)
-        if (!currentAccessorIds.includes(ugh.ownerId)) {
-          const selectedAccessor: AccessorChange = {
-            userId: ugh.ownerId,
-            type: AccessType.GAIN_ACCESS,
-          }
-          previousValue.push(selectedAccessor)
+        if (currentAccessorIds.includes(ugh.ownerId)) {
+          return previousValue
         }
+        if (
+          collaboratorLimit !== undefined &&
+          previousValue.filter(ac => ac.userId !== user?.ownerId).length >=
+            collaboratorLimit
+        ) {
+          return previousValue
+        }
+        const selectedAccessor: AccessorChange = {
+          userId: ugh.ownerId,
+          type: AccessType.GAIN_ACCESS,
+        }
+        previousValue.push(selectedAccessor)
         return previousValue
       })
     }
@@ -81,27 +100,41 @@ export default function DataAccessRequestAccessorsEditor(
   return (
     <>
       <Typography variant={'headline3'} sx={{ mt: 4, mb: 2 }}>
-        Data Requesters
+        Collaborators
+      </Typography>
+      <Typography variant={'body1'} sx={{ ...longFieldLabelSx, mb: 1 }}>
+        List the Synapse usernames of all collaborators at your institution
+        included in this data access request. Each collaborator must have a
+        Synapse account and be able to receive messages at their registered
+        email address.
       </Typography>
       <Typography
         component={'div'}
         variant={'body1'}
-        sx={{ mb: 1 }}
+        sx={{ ...longFieldLabelSx, mb: 1 }}
         className={'requester-label'}
       >
         {helpText}
       </Typography>
-      <UserSearchBox
-        inputId={'requesters'}
-        typeFilter={TYPE_FILTER.USERS_ONLY}
-        onChange={onSelectUserCallback}
-        filterPredicate={userGroupHeader =>
-          !accessorChanges
-            .map(ac => ac.userId)
-            .includes(userGroupHeader.ownerId)
-        }
-        value={null}
-      />
+      {isAtCollaboratorLimit && (
+        <Alert severity="warning" sx={{ mb: 1 }}>
+          You have reached the maximum of {collaboratorLimit} collaborators for
+          this request. Remove a collaborator to add another.
+        </Alert>
+      )}
+      {!isAtCollaboratorLimit && (
+        <UserSearchBox
+          inputId={'requesters'}
+          typeFilter={TYPE_FILTER.USERS_ONLY}
+          onChange={onSelectUserCallback}
+          filterPredicate={userGroupHeader =>
+            !accessorChanges
+              .map(ac => ac.userId)
+              .includes(userGroupHeader.ownerId)
+          }
+          value={null}
+        />
+      )}
       <Stack sx={{ my: 1, gap: 1 }}>
         {accessorChanges.map((ac, i) => {
           return (

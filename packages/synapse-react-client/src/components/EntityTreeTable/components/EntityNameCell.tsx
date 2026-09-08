@@ -12,8 +12,13 @@ export const depthPaddingMultiplierPx = 16
 export const NameCell: React.FC<CellContext<EntityBundleRow, unknown>> = ({
   row,
 }) => {
-  const { expanded, loadingIds, handleToggleExpanded, onEntityIdClicked } =
-    useEntityTreeTableContext()
+  const {
+    expanded,
+    loadingIds,
+    handleToggleExpanded,
+    onEntityIdClicked,
+    disableEntityLinks,
+  } = useEntityTreeTableContext()
   const { entityHeader, depth, isLeaf } = row.original
   const isExpanded = !!expanded[entityHeader.id]
   const hasChildren = !isLeaf
@@ -60,7 +65,10 @@ export const NameCell: React.FC<CellContext<EntityBundleRow, unknown>> = ({
       >
         <EntityLink
           entity={entityHeader}
+          link={!disableEntityLinks}
           onEntityIdClicked={onEntityIdClicked}
+          iconColor={'greyV2.800'}
+          iconVariant="outlined"
         />
       </Box>
     </Box>

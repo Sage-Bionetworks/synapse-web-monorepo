@@ -2,6 +2,7 @@ import StyledFormControl from '@/components/styled/StyledFormControl'
 import { InputLabel, Select, TextField } from '@mui/material'
 import { EvaluationRoundLimitType } from '@sage-bionetworks/synapse-types'
 import { EvaluationRoundLimitInput } from '../input_models/models'
+import { useId } from 'react'
 
 export type EvaluationRoundLimitOptionsProps = {
   limitInput: EvaluationRoundLimitInput
@@ -24,11 +25,14 @@ export function EvaluationRoundLimitOptions({
   allSelectedTypes,
   onChange,
 }: EvaluationRoundLimitOptionsProps) {
+  const limitTypeLabelId = useId()
+
   return (
     <>
       <StyledFormControl className="limit-type">
-        <InputLabel>Limit Type</InputLabel>
+        <InputLabel id={limitTypeLabelId}>Limit Type</InputLabel>
         <Select
+          labelId={limitTypeLabelId}
           fullWidth
           native
           value={limitInput.type}

@@ -1,10 +1,10 @@
 import React from 'react'
-import { StyledFormControl } from '@/components/StyledComponents'
-import { Box, TextField, useTheme } from '@mui/material'
+import { Stack, useTheme } from '@mui/material'
 import { VerificationSubmission } from '@sage-bionetworks/synapse-types'
 import { ChangeEvent, useState } from 'react'
 import RORInstitutionField from 'synapse-react-client/components/RORInstitutionField/RORInstitutionField'
 import { ContinueButton } from './ContinueButton'
+import { TextField } from 'synapse-react-client/components/TextField/index'
 
 const keysToValidate = ['firstName', 'lastName', 'location', 'company']
 
@@ -55,75 +55,53 @@ export const ProfileFieldsEditor = (
 
   return (
     <>
-      <Box
+      <Stack
+        gap={2}
         sx={{
           marginBottom: theme.spacing(2),
         }}
       >
-        <StyledFormControl
+        <TextField
           fullWidth
-          variant="standard"
-          margin="normal"
-          sx={{ marginTop: '0px' }}
-        >
-          <TextField
-            fullWidth
-            required
-            label={'First Name'}
-            id="firstName"
-            name="firstName"
-            onChange={handleChange}
-            value={values.firstName || ''}
-            error={!!errors.firstName}
-          />
-        </StyledFormControl>
-        <StyledFormControl fullWidth variant="standard" margin="normal">
-          <TextField
-            fullWidth
-            required
-            label={'Last Name'}
-            id="lastName"
-            name="lastName"
-            onChange={handleChange}
-            value={values.lastName || ''}
-            error={!!errors.lastName}
-          />
-        </StyledFormControl>
-        <StyledFormControl
-          fullWidth
-          variant="standard"
-          margin="normal"
           required
-        >
-          <RORInstitutionField
-            onChange={value => handleCompanyChange(value || '')}
-            value={values.company || ''}
-            error={!!errors.company}
-          />
-        </StyledFormControl>
-        <StyledFormControl
+          label={'First Name'}
+          id="firstName"
+          name="firstName"
+          onChange={handleChange}
+          value={values.firstName || ''}
+          error={!!errors.firstName}
+        />
+        <TextField
           fullWidth
-          variant="standard"
-          margin="normal"
           required
-        >
-          <TextField
-            label={'Location'}
-            id="location"
-            name="location"
-            fullWidth
-            onChange={handleChange}
-            value={values.location || ''}
-            error={!!errors.location}
-          />
-        </StyledFormControl>
+          label={'Last Name'}
+          id="lastName"
+          name="lastName"
+          onChange={handleChange}
+          value={values.lastName || ''}
+          error={!!errors.lastName}
+        />
+        <RORInstitutionField
+          onChange={value => handleCompanyChange(value || '')}
+          value={values.company || ''}
+          error={!!errors.company}
+        />
+        <TextField
+          label={'Location'}
+          id="location"
+          name="location"
+          fullWidth
+          onChange={handleChange}
+          value={values.location || ''}
+          error={!!errors.location}
+        />
         <ContinueButton
           onClick={() => {
             props.onNext(values)
           }}
           disabled={Object.keys(validate(values)).length > 0}
         />
-      </Box>
+      </Stack>
     </>
   )
 }

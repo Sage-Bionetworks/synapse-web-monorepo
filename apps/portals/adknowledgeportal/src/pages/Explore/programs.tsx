@@ -1,9 +1,8 @@
-import { programsSql } from '@/config/resources'
-import programs from '@/config/synapseConfigs/programs'
-import CardContainerLogic from 'synapse-react-client/components/CardContainerLogic/index'
+import { programsSearch } from '@/config/synapseConfigs/programs'
+import SearchQueryWrapperPlotNav from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 function ExplorePrograms() {
-  return <CardContainerLogic cardConfiguration={programs} sql={programsSql} />
+  return <SearchQueryWrapperPlotNav {...programsSearch} shouldDeepLink={true} />
 }
 
 export default ExplorePrograms

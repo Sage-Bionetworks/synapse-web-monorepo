@@ -18,6 +18,7 @@ type UploadDocumentFieldProps = {
   isMultiFileUpload?: boolean
   onClearAttachment?: (fileHandleId: string) => void
   isLoading?: boolean
+  disabled?: boolean
   uploadBtnVariant?: ButtonProps['variant']
 }
 
@@ -30,6 +31,7 @@ export function UploadDocumentField(props: UploadDocumentFieldProps) {
     isMultiFileUpload = false,
     onClearAttachment,
     isLoading = false,
+    disabled = false,
     uploadBtnVariant = 'outlined',
   } = props
   const [isUploading, setIsUploading] = useState(false)
@@ -65,7 +67,7 @@ export function UploadDocumentField(props: UploadDocumentFieldProps) {
         }}
         label={`Upload ${documentName}`}
         buttonProps={{
-          disabled: isLoading,
+          disabled: isLoading || disabled,
           variant: uploadBtnVariant,
           endIcon: <IconSvg icon={'upload'} wrap={false} />,
         }}

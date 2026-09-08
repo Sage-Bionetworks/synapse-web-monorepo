@@ -43,7 +43,7 @@ export const FTS_SEARCH_TERM = 'FTS_SEARCH_TERM'
 export const FTS_SEARCH_ROLE = 'FTS_SEARCH_ROLE'
 
 /**
- * Look in local storage for a set of QueryFilters to apply.  In addition, given the search params,
+ * Look in sessionStorage for a set of QueryFilters to apply.  In addition, given the search params,
  * generate a set of QueryFilters to narrow the query to view just related data.
  * May return null if a QueryFilter should not be added.
  * @param sql
@@ -56,11 +56,13 @@ export const getAdditionalFilters = (
   operator: SQLOperator = ColumnSingleValueFilterOperator.LIKE,
   sessionStorageKey?: string,
 ): QueryFilter[] | undefined => {
-  const sessionStorageQueryFiltersString = sessionStorageKey
-    ? sessionStorage.getItem(
-        QUERY_FILTERS_SESSION_STORAGE_KEY(sessionStorageKey),
-      )
-    : undefined
+  const hasSessionStorage = typeof sessionStorage !== 'undefined'
+  const sessionStorageQueryFiltersString =
+    hasSessionStorage && sessionStorageKey
+      ? sessionStorage.getItem(
+          QUERY_FILTERS_SESSION_STORAGE_KEY(sessionStorageKey),
+        )
+      : undefined
   let additionalFilters: QueryFilter[] = []
   if (sessionStorageQueryFiltersString) {
     additionalFilters = JSON.parse(
@@ -88,7 +90,12 @@ export const getAdditionalFilters = (
             return filter
           }
           switch (operator) {
-            case ColumnSingleValueFilterOperator.EQUAL: {
+            case ColumnSingleValueFilterOperator.EQUAL:
+            case ColumnSingleValueFilterOperator.NOT_EQUAL:
+            case ColumnSingleValueFilterOperator.GREATER_THAN:
+            case ColumnSingleValueFilterOperator.LESS_THAN:
+            case ColumnSingleValueFilterOperator.GREATER_THAN_OR_EQUAL:
+            case ColumnSingleValueFilterOperator.LESS_THAN_OR_EQUAL: {
               const filter: ColumnSingleValueQueryFilter = {
                 concreteType:
                   'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
@@ -98,13 +105,25 @@ export const getAdditionalFilters = (
               }
               return filter
             }
-            case ColumnSingleValueFilterOperator.IN: {
+            case ColumnSingleValueFilterOperator.IN:
+            case ColumnSingleValueFilterOperator.BETWEEN: {
               const filter: ColumnSingleValueQueryFilter = {
                 concreteType:
                   'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
                 columnName: key,
                 operator: operator,
                 values: splitAndTrim(searchParams[key]),
+              }
+              return filter
+            }
+            case ColumnSingleValueFilterOperator.IS_NULL:
+            case ColumnSingleValueFilterOperator.IS_NOT_NULL: {
+              const filter: ColumnSingleValueQueryFilter = {
+                concreteType:
+                  'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+                columnName: key,
+                operator: operator,
+                values: [],
               }
               return filter
             }
@@ -148,8 +167,25 @@ export const getAdditionalFilters = (
               }
               return filter
             }
+            default:
+              // Compile-time exhaustiveness guard; the log fires only if a new
+              // operator is added to the union without a case here.
+              operator satisfies never
+              console.warn(
+                `getAdditionalFilters: unrecognized SQL operator, skipping filter for key "${key}"`,
+                { operator },
+              )
+              return undefined
           }
-        }),
+        })
+        .filter(
+          (
+            f,
+          ): f is
+            | TextMatchesQueryFilter
+            | ColumnSingleValueQueryFilter
+            | ColumnMultiValueFunctionQueryFilter => f !== undefined,
+        ),
     )
   }
 

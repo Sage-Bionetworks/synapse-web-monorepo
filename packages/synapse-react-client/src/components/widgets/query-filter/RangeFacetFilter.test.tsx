@@ -4,7 +4,7 @@ import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { DEFAULT_PAGE_SIZE, VALUE_NOT_SET } from '@/utils/SynapseConstants'
-import { Collapse as MockCollapse } from '@mui/material'
+import { Collapse as MockCollapse, CollapseProps } from '@mui/material'
 import {
   ColumnModel,
   ColumnTypeEnum,
@@ -19,14 +19,15 @@ import { Suspense } from 'react'
 import { QueryContextType, QueryWrapper, useQueryContext } from '../../../index'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
 import { RangeValues } from '../Range'
-import RangeSlider from '../RangeSlider/RangeSlider'
+import RangeSlider, { RangeSliderProps } from '../RangeSlider/RangeSlider'
 import { RangeFacetFilter, RangeFacetFilterProps } from './RangeFacetFilter'
+import { RangeFacetFilterUI } from './RangeFacetFilterUI'
 
 let capturedOnApplyClicked: ((values: RangeValues) => void) | undefined
 
 vi.mock('../RangeSlider/RangeSlider', () => ({
   __esModule: true,
-  default: vi.fn((props: any) => {
+  default: vi.fn((props: RangeSliderProps) => {
     capturedOnApplyClicked = props.onApplyClicked
     return <div data-testid="RangeSlider"></div>
   }),
@@ -38,7 +39,7 @@ vi.mock(import('@mui/material'), async importOriginal => {
   const original = await importOriginal()
   return {
     ...original,
-    Collapse: vi.fn(props => (
+    Collapse: vi.fn((props: CollapseProps) => (
       <div data-testid="Collapse">{props.children}</div>
     )),
   }
@@ -157,17 +158,15 @@ describe('RangeFacetFilter tests', () => {
 
     it('should set for Unannotated', async () => {
       init({ ...props, facetResult: notSetFacetResult })
-      const notAssignedOption = await screen.findByLabelText<HTMLInputElement>(
-        'Not Assigned',
-      )
+      const notAssignedOption =
+        await screen.findByLabelText<HTMLInputElement>('Not Assigned')
       expect(notAssignedOption.checked).toBe(true)
     })
 
     it('interval', async () => {
       init({ ...props, facetResult: rangeFacetResult })
-      const rangeOption = await screen.findByLabelText<HTMLInputElement>(
-        'Range',
-      )
+      const rangeOption =
+        await screen.findByLabelText<HTMLInputElement>('Range')
       expect(rangeOption.checked).toBe(true)
     })
   })
@@ -363,9 +362,8 @@ describe('RangeFacetFilter tests', () => {
       init()
 
       // Click "Range"
-      const rangeOption = await screen.findByLabelText<HTMLInputElement>(
-        'Range',
-      )
+      const rangeOption =
+        await screen.findByLabelText<HTMLInputElement>('Range')
       await userEvent.click(rangeOption)
 
       // Type into the min/max text boxes
@@ -414,5 +412,130 @@ describe('RangeFacetFilter tests', () => {
         ])
       })
     })
+
+    it('normalizes NaN bounds from the range control to undefined', async () => {
+      init({ facetResult: rangeFacetResult })
+      await waitFor(() => expect(mockedRangeSlider).toHaveBeenCalled())
+      await waitFor(() => expect(capturedOnApplyClicked).toBeDefined())
+
+      act(() => {
+        capturedOnApplyClicked!({ min: NaN, max: 300 })
+      })
+
+      await waitFor(() => {
+        expect(
+          currentQueryContext?.getCurrentQueryRequest().query.selectedFacets,
+        ).toEqual([
+          {
+            concreteType:
+              'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
+            columnName: 'Year',
+            min: undefined,
+            max: '300',
+          },
+        ])
+      })
+    })
+  })
+})
+
+describe('RangeFacetFilterUI INTEGER without column bounds', () => {
+  it('renders a number Range input when columnMin and columnMax are absent', async () => {
+    render(
+      <RangeFacetFilterUI
+        label="Year"
+        facetResult={{}}
+        columnType="INTEGER"
+        onRangeValueSelected={vi.fn()}
+        onNotSetSelected={vi.fn()}
+        onAnySelected={vi.fn()}
+      />,
+      { wrapper: createWrapper() },
+    )
+    const rangeOption = screen.getByLabelText('Range')
+    await userEvent.click(rangeOption)
+    // Should show Range (number inputs), not RangeSlider
+    expect(screen.queryByTestId('RangeSlider')).not.toBeInTheDocument()
+    const minInput = screen.getByLabelText<HTMLInputElement>('min')
+    expect(minInput.type).toBe('number')
+  })
+
+  it('renders a number Range input when columnMin and columnMax are empty strings', async () => {
+    // Synthesized facets from SearchQueryWrapper use '' for unavailable bounds
+    render(
+      <RangeFacetFilterUI
+        label="Year"
+        facetResult={{ columnMin: '', columnMax: '' }}
+        columnType="INTEGER"
+        onRangeValueSelected={vi.fn()}
+        onNotSetSelected={vi.fn()}
+        onAnySelected={vi.fn()}
+      />,
+      { wrapper: createWrapper() },
+    )
+    const rangeOption = screen.getByLabelText('Range')
+    await userEvent.click(rangeOption)
+    expect(screen.queryByTestId('RangeSlider')).not.toBeInTheDocument()
+    const minInput = screen.getByLabelText<HTMLInputElement>('min')
+    expect(minInput.type).toBe('number')
+  })
+
+  it('renders a number Range input pre-filled when selectedMin and selectedMax are set', () => {
+    render(
+      <RangeFacetFilterUI
+        label="Year"
+        facetResult={{ selectedMin: '1997', selectedMax: '1999' }}
+        columnType="INTEGER"
+        onRangeValueSelected={vi.fn()}
+        onNotSetSelected={vi.fn()}
+        onAnySelected={vi.fn()}
+      />,
+      { wrapper: createWrapper() },
+    )
+    // selectedMin is set, so radio should already be on Range
+    const minInput = screen.getByLabelText<HTMLInputElement>('min')
+    expect(minInput.type).toBe('number')
+    expect(minInput.value).toBe('1997')
+  })
+
+  it('does not seed inputs with NaN when switching from "Not Assigned" → "Range"', async () => {
+    // selectedMin/Max = VALUE_NOT_SET simulates the state after clicking "Not Assigned".
+    // Without treating the sentinel as absent, parseInt('org.sagebionetworks…') = NaN
+    // would seed the min input, and applying with only a max value would emit min='NaN'.
+    render(
+      <RangeFacetFilterUI
+        label="Year"
+        facetResult={{ selectedMin: VALUE_NOT_SET, selectedMax: VALUE_NOT_SET }}
+        columnType="INTEGER"
+        onRangeValueSelected={vi.fn()}
+        onNotSetSelected={vi.fn()}
+        onAnySelected={vi.fn()}
+      />,
+      { wrapper: createWrapper() },
+    )
+    const rangeOption = screen.getByLabelText('Range')
+    await userEvent.click(rangeOption)
+    const minInput = screen.getByLabelText<HTMLInputElement>('min')
+    const maxInput = screen.getByLabelText<HTMLInputElement>('max')
+    expect(minInput.value).toBe('')
+    expect(maxInput.value).toBe('')
+  })
+
+  it('renders a RangeSlider when real columnMin and columnMax bounds are provided', async () => {
+    render(
+      <RangeFacetFilterUI
+        label="Year"
+        facetResult={{ columnMin: '1996', columnMax: '1999' }}
+        columnType="INTEGER"
+        onRangeValueSelected={vi.fn()}
+        onNotSetSelected={vi.fn()}
+        onAnySelected={vi.fn()}
+      />,
+      { wrapper: createWrapper() },
+    )
+    const rangeOption = screen.getByLabelText('Range')
+    await userEvent.click(rangeOption)
+    expect(screen.getByTestId('RangeSlider')).toBeInTheDocument()
+    expect(screen.queryByLabelText('min')).not.toBeInTheDocument()
   })
 })

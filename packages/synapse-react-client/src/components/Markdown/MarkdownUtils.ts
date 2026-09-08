@@ -3,6 +3,12 @@ import { RefObject } from 'react'
 import { MarkdownSynapseProps } from './MarkdownSynapse'
 import MarkdownIt from 'markdown-it'
 import { truncateString } from '@/utils/functions/StringUtils'
+import {
+  htmlToDOM,
+  Element as DomElement,
+  Text as DomText,
+  type DOMNode,
+} from 'html-react-parser'
 
 /**
  * Find all math identified elements of the form [id^=\"mathjax-\"]
@@ -126,10 +132,29 @@ export function handleLinkClicks(event: MouseEvent) {
   }
 }
 
+/**
+ * Extracts the plain text content from an HTML string. Implemented with an
+ * isomorphic HTML parser (rather than `document.createElement`) so it can run
+ * during server-side rendering / SSG prerender as well as in the browser.
+ */
 export function stripHTML(myHtmlString: string): string {
-  const el = document.createElement('div')
-  el.innerHTML = myHtmlString
-  return el.textContent || el.innerText || ''
+  if (!myHtmlString) {
+    return ''
+  }
+  const collectText = (nodes: DOMNode[]): string =>
+    nodes
+      .map(node => {
+        if (node instanceof DomText) {
+          return node.data
+        }
+        if (node instanceof DomElement) {
+          return collectText(node.children as DOMNode[])
+        }
+        return ''
+      })
+      .join('')
+
+  return collectText(htmlToDOM(myHtmlString))
 }
 
 export function transformStringIntoMarkdownProps(
@@ -215,27 +240,25 @@ const tableTags = ['table', 'thead', 'tbody', 'tr', 'tfoot']
 // Widget types that render inline elements and should not be treated as block-level
 const inlineWidgetTypes = ['badge', 'image', 'imageLink', 'buttonlink']
 
-const isInlineContainer = (node: Node): boolean => {
-  if (node.nodeType !== Node.ELEMENT_NODE) {
+const isInlineContainer = (node: DOMNode): boolean => {
+  if (!(node instanceof DomElement)) {
     return false
   }
 
-  const element = node as HTMLElement
-  const tag = element.tagName.toLowerCase()
+  const tag = node.name.toLowerCase()
   return inlineTags.includes(tag)
 }
 
 // Check if a node is a block level element
-export const isBlockLevelElement = (node: Node): boolean => {
-  if (node.nodeType !== Node.ELEMENT_NODE) {
+export const isBlockLevelElement = (node: DOMNode): boolean => {
+  if (!(node instanceof DomElement)) {
     return false
   }
 
-  const element = node as HTMLElement
-  const tag = element.tagName.toLowerCase()
+  const tag = node.name.toLowerCase()
   const isStandardBlock = blockLevelTags.includes(tag)
 
-  const widgetParams = element.getAttribute('data-widgetparams')
+  const widgetParams = node.attribs['data-widgetparams'] ?? null
   const isWidget =
     widgetParams !== null &&
     !inlineWidgetTypes.includes(widgetParams.split('?')[0])
@@ -243,7 +266,7 @@ export const isBlockLevelElement = (node: Node): boolean => {
   return isStandardBlock || isWidget
 }
 
-function isValidNesting(child: HTMLElement, ancestor: HTMLElement): boolean {
+function isValidNesting(child: DomElement, ancestor: DomElement): boolean {
   // case 1: block level elements cannot be inside of inline containers
   if (isBlockLevelElement(child) && isInlineContainer(ancestor)) {
     return false
@@ -251,14 +274,14 @@ function isValidNesting(child: HTMLElement, ancestor: HTMLElement): boolean {
 
   // case 2: buttons cannot be nested inside of other buttons
   if (
-    ancestor.tagName.toLowerCase() === 'button' &&
-    child.tagName.toLowerCase() === 'button'
+    ancestor.name.toLowerCase() === 'button' &&
+    child.name.toLowerCase() === 'button'
   ) {
     return false
   }
 
   // A <p> tag cannot contain block-level elements (including other <p> tags)
-  if (ancestor.tagName.toLowerCase() === 'p' && isBlockLevelElement(child)) {
+  if (ancestor.name.toLowerCase() === 'p' && isBlockLevelElement(child)) {
     return false
   }
 
@@ -268,30 +291,40 @@ function isValidNesting(child: HTMLElement, ancestor: HTMLElement): boolean {
 /**
  * Fixes invalid HTML nesting (e.g., <div> inside <p>) in a single O(n) pass.
  * It compares the current 'node' against a stack of its 'ancestors'.
- * @param node - The current DOM node being inspected.
- * @param ancestors - An array of the current node's parent elements
+ *
+ * Operates on the `domhandler` node tree produced by `html-react-parser`'s
+ * `htmlToDOM`, so it runs identically in the browser and during SSR/SSG
+ * prerender (no dependency on a live DOM, `DOMParser`, or `HTMLElement`).
+ * @param node - The current node being inspected.
+ * @param ancestors - An array of the current node's ancestor elements
  */
 export function fixInvalidNesting(
-  node: Node,
-  ancestors: HTMLElement[] = [],
+  node: DOMNode,
+  ancestors: DomElement[] = [],
 ): void {
   // Whitespace-only text nodes are invalid children of table structure elements and must be removed.
-  if (node.nodeType === Node.TEXT_NODE) {
-    const parentTag = (node.parentNode as HTMLElement)?.tagName?.toLowerCase()
+  if (node instanceof DomText) {
+    const parent = node.parent
+    const parentTag =
+      parent instanceof DomElement ? parent.name.toLowerCase() : undefined
 
-    if (tableTags.includes(parentTag) && !node.textContent?.trim()) {
-      node.parentNode?.removeChild(node)
+    if (parentTag && tableTags.includes(parentTag) && !node.data?.trim()) {
+      const siblings = (parent as DomElement).children
+      const index = siblings.indexOf(node)
+      if (index !== -1) {
+        siblings.splice(index, 1)
+      }
     }
 
     return
   }
 
   // We only care about element nodes
-  if (node.nodeType !== Node.ELEMENT_NODE) {
+  if (!(node instanceof DomElement)) {
     return
   }
 
-  const element = node as HTMLElement
+  const element = node
 
   // We check the current element against every ancestor in the stack to see if there is any invalid nesting.
   // We iterate backwards (from immediate parent to root) so we fix the closest invalid container first.
@@ -300,33 +333,19 @@ export function fixInvalidNesting(
 
     // if the nesting is invalid
     if (!isValidNesting(element, ancestor)) {
-      // change the ancestor to a div
-      const div = element.ownerDocument.createElement('div')
-
-      // Preserve all original attributes
-      Array.from(ancestor.attributes).forEach(attr =>
-        div.setAttribute(attr.name, attr.value),
-      )
-
-      // Move all children from the old element to the new <div>
-      while (ancestor.firstChild) {
-        div.appendChild(ancestor.firstChild)
-      }
-
-      // replace the ancestor with the new div
-      if (ancestor.parentNode) {
-        ancestor.parentNode.replaceChild(div, ancestor)
-      }
-
-      ancestors[i] = div // Update our local stack to reference to the new div
+      // Demote the ancestor to a <div> in place. Renaming preserves the
+      // existing attributes (`attribs`) and children, so no node surgery is
+      // required.
+      ancestor.name = 'div'
     }
   }
 
   // Push the current element to the stack before traversing children
   ancestors.push(element)
 
-  Array.from(element.childNodes).forEach(child => {
-    fixInvalidNesting(child, ancestors)
+  // Iterate over a copy because invalid table whitespace may be removed.
+  Array.from(element.children).forEach(child => {
+    fixInvalidNesting(child as DOMNode, ancestors)
   })
 
   // Pop the current element off the stack after traversing its children

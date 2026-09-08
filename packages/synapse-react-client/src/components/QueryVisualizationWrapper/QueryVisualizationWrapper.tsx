@@ -9,9 +9,11 @@ import { useGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 import { NoContentPlaceholderType } from '../SynapseTable/NoContentPlaceholderType'
 import { ExternalAnalysisPlatform } from '../SynapseTable/export/ExternalAnalysisPlatformsConstants'
 import NoContentPlaceholderComponent from './NoContentPlaceholder'
+import { createDuoFacetValueRenderer } from '../GenericCard/DuoTermTags/DuoTermTags'
 import {
   QueryVisualizationContextProvider,
   QueryVisualizationContextType,
+  RenderedFacetValueChip,
 } from './QueryVisualizationContext'
 
 // By default, show no external analysis platforms.
@@ -33,11 +35,25 @@ export type QueryVisualizationWrapperProps = {
   unitDescription?: string
   /** Mapping from column name to the name that should be shown for the column */
   columnAliases?: Record<string, string>
+  /** Optional custom renderer for enumeration facet values (see context). */
+  renderFacetValue?: (
+    columnName: string,
+    value: string,
+  ) => RenderedFacetValueChip | undefined
+  /**
+   * Column name of a STRING_LIST of Data Use Ontology (DUO) values. When set,
+   * that column's facet values and active-filter pills are automatically
+   * rendered as DUO tags, so portals don't need to supply their own
+   * `renderFacetValue` handler. An explicit `renderFacetValue` takes precedence.
+   */
+  dataUseModifiersColumnName?: string
   visibleColumnCount?: number
   hiddenColumns?: string[]
   defaultShowPlots?: boolean
   hideCopyToClipboard?: boolean
   hideSearchBarControl?: boolean
+  /** When true, the text matches filter pill is shown but cannot be removed. Defaults to true. */
+  lockTextMatchesQueryFilterPill?: boolean
   defaultShowSearchBar?: boolean
   showLastUpdatedOn?: boolean
   /** Default is INTERACTIVE */
@@ -72,6 +88,7 @@ export function QueryVisualizationWrapper(
     defaultShowPlots = true,
     hideCopyToClipboard = false,
     hideSearchBarControl = false,
+    lockTextMatchesQueryFilterPill = true,
     unitDescription = 'result',
     helpConfiguration,
     hasCustomPlots = false,
@@ -83,6 +100,18 @@ export function QueryVisualizationWrapper(
     () => props.columnAliases ?? {},
     [props.columnAliases],
   )
+
+  // An explicit renderFacetValue wins; otherwise, if a DUO column is declared,
+  // render that column's facet values and pills as DUO tags automatically.
+  const renderFacetValue = useMemo(() => {
+    if (props.renderFacetValue) {
+      return props.renderFacetValue
+    }
+    if (props.dataUseModifiersColumnName) {
+      return createDuoFacetValueRenderer(props.dataUseModifiersColumnName)
+    }
+    return undefined
+  }, [props.renderFacetValue, props.dataUseModifiersColumnName])
 
   const {
     getCurrentQueryRequest,
@@ -110,9 +139,8 @@ export function QueryVisualizationWrapper(
 
   const [showSqlEditor, setShowSqlEditor] = useState(false)
   const [showPlots, setShowPlots] = useState(defaultShowPlots)
-  const [showCopyToClipboard, setShowCopyToClipboard] = useState(
-    !hideCopyToClipboard,
-  )
+  const [showCopyToClipboard, setShowCopyToClipboard] =
+    useState(!hideCopyToClipboard)
   const [showFacetFilter, setShowFacetFilter] = useState(true)
 
   // The search bar and download confirmation should not be shown at the same time.
@@ -138,17 +166,31 @@ export function QueryVisualizationWrapper(
     [getCurrentQueryRequest],
   )
 
+  // Deep-compare-memoize so callers passing a fresh array literal
+  // (e.g. `hiddenColumns={['topic']}`) don't reset visible columns on every
+  // parent render.
+  const hiddenColumns = useDeepCompareMemoize(props.hiddenColumns ?? [])
   useEffect(() => {
     // SWC-6030: If sql changes, reset what columns are visible
+    const hidden = new Set(hiddenColumns)
     setVisibleColumns(
-      selectColumns.slice(0, visibleColumnCount).map(el => el.name),
+      selectColumns
+        .filter(el => !hidden.has(el.name))
+        .slice(0, visibleColumnCount)
+        .map(el => el.name),
     )
-  }, [selectColumns, lastQueryRequest.query.sql, visibleColumnCount])
+  }, [
+    selectColumns,
+    lastQueryRequest.query.sql,
+    visibleColumnCount,
+    hiddenColumns,
+  ])
 
   const getColumnDisplayName = useCallback(
     (columnName: string, jsonPath?: string) => {
       // SWC-5982: if force-display-original-column-names is set, then just return the string
       const forceDisplayOriginalColumnName =
+        typeof localStorage !== 'undefined' &&
         localStorage.getItem('force-display-original-column-names') === 'true'
 
       if (!columnName || (forceDisplayOriginalColumnName && !jsonPath)) {
@@ -208,6 +250,7 @@ export function QueryVisualizationWrapper(
       showLastUpdatedOn: props.showLastUpdatedOn,
       getColumnDisplayName,
       getDisplayValue,
+      renderFacetValue,
       getHelpText,
       NoContentPlaceholder,
       isShowingExportToAnalysisPlatformModal:
@@ -217,6 +260,7 @@ export function QueryVisualizationWrapper(
       showFacetFilter: hasFacetedSelectColumn ? showFacetFilter : false,
       setShowFacetFilter,
       hideSearchBarControl,
+      lockTextMatchesQueryFilterPill,
       showSearchBar,
       setShowSearchBar,
       showDownloadConfirmation,
@@ -237,6 +281,7 @@ export function QueryVisualizationWrapper(
       isShowingExportToAnalysisPlatformModal,
       props.rgbIndex,
       props.showLastUpdatedOn,
+      renderFacetValue,
       setShowDownloadConfirmation,
       setShowSearchBar,
       showCopyToClipboard,
@@ -249,6 +294,8 @@ export function QueryVisualizationWrapper(
       visibleColumns,
       hasCustomPlots,
       enabledExternalAnalysisPlatforms,
+      hideSearchBarControl,
+      lockTextMatchesQueryFilterPill,
     ],
   )
   /**

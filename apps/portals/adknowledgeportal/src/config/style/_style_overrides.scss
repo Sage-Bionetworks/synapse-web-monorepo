@@ -1,12 +1,45 @@
 :root {
   --adkp-accent-color: #684b84;
+  --data-explorer-title-color: var(--adkp-accent-color);
   --adkp-button-gradient: linear-gradient(180deg, #443471 0%, #5a488f 100%);
   --adkp-button-border-color: #32243f;
+  --portal-nav-underline-color: #fff;
+  --Brand-dark: #1f3042;
 }
 
 #header,
 #footer {
   background-color: var(--synapse-primary-action-color);
+}
+
+body {
+  background-color: #faf9fa;
+}
+
+#footer.footer--adkp {
+  .footer-main {
+    background: linear-gradient(
+      91deg,
+      #7761b7 5.34%,
+      #9067b6 24.31%,
+      #816dc8 91.15%
+    );
+
+    .footer-links {
+      text-transform: uppercase;
+    }
+  }
+
+  .footer-bottom {
+    background:
+      linear-gradient(0deg, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.15) 100%),
+      linear-gradient(91deg, #7761b7 5.34%, #9067b6 24.31%, #816dc8 91.15%);
+  }
+
+  .nav-logo {
+    // swaps rendered footer logo image
+    content: url('/footerLogo.svg');
+  }
 }
 
 .SRC-primary-background-color-border-left {
@@ -24,35 +57,24 @@ footer {
   }
 }
 
-.ProgramCardList {
-  .SRC-imageThumbnail img {
-    max-width: 100px;
-    padding-top: 20px;
-    padding-right: 30px;
-    float: right;
-  }
-}
-
 .ProgramsHomePage {
   .Programs__Card {
     width: 32%;
   }
 }
 
-.HomePageV2 {
-  h2.title {
-    color: var(--adkp-accent-color);
-    font-size: 36px;
-    font-style: normal;
-    font-weight: 600;
-    line-height: 62px; /* 172.222% */
-    text-transform: none;
-    margin: 0;
-  }
+h2.title {
+  color: var(--adkp-accent-color);
+  font-size: 36px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 62px; /* 172.222% */
+  text-transform: none;
+  margin: 0;
+}
 
-  p.center-title {
-    max-width: 650px;
-    margin-left: auto;
-    margin-right: auto;
-  }
+p.center-title {
+  max-width: 650px;
+  margin-left: auto;
+  margin-right: auto;
 }

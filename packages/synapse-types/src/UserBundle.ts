@@ -1,5 +1,6 @@
 import { VerificationSubmission } from './VerificationSubmission'
 import { UserProfile } from './UserProfile'
+import { IdentityProvider } from './IdentityProvider'
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/UserBundle.html
 export type UserBundle = {
@@ -11,4 +12,5 @@ export type UserBundle = {
   isVerified?: boolean // true iff the user is Verified
   isACTMember?: boolean // true iff the user is an ACT member
   isARReviewer?: boolean // true iff the user has permissions to review data access submissions on at least one access requirement (This is always true for an ACT member)
+  identityProviders?: IdentityProvider[] // The identity providers linked to this user's account
 }

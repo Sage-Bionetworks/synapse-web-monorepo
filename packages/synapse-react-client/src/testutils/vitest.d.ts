@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-empty-object-type,@typescript-eslint/no-empty-interface */
+/* oxlint-disable @typescript-eslint/no-empty-object-type,@typescript-eslint/no-empty-interface */
 import 'vitest'
 
 interface CustomMatchers<R = unknown> {

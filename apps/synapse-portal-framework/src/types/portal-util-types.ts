@@ -5,6 +5,11 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { PortalDOIConfiguration } from 'synapse-react-client/components/GenericCard/PortalDOI/PortalDOIConfiguration'
 
+export type SearchIndexConfig = {
+  searchIndexId: string
+  autocompleteFieldName: string
+}
+
 export type DetailsPageProps = {
   header?: React.ReactNode
   children?: React.ReactNode

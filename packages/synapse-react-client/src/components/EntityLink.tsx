@@ -25,6 +25,8 @@ export type EntityLinkProps = {
   /** The field of the entity to display. Default is 'name' */
   displayTextField?: keyof Entity | keyof EntityHeader
   onEntityIdClicked?: (entityId: string) => void
+  iconVariant?: 'twoTone' | 'outlined'
+  iconColor?: string
 }
 
 export const EntityLink = (props: EntityLinkProps): React.ReactNode => {
@@ -36,6 +38,8 @@ export const EntityLink = (props: EntityLinkProps): React.ReactNode => {
     link = true,
     showIcon = true,
     onEntityIdClicked,
+    iconVariant = 'twoTone',
+    iconColor,
   } = props
 
   let entityId = ''
@@ -92,7 +96,12 @@ export const EntityLink = (props: EntityLinkProps): React.ReactNode => {
           href={href}
         >
           {showIcon && (
-            <EntityTypeIcon type={type} style={{ marginRight: '6px' }} />
+            <EntityTypeIcon
+              sx={iconColor ? { color: iconColor } : undefined}
+              type={type}
+              style={{ marginRight: '6px' }}
+              variant={iconVariant}
+            />
           )}
           {entity[displayTextField as keyof typeof entity]}
         </Link>
@@ -101,7 +110,12 @@ export const EntityLink = (props: EntityLinkProps): React.ReactNode => {
       return (
         <p className={className}>
           {showIcon && (
-            <EntityTypeIcon type={type} style={{ marginRight: '6px' }} />
+            <EntityTypeIcon
+              sx={{ ...(iconColor && { color: iconColor }) }}
+              type={type}
+              style={{ marginRight: '6px' }}
+              variant={iconVariant}
+            />
           )}
           {entity[displayTextField as keyof typeof entity]}
         </p>

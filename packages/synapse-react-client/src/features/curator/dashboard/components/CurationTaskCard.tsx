@@ -1,131 +1,60 @@
 import { displayToast } from '@/components'
-import useOpenCuratorFromTaskButton from '@/features/entity/metadata-task/hooks/useOpenCuratorButton'
-import { OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE } from '@/features/entity/metadata-task/utils/constants'
-import { Card, Chip, Divider, Typography } from '@mui/material'
+import { getComputeTaskConcreteType } from '@/features/entity/metadata-task/utils/types'
 import { TaskBundle } from '@sage-bionetworks/synapse-client'
-import classNames from 'classnames'
-import styles from './CurationTaskCard.module.scss'
+import CurationTaskCardLayout, {
+  deriveCardFields,
+} from './CurationTaskCardLayout'
+import ExecutableTaskCard from './ExecutableTaskCard'
+import GridTaskCard from './GridTaskCard'
 import NextStepButton from './NextStepButton'
-import sharedStyles from './shared.module.scss'
-import UserOrTeamChip from './UserOrTeamChip'
+import styles from './CurationTaskCard.module.scss'
 
 export type CurationTaskCardProps = {
   taskBundle: TaskBundle
 }
 
-function useUiForTask(taskBundle: TaskBundle) {
-  const { onClick, isLoading, isPending, hasPermission } =
-    useOpenCuratorFromTaskButton(taskBundle.task!)
+/**
+ * Card component for displaying a curation task on the curator dashboard. Dispatches to the card
+ * variant appropriate for the task's type: an executable (Compute Data) task, a grid-supported
+ * (Curate Data) task, or a fallback for unrecognized types.
+ */
+export default function CurationTaskCard(props: CurationTaskCardProps) {
+  const { taskBundle } = props
 
   if (!taskBundle.task || !taskBundle.status) {
     throw new Error('Task bundle is missing required properties')
   }
 
-  switch (taskBundle.task?.taskProperties?.concreteType) {
+  const concreteType = taskBundle.task.taskProperties?.concreteType
+
+  if (getComputeTaskConcreteType(taskBundle.task.taskProperties)) {
+    return <ExecutableTaskCard taskBundle={taskBundle} />
+  }
+
+  switch (concreteType) {
     case 'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties':
     case 'org.sagebionetworks.repo.model.curation.metadata.RecordBasedMetadataTaskProperties':
-      return {
-        title: taskBundle.task.dataType,
-        description: taskBundle.task.instructions ?? '',
-        principalIds: taskBundle.task.assigneePrincipalId
-          ? [taskBundle.task.assigneePrincipalId]
-          : [],
-        buttonText: 'Open Curator',
-        taskType: 'Curate Data',
-        onClickNextStep: onClick,
-        isLoading,
-        isPending,
-        hasPermission,
-      }
-    default: {
-      console.error(
-        'No UI implemented for task type: ' +
-          // @ts-expect-error - the switch should be exhaustive for known types
-          taskBundle.task?.taskProperties?.concreteType,
+      return <GridTaskCard taskBundle={taskBundle} />
+    default:
+      console.error('No UI implemented for task type: ' + concreteType)
+      return (
+        <CurationTaskCardLayout
+          taskBundle={taskBundle}
+          {...deriveCardFields(taskBundle.task)}
+          taskType=""
+          renderActionButton={({ expanded }) => (
+            <NextStepButton
+              className={styles.cardButton}
+              buttonText="Continue"
+              onClick={() =>
+                displayToast('No action defined for this task type', 'danger', {
+                  title: 'Unexpected Error',
+                })
+              }
+              expanded={expanded}
+            />
+          )}
+        />
       )
-    }
   }
-
-  return {
-    title: taskBundle.task.dataType,
-    description: taskBundle.task.instructions ?? '',
-    principalIds: taskBundle.task.assigneePrincipalId
-      ? [taskBundle.task.assigneePrincipalId]
-      : [],
-    buttonText: 'Continue',
-    taskType: '',
-    onClickNextStep: () => {
-      displayToast('No action defined for this task type', 'danger', {
-        title: 'Unexpected Error',
-      })
-    },
-    isLoading: false,
-    isPending: false,
-    hasPermission: undefined,
-  }
-}
-
-function TaskTypeChip(props: { label: string }) {
-  const { label } = props
-  return (
-    <Chip sx={{ fontWeight: 600, backgroundColor: '#BFD3ED' }} label={label} />
-  )
-}
-
-/**
- * Card component for displaying a curation task on the curator dashboard. Shows relevant information about the task and includes a button to proceed to the next step in the workflow.
- */
-export default function CurationTaskCard(props: CurationTaskCardProps) {
-  const { taskBundle } = props
-  const {
-    title,
-    description,
-    taskType,
-    principalIds,
-    buttonText,
-    onClickNextStep,
-    hasPermission,
-    isLoading,
-    isPending,
-  } = useUiForTask(taskBundle)
-
-  return (
-    <Card className={classNames(sharedStyles.card, styles.card)}>
-      <div className={styles.cardContent}>
-        <div className={styles.mainContent}>
-          <div className={styles.titleChipContainer}>
-            <Typography variant="headline3">{title}</Typography>
-            {taskType && <TaskTypeChip label={taskType} />}
-          </div>
-          <Typography variant="body1">{description}</Typography>
-          <div className={styles.userChipContainer}>
-            {principalIds.map(principalId => (
-              <UserOrTeamChip key={principalId} principalId={principalId} />
-            ))}
-          </div>
-        </div>
-        <Divider
-          orientation="vertical"
-          flexItem
-          sx={{ display: { xs: 'none', md: 'block' } }}
-        />
-        <NextStepButton
-          className={styles.cardButton}
-          buttonText={buttonText}
-          onClick={
-            hasPermission
-              ? onClickNextStep
-              : () => {
-                  displayToast(
-                    OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE,
-                    'danger',
-                  )
-                }
-          }
-          disabled={isLoading}
-          loading={isPending}
-        />
-      </div>
-    </Card>
-  )
 }

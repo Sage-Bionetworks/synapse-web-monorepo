@@ -2,7 +2,11 @@ import type { CardConfiguration } from 'synapse-react-client/components/CardCont
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
-import { targetEnablingResourcesExploreSql } from '../resources'
+import {
+  targetEnablingResourcesExploreSql,
+  targetEnablingResourcesSearchIndexId,
+} from '../resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 // https://sagebionetworks.jira.com/wiki/spaces/PS/pages/2501607563/AMP-AD+Target+Enabling+Resources+Schema
 
@@ -102,3 +106,27 @@ export const targetEnablingResourcesQueryWrapperPlotNavProps: QueryWrapperPlotNa
       ],
     },
   }
+
+export const targetEnablingResourcesSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'Target Enabling Resources',
+  shouldDeepLink: false,
+  tableConfiguration: targetEnablingResourcesTableConfiguration,
+  facetsToPlot: [
+    'category',
+    'target',
+    'related_target',
+    'program',
+    'grant',
+    'contributing_center',
+  ],
+  columnAliases: {
+    TEP_type: 'TEP Type',
+    related_target: 'Related Target',
+    contributing_center: 'Contributing Center',
+  },
+  searchIndexId: targetEnablingResourcesSearchIndexId,
+  autocompleteFieldName: 'title',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
+}

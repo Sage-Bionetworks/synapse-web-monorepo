@@ -490,9 +490,8 @@ describe('SynapseSessionManager', () => {
       mockPostAuthV1Oauth2Introspect.mockResolvedValue(
         MOCK_INTROSPECTION_AUTHENTICATED,
       )
-      const result = await SynapseSessionManager.validateToken(
-        MOCK_ACCESS_TOKEN,
-      )
+      const result =
+        await SynapseSessionManager.validateToken(MOCK_ACCESS_TOKEN)
       expect(result).toEqual(MOCK_INTROSPECTION_AUTHENTICATED)
     })
 
@@ -500,17 +499,15 @@ describe('SynapseSessionManager', () => {
       mockPostAuthV1Oauth2Introspect.mockResolvedValue(
         MOCK_INTROSPECTION_INACTIVE,
       )
-      const result = await SynapseSessionManager.validateToken(
-        MOCK_ACCESS_TOKEN,
-      )
+      const result =
+        await SynapseSessionManager.validateToken(MOCK_ACCESS_TOKEN)
       expect(result).toBeNull()
     })
 
     it('getCurrentRealmPrincipals returns realm principals', async () => {
       mockGetRepoV1RealmPrincipals.mockResolvedValue(MOCK_REALM_PRINCIPAL)
-      const result = await SynapseSessionManager.getCurrentRealmPrincipals(
-        MOCK_ACCESS_TOKEN,
-      )
+      const result =
+        await SynapseSessionManager.getCurrentRealmPrincipals(MOCK_ACCESS_TOKEN)
       expect(result).toEqual(MOCK_REALM_PRINCIPAL)
     })
   })

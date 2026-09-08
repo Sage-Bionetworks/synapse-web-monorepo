@@ -70,7 +70,7 @@ export const TablePagination = (): React.ReactNode => {
   // A custom `renderItem` implementation for the MUI Pagination component that prefetches a page's data when the page number button is hovered over
   const renderPaginationItem = useCallback(
     (params: PaginationRenderItemParams) => {
-      // eslint-disable-next-line react/no-unstable-nested-components -- this declaration is within a useCallback itself, so it is stable (enough)
+      // oxlint-disable-next-line react/no-unstable-nested-components -- this declaration is within a useCallback itself, so it is stable (enough)
       const ButtonWithPagePrefetchOnHover = forwardRef(
         function PaginationItemButton(
           props: ComponentProps<'button'>,

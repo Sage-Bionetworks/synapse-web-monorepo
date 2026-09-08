@@ -1,5 +1,9 @@
 import { mockManagedACTAccessRequirement } from '@/mocks/accessRequirement/mockAccessRequirements'
 import {
+  mockEDucTemplate1,
+  mockEDucTemplate2,
+} from '@/mocks/eDuc/mockEDucTemplates'
+import {
   mockDucTemplateFileHandle,
   mockFileHandle,
 } from '@/mocks/mock_file_handle'
@@ -563,6 +567,82 @@ describe('SetManagedAccessRequirementFields', () => {
     expect(checkboxes.isIDURequired).toBeChecked()
     expect(checkboxes.isIDUPublic).not.toBeChecked()
     expect(checkboxes.isIDUPublic).not.toBeDisabled()
+  })
+
+  describe('eDUC template selection', () => {
+    const getEDucTemplateCombobox = () =>
+      screen.getByRole('combobox', {
+        name: 'eDUC template (electronic signing)',
+      })
+
+    test('shows the currently-selected eDUC template', async () => {
+      overrideGetAccessRequirementHandler({
+        ...mockManagedACTAccessRequirement,
+        eDucTemplateId: mockEDucTemplate1.templateId,
+      })
+
+      await setUp()
+
+      await waitFor(() => {
+        expect(getEDucTemplateCombobox()).toHaveValue(mockEDucTemplate1.name)
+      })
+    })
+
+    test('is empty when the AR has no eDUC template', async () => {
+      await setUp()
+      // mockManagedACTAccessRequirement has no eDucTemplateId
+      expect(getEDucTemplateCombobox()).toHaveValue('')
+    })
+
+    test('selecting a template updates the AR on save', async () => {
+      const { user, ref } = await setUp()
+
+      const combobox = getEDucTemplateCombobox()
+      await user.click(combobox)
+      await user.click(
+        await screen.findByRole('option', { name: mockEDucTemplate2.name }),
+      )
+      expect(combobox).toHaveValue(mockEDucTemplate2.name)
+
+      ref.current?.save()
+
+      await waitFor(() => {
+        expect(updateAccessRequirementSpy).toHaveBeenLastCalledWith(
+          MOCK_ACCESS_TOKEN,
+          {
+            ...mockManagedACTAccessRequirement,
+            eDucTemplateId: mockEDucTemplate2.templateId,
+          },
+        )
+      })
+    })
+
+    test('clearing the template reverts the AR to trad-DUC mode on save', async () => {
+      overrideGetAccessRequirementHandler({
+        ...mockManagedACTAccessRequirement,
+        eDucTemplateId: mockEDucTemplate1.templateId,
+      })
+      const { user, ref } = await setUp()
+
+      await waitFor(() => {
+        expect(getEDucTemplateCombobox()).toHaveValue(mockEDucTemplate1.name)
+      })
+
+      await user.click(screen.getByLabelText('Clear'))
+      expect(getEDucTemplateCombobox()).toHaveValue('')
+
+      ref.current?.save()
+
+      await waitFor(() => {
+        expect(updateAccessRequirementSpy).toHaveBeenLastCalledWith(
+          MOCK_ACCESS_TOKEN,
+          {
+            ...mockManagedACTAccessRequirement,
+            eDucTemplateId: undefined,
+          },
+        )
+      })
+    })
   })
 
   describe('getValidExpirationPeriodOrErrorMessage', () => {

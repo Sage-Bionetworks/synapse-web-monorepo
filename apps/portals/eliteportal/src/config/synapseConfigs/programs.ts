@@ -1,7 +1,12 @@
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import { defaultSearchConfiguration, programsSql } from '../resources'
+import {
+  defaultSearchConfiguration,
+  programsSearchIndexId,
+  programsSql,
+} from '../resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 import { TargetEnum } from 'synapse-react-client/utils/html/TargetEnum'
 
 const rgbIndex = 4
@@ -36,6 +41,17 @@ const programsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   name: 'Programs',
   cardConfiguration: programCardConfiguration,
   searchConfiguration: defaultSearchConfiguration,
+}
+
+export const programsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'Programs',
+  shouldDeepLink: false,
+  cardConfiguration: programCardConfiguration,
+  searchIndexId: programsSearchIndexId,
+  autocompleteFieldName: 'fullName',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }
 
 export default programsQueryWrapperPlotNavProps

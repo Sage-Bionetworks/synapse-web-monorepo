@@ -417,7 +417,7 @@ describe('StartGridSession - useImperativeHandle methods', () => {
     })
 
     it('should call onSessionChange with null when deleting session', () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
       let capturedDeleteOptions: any
 
       mockUseDeleteGridSession.mockImplementation(options => {
@@ -446,9 +446,9 @@ describe('StartGridSession - useImperativeHandle methods', () => {
 
       // Simulate successful deletion
       mockDeleteSession.mockImplementation(sessionId => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        // oxlint-disable-next-line @typescript-eslint/no-unsafe-member-access
         if (capturedDeleteOptions?.onSuccess) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+          // oxlint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
           capturedDeleteOptions.onSuccess(undefined, sessionId, undefined)
         }
       })

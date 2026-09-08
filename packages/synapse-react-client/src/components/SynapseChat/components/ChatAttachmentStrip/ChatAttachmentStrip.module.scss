@@ -1,0 +1,23 @@
+// Minimum width for each chip so 3 attachments are visible and a 4th is partially offscreen
+// in the 480px-wide composer. Kept as a SCSS variable since CSS is its only consumer.
+$chip-min-width: 140px;
+
+.strip {
+  --remove-button-offset-x: 8px;
+  --remove-button-offset-y: 5px;
+
+  display: flex;
+  column-gap: calc(10px - var(--remove-button-offset-x));
+  row-gap: calc(10px - var(--remove-button-offset-y));
+  overflow-x: auto;
+}
+
+.wrap {
+  flex-wrap: wrap;
+  overflow-x: visible;
+}
+
+.item {
+  flex: 1 1 0;
+  min-width: $chip-min-width;
+}

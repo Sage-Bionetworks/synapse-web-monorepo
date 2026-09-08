@@ -122,9 +122,10 @@ describe('ReviewerDashboard tests', () => {
 
     await screen.findByRole('tablist')
     const tabs = screen.getAllByRole('tab')
-    expect(tabs).toHaveLength(3)
+    expect(tabs).toHaveLength(4)
 
     screen.getByRole('tab', { name: 'Access Requirements' })
+    screen.getByRole('tab', { name: 'eDUC Templates' })
     screen.getByRole('tab', { name: 'Submissions' })
     screen.getByRole('tab', { name: 'User Access History' })
   })

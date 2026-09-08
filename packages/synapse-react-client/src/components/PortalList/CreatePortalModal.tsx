@@ -1,5 +1,5 @@
 import { useCreatePortal } from '@/synapse-queries/portal/usePortal'
-import { Alert } from '@mui/material'
+import { Alert, Stack } from '@mui/material'
 import { Portal } from '@sage-bionetworks/synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { KeyboardEvent, useState } from 'react'
@@ -65,7 +65,7 @@ export function CreatePortalModal({
   }
 
   const dialogContent = (
-    <>
+    <Stack gap={2}>
       <TextField
         id="portalNameInput"
         label="Portal Name"
@@ -79,7 +79,6 @@ export function CreatePortalModal({
         inputProps={{
           onKeyDown: handleKeyDown,
         }}
-        sx={{ mb: 2 }}
       />
       <TextField
         id="portalUrlInput"
@@ -96,12 +95,8 @@ export function CreatePortalModal({
           onKeyDown: handleKeyDown,
         }}
       />
-      {errorMessage && (
-        <Alert severity="error" sx={{ mt: 2 }}>
-          {errorMessage}
-        </Alert>
-      )}
-    </>
+      {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+    </Stack>
   )
 
   return (

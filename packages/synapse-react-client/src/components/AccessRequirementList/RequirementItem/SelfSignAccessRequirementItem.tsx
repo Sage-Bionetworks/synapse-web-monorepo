@@ -138,8 +138,8 @@ export default function SelfSignAccessRequirementItem(
         isLoadingStatus
           ? RequirementItemStatus.LOADING
           : isApproved
-          ? RequirementItemStatus.COMPLETE
-          : RequirementItemStatus.LOCKED
+            ? RequirementItemStatus.COMPLETE
+            : RequirementItemStatus.LOCKED
       }
       actions={actions}
     >

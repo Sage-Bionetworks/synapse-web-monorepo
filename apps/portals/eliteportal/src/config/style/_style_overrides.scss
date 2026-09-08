@@ -1,3 +1,8 @@
+// Accessible keyboard focus-ring color. See PORTALS-4277.
+:root {
+  --synapse-focus-color: #2f8d7c;
+}
+
 #header,
 #footer {
   background-color: var(--synapse-primary-action-color);
@@ -20,15 +25,6 @@ footer {
 
 .amp-project-component {
   margin-top: 30px;
-}
-
-.ProgramCardList {
-  .SRC-imageThumbnail img {
-    max-width: 100px;
-    padding-top: 20px;
-    padding-right: 30px;
-    float: right;
-  }
 }
 
 .ProgramsHomePage {

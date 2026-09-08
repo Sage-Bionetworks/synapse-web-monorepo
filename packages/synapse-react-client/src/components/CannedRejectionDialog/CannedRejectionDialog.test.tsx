@@ -4,7 +4,6 @@ import mockRejectionReasonsTableQueryResultBundle from '@/mocks/query/mockReject
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import failOnConsoleError from 'jest-fail-on-console'
 import {
   CannedRejectionDialog,
   CannedRejectionDialogProps,
@@ -33,7 +32,6 @@ function renderComponent(
 }
 
 describe('CannedRejectionDialog', () => {
-  failOnConsoleError()
   beforeAll(() => {
     server.listen()
     registerTableQueryResult(

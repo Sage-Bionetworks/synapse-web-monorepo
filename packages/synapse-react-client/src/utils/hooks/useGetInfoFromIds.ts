@@ -21,10 +21,10 @@ export type UseGetInfoFromIdsProps<
   THookType = T extends EntityHeader
     ? 'ENTITY_HEADER'
     : T extends UserGroupHeader
-    ? 'USER_PROFILE'
-    : T extends Evaluation
-    ? 'EVALUATION_QUEUE'
-    : never,
+      ? 'USER_PROFILE'
+      : T extends Evaluation
+        ? 'EVALUATION_QUEUE'
+        : never,
 > = {
   ids: string[]
   type: THookType

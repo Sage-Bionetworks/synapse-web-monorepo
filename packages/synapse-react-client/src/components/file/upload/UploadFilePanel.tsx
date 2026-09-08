@@ -1,12 +1,17 @@
+import Fade from '@mui/material/Fade'
 import Link from '@mui/material/Link'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
 import Stack from '@mui/material/Stack'
 import { SxProps } from '@mui/material/styles'
 import Typography from '@mui/material/Typography'
+import { noop } from 'lodash-es'
 import { MouseEvent, ReactNode, useRef, useState } from 'react'
 import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
-import Menu from '@mui/material/Menu'
-import Fade from '@mui/material/Fade'
-import MenuItem from '@mui/material/MenuItem'
+import {
+  FileSelectionConstraints,
+  validateFileSelection,
+} from './validateFileSelection'
 
 const disabledUploadPaneSx: SxProps = {
   pointerEvents: 'none',
@@ -46,6 +51,37 @@ export type UploadFilePanelProps = {
    * @default false
    */
   disableDragAndDrop?: boolean
+  /**
+   * When `allowMultipleFiles` is true, whether to skip the Files/Folder menu and open the
+   * (multi-select) file browser directly. Has no effect when `allowMultipleFiles` is false.
+   * @default false
+   */
+  hideFolderOption?: boolean
+  /**
+   * If provided, files whose `type` is not included in this list are rejected before upload,
+   * and used to constrain the file picker via the input's `accept` attribute.
+   */
+  acceptedContentTypes?: FileSelectionConstraints['acceptedContentTypes']
+  /**
+   * If provided, files larger than this are rejected before upload.
+   */
+  maxFileSizeBytes?: FileSelectionConstraints['maxFileSizeBytes']
+  /**
+   * If provided, a selection that would bring the total file count (see `currentFileCount`)
+   * above this value is rejected before upload.
+   */
+  maxFiles?: FileSelectionConstraints['maxFiles']
+  /**
+   * The number of files already selected/uploaded prior to this selection. Used with `maxFiles`.
+   * @default 0
+   */
+  currentFileCount?: FileSelectionConstraints['currentFileCount']
+  /**
+   * Invoked when a file selection is rejected due to `acceptedContentTypes`, `maxFileSizeBytes`,
+   * or `maxFiles`, with a human-readable description of the violation. Invoked with `null` when
+   * a subsequent selection is valid, so the caller can clear a previously displayed error.
+   */
+  onValidationError?: (message: string | null) => void
 }
 
 /**
@@ -62,6 +98,12 @@ export default function UploadFilePanel(props: UploadFilePanelProps) {
     disabled = false,
     message,
     disableDragAndDrop = false,
+    hideFolderOption = false,
+    acceptedContentTypes,
+    maxFileSizeBytes,
+    maxFiles,
+    currentFileCount = 0,
+    onValidationError = noop,
   } = props
   const fileInputRef = useRef<HTMLInputElement>(null)
   const folderInputRef = useRef<HTMLInputElement>(null)
@@ -69,7 +111,7 @@ export default function UploadFilePanel(props: UploadFilePanelProps) {
   const open = Boolean(anchorEl)
 
   const handleClick = (event: MouseEvent<HTMLElement>) => {
-    if (!allowMultipleFiles) {
+    if (!allowMultipleFiles || hideFolderOption) {
       fileInputRef.current!.click()
     } else {
       setAnchorEl(event.currentTarget)
@@ -77,6 +119,22 @@ export default function UploadFilePanel(props: UploadFilePanelProps) {
   }
   const handleClose = () => {
     setAnchorEl(null)
+  }
+
+  function handleFileListSelected(fileList: FileList) {
+    const files = Array.from(fileList)
+    const validationError = validateFileSelection(files, {
+      acceptedContentTypes,
+      maxFileSizeBytes,
+      maxFiles,
+      currentFileCount,
+    })
+    if (validationError) {
+      onValidationError(validationError)
+      return
+    }
+    onValidationError(null)
+    onUploadFileList(fileList)
   }
 
   return (
@@ -123,10 +181,13 @@ export default function UploadFilePanel(props: UploadFilePanelProps) {
             style={{ display: 'none' }}
             aria-hidden="true"
             multiple={allowMultipleFiles}
+            accept={acceptedContentTypes?.join(',')}
             ref={fileInputRef}
             onChange={e => {
               if (e.target.files != null) {
-                onUploadFileList(e.target.files)
+                handleFileListSelected(e.target.files)
+                // Reset so the same file(s) can be reselected after fixing a validation error.
+                e.target.value = ''
               }
             }}
           />
@@ -140,7 +201,8 @@ export default function UploadFilePanel(props: UploadFilePanelProps) {
             ref={folderInputRef}
             onChange={e => {
               if (e.target.files != null) {
-                onUploadFileList(e.target.files)
+                handleFileListSelected(e.target.files)
+                e.target.value = ''
               }
             }}
             // @ts-expect-error - webkitdirectory is not included in the InputHTMLAttributes type

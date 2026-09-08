@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* oxlint-disable @typescript-eslint/no-explicit-any */
 import LargeButton from '@/components/styled/LargeButton'
 import SynapseClient from '@/synapse-client'
 import { SynapseConstants } from '@/utils'
@@ -17,8 +17,8 @@ import UpSetJS, {
   UpSetFontSizes,
   UpSetSelectionProps,
 } from '@upsetjs/react'
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* oxlint-disable @typescript-eslint/no-unsafe-member-access */
+/* oxlint-disable @typescript-eslint/no-unsafe-assignment */
 import { useEffect, useState } from 'react'
 import { getColorPalette } from '../ColorGradient/ColorGradient'
 import { ErrorBanner } from '../error/ErrorBanner'

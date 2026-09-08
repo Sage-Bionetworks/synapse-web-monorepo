@@ -89,6 +89,7 @@ const NFHeader = (): React.ReactNode => {
           searchExampleTerms={searchExampleTerms}
           searchPlaceholder={searchPlaceholder}
           path="/Search"
+          isChatEnabled={true}
           sx={{
             flex: 1,
             '& > :first-child': {

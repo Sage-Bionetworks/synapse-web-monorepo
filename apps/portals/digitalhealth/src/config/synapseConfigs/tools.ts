@@ -2,10 +2,11 @@ import { ColumnSingleValueFilterOperator } from '@sage-bionetworks/synapse-types
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
 import type { CardContainerLogicProps } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../columnAliases'
-import { toolsSql } from '../resources'
+import { toolsSearchIndexId, toolsSql } from '../resources'
 
 const rgbIndex = 3
 
@@ -54,6 +55,25 @@ export const toolsQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
       'softwareName',
     ],
   },
+}
+
+export const toolsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'Tools',
+  shouldDeepLink: false,
+  searchIndexId: toolsSearchIndexId,
+  autocompleteFieldName: 'softwareName',
+  cardConfiguration: toolsCardConfiguration,
+  columnAliases,
+  facetsToPlot: [
+    'digitalAssessmentCategory',
+    'inputDataType',
+    'outputDataType',
+    'softwareLanguage',
+    'softwareType',
+  ],
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }
 
 export const toolsDetailPageProps: CardContainerLogicProps = {

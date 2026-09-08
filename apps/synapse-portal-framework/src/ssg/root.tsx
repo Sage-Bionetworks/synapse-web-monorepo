@@ -7,6 +7,10 @@
  * cannot be read inside this pre-built library, so the portal-side wrapper
  * passes them in.
  *
+ * If a portal needs to inject supplemental tags into `<head>` (e.g. a
+ * third-party widget script), use `createLayout({ headChildren })` instead of
+ * re-exporting `Layout` directly.
+ *
  * Typical usage in a portal's `src/root.tsx`:
  * ```ts
  * import {
@@ -101,32 +105,53 @@ export function links() {
   ]
 }
 
-export function Layout({ children }: { children: ReactNode }) {
-  return (
-    <html lang="en">
-      <head>
-        <Meta />
-        <Links />
-      </head>
-      <body>
-        {/* Google Tag Manager (noscript) — same GTM property across all Sage portals */}
-        <noscript>
-          <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-KPW4KS62"
-            height="0"
-            width="0"
-            style={{ display: 'none', visibility: 'hidden' }}
-          />
-        </noscript>
-
-        <noscript>You need to enable JavaScript to run this app.</noscript>
-        {children}
-        <ScrollRestoration />
-        <Scripts />
-      </body>
-    </html>
-  )
+export type LayoutOptions = {
+  /**
+   * Additional content rendered inside `<head>`, after `<Meta />` and
+   * `<Links />`. Use for portal-specific third-party widget scripts or other
+   * head-only tags that aren't covered by `meta()` or `links()`.
+   */
+  headChildren?: ReactNode
 }
+
+/**
+ * Returns a `Layout` component for the root route. Pass `headChildren` to
+ * inject supplemental tags (e.g. a third-party widget `<script>`) into
+ * `<head>`. Portals that don't need extras can re-export the default `Layout`
+ * named export below.
+ */
+export function createLayout(options: LayoutOptions = {}) {
+  const { headChildren } = options
+  return function Layout({ children }: { children: ReactNode }) {
+    return (
+      <html lang="en">
+        <head>
+          <Meta />
+          <Links />
+          {headChildren}
+        </head>
+        <body>
+          {/* Google Tag Manager (noscript) — same GTM property across all Sage portals */}
+          <noscript>
+            <iframe
+              src="https://www.googletagmanager.com/ns.html?id=GTM-KPW4KS62"
+              height="0"
+              width="0"
+              style={{ display: 'none', visibility: 'hidden' }}
+            />
+          </noscript>
+
+          <noscript>You need to enable JavaScript to run this app.</noscript>
+          {children}
+          <ScrollRestoration />
+          <Scripts />
+        </body>
+      </html>
+    )
+  }
+}
+
+export const Layout = createLayout()
 
 export default function Root() {
   return <Outlet />

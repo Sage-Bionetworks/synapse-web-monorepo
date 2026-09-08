@@ -6,9 +6,13 @@ import { userEvent } from '@testing-library/user-event/dist/cjs/setup/index.js'
 
 // Mock EntityLink component
 vi.mock('@/components/EntityLink', () => ({
-  EntityLink: vi.fn(({ entity }) => (
-    <a href={`#${entity.id}`}>{entity.name}</a>
-  )),
+  EntityLink: vi.fn(({ entity, link }) =>
+    link === false ? (
+      <span>{entity.name}</span>
+    ) : (
+      <a href={`#${entity.id}`}>{entity.name}</a>
+    ),
+  ),
 }))
 
 // Mock SynapseSpinner component
@@ -172,6 +176,25 @@ describe('NameCell', () => {
 
     const mainBox = container.firstElementChild
     expect(mainBox).toHaveStyle('padding-left: 80px') // depth * 2 * 8px = 5 * 2 * 8 = 80px
+  })
+
+  it('should render entity name as plain text when disableEntityLinks is true', () => {
+    render(
+      <EntityTreeTableContext.Provider
+        value={{ ...mockContextValue, disableEntityLinks: true }}
+      >
+        <NameCell {...createMockCellContext(mockEntityBundleRow)} />
+      </EntityTreeTableContext.Provider>,
+    )
+
+    expect(screen.queryByRole('link')).not.toBeInTheDocument()
+    expect(screen.getByText('Test Entity')).toBeInTheDocument()
+  })
+
+  it('should render entity name as a link when disableEntityLinks is false', () => {
+    renderWithContext(mockEntityBundleRow)
+
+    expect(screen.getByRole('link')).toBeInTheDocument()
   })
 
   it('should render correct ARIA labels for accessibility', () => {

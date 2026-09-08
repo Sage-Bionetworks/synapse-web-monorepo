@@ -1,6 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useMemo, useRef } from 'react'
-import { CookiesProvider } from 'react-cookie'
 import { createBrowserRouter, RouteObject } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
 import { RouteErrorBoundary } from 'synapse-react-client/components/error/RouteErrorBoundary'
@@ -48,15 +47,13 @@ function Portal(props: PortalProps) {
 
   return (
     <PortalContextProvider value={context}>
-      <CookiesProvider>
-        <ThemeProvider theme={{ palette }} injectFirst>
-          <QueryClientProvider client={queryClient}>
-            <DocumentMetadataProvider defaultTitle={defaultTitle}>
-              <RouterProvider router={router} />
-            </DocumentMetadataProvider>
-          </QueryClientProvider>
-        </ThemeProvider>
-      </CookiesProvider>
+      <ThemeProvider theme={{ palette }} injectFirst>
+        <QueryClientProvider client={queryClient}>
+          <DocumentMetadataProvider defaultTitle={defaultTitle}>
+            <RouterProvider router={router} />
+          </DocumentMetadataProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
     </PortalContextProvider>
   )
 }

@@ -4,12 +4,16 @@ import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseConstants } from '@/utils'
 import { getUserProfileWithProfilePicAttached } from '@/utils/functions/getUserData'
 import { UserProfile } from '@sage-bionetworks/synapse-types'
-import { render } from '@testing-library/react'
+import { render, waitFor } from '@testing-library/react'
 import UserCardList, { UserCardListProps } from './UserCardList'
 
-vi.mock('../../utils/functions/getUserData', () => ({
-  getUserProfileWithProfilePicAttached: vi.fn(),
-}))
+vi.mock(import('../../utils/functions/getUserData'), async importOriginal => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    getUserProfileWithProfilePicAttached: vi.fn(),
+  }
+})
 
 const mockGetUserProfileWithProfilePicAttached = vi.mocked(
   getUserProfileWithProfilePicAttached,
@@ -21,7 +25,10 @@ function renderComponent(props: UserCardListProps) {
 
 describe('UserCardList tests', () => {
   beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
+  afterEach(() => {
+    server.restoreHandlers()
+    mockGetUserProfileWithProfilePicAttached.mockReset()
+  })
   afterAll(() => server.close())
 
   const userOneId = '1'
@@ -38,61 +45,55 @@ describe('UserCardList tests', () => {
     size: SynapseConstants.MEDIUM_USER_CARD,
   }
 
-  const propsLast: UserCardListProps = {
-    list: [userThreeId],
-    size: SynapseConstants.MEDIUM_USER_CARD,
-  }
-
   const mockedDataFirstCall: { list: UserProfile[] } = {
     list: [
-      {
-        ...mockUserProfileData,
-        ownerId: userOneId,
-      },
-      {
-        ...mockUserProfileData,
-        ownerId: userTwoId,
-      },
+      { ...mockUserProfileData, ownerId: userOneId },
+      { ...mockUserProfileData, ownerId: userTwoId },
     ],
   }
 
   const mockedDataSecondCall: { list: UserProfile[] } = {
     list: [
-      {
-        ...mockUserProfileData,
-        ownerId: userThreeId,
-      },
+      { ...mockUserProfileData, ownerId: userOneId },
+      { ...mockUserProfileData, ownerId: userThreeId },
     ],
   }
 
-  mockGetUserProfileWithProfilePicAttached.mockResolvedValue(
-    mockedDataFirstCall,
-  )
-
   it('renders without crashing', () => {
+    mockGetUserProfileWithProfilePicAttached.mockResolvedValue(
+      mockedDataFirstCall,
+    )
     const { container } = renderComponent(propsInitial)
     expect(container).toBeDefined()
   })
 
-  it('updates state correctly', () => {
-    const spyOnUpdate = vi.spyOn(UserCardList.prototype, 'update')
+  it('fetches profiles for the provided ids and refetches when the id set changes', async () => {
+    mockGetUserProfileWithProfilePicAttached.mockResolvedValue(
+      mockedDataFirstCall,
+    )
     const { rerender } = renderComponent(propsInitial)
-    expect(spyOnUpdate).toHaveBeenLastCalledWith(propsInitial.list)
+    await waitFor(() => {
+      expect(mockGetUserProfileWithProfilePicAttached).toHaveBeenCalledWith([
+        userOneId,
+        userTwoId,
+      ])
+    })
 
-    // it should see that it was updated with a new ownerId not already contained
-    spyOnUpdate.mockClear()
     mockGetUserProfileWithProfilePicAttached.mockResolvedValue(
       mockedDataSecondCall,
     )
     rerender(<UserCardList {...propsSecond} />)
+    await waitFor(() => {
+      expect(mockGetUserProfileWithProfilePicAttached).toHaveBeenCalledWith([
+        userOneId,
+        userThreeId,
+      ])
+    })
+  })
 
-    expect(spyOnUpdate).toHaveBeenLastCalledWith([userThreeId])
-
-    // it should see that it was updated with a new ownerId that was contained already
-    spyOnUpdate.mockClear()
-    mockGetUserProfileWithProfilePicAttached.mockReset() // mock no longer matters
-    rerender(<UserCardList {...propsLast} />)
-    expect(spyOnUpdate).not.toHaveBeenCalled()
-    spyOnUpdate.mockClear()
+  it('does not fetch when the id list is empty', () => {
+    mockGetUserProfileWithProfilePicAttached.mockResolvedValue({ list: [] })
+    renderComponent({ list: [], size: SynapseConstants.MEDIUM_USER_CARD })
+    expect(mockGetUserProfileWithProfilePicAttached).not.toHaveBeenCalled()
   })
 })

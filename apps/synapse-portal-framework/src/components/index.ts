@@ -35,6 +35,7 @@ import { PortalSearchTabs } from './PortalSearch/PortalSearchTabs'
 import ProjectDiscussionForum from './ProjectDiscussionForum'
 import RedirectToURL from './RedirectToURL'
 import RedirectWithQuery from './RedirectWithQuery'
+import SurveyDialog from './SurveyDialog'
 import SurveyToast from './SurveyToast'
 import TabbedSynapseObjects from './TabbedSynapseObjects'
 import RepositoryUnderReviewAlert from './RepositoryUnderReviewAlert'
@@ -76,6 +77,7 @@ const PortalComponents = {
   ProjectDiscussionForum,
   ChallengeSubmissionWrapper,
   ChallengeDataDownloadWrapper,
+  SurveyDialog,
   SurveyToast,
   PortalSearchTabs,
   PortalFullTextSearchField,

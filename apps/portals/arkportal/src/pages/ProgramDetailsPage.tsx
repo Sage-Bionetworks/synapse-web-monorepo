@@ -5,7 +5,6 @@ import {
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
 import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
-import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/index'
 import columnAliases from '../config/columnAliases'
 import { datasetsSql, programSql, projectsSql } from '../config/resources'
@@ -15,9 +14,30 @@ import {
   programsRgbIndex,
 } from '../config/synapseConfigs/programs'
 import { projectsCardConfiguration } from '../config/synapseConfigs/projects'
+import { portalMetadata } from '@/config/portalMetadata'
+import { createDetailPageRouteExports } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
+import { metadataConfig } from './ProgramDetailsPage.config'
+import { ErrorPage, SynapseErrorType } from 'synapse-react-client'
+import { useParams } from 'react-router'
+
+export { metadataConfig }
+
+const _routeExports = createDetailPageRouteExports(
+  metadataConfig,
+  portalMetadata,
+)
+
+export const loader = _routeExports.loader
+export const clientLoader = _routeExports.clientLoader
+export const meta = _routeExports.meta
 
 function ProgramsDetailPage() {
-  const searchParams = useGetPortalComponentSearchParams()
+  const { Program } = useParams<{ Program: string }>()
+
+  if (!Program) {
+    return <ErrorPage type={SynapseErrorType.NOT_FOUND} gotoPlace={() => {}} />
+  }
+
   return (
     <DetailsPage
       header={
@@ -35,11 +55,13 @@ function ProgramsDetailPage() {
           rgbIndex={programsRgbIndex}
           columnAliases={columnAliases}
           sql={programSql}
-          searchParams={searchParams}
+          searchParams={{ Program }}
         />
       }
       sql={programSql}
       resourcePrimaryKey={['Program']}
+      searchParams={{ Program }}
+      disableCanonicalUrl
     >
       <DetailsPageContent
         content={[

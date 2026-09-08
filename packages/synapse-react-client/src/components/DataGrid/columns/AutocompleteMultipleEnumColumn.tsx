@@ -119,7 +119,8 @@ function AutocompleteMultipleEnumCell({
     notifyOptionCommitted,
     handleMenuOpen,
     handleClose,
-  } = useGridAutocompleteState({ active, stopEditing })
+    handlePopupIndicatorMouseDown,
+  } = useGridAutocompleteState({ active, focus, stopEditing })
 
   const safeRowData = createSafeRowData(rowData)
   const optionsWithLabels = choices.map(createOptionFromValue)
@@ -257,6 +258,7 @@ function AutocompleteMultipleEnumCell({
           disableCloseOnSelect={choices.length > 1}
           slotProps={{
             listbox: { onMouseDown: handleListboxMouseDown },
+            popupIndicator: { onMouseDown: handlePopupIndicatorMouseDown },
           }}
           onBlur={handleBlur}
           renderValue={(tagValue, getTagProps) =>
@@ -359,7 +361,14 @@ export function autocompleteMultipleEnumColumn({
         .map(item => parseFreeTextGivenJsonSchemaType(item, colType))
         .filter(item => item !== null && item !== undefined)
 
-      return parsedValues.length > 0 ? parsedValues : []
+      // When no values remain, use clearValue (null for required, undefined for
+      // optional) so paste and the X-clear button converge on the same
+      // in-model representation instead of [].
+      // Note: columnFactory also wraps this pasteValue with
+      // wrapPasteValueWithSchemaCoercion, which is a no-op here because
+      // coerceModelCellValue does not coerce empty arrays — this layer is the
+      // one responsible for the [] → clearValue conversion.
+      return parsedValues.length > 0 ? parsedValues : clearValue
     },
     disableKeys: true,
     keepFocus: true,

@@ -37,6 +37,8 @@ import {
   getAllowedColumnTypes,
   getColumnTypeFriendlyName,
   getFacetTypeFriendlyName,
+  getFormDataValueAsNumber,
+  getMaxListLengthForType,
   getMaxSizeForType,
 } from './TableColumnSchemaEditorUtils'
 import { HIERARCHY_VERTICAL_LINE_COMPONENT } from './TableColumnSchemaForm'
@@ -176,7 +178,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
       const errorsByField: Record<string, string> = {}
       validationErrors.forEach(e => {
         if (e.path) {
-          errorsByField[e.path[e.path.length - 1]] = e.message
+          errorsByField[String(e.path[e.path.length - 1])] = e.message
         }
       })
       return errorsByField
@@ -318,7 +320,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
           }}
         >
           {isDefaultColumn ? (
-            (columnModel as ColumnModelFormData).maximumSize ?? ''
+            ((columnModel as ColumnModelFormData).maximumSize ?? '')
           ) : (
             <FieldWithRecommendedMinimum
               value={(columnModel as ColumnModelFormData).maximumSize ?? ''}
@@ -364,7 +366,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
           }}
         >
           {isDefaultColumn ? (
-            (columnModel as ColumnModelFormData).maximumListLength ?? ''
+            ((columnModel as ColumnModelFormData).maximumListLength ?? '')
           ) : (
             <FieldWithRecommendedMinimum
               value={
@@ -393,6 +395,15 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
                 slotProps: {
                   input: {
                     'aria-label': 'Maximum List Length',
+                    min: 1,
+                    max: canHaveMaxListLength(columnModel.columnType)
+                      ? getMaxListLengthForType(
+                          columnModel.columnType,
+                          getFormDataValueAsNumber(
+                            (columnModel as ColumnModelFormData).maximumSize,
+                          ) ?? undefined,
+                        )
+                      : undefined,
                   },
                 },
                 sx: fieldSx,

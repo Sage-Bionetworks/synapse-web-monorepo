@@ -17,7 +17,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
@@ -31,12 +31,31 @@ jobs:
     # Job should not last longer than 60 minutes
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
         with:
           STORE_NX_CACHE: 'true'
+      - name: Determine if SageAccountWeb has had any changes
+        id: sage_account_web_changes
+        run: |
+          if pnpm nx show projects --affected --base=remotes/origin/main --json \
+            | jq -e 'index("SageAccountWeb")' > /dev/null; then
+            echo "Project is affected; setting project_affected=true"
+            echo "project_affected=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Project is not affected; setting project_affected=false"
+            echo "project_affected=false" >> "$GITHUB_OUTPUT"
+          fi
+      # SageAccountWeb's browser test project runs real Chromium via Playwright
+      # (jsdom can't evaluate CSS cascade/media queries), so the runner needs
+      # the browser binary installed before `nx affected --target test` runs.
+      - name: Install Playwright Browsers
+        if: ${{ steps.sage_account_web_changes.outputs.project_affected == 'true' }}
+        run: |
+          cd apps/SageAccountWeb
+          pnpm playwright install --with-deps chromium
       - id: test
         # Test runners run in parallel, so we use `--parallel=1` to avoid running them all at once
         run: pnpm nx affected --target test --base=remotes/origin/main --parallel=1
@@ -52,7 +71,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
@@ -63,27 +82,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
         with:
           STORE_NX_CACHE: 'true'
       - run: pnpm nx affected --target=type-check --base=remotes/origin/main
-  sonarqube-src:
-    # For monorepos, create one sonarcloud job per project and specify its directory
-    needs: test
-    name: scan-synapse-react-client
-    runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' }}
-    steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-        with:
-          # Disabling shallow clones is recommended for improving the relevancy of reporting
-          fetch-depth: 0
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602 # v6.0.0
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          projectBaseDir: packages/synapse-react-client

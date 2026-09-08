@@ -7,6 +7,7 @@ import {
 import React from 'react'
 import { SynapseClientError, useSynapseContext } from '@/utils'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
+import PendingActionsIcon from '@mui/icons-material/PendingActions'
 import { Box } from '@mui/material'
 import { useEffect } from 'react'
 import SpinnerButton from '../SpinnerButton/SpinnerButton'
@@ -64,6 +65,7 @@ const ChallengeRegisterButton = ({
     userSubmissionTeams && userSubmissionTeams.results.length > 0
   const isMemberOfBothParticipantAndSubmissionTeams =
     isRegistered && hasSubmissionTeam
+  const isMemberOfParticipantTeamOnly = isRegistered && !hasSubmissionTeam
 
   const error =
     getChallengeError || getTeamMembershipError || getSubmissionTeamsError
@@ -81,26 +83,50 @@ const ChallengeRegisterButton = ({
 
   return (
     <Box>
-      {!isMemberOfBothParticipantAndSubmissionTeams && (
+      {!isMemberOfBothParticipantAndSubmissionTeams &&
+        !isMemberOfParticipantTeamOnly && (
+          <SpinnerButton
+            disableElevation={true}
+            variant="contained"
+            onClick={() =>
+              isAuthenticated && onJoinClick ? onJoinClick() : undefined
+            }
+            sx={{
+              color: 'white',
+              backgroundColor: '#109488',
+              fontSize: '1.12em',
+              textTransform: 'none',
+              padding: '4px 18px',
+              fontWeight: 400,
+              ':hover': { color: 'white', backgroundColor: '#109488' },
+              ':active': { color: 'white', backgroundColor: '#109488' },
+              ':visited': { color: 'white', backgroundColor: '#109488' },
+            }}
+          >
+            Register for this Challenge
+          </SpinnerButton>
+        )}
+      {isMemberOfParticipantTeamOnly && (
         <SpinnerButton
           disableElevation={true}
           variant="contained"
+          endIcon={<PendingActionsIcon />}
           onClick={() =>
             isAuthenticated && onJoinClick ? onJoinClick() : undefined
           }
           sx={{
-            color: 'white',
-            backgroundColor: '#109488',
+            color: '#4A2E1B',
+            backgroundColor: '#FFD486',
             fontSize: '1.12em',
             textTransform: 'none',
             padding: '4px 18px',
             fontWeight: 400,
-            ':hover': { color: 'white', backgroundColor: '#109488' },
-            ':active': { color: 'white', backgroundColor: '#109488' },
-            ':visited': { color: 'white', backgroundColor: '#109488' },
+            ':hover': { color: '#4A2E1B', backgroundColor: '#FFD486' },
+            ':active': { color: '#4A2E1B', backgroundColor: '#FFD486' },
+            ':visited': { color: '#4A2E1B', backgroundColor: '#FFD486' },
           }}
         >
-          Register for this Challenge
+          Complete Registration
         </SpinnerButton>
       )}
       {isMemberOfBothParticipantAndSubmissionTeams && (

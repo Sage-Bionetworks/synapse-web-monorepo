@@ -1,9 +1,12 @@
 import { getChatbotHandlers } from '@/mocks/msw/handlers/chatHandlers'
-import { getEntityHandlers } from '@/mocks/msw/handlers/entityHandlers'
-import { getUserProfileHandlers } from '@/mocks/msw/handlers/userProfileHandlers'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Meta, StoryObj } from '@storybook/react-vite'
+import { HttpHandler } from 'msw'
 import SynapseChat from './SynapseChat'
+
+const handlers: Record<string, HttpHandler[]> = {
+  chatbot: getChatbotHandlers(MOCK_REPO_ORIGIN),
+}
 
 const meta = {
   title: 'Synapse/Chat',
@@ -11,6 +14,10 @@ const meta = {
   parameters: {
     requireLogin: true,
     chromatic: { viewports: [600, 1200] },
+    stack: 'mock',
+    msw: {
+      handlers,
+    },
   },
   argTypes: {
     isAuthenticated: {
@@ -26,14 +33,13 @@ type Story = StoryObj<typeof meta>
 
 export const ChatWithSynapse: Story = {
   args: { initialMessage: 'hello' },
-  parameters: {
-    stack: 'mock',
-    msw: {
-      handlers: [
-        ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
-        ...getEntityHandlers(MOCK_REPO_ORIGIN),
-        ...getChatbotHandlers(MOCK_REPO_ORIGIN),
-      ],
-    },
-  },
+}
+
+/**
+ * Demonstrates attaching local files to a chat message. Use the "+" button to upload one or
+ * more files, then send the message -- the mocked response reports the first attachment as
+ * FAILED and the rest as STAGED (see chatHandlers.ts) so both outcomes can be exercised.
+ */
+export const WithAttachments: Story = {
+  args: { allowAttachments: true },
 }

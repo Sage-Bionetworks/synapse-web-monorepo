@@ -1,0 +1,305 @@
+import mockDataset from '@/mocks/entity/mockDataset'
+import { mockFolderEntity } from '@/mocks/entity/mockEntity'
+import mockFileEntity from '@/mocks/entity/mockFileEntity'
+import { mockDoiAssociation } from '@/mocks/entity/mockProject'
+import { mockFileHandle } from '@/mocks/mock_file_handle'
+import {
+  MOCK_EXTERNAL_S3_STORAGE_LOCATION_ID,
+  mockExternalS3UploadDestination,
+} from '@/mocks/mock_upload_destination'
+import { getEntityBundleHandler } from '@/mocks/msw/handlers/entityHandlers'
+import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { DOI_ASSOCIATION } from '@/utils/APIConstants'
+import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
+import { DoiAssociation, EntityType } from '@sage-bionetworks/synapse-client'
+import {
+  EntityBundle,
+  EntityChildrenResponse,
+  ExternalFileHandle,
+  ExternalObjectStoreFileHandle,
+  S3_FILE_HANDLE_CONCRETE_TYPE_VALUE,
+  S3FileHandle,
+  VersionableEntity,
+} from '@sage-bionetworks/synapse-types'
+import { render, screen } from '@testing-library/react'
+import { http, HttpResponse } from 'msw'
+import EntitySidebar from './EntitySidebar'
+
+function useEntityBundleOverride(bundle: EntityBundle) {
+  server.use(
+    getEntityBundleHandler(
+      getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+      bundle,
+    ),
+  )
+}
+
+function useDoiAssociationOverride(doiAssociation: DoiAssociation | null) {
+  server.use(
+    http.get(
+      `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${DOI_ASSOCIATION}`,
+
+      () => {
+        if (doiAssociation == null) {
+          return HttpResponse.json({}, { status: 404 })
+        }
+        return HttpResponse.json(doiAssociation, { status: 200 })
+      },
+    ),
+  )
+}
+
+function renderComponent() {
+  return render(<EntitySidebar entityId={mockFileEntity.id} />, {
+    wrapper: createWrapper(),
+  })
+}
+
+describe('EntitySidebar', () => {
+  beforeAll(() => server.listen())
+  beforeEach(() => {
+    useDoiAssociationOverride(null)
+  })
+  beforeEach(() => {
+    server.use(getFeatureFlagsOverride())
+  })
+  afterEach(() => server.restoreHandlers())
+  afterAll(() => server.close())
+
+  describe('Displays individual properties', () => {
+    it('SynID', async () => {
+      renderComponent()
+
+      await screen.findByText(`SynID`)
+      await screen.findByText(mockFileEntity.id)
+    })
+    it('File size', async () => {
+      renderComponent()
+
+      await screen.findByText(`Size`)
+      await screen.findByText(
+        calculateFriendlyFileSize(mockFileHandle.contentSize),
+      )
+    })
+    it('File handle storage location', async () => {
+      renderComponent()
+
+      await screen.findByText(`Storage Location`)
+      await screen.findByText('Synapse Storage')
+    })
+    it('File handle storage location bucket and baseKey', async () => {
+      const bucketName = mockExternalS3UploadDestination.bucket
+      useEntityBundleOverride({
+        ...mockFileEntity.bundle,
+        fileHandles: [
+          {
+            ...mockFileHandle,
+            concreteType: S3_FILE_HANDLE_CONCRETE_TYPE_VALUE,
+            bucketName: bucketName,
+            storageLocationId: MOCK_EXTERNAL_S3_STORAGE_LOCATION_ID,
+          } as S3FileHandle,
+        ],
+      })
+      renderComponent()
+
+      await screen.findByText(`Storage Location`)
+      await screen.findByText(
+        `s3://${bucketName}/${mockExternalS3UploadDestination.baseKey}`,
+      )
+    })
+    it('File handle endpoint, bucket, key', async () => {
+      const endpointUrl = 'https://my-endpoint.fake'
+      const bucket = 'my-bucket'
+      const fileKey = 'my-key'
+      useEntityBundleOverride({
+        ...mockFileEntity.bundle,
+        fileHandles: [
+          {
+            ...mockFileHandle,
+            concreteType:
+              'org.sagebionetworks.repo.model.file.ExternalObjectStoreFileHandle',
+            endpointUrl,
+            bucket,
+            fileKey,
+          } as ExternalObjectStoreFileHandle,
+        ],
+      })
+      renderComponent()
+
+      await screen.findByText('Endpoint')
+      await screen.findByText(endpointUrl)
+      await screen.findByText('Bucket')
+      await screen.findByText(bucket)
+      await screen.findByText('File Key')
+      await screen.findByText(fileKey)
+      expect(screen.queryByText(`Storage Location`)).not.toBeInTheDocument()
+    })
+    it('External URL', async () => {
+      const externalUrl = 'https://some-external-url.net/path-to-file.jpg'
+      const fileHandle: ExternalFileHandle = {
+        ...mockFileHandle,
+        concreteType: 'org.sagebionetworks.repo.model.file.ExternalFileHandle',
+        externalURL: externalUrl,
+      }
+      useEntityBundleOverride({
+        ...mockFileEntity.bundle,
+        fileHandles: [fileHandle],
+      })
+      renderComponent()
+
+      await screen.findByText('URL')
+      const link = await screen.findByRole('link', { name: externalUrl })
+      expect(link).toHaveAttribute('href', externalUrl)
+      expect(screen.queryByText('Endpoint')).not.toBeInTheDocument()
+      expect(screen.queryByText('Bucket')).not.toBeInTheDocument()
+      expect(screen.queryByText('File Key')).not.toBeInTheDocument()
+      expect(screen.queryByText(`Storage Location`)).not.toBeInTheDocument()
+    })
+
+    it('File handle md5', async () => {
+      renderComponent()
+
+      await screen.findByText(`MD5`)
+      await screen.findByText(mockFileHandle.contentMd5!)
+    })
+    it('File handle download alias', async () => {
+      const fileName = 'custom-file-name-not-matching-entity-name.tar.gz'
+      useEntityBundleOverride({
+        ...mockFileEntity.bundle,
+        fileName,
+      })
+      renderComponent()
+
+      await screen.findByText(`Alias`)
+      await screen.findByText('Name when downloaded will be:')
+      await screen.findByText(fileName)
+    })
+    it('Does not show file handle download alias if it matches the name', async () => {
+      useEntityBundleOverride({
+        ...mockFileEntity.bundle,
+        fileName: mockFileEntity.entity.name,
+      })
+      renderComponent()
+
+      await screen.findByText(mockFileEntity.id)
+      expect(screen.queryByText(`Alias`)).not.toBeInTheDocument()
+    })
+    it('DOI', async () => {
+      useEntityBundleOverride({
+        ...mockFileEntity.bundle,
+        doiAssociation: mockDoiAssociation,
+      })
+      renderComponent()
+
+      await screen.findByText(`DOI`)
+      await screen.findByText(`https://doi.org/${mockDoiAssociation.doiUri}`)
+    })
+    it('Unversioned DOI fallback for latest version of versionable entity', async () => {
+      // The bundle does not provide a version-specific DOI, and the entity is the latest version
+      useEntityBundleOverride({
+        ...mockFileEntity.bundle,
+        entity: {
+          ...mockFileEntity.entity,
+          isLatestVersion: true,
+        } as VersionableEntity,
+        doiAssociation: undefined,
+      })
+      // A non-version-specific DOI exists
+      useDoiAssociationOverride(mockDoiAssociation)
+      renderComponent()
+
+      await screen.findByText(`DOI`)
+      await screen.findByText(`https://doi.org/${mockDoiAssociation.doiUri}`)
+    })
+
+    it('Unversioned DOI fallback is not shown if not latest version', async () => {
+      // The bundle does not provide a version-specific DOI, but this is not the latest version
+      useEntityBundleOverride({
+        ...mockFileEntity.bundle,
+        entity: {
+          ...mockFileEntity.entity,
+          isLatestVersion: false,
+        } as VersionableEntity,
+        doiAssociation: undefined,
+      })
+      // A non-version-specific DOI exists
+      useDoiAssociationOverride(mockDoiAssociation)
+      renderComponent()
+
+      await screen.findByText(mockFileEntity.id)
+      expect(screen.queryByText(`DOI`)).not.toBeInTheDocument()
+      expect(
+        screen.queryByText(`https://doi.org/${mockDoiAssociation.doiUri}`),
+      ).not.toBeInTheDocument()
+    })
+    it('Container fields (Child count, upload destination)', async () => {
+      useEntityBundleOverride({
+        ...mockFileEntity.bundle,
+        entity: mockFolderEntity,
+        entityType: EntityType.folder,
+      })
+
+      server.use(
+        http.post(
+          `${getEndpoint(
+            BackendDestinationEnum.REPO_ENDPOINT,
+          )}/repo/v1/entity/children`,
+          () => {
+            const response: EntityChildrenResponse = {
+              page: [],
+              totalChildCount: 55,
+              nextPageToken: 'npt',
+            }
+            return HttpResponse.json(response, { status: 200 })
+          },
+        ),
+      )
+
+      renderComponent()
+
+      await screen.findByText(`Items`)
+      await screen.findByText((55).toLocaleString())
+
+      await screen.findByText('Upload Destination')
+      await screen.findByText('Synapse Storage')
+    })
+    it('Displays "Storage Location" when entity is not a container and storageLocation exists', async () => {
+      useEntityBundleOverride({
+        ...mockFileEntity.bundle,
+        entity: {
+          ...mockFileEntity.entity,
+        },
+      })
+
+      renderComponent()
+
+      await screen.findByText('Storage Location')
+      await screen.findByText('Synapse Storage')
+    })
+    it('Displays "Upload Destination" when entity is a container and uploadDestinationString exists', async () => {
+      useEntityBundleOverride({
+        ...mockFileEntity.bundle,
+        entity: mockFolderEntity,
+        entityType: EntityType.folder,
+      })
+
+      renderComponent()
+
+      await screen.findByText('Upload Destination')
+      await screen.findByText('Synapse Storage')
+    })
+    it('Dataset items', async () => {
+      useEntityBundleOverride(mockDataset.bundle)
+      renderComponent()
+
+      await screen.findByText(`Items`)
+      await screen.findByText(mockDataset.entity.items!.length.toString())
+    })
+  })
+})

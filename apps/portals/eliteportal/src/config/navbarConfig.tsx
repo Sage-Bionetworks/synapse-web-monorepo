@@ -1,0 +1,129 @@
+import { NavbarConfig } from '@sage-bionetworks/synapse-portal-framework/components/navbar/Navbar'
+import Navbar from '@sage-bionetworks/synapse-portal-framework/components/navbar/Navbar'
+import {
+  PortalContextProvider,
+  usePortalContext,
+} from '@sage-bionetworks/synapse-portal-framework/components/PortalContext'
+import { useMemo } from 'react'
+import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
+import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
+
+const MODELS_NAV_PATH = '/Explore/Models'
+
+export default function EliteNavbar() {
+  const portalContext = usePortalContext()
+  const showModels = useGetFeatureFlag(FeatureFlagEnum.ELITE_PORTAL_MODELS)
+
+  const contextValue = useMemo(() => {
+    if (showModels) return portalContext
+    return {
+      ...portalContext,
+      navbarConfig: {
+        ...portalContext.navbarConfig,
+        routes: portalContext.navbarConfig.routes.map(route =>
+          route.children
+            ? {
+                ...route,
+                children: route.children.filter(
+                  child => child.path !== MODELS_NAV_PATH,
+                ),
+              }
+            : route,
+        ),
+      },
+    }
+  }, [portalContext, showModels])
+
+  return (
+    <PortalContextProvider value={contextValue}>
+      <Navbar layout={'with-sticky-search'} />
+    </PortalContextProvider>
+  )
+}
+
+export const navbarConfig: NavbarConfig = {
+  routes: [
+    {
+      name: 'About',
+      path: '/About',
+      children: [
+        {
+          name: 'Overview',
+          path: '/Overview',
+        },
+        {
+          name: 'Data Coordinating Center',
+          path: '/Data Coordinating Center',
+        },
+        {
+          name: 'Data Contribution',
+          path: '/Data Contribution',
+        },
+      ],
+    },
+    {
+      name: 'Explore',
+      path: '/Explore',
+      children: [
+        {
+          name: 'Programs',
+          path: '/Explore/Programs',
+        },
+        {
+          name: 'Projects',
+          path: '/Explore/Projects',
+        },
+        {
+          name: 'Studies',
+          path: '/Explore/Studies',
+        },
+        { name: 'Datasets', path: '/Explore/Datasets' },
+        { name: 'Models', path: '/Explore/Models' },
+        { name: 'Files', path: '/Explore/Data' },
+        {
+          name: 'Cohort Discovery',
+          path: '/Explore/Cohort Builder/Individuals',
+        },
+        { name: 'Publications', path: '/Explore/Publications' },
+        { name: 'Tools', path: '/Explore/Computational Tools' },
+        { name: 'People', path: '/Explore/People' },
+      ],
+    },
+    {
+      name: 'Data Access',
+      path: '/Data Access',
+      children: [
+        {
+          name: 'Data Access Overview',
+          path: '/Data Access/Data Access Overview',
+        },
+        {
+          name: 'Approved Access Requests',
+          path: '/Data Access/Approved Access Requests',
+        },
+        {
+          name: 'Acknowledge Data Use',
+          path: '/Data Access/Data Acknowledgement',
+        },
+        {
+          name: 'AI/ML Acceptable Use Policy',
+          path: '/Data Access/AI_ML_Acceptable_Use_Policy',
+        },
+      ],
+    },
+    {
+      name: 'Analysis Platforms',
+      path: '/Analysis Platforms',
+    },
+    {
+      name: 'Help',
+      path: 'https://help.eliteportal.org/help/',
+    },
+    {
+      name: 'News',
+      path: 'https://news.eliteportal.org/',
+    },
+  ],
+  isPortalsDropdownEnabled: true,
+  NavbarComponent: EliteNavbar,
+}

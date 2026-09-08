@@ -53,10 +53,15 @@ export function RangeFacetFilter(props: RangeFacetFilterProps) {
       columnType={columnModel.columnType}
       hideCollapsible={hideCollapsible}
       onRangeValueSelected={(values: RangeValues) => {
+        // Normalize numbers to strings; drop NaN (lodash isNumber(NaN) === true, so it must be filtered explicitly).
+        const toApiValue = (v: string | number | undefined) => {
+          if (isNumber(v)) return Number.isNaN(v) ? undefined : String(v)
+          return v
+        }
         setRangeFacetValue(
           facetResult,
-          isNumber(values.min) ? String(values.min) : values.min,
-          isNumber(values.max) ? String(values.max) : values.max,
+          toApiValue(values.min),
+          toApiValue(values.max),
         )
       }}
       onNotSetSelected={() => {

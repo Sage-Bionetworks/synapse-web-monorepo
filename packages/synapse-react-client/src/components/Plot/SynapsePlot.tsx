@@ -13,6 +13,7 @@ import Plotly, { AxisType, PlotType } from 'plotly.js-basic-dist'
 import { QueryContextType } from '../QueryContext'
 import { QueryWrapperSynapsePlotRowClickEvent } from '../QueryWrapperPlotNav/QueryWrapperSynapsePlot'
 import Plot from './Plot'
+import { unCamelCase } from '@/utils/functions/unCamelCase'
 import './SynapsePlot.scss'
 
 export type SynapsePlotWidgetParams = {
@@ -27,6 +28,10 @@ export type SynapsePlotWidgetParams = {
   barmode?: Plotly.Layout['barmode'] // Plotly barmode
   displayModeBar?: Plotly.Config['displayModeBar'] // sets the modebar visibility
   hoverinfo?: Plotly.PlotData['hoverinfo'] // sets the hover info
+  hideYAxisTickLabels?: boolean // hides the y-axis tick labels
+  hideXAxisTickLabels?: boolean // hides the x-axis tick labels
+  footnote?: string // optional text displayed below the plot
+  fullWidth?: boolean // forces the plot to take up the full container width
 }
 
 // QueryWrapperPlotNav customPlot parameters, undefined otherwise
@@ -57,6 +62,7 @@ export const SynapsePlot = (props: SynapsePlotProps): React.ReactNode => {
   }
   const { data: queryData, isLoading } =
     useGetFullTableQueryResults(queryRequest)
+
   if (isLoading) {
     return <Skeleton width={'100%'} height={'200px'} />
   }
@@ -75,6 +81,9 @@ export const SynapsePlot = (props: SynapsePlotProps): React.ReactNode => {
     horizontal,
     displayModeBar,
     hoverinfo,
+    hideYAxisTickLabels,
+    hideXAxisTickLabels,
+    footnote,
   } = props.synapsePlotWidgetParams
 
   const config: Partial<Plotly.Config> = {
@@ -84,10 +93,12 @@ export const SynapsePlot = (props: SynapsePlotProps): React.ReactNode => {
     showlegend: showlegend,
     title,
     barmode: barmode,
+    ...(footnote && { margin: { b: 40 } }),
   }
-  if (xtitle) {
+  if (xtitle || hideXAxisTickLabels) {
     layout.xaxis = {
-      title: xtitle,
+      ...(xtitle && { title: xtitle }),
+      ...(hideXAxisTickLabels && { showticklabels: false }),
     }
   }
   if (xaxistype) {
@@ -96,9 +107,10 @@ export const SynapsePlot = (props: SynapsePlotProps): React.ReactNode => {
       type: xaxistype,
     }
   }
-  if (ytitle) {
+  if (ytitle || hideYAxisTickLabels) {
     layout.yaxis = {
-      title: ytitle,
+      ...(ytitle && { title: ytitle }),
+      ...(hideYAxisTickLabels && { showticklabels: false }),
     }
   }
   // init plot_data
@@ -111,13 +123,22 @@ export const SynapsePlot = (props: SynapsePlotProps): React.ReactNode => {
   }
   for (let i = 0; i < headers.length - 1; i += 1) {
     // make an entry for each set of data points
+    const valueColumnName = headers[i + 1].name
+    const friendlyColumnName = unCamelCase(valueColumnName.replace(/_/g, ' '))
+    const hovertemplate =
+      type === 'bar'
+        ? horizontal
+          ? `<b>%{y}</b><br>${friendlyColumnName}: %{x:,}<extra></extra>`
+          : `<b>%{x}</b><br>${friendlyColumnName}: %{y:,}<extra></extra>`
+        : undefined
     plotData[i] = {
       orientation,
-      name: headers[i + 1].name,
+      name: valueColumnName,
       type: type,
       x: [],
       y: [],
       customdata: [],
+      ...(hovertemplate !== undefined && { hovertemplate }),
       ...(hoverinfo !== undefined && { hoverinfo }),
     }
   }
@@ -158,6 +179,7 @@ export const SynapsePlot = (props: SynapsePlotProps): React.ReactNode => {
       data={plotData}
       config={config}
       onClick={onPlotClick}
+      useResizeHandler={true}
     />
   )
 }

@@ -46,7 +46,7 @@ describe('promiseWithRetry', () => {
       .mockRejectedValue(lastError)
 
     const resultPromise = promiseWithRetry(fn, 2, 100)
-    // eslint-disable-next-line vitest/valid-expect -- We need to capture the promise rejection before advancing timers
+    // oxlint-disable-next-line vitest/valid-expect -- We need to capture the promise rejection before advancing timers
     const assertionPromise = expect(resultPromise).rejects.toThrow(lastError)
 
     await vi.runAllTimersAsync()

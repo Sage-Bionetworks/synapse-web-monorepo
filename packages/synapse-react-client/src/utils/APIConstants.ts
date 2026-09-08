@@ -74,6 +74,10 @@ export const TABLE_QUERY_ASYNC_GET = (
 export const ASYNCHRONOUS_JOB_TOKEN = (asyncJobToken: string) =>
   `${REPO}/asynchronous/job/${asyncJobToken}`
 
+export const SEARCH_QUERY_ASYNC_START = `${REPO}/search/query/async/start`
+export const SEARCH_QUERY_ASYNC_GET = (asyncJobToken: string) =>
+  `${REPO}/search/query/async/get/${asyncJobToken}`
+
 export const USER_PROFILE_ENDPOINT = `${REPO}/userProfile`
 
 export const SCHEMA = `${REPO}/schema`
@@ -182,6 +186,8 @@ export const FORUM_THREAD = (id: string) => `${FORUM}/${id}/threads`
 
 export const THREAD = `${REPO}/thread`
 export const THREAD_ID = (id: string) => `${THREAD}/${id}`
+export const THREAD_FOR_SUBMISSION = (submissionId: string | number) =>
+  `${THREAD}/submission/${submissionId}`
 export const THREAD_REPLIES = (id: string) => `${THREAD_ID(id)}/replies`
 
 export const AGENT = `${REPO}/agent`
@@ -206,12 +212,28 @@ export const ACCESS_APPROVAL_BY_ID = (id: string | number) =>
   `${ACCESS_APPROVAL}/${id}`
 
 export const DATA_ACCESS_REQUEST = `${REPO}/dataAccessRequest`
+export const DATA_ACCESS_REQUEST_LIST = `${DATA_ACCESS_REQUEST}/list`
+export const DATA_ACCESS_REQUEST_PREVIEW = (id: string | number) =>
+  `${DATA_ACCESS_REQUEST}/${id}/preview`
 export const DATA_ACCESS_REQUEST_SUBMISSION = (id: string | number) =>
   `${DATA_ACCESS_REQUEST}/${id}/submission`
+export const DATA_ACCESS_REQUEST_SIGNATURE = (id: string | number) =>
+  `${DATA_ACCESS_REQUEST}/${id}/signature`
+export const DATA_ACCESS_REQUEST_SIGNATURE_STATUS = (id: string | number) =>
+  `${DATA_ACCESS_REQUEST}/${id}/signature/status`
+export const DATA_ACCESS_REQUEST_SIGNATURE_FILEHANDLE_ID = (
+  id: string | number,
+) => `${DATA_ACCESS_REQUEST}/${id}/signature/filehandleId`
+export const DATA_ACCESS_REQUEST_SIGNATURE_QUOTA = (id: string | number) =>
+  `${DATA_ACCESS_REQUEST}/${id}/signature/quota`
 export const ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE = (
   accessRequirementId: string | number,
 ) =>
   `${ACCESS_REQUIREMENT_BY_ID(accessRequirementId)}/dataAccessRequestForUpdate`
+
+export const EDUC_TEMPLATE = `${REPO}/eDuc/template`
+export const EDUC_TEMPLATE_VALIDATION = (templateId: string) =>
+  `${EDUC_TEMPLATE}/${templateId}/validation`
 
 export const RESEARCH_PROJECT = `${REPO}/researchProject`
 export const ACCESS_REQUIREMENT_RESEARCH_PROJECT_FOR_UPDATE = (

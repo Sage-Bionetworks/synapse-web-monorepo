@@ -1,0 +1,19 @@
+$schema-table-container-height: 400px;
+
+.jsonSchemaPicker {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.organizationAutocomplete {
+  margin-bottom: 8px;
+}
+
+.schemaTableContainer {
+  height: $schema-table-container-height;
+
+  tr[aria-selected='true'] {
+    background-color: var(--synapse-primary-action-color-alpha-10);
+  }
+}

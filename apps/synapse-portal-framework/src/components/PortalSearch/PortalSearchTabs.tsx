@@ -5,6 +5,7 @@ export type PortalSearchTabConfig = {
   path: string
   title: string
   count?: number
+  score?: number
 }
 
 export type PortalSearchTabUIProps = {

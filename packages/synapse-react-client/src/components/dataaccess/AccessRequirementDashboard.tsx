@@ -111,8 +111,8 @@ export function AccessRequirementDashboard(
     [setReviewerId],
   )
 
-  return (
-    <div className="AccessRequirementDashboard">
+  const accessRequirementsPanel = (
+    <>
       <EntityFinderModal
         configuration={{
           initialScope: FinderScope.ALL_PROJECTS,
@@ -222,7 +222,11 @@ export function AccessRequirementDashboard(
         typeFilter={typeFilter}
         onTypeFilterChange={setTypeFilter}
       />
-    </div>
+    </>
+  )
+
+  return (
+    <div className="AccessRequirementDashboard">{accessRequirementsPanel}</div>
   )
 }
 

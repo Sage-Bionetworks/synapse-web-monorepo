@@ -1,7 +1,14 @@
-import { datasetsQueryWrapperPlotNavProps } from '@/config/synapseConfigs'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/index'
+import { datasetsSearch } from '@/config/synapseConfigs'
+import { portalMetadata } from '@/config/portalMetadata'
+import { createStaticMeta } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
+import SearchQueryWrapperPlotNav from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
+
+export const meta = createStaticMeta(
+  { title: 'Explore Datasets' },
+  portalMetadata,
+)
 
 function ExploreDatasets() {
-  return <QueryWrapperPlotNav {...datasetsQueryWrapperPlotNavProps} />
+  return <SearchQueryWrapperPlotNav {...datasetsSearch} shouldDeepLink={true} />
 }
 export default ExploreDatasets

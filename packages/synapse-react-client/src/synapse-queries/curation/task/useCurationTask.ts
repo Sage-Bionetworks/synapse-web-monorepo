@@ -1,10 +1,12 @@
 import { useSynapseContext } from '@/utils/index'
 import {
+  ComputeTaskExecutionResponse,
   CurationTask,
   ListCurationTaskRequest,
   ListCurationTaskResponse,
   SynapseClientError,
   TaskStatus,
+  waitForAsyncResult,
 } from '@sage-bionetworks/synapse-client'
 import {
   InfiniteData,
@@ -17,6 +19,30 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
+
+export function useCreateCurationTask(
+  options?: Partial<
+    UseMutationOptions<CurationTask, SynapseClientError, CurationTask>
+  >,
+) {
+  const { synapseClient, keyFactory } = useSynapseContext()
+  const queryClient = useQueryClient()
+  return useMutation({
+    ...options,
+    mutationFn: curationTask =>
+      synapseClient.curationTaskServicesClient.postRepoV1CurationTask({
+        curationTask,
+      }),
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries({
+        queryKey: keyFactory.getAllCurationTaskListKey(),
+      })
+      if (options?.onSuccess) {
+        options.onSuccess(data, variables, context)
+      }
+    },
+  })
+}
 
 export function useGetCurationTask<TData = CurationTask>(
   taskId: number,
@@ -92,13 +118,81 @@ export function useUpdateCurationTaskStatus(
         { taskId: taskStatus.taskId!, taskStatus },
       ),
     onSuccess: (data, variables, context) => {
-      // Invalidate both the status query and the task query using the ID key
       queryClient.invalidateQueries({
         queryKey: keyFactory.getCurationTaskIdKey(variables.taskId!),
+      })
+      queryClient.invalidateQueries({
+        queryKey: keyFactory.getAllCurationTaskListKey(),
       })
 
       if (options?.onSuccess) {
         options.onSuccess(data, variables, context)
+      }
+    },
+  })
+}
+
+export function useDeleteCurationTask(
+  options?: Partial<UseMutationOptions<void, SynapseClientError, number>>,
+) {
+  const { synapseClient, keyFactory } = useSynapseContext()
+  const queryClient = useQueryClient()
+  return useMutation({
+    ...options,
+    mutationFn: (taskId: number) =>
+      synapseClient.curationTaskServicesClient.deleteRepoV1CurationTaskTaskId({
+        taskId,
+      }),
+    onSuccess: (data, taskId, context) => {
+      queryClient.invalidateQueries({
+        queryKey: keyFactory.getCurationTaskIdKey(taskId),
+      })
+      queryClient.invalidateQueries({
+        queryKey: keyFactory.getAllCurationTaskListKey(),
+      })
+      if (options?.onSuccess) {
+        options.onSuccess(data, taskId, context)
+      }
+    },
+  })
+}
+
+/**
+ * Starts an executable curation task (e.g. sample sheet or record set generation) and awaits its
+ * completion. Polls the generic asynchronous job endpoint so that in-progress and failed states are
+ * surfaced. On success, invalidates the task's queries and the task list so the dashboard reflects
+ * the new status.
+ */
+export function useExecuteCurationTask(
+  options?: Partial<
+    UseMutationOptions<ComputeTaskExecutionResponse, SynapseClientError, number>
+  >,
+) {
+  const { synapseClient, keyFactory } = useSynapseContext()
+  const queryClient = useQueryClient()
+  return useMutation({
+    ...options,
+    mutationFn: async (taskId: number) => {
+      const asyncJobId =
+        await synapseClient.curationTaskServicesClient.postRepoV1CurationTaskTaskIdExecuteAsyncStart(
+          { taskId },
+        )
+      const asyncJobResponse = await waitForAsyncResult(() =>
+        synapseClient.asynchronousJobServicesClient.getRepoV1AsynchronousJobJobId(
+          { jobId: asyncJobId.token! },
+        ),
+      )
+      return asyncJobResponse.responseBody as ComputeTaskExecutionResponse
+    },
+    onSuccess: (data, taskId, context) => {
+      queryClient.invalidateQueries({
+        queryKey: keyFactory.getCurationTaskIdKey(taskId),
+      })
+      queryClient.invalidateQueries({
+        queryKey: keyFactory.getAllCurationTaskListKey(),
+      })
+      if (options?.onSuccess) {
+        options.onSuccess(data, taskId, context)
       }
     },
   })

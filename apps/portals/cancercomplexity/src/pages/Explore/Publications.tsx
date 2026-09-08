@@ -1,7 +1,16 @@
-import { publicationsQueryWrapperPlotNavProps } from '@/config/synapseConfigs'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/index'
+import { publicationsSearch } from '@/config/synapseConfigs'
+import { portalMetadata } from '@/config/portalMetadata'
+import { createStaticMeta } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
+import SearchQueryWrapperPlotNav from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
+
+export const meta = createStaticMeta(
+  { title: 'Explore Publications' },
+  portalMetadata,
+)
 
 function ExplorePublications() {
-  return <QueryWrapperPlotNav {...publicationsQueryWrapperPlotNavProps} />
+  return (
+    <SearchQueryWrapperPlotNav {...publicationsSearch} shouldDeepLink={true} />
+  )
 }
 export default ExplorePublications

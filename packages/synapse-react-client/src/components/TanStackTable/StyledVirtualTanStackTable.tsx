@@ -1,4 +1,5 @@
 import { mergeSlotProps } from '@/utils/slots/SlotUtils'
+import { SxProps, Theme } from '@mui/material'
 import { VirtualItem, Virtualizer } from '@tanstack/react-virtual'
 import { noop } from 'lodash-es'
 import React, { useContext } from 'react'
@@ -14,6 +15,28 @@ type StyledVirtualTanStackTableProps<T = unknown> = Omit<
 > & {
   rowVirtualizer: Virtualizer<any, any>
   onTableContainerScroll?: (target: EventTarget) => void
+  /**
+   * When true, alternating rows are given a striped background. Unlike {@link StyledTableContainerProps.noStripedRows},
+   * this does not rely on CSS `:nth-of-type`, since a virtualized row's position in the DOM is not
+   * guaranteed to match its data index as rows are mounted/unmounted while scrolling. Instead, this
+   * stripes rows based on the `data-index` attribute that {@link VirtualizedTr} sets on each `<tr>`.
+   * @default false
+   */
+  striped?: boolean
+}
+
+// The last digit of a `data-index` that identifies an odd row, e.g. matches indices 1, 3, 11, 23.
+const ODD_ROW_LAST_DIGITS = [1, 3, 5, 7, 9]
+
+const stripedRowsSx = {
+  // Exclude selected rows so this doesn't outrank a caller's own `[aria-selected="true"]`
+  // background rule (emotion's `sx` classes are more specific than a single class+attribute
+  // selector, e.g. EntityFinder's `.EntityFinderDetailsViewRow[aria-selected='true']`).
+  [ODD_ROW_LAST_DIGITS.map(
+    digit => `&[data-index$="${digit}"]:not([aria-selected="true"])`,
+  ).join(', ')]: {
+    backgroundColor: 'var(--synapse-background-color-gray)',
+  },
 }
 
 // Context to pass the row virtualizer to the Tr component
@@ -61,6 +84,7 @@ export default function StyledVirtualTanStackTable<T = unknown>(
     rowVirtualizer,
     slotProps = {},
     onTableContainerScroll = noop,
+    striped = false,
   } = props
 
   const virtualRows = rowVirtualizer.getVirtualItems()
@@ -80,15 +104,20 @@ export default function StyledVirtualTanStackTable<T = unknown>(
             position: 'relative', //needed for sticky header
             ...styledTableContainerProps?.style,
           },
-          sx: {
-            'thead > tr': {
-              display: 'flex',
-              width: '100%',
+          sx: [
+            {
+              'thead > tr': {
+                display: 'flex',
+                width: '100%',
+              },
             },
-          },
+            striped && { 'tbody > tr': stripedRowsSx },
+            styledTableContainerProps?.sx,
+          ]
+            .flat()
+            .filter(Boolean) as SxProps<Theme>,
           onScroll: e => onTableContainerScroll(e.target),
         }}
-        {...styledTableContainerProps}
         slots={{
           Tr: VirtualizedTr,
         }}

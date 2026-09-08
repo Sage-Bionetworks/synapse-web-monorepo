@@ -28,28 +28,11 @@ export const searchPageTabs = [
   },
 ] as const satisfies PortalSearchTabConfig[]
 
-type CCKPSearchRole =
-  | 'researcher'
-  | 'principalInvestigator'
-  | 'funder'
-  | 'trainee'
-  | 'patientAdvocate'
-export const roleMapping: Record<
-  CCKPSearchRole,
-  (typeof searchPageTabs)[number]['title']
-> = {
-  researcher: 'Datasets',
-  principalInvestigator: 'Grants',
-  funder: 'Grants',
-  trainee: 'Educational Resources',
-  patientAdvocate: 'Educational Resources',
-}
-
 export const portalSearchPageConfigs = [
-  cckpConfigs.grants,
-  cckpConfigs.people,
-  cckpConfigs.publications,
-  cckpConfigs.datasets,
-  cckpConfigs.tools,
-  cckpConfigs.education,
+  cckpConfigs.grantsSearch,
+  cckpConfigs.peopleSearch,
+  cckpConfigs.publicationsSearch,
+  cckpConfigs.datasetsSearch,
+  cckpConfigs.toolsSearch,
+  cckpConfigs.educationSearch,
 ]

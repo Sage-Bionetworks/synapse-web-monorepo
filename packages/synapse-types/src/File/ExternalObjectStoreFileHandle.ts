@@ -10,8 +10,7 @@ export type EXTERNAL_OBJECT_STORE_FILE_HANDLE_CONCRETE_TYPE =
  *
  * https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/file/ExternalObjectStoreFileHandle.html
  */
-export interface ExternalObjectStoreFileHandle
-  extends ExternalFileHandleInterface {
+export interface ExternalObjectStoreFileHandle extends ExternalFileHandleInterface {
   readonly concreteType: EXTERNAL_OBJECT_STORE_FILE_HANDLE_CONCRETE_TYPE
   /** endpoint URL of the S3 service. Do NOT set this value when creating a ExternalObjectStoreFileHandle since it will be overwritten with the value defined in the ExternalObjectStorageLocationSetting it references. */
   readonly endpointUrl: string

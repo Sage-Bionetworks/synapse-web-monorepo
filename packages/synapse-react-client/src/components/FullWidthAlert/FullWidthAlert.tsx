@@ -19,7 +19,7 @@ export type AlertButtonConfig = {
   tooltipText?: string
 } & (
   | // "onClick" or "href", but not both
-  {
+    {
       onClick?: MouseEventHandler<HTMLButtonElement>
     }
   | { href?: string }

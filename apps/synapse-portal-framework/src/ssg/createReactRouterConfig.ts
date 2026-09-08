@@ -28,6 +28,13 @@ export type CreateReactRouterConfigOptions = {
 }
 
 /**
+ * If future IDs include other path-breaking reserved characters, extend this function and add coverage.
+ */
+function encodePathSegment(id: string): string {
+  return id.replace(/\//g, '%2F')
+}
+
+/**
  * Builds a React Router framework-mode `Config` for an SSG portal.
  *
  * Encapsulates the portal-agnostic prerender pipeline: enumerate detail-page
@@ -43,7 +50,7 @@ export function createReactRouterConfig(
     metadataConfigs,
     additionalPreloads = [],
     appDirectory = 'src',
-    concurrency = 4,
+    concurrency = 16,
   } = options
 
   return {
@@ -54,14 +61,18 @@ export function createReactRouterConfig(
         const isProduction = process.env.NODE_ENV === 'production'
         const dynamicRoutes: string[] = []
 
-        // Enumerate record IDs for each detail page type. In dev mode, fetch
-        // only 1 ID per type to keep startup fast while still satisfying React
-        // Router's prerender validation for loader exports.
+        // Enumerate record IDs for each detail page type. We fetch only 1 ID
+        // when:
+        //   - in dev mode (keeps startup fast), or
+        //   - the detail page is marked `prerender: false` (high-cardinality
+        //     page that we don't want statically generated at scale).
+        // Either way React Router's ssr:false validator is satisfied because
+        // at least one path matches each loader-exporting route — the
+        // remaining paths fall through to the SPA fallback at runtime.
         for (const detailPage of sitemapConfig.detailPages) {
-          const result = await fetchResourceIds(
-            detailPage,
-            isProduction ? undefined : 1,
-          )
+          const limit =
+            !isProduction || detailPage.prerender === false ? 1 : undefined
+          const result = await fetchResourceIds(detailPage, limit)
           if (!result.success) {
             console.warn(
               `[prerender] Skipping ${detailPage.path}: ${result.error}`,
@@ -69,7 +80,7 @@ export function createReactRouterConfig(
             continue
           }
           for (const id of result.ids) {
-            dynamicRoutes.push(`/${detailPage.path}/${id}`)
+            dynamicRoutes.push(`/${detailPage.path}/${encodePathSegment(id)}`)
           }
         }
 
@@ -83,19 +94,20 @@ export function createReactRouterConfig(
           ])
         }
 
-        // Exclude legacy /DetailsPage redirect routes from prerendering.
+        // Exclude legacy /DetailsPage redirect routes (and any sub-paths like
+        // /DetailsPage/Details) from prerendering.
         // Prerendering them creates S3 directory structures (DetailsPage/index.html)
         // that cause S3 to 302-redirect `/DetailsPage?id=X` → `/DetailsPage/`
         // while dropping the query string, breaking the client-side redirect.
         // CloudFront serves __spa-fallback.html for these 404s, so React Router
         // handles them client-side with the full URL (including query) intact.
         const staticPaths = getStaticPaths().filter(
-          p => !p.endsWith('/DetailsPage'),
+          p => !p.includes('/DetailsPage'),
         )
 
         return [...staticPaths, ...dynamicRoutes]
       },
-      unstable_concurrency: concurrency,
+      concurrency,
     },
   } satisfies Config
 }

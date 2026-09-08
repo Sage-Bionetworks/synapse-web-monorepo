@@ -2,12 +2,59 @@ import ampAlsAccessColumn from '@/components/AmpAlsAccessColumn'
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
 import type { LabelLinkConfig } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import type { QueryWrapperSynapsePlotProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperSynapsePlot'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../columnAliases'
-import { datasetsSql } from '../resources'
+import { datasetsSearchIndexId, datasetsSql } from '../resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 const rgbIndex = 0
+
+const datasetParticipantCountPlotConfig: QueryWrapperSynapsePlotProps = {
+  title: 'Dataset Participant Count',
+  query:
+    'SELECT name, participant_count FROM syn66496326 WHERE participant_count > 0 ORDER BY participant_count DESC',
+  type: 'bar',
+  horizontal: true,
+  xtitle: 'Number of Participants',
+  ytitle: 'Dataset',
+  xaxistype: 'log',
+  showlegend: false,
+  hideYAxisTickLabels: true,
+  fullWidth: false,
+  footnote:
+    'Participant counts are reported per dataset and may include the same individuals across datasets; counts cannot be summed. Cross-study deduplication is in progress.',
+}
+
+const datasetItemCountPlotConfig: QueryWrapperSynapsePlotProps = {
+  title: 'Dataset Item Count',
+  query:
+    'SELECT name, datasetItemCount FROM syn66496326 WHERE datasetItemCount > 0 ORDER BY datasetItemCount DESC',
+  type: 'bar',
+  horizontal: true,
+  xtitle: 'Number of Files',
+  ytitle: 'Dataset',
+  showlegend: false,
+  hideYAxisTickLabels: true,
+  hideXAxisTickLabels: false,
+  fullWidth: false,
+}
+
+const datasetSizePlotConfig: QueryWrapperSynapsePlotProps = {
+  title: 'Dataset Size',
+  query:
+    'SELECT name, datasetSizeInBytes FROM syn66496326 WHERE datasetSizeInBytes > 0 ORDER BY datasetSizeInBytes DESC',
+  type: 'bar',
+  horizontal: true,
+  xtitle: 'Size (Bytes)',
+  ytitle: 'Dataset',
+  showlegend: false,
+  hideYAxisTickLabels: true,
+  hideXAxisTickLabels: false,
+  fullWidth: false,
+}
+
 export const datasetColumnLinks: LabelLinkConfig = [
   {
     isMarkdown: false,
@@ -41,6 +88,7 @@ export const datasetQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   },
   isInfinite: true,
   initialLimit: 50,
+  customPlots: [datasetItemCountPlotConfig, datasetSizePlotConfig],
 }
 
 export const datasetSchema: TableToGenericCardMapping = {
@@ -66,4 +114,27 @@ export const datasetCardConfiguration: CardConfiguration = {
   },
 
   labelLinkConfig: datasetColumnLinks,
+}
+
+export const datasetsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'Datasets',
+  shouldDeepLink: false,
+  columnAliases,
+  facetsToPlot: ['diseaseSubtype', 'assay'],
+  searchIndexId: datasetsSearchIndexId,
+  autocompleteFieldName: 'name',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
+  tableConfiguration: {
+    columnLinks: datasetColumnLinks,
+    showAccessColumn: false, // use custom access column instead
+    customColumns: [ampAlsAccessColumn],
+  },
+  customPlots: [
+    datasetItemCountPlotConfig,
+    datasetSizePlotConfig,
+    datasetParticipantCountPlotConfig,
+  ],
+  initialPlotTypeByFacetColumnName: { diseaseSubtype: 'BAR' },
 }

@@ -16,10 +16,13 @@ import {
   getEndpoint,
 } from 'synapse-react-client/utils/functions/index'
 import { useOneSageURL } from 'synapse-react-client/utils/hooks/useOneSageURL'
+import HeaderSearchBox from '../HeaderSearchBox'
 import NavLink from '../NavLink'
 import NavUserLink from '../NavUserLink'
 import { usePortalContext } from '../PortalContext'
 import { DropdownNavButton } from './DropdownNavButton'
+
+export type NavbarLayout = 'default' | 'with-sticky-search'
 
 type SynapseSettingLink = {
   text: string
@@ -38,6 +41,14 @@ type NavRoute = {
 export type NavbarConfig = {
   routes: NavRoute[]
   isPortalsDropdownEnabled: boolean
+  /** Optional override component; defaults to <Navbar /> when omitted */
+  NavbarComponent?: React.ComponentType
+  /** Layout variant; defaults to 'default' when omitted */
+  layout?: NavbarLayout
+  /** Background color for the sticky search nav link bar. Defaults to var(--synapse-secondary-action-color). */
+  stickyNavBackgroundColor?: string
+  /** Text color for the sticky search nav link bar. Defaults to #fff. */
+  stickyNavTextColor?: string
 }
 
 type ConditionalNavRouteProps = {
@@ -99,12 +110,23 @@ const synapseQuickLinks: SynapseSettingLink[] = [
   },
 ]
 
-export default function Navbar() {
+type NavbarProps = {
+  /** Overrides navbarConfig.layout when provided */
+  layout?: NavbarLayout
+}
+
+export default function Navbar({ layout: layoutProp }: NavbarProps = {}) {
   const { navbarConfig, logoHeaderConfig } = usePortalContext()
   const { isAuthenticated } = useSynapseContext()
   const navigate = useNavigate()
   const { data: userProfile } = useGetCurrentUserProfile()
-  const { isPortalsDropdownEnabled } = navbarConfig
+  const {
+    isPortalsDropdownEnabled,
+    stickyNavBackgroundColor,
+    stickyNavTextColor,
+  } = navbarConfig
+  const layout: NavbarLayout = layoutProp ?? navbarConfig.layout ?? 'default'
+  const isStickySearch = layout === 'with-sticky-search'
   const [showMenu, setShowMenu] = useState(false)
   const navRef = useRef<HTMLElement>(null)
 
@@ -180,30 +202,54 @@ export default function Navbar() {
     setProfileMenuAnchorEl(null)
   }
 
+  const navLogoContainer = (
+    <div className="nav-logo-container">
+      <NavLink
+        onClick={goToTop}
+        style={{ display: 'flex', alignItems: 'center' }}
+        to="/"
+        id="home-link"
+      >
+        <>
+          {imageElement} {nameElement}
+        </>
+      </NavLink>
+    </div>
+  )
+
   return (
     <>
       <Box
         ref={navRef}
         component={'nav'}
         className={
-          !showMenu
-            ? 'flex-display nav top-nav'
-            : 'flex-display nav top-nav mb-active'
+          `flex-display nav top-nav mui-fixed` +
+          (showMenu ? ' mb-active' : '') +
+          (isStickySearch ? ' top-nav--with-sticky-search' : '')
         }
-        sx={RESPONSIVE_SIDE_PADDING}
+        sx={isStickySearch ? undefined : RESPONSIVE_SIDE_PADDING}
+        style={
+          isStickySearch
+            ? ({
+                '--sticky-nav-bg': stickyNavBackgroundColor,
+                '--sticky-nav-color': stickyNavTextColor,
+              } as React.CSSProperties)
+            : undefined
+        }
       >
-        <div className="nav-logo-container">
-          <NavLink
-            onClick={goToTop}
-            style={{ display: 'flex', alignItems: 'center' }}
-            to="/"
-            id="home-link"
-          >
-            <>
-              {imageElement} {nameElement}
-            </>
-          </NavLink>
-        </div>
+        {isStickySearch ? (
+          <div className="nav-logo-and-search-container">
+            <>{navLogoContainer}</>
+            <HeaderSearchBox
+              variant="v3"
+              path="/Search"
+              searchPlaceholder="Search"
+              hideChatOption={true}
+            />
+          </div>
+        ) : (
+          <>{navLogoContainer}</>
+        )}
         <div
           className="nav-mobile-menu-btn mb-open"
           onClick={() => {

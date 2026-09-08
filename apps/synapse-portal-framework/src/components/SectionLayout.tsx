@@ -10,7 +10,7 @@ type SectionLayoutProps = PropsWithChildren<{
   /** JSX override for rendering. 'title' (string) is still required for hash-based scroll */
   titleNode?: React.ReactNode
   centerTitle?: boolean
-  subtitle?: string
+  subtitle?: React.ReactNode
   helpText?: string
 }>
 

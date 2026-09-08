@@ -21,6 +21,6 @@ export function useScrollOnMount() {
       clearTimeout(timer)
     }
     // Empty dependency array to intentionally run only on mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 }

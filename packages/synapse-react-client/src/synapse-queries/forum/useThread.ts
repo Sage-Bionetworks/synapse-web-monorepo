@@ -54,6 +54,18 @@ export function useGetThreadBundle(
   })
 }
 
+export function useGetThreadForSubmission(submissionId: string | number) {
+  const { keyFactory, synapseClient } = useSynapseContext()
+
+  return useQuery({
+    queryKey: keyFactory.getThreadForSubmissionQueryKey(submissionId),
+    queryFn: () =>
+      synapseClient.discussionServicesClient.getRepoV1ThreadSubmissionSubmissionId(
+        { submissionId: String(submissionId) },
+      ),
+  })
+}
+
 export function useGetThreadBody(
   threadData?: DiscussionThreadBundle,
   options?: Partial<UseQueryOptions<string, SynapseClientError>>,

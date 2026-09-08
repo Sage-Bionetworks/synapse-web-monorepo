@@ -72,7 +72,6 @@ const selectColumns: SelectColumn[] = columnModels
 
 const mockQueryContext: QueryContextType = {
   getCurrentQueryRequest: vi.fn().mockReturnValue(queryRequest),
-  onViewSharingSettingsClicked: vi.fn(),
   hasResettableFilters: false,
   fileIdColumnName: mockFileIdColumnName,
   fileVersionColumnName: mockFileVersionColumnName,
@@ -140,6 +139,7 @@ const mockQueryVisualizationContext: QueryVisualizationContextType = {
   showSearchBar: false,
   showSqlEditor: false,
   hideSearchBarControl: false,
+  lockTextMatchesQueryFilterPill: true,
 }
 const mockExportToCavatica = vi.fn()
 const mockExportToTerra = vi.fn()
@@ -198,8 +198,6 @@ describe('ExternalPlatformActionsRequiredPrecheck', () => {
         queryBundleRequest: queryRequest,
         columnModels: columnModels,
         onNumberOfRequiredActionsChanged: expect.any(Function),
-        onViewSharingSettingsClicked:
-          mockQueryContext.onViewSharingSettingsClicked,
       })
       act(() => {
         MockTableQueryActionsRequired.mock.lastCall![0]
@@ -263,8 +261,6 @@ describe('ExternalPlatformActionsRequiredPrecheck', () => {
       queryBundleRequest: queryRequest,
       columnModels: columnModels,
       onNumberOfRequiredActionsChanged: expect.any(Function),
-      onViewSharingSettingsClicked:
-        mockQueryContext.onViewSharingSettingsClicked,
     })
     act(() => {
       MockTableQueryActionsRequired.mock.lastCall![0]
@@ -331,8 +327,6 @@ describe('ExternalPlatformActionsRequiredPrecheck', () => {
       queryBundleRequest: queryRequest,
       columnModels: columnModels,
       onNumberOfRequiredActionsChanged: expect.any(Function),
-      onViewSharingSettingsClicked:
-        mockQueryContext.onViewSharingSettingsClicked,
     })
     act(() => {
       MockTableQueryActionsRequired.mock.lastCall![0]

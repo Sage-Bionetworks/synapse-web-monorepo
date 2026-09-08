@@ -16,6 +16,7 @@ import {
   configureFacetsForType,
   getAllowedColumnTypes,
   getJsonSchemaItemDefinitionForColumnType,
+  getMaxListLengthForType,
   getMaxSizeForType,
   getViewScopeForEntity,
 } from './TableColumnSchemaEditorUtils'
@@ -127,6 +128,7 @@ describe('TableColumnSchemaEditorUtils', () => {
       ColumnTypeEnum.DATE_LIST,
       ColumnTypeEnum.INTEGER_LIST,
       ColumnTypeEnum.ENTITYID_LIST,
+      ColumnTypeEnum.USERID_LIST,
     ]
 
     Object.values(ColumnTypeEnum).forEach((key: ColumnType) => {
@@ -243,7 +245,6 @@ describe('TableColumnSchemaEditorUtils', () => {
         ColumnTypeEnum.USERID,
         ColumnTypeEnum.MEDIUMTEXT,
         ColumnTypeEnum.LARGETEXT,
-        ColumnTypeEnum.JSON,
         ColumnTypeEnum.SUBMISSIONID,
         ColumnTypeEnum.EVALUATIONID,
         ColumnTypeEnum.USERID_LIST,
@@ -273,6 +274,41 @@ describe('TableColumnSchemaEditorUtils', () => {
       expect(() => {
         getMaxSizeForType(columnType)
       }).toThrow()
+    })
+  })
+
+  describe('getMaxListLengthForType', () => {
+    it('uses a fixed per-element character budget for non-STRING_LIST types', () => {
+      // 100,000 character budget divided by the fixed per-element size
+      expect(getMaxListLengthForType(ColumnTypeEnum.INTEGER_LIST)).toBe(5000)
+      expect(getMaxListLengthForType(ColumnTypeEnum.DATE_LIST)).toBe(5000)
+      expect(getMaxListLengthForType(ColumnTypeEnum.USERID_LIST)).toBe(5000)
+      expect(getMaxListLengthForType(ColumnTypeEnum.BOOLEAN_LIST)).toBe(20000)
+      expect(getMaxListLengthForType(ColumnTypeEnum.ENTITYID_LIST)).toBe(2272)
+    })
+    it('computes the budget for STRING_LIST from the element maximumSize', () => {
+      // 100,000 / maximumSize
+      expect(getMaxListLengthForType(ColumnTypeEnum.STRING_LIST, 1000)).toBe(
+        100,
+      )
+      expect(getMaxListLengthForType(ColumnTypeEnum.STRING_LIST, 100)).toBe(
+        1000,
+      )
+      expect(getMaxListLengthForType(ColumnTypeEnum.STRING_LIST, 1)).toBe(
+        100000,
+      )
+    })
+    it('uses the default string size for STRING_LIST when maximumSize is not provided', () => {
+      // 100,000 / DEFAULT_STRING_SIZE (50)
+      expect(getMaxListLengthForType(ColumnTypeEnum.STRING_LIST)).toBe(2000)
+    })
+    it('throws for non-list column types', () => {
+      const nonListTypes = Object.values(ColumnTypeEnum).filter(
+        type => !canHaveMaxListLength(type),
+      )
+      nonListTypes.forEach(type => {
+        expect(() => getMaxListLengthForType(type)).toThrow()
+      })
     })
   })
 

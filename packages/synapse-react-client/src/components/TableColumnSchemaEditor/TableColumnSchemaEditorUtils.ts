@@ -146,6 +146,7 @@ export function canHaveMaxListLength(
     case ColumnTypeEnum.DATE_LIST:
     case ColumnTypeEnum.INTEGER_LIST:
     case ColumnTypeEnum.ENTITYID_LIST:
+    case ColumnTypeEnum.USERID_LIST:
       return true
     default:
       // all others are false
@@ -198,6 +199,22 @@ export function configureFacetsForType(
   return allowedFacetTypes
 }
 
+/**
+ * Column types that are not allowed to have a default value.
+ * @see the `defaultValue` property description on the ColumnModel schema in the Synapse OpenAPI specification.
+ */
+export const DISALLOWED_DEFAULT_VALUE_COLUMN_TYPES: ColumnTypeEnum[] = [
+  ColumnTypeEnum.ENTITYID,
+  ColumnTypeEnum.ENTITYID_LIST,
+  ColumnTypeEnum.EVALUATIONID,
+  ColumnTypeEnum.FILEHANDLEID,
+  ColumnTypeEnum.LARGETEXT,
+  ColumnTypeEnum.MEDIUMTEXT,
+  ColumnTypeEnum.SUBMISSIONID,
+  ColumnTypeEnum.USERID,
+  ColumnTypeEnum.USERID_LIST,
+]
+
 export function canHaveDefault(
   type: ColumnType | ColumnTypeEnum,
   isView: boolean,
@@ -209,27 +226,42 @@ export function canHaveDefault(
   } else if (isJsonSubColumnFacet) {
     return false
   } else {
-    switch (type) {
-      case ColumnTypeEnum.ENTITYID:
-      case ColumnTypeEnum.ENTITYID_LIST:
-      case ColumnTypeEnum.FILEHANDLEID:
-      case ColumnTypeEnum.USERID:
-      case ColumnTypeEnum.USERID_LIST:
-      case ColumnTypeEnum.MEDIUMTEXT:
-      case ColumnTypeEnum.LARGETEXT:
-      case ColumnTypeEnum.JSON:
-      case ColumnTypeEnum.SUBMISSIONID:
-      case ColumnTypeEnum.EVALUATIONID:
-        return false
-      default:
-        return true
-    }
+    return !DISALLOWED_DEFAULT_VALUE_COLUMN_TYPES.includes(
+      type as ColumnTypeEnum,
+    )
   }
 }
 
 export const DEFAULT_STRING_SIZE = 50
 export const MAX_STRING_SIZE = 1000
-export const MAX_LIST_LENGTH = 100
+export const DEFAULT_LIST_LENGTH = 100
+
+/** The maximum number of characters allowed in a column name. */
+export const MAX_COLUMN_NAME_LENGTH = 256
+
+/** The maximum number of enumeration values allowed for a single column. */
+export const MAX_ENUM_VALUES = 100
+
+/**
+ * The maximum total character budget for a list column. The server enforces that
+ * `maximumListLength * <per-element character size>` does not exceed this value.
+ */
+export const LIST_LENGTH_CHARACTER_BUDGET = 100_000
+
+/**
+ * The fixed per-element character size (in the list-length budget) for list column types
+ * whose element size is not configurable. STRING_LIST is excluded because its per-element
+ * size is the configurable `maximumSize`.
+ */
+const FIXED_LIST_ELEMENT_CHARACTER_SIZE: Partial<
+  Record<ColumnTypeEnum, number>
+> = {
+  [ColumnTypeEnum.INTEGER_LIST]: 20,
+  [ColumnTypeEnum.DATE_LIST]: 20,
+  [ColumnTypeEnum.USERID_LIST]: 20,
+  [ColumnTypeEnum.BOOLEAN_LIST]: 5,
+  [ColumnTypeEnum.ENTITYID_LIST]: 44,
+}
 
 /**
  * Get the default max size for a given type.
@@ -246,6 +278,32 @@ export function getMaxSizeForType(type: ColumnType | ColumnTypeEnum): number {
     default:
       throw new Error(`Type is not known to have a max size: ${type}`)
   }
+}
+
+/**
+ * Get the maximum allowed `maximumListLength` for a list column type.
+ *
+ * The server enforces a total character budget of {@link LIST_LENGTH_CHARACTER_BUDGET}.
+ * For STRING_LIST the per-element size is the configurable `maximumSize` (defaulting to
+ * {@link DEFAULT_STRING_SIZE}); for all other list types the per-element size is fixed.
+ *
+ * @param type the list column type
+ * @param maximumSize the configured element size, used only for STRING_LIST
+ * @return the maximum allowed list length
+ */
+export function getMaxListLengthForType(
+  type: ColumnType | ColumnTypeEnum,
+  maximumSize?: number,
+): number {
+  if (type === ColumnTypeEnum.STRING_LIST) {
+    const elementSize = maximumSize ?? DEFAULT_STRING_SIZE
+    return Math.floor(LIST_LENGTH_CHARACTER_BUDGET / elementSize)
+  }
+  const elementSize = FIXED_LIST_ELEMENT_CHARACTER_SIZE[type as ColumnTypeEnum]
+  if (elementSize == null) {
+    throw new Error(`Type is not known to have a max list length: ${type}`)
+  }
+  return Math.floor(LIST_LENGTH_CHARACTER_BUDGET / elementSize)
 }
 
 export function canHaveRestrictedValues(

@@ -3,9 +3,11 @@ import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/Q
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import {
   defaultSearchConfiguration,
+  studiesSearchIndexId,
   studiesSql,
   SYNAPSE_PORTAL_ID,
 } from '../resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 import { TargetEnum } from 'synapse-react-client/utils/html/TargetEnum'
 import { PortalDOIConfiguration } from 'synapse-react-client/components/GenericCard/PortalDOI/PortalDOIConfiguration'
 import {
@@ -83,6 +85,18 @@ const studiesQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   shouldDeepLink: true,
   cardConfiguration: studyCardConfiguration,
   searchConfiguration: defaultSearchConfiguration,
+}
+
+export const studiesSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex: studiesRgbIndex,
+  name: 'Studies',
+  shouldDeepLink: false,
+  cardConfiguration: studyCardConfiguration,
+  columnAliases: studyColumnAliases,
+  searchIndexId: studiesSearchIndexId,
+  autocompleteFieldName: 'studyName',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }
 
 export default studiesQueryWrapperPlotNavProps

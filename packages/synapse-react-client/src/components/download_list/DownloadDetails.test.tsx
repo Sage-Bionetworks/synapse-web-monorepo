@@ -8,7 +8,7 @@ vi.mock('../../../src/utils/functions/testDownloadSpeed', () => ({
 
 const renderComponent = async (props: DownloadDetailsProps) => {
   // We must await asynchronous events for our assertions to pass
-  // eslint-disable-next-line @typescript-eslint/require-await
+  // oxlint-disable-next-line @typescript-eslint/require-await
   return await act(async () => {
     render(<DownloadDetails {...props} />, {
       wrapper: createWrapper(),

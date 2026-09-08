@@ -1,8 +1,15 @@
-import { programsQueryWrapperPlotNavProps } from '@/config/synapseConfigs/programs'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/index'
+import { programsSearch } from '@/config/synapseConfigs/programs'
+import SearchQueryWrapperPlotNav from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
+import { portalMetadata } from '@/config/portalMetadata'
+import { createStaticMeta } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
+
+export const meta = createStaticMeta(
+  { title: 'Explore Programs' },
+  portalMetadata,
+)
 
 function ExplorePrograms() {
-  return <QueryWrapperPlotNav {...programsQueryWrapperPlotNavProps} />
+  return <SearchQueryWrapperPlotNav {...programsSearch} shouldDeepLink={true} />
 }
 
 export default ExplorePrograms

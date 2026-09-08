@@ -299,7 +299,14 @@ export function TableDataCell(props: CellContext<Row, string | null>) {
     const columnLinkConfig = (columnLinks ?? []).find(el => {
       return el.matchColumnName === selectColumn.name
     })
-    const columnType = selectColumn.columnType
+    // Prefer the authoritative ColumnModel type over the SelectColumn type.
+    // For regular table queries the two are always identical. For search queries,
+    // SelectColumn types are fabricated as 'STRING' during the conversion from
+    // SearchQueryResults, but columnModels (from the entity bundle) carry the
+    // correct types (DATE, USERID, etc.) and are available once that bundle loads.
+    const columnType =
+      columnModels.find(cm => cm.name === selectColumn.name)?.columnType ??
+      selectColumn.columnType
     const isBold = cell.column.getIsSorted() ? 'SRC-boldText' : ''
     return (
       <SynapseTableCell

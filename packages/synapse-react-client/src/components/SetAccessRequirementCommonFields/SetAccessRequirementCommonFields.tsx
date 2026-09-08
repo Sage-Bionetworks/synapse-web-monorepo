@@ -214,67 +214,63 @@ export const SetAccessRequirementCommonFields = forwardRef(
       }
     }, [subjectsType, subjects, subjectsDefinedByAnnotations])
 
-    useImperativeHandle(
-      ref,
-      () => {
-        return {
-          save() {
-            const isStillLoading =
-              (isEditing && !accessRequirement) || !subjectsType
-            const hasSubjectsError =
-              !subjectsDefinedByAnnotations &&
-              (hasPendingSubjects || subjects.length === 0)
-            if (isStillLoading || hasSubjectsError) {
-              if (hasSubjectsError && !isStillLoading) {
-                if (hasPendingSubjects) {
-                  setSubjectsError(UNSAVED_SUBJECTS_ERROR_MESSAGE(subjectsType))
-                } else if (subjects.length === 0) {
-                  setSubjectsError(EMPTY_SUBJECT_LIST_ERROR_MESSAGE)
-                }
+    useImperativeHandle(ref, () => {
+      return {
+        save() {
+          const isStillLoading =
+            (isEditing && !accessRequirement) || !subjectsType
+          const hasSubjectsError =
+            !subjectsDefinedByAnnotations &&
+            (hasPendingSubjects || subjects.length === 0)
+          if (isStillLoading || hasSubjectsError) {
+            if (hasSubjectsError && !isStillLoading) {
+              if (hasPendingSubjects) {
+                setSubjectsError(UNSAVED_SUBJECTS_ERROR_MESSAGE(subjectsType))
+              } else if (subjects.length === 0) {
+                setSubjectsError(EMPTY_SUBJECT_LIST_ERROR_MESSAGE)
               }
-
-              onError()
-              return
             }
 
-            const newAccessType = getAccessType(subjectsType)
-            if (!isEditing) {
-              const newAr: Partial<AccessRequirement> = {
-                concreteType: arType,
-                subjectIds: subjects,
-                name: name,
-                accessType: newAccessType,
-                subjectsDefinedByAnnotations: subjectsDefinedByAnnotations,
-              }
-              createAccessRequirement(newAr)
-            }
+            onError()
+            return
+          }
 
-            if (isEditing && accessRequirement) {
-              updateAccessRequirement({
-                ...accessRequirement,
-                subjectIds: subjects,
-                name: name,
-                accessType: newAccessType,
-                subjectsDefinedByAnnotations: subjectsDefinedByAnnotations,
-              })
+          const newAccessType = getAccessType(subjectsType)
+          if (!isEditing) {
+            const newAr: Partial<AccessRequirement> = {
+              concreteType: arType,
+              subjectIds: subjects,
+              name: name,
+              accessType: newAccessType,
+              subjectsDefinedByAnnotations: subjectsDefinedByAnnotations,
             }
-          },
-        }
-      },
-      [
-        hasPendingSubjects,
-        subjectsType,
-        subjects,
-        name,
-        arType,
-        accessRequirement,
-        isEditing,
-        onError,
-        createAccessRequirement,
-        updateAccessRequirement,
-        subjectsDefinedByAnnotations,
-      ],
-    )
+            createAccessRequirement(newAr)
+          }
+
+          if (isEditing && accessRequirement) {
+            updateAccessRequirement({
+              ...accessRequirement,
+              subjectIds: subjects,
+              name: name,
+              accessType: newAccessType,
+              subjectsDefinedByAnnotations: subjectsDefinedByAnnotations,
+            })
+          }
+        },
+      }
+    }, [
+      hasPendingSubjects,
+      subjectsType,
+      subjects,
+      name,
+      arType,
+      accessRequirement,
+      isEditing,
+      onError,
+      createAccessRequirement,
+      updateAccessRequirement,
+      subjectsDefinedByAnnotations,
+    ])
 
     if (isLoadingAr || !subjectsType) {
       return (

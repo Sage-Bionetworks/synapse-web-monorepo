@@ -89,9 +89,8 @@ describe('EntityActionMenu tests', () => {
       layout,
     })
 
-    const buttonWrapperForTooltipAndButton = await screen.findAllByLabelText(
-      'action 1 text',
-    )
+    const buttonWrapperForTooltipAndButton =
+      await screen.findAllByLabelText('action 1 text')
     const iconButton = buttonWrapperForTooltipAndButton[1]
 
     await userEvent.click(iconButton)

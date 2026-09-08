@@ -12,7 +12,7 @@ type Story = StoryObj<typeof meta>
 export const Pill: Story = {
   args: {
     key: 'key',
-    innerText: 'Facet Value: ABC',
+    label: 'Facet Value: ABC',
     tooltipText: 'You can add tooltip text too.',
     onRemoveFilter: fn(),
   },

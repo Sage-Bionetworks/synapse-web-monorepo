@@ -14,7 +14,7 @@ pnpm test run src/features/entity/metadata-task  # Run all tests under a directo
 pnpm test --reporter=verbose                     # Run with verbose output (watch mode)
 pnpm build                                       # Build the library (Vite + tsc + copy assets)
 pnpm start                                       # Run Storybook dev server on port 6060
-pnpm lint                                        # ESLint
+pnpm lint                                        # Oxlint
 pnpm type-check                                  # TypeScript type check
 ```
 

@@ -18,7 +18,20 @@ export const IdColumnHeader: React.FC<
       .join('\n')
   }, [table.getRowModel().rows])
 
-  const copyButton = <CopyToClipboardIcon value={visibleIds} sizePx={16} />
+  const copyButton = (
+    <CopyToClipboardIcon
+      value={visibleIds}
+      sizePx={16}
+      icon="contentCopyRounded"
+    />
+  )
 
-  return <ColumnHeader {...props} title="ID" additionalButtons={copyButton} />
+  return (
+    <ColumnHeader
+      {...props}
+      title="ID"
+      iconPlacement={'left'}
+      additionalButtons={copyButton}
+    />
+  )
 }

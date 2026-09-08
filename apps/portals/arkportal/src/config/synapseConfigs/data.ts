@@ -10,20 +10,23 @@ export const dataColumnLinks: LabelLinkConfig = [
   {
     matchColumnName: 'project',
     isMarkdown: false,
-    baseURL: 'Explore/Projects/DetailsPage',
+    baseURL: 'Explore/Projects',
     URLColumnName: 'Project',
+    urlParamStyle: 'path-segment',
   },
   {
     matchColumnName: 'program',
     isMarkdown: false,
-    baseURL: 'Explore/Programs/DetailsPage',
+    baseURL: 'Explore/Programs',
     URLColumnName: 'Program',
+    urlParamStyle: 'path-segment',
   },
   {
     matchColumnName: 'dataset',
     isMarkdown: false,
-    baseURL: 'Explore/Datasets/DetailsPage',
+    baseURL: 'Explore/Datasets',
     URLColumnName: 'id',
+    urlParamStyle: 'path-segment',
   },
 ]
 

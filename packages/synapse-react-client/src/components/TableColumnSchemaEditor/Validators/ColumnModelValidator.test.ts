@@ -43,6 +43,43 @@ describe('ColumnModel validation', () => {
       },
     ])
   })
+  describe('name', () => {
+    it('rejects an empty name', () => {
+      expect(() =>
+        columnModelFormDataZodSchema.parse([
+          {
+            name: '',
+            columnType: ColumnTypeEnum.STRING,
+          },
+        ]),
+      ).toThrow()
+    })
+    it('accepts a name of exactly the maximum length (256)', () => {
+      const name = 'a'.repeat(256)
+      const columnModels = columnModelFormDataZodSchema.parse([
+        {
+          name,
+          columnType: ColumnTypeEnum.STRING,
+        },
+      ])
+      expect(columnModels).toEqual([
+        {
+          name,
+          columnType: ColumnTypeEnum.STRING,
+        },
+      ])
+    })
+    it('rejects a name longer than the maximum length (256)', () => {
+      expect(() =>
+        columnModelFormDataZodSchema.parse([
+          {
+            name: 'a'.repeat(257),
+            columnType: ColumnTypeEnum.STRING,
+          },
+        ]),
+      ).toThrow()
+    })
+  })
   describe('maximumSize', () => {
     it('handles no size', () => {
       const columnModels = columnModelFormDataZodSchema.parse([
@@ -269,12 +306,70 @@ describe('ColumnModel validation', () => {
       ).toThrow()
     })
     it('rejects a value over the maximum', () => {
+      // STRING_LIST with the default element size (50) has a budget of 100,000 / 50 = 2000
       expect(() =>
         columnModelFormDataZodSchema.parse([
           {
             name: 'overMax',
             columnType: ColumnTypeEnum.STRING_LIST,
+            maximumListLength: '2001',
+          },
+        ]),
+      ).toThrow()
+    })
+    it('couples STRING_LIST maximum list length to the element maximumSize', () => {
+      // maximumSize 1000 => budget of 100,000 / 1000 = 100
+      const columnModels = columnModelFormDataZodSchema.parse([
+        {
+          name: 'at budget',
+          columnType: ColumnTypeEnum.STRING_LIST,
+          maximumSize: '1000',
+          maximumListLength: '100',
+        },
+      ])
+      expect(columnModels).toEqual([
+        {
+          name: 'at budget',
+          columnType: ColumnTypeEnum.STRING_LIST,
+          maximumSize: 1000,
+          maximumListLength: 100,
+        },
+      ])
+
+      expect(() =>
+        columnModelFormDataZodSchema.parse([
+          {
+            name: 'over budget',
+            columnType: ColumnTypeEnum.STRING_LIST,
+            maximumSize: '1000',
             maximumListLength: '101',
+          },
+        ]),
+      ).toThrow()
+    })
+    it('uses a fixed per-element budget for non-STRING_LIST list types', () => {
+      // ENTITYID_LIST has a fixed element size of 44 => budget of floor(100,000 / 44) = 2272
+      const columnModels = columnModelFormDataZodSchema.parse([
+        {
+          name: 'at budget',
+          columnType: ColumnTypeEnum.ENTITYID_LIST,
+          maximumListLength: '2272',
+        },
+      ])
+      expect(columnModels).toEqual([
+        {
+          name: 'at budget',
+          columnType: ColumnTypeEnum.ENTITYID_LIST,
+          maximumListLength: 2272,
+        },
+      ])
+
+      expect(() =>
+        columnModelFormDataZodSchema.parse([
+          {
+            name: 'over budget',
+            columnType: ColumnTypeEnum.ENTITYID_LIST,
+            maximumListLength: '2273',
           },
         ]),
       ).toThrow()
@@ -577,8 +672,65 @@ describe('ColumnModel validation', () => {
         ]),
       ).toThrow()
     })
+    it('rejects a defaultValue for column types that cannot have a default', () => {
+      // USERID stores an integer, so the value is shape-valid, but the type is not allowed to have a default
+      expect(() =>
+        columnModelFormDataZodSchema.parse([
+          {
+            name: 'userid with default',
+            columnType: ColumnTypeEnum.USERID,
+            defaultValue: '123',
+          },
+        ]),
+      ).toThrow()
+    })
+    it('allows a defaultValue for JSON columns', () => {
+      const columnModels = columnModelFormDataZodSchema.parse([
+        {
+          name: 'json with default',
+          columnType: ColumnTypeEnum.JSON,
+          defaultValue: '{"a":1}',
+        },
+      ])
+      expect(columnModels).toEqual([
+        {
+          name: 'json with default',
+          columnType: ColumnTypeEnum.JSON,
+          defaultValue: '{"a":1}',
+        },
+      ])
+    })
   })
   describe('enumValues', () => {
+    it('accepts exactly the maximum number of enum values (100)', () => {
+      const enumValues = Array.from({ length: 100 }, (_, i) => `value${i}`)
+      const columnModels = columnModelFormDataZodSchema.parse([
+        {
+          name: 'foo',
+          columnType: ColumnTypeEnum.STRING,
+          enumValues,
+        },
+      ])
+      expect(columnModels).toEqual([
+        {
+          name: 'foo',
+          columnType: ColumnTypeEnum.STRING,
+          enumValues,
+        },
+      ])
+    })
+    it('rejects more than the maximum number of enum values (100)', () => {
+      const enumValues = Array.from({ length: 101 }, (_, i) => `value${i}`)
+      expect(() =>
+        columnModelFormDataZodSchema.parse([
+          {
+            name: 'foo',
+            columnType: ColumnTypeEnum.STRING,
+            enumValues,
+          },
+        ]),
+      ).toThrow()
+    })
     describe('STRING', () => {
       it('Handles an array of string enum values', () => {
         const columnModels = columnModelFormDataZodSchema.parse([

@@ -1,5 +1,4 @@
 import { Button, TextField, Typography } from '@mui/material'
-import { StyledFormControl } from '../components/StyledComponents'
 import { SyntheticEvent, useEffect, useState } from 'react'
 import {
   AliasType,
@@ -97,92 +96,60 @@ function RegisterAccount2() {
               <SourceAppLogo />
             </div>
             <div className="form-wrapper">
-              <StyledFormControl
+              <TextField
                 fullWidth
                 required
-                variant="standard"
-                margin="normal"
-              >
-                <TextField
-                  fullWidth
-                  required
-                  label={'Email'}
-                  id="email"
-                  name="email"
-                  disabled
-                  value={emailValidationSignedToken?.email ?? ''}
-                />
-              </StyledFormControl>
-              <StyledFormControl
+                label={'Email'}
+                id="email"
+                name="email"
+                disabled
+                value={emailValidationSignedToken?.email ?? ''}
+              />
+              <TextField
                 fullWidth
                 required
-                variant="standard"
-                margin="normal"
-              >
-                <TextField
-                  fullWidth
-                  required
-                  label={'Choose a username'}
-                  id="username"
-                  name="username"
-                  onChange={e => setUsername(e.target.value)}
-                  value={username || ''}
-                />
-              </StyledFormControl>
-              <StyledFormControl fullWidth variant="standard" margin="normal">
-                <TextField
-                  fullWidth
-                  label={'First name'}
-                  id="firstName"
-                  name="firstName"
-                  onChange={e => setFirstName(e.target.value)}
-                  value={firstName || ''}
-                />
-              </StyledFormControl>
-              <StyledFormControl fullWidth variant="standard" margin="normal">
-                <TextField
-                  fullWidth
-                  label={'Last name'}
-                  id="lastName"
-                  name="lastName"
-                  onChange={e => setLastName(e.target.value)}
-                  value={lastName || ''}
-                />
-              </StyledFormControl>
-              <StyledFormControl
+                label={'Choose a username'}
+                id="username"
+                name="username"
+                onChange={e => setUsername(e.target.value)}
+                value={username || ''}
+              />
+              <TextField
+                fullWidth
+                label={'First name'}
+                id="firstName"
+                name="firstName"
+                onChange={e => setFirstName(e.target.value)}
+                value={firstName || ''}
+              />
+              <TextField
+                fullWidth
+                label={'Last name'}
+                id="lastName"
+                name="lastName"
+                onChange={e => setLastName(e.target.value)}
+                value={lastName || ''}
+              />
+              <TextField
+                type="password"
                 fullWidth
                 required
-                variant="standard"
-                margin="normal"
-              >
-                <TextField
-                  type="password"
-                  fullWidth
-                  required
-                  label={'Password'}
-                  id="password1"
-                  name="password1"
-                  onChange={e => setPassword1(e.target.value)}
-                  value={password1 || ''}
-                />
-              </StyledFormControl>
-              <StyledFormControl
+                label={'Password'}
+                id="password1"
+                name="password1"
+                onChange={e => setPassword1(e.target.value)}
+                value={password1 || ''}
+              />
+              <TextField
+                type="password"
                 fullWidth
                 required
-                variant="standard"
-                margin="normal"
-              >
-                <TextField
-                  type="password"
-                  fullWidth
-                  required
-                  label={'Confirm password'}
-                  id="password2"
-                  name="password2"
-                  onChange={e => setPassword2(e.target.value)}
-                  value={password2 || ''}
-                />
-              </StyledFormControl>
+                label={'Confirm password'}
+                id="password2"
+                name="password2"
+                onChange={e => setPassword2(e.target.value)}
+                value={password2 || ''}
+              />
               <Button
                 variant="contained"
                 onClick={onCreateAccount}

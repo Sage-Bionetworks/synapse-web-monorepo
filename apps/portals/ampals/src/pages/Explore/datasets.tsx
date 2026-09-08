@@ -1,8 +1,8 @@
-import { datasetQueryWrapperPlotNavProps } from '@/config/synapseConfigs/datasets'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/index'
+import { datasetsSearch } from '@/config/synapseConfigs/datasets'
+import SearchQueryWrapperPlotNav from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 function ExploreDatasets() {
-  return <QueryWrapperPlotNav {...datasetQueryWrapperPlotNavProps} />
+  return <SearchQueryWrapperPlotNav {...datasetsSearch} shouldDeepLink={true} />
 }
 
 export default ExploreDatasets

@@ -118,6 +118,7 @@ const genericCardSchema: TableToGenericCardMapping = {
 }
 const genericCardSchemaHeader: TableToGenericCardMapping = {
   ...commonProps,
+  secondaryLabels: [labelOneColumnName],
 }
 const schema = {
   title: 0,
@@ -227,6 +228,25 @@ describe('TableRowGenericCard tests', () => {
     ).not.toBeInTheDocument()
     within(container.querySelector('.SRC-font-size-base')!).getByText(data[2])
     screen.getByTestId('CardFooter')
+  })
+
+  test('labels the DUO row with the column display name so it matches the facet', async () => {
+    // The card row for DUO tags must be labeled with the dataUseModifiers column's
+    // display name (unCamelCase / any alias) — the same source the facet uses —
+    // rather than a hardcoded string, so the two never diverge.
+    renderComponent(
+      {
+        ...propsForNonHeaderMode,
+        schema: { ...schema, dataUseModifiers: 13 },
+        data: [...data, 'DUO:0000046'],
+        genericCardSchema: {
+          ...genericCardSchema,
+          dataUseModifiersColumnName: 'dataUseModifiers',
+        },
+      },
+      'TableEntity',
+    )
+    expect(await screen.findByText('Data Use Modifiers')).toBeInTheDocument()
   })
 
   describe('Renders UserCards when a UserId_List column is present', () => {

@@ -1,3 +1,5 @@
+import { stripHTML } from '../MarkdownUtils'
+
 const TOC_CLASS = {
   1: 'toc-indent1',
   2: 'toc-indent2',
@@ -20,15 +22,16 @@ export default function MarkdownTableOfContents(
     /<h([1-6]) id="(.*)" .*toc="true">(.*)<\/h[1-6]>/gm
   let text = ''
   originalMarkup.replace(TOC_HEADER_REGEX_WITH_ID, (p1, p2, p3, p4) => {
-    text += p4
+    const headingText = stripHTML(p4)
+    text += headingText
     elements.push(
-      <div key={p4}>
+      <div key={headingText}>
         <a
           role="link"
           className={`link ${TOC_CLASS[Number(p2) as keyof typeof TOC_CLASS]}`}
           data-anchor={p3}
         >
-          {p4}
+          {headingText}
         </a>
       </div>,
     )

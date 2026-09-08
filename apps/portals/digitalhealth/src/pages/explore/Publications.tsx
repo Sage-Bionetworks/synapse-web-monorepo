@@ -1,8 +1,10 @@
-import { publicationsQueryWrapperPlotNavProps } from '@/config/synapseConfigs/index'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/index'
+import { publicationsSearch } from '@/config/synapseConfigs/index'
+import SearchQueryWrapperPlotNav from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 function ExplorePublications() {
-  return <QueryWrapperPlotNav {...publicationsQueryWrapperPlotNavProps} />
+  return (
+    <SearchQueryWrapperPlotNav {...publicationsSearch} shouldDeepLink={true} />
+  )
 }
 
 export default ExplorePublications

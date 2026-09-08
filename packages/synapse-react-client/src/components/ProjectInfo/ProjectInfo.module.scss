@@ -1,0 +1,33 @@
+$project-info-property-container-title: #16181e;
+
+.propertyTitle:global(.MuiTypography-root) {
+  color: var(--synapse-v2-gray-600);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 14px; /* 100% */
+  letter-spacing: -0.06px;
+}
+
+.propertyValue:global(.MuiTypography-root) {
+  color: var(--synapse-v2-gray-800);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px; /* 142.857% */
+  letter-spacing: -0.07px;
+}
+
+.propertyRow {
+  gap: 4px;
+}
+
+.propertyContainerTitle {
+  color: $project-info-property-container-title;
+  font-size: 16px;
+  font-weight: 540;
+  line-height: 24px; /* 150% */
+  letter-spacing: -0.16px;
+}
+
+.propertiesContainer {
+  gap: 12px;
+}

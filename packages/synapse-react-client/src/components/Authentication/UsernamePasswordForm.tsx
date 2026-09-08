@@ -1,6 +1,6 @@
 import { UseLoginReturn } from '@/utils/hooks'
 import { useOneSageURL } from '@/utils/hooks/useOneSageURL'
-import { Button, Link } from '@mui/material'
+import { Button, Link, Stack } from '@mui/material'
 import { SyntheticEvent, useState } from 'react'
 import TextField from '../TextField/TextField'
 import PasswordField from './PasswordField'
@@ -33,21 +33,23 @@ export default function UsernamePasswordForm(props: UsernamePasswordFormProps) {
         handleLogin(e)
       }}
     >
-      <TextField
-        required
-        fullWidth
-        autoFocus
-        autoComplete="username"
-        label="Username or Email Address"
-        id="username"
-        type="text"
-        value={username}
-        onChange={e => setUsername(e.target.value)}
-      />
-      <PasswordField
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-      />
+      <Stack gap={2} sx={{ mb: 1 }}>
+        <TextField
+          required
+          fullWidth
+          autoFocus
+          autoComplete="username"
+          label="Username or Email Address"
+          id="username"
+          type="text"
+          value={username}
+          onChange={e => setUsername(e.target.value)}
+        />
+        <PasswordField
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+        />
+      </Stack>
       {!hideForgotPasswordButton && (
         <Link
           href={resetPasswordUrl}

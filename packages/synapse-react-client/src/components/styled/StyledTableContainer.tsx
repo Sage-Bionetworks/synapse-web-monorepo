@@ -13,22 +13,35 @@ export type StyledTableContainerProps = BoxProps & {
    * @default false
    */
   noStripedRows?: boolean
+  noBackgroundColor?: boolean
   ['data-testid']?: string
 }
 
 export const StyledTableContainer: StyledComponent<StyledTableContainerProps> =
   styled(Box, {
-    shouldForwardProp: prop => prop !== 'density' && prop !== 'noStripedRows',
+    shouldForwardProp: prop =>
+      prop !== 'density' &&
+      prop !== 'noStripedRows' &&
+      prop !== 'noBackgroundColor',
   })<StyledTableContainerProps>(
-    ({ theme, density = 'default', noStripedRows = false }) => ({
+    ({
+      theme,
+      density = 'default',
+      noStripedRows = false,
+      noBackgroundColor = false,
+    }) => ({
       overflow: 'auto',
       paddingLeft: '2px',
-      ['thead > tr']: {
-        backgroundColor: theme.palette.grey[200],
-      },
+      ['thead > tr']: noBackgroundColor
+        ? undefined
+        : {
+            backgroundColor: theme.palette.grey[200],
+          },
       th: {
         height: '38px',
-        backgroundColor: theme.palette.grey[200],
+        backgroundColor: noBackgroundColor
+          ? 'transparent'
+          : theme.palette.grey[200],
         borderRight: '1px solid',
         borderColor: theme.palette.grey[400],
       },

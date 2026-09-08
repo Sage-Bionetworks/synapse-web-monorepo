@@ -7,7 +7,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { uniqueId } from 'lodash-es'
 import { http, HttpResponse } from 'msw'
-import { MOCK_FILE_HANDLE_ID, mockFileHandles } from '../../mock_file_handle'
+import { mockFileHandles } from '../../mock_file_handle'
 import { MOCK_USER_ID } from '../../user/mock_user_profile'
 import { SynapseApiResponse } from '../handlers'
 
@@ -39,10 +39,13 @@ export function getFileHandlers(backendOrigin: string) {
     ),
 
     http.post(`${backendOrigin}${FILE}/file/multipart`, () => {
+      // Each upload must get its own fileHandleId -- reusing MOCK_FILE_HANDLE_ID for every
+      // call made multi-file uploads (e.g. in chat attachments) collide on the same id, so
+      // removing one attachment would remove them all.
       const response: SynapseApiResponse<MultipartUploadStatus> = {
         state: 'COMPLETED',
-        resultFileHandleId: MOCK_FILE_HANDLE_ID,
-        uploadId: 'mockUploadId',
+        resultFileHandleId: uniqueId('mockFileHandleId'),
+        uploadId: uniqueId('mockUploadId'),
         startedBy: String(MOCK_USER_ID),
         startedOn: new Date().toISOString(),
         updatedOn: new Date().toISOString(),
@@ -51,19 +54,22 @@ export function getFileHandlers(backendOrigin: string) {
 
       return HttpResponse.json(response, { status: 201 })
     }),
-    http.put(`${backendOrigin}${FILE}/file/multipart/:id/complete`, () => {
-      const response: SynapseApiResponse<MultipartUploadStatus> = {
-        state: 'COMPLETED',
-        resultFileHandleId: MOCK_FILE_HANDLE_ID,
-        uploadId: 'mockUploadId',
-        startedBy: String(MOCK_USER_ID),
-        startedOn: new Date().toISOString(),
-        updatedOn: new Date().toISOString(),
-        partsState: '1',
-      }
+    http.put(
+      `${backendOrigin}${FILE}/file/multipart/:id/complete`,
+      ({ params }) => {
+        const response: SynapseApiResponse<MultipartUploadStatus> = {
+          state: 'COMPLETED',
+          resultFileHandleId: uniqueId('mockFileHandleId'),
+          uploadId: String(params.id),
+          startedBy: String(MOCK_USER_ID),
+          startedOn: new Date().toISOString(),
+          updatedOn: new Date().toISOString(),
+          partsState: '1',
+        }
 
-      return HttpResponse.json(response, { status: 201 })
-    }),
+        return HttpResponse.json(response, { status: 201 })
+      },
+    ),
 
     http.post<never, ExternalFileHandleInterface>(
       `${backendOrigin}${FILE}/externalFileHandle`,

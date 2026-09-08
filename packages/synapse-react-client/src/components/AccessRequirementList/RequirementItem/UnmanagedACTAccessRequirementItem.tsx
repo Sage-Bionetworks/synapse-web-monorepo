@@ -111,8 +111,8 @@ export default function UnmanagedACTAccessRequirementItem(
         isLoadingStatus
           ? RequirementItemStatus.LOADING
           : isApproved
-          ? RequirementItemStatus.COMPLETE
-          : RequirementItemStatus.LOCKED
+            ? RequirementItemStatus.COMPLETE
+            : RequirementItemStatus.LOCKED
       }
       actions={actions}
     >

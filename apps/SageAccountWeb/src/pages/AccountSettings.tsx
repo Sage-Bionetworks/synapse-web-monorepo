@@ -8,28 +8,27 @@ import {
   ListItemButton,
   MenuItem,
   Paper,
-  TextField,
+  Stack,
   Typography,
   useMediaQuery,
   useTheme,
 } from '@mui/material'
 import {
-  FeatureFlagEnum,
   UserBundle,
   UserProfile,
   VerificationState,
   VerificationStateEnum,
 } from '@sage-bionetworks/synapse-types'
-import React from 'react'
+import React, { useCallback } from 'react'
 import { RefObject, useEffect, useRef, useState } from 'react'
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router'
 import RORInstitutionField from 'synapse-react-client/components/RORInstitutionField/RORInstitutionField'
-import UniversalCookies from 'universal-cookie'
+import { useSourceAppId } from '../components/useSourceApp'
 import { ConfigureEmail } from '../components/ConfigureEmail'
 import { ProfileAvatar } from '../components/ProfileAvatar'
 import { ORCiDButton } from '../components/ProfileValidation/ORCiDButton'
 import { UnbindORCiDDialog } from '../components/ProfileValidation/UnbindORCiD'
-import { StyledFormControl } from '../components/StyledComponents'
+import { RASButton } from '../components/RASButton'
 import AccountSettingsTopBar from '../components/AccountSettingsTopBar'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
@@ -44,6 +43,10 @@ import TwoFactorAuthSettingsPanel from 'synapse-react-client/components/Authenti
 import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
 import CookiePreferencesDialog from 'synapse-react-client/components/CookiesNotification/CookiePreferencesDialog'
 import { SYNAPSE_REALM } from 'synapse-react-client/utils/SynapseConstants'
+import { TextField } from 'synapse-react-client/components/TextField/index'
+import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
+import { useCookieValue } from '@react-hookz/web/useCookieValue/index.js'
+const AMPALS_SOURCE_APP_ID = 'ampals'
 
 function CompletionStatus({ isComplete }: { isComplete: boolean | undefined }) {
   return (
@@ -83,6 +86,7 @@ const AccountSettings = (): React.ReactNode => {
   const [termsOfUse, setTermsOfUse] = useState<boolean>()
   const [showUnbindORCiDDialog, setShowUnbindORCiDDialog] =
     useState<boolean>(false)
+  const [isRASLinked, setIsRASLinked] = useState<boolean>(false)
   const navigate = useNavigate()
   const profileInformationRef = useRef<HTMLDivElement>(null)
   const changePasswordRef = useRef<HTMLDivElement>(null)
@@ -101,28 +105,36 @@ const AccountSettings = (): React.ReactNode => {
 
   const { clearSession } = useApplicationSessionContext()
   const showWebhooks = useGetFeatureFlag(FeatureFlagEnum.WEBHOOKS_UI)
+  const isAmpAlsSourceApp = useSourceAppId() === AMPALS_SOURCE_APP_ID
   const { data: currentRealm } = useGetCurrentRealm({
     select: realm => realm.id,
   })
-  const [isUTCTime, setUTCTime] = useState<string>(
-    SynapseClient.getUseUtcTimeFromCookie().toString(),
-  )
-  const [isUTCTimeStaged, setUTCTimeStaged] = useState<string>(isUTCTime)
   const handleChangesFn = (val: string) => {
     navigate(`/authenticated/${val}`)
   }
-  useEffect(() => {
-    const cookies = new UniversalCookies()
-    const current = new Date()
-    const nextYear = new Date()
-    nextYear.setFullYear(current.getFullYear() + 1)
-    const hostname = window.location.hostname.toLowerCase()
-    cookies.set(SynapseConstants.DATETIME_UTC_COOKIE_KEY, isUTCTime, {
+
+  const [isUTCTimeFormValue, setUTCTimeFormValue] = useState<string>('false')
+  const [isUtcTimeCookie, setIsUtcTimeCookie] = useCookieValue(
+    SynapseConstants.DATETIME_UTC_COOKIE_KEY,
+    {
       path: '/',
-      expires: nextYear,
-      domain: hostname.endsWith('.synapse.org') ? 'synapse.org' : undefined,
-    })
-  }, [isUTCTime])
+      domain:
+        typeof window !== 'undefined' &&
+        window.location.hostname.toLowerCase().endsWith('.synapse.org')
+          ? 'synapse.org'
+          : undefined,
+      expires: 365,
+    },
+  )
+
+  // Instantiate the form with the cookie
+  useEffect(() => {
+    setUTCTimeFormValue(isUtcTimeCookie === 'true' ? 'true' : 'false')
+  }, [isUtcTimeCookie])
+
+  const confirmChangeUtcTimeCookie = useCallback(() => {
+    setIsUtcTimeCookie(isUTCTimeFormValue)
+  }, [setIsUtcTimeCookie, isUTCTimeFormValue])
 
   const markFormDirty = () => setChangeInForm(true)
   const credentialButtonSX = {
@@ -143,6 +155,14 @@ const AccountSettings = (): React.ReactNode => {
     setVerified(bundle.isVerified)
     setOrcid(bundle.ORCID)
     setIsCertified(bundle.isCertified)
+    setIsRASLinked(
+      bundle.identityProviders?.some(
+        p =>
+          p.concreteType ===
+            'org.sagebionetworks.repo.model.auth.OAuthIdentityProvider' &&
+          p.provider === 'NIH_RESEARCHER_AUTH_SERVICE',
+      ) ?? false,
+    )
     const stateHistory = bundle.verificationSubmission?.stateHistory
     const currentState = stateHistory
       ? stateHistory[stateHistory.length - 1]
@@ -157,7 +177,8 @@ const AccountSettings = (): React.ReactNode => {
         SynapseConstants.USER_BUNDLE_MASK_USER_PROFILE |
         SynapseConstants.USER_BUNDLE_MASK_IS_VERIFIED |
         SynapseConstants.USER_BUNDLE_MASK_IS_CERTIFIED |
-        SynapseConstants.USER_BUNDLE_MASK_VERIFICATION_SUBMISSION
+        SynapseConstants.USER_BUNDLE_MASK_VERIFICATION_SUBMISSION |
+        SynapseConstants.USER_BUNDLE_MASK_IDENTITY_PROVIDERS
       const bundle: UserBundle = await SynapseClient.getMyUserBundle(
         mask,
         accessToken,
@@ -236,7 +257,6 @@ const AccountSettings = (): React.ReactNode => {
 
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-  const formControlMargin = isMobile ? 'dense' : 'normal'
 
   return (
     <div className="account-settings-page">
@@ -284,12 +304,7 @@ const AccountSettings = (): React.ReactNode => {
                   }}
                 />
                 <form onChange={markFormDirty}>
-                  <StyledFormControl
-                    fullWidth
-                    variant="standard"
-                    margin={formControlMargin}
-                    required
-                  >
+                  <Stack gap={isMobile ? 2 : 3}>
                     <TextField
                       label={'Username'}
                       id="username"
@@ -298,12 +313,6 @@ const AccountSettings = (): React.ReactNode => {
                       onChange={e => setUsername(e.target.value)}
                       value={username}
                     />
-                  </StyledFormControl>
-                  <StyledFormControl
-                    fullWidth
-                    variant="standard"
-                    margin={formControlMargin}
-                  >
                     <TextField
                       label={'First name'}
                       id="firstName"
@@ -312,12 +321,6 @@ const AccountSettings = (): React.ReactNode => {
                       onChange={e => setFirstName(e.target.value)}
                       value={firstName}
                     />
-                  </StyledFormControl>
-                  <StyledFormControl
-                    fullWidth
-                    variant="standard"
-                    margin={formControlMargin}
-                  >
                     <TextField
                       label={'Last name'}
                       id="lastName"
@@ -326,12 +329,6 @@ const AccountSettings = (): React.ReactNode => {
                       onChange={e => setLastName(e.target.value)}
                       value={lastName}
                     />
-                  </StyledFormControl>
-                  <StyledFormControl
-                    fullWidth
-                    variant="standard"
-                    margin={formControlMargin}
-                  >
                     <TextField
                       label={'Current position'}
                       id="position"
@@ -340,12 +337,6 @@ const AccountSettings = (): React.ReactNode => {
                       onChange={e => setPosition(e.target.value)}
                       value={position}
                     />
-                  </StyledFormControl>
-                  <StyledFormControl
-                    fullWidth
-                    variant="standard"
-                    margin={formControlMargin}
-                  >
                     <TextField
                       label={'Industry'}
                       id="industry"
@@ -354,12 +345,6 @@ const AccountSettings = (): React.ReactNode => {
                       onChange={e => setIndustry(e.target.value)}
                       value={industry}
                     />
-                  </StyledFormControl>
-                  <StyledFormControl
-                    fullWidth
-                    variant="standard"
-                    margin={formControlMargin}
-                  >
                     <TextField
                       label={'Website'}
                       id="website"
@@ -368,12 +353,6 @@ const AccountSettings = (): React.ReactNode => {
                       onChange={e => setUrl(e.target.value)}
                       value={url}
                     />
-                  </StyledFormControl>
-                  <StyledFormControl
-                    fullWidth
-                    variant="standard"
-                    margin={formControlMargin}
-                  >
                     <TextField
                       label={'City, Country'}
                       id="location"
@@ -382,39 +361,32 @@ const AccountSettings = (): React.ReactNode => {
                       onChange={e => setLocation(e.target.value)}
                       value={location}
                     />
-                  </StyledFormControl>
-                  <StyledFormControl
-                    fullWidth
-                    variant="standard"
-                    margin={formControlMargin}
-                  >
                     <RORInstitutionField
                       onChange={value => setCompany(value)}
                       value={company || ''}
                     />
-                  </StyledFormControl>
-                  <TextField
-                    fullWidth
-                    margin={formControlMargin}
-                    label="Bio"
-                    id="bio"
-                    name="bio"
-                    multiline
-                    rows={5}
-                    onChange={e => setBio(e.target.value)}
-                    value={bio}
-                  />
-                  <div className="primary-button-container">
-                    <Button
-                      onClick={() => {
-                        updateUserProfile()
-                      }}
-                      disabled={!changeInForm}
-                      variant="contained"
-                    >
-                      Save Changes
-                    </Button>
-                  </div>
+                    <TextField
+                      fullWidth
+                      label="Bio"
+                      id="bio"
+                      name="bio"
+                      multiline
+                      rows={5}
+                      onChange={e => setBio(e.target.value)}
+                      value={bio}
+                    />
+                    <div className="primary-button-container">
+                      <Button
+                        onClick={() => {
+                          updateUserProfile()
+                        }}
+                        disabled={!changeInForm}
+                        variant="contained"
+                      >
+                        Save Changes
+                      </Button>
+                    </div>
+                  </Stack>
                 </form>
               </Paper>
               <Paper
@@ -441,37 +413,30 @@ const AccountSettings = (): React.ReactNode => {
                 className="account-setting-panel main-panel"
               >
                 <Typography variant={'headline2'}>Date/Time Format</Typography>
-                <StyledFormControl
+                <TextField
+                  label={'Choose a format'}
+                  id="timezone-select"
+                  value={isUTCTimeFormValue}
                   fullWidth
-                  variant="standard"
-                  margin={formControlMargin}
-                  sx={{ marginBottom: '10px' }}
+                  select
+                  disabled={!cookiePreferences.functionalAllowed}
+                  onChange={event => {
+                    setUTCTimeFormValue(event.target.value)
+                  }}
                 >
-                  <TextField
-                    label={'Choose a format'}
-                    id="timezone-select"
-                    value={isUTCTimeStaged}
-                    fullWidth
-                    select
-                    disabled={!cookiePreferences.functionalAllowed}
-                    onChange={event => {
-                      setUTCTimeStaged(event.target.value)
-                    }}
-                  >
-                    <MenuItem value="false" sx={{ fontSize: '14px' }}>
-                      Local
-                    </MenuItem>
-                    <MenuItem value="true" sx={{ fontSize: '14px' }}>
-                      UTC
-                    </MenuItem>
-                  </TextField>
-                </StyledFormControl>
+                  <MenuItem value="false" sx={{ fontSize: '14px' }}>
+                    Local
+                  </MenuItem>
+                  <MenuItem value="true" sx={{ fontSize: '14px' }}>
+                    UTC
+                  </MenuItem>
+                </TextField>
                 <div className="primary-button-container">
                   <Button
-                    disabled={isUTCTimeStaged === isUTCTime}
+                    disabled={isUTCTimeFormValue === isUtcTimeCookie}
                     variant="contained"
                     sx={{ credentialButtonSX }}
-                    onClick={() => setUTCTime(isUTCTimeStaged)}
+                    onClick={() => confirmChangeUtcTimeCookie()}
                   >
                     Update Preference
                   </Button>
@@ -591,6 +556,26 @@ const AccountSettings = (): React.ReactNode => {
                       orcid={orcid}
                       redirectAfter={`${SynapseClient.getRootURL()}authenticated/myaccount`}
                     />
+                  </div>
+                )}
+                {isAmpAlsSourceApp && (
+                  <div className="credential-partition">
+                    <h4>NIH Researcher Auth Service (RAS)</h4>
+                    <CompletionStatus isComplete={isRASLinked} />
+                    <p>
+                      <i>
+                        Linking your NIH account allows you to sign in using
+                        your NIH credentials.
+                      </i>
+                    </p>
+                    {!isRASLinked && (
+                      <div className="primary-button-container">
+                        <RASButton
+                          sx={credentialButtonSX}
+                          redirectAfter={`${SynapseClient.getRootURL()}authenticated/myaccount`}
+                        />
+                      </div>
+                    )}
                   </div>
                 )}
                 <div className="credential-partition">

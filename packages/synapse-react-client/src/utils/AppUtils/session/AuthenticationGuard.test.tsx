@@ -60,9 +60,9 @@ function createMockSynapseContext(
     utcTime: false,
     withErrorBoundary: false,
     downloadCartPageUrl: '/DownloadCart',
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     keyFactory: {} as any,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
     synapseClient: {} as any,
     ...overrides,
   }

@@ -1,15 +1,16 @@
 import { COOKIES_AGREEMENT_COOKIE_KEY } from '@/utils/hooks/useCookiePreferences'
 import { Meta, StoryObj } from '@storybook/react-vite'
-import UniversalCookies from 'universal-cookie'
 import CookiesNotification from './CookiesNotification'
-
-const cookies = new UniversalCookies()
+import { useCookieValue } from '@react-hookz/web/useCookieValue/index.js'
 
 const meta = {
   title: 'UI/CookiesNotification',
   component: CookiesNotification,
-  render: () => {
-    cookies.remove(COOKIES_AGREEMENT_COOKIE_KEY)
+  render: function RenderFn() {
+    const [_val, _set, remove] = useCookieValue(COOKIES_AGREEMENT_COOKIE_KEY)
+
+    remove()
+
     return (
       <CookiesNotification
         onClose={prefs => {

@@ -1,7 +1,6 @@
 import { LinearProgress } from '@mui/material'
 import { useGetPortalComponentSearchParams } from '@sage-bionetworks/synapse-portal-framework/utils/UseGetPortalComponentSearchParams'
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
-import type { LabelLinkConfig } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import { CardContainerLogic } from 'synapse-react-client/components/CardContainerLogic/CardContainerLogic'
 import { ErrorBanner } from 'synapse-react-client/components/error/ErrorBanner'
 import ErrorPage from 'synapse-react-client/components/error/ErrorPage'
@@ -22,6 +21,8 @@ import {
   standardsColumnLinks,
   standardsRgbIndex,
 } from '@/config/synapseConfigs/standards'
+import { linkedDataSetCardConfiguration } from '@/config/synapseConfigs/datasets'
+import { manifestColumnLinks } from '@/config/synapseConfigs/manifest'
 import {
   DATASET_DENORMALIZED_COLUMN_CONSTS,
   DST_TABLE_COLUMN_CONSTS,
@@ -153,49 +154,6 @@ export const linkedOrgCardConfiguration: CardConfiguration = {
     ],
   },
 }
-export const linkedDataSetCardConfiguration: CardConfiguration = {
-  type: SynapseConstants.GENERIC_CARD,
-  genericCardSchema: {
-    type: '',
-    title: DATASET_DENORMALIZED_COLUMN_CONSTS.NAME,
-    description: DATASET_DENORMALIZED_COLUMN_CONSTS.DESCRIPTION,
-    link: DATASET_DENORMALIZED_COLUMN_CONSTS.DATA_URL,
-    secondaryLabels: [
-      DATASET_DENORMALIZED_COLUMN_CONSTS.DATA_URL,
-      DATASET_DENORMALIZED_COLUMN_CONSTS.DOCUMENTATION_URL,
-      DATASET_DENORMALIZED_COLUMN_CONSTS.TOPICS,
-      DATASET_DENORMALIZED_COLUMN_CONSTS.SUBSTRATES,
-    ],
-  },
-}
-
-const manifestColumnLinks: LabelLinkConfig = [
-  {
-    isMarkdown: true,
-    matchColumnName: MANIFEST_COLUMN_CONSTS.STANDARDS_AND_TOOLS_LINKS,
-  },
-  {
-    isMarkdown: true,
-    matchColumnName: MANIFEST_COLUMN_CONSTS.USES_DATA_SUBSTRATES_LINKS,
-  },
-  {
-    isMarkdown: true,
-    matchColumnName: MANIFEST_COLUMN_CONSTS.CONCERNS_DATA_TOPICS_LINKS,
-  },
-  {
-    isMarkdown: true,
-    matchColumnName: MANIFEST_COLUMN_CONSTS.CONCERNS_DATA_TOPICS_DOC_LINKS,
-  },
-  {
-    isMarkdown: true,
-    matchColumnName: MANIFEST_COLUMN_CONSTS.ANATOMY_LINKS,
-  },
-  {
-    isMarkdown: true,
-    matchColumnName: MANIFEST_COLUMN_CONSTS.DATASETS_LINK,
-  },
-]
-
 function detailSections({
   detailOrg: jsonColCounts,
   id,
@@ -332,6 +290,7 @@ function detailSections({
               searchConfiguration={{
                 ftsConfig: standardsFtsConfig,
               }}
+              hiddenColumns={['topic']}
               shouldDeepLink={false}
               hideQueryCount={true}
               hideDownload={true}
@@ -366,6 +325,7 @@ function detailSections({
               searchConfiguration={{
                 ftsConfig: standardsFtsConfig,
               }}
+              hiddenColumns={['topic']}
               shouldDeepLink={false}
               hideQueryCount={true}
               hideDownload={true}

@@ -2,7 +2,8 @@ import type { CardConfiguration } from 'synapse-react-client/components/CardCont
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { columnAliases } from './commonProps'
-import { publicationsSql } from '../resources'
+import { publicationsSearchIndexId, publicationsSql } from '../resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 export const newPublicationsSql = `${publicationsSql} order by ROW_ID desc limit 3`
 const type = SynapseConstants.GENERIC_CARD
@@ -63,6 +64,18 @@ const publications: QueryWrapperPlotNavProps = {
       'manifestation',
     ],
   },
+}
+
+export const publicationsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'Publications',
+  shouldDeepLink: false,
+  cardConfiguration: publicationsCardConfiguration,
+  columnAliases,
+  searchIndexId: publicationsSearchIndexId,
+  autocompleteFieldName: 'title',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }
 
 ///////// utilize NF GFF database

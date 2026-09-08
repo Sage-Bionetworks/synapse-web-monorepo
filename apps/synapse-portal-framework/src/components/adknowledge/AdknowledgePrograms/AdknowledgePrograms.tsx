@@ -46,6 +46,7 @@ function AdknowledgePrograms({ sql }: AdknowledgeProgramsProps) {
           titleColName="Program"
           imageColName="Homepage Image"
           descriptionColName="Short Description"
+          isVisibleColName="Present on Homepage"
           onRowClick={handleRowClick}
         />
         <aside className={styles.sidebar}>

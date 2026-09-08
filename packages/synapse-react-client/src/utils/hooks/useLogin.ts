@@ -129,7 +129,7 @@ export default function useLogin(opts: UseLoginOptions): UseLoginReturn {
       }
     }
     // We do NOT want to rerun this effect on step change. It should only run once, when we get the error.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [twoFaErrorResponse])
 
   /**

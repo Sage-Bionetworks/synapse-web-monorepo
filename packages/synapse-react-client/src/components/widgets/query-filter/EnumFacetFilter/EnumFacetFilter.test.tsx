@@ -170,9 +170,8 @@ describe('EnumFacetFilter', () => {
   describe('initialization', () => {
     it('should initiate selected items correctly', async () => {
       await init()
-      const checkboxes = await screen.findAllByRole<HTMLInputElement>(
-        'checkbox',
-      )
+      const checkboxes =
+        await screen.findAllByRole<HTMLInputElement>('checkbox')
       expect(checkboxes).toHaveLength(4)
 
       // "All" is not checked
@@ -188,9 +187,8 @@ describe('EnumFacetFilter', () => {
       it('should set labels correctly for STRING type', async () => {
         const { container } = await init()
 
-        const checkboxes = await screen.findAllByRole<HTMLInputElement>(
-          'checkbox',
-        )
+        const checkboxes =
+          await screen.findAllByRole<HTMLInputElement>('checkbox')
         const counts = container.querySelectorAll<HTMLDivElement>(
           '.EnumFacetFilter__count',
         )
@@ -222,9 +220,8 @@ describe('EnumFacetFilter', () => {
         })
         const { container } = await init({ facet: integerFacet })
 
-        const checkboxes = await screen.findAllByRole<HTMLInputElement>(
-          'checkbox',
-        )
+        const checkboxes =
+          await screen.findAllByRole<HTMLInputElement>('checkbox')
         const counts = container.querySelectorAll<HTMLDivElement>(
           '.EnumFacetFilter__count',
         )
@@ -265,9 +262,8 @@ describe('EnumFacetFilter', () => {
 
         const { container } = await init()
 
-        const checkboxes = await screen.findAllByRole<HTMLInputElement>(
-          'checkbox',
-        )
+        const checkboxes =
+          await screen.findAllByRole<HTMLInputElement>('checkbox')
         const counts = container.querySelectorAll<HTMLDivElement>(
           '.EnumFacetFilter__count',
         )
@@ -315,9 +311,8 @@ describe('EnumFacetFilter', () => {
 
         const { container } = await init(updatedProps)
 
-        const checkboxes = await screen.findAllByRole<HTMLInputElement>(
-          'checkbox',
-        )
+        const checkboxes =
+          await screen.findAllByRole<HTMLInputElement>('checkbox')
         const counts = container.querySelectorAll<HTMLDivElement>(
           '.EnumFacetFilter__count',
         )
@@ -366,9 +361,8 @@ describe('EnumFacetFilter', () => {
         }
         const { container } = await init(updatedProps)
 
-        const checkboxes = await screen.findAllByRole<HTMLInputElement>(
-          'checkbox',
-        )
+        const checkboxes =
+          await screen.findAllByRole<HTMLInputElement>('checkbox')
         const counts = container.querySelectorAll<HTMLDivElement>(
           '.EnumFacetFilter__count',
         )

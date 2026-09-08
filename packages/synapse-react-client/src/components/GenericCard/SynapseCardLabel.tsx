@@ -1,6 +1,7 @@
 import { CardLink } from '@/components/CardContainer/CardLink'
 import { getValueOrMultiValue } from '@/components/GenericCard/CardUtils'
 import { formatDate } from '@/utils/functions/DateFormatter'
+import { normalizeSynPrefix } from '@/utils/functions/EntityTypeUtils'
 import { getColumnIndex } from '@/utils/functions/index'
 import { TargetEnum } from '@/utils/html/TargetEnum'
 import { Tooltip } from '@mui/material'
@@ -153,9 +154,7 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
   }
 
   if ('resolveEntityName' in labelLink && labelLink.resolveEntityName && str) {
-    const { baseURL, URLColumnName } = labelLink
-    const href = `/${baseURL}?${URLColumnName}=${str}`
-    return <EntityLink entity={str} link={href} showIcon={false} />
+    return <EntityLink entity={str} showIcon={false} />
   }
 
   let labelContent: ReactNode
@@ -254,7 +253,10 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
         <p>
           {split.map((el, index) => {
             const cardLink = labelLink as CardLink
-            const elOrRowId = cardLink.overrideValueWithRowID ? rowId : el
+            const elOrRowId =
+              cardLink.overrideValueWithRowID && rowId
+                ? normalizeSynPrefix(rowId)
+                : el
             let href = ''
             if ('baseURL' in cardLink) {
               const {
@@ -275,7 +277,7 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
                 selectColumns,
                 columnModels,
               )
-              if (overrideHrefIndex) {
+              if (overrideHrefIndex != null) {
                 const overrideHrefData = rowData[overrideHrefIndex]
                 if (overrideHrefData) {
                   if (cardLink.overrideLinkURLColumnTransform) {

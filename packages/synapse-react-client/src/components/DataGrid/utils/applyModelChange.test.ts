@@ -3,7 +3,11 @@ import { SchemaPropertiesMap } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import { Model } from 'json-joy/lib/json-crdt'
 import { s } from 'json-joy/lib/json-crdt-patch'
 import { applyModelChange, ModelChange } from './applyModelChange'
-import { gridSchema, ReplicaSelectionModel } from '../DataGridTypes'
+import {
+  DataGridRow,
+  gridSchema,
+  ReplicaSelectionModel,
+} from '../DataGridTypes'
 import { getDefaultValueForProperty } from './applyModelChange'
 
 function createModel() {
@@ -112,6 +116,54 @@ describe('applyModelChange', () => {
     expect(snapshot.rows).toHaveLength(0)
   })
 
+  it('CREATE coerces empty string in rowData to null for a required column', () => {
+    const model = createModel()
+    const schema: SchemaPropertiesMap = {
+      col1: {
+        type: { type: 'string', isArray: false },
+        isRequired: true,
+        enumeratedValues: null,
+      },
+      col2: {
+        type: { type: 'string', isArray: false },
+        isRequired: false,
+        enumeratedValues: null,
+      },
+    }
+
+    applyModelChange(
+      model,
+      { type: 'CREATE', rowIndex: 0, rowData: { col1: '', col2: 'b' } },
+      schema,
+    )
+
+    expect(model.api.getSnapshot().rows[0].data).toEqual([null, 'b'])
+  })
+
+  it('CREATE coerces null in rowData to undefined for an optional column', () => {
+    const model = createModel()
+    const schema: SchemaPropertiesMap = {
+      col1: {
+        type: { type: 'string', isArray: false },
+        isRequired: true,
+        enumeratedValues: null,
+      },
+      col2: {
+        type: { type: 'string', isArray: false },
+        isRequired: false,
+        enumeratedValues: null,
+      },
+    }
+
+    applyModelChange(
+      model,
+      { type: 'CREATE', rowIndex: 0, rowData: { col1: 'a', col2: null } },
+      schema,
+    )
+
+    expect(model.api.getSnapshot().rows[0].data).toEqual(['a', undefined])
+  })
+
   it('CREATE fills missing columns with null when property is required', () => {
     const model = createModel()
     change = {
@@ -166,6 +218,54 @@ describe('applyModelChange', () => {
     expect(snapshot.rows).toHaveLength(1)
     // col2 should be null since not provided
     expect(snapshot.rows[0].data).toEqual(['only-col1', undefined])
+  })
+
+  it('CREATE coerces an empty string value to null for a required column', () => {
+    const model = createModel()
+    const schema: SchemaPropertiesMap = {
+      col1: {
+        type: { type: 'string', isArray: false },
+        isRequired: true,
+        enumeratedValues: null,
+      },
+      col2: {
+        type: { type: 'string', isArray: false },
+        isRequired: false,
+        enumeratedValues: null,
+      },
+    }
+
+    applyModelChange(
+      model,
+      { type: 'CREATE', rowIndex: 0, rowData: { col1: '', col2: 'b' } },
+      schema,
+    )
+
+    expect(model.api.getSnapshot().rows[0].data).toEqual([null, 'b'])
+  })
+
+  it('CREATE coerces an empty string value to undefined for an optional column', () => {
+    const model = createModel()
+    const schema: SchemaPropertiesMap = {
+      col1: {
+        type: { type: 'string', isArray: false },
+        isRequired: false,
+        enumeratedValues: null,
+      },
+      col2: {
+        type: { type: 'string', isArray: false },
+        isRequired: true,
+        enumeratedValues: null,
+      },
+    }
+
+    applyModelChange(
+      model,
+      { type: 'CREATE', rowIndex: 0, rowData: { col1: '', col2: 'b' } },
+      schema,
+    )
+
+    expect(model.api.getSnapshot().rows[0].data).toEqual([undefined, 'b'])
   })
 
   it('UPDATE does not advance the clock for cells whose values are unchanged', () => {
@@ -274,6 +374,93 @@ describe('applyModelChange', () => {
     expect(snapshot.rows[0].data).toEqual(['a', 'updated2'])
   })
 
+  it('UPDATE coerces an empty string to null for a required column', () => {
+    const model = createModel()
+    const schema: SchemaPropertiesMap = {
+      col1: {
+        type: { type: 'string', isArray: false },
+        isRequired: true,
+        enumeratedValues: null,
+      },
+      col2: {
+        type: { type: 'string', isArray: false },
+        isRequired: false,
+        enumeratedValues: null,
+      },
+    }
+
+    applyModelChange(
+      model,
+      { type: 'CREATE', rowIndex: 0, rowData: { col1: 'a', col2: 'b' } },
+      schema,
+    )
+    applyModelChange(
+      model,
+      { type: 'UPDATE', rowIndex: 0, updatedData: { col1: '' } },
+      schema,
+    )
+
+    expect(model.api.getSnapshot().rows[0].data).toEqual([null, 'b'])
+  })
+
+  it('UPDATE coerces an empty string to undefined for an optional column', () => {
+    const model = createModel()
+    const schema: SchemaPropertiesMap = {
+      col1: {
+        type: { type: 'string', isArray: false },
+        isRequired: false,
+        enumeratedValues: null,
+      },
+      col2: {
+        type: { type: 'string', isArray: false },
+        isRequired: true,
+        enumeratedValues: null,
+      },
+    }
+
+    applyModelChange(
+      model,
+      { type: 'CREATE', rowIndex: 0, rowData: { col1: 'a', col2: 'b' } },
+      schema,
+    )
+    applyModelChange(
+      model,
+      { type: 'UPDATE', rowIndex: 0, updatedData: { col1: '' } },
+      schema,
+    )
+
+    expect(model.api.getSnapshot().rows[0].data).toEqual([undefined, 'b'])
+  })
+
+  it('UPDATE coerces null to undefined for an optional column', () => {
+    const model = createModel()
+    const schema: SchemaPropertiesMap = {
+      col1: {
+        type: { type: 'string', isArray: false },
+        isRequired: false,
+        enumeratedValues: null,
+      },
+      col2: {
+        type: { type: 'string', isArray: false },
+        isRequired: true,
+        enumeratedValues: null,
+      },
+    }
+
+    applyModelChange(
+      model,
+      { type: 'CREATE', rowIndex: 0, rowData: { col1: 'a', col2: 'b' } },
+      schema,
+    )
+    applyModelChange(
+      model,
+      { type: 'UPDATE', rowIndex: 0, updatedData: { col1: null } },
+      schema,
+    )
+
+    expect(model.api.getSnapshot().rows[0].data).toEqual([undefined, 'b'])
+  })
+
   it('DELETE with count removes multiple rows', () => {
     const model = createModel()
 
@@ -377,6 +564,53 @@ describe('applyModelChange', () => {
     expect(snapshot.selection['A']).toEqual(selA)
     expect(snapshot.selection['B']).toEqual(selB)
   })
+
+  it('REORDER_COLUMNS replaces columnOrder with the new order', () => {
+    const model = createModel()
+    model.api.arr(['columnOrder'])?.ins(0, [s.con(0), s.con(1)])
+
+    applyModelChange(
+      model,
+      { type: 'REORDER_COLUMNS', newColumnOrder: [1, 0] },
+      schemaPropertyInfo,
+    )
+
+    const snapshot = model.api.getSnapshot()
+    expect(snapshot.columnOrder).toEqual([1, 0])
+    expect(snapshot.columnNames).toEqual(['col1', 'col2'])
+  })
+
+  it('REORDER_COLUMNS does not affect row data, only display order', () => {
+    const model = createModel()
+    model.api.arr(['columnOrder'])?.ins(0, [s.con(0), s.con(1)])
+
+    applyModelChange(
+      model,
+      { type: 'CREATE', rowIndex: 0, rowData: { col1: 'a', col2: 'b' } },
+      schemaPropertyInfo,
+    )
+    applyModelChange(
+      model,
+      { type: 'REORDER_COLUMNS', newColumnOrder: [1, 0] },
+      schemaPropertyInfo,
+    )
+
+    const snapshot = model.api.getSnapshot()
+    expect(snapshot.rows[0].data).toEqual(['a', 'b'])
+    expect(snapshot.columnOrder).toEqual([1, 0])
+  })
+
+  it('REORDER_COLUMNS handles an initially empty columnOrder', () => {
+    const model = createModel()
+
+    applyModelChange(
+      model,
+      { type: 'REORDER_COLUMNS', newColumnOrder: [0, 1] },
+      schemaPropertyInfo,
+    )
+
+    expect(model.api.getSnapshot().columnOrder).toEqual([0, 1])
+  })
 })
 
 describe('getDefaultValueForProperty', () => {
@@ -405,6 +639,62 @@ describe('getDefaultValueForProperty', () => {
       undefined,
     )
   })
+  it('coerces empty string to null when property exists and column is required', () => {
+    const row = { col1: '' }
+    const schemaPropertyInfo: SchemaPropertiesMap = {
+      col1: {
+        type: { type: 'string', isArray: false },
+        isRequired: true,
+        enumeratedValues: null,
+      },
+    }
+    expect(
+      getDefaultValueForProperty(row, 'col1', schemaPropertyInfo),
+    ).toBeNull()
+  })
+
+  it('coerces empty string to undefined when property exists and column is optional', () => {
+    const row = { col1: '' }
+    const schemaPropertyInfo: SchemaPropertiesMap = {
+      col1: {
+        type: { type: 'string', isArray: false },
+        isRequired: false,
+        enumeratedValues: null,
+      },
+    }
+    expect(
+      getDefaultValueForProperty(row, 'col1', schemaPropertyInfo),
+    ).toBeUndefined()
+  })
+
+  it('coerces null to undefined when property exists and column is optional', () => {
+    const row = { col1: null }
+    const schemaPropertyInfo: SchemaPropertiesMap = {
+      col1: {
+        type: { type: 'string', isArray: false },
+        isRequired: false,
+        enumeratedValues: null,
+      },
+    }
+    expect(
+      getDefaultValueForProperty(row, 'col1', schemaPropertyInfo),
+    ).toBeUndefined()
+  })
+
+  it('coerces undefined to null when property key exists and column is required', () => {
+    const row: DataGridRow = { col1: undefined }
+    const schemaPropertyInfo: SchemaPropertiesMap = {
+      col1: {
+        type: { type: 'string', isArray: false },
+        isRequired: true,
+        enumeratedValues: null,
+      },
+    }
+    expect(
+      getDefaultValueForProperty(row, 'col1', schemaPropertyInfo),
+    ).toBeNull()
+  })
+
   it('returns the expected value for missing values based on the schema', () => {
     const row = {} // all values missing
     const schemaPropertyInfo: SchemaPropertiesMap = {

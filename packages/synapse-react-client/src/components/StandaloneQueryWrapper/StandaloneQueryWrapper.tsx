@@ -46,6 +46,7 @@ type StandaloneQueryWrapperOwnProps = {
     | 'noContentPlaceholderType'
     | 'showLastUpdatedOn'
     | 'visibleColumnCount'
+    | 'hiddenColumns'
     | 'additionalFiltersSessionStorageKey'
   > &
   Pick<

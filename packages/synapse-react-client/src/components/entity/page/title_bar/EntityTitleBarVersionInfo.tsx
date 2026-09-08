@@ -39,6 +39,27 @@ function getDisplayedVersionNumber(entity: Entity): string | null {
   return `V${entity.versionNumber}${entity.isLatestVersion ? ' (Current)' : ''}`
 }
 
+function getDisplayedVersionComment(entity: Entity): string | null {
+  if (!isVersionableEntity(entity)) {
+    return null
+  }
+  return entity.versionComment ?? null
+}
+
+const forwardSlash = (
+  <Typography
+    component={'span'}
+    variant="smallText1"
+    sx={{
+      color: 'grey.700',
+      marginLeft: '5px',
+      marginRight: '5px',
+    }}
+  >
+    /
+  </Typography>
+)
+
 export function EntityTitleBarVersionInfo(
   props: EntityTitleBarVersionInfoProps,
 ) {
@@ -57,12 +78,24 @@ export function EntityTitleBarVersionInfo(
   const versionNumberDisplay =
     bundle?.entity && getDisplayedVersionNumber(bundle.entity)
 
+  const versionComment =
+    bundle?.entity && getDisplayedVersionComment(bundle.entity)
+
   if (!isVersionable) {
     return null
   }
-
   return (
     <Box sx={{ marginTop: '3px' }}>
+      <Tooltip title={'Click to show version history'} placement={'top'}>
+        <Link
+          onClick={toggleShowVersionHistory}
+          variant="smallText1"
+          sx={{ fontWeight: 400 }}
+        >
+          {versionNumberDisplay}
+        </Link>
+      </Tooltip>
+      {fullVersionLabel && versionNumberDisplay && forwardSlash}
       <Tooltip title={fullVersionLabel} placement={'bottom'}>
         <Typography
           component={'span'}
@@ -75,28 +108,17 @@ export function EntityTitleBarVersionInfo(
           {truncatedVersionLabel}
         </Typography>
       </Tooltip>
-      {fullVersionLabel && versionNumberDisplay && (
-        <Typography
-          component={'span'}
-          variant="smallText1"
-          sx={{
-            color: 'grey.700',
-            marginLeft: '5px',
-            marginRight: '5px',
-          }}
-        >
-          /
-        </Typography>
-      )}
-      <Tooltip title={'Click to show version history'} placement={'top'}>
-        <Link
-          onClick={toggleShowVersionHistory}
-          variant="smallText1"
-          sx={{ fontWeight: 400 }}
-        >
-          {versionNumberDisplay}
-        </Link>
-      </Tooltip>
+      {versionComment && forwardSlash}
+      <Typography
+        component={'span'}
+        variant="smallText1"
+        sx={{
+          color: 'grey.700',
+          fontStyle: 'italic',
+        }}
+      >
+        {versionComment}
+      </Typography>
     </Box>
   )
 }

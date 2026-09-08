@@ -78,7 +78,6 @@ type QueryWrapperPlotNavOwnProps = {
   defaultColumn?: string
   defaultShowSearchBox?: boolean
   lockedColumn?: QueryWrapperProps['lockedColumn']
-  onViewSharingSettingsClicked?: (benefactorId: string) => void
   initialLimit?: number
   hideTopLevelControls?: boolean
 } & Omit<TopLevelControlsProps, 'entityId'> &
@@ -96,7 +95,9 @@ type QueryWrapperPlotNavOwnProps = {
     QueryVisualizationWrapperProps,
     | 'defaultShowPlots'
     | 'visibleColumnCount'
+    | 'hiddenColumns'
     | 'columnAliases'
+    | 'renderFacetValue'
     | 'rgbIndex'
     | 'showLastUpdatedOn'
     | 'noContentPlaceholderType'
@@ -107,6 +108,7 @@ type QueryWrapperPlotNavOwnProps = {
     | 'hideSearchBarControl'
     | 'hideVisualizationsControl'
     | 'enabledExternalAnalysisPlatforms'
+    | 'lockTextMatchesQueryFilterPill'
   > &
   Pick<QueryContextType, 'combineRangeFacetConfig'>
 
@@ -114,7 +116,7 @@ export type QueryWrapperPlotNavProps = QueryOrDeprecatedSearchParams &
   PlotsContainerProps &
   QueryWrapperPlotNavOwnProps
 
-type QueryWrapperPlotNavContentsProps = Pick<
+export type QueryWrapperPlotNavContentsProps = Pick<
   QueryWrapperPlotNavProps,
   | 'tableConfiguration'
   | 'name'
@@ -139,10 +141,12 @@ type QueryWrapperPlotNavContentsProps = Pick<
   | 'hideTopLevelControls'
 > & {
   isFullTextSearchEnabled: boolean
-  remount: () => void
+  remount?: () => void
 }
 
-function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
+export function QueryWrapperPlotNavContents(
+  props: QueryWrapperPlotNavContentsProps,
+) {
   const {
     tableConfiguration,
     name,
@@ -157,7 +161,7 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
     searchConfiguration,
     cavaticaConnectAccountURL,
     customControls,
-    remount,
+    remount = () => {},
     isFullTextSearchEnabled,
     customPlots,
     initialLimit,
@@ -254,11 +258,14 @@ function QueryWrapperPlotNavContents(props: QueryWrapperPlotNavContentsProps) {
                   />
                 </>
               )}
-              <TotalQueryResults
-                frontText={''}
-                endText={hasFacetsOrFilters ? 'filtered by' : ''}
-                hideIfUnfiltered={true}
-              />
+              {/* Isolated Suspense so that metadata loading does not hide the table */}
+              <Suspense fallback={null}>
+                <TotalQueryResults
+                  frontText={''}
+                  endText={hasFacetsOrFilters ? 'filtered by' : ''}
+                  hideIfUnfiltered={true}
+                />
+              </Suspense>
               <CustomControls
                 customControls={customControls}
                 remount={remount}
@@ -382,14 +389,21 @@ export default function QueryWrapperPlotNav(props: QueryWrapperPlotNavProps) {
           unitDescription={unitDescription}
           rgbIndex={props.rgbIndex}
           columnAliases={props.columnAliases}
+          renderFacetValue={props.renderFacetValue}
+          dataUseModifiersColumnName={
+            props.cardConfiguration?.genericCardSchema
+              ?.dataUseModifiersColumnName
+          }
           helpConfiguration={helpConfiguration}
           visibleColumnCount={props.visibleColumnCount}
+          hiddenColumns={props.hiddenColumns}
           defaultShowPlots={props.defaultShowPlots}
           hideCopyToClipboard={props.hideCopyToClipboard}
           defaultShowSearchBar={
             (props.defaultShowSearchBox || isFullTextSearchEnabled) &&
             !props.hideSearchBarControl
           }
+          lockTextMatchesQueryFilterPill={props.lockTextMatchesQueryFilterPill}
           hideSearchBarControl={props.hideSearchBarControl}
           showLastUpdatedOn={showLastUpdatedOn}
           noContentPlaceholderType={NoContentPlaceholderType.INTERACTIVE}

@@ -1,7 +1,7 @@
 import React from 'react'
-import publications from '@/config/synapseConfigs/publications'
+import { publicationsSearch } from '@/config/synapseConfigs/publications'
 import { createStaticMeta } from '@sage-bionetworks/synapse-portal-framework/utils/detailPageRouteUtils'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import SearchQueryWrapperPlotNav from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 import { portalMetadata } from '@/config/portalMetadata'
 
 export const meta = createStaticMeta(
@@ -10,7 +10,9 @@ export const meta = createStaticMeta(
 )
 
 const ExplorePublications = (): React.ReactNode => {
-  return <QueryWrapperPlotNav {...publications} />
+  return (
+    <SearchQueryWrapperPlotNav {...publicationsSearch} shouldDeepLink={true} />
+  )
 }
 
 export default ExplorePublications

@@ -17,6 +17,7 @@ export type FooterConfig = {
   forum?: string
   about?: string
   additionalLogos?: string[] //svg
+  variant?: 'adkp'
 }
 // Footer end
 

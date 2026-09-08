@@ -16,6 +16,18 @@
   }
 }
 
+.linkCard {
+  display: flex;
+  flex-direction: column;
+  transition: all 200ms;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: none;
+    background-color: var(--synapse-gray-100);
+  }
+}
+
 .adknowledgeCardTitle:global(.MuiTypography-root) {
   color: var(--adkp-accent-color);
   font-size: 36px;
@@ -24,6 +36,7 @@
 }
 
 .adknowledgeCardDescription:global(.MuiTypography-root) {
+  color: var(--synapse-gray-900);
   line-height: 21px;
 }
 

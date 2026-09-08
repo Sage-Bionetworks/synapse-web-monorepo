@@ -1,8 +1,8 @@
-import { peopleQueryWrapperPlotNavProps } from '@/config/synapseConfigs/people'
-import QueryWrapperPlotNav from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import { peopleSearch } from '@/config/synapseConfigs/people'
+import SearchQueryWrapperPlotNav from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 function ExplorePeople() {
-  return <QueryWrapperPlotNav {...peopleQueryWrapperPlotNavProps} />
+  return <SearchQueryWrapperPlotNav {...peopleSearch} shouldDeepLink={true} />
 }
 
 export default ExplorePeople

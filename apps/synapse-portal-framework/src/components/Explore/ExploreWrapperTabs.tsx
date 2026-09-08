@@ -7,9 +7,10 @@ import {
   useTheme,
 } from '@mui/material'
 import { useMemo } from 'react'
-import { useLocation, useNavigate } from 'react-router'
+import { Link, LinkProps, useLocation, useNavigation } from 'react-router'
 import { ExploreWrapperProps } from './ExploreWrapperProps'
 import { matchPath } from 'react-router'
+import styles from './ExploreWrapperTabs.module.scss'
 
 export function CustomScrollButton(props: TabScrollButtonProps) {
   if (props.disabled) {
@@ -34,9 +35,10 @@ export function CustomScrollButton(props: TabScrollButtonProps) {
 export function ExploreWrapperTabs(props: ExploreWrapperProps) {
   const { explorePaths } = props
   const theme = useTheme()
-  const { pathname } = useLocation()
-  const navigate = useNavigate()
+  const navigation = useNavigation()
+  const location = useLocation()
   const isMobileView = useMediaQuery(theme.breakpoints.down('sm'))
+  const pathname = navigation?.location?.pathname ?? location.pathname
 
   const pathnameWithoutTrailingSlash = useMemo(
     () => pathname.replace(/\/$/, ''),
@@ -81,32 +83,15 @@ export function ExploreWrapperTabs(props: ExploreWrapperProps) {
     >
       {explorePaths.map(({ path, displayName = path }) => {
         path = `/Explore/${path}`
+        const linkProps: any = { to: path } satisfies LinkProps
         return (
           <Tab
+            className={styles.tab}
             key={path}
             value={encodeURI(path)}
             label={displayName}
-            onClick={() => {
-              void navigate(path)
-            }}
-            sx={{
-              transition: 'all 400ms',
-              fontSize: '16px',
-              fontWeight: 700,
-              color: 'grey.700',
-              minWidth: { xs: '100%', sm: 'unset' },
-              py: 1,
-              px: 0,
-              borderBottom: '4px solid',
-              borderBottomColor: 'transparent',
-              '&.Mui-selected': {
-                color: 'secondary.main',
-                borderBottomColor: 'secondary.main',
-              },
-              '&:hover:not(.Mui-selected)': {
-                color: 'grey.800',
-              },
-            }}
+            LinkComponent={Link}
+            {...linkProps}
           />
         )
       })}

@@ -94,7 +94,7 @@ describe('ChallengeRegisterButton', () => {
     const { user } = renderComponent()
 
     const button = await screen.findByRole('button', {
-      name: 'Register for this Challenge',
+      name: 'Complete Registration',
     })
 
     await user.click(button)

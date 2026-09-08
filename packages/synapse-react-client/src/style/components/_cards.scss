@@ -52,6 +52,9 @@
   &.SRC-portalCardHeader {
     color: white;
     margin-top: 0px;
+    h3 {
+      font-size: 24px !important;
+    }
     margin-bottom: 0px;
     background: var(--synapse-primary-action-color);
     @media (min-width: map.get(SRC.$breakpoints, 'medium')) {
@@ -102,6 +105,15 @@
     }
     .SRC-cardMetadata {
       background-color: inherit;
+    }
+    .SRC-imageThumbnail,
+    .SRC-cardThumbnail {
+      width: 100%;
+      max-width: 110px;
+      img {
+        width: 100%;
+        max-width: 110px;
+      }
     }
     @media (min-width: map.get(SRC.$breakpoints, 'medium')) {
       &.isAlignToLeftNav {
@@ -188,7 +200,7 @@
   .SRC-imageThumbnail {
     vertical-align: top;
     padding-right: 15px;
-    max-width: 215px;
+    max-width: 170px;
 
     @media (max-width: map.get(SRC.$breakpoints, 'medium')) {
       width: 0%;
@@ -196,7 +208,9 @@
     }
     @media (min-width: map.get(SRC.$breakpoints, 'medium')) {
       width: 25%;
-      display: inline-block;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     img {
@@ -249,9 +263,19 @@
       flex-direction: row;
       align-items: flex-start;
       gap: var(--baseline-grid);
+
       @media (max-width: map.get(SRC.$breakpoints, 'medium')) {
         flex-direction: column;
       }
+    }
+
+    .SRC-cardTitleArea--ctaRight {
+      align-items: center;
+      gap: 30px;
+    }
+
+    &.SRC-cardContent--ctaRight {
+      max-width: none;
     }
 
     .SRC-cardTitleAreaDetails {

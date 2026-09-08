@@ -1,4 +1,3 @@
-import { StyledFormControl } from '@/components/StyledComponents'
 import { TextField, Typography } from '@mui/material'
 
 export type TermsAndConditionsSignatureProps = {
@@ -30,21 +29,15 @@ export function TermsAndConditionsSignature({
         agreement with the terms stated above. You must sign in order to
         proceed.
       </Typography>
-      <StyledFormControl
+      <TextField
         fullWidth
-        variant="standard"
-        margin="normal"
         sx={tcSignatureFieldSx}
-      >
-        <TextField
-          fullWidth
-          id="signature"
-          name="signature"
-          placeholder={`Type "${expectedSignature}" without the quotes to acknowledge your agreement`}
-          disabled={!canSign}
-          onChange={e => onSigned(e.target.value === expectedSignature)}
-        />
-      </StyledFormControl>
+        id="signature"
+        name="signature"
+        placeholder={`Type "${expectedSignature}" without the quotes to acknowledge your agreement`}
+        disabled={!canSign}
+        onChange={e => onSigned(e.target.value === expectedSignature)}
+      />
     </>
   )
 }

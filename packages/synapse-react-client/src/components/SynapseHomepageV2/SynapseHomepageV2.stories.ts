@@ -6,7 +6,7 @@ import {
   MOCK_REPO_ORIGIN,
   PRODUCTION_ENDPOINT_CONFIG,
 } from '@/utils/functions/getEndpoint'
-import { FeatureFlagEnum } from '@sage-bionetworks/synapse-types'
+import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { SynapseHomepageV2 } from './SynapseHomepageV2'
 

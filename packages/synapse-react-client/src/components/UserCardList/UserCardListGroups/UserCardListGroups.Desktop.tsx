@@ -28,7 +28,7 @@ export default function UserCardListGroupsDesktop(
             </button>
           )
         })}
-        {/* 
+        {/*
               This button keeps the border line in the button container running from top to bottom,
               it doesn't have any functionality.
             */}

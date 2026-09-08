@@ -91,16 +91,29 @@ export function updateQueryUsingSearchTerm(
       searchText,
       ftsConfig,
     )
-    // PORTALS-2093: does this additional filter already exist?
-    const found = additionalFilters.find(
-      filter =>
-        filter.concreteType == textMatchesQueryFilter.concreteType &&
-        filter.searchExpression == textMatchesQueryFilter.searchExpression,
-    )
-    if (found) {
-      return queryBundleRequest
+    if (ftsConfig?.replaceExistingFilter) {
+      // Remove all existing TextMatchesQueryFilters, then add the new one
+      for (let i = additionalFilters.length - 1; i >= 0; i--) {
+        if (
+          additionalFilters[i].concreteType ===
+          textMatchesQueryFilter.concreteType
+        ) {
+          additionalFilters.splice(i, 1)
+        }
+      }
+      additionalFilters.push(textMatchesQueryFilter)
+    } else {
+      // PORTALS-2093: does this additional filter already exist?
+      const found = additionalFilters.find(
+        filter =>
+          filter.concreteType == textMatchesQueryFilter.concreteType &&
+          filter.searchExpression == textMatchesQueryFilter.searchExpression,
+      )
+      if (found) {
+        return queryBundleRequest
+      }
+      additionalFilters.push(textMatchesQueryFilter)
     }
-    additionalFilters.push(textMatchesQueryFilter)
   }
   queryBundleRequest.query.additionalFilters = additionalFilters
   return queryBundleRequest

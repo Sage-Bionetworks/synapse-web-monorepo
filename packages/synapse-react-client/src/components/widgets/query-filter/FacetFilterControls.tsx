@@ -199,7 +199,7 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
     [facetColumnsShown],
   )
   const combinedRangeFacetsColumnModelType = combineRangeFacetConfig
-    ? columnModels!.find(
+    ? columnModels?.find(
         model => model.name === combineRangeFacetConfig.minFacetColumn,
       )?.columnType
     : undefined
@@ -247,7 +247,10 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
         />
       )}
       {shownTopLevelFacets.map(facet => {
-        const columnModel = getCorrespondingColumnForFacet(facet, columnModels!)
+        const columnModel = getCorrespondingColumnForFacet(
+          facet,
+          columnModels ?? [],
+        )
         return (
           <div className="FacetFilterControls__facet" key={facet.columnName}>
             {facet.facetType === 'enumeration' && columnModel && (

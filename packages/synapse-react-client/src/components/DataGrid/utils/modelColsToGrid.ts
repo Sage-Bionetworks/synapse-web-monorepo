@@ -9,6 +9,7 @@ export function modelColsToGrid(
   columnWidths: Record<string, number> = {},
   pinnedColumns: Set<number> = new Set(),
   onTogglePin?: (columnIndex: number) => void,
+  upsertKey?: string[],
 ): Column[] {
   return columnOrder.map((index: number, arrayIndex: number) => {
     const columnName = columnNames[index]
@@ -29,6 +30,8 @@ export function modelColsToGrid(
       showPinIcon,
       isPinned,
       onTogglePin: onTogglePin ? () => onTogglePin(arrayIndex) : undefined,
+      schemaPropertyInfo: propertyInfo,
+      isUpsertKey: upsertKey?.includes(columnName) ?? false,
     })
   })
 }

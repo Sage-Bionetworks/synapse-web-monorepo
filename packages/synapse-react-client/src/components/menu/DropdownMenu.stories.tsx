@@ -51,3 +51,31 @@ export const Demo: Story = {
     ],
   },
 }
+
+export const DropdownMenuWithConditionalNote: Story = {
+  args: {
+    dropdownButtonText: 'Dropdown Menu Button',
+    buttonProps: {
+      endIcon: <IconSvg icon="verticalEllipsis" wrap={false} />,
+    },
+    showFileAccessRequestNotice: true,
+    paperSx: {
+      padding: '12px 16px',
+      width: '279px',
+    },
+    items: [
+      [
+        {
+          text: 'Do something cool',
+          onClick: onClickHandler(0),
+        },
+      ],
+      [
+        {
+          text: 'You can organize actions into groups',
+          onClick: onClickHandler(5),
+        },
+      ],
+    ],
+  },
+}

@@ -6,14 +6,16 @@ import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/Q
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
 import columnAliases from '../columnAliases'
-import { datasetsSql } from '../resources'
+import { datasetsSearchIndexId, datasetsSql } from '../resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 import { citationBoilerplateText } from './commonProps'
 
 const rgbIndex = 0
 export const datasetColumnLinks: LabelLinkConfig = [
   {
     isMarkdown: false,
-    baseURL: 'Explore/Datasets/DetailsPage',
+    baseURL: 'Explore/Datasets',
+    urlParamStyle: 'path-segment',
     URLColumnName: 'id',
     matchColumnName: 'name',
     overrideValueWithRowID: true,
@@ -53,13 +55,29 @@ export const datasetCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
   genericCardSchema: datasetSchema,
   titleLinkConfig: {
+    urlParamStyle: 'path-segment',
     isMarkdown: false,
     matchColumnName: 'id',
     URLColumnName: 'id',
-    baseURL: 'Explore/Datasets/DetailsPage',
+    baseURL: 'Explore/Datasets',
   },
   iconOptions: {
     Publication: publicationDataSvg,
     'Experimental Data': experimentalDataSvg,
   },
+}
+
+export const datasetsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'Datasets',
+  shouldDeepLink: false,
+  tableConfiguration: {
+    columnLinks: datasetColumnLinks,
+  },
+  columnAliases,
+  facetsToPlot: ['program', 'project', 'datasetType', 'assay'],
+  searchIndexId: datasetsSearchIndexId,
+  autocompleteFieldName: 'name',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }

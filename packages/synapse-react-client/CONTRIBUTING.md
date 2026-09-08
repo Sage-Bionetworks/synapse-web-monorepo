@@ -4,10 +4,7 @@
 
 ### Setup
 
-You may use any IDE you like. If you use [Visual Studio Code](https://code.visualstudio.com/), you can load the [workspace file](../../synapse-web-monorepo.code-workspace), which preconfigures and recommends some extensions, such as:
-
-- The [eslint](https://github.com/Microsoft/vscode-eslint) extension, which is a js linter and rough style guide.
-- The [prettier](https://github.com/prettier/prettier) extension, which is a more opinionated js linter. You will need to ensure you have vscode configured to format on saving by modifying ,.vscode/setting.json to include the line `"editor.formatOnSave": true`. See [here](https://code.visualstudio.com/updates/v1_6#_format-on-save) for more details.
+You may use any IDE you like. If you use [Visual Studio Code](https://code.visualstudio.com/), you can load the [workspace file](../../synapse-web-monorepo.code-workspace), which preconfigures and recommends relevant extensions.
 
 ### Git Workflow
 

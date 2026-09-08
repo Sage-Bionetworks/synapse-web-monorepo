@@ -7,7 +7,7 @@ import advancedCellularModelsUrl from '@/components/assets/advanced-cellular-mod
 import clinicalAssessmentToolsUrl from '@/components/assets/clinical-assessment-tools.svg?url'
 import computationalToolsUrl from '@/components/assets/computational-tools.svg?url'
 import patientDerivedModelsUrl from '@/components/assets/patient-derived-models.svg?url'
-import { Box, Link, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { Query } from '@sage-bionetworks/synapse-types'
 import pluralize from 'pluralize'
 import { ReactElement, ReactNode } from 'react'
@@ -305,24 +305,6 @@ const NFBrowseToolsPage = (props: NFBrowseToolsPageProps): ReactNode => {
           }}
         >
           What Tools Can We Help You Find?
-        </Typography>
-        <Typography
-          variant="body1"
-          sx={{ textAlign: 'center', paddingBottom: '15px' }}
-        >
-          For the greatest success with your search, ensure your spelling is
-          correct and avoid pluralization or suffixes.
-        </Typography>
-        <Typography
-          variant="body1"
-          sx={{ textAlign: 'center', paddingBottom: '40px' }}
-        >
-          <Link
-            href="https://help.nf.synapse.org/NFdocs/Tips-for-Search.2640478225.html"
-            target="_blank"
-          >
-            Learn More About MySQL Full Text Search
-          </Link>
         </Typography>
         <Search onSearch={gotoExploreToolsWithFullTextSearch} />
         <Typography variant="sectionTitle" className="sectionTitle">

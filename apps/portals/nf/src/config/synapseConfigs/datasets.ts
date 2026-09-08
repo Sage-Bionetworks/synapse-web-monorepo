@@ -1,9 +1,10 @@
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import { datasetsSql } from '../resources'
+import { datasetsSearchIndexId, datasetsSql } from '../resources'
 import { columnAliases as sharedColumnAliases } from './commonProps'
 import { studyColumnIconConfigs } from './studies'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 export const newDatasetsSql = `${datasetsSql} order by ROW_ID desc limit 3`
 export const datasetsRgbIndex = 8
@@ -19,6 +20,7 @@ const CUSTOM_LABEL_VALUE =
 
 export const datasetCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
+  actionButtonStyle: 'chip',
   genericCardSchema: {
     type: SynapseConstants.DATASET,
     title: 'title',
@@ -46,6 +48,8 @@ export const datasetCardConfiguration: CardConfiguration = {
       'visualizeDataOn',
     ],
     dataTypeIconNames: 'dataType',
+    // PORTALS-4282: surface Data Use Ontology terms in the metadata section.
+    dataUseModifiersColumnName: 'dataUseModifiers',
     synapseEntityConfig: {
       id: {
         source: 'rowId',
@@ -53,6 +57,18 @@ export const datasetCardConfiguration: CardConfiguration = {
       version: {
         source: 'rowVersionNumber',
       },
+    },
+    // Hosting-aware download/access. Driven by dataset annotation columns:
+    //  - `hosting`: controlled vocabulary — synapse | external-cloud |
+    //    external-download | external-access | mixed | unavailable. Blank/unknown
+    //    → synapse (standard Download), so this is inert until datasets are
+    //    annotated (annotation/schema work lives in nf-metadata-dictionary).
+    //  - `repository`: free-text external repo name shown in the label/tooltip.
+    //  - `externalUrl`: link target for non-downloadable (external-access) datasets.
+    hostingConfig: {
+      hostingColumn: 'hosting',
+      repositoryColumn: 'repository',
+      externalUrlColumn: 'externalUrl',
     },
   },
   labelLinkConfig: [
@@ -91,6 +107,18 @@ const datasets: QueryWrapperPlotNavProps = {
       'funder',
     ],
   },
+}
+
+export const datasetsSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex: datasetsRgbIndex,
+  name: 'Datasets',
+  shouldDeepLink: false,
+  cardConfiguration: datasetCardConfiguration,
+  columnAliases,
+  searchIndexId: datasetsSearchIndexId,
+  autocompleteFieldName: 'title',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }
 
 export default datasets

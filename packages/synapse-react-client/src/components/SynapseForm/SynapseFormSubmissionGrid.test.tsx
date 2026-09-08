@@ -27,7 +27,7 @@ const renderComponent = async (
   contextOverrides?: Partial<SynapseContextType>,
 ) => {
   // We must await asynchronous events for our assertions to pass
-  // eslint-disable-next-line @typescript-eslint/require-await
+  // oxlint-disable-next-line @typescript-eslint/require-await
   return await act(async () => {
     render(<UserFileGrid {...props} />, {
       wrapper: createWrapper(contextOverrides),

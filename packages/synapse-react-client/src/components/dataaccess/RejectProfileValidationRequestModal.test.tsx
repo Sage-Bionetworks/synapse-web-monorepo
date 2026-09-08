@@ -11,7 +11,6 @@ import { REJECT_VALIDATION_CANNED_RESPONSES_TABLE } from '@/utils/SynapseConstan
 import { VerificationStateEnum } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import failOnConsoleError from 'jest-fail-on-console'
 import { http } from 'msw'
 import { CannedRejectionDialog } from '../CannedRejectionDialog/CannedRejectionDialog'
 import {
@@ -59,7 +58,6 @@ function renderComponent(
 }
 
 describe('RejectProfileValidationRequestModal', () => {
-  failOnConsoleError()
   beforeAll(() => {
     server.listen()
     server.use(

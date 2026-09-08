@@ -407,8 +407,8 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
 
   const hasChangedSinceLastSave = Boolean(
     datasetOnServer &&
-      datasetToUpdate &&
-      !isEqual(datasetOnServer, datasetToUpdate),
+    datasetToUpdate &&
+    !isEqual(datasetOnServer, datasetToUpdate),
   )
 
   const {
@@ -531,7 +531,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     }
     setPreviousDatasetToUpdate(datasetToUpdate)
     // Only run when datasetToUpdate changes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
   }, [datasetToUpdate])
 
   const tableData = useMemo(

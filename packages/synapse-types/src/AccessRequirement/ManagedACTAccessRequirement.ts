@@ -52,4 +52,6 @@ export type ManagedACTAccessRequirement = {
   isIDURequired: boolean
   /* If true, then accessor needs to enable two-factor authentication before gaining access to the data. */
   isTwoFaRequired: boolean
+  /* The ID of the electronic Data Use Certificate (eDUC) template to fill out for data access requests. */
+  eDucTemplateId?: string
 }

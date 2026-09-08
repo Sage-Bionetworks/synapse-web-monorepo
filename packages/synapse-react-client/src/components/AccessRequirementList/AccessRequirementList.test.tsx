@@ -9,10 +9,26 @@ import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { AccessRequirement } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { displayToast } from '../ToastMessage/ToastMessage'
 import AccessRequirementList, {
   AccessRequirementListProps,
+  RequestDataStep,
 } from './AccessRequirementList'
 import * as AccessRequirementListUtils from './AccessRequirementListUtils'
+import EDucPreviewStep from './ManagedACTAccessRequirementRequestFlow/EDucPreviewStep/EDucPreviewStep'
+
+vi.mock('../ToastMessage/ToastMessage')
+const mockedDisplayToast = vi.mocked(displayToast)
+
+vi.mock(
+  './ManagedACTAccessRequirementRequestFlow/EDucPreviewStep/EDucPreviewStep',
+  () => ({
+    __esModule: true,
+    default: vi.fn(),
+  }),
+)
+const MockEDucPreviewStep = vi.mocked(EDucPreviewStep)
 
 const MOCK_FILE_ENTITY_ID = mockFileEntityData.id
 
@@ -28,7 +44,7 @@ describe('AccessRequirementList tests', () => {
 
   async function init(props: AccessRequirementListProps) {
     // We must await asynchronous events for our assertions to pass
-    // eslint-disable-next-line @typescript-eslint/require-await
+    // oxlint-disable-next-line @typescript-eslint/require-await
     await act(async () => {
       render(<AccessRequirementList {...props} />, {
         wrapper: createWrapper(),
@@ -71,5 +87,55 @@ describe('AccessRequirementList tests', () => {
     await waitFor(() =>
       expect(screen.getAllByTestId('RequirementItem')).toHaveLength(8),
     )
+  })
+
+  it('opens directly at the initialWizardEntry step (bypassing the AR list)', async () => {
+    await init({
+      ...props,
+      initialWizardEntry: {
+        step: RequestDataStep.SIGNATURE_STATUS,
+        managedACTAccessRequirement: {
+          ...mockManagedACTAccessRequirement,
+          eDucTemplateId: 'template-abc-123',
+        },
+      },
+    })
+
+    // Wizard is showing the signature-status step, not the AR list.
+    await screen.findByRole('heading', {
+      name: /Sign a Data Use Certificate/i,
+    })
+    expect(screen.queryAllByTestId('RequirementItem')).toHaveLength(0)
+    // Back is available so the user can navigate to the research project step to modify.
+    expect(screen.getByRole('button', { name: 'Back' })).toBeInTheDocument()
+  })
+
+  it('shows an info toast and closes the wizard when send-for-signature succeeds', async () => {
+    const onHide = vi.fn()
+    MockEDucPreviewStep.mockImplementation(({ onSendForSignature }) => (
+      <button onClick={onSendForSignature}>Mock send</button>
+    ))
+
+    await init({
+      ...props,
+      onHide,
+      initialWizardEntry: {
+        step: RequestDataStep.EDUC_PREVIEW,
+        managedACTAccessRequirement: {
+          ...mockManagedACTAccessRequirement,
+          eDucTemplateId: 'template-abc-123',
+        },
+      },
+    })
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: 'Mock send' }),
+    )
+
+    expect(mockedDisplayToast).toHaveBeenCalledWith(
+      expect.stringContaining('emailed to your collaborators'),
+      'info',
+    )
+    expect(onHide).toHaveBeenCalledTimes(1)
   })
 })

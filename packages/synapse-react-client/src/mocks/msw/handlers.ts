@@ -12,11 +12,13 @@ import getAllChallengeHandlers from './handlers/challengeHandlers'
 import { getDataAccessRequestHandlers } from './handlers/dataAccessRequestHandlers'
 import { getDiscussionHandlers } from './handlers/discussionHandlers'
 import { getDoiHandler } from './handlers/doiHandlers'
+import { getEDucTemplateHandlers } from './handlers/eDucTemplateHandlers'
 import { getEntityHandlers } from './handlers/entityHandlers'
 import { getEvaluationHandlers } from './handlers/evaluationHandlers'
 import { getFeatureFlagsOverride } from './handlers/featureFlagHandlers'
 import { getFileHandlers } from './handlers/fileHandlers'
 import { getGridHandlers } from './handlers/gridHandlers'
+import { getJsonSchemaListingHandlers } from './handlers/jsonSchemaListingHandlers'
 import { getMessageHandlers } from './handlers/messageHandlers'
 import { getPersonalAccessTokenHandlers } from './handlers/personalAccessTokenHandlers'
 import { getResearchProjectHandlers } from './handlers/researchProjectHandlers'
@@ -24,6 +26,8 @@ import { getResetTwoFactorAuthHandlers } from './handlers/resetTwoFactorAuthHand
 import { getRealmHandlers } from './handlers/realmHandlers'
 import { getShortIoHandlers } from './handlers/shortIoHandlers'
 import { getSubscriptionHandlers } from './handlers/subscriptionHandlers'
+import { getTermsOfServiceHandlers } from './handlers/termsOfServiceHandlers'
+import { termsOfServiceUpToDateStatus } from '../termsOfService/mockTermsOfService'
 import {
   getAnnotationColumnHandlers,
   getCreateColumnModelBatchHandler,
@@ -39,6 +43,7 @@ import { getWebhookHandlers } from './handlers/webhookHandlers'
 import { getAllWikiHandlers } from './handlers/wikiHandlers'
 import { getDataciteHandler } from './handlers/dataciteHandlers'
 import { getAuthHandlers } from './handlers/authHandlers'
+import { getHandlersForSearchQuery } from './handlers/searchQueryHandlers'
 
 // Simple utility type that just indicates that the response body could be an error like the Synapse backend may send.
 export type SynapseApiResponse<TData, TError = BaseError> = TData | TError
@@ -66,9 +71,13 @@ export function getHandlersForStorybook(
     accessRequirement: getAllAccessRequirementHandlers(backendOrigin),
     accessRequirementAcl: getAllAccessRequirementAclHandlers(backendOrigin),
     dataAccessRequest: getDataAccessRequestHandlers(backendOrigin),
+    eDucTemplate: getEDucTemplateHandlers(backendOrigin),
     researchProject: getResearchProjectHandlers(backendOrigin),
     file: getFileHandlers(backendOrigin),
     grid: getGridHandlers(backendOrigin),
+    jsonSchemaListing: Object.values(
+      getJsonSchemaListingHandlers(backendOrigin),
+    ).flat(),
     discussion: getDiscussionHandlers(backendOrigin),
     subscription: getSubscriptionHandlers(backendOrigin),
     evaluation: getEvaluationHandlers(backendOrigin),
@@ -84,10 +93,15 @@ export function getHandlersForStorybook(
     resetTwoFactorAuth: getResetTwoFactorAuthHandlers(backendOrigin),
     message: getMessageHandlers(backendOrigin),
     realm: getRealmHandlers(backendOrigin),
+    termsOfService: getTermsOfServiceHandlers(
+      backendOrigin,
+      termsOfServiceUpToDateStatus,
+    ),
     featureFlags: [getFeatureFlagsOverride({ portalOrigin })],
     tableQuery: getHandlersForTableQuery(backendOrigin),
     doi: getDoiHandler(backendOrigin),
     shortIo: getShortIoHandlers(),
+    search: getHandlersForSearchQuery(backendOrigin),
     webhook: getWebhookHandlers(backendOrigin),
     validationSchema: getValidationSchemaHandlers(backendOrigin),
     datacite: getDataciteHandler(),

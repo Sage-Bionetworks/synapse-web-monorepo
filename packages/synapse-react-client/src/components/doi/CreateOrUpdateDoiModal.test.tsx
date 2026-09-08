@@ -354,16 +354,16 @@ describe('CreateOrUpdateDoiModal', () => {
     const { user } = setup()
 
     // Wait for the versions to be rendered
-    const versionInput = await screen.findByLabelText(/Version/i)
+    const versionInput = await screen.findByRole('combobox', {
+      name: /Version/i,
+    })
     await user.click(versionInput)
     await screen.findByRole('option', { name: 'No version' })
     await screen.findByRole('option', { name: 'Version 1 / v1' })
     await screen.findByRole('option', { name: 'Version 2 / v2' })
 
     // Select a version
-    const versionSelect = screen.getByLabelText(/Version/i)
-    await user.click(versionSelect)
-    const versionOption = screen.getByText('Version 2 / v2')
+    const versionOption = screen.getByRole('option', { name: 'Version 2 / v2' })
     await user.click(versionOption)
 
     // Fill out the form

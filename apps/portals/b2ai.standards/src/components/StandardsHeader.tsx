@@ -1,7 +1,10 @@
 import React from 'react'
 import { Box, Typography, Button } from '@mui/material'
 import HeaderSearchBox from '@sage-bionetworks/synapse-portal-framework/components/HeaderSearchBox'
+import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
+import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
 import { FTSConfig } from 'synapse-react-client/components/SynapseTable/SearchV2'
+import { standardsSearchIndexConfig } from '@/config/synapseConfigs/searchConfig'
 
 export type StandardsHeaderProps = {
   sql: string
@@ -98,6 +101,8 @@ const StandardsHeader = (props: StandardsHeaderProps): React.ReactNode => {
           searchExampleTerms={searchExampleTerms}
           searchPlaceholder={searchPlaceholder}
           path="/Search"
+          searchIndexConfig={standardsSearchIndexConfig}
+          isChatEnabled={useGetFeatureFlag(FeatureFlagEnum.PORTAL_CHAT)}
           sx={{
             flex: 1,
             '& > :first-child': {

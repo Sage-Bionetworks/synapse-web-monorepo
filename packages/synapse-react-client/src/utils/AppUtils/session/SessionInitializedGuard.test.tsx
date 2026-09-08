@@ -10,7 +10,7 @@ vi.mock('./ApplicationSessionContext', () => ({
 const mockUseApplicationSessionContext = vi.mocked(useApplicationSessionContext)
 
 describe('SessionInitializedGuard', () => {
-  it('shows loading screen when session is not initialized', () => {
+  it('shows loading overlay alongside children when session is not initialized', () => {
     mockUseApplicationSessionContext.mockReturnValue({
       hasInitializedSession: false,
     } as any)
@@ -21,13 +21,14 @@ describe('SessionInitializedGuard', () => {
       </SessionInitializedGuard>,
     )
 
-    expect(screen.queryByText('Test Content')).not.toBeInTheDocument()
-    // The BlockingLoader should be shown
+    // Children render so that SSG-prefetched data is hydration-stable.
+    expect(screen.getByText('Test Content')).toBeInTheDocument()
+    // The BlockingLoader is rendered as a sibling overlay.
     const progressbar = screen.getByRole('progressbar')
     expect(progressbar).toBeInTheDocument()
   })
 
-  it('shows loading screen with custom hint text when session is not initialized', () => {
+  it('shows loading overlay with custom hint text when session is not initialized', () => {
     mockUseApplicationSessionContext.mockReturnValue({
       hasInitializedSession: false,
     } as any)
@@ -38,7 +39,7 @@ describe('SessionInitializedGuard', () => {
       </SessionInitializedGuard>,
     )
 
-    expect(screen.queryByText('Test Content')).not.toBeInTheDocument()
+    expect(screen.getByText('Test Content')).toBeInTheDocument()
     expect(screen.getByText('Custom loading message')).toBeInTheDocument()
   })
 

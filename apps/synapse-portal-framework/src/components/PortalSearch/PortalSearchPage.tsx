@@ -1,19 +1,23 @@
 import { Box } from '@mui/material'
 import { Outlet, useLocation, useNavigate, useSearchParams } from 'react-router'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
 import { PortalSearchTabConfig, PortalSearchTabs } from './PortalSearchTabs'
 import PortalFullTextSearchField from './PortalFullTextSearchField'
 import SearchParamAwareQueryWrapperPlotNav from './SearchParamAwareQueryWrapperPlotNav'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
-import type { StandaloneQueryWrapperProps } from 'synapse-react-client/components/StandaloneQueryWrapper/StandaloneQueryWrapper'
+import type { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
+import { isSearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
+import { useGetSuggestionsForSearchIndex } from 'synapse-react-client/components/SearchQueryWrapper/SearchQueryUseQueryOptions'
+import { SearchIndexConfig } from '../../types/portal-util-types'
 
 export type PortalSearchPageProps = {
   selectedTabIndex?: number
-  configs: QueryWrapperPlotNavProps[]
+  configs: (QueryWrapperPlotNavProps | SearchQueryWrapperPlotNavProps)[]
   searchPageTabs: PortalSearchTabConfig[]
   roleMapping?: Record<string, string>
+  searchIndexConfig?: SearchIndexConfig
 }
 
 function getQueryCount(queryResultBundleJSON: string) {
@@ -24,8 +28,21 @@ function getQueryCount(queryResultBundleJSON: string) {
   return queryCount
 }
 
+function getMaxScore(queryResultBundleJSON: string): number | undefined {
+  const bundle = JSON.parse(queryResultBundleJSON) as QueryResultBundle & {
+    maxScore?: number
+  }
+  return bundle.maxScore
+}
+
 export function PortalSearchPage(props: PortalSearchPageProps) {
-  const { selectedTabIndex, configs, searchPageTabs, roleMapping } = props
+  const {
+    selectedTabIndex,
+    configs,
+    searchPageTabs,
+    roleMapping,
+    searchIndexConfig,
+  } = props
   // Note: Files does not currently enable FTS
   const [searchPageTabsState, setSearchPageTabsState] = useState<
     PortalSearchTabConfig[]
@@ -41,8 +58,17 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
       selectedTabIndex?: number,
     ) => {
       const newCount = getQueryCount(newQueryResultBundleJSON)
+      const newScore = getMaxScore(newQueryResultBundleJSON)
+      let didChange = false
       if (searchPageTabsState[tabIndex].count !== newCount) {
         searchPageTabsState[tabIndex].count = newCount
+        didChange = true
+      }
+      if (searchPageTabsState[tabIndex].score !== newScore) {
+        searchPageTabsState[tabIndex].score = newScore
+        didChange = true
+      }
+      if (didChange) {
         setSearchPageTabsState([...searchPageTabsState])
       }
       // PORTALS-3382: If no tab is selected and all counts have been set, then redirect to the item with the highest count
@@ -59,14 +85,17 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
             search: location.search,
           })
         } else {
-          // Navigate to the tab that has the highest count.
-          // Explicitly initialize the accumulator ("max") to the first element (searchPageTabs[0]). "max" will never be null
-          const maxCountTab = searchPageTabs.reduce(
-            (max, tab) => (tab.count! > max.count! ? tab : max),
-            searchPageTabs[0],
-          )
+          // Navigate to the tab with the highest relevance score.
+          // Fall back to the first tab if no tab has a score (e.g. no results or search not yet performed).
+          const maxScoreTab = searchPageTabs.reduce<
+            PortalSearchTabConfig | undefined
+          >((best, tab) => {
+            if (tab.score === undefined) return best
+            if (best === undefined || best.score === undefined) return tab
+            return tab.score > best.score ? tab : best
+          }, undefined)
           navigate({
-            pathname: `/Search/${maxCountTab.path}`,
+            pathname: `/Search/${(maxScoreTab ?? searchPageTabs[0]).path}`,
             search: location.search,
           })
         }
@@ -74,12 +103,38 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
     },
     [searchPageTabsState, navigate, location.search],
   )
-  const searchParamAwareQueryWrapperProps: StandaloneQueryWrapperProps[] =
-    useMemo(() => {
-      return configs.map((config, index) => {
-        return {
-          ...config,
-          onQueryResultBundleChange: newQueryResultBundleJSON => {
+  const getSuggestions = useGetSuggestionsForSearchIndex(
+    searchIndexConfig?.searchIndexId ?? '',
+    searchIndexConfig?.autocompleteFieldName,
+  )
+  // on search field value update, update the special search parameter SEARCH_TERM, which the QueryWrapperPlotNav will load as the search term
+  return (
+    <Box
+      sx={{
+        px: { xs: '10px', lg: '50px' },
+        pb: { xs: '10px', lg: '50px' },
+        pt: { xs: '10px', lg: '20px' },
+      }}
+    >
+      <PortalFullTextSearchField
+        disabled={selectedTabIndex == undefined}
+        path={location.pathname}
+        getSuggestions={searchIndexConfig ? getSuggestions : undefined}
+      />
+      <Box
+        sx={{
+          pt: { xs: '10px', lg: '20px' },
+        }}
+      />
+      {configs.length !== 1 && selectedTabIndex != undefined && (
+        <PortalSearchTabs tabConfig={searchPageTabsState} />
+      )}
+
+      {configs.map((config, index) => {
+        const key = `searchResultTab-${selectedTabIndex}-${index}`
+        const sharedProps = {
+          isVisible: selectedTabIndex == index,
+          onQueryResultBundleChange: (newQueryResultBundleJSON: string) => {
             onQueryResultBundleChange(
               index,
               newQueryResultBundleJSON,
@@ -87,28 +142,23 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
             )
           },
         }
-      })
-    }, [configs, selectedTabIndex])
-
-  // on search field value update, update the special search parameter SEARCH_TERM, which the QueryWrapperPlotNav will load as the search term
-  return (
-    <Box sx={{ p: { xs: '10px', lg: '50px' } }}>
-      <PortalFullTextSearchField
-        disabled={selectedTabIndex == undefined}
-        path={location.pathname}
-      />
-      {selectedTabIndex != undefined && (
-        <PortalSearchTabs tabConfig={searchPageTabsState} />
-      )}
-      {searchParamAwareQueryWrapperProps.map(
-        (searchParamAwareQueryWrapperProps, index) => (
+        if (isSearchQueryWrapperPlotNavProps(config)) {
+          return (
+            <SearchParamAwareQueryWrapperPlotNav
+              key={key}
+              {...sharedProps}
+              searchQueryWrapperPlotNavProps={config}
+            />
+          )
+        }
+        return (
           <SearchParamAwareQueryWrapperPlotNav
-            key={`searchResultTab-${selectedTabIndex}-${index}`}
-            isVisible={selectedTabIndex == index}
-            standaloneQueryWrapperProps={searchParamAwareQueryWrapperProps}
+            key={key}
+            {...sharedProps}
+            standaloneQueryWrapperProps={config}
           />
-        ),
-      )}
+        )
+      })}
       {selectedTabIndex == undefined && (
         <Box
           sx={{

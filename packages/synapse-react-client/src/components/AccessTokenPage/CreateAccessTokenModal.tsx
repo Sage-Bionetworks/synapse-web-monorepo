@@ -90,7 +90,7 @@ export function CreateAccessTokenModal(props: CreateAccessTokenModalProps) {
       </Typography>
     </>
   ) : (
-    <div>
+    <Stack gap={2}>
       <TextField
         autoFocus
         label="Token Name"
@@ -99,66 +99,68 @@ export function CreateAccessTokenModal(props: CreateAccessTokenModalProps) {
         placeholder="e.g. Synapse command line access on my laptop"
         sx={{ mb: 2 }}
       />
-      <Typography variant="label">Token Permissions</Typography>
-      <Stack
-        sx={{
-          gap: 2,
-          my: 1,
-        }}
-      >
-        <div>
-          <FormControlLabel
-            control={<Checkbox />}
-            label={scopeDescriptions.view.displayName}
-            checked={viewAccess}
-            onChange={() => setViewAccess(!viewAccess)}
-          />
-          <Typography
-            variant={'smallText1'}
-            sx={{
-              color: 'grey.700',
-            }}
-          >
-            {scopeDescriptions.view.description}. Required to use Synapse
-            programmatic clients.
-          </Typography>
-        </div>
-        <div>
-          <FormControlLabel
-            control={<Checkbox />}
-            label={scopeDescriptions.download.displayName}
-            checked={downloadAccess}
-            onChange={() => setDownloadAccess(!downloadAccess)}
-          />
-          <Typography
-            variant={'smallText1'}
-            sx={{
-              color: 'grey.700',
-            }}
-          >
-            {scopeDescriptions.download.description}
-          </Typography>
-        </div>
-        <div>
-          <FormControlLabel
-            control={<Checkbox />}
-            label={scopeDescriptions.modify.displayName}
-            checked={modifyAccess}
-            onChange={() => setModifyAccess(!modifyAccess)}
-          />
-          <Typography
-            variant={'smallText1'}
-            sx={{
-              color: 'grey.700',
-            }}
-          >
-            {scopeDescriptions.modify.description}
-          </Typography>
-        </div>
-      </Stack>
+      <div>
+        <Typography variant="label">Token Permissions</Typography>
+        <Stack
+          sx={{
+            gap: 2,
+            my: 1,
+          }}
+        >
+          <div>
+            <FormControlLabel
+              control={<Checkbox />}
+              label={scopeDescriptions.view.displayName}
+              checked={viewAccess}
+              onChange={() => setViewAccess(!viewAccess)}
+            />
+            <Typography
+              variant={'smallText1'}
+              sx={{
+                color: 'grey.700',
+              }}
+            >
+              {scopeDescriptions.view.description}. Required to use Synapse
+              programmatic clients.
+            </Typography>
+          </div>
+          <div>
+            <FormControlLabel
+              control={<Checkbox />}
+              label={scopeDescriptions.download.displayName}
+              checked={downloadAccess}
+              onChange={() => setDownloadAccess(!downloadAccess)}
+            />
+            <Typography
+              variant={'smallText1'}
+              sx={{
+                color: 'grey.700',
+              }}
+            >
+              {scopeDescriptions.download.description}
+            </Typography>
+          </div>
+          <div>
+            <FormControlLabel
+              control={<Checkbox />}
+              label={scopeDescriptions.modify.displayName}
+              checked={modifyAccess}
+              onChange={() => setModifyAccess(!modifyAccess)}
+            />
+            <Typography
+              variant={'smallText1'}
+              sx={{
+                color: 'grey.700',
+              }}
+            >
+              {scopeDescriptions.modify.description}
+            </Typography>
+          </div>
+        </Stack>
+      </div>
       {validationError && <ErrorBanner error={validationError} />}
       {mutationError && <ErrorBanner error={mutationError.reason} />}
-    </div>
+    </Stack>
   )
 
   return (

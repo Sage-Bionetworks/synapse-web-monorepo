@@ -1,13 +1,12 @@
 import { StickyNote2Outlined } from '@mui/icons-material'
-import { Button, Tooltip } from '@mui/material'
+import { Box, Button, Tooltip } from '@mui/material'
 import { TaskBundle } from '@sage-bionetworks/synapse-client'
+import { useNavigate } from 'react-router'
 import useOpenCuratorFromTaskButton from '../hooks/useOpenCuratorButton'
 import {
-  OPEN_CURATOR_TOOLTIP_TITLE,
   OPEN_CURATOR_NO_PERMISSION_ON_SOURCE_ERROR_MESSAGE,
+  OPEN_CURATOR_TOOLTIP_TITLE,
 } from '../utils/constants'
-
-export const NO_TASK_ASSIGNEE_WARNING_DIALOG_TITLE = 'Task is Unassigned'
 
 /**
  * Handles rendering the 'Actions' cell in the Metadata Task table, which provides buttons for the user
@@ -18,11 +17,11 @@ export default function MetadataTaskTableActionCell(props: {
   taskBundle: TaskBundle
   canEdit: boolean
 }) {
-  const { taskBundle } = props
-  const curationTask = taskBundle.task!
+  const { canEdit, taskBundle } = props
+  const navigate = useNavigate()
 
   const { hasPermission, isLoading, isPending, onClick } =
-    useOpenCuratorFromTaskButton(curationTask)
+    useOpenCuratorFromTaskButton(taskBundle)
 
   const disableButton = isPending || isLoading || !hasPermission
   let tooltipTitle: string | undefined = undefined
@@ -33,10 +32,20 @@ export default function MetadataTaskTableActionCell(props: {
   }
 
   return (
-    <>
+    <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
+      {canEdit && (
+        <Button
+          variant="outlined"
+          onClick={() => void navigate(`edit/${taskBundle.task!.taskId}`)}
+          size={'small'}
+        >
+          Edit
+        </Button>
+      )}
       <Tooltip title={tooltipTitle}>
         <span>
           <Button
+            variant="contained"
             size={'small'}
             startIcon={<StickyNote2Outlined />}
             loading={isPending}
@@ -47,6 +56,6 @@ export default function MetadataTaskTableActionCell(props: {
           </Button>
         </span>
       </Tooltip>
-    </>
+    </Box>
   )
 }

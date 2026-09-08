@@ -1,5 +1,6 @@
 export * from './useAccessApprovals'
 export * from './useDataAccessSubmission'
 export * from './useAccessRequirements'
+export * from './useEDuc'
 export * from './useGetApprovedSubmissionInfo'
 export * from './useRestrictionInformation'

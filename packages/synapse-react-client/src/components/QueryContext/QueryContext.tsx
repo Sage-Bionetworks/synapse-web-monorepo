@@ -35,8 +35,6 @@ export type QueryContextType = {
   hasFacetedSelectColumn: boolean
   /** Returns true iff the current request has resettable filters applied via facet filters or additionalFilters. Excludes filters applied to a locked column */
   hasResettableFilters: boolean
-  // Either open benefactor entity page in a new window or open the sharing settings dialog (in Synapse.org)
-  onViewSharingSettingsClicked?: (benefactorId: string) => void
   /** Combines two faceted columns into a single inclusive range selector */
   combineRangeFacetConfig?: ReadonlyDeep<CombineRangeFacetConfig>
 
@@ -75,6 +73,15 @@ export type QueryContextType = {
    * PORTALS-3071: For Tables that are not entityviews or a datasets, keep track of the column that should be used for the row (entity) name
    */
   fileNameColumnName: string | undefined
+
+  /**
+   * Optional factory to get react-query options for a given page number without calling the standard
+   * table query API. When provided (e.g. by SearchQueryWrapper), usePrefetchTableRows will use this
+   * instead of getTableQueryUseQueryOptions so that the correct API is called for prefetching.
+   */
+  getRowDataQueryOptionsForPage?: (
+    pageNumber: number,
+  ) => TableQueryUseQueryOptions['rowDataQueryOptions']
 }
 
 /**

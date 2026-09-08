@@ -54,6 +54,7 @@ export const OBSERVATION_CARD = 'observation_card'
 export const RELEASE_CARD = 'release_card'
 export const COMPUTATIONAL: string = 'computational'
 export const COMPUTATIONAL_TOOL: string = 'computational tool'
+export const MODEL: string = 'model'
 export const EXPERIMENTAL: string = 'experimental'
 export const EXPERIMENTAL_TOOL: string = 'experimental tool'
 export const CLINICAL: string = 'clinical'
@@ -120,6 +121,7 @@ export const USER_BUNDLE_MASK_IS_CERTIFIED = 0x8
 export const USER_BUNDLE_MASK_IS_VERIFIED = 0x10
 export const USER_BUNDLE_MASK_IS_ACT_MEMBER = 0x20
 export const USER_BUNDLE_MASK_IS_AR_REVIEWER = 0x40
+export const USER_BUNDLE_MASK_IDENTITY_PROVIDERS = 0x80
 // SessionStorage keys for info from ids
 export const USER_PROFILE_STORAGE_KEY = 'INFO_FROM_IDS_USER_PROFILE'
 export const ENTITY_HEADER_STORAGE_KEY = 'INFO_FROM_IDS_ENTITY_HEADER'
@@ -154,12 +156,16 @@ export const LOGIN_BACK_BUTTON_CLASS_NAME = 'login-flow-back-button'
 export const LOGIN_METHOD_EMAIL = 'EMAIL'
 export const LOGIN_METHOD_OAUTH2_GOOGLE = 'GOOGLE'
 export const LOGIN_METHOD_OAUTH2_ARCUS = 'ARCUS'
+export const LOGIN_METHOD_OAUTH2_NIH_RESEARCHER_AUTH_SERVICE =
+  'NIH_RESEARCHER_AUTH_SERVICE'
 export const LOGIN_METHOD_OAUTH2_ORCID = 'ORCID'
 export const LOGIN_METHOD_OAUTH2_SAGE_BIONETWORKS = 'SAGE_BIONETWORKS'
 
 export const OAUTH2_PROVIDERS = {
   [LOGIN_METHOD_OAUTH2_ARCUS]: 'ARCUS_BIOSCIENCES',
   [LOGIN_METHOD_OAUTH2_GOOGLE]: 'GOOGLE_OAUTH_2_0',
+  [LOGIN_METHOD_OAUTH2_NIH_RESEARCHER_AUTH_SERVICE]:
+    'NIH_RESEARCHER_AUTH_SERVICE',
   [LOGIN_METHOD_OAUTH2_ORCID]: 'ORCID',
   [LOGIN_METHOD_OAUTH2_SAGE_BIONETWORKS]: 'SAGE_BIONETWORKS',
 }
@@ -180,7 +186,7 @@ export const LAST_LOGIN_DATE_LOCALSTORAGE_KEY = 'last_login_date'
 export const ACCESS_TOKEN_COOKIE_KEY =
   'org.sagebionetworks.security.user.login.token'
 export const LAST_PLACE_LOCALSTORAGE_KEY = 'last_place_url'
-
+export const ENTITY_SIDEBAR_STATE_LOCALSTORAGE_KEY = 'entity_sidebar_open'
 export const ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY =
   'org.sagebionetworks.account.promptedforlogin'
 
@@ -217,7 +223,10 @@ export const SYNAPSE_DOCS_SHARING_SETTINGS_PERMISSIONS_CONDITIONS_FOR_USE_URL =
 // Grid Page URL Query Parameters
 export const GRID_PAGE_SESSION_ID_QUERY_PARAM = 'sessionId'
 export const GRID_PAGE_AGENT_REGISTRATION_ID_QUERY_PARAM = 'agentRegistrationId'
-export const GRID_PAGE_TASK_ID_QUERY_PARAM = 'taskId'
+export const GRID_PAGE_TASK_ID_QUERY_PARAM = 'taskIds'
+
+// Curation Task List URL Query Parameters
+export const CURATION_TASK_LIST_ASSIGNED_TO_ME_QUERY_PARAM = 'assignedToMe'
 
 // Search Page URL Query Parameters
 export const SEARCH_PAGE_QUERY_PARAM = 'query'

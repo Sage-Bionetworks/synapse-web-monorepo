@@ -1,0 +1,25 @@
+// Entry animation for a chat bubble/response block mounting.
+$entry-duration: 500ms;
+$entry-easing: cubic-bezier(0.2, 0, 0, 1);
+$entry-translate-y: 10px;
+
+@keyframes chatInteractionEntry {
+  from {
+    opacity: 0;
+    transform: translateY($entry-translate-y);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.entryAnimation {
+  animation: chatInteractionEntry $entry-duration $entry-easing;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entryAnimation {
+    animation: none;
+  }
+}

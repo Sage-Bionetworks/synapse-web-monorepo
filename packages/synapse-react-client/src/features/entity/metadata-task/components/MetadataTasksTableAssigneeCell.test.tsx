@@ -61,14 +61,12 @@ describe('MetadataTasksTableAssigneeCell', () => {
   describe('assignee display', () => {
     it('renders "Unassigned" when assigneePrincipalId is missing', () => {
       const taskBundle = createMockTaskBundle({
-        task: {
-          taskId: 123,
-          assigneePrincipalId: undefined,
-          taskProperties: {
-            concreteType:
-              'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties',
-            fileViewId: 'syn999',
-          },
+        taskId: 123,
+        assigneePrincipalId: undefined,
+        taskProperties: {
+          concreteType:
+            'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties',
+          fileViewId: 'syn999',
         },
       })
       renderComponent(taskBundle, false)
@@ -78,14 +76,12 @@ describe('MetadataTasksTableAssigneeCell', () => {
 
     it('renders "Unassigned" when assigneePrincipalId is "0"', () => {
       const taskBundle = createMockTaskBundle({
-        task: {
-          taskId: 123,
-          assigneePrincipalId: '0',
-          taskProperties: {
-            concreteType:
-              'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties',
-            fileViewId: 'syn999',
-          },
+        taskId: 123,
+        assigneePrincipalId: '0',
+        taskProperties: {
+          concreteType:
+            'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties',
+          fileViewId: 'syn999',
         },
       })
       renderComponent(taskBundle, false)
@@ -153,8 +149,9 @@ describe('MetadataTasksTableAssigneeCell', () => {
     })
 
     it('shows active-session warning when task has an active session', async () => {
-      const taskBundleWithSession = createMockTaskBundle({
-        status: {
+      const taskBundleWithSession = createMockTaskBundle(
+        {},
+        {
           taskId: 123,
           executionDetails: {
             activeSessionId: 'active-session-id',
@@ -162,7 +159,7 @@ describe('MetadataTasksTableAssigneeCell', () => {
               'org.sagebionetworks.repo.model.curation.execution.GridExecutionDetails',
           },
         },
-      })
+      )
       await openEditDialog(taskBundleWithSession)
       expect(screen.getByText(/active Curator session/i)).toBeInTheDocument()
     })

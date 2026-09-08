@@ -20,7 +20,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { useQuery } from '@tanstack/react-query'
 import type Plotly from 'plotly.js-basic-dist'
-import { useMemo, useState } from 'react'
+import { useId, useMemo, useState } from 'react'
 import { getContrastColorPalette } from '../../ColorGradient/ColorGradient'
 import { ConfirmationDialog } from '../../ConfirmationDialog/ConfirmationDialog'
 import loadingScreen from '../../LoadingScreen/LoadingScreen'
@@ -50,23 +50,11 @@ export type FacetNavPanelProps = {
 }
 
 const maxLabelLength: number = 19
+export const MAX_PLOT_HEIGHT_PX = 150
+export const MAX_EXPANDED_PLOT_HEIGHT_PX = 300
 
 // STACKED_HORIZONTAL_BAR corresponds to a bar chart where we just want to show the proportion (like a pie chart)
 export type PlotType = 'PIE' | 'BAR' | 'STACKED_HORIZONTAL_BAR'
-
-const layout: Partial<Plotly.Layout> = {
-  showlegend: false,
-  annotations: [],
-  margin: { l: 0, r: 0, b: 0, t: 0, pad: 0 },
-  yaxis: {
-    visible: false,
-    showgrid: false,
-  },
-  xaxis: {
-    visible: false,
-    showgrid: false,
-  },
-}
 
 export type GraphData = {
   data: Plotly.Data[]
@@ -314,6 +302,12 @@ function FacetNavPanel(props: FacetNavPanelProps) {
     useMeasure<HTMLDivElement>()
   const { getColumnDisplayName } = useQueryVisualizationContext()
 
+  // Wait for a non-zero measured width before rendering the plot.
+  // Round width to avoid rebuilds from small pixel fluctuations.
+  const plotWidth = plotContainerMeasurements?.width
+    ? Math.round(plotContainerMeasurements.width)
+    : undefined
+
   const [showModal, setShowModal] = useState(false)
 
   const plotTitle = getColumnDisplayName(
@@ -330,6 +324,31 @@ function FacetNavPanel(props: FacetNavPanelProps) {
     [queryMetadata?.columnModels, facetToPlot],
   )
   const columnType = columnModel?.columnType as ColumnTypeEnum
+
+  // Plotly.js mutates the layout object it receives, so each component instance
+  // must have its own layout object. Sharing a single object across instances
+  // (e.g. when the expand modal mounts a second FacetNavPanel) causes Plotly's
+  // mutations on one chart to silently corrupt the other. Use useMemo to
+  // produce a fresh layout object per instance — do NOT hoist this to module scope.
+  const plotLayout = useMemo<Partial<Plotly.Layout>>(
+    () => ({
+      showlegend: false,
+      annotations: [],
+      margin: { l: 0, r: 0, b: 0, t: 0, pad: 0 },
+      yaxis: {
+        visible: plotType === 'BAR',
+        showgrid: false,
+        automargin: true,
+      },
+      xaxis: {
+        // Show category labels on the x-axis for vertical bar charts in modal view
+        visible: isModalView && plotType === 'BAR',
+        showgrid: false,
+        automargin: true,
+      },
+    }),
+    [isModalView, plotType],
+  )
 
   const { data: plotData } = useQuery({
     queryKey: [
@@ -353,11 +372,16 @@ function FacetNavPanel(props: FacetNavPanelProps) {
     enabled: !!facetToPlot,
   })
 
+  const chartSelectionInputLabelId = useId()
+  const filterByInputLabelId = useId()
+
   /* rendering functions */
   const chartSelectionToggle = (
     <StyledFormControl fullWidth>
-      <InputLabel>Chart Type</InputLabel>
+      <InputLabel id={chartSelectionInputLabelId}>Chart Type</InputLabel>
       <Select
+        labelId={chartSelectionInputLabelId}
+        label="Chart Type"
         value={plotType}
         onChange={e => {
           onSetPlotType(e.target.value as PlotType)
@@ -414,6 +438,7 @@ function FacetNavPanel(props: FacetNavPanelProps) {
             >
               <StyledFormControl>
                 <InputLabel
+                  id={filterByInputLabelId}
                   sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
                 >
                   <span>Filter All Data By</span>
@@ -422,6 +447,7 @@ function FacetNavPanel(props: FacetNavPanelProps) {
                   </Tooltip>
                 </InputLabel>
                 <EnumFacetFilter
+                  labelId={filterByInputLabelId}
                   facet={facetToPlot}
                   containerAs="Dropdown"
                   dropdownType="SelectBox"
@@ -440,26 +466,32 @@ function FacetNavPanel(props: FacetNavPanelProps) {
             className="FacetNavPanel__body"
           >
             <div ref={plotContainerRef}>
-              <Plot
-                key={`${facetToPlot.columnName}-${facetToPlot.jsonPath}-${plotType}-${plotContainerMeasurements?.width}`}
-                layout={layout}
-                data={plotData?.data ?? []}
-                style={getPlotStyle(
-                  plotContainerMeasurements?.width,
-                  plotType,
-                  isModalView ? 300 : 150,
-                )}
-                config={{ displayModeBar: false }}
-                onClick={evt =>
-                  applyFacetFilter(evt, facetToPlot, applyChangesToGraphSlice)
-                }
-              />
+              {plotWidth !== undefined && (
+                <Plot
+                  key={`${facetToPlot.columnName}-${facetToPlot.jsonPath}-${plotType}-${plotWidth}`}
+                  layout={plotLayout}
+                  data={plotData?.data ?? []}
+                  style={getPlotStyle(
+                    plotWidth,
+                    plotType,
+                    isModalView
+                      ? MAX_EXPANDED_PLOT_HEIGHT_PX
+                      : MAX_PLOT_HEIGHT_PX,
+                  )}
+                  config={{ displayModeBar: false }}
+                  onClick={evt =>
+                    applyFacetFilter(evt, facetToPlot, applyChangesToGraphSlice)
+                  }
+                />
+              )}
             </div>
-            <FacetPlotLegendList
-              labels={plotData?.labels}
-              colors={plotData?.colors}
-              isExpanded={isModalView}
-            />
+            <Box sx={{ alignSelf: 'center' }}>
+              <FacetPlotLegendList
+                labels={plotData?.labels}
+                colors={plotData?.colors}
+                isExpanded={isModalView}
+              />
+            </Box>
           </Box>
         </div>
       </>

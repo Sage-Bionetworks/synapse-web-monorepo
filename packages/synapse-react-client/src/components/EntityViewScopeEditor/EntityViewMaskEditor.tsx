@@ -10,6 +10,7 @@ import {
   ENTITY_VIEW_TYPE_MASK_FILE,
   ENTITY_VIEW_TYPE_MASK_FOLDER,
   ENTITY_VIEW_TYPE_MASK_TABLE,
+  ENTITY_VIEW_TYPE_MASK_DOCKER,
 } from '@sage-bionetworks/synapse-types'
 
 export type EntityViewMaskEditorProps = {
@@ -23,6 +24,7 @@ const maskLabelPairs: [string, number][] = [
   ['Folders', ENTITY_VIEW_TYPE_MASK_FOLDER],
   ['Tables', ENTITY_VIEW_TYPE_MASK_TABLE],
   ['Datasets', ENTITY_VIEW_TYPE_MASK_DATASET],
+  ['Docker Repositories', ENTITY_VIEW_TYPE_MASK_DOCKER],
 ]
 
 export function isMaskSupportedInUI(value: number) {

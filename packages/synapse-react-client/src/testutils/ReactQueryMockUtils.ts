@@ -421,7 +421,7 @@ export function getUseMutationMock<
           ({
             ...prevState,
             variables: vars,
-          } as UseMutationResult<TData, TError, TVariables>),
+          }) as UseMutationResult<TData, TError, TVariables>,
       )
     } else {
       console.warn(
@@ -470,11 +470,11 @@ export function getUseMutationMock<
 
       currentSetValue(
         prev =>
-          ({ ...successState, variables: prev.variables } as UseMutationResult<
+          ({ ...successState, variables: prev.variables }) as UseMutationResult<
             TData,
             TError,
             TVariables
-          >),
+          >,
       )
     } else {
       console.warn(
@@ -506,11 +506,11 @@ export function getUseMutationMock<
 
       currentSetValue(
         prev =>
-          ({ ...errorState, variables: prev.variables } as UseMutationResult<
+          ({ ...errorState, variables: prev.variables }) as UseMutationResult<
             TData,
             TError,
             TVariables
-          >),
+          >,
       )
     } else {
       console.warn(
@@ -542,11 +542,11 @@ export function getUseMutationMock<
 
       currentSetValue(
         prev =>
-          ({ ...pendingState, variables: prev.variables } as UseMutationResult<
+          ({ ...pendingState, variables: prev.variables }) as UseMutationResult<
             TData,
             TError,
             TVariables
-          >),
+          >,
       )
     } else {
       console.warn(
@@ -625,11 +625,11 @@ export function getUseMutationMock<
  * @deprecated Use {@link getUseMutationMock} instead, which provides utilities to dynamically change the state of the mock hook.
  */
 export function getUseMutationIdleMock<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   TData = any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   TError = any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   TVariables = any,
 >(data?: TData) {
   return {
@@ -656,11 +656,11 @@ export function getUseMutationIdleMock<
  * @deprecated Use {@link getUseMutationMock} instead, which provides utilities to dynamically change the state of the mock hook.
  */
 export function getUseMutationPendingMock<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   TData = any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   TError = any,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
   TVariables = any,
 >(data?: TData, variables?: TVariables) {
   return {

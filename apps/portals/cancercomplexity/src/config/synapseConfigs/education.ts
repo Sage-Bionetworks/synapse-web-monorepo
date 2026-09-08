@@ -4,7 +4,8 @@ import type { IconOptions } from 'synapse-react-client/components/Icon/Icon'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { TableToGenericCardMapping } from 'synapse-react-client/components/GenericCard/TableRowGenericCard'
-import { educationSql } from '../resources'
+import { educationSearchIndexId, educationSql } from '../resources'
+import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 import { citationBoilerplateText } from './commonProps'
 import { sharePageLinkButtonDetailPageProps } from '@sage-bionetworks/synapse-portal-framework/shared-config/SharePageLinkButtonConfig'
 
@@ -40,7 +41,8 @@ export const educationCardConfiguration: CardConfiguration = {
     isMarkdown: false,
     URLColumnName: 'title',
     matchColumnName: 'title',
-    baseURL: 'Explore/Educational Resources/DetailsPage',
+    baseURL: 'Explore/Educational Resources',
+    urlParamStyle: 'path-segment',
   },
   labelLinkConfig: [
     {
@@ -64,6 +66,18 @@ export const educationQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
     },
     searchable: ['title', 'description'],
   },
+}
+
+export const educationSearch: SearchQueryWrapperPlotNavProps = {
+  rgbIndex,
+  name: 'Educational Resources',
+  shouldDeepLink: false,
+  cardConfiguration: educationCardConfiguration,
+  facetsToPlot: ['topic', 'activityType'],
+  searchIndexId: educationSearchIndexId,
+  autocompleteFieldName: 'title',
+  hideTopLevelControls: false,
+  hideQueryCount: false,
 }
 
 /**
@@ -104,7 +118,8 @@ export const educationDetailsCardConfiguration: CardConfiguration = {
     isMarkdown: false,
     URLColumnName: 'title',
     matchColumnName: 'title',
-    baseURL: 'Explore/Educational Resources/DetailsPage',
+    baseURL: 'Explore/Educational Resources',
+    urlParamStyle: 'path-segment',
   },
   labelLinkConfig: [
     {

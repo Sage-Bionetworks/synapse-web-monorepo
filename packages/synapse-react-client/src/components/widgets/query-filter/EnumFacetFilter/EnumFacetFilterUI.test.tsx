@@ -92,9 +92,8 @@ describe('EnumFacetFilterUI (unit tests)', () => {
       canMultiSelect: false,
     })
 
-    const selectAllCheckbox = await screen.findByRole<HTMLInputElement>(
-      'checkbox',
-    )
+    const selectAllCheckbox =
+      await screen.findByRole<HTMLInputElement>('checkbox')
     expect(selectAllCheckbox.checked).toBe(!defaultProps.filterIsActive)
 
     const radioOptions = await screen.findAllByRole<HTMLInputElement>('radio')

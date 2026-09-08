@@ -6,17 +6,20 @@ import { datasetsSql, projectsSql, programSql } from './resources'
 
 const detailPages: DetailPageConfig[] = [
   {
-    path: 'Explore/Programs/DetailsPage',
+    path: 'Explore/Programs',
+    urlParamStyle: 'path-segment',
     sql: programSql,
     primaryKeyColumn: 'Program',
   },
   {
-    path: 'Explore/Projects/DetailsPage',
+    path: 'Explore/Projects',
+    urlParamStyle: 'path-segment',
     sql: projectsSql,
     primaryKeyColumn: 'Project',
   },
   {
-    path: 'Explore/Datasets/DetailsPage',
+    path: 'Explore/Datasets',
+    urlParamStyle: 'path-segment',
     sql: datasetsSql,
     primaryKeyColumn: 'id',
   },

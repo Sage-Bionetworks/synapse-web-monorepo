@@ -1,0 +1,33 @@
+.chip:global(.MuiButton-root) {
+  display: flex;
+  padding: 4px 12px 4px 5px;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  border-radius: 500px;
+  border: 1px solid var(--UI-Gray-500, #d0d4d9);
+  background: linear-gradient(
+    127deg,
+    rgba(220, 220, 220, 0.2) 0.7%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  color: #16181e;
+  font-weight: 500;
+  text-decoration: none;
+
+  :global(.MuiButton-endIcon) {
+    margin: 0;
+    color: #5a488f;
+  }
+}
+
+.categoryChip:global(.MuiChip-root) {
+  background-color: #ee986d;
+  color: #fff;
+  border-radius: 500px;
+  padding: 5px 8px 6px 8px;
+}
+
+.categorySkeleton {
+  border-radius: 5px;
+}

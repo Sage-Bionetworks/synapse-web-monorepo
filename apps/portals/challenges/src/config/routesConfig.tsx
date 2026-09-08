@@ -19,7 +19,10 @@ const CHALLENGE_LIST_PATH = '/OpenChallenges'
  *   'brats2027': '/Challenges/DetailsPage?id=syn74274098',
  */
 const CHALLENGE_SHORTCUTS: Record<string, string> = {
+  aou_challenge2026: '/Challenges/DetailsPage?id=syn73123692',
   brats2026: '/Challenges/DetailsPage?id=syn74274097',
+  DigitalPenChallenge: '/Challenges/DetailsPage?id=syn68634259',
+  morphic_dream: '/Challenges/DetailsPage?id=syn69885382',
 }
 
 const routes: RouteObject[] = [
@@ -62,9 +65,9 @@ const routes: RouteObject[] = [
           {
             path: INSTRUCTIONS_PATH,
             lazy: () =>
-              import(
-                '@/pages/ChallengeDetailsPageTabContent/InstructionsTab'
-              ).then(convertModuleToRouteObject),
+              import('@/pages/ChallengeDetailsPageTabContent/InstructionsTab').then(
+                convertModuleToRouteObject,
+              ),
           },
           {
             path: NEWS_PATH,
@@ -76,9 +79,9 @@ const routes: RouteObject[] = [
           {
             path: COMMUNITY_PATH,
             lazy: () =>
-              import(
-                '@/pages/ChallengeDetailsPageTabContent/CommunityTab'
-              ).then(convertModuleToRouteObject),
+              import('@/pages/ChallengeDetailsPageTabContent/CommunityTab').then(
+                convertModuleToRouteObject,
+              ),
           },
           {
             // Task tab last so we attempt to match the other paths first before using the slug

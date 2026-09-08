@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { EntityTreeTable } from './EntityTreeTable'
 import { useEntityTreeState } from './hooks/useEntityTreeState'
+import { useTableColumns } from './hooks/useTableColumns'
 
 vi.mock('./hooks/useEntityTreeState', () => ({
   useEntityTreeState: vi.fn(() => ({
@@ -85,5 +86,27 @@ describe('EntityTreeTable', () => {
     )
 
     expect(mockUseEntityTreeState).toHaveBeenCalledWith('syn456', false, false)
+  })
+
+  it('should pass showCheckboxColumn=true to useTableColumns when onToggleSelection is provided', () => {
+    const mockUseTableColumns = vi.mocked(useTableColumns)
+
+    render(<EntityTreeTable rootId="syn123" onToggleSelection={vi.fn()} />)
+
+    expect(mockUseTableColumns).toHaveBeenCalledWith(true, true)
+  })
+
+  it('should pass showCheckboxColumn=false to useTableColumns when onToggleSelection is not provided', () => {
+    const mockUseTableColumns = vi.mocked(useTableColumns)
+
+    render(<EntityTreeTable rootId="syn123" />)
+
+    expect(mockUseTableColumns).toHaveBeenCalledWith(true, false)
+  })
+
+  it('should pass disableEntityLinks and tree into context', () => {
+    render(<EntityTreeTable rootId="syn123" disableEntityLinks={true} />)
+
+    expect(screen.getByTestId('entity-tree-table-view')).toBeInTheDocument()
   })
 })

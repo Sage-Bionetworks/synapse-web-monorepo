@@ -29,6 +29,14 @@ export function convertDoiToLink(doi: string) {
 export const SYNAPSE_ENTITY_ID_REGEX = /^(syn\d+)(?:\.(\d+))?$/i
 
 /**
+ * Detects a Synapse entity ID token (e.g. `syn12345` or `syn12345.4`) embedded
+ * anywhere in a larger string, using word boundaries so ordinary words like
+ * `synapse` or `synonyms` don't match. Use `SYNAPSE_ENTITY_ID_REGEX` when
+ * validating a whole string, and this pattern when scanning free text.
+ */
+export const SYNAPSE_ENTITY_ID_TOKEN_REGEX = /\bsyn\d+(?:\.\d+)?\b/iu
+
+/**
  * Given a Synapse Entity ID of the form `syn123` or `syn123.4`, returns the
  * Reference object containing the entity ID and optional version number.
  * If the ID is not a valid Synapse Entity ID, returns null.
@@ -44,4 +52,18 @@ export function parseSynId(synId: string): Reference | null {
   } else {
     return synIdMatch
   }
+}
+
+/**
+ * Matches the href portion of a markdown link, e.g. `[label](https://example.com)`
+ * captures `https://example.com`.
+ */
+export const MARKDOWN_LINK_HREF_REGEX = /\]\(([^)]+)\)/
+
+/**
+ * Given a string that may be a markdown link (e.g. `[label](https://example.com)`),
+ * returns the extracted href. If the string is not a markdown link, returns it unchanged.
+ */
+export function extractMarkdownLinkHref(value: string): string {
+  return value.match(MARKDOWN_LINK_HREF_REGEX)?.[1] ?? value
 }

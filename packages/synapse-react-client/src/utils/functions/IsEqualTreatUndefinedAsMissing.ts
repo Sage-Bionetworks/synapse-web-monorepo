@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* oxlint-disable @typescript-eslint/no-explicit-any */
 // `any` is safe for these comparison functions
 import { isArray, isObject, includes, isEqualWith, omitBy } from 'lodash-es'
 

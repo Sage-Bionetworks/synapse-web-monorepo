@@ -30,6 +30,8 @@ import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/Synaps
 import {
   AccessorChange,
   AccessType,
+  Renewal,
+  Request,
   RestrictableObjectType,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
@@ -40,6 +42,7 @@ import * as UserSearchBoxModule from '../../../UserSearchBox/UserSearchBox'
 import * as AccessRequirementListUtils from '../../AccessRequirementListUtils'
 import DataAccessRequestAccessorsFilesForm, {
   DataAccessRequestAccessorsFilesFormProps,
+  EDUC_COLLABORATOR_LIMIT,
 } from './DataAccessRequestAccessorsFilesForm'
 
 const MARKDOWN_SYNAPSE_TEST_ID = 'MarkdownSynapseContent'
@@ -97,13 +100,15 @@ const mockGetDataRequestForUpdate = vi.spyOn(
   'getDataAccessRequestForUpdate',
 )
 
+function respondToUpdateWithUpdatedObject(req: Request | Renewal) {
+  // Update the 'GET' mock to return the updated object
+  mockGetDataRequestForUpdate.mockResolvedValue(req)
+  return Promise.resolve(req)
+}
+
 const mockUpdateDataAccessRequest = vi
   .spyOn(SynapseClient, 'updateDataAccessRequest')
-  .mockImplementation(req => {
-    // Update the 'GET' mock to return the updated object
-    mockGetDataRequestForUpdate.mockResolvedValue(req)
-    return Promise.resolve(req)
-  })
+  .mockImplementation(respondToUpdateWithUpdatedObject)
 
 vi.spyOn(SynapseClient, 'getFiles').mockResolvedValue({ requestedFiles: [] })
 
@@ -584,6 +589,261 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
 
     await waitFor(() => {
       expect(mockOnBackClicked).toHaveBeenCalled()
+    })
+  })
+
+  describe('when the AR has an eDucTemplateId', () => {
+    const eDucProps: DataAccessRequestAccessorsFilesFormProps = {
+      ...defaultProps,
+      managedACTAccessRequirement: {
+        ...mockManagedACTAccessRequirement,
+        eDucTemplateId: 'educ-template-123',
+      },
+    }
+
+    beforeEach(() => {
+      // Restore the default mock impl in case a previous test replaced it.
+      mockUpdateDataAccessRequest.mockImplementation(
+        respondToUpdateWithUpdatedObject,
+      )
+    })
+
+    it('renders Signing Official name and email fields', async () => {
+      mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
+      renderComponent(eDucProps)
+
+      await screen.findByLabelText(
+        /First and last names of your Signing Official/i,
+      )
+      await screen.findByLabelText(
+        /Institutional Email of your Signing Official/i,
+      )
+    })
+
+    it('keeps Submit disabled until SO name and email are provided', async () => {
+      mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
+      const { user } = renderComponent(eDucProps)
+
+      const submitButton = await screen.findByRole('button', { name: 'Submit' })
+      expect(submitButton).toBeDisabled()
+
+      const nameField = screen.getByLabelText(
+        /First and last names of your Signing Official/i,
+      )
+      const emailField = screen.getByLabelText(
+        /Institutional Email of your Signing Official/i,
+      )
+
+      await user.type(nameField, 'Jane Smith')
+      expect(submitButton).toBeDisabled()
+
+      await user.type(emailField, 'jane@example.edu')
+      await waitFor(() => expect(submitButton).toBeEnabled())
+    })
+
+    it('includes signingOfficial in the saved DAR on Submit', async () => {
+      mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
+      const { user } = renderComponent(eDucProps)
+
+      const nameField = await screen.findByLabelText(
+        /First and last names of your Signing Official/i,
+      )
+      const emailField = screen.getByLabelText(
+        /Institutional Email of your Signing Official/i,
+      )
+
+      await user.type(nameField, 'Jane Smith')
+      await user.type(emailField, 'jane@example.edu')
+
+      const submitButton = await screen.findByRole('button', { name: 'Submit' })
+      await waitFor(() => expect(submitButton).toBeEnabled())
+      await user.click(submitButton)
+
+      await waitFor(() => {
+        const lastCall = mockUpdateDataAccessRequest.mock.calls.filter(
+          call => call[0].signingOfficial,
+        )
+        expect(lastCall.length).toBeGreaterThan(0)
+        const savedRequest = lastCall[lastCall.length - 1][0]
+        expect(savedRequest.signingOfficial).toMatchObject({
+          name: 'Jane Smith',
+          institutionalEmail: 'jane@example.edu',
+        })
+      })
+    })
+
+    it('prefills SO fields from existing DAR', async () => {
+      mockGetDataRequestForUpdate.mockResolvedValue({
+        ...MOCK_DATA_ACCESS_REQUEST,
+        signingOfficial: {
+          name: 'Pre-filled Official',
+          institutionalEmail: 'prefilled@example.edu',
+        },
+      })
+      renderComponent(eDucProps)
+
+      await waitFor(() => {
+        expect(
+          screen.getByLabelText(
+            /First and last names of your Signing Official/i,
+          ),
+        ).toHaveValue('Pre-filled Official')
+        expect(
+          screen.getByLabelText(
+            /Institutional Email of your Signing Official/i,
+          ),
+        ).toHaveValue('prefilled@example.edu')
+      })
+    })
+
+    it('hides the user search and shows a warning when at the collaborator limit', async () => {
+      const cappedAccessorChanges: AccessorChange[] = Array.from(
+        { length: EDUC_COLLABORATOR_LIMIT },
+        (_, i) => ({
+          userId: String(2000 + i),
+          type: AccessType.GAIN_ACCESS,
+        }),
+      )
+      mockGetDataRequestForUpdate.mockResolvedValue({
+        ...MOCK_DATA_ACCESS_REQUEST,
+        accessorChanges: cappedAccessorChanges,
+      })
+
+      renderComponent(eDucProps)
+
+      await screen.findByRole('alert')
+      expect(screen.getByRole('alert')).toHaveTextContent(
+        new RegExp(`maximum of ${EDUC_COLLABORATOR_LIMIT} collaborators`, 'i'),
+      )
+      expect(screen.queryByTestId('UserSearchBox-MOCK')).not.toBeInTheDocument()
+    })
+
+    it('still shows the user search when one below the collaborator limit', async () => {
+      const nearCapAccessorChanges: AccessorChange[] = Array.from(
+        { length: EDUC_COLLABORATOR_LIMIT - 1 },
+        (_, i) => ({
+          userId: String(2000 + i),
+          type: AccessType.GAIN_ACCESS,
+        }),
+      )
+      mockGetDataRequestForUpdate.mockResolvedValue({
+        ...MOCK_DATA_ACCESS_REQUEST,
+        accessorChanges: nearCapAccessorChanges,
+      })
+
+      renderComponent(eDucProps)
+
+      await screen.findByTestId('UserSearchBox-MOCK')
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    })
+
+    it('does not cap collaborators when the AR is not eDUC', async () => {
+      const manyAccessorChanges: AccessorChange[] = Array.from(
+        { length: EDUC_COLLABORATOR_LIMIT + 5 },
+        (_, i) => ({
+          userId: String(2000 + i),
+          type: AccessType.GAIN_ACCESS,
+        }),
+      )
+      mockGetDataRequestForUpdate.mockResolvedValue({
+        ...MOCK_DATA_ACCESS_REQUEST,
+        accessorChanges: manyAccessorChanges,
+      })
+
+      renderComponent(defaultProps)
+
+      await screen.findByTestId('UserSearchBox-MOCK')
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    })
+
+    it('shows "Continue" and calls onEDucContinue instead of submitting when onEDucContinue is set', async () => {
+      mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
+      const mockOnEDucContinue = vi.fn()
+      const { user } = renderComponent({
+        ...eDucProps,
+        onEDucContinue: mockOnEDucContinue,
+      })
+
+      const nameField = await screen.findByLabelText(
+        /First and last names of your Signing Official/i,
+      )
+      const emailField = screen.getByLabelText(
+        /Institutional Email of your Signing Official/i,
+      )
+      await user.type(nameField, 'Jane Smith')
+      await user.type(emailField, 'jane@example.edu')
+
+      const continueButton = await screen.findByRole('button', {
+        name: 'Continue',
+      })
+      await waitFor(() => expect(continueButton).toBeEnabled())
+      await user.click(continueButton)
+
+      await waitFor(() => expect(mockOnEDucContinue).toHaveBeenCalledTimes(1))
+      expect(mockCreateSubmission).not.toHaveBeenCalled()
+    })
+
+    it('keeps the Signing Official fields enabled while the request is updated in the background', async () => {
+      mockGetDataRequestForUpdate.mockResolvedValue({
+        ...MOCK_DATA_ACCESS_REQUEST,
+        accessorChanges: [],
+      })
+      // The update never resolves, so the mutation remains pending
+      mockUpdateDataAccessRequest.mockImplementation(
+        () => new Promise(() => {}),
+      )
+
+      const { user } = renderComponent(eDucProps)
+
+      const nameField = await screen.findByLabelText(
+        /First and last names of your Signing Official/i,
+      )
+      const emailField = screen.getByLabelText(
+        /Institutional Email of your Signing Official/i,
+      )
+
+      // The pending background update adds the current user as an accessor
+      await waitFor(() =>
+        expect(mockUpdateDataAccessRequest).toHaveBeenCalled(),
+      )
+
+      expect(nameField).toBeEnabled()
+      expect(emailField).toBeEnabled()
+      await user.type(nameField, 'Jane Smith')
+      expect(nameField).toHaveValue('Jane Smith')
+    })
+
+    it('does not repeatedly update the request when the server response omits the applied changes', async () => {
+      // Simulate a server that does not persist the accessorChanges we send. Each response is a distinct object, as
+      // it would be over the wire, so the applied changes are not visible to the next render.
+      let etag = 0
+      mockGetDataRequestForUpdate.mockImplementation(() =>
+        Promise.resolve({
+          ...MOCK_DATA_ACCESS_REQUEST,
+          accessorChanges: [],
+          etag: String(etag),
+        }),
+      )
+      mockUpdateDataAccessRequest.mockImplementation(req =>
+        Promise.resolve({ ...req, accessorChanges: [], etag: String(++etag) }),
+      )
+
+      renderComponent(eDucProps)
+
+      await screen.findByLabelText(
+        /First and last names of your Signing Official/i,
+      )
+      await waitFor(() =>
+        expect(mockUpdateDataAccessRequest).toHaveBeenCalled(),
+      )
+      // Give the effect a chance to re-fire in response to the refetched request
+      await waitFor(() =>
+        expect(mockGetDataRequestForUpdate.mock.calls.length).toBeGreaterThan(
+          1,
+        ),
+      )
+
+      expect(mockUpdateDataAccessRequest).toHaveBeenCalledTimes(1)
     })
   })
 })

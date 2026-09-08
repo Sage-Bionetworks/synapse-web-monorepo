@@ -61,6 +61,17 @@ export * from './QueryContext'
 export * from './QueryCount'
 export * from './QueryWrapper'
 export * from './QueryWrapperPlotNav'
+export { SearchQueryWrapper } from './SearchQueryWrapper/SearchQueryWrapper'
+export type { SearchQueryWrapperProps } from './SearchQueryWrapper/SearchQueryWrapper'
+export type {
+  SearchQueryConfig,
+  SearchQueryStrategy,
+} from './SearchQueryWrapper/SearchQueryUseQueryOptions'
+export {
+  default as SearchQueryWrapperPlotNav,
+  isSearchQueryWrapperPlotNavProps,
+} from './SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
+export type { SearchQueryWrapperPlotNavProps } from './SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 export * from './RegisterPageLogoutPrompt'
 export * from './RenderIfInView'
 export * from './Resources'
@@ -91,6 +102,7 @@ export * from './HelpPopover'
 export * from './MuiContainer'
 export * from './JsonLdScript'
 export * from './DatasetJsonLdScript'
+export * from './DatasetHosting'
 export * from './SageResourcesPopover'
 export * from './RecentPublicationsGrid'
 export * from './ImageCardGridWithLinks'

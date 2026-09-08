@@ -19,6 +19,7 @@ import OrientationBanner from '../OrientationBanner'
 import { UserHistoryDashboard } from './AccessHistoryDashboard'
 import { AccessRequirementDashboard } from './AccessRequirementDashboard'
 import { DataAccessSubmissionDashboard } from './AccessSubmissionDashboard'
+import { EDucTemplateTable } from './EDucTemplateTable'
 import SubmissionPage from './SubmissionPage/SubmissionPage'
 
 function LinkTab(props: { href: string; children: ReactNode; icon: IconName }) {
@@ -67,6 +68,11 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
                   Access Requirements
                 </LinkTab>
               )}
+              {hasActPermissions && (
+                <LinkTab href="/EDucTemplates" icon="fileOutlined">
+                  eDUC Templates
+                </LinkTab>
+              )}
               {hasReviewerPermissions && (
                 <LinkTab href="/Submissions" icon="discussion">
                   Submissions
@@ -89,6 +95,10 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
           {
             path: 'AccessRequirements',
             element: hasActPermissions ? <AccessRequirementDashboard /> : null,
+          },
+          {
+            path: 'EDucTemplates',
+            element: hasActPermissions ? <EDucTemplateTable /> : null,
           },
           {
             path: 'Submissions',

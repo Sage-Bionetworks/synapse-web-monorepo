@@ -10,7 +10,7 @@ function HomePage() {
     <>
       <Header />
       <SectionLayout ContainerProps={{ className: 'home-spacer' }}>
-        <Goals entityId={'syn23518009'} />
+        <Goals entityId={'syn23518009'} itemsPerRow={4} />
       </SectionLayout>
       <div className={'home-bg-dark'}>
         <SectionLayout

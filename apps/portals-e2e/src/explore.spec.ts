@@ -1,7 +1,7 @@
 import { Locator, Page, expect, test } from '@playwright/test'
 import { defaultExpectTimeout } from '../playwright.config'
 import exploreConfig from './configs/exploreConfig'
-import { dismissBanners } from './helpers/banners'
+import { dismissBanners, dismissModalBanners } from './helpers/banners'
 import { getPortal } from './helpers/portalInfo'
 import { tagTestTitle } from './helpers/setup'
 
@@ -13,6 +13,8 @@ const goToExploreTab = async (page: Page, exploreTab: string) => {
       await page.goto(`/Explore/${exploreTab}`, { waitUntil: 'load' })
     })
 
+    await dismissModalBanners(page)
+
     await test.step('explore page has loaded', async () => {
       await expect(
         page.getByRole('heading', { name: 'Explore', exact: true }),
@@ -20,7 +22,16 @@ const goToExploreTab = async (page: Page, exploreTab: string) => {
       await expect(page.getByLabel('Explore Sections')).toBeVisible()
       // Extract the main tab name from paths like "Cohort Builder/Individuals"
       const tabName = exploreTab.split('/')[0]
-      await expect(page.getByRole('tab', { name: tabName })).toBeVisible()
+      let expectedTabLabel = tabName
+      if (getPortal() === 'eliteportal') {
+        if (tabName === 'Data') expectedTabLabel = 'Files'
+        else if (tabName === 'Cohort Builder')
+          expectedTabLabel = 'Cohort Discovery'
+        else if (tabName === 'Computational Tools') expectedTabLabel = 'Tools'
+      }
+      await expect(
+        page.getByRole('tab', { name: expectedTabLabel }),
+      ).toBeVisible()
     })
 
     await dismissBanners(page)
@@ -81,14 +92,15 @@ const expectTopLevelControls = async (
       // Extract the main tab name from paths like "Cohort Builder/Individuals"
       const tabName = exploreTab.split('/')[0]
       let exploreTabHeading = tabName
-      if (
-        (getPortal() === 'arkportal' && tabName === 'All Data') ||
-        (getPortal() === 'eliteportal' && tabName === 'Data')
-      ) {
+      if (getPortal() === 'arkportal' && tabName === 'All Data') {
         exploreTabHeading = 'Data'
+      } else if (getPortal() === 'eliteportal') {
+        if (tabName === 'Data') exploreTabHeading = 'Files'
+        else if (tabName === 'Cohort Builder')
+          exploreTabHeading = 'Cohort Discovery'
+        else if (tabName === 'Computational Tools') exploreTabHeading = 'Tools'
       } else if (
-        (getPortal() === 'eliteportal' ||
-          getPortal() === 'adknowledgeportal') &&
+        getPortal() === 'adknowledgeportal' &&
         tabName === 'Cohort Builder'
       ) {
         exploreTabHeading = 'Participants'
@@ -435,7 +447,10 @@ const expectTable = async (page: Page, exploreTab: string) => {
       })
 
       await test.step('confirm rows shown matches page count or total rows', async () => {
-        const rowsPerPageText = await page.getByRole('combobox').textContent()
+        const rowsPerPageText = await page
+          .getByRole('combobox')
+          .filter({ hasText: /per page/ })
+          .textContent()
         const rowsPerPage = parseInt(rowsPerPageText!.split(' ')[0])
         await expect(rows).toHaveCount(
           // add one for the header row

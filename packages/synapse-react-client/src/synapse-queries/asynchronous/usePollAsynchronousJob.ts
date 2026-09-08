@@ -4,21 +4,22 @@ import { useEffect, useState } from 'react'
 
 /**
  * Polls an asynchronous job and returns a UseQueryResult containing the job status. Stops polling once the job
- * succeeds or fails.
+ * succeeds or fails. The query is disabled while jobId is undefined (e.g. before the job has been registered).
  * @param jobId
  */
-export default function usePollAsynchronousJob(jobId: string) {
+export default function usePollAsynchronousJob(jobId: string | undefined) {
   const { synapseClient, keyFactory } = useSynapseContext()
 
   const [refetchInterval, setRefetchInterval] = useState<number | false>(1000)
 
   const query = useQuery({
-    queryKey: keyFactory.getAsyncJobStatusQueryKey(jobId),
+    queryKey: keyFactory.getAsyncJobStatusQueryKey(jobId ?? ''),
+    enabled: !!jobId,
     refetchInterval: refetchInterval,
     queryFn: () =>
       synapseClient.asynchronousJobServicesClient.getRepoV1AsynchronousJobJobId(
         {
-          jobId,
+          jobId: jobId!,
         },
       ),
   })

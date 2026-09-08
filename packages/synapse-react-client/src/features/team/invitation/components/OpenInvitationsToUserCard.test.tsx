@@ -52,9 +52,9 @@ const mockAcceptMutate = vi.fn()
 const mockDeclineMutate = vi.fn()
 
 // Captured options so tests can invoke onSuccess/onError callbacks directly.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line @typescript-eslint/no-explicit-any
 let capturedAddMemberOptions: any
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line @typescript-eslint/no-explicit-any
 let capturedDeleteInvitationOptions: any
 
 const MOCK_INVITATION_WITH_MESSAGE: MembershipInvitation = {

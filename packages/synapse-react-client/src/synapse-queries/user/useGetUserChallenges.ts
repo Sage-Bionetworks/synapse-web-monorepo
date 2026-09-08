@@ -70,9 +70,8 @@ export function useGetUserChallengesInfinite<
           challenges.results,
           challenge => challenge.projectId,
         )
-        const challengeProjects = await SynapseClient.getEntityHeadersByIds(
-          challengeProjectIds,
-        )
+        const challengeProjects =
+          await SynapseClient.getEntityHeadersByIds(challengeProjectIds)
         const challengeWithProjectHeaderPagedResults: ChallengeWithProjectHeaderPagedResults =
           {
             results: Array.from(challenges.results, (challenge, index) => {

@@ -35,7 +35,7 @@ async function renderTimelineSelector(
   props: TimelinePlotSpeciesSelectorProps = timelineSpeciesSelectorProps,
 ) {
   let component
-  // eslint-disable-next-line @typescript-eslint/require-await
+  // oxlint-disable-next-line @typescript-eslint/require-await
   await act(async () => {
     component = render(<TimelinePlotSpeciesSelector {...props} />, {
       wrapper: createWrapper(),

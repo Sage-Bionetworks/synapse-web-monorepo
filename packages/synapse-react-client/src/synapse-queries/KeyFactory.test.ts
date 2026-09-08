@@ -593,4 +593,44 @@ describe('KeyFactory tests', () => {
       )
     })
   })
+
+  describe('JSON Schema QueryKeys', () => {
+    test('getListOrganizationsQueryKey is stable and takes no arguments', () => {
+      expectQueryKeyToMatch(
+        keyFactory.getListOrganizationsQueryKey(),
+        keyFactory.getListOrganizationsQueryKey(),
+      )
+    })
+
+    test('getListJsonSchemasQueryKey differs by organization name', () => {
+      const orgAKey = keyFactory.getListJsonSchemasQueryKey('org.a')
+      const orgBKey = keyFactory.getListJsonSchemasQueryKey('org.b')
+
+      expectQueryKeyToMatch(
+        orgAKey,
+        keyFactory.getListJsonSchemasQueryKey('org.a'),
+      )
+      expectQueryKeyNotToMatch(orgAKey, orgBKey)
+    })
+
+    test('getListJsonSchemaVersionsQueryKey differs by organization and schema name', () => {
+      const key = keyFactory.getListJsonSchemaVersionsQueryKey(
+        'org.a',
+        'SchemaOne',
+      )
+
+      expectQueryKeyToMatch(
+        key,
+        keyFactory.getListJsonSchemaVersionsQueryKey('org.a', 'SchemaOne'),
+      )
+      expectQueryKeyNotToMatch(
+        key,
+        keyFactory.getListJsonSchemaVersionsQueryKey('org.a', 'SchemaTwo'),
+      )
+      expectQueryKeyNotToMatch(
+        key,
+        keyFactory.getListJsonSchemaVersionsQueryKey('org.b', 'SchemaOne'),
+      )
+    })
+  })
 })

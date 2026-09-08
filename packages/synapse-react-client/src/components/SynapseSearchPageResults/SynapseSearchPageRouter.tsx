@@ -1,3 +1,4 @@
+import { RouteErrorBoundary } from '@/components/error/RouteErrorBoundary'
 import { PropsWithChildren, useMemo } from 'react'
 import {
   createBrowserRouter,
@@ -25,6 +26,7 @@ export default function SynapseSearchPageRouter(
       {
         path: '/',
         element: <>{children}</>,
+        errorElement: <RouteErrorBoundary />,
       },
     ],
     [children, useMemoryRouter],

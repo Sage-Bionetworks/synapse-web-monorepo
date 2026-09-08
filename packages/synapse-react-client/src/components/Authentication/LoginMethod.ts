@@ -2,6 +2,7 @@ import {
   LOGIN_METHOD_EMAIL,
   LOGIN_METHOD_OAUTH2_ARCUS,
   LOGIN_METHOD_OAUTH2_GOOGLE,
+  LOGIN_METHOD_OAUTH2_NIH_RESEARCHER_AUTH_SERVICE,
   LOGIN_METHOD_OAUTH2_ORCID,
   LOGIN_METHOD_OAUTH2_SAGE_BIONETWORKS,
 } from '@/utils/SynapseConstants'
@@ -9,6 +10,7 @@ import {
 export const LoginMethods = [
   LOGIN_METHOD_OAUTH2_ARCUS,
   LOGIN_METHOD_OAUTH2_GOOGLE,
+  LOGIN_METHOD_OAUTH2_NIH_RESEARCHER_AUTH_SERVICE,
   LOGIN_METHOD_OAUTH2_ORCID,
   LOGIN_METHOD_EMAIL,
   LOGIN_METHOD_OAUTH2_SAGE_BIONETWORKS,
@@ -21,6 +23,8 @@ export function getLoginMethodFriendlyName(loginMethod: LoginMethod) {
       return 'Arcus Biosciences'
     case LOGIN_METHOD_OAUTH2_GOOGLE:
       return 'Google'
+    case LOGIN_METHOD_OAUTH2_NIH_RESEARCHER_AUTH_SERVICE:
+      return 'Researcher Auth Service'
     case LOGIN_METHOD_OAUTH2_ORCID:
       return 'ORCiD'
     case LOGIN_METHOD_EMAIL:
