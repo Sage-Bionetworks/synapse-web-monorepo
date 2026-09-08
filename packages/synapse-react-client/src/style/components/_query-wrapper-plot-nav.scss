@@ -86,6 +86,9 @@
   .FacetFilterControls {
     grid-row: 8 / span 1;
   }
+  .QueryBuilderControls {
+    grid-row: 8 / span 1;
+  }
   .PlotsContainer {
     grid-row: 9 / span 1;
   }
@@ -103,6 +106,12 @@
 
     .TotalQueryResults.hasFilters {
       margin-bottom: 5px;
+    }
+  }
+
+  &.isShowingQueryBuilder {
+    .FacetFilterControls {
+      display: none;
     }
   }
 

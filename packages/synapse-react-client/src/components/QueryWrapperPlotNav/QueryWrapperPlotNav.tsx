@@ -14,7 +14,7 @@ import { Box } from '@mui/material'
 import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { useQuery } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'
-import { Suspense, useMemo, useState } from 'react'
+import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { CardConfiguration } from '../CardContainer/CardConfiguration'
 import { SynapseErrorBoundary } from '../error'
 import FullTextSearch from '../FullTextSearch/FullTextSearch'
@@ -44,6 +44,10 @@ import PlotsContainer, {
 import FacetFilterControls, {
   FacetFilterControlsProps,
 } from '../widgets/query-filter/FacetFilterControls'
+import { QueryBuilderControls } from '../QueryBuilder/QueryBuilderControls'
+import { defaultQBGroup } from '../QueryBuilder/QueryBuilderStore'
+import { qbNodeToApiFilter } from '../QueryBuilder/queryBuilderTranslation'
+import { QBGroup } from '../QueryBuilder/QueryBuilderTypes'
 import { QueryWrapperSynapsePlotProps } from './QueryWrapperSynapsePlot'
 import { RowSetView } from './RowSetView'
 import QueryWrapperLoadingScreen from '../QueryWrapper/QueryWrapperLoadingScreen'
@@ -80,6 +84,19 @@ type QueryWrapperPlotNavOwnProps = {
   lockedColumn?: QueryWrapperProps['lockedColumn']
   initialLimit?: number
   hideTopLevelControls?: boolean
+  /**
+   * When true, shows a `Show / Hide Query Builder` toggle in `TopLevelControls`.
+   * The QB and the facet nav are mutually exclusive — turning the QB on hides
+   * the facet nav entirely.
+   */
+  showQueryBuilderControl?: boolean
+  /**
+   * When true, the QB is shown by default. When `showQueryBuilderControl` is
+   * also true, the user can toggle it back off from `TopLevelControls`. When
+   * `showQueryBuilderControl` is false the QB is permanently displayed with
+   * no toggle button.
+   */
+  defaultShowQueryBuilder?: boolean
 } & Omit<TopLevelControlsProps, 'entityId'> &
   Pick<QueryWrapperPlotNavCustomPlotParams, 'onCustomPlotClick'> &
   Pick<
@@ -141,6 +158,8 @@ export type QueryWrapperPlotNavContentsProps = Pick<
   | 'initialLimit'
   | 'initialPlotTypeByFacetColumnName'
   | 'hideTopLevelControls'
+  | 'showQueryBuilderControl'
+  | 'defaultShowQueryBuilder'
 > & {
   isFullTextSearchEnabled: boolean
   remount?: () => void
@@ -171,14 +190,45 @@ export function QueryWrapperPlotNavContents(
     initialLimit,
     initialPlotTypeByFacetColumnName,
     hideTopLevelControls,
+    showQueryBuilderControl = false,
+    defaultShowQueryBuilder = false,
   } = props
   const queryContext = useQueryContext()
   const [showExportMetadata, setShowExportMetadata] = useState(false)
+  const [showQueryBuilder, setShowQueryBuilder] = useState(
+    defaultShowQueryBuilder,
+  )
+  const [qbTree, setQbTree] = useState<QBGroup>(() => defaultQBGroup())
   const { hasFacetedSelectColumn: isFaceted, queryMetadataQueryOptions } =
     queryContext
+  const { executeQueryRequest } = queryContext
   const { isLoading: isLoadingQueryMetadata } = useQuery(
     queryMetadataQueryOptions,
   )
+
+  // Push QB tree edits into the outgoing query, debounced via the existing
+  // ImmutableTableQuery machinery (750ms). Skip the initial mount so we don't
+  // clobber any additionalFilters hydrated from the URL before the user has
+  // touched the tree.
+  const skipInitialQbSync = useRef(true)
+  useEffect(() => {
+    if (!showQueryBuilder) return
+    if (skipInitialQbSync.current) {
+      skipInitialQbSync.current = false
+      return
+    }
+    const filterGroup = qbNodeToApiFilter(qbTree)
+    executeQueryRequest(
+      prev => ({
+        ...prev,
+        query: {
+          ...prev.query,
+          additionalFilters: filterGroup ? [filterGroup] : undefined,
+        },
+      }),
+      { debounce: true },
+    )
+  }, [qbTree, showQueryBuilder, executeQueryRequest])
 
   const isRowSelectionVisible = useAtomValue(isRowSelectionVisibleAtom)
 
@@ -205,12 +255,12 @@ export function QueryWrapperPlotNavContents(
         return (
           <Box
             className={`QueryWrapperPlotNav ${
-              queryVisualizationContext.showFacetFilter
+              queryVisualizationContext.showFacetFilter && !showQueryBuilder
                 ? QUERY_FILTERS_EXPANDED_CSS
                 : QUERY_FILTERS_COLLAPSED_CSS
             } ${isRowSelectionVisible ? HAS_SELECTED_ROWS_CSS : ''} ${
               hideTopLevelControls ? 'isHidingTopLevelControls' : ''
-            }`}
+            } ${showQueryBuilder ? 'isShowingQueryBuilder' : ''}`}
             sx={{
               '*': {
                 cursor: isLoadingQueryMetadata ? 'wait' : undefined,
@@ -249,7 +299,7 @@ export function QueryWrapperPlotNavContents(
                       hideProgrammaticOptionsMenuItem
                     }
                     hideQueryCount={hideQueryCount}
-                    hideFacetFilterControl={!isFaceted}
+                    hideFacetFilterControl={!isFaceted || showQueryBuilder}
                     hideVisualizationsControl={
                       !isFaceted || hideVisualizationsControl
                     }
@@ -257,16 +307,30 @@ export function QueryWrapperPlotNavContents(
                     cavaticaConnectAccountURL={cavaticaConnectAccountURL}
                     remount={remount}
                     customControls={customControls}
+                    showQueryBuilderControl={showQueryBuilderControl}
+                    showQueryBuilder={showQueryBuilder}
+                    onToggleQueryBuilder={() =>
+                      setShowQueryBuilder(value => !value)
+                    }
                   />
                 </SynapseErrorBoundary>
               )}
-              {isFaceted && (
-                <>
+              {showQueryBuilder ? (
+                <Suspense fallback={null}>
+                  <div className="QueryBuilderControls">
+                    <QueryBuilderControls
+                      tree={qbTree}
+                      onTreeChange={setQbTree}
+                    />
+                  </div>
+                </Suspense>
+              ) : (
+                isFaceted && (
                   <FacetFilterControls
                     availableFacets={availableFacets}
                     initialExpandedFacetControls={initialExpandedFacetControls}
                   />
-                </>
+                )
               )}
               {/* Isolated Suspense so that metadata loading does not hide the table */}
               <Suspense fallback={null}>

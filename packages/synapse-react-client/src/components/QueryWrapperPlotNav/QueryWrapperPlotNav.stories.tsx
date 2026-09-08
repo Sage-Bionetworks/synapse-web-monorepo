@@ -235,6 +235,18 @@ const queryWithAdditionalFilter: Query = {
   ],
 }
 
+export const FileViewWithQueryBuilder: Story = {
+  name: 'FileView with Query Builder (V1 preview)',
+  args: {
+    ...FileView.args,
+    name: 'Data (Query Builder preview)',
+    sql: 'SELECT fileName, title, species, dataFormat, assay, tumorType, gender, tissue, grantName, grantType, consortium FROM syn9630847',
+    showQueryBuilderControl: true,
+    defaultShowQueryBuilder: true,
+    shouldDeepLink: false,
+  },
+}
+
 /**
  * This demo contains a filter on a locked column. This type of configuration should hide that the filter on the locked
  * column is applied, making it seem as if the total contents of the table are just the filtered results. Common in

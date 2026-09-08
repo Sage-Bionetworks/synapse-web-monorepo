@@ -1,0 +1,85 @@
+@use '../../style/abstracts/_cssVariables' as vars;
+
+.group {
+  position: relative;
+  padding: 8px 0 8px 16px;
+  border-left: 2px solid
+    var(--qb-accent-color, var(--synapse-primary-action-color));
+  border-radius: 2px 0 0 2px;
+
+  &.nested {
+    margin-top: 4px;
+    margin-bottom: 4px;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.combinator :global(.MuiToggleButton-root) {
+  text-transform: none;
+  padding: 2px 12px;
+  min-width: 44px;
+  font-weight: 700;
+  border-color: var(--synapse-gray-dark);
+  color: var(--synapse-gray-regular);
+}
+
+.combinator :global(.MuiToggleButton-root.Mui-selected) {
+  background-color: var(--qb-accent-color, var(--synapse-primary-action-color));
+  color: white;
+  border-color: var(--qb-accent-color, var(--synapse-primary-action-color));
+}
+
+.combinator :global(.MuiToggleButton-root.Mui-selected:hover) {
+  background-color: var(--qb-accent-color, var(--synapse-primary-action-color));
+}
+
+.notToggle {
+  text-transform: none;
+  padding: 2px 12px;
+  border-color: var(--synapse-gray-dark);
+  color: var(--synapse-gray-regular);
+  font-weight: 600;
+  font-size: 13px;
+
+  &:global(.Mui-selected),
+  &:global(.Mui-selected:hover) {
+    background-color: var(--synapse-error);
+    color: white;
+    border-color: var(--synapse-error);
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.actionButton {
+  text-transform: none;
+  padding: 2px 8px;
+  min-width: 0;
+  font-weight: 500;
+  color: var(--synapse-primary-action-color);
+}
+
+.children {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.emptyState {
+  padding: 8px 4px;
+  color: var(--synapse-gray-deemphasized);
+  font-style: italic;
+  font-size: 13px;
+}
