@@ -48,6 +48,8 @@ All changed projects and their dependents will be built, linted, tested, and typ
 
 Additionally, the project Storybook(s) will be published to Chromatic, where each story will be tested and snapshotted. To reduce usage, this job only runs on pull requests that are "ready-for-review" i.e. not drafts. For this reason, please mark your pull request as a draft until these checks are necessary.
 
+The Storybook for the latest `main` is also published to GitHub Pages: https://sage-bionetworks.github.io/synapse-web-monorepo/
+
 Some notes:
 
 - If the test step fails, you can find the failed tests by downloading the artifacts from the job, which includes HTML reports of the tests.
