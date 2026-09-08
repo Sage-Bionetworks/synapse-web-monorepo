@@ -461,6 +461,13 @@ export default function AccessRequirementList(
             displayToast(
               'Your DUC has been emailed to your collaborators. You can check signature progress in your access request history.',
               'info',
+              {
+                primaryButtonConfig: {
+                  text: 'View Request History',
+                  href: '/RequestHistory:default',
+                },
+                dismissOnPrimaryButtonClick: true,
+              },
             )
             onHide()
           }}
