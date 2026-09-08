@@ -35,6 +35,7 @@ import { ReactNode, useMemo, useState } from 'react'
 import { DialogBaseTitle } from '../DialogBase'
 import { EntityLink } from '../EntityLink'
 import IconSvg from '../IconSvg/IconSvg'
+import { displayToast } from '../ToastMessage/ToastMessage'
 import UserOrTeamBadge from '../UserOrTeamBadge'
 import { AccessRequirementListItem } from './AccessRequirementListItem'
 import { useCanShowManagedACTWikiInWizard } from './AccessRequirementListUtils'
@@ -454,7 +455,14 @@ export default function AccessRequirementList(
             requestDataStepCallback({ step: RequestDataStep.REVIEW_DUC })
           }}
           onSendForSignature={() => {
-            requestDataStepCallback({ step: RequestDataStep.SIGNATURE_STATUS })
+            // The signature-status step isn't useful right after routing (0 signatures collected,
+            // Submit necessarily disabled), so surface a toast and close the wizard. The user can
+            // resume from their in-flight requests table when signatures are ready.
+            displayToast(
+              'Your DUC has been emailed to your collaborators. You can check signature progress in your access request history.',
+              'info',
+            )
+            onHide()
           }}
           onManualUpload={() => {
             requestDataStepCallback({
@@ -488,17 +496,15 @@ export default function AccessRequirementList(
           subjectId={subjectId ?? ''}
           subjectType={subjectType ?? RestrictableObjectType.ENTITY}
           onHide={onHide}
-          onBackClicked={
-            // When entered directly via initialWizardEntry there is no earlier wizard step to
-            // return to, so omit the callback and let the step hide its Back button.
-            initialWizardEntry
-              ? undefined
-              : () => {
-                  requestDataStepCallback({
-                    step: RequestDataStep.EDUC_PREVIEW,
-                  })
-                }
-          }
+          onBackClicked={() => {
+            // Back from SIGNATURE_STATUS returns to the research project step so the user can
+            // modify the request. EDUC_PREVIEW is skipped because Send-for-signature toasts and
+            // closes the wizard, so users only reach this step from the row-level "Review
+            // Signatures and Submit" entry point.
+            requestDataStepCallback({
+              step: RequestDataStep.UPDATE_RESEARCH_PROJECT,
+            })
+          }}
           onSubmissionCreated={submissionId => {
             requestDataStepCallback({ step: RequestDataStep.COMPLETE })
             onSubmissionCreated(submissionId)

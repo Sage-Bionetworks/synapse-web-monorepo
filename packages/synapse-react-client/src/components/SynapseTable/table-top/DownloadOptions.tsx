@@ -21,6 +21,10 @@ import { DownloadLoginModal } from './DownloadLoginModal'
 export type DownloadOptionsProps = {
   onDownloadFiles: () => void
   darkTheme?: boolean
+  /** If true, the "Add ... files to Download List" menu item will be hidden */
+  hideAddToDownloadListMenuItem?: boolean
+  /** If true, the "Programmatic Options" menu item will be hidden */
+  hideProgrammaticOptionsMenuItem?: boolean
 }
 
 export function DownloadOptions(props: DownloadOptionsProps) {
@@ -45,14 +49,18 @@ export function DownloadOptions(props: DownloadOptionsProps) {
   const [showLoginModal, setShowLoginModal] = useState(false)
   const [showExportMetadata, setShowExportMetadata] = useState(false)
   const [showProgrammaticOptions, setShowProgrammaticOptions] = useState(false)
-  const { onDownloadFiles, darkTheme = true } = props
+  const {
+    onDownloadFiles,
+    darkTheme = true,
+    hideAddToDownloadListMenuItem,
+    hideProgrammaticOptionsMenuItem,
+  } = props
 
   const fileColumnId = getFileColumnModelId(queryMetadata?.columnModels)
 
-  const showAddQueryToDownloadList = canTableQueryBeAddedToDownloadList(
-    entity,
-    fileColumnId,
-  )
+  const showAddQueryToDownloadList =
+    !hideAddToDownloadListMenuItem &&
+    canTableQueryBeAddedToDownloadList(entity, fileColumnId)
 
   // SWC-5878 - Disable downloading a "Draft" dataset
   const disableDownload = entity && isDataset(entity) && entity.isLatestVersion
@@ -102,35 +110,38 @@ export function DownloadOptions(props: DownloadOptionsProps) {
         Export Table
       </MenuItem>,
     )
-    downloadMenuItems.push(
-      <Tooltip
-        key={'programmatic-options'}
-        title={
-          disableDownload
-            ? 'A draft version of a dataset cannot be downloaded programmatically'
-            : null
-        }
-        placement="left"
-        enterNextDelay={300}
-        describeChild={true}
-      >
-        <MenuItem
-          className={disableDownload ? 'ignoreLink' : undefined}
-          disabled={disableDownload}
-          // If disabled, add pointer-events-auto so the tooltip still works
-          style={disableDownload ? { pointerEvents: 'auto' } : {}}
-          onClick={() => setShowProgrammaticOptions(true)}
+    if (!hideProgrammaticOptionsMenuItem) {
+      downloadMenuItems.push(
+        <Tooltip
+          key={'programmatic-options'}
+          title={
+            disableDownload
+              ? 'A draft version of a dataset cannot be downloaded programmatically'
+              : null
+          }
+          placement="left"
+          enterNextDelay={300}
+          describeChild={true}
         >
-          Programmatic Options
-        </MenuItem>
-      </Tooltip>,
-    )
+          <MenuItem
+            className={disableDownload ? 'ignoreLink' : undefined}
+            disabled={disableDownload}
+            // If disabled, add pointer-events-auto so the tooltip still works
+            style={disableDownload ? { pointerEvents: 'auto' } : {}}
+            onClick={() => setShowProgrammaticOptions(true)}
+          >
+            Programmatic Options
+          </MenuItem>
+        </Tooltip>,
+      )
+    }
     return downloadMenuItems
   }, [
     isAuthenticated,
     disableDownload,
     hasResettableFilters,
     hasSelectedRows,
+    hideProgrammaticOptionsMenuItem,
     onDownloadFiles,
     queryMetadata?.queryCount,
     selectedRows,
