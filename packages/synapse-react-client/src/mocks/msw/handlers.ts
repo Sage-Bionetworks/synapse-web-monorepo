@@ -26,6 +26,8 @@ import { getResetTwoFactorAuthHandlers } from './handlers/resetTwoFactorAuthHand
 import { getRealmHandlers } from './handlers/realmHandlers'
 import { getShortIoHandlers } from './handlers/shortIoHandlers'
 import { getSubscriptionHandlers } from './handlers/subscriptionHandlers'
+import { getTermsOfServiceHandlers } from './handlers/termsOfServiceHandlers'
+import { termsOfServiceUpToDateStatus } from '../termsOfService/mockTermsOfService'
 import {
   getAnnotationColumnHandlers,
   getCreateColumnModelBatchHandler,
@@ -91,6 +93,10 @@ export function getHandlersForStorybook(
     resetTwoFactorAuth: getResetTwoFactorAuthHandlers(backendOrigin),
     message: getMessageHandlers(backendOrigin),
     realm: getRealmHandlers(backendOrigin),
+    termsOfService: getTermsOfServiceHandlers(
+      backendOrigin,
+      termsOfServiceUpToDateStatus,
+    ),
     featureFlags: [getFeatureFlagsOverride({ portalOrigin })],
     tableQuery: getHandlersForTableQuery(backendOrigin),
     doi: getDoiHandler(backendOrigin),
