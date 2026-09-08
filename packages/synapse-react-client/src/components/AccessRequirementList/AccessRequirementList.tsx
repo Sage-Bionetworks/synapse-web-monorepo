@@ -52,6 +52,10 @@ import CertificationRequirement from './RequirementItem/CertificationRequirement
 import TwoFactorAuthEnabledRequirement from './RequirementItem/TwoFactorAuthEnabledRequirement'
 import ValidationRequirement from './RequirementItem/ValidationRequirement'
 import { useOneSageURL } from '@/utils/hooks'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 
 export type AccessRequirementListProps = {
   /* if provided, will show this instead of the entity information */
@@ -464,7 +468,8 @@ export default function AccessRequirementList(
               {
                 primaryButtonConfig: {
                   text: 'View Request History',
-                  href: '/RequestHistory:default',
+                  // Resolves to a same-origin path on synapse.org and to the absolute synapse.org URL when embedded in a portal.
+                  href: `${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}RequestHistory:default`,
                 },
                 dismissOnPrimaryButtonClick: true,
               },

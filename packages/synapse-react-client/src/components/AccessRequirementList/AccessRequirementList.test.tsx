@@ -138,7 +138,7 @@ describe('AccessRequirementList tests', () => {
       expect.objectContaining({
         primaryButtonConfig: expect.objectContaining({
           text: 'View Request History',
-          href: '/RequestHistory:default',
+          href: expect.stringMatching(/\/RequestHistory:default$/),
         }),
       }),
     )
