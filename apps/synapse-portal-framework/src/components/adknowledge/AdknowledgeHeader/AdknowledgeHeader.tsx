@@ -16,12 +16,9 @@ const AdknowledgeHeader = (): React.ReactNode => {
     'ROSMAP',
     'Diverse Cohorts',
     'SEA-AD',
-    'snRNAseq',
-    'WGS',
     'Spatial Transcriptomics',
     'Proteomics',
     'Metabolomics',
-    'LOAD',
     'Harmonized Datasets',
     'Target Validation',
   ]
