@@ -135,6 +135,12 @@ describe('AccessRequirementList tests', () => {
     expect(mockedDisplayToast).toHaveBeenCalledWith(
       expect.stringContaining('emailed to your collaborators'),
       'info',
+      expect.objectContaining({
+        primaryButtonConfig: expect.objectContaining({
+          text: 'View Request History',
+          href: expect.stringMatching(/\/RequestHistory:default$/),
+        }),
+      }),
     )
     expect(onHide).toHaveBeenCalledTimes(1)
   })
