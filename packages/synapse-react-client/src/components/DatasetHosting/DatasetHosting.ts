@@ -64,6 +64,12 @@ export type DatasetHostingConfig = {
   label: string
   /** Fallback label when the template needs a repository but none was provided. */
   labelWithoutRepository?: string
+  /**
+   * Short, scannable label shown as a chip adornment next to the dataset title,
+   * summarizing WHERE the data lives (independent of any repository name). Not
+   * templated — never mentions a specific repository.
+   */
+  chipLabel: string
   /** Tooltip summarizing the hosting/download caveat. `{repository}` is substituted. */
   tooltip?: string
   /** MUI Chip color used for the button. `default` = neutral/non-actionable. */
@@ -87,6 +93,7 @@ export const DATASET_HOSTING_CONFIG: Record<
   synapse: {
     downloadable: true,
     label: 'Download',
+    chipLabel: 'Synapse Hosted',
     color: 'primary',
     icon: 'download',
     // No caveat — the default, expected experience.
@@ -94,6 +101,7 @@ export const DATASET_HOSTING_CONFIG: Record<
   'external-cloud': {
     downloadable: true,
     label: 'Download',
+    chipLabel: 'External Cloud',
     color: 'primary',
     icon: 'cloud',
     tooltip:
@@ -103,6 +111,7 @@ export const DATASET_HOSTING_CONFIG: Record<
     downloadable: true,
     label: 'Download from {repository}',
     labelWithoutRepository: 'Download from external repository',
+    chipLabel: 'Synapse Indexed',
     color: 'primary',
     icon: 'external',
     tooltip:
@@ -113,6 +122,7 @@ export const DATASET_HOSTING_CONFIG: Record<
     isExternalLink: true,
     label: 'Access at {repository}',
     labelWithoutRepository: 'Access externally',
+    chipLabel: 'Externally Hosted',
     color: 'warning',
     icon: 'launch',
     tooltip:
@@ -121,6 +131,7 @@ export const DATASET_HOSTING_CONFIG: Record<
   mixed: {
     downloadable: true,
     label: 'Download available files',
+    chipLabel: 'Mixed Hosting',
     color: 'primary',
     icon: 'mixed',
     tooltip:
@@ -129,6 +140,7 @@ export const DATASET_HOSTING_CONFIG: Record<
   unavailable: {
     downloadable: false,
     label: 'Not available for download',
+    chipLabel: 'Not Available',
     color: 'default',
     icon: 'unavailable',
     tooltip:

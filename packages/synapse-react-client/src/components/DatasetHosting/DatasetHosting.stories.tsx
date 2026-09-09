@@ -9,7 +9,8 @@ import {
   Typography,
 } from '@mui/material'
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { useRef } from 'react'
+import { useState } from 'react'
+import { EntityDownloadConfirmation } from '../EntityDownloadConfirmation'
 import { GenericCard } from '../GenericCard/GenericCard'
 import { GenericCardIcon } from '../GenericCard/GenericCardIcon'
 import {
@@ -50,20 +51,28 @@ type DatasetCardExample = {
   description: string
 }
 
-// Wraps a bare DatasetDownloadButton with a confirmation container, so the
-// download-confirmation dialog (e.g. the unauthenticated "Please Sign In" banner)
-// renders in-flow beneath the button instead of overlapping neighboring content.
+// Wraps a bare DatasetDownloadButton with a confirmation banner that renders
+// in-flow beneath the button, so the unauthenticated "Please Sign In" prompt
+// doesn't overlap neighboring content.
 function DemoDownloadButton(
-  props: Omit<DatasetDownloadButtonProps, 'downloadConfirmationContainer'>,
+  props: Omit<DatasetDownloadButtonProps, 'onDownloadClick' | 'isDownloading'>,
 ) {
-  const confirmationRef = useRef<HTMLDivElement>(null)
+  const [showConfirmation, setShowConfirmation] = useState(false)
+  const [isDownloading, setIsDownloading] = useState(false)
   return (
     <>
       <DatasetDownloadButton
         {...props}
-        downloadConfirmationContainer={confirmationRef}
+        onDownloadClick={() => setShowConfirmation(v => !v)}
+        isDownloading={isDownloading}
       />
-      <div ref={confirmationRef} />
+      {showConfirmation && props.entityId && (
+        <EntityDownloadConfirmation
+          entityId={props.entityId}
+          onIsLoadingChange={setIsDownloading}
+          handleClose={() => setShowConfirmation(false)}
+        />
+      )}
     </>
   )
 }
@@ -73,11 +82,8 @@ function DatasetCardDemo(props: {
   actionButtonStyle?: CardActionButtonStyle
 }) {
   const { example, actionButtonStyle = 'chip' } = props
-  // The card's download-confirmation dialog portals here, mirroring how the real
-  // card (TableRowGenericCard) targets its footer — otherwise the unauthenticated
-  // "Please Sign In" banner renders inline and overlaps the absolutely-positioned
-  // card header.
-  const confirmationRef = useRef<HTMLDivElement>(null)
+  const [showConfirmation, setShowConfirmation] = useState(false)
+  const [isDownloading, setIsDownloading] = useState(false)
   const labels: CardLabel[] = [
     { columnDisplayName: 'Disease Focus', value: 'Neurofibromatosis type 1' },
     { columnDisplayName: 'Assay', value: 'RNA-seq' },
@@ -100,12 +106,19 @@ function DatasetCardDemo(props: {
             hosting={example.hosting}
             repository={example.repository}
             externalUrl={example.externalUrl}
-            downloadConfirmationContainer={confirmationRef}
+            onDownloadClick={() => setShowConfirmation(v => !v)}
+            isDownloading={isDownloading}
           />
         }
         labels={labels}
       />
-      <div ref={confirmationRef} />
+      {showConfirmation && (
+        <EntityDownloadConfirmation
+          entityId={MOCK_DATASET_ID}
+          onIsLoadingChange={setIsDownloading}
+          handleClose={() => setShowConfirmation(false)}
+        />
+      )}
     </CardActionButtonStyleContext.Provider>
   )
 }
