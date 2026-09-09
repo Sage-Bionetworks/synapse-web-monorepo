@@ -21,6 +21,7 @@ import NavLink from '../NavLink'
 import NavUserLink from '../NavUserLink'
 import { usePortalContext } from '../PortalContext'
 import { DropdownNavButton } from './DropdownNavButton'
+import { SearchIndexConfig } from '@/types/portal-util-types'
 
 export type NavbarLayout = 'default' | 'with-sticky-search'
 
@@ -49,6 +50,8 @@ export type NavbarConfig = {
   stickyNavBackgroundColor?: string
   /** Text color for the sticky search nav link bar. Defaults to #fff. */
   stickyNavTextColor?: string
+  /** Search index used to power autocomplete suggestions in the sticky search nav bar. */
+  searchIndexConfig?: SearchIndexConfig
 }
 
 type ConditionalNavRouteProps = {
@@ -124,6 +127,7 @@ export default function Navbar({ layout: layoutProp }: NavbarProps = {}) {
     isPortalsDropdownEnabled,
     stickyNavBackgroundColor,
     stickyNavTextColor,
+    searchIndexConfig,
   } = navbarConfig
   const layout: NavbarLayout = layoutProp ?? navbarConfig.layout ?? 'default'
   const isStickySearch = layout === 'with-sticky-search'
@@ -245,6 +249,7 @@ export default function Navbar({ layout: layoutProp }: NavbarProps = {}) {
               path="/Search"
               searchPlaceholder="Search"
               hideChatOption={true}
+              searchIndexConfig={searchIndexConfig}
             />
           </div>
         ) : (
