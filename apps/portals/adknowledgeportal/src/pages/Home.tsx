@@ -98,7 +98,7 @@ function HomePageInternal() {
       </SectionLayout>
       <SectionLayout
         ContainerProps={{
-          sx: { marginBottom: '240px' },
+          sx: { marginBottom: '50px' },
         }}
         title="Data Analysis Platform Integrations"
         subtitle="Analyze your data in a trusted research environment, integrated with the knowledge portal ecosystem."
