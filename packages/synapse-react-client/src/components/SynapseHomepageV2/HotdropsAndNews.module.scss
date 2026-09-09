@@ -80,6 +80,17 @@
 .adkpVariant {
   background-color: transparent !important;
 
+  grid-template-columns: 100%;
+
+  .item {
+    border-left: 1px solid var(--synapse-gray-400);
+    border-top: none;
+
+    &:first-child {
+      border-top: 1px solid var(--synapse-gray-400);
+    }
+  }
+
   .item:hover {
     background: linear-gradient(
       91deg,

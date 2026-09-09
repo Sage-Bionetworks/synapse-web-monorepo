@@ -14,7 +14,7 @@ import { ReactComponent as ContributeIcon } from '../assets/contribution.svg'
 import { ReactComponent as AgoraIcon } from '../assets/agora.svg'
 import { ReactComponent as ModelADIcon } from '../assets/modelAD.svg'
 import styles from './HomePage.module.scss'
-import { Button } from '@mui/material'
+import { Box, Button, Stack } from '@mui/material'
 import { Link } from 'react-router'
 
 function HomePageInternal() {
@@ -101,7 +101,7 @@ function HomePageInternal() {
       </SectionLayout>
       <SectionLayout
         ContainerProps={{
-          sx: { marginBottom: '240px' },
+          sx: { marginBottom: '50px' },
         }}
         title="Data Analysis Platform Integrations"
         subtitle="Analyze your data in a trusted research environment (TRE), integrated with the knowledge portal ecosystem."
@@ -109,38 +109,51 @@ function HomePageInternal() {
       >
         <AdknowledgePlatformIntegrations />
       </SectionLayout>
-      <SectionLayout
-        ContainerProps={{
-          sx: { marginBottom: '90px' },
-        }}
-      >
-        <MailchimpSubscribeSection
-          headlineSx={{ color: 'var(--adkp-accent-color)' }}
-          background="linear-gradient(94deg, rgba(112, 110, 212, 0.04) 30.53%, rgba(198, 134, 230, 0.04) 76.86%)"
-          headline="Stay informed about the latest AD/ADRD research"
-          description="Subscribe to receive the AD Knowledge Portal monthly newsletter by e-mail, which provides information and updates related to the Portal. You can opt out at any time by using the unsubscribe link within the e-mail. We will not share your information with any third parties or use it for any other purposes."
-          mailchimpUrl="https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&id=96b614587a"
-        />
-      </SectionLayout>
-      <SectionLayout
-        title={'New Releases'}
-        centerTitle={true}
-        ContainerProps={{
-          sx: { marginBottom: '90px' },
-        }}
-        subtitle="Explore monthly data and feature releases. Click on a release to learn what's new!"
-      >
-        <div className={styles.newsSection}>
-          <FloatingBlobsBackground color1="#dcc9e4" color2="#cdc8dd" />
-          <WordPressNews
-            wordpressSiteUrl="https://news.adknowledgeportal.org"
-            showCategoryChips={false}
-            showDescription={true}
-            variant="adkp"
-            postCount={6}
-          />
+      <Stack className={styles.newsReleasesContainer}>
+        <Box className={styles.newsReleasesContent}>
+          <SectionLayout
+            title="News Releases"
+            centerTitle
+            ContainerProps={{ className: styles.newsReleasesMailchimp }}
+          >
+            <MailchimpSubscribeSection
+              headlineSx={{ color: 'var(--adkp-accent-color)' }}
+              description={
+                <Box sx={{ textAlign: 'left' }}>
+                  Click on a release to learn what's new, or subscribe to the AD
+                  Knowledge Portal newsletter to receive monthly updates on the
+                  latest AD/ADRD research, directly to your inbox!
+                  <br />
+                  <br />
+                  Opt out at any time. We promise not to share your information
+                  with any third parties or use it for any other purposes.
+                </Box>
+              }
+              mailchimpUrl="https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&id=96b614587a"
+            />
+          </SectionLayout>
+          <div className={styles.newsReleasesWordpress}>
+            <FloatingBlobsBackground color1="#dcc9e4" color2="#cdc8dd" />
+            <WordPressNews
+              wordpressSiteUrl="https://news.adknowledgeportal.org"
+              showCategoryChips={false}
+              showDescription={true}
+              variant="adkp"
+              postCount={3}
+            />
+          </div>
+        </Box>
+        <div className={styles.AdkpButtonContainer}>
+          <Button
+            variant="contained"
+            component={Link}
+            to="/Research Ecosystem"
+            sx={{ alignSelf: 'center' }}
+          >
+            View All Releases
+          </Button>
         </div>
-      </SectionLayout>
+      </Stack>
       <SectionLayout
         title="Related Consortia and Repositories"
         subtitle="Grounded in truly open science and radical collaboration, the AD Knowledge Portal bridges data silos by integrating with a broad network of consortia and repositories. Each contributes unique data and expertise needed to drive discovery in Alzheimer's Disease research."
@@ -151,7 +164,7 @@ function HomePageInternal() {
           },
         }}
       >
-        <div className={styles.relatedConsortiaButtonContainer}>
+        <div className={styles.AdkpButtonContainer}>
           <Button
             variant="contained"
             component={Link}

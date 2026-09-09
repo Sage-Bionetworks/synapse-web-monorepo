@@ -14,10 +14,11 @@
   }
 }
 
-.newsSection {
+.newsReleasesWordpress {
   position: relative;
   min-height: 500px;
   isolation: isolate;
+  padding: 0 16px;
 }
 
 .helpButtonsContainer {
@@ -27,7 +28,35 @@
   margin-top: 40px;
 }
 
-.relatedConsortiaButtonContainer {
+.AdkpButtonContainer {
   display: flex;
   justify-content: center;
+}
+
+.newsReleasesContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 57px;
+  margin-bottom: 12px;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    flex-direction: row;
+
+    .newsReleasesMailchimp {
+      flex: 0.7 1 0;
+    }
+
+    .newsReleasesWordpress {
+      flex: 1 1 0;
+    }
+  }
+}
+
+.newsReleasesContainer {
+  margin-bottom: 80px;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    padding: 60px 50px;
+  }
 }
