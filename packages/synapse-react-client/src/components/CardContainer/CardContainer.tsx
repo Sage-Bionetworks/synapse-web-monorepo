@@ -161,8 +161,7 @@ export function CardContainer(props: CardContainerProps) {
           data: rowData.values,
           selectColumns: rowSet.headers,
           columnModels: queryMetadata!.columnModels,
-          tableEntityConcreteType:
-            tableEntityConcreteType[0] && tableEntityConcreteType[0].type,
+          tableEntityConcreteType: tableEntityConcreteType[0]?.type,
           tableId: rowSet.tableId,
           queryContext: queryContext,
           queryVisualizationContext,

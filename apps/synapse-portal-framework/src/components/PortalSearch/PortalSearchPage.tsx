@@ -75,11 +75,11 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
       const allCountsSet = searchPageTabs.every(tab => tab.count !== undefined)
       if (selectedTabIndex == undefined && allCountsSet) {
         const roleTab =
-          role &&
-          roleMapping &&
-          searchPageTabs.find(tab => tab.title === roleMapping[role])
+          role && roleMapping
+            ? searchPageTabs.find(tab => tab.title === roleMapping[role])
+            : undefined
         // If a role is selected, navigate to the corresponding tab from the roleMapping unless that corresponding tab has a count of 0.
-        if (roleTab && roleTab.count) {
+        if (roleTab?.count) {
           navigate({
             pathname: `/Search/${roleTab.path}`,
             search: location.search,
@@ -91,7 +91,7 @@ export function PortalSearchPage(props: PortalSearchPageProps) {
             PortalSearchTabConfig | undefined
           >((best, tab) => {
             if (tab.score === undefined) return best
-            if (best === undefined || best.score === undefined) return tab
+            if (best?.score === undefined) return tab
             return tab.score > best.score ? tab : best
           }, undefined)
           navigate({

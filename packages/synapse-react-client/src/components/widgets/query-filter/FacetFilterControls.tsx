@@ -52,7 +52,7 @@ const patchRequestFacets = (
   const isEmptyValuesFacet =
     changedFacet.concreteType ===
       'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest' &&
-    (!changedFacet.facetValues || !changedFacet.facetValues.length)
+    !changedFacet.facetValues?.length
   const isEmptyRangesFacet =
     changedFacet.concreteType ===
       'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest' &&

@@ -154,8 +154,7 @@ class StatisticsPlot extends Component<
     const orientation: string = isHorizontal ? 'h' : 'v'
     const traces: any = []
     if (
-      plotData.fileDownloads &&
-      plotData.fileDownloads.months &&
+      plotData.fileDownloads?.months &&
       plotData.fileDownloads.months.length > 0
     ) {
       // add file downloads trace
@@ -169,8 +168,7 @@ class StatisticsPlot extends Component<
       )
     }
     if (
-      plotData.fileUploads &&
-      plotData.fileUploads.months &&
+      plotData.fileUploads?.months &&
       plotData.fileUploads.months.length > 0
     ) {
       // add file uploads trace

@@ -21,7 +21,7 @@ export function processResponseDocument(
       const targetElement = redirectElement.querySelector('target')
       const queryElement = redirectElement.querySelector('query')
 
-      if (targetElement && targetElement.textContent) {
+      if (targetElement?.textContent) {
         const target = targetElement.textContent.trim()
 
         // Guard against open redirect: only allow site-relative paths (/foo, not //evil.com or https://...)

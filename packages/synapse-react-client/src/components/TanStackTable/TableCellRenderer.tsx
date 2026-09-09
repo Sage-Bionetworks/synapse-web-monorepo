@@ -9,8 +9,7 @@ import {
 export function TableCellRenderer<T = unknown>(cell: Cell<T, unknown>) {
   const getWrapInExpandableTd =
     cell.getContext().table.options.meta?.getWrapInExpandableTd
-  const wrapInExpandableTd =
-    getWrapInExpandableTd && getWrapInExpandableTd(cell)
+  const wrapInExpandableTd = getWrapInExpandableTd?.(cell)
   const TableDataCellElement = wrapInExpandableTd
     ? ExpandableTableDataCell
     : 'td'

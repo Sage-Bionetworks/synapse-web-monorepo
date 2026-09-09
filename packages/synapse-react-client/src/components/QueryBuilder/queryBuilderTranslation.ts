@@ -29,7 +29,7 @@ const COLUMN_MULTI_VALUE_FUNCTION_QUERY_FILTER =
 
 /** A multi-value list column is one whose column type ends in `_LIST`. */
 export function isListColumn(columnType: string | null): boolean {
-  return columnType != null && columnType.endsWith('_LIST')
+  return columnType?.endsWith('_LIST') ?? false
 }
 
 // -----------------------------------------------------------------------------

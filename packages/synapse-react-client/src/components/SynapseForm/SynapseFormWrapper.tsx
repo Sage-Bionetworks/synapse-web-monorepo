@@ -125,7 +125,7 @@ class _SynapseFormWrapper extends Component<
           token,
         )
         formData = JSON.parse(fileData)
-        if (submitted && formData && formData['metadata']) {
+        if (submitted && formData?.['metadata']) {
           ;({ formSchemaVersion, uiSchemaVersion, navSchemaVersion } =
             formData['metadata'])
         }
