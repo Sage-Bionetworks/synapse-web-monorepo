@@ -15,7 +15,7 @@ export interface CustomFormContext extends FormContextType {
   /**
    * Allows varying the appearance of descriptions in the UI as either a popover or an expand/collapse control
    */
-  descriptionVariant?: 'popover' | 'expand'
+  descriptionVariant?: 'popover' | 'expand' | 'inline'
 
   /**
    * Allows varying the format of the description in the UI. If 'table', then the description and type are both shown
