@@ -8,6 +8,7 @@ import FloatingBlobsBackground from 'synapse-react-client/components/SynapseHome
 import AdknowledgePrograms from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgePrograms/AdknowledgePrograms'
 import AdknowledgePlatformIntegrations from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgePlatformIntegrations/AdknowledgePlatformIntegrations'
 import { dataTypeSql, exploreQuerySql, programsSql } from '@/config/resources'
+import { autocompleteSuggestionsSearchIndexConfig } from '@/config/searchConfig'
 import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
 import { ReactComponent as ContributeIcon } from '../assets/contribution.svg'
 import { ReactComponent as AgoraIcon } from '../assets/agora.svg'
@@ -65,7 +66,9 @@ function HomePageInternal() {
 
   return (
     <div>
-      <AdknowledgeHeader />
+      <AdknowledgeHeader
+        searchIndexConfig={autocompleteSuggestionsSearchIndexConfig}
+      />
       <SectionLayout
         title="Programs"
         subtitle="The AD Knowledge Portal is your gateway to extensive datasets and resources from NIA-supported Alzheimer's disease and related dementia programs. Dive into program-specific data to accelerate your research."
