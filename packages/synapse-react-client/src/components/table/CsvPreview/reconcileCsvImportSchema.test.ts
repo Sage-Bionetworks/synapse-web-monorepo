@@ -153,4 +153,67 @@ describe('reconcileCsvImportSchema', () => {
       }),
     ).toEqual(suggestedColumns)
   })
+
+  // A STRING without an explicit maximumSize defaults to 50 characters (and cannot exceed 1000), so
+  // narrowing a wide text suggestion to STRING would reject or truncate the CSV's own content.
+  describe('wide text suggestions', () => {
+    it.each([ColumnType.LARGETEXT, ColumnType.MEDIUMTEXT])(
+      'keeps %s for a schema-declared string column instead of narrowing it to STRING',
+      wideTextColumnType => {
+        const schemaPropertiesInfo: SchemaPropertiesMap = {
+          summary: {
+            type: { type: 'string', isArray: false },
+            isRequired: false,
+            enumeratedValues: null,
+          },
+        }
+        const suggestedColumns: ColumnModel[] = [
+          { name: 'summary', columnType: wideTextColumnType },
+        ]
+
+        expect(
+          reconcileCsvImportSchema(suggestedColumns, schemaPropertiesInfo, [
+            'summary',
+          ]),
+        ).toEqual(suggestedColumns)
+      },
+    )
+
+    it.each([ColumnType.LARGETEXT, ColumnType.MEDIUMTEXT])(
+      'keeps %s for a column already in the grid but absent from the custom schema',
+      wideTextColumnType => {
+        const suggestedColumns: ColumnModel[] = [
+          { name: 'notes', columnType: wideTextColumnType },
+        ]
+
+        expect(
+          reconcileCsvImportSchema(suggestedColumns, {}, ['notes']),
+        ).toEqual(suggestedColumns)
+      },
+    )
+
+    it('still restores the exact existing ColumnType over a wide text suggestion', () => {
+      const suggestedColumns: ColumnModel[] = [
+        { name: 'summary', columnType: ColumnType.LARGETEXT },
+      ]
+
+      expect(
+        reconcileCsvImportSchema(suggestedColumns, {}, [], {
+          summary: ColumnType.STRING,
+        }),
+      ).toEqual([{ name: 'summary', columnType: ColumnType.STRING }])
+    })
+
+    it('preserves the suggested maximumSize when coercing a sized type to STRING', () => {
+      const suggestedColumns: ColumnModel[] = [
+        { name: 'homepage', columnType: ColumnType.LINK, maximumSize: 500 },
+      ]
+
+      expect(
+        reconcileCsvImportSchema(suggestedColumns, {}, ['homepage']),
+      ).toEqual([
+        { name: 'homepage', columnType: ColumnType.STRING, maximumSize: 500 },
+      ])
+    })
+  })
 })

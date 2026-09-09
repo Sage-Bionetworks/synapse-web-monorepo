@@ -1,6 +1,15 @@
 import { SchemaPropertiesMap } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import { ColumnModel, ColumnType } from '@sage-bionetworks/synapse-client'
 
+// Text types that hold more than a STRING can and carry no maximumSize of their own. A STRING
+// without an explicit maximumSize defaults to 50 characters and cannot exceed 1000, so coercing
+// these would reject or truncate the CSV's own content. They already store free-form text, which is
+// what a schema-declared string column needs, so leave them as suggested.
+const WIDE_TEXT_COLUMN_TYPES: ReadonlySet<string> = new Set([
+  ColumnType.MEDIUMTEXT,
+  ColumnType.LARGETEXT,
+])
+
 function isDeclaredStringProperty(
   schemaPropertiesInfo: SchemaPropertiesMap,
   columnName: string,
@@ -26,7 +35,8 @@ function isDeclaredStringProperty(
  *    to be a string, since it would otherwise render as plain text (columns absent from a schema
  *    default to a text cell).
  * A column that is not already known by any of the above is a brand-new column, so the CSV-inferred
- * type is used as-is.
+ * type is used as-is. The string presumptions also leave wide text suggestions (MEDIUMTEXT,
+ * LARGETEXT) as-is, since those are already string types that hold more than a STRING can.
  */
 export function reconcileCsvImportSchema(
   suggestedColumns: ColumnModel[],
@@ -51,7 +61,11 @@ export function reconcileCsvImportSchema(
       ? isDeclaredStringProperty(schemaPropertiesInfo, column.name)
       : existingColumnNameSet.has(column.name)
 
-    if (isKnownStringColumn && column.columnType !== ColumnType.STRING) {
+    if (
+      isKnownStringColumn &&
+      column.columnType !== ColumnType.STRING &&
+      !WIDE_TEXT_COLUMN_TYPES.has(column.columnType ?? '')
+    ) {
       return { ...column, columnType: ColumnType.STRING }
     }
     return column
