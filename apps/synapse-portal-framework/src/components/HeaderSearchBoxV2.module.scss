@@ -10,17 +10,18 @@
   @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
     display: flex;
     justify-content: center;
-    width: 544px;
   }
 }
-
 .stack {
   gap: 30px;
   border-radius: 6px;
+  align-items: center;
+  width: 100%;
+}
 
-  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
-    min-width: 660px;
-  }
+.searchRow {
+  width: 100%;
+  max-width: 660px;
 }
 
 .exampleTermsContainer {
@@ -28,9 +29,11 @@
   flex-wrap: wrap;
   gap: 12px;
   justify-content: center;
+  max-width: 940px;
 }
 
 .searchField {
+  height: 44px;
   border-radius: 100px;
   border: 1px solid #e4e4e4;
   background: #fff;
@@ -39,6 +42,7 @@
     0 1px 1px 0 rgba(0, 0, 0, 0.05);
 
   :global(.MuiInputBase-root) {
+    height: 100%;
     border: 1px solid #e4e4e4;
     border-radius: 100px;
     box-shadow:

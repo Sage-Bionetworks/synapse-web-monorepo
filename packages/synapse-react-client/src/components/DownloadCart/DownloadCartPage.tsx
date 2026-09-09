@@ -84,14 +84,11 @@ export function DownloadCartPage() {
   }
   // SWC-5874: When arriving at the download cart when there are no ARs, the user should start in the Download list
   useEffect(() => {
-    if (data && data.numberOfFilesRequiringAction == 0) {
+    if (data?.numberOfFilesRequiringAction == 0) {
       setSelectedTabIndex(1)
     }
     // also hide the Create Package UI if there are no files available for download
-    if (
-      data &&
-      data.numberOfFilesAvailableForDownloadAndEligibleForPackaging === 0
-    ) {
+    if (data?.numberOfFilesAvailableForDownloadAndEligibleForPackaging === 0) {
       setIsShowingCreatePackageUI(false)
     }
   }, [data])

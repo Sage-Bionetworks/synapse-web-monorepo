@@ -1,7 +1,7 @@
 export const getSearchParam = (keyName: string): string | undefined => {
   const urlSearchParams = new URLSearchParams(window.location.search)
   let paramValue: string | undefined = undefined
-  if (urlSearchParams && urlSearchParams.get(keyName)) {
+  if (urlSearchParams?.get(keyName)) {
     paramValue = urlSearchParams.get(keyName)!
   }
   return paramValue
