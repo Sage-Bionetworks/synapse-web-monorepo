@@ -397,3 +397,84 @@ export const WithValidationStates: Story = {
     />
   ),
 }
+
+/**
+ * Values that do not match the column's schema type, as written by server-side
+ * CSV import. Numeric and date-time cells display the stored value rather than
+ * appearing empty, so the user can see what made the row invalid.
+ */
+export const WithSchemaMismatchedValues: Story = {
+  render: () => (
+    <DataGridStoryWrapper
+      initialRowData={[
+        {
+          __reactKey: '1',
+          name: 'Matches the schema',
+          age: 28,
+          score: 95.5,
+          created_date: dayjs('2024-01-15').toISOString(),
+          timestamp: dayjs('2024-01-15').valueOf(),
+          __validationStatus: 'valid',
+        },
+        {
+          __reactKey: '2',
+          name: 'Text where a number is expected',
+          age: 'N/A',
+          score: 'unknown',
+          created_date: 'not-a-date',
+          timestamp: 'sometime',
+          __validationStatus: 'invalid',
+        },
+        {
+          __reactKey: '3',
+          name: 'Numbers stored as strings',
+          age: '34',
+          score: '88.25',
+          created_date: '2024-02-20T00:00:00.000Z',
+          timestamp: '1705314600000',
+          __validationStatus: 'invalid',
+        },
+        {
+          __reactKey: '4',
+          name: 'Partially parseable',
+          age: '42 years',
+          score: '1e5',
+          created_date: '2024-13-45',
+          timestamp: -1,
+          __validationStatus: 'invalid',
+        },
+      ]}
+      columnNames={['name', 'age', 'score', 'created_date', 'timestamp']}
+      columnOrder={[0, 1, 2, 3, 4]}
+      schemaPropertiesInfo={{
+        name: {
+          type: { type: 'string', isArray: false },
+          isRequired: true,
+          enumeratedValues: null,
+        },
+        age: {
+          type: { type: 'integer', isArray: false },
+          isRequired: false,
+          enumeratedValues: null,
+        },
+        score: {
+          type: { type: 'number', isArray: false },
+          isRequired: false,
+          enumeratedValues: null,
+        },
+        created_date: {
+          type: { type: 'string', format: 'date-time', isArray: false },
+          isRequired: false,
+          enumeratedValues: null,
+        },
+        // Epoch milliseconds; exercises the numeric date-time storage format.
+        timestamp: {
+          type: { type: 'integer', format: 'date-time', isArray: false },
+          isRequired: false,
+          enumeratedValues: null,
+        },
+      }}
+      jsonSchema={{ type: 'object', properties: {} }}
+    />
+  ),
+}
