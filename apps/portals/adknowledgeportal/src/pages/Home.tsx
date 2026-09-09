@@ -108,7 +108,11 @@ function HomePageInternal() {
       </SectionLayout>
       <Stack className={styles.newsReleasesContainer}>
         <Box className={styles.newsReleasesContent}>
-          <SectionLayout title="News Releases" centerTitle>
+          <SectionLayout
+            title="News Releases"
+            centerTitle
+            ContainerProps={{ className: styles.newsReleasesMailchimp }}
+          >
             <MailchimpSubscribeSection
               headlineSx={{ color: 'var(--adkp-accent-color)' }}
               description={
@@ -125,7 +129,7 @@ function HomePageInternal() {
               mailchimpUrl="https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&id=96b614587a"
             />
           </SectionLayout>
-          <div className={styles.newsSection}>
+          <div className={styles.newsReleasesWordpress}>
             <FloatingBlobsBackground color1="#dcc9e4" color2="#cdc8dd" />
             <WordPressNews
               wordpressSiteUrl="https://news.adknowledgeportal.org"

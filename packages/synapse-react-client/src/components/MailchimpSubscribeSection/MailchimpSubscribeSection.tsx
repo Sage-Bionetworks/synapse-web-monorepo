@@ -115,7 +115,6 @@ export default function MailchimpSubscribeSection({
       sx={theme => ({
         background: background ? background : theme.palette.lightPrimary.main,
         borderRadius: '12px',
-        padding: 3,
       })}
     >
       <Box sx={{ flex: 1, minWidth: 0 }}>
