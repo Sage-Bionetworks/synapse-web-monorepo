@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { ReactNode, useEffect, useRef } from 'react'
 import {
   Box,
   Button,
@@ -17,8 +17,8 @@ import MailchimpSubscribe, {
 import styles from './MailchimpSubscribeSection.module.scss'
 
 export type MailchimpSubscribeSectionProps = {
-  headline: string
-  description: string
+  headline?: string
+  description: ReactNode
   mailchimpUrl: string
   headlineSx?: SxProps
   background?: string
@@ -112,7 +112,6 @@ export default function MailchimpSubscribeSection({
     <Stack
       direction={{ xs: 'column', sm: 'row' }}
       spacing={4}
-      alignItems="center"
       sx={theme => ({
         background: background ? background : theme.palette.lightPrimary.main,
         borderRadius: '12px',
@@ -126,14 +125,14 @@ export default function MailchimpSubscribeSection({
         <Typography variant="body1" className={styles.description}>
           {description}
         </Typography>
-        <MailchimpSubscribe
-          url={mailchimpUrl}
-          render={props => <MailchimpForm {...props} />}
-        />
+        <Box className={styles.formContainer}>
+          <EmailWithNotification />
+          <MailchimpSubscribe
+            url={mailchimpUrl}
+            render={props => <MailchimpForm {...props} />}
+          />
+        </Box>
       </Box>
-      <div className={styles.imageColumn}>
-        <EmailWithNotification />
-      </div>
     </Stack>
   )
 }

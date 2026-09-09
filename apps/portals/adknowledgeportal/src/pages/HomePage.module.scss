@@ -27,7 +27,22 @@
   margin-top: 40px;
 }
 
-.relatedConsortiaButtonContainer {
+.AdkpButtonContainer {
   display: flex;
   justify-content: center;
+}
+
+.newsReleasesContent {
+  display: flex;
+  flex-direction: column;
+  gap: 57px;
+  margin-bottom: 12px;
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'medium')) {
+    flex-direction: row;
+  }
+}
+
+.newsReleasesContainer {
+  padding: 60px 50px;
 }
