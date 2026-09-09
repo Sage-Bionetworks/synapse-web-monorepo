@@ -1,6 +1,7 @@
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined'
-import { Button, Link, Container } from '@mui/material'
+import { Box, Button, Link } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
+import { StyledConfirmationCard } from '@/components/StyledComponents'
 
 export type EmailConfirmationPageProps = {
   email: string
@@ -24,12 +25,12 @@ export function EmailConfirmationPage({ email }: EmailConfirmationPageProps) {
   }
 
   return (
-    <Container className="thankYouContainer">
-      <div className="thankYouPanel">
+    <StyledConfirmationCard>
+      <Box sx={{ width: '300px', maxWidth: '100%', margin: '0 auto' }}>
         <Avatar sx={avatarSx}>
           <EmailOutlinedIcon sx={iconSx} />
         </Avatar>
-        <div className="thankYouText">
+        <Box sx={{ marginBottom: 5 }}>
           <h3>Please check your email.</h3>
           <p>
             We've sent an email to <strong>{email}</strong>
@@ -47,7 +48,7 @@ export function EmailConfirmationPage({ email }: EmailConfirmationPageProps) {
           >
             I didn't receive an email
           </Link>
-        </div>
+        </Box>
         <Button
           onClick={() => window.location.assign('/authenticated/myaccount')}
           variant="contained"
@@ -55,7 +56,7 @@ export function EmailConfirmationPage({ email }: EmailConfirmationPageProps) {
         >
           Close
         </Button>
-      </div>
-    </Container>
+      </Box>
+    </StyledConfirmationCard>
   )
 }

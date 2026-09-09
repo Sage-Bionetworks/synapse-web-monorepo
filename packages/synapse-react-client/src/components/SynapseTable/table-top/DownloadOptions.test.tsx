@@ -269,4 +269,50 @@ describe('Download Options tests', () => {
     expect(downloadFilesMenuItem).toHaveAttribute('aria-disabled', 'true')
     expect(programmaticOptionsMenuItem).toHaveAttribute('aria-disabled', 'true')
   })
+
+  it('Hides the "Add to Download List" menu item when hideAddToDownloadListMenuItem is true', async () => {
+    registerTableQueryResult(fileViewQueryRequest.query, mockQueryResponseData)
+
+    renderComponent(
+      { ...props, hideAddToDownloadListMenuItem: true },
+      fileViewQueryRequest,
+    )
+
+    const downloadOptionsButton = await screen.findByRole('button', {
+      name: 'Download Options',
+    })
+
+    await userEvent.click(downloadOptionsButton)
+
+    await screen.findByRole('menuitem', { name: 'Export Table' })
+    await screen.findByRole('menuitem', { name: 'Programmatic Options' })
+
+    expect(
+      screen.queryByRole('menuitem', { name: ADD_ALL_FILES_TO_DOWNLOAD_CART }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('Hides the "Programmatic Options" menu item when hideProgrammaticOptionsMenuItem is true', async () => {
+    registerTableQueryResult(fileViewQueryRequest.query, mockQueryResponseData)
+
+    renderComponent(
+      { ...props, hideProgrammaticOptionsMenuItem: true },
+      fileViewQueryRequest,
+    )
+
+    const downloadOptionsButton = await screen.findByRole('button', {
+      name: 'Download Options',
+    })
+
+    await userEvent.click(downloadOptionsButton)
+
+    await screen.findByRole('menuitem', { name: 'Export Table' })
+    await screen.findByRole('menuitem', {
+      name: ADD_ALL_FILES_TO_DOWNLOAD_CART,
+    })
+
+    expect(
+      screen.queryByRole('menuitem', { name: 'Programmatic Options' }),
+    ).not.toBeInTheDocument()
+  })
 })

@@ -13,7 +13,7 @@ export function TermsAndConditionsLink({ sx }: TermsAndConditionsLinkProps) {
       target="_blank"
       sx={sx}
     >
-      View and Complete Terms and Conditions for Use
+      View Complete Terms and Conditions for Use
     </Button>
   )
 }

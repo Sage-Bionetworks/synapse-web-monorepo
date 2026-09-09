@@ -52,6 +52,10 @@ import CertificationRequirement from './RequirementItem/CertificationRequirement
 import TwoFactorAuthEnabledRequirement from './RequirementItem/TwoFactorAuthEnabledRequirement'
 import ValidationRequirement from './RequirementItem/ValidationRequirement'
 import { useOneSageURL } from '@/utils/hooks'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 
 export type AccessRequirementListProps = {
   /* if provided, will show this instead of the entity information */
@@ -461,6 +465,14 @@ export default function AccessRequirementList(
             displayToast(
               'Your DUC has been emailed to your collaborators. You can check signature progress in your access request history.',
               'info',
+              {
+                primaryButtonConfig: {
+                  text: 'View Request History',
+                  // Resolves to a same-origin path on synapse.org and to the absolute synapse.org URL when embedded in a portal.
+                  href: `${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}RequestHistory:default`,
+                },
+                dismissOnPrimaryButtonClick: true,
+              },
             )
             onHide()
           }}
@@ -496,17 +508,15 @@ export default function AccessRequirementList(
           subjectId={subjectId ?? ''}
           subjectType={subjectType ?? RestrictableObjectType.ENTITY}
           onHide={onHide}
-          onBackClicked={
-            // When entered directly via initialWizardEntry there is no earlier wizard step to
-            // return to, so omit the callback and let the step hide its Back button.
-            initialWizardEntry
-              ? undefined
-              : () => {
-                  requestDataStepCallback({
-                    step: RequestDataStep.EDUC_PREVIEW,
-                  })
-                }
-          }
+          onBackClicked={() => {
+            // Back from SIGNATURE_STATUS returns to the research project step so the user can
+            // modify the request. EDUC_PREVIEW is skipped because Send-for-signature toasts and
+            // closes the wizard, so users only reach this step from the row-level "Review
+            // Signatures and Submit" entry point.
+            requestDataStepCallback({
+              step: RequestDataStep.UPDATE_RESEARCH_PROJECT,
+            })
+          }}
           onSubmissionCreated={submissionId => {
             requestDataStepCallback({ step: RequestDataStep.COMPLETE })
             onSubmissionCreated(submissionId)

@@ -27,7 +27,7 @@ export const mergeMeta = <
   descriptors = [...descriptors]
 
   for (const descriptor of args.matches
-    .filter(match => match && match.meta)
+    .filter(match => match?.meta)
     .flatMap(_ => _.meta!)
     .slice()
     .reverse()) {

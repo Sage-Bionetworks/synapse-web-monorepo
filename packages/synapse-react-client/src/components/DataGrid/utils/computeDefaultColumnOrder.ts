@@ -1,3 +1,4 @@
+import { collectTopLevelProperties } from '@/utils/jsonschema/collectTopLevelProperties'
 import { JSONSchema7 } from 'json-schema'
 
 /**
@@ -10,9 +11,7 @@ export function computeDefaultColumnOrder(
   jsonSchema: JSONSchema7 | undefined,
   upsertKeyColumnNames?: string[],
 ): number[] {
-  const schemaPropertyNames = jsonSchema?.properties
-    ? Object.keys(jsonSchema.properties)
-    : []
+  const schemaPropertyNames = Object.keys(collectTopLevelProperties(jsonSchema))
   const orderedIndices: number[] = []
   const seen = new Set<number>()
 

@@ -76,7 +76,7 @@ class Dataset extends Component<DatasetProps, never> {
       { columnDisplayName: 'SIZE', value: fileSize },
       { columnDisplayName: 'FILES', value: fileCount },
     ]
-    if (genericCardSchema && genericCardSchema.secondaryLabels) {
+    if (genericCardSchema?.secondaryLabels) {
       const { secondaryLabels } = genericCardSchema
       for (let i = 0; i < secondaryLabels.length; i++) {
         const columnName = secondaryLabels[i]

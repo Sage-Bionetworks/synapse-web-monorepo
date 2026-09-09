@@ -6,8 +6,15 @@ import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
 import { TypeAnimation } from 'react-type-animation'
 import styles from './AdknowledgeHeader.module.scss'
 import { WordPressLatestPostChip } from 'synapse-react-client/components/WordPress/WordPressLatestPostChip'
+import { SearchIndexConfig } from '@/types/portal-util-types'
 
-const AdknowledgeHeader = (): React.ReactNode => {
+type AdknowledgeHeaderProps = {
+  searchIndexConfig?: SearchIndexConfig
+}
+
+const AdknowledgeHeader = ({
+  searchIndexConfig,
+}: AdknowledgeHeaderProps): React.ReactNode => {
   const searchPlaceholder = 'Search for...'
 
   const searchExampleTerms = [
@@ -16,12 +23,9 @@ const AdknowledgeHeader = (): React.ReactNode => {
     'ROSMAP',
     'Diverse Cohorts',
     'SEA-AD',
-    'snRNAseq',
-    'WGS',
     'Spatial Transcriptomics',
     'Proteomics',
     'Metabolomics',
-    'LOAD',
     'Harmonized Datasets',
     'Target Validation',
   ]
@@ -70,6 +74,7 @@ const AdknowledgeHeader = (): React.ReactNode => {
           path="/Search"
           variant="v2"
           isChatEnabled={useGetFeatureFlag(FeatureFlagEnum.PORTAL_CHAT)}
+          searchIndexConfig={searchIndexConfig}
         />
       </Stack>
     </header>

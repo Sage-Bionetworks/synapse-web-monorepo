@@ -47,7 +47,7 @@ function SearchPageInternal() {
   // Store the whole SearchQuery object as JSON in URL
   const handleQueryChange = (newQuery: SearchQuery) => {
     setSearchParams(prev => {
-      if (newQuery && newQuery.queryTerm && newQuery.queryTerm.length > 0) {
+      if (newQuery?.queryTerm && newQuery.queryTerm.length > 0) {
         prev.set(SEARCH_PAGE_QUERY_PARAM, JSON.stringify(newQuery))
       } else {
         prev.delete(SEARCH_PAGE_QUERY_PARAM)

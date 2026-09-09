@@ -164,10 +164,8 @@ export const SelectionRect = React.memo<SelectionContextType>(
 
     // Determine if any part of the selection is sticky (for the column marker)
     const selectionHasStickyMinCol =
-      (selection &&
-        stickyLeftColumns &&
-        stickyLeftColumns[selection.min.col]) ||
-      (activeCell && stickyLeftColumns && stickyLeftColumns[activeCell.col])
+      (selection && stickyLeftColumns?.[selection.min.col]) ||
+      (activeCell && stickyLeftColumns?.[activeCell.col])
 
     // Sticky offset for the column marker (using the leftmost selected column)
     const colMarkerStickyLeft =

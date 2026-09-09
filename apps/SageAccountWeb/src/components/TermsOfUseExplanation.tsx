@@ -1,16 +1,14 @@
-import React from 'react'
+import type { ReactNode } from 'react'
 import { Link, Typography } from '@mui/material'
 import { useSourceApp } from './useSourceApp'
 import { STATIC_SOURCE_APP_CONFIG } from 'synapse-react-client/utils/hooks/useSourceAppConfigs'
 
-export const TermsOfUseRightPanelText = (): React.ReactNode => {
+export const TermsOfUseExplanationContent = (): ReactNode => {
   const sourceApp = useSourceApp()
   const sourceAppName = sourceApp?.friendlyName
   const synapseAppName = STATIC_SOURCE_APP_CONFIG.friendlyName
   return (
     <>
-      <Typography variant="headline2">What is the Synapse Pledge?</Typography>
-
       <Typography variant="body1" sx={{ marginBottom: '20px' }}>
         {sourceAppName} is powered by{' '}
         {sourceApp?.friendlyName !== synapseAppName ? (
@@ -34,6 +32,15 @@ export const TermsOfUseRightPanelText = (): React.ReactNode => {
           act@sagebionetworks.org
         </Link>
       </Typography>
+    </>
+  )
+}
+
+export const TermsOfUseExplanationSection = (): ReactNode => {
+  return (
+    <>
+      <Typography variant="headline2">What is the Synapse Pledge?</Typography>
+      <TermsOfUseExplanationContent />
     </>
   )
 }

@@ -7,20 +7,15 @@ import { WordPressNews } from 'synapse-react-client/components/SynapseHomepageV2
 import FloatingBlobsBackground from 'synapse-react-client/components/SynapseHomepageV2/FloatingBlobsBackground'
 import AdknowledgePrograms from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgePrograms/AdknowledgePrograms'
 import AdknowledgePlatformIntegrations from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgePlatformIntegrations/AdknowledgePlatformIntegrations'
-import {
-  consortiaAndRepositoriesSql,
-  dataTypeSql,
-  exploreQuerySql,
-  programsSql,
-} from '@/config/resources'
+import { dataTypeSql, exploreQuerySql, programsSql } from '@/config/resources'
+import { autocompleteSuggestionsSearchIndexConfig } from '@/config/searchConfig'
 import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
 import { ReactComponent as ContributeIcon } from '../assets/contribution.svg'
 import { ReactComponent as AgoraIcon } from '../assets/agora.svg'
 import { ReactComponent as ModelADIcon } from '../assets/modelAD.svg'
 import styles from './HomePage.module.scss'
-import { CardContainerLogic } from 'synapse-react-client'
-import { consortiaAndRepositoriesCardConfig } from '@/config/synapseConfigs/consortiaAndRepositories'
 import { Button } from '@mui/material'
+import { Link } from 'react-router'
 
 function HomePageInternal() {
   const agoraCard = {
@@ -71,7 +66,32 @@ function HomePageInternal() {
 
   return (
     <div>
-      <AdknowledgeHeader />
+      <AdknowledgeHeader
+        searchIndexConfig={autocompleteSuggestionsSearchIndexConfig}
+      />
+      <SectionLayout
+        title="Programs"
+        subtitle="The AD Knowledge Portal is your gateway to extensive datasets and resources from NIA-supported Alzheimer's disease and related dementia programs. Dive into program-specific data to accelerate your research."
+        centerTitle
+        ContainerProps={{
+          className: 'home-spacer',
+        }}
+      >
+        <AdknowledgePrograms sql={`${programsSql} ORDER BY Program ASC`} />
+      </SectionLayout>
+      <SectionLayout
+        title="Results Explorers"
+        subtitle="These explorers provide interactive tools and visualizations to navigate complex datasets, identify key trends, and gain deeper insights into the data on our portal."
+        centerTitle
+        ContainerProps={{
+          sx: { marginBottom: '130px' },
+        }}
+      >
+        <div className={styles.resultsExplorersContainer}>
+          <AdknowledgeCard {...modelADCard} />
+          <AdknowledgeCard {...agoraCard} />
+        </div>
+      </SectionLayout>
       <SectionLayout
         ContainerProps={{
           className: 'home-spacer',
@@ -79,13 +99,15 @@ function HomePageInternal() {
       >
         <DataExplorer {...dataExplorerTextSection} />
       </SectionLayout>
-
       <SectionLayout
         ContainerProps={{
-          sx: { marginBottom: '80px' },
+          sx: { marginBottom: '240px' },
         }}
+        title="Data Analysis Platform Integrations"
+        subtitle="Analyze your data in a trusted research environment (TRE), integrated with the knowledge portal ecosystem."
+        centerTitle
       >
-        <AdknowledgeCard {...contributeCard} />
+        <AdknowledgePlatformIntegrations />
       </SectionLayout>
       <SectionLayout
         ContainerProps={{
@@ -99,26 +121,6 @@ function HomePageInternal() {
           description="Subscribe to receive the AD Knowledge Portal monthly newsletter by e-mail, which provides information and updates related to the Portal. You can opt out at any time by using the unsubscribe link within the e-mail. We will not share your information with any third parties or use it for any other purposes."
           mailchimpUrl="https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&id=96b614587a"
         />
-      </SectionLayout>
-      <SectionLayout
-        title="Programs"
-        subtitle="The AD Knowledge Portal is your gateway to extensive datasets and resources from NIA-supported Alzheimer's disease and related dementia programs. Dive into program-specific data to accelerate your research."
-        centerTitle
-        ContainerProps={{
-          className: 'home-spacer',
-        }}
-      >
-        <AdknowledgePrograms sql={`${programsSql} ORDER BY Program ASC`} />
-      </SectionLayout>
-      <SectionLayout
-        ContainerProps={{
-          sx: { marginBottom: '240px' },
-        }}
-        title="Data Analysis Platform Integrations"
-        subtitle="Analyze your data in a trusted research environment, integrated with the knowledge portal ecosystem."
-        centerTitle
-      >
-        <AdknowledgePlatformIntegrations />
       </SectionLayout>
       <SectionLayout
         title={'New Releases'}
@@ -140,32 +142,32 @@ function HomePageInternal() {
         </div>
       </SectionLayout>
       <SectionLayout
-        title="Results Explorers"
-        subtitle="These explorers provide interactive tools and visualizations to navigate complex datasets, identify key trends, and gain deeper insights into the data on our portal."
-        centerTitle
-        ContainerProps={{
-          sx: { marginBottom: '130px' },
-        }}
-      >
-        <div className={styles.resultsExplorersContainer}>
-          <AdknowledgeCard {...modelADCard} />
-          <AdknowledgeCard {...agoraCard} />
-        </div>
-      </SectionLayout>
-      <SectionLayout
         title="Related Consortia and Repositories"
         subtitle="Grounded in truly open science and radical collaboration, the AD Knowledge Portal bridges data silos by integrating with a broad network of consortia and repositories. Each contributes unique data and expertise needed to drive discovery in Alzheimer's Disease research."
         centerTitle
         ContainerProps={{
-          sx: { marginBottom: '140px' },
+          sx: {
+            marginBottom: '140px',
+          },
         }}
       >
-        <div className={styles.consortiaAndRepositoriesCards}>
-          <CardContainerLogic
-            cardConfiguration={consortiaAndRepositoriesCardConfig}
-            sql={consortiaAndRepositoriesSql}
-          />
+        <div className={styles.relatedConsortiaButtonContainer}>
+          <Button
+            variant="contained"
+            component={Link}
+            to="/Research Ecosystem"
+            sx={{ alignSelf: 'center' }}
+          >
+            View All
+          </Button>
         </div>
+      </SectionLayout>
+      <SectionLayout
+        ContainerProps={{
+          sx: { marginBottom: '80px' },
+        }}
+      >
+        <AdknowledgeCard {...contributeCard} />
       </SectionLayout>
       <SectionLayout
         title="Questions or Feedback?"
