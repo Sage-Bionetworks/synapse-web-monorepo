@@ -7,6 +7,11 @@ import {
   getRestrictionUiTypeFromAridhiaRequest,
   findRequestForDataset,
 } from './aridhiaAccessStatusUtils'
+import { useState } from 'react'
+import { DialogBase } from '../DialogBase'
+import { useAridhiaDarWizardParts } from './DarWizard/AridhiaDarWizard'
+import { useGetFeatureFlag } from '@/synapse-queries'
+import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 
 const buttonSx = { p: '0px', minWidth: 'unset' }
 
@@ -26,7 +31,20 @@ export type AridhiaAccessStatusProps = {
 export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
   const { datasetCode, url } = props
   const { isAuthenticated } = useSynapseContext()
+  const isDarFormEnabled = useGetFeatureFlag(
+    FeatureFlagEnum.AMPALS_RDCA_DAP_FORM_ENABLED,
+  )
   const { data: requestsResponse, isLoading } = useGetAridhiaRequests()
+
+  const [requestDialogOpen, setRequestDialogOpen] = useState(false)
+  const { content: wizardContent, actions: wizardActions } =
+    useAridhiaDarWizardParts(
+      { datasetCode },
+      {
+        enabled: requestDialogOpen,
+        onClose: () => setRequestDialogOpen(false),
+      },
+    )
 
   if (!isAuthenticated) {
     return (
@@ -77,12 +95,35 @@ export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
 
   const icon = <AccessIcon restrictionUiType={restrictionUiType} />
 
-  // If URL provided, wrap icon in link
-  return url ? (
-    <a href={url} target="_blank" rel="noopener noreferrer">
-      {icon}
-    </a>
-  ) : (
-    icon
+  if (restrictionUiType === RestrictionUiType.Accessible || !isDarFormEnabled) {
+    // Approved, or the RDCA-DAP request form is not yet enabled — keep the existing
+    // link-out to RDCA-DAP to access or request the data.
+    return url ? (
+      <a href={url} target="_blank" rel="noopener noreferrer">
+        {icon}
+      </a>
+    ) : (
+      icon
+    )
+  }
+
+  return (
+    <>
+      <Button
+        sx={buttonSx}
+        onClick={() => setRequestDialogOpen(true)}
+        aria-label="Request data access"
+      >
+        {icon}
+      </Button>
+      <DialogBase
+        open={requestDialogOpen}
+        onCancel={() => setRequestDialogOpen(false)}
+        maxWidth="md"
+        title="Request Data Access"
+        content={wizardContent}
+        actions={wizardActions}
+      />
+    </>
   )
 }

@@ -51,31 +51,53 @@ export class AridhiaError extends Error {
 }
 
 /**
- * Pulls a human-usable error string out of a `ResponseError`'s JSON body, preferring the
- * gateway's `error` field and falling back to `message`. Returns `undefined` when the body
- * isn't JSON, was already consumed, or carries neither field.
+ * Pulls a human-usable error string out of a JSON response body:
+ * - Gateway OAuth error: `{ error: 'invalid_token' }`
+ * - FAIR API error envelope: `{ error: { status: 400, message: '...' } }`
+ * - Direct message envelope: `{ message: '...' }`
+ *
+ * Returns `undefined` when the body carries no recognizable error text.
+ */
+function extractErrorTextFromBody(body: unknown): string | undefined {
+  if (!body || typeof body !== 'object') {
+    return undefined
+  }
+  const errorField = 'error' in body ? body.error : undefined
+  if (typeof errorField === 'string') {
+    return errorField
+  }
+  if (errorField && typeof errorField === 'object') {
+    if ('message' in errorField && typeof errorField.message === 'string') {
+      return errorField.message
+    }
+    if ('error' in errorField && typeof errorField.error === 'string') {
+      return errorField.error
+    }
+  }
+  const messageField = 'message' in body ? body.message : undefined
+  if (typeof messageField === 'string') {
+    return messageField
+  }
+  return undefined
+}
+
+/**
+ * Pulls a human-usable error string out of a `ResponseError`'s JSON body.
+ * Returns `undefined` when the body isn't JSON, was already consumed, or carries no recognizable field.
  */
 async function extractResponseErrorText(
   response: ResponseError['response'],
 ): Promise<string | undefined> {
   try {
     const body: unknown = await response.clone().json()
-    if (!body || typeof body !== 'object') {
-      return undefined
-    }
-    const errorField = 'error' in body ? body.error : undefined
-    if (typeof errorField === 'string') {
-      return errorField
-    }
-    const messageField = 'message' in body ? body.message : undefined
-    return typeof messageField === 'string' ? messageField : undefined
+    return extractErrorTextFromBody(body)
   } catch {
     // Response body wasn't JSON (or was already consumed).
     return undefined
   }
 }
 
-async function toAridhiaError(error: unknown): Promise<AridhiaError> {
+export async function toAridhiaError(error: unknown): Promise<AridhiaError> {
   if (error instanceof AridhiaError) {
     return error
   }
@@ -101,6 +123,10 @@ async function toAridhiaError(error: unknown): Promise<AridhiaError> {
       bodyErrorText ?? `Aridhia request failed (${httpStatus})`,
       { httpStatus },
     )
+  }
+  const bodyText = extractErrorTextFromBody(error)
+  if (bodyText) {
+    return new AridhiaError('unknown', bodyText)
   }
   return new AridhiaError(
     'unknown',
