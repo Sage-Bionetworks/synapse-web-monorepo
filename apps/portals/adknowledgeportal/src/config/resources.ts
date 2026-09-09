@@ -36,7 +36,7 @@ export const targetEnablingResourcesDetailsPageSql =
 export const cavaticaConnectAccountURL =
   'https://help.adknowledgeportal.org/apd/CAVATICA.4271145000.html'
 
-export const autocompleteSuggestionsSearchIndexId = 'syn77320025'
+export const autocompleteSuggestionsSearchIndexId = 'syn77329881'
 export const computationalSearchIndexId = 'syn75418908'
 export const peopleSearchIndexId = 'syn75418911'
 export const projectsSearchIndexId = 'syn75418912'
