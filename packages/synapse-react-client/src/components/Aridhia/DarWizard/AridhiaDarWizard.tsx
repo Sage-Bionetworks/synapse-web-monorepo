@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useMemo, useState } from 'react'
-import { Alert, Box, Button, Skeleton } from '@mui/material'
+import { Alert, Box, Button, Link, Skeleton } from '@mui/material'
 import { RJSFSchema } from '@rjsf/utils'
 import { useGetAridhiaDatasetSettings } from '@/aridhia-queries/useGetAridhiaDatasetSettings'
 import { useGetAridhiaWorkflow } from '@/aridhia-queries/useGetAridhiaWorkflow'
@@ -12,6 +12,7 @@ import { useGlobalIsEditingContext } from '@/utils/context/GlobalIsEditingContex
 import {
   fairSectionToRjsf,
   FairField,
+  FairFormPayload,
   parseFairFormSections,
   summarizeFormAnswers,
 } from '@/components/Aridhia/fairFormToRjsf'
@@ -41,6 +42,12 @@ const TRANSFER_TYPE_PRIORITY: TransferType[] = [
   'manual',
 ]
 
+type StepKey = 'destination' | 'workspace' | 'project' | 'about' | 'complete'
+
+/** Sage's general-purpose issue portal; RDCA-DAP/ALSKP has no dedicated service desk. */
+const SUPPORT_PORTAL_URL =
+  'https://sagebionetworks.jira.com/servicedesk/customer/portal/9'
+
 function isSectionComplete(
   schema: RJSFSchema,
   values: Record<string, unknown>,
@@ -49,6 +56,13 @@ function isSectionComplete(
     const value = values[key]
     return value !== undefined && value !== null && value !== ''
   })
+}
+
+function useFairSection(data: FairFormPayload | null | undefined, key: string) {
+  return useMemo(() => {
+    const section = parseFairFormSections(data).find(s => s.key === key)
+    return section ? fairSectionToRjsf(section) : undefined
+  }, [data, key])
 }
 
 /**
@@ -125,26 +139,9 @@ function useAridhiaDarWizardParts(
     }
   }, [allowedTransferTypes, draft.transferType, setDraft])
 
-  const aboutRjsf = useMemo(() => {
-    const section = parseFairFormSections(workflowQuery.data).find(
-      s => s.key === 'about',
-    )
-    return section ? fairSectionToRjsf(section) : undefined
-  }, [workflowQuery.data])
-
-  const projectRjsf = useMemo(() => {
-    const section = parseFairFormSections(workflowQuery.data).find(
-      s => s.key === 'project',
-    )
-    return section ? fairSectionToRjsf(section) : undefined
-  }, [workflowQuery.data])
-
-  const workspaceRjsf = useMemo(() => {
-    const section = parseFairFormSections(workspaceFormQuery.data).find(
-      s => s.key === 'workspace',
-    )
-    return section ? fairSectionToRjsf(section) : undefined
-  }, [workspaceFormQuery.data])
+  const aboutRjsf = useFairSection(workflowQuery.data, 'about')
+  const projectRjsf = useFairSection(workflowQuery.data, 'project')
+  const workspaceRjsf = useFairSection(workspaceFormQuery.data, 'workspace')
 
   const unsupportedFields: FairField[] = useMemo(() => {
     return [
@@ -204,7 +201,6 @@ function useAridhiaDarWizardParts(
     }
   }
 
-  type StepKey = 'destination' | 'workspace' | 'project' | 'about' | 'complete'
   const stepKeys: readonly StepKey[] = draft.workspaceRequested
     ? ['destination', 'workspace', 'project', 'about', 'complete']
     : ['destination', 'project', 'about', 'complete']
@@ -296,8 +292,15 @@ function useAridhiaDarWizardParts(
       {unsupportedFields.length > 0 && (
         <Alert severity="error" sx={{ mb: 2 }}>
           This request form includes field types the portal cannot render yet (
-          {unsupportedFields.map(f => f.name).join(', ')}). Please contact
-          support — submission is disabled until this is resolved.
+          {unsupportedFields.map(f => f.name).join(', ')}). Please{' '}
+          <Link
+            href={SUPPORT_PORTAL_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            contact support
+          </Link>{' '}
+          — submission is disabled until this is resolved.
         </Alert>
       )}
       {currentStepKey === 'destination' && (
