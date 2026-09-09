@@ -1,0 +1,52 @@
+diff --git a/dist/index.js b/dist/index.js
+index 36d7ca3b3679b561f77ddc2e6a812a9f7433fc2f..85bc8119573468eab806c5191ca2169b94bef288 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -80,8 +80,12 @@ function ArrayFieldItemTemplate(props) {
+     fontWeight: "bold",
+     minWidth: 0
+   };
++  // PORTALS-4453 patch: upstream `size: "auto"` here produced `flex: 0 0 auto`, letting nested
++  // object/array content overflow this Grid item's container. Fixed upstream in @rjsf/mui@6.1.0
++  // (https://github.com/rjsf-team/react-jsonschema-form/issues/3296) - drop this patch once
++  // @rjsf/mui is upgraded past 6.0.x.
+   return /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(import_Grid.default, { container: true, alignItems: "center", children: [
+-    /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(import_Grid.default, { size: "auto", style: { overflow: "auto" }, children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(import_Box.default, { mb: 2, children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(import_Paper.default, { elevation: 2, children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(import_Box.default, { p: 2, children }) }) }) }),
++    /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(import_Grid.default, { size: { xs: 8, sm: 9, md: 10, lg: 11, xl: 11.25 }, style: { overflow: "auto" }, children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(import_Box.default, { mb: 2, children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(import_Paper.default, { elevation: 2, children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(import_Box.default, { p: 2, children }) }) }) }),
+     hasToolbar && /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(import_Grid.default, { children: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(ArrayFieldItemButtonsTemplate, { ...buttonsProps, style: btnStyle }) })
+   ] });
+ }
+diff --git a/lib/ArrayFieldItemTemplate/ArrayFieldItemTemplate.js b/lib/ArrayFieldItemTemplate/ArrayFieldItemTemplate.js
+index 98eaa9dd976faf8bf618071639cea8417a17d2c4..4a990ba372ee1a3304fafb80fecbca0013229e96 100644
+--- a/lib/ArrayFieldItemTemplate/ArrayFieldItemTemplate.js
++++ b/lib/ArrayFieldItemTemplate/ArrayFieldItemTemplate.js
+@@ -18,6 +18,10 @@ export default function ArrayFieldItemTemplate(props) {
+         fontWeight: 'bold',
+         minWidth: 0,
+     };
+-    return (_jsxs(Grid, { container: true, alignItems: 'center', children: [_jsx(Grid, { size: 'auto', style: { overflow: 'auto' }, children: _jsx(Box, { mb: 2, children: _jsx(Paper, { elevation: 2, children: _jsx(Box, { p: 2, children: children }) }) }) }), hasToolbar && (_jsx(Grid, { children: _jsx(ArrayFieldItemButtonsTemplate, { ...buttonsProps, style: btnStyle }) }))] }));
++    // PORTALS-4453 patch: upstream `size: 'auto'` here produced `flex: 0 0 auto`, letting nested
++    // object/array content overflow this Grid item's container. Fixed upstream in @rjsf/mui@6.1.0
++    // (https://github.com/rjsf-team/react-jsonschema-form/issues/3296) - drop this patch once
++    // @rjsf/mui is upgraded past 6.0.x.
++    return (_jsxs(Grid, { container: true, alignItems: 'center', children: [_jsx(Grid, { size: { xs: 8, sm: 9, md: 10, lg: 11, xl: 11.25 }, style: { overflow: 'auto' }, children: _jsx(Box, { mb: 2, children: _jsx(Paper, { elevation: 2, children: _jsx(Box, { p: 2, children: children }) }) }) }), hasToolbar && (_jsx(Grid, { children: _jsx(ArrayFieldItemButtonsTemplate, { ...buttonsProps, style: btnStyle }) }))] }));
+ }
+ //# sourceMappingURL=ArrayFieldItemTemplate.js.map
+\ No newline at end of file
+diff --git a/src/ArrayFieldItemTemplate/ArrayFieldItemTemplate.tsx b/src/ArrayFieldItemTemplate/ArrayFieldItemTemplate.tsx
+index 09c1764353a9b3f2d1d91a547a1bdb031443e2bb..7d7e8191f52b3c7232fa8037bd8deac3b4a9b344 100644
+--- a/src/ArrayFieldItemTemplate/ArrayFieldItemTemplate.tsx
++++ b/src/ArrayFieldItemTemplate/ArrayFieldItemTemplate.tsx
+@@ -36,7 +36,11 @@ export default function ArrayFieldItemTemplate<
+   };
+   return (
+     <Grid container={true} alignItems='center'>
+-      <Grid size='auto' style={{ overflow: 'auto' }}>
++      {/* PORTALS-4453 patch: upstream `size='auto'` here produced `flex: 0 0 auto`, letting nested
++         object/array content overflow this Grid item's container. Fixed upstream in @rjsf/mui@6.1.0
++         (https://github.com/rjsf-team/react-jsonschema-form/issues/3296) - drop this patch once
++         @rjsf/mui is upgraded past 6.0.x. */}
++      <Grid size={{ xs: 8, sm: 9, md: 10, lg: 11, xl: 11.25 }} style={{ overflow: 'auto' }}>
+         <Box mb={2}>
+           <Paper elevation={2}>
+             <Box p={2}>{children}</Box>
