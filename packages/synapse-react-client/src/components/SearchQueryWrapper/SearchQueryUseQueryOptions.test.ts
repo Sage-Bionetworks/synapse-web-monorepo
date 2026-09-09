@@ -1535,7 +1535,7 @@ describe('toSearchIndexQuery – searchQueryConfig', () => {
       multi_match: {
         query: 'schwann',
         type: 'best_fields',
-        fields: ['resourceName^5', 'synonyms^4', 'rrid^4'],
+        fields: ['resourceName^5', 'synonyms^4', 'rrid^4', '*'],
       },
     })
   })
@@ -1568,7 +1568,7 @@ describe('toSearchIndexQuery – searchQueryConfig', () => {
       multi_match: {
         query: 'schwann',
         type: 'cross_fields',
-        fields: ['resourceName^5', 'description'],
+        fields: ['resourceName^5', 'description', '*'],
       },
     })
   })
@@ -1586,7 +1586,7 @@ describe('toSearchIndexQuery – searchQueryConfig', () => {
     expect(result.searchQuery?.query).toEqual({
       simple_query_string: {
         query: 'schwann',
-        fields: ['resourceName^5', 'synonyms^4'],
+        fields: ['resourceName^5', 'synonyms^4', '*'],
       },
     })
   })
@@ -1632,7 +1632,7 @@ describe('toSearchIndexQuery – searchQueryConfig', () => {
     expect(result.searchQuery?.query).toEqual({
       multi_match: {
         query: 'schwann',
-        fields: ['resourceName^5', 'synonyms^4'],
+        fields: ['resourceName^5', 'synonyms^4', '*'],
         fuzziness: 'AUTO',
       },
     })
@@ -1668,6 +1668,44 @@ describe('toSearchIndexQuery – searchQueryConfig', () => {
     }
     expect(clause.multi_match.fields).toContain('description')
     expect(clause.multi_match.fields).not.toContain('description^1')
+  })
+
+  it('field boosts without an explicit "*" get a "*": 1 fallback appended', () => {
+    const result = toSearchIndexQuery(
+      queryBundleWithText,
+      SEARCH_INDEX_ID,
+      undefined,
+      {
+        queryStrategy: 'MULTI_MATCH_BEST_FIELDS',
+        fieldBoosts: { resourceName: 5 },
+      },
+    )
+    expect(result.searchQuery?.query).toEqual({
+      multi_match: {
+        query: 'schwann',
+        type: 'best_fields',
+        fields: ['resourceName^5', '*'],
+      },
+    })
+  })
+
+  it('an explicit "*" boost is respected and not overridden', () => {
+    const result = toSearchIndexQuery(
+      queryBundleWithText,
+      SEARCH_INDEX_ID,
+      undefined,
+      {
+        queryStrategy: 'MULTI_MATCH_BEST_FIELDS',
+        fieldBoosts: { resourceName: 5, '*': 2 },
+      },
+    )
+    expect(result.searchQuery?.query).toEqual({
+      multi_match: {
+        query: 'schwann',
+        type: 'best_fields',
+        fields: ['resourceName^5', '*^2'],
+      },
+    })
   })
 })
 
@@ -1734,7 +1772,7 @@ describe('toSearchIndexQuery – exact phrase matching', () => {
     expect(result.searchQuery?.query).toEqual({
       simple_query_string: {
         query: '"exact phrase"',
-        fields: ['resourceName^5', 'synonyms^4'],
+        fields: ['resourceName^5', 'synonyms^4', '*'],
       },
     })
   })
@@ -1845,7 +1883,7 @@ describe('toSearchIndexQuery – Synapse ID detection', () => {
     expect(result.searchQuery?.query).toEqual({
       simple_query_string: {
         query: 'syn12345',
-        fields: ['resourceName^5', 'synonyms^4'],
+        fields: ['resourceName^5', 'synonyms^4', '*'],
       },
     })
   })

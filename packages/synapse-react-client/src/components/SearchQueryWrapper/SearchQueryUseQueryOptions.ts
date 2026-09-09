@@ -116,7 +116,10 @@ function resolveFields(
   fieldBoosts: Record<string, number> | undefined,
 ): string[] | undefined {
   if (!fieldBoosts) return undefined
-  return Object.entries(fieldBoosts).map(([field, boost]) =>
+  // Ensure fields not explicitly boosted are still searched (at neutral weight)
+  // rather than being excluded entirely.
+  const boosts = '*' in fieldBoosts ? fieldBoosts : { ...fieldBoosts, '*': 1 }
+  return Object.entries(boosts).map(([field, boost]) =>
     boost === 1 ? field : `${field}^${boost}`,
   )
 }
