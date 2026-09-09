@@ -15,8 +15,6 @@ export type TableQueryActionsRequiredProps = {
   queryBundleRequest: QueryBundleRequest
   /** The column models of the table */
   columnModels: ColumnModel[]
-  /** Invoked when a user clicks "View Sharing Settings" for a set of files that require the Download permission*/
-  onViewSharingSettingsClicked?: (benefactorId: string) => void
   /** Invoked when the number of required actions changes. Can be used to set UI state based on if all actions have been fulfilled */
   onNumberOfRequiredActionsChanged?: (actionsRequired: number) => void
 }
@@ -32,7 +30,6 @@ export function TableQueryActionsRequired(
     queryBundleRequest,
     columnModels,
     onNumberOfRequiredActionsChanged = noop,
-    onViewSharingSettingsClicked,
   } = props
 
   // This component will track all completed actions, based on which actions are omitted from the ActionsRequiredResponse
@@ -75,7 +72,6 @@ export function TableQueryActionsRequired(
           key={index}
           action={item.action}
           count={item.count}
-          onViewSharingSettingsClicked={onViewSharingSettingsClicked}
         />
       ))}
       {isLoading && times(3).map(k => <LoadingActionRequiredCard key={k} />)}

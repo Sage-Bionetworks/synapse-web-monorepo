@@ -1,6 +1,10 @@
 import DetailsPage from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/index'
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import { DetailsPageContextConsumer } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import { useDetailsPageContext } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContext'
+import {
+  DATASET_HOSTING_CONFIG,
+  normalizeHosting,
+} from 'synapse-react-client/components/DatasetHosting/DatasetHosting'
 import {
   createDetailPageRouteExports,
   type BaseDetailPageLoaderData,
@@ -45,6 +49,39 @@ const _routeExports = createDetailPageRouteExports<DatasetLoaderData>(
 export const loader = _routeExports.loader
 export const clientLoader = _routeExports.clientLoader
 export const meta = _routeExports.meta
+
+/**
+ * Files tab for a dataset. Reads the dataset's `hosting` annotation from the
+ * DetailsPage context and suppresses the download column / row selection for
+ * non-downloadable datasets (e.g. external-access), where Synapse downloads
+ * wouldn't work. Blank/unknown hosting → `synapse` → downloadable (default).
+ */
+function DatasetFilesTab({ id }: { id: string }) {
+  const { context, value: hosting } = useDetailsPageContext('hosting')
+  const isDownloadable =
+    DATASET_HOSTING_CONFIG[normalizeHosting(hosting)].downloadable
+  const versionNumber = context.rowData?.versionNumber
+  return (
+    <QueryWrapperPlotNav
+      rgbIndex={datasetsRgbIndex}
+      sql={`SELECT * FROM ${id}${versionNumber ? `.${versionNumber}` : ''}`}
+      visibleColumnCount={7}
+      tableConfiguration={{
+        showAccessColumn: true,
+        showDownloadColumn: isDownloadable,
+      }}
+      shouldDeepLink={false}
+      columnAliases={columnAliases}
+      defaultShowPlots={false}
+      enabledExternalAnalysisPlatforms={enabledAnalysisPlatforms}
+      isRowSelectionVisible={isDownloadable}
+      rowSelectionPrimaryKey={['id']}
+      fileIdColumnName="id"
+      fileNameColumnName="name"
+      fileVersionColumnName="currentVersion"
+    />
+  )
+}
 
 function DatasetDetailsPage() {
   const { id } = useParams<{ id: string }>()
@@ -92,34 +129,7 @@ function DatasetDetailsPage() {
           },
           {
             id: 'Files',
-            element: (
-              <DetailsPageContextConsumer>
-                {({ context }) => (
-                  <QueryWrapperPlotNav
-                    rgbIndex={datasetsRgbIndex}
-                    sql={`SELECT * FROM ${id}${
-                      context.rowData?.versionNumber
-                        ? `.${context.rowData.versionNumber}`
-                        : ''
-                    }`}
-                    visibleColumnCount={7}
-                    tableConfiguration={{
-                      showAccessColumn: true,
-                      showDownloadColumn: true,
-                    }}
-                    shouldDeepLink={false}
-                    columnAliases={columnAliases}
-                    defaultShowPlots={false}
-                    enabledExternalAnalysisPlatforms={enabledAnalysisPlatforms}
-                    isRowSelectionVisible={true}
-                    rowSelectionPrimaryKey={['id']}
-                    fileIdColumnName="id"
-                    fileNameColumnName="name"
-                    fileVersionColumnName="currentVersion"
-                  />
-                )}
-              </DetailsPageContextConsumer>
-            ),
+            element: <DatasetFilesTab id={id} />,
           },
         ]}
       />

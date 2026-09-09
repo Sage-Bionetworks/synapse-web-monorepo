@@ -1,6 +1,7 @@
 import {
   useGetDataAccessRequestForUpdate,
   useGetDataAccessRequestPreview,
+  useGetDataAccessRequestSignatureQuota,
   useInitiateDataAccessRequestSignature,
 } from '@/synapse-queries'
 import SynapseClient from '@/synapse-client'
@@ -15,9 +16,13 @@ import {
   IconButton,
   Skeleton,
   Stack,
+  Tooltip,
   Typography,
 } from '@mui/material'
-import { ManagedACTAccessRequirement } from '@sage-bionetworks/synapse-types'
+import {
+  FileHandleAssociateType,
+  ManagedACTAccessRequirement,
+} from '@sage-bionetworks/synapse-types'
 import { ReactNode } from 'react'
 import { useFetchBlobUrl } from '@/utils/hooks/useFetchBlobUrl'
 import IconSvg from '../../../IconSvg/IconSvg'
@@ -70,9 +75,13 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
 
   const previewFileHandleId = previewFileHandle?.fileHandleId
   const { blobUrl, error: blobError } = useFetchBlobUrl(
-    previewSrcOverride || !previewFileHandleId
+    previewSrcOverride || !previewFileHandleId || !dataAccessRequest?.id
       ? undefined
-      : SynapseClient.getPortalFileHandleServletUrl(previewFileHandleId),
+      : SynapseClient.getPortalFileHandleServletUrl(
+          previewFileHandleId,
+          dataAccessRequest.id,
+          FileHandleAssociateType.DataAccessRequestAttachment,
+        ),
   )
 
   const {
@@ -83,6 +92,16 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
   } = useInitiateDataAccessRequestSignature({
     onSuccess: () => onSendForSignature(),
   })
+
+  // Preflight the quota so we can disable the send-for-signature action when the user is at
+  // or over their limit. A fetch error falls back to the current enabled behavior so a quota
+  // service outage doesn't spuriously block valid requests.
+  const { data: signatureQuota } = useGetDataAccessRequestSignatureQuota(
+    dataAccessRequest?.id ?? '',
+    { enabled: Boolean(dataAccessRequest?.id) },
+  )
+  const isAtOrOverQuota =
+    signatureQuota?.remaining != null && signatureQuota.remaining <= 0
 
   const isLoading =
     isLoadingDar ||
@@ -158,15 +177,30 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
               'Complete and sign the DUC online by emailing a secure DocuSign link to your listed collaborators. Notifications will be sent directly to the email address associated with their Synapse accounts. This is fastest way to get access.'
             }
             action={
-              <Button
-                variant={'contained'}
-                disabled={actionsDisabled}
-                onClick={handleSendForSignature}
+              <Tooltip
+                title={
+                  isAtOrOverQuota
+                    ? `You have used all ${signatureQuota?.quota ?? ''} of your electronic signature routings for this request. Please contact ACT to request a quota reset.`
+                    : ''
+                }
+                arrow
+                disableHoverListener={!isAtOrOverQuota}
+                disableFocusListener={!isAtOrOverQuota}
+                disableTouchListener={!isAtOrOverQuota}
               >
-                {isSendingForSignature
-                  ? 'Sending...'
-                  : 'Send for electronic signature'}
-              </Button>
+                {/* Tooltip wrapper Box is needed because MUI Tooltip does not fire on disabled children directly. */}
+                <Box component={'span'}>
+                  <Button
+                    variant={'contained'}
+                    disabled={actionsDisabled || isAtOrOverQuota}
+                    onClick={handleSendForSignature}
+                  >
+                    {isSendingForSignature
+                      ? 'Sending...'
+                      : 'Send for electronic signature'}
+                  </Button>
+                </Box>
+              </Tooltip>
             }
           />
           <Divider />

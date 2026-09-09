@@ -1,13 +1,16 @@
 # Aridhia Client
 
-TypeScript client for the Aridhia FAIR and Workspaces APIs.
+TypeScript client for the C-Path Aridhia FAIR API, generated from the vendored upstream OpenAPI
+spec (`src/spec/fair-api-full.json`).
 
 ## Overview
 
-This package provides a TypeScript client for interacting with:
+This package provides a TypeScript client for:
 
-- Aridhia FAIR API endpoints for workflows, datasets, and requests
-- Aridhia Workspaces API endpoints for authentication and workspace management
+- The Aridhia API gateway's third-party token exchange (`POST /authenticate`)
+- The C-Path FAIR API endpoints this integration needs: datasets, dataset settings,
+  dictionaries, workspaces, catalogue entries, workspace-request forms, workflows, and data
+  access requests
 
 ## Installation
 
@@ -51,69 +54,73 @@ const aridhiaToken = authResponse.access_token
 ```typescript
 import {
   Configuration,
-  WorkflowsApi,
   DatasetsApi,
   RequestsApi,
 } from '@sage-bionetworks/aridhia-client'
 
-// Configure the client with Aridhia access token
-// All FAIR API calls must go through the gateway using the /fair path
+// The gateway proxies FAIR under `/fair`, and every generated operation path already carries
+// that prefix — so basePath is the bare gateway host, with no `/fair` suffix.
 const config = new Configuration({
-  basePath: 'https://gateway.westeurope.dap.c-path.org/fair',
+  basePath: 'https://gateway.westeurope.dap.c-path.org',
   accessToken: aridhiaToken,
 })
 
-// Create API instances
-const workflowsApi = new WorkflowsApi(config)
 const datasetsApi = new DatasetsApi(config)
 const requestsApi = new RequestsApi(config)
 
-// Use the APIs
-const workflows = await workflowsApi.fairWorkflowsGet()
-const datasets = await datasetsApi.fairDatasetsGet({
-  page: 1,
-  pageSize: 20,
-  requestable: true,
+const dataset = await datasetsApi.fairDatasetsCodeGet({ code: 'netflix' })
+const settings = await datasetsApi.fairDatasetsCodeSettingsGet({
+  code: 'netflix',
 })
+const requests = await requestsApi.fairRequestsGet({ page: 1, pageSize: 20 })
 ```
 
 ## Available APIs
 
-### FAIR API Endpoints
+Generated method/class names are derived from upstream tags and paths (the upstream spec has no
+`operationId`s); the actual emitted names — not the endpoint list below — are the source of
+truth. Two operations (`/datasets/{code}/workspaces` and `/datasets/{code}/workspaces-locations`)
+carry both a `datasets` and a `workspaces` tag upstream, so they're emitted on both `DatasetsApi`
+and `WorkspacesApi`.
 
-- **Workflows**
-  - `GET /workflows/` - List all workflows
-  - `GET /workflows/{code}` - Get workflow by code
-
-- **Datasets**
-  - `GET /datasets/` - List all datasets (with filtering)
-  - `GET /datasets/{code}` - Get dataset by code
-  - `GET /datasets/{code}/settings` - Get dataset settings
-
-- **Requests**
-  - `GET /requests/` - List all requests
-  - `GET /requests/{code}` - Get request by code
-  - `POST /requests/` - Create a new request
-
-### Workspaces API Endpoints
-
-- **Authentication**
+- **Authentication** (`AuthenticationApi`)
   - `POST /authenticate` - Exchange third party token for Aridhia access token
     - Request body: `{ subject_token_type, subject_token_issuer, subject_token }`
     - Response: `{ access_token, expires_in, refresh_token, token_type, ... }`
 
-- **Workspace Management**
-  - `POST /workspace_admin/workspace/search` - Search workspaces
-  - `GET /workspace_admin/form_definition/workspace_request` - Get workspace request form
-  - `POST /workspace_admin/workspace` - Create a workspace
-  - `POST /workspace_admin/workspace/{uuid}/upload_token` - Get upload token
+- **Datasets** (`DatasetsApi`)
+  - `GET /datasets/{code}` - Get dataset by code
+  - `GET /datasets/{code}/settings` - Get dataset settings (`allow_clear`/`allow_pseudonymised`/`allow_manual`, `workflow_key`, ...)
+  - `GET /datasets/{code}/dictionaries/` - List a dataset's dictionaries
+  - `GET /datasets/{code}/workspaces` - List a dataset's workspaces at a location
+  - `GET /datasets/{code}/workspaces-locations` - List a dataset's workspace locations
+  - `GET /datasets/{code}/catalogue` - Get a dataset's catalogue entry (includes the DUA `rights` URL)
+
+- **Requests** (`RequestsApi`)
+  - `GET /requests/` - List all requests
+  - `GET /requests/{code}` - Get request by code
+  - `POST /requests/` - Create a new data access request
+  - `GET /workflows/{code}` - Get a workflow's form fields by workflow key
+
+- **Workspaces** (`WorkspacesApi`)
+  - `GET /workspaces-forms/{code}` - Get a form definition (e.g. `code: 'workspace_request'`)
 
 ## Development
 
-To regenerate the client from the OpenAPI spec:
+To regenerate the client from the vendored upstream OpenAPI spec (`src/spec/fair-api-full.json`),
+patching the four known upstream defects and merging in the hand-authored gateway fragment
+(`src/spec/gateway-api.json`, which supplies `/authenticate` — a route the upstream FAIR spec
+doesn't describe):
 
 ```bash
 pnpm generate
+```
+
+To refresh the vendored upstream spec itself (occasionally, when C-Path ships a new FAIR API
+version):
+
+```bash
+curl -sS https://fair.dap.c-path.org/api/docs/fair.json -o src/spec/fair-api-full.json
 ```
 
 To build the package:

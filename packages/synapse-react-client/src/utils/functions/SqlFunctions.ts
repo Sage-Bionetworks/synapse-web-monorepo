@@ -90,7 +90,12 @@ export const getAdditionalFilters = (
             return filter
           }
           switch (operator) {
-            case ColumnSingleValueFilterOperator.EQUAL: {
+            case ColumnSingleValueFilterOperator.EQUAL:
+            case ColumnSingleValueFilterOperator.NOT_EQUAL:
+            case ColumnSingleValueFilterOperator.GREATER_THAN:
+            case ColumnSingleValueFilterOperator.LESS_THAN:
+            case ColumnSingleValueFilterOperator.GREATER_THAN_OR_EQUAL:
+            case ColumnSingleValueFilterOperator.LESS_THAN_OR_EQUAL: {
               const filter: ColumnSingleValueQueryFilter = {
                 concreteType:
                   'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
@@ -100,13 +105,25 @@ export const getAdditionalFilters = (
               }
               return filter
             }
-            case ColumnSingleValueFilterOperator.IN: {
+            case ColumnSingleValueFilterOperator.IN:
+            case ColumnSingleValueFilterOperator.BETWEEN: {
               const filter: ColumnSingleValueQueryFilter = {
                 concreteType:
                   'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
                 columnName: key,
                 operator: operator,
                 values: splitAndTrim(searchParams[key]),
+              }
+              return filter
+            }
+            case ColumnSingleValueFilterOperator.IS_NULL:
+            case ColumnSingleValueFilterOperator.IS_NOT_NULL: {
+              const filter: ColumnSingleValueQueryFilter = {
+                concreteType:
+                  'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+                columnName: key,
+                operator: operator,
+                values: [],
               }
               return filter
             }
@@ -150,8 +167,25 @@ export const getAdditionalFilters = (
               }
               return filter
             }
+            default:
+              // Compile-time exhaustiveness guard; the log fires only if a new
+              // operator is added to the union without a case here.
+              operator satisfies never
+              console.warn(
+                `getAdditionalFilters: unrecognized SQL operator, skipping filter for key "${key}"`,
+                { operator },
+              )
+              return undefined
           }
-        }),
+        })
+        .filter(
+          (
+            f,
+          ): f is
+            | TextMatchesQueryFilter
+            | ColumnSingleValueQueryFilter
+            | ColumnMultiValueFunctionQueryFilter => f !== undefined,
+        ),
     )
   }
 
@@ -162,7 +196,7 @@ export const getAdditionalFilters = (
 //look for a pattern of 'from[some number of spaces]syn[somenumbers]` case insensitive
 export const parseEntityIdFromSqlStatement = (sql: string): string => {
   const matches = sql.match(/(from)\s+(syn)\d+/gi)
-  return matches && matches[0] ? matches[0].substr(5).trim() : ''
+  return matches?.[0] ? matches[0].substr(5).trim() : ''
 }
 
 export const parseEntityIdAndVersionFromSqlStatement = (

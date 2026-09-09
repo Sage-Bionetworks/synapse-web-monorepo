@@ -5,8 +5,12 @@
   "type": "module",
   "dependencies": {
     "@mui/material": "^7.3.11",
+    "@react-router/node": "catalog:",
     "@sage-bionetworks/synapse-portal-framework": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
+    "@tanstack/react-query": "5.80.10",
+    "isbot": "^5.1.42",
+    "jsdom": "^28.1.0",
     "katex": "^0.16.47",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
@@ -15,6 +19,8 @@
     "vite": "^8.0.16"
   },
   "devDependencies": {
+    "@react-router/dev": "catalog:",
+    "@types/node": "^22.19.20",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "sass": "^1.100.0",
@@ -22,17 +28,41 @@
     "typescript": "5.8.3",
     "vite-config": "workspace:*",
     "vite-plugin-node-polyfills": "^0.28.0",
+    "vite-plugin-svgr": "^5.2.0",
     "vitest": "^4.1.8"
   },
+  "nx": {
+    "targets": {
+      "typegen": {
+        "dependsOn": [
+          "^build"
+        ],
+        "inputs": [
+          "{projectRoot}/react-router.config.ts",
+          "{projectRoot}/src/routes.ts"
+        ],
+        "outputs": [
+          "{projectRoot}/.react-router/types"
+        ]
+      },
+      "type-check": {
+        "dependsOn": [
+          "^build",
+          "typegen"
+        ]
+      }
+    }
+  },
   "scripts": {
-    "start": "vite",
-    "build": "pnpm save-build-date && vite build && pnpm run generate-sitemap",
+    "dev": "react-router dev",
+    "build": "pnpm save-build-date && react-router build && pnpm run generate-sitemap",
     "preview": "vite preview",
-    "type-check": "tsc --build",
-    "lint": "oxlint src",
     "build-sitemap-routes": "vite build --config sitemap.vite.config.ts && node build/sitemap-entry.mjs",
-    "_generate-sitemap": "pnpm build-sitemap-routes && tsx ../../synapse-portal-framework/src/sitemap/cli.ts \\\"$VITE_PORTAL_KEY\\\" --config src/config/sitemapConfig.ts --routes build/sitemap-routes.json",
+    "_generate-sitemap": "pnpm build-sitemap-routes && tsx ../../synapse-portal-framework/src/sitemap/cli.ts \"$VITE_PORTAL_KEY\" --config src/config/sitemapConfig.ts --routes build/sitemap-routes.json --output build/client",
     "generate-sitemap": "dotenv -- pnpm _generate-sitemap",
+    "type-check": "tsc --build",
+    "typegen": "react-router typegen",
+    "lint": "oxlint src",
     "save-build-date": "mkdir -p public && date > public/build-date.txt"
   }
 }

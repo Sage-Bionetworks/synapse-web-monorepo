@@ -9,6 +9,7 @@ import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   DATA_ACCESS_REQUEST_PREVIEW,
   DATA_ACCESS_REQUEST_SIGNATURE,
+  DATA_ACCESS_REQUEST_SIGNATURE_QUOTA,
 } from '@/utils/APIConstants'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -72,6 +73,7 @@ function renderComponent(props: EDucPreviewStepProps = defaultProps) {
 
 const previewEndpoint = `*${DATA_ACCESS_REQUEST_PREVIEW(MOCK_DATA_ACCESS_REQUEST.id)}`
 const signatureEndpoint = `*${DATA_ACCESS_REQUEST_SIGNATURE(MOCK_DATA_ACCESS_REQUEST.id)}`
+const quotaEndpoint = `*${DATA_ACCESS_REQUEST_SIGNATURE_QUOTA(MOCK_DATA_ACCESS_REQUEST.id)}`
 
 function successfulPreviewHandler() {
   return http.get(previewEndpoint, () =>
@@ -79,6 +81,12 @@ function successfulPreviewHandler() {
       { fileHandleId: 'preview-file-handle-456' },
       { status: 200 },
     ),
+  )
+}
+
+function quotaHandler(quota: number, remaining: number) {
+  return http.get(quotaEndpoint, () =>
+    HttpResponse.json({ quota, remaining }, { status: 200 }),
   )
 }
 
@@ -189,5 +197,50 @@ describe('EDucPreviewStep', () => {
     await user.click(uploadButton)
 
     expect(mockOnManualUpload).toHaveBeenCalledTimes(1)
+  })
+
+  it('enables the Send-for-signature button when signature quota remains', async () => {
+    server.use(successfulPreviewHandler(), quotaHandler(5, 3))
+    renderComponent()
+
+    const sendButton = await screen.findByRole('button', {
+      name: 'Send for electronic signature',
+    })
+    await waitFor(() => expect(sendButton).toBeEnabled())
+  })
+
+  it('disables the Send-for-signature button and shows a tooltip when the user is at quota', async () => {
+    server.use(successfulPreviewHandler(), quotaHandler(5, 0))
+    const { user } = renderComponent()
+
+    const sendButton = await screen.findByRole('button', {
+      name: 'Send for electronic signature',
+    })
+    await waitFor(() => expect(sendButton).toBeDisabled())
+
+    // Hover the wrapper span so the tooltip fires (MUI Tooltip doesn't listen on disabled buttons).
+    await user.hover(sendButton.parentElement!)
+    await screen.findByRole('tooltip')
+    expect(
+      screen.getByText(/all 5 of your electronic signature routings/i),
+    ).toBeInTheDocument()
+  })
+
+  it('leaves the Send-for-signature button enabled when the quota fetch fails', async () => {
+    server.use(
+      successfulPreviewHandler(),
+      http.get(quotaEndpoint, () =>
+        HttpResponse.json(
+          { reason: 'quota service unavailable' },
+          { status: 500 },
+        ),
+      ),
+    )
+    renderComponent()
+
+    const sendButton = await screen.findByRole('button', {
+      name: 'Send for electronic signature',
+    })
+    await waitFor(() => expect(sendButton).toBeEnabled())
   })
 })

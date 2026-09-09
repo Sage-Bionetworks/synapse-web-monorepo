@@ -268,7 +268,6 @@ function SearchQueryWrapperInternalWithSession(props: SearchQueryWrapperProps) {
     resetQuery,
     removeQueryFilter,
     removeValueFromQueryFilter,
-    onViewSharingSettingsClicked: undefined,
     addValueToSelectedFacet,
     combineRangeFacetConfig: undefined,
     setRangeFacetValue,

@@ -132,12 +132,12 @@ export function DropdownMenu(props: DropdownMenuProps) {
     const menuItem = items.flat()[0]
     return (
       <Button
-        component={'href' in menuItem ? 'a' : 'button'}
+        component={menuItem.href ? 'a' : 'button'}
         title={menuItem.tooltipText}
         variant={variant}
-        href={'href' in menuItem ? menuItem.href : undefined}
-        rel={'href' in menuItem ? 'noopener noreferrer' : undefined}
-        onClick={'onClick' in menuItem ? menuItem.onClick : undefined}
+        href={menuItem.href}
+        rel={menuItem.href ? 'noopener noreferrer' : undefined}
+        onClick={menuItem.onClick}
         disabled={menuItem.disabled}
         endIcon={menuItem.icon && <IconSvg icon={menuItem.icon} wrap={false} />}
       >
@@ -151,10 +151,7 @@ export function DropdownMenu(props: DropdownMenuProps) {
   }
 
   const handleClose = (event: Event | SyntheticEvent) => {
-    if (
-      anchorRef.current &&
-      anchorRef.current.contains(event.target as HTMLElement)
-    ) {
+    if (anchorRef.current?.contains(event.target as HTMLElement)) {
       return
     }
 
@@ -242,11 +239,9 @@ export function DropdownMenu(props: DropdownMenuProps) {
                                   },
                                 }}
                                 disabled={item.disabled}
-                                href={'href' in item ? item.href : undefined}
+                                href={item.href}
                                 rel={
-                                  'href' in item
-                                    ? 'noopener noreferrer'
-                                    : undefined
+                                  item.href ? 'noopener noreferrer' : undefined
                                 }
                                 // Allow pointer events on disabled item so tooltip works.
                                 style={{ pointerEvents: 'auto' }}

@@ -346,7 +346,7 @@ export function useDataGridWebSocket(options?: UseDataGridWebSocketOptions) {
    * Checks if the model snapshot contains the minimum data required for rendering (columns and rows).
    */
   function isModelRenderable(model: GridModel | null) {
-    if (!model || !model.api.getSnapshot() || !modelSnapshot) {
+    if (!model?.api.getSnapshot() || !modelSnapshot) {
       return false
     }
     const { columnNames, columnOrder, rows } = modelSnapshot

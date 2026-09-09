@@ -37,6 +37,25 @@ jobs:
       - uses: ./.github/actions/pnpm-setup-action
         with:
           STORE_NX_CACHE: 'true'
+      - name: Determine if SageAccountWeb has had any changes
+        id: sage_account_web_changes
+        run: |
+          if pnpm nx show projects --affected --base=remotes/origin/main --json \
+            | jq -e 'index("SageAccountWeb")' > /dev/null; then
+            echo "Project is affected; setting project_affected=true"
+            echo "project_affected=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Project is not affected; setting project_affected=false"
+            echo "project_affected=false" >> "$GITHUB_OUTPUT"
+          fi
+      # SageAccountWeb's browser test project runs real Chromium via Playwright
+      # (jsdom can't evaluate CSS cascade/media queries), so the runner needs
+      # the browser binary installed before `nx affected --target test` runs.
+      - name: Install Playwright Browsers
+        if: ${{ steps.sage_account_web_changes.outputs.project_affected == 'true' }}
+        run: |
+          cd apps/SageAccountWeb
+          pnpm playwright install --with-deps chromium
       - id: test
         # Test runners run in parallel, so we use `--parallel=1` to avoid running them all at once
         run: pnpm nx affected --target test --base=remotes/origin/main --parallel=1

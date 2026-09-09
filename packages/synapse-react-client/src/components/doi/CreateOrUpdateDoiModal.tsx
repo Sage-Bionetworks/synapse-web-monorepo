@@ -293,7 +293,7 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
   }, [currentUser, doi, entityBundle])
 
   function onSave() {
-    if (formRef.current && formRef.current.validateForm()) {
+    if (formRef.current?.validateForm()) {
       const requestDoi: V2Doi = convertFormDataToDoi(formData)
       requestDoi.objectType = objectType
       requestDoi.objectId = objectId
@@ -386,19 +386,17 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
           </Select>
         </StyledFormControl>
       )}
-      <div className="JsonSchemaFormContainer">
-        <JsonSchemaForm
-          formRef={formRef}
-          disabled={isLoading || wasModifiedViaAPI}
-          schema={doiFormSchema}
-          formData={formData}
-          onChange={e => {
-            setFormData(e.formData)
-          }}
-          uiSchema={doiFormUiSchema}
-          showErrorList={false}
-        />
-      </div>
+      <JsonSchemaForm
+        formRef={formRef}
+        disabled={isLoading || wasModifiedViaAPI}
+        schema={doiFormSchema}
+        formData={formData}
+        onChange={e => {
+          setFormData(e.formData)
+        }}
+        uiSchema={doiFormUiSchema}
+        showErrorList={false}
+      />
       {doi && (
         <Alert severity={'warning'}>
           <Typography variant={'body1'}>

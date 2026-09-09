@@ -2,13 +2,15 @@ import {
   StyledTableContainer,
   StyledTableContainerProps,
 } from '@/components/styled/StyledTableContainer'
+import { Box } from '@mui/material'
+import { useForkRef } from '@mui/material/utils'
 import {
   ColumnSizingState,
   flexRender,
   Row,
   Table,
 } from '@tanstack/react-table'
-import { useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { UIEvent, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { MemoizedTableBody, TableBody, TableBodyProps } from './TableBody'
 import {
   getColumnSizeCssVariable,
@@ -16,6 +18,7 @@ import {
   getHeaderSizeCssVariable,
 } from './TanStackTableUtils'
 import { StyledTanStackTableSlotProps, StyledTanStackTableSlots } from './types'
+import { useSyncedTopScrollbar } from './useSyncedTopScrollbar'
 
 export type StyledTanStackTableProps<TData = unknown, TRowType = Row<TData>> = {
   table: Table<TData>
@@ -28,6 +31,13 @@ export type StyledTanStackTableProps<TData = unknown, TRowType = Row<TData>> = {
    * Defaults to false (fixed layout).
    */
   autoColumnSizing?: boolean
+  /**
+   * When true, renders an additional horizontal scrollbar above the table (in addition to the
+   * browser's native scrollbar below it), synced to the same scroll position. Useful for wide
+   * tables where the bottom scrollbar may be far from the viewport's visible area.
+   * @default false
+   */
+  showTopScrollbar?: boolean
   slots?: StyledTanStackTableSlots<TData, TRowType>
   slotProps?: StyledTanStackTableSlotProps<TData, TRowType>
 } & Pick<TableBodyProps<TData, TRowType>, 'rows' | 'rowTransform'>
@@ -45,6 +55,7 @@ export default function StyledTanStackTable<
     styledTableContainerProps,
     fullWidth = true,
     autoColumnSizing = false,
+    showTopScrollbar = false,
     slots = {},
     slotProps = {},
   } = props
@@ -80,6 +91,23 @@ export default function StyledTanStackTable<
    * a column narrower than its content.
    */
   const tableRef = useRef<HTMLTableElement>(null)
+
+  const {
+    containerRef,
+    topScrollRef,
+    targetWidth: tableRenderedWidth,
+    handleTopScroll,
+    handleBottomScroll,
+  } = useSyncedTopScrollbar(tableRef, showTopScrollbar)
+
+  // Merge our own container ref/onScroll with any that the caller passed via
+  // styledTableContainerProps, rather than one clobbering the other.
+  const {
+    ref: callerContainerRef,
+    onScroll: callerOnScroll,
+    ...restContainerProps
+  } = styledTableContainerProps ?? {}
+  const mergedContainerRef = useForkRef(containerRef, callerContainerRef)
 
   // Track what columns+visibility combination was last measured so we know when
   // a re-measurement is needed (e.g. columns change or visibility is toggled).
@@ -165,64 +193,86 @@ export default function StyledTanStackTable<
     ? MemoizedTableBody
     : TableBody
 
+  function handleContainerScroll(e: UIEvent<HTMLDivElement>) {
+    callerOnScroll?.(e)
+    if (showTopScrollbar) {
+      handleBottomScroll(e)
+    }
+  }
+
   return (
-    <StyledTableContainer {...styledTableContainerProps}>
-      <Table
-        {...tableSlotProps}
-        ref={tableRef}
-        style={{
-          ...columnSizeVars,
-          // Pre-measurement: auto layout so the browser can size columns to content.
-          // Post-measurement: fixed layout so the user can resize below content width.
-          tableLayout: hasMeasured ? 'fixed' : 'auto',
-          width: tableWidth,
-          ...tableSlotProps['style'],
-        }}
+    <>
+      {showTopScrollbar && (
+        <Box
+          ref={topScrollRef}
+          onScroll={handleTopScroll}
+          sx={{ overflowX: 'auto', overflowY: 'hidden', height: '16px' }}
+        >
+          <Box sx={{ width: tableRenderedWidth, height: '1px' }} />
+        </Box>
+      )}
+      <StyledTableContainer
+        {...restContainerProps}
+        ref={mergedContainerRef}
+        onScroll={handleContainerScroll}
       >
-        <Thead {...theadSlotProps}>
-          {table.getHeaderGroups().map(headerGroup => {
-            return (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map(header => (
-                  <Th
-                    key={header.id}
-                    colSpan={header.colSpan}
-                    {...thSlotProps}
-                    style={{
-                      // Pre-measurement: no width hint — let the browser size freely.
-                      // Post-measurement: exact width from the measured/resized value.
-                      ...(hasMeasured && {
-                        width: `calc(var(${getHeaderSizeCssVariable(
-                          header.id,
-                        )}) * 1px)`,
-                      }),
-                      ...getCommonPinningStyles(header.column),
-                      ...thSlotProps['style'],
-                    }}
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                    {header.column.getCanResize() && (
-                      <div
-                        className={`resizer ${
-                          header.column.getIsResizing() ? 'isResizing' : ''
-                        }`}
-                        onMouseDown={header.getResizeHandler()}
-                        onTouchStart={header.getResizeHandler()}
-                      />
-                    )}
-                  </Th>
-                ))}
-              </tr>
-            )
-          })}
-        </Thead>
-        <TableBodyElement<TData, TRowType> {...tableBodyProps} />
-      </Table>
-    </StyledTableContainer>
+        <Table
+          {...tableSlotProps}
+          ref={tableRef}
+          style={{
+            ...columnSizeVars,
+            // Pre-measurement: auto layout so the browser can size columns to content.
+            // Post-measurement: fixed layout so the user can resize below content width.
+            tableLayout: hasMeasured ? 'fixed' : 'auto',
+            width: tableWidth,
+            ...tableSlotProps['style'],
+          }}
+        >
+          <Thead {...theadSlotProps}>
+            {table.getHeaderGroups().map(headerGroup => {
+              return (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map(header => (
+                    <Th
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      {...thSlotProps}
+                      style={{
+                        // Pre-measurement: no width hint — let the browser size freely.
+                        // Post-measurement: exact width from the measured/resized value.
+                        ...(hasMeasured && {
+                          width: `calc(var(${getHeaderSizeCssVariable(
+                            header.id,
+                          )}) * 1px)`,
+                        }),
+                        ...getCommonPinningStyles(header.column),
+                        ...thSlotProps['style'],
+                      }}
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                      {header.column.getCanResize() && (
+                        <div
+                          className={`resizer ${
+                            header.column.getIsResizing() ? 'isResizing' : ''
+                          }`}
+                          onMouseDown={header.getResizeHandler()}
+                          onTouchStart={header.getResizeHandler()}
+                        />
+                      )}
+                    </Th>
+                  ))}
+                </tr>
+              )
+            })}
+          </Thead>
+          <TableBodyElement<TData, TRowType> {...tableBodyProps} />
+        </Table>
+      </StyledTableContainer>
+    </>
   )
 }

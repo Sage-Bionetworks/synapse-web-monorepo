@@ -29,6 +29,7 @@ import {
 } from '@mui/material'
 import { EDucSignerStatus } from '@sage-bionetworks/synapse-client'
 import {
+  FileHandleAssociateType,
   ManagedACTAccessRequirement,
   RestrictableObjectType,
 } from '@sage-bionetworks/synapse-types'
@@ -102,9 +103,11 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
   )
   const viewDucHref =
     viewDucHrefOverride ??
-    (previewFileHandle?.fileHandleId
+    (previewFileHandle?.fileHandleId && requestId
       ? SynapseClient.getPortalFileHandleServletUrl(
           previewFileHandle.fileHandleId,
+          requestId,
+          FileHandleAssociateType.DataAccessRequestAttachment,
         )
       : undefined)
 

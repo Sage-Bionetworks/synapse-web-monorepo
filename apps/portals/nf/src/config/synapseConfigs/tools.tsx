@@ -25,17 +25,14 @@ export const toolsSchema: TableToGenericCardMapping = {
     'synonyms',
     'latestPublicationDate',
     'species',
-    // Shared across resource types since the LinkML migration (nf-osi/nf-research-tools-schema
-    // docs/MIGRATION.md) unified these into single columns -- replaces the old per-type
-    // cellLineDisease/animalModelDisease/diseaseType and modelofManifestation/
-    // animalModelOfManifestation names, none of which exist anymore.
+    'availability',
     'geneticDisorder',
     'manifestation',
     'organ',
-    'tumorType',
+    'tissue',
+    'modelType',
     // Cell Line
     'cellLineCategory',
-    'tissue',
     'resistance',
     // Animal Model
     'backgroundStrain',
@@ -52,17 +49,13 @@ export const toolsSchema: TableToGenericCardMapping = {
     'vectorType',
     'selectableMarker',
     // Biobank
-    'specimenTissueType',
     'specimenPreparationMethod',
     'specimenFormat',
     'specimenType',
     // Patient-Derived Model
-    'pdmModelSystemType',
     'pdmHostStrain',
     'engraftmentSite',
     // Organoid Protocol
-    'organoidType',
-    'organoidModelType',
     'organoidDerivationSource',
     'organoidCellTypes',
     'cultureSystem',
@@ -75,7 +68,6 @@ export const toolsSchema: TableToGenericCardMapping = {
     'clinicalAssessmentType',
     'clinicalAssessmentTargetPopulation',
     'clinicalAssessmentDiseaseSpecific',
-    'availabilityStatus',
   ],
   includeShareButton: true,
 }

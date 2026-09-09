@@ -1,4 +1,5 @@
 import { JsonSchemaForm } from '@/components/JsonSchemaForm/JsonSchemaForm'
+import jsonSchemaFormStyles from '@/components/JsonSchemaForm/JsonSchemaForm.module.scss'
 import TextWidget from '@/components/SchemaDrivenAnnotationEditor/widget/TextWidget'
 import {
   Alert,
@@ -76,10 +77,9 @@ function JSONArrayEditor<T = unknown>(props: JSONArrayEditorProps<T>) {
 
   return (
     <Box
-      className="JsonSchemaFormContainer"
       sx={{
         // Hide the label/button to show more info
-        '.JsonSchemaForm .LabelContainer': {
+        [`.${jsonSchemaFormStyles.jsonSchemaForm} .LabelContainer`]: {
           display: 'none',
           visibility: 'hidden',
         },

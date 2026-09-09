@@ -274,7 +274,7 @@ const getAllIDs = async (event: CustomControlCallbackData) => {
   event.request!.query.sql = 'select id from syn51186974'
   const results = await SynapseClient.getFullQueryTableResults(event.request!)
   results.queryResult?.queryResults.rows.map(row => {
-    if (row.values && row.values[0]) ids.push(row.values[0])
+    if (row.values?.[0]) ids.push(row.values[0])
   })
   return ids
 }
@@ -363,19 +363,6 @@ export const TableWithNoDownloadAccess: Story = {
     name: 'No Table Download Access',
     hideSqlEditorControl: false,
     shouldDeepLink: false,
-    // onViewSharingSettingsClicked: undefined
-    onViewSharingSettingsClicked: (benefactorEntityId: string) => {
-      displayToast(
-        `Open the ${benefactorEntityId} Sharing Settings dialog.  If undefined, send to the entity page.`,
-        'info',
-        {
-          primaryButtonConfig: {
-            text: 'Open Entity Page',
-            href: `https://www.synapse.org/Synapse:${benefactorEntityId}`,
-          },
-        },
-      )
-    },
   },
 }
 

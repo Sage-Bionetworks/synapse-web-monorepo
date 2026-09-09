@@ -7,6 +7,8 @@ export type AridhiaIntegrationProps = PropsWithChildren<{
    * All API calls, including FAIR API calls, should go through the gateway.
    */
   apiBasePath?: string
+  /** `idp-id` registered with the target C-Path hub, sent as `subject_token_issuer`. */
+  subjectTokenIssuer?: string
 }>
 
 /**
@@ -17,7 +19,11 @@ export type AridhiaIntegrationProps = PropsWithChildren<{
  * ```
  */
 export function AridhiaIntegration(props: AridhiaIntegrationProps) {
-  const { children, apiBasePath } = props
+  const {
+    children,
+    apiBasePath,
+    subjectTokenIssuer = 'sage-prod', // idp-id provided by C-Path
+  } = props
 
   return (
     <AridhiaContextProvider
@@ -25,7 +31,7 @@ export function AridhiaIntegration(props: AridhiaIntegrationProps) {
       authenticationRequest={{
         //Note: PLFM-9439 would enable us to switch this to an id_token (type 'jwt') rather than passing an access_token
         subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
-        subject_token_issuer: 'sage-prod', //idp-id provided by C-Path
+        subject_token_issuer: subjectTokenIssuer,
       }}
     >
       {children}

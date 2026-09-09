@@ -56,6 +56,7 @@ type SynapseChatMessageProps = {
   scrollIntoView?: boolean
   animateEntry?: boolean
   isAwaitingResponse?: boolean
+  showLoadingIcon?: boolean
   /**
    * Attachments sent with this message. This information is not available in any API request/response
    * until the job has finished processing, so this prop is used to optimistically render the attachment
@@ -74,6 +75,7 @@ export default function SynapseChatMessage(props: SynapseChatMessageProps) {
     scrollIntoView,
     animateEntry,
     isAwaitingResponse,
+    showLoadingIcon,
     pendingAttachments,
   } = props
   const { data: asyncJobStatus } = usePollAsynchronousJob(chatJobId)
@@ -121,6 +123,7 @@ export default function SynapseChatMessage(props: SynapseChatMessageProps) {
       scrollIntoView={scrollIntoView}
       animateEntry={animateEntry}
       isAwaitingResponse={isAwaitingResponse}
+      showLoadingIcon={showLoadingIcon}
       attachments={attachments}
       attachmentStatuses={chatResponse?.attachmentStatuses}
     />

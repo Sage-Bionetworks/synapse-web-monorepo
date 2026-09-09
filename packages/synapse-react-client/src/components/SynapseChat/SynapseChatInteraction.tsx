@@ -54,6 +54,8 @@ export type SynapseChatInteractionProps = {
   attachments?: SynapseChatInteractionAttachment[]
   /** Server-reported outcome of staging each attachment, if available (see AgentChatResponseWithAttachmentStatuses). */
   attachmentStatuses?: AgentChatAttachmentStatus[]
+  /** Whether to show the loading spinner icon while the response is in flight. */
+  showLoadingIcon?: boolean
 }
 
 // Show tool calls in the trace. Useful for development. We may want to show them to users in the future.
@@ -88,6 +90,7 @@ export function SynapseChatInteraction({
   isAwaitingResponse = false,
   attachments,
   attachmentStatuses,
+  showLoadingIcon = true,
 }: SynapseChatInteractionProps) {
   const theme = useTheme()
   const userMessageRef = useRef<HTMLLIElement | null>(null)
@@ -259,7 +262,9 @@ export function SynapseChatInteraction({
               size={'small'}
               startIcon={
                 isLoading ? (
-                  <SynapseSpinner size={14} />
+                  showLoadingIcon ? (
+                    <SynapseSpinner size={14} />
+                  ) : undefined
                 ) : showTrace ? (
                   <KeyboardArrowDown sx={{ width: '14px' }} />
                 ) : (

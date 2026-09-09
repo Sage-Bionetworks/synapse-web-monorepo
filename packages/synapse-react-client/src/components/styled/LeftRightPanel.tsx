@@ -15,6 +15,12 @@ export const StyledOuterContainer: StyledComponent<BoxProps> = styled(Box, {
   },
 }))
 
+/**
+ * Canonical 900px two-column card that stacks into a single scrollable column
+ * on mobile. Layout-only: consumers supply their own panel padding.
+ * `apps/SageAccountWeb` extends this (adding baked-in panel padding) rather
+ * than redefining it -- see that app's `StyledComponents.ts` (SWC-7966).
+ */
 export const StyledInnerContainer: StyledComponent<PaperProps> = styled(Paper, {
   label: 'StyledInnerContainer',
 })(({ theme }) => ({
@@ -22,9 +28,21 @@ export const StyledInnerContainer: StyledComponent<PaperProps> = styled(Paper, {
   minHeight: '675px',
   margin: '0 auto',
   display: 'flex',
+  overflow: 'hidden',
+  [theme.breakpoints.down('md')]: {
+    flexDirection: 'column',
+    width: '100%',
+    minHeight: 0,
+    height: '100vh',
+    overflowX: 'auto',
+    overflowY: 'scroll',
+  },
   '& > div:nth-of-type(1), & > div:nth-of-type(2)': {
     borderRadius: 'inherit',
     width: '450px',
+    [theme.breakpoints.down('md')]: {
+      width: '100%',
+    },
   },
   '& > div:nth-of-type(1)': {
     backgroundColor: theme.palette.background.paper,

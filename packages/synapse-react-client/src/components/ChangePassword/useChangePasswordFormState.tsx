@@ -39,7 +39,7 @@ export default function useChangePasswordFormState(
     'twoFAResetToken',
   )
 
-  // Store current and new password in state so that we can re-use it if 2FA is required
+  // Store current and new password in state so that we can re-use the current password if 2FA is required
   const [currentPassword, setCurrentPassword] = useState<string>('')
   const [newPassword, setNewPassword] = useState<string>('')
   const [twoFactorAuthErrorResponse, setTwoFactorAuthErrorResponse] = useState<
@@ -121,6 +121,7 @@ export default function useChangePasswordFormState(
     mutate: resetTwoFactorAuth,
     isSuccess: twoFactorAuthResetIsSuccess,
     isPending: twoFactorAuthResetIsPending,
+    error: twoFactorAuthResetError,
   } = useResetTwoFactorAuth()
 
   const beginTwoFactorAuthReset = useCallback(
@@ -129,7 +130,9 @@ export default function useChangePasswordFormState(
         const request: TwoFactorAuthResetRequest = {
           userId: twoFactorAuthErrorResponse.userId!,
           twoFaResetEndpoint: twoFaResetEndpoint,
-          // When attempting to reset 2FA while resetting a password, the current password must be used to request 2FA reset
+          // The 2fa/reset endpoint only accepts a twoFaToken minted for an AUTHENTICATION (login) challenge;
+          // the token from a change-password 2FA challenge is scoped to PASSWORD_CHANGE and is rejected there.
+          // The current password is therefore the only credential this flow can present.
           password: currentPassword,
         }
         resetTwoFactorAuth(request)
@@ -188,6 +191,12 @@ export default function useChangePasswordFormState(
             password after clicking the link sent to your email address.
           </Alert>
         )}
+        {otpStep === 'DISABLE_2FA_PROMPT' && twoFactorAuthResetError && (
+          <Alert severity={'error'} sx={{ my: 2 }}>
+            Failed to reset two-factor authentication:{' '}
+            {twoFactorAuthResetError.reason}
+          </Alert>
+        )}
       </>
     )
   }, [
@@ -198,6 +207,7 @@ export default function useChangePasswordFormState(
     options?.hideReset2FA,
     otpStep,
     promptForTwoFactorAuth,
+    twoFactorAuthResetError,
     twoFactorAuthResetIsPending,
     twoFactorAuthResetIsSuccess,
     twoFactorAuthResetUri,

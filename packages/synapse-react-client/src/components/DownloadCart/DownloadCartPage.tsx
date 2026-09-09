@@ -18,10 +18,7 @@ import { CreatePackageV2 } from './CreatePackageV2'
 import { PYTHON_CLIENT_IMPORT_AND_LOGIN } from './DirectProgrammaticDownload'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import { DownloadIneligibleForPackagingFilesFromListButton } from './DownloadIneligibleForPackagingFilesFromListButton'
-import {
-  DownloadListActionsRequired,
-  DownloadListActionsRequiredProps,
-} from './DownloadListActionsRequired'
+import { DownloadListActionsRequired } from './DownloadListActionsRequired'
 import ComponentCollapse from '../ComponentCollapse'
 
 const pythonDownloadCode = `${PYTHON_CLIENT_IMPORT_AND_LOGIN}
@@ -38,7 +35,7 @@ const filterTabs: { label: string; filter: AvailableFilter }[] = [
 /**
  * Show the Download Cart page.
  */
-export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
+export function DownloadCartPage() {
   const { accessToken } = useSynapseContext()
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0)
   const [selectedFilterTabIndex, setSelectedFilterTabIndex] =
@@ -87,14 +84,11 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
   }
   // SWC-5874: When arriving at the download cart when there are no ARs, the user should start in the Download list
   useEffect(() => {
-    if (data && data.numberOfFilesRequiringAction == 0) {
+    if (data?.numberOfFilesRequiringAction == 0) {
       setSelectedTabIndex(1)
     }
     // also hide the Create Package UI if there are no files available for download
-    if (
-      data &&
-      data.numberOfFilesAvailableForDownloadAndEligibleForPackaging === 0
-    ) {
+    if (data?.numberOfFilesAvailableForDownloadAndEligibleForPackaging === 0) {
       setIsShowingCreatePackageUI(false)
     }
   }, [data])
@@ -191,7 +185,7 @@ export function DownloadCartPage(props: DownloadListActionsRequiredProps) {
             // In the typical case where the download cart is cleared, unmounting the component ensures that the actions are cleared out.
             <div>
               <div className="container">
-                <DownloadListActionsRequired {...props} />
+                <DownloadListActionsRequired />
               </div>
             </div>
           )}

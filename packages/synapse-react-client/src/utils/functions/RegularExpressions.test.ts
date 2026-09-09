@@ -1,4 +1,8 @@
-import { parseSynId, convertDoiToLink } from './RegularExpressions'
+import {
+  parseSynId,
+  convertDoiToLink,
+  extractMarkdownLinkHref,
+} from './RegularExpressions'
 
 describe('RegularExpressions', () => {
   describe('parseSynId', () => {
@@ -31,6 +35,15 @@ describe('RegularExpressions', () => {
       const malformedDoi = '10.1000'
       const result = convertDoiToLink(malformedDoi)
       expect(result).toBe('')
+    })
+  })
+  describe('extractMarkdownLinkHref', () => {
+    test.each([
+      ['[label](https://example.com)', 'https://example.com'],
+      ['https://example.com', 'https://example.com'],
+      ['', ''],
+    ])('extractMarkdownLinkHref - %s', (input, expected) => {
+      expect(extractMarkdownLinkHref(input)).toBe(expected)
     })
   })
 })

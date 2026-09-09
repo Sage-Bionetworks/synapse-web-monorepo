@@ -20,6 +20,7 @@ const CUSTOM_LABEL_VALUE =
 
 export const datasetCardConfiguration: CardConfiguration = {
   type: SynapseConstants.GENERIC_CARD,
+  actionButtonStyle: 'chip',
   genericCardSchema: {
     type: SynapseConstants.DATASET,
     title: 'title',
@@ -56,6 +57,18 @@ export const datasetCardConfiguration: CardConfiguration = {
       version: {
         source: 'rowVersionNumber',
       },
+    },
+    // Hosting-aware download/access. Driven by dataset annotation columns:
+    //  - `hosting`: controlled vocabulary — synapse | external-cloud |
+    //    external-download | external-access | mixed | unavailable. Blank/unknown
+    //    → synapse (standard Download), so this is inert until datasets are
+    //    annotated (annotation/schema work lives in nf-metadata-dictionary).
+    //  - `repository`: free-text external repo name shown in the label/tooltip.
+    //  - `externalUrl`: link target for non-downloadable (external-access) datasets.
+    hostingConfig: {
+      hostingColumn: 'hosting',
+      repositoryColumn: 'repository',
+      externalUrlColumn: 'externalUrl',
     },
   },
   labelLinkConfig: [

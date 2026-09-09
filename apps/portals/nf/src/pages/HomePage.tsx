@@ -140,7 +140,7 @@ export default function HomePage() {
       <SectionLayout
         title={'Our Partners'}
         centerTitle
-        ContainerProps={{ className: 'home-spacer' }}
+        ContainerProps={{ className: 'home-spacer nf-partners-section' }}
       >
         <CardContainerLogic
           columnAliases={columnAliases}

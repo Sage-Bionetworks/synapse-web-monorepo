@@ -1,5 +1,5 @@
 import { RestrictionUiType } from '../HasAccess/AccessIcon'
-import { Request } from '@sage-bionetworks/aridhia-client/generated/models'
+import { RequestListItem } from '@sage-bionetworks/aridhia-client/generated/models'
 
 /**
  * Maps an Aridhia request status to the appropriate RestrictionUiType for display.
@@ -8,7 +8,7 @@ import { Request } from '@sage-bionetworks/aridhia-client/generated/models'
  * @returns The appropriate RestrictionUiType based on the request status
  */
 export function getRestrictionUiTypeFromAridhiaRequest(
-  request: Request | undefined,
+  request: RequestListItem | undefined,
 ): RestrictionUiType {
   if (!request) {
     // No request found - user needs to request access
@@ -38,11 +38,11 @@ export function getRestrictionUiTypeFromAridhiaRequest(
  * @returns The most recently updated request that contains the specified dataset, or undefined if not found
  */
 export function findRequestForDataset(
-  requests: Request[],
+  requests: RequestListItem[],
   datasetCode: string,
-): Request | undefined {
-  const matchingRequests = requests.filter(request =>
-    request.datasets?.some(dataset => dataset.code === datasetCode),
+): RequestListItem | undefined {
+  const matchingRequests = requests.filter(
+    request => request.datasets?.code === datasetCode,
   )
 
   if (matchingRequests.length === 0) {

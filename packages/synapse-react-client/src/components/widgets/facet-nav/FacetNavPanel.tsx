@@ -233,7 +233,7 @@ const applyFacetFilter = (
   allFacetValues: FacetColumnResultValues,
   callbackApplyFn: FacetNavPanelProps['applyChangesToGraphSlice'],
 ) => {
-  if (event.points && event.points[0]) {
+  if (event.points?.[0]) {
     const plotPointData: any = event.points[0]
     const facetValueClickedValue =
       plotPointData.data.facetEnumerationValues[plotPointData.pointNumber]

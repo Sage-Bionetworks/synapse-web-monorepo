@@ -412,6 +412,30 @@ describe('RangeFacetFilter tests', () => {
         ])
       })
     })
+
+    it('normalizes NaN bounds from the range control to undefined', async () => {
+      init({ facetResult: rangeFacetResult })
+      await waitFor(() => expect(mockedRangeSlider).toHaveBeenCalled())
+      await waitFor(() => expect(capturedOnApplyClicked).toBeDefined())
+
+      act(() => {
+        capturedOnApplyClicked!({ min: NaN, max: 300 })
+      })
+
+      await waitFor(() => {
+        expect(
+          currentQueryContext?.getCurrentQueryRequest().query.selectedFacets,
+        ).toEqual([
+          {
+            concreteType:
+              'org.sagebionetworks.repo.model.table.FacetColumnRangeRequest',
+            columnName: 'Year',
+            min: undefined,
+            max: '300',
+          },
+        ])
+      })
+    })
   })
 })
 
@@ -472,6 +496,29 @@ describe('RangeFacetFilterUI INTEGER without column bounds', () => {
     const minInput = screen.getByLabelText<HTMLInputElement>('min')
     expect(minInput.type).toBe('number')
     expect(minInput.value).toBe('1997')
+  })
+
+  it('does not seed inputs with NaN when switching from "Not Assigned" → "Range"', async () => {
+    // selectedMin/Max = VALUE_NOT_SET simulates the state after clicking "Not Assigned".
+    // Without treating the sentinel as absent, parseInt('org.sagebionetworks…') = NaN
+    // would seed the min input, and applying with only a max value would emit min='NaN'.
+    render(
+      <RangeFacetFilterUI
+        label="Year"
+        facetResult={{ selectedMin: VALUE_NOT_SET, selectedMax: VALUE_NOT_SET }}
+        columnType="INTEGER"
+        onRangeValueSelected={vi.fn()}
+        onNotSetSelected={vi.fn()}
+        onAnySelected={vi.fn()}
+      />,
+      { wrapper: createWrapper() },
+    )
+    const rangeOption = screen.getByLabelText('Range')
+    await userEvent.click(rangeOption)
+    const minInput = screen.getByLabelText<HTMLInputElement>('min')
+    const maxInput = screen.getByLabelText<HTMLInputElement>('max')
+    expect(minInput.value).toBe('')
+    expect(maxInput.value).toBe('')
   })
 
   it('renders a RangeSlider when real columnMin and columnMax bounds are provided', async () => {

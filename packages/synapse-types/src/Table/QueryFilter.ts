@@ -5,6 +5,22 @@ export enum ColumnSingleValueFilterOperator {
   EQUAL = 'EQUAL',
   /* The IN operation */
   IN = 'IN',
+  /* '>' */
+  GREATER_THAN = 'GREATER_THAN',
+  /* '<' */
+  LESS_THAN = 'LESS_THAN',
+  /* '>=' */
+  GREATER_THAN_OR_EQUAL = 'GREATER_THAN_OR_EQUAL',
+  /* '<=' */
+  LESS_THAN_OR_EQUAL = 'LESS_THAN_OR_EQUAL',
+  /* '<>' */
+  NOT_EQUAL = 'NOT_EQUAL',
+  /* IS NULL */
+  IS_NULL = 'IS_NULL',
+  /* IS NOT NULL */
+  IS_NOT_NULL = 'IS_NOT_NULL',
+  /* BETWEEN: values[0] is the lower bound, values[1] is the upper bound (inclusive). */
+  BETWEEN = 'BETWEEN',
 }
 export enum ColumnMultiValueFunction {
   /* HAS function on multi-value columns, same as the predicate: 'columnName HAS ()' */
@@ -56,7 +72,24 @@ export interface TextMatchesQueryFilter {
   searchMode?: TextMatchesMode
 }
 
+/* Boolean combinator for a FilterGroup's children. */
+export type BooleanOperator = 'AND' | 'OR'
+
+export const FILTER_GROUP_CONCRETE_TYPE_VALUE =
+  'org.sagebionetworks.repo.model.table.FilterGroup'
+export type FILTER_GROUP_CONCRETE_TYPE = typeof FILTER_GROUP_CONCRETE_TYPE_VALUE
+
+// A group of filter conditions combined with a boolean operator. Groups can be nested to form arbitrary boolean expression trees (AND/OR/NOT).
+export interface FilterGroup {
+  concreteType: FILTER_GROUP_CONCRETE_TYPE
+  isDefiningCondition?: boolean //When null (default) or false, this condition will be applied to WHERE clause of table/view query.  When set to true, for a query against a VirtualTable, this condition will be applied to the WHERE clause of the VirtualTable's definingSQL
+  operator?: BooleanOperator
+  not?: boolean
+  children?: QueryFilter[]
+}
+
 export type QueryFilter =
   | TextMatchesQueryFilter
   | ColumnSingleValueQueryFilter
   | ColumnMultiValueFunctionQueryFilter
+  | FilterGroup

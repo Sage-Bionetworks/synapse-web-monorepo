@@ -2,11 +2,12 @@ import { useGetEntityChildren } from '@/synapse-queries'
 import { useGetDOIAssociation } from '@/synapse-queries/doi/useDOI'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
 import {
+  isDataset,
   isEntityRefCollectionView,
   isVersionableEntity,
 } from '@/utils/functions/EntityTypeUtils'
 import useGetEntityMetadata from '@/utils/hooks/useGetEntityMetadata'
-import { Box, Link } from '@mui/material'
+import { Box, Link, Tooltip } from '@mui/material'
 import { DoiObjectType, EntityType } from '@sage-bionetworks/synapse-client'
 import { EntityRefCollectionView } from '@sage-bionetworks/synapse-types'
 import { ReactNode, useState } from 'react'
@@ -15,6 +16,21 @@ import { CitationsDialog } from './CitationsDialog'
 import { maxCitationCount, useDataCiteUsage } from './useDataCiteUsage'
 import { useGetMentions } from './useGetMentions'
 import Linkify from '@/components/GenericCard/Linkify'
+import { isTable } from '@/utils/functions/EntityTypeUtils'
+import { BUNDLE_MASK_LAST_UPDATED_ON } from '@/utils/SynapseConstants'
+import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
+import { entityTypeToFriendlyName } from '@/utils/functions/EntityTypeUtils'
+import { UserBadge } from '@/components/UserCard/UserBadge'
+import { formatDate } from '@/utils/functions/DateFormatter'
+import { InfoTwoTone } from '@mui/icons-material'
+import dayjs from 'dayjs'
+import {
+  DATASET_CREATED_BY_TOOLTIP,
+  INFO_ICON_SX,
+  getTableModifiedOnTooltip,
+  getTableModifiedOnAccessibleLabel,
+  getTableLastRebuiltTooltip,
+} from '../createdByModifiedByTooltips'
 
 export type EntityProperty = {
   key: string
@@ -51,6 +67,24 @@ export function useGetEntityTitleBarProperties(
     },
     { enabled: isContainer },
   )
+
+  const entity = bundle?.entity
+  const isTableLike = !!entity && isTable(entity)
+  const friendlyName = bundle ? entityTypeToFriendlyName(bundle.entityType) : ''
+
+  const { data: tableQueryResult } = useGetQueryResultBundleWithAsyncStatus(
+    {
+      entityId,
+      query: {
+        sql: `SELECT * FROM ${entityId}${versionNumber ? `.${versionNumber}` : ''} LIMIT 0`,
+      },
+      partMask: BUNDLE_MASK_LAST_UPDATED_ON,
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+    },
+    { enabled: !!(entity && isTable(entity)) },
+  )
+
+  const tableLastRebuilt = tableQueryResult?.responseBody?.lastUpdatedOn
 
   // If this is the latest entity version, show the "versionless" DOI if it exists.
   const useFallbackVersionlessDOI =
@@ -102,7 +136,7 @@ export function useGetEntityTitleBarProperties(
 
   const datasetItems =
     bundle?.entity && isEntityRefCollectionView(bundle.entity)
-      ? ((bundle?.entity as EntityRefCollectionView).items ?? []).length
+      ? ((bundle.entity as EntityRefCollectionView).items ?? []).length
       : null
 
   const { data: mentions } = useGetMentions(entityId)
@@ -202,6 +236,51 @@ export function useGetEntityTitleBarProperties(
             {downloadAlias}
           </Box>
         </>
+      ),
+    },
+    entity && {
+      key: 'createdBy',
+      title: 'Created By',
+      value: (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <UserBadge userId={entity.createdBy} />
+          <span>on {formatDate(dayjs(entity.createdOn))}</span>
+          {isDataset(entity) && (
+            <Tooltip title={DATASET_CREATED_BY_TOOLTIP}>
+              <InfoTwoTone sx={INFO_ICON_SX} />
+            </Tooltip>
+          )}
+        </Box>
+      ),
+    },
+    entity && {
+      key: 'modifiedBy',
+      title: isTableLike ? 'Configuration Last Modified' : 'Modified By',
+      value: (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <UserBadge userId={entity.modifiedBy} />
+          <span>on {formatDate(dayjs(entity.modifiedOn))}</span>
+          {isTableLike && (
+            <Tooltip
+              title={getTableModifiedOnTooltip(friendlyName)}
+              aria-label={getTableModifiedOnAccessibleLabel(friendlyName)}
+            >
+              <InfoTwoTone sx={INFO_ICON_SX} />
+            </Tooltip>
+          )}
+        </Box>
+      ),
+    },
+    tableLastRebuilt && {
+      key: 'lastRebuilt',
+      title: 'Last Rebuilt On',
+      value: (
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {formatDate(dayjs(tableLastRebuilt))}
+          <Tooltip title={getTableLastRebuiltTooltip(friendlyName)}>
+            <InfoTwoTone sx={INFO_ICON_SX} />
+          </Tooltip>
+        </Box>
       ),
     },
   ].filter(item => !!item) as EntityProperty[]

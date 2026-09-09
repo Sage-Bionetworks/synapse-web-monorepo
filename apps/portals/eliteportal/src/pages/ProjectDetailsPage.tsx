@@ -67,7 +67,7 @@ function ProjectDetailsPage() {
               <CardContainerLogic
                 cardConfiguration={datasetCardConfiguration}
                 sql={datasetsSql}
-                searchParams={{ projectShortName: shortName }}
+                searchParams={{ project: shortName }}
                 sqlOperator={ColumnMultiValueFunction.HAS}
               />
             ),

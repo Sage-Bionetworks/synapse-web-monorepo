@@ -4,7 +4,10 @@ import { getAccessRequirementHandlers } from '@/mocks/msw/handlers/accessRequire
 import { getDataAccessRequestHandlers } from '@/mocks/msw/handlers/dataAccessRequestHandlers'
 import { getUserProfileHandlers } from '@/mocks/msw/handlers/userProfileHandlers'
 import { getWikiHandlers } from '@/mocks/msw/handlers/wikiHandlers'
-import { DATA_ACCESS_REQUEST_PREVIEW } from '@/utils/APIConstants'
+import {
+  DATA_ACCESS_REQUEST_PREVIEW,
+  DATA_ACCESS_REQUEST_SIGNATURE_QUOTA,
+} from '@/utils/APIConstants'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { http, HttpResponse } from 'msw'
@@ -81,5 +84,29 @@ export const PreviewError: Story = {
   },
   args: {
     managedACTAccessRequirement: eDucManagedACTAccessRequirement,
+  },
+}
+
+export const PreviewAtQuota: Story = {
+  name: 'eDUC preview — user at signature quota',
+  parameters: {
+    msw: {
+      handlers: [
+        previewHandler,
+        http.get(
+          `${MOCK_REPO_ORIGIN}${DATA_ACCESS_REQUEST_SIGNATURE_QUOTA(MOCK_DATA_ACCESS_REQUEST.id)}`,
+          () => HttpResponse.json({ quota: 3, remaining: 0 }, { status: 200 }),
+        ),
+        ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
+        ...getWikiHandlers(MOCK_REPO_ORIGIN),
+        ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN),
+        ...getDataAccessRequestHandlers(MOCK_REPO_ORIGIN),
+      ],
+    },
+  },
+  args: {
+    managedACTAccessRequirement: eDucManagedACTAccessRequirement,
+    previewSrcOverride:
+      'https://www.rd.usda.gov/sites/default/files/pdf-sample_0.pdf',
   },
 }

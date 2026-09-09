@@ -41,6 +41,10 @@ const SEND_TO_ANALYSIS_PLATFORM_BUTTON_ID =
 export type TopLevelControlsProps = {
   name?: string
   hideDownload?: boolean
+  /** If true, the "Add ... files to Download List" option in the Download menu will be hidden */
+  hideAddToDownloadListMenuItem?: boolean
+  /** If true, the "Programmatic Options" option in the Download menu will be hidden */
+  hideProgrammaticOptionsMenuItem?: boolean
   hideVisualizationsControl?: boolean
   hideFacetFilterControl?: boolean
   hideQueryCount?: boolean
@@ -84,6 +88,8 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
     name,
     showColumnSelection = false,
     hideDownload = false,
+    hideAddToDownloadListMenuItem,
+    hideProgrammaticOptionsMenuItem,
     hideVisualizationsControl = false,
     hideFacetFilterControl = false,
     hideQueryCount = false,
@@ -285,6 +291,8 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
             <DownloadOptions
               darkTheme={true}
               onDownloadFiles={() => setShowDownloadConfirmation(true)}
+              hideAddToDownloadListMenuItem={hideAddToDownloadListMenuItem}
+              hideProgrammaticOptionsMenuItem={hideProgrammaticOptionsMenuItem}
             />
           )}
 

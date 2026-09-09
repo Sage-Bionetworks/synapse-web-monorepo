@@ -19,6 +19,7 @@ import {
   toSearchIndexQuery,
   type SearchQueryConfig,
 } from './SearchQueryUseQueryOptions'
+import { VALUE_NOT_SET } from '@/utils/SynapseConstants'
 
 const SEARCH_INDEX_ID = 'syn60001'
 
@@ -322,6 +323,91 @@ describe('toSearchIndexQuery', () => {
       }
     )?.range?.event_date
     expect(rangeClause).not.toHaveProperty('gte')
+  })
+
+  it('translates a range facet "Not Assigned" selection into a must_not exists post_filter', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleRequest({
+        selectedFacets: [
+          {
+            concreteType: FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
+            columnName: 'age',
+            min: VALUE_NOT_SET,
+            max: VALUE_NOT_SET,
+          },
+        ],
+      }),
+      SEARCH_INDEX_ID,
+      [{ id: 'c1', name: 'age', columnType: 'INTEGER', facetType: 'range' }],
+    )
+    // Must be a "field missing" clause, NOT a range clause containing the sentinel string.
+    expect(result.searchQuery?.post_filter).toEqual({
+      bool: { must_not: [{ exists: { field: 'age' } }] },
+    })
+    expect(result.searchQuery?.post_filter).not.toHaveProperty('range')
+  })
+
+  it('translates "Not Assigned" for DATE range facets without applying date conversion', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleRequest({
+        selectedFacets: [
+          {
+            concreteType: FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
+            columnName: 'event_date',
+            min: VALUE_NOT_SET,
+            max: VALUE_NOT_SET,
+          },
+        ],
+      }),
+      SEARCH_INDEX_ID,
+      [
+        {
+          id: 'c1',
+          name: 'event_date',
+          columnType: 'DATE',
+          facetType: 'range',
+        },
+      ],
+    )
+    expect(result.searchQuery?.post_filter).toEqual({
+      bool: { must_not: [{ exists: { field: 'event_date' } }] },
+    })
+  })
+
+  it('excludes a "Not Assigned" range clause from its own column\'s aggregation filter', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleRequest({
+        selectedFacets: [
+          {
+            concreteType: FACET_COLUMN_RANGE_REQUEST_CONCRETE_TYPE_VALUE,
+            columnName: 'age',
+            min: VALUE_NOT_SET,
+            max: VALUE_NOT_SET,
+          },
+          {
+            concreteType: FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+            columnName: 'organ',
+            facetValues: ['Brain'],
+          },
+        ],
+      }),
+      SEARCH_INDEX_ID,
+      [
+        {
+          id: 'c1',
+          name: 'organ',
+          columnType: 'STRING',
+          facetType: 'enumeration',
+        },
+        { id: 'c2', name: 'age', columnType: 'INTEGER', facetType: 'range' },
+      ],
+    )
+    // organ aggregation should be filtered by the age "Not Assigned" clause (drops its own)
+    expect(
+      (result.searchQuery?.aggregations as Record<string, unknown>)?.['organ'],
+    ).toMatchObject({
+      filter: { bool: { must_not: [{ exists: { field: 'age' } }] } },
+    })
   })
 
   it('combines multiple selectedFacets into a bool.must post_filter', () => {
@@ -1672,6 +1758,135 @@ describe('toSearchIndexQuery – exact phrase matching', () => {
     // "" contains no inner characters → falls through to the normal strategy
     expect(result.searchQuery?.query).toEqual({
       multi_match: { query: '""', fuzziness: 'AUTO' },
+    })
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Synapse ID detection
+// ---------------------------------------------------------------------------
+
+describe('toSearchIndexQuery – Synapse ID detection', () => {
+  function makeQueryBundleWithText(searchExpression: string) {
+    return makeQueryBundleRequest({
+      additionalFilters: [
+        {
+          concreteType: TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+          searchExpression,
+        },
+      ],
+    })
+  }
+
+  it('a bare Synapse ID always emits simple_query_string regardless of strategy', () => {
+    const strategies = [
+      undefined,
+      'MULTI_MATCH',
+      'MULTI_MATCH_BEST_FIELDS',
+      'MULTI_MATCH_CROSS_FIELDS',
+      'PHRASE_PREFIX',
+      'BOOSTED_FUZZY',
+      'SIMPLE_QUERY_STRING',
+    ] as const
+
+    for (const queryStrategy of strategies) {
+      const result = toSearchIndexQuery(
+        makeQueryBundleWithText('syn12345'),
+        SEARCH_INDEX_ID,
+        undefined,
+        queryStrategy ? { queryStrategy } : undefined,
+      )
+      expect(result.searchQuery?.query).toEqual({
+        simple_query_string: { query: 'syn12345' },
+      })
+    }
+  })
+
+  it('an uppercase Synapse ID is detected (case-insensitive)', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('SYN12345'),
+      SEARCH_INDEX_ID,
+    )
+    expect(result.searchQuery?.query).toEqual({
+      simple_query_string: { query: 'SYN12345' },
+    })
+  })
+
+  it('a versioned Synapse ID (syn123.4) emits simple_query_string', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('syn12345.7'),
+      SEARCH_INDEX_ID,
+    )
+    expect(result.searchQuery?.query).toEqual({
+      simple_query_string: { query: 'syn12345.7' },
+    })
+  })
+
+  it('a Synapse ID mixed with free-text terms emits simple_query_string', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('syn12345 cancer'),
+      SEARCH_INDEX_ID,
+    )
+    expect(result.searchQuery?.query).toEqual({
+      simple_query_string: { query: 'syn12345 cancer' },
+    })
+  })
+
+  it('field boosts are preserved when routing to simple_query_string for a Synapse ID', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('syn12345'),
+      SEARCH_INDEX_ID,
+      undefined,
+      {
+        queryStrategy: 'BOOSTED_FUZZY',
+        fieldBoosts: { resourceName: 5, synonyms: 4 },
+      },
+    )
+    expect(result.searchQuery?.query).toEqual({
+      simple_query_string: {
+        query: 'syn12345',
+        fields: ['resourceName^5', 'synonyms^4'],
+      },
+    })
+  })
+
+  it('a word that starts with "syn" but is not an ID (e.g. "synapse") is NOT routed to simple_query_string', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('synapse'),
+      SEARCH_INDEX_ID,
+    )
+    expect(result.searchQuery?.query).toEqual({
+      multi_match: { query: 'synapse', fuzziness: 'AUTO' },
+    })
+  })
+
+  it('"synonyms" is NOT detected as a Synapse ID', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('synonyms'),
+      SEARCH_INDEX_ID,
+    )
+    expect(result.searchQuery?.query).toEqual({
+      multi_match: { query: 'synonyms', fuzziness: 'AUTO' },
+    })
+  })
+
+  it('"syn" with no digits is NOT detected as a Synapse ID', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('syn'),
+      SEARCH_INDEX_ID,
+    )
+    expect(result.searchQuery?.query).toEqual({
+      multi_match: { query: 'syn', fuzziness: 'AUTO' },
+    })
+  })
+
+  it('a Synapse ID embedded in a larger word (e.g. "asyn12345") is NOT detected', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('asyn12345'),
+      SEARCH_INDEX_ID,
+    )
+    expect(result.searchQuery?.query).toEqual({
+      multi_match: { query: 'asyn12345', fuzziness: 'AUTO' },
     })
   })
 })

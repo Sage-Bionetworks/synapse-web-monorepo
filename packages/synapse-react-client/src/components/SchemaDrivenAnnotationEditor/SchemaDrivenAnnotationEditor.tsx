@@ -26,10 +26,10 @@ import {
 } from '../ConfirmationDialog/ConfirmationDialog'
 import { JsonSchemaForm } from '../JsonSchemaForm/JsonSchemaForm'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { collectTopLevelProperties } from '@/utils/jsonschema/collectTopLevelProperties'
 import {
   dropNullishArrayValues,
   dropNullValues,
-  getPossibleTopLevelPropertiesInObjectSchema,
   getFriendlyPropertyName,
   getJsonSchemaForForm,
   getSchemaIdForConcreteType,
@@ -179,8 +179,7 @@ export function SchemaDrivenAnnotationEditor(
     })
 
   const entitySchemaBaseProperties: JSONSchema7['properties'] = useMemo(
-    () =>
-      getPossibleTopLevelPropertiesInObjectSchema(schemaForEntityType ?? {}),
+    () => collectTopLevelProperties(schemaForEntityType),
     [schemaForEntityType],
   )
 
@@ -228,11 +227,11 @@ export function SchemaDrivenAnnotationEditor(
   const showHasNoAnnotationsAlert = schema === null && formDataHasNoAnnotations
 
   return (
-    <div className="JsonSchemaFormContainer">
+    <>
       {isLoading ? (
-        <div className="LoadingPlaceholder">
+        <Box sx={{ display: 'flex', margin: '60px auto' }}>
           <SynapseSpinner size={30} />
-        </div>
+        </Box>
       ) : (
         <>
           {entityJson && schema && (
@@ -411,6 +410,6 @@ export function SchemaDrivenAnnotationEditor(
           )}
         </>
       )}
-    </div>
+    </>
   )
 }

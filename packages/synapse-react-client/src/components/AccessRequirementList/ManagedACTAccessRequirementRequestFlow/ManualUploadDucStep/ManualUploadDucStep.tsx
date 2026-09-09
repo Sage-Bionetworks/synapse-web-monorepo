@@ -82,8 +82,12 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
   const previewFileHandleId = previewFileHandle?.fileHandleId
   const downloadHref =
     downloadHrefOverride ??
-    (previewFileHandleId
-      ? SynapseClient.getPortalFileHandleServletUrl(previewFileHandleId)
+    (previewFileHandleId && dataAccessRequest?.id
+      ? SynapseClient.getPortalFileHandleServletUrl(
+          previewFileHandleId,
+          dataAccessRequest.id,
+          FileHandleAssociateType.DataAccessRequestAttachment,
+        )
       : undefined)
 
   const [updateDarError, setUpdateDarError] = useState<string | undefined>()

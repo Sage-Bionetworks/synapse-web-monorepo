@@ -5,8 +5,6 @@ import useMergeGridWithSource, {
 import { displayToast } from '@/components/index'
 import { useGetEntity } from '@/synapse-queries'
 import { useGetSchemaBinding } from '@/synapse-queries/jsonschema/useEntityBoundSchema'
-import { useGetFeatureFlag } from '@/synapse-queries/featureflags'
-import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
 import { CloudDownloadTwoTone, CloudSyncTwoTone } from '@mui/icons-material'
 import { Skeleton, Tooltip } from '@mui/material'
@@ -46,10 +44,6 @@ export default function SyncGridWithSourceButton(
     ? convertToEntityType(entity.concreteType)
     : undefined
 
-  const enableRecordSetSync = useGetFeatureFlag(
-    FeatureFlagEnum.ENABLE_RECORDSET_SYNCHRONIZATION,
-  )
-
   const { mutate: mergeGrid, isPending } = useMergeGridWithSource({
     onSuccess: (result, variables) => {
       switch (result.type) {
@@ -58,9 +52,6 @@ export default function SyncGridWithSourceButton(
           break
         case 'tableUpdateTransaction':
           onMergeTableSuccess(result.data)
-          break
-        case 'recordset_overwrite':
-          displayToast('Successfully updated RecordSet.', 'success')
           break
         default:
           result satisfies never
@@ -74,7 +65,6 @@ export default function SyncGridWithSourceButton(
   //  we have the user PULL the latest changes before enabling a full PULL_PUSH, so they
   //  have an opportunity to handle and fix unexpected merge outcomes.
   const shouldPull =
-    enableRecordSetSync &&
     entity !== undefined &&
     sourceEntitySchemaBinding !== undefined &&
     shouldPullBeforePush(gridSession, entity, sourceEntitySchemaBinding)
@@ -82,7 +72,6 @@ export default function SyncGridWithSourceButton(
   const { buttonText, tooltipText } = getSyncButtonLabels(
     shouldPull,
     sourceEntityType,
-    enableRecordSetSync,
   )
 
   const isLoadingPrerequisiteData = entityLoading || schemaBindingIsLoading
@@ -155,7 +144,6 @@ export function shouldPullBeforePush(
 export function getSyncButtonLabels(
   shouldPull: boolean,
   sourceEntityType: EntityType | undefined,
-  enableRecordSetSync: boolean,
 ): { buttonText: string; tooltipText: string } {
   if (shouldPull) {
     return {
@@ -164,10 +152,7 @@ export function getSyncButtonLabels(
         'Imports any recent changes into this Curator session. Your changes will not yet be applied.',
     }
   }
-  if (
-    sourceEntityType === EntityType.table ||
-    (sourceEntityType === EntityType.recordset && !enableRecordSetSync)
-  ) {
+  if (sourceEntityType === EntityType.table) {
     return {
       buttonText: 'Apply changes',
       tooltipText:

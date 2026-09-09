@@ -5,11 +5,10 @@ import { ActionRequiredListItem } from '../DownloadCart/ActionRequiredListItem'
 
 export type EntityActionsRequiredProps = {
   entityId: string
-  onViewSharingSettingsClicked?: (benefactorId: string) => void
 }
 
 export function EntityActionsRequired(props: EntityActionsRequiredProps) {
-  const { entityId, onViewSharingSettingsClicked } = props
+  const { entityId } = props
   const { data: actionRequiredList } = useGetEntityActionsRequired(entityId)
   const actions = actionRequiredList?.actions
 
@@ -23,13 +22,7 @@ export function EntityActionsRequired(props: EntityActionsRequiredProps) {
         <div className="EntityActionsRequired">
           {allCompleteAndIncompleteActions.map((action: Action, index) => {
             if (action) {
-              return (
-                <ActionRequiredListItem
-                  key={index}
-                  action={action}
-                  onViewSharingSettingsClicked={onViewSharingSettingsClicked}
-                />
-              )
+              return <ActionRequiredListItem key={index} action={action} />
             } else return false
           })}
         </div>

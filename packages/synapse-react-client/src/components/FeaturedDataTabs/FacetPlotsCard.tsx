@@ -174,7 +174,7 @@ function FacetPlotsCard(props: FacetPlotsCardProps) {
       })
       .filter(x => x !== undefined)[0]
 
-    if (selectedFacet && selectedFacet.value) {
+    if (selectedFacet?.value) {
       return selectedFacet?.value
     }
     return ''

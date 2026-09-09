@@ -105,10 +105,19 @@ These are the standard tools and technologies that are used by multiple packages
 - react-router
 - MUI
 
-## Comments
+## Code Comments
 
-Default to no comment. Code should be self-explanatory through clear naming and structure; a comment is a last resort for genuinely non-obvious intent — a subtle invariant, a workaround for external behavior, or a "why this and not the obvious thing" that the code can't express on its own. Never comment to restate what the code does, and don't narrate routine logic. It is always useful to document regex patterns - i.e. what they are intended to match. When in doubt, leave it out.
-Never write "historical context" comments in a refactor — e.g. `// previously this used X`, `// changed from the old approach`, `// no longer does Y`. Once a PR merges, the old behavior is irrelevant and lives in git history. Comment what the code does now, not what it used to do.
+- **Prioritize Expressive Code**: Write highly readable, self-documenting code as the primary means of explanation. Default to no comment and, when absolutely necessary, use comments exclusively to provide critical context that cannot be naturally expressed through clean naming conventions and clear structure.
+- **Target the Audience (Method/Class-level docs vs. Inline)**: Match documentation placement to its specific consumer:
+  - **Public API**: Focus class and method comments strictly on the public contract, defining the behavior, parameters, and return values expected by the caller at that specific level of abstraction.
+  - **Internal Logic (Inline Comments)**: Place all underlying execution details, algorithmic mechanics, and internal complexities entirely within inline comments inside the implementation body.
+- **Document Intent, Refactor Mechanics**: Dedicate internal comments to explaining the underlying business logic, constraints, and rationale behind the code (the Why). Allow the code architecture to explain the execution (the What). Treat any impulse to write step-by-step prose about what the code is doing as an immediate signal to refactor the code into clearer, smaller functions.
+- **Current State Only**: Code comments and CLAUDE.md files should exclusively describe the current state, logic, and intent of the code.
+  - Keep historical context, diff explanations, and "before vs. after" commentary entirely within planning documents, commit messages, PR descriptions, or narrowly scoped as comments that are co-located with specific regression tests.
+  - Limit references to past logic strictly to active, ongoing code migration paths that directly impact current execution.
+- **Stable References**: Code comments and CLAUDE.md files should use reference points that survive automated refactoring and ongoing codebase evolution.
+  - Point to other code exclusively through LSP-supported dynamic links or external issue keys (like PLFM-1234).
+  - Define target locations using conceptual names or programmable signatures instead of brittle options like absolute file paths or hard-coded line numbers.
 
 ## Code review norms
 

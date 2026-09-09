@@ -4,12 +4,6 @@ export enum FeatureFlagEnum {
   // If enabled, show the new header component that uses the HeaderSearchBox component
   PORTAL_SEARCH_HEADER = 'PORTAL_SEARCH_HEADER',
 
-  // If enabled, allow viewing & editing the 'description' string field on entities
-  DESCRIPTION_FIELD = 'DESCRIPTION_FIELD',
-
-  // If enabled, use the re-implemented ACL Editor for entities
-  REACT_ENTITY_ACL_EDITOR = 'REACT_ENTITY_ACL_EDITOR',
-
   // If enabled, show the chatbot entrypoint from the new Synapse Homepage
   HOMEPAGE_CHATBOT = 'HOMEPAGE_CHATBOT',
 
@@ -22,15 +16,15 @@ export enum FeatureFlagEnum {
   // If enabled, show the SynapseChat dialog in portals
   PORTAL_CHAT = 'PORTAL_CHAT',
 
+  // If enabled, show the Curie launcher widget in portals
+  CURIE_CHAT_WIDGET = 'CURIE_CHAT_WIDGET',
+
   // If enabled, shows a "New Task" button on the metadata tasks page
   CURATION_TASK_PAGE_SHOW_NEW_TASK_BUTTON = 'CURATION_TASK_PAGE_SHOW_NEW_TASK_BUTTON',
-
-  // If enabled, Curator allows users to synchronize (merge) a grid session with the source RecordSet. If disabled, legacy behavior will be used, which overwrites the RecordSet with the grid session data.
-  ENABLE_RECORDSET_SYNCHRONIZATION = 'ENABLE_RECORDSET_SYNCHRONIZATION',
 
   // If enabled, show the Models section in the ELITE portal (nav item, Explore tab, and Search tab)
   ELITE_PORTAL_MODELS = 'ELITE_PORTAL_MODELS',
 
-  // If enabled, use Grid Agent V2 which supports multi-agent and chat attachments
-  GRID_AGENT_V2 = 'GRID_AGENT_V2',
+  // Reserved for unit tests. Not configured in Stack Builder; do not use in production code.
+  TEST_ONLY = 'TEST_ONLY',
 }

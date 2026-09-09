@@ -21,7 +21,6 @@
   "ignorePatterns": [
     ".nx/",
     "**/generated/",
-    "**/codegen/",
     "**/build/",
     "**/dist/",
     "**/playwright-report/",
@@ -143,6 +142,7 @@
     "typescript/no-wrapper-object-types": "error",
     "typescript/only-throw-error": "error",
     "typescript/prefer-as-const": "error",
+    "typescript/prefer-optional-chain": "error",
     "typescript/prefer-namespace-keyword": "error",
     "typescript/prefer-promise-reject-errors": "error",
     "typescript/require-await": "error",

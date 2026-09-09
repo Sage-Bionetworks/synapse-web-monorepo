@@ -99,11 +99,14 @@ function SearchParamAwareSearchQueryWrapperPlotNav({
     )
   }
 
-  // Hidden: run the query only to populate the count for tab auto-navigation
+  // Hidden: run the query only to populate the count for tab auto-navigation.
+  // Must forward searchQueryConfig so the count matches the visible tab's query
+  // (queryStrategy/fieldBoosts affect which documents match).
   return (
     <SearchQueryWrapper
       searchIndexId={config.searchIndexId}
       initQueryRequest={initQueryRequest}
+      searchQueryConfig={config.searchQueryConfig}
       onQueryResultBundleChange={onQueryResultBundleChange}
     />
   )
