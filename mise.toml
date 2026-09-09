@@ -1,0 +1,4 @@
+[tools]
+java = "corretto-21"
+node = "22.13.1"
+pnpm = "10.33.0"

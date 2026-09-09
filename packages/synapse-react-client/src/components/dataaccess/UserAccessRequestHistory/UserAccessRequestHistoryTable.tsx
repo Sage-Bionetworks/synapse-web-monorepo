@@ -34,8 +34,7 @@ const columns = [
     enableSorting: false,
     cell: ctx => {
       if (
-        ctx.row.original.userAccessApproval &&
-        ctx.row.original.userAccessApproval.expiredOn &&
+        ctx.row.original.userAccessApproval?.expiredOn &&
         dayjs(ctx.row.original.userAccessApproval.expiredOn).isBefore(dayjs())
       ) {
         return 'Expired'
@@ -57,10 +56,7 @@ const columns = [
     header: props => <ColumnHeader {...props} title={'Expires'} />,
     enableSorting: false,
     cell: ctx => {
-      if (
-        ctx.row.original.userAccessApproval &&
-        ctx.row.original.userAccessApproval.expiredOn
-      ) {
+      if (ctx.row.original.userAccessApproval?.expiredOn) {
         return formatDate(dayjs(ctx.row.original.userAccessApproval.expiredOn))
       }
       return null

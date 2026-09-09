@@ -27,7 +27,7 @@ function JoinTeamPage() {
   const [membershipInvitation, setMembershipInvitation] =
     useState<MembershipInvitation>()
   useEffect(() => {
-    if (context && context.signedToken) {
+    if (context?.signedToken) {
       if (isJoinTeamSignedToken(context.signedToken)) {
         setJoinTeamToken(context.signedToken)
       } else if (isMembershipInvtnSignedToken(context.signedToken)) {

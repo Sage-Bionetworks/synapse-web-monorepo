@@ -48,7 +48,7 @@ const ProjectDiscussionForum = (): React.ReactNode => {
         <DiscussionThread threadId={threadId} limit={20} />
       </Box>
     )
-  } else if (forum && forum.id) {
+  } else if (forum?.id) {
     return (
       <ForumPage
         forumId={forum.id}

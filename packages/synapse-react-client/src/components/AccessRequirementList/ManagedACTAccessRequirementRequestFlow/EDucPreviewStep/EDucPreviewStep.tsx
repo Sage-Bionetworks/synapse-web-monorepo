@@ -101,9 +101,7 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
     { enabled: Boolean(dataAccessRequest?.id) },
   )
   const isAtOrOverQuota =
-    signatureQuota != null &&
-    signatureQuota.remaining != null &&
-    signatureQuota.remaining <= 0
+    signatureQuota?.remaining != null && signatureQuota.remaining <= 0
 
   const isLoading =
     isLoadingDar ||

@@ -101,7 +101,7 @@ function HomePageInternal() {
           sx: { marginBottom: '50px' },
         }}
         title="Data Analysis Platform Integrations"
-        subtitle="Analyze your data in a trusted research environment, integrated with the knowledge portal ecosystem."
+        subtitle="Analyze your data in a trusted research environment (TRE), integrated with the knowledge portal ecosystem."
         centerTitle
       >
         <AdknowledgePlatformIntegrations />

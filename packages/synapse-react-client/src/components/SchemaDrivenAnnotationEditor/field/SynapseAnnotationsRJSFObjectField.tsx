@@ -7,12 +7,10 @@ import {
   RJSFSchema,
   StrictRJSFSchema,
 } from '@rjsf/utils'
+import { collectTopLevelProperties } from '@/utils/jsonschema/collectTopLevelProperties'
 import { JSONSchema7Definition } from 'json-schema'
 import { useEffect } from 'react'
-import {
-  convertToArray,
-  getPossibleTopLevelPropertiesInObjectSchema,
-} from '../AnnotationEditorUtils'
+import { convertToArray } from '../AnnotationEditorUtils'
 
 /**
  * Extends the @rjsf/core `ObjectField` and just adds a custom hook for Synapse annotation business logic
@@ -34,7 +32,7 @@ export function SynapseAnnotationsRJSFObjectField<
    */
   useEffect(() => {
     const newFormData: Record<string, any> = { ...formData }
-    const allProperties = getPossibleTopLevelPropertiesInObjectSchema(schema)
+    const allProperties = collectTopLevelProperties(schema)
     if (allProperties) {
       Object.entries(allProperties).forEach(([key, propertySchema]) => {
         // Since the annotations object is flat, we can safely use the property name as the key (no nested properties)

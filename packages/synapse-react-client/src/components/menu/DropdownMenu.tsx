@@ -151,10 +151,7 @@ export function DropdownMenu(props: DropdownMenuProps) {
   }
 
   const handleClose = (event: Event | SyntheticEvent) => {
-    if (
-      anchorRef.current &&
-      anchorRef.current.contains(event.target as HTMLElement)
-    ) {
+    if (anchorRef.current?.contains(event.target as HTMLElement)) {
       return
     }
 
