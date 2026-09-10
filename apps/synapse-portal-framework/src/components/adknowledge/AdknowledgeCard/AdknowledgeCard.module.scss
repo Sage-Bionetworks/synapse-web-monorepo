@@ -10,6 +10,7 @@
   align-items: center;
   text-align: center;
   gap: 41px;
+  max-width: 412px;
 
   @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
     padding: 25px 35px;
