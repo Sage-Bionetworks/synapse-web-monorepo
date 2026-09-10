@@ -71,12 +71,24 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
     throwOnError: true,
   })
 
+  // Once we start the void → refetch → updateDar sequence, the preview query must not run again:
+  // GET /dataAccessRequest/{id}/preview has server-side side effects (creates a new signature
+  // envelope, resets DAR to draft) that repopulate `eDucSignatureEnvelopeId` on the DAR. The
+  // backend then rejects the follow-up updateDar because we're trying to set a manually-uploaded
+  // `ducFileHandleId` on a DAR that still has an active signature envelope. Because
+  // `useVoidDataAccessRequestSignature` invalidates the root DAR query key on success, an active
+  // preview observer would otherwise be auto-refetched.
+  const [isSubmittingSignedDuc, setIsSubmittingSignedDuc] = useState(false)
+
   const {
     data: previewFileHandle,
     isLoading: isLoadingPreview,
     error: previewError,
   } = useGetDataAccessRequestPreview(dataAccessRequest?.id ?? '', {
-    enabled: Boolean(dataAccessRequest?.id) && !downloadHrefOverride,
+    enabled:
+      Boolean(dataAccessRequest?.id) &&
+      !downloadHrefOverride &&
+      !isSubmittingSignedDuc,
   })
 
   const previewFileHandleId = previewFileHandle?.fileHandleId
@@ -157,6 +169,8 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
     )
     let latestDar = dataAccessRequest
     if (hasSignatureEnvelope) {
+      // Freeze the preview query before voiding — see the comment above the `isSubmittingSignedDuc` state.
+      setIsSubmittingSignedDuc(true)
       try {
         await voidSignatureAsync(dataAccessRequest.id)
       } catch {
