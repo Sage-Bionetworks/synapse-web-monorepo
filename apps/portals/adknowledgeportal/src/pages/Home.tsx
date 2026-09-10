@@ -91,7 +91,6 @@ function HomePageInternal() {
         <div className={styles.resultsExplorersContainer}>
           <AdknowledgeCard {...modelADCard} />
           <AdknowledgeCard {...agoraCard} />
-          <AdknowledgeCard {...agoraCard} />
         </div>
       </SectionLayout>
       <SectionLayout
