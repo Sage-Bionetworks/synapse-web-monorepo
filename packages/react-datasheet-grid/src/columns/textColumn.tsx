@@ -3,6 +3,10 @@ import { createPortal } from 'react-dom'
 import { CellComponent, CellProps, Column } from '../types'
 import cx from 'classnames'
 import { useFirstRender } from '../hooks/useFirstRender'
+import {
+  getVisibleCellBounds,
+  isCellOriginVisible,
+} from '../utils/cellVisibility'
 
 type TextColumnOptions<T> = {
   placeholder?: string
@@ -39,7 +43,21 @@ type Rect = {
   height: number
   maxWidth: number
   maxHeight: number
+  // Whether the cell the popup is anchored to is still visible in the grid, as
+  // opposed to scrolled behind its sticky header/pinned columns or out of its
+  // scrollable area.
+  anchorVisible: boolean
 }
+
+const sameRect = (a: Rect | null, b: Rect): boolean =>
+  a !== null &&
+  a.top === b.top &&
+  a.left === b.left &&
+  a.width === b.width &&
+  a.height === b.height &&
+  a.maxWidth === b.maxWidth &&
+  a.maxHeight === b.maxHeight &&
+  a.anchorVisible === b.anchorVisible
 
 // Mirrors the defaults style.css sets on --dsg-cell-expanded-max-width/
 // height — used as the fallback if that CSS variable can't be read (see
@@ -104,6 +122,9 @@ const TextComponent = React.memo<
       // Small buffer so the popup never touches the very edge of the window.
       const viewportMargin = 8
 
+      const container = anchor.closest<HTMLElement>('.dsg-container')
+      const cell = anchor.closest('.dsg-cell')
+
       let rafId: number
       const update = () => {
         const rect = anchor.getBoundingClientRect()
@@ -121,24 +142,18 @@ const TextComponent = React.memo<
           window.innerHeight,
           viewportMargin,
         )
-        setPopupRect(prev =>
-          prev &&
-          prev.top === rect.top &&
-          prev.left === rect.left &&
-          prev.width === rect.width &&
-          prev.height === rect.height &&
-          prev.maxWidth === maxWidth &&
-          prev.maxHeight === maxHeight
-            ? prev
-            : {
-                top: rect.top,
-                left: rect.left,
-                width: rect.width,
-                height: rect.height,
-                maxWidth,
-                maxHeight,
-              },
-        )
+        const next = {
+          top: rect.top,
+          left: rect.left,
+          width: rect.width,
+          height: rect.height,
+          maxWidth,
+          maxHeight,
+          anchorVisible:
+            !container ||
+            isCellOriginVisible(rect, getVisibleCellBounds(container, cell)),
+        }
+        setPopupRect(prev => (sameRect(prev, next) ? prev : next))
         rafId = requestAnimationFrame(update)
       }
       update()
@@ -228,6 +243,16 @@ const TextComponent = React.memo<
       }
     }, [focus, rowData])
 
+    const anchorVisible = popupRect?.anchorVisible ?? true
+    // Nothing clips the popup, so it must not paint while the cell it is
+    // anchored to is hidden by the grid: an active cell falls back to rendering
+    // its value inside the cell, where the grid clips it like any other value.
+    // An in-progress edit is the exception — its input stays mounted (and
+    // focused) but invisible, so scrolling away doesn't end the edit.
+    const usePopup = active && (anchorVisible || focus)
+    const popupHidden = usePopup && !anchorVisible
+    const interactive = focus && !popupHidden
+
     const floating = Boolean(focus && popupRect)
 
     const textarea = (
@@ -252,7 +277,7 @@ const TextComponent = React.memo<
         style={
           popupRect
             ? {
-                pointerEvents: focus ? 'auto' : 'none',
+                pointerEvents: interactive ? 'auto' : 'none',
                 minWidth: floating
                   ? Math.min(popupRect.width, popupRect.maxWidth)
                   : popupRect.width,
@@ -263,7 +288,7 @@ const TextComponent = React.memo<
                     }
                   : { width: popupRect.width }),
               }
-            : { pointerEvents: focus ? 'auto' : 'none' }
+            : { pointerEvents: interactive ? 'auto' : 'none' }
         }
         onChange={e => {
           asyncRef.current.changedAt = Date.now()
@@ -299,6 +324,9 @@ const TextComponent = React.memo<
           display: 'flex',
           alignItems: 'center',
           pointerEvents: 'none',
+          // Opacity rather than visibility/unmounting: those would blur a
+          // focused input, ending the edit it is meant to preserve.
+          opacity: popupHidden ? 0 : undefined,
         }}
       >
         {textarea}
@@ -310,8 +338,8 @@ const TextComponent = React.memo<
         <div ref={setAnchor} className="dsg-input-anchor" />
         {anchor &&
           createPortal(
-            active ? popup : textarea,
-            active ? document.body : anchor,
+            usePopup ? popup : textarea,
+            usePopup ? document.body : anchor,
           )}
       </>
     )
