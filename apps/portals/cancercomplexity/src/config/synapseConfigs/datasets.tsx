@@ -13,8 +13,11 @@ import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/
 const rgbIndex = 0
 
 const CUSTOM_LABEL_KEY = 'HOW TO DOWNLOAD'
+// Shown for externally-hosted datasets; downloadable hosting types render the
+// shared "Click here to add to Synapse download list" link instead (see
+// TableRowGenericCard).
 const CUSTOM_LABEL_VALUE =
-  'This file is hosted externally, follow the External Link, below'
+  'File(s) are hosted externally. Click "Access at…" or follow the Source Repository Link, below'
 
 export const datasetSchema: TableToGenericCardMapping = {
   type: SynapseConstants.DATASET,
