@@ -6,13 +6,11 @@ import LayersOutlined from '@mui/icons-material/LayersOutlined'
 import BlockOutlined from '@mui/icons-material/BlockOutlined'
 import AssuredWorkloadOutlined from '@mui/icons-material/AssuredWorkloadOutlined'
 import LoginOutlined from '@mui/icons-material/LoginOutlined'
-import { ReactNode, RefObject, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { ReactNode, useState } from 'react'
 import { TargetEnum } from '@/utils/html/TargetEnum'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import { useSynapseContext } from '@/utils'
 import GenericCardActionButton from '../GenericCard/GenericCardActionButton'
-import { EntityDownloadConfirmation } from '../EntityDownloadConfirmation'
 import {
   DATASET_HOSTING_CONFIG,
   DatasetHostingConfig,
@@ -35,8 +33,6 @@ export type DatasetDownloadButtonProps = {
   entityId?: string
   /** The dataset name, shown in the download confirmation. */
   name: string
-  /** The dataset version to add to the download list, if any. */
-  version?: number
   /**
    * The dataset's hosting type. Accepts a raw annotation value (possibly blank,
    * null, or unrecognized); anything unrecognized is treated as `synapse`.
@@ -47,8 +43,16 @@ export type DatasetDownloadButtonProps = {
   /** Destination for the action when the dataset is not downloadable (e.g. dbGaP/EGA). */
   externalUrl?: string
   disabled?: boolean
-  /** Portal target for the download-confirmation dialog (see EntityDownloadConfirmation). */
-  downloadConfirmationContainer?: RefObject<HTMLElement | null>
+  /**
+   * Called when an authenticated user clicks a downloadable-hosting button.
+   * Owners of the button render the `EntityDownloadConfirmation` themselves and
+   * toggle it from this callback, so the confirmation banner can be shared with
+   * other download entry points on the same card (e.g. the customSecondaryLabel
+   * "Click here to add to Synapse download list" link).
+   */
+  onDownloadClick?: () => void
+  /** Disables the button while an owner-managed download flow is in progress. */
+  isDownloading?: boolean
 }
 
 function resolveLabel(
@@ -93,12 +97,12 @@ export function DatasetDownloadButton(props: DatasetDownloadButtonProps) {
   const {
     entityId,
     name,
-    version,
     hosting,
     repository,
     externalUrl,
     disabled,
-    downloadConfirmationContainer,
+    onDownloadClick,
+    isDownloading,
   } = props
   const { isAuthenticated } = useSynapseContext()
   const config = DATASET_HOSTING_CONFIG[normalizeHosting(hosting)]
@@ -107,8 +111,6 @@ export function DatasetDownloadButton(props: DatasetDownloadButtonProps) {
   const caveat = fillRepository(config.tooltip, repository)
   const Icon = ICONS[config.icon]
 
-  const [showConfirmation, setShowConfirmation] = useState(false)
-  const [isAdding, setIsAdding] = useState(false)
   const [signInPrompt, setSignInPrompt] = useState(false)
 
   const labelEl = (
@@ -169,35 +171,19 @@ export function DatasetDownloadButton(props: DatasetDownloadButtonProps) {
         variant="outlined"
         aria-label={ariaLabel}
         startIcon={<Icon sx={{ fontSize: '16px' }} />}
-        onClick={() => setShowConfirmation(value => !value)}
-        disabled={disabled || isAdding}
+        onClick={onDownloadClick}
+        disabled={disabled || isDownloading}
         sx={{ maxWidth: MAX_WIDTH, textTransform: 'none' }}
       >
         {labelEl}
       </GenericCardActionButton>
     )
-    const confirmation = showConfirmation ? (
-      <EntityDownloadConfirmation
-        entityId={entityId}
-        versionNumber={version}
-        onIsLoadingChange={setIsAdding}
-        handleClose={() => setShowConfirmation(false)}
-      />
-    ) : null
-    return (
-      <>
-        {caveat ? (
-          <Tooltip title={caveat} arrow placement="top">
-            <span>{button}</span>
-          </Tooltip>
-        ) : (
-          button
-        )}
-        {confirmation &&
-          (downloadConfirmationContainer?.current
-            ? createPortal(confirmation, downloadConfirmationContainer.current)
-            : confirmation)}
-      </>
+    return caveat ? (
+      <Tooltip title={caveat} arrow placement="top">
+        <span>{button}</span>
+      </Tooltip>
+    ) : (
+      button
     )
   }
 
