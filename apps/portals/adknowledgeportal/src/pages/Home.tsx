@@ -47,8 +47,19 @@ function HomePageInternal() {
     title: 'More than a petabyte of multiomic data...',
     buttonText: 'Explore Alzheimer’s Data',
     buttonLink: '/Explore/Data',
-    subtitle:
-      "Our data encompasses a wide range of modalities, ensuring comprehensive coverage for in-depth Alzheimer's research and discovery.",
+    subtitle: (
+      <>
+        Our data encompasses a wide range of modalities, ensuring comprehensive
+        coverage for in-depth Alzheimer's research and discovery.
+        <br />
+        <br />
+        <i>
+          Numbers indicate the count of studies contributing data in each
+          category.
+        </i>
+      </>
+    ),
+
     explorePath: '/Explore/Studies',
     exploreQuerySql,
   }
