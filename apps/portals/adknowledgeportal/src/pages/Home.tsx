@@ -112,7 +112,7 @@ function HomePageInternal() {
       <Stack className={styles.newsReleasesContainer}>
         <Box className={styles.newsReleasesContent}>
           <SectionLayout
-            title="News Releases"
+            title="New Releases"
             centerTitle
             ContainerProps={{ className: styles.newsReleasesMailchimp }}
           >
