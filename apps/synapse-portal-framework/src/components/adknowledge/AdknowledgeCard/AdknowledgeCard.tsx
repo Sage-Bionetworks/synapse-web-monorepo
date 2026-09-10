@@ -9,6 +9,7 @@ type AdknowledgeCardProps = {
   description?: React.ReactNode
   buttonText?: React.ReactNode
   buttonLink?: string
+  wide?: boolean
 }
 
 function AdknowledgeCard({
@@ -17,9 +18,11 @@ function AdknowledgeCard({
   description,
   buttonText,
   buttonLink,
+  wide,
 }: AdknowledgeCardProps) {
   const isExternal = isExternalLink(buttonLink ?? '')
   const renderCardAsLink = buttonLink && !buttonText
+  const containerClassName = `${styles.adknowledgeCardContainer} ${wide ? styles.wideCard : ''}`
 
   const cardContent = (
     <>
@@ -62,7 +65,7 @@ function AdknowledgeCard({
 
   return renderCardAsLink ? (
     <MuiLink
-      className={`${styles.adknowledgeCardContainer} ${renderCardAsLink ? styles.linkCard : ''}`}
+      className={`${containerClassName} ${styles.linkCard}`}
       href={buttonLink}
       target="_blank"
       rel="noopener noreferrer"
@@ -71,7 +74,7 @@ function AdknowledgeCard({
       {cardContent}
     </MuiLink>
   ) : (
-    <Stack className={styles.adknowledgeCardContainer}>{cardContent}</Stack>
+    <Stack className={containerClassName}>{cardContent}</Stack>
   )
 }
 

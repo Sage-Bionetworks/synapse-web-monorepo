@@ -12,6 +12,12 @@
   gap: 41px;
 
   @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    padding: 25px 35px;
+  }
+}
+
+.wideCard {
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
     padding: 40px;
   }
 }

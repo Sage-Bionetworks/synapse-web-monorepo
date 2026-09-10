@@ -39,12 +39,13 @@ function HomePageInternal() {
     buttonText: 'Learn More',
     buttonLink: '/Contribute',
     Image: ContributeIcon,
+    wide: true,
   }
 
   const dataExplorerTextSection = {
     sql: dataTypeSql,
     facetSql: exploreQuerySql,
-    title: 'More than a petabyte of multiomic data...',
+    title: 'More than a petabyte of multiomic data',
     buttonText: 'Explore Alzheimer’s Data',
     buttonLink: '/Explore/Data',
     subtitle:
@@ -89,6 +90,7 @@ function HomePageInternal() {
       >
         <div className={styles.resultsExplorersContainer}>
           <AdknowledgeCard {...modelADCard} />
+          <AdknowledgeCard {...agoraCard} />
           <AdknowledgeCard {...agoraCard} />
         </div>
       </SectionLayout>
