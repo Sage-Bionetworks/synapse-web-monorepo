@@ -55,6 +55,7 @@
 
 .newsReleasesContainer {
   margin-bottom: 80px;
+  padding: 60px 0;
 
   @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
     padding: 60px 50px;
