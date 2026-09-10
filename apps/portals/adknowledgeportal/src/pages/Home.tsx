@@ -146,8 +146,9 @@ function HomePageInternal() {
         <div className={styles.AdkpButtonContainer}>
           <Button
             variant="contained"
-            component={Link}
-            to="/Research Ecosystem"
+            href="https://news.adknowledgeportal.org/"
+            target="_blank"
+            rel="noopener noreferrer"
             sx={{ alignSelf: 'center' }}
           >
             View All Releases

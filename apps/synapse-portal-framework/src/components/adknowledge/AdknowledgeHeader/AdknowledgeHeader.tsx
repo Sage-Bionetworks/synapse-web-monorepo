@@ -18,8 +18,8 @@ const AdknowledgeHeader = ({
   const searchPlaceholder = 'Search for...'
 
   const searchExampleTerms = [
-    'MODEL-AD',
     'AMP-AD',
+    'MODEL-AD',
     'ROSMAP',
     'Diverse Cohorts',
     'SEA-AD',
