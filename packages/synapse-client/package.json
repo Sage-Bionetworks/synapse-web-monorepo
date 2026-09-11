@@ -30,7 +30,7 @@
     "undici": "^6.28.0",
     "vite": "^8.0.16",
     "vite-config": "workspace:*",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.11"
   },
   "scripts": {
     "clean": "rimraf ./dist && rimraf *.tsbuildinfo",
