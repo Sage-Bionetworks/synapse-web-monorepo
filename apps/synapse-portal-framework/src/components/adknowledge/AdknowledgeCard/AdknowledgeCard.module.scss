@@ -18,6 +18,8 @@
 }
 
 .wideCard {
+  max-width: none;
+
   @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
     padding: 40px;
   }
