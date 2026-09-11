@@ -1,0 +1,87 @@
+@use '../../style/abstracts/_cssVariables' as vars;
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  min-height: 30px;
+
+  // Value pills adopt the parent group's accent — parent sets `--qb-pill-color`
+  // as inline style on its wrapper (see FilterGroupNode).
+  --qb-pill-color: var(--synapse-primary-action-color);
+}
+
+.dragHandle {
+  cursor: grab;
+  color: var(--synapse-gray-deemphasized);
+}
+
+.remove {
+  color: var(--synapse-gray-600) !important;
+  border: 1px solid var(--synapse-border-color-gray) !important;
+  border-radius: 4px !important;
+  padding: 4px !important;
+
+  &:hover {
+    color: var(--synapse-error) !important;
+    border-color: var(--synapse-error) !important;
+    background-color: transparent !important;
+  }
+}
+
+// Match the field heights across the row so Property, Operator, and value
+// inputs all sit on the same baseline. Outlined inputs get consistent
+// padding via MUI defaults; we just fix the height and widths.
+.propertyPicker,
+.operatorPicker,
+.rangeInput,
+.textInput {
+  :global(.MuiOutlinedInput-root) {
+    height: 36px;
+    font-size: 14px;
+  }
+}
+
+.propertyPicker {
+  min-width: 200px;
+}
+
+.operatorPicker {
+  min-width: 120px;
+}
+
+.rangeInput {
+  width: 120px;
+}
+
+.textInput {
+  min-width: 200px;
+}
+
+.pillGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  :global(.MuiToggleButton-root),
+  :global(.MuiToggleButtonGroup-grouped) {
+    text-transform: none;
+    padding: 2px 12px;
+    border-radius: 999px !important;
+    border: 1px solid var(--synapse-gray-dark) !important;
+    margin: 0 !important;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  :global(.MuiToggleButton-root.Mui-selected) {
+    background-color: var(--qb-pill-color);
+    color: white;
+    border-color: var(--qb-pill-color) !important;
+  }
+
+  :global(.MuiToggleButton-root.Mui-selected:hover) {
+    background-color: var(--qb-pill-color);
+  }
+}
