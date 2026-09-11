@@ -31,13 +31,6 @@ function StudyMetadataTab() {
     <DetailsPageContent
       content={[
         {
-          title: 'Access Requirements',
-          id: 'AccessRequirements',
-          element: (
-            <MarkdownSynapseFromColumnData columnName={'AccessRequirements'} />
-          ),
-        },
-        {
           title: 'Study Metadata',
           id: 'StudyMetadata',
           element: (
