@@ -96,7 +96,7 @@ function HomePageInternal() {
         subtitle="These explorers provide interactive tools and visualizations to navigate complex datasets, identify key trends, and gain deeper insights into the data on our portal."
         centerTitle
         ContainerProps={{
-          sx: { marginBottom: '130px' },
+          sx: { marginBottom: '50px' },
         }}
       >
         <div className={styles.resultsExplorersContainer}>
@@ -168,12 +168,12 @@ function HomePageInternal() {
         </div>
       </Stack>
       <SectionLayout
-        title="Related Consortia and Repositories"
+        title="Research Ecosystem"
         subtitle="Grounded in truly open science and radical collaboration, the AD Knowledge Portal bridges data silos by integrating with a broad network of consortia and repositories. Each contributes unique data and expertise needed to drive discovery in Alzheimer's Disease research."
         centerTitle
         ContainerProps={{
           sx: {
-            marginBottom: '140px',
+            marginBottom: '120px',
           },
         }}
       >
@@ -182,7 +182,7 @@ function HomePageInternal() {
             variant="contained"
             component={Link}
             to="/Research Ecosystem"
-            sx={{ alignSelf: 'center' }}
+            sx={{ alignSelf: 'center', marginTop: '24px' }}
           >
             View All
           </Button>
@@ -190,7 +190,7 @@ function HomePageInternal() {
       </SectionLayout>
       <SectionLayout
         ContainerProps={{
-          sx: { marginBottom: '80px' },
+          sx: { marginBottom: '60px' },
         }}
       >
         <AdknowledgeCard {...contributeCard} />
