@@ -1,17 +1,18 @@
-import { Button } from '@mui/material'
+import { ReactNode, useState } from 'react'
 import { useGetAridhiaRequests } from '@/aridhia-queries'
-import AccessIcon, { RestrictionUiType } from '../HasAccess/AccessIcon'
-import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import { useSynapseContext } from '@/utils'
-import {
-  getRestrictionUiTypeFromAridhiaRequest,
-  findRequestForDataset,
-} from './aridhiaAccessStatusUtils'
-import { useState } from 'react'
+import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
+import { Button } from '@mui/material'
 import { DialogBase } from '../DialogBase'
+import AccessIcon, { RestrictionUiType } from '../HasAccess/AccessIcon'
+import {
+  findRequestForDataset,
+  getRestrictionUiTypeFromAridhiaRequest,
+} from './aridhiaAccessStatusUtils'
+import { getAridhiaFairPortalDatasetUrl } from './aridhiaFairPortalUrls'
+import AridhiaDarStatusPopover from './AridhiaDarStatusPopover'
 import { useAridhiaDarWizardParts } from './DarWizard/AridhiaDarWizard'
-import { useGetFeatureFlag } from '@/synapse-queries'
-import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
+import RdcaDapEligibilityDialog from './RdcaDapEligibilityDialog'
 
 const buttonSx = { p: '0px', minWidth: 'unset' }
 
@@ -20,7 +21,8 @@ export type AridhiaAccessStatusProps = {
    * dataset code
    */
   datasetCode: string
-  url?: string
+  /** Base URL of the RDCA-DAP FAIR portal's browsable UI, e.g. `https://fair.dap.c-path.org`. */
+  fairPortalUrl?: string
 }
 
 /**
@@ -29,13 +31,19 @@ export type AridhiaAccessStatusProps = {
  * Otherwise, shows the access status based on the data access requests.
  */
 export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
-  const { datasetCode, url } = props
+  const { datasetCode, fairPortalUrl } = props
   const { isAuthenticated } = useSynapseContext()
-  const isDarFormEnabled = useGetFeatureFlag(
-    FeatureFlagEnum.AMPALS_RDCA_DAP_FORM_ENABLED,
-  )
-  const { data: requestsResponse, isLoading } = useGetAridhiaRequests()
 
+  const {
+    data: requestsResponse,
+    isLoading,
+    isError,
+    error,
+  } = useGetAridhiaRequests()
+  const [popoverAnchorEl, setPopoverAnchorEl] = useState<HTMLElement | null>(
+    null,
+  )
+  const [eligibilityDialogOpen, setEligibilityDialogOpen] = useState(false)
   const [requestDialogOpen, setRequestDialogOpen] = useState(false)
   const { content: wizardContent, actions: wizardActions } =
     useAridhiaDarWizardParts(
@@ -79,43 +87,95 @@ export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
     )
   }
 
-  // Show loading state
+  let content: ReactNode = null
   if (isLoading) {
-    return <></>
-  }
-
-  // Check if there's a request for this dataset
-  const entityRequest = findRequestForDataset(
-    requestsResponse?.items ?? [],
-    datasetCode,
-  )
-
-  const restrictionUiType =
-    getRestrictionUiTypeFromAridhiaRequest(entityRequest)
-
-  const icon = <AccessIcon restrictionUiType={restrictionUiType} />
-
-  if (restrictionUiType === RestrictionUiType.Accessible || !isDarFormEnabled) {
-    // Approved, or the RDCA-DAP request form is not yet enabled — keep the existing
-    // link-out to RDCA-DAP to access or request the data.
-    return url ? (
-      <a href={url} target="_blank" rel="noopener noreferrer">
-        {icon}
-      </a>
-    ) : (
-      icon
+    // Show loading state — nothing to render yet.
+  } else if (isError && error.isEligibilityFailure) {
+    // The token exchange (or any other request) failed because this user has no linked
+    // RDCA-DAP account yet — the DAR wizard is unreachable until that's resolved.
+    content = (
+      <>
+        <Button
+          sx={buttonSx}
+          onClick={() => setEligibilityDialogOpen(true)}
+          aria-label="Link your RDCA-DAP account"
+        >
+          <AccessIcon
+            restrictionUiType={
+              RestrictionUiType.AccessBlockedByRDCADAPAccountNotLinked
+            }
+          />
+        </Button>
+        <RdcaDapEligibilityDialog
+          open={eligibilityDialogOpen}
+          onClose={() => setEligibilityDialogOpen(false)}
+        />
+      </>
     )
+  } else {
+    // Check if there's a request for this dataset
+    const entityRequest = findRequestForDataset(
+      requestsResponse?.items ?? [],
+      datasetCode,
+    )
+    const restrictionUiType =
+      getRestrictionUiTypeFromAridhiaRequest(entityRequest)
+    const icon = <AccessIcon restrictionUiType={restrictionUiType} />
+
+    if (restrictionUiType === RestrictionUiType.Accessible) {
+      // Approved, or the RDCA-DAP request form is not yet enabled — keep the existing
+      // link-out to RDCA-DAP to access or request the data.
+      content = fairPortalUrl ? (
+        <a
+          href={getAridhiaFairPortalDatasetUrl(fairPortalUrl, datasetCode)}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {icon}
+        </a>
+      ) : (
+        icon
+      )
+    } else if (entityRequest) {
+      // Pending or denied — click opens the status popover.
+      content = (
+        <>
+          <Button
+            sx={buttonSx}
+            onClick={ev => setPopoverAnchorEl(ev.currentTarget)}
+            aria-label="View data access request status"
+          >
+            {icon}
+          </Button>
+          <AridhiaDarStatusPopover
+            open={!!popoverAnchorEl}
+            anchorEl={popoverAnchorEl}
+            onClose={() => setPopoverAnchorEl(null)}
+            request={entityRequest}
+            fairPortalUrl={fairPortalUrl}
+          />
+        </>
+      )
+    } else {
+      // No request yet — the icon opens the request wizard in a dialog. The same wizard also
+      // renders at the route-based, non-modal `AridhiaDarWizard` page for a full-page entry
+      // point.
+      content = (
+        <Button
+          sx={buttonSx}
+          onClick={() => setRequestDialogOpen(true)}
+          aria-label="Request data access"
+        >
+          {icon}
+        </Button>
+      )
+    }
   }
 
   return (
     <>
-      <Button
-        sx={buttonSx}
-        onClick={() => setRequestDialogOpen(true)}
-        aria-label="Request data access"
-      >
-        {icon}
-      </Button>
+      {content}
+      {/*  Ensure all authenticated return paths render the wizard dialog to prevent flicker as the DAR state changes (e.g. on the confirmation screen). */}
       <DialogBase
         open={requestDialogOpen}
         onCancel={() => setRequestDialogOpen(false)}

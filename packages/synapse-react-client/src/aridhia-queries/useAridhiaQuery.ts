@@ -17,7 +17,11 @@ import { createAridhiaApiConfiguration } from './aridhiaTokenExchange'
 
 /**
  * - `invalid_token` / `invalid_issuer` — the gateway's `/authenticate` rejected the Synapse
- *   token outright (e.g. no linked RDCA-DAP account yet).
+ *   token outright. The gateway currently mints a token whether or not the account is linked
+ *   to RDCA-DAP, but kept as a recognized shape in case that changes.
+ * - `not_authorized` — a FAIR API call (e.g. `GET /fair/requests`) rejected an otherwise-valid
+ *   Aridhia token with 403 `{ error: { message: 'Not authorised for this operation' } }`. This
+ *   is the actual eligibility signal in practice: it means no linked RDCA-DAP account yet.
  * - `Invalid parameter` — the token-exchange request body was malformed. This is our bug, not
  *   the user's eligibility, so it is never treated as an eligibility failure.
  * - `not_configured` — called without an `AridhiaContextProvider` or a Synapse access token;
@@ -27,6 +31,7 @@ import { createAridhiaApiConfiguration } from './aridhiaTokenExchange'
 export type AridhiaErrorCode =
   | 'invalid_token'
   | 'invalid_issuer'
+  | 'not_authorized'
   | 'Invalid parameter'
   | 'not_configured'
   | 'unknown'
@@ -113,6 +118,18 @@ export async function toAridhiaError(error: unknown): Promise<AridhiaError> {
         httpStatus,
         // A malformed request body is our bug, not the user's account state.
         isEligibilityFailure: bodyErrorText !== 'Invalid parameter',
+      })
+    }
+    // The gateway's `/authenticate` always mints a token regardless of RDCA-DAP linkage; a FAIR
+    // resource call (e.g. `/fair/requests`) is what actually rejects an unlinked account, as a
+    // 403 with this message in its own `{ error: { message } }` envelope.
+    if (
+      httpStatus === 403 &&
+      bodyErrorText === 'Not authorised for this operation'
+    ) {
+      return new AridhiaError('not_authorized', bodyErrorText, {
+        httpStatus,
+        isEligibilityFailure: true,
       })
     }
     // An unrecognized error shape (e.g. a FAIR-side validation error on `/requests/`, which
