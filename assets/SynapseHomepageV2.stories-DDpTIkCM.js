@@ -1,0 +1,25 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{Ln as t,Rn as n,Vn as r}from"./synapse-client-CnbOkvM7.js";import{F as i,I as a,L as o,P as s,R as c,_ as l,v as u,z as d}from"./iframe-C4o6Dzk9.js";import{i as f,t as p}from"./SynapseHomepageV2-EgmMcOTd.js";import{n as m,t as h}from"./mockHomepageQueryResultData-Dxhc3hYW.js";var g,_,v;e((()=>{o(),i(),u(),h(),r(),d(),f(),g={title:`Synapse/SynapseHomepageV2`,component:p,parameters:{chromatic:{viewports:[600,1200]}}},_={args:{gotoPlace:e=>{window.alert(`SynapseHomepageV2 calling back to change route to ${e}`)}},loaders:[()=>{m()}],parameters:{stack:`production`,design:{type:`figma`,url:`https://www.figma.com/design/z2pi8sF6E2he3Q0ncey1S0/Synapse-Homepage-Refresh-(Copy)?node-id=2097-64422&t=lbZKhHAaWWC5JfDB-0`},msw:{handlers:[...s(t),...l(t),a({portalOrigin:n.PORTAL,overrides:{[c.HOMEPAGE_CHATBOT]:!0}})]}}},_.parameters={..._.parameters,docs:{..._.parameters?.docs,source:{originalSource:`{
+  args: {
+    gotoPlace: (href: string) => {
+      window.alert(\`SynapseHomepageV2 calling back to change route to \${href}\`);
+    }
+  },
+  loaders: [() => {
+    registerSynapseHomepageMockQueries();
+  }],
+  parameters: {
+    stack: 'production',
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/design/z2pi8sF6E2he3Q0ncey1S0/Synapse-Homepage-Refresh-(Copy)?node-id=2097-64422&t=lbZKhHAaWWC5JfDB-0'
+    },
+    msw: {
+      handlers: [...getFileHandlers(MOCK_REPO_ORIGIN), ...getHandlersForTableQuery(MOCK_REPO_ORIGIN), getFeatureFlagsOverride({
+        portalOrigin: PRODUCTION_ENDPOINT_CONFIG.PORTAL,
+        overrides: {
+          [FeatureFlagEnum.HOMEPAGE_CHATBOT]: true
+        }
+      })]
+    }
+  }
+}`,..._.parameters?.docs?.source}}},v=[`DemoVersion2`]}))();export{_ as DemoVersion2,v as __namedExportsOrder,g as default};
