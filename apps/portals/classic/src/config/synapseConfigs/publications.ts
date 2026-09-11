@@ -17,7 +17,18 @@ export const publicationCardProps: CardConfiguration = {
     title: 'dataFileName',
     subTitle: 'Authors',
     link: 'dataFileKey',
-    secondaryLabels: ['Year', 'Journal', 'Program', 'Grant', 'DOI', 'PubmedId'],
+    secondaryLabels: [
+      'Year',
+      'Journal',
+      'DOI',
+      'Program',
+      'PubmedId',
+      'PMID',
+      'Grant',
+      'Category',
+      'publicationDate',
+      'preprint',
+    ],
   },
 }
 
