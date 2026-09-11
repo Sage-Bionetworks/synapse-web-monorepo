@@ -110,8 +110,9 @@ export const publicationsSearchQueryConfig: SearchQueryConfig = {
 }
 export const studiesSearchIndexId = 'syn75081633'
 // Tuned in nf-osi/opensearch-ops (benchmark/studies/fields.yaml).
-// includeUnlistedFields:true is load-bearing, not just the default -- the `*` it appends is
-// what keeps the keyword-mapped ENTITYID columns searchable.
+// includeUnlistedFields:true because the `*` enables search for keyword-mapped ENTITYID 
+// cols not explicitly here; accessRequirements or others at 1 despite `*` to convey
+// they were measured-and-unboosted, and weights may still change as content evolves.
 export const studiesSearchQueryConfig: SearchQueryConfig = {
   queryStrategy: 'MULTI_MATCH_CROSS_FIELDS',
   includeUnlistedFields: true,
