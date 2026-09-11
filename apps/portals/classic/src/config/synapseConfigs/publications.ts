@@ -22,7 +22,6 @@ export const publicationCardProps: CardConfiguration = {
       'Journal',
       'DOI',
       'Program',
-      'PubmedId',
       'PMID',
       'Grant',
       'Category',
