@@ -21,11 +21,8 @@ export function RdcaDapEligibilityExplainer() {
         dataset.
       </Typography>
       <Typography>
-        If you already have an account, sign in to RDCA-DAP once to link it to
-        your ALS Knowledge Portal (Synapse) account.
-      </Typography>
-      <Typography>
-        If you don&apos;t have one yet, create an RDCA-DAP account.
+        To create a new account or link an existing account, open RDCA-DAP and
+        sign in with your ALS Knowledge Portal (Synapse) account.
       </Typography>
     </Stack>
   )
