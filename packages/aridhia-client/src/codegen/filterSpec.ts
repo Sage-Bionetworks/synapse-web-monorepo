@@ -349,6 +349,31 @@ function applyUpstreamDefectPatches(spec: OpenAPISpec): OpenAPISpec {
     fieldItemSchema.properties.default_options = { type: 'string' }
   }
 
+  // 7. `RequestListItem` and `RequestFull` both declare `datasets` as a single `RequestDataset`
+  //    object, but the live `GET /fair/requests` and `GET /fair/requests/{code}` responses
+  //    return `datasets` as an array of `RequestDataset` (a request can span multiple
+  //    datasets). Confirmed against live gateway responses.
+  {
+    for (const schemaName of ['RequestListItem', 'RequestFull']) {
+      const pointer = `#/components/schemas/${schemaName}`
+      const schema = getByPointer(spec, pointer)
+      const objectPart = schema?.allOf?.find(
+        part => part?.properties && 'datasets' in part.properties,
+      )
+      const datasetsSchema = objectPart?.properties?.datasets
+      const isDefect =
+        datasetsSchema?.$ref === '#/components/schemas/RequestDataset'
+      if (!isDefect) {
+        throw new Error(
+          `Upstream spec defect patch failed: ${pointer}.datasets is no longer a single RequestDataset $ref. Re-check whether this patch is still needed.`,
+        )
+      }
+      objectPart.properties.datasets = {
+        type: 'array',
+        items: { $ref: '#/components/schemas/RequestDataset' },
+      }
+    }
+  }
   return spec
 }
 

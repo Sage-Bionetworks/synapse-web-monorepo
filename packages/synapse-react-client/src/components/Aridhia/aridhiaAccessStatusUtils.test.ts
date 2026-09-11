@@ -78,12 +78,12 @@ describe('aridhiaAccessStatusUtils', () => {
         {
           code: 'REQ001',
           status: 'approved',
-          datasets: { code: 'DATASET_A' },
+          datasets: [{ code: 'DATASET_A' }],
         },
         {
           code: 'REQ002',
           status: 'pending',
-          datasets: { code: 'DATASET_C' },
+          datasets: [{ code: 'DATASET_C' }],
         },
       ]
 
@@ -97,7 +97,7 @@ describe('aridhiaAccessStatusUtils', () => {
         {
           code: 'REQ001',
           status: 'approved',
-          datasets: { code: 'DATASET_A' },
+          datasets: [{ code: 'DATASET_A' }],
         },
       ]
 
@@ -127,13 +127,13 @@ describe('aridhiaAccessStatusUtils', () => {
         {
           code: 'REQ001',
           status: 'approved',
-          datasets: { code: 'DATASET_A' },
+          datasets: [{ code: 'DATASET_A' }],
           updated_at: '2024-01-01T10:00:00Z',
         },
         {
           code: 'REQ002',
           status: 'pending',
-          datasets: { code: 'DATASET_A' },
+          datasets: [{ code: 'DATASET_A' }],
           updated_at: '2024-01-02T10:00:00Z',
         },
       ]
@@ -148,19 +148,19 @@ describe('aridhiaAccessStatusUtils', () => {
         {
           code: 'REQ001',
           status: 'approved',
-          datasets: { code: 'DATASET_A' },
+          datasets: [{ code: 'DATASET_A' }],
           updated_at: '2024-01-03T10:00:00Z', // Most recent
         },
         {
           code: 'REQ002',
           status: 'pending',
-          datasets: { code: 'DATASET_A' },
+          datasets: [{ code: 'DATASET_A' }],
           updated_at: '2024-01-01T10:00:00Z', // Oldest
         },
         {
           code: 'REQ003',
           status: 'denied',
-          datasets: { code: 'DATASET_A' },
+          datasets: [{ code: 'DATASET_A' }],
           updated_at: '2024-01-02T10:00:00Z', // Middle
         },
       ]
@@ -175,13 +175,13 @@ describe('aridhiaAccessStatusUtils', () => {
         {
           code: 'REQ001',
           status: 'approved',
-          datasets: { code: 'DATASET_A' },
+          datasets: [{ code: 'DATASET_A' }],
           // No updated_at
         },
         {
           code: 'REQ002',
           status: 'pending',
-          datasets: { code: 'DATASET_A' },
+          datasets: [{ code: 'DATASET_A' }],
           updated_at: '2024-01-01T10:00:00Z',
         },
       ]
@@ -197,12 +197,12 @@ describe('aridhiaAccessStatusUtils', () => {
         {
           code: 'REQ001',
           status: 'approved',
-          datasets: { code: 'DATASET_A' },
+          datasets: [{ code: 'DATASET_A' }],
         },
         {
           code: 'REQ002',
           status: 'pending',
-          datasets: { code: 'DATASET_A' },
+          datasets: [{ code: 'DATASET_A' }],
         },
       ]
 
@@ -217,7 +217,7 @@ describe('aridhiaAccessStatusUtils', () => {
         {
           code: 'REQ001',
           status: 'approved',
-          datasets: { code: 'dataset_a' },
+          datasets: [{ code: 'dataset_a' }],
         },
       ]
 
