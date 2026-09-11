@@ -2,7 +2,11 @@ import type { CardConfiguration } from 'synapse-react-client/components/CardCont
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { columnAliases } from './commonProps'
-import { publicationsSearchIndexId, publicationsSql } from '../resources'
+import {
+  publicationsSearchIndexId,
+  publicationsSearchQueryConfig,
+  publicationsSql,
+} from '../resources'
 import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
 
 export const newPublicationsSql = `${publicationsSql} order by ROW_ID desc limit 3`
@@ -73,6 +77,7 @@ export const publicationsSearch: SearchQueryWrapperPlotNavProps = {
   cardConfiguration: publicationsCardConfiguration,
   columnAliases,
   searchIndexId: publicationsSearchIndexId,
+  searchQueryConfig: publicationsSearchQueryConfig,
   autocompleteFieldName: 'title',
   hideTopLevelControls: false,
   hideQueryCount: false,

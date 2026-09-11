@@ -1,7 +1,11 @@
 import type { CardConfiguration } from 'synapse-react-client/components/CardContainer/CardConfiguration'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
-import { datasetsSearchIndexId, datasetsSql } from '../resources'
+import {
+  datasetsSearchIndexId,
+  datasetsSearchQueryConfig,
+  datasetsSql,
+} from '../resources'
 import { columnAliases as sharedColumnAliases } from './commonProps'
 import { studyColumnIconConfigs } from './studies'
 import { SearchQueryWrapperPlotNavProps } from 'synapse-react-client/components/SearchQueryWrapperPlotNav/SearchQueryWrapperPlotNav'
@@ -116,6 +120,7 @@ export const datasetsSearch: SearchQueryWrapperPlotNavProps = {
   cardConfiguration: datasetCardConfiguration,
   columnAliases,
   searchIndexId: datasetsSearchIndexId,
+  searchQueryConfig: datasetsSearchQueryConfig,
   autocompleteFieldName: 'title',
   hideTopLevelControls: false,
   hideQueryCount: false,

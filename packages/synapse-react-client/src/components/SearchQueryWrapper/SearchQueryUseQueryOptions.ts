@@ -66,6 +66,8 @@ export type SearchQueryConfig = {
    * queried at equal weight.
    */
   fieldBoosts?: Record<string, number>
+  /** Whether to append `*` to fieldBoosts at neutral weight. Defaults to true. */
+  includeUnlistedFields?: boolean
   /**
    * Fuzziness override. Overrides the per-strategy default. Leave undefined to
    * use each strategy's natural default (AUTO for MULTI_MATCH/BOOSTED_FUZZY,
@@ -114,11 +116,13 @@ type SearchQueryDSL =
 
 function resolveFields(
   fieldBoosts: Record<string, number> | undefined,
+  includeUnlistedFields: boolean,
 ): string[] | undefined {
   if (!fieldBoosts) return undefined
-  // Ensure fields not explicitly boosted are still searched (at neutral weight)
-  // rather than being excluded entirely.
-  const boosts = '*' in fieldBoosts ? fieldBoosts : { ...fieldBoosts, '*': 1 }
+  const boosts =
+    includeUnlistedFields && !('*' in fieldBoosts)
+      ? { ...fieldBoosts, '*': 1 }
+      : fieldBoosts
   return Object.entries(boosts).map(([field, boost]) =>
     boost === 1 ? field : `${field}^${boost}`,
   )
@@ -150,8 +154,13 @@ function buildQueryClause(
   queryText: string,
   config: SearchQueryConfig = {},
 ): MultiMatchClause | SimpleQueryStringClause {
-  const { queryStrategy = 'MULTI_MATCH', fieldBoosts, fuzziness } = config
-  const fields = resolveFields(fieldBoosts)
+  const {
+    queryStrategy = 'MULTI_MATCH',
+    fieldBoosts,
+    includeUnlistedFields = true,
+    fuzziness,
+  } = config
+  const fields = resolveFields(fieldBoosts, includeUnlistedFields)
 
   // Route to simple_query_string when the query needs exact-token treatment:
   //  - a double-quoted phrase (multi_match can't honour the phrase operator), or
