@@ -19,6 +19,9 @@
   min-height: 500px;
   isolation: isolate;
   padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .helpButtonsContainer {
