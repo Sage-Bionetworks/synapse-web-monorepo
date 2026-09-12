@@ -77,4 +77,73 @@ describe('CsvPreviewDialog', () => {
       MOCK_CSV_DESCRIPTOR,
     )
   })
+
+  it('overrides a suggested column type with the type from existingColumnSchema, in both the preview and onConfirm', async () => {
+    vi.mocked(useGetCsvPreview).mockReturnValue({
+      data: {
+        suggestedColumns: [{ name: 'entityId', columnType: 'ENTITYID' }],
+      },
+      isLoading: false,
+      error: null,
+    } as any)
+
+    const onConfirm = vi.fn()
+    const { user } = renderComponent({
+      open: true,
+      onClose: vi.fn(),
+      onConfirm,
+      existingColumnSchema: {
+        entityId: {
+          type: { type: 'string', isArray: false },
+          isRequired: false,
+          enumeratedValues: null,
+        },
+      },
+    })
+
+    await simulateFileUpload(user)
+
+    expect(await screen.findByText(/entityId/)).toBeVisible()
+    expect(screen.getByText(/\(STRING\)/)).toBeVisible()
+    expect(screen.queryByText(/\(ENTITYID\)/)).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Confirm' }))
+
+    expect(onConfirm).toHaveBeenCalledWith(
+      MOCK_FILE_HANDLE_ID,
+      [{ name: 'entityId', columnType: 'STRING' }],
+      MOCK_CSV_DESCRIPTOR,
+    )
+  })
+
+  it('overrides a suggested column type using existingColumnNames when the column is not declared in existingColumnSchema (e.g. a RecordSet system column like entityId)', async () => {
+    vi.mocked(useGetCsvPreview).mockReturnValue({
+      data: {
+        suggestedColumns: [{ name: 'entityId', columnType: 'ENTITYID' }],
+      },
+      isLoading: false,
+      error: null,
+    } as any)
+
+    const onConfirm = vi.fn()
+    const { user } = renderComponent({
+      open: true,
+      onClose: vi.fn(),
+      onConfirm,
+      existingColumnNames: ['id', 'entityId', 'path'],
+    })
+
+    await simulateFileUpload(user)
+
+    expect(screen.getByText(/\(STRING\)/)).toBeVisible()
+    expect(screen.queryByText(/\(ENTITYID\)/)).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Confirm' }))
+
+    expect(onConfirm).toHaveBeenCalledWith(
+      MOCK_FILE_HANDLE_ID,
+      [{ name: 'entityId', columnType: 'STRING' }],
+      MOCK_CSV_DESCRIPTOR,
+    )
+  })
 })
