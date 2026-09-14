@@ -28,25 +28,49 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          filter: tree:0
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        if: github.event_name == 'pull_request'
+        uses: nrwl/nx-set-shas@3e9ad7370203c1e93d109be57f3b72eb0eb511b1 # v4.4.0
       - uses: ./.github/actions/pnpm-setup-action
       - name: Get package path
         id: package-path
         run: |
           packagePath=$(pnpm nx show project ${{ matrix.publishablePackage }} --json | jq -r '.root')
           echo "packagePath=${packagePath}" >> "$GITHUB_OUTPUT"
+      # On PRs, skip packages nx doesn't consider affected. Always run on push
+      # to main, where every package must be considered for tagging/publishing.
+      - name: Determine if this package should be processed
+        id: package-changes
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          affected_json=$(pnpm nx show projects --affected --json)
+          if jq -e --arg pkg "${{ matrix.publishablePackage }}" 'index($pkg)' <<< "$affected_json" > /dev/null; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+          fi
       # Check if the package version changed
       - id: package-version-check
+        if: steps.package-changes.outputs.should_run == 'true'
         uses: EndBug/version-check@5785f1c1fedad8eeba81c658397b0bedaa1d8e12 # v2.1.7
         with:
           diff-search: true
           file-name: './${{ steps.package-path.outputs.packagePath }}/package.json'
       # Build the package to publish
       - name: Build package
+        if: steps.package-changes.outputs.should_run == 'true'
         run: pnpm nx run ${{ matrix.publishablePackage }}:build
       # If the package version changed, and the build succeeded, create the tag using the output of the previous step.
       - name: Create tag
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
-        if: github.event_name == 'push' && steps.package-version-check.outputs.changed == 'true'
+        if: ${{ steps.package-changes.outputs.should_run == 'true' && github.event_name == 'push' && steps.package-version-check.outputs.changed == 'true' }}
         with:
           github-token: ${{ github.token }}
           script: |
@@ -57,6 +81,7 @@ jobs:
               sha: context.sha
             })
       - name: Publish to NPM # or simulate the publish for PRs
+        if: steps.package-changes.outputs.should_run == 'true'
         run: pnpm publish --access public ${{ ((github.event_name == 'pull_request' || steps.package-version-check.outputs.changed == 'false') && '--dry-run --no-git-checks') || '' }}
         working-directory: './${{ steps.package-path.outputs.packagePath }}'
         env:

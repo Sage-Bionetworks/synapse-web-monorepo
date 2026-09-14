@@ -255,6 +255,33 @@ describe('useAridhiaMutation', () => {
     },
   )
 
+  it('normalizes a FAIR-side 403 "not authorised" response into an eligibility-failure AridhiaError', async () => {
+    const mutationFn = vi.fn().mockRejectedValue(
+      responseError(
+        {
+          error: {
+            status: 403,
+            message: 'Not authorised for this operation',
+          },
+        },
+        403,
+      ),
+    )
+    server.use(getAridhiaAuthenticateHandler())
+
+    const { result } = renderAridhiaHook(() => useAridhiaMutation(mutationFn))
+
+    act(() => {
+      result.current.mutate(undefined)
+    })
+
+    await waitFor(() => expect(result.current.isError).toBe(true))
+    const error = result.current.error as AridhiaError
+    expect(error.code).toBe('not_authorized')
+    expect(error.isEligibilityFailure).toBe(true)
+    expect(error.httpStatus).toBe(403)
+  })
+
   it('surfaces the server text verbatim for an unrecognized error body, still coded unknown', async () => {
     server.use(getAridhiaAuthenticateHandler())
     const mutationFn = vi

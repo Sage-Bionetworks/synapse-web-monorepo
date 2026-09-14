@@ -2,7 +2,19 @@ import { FairField } from '@/aridhia-queries/FairFormPayload'
 import { http, HttpHandler, HttpResponse, JsonBodyType } from 'msw'
 
 export const MOCK_ARIDHIA_GATEWAY = 'https://mock-gateway.test'
+export const MOCK_ARIDHIA_FAIR_PORTAL_URL = 'https://mock-fair-portal.test'
 export const MOCK_ARIDHIA_DATASET_CODE = 'sdtm_als1003'
+
+/**
+ * The FAIR API's 403 response for a Synapse-authenticated user with no linked RDCA-DAP
+ * account. Distinct from the gateway's own `/authenticate` OAuth-error envelope.
+ */
+export const MOCK_ARIDHIA_NOT_AUTHORIZED_ERROR = {
+  status: 403,
+  body: {
+    error: { status: 403, message: 'Not authorised for this operation' },
+  },
+}
 
 export const MOCK_ARIDHIA_AUTHENTICATION_REQUEST = {
   subject_token_type: 'urn:ietf:params:oauth:token-type:access_token',
@@ -84,12 +96,17 @@ export function getAridhiaAuthenticateHandler(
   )
 }
 
-export function getAridhiaRequestsHandler(items: unknown[] = []): HttpHandler {
+export function getAridhiaRequestsHandler(
+  items: unknown[] = [],
+  errorResponse?: { status: number; body: object },
+): HttpHandler {
   return http.get(`${MOCK_ARIDHIA_GATEWAY}/fair/requests/`, () =>
-    HttpResponse.json({
-      items,
-      paging: { page: 1, pageSize: 100, total: items.length },
-    }),
+    errorResponse
+      ? HttpResponse.json(errorResponse.body, { status: errorResponse.status })
+      : HttpResponse.json({
+          items,
+          paging: { page: 1, pageSize: 100, total: items.length },
+        }),
   )
 }
 

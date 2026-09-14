@@ -1,6 +1,6 @@
 import { Alert, Link as MuiLink, Stack, Typography } from '@mui/material'
+import { RDCA_DAP_URL } from '@/components/Aridhia/rdcaDapConstants'
 
-const RDCA_DAP_URL = 'https://portal.rdca.c-path.org/'
 const C_PATH_ADMIN_EMAIL = 'vtheurercrider@c-path.org'
 
 export type DarSubmittedPanelProps = {
