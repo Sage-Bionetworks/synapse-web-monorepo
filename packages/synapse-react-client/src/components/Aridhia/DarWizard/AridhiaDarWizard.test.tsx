@@ -4,6 +4,7 @@ import type { UserEvent } from '@testing-library/user-event'
 import { HttpHandler, HttpResponse } from 'msw'
 import { RequestPost } from '@sage-bionetworks/aridhia-client/generated/models'
 import {
+  getAridhiaAuthenticateHandler,
   getAridhiaDatasetSettingsHandler,
   getAridhiaDarWizardHandlers,
   getAridhiaSubmitRequestHandler,
@@ -714,6 +715,19 @@ describe('AridhiaDarWizard', () => {
     await waitFor(() => expect(capturedRequestBodies).toHaveLength(2))
 
     expect(capturedRequestBodies[0].code).toBe(capturedRequestBodies[1].code)
+  })
+
+  it('renders the ineligibility explainer when the token exchange is rejected', async () => {
+    server.use(
+      getAridhiaAuthenticateHandler({ error: 'invalid_token' }, 400),
+      getAridhiaDatasetSettingsHandler(),
+    )
+    renderWizard()
+
+    await waitFor(() =>
+      expect(screen.getByText(/linked rdca-dap account/i)).toBeInTheDocument(),
+    )
+    expect(screen.queryByLabelText('Tables')).not.toBeInTheDocument()
   })
 
   it('blocks submission and names an unsupported field type', async () => {
