@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   consumePortalChatReopenIntent,
   persistPortalChatReopenIntent,
@@ -6,7 +6,11 @@ import {
 
 describe('portalChatSessionStorage', () => {
   beforeEach(() => {
-    sessionStorage.clear()
+    localStorage.clear()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
   })
 
   it('round-trips a persisted intent', () => {
@@ -29,6 +33,17 @@ describe('portalChatSessionStorage', () => {
   })
 
   it('returns undefined when no intent is stored', () => {
+    expect(consumePortalChatReopenIntent()).toBeUndefined()
+  })
+
+  it('discards an intent that is older than the max age', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-09-14T00:00:00Z'))
+    persistPortalChatReopenIntent({ variant: 'curie' })
+
+    // Advance beyond the 1 hour TTL.
+    vi.setSystemTime(new Date('2026-09-14T01:00:01Z'))
+
     expect(consumePortalChatReopenIntent()).toBeUndefined()
   })
 })
