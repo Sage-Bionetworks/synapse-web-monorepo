@@ -12,6 +12,8 @@ export type ChatDialogContextType = {
   isChatAvailable: boolean
 }
 
+// Do not consume this raw context directly; use ChatDialogContextProvider (which also wires up
+// side effects like post-login chat reopen). Exported only so tests can provide a value in isolation.
 export const ChatDialogContext = createContext<
   ChatDialogContextType | undefined
 >(undefined)
