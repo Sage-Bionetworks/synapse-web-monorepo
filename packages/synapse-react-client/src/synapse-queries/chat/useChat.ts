@@ -51,6 +51,11 @@ export function useCreateAgentSession(
         await options.onSuccess(newAgentSession, variables, ctx)
       }
     },
+    onError: async (err, variables, ctx) => {
+      if (options?.onError) {
+        await options.onError(err, variables, ctx)
+      }
+    },
   })
 }
 

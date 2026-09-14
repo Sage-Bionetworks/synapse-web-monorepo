@@ -106,6 +106,12 @@ export type SynapseChatProps = {
    * @default false
    */
   allowAttachments?: boolean
+  /**
+   * Invoked when creating the agent session fails because the current (anonymous) user is not
+   * authorized to start a session with this agent. Callers should use this to prompt the user to
+   * log in. When omitted, the session creation error is shown inline instead.
+   */
+  onSessionCreationUnauthenticated?: () => void
 }
 
 export function SynapseChat({
@@ -124,8 +130,9 @@ export function SynapseChat({
   onChatResponse,
   suggestedPrompts,
   allowAttachments = false,
+  onSessionCreationUnauthenticated,
 }: SynapseChatProps) {
-  const { accessToken } = useSynapseContext()
+  const { accessToken, isAuthenticated } = useSynapseContext()
   const { userId } = useApplicationSessionContext()
 
   const baseDisclaimerText = chatbotName + ' can make mistakes'
@@ -143,6 +150,13 @@ export function SynapseChat({
   const { mutate: createAgentSession, error: createAgentSessionError } =
     useCreateAgentSession({
       onSuccess: newAgentSession => setAgentSession(newAgentSession),
+      onError: err => {
+        // A registration that the ACT has not opened to anonymous chat rejects an anonymous
+        // session with a 401/403. Defer to the caller to prompt the user to log in.
+        if (!isAuthenticated && (err.status === 401 || err.status === 403)) {
+          onSessionCreationUnauthenticated?.()
+        }
+      },
     })
 
   const { mutate: updateAgentSession } = useUpdateAgentSession({
@@ -263,11 +277,20 @@ export function SynapseChat({
   }
 
   if (createAgentSessionError) {
-    return (
-      <Alert severity={'error'} sx={{ my: 2 }}>
-        {createAgentSessionError.reason}
-      </Alert>
-    )
+    // When an anonymous user can't start a session, the caller is redirecting them to log in, so
+    // suppress the inline error in favor of that flow.
+    const deferredToLogin =
+      !isAuthenticated &&
+      !!onSessionCreationUnauthenticated &&
+      (createAgentSessionError.status === 401 ||
+        createAgentSessionError.status === 403)
+    if (!deferredToLogin) {
+      return (
+        <Alert severity={'error'} sx={{ my: 2 }}>
+          {createAgentSessionError.reason}
+        </Alert>
+      )
+    }
   }
 
   return (
