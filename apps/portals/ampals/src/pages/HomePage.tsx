@@ -10,6 +10,7 @@ import headerSvg from '../config/style/header.svg?url'
 import CardGridWithLinks from 'synapse-react-client/components/CardGridWithLinks/CardGridWithLinks'
 import PortalFeaturedPartners from 'synapse-react-client/components/PortalFeaturedPartners/PortalFeaturedPartners'
 import SynapseSankeyPlot from 'synapse-react-client/components/Plot/SynapseSankeyPlot'
+import SankeyFlowDetails from '@/components/SankeyFlowDetails'
 import {
   datasetsSql,
   filesSql,
@@ -183,6 +184,9 @@ export default function HomePage() {
           rightUnitLabel="files"
           onRightCategoryClick={handleSankeyFilesClick}
           onRightEndClick={handleAllFilesClick}
+          renderDetailPanel={focusedCategory => (
+            <SankeyFlowDetails focusedCategory={focusedCategory} />
+          )}
         />
       </SectionLayout>
       {/* <AMPALSExploreTheData sql={upsetPlotSql} /> */}

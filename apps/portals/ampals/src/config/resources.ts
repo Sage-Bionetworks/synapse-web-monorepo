@@ -6,6 +6,11 @@ export const datasetCollectionsSql =
 export const filesSql = `SELECT * FROM syn66271104`
 
 export const sankeyPlotSql = `SELECT source, count(source), sum(datasetItemCount) FROM syn66496326 group by source`
+
+export const sankeyDetailsTableId = 'syn66496326'
+// Per-dataset metadata behind each Sankey flow. Fetched once and summarized
+// client side, so hovering a flow does not trigger a query.
+export const sankeyDetailsSql = `SELECT source, assay, dataType, species, participant_count FROM ${sankeyDetailsTableId}`
 export const partnersSql = `SELECT * FROM syn68804819`
 
 export const datasetsSearchIndexId = 'syn75169900'
