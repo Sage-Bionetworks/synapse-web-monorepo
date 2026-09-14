@@ -47,7 +47,13 @@ export function getFlatTypeInfo(jsonSchema: JSONSchema7): FlatTypeInfo {
       jsonSchema as Record<string, unknown>,
     )
     if (oneOfOption) {
-      return getFlatTypeInfo(oneOfOption as JSONSchema7)
+      // A nullable property commonly declares its type in the oneOf option while
+      // keeping annotations like `format` and `readOnly` at the parent level, so
+      // the parent's are retained wherever the option does not restate them.
+      return {
+        ...flatTypeInfo,
+        ...getFlatTypeInfo(oneOfOption as JSONSchema7),
+      }
     }
   }
 
