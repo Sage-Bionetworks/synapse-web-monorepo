@@ -204,6 +204,12 @@ export function DropdownMenu(props: DropdownMenuProps) {
           // Fixes issue where react-flow (provenance) would appear above the menu
           zIndex: 10,
         }}
+        modifiers={[
+          {
+            name: 'offset',
+            options: { offset: [0, 6] },
+          },
+        ]}
       >
         {({ TransitionProps }) => (
           <Fade {...TransitionProps}>
