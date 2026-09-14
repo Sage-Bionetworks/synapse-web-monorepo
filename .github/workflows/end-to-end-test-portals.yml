@@ -25,8 +25,6 @@ jobs:
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@3e9ad7370203c1e93d109be57f3b72eb0eb511b1 # v4.4.0
       - uses: ./.github/actions/pnpm-setup-action
-        with:
-          STORE_NX_CACHE: 'true'
       - name: Determine which portals are affected
         id: affected
         run: |
@@ -48,8 +46,6 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - uses: ./.github/actions/pnpm-setup-action
-        with:
-          STORE_NX_CACHE: 'true'
       - name: Build portal
         run: pnpm nx run portals-e2e:portal:build
         env:

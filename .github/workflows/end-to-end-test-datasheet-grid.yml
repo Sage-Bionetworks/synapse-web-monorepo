@@ -29,8 +29,6 @@ jobs:
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@3e9ad7370203c1e93d109be57f3b72eb0eb511b1 # v4.4.0
       - uses: ./.github/actions/pnpm-setup-action
-        with:
-          STORE_NX_CACHE: 'true'
 
       - name: Determine if the package has had any changes
         id: package_changes
