@@ -30,7 +30,7 @@
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.39.0",
     "@types/lodash-es": "^4.17.12",
-    "@vitest/ui": "^4.1.8",
+    "@vitest/ui": "catalog:",
     "lodash-es": "^4.18.1",
     "msw": "^2.14.6",
     "rimraf": "^5.0.10",
@@ -38,9 +38,9 @@
     "tsx": "^4.22.4",
     "typescript": "6.0.3",
     "undici": "^6.28.0",
-    "vite": "^8.0.16",
+    "vite": "catalog:",
     "vite-config": "workspace:*",
-    "vitest": "^4.1.8"
+    "vitest": "catalog:"
   },
   "scripts": {
     "clean": "rimraf ./dist && rimraf *.tsbuildinfo",

@@ -1,5 +1,5 @@
 import { ResizeObserver } from '@juggle/resize-observer'
-import '@testing-library/jest-dom'
+import '@testing-library/jest-dom/vitest'
 
 // ResizeObserver polyfill for JSDOM
 globalThis.ResizeObserver = ResizeObserver
