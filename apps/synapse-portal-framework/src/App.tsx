@@ -6,7 +6,7 @@ import { SynapseToastContainer } from 'synapse-react-client/components/ToastMess
 import { SynapsePortalChatDialog } from 'synapse-react-client/components/SynapseChat/SynapsePortalChatDialog'
 import AppInitializer from './components/AppInitializer'
 import { AridhiaIntegration } from './components/AridhiaIntegration'
-import { ChatDialogContext } from './components/ChatDialogContext'
+import { ChatDialogContextProvider } from './components/ChatDialogContext'
 import Footer from './components/Footer'
 import Navbar from './components/navbar/Navbar'
 import { usePortalContext } from './components/PortalContext'
@@ -62,7 +62,7 @@ export default function App(props: AppProps) {
   }, [navigate, synapseChatProps])
 
   const content = (
-    <ChatDialogContext.Provider
+    <ChatDialogContextProvider
       value={{ openChat, isChatAvailable: !!synapseChatProps }}
     >
       <meta name="theme-color" content={palette.primary.main} />
@@ -85,7 +85,7 @@ export default function App(props: AppProps) {
           {...synapseChatProps}
         />
       )}
-    </ChatDialogContext.Provider>
+    </ChatDialogContextProvider>
   )
 
   return (

@@ -1689,6 +1689,37 @@ describe('toSearchIndexQuery – searchQueryConfig', () => {
     })
   })
 
+  it.each(['schwann', '"schwann cell"', 'syn12345'])(
+    'searches only the listed fields for %s',
+    searchExpression => {
+      const result = toSearchIndexQuery(
+        makeQueryBundleRequest({
+          additionalFilters: [
+            {
+              concreteType: TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+              searchExpression,
+            },
+          ],
+        }),
+        SEARCH_INDEX_ID,
+        undefined,
+        {
+          queryStrategy: 'MULTI_MATCH_BEST_FIELDS',
+          includeUnlistedFields: false,
+          fieldBoosts: { resourceName: 5, description: 1 },
+        },
+      )
+      const clauseType =
+        searchExpression !== 'schwann' ? 'simple_query_string' : 'multi_match'
+      expect(result.searchQuery?.query).toMatchObject({
+        [clauseType]: {
+          query: searchExpression,
+          fields: ['resourceName^5', 'description'],
+        },
+      })
+    },
+  )
+
   it('an explicit "*" boost is respected and not overridden', () => {
     const result = toSearchIndexQuery(
       queryBundleWithText,

@@ -7,7 +7,7 @@ import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/compon
 function ResearchEcosystem() {
   return (
     <SectionLayout
-      title="Related Consortia and Repositories"
+      title="Research Ecosystem"
       subtitle="Grounded in truly open science and radical collaboration, the AD Knowledge Portal bridges data silos by integrating with a broad network of consortia and repositories. Each contributes unique data and expertise needed to drive discovery in Alzheimer's Disease research."
       centerTitle
       ContainerProps={{
