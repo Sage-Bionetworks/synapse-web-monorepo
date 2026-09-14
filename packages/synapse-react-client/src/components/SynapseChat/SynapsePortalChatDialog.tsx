@@ -1,6 +1,7 @@
 import DraggableDialog from '../DraggableDialog/DraggableDialog'
 import { storeRedirectURLForOneSageLoginAndGotoURL } from '@/utils/AppUtils'
 import { useOneSageURL } from '@/utils/hooks/useOneSageURL'
+import { persistPortalChatReopenIntent } from './portalChatSessionStorage'
 import SynapseChat, { SynapseChatProps } from './SynapseChat'
 
 export type SynapsePortalChatDialogProps = SynapseChatProps & {
@@ -31,9 +32,14 @@ export function SynapsePortalChatDialog({
       <SynapseChat
         hideTitle={true}
         textboxPositionOffset="16px"
-        onSessionCreationUnauthenticated={() =>
+        onSessionCreationUnauthenticated={() => {
+          // Remember the chat was open so it can be reopened after the login round-trip.
+          persistPortalChatReopenIntent({
+            variant: chatDialogProps.variant,
+            initialMessage: chatDialogProps.initialMessage,
+          })
           storeRedirectURLForOneSageLoginAndGotoURL(oneSageUrl.toString())
-        }
+        }}
         {...chatDialogProps}
       />
     </DraggableDialog>

@@ -7,6 +7,7 @@ import { SynapsePortalChatDialog } from 'synapse-react-client/components/Synapse
 import AppInitializer from './components/AppInitializer'
 import { AridhiaIntegration } from './components/AridhiaIntegration'
 import { ChatDialogContext } from './components/ChatDialogContext'
+import { ChatReopenAfterLogin } from './components/ChatReopenAfterLogin'
 import Footer from './components/Footer'
 import Navbar from './components/navbar/Navbar'
 import { usePortalContext } from './components/PortalContext'
@@ -85,6 +86,7 @@ export default function App(props: AppProps) {
           {...synapseChatProps}
         />
       )}
+      <ChatReopenAfterLogin />
     </ChatDialogContext.Provider>
   )
 
