@@ -5,9 +5,6 @@ function ExploreLayout() {
     <ExploreWrapper
       explorePaths={[
         {
-          path: 'Programs',
-        },
-        {
           path: 'Collections',
         },
         {
