@@ -113,7 +113,7 @@ function HomePageInternal() {
       </SectionLayout>
       <SectionLayout
         ContainerProps={{
-          sx: { marginBottom: '50px' },
+          sx: { marginBottom: '110px' },
         }}
         title="Data Analysis Platform Integrations"
         subtitle="Analyze your data in a trusted research environment (TRE), integrated with the knowledge portal ecosystem."
