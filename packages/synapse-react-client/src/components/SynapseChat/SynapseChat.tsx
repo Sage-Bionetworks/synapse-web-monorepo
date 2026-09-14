@@ -321,7 +321,7 @@ export function SynapseChat({
           {chatbotName}
         </Typography>
       )}
-      {showAccessLevelMenu && variant !== 'curie' && (
+      {showAccessLevelMenu && variant !== 'curie' && isAuthenticated && (
         <AccessLevelMenu
           initAccessLevel={agentAccessLevel}
           onChange={newAccessLevel => {
