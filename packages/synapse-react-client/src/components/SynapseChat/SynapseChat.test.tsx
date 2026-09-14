@@ -14,6 +14,7 @@ import {
 import { getUseQuerySuccessMock } from '@/testutils/ReactQueryMockUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { FileHandleAssociateType } from '@sage-bionetworks/synapse-client'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
@@ -418,5 +419,108 @@ describe('SynapseChat - allowAttachments', () => {
 
     expect(screen.getByText('report.pdf')).toBeInTheDocument()
     expect(screen.queryByText('4242424')).not.toBeInTheDocument()
+  })
+})
+
+describe('SynapseChat - anonymous session creation', () => {
+  beforeAll(() => {
+    window.HTMLElement.prototype.scrollIntoView = vi.fn()
+  })
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+    mockUseUpdateAgentSession.mockReturnValue(idleMutation as any)
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+    mockUseGetChatAgentTraceEvents.mockReturnValue({ data: undefined } as any)
+    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+    mockUsePollAsynchronousJob.mockReturnValue({ data: undefined } as any)
+    mockUseChatState.mockReturnValue(defaultMockChatState)
+  })
+
+  function renderWithAuth(
+    isAuthenticated: boolean,
+    props?: Partial<SynapseChatProps>,
+  ) {
+    return render(<SynapseChat {...defaultProps} {...props} />, {
+      wrapper: createWrapper({ isAuthenticated }),
+    })
+  }
+
+  const unauthorizedError = new SynapseClientError(
+    403,
+    'This agent is not available to anonymous users.',
+    'https://example.org',
+  )
+
+  function captureSessionCreationOnError() {
+    let onError: ((err: SynapseClientError) => void) | undefined
+    mockUseCreateAgentSession.mockImplementation(
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      (options: any) => {
+        onError = options?.onError
+        // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+        return idleMutation as any
+      },
+    )
+    return () => onError
+  }
+
+  it('invokes onSessionCreationUnauthenticated when an anonymous session is rejected', () => {
+    const onSessionCreationUnauthenticated = vi.fn()
+    const getOnError = captureSessionCreationOnError()
+
+    renderWithAuth(false, { onSessionCreationUnauthenticated })
+    getOnError()?.(unauthorizedError)
+
+    expect(onSessionCreationUnauthenticated).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not invoke the callback for authenticated users', () => {
+    const onSessionCreationUnauthenticated = vi.fn()
+    const getOnError = captureSessionCreationOnError()
+
+    renderWithAuth(true, { onSessionCreationUnauthenticated })
+    getOnError()?.(unauthorizedError)
+
+    expect(onSessionCreationUnauthenticated).not.toHaveBeenCalled()
+  })
+
+  it('does not invoke the callback for non-authorization errors', () => {
+    const onSessionCreationUnauthenticated = vi.fn()
+    const getOnError = captureSessionCreationOnError()
+
+    renderWithAuth(false, { onSessionCreationUnauthenticated })
+    getOnError()?.(new SynapseClientError(500, 'boom', 'https://example.org'))
+
+    expect(onSessionCreationUnauthenticated).not.toHaveBeenCalled()
+  })
+
+  it('suppresses the inline error when deferring an anonymous user to login', () => {
+    mockUseCreateAgentSession.mockReturnValue({
+      ...idleMutation,
+      error: unauthorizedError,
+      isError: true,
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any)
+
+    renderWithAuth(false, { onSessionCreationUnauthenticated: vi.fn() })
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
+  it('shows the inline error when there is no login fallback', () => {
+    mockUseCreateAgentSession.mockReturnValue({
+      ...idleMutation,
+      error: unauthorizedError,
+      isError: true,
+      // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any)
+
+    renderWithAuth(false)
+
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      'This agent is not available to anonymous users.',
+    )
   })
 })
