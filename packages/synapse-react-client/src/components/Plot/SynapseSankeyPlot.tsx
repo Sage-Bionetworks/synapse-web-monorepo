@@ -62,6 +62,13 @@ export type SynapseSankeyPlotProps = {
   onRightCategoryClick?: (categoryLabel: string) => void
   /** Invoked when the right end node (rightLabel) is clicked. */
   onRightEndClick?: () => void
+  /**
+   * Renders a panel beside the chart describing the flow currently under the
+   * cursor, or the whole chart when nothing is focused. Receives the focused
+   * category's label, or null. Providing this switches the component to a
+   * two-column layout that stacks on narrow screens.
+   */
+  renderDetailPanel?: (focusedCategory: string | null) => React.ReactNode
 }
 
 // Datum shapes for the d3-sankey graph.
@@ -321,6 +328,7 @@ export const SynapseSankeyPlot = (
     rightUnitLabel = 'items',
     onRightCategoryClick,
     onRightEndClick,
+    renderDetailPanel,
   } = props
   const theme = useTheme()
   const gradientPrefix = useId()
@@ -582,7 +590,12 @@ export const SynapseSankeyPlot = (
   const categoryFire = (name: string) =>
     onCategoryClick ? () => onCategoryClick(name) : undefined
 
-  return (
+  // Center (source) nodes follow the left end node, so a source's index in the
+  // graph is its category index plus one.
+  const focusedCategory =
+    focusIndex === null ? null : (graph.nodes[focusIndex + 1]?.name ?? null)
+
+  const chart = (
     <div className={classNames(styles.root, { [styles.rootVisible]: visible })}>
       {title && (
         <div className={styles.title} style={{ fontFamily, color: textColor }}>
@@ -736,6 +749,19 @@ export const SynapseSankeyPlot = (
           )
         })}
       </svg>
+    </div>
+  )
+
+  if (!renderDetailPanel) {
+    return chart
+  }
+
+  return (
+    <div className={styles.withDetailPanel}>
+      {chart}
+      <div className={styles.detailPanel}>
+        {renderDetailPanel(focusedCategory)}
+      </div>
     </div>
   )
 }

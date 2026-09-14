@@ -1,0 +1,88 @@
+.root {
+  padding: 24px 28px;
+  border: 1px solid var(--synapse-gray-300);
+  border-radius: 6px;
+  background-color: white;
+}
+
+.title {
+  margin: 0;
+  // Long source names must not force the panel wider than its column.
+  overflow-wrap: anywhere;
+}
+
+.lede {
+  display: block;
+  margin-top: 4px;
+  color: var(--synapse-gray-700);
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  margin: 20px 0 0 0;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column-reverse;
+
+  dt {
+    color: var(--synapse-gray-700);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+}
+
+.statValue {
+  margin: 0;
+  color: var(--synapse-primary-action-color);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.facets {
+  margin: 24px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.facet {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.facetLabel {
+  color: var(--synapse-gray-700);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.facetValues {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  > span {
+    padding: 3px 10px;
+    border-radius: 12px;
+    color: var(--synapse-gray-900);
+    background-color: var(--synapse-primary-action-color-alpha-10);
+  }
+}
+
+// A muted grey count reads as stray metadata appended to the label; the count
+// is the data here, so it is coloured and weighted deliberately.
+.count {
+  color: var(--synapse-primary-action-color);
+  font-weight: 700;
+}
+
+.remainder {
+  color: var(--synapse-gray-700);
+  font-style: italic;
+}
