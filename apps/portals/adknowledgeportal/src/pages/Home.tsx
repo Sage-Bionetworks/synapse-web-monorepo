@@ -121,7 +121,11 @@ function HomePageInternal() {
       >
         <AdknowledgePlatformIntegrations />
       </SectionLayout>
-      <Stack className={styles.newsReleasesContainer}>
+      <SectionLayout
+        ContainerProps={{
+          sx: { marginBottom: '140px' },
+        }}
+      >
         <Box className={styles.newsReleasesContent}>
           <SectionLayout
             title="New Releases"
@@ -166,7 +170,7 @@ function HomePageInternal() {
             View All Releases
           </Button>
         </div>
-      </Stack>
+      </SectionLayout>
       <SectionLayout
         title="Related Consortia and Repositories"
         subtitle="Grounded in truly open science and radical collaboration, the AD Knowledge Portal bridges data silos by integrating with a broad network of consortia and repositories. Each contributes unique data and expertise needed to drive discovery in Alzheimer's Disease research."
