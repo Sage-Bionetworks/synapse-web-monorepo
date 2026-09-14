@@ -14,7 +14,7 @@ import { ReactComponent as ContributeIcon } from '../assets/contribution.svg'
 import { ReactComponent as AgoraIcon } from '../assets/agora.svg'
 import { ReactComponent as ModelADIcon } from '../assets/modelAD.svg'
 import styles from './HomePage.module.scss'
-import { Box, Button, Stack } from '@mui/material'
+import { Box, Button } from '@mui/material'
 import { Link } from 'react-router'
 
 function HomePageInternal() {
