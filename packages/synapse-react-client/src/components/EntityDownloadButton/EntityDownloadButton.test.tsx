@@ -92,7 +92,7 @@ describe('EntityDownloadButton', () => {
       }),
     )
     vi.mocked(useAddFileToDownloadList).mockReturnValue(
-      getUseMutationIdleMock(),
+      getUseMutationIdleMock(vi.mocked(useAddFileToDownloadList)),
     )
     vi.mocked(useDirectDownloadHandler).mockReturnValue({
       downloadFile: vi.fn(),
@@ -332,7 +332,9 @@ describe('EntityDownloadButton', () => {
           totalNumberOfResults: 1,
         }),
       )
-      const mockAddFileToDownloadList = getUseMutationIdleMock()
+      const mockAddFileToDownloadList = getUseMutationIdleMock(
+        vi.mocked(useAddFileToDownloadList),
+      )
       vi.mocked(useAddFileToDownloadList).mockReturnValue(
         mockAddFileToDownloadList,
       )
@@ -354,7 +356,7 @@ describe('EntityDownloadButton', () => {
       await userEvent.click(addToCartMenuItem)
 
       expect(screen.getByTestId('download-confirmation')).toBeInTheDocument()
-      expect(mockAddFileToDownloadList.mutate).not.toHaveBeenCalled()
+      expect(vi.mocked(mockAddFileToDownloadList.mutate)).not.toHaveBeenCalled()
     })
 
     it('shows download confirmation when adding an entityview to download list', async () => {
@@ -389,7 +391,9 @@ describe('EntityDownloadButton', () => {
   })
 
   it('directly adds file to download list without showing confirmation', async () => {
-    const mockAddFileToDownloadList = getUseMutationIdleMock()
+    const mockAddFileToDownloadList = getUseMutationIdleMock(
+      vi.mocked(useAddFileToDownloadList),
+    )
     vi.mocked(useAddFileToDownloadList).mockReturnValue(
       mockAddFileToDownloadList,
     )
@@ -408,7 +412,7 @@ describe('EntityDownloadButton', () => {
     expect(
       screen.queryByTestId('download-confirmation'),
     ).not.toBeInTheDocument()
-    expect(mockAddFileToDownloadList.mutate).toHaveBeenCalledWith({
+    expect(vi.mocked(mockAddFileToDownloadList.mutate)).toHaveBeenCalledWith({
       entityId: mockFileEntityData.id,
       entityVersionNumber: 3,
     })

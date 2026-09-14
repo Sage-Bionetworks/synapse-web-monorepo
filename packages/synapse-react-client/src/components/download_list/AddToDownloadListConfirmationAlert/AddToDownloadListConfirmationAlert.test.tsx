@@ -118,7 +118,9 @@ describe('AddToDownloadListConfirmationAlert', () => {
       ),
     )
 
-    mockUseAddToDownloadList.mockReturnValue(getUseMutationIdleMock())
+    mockUseAddToDownloadList.mockReturnValue(
+      getUseMutationIdleMock(mockUseAddToDownloadList),
+    )
   })
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())

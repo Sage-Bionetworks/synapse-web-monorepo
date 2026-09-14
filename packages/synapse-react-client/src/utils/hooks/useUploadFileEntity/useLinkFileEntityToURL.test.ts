@@ -39,14 +39,20 @@ const mockFileHandle: ExternalFileHandle = {
   externalURL: url,
 }
 
-const mockUseCreateEntityReturnValue = getUseMutationIdleMock()
+const mockUseCreateEntityReturnValue = getUseMutationIdleMock(
+  vi.mocked(useCreateEntity),
+)
 vi.mocked(useCreateEntity).mockReturnValue(mockUseCreateEntityReturnValue)
 
-const mockUseUpdateEntityReturnValue = getUseMutationIdleMock()
+const mockUseUpdateEntityReturnValue = getUseMutationIdleMock(
+  vi.mocked(useUpdateEntity),
+)
 vi.mocked(useUpdateEntity).mockReturnValue(mockUseUpdateEntityReturnValue)
 
-const mockUseExternalFileHandleReturnValue =
-  getUseMutationIdleMock(mockFileHandle)
+const mockUseExternalFileHandleReturnValue = getUseMutationIdleMock(
+  vi.mocked(useCreateExternalFileHandle),
+  mockFileHandle,
+)
 vi.mocked(useCreateExternalFileHandle).mockReturnValue(
   mockUseExternalFileHandleReturnValue,
 )
