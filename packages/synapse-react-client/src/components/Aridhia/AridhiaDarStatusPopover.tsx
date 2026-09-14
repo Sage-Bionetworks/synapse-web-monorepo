@@ -38,7 +38,6 @@ export default function AridhiaDarStatusPopover(
         <Typography variant="subtitle2">
           {request.name ?? request.code}
         </Typography>
-        <Typography variant="body2">Code: {request.code}</Typography>
         <Typography variant="body2">Status: {request.status}</Typography>
         {request.created_at && (
           <Typography variant="body2">

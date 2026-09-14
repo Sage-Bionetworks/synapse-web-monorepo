@@ -17,7 +17,7 @@ export function getRestrictionUiTypeFromAridhiaRequest(
 
   switch (request.status) {
     case 'approved':
-      return RestrictionUiType.Accessible
+      return RestrictionUiType.AccessibleOnRDCADAP
     case 'pending':
       return RestrictionUiType.AccessBlockedByRestrictionWithPendingRDCADAPRequest
     case 'denied':

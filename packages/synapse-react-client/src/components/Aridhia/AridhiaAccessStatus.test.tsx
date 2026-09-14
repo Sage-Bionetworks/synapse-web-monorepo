@@ -36,7 +36,7 @@ import {
 const NO_ACCESS_ICON_NAME = 'You must request access to this restricted item.'
 const PENDING_ACCESS_ICON_NAME =
   'Your access request is pending approval by RDCA-DAP.'
-const HAS_ACCESS_ICON_NAME = 'You have access to this item.'
+const HAS_ACCESS_ICON_NAME = 'You have access to this item on RDCA-DAP.'
 
 function renderStatus(fairPortalUrl?: string) {
   const Wrapper = createWrapper()
@@ -131,7 +131,7 @@ describe('AridhiaAccessStatus', () => {
     ).toBeInTheDocument()
   })
 
-  it('opens the status popover showing the request code when a request is pending, linking to the specific request on the FAIR portal', async () => {
+  it('opens the status popover showing the request name when a request is pending, linking to the specific request on the FAIR portal', async () => {
     const user = userEvent.setup()
     server.use(
       getAridhiaAuthenticateHandler(),
@@ -156,7 +156,7 @@ describe('AridhiaAccessStatus', () => {
 
     await waitFor(() =>
       expect(
-        screen.getByText('ampals-sdtm_als1003-abc12345', { exact: false }),
+        screen.getByText('My Request', { exact: false }),
       ).toBeInTheDocument(),
     )
     expect(

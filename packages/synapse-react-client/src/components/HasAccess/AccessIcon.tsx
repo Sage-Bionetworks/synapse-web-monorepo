@@ -12,7 +12,7 @@ export enum RestrictionUiType {
   AccessBlockedByACL = 'AccessBlockedByACL',
   AccessBlockedToAnonymous = 'AccessBlockedToAnonymous',
   AccessibleExternalFileHandle = 'AccessibleExternalFileHandle',
-  /** The user has no RDCA-DAP account linked yet, so the DAR wizard is unreachable. */
+  AccessibleOnRDCADAP = 'AccessibleOnRDCADAP',
   AccessBlockedByRDCADAPAccountNotLinked = 'AccessBlockedByRDCADAPAccountNotLinked',
 }
 
@@ -70,6 +70,11 @@ const iconConfiguration: Record<
     icon: 'accessOpen',
     color: theme => theme.palette.success.main,
     tooltipText: 'You have access to this item.',
+  },
+  [RestrictionUiType.AccessibleOnRDCADAP]: {
+    icon: 'accessOpen',
+    color: theme => theme.palette.success.main,
+    tooltipText: 'You have access to this item on RDCA-DAP.',
   },
   [RestrictionUiType.AccessibleExternalFileHandle]: {
     icon: 'linkOff',

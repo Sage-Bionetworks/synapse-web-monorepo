@@ -19,7 +19,7 @@ describe('aridhiaAccessStatusUtils', () => {
         code: 'REQ001',
       }
       const result = getRestrictionUiTypeFromAridhiaRequest(request)
-      expect(result).toBe(RestrictionUiType.Accessible)
+      expect(result).toBe(RestrictionUiType.AccessibleOnRDCADAP)
     })
 
     test('should return AccessBlockedByRestrictionWithPendingRDCADAPRequest when request status is pending', () => {

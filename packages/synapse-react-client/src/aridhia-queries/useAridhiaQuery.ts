@@ -125,7 +125,8 @@ export async function toAridhiaError(error: unknown): Promise<AridhiaError> {
     // 403 with this message in its own `{ error: { message } }` envelope.
     if (
       httpStatus === 403 &&
-      bodyErrorText === 'Not authorised for this operation'
+      (bodyErrorText?.toLowerCase().includes('not authorised') ||
+        bodyErrorText?.toLowerCase().includes('not authorized'))
     ) {
       return new AridhiaError('not_authorized', bodyErrorText, {
         httpStatus,

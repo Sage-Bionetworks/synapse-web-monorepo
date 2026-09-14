@@ -122,7 +122,7 @@ export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
       getRestrictionUiTypeFromAridhiaRequest(entityRequest)
     const icon = <AccessIcon restrictionUiType={restrictionUiType} />
 
-    if (restrictionUiType === RestrictionUiType.Accessible) {
+    if (restrictionUiType === RestrictionUiType.AccessibleOnRDCADAP) {
       // Approved, or the RDCA-DAP request form is not yet enabled — keep the existing
       // link-out to RDCA-DAP to access or request the data.
       content = fairPortalUrl ? (
