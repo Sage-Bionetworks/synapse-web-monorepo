@@ -1,9 +1,8 @@
-import { render } from '@testing-library/react'
+import { renderHook } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useApplicationSessionContext } from 'synapse-react-client'
 import { consumePortalChatReopenIntent } from 'synapse-react-client/components/SynapseChat/portalChatSessionStorage'
-import { useChatDialogContext } from './ChatDialogContext'
-import { ChatReopenAfterLogin } from './ChatReopenAfterLogin'
+import { useReopenChatAfterLogin } from './useReopenChatAfterLogin'
 
 vi.mock('synapse-react-client', () => ({
   useApplicationSessionContext: vi.fn(),
@@ -16,19 +15,11 @@ vi.mock(
   }),
 )
 
-vi.mock('./ChatDialogContext', () => ({
-  useChatDialogContext: vi.fn(),
-}))
-
-describe('ChatReopenAfterLogin', () => {
+describe('useReopenChatAfterLogin', () => {
   const openChat = vi.fn()
 
   beforeEach(() => {
     vi.resetAllMocks()
-    vi.mocked(useChatDialogContext).mockReturnValue({
-      openChat,
-      isChatAvailable: true,
-    })
   })
 
   it('reopens the chat when the user returns authenticated with a stored intent', () => {
@@ -41,7 +32,7 @@ describe('ChatReopenAfterLogin', () => {
       initialMessage: 'hello',
     })
 
-    render(<ChatReopenAfterLogin />)
+    renderHook(() => useReopenChatAfterLogin(openChat, true))
 
     expect(openChat).toHaveBeenCalledWith('hello', { variant: 'curie' })
   })
@@ -52,7 +43,7 @@ describe('ChatReopenAfterLogin', () => {
       isAuthenticated: false,
     } as never)
 
-    render(<ChatReopenAfterLogin />)
+    renderHook(() => useReopenChatAfterLogin(openChat, true))
 
     expect(consumePortalChatReopenIntent).not.toHaveBeenCalled()
     expect(openChat).not.toHaveBeenCalled()
@@ -67,10 +58,24 @@ describe('ChatReopenAfterLogin', () => {
       variant: 'curie',
     })
 
-    render(<ChatReopenAfterLogin />)
+    renderHook(() => useReopenChatAfterLogin(openChat, true))
 
     // The intent is consumed (cleared) so it can't trigger a redirect loop, but chat is not reopened.
     expect(consumePortalChatReopenIntent).toHaveBeenCalled()
+    expect(openChat).not.toHaveBeenCalled()
+  })
+
+  it('does not reopen when chat is unavailable', () => {
+    vi.mocked(useApplicationSessionContext).mockReturnValue({
+      hasInitializedSession: true,
+      isAuthenticated: true,
+    } as never)
+    vi.mocked(consumePortalChatReopenIntent).mockReturnValue({
+      variant: 'curie',
+    })
+
+    renderHook(() => useReopenChatAfterLogin(openChat, false))
+
     expect(openChat).not.toHaveBeenCalled()
   })
 
@@ -81,7 +86,7 @@ describe('ChatReopenAfterLogin', () => {
     } as never)
     vi.mocked(consumePortalChatReopenIntent).mockReturnValue(undefined)
 
-    render(<ChatReopenAfterLogin />)
+    renderHook(() => useReopenChatAfterLogin(openChat, true))
 
     expect(openChat).not.toHaveBeenCalled()
   })

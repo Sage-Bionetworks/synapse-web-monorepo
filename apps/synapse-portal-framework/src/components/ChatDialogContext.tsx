@@ -1,4 +1,5 @@
-import { createContext, useContext } from 'react'
+import { createContext, PropsWithChildren, useContext } from 'react'
+import { useReopenChatAfterLogin } from './useReopenChatAfterLogin'
 
 export type ChatDialogVariant = 'default' | 'curie'
 
@@ -14,6 +15,22 @@ export type ChatDialogContextType = {
 export const ChatDialogContext = createContext<
   ChatDialogContextType | undefined
 >(undefined)
+
+/**
+ * Provides the chat dialog context and wires up behavior that needs to run alongside it, such as
+ * reopening the chat after a login round-trip.
+ */
+export function ChatDialogContextProvider({
+  value,
+  children,
+}: PropsWithChildren<{ value: ChatDialogContextType }>) {
+  useReopenChatAfterLogin(value.openChat, value.isChatAvailable)
+  return (
+    <ChatDialogContext.Provider value={value}>
+      {children}
+    </ChatDialogContext.Provider>
+  )
+}
 
 export function useChatDialogContext(): ChatDialogContextType | undefined {
   return useContext(ChatDialogContext)
