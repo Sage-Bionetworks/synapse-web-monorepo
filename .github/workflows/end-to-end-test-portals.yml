@@ -12,74 +12,56 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  e2e-tests:
-    if: ${{ (github.event_name == 'push' && (github.ref_name == 'main' || github.actor == github.repository_owner)) || github.event_name == 'pull_request' }}
-    strategy:
-      fail-fast: false
-      max-parallel: ${{ github.repository_owner == 'Sage-Bionetworks' && 5 || 10 }}
-      matrix:
-        PORTAL:
-          [
-            adknowledgeportal,
-            arkportal,
-            bsmn,
-            cancercomplexity,
-            challenges,
-            digitalhealth,
-            eliteportal,
-            genie,
-            namhub,
-            nf,
-            stopadportal,
-          ]
+  detect-affected-portals:
+    if: ${{ (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
+    outputs:
+      portals: ${{ steps.affected.outputs.portals }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
+          filter: tree:0
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@3e9ad7370203c1e93d109be57f3b72eb0eb511b1 # v4.4.0
-
       - uses: ./.github/actions/pnpm-setup-action
         with:
           STORE_NX_CACHE: 'true'
-      - name: Determine if portal has had any changes
-        id: portal_changes
+      - name: Determine which portals are affected
+        id: affected
         run: |
-          affected=$(pnpm nx show projects --affected)
-          affected_array=($affected)
-
-          echo "Affected projects: ${affected_array[@]}"
-
-          for project in "${affected_array[@]}"; do
-            echo "Comparing: '$project' with '${{ matrix.PORTAL }}'"
-            if [[ "$project" == "${{ matrix.PORTAL }}" ]]; then
-              echo "Project is affected; setting project_affected=true"
-              echo "project_affected=true" >> "$GITHUB_OUTPUT"
-              exit 0
-            fi
-            done
-            echo "Project is not affected; setting project_affected=false"
-            echo "project_affected=false" >> "$GITHUB_OUTPUT"
-
+          set -euo pipefail
+          affected_json=$(pnpm nx show projects --affected --json)
+          all_json=$(cat .github/workflows/portals_e2e.json)
+          portals=$(jq -cn --argjson affected "$affected_json" --argjson all "$all_json" '[$all[] | select(IN($affected[]))]')
+          echo "Affected portals: $portals"
+          echo "portals=$portals" >> "$GITHUB_OUTPUT"
+  e2e-tests:
+    needs: detect-affected-portals
+    if: ${{ needs.detect-affected-portals.result == 'success' && needs.detect-affected-portals.outputs.portals != '[]' }}
+    strategy:
+      fail-fast: false
+      max-parallel: ${{ github.repository_owner == 'Sage-Bionetworks' && 6 || 10 }}
+      matrix:
+        PORTAL: ${{ fromJson(needs.detect-affected-portals.outputs.portals) }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: ./.github/actions/pnpm-setup-action
+        with:
+          STORE_NX_CACHE: 'true'
       - name: Build portal
-        if: ${{ steps.portal_changes.outputs.project_affected == 'true' }}
         run: pnpm nx run portals-e2e:portal:build
         env:
           PORTAL: ${{ matrix.PORTAL }}
-
       - name: Install Playwright Browsers
-        if: ${{ steps.portal_changes.outputs.project_affected == 'true' }}
         run: |
           cd "${{ env.PORTALS_E2E_SUBDIR }}"
           pnpm playwright install --with-deps
-
       - name: Run e2e tests
-        if: ${{ steps.portal_changes.outputs.project_affected == 'true' }}
         run: pnpm nx run portals-e2e:e2e
         env:
           PORTAL: ${{ matrix.PORTAL }}
-
       - name: Upload blob report to GitHub Actions Artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: ${{ always() }}
@@ -89,14 +71,12 @@ jobs:
           retention-days: 1
   merge-e2e-reports:
     # Merge reports after e2e-tests, even if some shards have failed
-    # But skip this job if the previous job was cancelled or skipped
+    # But skip this job if the previous job was cancelled or skipped (e.g. no portals were affected)
     if: ${{ !cancelled() && needs.e2e-tests.result != 'skipped' }}
     needs: [e2e-tests]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          fetch-depth: 0
       - uses: ./.github/actions/pnpm-setup-action
       - name: Download blob reports from GitHub Actions Artifacts
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
@@ -104,20 +84,10 @@ jobs:
           pattern: ${{ env.PW_ALL_BLOBS_DIR }}*
           path: ${{ env.PORTALS_E2E_SUBDIR }}/${{ env.PW_ALL_BLOBS_DIR }}
           merge-multiple: true
-      - name: Check if any E2E tests ran
-        run: |
-          cd ${{ env.PORTALS_E2E_SUBDIR }};
-          if [ ! -d "${{ env.PW_ALL_BLOBS_DIR }}" ]; then
-            exit 0
-          fi
       - name: Merge into HTML Report
         run: |
-          cd ${{ env.PORTALS_E2E_SUBDIR }}; 
-          if [ ! -d "${{ env.PW_ALL_BLOBS_DIR }}" ]; then
-            exit 0
-          else
-            pnpm exec playwright merge-reports --reporter html ./"${{ env.PW_ALL_BLOBS_DIR }}"
-          fi
+          cd ${{ env.PORTALS_E2E_SUBDIR }}
+          pnpm exec playwright merge-reports --reporter html ./"${{ env.PW_ALL_BLOBS_DIR }}"
       - name: Upload HTML report
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
