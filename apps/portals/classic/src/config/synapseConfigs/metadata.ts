@@ -10,6 +10,7 @@ const metadataPlotNavProps: QueryWrapperPlotNavProps = {
   defaultShowPlots: false,
   hideAddToDownloadListMenuItem: true,
   hideProgrammaticOptionsMenuItem: true,
+  fileIdColumnName: 'accessRequirements',
   tableConfiguration: {
     showAccessColumn: true,
     showDownloadColumn: false,
