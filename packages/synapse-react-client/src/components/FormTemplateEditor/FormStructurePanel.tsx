@@ -20,6 +20,8 @@ export type FormStructurePanelProps = {
   jsonSchema: RJSFSchema
   /** Properties not yet bound to any step in the template. */
   unboundProperties: ResolvedSchemaProperty[]
+  /** The FormTemplate's id, if it has been saved. Threaded down to file-field template uploads. */
+  formTemplateId: string | undefined
   onStepsChange: (next: EditableFormTemplateStep[]) => void
   onBindField: (propertyKey: string, stepKey: string) => void
 }
@@ -34,6 +36,7 @@ export function FormStructurePanel({
   steps,
   jsonSchema,
   unboundProperties,
+  formTemplateId,
   onStepsChange,
   onBindField,
 }: FormStructurePanelProps) {
@@ -119,6 +122,7 @@ export function FormStructurePanel({
               isLast={stepIdx === steps.length - 1}
               unboundProperties={unboundProperties}
               jsonSchema={jsonSchema}
+              formTemplateId={formTemplateId}
               defaultExpanded={stepIdx === 0}
               onChange={patch => handleStepChange(stepIdx, patch)}
               onBindField={propertyKey => onBindField(propertyKey, step.uiKey)}

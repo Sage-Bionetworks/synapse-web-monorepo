@@ -5,13 +5,20 @@ import { RJSFSchema } from '@rjsf/utils'
  * outside this set surfaces in the UI as "advanced" and must be edited via the
  * raw JSON Schema view.
  */
-export type SimpleFieldType = 'text' | 'number' | 'boolean' | 'choice' | 'file'
+export type SimpleFieldType =
+  | 'text'
+  | 'number'
+  | 'boolean'
+  | 'choice'
+  | 'multiChoice'
+  | 'file'
 
 export const FIELD_TYPE_OPTIONS: { value: SimpleFieldType; label: string }[] = [
   { value: 'text', label: 'Text' },
   { value: 'number', label: 'Number' },
   { value: 'boolean', label: 'Yes / No' },
-  { value: 'choice', label: 'Multiple choice' },
+  { value: 'choice', label: 'Single choice' },
+  { value: 'multiChoice', label: 'Multiple choice (select many)' },
   { value: 'file', label: 'File upload' },
 ]
 
@@ -21,6 +28,14 @@ export function detectFieldType(
   if (!prop || typeof prop !== 'object') return null
   if (prop.format === 'synapse-filehandle-id') return 'file'
   if (prop.type === 'string' && Array.isArray(prop.enum)) return 'choice'
+  if (
+    prop.type === 'array' &&
+    !Array.isArray(prop.items) &&
+    (prop.items as RJSFSchema | undefined)?.type === 'string' &&
+    Array.isArray((prop.items as RJSFSchema | undefined)?.enum)
+  ) {
+    return 'multiChoice'
+  }
   if (prop.type === 'string' && !prop.format) return 'text'
   if (prop.type === 'number' || prop.type === 'integer') return 'number'
   if (prop.type === 'boolean') return 'boolean'
@@ -30,6 +45,15 @@ export function detectFieldType(
 export function fieldTypeLabel(type: SimpleFieldType | null): string {
   if (type === null) return 'Advanced'
   return FIELD_TYPE_OPTIONS.find(opt => opt.value === type)?.label ?? 'Advanced'
+}
+
+/** The enum options an existing 'choice' or 'multiChoice' property declares, if any. */
+function existingEnumOptions(prev: RJSFSchema): string[] | undefined {
+  if (Array.isArray(prev.enum)) return prev.enum as string[]
+  const items = !Array.isArray(prev.items)
+    ? (prev.items as RJSFSchema)
+    : undefined
+  return Array.isArray(items?.enum) ? (items.enum as string[]) : undefined
 }
 
 /** Build a fresh schema body for the given simple type, preserving label and help text. */
@@ -53,10 +77,15 @@ export function applyFieldType(
       break
     case 'choice':
       next.type = 'string'
-      next.enum =
-        Array.isArray(prev.enum) && prev.enum.length > 0
-          ? prev.enum
-          : ['Option 1']
+      next.enum = existingEnumOptions(prev) ?? ['Option 1']
+      break
+    case 'multiChoice':
+      next.type = 'array'
+      next.items = {
+        type: 'string',
+        enum: existingEnumOptions(prev) ?? ['Option 1'],
+      }
+      next.uniqueItems = true
       break
     case 'file':
       next.type = 'number'
