@@ -1,13 +1,8 @@
 import { JsonSchemaForm } from '@/components/JsonSchemaForm/JsonSchemaForm'
-import { useGenerateDataAccessSchema } from '@/synapse-queries/dataaccess/useGenerateDataAccessSchema'
-import { createGenerateDataAccessSchemaFromTemplateDraftRequest } from '@/synapse-queries/dataaccess/useGenerateDataAccessSchema'
-import { useCreateJsonSchema } from '@/synapse-queries/jsonschema/useCreateJsonSchema'
-import { useDebouncedEffect } from '@/utils/hooks/useDebouncedEffect'
+import { generateDataAccessSchema } from '@/utils/jsonschema/generateDataAccessSchema'
 import {
   DataAccessRequestType,
   FormTemplate,
-  JsonSchema,
-  JsonSchemaToJSON,
 } from '@sage-bionetworks/synapse-client'
 import {
   Box,
@@ -20,30 +15,26 @@ import {
   Typography,
 } from '@mui/material'
 import { RJSFSchema } from '@rjsf/utils'
-import isEqual from 'lodash-es/isEqual'
-import { useEffect, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 type FormTemplatePreviewProps = {
   template: FormTemplate
   jsonSchema: RJSFSchema
 }
 
-/** How long to wait after the last edit before regenerating the preview. */
-const PREVIEW_DEBOUNCE_DELAY_MS = 500
-
 /**
  * Renders a live preview of how a FormTemplate + its referenced JSON Schema will appear to a
- * requester, generated server-side (the same generation service used to render the real
- * requester and reviewer forms) against the unsaved draft, debounced so rapid edits don't spam
- * the generation job. Since a `FormTemplate` only references its schema by `$id` and the schema
- * registry has no update operation, an edited-but-unsaved schema body has no `$id` the server
- * can resolve yet — so previewing schema edits (not just step rearrangement) means registering a
- * throwaway draft version of the schema after each debounced settle, purely so the generation
- * service has something to resolve. The final save (`useSaveFormTemplate`) registers the real
- * version independently and does not reuse these throwaway ones.
+ * requester. Computed client-side against the unsaved draft, purely to give ACT instant feedback
+ * while editing — the same transform the server's generation service performs, but run locally
+ * so previewing an in-progress edit never requires registering a throwaway JSON Schema version.
  *
- * The most recently generated steps stay on screen while a newer generation is in flight, so the
- * preview never flickers or blanks between edits.
+ * This is an interim measure: `GenerateDataAccessSchemaFromTemplateDraft` (the server's draft
+ * variant of the generation service) only resolves a schema already registered by `$id`, so
+ * generating a preview server-side today would mean writing a real schema-registry version on
+ * every edit. PLFM-XXXX proposes accepting an inline, unregistered draft schema body so the
+ * server can own this transform without that side effect — once it ships, this component should
+ * call `useGenerateDataAccessSchema` (as the real requester/reviewer render paths already do)
+ * instead of `generateDataAccessSchema`.
  */
 export function FormTemplatePreview({
   template,
@@ -53,59 +44,18 @@ export function FormTemplatePreview({
   const [requestType, setRequestType] = useState<DataAccessRequestType>(
     DataAccessRequestType.REQUEST,
   )
-  const [debouncedTemplate, setDebouncedTemplate] = useState(template)
-  const [debouncedJsonSchema, setDebouncedJsonSchema] = useState(jsonSchema)
 
-  useDebouncedEffect(
-    () => {
-      setDebouncedTemplate(template)
-      setDebouncedJsonSchema(jsonSchema)
-    },
-    [template, jsonSchema],
-    PREVIEW_DEBOUNCE_DELAY_MS,
+  const { steps } = useMemo(
+    () => generateDataAccessSchema(template, jsonSchema, requestType),
+    [template, jsonSchema, requestType],
   )
-
-  // Register a throwaway draft schema version whenever the debounced schema body diverges from
-  // the last one registered for preview, so the generation service has a `$id` to resolve.
-  const createSchema = useCreateJsonSchema()
-  const [previewSchema$id, setPreviewSchema$id] = useState(
-    debouncedJsonSchema.$id,
-  )
-  const lastRegisteredSchemaRef = useRef(debouncedJsonSchema)
-  useEffect(() => {
-    if (isEqual(debouncedJsonSchema, lastRegisteredSchemaRef.current)) return
-    lastRegisteredSchemaRef.current = debouncedJsonSchema
-    createSchema.mutate(debouncedJsonSchema as JsonSchema, {
-      onSuccess: response => setPreviewSchema$id(response.newVersionInfo?.$id),
-    })
-    // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedJsonSchema])
-
-  const request = previewSchema$id
-    ? createGenerateDataAccessSchemaFromTemplateDraftRequest(
-        { ...debouncedTemplate, schema$id: previewSchema$id },
-        requestType,
-      )
-    : undefined
-
-  const { data, isPending, isError } = useGenerateDataAccessSchema(request, {
-    // Hold the last successfully generated steps on screen while a newer generation is in
-    // flight, so the preview never flickers or blanks between edits.
-    placeholderData: previousData => previousData,
-  })
-
-  const steps = data?.steps ?? []
 
   if (steps.length === 0) {
     return (
       <Paper variant="outlined" sx={{ p: 2 }}>
         <Box sx={{ py: 4, textAlign: 'center' }}>
           <Typography variant="body2" color="text.secondary">
-            {isPending
-              ? 'Generating preview…'
-              : isError
-                ? 'Could not generate a preview for this template.'
-                : 'Add at least one step with a bound field to preview the form.'}
+            Add at least one step with a bound field to preview the form.
           </Typography>
         </Box>
       </Paper>
@@ -114,10 +64,8 @@ export function FormTemplatePreview({
 
   const safeIndex = Math.min(activeStep, steps.length - 1)
   const currentStep = steps[safeIndex]
-  const currentSchema = (JsonSchemaToJSON(currentStep.jsonSchema) ??
-    {}) as RJSFSchema
-  const title = (currentSchema.title as string) ?? ''
-  const description = (currentSchema.description as string) ?? ''
+  const title = (currentStep.jsonSchema.title as string) ?? ''
+  const description = (currentStep.jsonSchema.description as string) ?? ''
 
   return (
     <Paper className="JsonSchemaFormContainer" variant="outlined" sx={{ p: 2 }}>
@@ -140,21 +88,17 @@ export function FormTemplatePreview({
 
       {steps.length > 1 && (
         <Stepper activeStep={safeIndex} sx={{ mb: 2 }}>
-          {steps.map((step, index) => {
-            const stepSchema = (JsonSchemaToJSON(step.jsonSchema) ??
-              {}) as RJSFSchema
-            return (
-              <Step
-                key={index}
-                onClick={() => setActiveStep(index)}
-                sx={{ cursor: 'pointer' }}
-              >
-                <StepLabel>
-                  {(stepSchema.title as string) ?? `Step ${index + 1}`}
-                </StepLabel>
-              </Step>
-            )
-          })}
+          {steps.map((step, index) => (
+            <Step
+              key={index}
+              onClick={() => setActiveStep(index)}
+              sx={{ cursor: 'pointer' }}
+            >
+              <StepLabel>
+                {(step.jsonSchema.title as string) ?? `Step ${index + 1}`}
+              </StepLabel>
+            </Step>
+          ))}
         </Stepper>
       )}
 
@@ -169,7 +113,7 @@ export function FormTemplatePreview({
         </Typography>
       )}
       <JsonSchemaForm
-        schema={currentSchema}
+        schema={currentStep.jsonSchema}
         uiSchema={currentStep.uiSchema}
         formContext={{ descriptionVariant: 'inline' }}
         children={<></>}
