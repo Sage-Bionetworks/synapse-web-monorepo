@@ -143,7 +143,7 @@ export const Grid = <T,>({
     }
     // If we don't yet have measured column widths, fall back to the virtualizer's
     // estimated offset for this column to avoid overlapping the gutter/first columns.
-    if (!columnWidths || !columnWidths.length) {
+    if (!columnWidths?.length) {
       const estimatedOffset = colVirtualizer.getOffsetForIndex(colIndex)
       return typeof estimatedOffset === 'number' ? estimatedOffset : 0
     }

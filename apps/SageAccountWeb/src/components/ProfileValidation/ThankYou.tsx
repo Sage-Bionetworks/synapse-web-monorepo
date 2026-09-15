@@ -1,18 +1,12 @@
 import { Box, Typography, useTheme } from '@mui/material'
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined'
 import { PropsWithChildren } from 'react'
+import { StyledConfirmationCard } from '@/components/StyledComponents'
 
 function ThankYou({ children }: PropsWithChildren) {
   const theme = useTheme()
   return (
-    <Box
-      sx={{
-        width: '500px',
-        padding: theme.spacing(8),
-        margin: '0 auto',
-        backgroundColor: '#fff',
-      }}
-    >
+    <StyledConfirmationCard>
       <Box
         sx={{
           textAlign: 'center',
@@ -59,7 +53,7 @@ function ThankYou({ children }: PropsWithChildren) {
         You can access unrestricted areas of the website in the mean time.
       </Typography>
       {children}
-    </Box>
+    </StyledConfirmationCard>
   )
 }
 

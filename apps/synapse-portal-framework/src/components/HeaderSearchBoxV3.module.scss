@@ -29,7 +29,7 @@
   border-radius: 30px;
   // Resting border: a clear grey so the field reads against the near-white
   // navbar (was #eee, which was too low-contrast). Focus stays primary blue.
-  border: 1px solid var(--synapse-gray-500);
+  border: 1px solid var(--synapse-gray-600);
 
   :global(.MuiInputBase-root) {
     border-radius: 30px;

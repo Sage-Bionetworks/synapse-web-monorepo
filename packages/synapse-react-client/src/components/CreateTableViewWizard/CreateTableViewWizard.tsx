@@ -131,7 +131,7 @@ export default function CreateTableViewWizard(
     error: definingSqlValidationError,
   } = useValidateDefiningSql({
     onSuccess: (isSqlValid: ValidateDefiningSqlResponse) => {
-      if (isSqlValid && isSqlValid.isValid) {
+      if (isSqlValid?.isValid) {
         setStep('TABLE_NAME')
       }
     },
@@ -140,7 +140,7 @@ export default function CreateTableViewWizard(
   const sqlValidationError: string | null = useMemo(() => {
     if (definingSqlValidationError) {
       return definingSqlValidationError.reason
-    } else if (isSqlValid && isSqlValid.invalidReason) {
+    } else if (isSqlValid?.invalidReason) {
       return isSqlValid.invalidReason
     } else {
       return null

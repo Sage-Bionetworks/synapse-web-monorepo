@@ -293,7 +293,7 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
   }, [currentUser, doi, entityBundle])
 
   function onSave() {
-    if (formRef.current && formRef.current.validateForm()) {
+    if (formRef.current?.validateForm()) {
       const requestDoi: V2Doi = convertFormDataToDoi(formData)
       requestDoi.objectType = objectType
       requestDoi.objectId = objectId

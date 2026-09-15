@@ -119,13 +119,13 @@ export function PortalFullTextSearchField({
               handleSubmit(newValue)
             }
           }}
-          className={props.className}
           renderInput={params => (
             <TextField
               {...params}
               size="small"
               placeholder={placeholder}
               fullWidth
+              className={props.className}
               sx={textFieldSx}
               slotProps={{
                 input: {

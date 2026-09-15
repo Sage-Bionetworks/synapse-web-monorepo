@@ -1,6 +1,5 @@
 import {
   createTextColumn,
-  floatColumn,
   keyColumn,
 } from '@sage-bionetworks/react-datasheet-grid'
 import { autocompleteColumn } from '../columns/AutocompleteColumn'
@@ -8,6 +7,7 @@ import { mocked } from 'storybook/test'
 import { describe, expect, it } from 'vitest'
 import { autocompleteMultipleEnumColumn } from '../columns/AutocompleteMultipleEnumColumn'
 import { dateTimeColumn } from '../columns/DateTimeColumn'
+import { numberColumn } from '../columns/NumberColumn'
 import { createColumn } from './columnFactory'
 import React, { isValidElement, ReactElement } from 'react'
 
@@ -37,6 +37,10 @@ vi.mock('../columns/DateTimeColumn', () => ({
 
 vi.mock('../columns/AutocompleteMultipleEnumColumn', () => ({
   autocompleteMultipleEnumColumn: vi.fn(),
+}))
+
+vi.mock('../columns/NumberColumn', () => ({
+  numberColumn: vi.fn(),
 }))
 
 /** Helper to extract props from ColumnHeaderWithTooltip React element */
@@ -86,6 +90,7 @@ const mockAutocompleteMultipleEnumColumn = mocked(
   autocompleteMultipleEnumColumn,
 ).mockReturnValue(fakeColumn)
 const mockDateTimeColumn = mocked(dateTimeColumn).mockReturnValue(fakeColumn)
+const mockNumberColumn = mocked(numberColumn).mockReturnValue(fakeColumn)
 
 describe('columnFactory', () => {
   beforeEach(() => {
@@ -153,7 +158,11 @@ describe('columnFactory', () => {
       }
 
       const column = createColumn(config)
-      expect(keyColumnSpy).toHaveBeenCalledWith('count', floatColumn)
+      expect(mockNumberColumn).toHaveBeenCalledWith({
+        colType: 'number',
+        isRequired: true,
+      })
+      expect(keyColumnSpy).toHaveBeenCalledWith('count', fakeColumn)
 
       const headerProps = getHeaderProps(column.title)
       expect(headerProps.name).toBe('count')
@@ -169,6 +178,10 @@ describe('columnFactory', () => {
       }
 
       const column = createColumn(config)
+      expect(mockNumberColumn).toHaveBeenCalledWith({
+        colType: 'integer',
+        isRequired: false,
+      })
 
       const headerProps = getHeaderProps(column.title)
       expect(headerProps.name).toBe('age')

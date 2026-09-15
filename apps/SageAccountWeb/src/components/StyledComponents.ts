@@ -1,4 +1,4 @@
-import { PaperProps, styled, Theme } from '@mui/material'
+import { Paper, PaperProps, styled, Theme } from '@mui/material'
 import { SystemStyleObject } from '@mui/system'
 import { StyledComponent } from '@emotion/styled'
 import {
@@ -10,11 +10,11 @@ export { StyledOuterContainer }
 
 /**
  * SageAccountWeb flavor of the shared `StyledInnerContainer`
- * (`synapse-react-client/components/styled/LeftRightPanel`). The base supplies
- * the 900px two-column card, its two-tone panel colors, and the mobile
- * single-column stacking; this layer adds the app's panel padding and relative
- * positioning, and lets the single column grow to fill (and scroll past) the
- * viewport on mobile so tall content is never clipped (SWC-7966).
+ * (`synapse-react-client/components/styled/LeftRightPanel`). The base
+ * supplies the 900px two-column card, its two-tone panel colors, and the
+ * mobile single-column stacking; this layer adds the app's panel padding and
+ * relative positioning, reduced below `sm` so it fits a phone viewport
+ * (SWC-7966).
  */
 export const StyledInnerContainer: StyledComponent<PaperProps> = styled(
   BaseStyledInnerContainer,
@@ -22,9 +22,8 @@ export const StyledInnerContainer: StyledComponent<PaperProps> = styled(
   '& > div:nth-of-type(1), & > div:nth-of-type(2)': {
     position: 'relative',
     padding: theme.spacing(8),
-    [theme.breakpoints.down('md')]: {
-      minHeight: '100%',
-      height: 'auto',
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(5),
     },
   },
 }))
@@ -62,25 +61,21 @@ export function getWideDesktopTwoColumnSx(
 }
 
 /**
- * Reverts `StyledInnerContainer`'s mobile inner-scroll model (a fixed `100vh`
- * card with its own scrollbar) back to document-body scrolling: the container
- * grows with its content and the page scrolls normally. Used by pages whose
- * mobile content should flow with the body rather than scroll inside the card
- * (SWC-7966).
+ * Centered card for single-column "next steps" screens (e.g. email
+ * verification, profile-validation submission): fixed 500px width with
+ * generous padding on desktop, full width with reduced padding below `sm` so
+ * it never overflows a phone viewport (SWC-7966).
  */
-export function getMobileBodyScrollSx(theme: Theme): SystemStyleObject<Theme> {
-  return {
-    [theme.breakpoints.down('md')]: {
-      height: 'auto',
-      overflowY: 'visible',
-      '& > div:nth-of-type(1), & > div:nth-of-type(2)': {
-        minHeight: 'unset',
-      },
-    },
-    [theme.breakpoints.down('sm')]: {
-      '& > div:nth-of-type(1), & > div:nth-of-type(2)': {
-        padding: theme.spacing(5),
-      },
-    },
-  }
-}
+export const StyledConfirmationCard: StyledComponent<PaperProps> = styled(
+  Paper,
+  { label: 'StyledConfirmationCard' },
+)(({ theme }) => ({
+  width: '500px',
+  margin: '0 auto',
+  padding: theme.spacing(8),
+  backgroundColor: theme.palette.background.paper,
+  [theme.breakpoints.down('sm')]: {
+    width: '100%',
+    padding: theme.spacing(5),
+  },
+}))

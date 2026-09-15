@@ -196,7 +196,7 @@ export function OAuth2Form() {
   const { mutate: consentToRequest } = SynapseQueries.useConsentToOAuth2Request(
     {
       onSuccess: accessCode => {
-        if (!accessCode || !accessCode.access_code) {
+        if (!accessCode?.access_code) {
           onError(
             new Error(
               'Something went wrong - the access code is missing from the Synapse call.',
@@ -339,8 +339,7 @@ export function OAuth2Form() {
     !isLoading &&
     !error &&
     !isAuthenticated &&
-    oauthClientInfo &&
-    oauthClientInfo.verified &&
+    oauthClientInfo?.verified &&
     pendingRedirectURL === undefined &&
     oidcRequestDescription &&
     hasInitializedSession // wait for session to be initialized (may be anonymous) before jumping to One Sage

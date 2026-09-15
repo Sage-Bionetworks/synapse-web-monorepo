@@ -6,9 +6,9 @@ import ReorderColumnsButton from './ReorderColumnsButton'
 describe('ReorderColumnsButton', () => {
   const columnNames = ['a', 'b']
   const columnOrder = [0, 1]
+  // 'a' is not part of the schema, so it's the only column removable by default
   const jsonSchema: JSONSchema7 = {
     properties: {
-      a: { type: 'string' },
       b: { type: 'string' },
     },
   }
@@ -94,5 +94,65 @@ describe('ReorderColumnsButton', () => {
     expect(
       screen.getByRole('button', { name: /reorder columns/i }),
     ).toBeDisabled()
+  })
+
+  it('does not show remove buttons when canRemoveColumns is not set', async () => {
+    const user = userEvent.setup()
+    render(
+      <ReorderColumnsButton
+        columnNames={columnNames}
+        columnOrder={columnOrder}
+        jsonSchema={jsonSchema}
+        onReorder={vi.fn()}
+      />,
+    )
+
+    await user.click(screen.getByRole('button', { name: /reorder columns/i }))
+
+    expect(
+      screen.queryByRole('button', { name: 'Remove a' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('shows remove buttons and removes a column when canRemoveColumns is true', async () => {
+    const user = userEvent.setup()
+    const onReorder = vi.fn()
+    render(
+      <ReorderColumnsButton
+        columnNames={columnNames}
+        columnOrder={columnOrder}
+        jsonSchema={jsonSchema}
+        canRemoveColumns
+        onReorder={onReorder}
+      />,
+    )
+
+    await user.click(screen.getByRole('button', { name: /reorder columns/i }))
+    await user.click(screen.getByRole('button', { name: 'Remove a' }))
+    await user.click(screen.getByRole('button', { name: 'Save' }))
+
+    expect(onReorder).toHaveBeenCalledWith([1])
+  })
+
+  it('offers to remove only the column that is not in the schema', async () => {
+    const user = userEvent.setup()
+    render(
+      <ReorderColumnsButton
+        columnNames={columnNames}
+        columnOrder={columnOrder}
+        jsonSchema={jsonSchema}
+        canRemoveColumns
+        onReorder={vi.fn()}
+      />,
+    )
+
+    await user.click(screen.getByRole('button', { name: /reorder columns/i }))
+
+    // 'a' is an outdated column left over after a schema update, so it can be removed
+    expect(screen.getByRole('button', { name: 'Remove a' })).toBeInTheDocument()
+    // 'b' is still declared in the schema, so it cannot
+    expect(
+      screen.queryByRole('button', { name: 'Remove b' }),
+    ).not.toBeInTheDocument()
   })
 })

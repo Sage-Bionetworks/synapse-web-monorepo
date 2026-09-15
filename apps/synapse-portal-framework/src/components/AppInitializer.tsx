@@ -41,7 +41,7 @@ function AppInitializer(props: AppInitializerProps) {
       }
 
       const anchorElement = target.closest?.('a')
-      if (anchorElement && anchorElement.href) {
+      if (anchorElement?.href) {
         const { hostname } = new URL(anchorElement.href)
         if (
           KNOWN_SYNAPSE_ORG_URLS.includes(hostname.toLowerCase()) ||

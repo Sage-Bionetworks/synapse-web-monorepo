@@ -4,5 +4,8 @@
   // Your preferred overrides can go in your user settings file, or a custom code-workspace file
 
   "editor.defaultFormatter": "oxc.oxc-vscode",
-  "github.copilot.chat.searchSubagent.enabled": true
+  "github.copilot.chat.searchSubagent.enabled": true,
+  "[scss]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  }
 }

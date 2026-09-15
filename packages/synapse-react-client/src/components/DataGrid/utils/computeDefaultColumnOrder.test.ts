@@ -30,6 +30,25 @@ describe('computeDefaultColumnOrder', () => {
     ])
   })
 
+  it('orders columns whose properties are composed in via allOf/$ref', () => {
+    // 'extra' is deliberately first, so an inherited property being recognized (or not)
+    // changes where it lands
+    const columnNames = ['extra', 'inherited', 'own']
+    const jsonSchema: JSONSchema7 = {
+      definitions: {
+        Base: { type: 'object', properties: { inherited: { type: 'string' } } },
+      },
+      properties: { own: { type: 'string' } },
+      allOf: [{ $ref: '#/definitions/Base' }],
+    }
+
+    // The schema's own property first, then the inherited one, then the column absent
+    // from the schema
+    expect(computeDefaultColumnOrder(columnNames, jsonSchema)).toEqual([
+      2, 1, 0,
+    ])
+  })
+
   it('falls back to identity order when jsonSchema is undefined', () => {
     const columnNames = ['col1', 'col2', 'col3']
 

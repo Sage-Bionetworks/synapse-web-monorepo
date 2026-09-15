@@ -91,7 +91,7 @@ export function useRegisterSchema(schema?: JSONSchema7) {
   const [isRegistered, setIsRegistered] = useState(false)
 
   useEffect(() => {
-    if (schema && schema.$id) {
+    if (schema?.$id) {
       // The schema can be registered
       if (!hasSchema(schema.$id)) {
         try {

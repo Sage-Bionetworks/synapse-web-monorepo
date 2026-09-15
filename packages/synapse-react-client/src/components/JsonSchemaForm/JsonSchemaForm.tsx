@@ -5,6 +5,7 @@ import ArrayFieldTemplate from '@/components/JsonSchemaForm/templates/ArrayField
 import ArrayFieldTitleTemplate from '@/components/JsonSchemaForm/templates/ArrayFieldTitleTemplate'
 import BaseInputTemplate from '@/components/JsonSchemaForm/templates/BaseInputTemplate'
 import ButtonTemplate from '@/components/JsonSchemaForm/templates/ButtonTemplate'
+import { CustomFormContext } from '@/components/JsonSchemaForm/CustomFormContext'
 import DescriptionFieldTemplate from '@/components/JsonSchemaForm/templates/DescriptionFieldTemplate'
 import ErrorListTemplate from '@/components/JsonSchemaForm/templates/ErrorListTemplate'
 import FieldErrorTemplate from '@/components/JsonSchemaForm/templates/FieldErrorTemplate'
@@ -29,6 +30,9 @@ export function JsonSchemaForm<T = any>(
     formRef?: Ref<RJSFForm<T, RJSFSchema, GenericObjectType>>
   },
 ) {
+  const useCustomBooleanWidget =
+    (props.formContext as CustomFormContext | undefined)?.booleanWidget !==
+    'checkbox'
   return (
     <Form
       ref={props.formRef}
@@ -50,8 +54,8 @@ export function JsonSchemaForm<T = any>(
         ...props.templates,
       }}
       widgets={{
+        ...(useCustomBooleanWidget ? { CheckboxWidget: BooleanWidget } : {}),
         DateTimeWidget: DateTimeWidget,
-        CheckboxWidget: BooleanWidget,
         SelectWidget: SelectWidget,
         ...props.widgets,
       }}

@@ -7,11 +7,11 @@ import {
   CellProps,
   Column,
   createTextColumn,
-  floatColumn,
   keyColumn,
 } from '@sage-bionetworks/react-datasheet-grid'
 import { autocompleteColumn } from '../columns/AutocompleteColumn'
 import { autocompleteMultipleEnumColumn } from '../columns/AutocompleteMultipleEnumColumn'
+import { numberColumn } from '../columns/NumberColumn'
 import {
   calculateDefaultColumnWidth,
   HeaderOptions,
@@ -187,7 +187,13 @@ const COLUMN_FACTORIES = {
   },
 
   number: (config: ColumnConfig) => {
-    return createBaseColumn(config, floatColumn)
+    return createBaseColumn(
+      config,
+      numberColumn({
+        colType: config.typeInfo?.type,
+        isRequired: config.isRequired,
+      }),
+    )
   },
 
   enumerated: (config: ColumnConfig) => {

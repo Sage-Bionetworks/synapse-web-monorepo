@@ -156,7 +156,7 @@ export const DataSheetGrid = React.memo(
           if (!columns[colIndex]?.stickyLeft) {
             return 0
           }
-          if (!columnWidths || !columnWidths.length) {
+          if (!columnWidths?.length) {
             let offset = 0
             for (let i = 0; i < colIndex; i++) {
               if (columns[i].stickyLeft || i === 0) {
@@ -1007,8 +1007,7 @@ export const DataSheetGrid = React.memo(
           const rightClickOnSelectedHeaders =
             rightClick &&
             selection &&
-            cursorIndex &&
-            cursorIndex.row === -1 &&
+            cursorIndex?.row === -1 &&
             cursorIndex.col >= selection.min.col &&
             cursorIndex.col <= selection.max.col
 

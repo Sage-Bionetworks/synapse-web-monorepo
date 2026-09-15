@@ -172,8 +172,7 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
 
     // Apply client-side sorting if no server-side sort is specified
     let sortedValues: RenderedFacetValue[] = restOfFacetValuesArray
-    const isClientSideSort =
-      columnModel == undefined || columnModel.facetSortConfig == undefined
+    const isClientSideSort = columnModel?.facetSortConfig == undefined
     if (isClientSideSort) {
       if (isNumberColumnType) {
         sortedValues = sortBy(restOfFacetValuesArray, fv => Number(fv.value))

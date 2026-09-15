@@ -12,6 +12,8 @@ export enum RestrictionUiType {
   AccessBlockedByACL = 'AccessBlockedByACL',
   AccessBlockedToAnonymous = 'AccessBlockedToAnonymous',
   AccessibleExternalFileHandle = 'AccessibleExternalFileHandle',
+  AccessibleOnRDCADAP = 'AccessibleOnRDCADAP',
+  AccessBlockedByRDCADAPAccountNotLinked = 'AccessBlockedByRDCADAPAccountNotLinked',
 }
 
 const iconConfiguration: Record<
@@ -49,6 +51,11 @@ const iconConfiguration: Record<
     color: theme => theme.palette.warning.main,
     tooltipText: 'Your access request has been denied by RDCA-DAP.',
   },
+  [RestrictionUiType.AccessBlockedByRDCADAPAccountNotLinked]: {
+    icon: 'linkOff',
+    color: theme => theme.palette.warning.main,
+    tooltipText: 'Link your RDCA-DAP account to request access to this item.',
+  },
   [RestrictionUiType.AccessBlockedByACL]: {
     icon: 'accessClosed',
     color: theme => theme.palette.warning.main,
@@ -63,6 +70,11 @@ const iconConfiguration: Record<
     icon: 'accessOpen',
     color: theme => theme.palette.success.main,
     tooltipText: 'You have access to this item.',
+  },
+  [RestrictionUiType.AccessibleOnRDCADAP]: {
+    icon: 'accessOpen',
+    color: theme => theme.palette.success.main,
+    tooltipText: 'You have access to this item on RDCA-DAP.',
   },
   [RestrictionUiType.AccessibleExternalFileHandle]: {
     icon: 'linkOff',

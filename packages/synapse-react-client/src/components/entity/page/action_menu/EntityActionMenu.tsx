@@ -104,7 +104,7 @@ function mapAndFilterItemsInMenuGroup(
     (itemAcc: DropdownMenuItem[], actionViewProps: ActionViewProps) => {
       const configForAction = actionConfiguration[actionViewProps.action]
       // Only show the item if it's configured + visible
-      if (configForAction && configForAction.visible) {
+      if (configForAction?.visible) {
         itemAcc.push({
           text: configForAction.text ?? actionViewProps.action,
           onClick: configForAction.onClick,
@@ -178,7 +178,7 @@ export default function EntityActionMenu(props: EntityActionMenuProps) {
     layout.buttonActions.reduce(
       (acc: ComplexMenuButtonProps[], buttonViewProps: ActionViewProps) => {
         const configForAction = actionConfiguration[buttonViewProps.action]
-        if (configForAction && configForAction.visible) {
+        if (configForAction?.visible) {
           let onClick = configForAction.onClick
           if (onClick == null && !configForAction.href) {
             console.warn(`No handler registered for ${buttonViewProps.action}`)

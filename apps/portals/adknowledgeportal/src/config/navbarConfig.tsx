@@ -1,4 +1,5 @@
 import { NavbarConfig } from '@sage-bionetworks/synapse-portal-framework/components/navbar/Navbar'
+import { autocompleteSuggestionsSearchIndexConfig } from '@/config/searchConfig'
 
 export const navbarConfig: NavbarConfig = {
   routes: [
@@ -41,6 +42,10 @@ export const navbarConfig: NavbarConfig = {
       path: '/Contribute',
     },
     {
+      name: 'Research Ecosystem',
+      path: '/Research Ecosystem',
+    },
+    {
       name: 'News',
       path: 'https://news.adknowledgeportal.org/',
     },
@@ -57,4 +62,5 @@ export const navbarConfig: NavbarConfig = {
   isPortalsDropdownEnabled: false,
   layout: 'with-sticky-search',
   stickyNavBackgroundColor: '#5A488F',
+  searchIndexConfig: autocompleteSuggestionsSearchIndexConfig,
 }

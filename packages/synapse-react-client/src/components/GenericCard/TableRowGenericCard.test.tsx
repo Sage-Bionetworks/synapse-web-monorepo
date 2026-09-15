@@ -494,6 +494,101 @@ describe('TableRowGenericCard tests', () => {
     })
   })
 
+  describe('hostingConfig', () => {
+    const hostingSchema = {
+      ...schema,
+      downloadType: 13,
+    }
+    const hostingData = [...data.slice(0, 12), 'syn9999.2', 'Synapse Hosted']
+
+    const propsWithHosting = (
+      hostingValue: string,
+      overrides: Partial<TableToGenericCardMapping> = {},
+    ): TableRowGenericCardProps => {
+      const rowData = [...hostingData]
+      rowData[13] = hostingValue
+      return {
+        ...propsForNonHeaderMode,
+        data: rowData,
+        schema: hostingSchema,
+        genericCardSchema: {
+          ...genericCardSchema,
+          downloadCartSynId: 'datasetAlias',
+          hostingConfig: {
+            hostingColumn: 'downloadType',
+            hostingValueMap: {
+              'Synapse Hosted': 'synapse',
+              'Synapse Indexed': 'external-download',
+              'Externally Hosted': 'external-access',
+              'Not Available for Download': 'unavailable',
+            },
+          },
+          ...overrides,
+        },
+      }
+    }
+
+    it('renders a hosting adornment chip with the canonical label for the row', async () => {
+      renderComponent(propsWithHosting('Synapse Hosted'), 'TableEntity')
+      expect(await screen.findByText('Synapse Hosted')).toBeVisible()
+    })
+
+    it('maps portal-specific values to canonical labels via hostingValueMap', async () => {
+      renderComponent(propsWithHosting('Synapse Indexed'), 'TableEntity')
+      expect(await screen.findByText('Synapse Indexed')).toBeVisible()
+      renderComponent(propsWithHosting('Externally Hosted'), 'TableEntity')
+      expect(await screen.findByText('Externally Hosted')).toBeVisible()
+    })
+
+    it('does not render the hosting adornment when the raw value is blank', async () => {
+      renderComponent(propsWithHosting(''), 'TableEntity')
+      // The card should still render, but no hosting chip should appear.
+      await screen.findByTestId('CardFooter')
+      expect(screen.queryByText('Synapse Hosted')).not.toBeInTheDocument()
+      expect(screen.queryByText('Externally Hosted')).not.toBeInTheDocument()
+      expect(screen.queryByText('Not Available')).not.toBeInTheDocument()
+    })
+
+    it('lets an explicit CardTypeAdornment prop override the auto adornment', async () => {
+      renderComponent(
+        {
+          ...propsWithHosting('Synapse Hosted'),
+          CardTypeAdornment: () => <div>CustomAdornment</div>,
+        },
+        'TableEntity',
+      )
+      expect(await screen.findByText('CustomAdornment')).toBeVisible()
+      expect(screen.queryByText('Synapse Hosted')).not.toBeInTheDocument()
+    })
+
+    it('opens the download confirmation when the HOW TO DOWNLOAD link is clicked for a downloadable hosting type', async () => {
+      // Regression: previously the "Click here to add to Synapse download list"
+      // link toggled state whose EntityDownloadConfirmation render target was
+      // gated behind !hostingConfig, so the link was visible but non-functional.
+      mockEntityDownloadConfirmation.mockImplementation(() => (
+        <div data-testid="EntityDownloadConfirmation" />
+      ))
+      const { container } = renderComponent(
+        propsWithHosting('Synapse Hosted', {
+          customSecondaryLabelConfig: {
+            key: 'How to Download',
+            value: 'placeholder',
+            isVisible: () => true,
+          },
+        }),
+        'TableEntity',
+      )
+      const collapse = container.querySelector('.MuiCollapse-root')
+      expect(collapse).toHaveClass('MuiCollapse-hidden')
+
+      const link = await screen.findByText(
+        /Click here to add to Synapse download list/i,
+      )
+      await userEvent.click(link)
+      expect(collapse).not.toHaveClass('MuiCollapse-hidden')
+    })
+  })
+
   describe('synapseEntityConfig', () => {
     it('derives entity identifiers from column sources', async () => {
       const entityIdColumnName = 'datasetEntityId'

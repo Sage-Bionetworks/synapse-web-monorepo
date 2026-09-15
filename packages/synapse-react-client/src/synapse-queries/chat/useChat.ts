@@ -42,15 +42,11 @@ export function useCreateAgentSession(
     SynapseClientError,
     CreateAgentSessionRequest
   >({
+    ...options,
     mutationFn: (request: CreateAgentSessionRequest) =>
       synapseClient.agentChatServicesClient.postRepoV1AgentSession({
         createAgentSessionRequest: request,
       }),
-    onSuccess: async (newAgentSession, variables, ctx) => {
-      if (options?.onSuccess) {
-        await options.onSuccess(newAgentSession, variables, ctx)
-      }
-    },
   })
 }
 

@@ -1,4 +1,5 @@
 import {
+  autocompleteSuggestionsSearchIndexConfig,
   defaultSearchTabIndex,
   portalSearchPageConfigs,
   searchPageTabs,
@@ -11,6 +12,7 @@ function Search() {
       portalSearchPageConfigs={portalSearchPageConfigs}
       searchPageTabs={searchPageTabs}
       defaultSearchTabIndex={defaultSearchTabIndex}
+      searchIndexConfig={autocompleteSuggestionsSearchIndexConfig}
     />
   )
 }

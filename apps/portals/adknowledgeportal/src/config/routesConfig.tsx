@@ -122,6 +122,13 @@ const routes: RouteObject[] = [
           ),
       },
       {
+        path: 'Research Ecosystem',
+        lazy: () =>
+          import('@/pages/ResearchEcosystem/ResearchEcosystem').then(
+            convertModuleToRouteObject,
+          ),
+      },
+      {
         // The FormSubmission page has been replaced with a link to Service Desk
         // path: 'Contribute/FormSubmission',
         // lazy: () =>

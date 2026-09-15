@@ -205,8 +205,7 @@ export default function useDetectSSOCode(
                 }
                 if (
                   // The user logged in with OAuth while attempting to disable 2FA using an emailed signed token
-                  state &&
-                  state.twoFaResetToken &&
+                  state?.twoFaResetToken &&
                   onTwoFactorAuthResetTokenPresent
                 ) {
                   // Let the app handle redirecting to the 2FA reset page

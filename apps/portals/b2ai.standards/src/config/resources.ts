@@ -12,32 +12,29 @@ type TableInfoMap = Record<string, Partial<TableInfo>>
 const tableInfo: TableInfoMap = {
   DST_denormalized: {
     name: 'DST_denormalized',
-    id: 'syn65676531.93', // current version of DST_denormalized
+    id: 'syn65676531.99', // current version of DST_denormalized
   },
-  DataSet: { name: 'DataSet', id: 'syn66330217' },
   DataSet_denormalized: {
     name: 'DataSet_denormalized',
-    id: 'syn68258237.4', // current version of DataSet_denormalized
+    id: 'syn68258237.15', // current version of DataSet_denormalized
   },
-  DataSubstrate: { name: 'DataSubstrate', id: 'syn63096834' },
-  DataTopic: { name: 'DataTopic', id: 'syn63096835' },
-  // Requires Synapse login to access until public-access approval lands.
+  DataSubstrate: { name: 'DataSubstrate', id: 'syn63096834.32' },
+  // DataTopic: { name: 'DataTopic', id: 'syn63096835' },
   DataTopic_denormalized: {
     name: 'DataTopic_denormalized',
-    id: 'syn75081383',
+    id: 'syn75081383.8',
   },
-  // Organization: { name: 'Organization', id: 'syn63096836.31' },
   Organization_denormalized: {
     name: 'Organization',
-    id: 'syn69693360.24', // current version of Organization_denormalized
+    id: 'syn69693360.32', // current version of Organization_denormalized
   },
   D4D_content: {
     name: 'D4D_content',
-    id: 'syn68885644.12', // current version of D4D_content
+    id: 'syn68885644.13', // current version of D4D_content
   },
   Manifest: {
     name: 'Manifest',
-    id: 'syn72106735', // denormalized manifest, one row per data part
+    id: 'syn72106735.21', // denormalized manifest, one row per data part
   },
   // UseCase: { name: 'UseCase', id: 'syn63096837' }, // not using this, might in the future?
 }
@@ -236,14 +233,6 @@ export const standardsFtsConfig: FTSConfig = {
   textMatchesMode: 'BOOLEAN',
   distance: 50,
 }
-
-// Minimal column consts for the raw DataTopic table (used for cheap id→name
-// lookups from cells in other tables).
-export const DATA_TOPIC_COLUMN_CONSTS: ColumnConsts & { NAME: string } = {
-  ID: 'id',
-  NAME: 'name',
-} as const
-tableInfo.DataTopic.columnConsts = DATA_TOPIC_COLUMN_CONSTS
 
 export const TOPIC_TABLE_COLUMN_CONSTS: ColumnConsts & {
   NAME: string

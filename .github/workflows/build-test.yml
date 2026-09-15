@@ -20,12 +20,10 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
+          filter: tree:0
       - uses: ./.github/actions/pnpm-setup-action
-        with:
-          STORE_NX_CACHE: 'true'
       - run: pnpm nx affected --target=build --base=remotes/origin/main
   test:
-    needs: build
     runs-on:
       labels: ubuntu-latest
     # Job should not last longer than 60 minutes
@@ -34,9 +32,8 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
+          filter: tree:0
       - uses: ./.github/actions/pnpm-setup-action
-        with:
-          STORE_NX_CACHE: 'true'
       - name: Determine if SageAccountWeb has had any changes
         id: sage_account_web_changes
         run: |
@@ -68,24 +65,20 @@ jobs:
             ./packages/*/coverage/
             ./apps/*/coverage/
   lint:
-    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
+          filter: tree:0
       - uses: ./.github/actions/pnpm-setup-action
-        with:
-          STORE_NX_CACHE: 'true'
       - run: pnpm nx affected --target=lint --base=remotes/origin/main
   typecheck:
-    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
+          filter: tree:0
       - uses: ./.github/actions/pnpm-setup-action
-        with:
-          STORE_NX_CACHE: 'true'
       - run: pnpm nx affected --target=type-check --base=remotes/origin/main

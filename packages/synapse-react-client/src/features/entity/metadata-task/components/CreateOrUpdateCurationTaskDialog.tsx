@@ -213,8 +213,7 @@ export default function CreateOrUpdateCurationTaskDialog(
     string[]
   >(() => {
     const ids =
-      task &&
-      task.taskProperties &&
+      task?.taskProperties &&
       instanceOfGridSupportedTaskProperties(task.taskProperties)
         ? task.taskProperties.collaboratorPrincipalIds
         : undefined

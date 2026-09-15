@@ -23,7 +23,6 @@ import { BackButton } from '@/components/BackButton'
 import { EmailConfirmationPage } from '@/components/EmailConfirmationPage'
 import { SourceAppLogo } from '@/components/SourceApp'
 import {
-  getMobileBodyScrollSx,
   StyledInnerContainer,
   StyledOuterContainer,
 } from '@/components/StyledComponents'
@@ -252,199 +251,192 @@ const RegisterAccount1 = (): React.ReactNode => {
   return (
     <>
       <StyledOuterContainer className="RegisterAccount1">
-        <StyledInnerContainer sx={getMobileBodyScrollSx}>
-          {page !== Pages.EMAIL_REGISTRATION_THANK_YOU && (
-            <>
-              <Box sx={{ py: 10, px: 8, height: '100%', position: 'relative' }}>
-                <BackButtonForPage
-                  page={page}
-                  setPage={setPage}
-                  isSingleIdp={isSingleIdp}
-                />
-                <Box
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    minHeight: { xs: '100%', md: '530px' },
-                  }}
-                >
-                  <div className="panel-logo logo-wrapper">
-                    <SourceAppLogo />
-                  </div>
-                  {page === Pages.CHOOSE_REGISTRATION && (
-                    <>
-                      <div>
-                        <Button
-                          onClick={() => {
-                            setOAuthRegistrationProvider(
-                              SynapseConstants.OAUTH2_PROVIDERS.GOOGLE,
-                            )
-                            setPage(Pages.OAUTH_REGISTRATION)
-                          }}
-                          sx={chooseButtonSx}
-                          variant="outlined"
-                          startIcon={
-                            <img
-                              className="googleLogo"
-                              src={GoogleLogo}
-                              alt="Google Logo"
-                              style={{ width: 25 }}
-                            />
-                          }
-                        >
-                          Create account with Google
-                        </Button>
-                        <Button
-                          onClick={() => setPage(Pages.EMAIL_REGISTRATION)}
-                          sx={chooseButtonSx}
-                          variant="outlined"
-                          startIcon={<IconSvg icon="email" />}
-                        >
-                          Create account with your email
-                        </Button>
-                      </div>
-                      {lastLoginInfo && (
-                        <Box
-                          sx={{
-                            mt: 'auto',
-                          }}
-                        >
-                          {lastLoginInfo}
-                        </Box>
-                      )}
-                    </>
-                  )}
-                  {page === Pages.EMAIL_REGISTRATION && (
-                    <div className="EmailAddressUI">
-                      <TextField
-                        label={'Email address'}
-                        fullWidth
-                        id="emailAddress"
-                        name="emailAddress"
-                        required
-                        onChange={e =>
-                          setEmail(e.target.value ?? membershipInvitationEmail)
-                        }
-                        value={email || ''}
-                        onKeyDown={e => {
-                          if (e.key === 'Enter') {
-                            void onSendRegistrationInfo(e)
-                          }
-                        }}
-                      />
-                      {!!membershipInvitationEmail &&
-                        membershipInvitationEmail !== email && (
-                          <Typography
-                            variant="smallText1"
-                            sx={{ color: theme.palette.error.main }}
-                          >
-                            Changing your email address will affect any items
-                            that have been shared with you. You can add
-                            additional email addresses after account creation.
-                          </Typography>
-                        )}
+        {page !== Pages.EMAIL_REGISTRATION_THANK_YOU ? (
+          <StyledInnerContainer>
+            <Box sx={{ py: 10, px: 8, height: '100%', position: 'relative' }}>
+              <BackButtonForPage
+                page={page}
+                setPage={setPage}
+                isSingleIdp={isSingleIdp}
+              />
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  minHeight: { xs: '100%', md: '530px' },
+                }}
+              >
+                <div className="panel-logo logo-wrapper">
+                  <SourceAppLogo />
+                </div>
+                {page === Pages.CHOOSE_REGISTRATION && (
+                  <>
+                    <div>
                       <Button
-                        sx={buttonSx}
-                        variant="contained"
-                        onClick={e => {
-                          void onSendRegistrationInfo(e)
+                        onClick={() => {
+                          setOAuthRegistrationProvider(
+                            SynapseConstants.OAUTH2_PROVIDERS.GOOGLE,
+                          )
+                          setPage(Pages.OAUTH_REGISTRATION)
                         }}
-                        type="button"
-                        disabled={!(email && !isLoading)}
+                        sx={chooseButtonSx}
+                        variant="outlined"
+                        startIcon={
+                          <img
+                            className="googleLogo"
+                            src={GoogleLogo}
+                            alt="Google Logo"
+                            style={{ width: 25 }}
+                          />
+                        }
                       >
-                        Continue
+                        Create account with Google
+                      </Button>
+                      <Button
+                        onClick={() => setPage(Pages.EMAIL_REGISTRATION)}
+                        sx={chooseButtonSx}
+                        variant="outlined"
+                        startIcon={<IconSvg icon="email" />}
+                      >
+                        Create account with your email
                       </Button>
                     </div>
-                  )}
-                  {page === Pages.OAUTH_REGISTRATION && (
-                    <div>
-                      <TextField
-                        fullWidth
-                        label={'Username'}
-                        id="username"
-                        name="username"
-                        required
-                        error={!!usernameInvalidReason}
-                        helperText={usernameInvalidReason}
-                        onChange={e => {
-                          setUsername(e.target.value)
+                    {lastLoginInfo && (
+                      <Box
+                        sx={{
+                          mt: 'auto',
                         }}
-                        value={username || ''}
-                        onKeyDown={e => {
-                          if (e.key === 'Enter') {
-                            e.preventDefault()
-                            void onSignUpWithOAuthProvider(
-                              oauthRegistrationProvider,
-                            )
-                          }
-                        }}
-                      />
-                      <Button
-                        sx={buttonSx}
-                        variant="contained"
-                        onClick={e => {
+                      >
+                        {lastLoginInfo}
+                      </Box>
+                    )}
+                  </>
+                )}
+                {page === Pages.EMAIL_REGISTRATION && (
+                  <div className="EmailAddressUI">
+                    <TextField
+                      label={'Email address'}
+                      fullWidth
+                      id="emailAddress"
+                      name="emailAddress"
+                      required
+                      onChange={e =>
+                        setEmail(e.target.value ?? membershipInvitationEmail)
+                      }
+                      value={email || ''}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') {
+                          void onSendRegistrationInfo(e)
+                        }
+                      }}
+                    />
+                    {!!membershipInvitationEmail &&
+                      membershipInvitationEmail !== email && (
+                        <Typography
+                          variant="smallText1"
+                          sx={{ color: theme.palette.error.main }}
+                        >
+                          Changing your email address will affect any items that
+                          have been shared with you. You can add additional
+                          email addresses after account creation.
+                        </Typography>
+                      )}
+                    <Button
+                      sx={buttonSx}
+                      variant="contained"
+                      onClick={e => {
+                        void onSendRegistrationInfo(e)
+                      }}
+                      type="button"
+                      disabled={!(email && !isLoading)}
+                    >
+                      Continue
+                    </Button>
+                  </div>
+                )}
+                {page === Pages.OAUTH_REGISTRATION && (
+                  <div>
+                    <TextField
+                      fullWidth
+                      label={'Username'}
+                      id="username"
+                      name="username"
+                      required
+                      error={!!usernameInvalidReason}
+                      helperText={usernameInvalidReason}
+                      onChange={e => {
+                        setUsername(e.target.value)
+                      }}
+                      value={username || ''}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter') {
                           e.preventDefault()
                           void onSignUpWithOAuthProvider(
                             oauthRegistrationProvider,
                           )
-                        }}
-                        type="button"
-                        disabled={!(username && !isLoading)}
-                      >
-                        Continue
-                      </Button>
-                    </div>
-                  )}
-                </Box>
+                        }
+                      }}
+                    />
+                    <Button
+                      sx={buttonSx}
+                      variant="contained"
+                      onClick={e => {
+                        e.preventDefault()
+                        void onSignUpWithOAuthProvider(
+                          oauthRegistrationProvider,
+                        )
+                      }}
+                      type="button"
+                      disabled={!(username && !isLoading)}
+                    >
+                      Continue
+                    </Button>
+                  </div>
+                )}
               </Box>
-              <Box
-                sx={{
-                  background: {
-                    xs: 'none',
-                    md: "url('https://s3.amazonaws.com/static.synapse.org/images/login-panel-bg.svg') no-repeat right bottom 20px",
-                  },
-                }}
+            </Box>
+            <Box
+              sx={{
+                background: {
+                  xs: 'none',
+                  md: "url('https://s3.amazonaws.com/static.synapse.org/images/login-panel-bg.svg') no-repeat right bottom 20px",
+                },
+              }}
+            >
+              <Typography
+                variant="headline2"
+                sx={{ marginTop: { xs: '45px', md: '95px' } }}
               >
-                <Typography
-                  variant="headline2"
-                  sx={{ marginTop: { xs: '45px', md: '95px' } }}
-                >
-                  Create an Account
+                Create an Account
+              </Typography>
+              {page !== Pages.OAUTH_REGISTRATION && (
+                <>
+                  {sourceAppId != SYNAPSE_SOURCE_APP_ID && (
+                    <Typography variant="body1" sx={{ marginBottom: '20px' }}>
+                      Your <strong>{sourceAppName}</strong> account is also a{' '}
+                      <strong>Synapse account</strong>. You can also use it to
+                      access many other resources from Sage Bionetworks.
+                    </Typography>
+                  )}
+                  {sourceAppId === SYNAPSE_SOURCE_APP_ID && (
+                    <Typography variant="body1" sx={{ marginBottom: '20px' }}>
+                      Your <strong>Synapse</strong> account can also be used to
+                      access many other resources from Sage Bionetworks.
+                    </Typography>
+                  )}
+                </>
+              )}
+              {page === Pages.OAUTH_REGISTRATION && (
+                <Typography variant="body1" sx={{ marginBottom: '20px' }}>
+                  {VALID_USERNAME_DESCRIPTION}
                 </Typography>
-                {page !== Pages.OAUTH_REGISTRATION && (
-                  <>
-                    {sourceAppId != SYNAPSE_SOURCE_APP_ID && (
-                      <Typography variant="body1" sx={{ marginBottom: '20px' }}>
-                        Your <strong>{sourceAppName}</strong> account is also a{' '}
-                        <strong>Synapse account</strong>. You can also use it to
-                        access many other resources from Sage Bionetworks.
-                      </Typography>
-                    )}
-                    {sourceAppId === SYNAPSE_SOURCE_APP_ID && (
-                      <Typography variant="body1" sx={{ marginBottom: '20px' }}>
-                        Your <strong>Synapse</strong> account can also be used
-                        to access many other resources from Sage Bionetworks.
-                      </Typography>
-                    )}
-                  </>
-                )}
-                {page === Pages.OAUTH_REGISTRATION && (
-                  <Typography variant="body1" sx={{ marginBottom: '20px' }}>
-                    {VALID_USERNAME_DESCRIPTION}
-                  </Typography>
-                )}
-                <Link
-                  color="primary"
-                  component={RouterLink}
-                  to="/sageresources"
-                >
-                  More about Synapse accounts
-                </Link>
-              </Box>
-            </>
-          )}
-        </StyledInnerContainer>
-        {page === Pages.EMAIL_REGISTRATION_THANK_YOU && (
+              )}
+              <Link color="primary" component={RouterLink} to="/sageresources">
+                More about Synapse accounts
+              </Link>
+            </Box>
+          </StyledInnerContainer>
+        ) : (
           <EmailConfirmationPage email={email} />
         )}
       </StyledOuterContainer>

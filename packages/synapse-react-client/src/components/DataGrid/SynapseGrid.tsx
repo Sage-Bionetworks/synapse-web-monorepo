@@ -23,6 +23,7 @@ import {
 import {
   CreateGridRequest,
   GridSession,
+  instanceOfRecordSet,
 } from '@sage-bionetworks/synapse-client'
 import { ClickableJsonCrdt } from 'clickable-json'
 import {
@@ -194,6 +195,8 @@ function SynapseGridInner({
   const entityIsView =
     entityData?.concreteType ===
     'org.sagebionetworks.repo.model.table.EntityView'
+
+  const isRecordSet = !!entityData && instanceOfRecordSet(entityData)
 
   // If grid source entity is a recordSet, get its upsert key(s)
   // from the entity bundle
@@ -504,6 +507,7 @@ function SynapseGridInner({
                       columnOrder={modelSnapshot?.columnOrder ?? []}
                       jsonSchema={jsonSchema}
                       upsertKey={upsertKey}
+                      canRemoveColumns={isRecordSet}
                       onReorder={handleReorderColumns}
                     />
                     <GridMenuButton

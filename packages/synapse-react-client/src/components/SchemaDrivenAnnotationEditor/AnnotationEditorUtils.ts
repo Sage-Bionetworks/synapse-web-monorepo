@@ -1,12 +1,12 @@
 import { AdditionalPropertiesSchemaField } from '@/components/SchemaDrivenAnnotationEditor/field/AdditionalPropertiesSchemaField'
+import { collectTopLevelProperties } from '@/utils/jsonschema/collectTopLevelProperties'
 import {
   englishStringTranslator,
   RJSFValidationError,
   TranslatableString,
 } from '@rjsf/utils'
 import { JSONSchema7 } from 'json-schema'
-import { JSONPath } from 'jsonpath-plus'
-import { flatMap, groupBy, isEmpty, isObject } from 'lodash-es'
+import { flatMap, groupBy, isEmpty } from 'lodash-es'
 
 /**
  * Generates a JSON schema for the form UI based on the provided validation schema and entity schema base properties.
@@ -22,8 +22,7 @@ export function getJsonSchemaForForm(
   validationSchema: JSONSchema7 = {},
   entitySchema: JSONSchema7 = {},
 ): JSONSchema7 {
-  const entitySchemaProperties =
-    getPossibleTopLevelPropertiesInObjectSchema(entitySchema)
+  const entitySchemaProperties = collectTopLevelProperties(entitySchema)
 
   return {
     $schema: 'http://json-schema.org/draft-07/schema#',
@@ -197,32 +196,6 @@ export function shouldLiveValidate(
   const hasExistingAnnotations =
     existingAnnotations && Object.keys(existingAnnotations).length > 0
   return Boolean(hasExistingAnnotations && validationSchema)
-}
-
-/**
- * Returns all possible properties in the schema, including those in nested schemas/definitions. Note that this function
- * only works for 'flat objects', i.e. the schema must
- *  - define an object AND
- *  - the properties of the object cannot be objects
- * which is compatible with how Synapse Annotations are defined.
- * @param resolvedSchema
- */
-export function getPossibleTopLevelPropertiesInObjectSchema(
-  resolvedSchema: JSONSchema7,
-): JSONSchema7['properties'] {
-  const allProperties = {}
-  const foundPropertiesObjects = JSONPath({
-    path: '$..properties',
-    json: resolvedSchema,
-  })
-  for (const propertiesObject of foundPropertiesObjects) {
-    Object.assign(allProperties, propertiesObject)
-  }
-  // Use the schema.properties to override any properties defined in definitions
-  if (isObject(resolvedSchema.properties)) {
-    Object.assign(allProperties, resolvedSchema.properties)
-  }
-  return allProperties
 }
 
 /**

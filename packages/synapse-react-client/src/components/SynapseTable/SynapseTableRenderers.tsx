@@ -253,8 +253,7 @@ export function TableDataColumnHeader(
     selectColumn &&
     selectColumn.name.toLowerCase() === lockedColumn?.columnName?.toLowerCase() // used in details page to disable filter the column
   const isEntityIDColumn =
-    selectColumn &&
-    selectColumn.name == 'id' &&
+    selectColumn?.name == 'id' &&
     selectColumn.columnType == ColumnTypeEnum.ENTITYID
 
   // TODO: enableFiltering should be specified on the column, but for now it's easier to override `getCanFilter` here where we have the facet information

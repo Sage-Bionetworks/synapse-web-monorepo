@@ -9,11 +9,19 @@ export type ReorderColumnsButtonProps = {
   columnOrder: number[]
   jsonSchema: JSONSchema7 | undefined
   upsertKey?: string[]
+  canRemoveColumns?: boolean
   onReorder: (newColumnOrder: number[]) => void
 }
 
 export default function ReorderColumnsButton(props: ReorderColumnsButtonProps) {
-  const { columnNames, columnOrder, jsonSchema, upsertKey, onReorder } = props
+  const {
+    columnNames,
+    columnOrder,
+    jsonSchema,
+    upsertKey,
+    canRemoveColumns,
+    onReorder,
+  } = props
 
   const [showDialog, setShowDialog] = useState(false)
 
@@ -27,6 +35,7 @@ export default function ReorderColumnsButton(props: ReorderColumnsButtonProps) {
           columnOrder={columnOrder}
           jsonSchema={jsonSchema}
           upsertKey={upsertKey}
+          canRemoveColumns={canRemoveColumns}
           onSave={newColumnOrder => {
             onReorder(newColumnOrder)
             setShowDialog(false)

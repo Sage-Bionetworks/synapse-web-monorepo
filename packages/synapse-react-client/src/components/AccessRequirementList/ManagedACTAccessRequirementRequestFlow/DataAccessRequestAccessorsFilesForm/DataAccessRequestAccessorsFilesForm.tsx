@@ -232,8 +232,7 @@ export default function DataAccessRequestAccessorsFilesForm(
         type: isRenewal ? AccessType.RENEW_ACCESS : AccessType.GAIN_ACCESS,
       }
       if (
-        !dataAccessRequest.accessorChanges ||
-        !dataAccessRequest.accessorChanges.find(item =>
+        !dataAccessRequest.accessorChanges?.find(item =>
           deepEquals(item, currentUserWithGainAccess),
         )
       ) {

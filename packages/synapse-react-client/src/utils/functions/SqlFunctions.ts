@@ -196,7 +196,7 @@ export const getAdditionalFilters = (
 //look for a pattern of 'from[some number of spaces]syn[somenumbers]` case insensitive
 export const parseEntityIdFromSqlStatement = (sql: string): string => {
   const matches = sql.match(/(from)\s+(syn)\d+/gi)
-  return matches && matches[0] ? matches[0].substr(5).trim() : ''
+  return matches?.[0] ? matches[0].substr(5).trim() : ''
 }
 
 export const parseEntityIdAndVersionFromSqlStatement = (

@@ -17,7 +17,7 @@ export function getRestrictionUiTypeFromAridhiaRequest(
 
   switch (request.status) {
     case 'approved':
-      return RestrictionUiType.Accessible
+      return RestrictionUiType.AccessibleOnRDCADAP
     case 'pending':
       return RestrictionUiType.AccessBlockedByRestrictionWithPendingRDCADAPRequest
     case 'denied':
@@ -41,8 +41,8 @@ export function findRequestForDataset(
   requests: RequestListItem[],
   datasetCode: string,
 ): RequestListItem | undefined {
-  const matchingRequests = requests.filter(
-    request => request.datasets?.code === datasetCode,
+  const matchingRequests = requests.filter(request =>
+    request.datasets?.some(dataset => dataset.code === datasetCode),
   )
 
   if (matchingRequests.length === 0) {

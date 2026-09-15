@@ -72,10 +72,7 @@ export default function DropdownSelect(props: DropdownSelectProps) {
   }
 
   const handleClose = (event: Event) => {
-    if (
-      anchorRef.current &&
-      anchorRef.current.contains(event.target as HTMLElement)
-    ) {
+    if (anchorRef.current?.contains(event.target as HTMLElement)) {
       return
     }
 

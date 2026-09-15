@@ -6,8 +6,9 @@ const meta = {
   component: ReorderColumnsDialog,
   args: {
     open: true,
-    columnNames: ['species', 'name', 'age', 'notes'],
-    columnOrder: [0, 1, 2, 3],
+    // 'comments' is not defined in the schema below -- it's the only removable column
+    columnNames: ['species', 'name', 'age', 'notes', 'comments'],
+    columnOrder: [0, 1, 2, 3, 4],
     jsonSchema: {
       properties: {
         name: { type: 'string' },
@@ -28,12 +29,54 @@ export const Default: Story = {}
 
 export const AlreadyInDefaultOrder: Story = {
   args: {
-    columnOrder: [1, 2, 0, 3],
+    columnOrder: [1, 2, 0, 3, 4],
   },
 }
 
 export const WithUpsertKey: Story = {
   args: {
     upsertKey: ['name'],
+  },
+}
+
+export const WithColumnRemoval: Story = {
+  args: {
+    canRemoveColumns: true,
+  },
+}
+
+export const WithPreviouslyRemovedColumn: Story = {
+  args: {
+    // 'notes' (identity index 3, a schema column) was already removed and saved in a
+    // prior session -- it can be restored, but (being a schema column) not re-removed.
+    columnOrder: [0, 1, 2, 4],
+    canRemoveColumns: true,
+  },
+}
+
+export const WithComposedSchema: Story = {
+  args: {
+    // Validation schemas returned by Synapse inline referenced schemas under `definitions` and
+    // compose them with allOf. Every column but 'comments' is schema-defined here, even though
+    // only 'notes' is declared in the schema's own top-level `properties`.
+    jsonSchema: {
+      definitions: {
+        Animal: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+            age: { type: 'integer' },
+          },
+        },
+      },
+      properties: {
+        notes: { type: 'string' },
+      },
+      allOf: [
+        { $ref: '#/definitions/Animal' },
+        { properties: { species: { type: 'string' } } },
+      ],
+    },
+    canRemoveColumns: true,
   },
 }

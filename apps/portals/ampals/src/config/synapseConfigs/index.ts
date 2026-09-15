@@ -1,6 +1,5 @@
 import { datasetQueryWrapperPlotNavProps, datasetsSearch } from './datasets'
 import { filesQueryWrapperPlotNavProps } from './data'
-import { programsCardContainerLogicProps, programsSearch } from './programs'
 import {
   datasetCollectionsCardContainerLogicProps,
   datasetCollectionsSearch,
@@ -9,7 +8,6 @@ export {
   datasetQueryWrapperPlotNavProps,
   datasetsSearch,
   datasetCollectionsCardContainerLogicProps,
-  programsCardContainerLogicProps,
 }
 
 export default {
@@ -18,6 +16,4 @@ export default {
   files: filesQueryWrapperPlotNavProps,
   collections: datasetCollectionsCardContainerLogicProps,
   collectionsSearch: datasetCollectionsSearch,
-  programs: programsCardContainerLogicProps,
-  programsSearch,
 }

@@ -1,4 +1,5 @@
 import { RJSFInputLabelWrapper } from '@/components/JsonSchemaForm/templates/RJSFInputLabel'
+import { CustomFormContext } from '@/components/JsonSchemaForm/CustomFormContext'
 import { GridLegacy as Grid, InputLabel } from '@mui/material'
 import {
   FieldTemplateProps,
@@ -31,6 +32,14 @@ export function FieldTemplate<
     rawErrors,
   } = props
   const uiOptions = getUiOptions<T, S, F>(uiSchema)
+  const hasDescription = Boolean(uiOptions.description ?? schema.description)
+
+  // The real checkbox widget (formContext.booleanWidget === 'checkbox') renders its own label
+  // via MUI's FormControlLabel; only the Yes/No select needs FieldTemplate to force one, since
+  // RJSF hides labels for boolean schemas by default.
+  const usesRealCheckbox =
+    (registry.formContext as CustomFormContext | undefined)?.booleanWidget ===
+    'checkbox'
   const WrapIfAdditionalTemplate = getTemplate<
     'WrapIfAdditionalTemplate',
     T,
@@ -52,15 +61,18 @@ export function FieldTemplate<
       classNames={classNamesList.join(' ').trim()}
     >
       <RJSFInputLabelWrapper<T, S, F>
-        // RJSF hides labels for boolean checkboxes, but since we replaced checkboxes with a custom component, we want to show them
-        hideLabel={!(displayLabel || schema.type === 'boolean')}
+        // RJSF hides labels for boolean schemas by default; the Yes/No select widget doesn't
+        // render its own label, so force one on — the real checkbox widget does, so don't.
+        hideLabel={
+          !(displayLabel || (schema.type === 'boolean' && !usesRealCheckbox))
+        }
         fieldLabel={
           <InputLabel htmlFor={id}>
             {label}
             {required && <span className="required">*</span>}
           </InputLabel>
         }
-        description={description}
+        description={hasDescription ? description : undefined}
         registry={registry}
       >
         {children}

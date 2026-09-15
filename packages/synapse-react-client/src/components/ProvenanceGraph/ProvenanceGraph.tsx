@@ -111,11 +111,7 @@ const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
 
   const showNoProvenance = initialBuildComplete && !hasProvenanceNodes
 
-  if (
-    isSuccess &&
-    rootEntityHeadersPage &&
-    rootEntityHeadersPage.totalNumberOfResults == 0
-  ) {
+  if (isSuccess && rootEntityHeadersPage?.totalNumberOfResults == 0) {
     const synapseIds = rootEntityRefs.map(ref => ref.targetId).join(',')
     handleError(
       `Unable to load provenance for the given Synapse IDs: ${synapseIds}`,
@@ -416,8 +412,7 @@ const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
     event => {
       // Cannot simply check the truthy value of event.deltaX (or Y) because the value might be 0 (or -0), which is falsy
       if (
-        event &&
-        typeof event.deltaX !== 'undefined' &&
+        typeof event?.deltaX !== 'undefined' &&
         typeof event.deltaY !== 'undefined'
       ) {
         window.scrollTo(

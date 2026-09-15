@@ -43,7 +43,7 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
     const match = mockUserData.find(
       userData => userData.id.toString() === params.id,
     )
-    if (match && match.userProfile) {
+    if (match?.userProfile) {
       response = match.userProfile
       status = 200
     }
@@ -80,7 +80,7 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
     const match = mockUserData.find(
       userData => userData.id.toString() === params.id,
     )
-    if (match && match.userBundle) {
+    if (match?.userBundle) {
       response = match.userBundle
       status = 200
     }

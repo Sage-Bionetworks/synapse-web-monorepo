@@ -71,7 +71,7 @@ export function MarkdownEditor({
   }
 
   const handleTagModal = (text: string) => {
-    const start = textAreaRef.current && textAreaRef.current.selectionStart
+    const start = textAreaRef.current?.selectionStart
     if (start && start > 0 && text.charAt(start - 1) === '@') {
       setTagModalWithKeyboard(true)
       setIsShowingTagModal(true)

@@ -14,6 +14,7 @@ import {
 } from '../doiRedirector'
 import {
   studiesSearchIndexId,
+  studiesSearchQueryConfig,
   studiesSql,
   SYNAPSE_PORTAL_ID,
 } from '../resources'
@@ -188,6 +189,7 @@ export const studiesSearch: SearchQueryWrapperPlotNavProps = {
   cardConfiguration: studyCardConfiguration,
   columnAliases,
   searchIndexId: studiesSearchIndexId,
+  searchQueryConfig: studiesSearchQueryConfig,
   autocompleteFieldName: 'studyName',
   hideTopLevelControls: false,
   hideQueryCount: false,

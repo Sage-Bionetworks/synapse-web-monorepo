@@ -22,6 +22,13 @@ function StudyDetailsTab() {
           element: <MarkdownSynapseFromColumnData columnName={'study'} />,
         },
         {
+          title: 'Access Requirements',
+          id: 'AccessRequirements',
+          element: (
+            <MarkdownSynapseFromColumnData columnName={'AccessRequirements'} />
+          ),
+        },
+        {
           title: 'Acknowledgement',
           id: 'Acknowledgement',
           element: (

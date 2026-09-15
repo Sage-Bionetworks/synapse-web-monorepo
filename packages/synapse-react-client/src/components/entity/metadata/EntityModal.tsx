@@ -77,7 +77,7 @@ export function EntityModal(props: EntityModalProps) {
   }, [isInEditMode, onEditModeChanged])
 
   const { data: entityBundle } = useGetEntityBundle(entityId, versionNumber)
-  const canEdit = entityBundle && entityBundle.permissions.canEdit
+  const canEdit = entityBundle?.permissions?.canEdit
 
   const isVersionable =
     entityBundle && isVersionableEntityType(entityBundle.entityType)

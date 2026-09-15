@@ -173,11 +173,7 @@ export function ChallengeSubmission({
   )
 
   useEffect(() => {
-    if (
-      entityPermissions &&
-      entityPermissions.canView &&
-      entityPermissions.canAddChild
-    ) {
+    if (entityPermissions?.canView && entityPermissions.canAddChild) {
       setCanSubmit(true)
     }
     setLoading(false)
@@ -201,7 +197,7 @@ export function ChallengeSubmission({
     async function createChallengeProject() {
       const project: Project = getProject(challenge!, submissionTeam!)
       const challengeProject = await createEntity(project, accessToken)
-      if (challengeProject && challengeProject.id) {
+      if (challengeProject?.id) {
         setChallengeProjectId(challengeProject.id)
         setIsProjectNewlyCreated(true)
       }

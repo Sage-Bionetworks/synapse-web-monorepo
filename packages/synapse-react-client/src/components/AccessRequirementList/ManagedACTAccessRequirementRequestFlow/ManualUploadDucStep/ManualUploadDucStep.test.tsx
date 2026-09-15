@@ -14,6 +14,7 @@ import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   DATA_ACCESS_REQUEST,
   DATA_ACCESS_REQUEST_PREVIEW,
+  DATA_ACCESS_REQUEST_SIGNATURE,
   DATA_ACCESS_REQUEST_SUBMISSION,
 } from '@/utils/APIConstants'
 import {
@@ -110,6 +111,7 @@ function renderComponent(props: Partial<ManualUploadDucStepProps> = {}) {
 
 const previewEndpoint = `*${DATA_ACCESS_REQUEST_PREVIEW(MOCK_DATA_ACCESS_REQUEST.id)}`
 const updateEndpoint = `*${DATA_ACCESS_REQUEST}`
+const signatureEndpoint = `*${DATA_ACCESS_REQUEST_SIGNATURE(MOCK_DATA_ACCESS_REQUEST.id)}`
 const submissionEndpoint = `*${DATA_ACCESS_REQUEST_SUBMISSION(
   MOCK_DATA_ACCESS_REQUEST.id,
 )}`
@@ -329,5 +331,48 @@ describe('ManualUploadDucStep', () => {
     await screen.findByText(/couldn't save your change/i)
     expect(screen.getByText('Server error')).toBeInTheDocument()
     expect(mockOnSubmissionCreated).not.toHaveBeenCalled()
+  })
+
+  it('does not re-fetch /preview after voiding the signature envelope', async () => {
+    // Regression: /preview mutates server state (creates a new envelope, resets DAR to draft),
+    // which repopulates `eDucSignatureEnvelopeId` on the DAR and causes the subsequent
+    // updateDar call to be rejected — you can't set `ducFileHandleId` on a DAR that still has
+    // an active signature envelope. The void mutation's onSuccess broadly invalidates the DAR
+    // query tree, which would otherwise auto-refetch the preview observer. See PORTALS-4XXX.
+    mockGetDataRequestForUpdate.mockResolvedValue({
+      ...MOCK_DATA_ACCESS_REQUEST,
+      eDucSignatureEnvelopeId: 'envelope-abc',
+    })
+    let previewCallCount = 0
+    let voidCallCount = 0
+    let updateCallCount = 0
+    server.use(
+      http.get(previewEndpoint, () => {
+        previewCallCount += 1
+        return HttpResponse.json(
+          { fileHandleId: 'preview-file-1' },
+          { status: 200 },
+        )
+      }),
+      http.delete(signatureEndpoint, () => {
+        voidCallCount += 1
+        return new HttpResponse(null, { status: 200 })
+      }),
+      http.post(updateEndpoint, async ({ request }) => {
+        updateCallCount += 1
+        const body = (await request.json()) as { id: string; etag: string }
+        return HttpResponse.json({ ...body, etag: 'new-etag' }, { status: 201 })
+      }),
+    )
+    // Override the downloadHrefOverride so the preview endpoint is actually called.
+    const { user } = renderComponent({ downloadHrefOverride: undefined })
+    await waitFor(() => expect(previewCallCount).toBe(1))
+    await user.click(
+      await screen.findByRole('button', { name: /Upload Signed DUC/i }),
+    )
+    await waitFor(() => expect(voidCallCount).toBe(1))
+    await waitFor(() => expect(updateCallCount).toBe(1))
+    // Preview was fetched once at mount and NOT re-fetched after voiding.
+    expect(previewCallCount).toBe(1)
   })
 })

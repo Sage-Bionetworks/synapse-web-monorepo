@@ -82,13 +82,17 @@ function ArrayFieldTemplate<
           />
         }
         description={
-          <ArrayFieldDescriptionTemplate
-            idSchema={idSchema}
-            schema={schema}
-            description={(uiOptions.description || schema.description) ?? ''}
-            uiSchema={uiSchema}
-            registry={registry}
-          />
+          // RJSF always renders `description` as a DescriptionFieldTemplate node, even when
+          // there's no description text, so gate on the raw text instead of the rendered node.
+          (uiOptions.description || schema.description) && (
+            <ArrayFieldDescriptionTemplate
+              idSchema={idSchema}
+              schema={schema}
+              description={(uiOptions.description || schema.description) ?? ''}
+              uiSchema={uiSchema}
+              registry={registry}
+            />
+          )
         }
         registry={registry}
       >

@@ -35,7 +35,7 @@ import {
   SelectColumn,
   Table,
 } from '@sage-bionetworks/synapse-types'
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import CitationPopover from '../CitationPopover'
 import {
@@ -44,6 +44,7 @@ import {
   normalizeHosting,
 } from '../DatasetHosting/DatasetHosting'
 import DatasetDownloadButton from '../DatasetHosting/DatasetDownloadButton'
+import DatasetHostingAdornment from '../DatasetHosting/DatasetHostingAdornment'
 import { EntityDownloadConfirmation } from '../EntityDownloadConfirmation'
 import { HeaderCardVariant } from '../HeaderCard'
 import IconList from '../IconList'
@@ -448,9 +449,6 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   const hostingIsDownloadable = hostingType
     ? DATASET_HOSTING_CONFIG[hostingType].downloadable
     : true
-  // Portal target for the DatasetDownloadButton's download-confirmation dialog, so
-  // it renders in the card's top content region rather than inline in the button row.
-  const datasetDownloadConfirmationRef = useRef<HTMLDivElement>(null)
 
   // Transform the row to a record of (columnName, value) pairs for compatibility with getCandidateDoiId
   const dataAsRecord: Record<string, string | null> = useMemo(
@@ -633,9 +631,20 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     )
   }
 
-  const resolvedCardTypeAdornment = CardTypeAdornment ? (
-    <CardTypeAdornment schema={schema} data={data} />
-  ) : null
+  // Auto-render a scannable hosting chip next to the dataset type when the card
+  // opts into hosting-aware behavior and the row has a recognized hosting value,
+  // so the button's icon/tooltip is not the only visual signal of where files
+  // live. An explicit `CardTypeAdornment` prop always wins as an escape hatch.
+  let resolvedCardTypeAdornment: React.ReactNode = null
+  if (CardTypeAdornment) {
+    resolvedCardTypeAdornment = (
+      <CardTypeAdornment schema={schema} data={data} />
+    )
+  } else if (hostingConfig && rawHostingValue?.trim() && hostingType) {
+    resolvedCardTypeAdornment = (
+      <DatasetHostingAdornment hostingType={hostingType} isHeader={isHeader} />
+    )
+  }
 
   let isRenderingIcon = true
   if (isHeader && !imageFileHandleIdValue && !iconValue) {
@@ -691,7 +700,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
       useStylesForDisplayedImage={Boolean(imageFileHandleIdValue)}
       cardTopContent={
         <>
-          {!hostingConfig && resolvedDownloadCartSynIdValue && (
+          {resolvedDownloadCartSynIdValue && (
             <Collapse in={showDownloadConfirmation}>
               <EntityDownloadConfirmation
                 entityId={resolvedDownloadCartSynIdValue}
@@ -703,8 +712,6 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
               />
             </Collapse>
           )}
-          {/* DatasetDownloadButton (hosting path) portals its confirmation here. */}
-          {hostingConfig && <div ref={datasetDownloadConfirmationRef} />}
         </>
       }
       renderedIconList={
@@ -737,11 +744,13 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
                 <DatasetDownloadButton
                   entityId={resolvedDownloadCartSynIdValue}
                   name={title}
-                  version={resolvedDownloadCartVersionNumber}
                   hosting={hostingType}
                   repository={hostingRepository}
                   externalUrl={hostingExternalUrl}
-                  downloadConfirmationContainer={datasetDownloadConfirmationRef}
+                  onDownloadClick={() =>
+                    setShowDownloadConfirmation(val => !val)
+                  }
+                  isDownloading={downloadButtonLoading}
                 />
               )}
             {/* PORTALS-3386 Use synapseLink in schema to add entity to download cart */}

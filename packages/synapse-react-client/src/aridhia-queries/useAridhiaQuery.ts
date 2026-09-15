@@ -17,7 +17,11 @@ import { createAridhiaApiConfiguration } from './aridhiaTokenExchange'
 
 /**
  * - `invalid_token` / `invalid_issuer` — the gateway's `/authenticate` rejected the Synapse
- *   token outright (e.g. no linked RDCA-DAP account yet).
+ *   token outright. The gateway currently mints a token whether or not the account is linked
+ *   to RDCA-DAP, but kept as a recognized shape in case that changes.
+ * - `not_authorized` — a FAIR API call (e.g. `GET /fair/requests`) rejected an otherwise-valid
+ *   Aridhia token with 403 `{ error: { message: 'Not authorised for this operation' } }`. This
+ *   is the actual eligibility signal in practice: it means no linked RDCA-DAP account yet.
  * - `Invalid parameter` — the token-exchange request body was malformed. This is our bug, not
  *   the user's eligibility, so it is never treated as an eligibility failure.
  * - `not_configured` — called without an `AridhiaContextProvider` or a Synapse access token;
@@ -27,6 +31,7 @@ import { createAridhiaApiConfiguration } from './aridhiaTokenExchange'
 export type AridhiaErrorCode =
   | 'invalid_token'
   | 'invalid_issuer'
+  | 'not_authorized'
   | 'Invalid parameter'
   | 'not_configured'
   | 'unknown'
@@ -51,31 +56,53 @@ export class AridhiaError extends Error {
 }
 
 /**
- * Pulls a human-usable error string out of a `ResponseError`'s JSON body, preferring the
- * gateway's `error` field and falling back to `message`. Returns `undefined` when the body
- * isn't JSON, was already consumed, or carries neither field.
+ * Pulls a human-usable error string out of a JSON response body:
+ * - Gateway OAuth error: `{ error: 'invalid_token' }`
+ * - FAIR API error envelope: `{ error: { status: 400, message: '...' } }`
+ * - Direct message envelope: `{ message: '...' }`
+ *
+ * Returns `undefined` when the body carries no recognizable error text.
+ */
+function extractErrorTextFromBody(body: unknown): string | undefined {
+  if (!body || typeof body !== 'object') {
+    return undefined
+  }
+  const errorField = 'error' in body ? body.error : undefined
+  if (typeof errorField === 'string') {
+    return errorField
+  }
+  if (errorField && typeof errorField === 'object') {
+    if ('message' in errorField && typeof errorField.message === 'string') {
+      return errorField.message
+    }
+    if ('error' in errorField && typeof errorField.error === 'string') {
+      return errorField.error
+    }
+  }
+  const messageField = 'message' in body ? body.message : undefined
+  if (typeof messageField === 'string') {
+    return messageField
+  }
+  return undefined
+}
+
+/**
+ * Pulls a human-usable error string out of a `ResponseError`'s JSON body.
+ * Returns `undefined` when the body isn't JSON, was already consumed, or carries no recognizable field.
  */
 async function extractResponseErrorText(
   response: ResponseError['response'],
 ): Promise<string | undefined> {
   try {
     const body: unknown = await response.clone().json()
-    if (!body || typeof body !== 'object') {
-      return undefined
-    }
-    const errorField = 'error' in body ? body.error : undefined
-    if (typeof errorField === 'string') {
-      return errorField
-    }
-    const messageField = 'message' in body ? body.message : undefined
-    return typeof messageField === 'string' ? messageField : undefined
+    return extractErrorTextFromBody(body)
   } catch {
     // Response body wasn't JSON (or was already consumed).
     return undefined
   }
 }
 
-async function toAridhiaError(error: unknown): Promise<AridhiaError> {
+export async function toAridhiaError(error: unknown): Promise<AridhiaError> {
   if (error instanceof AridhiaError) {
     return error
   }
@@ -93,6 +120,19 @@ async function toAridhiaError(error: unknown): Promise<AridhiaError> {
         isEligibilityFailure: bodyErrorText !== 'Invalid parameter',
       })
     }
+    // The gateway's `/authenticate` always mints a token regardless of RDCA-DAP linkage; a FAIR
+    // resource call (e.g. `/fair/requests`) is what actually rejects an unlinked account, as a
+    // 403 with this message in its own `{ error: { message } }` envelope.
+    if (
+      httpStatus === 403 &&
+      (bodyErrorText?.toLowerCase().includes('not authorised') ||
+        bodyErrorText?.toLowerCase().includes('not authorized'))
+    ) {
+      return new AridhiaError('not_authorized', bodyErrorText, {
+        httpStatus,
+        isEligibilityFailure: true,
+      })
+    }
     // An unrecognized error shape (e.g. a FAIR-side validation error on `/requests/`, which
     // uses a different envelope than the gateway's `/authenticate`) — keep `code: 'unknown'`
     // but surface the server's own text verbatim so the caller can quote it.
@@ -101,6 +141,10 @@ async function toAridhiaError(error: unknown): Promise<AridhiaError> {
       bodyErrorText ?? `Aridhia request failed (${httpStatus})`,
       { httpStatus },
     )
+  }
+  const bodyText = extractErrorTextFromBody(error)
+  if (bodyText) {
+    return new AridhiaError('unknown', bodyText)
   }
   return new AridhiaError(
     'unknown',

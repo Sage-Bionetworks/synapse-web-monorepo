@@ -162,8 +162,7 @@ export default function CreateWebhookModal(props: CreateWebhookModalProps) {
 
   // If the user attempts to use a domain that has not been added to the allowlist, link to a form to create a request.
   const showRequestDomainForm =
-    error &&
-    error.errorResponse &&
+    error?.errorResponse &&
     'errorCode' in error.errorResponse &&
     error.errorResponse.errorCode ===
       ErrorResponseCode.UNSUPPORTED_WEBHOOK_DOMAIN

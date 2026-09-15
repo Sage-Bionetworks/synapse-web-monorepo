@@ -42,21 +42,122 @@ export const enabledAnalysisPlatforms: ExternalAnalysisPlatform[] = [
   'terra',
 ]
 export const datasetsSearchIndexId = 'syn75081630'
+// Tuned in nf-osi/opensearch-ops (benchmark/datasets/fields.yaml), which has the rationale.
+// Equal weights and includeUnlistedFields:false are both measured, not defaults -- boosting
+// costs recall here, and appending `*` undoes the whole gain.
+export const datasetsSearchQueryConfig: SearchQueryConfig = {
+  queryStrategy: 'BOOSTED_FUZZY',
+  includeUnlistedFields: false,
+  fieldBoosts: {
+    title: 1,
+    name: 1,
+    alternateName: 1,
+    series: 1,
+    keywords: 1,
+    measurementTechnique: 1,
+    assay: 1,
+    dataType: 1,
+    subject: 1,
+    description: 1,
+    manifestation: 1,
+    diseaseFocus: 1,
+    species: 1,
+    modelSystemName: 1,
+    ageGroup: 1,
+    creator: 1,
+    contributor: 1,
+    funder: 1,
+    fundingAgency: 1,
+    citation: 1,
+    countryOfOrigin: 1,
+    accessType: 1,
+    license: 1,
+    conditionsOfAccess: 1,
+    dataUseModifiers: 1,
+    includedInDataCatalog: 1,
+    hosting: 1,
+    repository: 1,
+    externalUrl: 1,
+    externalRepositoryUri: 1,
+    visualizeDataOn: 1,
+    path: 1,
+    doi: 1,
+    etag: 1,
+    datasetMD5Hex: 1,
+    croissant_file_s3_object: 1,
+    versionLabel: 1,
+    versionComment: 1,
+  },
+}
 export const publicationsSearchIndexId = 'syn75081631'
+// Tuned in nf-osi/opensearch-ops (benchmark/publications/fields.yaml).
+export const publicationsSearchQueryConfig: SearchQueryConfig = {
+  queryStrategy: 'BOOSTED_FUZZY',
+  includeUnlistedFields: false,
+  fieldBoosts: {
+    title: 5,
+    author: 3,
+    manifestation: 3,
+    diseaseFocus: 2,
+    studyName: 2,
+    journal: 2,
+    studyId: 1,
+    doi: 1,
+    pmid: 1,
+    fundingAgency: 1,
+    publicationType: 1,
+  },
+}
 export const studiesSearchIndexId = 'syn75081633'
+// Tuned in nf-osi/opensearch-ops (benchmark/studies/fields.yaml).
+// includeUnlistedFields:true because the `*` enables search for keyword-mapped ENTITYID 
+// cols not explicitly here; accessRequirements or others at 1 despite `*` to convey
+// they were measured-and-unboosted, and weights may still change as content evolves.
+export const studiesSearchQueryConfig: SearchQueryConfig = {
+  queryStrategy: 'MULTI_MATCH_CROSS_FIELDS',
+  includeUnlistedFields: true,
+  fieldBoosts: {
+    manifestation: 10,
+    name: 5,
+    studyName: 5,
+    studyLeads: 3,
+    institutions: 3,
+    initiative: 3,
+    summary: 3,
+    dataType: 3,
+    diseaseFocus: 2,
+    fundingAgency: 2,
+    grantDOI: 2,
+    studyStatus: 2,
+    dataStatus: 2,
+    clinicalTrialID: 2,
+    alternateDataRepository: 2,
+    accessRequirements: 1,
+    acknowledgementStatements: 1,
+  },
+}
 export const initiativesSearchIndexId = 'syn75081635'
 export const toolsSearchIndexId = 'syn75081636'
+// Tuned in nf-osi/opensearch-ops (benchmark/tools/fields.yaml), which has the sweep record.
+// Weights were swept for cross_fields specifically; they are not best_fields weights.
 export const toolsSearchQueryConfig: SearchQueryConfig = {
-  queryStrategy: 'MULTI_MATCH_BEST_FIELDS',
+  queryStrategy: 'MULTI_MATCH_CROSS_FIELDS',
+  includeUnlistedFields: false,
   fieldBoosts: {
-    resourceName: 5,
-    synonyms: 4,
-    rrid: 4,
-    targetAntigen: 2,
-    // Was diseaseType (Biobank's pre-migration field name, dropped when it was unified
-    // into the shared geneticDisorder column across resource types) -- this boost was a
-    // silent no-op against a nonexistent field until fixed.
-    geneticDisorder: 1,
+    resourceName: 2.5,
+    synonyms: 2,
+    rrid: 2,
+    targetAntigen: 1.75,
+    manifestation: 1.75,
+    geneticDisorder: 1.5,
+    tumorType: 1.5,
+    species: 1.5,
+    cellLineCategory: 1.5,
+    resourceType: 1.5,
+    vectorType: 1.5,
+    investigatorName: 2.25,
+    race: 1,
+    sex: 1,
     description: 1,
   },
 }

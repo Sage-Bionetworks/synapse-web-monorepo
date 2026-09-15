@@ -63,7 +63,7 @@ export const CreateChallengeTeam = forwardRef(function CreateChallengeTeam(
   const tooManyInvitees = numberOfInvitees > INVITEE_LIMIT
 
   const formDataIsValid = Boolean(
-    team && team.name && team.name.length > 1 && !tooManyInvitees,
+    team?.name && team.name.length > 1 && !tooManyInvitees,
   )
 
   useEffect(() => {

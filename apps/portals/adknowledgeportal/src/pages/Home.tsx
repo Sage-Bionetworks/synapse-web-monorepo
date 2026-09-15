@@ -7,20 +7,15 @@ import { WordPressNews } from 'synapse-react-client/components/SynapseHomepageV2
 import FloatingBlobsBackground from 'synapse-react-client/components/SynapseHomepageV2/FloatingBlobsBackground'
 import AdknowledgePrograms from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgePrograms/AdknowledgePrograms'
 import AdknowledgePlatformIntegrations from '@sage-bionetworks/synapse-portal-framework/components/adknowledge/AdknowledgePlatformIntegrations/AdknowledgePlatformIntegrations'
-import {
-  consortiaAndRepositoriesSql,
-  dataTypeSql,
-  exploreQuerySql,
-  programsSql,
-} from '@/config/resources'
+import { dataTypeSql, exploreQuerySql, programsSql } from '@/config/resources'
+import { autocompleteSuggestionsSearchIndexConfig } from '@/config/searchConfig'
 import { HomePageThemeProvider } from '@/themes/HomePageThemeProvider'
 import { ReactComponent as ContributeIcon } from '../assets/contribution.svg'
 import { ReactComponent as AgoraIcon } from '../assets/agora.svg'
 import { ReactComponent as ModelADIcon } from '../assets/modelAD.svg'
 import styles from './HomePage.module.scss'
-import { CardContainerLogic } from 'synapse-react-client'
-import { consortiaAndRepositoriesCardConfig } from '@/config/synapseConfigs/consortiaAndRepositories'
-import { Button } from '@mui/material'
+import { Box, Button } from '@mui/material'
+import { Link } from 'react-router'
 
 function HomePageInternal() {
   const agoraCard = {
@@ -44,16 +39,28 @@ function HomePageInternal() {
     buttonText: 'Learn More',
     buttonLink: '/Contribute',
     Image: ContributeIcon,
+    wide: true,
   }
 
   const dataExplorerTextSection = {
     sql: dataTypeSql,
     facetSql: exploreQuerySql,
-    title: 'More than a petabyte of multiomic data...',
+    title: 'More than a petabyte of multiomic data',
     buttonText: 'Explore Alzheimer’s Data',
     buttonLink: '/Explore/Data',
-    subtitle:
-      "Our data encompasses a wide range of modalities, ensuring comprehensive coverage for in-depth Alzheimer's research and discovery.",
+    subtitle: (
+      <>
+        Our data encompasses a wide range of modalities, ensuring comprehensive
+        coverage for in-depth Alzheimer's research and discovery.
+        <br />
+        <br />
+        <i>
+          Numbers indicate the count of studies contributing data in each
+          category.
+        </i>
+      </>
+    ),
+
     explorePath: '/Explore/Studies',
     exploreQuerySql,
   }
@@ -71,35 +78,9 @@ function HomePageInternal() {
 
   return (
     <div>
-      <AdknowledgeHeader />
-      <SectionLayout
-        ContainerProps={{
-          className: 'home-spacer',
-        }}
-      >
-        <DataExplorer {...dataExplorerTextSection} />
-      </SectionLayout>
-
-      <SectionLayout
-        ContainerProps={{
-          sx: { marginBottom: '80px' },
-        }}
-      >
-        <AdknowledgeCard {...contributeCard} />
-      </SectionLayout>
-      <SectionLayout
-        ContainerProps={{
-          sx: { marginBottom: '90px' },
-        }}
-      >
-        <MailchimpSubscribeSection
-          headlineSx={{ color: 'var(--adkp-accent-color)' }}
-          background="linear-gradient(94deg, rgba(112, 110, 212, 0.04) 30.53%, rgba(198, 134, 230, 0.04) 76.86%)"
-          headline="Stay informed about the latest AD/ADRD research"
-          description="Subscribe to receive the AD Knowledge Portal monthly newsletter by e-mail, which provides information and updates related to the Portal. You can opt out at any time by using the unsubscribe link within the e-mail. We will not share your information with any third parties or use it for any other purposes."
-          mailchimpUrl="https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&id=96b614587a"
-        />
-      </SectionLayout>
+      <AdknowledgeHeader
+        searchIndexConfig={autocompleteSuggestionsSearchIndexConfig}
+      />
       <SectionLayout
         title="Programs"
         subtitle="The AD Knowledge Portal is your gateway to extensive datasets and resources from NIA-supported Alzheimer's disease and related dementia programs. Dive into program-specific data to accelerate your research."
@@ -111,40 +92,11 @@ function HomePageInternal() {
         <AdknowledgePrograms sql={`${programsSql} ORDER BY Program ASC`} />
       </SectionLayout>
       <SectionLayout
-        ContainerProps={{
-          sx: { marginBottom: '240px' },
-        }}
-        title="Data Analysis Platform Integrations"
-        subtitle="Analyze your data in a trusted research environment, integrated with the knowledge portal ecosystem."
-        centerTitle
-      >
-        <AdknowledgePlatformIntegrations />
-      </SectionLayout>
-      <SectionLayout
-        title={'New Releases'}
-        centerTitle={true}
-        ContainerProps={{
-          sx: { marginBottom: '90px' },
-        }}
-        subtitle="Explore monthly data and feature releases. Click on a release to learn what's new!"
-      >
-        <div className={styles.newsSection}>
-          <FloatingBlobsBackground color1="#dcc9e4" color2="#cdc8dd" />
-          <WordPressNews
-            wordpressSiteUrl="https://news.adknowledgeportal.org"
-            showCategoryChips={false}
-            showDescription={true}
-            variant="adkp"
-            postCount={6}
-          />
-        </div>
-      </SectionLayout>
-      <SectionLayout
         title="Results Explorers"
         subtitle="These explorers provide interactive tools and visualizations to navigate complex datasets, identify key trends, and gain deeper insights into the data on our portal."
         centerTitle
         ContainerProps={{
-          sx: { marginBottom: '130px' },
+          sx: { marginBottom: '50px' },
         }}
       >
         <div className={styles.resultsExplorersContainer}>
@@ -153,19 +105,99 @@ function HomePageInternal() {
         </div>
       </SectionLayout>
       <SectionLayout
-        title="Related Consortia and Repositories"
-        subtitle="Grounded in truly open science and radical collaboration, the AD Knowledge Portal bridges data silos by integrating with a broad network of consortia and repositories. Each contributes unique data and expertise needed to drive discovery in Alzheimer's Disease research."
+        ContainerProps={{
+          className: 'home-spacer',
+        }}
+      >
+        <DataExplorer {...dataExplorerTextSection} />
+      </SectionLayout>
+      <SectionLayout
+        ContainerProps={{
+          sx: { marginBottom: '110px' },
+        }}
+        title="Data Analysis Platform Integrations"
+        subtitle="Analyze your data in a trusted research environment (TRE), integrated with the knowledge portal ecosystem."
         centerTitle
+      >
+        <AdknowledgePlatformIntegrations />
+      </SectionLayout>
+      <SectionLayout
         ContainerProps={{
           sx: { marginBottom: '140px' },
         }}
       >
-        <div className={styles.consortiaAndRepositoriesCards}>
-          <CardContainerLogic
-            cardConfiguration={consortiaAndRepositoriesCardConfig}
-            sql={consortiaAndRepositoriesSql}
-          />
+        <Box className={styles.newsReleasesContent}>
+          <SectionLayout
+            title="New Releases"
+            centerTitle
+            ContainerProps={{ className: styles.newsReleasesMailchimp }}
+          >
+            <MailchimpSubscribeSection
+              headlineSx={{ color: 'var(--adkp-accent-color)' }}
+              description={
+                <Box sx={{ textAlign: 'left' }}>
+                  Click on a release to learn what's new, or subscribe to the AD
+                  Knowledge Portal newsletter to receive monthly updates on the
+                  latest AD/ADRD research, directly to your inbox!
+                  <br />
+                  <br />
+                  Opt out at any time. We promise not to share your information
+                  with any third parties or use it for any other purposes.
+                </Box>
+              }
+              mailchimpUrl="https://sagebase.us7.list-manage.com/subscribe/post?u=b146de537186191a9d2110f3a&id=96b614587a"
+            />
+          </SectionLayout>
+          <div className={styles.newsReleasesWordpress}>
+            <FloatingBlobsBackground color1="#dcc9e4" color2="#cdc8dd" />
+            <WordPressNews
+              wordpressSiteUrl="https://news.adknowledgeportal.org"
+              showCategoryChips={false}
+              showDescription={true}
+              variant="adkp"
+              postCount={3}
+            />
+          </div>
+        </Box>
+        <div className={styles.AdkpButtonContainer}>
+          <Button
+            variant="contained"
+            href="https://news.adknowledgeportal.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+            sx={{ alignSelf: 'center' }}
+          >
+            View All Releases
+          </Button>
         </div>
+      </SectionLayout>
+      <SectionLayout
+        title="Research Ecosystem"
+        subtitle="Grounded in truly open science and radical collaboration, the AD Knowledge Portal bridges data silos by integrating with a broad network of consortia and repositories. Each contributes unique data and expertise needed to drive discovery in Alzheimer's Disease research."
+        centerTitle
+        ContainerProps={{
+          sx: {
+            marginBottom: '120px',
+          },
+        }}
+      >
+        <div className={styles.AdkpButtonContainer}>
+          <Button
+            variant="contained"
+            component={Link}
+            to="/Research Ecosystem"
+            sx={{ alignSelf: 'center', marginTop: '24px' }}
+          >
+            View All
+          </Button>
+        </div>
+      </SectionLayout>
+      <SectionLayout
+        ContainerProps={{
+          sx: { marginBottom: '60px' },
+        }}
+      >
+        <AdknowledgeCard {...contributeCard} />
       </SectionLayout>
       <SectionLayout
         title="Questions or Feedback?"

@@ -11,7 +11,7 @@ function ChallengeParticipantGoogleMap(
   const { projectId } = props
 
   const { data: challenge } = SynapseQueries.useGetEntityChallenge(projectId)
-  if (challenge && challenge.participantTeamId) {
+  if (challenge?.participantTeamId) {
     return (
       <Box sx={{ height: '500px' }}>
         <Map teamId={challenge.participantTeamId} />

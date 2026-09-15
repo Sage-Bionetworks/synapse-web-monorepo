@@ -39,7 +39,7 @@ export function SynapseHomepageChatSearch({
 
       // Check if the input is a valid Synapse ID with version
       const parsedSynId = parseSynId(searchValueCleaned)
-      if (parsedSynId && parsedSynId.targetVersionNumber) {
+      if (parsedSynId?.targetVersionNumber) {
         const synIdWithVersion = `${parsedSynId.targetId}.${parsedSynId.targetVersionNumber}`
         gotoPlace(`/Synapse:${synIdWithVersion}`)
         return

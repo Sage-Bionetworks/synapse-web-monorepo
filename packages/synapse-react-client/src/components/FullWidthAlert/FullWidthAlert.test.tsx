@@ -45,20 +45,17 @@ function setUp(
   const alert = screen.queryByRole('alert')
   const buttons = {
     primary:
-      defaultProps.primaryButtonConfig &&
-      defaultProps.primaryButtonConfig.text &&
+      defaultProps.primaryButtonConfig?.text &&
       screen.queryByRole('button', {
         name: defaultProps.primaryButtonConfig.text,
       }),
     secondary:
-      defaultProps.secondaryButtonConfig &&
-      defaultProps.secondaryButtonConfig.text &&
+      defaultProps.secondaryButtonConfig?.text &&
       screen.queryByRole('button', {
         name: defaultProps.secondaryButtonConfig.text,
       }),
     tertiary:
-      defaultProps.tertiaryButtonConfig &&
-      defaultProps.tertiaryButtonConfig.text &&
+      defaultProps.tertiaryButtonConfig?.text &&
       screen.queryByRole('button', {
         name: defaultProps.tertiaryButtonConfig.text,
       }),
@@ -104,7 +101,7 @@ describe('FullWidthAlert tests', () => {
     await user.click(buttons.secondary as HTMLElement)
     expect(window.open).toHaveBeenCalledTimes(1)
     expect(window.open).toHaveBeenCalledWith(
-      // @ts-ignore - typescript doesn't recognize href within the conditional AlertButtonConfig type
+      // @ts-expect-error - typescript doesn't recognize href within the conditional AlertButtonConfig type
       defaultProps.secondaryButtonConfig!.href,
       '_blank',
       'noopener',

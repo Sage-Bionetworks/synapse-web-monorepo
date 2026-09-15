@@ -26,10 +26,10 @@ import {
 } from '../ConfirmationDialog/ConfirmationDialog'
 import { JsonSchemaForm } from '../JsonSchemaForm/JsonSchemaForm'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { collectTopLevelProperties } from '@/utils/jsonschema/collectTopLevelProperties'
 import {
   dropNullishArrayValues,
   dropNullValues,
-  getPossibleTopLevelPropertiesInObjectSchema,
   getFriendlyPropertyName,
   getJsonSchemaForForm,
   getSchemaIdForConcreteType,
@@ -179,8 +179,7 @@ export function SchemaDrivenAnnotationEditor(
     })
 
   const entitySchemaBaseProperties: JSONSchema7['properties'] = useMemo(
-    () =>
-      getPossibleTopLevelPropertiesInObjectSchema(schemaForEntityType ?? {}),
+    () => collectTopLevelProperties(schemaForEntityType),
     [schemaForEntityType],
   )
 

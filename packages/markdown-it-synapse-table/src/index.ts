@@ -201,7 +201,7 @@ export default function synapse_table_plugin(md: MarkdownIt) {
       for (i = 0; i < columns.length; i++) {
         token = state.push('th_open', 'th', 1)
         token.map = [startLine, startLine + 1]
-        if (alignments && alignments[i]) {
+        if (alignments?.[i]) {
           token.attrSet('style', `text-align: ${alignments[i]}`)
         }
 
@@ -253,7 +253,7 @@ export default function synapse_table_plugin(md: MarkdownIt) {
       }
       for (i = 0; i < columnCount; i++) {
         token = state.push('td_open', 'td', 1)
-        if (alignments && alignments[i]) {
+        if (alignments?.[i]) {
           token.attrSet('style', `text-align: ${alignments[i]}`)
         }
         token = state.push('inline', '', 0)
