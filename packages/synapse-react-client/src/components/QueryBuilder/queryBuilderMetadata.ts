@@ -3,6 +3,10 @@
  * this both to populate the operator picker dropdown and to decide what shape
  * of value input to render.
  */
+import {
+  FRIENDLY_VALUE_NOT_SET,
+  VALUE_NOT_SET,
+} from '../../utils/SynapseConstants'
 import { QBConditionOp } from './QueryBuilderTypes'
 
 /** Categorization of columns for the QB UI. Not a synapse-types concept. */
@@ -132,4 +136,13 @@ export function labelForOp(op: QBConditionOp): string {
       op satisfies never
       return op
   }
+}
+
+/**
+ * Returns the user-facing label for a raw facet value. Backend sentinels like
+ * `VALUE_NOT_SET` display as `Not Assigned`; every other value renders as-is.
+ * The underlying value stored on the QB condition is unchanged.
+ */
+export function labelForFacetValue(value: string): string {
+  return value === VALUE_NOT_SET ? FRIENDLY_VALUE_NOT_SET : value
 }

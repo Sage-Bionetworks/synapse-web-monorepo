@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 import { isQBGroup, QBCondition, QBGroup, QBNode } from './QueryBuilderTypes'
-import { labelForOp } from './queryBuilderMetadata'
+import { labelForFacetValue, labelForOp } from './queryBuilderMetadata'
 
 /**
  * Render a QB tree as a plain-English React node with the AND / OR / NOT
@@ -105,10 +105,12 @@ function summarizeConditionValue(condition: QBCondition): string | null {
       return ''
     case 'is_any_of':
     case 'is_all_of':
-      return values.length === 0 ? null : values.join(', ')
+      return values.length === 0
+        ? null
+        : values.map(labelForFacetValue).join(', ')
     case 'equal':
     case 'not_equal':
-      return values.length === 0 ? null : values[0]
+      return values.length === 0 ? null : labelForFacetValue(values[0])
     case 'between':
       if (!rangeMin || !rangeMax) return null
       return `${rangeMin} and ${rangeMax}`

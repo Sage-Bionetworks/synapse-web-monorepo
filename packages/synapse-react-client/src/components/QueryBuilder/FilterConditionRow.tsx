@@ -18,6 +18,7 @@ import { useQueryBuilderInternalContext } from './QueryBuilderInternalContext'
 import {
   availableOpsForKind,
   classifyColumn,
+  labelForFacetValue,
   labelForOp,
   QBColumnKind,
 } from './queryBuilderMetadata'
@@ -220,7 +221,7 @@ function ValueInput(props: ValueInputProps) {
           >
             {facetValues.map(value => (
               <ToggleButton key={value} value={value}>
-                {value}
+                {labelForFacetValue(value)}
               </ToggleButton>
             ))}
           </ToggleButtonGroup>
