@@ -8,7 +8,6 @@ import {
   IconButton,
   Paper,
   Stack,
-  TextField,
   Typography,
 } from '@mui/material'
 import {
@@ -28,6 +27,7 @@ import {
 import styles from './dragHandle.module.scss'
 import { detectFieldType, fieldTypeLabel } from './schemaFieldUtils'
 import { SLOT_SORTABLE_TYPE } from './sortableIds'
+import { TemplateFileHandleField } from './TemplateFileHandleField'
 
 export type StepFieldRowProps = {
   /** Sortable id assigned by parent: `slot:{stepIndex}:{fieldIndex}`. */
@@ -46,6 +46,8 @@ export type StepFieldRowProps = {
   propertyKey: string
   isFirst: boolean
   isLast: boolean
+  /** The FormTemplate's id, if it has been saved. Used to build the template file download. */
+  formTemplateId: string | undefined
   onChange: (patch: Partial<FormTemplateField>) => void
   onMoveUp: () => void
   onMoveDown: () => void
@@ -67,6 +69,7 @@ export function StepFieldRow({
   propertyKey,
   isFirst,
   isLast,
+  formTemplateId,
   onChange,
   onMoveUp,
   onMoveDown,
@@ -171,19 +174,10 @@ export function StepFieldRow({
       <Collapse in={expanded} unmountOnExit>
         <Stack spacing={1} sx={{ pt: 1, pl: 4 }}>
           {isFileField && (
-            // Raw ID entry, no format validation -- FormTemplateField#templateFileHandleId is a
-            // string; a number input would risk precision loss or reformatting for large ids.
-            <TextField
-              label="Template file handle ID"
-              value={field.templateFileHandleId ?? ''}
-              onChange={e =>
-                onChange({
-                  templateFileHandleId: e.target.value || undefined,
-                })
-              }
-              size="small"
-              fullWidth
-              helperText="Optional"
+            <TemplateFileHandleField
+              fileHandleId={field.templateFileHandleId}
+              formTemplateId={formTemplateId}
+              onChange={next => onChange({ templateFileHandleId: next })}
             />
           )}
           <FormControlLabel
