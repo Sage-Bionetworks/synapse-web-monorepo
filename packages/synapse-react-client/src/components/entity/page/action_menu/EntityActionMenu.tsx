@@ -257,7 +257,12 @@ export default function EntityActionMenu(props: EntityActionMenuProps) {
         '& .MuiButton-root': {
           borderRadius: '6px',
           fontWeight: 540,
-          padding: '10px 12px',
+          padding: '8px',
+          height: '28px',
+
+          '& svg': {
+            fontSize: '16px',
+          },
         },
         // Optional per-layout overrides (e.g. background/border color for entity
         // menu buttons).
@@ -281,6 +286,9 @@ export default function EntityActionMenu(props: EntityActionMenuProps) {
         },
         '& .MuiButton-root .MuiTypography-root': {
           fontWeight: 540,
+          fontSize: '12px',
+          lineHeight: '12px',
+          letterSpacing: '-0.24px',
         },
       }}
     >
