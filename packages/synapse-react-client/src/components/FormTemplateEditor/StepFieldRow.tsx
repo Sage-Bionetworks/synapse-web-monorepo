@@ -10,7 +10,6 @@ import {
   IconButton,
   Paper,
   Stack,
-  TextField,
   Typography,
 } from '@mui/material'
 import {
@@ -28,6 +27,7 @@ import {
   submissionContextLabel,
 } from '@/utils/jsonschema/submissionContext'
 import { detectFieldType, fieldTypeLabel } from './schemaFieldUtils'
+import { TemplateFileHandleField } from './TemplateFileHandleField'
 
 export type StepFieldRowProps = {
   /** Sortable id assigned by parent: `slot:{stepIndex}:{fieldIndex}`. */
@@ -46,6 +46,8 @@ export type StepFieldRowProps = {
   propertyKey: string
   isFirst: boolean
   isLast: boolean
+  /** The FormTemplate's id, if it has been saved. Used to build the template file download. */
+  formTemplateId: string | undefined
   onChange: (patch: Partial<FormTemplateField>) => void
   onMoveUp: () => void
   onMoveDown: () => void
@@ -67,6 +69,7 @@ export function StepFieldRow({
   propertyKey,
   isFirst,
   isLast,
+  formTemplateId,
   onChange,
   onMoveUp,
   onMoveDown,
@@ -154,18 +157,10 @@ export function StepFieldRow({
       <Collapse in={expanded} unmountOnExit>
         <Stack spacing={1} sx={{ pt: 1, pl: 4 }}>
           {isFileField && (
-            <TextField
-              label="Template file handle ID"
-              type="number"
-              value={field.templateFileHandleId ?? ''}
-              onChange={e =>
-                onChange({
-                  templateFileHandleId: e.target.value || undefined,
-                })
-              }
-              size="small"
-              fullWidth
-              helperText="Optional"
+            <TemplateFileHandleField
+              fileHandleId={field.templateFileHandleId}
+              formTemplateId={formTemplateId}
+              onChange={next => onChange({ templateFileHandleId: next })}
             />
           )}
           <FormControlLabel
