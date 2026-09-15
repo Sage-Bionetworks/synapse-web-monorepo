@@ -26,6 +26,11 @@ function CurieChatDialogLauncher() {
       onClick={onClick}
       aria-label="Open Curie chat"
     >
+      <span className={styles.speechBubble}>
+        Hi!
+        <br />
+        How can I help you?
+      </span>
       <CurieLogo className={styles.curieLogo} />
     </button>
   )
