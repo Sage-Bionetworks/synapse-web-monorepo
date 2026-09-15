@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from '@mui/material'
 import { ColumnModel } from '@sage-bionetworks/synapse-types'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { splitAndTrim } from '../../utils/functions/StringUtils'
 import { useQueryBuilderInternalContext } from './QueryBuilderInternalContext'
 import {
@@ -213,18 +213,11 @@ function ValueInput(props: ValueInputProps) {
     case 'is_all_of':
       if ((columnKind === 'enum' || columnKind === 'list') && hasFacet) {
         return (
-          <ToggleButtonGroup
-            className={styles.pillGroup}
-            value={condition.values}
-            onChange={(_event, next: string[]) => onChange({ values: next })}
-            aria-label="Selected values"
-          >
-            {facetValues.map(value => (
-              <ToggleButton key={value} value={value}>
-                {labelForFacetValue(value)}
-              </ToggleButton>
-            ))}
-          </ToggleButtonGroup>
+          <FacetPillGroup
+            facetValues={facetValues}
+            selectedValues={condition.values}
+            onChange={next => onChange({ values: next })}
+          />
         )
       }
       return (
@@ -338,6 +331,69 @@ function ValueInput(props: ValueInputProps) {
       op satisfies never
       return null
   }
+}
+
+type FacetPillGroupProps = {
+  facetValues: string[]
+  selectedValues: string[]
+  onChange: (next: string[]) => void
+}
+
+// Above this many pills we show a text filter above the group.
+const PILL_FILTER_THRESHOLD = 40
+
+function FacetPillGroup(props: FacetPillGroupProps) {
+  const { facetValues, selectedValues, onChange } = props
+  const [filter, setFilter] = useState('')
+  const showFilter = facetValues.length > PILL_FILTER_THRESHOLD
+
+  // Sort alphabetically by the user-facing label so the pill order is
+  // predictable regardless of the backend's facet-result ordering.
+  const sortedValues = useMemo(() => {
+    return [...facetValues].sort((a, b) =>
+      labelForFacetValue(a).localeCompare(labelForFacetValue(b), undefined, {
+        sensitivity: 'base',
+      }),
+    )
+  }, [facetValues])
+
+  const visibleValues = useMemo(() => {
+    if (!showFilter || filter.trim() === '') return sortedValues
+    const q = filter.trim().toLowerCase()
+    return sortedValues.filter(v =>
+      labelForFacetValue(v).toLowerCase().includes(q),
+    )
+  }, [sortedValues, filter, showFilter])
+
+  return (
+    <div className={styles.pillGroupContainer}>
+      {showFilter && (
+        <TextField
+          className={styles.pillFilter}
+          size="small"
+          variant="outlined"
+          placeholder={`Filter ${facetValues.length} values…`}
+          value={filter}
+          onChange={event => setFilter(event.target.value)}
+          slotProps={{ htmlInput: { 'aria-label': 'Filter values' } }}
+        />
+      )}
+      <div className={styles.pillGroupScroll}>
+        <ToggleButtonGroup
+          className={styles.pillGroup}
+          value={selectedValues}
+          onChange={(_event, next: string[]) => onChange(next)}
+          aria-label="Selected values"
+        >
+          {visibleValues.map(value => (
+            <ToggleButton key={value} value={value}>
+              {labelForFacetValue(value)}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
+      </div>
+    </div>
+  )
 }
 
 function findFacetValues(

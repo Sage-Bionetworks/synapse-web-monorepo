@@ -59,6 +59,23 @@
   min-width: 200px;
 }
 
+.pillGroupContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.pillFilter {
+  max-width: 260px;
+}
+
+.pillGroupScroll {
+  max-height: 120px;
+  overflow-y: auto;
+}
+
 .pillGroup {
   display: flex;
   flex-wrap: wrap;
