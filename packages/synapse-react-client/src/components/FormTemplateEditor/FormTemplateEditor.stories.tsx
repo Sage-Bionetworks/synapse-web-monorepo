@@ -1,5 +1,7 @@
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Meta, StoryObj } from '@storybook/react-vite'
+import { getRealmHandlers } from '@/mocks/msw/handlers/realmHandlers'
+import { getAuthHandlers } from '@/mocks/msw/handlers/authHandlers'
 import { fn } from 'storybook/test'
 import {
   mockClinicalTemplate,
@@ -10,7 +12,7 @@ import {
   mockGenomicsSchema,
 } from '@/mocks/accessRequirement/mockJsonSchemas'
 import { getFormTemplateHandlers } from '@/mocks/msw/handlers/formTemplateHandlers'
-import { getFormTemplatePreviewHandlers } from '@/mocks/msw/handlers/formTemplatePreviewHandlers'
+import { getCreateSchemaHandlers } from '@/mocks/msw/handlers/createSchemaHandlers'
 import { getValidationSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
 import { FormTemplateEditor } from './FormTemplateEditor'
 
@@ -21,8 +23,10 @@ const meta: Meta<typeof FormTemplateEditor> = {
     stack: 'mock',
     msw: {
       handlers: [
+        ...getAuthHandlers(MOCK_REPO_ORIGIN),
+        ...getRealmHandlers(MOCK_REPO_ORIGIN),
         ...getFormTemplateHandlers(MOCK_REPO_ORIGIN),
-        ...getFormTemplatePreviewHandlers(MOCK_REPO_ORIGIN),
+        ...getCreateSchemaHandlers(MOCK_REPO_ORIGIN),
         ...getValidationSchemaHandlers(MOCK_REPO_ORIGIN, [
           mockGenomicsSchema,
           mockClinicalSchema,
