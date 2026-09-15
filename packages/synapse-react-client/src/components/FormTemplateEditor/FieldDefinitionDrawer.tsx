@@ -235,10 +235,25 @@ export function FieldDefinitionDrawer({
                 />
               </Stack>
 
-              {type === 'choice' && (
+              {(type === 'choice' || type === 'multiChoice') && (
                 <ChoiceOptionsEditor
-                  options={(property.enum as string[] | undefined) ?? []}
-                  onChange={next => onUpdate({ enum: next })}
+                  options={
+                    type === 'choice'
+                      ? ((property.enum as string[] | undefined) ?? [])
+                      : (((property.items as RJSFSchema | undefined)?.enum as
+                          | string[]
+                          | undefined) ?? [])
+                  }
+                  onChange={next =>
+                    type === 'choice'
+                      ? onUpdate({ enum: next })
+                      : onUpdate({
+                          items: {
+                            ...(property.items as RJSFSchema),
+                            enum: next,
+                          },
+                        })
+                  }
                 />
               )}
 

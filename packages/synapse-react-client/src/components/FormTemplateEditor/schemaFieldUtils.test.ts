@@ -44,7 +44,7 @@ describe('fieldTypeLabel', () => {
     expect(fieldTypeLabel('text')).toBe('Text')
     expect(fieldTypeLabel('number')).toBe('Number')
     expect(fieldTypeLabel('boolean')).toBe('Yes / No')
-    expect(fieldTypeLabel('choice')).toBe('Multiple choice')
+    expect(fieldTypeLabel('choice')).toBe('Single choice')
     expect(fieldTypeLabel('file')).toBe('File upload')
   })
 
