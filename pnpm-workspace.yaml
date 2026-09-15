@@ -5,6 +5,14 @@ minimumReleaseAge: 4320 # 3 days
 minimumReleaseAgeExclude:
   - '@sage-bionetworks/*'
 catalog:
+  vite: ^8.3.0
+  "@vitejs/plugin-react": ^6.1.1
+  vitest: ^5.0.0
+  "@vitest/coverage-v8": ^5.0.0
+  "@vitest/ui": ^5.0.0
+  "@vitest/utils": ^5.0.0
+  "@vitest/spy": ^5.0.0
+  "@vitest/browser-playwright": ^5.0.0
   react-router: ^7.18.0
   "@react-router/dev": ^7.18.0
   "@react-router/node": ^7.18.0

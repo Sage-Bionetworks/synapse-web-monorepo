@@ -32,9 +32,9 @@
     "@types/react-dom": "19.2.3",
     "@types/react-plotly.js": "^2.6.4",
     "@types/react-tooltip": "^4.2.4",
-    "@vitest/coverage-v8": "^4.1.8",
-    "@vitest/ui": "^4.1.8",
-    "@vitest/utils": "^4.1.8",
+    "@vitest/coverage-v8": "catalog:",
+    "@vitest/ui": "catalog:",
+    "@vitest/utils": "catalog:",
     "assert": "^2.1.0",
     "buffer": "^6.0.3",
     "https-browserify": "^1.0.0",
@@ -56,10 +56,10 @@
     "typescript": "6.0.3",
     "url": "^0.11.4",
     "util": "^0.12.5",
-    "vite": "^8.0.16",
+    "vite": "catalog:",
     "vite-config": "workspace:*",
     "vite-plugin-node-polyfills": "^0.28.0",
-    "vitest": "^4.1.8"
+    "vitest": "catalog:"
   },
   "scripts": {
     "clean": "rimraf build coverage",

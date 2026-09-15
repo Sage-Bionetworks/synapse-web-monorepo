@@ -27,11 +27,10 @@ describe('useCreatePathsAndGetParentId', () => {
     }
 
     const parentId = 'syn123'
-    const mockUseCreateFolderPathResult = getUseMutationIdleMock<
-      string,
-      Error,
-      { parentId: string; path: string[] }
-    >(parentId)
+    const mockUseCreateFolderPathResult = getUseMutationIdleMock(
+      mockUseCreateFolderPath,
+      parentId,
+    )
     mockUseCreateFolderPath.mockReturnValue(mockUseCreateFolderPathResult)
 
     const { result: hook } = renderHook()
@@ -53,11 +52,10 @@ describe('useCreatePathsAndGetParentId', () => {
 
     const rootContainerId = 'syn123'
     const folderId = 'syn456'
-    const mockUseCreateFolderPathResult = getUseMutationIdleMock<
-      string,
-      Error,
-      { parentId: string; path: string[] }
-    >(folderId)
+    const mockUseCreateFolderPathResult = getUseMutationIdleMock(
+      mockUseCreateFolderPath,
+      folderId,
+    )
     mockUseCreateFolderPath.mockReturnValue(mockUseCreateFolderPathResult)
 
     const { result: hook } = renderHook()
@@ -82,11 +80,10 @@ describe('useCreatePathsAndGetParentId', () => {
 
     const rootContainerId = 'syn123'
     const finalFolderId = 'syn456'
-    const mockUseCreateFolderPathResult = getUseMutationIdleMock<
-      string,
-      Error,
-      { parentId: string; path: string[] }
-    >(finalFolderId)
+    const mockUseCreateFolderPathResult = getUseMutationIdleMock(
+      mockUseCreateFolderPath,
+      finalFolderId,
+    )
     mockUseCreateFolderPath.mockReturnValue(mockUseCreateFolderPathResult)
 
     const { result: hook } = renderHook()

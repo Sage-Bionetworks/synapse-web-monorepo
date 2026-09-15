@@ -89,10 +89,10 @@ function setupUploadDestinationMock(uploadDestination: UploadDestination) {
 function setupPrepareDirsForUploadMock(
   prepareDirsForUploadReturn?: PrepareDirsForUploadReturn,
 ) {
-  const usePrepareFileEntityUploadMockReturn =
-    getUseMutationIdleMock<PrepareDirsForUploadReturn>(
-      prepareDirsForUploadReturn,
-    )
+  const usePrepareFileEntityUploadMockReturn = getUseMutationIdleMock(
+    mockUsePrepareFileEntityUpload,
+    prepareDirsForUploadReturn,
+  )
   mockUsePrepareFileEntityUpload.mockReturnValue(
     usePrepareFileEntityUploadMockReturn,
   )
@@ -110,20 +110,20 @@ describe('useUploadFileEntities', () => {
   const createdFileHandleId1 = '147421'
   const createdFileHandleId2 = '147422'
 
-  const createdEntity1: FileEntity = {
+  const createdEntity1 = {
     id: 'syn456',
     parentId,
     name: file1.name,
     concreteType: 'org.sagebionetworks.repo.model.FileEntity',
     dataFileHandleId: createdFileHandleId1,
-  }
-  const createdEntity2: FileEntity = {
+  } satisfies FileEntity
+  const createdEntity2 = {
     id: 'syn457',
     parentId,
     name: file2.name,
     concreteType: 'org.sagebionetworks.repo.model.FileEntity',
     dataFileHandleId: createdFileHandleId2,
-  }
+  } satisfies FileEntity
 
   const mockOnStorageLimitExceeded = vi.fn()
 
@@ -167,12 +167,16 @@ describe('useUploadFileEntities', () => {
       state: 'WAITING',
       bytesPendingUpload: 0,
     } satisfies UseUploadFilesReturn
-    const useCreateEntityReturn =
-      getUseMutationIdleMock<FileEntity>(createdEntity1)
-    const useUpdateEntityReturn = getUseMutationIdleMock<FileEntity>()
+    const useCreateEntityReturn = getUseMutationIdleMock(
+      mockUseCreateEntity,
+      createdEntity1,
+    )
+    const useUpdateEntityReturn = getUseMutationIdleMock(mockUseUpdateEntity)
 
     mockUseUploadFiles.mockReturnValue(useUploadFilesMockReturn)
-    mockUseCreateEntity.mockReturnValue(getUseMutationIdleMock())
+    mockUseCreateEntity.mockReturnValue(
+      getUseMutationIdleMock(mockUseCreateEntity),
+    )
     mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
     mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
 
@@ -296,14 +300,14 @@ describe('useUploadFileEntities', () => {
     } satisfies UseUploadFilesReturn
     mockUseUploadFiles.mockReturnValue(useUploadFilesMockReturn)
 
-    const useCreateEntityReturn = getUseMutationIdleMock<FileEntity>()
+    const useCreateEntityReturn = getUseMutationIdleMock(mockUseCreateEntity)
 
-    useCreateEntityReturn.mutateAsync
+    vi.mocked(useCreateEntityReturn.mutateAsync)
       .mockResolvedValueOnce(createdEntity1)
       .mockResolvedValueOnce(createdEntity2)
     mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
 
-    const useUpdateEntityReturn = getUseMutationIdleMock<FileEntity>()
+    const useUpdateEntityReturn = getUseMutationIdleMock(mockUseUpdateEntity)
     mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
 
     const { result: hook } = renderHook()
@@ -375,7 +379,7 @@ describe('useUploadFileEntities', () => {
 
   test('upload a new version of a specified FileEntity', async () => {
     const initiateUploadArgs: InitiateUploadArgs = [
-      { file: file1, existingEntityId: createdEntity1.id! },
+      { file: file1, existingEntityId: createdEntity1.id },
     ]
 
     setupUploadDestinationMock(mockSynapseUploadDestination)
@@ -383,7 +387,7 @@ describe('useUploadFileEntities', () => {
     const prepareDirsForUploadReturn: PrepareDirsForUploadReturn = {
       // The user explicitly specified updating this entity (e.g. from that entity page), so no need to prompt
       filesReadyForUpload: [
-        { file: file1, existingEntityId: createdEntity1.id! },
+        { file: file1, existingEntityId: createdEntity1.id },
       ],
       filesToPromptForNewVersion: [],
     }
@@ -402,11 +406,13 @@ describe('useUploadFileEntities', () => {
 
     mockGetEntityById.mockResolvedValueOnce(createdEntity1)
 
-    const useCreateEntityReturn = getUseMutationIdleMock<FileEntity>()
+    const useCreateEntityReturn = getUseMutationIdleMock(mockUseCreateEntity)
     mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
 
-    const useUpdateEntityReturn =
-      getUseMutationIdleMock<FileEntity>(createdEntity1)
+    const useUpdateEntityReturn = getUseMutationIdleMock(
+      mockUseUpdateEntity,
+      createdEntity1,
+    )
     mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
 
     const { result: hook } = renderHook()
@@ -442,7 +448,7 @@ describe('useUploadFileEntities', () => {
       expect(useUploadFilesMockReturn.startUpload).toHaveBeenCalledTimes(1)
       expect(useUploadFilesMockReturn.startUpload).toHaveBeenCalledWith({
         file: file1,
-        existingEntityId: createdEntity1.id!,
+        existingEntityId: createdEntity1.id,
       })
 
       expect(useUpdateEntityReturn.mutateAsync).toHaveBeenCalledTimes(1)
@@ -475,10 +481,10 @@ describe('useUploadFileEntities', () => {
           { file: file2, parentId: 'syn123', existingEntityId: 'syn457' },
         ],
       }
-      const usePrepareFileEntityUploadMockReturn =
-        getUseMutationIdleMock<PrepareDirsForUploadReturn>(
-          prepareDirsForUploadReturn,
-        )
+      const usePrepareFileEntityUploadMockReturn = getUseMutationIdleMock(
+        mockUsePrepareFileEntityUpload,
+        prepareDirsForUploadReturn,
+      )
       mockUsePrepareFileEntityUpload.mockReturnValue(
         usePrepareFileEntityUploadMockReturn,
       )
@@ -492,16 +498,20 @@ describe('useUploadFileEntities', () => {
       } satisfies UseUploadFilesReturn
       mockUseUploadFiles.mockReturnValue(useUploadFilesMockReturn)
 
-      const useCreateEntityReturn = getUseMutationIdleMock<FileEntity>()
+      const useCreateEntityReturn = getUseMutationIdleMock(mockUseCreateEntity)
       mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
 
       mockGetEntityById
         .mockResolvedValueOnce(createdEntity1)
         .mockResolvedValueOnce(createdEntity2)
 
-      const useUpdateEntityReturn = getUseMutationIdleMock<FileEntity>()
-      useUpdateEntityReturn.mutateAsync.mockResolvedValueOnce(createdEntity1)
-      useUpdateEntityReturn.mutateAsync.mockResolvedValueOnce(createdEntity2)
+      const useUpdateEntityReturn = getUseMutationIdleMock(mockUseUpdateEntity)
+      vi.mocked(useUpdateEntityReturn.mutateAsync).mockResolvedValueOnce(
+        createdEntity1,
+      )
+      vi.mocked(useUpdateEntityReturn.mutateAsync).mockResolvedValueOnce(
+        createdEntity2,
+      )
       mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
 
       const { result: hook } = renderHook()
@@ -586,12 +596,12 @@ describe('useUploadFileEntities', () => {
           {
             file: file1,
             parentId,
-            existingEntityId: createdEntity1.id!,
+            existingEntityId: createdEntity1.id,
           },
           {
             file: file2,
             parentId,
-            existingEntityId: createdEntity2.id!,
+            existingEntityId: createdEntity2.id,
           },
         )
       })
@@ -604,7 +614,7 @@ describe('useUploadFileEntities', () => {
           {
             file: file1,
             parentId,
-            existingEntityId: createdEntity1.id!,
+            existingEntityId: createdEntity1.id,
           },
           createdFileHandleId1,
         )
@@ -612,7 +622,7 @@ describe('useUploadFileEntities', () => {
           {
             file: file2,
             parentId,
-            existingEntityId: createdEntity2.id!,
+            existingEntityId: createdEntity2.id,
           },
           createdFileHandleId2,
         )
@@ -646,10 +656,10 @@ describe('useUploadFileEntities', () => {
           { file: file2, parentId: 'syn123', existingEntityId: 'syn457' },
         ],
       }
-      const usePrepareFileEntityUploadMockReturn =
-        getUseMutationIdleMock<PrepareDirsForUploadReturn>(
-          prepareDirsForUploadReturn,
-        )
+      const usePrepareFileEntityUploadMockReturn = getUseMutationIdleMock(
+        mockUsePrepareFileEntityUpload,
+        prepareDirsForUploadReturn,
+      )
       mockUsePrepareFileEntityUpload.mockReturnValue(
         usePrepareFileEntityUploadMockReturn,
       )
@@ -663,16 +673,20 @@ describe('useUploadFileEntities', () => {
       } satisfies UseUploadFilesReturn
       mockUseUploadFiles.mockReturnValue(useUploadFilesMockReturn)
 
-      const useCreateEntityReturn = getUseMutationIdleMock<FileEntity>()
+      const useCreateEntityReturn = getUseMutationIdleMock(mockUseCreateEntity)
       mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
 
       mockGetEntityById
         .mockResolvedValueOnce(createdEntity1)
         .mockResolvedValueOnce(createdEntity2)
 
-      const useUpdateEntityReturn = getUseMutationIdleMock<FileEntity>()
-      useUpdateEntityReturn.mutateAsync.mockResolvedValueOnce(createdEntity1)
-      useUpdateEntityReturn.mutateAsync.mockResolvedValueOnce(createdEntity2)
+      const useUpdateEntityReturn = getUseMutationIdleMock(mockUseUpdateEntity)
+      vi.mocked(useUpdateEntityReturn.mutateAsync).mockResolvedValueOnce(
+        createdEntity1,
+      )
+      vi.mocked(useUpdateEntityReturn.mutateAsync).mockResolvedValueOnce(
+        createdEntity2,
+      )
       mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
 
       const { result: hook } = renderHook()
@@ -732,12 +746,12 @@ describe('useUploadFileEntities', () => {
           {
             file: file1,
             parentId,
-            existingEntityId: createdEntity1.id!,
+            existingEntityId: createdEntity1.id,
           },
           {
             file: file2,
             parentId,
-            existingEntityId: createdEntity2.id!,
+            existingEntityId: createdEntity2.id,
           },
         )
       })
@@ -750,7 +764,7 @@ describe('useUploadFileEntities', () => {
           {
             file: file1,
             parentId,
-            existingEntityId: createdEntity1.id!,
+            existingEntityId: createdEntity1.id,
           },
           createdFileHandleId1,
         )
@@ -758,7 +772,7 @@ describe('useUploadFileEntities', () => {
           {
             file: file2,
             parentId,
-            existingEntityId: createdEntity2.id!,
+            existingEntityId: createdEntity2.id,
           },
           createdFileHandleId2,
         )
@@ -792,10 +806,10 @@ describe('useUploadFileEntities', () => {
           { file: file2, parentId: 'syn123', existingEntityId: 'syn457' },
         ],
       }
-      const usePrepareFileEntityUploadMockReturn =
-        getUseMutationIdleMock<PrepareDirsForUploadReturn>(
-          prepareDirsForUploadReturn,
-        )
+      const usePrepareFileEntityUploadMockReturn = getUseMutationIdleMock(
+        mockUsePrepareFileEntityUpload,
+        prepareDirsForUploadReturn,
+      )
       mockUsePrepareFileEntityUpload.mockReturnValue(
         usePrepareFileEntityUploadMockReturn,
       )
@@ -809,13 +823,15 @@ describe('useUploadFileEntities', () => {
       } satisfies UseUploadFilesReturn
       mockUseUploadFiles.mockReturnValue(useUploadFilesMockReturn)
 
-      const useCreateEntityReturn = getUseMutationIdleMock<FileEntity>()
+      const useCreateEntityReturn = getUseMutationIdleMock(mockUseCreateEntity)
       mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
 
       mockGetEntityById.mockResolvedValueOnce(createdEntity2)
 
-      const useUpdateEntityReturn = getUseMutationIdleMock<FileEntity>()
-      useUpdateEntityReturn.mutateAsync.mockResolvedValueOnce(createdEntity2)
+      const useUpdateEntityReturn = getUseMutationIdleMock(mockUseUpdateEntity)
+      vi.mocked(useUpdateEntityReturn.mutateAsync).mockResolvedValueOnce(
+        createdEntity2,
+      )
       mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
 
       const { result: hook } = renderHook()
@@ -942,10 +958,10 @@ describe('useUploadFileEntities', () => {
           { file: file2, parentId: 'syn123', existingEntityId: 'syn457' },
         ],
       }
-      const usePrepareFileEntityUploadMockReturn =
-        getUseMutationIdleMock<PrepareDirsForUploadReturn>(
-          prepareDirsForUploadReturn,
-        )
+      const usePrepareFileEntityUploadMockReturn = getUseMutationIdleMock(
+        mockUsePrepareFileEntityUpload,
+        prepareDirsForUploadReturn,
+      )
       mockUsePrepareFileEntityUpload.mockReturnValue(
         usePrepareFileEntityUploadMockReturn,
       )
@@ -959,16 +975,20 @@ describe('useUploadFileEntities', () => {
       } satisfies UseUploadFilesReturn
       mockUseUploadFiles.mockReturnValue(useUploadFilesMockReturn)
 
-      const useCreateEntityReturn = getUseMutationIdleMock<FileEntity>()
+      const useCreateEntityReturn = getUseMutationIdleMock(mockUseCreateEntity)
       mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
 
       mockGetEntityById
         .mockResolvedValueOnce(createdEntity1)
         .mockResolvedValueOnce(createdEntity2)
 
-      const useUpdateEntityReturn = getUseMutationIdleMock<FileEntity>()
-      useUpdateEntityReturn.mutateAsync.mockResolvedValueOnce(createdEntity1)
-      useUpdateEntityReturn.mutateAsync.mockResolvedValueOnce(createdEntity2)
+      const useUpdateEntityReturn = getUseMutationIdleMock(mockUseUpdateEntity)
+      vi.mocked(useUpdateEntityReturn.mutateAsync).mockResolvedValueOnce(
+        createdEntity1,
+      )
+      vi.mocked(useUpdateEntityReturn.mutateAsync).mockResolvedValueOnce(
+        createdEntity2,
+      )
       mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
 
       const { result: hook } = renderHook()
@@ -1065,11 +1085,13 @@ describe('useUploadFileEntities', () => {
     } satisfies UseUploadFilesReturn
     mockUseUploadFiles.mockReturnValue(useUploadFilesMockReturn)
 
-    const useCreateEntityReturn =
-      getUseMutationIdleMock<FileEntity>(createdEntity1)
+    const useCreateEntityReturn = getUseMutationIdleMock(
+      mockUseCreateEntity,
+      createdEntity1,
+    )
     mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
 
-    const useUpdateEntityReturn = getUseMutationIdleMock<FileEntity>()
+    const useUpdateEntityReturn = getUseMutationIdleMock(mockUseUpdateEntity)
     mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
 
     const { result: hook } = renderHook()
@@ -1137,11 +1159,13 @@ describe('useUploadFileEntities', () => {
     } satisfies UseUploadFilesReturn
     mockUseUploadFiles.mockReturnValue(useUploadFilesMockReturn)
 
-    const useCreateEntityReturn =
-      getUseMutationIdleMock<FileEntity>(createdEntity1)
+    const useCreateEntityReturn = getUseMutationIdleMock(
+      mockUseCreateEntity,
+      createdEntity1,
+    )
     mockUseCreateEntity.mockReturnValue(useCreateEntityReturn)
 
-    const useUpdateEntityReturn = getUseMutationIdleMock<FileEntity>()
+    const useUpdateEntityReturn = getUseMutationIdleMock(mockUseUpdateEntity)
     mockUseUpdateEntity.mockReturnValue(useUpdateEntityReturn)
 
     const { result: hook } = renderHook()

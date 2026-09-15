@@ -431,11 +431,11 @@ export function getUseMutationMock<
   }
 
   // Stable mock functions
-  const mockMutate = vi.fn()
-  const mockMutateAsync = vi.fn()
+  const mockMutate = vi.fn<(vars: TVariables) => void>()
+  const mockMutateAsync = vi.fn<(vars: TVariables) => Promise<TData>>()
   const mockReset = vi.fn()
-  const variables = (mockMutate.mock.lastCall?.[0] ??
-    mockMutateAsync.mock.lastCall?.[0]) as TVariables | undefined
+  const variables =
+    mockMutate.mock.lastCall?.[0] ?? mockMutateAsync.mock.lastCall?.[0]
 
   function mutate(vars: TVariables): void {
     setVars(vars)
@@ -444,7 +444,7 @@ export function getUseMutationMock<
 
   function mutateAsync(vars: TVariables): Promise<TData> {
     setVars(vars)
-    return mockMutateAsync(vars) as Promise<TData>
+    return mockMutateAsync(vars)
   }
 
   const setSuccess = (data: TData) => {
@@ -622,17 +622,41 @@ export function getUseMutationMock<
 }
 
 /**
- * @deprecated Use {@link getUseMutationMock} instead, which provides utilities to dynamically change the state of the mock hook.
+ * A mocked `useMutation`-family hook (e.g. `vi.spyOn(Module, 'useXyz')` or `vi.mocked(useXyz)`) whose
+ * `mockReturnValue` accepts a mutation result of type `T`. Passed to {@link getUseMutationIdleMock} and
+ * {@link getUseMutationPendingMock} purely so TData/TError/TVariables can be inferred from the real hook
+ * being mocked, instead of being retyped by hand at every call site.
  */
-export function getUseMutationIdleMock<
-  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-  TData = any,
-  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-  TError = any,
-  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-  TVariables = any,
->(data?: TData) {
-  return {
+// oxlint-disable-next-line @typescript-eslint/no-explicit-any -- bound accepting every UseMutationResult instantiation
+type AnyUseMutationResult = UseMutationResult<any, any, any, any>
+
+type MutationMockTarget<T extends AnyUseMutationResult> = {
+  mockReturnValue: (value: T) => unknown
+}
+
+type MutationDataOf<T extends AnyUseMutationResult> =
+  T extends UseMutationResult<infer TData, infer _E, infer _V, infer _C>
+    ? TData
+    : never
+
+type MutationVariablesOf<T extends AnyUseMutationResult> =
+  T extends UseMutationResult<infer _D, infer _E, infer TVariables, infer _C>
+    ? TVariables
+    : never
+
+/**
+ * Returns a static mock of `mockedHook`'s result in the "idle" state (i.e. `mutate`/`mutateAsync` have not
+ * yet been called). `mockedHook` is never invoked -- it exists only so TData/TError/TVariables are inferred
+ * from the real hook signature, keeping this mock in sync with it automatically.
+ *
+ * For assertions on how the hook's state changes over time, use {@link getUseMutationMock} instead.
+ */
+export function getUseMutationIdleMock<T extends AnyUseMutationResult>(
+  mockedHook: MutationMockTarget<T>,
+  data?: MutationDataOf<T>,
+): T {
+  void mockedHook
+  const idleResult = {
     context: undefined,
     data: undefined,
     error: null,
@@ -649,21 +673,27 @@ export function getUseMutationIdleMock<
     failureReason: null,
     isPending: false,
     submittedAt: 0,
-  } satisfies UseMutationResult<TData, TError, TVariables>
+  }
+  // `mutate`/`mutateAsync`/`reset` are untyped spies that accept and return anything, so they satisfy
+  // whichever concrete UseMutateFunction/UseMutateAsyncFunction shape `T` requires at runtime; the compiler
+  // cannot verify that against an abstract `T`, hence the single cast here.
+  return idleResult as unknown as T
 }
 
 /**
- * @deprecated Use {@link getUseMutationMock} instead, which provides utilities to dynamically change the state of the mock hook.
+ * Returns a static mock of `mockedHook`'s result in the "pending" state (i.e. `mutate`/`mutateAsync` has
+ * been called with `variables` and has not yet resolved). See {@link getUseMutationIdleMock} for how `T` is
+ * inferred.
+ *
+ * For assertions on how the hook's state changes over time, use {@link getUseMutationMock} instead.
  */
-export function getUseMutationPendingMock<
-  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-  TData = any,
-  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-  TError = any,
-  // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-  TVariables = any,
->(data?: TData, variables?: TVariables) {
-  return {
+export function getUseMutationPendingMock<T extends AnyUseMutationResult>(
+  mockedHook: MutationMockTarget<T>,
+  data?: MutationDataOf<T>,
+  variables?: MutationVariablesOf<T>,
+): T {
+  void mockedHook
+  const pendingResult = {
     context: undefined,
     data: undefined,
     error: null,
@@ -676,11 +706,13 @@ export function getUseMutationPendingMock<
     mutateAsync: vi.fn().mockResolvedValue(data),
     reset: vi.fn(),
     status: 'pending',
-    variables: variables!,
+    variables,
     failureReason: null,
     isPending: true,
     submittedAt: 0,
-  } satisfies UseMutationResult<TData, TError, TVariables>
+  }
+  // See getUseMutationIdleMock for why this cast is necessary and safe.
+  return pendingResult as unknown as T
 }
 
 /**

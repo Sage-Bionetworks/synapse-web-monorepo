@@ -64,7 +64,11 @@ export function usePrepareFileEntityUpload(
   const { synapseClient } = useSynapseContext()
   const { mutateAsync: createDirsForFileList } = useCreatePathsAndGetParentId()
 
-  return useMutation({
+  return useMutation<
+    PrepareDirsForUploadReturn,
+    SynapseClientError,
+    PrepareFileEntityUploadArgs
+  >({
     ...options,
     mutationFn: async (args: PrepareFileEntityUploadArgs) => {
       // If `existingEntityId` is defined, the file will be used to update a chosen FileEntity
