@@ -1,0 +1,72 @@
+@use '../../style/abstracts/_cssVariables' as vars;
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  background: var(--synapse-background-color-gray-light);
+  border: 1px solid var(--synapse-border-color-gray);
+  border-radius: 4px;
+}
+
+.summaryBar {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  padding: 8px 12px;
+  background: white;
+  border: 1px solid var(--synapse-border-color-gray);
+  border-radius: 4px;
+}
+
+.summaryHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.summaryLabel {
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: var(--synapse-gray-regular);
+}
+
+.summaryContent {
+  font-size: 14px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.summaryModeToggle {
+  flex-shrink: 0;
+
+  :global(.MuiToggleButton-root) {
+    text-transform: none;
+    padding: 2px 12px;
+    font-size: 12px;
+  }
+}
+
+.sqlPlaceholder {
+  color: var(--synapse-gray-deemphasized);
+  font-style: italic;
+}
+
+.sqlText {
+  display: block;
+  font-family: var(--synapse-font-family-mono, monospace);
+  font-size: 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--synapse-gray-1000);
+}
+
+.sqlError {
+  color: var(--synapse-error);
+  font-size: 13px;
+}

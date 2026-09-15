@@ -16,6 +16,7 @@ import {
   isFilterGroup,
 } from '../../utils/types/IsType'
 import { isQBGroup, QBCondition, QBGroup, QBNode } from './QueryBuilderTypes'
+import { newQBNodeId } from './queryBuilderId'
 
 const COLUMN_SINGLE_VALUE_QUERY_FILTER =
   'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter' as const
@@ -297,7 +298,7 @@ export function apiFilterToQBNode(filter: QueryFilter): QBNode | null {
       .filter((n): n is QBNode => n !== null)
     return {
       kind: 'group',
-      id: newId(),
+      id: newQBNodeId(),
       combinator: filter.operator ?? 'AND',
       not: filter.not ?? false,
       children,
@@ -309,7 +310,7 @@ export function apiFilterToQBNode(filter: QueryFilter): QBNode | null {
   if (isColumnMultiValueFunctionQueryFilter(filter)) {
     return {
       kind: 'condition',
-      id: newId(),
+      id: newQBNodeId(),
       columnName: filter.columnName,
       columnType: null,
       op: 'is_any_of',
@@ -329,7 +330,7 @@ function singleValueToCondition(
 ): QBCondition {
   const base = {
     kind: 'condition' as const,
-    id: newId(),
+    id: newQBNodeId(),
     columnName: filter.columnName,
     columnType: null,
     values: [] as string[],
@@ -394,7 +395,7 @@ export function selectedFacetsToQBGroup(
 ): QBGroup {
   return {
     kind: 'group',
-    id: newId(),
+    id: newQBNodeId(),
     combinator: 'AND',
     not: false,
     children: selectedFacets
@@ -408,7 +409,7 @@ function facetToQBCondition(facet: FacetColumnRequest): QBCondition | null {
     if (!facet.facetValues || facet.facetValues.length === 0) return null
     return {
       kind: 'condition',
-      id: newId(),
+      id: newQBNodeId(),
       columnName: facet.columnName,
       columnType: null,
       op: 'is_any_of',
@@ -424,7 +425,7 @@ function facetToQBCondition(facet: FacetColumnRequest): QBCondition | null {
     if (!hasMin && !hasMax) return null
     const base = {
       kind: 'condition' as const,
-      id: newId(),
+      id: newQBNodeId(),
       columnName: facet.columnName,
       columnType: null,
       values: [],
@@ -444,21 +445,4 @@ function facetToQBCondition(facet: FacetColumnRequest): QBCondition | null {
     return { ...base, op: 'lte', rangeMin: null, rangeMax: facet.max! }
   }
   return null
-}
-
-// -----------------------------------------------------------------------------
-// Utilities
-// -----------------------------------------------------------------------------
-
-let idCounter = 0
-function newId(): string {
-  if (
-    typeof crypto !== 'undefined' &&
-    typeof crypto.randomUUID === 'function'
-  ) {
-    return crypto.randomUUID()
-  }
-  // Monotonic counter is sufficient — QB ids are client-only React keys, not secrets.
-  idCounter += 1
-  return `qb-${idCounter}`
 }
