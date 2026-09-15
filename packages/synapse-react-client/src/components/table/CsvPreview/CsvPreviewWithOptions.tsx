@@ -9,12 +9,14 @@ import {
   Typography,
 } from '@mui/material'
 import {
+  ColumnType,
   CsvTableDescriptor,
   UploadToTablePreviewResult,
 } from '@sage-bionetworks/synapse-client'
 import CsvTableDescriptorForm, {
   CsvTableDescriptorFormHandle,
 } from '@/components/table/CsvTableDescriptorForm/CsvTableDescriptorForm'
+import { SchemaPropertiesMap } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import { useRef } from 'react'
 import CsvPreview from '@/components/table/CsvPreview/CsvPreview'
 
@@ -23,6 +25,12 @@ export type CsvPreviewWithOptionsProps = {
   fileHandleId: string | null
   /** Current CSV parsing configuration */
   csvTableDescriptor: CsvTableDescriptor
+  /** Known column types that take precedence over the CSV-content-based type suggestion */
+  existingColumnSchema?: SchemaPropertiesMap
+  /** Names of columns that already exist, even if not declared in existingColumnSchema */
+  existingColumnNames?: readonly string[]
+  /** Exact known ColumnTypes for columns that already exist, keyed by column name */
+  existingColumnTypesByName?: Readonly<Record<string, ColumnType>>
   /** Called when the user clicks "Refresh Preview" with the form's current values */
   onCsvTableDescriptorChange: (descriptor: CsvTableDescriptor) => void
   /** Called when the CSV preview data is fetched */
@@ -38,6 +46,9 @@ export type CsvPreviewWithOptionsProps = {
 export default function CsvPreviewWithOptions({
   fileHandleId,
   csvTableDescriptor,
+  existingColumnSchema,
+  existingColumnNames,
+  existingColumnTypesByName,
   onCsvTableDescriptorChange,
   onCsvPreviewDataChange,
   onIsLoadingChange,
@@ -50,6 +61,9 @@ export default function CsvPreviewWithOptions({
         <CsvPreview
           fileHandleId={fileHandleId}
           csvTableDescriptor={csvTableDescriptor}
+          existingColumnSchema={existingColumnSchema}
+          existingColumnNames={existingColumnNames}
+          existingColumnTypesByName={existingColumnTypesByName}
           onCsvPreviewDataChange={onCsvPreviewDataChange}
           onIsLoadingChange={onIsLoadingChange}
         />

@@ -5,6 +5,8 @@ import {
   FileUploadHandle,
 } from '@/components/file/upload/BasicFileHandleUpload'
 import { CsvUploadPreviewStep } from '@/components/table/CsvPreview/useCsvUploadPreview'
+import { SchemaPropertiesMap } from '@/utils/jsonschema/getSchemaPropertyInfo'
+import { ColumnType } from '@sage-bionetworks/synapse-client'
 import CsvPreviewWithOptions from './CsvPreviewWithOptions'
 
 export type CsvUploadPreviewContentProps = {
@@ -12,6 +14,12 @@ export type CsvUploadPreviewContentProps = {
    * Shared upload/preview workflow state and callbacks from useCsvUploadPreview.
    */
   workflow: ReturnType<typeof useCsvUploadPreview>
+  /** Known column types that take precedence over the CSV-content-based type suggestion */
+  existingColumnSchema?: SchemaPropertiesMap
+  /** Names of columns that already exist, even if not declared in existingColumnSchema */
+  existingColumnNames?: readonly string[]
+  /** Exact known ColumnTypes for columns that already exist, keyed by column name */
+  existingColumnTypesByName?: Readonly<Record<string, ColumnType>>
 }
 
 /**
@@ -19,6 +27,9 @@ export type CsvUploadPreviewContentProps = {
  */
 export default function CsvUploadPreviewContent({
   workflow,
+  existingColumnSchema,
+  existingColumnNames,
+  existingColumnTypesByName,
 }: CsvUploadPreviewContentProps) {
   const {
     step,
@@ -49,6 +60,9 @@ export default function CsvUploadPreviewContent({
     <CsvPreviewWithOptions
       fileHandleId={uploadedFileHandleId}
       csvTableDescriptor={csvTableDescriptor}
+      existingColumnSchema={existingColumnSchema}
+      existingColumnNames={existingColumnNames}
+      existingColumnTypesByName={existingColumnTypesByName}
       onCsvTableDescriptorChange={setCsvTableDescriptor}
       onCsvPreviewDataChange={setCsvPreviewData}
       onIsLoadingChange={setIsLoadingPreview}

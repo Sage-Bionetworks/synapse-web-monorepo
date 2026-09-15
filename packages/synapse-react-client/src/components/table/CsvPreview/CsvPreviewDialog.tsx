@@ -4,6 +4,7 @@ import CsvUploadPreviewContent from '@/components/table/CsvPreview/CsvUploadPrev
 import useCsvUploadPreview, {
   CsvUploadPreviewStep,
 } from '@/components/table/CsvPreview/useCsvUploadPreview'
+import { SchemaPropertiesMap } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import Button from '@mui/material/Button'
 import {
   ColumnModel,
@@ -20,6 +21,12 @@ export type CsvPreviewDialogProps = {
   confirmIsPending?: boolean
   /** An optional error message to display */
   errorMessage?: string
+  /** Known column types that take precedence over the CSV-content-based type suggestion, for
+   * columns that already exist in a target schema (e.g. an existing grid or table) */
+  existingColumnSchema?: SchemaPropertiesMap
+  /** Names of columns that already exist, even if not declared in existingColumnSchema (e.g. a
+   * RecordSet's system columns, which are not part of its custom schema) */
+  existingColumnNames?: readonly string[]
   /** Callback when the user confirms the column models
    * @param dataFileHandleId - The file handle ID of the uploaded CSV
    * @param columnModels - The confirmed column models
@@ -32,7 +39,15 @@ export type CsvPreviewDialogProps = {
 }
 
 export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
-  const { open, onClose, onConfirm, confirmIsPending, errorMessage } = props
+  const {
+    open,
+    onClose,
+    onConfirm,
+    confirmIsPending,
+    errorMessage,
+    existingColumnSchema,
+    existingColumnNames,
+  } = props
 
   const csvUploadPreviewWorkflow = useCsvUploadPreview()
 
@@ -65,7 +80,11 @@ export default function CsvPreviewDialog(props: CsvPreviewDialogProps) {
       open={open}
       content={
         <>
-          <CsvUploadPreviewContent workflow={csvUploadPreviewWorkflow} />
+          <CsvUploadPreviewContent
+            workflow={csvUploadPreviewWorkflow}
+            existingColumnSchema={existingColumnSchema}
+            existingColumnNames={existingColumnNames}
+          />
           {errorMessage && <ErrorBanner error={errorMessage} />}
         </>
       }
