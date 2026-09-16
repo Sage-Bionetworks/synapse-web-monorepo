@@ -40,13 +40,19 @@
 }
 
 .dataContainer {
-  display: inline-grid;
+  display: grid;
+  width: 100%;
+  align-self: stretch;
   row-gap: 8px;
   column-gap: 8px;
   flex: 1 1 60%;
   min-width: 0;
   grid-template-rows: repeat(9, fit-content(100%));
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .dataRowTitle {
@@ -76,7 +82,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8.8px 26.4px;
+  padding: 6px 12px;
   min-height: 66.6px;
   gap: 17.6px;
   justify-self: stretch;
@@ -90,16 +96,27 @@
     box-shadow 200ms ease,
     transform 200ms ease;
 
+  &:hover .dataRowTitle {
+    text-decoration: underline;
+  }
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    padding: 8.8px 26.4px;
+  }
+
   &:hover {
     background-color: #fff;
     border-color: #e1e1e1;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
-    transform: scale(1.1);
     z-index: 1;
     .viewCta {
       opacity: 1;
       pointer-events: auto;
     }
+  }
+
+  @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    transform: scale(1.1);
   }
 }
 
