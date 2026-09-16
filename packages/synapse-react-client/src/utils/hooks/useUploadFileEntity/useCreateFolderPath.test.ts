@@ -31,7 +31,9 @@ vi.mocked(useGetEntityLookupQueryOptions).mockReturnValue(args => ({
   queryKey: ['mockLookupEntityQueryKey', args],
 }))
 
-const useCreateEntityMockReturnValue = getUseMutationIdleMock()
+const useCreateEntityMockReturnValue = getUseMutationIdleMock(
+  vi.mocked(useCreateEntity),
+)
 vi.mocked(useCreateEntity).mockReturnValue(useCreateEntityMockReturnValue)
 
 describe('useCreateFolderPath', () => {
@@ -63,7 +65,7 @@ describe('useCreateFolderPath', () => {
 
   test('create a new folder', async () => {
     mockLookupEntity.mockResolvedValue(null)
-    useCreateEntityMockReturnValue.mutateAsync.mockResolvedValue(
+    vi.mocked(useCreateEntityMockReturnValue.mutateAsync).mockResolvedValue(
       mockFolderEntity,
     )
 
@@ -107,7 +109,7 @@ describe('useCreateFolderPath', () => {
       }
       return Promise.resolve(null)
     })
-    useCreateEntityMockReturnValue.mutateAsync.mockResolvedValue({
+    vi.mocked(useCreateEntityMockReturnValue.mutateAsync).mockResolvedValue({
       ...mockFolderEntity,
       name: 'childFolder',
       id: createdFolderId,
@@ -154,7 +156,7 @@ describe('useCreateFolderPath', () => {
 
   test('createEntity fails', async () => {
     mockLookupEntity.mockResolvedValue(null)
-    useCreateEntityMockReturnValue.mutateAsync.mockRejectedValue(
+    vi.mocked(useCreateEntityMockReturnValue.mutateAsync).mockRejectedValue(
       new SynapseClientError(
         403,
         'Forbidden',

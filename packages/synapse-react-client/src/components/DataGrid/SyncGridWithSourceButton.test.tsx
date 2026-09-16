@@ -84,7 +84,7 @@ function captureOnSuccessHandler(): { current: OnSuccessHandler | undefined } {
   }
   mockUseMergeGridWithSource.mockImplementation(options => {
     captured.current = options?.onSuccess as OnSuccessHandler
-    return getUseMutationIdleMock()
+    return getUseMutationIdleMock(mockUseMergeGridWithSource)
   })
   return captured
 }
@@ -93,7 +93,9 @@ describe('SyncGridWithSourceButton', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockUseGetSchemaBinding.mockReturnValue(getUseQuerySuccessMock(null))
-    mockUseMergeGridWithSource.mockReturnValue(getUseMutationIdleMock())
+    mockUseMergeGridWithSource.mockReturnValue(
+      getUseMutationIdleMock(mockUseMergeGridWithSource),
+    )
   })
 
   it('shows a loading skeleton instead of a button while the entity is loading', () => {
@@ -115,7 +117,9 @@ describe('SyncGridWithSourceButton', () => {
 
   it('shows a loading indicator while the mutation is pending', () => {
     mockUseGetEntity.mockReturnValue(getUseQuerySuccessMock(mockTableEntity))
-    mockUseMergeGridWithSource.mockReturnValue(getUseMutationPendingMock())
+    mockUseMergeGridWithSource.mockReturnValue(
+      getUseMutationPendingMock(mockUseMergeGridWithSource),
+    )
 
     renderComponent({ sessionId: 'session-1', sourceEntityId: 'syn222' })
 
@@ -126,7 +130,7 @@ describe('SyncGridWithSourceButton', () => {
     mockUseGetEntity.mockReturnValue(
       getUseQuerySuccessMock(mockEntityViewEntity),
     )
-    const mockMergeGrid = getUseMutationIdleMock()
+    const mockMergeGrid = getUseMutationIdleMock(mockUseMergeGridWithSource)
     mockUseMergeGridWithSource.mockReturnValue(mockMergeGrid)
 
     const gridSession: GridSession = {
@@ -138,7 +142,7 @@ describe('SyncGridWithSourceButton', () => {
     const button = screen.getByRole('button', { name: 'Sync changes' })
     await userEvent.click(button)
 
-    expect(mockMergeGrid.mutate).toHaveBeenCalledWith({
+    expect(vi.mocked(mockMergeGrid.mutate)).toHaveBeenCalledWith({
       gridSessionId: 'session-1',
       sourceEntityId: 'syn222',
       sourceEntityType: EntityType.entityview,
@@ -153,7 +157,7 @@ describe('SyncGridWithSourceButton', () => {
     mockUseGetSchemaBinding.mockReturnValue(
       getUseQuerySuccessMock(mockSchemaBinding),
     )
-    const mockMergeGrid = getUseMutationIdleMock()
+    const mockMergeGrid = getUseMutationIdleMock(mockUseMergeGridWithSource)
     mockUseMergeGridWithSource.mockReturnValue(mockMergeGrid)
 
     const gridSession: GridSession = {
@@ -167,7 +171,7 @@ describe('SyncGridWithSourceButton', () => {
     const button = screen.getByRole('button', { name: 'Import latest changes' })
     await userEvent.click(button)
 
-    expect(mockMergeGrid.mutate).toHaveBeenCalledWith({
+    expect(vi.mocked(mockMergeGrid.mutate)).toHaveBeenCalledWith({
       gridSessionId: 'session-1',
       sourceEntityId: 'syn111',
       sourceEntityType: EntityType.recordset,
@@ -181,7 +185,7 @@ describe('SyncGridWithSourceButton', () => {
     mockUseGetSchemaBinding.mockReturnValue(
       getUseQuerySuccessMock(mockSchemaBinding),
     )
-    const mockMergeGrid = getUseMutationIdleMock()
+    const mockMergeGrid = getUseMutationIdleMock(mockUseMergeGridWithSource)
     mockUseMergeGridWithSource.mockReturnValue(mockMergeGrid)
 
     const gridSession: GridSession = {
@@ -195,7 +199,7 @@ describe('SyncGridWithSourceButton', () => {
     const button = screen.getByRole('button', { name: 'Sync changes' })
     await userEvent.click(button)
 
-    expect(mockMergeGrid.mutate).toHaveBeenCalledWith({
+    expect(vi.mocked(mockMergeGrid.mutate)).toHaveBeenCalledWith({
       gridSessionId: 'session-1',
       sourceEntityId: 'syn111',
       sourceEntityType: EntityType.recordset,

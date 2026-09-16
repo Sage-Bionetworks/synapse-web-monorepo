@@ -72,7 +72,7 @@ const mockEntityWithNoPublicAccess = generateBaseEntity({
 
 const mockUseCreateOrUpdateDOI = vi
   .mocked(useCreateOrUpdateDOI)
-  .mockReturnValue(getUseMutationIdleMock())
+  .mockReturnValue(getUseMutationIdleMock(vi.mocked(useCreateOrUpdateDOI)))
 
 const mockUseGetEntityBundle = vi
   .mocked(useGetEntityBundle)
@@ -154,7 +154,9 @@ describe('CreateOrUpdateDoiModal', () => {
       getUseQuerySuccessMock(mockEntityWithPublicAccess.bundle),
     )
     mockUseGetDOI.mockReturnValue(getUseQuerySuccessMock(null))
-    mockUseCreateOrUpdateDOI.mockReturnValue(getUseMutationIdleMock())
+    mockUseCreateOrUpdateDOI.mockReturnValue(
+      getUseMutationIdleMock(mockUseCreateOrUpdateDOI),
+    )
   })
 
   it('renders the modal with default content', () => {
@@ -181,7 +183,9 @@ describe('CreateOrUpdateDoiModal', () => {
   })
 
   it('disables the Save button when loading', () => {
-    mockUseCreateOrUpdateDOI.mockReturnValue(getUseMutationPendingMock())
+    mockUseCreateOrUpdateDOI.mockReturnValue(
+      getUseMutationPendingMock(mockUseCreateOrUpdateDOI),
+    )
 
     setup()
 
@@ -228,7 +232,7 @@ describe('CreateOrUpdateDoiModal', () => {
   it('blocks submission when data violates the form schema', async () => {
     const mockMutate = vi.fn()
     mockUseCreateOrUpdateDOI.mockReturnValue({
-      ...getUseMutationIdleMock(),
+      ...getUseMutationIdleMock(mockUseCreateOrUpdateDOI),
       mutate: mockMutate,
     })
 
@@ -249,7 +253,7 @@ describe('CreateOrUpdateDoiModal', () => {
   it('calls mutate when the form is submitted', async () => {
     const mockMutate = vi.fn()
     mockUseCreateOrUpdateDOI.mockReturnValue({
-      ...getUseMutationIdleMock(),
+      ...getUseMutationIdleMock(mockUseCreateOrUpdateDOI),
       mutate: mockMutate,
     })
     mockUseGetCurrentUserProfile.mockReturnValue(
@@ -318,7 +322,7 @@ describe('CreateOrUpdateDoiModal', () => {
   it('renders versions in the list, allows selecting a version, and includes it in the request', async () => {
     const mockMutate = vi.fn()
     mockUseCreateOrUpdateDOI.mockReturnValue({
-      ...getUseMutationIdleMock(),
+      ...getUseMutationIdleMock(mockUseCreateOrUpdateDOI),
       mutate: mockMutate,
     })
     mockUseGetVersions.mockReturnValue(

@@ -23,9 +23,9 @@
     }
   },
   "peerDependencies": {
-    "vite": "^8.0.0",
+    "vite": "catalog:",
     "vite-plugin-node-polyfills": "^0.28.0",
-    "vitest": "^4.0.0"
+    "vitest": "catalog:"
   },
   "peerDependenciesMeta": {
     "vitest": {
@@ -38,16 +38,16 @@
   "devDependencies": {
     "@rolldown/plugin-babel": "^0.2.3",
     "@svgr/plugin-jsx": "^8.1.0",
-    "@vitejs/plugin-react": "^6.0.2",
+    "@vitejs/plugin-react": "catalog:",
     "svgo": "^3.3.5",
     "typescript": "6.0.3",
-    "vite": "^8.0.16",
+    "vite": "catalog:",
     "vite-plugin-dts": "^4.5.4",
     "vite-plugin-externalize-deps": "^0.10.0",
     "vite-plugin-html": "^3.2.2",
     "vite-plugin-lib-inject-css": "^2.2.2",
     "vite-plugin-node-polyfills": "^0.28.0",
     "vite-plugin-svgr": "^5.2.0",
-    "vitest": "^4.1.8"
+    "vitest": "catalog:"
   }
 }

@@ -95,11 +95,17 @@ beforeEach(() => {
   } as any)
   mockUseAddMemberToTeam.mockImplementation(options => {
     capturedAddMemberOptions = options
-    return { ...getUseMutationIdleMock(), mutate: mockAcceptMutate }
+    return {
+      ...getUseMutationIdleMock(mockUseAddMemberToTeam),
+      mutate: mockAcceptMutate,
+    }
   })
   mockUseDeleteMembershipInvitation.mockImplementation(options => {
     capturedDeleteInvitationOptions = options
-    return { ...getUseMutationIdleMock(), mutate: mockDeclineMutate }
+    return {
+      ...getUseMutationIdleMock(mockUseDeleteMembershipInvitation),
+      mutate: mockDeclineMutate,
+    }
   })
 })
 
@@ -235,7 +241,10 @@ describe('OpenInvitationsToUserCard', () => {
     it('disables the Decline button while accept is pending', () => {
       mockUseAddMemberToTeam.mockImplementation(options => {
         capturedAddMemberOptions = options
-        return { ...getUseMutationPendingMock(), mutate: mockAcceptMutate }
+        return {
+          ...getUseMutationPendingMock(mockUseAddMemberToTeam),
+          mutate: mockAcceptMutate,
+        }
       })
       mockUseGetAllOpenMembershipInvitations.mockReturnValue({
         data: [MOCK_INVITATION_WITH_MESSAGE],
@@ -301,7 +310,10 @@ describe('OpenInvitationsToUserCard', () => {
     it('disables the Join button while delete is pending', () => {
       mockUseDeleteMembershipInvitation.mockImplementation(options => {
         capturedDeleteInvitationOptions = options
-        return { ...getUseMutationPendingMock(), mutate: mockDeclineMutate }
+        return {
+          ...getUseMutationPendingMock(mockUseDeleteMembershipInvitation),
+          mutate: mockDeclineMutate,
+        }
       })
       mockUseGetAllOpenMembershipInvitations.mockReturnValue({
         data: [MOCK_INVITATION_WITH_MESSAGE],

@@ -62,9 +62,15 @@ describe('oAuthManagement tests', () => {
     setGetOAuthClientInfiniteSuccess = setSuccess
     mockFetchNextPage = _mockFetchNextPage
 
-    mockUseCreateOAuthClient.mockReturnValue(getUseMutationIdleMock())
-    mockUseUpdateOAuthClient.mockReturnValue(getUseMutationIdleMock())
-    mockUseDeleteOAuthClient.mockReturnValue(getUseMutationIdleMock())
+    mockUseCreateOAuthClient.mockReturnValue(
+      getUseMutationIdleMock(mockUseCreateOAuthClient),
+    )
+    mockUseUpdateOAuthClient.mockReturnValue(
+      getUseMutationIdleMock(mockUseUpdateOAuthClient),
+    )
+    mockUseDeleteOAuthClient.mockReturnValue(
+      getUseMutationIdleMock(mockUseDeleteOAuthClient),
+    )
   })
   afterEach(() => {
     server.restoreHandlers()
