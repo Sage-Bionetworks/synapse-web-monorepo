@@ -48,7 +48,7 @@
       "node-fetch": "^2.6.7",
       "glob@>=10.0.0 <11.0.0": "10.5.0",
       "js-cookie": "^3.0.7",
-      "js-yaml": "^4.3.1",
+      "js-yaml": "^4.3.2",
       "@nx/devkit@22.0.3>minimatch": "9.0.9",
       "mocha@10.8.2>serialize-javascript": "7.0.5",
       "@nestjs/core@11.1.17>path-to-regexp": "8.4.0",
@@ -61,9 +61,11 @@
       "undici@>=7.0.0 <7.29.0": "7.29.0",
       "immutable@>=5.0.0 <5.1.8": "5.1.8",
       "linkify-it": "^5.0.2",
-      "fast-uri": "^3.1.5",
+      "fast-uri": "^3.1.6",
       "shell-quote": "^1.9.0",
-      "ip-address": "^10.3.1"
+      "ip-address": "^10.3.1",
+      "nx@22.7.7>smol-toml": "^1.7.2",
+      "query-string@5.1.1>decode-uri-component": "^0.5.0"
     },
     "patchedDependencies": {
       "@rjsf/mui@6.0.0-beta.10": "patches/@rjsf__mui@6.0.0-beta.10.patch"
