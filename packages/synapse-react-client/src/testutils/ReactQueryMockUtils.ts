@@ -6,7 +6,7 @@ import {
   UseMutationResult,
   UseQueryResult,
 } from '@tanstack/react-query'
-import type { Mock } from '@vitest/spy'
+import type { Mock, Procedure } from '@vitest/spy'
 import { Dispatch, SetStateAction, useState } from 'react'
 
 /**
@@ -431,11 +431,11 @@ export function getUseMutationMock<
   }
 
   // Stable mock functions
-  const mockMutate = vi.fn()
-  const mockMutateAsync = vi.fn()
+  const mockMutate = vi.fn<(vars: TVariables) => void>()
+  const mockMutateAsync = vi.fn<(vars: TVariables) => Promise<TData>>()
   const mockReset = vi.fn()
-  const variables = (mockMutate.mock.lastCall?.[0] ??
-    mockMutateAsync.mock.lastCall?.[0]) as TVariables | undefined
+  const variables =
+    mockMutate.mock.lastCall?.[0] ?? mockMutateAsync.mock.lastCall?.[0]
 
   function mutate(vars: TVariables): void {
     setVars(vars)
@@ -444,7 +444,7 @@ export function getUseMutationMock<
 
   function mutateAsync(vars: TVariables): Promise<TData> {
     setVars(vars)
-    return mockMutateAsync(vars) as Promise<TData>
+    return mockMutateAsync(vars)
   }
 
   const setSuccess = (data: TData) => {
@@ -641,9 +641,9 @@ export function getUseMutationIdleMock<
     isIdle: true,
     isPaused: false,
     isSuccess: false,
-    mutate: vi.fn(),
-    mutateAsync: vi.fn().mockResolvedValue(data),
-    reset: vi.fn(),
+    mutate: vi.fn<Procedure>(),
+    mutateAsync: vi.fn<Procedure>().mockResolvedValue(data),
+    reset: vi.fn<Procedure>(),
     status: 'idle',
     variables: undefined,
     failureReason: null,
@@ -672,9 +672,9 @@ export function getUseMutationPendingMock<
     isIdle: false,
     isPaused: false,
     isSuccess: false,
-    mutate: vi.fn(),
-    mutateAsync: vi.fn().mockResolvedValue(data),
-    reset: vi.fn(),
+    mutate: vi.fn<Procedure>(),
+    mutateAsync: vi.fn<Procedure>().mockResolvedValue(data),
+    reset: vi.fn<Procedure>(),
     status: 'pending',
     variables: variables!,
     failureReason: null,
