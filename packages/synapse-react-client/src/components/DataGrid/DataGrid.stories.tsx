@@ -399,6 +399,61 @@ export const WithValidationStates: Story = {
 }
 
 /**
+ * Columns whose schema format is `date` collect a calendar date with no time of
+ * day. A string column stores the RFC 3339 full-date the user picked; an integer
+ * column stores the equivalent UTC-midnight epoch. Both render the same day
+ * regardless of the browser's timezone.
+ */
+export const WithDateOnlyColumns: Story = {
+  render: () => (
+    <DataGridStoryWrapper
+      initialRowData={[
+        {
+          __reactKey: '1',
+          name: 'Stored as a full-date string',
+          due_date: '2026-12-25',
+          due_date_epoch: Date.UTC(2026, 11, 25),
+          __validationStatus: 'valid',
+        },
+        {
+          __reactKey: '2',
+          name: 'Stored as a UTC-midnight ISO string',
+          due_date: '2027-01-01T00:00:00.000Z',
+          due_date_epoch: Date.UTC(2027, 0, 1),
+          __validationStatus: 'valid',
+        },
+        {
+          __reactKey: '3',
+          name: 'Not a date',
+          due_date: 'next Tuesday',
+          due_date_epoch: 'next Tuesday',
+          __validationStatus: 'invalid',
+        },
+      ]}
+      columnNames={['name', 'due_date', 'due_date_epoch']}
+      columnOrder={[0, 1, 2]}
+      schemaPropertiesInfo={{
+        name: {
+          type: { type: 'string', isArray: false },
+          isRequired: true,
+          enumeratedValues: null,
+        },
+        due_date: {
+          type: { type: 'string', format: 'date', isArray: false },
+          isRequired: false,
+          enumeratedValues: null,
+        },
+        due_date_epoch: {
+          type: { type: 'integer', format: 'date', isArray: false },
+          isRequired: false,
+          enumeratedValues: null,
+        },
+      }}
+    />
+  ),
+}
+
+/**
  * Values that do not match the column's schema type, as written by server-side
  * CSV import. Numeric and date-time cells display the stored value rather than
  * appearing empty, so the user can see what made the row invalid.
