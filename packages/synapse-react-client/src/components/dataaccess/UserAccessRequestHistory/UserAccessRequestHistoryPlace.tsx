@@ -60,7 +60,7 @@ function RequestSignatureRouteRenderer() {
   const navigate = useNavigate()
 
   const { data: summaries, isLoading: isLoadingSummaries } =
-    useListAllUserDataAccessRequests()
+    useListAllUserDataAccessRequests({ isEDuc: true })
   const summary = summaries?.find(s => s.requestId === requestId)
   const accessRequirementId = summary?.accessRequirementId
 

@@ -84,11 +84,11 @@ describe('InFlightEDucSignaturesTable', () => {
   })
 
   it('renders nothing when the fully-loaded, filtered list is empty', () => {
+    // The list request passes `isEDuc: true` server-side, so the hook only ever sees eDUC
+    // records. Client-side we still drop anything past submission (draft / submitted / voided).
     const { container } = renderWithRouter()
     act(() => {
       setListSuccess([
-        // Non-eDUC is ignored.
-        { requestId: '1', isEDuc: false, status: 'sent' },
         // eDUC past submission is ignored.
         { requestId: '2', isEDuc: true, status: 'submitted' },
         // Draft eDUC has not been routed for signature yet.
@@ -128,14 +128,6 @@ describe('InFlightEDucSignaturesTable', () => {
           status: 'completed',
           signaturesAcquired: 5,
           signaturesRequested: 5,
-        },
-        // Non-eDUC row is filtered out.
-        {
-          requestId: '13',
-          accessRequirementId: 'ar-4',
-          accessRequirementName: 'Requirement D',
-          isEDuc: false,
-          status: 'sent',
         },
       ])
     })

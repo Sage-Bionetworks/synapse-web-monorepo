@@ -16,8 +16,6 @@ import {
   DiscussionSearchRequest,
   EDucTemplateListRequest,
   EntityLookupRequest,
-  FormTemplateSearchRequest,
-  GenerateDataAccessSchemaRequestInterface,
   GetRepoV1DoiAssociationRequest,
   GetRepoV1DoiRequest,
   ListCurationTaskRequest,
@@ -209,8 +207,6 @@ const WIKI_PAGE_QUERY_KEY = 'wikiPage'
 const DATA_ACCESS_SUBMISSION_QUERY_KEY = 'dataAccessSubmission'
 const DATA_ACCESS_REQUEST_QUERY_KEY = 'dataAccessRequest'
 const EDUC_TEMPLATE_QUERY_KEY = 'eDucTemplate'
-const FORM_TEMPLATE_QUERY_KEY = 'formTemplate'
-const GENERATE_DATA_ACCESS_SCHEMA_QUERY_KEY = 'generateDataAccessSchema'
 
 /**
  * Returns a react-query Query Key.
@@ -670,37 +666,6 @@ export class KeyFactory {
 
   public getEDucTemplateValidationQueryKey(templateId: string) {
     return this.getKey(EDUC_TEMPLATE_QUERY_KEY, templateId, 'validation')
-  }
-
-  // Returns key that can be used to invalidate all form template queries, e.g. after a create/update
-  public getFormTemplateQueryKey() {
-    return this.getKey(FORM_TEMPLATE_QUERY_KEY)
-  }
-
-  public getFormTemplateByIdQueryKey(templateId: string) {
-    return this.getKey(FORM_TEMPLATE_QUERY_KEY, templateId)
-  }
-
-  public getFormTemplateVersionQueryKey(
-    templateId: string,
-    versionNumber: number,
-  ) {
-    return this.getKey(
-      FORM_TEMPLATE_QUERY_KEY,
-      templateId,
-      'version',
-      versionNumber,
-    )
-  }
-
-  public searchFormTemplatesQueryKey(params?: FormTemplateSearchRequest) {
-    return this.getKey(FORM_TEMPLATE_QUERY_KEY, 'search', params)
-  }
-
-  public generateDataAccessSchemaQueryKey(
-    params?: GenerateDataAccessSchemaRequestInterface,
-  ) {
-    return this.getKey(GENERATE_DATA_ACCESS_SCHEMA_QUERY_KEY, params)
   }
 
   public getValidationSchemaQueryKey(schema$id: string) {
