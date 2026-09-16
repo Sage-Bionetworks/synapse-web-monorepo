@@ -6,7 +6,7 @@ import { DoiObjectType } from '@sage-bionetworks/synapse-client'
 import useGetEntityMetadata from '@/utils/hooks/useGetEntityMetadata'
 import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined'
 
-const PROJECT_INFO_BUTTON_PADDING = '10px 12px'
+const PROJECT_INFO_BUTTON_PADDING = '8px'
 
 export type ProjectInfoProps = {
   projectId: string
@@ -66,6 +66,7 @@ export default function ProjectInfo(props: ProjectInfoProps) {
           borderRadius: '6px',
           fontWeight: 540,
           padding: PROJECT_INFO_BUTTON_PADDING,
+          height: '28px',
         }}
         variant="outlined"
       >
