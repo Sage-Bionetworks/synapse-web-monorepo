@@ -23,7 +23,7 @@
     "typescript": "5.8.3",
     "vite-config": "workspace:*",
     "vite-plugin-node-polyfills": "^0.28.0",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.11"
   },
   "scripts": {
     "start": "vite",
