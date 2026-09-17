@@ -33,3 +33,14 @@ export function hasDifference(
 ): boolean {
   return xorWith(x, y, comparator).length > 0
 }
+
+/** Move the item at `idx` by `direction` (-1 or 1). Returns the same array reference if the move
+ * would go out of bounds; otherwise a new array with the item relocated. */
+export function moveItem<T>(arr: T[], idx: number, direction: -1 | 1): T[] {
+  const newIdx = idx + direction
+  if (newIdx < 0 || newIdx >= arr.length) return arr
+  const next = [...arr]
+  const [item] = next.splice(idx, 1)
+  next.splice(newIdx, 0, item)
+  return next
+}

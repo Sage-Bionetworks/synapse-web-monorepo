@@ -71,8 +71,9 @@ export const TABLE_QUERY_ASYNC_GET = (
   asyncJobToken: string,
 ) => `${ENTITY_ID(entityId)}/table/query/async/get/${asyncJobToken}`
 
+export const ASYNCHRONOUS_JOB = `${REPO}/asynchronous/job`
 export const ASYNCHRONOUS_JOB_TOKEN = (asyncJobToken: string) =>
-  `${REPO}/asynchronous/job/${asyncJobToken}`
+  `${ASYNCHRONOUS_JOB}/${asyncJobToken}`
 
 export const SEARCH_QUERY_ASYNC_START = `${REPO}/search/query/async/start`
 export const SEARCH_QUERY_ASYNC_GET = (asyncJobToken: string) =>

@@ -1,22 +1,25 @@
+/**
+ * Generates the per-step (jsonSchema, uiSchema) bundle used to render a FormTemplate + its
+ * referenced JSON Schema as a multi-step RJSF form.
+ *
+ * This used to be a client-side stand-in for a server-side schema generation service, exercised
+ * only while previewing an unsaved draft. PLFM-9449 (design v34) removed that service entirely --
+ * the client is now permanently responsible for this transform, for both authoring previews and
+ * the real requester/reviewer render paths.
+ */
 import { RJSFSchema, UiSchema } from '@rjsf/utils'
 import {
+  DataAccessRequestType,
   FormTemplate,
-  FormTemplateFieldSubmissionContextEnum,
-  GenerateDataAccessSchemaFromAccessRequirementRequestTypeEnum,
 } from '@sage-bionetworks/synapse-client'
+import {
+  contextAppliesForRequestType,
+  listResolvedSchemaProperties,
+  pointerToPropertyKey,
+} from './submissionContext'
 
 /**
- * `REQUEST` | `RENEWAL`. The generated models declare this enum once per
- * request implementation; the unions are identical, so clients alias one.
- */
-export type DataAccessRequestType =
-  GenerateDataAccessSchemaFromAccessRequirementRequestTypeEnum
-
-/**
- * Client-side counterpart of the generated `GeneratedFormStep`. The generated
- * `JsonSchema` model renames JSON Schema keywords that are reserved words in
- * Java (`enum` -> `_enum`, `default` -> `_default`), which RJSF cannot render,
- * so the rendering path keeps RJSF's own schema types.
+ * Client-side counterpart of the generated `GeneratedFormStep`.
  */
 export type GeneratedFormStepForRjsf = {
   jsonSchema: RJSFSchema
@@ -26,60 +29,19 @@ export type GeneratedFormStepForRjsf = {
 export type GeneratedFormSchemaForRjsf = { steps: GeneratedFormStepForRjsf[] }
 
 /**
- * Resolve a JSON Pointer (RFC 6901) into a JSON Schema, returning the
- * referenced sub-schema. Supports the common single-segment pointers used by
- * FormTemplateField.schemaPath (e.g. "/institution"). Returns undefined if
- * the path cannot be resolved.
- */
-function resolveJsonPointer(
-  schema: RJSFSchema,
-  pointer: string,
-): { propertyName: string; subSchema: RJSFSchema } | undefined {
-  if (!pointer.startsWith('/')) return undefined
-  const segments = pointer
-    .slice(1)
-    .split('/')
-    .map(s => s.replace(/~1/g, '/').replace(/~0/g, '~'))
-
-  // We only support one-level property pointers in this prototype.
-  if (segments.length !== 1) return undefined
-  const propertyName = segments[0]
-  const sub = schema.properties?.[propertyName]
-  if (!sub || typeof sub === 'boolean') return undefined
-  return { propertyName, subSchema: sub as RJSFSchema }
-}
-
-/** Whether a field's submission context applies for the given requestType. */
-function fieldAppliesForContext(
-  context: FormTemplateFieldSubmissionContextEnum | undefined,
-  requestType: DataAccessRequestType,
-): boolean {
-  const resolvedContext =
-    context ?? FormTemplateFieldSubmissionContextEnum.ALWAYS
-  if (resolvedContext === FormTemplateFieldSubmissionContextEnum.ALWAYS)
-    return true
-  if (resolvedContext === FormTemplateFieldSubmissionContextEnum.REQUEST_ONLY)
-    return requestType === 'REQUEST'
-  if (resolvedContext === FormTemplateFieldSubmissionContextEnum.RENEWAL_ONLY)
-    return requestType === 'RENEWAL'
-  return false
-}
-
-/**
- * Generate a per-step (jsonSchema, uiSchema) bundle from a FormTemplate and
- * its referenced JSON Schema body. Mirrors the server-side
- * `GenerateDataAccessSchemaResponse`: each step's `jsonSchema` slices the
- * referenced schema to the properties targeted by that step's surviving
- * fields, with the step's title/description encoded as
- * `jsonSchema.title` / `jsonSchema.description`.
+ * Generate a per-step (jsonSchema, uiSchema) bundle from a FormTemplate and its referenced JSON
+ * Schema body. Each step's `jsonSchema` slices the referenced schema to the properties targeted
+ * by that step's fields, with the step's title/description encoded as `jsonSchema.title` /
+ * `jsonSchema.description`. A field whose property only applies to the other `requestType` (per
+ * the `x-synapse-submissionContext` convention -- see `./submissionContext`) is omitted.
  */
 export function generateDataAccessSchema(
   template: FormTemplate,
   schema: RJSFSchema,
-  requestType: DataAccessRequestType = 'REQUEST',
+  requestType: DataAccessRequestType = DataAccessRequestType.REQUEST,
 ): GeneratedFormSchemaForRjsf {
-  const requiredSet = new Set<string>(
-    Array.isArray(schema.required) ? schema.required : [],
+  const resolvedByKey = new Map(
+    listResolvedSchemaProperties(schema).map(p => [p.propertyKey, p]),
   )
 
   const steps: GeneratedFormStepForRjsf[] = []
@@ -91,21 +53,21 @@ export function generateDataAccessSchema(
     const uiOrder: string[] = []
 
     for (const field of step.fields) {
-      if (!fieldAppliesForContext(field.submissionContext, requestType)) {
+      const propertyKey = pointerToPropertyKey(field.schemaPath)
+      const resolved = propertyKey ? resolvedByKey.get(propertyKey) : undefined
+      if (!resolved) continue
+      if (!contextAppliesForRequestType(resolved.context, requestType)) {
         continue
       }
-      const resolved = resolveJsonPointer(schema, field.schemaPath)
-      if (!resolved) continue
 
-      const { propertyName, subSchema } = resolved
-      properties[propertyName] = { ...subSchema }
-      if (requiredSet.has(propertyName)) {
-        required.push(propertyName)
+      properties[resolved.propertyKey] = { ...resolved.subSchema }
+      if (resolved.isRequired) {
+        required.push(resolved.propertyKey)
       }
       if (field.uiDefinition && Object.keys(field.uiDefinition).length > 0) {
-        uiSchema[propertyName] = { ...(field.uiDefinition as UiSchema) }
+        uiSchema[resolved.propertyKey] = { ...(field.uiDefinition as UiSchema) }
       }
-      uiOrder.push(propertyName)
+      uiOrder.push(resolved.propertyKey)
     }
 
     if (uiOrder.length === 0) continue

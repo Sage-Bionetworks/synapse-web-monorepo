@@ -67,4 +67,49 @@ describe('useCreateJsonSchema', () => {
     expect(getJobSpy).toHaveBeenCalledWith({ jobId: 'job-1' })
     expect(result.current.data).toEqual(response)
   })
+
+  it('surfaces a job failure as a mutation error', async () => {
+    const schema: JsonSchema = {
+      $id: 'org.example-1.0.0',
+      type: 'object',
+      properties: { institution: { type: 'string' } },
+    }
+    const failedStatus: AsynchronousJobStatus = {
+      jobId: 'job-1',
+      jobState: 'FAILED',
+      errorMessage: 'The submitted schema is invalid.',
+    }
+    postJobSpy.mockResolvedValueOnce(failedStatus)
+    getJobSpy.mockResolvedValueOnce(failedStatus)
+
+    const { result } = renderHook(() => useCreateJsonSchema(), {
+      wrapper: createWrapper(),
+    })
+
+    result.current.mutate(schema)
+
+    await waitFor(() => expect(result.current.isError).toBe(true))
+    expect(result.current.error?.message).toBe(
+      'The submitted schema is invalid.',
+    )
+  })
+
+  it('propagates a network exception from starting the job', async () => {
+    const schema: JsonSchema = {
+      $id: 'org.example-1.0.0',
+      type: 'object',
+      properties: { institution: { type: 'string' } },
+    }
+    postJobSpy.mockRejectedValueOnce(new Error('Network error'))
+
+    const { result } = renderHook(() => useCreateJsonSchema(), {
+      wrapper: createWrapper(),
+    })
+
+    result.current.mutate(schema)
+
+    await waitFor(() => expect(result.current.isError).toBe(true))
+    expect(result.current.error?.message).toBe('Network error')
+    expect(getJobSpy).not.toHaveBeenCalled()
+  })
 })

@@ -5,13 +5,18 @@
  * the FormTemplate against that schema version.
  */
 import { useCreateJsonSchema } from '@/synapse-queries/jsonschema/useCreateJsonSchema'
-import { useCreateFormTemplate } from '@/synapse-queries/dataaccess/useFormTemplate'
-import { useUpdateFormTemplate } from '@/synapse-queries/dataaccess/useFormTemplate'
+import {
+  useCreateFormTemplate,
+  useUpdateFormTemplate,
+} from '@/synapse-queries/dataaccess/useFormTemplate'
 import { FormTemplate, JsonSchema } from '@sage-bionetworks/synapse-client'
 import { RJSFSchema } from '@rjsf/utils'
 import isEqual from 'lodash-es/isEqual'
 import { EditableFormTemplateStep, toFormTemplateSteps } from './utils'
-import { validateFormTemplateFields } from './formTemplateValidation'
+import {
+  FormTemplateFieldValidationError,
+  validateFormTemplateFields,
+} from './formTemplateValidation'
 
 export type SaveFormTemplateDraftParams = {
   initialTemplate?: FormTemplate
@@ -23,7 +28,7 @@ export type SaveFormTemplateDraftParams = {
 
 export type SaveFormTemplateDraftResult =
   | { ok: true; template: FormTemplate }
-  | { ok: false; validationErrors: string[] }
+  | { ok: false; validationErrors: FormTemplateFieldValidationError[] }
 
 /**
  * Owns the create-schema, create-template, and update-template mutations, and sequences them
@@ -48,7 +53,7 @@ export function useSaveFormTemplate() {
     const validationErrors = validateFormTemplateFields(
       formTemplateSteps,
       params.jsonSchema,
-    ).map(e => e.message)
+    )
     if (validationErrors.length > 0) {
       return { ok: false, validationErrors }
     }

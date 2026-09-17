@@ -1,13 +1,9 @@
-import {
-  FormTemplateFieldSubmissionContextEnum,
-  FormTemplateStep,
-} from '@sage-bionetworks/synapse-client'
+import { FormTemplateStep } from '@sage-bionetworks/synapse-client'
 import { RJSFSchema } from '@rjsf/utils'
 import {
   isFirstClassFieldKeyCollision,
   isLeafSchemaProperty,
   isUiHintCompatible,
-  resolveSchemaProperty,
   validateFormTemplateFields,
 } from './formTemplateValidation'
 
@@ -15,7 +11,6 @@ function field(schemaPath: string, uiDefinition: unknown = {}) {
   return {
     schemaPath,
     uiDefinition,
-    submissionContext: FormTemplateFieldSubmissionContextEnum.ALWAYS,
     isPublic: false,
   }
 }
@@ -31,25 +26,6 @@ describe('isFirstClassFieldKeyCollision', () => {
 
   it('does not flag an unrelated key', () => {
     expect(isFirstClassFieldKeyCollision('favoriteColor')).toBe(false)
-  })
-})
-
-describe('resolveSchemaProperty', () => {
-  const schema: RJSFSchema = {
-    type: 'object',
-    properties: { name: { type: 'string' } },
-  }
-
-  it('resolves a single-segment pointer to its property', () => {
-    expect(resolveSchemaProperty(schema, '/name')).toEqual({ type: 'string' })
-  })
-
-  it('returns undefined for a pointer that does not resolve', () => {
-    expect(resolveSchemaProperty(schema, '/missing')).toBeUndefined()
-  })
-
-  it('returns undefined for a multi-segment pointer', () => {
-    expect(resolveSchemaProperty(schema, '/a/b')).toBeUndefined()
   })
 })
 
@@ -128,12 +104,67 @@ describe('validateFormTemplateFields', () => {
     expect(errors[0]).toMatchObject({ stepIndex: 1, fieldIndex: 0 })
   })
 
-  it('flags an incompatible ui hint', () => {
+  it('flags an incompatible ui hint with a message naming the field', () => {
     const steps: FormTemplateStep[] = [
       { title: 'Step 1', fields: [field('/a', { 'ui:widget': 'checkbox' })] },
     ]
     const errors = validateFormTemplateFields(steps, jsonSchema)
     expect(errors).toHaveLength(1)
-    expect(errors[0].schemaPath).toBe('/a')
+    expect(errors[0]).toMatchObject({
+      schemaPath: '/a',
+      message: expect.stringContaining('"/a"'),
+    })
+  })
+
+  it('flags a schemaPath that resolves to a nested object rather than a leaf', () => {
+    const nestedSchema: RJSFSchema = {
+      type: 'object',
+      properties: {
+        address: {
+          type: 'object',
+          properties: { street: { type: 'string' } },
+        },
+      },
+    }
+    const steps: FormTemplateStep[] = [
+      { title: 'Step 1', fields: [field('/address')] },
+    ]
+    const errors = validateFormTemplateFields(steps, nestedSchema)
+    expect(errors).toHaveLength(1)
+    expect(errors[0]).toMatchObject({
+      schemaPath: '/address',
+      message: expect.stringContaining('nested object'),
+    })
+  })
+
+  it('flags a required schema property that no field binds to', () => {
+    const schemaWithUnboundRequired: RJSFSchema = {
+      type: 'object',
+      properties: {
+        a: { type: 'string' },
+        b: { type: 'number' },
+      },
+      required: ['a', 'b'],
+    }
+    const steps: FormTemplateStep[] = [
+      { title: 'Step 1', fields: [field('/a')] },
+    ]
+    const errors = validateFormTemplateFields(steps, schemaWithUnboundRequired)
+    expect(errors).toHaveLength(1)
+    expect(errors[0].schemaPath).toBe('/b')
+    expect(errors[0].stepIndex).toBeUndefined()
+    expect(errors[0].fieldIndex).toBeUndefined()
+  })
+
+  it('does not flag a required property that is bound, or one that is not required', () => {
+    const steps: FormTemplateStep[] = [
+      { title: 'Step 1', fields: [field('/a')] },
+    ]
+    expect(
+      validateFormTemplateFields(steps, {
+        ...jsonSchema,
+        required: ['a'],
+      }),
+    ).toEqual([])
   })
 })

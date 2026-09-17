@@ -20,10 +20,11 @@ import {
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import {
   AgentChatRequest,
+  AgentChatRequestConcreteTypeEnum,
   AgentChatResponse,
 } from '@sage-bionetworks/synapse-client'
 import { http, HttpResponse } from 'msw'
-import { generateAsyncJobHandlers } from './asyncJobHandlers'
+import { dispatchEntry, generateAsyncJobHandlers } from './asyncJobHandlers'
 
 function buildMockChatResponse(request: AgentChatRequest): AgentChatResponse {
   if (!request.attachments || request.attachments.length === 0) {
@@ -69,11 +70,18 @@ export const getChatbotHandlers = (
     },
   ),
   //Async job to send chat message to the agent
-  ...generateAsyncJobHandlers<AgentChatRequest, AgentChatResponse>(
-    START_CHAT_ASYNC,
-    tokenParam => GET_CHAT_ASYNC(tokenParam),
-    buildMockChatResponse,
-    backendOrigin,
+  ...generateAsyncJobHandlers(
+    dispatchEntry(
+      AgentChatRequestConcreteTypeEnum.org_sagebionetworks_repo_model_agent_AgentChatRequest,
+      buildMockChatResponse,
+    ),
+    {
+      asyncTypeServicePaths: {
+        requestPath: START_CHAT_ASYNC,
+        responsePath: tokenParam => GET_CHAT_ASYNC(tokenParam),
+      },
+      backendOrigin,
+    },
   ),
 
   //trace events
