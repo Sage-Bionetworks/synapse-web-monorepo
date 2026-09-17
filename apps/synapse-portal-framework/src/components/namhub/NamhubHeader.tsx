@@ -44,6 +44,7 @@ function NamhubHomePageHeader() {
             itemsToShow={3}
             allowCategories={[]}
             viewAllNewsButtonText="View All Events"
+            hideDate
           />
         </SectionLayout>
       </div>
