@@ -1,4 +1,10 @@
-import { Button, Typography, Stack } from '@mui/material'
+import {
+  Button,
+  Typography,
+  Stack,
+  useTheme,
+  useMediaQuery,
+} from '@mui/material'
 import { useEffect, useMemo, useState } from 'react'
 import styles from './DataExplorer.module.scss'
 import { useSmartLink } from '../SmartLink/useSmartLink'
@@ -61,6 +67,8 @@ export default function DataExplorer({
 }: DataExplorerProps) {
   const hasTextSection = title || subtitle || buttonText
   const smartLinkProps = useSmartLink(buttonLink)
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
   const entityId = parseEntityIdFromSqlStatement(sql)
   const facetEntityId = parseEntityIdFromSqlStatement(facetSql ?? '')
@@ -246,7 +254,7 @@ export default function DataExplorer({
                     )}
                   </div>
                 </div>
-                {rowUrl && (
+                {rowUrl && !isMobile && (
                   <div className={styles.viewCta}>
                     <span className={styles.viewCtaText}>View</span>
                     <ArrowForwardIcon className={styles.viewCtaIcon} />
