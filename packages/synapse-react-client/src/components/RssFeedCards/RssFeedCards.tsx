@@ -22,6 +22,7 @@ export type RssFeedCardsProps = {
   mailChimpListName?: string
   mailChimpUrl?: string
   viewAllNewsButtonText?: string
+  hideDate?: boolean
 }
 
 function buildRssFeedUrl(url: string, filter?: RssFilter) {
@@ -54,6 +55,7 @@ export function RssFeedCards(props: RssFeedCardsProps) {
     mailChimpListName,
     mailChimpUrl,
     viewAllNewsButtonText,
+    hideDate,
   } = props
 
   const { allItemsUrl, feedUrl } = buildRssFeedUrl(url, filter)
@@ -147,9 +149,11 @@ export function RssFeedCards(props: RssFeedCardsProps) {
                         })}
                       </div>
                     )}
-                    <p className="FeedItemDate">
-                      {dayjs(item.isoDate).format('MMMM YYYY')}
-                    </p>
+                    {!hideDate && (
+                      <p className="FeedItemDate">
+                        {dayjs(item.isoDate).format('MMMM YYYY')}
+                      </p>
+                    )}
                     <p className="FeedItemTitle">{item.title}</p>
                     <div className="FeedItemDescription">
                       {item.contentSnippet?.replace(/\[...\]|\[…\]/gm, '…')}
