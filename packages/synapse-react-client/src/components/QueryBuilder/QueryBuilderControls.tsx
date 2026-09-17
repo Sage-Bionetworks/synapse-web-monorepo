@@ -1,8 +1,7 @@
 import { Button, ToggleButton, ToggleButtonGroup } from '@mui/material'
-import { useCallback, useContext, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useQueryContext } from '../QueryContext'
-import { QueryVisualizationContext } from '../QueryVisualizationWrapper/QueryVisualizationContext'
-import { unCamelCase } from '../../utils/functions/unCamelCase'
+import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { FilterGroupNode } from './FilterGroupNode'
 import { qbNodeToApiFilter } from './queryBuilderTranslation'
 import { qbTreeToReadable } from './qbTreeToReadable'
@@ -60,16 +59,7 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
     }))
   }, [activeTree, executeQueryRequest])
 
-  // Use the outer QueryVisualizationContext's display-name resolver when
-  // available; fall back to the shared unCamelCase util when the QB is
-  // rendered outside a QueryVisualizationWrapper (e.g. standalone stories).
-  const queryVizContext = useContext(QueryVisualizationContext)
-  const getColumnDisplayName = useMemo(
-    () =>
-      queryVizContext?.getColumnDisplayName ??
-      ((columnName: string) => unCamelCase(columnName)),
-    [queryVizContext],
-  )
+  const { getColumnDisplayName } = useQueryVisualizationContext()
 
   const [summaryMode, setSummaryMode] = useState<SummaryMode>('plain-english')
 
