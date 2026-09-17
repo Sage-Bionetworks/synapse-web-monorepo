@@ -143,10 +143,9 @@ function buildColumns(actions: ActionCallbacks) {
 /**
  * Lists the requester's active eDUC signatures (routed / signed but not yet submitted).
  *
- * The underlying query walks every page of `POST /dataAccessRequest/list` inside its `queryFn`
- * because filtering is done client-side pending PLFM-9907 (which will add an `isEDuc` server-side
- * filter). Once server-side filtering ships, callers can switch back to a per-page infinite query
- * with a "Show More" button.
+ * The underlying query walks every page of `POST /dataAccessRequest/list` inside its `queryFn`,
+ * pushing the `isEDuc: true` filter to the server so the walk skips non-eDUC requests. Status is
+ * still filtered client-side because the list endpoint has no server-side status filter.
  *
  * Renders nothing when the fully-loaded, filtered list is empty.
  */
@@ -155,7 +154,7 @@ export function InFlightEDucSignaturesTable() {
     data: summaries,
     isLoading,
     error,
-  } = useListAllUserDataAccessRequests()
+  } = useListAllUserDataAccessRequests({ isEDuc: true })
 
   const [modifyingArId, setModifyingArId] = useState<string | undefined>()
   const [cancellingSummary, setCancellingSummary] = useState<
@@ -216,7 +215,6 @@ export function InFlightEDucSignaturesTable() {
     () =>
       (summaries ?? []).filter(
         summary =>
-          summary.isEDuc === true &&
           summary.status !== undefined &&
           (IN_FLIGHT_STATUSES as readonly string[]).includes(summary.status),
       ),

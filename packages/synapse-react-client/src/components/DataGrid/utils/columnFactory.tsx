@@ -162,6 +162,10 @@ function createBaseColumn(config: ColumnConfig, columnImpl: any) {
   }
 }
 
+// JSON Schema formats handled by the date column: `date-time` collects a time of
+// day alongside the date, `date` a calendar date on its own.
+const DATE_COLUMN_FORMATS: ReadonlySet<string> = new Set(['date', 'date-time'])
+
 const COLUMN_FACTORIES = {
   multipleEnum: (config: ColumnConfig) => {
     return createBaseColumn(
@@ -207,9 +211,10 @@ const COLUMN_FACTORIES = {
     )
   },
 
-  'date-time': (config: ColumnConfig) => {
+  dateOrDateTime: (config: ColumnConfig) => {
     const columnImpl = dateTimeColumn({
       colType: config.typeInfo?.type || null,
+      format: config.typeInfo?.format,
     })
 
     // Date-time needs special width calculation
@@ -261,8 +266,8 @@ function getColumnType(
       : 'text'
   }
 
-  if (typeInfo.format === 'date-time') {
-    return 'date-time'
+  if (typeInfo.format && DATE_COLUMN_FORMATS.has(typeInfo.format)) {
+    return 'dateOrDateTime'
   }
 
   // Handle arrays - check if it's an array of enums

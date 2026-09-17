@@ -17,6 +17,7 @@ import { getEntityHandlers } from './handlers/entityHandlers'
 import { getEvaluationHandlers } from './handlers/evaluationHandlers'
 import { getFeatureFlagsOverride } from './handlers/featureFlagHandlers'
 import { getFileHandlers } from './handlers/fileHandlers'
+import { getFormTemplateHandlers } from './handlers/formTemplateHandlers'
 import { getGridHandlers } from './handlers/gridHandlers'
 import { getJsonSchemaListingHandlers } from './handlers/jsonSchemaListingHandlers'
 import { getMessageHandlers } from './handlers/messageHandlers'
@@ -74,6 +75,7 @@ export function getHandlersForStorybook(
     eDucTemplate: getEDucTemplateHandlers(backendOrigin),
     researchProject: getResearchProjectHandlers(backendOrigin),
     file: getFileHandlers(backendOrigin),
+    formTemplate: getFormTemplateHandlers(backendOrigin),
     grid: getGridHandlers(backendOrigin),
     jsonSchemaListing: Object.values(
       getJsonSchemaListingHandlers(backendOrigin),
