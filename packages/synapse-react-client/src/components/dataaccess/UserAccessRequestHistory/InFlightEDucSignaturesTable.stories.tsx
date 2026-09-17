@@ -59,16 +59,27 @@ const page2: AccessRequestList = {
 const emptyList: AccessRequestList = { results: [] }
 
 function paginatedListHandler(pages: AccessRequestList[]) {
-  return http.post<never, { nextPageToken?: string }>(
+  return http.post<never, { nextPageToken?: string; isEDuc?: boolean }>(
     `${MOCK_REPO_ORIGIN}${DATA_ACCESS_REQUEST_LIST}`,
     async ({ request }) => {
       const body = await request.json()
+      // Mirror the server-side `isEDuc` filter so stories exercise the real query shape.
+      const filterByEDuc = body?.isEDuc
+      const filtered =
+        filterByEDuc === undefined
+          ? pages
+          : pages.map(page => ({
+              ...page,
+              results: (page.results ?? []).filter(
+                r => r.isEDuc === filterByEDuc,
+              ),
+            }))
       const nextPageToken = body?.nextPageToken
       if (!nextPageToken) {
-        return HttpResponse.json(pages[0], { status: 200 })
+        return HttpResponse.json(filtered[0], { status: 200 })
       }
       const index = Number(nextPageToken.replace(/^page-/, '')) - 1
-      const page = pages[index] ?? { results: [] }
+      const page = filtered[index] ?? { results: [] }
       return HttpResponse.json(page, { status: 200 })
     },
   )
