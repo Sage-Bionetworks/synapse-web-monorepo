@@ -4,7 +4,6 @@ import {
   AsynchronousJobStatus,
   CreateSchemaResponse,
   FormTemplate,
-  FormTemplateFieldSubmissionContextEnum,
 } from '@sage-bionetworks/synapse-client'
 import { renderHook } from '@testing-library/react'
 import { RJSFSchema } from '@rjsf/utils'
@@ -56,7 +55,6 @@ const steps: EditableFormTemplateStep[] = [
       {
         schemaPath: '/a',
         uiDefinition: {},
-        submissionContext: FormTemplateFieldSubmissionContextEnum.ALWAYS,
         isPublic: false,
       },
     ],
@@ -77,7 +75,6 @@ describe('useSaveFormTemplate', () => {
           {
             schemaPath: '/missing',
             uiDefinition: {},
-            submissionContext: FormTemplateFieldSubmissionContextEnum.ALWAYS,
             isPublic: false,
           },
         ],
@@ -87,7 +84,7 @@ describe('useSaveFormTemplate', () => {
       wrapper: createWrapper(),
     })
 
-    const saveResult = await result.current.save({
+    const saveResult = await result.current.mutateAsync({
       name: 'My Template',
       jsonSchema,
       steps: invalidSteps,
@@ -114,7 +111,7 @@ describe('useSaveFormTemplate', () => {
       wrapper: createWrapper(),
     })
 
-    const saveResult = await result.current.save({
+    const saveResult = await result.current.mutateAsync({
       name: 'My Template',
       jsonSchema,
       steps,
@@ -150,7 +147,7 @@ describe('useSaveFormTemplate', () => {
       wrapper: createWrapper(),
     })
 
-    const saveResult = await result.current.save({
+    const saveResult = await result.current.mutateAsync({
       initialTemplate,
       initialJsonSchema: jsonSchema,
       name: 'My Template',
@@ -168,7 +165,7 @@ describe('useSaveFormTemplate', () => {
     })
   })
 
-  it('propagates a 412 conflict from the update mutation', async () => {
+  it('propagates a 412 conflict from the update mutation, forwarding the stale etag', async () => {
     const initialTemplate: FormTemplate = {
       id: 'template-1',
       name: 'My Template',
@@ -187,7 +184,7 @@ describe('useSaveFormTemplate', () => {
     })
 
     await expect(
-      result.current.save({
+      result.current.mutateAsync({
         initialTemplate,
         initialJsonSchema: jsonSchema,
         name: 'My Template',
@@ -195,5 +192,55 @@ describe('useSaveFormTemplate', () => {
         steps,
       }),
     ).rejects.toMatchObject({ status: 412 })
+
+    expect(updateTemplateSpy).toHaveBeenCalledWith({
+      templateId: 'template-1',
+      formTemplate: expect.objectContaining({ etag: 'stale-etag' }),
+    })
+  })
+
+  it('registers a new schema version and updates the template when editing an existing template with a changed schema body', async () => {
+    mockSchemaCreation('org.example-1.0.1')
+    const initialTemplate: FormTemplate = {
+      id: 'template-1',
+      name: 'My Template',
+      schema$id: 'org.example-1.0.0',
+      steps: [],
+      etag: 'etag-1',
+      versionNumber: 1,
+    }
+    const updatedTemplate: FormTemplate = {
+      ...initialTemplate,
+      schema$id: 'org.example-1.0.1',
+      etag: 'etag-2',
+      versionNumber: 2,
+    }
+    updateTemplateSpy.mockResolvedValueOnce(updatedTemplate)
+
+    const changedJsonSchema: RJSFSchema = {
+      ...jsonSchema,
+      properties: { a: { type: 'string' }, b: { type: 'string' } },
+    }
+
+    const { result } = renderHook(() => useSaveFormTemplate(), {
+      wrapper: createWrapper(),
+    })
+
+    const saveResult = await result.current.mutateAsync({
+      initialTemplate,
+      initialJsonSchema: jsonSchema,
+      name: 'My Template',
+      jsonSchema: changedJsonSchema,
+      steps,
+    })
+
+    expect(saveResult).toEqual({ ok: true, template: updatedTemplate })
+    expect(postJobSpy).toHaveBeenCalled()
+    expect(updateTemplateSpy).toHaveBeenCalledWith({
+      templateId: 'template-1',
+      formTemplate: expect.objectContaining({
+        schema$id: 'org.example-1.0.1',
+      }),
+    })
   })
 })

@@ -3,7 +3,6 @@
  */
 import { useSynapseContext } from '@/utils'
 import {
-  CreateSchemaRequestConcreteTypeEnum,
   CreateSchemaResponse,
   JsonSchema,
   waitForAsyncResult,
@@ -12,10 +11,7 @@ import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/Synaps
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 
 /**
- * Register a new JSON Schema version. There is no "update" operation on the schema registry —
- * every call issues a fresh, immutable version and returns its full `$id` in
- * `newVersionInfo.$id`. Runs through the generic asynchronous job service and polls until the
- * job completes.
+ * Register a new JSON Schema version.
  * @see POST /repo/v1/asynchronous/job
  */
 export function useCreateJsonSchema(
@@ -34,7 +30,7 @@ export function useCreateJsonSchema(
           {
             asynchronousRequestBody: {
               concreteType:
-                CreateSchemaRequestConcreteTypeEnum.org_sagebionetworks_repo_model_schema_CreateSchemaRequest,
+                'org.sagebionetworks.repo.model.schema.CreateSchemaRequest',
               schema,
             },
           },

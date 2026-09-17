@@ -5,7 +5,10 @@ import {
   mockProjectValidationSchema,
   mockValidationSchema,
 } from '@/mocks/mockSchema'
-import { generateAsyncJobHandlers } from '@/mocks/msw/handlers/asyncJobHandlers'
+import {
+  dispatchEntry,
+  generateAsyncJobHandlers,
+} from '@/mocks/msw/handlers/asyncJobHandlers'
 import {
   SCHEMA_VALIDATION_GET,
   SCHEMA_VALIDATION_START,
@@ -23,34 +26,32 @@ export function getValidationSchemaHandlers(
   backendOrigin?: string,
   schemas: JSONSchema7[] = validationSchemas,
 ) {
-  return generateAsyncJobHandlers<
+  return generateAsyncJobHandlers(
+    dispatchEntry(
+      'org.sagebionetworks.repo.model.schema.GetValidationSchemaRequest',
+      request => {
+        const requestedId = request.$id
+        const validationSchema = requestedId
+          ? schemas.find(schema => schema.$id?.includes(requestedId))
+          : undefined
+        if (!validationSchema) {
+          throw new Error(
+            `Validation schema with id ${requestedId} not found in mock data.`,
+          )
+        }
+        return {
+          concreteType:
+            'org.sagebionetworks.repo.model.schema.GetValidationSchemaResponse',
+          validationSchema,
+        }
+      },
+    ),
     {
-      concreteType: 'org.sagebionetworks.repo.model.schema.GetValidationSchemaRequest'
-      $id: string
+      asyncTypeServicePaths: {
+        requestPath: SCHEMA_VALIDATION_START,
+        responsePath: tokenParam => SCHEMA_VALIDATION_GET(tokenParam),
+      },
+      backendOrigin,
     },
-    {
-      concreteType: 'org.sagebionetworks.repo.model.schema.GetValidationSchemaResponse'
-      validationSchema: JSONSchema7
-    }
-  >(
-    SCHEMA_VALIDATION_START,
-    tokenParam => SCHEMA_VALIDATION_GET(tokenParam),
-    req => {
-      const requestedId = req.$id
-      const validationSchema = schemas.find(schema =>
-        schema.$id?.includes(requestedId),
-      )
-      if (!validationSchema) {
-        throw new Error(
-          `Validation schema with id ${requestedId} not found in mock data.`,
-        )
-      }
-      return {
-        concreteType:
-          'org.sagebionetworks.repo.model.schema.GetValidationSchemaResponse',
-        validationSchema: validationSchema,
-      }
-    },
-    backendOrigin,
   )
 }

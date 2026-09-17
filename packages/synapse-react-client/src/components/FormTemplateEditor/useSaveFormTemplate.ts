@@ -5,13 +5,20 @@
  * the FormTemplate against that schema version.
  */
 import { useCreateJsonSchema } from '@/synapse-queries/jsonschema/useCreateJsonSchema'
-import { useCreateFormTemplate } from '@/synapse-queries/dataaccess/useFormTemplate'
-import { useUpdateFormTemplate } from '@/synapse-queries/dataaccess/useFormTemplate'
+import {
+  useCreateFormTemplate,
+  useUpdateFormTemplate,
+} from '@/synapse-queries/dataaccess/useFormTemplate'
 import { FormTemplate, JsonSchema } from '@sage-bionetworks/synapse-client'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { RJSFSchema } from '@rjsf/utils'
 import isEqual from 'lodash-es/isEqual'
+import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 import { EditableFormTemplateStep, toFormTemplateSteps } from './utils'
-import { validateFormTemplateFields } from './formTemplateValidation'
+import {
+  FormTemplateFieldValidationError,
+  validateFormTemplateFields,
+} from './formTemplateValidation'
 
 export type SaveFormTemplateDraftParams = {
   initialTemplate?: FormTemplate
@@ -23,64 +30,75 @@ export type SaveFormTemplateDraftParams = {
 
 export type SaveFormTemplateDraftResult =
   | { ok: true; template: FormTemplate }
-  | { ok: false; validationErrors: string[] }
+  | { ok: false; validationErrors: FormTemplateFieldValidationError[] }
 
 /**
  * Owns the create-schema, create-template, and update-template mutations, and sequences them
- * into a single save operation. Network failures (including a 412 conflict from a concurrent
- * edit) are left to reject from `save()` for the caller to catch and present.
+ * into a single save mutation. A validation failure resolves as `{ ok: false, validationErrors }`
+ * rather than rejecting; a network failure (including a 412 conflict from a concurrent edit)
+ * rejects normally, surfaced via the returned mutation's `error`.
  */
-export function useSaveFormTemplate() {
+export function useSaveFormTemplate(
+  options?: Omit<
+    UseMutationOptions<
+      SaveFormTemplateDraftResult,
+      SynapseClientError,
+      SaveFormTemplateDraftParams
+    >,
+    'mutationFn'
+  >,
+) {
   const createSchema = useCreateJsonSchema()
   const createTemplate = useCreateFormTemplate()
   const updateTemplate = useUpdateFormTemplate()
 
-  const isSaving =
-    createSchema.isPending ||
-    createTemplate.isPending ||
-    updateTemplate.isPending
+  return useMutation<
+    SaveFormTemplateDraftResult,
+    SynapseClientError,
+    SaveFormTemplateDraftParams
+  >({
+    ...options,
+    mutationFn: async params => {
+      const formTemplateSteps = toFormTemplateSteps(params.steps)
 
-  async function save(
-    params: SaveFormTemplateDraftParams,
-  ): Promise<SaveFormTemplateDraftResult> {
-    const formTemplateSteps = toFormTemplateSteps(params.steps)
-
-    const validationErrors = validateFormTemplateFields(
-      formTemplateSteps,
-      params.jsonSchema,
-    ).map(e => e.message)
-    if (validationErrors.length > 0) {
-      return { ok: false, validationErrors }
-    }
-
-    // The schema registry has no update operation — every save that changed the schema body
-    // registers a fresh, immutable version. Re-registering an unchanged body would still create
-    // an unnecessary version, so skip it when the draft's schema matches what was last resolved.
-    let schema$id = params.initialTemplate?.schema$id ?? ''
-    const schemaChanged = !isEqual(params.jsonSchema, params.initialJsonSchema)
-    if (schemaChanged || !schema$id) {
-      const response = await createSchema.mutateAsync(
-        params.jsonSchema as JsonSchema,
+      const validationErrors = validateFormTemplateFields(
+        formTemplateSteps,
+        params.jsonSchema,
       )
-      schema$id = response.newVersionInfo!.$id!
-    }
+      if (validationErrors.length > 0) {
+        return { ok: false, validationErrors }
+      }
 
-    const formTemplate: FormTemplate = {
-      ...params.initialTemplate,
-      name: params.name,
-      schema$id,
-      steps: formTemplateSteps,
-    }
+      // The schema registry has no update operation — every save that changed the schema body
+      // registers a fresh, immutable version. Re-registering an unchanged body would still create
+      // an unnecessary version, so skip it when the draft's schema matches what was last resolved.
+      let schema$id = params.initialTemplate?.schema$id ?? ''
+      const schemaChanged = !isEqual(
+        params.jsonSchema,
+        params.initialJsonSchema,
+      )
+      if (schemaChanged || !schema$id) {
+        const response = await createSchema.mutateAsync(
+          params.jsonSchema as JsonSchema,
+        )
+        schema$id = response.newVersionInfo!.$id!
+      }
 
-    const template = params.initialTemplate?.id
-      ? await updateTemplate.mutateAsync({
-          templateId: params.initialTemplate.id,
-          formTemplate,
-        })
-      : await createTemplate.mutateAsync(formTemplate)
+      const formTemplate: FormTemplate = {
+        ...params.initialTemplate,
+        name: params.name,
+        schema$id,
+        steps: formTemplateSteps,
+      }
 
-    return { ok: true, template }
-  }
+      const template = params.initialTemplate?.id
+        ? await updateTemplate.mutateAsync({
+            templateId: params.initialTemplate.id,
+            formTemplate,
+          })
+        : await createTemplate.mutateAsync(formTemplate)
 
-  return { save, isSaving }
+      return { ok: true, template }
+    },
+  })
 }

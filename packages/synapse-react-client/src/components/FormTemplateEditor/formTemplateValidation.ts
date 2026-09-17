@@ -3,49 +3,12 @@ import {
   FormTemplateField,
   FormTemplateStep,
 } from '@sage-bionetworks/synapse-client'
-
-/**
- * Reserved for the first-class fields that always render statically outside any authored
- * template (institution, PI, signing official, accessor changes, and the DUC/eDUC file). A
- * template property sharing one of these keys collides with a field the requester will already
- * see, so authoring one produces a warning — never a hard block, since the collision is only
- * cosmetic (both would render) rather than a data-integrity problem the server needs to reject.
- */
-export const FIRST_CLASS_RESERVED_PROPERTY_KEYS = [
-  'institution',
-  'principalInvestigator',
-  'signingOfficial',
-  'accessorChanges',
-  'ducFileHandleId',
-] as const
-
-/** Whether an authored top-level property key collides with a first-class field's reserved key. */
-export function isFirstClassFieldKeyCollision(propertyKey: string): boolean {
-  return (FIRST_CLASS_RESERVED_PROPERTY_KEYS as readonly string[]).includes(
-    propertyKey,
-  )
-}
-
-/**
- * Resolve a single-segment JSON Pointer (e.g. `/institution`) against the schema's top-level
- * `properties`, mirroring how the server resolves a `FormTemplateField.schemaPath`. Returns
- * `undefined` when the pointer is malformed, multi-segment, or does not resolve — all of which
- * the server rejects as "unresolvable schemaPath".
- */
-export function resolveSchemaProperty(
-  jsonSchema: RJSFSchema,
-  schemaPath: string,
-): RJSFSchema | undefined {
-  if (!schemaPath.startsWith('/')) return undefined
-  const segments = schemaPath
-    .slice(1)
-    .split('/')
-    .map(s => s.replace(/~1/g, '/').replace(/~0/g, '~'))
-  if (segments.length !== 1 || !segments[0]) return undefined
-  const sub = jsonSchema.properties?.[segments[0]]
-  if (!sub || typeof sub === 'boolean') return undefined
-  return sub as RJSFSchema
-}
+import {
+  listResolvedSchemaProperties,
+  pointerToPropertyKey,
+  propertyKeyToPointer,
+  resolveSchemaPropertyAtPointer,
+} from '@/utils/jsonschema/submissionContext'
 
 /**
  * A property is a "leaf" — the only kind a `FormTemplateField.schemaPath` may address — when it
@@ -89,8 +52,10 @@ export function isUiHintCompatible(
 }
 
 export type FormTemplateFieldValidationError = {
-  stepIndex: number
-  fieldIndex: number
+  /** Index of the step/field slot this error is anchored to. Omitted for an error against a
+   * schema-required property that isn't bound to any field -- there is no slot to anchor it to. */
+  stepIndex?: number
+  fieldIndex?: number
   schemaPath: string
   message: string
 }
@@ -99,7 +64,9 @@ export type FormTemplateFieldValidationError = {
  * Replicates the three rules the server enforces on `FormTemplateField` at create/update time
  * (see the `FormTemplateField` doc comment), so the editor can block save and point the error at
  * the offending field before ever reaching the server: the server only returns a flat,
- * concatenated message, not per-field errors.
+ * concatenated message, not per-field errors. Also flags a schema property the server will
+ * require (per its resolved submission context) that no field in the template binds to -- the
+ * server accepts this silently, but the requester would then be unable to satisfy it.
  */
 export function validateFormTemplateFields(
   steps: FormTemplateStep[],
@@ -107,6 +74,7 @@ export function validateFormTemplateFields(
 ): FormTemplateFieldValidationError[] {
   const errors: FormTemplateFieldValidationError[] = []
   const seenSchemaPaths = new Set<string>()
+  const boundPropertyKeys = new Set<string>()
 
   steps.forEach((step, stepIndex) => {
     step.fields.forEach((field: FormTemplateField, fieldIndex: number) => {
@@ -123,7 +91,13 @@ export function validateFormTemplateFields(
       }
       seenSchemaPaths.add(schemaPath)
 
-      const subSchema = resolveSchemaProperty(jsonSchema, schemaPath)
+      const propertyKey = pointerToPropertyKey(schemaPath)
+      if (propertyKey) boundPropertyKeys.add(propertyKey)
+
+      const subSchema = resolveSchemaPropertyAtPointer(
+        jsonSchema,
+        schemaPath,
+      )?.subSchema
       if (!subSchema) {
         errors.push({
           stepIndex,
@@ -154,6 +128,15 @@ export function validateFormTemplateFields(
       }
     })
   })
+
+  for (const property of listResolvedSchemaProperties(jsonSchema)) {
+    if (property.isRequired && !boundPropertyKeys.has(property.propertyKey)) {
+      errors.push({
+        schemaPath: propertyKeyToPointer(property.propertyKey),
+        message: `"${property.propertyKey}" is required by the schema but is not bound to any field in this template.`,
+      })
+    }
+  }
 
   return errors
 }
