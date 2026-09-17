@@ -163,6 +163,10 @@ const SynapseComponents = {
   ),
   IDUReport: lazy(() => import('./components/IDUReport/IDUReport')),
   IconSvg: lazy(() => import('./components/IconSvg/IconSvg')),
+  ImposeRestrictionDialog: lazy(
+    () =>
+      import('./components/AccessRequirement/ImposeRestrictionDialog/ImposeRestrictionDialog'),
+  ),
   MetadataTasksPage: lazy(
     () =>
       import('./features/entity/metadata-task/components/MetadataTasksPageRouter'),
