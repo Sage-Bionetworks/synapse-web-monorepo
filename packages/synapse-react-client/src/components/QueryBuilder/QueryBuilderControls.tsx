@@ -5,7 +5,7 @@ import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { FilterGroupNode } from './FilterGroupNode'
 import { qbNodeToApiFilter } from './queryBuilderTranslation'
 import { qbTreeToReadable } from './qbTreeToReadable'
-import { QueryBuilderInternalContext } from './QueryBuilderInternalContext'
+import { QueryBuilderInternalContextProvider } from './QueryBuilderInternalContext'
 import styles from './QueryBuilderControls.module.scss'
 import {
   addChildGroup,
@@ -15,7 +15,7 @@ import {
   removeNode,
   updateCondition,
   updateGroup,
-} from './QueryBuilderStore'
+} from './queryBuilderOperations'
 import { QBCondition, QBGroup } from './QueryBuilderTypes'
 import { useQBCombinedSql } from './useQBCombinedSql'
 import { useQBFacetSourceMetadata } from './useQBFacetSourceMetadata'
@@ -150,7 +150,7 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
   } = useQBCombinedSql(summaryMode === 'sql' ? activeTree : null)
 
   return (
-    <QueryBuilderInternalContext.Provider value={contextValue}>
+    <QueryBuilderInternalContextProvider value={contextValue}>
       <div className={styles.root}>
         <div className={styles.summaryBar}>
           <div className={styles.summaryHeader}>
@@ -205,6 +205,6 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
           </Button>
         </div>
       </div>
-    </QueryBuilderInternalContext.Provider>
+    </QueryBuilderInternalContextProvider>
   )
 }

@@ -12,7 +12,7 @@ import {
   removeNode,
   updateCondition,
   updateGroup,
-} from './QueryBuilderStore'
+} from './queryBuilderOperations'
 import { QBCondition, QBConditionOp, QBGroup } from './QueryBuilderTypes'
 
 function makeGroup(patch: Partial<QBGroup> = {}): QBGroup {

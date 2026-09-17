@@ -23,7 +23,7 @@ import {
   QBColumnKind,
 } from './queryBuilderMetadata'
 import styles from './FilterConditionRow.module.scss'
-import { defaultOpForColumnType } from './QueryBuilderStore'
+import { defaultOpForColumnType } from './queryBuilderOperations'
 import { QBCondition, QBConditionOp } from './QueryBuilderTypes'
 
 export type FilterConditionRowProps = {

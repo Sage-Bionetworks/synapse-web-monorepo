@@ -45,7 +45,7 @@ import FacetFilterControls, {
   FacetFilterControlsProps,
 } from '../widgets/query-filter/FacetFilterControls'
 import { QueryBuilderControls } from '../QueryBuilder/QueryBuilderControls'
-import { defaultQBGroup } from '../QueryBuilder/QueryBuilderStore'
+import { defaultQBGroup } from '../QueryBuilder/queryBuilderOperations'
 import { QBGroup } from '../QueryBuilder/QueryBuilderTypes'
 import { QueryWrapperSynapsePlotProps } from './QueryWrapperSynapsePlot'
 import { RowSetView } from './RowSetView'

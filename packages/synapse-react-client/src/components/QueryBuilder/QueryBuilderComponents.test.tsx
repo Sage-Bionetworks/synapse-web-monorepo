@@ -6,10 +6,10 @@ import { vi } from 'vitest'
 import { FilterConditionRow } from './FilterConditionRow'
 import { FilterGroupNode } from './FilterGroupNode'
 import {
-  QueryBuilderInternalContext,
+  QueryBuilderInternalContextProvider,
   QueryBuilderInternalContextType,
 } from './QueryBuilderInternalContext'
-import { defaultQBGroup, newBlankCondition } from './QueryBuilderStore'
+import { defaultQBGroup, newBlankCondition } from './queryBuilderOperations'
 import { QBGroup } from './QueryBuilderTypes'
 
 function makeContext(
@@ -37,9 +37,9 @@ function renderWithContext(
 ) {
   const contextValue = makeContext(overrides)
   const utils = render(
-    <QueryBuilderInternalContext.Provider value={contextValue}>
+    <QueryBuilderInternalContextProvider value={contextValue}>
       {ui}
-    </QueryBuilderInternalContext.Provider>,
+    </QueryBuilderInternalContextProvider>,
   )
   return { ...utils, contextValue }
 }

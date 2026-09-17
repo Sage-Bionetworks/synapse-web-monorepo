@@ -1,5 +1,5 @@
 import { ColumnModel, FacetColumnResult } from '@sage-bionetworks/synapse-types'
-import { createContext, useContext } from 'react'
+import { createContext, PropsWithChildren, useContext } from 'react'
 import { QBCondition, QBGroup } from './QueryBuilderTypes'
 
 /**
@@ -43,8 +43,22 @@ export type QueryBuilderInternalContextType = {
   removeConditionAt: (conditionId: string) => void
 }
 
-export const QueryBuilderInternalContext =
+const QueryBuilderInternalContext =
   createContext<QueryBuilderInternalContextType | null>(null)
+
+export type QueryBuilderInternalContextProviderProps = PropsWithChildren<{
+  value: QueryBuilderInternalContextType
+}>
+
+export function QueryBuilderInternalContextProvider(
+  props: QueryBuilderInternalContextProviderProps,
+) {
+  return (
+    <QueryBuilderInternalContext.Provider value={props.value}>
+      {props.children}
+    </QueryBuilderInternalContext.Provider>
+  )
+}
 
 export function useQueryBuilderInternalContext(): QueryBuilderInternalContextType {
   const context = useContext(QueryBuilderInternalContext)
