@@ -37,6 +37,10 @@
     padding: 0px 10px;
   }
 
+  :global(.field-description-inline) {
+    margin-bottom: 8px;
+  }
+
   :global(.rjsf-field-array) > :global(.field-description) {
     margin-top: 0px;
     margin-bottom: 8px;
