@@ -45,8 +45,17 @@ import FacetFilterControls, {
   FacetFilterControlsProps,
 } from '../widgets/query-filter/FacetFilterControls'
 import { QueryBuilderControls } from '../QueryBuilder/QueryBuilderControls'
-import { defaultQBGroup } from '../QueryBuilder/queryBuilderOperations'
+import {
+  defaultQBGroup,
+  hasCompleteCondition,
+} from '../QueryBuilder/queryBuilderOperations'
+import {
+  qbNodeToApiFilter,
+  selectedFacetsToQBGroup,
+} from '../QueryBuilder/queryBuilderTranslation'
 import { QBGroup } from '../QueryBuilder/QueryBuilderTypes'
+import { ConfirmationDialog } from '../ConfirmationDialog'
+import { isFilterGroup } from '../../utils/types/IsType'
 import { QueryWrapperSynapsePlotProps } from './QueryWrapperSynapsePlot'
 import { RowSetView } from './RowSetView'
 import QueryWrapperLoadingScreen from '../QueryWrapper/QueryWrapperLoadingScreen'
@@ -198,11 +207,76 @@ export function QueryWrapperPlotNavContents(
     defaultShowQueryBuilder,
   )
   const [qbTree, setQbTree] = useState<QBGroup>(() => defaultQBGroup())
+  const [isConfirmingHideQb, setIsConfirmingHideQb] = useState(false)
   const { hasFacetedSelectColumn: isFaceted, queryMetadataQueryOptions } =
     queryContext
-  const { isLoading: isLoadingQueryMetadata } = useQuery(
+  const { executeQueryRequest } = queryContext
+  const { isLoading: isLoadingQueryMetadata, data: queryMetadata } = useQuery(
     queryMetadataQueryOptions,
   )
+
+  // Facets ↔ QB transitions: switching FF → QB silently translates
+  // selectedFacets into the QB tree and swaps them for a FilterGroup in
+  // additionalFilters so results stay stable. Switching QB → FF prompts if
+  // the QB has meaningful state (a completed condition or an applied filter),
+  // since we can't losslessly reverse the translation.
+  const enterQueryBuilder = () => {
+    const selectedFacets = queryContext.currentQueryRequest.query.selectedFacets
+    if (selectedFacets && selectedFacets.length > 0) {
+      const translated = selectedFacetsToQBGroup(
+        selectedFacets,
+        queryMetadata?.columnModels,
+      )
+      const asFilter = qbNodeToApiFilter(translated)
+      setQbTree(translated)
+      executeQueryRequest(prev => ({
+        ...prev,
+        query: {
+          ...prev.query,
+          selectedFacets: undefined,
+          additionalFilters: asFilter
+            ? [
+                ...(prev.query.additionalFilters ?? []).filter(
+                  f => !isFilterGroup(f),
+                ),
+                asFilter,
+              ]
+            : prev.query.additionalFilters,
+        },
+      }))
+    }
+    setShowQueryBuilder(true)
+  }
+
+  const exitQueryBuilder = () => {
+    setQbTree(defaultQBGroup())
+    executeQueryRequest(prev => ({
+      ...prev,
+      query: {
+        ...prev.query,
+        additionalFilters: prev.query.additionalFilters?.filter(
+          f => !isFilterGroup(f),
+        ),
+      },
+    }))
+    setShowQueryBuilder(false)
+  }
+
+  const handleToggleQueryBuilder = () => {
+    if (!showQueryBuilder) {
+      enterQueryBuilder()
+      return
+    }
+    const hasFilterGroupApplied =
+      queryContext.currentQueryRequest.query.additionalFilters?.some(
+        isFilterGroup,
+      ) ?? false
+    if (hasCompleteCondition(qbTree) || hasFilterGroupApplied) {
+      setIsConfirmingHideQb(true)
+      return
+    }
+    exitQueryBuilder()
+  }
 
   const isRowSelectionVisible = useAtomValue(isRowSelectionVisibleAtom)
 
@@ -283,9 +357,7 @@ export function QueryWrapperPlotNavContents(
                     customControls={customControls}
                     showQueryBuilderControl={showQueryBuilderControl}
                     showQueryBuilder={showQueryBuilder}
-                    onToggleQueryBuilder={() =>
-                      setShowQueryBuilder(value => !value)
-                    }
+                    onToggleQueryBuilder={handleToggleQueryBuilder}
                   />
                 </SynapseErrorBoundary>
               )}
@@ -337,6 +409,21 @@ export function QueryWrapperPlotNavContents(
                   onClose={() => setShowExportMetadata(false)}
                 />
               )}
+              <ConfirmationDialog
+                open={isConfirmingHideQb}
+                title="Hide Query Builder?"
+                content="Hiding the Query Builder will clear the conditions you've built. This can't be undone."
+                confirmButtonProps={{
+                  children: 'Hide Query Builder',
+                  color: 'error',
+                  variant: 'contained',
+                }}
+                onConfirm={() => {
+                  setIsConfirmingHideQb(false)
+                  exitQueryBuilder()
+                }}
+                onCancel={() => setIsConfirmingHideQb(false)}
+              />
             </QueryWrapperErrorBoundary>
           </Box>
         )

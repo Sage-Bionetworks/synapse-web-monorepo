@@ -1,4 +1,5 @@
 import {
+  ColumnModel,
   ColumnMultiValueFunction,
   ColumnMultiValueFunctionQueryFilter,
   ColumnSingleValueFilterOperator,
@@ -8,6 +9,7 @@ import {
   FilterGroup,
   QueryFilter,
 } from '@sage-bionetworks/synapse-types'
+import { ReadonlyDeep } from 'type-fest'
 import {
   isColumnMultiValueFunctionQueryFilter,
   isColumnSingleValueQueryFilter,
@@ -391,27 +393,39 @@ function singleValueToCondition(
  * generally possible; a QB → facets switch clears the tree.
  */
 export function selectedFacetsToQBGroup(
-  selectedFacets: FacetColumnRequest[],
+  selectedFacets: ReadonlyDeep<FacetColumnRequest[]>,
+  columnModels?: ReadonlyDeep<ColumnModel[]>,
 ): QBGroup {
+  const columnTypeByName = new Map(
+    (columnModels ?? []).map(cm => [cm.name, cm.columnType as string]),
+  )
   return {
     kind: 'group',
     id: newQBNodeId(),
     combinator: 'AND',
     not: false,
     children: selectedFacets
-      .map(facetToQBCondition)
+      .map(facet =>
+        facetToQBCondition(
+          facet,
+          columnTypeByName.get(facet.columnName) ?? null,
+        ),
+      )
       .filter((c): c is QBCondition => c !== null),
   }
 }
 
-function facetToQBCondition(facet: FacetColumnRequest): QBCondition | null {
+function facetToQBCondition(
+  facet: ReadonlyDeep<FacetColumnRequest>,
+  columnType: string | null,
+): QBCondition | null {
   if (isFacetColumnValuesRequest(facet)) {
     if (!facet.facetValues || facet.facetValues.length === 0) return null
     return {
       kind: 'condition',
       id: newQBNodeId(),
       columnName: facet.columnName,
-      columnType: null,
+      columnType,
       op: 'is_any_of',
       values: [...facet.facetValues],
       rangeMin: null,
@@ -427,7 +441,7 @@ function facetToQBCondition(facet: FacetColumnRequest): QBCondition | null {
       kind: 'condition' as const,
       id: newQBNodeId(),
       columnName: facet.columnName,
-      columnType: null,
+      columnType,
       values: [],
       text: null,
     }
