@@ -87,6 +87,7 @@ Cache keys are centralized in `src/synapse-queries/KeyFactory.ts`.
 - Secondary: CSS Modules (`*.module.scss`) with simple camelCase class names (e.g., `.searchField`, `.portalCard`)
   - BEM naming (`ComponentName__element`) is legacy — CSS Modules provide scoping, so BEM is unnecessary
   - Prefer simple descriptive names over BEM structure in new components
+  - Never `@use`/`@import` `style/abstracts/_cssVariables` (or anything that emits a `:root`/selector block) from a `*.module.scss`. Doing so copies the default `--synapse-*` values into the code-split module CSS, which loads after a portal's theme override and silently reverts it. Modules should reference tokens with `var(--synapse-*)` and only `@use` side-effect-free partials (`abstracts/variables`, `abstracts/mixins`, `sass:*`).
 - Do not add to `src/style/base/_core.scss` — it is legacy and scheduled for removal
 
 ### Exposing new components
