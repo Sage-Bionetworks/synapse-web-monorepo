@@ -235,12 +235,29 @@ const queryWithAdditionalFilter: Query = {
   ],
 }
 
+const queryWithLockedSpecies: Query = {
+  sql: 'SELECT fileName, title, species, dataFormat, assay, tumorType, gender, tissue, grantName, grantType, consortium FROM syn9630847',
+  additionalFilters: [
+    {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+      columnName: 'species',
+      operator: ColumnSingleValueFilterOperator.EQUAL,
+      values: ['Human'],
+    },
+  ],
+}
+
 export const FileViewWithQueryBuilder: Story = {
   name: 'FileView with Query Builder (V1 preview)',
   args: {
     ...FileView.args,
     name: 'Data (Query Builder preview)',
-    sql: 'SELECT fileName, title, species, dataFormat, assay, tumorType, gender, tissue, grantName, grantType, consortium FROM syn9630847',
+    initQueryJson: JSON.stringify(queryWithLockedSpecies),
+    lockedColumn: {
+      columnName: 'species',
+      value: 'Human',
+    },
     showQueryBuilderControl: true,
     defaultShowQueryBuilder: true,
     shouldDeepLink: false,
