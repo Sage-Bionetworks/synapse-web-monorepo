@@ -5,6 +5,13 @@
 // -----------------------------------------------------------------------------
 // Global CSS Variables used across all applications
 // -----------------------------------------------------------------------------
+//
+// WARNING: Never `@use`/`@import` this file from a `*.module.scss`. The `:root`
+// block below emits DEFAULT `--synapse-*` values into every module that imports
+// it. Code-split module CSS loads after a portal's `App.scss` override and would
+// re-assert these defaults, silently reverting portal theme colors. Modules only
+// need `var(--synapse-*)` at runtime — they must not pull in these declarations.
+// This file is imported once, globally, via the app entry SCSS.
 
 :root {
   --synapse-primary-focus-border: #{v.$primary-focus-border};
