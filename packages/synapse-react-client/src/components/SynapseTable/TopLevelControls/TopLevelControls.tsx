@@ -38,6 +38,13 @@ import { SEND_TO_ANALYSIS_PLATFORM_SIGN_IN_MESSAGE } from '../SynapseTableUtils'
 const SEND_TO_ANALYSIS_PLATFORM_BUTTON_ID =
   'SendToAnalysisPlatformTopLevelControlButton'
 
+const FILTER_TOGGLE_BUTTON_SX = {
+  ml: 2,
+  fontWeight: 400,
+  fontSize: '14px',
+  textDecoration: 'none !important',
+} as const
+
 export type TopLevelControlsProps = {
   name?: string
   hideDownload?: boolean
@@ -201,12 +208,7 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
                   wrap={false}
                 />
               }
-              sx={{
-                ml: 2,
-                fontWeight: 400,
-                fontSize: '14px',
-                textDecoration: 'none !important',
-              }}
+              sx={FILTER_TOGGLE_BUTTON_SX}
             >
               {showFacetFilter ? 'Hide' : 'Show'} filters
             </Button>
@@ -221,12 +223,7 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
                   wrap={false}
                 />
               }
-              sx={{
-                ml: 2,
-                fontWeight: 400,
-                fontSize: '14px',
-                textDecoration: 'none !important',
-              }}
+              sx={FILTER_TOGGLE_BUTTON_SX}
             >
               {showQueryBuilder ? 'Hide' : 'Show'} Query Builder
             </Button>

@@ -14,7 +14,7 @@ import { Box } from '@mui/material'
 import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { useQuery } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, useMemo, useState } from 'react'
 import { CardConfiguration } from '../CardContainer/CardConfiguration'
 import { SynapseErrorBoundary } from '../error'
 import FullTextSearch from '../FullTextSearch/FullTextSearch'
@@ -46,7 +46,6 @@ import FacetFilterControls, {
 } from '../widgets/query-filter/FacetFilterControls'
 import { QueryBuilderControls } from '../QueryBuilder/QueryBuilderControls'
 import { defaultQBGroup } from '../QueryBuilder/QueryBuilderStore'
-import { qbNodeToApiFilter } from '../QueryBuilder/queryBuilderTranslation'
 import { QBGroup } from '../QueryBuilder/QueryBuilderTypes'
 import { QueryWrapperSynapsePlotProps } from './QueryWrapperSynapsePlot'
 import { RowSetView } from './RowSetView'
@@ -201,34 +200,9 @@ export function QueryWrapperPlotNavContents(
   const [qbTree, setQbTree] = useState<QBGroup>(() => defaultQBGroup())
   const { hasFacetedSelectColumn: isFaceted, queryMetadataQueryOptions } =
     queryContext
-  const { executeQueryRequest } = queryContext
   const { isLoading: isLoadingQueryMetadata } = useQuery(
     queryMetadataQueryOptions,
   )
-
-  // Push QB tree edits into the outgoing query, debounced via the existing
-  // ImmutableTableQuery machinery (750ms). Skip the initial mount so we don't
-  // clobber any additionalFilters hydrated from the URL before the user has
-  // touched the tree.
-  const skipInitialQbSync = useRef(true)
-  useEffect(() => {
-    if (!showQueryBuilder) return
-    if (skipInitialQbSync.current) {
-      skipInitialQbSync.current = false
-      return
-    }
-    const filterGroup = qbNodeToApiFilter(qbTree)
-    executeQueryRequest(
-      prev => ({
-        ...prev,
-        query: {
-          ...prev.query,
-          additionalFilters: filterGroup ? [filterGroup] : undefined,
-        },
-      }),
-      { debounce: true },
-    )
-  }, [qbTree, showQueryBuilder, executeQueryRequest])
 
   const isRowSelectionVisible = useAtomValue(isRowSelectionVisibleAtom)
 

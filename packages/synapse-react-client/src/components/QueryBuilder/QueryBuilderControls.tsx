@@ -1,8 +1,10 @@
-import { ToggleButton, ToggleButtonGroup } from '@mui/material'
+import { Button, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import { useCallback, useContext, useMemo, useState } from 'react'
+import { useQueryContext } from '../QueryContext'
 import { QueryVisualizationContext } from '../QueryVisualizationWrapper/QueryVisualizationContext'
 import { unCamelCase } from '../../utils/functions/unCamelCase'
 import { FilterGroupNode } from './FilterGroupNode'
+import { qbNodeToApiFilter } from './queryBuilderTranslation'
 import { qbTreeToReadable } from './qbTreeToReadable'
 import { QueryBuilderInternalContext } from './QueryBuilderInternalContext'
 import styles from './QueryBuilderControls.module.scss'
@@ -43,8 +45,20 @@ type SummaryMode = 'plain-english' | 'sql'
 export function QueryBuilderControls(props: QueryBuilderControlsProps) {
   const { tree, onTreeChange, onlyFacetedColumns = false } = props
   const { columnModels, facetResults } = useQBFacetSourceMetadata()
+  const { executeQueryRequest } = useQueryContext()
 
   const activeTree = tree ?? defaultQBGroup()
+
+  const onApply = useCallback(() => {
+    const filterGroup = qbNodeToApiFilter(activeTree)
+    executeQueryRequest(prev => ({
+      ...prev,
+      query: {
+        ...prev.query,
+        additionalFilters: filterGroup ? [filterGroup] : undefined,
+      },
+    }))
+  }, [activeTree, executeQueryRequest])
 
   // Use the outer QueryVisualizationContext's display-name resolver when
   // available; fall back to the shared unCamelCase util when the QB is
@@ -161,11 +175,8 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
               }}
               aria-label="Query summary display mode"
             >
-              <ToggleButton
-                value="plain-english"
-                aria-label="Show plain English"
-              >
-                Plain English
+              <ToggleButton value="plain-english" aria-label="Show summary">
+                Summary
               </ToggleButton>
               <ToggleButton value="sql" aria-label="Show SQL">
                 SQL
@@ -192,6 +203,17 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
         </div>
 
         <FilterGroupNode group={activeTree} isRoot />
+
+        <div className={styles.applyRow}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={onApply}
+            className={styles.applyButton}
+          >
+            Update Results
+          </Button>
+        </div>
       </div>
     </QueryBuilderInternalContext.Provider>
   )
