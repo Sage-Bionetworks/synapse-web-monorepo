@@ -30,11 +30,12 @@
   display: flex;
   padding: 40px 0;
   align-items: flex-start;
-  gap: 60px;
+  gap: 20px;
   flex: 1 0 0;
   flex-direction: column;
 
   @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
+    gap: 60px;
     flex-direction: row;
   }
 }
@@ -96,15 +97,20 @@
     box-shadow 200ms ease,
     transform 200ms ease;
 
-  &:hover .dataRowTitle {
+  .dataRowTitle {
     text-decoration: underline;
   }
 
   @media (min-width: map.get(SrcVariables.$breakpoints, 'large')) {
     padding: 8.8px 26.4px;
+
+    .dataRowTitle {
+      text-decoration: none;
+    }
   }
 
-  &:hover {
+  &:hover,
+  &:active {
     background-color: #fff;
     border-color: #e1e1e1;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
