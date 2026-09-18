@@ -8,7 +8,6 @@ import EntityActionMenu, {
   EntityActionMenuProps,
 } from '../action_menu/EntityActionMenu'
 import { EntityTitleBarVersionInfo } from './EntityTitleBarVersionInfo'
-import TitleBarProperties from './TitleBarProperties'
 import CopyToClipboardString from '@/components/CopyToClipboardString/CopyToClipboardString'
 
 export type EntityPageTitleBarProps = {
@@ -16,8 +15,6 @@ export type EntityPageTitleBarProps = {
   versionNumber?: number
   /* Props that will be passed through to an EntityActionMenu component */
   entityActionMenuProps?: EntityActionMenuProps
-  /* Callback invoked when an ACT member clicks "Add Conditions for Use". */
-  onActMemberClickAddConditionsForUse: () => void
 }
 
 const TITLE_BAR_BACKGROUND_COLOR = '#EAF0F5'
@@ -143,7 +140,6 @@ export default function EntityPageTitleBar(props: EntityPageTitleBarProps) {
           )}
         </Stack>
       </Box>
-      <TitleBarProperties {...props} />
     </div>
   )
 }
