@@ -86,6 +86,13 @@ function HomePageInternal() {
       >
         <HeaderSearchBox
           searchPlaceholder="Search studies, publications, and metadata"
+          searchExampleTerms={[
+            'loneliness',
+            'depression',
+            'sleep',
+            'risk-taking',
+            'cognitive function',
+          ]}
           path="/Search"
           // SCSS modules win over `sx` (injectFirst); double the selector to drop
           // the standalone-header outer padding in this embedded context.
