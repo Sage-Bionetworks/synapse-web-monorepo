@@ -28,13 +28,13 @@ export function classifyColumn(
   columnType: string | null,
   hasFacet: boolean,
 ): QBColumnKind {
-  if (columnType == null) return 'unknown'
   // `_LIST` columns keep the `list` kind so `is_all_of` remains available.
-  if (columnType.endsWith('_LIST')) return 'list'
-  // Any other faceted column becomes an enum picker regardless of the raw
-  // column type — the QB shows facet values as pills and defaults to
-  // `is_any_of`.
+  if (columnType?.endsWith('_LIST')) return 'list'
+  // Any faceted column becomes an enum picker regardless of the raw column
+  // type (even when the type is unknown, e.g. when the QB tree was hydrated
+  // from `selectedFacets` without column-model context).
   if (hasFacet) return 'enum'
+  if (columnType == null) return 'unknown'
   switch (columnType) {
     case 'BOOLEAN':
       return 'boolean'

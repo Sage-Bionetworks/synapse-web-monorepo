@@ -1,5 +1,6 @@
 import { Button, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import { useCallback, useMemo, useState } from 'react'
+import { isFilterGroup } from '../../utils/types/IsType'
 import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { FilterGroupNode } from './FilterGroupNode'
@@ -50,13 +51,22 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
 
   const onApply = useCallback(() => {
     const filterGroup = qbNodeToApiFilter(activeTree)
-    executeQueryRequest(prev => ({
-      ...prev,
-      query: {
-        ...prev.query,
-        additionalFilters: filterGroup ? [filterGroup] : undefined,
-      },
-    }))
+    executeQueryRequest(prev => {
+      // Preserve any non-QB additionalFilters (e.g. lockedColumn constraints
+      // introduced by portal detail pages) — Update Results only owns the
+      // FilterGroup slot.
+      const preserved = (prev.query.additionalFilters ?? []).filter(
+        f => !isFilterGroup(f),
+      )
+      const next = filterGroup ? [...preserved, filterGroup] : preserved
+      return {
+        ...prev,
+        query: {
+          ...prev.query,
+          additionalFilters: next.length > 0 ? next : undefined,
+        },
+      }
+    })
   }, [activeTree, executeQueryRequest])
 
   const { getColumnDisplayName } = useQueryVisualizationContext()

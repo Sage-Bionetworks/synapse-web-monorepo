@@ -1,6 +1,7 @@
 import {
   COLUMN_MULTI_VALUE_FUNCTION_QUERY_FILTER_CONCRETE_TYPE_VALUE,
   COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+  ColumnModel,
   ColumnMultiValueFunction,
   ColumnMultiValueFunctionQueryFilter,
   ColumnSingleValueFilterOperator,
@@ -639,5 +640,36 @@ describe('selectedFacetsToQBGroup', () => {
       columnName: 'age',
     }
     expect(selectedFacetsToQBGroup([facet]).children).toHaveLength(0)
+  })
+
+  it('resolves columnType from provided columnModels so LIST columns round-trip via HAS', () => {
+    const facet: FacetColumnValuesRequest = {
+      concreteType: FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+      columnName: 'assay',
+      facetValues: ['rnaSeq'],
+    }
+    const columnModels: ColumnModel[] = [
+      { id: '1', name: 'assay', columnType: 'STRING_LIST' },
+    ]
+    expect(
+      selectedFacetsToQBGroup([facet], columnModels).children[0],
+    ).toMatchObject({
+      columnName: 'assay',
+      columnType: 'STRING_LIST',
+      op: 'is_any_of',
+      values: ['rnaSeq'],
+    })
+  })
+
+  it('leaves columnType null when the column is not found in columnModels', () => {
+    const facet: FacetColumnValuesRequest = {
+      concreteType: FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
+      columnName: 'unknownColumn',
+      facetValues: ['a'],
+    }
+    expect(selectedFacetsToQBGroup([facet], []).children[0]).toMatchObject({
+      columnName: 'unknownColumn',
+      columnType: null,
+    })
   })
 })

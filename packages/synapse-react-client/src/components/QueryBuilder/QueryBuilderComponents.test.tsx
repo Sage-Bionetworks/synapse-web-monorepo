@@ -235,6 +235,24 @@ describe('FilterConditionRow', () => {
     within(pillGroup).getByRole('button', { name: 'Unknown' })
   })
 
+  it('renders enum pills + operator picker when columnType is null but the column is faceted', () => {
+    const condition = {
+      ...newBlankCondition('Sex', null),
+      op: 'is_any_of' as const,
+      values: ['Female'],
+    }
+    renderWithContext(<FilterConditionRow condition={condition} />, {
+      columnModels: [sexColumnModel],
+      facetResults: [sexFacetResult],
+    })
+    expect(
+      screen.getByRole('combobox', { name: 'Operator' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('group', { name: /Selected values/ }),
+    ).toBeInTheDocument()
+  })
+
   it('selecting a pill dispatches updateConditionAt with the new values array', async () => {
     const user = userEvent.setup()
     const condition = {
