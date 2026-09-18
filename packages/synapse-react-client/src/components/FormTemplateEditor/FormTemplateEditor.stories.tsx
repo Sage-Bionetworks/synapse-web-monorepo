@@ -1,7 +1,5 @@
-import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { getRealmHandlers } from '@/mocks/msw/handlers/realmHandlers'
-import { getAuthHandlers } from '@/mocks/msw/handlers/authHandlers'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { fn } from 'storybook/test'
 import {
   mockClinicalTemplate,
@@ -22,16 +20,18 @@ const meta: Meta<typeof FormTemplateEditor> = {
   parameters: {
     stack: 'mock',
     msw: {
-      handlers: [
-        ...getAuthHandlers(MOCK_REPO_ORIGIN),
-        ...getRealmHandlers(MOCK_REPO_ORIGIN),
-        ...getFormTemplateHandlers(MOCK_REPO_ORIGIN),
-        ...getCreateSchemaHandlers(MOCK_REPO_ORIGIN),
-        ...getValidationSchemaHandlers(MOCK_REPO_ORIGIN, [
+      // A named-group object (not a flat array) merges by key with the global default handlers
+      // set in .storybook/preview.tsx, so unlisted groups (auth, realm, etc.) still apply. A flat
+      // array would replace the entire default set instead of merging, dropping those handlers
+      // and sending their requests to the real network.
+      handlers: {
+        formTemplate: getFormTemplateHandlers(MOCK_REPO_ORIGIN),
+        createSchema: getCreateSchemaHandlers(MOCK_REPO_ORIGIN),
+        validationSchema: getValidationSchemaHandlers(MOCK_REPO_ORIGIN, [
           mockGenomicsSchema,
           mockClinicalSchema,
         ]),
-      ],
+      },
     },
   },
   args: {
