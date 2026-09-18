@@ -101,7 +101,7 @@ function HomePageInternal() {
             '&&': { p: 0 },
             // Lighten the frosted-glass card over the dark header background.
             '& > :first-of-type': {
-              background: 'rgba(255, 255, 255, 0.8)',
+              background: 'rgba(255, 255, 255, 0.4)',
             },
           }}
         />
