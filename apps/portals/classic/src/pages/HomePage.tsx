@@ -16,6 +16,7 @@ import {
 import FeaturedResearch from 'synapse-react-client/components/FeaturedResearch/FeaturedResearch'
 import ClassicSupportedByNIABanner from '@sage-bionetworks/synapse-portal-framework/components/classic/ClassicSupportedByNIABanner/ClassicSupportedByNIABanner'
 import ClassicDevelopedBySage from '@sage-bionetworks/synapse-portal-framework/components/classic/ClassicDevelopedBySage'
+import HeaderSearchBox from '@sage-bionetworks/synapse-portal-framework/components/HeaderSearchBox'
 import { visuallyHidden } from 'synapse-react-client'
 
 function HomePageInternal() {
@@ -82,7 +83,22 @@ function HomePageInternal() {
         backgroundMp4={headerbackgroundvideo}
         backgroundMp4Css="#024472"
         textAreaWidth="850px"
-      />
+      >
+        <HeaderSearchBox
+          searchPlaceholder="Search studies, publications, and metadata"
+          path="/Search"
+          // SCSS modules win over `sx` (injectFirst); double the selector to drop
+          // the standalone-header outer padding in this embedded context.
+          sx={{
+            width: '100%',
+            '&&': { p: 0 },
+            // Lighten the frosted-glass card over the dark header background.
+            '& > :first-of-type': {
+              background: 'rgba(255, 255, 255, 0.8)',
+            },
+          }}
+        />
+      </PortalHomePageHeader>
       <ClassicSupportedByNIABanner />
       <ImageCardGridWithLinks
         sql={whatWeDoSql}

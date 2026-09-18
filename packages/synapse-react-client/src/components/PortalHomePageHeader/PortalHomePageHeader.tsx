@@ -10,6 +10,7 @@ export type PortalHomePageHeaderProps = {
   backgroundMp4?: string
   backgroundMp4Css?: string // while video is loading, what should the background color be?
   textAreaWidth?: string // default is 746px.  used for md and up screen sizes
+  children?: React.ReactNode // rendered at the bottom of the header text area, e.g. a search box
 }
 
 const PortalHomePageHeader = ({
@@ -21,6 +22,7 @@ const PortalHomePageHeader = ({
   backgroundMp4,
   backgroundMp4Css,
   textAreaWidth = '746px',
+  children,
 }: PortalHomePageHeaderProps): React.ReactNode => {
   return (
     <Box
@@ -54,66 +56,93 @@ const PortalHomePageHeader = ({
         </Box>
       )}
       <Stack
+        direction={{ xs: 'column', lg: 'row' }}
         sx={{
-          alignItems: 'flex-start',
+          alignItems: {
+            xs: 'flex-start',
+            lg: children ? 'center' : 'flex-start',
+          },
+          justifyContent: 'space-between',
           padding: { xs: '40px', md: '40px 0' },
-          gap: '24px',
-          width: { sm: '100%', md: textAreaWidth },
+          gap: { xs: '40px', lg: '80px' },
         }}
       >
-        <Typography
-          variant="headline2"
+        <Stack
           sx={{
-            fontWeight: 300,
-            lineHeight: '130%',
-            fontSize: { xs: '36px', md: '42px' },
-            color: 'grey.1000',
+            alignItems: 'flex-start',
+            gap: '24px',
+            minWidth: 0,
+            flex: children ? { lg: '1 1 0' } : undefined,
+            width: children ? '100%' : { sm: '100%', md: textAreaWidth },
+            maxWidth: children ? { md: textAreaWidth } : undefined,
           }}
         >
-          {title}
-        </Typography>
-        {subTitle && (
           <Typography
-            variant="headline3"
+            variant="headline2"
             sx={{
-              fontSize: '24px',
-              fontWeight: '400',
-              lineHeight: '160%',
+              fontWeight: 300,
+              lineHeight: '130%',
+              fontSize: { xs: '36px', md: '42px' },
               color: 'grey.1000',
             }}
           >
-            {subTitle}
+            {title}
           </Typography>
-        )}
-        <Typography
-          sx={{ fontSize: '18px', lineHeight: '140%', color: 'grey.900' }}
-        >
-          {description}
-        </Typography>
-        {buttonLink && (
-          <Button
-            href={buttonLink}
-            target="_blank"
-            variant="contained"
-            role="button"
-            sx={theme => ({
-              whiteSpace: 'nowrap',
-              alignSelf: 'flex-start',
-              padding: '6px 24px',
-              fontWeight: 600,
-              boxShadow:
-                '0px 16px 16px 0px rgba(0, 0, 0, 0.10), 0px 4px 4px 0px rgba(0, 0, 0, 0.10), 0px 1px 1px 0px rgba(0, 0, 0, 0.10)',
-              '&:hover': {
+          {subTitle && (
+            <Typography
+              variant="headline3"
+              sx={{
+                fontSize: '24px',
+                fontWeight: '400',
+                lineHeight: '160%',
+                color: 'grey.1000',
+              }}
+            >
+              {subTitle}
+            </Typography>
+          )}
+          <Typography
+            sx={{ fontSize: '18px', lineHeight: '140%', color: 'grey.900' }}
+          >
+            {description}
+          </Typography>
+          {buttonLink && (
+            <Button
+              href={buttonLink}
+              target="_blank"
+              variant="contained"
+              role="button"
+              sx={theme => ({
+                whiteSpace: 'nowrap',
+                alignSelf: 'flex-start',
+                padding: '6px 24px',
+                fontWeight: 600,
                 boxShadow:
                   '0px 16px 16px 0px rgba(0, 0, 0, 0.10), 0px 4px 4px 0px rgba(0, 0, 0, 0.10), 0px 1px 1px 0px rgba(0, 0, 0, 0.10)',
-              },
-              [theme.breakpoints.down('sm')]: {
-                width: '100%',
-              },
-            })}
+                '&:hover': {
+                  boxShadow:
+                    '0px 16px 16px 0px rgba(0, 0, 0, 0.10), 0px 4px 4px 0px rgba(0, 0, 0, 0.10), 0px 1px 1px 0px rgba(0, 0, 0, 0.10)',
+                },
+                [theme.breakpoints.down('sm')]: {
+                  width: '100%',
+                },
+              })}
+            >
+              Learn more
+            </Button>
+          )}
+        </Stack>
+        {children && (
+          <Box
+            sx={{
+              flex: { lg: '1 1 0' },
+              minWidth: 0,
+              width: '100%',
+              maxWidth: { lg: '600px' },
+            }}
           >
-            Learn more
-          </Button>
+            {children}
+          </Box>
         )}
       </Stack>
     </Box>
