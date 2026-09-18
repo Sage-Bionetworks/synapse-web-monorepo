@@ -1,6 +1,6 @@
 {
   "name": "@sage-bionetworks/react-datasheet-grid",
-  "version": "4.11.5-sage.9",
+  "version": "4.11.5-sage.10",
   "private": false,
   "description": "An Excel-like React component to create beautiful spreadsheets.",
   "type": "module",
