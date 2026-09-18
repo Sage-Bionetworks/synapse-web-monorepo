@@ -19,7 +19,10 @@ const validationSchemas: JSONSchema7[] = [
   mockProjectValidationSchema,
 ]
 
-export function getValidationSchemaHandlers(backendOrigin?: string) {
+export function getValidationSchemaHandlers(
+  backendOrigin?: string,
+  schemas: JSONSchema7[] = validationSchemas,
+) {
   return generateAsyncJobHandlers<
     {
       concreteType: 'org.sagebionetworks.repo.model.schema.GetValidationSchemaRequest'
@@ -34,7 +37,7 @@ export function getValidationSchemaHandlers(backendOrigin?: string) {
     tokenParam => SCHEMA_VALIDATION_GET(tokenParam),
     req => {
       const requestedId = req.$id
-      const validationSchema = validationSchemas.find(schema =>
+      const validationSchema = schemas.find(schema =>
         schema.$id?.includes(requestedId),
       )
       if (!validationSchema) {
