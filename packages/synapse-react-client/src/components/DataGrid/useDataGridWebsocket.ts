@@ -175,6 +175,7 @@ export function useDataGridWebSocket(options?: UseDataGridWebSocketOptions) {
 
   const connectionAttemptCounter = useRef(0)
   const activeConnectionAttemptIdRef = useRef<number | null>(null)
+  const hasCompletedInitialLoadRef = useRef(false)
 
   const modelSnapshot = useCRDTModelView(state.model)
 
@@ -237,6 +238,7 @@ export function useDataGridWebSocket(options?: UseDataGridWebSocketOptions) {
 
       if (isDifferentConnection) {
         clearPresignedUrl()
+        hasCompletedInitialLoadRef.current = false
       }
 
       connectionAttemptCounter.current += 1
@@ -356,10 +358,29 @@ export function useDataGridWebSocket(options?: UseDataGridWebSocketOptions) {
     return columnsReady && orderReady && rowsReady
   }
 
+  // The server may complete the snapshot request before the client has fetched
+  // and decoded the snapshot, so `hasCompletedInitialSync` can be true while the
+  // rows are still arriving. Requiring an idle sync exchange keeps the flag false
+  // until the replay drains. Latching it means later exchanges — mid-session
+  // patches, or a reconnect to the same session — never take it back to false.
+  if (
+    state.hasCompletedInitialSync &&
+    !state.isSyncing &&
+    isModelRenderable(state.model)
+  ) {
+    hasCompletedInitialLoadRef.current = true
+  }
+
   return {
     isConnected: state.isConnected,
     websocketInstance: state.websocketInstance,
     hasCompletedInitialSync: state.hasCompletedInitialSync,
+    /**
+     * True once the first connection for the current session has finished
+     * replaying the server's data into the model. Latched: only connecting to a
+     * different session or replica resets it.
+     */
+    hasCompletedInitialLoad: hasCompletedInitialLoadRef.current,
     isSyncing: state.isSyncing,
     model: state.model,
     modelSnapshot,
