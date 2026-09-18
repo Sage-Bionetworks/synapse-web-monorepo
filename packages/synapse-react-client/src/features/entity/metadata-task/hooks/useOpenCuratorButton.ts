@@ -13,6 +13,7 @@ import {
 import { getGridSourceIdForTask } from '../utils/getGridSourceIdForTask'
 import useGridSessionForCurationTask from './useGridSessionForCurationTask'
 import useGridSessionForCurationTask_legacy from './useGridSessionForCurationTask_legacy'
+import useMarkCurationTaskInProgress from './useMarkCurationTaskInProgress'
 import { getLinkToGridSession } from '@/utils/functions/getSynapseWebClientLink'
 import { instanceOfGridSupportedTaskProperties } from '../utils/types'
 
@@ -57,6 +58,8 @@ export default function useOpenCuratorFromTaskButton(
     isPending: taskLinkedOpenGridIsPending,
   } = useGridSessionForCurationTask()
 
+  const { mutateAsync: markTaskInProgress } = useMarkCurationTaskInProgress()
+
   const gridSourceEntityId = getGridSourceIdForTask(taskProperties)
   const {
     data: sourceEntityPermissions,
@@ -76,7 +79,6 @@ export default function useOpenCuratorFromTaskButton(
           curationTask,
         })
       }
-      openGridSessionInNewWindow(gridSession.sessionId!, curationTask.taskId!)
     } catch (error) {
       if (error instanceof SynapseClientError && error.status === 403) {
         console.error(error)
@@ -91,6 +93,17 @@ export default function useOpenCuratorFromTaskButton(
           title: OPEN_CURATOR_ERROR_TITLE,
         })
       }
+      return
+    }
+
+    openGridSessionInNewWindow(gridSession.sessionId!, curationTask.taskId!)
+
+    // Recording that work has begun is bookkeeping that follows the window opening, so it must not
+    // delay the popup, hold the button in a pending state, or surface as a failure to open Curator.
+    try {
+      await markTaskInProgress(curationTask.taskId!)
+    } catch (error) {
+      console.error('Failed to mark curation task as in progress', error)
     }
   }, [
     curationTask,
@@ -98,6 +111,7 @@ export default function useOpenCuratorFromTaskButton(
     useTaskLinkedSession,
     getOrCreateLegacyGridSessionForUnassignedTask,
     getOrCreateTaskLinkedGridSession,
+    markTaskInProgress,
   ])
 
   const handleClickOpenCurator = useCallback(() => {
