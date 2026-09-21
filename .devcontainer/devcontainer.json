@@ -18,10 +18,13 @@
 
   "remoteUser": "node",
 
-  // 1. Configure pnpm to share its store in a mounted volume so multiple container instances can reuse it.
-  // 2. Symlink `~/.claude` to a `.claude-user/` folder inside the workspace bind mount, so Claude Code
-  //    session/auth state survives `Rebuild Container` instead of being wiped.
-  "postCreateCommand": "mise install && mise exec -- pnpm config set store-dir /workspace/.pnpm-store && mise exec -- pnpm install && mkdir -p ${containerWorkspaceFolder}/.claude-user && rm -rf $HOME/.claude && ln -sfn ${containerWorkspaceFolder}/.claude-user $HOME/.claude",
+  // 1. Install dependencies using mise
+  // 2. Configure pnpm to share its store in a mounted volume so multiple container instances can reuse it.
+  // 3. Configure pnpm with a minimumReleaseAge for global packages (Claude Code)
+  // 4. Install Claude Code via pnpm
+  // 5. Install dependencies for the workspace using pnpm
+  // 6. Symlink `~/.claude` to a `.claude-user/` folder inside the workspace bind mount, so Claude Code session/auth state survives `Rebuild Container` instead of being wiped.
+  "postCreateCommand": "mise install && pnpm config set store-dir /workspace/.pnpm-store && pnpm config set minimumReleaseAge 4320 --global && pnpm add -g --allow-build=@anthropic-ai/claude-code @anthropic-ai/claude-code && pnpm install && mkdir -p ${containerWorkspaceFolder}/.claude-user && rm -rf $HOME/.claude && ln -sfn ${containerWorkspaceFolder}/.claude-user $HOME/.claude",
 
   "customizations": {
     "vscode": {
