@@ -1,0 +1,36 @@
+{
+  "name": "synapse-web-monorepo",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "16gb"
+  },
+
+  "mounts": [
+    "source=synapse-web-monorepo-pnpm-store,target=/workspace/.pnpm-store,type=volume",
+    "source=synapse-web-monorepo-mise,target=/root/.local/share/mise,type=volume"
+  ],
+
+  // 1. Configure pnpm to share its store in a mounted volume so multiple container instances can reuse it.
+  // 2. Symlink `~/.claude` to a `.claude-user/` folder inside the workspace bind mount, so Claude Code
+  //    session/auth state survives `Rebuild Container` instead of being wiped.
+  "postCreateCommand": "mise install && mise exec -- pnpm config set store-dir /workspace/.pnpm-store && mise exec -- pnpm install && mkdir -p ${containerWorkspaceFolder}/.claude-user && rm -rf $HOME/.claude && ln -sfn ${containerWorkspaceFolder}/.claude-user $HOME/.claude",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "oxc.oxc-vscode",
+        "ms-playwright.playwright",
+        "nrwl.angular-console",
+        "Anthropic.claude-code"
+      ]
+    }
+  },
+
+  "forwardPorts": [3000, 3001, 4173, 5173, 6006]
+}

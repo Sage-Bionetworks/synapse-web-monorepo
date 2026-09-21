@@ -72,3 +72,6 @@ apps/portals/*/public/deploy-date.txt
 # worktree setup sentinel (created during pnpm install in new worktrees)
 .pnpm-installing
 .pnpm-install.log
+
+# Devcontainer's persistent state for Claude Code 
+.claude-user/
