@@ -1,22 +1,25 @@
-FROM node:22-slim
+# Used to copy `mise` binary into this image (https://mise.jdx.dev/mise-cookbook/docker.html#copy-the-binary-into-your-own-image)
+# Declared as a build stage so Dependabot tracks it
+FROM ghcr.io/jdx/mise:2026.9.12@sha256:868b004119abb2e7c146618da63371ec65da40bfb0f38a0ec4128ca9e96c057a AS mise
 
-# mise (https://mise.jdx.dev) - manages Java/Node/pnpm per mise.toml.
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl git ca-certificates unzip xz-utils extrepo \
-    && extrepo enable mise \
-    && apt-get remove -y --auto-remove extrepo \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends mise=2026.9.12 \
-    && rm -rf /var/lib/apt/lists/*
+FROM mcr.microsoft.com/devcontainers/base:debian
 
-# chown ~/.local/share dirs that `root` added from `root` to `node` so the `node` user can write as needed
-RUN mkdir -p /home/node/.local/share/mise && chown -R node:node /home/node/.local
+COPY --from=mise /usr/local/bin/mise /usr/local/bin/mise
 
-# Switch to non-root user
-USER node
+ENV MISE_DATA_DIR="/mnt/mise-data"
+ENV MISE_CACHE_DIR="/mnt/mise-data/cache"
+ENV PNPM_STORE_DIR="/mnt/pnpm-store"
+ENV PNPM_HOME="/home/vscode/.local/share/pnpm"
+ENV PATH="${MISE_DATA_DIR}/shims:${PNPM_HOME}:${PATH}"
 
-# Add mise shims and pnpm's global bin dir to the PATH.
-ENV PNPM_HOME="/home/node/.local/share/pnpm"
-ENV PATH="/home/node/.local/share/mise/shims:${PNPM_HOME}:${PATH}"
+# Ensures interactive terminals have the toolchain in the PATH
+RUN printf '%s\n' \
+    'eval "$(mise activate bash)"' \
+    'export PATH="${PNPM_HOME}:${PATH}"' \
+    >> /home/vscode/.bashrc
+
+RUN install -d -o vscode -g vscode /mnt/mise-data /mnt/pnpm-store
+
+USER vscode
 
 WORKDIR /workspace

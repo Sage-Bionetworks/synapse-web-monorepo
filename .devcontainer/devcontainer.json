@@ -7,24 +7,26 @@
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
 
   "hostRequirements": {
-    "cpus": 4,
-    "memory": "16gb"
+    "cpus": 2,
+    "memory": "8gb"
   },
 
+  // Caches for mise and pnpm store
   "mounts": [
-    "source=synapse-web-monorepo-pnpm-store,target=/workspace/.pnpm-store,type=volume",
-    "source=synapse-web-monorepo-mise,target=/home/node/.local/share/mise,type=volume"
+    "source=synapse-web-monorepo-mise,target=/mnt/mise-data,type=volume",
+    "source=synapse-web-monorepo-pnpm-store,target=/mnt/pnpm-store,type=volume"
   ],
 
-  "remoteUser": "node",
+  "remoteUser": "vscode",
 
-  // 1. Install dependencies using mise
-  // 2. Configure pnpm to share its store in a mounted volume so multiple container instances can reuse it.
-  // 3. Configure pnpm with a minimumReleaseAge for global packages (Claude Code)
-  // 4. Install Claude Code via pnpm
-  // 5. Install dependencies for the workspace using pnpm
-  // 6. Symlink `~/.claude` to a `.claude-user/` folder inside the workspace bind mount, so Claude Code session/auth state survives `Rebuild Container` instead of being wiped.
-  "postCreateCommand": "mise install && pnpm config set store-dir /workspace/.pnpm-store && pnpm config set minimumReleaseAge 4320 --global && pnpm add -g --allow-build=@anthropic-ai/claude-code @anthropic-ai/claude-code && pnpm install && mkdir -p ${containerWorkspaceFolder}/.claude-user && rm -rf $HOME/.claude && ln -sfn ${containerWorkspaceFolder}/.claude-user $HOME/.claude",
+  // Keep the container's PATH for tools and terminals; `userEnvProbe` otherwise
+  // substitutes a login shell's PATH, which omits the mise shims.
+  "remoteEnv": {
+    "PATH": "${containerEnv:PATH}"
+  },
+
+  "onCreateCommand": "bash .devcontainer/setup.sh ${containerWorkspaceFolder}",
+  "updateContentCommand": "pnpm install",
 
   "customizations": {
     "vscode": {
@@ -32,7 +34,8 @@
         "oxc.oxc-vscode",
         "ms-playwright.playwright",
         "nrwl.angular-console",
-        "Anthropic.claude-code"
+        "Anthropic.claude-code",
+        "vitest.explorer"
       ]
     }
   },
