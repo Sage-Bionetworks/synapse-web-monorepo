@@ -9,6 +9,15 @@
     margin-top: 4px;
     margin-bottom: 4px;
   }
+
+  &.dragging {
+    opacity: 0.4;
+  }
+}
+
+.dragHandle {
+  cursor: grab;
+  color: var(--synapse-gray-deemphasized);
 }
 
 .header {

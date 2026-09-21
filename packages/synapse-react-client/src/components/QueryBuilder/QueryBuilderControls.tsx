@@ -1,4 +1,6 @@
 import { Button, ToggleButton, ToggleButtonGroup } from '@mui/material'
+import { DragDropProvider, DragEndEvent } from '@dnd-kit/react'
+import { isSortable } from '@dnd-kit/react/sortable'
 import { useCallback, useMemo, useState } from 'react'
 import { isFilterGroup } from '../../utils/types/IsType'
 import { useQueryContext } from '../QueryContext'
@@ -13,6 +15,7 @@ import {
   addConditionToGroup,
   clearGroup,
   defaultQBGroup,
+  moveNode,
   removeNode,
   updateCondition,
   updateGroup,
@@ -118,6 +121,38 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
     },
     [activeTree, onTreeChange],
   )
+  const moveNodeAt = useCallback(
+    (sourceId: string, targetGroupId: string, targetIndex: number) => {
+      onTreeChange(moveNode(activeTree, sourceId, targetGroupId, targetIndex))
+    },
+    [activeTree, onTreeChange],
+  )
+
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { source, target, canceled } = event.operation
+      if (canceled || !source || !target) return
+
+      // A group's empty-state region is a plain droppable rather than a
+      // sortable, so dnd-kit never projects a position into it. It names its
+      // group explicitly and there is only one slot to land in.
+      const dropGroupId = target.data?.groupId
+      if (typeof dropGroupId === 'string') {
+        moveNodeAt(String(source.id), dropGroupId, 0)
+        return
+      }
+
+      // Otherwise commit the position dnd-kit projected onto the sortable
+      // while the drag was in flight — `group` and `index` describe exactly
+      // the arrangement that was on screen when the user let go. Deriving the
+      // destination from `target` instead does not work: once the optimistic
+      // sorting plugin reorders the DOM it re-points the operation at the
+      // source, so at drop time `target` is usually the dragged node itself.
+      if (!isSortable(source) || source.group == null) return
+      moveNodeAt(String(source.id), String(source.group), source.index)
+    },
+    [moveNodeAt],
+  )
 
   const contextValue = useMemo(
     () => ({
@@ -132,6 +167,7 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
       removeGroupAt,
       updateConditionAt,
       removeConditionAt,
+      moveNodeAt,
     }),
     [
       columnModels,
@@ -145,6 +181,7 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
       removeGroupAt,
       updateConditionAt,
       removeConditionAt,
+      moveNodeAt,
     ],
   )
 
@@ -161,60 +198,62 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
 
   return (
     <QueryBuilderInternalContextProvider value={contextValue}>
-      <div className={styles.root}>
-        <div className={styles.summaryBar}>
-          <div className={styles.summaryHeader}>
-            <span className={styles.summaryLabel}>Query Summary</span>
-            <ToggleButtonGroup
-              className={styles.summaryModeToggle}
-              size="small"
-              exclusive
-              value={summaryMode}
-              onChange={(_event, next: SummaryMode | null) => {
-                if (next != null) setSummaryMode(next)
-              }}
-              aria-label="Query summary display mode"
+      <DragDropProvider onDragEnd={handleDragEnd}>
+        <div className={styles.root}>
+          <div className={styles.summaryBar}>
+            <div className={styles.summaryHeader}>
+              <span className={styles.summaryLabel}>Query Summary</span>
+              <ToggleButtonGroup
+                className={styles.summaryModeToggle}
+                size="small"
+                exclusive
+                value={summaryMode}
+                onChange={(_event, next: SummaryMode | null) => {
+                  if (next != null) setSummaryMode(next)
+                }}
+                aria-label="Query summary display mode"
+              >
+                <ToggleButton value="plain-english" aria-label="Show summary">
+                  Summary
+                </ToggleButton>
+                <ToggleButton value="sql" aria-label="Show SQL">
+                  SQL
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </div>
+            <div
+              className={styles.summaryContent}
+              aria-live="polite"
+              aria-atomic="true"
             >
-              <ToggleButton value="plain-english" aria-label="Show summary">
-                Summary
-              </ToggleButton>
-              <ToggleButton value="sql" aria-label="Show SQL">
-                SQL
-              </ToggleButton>
-            </ToggleButtonGroup>
+              {summaryMode === 'plain-english' ? (
+                readable
+              ) : sqlError ? (
+                <span className={styles.sqlError}>
+                  Could not load SQL preview: {sqlError.message}
+                </span>
+              ) : isSqlPending ? (
+                <span className={styles.sqlPlaceholder}>Loading SQL…</span>
+              ) : (
+                <code className={styles.sqlText}>{combinedSql}</code>
+              )}
+            </div>
           </div>
-          <div
-            className={styles.summaryContent}
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            {summaryMode === 'plain-english' ? (
-              readable
-            ) : sqlError ? (
-              <span className={styles.sqlError}>
-                Could not load SQL preview: {sqlError.message}
-              </span>
-            ) : isSqlPending ? (
-              <span className={styles.sqlPlaceholder}>Loading SQL…</span>
-            ) : (
-              <code className={styles.sqlText}>{combinedSql}</code>
-            )}
+
+          <FilterGroupNode group={activeTree} isRoot />
+
+          <div className={styles.applyRow}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={onApply}
+              className={styles.applyButton}
+            >
+              Update Results
+            </Button>
           </div>
         </div>
-
-        <FilterGroupNode group={activeTree} isRoot />
-
-        <div className={styles.applyRow}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={onApply}
-            className={styles.applyButton}
-          >
-            Update Results
-          </Button>
-        </div>
-      </div>
+      </DragDropProvider>
     </QueryBuilderInternalContextProvider>
   )
 }

@@ -1,4 +1,13 @@
-import { Button, ToggleButton, ToggleButtonGroup } from '@mui/material'
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
+import {
+  Button,
+  IconButton,
+  ToggleButton,
+  ToggleButtonGroup,
+  Tooltip,
+} from '@mui/material'
+import { useDroppable } from '@dnd-kit/react'
+import { useSortable } from '@dnd-kit/react/sortable'
 import { CSSProperties } from 'react'
 import { FilterConditionRow } from './FilterConditionRow'
 import styles from './FilterGroupNode.module.scss'
@@ -8,10 +17,12 @@ import { isQBGroup, QBGroup } from './QueryBuilderTypes'
 export type FilterGroupNodeProps = {
   group: QBGroup
   isRoot?: boolean
+  parentGroupId?: string
+  index?: number
 }
 
 export function FilterGroupNode(props: FilterGroupNodeProps) {
-  const { group, isRoot = false } = props
+  const { group, isRoot = false, parentGroupId, index } = props
   const {
     addConditionAt,
     addChildGroupAt,
@@ -20,6 +31,27 @@ export function FilterGroupNode(props: FilterGroupNodeProps) {
     removeGroupAt,
   } = useQueryBuilderInternalContext()
 
+  // Non-root groups are draggable within their parent; the root is skipped.
+  // `useSortable` is always called (React rules of hooks) but disabled for the
+  // root so it never registers as a draggable or droppable sortable item.
+  const {
+    ref: sortableRef,
+    handleRef,
+    isDragSource,
+  } = useSortable({
+    id: group.id,
+    index: index ?? 0,
+    group: parentGroupId ?? group.id,
+    disabled: isRoot,
+  })
+
+  // Empty groups need their own drop target so users can drop items in.
+  const { ref: emptyDropRef } = useDroppable({
+    id: `${group.id}::empty`,
+    data: { groupId: group.id },
+    disabled: group.children.length > 0,
+  })
+
   const style: CSSProperties = {
     ['--qb-accent-color' as string]: accentColorFor(group),
     ['--qb-pill-color' as string]: accentColorFor(group),
@@ -27,13 +59,28 @@ export function FilterGroupNode(props: FilterGroupNodeProps) {
 
   return (
     <div
-      className={`${styles.group} ${isRoot ? '' : styles.nested}`}
+      ref={sortableRef}
+      className={`${styles.group} ${isRoot ? '' : styles.nested}${
+        isDragSource ? ` ${styles.dragging}` : ''
+      }`}
       style={style}
       role="group"
       aria-label={groupAriaLabel(group)}
       data-qb-node-id={group.id}
     >
       <div className={styles.header}>
+        {!isRoot && (
+          <Tooltip title="Drag to reorder group">
+            <IconButton
+              ref={handleRef}
+              size="small"
+              className={styles.dragHandle}
+              aria-label="Drag to reorder condition group"
+            >
+              <DragIndicatorIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        )}
         <ToggleButtonGroup
           size="small"
           className={styles.combinator}
@@ -102,15 +149,29 @@ export function FilterGroupNode(props: FilterGroupNodeProps) {
 
       <div className={styles.children}>
         {group.children.length === 0 ? (
-          <div className={styles.emptyState}>
+          <div ref={emptyDropRef} className={styles.emptyState}>
             No conditions yet, add one above
           </div>
         ) : (
-          group.children.map(child => {
+          group.children.map((child, childIndex) => {
             if (isQBGroup(child)) {
-              return <FilterGroupNode key={child.id} group={child} />
+              return (
+                <FilterGroupNode
+                  key={child.id}
+                  group={child}
+                  parentGroupId={group.id}
+                  index={childIndex}
+                />
+              )
             }
-            return <FilterConditionRow key={child.id} condition={child} />
+            return (
+              <FilterConditionRow
+                key={child.id}
+                condition={child}
+                parentGroupId={group.id}
+                index={childIndex}
+              />
+            )
           })
         )}
       </div>

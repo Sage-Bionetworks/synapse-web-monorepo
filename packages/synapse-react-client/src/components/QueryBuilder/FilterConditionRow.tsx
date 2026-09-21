@@ -1,5 +1,6 @@
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
+import { useSortable } from '@dnd-kit/react/sortable'
 import {
   Autocomplete,
   IconButton,
@@ -28,10 +29,12 @@ import { QBCondition, QBConditionOp } from './QueryBuilderTypes'
 
 export type FilterConditionRowProps = {
   condition: QBCondition
+  parentGroupId: string
+  index: number
 }
 
 export function FilterConditionRow(props: FilterConditionRowProps) {
-  const { condition } = props
+  const { condition, parentGroupId, index } = props
   const {
     columnModels,
     facetResults,
@@ -40,6 +43,16 @@ export function FilterConditionRow(props: FilterConditionRowProps) {
     updateConditionAt,
     removeConditionAt,
   } = useQueryBuilderInternalContext()
+
+  const {
+    ref: sortableRef,
+    handleRef,
+    isDragSource,
+  } = useSortable({
+    id: condition.id,
+    index,
+    group: parentGroupId,
+  })
 
   const facetColumnNames = useMemo(
     () =>
@@ -78,13 +91,15 @@ export function FilterConditionRow(props: FilterConditionRowProps) {
 
   return (
     <div
-      className={styles.row}
+      ref={sortableRef}
+      className={`${styles.row}${isDragSource ? ` ${styles.dragging}` : ''}`}
       role="group"
       aria-label={`Filter condition${condition.columnName ? ` on ${condition.columnName}` : ''}`}
       data-qb-node-id={condition.id}
     >
       <Tooltip title="Drag to reorder">
         <IconButton
+          ref={handleRef}
           size="small"
           className={styles.dragHandle}
           aria-label="Drag to reorder condition"

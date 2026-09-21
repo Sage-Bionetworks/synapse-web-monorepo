@@ -41,6 +41,13 @@ export type QueryBuilderInternalContextType = {
     patch: Partial<Omit<QBCondition, 'kind' | 'id'>>,
   ) => void
   removeConditionAt: (conditionId: string) => void
+
+  // -- Drag-and-drop --
+  moveNodeAt: (
+    sourceId: string,
+    targetGroupId: string,
+    targetIndex: number,
+  ) => void
 }
 
 const QueryBuilderInternalContext =

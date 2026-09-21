@@ -10,6 +10,10 @@
   --qb-pill-color: var(--synapse-primary-action-color);
 }
 
+.dragging {
+  opacity: 0.4;
+}
+
 .dragHandle {
   cursor: grab;
   color: var(--synapse-gray-deemphasized);

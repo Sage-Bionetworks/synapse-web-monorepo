@@ -27,6 +27,7 @@ function makeContext(
     removeGroupAt: vi.fn(),
     updateConditionAt: vi.fn(),
     removeConditionAt: vi.fn(),
+    moveNodeAt: vi.fn(),
     ...overrides,
   }
 }
@@ -193,9 +194,16 @@ describe('FilterConditionRow', () => {
   const blankCondition = newBlankCondition(null, null)
 
   it('exposes an accessible property picker + drag/remove buttons', () => {
-    renderWithContext(<FilterConditionRow condition={blankCondition} />, {
-      columnModels: [sexColumnModel, ageColumnModel],
-    })
+    renderWithContext(
+      <FilterConditionRow
+        condition={blankCondition}
+        parentGroupId="root"
+        index={0}
+      />,
+      {
+        columnModels: [sexColumnModel, ageColumnModel],
+      },
+    )
     expect(
       screen.getByRole('button', { name: 'Drag to reorder condition' }),
     ).toBeInTheDocument()
@@ -210,7 +218,11 @@ describe('FilterConditionRow', () => {
   it('dispatches removeConditionAt when trash is clicked', async () => {
     const user = userEvent.setup()
     const { contextValue } = renderWithContext(
-      <FilterConditionRow condition={blankCondition} />,
+      <FilterConditionRow
+        condition={blankCondition}
+        parentGroupId="root"
+        index={0}
+      />,
     )
     await user.click(screen.getByRole('button', { name: 'Remove condition' }))
     expect(contextValue.removeConditionAt).toHaveBeenCalledWith(
@@ -223,10 +235,17 @@ describe('FilterConditionRow', () => {
       ...newBlankCondition('Sex', 'STRING'),
       op: 'is_any_of' as const,
     }
-    renderWithContext(<FilterConditionRow condition={condition} />, {
-      columnModels: [sexColumnModel],
-      facetResults: [sexFacetResult],
-    })
+    renderWithContext(
+      <FilterConditionRow
+        condition={condition}
+        parentGroupId="root"
+        index={0}
+      />,
+      {
+        columnModels: [sexColumnModel],
+        facetResults: [sexFacetResult],
+      },
+    )
     const pillGroup = screen.getByRole('group', {
       name: /Selected values/,
     })
@@ -241,10 +260,17 @@ describe('FilterConditionRow', () => {
       op: 'is_any_of' as const,
       values: ['Female'],
     }
-    renderWithContext(<FilterConditionRow condition={condition} />, {
-      columnModels: [sexColumnModel],
-      facetResults: [sexFacetResult],
-    })
+    renderWithContext(
+      <FilterConditionRow
+        condition={condition}
+        parentGroupId="root"
+        index={0}
+      />,
+      {
+        columnModels: [sexColumnModel],
+        facetResults: [sexFacetResult],
+      },
+    )
     expect(
       screen.getByRole('combobox', { name: 'Operator' }),
     ).toBeInTheDocument()
@@ -260,7 +286,11 @@ describe('FilterConditionRow', () => {
       op: 'is_any_of' as const,
     }
     const { contextValue } = renderWithContext(
-      <FilterConditionRow condition={condition} />,
+      <FilterConditionRow
+        condition={condition}
+        parentGroupId="root"
+        index={0}
+      />,
       {
         columnModels: [sexColumnModel],
         facetResults: [sexFacetResult],
@@ -277,9 +307,16 @@ describe('FilterConditionRow', () => {
       ...newBlankCondition('Age', 'INTEGER'),
       op: 'between' as const,
     }
-    renderWithContext(<FilterConditionRow condition={condition} />, {
-      columnModels: [ageColumnModel],
-    })
+    renderWithContext(
+      <FilterConditionRow
+        condition={condition}
+        parentGroupId="root"
+        index={0}
+      />,
+      {
+        columnModels: [ageColumnModel],
+      },
+    )
     expect(screen.getByRole('textbox', { name: 'Minimum' })).toBeInTheDocument()
     expect(screen.getByRole('textbox', { name: 'Maximum' })).toBeInTheDocument()
   })
@@ -289,9 +326,16 @@ describe('FilterConditionRow', () => {
       ...newBlankCondition('Sex', 'STRING'),
       op: 'has_value' as const,
     }
-    renderWithContext(<FilterConditionRow condition={condition} />, {
-      columnModels: [sexColumnModel],
-    })
+    renderWithContext(
+      <FilterConditionRow
+        condition={condition}
+        parentGroupId="root"
+        index={0}
+      />,
+      {
+        columnModels: [sexColumnModel],
+      },
+    )
     expect(
       screen.queryByRole('textbox', { name: /Value/i }),
     ).not.toBeInTheDocument()
@@ -302,11 +346,18 @@ describe('FilterConditionRow', () => {
 
   it('offers only faceted columns when onlyFacetedColumns is true', async () => {
     const user = userEvent.setup()
-    renderWithContext(<FilterConditionRow condition={blankCondition} />, {
-      columnModels: [sexColumnModel, ageColumnModel],
-      facetResults: [sexFacetResult],
-      onlyFacetedColumns: true,
-    })
+    renderWithContext(
+      <FilterConditionRow
+        condition={blankCondition}
+        parentGroupId="root"
+        index={0}
+      />,
+      {
+        columnModels: [sexColumnModel, ageColumnModel],
+        facetResults: [sexFacetResult],
+        onlyFacetedColumns: true,
+      },
+    )
     await user.click(screen.getByRole('combobox', { name: 'Property' }))
     expect(screen.getByRole('option', { name: 'Sex' })).toBeInTheDocument()
     expect(
