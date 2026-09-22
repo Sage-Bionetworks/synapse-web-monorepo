@@ -6,17 +6,21 @@
  * initial values from an existing template when editing one.
  */
 import { RJSFSchema } from '@rjsf/utils'
-import { FormTemplate } from '@sage-bionetworks/synapse-client'
-import { DragEndEvent } from '@dnd-kit/react'
-import { isSortable } from '@dnd-kit/react/sortable'
-import { useCallback, useMemo, useState } from 'react'
-import { FIELD_DRAG_TYPE } from './FieldLibraryRow'
 import {
-  SLOT_GROUP_PREFIX,
-  STEP_SORTABLE_GROUP,
+  FormTemplate,
+  FormTemplateField,
+} from '@sage-bionetworks/synapse-client'
+import { DragEndEvent, DragOverEvent } from '@dnd-kit/react'
+import { move } from '@dnd-kit/helpers'
+import { useCallback, useMemo, useRef, useState } from 'react'
+import {
+  FIELD_DRAG_TYPE,
+  slotGroupId,
+  SLOT_SORTABLE_TYPE,
+  slotSortableId,
+  stepSortableId,
   STEP_SORTABLE_TYPE,
-} from './StepCard'
-import { SLOT_SORTABLE_TYPE } from './StepFieldRow'
+} from './sortableIds'
 import {
   createEditableStep,
   EditableFormTemplateStep,
@@ -48,22 +52,56 @@ export const EMPTY_SCHEMA: RJSFSchema = {
   required: [SUBMISSION_CONTEXT_PROPERTY],
 }
 
-/** Move an item from `fromIndex` to `toIndex`, returning a new array. */
-function arrayMove<T>(arr: T[], fromIndex: number, toIndex: number): T[] {
-  if (
-    fromIndex < 0 ||
-    fromIndex >= arr.length ||
-    toIndex < 0 ||
-    toIndex >= arr.length ||
-    fromIndex === toIndex
-  ) {
-    return arr
-  }
-  const next = [...arr]
-  const [item] = next.splice(fromIndex, 1)
-  next.splice(toIndex, 0, item)
-  return next
+/**
+ * Reorder the steps to match a list of step sortable ids. Falls back to the current order if the
+ * list does not account for every step, so a malformed drag can never drop a step.
+ */
+function stepsFromSortableIds(
+  steps: EditableFormTemplateStep[],
+  orderedIds: string[],
+): EditableFormTemplateStep[] {
+  const stepsById = new Map(
+    steps.map(step => [stepSortableId(step), step] as const),
+  )
+  const next = orderedIds
+    .map(id => stepsById.get(id))
+    .filter((step): step is EditableFormTemplateStep => step !== undefined)
+  return next.length === steps.length ? next : steps
 }
+
+/**
+ * The `Record<sortableGroup, sortableId[]>` projection of every step's slot rows. This is the shape
+ * `@dnd-kit/helpers`' `move` understands, and the only one that lets it splice a slot out of one
+ * step and into another.
+ */
+type SlotGroups = Record<string, string[]>
+
+/**
+ * Rebuild the steps from a moved slot-group projection. Falls back to the current steps if the
+ * projection does not account for every field, so a malformed drag can never drop one.
+ */
+function stepsFromSlotGroups(
+  steps: EditableFormTemplateStep[],
+  groups: SlotGroups,
+): EditableFormTemplateStep[] {
+  const fieldsById = new Map(
+    steps.flatMap(step =>
+      step.fields.map(field => [slotSortableId(field), field] as const),
+    ),
+  )
+  const next = steps.map(step => ({
+    ...step,
+    fields: (groups[slotGroupId(step)] ?? [])
+      .map(id => fieldsById.get(id))
+      .filter((field): field is FormTemplateField => field !== undefined),
+  }))
+  const movedFieldCount = next.reduce(
+    (total, step) => total + step.fields.length,
+    0,
+  )
+  return movedFieldCount === fieldsById.size ? next : steps
+}
+
 /** The editing state and mutations for an in-progress FormTemplate draft. */
 export interface FormTemplateDraft {
   name: string
@@ -83,6 +121,8 @@ export interface FormTemplateDraft {
   handleChangeRequired: (key: string, isRequired: boolean) => void
   handleChangeContext: (key: string, context: SchemaPropertyContext) => void
   handleRemoveProperty: (key: string) => void
+  handleDragStart: () => void
+  handleDragOver: (event: DragOverEvent) => void
   handleDragEnd: (event: DragEndEvent) => void
   previewTemplate: FormTemplate
 }
@@ -244,72 +284,83 @@ export function useFormTemplateDraft(
   /* Drag-and-drop                                                             */
   /* ------------------------------------------------------------------------ */
 
+  // Reordering is applied while dragging rather than on drop. `useSortable` ships with
+  // `OptimisticSortingPlugin`, which reorders the dragged element in the DOM behind React's back
+  // unless the draft state already reflects the new order by the time the drag-over render
+  // commits. Letting it win moves a slot's element into another step's list while React still
+  // believes it belongs to the old one, which strands the node and throws on the next removal.
+  const preDragSteps = useRef<EditableFormTemplateStep[] | null>(null)
+
+  const handleDragStart = useCallback(() => {
+    preDragSteps.current = steps
+  }, [steps])
+
+  const handleDragOver = useCallback(
+    (event: DragOverEvent) => {
+      const { source } = event.operation
+
+      if (source?.type === STEP_SORTABLE_TYPE) {
+        const stepIds = steps.map(stepSortableId)
+        const movedStepIds = move(stepIds, event)
+        if (movedStepIds === stepIds) return
+        setSteps(stepsFromSortableIds(steps, movedStepIds))
+        return
+      }
+
+      if (source?.type === SLOT_SORTABLE_TYPE) {
+        const slotGroups: SlotGroups = Object.fromEntries(
+          steps.map(step => [
+            slotGroupId(step),
+            step.fields.map(slotSortableId),
+          ]),
+        )
+        const movedSlotGroups = move(slotGroups, event)
+        if (movedSlotGroups === slotGroups) return
+        setSteps(stepsFromSlotGroups(steps, movedSlotGroups))
+      }
+    },
+    [steps],
+  )
+
   const handleDragEnd = useCallback((event: DragEndEvent) => {
-    if (event.canceled) return
+    const stepsBeforeDrag = preDragSteps.current
+    preDragSteps.current = null
+
+    if (event.canceled) {
+      if (stepsBeforeDrag) setSteps(stepsBeforeDrag)
+      return
+    }
+
+    // Binding a library field to a step is the one drag that is not a reorder, so it has no
+    // optimistic counterpart to keep in sync and only takes effect once the field is dropped.
     const { source, target } = event.operation
-    if (!source) return
+    if (source?.type !== FIELD_DRAG_TYPE) return
+    if (target?.type !== STEP_SORTABLE_TYPE) return
 
-    // Case 1: bind a field from the library to a step (target is a step
-    // sortable that accepts type 'field').
-    if (source.type === FIELD_DRAG_TYPE) {
-      if (!target || target.type !== STEP_SORTABLE_TYPE) return
-      const propertyKey = String(
-        (source.data as { propertyKey?: string } | undefined)?.propertyKey ??
-          '',
+    const propertyKey = String(
+      (source.data as { propertyKey?: string } | undefined)?.propertyKey ?? '',
+    )
+    const stepIdx = (target.data as { stepIndex?: number } | undefined)
+      ?.stepIndex
+    if (!propertyKey || typeof stepIdx !== 'number') return
+
+    const path = `/${propertyKey}`
+    setSteps(prev => {
+      if (prev.some(s => s.fields.some(f => f.schemaPath === path))) {
+        return prev
+      }
+      return prev.map((s, i) =>
+        i === stepIdx
+          ? {
+              ...s,
+              fields: [
+                ...s.fields,
+                { schemaPath: path, uiDefinition: {}, isPublic: false },
+              ],
+            }
+          : s,
       )
-      const stepIdx = (target.data as { stepIndex?: number } | undefined)
-        ?.stepIndex
-      if (!propertyKey || typeof stepIdx !== 'number') return
-      const path = `/${propertyKey}`
-      setSteps(prev => {
-        if (prev.some(s => s.fields.some(f => f.schemaPath === path))) {
-          return prev
-        }
-        return prev.map((s, i) =>
-          i === stepIdx
-            ? {
-                ...s,
-                fields: [
-                  ...s.fields,
-                  {
-                    schemaPath: path,
-                    uiDefinition: {},
-                    isPublic: false,
-                  },
-                ],
-              }
-            : s,
-        )
-      })
-      return
-    }
-
-    // Case 2: reorder steps.
-    if (source.type === STEP_SORTABLE_TYPE && isSortable(source)) {
-      const { initialIndex, index, group } = source
-      if (initialIndex === index) return
-      if (group === STEP_SORTABLE_GROUP) {
-        setSteps(prev => arrayMove(prev, initialIndex, index))
-      }
-      return
-    }
-
-    // Case 3: reorder slots within a step.
-    if (source.type === SLOT_SORTABLE_TYPE && isSortable(source)) {
-      const { initialIndex, index, group } = source
-      if (initialIndex === index) return
-      if (typeof group === 'string' && group.startsWith(SLOT_GROUP_PREFIX)) {
-        const stepIdx = parseInt(group.slice(SLOT_GROUP_PREFIX.length), 10)
-        if (!Number.isFinite(stepIdx)) return
-        setSteps(prev =>
-          prev.map((s, i) =>
-            i === stepIdx
-              ? { ...s, fields: arrayMove(s.fields, initialIndex, index) }
-              : s,
-          ),
-        )
-      }
-    }
+    })
   }, [])
 
   const previewTemplate: FormTemplate = useMemo(
@@ -340,6 +391,8 @@ export function useFormTemplateDraft(
     handleChangeRequired,
     handleChangeContext,
     handleRemoveProperty,
+    handleDragStart,
+    handleDragOver,
     handleDragEnd,
     previewTemplate,
   }

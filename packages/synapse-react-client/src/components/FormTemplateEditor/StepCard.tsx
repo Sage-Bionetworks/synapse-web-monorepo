@@ -1,3 +1,4 @@
+import { useDroppable } from '@dnd-kit/react'
 import { useSortable } from '@dnd-kit/react/sortable'
 import {
   FormTemplateField,
@@ -23,14 +24,25 @@ import {
 } from '@mui/icons-material'
 import { RJSFSchema } from '@rjsf/utils'
 import { useState } from 'react'
-import { StepFieldRow, SLOT_SORTABLE_TYPE } from './StepFieldRow'
-import { FIELD_DRAG_TYPE } from './FieldLibraryRow'
+import { StepFieldRow } from './StepFieldRow'
+import {
+  FIELD_DRAG_TYPE,
+  slotGroupId,
+  SLOT_SORTABLE_TYPE,
+  slotSortableId,
+  stepSortableId,
+  STEP_SORTABLE_GROUP,
+  STEP_SORTABLE_TYPE,
+} from './sortableIds'
 import { EditableFormTemplateStep, moveItem, normalizePointer } from './utils'
 import { resolveSchemaPropertyAtPointer } from '@/utils/jsonschema/submissionContext'
 
-export const STEP_SORTABLE_GROUP = 'steps'
-export const STEP_SORTABLE_TYPE = 'step'
-export const SLOT_GROUP_PREFIX = 'slots:'
+/**
+ * The slot list must lose to the slot rows inside it so that dragging over a populated step
+ * targets a row (which resolves to a precise insertion index) and only an empty or below-the-last-
+ * row region falls through to the list itself.
+ */
+const SLOT_LIST_COLLISION_PRIORITY = 1
 
 export type StepCardProps = {
   step: EditableFormTemplateStep
@@ -66,12 +78,20 @@ export function StepCard({
 
   // Step is sortable within its group, and also accepts field drops to bind.
   const { ref, handleRef, isDragging, isDropTarget } = useSortable({
-    id: `step:${step.uiKey}`,
+    id: stepSortableId(step),
     index: stepIndex,
     group: STEP_SORTABLE_GROUP,
     type: STEP_SORTABLE_TYPE,
     accept: [STEP_SORTABLE_TYPE, FIELD_DRAG_TYPE],
     data: { stepIndex },
+  })
+
+  // The slot list is the drop target for slots dragged in from another step, which is the only
+  // way to reach a step whose list is empty and therefore has no slot rows to target.
+  const { ref: slotListRef, isDropTarget: isSlotDropTarget } = useDroppable({
+    id: slotGroupId(step),
+    accept: SLOT_SORTABLE_TYPE,
+    collisionPriority: SLOT_LIST_COLLISION_PRIORITY,
   })
 
   const handleFieldChange = (
@@ -187,33 +207,60 @@ export function StepCard({
             sx={{ mb: 1.5 }}
           />
 
-          <Stack spacing={1}>
-            {step.fields.map((field, fieldIdx) => {
-              const key = pointerToKey(field.schemaPath)
-              const resolved = resolveSchemaPropertyAtPointer(
-                jsonSchema,
-                field.schemaPath,
-              )
-              return (
-                <StepFieldRow
-                  key={field.schemaPath}
-                  sortableId={`slot:${field.schemaPath}`}
-                  sortableIndex={fieldIdx}
-                  sortableGroup={`${SLOT_GROUP_PREFIX}${stepIndex}`}
-                  field={field}
-                  resolvedProperty={resolved?.subSchema}
-                  context={resolved?.context ?? 'ALWAYS'}
-                  propertyKey={key ?? field.schemaPath}
-                  isFirst={fieldIdx === 0}
-                  isLast={fieldIdx === step.fields.length - 1}
-                  onChange={patch => handleFieldChange(fieldIdx, patch)}
-                  onMoveUp={() => handleFieldMove(fieldIdx, -1)}
-                  onMoveDown={() => handleFieldMove(fieldIdx, 1)}
-                  onRemove={() => handleFieldRemove(fieldIdx)}
-                />
-              )
-            })}
+          <Box
+            ref={slotListRef}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 1,
+              mb: 1,
+              p: 0.5,
+              borderRadius: 1,
+              transition: 'outline-color 120ms, background-color 120ms',
+              outline: isSlotDropTarget
+                ? theme => `2px dashed ${theme.palette.primary.main}`
+                : '2px dashed transparent',
+              backgroundColor: isSlotDropTarget ? 'action.hover' : undefined,
+            }}
+          >
+            {step.fields.length === 0 ? (
+              <Typography
+                variant="caption"
+                color="text.secondary"
+                sx={{ p: 1 }}
+              >
+                Drag a field here, or bind one below.
+              </Typography>
+            ) : (
+              step.fields.map((field, fieldIdx) => {
+                const key = pointerToKey(field.schemaPath)
+                const resolved = resolveSchemaPropertyAtPointer(
+                  jsonSchema,
+                  field.schemaPath,
+                )
+                return (
+                  <StepFieldRow
+                    key={field.schemaPath}
+                    sortableId={slotSortableId(field)}
+                    sortableIndex={fieldIdx}
+                    sortableGroup={slotGroupId(step)}
+                    field={field}
+                    resolvedProperty={resolved?.subSchema}
+                    context={resolved?.context ?? 'ALWAYS'}
+                    propertyKey={key ?? field.schemaPath}
+                    isFirst={fieldIdx === 0}
+                    isLast={fieldIdx === step.fields.length - 1}
+                    onChange={patch => handleFieldChange(fieldIdx, patch)}
+                    onMoveUp={() => handleFieldMove(fieldIdx, -1)}
+                    onMoveDown={() => handleFieldMove(fieldIdx, 1)}
+                    onRemove={() => handleFieldRemove(fieldIdx)}
+                  />
+                )
+              })
+            )}
+          </Box>
 
+          <Stack spacing={1}>
             <TextField
               select
               size="small"
@@ -247,9 +294,6 @@ export function StepCard({
     </Paper>
   )
 }
-
-// SLOT_SORTABLE_TYPE is re-exported here for FormTemplateEditor convenience.
-export { SLOT_SORTABLE_TYPE }
 
 /** Convert a single-segment JSON pointer like `/institution` back to `institution`. */
 function pointerToKey(pointer: string): string | null {
