@@ -9,7 +9,6 @@ const meta = {
   component: EntityPageTitleBar,
   args: {
     entityId: '',
-    onActMemberClickAddConditionsForUse: () => {},
   },
   render: args => (
     <>

@@ -10,16 +10,13 @@ import {
 import {
   ColumnModel,
   QueryBundleRequest,
-  QueryResultBundle,
-  TableUpdateTransactionRequest,
   TableUpdateTransactionResponse,
-  ViewColumnModelRequest,
   ViewColumnModelResponse,
 } from '@sage-bionetworks/synapse-types'
 import { uniqueId } from 'lodash-es'
 import { http, HttpResponse } from 'msw'
 import defaultFileViewColumnModels from '../../query/defaultFileViewColumnModels'
-import { generateAsyncJobHandlers } from './asyncJobHandlers'
+import { dispatchEntry, generateAsyncJobHandlers } from './asyncJobHandlers'
 import { getTableQueryResult } from './tableQueryService'
 
 /**
@@ -33,12 +30,18 @@ export function getHandlersForTableQuery(
   backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
   entityId = ':id',
 ) {
-  return generateAsyncJobHandlers<QueryBundleRequest, QueryResultBundle>(
-    TABLE_QUERY_ASYNC_START(entityId),
-    tokenParam => TABLE_QUERY_ASYNC_GET(entityId, tokenParam),
-    // Get the table query result from the service
-    request => getTableQueryResult(request),
-    backendOrigin,
+  return generateAsyncJobHandlers(
+    dispatchEntry(
+      'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+      request => getTableQueryResult(request as unknown as QueryBundleRequest),
+    ),
+    {
+      asyncTypeServicePaths: {
+        requestPath: TABLE_QUERY_ASYNC_START(entityId),
+        responsePath: tokenParam => TABLE_QUERY_ASYNC_GET(entityId, tokenParam),
+      },
+      backendOrigin,
+    },
   )
 }
 
@@ -46,14 +49,19 @@ export function getAnnotationColumnHandlers(
   response: ViewColumnModelResponse,
   backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
 ) {
-  return generateAsyncJobHandlers<
-    ViewColumnModelRequest,
-    ViewColumnModelResponse
-  >(
-    '/repo/v1/column/view/scope/async/start',
-    tokenParam => `/repo/v1/column/view/scope/async/get/${tokenParam}`,
-    response,
-    backendOrigin,
+  return generateAsyncJobHandlers(
+    {
+      ['org.sagebionetworks.repo.model.table.ViewColumnModelRequest']: () =>
+        response,
+    },
+    {
+      asyncTypeServicePaths: {
+        requestPath: '/repo/v1/column/view/scope/async/start',
+        responsePath: tokenParam =>
+          `/repo/v1/column/view/scope/async/get/${tokenParam}`,
+      },
+      backendOrigin,
+    },
   )
 }
 
@@ -101,15 +109,19 @@ export function getTableTransactionHandlers(
   backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
   statusCode?: number,
 ) {
-  return generateAsyncJobHandlers<
-    TableUpdateTransactionRequest,
-    SynapseApiResponse<TableUpdateTransactionResponse>
-  >(
-    `/repo/v1/entity/:entityId/table/transaction/async/start`,
-    tokenParam =>
-      `/repo/v1/entity/:entityId/table/transaction/async/get/${tokenParam}`,
-    response,
-    backendOrigin,
-    statusCode,
+  return generateAsyncJobHandlers(
+    {
+      ['org.sagebionetworks.repo.model.table.TableUpdateTransactionRequest']:
+        () => response,
+    },
+    {
+      asyncTypeServicePaths: {
+        requestPath: `/repo/v1/entity/:entityId/table/transaction/async/start`,
+        responsePath: tokenParam =>
+          `/repo/v1/entity/:entityId/table/transaction/async/get/${tokenParam}`,
+      },
+      backendOrigin,
+      serviceSpecificEndpointResponseStatus: statusCode,
+    },
   )
 }

@@ -1,5 +1,6 @@
 import { ConfirmationDialog } from '@/components/ConfirmationDialog'
 import { computeDefaultColumnOrder } from '@/components/DataGrid/utils/computeDefaultColumnOrder'
+import { moveItem } from '@/utils/functions/ArrayUtils'
 import { collectTopLevelProperties } from '@/utils/jsonschema/collectTopLevelProperties'
 import {
   DeleteOutline,
@@ -32,13 +33,6 @@ export type ReorderColumnsDialogProps = {
   canRemoveColumns?: boolean
   onSave: (newColumnOrder: number[]) => void
   onCancel: () => void
-}
-
-function moveItem(order: number[], from: number, to: number): number[] {
-  const next = [...order]
-  const [moved] = next.splice(from, 1)
-  next.splice(to, 0, moved)
-  return next
 }
 
 export default function ReorderColumnsDialog(props: ReorderColumnsDialogProps) {
@@ -160,7 +154,7 @@ export default function ReorderColumnsDialog(props: ReorderColumnsDialogProps) {
                         disabled={isRemoved || displayIndex === 0}
                         onClick={() =>
                           setWorkingOrder(order =>
-                            moveItem(order, displayIndex, displayIndex - 1),
+                            moveItem(order, displayIndex, -1),
                           )
                         }
                       >
@@ -174,7 +168,7 @@ export default function ReorderColumnsDialog(props: ReorderColumnsDialogProps) {
                         }
                         onClick={() =>
                           setWorkingOrder(order =>
-                            moveItem(order, displayIndex, displayIndex + 1),
+                            moveItem(order, displayIndex, 1),
                           )
                         }
                       >

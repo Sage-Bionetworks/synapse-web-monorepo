@@ -1,7 +1,4 @@
-import {
-  FormTemplate,
-  FormTemplateFieldSubmissionContextEnum,
-} from '@sage-bionetworks/synapse-client'
+import { FormTemplate } from '@sage-bionetworks/synapse-client'
 import { MOCK_FILE_HANDLE_ID } from '@/mocks/mock_file_handle'
 import { mockClinicalSchema, mockGenomicsSchema } from './mockJsonSchemas'
 
@@ -27,7 +24,6 @@ export const mockGenomicsTemplate: FormTemplate = {
             'ui:widget': 'textarea',
             'ui:options': { rows: 5 },
           },
-          submissionContext: FormTemplateFieldSubmissionContextEnum.ALWAYS,
           isPublic: true,
         },
       ],
@@ -40,7 +36,6 @@ export const mockGenomicsTemplate: FormTemplate = {
         {
           schemaPath: '/agreeToTerms',
           uiDefinition: {},
-          submissionContext: FormTemplateFieldSubmissionContextEnum.ALWAYS,
         },
       ],
     },
@@ -52,8 +47,8 @@ export const mockGenomicsTemplate: FormTemplate = {
  * Renders the Data Access schema as a 2-step form:
  * Project Details → Compliance.
  *
- * Demonstrates a file-upload field with a downloadable template, and a
- * RENEWAL_ONLY field.
+ * Demonstrates a file-upload field with a downloadable template, and a Renewal-only field
+ * (`irbApprovalNumber`, gated in `mockClinicalSchema` via `x-synapse-submissionContext`).
  */
 export const mockClinicalTemplate: FormTemplate = {
   id: 'template-2',
@@ -68,13 +63,11 @@ export const mockClinicalTemplate: FormTemplate = {
         {
           schemaPath: '/projectTitle',
           uiDefinition: {},
-          submissionContext: FormTemplateFieldSubmissionContextEnum.ALWAYS,
           isPublic: true,
         },
         {
           schemaPath: '/dataUsePurpose',
           uiDefinition: {},
-          submissionContext: FormTemplateFieldSubmissionContextEnum.ALWAYS,
         },
       ],
     },
@@ -85,13 +78,10 @@ export const mockClinicalTemplate: FormTemplate = {
         {
           schemaPath: '/irbApprovalNumber',
           uiDefinition: {},
-          submissionContext:
-            FormTemplateFieldSubmissionContextEnum.RENEWAL_ONLY,
         },
         {
           schemaPath: '/signedDataUseAgreement',
           uiDefinition: {},
-          submissionContext: FormTemplateFieldSubmissionContextEnum.ALWAYS,
           templateFileHandleId: MOCK_FILE_HANDLE_ID,
         },
       ],
