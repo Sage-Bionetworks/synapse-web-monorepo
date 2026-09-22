@@ -26,6 +26,28 @@ if (typeof window !== 'undefined') {
   // IntersectionObserver polyfill for JSDOM
   setupIntersectionMocking(vi.fn)
 
+  // PointerEvent polyfill for JSDOM - https://github.com/jsdom/jsdom/issues/2527
+  // dnd-kit's pointer sensor narrows events with
+  // `event instanceof getWindow(event.target).PointerEvent`, which throws
+  // "Right-hand side of 'instanceof' is not an object" rather than returning
+  // false when the constructor is absent. The throw escapes as an unhandled
+  // error and fails the run even when every assertion passes.
+  if (window.PointerEvent == null) {
+    class JSDOMPointerEvent extends MouseEvent {
+      readonly pointerId: number
+      readonly pointerType: string
+      readonly isPrimary: boolean
+
+      constructor(type: string, params: PointerEventInit = {}) {
+        super(type, params)
+        this.pointerId = params.pointerId ?? 0
+        this.pointerType = params.pointerType ?? ''
+        this.isPrimary = params.isPrimary ?? false
+      }
+    }
+    window.PointerEvent = JSDOMPointerEvent as unknown as typeof PointerEvent
+  }
+
   const oldWindowLocation = window.location
   const oldWindowOpen = window.open
 

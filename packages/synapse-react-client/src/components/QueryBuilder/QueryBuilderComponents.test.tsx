@@ -27,7 +27,6 @@ function makeContext(
     removeGroupAt: vi.fn(),
     updateConditionAt: vi.fn(),
     removeConditionAt: vi.fn(),
-    moveNodeAt: vi.fn(),
     ...overrides,
   }
 }
@@ -205,7 +204,9 @@ describe('FilterConditionRow', () => {
       },
     )
     expect(
-      screen.getByRole('button', { name: 'Drag to reorder condition' }),
+      screen.getByRole('button', {
+        name: 'Drag condition into a condition group',
+      }),
     ).toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: 'Remove condition' }),

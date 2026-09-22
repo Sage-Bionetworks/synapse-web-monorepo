@@ -13,6 +13,14 @@
   &.dragging {
     opacity: 0.4;
   }
+
+  // Groups are the only drop targets and rows do not shuffle live during a
+  // drag, so this is the sole cue for which group will receive the node.
+  &.dropTarget {
+    border-radius: 3px;
+    box-shadow: inset 0 0 0 2px
+      var(--qb-accent-color, var(--synapse-primary-action-color));
+  }
 }
 
 .dragHandle {

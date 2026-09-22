@@ -8,9 +8,10 @@ import {
 } from '@mui/material'
 import { useDroppable } from '@dnd-kit/react'
 import { useSortable } from '@dnd-kit/react/sortable'
-import { CSSProperties } from 'react'
+import { CSSProperties, useCallback } from 'react'
 import { FilterConditionRow } from './FilterConditionRow'
 import styles from './FilterGroupNode.module.scss'
+import { groupDropZoneId, withoutOptimisticSorting } from './queryBuilderDnd'
 import { useQueryBuilderInternalContext } from './QueryBuilderInternalContext'
 import { isQBGroup, QBGroup } from './QueryBuilderTypes'
 
@@ -19,10 +20,12 @@ export type FilterGroupNodeProps = {
   isRoot?: boolean
   parentGroupId?: string
   index?: number
+  /** Nesting level, used to resolve drops into the innermost group. */
+  depth?: number
 }
 
 export function FilterGroupNode(props: FilterGroupNodeProps) {
-  const { group, isRoot = false, parentGroupId, index } = props
+  const { group, isRoot = false, parentGroupId, index, depth = 0 } = props
   const {
     addConditionAt,
     addChildGroupAt,
@@ -32,8 +35,9 @@ export function FilterGroupNode(props: FilterGroupNodeProps) {
   } = useQueryBuilderInternalContext()
 
   // Non-root groups are draggable within their parent; the root is skipped.
-  // `useSortable` is always called (React rules of hooks) but disabled for the
-  // root so it never registers as a draggable or droppable sortable item.
+  // `useSortable` is always called (React rules of hooks). Its droppable half
+  // is always off — the drop zone below covers the same element and is what
+  // makes this group a target.
   const {
     ref: sortableRef,
     handleRef,
@@ -42,15 +46,29 @@ export function FilterGroupNode(props: FilterGroupNodeProps) {
     id: group.id,
     index: index ?? 0,
     group: parentGroupId ?? group.id,
-    disabled: isRoot,
+    disabled: { draggable: isRoot, droppable: true },
+    plugins: withoutOptimisticSorting,
   })
 
-  // Empty groups need their own drop target so users can drop items in.
-  const { ref: emptyDropRef } = useDroppable({
-    id: `${group.id}::empty`,
+  // Groups are the only drop targets, so the zone spans the whole group.
+  // Zones nest along with the groups, which means a pointer inside a child is
+  // inside its ancestors too; ranking by depth lets the innermost group win.
+  const { ref: dropZoneRef, isDropTarget } = useDroppable({
+    id: groupDropZoneId(group.id),
     data: { groupId: group.id },
-    disabled: group.children.length > 0,
+    collisionPriority: depth,
   })
+
+  // The drag source and the drop zone are the same element. Both hooks hand
+  // back a stable callback ref, so this has to be memoized too — a fresh
+  // closure each render would detach and re-register the element every time.
+  const groupRef = useCallback(
+    (element: Element | null) => {
+      sortableRef(element)
+      dropZoneRef(element)
+    },
+    [sortableRef, dropZoneRef],
+  )
 
   const style: CSSProperties = {
     ['--qb-accent-color' as string]: accentColorFor(group),
@@ -59,10 +77,10 @@ export function FilterGroupNode(props: FilterGroupNodeProps) {
 
   return (
     <div
-      ref={sortableRef}
+      ref={groupRef}
       className={`${styles.group} ${isRoot ? '' : styles.nested}${
         isDragSource ? ` ${styles.dragging}` : ''
-      }`}
+      }${isDropTarget ? ` ${styles.dropTarget}` : ''}`}
       style={style}
       role="group"
       aria-label={groupAriaLabel(group)}
@@ -70,12 +88,12 @@ export function FilterGroupNode(props: FilterGroupNodeProps) {
     >
       <div className={styles.header}>
         {!isRoot && (
-          <Tooltip title="Drag to reorder group">
+          <Tooltip title="Drag into another condition group">
             <IconButton
               ref={handleRef}
               size="small"
               className={styles.dragHandle}
-              aria-label="Drag to reorder condition group"
+              aria-label="Drag condition group into another condition group"
             >
               <DragIndicatorIcon fontSize="small" />
             </IconButton>
@@ -149,7 +167,7 @@ export function FilterGroupNode(props: FilterGroupNodeProps) {
 
       <div className={styles.children}>
         {group.children.length === 0 ? (
-          <div ref={emptyDropRef} className={styles.emptyState}>
+          <div className={styles.emptyState}>
             No conditions yet, add one above
           </div>
         ) : (
@@ -161,6 +179,7 @@ export function FilterGroupNode(props: FilterGroupNodeProps) {
                   group={child}
                   parentGroupId={group.id}
                   index={childIndex}
+                  depth={depth + 1}
                 />
               )
             }

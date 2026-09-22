@@ -1,6 +1,5 @@
 import { Button, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import { DragDropProvider, DragEndEvent } from '@dnd-kit/react'
-import { isSortable } from '@dnd-kit/react/sortable'
 import { useCallback, useMemo, useState } from 'react'
 import { isFilterGroup } from '../../utils/types/IsType'
 import { useQueryContext } from '../QueryContext'
@@ -15,7 +14,7 @@ import {
   addConditionToGroup,
   clearGroup,
   defaultQBGroup,
-  moveNode,
+  moveNodeIntoGroup,
   removeNode,
   updateCondition,
   updateGroup,
@@ -121,37 +120,32 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
     },
     [activeTree, onTreeChange],
   )
-  const moveNodeAt = useCallback(
-    (sourceId: string, targetGroupId: string, targetIndex: number) => {
-      onTreeChange(moveNode(activeTree, sourceId, targetGroupId, targetIndex))
-    },
-    [activeTree, onTreeChange],
-  )
-
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
-      const { source, target, canceled } = event.operation
+      const { source, target, canceled, position, shape } = event.operation
       if (canceled || !source || !target) return
 
-      // A group's empty-state region is a plain droppable rather than a
-      // sortable, so dnd-kit never projects a position into it. It names its
-      // group explicitly and there is only one slot to land in.
-      const dropGroupId = target.data?.groupId
-      if (typeof dropGroupId === 'string') {
-        moveNodeAt(String(source.id), dropGroupId, 0)
-        return
-      }
+      // Only groups register a drop zone, and each one names its group in
+      // `data`, so every drop resolves to "put this node in that group".
+      const groupId: unknown = target.data?.groupId
+      if (typeof groupId !== 'string') return
 
-      // Otherwise commit the position dnd-kit projected onto the sortable
-      // while the drag was in flight — `group` and `index` describe exactly
-      // the arrangement that was on screen when the user let go. Deriving the
-      // destination from `target` instead does not work: once the optimistic
-      // sorting plugin reorders the DOM it re-points the operation at the
-      // source, so at drop time `target` is usually the dragged node itself.
-      if (!isSortable(source) || source.group == null) return
-      moveNodeAt(String(source.id), String(source.group), source.index)
+      // Which end of the group the node joins is the only positional choice
+      // left, so take it from the half of the group the pointer is over.
+      const pointer = shape?.current.center ?? position.current
+      const isPastMidpoint =
+        target.shape != null && pointer.y > target.shape.center.y
+
+      onTreeChange(
+        moveNodeIntoGroup(
+          activeTree,
+          String(source.id),
+          groupId,
+          isPastMidpoint ? 'end' : 'start',
+        ),
+      )
     },
-    [moveNodeAt],
+    [activeTree, onTreeChange],
   )
 
   const contextValue = useMemo(
@@ -167,7 +161,6 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
       removeGroupAt,
       updateConditionAt,
       removeConditionAt,
-      moveNodeAt,
     }),
     [
       columnModels,
@@ -181,7 +174,6 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
       removeGroupAt,
       updateConditionAt,
       removeConditionAt,
-      moveNodeAt,
     ],
   )
 

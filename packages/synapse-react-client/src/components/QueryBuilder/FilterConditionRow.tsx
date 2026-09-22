@@ -24,6 +24,7 @@ import {
   QBColumnKind,
 } from './queryBuilderMetadata'
 import styles from './FilterConditionRow.module.scss'
+import { withoutOptimisticSorting } from './queryBuilderDnd'
 import { defaultOpForColumnType } from './queryBuilderOperations'
 import { QBCondition, QBConditionOp } from './QueryBuilderTypes'
 
@@ -44,6 +45,9 @@ export function FilterConditionRow(props: FilterConditionRowProps) {
     removeConditionAt,
   } = useQueryBuilderInternalContext()
 
+  // A condition is a drag source only. Dropping onto a condition has no
+  // meaning in a boolean tree — a node joins a group, not another leaf — so
+  // groups own every drop zone and this row never becomes a target.
   const {
     ref: sortableRef,
     handleRef,
@@ -52,6 +56,8 @@ export function FilterConditionRow(props: FilterConditionRowProps) {
     id: condition.id,
     index,
     group: parentGroupId,
+    disabled: { droppable: true },
+    plugins: withoutOptimisticSorting,
   })
 
   const facetColumnNames = useMemo(
@@ -97,12 +103,12 @@ export function FilterConditionRow(props: FilterConditionRowProps) {
       aria-label={`Filter condition${condition.columnName ? ` on ${condition.columnName}` : ''}`}
       data-qb-node-id={condition.id}
     >
-      <Tooltip title="Drag to reorder">
+      <Tooltip title="Drag into a condition group">
         <IconButton
           ref={handleRef}
           size="small"
           className={styles.dragHandle}
-          aria-label="Drag to reorder condition"
+          aria-label="Drag condition into a condition group"
         >
           <DragIndicatorIcon fontSize="small" />
         </IconButton>
