@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material'
+import { Box, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { useNavigate, useRevalidator, useSearchParams } from 'react-router'
 import { backButtonSx } from '../components/BackButton.js'
 import { SourceAppDescription, SourceAppLogo } from '../components/SourceApp.js'
@@ -49,6 +49,8 @@ function LoginPage(props: LoginPageProps) {
   const navigate = useNavigate()
   const sourceApp = useSourceApp()
   const [searchParams] = useSearchParams()
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
 
   const {
     lastLoginDateState,
@@ -62,7 +64,7 @@ function LoginPage(props: LoginPageProps) {
         sx={theme => ({
           [theme.breakpoints.down('sm')]: {
             '& > div:nth-of-type(1), & > div:nth-of-type(2)': {
-              padding: '40px',
+              padding: '20px',
             },
           },
         })}
@@ -81,9 +83,37 @@ function LoginPage(props: LoginPageProps) {
               minHeight: { xs: '100%', md: '600px' },
             }}
           >
-            <div className={'panel-logo'}>
-              <SourceAppLogo />
-            </div>
+            {isMobile && (
+              <>
+                <Box
+                  className={'panel-logo'}
+                  sx={{
+                    '& > .SourceAppLogo': {
+                      marginBottom: '20px',
+                      marginTop: '44px',
+                    },
+                  }}
+                >
+                  <SourceAppLogo />
+                </Box>
+                <Typography
+                  className="headline"
+                  variant="headline2"
+                  sx={{
+                    marginBottom: '10px',
+                    fontSize: '18px',
+                  }}
+                >
+                  Sign in to your account
+                </Typography>
+                <SourceAppDescription />
+              </>
+            )}
+            {!isMobile && (
+              <div className={'panel-logo'}>
+                <SourceAppLogo />
+              </div>
+            )}
             <Box sx={{ my: 4 }}>
               <StandaloneLoginForm
                 sessionCallback={() => {
@@ -122,14 +152,19 @@ function LoginPage(props: LoginPageProps) {
             },
           }}
         >
-          <Typography
-            className="headline"
-            variant="headline2"
-            sx={{ marginTop: { xs: '45px', md: '95px' } }}
-          >
-            Sign in to your account
-          </Typography>
-          <SourceAppDescription />
+          {!isMobile && (
+            <>
+              <Typography
+                className="headline"
+                variant="headline2"
+                sx={{ marginTop: '95px' }}
+              >
+                Sign in to your account
+              </Typography>
+              <SourceAppDescription />
+            </>
+          )}
+
           <SystemUseNotification />
         </Box>
       </StyledInnerContainer>

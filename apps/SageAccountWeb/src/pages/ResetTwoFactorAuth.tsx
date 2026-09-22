@@ -67,6 +67,18 @@ function ResetTwoFactorAuth() {
         className={'ResetPasswords'}
         leftContent={
           <>
+            {promptConfirmDisable2FA && showPasswordField && (
+              <BackButton
+                onClick={() => {
+                  resetDisable2FAMutation()
+                  setShowPasswordField(false)
+                }}
+                sx={{
+                  alignSelf: 'flex-start',
+                  marginBottom: 2,
+                }}
+              />
+            )}
             <div className={'panel-logo'}>
               <SourceAppLogo />
             </div>
@@ -97,14 +109,14 @@ function ResetTwoFactorAuth() {
               )}
               {promptConfirmDisable2FA && (
                 <>
-                  {showPasswordField && (
+                  {/* {showPasswordField && (
                     <BackButton
                       onClick={() => {
                         resetDisable2FAMutation()
                         setShowPasswordField(false)
                       }}
                     />
-                  )}
+                  )} */}
                   <Typography
                     variant={'body1'}
                     sx={{
