@@ -261,7 +261,13 @@ export default function TwoFactorEnrollmentForm(
               >
                 <TextField
                   autoFocus
-                  slotProps={{ htmlInput: { maxLength: totpSecret?.digits } }}
+                  slotProps={{
+                    htmlInput: {
+                      maxLength: totpSecret?.digits,
+                      inputMode: 'numeric',
+                      pattern: '[0-9]*',
+                    },
+                  }}
                   value={totp}
                   onChange={e => {
                     setTotp(e.target.value)

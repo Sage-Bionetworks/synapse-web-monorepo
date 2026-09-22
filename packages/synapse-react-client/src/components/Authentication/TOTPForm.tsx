@@ -19,6 +19,14 @@ export default function TOTPForm(props: TOTPFormProps) {
       <MuiOtpInput
         autoFocus
         length={TOTP_LENGTH}
+        TextFieldsProps={{
+          slotProps: {
+            htmlInput: {
+              inputMode: 'numeric',
+              pattern: '[0-9]*',
+            },
+          },
+        }}
         value={verificationCode}
         onChange={setVerificationCode}
         onComplete={onSubmit}
