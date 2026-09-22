@@ -6,6 +6,7 @@ import UploadCsvToGridButton from '@/components/DataGrid/components/UploadCsvToG
 import useGetSchemaForGrid from '@/components/DataGrid/hooks/useGetSchemaForGrid'
 import SyncGridWithSourceButton from '@/components/DataGrid/SyncGridWithSourceButton'
 import computeReplicaSelectionModel from '@/components/DataGrid/utils/computeReplicaSelectionModel'
+import { getNamedColumnIndices } from '@/components/DataGrid/utils/getNamedColumnIndices'
 import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
 import { SynapseErrorBoundary } from '@/components/error/ErrorBanner'
 import { SkeletonTable } from '@/components/index'
@@ -51,6 +52,9 @@ import { removeNoOpOperations } from './utils/DataGridUtils'
 import { enrichRowsWithChangeInfo } from './utils/enrichRowsWithChangeInfo'
 import { mapOperationsToModelChanges } from './utils/mapOperationsToModelChanges'
 import CurieAvatarHead from '@/assets/mui_components/CurieAvatarHead'
+
+// Stable reference for renders with no model snapshot, so column memos don't recompute
+const EMPTY_COLUMN_NAMES: string[] = []
 
 export type SynapseGridProps = {
   agentRegistrationId?: string
@@ -216,6 +220,16 @@ function SynapseGridInner({
     model,
     replicas,
     replicaId,
+  )
+
+  const columnNames = modelSnapshot?.columnNames ?? EMPTY_COLUMN_NAMES
+
+  // Reconcile the two column fields once here rather than in each consumer: the hub can patch
+  // `columnOrder` and `columnNames` separately, so a render can land on an order that references a
+  // column whose name is not in the snapshot yet.
+  const columnOrder = useMemo(
+    () => getNamedColumnIndices(columnNames, modelSnapshot?.columnOrder ?? []),
+    [columnNames, modelSnapshot?.columnOrder],
   )
 
   // Transform the model view rows and columns to DataSheetGrid format
@@ -463,8 +477,8 @@ function SynapseGridInner({
                 <Grid size={12}>
                   <ValidationAlert
                     rowValues={rowValues}
-                    columnNames={modelSnapshot?.columnNames ?? []}
-                    columnOrder={modelSnapshot?.columnOrder ?? []}
+                    columnNames={columnNames}
+                    columnOrder={columnOrder}
                     onNavigateToCell={handleNavigateToCell}
                     isLoading={!hasCompletedInitialSync}
                   />
@@ -503,8 +517,8 @@ function SynapseGridInner({
                     {undoUI}
                     {redoUI}
                     <ReorderColumnsButton
-                      columnNames={modelSnapshot?.columnNames ?? []}
-                      columnOrder={modelSnapshot?.columnOrder ?? []}
+                      columnNames={columnNames}
+                      columnOrder={columnOrder}
                       jsonSchema={jsonSchema}
                       upsertKey={upsertKey}
                       canRemoveColumns={isRecordSet}
@@ -548,8 +562,8 @@ function SynapseGridInner({
                   <DataGrid
                     gridRef={gridRef}
                     rowValues={enrichedRowValues}
-                    columnNames={modelSnapshot?.columnNames ?? []}
-                    columnOrder={modelSnapshot?.columnOrder ?? []}
+                    columnNames={columnNames}
+                    columnOrder={columnOrder}
                     schemaPropertiesInfo={schemaPropertiesInfo}
                     entityIsView={entityIsView}
                     jsonSchema={jsonSchema}
