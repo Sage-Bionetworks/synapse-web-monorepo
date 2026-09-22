@@ -24,7 +24,6 @@ import {
   QBColumnKind,
 } from './queryBuilderMetadata'
 import styles from './FilterConditionRow.module.scss'
-import { withoutOptimisticSorting } from './queryBuilderDnd'
 import { defaultOpForColumnType } from './queryBuilderOperations'
 import { QBCondition, QBConditionOp } from './QueryBuilderTypes'
 
@@ -57,7 +56,6 @@ export function FilterConditionRow(props: FilterConditionRowProps) {
     index,
     group: parentGroupId,
     disabled: { droppable: true },
-    plugins: withoutOptimisticSorting,
   })
 
   const facetColumnNames = useMemo(

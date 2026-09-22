@@ -1999,12 +1999,6 @@ importers:
       '@aws-sdk/lib-storage':
         specifier: ^3.1064.0
         version: 3.1064.0(@aws-sdk/client-s3@3.1064.0)
-      '@dnd-kit/abstract':
-        specifier: ^0.5.0
-        version: 0.5.0
-      '@dnd-kit/dom':
-        specifier: ^0.5.0
-        version: 0.5.0
       '@dnd-kit/react':
         specifier: ^0.5.0
         version: 0.5.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)

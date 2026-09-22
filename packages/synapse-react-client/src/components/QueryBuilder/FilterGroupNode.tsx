@@ -11,7 +11,7 @@ import { useSortable } from '@dnd-kit/react/sortable'
 import { CSSProperties, useCallback } from 'react'
 import { FilterConditionRow } from './FilterConditionRow'
 import styles from './FilterGroupNode.module.scss'
-import { groupDropZoneId, withoutOptimisticSorting } from './queryBuilderDnd'
+import { groupDropZoneId } from './queryBuilderDnd'
 import { useQueryBuilderInternalContext } from './QueryBuilderInternalContext'
 import { isQBGroup, QBGroup } from './QueryBuilderTypes'
 
@@ -36,8 +36,11 @@ export function FilterGroupNode(props: FilterGroupNodeProps) {
 
   // Non-root groups are draggable within their parent; the root is skipped.
   // `useSortable` is always called (React rules of hooks). Its droppable half
-  // is always off — the drop zone below covers the same element and is what
-  // makes this group a target.
+  // stays off: the drop zone below covers the same element and is what makes
+  // this group a target. Keep it off unless `resolveDrop` in
+  // `QueryBuilderControls` is taught to resolve sortable targets too —
+  // dnd-kit's optimistic sorting only stands down for a target it sees the
+  // app reposition, and otherwise reorders the DOM behind React's back.
   const {
     ref: sortableRef,
     handleRef,
@@ -47,7 +50,6 @@ export function FilterGroupNode(props: FilterGroupNodeProps) {
     index: index ?? 0,
     group: parentGroupId ?? group.id,
     disabled: { draggable: isRoot, droppable: true },
-    plugins: withoutOptimisticSorting,
   })
 
   // Groups are the only drop targets, so the zone spans the whole group.

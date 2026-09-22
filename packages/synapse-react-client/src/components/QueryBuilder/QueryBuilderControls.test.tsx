@@ -2,28 +2,33 @@ import { act, render } from '@testing-library/react'
 import { ReactNode, useState } from 'react'
 import { vi } from 'vitest'
 import { QueryBuilderControls } from './QueryBuilderControls'
+import { groupDropZoneId } from './queryBuilderDnd'
 import { QBCondition, QBGroup } from './QueryBuilderTypes'
 
 /**
- * `onDragEnd` as handed to `DragDropProvider` by the component under test.
- * Captured by the `@dnd-kit/react` mock so tests can end a drag without
- * needing real pointer input or element geometry (jsdom has neither).
+ * The drag handlers `QueryBuilderControls` hands to `DragDropProvider`,
+ * captured by the `@dnd-kit/react` mock so tests can drive a gesture without
+ * pointer input or element geometry (jsdom has neither).
  */
-let capturedOnDragEnd: ((event: DragEndEventLike) => void) | undefined
+let handlers: {
+  onDragStart?: () => void
+  onDragOver?: (event: DragEventLike) => void
+  onDragEnd?: (event: DragEventLike) => void
+} = {}
 
-type DragEndEventLike = {
+type DragEventLike = {
   operation: {
     source: { id: string } | null
     target: TargetLike | null
     canceled: boolean
-    /** Pointer position; only `y` matters to the handler. */
+    /** Pointer position; only `y` matters to the handlers. */
     position: { current: { x: number; y: number } }
     shape: null
   }
 }
 /**
  * A drop zone. Only groups register one, and each names its group in
- * `data.groupId`; `shape.center.y` is what the handler compares the pointer
+ * `data.groupId`; `shape.center.y` is what the handlers compare the pointer
  * against to pick an end of that group's children.
  */
 type TargetLike = {
@@ -35,9 +40,15 @@ type TargetLike = {
 vi.mock('@dnd-kit/react', () => ({
   DragDropProvider: (props: {
     children: ReactNode
-    onDragEnd: (event: DragEndEventLike) => void
+    onDragStart: () => void
+    onDragOver: (event: DragEventLike) => void
+    onDragEnd: (event: DragEventLike) => void
   }) => {
-    capturedOnDragEnd = props.onDragEnd
+    handlers = {
+      onDragStart: props.onDragStart,
+      onDragOver: props.onDragOver,
+      onDragEnd: props.onDragEnd,
+    }
     return props.children
   },
   useDroppable: () => ({ ref: vi.fn(), isDropTarget: false }),
@@ -131,33 +142,51 @@ function renderControls(initialTree: QBGroup) {
   return { onTreeChange }
 }
 
+const DROP_ZONE_CENTER_Y = 100
+
 /**
- * End a drag of `sourceId` over `target`. `pastMidpoint` places the pointer
- * in the lower half of the drop zone, which appends to the group rather than
- * prepending.
+ * An operation for `sourceId` hovering `target`. `pastMidpoint` places the
+ * pointer in the lower half of the drop zone, which appends to the group
+ * rather than prepending.
  */
-function endDrag(
+function operation(
   sourceId: string,
   target: TargetLike,
   { pastMidpoint = false, canceled = false } = {},
-) {
-  const centerY = 100
-  act(() => {
-    capturedOnDragEnd?.({
-      operation: {
-        source: { id: sourceId },
-        target: { shape: { center: { x: 0, y: centerY } }, ...target },
-        canceled,
-        position: { current: { x: 0, y: pastMidpoint ? centerY + 10 : 0 } },
-        shape: null,
-      },
-    })
-  })
+): DragEventLike['operation'] {
+  return {
+    source: { id: sourceId },
+    target: { shape: { center: { x: 0, y: DROP_ZONE_CENTER_Y } }, ...target },
+    canceled,
+    position: {
+      current: { x: 0, y: pastMidpoint ? DROP_ZONE_CENTER_Y + 10 : 0 },
+    },
+    shape: null,
+  }
+}
+
+function startDrag() {
+  act(() => handlers.onDragStart?.())
+}
+
+function dragOver(...args: Parameters<typeof operation>) {
+  act(() => handlers.onDragOver?.({ operation: operation(...args) }))
+}
+
+function drop(...args: Parameters<typeof operation>) {
+  act(() => handlers.onDragEnd?.({ operation: operation(...args) }))
+}
+
+/** A whole gesture: press, hover a zone, release there. */
+function dragAndDrop(...args: Parameters<typeof operation>) {
+  startDrag()
+  dragOver(...args)
+  drop(...args)
 }
 
 /** A group's drop zone, as `FilterGroupNode` registers it. */
 function groupDropZone(groupId: string): TargetLike {
-  return { id: `${groupId}::dropzone`, data: { groupId } }
+  return { id: groupDropZoneId(groupId), data: { groupId } }
 }
 
 /** Child ids of the group with the given id, for readable assertions. */
@@ -173,21 +202,25 @@ function childIdsOf(tree: QBGroup, groupId: string): string[] {
 }
 
 beforeEach(() => {
-  capturedOnDragEnd = undefined
+  handlers = {}
 })
 
 describe('QueryBuilderControls drag and drop', () => {
-  function nextTree(onTreeChange: ReturnType<typeof vi.fn>): QBGroup {
-    expect(onTreeChange).toHaveBeenCalledTimes(1)
-    return onTreeChange.mock.calls[0][0] as QBGroup
+  /**
+   * The tree as it stands after the gesture. A gesture emits on both drag
+   * over and release, so only the last one describes where things ended up.
+   */
+  function latestTree(onTreeChange: ReturnType<typeof vi.fn>): QBGroup {
+    expect(onTreeChange).toHaveBeenCalled()
+    return onTreeChange.mock.lastCall?.[0] as QBGroup
   }
 
   it('moves a condition into a nested group, at the front from its upper half', () => {
     const { onTreeChange } = renderControls(makeTree())
 
-    endDrag('a', groupDropZone('nested'))
+    dragAndDrop('a', groupDropZone('nested'))
 
-    const next = nextTree(onTreeChange)
+    const next = latestTree(onTreeChange)
     expect(childIdsOf(next, 'root')).toEqual(['b', 'nested'])
     expect(childIdsOf(next, 'nested')).toEqual(['a', 'c'])
   })
@@ -195,9 +228,9 @@ describe('QueryBuilderControls drag and drop', () => {
   it('appends into a nested group when dropped on its lower half', () => {
     const { onTreeChange } = renderControls(makeTree())
 
-    endDrag('a', groupDropZone('nested'), { pastMidpoint: true })
+    dragAndDrop('a', groupDropZone('nested'), { pastMidpoint: true })
 
-    const next = nextTree(onTreeChange)
+    const next = latestTree(onTreeChange)
     expect(childIdsOf(next, 'nested')).toEqual(['c', 'a'])
   })
 
@@ -207,9 +240,9 @@ describe('QueryBuilderControls drag and drop', () => {
     nested.children = []
     const { onTreeChange } = renderControls(tree)
 
-    endDrag('a', groupDropZone('nested'))
+    dragAndDrop('a', groupDropZone('nested'))
 
-    const next = nextTree(onTreeChange)
+    const next = latestTree(onTreeChange)
     expect(childIdsOf(next, 'root')).toEqual(['b', 'nested'])
     expect(childIdsOf(next, 'nested')).toEqual(['a'])
   })
@@ -217,9 +250,9 @@ describe('QueryBuilderControls drag and drop', () => {
   it('moves a condition out of a nested group back to the root', () => {
     const { onTreeChange } = renderControls(makeTree())
 
-    endDrag('c', groupDropZone('root'))
+    dragAndDrop('c', groupDropZone('root'))
 
-    const next = nextTree(onTreeChange)
+    const next = latestTree(onTreeChange)
     expect(childIdsOf(next, 'root')).toEqual(['c', 'a', 'b', 'nested'])
     expect(childIdsOf(next, 'nested')).toEqual([])
   })
@@ -238,9 +271,9 @@ describe('QueryBuilderControls drag and drop', () => {
     ]
     const { onTreeChange } = renderControls(tree)
 
-    endDrag('other', groupDropZone('nested'))
+    dragAndDrop('other', groupDropZone('nested'))
 
-    const next = nextTree(onTreeChange)
+    const next = latestTree(onTreeChange)
     expect(childIdsOf(next, 'root')).toEqual(['a', 'b', 'nested'])
     expect(childIdsOf(next, 'nested')).toEqual(['other', 'c'])
   })
@@ -250,29 +283,60 @@ describe('QueryBuilderControls drag and drop', () => {
 
     // Conditions register no drop zone, so a target without a `groupId` in
     // its data cannot be resolved to a destination.
-    endDrag('a', { id: 'c' })
+    dragAndDrop('a', { id: 'c' })
 
     expect(onTreeChange).not.toHaveBeenCalled()
   })
 
-  it('ignores a canceled drag', () => {
+  it('moves the node on drag over, before the pointer is released', () => {
     const { onTreeChange } = renderControls(makeTree())
 
-    endDrag('a', groupDropZone('nested'), { canceled: true })
+    startDrag()
+    dragOver('a', groupDropZone('nested'))
 
-    expect(onTreeChange).not.toHaveBeenCalled()
+    // Keeping React state in step with the DOM within the gesture is what
+    // lets dnd-kit animate the rows and keeps it from reordering the DOM
+    // itself.
+    expect(childIdsOf(latestTree(onTreeChange), 'nested')).toEqual(['a', 'c'])
+  })
+
+  it('restores the pre-drag tree when the gesture is canceled', () => {
+    const tree = makeTree()
+    const { onTreeChange } = renderControls(tree)
+
+    startDrag()
+    dragOver('a', groupDropZone('nested'))
+    drop('a', groupDropZone('nested'), { canceled: true })
+
+    // dnd-kit reverts its own state on cancel but never ours, so the
+    // snapshot taken at drag start has to be put back.
+    expect(latestTree(onTreeChange)).toBe(tree)
+    expect(childIdsOf(latestTree(onTreeChange), 'root')).toEqual([
+      'a',
+      'b',
+      'nested',
+    ])
+  })
+
+  it('takes the release position over the last drag over', () => {
+    const { onTreeChange } = renderControls(makeTree())
+
+    // `dragover` only fires when the target changes, so crossing a group's
+    // midpoint without leaving it produces no event; the release decides.
+    startDrag()
+    dragOver('a', groupDropZone('nested'))
+    drop('a', groupDropZone('nested'), { pastMidpoint: true })
+
+    expect(childIdsOf(latestTree(onTreeChange), 'nested')).toEqual(['c', 'a'])
   })
 
   it('ignores a drop naming a group that is not in the tree', () => {
     const { onTreeChange } = renderControls(makeTree())
 
-    endDrag('a', groupDropZone('ghost'))
+    dragAndDrop('a', groupDropZone('ghost'))
 
     // `moveNodeIntoGroup` returns the tree by reference, so React bails out.
-    expect(onTreeChange).toHaveBeenCalledWith(
-      expect.objectContaining({ id: 'root' }),
-    )
-    expect(childIdsOf(nextTree(onTreeChange), 'root')).toEqual([
+    expect(childIdsOf(latestTree(onTreeChange), 'root')).toEqual([
       'a',
       'b',
       'nested',
@@ -282,9 +346,9 @@ describe('QueryBuilderControls drag and drop', () => {
   it('refuses to nest a group inside its own subtree', () => {
     const { onTreeChange } = renderControls(makeTree())
 
-    endDrag('nested', groupDropZone('nested'))
+    dragAndDrop('nested', groupDropZone('nested'))
 
-    const next = nextTree(onTreeChange)
+    const next = latestTree(onTreeChange)
     expect(childIdsOf(next, 'root')).toEqual(['a', 'b', 'nested'])
     expect(childIdsOf(next, 'nested')).toEqual(['c'])
   })
@@ -293,7 +357,7 @@ describe('QueryBuilderControls drag and drop', () => {
     const tree = makeTree()
     const { onTreeChange } = renderControls(tree)
 
-    endDrag('a', groupDropZone('root'))
+    dragAndDrop('a', groupDropZone('root'))
 
     // `moveNode` returns the tree by reference when the move is a no-op, so
     // React bails out of the re-render rather than rebuilding every row.
