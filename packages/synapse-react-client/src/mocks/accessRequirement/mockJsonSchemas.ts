@@ -11,6 +11,8 @@
  */
 
 import { RJSFSchema } from '@rjsf/utils'
+import { DataAccessRequestType } from '@sage-bionetworks/synapse-client'
+import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
 
 /** Genomics DAR data contract — all fields required. */
 export const mockGenomicsSchema: RJSFSchema = {
@@ -30,11 +32,18 @@ export const mockGenomicsSchema: RJSFSchema = {
       description:
         'I agree to abide by all terms and conditions for accessing this data.',
     },
+    [SUBMISSION_CONTEXT_PROPERTY]: {
+      type: 'string',
+      enum: [DataAccessRequestType.REQUEST, DataAccessRequestType.RENEWAL],
+    },
   },
-  required: ['intendedDataUse', 'agreeToTerms'],
+  required: ['intendedDataUse', 'agreeToTerms', SUBMISSION_CONTEXT_PROPERTY],
 }
 
-/** Clinical Trial DAR data contract — includes a file upload. */
+/**
+ * Clinical Trial DAR data contract — includes a file upload and a Renewal-only field
+ * (`irbApprovalNumber`), gated behind an `x-synapse-submissionContext` conditional.
+ */
 export const mockClinicalSchema: RJSFSchema = {
   $id: 'org.sagebionetworks.dar.clinical-1.0.0',
   type: 'object',
@@ -51,12 +60,6 @@ export const mockClinicalSchema: RJSFSchema = {
       description: 'Select the primary purpose for your use of this data.',
       enum: ['Research', 'Commercial', 'Educational'],
     },
-    irbApprovalNumber: {
-      type: 'string',
-      title: 'IRB Approval Number',
-      description:
-        'If your institution requires IRB approval, provide the approval number.',
-    },
     signedDataUseAgreement: {
       type: 'number',
       title: 'Signed Data Use Agreement',
@@ -64,8 +67,37 @@ export const mockClinicalSchema: RJSFSchema = {
         'Upload a signed copy of the Data Use Agreement. A template is available for download.',
       format: 'synapse-filehandle-id',
     },
+    [SUBMISSION_CONTEXT_PROPERTY]: {
+      type: 'string',
+      enum: [DataAccessRequestType.REQUEST, DataAccessRequestType.RENEWAL],
+    },
   },
-  required: ['projectTitle', 'signedDataUseAgreement'],
+  required: [
+    'projectTitle',
+    'signedDataUseAgreement',
+    SUBMISSION_CONTEXT_PROPERTY,
+  ],
+  allOf: [
+    {
+      if: {
+        properties: {
+          [SUBMISSION_CONTEXT_PROPERTY]: {
+            const: DataAccessRequestType.RENEWAL,
+          },
+        },
+      },
+      then: {
+        properties: {
+          irbApprovalNumber: {
+            type: 'string',
+            title: 'IRB Approval Number',
+            description:
+              'If your institution requires IRB approval, provide the approval number.',
+          },
+        },
+      },
+    },
+  ],
 }
 
 /**
