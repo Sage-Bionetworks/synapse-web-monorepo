@@ -48,7 +48,7 @@ export const SourceAppDescription = (): React.ReactNode => {
       sx={theme => ({
         maxHeight: '180px',
         overflow: 'auto',
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down('md')]: {
           fontSize: '16px',
         },
       })}

@@ -109,14 +109,6 @@ function ResetTwoFactorAuth() {
               )}
               {promptConfirmDisable2FA && (
                 <>
-                  {/* {showPasswordField && (
-                    <BackButton
-                      onClick={() => {
-                        resetDisable2FAMutation()
-                        setShowPasswordField(false)
-                      }}
-                    />
-                  )} */}
                   <Typography
                     variant={'body1'}
                     sx={{
