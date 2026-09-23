@@ -1,7 +1,7 @@
 /*
  * Editing UI for a FormTemplate draft: composes the pure `useFormTemplateDraft` state with save
- * orchestration (`useSaveFormTemplate`), client-side validation, and the first-class-field
- * collision warning. Receives already-resolved initial data — the caller (`FormTemplateEditor`)
+ * orchestration (`useSaveFormTemplate`) and client-side validation. Receives already-resolved
+ * initial data — the caller (`FormTemplateEditor`)
  * owns fetching, so this component never renders a loading state.
  */
 import { DragDropProvider, DragOverlay } from '@dnd-kit/react'
@@ -24,10 +24,7 @@ import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material'
 import { RJSFSchema } from '@rjsf/utils'
 import { useMemo, useState } from 'react'
 import { displayToast } from '@/components/ToastMessage'
-import {
-  listResolvedSchemaProperties,
-  resolveSchemaPropertyAtPointer,
-} from '@/utils/jsonschema/submissionContext'
+import { resolveSchemaPropertyAtPointer } from '@/utils/jsonschema/submissionContext'
 import { FieldDefinitionDrawer } from './FieldDefinitionDrawer'
 import { FieldLibrary } from './FieldLibrary'
 import { FIELD_DRAG_TYPE } from './sortableIds'
@@ -38,7 +35,6 @@ import { detectFieldType, fieldTypeLabel } from './schemaFieldUtils'
 import { toFormTemplateSteps } from './utils'
 import {
   FormTemplateFieldValidationError,
-  isFirstClassFieldKeyCollision,
   validateFormTemplateFields,
 } from './formTemplateValidation'
 import { useFormTemplateDraft } from './useFormTemplateDraft'
@@ -95,14 +91,6 @@ export function FormTemplateEditorForm({
   const validationErrors = useMemo(
     () => validateFormTemplateFields(toFormTemplateSteps(steps), jsonSchema),
     [steps, jsonSchema],
-  )
-
-  const firstClassCollisions = useMemo(
-    () =>
-      listResolvedSchemaProperties(jsonSchema)
-        .map(p => p.propertyKey)
-        .filter(isFirstClassFieldKeyCollision),
-    [jsonSchema],
   )
 
   const handleSave = async () => {
@@ -178,14 +166,6 @@ export function FormTemplateEditorForm({
           helperText="Used by ACT to identify and find this template. Not shown to requesters."
           sx={{ mb: 3 }}
         />
-
-        {firstClassCollisions.length > 0 && (
-          <Alert severity="warning" sx={{ mb: 2 }}>
-            These fields share a key with a first-class field that is always
-            shown to the requester separately, so requesters may see the
-            question twice: {firstClassCollisions.join(', ')}.
-          </Alert>
-        )}
 
         <Grid container spacing={2} alignItems="stretch">
           <Grid size={{ xs: 12, md: 4 }}>
@@ -292,10 +272,6 @@ export function FormTemplateEditorForm({
           isRequired={editingIsRequired}
           context={editingContext}
           isUsedInSteps={editingIsUsedInSteps}
-          isFirstClassCollision={
-            editingPropertyKey !== null &&
-            isFirstClassFieldKeyCollision(editingPropertyKey)
-          }
           onClose={() => setEditingPropertyKey(null)}
           onUpdate={patch => {
             if (editingPropertyKey)
