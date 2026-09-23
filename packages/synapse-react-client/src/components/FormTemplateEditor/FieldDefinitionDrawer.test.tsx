@@ -25,7 +25,6 @@ function baseProps(
     isRequired: false,
     context: 'ALWAYS',
     isUsedInSteps: false,
-    isFirstClassCollision: false,
     onClose: vi.fn(),
     onUpdate: vi.fn(),
     onRenameKey: vi.fn(),
@@ -66,19 +65,6 @@ describe('FieldDefinitionDrawer', () => {
       />,
     )
     expect(screen.getByText('Choices')).toBeInTheDocument()
-  })
-
-  it('shows the collision warning only when isFirstClassCollision is set', () => {
-    const { rerender } = render(
-      <FieldDefinitionDrawer
-        {...baseProps({ isFirstClassCollision: false })}
-      />,
-    )
-    expect(screen.queryByText(/first-class field/)).not.toBeInTheDocument()
-    rerender(
-      <FieldDefinitionDrawer {...baseProps({ isFirstClassCollision: true })} />,
-    )
-    expect(screen.getByText(/first-class field/)).toBeInTheDocument()
   })
 
   it('labels the delete button based on whether the field is bound to a step', () => {

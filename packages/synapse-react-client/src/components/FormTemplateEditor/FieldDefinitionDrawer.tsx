@@ -50,12 +50,6 @@ export type FieldDefinitionDrawerProps = {
   context: SchemaPropertyContext
   /** True when this field is bound to one or more steps. Affects delete affordance. */
   isUsedInSteps: boolean
-  /**
-   * True when this property's key collides with a first-class field that always renders
-   * statically outside the template (institution, PI, signing official, accessor changes, DUC).
-   * Non-blocking — both would render, so this is a warning, not an error.
-   */
-  isFirstClassCollision: boolean
   onClose: () => void
   onUpdate: (patch: Partial<RJSFSchema>) => void
   onRenameKey: (newKey: string) => void
@@ -77,7 +71,6 @@ export function FieldDefinitionDrawer({
   isRequired,
   context,
   isUsedInSteps,
-  isFirstClassCollision,
   onClose,
   onUpdate,
   onRenameKey,
@@ -185,14 +178,6 @@ export function FieldDefinitionDrawer({
               </MenuItem>
             ))}
           </TextField>
-        )}
-
-        {isFirstClassCollision && (
-          <Alert severity="warning" sx={{ mb: 2 }}>
-            "{propertyKey}" is similar to a first-class field (institution, PI,
-            signing official, accessor changes, or DUC upload) that is shown to
-            the requester separately. Requesters may see this question twice.
-          </Alert>
         )}
 
         <Box sx={{ flexGrow: 1, overflow: 'auto' }}>

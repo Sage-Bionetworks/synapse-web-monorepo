@@ -12,7 +12,6 @@ const meta = {
     isRequired: false,
     context: 'ALWAYS',
     isUsedInSteps: false,
-    isFirstClassCollision: false,
     onClose: () => console.log('onClose'),
     onUpdate: (patch: unknown) => console.log('onUpdate', patch),
     onRenameKey: (key: string) => console.log('onRenameKey', key),
@@ -53,14 +52,6 @@ export const FileField: Story = {
 export const AdvancedUnsupportedShape: Story = {
   args: {
     property: { $ref: '#/definitions/Address', title: 'Mailing address' },
-  },
-}
-
-/** This property's key collides with a first-class field (institution, PI, signing official,
- * accessor changes, DUC) that always renders statically outside the template. */
-export const FirstClassKeyCollision: Story = {
-  args: {
-    isFirstClassCollision: true,
   },
 }
 
