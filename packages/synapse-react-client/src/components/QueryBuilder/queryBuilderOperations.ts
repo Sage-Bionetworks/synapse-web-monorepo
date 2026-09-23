@@ -217,28 +217,25 @@ export function moveNode(
   return insertNodeAt(withoutSource, targetGroupId, clampedTarget, source.node)
 }
 
-/** Which end of a group's children a dropped node is added to. */
-export type QBDropPosition = 'start' | 'end'
-
 /**
- * Move the node identified by `nodeId` into the group identified by
- * `groupId`, at the start or end of that group's children.
+ * Move the node identified by `nodeId` to the front of the group identified
+ * by `groupId`.
  *
  * This is the operation behind drag-and-drop: only groups are drop targets,
- * so every drag resolves to "put this node in that group". Enforces the same
- * invariants as `moveNode`, and additionally returns the tree unchanged when
- * `groupId` names something that is not a group.
+ * so every drag resolves to "put this node in that group". The node always
+ * lands first, matching where `addConditionToGroup` puts a new row — within
+ * an AND/OR group the order carries no meaning, so there is nothing for a
+ * drop position to express. Enforces the same invariants as `moveNode`, and
+ * additionally returns the tree unchanged when `groupId` names something that
+ * is not a group.
  */
 export function moveNodeIntoGroup(
   root: QBGroup,
   nodeId: string,
   groupId: string,
-  position: QBDropPosition,
 ): QBGroup {
-  const group = findGroup(root, groupId)
-  if (group == null) return root
-  const targetIndex = position === 'end' ? group.children.length : 0
-  return moveNode(root, nodeId, groupId, targetIndex)
+  if (findGroup(root, groupId) == null) return root
+  return moveNode(root, nodeId, groupId, 0)
 }
 
 // -----------------------------------------------------------------------------

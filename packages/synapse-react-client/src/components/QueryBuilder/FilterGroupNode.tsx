@@ -1,17 +1,14 @@
-import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
-import {
-  Button,
-  IconButton,
-  ToggleButton,
-  ToggleButtonGroup,
-  Tooltip,
-} from '@mui/material'
+import { Button, ToggleButton, ToggleButtonGroup } from '@mui/material'
+import { useForkRef } from '@mui/material/utils'
+import { pointerIntersection } from '@dnd-kit/collision'
 import { useDroppable } from '@dnd-kit/react'
 import { useSortable } from '@dnd-kit/react/sortable'
-import { CSSProperties, useCallback } from 'react'
+import { CSSProperties } from 'react'
 import { FilterConditionRow } from './FilterConditionRow'
 import styles from './FilterGroupNode.module.scss'
-import { groupDropZoneId } from './queryBuilderDnd'
+import { QBDragHandle } from './QBDragHandle'
+import dragStyles from './queryBuilderDrag.module.scss'
+import { groupDropZoneData, groupDropZoneId } from './queryBuilderDnd'
 import { useQueryBuilderInternalContext } from './QueryBuilderInternalContext'
 import { isQBGroup, QBGroup } from './QueryBuilderTypes'
 
@@ -34,13 +31,11 @@ export function FilterGroupNode(props: FilterGroupNodeProps) {
     removeGroupAt,
   } = useQueryBuilderInternalContext()
 
-  // Non-root groups are draggable within their parent; the root is skipped.
-  // `useSortable` is always called (React rules of hooks). Its droppable half
-  // stays off: the drop zone below covers the same element and is what makes
-  // this group a target. Keep it off unless `resolveDrop` in
-  // `QueryBuilderControls` is taught to resolve sortable targets too —
-  // dnd-kit's optimistic sorting only stands down for a target it sees the
-  // app reposition, and otherwise reorders the DOM behind React's back.
+  // Groups become drop targets only through the `useDroppable` zone below.
+  // Keep the sortable's droppable half disabled unless `useQueryBuilderDrag`
+  // also resolves sortable targets: for any target the app doesn't reposition
+  // in `onDragOver`, dnd-kit's OptimisticSortingPlugin moves the DOM node
+  // itself, and React's next commit throws `NotFoundError` on `removeChild`.
   const {
     ref: sortableRef,
     handleRef,
@@ -52,25 +47,22 @@ export function FilterGroupNode(props: FilterGroupNodeProps) {
     disabled: { draggable: isRoot, droppable: true },
   })
 
-  // Groups are the only drop targets, so the zone spans the whole group.
-  // Zones nest along with the groups, which means a pointer inside a child is
-  // inside its ancestors too; ranking by depth lets the innermost group win.
+  // `useQueryBuilderDrag` identifies the target group by `data.groupId`. Zones
+  // nest inside their groups, so the pointer is inside every ancestor of the
+  // group it is over; hit-testing by pointer and ranking by depth selects the
+  // innermost. `collisionPriority` replaces the ranking a detector returns, so
+  // the detector has to be one that reports nothing but pointer hits —
+  // otherwise a deeper zone the dragged box merely overlaps outranks the zone
+  // the pointer is actually in.
   const { ref: dropZoneRef, isDropTarget } = useDroppable({
     id: groupDropZoneId(group.id),
-    data: { groupId: group.id },
+    data: groupDropZoneData(group.id),
+    collisionDetector: pointerIntersection,
     collisionPriority: depth,
   })
 
-  // The drag source and the drop zone are the same element. Both hooks hand
-  // back a stable callback ref, so this has to be memoized too — a fresh
-  // closure each render would detach and re-register the element every time.
-  const groupRef = useCallback(
-    (element: Element | null) => {
-      sortableRef(element)
-      dropZoneRef(element)
-    },
-    [sortableRef, dropZoneRef],
-  )
+  // The drag source and the drop zone are the same element.
+  const groupRef = useForkRef(sortableRef, dropZoneRef)
 
   const style: CSSProperties = {
     ['--qb-accent-color' as string]: accentColorFor(group),
@@ -81,7 +73,7 @@ export function FilterGroupNode(props: FilterGroupNodeProps) {
     <div
       ref={groupRef}
       className={`${styles.group} ${isRoot ? '' : styles.nested}${
-        isDragSource ? ` ${styles.dragging}` : ''
+        isDragSource ? ` ${dragStyles.dragSource}` : ''
       }${isDropTarget ? ` ${styles.dropTarget}` : ''}`}
       style={style}
       role="group"
@@ -90,16 +82,10 @@ export function FilterGroupNode(props: FilterGroupNodeProps) {
     >
       <div className={styles.header}>
         {!isRoot && (
-          <Tooltip title="Drag into another condition group">
-            <IconButton
-              ref={handleRef}
-              size="small"
-              className={styles.dragHandle}
-              aria-label="Drag condition group into another condition group"
-            >
-              <DragIndicatorIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
+          <QBDragHandle
+            handleRef={handleRef}
+            label="Drag condition group into another condition group"
+          />
         )}
         <ToggleButtonGroup
           size="small"

@@ -10,15 +10,6 @@
   --qb-pill-color: var(--synapse-primary-action-color);
 }
 
-.dragging {
-  opacity: 0.4;
-}
-
-.dragHandle {
-  cursor: grab;
-  color: var(--synapse-gray-deemphasized);
-}
-
 .remove {
   color: var(--synapse-gray-600) !important;
   border: 1px solid var(--synapse-border-color-gray);

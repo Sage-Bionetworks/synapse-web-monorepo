@@ -1,10 +1,11 @@
 import { Button, ToggleButton, ToggleButtonGroup } from '@mui/material'
-import { DragDropProvider, DragEndEvent, DragOverEvent } from '@dnd-kit/react'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { DragDropProvider } from '@dnd-kit/react'
+import { useCallback, useMemo, useState } from 'react'
 import { isFilterGroup } from '../../utils/types/IsType'
 import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { FilterGroupNode } from './FilterGroupNode'
+import { useQueryBuilderDrag } from './queryBuilderDnd'
 import { qbNodeToApiFilter } from './queryBuilderTranslation'
 import { qbTreeToReadable } from './qbTreeToReadable'
 import { QueryBuilderInternalContextProvider } from './QueryBuilderInternalContext'
@@ -14,7 +15,6 @@ import {
   addConditionToGroup,
   clearGroup,
   defaultQBGroup,
-  moveNodeIntoGroup,
   removeNode,
   updateCondition,
   updateGroup,
@@ -36,32 +36,6 @@ export type QueryBuilderControlsProps = {
 }
 
 type SummaryMode = 'plain-english' | 'sql'
-
-/**
- * Where a drag currently sits: the group under the pointer and which end of
- * its children the dragged node would join.
- *
- * Null when the pointer is not over a group's drop zone. Groups register the
- * only drop zones in the tree, each naming itself in `data.groupId`.
- */
-function resolveDrop(operation: DragEndEvent['operation']) {
-  const { source, target, position, shape } = operation
-  if (source == null || target == null) return null
-
-  const groupId: unknown = target.data?.groupId
-  if (typeof groupId !== 'string') return null
-
-  // Which end of the group the node joins is the only positional choice
-  // left, so take it from the half of the group the pointer is over.
-  const pointer = shape?.current.center ?? position.current
-  const isPastMidpoint =
-    target.shape != null && pointer.y > target.shape.center.y
-  return {
-    sourceId: String(source.id),
-    groupId,
-    position: isPastMidpoint ? ('end' as const) : ('start' as const),
-  }
-}
 
 /**
  * Top-level Query Builder panel. Uses `useQBFacetSourceMetadata()` — must be
@@ -146,59 +120,7 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
     },
     [activeTree, onTreeChange],
   )
-  const applyDrop = useCallback(
-    (operation: DragEndEvent['operation']) => {
-      const drop = resolveDrop(operation)
-      if (drop == null) return
-      onTreeChange(
-        moveNodeIntoGroup(
-          activeTree,
-          drop.sourceId,
-          drop.groupId,
-          drop.position,
-        ),
-      )
-    },
-    [activeTree, onTreeChange],
-  )
-
-  // The tree as it stood before the in-flight drag. `onDragOver` rewrites the
-  // tree as the pointer moves, so this snapshot is the only way back if the
-  // gesture is canceled — dnd-kit reverts its own state, never ours.
-  const treeBeforeDrag = useRef<QBGroup | null>(null)
-
-  const handleDragStart = useCallback(() => {
-    treeBeforeDrag.current = activeTree
-  }, [activeTree])
-
-  // Moving the node as the pointer crosses into a group is what keeps React
-  // state and the DOM in step within the gesture, which is the contract
-  // dnd-kit's sortables expect: rows animate to their new positions, and any
-  // optimistic sorting would stand down on seeing the indices already
-  // updated rather than reordering the DOM behind React's back.
-  const handleDragOver = useCallback(
-    (event: DragOverEvent) => applyDrop(event.operation),
-    [applyDrop],
-  )
-
-  const handleDragEnd = useCallback(
-    (event: DragEndEvent) => {
-      const snapshot = treeBeforeDrag.current
-      treeBeforeDrag.current = null
-
-      if (event.operation.canceled) {
-        if (snapshot != null) onTreeChange(snapshot)
-        return
-      }
-      // `dragover` only fires when the drop target changes, so the pointer
-      // can cross a group's midpoint without one. Re-resolving here makes
-      // the release authoritative; when it agrees with what is already on
-      // screen `moveNodeIntoGroup` returns the tree by reference and React
-      // bails out of the re-render.
-      applyDrop(event.operation)
-    },
-    [applyDrop, onTreeChange],
-  )
+  const dragHandlers = useQueryBuilderDrag(activeTree, onTreeChange)
 
   const contextValue = useMemo(
     () => ({
@@ -242,11 +164,7 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
 
   return (
     <QueryBuilderInternalContextProvider value={contextValue}>
-      <DragDropProvider
-        onDragStart={handleDragStart}
-        onDragOver={handleDragOver}
-        onDragEnd={handleDragEnd}
-      >
+      <DragDropProvider {...dragHandlers}>
         <div className={styles.root}>
           <div className={styles.summaryBar}>
             <div className={styles.summaryHeader}>

@@ -1,5 +1,4 @@
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
-import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
 import { useSortable } from '@dnd-kit/react/sortable'
 import {
   Autocomplete,
@@ -24,6 +23,8 @@ import {
   QBColumnKind,
 } from './queryBuilderMetadata'
 import styles from './FilterConditionRow.module.scss'
+import { QBDragHandle } from './QBDragHandle'
+import dragStyles from './queryBuilderDrag.module.scss'
 import { defaultOpForColumnType } from './queryBuilderOperations'
 import { QBCondition, QBConditionOp } from './QueryBuilderTypes'
 
@@ -96,21 +97,15 @@ export function FilterConditionRow(props: FilterConditionRowProps) {
   return (
     <div
       ref={sortableRef}
-      className={`${styles.row}${isDragSource ? ` ${styles.dragging}` : ''}`}
+      className={`${styles.row}${isDragSource ? ` ${dragStyles.dragSource}` : ''}`}
       role="group"
       aria-label={`Filter condition${condition.columnName ? ` on ${condition.columnName}` : ''}`}
       data-qb-node-id={condition.id}
     >
-      <Tooltip title="Drag into a condition group">
-        <IconButton
-          ref={handleRef}
-          size="small"
-          className={styles.dragHandle}
-          aria-label="Drag condition into a condition group"
-        >
-          <DragIndicatorIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
+      <QBDragHandle
+        handleRef={handleRef}
+        label="Drag condition into a condition group"
+      />
 
       <Tooltip title="Remove condition">
         <IconButton

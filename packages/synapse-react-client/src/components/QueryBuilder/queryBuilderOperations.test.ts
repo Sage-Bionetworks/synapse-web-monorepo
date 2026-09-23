@@ -464,18 +464,18 @@ describe('moveNodeIntoGroup', () => {
   }
 
   it('prepends into the target group', () => {
-    const next = moveNodeIntoGroup(makeFixture(), 'a', 'g1', 'start')
+    const next = moveNodeIntoGroup(makeFixture(), 'a', 'g1')
     expect(childIds(next, 'root')).toEqual(['b', 'g1'])
     expect(childIds(next, 'g1')).toEqual(['a', 'c'])
   })
 
-  it('appends into the target group', () => {
-    const next = moveNodeIntoGroup(makeFixture(), 'a', 'g1', 'end')
-    expect(childIds(next, 'g1')).toEqual(['c', 'a'])
+  it('prepends regardless of where the node started', () => {
+    const next = moveNodeIntoGroup(makeFixture(), 'b', 'g1')
+    expect(childIds(next, 'g1')).toEqual(['b', 'c'])
   })
 
   it('moves a node back up to the root', () => {
-    const next = moveNodeIntoGroup(makeFixture(), 'c', 'root', 'start')
+    const next = moveNodeIntoGroup(makeFixture(), 'c', 'root')
     expect(childIds(next, 'root')).toEqual(['c', 'a', 'b', 'g1'])
     expect(childIds(next, 'g1')).toEqual([])
   })
@@ -488,7 +488,7 @@ describe('moveNodeIntoGroup', () => {
         makeGroup({ id: 'dest' }),
       ],
     })
-    const next = moveNodeIntoGroup(root, 'src', 'dest', 'start')
+    const next = moveNodeIntoGroup(root, 'src', 'dest')
     expect(childIds(next, 'root')).toEqual(['dest'])
     const dest = next.children[0] as QBGroup
     expect((dest.children[0] as QBGroup).children.map(n => n.id)).toEqual(['x'])
@@ -496,17 +496,17 @@ describe('moveNodeIntoGroup', () => {
 
   it('returns the tree unchanged when the group id is missing', () => {
     const root = makeFixture()
-    expect(moveNodeIntoGroup(root, 'a', 'ghost', 'start')).toBe(root)
+    expect(moveNodeIntoGroup(root, 'a', 'ghost')).toBe(root)
   })
 
   it('returns the tree unchanged when the id names a condition, not a group', () => {
     const root = makeFixture()
-    expect(moveNodeIntoGroup(root, 'a', 'b', 'start')).toBe(root)
+    expect(moveNodeIntoGroup(root, 'a', 'b')).toBe(root)
   })
 
   it('refuses to move a node into itself', () => {
     const root = makeFixture()
-    expect(moveNodeIntoGroup(root, 'g1', 'g1', 'start')).toBe(root)
+    expect(moveNodeIntoGroup(root, 'g1', 'g1')).toBe(root)
   })
 
   it('refuses to move a group into its own descendant', () => {
@@ -516,12 +516,12 @@ describe('moveNodeIntoGroup', () => {
         makeGroup({ id: 'outer', children: [makeGroup({ id: 'inner' })] }),
       ],
     })
-    expect(moveNodeIntoGroup(root, 'outer', 'inner', 'start')).toBe(root)
+    expect(moveNodeIntoGroup(root, 'outer', 'inner')).toBe(root)
   })
 
   it('returns the tree unchanged when the node is already in that position', () => {
     const root = makeFixture()
-    expect(moveNodeIntoGroup(root, 'a', 'root', 'start')).toBe(root)
+    expect(moveNodeIntoGroup(root, 'a', 'root')).toBe(root)
   })
 })
 
