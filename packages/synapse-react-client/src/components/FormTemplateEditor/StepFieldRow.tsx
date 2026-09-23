@@ -97,7 +97,8 @@ export function StepFieldRow({
       sx={{
         p: 1,
         opacity: isDragging ? 0.5 : 1,
-        backgroundColor: isUnresolved ? 'error.light' : 'action.hover',
+        backgroundColor: 'action.hover',
+        borderColor: isUnresolved ? 'error.main' : undefined,
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
