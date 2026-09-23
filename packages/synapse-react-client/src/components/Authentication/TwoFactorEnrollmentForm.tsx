@@ -1,5 +1,8 @@
 import { StyledOuterContainer } from '@/components/styled/LeftRightPanel'
-import { TOTP_CLOCK_SKEW_ERROR_APPENDAGE } from '@/components/Authentication/Constants'
+import {
+  NUMERIC_CODE_HTML_INPUT_PROPS,
+  TOTP_CLOCK_SKEW_ERROR_APPENDAGE,
+} from '@/components/Authentication/Constants'
 import { useFinishTwoFactorEnrollment } from '@/synapse-queries/auth/useTwoFactorEnrollment'
 import { StyledComponent } from '@emotion/styled'
 import {
@@ -263,9 +266,8 @@ export default function TwoFactorEnrollmentForm(
                   autoFocus
                   slotProps={{
                     htmlInput: {
+                      ...NUMERIC_CODE_HTML_INPUT_PROPS,
                       maxLength: totpSecret?.digits,
-                      inputMode: 'numeric',
-                      pattern: '[0-9]*',
                     },
                   }}
                   value={totp}
