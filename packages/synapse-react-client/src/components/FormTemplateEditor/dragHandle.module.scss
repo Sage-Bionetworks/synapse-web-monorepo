@@ -1,0 +1,12 @@
+// Shared layout for the drag-indicator handles in FieldLibraryRow and StepFieldRow. Per-instance
+// color/cursor variations (e.g. disabled state) are layered on top via `sx`.
+.dragHandle {
+  display: flex;
+  align-items: center;
+  touch-action: none;
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
