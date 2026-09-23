@@ -22,9 +22,7 @@ export default function TOTPForm(props: TOTPFormProps) {
         length={TOTP_LENGTH}
         TextFieldsProps={{
           slotProps: {
-            htmlInput: {
-              NUMERIC_CODE_HTML_INPUT_PROPS,
-            },
+            htmlInput: NUMERIC_CODE_HTML_INPUT_PROPS,
           },
         }}
         value={verificationCode}
