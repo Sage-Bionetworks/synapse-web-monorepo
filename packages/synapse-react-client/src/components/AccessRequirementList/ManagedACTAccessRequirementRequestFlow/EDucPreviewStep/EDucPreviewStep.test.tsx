@@ -99,6 +99,22 @@ function successfulPreviewHandler() {
   )
 }
 
+/**
+ * A successful preview handler that counts its calls. GET /preview mints a signature envelope as a
+ * server-side side effect, so tests assert on how many times it ran, not just that it ran.
+ */
+function trackedPreviewHandler() {
+  const previewCalls = { count: 0 }
+  const handler = http.get(previewEndpoint, () => {
+    previewCalls.count += 1
+    return HttpResponse.json(
+      { fileHandleId: 'preview-file-handle-456' },
+      { status: 200 },
+    )
+  })
+  return { previewCalls, handler }
+}
+
 function quotaHandler(quota: number, remaining: number) {
   return http.get(quotaEndpoint, () =>
     HttpResponse.json({ quota, remaining }, { status: 200 }),
@@ -113,6 +129,16 @@ function precheckHandler(canUpdate: boolean) {
 
 function signatureStatusHandler(status: EDucSignatureStatus) {
   return http.get(statusEndpoint, () => HttpResponse.json(status))
+}
+
+/** An in-flight envelope with every signer still able to sign, so DocuSign can still correct it. */
+const CORRECTABLE_SIGNATURE_STATUS: EDucSignatureStatus = {
+  ducStatus: 'sent',
+  includesRequestChanges: true,
+  signerStatus: [
+    { name: 'Alice', status: 'done' },
+    { name: 'Bob', status: 'pending' },
+  ],
 }
 
 const PRECHECK_FAILURE_REASON = 'The signature envelope could not be read.'
@@ -418,6 +444,102 @@ describe('EDucPreviewStep', () => {
       expect(
         screen.queryByText(/changes will be applied to the existing request/i),
       ).not.toBeInTheDocument()
+    })
+
+    it('omits the pending-edits hint when the envelope can no longer be corrected', async () => {
+      server.use(
+        successfulPreviewHandler(),
+        signatureStatusHandler({
+          ducStatus: 'sent',
+          includesRequestChanges: false,
+          signerStatus: [
+            { name: 'Alice', status: 'done' },
+            { name: 'Dan', status: 'declined' },
+          ],
+        }),
+      )
+      renderComponent()
+
+      // The declined signer means sending will recreate the envelope, so promising that signatures
+      // carry over would contradict the confirmation dialog the user is about to see.
+      await screen.findByText(/1 of 2 signatures collected/i)
+      expect(
+        screen.queryByText(/changes will be applied to the existing request/i),
+      ).not.toBeInTheDocument()
+    })
+
+    it('does not regenerate the preview when the recreated routing fails after the void', async () => {
+      const { previewCalls, handler } = trackedPreviewHandler()
+      server.use(
+        handler,
+        signatureStatusHandler(CORRECTABLE_SIGNATURE_STATUS),
+        precheckHandler(false),
+        http.delete(
+          signatureEndpoint,
+          () => new HttpResponse(null, { status: 204 }),
+        ),
+        http.post(signatureEndpoint, () =>
+          HttpResponse.json(
+            { reason: 'DocuSign rejected the new routing.' },
+            { status: 400 },
+          ),
+        ),
+      )
+      const { user } = renderComponent()
+
+      await clickSendForSignature(user)
+      await user.click(
+        await screen.findByRole('button', {
+          name: RECREATE_ENVELOPE_CONFIRM_BUTTON_TEXT,
+        }),
+      )
+
+      await screen.findByText(
+        /couldn't send your DUC for electronic signature/i,
+      )
+      // The void already destroyed the envelope; refetching the preview here would mint a
+      // replacement the user never asked for and quietly reset the request to draft.
+      await waitFor(() => expect(previewCalls.count).toBe(1))
+      expect(previewCalls.count).toBe(1)
+    })
+
+    it('keeps Send enabled at quota, because correcting an envelope costs no routings', async () => {
+      server.use(
+        successfulPreviewHandler(),
+        signatureStatusHandler(CORRECTABLE_SIGNATURE_STATUS),
+        quotaHandler(5, 0),
+      )
+      renderComponent()
+
+      const sendButton = await screen.findByRole('button', {
+        name: SEND_FOR_SIGNATURE_BUTTON_TEXT,
+      })
+      await waitFor(() => expect(sendButton).toBeEnabled())
+    })
+
+    it('reports the exhausted quota instead of offering to recreate the envelope', async () => {
+      const { calls, handlers } = trackSignatureCalls(false)
+      server.use(
+        successfulPreviewHandler(),
+        signatureStatusHandler(CORRECTABLE_SIGNATURE_STATUS),
+        quotaHandler(5, 0),
+        ...handlers,
+      )
+      const { user } = renderComponent()
+
+      await clickSendForSignature(user)
+
+      await screen.findByText(/used all of your electronic signature requests/i)
+      expect(
+        screen.getByText(/all 5 of your electronic signature routings/i),
+      ).toBeInTheDocument()
+      expect(
+        screen.queryByRole('button', {
+          name: RECREATE_ENVELOPE_CONFIRM_BUTTON_TEXT,
+        }),
+      ).not.toBeInTheDocument()
+      expect(calls).toEqual(['GET precheck'])
+      expect(mockOnSendForSignature).not.toHaveBeenCalled()
     })
   })
 

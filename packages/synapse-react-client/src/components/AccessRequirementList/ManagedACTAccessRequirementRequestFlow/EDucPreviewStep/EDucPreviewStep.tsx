@@ -31,9 +31,16 @@ import {
 import { ReactNode, useState } from 'react'
 import { useFetchBlobUrl } from '@/utils/hooks/useFetchBlobUrl'
 import IconSvg from '../../../IconSvg/IconSvg'
+import {
+  getSignatureQuotaExhaustedMessage,
+  isSignatureEnvelopeUpdatable,
+  SIGNATURE_QUOTA_EXHAUSTED_TITLE,
+} from '../eDucSignatureUtils'
 import { longFieldLabelSx } from '../styles'
 
 const PDF_PREVIEW_HEIGHT = '500px'
+/** Keeps the hint text in a readable column without constraining the action it sits beneath. */
+const HINT_MAX_WIDTH = '240px'
 
 export const SEND_FOR_SIGNATURE_BUTTON_TEXT = 'Send for electronic signature'
 export const RECREATE_ENVELOPE_CONFIRM_BUTTON_TEXT =
@@ -92,14 +99,20 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
   // /dataAccessRequest/{id}/preview has server-side side effects (it creates a signature envelope
   // and resets the DAR to draft), and every signature mutation invalidates the DAR query key --
   // which would otherwise refetch the preview between the DELETE and the POST below.
-  const [isSendSequenceActive, setIsSendSequenceActive] = useState(false)
+  //
+  // This latches for the lifetime of the step rather than clearing when a send fails. Re-enabling
+  // the query would refetch it (the preview is stale the moment it lands), firing those side
+  // effects behind an error message -- worst of all after a successful void, where it would mint a
+  // replacement envelope the user never asked for. The already-fetched preview stays on screen, and
+  // leaving and re-entering the step regenerates it.
+  const [hasStartedSendSequence, setHasStartedSendSequence] = useState(false)
 
   const {
     data: previewFileHandle,
     isLoading: isLoadingPreview,
     error: previewError,
   } = useGetDataAccessRequestPreview(requestId ?? '', {
-    enabled: Boolean(requestId) && !isSendSequenceActive,
+    enabled: Boolean(requestId) && !hasStartedSendSequence,
   })
 
   const previewFileHandleId = previewFileHandle?.fileHandleId
@@ -127,7 +140,6 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
     reset: resetUpdateSignature,
   } = useUpdateDataAccessRequestSignature({
     onSuccess: () => onSendForSignature(),
-    onError: () => setIsSendSequenceActive(false),
   })
 
   const {
@@ -144,7 +156,6 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
     reset: resetInitiateSignature,
   } = useInitiateDataAccessRequestSignature({
     onSuccess: () => onSendForSignature(),
-    onError: () => setIsSendSequenceActive(false),
   })
 
   // Drives the "N of M signatures collected" hint, and tells us whether the user's edits have
@@ -157,6 +168,8 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
   const collectedSignatureCount = signers.filter(
     s => s.status === 'done',
   ).length
+  const isEnvelopeUpdatable =
+    hasSignatureEnvelope && isSignatureEnvelopeUpdatable(signatureStatus)
 
   // Preflight the quota so we can disable the send-for-signature action when the user is at
   // or over their limit. A fetch error falls back to the current enabled behavior so a quota
@@ -167,8 +180,16 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
   )
   const isAtOrOverQuota =
     signatureQuota?.remaining != null && signatureQuota.remaining <= 0
+  // Only routing a new envelope spends a quota unit; correcting one that is still in flight is
+  // free. Blocking the correction path would strand a user at quota who followed the "press Back
+  // to update collaborators" guidance, so gate on quota only when a new routing is in prospect.
+  const isSendBlockedByQuota = isAtOrOverQuota && !isEnvelopeUpdatable
 
   const [isRecreateConfirmationOpen, setIsRecreateConfirmationOpen] =
+    useState(false)
+  // Set when the server rejects an update that the client expected to succeed, leaving a recreate
+  // -- which the user has no quota for -- as the only way forward.
+  const [isRecreateBlockedByQuota, setIsRecreateBlockedByQuota] =
     useState(false)
 
   // The precheck and the mutation it selects are presented as a single action, so the button
@@ -202,6 +223,10 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
     (initiateSignatureError && {
       title: INITIATE_SIGNATURE_ERROR_TITLE,
       reason: initiateSignatureError.reason,
+    }) ||
+    (isRecreateBlockedByQuota && {
+      title: SIGNATURE_QUOTA_EXHAUSTED_TITLE,
+      reason: getSignatureQuotaExhaustedMessage(signatureQuota?.quota),
     })
 
   const resetSendErrors = () => {
@@ -209,12 +234,13 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
     resetUpdateSignature()
     resetVoidSignature()
     resetInitiateSignature()
+    setIsRecreateBlockedByQuota(false)
   }
 
   const handleSendForSignature = async () => {
     if (!requestId) return
     resetSendErrors()
-    setIsSendSequenceActive(true)
+    setHasStartedSendSequence(true)
 
     if (!hasSignatureEnvelope) {
       initiateSignature(requestId)
@@ -226,11 +252,13 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
       () => null,
     )
     if (canUpdateEnvelope === null) {
-      setIsSendSequenceActive(false)
       return
     }
     if (canUpdateEnvelope) {
       updateSignature(requestId)
+    } else if (isAtOrOverQuota) {
+      // Recreating spends a routing the user doesn't have, so there is nothing to confirm.
+      setIsRecreateBlockedByQuota(true)
     } else {
       setIsRecreateConfirmationOpen(true)
     }
@@ -244,7 +272,6 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
       () => false,
     )
     if (!isVoided) {
-      setIsSendSequenceActive(false)
       return
     }
     initiateSignature(requestId)
@@ -252,7 +279,6 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
 
   const handleCancelRecreateEnvelope = () => {
     setIsRecreateConfirmationOpen(false)
-    setIsSendSequenceActive(false)
   }
 
   return (
@@ -318,20 +344,20 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
             action={
               <Tooltip
                 title={
-                  isAtOrOverQuota
-                    ? `You have used all ${signatureQuota?.quota ?? ''} of your electronic signature routings for this request. Please contact ACT to request a quota reset.`
+                  isSendBlockedByQuota
+                    ? getSignatureQuotaExhaustedMessage(signatureQuota?.quota)
                     : ''
                 }
                 arrow
-                disableHoverListener={!isAtOrOverQuota}
-                disableFocusListener={!isAtOrOverQuota}
-                disableTouchListener={!isAtOrOverQuota}
+                disableHoverListener={!isSendBlockedByQuota}
+                disableFocusListener={!isSendBlockedByQuota}
+                disableTouchListener={!isSendBlockedByQuota}
               >
                 {/* Tooltip wrapper Box is needed because MUI Tooltip does not fire on disabled children directly. */}
                 <Box component={'span'}>
                   <Button
                     variant={'contained'}
-                    disabled={actionsDisabled || isAtOrOverQuota}
+                    disabled={actionsDisabled || isSendBlockedByQuota}
                     onClick={() => {
                       handleSendForSignature()
                     }}
@@ -348,6 +374,7 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
                 <>
                   {`${collectedSignatureCount} of ${signers.length} signatures collected.`}
                   {signatureStatus?.includesRequestChanges === false &&
+                    isEnvelopeUpdatable &&
                     ' Your changes will be applied to the existing request, so collaborators who have already signed will not need to sign again.'}
                 </>
               ) : undefined
@@ -428,10 +455,13 @@ function ActionRow(props: {
           {description}
         </Typography>
       </Box>
-      <Box sx={{ flexShrink: 0, maxWidth: { sm: '240px' } }}>
+      <Box sx={{ flexShrink: 0 }}>
         {action}
         {hint && (
-          <Typography variant={'smallText1'} sx={{ mt: 1, color: 'grey.700' }}>
+          <Typography
+            variant={'smallText1'}
+            sx={{ mt: 1, maxWidth: { sm: HINT_MAX_WIDTH }, color: 'grey.700' }}
+          >
             {hint}
           </Typography>
         )}

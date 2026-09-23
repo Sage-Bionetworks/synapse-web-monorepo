@@ -35,6 +35,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 import IconSvg from '../../../IconSvg/IconSvg'
+import { isSignatureEnvelopeUpdatable } from '../eDucSignatureUtils'
 import { longFieldLabelSx } from '../styles'
 
 export type SignatureStatusStepProps = {
@@ -96,6 +97,7 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
   const totalCount = signers.length
   const allCollected = totalCount > 0 && collectedCount === totalCount
   const outstandingSigners = signers.filter(s => s.status !== 'done')
+  const isEnvelopeUpdatable = isSignatureEnvelopeUpdatable(signatureStatus)
 
   const { data: previewFileHandle } = useGetDataAccessRequestPreview(
     requestId,
@@ -182,15 +184,19 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
         </Typography>
         {/* Editing is only worth offering while signatures are still outstanding -- once every
             signer is done the user should simply submit. Withheld until the status resolves so
-            the copy doesn't appear and then vanish. */}
-        {onBackClicked && signatureStatus && !allCollected && (
-          <Typography variant={'body1'} sx={{ ...longFieldLabelSx, mb: 3 }}>
-            You can update the list of Collaborators by pressing{' '}
-            <strong>Back</strong>. Your changes will be applied to this
-            signature request, so anyone who has already signed will not need to
-            sign again.
-          </Typography>
-        )}
+            the copy doesn't appear and then vanish, and withheld for an envelope DocuSign can no
+            longer correct, where going Back would force a re-signature rather than preserve one. */}
+        {onBackClicked &&
+          signatureStatus &&
+          !allCollected &&
+          isEnvelopeUpdatable && (
+            <Typography variant={'body1'} sx={{ ...longFieldLabelSx, mb: 3 }}>
+              You can update the list of Collaborators by pressing{' '}
+              <strong>Back</strong>. Your changes will be applied to this
+              signature request, so anyone who has already signed will not need
+              to sign again.
+            </Typography>
+          )}
 
         {isLoadingStatus && (
           <Skeleton

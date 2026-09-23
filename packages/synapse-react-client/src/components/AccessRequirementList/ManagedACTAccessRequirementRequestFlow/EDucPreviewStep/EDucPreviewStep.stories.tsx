@@ -69,6 +69,13 @@ function inFlightEnvelopeHandlers(options: {
   ]
 }
 
+function quotaHandler(quota: number, remaining: number) {
+  return http.get(
+    `${MOCK_REPO_ORIGIN}${DATA_ACCESS_REQUEST_SIGNATURE_QUOTA(MOCK_DATA_ACCESS_REQUEST.id)}`,
+    () => HttpResponse.json({ quota, remaining }, { status: 200 }),
+  )
+}
+
 const meta: Meta<typeof EDucPreviewStep> = {
   title:
     'Governance/Data Access Request Flow/Managed Access Requirement/Step 2c - eDUC Preview',
@@ -186,10 +193,34 @@ export const PreviewAtQuota: Story = {
     msw: {
       handlers: [
         previewHandler,
-        http.get(
-          `${MOCK_REPO_ORIGIN}${DATA_ACCESS_REQUEST_SIGNATURE_QUOTA(MOCK_DATA_ACCESS_REQUEST.id)}`,
-          () => HttpResponse.json({ quota: 3, remaining: 0 }, { status: 200 }),
-        ),
+        quotaHandler(3, 0),
+        ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
+        ...getWikiHandlers(MOCK_REPO_ORIGIN),
+        ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN),
+        ...getDataAccessRequestHandlers(MOCK_REPO_ORIGIN),
+      ],
+    },
+  },
+  args: {
+    managedACTAccessRequirement: eDucManagedACTAccessRequirement,
+    previewSrcOverride: SAMPLE_PDF_URL,
+  },
+}
+
+/**
+ * At quota with an envelope that still looks correctable, so Send stays enabled — updating an
+ * envelope spends no routings. Pressing Send runs a precheck that disagrees, and because a
+ * recreate would spend a routing the user doesn't have, the quota is reported instead of the
+ * "start a new signature request?" confirmation.
+ */
+export const PreviewAtQuotaWithInFlightEnvelope: Story = {
+  name: 'eDUC preview — at signature quota with an in-flight envelope',
+  parameters: {
+    msw: {
+      handlers: [
+        ...inFlightEnvelopeHandlers({ canUpdateEnvelope: false }),
+        previewHandler,
+        quotaHandler(3, 0),
         ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
         ...getWikiHandlers(MOCK_REPO_ORIGIN),
         ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN),

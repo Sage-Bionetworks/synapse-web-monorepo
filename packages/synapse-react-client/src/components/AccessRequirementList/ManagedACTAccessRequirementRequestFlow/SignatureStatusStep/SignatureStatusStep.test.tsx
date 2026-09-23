@@ -77,6 +77,14 @@ const partiallySignedStatus: EDucSignatureStatus = {
   ],
 }
 
+/** Partially signed with every signer still able to sign, so the envelope remains correctable. */
+const correctableStatus: EDucSignatureStatus = {
+  ...partiallySignedStatus,
+  signerStatus: partiallySignedStatus.signerStatus!.filter(
+    signer => signer.status !== 'declined',
+  ),
+}
+
 const fullySignedStatus: EDucSignatureStatus = {
   ducStatus: 'completed',
   includesRequestChanges: true,
@@ -206,7 +214,7 @@ describe('SignatureStatusStep', () => {
   it('tells the user that Back can be used to update collaborators mid-signature', async () => {
     server.use(
       http.get(statusEndpoint, () =>
-        HttpResponse.json(partiallySignedStatus, { status: 200 }),
+        HttpResponse.json(correctableStatus, { status: 200 }),
       ),
     )
     renderComponent()
@@ -215,6 +223,21 @@ describe('SignatureStatusStep', () => {
     expect(
       screen.getByText(/already signed will not need to sign again/i),
     ).toBeInTheDocument()
+  })
+
+  it('omits the update-collaborators copy when the envelope can no longer be corrected', async () => {
+    server.use(
+      http.get(statusEndpoint, () =>
+        HttpResponse.json(partiallySignedStatus, { status: 200 }),
+      ),
+    )
+    renderComponent()
+
+    // A declined signer strands the envelope, so going Back cannot preserve existing signatures.
+    await screen.findByText(/1 out of 4 signatures collected/i)
+    expect(
+      screen.queryByText(/update the list of Collaborators by pressing/i),
+    ).not.toBeInTheDocument()
   })
 
   it('omits the update-collaborators copy once every signature is collected', async () => {
@@ -234,12 +257,12 @@ describe('SignatureStatusStep', () => {
   it('omits the update-collaborators copy when there is no step to go back to', async () => {
     server.use(
       http.get(statusEndpoint, () =>
-        HttpResponse.json(partiallySignedStatus, { status: 200 }),
+        HttpResponse.json(correctableStatus, { status: 200 }),
       ),
     )
     renderComponent({ onBackClicked: undefined })
 
-    await screen.findByText(/1 out of 4 signatures collected/i)
+    await screen.findByText(/1 out of 3 signatures collected/i)
     expect(
       screen.queryByText(/update the list of Collaborators by pressing/i),
     ).not.toBeInTheDocument()
