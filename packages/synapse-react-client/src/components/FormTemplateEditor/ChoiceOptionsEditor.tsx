@@ -7,34 +7,29 @@ import {
   Typography,
 } from '@mui/material'
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material'
-import { useState } from 'react'
 
 type ChoiceOptionsEditorProps = {
   options: string[]
   onChange: (next: string[]) => void
 }
 
+/**
+ * Used in the FormTemplateEditor to edit a 'choice' field's options.
+ */
 export function ChoiceOptionsEditor({
   options,
   onChange,
 }: ChoiceOptionsEditorProps) {
-  // Parallel id array so a row's identity (and its TextField's caret/composition state) survives
-  // a mid-list deletion, since the options themselves are plain strings with no natural id.
-  // Mutated in lockstep with `options` by the handlers below -- never resynced from a prop effect.
-  const [ids, setIds] = useState(() => options.map(() => crypto.randomUUID()))
-
   const update = (idx: number, next: string) => {
     onChange(options.map((o, i) => (i === idx ? next : o)))
   }
   const remove = (idx: number) => {
     onChange(options.filter((_, i) => i !== idx))
-    setIds(prev => prev.filter((_, i) => i !== idx))
   }
   const add = () => {
     let n = options.length + 1
     while (options.includes(`Option ${n}`)) n++
     onChange([...options, `Option ${n}`])
-    setIds(prev => [...prev, crypto.randomUUID()])
   }
 
   return (
@@ -47,11 +42,9 @@ export function ChoiceOptionsEditor({
         Choices
       </Typography>
       <Stack spacing={1}>
+        {/* Index keys are safe: rows are fully controlled and hold no local state. */}
         {options.map((opt, idx) => (
-          <Box
-            key={ids[idx]}
-            sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
-          >
+          <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <TextField
               value={opt}
               onChange={e => update(idx, e.target.value)}

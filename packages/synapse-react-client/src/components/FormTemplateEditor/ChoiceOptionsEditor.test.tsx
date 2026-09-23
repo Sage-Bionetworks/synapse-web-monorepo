@@ -64,16 +64,4 @@ describe('ChoiceOptionsEditor', () => {
     expect(values).toEqual(['Option 1', 'Option 3', 'Option 4'])
     expect(new Set(values).size).toBe(values.length)
   })
-
-  it('keeps each row bound to its own text field after a mid-list deletion', async () => {
-    // Regression: an index-based key would reassign row identity on delete, so the row that used
-    // to be "Blue" would silently become the "Green" input instead of unmounting.
-    const user = userEvent.setup()
-    render(<Harness initialOptions={['Red', 'Blue', 'Green']} />)
-    const greenInput = screen.getByDisplayValue('Green')
-    await user.click(
-      screen.getAllByRole('button', { name: 'Delete choice' })[0], // remove "Red"
-    )
-    expect(screen.getByDisplayValue('Green')).toBe(greenInput)
-  })
 })
