@@ -205,8 +205,6 @@ describe('FieldDefinitionDrawer', () => {
     })
 
     it("starts each field with a fresh draft instead of leaking a prior field's in-progress edit", () => {
-      // Regression: an earlier version reset this draft via a prop-watching effect; switching
-      // fields now remounts the field via `key={propertyKey}` instead.
       function Harness() {
         const [propertyKey, setPropertyKey] = useState('institution')
         return (

@@ -13,7 +13,7 @@ import {
 } from '@mui/material'
 import { Close as CloseIcon, Delete as DeleteIcon } from '@mui/icons-material'
 import { RJSFSchema } from '@rjsf/utils'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { SchemaPropertyContext } from '@/utils/jsonschema/submissionContext'
 import { ChoiceOptionsEditor } from './ChoiceOptionsEditor'
 import {
@@ -89,32 +89,28 @@ export function FieldDefinitionDrawer({
   const type = property ? detectFieldType(property) : null
   const isAdvanced = property !== null && type === null
 
-  // Local draft so keystrokes don't rename the property until the key is confirmed valid and
-  // unique. `propertyKey` doubles as both this field's *identity* and its *current value*: a
-  // container elsewhere in the authoring flow may live-derive it from the question label as a
-  // slug until the editor manually diverges, so `propertyKey` can legitimately change out from
-  // under an open, unmodified draft, not just when switching to a different field. A
-  // `key`-driven remount can't distinguish those two cases (there's no separate stable field
-  // id), and remounting on every derived-slug keystroke would tear down this input's DOM node
-  // mid-edit. An effect resyncing the draft is the correct fit here.
-  const [keyDraft, setKeyDraft] = useState(propertyKey ?? '')
-  useEffect(() => {
-    setKeyDraft(propertyKey ?? '')
-  }, [propertyKey])
+  // The draft exists only while the key is being edited, and is tagged with the key it was started
+  // from. When `propertyKey` changes underneath it (switching fields, or the container re-slugging
+  // the key from the label) the draft no longer applies and the prop is shown again.
+  const [keyDraft, setKeyDraft] = useState<{
+    forKey: string | null
+    value: string
+  } | null>(null)
+  const displayedKey =
+    keyDraft?.forKey === propertyKey ? keyDraft.value : (propertyKey ?? '')
 
   const keyError =
-    keyDraft.length === 0
+    displayedKey.length === 0
       ? 'Required'
-      : keyDraft !== propertyKey && existingKeys.has(keyDraft)
+      : displayedKey !== propertyKey && existingKeys.has(displayedKey)
         ? 'Already used by another field'
         : null
 
   const commitKeyDraft = () => {
-    if (keyError || !propertyKey) {
-      setKeyDraft(propertyKey ?? '')
-      return
+    if (propertyKey && !keyError && displayedKey !== propertyKey) {
+      onRenameKey(displayedKey)
     }
-    if (keyDraft !== propertyKey) onRenameKey(keyDraft)
+    setKeyDraft(null)
   }
 
   const handleChangeType = (next: SimpleFieldType) => {
@@ -144,8 +140,13 @@ export function FieldDefinitionDrawer({
         {propertyKey && (
           <TextField
             label="Property key"
-            value={keyDraft}
-            onChange={e => setKeyDraft(sanitizePropertyKey(e.target.value))}
+            value={displayedKey}
+            onChange={e =>
+              setKeyDraft({
+                forKey: propertyKey,
+                value: sanitizePropertyKey(e.target.value),
+              })
+            }
             onBlur={commitKeyDraft}
             onKeyDown={e => {
               if (e.key === 'Enter') {
@@ -251,11 +252,7 @@ export function FieldDefinitionDrawer({
               </Stack>
 
               {type === 'choice' && (
-                // Keyed so switching to a different field remounts it, resetting its internal
-                // row ids -- otherwise they'd stay sized to the *previous* field's option count
-                // (this component persists across field switches; only `property` changes).
                 <ChoiceOptionsEditor
-                  key={propertyKey}
                   options={(property.enum as string[] | undefined) ?? []}
                   onChange={next => onUpdate({ enum: next })}
                 />
