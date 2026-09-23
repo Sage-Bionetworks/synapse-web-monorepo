@@ -86,8 +86,8 @@ export default function TwoFactorBackupCodes(props: TwoFactorBackupCodesProps) {
       leftContent={
         <Box
           sx={{
-            py: 10,
-            px: 8,
+            py: { xs: '20px', md: 10 },
+            px: { xs: '20px', md: 8 },
             height: '100%',
             position: 'relative',
           }}
@@ -170,14 +170,17 @@ export default function TwoFactorBackupCodes(props: TwoFactorBackupCodesProps) {
           sx={{
             py: 10,
             height: '100%',
-            background: `url(https://s3.amazonaws.com/static.synapse.org/images/twofactor-graphic.svg) no-repeat right bottom`,
+            background: {
+              xs: 'none',
+              md: `url(https://s3.amazonaws.com/static.synapse.org/images/twofactor-graphic.svg) no-repeat right bottom`,
+            },
             backgroundSize: '100%',
           }}
         >
           <Box
             sx={{
-              mt: 7,
-              px: 9,
+              mt: { xs: 0, md: 7 },
+              px: { xs: 0, md: 9 },
             }}
           >
             <Typography variant="headline1" sx={{ mb: 2.5 }}>
