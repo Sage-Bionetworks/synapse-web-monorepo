@@ -8,14 +8,9 @@ type JsonSchemaBodyEditorProps = {
 }
 
 /**
- * Raw JSON Schema editor -- a textarea with parse-error feedback. Surfaced behind an "Advanced"
- * disclosure for power users. Day-to-day field editing happens in the FieldLibrary +
- * FieldDefinitionDrawer.
- *
- * Local `text` is the source of truth while mounted -- it is never resynced from `value`, so a
- * round-tripped `onChange` (parent re-stringifies, or reformats) can't clobber in-progress
- * whitespace/newlines or move the caret. A consumer switching to a genuinely different schema
- * should remount with a stable `key` (e.g. the field's property key).
+ * Edits a JSON Schema as raw JSON. Calls `onChange` only when the text parses; otherwise shows
+ * the parse error. `value` is read only on mount, so remount with a new `key` to load a
+ * different schema.
  */
 export function JsonSchemaBodyEditor({
   value,

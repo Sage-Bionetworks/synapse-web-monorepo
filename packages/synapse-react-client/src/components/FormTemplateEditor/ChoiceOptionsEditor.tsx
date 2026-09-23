@@ -14,7 +14,8 @@ type ChoiceOptionsEditorProps = {
 }
 
 /**
- * Used in the FormTemplateEditor to edit a 'choice' field's options.
+ * Edits a choice field's options. At least one option is always kept, and added options get a
+ * unique `Option N` label.
  */
 export function ChoiceOptionsEditor({
   options,
