@@ -42,7 +42,12 @@ function recordReloadAttempt(): boolean {
   }
 }
 
-function handlePreloadError(event: VitePreloadErrorEvent) {
+// The event is deliberately left uncancelled. Cancelling it makes Vite's
+// preload helper resolve the failed import with `undefined` instead of
+// rethrowing, which breaks React Router's own recovery: its route-module
+// loader caches the `undefined` and dereferences it, turning a recoverable
+// load failure into a TypeError that reaches the route error boundary.
+function handlePreloadError() {
   const lastReloadTimestamp = readLastReloadTimestamp()
   const reloadedRecently =
     lastReloadTimestamp !== undefined &&
@@ -51,9 +56,6 @@ function handlePreloadError(event: VitePreloadErrorEvent) {
     return
   }
 
-  // Vite rethrows the error unless the event is cancelled. The reload makes it
-  // moot, and suppressing it avoids flashing an error page on the way out.
-  event.preventDefault()
   window.location.reload()
 }
 

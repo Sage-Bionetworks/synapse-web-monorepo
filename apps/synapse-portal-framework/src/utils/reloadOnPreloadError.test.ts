@@ -62,20 +62,20 @@ describe('registerPreloadErrorReloadHandler', () => {
     expect(reload).toHaveBeenCalledOnce()
   })
 
-  it('suppresses the error that Vite would otherwise rethrow', () => {
+  // Cancelling would make Vite resolve the failed import with `undefined`,
+  // which breaks React Router's own route-module reload recovery
+  it('leaves the event uncancelled so Vite still rethrows the error', () => {
     const event = dispatchPreloadError()
 
-    expect(event.defaultPrevented).toBe(true)
+    expect(event.defaultPrevented).toBe(false)
   })
 
   it('does not reload again while the cooldown is active', () => {
     dispatchPreloadError()
     vi.advanceTimersByTime(PRELOAD_ERROR_RELOAD_COOLDOWN_MS - 1)
-    const secondEvent = dispatchPreloadError()
+    dispatchPreloadError()
 
     expect(reload).toHaveBeenCalledOnce()
-    // The unhandled error surfaces so the error boundary can report it
-    expect(secondEvent.defaultPrevented).toBe(false)
   })
 
   it('reloads again for a preload error after the cooldown elapses', () => {
