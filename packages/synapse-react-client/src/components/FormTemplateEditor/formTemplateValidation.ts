@@ -11,26 +11,6 @@ import {
 } from '@/utils/jsonschema/submissionContext'
 
 /**
- * First-class fields that look like properties that are unconditionally asked in the DUC/eDUC
- * step of a data access request. In the JsonSchemaAccessRequirement editor, a warning is shown
- * if one of these keys is used to indicate to ACT that this may be a duplicate field.
- */
-export const FIRST_CLASS_RESERVED_PROPERTY_KEYS = [
-  'institution',
-  'principalInvestigator',
-  'signingOfficial',
-  'accessorChanges',
-  'ducFileHandleId',
-] as const
-
-/** Whether an authored top-level property key collides with a first-class field's reserved key. */
-export function isFirstClassFieldKeyCollision(propertyKey: string): boolean {
-  return (FIRST_CLASS_RESERVED_PROPERTY_KEYS as readonly string[]).includes(
-    propertyKey,
-  )
-}
-
-/**
  * A property is a "leaf" — the only kind a `FormTemplateField.schemaPath` may address — when it
  * is not itself a nested object schema with its own `properties`. The simple editor only ever
  * authors leaves, but the raw JSON Schema escape hatch can produce a nested object.

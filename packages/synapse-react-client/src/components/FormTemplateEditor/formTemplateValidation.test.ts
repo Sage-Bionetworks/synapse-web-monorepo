@@ -1,7 +1,6 @@
 import { FormTemplateStep } from '@sage-bionetworks/synapse-client'
 import { RJSFSchema } from '@rjsf/utils'
 import {
-  isFirstClassFieldKeyCollision,
   isLeafSchemaProperty,
   isUiHintCompatible,
   validateFormTemplateFields,
@@ -14,20 +13,6 @@ function field(schemaPath: string, uiDefinition: unknown = {}) {
     isPublic: false,
   }
 }
-
-describe('isFirstClassFieldKeyCollision', () => {
-  it('flags every reserved first-class key', () => {
-    expect(isFirstClassFieldKeyCollision('institution')).toBe(true)
-    expect(isFirstClassFieldKeyCollision('principalInvestigator')).toBe(true)
-    expect(isFirstClassFieldKeyCollision('signingOfficial')).toBe(true)
-    expect(isFirstClassFieldKeyCollision('accessorChanges')).toBe(true)
-    expect(isFirstClassFieldKeyCollision('ducFileHandleId')).toBe(true)
-  })
-
-  it('does not flag an unrelated key', () => {
-    expect(isFirstClassFieldKeyCollision('favoriteColor')).toBe(false)
-  })
-})
 
 describe('isLeafSchemaProperty', () => {
   it('treats a scalar property as a leaf', () => {
