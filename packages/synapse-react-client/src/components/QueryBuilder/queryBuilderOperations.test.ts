@@ -10,6 +10,7 @@ import {
   newBlankCondition,
   newEmptyGroup,
   removeNode,
+  moveNodeIntoGroup,
   updateCondition,
   updateGroup,
 } from './queryBuilderOperations'
@@ -434,6 +435,93 @@ describe('moveNode', () => {
     const next = moveNode(root, 'a', 'g1', 99)
     const g1 = next.children.find(n => n.id === 'g1') as QBGroup
     expect(g1.children.map(n => n.id)).toEqual(['c', 'g2', 'a'])
+  })
+})
+
+describe('moveNodeIntoGroup', () => {
+  //   root
+  //   ├── a  (condition)
+  //   ├── b  (condition)
+  //   └── g1 (group)
+  //       └── c  (condition)
+  function makeFixture(): QBGroup {
+    return makeGroup({
+      id: 'root',
+      children: [
+        makeCondition({ id: 'a' }),
+        makeCondition({ id: 'b' }),
+        makeGroup({ id: 'g1', children: [makeCondition({ id: 'c' })] }),
+      ],
+    })
+  }
+
+  function childIds(root: QBGroup, groupId: string): string[] {
+    const group =
+      root.id === groupId
+        ? root
+        : (root.children.find(child => child.id === groupId) as QBGroup)
+    return group.children.map(child => child.id)
+  }
+
+  it('prepends into the target group', () => {
+    const next = moveNodeIntoGroup(makeFixture(), 'a', 'g1')
+    expect(childIds(next, 'root')).toEqual(['b', 'g1'])
+    expect(childIds(next, 'g1')).toEqual(['a', 'c'])
+  })
+
+  it('prepends regardless of where the node started', () => {
+    const next = moveNodeIntoGroup(makeFixture(), 'b', 'g1')
+    expect(childIds(next, 'g1')).toEqual(['b', 'c'])
+  })
+
+  it('moves a node back up to the root', () => {
+    const next = moveNodeIntoGroup(makeFixture(), 'c', 'root')
+    expect(childIds(next, 'root')).toEqual(['c', 'a', 'b', 'g1'])
+    expect(childIds(next, 'g1')).toEqual([])
+  })
+
+  it('moves an entire subgroup, preserving its subtree', () => {
+    const root = makeGroup({
+      id: 'root',
+      children: [
+        makeGroup({ id: 'src', children: [makeCondition({ id: 'x' })] }),
+        makeGroup({ id: 'dest' }),
+      ],
+    })
+    const next = moveNodeIntoGroup(root, 'src', 'dest')
+    expect(childIds(next, 'root')).toEqual(['dest'])
+    const dest = next.children[0] as QBGroup
+    expect((dest.children[0] as QBGroup).children.map(n => n.id)).toEqual(['x'])
+  })
+
+  it('returns the tree unchanged when the group id is missing', () => {
+    const root = makeFixture()
+    expect(moveNodeIntoGroup(root, 'a', 'ghost')).toBe(root)
+  })
+
+  it('returns the tree unchanged when the id names a condition, not a group', () => {
+    const root = makeFixture()
+    expect(moveNodeIntoGroup(root, 'a', 'b')).toBe(root)
+  })
+
+  it('refuses to move a node into itself', () => {
+    const root = makeFixture()
+    expect(moveNodeIntoGroup(root, 'g1', 'g1')).toBe(root)
+  })
+
+  it('refuses to move a group into its own descendant', () => {
+    const root = makeGroup({
+      id: 'root',
+      children: [
+        makeGroup({ id: 'outer', children: [makeGroup({ id: 'inner' })] }),
+      ],
+    })
+    expect(moveNodeIntoGroup(root, 'outer', 'inner')).toBe(root)
+  })
+
+  it('returns the tree unchanged when the node is already in that position', () => {
+    const root = makeFixture()
+    expect(moveNodeIntoGroup(root, 'a', 'root')).toBe(root)
   })
 })
 

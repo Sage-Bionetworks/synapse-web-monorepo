@@ -1873,9 +1873,6 @@ importers:
         specifier: ^3.0.1
         version: 3.0.1
     devDependencies:
-      '@juggle/resize-observer':
-        specifier: ^3.4.0
-        version: 3.4.0
       '@playwright/test':
         specifier: ^1.60.0
         version: 1.60.0
@@ -1999,6 +1996,9 @@ importers:
       '@aws-sdk/lib-storage':
         specifier: ^3.1064.0
         version: 3.1064.0(@aws-sdk/client-s3@3.1064.0)
+      '@dnd-kit/collision':
+        specifier: ^0.5.0
+        version: 0.5.0
       '@dnd-kit/helpers':
         specifier: ^0.5.0
         version: 0.5.0
@@ -2288,9 +2288,6 @@ importers:
       '@googlemaps/jest-mocks':
         specifier: ^2.22.8
         version: 2.22.8
-      '@juggle/resize-observer':
-        specifier: ^3.4.0
-        version: 3.4.0
       '@open-draft/deferred-promise':
         specifier: ^2.2.0
         version: 2.2.0
@@ -2555,6 +2552,10 @@ importers:
         version: 6.0.3
 
   packages/vite-config:
+    dependencies:
+      '@juggle/resize-observer':
+        specifier: ^3.4.0
+        version: 3.4.0
     devDependencies:
       '@rolldown/plugin-babel':
         specifier: ^0.2.3
@@ -4642,8 +4643,8 @@ packages:
   '@popperjs/core@2.11.8':
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
 
-  '@preact/signals-core@1.14.2':
-    resolution: {integrity: sha512-RZHdBj9ZF4n40Rp4jS052EHHjBWf96P9oNdXPfhQTovCuWY9iQn3Gq+gOTJSgBO9A/JBuPfMOWsSX/lIU9Pc/A==}
+  '@preact/signals-core@1.14.4':
+    resolution: {integrity: sha512-HNB6HYeYKhQbJ1aKl+YRjrS4+QWHLKX6qKoUsfS/m0vqzsVaEBiZiaKbG/e+NKk2ch5ALQr/ihWaMHxiCuuWHA==}
 
   '@react-google-maps/api@2.20.8':
     resolution: {integrity: sha512-wtLYFtCGXK3qbIz1H5to3JxbosPnKsvjDKhqGylXUb859EskhzR7OpuNt0LqdLarXUtZCJTKzPn3BNaekNIahg==}
@@ -7415,6 +7416,7 @@ packages:
   eslint@9.39.4:
     resolution: {integrity: sha512-XoMjdBOwe/esVgEvLmNsD3IRHkm7fbKIUGvrleloJXUZgDHig2IPWNniv+GwjyJXzuNqVjlr5+4yVUZjycJwfQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -11970,7 +11972,7 @@ snapshots:
 
   '@dnd-kit/state@0.5.0':
     dependencies:
-      '@preact/signals-core': 1.14.2
+      '@preact/signals-core': 1.14.4
       tslib: 2.8.1
 
   '@emnapi/core@1.10.0':
@@ -13344,7 +13346,7 @@ snapshots:
 
   '@popperjs/core@2.11.8': {}
 
-  '@preact/signals-core@1.14.2': {}
+  '@preact/signals-core@1.14.4': {}
 
   '@react-google-maps/api@2.20.8(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:

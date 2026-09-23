@@ -1,5 +1,5 @@
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
-import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
+import { useSortable } from '@dnd-kit/react/sortable'
 import {
   Autocomplete,
   IconButton,
@@ -23,15 +23,19 @@ import {
   QBColumnKind,
 } from './queryBuilderMetadata'
 import styles from './FilterConditionRow.module.scss'
+import { QBDragHandle } from './QBDragHandle'
+import dragStyles from './queryBuilderDrag.module.scss'
 import { defaultOpForColumnType } from './queryBuilderOperations'
 import { QBCondition, QBConditionOp } from './QueryBuilderTypes'
 
 export type FilterConditionRowProps = {
   condition: QBCondition
+  parentGroupId: string
+  index: number
 }
 
 export function FilterConditionRow(props: FilterConditionRowProps) {
-  const { condition } = props
+  const { condition, parentGroupId, index } = props
   const {
     columnModels,
     facetResults,
@@ -40,6 +44,20 @@ export function FilterConditionRow(props: FilterConditionRowProps) {
     updateConditionAt,
     removeConditionAt,
   } = useQueryBuilderInternalContext()
+
+  // A condition is a drag source only. Dropping onto a condition has no
+  // meaning in a boolean tree — a node joins a group, not another leaf — so
+  // groups own every drop zone and this row never becomes a target.
+  const {
+    ref: sortableRef,
+    handleRef,
+    isDragSource,
+  } = useSortable({
+    id: condition.id,
+    index,
+    group: parentGroupId,
+    disabled: { droppable: true },
+  })
 
   const facetColumnNames = useMemo(
     () =>
@@ -78,20 +96,16 @@ export function FilterConditionRow(props: FilterConditionRowProps) {
 
   return (
     <div
-      className={styles.row}
+      ref={sortableRef}
+      className={`${styles.row}${isDragSource ? ` ${dragStyles.dragSource}` : ''}`}
       role="group"
       aria-label={`Filter condition${condition.columnName ? ` on ${condition.columnName}` : ''}`}
       data-qb-node-id={condition.id}
     >
-      <Tooltip title="Drag to reorder">
-        <IconButton
-          size="small"
-          className={styles.dragHandle}
-          aria-label="Drag to reorder condition"
-        >
-          <DragIndicatorIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
+      <QBDragHandle
+        handleRef={handleRef}
+        label="Drag condition into a condition group"
+      />
 
       <Tooltip title="Remove condition">
         <IconButton
