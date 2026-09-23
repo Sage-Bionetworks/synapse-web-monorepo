@@ -9,14 +9,21 @@ import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   DATA_ACCESS_REQUEST_PREVIEW,
   DATA_ACCESS_REQUEST_SIGNATURE,
+  DATA_ACCESS_REQUEST_SIGNATURE_PRECHECK,
   DATA_ACCESS_REQUEST_SIGNATURE_QUOTA,
+  DATA_ACCESS_REQUEST_SIGNATURE_STATUS,
 } from '@/utils/APIConstants'
+import { EDucSignatureStatus } from '@sage-bionetworks/synapse-client'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import MarkdownSynapse from '../../../Markdown/MarkdownSynapse'
 import * as AccessRequirementListUtils from '../../AccessRequirementListUtils'
-import EDucPreviewStep, { EDucPreviewStepProps } from './EDucPreviewStep'
+import EDucPreviewStep, {
+  EDucPreviewStepProps,
+  RECREATE_ENVELOPE_CONFIRM_BUTTON_TEXT,
+  SEND_FOR_SIGNATURE_BUTTON_TEXT,
+} from './EDucPreviewStep'
 
 vi.mock('@/utils/hooks/useFetchBlobUrl', () => ({
   useFetchBlobUrl: vi.fn().mockReturnValue({
@@ -74,6 +81,14 @@ function renderComponent(props: EDucPreviewStepProps = defaultProps) {
 const previewEndpoint = `*${DATA_ACCESS_REQUEST_PREVIEW(MOCK_DATA_ACCESS_REQUEST.id)}`
 const signatureEndpoint = `*${DATA_ACCESS_REQUEST_SIGNATURE(MOCK_DATA_ACCESS_REQUEST.id)}`
 const quotaEndpoint = `*${DATA_ACCESS_REQUEST_SIGNATURE_QUOTA(MOCK_DATA_ACCESS_REQUEST.id)}`
+const precheckEndpoint = `*${DATA_ACCESS_REQUEST_SIGNATURE_PRECHECK(MOCK_DATA_ACCESS_REQUEST.id)}`
+const statusEndpoint = `*${DATA_ACCESS_REQUEST_SIGNATURE_STATUS(MOCK_DATA_ACCESS_REQUEST.id)}`
+
+const MOCK_ENVELOPE_ID = 'docusign-envelope-abc'
+const DAR_WITH_IN_FLIGHT_ENVELOPE = {
+  ...MOCK_DATA_ACCESS_REQUEST,
+  eDucSignatureEnvelopeId: MOCK_ENVELOPE_ID,
+}
 
 function successfulPreviewHandler() {
   return http.get(previewEndpoint, () =>
@@ -88,6 +103,60 @@ function quotaHandler(quota: number, remaining: number) {
   return http.get(quotaEndpoint, () =>
     HttpResponse.json({ quota, remaining }, { status: 200 }),
   )
+}
+
+function precheckHandler(canUpdate: boolean) {
+  return http.get(precheckEndpoint, () =>
+    HttpResponse.json(canUpdate, { status: 200 }),
+  )
+}
+
+function signatureStatusHandler(status: EDucSignatureStatus) {
+  return http.get(statusEndpoint, () => HttpResponse.json(status))
+}
+
+const PRECHECK_FAILURE_REASON = 'The signature envelope could not be read.'
+
+/**
+ * Records every call made to the four endpoints that participate in the send-for-signature
+ * sequence, so tests can assert both which calls happened and in what order. `precheck` is
+ * the boolean the precheck resolves to, or `'error'` to make the precheck request itself fail.
+ */
+function trackSignatureCalls(precheck: boolean | 'error' = true) {
+  const calls: string[] = []
+  const handlers = [
+    http.get(precheckEndpoint, () => {
+      calls.push('GET precheck')
+      return precheck === 'error'
+        ? HttpResponse.json(
+            { reason: PRECHECK_FAILURE_REASON },
+            { status: 400 },
+          )
+        : HttpResponse.json(precheck, { status: 200 })
+    }),
+    http.put(signatureEndpoint, () => {
+      calls.push('PUT signature')
+      return HttpResponse.json<EDucSignatureStatus>({ ducStatus: 'sent' })
+    }),
+    http.delete(signatureEndpoint, () => {
+      calls.push('DELETE signature')
+      return new HttpResponse(null, { status: 204 })
+    }),
+    http.post(signatureEndpoint, () => {
+      calls.push('POST signature')
+      return HttpResponse.json({ quota: 5, remaining: 4 }, { status: 200 })
+    }),
+  ]
+  return { calls, handlers }
+}
+
+async function clickSendForSignature(user: ReturnType<typeof userEvent.setup>) {
+  const sendButton = await screen.findByRole('button', {
+    name: SEND_FOR_SIGNATURE_BUTTON_TEXT,
+  })
+  await waitFor(() => expect(sendButton).toBeEnabled())
+  await user.click(sendButton)
+  return sendButton
 }
 
 describe('EDucPreviewStep', () => {
@@ -140,25 +209,15 @@ describe('EDucPreviewStep', () => {
     expect(mockOnBackClicked).toHaveBeenCalledTimes(1)
   })
 
-  it('initiates signature routing and invokes onSendForSignature on success', async () => {
-    let signatureCallCount = 0
-    server.use(
-      successfulPreviewHandler(),
-      http.post(signatureEndpoint, () => {
-        signatureCallCount += 1
-        return HttpResponse.json({ quota: 5, remaining: 4 }, { status: 200 })
-      }),
-    )
+  it('creates a new envelope without a precheck when no envelope is in flight', async () => {
+    const { calls, handlers } = trackSignatureCalls()
+    server.use(successfulPreviewHandler(), ...handlers)
     const { user } = renderComponent()
 
-    const sendButton = await screen.findByRole('button', {
-      name: 'Send for electronic signature',
-    })
-    await waitFor(() => expect(sendButton).toBeEnabled())
-    await user.click(sendButton)
+    await clickSendForSignature(user)
 
     await waitFor(() => expect(mockOnSendForSignature).toHaveBeenCalledTimes(1))
-    expect(signatureCallCount).toBe(1)
+    expect(calls).toEqual(['POST signature'])
   })
 
   it('shows an error alert and does not advance when signature routing fails', async () => {
@@ -173,17 +232,201 @@ describe('EDucPreviewStep', () => {
     )
     const { user } = renderComponent()
 
-    const sendButton = await screen.findByRole('button', {
-      name: 'Send for electronic signature',
-    })
-    await waitFor(() => expect(sendButton).toBeEnabled())
-    await user.click(sendButton)
+    await clickSendForSignature(user)
 
     await screen.findByText(/couldn't send your DUC for electronic signature/i)
     expect(
       screen.getByText('Required field "institutionalEmail" is missing.'),
     ).toBeInTheDocument()
     expect(mockOnSendForSignature).not.toHaveBeenCalled()
+  })
+
+  describe('with an envelope already in flight', () => {
+    beforeEach(() => {
+      mockGetDataRequestForUpdate.mockResolvedValue(DAR_WITH_IN_FLIGHT_ENVELOPE)
+    })
+
+    it('updates the existing envelope when the precheck passes', async () => {
+      const { calls, handlers } = trackSignatureCalls()
+      server.use(successfulPreviewHandler(), ...handlers)
+      const { user } = renderComponent()
+
+      await clickSendForSignature(user)
+
+      await waitFor(() =>
+        expect(mockOnSendForSignature).toHaveBeenCalledTimes(1),
+      )
+      expect(calls).toEqual(['GET precheck', 'PUT signature'])
+    })
+
+    it('voids and recreates the envelope when the precheck fails and the user confirms', async () => {
+      const { calls, handlers } = trackSignatureCalls(false)
+      server.use(successfulPreviewHandler(), ...handlers)
+      const { user } = renderComponent()
+
+      await clickSendForSignature(user)
+
+      const confirmButton = await screen.findByRole('button', {
+        name: RECREATE_ENVELOPE_CONFIRM_BUTTON_TEXT,
+      })
+      expect(mockOnSendForSignature).not.toHaveBeenCalled()
+      await user.click(confirmButton)
+
+      await waitFor(() =>
+        expect(mockOnSendForSignature).toHaveBeenCalledTimes(1),
+      )
+      expect(calls).toEqual([
+        'GET precheck',
+        'DELETE signature',
+        'POST signature',
+      ])
+    })
+
+    it('makes no further calls when the user declines to recreate the envelope', async () => {
+      const { calls, handlers } = trackSignatureCalls(false)
+      server.use(successfulPreviewHandler(), ...handlers)
+      const { user } = renderComponent()
+
+      await clickSendForSignature(user)
+
+      await screen.findByRole('button', {
+        name: RECREATE_ENVELOPE_CONFIRM_BUTTON_TEXT,
+      })
+      await user.click(screen.getByRole('button', { name: 'Cancel' }))
+
+      await waitFor(() =>
+        expect(
+          screen.queryByRole('button', {
+            name: RECREATE_ENVELOPE_CONFIRM_BUTTON_TEXT,
+          }),
+        ).not.toBeInTheDocument(),
+      )
+      expect(calls).toEqual(['GET precheck'])
+      expect(mockOnSendForSignature).not.toHaveBeenCalled()
+    })
+
+    it('shows a precheck-specific error and skips the update when the precheck request fails', async () => {
+      const { calls, handlers } = trackSignatureCalls('error')
+      server.use(successfulPreviewHandler(), ...handlers)
+      const { user } = renderComponent()
+
+      await clickSendForSignature(user)
+
+      await screen.findByText(
+        /couldn't check the status of your existing signature request/i,
+      )
+      expect(screen.getByText(PRECHECK_FAILURE_REASON)).toBeInTheDocument()
+      expect(calls).toEqual(['GET precheck'])
+      expect(mockOnSendForSignature).not.toHaveBeenCalled()
+    })
+
+    it('shows an update-specific error and does not advance when the update fails', async () => {
+      server.use(
+        successfulPreviewHandler(),
+        precheckHandler(true),
+        http.put(signatureEndpoint, () =>
+          HttpResponse.json(
+            { reason: 'Envelope recipients could not be corrected.' },
+            { status: 400 },
+          ),
+        ),
+      )
+      const { user } = renderComponent()
+
+      await clickSendForSignature(user)
+
+      await screen.findByText(
+        /couldn't apply your changes to your existing signature request/i,
+      )
+      expect(
+        screen.getByText('Envelope recipients could not be corrected.'),
+      ).toBeInTheDocument()
+      expect(mockOnSendForSignature).not.toHaveBeenCalled()
+    })
+
+    it('shows a void-specific error and does not recreate the envelope when the void fails', async () => {
+      let postCallCount = 0
+      server.use(
+        successfulPreviewHandler(),
+        precheckHandler(false),
+        http.delete(signatureEndpoint, () =>
+          HttpResponse.json(
+            { reason: 'Envelope could not be voided.' },
+            { status: 400 },
+          ),
+        ),
+        http.post(signatureEndpoint, () => {
+          postCallCount += 1
+          return HttpResponse.json({ quota: 5, remaining: 4 })
+        }),
+      )
+      const { user } = renderComponent()
+
+      await clickSendForSignature(user)
+      await user.click(
+        await screen.findByRole('button', {
+          name: RECREATE_ENVELOPE_CONFIRM_BUTTON_TEXT,
+        }),
+      )
+
+      await screen.findByText(
+        /couldn't cancel your existing signature request/i,
+      )
+      expect(
+        screen.getByText('Envelope could not be voided.'),
+      ).toBeInTheDocument()
+      expect(postCallCount).toBe(0)
+      expect(mockOnSendForSignature).not.toHaveBeenCalled()
+    })
+
+    it('hints at the collected signatures and that pending edits will be applied', async () => {
+      server.use(
+        successfulPreviewHandler(),
+        signatureStatusHandler({
+          ducStatus: 'sent',
+          includesRequestChanges: false,
+          signerStatus: [
+            { name: 'Alice', status: 'done' },
+            { name: 'Bob', status: 'done' },
+            { name: 'Cara', status: 'pending' },
+          ],
+        }),
+      )
+      renderComponent()
+
+      await screen.findByText(/2 of 3 signatures collected/i)
+      expect(
+        screen.getByText(/changes will be applied to the existing request/i),
+      ).toBeInTheDocument()
+    })
+
+    it('omits the pending-edits hint when the envelope already reflects the request', async () => {
+      server.use(
+        successfulPreviewHandler(),
+        signatureStatusHandler({
+          ducStatus: 'sent',
+          includesRequestChanges: true,
+          signerStatus: [
+            { name: 'Alice', status: 'done' },
+            { name: 'Bob', status: 'pending' },
+          ],
+        }),
+      )
+      renderComponent()
+
+      await screen.findByText(/1 of 2 signatures collected/i)
+      expect(
+        screen.queryByText(/changes will be applied to the existing request/i),
+      ).not.toBeInTheDocument()
+    })
+  })
+
+  it('does not show the signature progress hint when no envelope is in flight', async () => {
+    server.use(successfulPreviewHandler())
+    renderComponent()
+
+    await screen.findByRole('button', { name: SEND_FOR_SIGNATURE_BUTTON_TEXT })
+    expect(screen.queryByText(/signatures collected/i)).not.toBeInTheDocument()
   })
 
   it('invokes onManualUpload when the Manually print button is clicked', async () => {
@@ -204,7 +447,7 @@ describe('EDucPreviewStep', () => {
     renderComponent()
 
     const sendButton = await screen.findByRole('button', {
-      name: 'Send for electronic signature',
+      name: SEND_FOR_SIGNATURE_BUTTON_TEXT,
     })
     await waitFor(() => expect(sendButton).toBeEnabled())
   })
@@ -214,7 +457,7 @@ describe('EDucPreviewStep', () => {
     const { user } = renderComponent()
 
     const sendButton = await screen.findByRole('button', {
-      name: 'Send for electronic signature',
+      name: SEND_FOR_SIGNATURE_BUTTON_TEXT,
     })
     await waitFor(() => expect(sendButton).toBeDisabled())
 
@@ -239,7 +482,7 @@ describe('EDucPreviewStep', () => {
     renderComponent()
 
     const sendButton = await screen.findByRole('button', {
-      name: 'Send for electronic signature',
+      name: SEND_FOR_SIGNATURE_BUTTON_TEXT,
     })
     await waitFor(() => expect(sendButton).toBeEnabled())
   })

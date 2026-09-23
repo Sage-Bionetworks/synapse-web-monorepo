@@ -1,8 +1,13 @@
+import { ConfirmationDialog } from '@/components/ConfirmationDialog'
 import {
+  useCheckDataAccessRequestSignatureUpdatable,
   useGetDataAccessRequestForUpdate,
   useGetDataAccessRequestPreview,
   useGetDataAccessRequestSignatureQuota,
+  useGetDataAccessRequestSignatureStatus,
   useInitiateDataAccessRequestSignature,
+  useUpdateDataAccessRequestSignature,
+  useVoidDataAccessRequestSignature,
 } from '@/synapse-queries'
 import SynapseClient from '@/synapse-client'
 import {
@@ -23,12 +28,25 @@ import {
   FileHandleAssociateType,
   ManagedACTAccessRequirement,
 } from '@sage-bionetworks/synapse-types'
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 import { useFetchBlobUrl } from '@/utils/hooks/useFetchBlobUrl'
 import IconSvg from '../../../IconSvg/IconSvg'
 import { longFieldLabelSx } from '../styles'
 
 const PDF_PREVIEW_HEIGHT = '500px'
+
+export const SEND_FOR_SIGNATURE_BUTTON_TEXT = 'Send for electronic signature'
+export const RECREATE_ENVELOPE_CONFIRM_BUTTON_TEXT =
+  'Cancel and start a new signature request'
+
+const PRECHECK_ERROR_TITLE =
+  "Sorry, we couldn't check the status of your existing signature request."
+const UPDATE_SIGNATURE_ERROR_TITLE =
+  "Sorry, we couldn't apply your changes to your existing signature request."
+const VOID_SIGNATURE_ERROR_TITLE =
+  "Sorry, we couldn't cancel your existing signature request."
+const INITIATE_SIGNATURE_ERROR_TITLE =
+  "Sorry, we couldn't send your DUC for electronic signature."
 
 export type EDucPreviewStepProps = {
   managedACTAccessRequirement: ManagedACTAccessRequirement
@@ -65,55 +83,176 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
       throwOnError: true,
     })
 
+  const requestId = dataAccessRequest?.id
+  const hasSignatureEnvelope = Boolean(
+    dataAccessRequest?.eDucSignatureEnvelopeId,
+  )
+
+  // Once the user commits to sending, the preview query must not run again: GET
+  // /dataAccessRequest/{id}/preview has server-side side effects (it creates a signature envelope
+  // and resets the DAR to draft), and every signature mutation invalidates the DAR query key --
+  // which would otherwise refetch the preview between the DELETE and the POST below.
+  const [isSendSequenceActive, setIsSendSequenceActive] = useState(false)
+
   const {
     data: previewFileHandle,
     isLoading: isLoadingPreview,
     error: previewError,
-  } = useGetDataAccessRequestPreview(dataAccessRequest?.id ?? '', {
-    enabled: Boolean(dataAccessRequest?.id),
+  } = useGetDataAccessRequestPreview(requestId ?? '', {
+    enabled: Boolean(requestId) && !isSendSequenceActive,
   })
 
   const previewFileHandleId = previewFileHandle?.fileHandleId
   const { blobUrl, error: blobError } = useFetchBlobUrl(
-    previewSrcOverride || !previewFileHandleId || !dataAccessRequest?.id
+    previewSrcOverride || !previewFileHandleId || !requestId
       ? undefined
       : SynapseClient.getPortalFileHandleServletUrl(
           previewFileHandleId,
-          dataAccessRequest.id,
+          requestId,
           FileHandleAssociateType.DataAccessRequestAttachment,
         ),
   )
 
   const {
+    mutateAsync: checkSignatureUpdatable,
+    isPending: isCheckingSignatureUpdatable,
+    error: precheckError,
+    reset: resetPrecheck,
+  } = useCheckDataAccessRequestSignatureUpdatable()
+
+  const {
+    mutate: updateSignature,
+    isPending: isUpdatingSignature,
+    error: updateSignatureError,
+    reset: resetUpdateSignature,
+  } = useUpdateDataAccessRequestSignature({
+    onSuccess: () => onSendForSignature(),
+    onError: () => setIsSendSequenceActive(false),
+  })
+
+  const {
+    mutateAsync: voidSignature,
+    isPending: isVoidingSignature,
+    error: voidSignatureError,
+    reset: resetVoidSignature,
+  } = useVoidDataAccessRequestSignature()
+
+  const {
     mutate: initiateSignature,
-    isPending: isSendingForSignature,
-    error: sendForSignatureError,
-    reset: resetSendForSignature,
+    isPending: isInitiatingSignature,
+    error: initiateSignatureError,
+    reset: resetInitiateSignature,
   } = useInitiateDataAccessRequestSignature({
     onSuccess: () => onSendForSignature(),
+    onError: () => setIsSendSequenceActive(false),
   })
+
+  // Drives the "N of M signatures collected" hint, and tells us whether the user's edits have
+  // already been pushed to the envelope. Only meaningful once an envelope exists.
+  const { data: signatureStatus } = useGetDataAccessRequestSignatureStatus(
+    requestId ?? '',
+    { enabled: Boolean(requestId) && hasSignatureEnvelope },
+  )
+  const signers = signatureStatus?.signerStatus ?? []
+  const collectedSignatureCount = signers.filter(
+    s => s.status === 'done',
+  ).length
 
   // Preflight the quota so we can disable the send-for-signature action when the user is at
   // or over their limit. A fetch error falls back to the current enabled behavior so a quota
   // service outage doesn't spuriously block valid requests.
   const { data: signatureQuota } = useGetDataAccessRequestSignatureQuota(
-    dataAccessRequest?.id ?? '',
-    { enabled: Boolean(dataAccessRequest?.id) },
+    requestId ?? '',
+    { enabled: Boolean(requestId) },
   )
   const isAtOrOverQuota =
     signatureQuota?.remaining != null && signatureQuota.remaining <= 0
 
+  const [isRecreateConfirmationOpen, setIsRecreateConfirmationOpen] =
+    useState(false)
+
+  // The precheck and the mutation it selects are presented as a single action, so the button
+  // stays in its sending state for the whole sequence rather than flickering between calls.
+  const isSendingForSignature =
+    isCheckingSignatureUpdatable ||
+    isUpdatingSignature ||
+    isVoidingSignature ||
+    isInitiatingSignature
+
   const isLoading =
     isLoadingDar ||
-    (Boolean(dataAccessRequest?.id) && isLoadingPreview) ||
+    (Boolean(requestId) && isLoadingPreview) ||
     (!previewSrcOverride && !!previewFileHandleId && !blobUrl && !blobError)
   const actionsDisabled =
     isLoading || (!previewSrcOverride && !blobUrl) || isSendingForSignature
 
-  const handleSendForSignature = () => {
-    if (!dataAccessRequest?.id) return
-    resetSendForSignature()
-    initiateSignature(dataAccessRequest.id)
+  const sendError =
+    (precheckError && {
+      title: PRECHECK_ERROR_TITLE,
+      reason: precheckError.reason,
+    }) ||
+    (updateSignatureError && {
+      title: UPDATE_SIGNATURE_ERROR_TITLE,
+      reason: updateSignatureError.reason,
+    }) ||
+    (voidSignatureError && {
+      title: VOID_SIGNATURE_ERROR_TITLE,
+      reason: voidSignatureError.reason,
+    }) ||
+    (initiateSignatureError && {
+      title: INITIATE_SIGNATURE_ERROR_TITLE,
+      reason: initiateSignatureError.reason,
+    })
+
+  const resetSendErrors = () => {
+    resetPrecheck()
+    resetUpdateSignature()
+    resetVoidSignature()
+    resetInitiateSignature()
+  }
+
+  const handleSendForSignature = async () => {
+    if (!requestId) return
+    resetSendErrors()
+    setIsSendSequenceActive(true)
+
+    if (!hasSignatureEnvelope) {
+      initiateSignature(requestId)
+      return
+    }
+
+    // `null` means the precheck itself failed; its error is surfaced by the alert below.
+    const canUpdateEnvelope = await checkSignatureUpdatable(requestId).catch(
+      () => null,
+    )
+    if (canUpdateEnvelope === null) {
+      setIsSendSequenceActive(false)
+      return
+    }
+    if (canUpdateEnvelope) {
+      updateSignature(requestId)
+    } else {
+      setIsRecreateConfirmationOpen(true)
+    }
+  }
+
+  const handleConfirmRecreateEnvelope = async () => {
+    if (!requestId) return
+    setIsRecreateConfirmationOpen(false)
+    const isVoided = await voidSignature(requestId).then(
+      () => true,
+      () => false,
+    )
+    if (!isVoided) {
+      setIsSendSequenceActive(false)
+      return
+    }
+    initiateSignature(requestId)
+  }
+
+  const handleCancelRecreateEnvelope = () => {
+    setIsRecreateConfirmationOpen(false)
+    setIsSendSequenceActive(false)
   }
 
   return (
@@ -193,14 +332,25 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
                   <Button
                     variant={'contained'}
                     disabled={actionsDisabled || isAtOrOverQuota}
-                    onClick={handleSendForSignature}
+                    onClick={() => {
+                      handleSendForSignature()
+                    }}
                   >
                     {isSendingForSignature
                       ? 'Sending...'
-                      : 'Send for electronic signature'}
+                      : SEND_FOR_SIGNATURE_BUTTON_TEXT}
                   </Button>
                 </Box>
               </Tooltip>
+            }
+            hint={
+              hasSignatureEnvelope && signers.length > 0 ? (
+                <>
+                  {`${collectedSignatureCount} of ${signers.length} signatures collected.`}
+                  {signatureStatus?.includesRequestChanges === false &&
+                    ' Your changes will be applied to the existing request, so collaborators who have already signed will not need to sign again.'}
+                </>
+              ) : undefined
             }
           />
           <Divider />
@@ -220,13 +370,11 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
             }
           />
         </Box>
-        {sendForSignatureError && (
+        {sendError && (
           <Alert severity={'error'} sx={{ mt: 2 }}>
-            <strong>
-              Sorry, we couldn&apos;t send your DUC for electronic signature.
-            </strong>
+            <strong>{sendError.title}</strong>
             <br />
-            {sendForSignatureError.reason}
+            {sendError.reason}
           </Alert>
         )}
       </DialogContent>
@@ -235,6 +383,26 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
           Back
         </Button>
       </DialogActions>
+      <ConfirmationDialog
+        open={isRecreateConfirmationOpen}
+        title={'Start a new signature request?'}
+        content={
+          <Typography variant={'body1'} sx={longFieldLabelSx}>
+            Your existing signature request can no longer be updated, so your
+            changes cannot be applied to it. To continue, we need to cancel it
+            and start a new one. Anyone who already signed will be asked to sign
+            again, and this will count against your signature request limit.
+          </Typography>
+        }
+        confirmButtonProps={{
+          children: RECREATE_ENVELOPE_CONFIRM_BUTTON_TEXT,
+          color: 'error',
+        }}
+        onConfirm={() => {
+          handleConfirmRecreateEnvelope()
+        }}
+        onCancel={handleCancelRecreateEnvelope}
+      />
     </>
   )
 }
@@ -243,8 +411,10 @@ function ActionRow(props: {
   title: string
   description: string
   action: ReactNode
+  /** Supplementary text rendered beneath the action. */
+  hint?: ReactNode
 }) {
-  const { title, description, action } = props
+  const { title, description, action, hint } = props
   return (
     <Stack
       direction={{ xs: 'column', sm: 'row' }}
@@ -258,7 +428,14 @@ function ActionRow(props: {
           {description}
         </Typography>
       </Box>
-      <Box sx={{ flexShrink: 0 }}>{action}</Box>
+      <Box sx={{ flexShrink: 0, maxWidth: { sm: '240px' } }}>
+        {action}
+        {hint && (
+          <Typography variant={'smallText1'} sx={{ mt: 1, color: 'grey.700' }}>
+            {hint}
+          </Typography>
+        )}
+      </Box>
     </Stack>
   )
 }

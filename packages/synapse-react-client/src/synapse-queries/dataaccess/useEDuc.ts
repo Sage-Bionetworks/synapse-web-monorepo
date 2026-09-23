@@ -266,6 +266,64 @@ export function useInitiateDataAccessRequestSignature(
 }
 
 /**
+ * Determine whether the data access request's pending changes can be applied to the envelope
+ * that is already in flight. Resolves to `false` when the envelope is in a state that DocuSign
+ * cannot correct — e.g. it has already completed, or it was voided.
+ *
+ * Modeled as a mutation despite being a GET: the answer is only meaningful at the instant the
+ * user acts on it, so it must never be served from cache.
+ *
+ * @see GET /repo/v1/dataAccessRequest/{requestId}/signature/precheck
+ */
+export function useCheckDataAccessRequestSignatureUpdatable(
+  options?: UseMutationOptions<boolean, SynapseClientError, string>,
+) {
+  const { synapseClient } = useSynapseContext()
+
+  return useMutation<boolean, SynapseClientError, string>({
+    ...options,
+    mutationFn: (requestId: string) =>
+      synapseClient.dataAccessServicesClient.getRepoV1DataAccessRequestRequestIdSignaturePrecheck(
+        { requestId },
+      ),
+  })
+}
+
+/**
+ * Apply the data access request's pending changes to its in-flight eDUC envelope, preserving the
+ * signatures that have already been collected.
+ * @see PUT /repo/v1/dataAccessRequest/{requestId}/signature
+ */
+export function useUpdateDataAccessRequestSignature(
+  options?: UseMutationOptions<EDucSignatureStatus, SynapseClientError, string>,
+) {
+  const { keyFactory, synapseClient } = useSynapseContext()
+  const queryClient = useQueryClient()
+
+  return useMutation<EDucSignatureStatus, SynapseClientError, string>({
+    ...options,
+    mutationFn: (requestId: string) =>
+      synapseClient.dataAccessServicesClient.putRepoV1DataAccessRequestRequestIdSignature(
+        { requestId },
+      ),
+    onSuccess: async (data, requestId, ctx) => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getDataAccessRequestSignatureQueryKey(requestId),
+        }),
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getDataAccessRequestQueryKey(),
+        }),
+      ])
+      if (options?.onSuccess) {
+        return options.onSuccess(data, requestId, ctx)
+      }
+      return
+    },
+  })
+}
+
+/**
  * Void the eDUC routing for a data access request, reverting the DAR to trad-DUC mode.
  * @see DELETE /repo/v1/dataAccessRequest/{requestId}/signature
  */

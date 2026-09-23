@@ -203,6 +203,48 @@ describe('SignatureStatusStep', () => {
     expect(mockOnBackClicked).toHaveBeenCalledTimes(1)
   })
 
+  it('tells the user that Back can be used to update collaborators mid-signature', async () => {
+    server.use(
+      http.get(statusEndpoint, () =>
+        HttpResponse.json(partiallySignedStatus, { status: 200 }),
+      ),
+    )
+    renderComponent()
+
+    await screen.findByText(/update the list of Collaborators by pressing/i)
+    expect(
+      screen.getByText(/already signed will not need to sign again/i),
+    ).toBeInTheDocument()
+  })
+
+  it('omits the update-collaborators copy once every signature is collected', async () => {
+    server.use(
+      http.get(statusEndpoint, () =>
+        HttpResponse.json(fullySignedStatus, { status: 200 }),
+      ),
+    )
+    renderComponent()
+
+    await screen.findByText(/All signatures collected/i)
+    expect(
+      screen.queryByText(/update the list of Collaborators by pressing/i),
+    ).not.toBeInTheDocument()
+  })
+
+  it('omits the update-collaborators copy when there is no step to go back to', async () => {
+    server.use(
+      http.get(statusEndpoint, () =>
+        HttpResponse.json(partiallySignedStatus, { status: 200 }),
+      ),
+    )
+    renderComponent({ onBackClicked: undefined })
+
+    await screen.findByText(/1 out of 4 signatures collected/i)
+    expect(
+      screen.queryByText(/update the list of Collaborators by pressing/i),
+    ).not.toBeInTheDocument()
+  })
+
   it('hides the Back button when onBackClicked is not provided', async () => {
     server.use(
       http.get(statusEndpoint, () =>
