@@ -17,7 +17,6 @@ import {
   EDucTemplateListRequest,
   EntityLookupRequest,
   FormTemplateSearchRequest,
-  GenerateDataAccessSchemaRequestInterface,
   GetRepoV1DoiAssociationRequest,
   GetRepoV1DoiRequest,
   ListCurationTaskRequest,
@@ -210,7 +209,6 @@ const DATA_ACCESS_SUBMISSION_QUERY_KEY = 'dataAccessSubmission'
 const DATA_ACCESS_REQUEST_QUERY_KEY = 'dataAccessRequest'
 const EDUC_TEMPLATE_QUERY_KEY = 'eDucTemplate'
 const FORM_TEMPLATE_QUERY_KEY = 'formTemplate'
-const GENERATE_DATA_ACCESS_SCHEMA_QUERY_KEY = 'generateDataAccessSchema'
 
 /**
  * Returns a react-query Query Key.
@@ -695,12 +693,6 @@ export class KeyFactory {
 
   public searchFormTemplatesQueryKey(params?: FormTemplateSearchRequest) {
     return this.getKey(FORM_TEMPLATE_QUERY_KEY, 'search', params)
-  }
-
-  public generateDataAccessSchemaQueryKey(
-    params?: GenerateDataAccessSchemaRequestInterface,
-  ) {
-    return this.getKey(GENERATE_DATA_ACCESS_SCHEMA_QUERY_KEY, params)
   }
 
   public getValidationSchemaQueryKey(schema$id: string) {
