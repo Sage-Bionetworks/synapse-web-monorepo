@@ -41,27 +41,25 @@ function getLoginMethod(window: Window) {
   return getLoginMethodByProviderQueryParam(provider)
 }
 
-function SignInHeading() {
-  return (
-    <>
-      <Typography
-        className="headline"
-        variant="headline2"
-        sx={theme => ({
-          marginTop: '95px',
-          [theme.breakpoints.down('md')]: {
-            marginTop: 0,
-            marginBottom: '10px',
-            fontSize: '18px',
-          },
-        })}
-      >
-        Sign in to your account
-      </Typography>
-      <SourceAppDescription />
-    </>
-  )
-}
+const SignInHeading = (
+  <>
+    <Typography
+      className="headline"
+      variant="headline2"
+      sx={theme => ({
+        marginTop: '95px',
+        [theme.breakpoints.down('md')]: {
+          marginTop: 0,
+          marginBottom: '10px',
+          fontSize: '18px',
+        },
+      })}
+    >
+      Sign in to your account
+    </Typography>
+    <SourceAppDescription />
+  </>
+)
 
 function LoginPage(props: LoginPageProps) {
   const { returnToUrl } = props
@@ -117,7 +115,7 @@ function LoginPage(props: LoginPageProps) {
               <SourceAppLogo />
             </Box>
             <Box sx={{ display: { xs: 'block', md: 'none' } }}>
-              <SignInHeading />
+              {SignInHeading}
             </Box>
             <Box sx={{ my: 4 }}>
               <StandaloneLoginForm
@@ -158,7 +156,7 @@ function LoginPage(props: LoginPageProps) {
           }}
         >
           <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-            <SignInHeading />
+            {SignInHeading}
           </Box>
           <SystemUseNotification />
         </Box>
