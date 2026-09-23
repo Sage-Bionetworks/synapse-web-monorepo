@@ -19,6 +19,7 @@ import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import MarkdownSynapse from '../../../Markdown/MarkdownSynapse'
 import * as AccessRequirementListUtils from '../../AccessRequirementListUtils'
+import { ACT_QUOTA_RESET_REQUEST_URL } from '../eDucSignatureUtils'
 import EDucPreviewStep, {
   EDucPreviewStepProps,
   RECREATE_ENVELOPE_CONFIRM_BUTTON_TEXT,
@@ -533,6 +534,12 @@ describe('EDucPreviewStep', () => {
       expect(
         screen.getByText(/all 5 of your electronic signature routings/i),
       ).toBeInTheDocument()
+      // The quota can only be reset by ACT, so the message has to hand off to their service desk.
+      const actLink = screen.getByRole('link', {
+        name: /Access and Compliance Team/i,
+      })
+      expect(actLink).toHaveAttribute('href', ACT_QUOTA_RESET_REQUEST_URL)
+      expect(actLink).toHaveAttribute('target', '_blank')
       expect(
         screen.queryByRole('button', {
           name: RECREATE_ENVELOPE_CONFIRM_BUTTON_TEXT,

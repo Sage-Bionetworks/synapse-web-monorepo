@@ -32,9 +32,9 @@ import { ReactNode, useState } from 'react'
 import { useFetchBlobUrl } from '@/utils/hooks/useFetchBlobUrl'
 import IconSvg from '../../../IconSvg/IconSvg'
 import {
-  getSignatureQuotaExhaustedMessage,
   isSignatureEnvelopeUpdatable,
   SIGNATURE_QUOTA_EXHAUSTED_TITLE,
+  SignatureQuotaExhaustedMessage,
 } from '../eDucSignatureUtils'
 import { longFieldLabelSx } from '../styles'
 
@@ -226,7 +226,7 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
     }) ||
     (isRecreateBlockedByQuota && {
       title: SIGNATURE_QUOTA_EXHAUSTED_TITLE,
-      reason: getSignatureQuotaExhaustedMessage(signatureQuota?.quota),
+      reason: <SignatureQuotaExhaustedMessage quota={signatureQuota?.quota} />,
     })
 
   const resetSendErrors = () => {
@@ -344,9 +344,13 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
             action={
               <Tooltip
                 title={
-                  isSendBlockedByQuota
-                    ? getSignatureQuotaExhaustedMessage(signatureQuota?.quota)
-                    : ''
+                  isSendBlockedByQuota ? (
+                    <SignatureQuotaExhaustedMessage
+                      quota={signatureQuota?.quota}
+                    />
+                  ) : (
+                    ''
+                  )
                 }
                 arrow
                 disableHoverListener={!isSendBlockedByQuota}
