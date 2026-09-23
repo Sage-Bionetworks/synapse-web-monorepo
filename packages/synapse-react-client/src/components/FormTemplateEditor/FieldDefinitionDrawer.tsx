@@ -189,10 +189,9 @@ export function FieldDefinitionDrawer({
 
         {isFirstClassCollision && (
           <Alert severity="warning" sx={{ mb: 2 }}>
-            "{propertyKey}" has the same key as a first-class field
-            (institution, PI, signing official, accessor changes, or DUC) that
-            is always shown to the requester separately. Requesters may see this
-            question twice.
+            "{propertyKey}" is similar to a first-class field (institution, PI,
+            signing official, accessor changes, or DUC upload) that is shown to
+            the requester separately. Requesters may see this question twice.
           </Alert>
         )}
 
