@@ -1,9 +1,11 @@
 import { Button, ToggleButton, ToggleButtonGroup } from '@mui/material'
+import { DragDropProvider } from '@dnd-kit/react'
 import { useCallback, useMemo, useState } from 'react'
 import { isFilterGroup } from '../../utils/types/IsType'
 import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
 import { FilterGroupNode } from './FilterGroupNode'
+import { useQueryBuilderDrag } from './queryBuilderDnd'
 import { qbNodeToApiFilter } from './queryBuilderTranslation'
 import { qbTreeToReadable } from './qbTreeToReadable'
 import { QueryBuilderInternalContextProvider } from './QueryBuilderInternalContext'
@@ -118,6 +120,7 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
     },
     [activeTree, onTreeChange],
   )
+  const dragHandlers = useQueryBuilderDrag(activeTree, onTreeChange)
 
   const contextValue = useMemo(
     () => ({
@@ -161,60 +164,62 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
 
   return (
     <QueryBuilderInternalContextProvider value={contextValue}>
-      <div className={styles.root}>
-        <div className={styles.summaryBar}>
-          <div className={styles.summaryHeader}>
-            <span className={styles.summaryLabel}>Query Summary</span>
-            <ToggleButtonGroup
-              className={styles.summaryModeToggle}
-              size="small"
-              exclusive
-              value={summaryMode}
-              onChange={(_event, next: SummaryMode | null) => {
-                if (next != null) setSummaryMode(next)
-              }}
-              aria-label="Query summary display mode"
+      <DragDropProvider {...dragHandlers}>
+        <div className={styles.root}>
+          <div className={styles.summaryBar}>
+            <div className={styles.summaryHeader}>
+              <span className={styles.summaryLabel}>Query Summary</span>
+              <ToggleButtonGroup
+                className={styles.summaryModeToggle}
+                size="small"
+                exclusive
+                value={summaryMode}
+                onChange={(_event, next: SummaryMode | null) => {
+                  if (next != null) setSummaryMode(next)
+                }}
+                aria-label="Query summary display mode"
+              >
+                <ToggleButton value="plain-english" aria-label="Show summary">
+                  Summary
+                </ToggleButton>
+                <ToggleButton value="sql" aria-label="Show SQL">
+                  SQL
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </div>
+            <div
+              className={styles.summaryContent}
+              aria-live="polite"
+              aria-atomic="true"
             >
-              <ToggleButton value="plain-english" aria-label="Show summary">
-                Summary
-              </ToggleButton>
-              <ToggleButton value="sql" aria-label="Show SQL">
-                SQL
-              </ToggleButton>
-            </ToggleButtonGroup>
+              {summaryMode === 'plain-english' ? (
+                readable
+              ) : sqlError ? (
+                <span className={styles.sqlError}>
+                  Could not load SQL preview: {sqlError.message}
+                </span>
+              ) : isSqlPending ? (
+                <span className={styles.sqlPlaceholder}>Loading SQL…</span>
+              ) : (
+                <code className={styles.sqlText}>{combinedSql}</code>
+              )}
+            </div>
           </div>
-          <div
-            className={styles.summaryContent}
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            {summaryMode === 'plain-english' ? (
-              readable
-            ) : sqlError ? (
-              <span className={styles.sqlError}>
-                Could not load SQL preview: {sqlError.message}
-              </span>
-            ) : isSqlPending ? (
-              <span className={styles.sqlPlaceholder}>Loading SQL…</span>
-            ) : (
-              <code className={styles.sqlText}>{combinedSql}</code>
-            )}
+
+          <FilterGroupNode group={activeTree} isRoot />
+
+          <div className={styles.applyRow}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={onApply}
+              className={styles.applyButton}
+            >
+              Update Results
+            </Button>
           </div>
         </div>
-
-        <FilterGroupNode group={activeTree} isRoot />
-
-        <div className={styles.applyRow}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={onApply}
-            className={styles.applyButton}
-          >
-            Update Results
-          </Button>
-        </div>
-      </div>
+      </DragDropProvider>
     </QueryBuilderInternalContextProvider>
   )
 }

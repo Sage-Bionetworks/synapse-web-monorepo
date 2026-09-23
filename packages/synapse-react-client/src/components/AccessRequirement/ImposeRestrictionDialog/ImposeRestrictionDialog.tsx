@@ -18,6 +18,7 @@ export type ImposeRestrictionFormProps = {
   entityId: string
   open: boolean
   onClose: () => void
+  onSuccess?: () => void
 }
 
 export default function ImposeRestrictionDialog(
@@ -33,7 +34,7 @@ export default function ImposeRestrictionDialog(
     </Typography>
   )
 
-  const { entityId, open, onClose } = props
+  const { entityId, open, onClose, onSuccess } = props
   const [isSensitiveHumanData, setIsSensitiveHumanData] = useState<
     boolean | null
   >(null)
@@ -52,6 +53,7 @@ export default function ImposeRestrictionDialog(
         'https://sagebionetworks.jira.com/servicedesk/customer/portal/8/group/15/create/134',
         '_blank',
       )
+      onSuccess?.()
       onClose()
     },
     onError: e => {

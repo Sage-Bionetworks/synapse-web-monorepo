@@ -1,0 +1,12 @@
+// Styles shared by both draggable node types in the tree.
+
+.dragHandle {
+  cursor: grab;
+  color: var(--synapse-gray-deemphasized);
+}
+
+// The node the pointer is carrying. It stays in the tree and moves between
+// groups as the drag goes, so it is dimmed to read as in-flight.
+.dragSource {
+  opacity: 0.4;
+}

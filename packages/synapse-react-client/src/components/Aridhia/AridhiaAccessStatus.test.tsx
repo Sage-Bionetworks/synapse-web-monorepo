@@ -18,6 +18,7 @@ import {
   MOCK_ARIDHIA_GATEWAY,
   MOCK_ARIDHIA_NOT_AUTHORIZED_ERROR,
 } from '@/mocks/msw/handlers/aridhiaHandlers'
+import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
 import { server } from '@/mocks/msw/server'
 import {
   fillRjsfTextField,
@@ -25,6 +26,8 @@ import {
 } from '@/testutils/RjsfFormTestUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { AridhiaContextProvider } from '@/utils/context/AridhiaContext'
+import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { HttpResponse } from 'msw'
 import AridhiaAccessStatus from './AridhiaAccessStatus'
 import {
@@ -37,6 +40,13 @@ const NO_ACCESS_ICON_NAME = 'You must request access to this restricted item.'
 const PENDING_ACCESS_ICON_NAME =
   'Your access request is pending approval by RDCA-DAP.'
 const HAS_ACCESS_ICON_NAME = 'You have access to this item on RDCA-DAP.'
+
+function darFormFeatureFlagOverride(enabled: boolean) {
+  return getFeatureFlagsOverride({
+    portalOrigin: getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT),
+    overrides: { [FeatureFlagEnum.AMPALS_RDCA_DAP_FORM_ENABLED]: enabled },
+  })
+}
 
 function renderStatus(fairPortalUrl?: string) {
   const Wrapper = createWrapper()
@@ -59,6 +69,7 @@ function renderStatus(fairPortalUrl?: string) {
 
 function wizardHandlers() {
   return [
+    darFormFeatureFlagOverride(true),
     getAridhiaAuthenticateHandler(),
     getAridhiaRequestsHandler(),
     getAridhiaDatasetSettingsHandler(),
@@ -114,9 +125,13 @@ describe('AridhiaAccessStatus', () => {
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())
 
-  it('opens the request wizard in a dialog when no request exists for this dataset', async () => {
+  it('opens the request wizard in a dialog when no request exists for this dataset and the feature flag is enabled', async () => {
     const user = userEvent.setup()
-    server.use(getAridhiaAuthenticateHandler(), getAridhiaRequestsHandler())
+    server.use(
+      darFormFeatureFlagOverride(true),
+      getAridhiaAuthenticateHandler(),
+      getAridhiaRequestsHandler(),
+    )
     renderStatus()
 
     await findNoAccessIcon()
@@ -129,6 +144,31 @@ describe('AridhiaAccessStatus', () => {
     expect(
       screen.getByRole('heading', { name: 'Request Data Access' }),
     ).toBeInTheDocument()
+  })
+
+  it('does not open the request wizard when the feature flag is disabled, and instead links out to the provided FAIR portal URL', async () => {
+    const user = userEvent.setup()
+    server.use(
+      darFormFeatureFlagOverride(false),
+      getAridhiaAuthenticateHandler(),
+      getAridhiaRequestsHandler(),
+    )
+    renderStatus(MOCK_ARIDHIA_FAIR_PORTAL_URL)
+
+    await findNoAccessIcon()
+    expect(
+      screen.queryByRole('button', { name: 'Request data access' }),
+    ).not.toBeInTheDocument()
+    expect(screen.getByRole('link')).toHaveAttribute(
+      'href',
+      getAridhiaFairPortalDatasetUrl(
+        MOCK_ARIDHIA_FAIR_PORTAL_URL,
+        MOCK_ARIDHIA_DATASET_CODE,
+      ),
+    )
+
+    await user.click(screen.getByRole('link'))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 
   it('opens the status popover showing the request name when a request is pending, linking to the specific request on the FAIR portal', async () => {

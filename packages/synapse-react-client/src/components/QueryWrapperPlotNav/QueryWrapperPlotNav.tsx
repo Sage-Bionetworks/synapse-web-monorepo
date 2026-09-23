@@ -14,7 +14,7 @@ import { Box } from '@mui/material'
 import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { useQuery } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'
-import { Suspense, useMemo, useState } from 'react'
+import { lazy, Suspense, useMemo, useState } from 'react'
 import { CardConfiguration } from '../CardContainer/CardConfiguration'
 import { SynapseErrorBoundary } from '../error'
 import FullTextSearch from '../FullTextSearch/FullTextSearch'
@@ -44,7 +44,6 @@ import PlotsContainer, {
 import FacetFilterControls, {
   FacetFilterControlsProps,
 } from '../widgets/query-filter/FacetFilterControls'
-import { QueryBuilderControls } from '../QueryBuilder/QueryBuilderControls'
 import {
   defaultQBGroup,
   hasCompleteCondition,
@@ -59,6 +58,22 @@ import { isFilterGroup } from '../../utils/types/IsType'
 import { QueryWrapperSynapsePlotProps } from './QueryWrapperSynapsePlot'
 import { RowSetView } from './RowSetView'
 import QueryWrapperLoadingScreen from '../QueryWrapper/QueryWrapperLoadingScreen'
+
+/**
+ * The Query Builder is hidden on every tab that renders this nav until the
+ * user opens it, and it pulls in a drag-and-drop library alongside its own
+ * panel. Loading it on demand keeps all of that off the critical path for the
+ * table and card views. It already renders inside a `Suspense` boundary, so
+ * there is nothing else to coordinate.
+ *
+ * The QB tree helpers imported above stay eager — they are pure functions this
+ * component calls from its own handlers, and none of them reach dnd-kit.
+ */
+const QueryBuilderControls = lazy(() =>
+  import('../QueryBuilder/QueryBuilderControls').then(module => ({
+    default: module.QueryBuilderControls,
+  })),
+)
 
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
 export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
