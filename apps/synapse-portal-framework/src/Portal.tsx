@@ -8,6 +8,7 @@ import { DocumentMetadataProvider } from 'synapse-react-client/utils/context/Doc
 import { defaultQueryClientConfig } from 'synapse-react-client/utils/context/FullContextProvider'
 import { PortalContextProvider } from './components/PortalContext'
 import { PortalProps } from './components/PortalProps'
+import { useReloadOnPreloadError } from './utils/reloadOnPreloadError'
 
 /**
  * Adds an errorElement to top-level routes that don't already have one
@@ -24,6 +25,7 @@ function addErrorBoundaryToRoutes(
 
 function Portal(props: PortalProps) {
   const { palette, ...context } = props
+  useReloadOnPreloadError()
   // Per-app QueryClient instance (stable via useRef).
   // Prevents cross-render cache leakage during SSR and avoids stale HMR state.
   const queryClientRef = useRef<QueryClient | null>(null)
