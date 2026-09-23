@@ -26,12 +26,6 @@ type FormTemplatePreviewProps = {
  * Renders a live preview of how a FormTemplate + its referenced JSON Schema will appear to a
  * requester. Computed client-side against the unsaved draft, purely to give ACT instant feedback
  * while editing.
- *
- * Per `generateDataAccessSchema`, the same client-side slicing also backs the real
- * requester/reviewer render paths -- there is no separate server-side generation service and no
- * per-field `submissionContext` on `FormTemplateField`; the Request/Renewal toggle below resolves
- * each property's applicable context from the schema's `x-synapse-submissionContext` `allOf`
- * conditionals (see `@/utils/jsonschema/submissionContext`).
  */
 export function FormTemplatePreview({
   template,
