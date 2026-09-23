@@ -751,6 +751,13 @@ describe('useDataGridWebSocket', () => {
 
       expect(result.current.isSyncing).toBe(true)
       expect(result.current.hasCompletedInitialLoad).toBe(true)
+
+      // The transition is one-way: a completed later exchange can't reset it
+      act(() => {
+        config.onGridReady!()
+        config.onSyncEnd!()
+      })
+      expect(result.current.hasCompletedInitialLoad).toBe(true)
     })
 
     it('stays true when reconnecting to the same session', async () => {
