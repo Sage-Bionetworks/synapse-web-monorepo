@@ -99,12 +99,12 @@ export function FieldDefinitionDrawer({
   const displayedKey =
     keyDraft?.forKey === propertyKey ? keyDraft.value : (propertyKey ?? '')
 
-  const keyError =
-    displayedKey.length === 0
-      ? 'Required'
-      : displayedKey !== propertyKey && existingKeys.has(displayedKey)
-        ? 'Already used by another field'
-        : null
+  let keyError: string | null = null
+  if (displayedKey.length === 0) {
+    keyError = 'Required'
+  } else if (displayedKey !== propertyKey && existingKeys.has(displayedKey)) {
+    keyError = 'Already used by another field'
+  }
 
   const commitKeyDraft = () => {
     if (propertyKey && !keyError && displayedKey !== propertyKey) {
