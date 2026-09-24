@@ -6,7 +6,6 @@ import {
   useGetDataAccessRequestForUpdate,
   useGetDataAccessRequestPreview,
   useGetDataAccessRequestSignatureQuota,
-  useGetDataAccessRequestSignatureStatus,
   useInitiateDataAccessRequestSignature,
   useUpdateDataAccessRequestSignature,
   useVoidDataAccessRequestSignature,
@@ -35,7 +34,6 @@ import { ReactNode, useState } from 'react'
 import { useFetchBlobUrl } from '@/utils/hooks/useFetchBlobUrl'
 import IconSvg from '../../../IconSvg/IconSvg'
 import {
-  isSignatureEnvelopeUpdatable,
   SIGNATURE_QUOTA_EXHAUSTED_TITLE,
   SignatureQuotaExhaustedMessage,
 } from '../eDucSignatureUtils'
@@ -165,15 +163,6 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
     onSuccess: () => onSendForSignature(),
   })
 
-  // Tells us whether a correction could still reach the in-flight envelope, which decides whether
-  // a send is free or will spend a routing. Only meaningful once an envelope exists.
-  const { data: signatureStatus } = useGetDataAccessRequestSignatureStatus(
-    requestId ?? '',
-    { enabled: Boolean(requestId) && hasSignatureEnvelope },
-  )
-  const isEnvelopeUpdatable =
-    hasSignatureEnvelope && isSignatureEnvelopeUpdatable(signatureStatus)
-
   // Preflight the quota so we can disable the send-for-signature action when the user is at
   // or over their limit. A fetch error falls back to the current enabled behavior so a quota
   // service outage doesn't spuriously block valid requests.
@@ -183,10 +172,11 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
   )
   const isAtOrOverQuota =
     signatureQuota?.remaining != null && signatureQuota.remaining <= 0
-  // Only routing a new envelope spends a quota unit; correcting one that is still in flight is
-  // free. Blocking the correction path would strand a user at quota who followed the "press Back
-  // to update collaborators" guidance, so gate on quota only when a new routing is in prospect.
-  const isSendBlockedByQuota = isAtOrOverQuota && !isEnvelopeUpdatable
+  // Only routing a new envelope spends a quota unit. Without an envelope in flight that is the
+  // only thing Send can do, so the quota blocks it outright. With one in flight, whether the send
+  // is free depends on the precheck, which only the server can answer -- so let the user press
+  // Send and let the confirmation it opens govern the paid option.
+  const isSendBlockedByQuota = isAtOrOverQuota && !hasSignatureEnvelope
 
   // Which send-confirmation the precheck selected, or `null` for none. Sending is never silent
   // once an envelope exists: either the user chooses between keeping and replacing it, or they
@@ -493,7 +483,7 @@ function RemainingEDucAllowance(props: { remaining: number | undefined }) {
   }
   return (
     <Typography variant={'body1'} sx={{ ...longFieldLabelSx, mt: 2 }}>
-      You can create {remaining} more electronic{' '}
+      You can create <strong>{remaining}</strong> more electronic{' '}
       {remaining === 1 ? 'DUC' : 'DUCs'} this month.
     </Typography>
   )

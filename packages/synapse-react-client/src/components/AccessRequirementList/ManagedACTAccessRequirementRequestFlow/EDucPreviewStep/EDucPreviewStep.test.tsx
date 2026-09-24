@@ -11,7 +11,6 @@ import {
   DATA_ACCESS_REQUEST_SIGNATURE,
   DATA_ACCESS_REQUEST_SIGNATURE_PRECHECK,
   DATA_ACCESS_REQUEST_SIGNATURE_QUOTA,
-  DATA_ACCESS_REQUEST_SIGNATURE_STATUS,
 } from '@/utils/APIConstants'
 import { EDucSignatureStatus } from '@sage-bionetworks/synapse-client'
 import { render, screen, waitFor } from '@testing-library/react'
@@ -88,7 +87,6 @@ const previewEndpoint = `*${DATA_ACCESS_REQUEST_PREVIEW(MOCK_DATA_ACCESS_REQUEST
 const signatureEndpoint = `*${DATA_ACCESS_REQUEST_SIGNATURE(MOCK_DATA_ACCESS_REQUEST.id)}`
 const quotaEndpoint = `*${DATA_ACCESS_REQUEST_SIGNATURE_QUOTA(MOCK_DATA_ACCESS_REQUEST.id)}`
 const precheckEndpoint = `*${DATA_ACCESS_REQUEST_SIGNATURE_PRECHECK(MOCK_DATA_ACCESS_REQUEST.id)}`
-const statusEndpoint = `*${DATA_ACCESS_REQUEST_SIGNATURE_STATUS(MOCK_DATA_ACCESS_REQUEST.id)}`
 
 const MOCK_ENVELOPE_ID = 'docusign-envelope-abc'
 const DAR_WITH_IN_FLIGHT_ENVELOPE = {
@@ -133,18 +131,19 @@ function precheckHandler(canUpdate: boolean) {
   )
 }
 
-function signatureStatusHandler(status: EDucSignatureStatus) {
-  return http.get(statusEndpoint, () => HttpResponse.json(status))
-}
-
-/** An in-flight envelope with every signer still able to sign, so DocuSign can still correct it. */
-const CORRECTABLE_SIGNATURE_STATUS: EDucSignatureStatus = {
-  ducStatus: 'sent',
-  includesRequestChanges: true,
-  signerStatus: [
-    { name: 'Alice', status: 'done' },
-    { name: 'Bob', status: 'pending' },
-  ],
+/**
+ * The precheck answering as `text/plain` rather than JSON, which the generated client surfaces as
+ * the raw string instead of a boolean.
+ */
+function plainTextPrecheckHandler(canUpdate: boolean) {
+  return http.get(
+    precheckEndpoint,
+    () =>
+      new HttpResponse(String(canUpdate), {
+        status: 200,
+        headers: { 'Content-Type': 'text/plain' },
+      }),
+  )
 }
 
 const PRECHECK_FAILURE_REASON = 'The signature envelope could not be read.'
@@ -200,11 +199,23 @@ async function clickDialogButton(
   return button
 }
 
+/**
+ * Finds the remaining-allowance sentence. The count is emphasized, so the sentence spans several
+ * text nodes and has to be matched against the paragraph's combined content rather than the direct
+ * text children the default matcher sees.
+ */
+function findAllowanceSentence(sentence: string) {
+  return screen.findByText(
+    (_content, element) =>
+      element?.tagName === 'P' && element.textContent === sentence,
+  )
+}
+
 describe('EDucPreviewStep', () => {
   beforeAll(() => server.listen())
-  // resetHandlers, not restoreHandlers: these tests override the quota, precheck and status
-  // endpoints per case, and `restoreHandlers` leaves `server.use` overrides in place, making the
-  // suite order-dependent.
+  // resetHandlers, not restoreHandlers: these tests override the quota and precheck endpoints
+  // per case, and `restoreHandlers` leaves `server.use` overrides in place, making the suite
+  // order-dependent.
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())
 
@@ -359,7 +370,6 @@ describe('EDucPreviewStep', () => {
       it('offers only the free option when the user is at quota', async () => {
         server.use(
           successfulPreviewHandler(),
-          signatureStatusHandler(CORRECTABLE_SIGNATURE_STATUS),
           quotaHandler(5, 0),
           precheckHandler(true),
         )
@@ -379,6 +389,29 @@ describe('EDucPreviewStep', () => {
         ).toBeDisabled()
       })
     })
+
+    it.each([true, false])(
+      'trusts a text/plain precheck answering %s',
+      async canUpdate => {
+        server.use(
+          successfulPreviewHandler(),
+          quotaHandler(5, 4),
+          plainTextPrecheckHandler(canUpdate),
+        )
+        const { user } = renderComponent()
+
+        await clickSendForSignature(user)
+
+        // The generated client hands back the raw body when the response isn't JSON, so an
+        // un-coerced "false" would read as truthy and offer to keep an envelope the server has
+        // already ruled out.
+        await screen.findByRole('heading', {
+          name: canUpdate
+            ? KEEP_OR_REPLACE_DIALOG_TITLE
+            : RESTART_SIGNING_DIALOG_TITLE,
+        })
+      },
+    )
 
     it('voids and recreates the envelope when the precheck fails and the user confirms', async () => {
       const { calls, handlers } = trackSignatureCalls(false)
@@ -430,7 +463,6 @@ describe('EDucPreviewStep', () => {
       async ({ canUpdate, dialogTitle }) => {
         server.use(
           successfulPreviewHandler(),
-          signatureStatusHandler(CORRECTABLE_SIGNATURE_STATUS),
           quotaHandler(12, 9),
           precheckHandler(canUpdate),
         )
@@ -439,16 +471,15 @@ describe('EDucPreviewStep', () => {
         await clickSendForSignature(user)
 
         await screen.findByRole('heading', { name: dialogTitle })
-        expect(
-          screen.getByText(/You can create 9 more electronic DUCs this month/i),
-        ).toBeInTheDocument()
+        await findAllowanceSentence(
+          'You can create 9 more electronic DUCs this month.',
+        )
       },
     )
 
     it('singularizes the remaining monthly allowance when one routing is left', async () => {
       server.use(
         successfulPreviewHandler(),
-        signatureStatusHandler(CORRECTABLE_SIGNATURE_STATUS),
         quotaHandler(12, 1),
         precheckHandler(true),
       )
@@ -459,15 +490,14 @@ describe('EDucPreviewStep', () => {
       await screen.findByRole('heading', {
         name: KEEP_OR_REPLACE_DIALOG_TITLE,
       })
-      expect(
-        screen.getByText(/You can create 1 more electronic DUC this month/i),
-      ).toBeInTheDocument()
+      await findAllowanceSentence(
+        'You can create 1 more electronic DUC this month.',
+      )
     })
 
     it('omits the remaining monthly allowance when the quota fetch fails', async () => {
       server.use(
         successfulPreviewHandler(),
-        signatureStatusHandler(CORRECTABLE_SIGNATURE_STATUS),
         http.get(quotaEndpoint, () =>
           HttpResponse.json(
             { reason: 'quota service unavailable' },
@@ -561,7 +591,6 @@ describe('EDucPreviewStep', () => {
       const { previewCalls, handler } = trackedPreviewHandler()
       server.use(
         handler,
-        signatureStatusHandler(CORRECTABLE_SIGNATURE_STATUS),
         precheckHandler(false),
         http.delete(
           signatureEndpoint,
@@ -589,11 +618,7 @@ describe('EDucPreviewStep', () => {
     })
 
     it('keeps Send enabled at quota, because correcting an envelope costs no routings', async () => {
-      server.use(
-        successfulPreviewHandler(),
-        signatureStatusHandler(CORRECTABLE_SIGNATURE_STATUS),
-        quotaHandler(5, 0),
-      )
+      server.use(successfulPreviewHandler(), quotaHandler(5, 0))
       renderComponent()
 
       const sendButton = await screen.findByRole('button', {
@@ -604,12 +629,7 @@ describe('EDucPreviewStep', () => {
 
     it('reports the exhausted quota instead of offering to restart signing', async () => {
       const { calls, handlers } = trackSignatureCalls(false)
-      server.use(
-        successfulPreviewHandler(),
-        signatureStatusHandler(CORRECTABLE_SIGNATURE_STATUS),
-        quotaHandler(5, 0),
-        ...handlers,
-      )
+      server.use(successfulPreviewHandler(), quotaHandler(5, 0), ...handlers)
       const { user } = renderComponent()
 
       await clickSendForSignature(user)

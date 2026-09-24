@@ -11,6 +11,7 @@ import {
   EDucTemplatePage,
   EDucTemplateValidationResult,
 } from '@sage-bionetworks/synapse-client'
+import { SynapseClient } from '@sage-bionetworks/synapse-client/SynapseClient'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   InfiniteData,
@@ -266,14 +267,30 @@ export function useInitiateDataAccessRequestSignature(
 }
 
 /**
- * Determine whether the data access request's pending changes can be applied to the envelope
- * that is already in flight. Resolves to `false` when the envelope is in a state that DocuSign
- * cannot correct — e.g. it has already completed, or it was voided.
- *
- * Modeled as a mutation despite being a GET: the answer is only meaningful at the instant the
- * user acts on it, so it must never be served from cache.
+ * Ask the server whether the data access request's pending changes can be applied to the envelope
+ * that is already in flight. The service owns every reason an envelope might be uncorrectable --
+ * completed, voided, cancelled, declined -- so the answer is never inferred from its status here.
  *
  * @see GET /repo/v1/dataAccessRequest/{requestId}/signature/precheck
+ */
+async function fetchSignaturePrecheck(
+  synapseClient: SynapseClient,
+  requestId: string,
+): Promise<boolean> {
+  // The generated client is typed `Promise<boolean>`, but it only parses the body as JSON when the
+  // response carries a JSON content type -- otherwise it hands back the raw text. Comparing
+  // explicitly keeps the string "false" from being read as a truthy value.
+  const canUpdate: unknown =
+    await synapseClient.dataAccessServicesClient.getRepoV1DataAccessRequestRequestIdSignaturePrecheck(
+      { requestId },
+    )
+  return canUpdate === true || canUpdate === 'true'
+}
+
+/**
+ * {@link fetchSignaturePrecheck} as a mutation, for the moment a user commits to sending. Modeled
+ * as a mutation despite being a GET because the answer decides which irreversible call follows, so
+ * it must never be served from cache.
  */
 export function useCheckDataAccessRequestSignatureUpdatable(
   options?: UseMutationOptions<boolean, SynapseClientError, string>,
@@ -283,9 +300,26 @@ export function useCheckDataAccessRequestSignatureUpdatable(
   return useMutation<boolean, SynapseClientError, string>({
     ...options,
     mutationFn: (requestId: string) =>
-      synapseClient.dataAccessServicesClient.getRepoV1DataAccessRequestRequestIdSignaturePrecheck(
-        { requestId },
-      ),
+      fetchSignaturePrecheck(synapseClient, requestId),
+  })
+}
+
+/**
+ * {@link fetchSignaturePrecheck} as a query, for screens that describe what sending *would* do
+ * rather than acting on it. Use {@link useCheckDataAccessRequestSignatureUpdatable} at the point
+ * of action, where a cached answer would be unsafe.
+ */
+export function useGetDataAccessRequestSignatureUpdatable(
+  requestId: string,
+  options?: Partial<UseQueryOptions<boolean, SynapseClientError>>,
+) {
+  const { keyFactory, synapseClient } = useSynapseContext()
+
+  return useQuery({
+    ...options,
+    queryKey:
+      keyFactory.getDataAccessRequestSignaturePrecheckQueryKey(requestId),
+    queryFn: () => fetchSignaturePrecheck(synapseClient, requestId),
   })
 }
 

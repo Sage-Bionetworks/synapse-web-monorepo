@@ -2,6 +2,7 @@ import {
   useGetDataAccessRequestForUpdate,
   useGetDataAccessRequestPreview,
   useGetDataAccessRequestSignatureStatus,
+  useGetDataAccessRequestSignatureUpdatable,
   useGetDataAccessRequestSignedFileHandleId,
   useSubmitDataAccessRequest,
   useUpdateDataAccessRequest,
@@ -35,7 +36,6 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 import IconSvg from '../../../IconSvg/IconSvg'
-import { isSignatureEnvelopeUpdatable } from '../eDucSignatureUtils'
 import { longFieldLabelSx } from '../styles'
 
 export type SignatureStatusStepProps = {
@@ -97,7 +97,14 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
   const totalCount = signers.length
   const allCollected = totalCount > 0 && collectedCount === totalCount
   const outstandingSigners = signers.filter(s => s.status !== 'done')
-  const isEnvelopeUpdatable = isSignatureEnvelopeUpdatable(signatureStatus)
+
+  // Whether going Back could still deliver edits to this envelope is the server's call -- it knows
+  // every state DocuSign will refuse to correct. Only the copy below depends on it, so a stale or
+  // failed answer simply withholds the guidance rather than blocking the step.
+  const { data: isEnvelopeUpdatable } =
+    useGetDataAccessRequestSignatureUpdatable(requestId, {
+      enabled: Boolean(requestId) && !allCollected,
+    })
 
   const { data: previewFileHandle } = useGetDataAccessRequestPreview(
     requestId,
@@ -183,9 +190,9 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
           the Data Access Request.
         </Typography>
         {/* Editing is only worth offering while signatures are still outstanding -- once every
-            signer is done the user should simply submit. Withheld until the status resolves so
-            the copy doesn't appear and then vanish, and withheld for an envelope DocuSign can no
-            longer correct, where going Back would force a re-signature rather than preserve one. */}
+            signer is done the user should simply submit. Withheld until both the status and the
+            precheck resolve, so the copy neither appears and then vanishes nor promises that
+            existing signatures carry over when the server has already ruled that out. */}
         {onBackClicked &&
           signatureStatus &&
           !allCollected &&

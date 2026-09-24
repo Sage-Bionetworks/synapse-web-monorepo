@@ -7,6 +7,7 @@ import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   DATA_ACCESS_REQUEST,
   DATA_ACCESS_REQUEST_SIGNATURE_FILEHANDLE_ID,
+  DATA_ACCESS_REQUEST_SIGNATURE_PRECHECK,
   DATA_ACCESS_REQUEST_SIGNATURE_STATUS,
   DATA_ACCESS_REQUEST_SUBMISSION,
 } from '@/utils/APIConstants'
@@ -61,6 +62,9 @@ const statusEndpoint = `*${DATA_ACCESS_REQUEST_SIGNATURE_STATUS(
 const signedFileHandleEndpoint = `*${DATA_ACCESS_REQUEST_SIGNATURE_FILEHANDLE_ID(
   MOCK_DATA_ACCESS_REQUEST.id,
 )}`
+const precheckEndpoint = `*${DATA_ACCESS_REQUEST_SIGNATURE_PRECHECK(
+  MOCK_DATA_ACCESS_REQUEST.id,
+)}`
 const updateEndpoint = `*${DATA_ACCESS_REQUEST}`
 const submissionEndpoint = `*${DATA_ACCESS_REQUEST_SUBMISSION(
   MOCK_DATA_ACCESS_REQUEST.id,
@@ -77,12 +81,10 @@ const partiallySignedStatus: EDucSignatureStatus = {
   ],
 }
 
-/** Partially signed with every signer still able to sign, so the envelope remains correctable. */
-const correctableStatus: EDucSignatureStatus = {
-  ...partiallySignedStatus,
-  signerStatus: partiallySignedStatus.signerStatus!.filter(
-    signer => signer.status !== 'declined',
-  ),
+function precheckHandler(canUpdate: boolean) {
+  return http.get(precheckEndpoint, () =>
+    HttpResponse.json(canUpdate, { status: 200 }),
+  )
 }
 
 const fullySignedStatus: EDucSignatureStatus = {
@@ -214,8 +216,9 @@ describe('SignatureStatusStep', () => {
   it('tells the user that Back can be used to update collaborators mid-signature', async () => {
     server.use(
       http.get(statusEndpoint, () =>
-        HttpResponse.json(correctableStatus, { status: 200 }),
+        HttpResponse.json(partiallySignedStatus, { status: 200 }),
       ),
+      precheckHandler(true),
     )
     renderComponent()
 
@@ -225,15 +228,34 @@ describe('SignatureStatusStep', () => {
     ).toBeInTheDocument()
   })
 
-  it('omits the update-collaborators copy when the envelope can no longer be corrected', async () => {
+  it('omits the update-collaborators copy when the precheck says the envelope is not updatable', async () => {
     server.use(
       http.get(statusEndpoint, () =>
         HttpResponse.json(partiallySignedStatus, { status: 200 }),
       ),
+      precheckHandler(false),
     )
     renderComponent()
 
-    // A declined signer strands the envelope, so going Back cannot preserve existing signatures.
+    // Only the server knows why an envelope can't be corrected -- cancelled, declined, completed.
+    await screen.findByText(/1 out of 4 signatures collected/i)
+    expect(
+      screen.queryByText(/update the list of Collaborators by pressing/i),
+    ).not.toBeInTheDocument()
+  })
+
+  it('omits the update-collaborators copy when the precheck request fails', async () => {
+    server.use(
+      http.get(statusEndpoint, () =>
+        HttpResponse.json(partiallySignedStatus, { status: 200 }),
+      ),
+      http.get(precheckEndpoint, () =>
+        HttpResponse.json({ reason: 'precheck unavailable' }, { status: 500 }),
+      ),
+    )
+    renderComponent()
+
+    // The copy is advisory, so a precheck outage withholds the guidance rather than guessing.
     await screen.findByText(/1 out of 4 signatures collected/i)
     expect(
       screen.queryByText(/update the list of Collaborators by pressing/i),
@@ -257,12 +279,13 @@ describe('SignatureStatusStep', () => {
   it('omits the update-collaborators copy when there is no step to go back to', async () => {
     server.use(
       http.get(statusEndpoint, () =>
-        HttpResponse.json(correctableStatus, { status: 200 }),
+        HttpResponse.json(partiallySignedStatus, { status: 200 }),
       ),
+      precheckHandler(true),
     )
     renderComponent({ onBackClicked: undefined })
 
-    await screen.findByText(/1 out of 3 signatures collected/i)
+    await screen.findByText(/1 out of 4 signatures collected/i)
     expect(
       screen.queryByText(/update the list of Collaborators by pressing/i),
     ).not.toBeInTheDocument()
