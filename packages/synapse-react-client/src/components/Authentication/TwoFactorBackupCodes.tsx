@@ -86,10 +86,9 @@ export default function TwoFactorBackupCodes(props: TwoFactorBackupCodesProps) {
       leftContent={
         <Box
           sx={{
-            py: 10,
-            px: 8,
+            py: { xs: '10px', md: 10 },
+            px: { xs: '10px', md: 8 },
             height: '100%',
-            position: 'relative',
           }}
         >
           <IconButton
@@ -98,8 +97,8 @@ export default function TwoFactorBackupCodes(props: TwoFactorBackupCodesProps) {
             className={hiddenOnPrintClassName}
             sx={{
               position: 'absolute',
-              top: theme.spacing(2),
-              left: theme.spacing(2),
+              top: { xs: 0, md: theme.spacing(2) },
+              left: { xs: 0, md: theme.spacing(2) },
             }}
           >
             <IconSvg
@@ -108,7 +107,7 @@ export default function TwoFactorBackupCodes(props: TwoFactorBackupCodesProps) {
               sx={{ height: '24px', width: '24px' }}
             />
           </IconButton>
-          <Typography variant="headline1" sx={{ mt: 7 }}>
+          <Typography variant="headline1" sx={{ mt: { xs: 0, md: 7 } }}>
             Backup codes
           </Typography>
           {showReplaceOldCodesWarning && (
@@ -168,26 +167,45 @@ export default function TwoFactorBackupCodes(props: TwoFactorBackupCodesProps) {
       rightContent={
         <Box
           sx={{
-            py: 10,
+            padding: { xs: '60px 0 0 0', md: 10 },
             height: '100%',
-            background: `url(https://s3.amazonaws.com/static.synapse.org/images/twofactor-graphic.svg) no-repeat right bottom`,
+            background: {
+              xs: 'none',
+              md: `url(https://s3.amazonaws.com/static.synapse.org/images/twofactor-graphic.svg) no-repeat right bottom`,
+            },
             backgroundSize: '100%',
           }}
         >
           <Box
             sx={{
-              mt: 7,
-              px: 9,
+              mt: { xs: 0, md: 7 },
+              px: { xs: '10px', md: 9 },
             }}
           >
-            <Typography variant="headline1" sx={{ mb: 2.5 }}>
+            <Typography
+              variant="headline1"
+              sx={theme => ({
+                mb: 2.5,
+                [theme.breakpoints.down('md')]: { fontSize: '18px' },
+              })}
+            >
               Save these codes
             </Typography>
-            <Typography variant="body1" sx={{ my: 2 }}>
+            <Typography
+              variant="body1"
+              sx={{
+                my: 2,
+              }}
+            >
               You can use these 10 backup codes to access your account if you
               ever lose access to your authentication device.
             </Typography>
-            <Typography variant="body1" sx={{ my: 2 }}>
+            <Typography
+              variant="body1"
+              sx={{
+                my: 2,
+              }}
+            >
               Each code can only be used once.
             </Typography>
           </Box>

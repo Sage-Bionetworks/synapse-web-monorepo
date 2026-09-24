@@ -21,7 +21,8 @@ export function RecoveryCodeGrid(props: RecoveryCodeGridProps) {
     <Box
       sx={{
         display: 'grid',
-        gridTemplateColumns: '47.5% 47.5%',
+        gridTemplateColumns: { xs: 'max-content', md: '47.5% 47.5%' },
+        justifyContent: { xs: 'center', md: 'stretch' },
         columnGap: '5%',
         gridTemplateRows: 'repeat(5, 1fr)',
         fontFamily: 'Menlo, Courier New, Courier, monospace',
