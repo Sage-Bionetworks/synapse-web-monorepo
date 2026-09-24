@@ -1,61 +1,47 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { useGetEntity } from '@/synapse-queries'
-import { useGetSchemaBinding } from '@/synapse-queries/jsonschema/useEntityBoundSchema'
+import useGridSourceSyncStatus, {
+  GridSourceSyncStatus,
+} from '@/components/DataGrid/hooks/useGridSourceSyncStatus'
 import { displayToast } from '@/components/ToastMessage/ToastMessage'
-import { mockSchemaBinding } from '@/mocks/mockSchema'
+import { IMPORT_LATEST_CHANGES_TEXT } from '@/components/DataGrid/utils/gridSyncMessages'
 import {
   getUseMutationIdleMock,
   getUseMutationPendingMock,
-  getUseQueryLoadingMock,
-  getUseQuerySuccessMock,
 } from '@/testutils/ReactQueryMockUtils'
 import {
-  Entity,
   EntityType,
   GridSession,
   SynchronizeGridResponse,
 } from '@sage-bionetworks/synapse-client'
-import SyncGridWithSourceButton, {
-  buildMergeGridVariables,
-  getSyncButtonLabels,
-  onSynchronizeSuccess,
-  shouldPullBeforePush,
-} from './SyncGridWithSourceButton'
+import SyncGridWithSourceButton from './SyncGridWithSourceButton'
 import useMergeGridWithSource, {
   MergeGridResult,
 } from './useMergeGridWithSource'
 
-vi.mock('@/synapse-queries')
-vi.mock('@/synapse-queries/jsonschema/useEntityBoundSchema')
-vi.mock('./useMergeGridWithSource')
+vi.mock('@/components/DataGrid/hooks/useGridSourceSyncStatus')
+// Mock only the mutation hook; buildMergeGridVariables is part of the behavior under test.
+vi.mock('./useMergeGridWithSource', async importOriginal => ({
+  ...(await importOriginal<typeof import('./useMergeGridWithSource')>()),
+  default: vi.fn(),
+}))
 vi.mock('@/components/ToastMessage/ToastMessage', () => ({
   displayToast: vi.fn(),
 }))
 
-const mockUseGetEntity = vi.mocked(useGetEntity)
-const mockUseGetSchemaBinding = vi.mocked(useGetSchemaBinding)
+const mockUseGridSourceSyncStatus = vi.mocked(useGridSourceSyncStatus)
 const mockUseMergeGridWithSource = vi.mocked(useMergeGridWithSource)
 const mockDisplayToast = vi.mocked(displayToast)
 
-const mockRecordSetEntity = {
-  id: 'syn111',
-  name: 'my record set',
-  concreteType: 'org.sagebionetworks.repo.model.RecordSet',
-  versionNumber: 2,
-} as const satisfies Entity
-
-const mockTableEntity = {
-  id: 'syn222',
-  name: 'my table',
-  concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
-} as const satisfies Entity
-
-const mockEntityViewEntity = {
-  id: 'syn333',
-  name: 'my entity view',
-  concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
-} as const satisfies Entity
+function mockSyncStatus(overrides: Partial<GridSourceSyncStatus> = {}) {
+  mockUseGridSourceSyncStatus.mockReturnValue({
+    isSourceOutdated: false,
+    sourceEntityName: 'my source',
+    sourceEntityType: undefined,
+    isLoading: false,
+    ...overrides,
+  })
+}
 
 function renderComponent(gridSession: GridSession) {
   return render(<SyncGridWithSourceButton gridSession={gridSession} />)
@@ -92,21 +78,12 @@ function captureOnSuccessHandler(): { current: OnSuccessHandler | undefined } {
 describe('SyncGridWithSourceButton', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mockUseGetSchemaBinding.mockReturnValue(getUseQuerySuccessMock(null))
+    mockSyncStatus()
     mockUseMergeGridWithSource.mockReturnValue(getUseMutationIdleMock())
   })
 
-  it('shows a loading skeleton instead of a button while the entity is loading', () => {
-    mockUseGetEntity.mockReturnValue(getUseQueryLoadingMock())
-
-    renderComponent({ sessionId: 'session-1', sourceEntityId: 'syn222' })
-
-    expect(screen.queryByRole('button')).not.toBeInTheDocument()
-  })
-
-  it('shows a loading skeleton instead of a button while the schema binding is loading', () => {
-    mockUseGetEntity.mockReturnValue(getUseQuerySuccessMock(mockTableEntity))
-    mockUseGetSchemaBinding.mockReturnValue(getUseQueryLoadingMock())
+  it('shows a loading skeleton instead of a button while the sync status is loading', () => {
+    mockSyncStatus({ isLoading: true })
 
     renderComponent({ sessionId: 'session-1', sourceEntityId: 'syn222' })
 
@@ -114,7 +91,7 @@ describe('SyncGridWithSourceButton', () => {
   })
 
   it('shows a loading indicator while the mutation is pending', () => {
-    mockUseGetEntity.mockReturnValue(getUseQuerySuccessMock(mockTableEntity))
+    mockSyncStatus({ sourceEntityType: EntityType.table })
     mockUseMergeGridWithSource.mockReturnValue(getUseMutationPendingMock())
 
     renderComponent({ sessionId: 'session-1', sourceEntityId: 'syn222' })
@@ -123,17 +100,11 @@ describe('SyncGridWithSourceButton', () => {
   })
 
   it('renders "Sync changes" for an entity view source and triggers a PULL_PUSH on click', async () => {
-    mockUseGetEntity.mockReturnValue(
-      getUseQuerySuccessMock(mockEntityViewEntity),
-    )
+    mockSyncStatus({ sourceEntityType: EntityType.entityview })
     const mockMergeGrid = getUseMutationIdleMock()
     mockUseMergeGridWithSource.mockReturnValue(mockMergeGrid)
 
-    const gridSession: GridSession = {
-      sessionId: 'session-1',
-      sourceEntityId: 'syn222',
-    }
-    renderComponent(gridSession)
+    renderComponent({ sessionId: 'session-1', sourceEntityId: 'syn222' })
 
     const button = screen.getByRole('button', { name: 'Sync changes' })
     await userEvent.click(button)
@@ -146,25 +117,19 @@ describe('SyncGridWithSourceButton', () => {
     })
   })
 
-  it('renders "Import latest changes" and triggers a PULL when the RecordSet source has been updated', async () => {
-    mockUseGetEntity.mockReturnValue(
-      getUseQuerySuccessMock(mockRecordSetEntity),
-    )
-    mockUseGetSchemaBinding.mockReturnValue(
-      getUseQuerySuccessMock(mockSchemaBinding),
-    )
+  it('renders "Import latest changes" and triggers a PULL when the source has been updated', async () => {
+    mockSyncStatus({
+      isSourceOutdated: true,
+      sourceEntityType: EntityType.recordset,
+    })
     const mockMergeGrid = getUseMutationIdleMock()
     mockUseMergeGridWithSource.mockReturnValue(mockMergeGrid)
 
-    const gridSession: GridSession = {
-      sessionId: 'session-1',
-      sourceEntityId: 'syn111',
-      sourceEntityVersionNumber: 1, // older than mockRecordSetEntity.versionNumber (2)
-      gridJsonSchema$Id: mockSchemaBinding.jsonSchemaVersionInfo.$id,
-    }
-    renderComponent(gridSession)
+    renderComponent({ sessionId: 'session-1', sourceEntityId: 'syn111' })
 
-    const button = screen.getByRole('button', { name: 'Import latest changes' })
+    const button = screen.getByRole('button', {
+      name: IMPORT_LATEST_CHANGES_TEXT,
+    })
     await userEvent.click(button)
 
     expect(mockMergeGrid.mutate).toHaveBeenCalledWith({
@@ -176,21 +141,11 @@ describe('SyncGridWithSourceButton', () => {
   })
 
   it('renders "Sync changes" for an up-to-date RecordSet source', async () => {
-    const unchangedRecordSet = { ...mockRecordSetEntity, versionNumber: 1 }
-    mockUseGetEntity.mockReturnValue(getUseQuerySuccessMock(unchangedRecordSet))
-    mockUseGetSchemaBinding.mockReturnValue(
-      getUseQuerySuccessMock(mockSchemaBinding),
-    )
+    mockSyncStatus({ sourceEntityType: EntityType.recordset })
     const mockMergeGrid = getUseMutationIdleMock()
     mockUseMergeGridWithSource.mockReturnValue(mockMergeGrid)
 
-    const gridSession: GridSession = {
-      sessionId: 'session-1',
-      sourceEntityId: 'syn111',
-      sourceEntityVersionNumber: 1,
-      gridJsonSchema$Id: mockSchemaBinding.jsonSchemaVersionInfo.$id,
-    }
-    renderComponent(gridSession)
+    renderComponent({ sessionId: 'session-1', sourceEntityId: 'syn111' })
 
     const button = screen.getByRole('button', { name: 'Sync changes' })
     await userEvent.click(button)
@@ -204,9 +159,7 @@ describe('SyncGridWithSourceButton', () => {
   })
 
   it('wires a successful "synchronize" mutation result to a success toast', () => {
-    mockUseGetEntity.mockReturnValue(
-      getUseQuerySuccessMock(mockEntityViewEntity),
-    )
+    mockSyncStatus({ sourceEntityType: EntityType.entityview })
     const captureOnSuccess = captureOnSuccessHandler()
 
     renderComponent({ sessionId: 'session-1', sourceEntityId: 'syn222' })
@@ -220,158 +173,5 @@ describe('SyncGridWithSourceButton', () => {
       'Successfully synchronized changes.',
       'success',
     )
-  })
-})
-
-describe('shouldPullBeforePush', () => {
-  const gridSession: GridSession = {
-    sessionId: 'session-1',
-    sourceEntityId: 'syn111',
-    sourceEntityVersionNumber: 1,
-    gridJsonSchema$Id: mockSchemaBinding.jsonSchemaVersionInfo.$id,
-  }
-
-  it('returns false when the source entity does not support PULL (e.g. an entityview)', () => {
-    expect(shouldPullBeforePush(gridSession, mockEntityViewEntity, null)).toBe(
-      false,
-    )
-  })
-
-  it('returns false for a RecordSet that has not changed', () => {
-    const unchangedRecordSet = { ...mockRecordSetEntity, versionNumber: 1 }
-    expect(
-      shouldPullBeforePush(gridSession, unchangedRecordSet, mockSchemaBinding),
-    ).toBe(false)
-  })
-
-  it('returns true when the RecordSet has a newer version than the grid session', () => {
-    expect(shouldPullBeforePush(gridSession, mockRecordSetEntity, null)).toBe(
-      true,
-    )
-  })
-
-  it('returns true when the JSON Schema binding has changed', () => {
-    const unchangedRecordSet = { ...mockRecordSetEntity, versionNumber: 1 }
-    const updatedSchemaBinding = {
-      ...mockSchemaBinding,
-      jsonSchemaVersionInfo: {
-        ...mockSchemaBinding.jsonSchemaVersionInfo,
-        $id: 'org.sagebionetworks-NewSchema-1.0.0',
-      },
-    }
-    expect(
-      shouldPullBeforePush(
-        gridSession,
-        unchangedRecordSet,
-        updatedSchemaBinding,
-      ),
-    ).toBe(true)
-  })
-
-  it('returns false when the source entity is null', () => {
-    expect(shouldPullBeforePush(gridSession, null, mockSchemaBinding)).toBe(
-      false,
-    )
-  })
-})
-
-describe('getSyncButtonLabels', () => {
-  it('prioritizes the PULL copy when shouldPull is true', () => {
-    expect(getSyncButtonLabels(true, EntityType.recordset).buttonText).toBe(
-      'Import latest changes',
-    )
-  })
-
-  it('returns table-specific copy for a table source when shouldPull is false', () => {
-    expect(getSyncButtonLabels(false, EntityType.table).buttonText).toBe(
-      'Apply changes',
-    )
-  })
-
-  it('returns "Sync changes" for a RecordSet source', () => {
-    expect(getSyncButtonLabels(false, EntityType.recordset).buttonText).toBe(
-      'Sync changes',
-    )
-  })
-
-  it('returns the default sync copy for a source with no known type when shouldPull is false', () => {
-    expect(getSyncButtonLabels(false, undefined).buttonText).toBe(
-      'Sync changes',
-    )
-  })
-
-  // This test will fail if a new EntityType is added and not handled by getSyncButtonLabels
-  test.each(Object.values(EntityType))(
-    'does not throw for EntityType: %s',
-    entityType => {
-      expect(() => getSyncButtonLabels(false, entityType)).not.toThrow()
-      expect(() => getSyncButtonLabels(true, entityType)).not.toThrow()
-    },
-  )
-})
-
-describe('buildMergeGridVariables', () => {
-  const gridSession: GridSession = {
-    sessionId: 'session-1',
-    sourceEntityId: 'syn222',
-  }
-
-  it('requests a PULL when shouldPull is true', () => {
-    expect(
-      buildMergeGridVariables(gridSession, EntityType.recordset, true),
-    ).toEqual({
-      gridSessionId: 'session-1',
-      sourceEntityId: 'syn222',
-      sourceEntityType: EntityType.recordset,
-      syncType: 'PULL',
-    })
-  })
-
-  it('requests a PULL_PUSH when shouldPull is false', () => {
-    expect(
-      buildMergeGridVariables(gridSession, EntityType.table, false),
-    ).toEqual({
-      gridSessionId: 'session-1',
-      sourceEntityId: 'syn222',
-      sourceEntityType: EntityType.table,
-      syncType: 'PULL_PUSH',
-    })
-  })
-})
-
-describe('onSynchronizeSuccess', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-
-  it('shows a PULL-specific success toast when there are no errors', () => {
-    onSynchronizeSuccess(mockSynchronizeGridResponse(), 'PULL')
-    expect(mockDisplayToast).toHaveBeenCalledWith(
-      'Successfully imported latest changes.',
-      'success',
-    )
-  })
-
-  it('shows a generic success toast for PULL_PUSH when there are no errors', () => {
-    onSynchronizeSuccess(mockSynchronizeGridResponse(), 'PULL_PUSH')
-    expect(mockDisplayToast).toHaveBeenCalledWith(
-      'Successfully synchronized changes.',
-      'success',
-    )
-  })
-
-  it('shows a warning toast listing the error messages when present', () => {
-    const result = mockSynchronizeGridResponse({
-      errorMessages: ['row 1 failed', 'row 2 failed'],
-    })
-    onSynchronizeSuccess(result, 'PULL_PUSH')
-
-    expect(mockDisplayToast).toHaveBeenCalledTimes(1)
-    const [content, severity, options] = mockDisplayToast.mock.calls[0]
-    expect(severity).toBe('warning')
-    expect(options).toEqual({ title: 'Some changes could not be applied' })
-    render(<>{content}</>)
-    expect(screen.getByText('row 1 failed')).toBeInTheDocument()
-    expect(screen.getByText('row 2 failed')).toBeInTheDocument()
   })
 })
