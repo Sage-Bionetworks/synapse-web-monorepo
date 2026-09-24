@@ -81,9 +81,10 @@ const partiallySignedStatus: EDucSignatureStatus = {
   ],
 }
 
+/** Answers the precheck in the `{ result }` shape the deployed service uses. */
 function precheckHandler(canUpdate: boolean) {
   return http.get(precheckEndpoint, () =>
-    HttpResponse.json(canUpdate, { status: 200 }),
+    HttpResponse.json({ result: canUpdate }, { status: 200 }),
   )
 }
 

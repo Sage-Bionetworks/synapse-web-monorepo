@@ -125,24 +125,27 @@ function quotaHandler(quota: number, remaining: number) {
   )
 }
 
-function precheckHandler(canUpdate: boolean) {
-  return http.get(precheckEndpoint, () =>
+/**
+ * Every shape the precheck is known to answer in. The deployed service wraps its answer in
+ * `{ result }`, the OpenAPI spec declares a bare boolean, and the generated client hands back the
+ * raw response text for any non-JSON content type. All three must resolve to the same decision.
+ */
+const PRECHECK_RESPONSE_SHAPES = {
+  'result-wrapped': (canUpdate: boolean) =>
+    HttpResponse.json({ result: canUpdate }, { status: 200 }),
+  'bare boolean': (canUpdate: boolean) =>
     HttpResponse.json(canUpdate, { status: 200 }),
-  )
+  'text/plain': (canUpdate: boolean) =>
+    new HttpResponse(String(canUpdate), {
+      status: 200,
+      headers: { 'Content-Type': 'text/plain' },
+    }),
 }
 
-/**
- * The precheck answering as `text/plain` rather than JSON, which the generated client surfaces as
- * the raw string instead of a boolean.
- */
-function plainTextPrecheckHandler(canUpdate: boolean) {
-  return http.get(
-    precheckEndpoint,
-    () =>
-      new HttpResponse(String(canUpdate), {
-        status: 200,
-        headers: { 'Content-Type': 'text/plain' },
-      }),
+/** Answers the precheck in the shape the deployed service uses. */
+function precheckHandler(canUpdate: boolean) {
+  return http.get(precheckEndpoint, () =>
+    PRECHECK_RESPONSE_SHAPES['result-wrapped'](canUpdate),
   )
 }
 
@@ -163,7 +166,7 @@ function trackSignatureCalls(precheck: boolean | 'error' = true) {
             { reason: PRECHECK_FAILURE_REASON },
             { status: 400 },
           )
-        : HttpResponse.json(precheck, { status: 200 })
+        : PRECHECK_RESPONSE_SHAPES['result-wrapped'](precheck)
     }),
     http.put(signatureEndpoint, () => {
       calls.push('PUT signature')
@@ -390,21 +393,25 @@ describe('EDucPreviewStep', () => {
       })
     })
 
-    it.each([true, false])(
-      'trusts a text/plain precheck answering %s',
-      async canUpdate => {
+    // The precheck decides which irreversible call follows, so its answer has to survive every
+    // shape it arrives in -- a truthiness check reads `{ result: false }` and `"false"` alike as
+    // "updatable", and reads `{ result: true }` as "updatable" only by accident.
+    it.each(
+      Object.entries(PRECHECK_RESPONSE_SHAPES).flatMap(([shape, respond]) =>
+        [true, false].map(canUpdate => ({ shape, respond, canUpdate })),
+      ),
+    )(
+      'opens the right confirmation for a $shape precheck answering $canUpdate',
+      async ({ respond, canUpdate }) => {
         server.use(
           successfulPreviewHandler(),
           quotaHandler(5, 4),
-          plainTextPrecheckHandler(canUpdate),
+          http.get(precheckEndpoint, () => respond(canUpdate)),
         )
         const { user } = renderComponent()
 
         await clickSendForSignature(user)
 
-        // The generated client hands back the raw body when the response isn't JSON, so an
-        // un-coerced "false" would read as truthy and offer to keep an envelope the server has
-        // already ruled out.
         await screen.findByRole('heading', {
           name: canUpdate
             ? KEEP_OR_REPLACE_DIALOG_TITLE

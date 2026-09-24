@@ -67,7 +67,7 @@ function inFlightEnvelopeHandlers(options: {
     ),
     http.get(
       `${MOCK_REPO_ORIGIN}${DATA_ACCESS_REQUEST_SIGNATURE_PRECHECK(MOCK_DATA_ACCESS_REQUEST.id)}`,
-      () => HttpResponse.json(canUpdateEnvelope),
+      () => HttpResponse.json({ result: canUpdateEnvelope }),
     ),
   ]
 }

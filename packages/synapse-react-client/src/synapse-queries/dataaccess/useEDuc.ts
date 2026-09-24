@@ -267,6 +267,22 @@ export function useInitiateDataAccessRequestSignature(
 }
 
 /**
+ * Reads the precheck's answer out of whichever shape it arrives in. The generated client types this
+ * endpoint as a bare `boolean` because that is what the OpenAPI spec declares, but neither the
+ * declared type nor the runtime value can be trusted directly: the deployed service answers with a
+ * `{ result }` wrapper, and the client falls back to handing back the raw response text whenever
+ * the content type isn't JSON. Every shape is therefore compared explicitly -- a truthiness check
+ * would read both the object `{ result: false }` and the string `"false"` as `true`.
+ */
+function parseSignaturePrecheckResponse(response: unknown): boolean {
+  const answer =
+    typeof response === 'object' && response !== null && 'result' in response
+      ? (response as { result: unknown }).result
+      : response
+  return answer === true || answer === 'true'
+}
+
+/**
  * Ask the server whether the data access request's pending changes can be applied to the envelope
  * that is already in flight. The service owns every reason an envelope might be uncorrectable --
  * completed, voided, cancelled, declined -- so the answer is never inferred from its status here.
@@ -277,14 +293,11 @@ async function fetchSignaturePrecheck(
   synapseClient: SynapseClient,
   requestId: string,
 ): Promise<boolean> {
-  // The generated client is typed `Promise<boolean>`, but it only parses the body as JSON when the
-  // response carries a JSON content type -- otherwise it hands back the raw text. Comparing
-  // explicitly keeps the string "false" from being read as a truthy value.
-  const canUpdate: unknown =
+  const response: unknown =
     await synapseClient.dataAccessServicesClient.getRepoV1DataAccessRequestRequestIdSignaturePrecheck(
       { requestId },
     )
-  return canUpdate === true || canUpdate === 'true'
+  return parseSignaturePrecheckResponse(response)
 }
 
 /**

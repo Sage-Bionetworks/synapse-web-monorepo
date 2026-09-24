@@ -127,9 +127,11 @@ export function getDataAccessRequestHandlers(backendOrigin: string) {
       () => new HttpResponse(null, { status: 204 }),
     ),
 
+    // The service wraps the answer in `{ result }`, though the OpenAPI spec declares a bare
+    // boolean. Mirror the deployed shape so mocked flows match what callers really parse.
     http.get(
       `${backendOrigin}${DATA_ACCESS_REQUEST_SIGNATURE_PRECHECK(':id')}`,
-      () => HttpResponse.json(true, { status: 200 }),
+      () => HttpResponse.json({ result: true }, { status: 200 }),
     ),
 
     http.get(
