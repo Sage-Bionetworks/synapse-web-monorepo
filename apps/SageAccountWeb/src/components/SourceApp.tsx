@@ -45,7 +45,13 @@ export const SourceAppDescription = (): React.ReactNode => {
     <Typography
       className="description"
       variant="subtitle1"
-      sx={{ maxHeight: '180px', overflow: 'auto' }}
+      sx={theme => ({
+        maxHeight: '180px',
+        overflow: 'auto',
+        [theme.breakpoints.down('md')]: {
+          fontSize: '16px',
+        },
+      })}
     >
       {sourceAppConfig?.description}
     </Typography>
