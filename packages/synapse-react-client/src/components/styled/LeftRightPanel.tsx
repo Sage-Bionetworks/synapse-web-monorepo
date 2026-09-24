@@ -26,12 +26,14 @@ export const StyledOuterContainer: StyledComponent<BoxProps> = styled(Box, {
 export const StyledInnerContainer: StyledComponent<PaperProps> = styled(Paper, {
   label: 'StyledInnerContainer',
 })(({ theme }) => ({
+  position: 'relative',
   width: '900px',
   minHeight: '675px',
   margin: '0 auto',
   display: 'flex',
   overflow: 'hidden',
   [theme.breakpoints.down('md')]: {
+    boxShadow: 'none',
     flexDirection: 'column',
     width: '100%',
     minHeight: 0,
@@ -50,6 +52,9 @@ export const StyledInnerContainer: StyledComponent<PaperProps> = styled(Paper, {
   },
   '& > div:nth-of-type(2)': {
     backgroundColor: theme.palette.grey[200],
+    [theme.breakpoints.down('md')]: {
+      backgroundColor: theme.palette.background.paper,
+    },
   },
 }))
 
@@ -67,8 +72,8 @@ export function LeftRightPanel({
   return (
     <StyledOuterContainer className={className}>
       <StyledInnerContainer>
-        <Box>{leftContent}</Box>
-        <Box>{rightContent}</Box>
+        <Box sx={{ order: { xs: 2, md: 1 } }}>{leftContent}</Box>
+        <Box sx={{ order: { xs: 1, md: 2 } }}>{rightContent}</Box>
       </StyledInnerContainer>
     </StyledOuterContainer>
   )
