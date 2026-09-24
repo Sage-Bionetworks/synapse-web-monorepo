@@ -20,10 +20,15 @@ import { http, HttpResponse } from 'msw'
 import MarkdownSynapse from '../../../Markdown/MarkdownSynapse'
 import * as AccessRequirementListUtils from '../../AccessRequirementListUtils'
 import { ACT_QUOTA_RESET_REQUEST_URL } from '../eDucSignatureUtils'
+import { CANCEL_BUTTON_TEXT } from '@/components/ConfirmationDialog/ConfirmationDialog'
 import EDucPreviewStep, {
   EDucPreviewStepProps,
-  RECREATE_ENVELOPE_CONFIRM_BUTTON_TEXT,
+  KEEP_EXISTING_DUC_BUTTON_TEXT,
+  KEEP_OR_REPLACE_DIALOG_TITLE,
+  RESTART_SIGNING_CONFIRM_BUTTON_TEXT,
+  RESTART_SIGNING_DIALOG_TITLE,
   SEND_FOR_SIGNATURE_BUTTON_TEXT,
+  SEND_NEW_DUC_BUTTON_TEXT,
 } from './EDucPreviewStep'
 
 vi.mock('@/utils/hooks/useFetchBlobUrl', () => ({
@@ -186,9 +191,21 @@ async function clickSendForSignature(user: ReturnType<typeof userEvent.setup>) {
   return sendButton
 }
 
+async function clickDialogButton(
+  user: ReturnType<typeof userEvent.setup>,
+  name: string,
+) {
+  const button = await screen.findByRole('button', { name })
+  await user.click(button)
+  return button
+}
+
 describe('EDucPreviewStep', () => {
   beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
+  // resetHandlers, not restoreHandlers: these tests override the quota, precheck and status
+  // endpoints per case, and `restoreHandlers` leaves `server.use` overrides in place, making the
+  // suite order-dependent.
+  afterEach(() => server.resetHandlers())
   afterAll(() => server.close())
 
   beforeEach(() => {
@@ -273,31 +290,106 @@ describe('EDucPreviewStep', () => {
       mockGetDataRequestForUpdate.mockResolvedValue(DAR_WITH_IN_FLIGHT_ENVELOPE)
     })
 
-    it('updates the existing envelope when the precheck passes', async () => {
-      const { calls, handlers } = trackSignatureCalls()
-      server.use(successfulPreviewHandler(), ...handlers)
-      const { user } = renderComponent()
+    describe('when the precheck says the envelope can still be updated', () => {
+      it('asks the user to choose rather than silently updating', async () => {
+        const { calls, handlers } = trackSignatureCalls()
+        server.use(successfulPreviewHandler(), ...handlers)
+        const { user } = renderComponent()
 
-      await clickSendForSignature(user)
+        await clickSendForSignature(user)
 
-      await waitFor(() =>
-        expect(mockOnSendForSignature).toHaveBeenCalledTimes(1),
-      )
-      expect(calls).toEqual(['GET precheck', 'PUT signature'])
+        await screen.findByRole('heading', {
+          name: KEEP_OR_REPLACE_DIALOG_TITLE,
+        })
+        expect(calls).toEqual(['GET precheck'])
+        expect(mockOnSendForSignature).not.toHaveBeenCalled()
+      })
+
+      it('updates the existing envelope when the user keeps it', async () => {
+        const { calls, handlers } = trackSignatureCalls()
+        server.use(successfulPreviewHandler(), ...handlers)
+        const { user } = renderComponent()
+
+        await clickSendForSignature(user)
+        await clickDialogButton(user, KEEP_EXISTING_DUC_BUTTON_TEXT)
+
+        await waitFor(() =>
+          expect(mockOnSendForSignature).toHaveBeenCalledTimes(1),
+        )
+        expect(calls).toEqual(['GET precheck', 'PUT signature'])
+      })
+
+      it('voids and recreates the envelope when the user sends a new DUC', async () => {
+        const { calls, handlers } = trackSignatureCalls()
+        server.use(successfulPreviewHandler(), ...handlers)
+        const { user } = renderComponent()
+
+        await clickSendForSignature(user)
+        await clickDialogButton(user, SEND_NEW_DUC_BUTTON_TEXT)
+
+        await waitFor(() =>
+          expect(mockOnSendForSignature).toHaveBeenCalledTimes(1),
+        )
+        expect(calls).toEqual([
+          'GET precheck',
+          'DELETE signature',
+          'POST signature',
+        ])
+      })
+
+      it('makes no further calls when the user cancels', async () => {
+        const { calls, handlers } = trackSignatureCalls()
+        server.use(successfulPreviewHandler(), ...handlers)
+        const { user } = renderComponent()
+
+        await clickSendForSignature(user)
+        await clickDialogButton(user, CANCEL_BUTTON_TEXT)
+
+        await waitFor(() =>
+          expect(
+            screen.queryByRole('heading', {
+              name: KEEP_OR_REPLACE_DIALOG_TITLE,
+            }),
+          ).not.toBeInTheDocument(),
+        )
+        expect(calls).toEqual(['GET precheck'])
+        expect(mockOnSendForSignature).not.toHaveBeenCalled()
+      })
+
+      it('offers only the free option when the user is at quota', async () => {
+        server.use(
+          successfulPreviewHandler(),
+          signatureStatusHandler(CORRECTABLE_SIGNATURE_STATUS),
+          quotaHandler(5, 0),
+          precheckHandler(true),
+        )
+        const { user } = renderComponent()
+
+        await clickSendForSignature(user)
+
+        await screen.findByRole('heading', {
+          name: KEEP_OR_REPLACE_DIALOG_TITLE,
+        })
+        // Keeping the existing DUC spends no routings, so it stays available at quota.
+        expect(
+          screen.getByRole('button', { name: KEEP_EXISTING_DUC_BUTTON_TEXT }),
+        ).toBeEnabled()
+        expect(
+          screen.getByRole('button', { name: SEND_NEW_DUC_BUTTON_TEXT }),
+        ).toBeDisabled()
+      })
     })
 
     it('voids and recreates the envelope when the precheck fails and the user confirms', async () => {
       const { calls, handlers } = trackSignatureCalls(false)
-      server.use(successfulPreviewHandler(), ...handlers)
+      server.use(successfulPreviewHandler(), quotaHandler(5, 4), ...handlers)
       const { user } = renderComponent()
 
       await clickSendForSignature(user)
 
-      const confirmButton = await screen.findByRole('button', {
-        name: RECREATE_ENVELOPE_CONFIRM_BUTTON_TEXT,
-      })
+      await screen.findByRole('heading', { name: RESTART_SIGNING_DIALOG_TITLE })
       expect(mockOnSendForSignature).not.toHaveBeenCalled()
-      await user.click(confirmButton)
+      await clickDialogButton(user, RESTART_SIGNING_CONFIRM_BUTTON_TEXT)
 
       await waitFor(() =>
         expect(mockOnSendForSignature).toHaveBeenCalledTimes(1),
@@ -309,27 +401,89 @@ describe('EDucPreviewStep', () => {
       ])
     })
 
-    it('makes no further calls when the user declines to recreate the envelope', async () => {
+    it('makes no further calls when the user declines to restart signing', async () => {
       const { calls, handlers } = trackSignatureCalls(false)
-      server.use(successfulPreviewHandler(), ...handlers)
+      server.use(successfulPreviewHandler(), quotaHandler(5, 4), ...handlers)
       const { user } = renderComponent()
 
       await clickSendForSignature(user)
 
-      await screen.findByRole('button', {
-        name: RECREATE_ENVELOPE_CONFIRM_BUTTON_TEXT,
-      })
-      await user.click(screen.getByRole('button', { name: 'Cancel' }))
+      await screen.findByRole('heading', { name: RESTART_SIGNING_DIALOG_TITLE })
+      await clickDialogButton(user, CANCEL_BUTTON_TEXT)
 
       await waitFor(() =>
         expect(
-          screen.queryByRole('button', {
-            name: RECREATE_ENVELOPE_CONFIRM_BUTTON_TEXT,
+          screen.queryByRole('heading', {
+            name: RESTART_SIGNING_DIALOG_TITLE,
           }),
         ).not.toBeInTheDocument(),
       )
       expect(calls).toEqual(['GET precheck'])
       expect(mockOnSendForSignature).not.toHaveBeenCalled()
+    })
+
+    it.each([
+      { canUpdate: true, dialogTitle: KEEP_OR_REPLACE_DIALOG_TITLE },
+      { canUpdate: false, dialogTitle: RESTART_SIGNING_DIALOG_TITLE },
+    ])(
+      'reports the remaining monthly allowance in "$dialogTitle"',
+      async ({ canUpdate, dialogTitle }) => {
+        server.use(
+          successfulPreviewHandler(),
+          signatureStatusHandler(CORRECTABLE_SIGNATURE_STATUS),
+          quotaHandler(12, 9),
+          precheckHandler(canUpdate),
+        )
+        const { user } = renderComponent()
+
+        await clickSendForSignature(user)
+
+        await screen.findByRole('heading', { name: dialogTitle })
+        expect(
+          screen.getByText(/You can create 9 more electronic DUCs this month/i),
+        ).toBeInTheDocument()
+      },
+    )
+
+    it('singularizes the remaining monthly allowance when one routing is left', async () => {
+      server.use(
+        successfulPreviewHandler(),
+        signatureStatusHandler(CORRECTABLE_SIGNATURE_STATUS),
+        quotaHandler(12, 1),
+        precheckHandler(true),
+      )
+      const { user } = renderComponent()
+
+      await clickSendForSignature(user)
+
+      await screen.findByRole('heading', {
+        name: KEEP_OR_REPLACE_DIALOG_TITLE,
+      })
+      expect(
+        screen.getByText(/You can create 1 more electronic DUC this month/i),
+      ).toBeInTheDocument()
+    })
+
+    it('omits the remaining monthly allowance when the quota fetch fails', async () => {
+      server.use(
+        successfulPreviewHandler(),
+        signatureStatusHandler(CORRECTABLE_SIGNATURE_STATUS),
+        http.get(quotaEndpoint, () =>
+          HttpResponse.json(
+            { reason: 'quota service unavailable' },
+            { status: 500 },
+          ),
+        ),
+        precheckHandler(true),
+      )
+      const { user } = renderComponent()
+
+      await clickSendForSignature(user)
+
+      await screen.findByRole('heading', {
+        name: KEEP_OR_REPLACE_DIALOG_TITLE,
+      })
+      expect(screen.queryByText(/more electronic DUC/i)).not.toBeInTheDocument()
     })
 
     it('shows a precheck-specific error and skips the update when the precheck request fails', async () => {
@@ -361,6 +515,7 @@ describe('EDucPreviewStep', () => {
       const { user } = renderComponent()
 
       await clickSendForSignature(user)
+      await clickDialogButton(user, KEEP_EXISTING_DUC_BUTTON_TEXT)
 
       await screen.findByText(
         /couldn't apply your changes to your existing signature request/i,
@@ -390,11 +545,7 @@ describe('EDucPreviewStep', () => {
       const { user } = renderComponent()
 
       await clickSendForSignature(user)
-      await user.click(
-        await screen.findByRole('button', {
-          name: RECREATE_ENVELOPE_CONFIRM_BUTTON_TEXT,
-        }),
-      )
+      await clickDialogButton(user, RESTART_SIGNING_CONFIRM_BUTTON_TEXT)
 
       await screen.findByText(
         /couldn't cancel your existing signature request/i,
@@ -404,69 +555,6 @@ describe('EDucPreviewStep', () => {
       ).toBeInTheDocument()
       expect(postCallCount).toBe(0)
       expect(mockOnSendForSignature).not.toHaveBeenCalled()
-    })
-
-    it('hints at the collected signatures and that pending edits will be applied', async () => {
-      server.use(
-        successfulPreviewHandler(),
-        signatureStatusHandler({
-          ducStatus: 'sent',
-          includesRequestChanges: false,
-          signerStatus: [
-            { name: 'Alice', status: 'done' },
-            { name: 'Bob', status: 'done' },
-            { name: 'Cara', status: 'pending' },
-          ],
-        }),
-      )
-      renderComponent()
-
-      await screen.findByText(/2 of 3 signatures collected/i)
-      expect(
-        screen.getByText(/changes will be applied to the existing request/i),
-      ).toBeInTheDocument()
-    })
-
-    it('omits the pending-edits hint when the envelope already reflects the request', async () => {
-      server.use(
-        successfulPreviewHandler(),
-        signatureStatusHandler({
-          ducStatus: 'sent',
-          includesRequestChanges: true,
-          signerStatus: [
-            { name: 'Alice', status: 'done' },
-            { name: 'Bob', status: 'pending' },
-          ],
-        }),
-      )
-      renderComponent()
-
-      await screen.findByText(/1 of 2 signatures collected/i)
-      expect(
-        screen.queryByText(/changes will be applied to the existing request/i),
-      ).not.toBeInTheDocument()
-    })
-
-    it('omits the pending-edits hint when the envelope can no longer be corrected', async () => {
-      server.use(
-        successfulPreviewHandler(),
-        signatureStatusHandler({
-          ducStatus: 'sent',
-          includesRequestChanges: false,
-          signerStatus: [
-            { name: 'Alice', status: 'done' },
-            { name: 'Dan', status: 'declined' },
-          ],
-        }),
-      )
-      renderComponent()
-
-      // The declined signer means sending will recreate the envelope, so promising that signatures
-      // carry over would contradict the confirmation dialog the user is about to see.
-      await screen.findByText(/1 of 2 signatures collected/i)
-      expect(
-        screen.queryByText(/changes will be applied to the existing request/i),
-      ).not.toBeInTheDocument()
     })
 
     it('does not regenerate the preview when the recreated routing fails after the void', async () => {
@@ -489,11 +577,7 @@ describe('EDucPreviewStep', () => {
       const { user } = renderComponent()
 
       await clickSendForSignature(user)
-      await user.click(
-        await screen.findByRole('button', {
-          name: RECREATE_ENVELOPE_CONFIRM_BUTTON_TEXT,
-        }),
-      )
+      await clickDialogButton(user, RESTART_SIGNING_CONFIRM_BUTTON_TEXT)
 
       await screen.findByText(
         /couldn't send your DUC for electronic signature/i,
@@ -518,7 +602,7 @@ describe('EDucPreviewStep', () => {
       await waitFor(() => expect(sendButton).toBeEnabled())
     })
 
-    it('reports the exhausted quota instead of offering to recreate the envelope', async () => {
+    it('reports the exhausted quota instead of offering to restart signing', async () => {
       const { calls, handlers } = trackSignatureCalls(false)
       server.use(
         successfulPreviewHandler(),
@@ -541,21 +625,11 @@ describe('EDucPreviewStep', () => {
       expect(actLink).toHaveAttribute('href', ACT_QUOTA_RESET_REQUEST_URL)
       expect(actLink).toHaveAttribute('target', '_blank')
       expect(
-        screen.queryByRole('button', {
-          name: RECREATE_ENVELOPE_CONFIRM_BUTTON_TEXT,
-        }),
+        screen.queryByRole('heading', { name: RESTART_SIGNING_DIALOG_TITLE }),
       ).not.toBeInTheDocument()
       expect(calls).toEqual(['GET precheck'])
       expect(mockOnSendForSignature).not.toHaveBeenCalled()
     })
-  })
-
-  it('does not show the signature progress hint when no envelope is in flight', async () => {
-    server.use(successfulPreviewHandler())
-    renderComponent()
-
-    await screen.findByRole('button', { name: SEND_FOR_SIGNATURE_BUTTON_TEXT })
-    expect(screen.queryByText(/signatures collected/i)).not.toBeInTheDocument()
   })
 
   it('invokes onManualUpload when the Manually print button is clicked', async () => {

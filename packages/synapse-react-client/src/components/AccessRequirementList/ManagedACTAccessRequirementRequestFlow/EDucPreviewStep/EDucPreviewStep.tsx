@@ -1,4 +1,6 @@
 import { ConfirmationDialog } from '@/components/ConfirmationDialog'
+import { CANCEL_BUTTON_TEXT } from '@/components/ConfirmationDialog/ConfirmationDialog'
+import { DialogBase } from '@/components/DialogBase'
 import {
   useCheckDataAccessRequestSignatureUpdatable,
   useGetDataAccessRequestForUpdate,
@@ -14,6 +16,7 @@ import {
   Alert,
   Box,
   Button,
+  ButtonProps,
   DialogActions,
   DialogContent,
   DialogTitle,
@@ -39,12 +42,16 @@ import {
 import { longFieldLabelSx } from '../styles'
 
 const PDF_PREVIEW_HEIGHT = '500px'
-/** Keeps the hint text in a readable column without constraining the action it sits beneath. */
-const HINT_MAX_WIDTH = '240px'
 
 export const SEND_FOR_SIGNATURE_BUTTON_TEXT = 'Send for electronic signature'
-export const RECREATE_ENVELOPE_CONFIRM_BUTTON_TEXT =
-  'Cancel and start a new signature request'
+
+export const KEEP_OR_REPLACE_DIALOG_TITLE =
+  'Keep your existing DUC or send a new one?'
+export const KEEP_EXISTING_DUC_BUTTON_TEXT = 'Keep Existing DUC'
+export const SEND_NEW_DUC_BUTTON_TEXT = 'Send new DUC'
+
+export const RESTART_SIGNING_DIALOG_TITLE = 'Restart DUC signing?'
+export const RESTART_SIGNING_CONFIRM_BUTTON_TEXT = 'I understand, send new DUC'
 
 const PRECHECK_ERROR_TITLE =
   "Sorry, we couldn't check the status of your existing signature request."
@@ -158,16 +165,12 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
     onSuccess: () => onSendForSignature(),
   })
 
-  // Drives the "N of M signatures collected" hint, and tells us whether the user's edits have
-  // already been pushed to the envelope. Only meaningful once an envelope exists.
+  // Tells us whether a correction could still reach the in-flight envelope, which decides whether
+  // a send is free or will spend a routing. Only meaningful once an envelope exists.
   const { data: signatureStatus } = useGetDataAccessRequestSignatureStatus(
     requestId ?? '',
     { enabled: Boolean(requestId) && hasSignatureEnvelope },
   )
-  const signers = signatureStatus?.signerStatus ?? []
-  const collectedSignatureCount = signers.filter(
-    s => s.status === 'done',
-  ).length
   const isEnvelopeUpdatable =
     hasSignatureEnvelope && isSignatureEnvelopeUpdatable(signatureStatus)
 
@@ -185,8 +188,12 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
   // to update collaborators" guidance, so gate on quota only when a new routing is in prospect.
   const isSendBlockedByQuota = isAtOrOverQuota && !isEnvelopeUpdatable
 
-  const [isRecreateConfirmationOpen, setIsRecreateConfirmationOpen] =
-    useState(false)
+  // Which send-confirmation the precheck selected, or `null` for none. Sending is never silent
+  // once an envelope exists: either the user chooses between keeping and replacing it, or they
+  // acknowledge that replacing it is the only option.
+  const [openConfirmation, setOpenConfirmation] = useState<
+    'keepOrReplace' | 'restartSigning' | null
+  >(null)
   // Set when the server rejects an update that the client expected to succeed, leaving a recreate
   // -- which the user has no quota for -- as the only way forward.
   const [isRecreateBlockedByQuota, setIsRecreateBlockedByQuota] =
@@ -255,18 +262,26 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
       return
     }
     if (canUpdateEnvelope) {
-      updateSignature(requestId)
+      // Only the user knows whether their edits are material enough to warrant re-signing, so
+      // the choice between correcting and replacing the envelope is theirs.
+      setOpenConfirmation('keepOrReplace')
     } else if (isAtOrOverQuota) {
-      // Recreating spends a routing the user doesn't have, so there is nothing to confirm.
+      // Replacing spends a routing the user doesn't have, so there is nothing to confirm.
       setIsRecreateBlockedByQuota(true)
     } else {
-      setIsRecreateConfirmationOpen(true)
+      setOpenConfirmation('restartSigning')
     }
   }
 
-  const handleConfirmRecreateEnvelope = async () => {
+  const handleKeepExistingDuc = () => {
     if (!requestId) return
-    setIsRecreateConfirmationOpen(false)
+    setOpenConfirmation(null)
+    updateSignature(requestId)
+  }
+
+  const handleSendNewDuc = async () => {
+    if (!requestId) return
+    setOpenConfirmation(null)
     const isVoided = await voidSignature(requestId).then(
       () => true,
       () => false,
@@ -277,8 +292,10 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
     initiateSignature(requestId)
   }
 
-  const handleCancelRecreateEnvelope = () => {
-    setIsRecreateConfirmationOpen(false)
+  // Dismissing leaves the request untouched, so the user is still free to fall back to the
+  // manual print-and-upload path.
+  const handleCancelConfirmation = () => {
+    setOpenConfirmation(null)
   }
 
   return (
@@ -373,16 +390,6 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
                 </Box>
               </Tooltip>
             }
-            hint={
-              hasSignatureEnvelope && signers.length > 0 ? (
-                <>
-                  {`${collectedSignatureCount} of ${signers.length} signatures collected.`}
-                  {signatureStatus?.includesRequestChanges === false &&
-                    isEnvelopeUpdatable &&
-                    ' Your changes will be applied to the existing request, so collaborators who have already signed will not need to sign again.'}
-                </>
-              ) : undefined
-            }
           />
           <Divider />
           <ActionRow
@@ -414,27 +421,108 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
           Back
         </Button>
       </DialogActions>
-      <ConfirmationDialog
-        open={isRecreateConfirmationOpen}
-        title={'Start a new signature request?'}
+      <DialogBase
+        open={openConfirmation === 'keepOrReplace'}
+        title={KEEP_OR_REPLACE_DIALOG_TITLE}
         content={
-          <Typography variant={'body1'} sx={longFieldLabelSx}>
-            Your existing signature request can no longer be updated, so your
-            changes cannot be applied to it. To continue, we need to cancel it
-            and start a new one. Anyone who already signed will be asked to sign
-            again, and this will count against your signature request limit.
-          </Typography>
+          <>
+            <Typography variant={'body1'} sx={longFieldLabelSx}>
+              Your DUC was already signed and submitted. If your changes
+              don&apos;t affect what&apos;s on it, you can keep it and resubmit.
+              If they do, you&apos;ll need a new DUC, and your PI or Project
+              Lead, Signing Official, and any named Collaborators will need to
+              sign again.
+            </Typography>
+            <RemainingEDucAllowance remaining={signatureQuota?.remaining} />
+          </>
         }
-        confirmButtonProps={{
-          children: RECREATE_ENVELOPE_CONFIRM_BUTTON_TEXT,
-          color: 'error',
-        }}
+        onCancel={handleCancelConfirmation}
+        actions={
+          <>
+            <Button variant={'outlined'} onClick={handleCancelConfirmation}>
+              {CANCEL_BUTTON_TEXT}
+            </Button>
+            <SendNewDucButton
+              quota={signatureQuota?.quota}
+              isAtOrOverQuota={isAtOrOverQuota}
+              variant={'outlined'}
+              onClick={() => {
+                handleSendNewDuc()
+              }}
+            >
+              {SEND_NEW_DUC_BUTTON_TEXT}
+            </SendNewDucButton>
+            <Button variant={'contained'} onClick={handleKeepExistingDuc}>
+              {KEEP_EXISTING_DUC_BUTTON_TEXT}
+            </Button>
+          </>
+        }
+      />
+      <ConfirmationDialog
+        open={openConfirmation === 'restartSigning'}
+        title={RESTART_SIGNING_DIALOG_TITLE}
+        content={
+          <>
+            <Typography variant={'body1'} sx={longFieldLabelSx}>
+              Your DUC was already submitted for review, so it can&apos;t be
+              edited. To submit your changes, we&apos;ll close the current DUC
+              and send a new one for signature. Your PI or Project Lead, Signing
+              Official, and any named Collaborators will need to sign again.
+            </Typography>
+            <RemainingEDucAllowance remaining={signatureQuota?.remaining} />
+          </>
+        }
+        confirmButtonProps={{ children: RESTART_SIGNING_CONFIRM_BUTTON_TEXT }}
         onConfirm={() => {
-          handleConfirmRecreateEnvelope()
+          handleSendNewDuc()
         }}
-        onCancel={handleCancelRecreateEnvelope}
+        onCancel={handleCancelConfirmation}
       />
     </>
+  )
+}
+
+/**
+ * The month's remaining electronic DUC allowance. Omitted rather than guessed at when the quota
+ * request has not resolved.
+ */
+function RemainingEDucAllowance(props: { remaining: number | undefined }) {
+  const { remaining } = props
+  if (remaining == null) {
+    return null
+  }
+  return (
+    <Typography variant={'body1'} sx={{ ...longFieldLabelSx, mt: 2 }}>
+      You can create {remaining} more electronic{' '}
+      {remaining === 1 ? 'DUC' : 'DUCs'} this month.
+    </Typography>
+  )
+}
+
+/**
+ * The "send a new DUC" action, disabled with an explanation when the user has no routings left.
+ * Replacing an envelope always spends one, so this is the only action in the keep-or-replace
+ * dialog that the quota can block.
+ */
+function SendNewDucButton(
+  props: ButtonProps & { quota: number | undefined; isAtOrOverQuota: boolean },
+) {
+  const { quota, isAtOrOverQuota, ...buttonProps } = props
+  return (
+    <Tooltip
+      title={
+        isAtOrOverQuota ? <SignatureQuotaExhaustedMessage quota={quota} /> : ''
+      }
+      arrow
+      disableHoverListener={!isAtOrOverQuota}
+      disableFocusListener={!isAtOrOverQuota}
+      disableTouchListener={!isAtOrOverQuota}
+    >
+      {/* Tooltip wrapper Box is needed because MUI Tooltip does not fire on disabled children directly. */}
+      <Box component={'span'}>
+        <Button {...buttonProps} disabled={isAtOrOverQuota} />
+      </Box>
+    </Tooltip>
   )
 }
 
@@ -442,10 +530,8 @@ function ActionRow(props: {
   title: string
   description: string
   action: ReactNode
-  /** Supplementary text rendered beneath the action. */
-  hint?: ReactNode
 }) {
-  const { title, description, action, hint } = props
+  const { title, description, action } = props
   return (
     <Stack
       direction={{ xs: 'column', sm: 'row' }}
@@ -459,17 +545,7 @@ function ActionRow(props: {
           {description}
         </Typography>
       </Box>
-      <Box sx={{ flexShrink: 0 }}>
-        {action}
-        {hint && (
-          <Typography
-            variant={'smallText1'}
-            sx={{ mt: 1, maxWidth: { sm: HINT_MAX_WIDTH }, color: 'grey.700' }}
-          >
-            {hint}
-          </Typography>
-        )}
-      </Box>
+      <Box sx={{ flexShrink: 0 }}>{action}</Box>
     </Stack>
   )
 }

@@ -18,7 +18,10 @@ import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { EDucSignatureStatus } from '@sage-bionetworks/synapse-client'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { http, HttpResponse } from 'msw'
-import EDucPreviewStep from './EDucPreviewStep'
+import { expect, userEvent, waitFor, within } from 'storybook/test'
+import EDucPreviewStep, {
+  SEND_FOR_SIGNATURE_BUTTON_TEXT,
+} from './EDucPreviewStep'
 
 const eDucManagedACTAccessRequirement = {
   ...mockManagedACTAccessRequirement,
@@ -99,6 +102,19 @@ export default meta
 
 type Story = StoryObj<typeof meta>
 
+/**
+ * Presses "Send for electronic signature" so the story lands on whichever confirmation the
+ * precheck selects. MUI portals dialog content to `document.body`, outside the story canvas.
+ */
+const openSendConfirmation: Story['play'] = async ({ canvasElement }) => {
+  const canvas = within(canvasElement.ownerDocument.body)
+  const sendButton = await canvas.findByRole('button', {
+    name: SEND_FOR_SIGNATURE_BUTTON_TEXT,
+  })
+  await waitFor(() => expect(sendButton).toBeEnabled())
+  await userEvent.click(sendButton)
+}
+
 export const Preview: Story = {
   name: 'eDUC preview step',
   args: {
@@ -110,17 +126,11 @@ export const Preview: Story = {
 }
 
 export const PreviewWithUpdatableEnvelope: Story = {
-  name: 'eDUC preview — pending edits to an in-flight envelope',
+  name: 'eDUC preview — in-flight envelope that can still be updated',
   parameters: {
     msw: {
       handlers: [
-        ...inFlightEnvelopeHandlers({
-          canUpdateEnvelope: true,
-          signatureStatus: {
-            ...MOCK_EDUC_SIGNATURE_STATUS,
-            includesRequestChanges: false,
-          },
-        }),
+        ...inFlightEnvelopeHandlers({ canUpdateEnvelope: true }),
         previewHandler,
         ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
         ...getWikiHandlers(MOCK_REPO_ORIGIN),
@@ -145,7 +155,6 @@ export const PreviewWithUnupdatableEnvelope: Story = {
           signatureStatus: {
             ...MOCK_EDUC_SIGNATURE_STATUS,
             ducStatus: 'completed',
-            includesRequestChanges: false,
           },
         }),
         previewHandler,
@@ -160,6 +169,28 @@ export const PreviewWithUnupdatableEnvelope: Story = {
     managedACTAccessRequirement: eDucManagedACTAccessRequirement,
     previewSrcOverride: SAMPLE_PDF_URL,
   },
+}
+
+/**
+ * Pressing Send on a correctable envelope asks the user to choose, because only they know whether
+ * their edits are material enough to warrant collecting signatures again.
+ */
+export const KeepOrReplaceConfirmation: Story = {
+  name: 'eDUC preview — "keep or replace" confirmation',
+  parameters: PreviewWithUpdatableEnvelope.parameters,
+  args: PreviewWithUpdatableEnvelope.args,
+  play: openSendConfirmation,
+}
+
+/**
+ * The same action on an envelope DocuSign can no longer correct, where replacing it is the only
+ * way to deliver the user's changes.
+ */
+export const RestartSigningConfirmation: Story = {
+  name: 'eDUC preview — "restart signing" confirmation',
+  parameters: PreviewWithUnupdatableEnvelope.parameters,
+  args: PreviewWithUnupdatableEnvelope.args,
+  play: openSendConfirmation,
 }
 
 export const PreviewError: Story = {
