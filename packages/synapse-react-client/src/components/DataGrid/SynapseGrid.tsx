@@ -1,6 +1,7 @@
 import CertificationRequirement from '@/components/AccessRequirementList/RequirementItem/CertificationRequirement'
 import ExportCsvFromGridButton from '@/components/DataGrid/components/ExportCsvFromGridButton'
 import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
+import GridSourceUpdatedNotification from '@/components/DataGrid/components/GridSourceUpdatedNotification'
 import ReorderColumnsButton from '@/components/DataGrid/components/ReorderColumnsButton'
 import UploadCsvToGridButton from '@/components/DataGrid/components/UploadCsvToGridButton'
 import useGetSchemaForGrid from '@/components/DataGrid/hooks/useGetSchemaForGrid'
@@ -10,7 +11,10 @@ import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
 import { SynapseErrorBoundary } from '@/components/error/ErrorBanner'
 import { SkeletonTable } from '@/components/index'
 import { useGetCurrentUserBundle } from '@/synapse-queries'
-import { useListGridReplicas } from '@/synapse-queries/grid/useGridSession'
+import {
+  useGetGridSession,
+  useListGridReplicas,
+} from '@/synapse-queries/grid/useGridSession'
 import { useGetEntity } from '@/synapse-queries/index'
 import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import { HelpOutline } from '@mui/icons-material'
@@ -79,6 +83,15 @@ function SynapseGridInner({
   const gridRef = useRef<DataSheetGridRef | null>(null)
 
   const { data: userBundle, isLoading } = useGetCurrentUserBundle()
+
+  // `session` is the snapshot captured when the session was created or joined. Reading the
+  // session back keeps its source entity version and JSON Schema references current, which
+  // the sync affordances compare against the source entity to detect external updates.
+  const { data: refreshedSession } = useGetGridSession(
+    session?.sessionId ?? '',
+    { enabled: !!session?.sessionId },
+  )
+  const currentSession = refreshedSession ?? session
 
   const { data: replicas = [], refetch: refetchReplicas } = useListGridReplicas(
     session?.sessionId,
@@ -539,26 +552,35 @@ function SynapseGridInner({
                         }
                       />
                     )}
-                    {session.sourceEntityId && (
-                      <SyncGridWithSourceButton gridSession={session} />
+                    {currentSession?.sourceEntityId && (
+                      <SyncGridWithSourceButton gridSession={currentSession} />
                     )}
                   </Stack>
                 </Grid>
                 <Grid size={12}>
-                  <DataGrid
-                    gridRef={gridRef}
-                    rowValues={enrichedRowValues}
-                    columnNames={modelSnapshot?.columnNames ?? []}
-                    columnOrder={modelSnapshot?.columnOrder ?? []}
-                    schemaPropertiesInfo={schemaPropertiesInfo}
-                    entityIsView={entityIsView}
-                    jsonSchema={jsonSchema}
-                    lastSelection={lastSelection}
-                    handleChange={handleChange}
-                    handleSelectionChange={handleSelectionChange}
-                    remoteSelections={remoteSelections}
-                    upsertKey={upsertKey}
-                  />
+                  <Box sx={{ position: 'relative' }}>
+                    <DataGrid
+                      gridRef={gridRef}
+                      rowValues={enrichedRowValues}
+                      columnNames={modelSnapshot?.columnNames ?? []}
+                      columnOrder={modelSnapshot?.columnOrder ?? []}
+                      schemaPropertiesInfo={schemaPropertiesInfo}
+                      entityIsView={entityIsView}
+                      jsonSchema={jsonSchema}
+                      lastSelection={lastSelection}
+                      handleChange={handleChange}
+                      handleSelectionChange={handleSelectionChange}
+                      remoteSelections={remoteSelections}
+                      upsertKey={upsertKey}
+                    />
+                    {hasCompletedInitialSync &&
+                      currentSession?.sourceEntityId && (
+                        <GridSourceUpdatedNotification
+                          key={currentSession.sessionId}
+                          gridSession={currentSession}
+                        />
+                      )}
+                  </Box>
                 </Grid>
               </>
             )}

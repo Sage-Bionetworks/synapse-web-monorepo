@@ -1,13 +1,20 @@
 import useMergeGridWithTable from './useMergeGridWithTable'
 import {
   EntityType,
+  GridSession,
   SynchronizeGridResponse,
   SyncType,
   TableUpdateTransactionResponse,
 } from '@sage-bionetworks/synapse-client'
-import { useMutation, UseMutationOptions } from '@tanstack/react-query'
+import {
+  useMutation,
+  UseMutationOptions,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 import { useSynchronizeGridSession } from '@/synapse-queries/grid/useGridSession'
+import { invalidateAllQueriesForEntity } from '@/synapse-queries/QueryFilterUtils'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
 
 export type MergeGridWithSource = {
   /** The ID of the grid session to merge with the source entity. */
@@ -33,7 +40,8 @@ export type MergeGridResult =
  * - EntityView/RecordSet -> useSynchronizeGridSession
  * - TableEntity -> useMergeGridWithTable
  *
- * Returns a query mutation that handles synchronization.
+ * Returns a query mutation that handles synchronization. Data cached for the grid session and
+ * the source entity is refetched before the mutation resolves.
  */
 export default function useMergeGridWithSource(
   options?: Omit<
@@ -45,6 +53,9 @@ export default function useMergeGridWithSource(
     'mutationFn'
   >,
 ) {
+  const queryClient = useQueryClient()
+  const { keyFactory } = useSynapseContext()
+
   // SynchronizeGridSession is the best option, but not all types are supported.
   // As support for other types is added, the other hooks should be replaced.
   const syncGridWithSource = useSynchronizeGridSession()
@@ -72,5 +83,43 @@ export default function useMergeGridWithSource(
         return { type: 'tableUpdateTransaction', data }
       }
     },
+    onSuccess: async (data, variables, context) => {
+      // A merge advances the session's references to the source entity version and JSON
+      // Schema, and pushing changes creates a new version of the source entity. Refetch both
+      // before resolving so that callers re-evaluate the sync state against current data.
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getGridSessionKey(variables.gridSessionId),
+        }),
+        variables.sourceEntityId
+          ? invalidateAllQueriesForEntity(
+              queryClient,
+              keyFactory,
+              variables.sourceEntityId,
+            )
+          : undefined,
+      ])
+
+      if (options?.onSuccess) {
+        await options.onSuccess(data, variables, context)
+      }
+    },
   })
+}
+
+/**
+ * Builds the variables passed to the merge grid mutation for the given grid session,
+ * source entity type, and whether the user should PULL before PULL_PUSH.
+ */
+export function buildMergeGridVariables(
+  gridSession: GridSession,
+  sourceEntityType: EntityType | undefined,
+  shouldPull: boolean,
+): MergeGridWithSource {
+  return {
+    gridSessionId: gridSession.sessionId!,
+    sourceEntityId: gridSession.sourceEntityId!,
+    sourceEntityType,
+    syncType: shouldPull ? 'PULL' : 'PULL_PUSH',
+  }
 }
