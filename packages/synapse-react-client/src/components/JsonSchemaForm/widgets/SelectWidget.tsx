@@ -74,7 +74,17 @@ export const SelectWidget: Widget = (props: SelectWidgetProps) => {
   return (
     <Autocomplete
       id={id}
-      value={findValueOption(value, enumOptions)}
+      value={
+        multiple
+          ? (Array.isArray(value) ? value : []).map(
+              (v): EnumOptionsType =>
+                (findValueOption(v, enumOptions) as EnumOptionsType | null) ?? {
+                  value: v,
+                  label: v,
+                },
+            )
+          : findValueOption(value, enumOptions)
+      }
       freeSolo={allowFreeSolo}
       forcePopupIcon
       selectOnFocus
@@ -86,7 +96,13 @@ export const SelectWidget: Widget = (props: SelectWidgetProps) => {
       multiple={multiple}
       disableClearable={!isClearable}
       onChange={(event, newValue) => {
-        if (isObject(newValue) && 'inputValue' in newValue) {
+        if (multiple) {
+          onChange(
+            (Array.isArray(newValue) ? newValue : []).map(v =>
+              isObject(v) && 'value' in v ? v.value : v,
+            ),
+          )
+        } else if (isObject(newValue) && 'inputValue' in newValue) {
           // Create a new value from the user input
           onChange(newValue.inputValue)
         } else if (isObject(newValue) && 'value' in newValue) {

@@ -10,6 +10,8 @@ import { createEditableStep, EditableFormTemplateStep, moveItem } from './utils'
 export type FormStructurePanelProps = {
   steps: EditableFormTemplateStep[]
   jsonSchema: RJSFSchema
+  /** The FormTemplate's id, if it has been saved. Threaded down to file-field template uploads. */
+  formTemplateId: string | undefined
   onStepsChange: (next: EditableFormTemplateStep[]) => void
 }
 
@@ -22,6 +24,7 @@ export type FormStructurePanelProps = {
 export function FormStructurePanel({
   steps,
   jsonSchema,
+  formTemplateId,
   onStepsChange,
 }: FormStructurePanelProps) {
   const usedKeys = useMemo(() => {
@@ -115,6 +118,7 @@ export function FormStructurePanel({
               isLast={stepIdx === steps.length - 1}
               unboundProperties={unboundProperties}
               jsonSchema={jsonSchema}
+              formTemplateId={formTemplateId}
               defaultExpanded={stepIdx === 0}
               onChange={patch => handleStepChange(stepIdx, patch)}
               onMoveUp={() => handleMoveStep(stepIdx, -1)}

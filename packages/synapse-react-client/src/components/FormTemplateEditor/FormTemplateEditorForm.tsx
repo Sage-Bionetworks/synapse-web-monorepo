@@ -116,7 +116,6 @@ export function FormTemplateEditorForm({
       )
       onSaved?.(result.template)
     } catch (error) {
-      console.error('DEBUG2', error)
       const clientError = error as SynapseClientError
       if (clientError.status === 412) {
         displayToast(
@@ -181,6 +180,7 @@ export function FormTemplateEditorForm({
             <FormStructurePanel
               steps={steps}
               jsonSchema={jsonSchema}
+              formTemplateId={initialTemplate?.id}
               onStepsChange={setSteps}
             />
           </Grid>

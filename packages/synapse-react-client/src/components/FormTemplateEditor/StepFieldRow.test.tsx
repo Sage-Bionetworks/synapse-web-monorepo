@@ -30,6 +30,7 @@ function renderRow(
       propertyKey="institution"
       isFirst={false}
       isLast={false}
+      formTemplateId={undefined}
       onChange={onChange}
       onMoveUp={onMoveUp}
       onMoveDown={onMoveDown}
@@ -65,37 +66,34 @@ describe('StepFieldRow', () => {
     expect(screen.getByText('Text')).toBeInTheDocument()
   })
 
-  it('toggles the expand/collapse label and reveals the file-handle field only for file fields', async () => {
+  it('toggles the expand/collapse label and reveals the template-file control only for file fields', async () => {
     const user = userEvent.setup()
     renderRow({ resolvedProperty: fileProperty })
-    expect(
-      screen.queryByLabelText('Template file handle ID'),
-    ).not.toBeInTheDocument()
+    expect(screen.queryByText('Template file')).not.toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Expand field' }))
-    expect(screen.getByLabelText('Template file handle ID')).toBeInTheDocument()
+    expect(screen.getByText('Template file')).toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: 'Collapse field' }),
     ).toBeInTheDocument()
   })
 
-  it('does not render the file-handle field for non-file types', async () => {
+  it('does not render the template-file control for non-file types', async () => {
     const user = userEvent.setup()
     renderRow()
     await user.click(screen.getByRole('button', { name: 'Expand field' }))
-    expect(
-      screen.queryByLabelText('Template file handle ID'),
-    ).not.toBeInTheDocument()
+    expect(screen.queryByText('Template file')).not.toBeInTheDocument()
   })
 
-  it('coerces an empty file handle id to undefined instead of an empty string', async () => {
+  it('clears the attached template file when its remove button is clicked', async () => {
     const user = userEvent.setup()
     const { onChange } = renderRow({
       resolvedProperty: fileProperty,
       field: { ...baseField, templateFileHandleId: '123' },
     })
     await user.click(screen.getByRole('button', { name: 'Expand field' }))
-    const input = screen.getByLabelText('Template file handle ID')
-    await user.clear(input)
+    await user.click(
+      screen.getByRole('button', { name: 'Remove template file' }),
+    )
     expect(onChange).toHaveBeenCalledWith({ templateFileHandleId: undefined })
   })
 

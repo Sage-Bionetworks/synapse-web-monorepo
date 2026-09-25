@@ -53,6 +53,8 @@ export type StepCardProps = {
   unboundProperties: Array<{ propertyKey: string; displayLabel: string }>
   /** The full JSON Schema, used to resolve display labels for slot rows. */
   jsonSchema: RJSFSchema
+  /** The FormTemplate's id, if it has been saved. Threaded down to file-field template uploads. */
+  formTemplateId: string | undefined
   /** If true, render expanded by default (first step). */
   defaultExpanded: boolean
   onChange: (patch: Partial<FormTemplateStep>) => void
@@ -68,6 +70,7 @@ export function StepCard({
   isLast,
   unboundProperties,
   jsonSchema,
+  formTemplateId,
   defaultExpanded,
   onChange,
   onMoveUp,
@@ -250,6 +253,7 @@ export function StepCard({
                     propertyKey={key ?? field.schemaPath}
                     isFirst={fieldIdx === 0}
                     isLast={fieldIdx === step.fields.length - 1}
+                    formTemplateId={formTemplateId}
                     onChange={patch => handleFieldChange(fieldIdx, patch)}
                     onMoveUp={() => handleFieldMove(fieldIdx, -1)}
                     onMoveDown={() => handleFieldMove(fieldIdx, 1)}

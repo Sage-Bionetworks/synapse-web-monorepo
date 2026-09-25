@@ -112,6 +112,12 @@ describe('FieldDefinitionDrawer', () => {
         number: { title: 'Institution', type: 'number' },
         boolean: { title: 'Institution', type: 'boolean' },
         choice: { title: 'Institution', type: 'string', enum: ['Option 1'] },
+        multiChoice: {
+          title: 'Institution',
+          type: 'array',
+          items: { type: 'string', enum: ['Option 1'] },
+          uniqueItems: true,
+        },
         file: {
           title: 'Institution',
           type: 'number',
