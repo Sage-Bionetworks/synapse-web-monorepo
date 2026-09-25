@@ -1,75 +1,27 @@
-import { CANCEL_BUTTON_TEXT } from '@/components/ConfirmationDialog/ConfirmationDialog'
-import { mockSchemaBinding } from '@/mocks/mockSchema'
-import {
-  dispatchEntry,
-  generateAsyncJobHandlers,
-} from '@/mocks/msw/handlers/asyncJobHandlers'
-import { ENTITY_ID, ENTITY_SCHEMA_BINDING } from '@/utils/APIConstants'
-import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
+import { GridSourceSync } from '@/components/DataGrid/hooks/useGridSourceSync'
 import { Box } from '@mui/material'
-import { GridSession, RecordSet } from '@sage-bionetworks/synapse-client'
+import { EntityType } from '@sage-bionetworks/synapse-client'
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { http, HttpResponse } from 'msw'
-import { userEvent, within } from 'storybook/test'
+import { fn } from 'storybook/test'
 import GridSourceUpdatedNotification from './GridSourceUpdatedNotification'
 
-const SOURCE_ENTITY_ID = 'syn123'
-
-const mockRecordSet: RecordSet = {
-  concreteType: 'org.sagebionetworks.repo.model.RecordSet',
-  id: SOURCE_ENTITY_ID,
-  name: 'Biospecimen Metadata',
-  versionNumber: 4,
-}
-
-const gridSession: GridSession = {
-  sessionId: 'grid-session-1',
-  sourceEntityId: SOURCE_ENTITY_ID,
-  // Older than the source entity's version, so the source reads as updated
-  sourceEntityVersionNumber: 3,
-  gridJsonSchema$Id: mockSchemaBinding.jsonSchemaVersionInfo.$id,
-}
-
-const handlers = {
-  sourceEntity: [
-    http.get(`${MOCK_REPO_ORIGIN}${ENTITY_ID(SOURCE_ENTITY_ID)}`, () =>
-      HttpResponse.json(mockRecordSet, { status: 200 }),
-    ),
-  ],
-  schemaBinding: [
-    http.get(
-      `${MOCK_REPO_ORIGIN}${ENTITY_SCHEMA_BINDING(SOURCE_ENTITY_ID)}`,
-      () => HttpResponse.json(mockSchemaBinding, { status: 200 }),
-    ),
-  ],
-  synchronize: generateAsyncJobHandlers(
-    dispatchEntry(
-      'org.sagebionetworks.repo.model.grid.SynchronizeGridRequest',
-      () => ({
-        concreteType:
-          'org.sagebionetworks.repo.model.grid.SynchronizeGridResponse',
-        errorMessages: [],
-      }),
-    ),
-    {
-      asyncTypeServicePaths: {
-        requestPath: '/repo/v1/grid/synchronize/async/start',
-        responsePath: token => `/repo/v1/grid/synchronize/async/get/${token}`,
-      },
-      backendOrigin: MOCK_REPO_ORIGIN,
-    },
-  ),
+const gridSourceSync: GridSourceSync = {
+  isSourceOutdated: true,
+  sourceEntityName: 'Biospecimen Metadata',
+  sourceEntityType: EntityType.recordset,
+  prompt: 'dialog',
+  isLoading: false,
+  isPending: false,
+  importChanges: fn(),
+  submit: fn(),
+  dismissDialog: fn(),
 }
 
 const meta = {
   title: 'Components/DataGrid/GridSourceUpdatedNotification',
   component: GridSourceUpdatedNotification,
   args: {
-    gridSession,
-  },
-  parameters: {
-    stack: 'mock',
-    msw: { handlers },
+    gridSourceSync,
   },
   decorators: [
     // Stands in for the grid the banner anchors itself to
@@ -91,25 +43,30 @@ export default meta
 
 type Story = StoryObj<typeof meta>
 
-/** The prompt shown when the source has been updated since the session was created. */
+/** Shown when the source has been updated since the session was created, and on submit. */
 export const Dialog: Story = {}
 
 /** The persistent reminder shown after the user declines the dialog. */
 export const Banner: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement.ownerDocument.body)
-    await userEvent.click(
-      await canvas.findByRole('button', { name: CANCEL_BUTTON_TEXT }),
-    )
+  args: {
+    gridSourceSync: { ...gridSourceSync, prompt: 'banner' },
   },
 }
 
-/** Nothing renders when the source has not changed since the session was created. */
-export const SourceUpToDate: Story = {
+/** While the import is in flight. */
+export const ImportPending: Story = {
   args: {
-    gridSession: {
-      ...gridSession,
-      sourceEntityVersionNumber: mockRecordSet.versionNumber,
+    gridSourceSync: { ...gridSourceSync, prompt: 'banner', isPending: true },
+  },
+}
+
+/** Nothing renders when there is nothing to prompt about. */
+export const Hidden: Story = {
+  args: {
+    gridSourceSync: {
+      ...gridSourceSync,
+      isSourceOutdated: false,
+      prompt: 'hidden',
     },
   },
 }

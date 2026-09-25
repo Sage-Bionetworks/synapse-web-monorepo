@@ -1,18 +1,23 @@
 import useMergeGridWithTable from './useMergeGridWithTable'
 import {
+  Entity,
   EntityType,
   GridSession,
+  JsonSchemaObjectBinding,
   SynchronizeGridResponse,
   SyncType,
   TableUpdateTransactionResponse,
 } from '@sage-bionetworks/synapse-client'
 import {
+  QueryClient,
   useMutation,
   UseMutationOptions,
   useQueryClient,
 } from '@tanstack/react-query'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client'
+import { shouldPullBeforePush } from '@/components/DataGrid/hooks/useGridSourceSyncStatus'
 import { useSynchronizeGridSession } from '@/synapse-queries/grid/useGridSession'
+import { KeyFactory } from '@/synapse-queries/KeyFactory'
 import { invalidateAllQueriesForEntity } from '@/synapse-queries/QueryFilterUtils'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 
@@ -66,22 +71,44 @@ export default function useMergeGridWithSource(
     mutationFn: async variables => {
       const { gridSessionId, sourceEntityId, sourceEntityType, syncType } =
         variables
-      const isEntityView = sourceEntityType === EntityType.entityview
-      const isRecordSet = sourceEntityType === EntityType.recordset
+      const isSynchronizeSupported =
+        sourceEntityType === EntityType.entityview ||
+        sourceEntityType === EntityType.recordset
 
-      if (isEntityView || isRecordSet) {
+      if (isSynchronizeSupported) {
+        if (syncType !== 'PULL') {
+          assertSourceHasNoUnimportedUpdates(
+            queryClient,
+            keyFactory,
+            gridSessionId,
+            sourceEntityId,
+          )
+        }
         const data = await syncGridWithSource.mutateAsync({
           gridSessionId,
           syncType,
         })
         return { type: 'synchronize', data }
-      } else {
-        const data = await mergeGridWithTable.mutateAsync({
-          gridSessionId,
-          sourceEntityId: sourceEntityId!,
-        })
-        return { type: 'tableUpdateTransaction', data }
       }
+
+      // The table service can only push. Falling through to it for a PULL -- or for a source whose
+      // type has not resolved -- would turn a request to import changes into a submit.
+      if (syncType === 'PULL') {
+        throw new Error(
+          `Importing changes is not supported for a source of type "${sourceEntityType ?? 'unknown'}".`,
+        )
+      }
+      if (!sourceEntityType || !sourceEntityId) {
+        throw new Error(
+          'Cannot apply changes because the source entity is not known yet. Please try again.',
+        )
+      }
+
+      const data = await mergeGridWithTable.mutateAsync({
+        gridSessionId,
+        sourceEntityId,
+      })
+      return { type: 'tableUpdateTransaction', data }
     },
     onSuccess: async (data, variables, context) => {
       // A merge advances the session's references to the source entity version and JSON
@@ -105,6 +132,52 @@ export default function useMergeGridWithSource(
       }
     },
   })
+}
+
+export const SOURCE_HAS_UNIMPORTED_UPDATES_MESSAGE =
+  'The source has been updated. Import those changes before applying yours.'
+
+/**
+ * Refuses a push while the source is known to have updates that this session has not imported.
+ *
+ * A PULL_PUSH applies the user's changes and imports the source's in one step, so pushing a
+ * session that is behind its source would merge the user's edits on top of data they were never
+ * shown. The UI prompts for the import first, but enforcing it here as well means no caller can
+ * reach the push without that prompt having been answered.
+ *
+ * Decided from cached reads, which the grid keeps current while a session is open. When the cache
+ * cannot answer, the push is allowed -- callers that gate on this are expected to have re-read the
+ * source themselves first.
+ */
+function assertSourceHasNoUnimportedUpdates(
+  queryClient: QueryClient,
+  keyFactory: KeyFactory,
+  gridSessionId: string,
+  sourceEntityId: string | undefined,
+) {
+  if (!sourceEntityId) {
+    return
+  }
+
+  const gridSession = queryClient.getQueryData<GridSession>(
+    keyFactory.getGridSessionKey(gridSessionId),
+  )
+  const sourceEntity = queryClient.getQueryData<Entity>(
+    keyFactory.getEntityQueryKey(sourceEntityId),
+  )
+  const schemaBinding =
+    queryClient.getQueryData<JsonSchemaObjectBinding | null>(
+      keyFactory.getEntityBoundJsonSchemaQueryKey(sourceEntityId),
+    )
+
+  const canDecide =
+    gridSession != null && sourceEntity != null && schemaBinding !== undefined
+  if (
+    canDecide &&
+    shouldPullBeforePush(gridSession, sourceEntity, schemaBinding)
+  ) {
+    throw new Error(SOURCE_HAS_UNIMPORTED_UPDATES_MESSAGE)
+  }
 }
 
 /**

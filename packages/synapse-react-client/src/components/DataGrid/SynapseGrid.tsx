@@ -6,16 +6,14 @@ import GridSourceUpdatedNotification from '@/components/DataGrid/components/Grid
 import ReorderColumnsButton from '@/components/DataGrid/components/ReorderColumnsButton'
 import UploadCsvToGridButton from '@/components/DataGrid/components/UploadCsvToGridButton'
 import useGetSchemaForGrid from '@/components/DataGrid/hooks/useGetSchemaForGrid'
+import useGridSourceSync from '@/components/DataGrid/hooks/useGridSourceSync'
 import SyncGridWithSourceButton from '@/components/DataGrid/SyncGridWithSourceButton'
 import computeReplicaSelectionModel from '@/components/DataGrid/utils/computeReplicaSelectionModel'
 import { getNamedColumnIndices } from '@/components/DataGrid/utils/getNamedColumnIndices'
 import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
 import { SynapseErrorBoundary } from '@/components/error/ErrorBanner'
 import { useGetCurrentUserBundle } from '@/synapse-queries'
-import {
-  useGetGridSession,
-  useListGridReplicas,
-} from '@/synapse-queries/grid/useGridSession'
+import { useListGridReplicas } from '@/synapse-queries/grid/useGridSession'
 import { useGetEntity } from '@/synapse-queries/index'
 import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import { HelpOutline } from '@mui/icons-material'
@@ -87,15 +85,6 @@ function SynapseGridInner({
   const gridRef = useRef<DataSheetGridRef | null>(null)
 
   const { data: userBundle, isLoading } = useGetCurrentUserBundle()
-
-  // `session` is the snapshot captured when the session was created or joined. Reading the
-  // session back keeps its source entity version and JSON Schema references current, which
-  // the sync affordances compare against the source entity to detect external updates.
-  const { data: refreshedSession } = useGetGridSession(
-    session?.sessionId ?? '',
-    { enabled: !!session?.sessionId },
-  )
-  const currentSession = refreshedSession ?? session
 
   const { data: replicas = [], refetch: refetchReplicas } = useListGridReplicas(
     session?.sessionId,
@@ -196,6 +185,10 @@ function SynapseGridInner({
       }
     }
   }, [model])
+
+  // Shared by the submit button, the source-updated dialog, and the source-updated banner, so
+  // they agree on the sync state and share a single in-flight merge.
+  const gridSourceSync = useGridSourceSync(session)
 
   const jsonSchema = useGetSchemaForGrid(session)
 
@@ -556,8 +549,10 @@ function SynapseGridInner({
                         }
                       />
                     )}
-                    {currentSession?.sourceEntityId && (
-                      <SyncGridWithSourceButton gridSession={currentSession} />
+                    {session.sourceEntityId && (
+                      <SyncGridWithSourceButton
+                        gridSourceSync={gridSourceSync}
+                      />
                     )}
                   </Stack>
                 </Grid>
@@ -577,13 +572,11 @@ function SynapseGridInner({
                       remoteSelections={remoteSelections}
                       upsertKey={upsertKey}
                     />
-                    {hasCompletedInitialSync &&
-                      currentSession?.sourceEntityId && (
-                        <GridSourceUpdatedNotification
-                          key={currentSession.sessionId}
-                          gridSession={currentSession}
-                        />
-                      )}
+                    {hasCompletedInitialSync && session.sourceEntityId && (
+                      <GridSourceUpdatedNotification
+                        gridSourceSync={gridSourceSync}
+                      />
+                    )}
                   </Box>
                 </Grid>
               </>
