@@ -117,7 +117,7 @@ describe('SyncGridWithSourceButton', () => {
     })
   })
 
-  it('renders "Import latest changes" and triggers a PULL when the source has been updated', async () => {
+  it('renders "Import changes" and triggers a PULL when the source has been updated', async () => {
     mockSyncStatus({
       isSourceOutdated: true,
       sourceEntityType: EntityType.recordset,

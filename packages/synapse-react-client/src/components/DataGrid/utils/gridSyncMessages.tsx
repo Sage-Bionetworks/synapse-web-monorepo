@@ -10,7 +10,7 @@ import {
  * user's own changes back to Synapse. Shared by every affordance for that action — the
  * sync button, the out-of-date dialog, and the out-of-date banner — so they cannot drift.
  */
-export const IMPORT_LATEST_CHANGES_TEXT = 'Import latest changes'
+export const IMPORT_LATEST_CHANGES_TEXT = 'Import changes'
 
 /**
  * Determines the button label and tooltip copy for the sync button based on whether the
@@ -29,13 +29,13 @@ export function getSyncButtonLabels(
   }
   if (sourceEntityType === EntityType.table) {
     return {
-      buttonText: 'Apply changes',
+      buttonText: 'Submit',
       tooltipText:
         'Applies any changes made in this Curator session to the source',
     }
   }
   return {
-    buttonText: 'Sync changes',
+    buttonText: 'Submit',
     tooltipText:
       'Applies any changes made in this Curator session, and imports any recent changes into this Curator session.',
   }

@@ -9,14 +9,13 @@ import {
   IMPORT_LATEST_CHANGES_TEXT,
 } from '@/components/DataGrid/utils/gridSyncMessages'
 import { displayToast } from '@/components/ToastMessage/ToastMessage'
-import { CloudDownloadTwoTone } from '@mui/icons-material'
 import { Alert, Snackbar, Stack, Typography } from '@mui/material'
 import { GridSession } from '@sage-bionetworks/synapse-client'
 import { useState } from 'react'
 
-export const SOURCE_UPDATED_TITLE = 'This record set has been updated'
+export const SOURCE_UPDATED_TITLE = 'Changes Available'
 export const SOURCE_UPDATED_BANNER_TEXT =
-  'Updates to the source record set are available.'
+  'Import the latest schema changes before submitting.'
 
 export type GridSourceUpdatedNotificationProps = {
   gridSession: GridSession
@@ -69,16 +68,17 @@ export default function GridSourceUpdatedNotification(
         title={SOURCE_UPDATED_TITLE}
         content={
           <Typography variant="body1">
-            {sourceEntityName ?? 'The source record set'} has changed since this
-            Curator session was started. Import the latest changes to work with
-            current data. Your changes in this session will not be applied to
-            Synapse yet.
+            The data model has changed, or data has been added. Click Import
+            Changes to apply the latest changes. Importing will pull in the
+            latest schema and data. Any unsaved edits you've made will be
+            preserved, but columns and other content may change. Note: You won't
+            be able to submit your changes or apply them to your files or
+            records before importing changes.
           </Typography>
         }
         confirmButtonProps={{
           children: IMPORT_LATEST_CHANGES_TEXT,
           loading: isPending,
-          startIcon: <CloudDownloadTwoTone />,
         }}
         onConfirm={importLatestChanges}
         onCancel={() => setHasDeclinedDialog(true)}
@@ -94,7 +94,7 @@ export default function GridSourceUpdatedNotification(
       // attached to the grid it applies to.
       sx={{ position: 'absolute' }}
     >
-      <Alert severity="info">
+      <Alert severity="warning">
         <Stack
           direction={{ xs: 'column', sm: 'row' }}
           spacing={2}
@@ -106,7 +106,6 @@ export default function GridSourceUpdatedNotification(
           <GridMenuButton
             variant="contained"
             loading={isPending}
-            startIcon={<CloudDownloadTwoTone />}
             onClick={importLatestChanges}
           >
             {IMPORT_LATEST_CHANGES_TEXT}
