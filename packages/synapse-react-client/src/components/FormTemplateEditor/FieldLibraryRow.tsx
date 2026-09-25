@@ -73,9 +73,6 @@ export function FieldLibraryRow({
         >
           <DragHandleIcon fontSize="small" />
         </Box>
-        {/* Sibling of the drag handle, not an ancestor -- nesting two interactive roles is
-            invalid ARIA, and an explicit aria-label keeps this control's accessible name a
-            clean, stable string instead of the concatenation of every badge/chip inside it. */}
         <Box
           role="button"
           tabIndex={0}

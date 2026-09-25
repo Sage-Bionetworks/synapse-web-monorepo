@@ -90,6 +90,18 @@ export function StepFieldRow({
   const isFileField = type === 'file'
   const isUnresolved = !resolvedProperty
 
+  let caption = `Missing field: ${field.schemaPath}`
+  if (!isUnresolved) {
+    const captionParts = [fieldTypeLabel(type)]
+    if (context !== 'ALWAYS') {
+      captionParts.push(submissionContextLabel(context))
+    }
+    if (field.isPublic) {
+      captionParts.push('Public')
+    }
+    caption = captionParts.join(' · ')
+  }
+
   return (
     <Paper
       ref={ref}
@@ -131,13 +143,7 @@ export function StepFieldRow({
             variant="caption"
             color={isUnresolved ? 'error' : 'text.secondary'}
           >
-            {isUnresolved
-              ? `Missing field: ${field.schemaPath}`
-              : `${fieldTypeLabel(type)}${
-                  context !== 'ALWAYS'
-                    ? ` · ${submissionContextLabel(context)}`
-                    : ''
-                }${field.isPublic ? ' · Public' : ''}`}
+            {caption}
           </Typography>
         </Box>
         <IconButton
