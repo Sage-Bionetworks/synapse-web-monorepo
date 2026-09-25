@@ -1,1 +1,0 @@
-import{o as e}from"./preload-helper-CsHsquCd.js";import{g as t}from"./SynapseContext-5r-RDIl_.js";var n=e((()=>{t()}));export{n as t};
