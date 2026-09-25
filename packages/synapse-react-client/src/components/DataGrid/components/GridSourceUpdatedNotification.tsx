@@ -1,24 +1,15 @@
 import { ConfirmationDialog } from '@/components/ConfirmationDialog'
 import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
-import useGridSourceSyncStatus from '@/components/DataGrid/hooks/useGridSourceSyncStatus'
-import useMergeGridWithSource, {
-  buildMergeGridVariables,
-} from '@/components/DataGrid/useMergeGridWithSource'
-import {
-  displaySynchronizeResultToast,
-  IMPORT_LATEST_CHANGES_TEXT,
-} from '@/components/DataGrid/utils/gridSyncMessages'
-import { displayToast } from '@/components/ToastMessage/ToastMessage'
+import { GridSourceSync } from '@/components/DataGrid/hooks/useGridSourceSync'
+import { IMPORT_LATEST_CHANGES_TEXT } from '@/components/DataGrid/utils/gridSyncMessages'
 import { Alert, Snackbar, Stack, Typography } from '@mui/material'
-import { GridSession } from '@sage-bionetworks/synapse-client'
-import { useState } from 'react'
 
 export const SOURCE_UPDATED_TITLE = 'Changes Available'
 export const SOURCE_UPDATED_BANNER_TEXT =
   'Import the latest schema changes before submitting.'
 
 export type GridSourceUpdatedNotificationProps = {
-  gridSession: GridSession
+  gridSourceSync: GridSourceSync
 }
 
 /**
@@ -26,41 +17,20 @@ export type GridSourceUpdatedNotificationProps = {
  * session was created. Opens as a dialog, and falls back to a persistent banner in the lower
  * right of its container if the user declines.
  *
- * Renders nothing when the source is up to date, so this can be mounted unconditionally.
- * Mount with a `key` of the session ID so that the prompt is offered again for a new session.
+ * Renders nothing while there is nothing to prompt about, so this can be mounted
+ * unconditionally alongside the grid.
  */
 export default function GridSourceUpdatedNotification(
   props: GridSourceUpdatedNotificationProps,
 ) {
-  const { gridSession } = props
+  const { gridSourceSync } = props
+  const { prompt, isPending, importChanges, dismissDialog } = gridSourceSync
 
-  const [hasDeclinedDialog, setHasDeclinedDialog] = useState(false)
-  const [hasImported, setHasImported] = useState(false)
-
-  const { isSourceOutdated, sourceEntityName, sourceEntityType } =
-    useGridSourceSyncStatus(gridSession)
-
-  const { mutate: mergeGrid, isPending } = useMergeGridWithSource({
-    onSuccess: (result, variables) => {
-      if (result.type === 'synchronize') {
-        displaySynchronizeResultToast(result.data, variables.syncType)
-      }
-      // Stop prompting for the remainder of this session once the user has imported, so that a
-      // source entity version that has not yet caught up cannot re-open the dialog.
-      setHasImported(true)
-    },
-    onError: e => displayToast(e.message, 'danger'),
-  })
-
-  function importLatestChanges() {
-    mergeGrid(buildMergeGridVariables(gridSession, sourceEntityType, true))
-  }
-
-  if (!isSourceOutdated || hasImported) {
+  if (prompt === 'hidden') {
     return null
   }
 
-  if (!hasDeclinedDialog) {
+  if (prompt === 'dialog') {
     return (
       <ConfirmationDialog
         open
@@ -80,8 +50,8 @@ export default function GridSourceUpdatedNotification(
           children: IMPORT_LATEST_CHANGES_TEXT,
           loading: isPending,
         }}
-        onConfirm={importLatestChanges}
-        onCancel={() => setHasDeclinedDialog(true)}
+        onConfirm={importChanges}
+        onCancel={dismissDialog}
       />
     )
   }
@@ -106,7 +76,7 @@ export default function GridSourceUpdatedNotification(
           <GridMenuButton
             variant="contained"
             loading={isPending}
-            onClick={importLatestChanges}
+            onClick={importChanges}
           >
             {IMPORT_LATEST_CHANGES_TEXT}
           </GridMenuButton>
