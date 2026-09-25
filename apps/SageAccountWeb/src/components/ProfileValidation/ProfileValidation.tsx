@@ -324,6 +324,11 @@ function ProfileValidation() {
     ValidationWizardStep.PROFILE_INFO,
   )
 
+  const goToStep = (nextStep: ValidationWizardStep) => {
+    setStep(nextStep)
+    window.scrollTo(0, 0)
+  }
+
   const [isReturnToAccountSettings, setIsReturnToAccountSettings] =
     useState(false)
 
@@ -388,7 +393,7 @@ function ProfileValidation() {
           accessToken!,
         )
 
-        setStep(ValidationWizardStep.THANK_YOU)
+        goToStep(ValidationWizardStep.THANK_YOU)
       } catch (err: any) {
         displayToast(err.reason as string, 'danger')
       }
@@ -416,16 +421,16 @@ function ProfileValidation() {
         try {
           Object.assign(verificationSubmission || {}, vs!)
           await updateProfileFromVerificationSubmission()
-          setStep(ValidationWizardStep.VERIFY_IDENTITY)
+          goToStep(ValidationWizardStep.VERIFY_IDENTITY)
         } catch (err: any) {
           displayToast(err.reason as string, 'danger')
         }
         break
       case ValidationWizardStep.VERIFY_IDENTITY:
-        setStep(ValidationWizardStep.TERMS_AGREE)
+        goToStep(ValidationWizardStep.TERMS_AGREE)
         break
       case ValidationWizardStep.TERMS_AGREE:
-        setStep(ValidationWizardStep.SIGN_PLEDGE)
+        goToStep(ValidationWizardStep.SIGN_PLEDGE)
         break
       case ValidationWizardStep.SIGN_PLEDGE:
         onSubmit()
@@ -437,13 +442,13 @@ function ProfileValidation() {
     event.preventDefault()
     switch (step) {
       case ValidationWizardStep.VERIFY_IDENTITY:
-        setStep(ValidationWizardStep.PROFILE_INFO)
+        goToStep(ValidationWizardStep.PROFILE_INFO)
         break
       case ValidationWizardStep.TERMS_AGREE:
-        setStep(ValidationWizardStep.VERIFY_IDENTITY)
+        goToStep(ValidationWizardStep.VERIFY_IDENTITY)
         break
       case ValidationWizardStep.SIGN_PLEDGE:
-        setStep(ValidationWizardStep.TERMS_AGREE)
+        goToStep(ValidationWizardStep.TERMS_AGREE)
         break
     }
   }
