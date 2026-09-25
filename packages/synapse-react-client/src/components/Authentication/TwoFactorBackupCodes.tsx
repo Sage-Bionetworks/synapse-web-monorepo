@@ -167,7 +167,7 @@ export default function TwoFactorBackupCodes(props: TwoFactorBackupCodesProps) {
       rightContent={
         <Box
           sx={{
-            padding: { xs: '60px 0 0 0', md: 10 },
+            padding: { xs: '60px 0 0 0', md: theme.spacing(10, 0) },
             height: '100%',
             background: {
               xs: 'none',
