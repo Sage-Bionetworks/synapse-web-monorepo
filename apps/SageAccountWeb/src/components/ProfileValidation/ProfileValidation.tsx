@@ -25,7 +25,7 @@ import { Navigate } from 'react-router'
 import { getSearchParam } from '../../URLUtils'
 import { BackButton } from '../BackButton'
 import { SourceAppLogo } from '../SourceApp'
-import { TermsOfUseExplanationSection } from '../TermsOfUseExplanation'
+import { TermsOfUseExplanationContent } from '../TermsOfUseExplanation'
 import { useSourceApp } from '../useSourceApp'
 import Attestation from './Attestation'
 import { ProfileFieldsEditor } from './ProfileFieldsEditor'
@@ -37,6 +37,7 @@ import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import * as SynapseClient from 'synapse-react-client/synapse-client/SynapseClient'
 import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
 import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
+import { MobileInstructionsAccordion } from '../MobileInstructionsAccordion'
 
 const IDENTITY_ATTESTATION_TEMPLATE_DOCUMENT_LINK =
   'https://docs.synapse.org/__attachments/a_0e25a19df7aba279fafe5d7c82f58ac249857e91858a599a51a4abbe6b9ae3e3/signing_official.doc?cb=6e5bee79a4f557fcfeb54f5352ef5969'
@@ -44,7 +45,7 @@ const IDENTITY_ATTESTATION_TEMPLATE_DOCUMENT_LINK =
 const NOTARIZED_LETTER_TEMPLATE_DOCUMENT_LINK =
   'https://docs.synapse.org/__attachments/a_308df8654f4bd6b32eaba979252133cd6e0eb571a29c2e181900c7203914321f/notarized_letter.doc?cb=2322b7fdd04da7d57f8e0f1711d774da'
 
-const STEP_CONTENT = [
+export const STEP_CONTENT = [
   {
     title: 'Identity verification',
     body: (
@@ -98,12 +99,8 @@ const STEP_CONTENT = [
   },
 
   {
-    title: null,
-    body: (
-      <>
-        <TermsOfUseExplanationSection />
-      </>
-    ),
+    title: 'What is the Synapse Pledge?',
+    body: <TermsOfUseExplanationContent />,
   },
 
   {
@@ -198,11 +195,11 @@ const STEP_CONTENT = [
       </>
     ),
   },
-]
+] as const
 
 function RightPanel({ stepNumber }: { stepNumber: number }) {
   const theme = useTheme()
-  const totalSteps = 4
+  const totalSteps = STEP_CONTENT.length
   return (
     <Box sx={{ position: 'relative' }}>
       {stepNumber === 0 && (
@@ -467,6 +464,9 @@ function ProfileValidation() {
                 <BackButton onClick={onPrevious} />
               )}
               <SourceAppLogo sx={{ textAlign: 'center' }} />
+              <MobileInstructionsAccordion title={STEP_CONTENT[step].title}>
+                {STEP_CONTENT[step].body}
+              </MobileInstructionsAccordion>
               <BodyControlFactory
                 {...{
                   step: step,
@@ -482,11 +482,7 @@ function ProfileValidation() {
           )}
           <Box
             data-testid={DESKTOP_RIGHT_PANEL_TEST_ID}
-            sx={
-              step === ValidationWizardStep.TERMS_AGREE
-                ? { display: { xs: 'none', md: 'block' } }
-                : undefined
-            }
+            sx={{ display: { xs: 'none', md: 'block' } }}
           >
             <RightPanel stepNumber={step} />
           </Box>
