@@ -117,8 +117,11 @@ export function useQBValueDisplayName(
       const lookupType =
         columnName == null ? null : lookupTypeByColumnName.get(columnName)
       if (lookupType == null) return labelForFacetValue(value)
-      // Lookups resolve asynchronously — until they land (or when an ID no
-      // longer resolves) the raw value is the best label available.
+      // Lookups resolve asynchronously, and only faceted values are looked up
+      // at all, so the raw value is the best label available until (or unless)
+      // a name arrives. An ID the backend won't resolve still gets a label
+      // here: `useGetInfoFromIds` substitutes a placeholder header, named
+      // after the ID for entities and `Unknown` for users.
       return (
         labelsByLookupType[lookupType].get(value) ?? labelForFacetValue(value)
       )

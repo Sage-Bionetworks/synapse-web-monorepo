@@ -14,6 +14,8 @@ import { renderHook, waitFor } from '@testing-library/react'
 import { useQBValueDisplayName } from './useQBValueDisplayName'
 
 const MOCK_FILE_ID = mockFileEntityData.id.replace('syn', '')
+/** An entity ID the backend returns no header for (e.g. deleted, or no read access). */
+const UNRESOLVABLE_FILE_ID = '999999999'
 
 const columnModels: ColumnModel[] = [
   {
@@ -44,6 +46,7 @@ const facetResults: FacetColumnResult[] = [
     facetType: 'enumeration',
     facetValues: [
       { value: MOCK_FILE_ID, count: 1, isSelected: false },
+      { value: UNRESOLVABLE_FILE_ID, count: 1, isSelected: false },
       { value: VALUE_NOT_SET, count: 2, isSelected: false },
     ],
   },
@@ -107,8 +110,21 @@ describe('useQBValueDisplayName', () => {
     }
   })
 
-  it('falls back to the raw value for an ID that does not resolve', () => {
+  it('falls back to the raw value for an ID the backend returns no header for', async () => {
     const { result } = renderUseQBValueDisplayName()
-    expect(result.current('File', '999999999')).toBe('999999999')
+    // Both IDs are looked up in the same batch, so once the resolvable one has
+    // a name the unresolvable one has settled too.
+    await waitFor(() =>
+      expect(result.current('File', MOCK_FILE_ID)).toBe(MOCK_FILE_NAME),
+    )
+    expect(result.current('File', UNRESOLVABLE_FILE_ID)).toBe(
+      UNRESOLVABLE_FILE_ID,
+    )
+  })
+
+  it('falls back to the raw value for a value that was never looked up', () => {
+    const { result } = renderUseQBValueDisplayName()
+    // Only faceted values are looked up; anything else labels as-is.
+    expect(result.current('File', '123456')).toBe('123456')
   })
 })
