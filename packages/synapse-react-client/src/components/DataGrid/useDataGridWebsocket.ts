@@ -1,4 +1,7 @@
-import { GridModel } from '@/components/DataGrid/DataGridTypes'
+import {
+  GridModel,
+  GridModelSnapshot,
+} from '@/components/DataGrid/DataGridTypes'
 import { useCRDTModelView } from '@/components/DataGrid/useCRDTModelView'
 import { normalizeWebsocketError } from '@/components/DataGrid/utils/normalizeWebsocketError'
 import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react'
@@ -14,6 +17,13 @@ interface WebSocketState {
    * Corresponds to the `GRID_READY` action.
    */
   hasCompletedInitialSync: boolean
+  /**
+   * True once the first connection for the current session has finished replaying
+   * the server's data into the model. A one-way transition: later sync activity
+   * never takes it back to false, and only connecting to a different
+   * session/replica resets it.
+   */
+  hasCompletedInitialLoad: boolean
   /**
    * True while a clock-sync exchange is in progress. Set on every outgoing
    * `synchronize-clock` and cleared on `ResponseComplete`, which the server
@@ -42,6 +52,7 @@ type WebSocketAction =
   | { type: 'CONNECTION_OPENED' }
   | { type: 'CONNECTION_CLOSED' }
   | { type: 'GRID_READY' }
+  | { type: 'INITIAL_LOAD_COMPLETE' }
   | { type: 'SYNC_STARTED' }
   | { type: 'SYNC_ENDED' }
   | { type: 'MODEL_CREATED'; payload: GridModel }
@@ -68,6 +79,9 @@ function websocketReducer(
         },
         hasCompletedInitialSync: isSameConnection
           ? state.hasCompletedInitialSync
+          : false,
+        hasCompletedInitialLoad: isSameConnection
+          ? state.hasCompletedInitialLoad
           : false,
         isSyncing: false,
         model: isSameConnection ? state.model : null,
@@ -104,6 +118,12 @@ function websocketReducer(
       return {
         ...state,
         hasCompletedInitialSync: true,
+      }
+
+    case 'INITIAL_LOAD_COMPLETE':
+      return {
+        ...state,
+        hasCompletedInitialLoad: true,
       }
 
     case 'SYNC_STARTED':
@@ -145,6 +165,7 @@ function websocketReducer(
 export const initialWebSocketState: WebSocketState = {
   model: null,
   hasCompletedInitialSync: false,
+  hasCompletedInitialLoad: false,
   isSyncing: false,
   isConnected: false,
   isConnecting: false,
@@ -153,6 +174,23 @@ export const initialWebSocketState: WebSocketState = {
   connectionAttemptId: null,
   connectionError: null,
   websocketError: null,
+}
+
+/**
+ * Checks if the model snapshot contains the minimum data required for rendering (columns and rows).
+ */
+function isModelRenderable(
+  model: GridModel | null,
+  modelSnapshot: GridModelSnapshot | null | undefined,
+) {
+  if (!model?.api.getSnapshot() || !modelSnapshot) {
+    return false
+  }
+  const { columnNames, columnOrder, rows } = modelSnapshot
+  const columnsReady = columnNames.length >= 1
+  const orderReady = columnOrder.length >= 1
+  const rowsReady = rows.length >= 0
+  return columnsReady && orderReady && rowsReady
 }
 
 /**
@@ -343,23 +381,36 @@ export function useDataGridWebSocket(options?: UseDataGridWebSocketOptions) {
   }, [state.websocketInstance])
 
   /**
-   * Checks if the model snapshot contains the minimum data required for rendering (columns and rows).
+   * Mark the initial load complete once the server has finished replaying its
+   * data into the model.
+   *
+   * The server may complete the snapshot request before the client has fetched
+   * and decoded the snapshot, so `hasCompletedInitialSync` can be true while the
+   * rows are still arriving. Requiring an idle sync exchange as well holds the
+   * transition until the replay drains.
    */
-  function isModelRenderable(model: GridModel | null) {
-    if (!model?.api.getSnapshot() || !modelSnapshot) {
-      return false
+  useEffect(() => {
+    if (
+      !state.hasCompletedInitialLoad &&
+      state.hasCompletedInitialSync &&
+      !state.isSyncing &&
+      isModelRenderable(state.model, modelSnapshot)
+    ) {
+      dispatch({ type: 'INITIAL_LOAD_COMPLETE' })
     }
-    const { columnNames, columnOrder, rows } = modelSnapshot
-    const columnsReady = columnNames.length >= 1
-    const orderReady = columnOrder.length >= 1
-    const rowsReady = rows.length >= 0
-    return columnsReady && orderReady && rowsReady
-  }
+  }, [
+    state.hasCompletedInitialLoad,
+    state.hasCompletedInitialSync,
+    state.isSyncing,
+    state.model,
+    modelSnapshot,
+  ])
 
   return {
     isConnected: state.isConnected,
     websocketInstance: state.websocketInstance,
     hasCompletedInitialSync: state.hasCompletedInitialSync,
+    hasCompletedInitialLoad: state.hasCompletedInitialLoad,
     isSyncing: state.isSyncing,
     model: state.model,
     modelSnapshot,
@@ -368,6 +419,6 @@ export function useDataGridWebSocket(options?: UseDataGridWebSocketOptions) {
     errorEstablishingWebsocketConnection:
       state.connectionError ?? errorEstablishingWebsocketConnection,
     websocketError: state.websocketError,
-    hasSufficientData: isModelRenderable(state.model),
+    hasSufficientData: isModelRenderable(state.model, modelSnapshot),
   }
 }
