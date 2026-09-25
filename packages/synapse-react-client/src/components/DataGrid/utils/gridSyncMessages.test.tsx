@@ -6,8 +6,10 @@ import {
 import { render, screen } from '@testing-library/react'
 import {
   displaySynchronizeResultToast,
+  displayTableUpdateResultToast,
   getSyncButtonLabels,
   IMPORT_LATEST_CHANGES_TEXT,
+  SUBMIT_TEXT,
 } from './gridSyncMessages'
 
 vi.mock('@/components/ToastMessage/ToastMessage', () => ({
@@ -33,21 +35,30 @@ describe('getSyncButtonLabels', () => {
     )
   })
 
-  it('returns table-specific copy for a table source when shouldPull is false', () => {
-    expect(getSyncButtonLabels(false, EntityType.table).buttonText).toBe(
-      'Apply changes',
+  it('returns table-specific tooltip copy for a table source when shouldPull is false', () => {
+    const { buttonText, tooltipText } = getSyncButtonLabels(
+      false,
+      EntityType.table,
     )
+    expect(buttonText).toBe(SUBMIT_TEXT)
+    expect(tooltipText).toContain('Applies any changes')
   })
 
-  it('returns "Sync changes" for a RecordSet source', () => {
+  it('returns the submit copy for a RecordSet source', () => {
     expect(getSyncButtonLabels(false, EntityType.recordset).buttonText).toBe(
-      'Sync changes',
+      SUBMIT_TEXT,
     )
   })
 
-  it('returns the default sync copy for a source with no known type when shouldPull is false', () => {
-    expect(getSyncButtonLabels(false, undefined).buttonText).toBe(
-      'Sync changes',
+  it('returns the submit copy for a source with no known type when shouldPull is false', () => {
+    expect(getSyncButtonLabels(false, undefined).buttonText).toBe(SUBMIT_TEXT)
+  })
+
+  // The client prompts before importing rather than importing as part of the submit, so the
+  // tooltip must not promise that recent changes are imported automatically.
+  it('does not advertise an automatic import for a RecordSet source', () => {
+    expect(getSyncButtonLabels(false, EntityType.recordset).tooltipText).toBe(
+      'Applies any changes made in this Curator session to the source. If the source has been updated, you will be asked to import those changes first.',
     )
   })
 
@@ -95,5 +106,74 @@ describe('displaySynchronizeResultToast', () => {
     render(<>{content}</>)
     expect(screen.getByText('row 1 failed')).toBeInTheDocument()
     expect(screen.getByText('row 2 failed')).toBeInTheDocument()
+  })
+})
+
+describe('displayTableUpdateResultToast', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('reports the number of rows updated for a TableEntity source', () => {
+    displayTableUpdateResultToast({
+      concreteType:
+        'org.sagebionetworks.repo.model.table.TableUpdateTransactionResponse',
+      results: [
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.UploadToTableResult',
+          rowsProcessed: 1234,
+        },
+      ],
+    })
+
+    expect(mockDisplayToast).toHaveBeenCalledWith(
+      'Successfully updated 1,234 rows.',
+      'success',
+    )
+  })
+
+  it('reports per-entity failures for a View source', () => {
+    displayTableUpdateResultToast({
+      concreteType:
+        'org.sagebionetworks.repo.model.table.TableUpdateTransactionResponse',
+      results: [
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.EntityUpdateResults',
+          updateResults: [
+            {
+              entityId: 'syn1',
+              failureCode: 'UNAUTHORIZED',
+              failureMessage: 'not allowed',
+            },
+          ],
+        },
+      ],
+    })
+
+    expect(mockDisplayToast).toHaveBeenCalledWith(
+      'Some changes could not be applied:\nsyn1: not allowed (code: UNAUTHORIZED)',
+      'danger',
+    )
+  })
+
+  it('reports success for a View source when no rows failed', () => {
+    displayTableUpdateResultToast({
+      concreteType:
+        'org.sagebionetworks.repo.model.table.TableUpdateTransactionResponse',
+      results: [
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.EntityUpdateResults',
+          updateResults: [{ entityId: 'syn1' }],
+        },
+      ],
+    })
+
+    expect(mockDisplayToast).toHaveBeenCalledWith(
+      'Changes applied successfully',
+      'success',
+    )
   })
 })
