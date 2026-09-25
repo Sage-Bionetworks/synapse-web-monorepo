@@ -26,11 +26,8 @@ import {
   submissionContextLabel,
 } from '@/utils/jsonschema/submissionContext'
 import styles from './dragHandle.module.scss'
-import {
-  detectFieldType,
-  fieldTypeLabel,
-  SLOT_SORTABLE_TYPE,
-} from './schemaFieldUtils'
+import { detectFieldType, fieldTypeLabel } from './schemaFieldUtils'
+import { SLOT_SORTABLE_TYPE } from './sortableIds'
 
 export type StepFieldRowProps = {
   /** Sortable id assigned by parent: `slot:{stepIndex}:{fieldIndex}`. */

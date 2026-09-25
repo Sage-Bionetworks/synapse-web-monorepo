@@ -7,11 +7,8 @@ import {
   submissionContextLabel,
 } from '@/utils/jsonschema/submissionContext'
 import styles from './dragHandle.module.scss'
-import {
-  detectFieldType,
-  FIELD_DRAG_TYPE,
-  fieldTypeLabel,
-} from './schemaFieldUtils'
+import { detectFieldType, fieldTypeLabel } from './schemaFieldUtils'
+import { FIELD_DRAG_TYPE } from './sortableIds'
 
 export type FieldLibraryRowProps = {
   propertyKey: string

@@ -1,9 +1,5 @@
 import { RJSFSchema } from '@rjsf/utils'
 
-/** dnd-kit sortable type for a field slot within a step; slots only reorder within their step. */
-export const SLOT_SORTABLE_TYPE = 'slot'
-/** dnd-kit draggable type for a field library row being bound to a step. */
-export const FIELD_DRAG_TYPE = 'field'
 /**
  * The set of property shapes the simple editor knows how to author. Anything
  * outside this set surfaces in the UI as "advanced" and must be edited via the
