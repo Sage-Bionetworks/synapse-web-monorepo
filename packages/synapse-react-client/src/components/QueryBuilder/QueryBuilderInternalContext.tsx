@@ -1,6 +1,7 @@
 import { ColumnModel, FacetColumnResult } from '@sage-bionetworks/synapse-types'
 import { createContext, PropsWithChildren, useContext } from 'react'
 import { QBCondition, QBGroup } from './QueryBuilderTypes'
+import { QBValueDisplayNameFn } from './useQBValueDisplayName'
 
 /**
  * Internal-only context shared between `QueryBuilderControls`,
@@ -24,6 +25,12 @@ export type QueryBuilderInternalContextType = {
    * `QueryVisualizationContext.getColumnDisplayName` when available.
    */
   getColumnDisplayName: (columnName: string) => string
+  /**
+   * Returns the user-facing label for a value of the given column — resolves
+   * Synapse IDs to entity/user/evaluation names, and the backend's
+   * `VALUE_NOT_SET` sentinel to `Not Assigned`.
+   */
+  getValueDisplayName: QBValueDisplayNameFn
 
   // -- Group operations --
   addConditionAt: (groupId: string) => void

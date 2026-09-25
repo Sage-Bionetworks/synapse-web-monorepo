@@ -22,6 +22,7 @@ import {
 import { QBCondition, QBGroup } from './QueryBuilderTypes'
 import { useQBCombinedSql } from './useQBCombinedSql'
 import { useQBFacetSourceMetadata } from './useQBFacetSourceMetadata'
+import { useQBValueDisplayName } from './useQBValueDisplayName'
 
 export type QueryBuilderControlsProps = {
   /** The QB tree. When null, an empty default tree is rendered. */
@@ -72,6 +73,7 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
   }, [activeTree, executeQueryRequest])
 
   const { getColumnDisplayName } = useQueryVisualizationContext()
+  const getValueDisplayName = useQBValueDisplayName(columnModels, facetResults)
 
   const [summaryMode, setSummaryMode] = useState<SummaryMode>('plain-english')
 
@@ -128,6 +130,7 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
       facetResults,
       onlyFacetedColumns,
       getColumnDisplayName,
+      getValueDisplayName,
       addConditionAt,
       addChildGroupAt,
       clearGroupAt,
@@ -141,6 +144,7 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
       facetResults,
       onlyFacetedColumns,
       getColumnDisplayName,
+      getValueDisplayName,
       addConditionAt,
       addChildGroupAt,
       clearGroupAt,
@@ -152,8 +156,9 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
   )
 
   const readable = useMemo(
-    () => qbTreeToReadable(activeTree, getColumnDisplayName),
-    [activeTree, getColumnDisplayName],
+    () =>
+      qbTreeToReadable(activeTree, getColumnDisplayName, getValueDisplayName),
+    [activeTree, getColumnDisplayName, getValueDisplayName],
   )
 
   const {

@@ -4,10 +4,24 @@
  * of value input to render.
  */
 import {
+  FacetColumnResult,
+  FacetColumnResultValues,
+} from '@sage-bionetworks/synapse-types'
+import {
   FRIENDLY_VALUE_NOT_SET,
   VALUE_NOT_SET,
 } from '../../utils/SynapseConstants'
 import { QBConditionOp } from './QueryBuilderTypes'
+
+/** Narrows a facet result to the enumerated-values variant the QB can render. */
+export function isFacetColumnResultValues(
+  facet: FacetColumnResult,
+): facet is FacetColumnResultValues {
+  return (
+    facet.concreteType ===
+    'org.sagebionetworks.repo.model.table.FacetColumnResultValues'
+  )
+}
 
 /** Categorization of columns for the QB UI. Not a synapse-types concept. */
 export type QBColumnKind =
