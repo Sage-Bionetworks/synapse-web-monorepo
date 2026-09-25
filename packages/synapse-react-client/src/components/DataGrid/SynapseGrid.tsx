@@ -1,9 +1,11 @@
 import CertificationRequirement from '@/components/AccessRequirementList/RequirementItem/CertificationRequirement'
 import ExportCsvFromGridButton from '@/components/DataGrid/components/ExportCsvFromGridButton'
 import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
+import GridSourceUpdatedNotification from '@/components/DataGrid/components/GridSourceUpdatedNotification'
 import ReorderColumnsButton from '@/components/DataGrid/components/ReorderColumnsButton'
 import UploadCsvToGridButton from '@/components/DataGrid/components/UploadCsvToGridButton'
 import useGetSchemaForGrid from '@/components/DataGrid/hooks/useGetSchemaForGrid'
+import useGridSourceSync from '@/components/DataGrid/hooks/useGridSourceSync'
 import SyncGridWithSourceButton from '@/components/DataGrid/SyncGridWithSourceButton'
 import computeReplicaSelectionModel from '@/components/DataGrid/utils/computeReplicaSelectionModel'
 import modelRowsToGrid from '@/components/DataGrid/utils/modelRowsToGrid'
@@ -179,6 +181,10 @@ function SynapseGridInner({
       }
     }
   }, [model])
+
+  // Shared by the submit button, the source-updated dialog, and the source-updated banner, so
+  // they agree on the sync state and share a single in-flight merge.
+  const gridSourceSync = useGridSourceSync(session)
 
   const jsonSchema = useGetSchemaForGrid(session)
 
@@ -540,25 +546,34 @@ function SynapseGridInner({
                       />
                     )}
                     {session.sourceEntityId && (
-                      <SyncGridWithSourceButton gridSession={session} />
+                      <SyncGridWithSourceButton
+                        gridSourceSync={gridSourceSync}
+                      />
                     )}
                   </Stack>
                 </Grid>
                 <Grid size={12}>
-                  <DataGrid
-                    gridRef={gridRef}
-                    rowValues={enrichedRowValues}
-                    columnNames={modelSnapshot?.columnNames ?? []}
-                    columnOrder={modelSnapshot?.columnOrder ?? []}
-                    schemaPropertiesInfo={schemaPropertiesInfo}
-                    entityIsView={entityIsView}
-                    jsonSchema={jsonSchema}
-                    lastSelection={lastSelection}
-                    handleChange={handleChange}
-                    handleSelectionChange={handleSelectionChange}
-                    remoteSelections={remoteSelections}
-                    upsertKey={upsertKey}
-                  />
+                  <Box sx={{ position: 'relative' }}>
+                    <DataGrid
+                      gridRef={gridRef}
+                      rowValues={enrichedRowValues}
+                      columnNames={modelSnapshot?.columnNames ?? []}
+                      columnOrder={modelSnapshot?.columnOrder ?? []}
+                      schemaPropertiesInfo={schemaPropertiesInfo}
+                      entityIsView={entityIsView}
+                      jsonSchema={jsonSchema}
+                      lastSelection={lastSelection}
+                      handleChange={handleChange}
+                      handleSelectionChange={handleSelectionChange}
+                      remoteSelections={remoteSelections}
+                      upsertKey={upsertKey}
+                    />
+                    {hasCompletedInitialSync && session.sourceEntityId && (
+                      <GridSourceUpdatedNotification
+                        gridSourceSync={gridSourceSync}
+                      />
+                    )}
+                  </Box>
                 </Grid>
               </>
             )}
