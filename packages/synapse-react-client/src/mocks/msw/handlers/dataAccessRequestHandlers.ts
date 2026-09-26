@@ -3,6 +3,7 @@ import {
   DATA_ACCESS_REQUEST,
   DATA_ACCESS_REQUEST_SIGNATURE,
   DATA_ACCESS_REQUEST_SIGNATURE_FILEHANDLE_ID,
+  DATA_ACCESS_REQUEST_SIGNATURE_PRECHECK,
   DATA_ACCESS_REQUEST_SIGNATURE_QUOTA,
   DATA_ACCESS_REQUEST_SIGNATURE_STATUS,
   DATA_ACCESS_REQUEST_SUBMISSION,
@@ -44,6 +45,16 @@ const mockMapARToDataAccessRequestService = new BasicMockedCrudService<{
     },
   ],
 })
+
+export const MOCK_EDUC_SIGNATURE_STATUS: EDucSignatureStatus = {
+  ducStatus: 'sent',
+  includesRequestChanges: true,
+  signerStatus: [
+    { name: 'Alice Accessor', userId: '3388888', status: 'done' },
+    { name: 'Bob Collaborator', userId: '3388889', status: 'pending' },
+    { name: 'Cara Officer', status: 'pending' },
+  ],
+}
 
 export function getDataAccessRequestHandlers(backendOrigin: string) {
   return [
@@ -102,23 +113,32 @@ export function getDataAccessRequestHandlers(backendOrigin: string) {
       return HttpResponse.json({ quota: 5, remaining: 4 }, { status: 200 })
     }),
 
+    // A successful update always leaves the envelope in sync with the request, whatever the
+    // status handler below is overridden to report beforehand.
+    http.put(`${backendOrigin}${DATA_ACCESS_REQUEST_SIGNATURE(':id')}`, () => {
+      return HttpResponse.json<EDucSignatureStatus>(
+        { ...MOCK_EDUC_SIGNATURE_STATUS, includesRequestChanges: true },
+        { status: 200 },
+      )
+    }),
+
+    http.delete(
+      `${backendOrigin}${DATA_ACCESS_REQUEST_SIGNATURE(':id')}`,
+      () => new HttpResponse(null, { status: 204 }),
+    ),
+
+    // The service wraps the answer in `{ result }`, though the OpenAPI spec declares a bare
+    // boolean. Mirror the deployed shape so mocked flows match what callers really parse.
+    http.get(
+      `${backendOrigin}${DATA_ACCESS_REQUEST_SIGNATURE_PRECHECK(':id')}`,
+      () => HttpResponse.json({ result: true }, { status: 200 }),
+    ),
+
     http.get(
       `${backendOrigin}${DATA_ACCESS_REQUEST_SIGNATURE_STATUS(':id')}`,
       () => {
         return HttpResponse.json<EDucSignatureStatus>(
-          {
-            ducStatus: 'sent',
-            includesRequestChanges: true,
-            signerStatus: [
-              { name: 'Alice Accessor', userId: '3388888', status: 'done' },
-              {
-                name: 'Bob Collaborator',
-                userId: '3388889',
-                status: 'pending',
-              },
-              { name: 'Cara Officer', status: 'pending' },
-            ],
-          },
+          MOCK_EDUC_SIGNATURE_STATUS,
           { status: 200 },
         )
       },

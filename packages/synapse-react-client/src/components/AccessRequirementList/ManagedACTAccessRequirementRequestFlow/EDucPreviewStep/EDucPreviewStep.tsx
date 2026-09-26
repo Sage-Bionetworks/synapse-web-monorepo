@@ -1,14 +1,21 @@
+import { ConfirmationDialog } from '@/components/ConfirmationDialog'
+import { CANCEL_BUTTON_TEXT } from '@/components/ConfirmationDialog/ConfirmationDialog'
+import { DialogBase } from '@/components/DialogBase'
 import {
+  useCheckDataAccessRequestSignatureUpdatable,
   useGetDataAccessRequestForUpdate,
   useGetDataAccessRequestPreview,
   useGetDataAccessRequestSignatureQuota,
   useInitiateDataAccessRequestSignature,
+  useUpdateDataAccessRequestSignature,
+  useVoidDataAccessRequestSignature,
 } from '@/synapse-queries'
 import SynapseClient from '@/synapse-client'
 import {
   Alert,
   Box,
   Button,
+  ButtonProps,
   DialogActions,
   DialogContent,
   DialogTitle,
@@ -23,12 +30,35 @@ import {
   FileHandleAssociateType,
   ManagedACTAccessRequirement,
 } from '@sage-bionetworks/synapse-types'
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 import { useFetchBlobUrl } from '@/utils/hooks/useFetchBlobUrl'
 import IconSvg from '../../../IconSvg/IconSvg'
+import {
+  SIGNATURE_QUOTA_EXHAUSTED_TITLE,
+  SignatureQuotaExhaustedMessage,
+} from '../eDucSignatureUtils'
 import { longFieldLabelSx } from '../styles'
 
 const PDF_PREVIEW_HEIGHT = '500px'
+
+export const SEND_FOR_SIGNATURE_BUTTON_TEXT = 'Send for electronic signature'
+
+export const KEEP_OR_REPLACE_DIALOG_TITLE =
+  'Keep your existing DUC or send a new one?'
+export const KEEP_EXISTING_DUC_BUTTON_TEXT = 'Keep Existing DUC'
+export const SEND_NEW_DUC_BUTTON_TEXT = 'Send new DUC'
+
+export const RESTART_SIGNING_DIALOG_TITLE = 'Restart DUC signing?'
+export const RESTART_SIGNING_CONFIRM_BUTTON_TEXT = 'I understand, send new DUC'
+
+const PRECHECK_ERROR_TITLE =
+  "Sorry, we couldn't check the status of your existing signature request."
+const UPDATE_SIGNATURE_ERROR_TITLE =
+  "Sorry, we couldn't apply your changes to your existing signature request."
+const VOID_SIGNATURE_ERROR_TITLE =
+  "Sorry, we couldn't cancel your existing signature request."
+const INITIATE_SIGNATURE_ERROR_TITLE =
+  "Sorry, we couldn't send your DUC for electronic signature."
 
 export type EDucPreviewStepProps = {
   managedACTAccessRequirement: ManagedACTAccessRequirement
@@ -65,30 +95,72 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
       throwOnError: true,
     })
 
+  const requestId = dataAccessRequest?.id
+  const hasSignatureEnvelope = Boolean(
+    dataAccessRequest?.eDucSignatureEnvelopeId,
+  )
+
+  // Once the user commits to sending, the preview query must not run again: GET
+  // /dataAccessRequest/{id}/preview has server-side side effects (it creates a signature envelope
+  // and resets the DAR to draft), and every signature mutation invalidates the DAR query key --
+  // which would otherwise refetch the preview between the DELETE and the POST below. PLFM-9938
+  // tracks making that endpoint side-effect free; until it lands the call stays a query (callers
+  // read it declaratively) and this latch is what keeps it from firing at the wrong moment.
+  //
+  // This latches for the lifetime of the step rather than clearing when a send fails. Re-enabling
+  // the query would refetch it (the preview is stale the moment it lands), firing those side
+  // effects behind an error message -- worst of all after a successful void, where it would mint a
+  // replacement envelope the user never asked for. The already-fetched preview stays on screen, and
+  // leaving and re-entering the step regenerates it.
+  const [hasStartedSendSequence, setHasStartedSendSequence] = useState(false)
+
   const {
     data: previewFileHandle,
     isLoading: isLoadingPreview,
     error: previewError,
-  } = useGetDataAccessRequestPreview(dataAccessRequest?.id ?? '', {
-    enabled: Boolean(dataAccessRequest?.id),
+  } = useGetDataAccessRequestPreview(requestId ?? '', {
+    enabled: Boolean(requestId) && !hasStartedSendSequence,
   })
 
   const previewFileHandleId = previewFileHandle?.fileHandleId
   const { blobUrl, error: blobError } = useFetchBlobUrl(
-    previewSrcOverride || !previewFileHandleId || !dataAccessRequest?.id
+    previewSrcOverride || !previewFileHandleId || !requestId
       ? undefined
       : SynapseClient.getPortalFileHandleServletUrl(
           previewFileHandleId,
-          dataAccessRequest.id,
+          requestId,
           FileHandleAssociateType.DataAccessRequestAttachment,
         ),
   )
 
   const {
+    mutateAsync: checkSignatureUpdatable,
+    isPending: isCheckingSignatureUpdatable,
+    error: precheckError,
+    reset: resetPrecheck,
+  } = useCheckDataAccessRequestSignatureUpdatable()
+
+  const {
+    mutate: updateSignature,
+    isPending: isUpdatingSignature,
+    error: updateSignatureError,
+    reset: resetUpdateSignature,
+  } = useUpdateDataAccessRequestSignature({
+    onSuccess: () => onSendForSignature(),
+  })
+
+  const {
+    mutateAsync: voidSignature,
+    isPending: isVoidingSignature,
+    error: voidSignatureError,
+    reset: resetVoidSignature,
+  } = useVoidDataAccessRequestSignature()
+
+  const {
     mutate: initiateSignature,
-    isPending: isSendingForSignature,
-    error: sendForSignatureError,
-    reset: resetSendForSignature,
+    isPending: isInitiatingSignature,
+    error: initiateSignatureError,
+    reset: resetInitiateSignature,
   } = useInitiateDataAccessRequestSignature({
     onSuccess: () => onSendForSignature(),
   })
@@ -96,24 +168,132 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
   // Preflight the quota so we can disable the send-for-signature action when the user is at
   // or over their limit. A fetch error falls back to the current enabled behavior so a quota
   // service outage doesn't spuriously block valid requests.
-  const { data: signatureQuota } = useGetDataAccessRequestSignatureQuota(
-    dataAccessRequest?.id ?? '',
-    { enabled: Boolean(dataAccessRequest?.id) },
-  )
+  const { data: signatureQuota, isLoading: isLoadingQuota } =
+    useGetDataAccessRequestSignatureQuota(requestId ?? '', {
+      enabled: Boolean(requestId),
+    })
   const isAtOrOverQuota =
     signatureQuota?.remaining != null && signatureQuota.remaining <= 0
+  // Only routing a new envelope spends a quota unit. With no envelope in flight, routing a new one
+  // is the only thing Send can do, so an exhausted quota blocks the button outright. With one in
+  // flight, Send may instead correct that envelope for free -- and only the server's precheck knows
+  // which -- so the button stays enabled and the confirmation it opens gates the paid path.
+  const isSendBlockedByQuota = isAtOrOverQuota && !hasSignatureEnvelope
+
+  // Which send-confirmation the precheck selected, or `null` for none. Once an envelope exists,
+  // Send always stops for an explicit decision from the user: either they choose between keeping
+  // and replacing it, or they acknowledge that replacing it is the only option left.
+  const [openConfirmation, setOpenConfirmation] = useState<
+    'keepOrReplace' | 'restartSigning' | null
+  >(null)
+  // Set when the server rejects an update that the client expected to succeed, leaving a recreate
+  // -- which the user has no quota for -- as the only way forward.
+  const [isRecreateBlockedByQuota, setIsRecreateBlockedByQuota] =
+    useState(false)
+
+  // The precheck and the mutation it selects are presented as a single action, so the button
+  // stays in its sending state for the whole sequence rather than flickering between calls.
+  const isSendingForSignature =
+    isCheckingSignatureUpdatable ||
+    isUpdatingSignature ||
+    isVoidingSignature ||
+    isInitiatingSignature
 
   const isLoading =
     isLoadingDar ||
-    (Boolean(dataAccessRequest?.id) && isLoadingPreview) ||
+    (Boolean(requestId) && isLoadingPreview) ||
     (!previewSrcOverride && !!previewFileHandleId && !blobUrl && !blobError)
   const actionsDisabled =
     isLoading || (!previewSrcOverride && !blobUrl) || isSendingForSignature
+  // The quota governs what Send is allowed to do, so keep it disabled until that answer lands
+  // rather than letting the user start a send we may be about to block. Deliberately not folded
+  // into `isLoading`: the preview skeleton shouldn't wait on the quota, and the manual
+  // print-and-upload path spends no quota and stays available throughout.
+  const isSendDisabled =
+    actionsDisabled || isLoadingQuota || isSendBlockedByQuota
 
-  const handleSendForSignature = () => {
-    if (!dataAccessRequest?.id) return
-    resetSendForSignature()
-    initiateSignature(dataAccessRequest.id)
+  const sendError =
+    (precheckError && {
+      title: PRECHECK_ERROR_TITLE,
+      reason: precheckError.reason,
+    }) ||
+    (updateSignatureError && {
+      title: UPDATE_SIGNATURE_ERROR_TITLE,
+      reason: updateSignatureError.reason,
+    }) ||
+    (voidSignatureError && {
+      title: VOID_SIGNATURE_ERROR_TITLE,
+      reason: voidSignatureError.reason,
+    }) ||
+    (initiateSignatureError && {
+      title: INITIATE_SIGNATURE_ERROR_TITLE,
+      reason: initiateSignatureError.reason,
+    }) ||
+    (isRecreateBlockedByQuota && {
+      title: SIGNATURE_QUOTA_EXHAUSTED_TITLE,
+      reason: <SignatureQuotaExhaustedMessage quota={signatureQuota?.quota} />,
+    })
+
+  const resetSendErrors = () => {
+    resetPrecheck()
+    resetUpdateSignature()
+    resetVoidSignature()
+    resetInitiateSignature()
+    setIsRecreateBlockedByQuota(false)
+  }
+
+  const handleSendForSignature = async () => {
+    if (!requestId) return
+    resetSendErrors()
+    setHasStartedSendSequence(true)
+
+    if (!hasSignatureEnvelope) {
+      initiateSignature(requestId)
+      return
+    }
+
+    // `null` means the precheck itself failed; its error is surfaced by the alert below.
+    const canUpdateEnvelope = await checkSignatureUpdatable(requestId).catch(
+      () => null,
+    )
+    if (canUpdateEnvelope === null) {
+      return
+    }
+    if (canUpdateEnvelope) {
+      // Only the user knows whether their edits are material enough to warrant re-signing, so
+      // the choice between correcting and replacing the envelope is theirs.
+      setOpenConfirmation('keepOrReplace')
+    } else if (isAtOrOverQuota) {
+      // Replacing spends a routing the user doesn't have, so there is nothing to confirm.
+      setIsRecreateBlockedByQuota(true)
+    } else {
+      setOpenConfirmation('restartSigning')
+    }
+  }
+
+  const handleKeepExistingDuc = () => {
+    if (!requestId) return
+    setOpenConfirmation(null)
+    updateSignature(requestId)
+  }
+
+  const handleSendNewDuc = async () => {
+    if (!requestId) return
+    setOpenConfirmation(null)
+    const isVoided = await voidSignature(requestId).then(
+      () => true,
+      () => false,
+    )
+    if (!isVoided) {
+      return
+    }
+    initiateSignature(requestId)
+  }
+
+  // Dismissing leaves the request untouched, so the user is still free to fall back to the
+  // manual print-and-upload path.
+  const handleCancelConfirmation = () => {
+    setOpenConfirmation(null)
   }
 
   return (
@@ -179,25 +359,31 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
             action={
               <Tooltip
                 title={
-                  isAtOrOverQuota
-                    ? `You have used all ${signatureQuota?.quota ?? ''} of your electronic signature routings for this request. Please contact ACT to request a quota reset.`
-                    : ''
+                  isSendBlockedByQuota ? (
+                    <SignatureQuotaExhaustedMessage
+                      quota={signatureQuota?.quota}
+                    />
+                  ) : (
+                    ''
+                  )
                 }
                 arrow
-                disableHoverListener={!isAtOrOverQuota}
-                disableFocusListener={!isAtOrOverQuota}
-                disableTouchListener={!isAtOrOverQuota}
+                disableHoverListener={!isSendBlockedByQuota}
+                disableFocusListener={!isSendBlockedByQuota}
+                disableTouchListener={!isSendBlockedByQuota}
               >
                 {/* Tooltip wrapper Box is needed because MUI Tooltip does not fire on disabled children directly. */}
                 <Box component={'span'}>
                   <Button
                     variant={'contained'}
-                    disabled={actionsDisabled || isAtOrOverQuota}
-                    onClick={handleSendForSignature}
+                    disabled={isSendDisabled}
+                    onClick={() => {
+                      handleSendForSignature()
+                    }}
                   >
                     {isSendingForSignature
                       ? 'Sending...'
-                      : 'Send for electronic signature'}
+                      : SEND_FOR_SIGNATURE_BUTTON_TEXT}
                   </Button>
                 </Box>
               </Tooltip>
@@ -220,13 +406,11 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
             }
           />
         </Box>
-        {sendForSignatureError && (
+        {sendError && (
           <Alert severity={'error'} sx={{ mt: 2 }}>
-            <strong>
-              Sorry, we couldn&apos;t send your DUC for electronic signature.
-            </strong>
+            <strong>{sendError.title}</strong>
             <br />
-            {sendForSignatureError.reason}
+            {sendError.reason}
           </Alert>
         )}
       </DialogContent>
@@ -235,7 +419,108 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
           Back
         </Button>
       </DialogActions>
+      <DialogBase
+        open={openConfirmation === 'keepOrReplace'}
+        title={KEEP_OR_REPLACE_DIALOG_TITLE}
+        content={
+          <>
+            <Typography variant={'body1'} sx={longFieldLabelSx}>
+              Your DUC was already signed and submitted. If your changes
+              don&apos;t affect what&apos;s on it, you can keep it and resubmit.
+              If they do, you&apos;ll need a new DUC, and your PI or Project
+              Lead, Signing Official, and any named Collaborators will need to
+              sign again.
+            </Typography>
+            <RemainingEDucAllowance remaining={signatureQuota?.remaining} />
+          </>
+        }
+        onCancel={handleCancelConfirmation}
+        actions={
+          <>
+            <Button variant={'outlined'} onClick={handleCancelConfirmation}>
+              {CANCEL_BUTTON_TEXT}
+            </Button>
+            <SendNewDucButton
+              quota={signatureQuota?.quota}
+              isAtOrOverQuota={isAtOrOverQuota}
+              variant={'outlined'}
+              onClick={() => {
+                handleSendNewDuc()
+              }}
+            >
+              {SEND_NEW_DUC_BUTTON_TEXT}
+            </SendNewDucButton>
+            <Button variant={'contained'} onClick={handleKeepExistingDuc}>
+              {KEEP_EXISTING_DUC_BUTTON_TEXT}
+            </Button>
+          </>
+        }
+      />
+      <ConfirmationDialog
+        open={openConfirmation === 'restartSigning'}
+        title={RESTART_SIGNING_DIALOG_TITLE}
+        content={
+          <>
+            <Typography variant={'body1'} sx={longFieldLabelSx}>
+              Your DUC was already submitted for review, so it can&apos;t be
+              edited. To submit your changes, we&apos;ll close the current DUC
+              and send a new one for signature. Your PI or Project Lead, Signing
+              Official, and any named Collaborators will need to sign again.
+            </Typography>
+            <RemainingEDucAllowance remaining={signatureQuota?.remaining} />
+          </>
+        }
+        confirmButtonProps={{ children: RESTART_SIGNING_CONFIRM_BUTTON_TEXT }}
+        onConfirm={() => {
+          handleSendNewDuc()
+        }}
+        onCancel={handleCancelConfirmation}
+      />
     </>
+  )
+}
+
+/**
+ * The month's remaining electronic DUC allowance. Omitted rather than guessed at when the quota
+ * request has not resolved.
+ */
+function RemainingEDucAllowance(props: { remaining: number | undefined }) {
+  const { remaining } = props
+  if (remaining == null) {
+    return null
+  }
+  return (
+    <Typography variant={'body1'} sx={{ ...longFieldLabelSx, mt: 2 }}>
+      You can create <strong>{remaining}</strong> more electronic{' '}
+      {remaining === 1 ? 'DUC' : 'DUCs'} this month.
+    </Typography>
+  )
+}
+
+/**
+ * The "send a new DUC" action, disabled with an explanation when the user has no routings left.
+ * Replacing an envelope always spends one, so this is the only action in the keep-or-replace
+ * dialog that the quota can block.
+ */
+function SendNewDucButton(
+  props: ButtonProps & { quota: number | undefined; isAtOrOverQuota: boolean },
+) {
+  const { quota, isAtOrOverQuota, ...buttonProps } = props
+  return (
+    <Tooltip
+      title={
+        isAtOrOverQuota ? <SignatureQuotaExhaustedMessage quota={quota} /> : ''
+      }
+      arrow
+      disableHoverListener={!isAtOrOverQuota}
+      disableFocusListener={!isAtOrOverQuota}
+      disableTouchListener={!isAtOrOverQuota}
+    >
+      {/* Tooltip wrapper Box is needed because MUI Tooltip does not fire on disabled children directly. */}
+      <Box component={'span'}>
+        <Button {...buttonProps} disabled={isAtOrOverQuota} />
+      </Box>
+    </Tooltip>
   )
 }
 
