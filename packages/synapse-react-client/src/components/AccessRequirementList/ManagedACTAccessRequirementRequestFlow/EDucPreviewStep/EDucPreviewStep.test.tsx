@@ -682,6 +682,23 @@ describe('EDucPreviewStep', () => {
     await waitFor(() => expect(sendButton).toBeEnabled())
   })
 
+  it('keeps Send disabled until the quota answer arrives, but leaves manual upload available', async () => {
+    server.use(
+      successfulPreviewHandler(),
+      http.get(quotaEndpoint, () => new Promise<never>(() => {})),
+    )
+    renderComponent()
+
+    // Manual print-and-upload spends no quota, so it must not wait on the quota request.
+    const uploadButton = await screen.findByRole('button', {
+      name: 'Manually print and upload PDF',
+    })
+    await waitFor(() => expect(uploadButton).toBeEnabled())
+    expect(
+      screen.getByRole('button', { name: SEND_FOR_SIGNATURE_BUTTON_TEXT }),
+    ).toBeDisabled()
+  })
+
   it('disables the Send-for-signature button and shows a tooltip when the user is at quota', async () => {
     server.use(successfulPreviewHandler(), quotaHandler(5, 0))
     const { user } = renderComponent()

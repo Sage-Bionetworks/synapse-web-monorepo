@@ -103,7 +103,9 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
   // Once the user commits to sending, the preview query must not run again: GET
   // /dataAccessRequest/{id}/preview has server-side side effects (it creates a signature envelope
   // and resets the DAR to draft), and every signature mutation invalidates the DAR query key --
-  // which would otherwise refetch the preview between the DELETE and the POST below.
+  // which would otherwise refetch the preview between the DELETE and the POST below. PLFM-9938
+  // tracks making that endpoint side-effect free; until it lands the call stays a query (callers
+  // read it declaratively) and this latch is what keeps it from firing at the wrong moment.
   //
   // This latches for the lifetime of the step rather than clearing when a send fails. Re-enabling
   // the query would refetch it (the preview is stale the moment it lands), firing those side
@@ -166,21 +168,21 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
   // Preflight the quota so we can disable the send-for-signature action when the user is at
   // or over their limit. A fetch error falls back to the current enabled behavior so a quota
   // service outage doesn't spuriously block valid requests.
-  const { data: signatureQuota } = useGetDataAccessRequestSignatureQuota(
-    requestId ?? '',
-    { enabled: Boolean(requestId) },
-  )
+  const { data: signatureQuota, isLoading: isLoadingQuota } =
+    useGetDataAccessRequestSignatureQuota(requestId ?? '', {
+      enabled: Boolean(requestId),
+    })
   const isAtOrOverQuota =
     signatureQuota?.remaining != null && signatureQuota.remaining <= 0
-  // Only routing a new envelope spends a quota unit. Without an envelope in flight that is the
-  // only thing Send can do, so the quota blocks it outright. With one in flight, whether the send
-  // is free depends on the precheck, which only the server can answer -- so let the user press
-  // Send and let the confirmation it opens govern the paid option.
+  // Only routing a new envelope spends a quota unit. With no envelope in flight, routing a new one
+  // is the only thing Send can do, so an exhausted quota blocks the button outright. With one in
+  // flight, Send may instead correct that envelope for free -- and only the server's precheck knows
+  // which -- so the button stays enabled and the confirmation it opens gates the paid path.
   const isSendBlockedByQuota = isAtOrOverQuota && !hasSignatureEnvelope
 
-  // Which send-confirmation the precheck selected, or `null` for none. Sending is never silent
-  // once an envelope exists: either the user chooses between keeping and replacing it, or they
-  // acknowledge that replacing it is the only option.
+  // Which send-confirmation the precheck selected, or `null` for none. Once an envelope exists,
+  // Send always stops for an explicit decision from the user: either they choose between keeping
+  // and replacing it, or they acknowledge that replacing it is the only option left.
   const [openConfirmation, setOpenConfirmation] = useState<
     'keepOrReplace' | 'restartSigning' | null
   >(null)
@@ -203,6 +205,12 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
     (!previewSrcOverride && !!previewFileHandleId && !blobUrl && !blobError)
   const actionsDisabled =
     isLoading || (!previewSrcOverride && !blobUrl) || isSendingForSignature
+  // The quota governs what Send is allowed to do, so keep it disabled until that answer lands
+  // rather than letting the user start a send we may be about to block. Deliberately not folded
+  // into `isLoading`: the preview skeleton shouldn't wait on the quota, and the manual
+  // print-and-upload path spends no quota and stays available throughout.
+  const isSendDisabled =
+    actionsDisabled || isLoadingQuota || isSendBlockedByQuota
 
   const sendError =
     (precheckError && {
@@ -368,7 +376,7 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
                 <Box component={'span'}>
                   <Button
                     variant={'contained'}
-                    disabled={actionsDisabled || isSendBlockedByQuota}
+                    disabled={isSendDisabled}
                     onClick={() => {
                       handleSendForSignature()
                     }}
