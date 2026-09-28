@@ -1,5 +1,6 @@
 import { ConfirmationDialog } from '@/components/ConfirmationDialog'
 import { computeDefaultColumnOrder } from '@/components/DataGrid/utils/computeDefaultColumnOrder'
+import { getNamedColumnIndices } from '@/components/DataGrid/utils/getNamedColumnIndices'
 import { moveItem } from '@/utils/functions/ArrayUtils'
 import { collectTopLevelProperties } from '@/utils/jsonschema/collectTopLevelProperties'
 import {
@@ -48,11 +49,13 @@ export default function ReorderColumnsDialog(props: ReorderColumnsDialogProps) {
   } = props
 
   // Columns previously removed (and saved) are absent from columnOrder entirely, but their
-  // identity index still exists in columnNames -- surface them so they can be restored.
+  // identity index still exists in columnNames -- surface them so they can be restored. Indices
+  // without a name are skipped: there is nothing to label them with in the list.
   const previouslyRemovedColumnIndices = canRemoveColumns
-    ? columnNames
-        .map((_, index) => index)
-        .filter(index => !columnOrder.includes(index))
+    ? getNamedColumnIndices(
+        columnNames,
+        columnNames.map((_, index) => index),
+      ).filter(index => !columnOrder.includes(index))
     : []
 
   const [workingOrder, setWorkingOrder] = useState<number[]>([
