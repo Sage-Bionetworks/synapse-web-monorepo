@@ -35,6 +35,7 @@ import { FormStructurePanel } from './FormStructurePanel'
 import { FormTemplatePreview } from './FormTemplatePreview'
 import { JsonSchemaBodyEditor } from './JsonSchemaBodyEditor'
 import { detectFieldType, fieldTypeLabel } from './schemaFieldUtils'
+import { getFormTemplateSchemaLineage } from './formTemplateSchema'
 import { toFormTemplateSteps } from './utils'
 import {
   FormTemplateFieldValidationError,
@@ -151,6 +152,11 @@ export function FormTemplateEditorForm({
     editingPropertyKey !== null &&
     usedPaths.has(propertyKeyToPointer(editingPropertyKey))
 
+  const schemaLineage = getFormTemplateSchemaLineage(
+    name,
+    initialTemplate?.schema$id,
+  )
+
   return (
     <DragDropProvider {...dragHandlers}>
       <Paper sx={{ p: 3 }}>
@@ -167,8 +173,19 @@ export function FormTemplateEditorForm({
           size="small"
           fullWidth
           helperText="Used by ACT to identify and find this template. Not shown to requesters."
-          sx={{ mb: 3 }}
+          sx={{ mb: 1 }}
         />
+        <Typography
+          variant="caption"
+          color="text.secondary"
+          component="p"
+          sx={{ mb: 3 }}
+        >
+          JSON Schema:{' '}
+          {initialTemplate?.schema$id ??
+            `${schemaLineage.organizationName}-${schemaLineage.schemaName}`}
+          {!initialTemplate && ' (a new version is registered when saved)'}
+        </Typography>
 
         <Grid container spacing={2} alignItems="stretch">
           <Grid size={{ xs: 12, md: 4 }}>

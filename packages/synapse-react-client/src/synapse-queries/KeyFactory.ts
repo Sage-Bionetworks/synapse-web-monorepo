@@ -708,6 +708,10 @@ export class KeyFactory {
     return this.getKey('validationSchema', schema$id)
   }
 
+  public getRegisteredSchemaQueryKey(schema$id: string) {
+    return this.getKey('registeredSchema', schema$id)
+  }
+
   public getPresignedUrlContentQueryKey(
     fileHandle: FileHandle,
     request: BatchFileRequest,

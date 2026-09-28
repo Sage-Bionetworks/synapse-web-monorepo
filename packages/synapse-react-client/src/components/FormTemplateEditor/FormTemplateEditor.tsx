@@ -3,9 +3,12 @@
  * and the JSON Schema it references (when `templateId` is given), then hands the resolved data
  * to `FormTemplateEditorForm`, which owns the actual editing state and save orchestration.
  * Passing no `templateId` opens a blank editor for creating a new template.
+ *
+ * The schema is loaded as registered, with its `$ref`s intact, so that saving a new version
+ * preserves the reference to the base schema rather than inlining it.
  */
 import { useGetFormTemplate } from '@/synapse-queries/dataaccess/useFormTemplate'
-import { useGetSchema } from '@/synapse-queries/jsonschema/useSchema'
+import { useGetRegisteredSchema } from '@/synapse-queries/jsonschema/useSchema'
 import { Alert, Box, CircularProgress, Paper } from '@mui/material'
 import { RJSFSchema } from '@rjsf/utils'
 import { FormTemplate } from '@sage-bionetworks/synapse-client'
@@ -34,7 +37,7 @@ export function FormTemplateEditor({
     data: jsonSchema,
     isLoading: isLoadingSchema,
     error: schemaError,
-  } = useGetSchema(template?.schema$id ?? '', {
+  } = useGetRegisteredSchema(template?.schema$id ?? '', {
     enabled: !!template?.schema$id,
   })
 
