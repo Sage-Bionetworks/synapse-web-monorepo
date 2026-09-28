@@ -45,7 +45,7 @@ export interface WebSocketState {
 }
 
 // Action types
-type WebSocketAction =
+export type WebSocketAction =
   | {
       type: 'CONNECT_REQUESTED'
       payload: { replicaId: number; sessionId: string; attemptId: number }
@@ -62,7 +62,7 @@ type WebSocketAction =
   | { type: 'WEBSOCKET_ERROR'; payload: unknown }
 
 // Reducer function
-function websocketReducer(
+export function websocketReducer(
   state: WebSocketState,
   action: WebSocketAction,
 ): WebSocketState {

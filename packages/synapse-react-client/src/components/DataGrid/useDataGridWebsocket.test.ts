@@ -9,6 +9,8 @@ import {
   initialWebSocketState,
   isInitialLoadReady,
   useDataGridWebSocket,
+  WebSocketAction,
+  websocketReducer,
   WebSocketState,
 } from './useDataGridWebsocket'
 import { useEstablishWebsocketConnection } from '@/synapse-queries/grid/useEstablishWebsocketConnection'
@@ -136,6 +138,112 @@ beforeEach(() => {
   )
 
   mockUseDocumentVisibility.mockImplementation(() => true)
+})
+
+describe('websocketReducer', () => {
+  const someModel = {
+    api: { getSnapshot: () => ({}) },
+  } as unknown as GridModel
+
+  const connectRequested = (
+    replicaId: number,
+    sessionId: string,
+  ): WebSocketAction => ({
+    type: 'CONNECT_REQUESTED',
+    payload: { replicaId, sessionId, attemptId: 1 },
+  })
+
+  /** A session whose initial load has finished. */
+  const loadedState: WebSocketState = {
+    ...initialWebSocketState,
+    connectionParams: { replicaId: 1, sessionId: 'session-a' },
+    model: someModel,
+    isConnected: true,
+    hasCompletedInitialSync: true,
+    hasCompletedInitialLoad: true,
+  }
+
+  it('sets hasCompletedInitialLoad on INITIAL_LOAD_COMPLETE', () => {
+    const next = websocketReducer(initialWebSocketState, {
+      type: 'INITIAL_LOAD_COMPLETE',
+    })
+    expect(next.hasCompletedInitialLoad).toBe(true)
+  })
+
+  const NON_RESETTING_ACTIONS: WebSocketAction[] = [
+    { type: 'GRID_READY' },
+    { type: 'SYNC_STARTED' },
+    { type: 'SYNC_ENDED' },
+    { type: 'CONNECTION_OPENED' },
+    { type: 'CONNECTION_CLOSED' },
+    { type: 'MODEL_CREATED', payload: someModel },
+    { type: 'INITIAL_LOAD_COMPLETE' },
+  ]
+
+  it.each(NON_RESETTING_ACTIONS)(
+    'keeps hasCompletedInitialLoad true through $type',
+    action => {
+      expect(
+        websocketReducer(loadedState, action).hasCompletedInitialLoad,
+      ).toBe(true)
+    },
+  )
+
+  describe('CONNECT_REQUESTED', () => {
+    it('preserves load progress when reconnecting to the same replica and session', () => {
+      const next = websocketReducer(
+        loadedState,
+        connectRequested(1, 'session-a'),
+      )
+      expect(next.hasCompletedInitialLoad).toBe(true)
+      expect(next.hasCompletedInitialSync).toBe(true)
+      expect(next.model).toBe(someModel)
+    })
+
+    it.each([
+      { reason: 'the session differs', replicaId: 1, sessionId: 'session-b' },
+      { reason: 'the replica differs', replicaId: 2, sessionId: 'session-a' },
+    ])('discards load progress when $reason', ({ replicaId, sessionId }) => {
+      const next = websocketReducer(
+        loadedState,
+        connectRequested(replicaId, sessionId),
+      )
+      expect(next.hasCompletedInitialLoad).toBe(false)
+      expect(next.hasCompletedInitialSync).toBe(false)
+      expect(next.model).toBeNull()
+    })
+  })
+
+  describe('CONNECTION_CLOSED', () => {
+    it('discards the completed-exchange signal when the drop happens mid-load', () => {
+      const midLoad: WebSocketState = {
+        ...loadedState,
+        hasCompletedInitialLoad: false,
+        hasCompletedInitialSync: true,
+      }
+      const next = websocketReducer(midLoad, { type: 'CONNECTION_CLOSED' })
+      // Otherwise the gate would treat a partially replayed model as loaded
+      expect(next.hasCompletedInitialSync).toBe(false)
+    })
+
+    it('keeps the completed-exchange signal once the load has finished', () => {
+      const next = websocketReducer(loadedState, { type: 'CONNECTION_CLOSED' })
+      expect(next.hasCompletedInitialSync).toBe(true)
+    })
+
+    it.each([true, false])(
+      'clears the connection and sync flags (hasCompletedInitialLoad=%s)',
+      hasCompletedInitialLoad => {
+        const next = websocketReducer(
+          { ...loadedState, hasCompletedInitialLoad, isSyncing: true },
+          { type: 'CONNECTION_CLOSED' },
+        )
+        expect(next.isConnected).toBe(false)
+        expect(next.isConnecting).toBe(false)
+        expect(next.isSyncing).toBe(false)
+      },
+    )
+  })
 })
 
 describe('isInitialLoadReady', () => {
@@ -715,84 +823,6 @@ describe('useDataGridWebSocket', () => {
         api: { getSnapshot: vi.fn(() => ({ columns: [], rows: [] })) },
       }) as unknown as GridModel
 
-    it('is false before the first sync exchange completes', async () => {
-      const { result } = renderHook(() => useDataGridWebSocket(), {
-        wrapper: createWrapper(),
-      })
-
-      act(() => {
-        result.current.connect(1, 'initial-load-session')
-      })
-
-      await waitFor(() => {
-        expect(result.current.websocketInstance).not.toBeNull()
-      })
-
-      expect(result.current.hasCompletedInitialLoad).toBe(false)
-    })
-
-    it('stays false when the server completes the sync exchange before the model exists', async () => {
-      const { result } = renderHook(() => useDataGridWebSocket(), {
-        wrapper: createWrapper(),
-      })
-
-      act(() => {
-        result.current.connect(2, 'early-complete-session')
-      })
-
-      await waitFor(() => {
-        expect(result.current.websocketInstance).not.toBeNull()
-      })
-
-      const config = MockDataGridWebSocket.mock.lastCall![0]
-
-      // The server can complete the snapshot request before the client has
-      // fetched and decoded the snapshot, so there is no model yet.
-      act(() => {
-        config.onGridReady!()
-        config.onSyncEnd!()
-      })
-
-      expect(result.current.hasCompletedInitialSync).toBe(true)
-      expect(result.current.model).toBeNull()
-      expect(result.current.hasCompletedInitialLoad).toBe(false)
-    })
-
-    it('stays false while patches are still replaying into a renderable model', async () => {
-      const { result } = renderHook(() => useDataGridWebSocket(), {
-        wrapper: createWrapper(),
-      })
-
-      act(() => {
-        result.current.connect(3, 'replaying-session')
-      })
-
-      await waitFor(() => {
-        expect(result.current.websocketInstance).not.toBeNull()
-      })
-
-      const config = MockDataGridWebSocket.mock.lastCall![0]
-
-      act(() => {
-        config.onGridReady!()
-        config.onSyncEnd!()
-      })
-
-      // Creating the model kicks off another clock sync, during which the
-      // remaining rows arrive.
-      act(() => {
-        config.onModelCreate!(createRenderableModel())
-        config.onSyncStart!()
-      })
-
-      // The model is renderable and the first exchange completed, but the flag
-      // must wait for the in-flight exchange carrying the remaining rows.
-      expect(result.current.modelSnapshot).not.toBeNull()
-      expect(result.current.hasCompletedInitialSync).toBe(true)
-      expect(result.current.isSyncing).toBe(true)
-      expect(result.current.hasCompletedInitialLoad).toBe(false)
-    })
-
     it('stays false when the socket drops mid-replay, then opens after the reconnect replays', async () => {
       const { result } = renderHook(() => useDataGridWebSocket(), {
         wrapper: createWrapper(),
@@ -917,107 +947,6 @@ describe('useDataGridWebSocket', () => {
         config.onSyncEnd!()
       })
       expect(result.current.hasCompletedInitialLoad).toBe(true)
-    })
-
-    it('stays true while a later patch is synced mid-session', async () => {
-      const { result } = renderHook(() => useDataGridWebSocket(), {
-        wrapper: createWrapper(),
-      })
-
-      act(() => {
-        result.current.connect(5, 'mid-session-patch')
-      })
-
-      await waitFor(() => {
-        expect(result.current.websocketInstance).not.toBeNull()
-      })
-
-      const config = MockDataGridWebSocket.mock.lastCall![0]
-
-      act(() => {
-        config.onModelCreate!(createRenderableModel())
-        config.onGridReady!()
-        config.onSyncEnd!()
-      })
-      expect(result.current.hasCompletedInitialLoad).toBe(true)
-
-      act(() => {
-        config.onSyncStart!()
-      })
-
-      expect(result.current.isSyncing).toBe(true)
-      expect(result.current.hasCompletedInitialLoad).toBe(true)
-
-      // The transition is one-way: a completed later exchange can't reset it
-      act(() => {
-        config.onGridReady!()
-        config.onSyncEnd!()
-      })
-      expect(result.current.hasCompletedInitialLoad).toBe(true)
-    })
-
-    it('stays true when reconnecting to the same session', async () => {
-      const { result } = renderHook(() => useDataGridWebSocket(), {
-        wrapper: createWrapper(),
-      })
-
-      act(() => {
-        result.current.connect(6, 'same-session')
-      })
-
-      await waitFor(() => {
-        expect(result.current.websocketInstance).not.toBeNull()
-      })
-
-      act(() => {
-        const config = MockDataGridWebSocket.mock.lastCall![0]
-        config.onModelCreate!(createRenderableModel())
-        config.onGridReady!()
-        config.onSyncEnd!()
-      })
-      expect(result.current.hasCompletedInitialLoad).toBe(true)
-
-      act(() => {
-        result.current.connect(6, 'same-session')
-      })
-
-      await waitFor(() => {
-        expect(mockEstablishWebsocketConnection).toHaveBeenCalledTimes(2)
-      })
-      expect(result.current.hasCompletedInitialLoad).toBe(true)
-    })
-
-    it('resets when connecting to a different session', async () => {
-      const { result } = renderHook(() => useDataGridWebSocket(), {
-        wrapper: createWrapper(),
-      })
-
-      act(() => {
-        result.current.connect(7, 'first-session')
-      })
-
-      await waitFor(() => {
-        expect(result.current.websocketInstance).not.toBeNull()
-      })
-
-      act(() => {
-        const config = MockDataGridWebSocket.mock.lastCall![0]
-        config.onModelCreate!(createRenderableModel())
-        config.onGridReady!()
-        config.onSyncEnd!()
-      })
-      expect(result.current.hasCompletedInitialLoad).toBe(true)
-
-      act(() => {
-        result.current.connect(8, 'second-session')
-      })
-
-      expect(result.current.hasCompletedInitialLoad).toBe(false)
-
-      await waitFor(() => {
-        expect(mockEstablishWebsocketConnection).toHaveBeenCalledTimes(2)
-      })
-      expect(result.current.hasCompletedInitialLoad).toBe(false)
     })
   })
 })
