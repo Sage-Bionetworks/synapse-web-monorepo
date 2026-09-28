@@ -43,7 +43,7 @@ describe('GridLoadingState', () => {
 
   it('renders a skeleton in place of the grid', () => {
     render(<GridLoadingState hasReplicaId hasPresignedUrl isConnected />)
-    expect(screen.getByText('Setting up grid')).toBeInTheDocument()
+    expect(screen.getByText(GRID_LOADING_MESSAGES.heading)).toBeInTheDocument()
     expect(
       document.querySelectorAll('.MuiSkeleton-root').length,
     ).toBeGreaterThan(0)

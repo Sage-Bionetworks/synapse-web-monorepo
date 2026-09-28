@@ -9,6 +9,7 @@ export type GridLoadingStateProps = {
 }
 
 export const GRID_LOADING_MESSAGES = {
+  heading: 'Setting up grid',
   awaitingReplica: 'Setting up real-time sync…',
   awaitingPresignedUrl: 'Establishing secure connection…',
   awaitingConnection: 'Connecting to server…',
@@ -43,7 +44,9 @@ export function getGridLoadingMessage({
 export default function GridLoadingState(props: GridLoadingStateProps) {
   return (
     <Stack spacing={1} sx={{ mb: 1.25 }}>
-      <Typography variant="sectionTitle">Setting up grid</Typography>
+      <Typography variant="sectionTitle">
+        {GRID_LOADING_MESSAGES.heading}
+      </Typography>
       <Stack direction="row" spacing={1} role="status" alignItems="center">
         <SynapseSpinner size={16} margin="0" />
         <Typography variant="caption" color="text.secondary">
