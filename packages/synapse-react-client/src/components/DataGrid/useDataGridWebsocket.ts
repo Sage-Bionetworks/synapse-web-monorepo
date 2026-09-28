@@ -419,6 +419,5 @@ export function useDataGridWebSocket(options?: UseDataGridWebSocketOptions) {
     errorEstablishingWebsocketConnection:
       state.connectionError ?? errorEstablishingWebsocketConnection,
     websocketError: state.websocketError,
-    hasSufficientData: isModelRenderable(state.model, modelSnapshot),
   }
 }

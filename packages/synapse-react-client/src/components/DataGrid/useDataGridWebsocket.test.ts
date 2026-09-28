@@ -139,11 +139,11 @@ describe('useDataGridWebSocket', () => {
     expect(result.current.isConnected).toBe(false)
     expect(result.current.websocketInstance).toBeNull()
     expect(result.current.hasCompletedInitialSync).toBe(false)
+    expect(result.current.hasCompletedInitialLoad).toBe(false)
     expect(result.current.isSyncing).toBe(false)
     expect(result.current.modelSnapshot).toBeUndefined()
     expect(result.current.presignedUrl).toBe('ws://mocked-url')
     expect(result.current.errorEstablishingWebsocketConnection).toBeNull()
-    expect(result.current.hasSufficientData).toBe(false)
   })
 
   it('should create websocket and update state via callbacks', async () => {
@@ -208,7 +208,7 @@ describe('useDataGridWebSocket', () => {
       columnOrder: [1],
       rows: [{ id: 'mock_row' }],
     })
-    expect(result.current.hasSufficientData).toBe(true)
+    expect(result.current.hasCompletedInitialLoad).toBe(true)
   })
 
   it('should defer connection attempts until the document becomes visible', async () => {
@@ -301,7 +301,7 @@ describe('useDataGridWebSocket', () => {
 
     expect(result.current.model).toBe(existingModel)
     expect(result.current.hasCompletedInitialSync).toBe(true)
-    expect(result.current.hasSufficientData).toBe(true)
+    expect(result.current.hasCompletedInitialLoad).toBe(true)
 
     const clearCountAfterFirstConnection =
       mockClearPresignedUrl.mock.calls.length
@@ -327,7 +327,7 @@ describe('useDataGridWebSocket', () => {
     )
     expect(result.current.model).toBe(existingModel)
     expect(result.current.hasCompletedInitialSync).toBe(true)
-    expect(result.current.hasSufficientData).toBe(true)
+    expect(result.current.hasCompletedInitialLoad).toBe(true)
   })
 
   it('should avoid duplicate connection attempts while establish mutation is pending', async () => {
@@ -658,7 +658,7 @@ describe('useDataGridWebSocket', () => {
       })
 
       expect(result.current.hasCompletedInitialSync).toBe(true)
-      expect(result.current.hasSufficientData).toBe(false)
+      expect(result.current.model).toBeNull()
       expect(result.current.hasCompletedInitialLoad).toBe(false)
     })
 
@@ -689,7 +689,9 @@ describe('useDataGridWebSocket', () => {
         config.onSyncStart!()
       })
 
-      expect(result.current.hasSufficientData).toBe(true)
+      // The model is renderable and the first exchange completed, but the flag
+      // must wait for the in-flight exchange carrying the remaining rows.
+      expect(result.current.modelSnapshot).not.toBeNull()
       expect(result.current.hasCompletedInitialSync).toBe(true)
       expect(result.current.isSyncing).toBe(true)
       expect(result.current.hasCompletedInitialLoad).toBe(false)
