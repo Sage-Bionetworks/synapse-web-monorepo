@@ -1,8 +1,16 @@
-import { GridModel } from '@/components/DataGrid/DataGridTypes'
+import {
+  GridModel,
+  GridModelSnapshot,
+} from '@/components/DataGrid/DataGridTypes'
 import { DataGridWebSocket } from '@/components/DataGrid/DataGridWebSocket'
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import { useDataGridWebSocket } from './useDataGridWebsocket'
+import {
+  initialWebSocketState,
+  isInitialLoadReady,
+  useDataGridWebSocket,
+  WebSocketState,
+} from './useDataGridWebsocket'
 import { useEstablishWebsocketConnection } from '@/synapse-queries/grid/useEstablishWebsocketConnection'
 import { Model } from 'json-joy/lib/json-crdt'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
@@ -128,6 +136,94 @@ beforeEach(() => {
   )
 
   mockUseDocumentVisibility.mockImplementation(() => true)
+})
+
+describe('isInitialLoadReady', () => {
+  const renderableModel = {
+    api: { getSnapshot: () => ({ columns: [], rows: [] }) },
+  } as unknown as GridModel
+
+  const populatedSnapshot = {
+    columnNames: ['col'],
+    columnOrder: [0],
+    rows: [{ id: 'row' }],
+  } as unknown as GridModelSnapshot
+
+  /**
+   * `gridSchema` types `columnNames` as a fixed-length tuple, so states the CRDT
+   * reaches at runtime (no columns yet) aren't representable in the type — hence
+   * the cast.
+   */
+  const snapshotWith = (
+    overrides: Record<string, unknown>,
+  ): GridModelSnapshot =>
+    ({ ...populatedSnapshot, ...overrides }) as unknown as GridModelSnapshot
+
+  /** Every gate condition satisfied; the cases below each break exactly one. */
+  const readyState: WebSocketState = {
+    ...initialWebSocketState,
+    model: renderableModel,
+    hasCompletedInitialSync: true,
+    hasCompletedInitialLoad: false,
+    isSyncing: false,
+  }
+
+  const BLOCKED_CASES: Array<{
+    reason: string
+    state: Partial<WebSocketState>
+    snapshot: GridModelSnapshot | null | undefined
+  }> = [
+    {
+      reason: 'the load has already completed',
+      state: { hasCompletedInitialLoad: true },
+      snapshot: populatedSnapshot,
+    },
+    {
+      reason: 'no sync exchange has completed yet',
+      state: { hasCompletedInitialSync: false },
+      snapshot: populatedSnapshot,
+    },
+    {
+      reason: 'a sync exchange is still in flight',
+      state: { isSyncing: true },
+      snapshot: populatedSnapshot,
+    },
+    {
+      reason: 'there is no model yet',
+      state: { model: null },
+      snapshot: populatedSnapshot,
+    },
+    { reason: 'the snapshot is null', state: {}, snapshot: null },
+    { reason: 'the snapshot is undefined', state: {}, snapshot: undefined },
+    {
+      reason: 'the snapshot has no column names',
+      state: {},
+      snapshot: snapshotWith({ columnNames: [] }),
+    },
+    {
+      reason: 'the snapshot has no column order',
+      state: {},
+      snapshot: snapshotWith({ columnOrder: [] }),
+    },
+  ]
+
+  it('is true when a sync exchange has completed and the model is renderable', () => {
+    expect(isInitialLoadReady(readyState, populatedSnapshot)).toBe(true)
+  })
+
+  it.each(BLOCKED_CASES)('is false when $reason', ({ state, snapshot }) => {
+    expect(isInitialLoadReady({ ...readyState, ...state }, snapshot)).toBe(
+      false,
+    )
+  })
+
+  // A grid whose source has columns but no records is a legitimate loaded state,
+  // so row count deliberately does not gate readiness.
+  it('is true for a session with columns but no rows', () => {
+    expect(isInitialLoadReady(readyState, snapshotWith({ rows: [] }))).toBe(
+      true,
+    )
+  })
 })
 
 describe('useDataGridWebSocket', () => {

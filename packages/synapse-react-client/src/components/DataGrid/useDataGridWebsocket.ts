@@ -10,7 +10,7 @@ import { useEstablishWebsocketConnection } from '@/synapse-queries/grid/useEstab
 import { useDocumentVisibility } from '@react-hookz/web'
 
 // State type
-interface WebSocketState {
+export interface WebSocketState {
   model: GridModel | null
   /**
    * True if the WebSocket has finished a sync exchange on the current connection
@@ -204,6 +204,30 @@ function isModelRenderable(
 }
 
 /**
+ * Whether the server has finished replaying its data into the model, so the grid
+ * can be shown and edited. Drives the one-way `INITIAL_LOAD_COMPLETE` transition.
+ *
+ * Returns false once `hasCompletedInitialLoad` is set, so callers can dispatch
+ * unconditionally on a true result without re-entering the transition.
+ *
+ * `hasCompletedInitialSync` alone is not sufficient: the server may complete the
+ * snapshot request before the client has fetched and decoded the snapshot, which
+ * leaves that flag true while the rows are still arriving. Requiring an idle sync
+ * exchange holds the transition until the replay drains.
+ */
+export function isInitialLoadReady(
+  state: WebSocketState,
+  modelSnapshot: GridModelSnapshot | null | undefined,
+): boolean {
+  return (
+    !state.hasCompletedInitialLoad &&
+    state.hasCompletedInitialSync &&
+    !state.isSyncing &&
+    isModelRenderable(state.model, modelSnapshot)
+  )
+}
+
+/**
  * Custom hook to manage a DataGrid WebSocket connection.
  * Handles:
  *   - Fetching presigned URLs via a mutation hook
@@ -390,31 +414,11 @@ export function useDataGridWebSocket(options?: UseDataGridWebSocketOptions) {
     }
   }, [state.websocketInstance])
 
-  /**
-   * Mark the initial load complete once the server has finished replaying its
-   * data into the model.
-   *
-   * The server may complete the snapshot request before the client has fetched
-   * and decoded the snapshot, so `hasCompletedInitialSync` can be true while the
-   * rows are still arriving. Requiring an idle sync exchange as well holds the
-   * transition until the replay drains.
-   */
   useEffect(() => {
-    if (
-      !state.hasCompletedInitialLoad &&
-      state.hasCompletedInitialSync &&
-      !state.isSyncing &&
-      isModelRenderable(state.model, modelSnapshot)
-    ) {
+    if (isInitialLoadReady(state, modelSnapshot)) {
       dispatch({ type: 'INITIAL_LOAD_COMPLETE' })
     }
-  }, [
-    state.hasCompletedInitialLoad,
-    state.hasCompletedInitialSync,
-    state.isSyncing,
-    state.model,
-    modelSnapshot,
-  ])
+  }, [state, modelSnapshot])
 
   return {
     isConnected: state.isConnected,
