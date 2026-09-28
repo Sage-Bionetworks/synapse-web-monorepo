@@ -54,7 +54,7 @@ export function FieldLibraryRow({
       sx={{
         p: 1.25,
         transition: 'opacity 120ms',
-        opacity: isDragging ? 0.4 : 1,
+        opacity: isDragging ? 'var(--synapse-drag-source-opacity)' : 1,
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
@@ -63,7 +63,7 @@ export function FieldLibraryRow({
           role="button"
           tabIndex={isUsedInSteps ? -1 : 0}
           aria-label={
-            isUsedInSteps ? 'Already bound to a step' : 'Drag to bind to a step'
+            isUsedInSteps ? 'Already in a form step' : 'Drag to add to a step'
           }
           className={styles.dragHandle}
           sx={{
@@ -138,7 +138,7 @@ export function FieldLibraryRow({
             </Stack>
           </Box>
           <Chip
-            label={isUsedInSteps ? 'In step' : 'Unbound'}
+            label={isUsedInSteps ? 'In form' : 'Not in form'}
             size="small"
             color={isUsedInSteps ? 'success' : 'warning'}
             variant="outlined"

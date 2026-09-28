@@ -37,10 +37,10 @@ describe('FieldLibraryRow', () => {
     expect(screen.queryByText('Request only')).not.toBeInTheDocument()
   })
 
-  it('shows the bound/unbound chip', () => {
+  it('shows the in-form/not-in-form chip', () => {
     renderRow({ isUsedInSteps: true })
-    expect(screen.getByText('In step')).toBeInTheDocument()
-    expect(screen.queryByText('Unbound')).not.toBeInTheDocument()
+    expect(screen.getByText('In form')).toBeInTheDocument()
+    expect(screen.queryByText('Not in form')).not.toBeInTheDocument()
   })
 
   it('is reachable and activatable via keyboard as the only affordance for opening the drawer', async () => {
@@ -60,30 +60,30 @@ describe('FieldLibraryRow', () => {
     expect(onClick).toHaveBeenCalledTimes(1)
   })
 
-  it('places the drag handle first in the tab order when unbound', async () => {
+  it('places the drag handle first in the tab order when not in the form', async () => {
     const user = userEvent.setup()
     renderRow({ isUsedInSteps: false })
     await user.tab()
     expect(
-      screen.getByRole('button', { name: 'Drag to bind to a step' }),
+      screen.getByRole('button', { name: 'Drag to add to a step' }),
     ).toHaveFocus()
   })
 
-  it('skips the drag handle in the tab order and relabels it once bound to a step', async () => {
+  it('skips the drag handle in the tab order and relabels it once in a form step', async () => {
     const user = userEvent.setup()
     renderRow({ isUsedInSteps: true })
     await user.tab()
     // Direct .focus() would succeed regardless of tabIndex -- Tab is what actually exercises
     // exclusion from the sequential focus order.
     expect(
-      screen.getByRole('button', { name: 'Already bound to a step' }),
+      screen.getByRole('button', { name: 'Already in a form step' }),
     ).not.toHaveFocus()
   })
 
   it('stops a drag-handle click from also opening the drawer', () => {
     const { onClick } = renderRow()
     fireEvent.click(
-      screen.getByRole('button', { name: 'Drag to bind to a step' }),
+      screen.getByRole('button', { name: 'Drag to add to a step' }),
     )
     expect(onClick).not.toHaveBeenCalled()
   })

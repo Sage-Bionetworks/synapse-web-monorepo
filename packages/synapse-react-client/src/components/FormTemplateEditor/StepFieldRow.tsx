@@ -108,7 +108,7 @@ export function StepFieldRow({
       variant="outlined"
       sx={{
         p: 1,
-        opacity: isDragging ? 0.5 : 1,
+        opacity: isDragging ? 'var(--synapse-drag-source-opacity)' : 1,
         backgroundColor: 'action.hover',
         borderColor: isUnresolved ? 'error.main' : undefined,
       }}

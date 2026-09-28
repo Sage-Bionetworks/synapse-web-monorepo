@@ -76,7 +76,7 @@ describe('FieldDefinitionDrawer', () => {
     ).toBeInTheDocument()
     rerender(<FieldDefinitionDrawer {...baseProps({ isUsedInSteps: true })} />)
     expect(
-      screen.getByRole('button', { name: 'Delete (will unbind from steps)' }),
+      screen.getByRole('button', { name: 'Delete (will remove from form)' }),
     ).toBeInTheDocument()
   })
 

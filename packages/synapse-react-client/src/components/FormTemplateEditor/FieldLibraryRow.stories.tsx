@@ -17,7 +17,7 @@ export default meta
 
 type Story = StoryObj<typeof FieldLibraryRow>
 
-export const Unbound: Story = {}
+export const NotInForm: Story = {}
 
 export const RequiredWithSubmissionContext: Story = {
   args: {
@@ -26,8 +26,8 @@ export const RequiredWithSubmissionContext: Story = {
   },
 }
 
-/** Already bound to a step -- its drag handle is disabled and dropped from the tab order. */
-export const BoundToStep: Story = {
+/** Already in a form step -- its drag handle is disabled and dropped from the tab order. */
+export const InForm: Story = {
   args: {
     isUsedInSteps: true,
   },
