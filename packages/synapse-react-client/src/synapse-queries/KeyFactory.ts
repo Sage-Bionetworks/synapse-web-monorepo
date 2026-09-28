@@ -657,6 +657,15 @@ export class KeyFactory {
     )
   }
 
+  public getDataAccessRequestSignaturePrecheckQueryKey(requestId: string) {
+    return this.getKey(
+      DATA_ACCESS_REQUEST_QUERY_KEY,
+      requestId,
+      'signature',
+      'precheck',
+    )
+  }
+
   // Returns key that can be used to invalidate all eDUC template queries
   public getEDucTemplateQueryKey() {
     return this.getKey(EDUC_TEMPLATE_QUERY_KEY)

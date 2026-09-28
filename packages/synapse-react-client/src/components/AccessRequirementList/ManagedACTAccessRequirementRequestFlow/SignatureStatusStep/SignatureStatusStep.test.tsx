@@ -7,6 +7,7 @@ import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   DATA_ACCESS_REQUEST,
   DATA_ACCESS_REQUEST_SIGNATURE_FILEHANDLE_ID,
+  DATA_ACCESS_REQUEST_SIGNATURE_PRECHECK,
   DATA_ACCESS_REQUEST_SIGNATURE_STATUS,
   DATA_ACCESS_REQUEST_SUBMISSION,
 } from '@/utils/APIConstants'
@@ -61,6 +62,9 @@ const statusEndpoint = `*${DATA_ACCESS_REQUEST_SIGNATURE_STATUS(
 const signedFileHandleEndpoint = `*${DATA_ACCESS_REQUEST_SIGNATURE_FILEHANDLE_ID(
   MOCK_DATA_ACCESS_REQUEST.id,
 )}`
+const precheckEndpoint = `*${DATA_ACCESS_REQUEST_SIGNATURE_PRECHECK(
+  MOCK_DATA_ACCESS_REQUEST.id,
+)}`
 const updateEndpoint = `*${DATA_ACCESS_REQUEST}`
 const submissionEndpoint = `*${DATA_ACCESS_REQUEST_SUBMISSION(
   MOCK_DATA_ACCESS_REQUEST.id,
@@ -75,6 +79,13 @@ const partiallySignedStatus: EDucSignatureStatus = {
     { name: 'Cara Officer', status: 'pending' },
     { name: 'Dan Declined', status: 'declined' },
   ],
+}
+
+/** Answers the precheck in the `{ result }` shape the deployed service uses. */
+function precheckHandler(canUpdate: boolean) {
+  return http.get(precheckEndpoint, () =>
+    HttpResponse.json({ result: canUpdate }, { status: 200 }),
+  )
 }
 
 const fullySignedStatus: EDucSignatureStatus = {
@@ -201,6 +212,84 @@ describe('SignatureStatusStep', () => {
     const { user } = renderComponent()
     await user.click(await screen.findByRole('button', { name: 'Back' }))
     expect(mockOnBackClicked).toHaveBeenCalledTimes(1)
+  })
+
+  it('tells the user that Back can be used to update collaborators mid-signature', async () => {
+    server.use(
+      http.get(statusEndpoint, () =>
+        HttpResponse.json(partiallySignedStatus, { status: 200 }),
+      ),
+      precheckHandler(true),
+    )
+    renderComponent()
+
+    await screen.findByText(/update the list of Collaborators by pressing/i)
+    expect(
+      screen.getByText(/already signed will not need to sign again/i),
+    ).toBeInTheDocument()
+  })
+
+  it('omits the update-collaborators copy when the precheck says the envelope is not updatable', async () => {
+    server.use(
+      http.get(statusEndpoint, () =>
+        HttpResponse.json(partiallySignedStatus, { status: 200 }),
+      ),
+      precheckHandler(false),
+    )
+    renderComponent()
+
+    // Only the server knows why an envelope can't be corrected -- cancelled, declined, completed.
+    await screen.findByText(/1 out of 4 signatures collected/i)
+    expect(
+      screen.queryByText(/update the list of Collaborators by pressing/i),
+    ).not.toBeInTheDocument()
+  })
+
+  it('omits the update-collaborators copy when the precheck request fails', async () => {
+    server.use(
+      http.get(statusEndpoint, () =>
+        HttpResponse.json(partiallySignedStatus, { status: 200 }),
+      ),
+      http.get(precheckEndpoint, () =>
+        HttpResponse.json({ reason: 'precheck unavailable' }, { status: 500 }),
+      ),
+    )
+    renderComponent()
+
+    // The copy is advisory, so a precheck outage withholds the guidance rather than guessing.
+    await screen.findByText(/1 out of 4 signatures collected/i)
+    expect(
+      screen.queryByText(/update the list of Collaborators by pressing/i),
+    ).not.toBeInTheDocument()
+  })
+
+  it('omits the update-collaborators copy once every signature is collected', async () => {
+    server.use(
+      http.get(statusEndpoint, () =>
+        HttpResponse.json(fullySignedStatus, { status: 200 }),
+      ),
+    )
+    renderComponent()
+
+    await screen.findByText(/All signatures collected/i)
+    expect(
+      screen.queryByText(/update the list of Collaborators by pressing/i),
+    ).not.toBeInTheDocument()
+  })
+
+  it('omits the update-collaborators copy when there is no step to go back to', async () => {
+    server.use(
+      http.get(statusEndpoint, () =>
+        HttpResponse.json(partiallySignedStatus, { status: 200 }),
+      ),
+      precheckHandler(true),
+    )
+    renderComponent({ onBackClicked: undefined })
+
+    await screen.findByText(/1 out of 4 signatures collected/i)
+    expect(
+      screen.queryByText(/update the list of Collaborators by pressing/i),
+    ).not.toBeInTheDocument()
   })
 
   it('hides the Back button when onBackClicked is not provided', async () => {
