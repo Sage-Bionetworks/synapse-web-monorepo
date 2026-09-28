@@ -23,6 +23,7 @@ import {
   ArrowUpward as UpIcon,
 } from '@mui/icons-material'
 import { RJSFSchema } from '@rjsf/utils'
+import pluralize from 'pluralize'
 import { useState } from 'react'
 import {
   pointerToPropertyKey,
@@ -42,7 +43,7 @@ import {
   STEP_SORTABLE_GROUP,
   STEP_SORTABLE_TYPE,
 } from './sortableIds'
-import { EditableFormTemplateStep, moveItem } from './utils'
+import { BIND_FIELD_LABEL, EditableFormTemplateStep, moveItem } from './utils'
 
 /**
  * The slot list must lose to the slot rows inside it so that dragging over a populated step
@@ -121,9 +122,7 @@ export function StepCard({
     onChange({ fields: step.fields.filter((_, i) => i !== fieldIdx) })
   }
 
-  const fieldCountLabel = `${step.fields.length} ${
-    step.fields.length === 1 ? 'field' : 'fields'
-  }`
+  const fieldCountLabel = pluralize('field', step.fields.length, true)
 
   return (
     <Paper
@@ -263,7 +262,7 @@ export function StepCard({
             <TextField
               select
               size="small"
-              label="Bind field"
+              label={BIND_FIELD_LABEL}
               value=""
               onChange={e => {
                 if (e.target.value) onBindField(e.target.value)

@@ -16,6 +16,7 @@ import {
   propertyKeyToPointer,
 } from '@/utils/jsonschema/submissionContext'
 import { FieldLibraryRow } from './FieldLibraryRow'
+import fieldLibraryStyles from './FieldLibrary.module.scss'
 
 export type FieldLibraryProps = {
   jsonSchema: RJSFSchema
@@ -71,15 +72,8 @@ export function FieldLibrary({
         {filtered.map(p => (
           <Box
             key={p.propertyKey}
-            sx={
-              selectedPropertyKey === p.propertyKey
-                ? {
-                    outline: theme => `2px solid ${theme.palette.primary.main}`,
-                    outlineOffset: '-2px',
-                    borderRadius: 1,
-                  }
-                : undefined
-            }
+            className={fieldLibraryStyles.selectedRow}
+            data-selected={selectedPropertyKey === p.propertyKey}
           >
             <FieldLibraryRow
               propertyKey={p.propertyKey}
@@ -120,6 +114,7 @@ export function FieldLibrary({
                   </InputAdornment>
                 ),
               },
+              htmlInput: { 'aria-label': 'Search fields' },
             }}
           />
           <Button

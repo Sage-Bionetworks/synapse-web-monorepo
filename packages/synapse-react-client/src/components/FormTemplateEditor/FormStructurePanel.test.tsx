@@ -3,6 +3,7 @@ import { FormTemplate } from '@sage-bionetworks/synapse-client'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { FormStructurePanel } from './FormStructurePanel'
+import { BIND_FIELD_LABEL } from './utils'
 import { useFormTemplateDraft } from './useFormTemplateDraft'
 
 const jsonSchema: RJSFSchema = {
@@ -28,8 +29,14 @@ const template: FormTemplate = {
   ],
 }
 
-function Harness({ initialTemplate }: { initialTemplate: FormTemplate }) {
-  const draft = useFormTemplateDraft(initialTemplate, jsonSchema)
+function Harness({
+  initialTemplate,
+  schema = jsonSchema,
+}: {
+  initialTemplate: FormTemplate
+  schema?: RJSFSchema
+}) {
+  const draft = useFormTemplateDraft(initialTemplate, schema)
   return (
     <FormStructurePanel
       steps={draft.steps}
@@ -41,9 +48,9 @@ function Harness({ initialTemplate }: { initialTemplate: FormTemplate }) {
   )
 }
 
-function renderPanel(initialTemplate = template) {
+function renderPanel(initialTemplate = template, schema?: RJSFSchema) {
   const user = userEvent.setup()
-  render(<Harness initialTemplate={initialTemplate} />)
+  render(<Harness initialTemplate={initialTemplate} schema={schema} />)
   return { user }
 }
 
@@ -56,6 +63,11 @@ function slotLabels() {
   return screen
     .queryAllByText(/^(Institution|PI|notes)$/)
     .map(el => el.textContent)
+}
+
+/** Field-count captions ("N field(s)"), one per step, in step order. */
+function fieldCounts() {
+  return screen.getAllByText(/^\d+ fields?$/).map(el => el.textContent)
 }
 
 describe('FormStructurePanel', () => {
@@ -123,19 +135,65 @@ describe('FormStructurePanel', () => {
       '2 fields are not yet bound to a step',
     )
 
-    await user.click(screen.getByRole('combobox', { name: 'Bind field' }))
+    await user.click(screen.getByRole('combobox', { name: BIND_FIELD_LABEL }))
     await user.click(screen.getByRole('option', { name: 'PI (/pi)' }))
     expect(screen.getByRole('alert')).toHaveTextContent(
       '1 field is not yet bound to a step',
     )
 
-    await user.click(screen.getByRole('combobox', { name: 'Bind field' }))
+    await user.click(screen.getByRole('combobox', { name: BIND_FIELD_LABEL }))
     await user.click(screen.getByRole('option', { name: '/notes' }))
     expect(screen.queryByRole('alert')).not.toBeInTheDocument()
     expect(
-      screen.getByRole('combobox', { name: 'Bind field' }),
+      screen.getByRole('combobox', { name: BIND_FIELD_LABEL }),
     ).toHaveAttribute('aria-disabled', 'true')
     expect(slotLabels()).toEqual(['Institution', 'PI', 'notes'])
     expect(screen.getByText('3 fields')).toBeInTheDocument()
+  })
+
+  it('errors on a required unbound field, distinct from an optional unbound warning', async () => {
+    const { user } = renderPanel(
+      {
+        ...template,
+        steps: [{ title: 'One', fields: [field('/institution')] }],
+      },
+      { ...jsonSchema, required: ['pi'] },
+    )
+
+    expect(screen.getByText(/must be bound before saving/)).toHaveTextContent(
+      'PI',
+    )
+    expect(screen.getByText(/not yet bound to a step\./)).toHaveTextContent(
+      '1 field',
+    )
+
+    await user.click(screen.getByRole('combobox', { name: BIND_FIELD_LABEL }))
+    await user.click(screen.getByRole('option', { name: 'PI (/pi)' }))
+    expect(
+      screen.queryByText(/must be bound before saving/),
+    ).not.toBeInTheDocument()
+    expect(screen.getByText(/not yet bound to a step\./)).toHaveTextContent(
+      '1 field',
+    )
+
+    await user.click(screen.getByRole('combobox', { name: BIND_FIELD_LABEL }))
+    await user.click(screen.getByRole('option', { name: '/notes' }))
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
+  it('binds a field into the step whose "Bind field" menu was used, not just the first', async () => {
+    const { user } = renderPanel()
+
+    // Step "Two" starts collapsed; expand it to reach its "Bind field" control.
+    await user.click(screen.getByRole('button', { name: 'Expand step' }))
+    const bindFieldSelects = screen.getAllByRole('combobox', {
+      name: BIND_FIELD_LABEL,
+    })
+    expect(bindFieldSelects).toHaveLength(2)
+
+    await user.click(bindFieldSelects[1])
+    await user.click(screen.getByRole('option', { name: '/notes' }))
+
+    expect(fieldCounts()).toEqual(['2 fields', '1 field'])
   })
 })

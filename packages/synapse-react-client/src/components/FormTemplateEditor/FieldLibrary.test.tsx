@@ -65,7 +65,10 @@ describe('FieldLibrary', () => {
   ])('filters by %s, ignoring case', async (_label, term, expected) => {
     const { user } = renderLibrary()
 
-    await user.type(screen.getByPlaceholderText('Search fields…'), term)
+    await user.type(
+      screen.getByRole('textbox', { name: 'Search fields' }),
+      term,
+    )
 
     expect(listedFields()).toEqual(expected)
   })
@@ -73,7 +76,10 @@ describe('FieldLibrary', () => {
   it('says when nothing matches the search', async () => {
     const { user } = renderLibrary()
 
-    await user.type(screen.getByPlaceholderText('Search fields…'), 'zzz')
+    await user.type(
+      screen.getByRole('textbox', { name: 'Search fields' }),
+      'zzz',
+    )
 
     expect(screen.getByText('No fields match "zzz".')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /^Edit / })).toBeNull()

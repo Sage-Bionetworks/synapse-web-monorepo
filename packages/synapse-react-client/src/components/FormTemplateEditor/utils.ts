@@ -2,6 +2,9 @@ import { FormTemplateStep } from '@sage-bionetworks/synapse-client'
 
 export { moveItem } from '@/utils/functions/ArrayUtils'
 
+/** Label for the per-step control that binds an unbound field into that step. */
+export const BIND_FIELD_LABEL = 'Bind field'
+
 let nextUiKeySeq = 0
 
 /**

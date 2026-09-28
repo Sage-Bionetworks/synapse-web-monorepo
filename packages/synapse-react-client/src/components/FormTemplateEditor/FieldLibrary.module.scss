@@ -1,0 +1,12 @@
+// Highlight for the field-library row matching the currently selected property.
+// Toggled with `data-selected` so the component only reports state and the look lives here,
+// matching the pattern used by dropTarget.module.scss.
+.selectedRow {
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  border-radius: 4px;
+
+  &[data-selected='true'] {
+    outline-color: var(--synapse-primary-action-color);
+  }
+}

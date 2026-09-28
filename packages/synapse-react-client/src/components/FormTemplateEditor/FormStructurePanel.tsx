@@ -1,10 +1,19 @@
 import { FormTemplateStep } from '@sage-bionetworks/synapse-client'
 import { Alert, Box, Button, Paper, Stack, Typography } from '@mui/material'
 import { Add as AddIcon } from '@mui/icons-material'
+import pluralize from 'pluralize'
 import { RJSFSchema } from '@rjsf/utils'
-import { ResolvedSchemaProperty } from '@/utils/jsonschema/submissionContext'
+import {
+  propertyKeyToPointer,
+  ResolvedSchemaProperty,
+} from '@/utils/jsonschema/submissionContext'
 import { StepCard } from './StepCard'
-import { createEditableStep, EditableFormTemplateStep, moveItem } from './utils'
+import {
+  BIND_FIELD_LABEL,
+  createEditableStep,
+  EditableFormTemplateStep,
+  moveItem,
+} from './utils'
 
 export type FormStructurePanelProps = {
   steps: EditableFormTemplateStep[]
@@ -44,6 +53,9 @@ export function FormStructurePanel({
     onStepsChange(moveItem(steps, idx, direction))
   }
 
+  const requiredUnbound = unboundProperties.filter(p => p.isRequired)
+  const optionalUnbound = unboundProperties.filter(p => !p.isRequired)
+
   return (
     <Paper variant="outlined" sx={{ p: 2, height: '100%' }}>
       <Box
@@ -71,12 +83,24 @@ export function FormStructurePanel({
         </Button>
       </Box>
 
-      {unboundProperties.length > 0 && (
+      {requiredUnbound.length > 0 && (
+        <Alert severity="error" sx={{ mb: 1.5 }}>
+          {pluralize('required field', requiredUnbound.length, true)}{' '}
+          {pluralize('is', requiredUnbound.length)} not bound to a step and must
+          be bound before saving:{' '}
+          {requiredUnbound
+            .map(p => p.subSchema.title ?? propertyKeyToPointer(p.propertyKey))
+            .join(', ')}
+          .
+        </Alert>
+      )}
+
+      {optionalUnbound.length > 0 && (
         <Alert severity="warning" sx={{ mb: 1.5 }}>
-          {unboundProperties.length}{' '}
-          {unboundProperties.length === 1 ? 'field is' : 'fields are'} not yet
-          bound to a step. Use a step's "Bind field" dropdown to add{' '}
-          {unboundProperties.length === 1 ? 'it' : 'them'}.
+          {pluralize('field', optionalUnbound.length, true)}{' '}
+          {pluralize('is', optionalUnbound.length)} not yet bound to a step. Use
+          a step's "{BIND_FIELD_LABEL}" dropdown to add{' '}
+          {optionalUnbound.length === 1 ? 'it' : 'them'}.
         </Alert>
       )}
 
