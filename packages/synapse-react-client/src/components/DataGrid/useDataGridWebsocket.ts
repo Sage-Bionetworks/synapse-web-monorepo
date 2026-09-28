@@ -13,8 +13,10 @@ import { useDocumentVisibility } from '@react-hookz/web'
 interface WebSocketState {
   model: GridModel | null
   /**
-   * True if the WebSocket has finished the initial sync and can process CRDT updates.
-   * Corresponds to the `GRID_READY` action.
+   * True if the WebSocket has finished a sync exchange on the current connection
+   * and can process CRDT updates. Set by `GRID_READY`; cleared on disconnect until
+   * `hasCompletedInitialLoad` is set, since a drop mid-replay leaves the model
+   * holding only part of the server's data.
    */
   hasCompletedInitialSync: boolean
   /**
@@ -112,6 +114,14 @@ function websocketReducer(
         isConnected: false,
         isConnecting: false,
         isSyncing: false,
+        // A drop before the initial load finishes invalidates the completed-exchange
+        // signal: the model may hold only the part of the data that arrived so far.
+        // Clearing it makes the readiness gate wait for the reconnect's replay
+        // instead of latching onto a partially loaded model. Once the load is done,
+        // drops are ordinary reconnects and the signal must survive them.
+        hasCompletedInitialSync: state.hasCompletedInitialLoad
+          ? state.hasCompletedInitialSync
+          : false,
       }
 
     case 'GRID_READY':

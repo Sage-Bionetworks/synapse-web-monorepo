@@ -697,6 +697,104 @@ describe('useDataGridWebSocket', () => {
       expect(result.current.hasCompletedInitialLoad).toBe(false)
     })
 
+    it('stays false when the socket drops mid-replay, then opens after the reconnect replays', async () => {
+      const { result } = renderHook(() => useDataGridWebSocket(), {
+        wrapper: createWrapper(),
+      })
+
+      act(() => {
+        result.current.connect(9, 'drop-mid-replay')
+      })
+
+      await waitFor(() => {
+        expect(result.current.websocketInstance).not.toBeNull()
+      })
+
+      const config = MockDataGridWebSocket.mock.lastCall![0]
+
+      act(() => {
+        config.onStatusChange!(true, result.current.websocketInstance!)
+        config.onGridReady!()
+        config.onSyncEnd!()
+      })
+
+      // The snapshot lands and the exchange carrying the remaining rows begins
+      act(() => {
+        config.onModelCreate!(createRenderableModel())
+        config.onSyncStart!()
+      })
+      expect(result.current.hasCompletedInitialLoad).toBe(false)
+
+      // Closing the socket also clears isSyncing, leaving a renderable but only
+      // partially loaded model. The gate must not mistake that for a finished load.
+      act(() => {
+        config.onStatusChange!(false, result.current.websocketInstance!)
+      })
+
+      expect(result.current.isSyncing).toBe(false)
+      expect(result.current.model).not.toBeNull()
+      expect(result.current.hasCompletedInitialSync).toBe(false)
+      expect(result.current.hasCompletedInitialLoad).toBe(false)
+
+      // Re-opening the socket must not open the gate either: the server has not
+      // replayed the remainder yet, and `connected` (which starts the next
+      // exchange) arrives after `onopen`.
+      await waitFor(() => {
+        expect(mockEstablishWebsocketConnection).toHaveBeenCalledTimes(2)
+      })
+
+      const reconnectConfig = MockDataGridWebSocket.mock.lastCall![0]
+      act(() => {
+        reconnectConfig.onStatusChange!(true, result.current.websocketInstance!)
+      })
+      expect(result.current.hasCompletedInitialLoad).toBe(false)
+
+      // Once the reconnect's replay drains, the gate opens — the stricter guard
+      // must not deadlock the load.
+      act(() => {
+        reconnectConfig.onGridReady!()
+        reconnectConfig.onSyncEnd!()
+      })
+      expect(result.current.hasCompletedInitialLoad).toBe(true)
+    })
+
+    it('keeps the completed sync signal when the socket drops after the initial load', async () => {
+      const { result } = renderHook(() => useDataGridWebSocket(), {
+        wrapper: createWrapper(),
+      })
+
+      act(() => {
+        result.current.connect(10, 'drop-after-load')
+      })
+
+      await waitFor(() => {
+        expect(result.current.websocketInstance).not.toBeNull()
+      })
+
+      const config = MockDataGridWebSocket.mock.lastCall![0]
+
+      act(() => {
+        config.onStatusChange!(true, result.current.websocketInstance!)
+        config.onModelCreate!(createRenderableModel())
+        config.onGridReady!()
+        config.onSyncEnd!()
+      })
+      expect(result.current.hasCompletedInitialLoad).toBe(true)
+
+      act(() => {
+        config.onStatusChange!(false, result.current.websocketInstance!)
+      })
+
+      expect(result.current.hasCompletedInitialSync).toBe(true)
+      expect(result.current.hasCompletedInitialLoad).toBe(true)
+
+      // The close also triggers an auto-reconnect; let it settle
+      await waitFor(() => {
+        expect(mockEstablishWebsocketConnection).toHaveBeenCalledTimes(2)
+      })
+      expect(result.current.hasCompletedInitialLoad).toBe(true)
+    })
+
     it('becomes true once the model is renderable and the sync exchange is idle', async () => {
       const { result } = renderHook(() => useDataGridWebSocket(), {
         wrapper: createWrapper(),
