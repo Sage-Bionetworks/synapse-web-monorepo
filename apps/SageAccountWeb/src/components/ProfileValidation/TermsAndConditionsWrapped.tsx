@@ -5,7 +5,6 @@ import { VerificationSubmission } from '@sage-bionetworks/synapse-types'
 import { ReturnToAppButton } from './ReturnToAppButton'
 import { TermsAndConditionsLink } from '../TermsAndConditionsLink'
 import TermsAndConditions from 'synapse-react-client/components/TermsAndConditions/TermsAndConditions'
-import { TermsOfUseMobileAccordion } from '../TermsOfUseMobileAccordion'
 // import { TermsAndConditionsSignature } from './TermsAndConditionsSignature'
 
 export type TermsAndConditionsWrappedProps = {
@@ -22,7 +21,6 @@ function TermsAndConditionsWrapped({
 
   return (
     <Box>
-      <TermsOfUseMobileAccordion />
       <TermsAndConditions
         termsAndConditionsTableID={
           import.meta.env.VITE_TERMS_AND_CONDITIONS_TABLE_ID

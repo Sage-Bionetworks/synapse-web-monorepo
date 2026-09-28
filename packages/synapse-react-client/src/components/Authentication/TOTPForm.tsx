@@ -2,6 +2,7 @@ import { UseLoginReturn } from '@/utils/hooks'
 import { Box, Button } from '@mui/material'
 import { MuiOtpInput } from 'mui-one-time-password-input'
 import { useState } from 'react'
+import { NUMERIC_CODE_HTML_INPUT_PROPS } from './Constants'
 
 const TOTP_LENGTH = 6
 const DIGIT_CHARACTERS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
@@ -19,6 +20,11 @@ export default function TOTPForm(props: TOTPFormProps) {
       <MuiOtpInput
         autoFocus
         length={TOTP_LENGTH}
+        TextFieldsProps={{
+          slotProps: {
+            htmlInput: NUMERIC_CODE_HTML_INPUT_PROPS,
+          },
+        }}
         value={verificationCode}
         onChange={setVerificationCode}
         onComplete={onSubmit}

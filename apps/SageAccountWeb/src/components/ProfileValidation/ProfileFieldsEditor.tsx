@@ -1,10 +1,11 @@
 import React from 'react'
-import { Stack, useTheme } from '@mui/material'
+import { Box, Stack, useTheme } from '@mui/material'
 import { VerificationSubmission } from '@sage-bionetworks/synapse-types'
 import { ChangeEvent, useState } from 'react'
 import RORInstitutionField from 'synapse-react-client/components/RORInstitutionField/RORInstitutionField'
 import { ContinueButton } from './ContinueButton'
 import { TextField } from 'synapse-react-client/components/TextField/index'
+import { ReturnToAppButton } from './ReturnToAppButton'
 
 const keysToValidate = ['firstName', 'lastName', 'location', 'company']
 
@@ -101,6 +102,9 @@ export const ProfileFieldsEditor = (
           }}
           disabled={Object.keys(validate(values)).length > 0}
         />
+        <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+          <ReturnToAppButton />
+        </Box>
       </Stack>
     </>
   )

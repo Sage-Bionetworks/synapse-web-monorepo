@@ -8,31 +8,60 @@ import {
   Viewport,
   setViewport,
 } from '../../tests/viewports'
-import ProfileValidation, { ValidationWizardStep } from './ProfileValidation'
+import ProfileValidation, {
+  ValidationWizardStep,
+  STEP_CONTENT,
+} from './ProfileValidation'
 
 const PLEDGE_LABEL = 'I agree to the pledge'
 
-function renderTermsAgreeStep() {
+function renderStep(step: ValidationWizardStep) {
   // ProfileValidation reads the starting step via `getSearchParam`, which
   // reads `window.location.search` directly rather than the router's
   // location -- MemoryRouter's in-memory history doesn't affect that.
-  window.history.pushState({}, '', `/?step=${ValidationWizardStep.TERMS_AGREE}`)
+  window.history.pushState({}, '', `/?step=${step}`)
   return renderInBrowser(<ProfileValidation />)
 }
 
-function setUpTermsAgreeStep(viewport: Viewport) {
+function setUpStep(viewport: Viewport) {
   beforeEach(async () => {
     await setViewport(viewport)
     mockPledgeTable([{ label: PLEDGE_LABEL, description: '' }])
   })
 }
 
+const MOBILE_STEP_CASES = STEP_CONTENT.map(({ title }, step) => ({
+  step,
+  title,
+}))
+
+describe.each(MOBILE_STEP_CASES)(
+  'step $step at mobile width (PORTALS-4490)',
+  ({ step, title }) => {
+    setUpStep(MOBILE_VIEWPORT)
+
+    test('shows instructions in an accordion, not below the form', async () => {
+      const screen = await renderStep(step)
+
+      await expect
+        .element(screen.getByRole('button', { name: title }))
+        .toBeVisible()
+      expect(
+        screen.getByTestId(DESKTOP_RIGHT_PANEL_TEST_ID).element(),
+      ).not.toBeVisible()
+      await expect
+        .element(screen.getByRole('button', { name: 'Cancel Validation' }))
+        .toBeVisible()
+    })
+  },
+)
+
 describe('ProfileValidation terms step (SWC-7966)', () => {
   describe.each(VIEWPORTS)('at $name width', viewport => {
-    setUpTermsAgreeStep(viewport)
+    setUpStep(viewport)
 
     test('the page fits the viewport and the pledge can be agreed to', async () => {
-      const screen = await renderTermsAgreeStep()
+      const screen = await renderStep(ValidationWizardStep.TERMS_AGREE)
 
       const continueButton = screen.getByRole('button', { name: 'Continue' })
       await expect.element(continueButton).toBeVisible()
@@ -65,10 +94,10 @@ describe('ProfileValidation terms step (SWC-7966)', () => {
   })
 
   describe('at mobile width', () => {
-    setUpTermsAgreeStep(MOBILE_VIEWPORT)
+    setUpStep(MOBILE_VIEWPORT)
 
     test('moves the pledge explanation into an accordion and hides the right panel', async () => {
-      const screen = await renderTermsAgreeStep()
+      const screen = await renderStep(ValidationWizardStep.TERMS_AGREE)
 
       const accordionButton = screen.getByRole('button', {
         name: 'What is the Synapse Pledge?',
@@ -81,10 +110,10 @@ describe('ProfileValidation terms step (SWC-7966)', () => {
   })
 
   describe('at desktop width', () => {
-    setUpTermsAgreeStep(DESKTOP_VIEWPORT)
+    setUpStep(DESKTOP_VIEWPORT)
 
     test('shows the pledge explanation in the right panel instead of an accordion', async () => {
-      const screen = await renderTermsAgreeStep()
+      const screen = await renderStep(ValidationWizardStep.TERMS_AGREE)
       await expect
         .element(screen.getByRole('button', { name: 'Continue' }))
         .toBeVisible()

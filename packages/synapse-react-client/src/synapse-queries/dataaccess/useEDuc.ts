@@ -273,6 +273,11 @@ export function useInitiateDataAccessRequestSignature(
  * `{ result }` wrapper, and the client falls back to handing back the raw response text whenever
  * the content type isn't JSON. Every shape is therefore compared explicitly -- a truthiness check
  * would read both the object `{ result: false }` and the string `"false"` as `true`.
+ *
+ * The spec is what is wrong here, not this endpoint: it declares a bare `boolean` for every
+ * BooleanResult-returning service (`GET /entity/{id}/access` and `GET /evaluation/{evalId}/access`
+ * are the others), so the generated types misdescribe all of them. Tracked by PLFM-10007 --
+ * delete this shim and read the generated type directly once the spec is corrected.
  */
 function parseSignaturePrecheckResponse(response: unknown): boolean {
   const answer =

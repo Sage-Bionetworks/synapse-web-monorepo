@@ -1,5 +1,43 @@
 import { describe, it, expect } from 'vitest'
-import { hexDecodeAndDeserialize, serializeAndHexEncode } from './URLUtils'
+import {
+  getSearchParam,
+  hexDecodeAndDeserialize,
+  serializeAndHexEncode,
+} from './URLUtils'
+
+describe('getSearchParam', () => {
+  function setLocation(search: string) {
+    window.history.replaceState({}, '', `/resetPassword${search}`)
+  }
+
+  it('returns the value of the param', () => {
+    setLocation('?passwordResetToken=abc')
+
+    expect(getSearchParam('passwordResetToken')).toEqual('abc')
+  })
+
+  it('returns undefined when the param is absent', () => {
+    setLocation('?someOtherParam=abc')
+
+    expect(getSearchParam('passwordResetToken')).toBeUndefined()
+  })
+
+  it('returns undefined when the param has no value', () => {
+    setLocation('?passwordResetToken')
+
+    expect(getSearchParam('passwordResetToken')).toBeUndefined()
+  })
+
+  it('returns the last non-empty value when the param is repeated', () => {
+    // A link built by appending a token to a URL that already contained one; only the final
+    // token is current.
+    setLocation(
+      '?passwordResetToken&passwordResetToken=abc&passwordResetToken=def',
+    )
+
+    expect(getSearchParam('passwordResetToken')).toEqual('def')
+  })
+})
 
 describe('hexDecodeAndDeserialize Compatibility', () => {
   it('should correctly decode a basic JSON object', () => {

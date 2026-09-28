@@ -6,3 +6,8 @@ export const RECOVERY_CODE_GUIDANCE_TEXT_SHORT =
 
 export const TOTP_CLOCK_SKEW_ERROR_APPENDAGE =
   'Please ensure automatic date and time is enabled in your device settings and try again.'
+
+export const NUMERIC_CODE_HTML_INPUT_PROPS = {
+  inputMode: 'numeric',
+  pattern: '[0-9]*',
+} as const satisfies React.InputHTMLAttributes<HTMLInputElement>
