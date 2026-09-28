@@ -16,7 +16,6 @@ import { ACT_TEAM_ID } from '@/utils/SynapseConstants'
 import { Button, Grid, Skeleton, Stack, Typography } from '@mui/material'
 import {
   ACCESS_TYPE,
-  FileHandleAssociateType,
   ManagedACTAccessRequirement,
   Submission,
   SubmissionState,
@@ -30,7 +29,8 @@ import { SynapseErrorBoundary } from '../../error/ErrorBanner'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import { UserBadge } from '../../UserCard/UserBadge'
 import UserOrTeamBadge from '../../UserOrTeamBadge/UserOrTeamBadge'
-import { FileHandleLink } from '../../widgets/FileHandleLink'
+import { DataAccessSubmissionFileHandleLink } from './DataAccessSubmissionFileHandleLink'
+import { SubmissionSchemaAnswers } from './SubmissionSchemaAnswers'
 import RejectDataAccessRequestModal from '../RejectDataAccessRequestModal'
 import { DiscussionThread } from '@/components/Forum'
 
@@ -45,29 +45,6 @@ export type SubmissionPageProps = {
 
 const THREAD_BODY =
   'Use this thread to communicate with the reviewers about this access request.'
-
-function DataAccessSubmissionFileHandleLink(props: {
-  submissionId: string
-  fileHandleId: string
-}) {
-  const { submissionId, fileHandleId } = props
-  const fileHandleAssociation = useMemo(
-    () => ({
-      fileHandleId: fileHandleId,
-      associateObjectId: submissionId,
-      associateObjectType:
-        FileHandleAssociateType.DataAccessSubmissionAttachment,
-    }),
-    [fileHandleId, submissionId],
-  )
-  return (
-    <FileHandleLink
-      key={fileHandleId}
-      showDownloadIcon={true}
-      fileHandleAssociation={fileHandleAssociation}
-    />
-  )
-}
 
 type AccessRequirementWikiType = {
   accessRequirementId: string
@@ -435,26 +412,30 @@ export default function SubmissionPage(props: SubmissionPageProps) {
           ) : (
             <Skeleton width={100} />
           )}
-          <Typography className="Key" variant="dataFieldKey">
-            Institution
-          </Typography>
-          <Typography className="Value" variant="smallText1">
-            {submission ? (
-              submission.researchProjectSnapshot.institution
-            ) : (
-              <Skeleton width={100} />
-            )}
-          </Typography>
-          <Typography className="Key" variant="dataFieldKey">
-            Project Lead
-          </Typography>
-          <Typography className="Value" variant="smallText1">
-            {submission ? (
-              submission.researchProjectSnapshot.projectLead
-            ) : (
-              <Skeleton width={100} />
-            )}
-          </Typography>
+          {(!submission || submission.researchProjectSnapshot) && (
+            <>
+              <Typography className="Key" variant="dataFieldKey">
+                Institution
+              </Typography>
+              <Typography className="Value" variant="smallText1">
+                {submission ? (
+                  submission.researchProjectSnapshot?.institution
+                ) : (
+                  <Skeleton width={100} />
+                )}
+              </Typography>
+              <Typography className="Key" variant="dataFieldKey">
+                Project Lead
+              </Typography>
+              <Typography className="Value" variant="smallText1">
+                {submission ? (
+                  submission.researchProjectSnapshot?.projectLead
+                ) : (
+                  <Skeleton width={100} />
+                )}
+              </Typography>
+            </>
+          )}
         </div>
       </Grid>
       <Grid
@@ -557,6 +538,9 @@ export default function SubmissionPage(props: SubmissionPageProps) {
                     </Fragment>
                   ))}
                 </section>
+              )}
+              {submission?.schemaData && (
+                <SubmissionSchemaAnswers submission={submission} />
               )}
             </Stack>
           </section>
