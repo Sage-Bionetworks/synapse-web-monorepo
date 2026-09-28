@@ -8,6 +8,7 @@ import {
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent, { UserEvent } from '@testing-library/user-event'
 import { FormTemplateEditor } from './FormTemplateEditor'
+import { ACCESS_REQUIREMENT_BASE_SCHEMA_ID } from './formTemplateSchema'
 
 const postJobSpy = vi.spyOn(
   MOCK_CONTEXT_VALUE.synapseClient.asynchronousJobServicesClient,
@@ -20,6 +21,10 @@ const getJobSpy = vi.spyOn(
 const createTemplateSpy = vi.spyOn(
   MOCK_CONTEXT_VALUE.synapseClient.accessRequirementServicesClient,
   'postRepoV1AccessRequirementFormTemplate',
+)
+const listSchemaVersionsSpy = vi.spyOn(
+  MOCK_CONTEXT_VALUE.synapseClient.jsonSchemaServicesClient,
+  'postRepoV1SchemaVersionList',
 )
 
 /** Resolve every in-flight generic async job (schema creation, schema-generation preview) as
@@ -61,6 +66,7 @@ describe('FormTemplateEditor', () => {
       newVersionInfo: { $id: 'org.example.mock-schema-1.0.1' },
     }
     mockAsyncJobsAsComplete(schemaCreationResponse)
+    listSchemaVersionsSpy.mockResolvedValue({ page: [] })
   })
 
   it('derives the property key from the question label until it is overridden', async () => {
@@ -126,7 +132,7 @@ describe('FormTemplateEditor', () => {
     expect(keyField).toHaveValue('myfield1')
   })
 
-  it('marks a field as public and includes isPublic in the saved template', async () => {
+  it('registers a new template schema under the ACT organization, extending the base schema, and includes isPublic in the saved template', async () => {
     const user = userEvent.setup()
     const onSaved = vi.fn()
     renderEditor(onSaved)
@@ -167,6 +173,16 @@ describe('FormTemplateEditor', () => {
     await user.click(screen.getByRole('button', { name: 'Create Template' }))
 
     await waitFor(() => expect(onSaved).toHaveBeenCalled())
+    expect(postJobSpy).toHaveBeenCalledWith({
+      asynchronousRequestBody: expect.objectContaining({
+        concreteType:
+          'org.sagebionetworks.repo.model.schema.CreateSchemaRequest',
+        schema: expect.objectContaining({
+          $id: 'org.sagebionetworks.act-MyTemplate-1.0.0',
+          allOf: [{ $ref: ACCESS_REQUIREMENT_BASE_SCHEMA_ID }],
+        }),
+      }),
+    })
     expect(createTemplateSpy).toHaveBeenCalledWith({
       formTemplate: expect.objectContaining({
         steps: [

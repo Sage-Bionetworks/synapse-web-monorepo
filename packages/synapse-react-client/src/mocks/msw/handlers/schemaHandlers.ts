@@ -14,6 +14,7 @@ import {
   SCHEMA_VALIDATION_START,
 } from '@/utils/APIConstants'
 import { JSONSchema7 } from 'json-schema'
+import { http, HttpResponse } from 'msw'
 
 const validationSchemas: JSONSchema7[] = [
   mockValidationSchema,
@@ -54,4 +55,25 @@ export function getValidationSchemaHandlers(
       backendOrigin,
     },
   )
+}
+
+/** Serves each schema as registered, looked up by its exact `$id`. */
+export function getRegisteredSchemaHandlers(
+  backendOrigin: string,
+  schemas: JSONSchema7[],
+) {
+  return [
+    http.get(
+      `${backendOrigin}/repo/v1/schema/type/registered/:id`,
+      ({ params }) => {
+        const schema = schemas.find(s => s.$id === params.id)
+        return schema
+          ? HttpResponse.json(schema, { status: 200 })
+          : HttpResponse.json(
+              { reason: `Schema ${String(params.id)} not found in mock data.` },
+              { status: 404 },
+            )
+      },
+    ),
+  ]
 }

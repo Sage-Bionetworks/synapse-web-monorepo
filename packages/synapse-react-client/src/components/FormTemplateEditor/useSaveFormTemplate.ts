@@ -4,6 +4,7 @@
  * registering a new JSON Schema version when the schema body changed, and creating or updating
  * the FormTemplate against that schema version.
  */
+import { getJsonSchemaVersionsQuery } from '@/synapse-queries/jsonschema/useListJsonSchemaVersions'
 import { useCreateJsonSchema } from '@/synapse-queries/jsonschema/useCreateJsonSchema'
 import {
   useCreateFormTemplate,
@@ -13,8 +14,17 @@ import { FormTemplate, JsonSchema } from '@sage-bionetworks/synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { RJSFSchema } from '@rjsf/utils'
 import isEqual from 'lodash-es/isEqual'
-import { useMutation, UseMutationOptions } from '@tanstack/react-query'
+import {
+  useMutation,
+  UseMutationOptions,
+  useQueryClient,
+} from '@tanstack/react-query'
+import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { EditableFormTemplateStep, toFormTemplateSteps } from './utils'
+import {
+  getFormTemplateSchemaLineage,
+  getNextSchemaVersion,
+} from './formTemplateSchema'
 import {
   FormTemplateFieldValidationError,
   validateFormTemplateFields,
@@ -48,6 +58,8 @@ export function useSaveFormTemplate(
     'mutationFn'
   >,
 ) {
+  const queryClient = useQueryClient()
+  const { synapseClient, keyFactory } = useSynapseContext()
   const createSchema = useCreateJsonSchema()
   const createTemplate = useCreateFormTemplate()
   const updateTemplate = useUpdateFormTemplate()
@@ -78,9 +90,23 @@ export function useSaveFormTemplate(
         params.initialJsonSchema,
       )
       if (schemaChanged || !schema$id) {
-        const response = await createSchema.mutateAsync(
-          params.jsonSchema as JsonSchema,
+        const { organizationName, schemaName } = getFormTemplateSchemaLineage(
+          params.name,
+          params.initialTemplate?.schema$id,
         )
+        // Registered versions are immutable, so the list is read fresh on every save to pick a
+        // version that does not exist yet.
+        const registeredVersions = await queryClient.fetchQuery({
+          ...getJsonSchemaVersionsQuery(organizationName, schemaName, {
+            synapseClient,
+            keyFactory,
+          }),
+          staleTime: 0,
+        })
+        const response = await createSchema.mutateAsync({
+          ...params.jsonSchema,
+          $id: `${organizationName}-${schemaName}-${getNextSchemaVersion(registeredVersions)}`,
+        } as JsonSchema)
         schema$id = response.newVersionInfo!.$id!
       }
 

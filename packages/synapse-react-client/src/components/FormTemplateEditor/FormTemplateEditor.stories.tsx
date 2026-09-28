@@ -10,7 +10,8 @@ import {
   mockGenomicsSchema,
 } from '@/mocks/accessRequirement/mockJsonSchemas'
 import { getFormTemplateHandlers } from '@/mocks/msw/handlers/formTemplateHandlers'
-import { getValidationSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
+import { getJsonSchemaListingHandlers } from '@/mocks/msw/handlers/jsonSchemaListingHandlers'
+import { getRegisteredSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
 import { FormTemplateEditor } from './FormTemplateEditor'
 
 const meta: Meta<typeof FormTemplateEditor> = {
@@ -21,10 +22,11 @@ const meta: Meta<typeof FormTemplateEditor> = {
     msw: {
       handlers: [
         ...getFormTemplateHandlers(MOCK_REPO_ORIGIN),
-        ...getValidationSchemaHandlers(MOCK_REPO_ORIGIN, [
+        ...getRegisteredSchemaHandlers(MOCK_REPO_ORIGIN, [
           mockGenomicsSchema,
           mockClinicalSchema,
         ]),
+        ...getJsonSchemaListingHandlers(MOCK_REPO_ORIGIN).versions,
       ],
     },
   },
