@@ -24,10 +24,13 @@ import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material'
 import { RJSFSchema } from '@rjsf/utils'
 import { useMemo, useState } from 'react'
 import { displayToast } from '@/components/ToastMessage'
-import { resolveSchemaPropertyAtPointer } from '@/utils/jsonschema/submissionContext'
+import {
+  propertyKeyToPointer,
+  resolveSchemaPropertyAtPointer,
+} from '@/utils/jsonschema/submissionContext'
 import { FieldDefinitionDrawer } from './FieldDefinitionDrawer'
 import { FieldLibrary } from './FieldLibrary'
-import { FIELD_DRAG_TYPE } from './sortableIds'
+import { FIELD_DRAG_TYPE, readFieldDragData } from './sortableIds'
 import { FormStructurePanel } from './FormStructurePanel'
 import { FormTemplatePreview } from './FormTemplatePreview'
 import { JsonSchemaBodyEditor } from './JsonSchemaBodyEditor'
@@ -38,6 +41,7 @@ import {
   validateFormTemplateFields,
 } from './formTemplateValidation'
 import { useFormTemplateDraft } from './useFormTemplateDraft'
+import { useFormTemplateDrag } from './useFormTemplateDrag'
 import { useSaveFormTemplate } from './useSaveFormTemplate'
 
 export type FormTemplateEditorFormProps = {
@@ -70,6 +74,7 @@ export function FormTemplateEditorForm({
     setEditingPropertyKey,
     usedPaths,
     existingPropertyKeys,
+    unboundProperties,
     handleCreateField,
     renamePropertyKey,
     handleUpdateProperty,
@@ -77,11 +82,10 @@ export function FormTemplateEditorForm({
     handleChangeRequired,
     handleChangeContext,
     handleRemoveProperty,
-    handleDragStart,
-    handleDragOver,
-    handleDragEnd,
+    bindField,
     previewTemplate,
   } = draft
+  const dragHandlers = useFormTemplateDrag(draft)
 
   const { mutateAsync: save, isPending: isSaving } = useSaveFormTemplate()
   const [saveError, setSaveError] = useState<
@@ -136,20 +140,20 @@ export function FormTemplateEditorForm({
 
   const editingResolved =
     editingPropertyKey !== null
-      ? resolveSchemaPropertyAtPointer(jsonSchema, `/${editingPropertyKey}`)
+      ? resolveSchemaPropertyAtPointer(
+          jsonSchema,
+          propertyKeyToPointer(editingPropertyKey),
+        )
       : undefined
   const editingProperty: RJSFSchema | null = editingResolved?.subSchema ?? null
   const editingIsRequired = editingResolved?.isRequired ?? false
   const editingContext = editingResolved?.context ?? 'ALWAYS'
   const editingIsUsedInSteps =
-    editingPropertyKey !== null && usedPaths.has(`/${editingPropertyKey}`)
+    editingPropertyKey !== null &&
+    usedPaths.has(propertyKeyToPointer(editingPropertyKey))
 
   return (
-    <DragDropProvider
-      onDragStart={handleDragStart}
-      onDragOver={handleDragOver}
-      onDragEnd={handleDragEnd}
-    >
+    <DragDropProvider {...dragHandlers}>
       <Paper sx={{ p: 3 }}>
         <Typography variant="h6" gutterBottom>
           {initialTemplate ? 'Edit Form Template' : 'Create Form Template'}
@@ -181,7 +185,9 @@ export function FormTemplateEditorForm({
             <FormStructurePanel
               steps={steps}
               jsonSchema={jsonSchema}
+              unboundProperties={unboundProperties}
               onStepsChange={setSteps}
+              onBindField={bindField}
             />
           </Grid>
           <Grid size={{ xs: 12, md: 4 }}>
@@ -302,14 +308,11 @@ export function FormTemplateEditorForm({
       <DragOverlay>
         {source => {
           if (source.type !== FIELD_DRAG_TYPE) return null
-          const propertyKey = String(
-            (source.data as { propertyKey?: string } | undefined)
-              ?.propertyKey ?? '',
-          )
+          const propertyKey = readFieldDragData(source.data)
           if (!propertyKey) return null
           const property = resolveSchemaPropertyAtPointer(
             jsonSchema,
-            `/${propertyKey}`,
+            propertyKeyToPointer(propertyKey),
           )?.subSchema
           if (!property) return null
           return (
