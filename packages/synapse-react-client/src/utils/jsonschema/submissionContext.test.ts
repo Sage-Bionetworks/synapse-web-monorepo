@@ -7,6 +7,7 @@ import {
   propertyKeyToPointer,
   removeSchemaProperty,
   renameSchemaProperty,
+  replaceSchemaPropertyDefinition,
   resolveSchemaPropertyAtPointer,
   setSchemaProperty,
   setSchemaPropertyContext,
@@ -389,6 +390,50 @@ describe('setSchemaPropertyContext', () => {
     expect(setSchemaPropertyContext(schema, 'missing', 'RENEWAL_ONLY')).toBe(
       schema,
     )
+  })
+})
+
+describe('replaceSchemaPropertyDefinition', () => {
+  it.each([
+    ['a top-level', 'institution', 'ALWAYS'],
+    ['an allOf branch', 'summaryOfUse', 'RENEWAL_ONLY'],
+  ] as const)(
+    'replaces a required property in %s, keeping it required at its context',
+    (_label, propertyKey, context) => {
+      const next = replaceSchemaPropertyDefinition(
+        withRenewalOnlyField,
+        propertyKey,
+        { type: 'number', title: 'Replaced' },
+      )
+      expect(
+        resolveSchemaPropertyAtPointer(next, `/${propertyKey}`),
+      ).toMatchObject({
+        subSchema: { type: 'number', title: 'Replaced' },
+        isRequired: true,
+        context,
+      })
+    },
+  )
+
+  it('keeps an optional property optional', () => {
+    const schema: RJSFSchema = {
+      type: 'object',
+      properties: { a: { type: 'string' } },
+    }
+    const next = replaceSchemaPropertyDefinition(schema, 'a', {
+      type: 'boolean',
+    })
+    expect(resolveSchemaPropertyAtPointer(next, '/a')).toMatchObject({
+      subSchema: { type: 'boolean' },
+      isRequired: false,
+    })
+  })
+
+  it('is a no-op when the property does not resolve', () => {
+    const schema: RJSFSchema = { type: 'object', properties: {} }
+    expect(
+      replaceSchemaPropertyDefinition(schema, 'missing', { type: 'string' }),
+    ).toBe(schema)
   })
 })
 

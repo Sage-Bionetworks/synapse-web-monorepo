@@ -389,6 +389,31 @@ export function setSchemaPropertyContext(
 }
 
 /**
+ * Replace a property's definition wherever it's defined (top-level or an `allOf` branch),
+ * preserving its context and required-ness. A no-op if the property doesn't resolve.
+ */
+export function replaceSchemaPropertyDefinition(
+  schema: RJSFSchema,
+  propertyKey: string,
+  subSchema: RJSFSchema,
+): RJSFSchema {
+  const resolved = resolveSchemaPropertyAtPointer(
+    schema,
+    propertyKeyToPointer(propertyKey),
+  )
+  if (!resolved) return schema
+  const next = setSchemaProperty(
+    schema,
+    propertyKey,
+    subSchema,
+    resolved.context,
+  )
+  return resolved.isRequired
+    ? setSchemaPropertyRequired(next, propertyKey, resolved.context, true)
+    : next
+}
+
+/**
  * Rename a property's key wherever it's defined (top-level or an `allOf` branch), preserving its
  * definition, context, and required-ness. A no-op if `oldKey` doesn't resolve.
  */
