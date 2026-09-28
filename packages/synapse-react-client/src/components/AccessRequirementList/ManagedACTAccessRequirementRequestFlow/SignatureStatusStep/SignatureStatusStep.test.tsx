@@ -7,12 +7,15 @@ import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   DATA_ACCESS_REQUEST,
   DATA_ACCESS_REQUEST_SIGNATURE_FILEHANDLE_ID,
+  DATA_ACCESS_REQUEST_SIGNATURE_PRECHECK,
   DATA_ACCESS_REQUEST_SIGNATURE_STATUS,
   DATA_ACCESS_REQUEST_SUBMISSION,
 } from '@/utils/APIConstants'
 import { EDucSignatureStatus } from '@sage-bionetworks/synapse-client'
 import { RestrictableObjectType } from '@sage-bionetworks/synapse-types'
+import { formatDate } from '@/utils/functions/DateFormatter'
 import { render, screen, waitFor } from '@testing-library/react'
+import dayjs from 'dayjs'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import SignatureStatusStep, {
@@ -61,10 +64,17 @@ const statusEndpoint = `*${DATA_ACCESS_REQUEST_SIGNATURE_STATUS(
 const signedFileHandleEndpoint = `*${DATA_ACCESS_REQUEST_SIGNATURE_FILEHANDLE_ID(
   MOCK_DATA_ACCESS_REQUEST.id,
 )}`
+const precheckEndpoint = `*${DATA_ACCESS_REQUEST_SIGNATURE_PRECHECK(
+  MOCK_DATA_ACCESS_REQUEST.id,
+)}`
 const updateEndpoint = `*${DATA_ACCESS_REQUEST}`
 const submissionEndpoint = `*${DATA_ACCESS_REQUEST_SUBMISSION(
   MOCK_DATA_ACCESS_REQUEST.id,
 )}`
+
+const DECLINED_REASON =
+  'The intended data use statement does not match what we discussed.'
+const DECLINED_ON = '2026-03-15T14:30:00.000Z'
 
 const partiallySignedStatus: EDucSignatureStatus = {
   ducStatus: 'sent',
@@ -73,8 +83,20 @@ const partiallySignedStatus: EDucSignatureStatus = {
     { name: 'Alice Accessor', userId: String(MOCK_USER_ID), status: 'done' },
     { name: 'Bob Collaborator', userId: '3388889', status: 'pending' },
     { name: 'Cara Officer', status: 'pending' },
-    { name: 'Dan Declined', status: 'declined' },
+    {
+      name: 'Dan Declined',
+      status: 'declined',
+      declinedReason: DECLINED_REASON,
+      declinedOn: DECLINED_ON,
+    },
   ],
+}
+
+/** Answers the precheck in the `{ result }` shape the deployed service uses. */
+function precheckHandler(canUpdate: boolean) {
+  return http.get(precheckEndpoint, () =>
+    HttpResponse.json({ result: canUpdate }, { status: 200 }),
+  )
 }
 
 const fullySignedStatus: EDucSignatureStatus = {
@@ -142,10 +164,48 @@ describe('SignatureStatusStep', () => {
 
     // Signers whose status is neither 'pending' nor 'done' show a status label.
     expect(screen.getByText(/Dan Declined/)).toBeInTheDocument()
-    expect(screen.getByText(/\(declined\)/)).toBeInTheDocument()
 
     // The already-signed accessor is not listed as outstanding.
     expect(screen.queryByText('Alice Accessor')).not.toBeInTheDocument()
+  })
+
+  it('dates the decline and quotes the reason the signer gave', async () => {
+    server.use(
+      http.get(statusEndpoint, () =>
+        HttpResponse.json(partiallySignedStatus, { status: 200 }),
+      ),
+    )
+    renderComponent()
+
+    // Formatted through the shared date helper so the assertion follows the user's timezone
+    // preference rather than pinning a rendering of the timestamp.
+    await screen.findByText(`(declined ${formatDate(dayjs(DECLINED_ON))})`, {
+      exact: false,
+    })
+
+    const reason = screen.getByText(DECLINED_REASON)
+    expect(reason.tagName).toBe('BLOCKQUOTE')
+  })
+
+  it('omits the decline details for signers who have not declined', async () => {
+    server.use(
+      http.get(statusEndpoint, () =>
+        HttpResponse.json(
+          {
+            ...partiallySignedStatus,
+            signerStatus: partiallySignedStatus.signerStatus!.filter(
+              signer => signer.status !== 'declined',
+            ),
+          } satisfies EDucSignatureStatus,
+          { status: 200 },
+        ),
+      ),
+    )
+    renderComponent()
+
+    await screen.findByText(/still waiting for signatures from/i)
+    expect(screen.queryByText(DECLINED_REASON)).not.toBeInTheDocument()
+    expect(screen.queryByText(/\(declined/)).not.toBeInTheDocument()
   })
 
   it('shows the "All signatures collected" message when every signer is done', async () => {
@@ -201,6 +261,84 @@ describe('SignatureStatusStep', () => {
     const { user } = renderComponent()
     await user.click(await screen.findByRole('button', { name: 'Back' }))
     expect(mockOnBackClicked).toHaveBeenCalledTimes(1)
+  })
+
+  it('tells the user that Back can be used to update collaborators mid-signature', async () => {
+    server.use(
+      http.get(statusEndpoint, () =>
+        HttpResponse.json(partiallySignedStatus, { status: 200 }),
+      ),
+      precheckHandler(true),
+    )
+    renderComponent()
+
+    await screen.findByText(/update the list of Collaborators by pressing/i)
+    expect(
+      screen.getByText(/already signed will not need to sign again/i),
+    ).toBeInTheDocument()
+  })
+
+  it('omits the update-collaborators copy when the precheck says the envelope is not updatable', async () => {
+    server.use(
+      http.get(statusEndpoint, () =>
+        HttpResponse.json(partiallySignedStatus, { status: 200 }),
+      ),
+      precheckHandler(false),
+    )
+    renderComponent()
+
+    // Only the server knows why an envelope can't be corrected -- cancelled, declined, completed.
+    await screen.findByText(/1 out of 4 signatures collected/i)
+    expect(
+      screen.queryByText(/update the list of Collaborators by pressing/i),
+    ).not.toBeInTheDocument()
+  })
+
+  it('omits the update-collaborators copy when the precheck request fails', async () => {
+    server.use(
+      http.get(statusEndpoint, () =>
+        HttpResponse.json(partiallySignedStatus, { status: 200 }),
+      ),
+      http.get(precheckEndpoint, () =>
+        HttpResponse.json({ reason: 'precheck unavailable' }, { status: 500 }),
+      ),
+    )
+    renderComponent()
+
+    // The copy is advisory, so a precheck outage withholds the guidance rather than guessing.
+    await screen.findByText(/1 out of 4 signatures collected/i)
+    expect(
+      screen.queryByText(/update the list of Collaborators by pressing/i),
+    ).not.toBeInTheDocument()
+  })
+
+  it('omits the update-collaborators copy once every signature is collected', async () => {
+    server.use(
+      http.get(statusEndpoint, () =>
+        HttpResponse.json(fullySignedStatus, { status: 200 }),
+      ),
+    )
+    renderComponent()
+
+    await screen.findByText(/All signatures collected/i)
+    expect(
+      screen.queryByText(/update the list of Collaborators by pressing/i),
+    ).not.toBeInTheDocument()
+  })
+
+  it('omits the update-collaborators copy when there is no step to go back to', async () => {
+    server.use(
+      http.get(statusEndpoint, () =>
+        HttpResponse.json(partiallySignedStatus, { status: 200 }),
+      ),
+      precheckHandler(true),
+    )
+    renderComponent({ onBackClicked: undefined })
+
+    await screen.findByText(/1 out of 4 signatures collected/i)
+    expect(
+      screen.queryByText(/update the list of Collaborators by pressing/i),
+    ).not.toBeInTheDocument()
   })
 
   it('hides the Back button when onBackClicked is not provided', async () => {

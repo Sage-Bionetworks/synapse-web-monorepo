@@ -227,6 +227,8 @@ export const DATA_ACCESS_REQUEST_SIGNATURE_FILEHANDLE_ID = (
 ) => `${DATA_ACCESS_REQUEST}/${id}/signature/filehandleId`
 export const DATA_ACCESS_REQUEST_SIGNATURE_QUOTA = (id: string | number) =>
   `${DATA_ACCESS_REQUEST}/${id}/signature/quota`
+export const DATA_ACCESS_REQUEST_SIGNATURE_PRECHECK = (id: string | number) =>
+  `${DATA_ACCESS_REQUEST}/${id}/signature/precheck`
 export const ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE = (
   accessRequirementId: string | number,
 ) =>

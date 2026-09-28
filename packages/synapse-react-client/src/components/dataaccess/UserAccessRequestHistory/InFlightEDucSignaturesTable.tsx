@@ -43,12 +43,14 @@ import {
 const IN_FLIGHT_STATUSES: readonly AccessRequestSummaryStatusEnum[] = [
   'sent',
   'delivered',
+  'declined',
   'completed',
 ] as const
 
 const STATUS_DISPLAY: Record<string, string> = {
   sent: 'Signatures pending',
   delivered: 'Signatures pending',
+  declined: 'Signature declined',
   completed: 'Ready to submit',
 }
 

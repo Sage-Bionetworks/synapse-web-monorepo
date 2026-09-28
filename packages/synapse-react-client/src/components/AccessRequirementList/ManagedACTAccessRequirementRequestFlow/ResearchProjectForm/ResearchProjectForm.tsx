@@ -268,6 +268,11 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
       )}
       {!showConfirmationScreen && (
         <DialogContent>
+          {alert && (
+            <Alert severity={alert.key} sx={{ mb: 2 }}>
+              {alert.message}
+            </Alert>
+          )}
           <ManagedACTAccessRequirementFormWikiWrapper
             managedACTAccessRequirementId={String(
               managedACTAccessRequirement.id,
@@ -396,7 +401,6 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
               )}
             </Box>
           </ManagedACTAccessRequirementFormWikiWrapper>
-          {alert && <Alert severity={alert.key}>{alert.message}</Alert>}
         </DialogContent>
       )}
       <DialogActions>

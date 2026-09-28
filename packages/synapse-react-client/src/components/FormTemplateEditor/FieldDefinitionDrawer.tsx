@@ -266,7 +266,7 @@ export function FieldDefinitionDrawer({
             onClick={onRemove}
             disabled={!property}
           >
-            {isUsedInSteps ? 'Delete (will unbind from steps)' : 'Delete field'}
+            {isUsedInSteps ? 'Delete (will remove from form)' : 'Delete field'}
           </Button>
           <Button variant="contained" onClick={onClose}>
             Done
