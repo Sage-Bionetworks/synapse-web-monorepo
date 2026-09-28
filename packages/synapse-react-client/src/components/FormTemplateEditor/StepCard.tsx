@@ -128,12 +128,10 @@ export function StepCard({
     <Paper
       ref={ref}
       variant="outlined"
-      className={dropTargetStyles.dropTarget}
+      className={`${dropTargetStyles.dropTarget} ${dragHandleStyles.dragSource}`}
       data-drop-target={isDropTarget}
-      sx={{
-        p: 1.5,
-        opacity: isDragging ? 'var(--synapse-drag-source-opacity)' : 1,
-      }}
+      data-dragging={isDragging}
+      sx={{ p: 1.5 }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
         <Box
