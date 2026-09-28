@@ -8,5 +8,5 @@
 // The node the pointer is carrying. It stays in the tree and moves between
 // groups as the drag goes, so it is dimmed to read as in-flight.
 .dragSource {
-  opacity: 0.4;
+  opacity: var(--synapse-drag-source-opacity);
 }
