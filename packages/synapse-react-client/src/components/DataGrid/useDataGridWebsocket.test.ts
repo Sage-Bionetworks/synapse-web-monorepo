@@ -530,8 +530,11 @@ describe('useDataGridWebSocket', () => {
       clearCountAfterFirstConnection,
     )
     expect(result.current.model).toBe(existingModel)
+    // `hasCompletedInitialLoad` is deliberately not asserted here: the effect
+    // re-latches it within the same commit, so a post-reconnect read cannot tell
+    // "preserved" from "reset then re-latched". Covered by the render-history test
+    // in the `hasCompletedInitialLoad` block instead.
     expect(result.current.hasCompletedInitialSync).toBe(true)
-    expect(result.current.hasCompletedInitialLoad).toBe(true)
   })
 
   it('should avoid duplicate connection attempts while establish mutation is pending', async () => {
@@ -919,6 +922,58 @@ describe('useDataGridWebSocket', () => {
         expect(mockEstablishWebsocketConnection).toHaveBeenCalledTimes(2)
       })
       expect(result.current.hasCompletedInitialLoad).toBe(true)
+    })
+
+    it('never reports false again while reconnecting to the same session', async () => {
+      const renderedFlags: boolean[] = []
+      const { result } = renderHook(
+        () => {
+          const hook = useDataGridWebSocket()
+          // Record every rendered value. Asserting only the latest would pass even
+          // if CONNECT_REQUESTED reset the flag and the effect re-latched it within
+          // the same commit — which the user would see as the skeleton flickering
+          // back over a loaded grid.
+          renderedFlags.push(hook.hasCompletedInitialLoad)
+          return hook
+        },
+        { wrapper: createWrapper() },
+      )
+
+      act(() => {
+        result.current.connect(11, 'no-flicker-session')
+      })
+
+      await waitFor(() => {
+        expect(result.current.websocketInstance).not.toBeNull()
+      })
+
+      const config = MockDataGridWebSocket.mock.lastCall![0]
+      act(() => {
+        config.onStatusChange!(true, result.current.websocketInstance!)
+        config.onModelCreate!(createRenderableModel())
+        config.onGridReady!()
+        config.onSyncEnd!()
+      })
+      expect(result.current.hasCompletedInitialLoad).toBe(true)
+
+      const firstRenderAfterLoad = renderedFlags.length
+
+      act(() => {
+        result.current.connect(11, 'no-flicker-session')
+      })
+
+      // Tolerant of the exact count so that this test fails on the render history
+      // rather than on connection bookkeeping
+      await waitFor(() => {
+        expect(
+          mockEstablishWebsocketConnection.mock.calls.length,
+        ).toBeGreaterThanOrEqual(2)
+      })
+
+      const flagsAfterReconnect = renderedFlags.slice(firstRenderAfterLoad)
+      // Guard against the assertion below passing on an empty array
+      expect(flagsAfterReconnect.length).toBeGreaterThan(0)
+      expect(flagsAfterReconnect).not.toContain(false)
     })
 
     it('becomes true once the model is renderable and the sync exchange is idle', async () => {
