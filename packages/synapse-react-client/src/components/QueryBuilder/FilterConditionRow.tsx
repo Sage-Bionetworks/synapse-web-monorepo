@@ -18,6 +18,7 @@ import { useQueryBuilderInternalContext } from './QueryBuilderInternalContext'
 import {
   availableOpsForKind,
   classifyColumn,
+  facetValueMatchesFilter,
   isFacetColumnResultValues,
   labelForOp,
   QBColumnKind,
@@ -348,7 +349,7 @@ type FacetPillGroupProps = {
 }
 
 // Above this many pills we show a text filter above the group.
-const PILL_FILTER_THRESHOLD = 40
+export const PILL_FILTER_THRESHOLD = 40
 
 function FacetPillGroup(props: FacetPillGroupProps) {
   const { columnName, facetValues, selectedValues, onChange } = props
@@ -372,9 +373,10 @@ function FacetPillGroup(props: FacetPillGroupProps) {
   }, [facetValues, labelForValue])
 
   const visibleValues = useMemo(() => {
-    if (!showFilter || filter.trim() === '') return sortedValues
-    const q = filter.trim().toLowerCase()
-    return sortedValues.filter(v => labelForValue(v).toLowerCase().includes(q))
+    if (!showFilter) return sortedValues
+    return sortedValues.filter(v =>
+      facetValueMatchesFilter(v, labelForValue(v), filter),
+    )
   }, [sortedValues, filter, showFilter, labelForValue])
 
   return (

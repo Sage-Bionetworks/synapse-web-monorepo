@@ -3,7 +3,7 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ReactNode } from 'react'
 import { vi } from 'vitest'
-import { FilterConditionRow } from './FilterConditionRow'
+import { FilterConditionRow, PILL_FILTER_THRESHOLD } from './FilterConditionRow'
 import { FilterGroupNode } from './FilterGroupNode'
 import {
   QueryBuilderInternalContextProvider,
@@ -307,6 +307,41 @@ describe('FilterConditionRow', () => {
       'Aardvark Data File',
       'Zebra Data File',
     ])
+  })
+
+  it('filters pills labeled with a display name by pasted Synapse ID', async () => {
+    const user = userEvent.setup()
+    // The filter input only appears once the pill count exceeds the threshold.
+    const manyFacetValues = Array.from(
+      { length: PILL_FILTER_THRESHOLD + 1 },
+      (_unused, index) => ({
+        value: String(index),
+        count: 1,
+        isSelected: false,
+      }),
+    )
+    renderWithContext(
+      <FilterConditionRow
+        condition={entityIdCondition}
+        parentGroupId="root"
+        index={0}
+      />,
+      {
+        columnModels: [fileColumnModel],
+        facetResults: [{ ...fileFacetResult, facetValues: manyFacetValues }],
+        getValueDisplayName: (_columnName, value) => `Entity Number ${value}`,
+      },
+    )
+    await user.type(
+      screen.getByRole('textbox', { name: 'Filter values' }),
+      'syn7',
+    )
+    const pillGroup = screen.getByRole('group', { name: /Selected values/ })
+    expect(
+      within(pillGroup)
+        .getAllByRole('button')
+        .map(pill => pill.textContent),
+    ).toEqual(['Entity Number 7'])
   })
 
   it('stores the raw value when a pill labeled with a display name is selected', async () => {
