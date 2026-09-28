@@ -41,11 +41,21 @@ describe('GridLoadingState', () => {
     },
   )
 
-  it('renders a skeleton in place of the grid', () => {
+  it('heads the placeholder with an accessible heading', () => {
     render(<GridLoadingState hasReplicaId hasPresignedUrl isConnected />)
-    expect(screen.getByText(GRID_LOADING_MESSAGES.heading)).toBeInTheDocument()
     expect(
-      document.querySelectorAll('.MuiSkeleton-root').length,
-    ).toBeGreaterThan(0)
+      screen.getByRole('heading', { name: GRID_LOADING_MESSAGES.heading }),
+    ).toBeInTheDocument()
+  })
+
+  it('keeps the decorative placeholder rows out of the accessibility tree', () => {
+    render(<GridLoadingState hasReplicaId hasPresignedUrl isConnected />)
+    // The status message is the only thing a screen reader should pick up here,
+    // so the skeleton must not surface as a table/grid of its own
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
+    expect(screen.queryByRole('grid')).not.toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent(
+      GRID_LOADING_MESSAGES.awaitingData,
+    )
   })
 })

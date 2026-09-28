@@ -43,8 +43,8 @@ export function getGridLoadingMessage({
  */
 export default function GridLoadingState(props: GridLoadingStateProps) {
   return (
-    <Stack spacing={1} sx={{ mb: 1.25 }}>
-      <Typography variant="sectionTitle">
+    <Stack spacing={1} aria-busy="true" sx={{ mb: 1.25 }}>
+      <Typography variant="sectionTitle" component="h2">
         {GRID_LOADING_MESSAGES.heading}
       </Typography>
       <Stack direction="row" spacing={1} role="status" alignItems="center">
@@ -53,7 +53,7 @@ export default function GridLoadingState(props: GridLoadingStateProps) {
           {getGridLoadingMessage(props)}
         </Typography>
       </Stack>
-      <SkeletonTable numRows={4} numCols={1} />
+      <SkeletonTable aria-hidden numRows={4} numCols={1} />
     </Stack>
   )
 }
