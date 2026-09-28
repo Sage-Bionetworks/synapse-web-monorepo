@@ -4,10 +4,25 @@
  * of value input to render.
  */
 import {
+  FacetColumnResult,
+  FacetColumnResultValues,
+} from '@sage-bionetworks/synapse-types'
+import { parseSynId } from '../../utils/functions/RegularExpressions'
+import {
   FRIENDLY_VALUE_NOT_SET,
   VALUE_NOT_SET,
 } from '../../utils/SynapseConstants'
 import { QBConditionOp } from './QueryBuilderTypes'
+
+/** Narrows a facet result to the enumerated-values variant the QB can render. */
+export function isFacetColumnResultValues(
+  facet: FacetColumnResult,
+): facet is FacetColumnResultValues {
+  return (
+    facet.concreteType ===
+    'org.sagebionetworks.repo.model.table.FacetColumnResultValues'
+  )
+}
 
 /** Categorization of columns for the QB UI. Not a synapse-types concept. */
 export type QBColumnKind =
@@ -145,4 +160,25 @@ export function labelForOp(op: QBConditionOp): string {
  */
 export function labelForFacetValue(value: string): string {
   return value === VALUE_NOT_SET ? FRIENDLY_VALUE_NOT_SET : value
+}
+
+/**
+ * Does a facet value match the pill filter query? Matching considers both the
+ * user-facing label and the underlying value, so a pill labeled with a
+ * resolved entity or user name is still findable by the ID it stores.
+ *
+ * An empty query matches everything.
+ */
+export function facetValueMatchesFilter(
+  value: string,
+  label: string,
+  query: string,
+): boolean {
+  const normalizedQuery = query.trim().toLowerCase()
+  if (normalizedQuery === '') return true
+  if (label.toLowerCase().includes(normalizedQuery)) return true
+  if (value.toLowerCase().includes(normalizedQuery)) return true
+  // An entity ID pasted from elsewhere in Synapse carries a `syn` prefix (and
+  // possibly a version suffix) that an ENTITYID column's stored value doesn't.
+  return parseSynId(normalizedQuery)?.targetId === `syn${value}`
 }

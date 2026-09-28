@@ -1,6 +1,7 @@
 import { render } from '@testing-library/react'
 import { qbTreeToReadable } from './qbTreeToReadable'
 import { QBCondition, QBGroup } from './QueryBuilderTypes'
+import { QBValueDisplayNameFn } from './useQBValueDisplayName'
 
 let idCounter = 0
 const nextId = () => `id-${idCounter++}`
@@ -31,8 +32,13 @@ function makeGroup(patch: Partial<QBGroup> = {}): QBGroup {
   }
 }
 
-function renderReadable(root: QBGroup): string {
-  const { container } = render(<>{qbTreeToReadable(root)}</>)
+function renderReadable(
+  root: QBGroup,
+  getValueDisplayName?: QBValueDisplayNameFn,
+): string {
+  const { container } = render(
+    <>{qbTreeToReadable(root, undefined, getValueDisplayName)}</>,
+  )
   return container.textContent ?? ''
 }
 
@@ -112,6 +118,31 @@ describe('qbTreeToReadable', () => {
     })
     expect(renderReadable(makeGroup({ children: [c] }))).toBe(
       'Age between 18 and 65',
+    )
+  })
+
+  it('summarizes values with the resolved display name for the condition column', () => {
+    const anyOf = makeCondition({
+      columnName: 'File',
+      columnType: 'ENTITYID',
+      op: 'is_any_of',
+      values: ['123', '456'],
+    })
+    const equals = makeCondition({
+      columnName: 'Contributor',
+      columnType: 'USERID',
+      op: 'equal',
+      values: ['999'],
+    })
+    const displayNames: Record<string, Record<string, string>> = {
+      File: { '123': 'My File', '456': 'My Other File' },
+      Contributor: { '999': 'myUserName' },
+    }
+    const getValueDisplayName: QBValueDisplayNameFn = (columnName, value) =>
+      displayNames[columnName!][value]
+    const root = makeGroup({ children: [anyOf, equals] })
+    expect(renderReadable(root, getValueDisplayName)).toBe(
+      'File is any of My File, My Other File AND Contributor equals myUserName',
     )
   })
 

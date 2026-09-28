@@ -15,6 +15,7 @@ import {
   QueryBuilderInternalContextType,
 } from './QueryBuilderInternalContext'
 import { QBCondition, QBGroup } from './QueryBuilderTypes'
+import { rawQBValueDisplayName } from './useQBValueDisplayName'
 
 // The hook takes only types from `@dnd-kit/react`, so these stubs affect the
 // rendered components and leave the hook exercising its real implementation.
@@ -217,6 +218,7 @@ describe('group drop zone registration', () => {
       facetResults: [],
       onlyFacetedColumns: false,
       getColumnDisplayName: (name: string) => name,
+      getValueDisplayName: rawQBValueDisplayName,
       addConditionAt: vi.fn(),
       addChildGroupAt: vi.fn(),
       clearGroupAt: vi.fn(),
