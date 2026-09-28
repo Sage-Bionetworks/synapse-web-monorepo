@@ -593,6 +593,67 @@ describe('ResearchProjectForm', { timeout: 30_000 }, () => {
       })
     })
 
+    it('shows an error above the form when the DAR update fails', async () => {
+      const consoleErrorSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {})
+      const errorReason =
+        'User emails must be a valid email address Value=invalidemail'
+      mockUpdateDataAccessRequest.mockImplementation(() => {
+        throw new SynapseClientError(
+          400,
+          errorReason,
+          expect.getState().currentTestName!,
+        )
+      })
+
+      const { user, projectLeadInput, institutionInput } = await setUp({
+        ...defaultProps,
+        managedACTAccessRequirement: eDucAr,
+      })
+
+      await waitFor(() =>
+        expect(mockGetDataAccessRequestForUpdate).toHaveBeenCalled(),
+      )
+
+      await user.type(projectLeadInput, 'Jane Doe')
+      await user.type(institutionInput, 'My Institution')
+      await user.type(
+        screen.getByLabelText(
+          'Institutional Email of your Project Lead or PI',
+          { exact: false },
+        ),
+        'invalidemail',
+      )
+      act(() => {
+        mockedUserSearchBox.mock.lastCall![0].onChange!('9999', {} as never)
+      })
+
+      await waitFor(() =>
+        expect(
+          screen.getByRole('button', { name: 'Save and Continue' }),
+        ).not.toBeDisabled(),
+      )
+      await clickSaveAndContinue(user)
+
+      const alert = await screen.findByRole('alert')
+      within(alert).getByText(errorReason)
+      expect(mockOnSave).not.toHaveBeenCalled()
+
+      // SWC-8007: the alert must precede the form so it is visible without
+      // scrolling past the AR wiki, which can be arbitrarily long.
+      const reRenderedProjectLeadInput = screen.getByLabelText(
+        'First and last names of your project lead or PI',
+        { exact: false },
+      )
+      expect(
+        alert.compareDocumentPosition(reRenderedProjectLeadInput) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy()
+
+      consoleErrorSpy.mockRestore()
+    })
+
     it('prefills the project lead from the selected PI profile when the field is empty', async () => {
       const mockGetUserProfileById = vi
         .spyOn(SynapseClient, 'getUserProfileById')
