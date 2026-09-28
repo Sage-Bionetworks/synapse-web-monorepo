@@ -46,8 +46,8 @@ describe('FieldLibrary', () => {
       'Edit Principal Investigator',
       'Edit projectLead',
     ])
-    expect(screen.getAllByText('In step')).toHaveLength(1)
-    expect(screen.getAllByText('Unbound')).toHaveLength(2)
+    expect(screen.getAllByText('In form')).toHaveLength(1)
+    expect(screen.getAllByText('Not in form')).toHaveLength(2)
   })
 
   it.each([
