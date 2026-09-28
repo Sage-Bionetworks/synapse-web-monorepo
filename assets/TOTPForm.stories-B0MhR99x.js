@@ -1,0 +1,8 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{r as t}from"./ToastMessage-DpgCCOBM.js";import{t as n}from"./ToastMessage-DTWBd8yt.js";import{_n as r,gn as i}from"./iframe-F_p8aheI.js";var a,o,s;e((()=>{r(),n(),a={title:`Authentication/TOTPForm`,component:i},o={args:{loginIsPending:!1,onSubmit:e=>{t(`Submitted code: ${e}`,`info`)}}},o.parameters={...o.parameters,docs:{...o.parameters?.docs,source:{originalSource:`{
+  args: {
+    loginIsPending: false,
+    onSubmit: (value: string) => {
+      displayToast(\`Submitted code: \${value}\`, 'info');
+    }
+  }
+}`,...o.parameters?.docs?.source}}},s=[`Demo`]}))();export{o as Demo,s as __namedExportsOrder,a as default};

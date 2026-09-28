@@ -1,0 +1,15 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{Un as t,zn as n}from"./synapse-client-b99e5Uz3.js";import{D as r,O as i}from"./iframe-F_p8aheI.js";import{n as a,t as o}from"./AccessTokenPage-KOFZQjZ_.js";var s,c,l,u;e((()=>{i(),t(),a(),s={title:`Synapse/AccessTokenPage`,component:o,args:{title:`Personal Access Tokens`,body:`Create and manage tokens that can be used to access your Synapse account programmatically.`},parameters:{stack:`mock`}},c={parameters:{msw:{handlers:[...r(n)]}}},l={parameters:{msw:{handlers:[...r(n,{results:[]})]}}},c.parameters={...c.parameters,docs:{...c.parameters?.docs,source:{originalSource:`{
+  parameters: {
+    msw: {
+      handlers: [...getPersonalAccessTokenHandlers(MOCK_REPO_ORIGIN)]
+    }
+  }
+}`,...c.parameters?.docs?.source}}},l.parameters={...l.parameters,docs:{...l.parameters?.docs,source:{originalSource:`{
+  parameters: {
+    msw: {
+      handlers: [...getPersonalAccessTokenHandlers(MOCK_REPO_ORIGIN, {
+        results: []
+      })]
+    }
+  }
+}`,...l.parameters?.docs?.source}}},u=[`Demo`,`NoTokens`]}))();export{c as Demo,l as NoTokens,u as __namedExportsOrder,s as default};
