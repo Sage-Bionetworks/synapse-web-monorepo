@@ -13,7 +13,9 @@ import {
 } from '@/utils/APIConstants'
 import { EDucSignatureStatus } from '@sage-bionetworks/synapse-client'
 import { RestrictableObjectType } from '@sage-bionetworks/synapse-types'
+import { formatDate } from '@/utils/functions/DateFormatter'
 import { render, screen, waitFor } from '@testing-library/react'
+import dayjs from 'dayjs'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import SignatureStatusStep, {
@@ -70,6 +72,10 @@ const submissionEndpoint = `*${DATA_ACCESS_REQUEST_SUBMISSION(
   MOCK_DATA_ACCESS_REQUEST.id,
 )}`
 
+const DECLINED_REASON =
+  'The intended data use statement does not match what we discussed.'
+const DECLINED_ON = '2026-03-15T14:30:00.000Z'
+
 const partiallySignedStatus: EDucSignatureStatus = {
   ducStatus: 'sent',
   includesRequestChanges: true,
@@ -77,7 +83,12 @@ const partiallySignedStatus: EDucSignatureStatus = {
     { name: 'Alice Accessor', userId: String(MOCK_USER_ID), status: 'done' },
     { name: 'Bob Collaborator', userId: '3388889', status: 'pending' },
     { name: 'Cara Officer', status: 'pending' },
-    { name: 'Dan Declined', status: 'declined' },
+    {
+      name: 'Dan Declined',
+      status: 'declined',
+      declinedReason: DECLINED_REASON,
+      declinedOn: DECLINED_ON,
+    },
   ],
 }
 
@@ -153,10 +164,48 @@ describe('SignatureStatusStep', () => {
 
     // Signers whose status is neither 'pending' nor 'done' show a status label.
     expect(screen.getByText(/Dan Declined/)).toBeInTheDocument()
-    expect(screen.getByText(/\(declined\)/)).toBeInTheDocument()
 
     // The already-signed accessor is not listed as outstanding.
     expect(screen.queryByText('Alice Accessor')).not.toBeInTheDocument()
+  })
+
+  it('dates the decline and quotes the reason the signer gave', async () => {
+    server.use(
+      http.get(statusEndpoint, () =>
+        HttpResponse.json(partiallySignedStatus, { status: 200 }),
+      ),
+    )
+    renderComponent()
+
+    // Formatted through the shared date helper so the assertion follows the user's timezone
+    // preference rather than pinning a rendering of the timestamp.
+    await screen.findByText(`(declined ${formatDate(dayjs(DECLINED_ON))})`, {
+      exact: false,
+    })
+
+    const reason = screen.getByText(DECLINED_REASON)
+    expect(reason.tagName).toBe('BLOCKQUOTE')
+  })
+
+  it('omits the decline details for signers who have not declined', async () => {
+    server.use(
+      http.get(statusEndpoint, () =>
+        HttpResponse.json(
+          {
+            ...partiallySignedStatus,
+            signerStatus: partiallySignedStatus.signerStatus!.filter(
+              signer => signer.status !== 'declined',
+            ),
+          } satisfies EDucSignatureStatus,
+          { status: 200 },
+        ),
+      ),
+    )
+    renderComponent()
+
+    await screen.findByText(/still waiting for signatures from/i)
+    expect(screen.queryByText(DECLINED_REASON)).not.toBeInTheDocument()
+    expect(screen.queryByText(/\(declined/)).not.toBeInTheDocument()
   })
 
   it('shows the "All signatures collected" message when every signer is done', async () => {

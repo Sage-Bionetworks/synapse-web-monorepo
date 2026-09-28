@@ -10,6 +10,7 @@ import {
 } from '@/testutils/ReactQueryMockUtils'
 import {
   AccessRequestSummary,
+  AccessRequestSummaryStatusEnum,
   SynapseClientError,
 } from '@sage-bionetworks/synapse-client'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
@@ -56,6 +57,44 @@ function renderWithRouter() {
   )
   return render(<RouterProvider router={router} />)
 }
+
+/**
+ * Every status the list endpoint can return, mapped to the text the table displays for it, or
+ * `null` when the request is not in-flight and must be filtered out of the table entirely.
+ *
+ * Typing this as a total `Record` over the enum makes adding a new status a type error here, so a
+ * new case can't silently fall through the table's filter.
+ */
+const STATUS_EXPECTATIONS: Record<
+  AccessRequestSummaryStatusEnum,
+  string | null
+> = {
+  created: null,
+  draft: null,
+  sent: 'Signatures pending',
+  delivered: 'Signatures pending',
+  completed: 'Ready to submit',
+  declined: 'Signature declined',
+  voided: null,
+  correct: null,
+  submitted: null,
+  approved: null,
+  rejected: null,
+  cancelled: null,
+}
+
+const statusesWithExpectation = Object.entries(STATUS_EXPECTATIONS) as [
+  AccessRequestSummaryStatusEnum,
+  string | null,
+][]
+
+const inFlightStatuses = statusesWithExpectation.filter(
+  (entry): entry is [AccessRequestSummaryStatusEnum, string] =>
+    entry[1] !== null,
+)
+const nonInFlightStatuses = statusesWithExpectation
+  .filter(([, display]) => display === null)
+  .map(([status]) => status)
 
 describe('InFlightEDucSignaturesTable', () => {
   const {
@@ -129,6 +168,15 @@ describe('InFlightEDucSignaturesTable', () => {
           signaturesAcquired: 5,
           signaturesRequested: 5,
         },
+        {
+          requestId: '13',
+          accessRequirementId: 'ar-4',
+          accessRequirementName: 'Requirement D',
+          isEDuc: true,
+          status: 'declined',
+          signaturesAcquired: 1,
+          signaturesRequested: 5,
+        },
       ])
     })
 
@@ -142,11 +190,88 @@ describe('InFlightEDucSignaturesTable', () => {
     expect(columnHeaders[3]).toHaveTextContent('Actions')
 
     const rows = within(table).getAllByRole('row')
-    expect(rows).toHaveLength(4)
+    expect(rows).toHaveLength(5)
     const row1Cells = within(rows[1]).getAllByRole('cell')
     expect(row1Cells[0]).toHaveTextContent('Requirement A')
     expect(row1Cells[1]).toHaveTextContent('2 of 5')
     expect(row1Cells[2]).toHaveTextContent('Signatures pending')
+
+    const declinedRowCells = within(rows[4]).getAllByRole('cell')
+    expect(declinedRowCells[0]).toHaveTextContent('Requirement D')
+    expect(declinedRowCells[1]).toHaveTextContent('1 of 5')
+    expect(declinedRowCells[2]).toHaveTextContent('Signature declined')
+  })
+
+  it.each(inFlightStatuses)(
+    'renders a request with status "%s" as "%s"',
+    (status, expectedDisplay) => {
+      renderWithRouter()
+      act(() => {
+        setListSuccess([
+          {
+            requestId: '10',
+            accessRequirementId: 'ar-1',
+            accessRequirementName: 'Requirement A',
+            isEDuc: true,
+            status,
+            signaturesAcquired: 2,
+            signaturesRequested: 5,
+          },
+        ])
+      })
+
+      const dataRow = within(screen.getByRole('table')).getAllByRole('row')[1]
+      expect(within(dataRow).getAllByRole('cell')[2]).toHaveTextContent(
+        expectedDisplay,
+      )
+    },
+  )
+
+  it.each(nonInFlightStatuses)(
+    'filters out a request with status "%s"',
+    status => {
+      const { container } = renderWithRouter()
+      act(() => {
+        setListSuccess([
+          {
+            requestId: '10',
+            accessRequirementId: 'ar-1',
+            accessRequirementName: 'Requirement A',
+            isEDuc: true,
+            status,
+          },
+        ])
+      })
+
+      expect(container).toBeEmptyDOMElement()
+    },
+  )
+
+  it('keeps a declined request actionable so the user can modify or cancel it', () => {
+    renderWithRouter()
+    act(() => {
+      setListSuccess([
+        {
+          requestId: '10',
+          accessRequirementId: 'ar-1',
+          accessRequirementName: 'Requirement A',
+          isEDuc: true,
+          status: 'declined',
+          signaturesAcquired: 1,
+          signaturesRequested: 5,
+        },
+      ])
+    })
+
+    expect(
+      screen.getByRole('link', { name: 'Review Signatures and Submit' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Modify Request' }),
+    ).not.toBeDisabled()
+    expect(
+      screen.getByRole('button', { name: 'Cancel Request' }),
+    ).toBeInTheDocument()
   })
 
   it('links "Review Signatures and Submit" to the deep-link signature route', () => {
