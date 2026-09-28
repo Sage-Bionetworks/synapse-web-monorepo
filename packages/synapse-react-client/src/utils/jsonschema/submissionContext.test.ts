@@ -227,20 +227,39 @@ describe('setSchemaProperty', () => {
     expect(next.allOf).toBeUndefined()
   })
 
-  it('inserts a new RENEWAL_ONLY property into a fresh allOf branch', () => {
-    const schema: RJSFSchema = { type: 'object', properties: {} }
+  it('inserts a new RENEWAL_ONLY property into a fresh allOf branch, alongside existing allOf entries', () => {
+    const baseRef = { $ref: 'org.example-Base-1.0.0' }
+    const schema: RJSFSchema = {
+      type: 'object',
+      properties: {},
+      allOf: [baseRef],
+    }
     const next = setSchemaProperty(
       schema,
       'summaryOfUse',
       { type: 'string' },
       'RENEWAL_ONLY',
     )
-    expect(next.properties).toMatchObject({
-      [SUBMISSION_CONTEXT_PROPERTY]: expect.anything(),
-    })
-    expect(next.required).toContain(SUBMISSION_CONTEXT_PROPERTY)
+    expect(next.allOf).toHaveLength(2)
+    expect(next.allOf?.[0]).toEqual(baseRef)
+    expect(next.properties).toEqual({})
     expect(resolveSchemaPropertyAtPointer(next, '/summaryOfUse')).toMatchObject(
       { context: 'RENEWAL_ONLY', subSchema: { type: 'string' } },
+    )
+  })
+
+  it('keeps unrelated allOf entries when moving the last conditional property back to ALWAYS', () => {
+    const baseRef = { $ref: 'org.example-Base-1.0.0' }
+    const conditional = setSchemaProperty(
+      { type: 'object', properties: {}, allOf: [baseRef] },
+      'summaryOfUse',
+      { type: 'string' },
+      'RENEWAL_ONLY',
+    )
+    const next = setSchemaPropertyContext(conditional, 'summaryOfUse', 'ALWAYS')
+    expect(next.allOf).toEqual([baseRef])
+    expect(resolveSchemaPropertyAtPointer(next, '/summaryOfUse')).toMatchObject(
+      { context: 'ALWAYS' },
     )
   })
 

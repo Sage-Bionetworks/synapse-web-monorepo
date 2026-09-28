@@ -9,7 +9,6 @@ import { useCallback, useMemo, useState } from 'react'
 import {
   ResolvedSchemaProperty,
   SchemaPropertyContext,
-  SUBMISSION_CONTEXT_PROPERTY,
 } from '@/utils/jsonschema/submissionContext'
 import {
   bindField,
@@ -27,24 +26,13 @@ import {
   schemaPropertyKeys,
   updateProperty,
 } from './formTemplateDraftState'
+import { createNewFormTemplateSchema } from './formTemplateSchema'
 import {
   createEditableStep,
   EditableFormTemplateStep,
   toEditableSteps,
   toFormTemplateSteps,
 } from './utils'
-
-export const EMPTY_SCHEMA: RJSFSchema = {
-  $schema: 'http://json-schema.org/draft-07/schema#',
-  type: 'object',
-  properties: {
-    [SUBMISSION_CONTEXT_PROPERTY]: {
-      type: 'string',
-      enum: ['REQUEST', 'RENEWAL'],
-    },
-  },
-  required: [SUBMISSION_CONTEXT_PROPERTY],
-}
 
 /** The editing state and mutations for an in-progress FormTemplate draft. */
 export interface FormTemplateDraft {
@@ -80,7 +68,7 @@ export function useFormTemplateDraft(
 ): FormTemplateDraft {
   const [name, setName] = useState(initialTemplate?.name ?? '')
   const [draft, setDraft] = useState<FormTemplateDraftState>(() => ({
-    jsonSchema: initialJsonSchema ?? { ...EMPTY_SCHEMA },
+    jsonSchema: initialJsonSchema ?? createNewFormTemplateSchema(),
     steps: initialTemplate
       ? toEditableSteps(initialTemplate.steps)
       : [createEditableStep()],
