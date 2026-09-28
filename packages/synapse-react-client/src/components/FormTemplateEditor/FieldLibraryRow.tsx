@@ -48,11 +48,9 @@ export function FieldLibraryRow({
     <Paper
       ref={ref}
       variant="outlined"
-      sx={{
-        p: 1.25,
-        transition: 'opacity 120ms',
-        opacity: isDragging ? 'var(--synapse-drag-source-opacity)' : 1,
-      }}
+      className={styles.dragSource}
+      data-dragging={isDragging}
+      sx={{ p: 1.25 }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
         <Box

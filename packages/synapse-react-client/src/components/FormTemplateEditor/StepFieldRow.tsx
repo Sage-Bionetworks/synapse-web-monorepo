@@ -103,9 +103,10 @@ export function StepFieldRow({
     <Paper
       ref={ref}
       variant="outlined"
+      className={styles.dragSource}
+      data-dragging={isDragging}
       sx={{
         p: 1,
-        opacity: isDragging ? 'var(--synapse-drag-source-opacity)' : 1,
         backgroundColor: 'action.hover',
         borderColor: isUnresolved ? 'error.main' : undefined,
       }}
