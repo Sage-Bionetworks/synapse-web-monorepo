@@ -1,5 +1,5 @@
-import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Meta, StoryObj } from '@storybook/react-vite'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { fn } from 'storybook/test'
 import {
   mockClinicalTemplate,
@@ -11,8 +11,18 @@ import {
 } from '@/mocks/accessRequirement/mockJsonSchemas'
 import { getFormTemplateHandlers } from '@/mocks/msw/handlers/formTemplateHandlers'
 import { getJsonSchemaListingHandlers } from '@/mocks/msw/handlers/jsonSchemaListingHandlers'
-import { getRegisteredSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
+import {
+  getCreateSchemaHandlers,
+  getRegisteredSchemaHandlers,
+} from '@/mocks/msw/handlers/schemaHandlers'
+import { JSONSchema7 } from 'json-schema'
 import { FormTemplateEditor } from './FormTemplateEditor'
+
+// Shared by the create and fetch handlers so a schema version registered on save can be loaded.
+const registeredSchemas: JSONSchema7[] = [
+  mockGenomicsSchema,
+  mockClinicalSchema,
+]
 
 const meta: Meta<typeof FormTemplateEditor> = {
   title: 'Governance/JSON Schema AR/Form Template Editor',
@@ -20,14 +30,18 @@ const meta: Meta<typeof FormTemplateEditor> = {
   parameters: {
     stack: 'mock',
     msw: {
-      handlers: [
-        ...getFormTemplateHandlers(MOCK_REPO_ORIGIN),
-        ...getRegisteredSchemaHandlers(MOCK_REPO_ORIGIN, [
-          mockGenomicsSchema,
-          mockClinicalSchema,
-        ]),
-        ...getJsonSchemaListingHandlers(MOCK_REPO_ORIGIN).versions,
-      ],
+      handlers: {
+        formTemplate: getFormTemplateHandlers(MOCK_REPO_ORIGIN),
+        createSchema: getCreateSchemaHandlers(
+          MOCK_REPO_ORIGIN,
+          registeredSchemas,
+        ),
+        registeredSchema: getRegisteredSchemaHandlers(
+          MOCK_REPO_ORIGIN,
+          registeredSchemas,
+        ),
+        schemaVersions: getJsonSchemaListingHandlers(MOCK_REPO_ORIGIN).versions,
+      },
     },
   },
   args: {
