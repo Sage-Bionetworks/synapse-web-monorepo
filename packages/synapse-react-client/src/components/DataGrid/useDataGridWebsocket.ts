@@ -1,4 +1,7 @@
-import { GridModel } from '@/components/DataGrid/DataGridTypes'
+import {
+  GridModel,
+  GridModelSnapshot,
+} from '@/components/DataGrid/DataGridTypes'
 import { useCRDTModelView } from '@/components/DataGrid/useCRDTModelView'
 import { normalizeWebsocketError } from '@/components/DataGrid/utils/normalizeWebsocketError'
 import { useCallback, useEffect, useMemo, useReducer, useRef } from 'react'
@@ -7,13 +10,22 @@ import { useEstablishWebsocketConnection } from '@/synapse-queries/grid/useEstab
 import { useDocumentVisibility } from '@react-hookz/web'
 
 // State type
-interface WebSocketState {
+export interface WebSocketState {
   model: GridModel | null
   /**
-   * True if the WebSocket has finished the initial sync and can process CRDT updates.
-   * Corresponds to the `GRID_READY` action.
+   * True if the WebSocket has finished a sync exchange on the current connection
+   * and can process CRDT updates. Set by `GRID_READY`; cleared on disconnect until
+   * `hasCompletedInitialLoad` is set, since a drop mid-replay leaves the model
+   * holding only part of the server's data.
    */
   hasCompletedInitialSync: boolean
+  /**
+   * True once the first connection for the current session has finished replaying
+   * the server's data into the model. A one-way transition: later sync activity
+   * never takes it back to false, and only connecting to a different
+   * session/replica resets it.
+   */
+  hasCompletedInitialLoad: boolean
   /**
    * True while a clock-sync exchange is in progress. Set on every outgoing
    * `synchronize-clock` and cleared on `ResponseComplete`, which the server
@@ -33,7 +45,7 @@ interface WebSocketState {
 }
 
 // Action types
-type WebSocketAction =
+export type WebSocketAction =
   | {
       type: 'CONNECT_REQUESTED'
       payload: { replicaId: number; sessionId: string; attemptId: number }
@@ -42,6 +54,7 @@ type WebSocketAction =
   | { type: 'CONNECTION_OPENED' }
   | { type: 'CONNECTION_CLOSED' }
   | { type: 'GRID_READY' }
+  | { type: 'INITIAL_LOAD_COMPLETE' }
   | { type: 'SYNC_STARTED' }
   | { type: 'SYNC_ENDED' }
   | { type: 'MODEL_CREATED'; payload: GridModel }
@@ -49,7 +62,7 @@ type WebSocketAction =
   | { type: 'WEBSOCKET_ERROR'; payload: unknown }
 
 // Reducer function
-function websocketReducer(
+export function websocketReducer(
   state: WebSocketState,
   action: WebSocketAction,
 ): WebSocketState {
@@ -68,6 +81,9 @@ function websocketReducer(
         },
         hasCompletedInitialSync: isSameConnection
           ? state.hasCompletedInitialSync
+          : false,
+        hasCompletedInitialLoad: isSameConnection
+          ? state.hasCompletedInitialLoad
           : false,
         isSyncing: false,
         model: isSameConnection ? state.model : null,
@@ -98,12 +114,26 @@ function websocketReducer(
         isConnected: false,
         isConnecting: false,
         isSyncing: false,
+        // A drop before the initial load finishes invalidates the completed-exchange
+        // signal: the model may hold only the part of the data that arrived so far.
+        // Clearing it makes the readiness gate wait for the reconnect's replay
+        // instead of latching onto a partially loaded model. Once the load is done,
+        // drops are ordinary reconnects and the signal must survive them.
+        hasCompletedInitialSync: state.hasCompletedInitialLoad
+          ? state.hasCompletedInitialSync
+          : false,
       }
 
     case 'GRID_READY':
       return {
         ...state,
         hasCompletedInitialSync: true,
+      }
+
+    case 'INITIAL_LOAD_COMPLETE':
+      return {
+        ...state,
+        hasCompletedInitialLoad: true,
       }
 
     case 'SYNC_STARTED':
@@ -145,6 +175,7 @@ function websocketReducer(
 export const initialWebSocketState: WebSocketState = {
   model: null,
   hasCompletedInitialSync: false,
+  hasCompletedInitialLoad: false,
   isSyncing: false,
   isConnected: false,
   isConnecting: false,
@@ -153,6 +184,47 @@ export const initialWebSocketState: WebSocketState = {
   connectionAttemptId: null,
   connectionError: null,
   websocketError: null,
+}
+
+/**
+ * Checks if the model snapshot contains the minimum data required for rendering (columns and rows).
+ */
+function isModelRenderable(
+  model: GridModel | null,
+  modelSnapshot: GridModelSnapshot | null | undefined,
+) {
+  if (!model?.api.getSnapshot() || !modelSnapshot) {
+    return false
+  }
+  const { columnNames, columnOrder, rows } = modelSnapshot
+  const columnsReady = columnNames.length >= 1
+  const orderReady = columnOrder.length >= 1
+  const rowsReady = rows.length >= 0
+  return columnsReady && orderReady && rowsReady
+}
+
+/**
+ * Whether the server has finished replaying its data into the model, so the grid
+ * can be shown and edited. Drives the one-way `INITIAL_LOAD_COMPLETE` transition.
+ *
+ * Returns false once `hasCompletedInitialLoad` is set, so callers can dispatch
+ * unconditionally on a true result without re-entering the transition.
+ *
+ * `hasCompletedInitialSync` alone is not sufficient: the server may complete the
+ * snapshot request before the client has fetched and decoded the snapshot, which
+ * leaves that flag true while the rows are still arriving. Requiring an idle sync
+ * exchange holds the transition until the replay drains.
+ */
+export function isInitialLoadReady(
+  state: WebSocketState,
+  modelSnapshot: GridModelSnapshot | null | undefined,
+): boolean {
+  return (
+    !state.hasCompletedInitialLoad &&
+    state.hasCompletedInitialSync &&
+    !state.isSyncing &&
+    isModelRenderable(state.model, modelSnapshot)
+  )
 }
 
 /**
@@ -342,24 +414,17 @@ export function useDataGridWebSocket(options?: UseDataGridWebSocketOptions) {
     }
   }, [state.websocketInstance])
 
-  /**
-   * Checks if the model snapshot contains the minimum data required for rendering (columns and rows).
-   */
-  function isModelRenderable(model: GridModel | null) {
-    if (!model?.api.getSnapshot() || !modelSnapshot) {
-      return false
+  useEffect(() => {
+    if (isInitialLoadReady(state, modelSnapshot)) {
+      dispatch({ type: 'INITIAL_LOAD_COMPLETE' })
     }
-    const { columnNames, columnOrder, rows } = modelSnapshot
-    const columnsReady = columnNames.length >= 1
-    const orderReady = columnOrder.length >= 1
-    const rowsReady = rows.length >= 0
-    return columnsReady && orderReady && rowsReady
-  }
+  }, [state, modelSnapshot])
 
   return {
     isConnected: state.isConnected,
     websocketInstance: state.websocketInstance,
     hasCompletedInitialSync: state.hasCompletedInitialSync,
+    hasCompletedInitialLoad: state.hasCompletedInitialLoad,
     isSyncing: state.isSyncing,
     model: state.model,
     modelSnapshot,
@@ -368,6 +433,5 @@ export function useDataGridWebSocket(options?: UseDataGridWebSocketOptions) {
     errorEstablishingWebsocketConnection:
       state.connectionError ?? errorEstablishingWebsocketConnection,
     websocketError: state.websocketError,
-    hasSufficientData: isModelRenderable(state.model),
   }
 }
