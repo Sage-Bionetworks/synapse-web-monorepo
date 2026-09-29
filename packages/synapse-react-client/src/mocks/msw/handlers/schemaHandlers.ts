@@ -77,3 +77,33 @@ export function getRegisteredSchemaHandlers(
     ),
   ]
 }
+
+/**
+ * Mocks the `CreateSchemaRequest` async job on the generic asynchronous job endpoint. Registers
+ * each created schema under its requested `$id` by appending it to `registeredSchemas`; pass the
+ * same array to {@link getRegisteredSchemaHandlers} so newly created versions can be fetched.
+ */
+export function getCreateSchemaHandlers(
+  backendOrigin: string,
+  registeredSchemas: JSONSchema7[],
+) {
+  return generateAsyncJobHandlers(
+    dispatchEntry(
+      'org.sagebionetworks.repo.model.schema.CreateSchemaRequest',
+      request => {
+        const { schema } = request
+        const $id = schema?.$id
+        if (!schema || !$id) {
+          throw new Error('CreateSchemaRequest schema must declare an $id.')
+        }
+        registeredSchemas.push(schema as JSONSchema7)
+        return {
+          concreteType:
+            'org.sagebionetworks.repo.model.schema.CreateSchemaResponse',
+          newVersionInfo: { $id },
+        }
+      },
+    ),
+    { backendOrigin },
+  )
+}
