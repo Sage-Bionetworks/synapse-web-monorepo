@@ -33,7 +33,7 @@ export class MissingFormTemplateRefError extends Error {
  * The FormTemplate version in effect when the submission was created, as opposed to the one its
  * Access Requirement currently references.
  */
-export function useSubmissionFormTemplateRef(
+export function getSubmissionFormTemplateRef(
   submission: Submission | undefined,
 ): FormTemplateReference | undefined {
   return (submission as SubmissionWithFormTemplateRef | undefined)
@@ -59,7 +59,7 @@ export function useGeneratedSubmissionForm(
   submission: Submission | undefined,
 ): GeneratedSubmissionFormResult {
   const hasSchemaData = submission?.schemaData != null
-  const templateRef = useSubmissionFormTemplateRef(submission)
+  const templateRef = getSubmissionFormTemplateRef(submission)
 
   const templateQuery = useGetFormTemplateVersion(
     hasSchemaData ? templateRef?.templateId : undefined,

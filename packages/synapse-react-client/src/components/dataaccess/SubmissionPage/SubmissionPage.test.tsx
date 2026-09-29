@@ -782,7 +782,7 @@ describe('Submission Page tests', () => {
       ).not.toBeInTheDocument()
     })
 
-    it('shows an error in the form responses section, and keeps review actions, when the template cannot be loaded', async () => {
+    it('shows an error alongside the answers listed by key, and keeps review actions, when the template cannot be loaded', async () => {
       serveSubmission({
         ...mockSchemaDataSubmission,
         formTemplateRef: { templateId: 'missing', templateVersionNumber: 1 },
@@ -796,6 +796,11 @@ describe('Submission Page tests', () => {
         await screen.findByRole('heading', { name: 'Form Responses' })
       ).closest('section')!
       await within(formResponses).findByRole('alert')
+      const otherResponses = within(formResponses)
+        .getByRole('heading', { name: OTHER_RESPONSES_TITLE })
+        .closest('section')!
+      within(otherResponses).getByText('projectTitle')
+      within(otherResponses).getByText('Longitudinal Biomarker Study')
       screen.getByRole('button', { name: 'Approve' })
       screen.getByRole('button', { name: 'Reject' })
     })
@@ -824,6 +829,23 @@ describe('Submission Page tests', () => {
           }),
         ),
       )
+    })
+
+    it('opens the rejection modal for a schema-driven submission the same way as a ManagedACT submission', async () => {
+      renderComponent({
+        submissionId: mockSchemaDataSubmission.id,
+        isReviewer: true,
+      })
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Reject' }),
+      )
+
+      expect(mockRejectDataAccessRequestModal).toHaveBeenLastRenderedWithProps({
+        open: true,
+        submissionId: mockSchemaDataSubmission.id,
+        onClose: expect.anything(),
+      })
     })
   })
 })
