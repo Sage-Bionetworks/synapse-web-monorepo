@@ -174,4 +174,35 @@ describe('FormTemplatePreview', () => {
     // Previously-active index 1 no longer exists; should fall back to the last real step.
     expect(getFieldLabel('Institution')).toBeInTheDocument()
   })
+
+  it('renders a multi-choice field as a multi-select that accumulates selections', async () => {
+    const user = userEvent.setup()
+    renderPreview({
+      template: template([
+        {
+          title: 'Basics',
+          fields: [{ schemaPath: '/colors', uiDefinition: {} }],
+        },
+      ]),
+      jsonSchema: {
+        ...schema,
+        properties: {
+          ...schema.properties,
+          colors: {
+            type: 'array',
+            title: 'Colors',
+            items: { type: 'string', enum: ['Red', 'Green', 'Blue'] },
+            uniqueItems: true,
+          },
+        },
+      },
+    })
+    const combobox = screen.getByRole('combobox')
+    await user.click(combobox)
+    await user.click(screen.getByRole('option', { name: 'Green' }))
+    await user.click(combobox)
+    await user.click(screen.getByRole('option', { name: 'Red' }))
+    expect(screen.getByRole('button', { name: 'Green' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Red' })).toBeInTheDocument()
+  })
 })

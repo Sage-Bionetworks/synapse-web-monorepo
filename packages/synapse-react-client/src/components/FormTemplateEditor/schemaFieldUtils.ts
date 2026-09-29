@@ -28,11 +28,14 @@ export function detectFieldType(
   if (!prop || typeof prop !== 'object') return null
   if (prop.format === 'synapse-filehandle-id') return 'file'
   if (prop.type === 'string' && Array.isArray(prop.enum)) return 'choice'
+  // RJSF renders an array as a multi-select only when `uniqueItems` is set; without it the
+  // property renders as a repeatable list, which the simple editor does not author.
+  const items = prop.items as RJSFSchema | undefined
   if (
     prop.type === 'array' &&
-    !Array.isArray(prop.items) &&
-    (prop.items as RJSFSchema | undefined)?.type === 'string' &&
-    Array.isArray((prop.items as RJSFSchema | undefined)?.enum)
+    prop.uniqueItems === true &&
+    items?.type === 'string' &&
+    Array.isArray(items.enum)
   ) {
     return 'multiChoice'
   }
@@ -47,13 +50,10 @@ export function fieldTypeLabel(type: SimpleFieldType | null): string {
   return FIELD_TYPE_OPTIONS.find(opt => opt.value === type)?.label ?? 'Advanced'
 }
 
-/** The enum options an existing 'choice' or 'multiChoice' property declares, if any. */
-function existingEnumOptions(prev: RJSFSchema): string[] | undefined {
-  if (Array.isArray(prev.enum)) return prev.enum as string[]
-  const items = !Array.isArray(prev.items)
-    ? (prev.items as RJSFSchema)
-    : undefined
-  return Array.isArray(items?.enum) ? (items.enum as string[]) : undefined
+/** The options a 'choice' (`enum`) or 'multiChoice' (`items.enum`) property declares; empty if none. */
+export function choiceOptions(prop: RJSFSchema): string[] {
+  const options = prop.enum ?? (prop.items as RJSFSchema | undefined)?.enum
+  return Array.isArray(options) ? (options as string[]) : []
 }
 
 /** Build a fresh schema body for the given simple type, preserving label and help text. */
@@ -65,6 +65,9 @@ export function applyFieldType(
     title: prev.title,
     description: prev.description,
   }
+  const existingChoices = choiceOptions(prev)
+  // A choice field needs at least one option to be answerable.
+  const choices = existingChoices.length > 0 ? existingChoices : ['Option 1']
   switch (type) {
     case 'text':
       next.type = 'string'
@@ -77,14 +80,11 @@ export function applyFieldType(
       break
     case 'choice':
       next.type = 'string'
-      next.enum = existingEnumOptions(prev) ?? ['Option 1']
+      next.enum = choices
       break
     case 'multiChoice':
       next.type = 'array'
-      next.items = {
-        type: 'string',
-        enum: existingEnumOptions(prev) ?? ['Option 1'],
-      }
+      next.items = { type: 'string', enum: choices }
       next.uniqueItems = true
       break
     case 'file':
