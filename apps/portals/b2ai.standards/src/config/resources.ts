@@ -16,7 +16,7 @@ const tableInfo: TableInfoMap = {
   },
   DataSet_denormalized: {
     name: 'DataSet_denormalized',
-    id: 'syn68258237.15', // current version of DataSet_denormalized
+    id: 'syn68258237.28', // current version of DataSet_denormalized
   },
   DataSubstrate: { name: 'DataSubstrate', id: 'syn63096834.32' },
   // DataTopic: { name: 'DataTopic', id: 'syn63096835' },
@@ -125,7 +125,7 @@ export const DATASET_DENORMALIZED_COLUMN_CONSTS: ColumnConsts = {
   DESCRIPTION: 'description',
   CATEGORY: 'category',
   DATA_URL: 'DataURL',
-  DATASHEET_URL: 'DatasheetURL',
+  ROCRATE_URL: 'ROCrateURL',
   DOCUMENTATION_URL: 'DocumentationURL',
   IS_PUBLIC: 'isPublic',
   PRODUCED_BY: 'producedBy',
