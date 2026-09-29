@@ -63,10 +63,13 @@ export function displaySynchronizeResultToast(
       displayToast('Successfully synchronized changes.', 'success')
     }
   } else {
+    // Collapsed to distinct messages so a failure affecting many rows reads once, which
+    // also makes the message itself a unique, stable key
+    const distinctErrorMessages = [...new Set(result.errorMessages)]
     displayToast(
       <ul>
-        {result.errorMessages.map((msg, index) => (
-          <li key={index}>{msg}</li>
+        {distinctErrorMessages.map(msg => (
+          <li key={msg}>{msg}</li>
         ))}
       </ul>,
       'warning',

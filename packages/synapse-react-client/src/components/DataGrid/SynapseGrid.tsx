@@ -58,11 +58,11 @@ import CurieAvatarHead from '@/assets/mui_components/CurieAvatarHead'
 // Stable reference for renders with no model snapshot, so column memos don't recompute
 const EMPTY_COLUMN_NAMES: string[] = []
 
-export type SynapseGridProps = {
+export type SynapseGridProps = Readonly<{
   agentRegistrationId?: string
   showDebugInfo?: boolean
   ref?: Ref<SynapseGridHandle>
-}
+}>
 
 export type SynapseGridHandle = {
   initializeGrid: (request: CreateGridRequest) => void

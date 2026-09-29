@@ -4,9 +4,9 @@ import { getSyncButtonLabels } from '@/components/DataGrid/utils/gridSyncMessage
 import { CloudDownloadTwoTone, CloudSyncTwoTone } from '@mui/icons-material'
 import { Skeleton, Tooltip } from '@mui/material'
 
-export type SyncGridWithSourceButtonProps = {
+export type SyncGridWithSourceButtonProps = Readonly<{
   gridSourceSync: GridSourceSync
-}
+}>
 
 /**
  * Applies this session's changes to its source entity. When the source already has updates

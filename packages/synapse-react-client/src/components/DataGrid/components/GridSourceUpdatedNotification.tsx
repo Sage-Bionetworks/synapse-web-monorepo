@@ -8,9 +8,9 @@ export const SOURCE_UPDATED_TITLE = 'Changes Available'
 export const SOURCE_UPDATED_BANNER_TEXT =
   'Import the latest schema changes before submitting.'
 
-export type GridSourceUpdatedNotificationProps = {
+export type GridSourceUpdatedNotificationProps = Readonly<{
   gridSourceSync: GridSourceSync
-}
+}>
 
 /**
  * Escalating prompt to import updates that were made to a grid session's source after the

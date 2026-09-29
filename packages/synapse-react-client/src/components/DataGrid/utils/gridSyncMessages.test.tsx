@@ -107,6 +107,20 @@ describe('displaySynchronizeResultToast', () => {
     expect(screen.getByText('row 1 failed')).toBeInTheDocument()
     expect(screen.getByText('row 2 failed')).toBeInTheDocument()
   })
+
+  it('lists a message affecting several rows only once', () => {
+    const result = mockSynchronizeGridResponse({
+      errorMessages: ['Invalid value', 'Invalid value', 'Missing column'],
+    })
+    displaySynchronizeResultToast(result, 'PULL_PUSH')
+
+    const [content] = mockDisplayToast.mock.calls[0]
+    render(<>{content}</>)
+    expect(screen.getAllByRole('listitem').map(li => li.textContent)).toEqual([
+      'Invalid value',
+      'Missing column',
+    ])
+  })
 })
 
 describe('displayTableUpdateResultToast', () => {
