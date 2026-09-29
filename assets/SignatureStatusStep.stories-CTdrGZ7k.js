@@ -1,0 +1,15 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{_ as t,i as n,t as r}from"./core-CI8DLeHF.js";import{F as i,t as a}from"./dist-C7SMz8Oe.js";import{Ln as o,Tt as s,Un as c,Ut as l,zn as u}from"./synapse-client-C0WJQHYT.js";import{i as d,t as f}from"./mock_user_profile-DpGVXyMi.js";import{i as p,u as m}from"./mockAccessRequirements-DG_Pt6wk.js";import{At as h,Ot as g,Vt as _,a as v,d as y,f as b,jt as x,kt as S,o as C,zt as w}from"./iframe-Dpz3FT5Y.js";import{n as T,t as E}from"./SignatureStatusStep-B-QwX_qd.js";var D,O,k,A,j,M,N,P,F;e((()=>{p(),x(),_(),S(),b(),C(),d(),o(),c(),a(),r(),T(),D={...m,eDucTemplateId:`template-abc-123`},O={...h,eDucSignatureEnvelopeId:`docusign-envelope-123`},k=n.get(`${u}${s(D.id)}`,()=>t.json(O,{status:200})),A=n.get(`${u}${l(h.id)}`,()=>t.json({ducStatus:`sent`,includesRequestChanges:!0,signerStatus:[{name:`Alice Accessor`,userId:`999`,status:`done`},{name:`Bob Collaborator`,userId:String(f),status:`pending`},{name:`Cara Officer`,status:`pending`},{name:`Dan Declined`,status:`declined`,declinedReason:`The intended data use statement does not match what we agreed on. Please revise section 3 before re-sending.`,declinedOn:`2026-03-15T14:30:00.000Z`}]},{status:200})),j=n.get(`${u}${l(h.id)}`,()=>t.json({ducStatus:`completed`,includesRequestChanges:!0,signerStatus:[{name:`Alice Accessor`,userId:`999`,status:`done`},{name:`Bob Collaborator`,userId:String(f),status:`done`},{name:`Cara Officer`,status:`done`}]},{status:200})),M={title:`Governance/Data Access Request Flow/Managed Access Requirement/Step 2e - Signature Status`,component:E,parameters:{stack:`mock`,chromatic:{viewports:[600,1200]},msw:{handlers:[k,...y(u),...v(u),...w(u),...g(u)]}},args:{managedACTAccessRequirement:D,subjectId:`9876543`,subjectType:i.ENTITY,viewDucHrefOverride:`https://www.rd.usda.gov/sites/default/files/pdf-sample_0.pdf`}},N={name:`Signatures in progress`,parameters:{msw:{handlers:[k,A,...y(u),...v(u),...w(u),...g(u)]}}},P={name:`All signatures collected — ready to submit`,parameters:{msw:{handlers:[k,j,...y(u),...v(u),...w(u),...g(u)]}}},N.parameters={...N.parameters,docs:{...N.parameters?.docs,source:{originalSource:`{
+  name: 'Signatures in progress',
+  parameters: {
+    msw: {
+      handlers: [overrideDarHandler, partiallySignedHandler, ...getUserProfileHandlers(MOCK_REPO_ORIGIN), ...getWikiHandlers(MOCK_REPO_ORIGIN), ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN), ...getDataAccessRequestHandlers(MOCK_REPO_ORIGIN)]
+    }
+  }
+}`,...N.parameters?.docs?.source}}},P.parameters={...P.parameters,docs:{...P.parameters?.docs,source:{originalSource:`{
+  name: 'All signatures collected — ready to submit',
+  parameters: {
+    msw: {
+      handlers: [overrideDarHandler, fullySignedHandler, ...getUserProfileHandlers(MOCK_REPO_ORIGIN), ...getWikiHandlers(MOCK_REPO_ORIGIN), ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN), ...getDataAccessRequestHandlers(MOCK_REPO_ORIGIN)]
+    }
+  }
+}`,...P.parameters?.docs?.source}}},F=[`InProgress`,`AllSignaturesCollected`]}))();export{P as AllSignaturesCollected,N as InProgress,F as __namedExportsOrder,M as default};
