@@ -29,13 +29,17 @@ import {
   resolveSchemaPropertyAtPointer,
 } from '@/utils/jsonschema/submissionContext'
 import { FieldDefinitionDrawer } from './FieldDefinitionDrawer'
+import { FieldValidationErrorAlert } from './FieldValidationErrorAlert'
 import { FieldLibrary } from './FieldLibrary'
 import { FIELD_DRAG_TYPE, readFieldDragData } from './sortableIds'
 import { FormStructurePanel } from './FormStructurePanel'
 import { FormTemplatePreview } from './FormTemplatePreview'
 import { JsonSchemaBodyEditor } from './JsonSchemaBodyEditor'
 import { detectFieldType, fieldTypeLabel } from './schemaFieldUtils'
-import { getFormTemplateSchemaLineage } from './formTemplateSchema'
+import {
+  formatSchema$id,
+  getFormTemplateSchemaLineage,
+} from './formTemplateSchema'
 import { toFormTemplateSteps } from './utils'
 import {
   FormTemplateFieldValidationError,
@@ -182,8 +186,7 @@ export function FormTemplateEditorForm({
           sx={{ mb: 3 }}
         >
           JSON Schema:{' '}
-          {initialTemplate?.schema$id ??
-            `${schemaLineage.organizationName}-${schemaLineage.schemaName}`}
+          {initialTemplate?.schema$id ?? formatSchema$id(schemaLineage)}
           {!initialTemplate && ' (a new version is registered when saved)'}
         </Typography>
 
@@ -245,25 +248,12 @@ export function FormTemplateEditorForm({
         </Accordion>
 
         {validationErrors.length > 0 && (
-          <Alert severity="error" sx={{ mt: 2 }}>
+          <FieldValidationErrorAlert errors={validationErrors}>
             Fix the following before saving:
-            <ul style={{ margin: 0, paddingLeft: '1.25em' }}>
-              {validationErrors.map((e, i) => (
-                <li key={i}>{e.message}</li>
-              ))}
-            </ul>
-          </Alert>
+          </FieldValidationErrorAlert>
         )}
 
-        {saveError && (
-          <Alert severity="error" sx={{ mt: 2 }}>
-            <ul style={{ margin: 0, paddingLeft: '1.25em' }}>
-              {saveError.map((e, i) => (
-                <li key={i}>{e.message}</li>
-              ))}
-            </ul>
-          </Alert>
-        )}
+        {saveError && <FieldValidationErrorAlert errors={saveError} />}
 
         <Divider sx={{ my: 2 }} />
 
