@@ -5,6 +5,7 @@ import {
   FileHandle,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
+import { useMemo } from 'react'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import HtmlPreview from './HtmlPreview/HtmlPreview'
 import PdfPreview from './PdfPreview'
@@ -12,31 +13,28 @@ import { PreviewRendererType } from './PreviewRendererType'
 
 const MAX_FILE_SIZE = 30 * MB
 
-export type FileHandleContentRendererProps = {
+type FileHandleContentProps = {
   /** The file handle whose contents should be downloaded and rendered */
   fileHandle: FileHandle
   /** The association between the file handle and an object which will give the user permission to access the file data */
   fileHandleAssociation: FileHandleAssociation
-  /** Informs how to render the file data */
-  previewType: PreviewRendererType
 }
 
 /**
- * Fetches the content for and renders the contents of a file handle.
- * @param props
- * @returns
+ * Downloads a file handle's contents as text and renders it as sanitized HTML.
  */
-export default function FileHandleContentRenderer(
-  props: FileHandleContentRendererProps,
-) {
-  const { fileHandle, fileHandleAssociation, previewType } = props
+function HtmlPreviewLoader(props: FileHandleContentProps) {
+  const { fileHandle, fileHandleAssociation } = props
 
-  const batchFileRequest: BatchFileRequest = {
-    requestedFiles: [fileHandleAssociation],
-    includePreSignedURLs: true,
-    includeFileHandles: false,
-    includePreviewPreSignedURLs: false,
-  }
+  const batchFileRequest: BatchFileRequest = useMemo(
+    () => ({
+      requestedFiles: [fileHandleAssociation],
+      includePreSignedURLs: true,
+      includeFileHandles: false,
+      includePreviewPreSignedURLs: false,
+    }),
+    [fileHandleAssociation],
+  )
 
   const { data: content, isLoading } = useGetPresignedUrlContent(
     fileHandle,
@@ -48,23 +46,49 @@ export default function FileHandleContentRenderer(
   if (isLoading) {
     return <SynapseSpinner />
   }
-  if (previewType === PreviewRendererType.HTML) {
-    return (
-      <HtmlPreview rawHtml={content!} createdByUserId={fileHandle.createdBy} />
-    )
-  } else if (previewType === PreviewRendererType.PDF) {
-    return (
-      <PdfPreview
-        fileHandle={fileHandle}
-        fileHandleAssociation={fileHandleAssociation}
-      />
-    )
-  } else {
-    if (previewType !== PreviewRendererType.NONE) {
+
+  return (
+    <HtmlPreview rawHtml={content!} createdByUserId={fileHandle.createdBy} />
+  )
+}
+
+export type FileHandleContentRendererProps = FileHandleContentProps & {
+  /** Informs how to render the file data */
+  previewType: PreviewRendererType
+}
+
+/**
+ * Renders the contents of a file handle. Each supported preview type is responsible for retrieving the file data in
+ * whichever form it needs.
+ * @param props
+ * @returns
+ */
+export default function FileHandleContentRenderer(
+  props: FileHandleContentRendererProps,
+) {
+  const { fileHandle, fileHandleAssociation, previewType } = props
+
+  switch (previewType) {
+    case PreviewRendererType.HTML:
+      return (
+        <HtmlPreviewLoader
+          fileHandle={fileHandle}
+          fileHandleAssociation={fileHandleAssociation}
+        />
+      )
+    case PreviewRendererType.PDF:
+      return (
+        <PdfPreview
+          fileHandle={fileHandle}
+          fileHandleAssociation={fileHandleAssociation}
+        />
+      )
+    case PreviewRendererType.NONE:
+      return <></>
+    default:
       console.warn(
         `Rendering a preview of type ${previewType} is not supported in Portals`,
       )
-    }
-    return <></>
+      return <></>
   }
 }
