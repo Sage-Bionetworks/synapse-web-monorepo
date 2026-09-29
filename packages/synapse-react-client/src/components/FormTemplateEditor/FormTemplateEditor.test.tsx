@@ -1,5 +1,11 @@
+import { mockGenomicsTemplate } from '@/mocks/accessRequirement/mockFormTemplates'
+import { mockGenomicsSchema } from '@/mocks/accessRequirement/mockJsonSchemas'
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import { getFormTemplateHandlers } from '@/mocks/msw/handlers/formTemplateHandlers'
+import { getRegisteredSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
+import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import {
   AsynchronousJobStatus,
   CreateSchemaResponse,
@@ -7,8 +13,11 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent, { UserEvent } from '@testing-library/user-event'
+import { JSONSchema7 } from 'json-schema'
 import { FormTemplateEditor } from './FormTemplateEditor'
 import { ACCESS_REQUIREMENT_BASE_SCHEMA_ID } from './formTemplateSchema'
+
+const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
 const postJobSpy = vi.spyOn(
   MOCK_CONTEXT_VALUE.synapseClient.asynchronousJobServicesClient,
@@ -39,10 +48,11 @@ function mockAsyncJobsAsComplete(response: CreateSchemaResponse) {
   getJobSpy.mockResolvedValue(completeStatus)
 }
 
-function renderEditor(onSaved = vi.fn()) {
-  return render(<FormTemplateEditor onSaved={onSaved} />, {
-    wrapper: createWrapper(),
-  })
+function renderEditor(onSaved = vi.fn(), templateId?: string) {
+  return render(
+    <FormTemplateEditor templateId={templateId} onSaved={onSaved} />,
+    { wrapper: createWrapper() },
+  )
 }
 
 /** Create a field via the library's "New" button; opens its drawer. */
@@ -56,8 +66,17 @@ function getKeyField() {
 }
 
 describe('FormTemplateEditor', () => {
+  beforeAll(() => server.listen())
+  afterAll(() => server.close())
+
   beforeEach(() => {
     vi.clearAllMocks()
+    server.use(
+      ...getFormTemplateHandlers(REPO_ENDPOINT),
+      ...getRegisteredSchemaHandlers(REPO_ENDPOINT, [
+        mockGenomicsSchema as JSONSchema7,
+      ]),
+    )
     // The live preview also registers throwaway draft schema versions and generates a preview
     // in the background; resolve every async job the same way so it never hangs the test.
     const schemaCreationResponse: CreateSchemaResponse = {
@@ -68,6 +87,8 @@ describe('FormTemplateEditor', () => {
     mockAsyncJobsAsComplete(schemaCreationResponse)
     listSchemaVersionsSpy.mockResolvedValue({ page: [] })
   })
+
+  afterEach(() => server.resetHandlers())
 
   it('derives the property key from the question label until it is overridden', async () => {
     const user = userEvent.setup()
@@ -202,8 +223,7 @@ describe('FormTemplateEditor', () => {
 
   it('blocks saving and shows an error when a field references a removed schema property', async () => {
     const user = userEvent.setup()
-    const onSaved = vi.fn()
-    renderEditor(onSaved)
+    renderEditor()
 
     await createField(user)
     await user.click(screen.getByRole('button', { name: 'Close field editor' }))
@@ -241,7 +261,69 @@ describe('FormTemplateEditor', () => {
     expect(
       screen.getByRole('button', { name: 'Create Template' }),
     ).toBeDisabled()
-    expect(onSaved).not.toHaveBeenCalled()
-    expect(createTemplateSpy).not.toHaveBeenCalled()
+  })
+
+  it('opens an existing template with its registered schema, and saves a changed schema as the next major version in its lineage with the base $ref kept', async () => {
+    const user = userEvent.setup()
+    const onSaved = vi.fn()
+    listSchemaVersionsSpy.mockResolvedValue({
+      page: [{ semanticVersion: '1.0.0' }],
+    })
+    renderEditor(onSaved, mockGenomicsTemplate.id)
+
+    expect(screen.getByRole('progressbar')).toBeInTheDocument()
+    await screen.findByRole('heading', { name: 'Edit Form Template' })
+    expect(
+      screen.getByText(`JSON Schema: ${mockGenomicsSchema.$id}`),
+    ).toBeVisible()
+
+    await createField(user)
+    await user.click(screen.getByRole('button', { name: 'Close field editor' }))
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'New' })).toBeEnabled(),
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Save Changes' }))
+
+    await waitFor(() => expect(onSaved).toHaveBeenCalled())
+    expect(listSchemaVersionsSpy).toHaveBeenCalledWith(
+      {
+        listJsonSchemaVersionInfoRequest: expect.objectContaining({
+          organizationName: 'org.sagebionetworks.act',
+          schemaName: 'GenomicsDataAccessRequest',
+        }),
+      },
+      expect.anything(),
+    )
+    expect(postJobSpy).toHaveBeenCalledWith({
+      asynchronousRequestBody: expect.objectContaining({
+        concreteType:
+          'org.sagebionetworks.repo.model.schema.CreateSchemaRequest',
+        schema: expect.objectContaining({
+          $id: 'org.sagebionetworks.act-GenomicsDataAccessRequest-2.0.0',
+          allOf: [{ $ref: ACCESS_REQUIREMENT_BASE_SCHEMA_ID }],
+          properties: expect.objectContaining({
+            intendedDataUse: mockGenomicsSchema.properties!.intendedDataUse,
+            newField: expect.anything(),
+          }),
+        }),
+      }),
+    })
+    expect(onSaved).toHaveBeenCalledWith(
+      expect.objectContaining({ id: mockGenomicsTemplate.id }),
+    )
+  })
+
+  it('shows an error instead of the editor when the template cannot be loaded', async () => {
+    renderEditor(vi.fn(), 'missing-template')
+
+    expect(
+      await screen.findByText(
+        'Could not load the form template: FormTemplate not found: missing-template',
+      ),
+    ).toBeVisible()
+    expect(
+      screen.queryByRole('textbox', { name: 'Internal Name' }),
+    ).not.toBeInTheDocument()
   })
 })

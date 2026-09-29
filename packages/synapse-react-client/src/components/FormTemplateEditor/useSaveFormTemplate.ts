@@ -22,6 +22,7 @@ import {
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { EditableFormTemplateStep, toFormTemplateSteps } from './utils'
 import {
+  formatSchema$id,
   getFormTemplateSchemaLineage,
   getNextSchemaVersion,
 } from './formTemplateSchema'
@@ -90,22 +91,26 @@ export function useSaveFormTemplate(
         params.initialJsonSchema,
       )
       if (schemaChanged || !schema$id) {
-        const { organizationName, schemaName } = getFormTemplateSchemaLineage(
+        const lineage = getFormTemplateSchemaLineage(
           params.name,
           params.initialTemplate?.schema$id,
         )
         // Registered versions are immutable, so the list is read fresh on every save to pick a
         // version that does not exist yet.
         const registeredVersions = await queryClient.fetchQuery({
-          ...getJsonSchemaVersionsQuery(organizationName, schemaName, {
-            synapseClient,
-            keyFactory,
-          }),
+          ...getJsonSchemaVersionsQuery(
+            lineage.organizationName,
+            lineage.schemaName,
+            { synapseClient, keyFactory },
+          ),
           staleTime: 0,
         })
         const response = await createSchema.mutateAsync({
           ...params.jsonSchema,
-          $id: `${organizationName}-${schemaName}-${getNextSchemaVersion(registeredVersions)}`,
+          $id: formatSchema$id(
+            lineage,
+            getNextSchemaVersion(registeredVersions),
+          ),
         } as JsonSchema)
         schema$id = response.newVersionInfo!.$id!
       }

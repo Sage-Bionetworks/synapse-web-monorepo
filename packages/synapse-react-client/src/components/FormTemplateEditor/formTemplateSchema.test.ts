@@ -22,14 +22,14 @@ describe('getFormTemplateSchemaLineage', () => {
     },
   )
 
-  it('keeps the lineage of the schema an existing template references, regardless of its name', () => {
+  it('keeps the organization and name of the schema an existing template references, regardless of its name', () => {
     expect(
       getFormTemplateSchemaLineage(
         'Renamed Template',
-        'org.sagebionetworks.act-OriginalName-3.0.0',
+        'org.example-OriginalName-3.0.0',
       ),
     ).toEqual({
-      organizationName: 'org.sagebionetworks.act',
+      organizationName: 'org.example',
       schemaName: 'OriginalName',
     })
   })

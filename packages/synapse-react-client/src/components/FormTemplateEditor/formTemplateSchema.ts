@@ -45,6 +45,15 @@ export function getFormTemplateSchemaLineage(
 }
 
 /**
+ * The `$id` of a schema version in a lineage: `<organization>-<schemaName>-<version>`. Without a
+ * version, the unversioned `<organization>-<schemaName>` prefix that identifies the lineage.
+ */
+export function formatSchema$id(lineage: SchemaLineage, version?: string) {
+  const lineage$id = `${lineage.organizationName}-${lineage.schemaName}`
+  return version ? `${lineage$id}-${version}` : lineage$id
+}
+
+/**
  * The version to register next in a lineage: one major version above the highest registered
  * version, or `1.0.0` for a lineage with no versions yet.
  */

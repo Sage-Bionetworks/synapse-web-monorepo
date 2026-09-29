@@ -7,9 +7,10 @@
  * The schema is loaded as registered, with its `$ref`s intact, so that saving a new version
  * preserves the reference to the base schema rather than inlining it.
  */
+import { SynapseSpinner } from '@/components/LoadingScreen/LoadingScreen'
 import { useGetFormTemplate } from '@/synapse-queries/dataaccess/useFormTemplate'
 import { useGetRegisteredSchema } from '@/synapse-queries/jsonschema/useSchema'
-import { Alert, Box, CircularProgress, Paper } from '@mui/material'
+import { Alert, Paper } from '@mui/material'
 import { RJSFSchema } from '@rjsf/utils'
 import { FormTemplate } from '@sage-bionetworks/synapse-client'
 import { FormTemplateEditorForm } from './FormTemplateEditorForm'
@@ -44,9 +45,7 @@ export function FormTemplateEditor({
   if (templateId && (isLoadingTemplate || (template && isLoadingSchema))) {
     return (
       <Paper sx={{ p: 3 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
-          <CircularProgress />
-        </Box>
+        <SynapseSpinner size={40} />
       </Paper>
     )
   }
