@@ -263,7 +263,7 @@ describe('FormTemplateEditor', () => {
     ).toBeDisabled()
   })
 
-  it('opens an existing template with its registered schema, and saves a changed schema as the next major version in its lineage with the base $ref kept', async () => {
+  it("opens an existing template with its registered schema, and saves a changed schema as the schema's next major version with the base $ref kept", async () => {
     const user = userEvent.setup()
     const onSaved = vi.fn()
     listSchemaVersionsSpy.mockResolvedValue({

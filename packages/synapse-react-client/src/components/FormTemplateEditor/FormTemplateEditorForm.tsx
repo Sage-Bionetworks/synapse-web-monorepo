@@ -38,7 +38,7 @@ import { JsonSchemaBodyEditor } from './JsonSchemaBodyEditor'
 import { detectFieldType, fieldTypeLabel } from './schemaFieldUtils'
 import {
   formatSchema$id,
-  getFormTemplateSchemaLineage,
+  resolveFormTemplateSchemaName,
 } from './formTemplateSchema'
 import { toFormTemplateSteps } from './utils'
 import {
@@ -156,7 +156,7 @@ export function FormTemplateEditorForm({
     editingPropertyKey !== null &&
     usedPaths.has(propertyKeyToPointer(editingPropertyKey))
 
-  const schemaLineage = getFormTemplateSchemaLineage(
+  const templateSchemaName = resolveFormTemplateSchemaName(
     name,
     initialTemplate?.schema$id,
   )
@@ -186,7 +186,7 @@ export function FormTemplateEditorForm({
           sx={{ mb: 3 }}
         >
           JSON Schema:{' '}
-          {initialTemplate?.schema$id ?? formatSchema$id(schemaLineage)}
+          {initialTemplate?.schema$id ?? formatSchema$id(templateSchemaName)}
           {!initialTemplate && ' (a new version is registered when saved)'}
         </Typography>
 

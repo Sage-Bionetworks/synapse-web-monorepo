@@ -126,7 +126,7 @@ describe('useSaveFormTemplate', () => {
     expect(createTemplateSpy).not.toHaveBeenCalled()
   })
 
-  it('registers the next major version under a lineage derived from the name, and creates the template, when there is no existing template', async () => {
+  it('registers the next major version under a schema name derived from the template name, and creates the template, when there is no existing template', async () => {
     mockRegisteredVersions('2.0.0')
     mockSchemaCreation('org.sagebionetworks.act-MyTemplate-3.0.0')
     const createdTemplate: FormTemplate = {
@@ -234,7 +234,7 @@ describe('useSaveFormTemplate', () => {
     })
   })
 
-  it('registers the next major version in the existing schema lineage, even after a rename, and updates the template when its schema body changed', async () => {
+  it("registers the next major version under the existing schema's name, even after a rename, and updates the template when its schema body changed", async () => {
     mockRegisteredVersions('1.0.0')
     mockSchemaCreation('org.example-MyTemplate-2.0.0')
     const initialTemplate: FormTemplate = {

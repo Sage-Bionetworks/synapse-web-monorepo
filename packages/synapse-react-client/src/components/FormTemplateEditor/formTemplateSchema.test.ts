@@ -1,11 +1,11 @@
 import { JsonSchemaVersionInfo } from '@sage-bionetworks/synapse-client'
 import {
   FORM_TEMPLATE_SCHEMA_ORGANIZATION,
-  getFormTemplateSchemaLineage,
   getNextSchemaVersion,
+  resolveFormTemplateSchemaName,
 } from './formTemplateSchema'
 
-describe('getFormTemplateSchemaLineage', () => {
+describe('resolveFormTemplateSchemaName', () => {
   it.each([
     ['Data Use Request', 'DataUseRequest'],
     ['data-use request (v2)', 'DataUseRequestV2'],
@@ -15,7 +15,7 @@ describe('getFormTemplateSchemaLineage', () => {
   ])(
     'derives a valid schema name for a new template named %j',
     (name, schemaName) => {
-      expect(getFormTemplateSchemaLineage(name)).toEqual({
+      expect(resolveFormTemplateSchemaName(name)).toEqual({
         organizationName: FORM_TEMPLATE_SCHEMA_ORGANIZATION,
         schemaName,
       })
@@ -24,7 +24,7 @@ describe('getFormTemplateSchemaLineage', () => {
 
   it('keeps the organization and name of the schema an existing template references, regardless of its name', () => {
     expect(
-      getFormTemplateSchemaLineage(
+      resolveFormTemplateSchemaName(
         'Renamed Template',
         'org.example-OriginalName-3.0.0',
       ),
@@ -40,7 +40,7 @@ describe('getNextSchemaVersion', () => {
     return { semanticVersion }
   }
 
-  it('starts a lineage with no versions at 1.0.0', () => {
+  it('starts a schema with no registered versions at 1.0.0', () => {
     expect(getNextSchemaVersion([])).toBe('1.0.0')
   })
 
