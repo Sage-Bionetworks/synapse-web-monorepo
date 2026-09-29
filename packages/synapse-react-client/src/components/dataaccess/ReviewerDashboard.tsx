@@ -20,6 +20,8 @@ import { UserHistoryDashboard } from './AccessHistoryDashboard'
 import { AccessRequirementDashboard } from './AccessRequirementDashboard'
 import { DataAccessSubmissionDashboard } from './AccessSubmissionDashboard'
 import { EDucTemplateTable } from './EDucTemplateTable'
+import { FormTemplateEditorRoute } from './FormTemplateEditorRoute'
+import { FORM_TEMPLATES_PATH, FormTemplateTable } from './FormTemplateTable'
 import SubmissionPage from './SubmissionPage/SubmissionPage'
 
 function LinkTab(props: { href: string; children: ReactNode; icon: IconName }) {
@@ -73,6 +75,11 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
                   eDUC Templates
                 </LinkTab>
               )}
+              {hasActPermissions && (
+                <LinkTab href={FORM_TEMPLATES_PATH} icon="edit">
+                  Form Templates
+                </LinkTab>
+              )}
               {hasReviewerPermissions && (
                 <LinkTab href="/Submissions" icon="discussion">
                   Submissions
@@ -99,6 +106,18 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
           {
             path: 'EDucTemplates',
             element: hasActPermissions ? <EDucTemplateTable /> : null,
+          },
+          {
+            path: 'FormTemplates',
+            element: hasActPermissions ? <FormTemplateTable /> : null,
+          },
+          {
+            path: 'FormTemplates/new',
+            element: hasActPermissions ? <FormTemplateEditorRoute /> : null,
+          },
+          {
+            path: 'FormTemplates/:templateId',
+            element: hasActPermissions ? <FormTemplateEditorRoute /> : null,
           },
           {
             path: 'Submissions',
