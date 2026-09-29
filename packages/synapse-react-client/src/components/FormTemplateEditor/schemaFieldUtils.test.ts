@@ -1,5 +1,7 @@
+import { RJSFSchema } from '@rjsf/utils'
 import {
   applyFieldType,
+  choiceOptions,
   detectFieldType,
   fieldTypeLabel,
   generatePropertyKey,
@@ -15,6 +17,30 @@ describe('detectFieldType', () => {
 
   it('detects a choice field as a string with an enum', () => {
     expect(detectFieldType({ type: 'string', enum: ['a', 'b'] })).toBe('choice')
+  })
+
+  it('detects a multi-choice field as a unique-items array of string enum values', () => {
+    expect(
+      detectFieldType({
+        type: 'array',
+        items: { type: 'string', enum: ['a', 'b'] },
+        uniqueItems: true,
+      }),
+    ).toBe('multiChoice')
+  })
+
+  it.each<[string, RJSFSchema]>([
+    ['without uniqueItems', { items: { type: 'string', enum: ['a'] } }],
+    [
+      'with non-string items',
+      { items: { type: 'number', enum: [1] }, uniqueItems: true },
+    ],
+    [
+      'with tuple items',
+      { items: [{ type: 'string', enum: ['a'] }], uniqueItems: true },
+    ],
+  ])('treats an enum array %s as advanced', (_, shape) => {
+    expect(detectFieldType({ type: 'array', ...shape })).toBeNull()
   })
 
   it('detects a plain string as text', () => {
@@ -45,6 +71,7 @@ describe('fieldTypeLabel', () => {
     expect(fieldTypeLabel('number')).toBe('Number')
     expect(fieldTypeLabel('boolean')).toBe('Yes / No')
     expect(fieldTypeLabel('choice')).toBe('Single choice')
+    expect(fieldTypeLabel('multiChoice')).toBe('Multiple choice (select many)')
     expect(fieldTypeLabel('file')).toBe('File upload')
   })
 
@@ -88,6 +115,54 @@ describe('applyFieldType', () => {
     expect(
       applyFieldType({ type: 'string', enum: ['Yes', 'No'] }, 'choice'),
     ).toMatchObject({ enum: ['Yes', 'No'] })
+  })
+
+  it.each<[string, RJSFSchema]>([
+    ['choice', { type: 'string', enum: [] }],
+    ['multiChoice', { type: 'array', items: { type: 'string', enum: [] } }],
+  ])(
+    'falls back to a default option when the existing %s enum is empty',
+    (_, prev) => {
+      expect(choiceOptions(applyFieldType(prev, 'choice'))).toEqual([
+        'Option 1',
+      ])
+      expect(choiceOptions(applyFieldType(prev, 'multiChoice'))).toEqual([
+        'Option 1',
+      ])
+    },
+  )
+
+  it('builds a multi-choice field as a unique-items array of string enum values', () => {
+    expect(applyFieldType({}, 'multiChoice')).toMatchObject({
+      type: 'array',
+      items: { type: 'string', enum: ['Option 1'] },
+      uniqueItems: true,
+    })
+  })
+
+  it('carries options between single and multiple choice', () => {
+    const multi = applyFieldType(
+      { type: 'string', enum: ['Yes', 'No'] },
+      'multiChoice',
+    )
+    expect(multi).toMatchObject({ items: { enum: ['Yes', 'No'] } })
+    expect(applyFieldType(multi, 'choice')).toEqual({
+      type: 'string',
+      enum: ['Yes', 'No'],
+    })
+  })
+
+  it('drops items and uniqueItems when switching a multi-choice field to a non-choice type', () => {
+    const next = applyFieldType(
+      {
+        type: 'array',
+        items: { type: 'string', enum: ['a'] },
+        uniqueItems: true,
+      },
+      'text',
+    )
+    expect(next).not.toHaveProperty('items')
+    expect(next).not.toHaveProperty('uniqueItems')
   })
 
   it('drops a stale enum when switching a choice field to a non-choice type', () => {

@@ -18,6 +18,7 @@ import { SchemaPropertyContext } from '@/utils/jsonschema/submissionContext'
 import { ChoiceOptionsEditor } from './ChoiceOptionsEditor'
 import {
   applyFieldType,
+  choiceOptions,
   detectFieldType,
   FIELD_TYPE_OPTIONS,
   sanitizePropertyKey,
@@ -237,13 +238,7 @@ export function FieldDefinitionDrawer({
 
               {(type === 'choice' || type === 'multiChoice') && (
                 <ChoiceOptionsEditor
-                  options={
-                    type === 'choice'
-                      ? ((property.enum as string[] | undefined) ?? [])
-                      : (((property.items as RJSFSchema | undefined)?.enum as
-                          | string[]
-                          | undefined) ?? [])
-                  }
+                  options={choiceOptions(property)}
                   onChange={next =>
                     type === 'choice'
                       ? onUpdate({ enum: next })

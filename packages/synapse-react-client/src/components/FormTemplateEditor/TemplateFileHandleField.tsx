@@ -16,8 +16,11 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
-import { useRef, useState } from 'react'
+import {
+  FileHandleAssociateType,
+  FileHandleAssociation,
+} from '@sage-bionetworks/synapse-types'
+import { useMemo, useRef, useState } from 'react'
 
 export type TemplateFileHandleFieldProps = {
   /** The slot's `templateFileHandleId`, if one is attached. */
@@ -45,6 +48,22 @@ export function TemplateFileHandleField({
   const [dialogOpen, setDialogOpen] = useState(false)
   const [validationError, setValidationError] = useState<string | null>(null)
   const uploadRef = useRef<FileUploadHandle | null>(null)
+  // FileHandleLink refetches whenever the association's identity changes.
+  const fileHandleAssociation = useMemo<FileHandleAssociation | undefined>(
+    () =>
+      fileHandleId && formTemplateId
+        ? {
+            fileHandleId,
+            // AccessRequirementAttachment is a stand-in: a FormTemplate is not an
+            // AccessRequirement, so the server may not authorize this download.
+            // Supported FormTemplate template-file downloads are tracked in PLFM-10013.
+            associateObjectType:
+              FileHandleAssociateType.AccessRequirementAttachment,
+            associateObjectId: formTemplateId,
+          }
+        : undefined,
+    [fileHandleId, formTemplateId],
+  )
 
   return (
     <Box>
@@ -54,22 +73,14 @@ export function TemplateFileHandleField({
       <Stack direction="row" spacing={1} alignItems="center">
         {fileHandleId ? (
           <>
-            {formTemplateId ? (
+            {fileHandleAssociation ? (
               <FileHandleLink
-                fileHandleAssociation={{
-                  fileHandleId,
-                  // AccessRequirementAttachment is reused here as a stand-in; a FormTemplate is
-                  // not itself an AccessRequirement, so this download may need a dedicated
-                  // FileHandleAssociateType from the server once one exists.
-                  associateObjectType:
-                    FileHandleAssociateType.AccessRequirementAttachment,
-                  associateObjectId: formTemplateId,
-                }}
+                fileHandleAssociation={fileHandleAssociation}
                 showDownloadIcon
               />
             ) : (
               <Typography variant="body2" color="text.secondary">
-                {/* TODO: Once the dedicated FileHandleAssociateType for FormTemplate exists, update this message to show the current file name and allow downloading the current file. */}
+                {/* TODO(PLFM-10013): once FormTemplate template files are downloadable, show the current file name and allow downloading it here. */}
                 Uploaded — save the template to enable download
               </Typography>
             )}

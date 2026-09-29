@@ -40,6 +40,18 @@ export const ChoiceField: Story = {
   },
 }
 
+export const MultipleChoiceField: Story = {
+  args: {
+    propertyKey: 'dataTypes',
+    property: {
+      type: 'array',
+      title: 'Data types requested',
+      items: { type: 'string', enum: ['Genomic', 'Clinical', 'Imaging'] },
+      uniqueItems: true,
+    },
+  },
+}
+
 export const FileField: Story = {
   args: {
     propertyKey: 'consentForm',
