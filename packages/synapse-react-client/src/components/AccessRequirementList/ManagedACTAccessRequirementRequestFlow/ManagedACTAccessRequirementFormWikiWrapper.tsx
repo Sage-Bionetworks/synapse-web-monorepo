@@ -6,6 +6,8 @@ import { useCanShowManagedACTWikiInWizard } from '../AccessRequirementListUtils'
 
 type ManagedACTAccessRequirementFormWikiWrapperProps = PropsWithChildren<{
   managedACTAccessRequirementId: string
+  /** When true, only the children are rendered, at full width, and the wiki is neither fetched nor shown. */
+  hideWiki?: boolean
 }>
 
 /**
@@ -18,15 +20,19 @@ type ManagedACTAccessRequirementFormWikiWrapperProps = PropsWithChildren<{
 export default function ManagedACTAccessRequirementFormWikiWrapper(
   props: ManagedACTAccessRequirementFormWikiWrapperProps,
 ) {
-  const { children, managedACTAccessRequirementId } = props
+  const { children, managedACTAccessRequirementId, hideWiki = false } = props
   const { data: wikiPage } = useGetAccessRequirementWikiPageKey(
     managedACTAccessRequirementId,
     {
-      enabled: !!managedACTAccessRequirementId,
+      enabled: !!managedACTAccessRequirementId && !hideWiki,
     },
   )
 
   const canShowWiki = useCanShowManagedACTWikiInWizard()
+
+  if (hideWiki) {
+    return <>{children}</>
+  }
 
   return (
     <Grid container spacing={5}>

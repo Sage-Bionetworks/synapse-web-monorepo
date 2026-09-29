@@ -9,14 +9,14 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
-import { ManagedACTAccessRequirement } from '@sage-bionetworks/synapse-types'
 import IconSvg from '../../../IconSvg/IconSvg'
 import ManagedACTAccessRequirementFormWikiWrapper from '../ManagedACTAccessRequirementFormWikiWrapper'
 import { ReviewCollaboratorsAndSigningOfficialAccordion } from '../ReviewCollaboratorsAndSigningOfficialAccordion'
 import { longFieldLabelSx } from '../styles'
+import { RequestFlowAccessRequirement } from '../requestFlowTypes'
 
 export type ReviewDucStepProps = {
-  managedACTAccessRequirement: ManagedACTAccessRequirement
+  managedACTAccessRequirement: RequestFlowAccessRequirement
   onHide: () => void
   onBackClicked: () => void
   /**
@@ -24,6 +24,8 @@ export type ReviewDucStepProps = {
    * (PORTALS-4377), where the generated document is displayed for review before signing.
    */
   onCreateDuc: () => void
+  /** Hides the access requirement wiki that is otherwise shown beside the step. */
+  hideWiki?: boolean
 }
 
 /**
@@ -31,8 +33,13 @@ export type ReviewDucStepProps = {
  * Lets the user confirm their collaborators, PI, and Signing Official before generating the DUC.
  */
 export default function ReviewDucStep(props: ReviewDucStepProps) {
-  const { managedACTAccessRequirement, onHide, onBackClicked, onCreateDuc } =
-    props
+  const {
+    managedACTAccessRequirement,
+    onHide,
+    onBackClicked,
+    onCreateDuc,
+    hideWiki,
+  } = props
 
   const { data: dataAccessRequest, isLoading } =
     useGetDataAccessRequestForUpdate(String(managedACTAccessRequirement.id), {
@@ -58,6 +65,7 @@ export default function ReviewDucStep(props: ReviewDucStepProps) {
       <DialogContent>
         <ManagedACTAccessRequirementFormWikiWrapper
           managedACTAccessRequirementId={String(managedACTAccessRequirement.id)}
+          hideWiki={hideWiki}
         >
           <Box>
             <Typography variant={'headline3'} sx={{ mb: 2 }}>

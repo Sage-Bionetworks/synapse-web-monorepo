@@ -1,4 +1,3 @@
-import { NewReleasesOutlined } from '@mui/icons-material'
 import {
   Alert,
   AlertProps as MuiAlertProps,
@@ -9,17 +8,13 @@ import {
   DialogTitle,
   Divider,
   IconButton,
-  Link,
   Stack,
-  TextField,
   Typography,
 } from '@mui/material'
-import { deepEquals } from '@rjsf/utils'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import isEmpty from 'lodash-es/isEmpty'
 import {
   AccessorChange,
-  AccessType,
   FileHandleAssociateType,
   FileHandleAssociation,
   FileUploadComplete,
@@ -30,7 +25,7 @@ import {
   SigningOfficial,
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
-import { ReactNode, useEffect, useRef, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import {
   useGetCurrentUserProfile,
   useGetDataAccessRequestForUpdate,
@@ -44,59 +39,15 @@ import DataAccessRequestAccessorsEditor, {
   DataAccessRequestAccessorsEditorProps,
 } from '../DataAccessRequestAccessorsEditor'
 import { longFieldLabelSx } from '../styles'
-import DocumentTemplate from '../DocumentTemplate'
+import AccessorRequirementHelpText from '../AccessorRequirementHelpText'
+import DucUploadSection from '../DucUploadSection'
 import ManagedACTAccessRequirementFormWikiWrapper from '../ManagedACTAccessRequirementFormWikiWrapper'
+import SigningOfficialFields from '../SigningOfficialFields'
+import { useInitializeRequestAccessors } from '../useInitializeRequestAccessors'
 import { UploadDocumentField } from '../UploadDocumentField'
 
 // PORTALS-4376: eDUC DARs cap total accessors at 100 (submitter + PI + 97 collaborators + 1 slack).
 export const EDUC_COLLABORATOR_LIMIT = 97
-
-function AccessorRequirementHelpText(props: {
-  managedACTAccessRequirement: ManagedACTAccessRequirement
-  isEDucEnabled: boolean
-}) {
-  const { managedACTAccessRequirement, isEDucEnabled } = props
-  let link: string = ''
-  let msg: string = ''
-
-  if (
-    managedACTAccessRequirement.isCertifiedUserRequired &&
-    managedACTAccessRequirement.isValidatedProfileRequired
-  ) {
-    link = 'https://help.synapse.org/docs/User-Types.2007072795.html'
-    msg =
-      'All data requesters must be certified users and have a validated user profile.'
-  } else if (managedACTAccessRequirement.isCertifiedUserRequired) {
-    link =
-      'https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-CertifiedUsers'
-    msg = 'All data requesters must be a certified user.'
-  } else if (managedACTAccessRequirement.isValidatedProfileRequired) {
-    link =
-      'https://help.synapse.org/docs/User-Types.2007072795.html#UserAccountTiers-ValidatedUsers'
-    msg = 'All data requesters must have a validated user profile.'
-  }
-  return (
-    <>
-      {managedACTAccessRequirement.isDUCRequired && !isEDucEnabled ? (
-        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', py: 1 }}>
-          <NewReleasesOutlined sx={{ color: 'error.main' }} />
-          <div>
-            You must list the Synapse user names of all collaborators listed in
-            your Data Use Certificate (DUC).
-          </div>
-        </Box>
-      ) : (
-        ''
-      )}
-      {msg}{' '}
-      {link && (
-        <Link href={link} target={'_blank'} rel={'noreferrer'}>
-          Learn more
-        </Link>
-      )}
-    </>
-  )
-}
 
 export type DataAccessRequestAccessorsFilesFormProps = {
   /**
@@ -160,7 +111,6 @@ export default function DataAccessRequestAccessorsFilesForm(
   const [publication, setPublication] = useState<string | undefined>()
   const [soName, setSoName] = useState<string>('')
   const [soEmail, setSoEmail] = useState<string>('')
-  const hasAppliedImmediateUpdates = useRef(false)
 
   const { data: dataAccessRequest, isLoading: isLoadingGetDataAccessRequest } =
     useGetDataAccessRequestForUpdate(String(managedACTAccessRequirement.id), {
@@ -213,67 +163,13 @@ export default function DataAccessRequestAccessorsFilesForm(
   const disableSubmitButton =
     submitDataAccessRequestIsPending || (isEDucEnabled && (!soName || !soEmail))
 
-  /**
-   * This effect comprises a collection of updates we should immediately apply to a data access request.
-   */
-  useEffect(() => {
-    if (dataAccessRequest && user && !hasAppliedImmediateUpdates.current) {
-      let shouldUpdate = false
-
-      // Attach the researchProjectId to the request
-      if (!dataAccessRequest.researchProjectId) {
-        dataAccessRequest.researchProjectId = researchProjectId
-        shouldUpdate = true
-      }
-
-      // Add the current user with GAIN_ACCESS to the list of accessors
-      const currentUserWithGainAccess: AccessorChange = {
-        userId: user.ownerId,
-        type: isRenewal ? AccessType.RENEW_ACCESS : AccessType.GAIN_ACCESS,
-      }
-      if (
-        !dataAccessRequest.accessorChanges?.find(item =>
-          deepEquals(item, currentUserWithGainAccess),
-        )
-      ) {
-        dataAccessRequest.accessorChanges = [
-          currentUserWithGainAccess,
-          ...(dataAccessRequest.accessorChanges || []),
-        ]
-        shouldUpdate = true
-      }
-
-      // SWC-5765: Filter out duplicate accessors
-      const seen = new Set()
-      const uniqueAccessorChanges = dataAccessRequest.accessorChanges.filter(
-        accessorChange => {
-          return seen.has(accessorChange.userId)
-            ? false
-            : seen.add(accessorChange.userId)
-        },
-      )
-      if (
-        uniqueAccessorChanges.length !==
-        dataAccessRequest.accessorChanges.length
-      ) {
-        dataAccessRequest.accessorChanges = uniqueAccessorChanges
-        shouldUpdate = true
-      }
-
-      if (shouldUpdate) {
-        // Only attempt these updates once. If the server does not echo back a value we applied here, retrying would
-        // loop indefinitely, leaving the form perpetually in a pending state.
-        hasAppliedImmediateUpdates.current = true
-        updateRequestAsync(dataAccessRequest)
-      }
-    }
-  }, [
+  useInitializeRequestAccessors({
     dataAccessRequest,
-    isRenewal,
-    researchProjectId,
-    updateRequestAsync,
     user,
-  ])
+    isRenewal,
+    updateRequest: updateRequestAsync,
+    researchProjectId,
+  })
 
   /**
    * Fields other than uploaded files are NOT immediately synced with the server. Set local state if these values exist in the
@@ -478,47 +374,13 @@ export default function DataAccessRequestAccessorsFilesForm(
             </Typography>
 
             {isEDucEnabled && (
-              <>
-                <Typography variant={'headline3'} sx={{ mb: 2 }}>
-                  Signing Official
-                </Typography>
-                <Typography
-                  variant={'body1'}
-                  sx={{ ...longFieldLabelSx, mb: 2 }}
-                >
-                  The signing official is a member of your institution with
-                  oversight authority who is NOT part of the study team (i.e.,
-                  not the Project Lead, not a Data Requester or Collaborator,
-                  and not the Principal Investigator). They do not need a
-                  Synapse account but must be able to receive messages at the
-                  email address provided below.
-                </Typography>
-                <TextField
-                  id="so-name"
-                  label="First and last names of your Signing Official"
-                  placeholder="First and last name of signing official, ex: John Smith"
-                  fullWidth
-                  type="text"
-                  disabled={disableLocalStateFields}
-                  value={soName}
-                  required
-                  onChange={e => setSoName(e.target.value)}
-                  sx={{ mb: 2 }}
-                />
-                <TextField
-                  id="so-email"
-                  label="Institutional Email of your Signing Official"
-                  type="email"
-                  placeholder="Individual with signing authority, e.g. jane.smith@institution.edu"
-                  fullWidth
-                  disabled={disableLocalStateFields}
-                  value={soEmail}
-                  required
-                  onChange={e => setSoEmail(e.target.value)}
-                  sx={{ mb: 2 }}
-                />
-                <Divider sx={{ my: 4 }} />
-              </>
+              <SigningOfficialFields
+                name={soName}
+                email={soEmail}
+                disabled={disableLocalStateFields}
+                onNameChange={setSoName}
+                onEmailChange={setSoEmail}
+              />
             )}
 
             {dataAccessRequest && user && (
@@ -531,7 +393,7 @@ export default function DataAccessRequestAccessorsFilesForm(
                 }
                 helpText={
                   <AccessorRequirementHelpText
-                    managedACTAccessRequirement={managedACTAccessRequirement}
+                    accessRequirement={managedACTAccessRequirement}
                     isEDucEnabled={isEDucEnabled}
                   />
                 }
@@ -546,58 +408,12 @@ export default function DataAccessRequestAccessorsFilesForm(
             {/* DUC — hidden for eDUC ARs, which handle DUC via the eDUC flow */}
             {managedACTAccessRequirement?.isDUCRequired && !isEDucEnabled && (
               <>
-                {managedACTAccessRequirement?.ducTemplateFileHandleId && (
-                  <DocumentTemplate
-                    title={'Download DUC Template'}
-                    description={
-                      'As a first step, you will need to download the most current version of the Data Use Certificate.'
-                    }
-                    fileHandleAssociation={{
-                      fileHandleId:
-                        managedACTAccessRequirement.ducTemplateFileHandleId,
-                      associateObjectType:
-                        FileHandleAssociateType.AccessRequirementAttachment,
-                      associateObjectId: String(managedACTAccessRequirement.id),
-                    }}
-                    downloadButtonText={'Download DUC Template'}
-                  />
-                )}
-                <Typography variant={'headline3'} sx={{ mt: 4, mb: 2 }}>
-                  Fill out and upload a Data Use Certificate
-                </Typography>
-                <Typography
-                  variant={'body1'}
-                  sx={{ ...longFieldLabelSx, my: 2 }}
-                >
-                  You must download and fill out a Data Use Certificate (DUC).
-                  Be sure to upload the completed DUC below once you&apos;ve
-                  completed it.
-                </Typography>
-                <Typography
-                  variant={'body1'}
-                  component={'ol'}
-                  sx={longFieldLabelSx}
-                >
-                  <li>Download the DUC template file.</li>
-                  <li>
-                    Fill out the DUC template, following the instructions in the
-                    file.
-                  </li>
-                  <li>
-                    Upload the completed certificate using the button below:
-                  </li>
-                </Typography>
-                <SynapseErrorBoundary>
-                  <UploadDocumentField
-                    id={'duc'}
-                    isLoading={isLoading}
-                    uploadCallback={resp =>
-                      uploadCallback(resp, 'ducFileHandleId')
-                    }
-                    documentName={'Data Use Certificate'}
-                    fileHandleAssociations={ducFileHandleAssociation}
-                  />
-                </SynapseErrorBoundary>
+                <DucUploadSection
+                  accessRequirement={managedACTAccessRequirement}
+                  isLoading={isLoading}
+                  uploadedDucAssociations={ducFileHandleAssociation}
+                  onUpload={resp => uploadCallback(resp, 'ducFileHandleId')}
+                />
                 {(managedACTAccessRequirement?.isIRBApprovalRequired ||
                   managedACTAccessRequirement?.areOtherAttachmentsRequired) && (
                   <Divider sx={{ my: 4 }} />

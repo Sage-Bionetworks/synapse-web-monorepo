@@ -21,7 +21,6 @@ import {
 import {
   FileHandleAssociateType,
   FileHandleAssociation,
-  ManagedACTAccessRequirement,
   RestrictableObjectType,
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
@@ -30,9 +29,10 @@ import IconSvg from '../../../IconSvg/IconSvg'
 import { ReviewCollaboratorsAndSigningOfficialAccordion } from '../ReviewCollaboratorsAndSigningOfficialAccordion'
 import { UploadDocumentField } from '../UploadDocumentField'
 import { longFieldLabelSx } from '../styles'
+import { RequestFlowAccessRequirement } from '../requestFlowTypes'
 
 export type ManualUploadDucStepProps = {
-  managedACTAccessRequirement: ManagedACTAccessRequirement
+  managedACTAccessRequirement: RequestFlowAccessRequirement
   subjectId: string
   subjectType: RestrictableObjectType
   onHide: () => void
