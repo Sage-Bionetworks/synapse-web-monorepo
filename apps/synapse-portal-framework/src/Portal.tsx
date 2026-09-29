@@ -1,6 +1,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useMemo, useRef } from 'react'
-import { createBrowserRouter, RouteObject } from 'react-router'
+import {
+  createBrowserRouter,
+  RouteObject,
+  Outlet,
+  ScrollRestoration,
+} from 'react-router'
 import { RouterProvider } from 'react-router/dom'
 import { RouteErrorBoundary } from 'synapse-react-client/components/error/RouteErrorBoundary'
 import { ThemeProvider } from 'synapse-react-client/theme/ThemeProvider'
@@ -33,6 +38,14 @@ function Portal(props: PortalProps) {
     queryClientRef.current = new QueryClient(defaultQueryClientConfig)
   }
   const queryClient = queryClientRef.current
+  function ScrollRestorationLayout() {
+    return (
+      <>
+        <ScrollRestoration />
+        <Outlet />
+      </>
+    )
+  }
   const routesWithErrorBoundary = useMemo(
     () =>
       addErrorBoundaryToRoutes(
@@ -42,7 +55,13 @@ function Portal(props: PortalProps) {
     [props.routeConfig, context.logoHeaderConfig?.icon],
   )
   const router = useMemo(
-    () => createBrowserRouter(routesWithErrorBoundary),
+    () =>
+      createBrowserRouter([
+        {
+          element: <ScrollRestorationLayout />,
+          children: routesWithErrorBoundary,
+        },
+      ]),
     [routesWithErrorBoundary],
   )
   const defaultTitle = props.portalName || undefined
