@@ -3,11 +3,13 @@ import { mockClinicalSchema } from '@/mocks/accessRequirement/mockJsonSchemas'
 import {
   mockSchemaDataAndFirstClassSubmission,
   mockSchemaDataSubmission,
-  mockSubmittedSubmission,
 } from '@/mocks/dataaccess/MockSubmission'
 import { getRegisteredSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
 import { server } from '@/mocks/msw/server'
-import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
+  createWrapper,
+  createWrapperAndQueryClient,
+} from '@/testutils/TestingLibraryUtils'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { FormTemplate } from '@sage-bionetworks/synapse-client'
 import { renderHook, waitFor } from '@testing-library/react'
@@ -60,12 +62,15 @@ describe('useGeneratedSubmissionForm', () => {
   afterEach(() => server.restoreHandlers())
   afterAll(() => server.close())
 
-  it('stays idle for a submission without schemaData', () => {
-    const requestedVersions = registerTemplateVersions([mockClinicalTemplate])
+  it('stays idle for a submission without schemaData, even when it records a template', () => {
+    registerTemplateVersions([mockClinicalTemplate])
+    const { schemaData: _omitted, ...submissionWithoutSchemaData } =
+      mockSchemaDataSubmission
+    const { wrapperFn, queryClient } = createWrapperAndQueryClient()
 
     const { result } = renderHook(
-      () => useGeneratedSubmissionForm(mockSubmittedSubmission),
-      { wrapper: createWrapper() },
+      () => useGeneratedSubmissionForm(submissionWithoutSchemaData),
+      { wrapper: wrapperFn },
     )
 
     expect(result.current).toEqual({
@@ -73,7 +78,7 @@ describe('useGeneratedSubmissionForm', () => {
       isLoading: false,
       error: undefined,
     })
-    expect(requestedVersions).toEqual([])
+    expect(queryClient.isFetching()).toBe(0)
   })
 
   it('generates steps from the template version recorded on the submission, not the latest', async () => {
@@ -123,18 +128,19 @@ describe('useGeneratedSubmissionForm', () => {
   })
 
   it('reports an error when the submission has schemaData but no template reference', () => {
-    const requestedVersions = registerTemplateVersions([mockClinicalTemplate])
+    registerTemplateVersions([mockClinicalTemplate])
     const { formTemplateRef: _omitted, ...submissionWithoutRef } =
       mockSchemaDataSubmission
+    const { wrapperFn, queryClient } = createWrapperAndQueryClient()
 
     const { result } = renderHook(
       () => useGeneratedSubmissionForm(submissionWithoutRef),
-      { wrapper: createWrapper() },
+      { wrapper: wrapperFn },
     )
 
     expect(result.current.isLoading).toBe(false)
     expect(result.current.error).toBeInstanceOf(MissingFormTemplateRefError)
-    expect(requestedVersions).toEqual([])
+    expect(queryClient.isFetching()).toBe(0)
   })
 
   it('surfaces a failure to fetch the template', async () => {
