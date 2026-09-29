@@ -28,6 +28,18 @@ function addErrorBoundaryToRoutes(
   }))
 }
 
+/**
+ * Pathless layout route that enables scroll restoration for all portal routes
+ */
+function ScrollRestorationLayout() {
+  return (
+    <>
+      <Outlet />
+      <ScrollRestoration />
+    </>
+  )
+}
+
 function Portal(props: PortalProps) {
   const { palette, ...context } = props
   useReloadOnPreloadError()
@@ -38,14 +50,6 @@ function Portal(props: PortalProps) {
     queryClientRef.current = new QueryClient(defaultQueryClientConfig)
   }
   const queryClient = queryClientRef.current
-  function ScrollRestorationLayout() {
-    return (
-      <>
-        <ScrollRestoration />
-        <Outlet />
-      </>
-    )
-  }
   const routesWithErrorBoundary = useMemo(
     () =>
       addErrorBoundaryToRoutes(
