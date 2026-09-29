@@ -89,7 +89,7 @@ function RequestSignatureRouteRenderer() {
       }}
       initialWizardEntry={{
         step: RequestDataStep.SIGNATURE_STATUS,
-        managedACTAccessRequirement: accessRequirement,
+        accessRequirement,
       }}
     />
   )

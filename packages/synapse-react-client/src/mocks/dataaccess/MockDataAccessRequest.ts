@@ -1,5 +1,6 @@
 import { AccessType, Renewal, Request } from '@sage-bionetworks/synapse-types'
 import { mockManagedACTAccessRequirement } from '../accessRequirement/mockAccessRequirements'
+import { mockJsonSchemaAR1 } from '../accessRequirement/mockJsonSchemaAccessRequirements'
 import { MOCK_USER_ID, MOCK_USER_ID_2 } from '../user/mock_user_profile'
 import {
   MOCK_DATA_ACCESS_SUBMISSION_ATTACHMENT_1_FILE_HANDLE_ID,
@@ -67,4 +68,21 @@ export const MOCK_DATA_ACCESS_RENEWAL: Renewal = {
   summaryOfUse:
     'We ran a χ² test of homogeneity to determine if this data was representative of the rest of the population with' +
     ' consideration for similar large data collections.',
+}
+
+export const MOCK_JSON_SCHEMA_DATA_ACCESS_REQUEST_ID = '7710001'
+
+/** An in-progress request for {@link mockJsonSchemaAR1}, which has no saved answers. */
+export const MOCK_JSON_SCHEMA_DATA_ACCESS_REQUEST: Request = {
+  id: MOCK_JSON_SCHEMA_DATA_ACCESS_REQUEST_ID,
+  accessorChanges: [],
+  createdBy: String(MOCK_USER_ID),
+  createdOn: '2026-09-01T13:06:51+00:00',
+  irbFileHandleId: '',
+  modifiedBy: String(MOCK_USER_ID),
+  modifiedOn: '2026-09-01T13:06:51+00:00',
+  researchProjectId: '',
+  etag: '0',
+  accessRequirementId: String(mockJsonSchemaAR1.id),
+  concreteType: 'org.sagebionetworks.repo.model.dataaccess.Request',
 }

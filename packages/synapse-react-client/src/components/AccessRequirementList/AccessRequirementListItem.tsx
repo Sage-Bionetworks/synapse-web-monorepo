@@ -1,6 +1,8 @@
 import {
   ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   AccessRequirement,
+  JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  JsonSchemaAccessRequirement,
   LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   ManagedACTAccessRequirement,
@@ -17,7 +19,11 @@ import LockAccessRequirementItem from './RequirementItem/LockAccessRequirementIt
 export type AccessRequirementListItemProps = {
   accessRequirement: AccessRequirement
   onHide: () => void
-  onRequestAccess: (accessRequirement: ManagedACTAccessRequirement) => void
+  onRequestAccess: (
+    accessRequirement:
+      | ManagedACTAccessRequirement
+      | JsonSchemaAccessRequirement,
+  ) => void
   subjectId?: string
   subjectType?: RestrictableObjectType
 }
@@ -49,6 +55,18 @@ export function AccessRequirementListItem(
         />
       )
     case MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
+      return (
+        <ManagedACTAccessRequirementItem
+          accessRequirement={accessRequirement}
+          subjectId={subjectId}
+          subjectType={subjectType}
+          onRejectTerms={onHide}
+          onRequestAccess={() => {
+            onRequestAccess(accessRequirement)
+          }}
+        />
+      )
+    case JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
       return (
         <ManagedACTAccessRequirementItem
           accessRequirement={accessRequirement}

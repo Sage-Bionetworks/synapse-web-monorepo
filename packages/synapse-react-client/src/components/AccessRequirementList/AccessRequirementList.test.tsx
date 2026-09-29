@@ -5,7 +5,13 @@ import {
   mockToUAccessRequirement,
 } from '@/mocks/accessRequirement/mockAccessRequirements'
 import mockFileEntityData from '@/mocks/entity/mockFileEntity'
+import { mockJsonSchemaAR1 } from '@/mocks/accessRequirement/mockJsonSchemaAccessRequirements'
+import { getRegisteredSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
+import { mockGenomicsSchema } from '@/mocks/accessRequirement/mockJsonSchemas'
 import { server } from '@/mocks/msw/server'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { http, HttpResponse } from 'msw'
+import { JSONSchema7 } from 'json-schema'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { AccessRequirement } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor } from '@testing-library/react'
@@ -94,7 +100,7 @@ describe('AccessRequirementList tests', () => {
       ...props,
       initialWizardEntry: {
         step: RequestDataStep.SIGNATURE_STATUS,
-        managedACTAccessRequirement: {
+        accessRequirement: {
           ...mockManagedACTAccessRequirement,
           eDucTemplateId: 'template-abc-123',
         },
@@ -121,7 +127,7 @@ describe('AccessRequirementList tests', () => {
       onHide,
       initialWizardEntry: {
         step: RequestDataStep.EDUC_PREVIEW,
-        managedACTAccessRequirement: {
+        accessRequirement: {
           ...mockManagedACTAccessRequirement,
           eDucTemplateId: 'template-abc-123',
         },
@@ -143,5 +149,48 @@ describe('AccessRequirementList tests', () => {
       }),
     )
     expect(onHide).toHaveBeenCalledTimes(1)
+  })
+
+  it('opens the request wizard for a JsonSchemaAccessRequirement that has no wiki', async () => {
+    const repoEndpoint = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
+    const jsonSchemaAccessRequirement =
+      mockJsonSchemaAR1 as unknown as AccessRequirement
+    server.use(
+      http.get(
+        `${repoEndpoint}/repo/v1/accessRequirement/${mockJsonSchemaAR1.id}/status`,
+        () =>
+          HttpResponse.json({
+            accessRequirementId: String(mockJsonSchemaAR1.id),
+            concreteType:
+              'org.sagebionetworks.repo.model.dataaccess.ManagedACTAccessRequirementStatus',
+            isApproved: false,
+          }),
+      ),
+      http.get(
+        `${repoEndpoint}/repo/v1/accessRequirement/${mockJsonSchemaAR1.id}/dataAccessRequestForUpdate`,
+        () =>
+          HttpResponse.json({
+            id: '9100',
+            accessRequirementId: String(mockJsonSchemaAR1.id),
+            accessorChanges: [],
+            etag: 'etag-0',
+            concreteType: 'org.sagebionetworks.repo.model.dataaccess.Request',
+          }),
+      ),
+      ...getRegisteredSchemaHandlers(repoEndpoint, [
+        mockGenomicsSchema as JSONSchema7,
+      ]),
+    )
+    await init({
+      ...props,
+      accessRequirementFromProps: [jsonSchemaAccessRequirement],
+    })
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: 'Request access' }),
+    )
+
+    expect(await screen.findByText('Requester information')).toBeVisible()
+    expect(screen.queryByText('Instructions')).not.toBeInTheDocument()
   })
 })

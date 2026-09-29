@@ -264,7 +264,7 @@ export function InFlightEDucSignaturesTable() {
           onHide={() => setModifyingArId(undefined)}
           initialWizardEntry={{
             step: RequestDataStep.UPDATE_RESEARCH_PROJECT,
-            managedACTAccessRequirement: modifyAccessRequirement,
+            accessRequirement: modifyAccessRequirement,
           }}
         />
       )}
