@@ -23,8 +23,8 @@ import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { EditableFormTemplateStep, toFormTemplateSteps } from './utils'
 import {
   formatSchema$id,
-  getFormTemplateSchemaLineage,
   getNextSchemaVersion,
+  resolveFormTemplateSchemaName,
 } from './formTemplateSchema'
 import {
   FormTemplateFieldValidationError,
@@ -91,7 +91,7 @@ export function useSaveFormTemplate(
         params.initialJsonSchema,
       )
       if (schemaChanged || !schema$id) {
-        const lineage = getFormTemplateSchemaLineage(
+        const templateSchemaName = resolveFormTemplateSchemaName(
           params.name,
           params.initialTemplate?.schema$id,
         )
@@ -99,8 +99,8 @@ export function useSaveFormTemplate(
         // version that does not exist yet.
         const registeredVersions = await queryClient.fetchQuery({
           ...getJsonSchemaVersionsQuery(
-            lineage.organizationName,
-            lineage.schemaName,
+            templateSchemaName.organizationName,
+            templateSchemaName.schemaName,
             { synapseClient, keyFactory },
           ),
           staleTime: 0,
@@ -108,7 +108,7 @@ export function useSaveFormTemplate(
         const response = await createSchema.mutateAsync({
           ...params.jsonSchema,
           $id: formatSchema$id(
-            lineage,
+            templateSchemaName,
             getNextSchemaVersion(registeredVersions),
           ),
         } as JsonSchema)

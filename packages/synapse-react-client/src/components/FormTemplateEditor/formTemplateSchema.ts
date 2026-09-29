@@ -14,17 +14,19 @@ export const FORM_TEMPLATE_SCHEMA_ORGANIZATION = 'org.sagebionetworks.act'
 
 const FALLBACK_SCHEMA_NAME = 'FormTemplate'
 
-export type SchemaLineage = { organizationName: string; schemaName: string }
+/** A registered schema's name, qualified by its organization; every version shares it. */
+export type SchemaName = { organizationName: string; schemaName: string }
 
 /**
  * The organization and schema name that a template's schema versions are registered under.
- * An existing template keeps the lineage of the schema it already references, so renaming the
- * template does not start a new lineage. A new template derives the schema name from its name.
+ * An existing template keeps those of the schema it already references, so renaming the
+ * template does not start registering under a new schema name. A new template derives the
+ * schema name from its name.
  */
-export function getFormTemplateSchemaLineage(
+export function resolveFormTemplateSchemaName(
   templateName: string,
   existingSchema$id?: string,
-): SchemaLineage {
+): SchemaName {
   if (existingSchema$id) {
     // A schema $id is `<organization>-<schemaName>-<version>`; neither of the first two may
     // contain a dash.
@@ -45,17 +47,17 @@ export function getFormTemplateSchemaLineage(
 }
 
 /**
- * The `$id` of a schema version in a lineage: `<organization>-<schemaName>-<version>`. Without a
- * version, the unversioned `<organization>-<schemaName>` prefix that identifies the lineage.
+ * The `$id` of a schema version: `<organization>-<schemaName>-<version>`. Without a version,
+ * the unversioned `<organization>-<schemaName>` prefix shared by every version.
  */
-export function formatSchema$id(lineage: SchemaLineage, version?: string) {
-  const lineage$id = `${lineage.organizationName}-${lineage.schemaName}`
-  return version ? `${lineage$id}-${version}` : lineage$id
+export function formatSchema$id(name: SchemaName, version?: string) {
+  const unversioned$id = `${name.organizationName}-${name.schemaName}`
+  return version ? `${unversioned$id}-${version}` : unversioned$id
 }
 
 /**
- * The version to register next in a lineage: one major version above the highest registered
- * version, or `1.0.0` for a lineage with no versions yet.
+ * The version to register next under a schema name: one major version above the highest
+ * registered version, or `1.0.0` when none is registered yet.
  */
 export function getNextSchemaVersion(
   registeredVersions: JsonSchemaVersionInfo[],
