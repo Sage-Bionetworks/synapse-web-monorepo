@@ -19,10 +19,15 @@ import FileHandleContentRenderer, {
   FileHandleContentRendererProps,
 } from './FileHandleContentRenderer'
 import * as HtmlPreviewModule from './HtmlPreview/HtmlPreview'
+import * as PdfPreviewModule from './PdfPreview'
 import { PreviewRendererType } from './PreviewRendererType'
 
 vi.spyOn(HtmlPreviewModule, 'default').mockImplementation(() => {
   return <div data-testid="HtmlPreview"></div>
+})
+
+vi.spyOn(PdfPreviewModule, 'default').mockImplementation(() => {
+  return <div data-testid="PdfPreview"></div>
 })
 
 function renderComponent(props: FileHandleContentRendererProps) {
@@ -40,8 +45,11 @@ function renderComponent(props: FileHandleContentRendererProps) {
 const PRESIGNED_URL = 'https://fake-presigned-url.not-real.gov/file'
 
 describe('FileHandleContentRenderer tests', () => {
+  const onGetPresignedUrl = vi.fn<() => void>()
+
   beforeAll(() => server.listen())
   beforeEach(() => {
+    onGetPresignedUrl.mockClear()
     server.use(
       // Handler to return the presigned URL for the requested file
       http.post(
@@ -49,6 +57,7 @@ describe('FileHandleContentRenderer tests', () => {
           BackendDestinationEnum.REPO_ENDPOINT,
         )}/file/v1/fileHandle/batch`,
         () => {
+          onGetPresignedUrl()
           const result: BatchFileResult = {
             requestedFiles: [
               {
@@ -99,6 +108,39 @@ describe('FileHandleContentRenderer tests', () => {
 
     await screen.findByTestId('HtmlPreview')
   })
+
+  it('Delegates fetching to PdfPreview rather than downloading the content itself', async () => {
+    const fileHandle: FileHandle = {
+      id: MOCK_FILE_HANDLE_ID,
+      fileName: 'test.pdf',
+      contentSize: 100,
+      contentType: 'application/pdf',
+      etag: '',
+      createdBy: '',
+      createdOn: '',
+      concreteType: 'org.sagebionetworks.repo.model.file.S3FileHandle',
+      storageLocationId: 0,
+      modifiedOn: '',
+      status: 'AVAILABLE',
+    }
+    const fileHandleAssociation: FileHandleAssociation = {
+      fileHandleId: fileHandle.id,
+      associateObjectId: mockFileEntityData.id,
+      associateObjectType: FileHandleAssociateType.FileEntity,
+    }
+
+    renderComponent({
+      fileHandle,
+      fileHandleAssociation,
+      previewType: PreviewRendererType.PDF,
+    })
+
+    await screen.findByTestId('PdfPreview')
+
+    // PdfPreview is mocked out, so any request here would be a redundant second download of the same file.
+    expect(onGetPresignedUrl).not.toHaveBeenCalled()
+  })
+
   it('Throws an error if the file content size is > 30MB', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => {})
     const fileSize = 100 * MB
