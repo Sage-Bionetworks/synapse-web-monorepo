@@ -1,11 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useMemo, useRef } from 'react'
-import {
-  createBrowserRouter,
-  RouteObject,
-  Outlet,
-  ScrollRestoration,
-} from 'react-router'
+import { createBrowserRouter, RouteObject } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
 import { RouteErrorBoundary } from 'synapse-react-client/components/error/RouteErrorBoundary'
 import { ThemeProvider } from 'synapse-react-client/theme/ThemeProvider'
@@ -28,18 +23,6 @@ function addErrorBoundaryToRoutes(
   }))
 }
 
-/**
- * Pathless layout route that enables scroll restoration for all portal routes
- */
-function ScrollRestorationLayout() {
-  return (
-    <>
-      <Outlet />
-      <ScrollRestoration />
-    </>
-  )
-}
-
 function Portal(props: PortalProps) {
   const { palette, ...context } = props
   useReloadOnPreloadError()
@@ -59,13 +42,7 @@ function Portal(props: PortalProps) {
     [props.routeConfig, context.logoHeaderConfig?.icon],
   )
   const router = useMemo(
-    () =>
-      createBrowserRouter([
-        {
-          element: <ScrollRestorationLayout />,
-          children: routesWithErrorBoundary,
-        },
-      ]),
+    () => createBrowserRouter(routesWithErrorBoundary),
     [routesWithErrorBoundary],
   )
   const defaultTitle = props.portalName || undefined
