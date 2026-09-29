@@ -3,12 +3,13 @@ import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { TotpSecret } from '@sage-bionetworks/synapse-types'
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import TwoFactorEnrollmentForm, {
   EXPORTED_FOR_UNIT_TESTING,
   TwoFactorEnrollmentFormProps,
 } from './TwoFactorEnrollmentForm'
+import { displayToast } from '@/components/ToastMessage/ToastMessage'
 import { MOCK_USER_NAME } from '@/mocks/user/mock_user_profile'
 import { TOTP_CLOCK_SKEW_ERROR_APPENDAGE } from './Constants'
 
@@ -26,6 +27,12 @@ vi.mock('qrcode', () => ({
   toCanvas: vi.fn(),
 }))
 
+vi.mock('@/components/ToastMessage/ToastMessage', () => ({
+  displayToast: vi.fn(),
+}))
+
+const mockDisplayToast = vi.mocked(displayToast)
+
 const mockComplete2FAEnrollment = vi.spyOn(
   SynapseClient,
   'complete2FAEnrollment',
@@ -41,6 +48,10 @@ function renderComponent(props: TwoFactorEnrollmentFormProps) {
 }
 
 describe('TwoFactorEnrollmentForm', () => {
+  beforeEach(() => {
+    mockDisplayToast.mockClear()
+  })
+
   it("Bind a 2FA secret to a user's account", async () => {
     renderComponent({
       totpSecret,
@@ -94,17 +105,28 @@ describe('TwoFactorEnrollmentForm', () => {
 
     await userEvent.click(submitButton)
 
-    const errorAlert = await screen.findByRole('alert')
-    within(errorAlert).getByText(
-      `Invalid TOTP code. ${TOTP_CLOCK_SKEW_ERROR_APPENDAGE}`,
-    )
+    // The invalid code is reported on the field itself, so it stays visible above a mobile virtual keyboard
+    await waitFor(() => {
+      expect(totpInput).toHaveAccessibleDescription(
+        `Invalid TOTP code. ${TOTP_CLOCK_SKEW_ERROR_APPENDAGE}`,
+      )
+    })
     expect(mockComplete2FAEnrollment).toHaveBeenCalledTimes(1)
+    expect(mockDisplayToast).not.toHaveBeenCalled()
 
     consoleErrorSpy.mockRestore()
 
     // Enter the correct code
     mockComplete2FAEnrollment.mockResolvedValue({ status: 'ENABLED' })
     await userEvent.clear(totpInput)
+
+    // Editing the code clears the previous error
+    await waitFor(() => {
+      expect(totpInput).not.toHaveAccessibleDescription(
+        `Invalid TOTP code. ${TOTP_CLOCK_SKEW_ERROR_APPENDAGE}`,
+      )
+    })
+
     await userEvent.type(totpInput, '654321')
     await userEvent.click(submitButton)
 
@@ -119,6 +141,40 @@ describe('TwoFactorEnrollmentForm', () => {
       )
       expect(onSuccessFn).toHaveBeenCalledTimes(1)
     })
+  })
+
+  it('Shows a toast for an error that is not specific to the code field', async () => {
+    mockComplete2FAEnrollment.mockRejectedValue(
+      new SynapseClientError(
+        500,
+        'Something went wrong',
+        expect.getState().currentTestName!,
+      ),
+    )
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => {})
+
+    renderComponent({
+      totpSecret,
+      onTwoFactorEnrollmentSuccess: onSuccessFn,
+      onBackClicked: onBackClickedFn,
+    })
+
+    const totpInput = await screen.findByRole('textbox')
+    await userEvent.type(totpInput, '123456')
+    await userEvent.click(screen.getByRole('button', { name: 'Activate' }))
+
+    await waitFor(() => {
+      expect(mockDisplayToast).toHaveBeenCalledWith(
+        'Something went wrong',
+        'danger',
+      )
+    })
+    // The message has no field to attach to, so the field is left unmarked
+    expect(totpInput).not.toHaveAccessibleDescription('Something went wrong')
+
+    consoleErrorSpy.mockRestore()
   })
 
   it('toOtpAuthUrl', () => {

@@ -10,6 +10,7 @@ import {
   BoxProps,
   Button,
   Divider,
+  FormHelperText,
   IconButton,
   Link,
   Paper,
@@ -21,12 +22,13 @@ import { TotpSecret } from '@sage-bionetworks/synapse-types'
 import * as qrcode from 'qrcode'
 // qrcode is CJS-only; use namespace import for Vite dev mode CJS interop.
 const { toCanvas } = qrcode
-import { useEffect, useRef, useState } from 'react'
-import FullWidthAlert from '../FullWidthAlert/FullWidthAlert'
+import { useEffect, useId, useRef, useState } from 'react'
 import IconSvg from '../IconSvg/IconSvg'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import TextField from '../TextField/TextField'
 import TwoFactorSecretDialog from './TwoFactorSecretDialog'
+import { displayToast } from '../ToastMessage/ToastMessage'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 
 /**
  * Returns a URL that can be used to generate a QR code that 2FA authenticator apps can interpret.
@@ -35,6 +37,10 @@ import TwoFactorSecretDialog from './TwoFactorSecretDialog'
  */
 function toOtpAuthUrl(secret: TotpSecret) {
   return `otpauth://totp/Synapse:${secret.username}?secret=${secret.secret}&issuer=Sage%20Bionetworks&algorithm=${secret.alg}&digits=${secret.digits}&period=${secret.period}`
+}
+
+function isInvalidTotpCodeError(error: SynapseClientError) {
+  return error.reason.toLowerCase().includes('invalid totp code')
 }
 
 const Section: StyledComponent<BoxProps> = styled(
@@ -82,14 +88,24 @@ export default function TwoFactorEnrollmentForm(
   const [hasQrCode, setHasQrCode] = useState(false)
   const [showSecretInModal, setShowSecretInModal] = useState(false)
   const qrCodeCanvasElement = useRef<HTMLCanvasElement>(null)
+  const invalidCodeErrorId = useId()
 
   const {
     mutate: finishEnrollment,
     isPending: isFinishingEnrollment,
     error,
+    reset: resetEnrollmentError,
   } = useFinishTwoFactorEnrollment({
     onSuccess: onTwoFactorEnrollmentSuccess,
+    onError: error => {
+      // An invalid code is reported on the code field itself; anything else has no field to attach to
+      if (!isInvalidTotpCodeError(error)) {
+        displayToast(error.reason, 'danger')
+      }
+    },
   })
+
+  const showInvalidCodeError = error != null && isInvalidTotpCodeError(error)
 
   useEffect(() => {
     async function createQrCode() {
@@ -268,10 +284,18 @@ export default function TwoFactorEnrollmentForm(
                     htmlInput: {
                       ...NUMERIC_CODE_HTML_INPUT_PROPS,
                       maxLength: totpSecret?.digits,
+                      'aria-describedby': showInvalidCodeError
+                        ? invalidCodeErrorId
+                        : undefined,
                     },
                   }}
                   value={totp}
+                  error={showInvalidCodeError}
                   onChange={e => {
+                    // Clear a previous failure as soon as the user edits the code
+                    if (error) {
+                      resetEnrollmentError()
+                    }
                     setTotp(e.target.value)
                   }}
                 />
@@ -286,20 +310,16 @@ export default function TwoFactorEnrollmentForm(
                   Activate
                 </Button>
               </Stack>
+              {/* The message sits outside the input's form control so that it can wrap
+                  against the full width of the card rather than the width of the input */}
+              {showInvalidCodeError && (
+                <FormHelperText id={invalidCodeErrorId} error sx={{ mt: 1 }}>
+                  {`${error.reason}. ${TOTP_CLOCK_SKEW_ERROR_APPENDAGE}`}
+                </FormHelperText>
+              )}
             </form>
           </SectionInnerGrid>
         </Section>
-        {error && (
-          <FullWidthAlert
-            variant={'danger'}
-            isGlobal={false}
-            description={
-              error.reason.toLowerCase().includes('invalid totp code')
-                ? `${error.reason}. ${TOTP_CLOCK_SKEW_ERROR_APPENDAGE}`
-                : error.reason
-            }
-          />
-        )}
       </Paper>
     </StyledOuterContainer>
   )

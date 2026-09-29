@@ -1,8 +1,17 @@
 .SynapseToastContainer {
   inset: unset !important;
-  bottom: 20px !important;
   z-index: 2001 !important;
   width: 100%;
+
+  &.SynapseToastContainerBottom {
+    bottom: 20px !important;
+  }
+
+  // Flush to the top of the viewport, where a virtual keyboard can't cover it
+  &.SynapseToastContainerTop {
+    top: 0 !important;
+  }
+
   .SynapseToastMessage {
     display: unset;
     line-height: unset;
