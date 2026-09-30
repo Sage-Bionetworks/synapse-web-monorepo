@@ -211,25 +211,6 @@ function findBranchIndex(
   })
 }
 
-/** Ensure the schema declares `x-synapse-submissionContext` as a required top-level property,
- * so a schema with at least one conditional field is self-describing and matches what the
- * submitted `schemaData` is required to include. A no-op if already declared. */
-function ensureSubmissionContextDeclared(schema: RJSFSchema): RJSFSchema {
-  const properties = (schema.properties ?? {}) as Record<string, RJSFSchema>
-  if (SUBMISSION_CONTEXT_PROPERTY in properties) return schema
-  return {
-    ...schema,
-    properties: {
-      ...properties,
-      [SUBMISSION_CONTEXT_PROPERTY]: {
-        type: 'string',
-        enum: [DataAccessRequestType.REQUEST, DataAccessRequestType.RENEWAL],
-      },
-    },
-    required: [...(schema.required ?? []), SUBMISSION_CONTEXT_PROPERTY],
-  }
-}
-
 /**
  * Remove `propertyKey` from wherever it's currently defined. Drops now-empty
  * `then.properties`/branches/the `allOf` array itself so relocating or deleting
@@ -306,8 +287,7 @@ export function setSchemaProperty(
     }
   }
 
-  const base = ensureSubmissionContextDeclared(withoutProperty)
-  const allOf = [...(base.allOf ?? [])]
+  const allOf = [...(withoutProperty.allOf ?? [])]
   const branchIndex = findBranchIndex(allOf, requestType)
   if (branchIndex === -1) {
     allOf.push({
@@ -330,7 +310,7 @@ export function setSchemaProperty(
       },
     }
   }
-  return { ...base, allOf }
+  return { ...withoutProperty, allOf }
 }
 
 /** Set whether a property is required within its current context's branch (top-level `required`
@@ -385,6 +365,31 @@ export function setSchemaPropertyContext(
   )
   return resolved.isRequired
     ? setSchemaPropertyRequired(next, propertyKey, context, true)
+    : next
+}
+
+/**
+ * Replace a property's definition wherever it's defined (top-level or an `allOf` branch),
+ * preserving its context and required-ness. A no-op if the property doesn't resolve.
+ */
+export function replaceSchemaPropertyDefinition(
+  schema: RJSFSchema,
+  propertyKey: string,
+  subSchema: RJSFSchema,
+): RJSFSchema {
+  const resolved = resolveSchemaPropertyAtPointer(
+    schema,
+    propertyKeyToPointer(propertyKey),
+  )
+  if (!resolved) return schema
+  const next = setSchemaProperty(
+    schema,
+    propertyKey,
+    subSchema,
+    resolved.context,
+  )
+  return resolved.isRequired
+    ? setSchemaPropertyRequired(next, propertyKey, resolved.context, true)
     : next
 }
 

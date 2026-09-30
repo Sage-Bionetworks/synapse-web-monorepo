@@ -26,11 +26,8 @@ import {
   submissionContextLabel,
 } from '@/utils/jsonschema/submissionContext'
 import styles from './dragHandle.module.scss'
-import {
-  detectFieldType,
-  fieldTypeLabel,
-  SLOT_SORTABLE_TYPE,
-} from './schemaFieldUtils'
+import { detectFieldType, fieldTypeLabel } from './schemaFieldUtils'
+import { SLOT_SORTABLE_TYPE } from './sortableIds'
 
 export type StepFieldRowProps = {
   /** Sortable id assigned by parent: `slot:{stepIndex}:{fieldIndex}`. */
@@ -106,9 +103,10 @@ export function StepFieldRow({
     <Paper
       ref={ref}
       variant="outlined"
+      className={styles.dragSource}
+      data-dragging={isDragging}
       sx={{
         p: 1,
-        opacity: isDragging ? 'var(--synapse-drag-source-opacity)' : 1,
         backgroundColor: 'action.hover',
         borderColor: isUnresolved ? 'error.main' : undefined,
       }}

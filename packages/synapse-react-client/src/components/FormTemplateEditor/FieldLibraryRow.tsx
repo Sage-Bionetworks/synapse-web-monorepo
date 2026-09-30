@@ -7,11 +7,8 @@ import {
   submissionContextLabel,
 } from '@/utils/jsonschema/submissionContext'
 import styles from './dragHandle.module.scss'
-import {
-  detectFieldType,
-  FIELD_DRAG_TYPE,
-  fieldTypeLabel,
-} from './schemaFieldUtils'
+import { detectFieldType, fieldTypeLabel } from './schemaFieldUtils'
+import { FIELD_DRAG_TYPE, fieldDragData } from './sortableIds'
 
 export type FieldLibraryRowProps = {
   propertyKey: string
@@ -43,7 +40,7 @@ export function FieldLibraryRow({
   const { ref, handleRef, isDragging } = useDraggable({
     id: `field:${propertyKey}`,
     type: FIELD_DRAG_TYPE,
-    data: { propertyKey },
+    data: fieldDragData(propertyKey),
     disabled: isUsedInSteps,
   })
 
@@ -51,11 +48,9 @@ export function FieldLibraryRow({
     <Paper
       ref={ref}
       variant="outlined"
-      sx={{
-        p: 1.25,
-        transition: 'opacity 120ms',
-        opacity: isDragging ? 'var(--synapse-drag-source-opacity)' : 1,
-      }}
+      className={styles.dragSource}
+      data-dragging={isDragging}
+      sx={{ p: 1.25 }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
         <Box

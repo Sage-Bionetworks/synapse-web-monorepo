@@ -36,9 +36,3 @@ export function toFormTemplateSteps(
 ): FormTemplateStep[] {
   return steps.map(({ uiKey: _uiKey, ...rest }) => rest)
 }
-
-/** Normalize a JSON pointer (ensure leading slash). */
-export function normalizePointer(p: string): string {
-  if (!p) return p
-  return p.startsWith('/') ? p : `/${p}`
-}
