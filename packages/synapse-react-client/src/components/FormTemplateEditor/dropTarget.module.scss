@@ -1,0 +1,14 @@
+// Shared highlight for the step card and its slot list while a compatible drag hovers over them.
+// Toggled with `data-drop-target` so the component only reports state and the look lives here.
+.dropTarget {
+  outline: 2px dashed transparent;
+  outline-offset: -2px;
+  transition:
+    outline-color 120ms,
+    background-color 120ms;
+
+  &[data-drop-target='true'] {
+    outline-color: var(--synapse-primary-action-color);
+    background-color: var(--synapse-primary-action-color-alpha-4);
+  }
+}
