@@ -10,6 +10,7 @@ import {
 } from 'react-router'
 import { RouterProvider as DOMRouterProvider } from 'react-router/dom'
 import SWCPageLayout from '@/components/layout/SWCPageLayout'
+import { useScrollToTopOnRouteChange } from '@/utils/hooks/useScrollToTopOnRouteChange'
 
 export type CuratorDashboardRouterProps = PropsWithChildren<{
   /** Used to determine the base path for the component. Default is CuratorDashboard:0 */
@@ -17,6 +18,22 @@ export type CuratorDashboardRouterProps = PropsWithChildren<{
   /** If true use a MemoryRouter, which prevents the browser URL from updating. For testing purposes only. */
   useMemoryRouter?: boolean
 }>
+
+/**
+ * Chrome shared by every route in the dashboard. Stays mounted across navigation between the task
+ * list and the task editor, both of which render into its `Outlet`.
+ */
+function CuratorDashboardLayout() {
+  useScrollToTopOnRouteChange()
+
+  return (
+    <SWCPageLayout header={{ title: 'Curator Dashboard' }}>
+      <div className="pageContent" style={{ marginTop: '2rem' }}>
+        <Outlet />
+      </div>
+    </SWCPageLayout>
+  )
+}
 
 /**
  * A router wrapper for the CuratorDashboard, which applies a router around the component to support using react-router APIs
@@ -32,13 +49,7 @@ export default function CuratorDashboardRouter(
     () => [
       {
         path: '/',
-        element: (
-          <SWCPageLayout header={{ title: 'Curator Dashboard' }}>
-            <div className="pageContent" style={{ marginTop: '2rem' }}>
-              <Outlet />
-            </div>
-          </SWCPageLayout>
-        ),
+        element: <CuratorDashboardLayout />,
         children: [
           { index: true, element: <CuratorDashboardContent /> },
           { path: 'edit/:taskId', element: <EditCurationTaskPage /> },
