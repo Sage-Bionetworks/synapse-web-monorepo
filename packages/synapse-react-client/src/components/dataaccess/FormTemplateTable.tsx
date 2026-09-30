@@ -134,7 +134,8 @@ export function FormTemplateTable() {
       <Box
         sx={{
           display: 'flex',
-          alignItems: 'center',
+          // The text field's label sits above its input, so align to the bottom to line up with the input
+          alignItems: 'flex-end',
           gap: 2,
           flexWrap: 'wrap',
           mb: 2,
@@ -158,8 +159,12 @@ export function FormTemplateTable() {
         />
         <FormControlLabel
           label={'Include deprecated'}
+          // Drop the inherited bottom margin so the switch lines up with the input
+          sx={{ mb: 0 }}
           control={
             <Switch
+              // The hidden input's default margin overflows the switch and scrolls it when checked
+              sx={{ '& .MuiSwitch-input': { m: 0 } }}
               checked={includeDeprecated}
               onChange={e => setIncludeDeprecated(e.target.checked)}
             />
