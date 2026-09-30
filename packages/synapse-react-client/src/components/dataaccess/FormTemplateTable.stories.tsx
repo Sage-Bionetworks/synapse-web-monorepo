@@ -2,27 +2,25 @@ import {
   mockDeprecatedTemplate,
   mockFormTemplates,
 } from '@/mocks/accessRequirement/mockFormTemplates'
-import { getFormTemplateHandlers } from '@/mocks/msw/handlers/formTemplateHandlers'
-import BasicMockedCrudService from '@/mocks/msw/util/BasicMockedCrudService'
+import {
+  getFormTemplateHandlers,
+  getFormTemplateSearchUrl,
+  getFormTemplateService,
+} from '@/mocks/msw/handlers/formTemplateHandlers'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Meta, StoryObj } from '@storybook/react-vite'
-import { FormTemplate } from '@sage-bionetworks/synapse-client'
 import { HttpHandler, http, HttpResponse } from 'msw'
 import { MemoryRouter } from 'react-router'
 import { FormTemplateTable } from './FormTemplateTable'
 
-const SEARCH_URL = `${MOCK_REPO_ORIGIN}/repo/v1/accessRequirement/formTemplate/search`
+const SEARCH_URL = getFormTemplateSearchUrl(MOCK_REPO_ORIGIN)
 
 const handlers: Record<string, HttpHandler[]> = {
   default: getFormTemplateHandlers(
     MOCK_REPO_ORIGIN,
-    new BasicMockedCrudService<FormTemplate, 'id'>({
-      initialData: [...mockFormTemplates, mockDeprecatedTemplate],
-      idField: 'id',
-      autoGenerateId: true,
-    }),
+    getFormTemplateService([...mockFormTemplates, mockDeprecatedTemplate]),
   ),
-  empty: [http.post(SEARCH_URL, () => HttpResponse.json({ results: [] }))],
+  empty: getFormTemplateHandlers(MOCK_REPO_ORIGIN, getFormTemplateService([])),
   error: [
     http.post(SEARCH_URL, () =>
       HttpResponse.json({ reason: 'Search failed' }, { status: 500 }),

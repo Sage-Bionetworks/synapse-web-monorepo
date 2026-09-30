@@ -23,8 +23,11 @@ import { Link, useNavigate } from 'react-router'
 import ColumnHeader from '../TanStackTable/ColumnHeader'
 import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 
-export const FORM_TEMPLATES_PATH = '/FormTemplates'
-export const NEW_FORM_TEMPLATE_PATH = `${FORM_TEMPLATES_PATH}/new`
+export const FORM_TEMPLATES_ROUTE = 'FormTemplates'
+export const NEW_FORM_TEMPLATE_ROUTE = `${FORM_TEMPLATES_ROUTE}/new`
+export const FORM_TEMPLATE_ROUTE = `${FORM_TEMPLATES_ROUTE}/:templateId`
+export const FORM_TEMPLATES_PATH = `/${FORM_TEMPLATES_ROUTE}`
+export const NEW_FORM_TEMPLATE_PATH = `/${NEW_FORM_TEMPLATE_ROUTE}`
 export const getFormTemplatePath = (templateId: string) =>
   `${FORM_TEMPLATES_PATH}/${templateId}`
 
@@ -89,17 +92,19 @@ export function FormTemplateTable() {
     getRowId: row => row.id ?? '',
   })
 
+  const errorAlert = error && (
+    <Alert severity={'error'}>
+      <strong>Sorry, we couldn&apos;t load the form templates.</strong>
+      <br />
+      {error.reason}
+    </Alert>
+  )
+
   let content
   if (isLoading) {
     content = <Skeleton variant={'rectangular'} height={200} />
-  } else if (error) {
-    content = (
-      <Alert severity={'error'}>
-        <strong>Sorry, we couldn&apos;t load the form templates.</strong>
-        <br />
-        {error.reason}
-      </Alert>
-    )
+  } else if (error && !data) {
+    content = errorAlert
   } else if (templates.length === 0) {
     content = <Alert severity={'info'}>No form templates found.</Alert>
   } else {
@@ -109,6 +114,8 @@ export function FormTemplateTable() {
           table={table}
           styledTableContainerProps={{ sx: { my: 2 } }}
         />
+        {/* A failed "Load more" keeps the loaded rows; clicking "Load more" again retries */}
+        {errorAlert}
         {hasNextPage && (
           <Button
             variant={'outlined'}

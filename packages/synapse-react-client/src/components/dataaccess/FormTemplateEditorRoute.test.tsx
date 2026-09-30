@@ -10,6 +10,12 @@ import {
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
 import { FormTemplateEditorRoute } from './FormTemplateEditorRoute'
+import {
+  FORM_TEMPLATE_ROUTE,
+  FORM_TEMPLATES_PATH,
+  getFormTemplatePath,
+  NEW_FORM_TEMPLATE_PATH,
+} from './FormTemplateTable'
 import { getFormTemplateHandlers } from '@/mocks/msw/handlers/formTemplateHandlers'
 import { getRegisteredSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
 import { mockGenomicsSchema } from '@/mocks/accessRequirement/mockJsonSchemas'
@@ -20,13 +26,13 @@ function renderAt(path: string) {
   render(
     <MemoryRouter initialEntries={[path]}>
       <Routes>
-        <Route path="/FormTemplates" element={<div>Template list</div>} />
+        <Route path={FORM_TEMPLATES_PATH} element={<div>Template list</div>} />
         <Route
-          path="/FormTemplates/new"
+          path={NEW_FORM_TEMPLATE_PATH}
           element={<FormTemplateEditorRoute />}
         />
         <Route
-          path="/FormTemplates/:templateId"
+          path={`/${FORM_TEMPLATE_ROUTE}`}
           element={<FormTemplateEditorRoute />}
         />
       </Routes>
@@ -41,7 +47,7 @@ describe('FormTemplateEditorRoute', () => {
   afterAll(() => server.close())
 
   it('opens an empty editor for /new', async () => {
-    renderAt('/FormTemplates/new')
+    renderAt(NEW_FORM_TEMPLATE_PATH)
     await screen.findByText('Create Form Template')
   })
 
@@ -50,13 +56,13 @@ describe('FormTemplateEditorRoute', () => {
       ...getFormTemplateHandlers(REPO_ORIGIN),
       ...getRegisteredSchemaHandlers(REPO_ORIGIN, [mockGenomicsSchema]),
     )
-    renderAt(`/FormTemplates/${mockGenomicsTemplate.id}`)
+    renderAt(getFormTemplatePath(mockGenomicsTemplate.id!))
     await screen.findByText('Edit Form Template')
   })
 
   it('returns to the list on cancel', async () => {
     const user = userEvent.setup()
-    renderAt('/FormTemplates/new')
+    renderAt(NEW_FORM_TEMPLATE_PATH)
     await user.click(await screen.findByRole('button', { name: 'Cancel' }))
     await screen.findByText('Template list')
   })
@@ -68,7 +74,7 @@ describe('FormTemplateEditorRoute', () => {
         () => HttpResponse.json({ reason: 'not found' }, { status: 404 }),
       ),
     )
-    renderAt('/FormTemplates/missing')
+    renderAt(getFormTemplatePath('missing'))
     await screen.findByText(/Could not load the form template/)
   })
 })

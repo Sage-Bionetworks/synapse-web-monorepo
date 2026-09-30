@@ -21,7 +21,13 @@ import { AccessRequirementDashboard } from './AccessRequirementDashboard'
 import { DataAccessSubmissionDashboard } from './AccessSubmissionDashboard'
 import { EDucTemplateTable } from './EDucTemplateTable'
 import { FormTemplateEditorRoute } from './FormTemplateEditorRoute'
-import { FORM_TEMPLATES_PATH, FormTemplateTable } from './FormTemplateTable'
+import {
+  FORM_TEMPLATE_ROUTE,
+  FORM_TEMPLATES_PATH,
+  FORM_TEMPLATES_ROUTE,
+  FormTemplateTable,
+  NEW_FORM_TEMPLATE_ROUTE,
+} from './FormTemplateTable'
 import SubmissionPage from './SubmissionPage/SubmissionPage'
 
 function LinkTab(props: { href: string; children: ReactNode; icon: IconName }) {
@@ -108,15 +114,15 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
             element: hasActPermissions ? <EDucTemplateTable /> : null,
           },
           {
-            path: 'FormTemplates',
+            path: FORM_TEMPLATES_ROUTE,
             element: hasActPermissions ? <FormTemplateTable /> : null,
           },
           {
-            path: 'FormTemplates/new',
+            path: NEW_FORM_TEMPLATE_ROUTE,
             element: hasActPermissions ? <FormTemplateEditorRoute /> : null,
           },
           {
-            path: 'FormTemplates/:templateId',
+            path: FORM_TEMPLATE_ROUTE,
             element: hasActPermissions ? <FormTemplateEditorRoute /> : null,
           },
           {
