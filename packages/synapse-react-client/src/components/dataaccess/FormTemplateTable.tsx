@@ -22,6 +22,7 @@ import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import ColumnHeader from '../TanStackTable/ColumnHeader'
 import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
+import { keepPreviousData } from '@tanstack/react-query'
 
 export const FORM_TEMPLATES_ROUTE = 'FormTemplates'
 export const NEW_FORM_TEMPLATE_ROUTE = `${FORM_TEMPLATES_ROUTE}/new`
@@ -78,7 +79,10 @@ export function FormTemplateTable() {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useSearchFormTemplatesInfinite(request)
+  } = useSearchFormTemplatesInfinite(request, {
+    // keepPreviousData avoids a flicker when the request changes
+    placeholderData: keepPreviousData,
+  })
 
   const templates = useMemo(
     () => data?.pages.flatMap(page => page.results ?? []) ?? [],
