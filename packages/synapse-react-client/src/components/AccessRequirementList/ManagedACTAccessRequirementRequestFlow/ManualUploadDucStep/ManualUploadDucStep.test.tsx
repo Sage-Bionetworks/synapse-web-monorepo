@@ -333,46 +333,80 @@ describe('ManualUploadDucStep', () => {
     expect(mockOnSubmissionCreated).not.toHaveBeenCalled()
   })
 
-  it('does not re-fetch /preview after voiding the signature envelope', async () => {
-    // Regression: /preview mutates server state (creates a new envelope, resets DAR to draft),
-    // which repopulates `eDucSignatureEnvelopeId` on the DAR and causes the subsequent
-    // updateDar call to be rejected — you can't set `ducFileHandleId` on a DAR that still has
-    // an active signature envelope. The void mutation's onSuccess broadly invalidates the DAR
-    // query tree, which would otherwise auto-refetch the preview observer. See PORTALS-4XXX.
-    mockGetDataRequestForUpdate.mockResolvedValue({
-      ...MOCK_DATA_ACCESS_REQUEST,
-      eDucSignatureEnvelopeId: 'envelope-abc',
+  describe('voiding a prior signature routing on upload', () => {
+    /**
+     * Counts the calls the upload path can make, so each test can assert on whether the void
+     * fired rather than only on the update that follows it.
+     */
+    function trackUploadCalls() {
+      const calls = { void: 0, update: 0, preview: 0 }
+      return {
+        calls,
+        handlers: [
+          http.get(previewEndpoint, () => {
+            calls.preview += 1
+            return HttpResponse.json(
+              { fileHandleId: 'preview-file-1' },
+              { status: 200 },
+            )
+          }),
+          http.delete(signatureEndpoint, () => {
+            calls.void += 1
+            return new HttpResponse(null, { status: 200 })
+          }),
+          http.post(updateEndpoint, async ({ request }) => {
+            calls.update += 1
+            const body = (await request.json()) as { id: string; etag: string }
+            return HttpResponse.json(
+              { ...body, etag: 'new-etag' },
+              { status: 201 },
+            )
+          }),
+        ],
+      }
+    }
+
+    it('voids the envelope before saving the signed DUC when a routing is in flight', async () => {
+      mockGetDataRequestForUpdate.mockResolvedValue({
+        ...MOCK_DATA_ACCESS_REQUEST,
+        eDucSignatureEnvelopeId: 'envelope-abc',
+      })
+      const { calls, handlers } = trackUploadCalls()
+      server.use(...handlers)
+
+      // Clear the href override so the preview is actually fetched and can be counted.
+      const { user } = renderComponent({ downloadHrefOverride: undefined })
+      await waitFor(() => expect(calls.preview).toBe(1))
+      await user.click(
+        await screen.findByRole('button', { name: /Upload Signed DUC/i }),
+      )
+
+      // The server rejects a manually-uploaded DUC while a routing is live, so the void has to
+      // land before the update is attempted.
+      await waitFor(() => expect(calls.void).toBe(1))
+      await waitFor(() => expect(calls.update).toBe(1))
+      // Regenerating the preview costs a server-side PDF render, and neither voiding nor saving
+      // changes what it would contain, so nothing in this sequence may invalidate it.
+      expect(calls.preview).toBe(1)
     })
-    let previewCallCount = 0
-    let voidCallCount = 0
-    let updateCallCount = 0
-    server.use(
-      http.get(previewEndpoint, () => {
-        previewCallCount += 1
-        return HttpResponse.json(
-          { fileHandleId: 'preview-file-1' },
-          { status: 200 },
-        )
-      }),
-      http.delete(signatureEndpoint, () => {
-        voidCallCount += 1
-        return new HttpResponse(null, { status: 200 })
-      }),
-      http.post(updateEndpoint, async ({ request }) => {
-        updateCallCount += 1
-        const body = (await request.json()) as { id: string; etag: string }
-        return HttpResponse.json({ ...body, etag: 'new-etag' }, { status: 201 })
-      }),
-    )
-    // Override the downloadHrefOverride so the preview endpoint is actually called.
-    const { user } = renderComponent({ downloadHrefOverride: undefined })
-    await waitFor(() => expect(previewCallCount).toBe(1))
-    await user.click(
-      await screen.findByRole('button', { name: /Upload Signed DUC/i }),
-    )
-    await waitFor(() => expect(voidCallCount).toBe(1))
-    await waitFor(() => expect(updateCallCount).toBe(1))
-    // Preview was fetched once at mount and NOT re-fetched after voiding.
-    expect(previewCallCount).toBe(1)
+
+    it('saves the signed DUC without voiding when the user only previewed the DUC', async () => {
+      // Generating a preview leaves the request untouched, so a user who reached this step
+      // without sending for signature has no envelope and must not be charged a void.
+      mockGetDataRequestForUpdate.mockResolvedValue({
+        ...MOCK_DATA_ACCESS_REQUEST,
+        eDucSignatureEnvelopeId: undefined,
+      })
+      const { calls, handlers } = trackUploadCalls()
+      server.use(...handlers)
+
+      const { user } = renderComponent()
+      await user.click(
+        await screen.findByRole('button', { name: /Upload Signed DUC/i }),
+      )
+
+      await waitFor(() => expect(calls.update).toBe(1))
+      expect(calls.void).toBe(0)
+    })
   })
 })

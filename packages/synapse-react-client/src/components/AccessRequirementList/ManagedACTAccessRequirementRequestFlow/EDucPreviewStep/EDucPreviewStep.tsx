@@ -96,30 +96,20 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
     })
 
   const requestId = dataAccessRequest?.id
+  const accessRequirementId = String(managedACTAccessRequirement.id)
+  // Set only once a routing has actually been sent -- generating the preview leaves the request
+  // untouched -- so this cleanly separates a first send from a re-send. The signature mutations
+  // invalidate this query, so a send from an earlier pass through the wizard is reflected here.
   const hasSignatureEnvelope = Boolean(
     dataAccessRequest?.eDucSignatureEnvelopeId,
   )
-
-  // Once the user commits to sending, the preview query must not run again: GET
-  // /dataAccessRequest/{id}/preview has server-side side effects (it creates a signature envelope
-  // and resets the DAR to draft), and every signature mutation invalidates the DAR query key --
-  // which would otherwise refetch the preview between the DELETE and the POST below. PLFM-9938
-  // tracks making that endpoint side-effect free; until it lands the call stays a query (callers
-  // read it declaratively) and this latch is what keeps it from firing at the wrong moment.
-  //
-  // This latches for the lifetime of the step rather than clearing when a send fails. Re-enabling
-  // the query would refetch it (the preview is stale the moment it lands), firing those side
-  // effects behind an error message -- worst of all after a successful void, where it would mint a
-  // replacement envelope the user never asked for. The already-fetched preview stays on screen, and
-  // leaving and re-entering the step regenerates it.
-  const [hasStartedSendSequence, setHasStartedSendSequence] = useState(false)
 
   const {
     data: previewFileHandle,
     isLoading: isLoadingPreview,
     error: previewError,
   } = useGetDataAccessRequestPreview(requestId ?? '', {
-    enabled: Boolean(requestId) && !hasStartedSendSequence,
+    enabled: Boolean(requestId),
   })
 
   const previewFileHandleId = previewFileHandle?.fileHandleId
@@ -245,10 +235,11 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
   const handleSendForSignature = async () => {
     if (!requestId) return
     resetSendErrors()
-    setHasStartedSendSequence(true)
 
+    // Routing creates the envelope as well as sending it, so with nothing in flight there is no
+    // existing envelope to reconcile against.
     if (!hasSignatureEnvelope) {
-      initiateSignature(requestId)
+      initiateSignature({ requestId, accessRequirementId })
       return
     }
 
@@ -274,20 +265,23 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
   const handleKeepExistingDuc = () => {
     if (!requestId) return
     setOpenConfirmation(null)
-    updateSignature(requestId)
+    updateSignature({ requestId, accessRequirementId })
   }
 
   const handleSendNewDuc = async () => {
     if (!requestId) return
     setOpenConfirmation(null)
-    const isVoided = await voidSignature(requestId).then(
+    const isVoided = await voidSignature({
+      requestId,
+      accessRequirementId,
+    }).then(
       () => true,
       () => false,
     )
     if (!isVoided) {
       return
     }
-    initiateSignature(requestId)
+    initiateSignature({ requestId, accessRequirementId })
   }
 
   // Dismissing leaves the request untouched, so the user is still free to fall back to the

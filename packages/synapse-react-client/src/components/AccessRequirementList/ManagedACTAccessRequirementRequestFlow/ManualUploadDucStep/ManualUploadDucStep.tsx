@@ -71,24 +71,12 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
     throwOnError: true,
   })
 
-  // Once we start the void → refetch → updateDar sequence, the preview query must not run again:
-  // GET /dataAccessRequest/{id}/preview has server-side side effects (creates a new signature
-  // envelope, resets DAR to draft) that repopulate `eDucSignatureEnvelopeId` on the DAR. The
-  // backend then rejects the follow-up updateDar because we're trying to set a manually-uploaded
-  // `ducFileHandleId` on a DAR that still has an active signature envelope. Because
-  // `useVoidDataAccessRequestSignature` invalidates the root DAR query key on success, an active
-  // preview observer would otherwise be auto-refetched.
-  const [isSubmittingSignedDuc, setIsSubmittingSignedDuc] = useState(false)
-
   const {
     data: previewFileHandle,
     isLoading: isLoadingPreview,
     error: previewError,
   } = useGetDataAccessRequestPreview(dataAccessRequest?.id ?? '', {
-    enabled:
-      Boolean(dataAccessRequest?.id) &&
-      !downloadHrefOverride &&
-      !isSubmittingSignedDuc,
+    enabled: Boolean(dataAccessRequest?.id) && !downloadHrefOverride,
   })
 
   const previewFileHandleId = previewFileHandle?.fileHandleId
@@ -162,17 +150,19 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
       return
     }
     setUpdateDarError(undefined)
-    // Only void a prior eDUC signature routing if one was actually sent. If the user ejected
-    // from EDucPreviewStep before sending for signature, there's nothing to void.
+    // The server rejects a manually-uploaded `ducFileHandleId` while a routing is still in flight,
+    // so an existing envelope has to be voided first. Generating the preview never creates one, so
+    // this only fires for users who actually sent the DUC for signature and then changed their mind.
     const hasSignatureEnvelope = Boolean(
       dataAccessRequest.eDucSignatureEnvelopeId,
     )
     let latestDar = dataAccessRequest
     if (hasSignatureEnvelope) {
-      // Freeze the preview query before voiding — see the comment above the `isSubmittingSignedDuc` state.
-      setIsSubmittingSignedDuc(true)
       try {
-        await voidSignatureAsync(dataAccessRequest.id)
+        await voidSignatureAsync({
+          requestId: dataAccessRequest.id,
+          accessRequirementId: String(managedACTAccessRequirement.id),
+        })
       } catch {
         return
       }
