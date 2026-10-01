@@ -29,6 +29,7 @@ import { ProfileAvatar } from '../components/ProfileAvatar'
 import { ORCiDButton } from '../components/ProfileValidation/ORCiDButton'
 import { UnbindORCiDDialog } from '../components/ProfileValidation/UnbindORCiD'
 import { RASButton } from '../components/RASButton'
+import { UnlinkRASButton } from '../components/UnlinkRASButton'
 import AccountSettingsTopBar from '../components/AccountSettingsTopBar'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import IconSvg from 'synapse-react-client/components/IconSvg/IconSvg'
@@ -568,14 +569,19 @@ const AccountSettings = (): React.ReactNode => {
                         your NIH credentials.
                       </i>
                     </p>
-                    {!isRASLinked && (
-                      <div className="primary-button-container">
+                    <div className="primary-button-container">
+                      {isRASLinked ? (
+                        <UnlinkRASButton
+                          sx={credentialButtonSX}
+                          onUnlinkSuccess={() => void getUserData()}
+                        />
+                      ) : (
                         <RASButton
                           sx={credentialButtonSX}
                           redirectAfter={`${SynapseClient.getRootURL()}authenticated/myaccount`}
                         />
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
                 )}
                 <div className="credential-partition">

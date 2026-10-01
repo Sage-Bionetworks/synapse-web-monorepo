@@ -2,6 +2,7 @@ import { removeTrailingUndefinedElements } from '@/utils/functions/ArrayUtils'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions/index'
 import { hashCode, normalizeNumericId } from '@/utils/functions/StringUtils'
 import {
+  USER_BUNDLE_MASK_IDENTITY_PROVIDERS,
   USER_BUNDLE_MASK_IS_ACT_MEMBER,
   USER_BUNDLE_MASK_IS_AR_REVIEWER,
   USER_BUNDLE_MASK_IS_CERTIFIED,
@@ -219,6 +220,10 @@ const FORM_TEMPLATE_QUERY_KEY = 'formTemplate'
  *
  * For more information, see https://tkdodo.eu/blog/leveraging-the-query-function-context
  */
+
+/** The userId value used in query keys for data scoped to the signed-in user (e.g. the current user's bundle). */
+export const CURRENT_USER_ID = 'current'
+
 export class KeyFactory {
   accessToken: string | undefined = undefined
   constructor(accessToken: string | undefined) {
@@ -1013,6 +1018,11 @@ export class KeyFactory {
     return this.getKey('user', 'current', 'profile')
   }
 
+  /** Prefix matching every user bundle query for the user, regardless of the requested mask. */
+  public getAllUserBundleQueryKey(userId: string) {
+    return this.getKey('user', userId, 'bundle')
+  }
+
   public getUserBundleQueryKey(userId: string, mask: number) {
     // Convert the mask into an object, where the field is only included (with value true) iff the bit in the mask is set
     const maskObject = {
@@ -1037,8 +1047,11 @@ export class KeyFactory {
       ...((mask & USER_BUNDLE_MASK_IS_AR_REVIEWER) !== 0
         ? { isARReviewer: true }
         : undefined),
+      ...((mask & USER_BUNDLE_MASK_IDENTITY_PROVIDERS) !== 0
+        ? { isIdentityProviders: true }
+        : undefined),
     }
-    return this.getKey('user', userId, 'bundle', maskObject)
+    return [...this.getAllUserBundleQueryKey(userId), maskObject]
   }
 
   public getUserProfileQueryKey(userId: string) {
