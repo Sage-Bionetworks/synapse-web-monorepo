@@ -1,5 +1,6 @@
 import { useGetCurrentUserBundle } from '@/synapse-queries/user/useUserBundle'
-import { Typography } from '@mui/material'
+import { DynamicFormOutlined } from '@mui/icons-material'
+import { Box, Typography } from '@mui/material'
 import { ReactNode, useMemo } from 'react'
 import {
   createBrowserRouter,
@@ -13,25 +14,37 @@ import {
 } from 'react-router'
 import { RouterProvider as DOMRouterProvider } from 'react-router/dom'
 import { SynapseErrorBoundary } from '../error/ErrorBanner'
-import IconSvg, { IconName } from '../IconSvg/IconSvg'
+import IconSvg from '../IconSvg/IconSvg'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import OrientationBanner from '../OrientationBanner'
 import { UserHistoryDashboard } from './AccessHistoryDashboard'
 import { AccessRequirementDashboard } from './AccessRequirementDashboard'
 import { DataAccessSubmissionDashboard } from './AccessSubmissionDashboard'
 import { EDucTemplateTable } from './EDucTemplateTable'
+import { FormTemplateEditorRoute } from './FormTemplateEditorRoute'
+import {
+  FORM_TEMPLATE_ROUTE,
+  FORM_TEMPLATES_PATH,
+  FORM_TEMPLATES_ROUTE,
+  FormTemplateTable,
+  NEW_FORM_TEMPLATE_ROUTE,
+} from './FormTemplateTable'
 import SubmissionPage from './SubmissionPage/SubmissionPage'
 
-function LinkTab(props: { href: string; children: ReactNode; icon: IconName }) {
+function LinkTab(props: {
+  href: string
+  children: ReactNode
+  icon: ReactNode
+}) {
   const { href, children, icon } = props
   return (
     <NavLink className="Tab" role="tab" to={href}>
-      <IconSvg
-        icon={icon}
-        sx={{
-          paddingRight: '0.2rem',
-        }}
-      />
+      <Box
+        component="span"
+        sx={{ display: 'inline-flex', paddingRight: '0.2rem' }}
+      >
+        {icon}
+      </Box>
       <Typography variant="buttonLink">{children}</Typography>
     </NavLink>
   )
@@ -64,22 +77,42 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
           <div className="ReviewerDashboard">
             <div className="Tabs" role="tablist">
               {hasActPermissions && (
-                <LinkTab href="/AccessRequirements" icon="accessClosed">
+                <LinkTab
+                  href="/AccessRequirements"
+                  icon={<IconSvg icon="accessClosed" />}
+                >
                   Access Requirements
                 </LinkTab>
               )}
               {hasActPermissions && (
-                <LinkTab href="/EDucTemplates" icon="fileOutlined">
+                <LinkTab
+                  href="/EDucTemplates"
+                  icon={<IconSvg icon="fileOutlined" />}
+                >
                   eDUC Templates
                 </LinkTab>
               )}
+              {hasActPermissions && (
+                <LinkTab
+                  href={FORM_TEMPLATES_PATH}
+                  icon={<DynamicFormOutlined />}
+                >
+                  Form Templates
+                </LinkTab>
+              )}
               {hasReviewerPermissions && (
-                <LinkTab href="/Submissions" icon="discussion">
+                <LinkTab
+                  href="/Submissions"
+                  icon={<IconSvg icon="discussion" />}
+                >
                   Submissions
                 </LinkTab>
               )}
               {hasReviewerPermissions && (
-                <LinkTab href="/UserAccessHistory" icon="history">
+                <LinkTab
+                  href="/UserAccessHistory"
+                  icon={<IconSvg icon="history" />}
+                >
                   User Access History
                 </LinkTab>
               )}
@@ -99,6 +132,18 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
           {
             path: 'EDucTemplates',
             element: hasActPermissions ? <EDucTemplateTable /> : null,
+          },
+          {
+            path: FORM_TEMPLATES_ROUTE,
+            element: hasActPermissions ? <FormTemplateTable /> : null,
+          },
+          {
+            path: NEW_FORM_TEMPLATE_ROUTE,
+            element: hasActPermissions ? <FormTemplateEditorRoute /> : null,
+          },
+          {
+            path: FORM_TEMPLATE_ROUTE,
+            element: hasActPermissions ? <FormTemplateEditorRoute /> : null,
           },
           {
             path: 'Submissions',

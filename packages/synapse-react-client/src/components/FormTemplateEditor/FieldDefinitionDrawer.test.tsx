@@ -67,6 +67,27 @@ describe('FieldDefinitionDrawer', () => {
     expect(screen.getByText('Choices')).toBeInTheDocument()
   })
 
+  it('writes option edits on a multi-choice property to items.enum', async () => {
+    const user = userEvent.setup()
+    const onUpdate = vi.fn()
+    render(
+      <FieldDefinitionDrawer
+        {...baseProps({
+          property: {
+            type: 'array',
+            items: { type: 'string', enum: ['A'] },
+            uniqueItems: true,
+          },
+          onUpdate,
+        })}
+      />,
+    )
+    await user.click(screen.getByRole('button', { name: 'Add choice' }))
+    expect(onUpdate).toHaveBeenCalledWith({
+      items: { type: 'string', enum: ['A', 'Option 2'] },
+    })
+  })
+
   it('labels the delete button based on whether the field is bound to a step', () => {
     const { rerender } = render(
       <FieldDefinitionDrawer {...baseProps({ isUsedInSteps: false })} />,
@@ -112,6 +133,12 @@ describe('FieldDefinitionDrawer', () => {
         number: { title: 'Institution', type: 'number' },
         boolean: { title: 'Institution', type: 'boolean' },
         choice: { title: 'Institution', type: 'string', enum: ['Option 1'] },
+        multiChoice: {
+          title: 'Institution',
+          type: 'array',
+          items: { type: 'string', enum: ['Option 1'] },
+          uniqueItems: true,
+        },
         file: {
           title: 'Institution',
           type: 'number',

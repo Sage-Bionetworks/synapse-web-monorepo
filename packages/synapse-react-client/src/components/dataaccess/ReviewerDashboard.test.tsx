@@ -13,11 +13,13 @@ import { http, HttpResponse } from 'msw'
 import * as UserAccessHistoryDashboardModule from './AccessHistoryDashboard'
 import * as AccessRequirementDashboardModule from './AccessRequirementDashboard'
 import * as AccessRequestSubmissionDashboardModule from './AccessSubmissionDashboard'
+import * as FormTemplateTableModule from './FormTemplateTable'
 import ReviewerDashboard from './ReviewerDashboard'
 
 const AR_DASHBOARD_TEST_ID = 'AccessRequirementDashboardTestId'
 const SUBMISSION_DASHBOARD_TEST_ID = 'SubmissionDashboardTestId'
 const HISTORY_DASHBOARD_TEST_ID = 'HistoryDashboardTestId'
+const FORM_TEMPLATE_TABLE_TEST_ID = 'FormTemplateTableTestId'
 
 vi.spyOn(
   AccessRequirementDashboardModule,
@@ -39,6 +41,12 @@ vi.spyOn(
 ).mockImplementation(() => {
   return <div data-testid={HISTORY_DASHBOARD_TEST_ID}></div>
 })
+
+vi.spyOn(FormTemplateTableModule, 'FormTemplateTable').mockImplementation(
+  () => {
+    return <div data-testid={FORM_TEMPLATE_TABLE_TEST_ID}></div>
+  },
+)
 
 // By default, ensure the user has permission to see all tabs before trying to render them
 function renderComponent(
@@ -85,6 +93,16 @@ describe('ReviewerDashboard tests', () => {
       await screen.findByTestId(AR_DASHBOARD_TEST_ID)
     })
 
+    it('Renders the Form Templates list', async () => {
+      renderComponent()
+
+      await userEvent.click(
+        await screen.findByRole('tab', { name: 'Form Templates' }),
+      )
+
+      await screen.findByTestId(FORM_TEMPLATE_TABLE_TEST_ID)
+    })
+
     it('Renders the Submission Dashboard', async () => {
       renderComponent()
 
@@ -122,10 +140,11 @@ describe('ReviewerDashboard tests', () => {
 
     await screen.findByRole('tablist')
     const tabs = screen.getAllByRole('tab')
-    expect(tabs).toHaveLength(4)
+    expect(tabs).toHaveLength(5)
 
     screen.getByRole('tab', { name: 'Access Requirements' })
     screen.getByRole('tab', { name: 'eDUC Templates' })
+    screen.getByRole('tab', { name: 'Form Templates' })
     screen.getByRole('tab', { name: 'Submissions' })
     screen.getByRole('tab', { name: 'User Access History' })
   })
@@ -139,6 +158,9 @@ describe('ReviewerDashboard tests', () => {
 
     expect(
       screen.queryByRole('tab', { name: 'Access Requirements' }),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('tab', { name: 'Form Templates' }),
     ).not.toBeInTheDocument()
     screen.getByRole('tab', { name: 'Submissions' })
     screen.getByRole('tab', { name: 'User Access History' })

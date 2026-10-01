@@ -708,6 +708,10 @@ export class KeyFactory {
     return this.getKey('validationSchema', schema$id)
   }
 
+  public getRegisteredSchemaQueryKey(schema$id: string) {
+    return this.getKey('registeredSchema', schema$id)
+  }
+
   public getPresignedUrlContentQueryKey(
     fileHandle: FileHandle,
     request: BatchFileRequest,
@@ -1073,6 +1077,10 @@ export class KeyFactory {
 
   public getBatchOfFiles(request: BatchFileRequest) {
     return this.getKey('fileBatch', request)
+  }
+
+  public getFileHandleQueryKey(fileHandleId: string) {
+    return this.getKey('fileHandle', fileHandleId)
   }
 
   public getChatAgentTraceKey(request: TraceEventsRequest) {

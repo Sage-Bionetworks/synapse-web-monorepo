@@ -94,3 +94,12 @@ export const mockFormTemplates: FormTemplate[] = [
   mockGenomicsTemplate,
   mockClinicalTemplate,
 ]
+
+/** A deprecated template. Not part of `mockFormTemplates`, which models the default (non-deprecated) list. */
+export const mockDeprecatedTemplate: FormTemplate = {
+  ...mockGenomicsTemplate,
+  id: 'template-3',
+  name: 'Legacy Genomics DAR',
+  etag: 'etag-template-3',
+  deprecated: true,
+}

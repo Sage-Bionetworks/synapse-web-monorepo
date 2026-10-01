@@ -1,5 +1,6 @@
 import { FormTemplateStep } from '@sage-bionetworks/synapse-client'
 import { RJSFSchema } from '@rjsf/utils'
+import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
 import {
   isLeafSchemaProperty,
   isUiHintCompatible,
@@ -149,6 +150,22 @@ describe('validateFormTemplateFields', () => {
       validateFormTemplateFields(steps, {
         ...jsonSchema,
         required: ['a'],
+      }),
+    ).toEqual([])
+  })
+
+  it('does not require the submission context to be bound, since it is set on submission', () => {
+    const steps: FormTemplateStep[] = [
+      { title: 'Step 1', fields: [field('/a')] },
+    ]
+    expect(
+      validateFormTemplateFields(steps, {
+        type: 'object',
+        properties: {
+          a: { type: 'string' },
+          [SUBMISSION_CONTEXT_PROPERTY]: { type: 'string' },
+        },
+        required: ['a', SUBMISSION_CONTEXT_PROPERTY],
       }),
     ).toEqual([])
   })

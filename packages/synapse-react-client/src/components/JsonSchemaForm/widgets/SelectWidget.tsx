@@ -28,6 +28,40 @@ export function findValueOption(
   }
 }
 
+/**
+ * Maps a multi-select form value (an array of enum values) to the Autocomplete option objects it
+ * selects. Values with no matching option (e.g. free-solo input) become `{ value, label: value }`.
+ * A non-array value selects nothing.
+ */
+export function toMultipleAutocompleteValue(
+  value: unknown,
+  options: EnumOptionsType[],
+): EnumOptionsType[] {
+  if (!Array.isArray(value)) {
+    return []
+  }
+  return value.map(
+    v =>
+      options.find(option => option.value === v) ?? {
+        value: v,
+        label: String(v),
+      },
+  )
+}
+
+/**
+ * Maps a multi-select Autocomplete selection (option objects and/or free-solo strings) back to the
+ * array of enum values stored in the form data.
+ */
+export function fromMultipleAutocompleteValue(newValue: unknown): unknown[] {
+  if (!Array.isArray(newValue)) {
+    return []
+  }
+  return newValue.map((v: unknown) =>
+    isObject(v) && 'value' in v ? v.value : v,
+  )
+}
+
 type SelectWidgetProps = WidgetProps & {
   isClearable?: boolean
 }
@@ -74,7 +108,11 @@ export const SelectWidget: Widget = (props: SelectWidgetProps) => {
   return (
     <Autocomplete
       id={id}
-      value={findValueOption(value, enumOptions)}
+      value={
+        multiple
+          ? toMultipleAutocompleteValue(value, enumOptions)
+          : findValueOption(value, enumOptions)
+      }
       freeSolo={allowFreeSolo}
       forcePopupIcon
       selectOnFocus
@@ -86,7 +124,9 @@ export const SelectWidget: Widget = (props: SelectWidgetProps) => {
       multiple={multiple}
       disableClearable={!isClearable}
       onChange={(event, newValue) => {
-        if (isObject(newValue) && 'inputValue' in newValue) {
+        if (multiple) {
+          onChange(fromMultipleAutocompleteValue(newValue))
+        } else if (isObject(newValue) && 'inputValue' in newValue) {
           // Create a new value from the user input
           onChange(newValue.inputValue)
         } else if (isObject(newValue) && 'value' in newValue) {

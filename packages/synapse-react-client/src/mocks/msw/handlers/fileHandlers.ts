@@ -1,4 +1,4 @@
-import { FILE, FILE_HANDLE_BATCH } from '@/utils/APIConstants'
+import { FILE, FILE_HANDLE, FILE_HANDLE_BATCH } from '@/utils/APIConstants'
 import { ExternalFileHandleInterface } from '@sage-bionetworks/synapse-client'
 import {
   BatchFileRequest,
@@ -35,6 +35,19 @@ export function getFileHandlers(backendOrigin: string) {
         })
 
         return HttpResponse.json(response, { status: 201 })
+      },
+    ),
+
+    http.get<{ id: string }>(
+      `${backendOrigin}${FILE_HANDLE}/:id`,
+      ({ params }) => {
+        const fileHandle = mockFileHandles.find(fh => fh.id === params.id)
+        return fileHandle
+          ? HttpResponse.json(fileHandle)
+          : HttpResponse.json(
+              { reason: `FileHandle not found: ${params.id}` },
+              { status: 404 },
+            )
       },
     ),
 
