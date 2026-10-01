@@ -142,6 +142,7 @@ export default function DataAccessRequestAccessorsFilesForm(
     })
 
   const {
+    mutate: updateRequest,
     mutateAsync: updateRequestAsync,
     isPending: updateDataAccessRequestIsPending,
   } = useUpdateDataAccessRequest({
@@ -167,7 +168,7 @@ export default function DataAccessRequestAccessorsFilesForm(
     dataAccessRequest,
     user,
     isRenewal,
-    updateRequest: updateRequestAsync,
+    updateRequest,
     researchProjectId,
   })
 
@@ -266,7 +267,7 @@ export default function DataAccessRequestAccessorsFilesForm(
     }
 
   const onClearAttachment = (fid: string) => {
-    updateRequestAsync({
+    updateRequest({
       ...dataAccessRequest!,
       attachments: dataAccessRequest!.attachments?.filter(item => item !== fid),
     })
@@ -283,7 +284,7 @@ export default function DataAccessRequestAccessorsFilesForm(
       // Files are uploaded and synced with the server immediately
       const uploadResponse: FileUploadComplete = data.resp
       if (context === 'attachments') {
-        updateRequestAsync({
+        updateRequest({
           ...dataAccessRequest!,
           attachments: [
             ...(dataAccessRequest!.attachments || []),
@@ -291,7 +292,7 @@ export default function DataAccessRequestAccessorsFilesForm(
           ],
         })
       } else {
-        updateRequestAsync({
+        updateRequest({
           ...dataAccessRequest!,
           [context]: uploadResponse.fileHandleId,
         })

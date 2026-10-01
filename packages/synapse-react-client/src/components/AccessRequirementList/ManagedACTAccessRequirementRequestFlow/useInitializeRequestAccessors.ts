@@ -12,7 +12,8 @@ type UseInitializeRequestAccessorsArgs = {
   dataAccessRequest: Request | Renewal | undefined
   user: UserProfile | undefined
   isRenewal: boolean
-  updateRequest: (request: Request | Renewal) => Promise<unknown>
+  /** Saves the request. Must handle its own errors, e.g. a react-query `mutate` function with an `onError` handler. */
+  updateRequest: (request: Request | Renewal) => void
   /** When provided, is attached to a request that does not yet reference a research project. */
   researchProjectId?: string
 }
