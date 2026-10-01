@@ -6,7 +6,11 @@ import {
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
 } from '@/mocks/accessRequirement/mockAccessRequirements'
-import { mockJsonSchemaAR1 } from '@/mocks/accessRequirement/mockJsonSchemaAccessRequirements'
+import {
+  mockJsonSchemaAR1,
+  mockJsonSchemaAR1WikiPage,
+  mockJsonSchemaAR1WikiPageKey,
+} from '@/mocks/accessRequirement/mockJsonSchemaAccessRequirements'
 import { mockJsonSchemaRegistry } from '@/mocks/accessRequirement/mockJsonSchemas'
 import { mockUnmetControlledDataRestrictionInformationACT } from '@/mocks/mock_has_access_data'
 import { mockApprovedSubmission } from '@/mocks/dataaccess/MockSubmission'
@@ -27,7 +31,11 @@ import {
 } from '@/mocks/msw/handlers/userProfileHandlers'
 import { getWikiHandlers } from '@/mocks/msw/handlers/wikiHandlers'
 import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
-import { ACCESS_APPROVAL } from '@/utils/APIConstants'
+import {
+  ACCESS_APPROVAL,
+  ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
+  WIKI_PAGE_ID,
+} from '@/utils/APIConstants'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import {
   AccessApproval,
@@ -430,6 +438,19 @@ export const SchemaDrivenRequirement: Story = {
   parameters: {
     msw: {
       handlers: [
+        http.get(
+          `${MOCK_REPO_ORIGIN}${ACCESS_REQUIREMENT_WIKI_PAGE_KEY(mockJsonSchemaAR1WikiPageKey.ownerObjectId)}`,
+          () => HttpResponse.json(mockJsonSchemaAR1WikiPageKey),
+        ),
+        http.get(
+          `${MOCK_REPO_ORIGIN}${WIKI_PAGE_ID(
+            mockJsonSchemaAR1WikiPageKey.ownerObjectType,
+            mockJsonSchemaAR1WikiPageKey.ownerObjectId,
+            mockJsonSchemaAR1WikiPageKey.wikiPageId,
+          )}`,
+          () => HttpResponse.json(mockJsonSchemaAR1WikiPage),
+        ),
+        ...getWikiHandlers(MOCK_REPO_ORIGIN),
         ...getEntityHandlers(MOCK_REPO_ORIGIN),
         getCurrentUserCertifiedValidatedHandler(MOCK_REPO_ORIGIN, true, true),
         ...getTwoFactorAuthStatusHandler(true),
