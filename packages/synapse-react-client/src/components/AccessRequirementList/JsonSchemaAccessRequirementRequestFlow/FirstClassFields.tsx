@@ -13,7 +13,7 @@ import DucUploadSection from '../ManagedACTAccessRequirementRequestFlow/DucUploa
 import PrincipalInvestigatorFields from '../ManagedACTAccessRequirementRequestFlow/PrincipalInvestigatorFields'
 import { AccessorStepAccessRequirement } from '../ManagedACTAccessRequirementRequestFlow/requestFlowTypes'
 import SigningOfficialFields from '../ManagedACTAccessRequirementRequestFlow/SigningOfficialFields'
-import { FirstClassFieldValues } from './firstClassFields'
+import { FirstClassFieldValues, isRenewalRequest } from './firstClassFields'
 
 export type FirstClassFieldsProps = {
   accessRequirement: AccessorStepAccessRequirement
@@ -40,8 +40,7 @@ export default function FirstClassFields(props: FirstClassFieldsProps) {
     onDucUpload,
   } = props
   const isEDucEnabled = Boolean(accessRequirement.eDucTemplateId)
-  const isRenewal =
-    request.concreteType === 'org.sagebionetworks.repo.model.dataaccess.Renewal'
+  const isRenewal = isRenewalRequest(request)
   const uploadedDucAssociations: FileHandleAssociation[] =
     request.ducFileHandleId
       ? [

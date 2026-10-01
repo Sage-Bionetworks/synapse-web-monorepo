@@ -155,7 +155,19 @@ describe('AccessRequirementList tests', () => {
     const repoEndpoint = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
     const jsonSchemaAccessRequirement =
       mockJsonSchemaAR1 as unknown as AccessRequirement
+    const WIKI_NOT_FOUND_REASON = 'No wiki exists for this requirement'
+    let wikiKeyRequested = false
     server.use(
+      http.get(
+        `${repoEndpoint}/repo/v1/access_requirement/${mockJsonSchemaAR1.id}/wikikey`,
+        () => {
+          wikiKeyRequested = true
+          return HttpResponse.json(
+            { reason: WIKI_NOT_FOUND_REASON },
+            { status: 404 },
+          )
+        },
+      ),
       http.get(
         `${repoEndpoint}/repo/v1/accessRequirement/${mockJsonSchemaAR1.id}/status`,
         () =>
@@ -186,9 +198,17 @@ describe('AccessRequirementList tests', () => {
       accessRequirementFromProps: [jsonSchemaAccessRequirement],
     })
 
-    await userEvent.click(
-      await screen.findByRole('button', { name: 'Request access' }),
-    )
+    const requestAccessButton = await screen.findByRole('button', {
+      name: 'Request access',
+    })
+    await waitFor(() => expect(wikiKeyRequested).toBe(true))
+    // A missing wiki is not an error
+    await new Promise(resolve => setTimeout(resolve, 100))
+    expect(
+      screen.queryByText(WIKI_NOT_FOUND_REASON, { exact: false }),
+    ).not.toBeInTheDocument()
+
+    await userEvent.click(requestAccessButton)
 
     expect(await screen.findByText('Requester information')).toBeVisible()
     expect(screen.queryByText('Instructions')).not.toBeInTheDocument()

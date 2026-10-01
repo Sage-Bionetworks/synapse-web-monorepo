@@ -5,17 +5,23 @@ import {
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
 } from '@/mocks/accessRequirement/mockAccessRequirements'
+import { mockJsonSchemaAR1 } from '@/mocks/accessRequirement/mockJsonSchemaAccessRequirements'
+import { AccessRequirement } from '@sage-bionetworks/synapse-types'
 import {
   getOldAccessRequirementInstructions,
   hasAccessorRequirement,
   LOCK_ACCESS_REQUIREMENT_TEXT,
 } from './GovernanceUtils'
 
+const jsonSchemaAccessRequirement =
+  mockJsonSchemaAR1 as unknown as AccessRequirement
+
 describe('GovernanceUtils', () => {
   describe('hasAccessorRequirement', () => {
     test('identifies ARs with accessor requirements', () => {
       expect(hasAccessorRequirement(mockManagedACTAccessRequirement)).toBe(true)
       expect(hasAccessorRequirement(mockSelfSignAccessRequirement)).toBe(true)
+      expect(hasAccessorRequirement(jsonSchemaAccessRequirement)).toBe(true)
     })
 
     test('identifies ARs without accessor requirements', () => {
@@ -29,6 +35,11 @@ describe('GovernanceUtils', () => {
     test('Managed AR', () => {
       expect(
         getOldAccessRequirementInstructions(mockManagedACTAccessRequirement),
+      ).toBe('')
+    })
+    test('JSON Schema AR', () => {
+      expect(
+        getOldAccessRequirementInstructions(jsonSchemaAccessRequirement),
       ).toBe('')
     })
     test('Self Sign AR', () => {
