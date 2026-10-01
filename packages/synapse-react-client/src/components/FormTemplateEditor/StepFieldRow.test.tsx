@@ -1,5 +1,7 @@
 import { FormTemplateField } from '@sage-bionetworks/synapse-client'
 import { RJSFSchema } from '@rjsf/utils'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { StepFieldRow } from './StepFieldRow'
@@ -37,11 +39,16 @@ function renderRow(
       onRemove={onRemove}
       {...overrides}
     />,
+    { wrapper: createWrapper() },
   )
   return { onChange, onMoveUp, onMoveDown, onRemove }
 }
 
 describe('StepFieldRow', () => {
+  beforeAll(() => server.listen())
+  afterEach(() => server.resetHandlers())
+  afterAll(() => server.close())
+
   it('shows the resolved property title and type', () => {
     renderRow()
     expect(screen.getByText('Institution')).toBeInTheDocument()
