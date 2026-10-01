@@ -1,12 +1,14 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import SynapseClient from '@/synapse-client'
+import { useGetCreatorFileHandle } from '@/synapse-queries/file/useFileHandle'
+import { useGetFileBatch } from '@/synapse-queries/file/useFiles'
 import { SynapseConstants } from '@/utils'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import {
   BatchFileRequest,
   FileHandleAssociation,
 } from '@sage-bionetworks/synapse-types'
-import { useEffect, useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
 import IconSvg from '../IconSvg/IconSvg'
 
 type FileHandleLinkProps = {
@@ -40,59 +42,52 @@ export const FileHandleLink = (props: FileHandleLinkProps): React.ReactNode => {
   const { accessToken } = useSynapseContext()
   const fileHandleId =
     fileHandleAssociation?.fileHandleId ?? creatorFileHandleId
+  const shouldLookUpFileName = displayValue === undefined
 
-  const [fileName, setFileName] = useState<string | undefined>()
+  const batchFileRequest = useMemo<BatchFileRequest>(
+    () => ({
+      requestedFiles: fileHandleAssociation ? [fileHandleAssociation] : [],
+      includeFileHandles: true,
+      includePreSignedURLs: false,
+      includePreviewPreSignedURLs: false,
+    }),
+    [fileHandleAssociation],
+  )
+  const { data: batchFileResult } = useGetFileBatch(batchFileRequest, {
+    enabled: shouldLookUpFileName && !!fileHandleAssociation,
+  })
+  const { data: creatorFileHandle } = useGetCreatorFileHandle(
+    creatorFileHandleId ?? '',
+    { enabled: shouldLookUpFileName && !!creatorFileHandleId },
+  )
+  const fileName = fileHandleAssociation
+    ? batchFileResult?.requestedFiles[0].fileHandle?.fileName
+    : creatorFileHandle?.fileName
 
-  useEffect(() => {
-    if (displayValue !== undefined) {
-      return
-    }
-    const getFileName = async () => {
-      if (fileHandleAssociation) {
-        const batchFileRequest: BatchFileRequest = {
-          requestedFiles: [fileHandleAssociation],
-          includeFileHandles: true,
-          includePreSignedURLs: false,
-          includePreviewPreSignedURLs: false,
-        }
-        const batchFileResult = await SynapseClient.getFiles(
-          batchFileRequest,
-          accessToken,
-        )
-        setFileName(batchFileResult.requestedFiles[0].fileHandle?.fileName)
-      } else {
-        const fileHandle = await SynapseClient.getFileHandleById(
-          creatorFileHandleId,
-          accessToken,
-        )
-        setFileName(fileHandle.fileName)
-      }
-    }
-    getFileName()
-  }, [accessToken, displayValue, fileHandleAssociation, creatorFileHandleId])
-
-  const getDownloadUrl = (): Promise<string> =>
-    fileHandleAssociation
-      ? SynapseClient.getActualFileHandleByIdURL(
-          fileHandleAssociation.fileHandleId,
-          accessToken,
-          fileHandleAssociation.associateObjectType,
-          fileHandleAssociation.associateObjectId,
-          redirect,
-        )
-      : SynapseClient.getFileHandleByIdURL(creatorFileHandleId, accessToken)
+  const { mutate: openFile } = useMutation({
+    mutationFn: (): Promise<string> =>
+      fileHandleAssociation
+        ? SynapseClient.getActualFileHandleByIdURL(
+            fileHandleAssociation.fileHandleId,
+            accessToken,
+            fileHandleAssociation.associateObjectType,
+            fileHandleAssociation.associateObjectId,
+            redirect,
+          )
+        : SynapseClient.getFileHandleByIdURL(creatorFileHandleId, accessToken),
+    onSuccess: url => {
+      window.open(url, '_blank')
+    },
+    onError: err => {
+      console.error('Error on retrieving file handle url ', err)
+    },
+  })
 
   return (
     <button
       onClick={() => {
         if (accessToken) {
-          getDownloadUrl()
-            .then(url => {
-              window.open(url, '_blank')
-            })
-            .catch(err => {
-              console.error('Error on retrieving file handle url ', err)
-            })
+          openFile()
         }
       }}
       className={`SRC-primary-text-color ${SynapseConstants.SRC_SIGN_IN_CLASS}`}

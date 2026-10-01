@@ -1079,6 +1079,10 @@ export class KeyFactory {
     return this.getKey('fileBatch', request)
   }
 
+  public getFileHandleQueryKey(fileHandleId: string) {
+    return this.getKey('fileHandle', fileHandleId)
+  }
+
   public getChatAgentTraceKey(request: TraceEventsRequest) {
     return this.getKey('chatbotTraceEvents', request)
   }

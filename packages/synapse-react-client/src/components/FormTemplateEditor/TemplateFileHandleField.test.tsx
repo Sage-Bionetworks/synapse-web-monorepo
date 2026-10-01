@@ -6,8 +6,10 @@ import { MOCK_FILE_HANDLE_ID } from '@/mocks/mock_file_handle'
 import { server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
 import {
   TemplateFileHandleField,
   TemplateFileHandleFieldProps,
@@ -17,6 +19,8 @@ vi.mock('@/components/file/upload/BasicFileHandleUpload', () => ({
   BasicFileHandleUpload: vi.fn(),
 }))
 
+const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
+const DOWNLOAD_URL = 'https://example.com/download/template.docx'
 const UPLOADED_FILE_HANDLE_ID = '9999999'
 const VALIDATION_ERROR = 'File is too large.'
 
@@ -116,6 +120,48 @@ describe('TemplateFileHandleField', () => {
         associateObjectId: '42',
       }),
     ])
+  })
+
+  it('opens the file handle download URL for an unsaved template', async () => {
+    server.use(
+      http.get(`${REPO_ENDPOINT}/file/v1/fileHandle/:id/url`, ({ params }) =>
+        params.id === MOCK_FILE_HANDLE_ID
+          ? HttpResponse.json(DOWNLOAD_URL)
+          : new HttpResponse(null, { status: 404 }),
+      ),
+    )
+    const openSpy = vi.spyOn(window, 'open').mockReturnValue(null)
+    const user = userEvent.setup()
+    renderField({ fileHandleId: MOCK_FILE_HANDLE_ID })
+    await user.click(
+      await screen.findByRole('button', { name: /mock-file\.raw/ }),
+    )
+    await waitFor(() =>
+      expect(openSpy).toHaveBeenCalledWith(DOWNLOAD_URL, '_blank'),
+    )
+    openSpy.mockRestore()
+  })
+
+  it('opens the associated file download URL for a saved template', async () => {
+    server.use(
+      http.get(`${REPO_ENDPOINT}/file/v1/file/:id`, ({ request, params }) => {
+        const url = new URL(request.url)
+        return params.id === MOCK_FILE_HANDLE_ID &&
+          url.searchParams.get('fileAssociateId') === '42'
+          ? HttpResponse.json(DOWNLOAD_URL)
+          : new HttpResponse(null, { status: 404 })
+      }),
+    )
+    const openSpy = vi.spyOn(window, 'open').mockReturnValue(null)
+    const user = userEvent.setup()
+    renderField({ fileHandleId: MOCK_FILE_HANDLE_ID, formTemplateId: '42' })
+    await user.click(
+      await screen.findByRole('button', { name: /mock-file\.raw/ }),
+    )
+    await waitFor(() =>
+      expect(openSpy).toHaveBeenCalledWith(DOWNLOAD_URL, '_blank'),
+    )
+    openSpy.mockRestore()
   })
 
   it('does not refetch the file when re-rendered with the same ids', async () => {
