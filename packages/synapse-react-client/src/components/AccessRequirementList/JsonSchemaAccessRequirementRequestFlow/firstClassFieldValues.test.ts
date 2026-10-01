@@ -5,7 +5,7 @@ import {
   buildRequest,
   FirstClassFieldValues,
   toFirstClassFieldValues,
-} from './firstClassFields'
+} from './firstClassFieldValues'
 
 const CURRENT_USER_ID = '1'
 
@@ -144,10 +144,17 @@ describe('buildRequest', () => {
   })
 
   it('keeps the request’s eDUC participants when the AR has no eDUC', () => {
-    const built = buildRequest(request, completeValues, {}, false)
+    const principalInvestigator = { name: 'Saved PI', userId: '7' }
+    const signingOfficial = { name: 'Saved SO' }
+    const built = buildRequest(
+      { ...request, principalInvestigator, signingOfficial },
+      completeValues,
+      {},
+      false,
+    )
     expect(built.institution).toBe('Existing Institution')
-    expect(built.principalInvestigator).toBeUndefined()
-    expect(built.signingOfficial).toBeUndefined()
+    expect(built.principalInvestigator).toEqual(principalInvestigator)
+    expect(built.signingOfficial).toEqual(signingOfficial)
   })
 
   it('saves the accessor changes', () => {

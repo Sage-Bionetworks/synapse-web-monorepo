@@ -20,9 +20,8 @@ import {
   useParams,
 } from 'react-router'
 import { RouterProvider as DOMRouterProvider } from 'react-router/dom'
-import AccessRequirementList, {
-  RequestDataStep,
-} from '../../AccessRequirementList/AccessRequirementList'
+import AccessRequirementList from '../../AccessRequirementList/AccessRequirementList'
+import { RequestDataStep } from '../../AccessRequirementList/RequestDataStep'
 import SubmissionPage from '../SubmissionPage/SubmissionPage'
 import {
   REQUEST_ID_PARAM,

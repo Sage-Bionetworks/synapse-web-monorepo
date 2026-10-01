@@ -21,10 +21,8 @@ import {
   AccessRequirement,
   ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-  JsonSchemaAccessRequirement,
   LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-  ManagedACTAccessRequirement,
   Renewal,
   Request,
   RestrictableObjectType,
@@ -41,6 +39,11 @@ import { displayToast } from '../ToastMessage/ToastMessage'
 import UserOrTeamBadge from '../UserOrTeamBadge'
 import { AccessRequirementListItem } from './AccessRequirementListItem'
 import { useCanShowManagedACTWikiInWizard } from './AccessRequirementListUtils'
+import {
+  getFirstRequestStep,
+  RequestableAccessRequirement,
+  RequestDataStep,
+} from './RequestDataStep'
 import CancelRequestDataAccess from './ManagedACTAccessRequirementRequestFlow/CancelRequestDataAccess'
 import DataAccessRequestAccessorsFilesForm from './ManagedACTAccessRequirementRequestFlow/DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 import JsonSchemaRequestWizard from './JsonSchemaAccessRequirementRequestFlow/JsonSchemaRequestWizard'
@@ -89,7 +92,7 @@ export type AccessRequirementListProps = {
    */
   initialWizardEntry?: {
     step: RequestDataStep
-    accessRequirement: ManagedACTAccessRequirement | JsonSchemaAccessRequirement
+    accessRequirement: RequestableAccessRequirement
   }
 } & (
   | {
@@ -153,27 +156,9 @@ const isARUnsupported = (accessRequirement: AccessRequirement) => {
   return !SUPPORTED_ACCESS_REQUIREMENT_TYPES.has(accessRequirement.concreteType)
 }
 
-/**
- * Represents a distinct screen in the wizard used to apply to a ManagedACTAccessRequirement
- */
-export enum RequestDataStep {
-  SHOW_ALL_ARS = 0,
-  UPDATE_RESEARCH_PROJECT = 1,
-  UPDATE_ACCESSORS_AND_FILES = 2,
-  PROMPT_CANCEL = 3,
-  PROMPT_LOGIN = 4,
-  COMPLETE = 5,
-  REVIEW_DUC = 6,
-  EDUC_PREVIEW = 7,
-  MANUAL_UPLOAD_DUC = 8,
-  SIGNATURE_STATUS = 9,
-  /** The request wizard of a JsonSchemaAccessRequirement, which owns its own sequence of steps */
-  SCHEMA_DRIVEN_REQUEST = 10,
-}
-
 export type RequestDataStepCallbackArgs = {
   step: RequestDataStep
-  accessRequirement?: ManagedACTAccessRequirement | JsonSchemaAccessRequirement
+  accessRequirement?: RequestableAccessRequirement
   researchProjectId?: string
   dataAccessRequest?: Request | Renewal
 }
@@ -192,7 +177,7 @@ export type RequestDataStepCallbackArgs = {
  *
  * To open the wizard directly at a specific step (for example, to resume an in-progress eDUC signature
  * flow or to serve a deep-link route), pass {@link AccessRequirementListProps.initialWizardEntry} with
- * the target step and the {@link ManagedACTAccessRequirement} the wizard should operate on.
+ * the target step and the {@link RequestableAccessRequirement} the wizard should operate on.
  */
 export default function AccessRequirementList(
   props: AccessRequirementListProps,
@@ -236,7 +221,7 @@ export default function AccessRequirementList(
   )
   const oneSageURL = useOneSageURL()
   const [accessRequirementInWizard, setAccessRequirementInWizard] = useState<
-    ManagedACTAccessRequirement | JsonSchemaAccessRequirement | undefined
+    RequestableAccessRequirement | undefined
   >(initialWizardEntry?.accessRequirement)
   const managedACTAccessRequirement =
     accessRequirementInWizard?.concreteType ===
@@ -542,9 +527,7 @@ export default function AccessRequirementList(
             // closes the wizard, so users only reach this step from the row-level "Review
             // Signatures and Submit" entry point.
             requestDataStepCallback({
-              step: isSchemaDriven
-                ? RequestDataStep.SCHEMA_DRIVEN_REQUEST
-                : RequestDataStep.UPDATE_RESEARCH_PROJECT,
+              step: getFirstRequestStep(accessRequirementInWizard!),
             })
           }}
           onSubmissionCreated={submissionId => {
@@ -634,12 +617,9 @@ export default function AccessRequirementList(
                   subjectType={subjectType}
                   onHide={onHide}
                   onRequestAccess={accessRequirement => {
-                    const nextStep = !isAuthenticated
-                      ? RequestDataStep.PROMPT_LOGIN
-                      : accessRequirement.concreteType ===
-                          JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
-                        ? RequestDataStep.SCHEMA_DRIVEN_REQUEST
-                        : RequestDataStep.UPDATE_RESEARCH_PROJECT
+                    const nextStep = isAuthenticated
+                      ? getFirstRequestStep(accessRequirement)
+                      : RequestDataStep.PROMPT_LOGIN
                     requestDataStepCallback({
                       accessRequirement,
                       step: nextStep,

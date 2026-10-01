@@ -1,3 +1,4 @@
+import { FormTemplateReference } from '@sage-bionetworks/synapse-client'
 import ACCESS_TYPE from '../ACCESS_TYPE'
 import { RestrictableObjectDescriptor } from './RestrictableObjectDescriptor'
 
@@ -7,12 +8,6 @@ export const JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE =
   'org.sagebionetworks.repo.model.JsonSchemaAccessRequirement'
 export type JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE =
   typeof JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
-
-/** A specific FormTemplate id and version. */
-export type FormTemplateReference = {
-  templateId: string
-  templateVersionNumber: number
-}
 
 /**
  * An access requirement that collects additional information described by a JSON Schema and rendered using a

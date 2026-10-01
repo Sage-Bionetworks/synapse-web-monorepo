@@ -1,3 +1,4 @@
+import { DataAccessRequestType } from '@sage-bionetworks/synapse-client'
 import {
   AccessorChange,
   Renewal,
@@ -39,6 +40,14 @@ export function areFirstClassFieldsComplete(
     values.signingOfficialName &&
     values.signingOfficialEmail,
   )
+}
+
+export function getRequestType(
+  request: Request | Renewal,
+): DataAccessRequestType {
+  return isRenewalRequest(request)
+    ? DataAccessRequestType.RENEWAL
+    : DataAccessRequestType.REQUEST
 }
 
 export function isRenewalRequest(
@@ -84,7 +93,7 @@ export function buildRequest(
   return {
     ...request,
     accessorChanges: values.accessorChanges,
-    schemaData: withSubmissionContext(schemaData, isRenewalRequest(request)),
+    schemaData: withSubmissionContext(schemaData, getRequestType(request)),
     ...(isEDucEnabled
       ? {
           institution: values.institution,

@@ -21,7 +21,6 @@ import {
   StepLabel,
   Stepper,
 } from '@mui/material'
-import { DataAccessRequestType } from '@sage-bionetworks/synapse-client'
 import {
   JsonSchemaAccessRequirement,
   Renewal,
@@ -36,9 +35,9 @@ import {
   areFirstClassFieldsComplete,
   buildRequest,
   FirstClassFieldValues,
-  isRenewalRequest,
+  getRequestType,
   toFirstClassFieldValues,
-} from './firstClassFields'
+} from './firstClassFieldValues'
 import SchemaStepForm, { SchemaStepFormHandle } from './SchemaStepForm'
 import { getFileUploadFieldTitles, SchemaData } from './schemaData'
 
@@ -78,14 +77,9 @@ export default function JsonSchemaRequestWizard(
       throwOnError: true,
     },
   )
-  const isRenewal = request !== undefined && isRenewalRequest(request)
   const { form, error: formError } = useGeneratedRequestForm(
     accessRequirement.formTemplateRef,
-    request
-      ? isRenewal
-        ? DataAccessRequestType.RENEWAL
-        : DataAccessRequestType.REQUEST
-      : undefined,
+    request ? getRequestType(request) : undefined,
   )
 
   if (formError) {
@@ -114,18 +108,24 @@ export default function JsonSchemaRequestWizard(
   )
 }
 
+function WizardTitle(props: { onHide: () => void }) {
+  return (
+    <DialogTitle>
+      <Stack direction="row" sx={{ alignItems: 'center', gap: '5px' }}>
+        Request Access
+        <Box sx={{ flexGrow: 1 }} />
+        <IconButton aria-label={'Close'} onClick={props.onHide}>
+          <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
+        </IconButton>
+      </Stack>
+    </DialogTitle>
+  )
+}
+
 function WizardFrame(props: { onHide: () => void; children: React.ReactNode }) {
   return (
     <>
-      <DialogTitle>
-        <Stack direction="row" sx={{ alignItems: 'center', gap: '5px' }}>
-          Request Access
-          <Box sx={{ flexGrow: 1 }} />
-          <IconButton aria-label={'Close'} onClick={props.onHide}>
-            <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
-          </IconButton>
-        </Stack>
-      </DialogTitle>
+      <WizardTitle onHide={props.onHide} />
       <DialogContent>{props.children}</DialogContent>
     </>
   )
@@ -255,15 +255,7 @@ function JsonSchemaRequestWizardContent(
 
   return (
     <>
-      <DialogTitle>
-        <Stack direction="row" sx={{ alignItems: 'center', gap: '5px' }}>
-          Request Access
-          <Box sx={{ flexGrow: 1 }} />
-          <IconButton aria-label={'Close'} onClick={onHide}>
-            <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
-          </IconButton>
-        </Stack>
-      </DialogTitle>
+      <WizardTitle onHide={onHide} />
       <DialogContent>
         {steps.length > 0 && (
           <Stepper activeStep={activeStepIndex} sx={{ mb: 3 }}>
