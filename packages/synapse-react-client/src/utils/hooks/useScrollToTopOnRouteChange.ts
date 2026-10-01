@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import { useLocation } from 'react-router'
 
 /**
@@ -12,7 +12,7 @@ export function useScrollToTopOnRouteChange() {
   const { pathname } = useLocation()
   const previousPathname = useRef(pathname)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (pathname === previousPathname.current) {
       return
     }
