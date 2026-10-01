@@ -95,10 +95,10 @@ describe('TemplateFileHandleField', () => {
     expect(screen.getByRole('alert')).toHaveTextContent(VALIDATION_ERROR)
   })
 
-  it('withholds download for an unsaved template, without requesting the file', () => {
+  it('links an unsaved template to the file handle directly, without an association', async () => {
     renderField({ fileHandleId: MOCK_FILE_HANDLE_ID })
     expect(
-      screen.getByText('Uploaded — save the template to enable download'),
+      await screen.findByRole('button', { name: /mock-file\.raw/ }),
     ).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Replace' })).toBeInTheDocument()
     expect(getFilesSpy).not.toHaveBeenCalled()

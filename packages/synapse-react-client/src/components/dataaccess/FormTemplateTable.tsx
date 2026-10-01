@@ -10,6 +10,7 @@ import {
   Skeleton,
   Switch,
   TextField,
+  Typography,
 } from '@mui/material'
 import { useDebouncedState } from '@react-hookz/web'
 import { FormTemplate } from '@sage-bionetworks/synapse-client'
@@ -110,7 +111,11 @@ export function FormTemplateTable() {
   } else if (error && !data) {
     content = errorAlert
   } else if (templates.length === 0) {
-    content = <Alert severity={'info'}>No form templates found.</Alert>
+    content = (
+      <Typography variant={'body1'} sx={{ textAlign: 'center', my: 2 }}>
+        No form templates found.
+      </Typography>
+    )
   } else {
     content = (
       <>

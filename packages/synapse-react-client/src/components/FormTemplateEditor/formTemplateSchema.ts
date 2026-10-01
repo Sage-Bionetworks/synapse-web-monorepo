@@ -1,4 +1,5 @@
 import { RJSFSchema } from '@rjsf/utils'
+import { toPascalCase } from '@/utils/functions/toPascalCase'
 import { JsonSchemaVersionInfo } from '@sage-bionetworks/synapse-client'
 
 /**
@@ -34,10 +35,7 @@ export function resolveFormTemplateSchemaName(
     return { organizationName, schemaName }
   }
   // Schema names only allow letters and digits and must start with a letter.
-  const words = templateName.match(/[A-Za-z0-9]+/g) ?? []
-  const pascalCase = words
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join('')
+  const pascalCase = toPascalCase(templateName)
   return {
     organizationName: FORM_TEMPLATE_SCHEMA_ORGANIZATION,
     schemaName: /^[A-Za-z]/.test(pascalCase)

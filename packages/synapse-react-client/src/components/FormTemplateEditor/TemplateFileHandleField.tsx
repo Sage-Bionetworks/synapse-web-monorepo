@@ -27,8 +27,8 @@ export type TemplateFileHandleFieldProps = {
   fileHandleId: string | undefined
   /**
    * The FormTemplate's id, used to build the download association. Undefined for a template
-   * that has not been saved yet (a brand-new draft), in which case download is unavailable
-   * until the first save.
+   * that has not been saved yet (a brand-new draft), in which case the file is downloaded
+   * directly as a file handle the current user uploaded.
    */
   formTemplateId: string | undefined
   onChange: (fileHandleId: string | undefined) => void
@@ -73,16 +73,17 @@ export function TemplateFileHandleField({
       <Stack direction="row" spacing={1} alignItems="center">
         {fileHandleId ? (
           <>
+            {/* A template that has not been saved yet can only reference a file handle that the current user uploaded, so it is downloaded directly. */}
             {fileHandleAssociation ? (
               <FileHandleLink
                 fileHandleAssociation={fileHandleAssociation}
                 showDownloadIcon
               />
             ) : (
-              <Typography variant="body2" color="text.secondary">
-                {/* TODO(PLFM-10013): once FormTemplate template files are downloadable, show the current file name and allow downloading it here. */}
-                Uploaded — save the template to enable download
-              </Typography>
+              <FileHandleLink
+                creatorFileHandleId={fileHandleId}
+                showDownloadIcon
+              />
             )}
             <IconButton
               size="small"
