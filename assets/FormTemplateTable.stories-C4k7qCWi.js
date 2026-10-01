@@ -1,0 +1,13 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{t}from"./jsx-runtime-l3w3GfrB.js";import{_ as n,i as r,t as i}from"./core-CI8DLeHF.js";import{Bn as a,Wn as o}from"./synapse-client-CaTCickH.js";import{r as s,t as c}from"./development--dxNTjKx.js";import{B as l,F as u,I as d,L as f,P as p,R as m,V as h}from"./iframe-DjLzf-1r.js";import{i as g,o as _}from"./FormTemplateTable-C3WjaOYV.js";var v,y,b,x,S,C,w,T;e((()=>{m(),f(),o(),i(),c(),_(),v=t(),y=u(a),b={default:p(a,d([...h,l])),empty:p(a,d([])),error:[r.post(y,()=>n.json({reason:`Search failed`},{status:500}))]},x={title:`Governance/Form Templates Table`,component:g,decorators:[e=>(0,v.jsx)(s,{children:(0,v.jsx)(e,{})})],parameters:{stack:`mock`,msw:{handlers:b.default}}},S={},C={parameters:{msw:{handlers:b.empty}}},w={parameters:{msw:{handlers:b.error}}},S.parameters={...S.parameters,docs:{...S.parameters?.docs,source:{originalSource:`{}`,...S.parameters?.docs?.source}}},C.parameters={...C.parameters,docs:{...C.parameters?.docs,source:{originalSource:`{
+  parameters: {
+    msw: {
+      handlers: handlers.empty
+    }
+  }
+}`,...C.parameters?.docs?.source}}},w.parameters={...w.parameters,docs:{...w.parameters?.docs,source:{originalSource:`{
+  parameters: {
+    msw: {
+      handlers: handlers.error
+    }
+  }
+}`,...w.parameters?.docs?.source}}},T=[`Demo`,`Empty`,`ErrorState`]}))();export{S as Demo,C as Empty,w as ErrorState,T as __namedExportsOrder,x as default};
