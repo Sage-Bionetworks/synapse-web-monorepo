@@ -108,14 +108,10 @@ describe('FormTemplatePreview', () => {
     ).toBeInTheDocument()
   })
 
-  it('renders the single step title, description, and its bound field', () => {
+  it('renders the single step title and description exactly once, with its bound field', () => {
     renderPreview({ template: oneStepTemplate, jsonSchema: schema })
-    // The preview's own step-title heading is an h6; RJSF also renders the object schema's
-    // `title` as its own h5 inside the form -- assert the specific one this component owns.
-    expect(
-      screen.getByRole('heading', { name: 'Basics', level: 6 }),
-    ).toBeInTheDocument()
-    expect(screen.getAllByText('Tell us about yourself')[0]).toBeInTheDocument()
+    expect(screen.getAllByText('Basics')).toHaveLength(1)
+    expect(screen.getAllByText('Tell us about yourself')).toHaveLength(1)
     expect(getFieldLabel('Institution')).toBeInTheDocument()
   })
 

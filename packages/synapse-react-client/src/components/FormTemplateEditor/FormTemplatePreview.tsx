@@ -55,8 +55,6 @@ export function FormTemplatePreview({
 
   const safeIndex = Math.min(activeStep, steps.length - 1)
   const currentStep = steps[safeIndex]
-  const title = (currentStep.jsonSchema.title as string) ?? ''
-  const description = (currentStep.jsonSchema.description as string) ?? ''
 
   return (
     <Paper variant="outlined" sx={{ p: 2 }}>
@@ -89,16 +87,6 @@ export function FormTemplatePreview({
         </Stepper>
       )}
 
-      {title && (
-        <Typography variant="h6" gutterBottom>
-          {title}
-        </Typography>
-      )}
-      {description && (
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          {description}
-        </Typography>
-      )}
       <JsonSchemaForm
         schema={currentStep.jsonSchema}
         uiSchema={currentStep.uiSchema}
