@@ -8,6 +8,35 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { useEffect, useRef } from 'react'
 
+/**
+ * The accessors of a request after listing the current user as an accessor and removing duplicate accessors.
+ */
+export function ensureCurrentUserIsAccessor(
+  accessorChanges: AccessorChange[] | undefined,
+  currentUserId: string,
+  isRenewal: boolean,
+): AccessorChange[] {
+  const currentUserWithGainAccess: AccessorChange = {
+    userId: currentUserId,
+    type: isRenewal ? AccessType.RENEW_ACCESS : AccessType.GAIN_ACCESS,
+  }
+  const withCurrentUser = accessorChanges?.some(item =>
+    deepEquals(item, currentUserWithGainAccess),
+  )
+    ? accessorChanges
+    : [currentUserWithGainAccess, ...(accessorChanges ?? [])]
+
+  // SWC-5765: Filter out duplicate accessors
+  const seen = new Set<string>()
+  return withCurrentUser.filter(accessorChange => {
+    if (seen.has(accessorChange.userId)) {
+      return false
+    }
+    seen.add(accessorChange.userId)
+    return true
+  })
+}
+
 type UseInitializeRequestAccessorsArgs = {
   dataAccessRequest: Request | Renewal | undefined
   user: UserProfile | undefined
@@ -44,36 +73,13 @@ export function useInitializeRequestAccessors(
         shouldUpdate = true
       }
 
-      const currentUserWithGainAccess: AccessorChange = {
-        userId: user.ownerId,
-        type: isRenewal ? AccessType.RENEW_ACCESS : AccessType.GAIN_ACCESS,
-      }
-      if (
-        !dataAccessRequest.accessorChanges?.find(item =>
-          deepEquals(item, currentUserWithGainAccess),
-        )
-      ) {
-        dataAccessRequest.accessorChanges = [
-          currentUserWithGainAccess,
-          ...(dataAccessRequest.accessorChanges || []),
-        ]
-        shouldUpdate = true
-      }
-
-      // SWC-5765: Filter out duplicate accessors
-      const seen = new Set()
-      const uniqueAccessorChanges = dataAccessRequest.accessorChanges.filter(
-        accessorChange => {
-          return seen.has(accessorChange.userId)
-            ? false
-            : seen.add(accessorChange.userId)
-        },
+      const accessorChanges = ensureCurrentUserIsAccessor(
+        dataAccessRequest.accessorChanges,
+        user.ownerId,
+        isRenewal,
       )
-      if (
-        uniqueAccessorChanges.length !==
-        dataAccessRequest.accessorChanges.length
-      ) {
-        dataAccessRequest.accessorChanges = uniqueAccessorChanges
+      if (!deepEquals(accessorChanges, dataAccessRequest.accessorChanges)) {
+        dataAccessRequest.accessorChanges = accessorChanges
         shouldUpdate = true
       }
 

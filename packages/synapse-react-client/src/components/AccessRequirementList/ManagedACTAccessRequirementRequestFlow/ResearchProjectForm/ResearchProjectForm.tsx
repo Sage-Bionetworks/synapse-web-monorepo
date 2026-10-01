@@ -24,7 +24,6 @@ import {
   Renewal,
   Request,
   ResearchProject,
-  TYPE_FILTER,
 } from '@sage-bionetworks/synapse-types'
 import isEmpty from 'lodash-es/isEmpty'
 import { FormEvent, useEffect, useRef, useState } from 'react'
@@ -33,9 +32,9 @@ import IconSvg from '../../../IconSvg/IconSvg'
 import TextFieldWithWordLimit, {
   getWordCount,
 } from '../../../TextField/TextFieldWithWordLimit'
-import UserSearchBox from '../../../UserSearchBox/UserSearchBox'
 import { AlertProps } from '../DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 import ManagedACTAccessRequirementFormWikiWrapper from '../ManagedACTAccessRequirementFormWikiWrapper'
+import PrincipalInvestigatorFields from '../PrincipalInvestigatorFields'
 
 const INTENDED_DATA_USE_MIN_WORD_COUNT = 50
 const INTENDED_DATA_USE_MAX_WORD_COUNT = 750 // SWC-7526
@@ -318,39 +317,13 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
                 }}
               />
               {isEDucEnabled && (
-                <Box sx={{ mb: '20px' }}>
-                  <Typography
-                    component="label"
-                    htmlFor="pi-user"
-                    variant="body1"
-                    sx={{ display: 'block', mb: 1 }}
-                  >
-                    Synapse username of your Project Lead or PI
-                    <Box component="span" sx={{ color: 'error.main' }}>
-                      {' '}
-                      *
-                    </Box>
-                  </Typography>
-                  <UserSearchBox
-                    inputId="pi-user"
-                    typeFilter={TYPE_FILTER.USERS_ONLY}
-                    value={piUserId}
-                    onChange={principalId => setPiUserId(principalId)}
-                    placeholder="Search Synapse for your Project Lead or PI"
-                  />
-                  <TextField
-                    id="pi-email"
-                    label="Institutional Email of your Project Lead or PI"
-                    type="email"
-                    placeholder="pi@example.edu"
-                    fullWidth
-                    disabled={isLoading}
-                    value={piEmail}
-                    required
-                    onChange={e => setPiEmail(e.target.value)}
-                    sx={{ mt: 2 }}
-                  />
-                </Box>
+                <PrincipalInvestigatorFields
+                  userId={piUserId}
+                  email={piEmail}
+                  disabled={isLoading}
+                  onUserIdChange={setPiUserId}
+                  onEmailChange={setPiEmail}
+                />
               )}
 
               <TextField
