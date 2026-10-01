@@ -16,9 +16,11 @@ describe('UnlinkRASButton', () => {
   afterEach(() => server.resetHandlers())
   afterAll(() => server.close())
 
-  function renderComponent(onUnlink?: () => void) {
+  function renderComponent(onUnlinkSuccess?: () => void) {
     const user = userEvent.setup()
-    render(<UnlinkRASButton onUnlink={onUnlink} />, { wrapper: TestWrapper })
+    render(<UnlinkRASButton onUnlinkSuccess={onUnlinkSuccess} />, {
+      wrapper: TestWrapper,
+    })
     return { user }
   }
 
@@ -55,16 +57,16 @@ describe('UnlinkRASButton', () => {
         return new HttpResponse(null, { status: 200 })
       }),
     )
-    const onUnlink = vi.fn()
+    const onUnlinkSuccess = vi.fn()
 
-    const { user } = renderComponent(onUnlink)
+    const { user } = renderComponent(onUnlinkSuccess)
     await openDialog(user)
 
     await user.click(
       screen.getByRole('button', { name: 'Yes, unlink NIH account' }),
     )
 
-    await waitFor(() => expect(onUnlink).toHaveBeenCalled())
+    await waitFor(() => expect(onUnlinkSuccess).toHaveBeenCalled())
     expect(onRequest).toHaveBeenCalledWith('NIH_RESEARCHER_AUTH_SERVICE')
   })
 
@@ -77,9 +79,9 @@ describe('UnlinkRASButton', () => {
         )
       }),
     )
-    const onUnlink = vi.fn()
+    const onUnlinkSuccess = vi.fn()
 
-    const { user } = renderComponent(onUnlink)
+    const { user } = renderComponent(onUnlinkSuccess)
     const dialog = await openDialog(user)
 
     await user.click(
@@ -87,7 +89,7 @@ describe('UnlinkRASButton', () => {
     )
 
     await screen.findByText('Something went wrong')
-    expect(onUnlink).not.toHaveBeenCalled()
+    expect(onUnlinkSuccess).not.toHaveBeenCalled()
     expect(dialog).toBeVisible()
   })
 })

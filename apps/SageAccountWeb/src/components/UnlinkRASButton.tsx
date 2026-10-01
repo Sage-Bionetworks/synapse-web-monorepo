@@ -3,27 +3,28 @@ import {
   OAuthProvider,
   SynapseClientError,
 } from '@sage-bionetworks/synapse-client'
+import { noop } from 'lodash-es'
 import React, { useState } from 'react'
 import { ConfirmationDialog } from 'synapse-react-client/components/ConfirmationDialog/ConfirmationDialog'
 import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
 import { useUnbindOAuthProviderIdentity } from 'synapse-react-client/synapse-queries/auth/useUnbindOAuthProviderIdentity'
 
 export type UnlinkRASButtonProps = {
-  onUnlink?: () => void
+  onUnlinkSuccess?: () => void
   sx?: SxProps
 }
 
 export const UnlinkRASButton = (
   props: UnlinkRASButtonProps,
 ): React.ReactNode => {
-  const { onUnlink, sx } = props
+  const { onUnlinkSuccess = noop, sx } = props
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   const { mutate, isPending } = useUnbindOAuthProviderIdentity({
     onSuccess: () => {
       setIsDialogOpen(false)
       displayToast('Your NIH account has been unlinked.', 'success')
-      onUnlink?.()
+      onUnlinkSuccess()
     },
     onError: (err: SynapseClientError) => {
       displayToast(err.reason, 'danger')

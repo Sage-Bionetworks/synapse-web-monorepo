@@ -573,7 +573,7 @@ const AccountSettings = (): React.ReactNode => {
                       {isRASLinked ? (
                         <UnlinkRASButton
                           sx={credentialButtonSX}
-                          onUnlink={() => void getUserData()}
+                          onUnlinkSuccess={() => void getUserData()}
                         />
                       ) : (
                         <RASButton

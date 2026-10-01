@@ -220,6 +220,10 @@ const FORM_TEMPLATE_QUERY_KEY = 'formTemplate'
  *
  * For more information, see https://tkdodo.eu/blog/leveraging-the-query-function-context
  */
+
+/** The userId value used in query keys for data scoped to the signed-in user (e.g. the current user's bundle). */
+export const CURRENT_USER_ID = 'current'
+
 export class KeyFactory {
   accessToken: string | undefined = undefined
   constructor(accessToken: string | undefined) {

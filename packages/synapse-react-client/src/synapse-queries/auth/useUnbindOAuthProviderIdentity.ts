@@ -5,6 +5,7 @@ import {
   UseMutationOptions,
   useQueryClient,
 } from '@tanstack/react-query'
+import { CURRENT_USER_ID } from '../KeyFactory'
 
 /**
  * Removes the link between the current user's account and an OAuth identity provider.
@@ -29,7 +30,7 @@ export function useUnbindOAuthProviderIdentity(
     onSuccess: async (data, provider, ctx) => {
       // The bundle reports which providers are linked, so every mask of it is now stale
       await queryClient.invalidateQueries({
-        queryKey: keyFactory.getAllUserBundleQueryKey('current'),
+        queryKey: keyFactory.getAllUserBundleQueryKey(CURRENT_USER_ID),
       })
 
       if (options?.onSuccess) {
