@@ -13,7 +13,10 @@ import DucUploadSection from '../ManagedACTAccessRequirementRequestFlow/DucUploa
 import PrincipalInvestigatorFields from '../ManagedACTAccessRequirementRequestFlow/PrincipalInvestigatorFields'
 import { AccessorStepAccessRequirement } from '../ManagedACTAccessRequirementRequestFlow/requestFlowTypes'
 import SigningOfficialFields from '../ManagedACTAccessRequirementRequestFlow/SigningOfficialFields'
-import { FirstClassFieldValues, isRenewalRequest } from './firstClassFields'
+import {
+  FirstClassFieldValues,
+  isRenewalRequest,
+} from './firstClassFieldValues'
 
 export type FirstClassFieldsProps = {
   accessRequirement: AccessorStepAccessRequirement

@@ -5,10 +5,19 @@ import {
   mockToUAccessRequirement,
 } from '@/mocks/accessRequirement/mockAccessRequirements'
 import mockFileEntityData from '@/mocks/entity/mockFileEntity'
-import { mockJsonSchemaAR1 } from '@/mocks/accessRequirement/mockJsonSchemaAccessRequirements'
+import {
+  mockJsonSchemaAR1,
+  mockJsonSchemaAR1WikiPage,
+  mockJsonSchemaAR1WikiPageKey,
+} from '@/mocks/accessRequirement/mockJsonSchemaAccessRequirements'
 import { getRegisteredSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
 import { mockGenomicsSchema } from '@/mocks/accessRequirement/mockJsonSchemas'
 import { server } from '@/mocks/msw/server'
+import {
+  ACCESS_REQUIREMENT_STATUS,
+  ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
+  WIKI_PAGE_ID,
+} from '@/utils/APIConstants'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { http, HttpResponse } from 'msw'
 import { JSONSchema7 } from 'json-schema'
@@ -19,10 +28,10 @@ import userEvent from '@testing-library/user-event'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import AccessRequirementList, {
   AccessRequirementListProps,
-  RequestDataStep,
 } from './AccessRequirementList'
 import * as AccessRequirementListUtils from './AccessRequirementListUtils'
 import EDucPreviewStep from './ManagedACTAccessRequirementRequestFlow/EDucPreviewStep/EDucPreviewStep'
+import { RequestDataStep } from './RequestDataStep'
 
 vi.mock('../ToastMessage/ToastMessage')
 const mockedDisplayToast = vi.mocked(displayToast)
@@ -151,66 +160,107 @@ describe('AccessRequirementList tests', () => {
     expect(onHide).toHaveBeenCalledTimes(1)
   })
 
-  it('opens the request wizard for a JsonSchemaAccessRequirement that has no wiki', async () => {
-    const repoEndpoint = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
+  describe('JsonSchemaAccessRequirement', () => {
     const jsonSchemaAccessRequirement =
       mockJsonSchemaAR1 as unknown as AccessRequirement
-    const WIKI_NOT_FOUND_REASON = 'No wiki exists for this requirement'
-    let wikiKeyRequested = false
-    server.use(
-      http.get(
-        `${repoEndpoint}/repo/v1/access_requirement/${mockJsonSchemaAR1.id}/wikikey`,
-        () => {
-          wikiKeyRequested = true
-          return HttpResponse.json(
-            { reason: WIKI_NOT_FOUND_REASON },
-            { status: 404 },
-          )
-        },
-      ),
-      http.get(
-        `${repoEndpoint}/repo/v1/accessRequirement/${mockJsonSchemaAR1.id}/status`,
-        () =>
-          HttpResponse.json({
-            accessRequirementId: String(mockJsonSchemaAR1.id),
-            concreteType:
-              'org.sagebionetworks.repo.model.dataaccess.ManagedACTAccessRequirementStatus',
-            isApproved: false,
-          }),
-      ),
-      http.get(
-        `${repoEndpoint}/repo/v1/accessRequirement/${mockJsonSchemaAR1.id}/dataAccessRequestForUpdate`,
-        () =>
-          HttpResponse.json({
-            id: '9100',
-            accessRequirementId: String(mockJsonSchemaAR1.id),
-            accessorChanges: [],
-            etag: 'etag-0',
-            concreteType: 'org.sagebionetworks.repo.model.dataaccess.Request',
-          }),
-      ),
-      ...getRegisteredSchemaHandlers(repoEndpoint, [
-        mockGenomicsSchema as JSONSchema7,
-      ]),
-    )
-    await init({
-      ...props,
-      accessRequirementFromProps: [jsonSchemaAccessRequirement],
+    const WIKI_ERROR_REASON = 'The wiki could not be loaded'
+
+    function useRegisteredSchema() {
+      server.use(
+        http.get(
+          `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ACCESS_REQUIREMENT_STATUS(mockJsonSchemaAR1.id)}`,
+          () =>
+            HttpResponse.json({
+              accessRequirementId: String(mockJsonSchemaAR1.id),
+              concreteType:
+                'org.sagebionetworks.repo.model.dataaccess.ManagedACTAccessRequirementStatus',
+              isApproved: false,
+            }),
+        ),
+        ...getRegisteredSchemaHandlers(
+          getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+          [mockGenomicsSchema as JSONSchema7],
+        ),
+      )
+    }
+
+    function useWikiKeyResponse(status: number) {
+      const state = { requested: false }
+      server.use(
+        http.get(
+          `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ACCESS_REQUIREMENT_WIKI_PAGE_KEY(mockJsonSchemaAR1.id)}`,
+          () => {
+            state.requested = true
+            return status === 200
+              ? HttpResponse.json(mockJsonSchemaAR1WikiPageKey)
+              : HttpResponse.json({ reason: WIKI_ERROR_REASON }, { status })
+          },
+        ),
+      )
+      return state
+    }
+
+    it('opens the request wizard, and does not show a missing wiki as an error', async () => {
+      const wikiKey = useWikiKeyResponse(404)
+      useRegisteredSchema()
+      await init({
+        ...props,
+        accessRequirementFromProps: [jsonSchemaAccessRequirement],
+      })
+
+      const requestAccessButton = await screen.findByRole('button', {
+        name: 'Request access',
+      })
+      await waitFor(() => expect(wikiKey.requested).toBe(true))
+      await new Promise(resolve => setTimeout(resolve, 100))
+      expect(
+        screen.queryByText(WIKI_ERROR_REASON, { exact: false }),
+      ).not.toBeInTheDocument()
+
+      await userEvent.click(requestAccessButton)
+
+      expect(await screen.findByText('Requester information')).toBeVisible()
     })
 
-    const requestAccessButton = await screen.findByRole('button', {
-      name: 'Request access',
+    it('shows the error when the wiki fails to load for a reason other than not existing', async () => {
+      useWikiKeyResponse(500)
+      useRegisteredSchema()
+      await init({
+        ...props,
+        accessRequirementFromProps: [jsonSchemaAccessRequirement],
+      })
+
+      expect(
+        await screen.findByText(WIKI_ERROR_REASON, { exact: false }),
+      ).toBeVisible()
     })
-    await waitFor(() => expect(wikiKeyRequested).toBe(true))
-    // A missing wiki is not an error
-    await new Promise(resolve => setTimeout(resolve, 100))
-    expect(
-      screen.queryByText(WIKI_NOT_FOUND_REASON, { exact: false }),
-    ).not.toBeInTheDocument()
 
-    await userEvent.click(requestAccessButton)
+    it('does not show the access requirement wiki in the request wizard', async () => {
+      const WIKI_TEXT = 'Access to these genomics data is controlled.'
+      useWikiKeyResponse(200)
+      server.use(
+        http.get(
+          `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${WIKI_PAGE_ID(
+            mockJsonSchemaAR1WikiPageKey.ownerObjectType,
+            mockJsonSchemaAR1WikiPageKey.ownerObjectId,
+            mockJsonSchemaAR1WikiPageKey.wikiPageId,
+          )}`,
+          () => HttpResponse.json(mockJsonSchemaAR1WikiPage),
+        ),
+      )
+      useRegisteredSchema()
+      await init({
+        ...props,
+        accessRequirementFromProps: [jsonSchemaAccessRequirement],
+      })
+      expect(await screen.findByText(WIKI_TEXT)).toBeVisible()
 
-    expect(await screen.findByText('Requester information')).toBeVisible()
-    expect(screen.queryByText('Instructions')).not.toBeInTheDocument()
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Request access' }),
+      )
+
+      expect(await screen.findByText('Requester information')).toBeVisible()
+      expect(screen.queryByText(WIKI_TEXT)).not.toBeInTheDocument()
+    })
   })
 })

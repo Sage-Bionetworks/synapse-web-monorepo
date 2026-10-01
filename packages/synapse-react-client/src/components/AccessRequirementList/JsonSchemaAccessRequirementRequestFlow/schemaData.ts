@@ -1,6 +1,7 @@
 import { GeneratedFormStepForRjsf } from '@/utils/jsonschema/generateDataAccessSchema'
 import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
 import { RJSFSchema } from '@rjsf/utils'
+import { DataAccessRequestType } from '@sage-bionetworks/synapse-client'
 import pick from 'lodash-es/pick'
 
 export type SchemaData = Record<string, unknown>
@@ -20,16 +21,16 @@ export function getStepData(
 }
 
 /**
- * The payload the server validates. It must declare whether the request is a renewal so that context-specific
- * properties are validated against the right branch of the schema.
+ * The payload the server validates. It must declare the type of the request so that context-specific properties are
+ * validated against the right branch of the schema.
  */
 export function withSubmissionContext(
   schemaData: SchemaData,
-  isRenewal: boolean,
+  requestType: DataAccessRequestType,
 ): SchemaData {
   return {
     ...schemaData,
-    [SUBMISSION_CONTEXT_PROPERTY]: isRenewal ? 'RENEWAL' : 'REQUEST',
+    [SUBMISSION_CONTEXT_PROPERTY]: requestType,
   }
 }
 
