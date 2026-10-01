@@ -1,3 +1,7 @@
+import {
+  mockWindowScrollTo,
+  simulateWindowScroll,
+} from '@/testutils/ScrollTestUtils'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
@@ -8,18 +12,16 @@ import {
   RouterProvider,
 } from 'react-router'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { useScrollToTopOnRouteChange } from './useScrollToTopOnRouteChange'
+import { useRestoreScrollOnRouteChange } from './useRestoreScrollOnRouteChange'
 
 function Layout() {
-  useScrollToTopOnRouteChange()
+  useRestoreScrollOnRouteChange()
   return <Outlet />
 }
 
 function setUp() {
-  // `window.scrollTo` is stubbed globally in the test setup, so clear any calls recorded by an
-  // earlier test before rendering.
-  const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => {})
-  scrollTo.mockClear()
+  const scrollTo = mockWindowScrollTo()
+  simulateWindowScroll(0)
 
   const routes: RouteObject[] = [
     {
@@ -35,7 +37,7 @@ function setUp() {
             </>
           ),
         },
-        { path: 'child', element: <div>child route</div> },
+        { path: 'child', element: <Link to="/">back to list</Link> },
       ],
     },
   ]
@@ -49,18 +51,34 @@ function setUp() {
   return { scrollTo, user: userEvent.setup() }
 }
 
-describe('useScrollToTopOnRouteChange', () => {
+describe('useRestoreScrollOnRouteChange', () => {
   afterEach(() => {
     vi.restoreAllMocks()
   })
 
-  it('scrolls to the top when the pathname changes', async () => {
+  it('scrolls to the top when reaching a pathname for the first time', async () => {
     const { scrollTo, user } = setUp()
+    simulateWindowScroll(1500)
 
     await user.click(screen.getByRole('link', { name: 'go to child' }))
 
-    expect(await screen.findByText('child route')).toBeInTheDocument()
+    expect(await screen.findByText('back to list')).toBeInTheDocument()
     expect(scrollTo).toHaveBeenCalledWith(0, 0)
+  })
+
+  it('restores the previous offset when returning to a pathname', async () => {
+    const { scrollTo, user } = setUp()
+    simulateWindowScroll(1500)
+
+    await user.click(screen.getByRole('link', { name: 'go to child' }))
+    expect(await screen.findByText('back to list')).toBeInTheDocument()
+    simulateWindowScroll(0)
+    scrollTo.mockClear()
+
+    await user.click(screen.getByRole('link', { name: 'back to list' }))
+
+    expect(await screen.findByText('go to child')).toBeInTheDocument()
+    expect(scrollTo).toHaveBeenCalledWith(0, 1500)
   })
 
   it('does not scroll on the initial render', () => {
@@ -71,6 +89,7 @@ describe('useScrollToTopOnRouteChange', () => {
 
   it('does not scroll when only the search params change', async () => {
     const { scrollTo, user } = setUp()
+    simulateWindowScroll(1500)
 
     await user.click(screen.getByRole('link', { name: 'apply filter' }))
 

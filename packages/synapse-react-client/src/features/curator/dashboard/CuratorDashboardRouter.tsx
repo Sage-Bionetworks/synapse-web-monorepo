@@ -10,7 +10,7 @@ import {
 } from 'react-router'
 import { RouterProvider as DOMRouterProvider } from 'react-router/dom'
 import SWCPageLayout from '@/components/layout/SWCPageLayout'
-import { useScrollToTopOnRouteChange } from '@/utils/hooks/useScrollToTopOnRouteChange'
+import { useRestoreScrollOnRouteChange } from '@/utils/hooks/useRestoreScrollOnRouteChange'
 
 export type CuratorDashboardRouterProps = PropsWithChildren<{
   /** Used to determine the base path for the component. Default is CuratorDashboard:0 */
@@ -24,7 +24,7 @@ export type CuratorDashboardRouterProps = PropsWithChildren<{
  * list and the task editor, both of which render into its `Outlet`.
  */
 function CuratorDashboardLayout() {
-  useScrollToTopOnRouteChange()
+  useRestoreScrollOnRouteChange()
 
   return (
     <SWCPageLayout header={{ title: 'Curator Dashboard' }}>

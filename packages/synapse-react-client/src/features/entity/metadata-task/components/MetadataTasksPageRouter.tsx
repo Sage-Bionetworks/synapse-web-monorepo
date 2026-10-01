@@ -1,6 +1,6 @@
 import { getCurationTaskFlowRoutes } from '@/features/entity/metadata-task/create-task/curationTaskFlowRoutes'
 import EditCurationTaskPage from '@/features/entity/metadata-task/create-task/EditCurationTaskPage'
-import { useScrollToTopOnRouteChange } from '@/utils/hooks/useScrollToTopOnRouteChange'
+import { useRestoreScrollOnRouteChange } from '@/utils/hooks/useRestoreScrollOnRouteChange'
 import { PropsWithChildren, useMemo } from 'react'
 import {
   createBrowserRouter,
@@ -28,7 +28,7 @@ export type MetadataTasksPageRouterProps = PropsWithChildren<{
  * create/edit flows, all of which render into its `Outlet`.
  */
 function MetadataTasksPageLayout() {
-  useScrollToTopOnRouteChange()
+  useRestoreScrollOnRouteChange()
 
   return <Outlet />
 }
