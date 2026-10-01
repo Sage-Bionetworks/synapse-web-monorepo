@@ -31,18 +31,16 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { useRef, useState } from 'react'
 import IconSvg from '../../IconSvg/IconSvg'
-import { ensureCurrentUserIsAccessor } from '../ManagedACTAccessRequirementRequestFlow/useInitializeRequestAccessors'
 import FirstClassFields from './FirstClassFields'
 import {
   areFirstClassFieldsComplete,
+  buildRequest,
   FirstClassFieldValues,
+  isRenewalRequest,
+  toFirstClassFieldValues,
 } from './firstClassFields'
 import SchemaStepForm, { SchemaStepFormHandle } from './SchemaStepForm'
-import {
-  getFileUploadFieldTitles,
-  SchemaData,
-  withSubmissionContext,
-} from './schemaData'
+import { getFileUploadFieldTitles, SchemaData } from './schemaData'
 
 export const FIRST_CLASS_FIELDS_STEP_LABEL = 'Requester information'
 
@@ -80,9 +78,7 @@ export default function JsonSchemaRequestWizard(
       throwOnError: true,
     },
   )
-  const isRenewal =
-    request?.concreteType ===
-    'org.sagebionetworks.repo.model.dataaccess.Renewal'
+  const isRenewal = request !== undefined && isRenewalRequest(request)
   const { form, error: formError } = useGeneratedRequestForm(
     accessRequirement.formTemplateRef,
     request
@@ -156,26 +152,14 @@ function JsonSchemaRequestWizardContent(
     currentUserId,
     steps,
   } = props
-  const isRenewal =
-    request.concreteType === 'org.sagebionetworks.repo.model.dataaccess.Renewal'
   const isEDucEnabled = Boolean(accessRequirement.eDucTemplateId)
 
   const [activeStepIndex, setActiveStepIndex] = useState(0)
   const [alertMessage, setAlertMessage] = useState<string | undefined>()
   const [firstClassValues, setFirstClassValues] =
-    useState<FirstClassFieldValues>(() => ({
-      accessorChanges: ensureCurrentUserIsAccessor(
-        request.accessorChanges,
-        currentUserId,
-        isRenewal,
-      ),
-      institution: request.institution ?? '',
-      piName: request.principalInvestigator?.name ?? '',
-      piUserId: request.principalInvestigator?.userId ?? null,
-      piEmail: request.principalInvestigator?.institutionalEmail ?? '',
-      signingOfficialName: request.signingOfficial?.name ?? '',
-      signingOfficialEmail: request.signingOfficial?.institutionalEmail ?? '',
-    }))
+    useState<FirstClassFieldValues>(() =>
+      toFirstClassFieldValues(request, currentUserId),
+    )
   const [schemaData, setSchemaData] = useState<SchemaData>(
     request.schemaData ?? {},
   )
@@ -201,38 +185,18 @@ function JsonSchemaRequestWizardContent(
     ? undefined
     : steps[activeStepIndex - 1]
 
-  function buildRequest(
-    latestSchemaData: SchemaData = schemaData,
-  ): Request | Renewal {
-    const values = firstClassValues
-    return {
-      ...request,
-      accessorChanges: values.accessorChanges,
-      schemaData: withSubmissionContext(latestSchemaData, isRenewal),
-      ...(isEDucEnabled
-        ? {
-            institution: values.institution,
-            principalInvestigator: {
-              ...request.principalInvestigator,
-              name: values.piName || undefined,
-              userId: values.piUserId ?? undefined,
-              institutionalEmail: values.piEmail || undefined,
-            },
-            signingOfficial: {
-              ...request.signingOfficial,
-              name: values.signingOfficialName || undefined,
-              institutionalEmail: values.signingOfficialEmail || undefined,
-            },
-          }
-        : {}),
-    } as Request | Renewal
-  }
-
   async function saveAndAdvance(latestSchemaData: SchemaData = schemaData) {
     setAlertMessage(undefined)
     let saved: Request | Renewal
     try {
-      saved = await updateRequest(buildRequest(latestSchemaData))
+      saved = await updateRequest(
+        buildRequest(
+          request,
+          firstClassValues,
+          latestSchemaData,
+          isEDucEnabled,
+        ),
+      )
     } catch {
       // The mutation's onError displays the message
       return
@@ -267,10 +231,11 @@ function JsonSchemaRequestWizardContent(
 
   function onDucUpload(response: UploadCallbackResp) {
     if (response.success && response.resp) {
-      void updateRequest({
+      // The mutation's onError displays the message
+      updateRequest({
         ...request,
         ducFileHandleId: response.resp.fileHandleId,
-      })
+      }).catch(() => {})
     } else if (response.error) {
       setAlertMessage(response.error.reason)
     }
@@ -366,7 +331,16 @@ function JsonSchemaRequestWizardContent(
         <Button
           variant="outlined"
           disabled={isBusy}
-          onClick={() => onCancel(buildRequest())}
+          onClick={() =>
+            onCancel(
+              buildRequest(
+                request,
+                firstClassValues,
+                schemaData,
+                isEDucEnabled,
+              ),
+            )
+          }
         >
           Cancel
         </Button>
