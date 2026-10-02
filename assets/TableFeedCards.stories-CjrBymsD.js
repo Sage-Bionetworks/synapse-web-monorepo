@@ -1,0 +1,1 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{n as t,t as n}from"./TableFeedCards-05z1E4OH.js";var r,i,a;e((()=>{t(),r={title:`Synapse/TableFeedCards`,component:n},i={args:{tableEntityId:`syn23520190`}},a=[`Demo`]}))();export{i as Demo,a as __namedExportsOrder,r as default};

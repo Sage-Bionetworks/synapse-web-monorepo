@@ -1,0 +1,1 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{n as t,t as n}from"./CopyToClipboardInput-DxkB_8jg.js";var r,i,a;e((()=>{t(),r={title:`Synapse/CopyToClipboardInput`,component:n},i={args:{value:`The quick brown fox jumps over the lazy dog.`,inputWidth:`250px`}},a=[`Default`]}))();export{i as Default,a as __namedExportsOrder,r as default};
