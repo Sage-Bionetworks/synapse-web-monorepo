@@ -1,9 +1,0 @@
-import{o as e}from"./preload-helper-CsHsquCd.js";import{Bn as t,Wn as n}from"./synapse-client-CaTCickH.js";import{A as r,Cn as i,G as a,H as o,L as s,P as c,R as l,Tn as u,U as d,W as f,k as p,wn as m,z as h}from"./iframe-DyyNjE82.js";import{n as g,t as _}from"./FormTemplateEditor-54u10W6l.js";var v,y,b,x,S,C,w;e((()=>{n(),l(),d(),s(),r(),u(),g(),{fn:v}=__STORYBOOK_MODULE_TEST__,y=[a,f],b={title:`Governance/JSON Schema AR/Form Template Editor`,component:_,parameters:{stack:`mock`,msw:{handlers:{formTemplate:c(t),createSchema:i(t,y),registeredSchema:m(t,y),schemaVersions:p(t).versions}}},args:{onSaved:v(),onCancel:v()},tags:[`autodocs`]},x={},S={args:{templateId:o.id}},C={args:{templateId:h.id}},x.parameters={...x.parameters,docs:{...x.parameters?.docs,source:{originalSource:`{}`,...x.parameters?.docs?.source},description:{story:`Create a brand new FormTemplate from scratch.`,...x.parameters?.docs?.description}}},S.parameters={...S.parameters,docs:{...S.parameters?.docs,source:{originalSource:`{
-  args: {
-    templateId: mockGenomicsTemplate.id
-  }
-}`,...S.parameters?.docs?.source},description:{story:`Edit the Genomics DAR template (3 steps, all required).`,...S.parameters?.docs?.description}}},C.parameters={...C.parameters,docs:{...C.parameters?.docs,source:{originalSource:`{
-  args: {
-    templateId: mockClinicalTemplate.id
-  }
-}`,...C.parameters?.docs?.source},description:{story:"Edit the Clinical Trial DAR template — includes a file-upload field\n(`synapse-filehandle-id`) with a downloadable template, and a\n`RENEWAL_ONLY` field.",...C.parameters?.docs?.description}}},w=[`CreateNewTemplate`,`EditGenomicsTemplate`,`EditClinicalTemplate`]}))();export{x as CreateNewTemplate,C as EditClinicalTemplate,S as EditGenomicsTemplate,w as __namedExportsOrder,b as default};
