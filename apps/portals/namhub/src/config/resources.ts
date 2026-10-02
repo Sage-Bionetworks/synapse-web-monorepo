@@ -2,6 +2,7 @@ import { ExternalAnalysisPlatform } from 'synapse-react-client/components/Synaps
 
 export const studiesSql = `SELECT * FROM syn75904610`
 export const datasetsSql = `SELECT * FROM syn76283922`
+export const publicationsSql = `SELECT * FROM syn75404744`
 
 export const rgbIndex = 5
 
