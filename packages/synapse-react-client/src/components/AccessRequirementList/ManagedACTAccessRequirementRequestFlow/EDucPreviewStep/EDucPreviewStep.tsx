@@ -26,10 +26,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
-import {
-  FileHandleAssociateType,
-  ManagedACTAccessRequirement,
-} from '@sage-bionetworks/synapse-types'
+import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
 import { ReactNode, useState } from 'react'
 import { useFetchBlobUrl } from '@/utils/hooks/useFetchBlobUrl'
 import IconSvg from '../../../IconSvg/IconSvg'
@@ -38,6 +35,7 @@ import {
   SignatureQuotaExhaustedMessage,
 } from '../eDucSignatureUtils'
 import { longFieldLabelSx } from '../styles'
+import { RequestFlowAccessRequirement } from '../requestFlowTypes'
 
 const PDF_PREVIEW_HEIGHT = '500px'
 
@@ -61,7 +59,7 @@ const INITIATE_SIGNATURE_ERROR_TITLE =
   "Sorry, we couldn't send your DUC for electronic signature."
 
 export type EDucPreviewStepProps = {
-  managedACTAccessRequirement: ManagedACTAccessRequirement
+  managedACTAccessRequirement: RequestFlowAccessRequirement
   onHide: () => void
   onBackClicked: () => void
   onSendForSignature: () => void

@@ -2,7 +2,6 @@ import { formatDate } from '@/utils/functions/DateFormatter'
 import { Alert, Box, ButtonProps, Link, Typography } from '@mui/material'
 import Stack from '@mui/material/Stack'
 import {
-  ManagedACTAccessRequirement,
   ManagedACTAccessRequirementStatus,
   RestrictionInformationResponse,
   SubmissionState,
@@ -11,12 +10,13 @@ import dayjs from 'dayjs'
 import { ReactNode, useState } from 'react'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
 import RequirementItem from '../RequirementItem/RequirementItem'
+import { RequestFlowAccessRequirement } from './requestFlowTypes'
 
 export type ManagedACTAccessRequirementItemViewProps = {
   /**
    * The ManagedACTAccessRequirement to be displayed.
    */
-  accessRequirement: ManagedACTAccessRequirement
+  accessRequirement: RequestFlowAccessRequirement
   /**
    * The user's status for this access requirement.
    */

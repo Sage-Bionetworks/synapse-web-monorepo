@@ -36,13 +36,13 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import {
   FileHandleAssociateType,
-  ManagedACTAccessRequirement,
   RestrictableObjectType,
 } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import IconSvg from '../../../IconSvg/IconSvg'
 import { longFieldLabelSx } from '../styles'
+import { RequestFlowAccessRequirement } from '../requestFlowTypes'
 
 /** Browser defaults indent a blockquote far too much for a nested list item. */
 const declinedReasonSx: SxProps = {
@@ -55,7 +55,7 @@ const declinedReasonSx: SxProps = {
 }
 
 export type SignatureStatusStepProps = {
-  managedACTAccessRequirement: ManagedACTAccessRequirement
+  managedACTAccessRequirement: RequestFlowAccessRequirement
   subjectId: string
   subjectType: RestrictableObjectType
   onHide: () => void
