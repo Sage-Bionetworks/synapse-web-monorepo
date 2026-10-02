@@ -12,10 +12,10 @@ import {
 import { ReactNode, useCallback } from 'react'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import RequirementItem from '../RequirementItem/RequirementItem'
-import ManagedACTAccessRequirementItemView from './ManagedACTAccessRequirementItemView'
+import RequestableAccessRequirementItemView from './RequestableAccessRequirementItemView'
 import { RequestFlowAccessRequirement } from './requestFlowTypes'
 
-export type ManagedACTAccessRequirementItemProps = {
+export type RequestableAccessRequirementItemProps = {
   /**
    * The ManagedACTAccessRequirement or JsonSchemaAccessRequirement to be displayed.
    */
@@ -42,8 +42,8 @@ export type ManagedACTAccessRequirementItemProps = {
  * Renders a {@link RequirementItem} for a ManagedACTAccessRequirement or JsonSchemaAccessRequirement, which allows a user to see if they have met the
  * requirement, and if not, complete a data access request to apply for access.
  */
-export function ManagedACTAccessRequirementItem(
-  props: ManagedACTAccessRequirementItemProps,
+export function RequestableAccessRequirementItem(
+  props: RequestableAccessRequirementItemProps,
 ) {
   const {
     accessRequirement,
@@ -127,7 +127,7 @@ export function ManagedACTAccessRequirementItem(
   }
 
   return (
-    <ManagedACTAccessRequirementItemView
+    <RequestableAccessRequirementItemView
       isLoading={isLoading}
       accessRequirement={accessRequirement}
       accessRequirementStatus={accessRequirementStatus}
@@ -150,4 +150,4 @@ export function ManagedACTAccessRequirementItem(
   )
 }
 
-export default ManagedACTAccessRequirementItem
+export default RequestableAccessRequirementItem

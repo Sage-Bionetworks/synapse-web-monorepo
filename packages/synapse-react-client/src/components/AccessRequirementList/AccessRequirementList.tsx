@@ -38,9 +38,13 @@ import IconSvg from '../IconSvg/IconSvg'
 import { displayToast } from '../ToastMessage/ToastMessage'
 import UserOrTeamBadge from '../UserOrTeamBadge'
 import { AccessRequirementListItem } from './AccessRequirementListItem'
-import { useCanShowManagedACTWikiInWizard } from './AccessRequirementListUtils'
+import { useShowAccessRequirementWikiInWizard } from './AccessRequirementListUtils'
+import { hasAccessorRequirement } from '../SetBasicAccessRequirementFields/GovernanceUtils'
 import {
   getFirstRequestStep,
+  getNextRequestStep,
+  getPreviousRequestStep,
+  isRequestableAccessRequirement,
   RequestableAccessRequirement,
   RequestDataStep,
 } from './RequestDataStep'
@@ -238,7 +242,8 @@ export default function AccessRequirementList(
     Request | Renewal | undefined
   >()
 
-  const canShowManagedACTWikiInWizard = useCanShowManagedACTWikiInWizard()
+  const showAccessRequirementWikiInWizard =
+    useShowAccessRequirementWikiInWizard(accessRequirementInWizard)
 
   const { data: fetchedRequirementsForTeam } = useGetAccessRequirementsForTeam(
     subjectId!,
@@ -322,34 +327,31 @@ export default function AccessRequirementList(
     setRequestDataStep(step)
   }
 
+  // Each callback is invoked from the step being rendered, so `requestDataStep` is the step being navigated away from
+  const goToNextRequestStep = () =>
+    requestDataStepCallback({
+      step: getNextRequestStep(accessRequirementInWizard!, requestDataStep),
+    })
+  const goToPreviousRequestStep = () =>
+    requestDataStepCallback({
+      step: getPreviousRequestStep(accessRequirementInWizard!, requestDataStep),
+    })
+
   const anyARsRequireTwoFactorAuth = accessRequirements?.some(
     accessRequirement =>
-      (accessRequirement.concreteType ===
-        MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE ||
-        accessRequirement.concreteType ===
-          JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE) &&
+      isRequestableAccessRequirement(accessRequirement) &&
       accessRequirement.isTwoFaRequired,
   )
 
   const anyARsRequireCertification = accessRequirements?.some(
     accessRequirement =>
-      (accessRequirement.concreteType ===
-        MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE ||
-        accessRequirement.concreteType ===
-          JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE ||
-        accessRequirement.concreteType ===
-          SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE) &&
+      hasAccessorRequirement(accessRequirement) &&
       accessRequirement.isCertifiedUserRequired,
   )
 
   const anyARsRequireProfileValidation = accessRequirements?.some(
     accessRequirement =>
-      (accessRequirement.concreteType ===
-        MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE ||
-        accessRequirement.concreteType ===
-          JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE ||
-        accessRequirement.concreteType ===
-          SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE) &&
+      hasAccessorRequirement(accessRequirement) &&
       accessRequirement.isValidatedProfileRequired,
   )
 
@@ -378,17 +380,13 @@ export default function AccessRequirementList(
     }
   }, [numberOfFilesAffected, requestObjectName, subjectId, subjectType])
 
-  // The wiki is only shown beside the forms of a ManagedACTAccessRequirement
-  const isSchemaDriven = jsonSchemaAccessRequirement !== undefined
   const dialogWidth =
     [
       RequestDataStep.UPDATE_ACCESSORS_AND_FILES,
       RequestDataStep.UPDATE_RESEARCH_PROJECT,
       RequestDataStep.REVIEW_DUC,
       RequestDataStep.EDUC_PREVIEW,
-    ].includes(requestDataStep) &&
-    canShowManagedACTWikiInWizard &&
-    !isSchemaDriven
+    ].includes(requestDataStep) && showAccessRequirementWikiInWizard
       ? 'xl'
       : 'md'
 
@@ -400,8 +398,10 @@ export default function AccessRequirementList(
           managedACTAccessRequirement={managedACTAccessRequirement!}
           onSave={researchProject => {
             requestDataStepCallback({
-              accessRequirement: managedACTAccessRequirement,
-              step: RequestDataStep.UPDATE_ACCESSORS_AND_FILES,
+              step: getNextRequestStep(
+                managedACTAccessRequirement!,
+                requestDataStep,
+              ),
               researchProjectId: researchProject.id,
             })
           }}
@@ -427,18 +427,10 @@ export default function AccessRequirementList(
             requestDataStepCallback({ step: RequestDataStep.COMPLETE })
             onSubmissionCreated(submissionId)
           }}
-          onBackClicked={() => {
-            requestDataStepCallback({
-              step: RequestDataStep.UPDATE_RESEARCH_PROJECT,
-            })
-          }}
+          onBackClicked={goToPreviousRequestStep}
           onEDucContinue={
             managedACTAccessRequirement?.eDucTemplateId
-              ? () => {
-                  requestDataStepCallback({
-                    step: RequestDataStep.REVIEW_DUC,
-                  })
-                }
+              ? goToNextRequestStep
               : undefined
           }
         />
@@ -448,18 +440,9 @@ export default function AccessRequirementList(
       renderContent = (
         <ReviewDucStep
           managedACTAccessRequirement={accessRequirementInWizard!}
-          hideWiki={isSchemaDriven}
           onHide={onHide}
-          onBackClicked={() => {
-            requestDataStepCallback({
-              step: isSchemaDriven
-                ? RequestDataStep.SCHEMA_DRIVEN_REQUEST
-                : RequestDataStep.UPDATE_ACCESSORS_AND_FILES,
-            })
-          }}
-          onCreateDuc={() => {
-            requestDataStepCallback({ step: RequestDataStep.EDUC_PREVIEW })
-          }}
+          onBackClicked={goToPreviousRequestStep}
+          onCreateDuc={goToNextRequestStep}
         />
       )
       break
@@ -468,9 +451,7 @@ export default function AccessRequirementList(
         <EDucPreviewStep
           managedACTAccessRequirement={accessRequirementInWizard!}
           onHide={onHide}
-          onBackClicked={() => {
-            requestDataStepCallback({ step: RequestDataStep.REVIEW_DUC })
-          }}
+          onBackClicked={goToPreviousRequestStep}
           onSendForSignature={() => {
             // The signature-status step isn't useful right after routing (0 signatures collected,
             // Submit necessarily disabled), so surface a toast and close the wizard. The user can
@@ -489,11 +470,7 @@ export default function AccessRequirementList(
             )
             onHide()
           }}
-          onManualUpload={() => {
-            requestDataStepCallback({
-              step: RequestDataStep.MANUAL_UPLOAD_DUC,
-            })
-          }}
+          onManualUpload={goToNextRequestStep}
         />
       )
       break
@@ -504,9 +481,7 @@ export default function AccessRequirementList(
           subjectId={subjectId ?? ''}
           subjectType={subjectType ?? RestrictableObjectType.ENTITY}
           onHide={onHide}
-          onBackClicked={() => {
-            requestDataStepCallback({ step: RequestDataStep.EDUC_PREVIEW })
-          }}
+          onBackClicked={goToPreviousRequestStep}
           onSubmissionCreated={submissionId => {
             requestDataStepCallback({ step: RequestDataStep.COMPLETE })
             onSubmissionCreated(submissionId)
@@ -556,11 +531,7 @@ export default function AccessRequirementList(
           }}
           onEDucContinue={
             jsonSchemaAccessRequirement?.eDucTemplateId
-              ? () => {
-                  requestDataStepCallback({
-                    step: RequestDataStep.REVIEW_DUC,
-                  })
-                }
+              ? goToNextRequestStep
               : undefined
           }
         />

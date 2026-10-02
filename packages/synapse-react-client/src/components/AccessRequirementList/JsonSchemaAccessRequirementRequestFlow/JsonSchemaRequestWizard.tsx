@@ -13,10 +13,7 @@ import {
   Button,
   DialogActions,
   DialogContent,
-  DialogTitle,
-  IconButton,
   Skeleton,
-  Stack,
   Step,
   StepLabel,
   Stepper,
@@ -29,19 +26,20 @@ import {
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
 import { useRef, useState } from 'react'
-import IconSvg from '../../IconSvg/IconSvg'
-import FirstClassFields from './FirstClassFields'
+import { DialogBaseTitle } from '../../DialogBase'
+import RequesterInformationFields from './RequesterInformationFields'
 import {
-  areFirstClassFieldsComplete,
+  isRequesterInformationComplete,
   buildRequest,
-  FirstClassFieldValues,
+  RequesterInformationValues,
   getRequestType,
-  toFirstClassFieldValues,
-} from './firstClassFieldValues'
+  toRequesterInformationValues,
+} from './requesterInformation'
 import SchemaStepForm, { SchemaStepFormHandle } from './SchemaStepForm'
 import { getFileUploadFieldTitles, SchemaData } from './schemaData'
 
-export const FIRST_CLASS_FIELDS_STEP_LABEL = 'Requester information'
+export const REQUESTER_INFORMATION_STEP_LABEL = 'Requester information'
+const REQUEST_ACCESS_TITLE = 'Request Access'
 
 export type JsonSchemaRequestWizardProps = {
   accessRequirement: JsonSchemaAccessRequirement
@@ -59,8 +57,8 @@ export type JsonSchemaRequestWizardProps = {
 }
 
 /**
- * The request wizard for a JsonSchemaAccessRequirement: a fixed step of first-class fields followed by one step per
- * step of the access requirement's FormTemplate.
+ * The request wizard for a JsonSchemaAccessRequirement: a fixed step of requester information followed by one step
+ * per step of the access requirement's FormTemplate.
  */
 export default function JsonSchemaRequestWizard(
   props: JsonSchemaRequestWizardProps,
@@ -108,24 +106,10 @@ export default function JsonSchemaRequestWizard(
   )
 }
 
-function WizardTitle(props: { onHide: () => void }) {
-  return (
-    <DialogTitle>
-      <Stack direction="row" sx={{ alignItems: 'center', gap: '5px' }}>
-        Request Access
-        <Box sx={{ flexGrow: 1 }} />
-        <IconButton aria-label={'Close'} onClick={props.onHide}>
-          <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
-        </IconButton>
-      </Stack>
-    </DialogTitle>
-  )
-}
-
 function WizardFrame(props: { onHide: () => void; children: React.ReactNode }) {
   return (
     <>
-      <WizardTitle onHide={props.onHide} />
+      <DialogBaseTitle title={REQUEST_ACCESS_TITLE} onCancel={props.onHide} />
       <DialogContent>{props.children}</DialogContent>
     </>
   )
@@ -156,9 +140,9 @@ function JsonSchemaRequestWizardContent(
 
   const [activeStepIndex, setActiveStepIndex] = useState(0)
   const [alertMessage, setAlertMessage] = useState<string | undefined>()
-  const [firstClassValues, setFirstClassValues] =
-    useState<FirstClassFieldValues>(() =>
-      toFirstClassFieldValues(request, currentUserId),
+  const [requesterInformation, setRequesterInformation] =
+    useState<RequesterInformationValues>(() =>
+      toRequesterInformationValues(request, currentUserId),
     )
   const [schemaData, setSchemaData] = useState<SchemaData>(
     request.schemaData ?? {},
@@ -177,11 +161,11 @@ function JsonSchemaRequestWizardContent(
 
   const fileUploadFieldTitles = getFileUploadFieldTitles(steps)
   const isBusy = isSaving || isSubmitting
-  // Step 0 is the first-class fields; schema steps follow
+  // Step 0 is the requester information; schema steps follow
   const lastStepIndex = steps.length
   const isLastStep = activeStepIndex === lastStepIndex
-  const isFirstClassStep = activeStepIndex === 0
-  const activeSchemaStep = isFirstClassStep
+  const isRequesterInformationStep = activeStepIndex === 0
+  const activeSchemaStep = isRequesterInformationStep
     ? undefined
     : steps[activeStepIndex - 1]
 
@@ -192,7 +176,7 @@ function JsonSchemaRequestWizardContent(
       saved = await updateRequest(
         buildRequest(
           request,
-          firstClassValues,
+          requesterInformation,
           latestSchemaData,
           isEDucEnabled,
         ),
@@ -221,7 +205,7 @@ function JsonSchemaRequestWizardContent(
   }
 
   function onNextClicked() {
-    if (isFirstClassStep) {
+    if (isRequesterInformationStep) {
       void saveAndAdvance()
     } else {
       // Validates the step; onValid is invoked only if the answers are valid
@@ -243,8 +227,8 @@ function JsonSchemaRequestWizardContent(
 
   const disableNext =
     isBusy ||
-    (isFirstClassStep &&
-      !areFirstClassFieldsComplete(firstClassValues, isEDucEnabled)) ||
+    (isRequesterInformationStep &&
+      !isRequesterInformationComplete(requesterInformation, isEDucEnabled)) ||
     (isLastStep && fileUploadFieldTitles.length > 0)
 
   const primaryActionText = !isLastStep
@@ -255,11 +239,11 @@ function JsonSchemaRequestWizardContent(
 
   return (
     <>
-      <WizardTitle onHide={onHide} />
+      <DialogBaseTitle title={REQUEST_ACCESS_TITLE} onCancel={onHide} />
       <DialogContent>
         {steps.length > 0 && (
           <Stepper activeStep={activeStepIndex} sx={{ mb: 3 }}>
-            {[FIRST_CLASS_FIELDS_STEP_LABEL]
+            {[REQUESTER_INFORMATION_STEP_LABEL]
               .concat(steps.map(step => String(step.jsonSchema.title ?? '')))
               .map((label, index) => (
                 <Step key={index}>
@@ -268,13 +252,13 @@ function JsonSchemaRequestWizardContent(
               ))}
           </Stepper>
         )}
-        {isFirstClassStep && (
-          <FirstClassFields
+        {isRequesterInformationStep && (
+          <RequesterInformationFields
             accessRequirement={accessRequirement}
             request={request}
-            values={firstClassValues}
+            values={requesterInformation}
             onChange={changes =>
-              setFirstClassValues(previous => ({ ...previous, ...changes }))
+              setRequesterInformation(previous => ({ ...previous, ...changes }))
             }
             disabled={isBusy}
             isLoading={isBusy}
@@ -310,7 +294,7 @@ function JsonSchemaRequestWizardContent(
         )}
       </DialogContent>
       <DialogActions>
-        {!isFirstClassStep && (
+        {!isRequesterInformationStep && (
           <Button
             variant="outlined"
             disabled={isBusy}
@@ -327,7 +311,7 @@ function JsonSchemaRequestWizardContent(
             onCancel(
               buildRequest(
                 request,
-                firstClassValues,
+                requesterInformation,
                 schemaData,
                 isEDucEnabled,
               ),

@@ -11,7 +11,7 @@ import { SchemaData, withSubmissionContext } from './schemaData'
  * The answers to the questions that the server itself consumes (eDUC signing and the accessor lifecycle). These are
  * always asked, ahead of the schema-driven questions.
  */
-export type FirstClassFieldValues = {
+export type RequesterInformationValues = {
   accessorChanges: AccessorChange[]
   institution: string
   piName: string
@@ -22,11 +22,11 @@ export type FirstClassFieldValues = {
 }
 
 /**
- * Whether the first-class fields are complete enough to continue. Institution, PI, and signing official are only
+ * Whether the requester information is complete enough to continue. Institution, PI, and signing official are only
  * required to sign an eDUC.
  */
-export function areFirstClassFieldsComplete(
-  values: FirstClassFieldValues,
+export function isRequesterInformationComplete(
+  values: RequesterInformationValues,
   isEDucEnabled: boolean,
 ): boolean {
   if (!isEDucEnabled) {
@@ -59,12 +59,12 @@ export function isRenewalRequest(
 }
 
 /**
- * The first-class field values to show for a saved request. The current user is always listed as an accessor.
+ * The requester information to show for a saved request. The current user is always listed as an accessor.
  */
-export function toFirstClassFieldValues(
+export function toRequesterInformationValues(
   request: Request | Renewal,
   currentUserId: string,
-): FirstClassFieldValues {
+): RequesterInformationValues {
   return {
     accessorChanges: ensureCurrentUserIsAccessor(
       request.accessorChanges,
@@ -86,7 +86,7 @@ export function toFirstClassFieldValues(
  */
 export function buildRequest(
   request: Request | Renewal,
-  values: FirstClassFieldValues,
+  values: RequesterInformationValues,
   schemaData: SchemaData,
   isEDucEnabled: boolean,
 ): Request | Renewal {

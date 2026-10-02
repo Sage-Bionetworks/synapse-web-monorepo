@@ -11,7 +11,7 @@ import {
 import React from 'react'
 import { RequestableAccessRequirement } from './RequestDataStep'
 import UnmanagedACTAccessRequirementItem from './RequirementItem/UnmanagedACTAccessRequirementItem'
-import ManagedACTAccessRequirementItem from './ManagedACTAccessRequirementRequestFlow/ManagedACTAccessRequirementItem'
+import RequestableAccessRequirementItem from './ManagedACTAccessRequirementRequestFlow/RequestableAccessRequirementItem'
 import SelfSignAccessRequirementItem from './RequirementItem/SelfSignAccessRequirementItem'
 import LockAccessRequirementItem from './RequirementItem/LockAccessRequirementItem'
 
@@ -50,20 +50,9 @@ export function AccessRequirementListItem(
         />
       )
     case MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
-      return (
-        <ManagedACTAccessRequirementItem
-          accessRequirement={accessRequirement}
-          subjectId={subjectId}
-          subjectType={subjectType}
-          onRejectTerms={onHide}
-          onRequestAccess={() => {
-            onRequestAccess(accessRequirement)
-          }}
-        />
-      )
     case JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
       return (
-        <ManagedACTAccessRequirementItem
+        <RequestableAccessRequirementItem
           accessRequirement={accessRequirement}
           subjectId={subjectId}
           subjectType={subjectType}

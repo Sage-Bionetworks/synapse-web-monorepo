@@ -81,7 +81,6 @@ export const MOCK_JSON_SCHEMA_DATA_ACCESS_REQUEST: Request = {
   irbFileHandleId: '',
   modifiedBy: String(MOCK_USER_ID),
   modifiedOn: '2026-09-01T13:06:51+00:00',
-  researchProjectId: '',
   etag: '0',
   accessRequirementId: String(mockJsonSchemaAR1.id),
   concreteType: 'org.sagebionetworks.repo.model.dataaccess.Request',

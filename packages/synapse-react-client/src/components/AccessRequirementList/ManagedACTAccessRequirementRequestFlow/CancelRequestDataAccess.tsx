@@ -1,18 +1,14 @@
 import { useUpdateDataAccessRequest } from '@/synapse-queries'
 import {
   Alert,
-  Box,
   Button,
   DialogActions,
   DialogContent,
-  DialogTitle,
-  IconButton,
-  Stack,
   Typography,
 } from '@mui/material'
 import { Renewal, Request } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
-import IconSvg from '../../IconSvg/IconSvg'
+import { DialogBaseTitle } from '../../DialogBase'
 import { AlertProps } from './DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 
 export type CancelRequestDataAccessProps = {
@@ -49,21 +45,7 @@ function CancelRequestDataAccess(props: CancelRequestDataAccessProps) {
 
   return (
     <>
-      <DialogTitle>
-        <Stack
-          direction="row"
-          sx={{
-            alignItems: 'center',
-            gap: '5px',
-          }}
-        >
-          Save Changes
-          <Box sx={{ flexGrow: 1 }} />
-          <IconButton aria-label={'Close'} onClick={onHide}>
-            <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
-          </IconButton>
-        </Stack>
-      </DialogTitle>
+      <DialogBaseTitle title={'Save Changes'} onCancel={onHide} />
 
       <DialogContent>
         <Typography variant={'body1'}>

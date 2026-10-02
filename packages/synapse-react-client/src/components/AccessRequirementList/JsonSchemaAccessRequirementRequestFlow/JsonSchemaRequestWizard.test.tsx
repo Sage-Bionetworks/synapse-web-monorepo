@@ -22,7 +22,7 @@ import userEvent from '@testing-library/user-event'
 import { JSONSchema7 } from 'json-schema'
 import { http, HttpResponse } from 'msw'
 import JsonSchemaRequestWizard, {
-  FIRST_CLASS_FIELDS_STEP_LABEL,
+  REQUESTER_INFORMATION_STEP_LABEL,
   JsonSchemaRequestWizardProps,
 } from './JsonSchemaRequestWizard'
 
@@ -43,7 +43,6 @@ function createRequest(
   return {
     id: REQUEST_ID,
     accessRequirementId: String(accessRequirement.id),
-    researchProjectId: '',
     irbFileHandleId: '',
     createdOn: '2026-01-01T00:00:00.000Z',
     modifiedOn: '2026-01-01T00:00:00.000Z',
@@ -152,14 +151,14 @@ describe('JsonSchemaRequestWizard', () => {
     const user = userEvent.setup()
     renderWizard(genomicsAccessRequirement)
 
-    await screen.findByText(FIRST_CLASS_FIELDS_STEP_LABEL, {
+    await screen.findByText(REQUESTER_INFORMATION_STEP_LABEL, {
       selector: '.MuiStepLabel-label',
     })
     const stepLabels = Array.from(
       document.querySelectorAll('.MuiStepLabel-label'),
     ).map(label => label.textContent)
     expect(stepLabels).toEqual([
-      FIRST_CLASS_FIELDS_STEP_LABEL,
+      REQUESTER_INFORMATION_STEP_LABEL,
       'Research Use',
       'Agreements',
     ])

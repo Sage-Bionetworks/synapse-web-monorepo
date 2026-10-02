@@ -1,18 +1,17 @@
 import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
 import { AccessType, Renewal, Request } from '@sage-bionetworks/synapse-types'
 import {
-  areFirstClassFieldsComplete,
+  isRequesterInformationComplete,
   buildRequest,
-  FirstClassFieldValues,
-  toFirstClassFieldValues,
-} from './firstClassFieldValues'
+  RequesterInformationValues,
+  toRequesterInformationValues,
+} from './requesterInformation'
 
 const CURRENT_USER_ID = '1'
 
 const request: Request = {
   id: '9100',
   accessRequirementId: '9000',
-  researchProjectId: '',
   irbFileHandleId: '',
   createdOn: '2026-01-01T00:00:00.000Z',
   modifiedOn: '2026-01-01T00:00:00.000Z',
@@ -29,7 +28,7 @@ const renewal: Renewal = {
   concreteType: 'org.sagebionetworks.repo.model.dataaccess.Renewal',
 }
 
-const completeValues: FirstClassFieldValues = {
+const completeValues: RequesterInformationValues = {
   accessorChanges: [{ userId: CURRENT_USER_ID, type: AccessType.GAIN_ACCESS }],
   institution: 'Sage Bionetworks',
   piName: 'Pat Investigator',
@@ -39,17 +38,17 @@ const completeValues: FirstClassFieldValues = {
   signingOfficialEmail: 'sam@sagebase.org',
 }
 
-describe('areFirstClassFieldsComplete', () => {
+describe('isRequesterInformationComplete', () => {
   it('does not require eDUC participants when the AR has no eDUC', () => {
     expect(
-      areFirstClassFieldsComplete(
+      isRequesterInformationComplete(
         { ...completeValues, institution: '', piUserId: null },
         false,
       ),
     ).toBe(true)
   })
 
-  it.each<[string, Partial<FirstClassFieldValues>]>([
+  it.each<[string, Partial<RequesterInformationValues>]>([
     ['institution', { institution: '' }],
     ['PI name', { piName: '' }],
     ['PI user', { piUserId: null }],
@@ -57,29 +56,29 @@ describe('areFirstClassFieldsComplete', () => {
     ['signing official name', { signingOfficialName: '' }],
     ['signing official email', { signingOfficialEmail: '' }],
   ])('requires the %s when the AR has an eDUC', (_name, blank) => {
-    expect(areFirstClassFieldsComplete(completeValues, true)).toBe(true)
+    expect(isRequesterInformationComplete(completeValues, true)).toBe(true)
     expect(
-      areFirstClassFieldsComplete({ ...completeValues, ...blank }, true),
+      isRequesterInformationComplete({ ...completeValues, ...blank }, true),
     ).toBe(false)
   })
 })
 
-describe('toFirstClassFieldValues', () => {
+describe('toRequesterInformationValues', () => {
   it('lists the current user as a GAIN_ACCESS accessor of a request', () => {
     expect(
-      toFirstClassFieldValues(request, CURRENT_USER_ID).accessorChanges,
+      toRequesterInformationValues(request, CURRENT_USER_ID).accessorChanges,
     ).toEqual([{ userId: CURRENT_USER_ID, type: AccessType.GAIN_ACCESS }])
   })
 
   it('lists the current user as a RENEW_ACCESS accessor of a renewal', () => {
     expect(
-      toFirstClassFieldValues(renewal, CURRENT_USER_ID).accessorChanges,
+      toRequesterInformationValues(renewal, CURRENT_USER_ID).accessorChanges,
     ).toEqual([{ userId: CURRENT_USER_ID, type: AccessType.RENEW_ACCESS }])
   })
 
   it('restores the saved eDUC participants', () => {
     expect(
-      toFirstClassFieldValues(
+      toRequesterInformationValues(
         {
           ...request,
           principalInvestigator: {
