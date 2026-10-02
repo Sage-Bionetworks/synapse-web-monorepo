@@ -2,17 +2,16 @@ import { useGetAccessRequirementWikiPageKey } from '@/synapse-queries'
 import { GridLegacy as Grid, Typography } from '@mui/material'
 import { PropsWithChildren } from 'react'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
-import { useCanShowManagedACTWikiInWizard } from '../AccessRequirementListUtils'
+import { useShowAccessRequirementWikiInWizard } from '../AccessRequirementListUtils'
+import { RequestFlowAccessRequirement } from './requestFlowTypes'
 
 type ManagedACTAccessRequirementFormWikiWrapperProps = PropsWithChildren<{
-  managedACTAccessRequirementId: string
-  /** When true, only the children are rendered, at full width, and the wiki is neither fetched nor shown. */
-  hideWiki?: boolean
+  accessRequirement: RequestFlowAccessRequirement
 }>
 
 /**
- * Renders the child content next to the wiki associated with the provided ManagedACTAccessRequirement. Utilizes a grid
- * layout where the wiki content will not appear on small screen sizes.
+ * Renders the child content next to the wiki associated with the provided access requirement. When the wiki cannot be
+ * shown (see {@link useShowAccessRequirementWikiInWizard}), only the children are rendered, at full width.
  *
  * @param props
  * @constructor
@@ -20,17 +19,14 @@ type ManagedACTAccessRequirementFormWikiWrapperProps = PropsWithChildren<{
 export default function ManagedACTAccessRequirementFormWikiWrapper(
   props: ManagedACTAccessRequirementFormWikiWrapperProps,
 ) {
-  const { children, managedACTAccessRequirementId, hideWiki = false } = props
+  const { children, accessRequirement } = props
+  const showWiki = useShowAccessRequirementWikiInWizard(accessRequirement)
   const { data: wikiPage } = useGetAccessRequirementWikiPageKey(
-    managedACTAccessRequirementId,
-    {
-      enabled: !!managedACTAccessRequirementId && !hideWiki,
-    },
+    String(accessRequirement.id),
+    { enabled: showWiki },
   )
 
-  const canShowWiki = useCanShowManagedACTWikiInWizard()
-
-  if (hideWiki) {
+  if (!showWiki) {
     return <>{children}</>
   }
 
@@ -51,29 +47,27 @@ export default function ManagedACTAccessRequirementFormWikiWrapper(
       >
         {children}
       </Grid>
-      {canShowWiki && (
-        <Grid
-          item
-          md={6}
-          lg={7}
-          sx={{
-            overflowY: 'scroll',
-            pr: 1,
-          }}
-        >
-          <Typography variant={'headline3'} sx={{ mb: 2 }}>
-            Instructions
-          </Typography>
-          {wikiPage && (
-            <MarkdownSynapse
-              wikiId={wikiPage.wikiPageId}
-              ownerId={wikiPage.ownerObjectId}
-              objectType={wikiPage.ownerObjectType}
-              loadingSkeletonRowCount={15}
-            />
-          )}
-        </Grid>
-      )}
+      <Grid
+        item
+        md={6}
+        lg={7}
+        sx={{
+          overflowY: 'scroll',
+          pr: 1,
+        }}
+      >
+        <Typography variant={'headline3'} sx={{ mb: 2 }}>
+          Instructions
+        </Typography>
+        {wikiPage && (
+          <MarkdownSynapse
+            wikiId={wikiPage.wikiPageId}
+            ownerId={wikiPage.ownerObjectId}
+            objectType={wikiPage.ownerObjectType}
+            loadingSkeletonRowCount={15}
+          />
+        )}
+      </Grid>
     </Grid>
   )
 }
