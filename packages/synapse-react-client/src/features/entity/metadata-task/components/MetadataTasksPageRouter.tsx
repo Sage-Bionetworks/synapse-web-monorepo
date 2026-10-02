@@ -1,9 +1,11 @@
 import { getCurationTaskFlowRoutes } from '@/features/entity/metadata-task/create-task/curationTaskFlowRoutes'
 import EditCurationTaskPage from '@/features/entity/metadata-task/create-task/EditCurationTaskPage'
+import { useRestoreScrollOnRouteChange } from '@/utils/hooks/useRestoreScrollOnRouteChange'
 import { PropsWithChildren, useMemo } from 'react'
 import {
   createBrowserRouter,
   createMemoryRouter,
+  Outlet,
   RouteObject,
   RouterProvider,
 } from 'react-router'
@@ -22,6 +24,16 @@ export type MetadataTasksPageRouterProps = PropsWithChildren<{
 }>
 
 /**
+ * Parent of every route on the page. Stays mounted across navigation between the task list and the
+ * create/edit flows, all of which render into its `Outlet`.
+ */
+function MetadataTasksPageLayout() {
+  useRestoreScrollOnRouteChange()
+
+  return <Outlet />
+}
+
+/**
  * A router wrapper for `MetadataTasksPage`, which applies a router around the page content to support
  * page-based create/edit flows for curation tasks, mirroring `GridPageRouter`.
  */
@@ -34,6 +46,7 @@ export default function MetadataTasksPageRouter(
     () => [
       {
         path: '/',
+        element: <MetadataTasksPageLayout />,
         children: [
           {
             index: true,

@@ -22,6 +22,12 @@ if (typeof window !== 'undefined') {
   // IntersectionObserver polyfill for JSDOM
   setupIntersectionMocking(vi.fn)
 
+  // jsdom has no layout engine, so its scroll methods throw "Not implemented" through the virtual
+  // console. Stub them so components that scroll don't pollute test output; tests that assert on
+  // scrolling can still spy on these.
+  window.scrollTo = vi.fn()
+  window.scroll = vi.fn()
+
   // PointerEvent polyfill for JSDOM - https://github.com/jsdom/jsdom/issues/2527
   // dnd-kit's pointer sensor narrows events with
   // `event instanceof getWindow(event.target).PointerEvent`, which throws
