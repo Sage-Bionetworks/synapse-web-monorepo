@@ -45,7 +45,7 @@
       window.LOGLEVEL = 'info';
       window.FRAMEWORK_OPTIONS = {"strictMode":true,"builder":{"viteConfigPath":"./.storybook/storybook-vite.config.mts"}};
       window.CHANNEL_OPTIONS = {};
-      window.FEATURES = {"argTypeTargetsV7":true,"legacyDecoratorFileOrder":false,"disallowImplicitActionsInRenderV8":true,"viewport":true,"highlight":true,"controls":true,"interactions":true,"actions":true,"backgrounds":true,"outline":true,"measure":true,"sidebarOnboardingChecklist":true,"componentsManifest":false};
+      window.FEATURES = {"actions":true,"argTypeTargetsV7":true,"babelRemoveBugfixes":false,"backgrounds":true,"changeDetection":true,"componentsManifest":false,"controls":true,"disallowImplicitActionsInRenderV8":true,"highlight":true,"interactions":true,"legacyDecoratorFileOrder":false,"measure":true,"outline":true,"menuOnboardingChecklist":true,"sidebarOnboardingChecklist":true,"viewport":true};
       window.STORIES = [{"titlePrefix":"","directory":".","files":"**/*.stories.mdx","importPathMatcher":"^\\.(?:(?:^|\\/|(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)(?!\\.)(?=.)[^/]*?\\.stories\\.mdx)$"},{"titlePrefix":"","directory":".","files":"**/*.stories.@(js|jsx|ts|tsx)","importPathMatcher":"^\\.(?:(?:^|\\/|(?:(?:(?!(?:^|\\/)\\.).)*?)\\/)(?!\\.)(?=.)[^/]*?\\.stories\\.(js|jsx|ts|tsx))$"}];
       window.DOCS_OPTIONS = {};
       window.TAGS_OPTIONS = {};
@@ -171,11 +171,11 @@
     border-radius: 10px;
     background: rgb(247, 247, 247);
     color: rgb(46, 52, 56);
+  }
 
-    & * {
-      background: rgb(247, 247, 247);
-      color: rgb(46, 52, 56);
-    }
+  .sb-nopreview_main * {
+    background: rgb(247, 247, 247);
+    color: rgb(46, 52, 56);
   }
 
   .sb-nopreview_heading {
@@ -206,84 +206,89 @@
     border: 1px solid #ff0000;
     box-shadow: 0 0 64px rgba(0, 0, 0, 0.1);
     gap: 24px;
+  }
 
-    & ol {
-      padding-left: 18px;
-      margin: 0;
-    }
+  .sb-errordisplay_main ol {
+    padding-left: 18px;
+    margin: 0;
+  }
 
-    /* Redefine colors to ensure readability regardless of user-provided * selectors. */
-    * {
-      background: white;
-      color: black;
-    }
+  /* Redefine colors to ensure readability regardless of user-provided * selectors. */
+  .sb-errordisplay_main * {
+    background: white;
+    color: black;
+  }
 
-    & h1 {
-      font-family: Nunito Sans;
-      font-size: 22px;
-      font-weight: 400;
-      line-height: 30px;
-      font-weight: normal;
-      margin: 0;
+  /* Exclude error code block from the universal reset to preserve ANSI colors and dark theme */
+  .sb-errordisplay_main .sb-errordisplay_code,
+  .sb-errordisplay_main .sb-errordisplay_code * {
+    background: #242424;
+    color: #c6c6c6;
+  }
 
-      &::before {
-        content: '';
-        display: inline-block;
-        width: 12px;
-        height: 12px;
-        background: #ff4400;
-        border-radius: 50%;
-        margin-right: 8px;
-      }
-    }
+  .sb-errordisplay_main h1 {
+    font-family: inherit;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 30px;
+    margin: 0;
+  }
 
-    & p,
-    & ol {
-      font-family: Nunito Sans;
-      font-size: 14px;
-      font-weight: 400;
-      line-height: 19px;
-      margin: 0;
-    }
+  .sb-errordisplay_main h1::before {
+    content: '';
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background: #ff4400;
+    border-radius: 50%;
+    margin-right: 8px;
+  }
 
-    & li + li {
-      margin: 0;
-      padding: 0;
-      padding-top: 12px;
-    }
+  .sb-errordisplay_main p,
+  .sb-errordisplay_main ol {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 19px;
+    margin: 0;
+  }
 
-    & a {
-      color: currentColor;
-    }
+  .sb-errordisplay_main li + li {
+    margin: 0;
+    padding: 0;
+    padding-top: 12px;
+  }
 
-    & .sb-errordisplay_code {
-      padding: 10px;
-      flex: 1;
-      background: #242424;
-      color: #c6c6c6;
-      box-sizing: border-box;
+  .sb-errordisplay_main a {
+    color: currentColor;
+  }
 
-      font-size: 14px;
-      font-weight: 400;
-      line-height: 19px;
-      border-radius: 4px;
+  .sb-errordisplay_main .sb-errordisplay_code {
+    padding: 10px;
+    flex: 1;
+    background: #242424;
+    color: #c6c6c6;
+    box-sizing: border-box;
 
-      font-family:
-        'Operator Mono', 'Fira Code Retina', 'Fira Code', 'FiraCode-Retina', 'Andale Mono',
-        'Lucida Console', Consolas, Monaco, monospace;
-      margin: 0;
-      overflow: auto;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 19px;
+    border-radius: 4px;
 
-      & code {
-        background-color: inherit;
-        color: inherit;
-      }
-    }
+    font-family:
+      'Operator Mono', 'Fira Code Retina', 'Fira Code', 'FiraCode-Retina', 'Andale Mono',
+      'Lucida Console', Consolas, Monaco, monospace;
+    margin: 0;
+    overflow: auto;
+  }
 
-    & .sb-errordisplay pre {
-      white-space: pre-wrap;
-      white-space: revert;
-    }
+  .sb-errordisplay_main .sb-errordisplay_code code {
+    background-color: inherit;
+    color: inherit;
+  }
+
+  .sb-errordisplay_main .sb-errordisplay_code {
+    white-space: pre-wrap;
   }
 
   @-webkit-keyframes sb-rotate360 {
@@ -571,7 +576,7 @@
 
 <script crossorigin src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
-    <script type="module" crossorigin src="./assets/iframe-dEBbv4Mq.js"></script>
+    <script type="module" crossorigin src="./assets/iframe-dKu_lQcc.js"></script>
     <link rel="modulepreload" crossorigin href="./assets/preload-helper-CsHsquCd.js">
     <link rel="modulepreload" crossorigin href="./assets/prop-types-De2w50yR.js">
     <link rel="modulepreload" crossorigin href="./assets/react-BXiJfEW5.js">
@@ -597,36 +602,36 @@
     <link rel="modulepreload" crossorigin href="./assets/SynapseConstants-C6NyDJfS.js">
     <link rel="modulepreload" crossorigin href="./assets/calculateFriendlyFileSize-Ch80TIYh.js">
     <link rel="modulepreload" crossorigin href="./assets/dist-C7SMz8Oe.js">
-    <link rel="modulepreload" crossorigin href="./assets/synapse-client-CaTCickH.js">
+    <link rel="modulepreload" crossorigin href="./assets/synapse-client-B6YB0NPi.js">
     <link rel="modulepreload" crossorigin href="./assets/spreadSx-Bz92BW33.js">
     <link rel="modulepreload" crossorigin href="./assets/FullWidthAlert-BfHxWgzH.js">
     <link rel="modulepreload" crossorigin href="./assets/ToastMessage-CAdBN_oP.js">
     <link rel="modulepreload" crossorigin href="./assets/FullWidthAlert-DvDnG62D.js">
     <link rel="modulepreload" crossorigin href="./assets/StringUtils-bcYoP167.js">
-    <link rel="modulepreload" crossorigin href="./assets/SynapseContext-Qg5v7-Yf.js">
+    <link rel="modulepreload" crossorigin href="./assets/SynapseContext-BASIpZbs.js">
     <link rel="modulepreload" crossorigin href="./assets/development--dxNTjKx.js">
     <link rel="modulepreload" crossorigin href="./assets/tinycolor-87osv4U_.js">
     <link rel="modulepreload" crossorigin href="./assets/Constants-uhei4dkS.js">
     <link rel="modulepreload" crossorigin href="./assets/LoadingScreen-trpAX1cz.js">
     <link rel="modulepreload" crossorigin href="./assets/ToastMessage-Lnv_UP1T.js">
     <link rel="modulepreload" crossorigin href="./assets/ror-CFDzPxb5.js">
-    <link rel="modulepreload" crossorigin href="./assets/useTwoFactorEnrollment-BDRxRD7W.js">
-    <link rel="modulepreload" crossorigin href="./assets/useDownloadList-C-8Lnad2.js">
+    <link rel="modulepreload" crossorigin href="./assets/useTwoFactorEnrollment-B9zJVcPm.js">
+    <link rel="modulepreload" crossorigin href="./assets/useDownloadList-DpR05sHc.js">
     <link rel="modulepreload" crossorigin href="./assets/useMountEffect-DamK1f1D.js">
     <link rel="modulepreload" crossorigin href="./assets/useCookieValue-DWYqpYn3.js">
     <link rel="modulepreload" crossorigin href="./assets/useCookiePreferences-CeKlOP66.js">
-    <link rel="modulepreload" crossorigin href="./assets/useLogin-CeN8ulDa.js">
-    <link rel="modulepreload" crossorigin href="./assets/IconSvg-fKQWrB0S.js">
+    <link rel="modulepreload" crossorigin href="./assets/useLogin-BhAUv0A5.js">
+    <link rel="modulepreload" crossorigin href="./assets/IconSvg-Dj6v_BO6.js">
     <link rel="modulepreload" crossorigin href="./assets/TextField-BW_4n4SW.js">
-    <link rel="modulepreload" crossorigin href="./assets/LeftRightPanel-HEjrlJqG.js">
-    <link rel="modulepreload" crossorigin href="./assets/TwoFactorEnrollmentForm-Dw5hVOr_.js">
+    <link rel="modulepreload" crossorigin href="./assets/LeftRightPanel-CgpaCDcD.js">
+    <link rel="modulepreload" crossorigin href="./assets/TwoFactorEnrollmentForm-BYJGwf3y.js">
     <link rel="modulepreload" crossorigin href="./assets/dist-CoVeHUmK.js">
     <link rel="modulepreload" crossorigin href="./assets/dayjs.min-CqrFRUCi.js">
     <link rel="modulepreload" crossorigin href="./assets/localizedFormat-D8-LHJCt.js">
     <link rel="modulepreload" crossorigin href="./assets/utc-DT9a5LtT.js">
-    <link rel="modulepreload" crossorigin href="./assets/DateFormatter-DkcLcDSw.js">
-    <link rel="modulepreload" crossorigin href="./assets/LastLoginInfo-GbA8cmq6.js">
-    <link rel="modulepreload" crossorigin href="./assets/IconSvg-X-fCjxkK.js">
+    <link rel="modulepreload" crossorigin href="./assets/DateFormatter-B8rkbzpe.js">
+    <link rel="modulepreload" crossorigin href="./assets/LastLoginInfo-B3k9btfQ.js">
+    <link rel="modulepreload" crossorigin href="./assets/IconSvg-A-CyBvWg.js">
     <link rel="modulepreload" crossorigin href="./assets/TextField-CXEgPXc_.js">
     <link rel="modulepreload" crossorigin href="./assets/mockTeam-DZuZbOA0.js">
     <link rel="modulepreload" crossorigin href="./assets/mockProject-Ce_dVsj_.js">
@@ -636,7 +641,7 @@
     <link rel="modulepreload" crossorigin href="./assets/mockFileEntity-BhJguW9b.js">
     <link rel="modulepreload" crossorigin href="./assets/mockSchema-DLbk-FSf.js">
     <link rel="modulepreload" crossorigin href="./assets/BasicMockedCrudService-BK0TAaui.js">
-    <link rel="modulepreload" crossorigin href="./assets/asyncJobHandlers-vr_PNp_d.js">
+    <link rel="modulepreload" crossorigin href="./assets/asyncJobHandlers-DCS6lPWi.js">
     <link rel="stylesheet" crossorigin href="./assets/FullWidthAlert-CccBg3YT.css">
     <link rel="stylesheet" crossorigin href="./assets/LoadingScreen-DzW1zZwQ.css">
     <link rel="stylesheet" crossorigin href="./assets/TextField-Ck1V2LID.css">

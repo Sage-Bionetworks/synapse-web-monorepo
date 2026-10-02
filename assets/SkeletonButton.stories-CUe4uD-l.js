@@ -1,0 +1,1 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{n as t,t as n}from"./SkeletonButton-Cn0pOogy.js";var r,i,a;e((()=>{t(),r={title:`Synapse/SkeletonButton`,component:n},i={},a=[`Demo`]}))();export{i as Demo,a as __namedExportsOrder,r as default};
