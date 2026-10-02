@@ -14,15 +14,15 @@ import PrincipalInvestigatorFields from '../ManagedACTAccessRequirementRequestFl
 import { AccessorStepAccessRequirement } from '../ManagedACTAccessRequirementRequestFlow/requestFlowTypes'
 import SigningOfficialFields from '../ManagedACTAccessRequirementRequestFlow/SigningOfficialFields'
 import {
-  FirstClassFieldValues,
+  RequesterInformationValues,
   isRenewalRequest,
-} from './firstClassFieldValues'
+} from './requesterInformation'
 
-export type FirstClassFieldsProps = {
+export type RequesterInformationFieldsProps = {
   accessRequirement: AccessorStepAccessRequirement
   request: Request | Renewal
-  values: FirstClassFieldValues
-  onChange: (changes: Partial<FirstClassFieldValues>) => void
+  values: RequesterInformationValues
+  onChange: (changes: Partial<RequesterInformationValues>) => void
   disabled: boolean
   isLoading: boolean
   onDucUpload: (response: UploadCallbackResp) => void
@@ -32,7 +32,9 @@ export type FirstClassFieldsProps = {
  * The always-present questions of a JsonSchemaAccessRequirement request: who is requesting access, the eDUC
  * participants, and the DUC when it is uploaded rather than signed electronically.
  */
-export default function FirstClassFields(props: FirstClassFieldsProps) {
+export default function RequesterInformationFields(
+  props: RequesterInformationFieldsProps,
+) {
   const {
     accessRequirement,
     request,

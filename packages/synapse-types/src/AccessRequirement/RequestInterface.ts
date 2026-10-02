@@ -20,7 +20,8 @@ export interface SigningOfficial {
 export interface RequestInterface {
   id: string
   accessRequirementId: string
-  researchProjectId: string
+  /* The research project of a ManagedACTAccessRequirement request. Not used by a JsonSchemaAccessRequirement request. */
+  researchProjectId?: string
   createdOn: string
   modifiedOn: string
   createdBy: string
