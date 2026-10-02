@@ -1,1 +1,0 @@
-import{o as e}from"./preload-helper-CsHsquCd.js";import{n as t,t as n}from"./FavoriteButton-BEgYyj-J.js";var r,i,a;e((()=>{t(),r={title:`Synapse/FavoriteButton`,component:n},i={args:{entityId:`syn33576900`}},a=[`Demo`]}))();export{i as Demo,a as __namedExportsOrder,r as default};

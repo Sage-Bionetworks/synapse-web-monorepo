@@ -1,0 +1,1 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{c as t,i as n,l as r,n as i}from"./SynapseHomepageV2-CiCZ6a5c.js";var a,o,s;e((()=>{r(),n(),a={title:`Synapse/HomePage/FeaturedDatasets`,component:t,parameters:{chromatic:{viewports:[600,1200]}}},o={name:`Synapse Featured Datasets`,args:{sourceTable:i}},s=[`Demo`]}))();export{o as Demo,s as __namedExportsOrder,a as default};

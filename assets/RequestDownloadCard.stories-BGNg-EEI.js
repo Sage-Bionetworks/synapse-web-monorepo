@@ -1,0 +1,1 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{n as t,t as n}from"./RequestDownloadCard-C28Ti7pl.js";var r,i,a;e((()=>{t(),r={title:`Download/RequestDownloadCard`,component:n},i={args:{entityId:`syn36695878`}},a=[`Demo`]}))();export{i as Demo,a as __namedExportsOrder,r as default};
