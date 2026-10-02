@@ -8,6 +8,7 @@ export const navbarConfig: NavbarConfig = {
       children: [
         { name: 'Studies', path: '/Explore/Studies' },
         { name: 'Datasets', path: '/Explore/Datasets' },
+        { name: 'Publications', path: '/Explore/Publications' },
       ],
     },
     {
