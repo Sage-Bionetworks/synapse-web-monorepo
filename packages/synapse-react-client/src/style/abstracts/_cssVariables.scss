@@ -150,4 +150,15 @@
   --synapse-drag-source-opacity: 0.4;
 
   --synapse-space-unit: 2.1rem;
+
+  --synapse-floating-row-selection-bar-height: 70px;
+  // Space occupied along the bottom edge of the viewport by app-level fixed UI
+  --synapse-bottom-viewport-inset: 0px;
+}
+
+// Let bottom-anchored UI (e.g. the Curie launcher) move clear of the floating row-selection bar
+body:has(.SynapseFloatingRowSelectionBar) {
+  --synapse-bottom-viewport-inset: var(
+    --synapse-floating-row-selection-bar-height
+  );
 }

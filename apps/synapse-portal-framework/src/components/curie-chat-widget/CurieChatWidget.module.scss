@@ -1,8 +1,11 @@
 .widget {
-  z-index: 1050;
+  z-index: 2002;
   position: fixed;
   right: 0;
-  bottom: var(--curie-widget-bottom, 8px);
+  bottom: calc(
+    var(--curie-widget-bottom, 8px) + var(--synapse-bottom-viewport-inset, 0px)
+  );
+  transition: bottom 0.2s ease;
   display: flex;
   align-items: center;
   border: 0;
@@ -11,6 +14,10 @@
   background: transparent;
   line-height: 0;
   cursor: pointer;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 }
 
 .speechBubble {
