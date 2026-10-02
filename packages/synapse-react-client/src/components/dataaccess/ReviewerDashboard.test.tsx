@@ -1,3 +1,5 @@
+import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
+import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { server } from '@/mocks/msw/server'
 import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
@@ -52,8 +54,15 @@ vi.spyOn(FormTemplateTableModule, 'FormTemplateTable').mockImplementation(
 function renderComponent(
   isACTMember: boolean = true,
   isARReviewer: boolean = true,
+  isFormTemplatesEnabled: boolean = true,
 ) {
   server.use(
+    getFeatureFlagsOverride({
+      portalOrigin: getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT),
+      overrides: {
+        [FeatureFlagEnum.ACT_DASHBOARD_FORM_TEMPLATES]: isFormTemplatesEnabled,
+      },
+    }),
     http.get(
       `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${USER_BUNDLE}`,
       () => {
@@ -147,6 +156,24 @@ describe('ReviewerDashboard tests', () => {
     screen.getByRole('tab', { name: 'Form Templates' })
     screen.getByRole('tab', { name: 'Submissions' })
     screen.getByRole('tab', { name: 'User Access History' })
+  })
+
+  it('ACT cannot see the Form Templates tab when the feature flag is disabled', async () => {
+    renderComponent(true, true, false)
+
+    await screen.findByRole('tab', { name: 'Access Requirements' })
+    expect(
+      screen.queryByRole('tab', { name: 'Form Templates' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('Non-ACT reviewer cannot see the Form Templates tab even when the feature flag is enabled', async () => {
+    renderComponent(false, true, true)
+
+    await screen.findByRole('tab', { name: 'Submissions' })
+    expect(
+      screen.queryByRole('tab', { name: 'Form Templates' }),
+    ).not.toBeInTheDocument()
   })
 
   it('AR Reviewer can see Submissions and User Access History tabs', async () => {

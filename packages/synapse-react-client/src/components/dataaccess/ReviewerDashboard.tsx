@@ -1,3 +1,5 @@
+import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
+import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { useGetCurrentUserBundle } from '@/synapse-queries/user/useUserBundle'
 import { DynamicFormOutlined } from '@mui/icons-material'
 import { Box, Typography } from '@mui/material'
@@ -68,6 +70,10 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
   const hasActPermissions = userBundle?.isACTMember
   const hasReviewerPermissions =
     userBundle?.isACTMember || userBundle?.isARReviewer
+  const isFormTemplatesFeatureEnabled = useGetFeatureFlag(
+    FeatureFlagEnum.ACT_DASHBOARD_FORM_TEMPLATES,
+  )
+  const showFormTemplates = hasActPermissions && isFormTemplatesFeatureEnabled
 
   const routes: RouteObject[] = useMemo(
     () => [
@@ -92,7 +98,7 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
                   eDUC Templates
                 </LinkTab>
               )}
-              {hasActPermissions && (
+              {showFormTemplates && (
                 <LinkTab
                   href={FORM_TEMPLATES_PATH}
                   icon={<DynamicFormOutlined />}
@@ -135,15 +141,15 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
           },
           {
             path: FORM_TEMPLATES_ROUTE,
-            element: hasActPermissions ? <FormTemplateTable /> : null,
+            element: showFormTemplates ? <FormTemplateTable /> : null,
           },
           {
             path: NEW_FORM_TEMPLATE_ROUTE,
-            element: hasActPermissions ? <FormTemplateEditorRoute /> : null,
+            element: showFormTemplates ? <FormTemplateEditorRoute /> : null,
           },
           {
             path: FORM_TEMPLATE_ROUTE,
-            element: hasActPermissions ? <FormTemplateEditorRoute /> : null,
+            element: showFormTemplates ? <FormTemplateEditorRoute /> : null,
           },
           {
             path: 'Submissions',
@@ -177,7 +183,7 @@ export function ReviewerDashboard(props: ReviewerDashboardProps) {
         ],
       },
     ],
-    [hasActPermissions, hasReviewerPermissions],
+    [hasActPermissions, hasReviewerPermissions, showFormTemplates],
   )
 
   const router = useMemo(() => {
