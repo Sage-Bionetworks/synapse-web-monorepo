@@ -1,1 +1,0 @@
-import{o as e}from"./preload-helper-CsHsquCd.js";import{n as t,t as n}from"./DropdownSelect-CogHm2wY.js";var r,i,a;e((()=>{t(),r={title:`Components/DropdownSelect`,component:n},i={name:`DropdownSelect`,args:{options:[`Create a merge commit`,`Squash and merge`,`Rebase and merge`],variant:`outlined`}},a=[`Demo`]}))();export{i as Demo,a as __namedExportsOrder,r as default};

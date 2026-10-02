@@ -1,0 +1,1 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{n as t,t as n}from"./UserProfileLinks-C6EZ1g6d.js";var r,i,a;e((()=>{t(),r={title:`Synapse/UserProfileLinks`,component:n},i={args:{userId:`1131050`}},a=[`Demo`]}))();export{i as Demo,a as __namedExportsOrder,r as default};

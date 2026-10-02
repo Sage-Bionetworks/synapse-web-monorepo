@@ -1,0 +1,1 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{n as t,t as n}from"./Resources-DbA3e8AS.js";var r,i,a;e((()=>{t(),r={title:`Home Page/Resources`,component:n},i={args:{entityId:`syn22311127`}},a=[`Demo`]}))();export{i as Demo,a as __namedExportsOrder,r as default};
