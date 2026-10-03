@@ -1,12 +1,6 @@
 export type FeatureFlags = Record<FeatureFlagEnum, boolean>
 
 export enum FeatureFlagEnum {
-  // If enabled, show the new header component that uses the HeaderSearchBox component
-  PORTAL_SEARCH_HEADER = 'PORTAL_SEARCH_HEADER',
-
-  // If enabled, show the chatbot entrypoint from the new Synapse Homepage
-  HOMEPAGE_CHATBOT = 'HOMEPAGE_CHATBOT',
-
   // If enabled, account settings will link to a page to manage webhooks
   WEBHOOKS_UI = 'WEBHOOKS_UI',
 
