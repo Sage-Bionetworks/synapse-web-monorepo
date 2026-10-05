@@ -7,6 +7,7 @@ import {
   createMemoryRouter,
   RouteObject,
   RouterProvider,
+  ScrollRestoration,
 } from 'react-router'
 import { RouterProvider as DOMRouterProvider } from 'react-router/dom'
 import SWCPageLayout from '@/components/layout/SWCPageLayout'
@@ -37,6 +38,7 @@ export default function CuratorDashboardRouter(
             <div className="pageContent" style={{ marginTop: '2rem' }}>
               <Outlet />
             </div>
+            <ScrollRestoration getKey={location => location.pathname} />
           </SWCPageLayout>
         ),
         children: [
