@@ -1,1 +1,0 @@
-import{o as e}from"./preload-helper-CsHsquCd.js";import{n as t,t as n}from"./EntityLink-CpKb_hjA.js";var r,i,a;e((()=>{t(),r={title:`Components/EntityLink`,component:n},i={args:{entity:`syn32846102`}},a=[`Private`]}))();export{i as Private,a as __namedExportsOrder,r as default};

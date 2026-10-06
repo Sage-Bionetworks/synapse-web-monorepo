@@ -1,1 +1,0 @@
-import{o as e}from"./preload-helper-CsHsquCd.js";import{n as t,t as n}from"./CreateProjectModal-LCV2VbWb.js";var r,i,a,o;e((()=>{t(),{fn:r}=__STORYBOOK_MODULE_TEST__,i={title:`Synapse/CreateProjectModal`,component:n},a={args:{isShowingModal:!0,onClose:r()}},o=[`Demo`]}))();export{a as Demo,o as __namedExportsOrder,i as default};
