@@ -1,5 +1,6 @@
 import { displayToast } from '@/components/ToastMessage/ToastMessage'
 import {
+  DataAccessRequestSignatureVariables,
   useListAllUserDataAccessRequests,
   useVoidDataAccessRequestSignature,
 } from '@/synapse-queries'
@@ -107,7 +108,7 @@ describe('InFlightEDucSignaturesTable', () => {
   const { mock: voidMock, mockMutate: mockVoidMutate } = getUseMutationMock<
     void,
     SynapseClientError,
-    string
+    DataAccessRequestSignatureVariables
   >()
 
   beforeEach(() => {
@@ -415,7 +416,12 @@ describe('InFlightEDucSignaturesTable', () => {
         name: 'Cancel Request',
       }),
     )
-    expect(mockVoidMutate).toHaveBeenCalledWith('10')
+    // The access requirement travels with the request so the mutation can invalidate the
+    // cached request that carries `eDucSignatureEnvelopeId`.
+    expect(mockVoidMutate).toHaveBeenCalledWith({
+      requestId: '10',
+      accessRequirementId: 'ar-1',
+    })
   })
 
   it('backs out of Cancel Request without mutating when Keep Request is clicked', async () => {
