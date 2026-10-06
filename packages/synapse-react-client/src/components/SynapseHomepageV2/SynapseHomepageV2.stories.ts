@@ -1,12 +1,7 @@
-import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
 import { getFileHandlers } from '@/mocks/msw/handlers/fileHandlers'
 import { getHandlersForTableQuery } from '@/mocks/msw/handlers/tableQueryHandlers'
 import { registerSynapseHomepageMockQueries } from '@/mocks/query/mockHomepageQueryResultData'
-import {
-  MOCK_REPO_ORIGIN,
-  PRODUCTION_ENDPOINT_CONFIG,
-} from '@/utils/functions/getEndpoint'
-import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { SynapseHomepageV2 } from './SynapseHomepageV2'
 
@@ -41,12 +36,6 @@ export const DemoVersion2: Story = {
       handlers: [
         ...getFileHandlers(MOCK_REPO_ORIGIN),
         ...getHandlersForTableQuery(MOCK_REPO_ORIGIN),
-        getFeatureFlagsOverride({
-          portalOrigin: PRODUCTION_ENDPOINT_CONFIG.PORTAL,
-          overrides: {
-            [FeatureFlagEnum.HOMEPAGE_CHATBOT]: true,
-          },
-        }),
       ],
     },
   },
