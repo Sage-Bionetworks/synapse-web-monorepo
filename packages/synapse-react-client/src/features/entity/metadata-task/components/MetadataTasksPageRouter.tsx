@@ -4,8 +4,10 @@ import { PropsWithChildren, useMemo } from 'react'
 import {
   createBrowserRouter,
   createMemoryRouter,
+  Outlet,
   RouteObject,
   RouterProvider,
+  ScrollRestoration,
 } from 'react-router'
 import { RouterProvider as DOMRouterProvider } from 'react-router/dom'
 import { MetadataTasksPageInternal } from './MetadataTasksPage'
@@ -34,6 +36,12 @@ export default function MetadataTasksPageRouter(
     () => [
       {
         path: '/',
+        element: (
+          <>
+            <Outlet />
+            <ScrollRestoration getKey={location => location.pathname} />
+          </>
+        ),
         children: [
           {
             index: true,
