@@ -1,1 +1,0 @@
-import{o as e}from"./preload-helper-CsHsquCd.js";import{n as t,t as n}from"./DownloadLoginModal-CiI8mKta.js";var r,i,a,o;e((()=>{t(),{fn:r}=__STORYBOOK_MODULE_TEST__,i={title:`Download/DownloadLoginModal`,component:n},a={args:{showModal:!0,onHide:r()}},o=[`Demo`]}))();export{a as Demo,o as __namedExportsOrder,i as default};

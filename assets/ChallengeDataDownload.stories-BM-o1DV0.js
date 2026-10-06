@@ -1,0 +1,1 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{n as t,t as n}from"./ChallengeDataDownload-DFt6w6Ff.js";var r,i,a;e((()=>{n(),r={title:`Synapse/Challenge/ChallengeDataDownload`,component:t},i={args:{parentContainerId:`syn51565244`}},a=[`Demo`]}))();export{i as Demo,a as __namedExportsOrder,r as default};

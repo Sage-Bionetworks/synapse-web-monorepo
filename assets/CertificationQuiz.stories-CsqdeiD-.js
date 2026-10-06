@@ -1,0 +1,1 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{n as t,t as n}from"./CertificationQuiz-D8eYH9eM.js";var r,i,a;e((()=>{t(),r={title:`Synapse/CertificationQuiz`,component:n},i={},a=[`CertificationQuizDemo`]}))();export{i as CertificationQuizDemo,a as __namedExportsOrder,r as default};
