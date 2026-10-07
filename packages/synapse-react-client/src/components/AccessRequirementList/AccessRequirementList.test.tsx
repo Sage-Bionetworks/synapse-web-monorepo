@@ -168,7 +168,7 @@ describe('AccessRequirementList tests', () => {
     function useRegisteredSchema() {
       server.use(
         http.get(
-          `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ACCESS_REQUIREMENT_STATUS(mockJsonSchemaAR1.id)}`,
+          `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ACCESS_REQUIREMENT_STATUS(jsonSchemaAccessRequirement.id)}`,
           () =>
             HttpResponse.json({
               accessRequirementId: String(mockJsonSchemaAR1.id),
@@ -188,7 +188,7 @@ describe('AccessRequirementList tests', () => {
       const state = { requested: false }
       server.use(
         http.get(
-          `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ACCESS_REQUIREMENT_WIKI_PAGE_KEY(mockJsonSchemaAR1.id)}`,
+          `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ACCESS_REQUIREMENT_WIKI_PAGE_KEY(jsonSchemaAccessRequirement.id)}`,
           () => {
             state.requested = true
             return status === 200
