@@ -35,8 +35,14 @@ import {
   getRequestType,
   toRequesterInformationValues,
 } from './requesterInformation'
-import SchemaStepForm, { SchemaStepFormHandle } from './SchemaStepForm'
-import { getFileUploadFieldTitles, SchemaData } from './schemaData'
+import SchemaStepForm, {
+  SchemaStepFormHandle,
+} from '@/components/JsonSchemaForm/SchemaStepForm'
+import {
+  getFileUploadFieldTitles,
+  getStepTitle,
+  SchemaData,
+} from '@/utils/jsonschema/schemaData'
 
 export const REQUESTER_INFORMATION_STEP_LABEL = 'Requester information'
 const REQUEST_ACCESS_TITLE = 'Request Access'
@@ -244,7 +250,8 @@ function JsonSchemaRequestWizardContent(
         {steps.length > 0 && (
           <Stepper activeStep={activeStepIndex} sx={{ mb: 3 }}>
             {[REQUESTER_INFORMATION_STEP_LABEL]
-              .concat(steps.map(step => String(step.jsonSchema.title ?? '')))
+              // The requester information step comes first, so schema steps start at position 2
+              .concat(steps.map((step, index) => getStepTitle(step, index + 2)))
               .map((label, index) => (
                 <Step key={index}>
                   <StepLabel>{label}</StepLabel>

@@ -1,8 +1,8 @@
 import { JsonSchemaForm } from '@/components/JsonSchemaForm/JsonSchemaForm'
 import { GeneratedFormStepForRjsf } from '@/utils/jsonschema/generateDataAccessSchema'
+import { getStepData, SchemaData } from '@/utils/jsonschema/schemaData'
 import RJSFForm from '@rjsf/core'
 import { Ref, useImperativeHandle, useRef } from 'react'
-import { getStepData, SchemaData } from './schemaData'
 
 export type SchemaStepFormHandle = {
   /** Validates the step's answers, showing errors against invalid fields. */
@@ -10,16 +10,17 @@ export type SchemaStepFormHandle = {
 }
 
 export type SchemaStepFormProps = {
-  ref: Ref<SchemaStepFormHandle>
+  ref?: Ref<SchemaStepFormHandle>
   step: GeneratedFormStepForRjsf
   schemaData: SchemaData
   onSchemaDataChange: (schemaData: SchemaData) => void
   /** Invoked with the complete answers when the step's answers pass validation. */
-  onValid: (schemaData: SchemaData) => void
+  onValid?: (schemaData: SchemaData) => void
 }
 
 /**
- * A single schema-driven step of the request wizard.
+ * A single step of a form generated from a FormTemplate, rendered as a requester sees it. The answers of all steps
+ * are kept in `schemaData`; the step shows and updates only its own.
  */
 export default function SchemaStepForm(props: SchemaStepFormProps) {
   const { ref, step, schemaData, onSchemaDataChange, onValid } = props
@@ -41,7 +42,7 @@ export default function SchemaStepForm(props: SchemaStepFormProps) {
         onSchemaDataChange({ ...schemaData, ...event.formData })
       }
       onSubmit={event =>
-        onValid({ ...schemaData, ...(event.formData as SchemaData) })
+        onValid?.({ ...schemaData, ...(event.formData as SchemaData) })
       }
     >
       <></>

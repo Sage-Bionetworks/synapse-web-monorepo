@@ -5,7 +5,10 @@ import {
   Request,
 } from '@sage-bionetworks/synapse-types'
 import { ensureCurrentUserIsAccessor } from '../ManagedACTAccessRequirementRequestFlow/useInitializeRequestAccessors'
-import { SchemaData, withSubmissionContext } from './schemaData'
+import {
+  SchemaData,
+  withSubmissionContext,
+} from '@/utils/jsonschema/schemaData'
 
 /**
  * The answers to the questions that the server itself consumes (eDUC signing and the accessor lifecycle). These are

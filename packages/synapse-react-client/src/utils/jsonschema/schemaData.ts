@@ -21,6 +21,19 @@ export function getStepData(
 }
 
 /**
+ * The title of a generated step, or `Step {position}` for a step without one.
+ * @param position the 1-based position of the step among all steps shown to the user
+ */
+export function getStepTitle(
+  step: GeneratedFormStepForRjsf,
+  position: number,
+): string {
+  return typeof step.jsonSchema.title === 'string' && step.jsonSchema.title
+    ? step.jsonSchema.title
+    : `Step ${position}`
+}
+
+/**
  * The payload the server validates. It must declare the type of the request so that context-specific properties are
  * validated against the right branch of the schema.
  */
