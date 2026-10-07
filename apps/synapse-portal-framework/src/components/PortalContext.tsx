@@ -9,10 +9,20 @@ import { RouteObject } from 'react-router'
 import { SynapseChatProps } from 'synapse-react-client'
 import { NavbarConfig } from './navbar/Navbar'
 
-export type AridhiaConfig = {
+export type AridhiaEndpoints = {
   apiBasePath?: string
   /** `idp-id` registered with the target C-Path hub: `sage-prod` (prod) or `sage-dev` (C-Path dev hub). */
   subjectTokenIssuer?: string
+  /** Base URL of the C-Path FAIR portal's browsable UI. */
+  fairPortalUrl?: string
+}
+
+export type AridhiaConfig = AridhiaEndpoints & {
+  /**
+   * Endpoints for the C-Path dev hub, used instead of the default endpoints when the
+   * `AMPALS_RDCA_DAP_FORM_ENABLED` feature flag is enabled.
+   */
+  devEndpoints?: AridhiaEndpoints
 }
 
 export type PortalContextType = {

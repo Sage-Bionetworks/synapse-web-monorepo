@@ -5,7 +5,7 @@ import { SynapseErrorBoundary } from 'synapse-react-client/components/error/Erro
 import { SynapseToastContainer } from 'synapse-react-client/components/ToastMessage/index'
 import { SynapsePortalChatDialog } from 'synapse-react-client/components/SynapseChat/SynapsePortalChatDialog'
 import AppInitializer from './components/AppInitializer'
-import { AridhiaIntegration } from './components/AridhiaIntegration'
+import { PortalAridhiaIntegration } from './components/AridhiaIntegration'
 import { ChatDialogContextProvider } from './components/ChatDialogContext'
 import Footer from './components/Footer'
 import Navbar from './components/navbar/Navbar'
@@ -95,12 +95,7 @@ export default function App(props: AppProps) {
         requireAuthentication={requireAuthentication}
       >
         {aridhiaConfig?.apiBasePath ? (
-          <AridhiaIntegration
-            apiBasePath={aridhiaConfig.apiBasePath}
-            subjectTokenIssuer={aridhiaConfig.subjectTokenIssuer}
-          >
-            {content}
-          </AridhiaIntegration>
+          <PortalAridhiaIntegration>{content}</PortalAridhiaIntegration>
         ) : (
           content
         )}
