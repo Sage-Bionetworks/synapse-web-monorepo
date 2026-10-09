@@ -32,9 +32,9 @@ export function useCreateTeam(
   return useMutation<Team, SynapseClientError, CreateTeamRequest>({
     ...options,
     mutationFn: team => SynapseClient.createTeam(team, accessToken),
-    onSuccess: async (data, variables, context) => {
+    onSuccess: async (data, variables, context, mutationContext) => {
       if (options?.onSuccess) {
-        options.onSuccess(data, variables, context)
+        options.onSuccess(data, variables, context, mutationContext)
       }
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getAllUserTeamsQueryKey(),

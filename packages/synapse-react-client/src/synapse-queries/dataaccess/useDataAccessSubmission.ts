@@ -145,7 +145,7 @@ export function useUpdateDataAccessSubmissionState(
     ...options,
     mutationFn: (request: SubmissionStateChangeRequest): Promise<Submission> =>
       SynapseClient.updateSubmissionStatus(request, accessToken),
-    onSuccess: async (updatedSubmission, variables, ctx) => {
+    onSuccess: async (updatedSubmission, variables, ctx, mutationContext) => {
       // Invalidate all searches, since updating the status will affect filtered search results
       await queryClient.invalidateQueries({
         queryKey: keyFactory.searchDataAccessSubmissionQueryKey(),
@@ -157,7 +157,12 @@ export function useUpdateDataAccessSubmissionState(
       )
 
       if (options?.onSuccess) {
-        await options.onSuccess(updatedSubmission, variables, ctx)
+        await options.onSuccess(
+          updatedSubmission,
+          variables,
+          ctx,
+          mutationContext,
+        )
       }
     },
   })
@@ -196,7 +201,7 @@ export function useSubmitDataAccessRequest(
       }
       return SynapseClient.submitDataAccessRequest(request, accessToken!)
     },
-    onSuccess: async (data, variables, ctx) => {
+    onSuccess: async (data, variables, ctx, mutationContext) => {
       await Promise.all([
         // Invalidate the status of the relevant AR
         queryClient.invalidateQueries({
@@ -211,7 +216,7 @@ export function useSubmitDataAccessRequest(
       ])
 
       if (options?.onSuccess) {
-        await options.onSuccess(data, variables, ctx)
+        await options.onSuccess(data, variables, ctx, mutationContext)
       }
     },
   })

@@ -106,14 +106,14 @@ export function useCreateAccessRequirement<T extends AccessRequirement>(
   return useMutation<T, SynapseClientError, Partial<T>>({
     ...options,
     mutationFn: ar => createAccessRequirement<T>(accessToken, ar),
-    onSuccess: async (newAr, ar, ctx) => {
+    onSuccess: async (newAr, ar, ctx, mutationContext) => {
       const accessRequirementQueryKey = keyFactory.getAccessRequirementQueryKey(
         newAr.id.toString(),
       )
       queryClient.setQueryData(accessRequirementQueryKey, newAr)
 
       if (options?.onSuccess) {
-        return await options.onSuccess(newAr, ar, ctx)
+        return await options.onSuccess(newAr, ar, ctx, mutationContext)
       }
       return
     },
@@ -128,14 +128,14 @@ export function useUpdateAccessRequirement<T extends AccessRequirement>(
   return useMutation<T, SynapseClientError, T>({
     ...options,
     mutationFn: ar => updateAccessRequirement<T>(accessToken, ar),
-    onSuccess: async (newAr, ar, ctx) => {
+    onSuccess: async (newAr, ar, ctx, mutationContext) => {
       const accessRequirementQueryKey = keyFactory.getAccessRequirementQueryKey(
         newAr.id.toString(),
       )
       queryClient.setQueryData(accessRequirementQueryKey, newAr)
 
       if (options?.onSuccess) {
-        return await options.onSuccess(newAr, ar, ctx)
+        return await options.onSuccess(newAr, ar, ctx, mutationContext)
       }
       return
     },
@@ -169,13 +169,13 @@ export function useDeleteAccessRequirementACL(
     ...options,
     mutationFn: accessRequirementId =>
       deleteAccessRequirementAcl(accessToken, accessRequirementId),
-    onSuccess: async (data, accessRequirementId, ctx) => {
+    onSuccess: async (data, accessRequirementId, ctx, mutationContext) => {
       await queryClient.invalidateQueries({
         queryKey:
           keyFactory.getAccessRequirementAclQueryKey(accessRequirementId),
       })
       if (options?.onSuccess) {
-        await options.onSuccess(data, accessRequirementId, ctx)
+        await options.onSuccess(data, accessRequirementId, ctx, mutationContext)
       }
     },
   })
@@ -194,13 +194,13 @@ export function useCreateAccessRequirementACL(
   return useMutation<AccessControlList, SynapseClientError, AccessControlList>({
     ...options,
     mutationFn: acl => createAccessRequirementAcl(accessToken, acl),
-    onSuccess: async (newAcl, acl, ctx) => {
+    onSuccess: async (newAcl, acl, ctx, mutationContext) => {
       const accessRequirementAclQueryKey =
         keyFactory.getAccessRequirementAclQueryKey(newAcl.id)
       queryClient.setQueryData(accessRequirementAclQueryKey, newAcl)
 
       if (options?.onSuccess) {
-        return await options.onSuccess(newAcl, acl, ctx)
+        return await options.onSuccess(newAcl, acl, ctx, mutationContext)
       }
       return
     },
@@ -220,13 +220,13 @@ export function useUpdateAccessRequirementACL(
   return useMutation<AccessControlList, SynapseClientError, AccessControlList>({
     ...options,
     mutationFn: acl => updateAccessRequirementAcl(accessToken, acl),
-    onSuccess: async (newAcl, acl, ctx) => {
+    onSuccess: async (newAcl, acl, ctx, mutationContext) => {
       const accessRequirementAclQueryKey =
         keyFactory.getAccessRequirementAclQueryKey(newAcl.id)
       queryClient.setQueryData(accessRequirementAclQueryKey, newAcl)
 
       if (options?.onSuccess) {
-        return await options.onSuccess(newAcl, acl, ctx)
+        return await options.onSuccess(newAcl, acl, ctx, mutationContext)
       }
       return
     },
@@ -280,7 +280,7 @@ export function useCreateLockAccessRequirement(
     mutationFn: (entityId: string) =>
       SynapseClient.createLockAccessRequirement(entityId, accessToken),
     mutationKey: ['createLockAccessRequirement'],
-    onSuccess: async (data, variables, ctx) => {
+    onSuccess: async (data, variables, ctx, mutationContext) => {
       await Promise.all([
         // Invalidate all access requirement queries
         queryClient.invalidateQueries({
@@ -296,7 +296,7 @@ export function useCreateLockAccessRequirement(
         ),
       ])
       if (options?.onSuccess) {
-        return options.onSuccess(data, variables, ctx)
+        return options.onSuccess(data, variables, ctx, mutationContext)
       }
       return
     },
@@ -402,7 +402,7 @@ export function useUpdateResearchProject(
     ...options,
     mutationFn: (researchProject: ResearchProject) =>
       SynapseClient.updateResearchProject(researchProject, accessToken!),
-    onSuccess: async (data, variables, ctx) => {
+    onSuccess: async (data, variables, ctx, mutationContext) => {
       // Invalidate the research project query
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getAccessRequirementResearchProjectQueryKey(
@@ -410,7 +410,7 @@ export function useUpdateResearchProject(
         ),
       })
       if (options?.onSuccess) {
-        return options.onSuccess(data, variables, ctx)
+        return options.onSuccess(data, variables, ctx, mutationContext)
       }
       return
     },
@@ -451,7 +451,7 @@ export function useUpdateDataAccessRequest(
     ...options,
     mutationFn: (requestInterface: Request | Renewal) =>
       SynapseClient.updateDataAccessRequest(requestInterface, accessToken!),
-    onSuccess: async (data, variables, ctx) => {
+    onSuccess: async (data, variables, ctx, mutationContext) => {
       // Invalidate the data access request query
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getDataAccessRequestForUpdateQueryKey(
@@ -459,7 +459,7 @@ export function useUpdateDataAccessRequest(
         ),
       })
       if (options?.onSuccess) {
-        return options.onSuccess(data, variables, ctx)
+        return options.onSuccess(data, variables, ctx, mutationContext)
       }
       return
     },
@@ -485,7 +485,7 @@ export function useCreateAccessApproval(
     ...options,
     mutationFn: request =>
       SynapseClient.createAccessApproval(accessToken, request),
-    onSuccess: async (data, variables, ctx) => {
+    onSuccess: async (data, variables, ctx, mutationContext) => {
       await Promise.all([
         // Invalidate query for AR status
         queryClient.invalidateQueries({
@@ -499,7 +499,7 @@ export function useCreateAccessApproval(
         ),
       ])
       if (options?.onSuccess) {
-        return options.onSuccess(data, variables, ctx)
+        return options.onSuccess(data, variables, ctx, mutationContext)
       }
       return
     },
@@ -525,7 +525,7 @@ export function useCancelDataAccessRequest(
     ...options,
     mutationFn: request =>
       SynapseClient.cancelDataAccessRequest(request.submissionId, accessToken!),
-    onSuccess: async (data, variables, ctx) => {
+    onSuccess: async (data, variables, ctx, mutationContext) => {
       await Promise.all([
         // Invalidate data access submission queries
         queryClient.invalidateQueries({
@@ -540,7 +540,7 @@ export function useCancelDataAccessRequest(
       ])
 
       if (options?.onSuccess) {
-        return options.onSuccess(data, variables, ctx)
+        return options.onSuccess(data, variables, ctx, mutationContext)
       }
       return
     },

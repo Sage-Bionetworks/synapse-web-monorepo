@@ -335,6 +335,7 @@ describe('CreateOrUpdateDoiModal', () => {
         },
         expectedDoiRequest,
         undefined,
+        {} as never,
       )
     })
     expect(mockDisplayToast).toHaveBeenCalledWith(

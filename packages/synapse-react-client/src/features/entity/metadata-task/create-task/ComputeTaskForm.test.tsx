@@ -144,7 +144,7 @@ beforeEach(() => {
       ({
         mutate: (taskId: number) => {
           mockDeleteMutate(taskId)
-          options?.onSuccess?.(undefined, taskId, {})
+          options?.onSuccess?.(undefined, taskId, {}, {} as never)
         },
         isPending: false,
       }) as any,

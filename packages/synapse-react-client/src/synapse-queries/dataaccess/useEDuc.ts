@@ -249,7 +249,7 @@ export function useInitiateDataAccessRequestSignature(
       synapseClient.dataAccessServicesClient.postRepoV1DataAccessRequestRequestIdSignature(
         { requestId },
       ),
-    onSuccess: async (data, requestId, ctx) => {
+    onSuccess: async (data, requestId, ctx, mutationContext) => {
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: keyFactory.getDataAccessRequestSignatureQueryKey(requestId),
@@ -259,7 +259,7 @@ export function useInitiateDataAccessRequestSignature(
         }),
       ])
       if (options?.onSuccess) {
-        return options.onSuccess(data, requestId, ctx)
+        return options.onSuccess(data, requestId, ctx, mutationContext)
       }
       return
     },
@@ -358,7 +358,7 @@ export function useUpdateDataAccessRequestSignature(
       synapseClient.dataAccessServicesClient.putRepoV1DataAccessRequestRequestIdSignature(
         { requestId },
       ),
-    onSuccess: async (data, requestId, ctx) => {
+    onSuccess: async (data, requestId, ctx, mutationContext) => {
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: keyFactory.getDataAccessRequestSignatureQueryKey(requestId),
@@ -368,7 +368,7 @@ export function useUpdateDataAccessRequestSignature(
         }),
       ])
       if (options?.onSuccess) {
-        return options.onSuccess(data, requestId, ctx)
+        return options.onSuccess(data, requestId, ctx, mutationContext)
       }
       return
     },
@@ -392,7 +392,7 @@ export function useVoidDataAccessRequestSignature(
       synapseClient.dataAccessServicesClient.deleteRepoV1DataAccessRequestRequestIdSignature(
         { requestId },
       ),
-    onSuccess: async (data, requestId, ctx) => {
+    onSuccess: async (data, requestId, ctx, mutationContext) => {
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: keyFactory.getDataAccessRequestSignatureQueryKey(requestId),
@@ -402,7 +402,7 @@ export function useVoidDataAccessRequestSignature(
         }),
       ])
       if (options?.onSuccess) {
-        return options.onSuccess(data, requestId, ctx)
+        return options.onSuccess(data, requestId, ctx, mutationContext)
       }
       return
     },

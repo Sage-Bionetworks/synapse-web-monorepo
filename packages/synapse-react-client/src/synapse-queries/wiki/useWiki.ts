@@ -149,7 +149,7 @@ export const useCreateWikiPage = (
         input.ownerObjectId,
         input.wikiPage,
       ),
-    onSuccess: async (wikiPage, input, ctx) => {
+    onSuccess: async (wikiPage, input, ctx, mutationContext) => {
       const wikiPageKey: WikiPageKey = {
         wikiPageId: wikiPage.id,
         ownerObjectId: input.ownerObjectId,
@@ -168,7 +168,7 @@ export const useCreateWikiPage = (
       }
 
       if (options?.onSuccess) {
-        return await options.onSuccess(wikiPage, input, ctx)
+        return await options.onSuccess(wikiPage, input, ctx, mutationContext)
       }
       return
     },
@@ -200,7 +200,7 @@ export const useUpdateWikiPage = (
         input.ownerObjectId,
         input.wikiPage,
       ),
-    onSuccess: async (wikiPage, input, ctx) => {
+    onSuccess: async (wikiPage, input, ctx, mutationContext) => {
       const wikiPageKey: WikiPageKey = {
         wikiPageId: wikiPage.id,
         ownerObjectId: input.ownerObjectId,
@@ -210,7 +210,7 @@ export const useUpdateWikiPage = (
       queryClient.setQueryData(wikiPageQueryKey, wikiPage)
 
       if (options?.onSuccess) {
-        return await options.onSuccess(wikiPage, input, ctx)
+        return await options.onSuccess(wikiPage, input, ctx, mutationContext)
       }
       return
     },
