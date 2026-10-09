@@ -1,0 +1,1 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{r as t,t as n}from"./SynapseNavDrawer-ndj4LVDf.js";var r,i,a;e((()=>{t(),r={title:`Synapse/SynapseNavDrawer`,component:n},i={args:{initIsOpen:!1,gotoPlace:e=>{window.alert(`Nav bar calling back to change route to ${e}`)}}},a=[`Demo`]}))();export{i as Demo,a as __namedExportsOrder,r as default};

@@ -1,1 +1,0 @@
-import{o as e}from"./preload-helper-CsHsquCd.js";import{n as t,t as n}from"./ForumThreadEditor-BpDJYlZC.js";var r,i,a,o;e((()=>{t(),{fn:r}=__STORYBOOK_MODULE_TEST__,i={title:`Synapse/ForumThreadEditor`,component:n},a={args:{id:`123`,isReply:!1,isDialog:!1,onClose:r()}},o=[`ForumThreadEditorDemo`]}))();export{a as ForumThreadEditorDemo,o as __namedExportsOrder,i as default};
