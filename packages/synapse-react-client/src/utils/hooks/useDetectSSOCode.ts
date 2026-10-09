@@ -52,6 +52,17 @@ export type UseDetectSSOCodeOptions = {
 }
 
 /*
+ * Identity providers that cannot be used to create a Synapse account, so an unlinked identity must surface an error
+ * instead of sending the user to registration.
+ */
+const UNLINKED_IDENTITY_ERROR_BY_PROVIDER: Partial<Record<string, string>> = {
+  [OAUTH2_PROVIDERS.ORCID]:
+    'No Synapse account is linked to this ORCID iD. Sign in to Synapse and link your ORCID iD from your account settings.',
+  [OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE]:
+    'No Synapse account is linked to this NIH RAS identity. Sign in to Synapse and link your NIH RAS identity from your account settings.',
+}
+
+/*
  * During SSO login, the authorization provider (Google, ORCiD, ArcusBio Okta, ...) will send the user back to the portal with an authorization code,
  * which can be exchanged for a Synapse user session. This function should be called whenever the root App is initialized
  * (to look for this code parameter and complete the round-trip). If state is included, then we assume that this is being
@@ -219,17 +230,15 @@ export default function useDetectSSOCode(
           }
           const onFailure = (err: SynapseClientError) => {
             if (err.status === 404) {
-              if (OAUTH2_PROVIDERS.NIH_RESEARCHER_AUTH_SERVICE == provider) {
-                // RAS cannot create a Synapse account (no alias). Surface an
-                // explicit error instead of redirecting to registration.
+              const unlinkedIdentityError =
+                UNLINKED_IDENTITY_ERROR_BY_PROVIDER[provider]
+              if (unlinkedIdentityError) {
                 console.error(
-                  'No Synapse account is linked to this NIH RAS identity: ',
+                  `No Synapse account is linked to this ${provider} identity: `,
                   err,
                 )
                 if (onError) {
-                  onError(
-                    'No Synapse account is linked to this NIH RAS identity. Sign in to Synapse and link your NIH RAS identity from your account settings.',
-                  )
+                  onError(unlinkedIdentityError)
                 }
                 return
               }
