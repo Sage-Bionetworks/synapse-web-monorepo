@@ -1,18 +1,19 @@
-import { useTableUpdateTransaction } from '@/synapse-queries/table/useTableUpdateTransaction'
-import { getUseMutationMock } from '@/testutils/ReactQueryMockUtils'
+import {
+  dispatchEntry,
+  generateAsyncJobHandlers,
+} from '@/mocks/msw/handlers/asyncJobHandlers'
+import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { SynapseClientError } from '@/utils/index'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import {
   CsvTableDescriptor,
   TableUpdateTransactionRequest,
-  TableUpdateTransactionResponse,
 } from '@sage-bionetworks/synapse-client'
 import { act, renderHook } from '@testing-library/react'
 import useUploadCsvToExistingTable from './useUploadCsvToExistingTable'
-
-vi.mock('@/synapse-queries/table/useTableUpdateTransaction', () => ({
-  useTableUpdateTransaction: vi.fn(),
-}))
 
 describe('useUploadCsvToExistingTable', () => {
   const csvTableDescriptor: CsvTableDescriptor = {
@@ -24,30 +25,44 @@ describe('useUploadCsvToExistingTable', () => {
   }
   const fileHandleId = 'someFileHandleId'
 
-  const {
-    mock: mockUseTableUpdateTransaction,
-    mockMutateAsync: mockTableUpdateTransaction,
-  } = getUseMutationMock<
-    TableUpdateTransactionResponse,
-    SynapseClientError,
-    TableUpdateTransactionRequest
-  >()
+  const mockTableUpdateTransaction =
+    vi.fn<(request: TableUpdateTransactionRequest) => void>()
 
+  beforeAll(() => server.listen())
   beforeEach(() => {
-    vi.mocked(useTableUpdateTransaction).mockImplementation(
-      mockUseTableUpdateTransaction,
+    server.use(
+      ...generateAsyncJobHandlers(
+        dispatchEntry(
+          'org.sagebionetworks.repo.model.table.TableUpdateTransactionRequest',
+          request => {
+            mockTableUpdateTransaction(request)
+            return {
+              concreteType:
+                'org.sagebionetworks.repo.model.table.TableUpdateTransactionResponse',
+              results: [],
+            }
+          },
+        ),
+        {
+          asyncTypeServicePaths: {
+            requestPath:
+              '/repo/v1/entity/:entityId/table/transaction/async/start',
+            responsePath: tokenParam =>
+              `/repo/v1/entity/:entityId/table/transaction/async/get/${tokenParam}`,
+          },
+          backendOrigin: getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        },
+      ),
     )
   })
-
   afterEach(() => {
-    vi.resetAllMocks()
+    server.restoreHandlers()
+    vi.clearAllMocks()
   })
+  afterAll(() => server.close())
 
   it('calls tableTransaction with the provided tableId', async () => {
     const tableId = 'syn123'
-    mockTableUpdateTransaction.mockResolvedValue(
-      {} as TableUpdateTransactionResponse,
-    )
 
     const { result } = renderHook(() => useUploadCsvToExistingTable(), {
       wrapper: createWrapper(),

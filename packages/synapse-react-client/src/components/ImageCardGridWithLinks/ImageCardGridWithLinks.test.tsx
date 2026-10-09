@@ -1,28 +1,38 @@
-import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
-import { getUseQueryMock } from '@/testutils/ReactQueryMockUtils'
+import {
+  dispatchEntry,
+  generateAsyncJobHandlers,
+} from '@/mocks/msw/handlers/asyncJobHandlers'
+import { http, server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
+  FILE_HANDLE_BATCH,
+  TABLE_QUERY_ASYNC_GET,
+  TABLE_QUERY_ASYNC_START,
+} from '@/utils/APIConstants'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
+import {
+  BatchFileRequest,
   BatchFileResult,
   ColumnTypeEnum,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
+import { HttpResponse } from 'msw'
 import { createMemoryRouter, RouterProvider } from 'react-router'
-import * as SynapseClient from '@/synapse-client/SynapseClient'
 import ImageCardGridWithLinks, {
   ImageCardGridWithLinksProps,
 } from './ImageCardGridWithLinks'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client'
 
-vi.mock('@/synapse-queries/entity/useGetQueryResultBundle')
-
-const {
-  mock: mockUseGetQueryResultBundleImpl,
-  setSuccess: setGetQueryResultBundleSuccess,
-} = getUseQueryMock<QueryResultBundle, SynapseClientError>()
-const mockUseGetQueryResultBundle = vi.mocked(useGetQueryResultBundle)
+const mockQueryRequest = vi.fn()
 
 describe('ImageCardGridWithLinks Tests', () => {
+  beforeAll(() => server.listen())
+  afterEach(() => server.resetHandlers())
+  afterAll(() => server.close())
+
   const mockProps: ImageCardGridWithLinksProps = {
     sql: 'SELECT * FROM syn64112885',
     title: 'Test title',
@@ -109,10 +119,31 @@ describe('ImageCardGridWithLinks Tests', () => {
   }
 
   beforeEach(() => {
-    vi.clearAllMocks()
-    vi.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
-    mockUseGetQueryResultBundle.mockImplementation(
-      mockUseGetQueryResultBundleImpl,
+    mockQueryRequest.mockClear()
+    server.use(
+      ...generateAsyncJobHandlers(
+        dispatchEntry(
+          'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+          request => {
+            mockQueryRequest(request)
+            return mockQueryResult
+          },
+        ),
+        {
+          asyncTypeServicePaths: {
+            requestPath: TABLE_QUERY_ASYNC_START(':id'),
+            responsePath: tokenParam =>
+              TABLE_QUERY_ASYNC_GET(':id', tokenParam),
+          },
+        },
+      ),
+      http.post<never, BatchFileRequest>(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${FILE_HANDLE_BATCH}`,
+        () => HttpResponse.json(mockBatchFileResult, { status: 201 }),
+      ),
+      http.get('https://mockurl.com/:fileName', () =>
+        HttpResponse.text('mock image content'),
+      ),
     )
   })
 
@@ -131,14 +162,11 @@ describe('ImageCardGridWithLinks Tests', () => {
   it('fetches and displays cards', async () => {
     renderWithRouter(mockProps)
 
-    act(() => {
-      setGetQueryResultBundleSuccess(mockQueryResult)
-    })
-
     expect(await screen.findByText('Test title')).toBeInTheDocument()
     expect(screen.getByText('This is a summary.')).toBeInTheDocument()
-    expect(screen.getByText('Comparative Biology')).toBeInTheDocument()
+    expect(await screen.findByText('Comparative Biology')).toBeInTheDocument()
     expect(screen.getByText('Reference Genomes')).toBeInTheDocument()
+    expect(mockQueryRequest).toHaveBeenCalledTimes(1)
 
     await waitFor(() => {
       const images = screen.getAllByRole('img')

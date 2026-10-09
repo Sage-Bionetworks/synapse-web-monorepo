@@ -1,44 +1,24 @@
-import { useGetDOIAssociation } from '@/synapse-queries/doi/useDOI'
-import { useGetEntityBundle } from '@/synapse-queries/entity/useEntityBundle'
-import { getUseQueryMock } from '@/testutils/ReactQueryMockUtils'
+import {
+  getEntityBundleHandler,
+  getVersionedEntityBundleHandler,
+} from '@/mocks/msw/handlers/entityHandlers'
+import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import {
   DoiAssociation,
   DoiAssociationObjectTypeEnum,
   EntityType,
-  SynapseClientError,
 } from '@sage-bionetworks/synapse-client'
 import { EntityBundle } from '@sage-bionetworks/synapse-types'
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
 import { vi } from 'vitest'
 import EntityCitation from './EntityCitation'
-
-vi.mock('@/synapse-queries/entity/useEntityBundle', () => {
-  return {
-    useGetEntityBundle: vi.fn(),
-  }
-})
-
-vi.mock('@/synapse-queries/doi/useDOI', () => {
-  return {
-    useGetDOIAssociation: vi.fn(),
-  }
-})
-
-const mockUseGetEntityBundle = vi.mocked(useGetEntityBundle)
-const mockUseGetDOIAssociation = vi.mocked(useGetDOIAssociation)
-
-const {
-  mock: useGetEntityBundleMockImpl,
-  setSuccess: setMockUseGetEntityBundleSuccess,
-} = getUseQueryMock<Partial<EntityBundle>, SynapseClientError>()
-
-const { mock: useGetEntityDOIMockImpl, setSuccess: setEntityDOISuccess } =
-  getUseQueryMock<DoiAssociation | null, SynapseClientError>()
-
-const { mock: useGetProjectDOIMockImpl, setSuccess: setProjectDOISuccess } =
-  getUseQueryMock<DoiAssociation | null, SynapseClientError>()
 
 const mockEntityWithUnversionedDoiId = 'syn61841662'
 const mockEntityWithVersionedDoiId = 'syn66268092'
@@ -96,33 +76,42 @@ const doiProjectSuccess: DoiAssociation = {
 }
 
 const openPopover = async (buttonName: string) => {
-  const button = screen.getByRole('button', { name: `${buttonName}` })
+  const button = await screen.findByRole('button', { name: buttonName })
   await userEvent.click(button)
 }
 
+const repoOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
+
+/**
+ * Sets up the backend so that the entity bundle is returned and DOI associations are returned for the given
+ * object IDs. Any other object ID has no DOI association (404).
+ */
+function mockBackend(
+  doiAssociationsByObjectId: Record<string, DoiAssociation>,
+) {
+  server.use(
+    getEntityBundleHandler(repoOrigin, fileWithDoiAssociation),
+    getVersionedEntityBundleHandler(repoOrigin, fileWithDoiAssociation),
+    http.get(`${repoOrigin}/repo/v1/doi/association`, ({ request }) => {
+      const id = new URL(request.url).searchParams.get('id')
+      const association = id ? doiAssociationsByObjectId[id] : undefined
+      return association
+        ? HttpResponse.json(association)
+        : HttpResponse.json({ reason: 'Not found' }, { status: 404 })
+    }),
+  )
+}
+
 describe('EntityCitation tests', () => {
-  beforeEach(() => {
+  beforeAll(() => server.listen())
+  afterEach(() => {
+    server.resetHandlers()
     vi.clearAllMocks()
-
-    mockUseGetEntityBundle.mockImplementation(useGetEntityBundleMockImpl)
-
-    mockUseGetDOIAssociation.mockImplementation((request, options) => {
-      if (
-        request.id === mockEntityWithVersionedDoiId ||
-        request.id === mockEntityWithUnversionedDoiId
-      ) {
-        return useGetEntityDOIMockImpl()
-      } else if (
-        request.id === mockProjectWithDoiId ||
-        request.id === mockProjectWithNoDoiId
-      ) {
-        return useGetProjectDOIMockImpl()
-      }
-      return useGetEntityDOIMockImpl()
-    })
   })
+  afterAll(() => server.close())
 
   it('renders "Cite page" button when only entity DOI exists', async () => {
+    mockBackend({ [mockEntityWithVersionedDoiId]: doiEntitySuccess })
     render(
       <EntityCitation
         projectId={mockProjectWithNoDoiId}
@@ -132,18 +121,13 @@ describe('EntityCitation tests', () => {
       { wrapper: createWrapper() },
     )
 
-    act(() => {
-      setMockUseGetEntityBundleSuccess(fileWithDoiAssociation)
-      setEntityDOISuccess(doiEntitySuccess)
-      setProjectDOISuccess(null)
-    })
-
     await openPopover('Cite page')
 
     screen.getByRole('dialog', { name: /Citation options/i })
   })
 
   it('renders "Cite project" when only project DOI exists', async () => {
+    mockBackend({ [mockProjectWithDoiId]: doiProjectSuccess })
     render(
       <EntityCitation
         projectId={mockProjectWithDoiId}
@@ -153,19 +137,16 @@ describe('EntityCitation tests', () => {
       { wrapper: createWrapper() },
     )
 
-    // Set mock responses after hooks have initialized
-    act(() => {
-      setMockUseGetEntityBundleSuccess(fileWithDoiAssociation)
-      setEntityDOISuccess(null)
-      setProjectDOISuccess(doiProjectSuccess)
-    })
-
     await openPopover('Cite project')
 
     screen.getByRole('dialog', { name: /Citation options/i })
   })
 
   it('Both project and entity have DOIs', async () => {
+    mockBackend({
+      [mockEntityWithUnversionedDoiId]: doiEntitySuccess,
+      [mockProjectWithDoiId]: doiProjectSuccess,
+    })
     render(
       <EntityCitation
         projectId={mockProjectWithDoiId}
@@ -174,12 +155,6 @@ describe('EntityCitation tests', () => {
       />,
       { wrapper: createWrapper() },
     )
-
-    act(() => {
-      setMockUseGetEntityBundleSuccess(fileWithDoiAssociation)
-      setEntityDOISuccess(doiEntitySuccess)
-      setProjectDOISuccess(doiProjectSuccess)
-    })
 
     await openPopover('Cite as...')
 
@@ -199,6 +174,7 @@ describe('EntityCitation tests', () => {
 
   // Skipped, see PORTALS-3746
   it.skip('Versioned Entity DOI', async () => {
+    mockBackend({ [mockEntityWithVersionedDoiId]: versionedDoiEntitySuccess })
     render(
       <EntityCitation
         projectId={mockProjectWithNoDoiId}
@@ -207,12 +183,6 @@ describe('EntityCitation tests', () => {
       />,
       { wrapper: createWrapper() },
     )
-
-    act(() => {
-      setMockUseGetEntityBundleSuccess(fileWithDoiAssociation)
-      setEntityDOISuccess(versionedDoiEntitySuccess)
-      setProjectDOISuccess(null)
-    })
 
     await openPopover('Cite page')
 
@@ -228,6 +198,7 @@ describe('EntityCitation tests', () => {
   })
 
   it('Versionless Entity DOI', async () => {
+    mockBackend({ [mockEntityWithUnversionedDoiId]: doiEntitySuccess })
     render(
       <EntityCitation
         projectId={mockProjectWithNoDoiId}
@@ -236,12 +207,6 @@ describe('EntityCitation tests', () => {
       />,
       { wrapper: createWrapper() },
     )
-
-    act(() => {
-      setMockUseGetEntityBundleSuccess(fileWithDoiAssociation)
-      setEntityDOISuccess(doiEntitySuccess)
-      setProjectDOISuccess(null)
-    })
 
     await openPopover('Cite page')
 

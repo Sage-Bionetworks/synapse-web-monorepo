@@ -1,21 +1,37 @@
-import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
-import { getUseQuerySuccessMock } from '@/testutils/ReactQueryMockUtils'
+import {
+  dispatchEntry,
+  generateAsyncJobHandlers,
+} from '@/mocks/msw/handlers/asyncJobHandlers'
+import { http, server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
+  FILE_HANDLE_BATCH,
+  TABLE_QUERY_ASYNC_GET,
+  TABLE_QUERY_ASYNC_START,
+} from '@/utils/APIConstants'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
+import {
+  BatchFileRequest,
   BatchFileResult,
   ColumnTypeEnum,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import { render, screen, waitFor } from '@testing-library/react'
-import { SynapseClient } from '../../index'
+import { render, screen } from '@testing-library/react'
+import { HttpResponse } from 'msw'
 import PortalFeaturedPartners, {
   PortalFeaturedPartnersProps,
 } from './PortalFeaturedPartners'
 
-vi.mock('../../synapse-queries/entity/useGetQueryResultBundle')
-const mockUseGetQueryResultBundle = vi.mocked(useGetQueryResultBundle)
+const mockQueryRequest = vi.fn()
 
 describe('ImageCardGridWithLinks Tests', () => {
+  beforeAll(() => server.listen())
+  afterEach(() => server.resetHandlers())
+  afterAll(() => server.close())
+
   const mockProps: PortalFeaturedPartnersProps = {
     sql: 'SELECT * FROM syn62661043',
   }
@@ -96,10 +112,31 @@ describe('ImageCardGridWithLinks Tests', () => {
   }
 
   beforeEach(() => {
-    vi.clearAllMocks()
-    vi.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
-    mockUseGetQueryResultBundle.mockReturnValue(
-      getUseQuerySuccessMock(mockQueryResult),
+    mockQueryRequest.mockClear()
+    server.use(
+      ...generateAsyncJobHandlers(
+        dispatchEntry(
+          'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+          request => {
+            mockQueryRequest(request)
+            return mockQueryResult
+          },
+        ),
+        {
+          asyncTypeServicePaths: {
+            requestPath: TABLE_QUERY_ASYNC_START(':id'),
+            responsePath: tokenParam =>
+              TABLE_QUERY_ASYNC_GET(':id', tokenParam),
+          },
+        },
+      ),
+      http.post<never, BatchFileRequest>(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${FILE_HANDLE_BATCH}`,
+        () => HttpResponse.json(mockBatchFileResult, { status: 201 }),
+      ),
+      http.get('https://mockurl.com/:fileName', () =>
+        HttpResponse.text('mock image content'),
+      ),
     )
   })
 
@@ -112,13 +149,11 @@ describe('ImageCardGridWithLinks Tests', () => {
   it('fetches and displays partners', async () => {
     renderComponent(mockProps)
 
-    await waitFor(() =>
-      expect(mockUseGetQueryResultBundle).toHaveBeenCalledTimes(1),
-    )
+    expect(await screen.findByText('Partner 3')).toBeInTheDocument()
+    expect(mockQueryRequest).toHaveBeenCalledTimes(1)
 
     const partners = screen.getAllByRole('link')
     expect(partners).toHaveLength(3)
-    expect(screen.getByText('Partner 3')).toBeInTheDocument()
     expect(partners[0]).toHaveAttribute('href', 'http://somewebsite1.com')
     expect(partners[1]).toHaveAttribute('href', 'http://somewebsite2.com')
     expect(partners[2]).toHaveAttribute('href', 'http://somewebsite3.com')

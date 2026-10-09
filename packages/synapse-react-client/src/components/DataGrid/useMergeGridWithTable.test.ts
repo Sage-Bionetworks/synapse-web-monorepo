@@ -1,28 +1,17 @@
-import SynapseClient from '@/synapse-client/index'
-import { useExportGridAsCsv } from '@/synapse-queries/grid/useExportGrid'
-import { useTableUpdateTransaction } from '@/synapse-queries/table/useTableUpdateTransaction'
-import { getUseMutationMock } from '@/testutils/ReactQueryMockUtils'
-import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { SynapseClientError } from '@/utils/index'
 import {
-  DownloadFromGridRequest,
-  DownloadFromGridResult,
-  FileEntity,
-  TableUpdateTransactionRequest,
-  TableUpdateTransactionResponse,
-} from '@sage-bionetworks/synapse-client'
+  dispatchEntry,
+  generateAsyncJobHandlers,
+} from '@/mocks/msw/handlers/asyncJobHandlers'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { FileEntity } from '@sage-bionetworks/synapse-client'
 import { TableEntity } from '@sage-bionetworks/synapse-types'
-import { act, renderHook } from '@testing-library/react'
+import { renderHook } from '@testing-library/react'
+import { http, HttpResponse } from 'msw'
 import useMergeGridWithTable, {
   getDownloadFromGridRequestParamsForEntity,
 } from './useMergeGridWithTable'
-
-vi.mock('@/synapse-queries/grid/useExportGrid', () => ({
-  useExportGridAsCsv: vi.fn(),
-}))
-vi.mock('@/synapse-queries/table/useTableUpdateTransaction', () => ({
-  useTableUpdateTransaction: vi.fn(),
-}))
 
 describe('getDownloadFromGridRequestParamsForEntity', () => {
   it('returns correct request params for TableEntity', () => {
@@ -56,87 +45,101 @@ describe('useMergeGridWithTable', () => {
   const gridSessionId = 'session1'
   const tableEntityId = 'syn890'
   const fileHandleId = '123456'
-  const mockGetEntity = vi.spyOn(SynapseClient, 'getEntity')
+  const repoEndpoint = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
-  const { mock: mockUseExportGridAsCsv, mockMutateAsync: mockExportGridToCsv } =
-    getUseMutationMock<
-      DownloadFromGridResult,
-      SynapseClientError,
-      DownloadFromGridRequest
-    >()
-  const {
-    mock: mockUseTableUpdateTransaction,
-    mockMutateAsync: mockUpdateTable,
-  } = getUseMutationMock<
-    TableUpdateTransactionResponse,
-    SynapseClientError,
-    TableUpdateTransactionRequest
-  >()
+  const onGridExportRequest = vi.fn()
+  const onTableUpdateRequest = vi.fn()
 
-  beforeEach(() => {
-    vi.mocked(useExportGridAsCsv).mockImplementation(mockUseExportGridAsCsv)
-    vi.mocked(useTableUpdateTransaction).mockImplementation(
-      mockUseTableUpdateTransaction,
-    )
-  })
-
+  beforeAll(() => server.listen())
   afterEach(() => {
-    vi.resetAllMocks()
+    server.resetHandlers()
+    vi.clearAllMocks()
   })
+  afterAll(() => server.close())
 
   it('calls all steps and returns updateTable result', async () => {
     const entity = {
       id: tableEntityId,
       concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
     } as TableEntity
-    mockGetEntity.mockResolvedValue(entity)
-    mockExportGridToCsv.mockResolvedValue({
-      resultsFileHandleId: fileHandleId,
-      concreteType:
-        'org.sagebionetworks.repo.model.grid.DownloadFromGridResult',
-    })
-    mockUpdateTable.mockResolvedValue({ success: true } as any)
+    server.use(
+      http.get(`${repoEndpoint}/repo/v1/entity/${tableEntityId}`, () =>
+        HttpResponse.json(entity),
+      ),
+      ...generateAsyncJobHandlers(
+        dispatchEntry(
+          'org.sagebionetworks.repo.model.grid.DownloadFromGridRequest',
+          request => {
+            onGridExportRequest(request)
+            return {
+              resultsFileHandleId: fileHandleId,
+              concreteType:
+                'org.sagebionetworks.repo.model.grid.DownloadFromGridResult',
+            }
+          },
+        ),
+        {
+          asyncTypeServicePaths: {
+            requestPath: '/repo/v1/grid/download/csv/async/start',
+            responsePath: token =>
+              `/repo/v1/grid/download/csv/async/get/${token}`,
+          },
+        },
+      ),
+      ...generateAsyncJobHandlers(
+        dispatchEntry(
+          'org.sagebionetworks.repo.model.table.TableUpdateTransactionRequest',
+          request => {
+            onTableUpdateRequest(request)
+            return { success: true }
+          },
+        ),
+        {
+          asyncTypeServicePaths: {
+            requestPath: '/repo/v1/entity/:id/table/transaction/async/start',
+            responsePath: token =>
+              `/repo/v1/entity/${tableEntityId}/table/transaction/async/get/${token}`,
+          },
+        },
+      ),
+    )
 
     const { result } = renderHook(() => useMergeGridWithTable(), {
       wrapper: createWrapper(),
     })
-    await act(async () => {
-      const response = await result.current.mutateAsync({
-        gridSessionId: gridSessionId,
-        sourceEntityId: tableEntityId,
-      })
-      expect(mockGetEntity).toHaveBeenCalledWith(
-        expect.any(String),
-        tableEntityId,
-        undefined,
-      )
-      expect(mockExportGridToCsv).toHaveBeenCalledWith({
-        includeRowIdAndRowVersion: true,
-        includeEtag: false,
-        concreteType:
-          'org.sagebionetworks.repo.model.grid.DownloadFromGridRequest',
-        sessionId: gridSessionId,
-      })
-      expect(mockUpdateTable).toHaveBeenCalledWith({
-        concreteType:
-          'org.sagebionetworks.repo.model.table.TableUpdateTransactionRequest',
-        entityId: tableEntityId,
-        changes: [
-          {
-            uploadFileHandleId: fileHandleId,
-            tableId: tableEntityId,
-            concreteType:
-              'org.sagebionetworks.repo.model.table.UploadToTableRequest',
-          },
-        ],
-      })
-      expect(response).toEqual({ success: true })
+    const response = await result.current.mutateAsync({
+      gridSessionId: gridSessionId,
+      sourceEntityId: tableEntityId,
     })
+
+    expect(onGridExportRequest).toHaveBeenCalledWith({
+      includeRowIdAndRowVersion: true,
+      includeEtag: false,
+      concreteType:
+        'org.sagebionetworks.repo.model.grid.DownloadFromGridRequest',
+      sessionId: gridSessionId,
+    })
+    expect(onTableUpdateRequest).toHaveBeenCalledWith({
+      concreteType:
+        'org.sagebionetworks.repo.model.table.TableUpdateTransactionRequest',
+      entityId: tableEntityId,
+      changes: [
+        {
+          uploadFileHandleId: fileHandleId,
+          tableId: tableEntityId,
+          concreteType:
+            'org.sagebionetworks.repo.model.table.UploadToTableRequest',
+        },
+      ],
+    })
+    expect(response).toEqual({ success: true })
   })
 
   it('handles a thrown error', async () => {
-    mockGetEntity.mockRejectedValue(
-      new SynapseClientError(400, 'error', expect.getState().currentTestName!),
+    server.use(
+      http.get(`${repoEndpoint}/repo/v1/entity/${tableEntityId}`, () =>
+        HttpResponse.json({ reason: 'error' }, { status: 400 }),
+      ),
     )
     const { result } = renderHook(() => useMergeGridWithTable(), {
       wrapper: createWrapper(),
@@ -147,5 +150,7 @@ describe('useMergeGridWithTable', () => {
         sourceEntityId: tableEntityId,
       }),
     ).rejects.toThrow('error')
+    expect(onGridExportRequest).not.toHaveBeenCalled()
+    expect(onTableUpdateRequest).not.toHaveBeenCalled()
   })
 })

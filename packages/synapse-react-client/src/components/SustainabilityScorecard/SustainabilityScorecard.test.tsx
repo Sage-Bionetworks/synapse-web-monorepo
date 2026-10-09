@@ -1,25 +1,16 @@
 import { render, screen } from '@testing-library/react'
 import SustainabilityScorecard from './SustainabilityScorecard'
 import { SustainabilityScorecardProps } from './SustainabilityScorecard'
-import { getUseQueryMock } from '@/testutils/ReactQueryMockUtils'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   ColumnSingleValueFilterOperator,
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client'
-import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
 import { SynapseConstants } from '@/utils'
 import { MemoryRouter } from 'react-router'
-
-vi.mock('@/synapse-queries/entity/useGetQueryResultBundle')
-
-const {
-  mock: mockUseGetQueryResultBundleImpl,
-  setSuccess: setGetQueryResultBundleSuccess,
-} = getUseQueryMock<QueryResultBundle, SynapseClientError>()
-
-const mockUseGetQueryResultBundle = vi.mocked(useGetQueryResultBundle)
 
 const mockBundleSuccess: QueryResultBundle = {
   queryResult: {
@@ -112,20 +103,20 @@ async function renderWithSuccessMock() {
     <MemoryRouter>
       <SustainabilityScorecard {...mockProps} />
     </MemoryRouter>,
+    { wrapper: createWrapper() },
   )
 
-  setGetQueryResultBundleSuccess(mockBundleSuccess)
   await waitForDataLoad()
 }
 
 describe('SustainabilityScorecard tests', () => {
+  beforeAll(() => server.listen())
   beforeEach(() => {
-    vi.clearAllMocks()
-
-    mockUseGetQueryResultBundle.mockImplementation(
-      mockUseGetQueryResultBundleImpl,
-    )
+    registerTableQueryResult(mockQuery.query, mockBundleSuccess)
   })
+  afterEach(() => server.restoreHandlers())
+  afterAll(() => server.close())
+
   it('displays metrics', async () => {
     await renderWithSuccessMock()
 

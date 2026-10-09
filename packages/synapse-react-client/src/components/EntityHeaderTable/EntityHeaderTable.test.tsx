@@ -7,30 +7,14 @@ import mockFileEntityData, {
   MOCK_FILE_ENTITY_ID,
   MOCK_FILE_NAME,
 } from '@/mocks/entity/mockFileEntity'
-import { useGetEntityHeaders } from '@/synapse-queries/entity/useGetEntityHeaders'
-import { getUseQueryMock } from '@/testutils/ReactQueryMockUtils'
+import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client'
-import {
-  EntityHeader,
-  PaginatedResults,
-  ReferenceList,
-} from '@sage-bionetworks/synapse-types'
+import { ReferenceList } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import * as EntityFinderModule from '../EntityFinder/EntityFinderModal'
 import { EntityFinderModal } from '../EntityFinder/EntityFinderModal'
 import { EntityHeaderTable, EntityHeaderTableProps } from './EntityHeaderTable'
-
-vi.mock(
-  '@/synapse-queries/entity/useGetEntityHeaders',
-  async importOriginal => ({
-    ...(await importOriginal()),
-    useGetEntityHeaders: vi.fn(),
-  }),
-)
-
-const mockUseGetEntityHeaders = vi.mocked(useGetEntityHeaders)
 
 function renderTable(props: EntityHeaderTableProps) {
   return render(<EntityHeaderTable {...props} />, {
@@ -46,22 +30,14 @@ const mockEntityFinderModal = vi.mocked(EntityFinderModal)
 const user = userEvent.setup({ advanceTimers: vi.runAllTimers })
 
 describe('EntityHeaderTable tests', () => {
-  let setUseGetEntityHeadersResult: ReturnType<
-    typeof getUseQueryMock<PaginatedResults<EntityHeader>, SynapseClientError>
-  >['setSuccess']
   beforeAll(() => {
+    server.listen()
     vi.useFakeTimers()
   })
+  afterEach(() => server.restoreHandlers())
   afterAll(() => {
     vi.useRealTimers()
-  })
-  beforeEach(() => {
-    const { mock, setSuccess } = getUseQueryMock<
-      PaginatedResults<EntityHeader>,
-      SynapseClientError
-    >()
-    setUseGetEntityHeadersResult = setSuccess
-    mockUseGetEntityHeaders.mockImplementation(mock)
+    server.close()
   })
 
   it('renders table (not editable)', async () => {
@@ -70,15 +46,6 @@ describe('EntityHeaderTable tests', () => {
       { targetId: mockDatasetData.id },
     ]
     renderTable({ references: refs, isEditable: false })
-
-    act(() => {
-      setUseGetEntityHeadersResult({
-        results: [
-          mockFileEntityData.entityHeader,
-          mockDatasetData.entityHeader,
-        ],
-      })
-    })
 
     expect(await screen.findAllByRole('columnheader')).toHaveLength(3)
     expect(await screen.findAllByRole('row')).toHaveLength(3) // 1 header row and 2 data rows
@@ -97,15 +64,6 @@ describe('EntityHeaderTable tests', () => {
       { targetId: mockDatasetData.id },
     ]
     renderTable({ references: refs, isEditable: true, onUpdate: mockOnUpdate })
-
-    act(() => {
-      setUseGetEntityHeadersResult({
-        results: [
-          mockFileEntityData.entityHeader,
-          mockDatasetData.entityHeader,
-        ],
-      })
-    })
 
     const textField = await screen.findByRole('textbox')
     expect(textField.getAttribute('type')).toBe('text')
@@ -135,15 +93,6 @@ describe('EntityHeaderTable tests', () => {
       isEditable: true,
       onUpdate: mockOnUpdate,
       hideTextFieldToPasteValue: true, // !
-    })
-
-    act(() => {
-      setUseGetEntityHeadersResult({
-        results: [
-          mockFileEntityData.entityHeader,
-          mockDatasetData.entityHeader,
-        ],
-      })
     })
 
     const openEntityFinderButton = await screen.findByRole('button', {
@@ -197,15 +146,6 @@ describe('EntityHeaderTable tests', () => {
       removeSelectedRowsButtonText: removeEntitiesButtonText,
     })
 
-    act(() => {
-      setUseGetEntityHeadersResult({
-        results: [
-          mockFileEntityData.entityHeader,
-          mockDatasetData.entityHeader,
-        ],
-      })
-    })
-
     const checkBoxes = await screen.findAllByRole('checkbox')
     // Click the 'Select All' checkbox
     await user.click(checkBoxes[0])
@@ -230,15 +170,6 @@ describe('EntityHeaderTable tests', () => {
       isEditable: true,
       onUpdate: mockOnUpdate,
       removeSelectedRowsButtonText: removeEntitiesButtonText,
-    })
-
-    act(() => {
-      setUseGetEntityHeadersResult({
-        results: [
-          ...mockFileEntities.slice(0, 10).map(entity => entity.entityHeader!),
-          mockDatasetData.entityHeader,
-        ],
-      })
     })
 
     // Should have 12 rows: 11 items + table header
@@ -272,12 +203,6 @@ describe('EntityHeaderTable tests', () => {
     expect(mockOnUpdate).toHaveBeenCalledWith([
       { targetId: mockDatasetData.id },
     ])
-
-    act(() => {
-      setUseGetEntityHeadersResult({
-        results: [mockDatasetData.entityHeader],
-      })
-    })
 
     await waitFor(() => {
       // The filter field was removed

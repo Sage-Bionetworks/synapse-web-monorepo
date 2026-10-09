@@ -1,82 +1,88 @@
 import RORInstitutionField from '@/components/RORInstitutionField/RORInstitutionField'
-import { useSearchRegistry } from '@/synapse-queries/index'
-import {
-  getUseQueryErrorMock,
-  getUseQuerySuccessMock,
-} from '@/testutils/ReactQueryMockUtils'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client'
+import { server } from '@/mocks/msw/server'
+import { RORSearchResult } from '@/ror-client/types/ROROrganization'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
 
-vi.mock('@/synapse-queries/ror')
+const ROR_SEARCH_URL = 'https://api.ror.org/v2/organizations'
 
-const mockUseSearchRegistry = vi.mocked(useSearchRegistry).mockReturnValue(
-  getUseQuerySuccessMock({
-    items: [
-      {
-        admin: {
-          created: { date: '2018-11-14', schema_version: '1.0' },
-          last_modified: { date: '2024-12-11', schema_version: '2.1' },
-        },
-        domains: [],
-        established: 2009,
-        external_ids: [
-          { all: ['grid.430406.5'], preferred: 'grid.430406.5', type: 'grid' },
-          { all: ['0000 0004 6023 5303'], preferred: null, type: 'isni' },
-          { all: ['Q891621'], preferred: null, type: 'wikidata' },
-        ],
-        id: 'https://ror.org/049ncjx51',
-        links: [
-          { type: 'website', value: 'https://sagebionetworks.org' },
-          {
-            type: 'wikipedia',
-            value: 'https://en.wikipedia.org/wiki/Sage_Bionetworks',
-          },
-        ],
-        locations: [
-          {
-            geonames_details: {
-              continent_code: 'NA',
-              continent_name: 'North America',
-              country_code: 'US',
-              country_name: 'United States',
-              country_subdivision_code: 'WA',
-              country_subdivision_name: 'Washington',
-              lat: 47.60621,
-              lng: -122.33207,
-              name: 'Seattle',
-            },
-            geonames_id: 5809844,
-          },
-        ],
-        names: [
-          {
-            lang: 'en',
-            types: ['ror_display', 'label'],
-            value: 'Sage Bionetworks',
-          },
-        ],
-        relationships: [],
-        status: 'active',
-        types: ['nonprofit'],
+const mockSearchResult = {
+  items: [
+    {
+      admin: {
+        created: { date: '2018-11-14', schema_version: '1.0' },
+        last_modified: { date: '2024-12-11', schema_version: '2.1' },
       },
-    ],
-  }),
-)
+      domains: [],
+      established: 2009,
+      external_ids: [
+        { all: ['grid.430406.5'], preferred: 'grid.430406.5', type: 'grid' },
+        { all: ['0000 0004 6023 5303'], preferred: null, type: 'isni' },
+        { all: ['Q891621'], preferred: null, type: 'wikidata' },
+      ],
+      id: 'https://ror.org/049ncjx51',
+      links: [
+        { type: 'website', value: 'https://sagebionetworks.org' },
+        {
+          type: 'wikipedia',
+          value: 'https://en.wikipedia.org/wiki/Sage_Bionetworks',
+        },
+      ],
+      locations: [
+        {
+          geonames_details: {
+            continent_code: 'NA',
+            continent_name: 'North America',
+            country_code: 'US',
+            country_name: 'United States',
+            country_subdivision_code: 'WA',
+            country_subdivision_name: 'Washington',
+            lat: 47.60621,
+            lng: -122.33207,
+            name: 'Seattle',
+          },
+          geonames_id: 5809844,
+        },
+      ],
+      names: [
+        {
+          lang: 'en',
+          types: ['ror_display', 'label'],
+          value: 'Sage Bionetworks',
+        },
+      ],
+      relationships: [],
+      status: 'active',
+      types: ['nonprofit'],
+    },
+  ],
+} as unknown as RORSearchResult
 
 describe('RORInstitutionField', () => {
   const user = userEvent.setup({ advanceTimers: vi.runAllTimers })
   beforeAll(() => {
+    server.listen()
     vi.useFakeTimers()
   })
+  afterEach(() => server.resetHandlers())
   afterAll(() => {
     vi.useRealTimers()
+    server.close()
+  })
+  beforeEach(() => {
+    server.use(
+      http.get(ROR_SEARCH_URL, () => HttpResponse.json(mockSearchResult)),
+    )
   })
 
   it('displays the value prop', () => {
     const value1 = 'some value'
     const value2 = 'some other value'
-    const { rerender } = render(<RORInstitutionField value={value1} />)
+    const { rerender } = render(<RORInstitutionField value={value1} />, {
+      wrapper: createWrapper(),
+    })
     const input = screen.getByRole('combobox')
     expect(input).toHaveValue(value1)
 
@@ -87,7 +93,9 @@ describe('RORInstitutionField', () => {
   it('allows typing free text', async () => {
     const mockOnChange = vi.fn()
 
-    render(<RORInstitutionField onChange={mockOnChange} />)
+    render(<RORInstitutionField onChange={mockOnChange} />, {
+      wrapper: createWrapper(),
+    })
 
     const input = screen.getByRole('combobox')
     await user.type(input, 'my organization')
@@ -99,7 +107,9 @@ describe('RORInstitutionField', () => {
   it('shows search results which can be selected', async () => {
     const mockOnChange = vi.fn()
 
-    render(<RORInstitutionField onChange={mockOnChange} />)
+    render(<RORInstitutionField onChange={mockOnChange} />, {
+      wrapper: createWrapper(),
+    })
 
     const input = screen.getByRole('combobox')
     await user.type(input, 'sage bionetworks')
@@ -117,17 +127,15 @@ describe('RORInstitutionField', () => {
 
   it('handles ROR API outage', async () => {
     const mockOnChange = vi.fn()
-    mockUseSearchRegistry.mockReturnValue(
-      getUseQueryErrorMock(
-        new SynapseClientError(
-          500,
-          'ROR API is down',
-          expect.getState().currentTestName!,
-        ),
+    server.use(
+      http.get(ROR_SEARCH_URL, () =>
+        HttpResponse.json({ reason: 'ROR API is down' }, { status: 500 }),
       ),
     )
 
-    render(<RORInstitutionField onChange={mockOnChange} />)
+    render(<RORInstitutionField onChange={mockOnChange} />, {
+      wrapper: createWrapper(),
+    })
 
     const input = screen.getByRole('combobox')
     await user.type(input, 'my organization')

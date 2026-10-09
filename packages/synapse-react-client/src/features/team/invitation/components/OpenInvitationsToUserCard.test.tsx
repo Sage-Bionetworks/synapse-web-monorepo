@@ -1,35 +1,23 @@
 import { displayToast } from '@/components/ToastMessage/ToastMessage'
+import { server } from '@/mocks/msw/server'
 import { MOCK_TEAM_ID, MOCK_TEAM_ID_2 } from '@/mocks/team/mockTeam'
-import {
-  MOCK_USER_ID,
-  MOCK_USER_ID_2,
-  mockUserProfileData,
-} from '@/mocks/user/mock_user_profile'
-import { useAddMemberToTeam, useGetCurrentUserProfile } from '@/synapse-queries'
-import {
-  useDeleteMembershipInvitation,
-  useGetAllOpenMembershipInvitations,
-} from '@/synapse-queries/team/useTeamMembers'
-import {
-  getUseMutationIdleMock,
-  getUseMutationPendingMock,
-  getUseQuerySuccessMock,
-} from '@/testutils/ReactQueryMockUtils'
+import { MOCK_USER_ID, MOCK_USER_ID_2 } from '@/mocks/user/mock_user_profile'
+import { createWrapperAndQueryClient } from '@/testutils/TestingLibraryUtils'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import {
   MembershipInvitation,
-  SynapseClientError,
-} from '@sage-bionetworks/synapse-client'
-import { act, render, screen } from '@testing-library/react'
+  PaginatedResults,
+} from '@sage-bionetworks/synapse-types'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import OpenInvitationsToUserCard from './OpenInvitationsToUserCard'
+import { delay, http, HttpResponse } from 'msw'
 import {
   ACCEPT_TEAM_INVITATION_ERROR_MESSAGE,
   ACCEPT_TEAM_INVITATION_SUCCESS_MESSAGE,
   DECLINE_TEAM_INVITATION_ERROR_MESSAGE,
 } from '../utils/constants'
+import OpenInvitationsToUserCard from './OpenInvitationsToUserCard'
 
-vi.mock('@/synapse-queries/user/useUserBundle')
-vi.mock('@/synapse-queries/team/useTeamMembers')
 vi.mock('@/components/ToastMessage/ToastMessage')
 vi.mock('@/components/UserOrTeamBadge/UserOrTeamBadge', () => ({
   default: () => <span data-testid="UserOrTeamBadge" />,
@@ -38,24 +26,13 @@ vi.mock('@/components/UserCard/UserBadge', () => ({
   UserBadge: () => <span data-testid="UserBadge" />,
 }))
 
-const mockUseGetCurrentUserProfile = vi.mocked(useGetCurrentUserProfile)
-const mockUseGetAllOpenMembershipInvitations = vi.mocked(
-  useGetAllOpenMembershipInvitations,
-)
-const mockUseAddMemberToTeam = vi.mocked(useAddMemberToTeam)
-const mockUseDeleteMembershipInvitation = vi.mocked(
-  useDeleteMembershipInvitation,
-)
 const mockDisplayToast = vi.mocked(displayToast)
 
-const mockAcceptMutate = vi.fn()
-const mockDeclineMutate = vi.fn()
+const REPO_ORIGIN = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
-// Captured options so tests can invoke onSuccess/onError callbacks directly.
-// oxlint-disable-next-line @typescript-eslint/no-explicit-any
-let capturedAddMemberOptions: any
-// oxlint-disable-next-line @typescript-eslint/no-explicit-any
-let capturedDeleteInvitationOptions: any
+const OPEN_INVITATIONS_URL = `${REPO_ORIGIN}/repo/v1/user/:userId/openInvitation`
+const ADD_MEMBER_URL = `${REPO_ORIGIN}/repo/v1/team/:teamId/member/:memberId`
+const DELETE_INVITATION_URL = `${REPO_ORIGIN}/repo/v1/membershipInvitation/:invitationId`
 
 const MOCK_INVITATION_WITH_MESSAGE: MembershipInvitation = {
   id: 'inv-1',
@@ -83,98 +60,121 @@ const MOCK_INVITATION_NO_MESSAGE: MembershipInvitation = {
   createdOn: '2024-01-03T00:00:00.000Z',
 }
 
+/** Invitations returned by the mocked open invitations endpoint */
+let currentInvitations: MembershipInvitation[]
+const onOpenInvitationsRequest = vi.fn()
+
+function useOpenInvitationsHandler() {
+  server.use(
+    http.get(OPEN_INVITATIONS_URL, () => {
+      onOpenInvitationsRequest()
+      const response: PaginatedResults<MembershipInvitation> = {
+        results: currentInvitations,
+        totalNumberOfResults: currentInvitations.length,
+      }
+      return HttpResponse.json(response, { status: 200 })
+    }),
+  )
+}
+
+beforeAll(() => server.listen())
+afterEach(() => server.resetHandlers())
+afterAll(() => server.close())
+
 beforeEach(() => {
   vi.clearAllMocks()
-
-  mockUseGetCurrentUserProfile.mockReturnValue(
-    getUseQuerySuccessMock(mockUserProfileData),
-  )
-  mockUseGetAllOpenMembershipInvitations.mockReturnValue({
-    data: [MOCK_INVITATION_WITH_MESSAGE, MOCK_INVITATION_2],
-    isLoading: false,
-  } as any)
-  mockUseAddMemberToTeam.mockImplementation(options => {
-    capturedAddMemberOptions = options
-    return { ...getUseMutationIdleMock(), mutate: mockAcceptMutate }
-  })
-  mockUseDeleteMembershipInvitation.mockImplementation(options => {
-    capturedDeleteInvitationOptions = options
-    return { ...getUseMutationIdleMock(), mutate: mockDeclineMutate }
-  })
+  currentInvitations = [MOCK_INVITATION_WITH_MESSAGE, MOCK_INVITATION_2]
+  useOpenInvitationsHandler()
 })
 
 function renderComponent() {
-  return render(<OpenInvitationsToUserCard />)
+  const { wrapperFn, queryClient } = createWrapperAndQueryClient()
+  const result = render(<OpenInvitationsToUserCard />, { wrapper: wrapperFn })
+  return { ...result, queryClient }
+}
+
+/**
+ * Waits until the request for the user's open invitations has been made and all queries have settled.
+ */
+async function waitForInvitationsToLoad(
+  queryClient: ReturnType<typeof renderComponent>['queryClient'],
+) {
+  await waitFor(() => expect(onOpenInvitationsRequest).toHaveBeenCalled())
+  await waitFor(() => expect(queryClient.isFetching()).toBe(0))
 }
 
 describe('OpenInvitationsToUserCard', () => {
   describe('visibility', () => {
-    it('renders nothing while loading when no invitations have been seen yet', () => {
-      mockUseGetAllOpenMembershipInvitations.mockReturnValue({
-        data: undefined,
-        isLoading: true,
-      } as any)
+    it('renders nothing while loading when no invitations have been seen yet', async () => {
+      server.use(
+        http.get(OPEN_INVITATIONS_URL, async () => {
+          onOpenInvitationsRequest()
+          await delay('infinite')
+        }),
+      )
 
       const { container } = renderComponent()
 
+      await waitFor(() => expect(onOpenInvitationsRequest).toHaveBeenCalled())
       expect(container).toBeEmptyDOMElement()
     })
 
-    it('renders nothing when there are no invitations and none have ever been seen', () => {
-      mockUseGetAllOpenMembershipInvitations.mockReturnValue({
-        data: [],
-        isLoading: false,
-      } as any)
+    it('renders nothing when there are no invitations and none have ever been seen', async () => {
+      currentInvitations = []
 
-      const { container } = renderComponent()
+      const { container, queryClient } = renderComponent()
 
+      await waitForInvitationsToLoad(queryClient)
       expect(container).toBeEmptyDOMElement()
     })
   })
 
   describe('card content', () => {
-    it('shows the "Pending Team Invitations" heading', () => {
-      renderComponent()
-
-      expect(screen.getByText(/pending team invitations/i)).toBeInTheDocument()
-    })
-
-    it('shows a description about new content being visible after accepting', () => {
+    it('shows the "Pending Team Invitations" heading', async () => {
       renderComponent()
 
       expect(
-        screen.getByText(/new content may be visible to you after you accept/i),
+        await screen.findByText(/pending team invitations/i),
       ).toBeInTheDocument()
     })
 
-    it('renders one Join and one Decline button per invitation', () => {
+    it('shows a description about new content being visible after accepting', async () => {
       renderComponent()
 
-      expect(screen.getAllByRole('button', { name: /join/i })).toHaveLength(2)
+      expect(
+        await screen.findByText(
+          /new content may be visible to you after you accept/i,
+        ),
+      ).toBeInTheDocument()
+    })
+
+    it('renders one Join and one Decline button per invitation', async () => {
+      renderComponent()
+
+      expect(
+        await screen.findAllByRole('button', { name: /join/i }),
+      ).toHaveLength(2)
       expect(screen.getAllByRole('button', { name: /decline/i })).toHaveLength(
         2,
       )
     })
 
-    it('shows the message text when an invitation has a message', () => {
-      mockUseGetAllOpenMembershipInvitations.mockReturnValue({
-        data: [MOCK_INVITATION_WITH_MESSAGE],
-        isLoading: false,
-      } as any)
+    it('shows the message text when an invitation has a message', async () => {
+      currentInvitations = [MOCK_INVITATION_WITH_MESSAGE]
 
       renderComponent()
 
-      expect(screen.getByText('Please join our team!')).toBeInTheDocument()
+      expect(
+        await screen.findByText('Please join our team!'),
+      ).toBeInTheDocument()
     })
 
-    it('does not show a message when an invitation has no message', () => {
-      mockUseGetAllOpenMembershipInvitations.mockReturnValue({
-        data: [MOCK_INVITATION_NO_MESSAGE],
-        isLoading: false,
-      } as any)
+    it('does not show a message when an invitation has no message', async () => {
+      currentInvitations = [MOCK_INVITATION_NO_MESSAGE]
 
       renderComponent()
 
+      await screen.findByRole('button', { name: /join/i })
       expect(
         screen.queryByText(/please join|would love/i),
       ).not.toBeInTheDocument()
@@ -182,154 +182,182 @@ describe('OpenInvitationsToUserCard', () => {
   })
 
   describe('accepting an invitation', () => {
-    it('calls mutate with the correct teamId and userId when Join is clicked', async () => {
+    it('sends a request with the correct teamId and userId when Join is clicked', async () => {
       const user = userEvent.setup()
-      mockUseGetAllOpenMembershipInvitations.mockReturnValue({
-        data: [MOCK_INVITATION_WITH_MESSAGE],
-        isLoading: false,
-      } as any)
+      currentInvitations = [MOCK_INVITATION_WITH_MESSAGE]
+      const onAddMemberRequest = vi.fn()
+      server.use(
+        http.put(ADD_MEMBER_URL, ({ params }) => {
+          onAddMemberRequest(params.teamId, params.memberId)
+          return new HttpResponse(null, { status: 200 })
+        }),
+      )
 
       renderComponent()
 
-      await user.click(screen.getByRole('button', { name: /join/i }))
+      await user.click(await screen.findByRole('button', { name: /join/i }))
 
-      expect(mockAcceptMutate).toHaveBeenCalledWith({
-        teamId: MOCK_INVITATION_WITH_MESSAGE.teamId,
-        userId: MOCK_INVITATION_WITH_MESSAGE.inviteeId,
-      })
-    })
-
-    it('shows a success toast after accepting an invitation', () => {
-      renderComponent()
-
-      act(() => {
-        capturedAddMemberOptions?.onSuccess?.()
-      })
-
-      expect(mockDisplayToast).toHaveBeenCalledWith(
-        ACCEPT_TEAM_INVITATION_SUCCESS_MESSAGE,
-        'success',
+      await waitFor(() =>
+        expect(onAddMemberRequest).toHaveBeenCalledWith(
+          MOCK_INVITATION_WITH_MESSAGE.teamId,
+          MOCK_INVITATION_WITH_MESSAGE.inviteeId,
+        ),
       )
     })
 
-    it('shows an error toast when accepting an invitation fails', () => {
+    it('shows a success toast after accepting an invitation', async () => {
+      const user = userEvent.setup()
+      currentInvitations = [MOCK_INVITATION_WITH_MESSAGE]
+      server.use(
+        http.put(ADD_MEMBER_URL, () => new HttpResponse(null, { status: 200 })),
+      )
+
       renderComponent()
 
-      act(() => {
-        capturedAddMemberOptions?.onError?.(
-          new SynapseClientError(
-            400,
-            'Some error reason',
-            expect.getState().currentTestName!,
-          ),
-        )
-      })
+      await user.click(await screen.findByRole('button', { name: /join/i }))
 
-      expect(mockDisplayToast).toHaveBeenCalledWith(
-        'Some error reason',
-        'danger',
-        { title: ACCEPT_TEAM_INVITATION_ERROR_MESSAGE },
+      await waitFor(() =>
+        expect(mockDisplayToast).toHaveBeenCalledWith(
+          ACCEPT_TEAM_INVITATION_SUCCESS_MESSAGE,
+          'success',
+        ),
       )
     })
 
-    it('disables the Decline button while accept is pending', () => {
-      mockUseAddMemberToTeam.mockImplementation(options => {
-        capturedAddMemberOptions = options
-        return { ...getUseMutationPendingMock(), mutate: mockAcceptMutate }
-      })
-      mockUseGetAllOpenMembershipInvitations.mockReturnValue({
-        data: [MOCK_INVITATION_WITH_MESSAGE],
-        isLoading: false,
-      } as any)
+    it('shows an error toast when accepting an invitation fails', async () => {
+      const user = userEvent.setup()
+      currentInvitations = [MOCK_INVITATION_WITH_MESSAGE]
+      server.use(
+        http.put(ADD_MEMBER_URL, () =>
+          HttpResponse.json({ reason: 'Some error reason' }, { status: 400 }),
+        ),
+      )
 
       renderComponent()
 
-      expect(screen.getByRole('button', { name: /decline/i })).toBeDisabled()
+      await user.click(await screen.findByRole('button', { name: /join/i }))
+
+      await waitFor(() =>
+        expect(mockDisplayToast).toHaveBeenCalledWith(
+          'Some error reason',
+          'danger',
+          { title: ACCEPT_TEAM_INVITATION_ERROR_MESSAGE },
+        ),
+      )
+    })
+
+    it('disables the Decline button while accept is pending', async () => {
+      const user = userEvent.setup()
+      currentInvitations = [MOCK_INVITATION_WITH_MESSAGE]
+      server.use(http.put(ADD_MEMBER_URL, () => delay('infinite')))
+
+      renderComponent()
+
+      await user.click(await screen.findByRole('button', { name: /join/i }))
+
+      await waitFor(() =>
+        expect(screen.getByRole('button', { name: /decline/i })).toBeDisabled(),
+      )
     })
   })
 
   describe('declining an invitation', () => {
-    it('calls mutate with the correct invitationId when Decline is clicked', async () => {
+    it('sends a request with the correct invitationId when Decline is clicked', async () => {
       const user = userEvent.setup()
-      mockUseGetAllOpenMembershipInvitations.mockReturnValue({
-        data: [MOCK_INVITATION_WITH_MESSAGE],
-        isLoading: false,
-      } as any)
+      currentInvitations = [MOCK_INVITATION_WITH_MESSAGE]
+      const onDeleteInvitationRequest = vi.fn()
+      server.use(
+        http.delete(DELETE_INVITATION_URL, ({ params }) => {
+          onDeleteInvitationRequest(params.invitationId)
+          return new HttpResponse(null, { status: 204 })
+        }),
+      )
 
       renderComponent()
 
-      await user.click(screen.getByRole('button', { name: /decline/i }))
+      await user.click(await screen.findByRole('button', { name: /decline/i }))
 
-      expect(mockDeclineMutate).toHaveBeenCalledWith({
-        membershipInvitation: MOCK_INVITATION_WITH_MESSAGE,
-      })
-    })
-
-    it('shows a success toast after declining an invitation', () => {
-      renderComponent()
-
-      act(() => {
-        capturedDeleteInvitationOptions?.onSuccess?.()
-      })
-
-      expect(mockDisplayToast).toHaveBeenCalledWith(
-        'Invitation dismissed.',
-        'info',
+      await waitFor(() =>
+        expect(onDeleteInvitationRequest).toHaveBeenCalledWith(
+          MOCK_INVITATION_WITH_MESSAGE.id,
+        ),
       )
     })
 
-    it('shows an error toast when declining an invitation fails', () => {
+    it('shows a success toast after declining an invitation', async () => {
+      const user = userEvent.setup()
+      currentInvitations = [MOCK_INVITATION_WITH_MESSAGE]
+      server.use(
+        http.delete(
+          DELETE_INVITATION_URL,
+          () => new HttpResponse(null, { status: 204 }),
+        ),
+      )
+
       renderComponent()
 
-      act(() => {
-        capturedDeleteInvitationOptions?.onError?.(
-          new SynapseClientError(
-            400,
-            'Some error reason',
-            expect.getState().currentTestName!,
-          ),
-        )
-      })
+      await user.click(await screen.findByRole('button', { name: /decline/i }))
 
-      expect(mockDisplayToast).toHaveBeenCalledWith(
-        'Some error reason',
-        'danger',
-        { title: DECLINE_TEAM_INVITATION_ERROR_MESSAGE },
+      await waitFor(() =>
+        expect(mockDisplayToast).toHaveBeenCalledWith(
+          'Invitation dismissed.',
+          'info',
+        ),
       )
     })
 
-    it('disables the Join button while delete is pending', () => {
-      mockUseDeleteMembershipInvitation.mockImplementation(options => {
-        capturedDeleteInvitationOptions = options
-        return { ...getUseMutationPendingMock(), mutate: mockDeclineMutate }
-      })
-      mockUseGetAllOpenMembershipInvitations.mockReturnValue({
-        data: [MOCK_INVITATION_WITH_MESSAGE],
-        isLoading: false,
-      } as any)
+    it('shows an error toast when declining an invitation fails', async () => {
+      const user = userEvent.setup()
+      currentInvitations = [MOCK_INVITATION_WITH_MESSAGE]
+      server.use(
+        http.delete(DELETE_INVITATION_URL, () =>
+          HttpResponse.json({ reason: 'Some error reason' }, { status: 400 }),
+        ),
+      )
 
       renderComponent()
 
-      expect(screen.getByRole('button', { name: /join/i })).toBeDisabled()
+      await user.click(await screen.findByRole('button', { name: /decline/i }))
+
+      await waitFor(() =>
+        expect(mockDisplayToast).toHaveBeenCalledWith(
+          'Some error reason',
+          'danger',
+          { title: DECLINE_TEAM_INVITATION_ERROR_MESSAGE },
+        ),
+      )
+    })
+
+    it('disables the Join button while delete is pending', async () => {
+      const user = userEvent.setup()
+      currentInvitations = [MOCK_INVITATION_WITH_MESSAGE]
+      server.use(http.delete(DELETE_INVITATION_URL, () => delay('infinite')))
+
+      renderComponent()
+
+      await user.click(await screen.findByRole('button', { name: /decline/i }))
+
+      await waitFor(() =>
+        expect(screen.getByRole('button', { name: /join/i })).toBeDisabled(),
+      )
     })
   })
 
   describe('persistence after invitations are cleared', () => {
-    it('shows "no pending invitations" instead of hiding the card when the list empties after being non-empty', () => {
-      const { rerender } = renderComponent()
+    it('shows "no pending invitations" instead of hiding the card when the list empties after being non-empty', async () => {
+      const { queryClient } = renderComponent()
 
       // Initially there are invitations — the card and buttons are visible.
-      expect(screen.getByText(/pending team invitations/i)).toBeInTheDocument()
+      expect(
+        await screen.findByText(/pending team invitations/i),
+      ).toBeInTheDocument()
 
       // Simulate all invitations being accepted or declined.
-      mockUseGetAllOpenMembershipInvitations.mockReturnValue({
-        data: [],
-        isLoading: false,
-      } as any)
-      rerender(<OpenInvitationsToUserCard />)
+      currentInvitations = []
+      await queryClient.invalidateQueries()
 
       expect(
-        screen.getByText(/you have no pending team invitations/i),
+        await screen.findByText(/you have no pending team invitations/i),
       ).toBeInTheDocument()
       expect(
         screen.queryByRole('button', { name: /join/i }),

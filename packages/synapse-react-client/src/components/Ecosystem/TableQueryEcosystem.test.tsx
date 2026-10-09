@@ -1,14 +1,13 @@
 import TableQueryEcosystem from '@/components/Ecosystem/TableQueryEcosystem'
 import { ImageFileHandle } from '@/components/widgets/ImageFileHandle'
-import { useGetFullTableQueryResults } from '@/synapse-queries/entity/useGetQueryResultBundle'
-import { getUseQueryMock } from '@/testutils/ReactQueryMockUtils'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { Query, QueryResultBundle } from '@sage-bionetworks/synapse-types'
-import { act, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { Markdown } from '@/components/Markdown/MarkdownSynapse'
 
 vi.mock('@/components/Markdown/MarkdownSynapse')
-vi.mock('@/synapse-queries/entity/useGetQueryResultBundle')
 vi.mock('@/components/widgets/ImageFileHandle')
 
 const mockMarkdownSynapse = vi
@@ -18,15 +17,9 @@ const mockImageFileHandle = vi
   .mocked(ImageFileHandle)
   .mockReturnValue(<span>ImageFileHandle</span>)
 
-const mockUseGetFullTableQueryResults = vi.mocked(useGetFullTableQueryResults)
-const { mock: mockUseGetFullTableQueryResultsImpl, setSuccess } =
-  getUseQueryMock<QueryResultBundle, SynapseClientError>()
-mockUseGetFullTableQueryResults.mockImplementation(
-  mockUseGetFullTableQueryResultsImpl,
-)
-
 const tableQueryResult = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
+  maxRowsPerPage: 100,
   queryResult: {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
     queryResults: {
@@ -77,14 +70,17 @@ const query: Query = {
 }
 
 describe('TableQueryEcosystem', () => {
-  it('displays data from a table', () => {
-    render(<TableQueryEcosystem query={query} />)
+  beforeAll(() => server.listen())
+  beforeEach(() => {
+    registerTableQueryResult(query, tableQueryResult)
+  })
+  afterEach(() => server.restoreHandlers())
+  afterAll(() => server.close())
 
-    act(() => {
-      setSuccess(tableQueryResult)
-    })
+  it('displays data from a table', async () => {
+    render(<TableQueryEcosystem query={query} />, { wrapper: createWrapper() })
 
-    screen.getByText('Data Repository')
+    await screen.findByText('Data Repository')
     screen.getByText('Data Visualization')
     let sectionTitle = screen.getByText('Synapse')
     expect(sectionTitle).toHaveAttribute('href', 'https://www.synapse.org')
