@@ -518,7 +518,12 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
         renderEditDialog(fileBasedTask, { onDeleteSuccess })
 
         // Simulate the mutation succeeding
-        lastDeleteOptions?.onSuccess?.(undefined, MOCK_CURATION_TASK_ID, {})
+        lastDeleteOptions?.onSuccess?.(
+          undefined,
+          MOCK_CURATION_TASK_ID,
+          {},
+          {} as never,
+        )
 
         expect(onDeleteSuccess).toHaveBeenCalledTimes(1)
       })

@@ -198,7 +198,7 @@ export default function useLogin(opts: UseLoginOptions): UseLoginReturn {
     isPending: loginWith2FACodeIsPending,
   } = useMutation<LoginResponse, SynapseClientError, TwoFactorAuthLoginRequest>(
     {
-      mutationFn: SynapseClient.loginWith2fa,
+      mutationFn: request => SynapseClient.loginWith2fa(request),
       onError: e => {
         setErrorMessage(e.reason)
         if (e.reason.includes('The provided code is invalid')) {

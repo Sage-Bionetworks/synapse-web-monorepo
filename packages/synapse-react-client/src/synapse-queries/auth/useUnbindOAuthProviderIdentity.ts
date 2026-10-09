@@ -27,14 +27,14 @@ export function useUnbindOAuthProviderIdentity(
       synapseClient.authenticationServicesClient.deleteAuthV1Oauth2Identity({
         provider,
       }),
-    onSuccess: async (data, provider, ctx) => {
+    onSuccess: async (data, provider, ctx, mutationContext) => {
       // The bundle reports which providers are linked, so every mask of it is now stale
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getAllUserBundleQueryKey(CURRENT_USER_ID),
       })
 
       if (options?.onSuccess) {
-        await options.onSuccess(data, provider, ctx)
+        await options.onSuccess(data, provider, ctx, mutationContext)
       }
     },
   })

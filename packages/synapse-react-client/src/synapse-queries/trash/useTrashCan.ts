@@ -74,12 +74,12 @@ export function useRestoreEntities(
       })
       return Promise.allSettled(promises)
     },
-    onSuccess: async (_, ids, ctx) => {
+    onSuccess: async (_, ids, ctx, mutationContext) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getTrashCanItemsQueryKey(),
       })
       if (options?.onSuccess) {
-        await options.onSuccess(_, ids, ctx)
+        await options.onSuccess(_, ids, ctx, mutationContext)
       }
     },
   })
@@ -112,12 +112,12 @@ export function usePurgeEntities(
       })
       return Promise.allSettled(promises)
     },
-    onSuccess: async (_, ids, ctx) => {
+    onSuccess: async (_, ids, ctx, mutationContext) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getTrashCanItemsQueryKey(),
       })
       if (options?.onSuccess) {
-        await options.onSuccess(_, ids, ctx)
+        await options.onSuccess(_, ids, ctx, mutationContext)
       }
     },
   })

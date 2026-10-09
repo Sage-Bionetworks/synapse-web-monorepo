@@ -39,12 +39,12 @@ export function useAddFavorite(
     mutationFn: (entityId: string) =>
       SynapseClient.addUserFavorite(entityId, accessToken),
     mutationKey: ['addFavorite'],
-    onSuccess: async (data, variables, ctx) => {
+    onSuccess: async (data, variables, ctx, mutationContext) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getFavoritesQueryKey(),
       })
       if (options?.onSuccess) {
-        return options.onSuccess(data, variables, ctx)
+        return options.onSuccess(data, variables, ctx, mutationContext)
       }
       return
     },
@@ -63,12 +63,12 @@ export function useRemoveFavorite(
     mutationFn: (entityId: string) =>
       SynapseClient.removeUserFavorite(entityId, accessToken),
     mutationKey: ['removeFavorite'],
-    onSuccess: async (data, variables, ctx) => {
+    onSuccess: async (data, variables, ctx, mutationContext) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getFavoritesQueryKey(),
       })
       if (options?.onSuccess) {
-        return options.onSuccess(data, variables, ctx)
+        return options.onSuccess(data, variables, ctx, mutationContext)
       }
       return
     },
