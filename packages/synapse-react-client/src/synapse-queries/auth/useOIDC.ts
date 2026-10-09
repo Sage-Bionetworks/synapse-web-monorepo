@@ -83,13 +83,13 @@ export function useConsentToOAuth2Request(
       synapseClient.openIDConnectServicesClient.postAuthV1Oauth2Consent({
         oIDCAuthorizationRequest: request,
       }),
-    onSuccess: async (data, request, ctx) => {
+    onSuccess: async (data, request, ctx, mutationContext) => {
       await queryClient.invalidateQueries({
         queryKey:
           keyFactory.getHasCurrentUserAuthorizedOAuthClientQueryKey(request),
       })
       if (options?.onSuccess) {
-        options.onSuccess(data, request, ctx)
+        options.onSuccess(data, request, ctx, mutationContext)
       }
     },
   })

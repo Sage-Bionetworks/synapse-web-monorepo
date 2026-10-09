@@ -127,7 +127,7 @@ export function useCreateEntity(
   >({
     mutationFn: (entity: Entity) =>
       SynapseClient.createEntity(entity, accessToken),
-    onSuccess: async (newEntity, variables, ctx) => {
+    onSuccess: async (newEntity, variables, ctx, mutationContext) => {
       const entityDataQueryKey = keyFactory.getEntityQueryKey(newEntity.id!)
       queryClient.setQueryData(entityDataQueryKey, newEntity)
       queryClient.setQueryData<EntityLookupQueryData>(
@@ -145,7 +145,7 @@ export function useCreateEntity(
       )
 
       if (options?.onSuccess) {
-        await options.onSuccess(newEntity, variables, ctx)
+        await options.onSuccess(newEntity, variables, ctx, mutationContext)
       }
     },
   })
@@ -161,7 +161,7 @@ export function useUpdateEntity<T extends Entity>(
     ...options,
     mutationFn: (entity: T) =>
       SynapseClient.updateEntity<T>(entity, accessToken),
-    onSuccess: async (updatedEntity, variables, ctx) => {
+    onSuccess: async (updatedEntity, variables, ctx, mutationContext) => {
       const entityDataQueryKey = keyFactory.getEntityQueryKey(updatedEntity.id!)
       queryClient.setQueryData(entityDataQueryKey, updatedEntity)
       await invalidateAllQueriesForEntity(
@@ -172,7 +172,7 @@ export function useUpdateEntity<T extends Entity>(
       )
 
       if (options?.onSuccess) {
-        await options.onSuccess(updatedEntity, variables, ctx)
+        await options.onSuccess(updatedEntity, variables, ctx, mutationContext)
       }
     },
   })
@@ -196,13 +196,13 @@ export function useDeleteEntity(
       await SynapseClient.deleteEntity(accessToken, entityId)
       return entity.parentId
     },
-    onSuccess: async (parentId, entityId, ctx) => {
+    onSuccess: async (parentId, entityId, ctx, mutationContext) => {
       await invalidateAllQueriesForEntity(queryClient, keyFactory, entityId)
       if (parentId) {
         await invalidateAllQueriesForEntity(queryClient, keyFactory, parentId)
       }
       if (options?.onSuccess) {
-        await options.onSuccess(parentId, entityId, ctx)
+        await options.onSuccess(parentId, entityId, ctx, mutationContext)
       }
     },
   })
@@ -338,7 +338,7 @@ export function useUpdateViaJson(
       const entityId = json.id
       return SynapseClient.updateEntityJson(entityId, json, accessToken)
     },
-    onSuccess: async (data, variables, ctx) => {
+    onSuccess: async (data, variables, ctx, mutationContext) => {
       const entityId = data.id
       // This annotation data will never include derived annotations, which are calculated by the backend asynchronously
       const entityJsonQueryKey = keyFactory.getEntityJsonQueryKey(
@@ -355,7 +355,7 @@ export function useUpdateViaJson(
       )
 
       if (options?.onSuccess) {
-        await options.onSuccess(data, variables, ctx)
+        await options.onSuccess(data, variables, ctx, mutationContext)
       }
     },
   })
@@ -455,7 +455,12 @@ export function useCreateEntityACL(
     ...options,
     mutationFn: (acl: AccessControlList) =>
       SynapseClient.createEntityACL(acl, accessToken),
-    onSuccess: async (updatedACL: AccessControlList, variables, ctx) => {
+    onSuccess: async (
+      updatedACL: AccessControlList,
+      variables,
+      ctx,
+      mutationContext,
+    ) => {
       await onMutateEntityAclSuccess(
         updatedACL.id,
         updatedACL,
@@ -464,7 +469,7 @@ export function useCreateEntityACL(
       )
 
       if (options?.onSuccess) {
-        await options.onSuccess(updatedACL, variables, ctx)
+        await options.onSuccess(updatedACL, variables, ctx, mutationContext)
       }
     },
   })
@@ -482,7 +487,12 @@ export function useUpdateEntityACL(
     ...options,
     mutationFn: (acl: AccessControlList) =>
       SynapseClient.updateEntityACL(acl, accessToken),
-    onSuccess: async (updatedACL: AccessControlList, variables, ctx) => {
+    onSuccess: async (
+      updatedACL: AccessControlList,
+      variables,
+      ctx,
+      mutationContext,
+    ) => {
       await onMutateEntityAclSuccess(
         updatedACL.id,
         updatedACL,
@@ -491,7 +501,7 @@ export function useUpdateEntityACL(
       )
 
       if (options?.onSuccess) {
-        await options.onSuccess(updatedACL, variables, ctx)
+        await options.onSuccess(updatedACL, variables, ctx, mutationContext)
       }
     },
   })
@@ -507,11 +517,11 @@ export function useDeleteEntityACL(
     ...options,
     mutationFn: (entityId: string) =>
       SynapseClient.deleteEntityACL(entityId, accessToken),
-    onSuccess: async (result: void, entityId, ctx) => {
+    onSuccess: async (result: void, entityId, ctx, mutationContext) => {
       await onMutateEntityAclSuccess(entityId, null, queryClient, keyFactory)
 
       if (options?.onSuccess) {
-        await options.onSuccess(result, entityId, ctx)
+        await options.onSuccess(result, entityId, ctx, mutationContext)
       }
     },
   })
@@ -590,7 +600,7 @@ export function useUpdateTableColumns(
 
       return SynapseClient.updateTable(transactionRequest, accessToken)
     },
-    onSuccess: async (response, variables, ctx) => {
+    onSuccess: async (response, variables, ctx, mutationContext) => {
       await invalidateAllQueriesForEntity(
         queryClient,
         keyFactory,
@@ -598,7 +608,7 @@ export function useUpdateTableColumns(
       )
 
       if (options?.onSuccess) {
-        await options.onSuccess(response, variables, ctx)
+        await options.onSuccess(response, variables, ctx, mutationContext)
       }
     },
   })

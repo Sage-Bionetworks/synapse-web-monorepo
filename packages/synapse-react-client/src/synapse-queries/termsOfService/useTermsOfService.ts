@@ -57,14 +57,14 @@ export function useSignTermsOfService(
     ...options,
     mutationFn: (accessToken: AccessToken) =>
       SynapseClient.signSynapseTermsOfUse(accessToken),
-    onSuccess: async (resp, variables, ctx) => {
+    onSuccess: async (resp, variables, ctx, mutationContext) => {
       // Wait for the refetch so that consumers redirecting in onSuccess see the updated status.
       // Otherwise, guards that check the (stale) status may send the user back to sign again.
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getTermsOfServiceStatus(),
       })
       if (options?.onSuccess) {
-        await options.onSuccess(resp, variables, ctx)
+        await options.onSuccess(resp, variables, ctx, mutationContext)
       }
     },
   })

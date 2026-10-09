@@ -231,9 +231,9 @@ export function useAddMemberToTeam(
         userId,
         accessToken!,
       ),
-    onSuccess: async (data, variables, ctx) => {
+    onSuccess: async (data, variables, ctx, mutationContext) => {
       if (options?.onSuccess) {
-        options.onSuccess(data, variables, ctx)
+        options.onSuccess(data, variables, ctx, mutationContext)
       }
       await Promise.all([
         queryClient.invalidateQueries({
@@ -282,7 +282,7 @@ export function useRequestToJoinTeam(
     ...options,
     mutationFn: request =>
       SynapseClient.createMembershipRequest(request, accessToken),
-    onSuccess: async (data, variables, ctx) => {
+    onSuccess: async (data, variables, ctx, mutationContext) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getMembershipStatusQueryKey(
           variables.teamId,
@@ -290,7 +290,7 @@ export function useRequestToJoinTeam(
         ),
       })
       if (options.onSuccess) {
-        return options.onSuccess(data, variables, ctx)
+        return options.onSuccess(data, variables, ctx, mutationContext)
       }
       return
     },
@@ -325,7 +325,7 @@ export function useDeleteMembershipInvitation(
       synapseClient.membershipInvitationServicesClient.deleteRepoV1MembershipInvitationId(
         { id: membershipInvitation.id! },
       ),
-    onSuccess: async (data, variables, ctx) => {
+    onSuccess: async (data, variables, ctx, mutationContext) => {
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: keyFactory.getAllOpenMembershipInvitationsQueryKey(),
@@ -339,7 +339,7 @@ export function useDeleteMembershipInvitation(
         }),
       ])
       if (options?.onSuccess) {
-        await options.onSuccess(data, variables, ctx)
+        await options.onSuccess(data, variables, ctx, mutationContext)
       }
     },
   })
@@ -362,7 +362,7 @@ export function useDeleteTeamMembership(
     ...options,
     mutationFn: variables =>
       deleteMemberFromTeam(variables.teamId, variables.userId, accessToken),
-    onSuccess: async (data, variables, ctx) => {
+    onSuccess: async (data, variables, ctx, mutationContext) => {
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: keyFactory.getIsUserMemberOfTeamQueryKey(
@@ -378,7 +378,7 @@ export function useDeleteTeamMembership(
         }),
       ])
       if (options?.onSuccess) {
-        await options.onSuccess(data, variables, ctx)
+        await options.onSuccess(data, variables, ctx, mutationContext)
       }
     },
   })
