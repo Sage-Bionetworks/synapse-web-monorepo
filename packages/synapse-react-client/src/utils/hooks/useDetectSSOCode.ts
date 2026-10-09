@@ -234,7 +234,7 @@ export default function useDetectSSOCode(
                 UNLINKED_IDENTITY_ERROR_BY_PROVIDER[provider]
               if (unlinkedIdentityError) {
                 console.error(
-                  `No Synapse account is linked to this ${provider} identity: `,
+                  'No Synapse account is linked to this identity: ',
                   err,
                 )
                 if (onError) {
