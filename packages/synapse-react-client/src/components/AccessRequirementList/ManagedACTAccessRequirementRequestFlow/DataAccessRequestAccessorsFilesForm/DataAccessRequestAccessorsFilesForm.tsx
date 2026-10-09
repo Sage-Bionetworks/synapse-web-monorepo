@@ -5,10 +5,7 @@ import {
   Button,
   DialogActions,
   DialogContent,
-  DialogTitle,
   Divider,
-  IconButton,
-  Stack,
   Typography,
 } from '@mui/material'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
@@ -34,7 +31,7 @@ import {
 } from '../../../../synapse-queries'
 import { useSynapseContext } from '../../../../utils'
 import { SynapseErrorBoundary } from '../../../error/ErrorBanner'
-import IconSvg from '../../../IconSvg/IconSvg'
+import { DialogBaseTitle } from '../../../DialogBase'
 import DataAccessRequestAccessorsEditor, {
   DataAccessRequestAccessorsEditorProps,
 } from '../DataAccessRequestAccessorsEditor'
@@ -342,24 +339,10 @@ export default function DataAccessRequestAccessorsFilesForm(
 
   return (
     <>
-      <DialogTitle>
-        <Stack
-          direction="row"
-          sx={{
-            alignItems: 'center',
-            gap: '5px',
-          }}
-        >
-          Request Access
-          <Box sx={{ flexGrow: 1 }} />
-          <IconButton onClick={props.onHide}>
-            <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
-          </IconButton>
-        </Stack>
-      </DialogTitle>
+      <DialogBaseTitle title={'Request Access'} onCancel={props.onHide} />
       <DialogContent>
         <ManagedACTAccessRequirementFormWikiWrapper
-          managedACTAccessRequirementId={String(managedACTAccessRequirement.id)}
+          accessRequirement={managedACTAccessRequirement}
         >
           <Box
             component={'form'}

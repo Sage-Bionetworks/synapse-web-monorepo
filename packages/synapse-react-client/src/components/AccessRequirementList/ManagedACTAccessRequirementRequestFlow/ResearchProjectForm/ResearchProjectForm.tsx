@@ -12,9 +12,6 @@ import {
   Button,
   DialogActions,
   DialogContent,
-  DialogTitle,
-  IconButton,
-  Stack,
   TextField,
   Typography,
 } from '@mui/material'
@@ -28,7 +25,7 @@ import {
 import isEmpty from 'lodash-es/isEmpty'
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import HelpPopover from '../../../HelpPopover'
-import IconSvg from '../../../IconSvg/IconSvg'
+import { DialogBaseTitle } from '../../../DialogBase'
 import TextFieldWithWordLimit, {
   getWordCount,
 } from '../../../TextField/TextFieldWithWordLimit'
@@ -245,21 +242,7 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
 
   return (
     <>
-      <DialogTitle>
-        <Stack
-          direction="row"
-          sx={{
-            alignItems: 'center',
-            gap: '5px',
-          }}
-        >
-          Request Access
-          <Box sx={{ flexGrow: 1 }} />
-          <IconButton aria-label={'Close'} onClick={onHide}>
-            <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
-          </IconButton>
-        </Stack>
-      </DialogTitle>
+      <DialogBaseTitle title={'Request Access'} onCancel={() => onHide?.()} />
       {showConfirmationScreen && (
         <ConfirmationScreenContent
           isIDURequired={managedACTAccessRequirement.isIDURequired}
@@ -273,9 +256,7 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
             </Alert>
           )}
           <ManagedACTAccessRequirementFormWikiWrapper
-            managedACTAccessRequirementId={String(
-              managedACTAccessRequirement.id,
-            )}
+            accessRequirement={managedACTAccessRequirement}
           >
             <Box
               component={'form'}

@@ -1,23 +1,24 @@
 import {
   ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   AccessRequirement,
+  JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-  ManagedACTAccessRequirement,
   SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   TERMS_OF_USE_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   RestrictableObjectType,
 } from '@sage-bionetworks/synapse-types'
 import React from 'react'
+import { RequestableAccessRequirement } from './RequestDataStep'
 import UnmanagedACTAccessRequirementItem from './RequirementItem/UnmanagedACTAccessRequirementItem'
-import ManagedACTAccessRequirementItem from './ManagedACTAccessRequirementRequestFlow/ManagedACTAccessRequirementItem'
+import RequestableAccessRequirementItem from './ManagedACTAccessRequirementRequestFlow/RequestableAccessRequirementItem'
 import SelfSignAccessRequirementItem from './RequirementItem/SelfSignAccessRequirementItem'
 import LockAccessRequirementItem from './RequirementItem/LockAccessRequirementItem'
 
 export type AccessRequirementListItemProps = {
   accessRequirement: AccessRequirement
   onHide: () => void
-  onRequestAccess: (accessRequirement: ManagedACTAccessRequirement) => void
+  onRequestAccess: (accessRequirement: RequestableAccessRequirement) => void
   subjectId?: string
   subjectType?: RestrictableObjectType
 }
@@ -49,8 +50,9 @@ export function AccessRequirementListItem(
         />
       )
     case MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
+    case JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
       return (
-        <ManagedACTAccessRequirementItem
+        <RequestableAccessRequirementItem
           accessRequirement={accessRequirement}
           subjectId={subjectId}
           subjectType={subjectType}

@@ -20,7 +20,8 @@ export interface SigningOfficial {
 export interface RequestInterface {
   id: string
   accessRequirementId: string
-  researchProjectId: string
+  /* The research project of a ManagedACTAccessRequirement request. Not used by a JsonSchemaAccessRequirement request. */
+  researchProjectId?: string
   createdOn: string
   modifiedOn: string
   createdBy: string
@@ -39,6 +40,8 @@ export interface RequestInterface {
   signingOfficial?: SigningOfficial
   /* DocuSign envelope ID for the routed eDUC. Set when the request has been sent for e-signature. */
   eDucSignatureEnvelopeId?: string
+  /* Answers to the schema-driven form of a JsonSchemaAccessRequirement. Includes `x-synapse-submissionContext`. */
+  schemaData?: Record<string, unknown>
 }
 
 export interface Request extends RequestInterface {

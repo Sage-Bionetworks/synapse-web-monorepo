@@ -1,5 +1,6 @@
-import { JsonSchemaForm } from '@/components/JsonSchemaForm/JsonSchemaForm'
+import SchemaStepForm from '@/components/JsonSchemaForm/SchemaStepForm'
 import { generateDataAccessSchema } from '@/utils/jsonschema/generateDataAccessSchema'
+import { getStepTitle, SchemaData } from '@/utils/jsonschema/schemaData'
 import {
   DataAccessRequestType,
   FormTemplate,
@@ -32,6 +33,8 @@ export function FormTemplatePreview({
   jsonSchema,
 }: FormTemplatePreviewProps) {
   const [activeStep, setActiveStep] = useState(0)
+  // Kept across steps and request types so ACT can see how answers carry through the form
+  const [schemaData, setSchemaData] = useState<SchemaData>({})
   const [requestType, setRequestType] = useState<DataAccessRequestType>(
     DataAccessRequestType.REQUEST,
   )
@@ -80,19 +83,19 @@ export function FormTemplatePreview({
           {steps.map((step, index) => (
             <Step key={index}>
               <StepButton onClick={() => setActiveStep(index)}>
-                {(step.jsonSchema.title as string) ?? `Step ${index + 1}`}
+                {getStepTitle(step, index + 1)}
               </StepButton>
             </Step>
           ))}
         </Stepper>
       )}
 
-      <JsonSchemaForm
-        schema={currentStep.jsonSchema}
-        uiSchema={currentStep.uiSchema}
-        formContext={{ descriptionVariant: 'inline' }}
-        children={<></>}
-        liveValidate={false}
+      <SchemaStepForm
+        // Each step is a separate form, as it is for a requester
+        key={safeIndex}
+        step={currentStep}
+        schemaData={schemaData}
+        onSchemaDataChange={setSchemaData}
       />
     </Paper>
   )

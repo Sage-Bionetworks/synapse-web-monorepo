@@ -1,6 +1,8 @@
 import {
   ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   AccessRequirement,
+  JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  JsonSchemaAccessRequirement,
   LOCK_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   ManagedACTAccessRequirement,
@@ -15,6 +17,7 @@ export const LOCK_ACCESS_REQUIREMENT_TEXT =
 export const getOldAccessRequirementInstructions = (ar: AccessRequirement) => {
   switch (ar.concreteType) {
     case MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
+    case JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
     case SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE:
       // uses wiki to store instructions
       return ''
@@ -33,9 +36,13 @@ export const getOldAccessRequirementInstructions = (ar: AccessRequirement) => {
  */
 export const hasAccessorRequirement = (
   ar: AccessRequirement,
-): ar is SelfSignAccessRequirement | ManagedACTAccessRequirement => {
+): ar is
+  | SelfSignAccessRequirement
+  | ManagedACTAccessRequirement
+  | JsonSchemaAccessRequirement => {
   return (
     ar.concreteType === SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE ||
-    ar.concreteType == MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
+    ar.concreteType == MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE ||
+    ar.concreteType == JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
   )
 }

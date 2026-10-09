@@ -15,9 +15,9 @@ import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { SynapseClient, SynapseContextType } from '../../../index'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
-import ManagedACTAccessRequirementItem, {
-  ManagedACTAccessRequirementItemProps,
-} from './ManagedACTAccessRequirementItem'
+import RequestableAccessRequirementItem, {
+  RequestableAccessRequirementItemProps,
+} from './RequestableAccessRequirementItem'
 import { formatDate } from '@/utils/functions/DateFormatter'
 
 vi.mock('@/utils/functions/DateFormatter', () => ({
@@ -25,14 +25,14 @@ vi.mock('@/utils/functions/DateFormatter', () => ({
 }))
 
 async function renderComponent(
-  props: ManagedACTAccessRequirementItemProps,
+  props: RequestableAccessRequirementItemProps,
   wrapperProps?: Partial<SynapseContextType>,
 ) {
   let renderReturn
   // We must await asynchronous events for our assertions to pass
   // oxlint-disable-next-line @typescript-eslint/require-await
   await act(async () => {
-    renderReturn = render(<ManagedACTAccessRequirementItem {...props} />, {
+    renderReturn = render(<RequestableAccessRequirementItem {...props} />, {
       wrapper: createWrapper(wrapperProps),
     })
   })
@@ -85,7 +85,7 @@ const mockOnHide = vi.fn()
 
 const rejectedReason = 'You incorrectly filled out your IDU Statement.'
 
-const defaultProps: ManagedACTAccessRequirementItemProps = {
+const defaultProps: RequestableAccessRequirementItemProps = {
   accessRequirement: mockManagedACTAccessRequirement,
   onRequestAccess: mockOnRequestAccess,
   onRejectTerms: mockOnHide,
@@ -198,7 +198,7 @@ async function testWikiShownWithoutToggle() {
   ).not.toBeInTheDocument()
 }
 
-describe('ManagedACTAccessRequirementItem', () => {
+describe('RequestableAccessRequirementItem', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })

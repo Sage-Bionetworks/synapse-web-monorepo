@@ -118,7 +118,7 @@ vi.spyOn(SynapseClient, 'getWikiPageKeyForAccessRequirement').mockResolvedValue(
 
 vi.spyOn(
   AccessRequirementListUtils,
-  'useCanShowManagedACTWikiInWizard',
+  'useShowAccessRequirementWikiInWizard',
 ).mockReturnValue(true)
 
 const mockCreateSubmission = vi
