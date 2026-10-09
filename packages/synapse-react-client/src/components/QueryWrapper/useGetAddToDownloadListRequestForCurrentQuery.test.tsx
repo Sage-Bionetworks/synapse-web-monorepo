@@ -5,7 +5,6 @@ import {
   useSelectedRowsAtomValue,
 } from '@/components/QueryWrapper/TableRowSelectionState'
 import { useSuspenseGetQueryMetadata } from '@/components/QueryWrapper/useGetQueryMetadata'
-import { getUseQuerySuccessMock } from '@/testutils/ReactQueryMockUtils'
 import { ColumnType } from '@sage-bionetworks/synapse-client'
 import {
   ColumnModel,
@@ -36,6 +35,11 @@ const mockUseRowSelectionPrimaryKeyAtomValue = vi.mocked(
 )
 const mockUseSelectedRowsAtomValue = vi.mocked(useSelectedRowsAtomValue)
 const mockUseSuspenseGetQueryMetadata = vi.mocked(useSuspenseGetQueryMetadata)
+
+/** The hook under test only reads `data` from the query metadata result */
+function metadataResult(data: Partial<QueryResultBundle>) {
+  return { data } as unknown as ReturnType<typeof useSuspenseGetQueryMetadata>
+}
 
 const query: Query = {
   sql: 'SELECT * FROM syn123',
@@ -108,7 +112,7 @@ describe('useGetAddToDownloadListRequestForCurrentQuery', () => {
       fileVersionColumnName: undefined,
     })
     mockUseSuspenseGetQueryMetadata.mockReturnValue(
-      getUseQuerySuccessMock({
+      metadataResult({
         columnModels: [fileEntityIdColumn],
         selectColumns: [fileEntityIdColumn],
       }),
@@ -136,7 +140,7 @@ describe('useGetAddToDownloadListRequestForCurrentQuery', () => {
       fileVersionColumnName: 'fileVer',
     })
     mockUseSuspenseGetQueryMetadata.mockReturnValue(
-      getUseQuerySuccessMock<QueryResultBundle>({
+      metadataResult({
         concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
         columnModels: columns,
         selectColumns: columns,
@@ -166,7 +170,7 @@ describe('useGetAddToDownloadListRequestForCurrentQuery', () => {
       fileVersionColumnName: undefined,
     })
     mockUseSuspenseGetQueryMetadata.mockReturnValue(
-      getUseQuerySuccessMock<QueryResultBundle>({
+      metadataResult({
         concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
         columnModels: [primaryKeyColumn],
         selectColumns: [primaryKeyColumn],

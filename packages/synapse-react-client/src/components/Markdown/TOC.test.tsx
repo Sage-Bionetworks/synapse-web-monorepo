@@ -1,45 +1,51 @@
 import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
-import { getUseQuerySuccessMock } from '@/testutils/ReactQueryMockUtils'
+import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen } from '@testing-library/react'
 import MarkdownSynapse from './MarkdownSynapse'
-import { vi, describe, beforeAll, it } from 'vitest'
+import { http, HttpResponse } from 'msw'
+import { afterAll, afterEach, beforeAll, describe, it } from 'vitest'
 import {
-  useGetWikiPage,
-  useGetWikiAttachments,
-} from '@/synapse-queries/wiki/useWiki'
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
+import { WikiPage } from '@sage-bionetworks/synapse-types'
 
-vi.mock('@/synapse-queries/wiki/useWiki', () => ({
-  useGetWikiPage: vi.fn(),
-  useGetWikiAttachments: vi.fn(),
-}))
-
-const mockUseGetWikiPage = vi.mocked(useGetWikiPage)
-const mockUseGetWikiAttachments = vi.mocked(useGetWikiAttachments)
+const REPO_ORIGIN = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
 describe('renders without crashing', () => {
-  beforeAll(() => {
-    mockUseGetWikiAttachments.mockReturnValue(
-      getUseQuerySuccessMock({ list: [] }),
-    )
-  })
+  beforeAll(() => server.listen())
+  afterEach(() => server.resetHandlers())
+  afterAll(() => server.close())
+
   const mockOwnerId = 'mock_owner_id'
   const mockWikiId = 'mock_wiki_id'
 
-  it('renders a table of contents without crashing', async () => {
-    mockUseGetWikiPage.mockReturnValue(
-      getUseQuerySuccessMock({
-        markdown: '${toc}\n#Heading1',
-        id: '1',
-        modifiedBy: `${MOCK_USER_ID}`,
-        modifiedOn: new Date().toISOString(),
-        title: 'toc',
-        attachmentFileHandleIds: [],
-        createdBy: `${MOCK_USER_ID}`,
-        createdOn: new Date().toISOString(),
-        etag: 'etag',
-      }),
+  function mockWikiPage(wikiPage: WikiPage) {
+    server.use(
+      http.get(
+        `${REPO_ORIGIN}/repo/v1/entity/${mockOwnerId}/wiki/${mockWikiId}`,
+        () => HttpResponse.json(wikiPage),
+      ),
+      http.get(
+        `${REPO_ORIGIN}/repo/v1/entity/${mockOwnerId}/wiki2/${mockWikiId}/attachmenthandles`,
+        () => HttpResponse.json({ list: [] }),
+      ),
     )
+  }
+
+  it('renders a table of contents without crashing', async () => {
+    mockWikiPage({
+      markdown: '${toc}\n#Heading1',
+      id: '1',
+      modifiedBy: `${MOCK_USER_ID}`,
+      modifiedOn: new Date().toISOString(),
+      title: 'toc',
+      attachmentFileHandleIds: [],
+      createdBy: `${MOCK_USER_ID}`,
+      createdOn: new Date().toISOString(),
+      etag: 'etag',
+    })
 
     render(<MarkdownSynapse ownerId={mockOwnerId} wikiId={mockWikiId} />, {
       wrapper: createWrapper(),
@@ -54,19 +60,17 @@ describe('renders without crashing', () => {
   })
 
   it('renders a table of contents with a non-toc-header header', async () => {
-    mockUseGetWikiPage.mockReturnValue(
-      getUseQuerySuccessMock({
-        markdown: "${toc}\n#Heading1\n##! Don't show me!",
-        id: '1',
-        modifiedBy: `${MOCK_USER_ID}`,
-        modifiedOn: new Date().toISOString(),
-        title: 'toc',
-        attachmentFileHandleIds: [],
-        createdBy: `${MOCK_USER_ID}`,
-        createdOn: new Date().toISOString(),
-        etag: 'etag',
-      }),
-    )
+    mockWikiPage({
+      markdown: "${toc}\n#Heading1\n##! Don't show me!",
+      id: '1',
+      modifiedBy: `${MOCK_USER_ID}`,
+      modifiedOn: new Date().toISOString(),
+      title: 'toc',
+      attachmentFileHandleIds: [],
+      createdBy: `${MOCK_USER_ID}`,
+      createdOn: new Date().toISOString(),
+      etag: 'etag',
+    })
 
     render(<MarkdownSynapse ownerId={mockOwnerId} wikiId={mockWikiId} />, {
       wrapper: createWrapper(),

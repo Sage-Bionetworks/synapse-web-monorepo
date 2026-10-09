@@ -6,21 +6,22 @@ import {
   MOCK_USER_ID_2,
   MOCK_USER_ID_3,
 } from '@/mocks/user/mock_user_profile'
-import { useSearchAccessSubmissionUserRequestsInfinite } from '@/synapse-queries/dataaccess/useDataAccessSubmission'
-import { getUseInfiniteQueryMock } from '@/testutils/ReactQueryMockUtils'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { REPO } from '@/utils/APIConstants'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import {
-  SynapseClientError,
-  UserSubmissionSearchResponse,
+  UserSubmissionSearchRequest,
   UserSubmissionSearchResult,
 } from '@sage-bionetworks/synapse-client'
 import { SubmissionState } from '@sage-bionetworks/synapse-types'
-import { act, render, screen, within } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 
 vi.mock('@/utils/functions/DateFormatter')
-vi.mock('@/synapse-queries/dataaccess/useDataAccessSubmission')
 vi.mock('@/components/UserOrTeamBadge/UserOrTeamBadge')
 vi.mock(
   '@/components/dataaccess/UserAccessRequestHistory/InFlightEDucSignaturesTable',
@@ -33,9 +34,9 @@ vi.mocked(formatDate).mockReturnValue('mock formatted date')
 vi.mocked(UserOrTeamBadge).mockImplementation(() => (
   <span data-testid={'UserOrTeamBadge'} />
 ))
-const mockUseSearchAccessSubmissionUserRequestsInfinite = vi.mocked(
-  useSearchAccessSubmissionUserRequestsInfinite,
-)
+const USER_REQUESTS_URL = `${getEndpoint(
+  BackendDestinationEnum.REPO_ENDPOINT,
+)}${REPO}/dataAccessSubmission/userRequests`
 
 const futureDate = new Date()
 futureDate.setFullYear(futureDate.getFullYear() + 5)
@@ -82,34 +83,27 @@ const data: UserSubmissionSearchResult[] = [
   },
 ]
 
+function renderPage() {
+  const router = createMemoryRouter([
+    {
+      path: '/',
+      element: <UserAccessRequestHistoryPage />,
+    },
+  ])
+  render(<RouterProvider router={router} />, { wrapper: createWrapper() })
+}
+
 describe('UserAccessRequestHistoryTable', () => {
-  const {
-    mock: useSearchAccessSubmissionUserRequestsInfiniteMockImpl,
-    setSuccess: setMockUseSearchAccessSubmissionUserRequestsInfiniteSuccess,
-    mockFetchNextPage,
-  } = getUseInfiniteQueryMock<
-    UserSubmissionSearchResponse,
-    SynapseClientError
-  >()
+  beforeAll(() => server.listen())
+  afterEach(() => server.resetHandlers())
+  afterAll(() => server.close())
 
   it('Displays table of data', async () => {
-    mockUseSearchAccessSubmissionUserRequestsInfinite.mockImplementation(
-      useSearchAccessSubmissionUserRequestsInfiniteMockImpl,
+    server.use(
+      http.post(USER_REQUESTS_URL, () => HttpResponse.json({ results: data })),
     )
 
-    const router = createMemoryRouter([
-      {
-        path: '/',
-        element: <UserAccessRequestHistoryPage />,
-      },
-    ])
-    render(<RouterProvider router={router} />)
-
-    act(() => {
-      setMockUseSearchAccessSubmissionUserRequestsInfiniteSuccess([
-        { results: data },
-      ])
-    })
+    renderPage()
 
     screen.getByText('History of your access requests')
 
@@ -123,8 +117,11 @@ describe('UserAccessRequestHistoryTable', () => {
     expect(columnHeaders[4]).toHaveTextContent('Submitter')
     expect(columnHeaders[5]).toHaveTextContent('')
 
+    // 4 data rows + 1 header row
+    await waitFor(() =>
+      expect(within(table).getAllByRole('row')).toHaveLength(5),
+    )
     const rows = within(table).getAllByRole('row')
-    expect(rows.length).toBe(5) // 4 data rows + 1 header row
     const row1Cells = within(rows[1]).getAllByRole('cell')
     expect(row1Cells[0]).toHaveTextContent('Requirement A')
     expect(row1Cells[1]).toHaveTextContent('Approved')
@@ -147,21 +144,20 @@ describe('UserAccessRequestHistoryTable', () => {
   })
 
   it('Handles pagination', async () => {
-    const hasNextPage = true
-    const router = createMemoryRouter([
-      {
-        path: '/',
-        element: <UserAccessRequestHistoryPage />,
-      },
-    ])
-    render(<RouterProvider router={router} />)
+    const requestBodies: UserSubmissionSearchRequest[] = []
+    server.use(
+      http.post(USER_REQUESTS_URL, async ({ request }) => {
+        const body = (await request.json()) as UserSubmissionSearchRequest
+        requestBodies.push(body)
+        return HttpResponse.json(
+          body.nextPageToken
+            ? { results: [] }
+            : { results: data, nextPageToken: 'nextPageToken' },
+        )
+      }),
+    )
 
-    act(() => {
-      setMockUseSearchAccessSubmissionUserRequestsInfiniteSuccess(
-        [{ results: data, nextPageToken: 'nextPageToken' }],
-        hasNextPage,
-      )
-    })
+    renderPage()
 
     screen.getByText('History of your access requests')
     const button = await screen.findByRole('button', {
@@ -169,6 +165,11 @@ describe('UserAccessRequestHistoryTable', () => {
     })
 
     await userEvent.click(button)
-    expect(mockFetchNextPage).toHaveBeenCalled()
+    await waitFor(() =>
+      expect(requestBodies).toEqual([
+        expect.not.objectContaining({ nextPageToken: expect.anything() }),
+        expect.objectContaining({ nextPageToken: 'nextPageToken' }),
+      ]),
+    )
   })
 })

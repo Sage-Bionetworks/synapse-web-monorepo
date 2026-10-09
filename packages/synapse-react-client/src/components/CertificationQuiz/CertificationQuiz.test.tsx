@@ -5,25 +5,15 @@ import {
 } from '@/mocks/mockCertificationQuiz'
 import { server } from '@/mocks/msw/server'
 import { mockUserBundle } from '@/mocks/user/mock_user_profile'
-import { useGetCurrentUserBundle } from '@/synapse-queries'
-import {
-  useGetPassingRecord,
-  usePostCertifiedUserTestResponse,
-} from '@/synapse-queries/user/useCertificationQuiz'
-import {
-  getUseMutationMock,
-  getUseQueryMock,
-} from '@/testutils/ReactQueryMockUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { formatDate } from '@/utils/functions/DateFormatter'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
+  MULTICHOICE_RESPONSE_CONCRETE_TYPE_VALUE,
   PassingRecord,
-  QuizResponse,
   UserBundle,
 } from '@sage-bionetworks/synapse-types'
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import dayjs from 'dayjs'
 import { noop } from 'lodash-es'
@@ -32,24 +22,7 @@ import * as ToastMessage from '../ToastMessage/ToastMessage'
 import CertificationQuiz from './CertificationQuiz'
 
 window.open = vi.fn()
-vi.mock('../../synapse-queries/user/useCertificationQuiz', () => {
-  return {
-    usePostCertifiedUserTestResponse: vi.fn(),
-    useGetPassingRecord: vi.fn(),
-  }
-})
-
-const mockUsePostCertifiedUserTestResponse = vi.mocked(
-  usePostCertifiedUserTestResponse,
-)
-const mockUseGetPassingRecord = vi.mocked(useGetPassingRecord)
-
-vi.mock('../../synapse-queries/user/useUserBundle', () => {
-  return {
-    useGetCurrentUserBundle: vi.fn(),
-  }
-})
-const mockUseGetCurrentUserBundle = vi.mocked(useGetCurrentUserBundle)
+window.scrollTo = vi.fn()
 
 const mockToastFn = vi
   .spyOn(ToastMessage, 'displayToast')
@@ -57,14 +30,45 @@ const mockToastFn = vi
 const gettingStartedUrl =
   'https://help.synapse.org/docs/Getting-Started.2055471150.html'
 
+const repoEndpoint = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
+
 const getQuizHandler = http.get(
-  `${getEndpoint(
-    BackendDestinationEnum.REPO_ENDPOINT,
-  )}/repo/v1/certifiedUserTest`,
+  `${repoEndpoint}/repo/v1/certifiedUserTest`,
   () => {
     return HttpResponse.json(mockQuiz, { status: 200 })
   },
 )
+
+const passingRecordRequestSpy = vi.fn()
+const postQuizResponseSpy = vi.fn()
+
+/**
+ * Mocks the user's certification state. A null passing record is represented by a 404, which is how the backend
+ * reports that the user has never taken the quiz.
+ */
+function mockCertificationState(
+  passingRecord: PassingRecord | null,
+  userBundle: UserBundle,
+) {
+  server.use(
+    http.get(`${repoEndpoint}/repo/v1/user/bundle`, () =>
+      HttpResponse.json(userBundle, { status: 200 }),
+    ),
+    // Note: SynapseClient.getPassingRecord builds a URL with a double slash after /repo/v1
+    http.get(
+      `${repoEndpoint}/repo/v1//user/:id/certifiedUserPassingRecord`,
+      () => {
+        passingRecordRequestSpy()
+        return passingRecord
+          ? HttpResponse.json(passingRecord, { status: 200 })
+          : HttpResponse.json(
+              { reason: 'No passing record found' },
+              { status: 404 },
+            )
+      },
+    ),
+  )
+}
 
 function renderComponent() {
   render(<CertificationQuiz />, {
@@ -72,33 +76,29 @@ function renderComponent() {
   })
 }
 
-const {
-  mock: useGetPassingRecordMockImpl,
-  setSuccess: setMockUseGetPassingRecordSuccess,
-} = getUseQueryMock<PassingRecord | null, SynapseClientError>()
+/**
+ * Waits until the user bundle has been loaded and the passing record has been requested. Until then, the
+ * component renders the quiz form as if the user had not taken the quiz, which is replaced by a skeleton once the
+ * passing record is being loaded.
+ */
+async function waitForCertificationStateRequested() {
+  await waitFor(() => expect(passingRecordRequestSpy).toHaveBeenCalled())
+}
 
-const {
-  mock: useGetCurrentUserBundleMockImpl,
-  setSuccess: setMockUseGetCurrentUserBundleSuccess,
-} = getUseQueryMock<UserBundle, SynapseClientError>()
-
-const { mock: mutationMockImpl, mockMutate } = getUseMutationMock<
-  PassingRecord,
-  SynapseClientError,
-  QuizResponse
->()
-
-const emptyPassingRecordResult = null
 const userBundleResult = { ...mockUserBundle, isCertified: false }
 
 describe('CertificationQuiz tests', () => {
   beforeAll(() => server.listen())
   beforeEach(() => {
-    server.use(getQuizHandler)
-    mockUsePostCertifiedUserTestResponse.mockImplementation(mutationMockImpl)
-    mockUseGetPassingRecord.mockImplementation(useGetPassingRecordMockImpl)
-    mockUseGetCurrentUserBundle.mockImplementation(
-      useGetCurrentUserBundleMockImpl,
+    server.use(
+      getQuizHandler,
+      http.post(
+        `${repoEndpoint}/repo/v1/certifiedUserTestResponse`,
+        async ({ request }) => {
+          postQuizResponseSpy(await request.json())
+          return HttpResponse.json(mockPassingRecordPassed, { status: 201 })
+        },
+      ),
     )
   })
 
@@ -109,12 +109,8 @@ describe('CertificationQuiz tests', () => {
   afterAll(() => server.close())
 
   it('Shows loads the certification quiz', async () => {
+    mockCertificationState(null, userBundleResult)
     renderComponent()
-
-    act(() => {
-      setMockUseGetPassingRecordSuccess(emptyPassingRecordResult)
-      setMockUseGetCurrentUserBundleSuccess(userBundleResult)
-    })
 
     // PORTALS-3131: Quiz header not shown - it's now hard-coded
     await screen.findByText('Certified User Quiz')
@@ -122,12 +118,9 @@ describe('CertificationQuiz tests', () => {
   })
 
   it('Open new tab when clicking help button', async () => {
+    mockCertificationState(null, userBundleResult)
     renderComponent()
-
-    act(() => {
-      setMockUseGetPassingRecordSuccess(emptyPassingRecordResult)
-      setMockUseGetCurrentUserBundleSuccess(userBundleResult)
-    })
+    await waitForCertificationStateRequested()
 
     const helpButton = await screen.findByRole('button', { name: 'Help' })
     await userEvent.click(helpButton)
@@ -135,12 +128,9 @@ describe('CertificationQuiz tests', () => {
   })
 
   it('Submit quiz when not all questions are answered', async () => {
+    mockCertificationState(null, userBundleResult)
     renderComponent()
-
-    act(() => {
-      setMockUseGetPassingRecordSuccess(emptyPassingRecordResult)
-      setMockUseGetCurrentUserBundleSuccess(userBundleResult)
-    })
+    await waitForCertificationStateRequested()
 
     const submitButton = await screen.findByRole('button', { name: 'Submit' })
     await userEvent.click(submitButton)
@@ -151,17 +141,14 @@ describe('CertificationQuiz tests', () => {
         'warning',
       ),
     )
+    expect(postQuizResponseSpy).not.toHaveBeenCalled()
   })
 
   it('Submit quiz that did not pass', async () => {
+    mockCertificationState(mockPassingRecordFailed, userBundleResult)
     renderComponent()
 
     // set up and verify quiz failed UI. click retry
-    act(() => {
-      setMockUseGetPassingRecordSuccess(mockPassingRecordFailed)
-      setMockUseGetCurrentUserBundleSuccess(userBundleResult)
-    })
-
     await screen.findByText('Quiz Failed')
 
     expect(mockToastFn).not.toHaveBeenCalled()
@@ -187,12 +174,9 @@ describe('CertificationQuiz tests', () => {
   })
 
   it('Submit quiz that did pass', async () => {
+    mockCertificationState(null, userBundleResult)
     renderComponent()
-
-    act(() => {
-      setMockUseGetPassingRecordSuccess(emptyPassingRecordResult)
-      setMockUseGetCurrentUserBundleSuccess(userBundleResult)
-    })
+    await waitForCertificationStateRequested()
 
     const radio1 = await screen.findByLabelText(
       mockQuiz.questions[0].answers[0].prompt,
@@ -210,19 +194,32 @@ describe('CertificationQuiz tests', () => {
     expect(radio2).toBeChecked()
 
     await userEvent.click(submitButton)
-    expect(mockMutate).toHaveBeenCalledTimes(1)
+
+    await waitFor(() => expect(postQuizResponseSpy).toHaveBeenCalledTimes(1))
+    const expectedQuizResponse = {
+      quizId: mockQuiz.id,
+      questionResponses: [
+        {
+          questionIndex: 0,
+          answerIndex: [0],
+          concreteType: MULTICHOICE_RESPONSE_CONCRETE_TYPE_VALUE,
+        },
+        {
+          questionIndex: 1,
+          answerIndex: [0],
+          concreteType: MULTICHOICE_RESPONSE_CONCRETE_TYPE_VALUE,
+        },
+      ],
+    }
+    expect(postQuizResponseSpy).toHaveBeenCalledWith(expectedQuizResponse)
   })
 
   it('Verify passing UI', async () => {
-    renderComponent()
-
-    act(() => {
-      setMockUseGetPassingRecordSuccess(mockPassingRecordPassed)
-      setMockUseGetCurrentUserBundleSuccess({
-        ...mockUserBundle,
-        isCertified: true,
-      })
+    mockCertificationState(mockPassingRecordPassed, {
+      ...mockUserBundle,
+      isCertified: true,
     })
+    renderComponent()
 
     const passedOnFormatted = formatDate(
       dayjs(mockPassingRecordPassed.passedOn),
@@ -233,18 +230,17 @@ describe('CertificationQuiz tests', () => {
   })
 
   it('Test ACT revoked case - Passed quiz but not certified', async () => {
-    renderComponent()
-
-    act(() => {
-      setMockUseGetPassingRecordSuccess({
+    mockCertificationState(
+      {
         ...mockPassingRecordPassed,
         revokedOn: new Date().toISOString(),
-      })
-      setMockUseGetCurrentUserBundleSuccess({
+      },
+      {
         ...mockUserBundle,
         isCertified: false,
-      })
-    })
+      },
+    )
+    renderComponent()
 
     await screen.findByText('Your certification was revoked', { exact: false })
     await screen.findByText('retake the quiz')

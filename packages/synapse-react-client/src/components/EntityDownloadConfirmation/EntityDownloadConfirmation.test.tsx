@@ -1,33 +1,46 @@
 import AddToDownloadListConfirmationAlert from '@/components/download_list/AddToDownloadListConfirmationAlert/AddToDownloadListConfirmationAlert'
+import { server } from '@/mocks/msw/server'
+import { ENTITY_ID } from '@/utils/APIConstants'
 import { convertToConcreteEntityType } from '@/utils/functions/EntityTypeUtils'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import { EntityType } from '@sage-bionetworks/synapse-client'
+import { Entity } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
+import { http, HttpResponse } from 'msw'
 import mockFileEntityData from '../../mocks/entity/mockFileEntity'
 import mockTableEntity from '../../mocks/entity/mockTableEntity'
-import { useGetEntity } from '../../synapse-queries/'
-import { getUseQuerySuccessMock } from '../../testutils/ReactQueryMockUtils'
 import { createWrapper } from '../../testutils/TestingLibraryUtils'
 import EntityDownloadConfirmation, {
   EntityDownloadConfirmationProps,
 } from './EntityDownloadConfirmation'
 
-vi.mock('../../synapse-queries')
 vi.mock(
   '../download_list/AddToDownloadListConfirmationAlert/AddToDownloadListConfirmationAlert',
 )
 
-const mockUseGetEntity = vi.mocked(useGetEntity)
+function mockGetEntity(entity: Entity & { versionNumber?: number }) {
+  server.use(
+    http.get(
+      `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_ID(':id')}`,
+      () => HttpResponse.json(entity),
+    ),
+  )
+}
+
 const mockAddToDownloadListConfirmationAlert = vi
   .mocked(AddToDownloadListConfirmationAlert)
   .mockReturnValue(<div data-testid="AddToDownloadListConfirmationAlert" />)
 
+beforeAll(() => server.listen())
 beforeEach(() => {
   vi.clearAllMocks()
-
-  mockUseGetEntity.mockReturnValue(
-    getUseQuerySuccessMock(mockTableEntity.entity),
-  )
+  mockGetEntity(mockTableEntity.entity)
 })
+afterEach(() => server.restoreHandlers())
+afterAll(() => server.close())
 
 describe('EntityDownloadConfirmation', () => {
   const props: EntityDownloadConfirmationProps = {
@@ -39,12 +52,10 @@ describe('EntityDownloadConfirmation', () => {
   it.each([EntityType.project, EntityType.folder])(
     'shows the download confirmation UI for a container (%s) when clicked',
     async entityType => {
-      mockUseGetEntity.mockReturnValue(
-        getUseQuerySuccessMock({
-          ...mockTableEntity.entity,
-          concreteType: convertToConcreteEntityType(entityType),
-        }),
-      )
+      mockGetEntity({
+        ...mockTableEntity.entity,
+        concreteType: convertToConcreteEntityType(entityType),
+      })
 
       render(<EntityDownloadConfirmation {...props} />, {
         wrapper: createWrapper(),
@@ -73,12 +84,10 @@ describe('EntityDownloadConfirmation', () => {
   it.each([EntityType.dataset, EntityType.datasetcollection])(
     'shows the download confirmation UI for a collection (%s) when clicked',
     async entityType => {
-      mockUseGetEntity.mockReturnValue(
-        getUseQuerySuccessMock({
-          ...mockTableEntity.entity,
-          concreteType: convertToConcreteEntityType(entityType),
-        }),
-      )
+      mockGetEntity({
+        ...mockTableEntity.entity,
+        concreteType: convertToConcreteEntityType(entityType),
+      })
 
       render(<EntityDownloadConfirmation {...props} />, {
         wrapper: createWrapper(),
@@ -105,12 +114,10 @@ describe('EntityDownloadConfirmation', () => {
   )
 
   it('shows the download confirmation UI for entityview (query) when clicked', async () => {
-    mockUseGetEntity.mockReturnValue(
-      getUseQuerySuccessMock({
-        ...mockTableEntity.entity,
-        concreteType: convertToConcreteEntityType(EntityType.entityview),
-      }),
-    )
+    mockGetEntity({
+      ...mockTableEntity.entity,
+      concreteType: convertToConcreteEntityType(EntityType.entityview),
+    })
 
     render(<EntityDownloadConfirmation {...props} />, {
       wrapper: createWrapper(),
@@ -135,13 +142,11 @@ describe('EntityDownloadConfirmation', () => {
 
   it('shows the download confirmation UI for entityview snapshot (query) when clicked', async () => {
     const versionNumber = 3
-    mockUseGetEntity.mockReturnValue(
-      getUseQuerySuccessMock({
-        ...mockTableEntity.entity,
-        concreteType: convertToConcreteEntityType(EntityType.entityview),
-        versionNumber,
-      }),
-    )
+    mockGetEntity({
+      ...mockTableEntity.entity,
+      concreteType: convertToConcreteEntityType(EntityType.entityview),
+      versionNumber,
+    })
 
     render(
       <EntityDownloadConfirmation {...props} versionNumber={versionNumber} />,
@@ -168,9 +173,7 @@ describe('EntityDownloadConfirmation', () => {
   })
 
   it('waits for the button to disappear for other entity types', async () => {
-    mockUseGetEntity.mockReturnValue(
-      getUseQuerySuccessMock(mockFileEntityData.entity),
-    )
+    mockGetEntity(mockFileEntityData.entity)
     render(<EntityDownloadConfirmation {...props} />, {
       wrapper: createWrapper(),
     })

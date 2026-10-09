@@ -1,33 +1,27 @@
-import { useCreateEntity } from '@/synapse-queries'
-import { useCreateColumnModels } from '@/synapse-queries/table/useColumnModel'
-import { useTableUpdateTransaction } from '@/synapse-queries/table/useTableUpdateTransaction'
-import { getUseMutationMock } from '@/testutils/ReactQueryMockUtils'
+import {
+  dispatchEntry,
+  generateAsyncJobHandlers,
+} from '@/mocks/msw/handlers/asyncJobHandlers'
+import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { SynapseClientError } from '@/utils/index'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import {
   CsvTableDescriptor,
   TableUpdateTransactionRequest,
-  TableUpdateTransactionResponse,
 } from '@sage-bionetworks/synapse-client'
 import {
   Entity,
   ColumnModel as SynapseTypesColumnModel,
 } from '@sage-bionetworks/synapse-types'
 import { act, renderHook } from '@testing-library/react'
+import { http, HttpResponse } from 'msw'
 import { SetOptional } from 'type-fest'
 import useCreateTableFromCsv from './useCreateTableFromCsv'
 
-vi.mock('@/synapse-queries/table/useColumnModel', () => ({
-  useCreateColumnModels: vi.fn(),
-}))
-
-vi.mock('../../../synapse-queries/entity/useEntity', () => ({
-  useCreateEntity: vi.fn(),
-}))
-
-vi.mock('@/synapse-queries/table/useTableUpdateTransaction', () => ({
-  useTableUpdateTransaction: vi.fn(),
-}))
+const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
 describe('useCreateTableFromCsv', () => {
   const csvTableDescriptor: CsvTableDescriptor = {
@@ -39,38 +33,46 @@ describe('useCreateTableFromCsv', () => {
   }
   const fileHandleId = 'someFileHandleId'
 
-  const {
-    mock: mockUseCreateColumnModels,
-    mockMutateAsync: mockCreateColumnModels,
-  } = getUseMutationMock<
-    SynapseTypesColumnModel[],
-    SynapseClientError,
-    SetOptional<SynapseTypesColumnModel, 'id'>[]
-  >()
-  const { mock: mockUseCreateEntity, mockMutateAsync: mockCreateEntity } =
-    getUseMutationMock<Entity, SynapseClientError, Entity>()
-  const {
-    mock: mockUseTableUpdateTransaction,
-    mockMutateAsync: mockTableUpdateTransaction,
-  } = getUseMutationMock<
-    TableUpdateTransactionResponse,
-    SynapseClientError,
-    TableUpdateTransactionRequest
-  >()
+  const mockCreateColumnModels =
+    vi.fn<
+      (body: { list: SetOptional<SynapseTypesColumnModel, 'id'>[] }) => void
+    >()
+  const mockCreateEntity = vi.fn<(body: Entity) => void>()
+  const mockTableUpdateTransaction =
+    vi.fn<(request: TableUpdateTransactionRequest) => void>()
 
+  beforeAll(() => server.listen())
   beforeEach(() => {
-    vi.mocked(useCreateColumnModels).mockImplementation(
-      mockUseCreateColumnModels,
-    )
-    vi.mocked(useCreateEntity).mockImplementation(mockUseCreateEntity)
-    vi.mocked(useTableUpdateTransaction).mockImplementation(
-      mockUseTableUpdateTransaction,
+    server.use(
+      ...generateAsyncJobHandlers(
+        dispatchEntry(
+          'org.sagebionetworks.repo.model.table.TableUpdateTransactionRequest',
+          request => {
+            mockTableUpdateTransaction(request)
+            return {
+              concreteType:
+                'org.sagebionetworks.repo.model.table.TableUpdateTransactionResponse',
+              results: [],
+            }
+          },
+        ),
+        {
+          asyncTypeServicePaths: {
+            requestPath:
+              '/repo/v1/entity/:entityId/table/transaction/async/start',
+            responsePath: tokenParam =>
+              `/repo/v1/entity/:entityId/table/transaction/async/get/${tokenParam}`,
+          },
+          backendOrigin: REPO_ENDPOINT,
+        },
+      ),
     )
   })
-
   afterEach(() => {
-    vi.resetAllMocks()
+    server.restoreHandlers()
+    vi.clearAllMocks()
   })
+  afterAll(() => server.close())
 
   it('creates column models, entity, then runs the table transaction', async () => {
     const parentId = 'syn456'
@@ -84,10 +86,27 @@ describe('useCreateTableFromCsv', () => {
     ] as SynapseTypesColumnModel[]
     const newEntityId = 'syn789'
 
-    mockCreateColumnModels.mockResolvedValue(createdColumns)
-    mockCreateEntity.mockResolvedValue({ id: newEntityId } as Entity)
-    mockTableUpdateTransaction.mockResolvedValue(
-      {} as TableUpdateTransactionResponse,
+    server.use(
+      http.post<never, { list: SetOptional<SynapseTypesColumnModel, 'id'>[] }>(
+        `${REPO_ENDPOINT}/repo/v1/column/batch`,
+        async ({ request }) => {
+          mockCreateColumnModels(await request.json())
+          return HttpResponse.json(
+            {
+              concreteType: 'org.sagebionetworks.repo.model.table.ColumnModel',
+              list: createdColumns,
+            },
+            { status: 201 },
+          )
+        },
+      ),
+      http.post<never, Entity>(
+        `${REPO_ENDPOINT}/repo/v1/entity`,
+        async ({ request }) => {
+          mockCreateEntity(await request.json())
+          return HttpResponse.json({ id: newEntityId }, { status: 201 })
+        },
+      ),
     )
 
     const { result } = renderHook(() => useCreateTableFromCsv(), {
@@ -104,7 +123,16 @@ describe('useCreateTableFromCsv', () => {
       })
     })
 
-    expect(mockCreateColumnModels).toHaveBeenCalledWith(columnModels)
+    expect(mockCreateColumnModels).toHaveBeenCalledWith(
+      expect.objectContaining({
+        list: [
+          {
+            ...columnModels[0],
+            concreteType: 'org.sagebionetworks.repo.model.table.ColumnModel',
+          },
+        ],
+      }),
+    )
     expect(mockCreateEntity).toHaveBeenCalledWith({
       name: tableName,
       parentId,
@@ -128,8 +156,17 @@ describe('useCreateTableFromCsv', () => {
   })
 
   it('propagates errors from inner mutations', async () => {
-    mockCreateColumnModels.mockRejectedValue(
-      new SynapseClientError(400, 'boom', expect.getState().currentTestName!),
+    server.use(
+      http.post(`${REPO_ENDPOINT}/repo/v1/column/batch`, () =>
+        HttpResponse.json({ reason: 'boom' }, { status: 400 }),
+      ),
+      http.post<never, Entity>(
+        `${REPO_ENDPOINT}/repo/v1/entity`,
+        async ({ request }) => {
+          mockCreateEntity(await request.json())
+          return HttpResponse.json({ id: 'syn789' }, { status: 201 })
+        },
+      ),
     )
 
     const { result } = renderHook(() => useCreateTableFromCsv(), {

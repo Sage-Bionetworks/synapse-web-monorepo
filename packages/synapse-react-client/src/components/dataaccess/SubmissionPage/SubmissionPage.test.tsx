@@ -19,28 +19,19 @@ import {
   MOCK_USER_NAME_2,
   MOCK_USER_NAME_3,
 } from '@/mocks/user/mock_user_profile'
-import { useGetUserAccessApproval } from '@/synapse-queries/dataaccess/useAccessApprovals'
-import { useGetThreadForSubmission } from '@/synapse-queries/forum/useThread'
-import {
-  getUseQueryErrorMock,
-  getUseQueryIdleMock,
-  getUseQuerySuccessMock,
-} from '@/testutils/ReactQueryMockUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   ACCESS_REQUIREMENT_ACL,
   ACCESS_REQUIREMENT_BY_ID,
   ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
   DATA_ACCESS_SUBMISSION_BY_ID,
+  THREAD_FOR_SUBMISSION,
 } from '@/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
-import {
-  AccessApproval,
-  SynapseClientError,
-} from '@sage-bionetworks/synapse-client'
+import { AccessApproval } from '@sage-bionetworks/synapse-client'
 import {
   ACCESS_TYPE,
   AccessControlList,
@@ -76,10 +67,6 @@ const onServerReceivedUpdate = vi.fn()
 
 vi.mock('react-router')
 vi.mock('./CancelDataAccessRequestConfirmationModal')
-vi.mock('@/synapse-queries/dataaccess/useAccessApprovals')
-vi.mock('@/synapse-queries/forum/useThread', () => ({
-  useGetThreadForSubmission: vi.fn(),
-}))
 
 vi.mock('@/components/AccessRequirementList/AccessRequirementList')
 
@@ -129,13 +116,19 @@ const mockDiscussionThread = vi
   .mocked(DiscussionThread)
   .mockImplementation(() => <div data-testid="DiscussionThread" />)
 
-const mockGetThreadForSubmission = vi
-  .mocked(useGetThreadForSubmission)
-  .mockReturnValue(getUseQueryIdleMock())
+const USER_ACCESS_APPROVAL_PATH = (submissionId: string | number) =>
+  `${DATA_ACCESS_SUBMISSION_BY_ID(submissionId)}/userAccessApproval`
 
-const mockGetUserAccessApproval = vi
-  .mocked(useGetUserAccessApproval)
-  .mockReturnValue(getUseQueryIdleMock())
+function mockUserAccessApprovalResponse(accessApproval: AccessApproval) {
+  server.use(
+    http.get(
+      `${getEndpoint(
+        BackendDestinationEnum.REPO_ENDPOINT,
+      )}${USER_ACCESS_APPROVAL_PATH(':id')}`,
+      () => HttpResponse.json(accessApproval, { status: 200 }),
+    ),
+  )
+}
 
 const mockAccessApproval: AccessApproval = {
   id: 123,
@@ -153,9 +146,8 @@ const mockAccessApproval: AccessApproval = {
 }
 
 describe('Submission Page tests', () => {
-  beforeAll(() => {
-    server.listen()
-
+  beforeAll(() => server.listen())
+  beforeEach(() => {
     // Configure MSW
     server.use(
       // Return submission based on ID
@@ -211,6 +203,28 @@ describe('Submission Page tests', () => {
           )
         },
       ),
+      // By default, the user has no access approval
+      http.get(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}${USER_ACCESS_APPROVAL_PATH(':id')}`,
+        () =>
+          HttpResponse.json(
+            { reason: 'No access approval found' },
+            { status: 404 },
+          ),
+      ),
+      // By default, the submission has no associated thread
+      http.get(
+        `${getEndpoint(
+          BackendDestinationEnum.REPO_ENDPOINT,
+        )}${THREAD_FOR_SUBMISSION(':id')}`,
+        () =>
+          HttpResponse.json(
+            { reason: 'No thread found for submission' },
+            { status: 404 },
+          ),
+      ),
       http.put(
         `${getEndpoint(
           BackendDestinationEnum.REPO_ENDPOINT,
@@ -223,7 +237,7 @@ describe('Submission Page tests', () => {
     )
   })
   afterEach(() => {
-    server.restoreHandlers()
+    server.resetHandlers()
     vi.clearAllMocks()
   })
   afterAll(() => server.close())
@@ -414,16 +428,6 @@ describe('Submission Page tests', () => {
 
   describe('Viewing page as an accessor', () => {
     it('supports canceling a SUBMITTED request', async () => {
-      mockGetUserAccessApproval.mockReturnValue(
-        getUseQueryErrorMock(
-          new SynapseClientError(
-            404,
-            'Not found',
-            expect.getState().currentTestName!,
-          ),
-        ),
-      )
-
       renderComponent({
         submissionId: SUBMITTED_SUBMISSION_ID,
         isReviewer: false,
@@ -450,13 +454,11 @@ describe('Submission Page tests', () => {
     it('supports updating an APPROVED and unexpired request', async () => {
       const futureDate = new Date()
       futureDate.setFullYear(futureDate.getFullYear() + 1)
-      mockGetUserAccessApproval.mockReturnValue(
-        getUseQuerySuccessMock({
-          ...mockAccessApproval,
-          expiredOn: futureDate.toISOString(),
-          state: 'APPROVED',
-        }),
-      )
+      mockUserAccessApprovalResponse({
+        ...mockAccessApproval,
+        expiredOn: futureDate.toISOString(),
+        state: 'APPROVED',
+      })
       renderComponent({
         submissionId: APPROVED_SUBMISSION_ID,
         isReviewer: false,
@@ -485,13 +487,11 @@ describe('Submission Page tests', () => {
     it('supports updating an APPROVED and expired request', async () => {
       const pastDate = new Date()
       pastDate.setFullYear(pastDate.getFullYear() - 1)
-      mockGetUserAccessApproval.mockReturnValue(
-        getUseQuerySuccessMock({
-          ...mockAccessApproval,
-          expiredOn: pastDate.toISOString(),
-          state: 'APPROVED',
-        }),
-      )
+      mockUserAccessApprovalResponse({
+        ...mockAccessApproval,
+        expiredOn: pastDate.toISOString(),
+        state: 'APPROVED',
+      })
       renderComponent({
         submissionId: APPROVED_SUBMISSION_ID,
         isReviewer: false,
@@ -518,16 +518,6 @@ describe('Submission Page tests', () => {
     })
 
     it('supports updating a CANCELLED request', async () => {
-      mockGetUserAccessApproval.mockReturnValue(
-        getUseQueryErrorMock(
-          new SynapseClientError(
-            404,
-            'Not found',
-            expect.getState().currentTestName!,
-          ),
-        ),
-      )
-
       renderComponent({
         submissionId: CANCELLED_SUBMISSION_ID,
         isReviewer: false,
@@ -556,16 +546,6 @@ describe('Submission Page tests', () => {
     it('supports updating a REJECTED request', async () => {
       const pastDate = new Date()
       pastDate.setFullYear(pastDate.getFullYear() - 1)
-      mockGetUserAccessApproval.mockReturnValue(
-        getUseQueryErrorMock(
-          new SynapseClientError(
-            404,
-            'Not found',
-            expect.getState().currentTestName!,
-          ),
-        ),
-      )
-
       renderComponent({
         submissionId: REJECTED_SUBMISSION_ID,
         isReviewer: false,
@@ -596,7 +576,14 @@ describe('Submission Page tests', () => {
         forumId: 'test-forum-id',
         projectId: 'test-project-id',
       })
-      mockGetThreadForSubmission.mockReturnValue(getUseQuerySuccessMock(thread))
+      server.use(
+        http.get(
+          `${getEndpoint(
+            BackendDestinationEnum.REPO_ENDPOINT,
+          )}${THREAD_FOR_SUBMISSION(':id')}`,
+          () => HttpResponse.json(thread, { status: 200 }),
+        ),
+      )
 
       renderComponent({
         submissionId: SUBMITTED_SUBMISSION_ID,
@@ -609,14 +596,13 @@ describe('Submission Page tests', () => {
       )
     })
 
-    it('does not render the Discussion section when there is no associated thread', () => {
-      mockGetThreadForSubmission.mockReturnValue(getUseQueryIdleMock())
-
+    it('does not render the Discussion section when there is no associated thread', async () => {
       renderComponent({
         submissionId: SUBMITTED_SUBMISSION_ID,
         isReviewer: false,
       })
 
+      await screen.findByText('SUBMITTED')
       expect(screen.queryByTestId('DiscussionThread')).not.toBeInTheDocument()
       expect(mockDiscussionThread).not.toHaveBeenCalled()
     })

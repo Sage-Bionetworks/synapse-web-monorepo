@@ -1,5 +1,5 @@
-import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
-import { getUseQuerySuccessMock } from '@/testutils/ReactQueryMockUtils'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   BatchFileResult,
@@ -10,10 +10,11 @@ import { render, screen, waitFor } from '@testing-library/react'
 import { SynapseClient } from '../../index'
 import FeaturedResearch, { FeaturedResearchProps } from './FeaturedResearch'
 
-vi.mock('../../synapse-queries/entity/useGetQueryResultBundle')
-const mockUseGetQueryResultBundle = vi.mocked(useGetQueryResultBundle)
-
 describe('FeaturedResearch Tests', () => {
+  beforeAll(() => server.listen())
+  afterEach(() => server.restoreHandlers())
+  afterAll(() => server.close())
+
   const mockProps: FeaturedResearchProps = {
     sql: 'SELECT * FROM syn64542019',
   }
@@ -120,9 +121,7 @@ describe('FeaturedResearch Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
-    mockUseGetQueryResultBundle.mockReturnValue(
-      getUseQuerySuccessMock(mockQueryResult),
-    )
+    registerTableQueryResult({ sql: mockProps.sql }, mockQueryResult)
   })
 
   function renderComponent(props: FeaturedResearchProps) {
@@ -132,19 +131,13 @@ describe('FeaturedResearch Tests', () => {
   }
 
   it('fetches and displays research cards', async () => {
-    mockUseGetQueryResultBundle.mockReturnValue(
-      getUseQuerySuccessMock(mockQueryResult),
-    )
     renderComponent(mockProps)
 
-    await waitFor(() =>
-      expect(mockUseGetQueryResultBundle).toHaveBeenCalledTimes(1),
-    )
+    await screen.findByText('Title 1')
 
     const headings = screen.getAllByText('Featured Research')
     expect(headings.length).toBe(2)
     expect(screen.getByText('Read more')).toBeInTheDocument()
-    expect(screen.getByText('Title 1')).toBeInTheDocument()
     expect(screen.getByText('Description 1')).toBeInTheDocument()
 
     expect(screen.getByText('Title 2')).toBeInTheDocument()

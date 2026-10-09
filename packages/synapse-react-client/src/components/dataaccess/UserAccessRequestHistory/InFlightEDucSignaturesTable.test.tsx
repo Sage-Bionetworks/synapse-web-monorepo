@@ -1,28 +1,22 @@
 import { displayToast } from '@/components/ToastMessage/ToastMessage'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
-  useListAllUserDataAccessRequests,
-  useVoidDataAccessRequestSignature,
-} from '@/synapse-queries'
-import { useGetAccessRequirements } from '@/synapse-queries/dataaccess/useAccessRequirements'
-import {
-  getUseMutationMock,
-  getUseQueryMock,
-} from '@/testutils/ReactQueryMockUtils'
+  ACCESS_REQUIREMENT_BY_ID,
+  DATA_ACCESS_REQUEST_LIST,
+  DATA_ACCESS_REQUEST_SIGNATURE,
+} from '@/utils/APIConstants'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import {
   AccessRequestSummary,
   AccessRequestSummaryStatusEnum,
-  SynapseClientError,
 } from '@sage-bionetworks/synapse-client'
-import { act, render, screen, waitFor, within } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { delay, http, HttpResponse } from 'msw'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import { InFlightEDucSignaturesTable } from './InFlightEDucSignaturesTable'
 
-vi.mock('@/synapse-queries', () => ({
-  useListAllUserDataAccessRequests: vi.fn(),
-  useVoidDataAccessRequestSignature: vi.fn(),
-}))
-vi.mock('@/synapse-queries/dataaccess/useAccessRequirements')
 vi.mock('@/components/ToastMessage/ToastMessage')
 // The wizard is rendered inside the Modify modal; stub it to keep this test focused on
 // InFlightEDucSignaturesTable behavior.
@@ -40,13 +34,6 @@ vi.mock(
 
 import AccessRequirementList from '@/components/AccessRequirementList/AccessRequirementList'
 
-const mockUseListAllUserDataAccessRequests = vi.mocked(
-  useListAllUserDataAccessRequests,
-)
-const mockUseVoidDataAccessRequestSignature = vi.mocked(
-  useVoidDataAccessRequestSignature,
-)
-const mockUseGetAccessRequirements = vi.mocked(useGetAccessRequirements)
 const mockedDisplayToast = vi.mocked(displayToast)
 const MockAccessRequirementList = vi.mocked(AccessRequirementList)
 
@@ -55,7 +42,38 @@ function renderWithRouter() {
     [{ path: '/', element: <InFlightEDucSignaturesTable /> }],
     { initialEntries: ['/'] },
   )
-  return render(<RouterProvider router={router} />)
+  return render(<RouterProvider router={router} />, {
+    wrapper: createWrapper(),
+  })
+}
+
+const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
+
+function mockRequestList(summaries: AccessRequestSummary[]) {
+  const requested = vi.fn()
+  server.use(
+    http.post(`${REPO_ENDPOINT}${DATA_ACCESS_REQUEST_LIST}`, () => {
+      requested()
+      return HttpResponse.json({ results: summaries })
+    }),
+  )
+  return requested
+}
+
+function mockAccessRequirement(
+  response: () => Promise<Response> | Response,
+): void {
+  server.use(
+    http.get(`${REPO_ENDPOINT}${ACCESS_REQUIREMENT_BY_ID(':id')}`, response),
+  )
+}
+
+const IN_FLIGHT_SUMMARY: AccessRequestSummary = {
+  requestId: '10',
+  accessRequirementId: 'ar-1',
+  accessRequirementName: 'Requirement A',
+  isEDuc: true,
+  status: 'sent',
 }
 
 /**
@@ -97,90 +115,100 @@ const nonInFlightStatuses = statusesWithExpectation
   .map(([status]) => status)
 
 describe('InFlightEDucSignaturesTable', () => {
-  const {
-    mock: listMock,
-    setSuccess: setListSuccess,
-    setError: setListError,
-    setLoading: setListLoading,
-  } = getUseQueryMock<AccessRequestSummary[], SynapseClientError>()
+  const onVoidSignature = vi.fn()
 
-  const { mock: voidMock, mockMutate: mockVoidMutate } = getUseMutationMock<
-    void,
-    SynapseClientError,
-    string
-  >()
-
+  beforeAll(() => server.listen())
   beforeEach(() => {
     mockedDisplayToast.mockReset()
-    mockVoidMutate.mockReset()
-    mockUseListAllUserDataAccessRequests.mockImplementation(listMock)
-    mockUseVoidDataAccessRequestSignature.mockImplementation(voidMock)
-    // Default: AR fetch is idle — the Modify modal will render null until we opt in per-test.
-    mockUseGetAccessRequirements.mockReturnValue({ data: undefined } as never)
+    onVoidSignature.mockReset()
+    server.use(
+      http.delete(
+        `${REPO_ENDPOINT}${DATA_ACCESS_REQUEST_SIGNATURE(':requestId')}`,
+        ({ params }) => {
+          onVoidSignature(params.requestId)
+          return new HttpResponse(null, { status: 200 })
+        },
+      ),
+    )
     MockAccessRequirementList.mockImplementation(() => (
       <div data-testid={'MockAccessRequirementList'} />
     ))
   })
+  afterEach(() => {
+    server.resetHandlers()
+  })
+  afterAll(() => server.close())
 
-  it('renders nothing when the fully-loaded, filtered list is empty', () => {
+  it('renders nothing when the fully-loaded, filtered list is empty', async () => {
     // The list request passes `isEDuc: true` server-side, so the hook only ever sees eDUC
     // records. Client-side we still drop anything past submission (draft / submitted / voided).
+    const requestedBodies: unknown[] = []
+    server.use(
+      http.post(
+        `${REPO_ENDPOINT}${DATA_ACCESS_REQUEST_LIST}`,
+        async ({ request }) => {
+          requestedBodies.push(await request.json())
+          return HttpResponse.json({
+            results: [
+              // eDUC past submission is ignored.
+              { requestId: '2', isEDuc: true, status: 'submitted' },
+              // Draft eDUC has not been routed for signature yet.
+              { requestId: '3', isEDuc: true, status: 'draft' },
+            ],
+          })
+        },
+      ),
+    )
     const { container } = renderWithRouter()
-    act(() => {
-      setListSuccess([
-        // eDUC past submission is ignored.
-        { requestId: '2', isEDuc: true, status: 'submitted' },
-        // Draft eDUC has not been routed for signature yet.
-        { requestId: '3', isEDuc: true, status: 'draft' },
-      ])
-    })
-    expect(container).toBeEmptyDOMElement()
+    await waitFor(() => expect(requestedBodies).toHaveLength(1))
+    expect(requestedBodies[0]).toEqual(
+      expect.objectContaining({ isEDuc: true }),
+    )
+    await waitFor(() => expect(container).toBeEmptyDOMElement())
   })
 
-  it('renders a row for each in-flight eDUC request with the expected columns', () => {
+  it('renders a row for each in-flight eDUC request with the expected columns', async () => {
+    mockRequestList([
+      {
+        requestId: '10',
+        accessRequirementId: 'ar-1',
+        accessRequirementName: 'Requirement A',
+        isEDuc: true,
+        status: 'sent',
+        signaturesAcquired: 2,
+        signaturesRequested: 5,
+      },
+      {
+        requestId: '11',
+        accessRequirementId: 'ar-2',
+        accessRequirementName: 'Requirement B',
+        isEDuc: true,
+        status: 'delivered',
+        signaturesAcquired: 4,
+        signaturesRequested: 5,
+      },
+      {
+        requestId: '12',
+        accessRequirementId: 'ar-3',
+        accessRequirementName: 'Requirement C',
+        isEDuc: true,
+        status: 'completed',
+        signaturesAcquired: 5,
+        signaturesRequested: 5,
+      },
+      {
+        requestId: '13',
+        accessRequirementId: 'ar-4',
+        accessRequirementName: 'Requirement D',
+        isEDuc: true,
+        status: 'declined',
+        signaturesAcquired: 1,
+        signaturesRequested: 5,
+      },
+    ])
     renderWithRouter()
-    act(() => {
-      setListSuccess([
-        {
-          requestId: '10',
-          accessRequirementId: 'ar-1',
-          accessRequirementName: 'Requirement A',
-          isEDuc: true,
-          status: 'sent',
-          signaturesAcquired: 2,
-          signaturesRequested: 5,
-        },
-        {
-          requestId: '11',
-          accessRequirementId: 'ar-2',
-          accessRequirementName: 'Requirement B',
-          isEDuc: true,
-          status: 'delivered',
-          signaturesAcquired: 4,
-          signaturesRequested: 5,
-        },
-        {
-          requestId: '12',
-          accessRequirementId: 'ar-3',
-          accessRequirementName: 'Requirement C',
-          isEDuc: true,
-          status: 'completed',
-          signaturesAcquired: 5,
-          signaturesRequested: 5,
-        },
-        {
-          requestId: '13',
-          accessRequirementId: 'ar-4',
-          accessRequirementName: 'Requirement D',
-          isEDuc: true,
-          status: 'declined',
-          signaturesAcquired: 1,
-          signaturesRequested: 5,
-        },
-      ])
-    })
 
-    screen.getByText(/In-flight eDUC signatures/i)
+    await screen.findByText(/In-flight eDUC signatures/i)
     const table = screen.getByRole('table')
     const columnHeaders = within(table).getAllByRole('columnheader')
     expect(columnHeaders).toHaveLength(4)
@@ -204,23 +232,23 @@ describe('InFlightEDucSignaturesTable', () => {
 
   it.each(inFlightStatuses)(
     'renders a request with status "%s" as "%s"',
-    (status, expectedDisplay) => {
+    async (status, expectedDisplay) => {
+      mockRequestList([
+        {
+          requestId: '10',
+          accessRequirementId: 'ar-1',
+          accessRequirementName: 'Requirement A',
+          isEDuc: true,
+          status,
+          signaturesAcquired: 2,
+          signaturesRequested: 5,
+        },
+      ])
       renderWithRouter()
-      act(() => {
-        setListSuccess([
-          {
-            requestId: '10',
-            accessRequirementId: 'ar-1',
-            accessRequirementName: 'Requirement A',
-            isEDuc: true,
-            status,
-            signaturesAcquired: 2,
-            signaturesRequested: 5,
-          },
-        ])
-      })
 
-      const dataRow = within(screen.getByRole('table')).getAllByRole('row')[1]
+      const dataRow = within(await screen.findByRole('table')).getAllByRole(
+        'row',
+      )[1]
       expect(within(dataRow).getAllByRole('cell')[2]).toHaveTextContent(
         expectedDisplay,
       )
@@ -229,42 +257,39 @@ describe('InFlightEDucSignaturesTable', () => {
 
   it.each(nonInFlightStatuses)(
     'filters out a request with status "%s"',
-    status => {
-      const { container } = renderWithRouter()
-      act(() => {
-        setListSuccess([
-          {
-            requestId: '10',
-            accessRequirementId: 'ar-1',
-            accessRequirementName: 'Requirement A',
-            isEDuc: true,
-            status,
-          },
-        ])
-      })
-
-      expect(container).toBeEmptyDOMElement()
-    },
-  )
-
-  it('keeps a declined request actionable so the user can modify or cancel it', () => {
-    renderWithRouter()
-    act(() => {
-      setListSuccess([
+    async status => {
+      const requested = mockRequestList([
         {
           requestId: '10',
           accessRequirementId: 'ar-1',
           accessRequirementName: 'Requirement A',
           isEDuc: true,
-          status: 'declined',
-          signaturesAcquired: 1,
-          signaturesRequested: 5,
+          status,
         },
       ])
-    })
+      const { container } = renderWithRouter()
+
+      await waitFor(() => expect(requested).toHaveBeenCalled())
+      await waitFor(() => expect(container).toBeEmptyDOMElement())
+    },
+  )
+
+  it('keeps a declined request actionable so the user can modify or cancel it', async () => {
+    mockRequestList([
+      {
+        requestId: '10',
+        accessRequirementId: 'ar-1',
+        accessRequirementName: 'Requirement A',
+        isEDuc: true,
+        status: 'declined',
+        signaturesAcquired: 1,
+        signaturesRequested: 5,
+      },
+    ])
+    renderWithRouter()
 
     expect(
-      screen.getByRole('link', { name: 'Review Signatures and Submit' }),
+      await screen.findByRole('link', { name: 'Review Signatures and Submit' }),
     ).toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: 'Modify Request' }),
@@ -274,46 +299,36 @@ describe('InFlightEDucSignaturesTable', () => {
     ).toBeInTheDocument()
   })
 
-  it('links "Review Signatures and Submit" to the deep-link signature route', () => {
+  it('links "Review Signatures and Submit" to the deep-link signature route', async () => {
+    mockRequestList([
+      {
+        requestId: '10',
+        accessRequirementId: 'ar-1',
+        accessRequirementName: 'Requirement A',
+        isEDuc: true,
+        status: 'sent',
+        signaturesAcquired: 2,
+        signaturesRequested: 5,
+      },
+    ])
     renderWithRouter()
-    act(() => {
-      setListSuccess([
-        {
-          requestId: '10',
-          accessRequirementId: 'ar-1',
-          accessRequirementName: 'Requirement A',
-          isEDuc: true,
-          status: 'sent',
-          signaturesAcquired: 2,
-          signaturesRequested: 5,
-        },
-      ])
-    })
-    const link = screen.getByRole('link', {
+    const link = await screen.findByRole('link', {
       name: 'Review Signatures and Submit',
     })
     expect(link).toHaveAttribute('href', '/request/10/signature')
   })
 
   it('opens the modify wizard when "Modify Request" is clicked', async () => {
-    mockUseGetAccessRequirements.mockReturnValue({
-      data: { id: 1, eDucTemplateId: 'template-x' },
-    } as never)
+    mockAccessRequirement(() =>
+      HttpResponse.json({ id: 1, eDucTemplateId: 'template-x' }),
+    )
+    mockRequestList([IN_FLIGHT_SUMMARY])
     const user = userEvent.setup()
     renderWithRouter()
-    act(() => {
-      setListSuccess([
-        {
-          requestId: '10',
-          accessRequirementId: 'ar-1',
-          accessRequirementName: 'Requirement A',
-          isEDuc: true,
-          status: 'sent',
-        },
-      ])
-    })
 
-    await user.click(screen.getByRole('button', { name: 'Modify Request' }))
+    await user.click(
+      await screen.findByRole('button', { name: 'Modify Request' }),
+    )
     await screen.findByTestId('MockAccessRequirementList')
     // The wizard is mounted with an initialWizardEntry pointing at the research project step.
     const props = MockAccessRequirementList.mock.lastCall![0]
@@ -322,25 +337,17 @@ describe('InFlightEDucSignaturesTable', () => {
   })
 
   it('shows a loading state on the Modify button while the access requirement is fetching', async () => {
-    mockUseGetAccessRequirements.mockReturnValue({
-      data: undefined,
-      isFetching: true,
-    } as never)
+    mockAccessRequirement(async () => {
+      await delay('infinite')
+      return HttpResponse.json({ id: 1, eDucTemplateId: 'template-x' })
+    })
+    mockRequestList([IN_FLIGHT_SUMMARY])
     const user = userEvent.setup()
     renderWithRouter()
-    act(() => {
-      setListSuccess([
-        {
-          requestId: '10',
-          accessRequirementId: 'ar-1',
-          accessRequirementName: 'Requirement A',
-          isEDuc: true,
-          status: 'sent',
-        },
-      ])
-    })
 
-    const modifyButton = screen.getByRole('button', { name: 'Modify Request' })
+    const modifyButton = await screen.findByRole('button', {
+      name: 'Modify Request',
+    })
     await user.click(modifyButton)
 
     const loadingButton = await screen.findByRole('button', {
@@ -354,25 +361,16 @@ describe('InFlightEDucSignaturesTable', () => {
   })
 
   it('toasts and bails out of the Modify flow when the access requirement fails to load', async () => {
-    mockUseGetAccessRequirements.mockReturnValue({
-      data: undefined,
-      error: { reason: 'boom' } as SynapseClientError,
-    } as never)
+    mockAccessRequirement(() =>
+      HttpResponse.json({ reason: 'boom' }, { status: 403 }),
+    )
+    mockRequestList([IN_FLIGHT_SUMMARY])
     const user = userEvent.setup()
     renderWithRouter()
-    act(() => {
-      setListSuccess([
-        {
-          requestId: '10',
-          accessRequirementId: 'ar-1',
-          accessRequirementName: 'Requirement A',
-          isEDuc: true,
-          status: 'sent',
-        },
-      ])
-    })
 
-    await user.click(screen.getByRole('button', { name: 'Modify Request' }))
+    await user.click(
+      await screen.findByRole('button', { name: 'Modify Request' }),
+    )
 
     await waitFor(() =>
       expect(mockedDisplayToast).toHaveBeenCalledWith(
@@ -384,28 +382,22 @@ describe('InFlightEDucSignaturesTable', () => {
       screen.queryByTestId('MockAccessRequirementList'),
     ).not.toBeInTheDocument()
     // Modify button is re-enabled so the user can retry.
-    expect(
-      screen.getByRole('button', { name: 'Modify Request' }),
-    ).not.toBeDisabled()
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: 'Modify Request' }),
+      ).not.toBeDisabled(),
+    )
   })
 
   it('voids the signature after confirming Cancel Request', async () => {
+    mockRequestList([IN_FLIGHT_SUMMARY])
     const user = userEvent.setup()
     renderWithRouter()
-    act(() => {
-      setListSuccess([
-        {
-          requestId: '10',
-          accessRequirementId: 'ar-1',
-          accessRequirementName: 'Requirement A',
-          isEDuc: true,
-          status: 'sent',
-        },
-      ])
-    })
 
     // Row-level "Cancel Request" opens the confirmation dialog.
-    await user.click(screen.getByRole('button', { name: 'Cancel Request' }))
+    await user.click(
+      await screen.findByRole('button', { name: 'Cancel Request' }),
+    )
     const confirmationDialog = await screen.findByRole('dialog')
     within(confirmationDialog).getByText(/void the electronic signature/i)
 
@@ -415,25 +407,17 @@ describe('InFlightEDucSignaturesTable', () => {
         name: 'Cancel Request',
       }),
     )
-    expect(mockVoidMutate).toHaveBeenCalledWith('10')
+    await waitFor(() => expect(onVoidSignature).toHaveBeenCalledWith('10'))
   })
 
   it('backs out of Cancel Request without mutating when Keep Request is clicked', async () => {
+    mockRequestList([IN_FLIGHT_SUMMARY])
     const user = userEvent.setup()
     renderWithRouter()
-    act(() => {
-      setListSuccess([
-        {
-          requestId: '10',
-          accessRequirementId: 'ar-1',
-          accessRequirementName: 'Requirement A',
-          isEDuc: true,
-          status: 'sent',
-        },
-      ])
-    })
 
-    await user.click(screen.getByRole('button', { name: 'Cancel Request' }))
+    await user.click(
+      await screen.findByRole('button', { name: 'Cancel Request' }),
+    )
     const dialog = await screen.findByRole('dialog')
     await user.click(
       within(dialog).getByRole('button', { name: 'Keep Request' }),
@@ -441,22 +425,31 @@ describe('InFlightEDucSignaturesTable', () => {
     await waitFor(() =>
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
     )
-    expect(mockVoidMutate).not.toHaveBeenCalled()
+    expect(onVoidSignature).not.toHaveBeenCalled()
   })
 
   it('shows a skeleton loader while the request list is loading', () => {
+    server.use(
+      http.post(`${REPO_ENDPOINT}${DATA_ACCESS_REQUEST_LIST}`, async () => {
+        await delay('infinite')
+        return HttpResponse.json({ results: [IN_FLIGHT_SUMMARY] })
+      }),
+    )
     renderWithRouter()
-    act(() => setListLoading())
     expect(screen.queryByRole('table')).not.toBeInTheDocument()
     expect(
       screen.queryByText(/In-flight eDUC signatures/i),
     ).not.toBeInTheDocument()
   })
 
-  it('shows an error alert when the request list fails to load', () => {
+  it('shows an error alert when the request list fails to load', async () => {
+    server.use(
+      http.post(`${REPO_ENDPOINT}${DATA_ACCESS_REQUEST_LIST}`, () =>
+        HttpResponse.json({ reason: 'boom' }, { status: 403 }),
+      ),
+    )
     renderWithRouter()
-    act(() => setListError({ reason: 'boom' } as SynapseClientError))
-    screen.getByText(/couldn't load your in-flight eDUC signatures/i)
+    await screen.findByText(/couldn't load your in-flight eDUC signatures/i)
     expect(screen.getByText('boom')).toBeInTheDocument()
   })
 })

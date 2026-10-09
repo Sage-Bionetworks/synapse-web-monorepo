@@ -9,7 +9,6 @@ import { act, render, screen, waitFor } from '@testing-library/react'
 import { ButtonProps } from '@mui/material'
 import { upperFirst } from 'lodash-es'
 import { useExportTableQueryToAnalysisPlatform } from '../../../synapse-queries/entity/useExportTableQueryToAnalysisPlatform'
-import { getUseQuerySuccessMock } from '../../../testutils/ReactQueryMockUtils'
 import { TableQueryActionsRequired } from '../../DownloadCart/TableQueryActionsRequired'
 import { useQueryContext } from '../../QueryContext'
 import { QueryContextType } from '../../QueryContext/index'
@@ -156,13 +155,14 @@ describe('ExternalPlatformActionsRequiredPrecheck', () => {
       mockQueryVisualizationContext,
     )
 
-    mockUseGetQueryMetadata.mockReturnValue(
-      getUseQuerySuccessMock({
+    mockUseGetQueryMetadata.mockReturnValue({
+      data: {
         concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
         columnModels: columnModels,
         selectColumns: selectColumns,
-      }),
-    )
+      },
+      isLoading: false,
+    } as unknown as ReturnType<typeof useGetQueryMetadata>)
 
     mockUseSelectedRowsAtomValue.mockReturnValue([])
     mockUseHasSelectedRowsAtomValue.mockReturnValue(false)

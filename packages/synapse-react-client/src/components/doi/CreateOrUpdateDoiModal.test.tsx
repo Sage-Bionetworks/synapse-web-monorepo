@@ -14,12 +14,6 @@ import { useGetEntityBundle } from '@/synapse-queries/entity/useEntityBundle'
 import { useGetPortal } from '@/synapse-queries/portal/usePortal'
 import { useGetRealmPrincipals } from '@/synapse-queries/realm/useRealmPrincipals'
 import { useGetCurrentUserProfile } from '@/synapse-queries/user/useUserBundle'
-import {
-  getUseMutationIdleMock,
-  getUseMutationPendingMock,
-  getUseQueryIdleMock,
-  getUseQuerySuccessMock,
-} from '@/testutils/ReactQueryMockUtils'
 import { useGlobalIsEditingContext } from '@/utils/context/GlobalIsEditingContext'
 import { getAccessTypeFromPermissionLevel } from '@/utils/PermissionLevelToAccessType'
 import {
@@ -72,28 +66,41 @@ const mockEntityWithNoPublicAccess = generateBaseEntity({
 
 const mockUseCreateOrUpdateDOI = vi
   .mocked(useCreateOrUpdateDOI)
-  .mockReturnValue(getUseMutationIdleMock())
+  .mockReturnValue({
+    mutate: vi.fn(),
+    isPending: false,
+    error: null,
+  } as unknown as ReturnType<typeof useCreateOrUpdateDOI>)
 
-const mockUseGetEntityBundle = vi
-  .mocked(useGetEntityBundle)
-  .mockReturnValue(getUseQuerySuccessMock(mockEntityWithPublicAccess.bundle))
+const mockUseGetEntityBundle = vi.mocked(useGetEntityBundle).mockReturnValue({
+  data: mockEntityWithPublicAccess.bundle,
+  isLoading: false,
+} as unknown as ReturnType<typeof useGetEntityBundle>)
 
 const mockUseGetRealmPrincipals = vi
   .mocked(useGetRealmPrincipals)
-  .mockReturnValue(getUseQuerySuccessMock(MOCK_REALM_PRINCIPAL))
+  .mockReturnValue({
+    data: MOCK_REALM_PRINCIPAL,
+    isLoading: false,
+  } as unknown as ReturnType<typeof useGetRealmPrincipals>)
 
-const mockUseGetDOI = vi
-  .mocked(useGetDOI)
-  .mockReturnValue(getUseQuerySuccessMock(null))
-const mockUseGetVersions = vi
-  .mocked(useGetVersions)
-  .mockReturnValue(getUseQuerySuccessMock({ results: [] }))
+const mockUseGetDOI = vi.mocked(useGetDOI).mockReturnValue({
+  data: null,
+  isLoading: false,
+} as unknown as ReturnType<typeof useGetDOI>)
+const mockUseGetVersions = vi.mocked(useGetVersions).mockReturnValue({
+  data: { results: [] },
+} as unknown as ReturnType<typeof useGetVersions>)
 const mockUseGetCurrentUserProfile = vi
   .mocked(useGetCurrentUserProfile)
-  .mockReturnValue(getUseQuerySuccessMock(mockUserProfileData))
-const mockUseGetPortal = vi
-  .mocked(useGetPortal)
-  .mockReturnValue(getUseQueryIdleMock())
+  .mockReturnValue({
+    data: mockUserProfileData,
+    isLoading: false,
+  } as unknown as ReturnType<typeof useGetCurrentUserProfile>)
+// The portal query is disabled unless a portalId is provided, so it has no data by default
+const mockUseGetPortal = vi.mocked(useGetPortal).mockReturnValue({
+  data: undefined,
+} as unknown as ReturnType<typeof useGetPortal>)
 
 const mockDisplayToast = vi.mocked(displayToast)
 const mockSetIsEditing = vi.fn()
@@ -150,11 +157,19 @@ describe('CreateOrUpdateDoiModal', () => {
   })
 
   beforeEach(() => {
-    mockUseGetEntityBundle.mockReturnValue(
-      getUseQuerySuccessMock(mockEntityWithPublicAccess.bundle),
-    )
-    mockUseGetDOI.mockReturnValue(getUseQuerySuccessMock(null))
-    mockUseCreateOrUpdateDOI.mockReturnValue(getUseMutationIdleMock())
+    mockUseGetEntityBundle.mockReturnValue({
+      data: mockEntityWithPublicAccess.bundle,
+      isLoading: false,
+    } as unknown as ReturnType<typeof useGetEntityBundle>)
+    mockUseGetDOI.mockReturnValue({
+      data: null,
+      isLoading: false,
+    } as unknown as ReturnType<typeof useGetDOI>)
+    mockUseCreateOrUpdateDOI.mockReturnValue({
+      mutate: vi.fn(),
+      isPending: false,
+      error: null,
+    } as unknown as ReturnType<typeof useCreateOrUpdateDOI>)
   })
 
   it('renders the modal with default content', () => {
@@ -181,7 +196,11 @@ describe('CreateOrUpdateDoiModal', () => {
   })
 
   it('disables the Save button when loading', () => {
-    mockUseCreateOrUpdateDOI.mockReturnValue(getUseMutationPendingMock())
+    mockUseCreateOrUpdateDOI.mockReturnValue({
+      mutate: vi.fn(),
+      isPending: true,
+      error: null,
+    } as unknown as ReturnType<typeof useCreateOrUpdateDOI>)
 
     setup()
 
@@ -190,8 +209,8 @@ describe('CreateOrUpdateDoiModal', () => {
   })
 
   it('renders a warning if the DOI was modified via API', () => {
-    mockUseGetDOI.mockReturnValue(
-      getUseQuerySuccessMock({
+    mockUseGetDOI.mockReturnValue({
+      data: {
         titles: [{ title: 'Test DOI Title' }],
         creators: [
           {
@@ -205,8 +224,9 @@ describe('CreateOrUpdateDoiModal', () => {
             ],
           },
         ],
-      }),
-    )
+      },
+      isLoading: false,
+    } as unknown as ReturnType<typeof useGetDOI>)
     setup()
 
     expect(
@@ -217,7 +237,10 @@ describe('CreateOrUpdateDoiModal', () => {
   })
 
   it('renders the form with pre-filled data when DOI is null', async () => {
-    mockUseGetDOI.mockReturnValue(getUseQuerySuccessMock(null))
+    mockUseGetDOI.mockReturnValue({
+      data: null,
+      isLoading: false,
+    } as unknown as ReturnType<typeof useGetDOI>)
 
     setup()
 
@@ -228,11 +251,15 @@ describe('CreateOrUpdateDoiModal', () => {
   it('blocks submission when data violates the form schema', async () => {
     const mockMutate = vi.fn()
     mockUseCreateOrUpdateDOI.mockReturnValue({
-      ...getUseMutationIdleMock(),
       mutate: mockMutate,
-    })
+      isPending: false,
+      error: null,
+    } as unknown as ReturnType<typeof useCreateOrUpdateDOI>)
 
-    mockUseGetDOI.mockReturnValue(getUseQuerySuccessMock(null))
+    mockUseGetDOI.mockReturnValue({
+      data: null,
+      isLoading: false,
+    } as unknown as ReturnType<typeof useGetDOI>)
 
     const { user } = setup()
 
@@ -249,12 +276,14 @@ describe('CreateOrUpdateDoiModal', () => {
   it('calls mutate when the form is submitted', async () => {
     const mockMutate = vi.fn()
     mockUseCreateOrUpdateDOI.mockReturnValue({
-      ...getUseMutationIdleMock(),
       mutate: mockMutate,
-    })
-    mockUseGetCurrentUserProfile.mockReturnValue(
-      getUseQuerySuccessMock(mockUserProfileData),
-    )
+      isPending: false,
+      error: null,
+    } as unknown as ReturnType<typeof useCreateOrUpdateDOI>)
+    mockUseGetCurrentUserProfile.mockReturnValue({
+      data: mockUserProfileData,
+      isLoading: false,
+    } as unknown as ReturnType<typeof useGetCurrentUserProfile>)
 
     const { user } = setup()
 
@@ -318,11 +347,12 @@ describe('CreateOrUpdateDoiModal', () => {
   it('renders versions in the list, allows selecting a version, and includes it in the request', async () => {
     const mockMutate = vi.fn()
     mockUseCreateOrUpdateDOI.mockReturnValue({
-      ...getUseMutationIdleMock(),
       mutate: mockMutate,
-    })
-    mockUseGetVersions.mockReturnValue(
-      getUseQuerySuccessMock({
+      isPending: false,
+      error: null,
+    } as unknown as ReturnType<typeof useCreateOrUpdateDOI>)
+    mockUseGetVersions.mockReturnValue({
+      data: {
         results: [
           {
             versionNumber: 1,
@@ -345,11 +375,12 @@ describe('CreateOrUpdateDoiModal', () => {
             isLatestVersion: true,
           },
         ],
-      }),
-    )
-    mockUseGetCurrentUserProfile.mockReturnValue(
-      getUseQuerySuccessMock(mockUserProfileData),
-    )
+      },
+    } as unknown as ReturnType<typeof useGetVersions>)
+    mockUseGetCurrentUserProfile.mockReturnValue({
+      data: mockUserProfileData,
+      isLoading: false,
+    } as unknown as ReturnType<typeof useGetCurrentUserProfile>)
 
     const { user } = setup()
 
@@ -363,7 +394,9 @@ describe('CreateOrUpdateDoiModal', () => {
     await screen.findByRole('option', { name: 'Version 2 / v2' })
 
     // Select a version
-    const versionOption = screen.getByRole('option', { name: 'Version 2 / v2' })
+    const versionOption = screen.getByRole('option', {
+      name: 'Version 2 / v2',
+    })
     await user.click(versionOption)
 
     // Fill out the form
@@ -409,9 +442,10 @@ describe('CreateOrUpdateDoiModal', () => {
 
   it('Displays the Publisher field if the DOI would belong to a portal', async () => {
     const mockPortalName = 'Test Portal'
-    mockUseGetPortal.mockReturnValue(
-      getUseQuerySuccessMock({ id: '123', name: mockPortalName }),
-    )
+    mockUseGetPortal.mockReturnValue({
+      data: { id: '123', name: mockPortalName },
+      isLoading: false,
+    } as unknown as ReturnType<typeof useGetPortal>)
 
     setup({ ...defaultProps, portalId: '123' })
 
@@ -444,9 +478,10 @@ describe('CreateOrUpdateDoiModal', () => {
     })
 
     it('shows warning step when creating DOI for private entity', async () => {
-      mockUseGetEntityBundle.mockReturnValue(
-        getUseQuerySuccessMock(mockEntityWithNoPublicAccess.bundle),
-      )
+      mockUseGetEntityBundle.mockReturnValue({
+        data: mockEntityWithNoPublicAccess.bundle,
+        isLoading: false,
+      } as unknown as ReturnType<typeof useGetEntityBundle>)
 
       setup()
 
@@ -466,15 +501,17 @@ describe('CreateOrUpdateDoiModal', () => {
     })
 
     it('shows form directly when updating existing DOI regardless of privacy', async () => {
-      mockUseGetEntityBundle.mockReturnValue(
-        getUseQuerySuccessMock(mockEntityWithNoPublicAccess.bundle),
-      )
-      mockUseGetDOI.mockReturnValue(
-        getUseQuerySuccessMock({
+      mockUseGetEntityBundle.mockReturnValue({
+        data: mockEntityWithNoPublicAccess.bundle,
+        isLoading: false,
+      } as unknown as ReturnType<typeof useGetEntityBundle>)
+      mockUseGetDOI.mockReturnValue({
+        data: {
           titles: [{ title: 'Existing DOI Title' }],
           creators: [{ creatorName: 'Doe, John' }],
-        }),
-      )
+        },
+        isLoading: false,
+      } as unknown as ReturnType<typeof useGetDOI>)
 
       setup()
 
@@ -485,9 +522,10 @@ describe('CreateOrUpdateDoiModal', () => {
     })
 
     it('advances to form step when clicking Continue on warning', async () => {
-      mockUseGetEntityBundle.mockReturnValue(
-        getUseQuerySuccessMock(mockEntityWithNoPublicAccess.bundle),
-      )
+      mockUseGetEntityBundle.mockReturnValue({
+        data: mockEntityWithNoPublicAccess.bundle,
+        isLoading: false,
+      } as unknown as ReturnType<typeof useGetEntityBundle>)
 
       const { user } = setup()
 
@@ -501,9 +539,10 @@ describe('CreateOrUpdateDoiModal', () => {
     })
 
     it('closes modal when clicking Cancel on warning step', async () => {
-      mockUseGetEntityBundle.mockReturnValue(
-        getUseQuerySuccessMock(mockEntityWithNoPublicAccess.bundle),
-      )
+      mockUseGetEntityBundle.mockReturnValue({
+        data: mockEntityWithNoPublicAccess.bundle,
+        isLoading: false,
+      } as unknown as ReturnType<typeof useGetEntityBundle>)
 
       const onClose = vi.fn()
       const { user } = setup({ ...defaultProps, onClose })
@@ -519,9 +558,10 @@ describe('CreateOrUpdateDoiModal', () => {
     })
 
     it('resets to warning step when modal is reopened', async () => {
-      mockUseGetEntityBundle.mockReturnValue(
-        getUseQuerySuccessMock(mockEntityWithNoPublicAccess.bundle),
-      )
+      mockUseGetEntityBundle.mockReturnValue({
+        data: mockEntityWithNoPublicAccess.bundle,
+        isLoading: false,
+      } as unknown as ReturnType<typeof useGetEntityBundle>)
 
       const { rerender, user } = setup({ ...defaultProps, open: true })
       expect(mockUseGetRealmPrincipals).toHaveBeenCalled()
@@ -558,9 +598,10 @@ describe('CreateOrUpdateDoiModal', () => {
         },
       })
 
-      mockUseGetEntityBundle.mockReturnValue(
-        getUseQuerySuccessMock(entityWithAuthUsersAccess.bundle),
-      )
+      mockUseGetEntityBundle.mockReturnValue({
+        data: entityWithAuthUsersAccess.bundle,
+        isLoading: false,
+      } as unknown as ReturnType<typeof useGetEntityBundle>)
 
       setup()
 

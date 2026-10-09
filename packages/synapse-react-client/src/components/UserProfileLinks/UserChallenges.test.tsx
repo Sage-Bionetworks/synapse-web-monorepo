@@ -1,22 +1,15 @@
 import { SynapseTestContext } from '@/mocks/MockSynapseContext'
-import { useGetUserChallengesInfinite } from '@/synapse-queries/user/useGetUserChallenges'
-import { getUseInfiniteQueryMock } from '@/testutils/ReactQueryMockUtils'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client'
+import { server } from '@/mocks/msw/server'
 import {
-  ChallengeWithProjectHeader,
-  ChallengeWithProjectHeaderPagedResults,
-} from '@sage-bionetworks/synapse-types'
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
+import { ChallengeWithProjectHeader } from '@sage-bionetworks/synapse-types'
 import { act, render, screen } from '@testing-library/react'
+import { http, HttpResponse } from 'msw'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import UserChallenges from './UserChallenges'
 
-vi.mock('@/synapse-queries/user/useGetUserChallenges', () => {
-  return {
-    useGetUserChallengesInfinite: vi.fn(),
-  }
-})
-
-const mockUseGetUserChallengesInfinite = vi.mocked(useGetUserChallengesInfinite)
 const userId = '10000'
 const page1: ChallengeWithProjectHeader[] = [
   {
@@ -71,54 +64,55 @@ function renderComponent() {
 }
 
 describe('UserChallenges tests', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
+  beforeAll(() => server.listen())
+  afterEach(() => server.resetHandlers())
+  afterAll(() => server.close())
+
   it('loads more challenges when inView', async () => {
-    const { mock, mockFetchNextPage, setSuccess } = getUseInfiniteQueryMock<
-      ChallengeWithProjectHeaderPagedResults,
-      SynapseClientError
-    >()
-    mockUseGetUserChallengesInfinite.mockImplementation(mock)
+    const onChallengeRequest = vi.fn()
+    const challengePages = [page1, page2]
+    server.use(
+      http.get(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}/repo/v1/challenge`,
+        ({ request }) => {
+          const offset = Number(new URL(request.url).searchParams.get('offset'))
+          onChallengeRequest(offset)
+          return HttpResponse.json({
+            results: challengePages[offset / 10].map(item => item.challenge),
+            totalNumberOfResults: 2,
+          })
+        },
+      ),
+      http.post(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}/repo/v1/entity/header`,
+        async ({ request }) => {
+          const body = (
+            (await request.json()) as { references: { targetId: string }[] }
+          ).references
+          const allItems = [...page1, ...page2]
+          return HttpResponse.json({
+            results: body.map(
+              ref =>
+                allItems.find(
+                  item => item.challenge.projectId === ref.targetId,
+                )!.projectHeader,
+            ),
+          })
+        },
+      ),
+    )
 
     renderComponent()
 
-    act(() => {
-      setSuccess(
-        [
-          {
-            results: page1,
-            totalNumberOfResults: 2,
-          },
-        ],
-        true,
-      )
-    })
-
     await screen.findByText('The first')
     expect(screen.queryByText('The second')).not.toBeInTheDocument()
+    expect(onChallengeRequest).toHaveBeenCalledTimes(1)
 
     act(() => {
       mockAllIsIntersecting(true)
     })
-    expect(mockFetchNextPage).toHaveBeenCalled()
-
-    act(() => {
-      setSuccess(
-        [
-          {
-            results: page1,
-            totalNumberOfResults: 2,
-          },
-          {
-            results: page2,
-            totalNumberOfResults: 2,
-          },
-        ],
-        false,
-      )
-    })
 
     await screen.findByText('The second')
+    expect(onChallengeRequest).toHaveBeenLastCalledWith(10)
   })
 })

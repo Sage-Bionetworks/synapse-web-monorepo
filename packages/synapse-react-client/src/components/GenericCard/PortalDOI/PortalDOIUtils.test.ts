@@ -2,87 +2,92 @@ import {
   getCandidateDoiId,
   useShowDoiCardLabel,
 } from '@/components/GenericCard/PortalDOI/PortalDOIUtils'
-import { useGetDOIAssociation } from '@/synapse-queries/doi/useDOI'
-import { useGetUserPortalPermissions } from '@/synapse-queries/portal/usePortal'
+import { server } from '@/mocks/msw/server'
+import { createWrapperAndQueryClient } from '@/testutils/TestingLibraryUtils'
 import {
-  getUseQueryIdleMock,
-  getUseQuerySuccessMock,
-} from '@/testutils/ReactQueryMockUtils'
-import { renderHook } from '@testing-library/react'
-import { beforeEach, describe, it, vi } from 'vitest'
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
+import { DoiAssociation, DoiObjectType } from '@sage-bionetworks/synapse-client'
+import { renderHook, waitFor } from '@testing-library/react'
+import { http, HttpResponse } from 'msw'
+import { afterAll, afterEach, beforeAll, describe, it, vi } from 'vitest'
 
-vi.mock('@/synapse-queries/doi/useDOI')
-vi.mock('@/synapse-queries/portal/usePortal')
+const repoOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
-const mockUseGetDOIAssociation = vi.mocked(useGetDOIAssociation)
-const mockUseGetPortalPermissions = vi.mocked(useGetUserPortalPermissions)
+function mockBackend(
+  doiAssociation: Partial<DoiAssociation> | null,
+  canMintDoi: boolean,
+) {
+  server.use(
+    http.get(`${repoOrigin}/repo/v1/doi/association`, () =>
+      doiAssociation
+        ? HttpResponse.json(doiAssociation)
+        : HttpResponse.json({ reason: 'Not found' }, { status: 404 }),
+    ),
+    http.get(`${repoOrigin}/repo/v1/portal/:portalId/permissions`, () =>
+      HttpResponse.json({ canMintDoi }),
+    ),
+  )
+}
 
 describe('PortalDOIUtils', () => {
+  beforeAll(() => server.listen())
+  afterEach(() => server.resetHandlers())
+  afterAll(() => server.close())
+
   describe('useShowDoiCardLabel', () => {
     const mockPortalId = 'mockedPortalId'
     const mockResourceId = 'mockedResourceId'
-    beforeEach(() => {
-      mockUseGetDOIAssociation.mockReturnValue(getUseQueryIdleMock())
-      mockUseGetPortalPermissions.mockReturnValue(getUseQueryIdleMock())
-    })
-    it('returns true if DOI exists, no permission to mint', () => {
-      mockUseGetDOIAssociation.mockReturnValue(
-        getUseQuerySuccessMock({
-          id: mockResourceId,
-          portalId: mockPortalId,
-          type: 'PORTAL_RESOURCE',
-        }),
-      )
-      mockUseGetPortalPermissions.mockReturnValue(getUseQuerySuccessMock(false))
-      const hook = renderHook(() =>
-        useShowDoiCardLabel({
-          portalId: mockPortalId,
-          resourceId: mockResourceId,
-        }),
-      )
+    const mockDoi: Partial<DoiAssociation> = {
+      objectId: mockResourceId,
+      portalId: mockPortalId,
+      objectType: DoiObjectType.PORTAL_RESOURCE,
+    }
 
-      expect(hook.result.current).toBe(true)
-    })
-    it('returns true if DOI exists, with permission to mint', () => {
-      mockUseGetDOIAssociation.mockReturnValue(
-        getUseQuerySuccessMock({
-          id: mockResourceId,
-          portalId: mockPortalId,
-          type: 'PORTAL_RESOURCE',
-        }),
+    function renderUseShowDoiCardLabel() {
+      const { wrapperFn, queryClient } = createWrapperAndQueryClient()
+      const hook = renderHook(
+        () =>
+          useShowDoiCardLabel({
+            portalId: mockPortalId,
+            resourceId: mockResourceId,
+          }),
+        { wrapper: wrapperFn },
       )
-      mockUseGetPortalPermissions.mockReturnValue(getUseQuerySuccessMock(true))
-      const hook = renderHook(() =>
-        useShowDoiCardLabel({
-          portalId: mockPortalId,
-          resourceId: mockResourceId,
-        }),
-      )
+      /** Resolves once all in-flight queries have settled */
+      const waitForQueriesToSettle = async () => {
+        await waitFor(() => expect(queryClient.isFetching()).toBe(0))
+        await waitFor(() =>
+          expect(queryClient.getQueryCache().getAll()).toHaveLength(2),
+        )
+      }
+      return { hook, waitForQueriesToSettle }
+    }
 
-      expect(hook.result.current).toBe(true)
-    })
-    it('returns true if DOI does not exist, with permission to mint', () => {
-      mockUseGetDOIAssociation.mockReturnValue(getUseQuerySuccessMock(null))
-      mockUseGetPortalPermissions.mockReturnValue(getUseQuerySuccessMock(true))
-      const hook = renderHook(() =>
-        useShowDoiCardLabel({
-          portalId: mockPortalId,
-          resourceId: mockResourceId,
-        }),
-      )
+    it('returns true if DOI exists, no permission to mint', async () => {
+      mockBackend(mockDoi, false)
+      const { hook } = renderUseShowDoiCardLabel()
 
-      expect(hook.result.current).toBe(true)
+      await waitFor(() => expect(hook.result.current).toBe(true))
     })
-    it('returns false if DOI does not exist, no permission to mint', () => {
-      mockUseGetDOIAssociation.mockReturnValue(getUseQuerySuccessMock(null))
-      mockUseGetPortalPermissions.mockReturnValue(getUseQuerySuccessMock(false))
-      const hook = renderHook(() =>
-        useShowDoiCardLabel({
-          portalId: mockPortalId,
-          resourceId: mockResourceId,
-        }),
-      )
+    it('returns true if DOI exists, with permission to mint', async () => {
+      mockBackend(mockDoi, true)
+      const { hook } = renderUseShowDoiCardLabel()
 
+      await waitFor(() => expect(hook.result.current).toBe(true))
+    })
+    it('returns true if DOI does not exist, with permission to mint', async () => {
+      mockBackend(null, true)
+      const { hook } = renderUseShowDoiCardLabel()
+
+      await waitFor(() => expect(hook.result.current).toBe(true))
+    })
+    it('returns false if DOI does not exist, no permission to mint', async () => {
+      mockBackend(null, false)
+      const { hook, waitForQueriesToSettle } = renderUseShowDoiCardLabel()
+
+      await waitForQueriesToSettle()
       expect(hook.result.current).toBe(false)
     })
   })

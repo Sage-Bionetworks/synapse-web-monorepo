@@ -5,18 +5,22 @@ import {
   mockExternalS3UploadDestination,
   mockSynapseStorageUploadDestination,
 } from '@/mocks/mock_upload_destination'
-import {
-  useGetDefaultUploadDestination,
-  useGetEntity,
-} from '@/synapse-queries/index'
-import { getUseQuerySuccessMock } from '@/testutils/ReactQueryMockUtils'
+import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { ENTITY_ID } from '@/utils/APIConstants'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import {
   useUploadFileEntities,
   UseUploadFileEntitiesReturn,
 } from '@/utils/hooks/useUploadFileEntity/useUploadFileEntities'
+import { Entity } from '@sage-bionetworks/synapse-types'
+import { UploadDestination } from '@sage-bionetworks/synapse-client'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
 import { createRef } from 'react'
 import {
   EntityUpload,
@@ -28,14 +32,6 @@ import { ProjectStorageLimitAlert } from './ProjectStorageLimitAlert'
 
 vi.mock('../../utils/hooks/useUploadFileEntity/useUploadFileEntities', () => ({
   useUploadFileEntities: vi.fn(),
-}))
-
-vi.mock('../../synapse-queries/entity/useEntity', () => ({
-  useGetEntity: vi.fn(),
-}))
-
-vi.mock('../../synapse-queries/file/useUploadDestination.ts', () => ({
-  useGetDefaultUploadDestination: vi.fn(),
 }))
 
 vi.mock('./FileUploadProgress', () => ({
@@ -52,10 +48,24 @@ vi.mock('./ProjectStorageLimitAlert', () => ({
 const mockFileUploadProgress = vi.mocked(FileUploadProgress)
 const mockProjectStorageLimitAlert = vi.mocked(ProjectStorageLimitAlert)
 const mockUseUploadFileEntities = vi.mocked(useUploadFileEntities)
-const mockUseGetEntity = vi.mocked(useGetEntity)
-const mockUseGetDefaultUploadDestination = vi.mocked(
-  useGetDefaultUploadDestination,
-)
+
+const repoEndpoint = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
+
+function mockGetEntity(entity: Entity) {
+  server.use(
+    http.get(`${repoEndpoint}${ENTITY_ID(':id')}`, () =>
+      HttpResponse.json(entity),
+    ),
+  )
+}
+
+function mockGetDefaultUploadDestination(uploadDestination: UploadDestination) {
+  server.use(
+    http.get(`${repoEndpoint}/file/v1/entity/:id/uploadDestination`, () =>
+      HttpResponse.json(uploadDestination),
+    ),
+  )
+}
 
 const mockUseUploadFileEntitiesReturn = {
   state: 'WAITING',
@@ -68,6 +78,10 @@ const mockUseUploadFileEntitiesReturn = {
 } satisfies UseUploadFileEntitiesReturn
 
 describe('EntityUpload', () => {
+  beforeAll(() => server.listen())
+  afterEach(() => server.restoreHandlers())
+  afterAll(() => server.close())
+
   function renderComponent(propOverrides: Partial<EntityUploadProps> = {}) {
     const user = userEvent.setup()
     const ref = createRef<EntityUploadHandle>()
@@ -91,10 +105,8 @@ describe('EntityUpload', () => {
     vi.clearAllMocks()
 
     mockUseUploadFileEntities.mockReturnValue(mockUseUploadFileEntitiesReturn)
-    mockUseGetEntity.mockReturnValue(getUseQuerySuccessMock(mockProject.entity))
-    mockUseGetDefaultUploadDestination.mockReturnValue(
-      getUseQuerySuccessMock(mockSynapseStorageUploadDestination),
-    )
+    mockGetEntity(mockProject.entity)
+    mockGetDefaultUploadDestination(mockSynapseStorageUploadDestination)
   })
 
   it('supports selecting files for upload into a container', async () => {
@@ -125,13 +137,12 @@ describe('EntityUpload', () => {
   })
 
   it('supports uploading a new version of a specified FileEntity', async () => {
-    mockUseGetEntity.mockReturnValue(
-      getUseQuerySuccessMock(mockFileEntity.entity),
-    )
+    mockGetEntity(mockFileEntity.entity)
     const { user, result } = renderComponent({
       entityId: mockFileEntity.entity.id,
     })
 
+    await screen.findByText('Click to upload')
     const fileInput = result.container.querySelector<HTMLInputElement>(
       'input[type="file"][id=filesToUpload]',
     )!
@@ -146,9 +157,7 @@ describe('EntityUpload', () => {
   })
 
   it('does not support selecting a folder when updating a specified FileEntity', async () => {
-    mockUseGetEntity.mockReturnValue(
-      getUseQuerySuccessMock(mockFileEntity.entity),
-    )
+    mockGetEntity(mockFileEntity.entity)
     const { user, result } = renderComponent({
       entityId: mockFileEntity.entity.id,
     })
@@ -283,12 +292,10 @@ describe('EntityUpload', () => {
 
   it('displays a banner for an alternative storage location', async () => {
     const bannerText = 'a rad custom storage location'
-    mockUseGetDefaultUploadDestination.mockReturnValue(
-      getUseQuerySuccessMock({
-        ...mockExternalS3UploadDestination,
-        banner: bannerText,
-      }),
-    )
+    mockGetDefaultUploadDestination({
+      ...mockExternalS3UploadDestination,
+      banner: bannerText,
+    })
 
     renderComponent()
 
@@ -299,9 +306,7 @@ describe('EntityUpload', () => {
   })
 
   it('allows entering AWS credentials when the UploadDestination is an ExternalObjectStoreUploadDestination', async () => {
-    mockUseGetDefaultUploadDestination.mockReturnValue(
-      getUseQuerySuccessMock(mockExternalObjectStoreUploadDestination),
-    )
+    mockGetDefaultUploadDestination(mockExternalObjectStoreUploadDestination)
 
     const accessKeyValue = 'myAccessKey'
     const secretKeyValue = 'mySecretKey'

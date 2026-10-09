@@ -1,19 +1,20 @@
-import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { TABLE_QUERY_ASYNC_START } from '@/utils/APIConstants'
 import {
-  getUseQueryLoadingMock,
-  getUseQuerySuccessMock,
-} from '@/testutils/ReactQueryMockUtils'
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import {
   ColumnTypeEnum,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
+import { delay, http } from 'msw'
 import RowDataTableWithQuery, {
   RowDataTableWithQueryProps,
 } from './RowDataTableWithQuery'
-
-vi.mock('../../synapse-queries/entity/useGetQueryResultBundle')
-const mockUseGetQueryResultBundle = vi.mocked(useGetQueryResultBundle)
 
 describe('RowDataTableWithQuery tests', () => {
   const dataColumnAliases = {
@@ -86,16 +87,18 @@ describe('RowDataTableWithQuery tests', () => {
     ],
   }
 
+  beforeAll(() => server.listen())
   beforeEach(() => {
-    vi.clearAllMocks()
-    mockUseGetQueryResultBundle.mockReturnValue(
-      getUseQuerySuccessMock(mockQueryResult),
-    )
+    registerTableQueryResult(mockProps.query, mockQueryResult)
   })
+  afterEach(() => server.restoreHandlers())
+  afterAll(() => server.close())
 
-  it('renders correct labels', () => {
-    render(<RowDataTableWithQuery {...mockProps} />)
-    expect(screen.getByText('Name')).toBeInTheDocument()
+  it('renders correct labels', async () => {
+    render(<RowDataTableWithQuery {...mockProps} />, {
+      wrapper: createWrapper(),
+    })
+    expect(await screen.findByText('Name')).toBeInTheDocument()
     expect(screen.getByText('Synodos NF2')).toBeInTheDocument()
     expect(screen.getByText('Data Type(s)')).toBeInTheDocument()
     expect(
@@ -106,10 +109,12 @@ describe('RowDataTableWithQuery tests', () => {
     expect(screen.getByText('DOI')).toBeInTheDocument()
   })
 
-  it('renders links correctly', () => {
-    render(<RowDataTableWithQuery {...mockProps} />)
+  it('renders links correctly', async () => {
+    render(<RowDataTableWithQuery {...mockProps} />, {
+      wrapper: createWrapper(),
+    })
     const linkName = 'https://doi.org/10.48105/pc.gr.88541'
-    const linkElement = screen.getByRole('link', { name: linkName })
+    const linkElement = await screen.findByRole('link', { name: linkName })
     expect(linkElement).toBeInTheDocument()
     expect(linkElement).toHaveAttribute(
       'href',
@@ -118,8 +123,17 @@ describe('RowDataTableWithQuery tests', () => {
   })
 
   it('Shows loading state', () => {
-    mockUseGetQueryResultBundle.mockReturnValue(getUseQueryLoadingMock())
-    render(<RowDataTableWithQuery {...mockProps} />)
+    server.use(
+      http.post(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${TABLE_QUERY_ASYNC_START(':id')}`,
+        async () => {
+          await delay('infinite')
+        },
+      ),
+    )
+    render(<RowDataTableWithQuery {...mockProps} />, {
+      wrapper: createWrapper(),
+    })
     const skeleton = document.querySelector('.MuiSkeleton-root')
     expect(skeleton).toBeInTheDocument()
   })

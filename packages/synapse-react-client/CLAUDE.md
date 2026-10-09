@@ -78,7 +78,7 @@ Cache keys are centralized in `src/synapse-queries/KeyFactory.ts`.
 - **Framework**: Vitest + Testing Library (`@testing-library/react`)
 - **API mocking**: MSW (Mock Service Worker) via `src/mocks/msw/server.ts` and per-domain handlers in `src/mocks/msw/handlers/`
 - **Test wrapper**: Use `createWrapper()` or `createWrapperAndQueryClient()` from `src/testutils/TestingLibraryUtils.tsx` to render components with proper context and an isolated query cache
-- **Hook state mocking**: Use `getUseQueryMock()` from `src/testutils/ReactQueryMockUtils.ts` when mocking entire hooks rather than intercepting at the network level
+- **Hook state mocking**: Don't mock TanStack Query hooks' return values. Run the real hooks inside `createWrapper()` and mock the network with `server.use(...)` (MSW). Faking hook results couples tests to TanStack's result types, which change often. If a hook module must be mocked, return only the fields the code under test reads, cast via `unknown` (`as unknown as ReturnType<typeof useFoo>`)
 - Test files live co-located with source: `src/components/Foo/Foo.test.tsx`
 
 ### Styling
