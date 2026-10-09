@@ -1,5 +1,4 @@
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
-import { getUseMutationIdleMock } from '@/testutils/ReactQueryMockUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { renderHook as _renderHook } from '@testing-library/react'
 import * as GetFileEntityIdWithSameNameModule from './getFileEntityIdWithSameName'
@@ -14,6 +13,20 @@ const mockUseCreatePathsAndGetParentId = vi.spyOn(
   UseCreatePathsAndGetParentIdModule,
   'useCreatePathsAndGetParentId',
 )
+
+/**
+ * Mocks useCreatePathsAndGetParentId, which is isolated from the hook under test. Only `mutateAsync` is read.
+ */
+function mockCreatePathsAndGetParentIdHook() {
+  const mutateAsync = vi.fn()
+  mockUseCreatePathsAndGetParentId.mockReturnValue({
+    mutateAsync,
+  } as unknown as ReturnType<
+    typeof UseCreatePathsAndGetParentIdModule.useCreatePathsAndGetParentId
+  >)
+  return { mutateAsync }
+}
+
 const mockGetFileEntityIdWithSameName = vi.spyOn(
   GetFileEntityIdWithSameNameModule,
   'getFileEntityIdWithSameName',
@@ -39,12 +52,10 @@ describe('usePrepareFileEntityUpload', () => {
   ]
 
   test('prepares a new file entity for upload and an existing file entity for update', async () => {
-    const useCreatePathsAndGetParentIdMockResult = getUseMutationIdleMock(null)
+    const useCreatePathsAndGetParentIdMockResult =
+      mockCreatePathsAndGetParentIdHook()
     useCreatePathsAndGetParentIdMockResult.mutateAsync.mockImplementation(
       ({ file }) => ({ file, parentId: rootContainerId }),
-    )
-    mockUseCreatePathsAndGetParentId.mockReturnValue(
-      useCreatePathsAndGetParentIdMockResult,
     )
 
     mockGetFileEntityIdWithSameName.mockImplementation(fileName => {
@@ -100,10 +111,8 @@ describe('usePrepareFileEntityUpload', () => {
   })
 
   test('directly update FileEntity', async () => {
-    const useCreatePathsAndGetParentIdMockResult = getUseMutationIdleMock(null)
-    mockUseCreatePathsAndGetParentId.mockReturnValue(
-      useCreatePathsAndGetParentIdMockResult,
-    )
+    const useCreatePathsAndGetParentIdMockResult =
+      mockCreatePathsAndGetParentIdHook()
 
     const { result: hook } = renderHook()
     const result = await hook.current.mutateAsync([
@@ -125,12 +134,10 @@ describe('usePrepareFileEntityUpload', () => {
   })
 
   test('creating directory fails', async () => {
-    const useCreatePathsAndGetParentIdMockResult = getUseMutationIdleMock(null)
+    const useCreatePathsAndGetParentIdMockResult =
+      mockCreatePathsAndGetParentIdHook()
     useCreatePathsAndGetParentIdMockResult.mutateAsync.mockRejectedValue(
       new Error('Failed to create directory'),
-    )
-    mockUseCreatePathsAndGetParentId.mockReturnValue(
-      useCreatePathsAndGetParentIdMockResult,
     )
 
     const { result: hook } = renderHook()
@@ -149,12 +156,10 @@ describe('usePrepareFileEntityUpload', () => {
   })
 
   test('file lookup fails', async () => {
-    const useCreatePathsAndGetParentIdMockResult = getUseMutationIdleMock(null)
+    const useCreatePathsAndGetParentIdMockResult =
+      mockCreatePathsAndGetParentIdHook()
     useCreatePathsAndGetParentIdMockResult.mutateAsync.mockImplementation(
       ({ file }) => ({ file, parentId: rootContainerId }),
-    )
-    mockUseCreatePathsAndGetParentId.mockReturnValue(
-      useCreatePathsAndGetParentIdMockResult,
     )
 
     mockGetFileEntityIdWithSameName.mockImplementation(fileName =>

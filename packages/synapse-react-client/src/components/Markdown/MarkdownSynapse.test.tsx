@@ -1,15 +1,14 @@
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
 import { mockEntityWikiPage } from '@/mocks/mockWiki'
-import {
-  useGetWikiAttachments,
-  useGetWikiPage,
-} from '@/synapse-queries/wiki/useWiki'
-import {
-  getUseQueryIdleMock,
-  getUseQuerySuccessMock,
-} from '@/testutils/ReactQueryMockUtils'
+import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '@/utils/context/SynapseContext'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
+import { ObjectType, WikiPageKey } from '@sage-bionetworks/synapse-types'
+import { http, HttpResponse } from 'msw'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import { describe, it, vi } from 'vitest'
 import MarkdownSynapse, {
@@ -25,7 +24,6 @@ import * as MarkdownUtils from './MarkdownUtils'
 vi.mock('./widget/MarkdownSynapseImage')
 vi.mock('./widget/MarkdownSynapsePlot')
 vi.mock('./widget/MarkdownProvenanceGraph')
-vi.mock('@/synapse-queries/wiki/useWiki')
 
 const mockMarkdownSynapseImage = vi
   .mocked(MarkdownSynapseImage)
@@ -36,8 +34,29 @@ const mockMarkdownSynapsePlot = vi
 const mockMarkdownProvenanceGraph = vi
   .mocked(MarkdownProvenanceGraph)
   .mockReturnValue(<figure data-testid={'MarkdownProvenanceGraph'}></figure>)
-const mockUseGetWikiPage = vi.mocked(useGetWikiPage)
-const mockUseGetWikiAttachments = vi.mocked(useGetWikiAttachments)
+
+const REPO_ORIGIN = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
+
+/**
+ * Make the entity wiki endpoints respond with a wiki page that has the given markdown,
+ * both when the wiki ID is known and when the root wiki page must be looked up first.
+ */
+function mockWikiPageMarkdown(markdown: string) {
+  const rootWikiPageKey: WikiPageKey = {
+    ownerObjectId: '_',
+    ownerObjectType: ObjectType.ENTITY,
+    wikiPageId: mockEntityWikiPage.id,
+  }
+  server.use(
+    http.get(`${REPO_ORIGIN}/repo/v1/entity/:ownerId/wikikey`, () =>
+      HttpResponse.json(rootWikiPageKey),
+    ),
+    http.get(`${REPO_ORIGIN}/repo/v1/entity/:ownerId/wiki/:wikiId`, () =>
+      HttpResponse.json({ ...mockEntityWikiPage, markdown }),
+    ),
+  )
+}
+
 function getComponent(props: MarkdownSynapseProps) {
   return <MarkdownSynapse {...props} />
 }
@@ -46,20 +65,21 @@ const renderComponent = (
   props: MarkdownSynapseProps,
   synapseContext?: SynapseContextType,
 ) => {
-  return render(getComponent(props), { wrapper: createWrapper(synapseContext) })
+  return render(getComponent(props), {
+    wrapper: createWrapper(synapseContext),
+  })
 }
 
 const processMathSpy = vi.spyOn(MarkdownUtils, 'processMath')
 
 describe('MarkdownSynapse tests', () => {
+  beforeAll(() => server.listen())
   beforeEach(() => {
     processMathSpy.mockReset()
     vi.clearAllMocks()
-
-    // Reset the useGetWikiPage` mock
-    mockUseGetWikiPage.mockReturnValue(getUseQueryIdleMock())
-    mockUseGetWikiAttachments.mockReturnValue(getUseQueryIdleMock())
   })
+  afterEach(() => server.resetHandlers())
+  afterAll(() => server.close())
 
   describe('renders with basic functionality', () => {
     it('mounts correctly with markdown already loaded', () => {
@@ -94,12 +114,7 @@ describe('MarkdownSynapse tests', () => {
 
       const text = 'text'
       const markdownPlaceholder = `## ${text}`
-      mockUseGetWikiPage.mockReturnValue(
-        getUseQuerySuccessMock({
-          ...mockEntityWikiPage,
-          markdown: markdownPlaceholder,
-        }),
-      )
+      mockWikiPageMarkdown(markdownPlaceholder)
 
       // we only care to mock these functions and ensure they're called
       // Full functionality will get tested in the specific widget tests
@@ -136,22 +151,17 @@ describe('MarkdownSynapse tests', () => {
       })
     })
 
-    it('by default, displays empty string when wiki markdown is empty string', () => {
+    it('by default, displays empty string when wiki markdown is empty string', async () => {
       const props: MarkdownSynapseProps = {
         wikiId: 'xxx', // placeholder
         ownerId: 'xxx', // placeholder
       }
 
-      mockUseGetWikiPage.mockReturnValue(
-        getUseQuerySuccessMock({
-          ...mockEntityWikiPage,
-          markdown: '',
-        }),
-      )
+      mockWikiPageMarkdown('')
 
       renderComponent(props)
 
-      const markdownField = screen.getByTestId('markdown')
+      const markdownField = await screen.findByTestId('markdown')
       expect(markdownField).toHaveTextContent('')
     })
 
@@ -171,12 +181,7 @@ describe('MarkdownSynapse tests', () => {
         showPlaceholderIfNoWikiContent: true,
       }
 
-      mockUseGetWikiPage.mockReturnValue(
-        getUseQuerySuccessMock({
-          ...mockEntityWikiPage,
-          markdown: '',
-        }),
-      )
+      mockWikiPageMarkdown('')
       renderComponent(props)
       await screen.findByText(NO_WIKI_CONTENT)
     })
@@ -184,15 +189,8 @@ describe('MarkdownSynapse tests', () => {
 
   describe('it renders a video widget', () => {
     it('do not render a video widget without token', () => {
-      mockUseGetWikiPage.mockReturnValue(
-        getUseQuerySuccessMock({
-          ...mockEntityWikiPage,
-          markdown: '${video?mp4SynapseId=syn21714374}',
-        }),
-      )
-
       const props: MarkdownSynapseProps = {
-        ownerId: '_',
+        markdown: '${video?mp4SynapseId=syn21714374}',
       }
       renderComponent(props, { ...MOCK_CONTEXT_VALUE, accessToken: undefined })
       expect(() => screen.getByTestId('video-login')).toBeDefined()
@@ -207,12 +205,7 @@ describe('MarkdownSynapse tests', () => {
         .concat(`${width}`)
         .concat('}')
 
-      mockUseGetWikiPage.mockReturnValue(
-        getUseQuerySuccessMock({
-          ...mockEntityWikiPage,
-          markdown: givenMarkdown,
-        }),
-      )
+      mockWikiPageMarkdown(givenMarkdown)
 
       const props: MarkdownSynapseProps = {
         ownerId: '_',
@@ -227,12 +220,8 @@ describe('MarkdownSynapse tests', () => {
 
   describe('it renders an image widget', () => {
     it('renders an image from a synapseId', async () => {
-      mockUseGetWikiPage.mockReturnValue(
-        getUseQuerySuccessMock({
-          ...mockEntityWikiPage,
-          markdown:
-            '${image?synapseId=syn7809125&version=2&align=None&responsive=true}',
-        }),
+      mockWikiPageMarkdown(
+        '${image?synapseId=syn7809125&version=2&align=None&responsive=true}',
       )
 
       const props: MarkdownSynapseProps = {
@@ -250,12 +239,8 @@ describe('MarkdownSynapse tests', () => {
     })
 
     it('renders an image from a file handleId', async () => {
-      mockUseGetWikiPage.mockReturnValue(
-        getUseQuerySuccessMock({
-          ...mockEntityWikiPage,
-          markdown:
-            '${image?fileName=joy%2Esvg&align=None&scale=100&responsive=true&altText=}',
-        }),
+      mockWikiPageMarkdown(
+        '${image?fileName=joy%2Esvg&align=None&scale=100&responsive=true&altText=}',
       )
 
       const props: MarkdownSynapseProps = {
@@ -275,12 +260,8 @@ describe('MarkdownSynapse tests', () => {
   })
 
   it('renders the SynapsePlot component', async () => {
-    mockUseGetWikiPage.mockReturnValue(
-      getUseQuerySuccessMock({
-        ...mockEntityWikiPage,
-        markdown:
-          '${plot?query=select "Age"%2C "Insol" from syn9872596&title=&type=BAR&barmode=GROUP&horizontal=false&showlegend=true}',
-      }),
+    mockWikiPageMarkdown(
+      '${plot?query=select "Age"%2C "Insol" from syn9872596&title=&type=BAR&barmode=GROUP&horizontal=false&showlegend=true}',
     )
 
     const props: MarkdownSynapseProps = {
@@ -293,12 +274,8 @@ describe('MarkdownSynapse tests', () => {
   })
 
   it('renders the ProvenanceGraph component', async () => {
-    mockUseGetWikiPage.mockReturnValue(
-      getUseQuerySuccessMock({
-        ...mockEntityWikiPage,
-        markdown:
-          '${provenance?entityList=syn12548902%2Csyn33344762&depth=3&displayHeightPx=800&showExpand=false}',
-      }),
+    mockWikiPageMarkdown(
+      '${provenance?entityList=syn12548902%2Csyn33344762&depth=3&displayHeightPx=800&showExpand=false}',
     )
 
     const props: MarkdownSynapseProps = {
@@ -310,12 +287,8 @@ describe('MarkdownSynapse tests', () => {
     expect(mockMarkdownProvenanceGraph).toHaveBeenCalled()
   })
   it('renders the ProvenanceGraph component when pointing to a specific entity version', async () => {
-    mockUseGetWikiPage.mockReturnValue(
-      getUseQuerySuccessMock({
-        ...mockEntityWikiPage,
-        markdown:
-          '${provenance?entityList=syn12548902%2Fversion%2F34&depth=1&displayHeightPx=500&showExpand=true}',
-      }),
+    mockWikiPageMarkdown(
+      '${provenance?entityList=syn12548902%2Fversion%2F34&depth=1&displayHeightPx=500&showExpand=true}',
     )
     const props: MarkdownSynapseProps = {
       ownerId: '_',
@@ -329,14 +302,9 @@ describe('MarkdownSynapse tests', () => {
   it('renders a synapse reference', async () => {
     // note- a reference is the anchor tag inside the text that links to the bookmark down below,
     // its an inline link
-    mockUseGetWikiPage.mockReturnValue(
-      getUseQuerySuccessMock({
-        ...mockEntityWikiPage,
-        markdown: '${reference?params}',
-      }),
-    )
+    mockWikiPageMarkdown('${reference?params}')
 
-    const { container } = renderComponent({})
+    const { container } = renderComponent({ ownerId: '_' })
     await waitFor(() =>
       expect(container.querySelector('a#ref1')).toBeInTheDocument(),
     )
@@ -345,12 +313,7 @@ describe('MarkdownSynapse tests', () => {
   it('renders a bookmark', async () => {
     // note - a bookmark is a corresponding citation for an inline reference, it provides a URL for
     // the reference.
-    mockUseGetWikiPage.mockReturnValue(
-      getUseQuerySuccessMock({
-        ...mockEntityWikiPage,
-        markdown: '${reference?text=google.com}',
-      }),
-    )
+    mockWikiPageMarkdown('${reference?text=google.com}')
     const props: MarkdownSynapseProps = {
       ownerId: '_',
       wikiId: '_',
