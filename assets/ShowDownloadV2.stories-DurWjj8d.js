@@ -1,1 +1,0 @@
-import{o as e}from"./preload-helper-CsHsquCd.js";import{n as t,t as n}from"./ShowDownloadV2-B7FUx31t.js";var r,i,a;e((()=>{t(),r={title:`Download/ShowDownloadV2`,component:n},i={args:{to:`/#/Other%20Components?id=downloadcartpage`}},a=[`Demo`]}))();export{i as Demo,a as __namedExportsOrder,r as default};

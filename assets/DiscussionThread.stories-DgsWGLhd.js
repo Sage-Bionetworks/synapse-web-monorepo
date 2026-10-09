@@ -1,1 +1,0 @@
-import{o as e}from"./preload-helper-CsHsquCd.js";import{n as t,t as n}from"./DiscussionThread-DppyRDOq.js";var r,i,a;e((()=>{t(),r={title:`Synapse/DiscussionThread`,component:n},i={args:{threadId:`1138`,limit:30}},a=[`DiscussionThreadDemo`]}))();export{i as DiscussionThreadDemo,a as __namedExportsOrder,r as default};

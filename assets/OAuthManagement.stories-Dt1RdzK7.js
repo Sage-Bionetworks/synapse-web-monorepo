@@ -1,1 +1,0 @@
-import{o as e}from"./preload-helper-CsHsquCd.js";import{n as t,t as n}from"./OAuthManagement-B54tZVpS.js";var r,i,a;e((()=>{t(),r={title:`Synapse/OAuthManagement`,component:n},i={},a=[`OAuthManagementDemo`]}))();export{i as OAuthManagementDemo,a as __namedExportsOrder,r as default};

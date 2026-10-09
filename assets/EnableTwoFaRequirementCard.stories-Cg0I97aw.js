@@ -1,1 +1,0 @@
-import{o as e}from"./preload-helper-CsHsquCd.js";import{n as t,t as n}from"./EnableTwoFaRequirementCard-Rbnc8FGr.js";var r,i,a;e((()=>{t(),r={title:`Download/EnableTwoFaRequirementCard`,component:n},i={args:{accessRequirementId:5592528}},a=[`Demo`]}))();export{i as Demo,a as __namedExportsOrder,r as default};

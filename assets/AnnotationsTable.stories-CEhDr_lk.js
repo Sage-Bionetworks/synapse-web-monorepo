@@ -1,1 +1,0 @@
-import{o as e}from"./preload-helper-CsHsquCd.js";import{r as t,t as n}from"./AnnotationsTable-CTh_SNdA.js";var r,i,a;e((()=>{t(),r={title:`Synapse/AnnotationsTable`,component:n},i={args:{entityId:`syn23567475`}},a=[`Demo`]}))();export{i as Demo,a as __namedExportsOrder,r as default};
