@@ -30,9 +30,9 @@ export function useRegisterTeamForChallenge(
     ...options,
     mutationFn: request =>
       SynapseClient.registerChallengeTeam(request, accessToken),
-    onSuccess: async (data, request, context) => {
+    onSuccess: async (data, request, context, mutationContext) => {
       if (options?.onSuccess) {
-        return options.onSuccess(data, request, context)
+        return options.onSuccess(data, request, context, mutationContext)
       }
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getChallengeTeamListQueryKey(request.challengeId),

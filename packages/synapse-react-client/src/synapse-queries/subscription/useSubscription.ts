@@ -143,7 +143,7 @@ export function usePostSubscription(
     ...options,
     mutationFn: (topic: Topic) =>
       SynapseClient.postSubscription(accessToken, topic),
-    onSuccess: async (updatedSubscription, variables, ctx) => {
+    onSuccess: async (updatedSubscription, variables, ctx, mutationContext) => {
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: keyFactory.getAllSubscriptionsQueryKey(),
@@ -163,7 +163,12 @@ export function usePostSubscription(
       ])
 
       if (options?.onSuccess) {
-        await options.onSuccess(updatedSubscription, variables, ctx)
+        await options.onSuccess(
+          updatedSubscription,
+          variables,
+          ctx,
+          mutationContext,
+        )
       }
     },
   })
@@ -182,7 +187,7 @@ export function useDeleteSubscription(
         accessToken,
         subscription.subscriptionId,
       ),
-    onSuccess: async (updatedSubscription, variables, ctx) => {
+    onSuccess: async (updatedSubscription, variables, ctx, mutationContext) => {
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: keyFactory.getAllSubscriptionsQueryKey(),
@@ -202,7 +207,12 @@ export function useDeleteSubscription(
       ])
 
       if (options?.onSuccess) {
-        await options.onSuccess(updatedSubscription, variables, ctx)
+        await options.onSuccess(
+          updatedSubscription,
+          variables,
+          ctx,
+          mutationContext,
+        )
       }
     },
   })

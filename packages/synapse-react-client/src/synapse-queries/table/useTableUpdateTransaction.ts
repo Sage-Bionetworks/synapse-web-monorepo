@@ -49,7 +49,7 @@ export function useTableUpdateTransaction(
 
       return response.responseBody as TableUpdateTransactionResponse
     },
-    onSuccess: async (response, variables, ctx) => {
+    onSuccess: async (response, variables, ctx, mutationContext) => {
       await invalidateAllQueriesForEntity(
         queryClient,
         keyFactory,
@@ -57,7 +57,7 @@ export function useTableUpdateTransaction(
       )
 
       if (options?.onSuccess) {
-        await options.onSuccess(response, variables, ctx)
+        await options.onSuccess(response, variables, ctx, mutationContext)
       }
     },
   })
