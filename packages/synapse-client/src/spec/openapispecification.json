@@ -26328,7 +26328,8 @@
               "UNSUPPORTED_WEBHOOK_DOMAIN",
               "PROJECT_STORAGE_LIMIT_EXCEEDED",
               "TWO_FA_ENABLED_REQUIRED",
-              "BELOW_THRESHOLD"
+              "BELOW_THRESHOLD",
+              "ROW_SUPPRESSED"
             ]
           }
         },
@@ -26646,7 +26647,7 @@
           },
           "searchConfigurationId": {
             "type": "string",
-            "description": "Optional. ID of the SearchConfiguration to apply when building this index. If omitted, the build walks up the entity hierarchy (entity → folder → project) looking for the closest SearchConfigBinding; if none is found, platform defaults are used."
+            "description": "Optional. ID of the SearchConfiguration to apply when building this index. If omitted, the build walks up the entity hierarchy (entity \u2192 folder \u2192 project) looking for the closest SearchConfigBinding; if none is found, platform defaults are used."
           }
         },
         "description": "<p>A Synapse entity that materializes an OpenSearch index from a SQL view of a table-like entity. The <code>definingSQL<\/code> picks the columns and rows to index; the SearchConfiguration (either pointed at directly via <code>searchConfigurationId<\/code> or inherited from an ancestor binding) controls analyzers and synonyms. Once built, the index supports full-text search, faceted search, and autocomplete via the search endpoints on the SearchManagementController.<\/p><p><b>Per-column <code>ignore_above<\/code> limit at index-build time<\/b> &mdash; values longer than this on a given field are NOT indexed for exact match or sort, but remain stored in the source document:<\/p><table border='1'><tr><th>Synapse column type<\/th><th>ignore_above (keyword sub-field)<\/th><\/tr><tr><td>STRING, STRING_LIST, LINK<\/td><td>1,000 chars<\/td><\/tr><tr><td>MEDIUMTEXT<\/td><td>100,000 chars<\/td><\/tr><tr><td>LARGETEXT<\/td><td>8,192 chars<\/td><\/tr><tr><td>ENTITYID, USERID, ENTITYID_LIST, USERID_LIST<\/td><td>256 chars<\/td><\/tr><tr><td>INTEGER, DATE, INTEGER_LIST, DATE_LIST, FILEHANDLEID, SUBMISSIONID, EVALUATIONID, DOUBLE, BOOLEAN, BOOLEAN_LIST, JSON<\/td><td>n/a<\/td><\/tr><\/table><p>Maximum 500,000 indexed rows per SearchIndex.<\/p>",
@@ -35658,7 +35659,8 @@
               "UNSUPPORTED_WEBHOOK_DOMAIN",
               "PROJECT_STORAGE_LIMIT_EXCEEDED",
               "TWO_FA_ENABLED_REQUIRED",
-              "BELOW_THRESHOLD"
+              "BELOW_THRESHOLD",
+              "ROW_SUPPRESSED"
             ]
           }
         },
@@ -39940,8 +39942,20 @@
         "properties": {
           "suppressionThreshold": {
             "type": "integer",
-            "description": "The minimum number of matching rows required before an aggregate result is returned. An aggregate query that matches a non-zero row count below this threshold is suppressed. Must be a positive value.",
+            "description": "The minimum number of matching rows required before an aggregate result is returned. An aggregate query that matches a non-zero row count below this threshold is suppressed. Must be a positive value. This is also the k value enforced by cell-level k-anonymity: a participant-count cell whose value is non-zero but below this threshold is suppressed.",
             "format": "int32"
+          },
+          "quasiIdentifierColumnNames": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The names of the columns of the source that are quasi-identifiers (QIDs), including any direct participant identifier. Optional: when omitted, the source is restricted to aggregate-only reads (no row-level data is ever returned, and the total count is gated against the suppression threshold). When provided, the source additionally allows row-returning aggregate queries with cell-level k-anonymity applied. Each name must match an actual column name of the source; at query time, if any configured QID name does not match a column of the source, an exception is thrown. A QID column may only appear in a query as the argument of a COUNT (or COUNT DISTINCT) or in a WHERE clause. Any other use (bare projection, a non-count aggregate, GROUP BY, ORDER BY, SELECT DISTINCT, or an arithmetic/string expression) is permitted only for the aggregate-only response (the gated total count and obscured facet statistics); a query that both uses a QID in one of those ways and requests row results is rejected with an error identifying the offending use."
+          },
+          "countSuppressionStrategy": {
+            "type": "string",
+            "description": "Selects how a query that returns rows from an aggregate-only source treats a participant-count cell whose value is non-zero but below the suppression threshold (k). A count of exactly zero is never suppressed under either strategy. The ACT chooses the strategy per source based on what a given case requires.",
+            "enum": ["EXCLUDE_ROW", "MASK_BELOW_THRESHOLD"]
           },
           "facetPostProcessingConfig": {
             "$ref": "#/components/schemas/org.sagebionetworks.repo.model.FacetPostProcessingConfig",
@@ -44895,7 +44909,7 @@
             "description": "The date this binding was created."
           }
         },
-        "description": "Attaches a SearchConfiguration to an entity. When a SearchIndex is built, the effective SearchConfiguration is resolved by walking up the entity hierarchy (entity → folder → project) and using the first binding found. The typical setup is one binding on the project so every descendant SearchIndex inherits it automatically. Create / replace via PUT /entity/{entityId}/searchconfig/binding; read the effective binding via GET; remove via DELETE."
+        "description": "Attaches a SearchConfiguration to an entity. When a SearchIndex is built, the effective SearchConfiguration is resolved by walking up the entity hierarchy (entity \u2192 folder \u2192 project) and using the first binding found. The typical setup is one binding on the project so every descendant SearchIndex inherits it automatically. Create / replace via PUT /entity/{entityId}/searchconfig/binding; read the effective binding via GET; remove via DELETE."
       },
       "org.sagebionetworks.repo.model.search.dsl.Query": {
         "type": "object",
@@ -49030,7 +49044,8 @@
           "UNSUPPORTED_WEBHOOK_DOMAIN",
           "PROJECT_STORAGE_LIMIT_EXCEEDED",
           "TWO_FA_ENABLED_REQUIRED",
-          "BELOW_THRESHOLD"
+          "BELOW_THRESHOLD",
+          "ROW_SUPPRESSED"
         ]
       },
       "org.sagebionetworks.repo.model.curation.TaskStatus": {
@@ -54803,7 +54818,8 @@
               "UNSUPPORTED_WEBHOOK_DOMAIN",
               "PROJECT_STORAGE_LIMIT_EXCEEDED",
               "TWO_FA_ENABLED_REQUIRED",
-              "BELOW_THRESHOLD"
+              "BELOW_THRESHOLD",
+              "ROW_SUPPRESSED"
             ]
           }
         },
@@ -55369,7 +55385,8 @@
               "UNSUPPORTED_WEBHOOK_DOMAIN",
               "PROJECT_STORAGE_LIMIT_EXCEEDED",
               "TWO_FA_ENABLED_REQUIRED",
-              "BELOW_THRESHOLD"
+              "BELOW_THRESHOLD",
+              "ROW_SUPPRESSED"
             ]
           },
           "reason": {
@@ -56513,6 +56530,68 @@
           }
         },
         "description": "Represents a range of IDs"
+      },
+      "org.sagebionetworks.repo.model.AggregateCountSuppressionStrategy": {
+        "type": "string",
+        "enum": ["EXCLUDE_ROW", "MASK_BELOW_THRESHOLD"]
+      },
+      "org.sagebionetworks.repo.model.table.RowSuppressionErrorResponse": {
+        "type": "object",
+        "properties": {
+          "concreteType": {
+            "type": "string",
+            "enum": [
+              "org.sagebionetworks.repo.model.table.RowSuppressionErrorResponse"
+            ]
+          },
+          "rowSuppressionReasonCode": {
+            "type": "string",
+            "description": "A machine-readable code explaining why the row results of a query against an aggregate-only source were withheld. When such a query requests row results, it is rejected with this code rather than returning rows.",
+            "enum": [
+              "NO_QUASI_IDENTIFIERS",
+              "QID_PROJECTED",
+              "QID_IN_NON_COUNT_AGGREGATE",
+              "QID_IN_GROUP_BY",
+              "QID_IN_ORDER_BY",
+              "QID_IN_SELECT_DISTINCT",
+              "QID_IN_EXPRESSION"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "description": "The reason for the error"
+          },
+          "errorCode": {
+            "type": "string",
+            "description": "A code to be used by clients to handle the error.",
+            "enum": [
+              "PASSWORD_RESET_VIA_EMAIL_REQUIRED",
+              "USER_CERTIFICATION_REQUIRED",
+              "INVALID_TABLE_QUERY_FACET_COLUMN_REQUEST",
+              "OAUTH_CLIENT_NOT_VERIFIED",
+              "TWO_FA_REQUIRED",
+              "UNSUPPORTED_WEBHOOK_DOMAIN",
+              "PROJECT_STORAGE_LIMIT_EXCEEDED",
+              "TWO_FA_ENABLED_REQUIRED",
+              "BELOW_THRESHOLD",
+              "ROW_SUPPRESSED"
+            ]
+          }
+        },
+        "description": "Error returned when a query against an aggregate-only source requests row results but references a quasi-identifier column in a way that would expose it as more than a count. The row results are withheld to protect individual-level data. To obtain the aggregate-only response (the gated total count and obscured facet statistics), re-run the query without requesting row results.",
+        "required": ["concreteType"]
+      },
+      "org.sagebionetworks.repo.model.table.RowSuppressionReasonCode": {
+        "type": "string",
+        "enum": [
+          "NO_QUASI_IDENTIFIERS",
+          "QID_PROJECTED",
+          "QID_IN_NON_COUNT_AGGREGATE",
+          "QID_IN_GROUP_BY",
+          "QID_IN_ORDER_BY",
+          "QID_IN_SELECT_DISTINCT",
+          "QID_IN_EXPRESSION"
+        ]
       }
     },
     "securitySchemes": {
