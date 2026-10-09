@@ -70,7 +70,7 @@
     "vite-plugin-node-polyfills": "^0.28.0",
     "vitest": "catalog:",
     "vitest-browser-react": "^2.3.0",
-    "vitest-when": "^0.10.0",
+    "vitest-when": "^1.0.0",
     "whatwg-fetch": "^3.6.20"
   },
   "scripts": {
