@@ -20,7 +20,7 @@ export type AridhiaEndpoints = {
 export type AridhiaConfig = AridhiaEndpoints & {
   /**
    * Endpoints for the C-Path dev hub, used instead of the default endpoints when the
-   * `AMPALS_RDCA_DAP_FORM_ENABLED` feature flag is enabled.
+   * origin contains 'staging'.
    */
   devEndpoints?: AridhiaEndpoints
 }

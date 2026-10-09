@@ -1,18 +1,12 @@
 import { renderHook } from '@testing-library/react'
 import { PropsWithChildren } from 'react'
-import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
-import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   AridhiaConfig,
   PortalContextProvider,
   PortalContextType,
 } from './PortalContext'
 import { useAridhiaEndpoints } from './useAridhiaEndpoints'
-
-vi.mock('synapse-react-client/synapse-queries/index', () => ({
-  useGetFeatureFlag: vi.fn(),
-}))
 
 const defaultEndpoints = {
   apiBasePath: 'https://gateway.prod.example',
@@ -34,38 +28,39 @@ function renderEndpoints(aridhiaConfig: AridhiaConfig | undefined) {
   return renderHook(() => useAridhiaEndpoints(), { wrapper }).result.current
 }
 
+function stubOrigin(origin: string) {
+  vi.stubGlobal('location', { ...window.location, origin })
+}
+
 describe('useAridhiaEndpoints', () => {
-  beforeEach(() => {
-    vi.resetAllMocks()
+  afterEach(() => {
+    vi.unstubAllGlobals()
   })
 
-  it('returns the default endpoints when the feature flag is disabled', () => {
-    vi.mocked(useGetFeatureFlag).mockReturnValue(false)
+  it('returns the default endpoints when the origin is not staging', () => {
+    stubOrigin('https://ampals.synapse.org')
 
     expect(renderEndpoints({ ...defaultEndpoints, devEndpoints })).toEqual(
       defaultEndpoints,
     )
-    expect(useGetFeatureFlag).toHaveBeenCalledWith(
-      FeatureFlagEnum.AMPALS_RDCA_DAP_FORM_ENABLED,
-    )
   })
 
-  it('returns the dev endpoints when the feature flag is enabled', () => {
-    vi.mocked(useGetFeatureFlag).mockReturnValue(true)
+  it('returns the dev endpoints when the origin contains "staging"', () => {
+    stubOrigin('https://staging.ampals.synapse.org')
 
     expect(renderEndpoints({ ...defaultEndpoints, devEndpoints })).toEqual(
       devEndpoints,
     )
   })
 
-  it('returns the default endpoints when the flag is enabled but no dev endpoints are configured', () => {
-    vi.mocked(useGetFeatureFlag).mockReturnValue(true)
+  it('returns the default endpoints on staging when no dev endpoints are configured', () => {
+    stubOrigin('https://staging.ampals.synapse.org')
 
     expect(renderEndpoints(defaultEndpoints)).toEqual(defaultEndpoints)
   })
 
   it('returns empty endpoints when the portal has no Aridhia config', () => {
-    vi.mocked(useGetFeatureFlag).mockReturnValue(true)
+    stubOrigin('https://staging.ampals.synapse.org')
 
     expect(renderEndpoints(undefined)).toEqual({})
   })

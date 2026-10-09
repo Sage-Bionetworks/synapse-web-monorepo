@@ -1,5 +1,4 @@
-import { useQueryClient } from '@tanstack/react-query'
-import { PropsWithChildren, useEffect } from 'react'
+import { PropsWithChildren } from 'react'
 import { AridhiaContextProvider } from 'synapse-react-client/utils/context/AridhiaContext'
 import { useAridhiaEndpoints } from './useAridhiaEndpoints'
 
@@ -43,18 +42,10 @@ export function AridhiaIntegration(props: AridhiaIntegrationProps) {
 
 /**
  * {@link AridhiaIntegration} configured from the portal's `aridhiaConfig`, using the C-Path dev hub
- * endpoints when the `AMPALS_RDCA_DAP_FORM_ENABLED` feature flag is enabled.
+ * endpoints when served from a staging origin.
  */
 export function PortalAridhiaIntegration(props: PropsWithChildren) {
   const { apiBasePath, subjectTokenIssuer } = useAridhiaEndpoints()
-  const queryClient = useQueryClient()
-
-  // Aridhia query keys do not include the gateway URL. The feature flag resolves after the first
-  // render, so discard anything fetched from a different hub than the one now configured.
-  useEffect(() => {
-    queryClient.cancelQueries({ queryKey: ['aridhia'] })
-    queryClient.removeQueries({ queryKey: ['aridhia'] })
-  }, [apiBasePath, queryClient])
 
   return (
     <AridhiaIntegration
