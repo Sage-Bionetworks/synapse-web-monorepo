@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef } from 'react'
 import { ScrollRestoration, useLocation } from 'react-router'
 
-const HASH_TARGET_SETTLE_MS = 500
+const HASH_TARGET_SETTLE_MS = 3000
 
 /**
  * Scroll behavior for a portal: scroll reset and back/forward position restore,
