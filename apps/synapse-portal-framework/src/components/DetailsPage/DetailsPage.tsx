@@ -17,7 +17,6 @@ import {
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { DetailsPageContextProvider } from './DetailsPageContext'
 import { DetailsPageDocumentMetadata } from './DetailsPageDocumentMetadata'
-import { useScrollOnMount } from './utils'
 
 /**
  * The details pages give a deeper dive into a particular portal section.
@@ -54,8 +53,6 @@ export default function DetailsPage(props: DetailsPageProps) {
     () => ({ ...queryStringSearchParams, ...searchParamsProp }),
     [queryStringSearchParams, searchParamsProp],
   )
-
-  useScrollOnMount()
 
   const queryBundleRequest = useMemo(() => {
     const entityId = parseEntityIdFromSqlStatement(sql)
