@@ -30,7 +30,8 @@
  */
 import type { ReactNode } from 'react'
 import type { MetaArgs, MetaDescriptor } from 'react-router'
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
+import { Links, Meta, Outlet, Scripts } from 'react-router'
+import { PortalScrollRestoration } from '../components/PortalScrollRestoration'
 import { mergeMeta } from '../utils/mergeMeta'
 
 export type RootMetaOptions = {
@@ -143,7 +144,7 @@ export function createLayout(options: LayoutOptions = {}) {
 
           <noscript>You need to enable JavaScript to run this app.</noscript>
           {children}
-          <ScrollRestoration />
+          <PortalScrollRestoration />
           <Scripts />
         </body>
       </html>
