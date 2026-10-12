@@ -16,6 +16,11 @@ import {
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createMemoryRouter, RouterProvider } from 'react-router'
+import { RequestDataStep } from '@/components/AccessRequirementList/RequestDataStep'
+import {
+  JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+} from '@sage-bionetworks/synapse-types'
 import { InFlightEDucSignaturesTable } from './InFlightEDucSignaturesTable'
 
 vi.mock('@/synapse-queries', () => ({
@@ -26,17 +31,9 @@ vi.mock('@/synapse-queries/dataaccess/useAccessRequirements')
 vi.mock('@/components/ToastMessage/ToastMessage')
 // The wizard is rendered inside the Modify modal; stub it to keep this test focused on
 // InFlightEDucSignaturesTable behavior.
-vi.mock(
-  '@/components/AccessRequirementList/AccessRequirementList',
-  async importOriginal => {
-    const original = (await importOriginal()) as object
-    return {
-      ...original,
-      __esModule: true,
-      default: vi.fn(),
-    }
-  },
-)
+vi.mock('@/components/AccessRequirementList/AccessRequirementList', () => ({
+  default: vi.fn(),
+}))
 
 import AccessRequirementList from '@/components/AccessRequirementList/AccessRequirementList'
 
@@ -295,31 +292,43 @@ describe('InFlightEDucSignaturesTable', () => {
     expect(link).toHaveAttribute('href', '/request/10/signature')
   })
 
-  it('opens the modify wizard when "Modify Request" is clicked', async () => {
-    mockUseGetAccessRequirements.mockReturnValue({
-      data: { id: 1, eDucTemplateId: 'template-x' },
-    } as never)
-    const user = userEvent.setup()
-    renderWithRouter()
-    act(() => {
-      setListSuccess([
-        {
-          requestId: '10',
-          accessRequirementId: 'ar-1',
-          accessRequirementName: 'Requirement A',
-          isEDuc: true,
-          status: 'sent',
-        },
-      ])
-    })
+  it.each([
+    [
+      MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+      RequestDataStep.UPDATE_RESEARCH_PROJECT,
+    ],
+    [
+      JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+      RequestDataStep.SCHEMA_DRIVEN_REQUEST,
+    ],
+  ])(
+    'opens the modify wizard for a %s at its first request step',
+    async (concreteType, expectedStep) => {
+      mockUseGetAccessRequirements.mockReturnValue({
+        data: { id: 1, concreteType, eDucTemplateId: 'template-x' },
+      } as never)
+      const user = userEvent.setup()
+      renderWithRouter()
+      act(() => {
+        setListSuccess([
+          {
+            requestId: '10',
+            accessRequirementId: 'ar-1',
+            accessRequirementName: 'Requirement A',
+            isEDuc: true,
+            status: 'sent',
+          },
+        ])
+      })
 
-    await user.click(screen.getByRole('button', { name: 'Modify Request' }))
-    await screen.findByTestId('MockAccessRequirementList')
-    // The wizard is mounted with an initialWizardEntry pointing at the research project step.
-    const props = MockAccessRequirementList.mock.lastCall![0]
-    expect(props.renderAsModal).toBe(true)
-    expect(props.initialWizardEntry?.step).toBeDefined()
-  })
+      await user.click(screen.getByRole('button', { name: 'Modify Request' }))
+      await screen.findByTestId('MockAccessRequirementList')
+      // The wizard is mounted with an initialWizardEntry pointing at the first step of the AR's request flow.
+      const props = MockAccessRequirementList.mock.lastCall![0]
+      expect(props.renderAsModal).toBe(true)
+      expect(props.initialWizardEntry?.step).toBe(expectedStep)
+    },
+  )
 
   it('shows a loading state on the Modify button while the access requirement is fetching', async () => {
     mockUseGetAccessRequirements.mockReturnValue({

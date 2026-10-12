@@ -1,3 +1,4 @@
+import { CLOSE_BUTTON_LABEL } from '@/components/DialogBase'
 import { mockManagedACTAccessRequirement } from '@/mocks/accessRequirement/mockAccessRequirements'
 import { MOCK_DATA_ACCESS_REQUEST } from '@/mocks/dataaccess/MockDataAccessRequest'
 import { server } from '@/mocks/msw/server'
@@ -361,7 +362,9 @@ describe('SignatureStatusStep', () => {
       ),
     )
     const { user } = renderComponent()
-    await user.click(await screen.findByRole('button', { name: 'Close' }))
+    await user.click(
+      await screen.findByRole('button', { name: CLOSE_BUTTON_LABEL }),
+    )
     expect(mockOnHide).toHaveBeenCalledTimes(1)
   })
 

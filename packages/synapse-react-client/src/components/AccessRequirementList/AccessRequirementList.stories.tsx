@@ -6,6 +6,13 @@ import {
   mockSelfSignAccessRequirement,
   mockToUAccessRequirement,
 } from '@/mocks/accessRequirement/mockAccessRequirements'
+import {
+  mockJsonSchemaAR1,
+  mockJsonSchemaAR1WikiPage,
+  mockJsonSchemaAR1WikiPageKey,
+} from '@/mocks/accessRequirement/mockJsonSchemaAccessRequirements'
+import { mockJsonSchemaRegistry } from '@/mocks/accessRequirement/mockJsonSchemas'
+import { mockUnmetControlledDataRestrictionInformationACT } from '@/mocks/mock_has_access_data'
 import { mockApprovedSubmission } from '@/mocks/dataaccess/MockSubmission'
 import mockFileEntity from '@/mocks/entity/mockFileEntity'
 import {
@@ -13,20 +20,32 @@ import {
   getAccessRequirementHandlers,
   getAccessRequirementStatusHandlers,
 } from '@/mocks/msw/handlers/accessRequirementHandlers'
+import { getDataAccessRequestHandlers } from '@/mocks/msw/handlers/dataAccessRequestHandlers'
+import { getFormTemplateHandlers } from '@/mocks/msw/handlers/formTemplateHandlers'
+import { getRegisteredSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
 import { getEntityHandlers } from '@/mocks/msw/handlers/entityHandlers'
 import { getResearchProjectHandlers } from '@/mocks/msw/handlers/researchProjectHandlers'
-import { getCurrentUserCertifiedValidatedHandler } from '@/mocks/msw/handlers/userProfileHandlers'
+import {
+  getCurrentUserCertifiedValidatedHandler,
+  getUserProfileHandlers,
+} from '@/mocks/msw/handlers/userProfileHandlers'
 import { getWikiHandlers } from '@/mocks/msw/handlers/wikiHandlers'
 import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
-import { ACCESS_APPROVAL } from '@/utils/APIConstants'
+import {
+  ACCESS_APPROVAL,
+  ACCESS_REQUIREMENT_WIKI_PAGE_KEY,
+  WIKI_PAGE_ID,
+} from '@/utils/APIConstants'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import {
   AccessApproval,
+  AccessRequirement,
   ApprovalState,
   SubmissionState,
   TwoFactorAuthStatus,
 } from '@sage-bionetworks/synapse-types'
 import { Meta, StoryObj } from '@storybook/react-vite'
+import { JSONSchema7 } from 'json-schema'
 import { http, HttpResponse } from 'msw'
 import AccessRequirementList from './AccessRequirementList'
 
@@ -404,5 +423,78 @@ export const LockAccessRequirement: Story = {
         ...getWikiHandlers(MOCK_REPO_ORIGIN),
       ],
     },
+  },
+}
+
+// The mock is typed with the generated client; the list is typed with the legacy access requirement types
+const schemaDrivenAccessRequirement =
+  mockJsonSchemaAR1 as unknown as AccessRequirement
+
+/**
+ * A JsonSchemaAccessRequirement asks the requester for the answers described by its FormTemplate after the
+ * information every request needs.
+ */
+export const SchemaDrivenRequirement: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        http.get(
+          `${MOCK_REPO_ORIGIN}${ACCESS_REQUIREMENT_WIKI_PAGE_KEY(mockJsonSchemaAR1WikiPageKey.ownerObjectId)}`,
+          () => HttpResponse.json(mockJsonSchemaAR1WikiPageKey),
+        ),
+        http.get(
+          `${MOCK_REPO_ORIGIN}${WIKI_PAGE_ID(
+            mockJsonSchemaAR1WikiPageKey.ownerObjectType,
+            mockJsonSchemaAR1WikiPageKey.ownerObjectId,
+            mockJsonSchemaAR1WikiPageKey.wikiPageId,
+          )}`,
+          () => HttpResponse.json(mockJsonSchemaAR1WikiPage),
+        ),
+        ...getWikiHandlers(MOCK_REPO_ORIGIN),
+        ...getEntityHandlers(MOCK_REPO_ORIGIN),
+        getCurrentUserCertifiedValidatedHandler(MOCK_REPO_ORIGIN, true, true),
+        ...getTwoFactorAuthStatusHandler(true),
+        ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN),
+        ...getAccessRequirementEntityBindingHandlers(
+          MOCK_REPO_ORIGIN,
+          undefined,
+          [schemaDrivenAccessRequirement],
+        ),
+        ...getAccessRequirementStatusHandlers(MOCK_REPO_ORIGIN, [
+          {
+            accessRequirementId: String(mockJsonSchemaAR1.id),
+            concreteType:
+              'org.sagebionetworks.repo.model.dataaccess.ManagedACTAccessRequirementStatus',
+            isApproved: false,
+          },
+        ]),
+        http.post(`${MOCK_REPO_ORIGIN}/repo/v1/restrictionInformation`, () =>
+          HttpResponse.json({
+            ...mockUnmetControlledDataRestrictionInformationACT,
+            restrictionDetails: [
+              {
+                accessRequirementId: mockJsonSchemaAR1.id,
+                isMet: false,
+                isExempt: false,
+                isApproved: false,
+              },
+            ],
+          }),
+        ),
+        ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
+        ...getDataAccessRequestHandlers(MOCK_REPO_ORIGIN),
+        ...getFormTemplateHandlers(MOCK_REPO_ORIGIN),
+        ...getRegisteredSchemaHandlers(
+          MOCK_REPO_ORIGIN,
+          Object.values(mockJsonSchemaRegistry) as JSONSchema7[],
+        ),
+      ],
+    },
+  },
+  args: {
+    entityId: mockFileEntity.id,
+    accessRequirementFromProps: [schemaDrivenAccessRequirement],
+    isAuthenticated: true,
+    renderAsModal: true,
   },
 }

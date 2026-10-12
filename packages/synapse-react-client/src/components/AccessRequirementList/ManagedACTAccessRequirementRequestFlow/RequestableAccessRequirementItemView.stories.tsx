@@ -6,12 +6,12 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { fn } from 'storybook/test'
-import { ManagedACTAccessRequirementItemView } from './ManagedACTAccessRequirementItemView'
+import { RequestableAccessRequirementItemView } from './RequestableAccessRequirementItemView'
 
-const meta: Meta<typeof ManagedACTAccessRequirementItemView> = {
+const meta: Meta<typeof RequestableAccessRequirementItemView> = {
   title:
-    'Governance/Data Access Request Flow/Requirements/ManagedACTAccessRequirementItem',
-  component: ManagedACTAccessRequirementItemView,
+    'Governance/Data Access Request Flow/Requirements/RequestableAccessRequirementItem',
+  component: RequestableAccessRequirementItemView,
   args: {
     accessRequirement: mockManagedACTAccessRequirement,
     wikiPage: (
@@ -26,7 +26,7 @@ const meta: Meta<typeof ManagedACTAccessRequirementItemView> = {
     cancelRequestIsPending: false,
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof ManagedACTAccessRequirementItemView>
+} satisfies Meta<typeof RequestableAccessRequirementItemView>
 
 export default meta
 

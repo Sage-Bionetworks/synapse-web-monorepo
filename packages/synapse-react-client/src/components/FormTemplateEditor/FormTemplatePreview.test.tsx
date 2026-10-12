@@ -134,6 +134,18 @@ describe('FormTemplatePreview', () => {
     expect(getFieldLabel('Signing Official')).toBeInTheDocument()
   })
 
+  it('keeps answers when moving between steps', async () => {
+    const user = userEvent.setup()
+    renderPreview({
+      template: twoAlwaysVisibleStepsTemplate,
+      jsonSchema: schema,
+    })
+    await user.type(screen.getByRole('textbox'), 'Sage Bionetworks')
+    await user.click(screen.getByRole('button', { name: 'Additional info' }))
+    await user.click(screen.getByRole('button', { name: 'Basics' }))
+    expect(screen.getByRole('textbox')).toHaveValue('Sage Bionetworks')
+  })
+
   it('excludes a step whose only field is gated to the other request type', () => {
     // "summaryOfUse" is gated to RENEWAL by the schema's allOf; a REQUEST-only preview omits the
     // "Renewal details" step entirely (generateDataAccessSchema drops steps with no fields).

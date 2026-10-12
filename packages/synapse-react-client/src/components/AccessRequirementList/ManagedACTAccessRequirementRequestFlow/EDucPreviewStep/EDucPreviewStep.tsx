@@ -18,9 +18,7 @@ import {
   ButtonProps,
   DialogActions,
   DialogContent,
-  DialogTitle,
   Divider,
-  IconButton,
   Skeleton,
   Stack,
   Tooltip,
@@ -29,7 +27,7 @@ import {
 import { FileHandleAssociateType } from '@sage-bionetworks/synapse-types'
 import { ReactNode, useState } from 'react'
 import { useFetchBlobUrl } from '@/utils/hooks/useFetchBlobUrl'
-import IconSvg from '../../../IconSvg/IconSvg'
+import { DialogBaseTitle } from '../../../DialogBase'
 import {
   SIGNATURE_QUOTA_EXHAUSTED_TITLE,
   SignatureQuotaExhaustedMessage,
@@ -296,15 +294,7 @@ export default function EDucPreviewStep(props: EDucPreviewStepProps) {
 
   return (
     <>
-      <DialogTitle>
-        <Stack direction="row" sx={{ alignItems: 'center', gap: '5px' }}>
-          Request Access
-          <Box sx={{ flexGrow: 1 }} />
-          <IconButton aria-label={'Close'} onClick={onHide}>
-            <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
-          </IconButton>
-        </Stack>
-      </DialogTitle>
+      <DialogBaseTitle title={'Request Access'} onCancel={onHide} />
       <DialogContent>
         <Typography variant={'body1'} sx={{ fontWeight: 700, mb: 1 }}>
           Take a minute to preview your DUC

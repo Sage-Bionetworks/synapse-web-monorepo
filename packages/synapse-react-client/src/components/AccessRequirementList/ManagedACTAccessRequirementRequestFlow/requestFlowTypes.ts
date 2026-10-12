@@ -1,12 +1,13 @@
 import { ManagedACTAccessRequirement } from '@sage-bionetworks/synapse-types'
+import { RequestableAccessRequirement } from '../RequestDataStep'
 
 /**
  * The part of an access requirement that every data access request step needs. Satisfied by any access requirement
  * type that supports the data access request flow.
  */
 export type RequestFlowAccessRequirement = Pick<
-  ManagedACTAccessRequirement,
-  'id'
+  RequestableAccessRequirement,
+  'id' | 'concreteType'
 > &
   Partial<Pick<ManagedACTAccessRequirement, 'eDucTemplateId'>>
 
