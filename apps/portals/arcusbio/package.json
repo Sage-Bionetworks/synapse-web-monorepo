@@ -8,7 +8,7 @@
     "@mui/material": "^7.3.11",
     "@sage-bionetworks/synapse-portal-framework": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
-    "katex": "^0.16.47",
+    "katex": "^0.18.2",
     "lodash-es": "^4.18.1",
     "pluralize": "^8.0.0",
     "react": "^19.2.7",
