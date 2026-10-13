@@ -161,6 +161,17 @@ export default function SubmissionPage(props: SubmissionPageProps) {
     return <Skeleton width={100} />
   }, [isExpired, isLoadingAccessApproval, submission])
 
+  const hasSchemaAnswers =
+    !!submission?.schemaData && Object.keys(submission.schemaData).length > 0
+  const hasDocuments = Boolean(
+    submission?.ducFileHandleId ||
+    submission?.irbFileHandleId ||
+    submission?.attachments,
+  )
+  // A schema-driven submission may carry its documents only as form answers, so an empty
+  // Documents heading would sit directly above them.
+  const showDocumentsHeading = hasDocuments || !submission?.schemaData
+
   return (
     <Grid container={true} spacing={4} className="SubmissionPage">
       {showUpdateRequestDialog && accessRequirement && (
@@ -498,9 +509,11 @@ export default function SubmissionPage(props: SubmissionPageProps) {
                   </Typography>
                 </section>
               )}
-              <Typography variant="headline2" gutterBottom>
-                Documents
-              </Typography>
+              {showDocumentsHeading && (
+                <Typography variant="headline2" gutterBottom>
+                  Documents
+                </Typography>
+              )}
               {submission?.ducFileHandleId && (
                 <section>
                   <Typography variant="smallText2">
@@ -539,7 +552,7 @@ export default function SubmissionPage(props: SubmissionPageProps) {
                   ))}
                 </section>
               )}
-              {submission?.schemaData && (
+              {submission && hasSchemaAnswers && (
                 <SubmissionSchemaAnswers submission={submission} />
               )}
             </Stack>

@@ -51,8 +51,8 @@ function isFileHandleId(value: unknown): value is string | number {
   )
 }
 
-/** A choice answer's display label: its `oneOf` title when declared, otherwise the stored value. */
-function choiceLabel(subSchema: RJSFSchema | undefined, value: unknown) {
+/** An answer's display text: a choice's `oneOf` title when declared, otherwise the stored value. */
+function formatAnswer(subSchema: RJSFSchema | undefined, value: unknown) {
   const option = subSchema?.oneOf?.find(
     o => typeof o === 'object' && o.const === value,
   ) as RJSFSchema | undefined
@@ -85,13 +85,25 @@ function SchemaAnswerValue(props: {
   }
   const itemSchema = subSchema?.items as RJSFSchema | undefined
   const text = Array.isArray(value)
-    ? value.map(item => choiceLabel(itemSchema, item)).join(', ')
-    : choiceLabel(subSchema, value)
+    ? value.map(item => formatAnswer(itemSchema, item)).join(', ')
+    : formatAnswer(subSchema, value)
   return (
     <Typography variant="body1" style={{ whiteSpace: 'pre-line' }}>
       {text}
     </Typography>
   )
+}
+
+function toAnsweredField(
+  propertyKey: string,
+  subSchema: RJSFSchema | undefined,
+  uiTitle?: string,
+): AnsweredField {
+  return {
+    propertyKey,
+    label: uiTitle ?? subSchema?.title ?? propertyKey,
+    subSchema,
+  }
 }
 
 function toStepGroup({
@@ -101,19 +113,13 @@ function toStepGroup({
   return {
     title: String(jsonSchema.title ?? ''),
     description: jsonSchema.description,
-    fields: (uiSchema['ui:order'] ?? []).map(propertyKey => {
-      const subSchema = jsonSchema.properties?.[propertyKey] as
-        | RJSFSchema
-        | undefined
-      const fieldUiSchema = uiSchema[propertyKey] as UiSchema | undefined
-      return {
+    fields: (uiSchema['ui:order'] ?? []).map(propertyKey =>
+      toAnsweredField(
         propertyKey,
-        label: String(
-          fieldUiSchema?.['ui:title'] ?? subSchema?.title ?? propertyKey,
-        ),
-        subSchema,
-      }
-    }),
+        jsonSchema.properties?.[propertyKey] as RJSFSchema | undefined,
+        (uiSchema[propertyKey] as UiSchema | undefined)?.['ui:title'],
+      ),
+    ),
   }
 }
 
@@ -133,14 +139,12 @@ function buildAnswerGroups(
   )
   const unplacedFields = Object.keys(schemaData)
     .filter(key => !placedKeys.has(key))
-    .map(propertyKey => {
-      const subSchema = schemaPropertiesByKey.get(propertyKey)?.subSchema
-      return {
+    .map(propertyKey =>
+      toAnsweredField(
         propertyKey,
-        label: String(subSchema?.title ?? propertyKey),
-        subSchema,
-      }
-    })
+        schemaPropertiesByKey.get(propertyKey)?.subSchema,
+      ),
+    )
 
   return unplacedFields.length > 0
     ? [...stepGroups, { title: OTHER_RESPONSES_TITLE, fields: unplacedFields }]

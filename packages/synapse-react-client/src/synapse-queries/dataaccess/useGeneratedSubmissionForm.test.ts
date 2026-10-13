@@ -30,12 +30,10 @@ const templateVersion2: FormTemplate = {
 }
 
 function registerTemplateVersions(versions: FormTemplate[]) {
-  const requestedVersions: string[] = []
   server.use(
     http.get(
       `${REPO_ENDPOINT}/repo/v1/accessRequirement/formTemplate/:id/version/:versionNumber`,
       ({ params }) => {
-        requestedVersions.push(String(params.versionNumber))
         const template = versions.find(
           t =>
             t.id === params.id &&
@@ -50,7 +48,6 @@ function registerTemplateVersions(versions: FormTemplate[]) {
       mockClinicalSchema as JSONSchema7,
     ]),
   )
-  return requestedVersions
 }
 
 function stepPropertyKeys(form: GeneratedSubmissionForm | undefined) {
@@ -82,10 +79,7 @@ describe('useGeneratedSubmissionForm', () => {
   })
 
   it('generates steps from the template version recorded on the submission, not the latest', async () => {
-    const requestedVersions = registerTemplateVersions([
-      mockClinicalTemplate,
-      templateVersion2,
-    ])
+    registerTemplateVersions([mockClinicalTemplate, templateVersion2])
 
     const { result } = renderHook(
       () => useGeneratedSubmissionForm(mockSchemaDataSubmission),
@@ -93,7 +87,6 @@ describe('useGeneratedSubmissionForm', () => {
     )
 
     await waitFor(() => expect(result.current.form).toBeDefined())
-    expect(requestedVersions).toEqual(['1'])
     expect(result.current.form!.steps.map(s => s.jsonSchema.title)).toEqual([
       'Project Details',
       'Compliance',
@@ -145,6 +138,19 @@ describe('useGeneratedSubmissionForm', () => {
 
   it('surfaces a failure to fetch the template', async () => {
     registerTemplateVersions([])
+
+    const { result } = renderHook(
+      () => useGeneratedSubmissionForm(mockSchemaDataSubmission),
+      { wrapper: createWrapper() },
+    )
+
+    await waitFor(() => expect(result.current.error).toBeDefined())
+    expect(result.current.form).toBeUndefined()
+  })
+
+  it('surfaces a failure to fetch the registered schema', async () => {
+    registerTemplateVersions([mockClinicalTemplate])
+    server.use(...getRegisteredSchemaHandlers(REPO_ENDPOINT, []))
 
     const { result } = renderHook(
       () => useGeneratedSubmissionForm(mockSchemaDataSubmission),

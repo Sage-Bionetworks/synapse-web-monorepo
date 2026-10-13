@@ -65,9 +65,9 @@ export function useGeneratedSubmissionForm(
     hasSchemaData ? templateRef?.templateId : undefined,
     templateRef?.templateVersionNumber,
   )
-  const schema$id = templateQuery.data?.schema$id
-  const schemaQuery = useGetRegisteredSchema(schema$id ?? '', {
-    enabled: !!schema$id,
+  const schemaId = templateQuery.data?.schema$id
+  const schemaQuery = useGetRegisteredSchema(schemaId ?? '', {
+    enabled: !!schemaId,
   })
 
   const template = templateQuery.data

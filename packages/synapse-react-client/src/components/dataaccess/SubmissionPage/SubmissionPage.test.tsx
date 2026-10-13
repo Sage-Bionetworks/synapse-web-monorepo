@@ -657,8 +657,17 @@ describe('Submission Page tests', () => {
   describe('Schema-driven submissions', () => {
     const repoEndpoint = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
+    let servedSubmission: SubmissionWithFormTemplateRef | undefined
+
     beforeEach(() => {
+      servedSubmission = undefined
       server.use(
+        // Falls through to the suite-wide handler unless a test serves its own submission
+        http.get(`${repoEndpoint}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`, () =>
+          servedSubmission
+            ? HttpResponse.json(servedSubmission, { status: 200 })
+            : undefined,
+        ),
         ...getFormTemplateHandlers(repoEndpoint),
         ...getRegisteredSchemaHandlers(repoEndpoint, [
           mockClinicalSchema as JSONSchema7,
@@ -667,11 +676,7 @@ describe('Submission Page tests', () => {
     })
 
     function serveSubmission(submission: SubmissionWithFormTemplateRef) {
-      server.use(
-        http.get(`${repoEndpoint}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`, () =>
-          HttpResponse.json(submission, { status: 200 }),
-        ),
-      )
+      servedSubmission = submission
     }
 
     it('renders schemaData answers labelled and grouped by template step, in order', async () => {
@@ -726,7 +731,7 @@ describe('Submission Page tests', () => {
         isReviewer: true,
       })
 
-      await screen.findByRole('heading', { name: 'Form Responses' })
+      await screen.findByText('Longitudinal Biomarker Study')
       expect(screen.queryByText('Institution')).not.toBeInTheDocument()
       expect(screen.queryByText('Project Lead')).not.toBeInTheDocument()
     })
@@ -757,6 +762,40 @@ describe('Submission Page tests', () => {
       expect(
         screen.queryByRole('heading', { name: 'Form Responses' }),
       ).not.toBeInTheDocument()
+    })
+
+    it('renders no form responses section for empty schemaData', async () => {
+      serveSubmission({ ...mockSchemaDataSubmission, schemaData: {} })
+      renderComponent({
+        submissionId: mockSchemaDataSubmission.id,
+        isReviewer: true,
+      })
+
+      await screen.findByRole('button', { name: 'Approve' })
+      expect(
+        screen.queryByRole('heading', { name: 'Form Responses' }),
+      ).not.toBeInTheDocument()
+    })
+
+    it('omits the Documents heading when a schema-driven submission has no first-class documents', async () => {
+      renderComponent({
+        submissionId: mockSchemaDataSubmission.id,
+        isReviewer: true,
+      })
+
+      await screen.findByRole('heading', { name: 'Form Responses' })
+      expect(
+        screen.queryByRole('heading', { name: 'Documents' }),
+      ).not.toBeInTheDocument()
+    })
+
+    it('keeps the Documents heading for a ManagedACT submission', async () => {
+      renderComponent({
+        submissionId: SUBMITTED_SUBMISSION_ID,
+        isReviewer: true,
+      })
+
+      await screen.findByRole('heading', { name: 'Documents' })
     })
 
     it('lists answers that are not placed in a template step under Other responses', async () => {
