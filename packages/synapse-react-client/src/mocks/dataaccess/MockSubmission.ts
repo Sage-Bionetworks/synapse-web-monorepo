@@ -1,4 +1,9 @@
 import { mockManagedACTAccessRequirement } from '@/mocks/accessRequirement/mockAccessRequirements'
+import { mockClinicalTemplate } from '@/mocks/accessRequirement/mockFormTemplates'
+import { mockJsonSchemaAR2 } from '@/mocks/accessRequirement/mockJsonSchemaAccessRequirements'
+import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
+import type { SubmissionWithFormTemplateRef } from '@/synapse-queries/dataaccess/useGeneratedSubmissionForm'
+import { DataAccessRequestType } from '@sage-bionetworks/synapse-client'
 import {
   MOCK_FILE_HANDLE_ID,
   MOCK_PREVIEW_FILE_HANDLE_ID,
@@ -230,10 +235,59 @@ export const mockCancelledSubmission = {
   subjectType: RestrictableObjectType.ENTITY,
 } satisfies Submission
 
+/** A submission against a JsonSchemaAccessRequirement that collected no first-class fields. */
+export const mockSchemaDataSubmission = {
+  id: '10',
+  accessRequirementId: String(mockJsonSchemaAR2.id),
+  accessRequirementVersion: 1,
+  formTemplateRef: {
+    templateId: mockClinicalTemplate.id!,
+    templateVersionNumber: mockClinicalTemplate.versionNumber!,
+  },
+  requestId: '10',
+  accessorChanges: [
+    {
+      userId: MOCK_USER_ID.toString(),
+      type: AccessType.GAIN_ACCESS,
+    },
+  ],
+  schemaData: {
+    [SUBMISSION_CONTEXT_PROPERTY]: DataAccessRequestType.REQUEST,
+    projectTitle: 'Longitudinal Biomarker Study',
+    dataUsePurpose: 'Research',
+    signedDataUseAgreement: MOCK_FILE_HANDLE_ID,
+  },
+  isRenewalSubmission: false,
+  submittedOn: '2026-09-20T15:50:19.275Z',
+  modifiedOn: '2026-09-20T15:50:19.275Z',
+  submittedBy: MOCK_USER_ID.toString(),
+  modifiedBy: MOCK_USER_ID.toString(),
+  state: SubmissionState.SUBMITTED,
+  etag: 'b1e3c0a5-7c1d-4a51-9d0c-2c6f0b5e7a10',
+  subjectId: 'syn12156790',
+  subjectType: RestrictableObjectType.ENTITY,
+} satisfies SubmissionWithFormTemplateRef
+
+/** A renewal against a JsonSchemaAccessRequirement that also carries first-class fields. */
+export const mockSchemaDataAndFirstClassSubmission = {
+  ...mockSubmittedSubmission,
+  id: '11',
+  accessRequirementId: String(mockJsonSchemaAR2.id),
+  formTemplateRef: mockSchemaDataSubmission.formTemplateRef,
+  isRenewalSubmission: true,
+  schemaData: {
+    ...mockSchemaDataSubmission.schemaData,
+    [SUBMISSION_CONTEXT_PROPERTY]: DataAccessRequestType.RENEWAL,
+    irbApprovalNumber: 'IRB-2026-0042',
+  },
+} satisfies SubmissionWithFormTemplateRef
+
 export const mockSubmissions: Submission[] = [
   mockApprovedSubmission,
   mockRejectedSubmission,
   mockSubmittedSubmission,
   mockDemoSubmission,
   mockCancelledSubmission,
+  mockSchemaDataSubmission,
+  mockSchemaDataAndFirstClassSubmission,
 ]
