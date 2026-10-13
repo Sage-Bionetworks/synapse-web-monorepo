@@ -36,6 +36,7 @@ async function editJsonSchemaAccessRequirement(schemaDrivenEnabled: boolean) {
   )
   await screen.findByRole('textbox', { name: 'Name' })
   await user.click(screen.getByRole('button', { name: 'Save & Continue' }))
+  return { user }
 }
 
 describe('CreateOrUpdateAccessRequirementWizard for a JsonSchemaAccessRequirement', () => {
@@ -44,7 +45,7 @@ describe('CreateOrUpdateAccessRequirementWizard for a JsonSchemaAccessRequiremen
   afterAll(() => server.close())
 
   test('continues to the managed AR settings and reviewer permissions when the feature is enabled', async () => {
-    await editJsonSchemaAccessRequirement(true)
+    const { user } = await editJsonSchemaAccessRequirement(true)
 
     await screen.findByText('Data Access Request Parameters')
     expect(
@@ -52,9 +53,12 @@ describe('CreateOrUpdateAccessRequirementWizard for a JsonSchemaAccessRequiremen
         name: 'Accessors must use two-factor authentication (2FA).',
       }),
     ).toBeChecked()
-    // Reviewer permissions follow, so this is not the last step
+
+    await user.click(screen.getByRole('button', { name: 'Save & Continue' }))
     expect(
-      screen.getByRole('button', { name: 'Save & Continue' }),
+      await screen.findByRole('heading', {
+        name: 'Access Requirement Permissions',
+      }),
     ).toBeVisible()
   })
 

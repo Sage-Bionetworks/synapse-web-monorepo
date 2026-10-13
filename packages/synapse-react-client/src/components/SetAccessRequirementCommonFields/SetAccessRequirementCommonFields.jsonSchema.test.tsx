@@ -6,7 +6,7 @@ import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
 import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
 import { server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
-import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { createWrapperAndQueryClient } from '@/testutils/TestingLibraryUtils'
 import { ACCESS_REQUIREMENT_BY_ID } from '@/utils/APIConstants'
 import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
@@ -72,11 +72,12 @@ function serveJsonSchemaAccessRequirement() {
 async function setUp(props: SetAccessRequirementCommonFieldsProps) {
   const user = userEvent.setup()
   const ref = createRef<SetAccessRequirementCommonFieldsHandle>()
+  const { wrapperFn, queryClient } = createWrapperAndQueryClient()
   render(<SetAccessRequirementCommonFields ref={ref} {...props} />, {
-    wrapper: createWrapper(),
+    wrapper: wrapperFn,
   })
   const nameInput = await screen.findByRole('textbox', { name: 'Name' })
-  return { ref, user, nameInput }
+  return { ref, user, nameInput, queryClient }
 }
 
 describe('SetAccessRequirementCommonFields for schema-driven access requirements', () => {
@@ -192,6 +193,67 @@ describe('SetAccessRequirementCommonFields for schema-driven access requirements
     ).toBeVisible()
     expect(onError).toHaveBeenCalledTimes(1)
     expect(updateAccessRequirementSpy).not.toHaveBeenCalled()
+  })
+
+  test('does not save an AR pinned to a form template version that does not exist', async () => {
+    setSchemaDrivenFeatureEnabled(true)
+    serveJsonSchemaAccessRequirement()
+    server.use(
+      http.get(
+        `${REPO_ENDPOINT}/repo/v1/accessRequirement/formTemplate/:id/version/:versionNumber`,
+        () => HttpResponse.json({ reason: 'Not found' }, { status: 404 }),
+      ),
+    )
+    const { ref, queryClient } = await setUp(existingJsonSchemaArProps)
+
+    await screen.findByRole('combobox', { name: 'Template version' })
+    await waitFor(() => expect(queryClient.isFetching()).toBe(0))
+    act(() => ref.current?.save())
+
+    expect(
+      await screen.findByText(/could not be loaded: Not found/),
+    ).toBeVisible()
+    expect(onError).toHaveBeenCalledTimes(1)
+    expect(updateAccessRequirementSpy).not.toHaveBeenCalled()
+  })
+
+  test('saves the newer form template version after ACT updates the AR to it', async () => {
+    const user = userEvent.setup()
+    setSchemaDrivenFeatureEnabled(true)
+    serveJsonSchemaAccessRequirement()
+    const newerVersion = { ...mockClinicalTemplate, versionNumber: 2 }
+    server.use(
+      http.get(
+        `${REPO_ENDPOINT}/repo/v1/accessRequirement/formTemplate/:id`,
+        () => HttpResponse.json(newerVersion),
+      ),
+      http.get(
+        `${REPO_ENDPOINT}/repo/v1/accessRequirement/formTemplate/:id/version/:versionNumber`,
+        ({ params }) =>
+          HttpResponse.json({
+            ...mockClinicalTemplate,
+            versionNumber: Number(params.versionNumber),
+          }),
+      ),
+    )
+    const { ref } = await setUp(existingJsonSchemaArProps)
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Update to version 2' }),
+    )
+    act(() => ref.current?.save())
+
+    await waitFor(() => {
+      expect(updateAccessRequirementSpy).toHaveBeenCalledWith(
+        MOCK_ACCESS_TOKEN,
+        expect.objectContaining({
+          formTemplateRef: {
+            templateId: mockClinicalTemplate.id,
+            templateVersionNumber: 2,
+          },
+        }),
+      )
+    })
   })
 
   test('leaves the form template reference untouched when the feature is disabled', async () => {

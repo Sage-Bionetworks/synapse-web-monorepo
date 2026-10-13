@@ -24,6 +24,7 @@ import {
   FormTemplateReference,
 } from '@sage-bionetworks/synapse-client'
 import { keepPreviousData } from '@tanstack/react-query'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { useId, useMemo, useState } from 'react'
 import { FormTemplatePreviewDialog } from './FormTemplatePreviewDialog'
 
@@ -34,6 +35,23 @@ export const SELECT_FORM_TEMPLATE_ERROR =
  * Why a reference cannot be saved on an Access Requirement, or undefined if it can. These mirror
  * the checks the server makes when an Access Requirement is created or updated.
  */
+export function getFormTemplateReferenceError(
+  reference: FormTemplateReference | undefined,
+  loadedVersion: { template?: FormTemplate; error?: SynapseClientError },
+): string | undefined {
+  if (!reference) {
+    return SELECT_FORM_TEMPLATE_ERROR
+  }
+  const description = `Version ${reference.templateVersionNumber} of the form template with the id '${reference.templateId}'`
+  if (loadedVersion.error) {
+    return `${description} could not be loaded: ${loadedVersion.error.reason}`
+  }
+  if (loadedVersion.template?.deprecated) {
+    return `${description} is deprecated, so it cannot be referenced by an Access Requirement.`
+  }
+  return undefined
+}
+
 export function useFormTemplateReferenceError(
   reference: FormTemplateReference | undefined,
 ): string | undefined {
@@ -41,17 +59,10 @@ export function useFormTemplateReferenceError(
     reference?.templateId,
     reference?.templateVersionNumber,
   )
-  if (!reference) {
-    return SELECT_FORM_TEMPLATE_ERROR
-  }
-  const description = `Version ${reference.templateVersionNumber} of the form template with the id '${reference.templateId}'`
-  if (error) {
-    return `${description} could not be loaded: ${error.reason}`
-  }
-  if (template?.deprecated) {
-    return `${description} is deprecated, so it cannot be referenced by an Access Requirement.`
-  }
-  return undefined
+  return getFormTemplateReferenceError(reference, {
+    template,
+    error: error ?? undefined,
+  })
 }
 
 function describeVersion(version: FormTemplate, latestVersionNumber: number) {
@@ -100,7 +111,9 @@ export function FormTemplateReferenceField(
     value?.templateId,
     value?.templateVersionNumber,
   )
-  const { versions } = useGetFormTemplateVersions(value?.templateId)
+  const { versions, latestVersion } = useGetFormTemplateVersions(
+    value?.templateId,
+  )
 
   const templateOptions = useMemo(() => {
     const searchResults =
@@ -111,7 +124,6 @@ export function FormTemplateReferenceField(
       : searchResults
   }, [searchData, selectedVersion])
 
-  const latestVersion = versions[0]
   const latestVersionNumber = latestVersion?.versionNumber ?? 0
   const canUpdateToLatest =
     value != null &&
@@ -134,7 +146,12 @@ export function FormTemplateReferenceField(
           }
         }}
         onChange={(_event, template) => {
-          if (template?.id != null && template.versionNumber != null) {
+          // Choosing the template that is already selected must not move it to the latest version
+          if (
+            template?.id != null &&
+            template.versionNumber != null &&
+            template.id !== value?.templateId
+          ) {
             onChange({
               templateId: template.id,
               templateVersionNumber: template.versionNumber,

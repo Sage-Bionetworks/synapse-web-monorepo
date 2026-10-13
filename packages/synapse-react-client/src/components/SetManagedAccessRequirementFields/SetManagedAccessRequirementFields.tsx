@@ -121,6 +121,10 @@ export const SetManagedAccessRequirementFields = forwardRef(
       }
     }
 
+    const isManagedAr =
+      updatedAr.concreteType ===
+      MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
+
     return (
       <>
         <AccessRequirementWikiInstructions accessRequirement={updatedAr} />
@@ -158,8 +162,7 @@ export const SetManagedAccessRequirementFields = forwardRef(
                 isLoading={isUpdatingAccessRequirement}
                 onChange={changes => setUpdatedAr({ ...updatedAr, ...changes })}
               />
-              {updatedAr.concreteType ===
-                MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE && (
+              {isManagedAr && (
                 <>
                   <FormControlLabel
                     label="IRB approval is required."
@@ -201,8 +204,7 @@ export const SetManagedAccessRequirementFields = forwardRef(
                   }
                 }}
               />
-              {updatedAr.concreteType ===
-                MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE && (
+              {isManagedAr && (
                 <Box
                   sx={{
                     mt: 1,

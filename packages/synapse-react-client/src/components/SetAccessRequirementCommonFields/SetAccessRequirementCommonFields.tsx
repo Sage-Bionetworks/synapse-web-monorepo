@@ -134,11 +134,11 @@ export const SetAccessRequirementCommonFields = forwardRef(
     >(undefined)
     const [showFormTemplateError, setShowFormTemplateError] =
       useState<boolean>(false)
-    const isSchemaDriven =
+    const isSchemaDrivenTypeSelected =
       isSchemaDrivenEnabled &&
       arType === JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
     const formTemplateReferenceError = useFormTemplateReferenceError(
-      isSchemaDriven ? formTemplateRef : undefined,
+      isSchemaDrivenTypeSelected ? formTemplateRef : undefined,
     )
 
     const onMutationSuccess = (ar: AccessRequirement) => {
@@ -264,7 +264,7 @@ export const SetAccessRequirementCommonFields = forwardRef(
             return
           }
 
-          if (isSchemaDriven && formTemplateReferenceError) {
+          if (isSchemaDrivenTypeSelected && formTemplateReferenceError) {
             setShowFormTemplateError(true)
             onError()
             return
@@ -278,7 +278,7 @@ export const SetAccessRequirementCommonFields = forwardRef(
               name: name,
               accessType: newAccessType,
               subjectsDefinedByAnnotations: subjectsDefinedByAnnotations,
-              ...(isSchemaDriven ? { formTemplateRef } : {}),
+              ...(isSchemaDrivenTypeSelected ? { formTemplateRef } : {}),
             }
             createAccessRequirement(newAr)
           }
@@ -290,7 +290,7 @@ export const SetAccessRequirementCommonFields = forwardRef(
               name: name,
               accessType: newAccessType,
               subjectsDefinedByAnnotations: subjectsDefinedByAnnotations,
-              ...(isSchemaDriven ? { formTemplateRef } : {}),
+              ...(isSchemaDrivenTypeSelected ? { formTemplateRef } : {}),
             })
           }
         },
@@ -307,7 +307,7 @@ export const SetAccessRequirementCommonFields = forwardRef(
       createAccessRequirement,
       updateAccessRequirement,
       subjectsDefinedByAnnotations,
-      isSchemaDriven,
+      isSchemaDrivenTypeSelected,
       formTemplateRef,
       formTemplateReferenceError,
     ])
@@ -422,7 +422,7 @@ export const SetAccessRequirementCommonFields = forwardRef(
             </RadioGroup>
           </>
         )}
-        {isSchemaDriven && (
+        {isSchemaDrivenTypeSelected && (
           <Box sx={{ mt: 2 }}>
             <Typography
               {...headerProps}

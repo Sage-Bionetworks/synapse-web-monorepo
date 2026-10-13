@@ -75,25 +75,29 @@ export function useGetFormTemplateVersion(
 }
 
 /**
- * Retrieve every version of a FormTemplate, newest first. The API has no endpoint to list
- * versions, so this fetches the latest version and then each earlier version number in turn.
- * Disabled while templateId is undefined.
+ * Retrieve every version of a FormTemplate. The API has no endpoint to list versions, so this
+ * fetches the latest version and then each earlier version number in turn. `versions` is ordered
+ * newest first and omits any version that has not loaded; `latestVersion` is always the template's
+ * actual latest version. Disabled while templateId is undefined.
  */
 export function useGetFormTemplateVersions(templateId: string | undefined) {
   const { keyFactory, synapseClient } = useSynapseContext()
   const { data: latestVersion, error: latestVersionError } =
     useGetFormTemplate(templateId)
 
-  const versionNumbers = useMemo(() => {
-    const latestVersionNumber = latestVersion?.versionNumber ?? 0
+  const earlierVersionNumbers = useMemo(() => {
+    const earlierVersionCount = Math.max(
+      (latestVersion?.versionNumber ?? 0) - 1,
+      0,
+    )
     return Array.from(
-      { length: latestVersionNumber },
-      (_, index) => latestVersionNumber - index,
+      { length: earlierVersionCount },
+      (_, index) => earlierVersionCount - index,
     )
   }, [latestVersion?.versionNumber])
 
   return useQueries({
-    queries: versionNumbers.map(versionNumber => ({
+    queries: earlierVersionNumbers.map(versionNumber => ({
       queryKey: keyFactory.getFormTemplateVersionQueryKey(
         templateId ?? '',
         versionNumber,
@@ -104,7 +108,11 @@ export function useGetFormTemplateVersions(templateId: string | undefined) {
         ),
     })),
     combine: results => ({
-      versions: results.flatMap(result => (result.data ? [result.data] : [])),
+      latestVersion,
+      versions: [
+        ...(latestVersion ? [latestVersion] : []),
+        ...results.flatMap(result => (result.data ? [result.data] : [])),
+      ],
       isLoading:
         templateId != null &&
         (latestVersion == null

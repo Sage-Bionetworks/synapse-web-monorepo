@@ -10,6 +10,7 @@ import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { FormTemplate } from '@sage-bionetworks/synapse-client'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   render,
   renderHook,
@@ -22,6 +23,7 @@ import { JSONSchema7 } from 'json-schema'
 import { http, HttpResponse } from 'msw'
 import {
   FormTemplateReferenceField,
+  getFormTemplateReferenceError,
   SELECT_FORM_TEMPLATE_ERROR,
   useFormTemplateReferenceError,
 } from './FormTemplateReferenceField'
@@ -87,9 +89,11 @@ describe('FormTemplateReferenceField', () => {
     expect(
       await screen.findByText(mockClinicalTemplate.schema$id),
     ).toBeVisible()
-    expect(
-      screen.getByRole('combobox', { name: 'Template version' }),
-    ).toHaveTextContent('Version 2 (latest)')
+    await waitFor(() =>
+      expect(
+        screen.getByRole('combobox', { name: 'Template version' }),
+      ).toHaveTextContent('Version 2 (latest)'),
+    )
   })
 
   test('lists versions newest first and disables deprecated versions', async () => {
@@ -107,8 +111,8 @@ describe('FormTemplateReferenceField', () => {
     await user.click(
       await screen.findByRole('combobox', { name: 'Template version' }),
     )
-    const options = await screen.findAllByRole('option')
-    await waitFor(() => expect(options).toHaveLength(3))
+    await waitFor(() => expect(screen.getAllByRole('option')).toHaveLength(3))
+    const options = screen.getAllByRole('option')
     expect(options.map(o => o.textContent)).toEqual([
       'Version 3 (latest)',
       'Version 2 (deprecated)',
@@ -144,29 +148,77 @@ describe('FormTemplateReferenceField', () => {
       { wrapper: createWrapper() },
     )
 
-    await screen.findByText(mockClinicalTemplate.schema$id)
-    await screen.findByRole('combobox', { name: 'Template version' })
+    // The versions have loaded once the pinned version is labelled as the latest
+    await waitFor(() =>
+      expect(
+        screen.getByRole('combobox', { name: 'Template version' }),
+      ).toHaveTextContent('Version 2 (latest)'),
+    )
     expect(
       screen.queryByRole('button', { name: /Update to version/ }),
     ).not.toBeInTheDocument()
   })
 
   test('does not offer an update to a deprecated latest version', async () => {
+    const user = userEvent.setup()
     serveTemplateVersions([version(1), version(2, { deprecated: true })])
     render(
       <FormTemplateReferenceField value={reference(1)} onChange={onChange} />,
       { wrapper: createWrapper() },
     )
 
-    await screen.findByText(mockClinicalTemplate.schema$id)
-    await waitFor(() =>
-      expect(
-        screen.getByRole('combobox', { name: 'Template version' }),
-      ).toHaveTextContent('Version 1'),
+    // The versions have loaded once the latest one is listed
+    await user.click(
+      await screen.findByRole('combobox', { name: 'Template version' }),
     )
+    await screen.findByRole('option', {
+      name: 'Version 2 (latest, deprecated)',
+    })
     expect(
       screen.queryByRole('button', { name: /Update to version/ }),
     ).not.toBeInTheDocument()
+  })
+
+  test('offers the actual latest version even when an earlier version fails to load', async () => {
+    const user = userEvent.setup()
+    serveTemplateVersions([version(1), version(2), version(3)])
+    server.use(
+      http.get(`${TEMPLATE_URL}/:id/version/2`, () =>
+        HttpResponse.json({ reason: 'Unavailable' }, { status: 500 }),
+      ),
+    )
+    render(
+      <FormTemplateReferenceField value={reference(1)} onChange={onChange} />,
+      { wrapper: createWrapper() },
+    )
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Update to version 3' }),
+    )
+    expect(onChange).toHaveBeenCalledExactlyOnceWith(reference(3))
+  })
+
+  test('choosing the template that is already selected keeps its pinned version', async () => {
+    const user = userEvent.setup()
+    serveTemplateVersions([version(1), version(2)])
+    server.use(
+      http.post(getFormTemplateSearchUrl(REPO_ENDPOINT), () =>
+        HttpResponse.json({ results: [version(2)] }),
+      ),
+    )
+    render(
+      <FormTemplateReferenceField value={reference(1)} onChange={onChange} />,
+      { wrapper: createWrapper() },
+    )
+
+    await user.click(
+      await screen.findByRole('combobox', { name: 'Form template' }),
+    )
+    await user.click(
+      await screen.findByRole('option', { name: mockClinicalTemplate.name }),
+    )
+
+    expect(onChange).not.toHaveBeenCalled()
   })
 
   test('warns when the pinned version is deprecated', async () => {
@@ -298,5 +350,29 @@ describe('useFormTemplateReferenceError', () => {
       { wrapper: createWrapper() },
     )
     await waitFor(() => expect(result.current).toContain('is deprecated'))
+  })
+})
+
+describe('getFormTemplateReferenceError', () => {
+  const description = `Version 1 of the form template with the id '${mockClinicalTemplate.id}'`
+
+  test.each([
+    ['no reference', undefined, {}, SELECT_FORM_TEMPLATE_ERROR],
+    [
+      'a version that failed to load',
+      reference(1),
+      { error: { reason: 'Not found' } as SynapseClientError },
+      `${description} could not be loaded: Not found`,
+    ],
+    [
+      'a deprecated version',
+      reference(1),
+      { template: version(1, { deprecated: true }) },
+      `${description} is deprecated, so it cannot be referenced by an Access Requirement.`,
+    ],
+    ['a usable version', reference(1), { template: version(1) }, undefined],
+    ['a version that is still loading', reference(1), {}, undefined],
+  ])('%s', (_name, ref, loadedVersion, expected) => {
+    expect(getFormTemplateReferenceError(ref, loadedVersion)).toBe(expected)
   })
 })
