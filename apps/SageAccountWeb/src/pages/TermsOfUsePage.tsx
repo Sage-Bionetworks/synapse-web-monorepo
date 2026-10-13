@@ -67,7 +67,6 @@ function TermsOfUsePage() {
   }
 
   if (isDone) {
-    // AppInitializer still thinks the ToU are not signed.
     if (sourceApp?.requestAffiliation) {
       window.location.assign('/authenticated/currentaffiliation')
     } else {
