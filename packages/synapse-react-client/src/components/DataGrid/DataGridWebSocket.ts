@@ -82,6 +82,9 @@ export class DataGridWebSocket {
   private inFlightPatchRequestId: number | null = null
   private patchAckTimeoutMs: number
   private patchAckTimer: number | null = null
+  // Set once disconnect() has been requested: the socket closes when the last patch is acknowledged
+  private isClosing = false
+  private isSyncExchangeOpen = false
 
   private onModelCreate: (model: GridModel) => void
   private onGridReady: () => void
@@ -160,6 +163,8 @@ export class DataGridWebSocket {
     this.socket.onclose = () => {
       console.debug('Disconnected from the WebSocket server')
       this.stopWaitingForPatchAck()
+      // Edits not yet flushed stay in the model for the replacement connection to send
+      this.throttledSendPatch.cancel()
       this.onStatusChange(false, this)
     }
 
@@ -168,18 +173,37 @@ export class DataGridWebSocket {
     }
   }
 
+  /**
+   * Closes the connection once every unacknowledged patch has been acknowledged, so edits made
+   * just before leaving are not lost. The owner has moved on, so no further callbacks fire.
+   */
   public disconnect() {
-    if (this.socket.readyState === WebSocket.OPEN) {
-      this.throttledSendPatch.flush()
-      this.throttledSendPatch.cancel()
-      this.stopWaitingForPatchAck()
-      this.socket.close()
-      console.debug('WebSocket connection closed')
-    } else {
+    if (this.socket.readyState !== WebSocket.OPEN) {
       // Edits that were never flushed stay in the model for the next connection to send
       this.throttledSendPatch.cancel()
       console.warn('WebSocket is not open. No action taken.')
+      return
     }
+
+    this.throttledSendPatch.flush()
+    this.throttledSendPatch.cancel()
+    this.isClosing = true
+    this.onModelCreate = noop
+    this.onGridReady = noop
+    this.onStatusChange = noop
+    this.onReplicaConnected = noop
+    this.onReplicaDisconnected = noop
+    this.onSyncStart = noop
+    this.onSyncEnd = noop
+    this.onError = noop
+    if (this.unacknowledgedPatches.length === 0) {
+      this.closeSocket()
+    }
+  }
+
+  private closeSocket() {
+    this.socket.close()
+    console.debug('WebSocket connection closed')
   }
 
   /**
@@ -210,6 +234,9 @@ export class DataGridWebSocket {
 
   private handleMessage(rawMessage: string) {
     const message = JsonRx.fromJson(JSON.parse(rawMessage))
+    if (this.isClosing && !(message instanceof JsonRxResponseComplete)) {
+      return
+    }
     if (message instanceof JsonRxResponse) {
       this.handleResponse(
         message as JsonRxResponse<SynapseGridWebSocketMessagePayload>,
@@ -278,17 +305,30 @@ export class DataGridWebSocket {
 
   private handleResponseComplete(message: JsonRxResponseComplete) {
     if (message.getSubscriptionId() === this.inFlightPatchRequestId) {
-      this.unacknowledgedPatches.shift()
-      this.stopWaitingForPatchAck()
-      this.sendNextPatch()
+      this.handlePatchAcknowledged()
       return
     }
+    this.isSyncExchangeOpen = false
     // Clocks are in sync, no further action needed
     this.onGridReady()
     this.onSyncEnd()
     console.debug(
       'Clocks synchronized with server. Incrementing sequence number.',
     )
+  }
+
+  private handlePatchAcknowledged() {
+    this.unacknowledgedPatches.shift()
+    this.stopWaitingForPatchAck()
+    if (this.unacknowledgedPatches.length > 0) {
+      this.sendNextPatch()
+    } else if (this.isClosing) {
+      this.closeSocket()
+    } else if (this.isSyncExchangeOpen && this.model) {
+      // The sync was answered with local patches instead of a clock. Now that they are stored,
+      // confirm the clock so the server can complete the exchange.
+      this.sendSyncMessage(this.verboseEncoder.encode(this.model).time)
+    }
   }
 
   private handleNotification(message: JsonRxNotification) {
@@ -434,6 +474,7 @@ export class DataGridWebSocket {
       'synchronize-clock',
       clock ?? [],
     )
+    this.isSyncExchangeOpen = true
     this.onSyncStart()
     this.sendMessage(message)
   }
