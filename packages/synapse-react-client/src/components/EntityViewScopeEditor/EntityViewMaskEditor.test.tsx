@@ -100,13 +100,13 @@ describe('EntityViewMaskEditor tests', () => {
       ),
     ).toBe(true)
 
-    // 0x02 is not a recognized mask bit
     expect(
       isMaskSupportedInUI(
         ENTITY_VIEW_TYPE_MASK_FILE | ENTITY_VIEW_TYPE_MASK_RECORDSET,
       ),
     ).toBe(true)
 
+    // 0x02 is not a recognized mask bit
     expect(isMaskSupportedInUI(0x02)).toBe(false)
     expect(isMaskSupportedInUI(ENTITY_VIEW_TYPE_MASK_FILE | 0x02)).toBe(false)
   })
