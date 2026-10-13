@@ -10,7 +10,11 @@ import {
   FormControlLabel,
   Typography,
 } from '@mui/material'
-import { ManagedACTAccessRequirement } from '@sage-bionetworks/synapse-types'
+import {
+  JsonSchemaAccessRequirement,
+  MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  ManagedACTAccessRequirement,
+} from '@sage-bionetworks/synapse-types'
 import {
   ForwardedRef,
   forwardRef,
@@ -42,6 +46,16 @@ export type SetManagedAccessRequirementFieldsProps = {
   onError: () => void
 }
 
+/**
+ * The AR types that ACT reviews in Synapse and that share the same accessor, DUC, and expiration
+ * settings. A JsonSchemaAccessRequirement collects its remaining requirements through its form
+ * template, so the IRB, other documents, and Intended Data Use settings only apply to a
+ * ManagedACTAccessRequirement.
+ */
+type ReviewedAccessRequirement =
+  | ManagedACTAccessRequirement
+  | JsonSchemaAccessRequirement
+
 export const SetManagedAccessRequirementFields = forwardRef(
   function SetManagedAccessRequirementFields(
     props: SetManagedAccessRequirementFieldsProps,
@@ -50,10 +64,9 @@ export const SetManagedAccessRequirementFields = forwardRef(
     const { accessRequirementId, onSave, onError } = props
 
     const { data: accessRequirement, error: getArError } =
-      useGetAccessRequirements<ManagedACTAccessRequirement>(
-        accessRequirementId,
-        { staleTime: Infinity },
-      )
+      useGetAccessRequirements<ReviewedAccessRequirement>(accessRequirementId, {
+        staleTime: Infinity,
+      })
     useEffect(() => {
       if (accessRequirement) {
         setUpdatedAr(accessRequirement)
@@ -68,14 +81,14 @@ export const SetManagedAccessRequirementFields = forwardRef(
     >(null)
 
     const [updatedAr, setUpdatedAr] =
-      useState<ManagedACTAccessRequirement | null>(null)
+      useState<ReviewedAccessRequirement | null>(null)
     const [expirationPeriodDays, setExpirationPeriodDays] = useState<string>('')
 
     const {
       mutate: updateAccessRequirement,
       isPending: isUpdatingAccessRequirement,
       error: updateArError,
-    } = useUpdateAccessRequirement<ManagedACTAccessRequirement>({
+    } = useUpdateAccessRequirement<ReviewedAccessRequirement>({
       onSuccess: () => onSave(),
       onError: () => onError(),
     })
@@ -132,7 +145,7 @@ export const SetManagedAccessRequirementFields = forwardRef(
             <AccessorRequirements
               accessRequirement={updatedAr}
               onChange={updatedAr =>
-                setUpdatedAr(updatedAr as ManagedACTAccessRequirement)
+                setUpdatedAr(updatedAr as ReviewedAccessRequirement)
               }
             />
             <Box
@@ -145,29 +158,34 @@ export const SetManagedAccessRequirementFields = forwardRef(
                 isLoading={isUpdatingAccessRequirement}
                 onChange={changes => setUpdatedAr({ ...updatedAr, ...changes })}
               />
-              <FormControlLabel
-                label="IRB approval is required."
-                checked={updatedAr.isIRBApprovalRequired}
-                control={<Checkbox />}
-                onChange={(_event, checked: boolean) =>
-                  setUpdatedAr({
-                    ...updatedAr,
-                    isIRBApprovalRequired: checked,
-                  })
-                }
-                sx={{ ml: 0 }}
-              />
-              <FormControlLabel
-                control={<Checkbox />}
-                label="Other documents are required."
-                checked={updatedAr.areOtherAttachmentsRequired}
-                onChange={(_event, checked: boolean) =>
-                  setUpdatedAr({
-                    ...updatedAr,
-                    areOtherAttachmentsRequired: checked,
-                  })
-                }
-              />
+              {updatedAr.concreteType ===
+                MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE && (
+                <>
+                  <FormControlLabel
+                    label="IRB approval is required."
+                    checked={updatedAr.isIRBApprovalRequired}
+                    control={<Checkbox />}
+                    onChange={(_event, checked: boolean) =>
+                      setUpdatedAr({
+                        ...updatedAr,
+                        isIRBApprovalRequired: checked,
+                      })
+                    }
+                    sx={{ ml: 0 }}
+                  />
+                  <FormControlLabel
+                    control={<Checkbox />}
+                    label="Other documents are required."
+                    checked={updatedAr.areOtherAttachmentsRequired}
+                    onChange={(_event, checked: boolean) =>
+                      setUpdatedAr({
+                        ...updatedAr,
+                        areOtherAttachmentsRequired: checked,
+                      })
+                    }
+                  />
+                </>
+              )}
               <ExpirationPeriodField
                 days={expirationPeriodDays}
                 error={expirationPeriodError}
@@ -183,43 +201,46 @@ export const SetManagedAccessRequirementFields = forwardRef(
                   }
                 }}
               />
-              <Box
-                sx={{
-                  mt: 1,
-                }}
-              >
-                <FormControlLabel
-                  control={<Checkbox />}
-                  label="Intended Data Use statement is required."
-                  checked={updatedAr.isIDURequired}
-                  onChange={(_event, checked: boolean) => {
-                    if (checked) {
+              {updatedAr.concreteType ===
+                MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE && (
+                <Box
+                  sx={{
+                    mt: 1,
+                  }}
+                >
+                  <FormControlLabel
+                    control={<Checkbox />}
+                    label="Intended Data Use statement is required."
+                    checked={updatedAr.isIDURequired}
+                    onChange={(_event, checked: boolean) => {
+                      if (checked) {
+                        setUpdatedAr({
+                          ...updatedAr,
+                          isIDURequired: true,
+                        })
+                      } else {
+                        setUpdatedAr({
+                          ...updatedAr,
+                          isIDURequired: false,
+                          isIDUPublic: false,
+                        })
+                      }
+                    }}
+                  />
+                  <FormControlLabel
+                    control={<Checkbox />}
+                    label="Intended Data Use statements will be publicly available."
+                    checked={updatedAr.isIDUPublic}
+                    disabled={!updatedAr.isIDURequired}
+                    onChange={(_event, checked: boolean) =>
                       setUpdatedAr({
                         ...updatedAr,
-                        isIDURequired: true,
-                      })
-                    } else {
-                      setUpdatedAr({
-                        ...updatedAr,
-                        isIDURequired: false,
-                        isIDUPublic: false,
+                        isIDUPublic: checked,
                       })
                     }
-                  }}
-                />
-                <FormControlLabel
-                  control={<Checkbox />}
-                  label="Intended Data Use statements will be publicly available."
-                  checked={updatedAr.isIDUPublic}
-                  disabled={!updatedAr.isIDURequired}
-                  onChange={(_event, checked: boolean) =>
-                    setUpdatedAr({
-                      ...updatedAr,
-                      isIDUPublic: checked,
-                    })
-                  }
-                />
-              </Box>
+                  />
+                </Box>
+              )}
             </Box>
           </Box>
         </Box>
