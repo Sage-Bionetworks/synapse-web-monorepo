@@ -4,7 +4,7 @@ import {
 } from '@/components/DataGrid/DataGridTypes'
 import { DataGridWebSocket } from '@/components/DataGrid/DataGridWebSocket'
 import { act, renderHook, waitFor } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi, type Mock } from 'vitest'
 import {
   initialWebSocketState,
   isInitialLoadReady,
@@ -16,6 +16,7 @@ import {
 import { useEstablishWebsocketConnection } from '@/synapse-queries/grid/useEstablishWebsocketConnection'
 import { Model } from 'json-joy/lib/json-crdt'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { CompactCodecPatch } from 'json-joy/lib/json-crdt-patch/codec/compact'
 
 const mockUseDocumentVisibility = vi.fn(() => true)
 
@@ -56,6 +57,7 @@ type MockWebSocketInstance = MockWebSocketConfig & {
   socket: { readyState: number }
   sendPatch: ReturnType<typeof vi.fn>
   disconnect: ReturnType<typeof vi.fn>
+  getPendingPatches: Mock<() => CompactCodecPatch[]>
 }
 
 vi.mock('./DataGridWebSocket', () => ({
@@ -69,6 +71,7 @@ vi.mock('./DataGridWebSocket', () => ({
       socket: { readyState: WebSocket.OPEN },
       sendPatch: vi.fn(),
       disconnect: vi.fn(),
+      getPendingPatches: vi.fn(() => []),
     }
   }),
 }))
@@ -672,6 +675,84 @@ describe('useDataGridWebSocket', () => {
       expect(result.current.websocketInstance).not.toBe(firstInstance)
     })
     expect(mockClearPresignedUrl).toHaveBeenCalledTimes(1)
+  })
+
+  it('should hand unacknowledged patches to the replacement websocket when reconnecting to the same session', async () => {
+    const unacknowledgedPatches = [
+      [[13, 1]],
+      [[13, 2]],
+    ] as unknown as CompactCodecPatch[]
+    const { result } = renderHook(() => useDataGridWebSocket(), {
+      wrapper: createWrapper(),
+    })
+
+    act(() => {
+      result.current.connect(13, 'resend-patches')
+    })
+    await waitFor(() => {
+      expect(result.current.websocketInstance).not.toBeNull()
+    })
+    const firstInstance = result.current.websocketInstance!
+    vi.mocked(firstInstance).getPendingPatches.mockReturnValue(
+      unacknowledgedPatches,
+    )
+    const firstCallConfig = MockDataGridWebSocket.mock.calls.at(-1)![0]
+    act(() => {
+      firstCallConfig.onStatusChange!(true, firstInstance)
+      firstCallConfig.onModelCreate!({
+        api: { getSnapshot: vi.fn(() => ({ columns: [], rows: [] })) },
+      } as unknown as GridModel)
+    })
+
+    act(() => {
+      firstCallConfig.onStatusChange!(false, firstInstance)
+    })
+
+    await waitFor(() => {
+      expect(mockEstablishWebsocketConnection).toHaveBeenCalledTimes(2)
+    })
+    const retryArgs = mockEstablishWebsocketConnection.mock.calls[1][0] as {
+      websocketOptions: MockWebSocketConfig
+    }
+    expect(retryArgs.websocketOptions.pendingPatches).toEqual(
+      unacknowledgedPatches,
+    )
+  })
+
+  it('should not hand patches to a websocket for a different session', async () => {
+    const { result } = renderHook(() => useDataGridWebSocket(), {
+      wrapper: createWrapper(),
+    })
+
+    act(() => {
+      result.current.connect(13, 'session-a')
+    })
+    await waitFor(() => {
+      expect(result.current.websocketInstance).not.toBeNull()
+    })
+    const firstInstance = result.current.websocketInstance!
+    vi.mocked(firstInstance).getPendingPatches.mockReturnValue([
+      [[13, 1]],
+    ] as unknown as CompactCodecPatch[])
+    const firstCallConfig = MockDataGridWebSocket.mock.calls.at(-1)![0]
+    act(() => {
+      firstCallConfig.onStatusChange!(true, firstInstance)
+      firstCallConfig.onModelCreate!({
+        api: { getSnapshot: vi.fn(() => ({ columns: [], rows: [] })) },
+      } as unknown as GridModel)
+    })
+
+    act(() => {
+      result.current.connect(13, 'session-b')
+    })
+
+    await waitFor(() => {
+      expect(mockEstablishWebsocketConnection).toHaveBeenCalledTimes(2)
+    })
+    const secondArgs = mockEstablishWebsocketConnection.mock.calls[1][0] as {
+      websocketOptions: MockWebSocketConfig
+    }
+    expect(secondArgs.websocketOptions.pendingPatches).toBeUndefined()
   })
 
   it('should toggle isSyncing via onSyncStart/onSyncEnd callbacks', async () => {
