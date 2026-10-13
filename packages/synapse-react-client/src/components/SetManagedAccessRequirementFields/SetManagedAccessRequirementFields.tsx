@@ -1,61 +1,33 @@
 import {
   useGetAccessRequirements,
-  useListEDucTemplates,
   useUpdateAccessRequirement,
 } from '@/synapse-queries'
 import { DAY_IN_MS } from '@/utils/SynapseConstants'
 import {
   Alert,
-  Autocomplete,
   Box,
   Checkbox,
   FormControlLabel,
-  TextField,
   Typography,
 } from '@mui/material'
-import { EDucTemplate } from '@sage-bionetworks/synapse-client'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import {
-  FileHandleAssociateType,
-  FileHandleAssociation,
-  FileUploadComplete,
-  ManagedACTAccessRequirement,
-  UploadCallbackResp,
-} from '@sage-bionetworks/synapse-types'
+import { ManagedACTAccessRequirement } from '@sage-bionetworks/synapse-types'
 import {
   ForwardedRef,
   forwardRef,
   useEffect,
   useImperativeHandle,
-  useMemo,
   useState,
 } from 'react'
-import { UploadDocumentField } from '../AccessRequirementList/ManagedACTAccessRequirementRequestFlow/UploadDocumentField'
-import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import {
   AccessorRequirements,
   AccessRequirementWikiInstructions,
 } from '../SetBasicAccessRequirementFields'
-
-export const DUC_TEMPLATE_UPLOAD_ERROR =
-  'There was an error uploading the DUC template. '
-
-export const getValidExpirationPeriodOrErrorMessage = (
-  expirationPeriodDays: string,
-) => {
-  if (expirationPeriodDays === '') return 0
-
-  const msgPrefix = 'Please enter a valid expiration period (in days): '
-  if (/^[-]?\d+$/.test(expirationPeriodDays)) {
-    const num = Number(expirationPeriodDays)
-    if (num < 0) {
-      return `${msgPrefix}If expiration period is set, then it must be greater than 0.`
-    }
-    return num * DAY_IN_MS
-  }
-  return `${msgPrefix}For input string: "${expirationPeriodDays}"`
-}
+import { DataUseCertificateFields } from './DataUseCertificateFields'
+import {
+  ExpirationPeriodField,
+  getValidExpirationPeriodOrErrorMessage,
+} from './ExpirationPeriodField'
 
 export type SetManagedAccessRequirementFieldsHandle = {
   /* Allow the parent component to trigger saving the AR, so this may be embedded in an arbitrary modal. */
@@ -91,9 +63,6 @@ export const SetManagedAccessRequirementFields = forwardRef(
       }
     }, [accessRequirement])
 
-    const [uploadDucTemplateError, setUploadDucTemplateError] = useState<
-      string | null
-    >(null)
     const [expirationPeriodError, setExpirationPeriodError] = useState<
       string | null
     >(null)
@@ -101,62 +70,6 @@ export const SetManagedAccessRequirementFields = forwardRef(
     const [updatedAr, setUpdatedAr] =
       useState<ManagedACTAccessRequirement | null>(null)
     const [expirationPeriodDays, setExpirationPeriodDays] = useState<string>('')
-
-    const ducTemplateFileHandleAssociation = useMemo(() => {
-      if (updatedAr?.ducTemplateFileHandleId) {
-        const ducTemplateFileHandleAssociation: FileHandleAssociation = {
-          fileHandleId: updatedAr.ducTemplateFileHandleId,
-          associateObjectType:
-            FileHandleAssociateType.AccessRequirementAttachment,
-          associateObjectId: updatedAr.id.toString(),
-        }
-        return ducTemplateFileHandleAssociation
-      }
-      return undefined
-    }, [updatedAr?.ducTemplateFileHandleId, updatedAr?.id])
-
-    const {
-      data: eDucTemplateData,
-      isLoading: isLoadingEDucTemplates,
-      hasNextPage: hasNextEDucTemplatePage,
-      fetchNextPage: fetchNextEDucTemplatePage,
-    } = useListEDucTemplates()
-    // Auto-fetch all pages so the dropdown always shows the complete template list.
-    useEffect(() => {
-      if (hasNextEDucTemplatePage) {
-        void fetchNextEDucTemplatePage()
-      }
-    }, [hasNextEDucTemplatePage, fetchNextEDucTemplatePage])
-    const eDucTemplates = useMemo(
-      () => eDucTemplateData?.pages.flatMap(page => page.results ?? []) ?? [],
-      [eDucTemplateData],
-    )
-    const selectedEDucTemplate = useMemo(
-      () =>
-        eDucTemplates.find(
-          template => template.templateId === updatedAr?.eDucTemplateId,
-        ) ?? null,
-      [eDucTemplates, updatedAr?.eDucTemplateId],
-    )
-
-    const uploadDucTemplateCallback = (data: UploadCallbackResp) => {
-      if (data.resp && data.success && updatedAr) {
-        setUploadDucTemplateError(null)
-        // Files are uploaded and synced with the server immediately
-        const uploadResponse: FileUploadComplete = data.resp
-        setUpdatedAr({
-          ...updatedAr,
-          ducTemplateFileHandleId: uploadResponse.fileHandleId,
-          eDucTemplateId: undefined, // mutually exclusive with file upload
-        })
-      } else if (!data.success && data.error) {
-        setUploadDucTemplateError(
-          `${DUC_TEMPLATE_UPLOAD_ERROR} ${
-            (data.error as SynapseClientError).reason
-          }`,
-        )
-      }
-    }
 
     const {
       mutate: updateAccessRequirement,
@@ -227,72 +140,11 @@ export const SetManagedAccessRequirementFields = forwardRef(
                 mb: 2,
               }}
             >
-              <Typography
-                variant="body1"
-                sx={{
-                  fontWeight: 700,
-                }}
-              >
-                DUC
-              </Typography>
-              <FormControlLabel
-                control={<Checkbox />}
-                label="DUC is required."
-                checked={updatedAr.isDUCRequired}
-                onChange={(_event, checked: boolean) =>
-                  setUpdatedAr({
-                    ...updatedAr,
-                    isDUCRequired: checked,
-                  })
-                }
+              <DataUseCertificateFields
+                accessRequirement={updatedAr}
+                isLoading={isUpdatingAccessRequirement}
+                onChange={changes => setUpdatedAr({ ...updatedAr, ...changes })}
               />
-              <SynapseErrorBoundary>
-                <UploadDocumentField
-                  id="duc"
-                  isLoading={isUpdatingAccessRequirement}
-                  disabled={!updatedAr.isDUCRequired}
-                  uploadCallback={resp => uploadDucTemplateCallback(resp)}
-                  documentName="Template DUC"
-                  fileHandleAssociations={
-                    ducTemplateFileHandleAssociation
-                      ? [ducTemplateFileHandleAssociation]
-                      : undefined
-                  }
-                  isMultiFileUpload={false}
-                  uploadBtnVariant="contained"
-                />
-                {uploadDucTemplateError && (
-                  <Alert severity="error" sx={{ marginTop: 2 }}>
-                    {uploadDucTemplateError}
-                  </Alert>
-                )}
-              </SynapseErrorBoundary>
-              <Box sx={{ mt: 2 }}>
-                <Autocomplete<EDucTemplate>
-                  id="eDucTemplate"
-                  options={eDucTemplates}
-                  loading={isLoadingEDucTemplates}
-                  disabled={!updatedAr.isDUCRequired}
-                  value={selectedEDucTemplate}
-                  onChange={(_event, template) =>
-                    setUpdatedAr({
-                      ...updatedAr,
-                      eDucTemplateId: template?.templateId,
-                    })
-                  }
-                  getOptionLabel={template => template.name ?? ''}
-                  isOptionEqualToValue={(option, value) =>
-                    option.templateId === value.templateId
-                  }
-                  renderInput={params => (
-                    <TextField
-                      {...params}
-                      label="eDUC template (electronic signing)"
-                      helperText="Optional. Select a DocuSign template to enable the eDUC signing flow for this Access Requirement."
-                    />
-                  )}
-                />
-              </Box>
               <FormControlLabel
                 label="IRB approval is required."
                 checked={updatedAr.isIRBApprovalRequired}
@@ -316,18 +168,12 @@ export const SetManagedAccessRequirementFields = forwardRef(
                   })
                 }
               />
-              <TextField
-                id="expirationPeriod"
-                name="expirationPeriod"
-                label="Expiration period (days)"
-                value={expirationPeriodDays}
-                error={Boolean(expirationPeriodError)}
-                helperText={expirationPeriodError}
-                sx={{ mt: 1 }}
-                fullWidth
-                onChange={event => {
+              <ExpirationPeriodField
+                days={expirationPeriodDays}
+                error={expirationPeriodError}
+                onChange={days => {
                   setExpirationPeriodError(null)
-                  setExpirationPeriodDays(event.target.value)
+                  setExpirationPeriodDays(days)
                 }}
                 onBlur={() => {
                   const expirationPeriodOrErrorMessage =
