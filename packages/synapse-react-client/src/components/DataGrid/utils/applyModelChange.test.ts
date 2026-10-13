@@ -613,6 +613,33 @@ describe('applyModelChange', () => {
   })
 })
 
+describe('applyModelChange cost', () => {
+  it('does not take a snapshot of the whole model for each change in a batch', () => {
+    const model = createModel()
+    const getSnapshot = vi.spyOn(model.api, 'getSnapshot')
+
+    for (let rowIndex = 0; rowIndex < 50; rowIndex++) {
+      applyModelChange(
+        model,
+        { type: 'CREATE', rowIndex, rowData: { col1: `r${rowIndex}` } },
+        {},
+      )
+    }
+    for (let rowIndex = 0; rowIndex < 50; rowIndex++) {
+      applyModelChange(
+        model,
+        { type: 'UPDATE', rowIndex, updatedData: { col2: `u${rowIndex}` } },
+        {},
+      )
+    }
+
+    expect(getSnapshot).not.toHaveBeenCalled()
+    const { rows } = model.api.getSnapshot()
+    expect(rows).toHaveLength(50)
+    expect(rows[49].data).toEqual(['r49', 'u49'])
+  })
+})
+
 describe('getDefaultValueForProperty', () => {
   it('returns the value if the property exists in the row', () => {
     const row = { col1: 'value1', col2: null, col3: undefined }

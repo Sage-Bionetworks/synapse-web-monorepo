@@ -5,7 +5,7 @@ import {
 } from '@/components/DataGrid/utils/splitPatch'
 import { Model } from 'json-joy/lib/json-crdt'
 import { decode, encode } from 'json-joy/lib/json-crdt-patch/codec/compact'
-import { beforeEach } from 'vitest'
+import { beforeEach, vi } from 'vitest'
 
 describe('splitPatch', () => {
   let model: GridModel
@@ -80,6 +80,48 @@ describe('splitPatch', () => {
     splitPatches.forEach(p => {
       expect(getPatchSizeInBytes(p)).toBeGreaterThan(maxSize)
     })
+  })
+
+  it('fills each part up to the limit, measuring multi-byte characters in bytes', () => {
+    const maxSize = 400
+    const multiByteString = 'é日本語'.repeat(10)
+    for (let i = 0; i < 12; i++) {
+      model.api.vec(['columnNames']).set([[i, `${i}${multiByteString}`]])
+    }
+    const patch = model.api.flush()
+
+    const splitPatches = splitPatch(patch, maxSize)
+
+    expect(splitPatches.length).toBeGreaterThan(2)
+    splitPatches.forEach(part => {
+      expect(getPatchSizeInBytes(part)).toBeLessThanOrEqual(maxSize)
+    })
+    // A part is only closed when the next operation would not have fit
+    splitPatches.slice(0, -1).forEach((part, index) => {
+      const firstOperationOfNextPart = splitPatches[index + 1][1]
+      expect(
+        getPatchSizeInBytes([...part, firstOperationOfNextPart]),
+      ).toBeGreaterThan(maxSize)
+    })
+  })
+
+  it('serializes each operation a bounded number of times regardless of how many parts it produces', () => {
+    for (let i = 0; i < 300; i++) {
+      model.api.vec(['columnNames']).set([[i % 10, `column-${i}`]])
+    }
+    const patch = model.api.flush()
+    const fullPatchLength = JSON.stringify(encode(patch)).length
+    const stringify = vi.spyOn(JSON, 'stringify')
+
+    const splitPatches = splitPatch(patch, 1000)
+
+    const serializedLength = stringify.mock.results.reduce(
+      (total, result) => total + String(result.value).length,
+      0,
+    )
+    stringify.mockRestore()
+    expect(splitPatches.length).toBeGreaterThan(5)
+    expect(serializedLength).toBeLessThan(fullPatchLength * 3)
   })
 
   it('returns a single patch if total size is exactly at the limit', () => {

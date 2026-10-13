@@ -48,12 +48,14 @@ export function applyModelChange(
   schemaPropertyInfo: SchemaPropertiesMap,
 ) {
   const rowsArr = model.api.arr(['rows'])
-  const { columnNames } = model.api.getSnapshot()
+  // Read only the column names. A full snapshot walks every row, which makes applying a
+  // batch of N changes cost O(N * rows).
+  const columnNamesVec = model.api.vec(['columnNames'])
 
   switch (change.type) {
     case 'CREATE': {
       // Convert rowData object into a CRDT vector
-      const rowData = columnNames.map(name =>
+      const rowData = (columnNamesVec.view() as string[]).map(name =>
         s.con(
           getDefaultValueForProperty(change.rowData, name, schemaPropertyInfo),
         ),
@@ -70,7 +72,12 @@ export function applyModelChange(
       break
 
     case 'UPDATE': {
-      const currentRowData = model.api.getSnapshot().rows[change.rowIndex]?.data
+      const columnNames = columnNamesVec.view() as string[]
+      const rowExists = change.rowIndex < (rowsArr?.length() ?? 0)
+      const rowVec = rowExists
+        ? model.api.vec(['rows', String(change.rowIndex), 'data'])
+        : undefined
+      const currentRowData = rowVec?.view() as unknown[] | undefined
       Object.entries(change.updatedData).forEach(([key, value]) => {
         if (key.startsWith('_')) return // Skip internal properties like _rowId
         const colIndex = columnNames.indexOf(key)
@@ -87,13 +94,10 @@ export function applyModelChange(
           // the local replica's SID on unmodified cells.
           if (isEqual(currentRowData?.[colIndex], coercedValue)) return
           // Get the CRDT array of cell values for this row
-          const rowVec = model.api.vec([
-            'rows',
-            String(change.rowIndex),
-            'data',
-          ])
+          const targetRowVec =
+            rowVec ?? model.api.vec(['rows', String(change.rowIndex), 'data'])
           // Update the specific column with the new value
-          rowVec?.set([[colIndex, s.con(coercedValue)]])
+          targetRowVec?.set([[colIndex, s.con(coercedValue)]])
         }
       })
       break
