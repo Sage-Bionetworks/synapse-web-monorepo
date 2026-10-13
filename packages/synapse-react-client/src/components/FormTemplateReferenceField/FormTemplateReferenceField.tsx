@@ -1,4 +1,5 @@
 import { NAME_SEARCH_DEBOUNCE_DELAY_MS } from '@/components/dataaccess/FormTemplateTable'
+import { StyledFormControl } from '@/components/styled/StyledFormControl'
 import {
   useGetFormTemplateVersion,
   useGetFormTemplateVersions,
@@ -9,7 +10,6 @@ import {
   Autocomplete,
   Box,
   Button,
-  FormControl,
   FormHelperText,
   InputLabel,
   MenuItem,
@@ -170,11 +170,10 @@ export function FormTemplateReferenceField(
         )}
       />
       {value && (
-        <FormControl error={Boolean(error)}>
+        <StyledFormControl error={Boolean(error)}>
           <InputLabel id={versionLabelId}>Template version</InputLabel>
           <Select
             labelId={versionLabelId}
-            label="Template version"
             value={value.templateVersionNumber}
             onChange={event =>
               onChange({
@@ -200,7 +199,7 @@ export function FormTemplateReferenceField(
               </MenuItem>
             )}
           </Select>
-        </FormControl>
+        </StyledFormControl>
       )}
       {selectedVersion?.deprecated && (
         <Alert severity="warning">

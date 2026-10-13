@@ -105,7 +105,7 @@ export const MockActAR: Story = {
 const schemaDrivenHandlers = {
   featureFlags: [
     getFeatureFlagsOverride({
-      portalOrigin: MOCK_PORTAL_ORIGIN.replace(/\/$/, ''),
+      portalOrigin: MOCK_PORTAL_ORIGIN,
       overrides: { [FeatureFlagEnum.ACT_DASHBOARD_FORM_TEMPLATES]: true },
     }),
   ],
