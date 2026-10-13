@@ -9,6 +9,9 @@ import {
   CompactCodecTimestamp,
 } from 'json-joy/lib/json-crdt-patch/codec/compact/types'
 
+const JSON_ARRAY_BRACKETS_SIZE = 2
+const JSON_ELEMENT_SEPARATOR_SIZE = 1
+
 const textEncoder = new TextEncoder()
 
 function getJsonSizeInBytes(value: unknown): number {
@@ -78,8 +81,6 @@ export function splitPatch(
   // A JSON array serializes as `[`, its elements joined by `,`, and `]`, so the size of the
   // split patch under construction is tracked by adding each element's size once. Re-serializing
   // the whole chunk for every operation costs O(ops * chunk size).
-  const JSON_ARRAY_BRACKETS_SIZE = 2
-  const JSON_ELEMENT_SEPARATOR_SIZE = 1
   const splitPatches: CompactCodecPatch[] = []
   let currentSplitPatch: CompactCodecPatch = [binaryEncodedPatch[0]]
   let currentSplitPatchSize =

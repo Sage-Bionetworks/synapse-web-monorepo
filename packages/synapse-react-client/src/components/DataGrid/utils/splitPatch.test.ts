@@ -103,6 +103,24 @@ describe('splitPatch', () => {
         getPatchSizeInBytes([...part, firstOperationOfNextPart]),
       ).toBeGreaterThan(maxSize)
     })
+    // No operation is dropped or misplaced
+    modelCopy.applyBatch(splitPatches.map(decode))
+    expect(modelCopy.api.getSnapshot()).toEqual(model.api.getSnapshot())
+  })
+
+  it('keeps an operation in a part that is exactly at the limit, and moves it out when the limit is one byte lower', () => {
+    for (let i = 0; i < 12; i++) {
+      model.api.vec(['columnNames']).set([[i, `column-${i}`]])
+    }
+    const patch = model.api.flush()
+    const [firstPart] = splitPatch(patch, 300)
+    const firstPartSize = getPatchSizeInBytes(firstPart)
+
+    const [firstPartAtExactLimit] = splitPatch(patch, firstPartSize)
+    const [firstPartOneByteUnder] = splitPatch(patch, firstPartSize - 1)
+
+    expect(firstPartAtExactLimit).toEqual(firstPart)
+    expect(firstPartOneByteUnder.length).toBeLessThan(firstPart.length)
   })
 
   it('serializes each operation a bounded number of times regardless of how many parts it produces', () => {

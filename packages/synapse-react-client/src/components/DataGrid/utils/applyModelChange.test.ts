@@ -613,6 +613,32 @@ describe('applyModelChange', () => {
   })
 })
 
+describe('applyModelChange UPDATE of a row that does not exist', () => {
+  it('throws instead of silently dropping a cell write', () => {
+    const model = createModel()
+
+    expect(() =>
+      applyModelChange(
+        model,
+        { type: 'UPDATE', rowIndex: 3, updatedData: { col1: 'value' } },
+        {},
+      ),
+    ).toThrow()
+  })
+
+  it('does nothing when the update only restates blank cells', () => {
+    const model = createModel()
+
+    applyModelChange(
+      model,
+      { type: 'UPDATE', rowIndex: 3, updatedData: { col1: undefined } },
+      {},
+    )
+
+    expect(model.api.getSnapshot().rows).toHaveLength(0)
+  })
+})
+
 describe('applyModelChange cost', () => {
   it('does not take a snapshot of the whole model for each change in a batch', () => {
     const model = createModel()

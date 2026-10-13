@@ -73,10 +73,9 @@ export function applyModelChange(
 
     case 'UPDATE': {
       const columnNames = columnNamesVec.view() as string[]
+      const rowDataPath = ['rows', String(change.rowIndex), 'data']
       const rowExists = change.rowIndex < (rowsArr?.length() ?? 0)
-      const rowVec = rowExists
-        ? model.api.vec(['rows', String(change.rowIndex), 'data'])
-        : undefined
+      const rowVec = rowExists ? model.api.vec(rowDataPath) : undefined
       const currentRowData = rowVec?.view() as unknown[] | undefined
       Object.entries(change.updatedData).forEach(([key, value]) => {
         if (key.startsWith('_')) return // Skip internal properties like _rowId
@@ -93,9 +92,9 @@ export function applyModelChange(
           // Only write cells whose value actually changed to avoid stamping
           // the local replica's SID on unmodified cells.
           if (isEqual(currentRowData?.[colIndex], coercedValue)) return
-          // Get the CRDT array of cell values for this row
-          const targetRowVec =
-            rowVec ?? model.api.vec(['rows', String(change.rowIndex), 'data'])
+          // An update to a row that does not exist must fail loudly rather than be dropped,
+          // so resolve the path again here to surface the missing row.
+          const targetRowVec = rowVec ?? model.api.vec(rowDataPath)
           // Update the specific column with the new value
           targetRowVec?.set([[colIndex, s.con(coercedValue)]])
         }
