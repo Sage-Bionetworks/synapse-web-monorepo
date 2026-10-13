@@ -75,10 +75,10 @@ export function useGetFormTemplateVersion(
 }
 
 /**
- * Retrieve every version of a FormTemplate. The API has no endpoint to list versions, so this
- * fetches the latest version and then each earlier version number in turn. `versions` is ordered
- * newest first and omits any version that has not loaded; `latestVersion` is always the template's
- * actual latest version. Disabled while templateId is undefined.
+ * Retrieve every version of a FormTemplate. The API has no endpoint to list versions (PLFM-10045),
+ * so this fetches the latest version and then each earlier version number in turn. `versions` is
+ * ordered newest first and omits any version that has not loaded; `latestVersion` is always the
+ * template's actual latest version. Disabled while templateId is undefined.
  */
 export function useGetFormTemplateVersions(templateId: string | undefined) {
   const { keyFactory, synapseClient } = useSynapseContext()

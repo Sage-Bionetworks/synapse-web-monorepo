@@ -10,11 +10,8 @@ import {
   FormControlLabel,
   Typography,
 } from '@mui/material'
-import {
-  JsonSchemaAccessRequirement,
-  MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
-  ManagedACTAccessRequirement,
-} from '@sage-bionetworks/synapse-types'
+import { RequestableAccessRequirement } from '@/utils/types/RequestableAccessRequirement'
+import { MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
 import {
   ForwardedRef,
   forwardRef,
@@ -46,16 +43,6 @@ export type SetManagedAccessRequirementFieldsProps = {
   onError: () => void
 }
 
-/**
- * The AR types that ACT reviews in Synapse and that share the same accessor, DUC, and expiration
- * settings. A JsonSchemaAccessRequirement collects its remaining requirements through its form
- * template, so the IRB, other documents, and Intended Data Use settings only apply to a
- * ManagedACTAccessRequirement.
- */
-type ReviewedAccessRequirement =
-  | ManagedACTAccessRequirement
-  | JsonSchemaAccessRequirement
-
 export const SetManagedAccessRequirementFields = forwardRef(
   function SetManagedAccessRequirementFields(
     props: SetManagedAccessRequirementFieldsProps,
@@ -64,9 +51,12 @@ export const SetManagedAccessRequirementFields = forwardRef(
     const { accessRequirementId, onSave, onError } = props
 
     const { data: accessRequirement, error: getArError } =
-      useGetAccessRequirements<ReviewedAccessRequirement>(accessRequirementId, {
-        staleTime: Infinity,
-      })
+      useGetAccessRequirements<RequestableAccessRequirement>(
+        accessRequirementId,
+        {
+          staleTime: Infinity,
+        },
+      )
     useEffect(() => {
       if (accessRequirement) {
         setUpdatedAr(accessRequirement)
@@ -81,14 +71,14 @@ export const SetManagedAccessRequirementFields = forwardRef(
     >(null)
 
     const [updatedAr, setUpdatedAr] =
-      useState<ReviewedAccessRequirement | null>(null)
+      useState<RequestableAccessRequirement | null>(null)
     const [expirationPeriodDays, setExpirationPeriodDays] = useState<string>('')
 
     const {
       mutate: updateAccessRequirement,
       isPending: isUpdatingAccessRequirement,
       error: updateArError,
-    } = useUpdateAccessRequirement<ReviewedAccessRequirement>({
+    } = useUpdateAccessRequirement<RequestableAccessRequirement>({
       onSuccess: () => onSave(),
       onError: () => onError(),
     })
@@ -121,6 +111,8 @@ export const SetManagedAccessRequirementFields = forwardRef(
       }
     }
 
+    // A JsonSchemaAccessRequirement collects its remaining requirements through its form template,
+    // so IRB approval, other documents, and Intended Data Use only apply to a Managed ACT AR.
     const isManagedAr =
       updatedAr.concreteType ===
       MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
@@ -149,7 +141,7 @@ export const SetManagedAccessRequirementFields = forwardRef(
             <AccessorRequirements
               accessRequirement={updatedAr}
               onChange={updatedAr =>
-                setUpdatedAr(updatedAr as ReviewedAccessRequirement)
+                setUpdatedAr(updatedAr as RequestableAccessRequirement)
               }
             />
             <Box

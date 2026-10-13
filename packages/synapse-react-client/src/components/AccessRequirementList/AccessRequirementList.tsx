@@ -41,11 +41,13 @@ import { AccessRequirementListItem } from './AccessRequirementListItem'
 import { useShowAccessRequirementWikiInWizard } from './AccessRequirementListUtils'
 import { hasAccessorRequirement } from '../SetBasicAccessRequirementFields/GovernanceUtils'
 import {
+  isRequestableAccessRequirement,
+  RequestableAccessRequirement,
+} from '@/utils/types/RequestableAccessRequirement'
+import {
   getFirstRequestStep,
   getNextRequestStep,
   getPreviousRequestStep,
-  isRequestableAccessRequirement,
-  RequestableAccessRequirement,
   RequestDataStep,
 } from './RequestDataStep'
 import CancelRequestDataAccess from './ManagedACTAccessRequirementRequestFlow/CancelRequestDataAccess'
