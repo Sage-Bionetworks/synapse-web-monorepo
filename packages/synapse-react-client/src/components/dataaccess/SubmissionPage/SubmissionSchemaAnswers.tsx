@@ -11,12 +11,12 @@ import {
 import { Skeleton, Stack, Typography } from '@mui/material'
 import { RJSFSchema, UiSchema } from '@rjsf/utils'
 import { Submission } from '@sage-bionetworks/synapse-types'
-import { Fragment, ReactNode, useMemo } from 'react'
+import { ReactNode, useMemo } from 'react'
 import { DataAccessSubmissionFileHandleLink } from './DataAccessSubmissionFileHandleLink'
 
 export const NO_RESPONSE_TEXT = 'No response'
 export const OTHER_RESPONSES_TITLE = 'Other responses'
-const FILE_HANDLE_ID_PATTERN = /^\d+$/
+const NUMERIC_ID_PATTERN = /^\d+$/
 const NO_SCHEMA_DATA: Record<string, unknown> = {}
 
 type AnsweredField = {
@@ -41,13 +41,15 @@ function isEmptyAnswer(value: unknown): boolean {
 }
 
 /**
- * `schemaData` is written by the submitter, so only a well-formed ID may be turned into a
- * download request made with the reviewer's credentials.
+ * Whether `value` has the shape of a numeric ID. This does not establish what the ID refers to:
+ * that comes from the schema declaring a file field. `schemaData` is written by the submitter, so
+ * even then only a well-formed ID may be turned into a download request made with the reviewer's
+ * credentials.
  */
-function isFileHandleId(value: unknown): value is string | number {
+function isNumericId(value: unknown): value is string | number {
   return (
     (typeof value === 'string' || typeof value === 'number') &&
-    FILE_HANDLE_ID_PATTERN.test(String(value))
+    NUMERIC_ID_PATTERN.test(String(value))
   )
 }
 
@@ -75,7 +77,7 @@ function SchemaAnswerValue(props: {
       </Typography>
     )
   }
-  if (detectFieldType(subSchema) === 'file' && isFileHandleId(value)) {
+  if (detectFieldType(subSchema) === 'file' && isNumericId(value)) {
     return (
       <DataAccessSubmissionFileHandleLink
         submissionId={submissionId}
@@ -172,21 +174,21 @@ export function SubmissionSchemaAnswerList(
   )
 
   return (
-    <Stack sx={{ gap: 2 }}>
+    <Stack sx={{ gap: 4 }}>
       {groups.map((group, index) => (
         // Step titles are not unique, and the list is derived rather than reordered.
-        <section key={index}>
-          <Typography variant="headline3" gutterBottom>
-            {group.title}
-          </Typography>
-          {group.description && (
-            <Typography variant="body1" color="text.secondary" gutterBottom>
-              {group.description}
-            </Typography>
-          )}
-          <Stack component="dl" sx={{ gap: 1, m: 0 }}>
+        <Stack component="section" key={index} sx={{ gap: 2 }}>
+          <Stack sx={{ gap: 0.5 }}>
+            <Typography variant="headline3">{group.title}</Typography>
+            {group.description && (
+              <Typography variant="body1" color="text.secondary">
+                {group.description}
+              </Typography>
+            )}
+          </Stack>
+          <Stack component="dl" sx={{ gap: 2, m: 0 }}>
             {group.fields.map(field => (
-              <Fragment key={field.propertyKey}>
+              <Stack key={field.propertyKey} sx={{ gap: 0.5 }}>
                 <Typography variant="smallText2" component="dt">
                   {field.label}
                 </Typography>
@@ -197,10 +199,10 @@ export function SubmissionSchemaAnswerList(
                     subSchema={field.subSchema}
                   />
                 </Typography>
-              </Fragment>
+              </Stack>
             ))}
           </Stack>
-        </section>
+        </Stack>
       ))}
     </Stack>
   )
@@ -221,10 +223,8 @@ export function SubmissionSchemaAnswers(props: SubmissionSchemaAnswersProps) {
   const { form, isLoading, error } = useGeneratedSubmissionForm(submission)
 
   return (
-    <section>
-      <Typography variant="headline2" gutterBottom>
-        Form Responses
-      </Typography>
+    <Stack component="section" sx={{ gap: 2 }}>
+      <Typography variant="headline2">Form Responses</Typography>
       {error && <ErrorBanner error={error} />}
       {isLoading ? (
         <Skeleton width={300} />
@@ -235,6 +235,6 @@ export function SubmissionSchemaAnswers(props: SubmissionSchemaAnswersProps) {
           form={form}
         />
       )}
-    </section>
+    </Stack>
   )
 }
