@@ -8,6 +8,7 @@ import {
 } from '@/utils/functions/getEndpoint'
 import { DiscussionFilter } from '@sage-bionetworks/synapse-types'
 import { render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import { ForumTable, ForumTableProps } from './ForumTable'
 
@@ -75,5 +76,27 @@ describe('ForumTable', () => {
 
     await screen.findByText('Thread about syn123')
     expect(requestedEntityIds).toEqual(['syn123'])
+  })
+
+  it('prompts to view the forum when no threads reference the entity', async () => {
+    server.use(
+      http.get(ENTITY_THREADS_URL, () =>
+        HttpResponse.json({ results: [], totalNumberOfResults: 0 }),
+      ),
+    )
+    const onViewForumClicked = vi.fn()
+
+    renderComponent({
+      entityId: 'syn123',
+      limit: 1,
+      onClickLink: vi.fn(),
+      onViewForumClicked,
+    })
+
+    await screen.findByText('No discussions yet')
+    await userEvent.click(
+      screen.getByRole('button', { name: 'View Discussion Forum' }),
+    )
+    expect(onViewForumClicked).toHaveBeenCalledTimes(1)
   })
 })
