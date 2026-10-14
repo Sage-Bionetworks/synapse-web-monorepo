@@ -64,11 +64,10 @@ describe('useCreateJsonSchema', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
     expect(postJobSpy).toHaveBeenCalledWith({
-      asynchronousRequestBody: {
+      asynchronousRequestBody: expect.objectContaining({
         concreteType:
           'org.sagebionetworks.repo.model.schema.CreateSchemaRequest',
-        schema,
-      },
+      }),
     })
     expect(getJobSpy).toHaveBeenCalledWith({ jobId: 'job-1' })
     expect(result.current.data).toEqual(response)
@@ -131,7 +130,7 @@ describe('useCreateJsonSchema request body', () => {
   })
   afterEach(() => server.resetHandlers())
 
-  it('sends every standard JSON Schema keyword the backend models, including nested ones', async () => {
+  it('sends choice options, constants, defaults, and conditionals to the server', async () => {
     const schema: RJSFSchema = {
       $id: 'org.example-1.0.0',
       type: 'object',
@@ -148,6 +147,32 @@ describe('useCreateJsonSchema request body', () => {
       if: { properties: { singleChoice: { const: 'Red' } } },
       then: { required: ['constant'] },
       else: { required: ['withDefault'] },
+    }
+    const { result } = renderHook(() => useCreateJsonSchema(), {
+      wrapper: createWrapper(),
+    })
+
+    await result.current.mutateAsync(schema)
+
+    expect(registeredSchemas).toEqual([schema])
+  })
+
+  it('sends the keywords of schemas nested under composition, definition, and applicator keywords', async () => {
+    const schema: RJSFSchema = {
+      $id: 'org.example-1.0.0',
+      type: 'object',
+      definitions: { color: { type: 'string', enum: ['Red', 'Green'] } },
+      allOf: [{ properties: { a: { enum: ['x'] } } }],
+      anyOf: [{ properties: { b: { enum: ['y'] } } }],
+      oneOf: [{ const: 'first' }, { const: 'second' }],
+      not: { enum: ['forbidden'] },
+      properties: {
+        tags: { type: 'array', contains: { const: 'required-tag' } },
+        scores: {
+          type: 'object',
+          additionalProperties: { type: 'string', enum: ['low', 'high'] },
+        },
+      },
     }
     const { result } = renderHook(() => useCreateJsonSchema(), {
       wrapper: createWrapper(),
