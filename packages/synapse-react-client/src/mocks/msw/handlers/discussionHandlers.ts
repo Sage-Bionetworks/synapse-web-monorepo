@@ -1,4 +1,4 @@
-import { FORUM, FORUM_THREAD, THREAD } from '@/utils/APIConstants'
+import { ENTITY_ID, FORUM, FORUM_THREAD, THREAD } from '@/utils/APIConstants'
 import {
   CreateDiscussionThread,
   DiscussionFilter,
@@ -137,6 +137,26 @@ export function getDiscussionHandlers(backendOrigin: string) {
         return HttpResponse.json(response, { status: 200 })
       },
     ),
+
+    http.get(`${backendOrigin}${ENTITY_ID(':id')}/threads`, ({ request }) => {
+      const offsetParam = new URL(request.url).searchParams.get('offset')
+      const offset = offsetParam ? parseInt(offsetParam) : 0
+      const limitParam = new URL(request.url).searchParams.get('limit')
+      const limit = limitParam ? parseInt(limitParam) : 10
+
+      // Mock threads don't track which entities they reference, so treat every active thread as a match
+      const referencingThreads = threadService.getMany(
+        thread => !thread.isDeleted,
+      )
+
+      const response: SynapseApiResponse<
+        PaginatedResults<DiscussionThreadBundle>
+      > = {
+        results: referencingThreads.slice(offset, offset + limit),
+        totalNumberOfResults: referencingThreads.length,
+      }
+      return HttpResponse.json(response, { status: 200 })
+    }),
     http.get(`${backendOrigin}${FORUM}/:id/moderators`, () => {
       const resp: PaginatedIds = {
         results: [String(MOCK_USER_ID)],

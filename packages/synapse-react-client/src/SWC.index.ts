@@ -146,6 +146,7 @@ const SynapseComponents = {
   ),
   FavoritesPage: lazy(() => import('./components/favorites/FavoritesPage')),
   ForumSearch: lazy(() => import('./components/ForumSearch/ForumSearch')),
+  ForumTable: lazy(() => import('./components/Forum/ForumTable')),
   FullWidthAlert: lazy(
     () => import('./components/FullWidthAlert/FullWidthAlert'),
   ),

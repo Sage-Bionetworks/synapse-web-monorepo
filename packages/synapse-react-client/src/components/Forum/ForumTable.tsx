@@ -1,10 +1,14 @@
+import { ErrorBanner } from '@/components/error/ErrorBanner'
 import InfiniteTableLayout from '@/components/layout/InfiniteTableLayout'
-import { useGetForumThreadsInfinite } from '@/synapse-queries/forum/useForum'
+import {
+  useGetEntityThreadsInfinite,
+  useGetForumThreadsInfinite,
+} from '@/synapse-queries/forum/useForum'
 import { AVATAR } from '@/utils/SynapseConstants'
 import { Link } from '@mui/material'
+import { DiscussionThreadBundle as DiscussionThreadBundleGenerated } from '@sage-bionetworks/synapse-client'
 import {
   DiscussionFilter,
-  DiscussionThreadBundle,
   DiscussionThreadOrder,
 } from '@sage-bionetworks/synapse-types'
 import {
@@ -24,23 +28,24 @@ import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 import { UserBadge } from '../UserCard/UserBadge'
 import UserCard from '../UserCard/UserCard'
 
-export type ForumTableProps = {
-  forumId: string
+type ForumTableBaseProps = {
   limit: number
   onClickLink: (threadId: string) => void
-  filter: DiscussionFilter
 }
 
-const columnHelper = createColumnHelper<DiscussionThreadBundle>()
+export type ForumTableProps = ForumTableBaseProps &
+  ({ forumId: string; filter: DiscussionFilter } | { entityId: string })
+
+const columnHelper = createColumnHelper<DiscussionThreadBundleGenerated>()
 
 function getColumns(
   onClickLink: (threadId: string) => void,
-): ColumnDef<DiscussionThreadBundle, any>[] {
+): ColumnDef<DiscussionThreadBundleGenerated, any>[] {
   return [
     columnHelper.accessor('title', {
       header: props => <ColumnHeader {...props} title={'Topic'} />,
       cell: ({ row }) => (
-        <Link onClick={() => onClickLink(row.original.id)}>
+        <Link onClick={() => row.original.id && onClickLink(row.original.id)}>
           {row.original.isPinned ? <IconSvg icon="pushpin" /> : <></>}
           {row.original.title}
         </Link>
@@ -57,7 +62,7 @@ function getColumns(
     columnHelper.accessor('activeAuthors', {
       header: props => <ColumnHeader {...props} title={'Active Users'} />,
       cell: ({ getValue }) =>
-        getValue().map((userId: string) => (
+        (getValue() ?? []).map((userId: string) => (
           <div key={userId} className="avatarContainer">
             <UserCard
               showCardOnHover={true}
@@ -72,33 +77,31 @@ function getColumns(
     }),
     columnHelper.accessor('numberOfReplies', {
       header: props => <ColumnHeader {...props} title={'Replies'} />,
-      cell: ({ getValue }) => getValue().toLocaleString(),
+      cell: ({ getValue }) => getValue()?.toLocaleString(),
       enableSorting: true,
       minSize: 10,
       size: 20,
     }),
     columnHelper.accessor('numberOfViews', {
       header: props => <ColumnHeader {...props} title={'Views'} />,
-      cell: ({ getValue }) => getValue().toLocaleString(),
+      cell: ({ getValue }) => getValue()?.toLocaleString(),
       enableSorting: true,
       minSize: 10,
       size: 20,
     }),
     columnHelper.accessor('lastActivity', {
       header: props => <ColumnHeader {...props} title={'Activity'} />,
-      cell: ({ getValue }) => dayjs(getValue()).format('L'),
+      cell: ({ getValue }) => getValue() && dayjs(getValue()).format('L'),
       enableSorting: true,
       size: 30,
     }),
   ]
 }
 
-export function ForumTable({
-  forumId,
-  limit,
-  filter,
-  onClickLink,
-}: ForumTableProps) {
+export function ForumTable(props: ForumTableProps) {
+  const { limit, onClickLink } = props
+  const isEntityMode = 'entityId' in props
+
   const [tableSortState, setTableSortState] = useState<SortingState>([
     {
       desc: true,
@@ -121,14 +124,33 @@ export function ForumTable({
     return DiscussionThreadOrder.PINNED_AND_LAST_ACTIVITY
   }, [tableSortState])
 
-  const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
-    useGetForumThreadsInfinite(
-      forumId,
-      limit,
-      discussionThreadOrder,
-      !tableSortState[0]?.desc,
-      filter,
-    )
+  const ascending = !tableSortState[0]?.desc
+
+  const forumThreadsQuery = useGetForumThreadsInfinite(
+    isEntityMode ? '' : props.forumId,
+    limit,
+    discussionThreadOrder,
+    ascending,
+    isEntityMode ? undefined : props.filter,
+    { enabled: !isEntityMode },
+  )
+
+  const entityThreadsQuery = useGetEntityThreadsInfinite(
+    isEntityMode ? props.entityId : '',
+    limit,
+    discussionThreadOrder,
+    ascending,
+    { enabled: isEntityMode },
+  )
+
+  const {
+    data,
+    isLoading,
+    error,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = isEntityMode ? entityThreadsQuery : forumThreadsQuery
 
   const threads = useMemo(
     () => data?.pages.flatMap(page => page.results) ?? [],
@@ -137,15 +159,15 @@ export function ForumTable({
 
   const columns = useMemo(() => getColumns(onClickLink), [onClickLink])
 
-  const table: Table<DiscussionThreadBundle> =
-    useReactTable<DiscussionThreadBundle>({
+  const table: Table<DiscussionThreadBundleGenerated> =
+    useReactTable<DiscussionThreadBundleGenerated>({
       data: threads,
       columns: columns,
       state: {
         sorting: tableSortState,
       },
       onSortingChange: setTableSortState,
-      getRowId: row => row.id,
+      getRowId: (row, index) => row.id ?? String(index),
       getCoreRowModel: getCoreRowModel(),
       columnResizeMode: 'onChange',
       manualSorting: true,
@@ -157,6 +179,7 @@ export function ForumTable({
 
   return (
     <div className="ForumTable">
+      <ErrorBanner error={error} />
       <InfiniteTableLayout
         table={
           <StyledTanStackTable
@@ -175,3 +198,5 @@ export function ForumTable({
     </div>
   )
 }
+
+export default ForumTable
