@@ -1,0 +1,1 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{n as t}from"./DiscussionThread-GZxN-CNE.js";import{n}from"./ForumPage-Cv-8oG9D.js";var r=e((()=>{t(),n()}));export{r as t};
