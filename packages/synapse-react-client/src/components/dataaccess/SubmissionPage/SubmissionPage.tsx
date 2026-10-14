@@ -13,7 +13,17 @@ import { useGetCurrentUserProfile } from '@/synapse-queries/user'
 import { useGetUserAccessApproval } from '@/synapse-queries/dataaccess/useAccessApprovals'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { ACT_TEAM_ID } from '@/utils/SynapseConstants'
-import { Button, Grid, Skeleton, Stack, Typography } from '@mui/material'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Button,
+  Grid,
+  Skeleton,
+  Stack,
+  Typography,
+} from '@mui/material'
 import {
   ACCESS_TYPE,
   ManagedACTAccessRequirement,
@@ -59,19 +69,28 @@ function AccessRequirementWiki(props: AccessRequirementWikiType) {
   )
 
   return wikiPageKey ? (
-    <div className="AccessRequirementWikiContainer">
-      <div className="AccessRequirementWikiContent">
-        <Typography variant="headline1">Access Requirement</Typography>
-        <hr />
+    <Accordion
+      className="AccessRequirementWikiContainer"
+      disableGutters
+      square
+      variant="outlined"
+      slotProps={{ transition: { unmountOnExit: true } }}
+    >
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Typography variant="headline1" component="h2">
+          Access Requirement Wiki
+        </Typography>
+      </AccordionSummary>
+      <AccordionDetails>
         <MarkdownSynapse
           wikiId={wikiPageKey?.wikiPageId}
           ownerId={wikiPageKey?.ownerObjectId}
           objectType={wikiPageKey?.ownerObjectType}
         />
-      </div>
-    </div>
+      </AccordionDetails>
+    </Accordion>
   ) : (
-    <Skeleton width={'100%'} height={'600px'} />
+    <Skeleton width={'100%'} height={'64px'} />
   )
 }
 

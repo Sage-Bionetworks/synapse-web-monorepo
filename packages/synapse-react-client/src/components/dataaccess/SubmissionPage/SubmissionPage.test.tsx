@@ -798,6 +798,25 @@ describe('Submission Page tests', () => {
       await screen.findByRole('heading', { name: 'Documents' })
     })
 
+    it('collapses the Access Requirement Wiki by default and shows it when expanded', async () => {
+      const user = userEvent.setup()
+      renderComponent({
+        submissionId: SUBMITTED_SUBMISSION_ID,
+        isReviewer: true,
+      })
+
+      const wikiToggle = await screen.findByRole('button', {
+        name: 'Access Requirement Wiki',
+      })
+      expect(wikiToggle).toHaveAttribute('aria-expanded', 'false')
+      expect(screen.queryByText('Wiki Contents...')).not.toBeInTheDocument()
+
+      await user.click(wikiToggle)
+
+      expect(wikiToggle).toHaveAttribute('aria-expanded', 'true')
+      expect(await screen.findByText('Wiki Contents...')).toBeVisible()
+    })
+
     it('lists answers that are not placed in a template step under Other responses', async () => {
       serveSubmission({
         ...mockSchemaDataSubmission,
