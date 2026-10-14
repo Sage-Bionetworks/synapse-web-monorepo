@@ -1,7 +1,10 @@
 import { MOCK_FORUM_ID } from '@/mocks/discussion/mock_discussion'
 import mockProject from '@/mocks/entity/mockProject'
+import { ENTITY_ID } from '@/utils/APIConstants'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { DiscussionFilter } from '@sage-bionetworks/synapse-types'
 import { Meta, StoryObj } from '@storybook/react-vite'
+import { http, HttpResponse } from 'msw'
 import { ForumTable } from './ForumTable'
 
 const meta = {
@@ -28,5 +31,23 @@ export const ForumThreads: Story = {
 export const EntityThreads: Story = {
   args: {
     entityId: mockProject.id,
+  },
+}
+
+export const EntityThreadsEmpty: Story = {
+  parameters: {
+    msw: {
+      handlers: {
+        discussion: [
+          http.get(`${MOCK_REPO_ORIGIN}${ENTITY_ID(':id')}/threads`, () =>
+            HttpResponse.json({ results: [], totalNumberOfResults: 0 }),
+          ),
+        ],
+      },
+    },
+  },
+  args: {
+    entityId: mockProject.id,
+    onViewForumClicked: () => alert('Navigate to the project discussion forum'),
   },
 }

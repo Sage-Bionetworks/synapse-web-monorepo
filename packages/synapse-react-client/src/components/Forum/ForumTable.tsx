@@ -27,6 +27,7 @@ import ColumnHeader from '../TanStackTable/ColumnHeader'
 import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 import { UserBadge } from '../UserCard/UserBadge'
 import UserCard from '../UserCard/UserCard'
+import DiscussionEmpty from './DiscussionEmpty'
 
 type ForumTableBaseProps = {
   limit: number
@@ -34,7 +35,10 @@ type ForumTableBaseProps = {
 }
 
 export type ForumTableProps = ForumTableBaseProps &
-  ({ forumId: string; filter: DiscussionFilter } | { entityId: string })
+  (
+    | { forumId: string; filter: DiscussionFilter }
+    | { entityId: string; onViewForumClicked?: () => void }
+  )
 
 const columnHelper = createColumnHelper<DiscussionThreadBundleGenerated>()
 
@@ -176,6 +180,17 @@ export function ForumTable(props: ForumTableProps) {
     })
 
   const hasNoResults = !isLoading && table.getRowModel().rows.length === 0
+
+  const onViewForumClicked = isEntityMode ? props.onViewForumClicked : undefined
+
+  if (hasNoResults && onViewForumClicked) {
+    return (
+      <>
+        <ErrorBanner error={error} />
+        <DiscussionEmpty onViewForumClicked={onViewForumClicked} />
+      </>
+    )
+  }
 
   return (
     <div className="ForumTable">
