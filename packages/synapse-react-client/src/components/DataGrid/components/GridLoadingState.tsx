@@ -9,11 +9,12 @@ export type GridLoadingStateProps = {
 }
 
 export const GRID_LOADING_MESSAGES = {
-  heading: 'Setting up grid',
+  heading: 'Preparing your grid',
   awaitingReplica: 'Setting up real-time sync…',
   awaitingPresignedUrl: 'Establishing secure connection…',
   awaitingConnection: 'Connecting to server…',
-  awaitingData: 'Loading table data…',
+  awaitingData:
+    'Loading metadata and validation results. Large datasets may take up to 5 minutes to load. Please keep this page open.',
 } as const
 
 /**
