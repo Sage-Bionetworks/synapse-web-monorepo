@@ -1,12 +1,18 @@
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import { getCreateSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
+import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { RJSFSchema } from '@rjsf/utils'
+import { JSONSchema7 } from 'json-schema'
 import {
   AsynchronousJobStatus,
   CreateSchemaResponse,
-  JsonSchema,
 } from '@sage-bionetworks/synapse-client'
 import { renderHook, waitFor } from '@testing-library/react'
 import { useCreateJsonSchema } from './useCreateJsonSchema'
+
+const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
 const postJobSpy = vi.spyOn(
   MOCK_CONTEXT_VALUE.synapseClient.asynchronousJobServicesClient,
@@ -23,7 +29,7 @@ describe('useCreateJsonSchema', () => {
   })
 
   it('starts the async job with the schema body and polls until it completes', async () => {
-    const schema: JsonSchema = {
+    const schema: RJSFSchema = {
       $id: 'org.example-1.0.0',
       type: 'object',
       properties: { institution: { type: 'string' } },
@@ -69,7 +75,7 @@ describe('useCreateJsonSchema', () => {
   })
 
   it('surfaces a job failure as a mutation error', async () => {
-    const schema: JsonSchema = {
+    const schema: RJSFSchema = {
       $id: 'org.example-1.0.0',
       type: 'object',
       properties: { institution: { type: 'string' } },
@@ -95,7 +101,7 @@ describe('useCreateJsonSchema', () => {
   })
 
   it('propagates a network exception from starting the job', async () => {
-    const schema: JsonSchema = {
+    const schema: RJSFSchema = {
       $id: 'org.example-1.0.0',
       type: 'object',
       properties: { institution: { type: 'string' } },
@@ -111,5 +117,44 @@ describe('useCreateJsonSchema', () => {
     await waitFor(() => expect(result.current.isError).toBe(true))
     expect(result.current.error?.message).toBe('Network error')
     expect(getJobSpy).not.toHaveBeenCalled()
+  })
+})
+
+describe('useCreateJsonSchema request body', () => {
+  const registeredSchemas: JSONSchema7[] = []
+
+  beforeAll(() => server.listen())
+  afterAll(() => server.close())
+  beforeEach(() => {
+    registeredSchemas.length = 0
+    server.use(...getCreateSchemaHandlers(REPO_ENDPOINT, registeredSchemas))
+  })
+  afterEach(() => server.resetHandlers())
+
+  it('sends every standard JSON Schema keyword the backend models, including nested ones', async () => {
+    const schema: RJSFSchema = {
+      $id: 'org.example-1.0.0',
+      type: 'object',
+      properties: {
+        singleChoice: { type: 'string', enum: ['Red', 'Green'] },
+        multiChoice: {
+          type: 'array',
+          items: { type: 'string', enum: ['Email', 'Phone'] },
+          uniqueItems: true,
+        },
+        constant: { type: 'string', const: 'fixed' },
+        withDefault: { type: 'string', default: 'hello' },
+      },
+      if: { properties: { singleChoice: { const: 'Red' } } },
+      then: { required: ['constant'] },
+      else: { required: ['withDefault'] },
+    }
+    const { result } = renderHook(() => useCreateJsonSchema(), {
+      wrapper: createWrapper(),
+    })
+
+    await result.current.mutateAsync(schema)
+
+    expect(registeredSchemas).toEqual([schema])
   })
 })
