@@ -11,6 +11,7 @@ import {
   ENTITY_CONCRETE_TYPE,
   ENTITY_VIEW_CONCRETE_TYPE_VALUE,
   ENTITY_VIEW_TYPE_MASK_FILE,
+  ENTITY_VIEW_TYPE_MASK_RECORDSET,
   EntityHeader,
   EntityView,
   FILE_ENTITY_CONCRETE_TYPE_VALUE,
@@ -276,20 +277,27 @@ export const isEntityView = isTypeViaConcreteTypeFactory<EntityView, Entity>(
   ENTITY_VIEW_CONCRETE_TYPE_VALUE,
 )
 
+// RecordSets are backed by a data file, so they are treated like files in a view.
+const FILE_BACKED_VIEW_TYPE_MASK =
+  ENTITY_VIEW_TYPE_MASK_FILE | ENTITY_VIEW_TYPE_MASK_RECORDSET
+
 /**
  * @param entityView
- * @returns true iff the viewTypeMask allows files to appear in the view
+ * @returns true iff the viewTypeMask allows files (or file-backed RecordSets) to appear in the view
  */
 export function hasFilesInView(entityView: EntityView) {
-  return (entityView.viewTypeMask & ENTITY_VIEW_TYPE_MASK_FILE) != 0
+  return (entityView.viewTypeMask & FILE_BACKED_VIEW_TYPE_MASK) != 0
 }
 
 /**
  * @param entityView
- * @returns true iff the viewTypeMask allows only files to appear in the view
+ * @returns true iff the viewTypeMask allows only files (or file-backed RecordSets) to appear in the view
  */
 export function isFileView(entityView: EntityView) {
-  return entityView.viewTypeMask === ENTITY_VIEW_TYPE_MASK_FILE
+  return (
+    hasFilesInView(entityView) &&
+    (entityView.viewTypeMask & ~FILE_BACKED_VIEW_TYPE_MASK) === 0
+  )
 }
 
 export function isVersionableEntity(
