@@ -1,10 +1,20 @@
 import AccessRequirementList from '@/components/AccessRequirementList/AccessRequirementList'
 import { DiscussionThread } from '@/components/Forum'
 import { mockManagedACTAccessRequirement } from '@/mocks/accessRequirement/mockAccessRequirements'
+import { mockClinicalSchema } from '@/mocks/accessRequirement/mockJsonSchemas'
+import { MOCK_FILE_HANDLE_ID } from '@/mocks/mock_file_handle'
+import { getFormTemplateHandlers } from '@/mocks/msw/handlers/formTemplateHandlers'
+import { getRegisteredSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
+import { SubmissionWithFormTemplateRef } from '@/synapse-queries/dataaccess/useGeneratedSubmissionForm'
+import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
+import { JSONSchema7 } from 'json-schema'
+import { OTHER_RESPONSES_TITLE } from './SubmissionSchemaAnswers'
 import {
   mockApprovedSubmission,
   mockCancelledSubmission,
   mockRejectedSubmission,
+  mockSchemaDataAndFirstClassSubmission,
+  mockSchemaDataSubmission,
   mockSubmissions,
   mockSubmittedSubmission,
 } from '@/mocks/dataaccess/MockSubmission'
@@ -44,6 +54,7 @@ import {
 import {
   ACCESS_TYPE,
   AccessControlList,
+  FileHandleAssociateType,
   FileHandleAssociation,
   SubmissionState,
 } from '@sage-bionetworks/synapse-types'
@@ -640,6 +651,259 @@ describe('Submission Page tests', () => {
 
       // Modified by
       expect(screen.queryByText('Modified By')).not.toBeInTheDocument()
+    })
+  })
+
+  describe('Schema-driven submissions', () => {
+    const repoEndpoint = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
+
+    let servedSubmission: SubmissionWithFormTemplateRef | undefined
+
+    beforeEach(() => {
+      servedSubmission = undefined
+      server.use(
+        // Falls through to the suite-wide handler unless a test serves its own submission
+        http.get(`${repoEndpoint}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`, () =>
+          servedSubmission
+            ? HttpResponse.json(servedSubmission, { status: 200 })
+            : undefined,
+        ),
+        ...getFormTemplateHandlers(repoEndpoint),
+        ...getRegisteredSchemaHandlers(repoEndpoint, [
+          mockClinicalSchema as JSONSchema7,
+        ]),
+      )
+    })
+
+    function serveSubmission(submission: SubmissionWithFormTemplateRef) {
+      servedSubmission = submission
+    }
+
+    it('renders schemaData answers labelled and grouped by template step, in order', async () => {
+      renderComponent({
+        submissionId: mockSchemaDataSubmission.id,
+        isReviewer: true,
+      })
+
+      const formResponses = (
+        await screen.findByRole('heading', { name: 'Form Responses' })
+      ).closest('section')!
+      const stepHeadings = await within(formResponses).findAllByRole(
+        'heading',
+        { level: 3 },
+      )
+      expect(stepHeadings.map(h => h.textContent)).toEqual([
+        'Project Details',
+        'Compliance',
+      ])
+
+      const projectDetails = stepHeadings[0].closest('section')!
+      within(projectDetails).getByText('Project Title')
+      within(projectDetails).getByText('Longitudinal Biomarker Study')
+      within(projectDetails).getByText('Data Use Purpose')
+      within(projectDetails).getByText('Research')
+
+      // Renewal-only field is omitted for an initial request
+      expect(screen.queryByText('IRB Approval Number')).not.toBeInTheDocument()
+    })
+
+    it('renders file answers as downloads associated with the submission', async () => {
+      renderComponent({
+        submissionId: mockSchemaDataSubmission.id,
+        isReviewer: true,
+      })
+
+      const compliance = (
+        await screen.findByRole('heading', { name: 'Compliance' })
+      ).closest('section')!
+      const fileLink = within(compliance).getByTestId('FileHandleLink')
+      expect(JSON.parse(fileLink.textContent ?? '')).toEqual({
+        fileHandleId: String(MOCK_FILE_HANDLE_ID),
+        associateObjectId: mockSchemaDataSubmission.id,
+        associateObjectType:
+          FileHandleAssociateType.DataAccessSubmissionAttachment,
+      })
+    })
+
+    it('omits research project fields when the submission has no research project snapshot', async () => {
+      renderComponent({
+        submissionId: mockSchemaDataSubmission.id,
+        isReviewer: true,
+      })
+
+      await screen.findByText('Longitudinal Biomarker Study')
+      expect(screen.queryByText('Institution')).not.toBeInTheDocument()
+      expect(screen.queryByText('Project Lead')).not.toBeInTheDocument()
+    })
+
+    it('renders both first-class fields and schemaData answers when both are present', async () => {
+      renderComponent({
+        submissionId: mockSchemaDataAndFirstClassSubmission.id,
+        isReviewer: true,
+      })
+
+      await screen.findByText(
+        mockSchemaDataAndFirstClassSubmission.researchProjectSnapshot
+          .institution,
+      )
+      await screen.findByText('Intended Data Use Statement')
+      // Renewal-only field is included for a renewal
+      await screen.findByText('IRB Approval Number')
+      screen.getByText('IRB-2026-0042')
+    })
+
+    it('does not render a form responses section for a submission without schemaData', async () => {
+      renderComponent({
+        submissionId: SUBMITTED_SUBMISSION_ID,
+        isReviewer: true,
+      })
+
+      await screen.findByText('Intended Data Use Statement')
+      expect(
+        screen.queryByRole('heading', { name: 'Form Responses' }),
+      ).not.toBeInTheDocument()
+    })
+
+    it('renders no form responses section for empty schemaData', async () => {
+      serveSubmission({ ...mockSchemaDataSubmission, schemaData: {} })
+      renderComponent({
+        submissionId: mockSchemaDataSubmission.id,
+        isReviewer: true,
+      })
+
+      await screen.findByRole('button', { name: 'Approve' })
+      expect(
+        screen.queryByRole('heading', { name: 'Form Responses' }),
+      ).not.toBeInTheDocument()
+    })
+
+    it('omits the Documents heading when a schema-driven submission has no first-class documents', async () => {
+      renderComponent({
+        submissionId: mockSchemaDataSubmission.id,
+        isReviewer: true,
+      })
+
+      await screen.findByRole('heading', { name: 'Form Responses' })
+      expect(
+        screen.queryByRole('heading', { name: 'Documents' }),
+      ).not.toBeInTheDocument()
+    })
+
+    it('keeps the Documents heading for a ManagedACT submission', async () => {
+      renderComponent({
+        submissionId: SUBMITTED_SUBMISSION_ID,
+        isReviewer: true,
+      })
+
+      await screen.findByRole('heading', { name: 'Documents' })
+    })
+
+    it('collapses the Access Requirement Wiki by default and shows it when expanded', async () => {
+      const user = userEvent.setup()
+      renderComponent({
+        submissionId: SUBMITTED_SUBMISSION_ID,
+        isReviewer: true,
+      })
+
+      const wikiToggle = await screen.findByRole('button', {
+        name: 'Access Requirement Wiki',
+      })
+      expect(wikiToggle).toHaveAttribute('aria-expanded', 'false')
+      expect(screen.queryByText('Wiki Contents...')).not.toBeInTheDocument()
+
+      await user.click(wikiToggle)
+
+      expect(wikiToggle).toHaveAttribute('aria-expanded', 'true')
+      expect(await screen.findByText('Wiki Contents...')).toBeVisible()
+    })
+
+    it('lists answers that are not placed in a template step under Other responses', async () => {
+      serveSubmission({
+        ...mockSchemaDataSubmission,
+        schemaData: {
+          ...mockSchemaDataSubmission.schemaData,
+          legacyAnswer: 'Kept from an earlier schema',
+        },
+      })
+      renderComponent({
+        submissionId: mockSchemaDataSubmission.id,
+        isReviewer: true,
+      })
+
+      const otherResponses = (
+        await screen.findByRole('heading', { name: OTHER_RESPONSES_TITLE })
+      ).closest('section')!
+      within(otherResponses).getByText('legacyAnswer')
+      within(otherResponses).getByText('Kept from an earlier schema')
+      expect(
+        within(otherResponses).queryByText(SUBMISSION_CONTEXT_PROPERTY),
+      ).not.toBeInTheDocument()
+    })
+
+    it('shows an error alongside the answers listed by key, and keeps review actions, when the template cannot be loaded', async () => {
+      serveSubmission({
+        ...mockSchemaDataSubmission,
+        formTemplateRef: { templateId: 'missing', templateVersionNumber: 1 },
+      } satisfies SubmissionWithFormTemplateRef)
+      renderComponent({
+        submissionId: mockSchemaDataSubmission.id,
+        isReviewer: true,
+      })
+
+      const formResponses = (
+        await screen.findByRole('heading', { name: 'Form Responses' })
+      ).closest('section')!
+      await within(formResponses).findByRole('alert')
+      const otherResponses = within(formResponses)
+        .getByRole('heading', { name: OTHER_RESPONSES_TITLE })
+        .closest('section')!
+      within(otherResponses).getByText('projectTitle')
+      within(otherResponses).getByText('Longitudinal Biomarker Study')
+      screen.getByRole('button', { name: 'Approve' })
+      screen.getByRole('button', { name: 'Reject' })
+    })
+
+    it('approves a schema-driven submission the same way as a ManagedACT submission', async () => {
+      renderComponent({
+        submissionId: mockSchemaDataSubmission.id,
+        isReviewer: true,
+      })
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Approve' }),
+      )
+      const confirmationDialog = await screen.findByRole('dialog')
+      await userEvent.click(
+        within(confirmationDialog).getByRole('button', {
+          name: 'Approve Request',
+        }),
+      )
+
+      await waitFor(() =>
+        expect(onServerReceivedUpdate).toHaveBeenCalledWith(
+          expect.objectContaining({
+            submissionId: mockSchemaDataSubmission.id,
+            newState: SubmissionState.APPROVED,
+          }),
+        ),
+      )
+    })
+
+    it('opens the rejection modal for a schema-driven submission the same way as a ManagedACT submission', async () => {
+      renderComponent({
+        submissionId: mockSchemaDataSubmission.id,
+        isReviewer: true,
+      })
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Reject' }),
+      )
+
+      expect(mockRejectDataAccessRequestModal).toHaveBeenLastRenderedWithProps({
+        open: true,
+        submissionId: mockSchemaDataSubmission.id,
+        onClose: expect.anything(),
+      })
     })
   })
 })

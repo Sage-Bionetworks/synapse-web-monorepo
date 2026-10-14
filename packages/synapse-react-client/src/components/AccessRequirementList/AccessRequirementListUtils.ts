@@ -1,6 +1,10 @@
 import { getAccessRequirementStatus } from '@/synapse-client/SynapseClient'
 import { useMediaQuery, useTheme } from '@mui/material'
 import { sortBy } from 'lodash-es'
+import {
+  AccessRequirement,
+  MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+} from '@sage-bionetworks/synapse-types'
 
 /**
  * Given an array of access requirement IDs, return the IDs sorted by the user's status, where
@@ -32,11 +36,17 @@ export const sortAccessRequirementsByCompletion = async (
 }
 
 /**
- * Determines if we can show ManagedACTAccessRequirement wiki content alongside the forms using a media query.
- * See SWC-6432.
+ * Determines if the wiki of the access requirement in the request wizard is shown alongside the forms. Only a
+ * ManagedACTAccessRequirement's wiki is shown, and only on screens wide enough to fit it (SWC-6432).
  */
-export function useCanShowManagedACTWikiInWizard(): boolean {
+export function useShowAccessRequirementWikiInWizard(
+  accessRequirement: Pick<AccessRequirement, 'concreteType'> | undefined,
+): boolean {
   const theme = useTheme()
   const matchesBreakpoint = useMediaQuery(theme.breakpoints.up('md'))
-  return matchesBreakpoint
+  // A JsonSchemaAccessRequirement's form describes what it asks, so its wiki is not shown beside the form
+  return (
+    accessRequirement?.concreteType ===
+      MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE && matchesBreakpoint
+  )
 }

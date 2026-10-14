@@ -12,8 +12,6 @@ import {
   Button,
   DialogActions,
   DialogContent,
-  DialogTitle,
-  IconButton,
   Skeleton,
   Stack,
   Typography,
@@ -26,6 +24,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 import IconSvg from '../../../IconSvg/IconSvg'
+import { DialogBaseTitle } from '../../../DialogBase'
 import { ReviewCollaboratorsAndSigningOfficialAccordion } from '../ReviewCollaboratorsAndSigningOfficialAccordion'
 import { UploadDocumentField } from '../UploadDocumentField'
 import { longFieldLabelSx } from '../styles'
@@ -204,15 +203,7 @@ export default function ManualUploadDucStep(props: ManualUploadDucStepProps) {
 
   return (
     <>
-      <DialogTitle>
-        <Stack direction="row" sx={{ alignItems: 'center', gap: '5px' }}>
-          Request Access
-          <Box sx={{ flexGrow: 1 }} />
-          <IconButton aria-label={'Close'} onClick={onHide}>
-            <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
-          </IconButton>
-        </Stack>
-      </DialogTitle>
+      <DialogBaseTitle title={'Request Access'} onCancel={onHide} />
       <DialogContent>
         <Box>
           <Typography variant={'headline3'} sx={{ mb: 2 }}>

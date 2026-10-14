@@ -4,12 +4,9 @@ import {
   Button,
   DialogActions,
   DialogContent,
-  DialogTitle,
-  IconButton,
-  Stack,
   Typography,
 } from '@mui/material'
-import IconSvg from '../../../IconSvg/IconSvg'
+import { DialogBaseTitle } from '../../../DialogBase'
 import ManagedACTAccessRequirementFormWikiWrapper from '../ManagedACTAccessRequirementFormWikiWrapper'
 import { ReviewCollaboratorsAndSigningOfficialAccordion } from '../ReviewCollaboratorsAndSigningOfficialAccordion'
 import { longFieldLabelSx } from '../styles'
@@ -24,8 +21,6 @@ export type ReviewDucStepProps = {
    * (PORTALS-4377), where the generated document is displayed for review before signing.
    */
   onCreateDuc: () => void
-  /** Hides the access requirement wiki that is otherwise shown beside the step. */
-  hideWiki?: boolean
 }
 
 /**
@@ -33,13 +28,8 @@ export type ReviewDucStepProps = {
  * Lets the user confirm their collaborators, PI, and Signing Official before generating the DUC.
  */
 export default function ReviewDucStep(props: ReviewDucStepProps) {
-  const {
-    managedACTAccessRequirement,
-    onHide,
-    onBackClicked,
-    onCreateDuc,
-    hideWiki,
-  } = props
+  const { managedACTAccessRequirement, onHide, onBackClicked, onCreateDuc } =
+    props
 
   const { data: dataAccessRequest, isLoading } =
     useGetDataAccessRequestForUpdate(String(managedACTAccessRequirement.id), {
@@ -53,19 +43,10 @@ export default function ReviewDucStep(props: ReviewDucStepProps) {
 
   return (
     <>
-      <DialogTitle>
-        <Stack direction="row" sx={{ alignItems: 'center', gap: '5px' }}>
-          Request Access
-          <Box sx={{ flexGrow: 1 }} />
-          <IconButton aria-label={'Close'} onClick={onHide}>
-            <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
-          </IconButton>
-        </Stack>
-      </DialogTitle>
+      <DialogBaseTitle title={'Request Access'} onCancel={onHide} />
       <DialogContent>
         <ManagedACTAccessRequirementFormWikiWrapper
-          managedACTAccessRequirementId={String(managedACTAccessRequirement.id)}
-          hideWiki={hideWiki}
+          accessRequirement={managedACTAccessRequirement}
         >
           <Box>
             <Typography variant={'headline3'} sx={{ mb: 2 }}>

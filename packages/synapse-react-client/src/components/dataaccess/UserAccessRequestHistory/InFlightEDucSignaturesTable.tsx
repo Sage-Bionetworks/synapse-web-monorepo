@@ -1,6 +1,8 @@
-import AccessRequirementList, {
-  RequestDataStep,
-} from '@/components/AccessRequirementList/AccessRequirementList'
+import AccessRequirementList from '@/components/AccessRequirementList/AccessRequirementList'
+import {
+  getFirstRequestStep,
+  RequestableAccessRequirement,
+} from '@/components/AccessRequirementList/RequestDataStep'
 import { SkeletonTable } from '@/components/Skeleton'
 import ColumnHeader from '@/components/TanStackTable/ColumnHeader'
 import StyledTanStackTable from '@/components/TanStackTable/StyledTanStackTable'
@@ -27,7 +29,6 @@ import {
   AccessRequestSummary,
   AccessRequestSummaryStatusEnum,
 } from '@sage-bionetworks/synapse-client'
-import { ManagedACTAccessRequirement } from '@sage-bionetworks/synapse-types'
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -167,9 +168,12 @@ export function InFlightEDucSignaturesTable() {
     data: modifyAccessRequirement,
     isFetching: isFetchingModifyAr,
     error: modifyArError,
-  } = useGetAccessRequirements<ManagedACTAccessRequirement>(
+  } = useGetAccessRequirements<RequestableAccessRequirement>(
     modifyingArId ?? '',
-    { enabled: Boolean(modifyingArId), staleTime: Infinity },
+    {
+      enabled: Boolean(modifyingArId),
+      staleTime: Infinity,
+    },
   )
 
   // Bail out of the Modify flow if the AR fetch fails so the user isn't stuck on a disabled button.
@@ -263,8 +267,8 @@ export function InFlightEDucSignaturesTable() {
           renderAsModal
           onHide={() => setModifyingArId(undefined)}
           initialWizardEntry={{
-            step: RequestDataStep.UPDATE_RESEARCH_PROJECT,
-            managedACTAccessRequirement: modifyAccessRequirement,
+            step: getFirstRequestStep(modifyAccessRequirement),
+            accessRequirement: modifyAccessRequirement,
           }}
         />
       )}

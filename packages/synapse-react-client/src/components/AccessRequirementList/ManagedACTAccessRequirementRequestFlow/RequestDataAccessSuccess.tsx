@@ -1,14 +1,5 @@
-import {
-  Box,
-  Button,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  IconButton,
-  Stack,
-  Typography,
-} from '@mui/material'
-import IconSvg from '../../IconSvg/IconSvg'
+import { Button, DialogContent, DialogActions, Typography } from '@mui/material'
+import { DialogBaseTitle } from '../../DialogBase'
 
 export type RequestDataAccessSuccessProps = {
   onHide: () => void
@@ -20,21 +11,10 @@ export default function RequestDataAccessSuccess(
   const { onHide } = props
   return (
     <>
-      <DialogTitle>
-        <Stack
-          direction="row"
-          sx={{
-            alignItems: 'center',
-            gap: '5px',
-          }}
-        >
-          Your Data Access Request Has Been Submitted
-          <Box sx={{ flexGrow: 1 }} />
-          <IconButton aria-label={'Close'} onClick={onHide}>
-            <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
-          </IconButton>
-        </Stack>
-      </DialogTitle>
+      <DialogBaseTitle
+        title={'Your Data Access Request Has Been Submitted'}
+        onCancel={onHide}
+      />
 
       <DialogContent>
         <Typography variant="body1">

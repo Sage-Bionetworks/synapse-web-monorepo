@@ -1,3 +1,4 @@
+import { CLOSE_BUTTON_LABEL } from '@/components/DialogBase'
 import {
   mockManagedACTAccessRequirement,
   mockManagedACTAccessRequirementWikiPageKey,
@@ -80,7 +81,7 @@ vi.spyOn(SynapseClient, 'getWikiPageKeyForAccessRequirement').mockResolvedValue(
 )
 vi.spyOn(
   AccessRequirementListUtils,
-  'useCanShowManagedACTWikiInWizard',
+  'useShowAccessRequirementWikiInWizard',
 ).mockReturnValue(true)
 
 const mockOnHide = vi.fn()
@@ -237,7 +238,9 @@ describe('ManualUploadDucStep', () => {
 
   it('invokes onHide when the close icon is clicked', async () => {
     const { user } = renderComponent()
-    await user.click(await screen.findByRole('button', { name: 'Close' }))
+    await user.click(
+      await screen.findByRole('button', { name: CLOSE_BUTTON_LABEL }),
+    )
     expect(mockOnHide).toHaveBeenCalledTimes(1)
   })
 

@@ -1,7 +1,5 @@
-import { scrollToWithOffset } from '@/utils'
 import { Box, Container, ContainerProps } from '@mui/material'
-import { PropsWithChildren, useEffect, useRef } from 'react'
-import { useLocation } from 'react-router'
+import { PropsWithChildren } from 'react'
 import { HelpPopover } from 'synapse-react-client/components/HelpPopover/HelpPopover'
 
 type SectionLayoutProps = PropsWithChildren<{
@@ -24,38 +22,21 @@ export function SectionLayout(props: SectionLayoutProps) {
     helpText,
     children,
   } = props
-  const { hash, pathname } = useLocation()
-
-  const scrollToRef = useRef(null)
-  const scrollToJsx =
-    title && hash && hash === `#${encodeURI(title)}` ? (
-      <span ref={scrollToRef} />
-    ) : (
-      <></>
-    )
-  // Scroll to top if there's no hash in the URL
-  useEffect(() => {
-    if (!hash) {
-      window.scrollTo(0, 0)
-    }
-  }, [pathname, hash])
-  // this delay is here to improve the location of the element, since it's position depends on the layout of other components on the page (that also need to load)
-  setTimeout(() => {
-    if (scrollToRef.current) {
-      scrollToWithOffset(scrollToRef.current)
-    }
-  }, 500)
-
   return (
     <Container
       maxWidth={'lg'}
       {...ContainerProps}
+      id={title}
+      className={
+        ContainerProps?.className
+          ? `scroll-target ${ContainerProps.className}`
+          : 'scroll-target'
+      }
       sx={{
         overflow: 'auto',
         ...ContainerProps?.sx,
       }}
     >
-      {scrollToJsx}
       {title && (
         <h2 className={`title ${centerTitle ? 'center-title' : ''}`}>
           {titleNode ?? title}

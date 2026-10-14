@@ -17,7 +17,9 @@ import {
 import {
   MOCK_DATA_ACCESS_RENEWAL,
   MOCK_DATA_ACCESS_REQUEST,
+  MOCK_JSON_SCHEMA_DATA_ACCESS_REQUEST,
 } from '../../dataaccess/MockDataAccessRequest'
+import { mockJsonSchemaAR1 } from '../../accessRequirement/mockJsonSchemaAccessRequirements'
 import BasicMockedCrudService from '../util/BasicMockedCrudService'
 import { EDucSignatureStatus } from '@sage-bionetworks/synapse-client'
 
@@ -27,7 +29,11 @@ const mockDataAccessRequestService = new BasicMockedCrudService<
 >({
   idField: 'id',
   autoGenerateId: true,
-  initialData: [MOCK_DATA_ACCESS_REQUEST, MOCK_DATA_ACCESS_RENEWAL],
+  initialData: [
+    MOCK_DATA_ACCESS_REQUEST,
+    MOCK_DATA_ACCESS_RENEWAL,
+    MOCK_JSON_SCHEMA_DATA_ACCESS_REQUEST,
+  ],
 })
 
 const mockMapARToDataAccessRequestService = new BasicMockedCrudService<{
@@ -42,6 +48,10 @@ const mockMapARToDataAccessRequestService = new BasicMockedCrudService<{
     {
       accessRequirementId: String(MOCK_ACCESS_REQUIREMENT_WITHOUT_ACL_ID),
       requestId: MOCK_DATA_ACCESS_RENEWAL.id,
+    },
+    {
+      accessRequirementId: String(mockJsonSchemaAR1.id),
+      requestId: MOCK_JSON_SCHEMA_DATA_ACCESS_REQUEST.id,
     },
   ],
 })

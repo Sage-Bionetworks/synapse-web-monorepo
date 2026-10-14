@@ -13,10 +13,19 @@ import { useGetCurrentUserProfile } from '@/synapse-queries/user'
 import { useGetUserAccessApproval } from '@/synapse-queries/dataaccess/useAccessApprovals'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { ACT_TEAM_ID } from '@/utils/SynapseConstants'
-import { Button, Grid, Skeleton, Stack, Typography } from '@mui/material'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Button,
+  Grid,
+  Skeleton,
+  Stack,
+  Typography,
+} from '@mui/material'
 import {
   ACCESS_TYPE,
-  FileHandleAssociateType,
   ManagedACTAccessRequirement,
   Submission,
   SubmissionState,
@@ -30,7 +39,8 @@ import { SynapseErrorBoundary } from '../../error/ErrorBanner'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
 import { UserBadge } from '../../UserCard/UserBadge'
 import UserOrTeamBadge from '../../UserOrTeamBadge/UserOrTeamBadge'
-import { FileHandleLink } from '../../widgets/FileHandleLink'
+import { DataAccessSubmissionFileHandleLink } from './DataAccessSubmissionFileHandleLink'
+import { SubmissionSchemaAnswers } from './SubmissionSchemaAnswers'
 import RejectDataAccessRequestModal from '../RejectDataAccessRequestModal'
 import { DiscussionThread } from '@/components/Forum'
 
@@ -46,29 +56,6 @@ export type SubmissionPageProps = {
 const THREAD_BODY =
   'Use this thread to communicate with the reviewers about this access request.'
 
-function DataAccessSubmissionFileHandleLink(props: {
-  submissionId: string
-  fileHandleId: string
-}) {
-  const { submissionId, fileHandleId } = props
-  const fileHandleAssociation = useMemo(
-    () => ({
-      fileHandleId: fileHandleId,
-      associateObjectId: submissionId,
-      associateObjectType:
-        FileHandleAssociateType.DataAccessSubmissionAttachment,
-    }),
-    [fileHandleId, submissionId],
-  )
-  return (
-    <FileHandleLink
-      key={fileHandleId}
-      showDownloadIcon={true}
-      fileHandleAssociation={fileHandleAssociation}
-    />
-  )
-}
-
 type AccessRequirementWikiType = {
   accessRequirementId: string
 }
@@ -82,19 +69,28 @@ function AccessRequirementWiki(props: AccessRequirementWikiType) {
   )
 
   return wikiPageKey ? (
-    <div className="AccessRequirementWikiContainer">
-      <div className="AccessRequirementWikiContent">
-        <Typography variant="headline1">Access Requirement</Typography>
-        <hr />
+    <Accordion
+      className="AccessRequirementWikiContainer"
+      disableGutters
+      square
+      variant="outlined"
+      slotProps={{ transition: { unmountOnExit: true } }}
+    >
+      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <Typography variant="headline1" component="h2">
+          Access Requirement Wiki
+        </Typography>
+      </AccordionSummary>
+      <AccordionDetails>
         <MarkdownSynapse
           wikiId={wikiPageKey?.wikiPageId}
           ownerId={wikiPageKey?.ownerObjectId}
           objectType={wikiPageKey?.ownerObjectType}
         />
-      </div>
-    </div>
+      </AccordionDetails>
+    </Accordion>
   ) : (
-    <Skeleton width={'100%'} height={'600px'} />
+    <Skeleton width={'100%'} height={'64px'} />
   )
 }
 
@@ -183,6 +179,17 @@ export default function SubmissionPage(props: SubmissionPageProps) {
     }
     return <Skeleton width={100} />
   }, [isExpired, isLoadingAccessApproval, submission])
+
+  const hasSchemaAnswers =
+    !!submission?.schemaData && Object.keys(submission.schemaData).length > 0
+  const hasDocuments = Boolean(
+    submission?.ducFileHandleId ||
+    submission?.irbFileHandleId ||
+    submission?.attachments,
+  )
+  // A schema-driven submission may carry its documents only as form answers, so an empty
+  // Documents heading would sit directly above them.
+  const showDocumentsHeading = hasDocuments || !submission?.schemaData
 
   return (
     <Grid container={true} spacing={4} className="SubmissionPage">
@@ -435,26 +442,30 @@ export default function SubmissionPage(props: SubmissionPageProps) {
           ) : (
             <Skeleton width={100} />
           )}
-          <Typography className="Key" variant="dataFieldKey">
-            Institution
-          </Typography>
-          <Typography className="Value" variant="smallText1">
-            {submission ? (
-              submission.researchProjectSnapshot.institution
-            ) : (
-              <Skeleton width={100} />
-            )}
-          </Typography>
-          <Typography className="Key" variant="dataFieldKey">
-            Project Lead
-          </Typography>
-          <Typography className="Value" variant="smallText1">
-            {submission ? (
-              submission.researchProjectSnapshot.projectLead
-            ) : (
-              <Skeleton width={100} />
-            )}
-          </Typography>
+          {(!submission || submission.researchProjectSnapshot) && (
+            <>
+              <Typography className="Key" variant="dataFieldKey">
+                Institution
+              </Typography>
+              <Typography className="Value" variant="smallText1">
+                {submission ? (
+                  submission.researchProjectSnapshot?.institution
+                ) : (
+                  <Skeleton width={100} />
+                )}
+              </Typography>
+              <Typography className="Key" variant="dataFieldKey">
+                Project Lead
+              </Typography>
+              <Typography className="Value" variant="smallText1">
+                {submission ? (
+                  submission.researchProjectSnapshot?.projectLead
+                ) : (
+                  <Skeleton width={100} />
+                )}
+              </Typography>
+            </>
+          )}
         </div>
       </Grid>
       <Grid
@@ -517,9 +528,11 @@ export default function SubmissionPage(props: SubmissionPageProps) {
                   </Typography>
                 </section>
               )}
-              <Typography variant="headline2" gutterBottom>
-                Documents
-              </Typography>
+              {showDocumentsHeading && (
+                <Typography variant="headline2" gutterBottom>
+                  Documents
+                </Typography>
+              )}
               {submission?.ducFileHandleId && (
                 <section>
                   <Typography variant="smallText2">
@@ -557,6 +570,9 @@ export default function SubmissionPage(props: SubmissionPageProps) {
                     </Fragment>
                   ))}
                 </section>
+              )}
+              {submission && hasSchemaAnswers && (
+                <SubmissionSchemaAnswers submission={submission} />
               )}
             </Stack>
           </section>

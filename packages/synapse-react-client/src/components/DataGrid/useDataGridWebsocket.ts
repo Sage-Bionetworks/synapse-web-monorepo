@@ -361,6 +361,10 @@ export function useDataGridWebSocket(options?: UseDataGridWebSocketOptions) {
       websocketOptions: {
         ...websocketOptionsWithoutModel,
         model: state.model, // Current model at connection time
+        // A model only survives for the same session, so patches only carry over with it
+        pendingPatches: state.model
+          ? state.websocketInstance?.getPendingPatches()
+          : undefined,
       },
     })
       .then(ws => {
