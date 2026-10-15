@@ -81,13 +81,10 @@ function renderComponent(props: MapProps) {
 }
 
 describe('GoogleMap tests', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     server.use(...geoDataHandlers)
     initialize()
   })
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   it('Fetches all data if no team ID is specified', async () => {
     const props: MapProps = {}

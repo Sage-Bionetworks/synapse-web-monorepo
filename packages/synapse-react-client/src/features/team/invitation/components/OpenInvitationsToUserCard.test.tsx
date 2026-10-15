@@ -77,10 +77,6 @@ function useOpenInvitationsHandler() {
   )
 }
 
-beforeAll(() => server.listen())
-afterEach(() => server.resetHandlers())
-afterAll(() => server.close())
-
 beforeEach(() => {
   vi.clearAllMocks()
   currentInvitations = [MOCK_INVITATION_WITH_MESSAGE, MOCK_INVITATION_2]

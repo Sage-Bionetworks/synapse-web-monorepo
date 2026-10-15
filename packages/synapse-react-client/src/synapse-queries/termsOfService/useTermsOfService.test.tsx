@@ -23,10 +23,6 @@ const backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 const ACCESS_TOKEN = 'user-access-token'
 
 describe('useTermsOfService', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   let hasSigned: boolean
   beforeEach(() => {
     hasSigned = false

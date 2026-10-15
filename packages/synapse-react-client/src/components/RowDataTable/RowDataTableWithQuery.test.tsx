@@ -87,12 +87,9 @@ describe('RowDataTableWithQuery tests', () => {
     ],
   }
 
-  beforeAll(() => server.listen())
   beforeEach(() => {
     registerTableQueryResult(mockProps.query, mockQueryResult)
   })
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   it('renders correct labels', async () => {
     render(<RowDataTableWithQuery {...mockProps} />, {

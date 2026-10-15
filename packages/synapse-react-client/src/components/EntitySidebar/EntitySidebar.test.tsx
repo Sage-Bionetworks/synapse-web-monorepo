@@ -62,15 +62,12 @@ function renderComponent() {
 }
 
 describe('EntitySidebar', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     useDoiAssociationOverride(null)
   })
   beforeEach(() => {
     server.use(getFeatureFlagsOverride())
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   describe('Displays individual properties', () => {
     it('SynID', async () => {

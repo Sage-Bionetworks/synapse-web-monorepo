@@ -87,11 +87,7 @@ describe('TableColumnSchemaEditor', () => {
   )
   const updateTableSpy = vi.spyOn(SynapseClient, 'updateTable')
 
-  beforeAll(() => {
-    server.listen()
-  })
   beforeEach(() => {
-    server.resetHandlers()
     server.use(
       /* Each test in this suite should register its own table query handler */
       ...getDefaultColumnHandlers(),
@@ -113,7 +109,6 @@ describe('TableColumnSchemaEditor', () => {
     )
   })
   afterEach(() => vi.clearAllMocks())
-  afterAll(() => server.close())
 
   it('Renders a form and preloads data', async () => {
     server.use(

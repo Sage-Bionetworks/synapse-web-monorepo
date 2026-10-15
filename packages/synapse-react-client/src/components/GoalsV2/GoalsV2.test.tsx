@@ -1,4 +1,3 @@
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   BatchFileResult,
@@ -108,9 +107,6 @@ beforeEach(() => {
     tableQueryResult,
   )
 })
-beforeAll(() => server.listen())
-afterEach(() => server.resetHandlers())
-afterAll(() => server.close())
 
 describe('GoalsV2', () => {
   test('renders the component with provided props', async () => {

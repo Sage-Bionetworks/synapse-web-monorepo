@@ -82,9 +82,6 @@ async function setUp(props: SetAccessRequirementCommonFieldsProps) {
 
 describe('SetAccessRequirementCommonFields for schema-driven access requirements', () => {
   beforeEach(() => vi.clearAllMocks())
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   test('does not offer the schema-driven type when the feature is disabled', async () => {
     setSchemaDrivenFeatureEnabled(false)

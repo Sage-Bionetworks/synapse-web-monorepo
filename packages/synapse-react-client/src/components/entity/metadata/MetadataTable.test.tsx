@@ -37,9 +37,6 @@ function renderComponent(
 
 describe('MetadataTable tests', () => {
   // Handle the msw lifecycle:
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it('Renders all rows for a project', async () => {
     renderComponent()

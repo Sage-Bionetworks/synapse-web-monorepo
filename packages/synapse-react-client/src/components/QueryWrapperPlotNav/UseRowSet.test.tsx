@@ -1,10 +1,10 @@
+import '@/mocks/msw/server'
 import {
   mockQueryBundleRequest,
   mockQueryResultBundle,
 } from '@/mocks/mockFileViewQuery'
 
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { act, renderHook as _renderHook, waitFor } from '@testing-library/react'
 import { QueryWrapper } from '../QueryWrapper'
@@ -12,14 +12,11 @@ import { useRowSet } from './UseRowSet'
 
 describe('UseRowSet', () => {
   beforeAll(() => {
-    server.listen()
     registerTableQueryResult(
       mockQueryBundleRequest.query,
       mockQueryResultBundle,
     )
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
   function renderHook(isInfinite: boolean, initialLimit?: number) {
     return _renderHook(() => useRowSet(initialLimit), {
       wrapper: ({ children }) => {

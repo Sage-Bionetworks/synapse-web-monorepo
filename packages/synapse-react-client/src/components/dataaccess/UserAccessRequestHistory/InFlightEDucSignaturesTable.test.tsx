@@ -114,7 +114,6 @@ const nonInFlightStatuses = statusesWithExpectation
 describe('InFlightEDucSignaturesTable', () => {
   const onVoidSignature = vi.fn()
 
-  beforeAll(() => server.listen())
   beforeEach(() => {
     mockedDisplayToast.mockReset()
     onVoidSignature.mockReset()
@@ -131,10 +130,6 @@ describe('InFlightEDucSignaturesTable', () => {
       <div data-testid={'MockAccessRequirementList'} />
     ))
   })
-  afterEach(() => {
-    server.resetHandlers()
-  })
-  afterAll(() => server.close())
 
   it('renders nothing when the fully-loaded, filtered list is empty', async () => {
     // The list request passes `isEDuc: true` server-side, so the hook only ever sees eDUC

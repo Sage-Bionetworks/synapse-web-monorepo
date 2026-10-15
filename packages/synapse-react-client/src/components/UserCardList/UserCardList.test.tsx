@@ -1,4 +1,4 @@
-import { server } from '@/mocks/msw/server'
+import '@/mocks/msw/server'
 import { mockUserProfileData } from '@/mocks/user/mock_user_profile'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseConstants } from '@/utils'
@@ -24,12 +24,9 @@ function renderComponent(props: UserCardListProps) {
 }
 
 describe('UserCardList tests', () => {
-  beforeAll(() => server.listen())
   afterEach(() => {
-    server.restoreHandlers()
     mockGetUserProfileWithProfilePicAttached.mockReset()
   })
-  afterAll(() => server.close())
 
   const userOneId = '1'
   const userTwoId = '2'

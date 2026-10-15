@@ -41,10 +41,6 @@ const repoOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 const mockUseChatState = vi.mocked(useChatState)
 const mockAddFilesDialog = vi.mocked(AddFilesDialog)
 
-beforeAll(() => server.listen())
-afterEach(() => server.resetHandlers())
-afterAll(() => server.close())
-
 const mockSendChat = vi.fn()
 
 const defaultMockChatState = {

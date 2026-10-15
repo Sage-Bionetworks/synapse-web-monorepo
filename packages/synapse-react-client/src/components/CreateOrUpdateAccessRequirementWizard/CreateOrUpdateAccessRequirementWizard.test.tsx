@@ -1,3 +1,4 @@
+import '@/mocks/msw/server'
 import { MOCK_MANAGED_ACCESS_REQUIREMENT_ACL } from '@/mocks/accessRequirement/mockAccessRequirementAcls'
 import {
   MOCK_AR_ETAG,
@@ -11,7 +12,6 @@ import {
   MOCK_FILE_NAME,
 } from '@/mocks/entity/mockFileEntity'
 import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
-import { server } from '@/mocks/msw/server'
 import { MOCK_USER_NAME } from '@/mocks/user/mock_user_profile'
 import SynapseClient from '@/synapse-client'
 import {
@@ -101,9 +101,6 @@ function getBtn(name: string) {
 
 describe('CreateOrUpdateAccessRequirementWizard', () => {
   beforeEach(() => vi.clearAllMocks())
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   test('when passed a subject, title specifies that wizard is creating an AR', () => {
     setUp({

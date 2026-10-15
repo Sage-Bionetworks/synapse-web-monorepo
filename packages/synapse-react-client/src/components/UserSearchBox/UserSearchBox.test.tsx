@@ -1,4 +1,4 @@
-import { server } from '@/mocks/msw/server'
+import '@/mocks/msw/server'
 import {
   MOCK_USER_ID,
   MOCK_USER_NAME,
@@ -11,10 +11,6 @@ import userEvent from '@testing-library/user-event'
 import UserSearchBox from './UserSearchBox'
 
 describe('UserSearchBox tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   const onChange = vi.fn()
   beforeEach(() => onChange.mockClear())
 

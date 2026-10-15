@@ -45,9 +45,6 @@ async function renderForJsonSchemaAccessRequirement() {
 
 describe('SetManagedAccessRequirementFields for a JsonSchemaAccessRequirement', () => {
   beforeEach(() => vi.clearAllMocks())
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   test('shows the settings shared with a ManagedACTAccessRequirement', async () => {
     await renderForJsonSchemaAccessRequirement()

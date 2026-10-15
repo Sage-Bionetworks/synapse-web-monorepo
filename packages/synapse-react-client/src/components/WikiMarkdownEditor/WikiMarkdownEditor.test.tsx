@@ -84,9 +84,6 @@ async function waitForTitleSet(title: string) {
 
 describe('WikiMarkdownEditor', () => {
   beforeEach(() => vi.clearAllMocks())
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   test('does not display title for root WikiPage', async () => {
     setUp(defaultRootWikiPageProps)

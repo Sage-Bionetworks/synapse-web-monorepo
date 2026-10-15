@@ -61,12 +61,9 @@ function renderField(overrides: Partial<TemplateFileHandleFieldProps> = {}) {
 const getFilesSpy = vi.spyOn(SynapseClient, 'getFiles')
 
 describe('TemplateFileHandleField', () => {
-  beforeAll(() => server.listen())
   afterEach(() => {
     getFilesSpy.mockClear()
-    server.resetHandlers()
   })
-  afterAll(() => server.close())
 
   it('offers Upload when no file is attached', () => {
     renderField()

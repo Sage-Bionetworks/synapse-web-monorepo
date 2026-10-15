@@ -1,3 +1,4 @@
+import '@/mocks/msw/server'
 import {
   ColumnModel,
   ColumnSingleValueFilterOperator,
@@ -10,7 +11,6 @@ import { ButtonProps } from '@mui/material'
 import { cloneDeep, upperFirst } from 'lodash-es'
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   BUNDLE_MASK_QUERY_COLUMN_MODELS,
@@ -162,10 +162,6 @@ const mockExportToPlutoDev = vi.fn()
 const mockExportToADWorkbench = vi.fn()
 
 describe('ExternalPlatformActionsRequiredPrecheck', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   beforeEach(() => {
     vi.clearAllMocks()
 
