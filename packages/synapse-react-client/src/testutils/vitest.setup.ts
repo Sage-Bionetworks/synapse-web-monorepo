@@ -11,6 +11,21 @@ import { TextEncoder, TextDecoder } from 'node:util'
 // so for those cases, we can stub `jest` to use `vi`.
 vi.stubGlobal('jest', vi)
 
+// Every test file shares one MSW server, so tests only need `server.use(...)` for per-test overrides.
+// Requests with no matching handler fail the test instead of silently reaching the network.
+//
+// The server is imported lazily, in `beforeAll`, rather than at the top of this file. Its handlers import most of
+// the app, and a module loaded by a setup file is cached before a test file's `vi.mock` calls are registered, so
+// a static import here would stop test files from mocking those modules.
+let server: typeof import('../mocks/msw/server').server
+beforeAll(async () => {
+  ;({ server } = await import('../mocks/msw/server'))
+  server.listen({ onUnhandledRequest: 'error' })
+})
+// `resetHandlers` (not `restoreHandlers`) drops `server.use` overrides, so they cannot leak between tests.
+afterEach(() => server.resetHandlers())
+afterAll(() => server.close())
+
 if (typeof window !== 'undefined') {
   // JSDOM doesn't support createObjectURL and revokeObjectURL, so we shim them
   // https://github.com/jsdom/jsdom/issues/1721

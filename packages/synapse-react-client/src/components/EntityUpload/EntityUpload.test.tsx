@@ -78,10 +78,6 @@ const mockUseUploadFileEntitiesReturn = {
 } satisfies UseUploadFileEntitiesReturn
 
 describe('EntityUpload', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   function renderComponent(propOverrides: Partial<EntityUploadProps> = {}) {
     const user = userEvent.setup()
     const ref = createRef<EntityUploadHandle>()

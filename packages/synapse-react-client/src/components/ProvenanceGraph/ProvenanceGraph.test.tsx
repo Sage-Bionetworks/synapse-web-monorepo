@@ -49,7 +49,6 @@ function renderComponent(props: ProvenanceProps) {
 }
 
 describe('ProvenanceGraph', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     server.use(
       http.get(
@@ -89,8 +88,6 @@ describe('ProvenanceGraph', () => {
       ),
     )
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   test('Shows a basic provenance graph successfully', async () => {
     renderComponent({

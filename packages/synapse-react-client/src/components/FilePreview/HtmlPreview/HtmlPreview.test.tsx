@@ -26,7 +26,6 @@ function renderComponent(props: HtmlPreviewProps) {
 const { useCleanHtml } = EXPORTED_FOR_UNIT_TESTING
 
 describe('HTML Preview tests', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     // Configure the team members request to indicate that MOCK_USER_ID is on the trusted users team
     const htmlTeamMembership: TeamMember = {
@@ -56,8 +55,6 @@ describe('HTML Preview tests', () => {
       ),
     )
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   describe('useCleanHtml unit tests', () => {
     it('Returns undefined if isLoading is true', () => {

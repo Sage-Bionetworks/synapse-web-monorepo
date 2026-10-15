@@ -6,7 +6,6 @@ import {
   MOCK_ACCESS_TOKEN,
   MOCK_CONTEXT_VALUE,
 } from '@/mocks/MockSynapseContext'
-import { server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '@/utils/context/SynapseContext'
@@ -41,8 +40,6 @@ describe('SynapseFormSubmissionsGrid', () => {
     formGroupId,
     itemNoun,
   }
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
   beforeEach(() => {
     mockListFormData.mockClear()
     mockListFormData.mockImplementation(request => {
@@ -53,7 +50,6 @@ describe('SynapseFormSubmissionsGrid', () => {
       }
     })
   })
-  afterAll(() => server.close())
 
   test('displays table with file list when files are present', async () => {
     await renderComponent(props)

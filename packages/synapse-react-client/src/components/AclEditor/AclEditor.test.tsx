@@ -1,4 +1,3 @@
-import { server } from '@/mocks/msw/server'
 import {
   MOCK_TEAM_ID,
   MOCK_TEAM_ID_2,
@@ -123,9 +122,6 @@ async function setUp(
 
 describe('AclEditor', () => {
   beforeEach(() => vi.clearAllMocks())
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it('Shows loading UI', async () => {
     await setUp({ isLoading: true }, 0)

@@ -12,10 +12,6 @@ import { useUnbindOAuthProviderIdentity } from './useUnbindOAuthProviderIdentity
 const backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
 describe('useUnbindOAuthProviderIdentity', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   it('passes the provider to the identity endpoint', async () => {
     const onRequest = vi.fn()
     server.use(

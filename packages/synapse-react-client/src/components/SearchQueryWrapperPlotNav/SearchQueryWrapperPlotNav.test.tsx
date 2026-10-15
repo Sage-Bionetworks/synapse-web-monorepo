@@ -30,13 +30,10 @@ function addEntityBundleWithColumnModelsHandler() {
 }
 
 describe('SearchQueryWrapperPlotNav', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     vi.clearAllMocks()
     addEntityBundleWithColumnModelsHandler()
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it.skip('renders row data returned by the SearchQueryServicesApi', async () => {
     render(

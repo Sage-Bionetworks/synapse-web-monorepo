@@ -197,12 +197,9 @@ function setupEmptyDownloadListHandlers() {
 }
 
 describe('DownloadIneligibleForPackagingFilesFromListButton', () => {
-  beforeAll(() => server.listen())
   afterEach(() => {
-    server.restoreHandlers()
     vi.clearAllMocks()
   })
-  afterAll(() => server.close())
 
   // Currently tested scenarios:
   // - Button rendering (default, custom text, custom variant)

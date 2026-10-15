@@ -139,10 +139,6 @@ async function advanceToStep(user: ReturnType<typeof userEvent.setup>) {
 }
 
 describe('JsonSchemaRequestWizard', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   it('shows the requester information followed by the template steps, in order', async () => {
     mockRequestServices(
       genomicsAccessRequirement,

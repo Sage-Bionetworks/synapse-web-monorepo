@@ -68,10 +68,6 @@ function renderComponent(
 }
 
 describe('ProgrammaticOptions tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   it('Successfully transform sql', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => {})
     registerTableQueryResult(queryBundleRequest.query, {

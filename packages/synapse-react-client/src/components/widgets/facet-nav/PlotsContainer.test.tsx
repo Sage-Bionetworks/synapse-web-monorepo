@@ -1,7 +1,6 @@
 import { mockTableEntity } from '@/mocks/entity/mockTableEntity'
 import testData from '@/mocks/mockQueryResponseDataWithManyEnumFacets'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseConstants } from '@/utils'
 import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
@@ -63,12 +62,9 @@ function init(props?: PlotsContainerProps) {
 }
 
 describe('facets display hide/show', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     registerTableQueryResult(lastQueryRequest.query, testData)
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it("should display 2 facets with 'show more' button", async () => {
     init()

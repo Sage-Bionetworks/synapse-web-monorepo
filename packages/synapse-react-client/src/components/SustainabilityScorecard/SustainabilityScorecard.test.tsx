@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react'
 import SustainabilityScorecard from './SustainabilityScorecard'
 import { SustainabilityScorecardProps } from './SustainabilityScorecard'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   ColumnSingleValueFilterOperator,
@@ -110,12 +109,9 @@ async function renderWithSuccessMock() {
 }
 
 describe('SustainabilityScorecard tests', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     registerTableQueryResult(mockQuery.query, mockBundleSuccess)
   })
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   it('displays metrics', async () => {
     await renderWithSuccessMock()

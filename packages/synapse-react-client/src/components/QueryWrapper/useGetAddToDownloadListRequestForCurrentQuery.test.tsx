@@ -7,7 +7,6 @@ import {
 } from '@/components/QueryWrapper/TableRowSelectionState'
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   BUNDLE_MASK_QUERY_COLUMN_MODELS,
@@ -144,12 +143,9 @@ async function renderHookWithQueryMetadata(
 }
 
 describe('useGetAddToDownloadListRequestForCurrentQuery', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     vi.clearAllMocks()
   })
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   it('returns AddToDownloadListRequest with file column from getFileColumnModelId if no fileId/fileVersion column names', async () => {
     mockUseHasSelectedRowsAtomValue.mockReturnValue(false)

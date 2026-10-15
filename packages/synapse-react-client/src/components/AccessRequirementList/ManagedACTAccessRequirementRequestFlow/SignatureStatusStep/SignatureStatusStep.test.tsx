@@ -111,10 +111,6 @@ const fullySignedStatus: EDucSignatureStatus = {
 }
 
 describe('SignatureStatusStep', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   beforeEach(() => {
     mockOnHide.mockReset()
     mockOnBackClicked.mockReset()

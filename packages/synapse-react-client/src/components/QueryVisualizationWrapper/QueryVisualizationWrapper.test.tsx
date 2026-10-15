@@ -1,7 +1,6 @@
 import { MOCK_TABLE_ENTITY_ID } from '@/mocks/entity/mockTableEntity'
 import queryResponse from '@/mocks/mockQueryResponseDataWithManyEnumFacets'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseConstants } from '@/utils'
 import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
@@ -70,15 +69,12 @@ const initialQueryRequest: QueryBundleRequest = {
 }
 
 describe('QueryVisualizationWrapper', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     registerTableQueryResult(initialQueryRequest.query, queryResponse)
   })
   afterEach(() => {
-    server.restoreHandlers()
     vi.resetAllMocks()
   })
-  afterAll(() => server.close())
 
   test('Initialize selectColumns', async () => {
     render(<TestComponent />, { wrapper: createWrapper() })
