@@ -1,18 +1,11 @@
-import {
-  getUseQueryErrorMock,
-  getUseQueryLoadingMock,
-  getUseQuerySuccessMock,
-} from '@/testutils/ReactQueryMockUtils'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import CitationPopover from './CitationPopover'
 import { createLinkAndDownload } from './CitationPopoverUtils'
-import { useCitation } from './useCitation'
+import { delay, http, HttpResponse } from 'msw'
 import MarkdownSynapse from '../Markdown/MarkdownSynapse'
-
-vi.mock('./useCitation', () => ({
-  useCitation: vi.fn(),
-}))
 
 vi.mock('./CitationPopoverUtils', () => ({
   createLinkAndDownload: vi.fn(),
@@ -26,7 +19,6 @@ mockMarkdownSynapse.mockImplementation(
   props =>
     (<div data-testid={'MarkdownSynapseContent'}>{props.markdown}</div>) as any,
 )
-const mockUseCitation = vi.mocked(useCitation)
 const mockCreateLinkAndDownload = vi.mocked(createLinkAndDownload)
 
 const openPopover = async () => {
@@ -43,19 +35,41 @@ const mockProps = {
   boilerplateText: 'Some boilerplate text',
 }
 
+const CITATION_URL = 'https://citation.doi.org/format'
+const onCitationRequest = vi.fn()
+
+function renderComponent() {
+  return render(<CitationPopover {...mockProps} />, {
+    wrapper: createWrapper(),
+  })
+}
+
 describe('CitationPopover tests', () => {
+  beforeAll(() => server.listen())
+  afterEach(() => server.resetHandlers())
+  afterAll(() => server.close())
+
   beforeEach(() => {
     vi.clearAllMocks()
-    mockUseCitation.mockReturnValue(getUseQuerySuccessMock(data))
+    server.use(
+      http.get(CITATION_URL, ({ request }) => {
+        const url = new URL(request.url)
+        onCitationRequest(
+          url.searchParams.get('doi'),
+          url.searchParams.get('style'),
+        )
+        return HttpResponse.text(data)
+      }),
+    )
   })
 
   it('renders button', async () => {
-    render(<CitationPopover {...mockProps} />)
+    renderComponent()
     await screen.findByRole('button', { name: /Cite As/i })
   })
 
   it('opens popover when button is clicked and fetches citation', async () => {
-    render(<CitationPopover {...mockProps} />)
+    renderComponent()
     await openPopover()
 
     await screen.findByRole('dialog', {
@@ -63,10 +77,9 @@ describe('CitationPopover tests', () => {
     })
 
     await waitFor(() => {
-      expect(mockUseCitation).toHaveBeenCalledWith(
-        mockProps.doi,
+      expect(onCitationRequest).toHaveBeenCalledWith(
+        '10.1234/abcd1234',
         'bibtex',
-        true,
       )
     })
 
@@ -74,7 +87,7 @@ describe('CitationPopover tests', () => {
   })
 
   it('shows menu options when select button is clicked with bibtex as default', async () => {
-    render(<CitationPopover {...mockProps} />)
+    renderComponent()
     await openPopover()
 
     await screen.findByRole('dialog', {
@@ -95,7 +108,7 @@ describe('CitationPopover tests', () => {
   })
 
   it('displays boilerplate text when available', async () => {
-    render(<CitationPopover {...mockProps} />)
+    renderComponent()
     await openPopover()
 
     await screen.findByText(content =>
@@ -104,7 +117,7 @@ describe('CitationPopover tests', () => {
   })
 
   it('copies citation to clipboard', async () => {
-    render(<CitationPopover {...mockProps} />)
+    renderComponent()
     const mockWriteText = vi.fn().mockResolvedValue('copied')
     Object.assign(navigator, {
       clipboard: { writeText: mockWriteText },
@@ -128,7 +141,7 @@ describe('CitationPopover tests', () => {
   })
 
   it('downloads citation', async () => {
-    render(<CitationPopover {...mockProps} />)
+    renderComponent()
     const { title } = mockProps
     await openPopover()
 
@@ -154,9 +167,9 @@ describe('CitationPopover tests', () => {
   })
 
   it('displays loading text while fetching citation', async () => {
-    mockUseCitation.mockReturnValue(getUseQueryLoadingMock())
+    server.use(http.get(CITATION_URL, () => delay('infinite')))
 
-    render(<CitationPopover {...mockProps} />)
+    renderComponent()
     await openPopover()
 
     await screen.findByRole('dialog', {
@@ -167,11 +180,14 @@ describe('CitationPopover tests', () => {
   })
 
   it('displays error message', async () => {
-    const mockError = new Error('Failed to fetch citation.')
+    server.use(
+      http.get(
+        CITATION_URL,
+        () => new HttpResponse(null, { status: 500, statusText: 'Boom' }),
+      ),
+    )
 
-    mockUseCitation.mockReturnValue(getUseQueryErrorMock(mockError))
-
-    render(<CitationPopover {...mockProps} />)
+    renderComponent()
     await openPopover()
 
     await screen.findByRole('dialog', {
@@ -179,6 +195,6 @@ describe('CitationPopover tests', () => {
     })
 
     const alert = await screen.findByRole('alert')
-    within(alert).getByText('Failed to fetch citation.')
+    within(alert).getByText('Failed to fetch citation: 500: Boom')
   })
 })

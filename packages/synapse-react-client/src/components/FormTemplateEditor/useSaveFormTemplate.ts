@@ -10,7 +10,7 @@ import {
   useCreateFormTemplate,
   useUpdateFormTemplate,
 } from '@/synapse-queries/dataaccess/useFormTemplate'
-import { FormTemplate, JsonSchema } from '@sage-bionetworks/synapse-client'
+import { FormTemplate } from '@sage-bionetworks/synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { RJSFSchema } from '@rjsf/utils'
 import isEqual from 'lodash-es/isEqual'
@@ -111,7 +111,7 @@ export function useSaveFormTemplate(
             templateSchemaName,
             getNextSchemaVersion(registeredVersions),
           ),
-        } as JsonSchema)
+        })
         schema$id = response.newVersionInfo!.$id!
       }
 

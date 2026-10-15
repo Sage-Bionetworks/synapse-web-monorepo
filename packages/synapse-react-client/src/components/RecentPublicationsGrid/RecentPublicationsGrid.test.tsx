@@ -1,18 +1,24 @@
-import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
-import { getUseQuerySuccessMock } from '@/testutils/ReactQueryMockUtils'
+import { server } from '@/mocks/msw/server'
+import {
+  dispatchEntry,
+  generateAsyncJobHandlers,
+} from '@/mocks/msw/handlers/asyncJobHandlers'
+import {
+  TABLE_QUERY_ASYNC_GET,
+  TABLE_QUERY_ASYNC_START,
+} from '@/utils/APIConstants'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   ColumnTypeEnum,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { createMemoryRouter, RouterProvider } from 'react-router'
 import RecentPublicationsGrid, {
   RecentPublicationsGridProps,
 } from './RecentPublicationsGrid'
 
-vi.mock('../../synapse-queries/entity/useGetQueryResultBundle')
-const mockUseGetQueryResultBundle = vi.mocked(useGetQueryResultBundle)
+const mockQueryRequest = vi.fn()
 
 describe('RecentPublicationsGrid Tests', () => {
   const mockProps: RecentPublicationsGridProps = {
@@ -98,10 +104,29 @@ describe('RecentPublicationsGrid Tests', () => {
     ],
   }
 
+  beforeAll(() => server.listen())
+  afterEach(() => server.resetHandlers())
+  afterAll(() => server.close())
+
   beforeEach(() => {
-    vi.clearAllMocks()
-    mockUseGetQueryResultBundle.mockReturnValue(
-      getUseQuerySuccessMock(mockQueryResult),
+    mockQueryRequest.mockClear()
+    server.use(
+      ...generateAsyncJobHandlers(
+        dispatchEntry(
+          'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+          request => {
+            mockQueryRequest(request)
+            return mockQueryResult
+          },
+        ),
+        {
+          asyncTypeServicePaths: {
+            requestPath: TABLE_QUERY_ASYNC_START(':id'),
+            responsePath: tokenParam =>
+              TABLE_QUERY_ASYNC_GET(':id', tokenParam),
+          },
+        },
+      ),
     )
   })
 
@@ -120,9 +145,8 @@ describe('RecentPublicationsGrid Tests', () => {
   it('fetches and displays publication cards', async () => {
     renderWithRouter(mockProps)
 
-    await waitFor(() =>
-      expect(mockUseGetQueryResultBundle).toHaveBeenCalledTimes(1),
-    )
+    await screen.findByText('Title1')
+    expect(mockQueryRequest).toHaveBeenCalledTimes(1)
 
     expect(screen.queryByText('Category1')).not.toBeInTheDocument()
     screen.getByText('Title1')

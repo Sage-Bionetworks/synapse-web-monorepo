@@ -1,33 +1,22 @@
 import mockFileEntity from '@/mocks/entity/mockFileEntity'
 import mockProject from '@/mocks/entity/mockProject'
-import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
-import {
-  useCreateEntity,
-  useUpdateEntity,
-} from '@/synapse-queries/entity/useEntity'
-import { useCreateExternalFileHandle } from '@/synapse-queries/file/useFileHandle'
-import { getUseMutationIdleMock } from '@/testutils/ReactQueryMockUtils'
+import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { ENTITY, ENTITY_ID, FILE } from '@/utils/APIConstants'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import { ExternalFileHandle } from '@sage-bionetworks/synapse-client'
+import { Entity } from '@sage-bionetworks/synapse-types'
 import { renderHook as _renderHook } from '@testing-library/react'
+import { http, HttpResponse } from 'msw'
 import {
   getFileNameFromExternalUrl,
   useLinkFileEntityToURL,
 } from './useLinkFileEntityToURL'
 
-vi.mock('../../../synapse-queries/entity/useEntity', () => ({
-  useCreateEntity: vi.fn(),
-  useUpdateEntity: vi.fn(),
-}))
-
-vi.mock('../../../synapse-queries/file/useFileHandle', () => ({
-  useCreateExternalFileHandle: vi.fn(),
-}))
-
-const mockGetEntity = vi.spyOn(
-  MOCK_CONTEXT_VALUE.synapseClient.entityServicesClient,
-  'getRepoV1EntityId',
-)
+const backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
 const url = 'sftp://some-url.fake/path/to/file.txt'
 const fileName = 'MyFile.svg'
@@ -39,19 +28,47 @@ const mockFileHandle: ExternalFileHandle = {
   externalURL: url,
 }
 
-const mockUseCreateEntityReturnValue = getUseMutationIdleMock()
-vi.mocked(useCreateEntity).mockReturnValue(mockUseCreateEntityReturnValue)
+const mockCreateExternalFileHandle = vi.fn<(body: unknown) => void>()
+const mockCreateEntity = vi.fn<(body: Entity) => void>()
+const mockUpdateEntity = vi.fn<(body: Entity) => void>()
 
-const mockUseUpdateEntityReturnValue = getUseMutationIdleMock()
-vi.mocked(useUpdateEntity).mockReturnValue(mockUseUpdateEntityReturnValue)
-
-const mockUseExternalFileHandleReturnValue =
-  getUseMutationIdleMock(mockFileHandle)
-vi.mocked(useCreateExternalFileHandle).mockReturnValue(
-  mockUseExternalFileHandleReturnValue,
-)
+/** Mocks the endpoints used by the hook, where the entity being linked is the given entity */
+function mockEndpoints(existingEntity: Entity) {
+  server.use(
+    http.get(`${backendOrigin}${ENTITY_ID(existingEntity.id!)}`, () =>
+      HttpResponse.json(existingEntity),
+    ),
+    http.post(
+      `${backendOrigin}${FILE}/externalFileHandle`,
+      async ({ request }) => {
+        mockCreateExternalFileHandle(await request.json())
+        return HttpResponse.json(mockFileHandle, { status: 201 })
+      },
+    ),
+    http.post<never, Entity>(
+      `${backendOrigin}${ENTITY}`,
+      async ({ request }) => {
+        const body = await request.json()
+        mockCreateEntity(body)
+        return HttpResponse.json({ ...body, id: 'syn999' })
+      },
+    ),
+    http.put<never, Entity>(
+      `${backendOrigin}${ENTITY_ID(existingEntity.id!)}`,
+      async ({ request }) => {
+        const body = await request.json()
+        mockUpdateEntity(body)
+        return HttpResponse.json(body)
+      },
+    ),
+  )
+}
 
 describe('useLinkFileEntityToURL', () => {
+  beforeAll(() => server.listen())
+  afterEach(() => server.resetHandlers())
+  afterAll(() => server.close())
+
   function renderHook() {
     return _renderHook(() => useLinkFileEntityToURL(), {
       wrapper: createWrapper(),
@@ -63,7 +80,7 @@ describe('useLinkFileEntityToURL', () => {
   })
 
   test('create a FileEntity', async () => {
-    mockGetEntity.mockResolvedValue(mockProject.entity)
+    mockEndpoints(mockProject.entity)
 
     const { result: hook } = renderHook()
 
@@ -73,25 +90,22 @@ describe('useLinkFileEntityToURL', () => {
       name: fileName,
     })
 
-    expect(
-      mockUseExternalFileHandleReturnValue.mutateAsync,
-    ).toHaveBeenCalledWith({
-      externalFileHandleInterface: {
-        concreteType: 'org.sagebionetworks.repo.model.file.ExternalFileHandle',
-        fileName: fileName,
-        externalURL: url,
-      },
+    expect(mockCreateExternalFileHandle).toHaveBeenCalledWith({
+      concreteType: 'org.sagebionetworks.repo.model.file.ExternalFileHandle',
+      fileName: fileName,
+      externalURL: url,
     })
-    expect(mockUseCreateEntityReturnValue.mutateAsync).toHaveBeenCalledWith({
+    expect(mockCreateEntity).toHaveBeenCalledWith({
       concreteType: 'org.sagebionetworks.repo.model.FileEntity',
       dataFileHandleId: mockFileHandle.id!,
       name: fileName,
       parentId: mockProject.entity.id,
     })
+    expect(mockUpdateEntity).not.toHaveBeenCalled()
   })
 
   test('update a FileEntity', async () => {
-    mockGetEntity.mockResolvedValue(mockFileEntity.entity)
+    mockEndpoints(mockFileEntity.entity)
 
     const { result: hook } = renderHook()
 
@@ -101,19 +115,16 @@ describe('useLinkFileEntityToURL', () => {
       name: fileName,
     })
 
-    expect(
-      mockUseExternalFileHandleReturnValue.mutateAsync,
-    ).toHaveBeenCalledWith({
-      externalFileHandleInterface: {
-        concreteType: 'org.sagebionetworks.repo.model.file.ExternalFileHandle',
-        fileName: fileName,
-        externalURL: url,
-      },
+    expect(mockCreateExternalFileHandle).toHaveBeenCalledWith({
+      concreteType: 'org.sagebionetworks.repo.model.file.ExternalFileHandle',
+      fileName: fileName,
+      externalURL: url,
     })
-    expect(mockUseUpdateEntityReturnValue.mutateAsync).toHaveBeenCalledWith({
+    expect(mockUpdateEntity).toHaveBeenCalledWith({
       ...mockFileEntity.entity,
       dataFileHandleId: mockFileHandle.id!,
     })
+    expect(mockCreateEntity).not.toHaveBeenCalled()
   })
 
   test('getFileNameFromExternalFile', () => {
