@@ -71,14 +71,11 @@ const steps: EditableFormTemplateStep[] = [
 ]
 
 describe('useSaveFormTemplate', () => {
-  beforeAll(() => server.listen())
-  afterAll(() => server.close())
   beforeEach(() => {
     vi.clearAllMocks()
     registeredSchemas.length = 0
     server.use(...getCreateSchemaHandlers(REPO_ENDPOINT, registeredSchemas))
   })
-  afterEach(() => server.resetHandlers())
 
   it('returns validation errors and never calls the network when the draft is invalid', async () => {
     const invalidSteps: EditableFormTemplateStep[] = [

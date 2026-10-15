@@ -1,6 +1,6 @@
+import '@/mocks/msw/server'
 import { mockTableEntity } from '@/mocks/entity/mockTableEntity'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseConstants } from '@/utils'
 import {
@@ -94,12 +94,9 @@ function renderComponent(props: TotalQueryResultsProps) {
 }
 
 describe('TotalQueryResults test', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     registerTableQueryResult(mockQueryRequest.query, mockQueryReturn)
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
   const props: TotalQueryResultsProps = {
     frontText: displayText,
   }

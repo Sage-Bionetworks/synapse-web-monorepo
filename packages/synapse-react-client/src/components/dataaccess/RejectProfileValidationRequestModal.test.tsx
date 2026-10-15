@@ -58,8 +58,7 @@ function renderComponent(
 }
 
 describe('RejectProfileValidationRequestModal', () => {
-  beforeAll(() => {
-    server.listen()
+  beforeEach(() => {
     server.use(
       http.post(
         `${getEndpoint(
@@ -71,8 +70,6 @@ describe('RejectProfileValidationRequestModal', () => {
       ),
     )
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it('Renders CannedRejectionDialog, which invokes a callback to reject the submission', async () => {
     const { user } = renderComponent()

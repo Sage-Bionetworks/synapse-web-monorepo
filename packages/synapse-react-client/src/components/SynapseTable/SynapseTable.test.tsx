@@ -165,9 +165,6 @@ vi.spyOn(NoContentPlaceholderModule, 'default').mockImplementation(() => {
 
 // FIXME: Flaky in CI
 describe.skip('SynapseTable tests', () => {
-  beforeAll(() => {
-    server.listen()
-  })
   beforeEach(() => {
     server.use(
       http.post<never, { references: Reference[] }>(
@@ -263,7 +260,6 @@ describe.skip('SynapseTable tests', () => {
       ),
     )
   })
-  afterAll(() => server.close())
 
   const entityTypeCases: [
     string,

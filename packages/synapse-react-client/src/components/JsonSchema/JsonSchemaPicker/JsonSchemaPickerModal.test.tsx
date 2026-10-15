@@ -1,8 +1,8 @@
+import '@/mocks/msw/server'
 import {
   MOCK_MULTI_VERSION_SCHEMA_NAME,
   MOCK_ORGANIZATION_SAGEBIONETWORKS_NAME,
 } from '@/mocks/jsonschema/mockJsonSchemaListing'
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { mockVirtualizedTableLayout } from '@/testutils/VirtualizedTableTestUtils'
 import { render, screen, waitFor, within } from '@testing-library/react'
@@ -50,12 +50,9 @@ async function selectSchema(schemaName: string) {
 describe('JsonSchemaPickerModal', () => {
   let restoreVirtualizedTableLayout: () => void
   beforeAll(() => {
-    server.listen()
     restoreVirtualizedTableLayout = mockVirtualizedTableLayout()
   })
-  afterEach(() => server.resetHandlers())
   afterAll(() => {
-    server.close()
     restoreVirtualizedTableLayout()
   })
 

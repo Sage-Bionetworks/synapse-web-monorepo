@@ -85,10 +85,6 @@ function renderComponent(
 }
 
 describe('ReviewerDashboard tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   describe('Tabs render the correct content', () => {
     it('Renders the AR Dashboard', async () => {
       renderComponent()

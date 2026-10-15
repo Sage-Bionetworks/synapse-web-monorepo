@@ -110,15 +110,12 @@ function configureSchemaBindingHandler(schemaBinding: JsonSchemaObjectBinding) {
 
 describe('SchemaDrivenAnnotationEditor tests', () => {
   // Handle the msw lifecycle:
-  beforeAll(() => server.listen())
   beforeEach(() => {
     server.use(...getValidationSchemaHandlers())
   })
   afterEach(() => {
-    server.restoreHandlers()
     vi.clearAllMocks()
   })
-  afterAll(() => server.close())
 
   const noAnnotationsHandler = http.get(
     `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${ENTITY_JSON(

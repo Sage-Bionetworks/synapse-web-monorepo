@@ -81,10 +81,6 @@ function useMswRestrictionInformation(
 }
 
 describe('HasAccess tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   beforeEach(() => {
     vi.clearAllMocks()
   })

@@ -1,3 +1,4 @@
+import '@/mocks/msw/server'
 import {
   MOCK_NEWLY_CREATED_AR_ID,
   mockACTAccessRequirement,
@@ -12,7 +13,6 @@ import {
   MOCK_FILE_NAME,
 } from '@/mocks/entity/mockFileEntity'
 import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
-import { server } from '@/mocks/msw/server'
 import { MOCK_TEAM_ID, mockTeamData } from '@/mocks/team/mockTeam'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
@@ -108,9 +108,6 @@ function getRadioButtons() {
 
 describe('SetAccessRequirementCommonFields', () => {
   beforeEach(() => vi.clearAllMocks())
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   test('creates a new managed entity AR', async () => {
     const { ref, user, nameInput } = await setUp(newEntityArProps)

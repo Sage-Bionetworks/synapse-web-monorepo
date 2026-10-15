@@ -42,10 +42,6 @@ function renderAt(path: string) {
 }
 
 describe('FormTemplateEditorRoute', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   it('opens an empty editor for /new', async () => {
     renderAt(NEW_FORM_TEMPLATE_PATH)
     await screen.findByText('Create Form Template')

@@ -56,7 +56,6 @@ const onServerReceivedRestore = vi.fn()
 const onServerReceivedPurge = vi.fn()
 
 describe('TrashCanList', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     server.use(
       http.get(
@@ -87,8 +86,6 @@ describe('TrashCanList', () => {
       ),
     )
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   test('Shows list of items in trash', async () => {
     renderComponent()

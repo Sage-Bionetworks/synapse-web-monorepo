@@ -3,12 +3,6 @@ import {
   SynapseTestContext,
 } from '@/mocks/MockSynapseContext'
 import SynapseClient from '@/synapse-client'
-import { getEntityBundleHandler } from '@/mocks/msw/handlers/entityHandlers'
-import { server } from '@/mocks/msw/server'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '@/utils/functions/getEndpoint'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   EntityHeader,
@@ -99,25 +93,8 @@ function renderComponent(propOverrides?: Partial<EntityFinderProps>) {
 }
 
 describe('EntityFinder tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   beforeEach(() => {
     vi.clearAllMocks()
-
-    server.use(
-      getEntityBundleHandler(
-        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
-        {
-          entity: {
-            id: 'syn123',
-            name: 'My file entity',
-            concreteType: 'org.sagebionetworks.repo.model.FileEntity',
-          },
-        },
-      ),
-    )
   })
 
   describe('single-select toggleSelection validation', () => {

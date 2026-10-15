@@ -29,7 +29,6 @@ const onTableUpdateRequest = vi.fn()
 const onGridExportRequest = vi.fn()
 
 describe('useMergeGridWithSource', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     server.use(
       ...generateAsyncJobHandlers(
@@ -95,10 +94,8 @@ describe('useMergeGridWithSource', () => {
     )
   })
   afterEach(() => {
-    server.resetHandlers()
     vi.clearAllMocks()
   })
-  afterAll(() => server.close())
 
   it('synchronizes an EntityView-sourced grid via the Synchronize service', async () => {
     const { result } = renderHook(() => useMergeGridWithSource(), {

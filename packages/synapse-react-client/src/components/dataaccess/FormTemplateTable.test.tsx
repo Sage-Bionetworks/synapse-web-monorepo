@@ -55,10 +55,6 @@ function renderComponent() {
 }
 
 describe('FormTemplateTable', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   it('lists templates as links to the editor', async () => {
     useTemplates([mockGenomicsTemplate, mockClinicalTemplate])
     renderComponent()

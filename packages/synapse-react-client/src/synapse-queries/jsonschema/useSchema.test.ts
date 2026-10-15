@@ -9,10 +9,6 @@ import { useGetRegisteredSchema } from './useSchema'
 const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
 describe('useGetRegisteredSchema', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   it('returns the registered body verbatim, without adding keywords to nested schemas', async () => {
     const registered: JSONSchema7 = {
       $id: 'org.example-Registered-1.0.0',
