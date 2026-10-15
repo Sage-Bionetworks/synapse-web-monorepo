@@ -15,7 +15,7 @@
     "@sage-bionetworks/synapse-client": "workspace:*",
     "@sage-bionetworks/synapse-portal-framework": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
-    "@tanstack/react-query": "5.80.10",
+    "@tanstack/react-query": "5.104.1",
     "dayjs": "^1.11.21",
     "js-cookie": "^3.0.8",
     "katex": "^0.16.47",

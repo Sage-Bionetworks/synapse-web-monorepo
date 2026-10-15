@@ -47,12 +47,12 @@ export function useCreateGridReplica(
           gridSessionId: sessionId,
         },
       } as PostRepoV1GridSessionSessionIdReplicaRequest),
-    onSuccess: async (replicaId, sessionId, ctx) => {
+    onSuccess: async (replicaId, sessionId, ctx, mutationContext) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getGridSessionListKey(),
       })
       if (options?.onSuccess) {
-        await options.onSuccess(replicaId, sessionId, ctx)
+        await options.onSuccess(replicaId, sessionId, ctx, mutationContext)
       }
     },
   })
@@ -70,12 +70,12 @@ export function useDeleteGridSession(
       synapseClient.gridServicesClient.deleteRepoV1GridSessionSessionId({
         sessionId,
       }),
-    onSuccess: async (updatedClient, sessionId, ctx) => {
+    onSuccess: async (updatedClient, sessionId, ctx, mutationContext) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getGridSessionListKey(),
       })
       if (options?.onSuccess) {
-        await options.onSuccess(updatedClient, sessionId, ctx)
+        await options.onSuccess(updatedClient, sessionId, ctx, mutationContext)
       }
     },
   })
