@@ -1,15 +1,52 @@
-import { getUseMutationIdleMock } from '@/testutils/ReactQueryMockUtils'
+import { mockFolderEntity } from '@/mocks/entity/mockEntity'
+import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { ENTITY, ENTITY_ID } from '@/utils/APIConstants'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
+import { EntityLookupRequest } from '@sage-bionetworks/synapse-client'
 import { renderHook as _renderHook } from '@testing-library/react'
-import * as UseCreateFolderPathModule from './useCreateFolderPath'
+import { http, HttpResponse } from 'msw'
 import { useCreatePathsAndGetParentId } from './useCreatePathsAndGetParentId'
 
-const mockUseCreateFolderPath = vi.spyOn(
-  UseCreateFolderPathModule,
-  'useCreateFolderPath',
-)
+const backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
+
+const mockLookupEntity = vi.fn<(request: EntityLookupRequest) => void>()
+const mockCreateEntity = vi.fn()
+
+/**
+ * Mocks the endpoints used to find existing folders. Every lookup finds a folder, whose ID is determined by the
+ * name of the looked-up folder.
+ */
+function mockExistingFolders(folderIds: Record<string, string>) {
+  server.use(
+    http.post<never, EntityLookupRequest>(
+      `${backendOrigin}${ENTITY}/child`,
+      async ({ request }) => {
+        const body = await request.json()
+        mockLookupEntity(body)
+        return HttpResponse.json({ id: folderIds[body.entityName ?? ''] })
+      },
+    ),
+    http.get<{ entityId: string }>(
+      `${backendOrigin}${ENTITY_ID(':entityId')}`,
+      ({ params }) =>
+        HttpResponse.json({ ...mockFolderEntity, id: params.entityId }),
+    ),
+    http.post(`${backendOrigin}${ENTITY}`, () => {
+      mockCreateEntity()
+      return HttpResponse.json(mockFolderEntity)
+    }),
+  )
+}
 
 describe('useCreatePathsAndGetParentId', () => {
+  beforeAll(() => server.listen())
+  afterEach(() => server.resetHandlers())
+  afterAll(() => server.close())
+
   function renderHook() {
     return _renderHook(() => useCreatePathsAndGetParentId(), {
       wrapper: createWrapper(),
@@ -26,13 +63,7 @@ describe('useCreatePathsAndGetParentId', () => {
       webkitRelativePath: '',
     }
 
-    const parentId = 'syn123'
-    const mockUseCreateFolderPathResult = getUseMutationIdleMock<
-      string,
-      Error,
-      { parentId: string; path: string[] }
-    >(parentId)
-    mockUseCreateFolderPath.mockReturnValue(mockUseCreateFolderPathResult)
+    mockExistingFolders({})
 
     const { result: hook } = renderHook()
 
@@ -42,7 +73,8 @@ describe('useCreatePathsAndGetParentId', () => {
     })
 
     expect(result).toEqual({ file, parentId: 'syn123' })
-    expect(mockUseCreateFolderPathResult.mutateAsync).not.toHaveBeenCalled()
+    expect(mockLookupEntity).not.toHaveBeenCalled()
+    expect(mockCreateEntity).not.toHaveBeenCalled()
   })
 
   test('path with one folder', async () => {
@@ -53,12 +85,7 @@ describe('useCreatePathsAndGetParentId', () => {
 
     const rootContainerId = 'syn123'
     const folderId = 'syn456'
-    const mockUseCreateFolderPathResult = getUseMutationIdleMock<
-      string,
-      Error,
-      { parentId: string; path: string[] }
-    >(folderId)
-    mockUseCreateFolderPath.mockReturnValue(mockUseCreateFolderPathResult)
+    mockExistingFolders({ folder1: folderId })
 
     const { result: hook } = renderHook()
 
@@ -68,9 +95,10 @@ describe('useCreatePathsAndGetParentId', () => {
     })
 
     expect(result).toEqual({ file, parentId: folderId })
-    expect(mockUseCreateFolderPathResult.mutateAsync).toHaveBeenCalledWith({
-      rootContainerId,
-      path: ['folder1'],
+    expect(mockLookupEntity).toHaveBeenCalledTimes(1)
+    expect(mockLookupEntity).toHaveBeenCalledWith({
+      parentId: rootContainerId,
+      entityName: 'folder1',
     })
   })
 
@@ -81,13 +109,9 @@ describe('useCreatePathsAndGetParentId', () => {
     }
 
     const rootContainerId = 'syn123'
+    const firstFolderId = 'syn455'
     const finalFolderId = 'syn456'
-    const mockUseCreateFolderPathResult = getUseMutationIdleMock<
-      string,
-      Error,
-      { parentId: string; path: string[] }
-    >(finalFolderId)
-    mockUseCreateFolderPath.mockReturnValue(mockUseCreateFolderPathResult)
+    mockExistingFolders({ folder1: firstFolderId, folder2: finalFolderId })
 
     const { result: hook } = renderHook()
 
@@ -97,9 +121,14 @@ describe('useCreatePathsAndGetParentId', () => {
     })
 
     expect(result).toEqual({ file, parentId: finalFolderId })
-    expect(mockUseCreateFolderPathResult.mutateAsync).toHaveBeenCalledWith({
-      rootContainerId,
-      path: ['folder1', 'folder2'],
+    expect(mockLookupEntity).toHaveBeenCalledTimes(2)
+    expect(mockLookupEntity).toHaveBeenNthCalledWith(1, {
+      parentId: rootContainerId,
+      entityName: 'folder1',
+    })
+    expect(mockLookupEntity).toHaveBeenNthCalledWith(2, {
+      parentId: firstFolderId,
+      entityName: 'folder2',
     })
   })
 })

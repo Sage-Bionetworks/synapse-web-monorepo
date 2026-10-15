@@ -1,19 +1,15 @@
 import { SynapseTestContext } from '@/mocks/MockSynapseContext'
-import { useGetUserTeamsInfinite } from '@/synapse-queries/user/useGetUserTeams'
-import { getUseInfiniteQueryMock } from '@/testutils/ReactQueryMockUtils'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client'
+import { server } from '@/mocks/msw/server'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import { PaginatedResults, Team } from '@sage-bionetworks/synapse-types'
 import { act, render, screen } from '@testing-library/react'
+import { http, HttpResponse } from 'msw'
 import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import UserTeams from './UserTeams'
 
-vi.mock('@/synapse-queries/user/useGetUserTeams', () => {
-  return {
-    useGetUserTeamsInfinite: vi.fn(),
-  }
-})
-
-const mockUseGetUserTeamsInfinite = vi.mocked(useGetUserTeamsInfinite)
 const userId = '10000'
 const page1: Team[] = [
   {
@@ -38,46 +34,38 @@ function renderComponent() {
 }
 
 describe('UserTeams tests', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-  })
-  it('loads more teams when inView', async () => {
-    const {
-      mock: mockUseGetUserTeamsInfiniteImplementation,
-      mockFetchNextPage,
-      setSuccess,
-    } = getUseInfiniteQueryMock<PaginatedResults<Team>, SynapseClientError>()
+  beforeAll(() => server.listen())
+  afterEach(() => server.resetHandlers())
+  afterAll(() => server.close())
 
-    mockUseGetUserTeamsInfinite.mockImplementation(
-      mockUseGetUserTeamsInfiniteImplementation,
+  it('loads more teams when inView', async () => {
+    const onRequest = vi.fn()
+    server.use(
+      http.get(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}/repo/v1/user/${userId}/team`,
+        ({ request }) => {
+          const offset = new URL(request.url).searchParams.get('offset')
+          onRequest(offset)
+          const response: PaginatedResults<Team> =
+            offset === '0'
+              ? { results: page1, totalNumberOfResults: 2 }
+              : { results: page2, totalNumberOfResults: 2 }
+          return HttpResponse.json(response)
+        },
+      ),
     )
 
     renderComponent()
 
-    act(() => {
-      setSuccess(
-        [
-          {
-            results: page1,
-          },
-        ],
-        true,
-      )
-    })
-
     await screen.findByText('The first')
-
     expect(screen.queryByText('The second')).toBeNull()
+    expect(onRequest).toHaveBeenCalledTimes(1)
 
     act(() => {
       mockAllIsIntersecting(true)
     })
-    expect(mockFetchNextPage).toHaveBeenCalled()
-
-    act(() => {
-      setSuccess([{ results: page1 }, { results: page2 }], false)
-    })
 
     await screen.findByText('The second')
+    expect(onRequest).toHaveBeenLastCalledWith('1')
   })
 })

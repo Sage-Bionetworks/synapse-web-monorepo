@@ -5,7 +5,6 @@ import {
 import { SYNAPSE_STORAGE_LOCATION_ID } from '@/synapse-client'
 import { useDirectUploadToS3 } from '@/synapse-queries/file/useDirectUploadToS3'
 import { useSynapseMultipartUpload } from '@/synapse-queries/file/useSynapseMultipartUpload'
-import { getUseMutationIdleMock } from '@/testutils/ReactQueryMockUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   BaseFileUploadArgs,
@@ -28,6 +27,29 @@ vi.mock('@/synapse-queries/file/useDirectUploadToS3', () => {
 
 const mockUseSynapseMultipartUpload = vi.mocked(useSynapseMultipartUpload)
 const mockUseDirectS3Upload = vi.mocked(useDirectUploadToS3)
+
+/**
+ * The sibling upload mutation hooks are isolated from the hook under test. useUploadFiles only reads `mutateAsync`
+ * from them, so the mocks are minimal objects with just the fields that are used.
+ */
+function createMutationMock(mutateAsyncResult?: unknown) {
+  return {
+    mutate: vi.fn(),
+    mutateAsync: vi.fn().mockResolvedValue(mutateAsyncResult),
+  }
+}
+
+function setMultipartUploadMock(mock: ReturnType<typeof createMutationMock>) {
+  mockUseSynapseMultipartUpload.mockReturnValue(
+    mock as unknown as ReturnType<typeof useSynapseMultipartUpload>,
+  )
+}
+
+function setDirectS3UploadMock(mock: ReturnType<typeof createMutationMock>) {
+  mockUseDirectS3Upload.mockReturnValue(
+    mock as unknown as ReturnType<typeof useDirectUploadToS3>,
+  )
+}
 
 const mockStorageLocationId = 6543
 
@@ -86,15 +108,13 @@ describe('useUploadFiles', () => {
     async ({ args }) => {
       const startUploadArgs: BaseFileUploadArgs[] = [{ file: file1 }]
 
-      const useSynapseMultipartUploadMockReturn = getUseMutationIdleMock({
+      const useSynapseMultipartUploadMockReturn = createMutationMock({
         fileHandleId: createdFileHandleId1,
         fileName: file1.name,
       })
-      mockUseSynapseMultipartUpload.mockReturnValue(
-        useSynapseMultipartUploadMockReturn,
-      )
+      setMultipartUploadMock(useSynapseMultipartUploadMockReturn)
 
-      mockUseDirectS3Upload.mockReturnValue(getUseMutationIdleMock())
+      setDirectS3UploadMock(createMutationMock())
 
       const { result: hook } = renderHook(args)
 
@@ -149,12 +169,12 @@ describe('useUploadFiles', () => {
   test('upload file via direct S3 upload', async () => {
     const startUploadArgs: BaseFileUploadArgs[] = [{ file: file1 }]
 
-    mockUseSynapseMultipartUpload.mockReturnValue(getUseMutationIdleMock())
+    setMultipartUploadMock(createMutationMock())
 
-    const useDirectS3UploadReturn = getUseMutationIdleMock({
+    const useDirectS3UploadReturn = createMutationMock({
       id: createdFileHandleId1,
     })
-    mockUseDirectS3Upload.mockReturnValue(useDirectS3UploadReturn)
+    setDirectS3UploadMock(useDirectS3UploadReturn)
 
     const { result: hook } = renderHook({
       uploadDestination: mockExternalObjectStoreUploadDestination,
@@ -206,7 +226,7 @@ describe('useUploadFiles', () => {
       { file: file2 },
     ]
 
-    const useSynapseMultipartUploadMockReturn = getUseMutationIdleMock()
+    const useSynapseMultipartUploadMockReturn = createMutationMock()
     useSynapseMultipartUploadMockReturn.mutateAsync.mockResolvedValueOnce({
       fileHandleId: createdFileHandleId1,
       fileName: file1.name,
@@ -215,10 +235,8 @@ describe('useUploadFiles', () => {
       fileHandleId: createdFileHandleId2,
       fileName: file2.name,
     })
-    mockUseSynapseMultipartUpload.mockReturnValue(
-      useSynapseMultipartUploadMockReturn,
-    )
-    mockUseDirectS3Upload.mockReturnValue(getUseMutationIdleMock())
+    setMultipartUploadMock(useSynapseMultipartUploadMockReturn)
+    setDirectS3UploadMock(createMutationMock())
 
     const { result: hook } = renderHook()
 
@@ -274,17 +292,15 @@ describe('useUploadFiles', () => {
   test('pause and resume an upload', async () => {
     const startUploadArgs: BaseFileUploadArgs[] = [{ file: file1 }]
 
-    const useSynapseMultipartUploadMockReturn = getUseMutationIdleMock({
+    const useSynapseMultipartUploadMockReturn = createMutationMock({
       fileHandleId: createdFileHandleId1,
       fileName: file1.name,
     })
-    mockUseSynapseMultipartUpload.mockReturnValue(
-      useSynapseMultipartUploadMockReturn,
-    )
+    setMultipartUploadMock(useSynapseMultipartUploadMockReturn)
     useSynapseMultipartUploadMockReturn.mutateAsync.mockRejectedValueOnce(
       new Error('the request was aborted.'),
     )
-    mockUseDirectS3Upload.mockReturnValue(getUseMutationIdleMock())
+    setDirectS3UploadMock(createMutationMock())
 
     const { result: hook } = renderHook()
 
@@ -353,17 +369,15 @@ describe('useUploadFiles', () => {
   test('cancel and remove an upload', async () => {
     const startUploadArgs: BaseFileUploadArgs[] = [{ file: file1 }]
 
-    const useSynapseMultipartUploadMockReturn = getUseMutationIdleMock({
+    const useSynapseMultipartUploadMockReturn = createMutationMock({
       fileHandleId: createdFileHandleId1,
       fileName: file1.name,
     })
-    mockUseSynapseMultipartUpload.mockReturnValue(
-      useSynapseMultipartUploadMockReturn,
-    )
+    setMultipartUploadMock(useSynapseMultipartUploadMockReturn)
     useSynapseMultipartUploadMockReturn.mutateAsync.mockRejectedValueOnce(
       new Error('the request was aborted.'),
     )
-    mockUseDirectS3Upload.mockReturnValue(getUseMutationIdleMock())
+    setDirectS3UploadMock(createMutationMock())
 
     const { result: hook } = renderHook()
 
@@ -413,17 +427,15 @@ describe('useUploadFiles', () => {
 
   test('upload fails, and user removes it', async () => {
     const startUploadArgs: BaseFileUploadArgs[] = [{ file: file1 }]
-    const useSynapseMultipartUploadMockReturn = getUseMutationIdleMock({
+    const useSynapseMultipartUploadMockReturn = createMutationMock({
       fileHandleId: createdFileHandleId1,
       fileName: file1.name,
     })
-    mockUseSynapseMultipartUpload.mockReturnValue(
-      useSynapseMultipartUploadMockReturn,
-    )
+    setMultipartUploadMock(useSynapseMultipartUploadMockReturn)
     useSynapseMultipartUploadMockReturn.mutateAsync.mockRejectedValue(
       new Error('The upload failed'),
     )
-    mockUseDirectS3Upload.mockReturnValue(getUseMutationIdleMock())
+    setDirectS3UploadMock(createMutationMock())
 
     const { result: hook } = renderHook()
 
