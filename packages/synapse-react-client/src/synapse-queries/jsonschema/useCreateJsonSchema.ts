@@ -42,6 +42,8 @@ export function useCreateJsonSchema(
         accessToken,
         BackendDestinationEnum.REPO_ENDPOINT,
       )
+      // Polled with the generated client because the job status endpoint returns 200 even when the
+      // job failed, and `waitForAsyncResult` is what turns a FAILED status into an error.
       const jobResult = await waitForAsyncResult(() =>
         synapseClient.asynchronousJobServicesClient.getRepoV1AsynchronousJobJobId(
           { jobId: jobStatus.jobId! },
