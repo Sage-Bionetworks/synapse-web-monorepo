@@ -1,0 +1,44 @@
+{
+  "name": "synapse-web-monorepo",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+
+  "hostRequirements": {
+    "cpus": 2,
+    "memory": "8gb"
+  },
+
+  // Caches for mise and pnpm store
+  "mounts": [
+    "source=synapse-web-monorepo-mise,target=/mnt/mise-data,type=volume",
+    "source=synapse-web-monorepo-pnpm-store,target=/mnt/pnpm-store,type=volume"
+  ],
+
+  "remoteUser": "vscode",
+
+  // Keep the container's PATH for tools and terminals; `userEnvProbe` otherwise
+  // substitutes a login shell's PATH, which omits the mise shims.
+  "remoteEnv": {
+    "PATH": "${containerEnv:PATH}"
+  },
+
+  "onCreateCommand": "bash .devcontainer/setup.sh ${containerWorkspaceFolder}",
+  "updateContentCommand": "pnpm install",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "oxc.oxc-vscode",
+        "ms-playwright.playwright",
+        "nrwl.angular-console",
+        "Anthropic.claude-code",
+        "vitest.explorer"
+      ]
+    }
+  },
+
+  "forwardPorts": [3000, 3001, 4173, 5173, 6006]
+}
