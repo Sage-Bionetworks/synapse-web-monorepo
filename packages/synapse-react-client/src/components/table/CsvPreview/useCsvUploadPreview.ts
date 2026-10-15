@@ -4,7 +4,7 @@ import {
   UploadToTablePreviewResult,
 } from '@sage-bionetworks/synapse-client'
 
-const DEFAULT_CSV_TABLE_DESCRIPTOR: CsvTableDescriptor = {
+export const DEFAULT_CSV_TABLE_DESCRIPTOR: CsvTableDescriptor = {
   separator: ',',
   quoteCharacter: '"',
   escapeCharacter: '\\',
