@@ -1,6 +1,10 @@
 import { Model } from 'json-joy/lib/json-crdt'
-import { encode } from 'json-joy/lib/json-crdt-patch/codec/compact'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import {
+  CompactCodecPatch,
+  decode,
+  encode,
+} from 'json-joy/lib/json-crdt-patch/codec/compact'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { GridModel, gridSchema } from './DataGridTypes'
 import { DataGridWebSocket } from './DataGridWebSocket'
 
@@ -216,6 +220,330 @@ describe('DataGridWebSocket', () => {
       ws.disconnect()
 
       expect(mockSocket.sentMessages.length).toBeGreaterThanOrEqual(1)
+    })
+  })
+
+  describe('patch sending', () => {
+    const PATCH_ACK_TIMEOUT_MS = 1000
+
+    beforeEach(() => {
+      vi.useFakeTimers()
+      vi.spyOn(console, 'debug').mockImplementation(() => {})
+      vi.spyOn(console, 'warn').mockImplementation(() => {})
+    })
+
+    afterEach(() => {
+      vi.useRealTimers()
+    })
+
+    function addColumnEdit(model: GridModel, index: number, name: string) {
+      ;(model as unknown as Model).api.vec(['columnNames']).set([[index, name]])
+    }
+
+    /** A maxPayloadSizeBytes of 1 makes splitPatch emit one patch per operation */
+    function createWebSocketWithUnsentEdits(
+      overrides: Parameters<typeof createDataGridWebSocket>[0] = {},
+    ) {
+      const model = createTestModel()
+      addColumnEdit(model, 0, 'a')
+      addColumnEdit(model, 1, 'b')
+      addColumnEdit(model, 2, 'c')
+      const { ws, mockSocket } = createDataGridWebSocket({
+        model,
+        maxPayloadSizeBytes: 1,
+        patchAckTimeoutMs: PATCH_ACK_TIMEOUT_MS,
+        ...overrides,
+      })
+      return { ws, mockSocket, model }
+    }
+
+    function sentRequests(mockSocket: MockWebSocket, method: string) {
+      return parseSentMessages(mockSocket).filter(
+        message => message[2] === method,
+      )
+    }
+
+    function flushThrottledPatch(ws: DataGridWebSocket) {
+      ws.sendPatch()
+      vi.advanceTimersByTime(0)
+    }
+
+    /** The logical clock time at which each sent patch starts, in the order they were sent */
+    function sentPatchStartTimes(mockSocket: MockWebSocket) {
+      return sentRequests(mockSocket, 'patch').map(
+        request => decode(request[3] as CompactCodecPatch).getId()!.time,
+      )
+    }
+
+    /** Each patch must be the only one on the socket until the one before it is acknowledged */
+    function expectPatchesSentOneAtATime(
+      mockSocket: MockWebSocket,
+      expectedPatches: CompactCodecPatch[],
+    ) {
+      expectedPatches.forEach((expectedPatch, index) => {
+        const patchRequests = sentRequests(mockSocket, 'patch')
+        expect(patchRequests).toHaveLength(index + 1)
+        expect(patchRequests[index][3]).toEqual(expectedPatch)
+        mockSocket.simulateMessage([5, patchRequests[index][1]])
+      })
+      expect(sentRequests(mockSocket, 'patch')).toHaveLength(
+        expectedPatches.length,
+      )
+    }
+
+    it('keeps one patch on the socket until its acknowledgement arrives, across every part of a split patch', () => {
+      const { ws, mockSocket } = createWebSocketWithUnsentEdits()
+      flushThrottledPatch(ws)
+      const expectedPatches = ws.getPendingPatches()
+      expect(expectedPatches.length).toBeGreaterThan(1)
+
+      expectPatchesSentOneAtATime(mockSocket, expectedPatches)
+
+      expect(ws.getPendingPatches()).toEqual([])
+      const startTimes = sentPatchStartTimes(mockSocket)
+      expect(startTimes).toEqual([...startTimes].sort((a, b) => a - b))
+    })
+
+    it('holds a later flush behind the unacknowledged patch', () => {
+      const { ws, mockSocket, model } = createWebSocketWithUnsentEdits()
+      flushThrottledPatch(ws)
+      addColumnEdit(model, 3, 'd')
+      flushThrottledPatch(ws)
+
+      expect(sentRequests(mockSocket, 'patch')).toHaveLength(1)
+      expectPatchesSentOneAtATime(mockSocket, ws.getPendingPatches())
+      const startTimes = sentPatchStartTimes(mockSocket)
+      expect(startTimes).toEqual([...startTimes].sort((a, b) => a - b))
+    })
+
+    it('does not release the next patch when a clock sync completes', () => {
+      const onGridReady = vi.fn()
+      const onSyncEnd = vi.fn()
+      const { ws, mockSocket } = createWebSocketWithUnsentEdits({
+        onGridReady,
+        onSyncEnd,
+      })
+      flushThrottledPatch(ws)
+      mockSocket.simulateMessage([8, 'new-patch'])
+      const [syncRequest] = sentRequests(mockSocket, 'synchronize-clock')
+
+      mockSocket.simulateMessage([5, syncRequest[1]])
+
+      expect(sentRequests(mockSocket, 'patch')).toHaveLength(1)
+      expect(onGridReady).toHaveBeenCalledTimes(1)
+      expect(onSyncEnd).toHaveBeenCalledTimes(1)
+    })
+
+    it('does not treat a patch acknowledgement as a completed clock sync', () => {
+      const onGridReady = vi.fn()
+      const onSyncEnd = vi.fn()
+      const { ws, mockSocket } = createWebSocketWithUnsentEdits({
+        onGridReady,
+        onSyncEnd,
+      })
+      flushThrottledPatch(ws)
+      const [patchRequest] = sentRequests(mockSocket, 'patch')
+
+      mockSocket.simulateMessage([5, patchRequest[1]])
+
+      expect(onGridReady).not.toHaveBeenCalled()
+      expect(onSyncEnd).not.toHaveBeenCalled()
+    })
+
+    it('confirms the clock once the patches sent during a sync are acknowledged', () => {
+      const onGridReady = vi.fn()
+      const { ws, mockSocket } = createWebSocketWithUnsentEdits({ onGridReady })
+      mockSocket.simulateMessage([8, 'connected'])
+      flushThrottledPatch(ws)
+      expect(sentRequests(mockSocket, 'synchronize-clock')).toHaveLength(1)
+
+      expectPatchesSentOneAtATime(mockSocket, ws.getPendingPatches())
+
+      const syncRequests = sentRequests(mockSocket, 'synchronize-clock')
+      expect(syncRequests).toHaveLength(2)
+      mockSocket.simulateMessage([5, syncRequests[1][1]])
+      expect(onGridReady).toHaveBeenCalledTimes(1)
+    })
+
+    it('does not confirm the clock again when the sync already completed', () => {
+      const { ws, mockSocket } = createWebSocketWithUnsentEdits()
+      mockSocket.simulateMessage([8, 'connected'])
+      const [syncRequest] = sentRequests(mockSocket, 'synchronize-clock')
+      mockSocket.simulateMessage([5, syncRequest[1]])
+      flushThrottledPatch(ws)
+
+      expectPatchesSentOneAtATime(mockSocket, ws.getPendingPatches())
+
+      expect(sentRequests(mockSocket, 'synchronize-clock')).toHaveLength(1)
+    })
+
+    it('drops the connection instead of sending the next patch when an acknowledgement never arrives', () => {
+      const onStatusChange = vi.fn()
+      const { ws, mockSocket } = createWebSocketWithUnsentEdits({
+        onStatusChange,
+      })
+      flushThrottledPatch(ws)
+      const unacknowledgedPatches = ws.getPendingPatches()
+
+      vi.advanceTimersByTime(PATCH_ACK_TIMEOUT_MS)
+
+      expect(mockSocket.close).toHaveBeenCalledTimes(1)
+      expect(onStatusChange).toHaveBeenCalledWith(false, ws)
+      expect(sentRequests(mockSocket, 'patch')).toHaveLength(1)
+      expect(ws.getPendingPatches()).toEqual(unacknowledgedPatches)
+    })
+
+    it('ignores late events from a connection dropped for a missing acknowledgement', () => {
+      const onStatusChange = vi.fn()
+      const { ws, mockSocket } = createWebSocketWithUnsentEdits({
+        onStatusChange,
+      })
+      flushThrottledPatch(ws)
+      const [patchRequest] = sentRequests(mockSocket, 'patch')
+      vi.advanceTimersByTime(PATCH_ACK_TIMEOUT_MS)
+      const pendingAfterTimeout = ws.getPendingPatches()
+
+      mockSocket.simulateMessage([5, patchRequest[1]])
+      mockSocket.simulateClose()
+
+      expect(sentRequests(mockSocket, 'patch')).toHaveLength(1)
+      expect(ws.getPendingPatches()).toEqual(pendingAfterTimeout)
+      expect(onStatusChange).toHaveBeenCalledTimes(1)
+    })
+
+    it('keeps the connection when the acknowledgement arrives in time', () => {
+      const { ws, mockSocket } = createWebSocketWithUnsentEdits({
+        maxPayloadSizeBytes: undefined,
+      })
+      flushThrottledPatch(ws)
+      const [patchRequest] = sentRequests(mockSocket, 'patch')
+
+      mockSocket.simulateMessage([5, patchRequest[1]])
+      vi.advanceTimersByTime(PATCH_ACK_TIMEOUT_MS * 2)
+
+      expect(mockSocket.close).not.toHaveBeenCalled()
+    })
+
+    it('resends unacknowledged patches in order on a replacement connection once the server is ready', () => {
+      const original = createWebSocketWithUnsentEdits()
+      flushThrottledPatch(original.ws)
+      vi.advanceTimersByTime(PATCH_ACK_TIMEOUT_MS)
+      const unacknowledgedPatches = original.ws.getPendingPatches()
+      expect(unacknowledgedPatches.length).toBeGreaterThan(1)
+
+      const replacement = createDataGridWebSocket({
+        pendingPatches: unacknowledgedPatches,
+      })
+      expect(replacement.mockSocket.sentMessages).toHaveLength(0)
+      replacement.mockSocket.simulateMessage([8, 'connected'])
+
+      expectPatchesSentOneAtATime(replacement.mockSocket, unacknowledgedPatches)
+      expect(replacement.ws.getPendingPatches()).toEqual([])
+      const startTimes = sentPatchStartTimes(replacement.mockSocket)
+      expect(startTimes).toEqual([...startTimes].sort((a, b) => a - b))
+    })
+
+    it('sends patches inherited from a previous connection before new edits', () => {
+      const original = createWebSocketWithUnsentEdits()
+      flushThrottledPatch(original.ws)
+      const inheritedPatches = original.ws.getPendingPatches()
+      const newModel = createTestModel()
+      addColumnEdit(newModel, 5, 'new')
+      const replacement = createDataGridWebSocket({
+        model: newModel,
+        pendingPatches: inheritedPatches,
+      })
+
+      flushThrottledPatch(replacement.ws)
+
+      const allPatches = replacement.ws.getPendingPatches()
+      expect(allPatches.length).toBeGreaterThan(inheritedPatches.length)
+      expect(allPatches.slice(0, inheritedPatches.length)).toEqual(
+        inheritedPatches,
+      )
+      expectPatchesSentOneAtATime(replacement.mockSocket, allPatches)
+    })
+
+    it('keeps the in-flight patch pending when the connection closes before it is acknowledged', () => {
+      const { ws, mockSocket } = createWebSocketWithUnsentEdits()
+      flushThrottledPatch(ws)
+      const unacknowledgedPatches = ws.getPendingPatches()
+
+      mockSocket.simulateClose()
+      vi.advanceTimersByTime(PATCH_ACK_TIMEOUT_MS)
+
+      expect(ws.getPendingPatches()).toEqual(unacknowledgedPatches)
+      expect(mockSocket.close).not.toHaveBeenCalled()
+    })
+
+    it('leaves edits waiting on the throttle in the model when the connection closes', () => {
+      const { ws, mockSocket, model } = createWebSocketWithUnsentEdits({
+        patchThrottleMs: 5000,
+      })
+      ws.sendPatch()
+
+      mockSocket.simulateClose()
+      vi.advanceTimersByTime(5000)
+
+      expect(ws.getPendingPatches()).toEqual([])
+      expect(
+        (model as unknown as Model).api.flush().ops.length,
+      ).toBeGreaterThan(0)
+    })
+
+    it('closes only after every queued patch is acknowledged when disconnecting', () => {
+      const { ws, mockSocket } = createWebSocketWithUnsentEdits({
+        patchThrottleMs: 5000,
+      })
+      ws.sendPatch()
+
+      ws.disconnect()
+
+      const queuedPatches = ws.getPendingPatches()
+      expect(queuedPatches.length).toBeGreaterThan(1)
+      queuedPatches.forEach((_patch, index) => {
+        expect(mockSocket.close).not.toHaveBeenCalled()
+        expect(sentRequests(mockSocket, 'patch')).toHaveLength(index + 1)
+        mockSocket.simulateMessage([
+          5,
+          sentRequests(mockSocket, 'patch')[index][1],
+        ])
+      })
+      expect(mockSocket.close).toHaveBeenCalledTimes(1)
+    })
+
+    it('stops notifying its owner once disconnect is requested', () => {
+      const onGridReady = vi.fn()
+      const onStatusChange = vi.fn()
+      const { ws, mockSocket } = createWebSocketWithUnsentEdits({
+        onGridReady,
+        onStatusChange,
+        patchThrottleMs: 5000,
+      })
+      ws.sendPatch()
+      ws.disconnect()
+
+      mockSocket.simulateMessage([5, 9999])
+      mockSocket.simulateClose()
+
+      expect(onGridReady).not.toHaveBeenCalled()
+      expect(onStatusChange).not.toHaveBeenCalled()
+    })
+
+    it('leaves unflushed edits in the model when disconnecting a socket that is not open', () => {
+      const { ws, mockSocket, model } = createWebSocketWithUnsentEdits({
+        patchThrottleMs: 5000,
+      })
+      mockSocket.readyState = WebSocket.CLOSED
+      ws.sendPatch()
+
+      ws.disconnect()
+      vi.advanceTimersByTime(5000)
+
+      expect(ws.getPendingPatches()).toEqual([])
+      expect(
+        (model as unknown as Model).api.flush().ops.length,
+      ).toBeGreaterThan(0)
     })
   })
 
@@ -639,31 +967,6 @@ describe('DataGridWebSocket', () => {
   })
 
   describe('sendPatch', () => {
-    it('sends multiple messages for a large patch', () => {
-      vi.useFakeTimers()
-      const { ws, mockSocket } = createDataGridWebSocket({
-        maxPayloadSizeBytes: 100, // very small to force splitting
-      })
-
-      const model = Model.create(gridSchema)
-      model.api.flush()
-      for (let i = 0; i < 5; i++) {
-        model.api.vec(['columnNames']).set([[i, 'x'.repeat(200)]])
-      }
-      ws['model'] = model
-
-      ws.sendPatch()
-      vi.advanceTimersByTime(0)
-
-      expect(mockSocket.sentMessages.length).toBeGreaterThan(1)
-      const sent = parseSentMessages(mockSocket)
-      sent.forEach(arr => {
-        expect(arr[2]).toBe('patch')
-        expect(Array.isArray(arr[3])).toBe(true)
-      })
-      vi.useRealTimers()
-    })
-
     it('does not throw and logs a warning when model is null', () => {
       vi.useFakeTimers()
       const consoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {})

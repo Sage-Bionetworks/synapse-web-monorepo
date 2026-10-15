@@ -1,11 +1,9 @@
 import { Container } from '@mui/material'
 import { DetailsPageContent } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/DetailsPageContentLayout'
-import { useScrollOnMount } from '@sage-bionetworks/synapse-portal-framework/components/DetailsPage/utils'
 import { SectionLayout } from '@sage-bionetworks/synapse-portal-framework/components/SectionLayout'
 import { Markdown } from 'synapse-react-client/components/Markdown/MarkdownSynapse'
 
 function ApprovedAccessRequests() {
-  useScrollOnMount()
   return (
     <Container>
       <SectionLayout title={'Approved Access Requests'}>

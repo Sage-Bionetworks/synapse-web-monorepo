@@ -18,5 +18,13 @@ export function getAuthHandlers(backendOrigin: string) {
     http.post(`${backendOrigin}/auth/v1/oauth2/introspect`, () => {
       return HttpResponse.json({ active: true }, { status: 200 })
     }),
+
+    getUnbindOAuthProviderIdentityHandler(backendOrigin),
   ]
+}
+
+export function getUnbindOAuthProviderIdentityHandler(backendOrigin: string) {
+  return http.delete(`${backendOrigin}/auth/v1/oauth2/identity`, () => {
+    return new HttpResponse(null, { status: 200 })
+  })
 }

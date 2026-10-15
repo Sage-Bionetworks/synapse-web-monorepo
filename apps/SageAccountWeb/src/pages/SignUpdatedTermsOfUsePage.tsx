@@ -25,10 +25,10 @@ import { displayToast } from 'synapse-react-client/components/ToastMessage/Toast
 import { GovernanceMarkdownGithub } from 'synapse-react-client/components/Markdown/GovernanceMarkdownGithub'
 
 function SignUpdatedTermsOfUsePage() {
-  const [isLoading, setIsLoading] = useState(false)
   const [isCheckboxSelected, setIsCheckboxSelected] = useState(false)
   const { accessToken, isAuthenticated } = useSynapseContext()
-  const { mutate: signTermsOfService } = useSignTermsOfService()
+  const { mutate: signTermsOfService, isPending: isSigning } =
+    useSignTermsOfService()
   const navigate = useNavigate()
   const { data: tosInfo } = useTermsOfServiceInfo()
   const { data: tosStatus } = useTermsOfServiceStatus(accessToken, {
@@ -36,40 +36,34 @@ function SignUpdatedTermsOfUsePage() {
   })
 
   const redirectAfterSignOrSkip = () => {
-    const didRedirect = restoreLastPlace(navigate)
+    const didRedirect =
+      restoreLastPlace(navigate) || processRedirectURLInOneSage()
     if (!didRedirect) {
-      // if we did not redirect to a page in this app, then look for the redirect cookie
-      processRedirectURLInOneSage()
+      // The user opened this page directly, so there is no page in this app or source app to return to
+      navigate('/authenticated/myaccount', { replace: true })
     }
   }
 
   const isSkipAvailable =
     tosStatus?.userCurrentTermsOfServiceState ==
     TermsOfServiceState.MUST_AGREE_SOON
-  const onSignTermsOfUse = async (event: SyntheticEvent) => {
+  const onSignTermsOfUse = (event: SyntheticEvent) => {
     event.preventDefault()
-    setIsLoading(true)
-    try {
-      if (isAuthenticated && accessToken) {
-        signTermsOfService(
-          {
-            accessToken,
-            termsOfServiceVersion: tosInfo?.latestTermsOfServiceVersion!,
+    if (isAuthenticated && accessToken) {
+      signTermsOfService(
+        {
+          accessToken,
+          termsOfServiceVersion: tosInfo?.latestTermsOfServiceVersion!,
+        },
+        {
+          onSuccess: () => {
+            redirectAfterSignOrSkip()
           },
-          {
-            onSuccess: () => {
-              redirectAfterSignOrSkip()
-            },
-            onError: err => {
-              displayToast(err.reason as string, 'danger')
-            },
+          onError: err => {
+            displayToast(err.reason as string, 'danger')
           },
-        )
-      }
-    } catch (err: any) {
-      displayToast(err.reason as string, 'danger')
-    } finally {
-      setIsLoading(false)
+        },
+      )
     }
   }
 
@@ -112,7 +106,7 @@ function SignUpdatedTermsOfUsePage() {
               variant="contained"
               sx={{ width: '100%' }}
               onClick={onSignTermsOfUse}
-              disabled={isLoading || !isCheckboxSelected}
+              disabled={isSigning || !isCheckboxSelected}
             >
               Agree and Continue
             </Button>
@@ -127,7 +121,7 @@ function SignUpdatedTermsOfUsePage() {
                   )
                   redirectAfterSignOrSkip()
                 }}
-                disabled={isLoading}
+                disabled={isSigning}
               >
                 Skip for Now
               </Button>

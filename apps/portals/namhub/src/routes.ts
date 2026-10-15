@@ -24,6 +24,7 @@ export default [
       route('Explore', 'pages/Explore/layout.tsx', [
         route('Studies', 'pages/Explore/studies.tsx'),
         route('Datasets', 'pages/Explore/datasets.tsx'),
+        route('Publications', 'pages/Explore/publications.tsx'),
       ]),
 
       route('Explore/Datasets/:id', 'pages/DatasetDetailsPage.tsx'),

@@ -3,6 +3,11 @@ import {
   JsonSchemaAccessRequirementConcreteTypeEnum,
 } from '@sage-bionetworks/synapse-client'
 import { MOCK_DUC_TEMPLATE_FILE_HANDLE_ID } from '@/mocks/mock_file_handle'
+import {
+  ObjectType,
+  WikiPage,
+  WikiPageKey,
+} from '@sage-bionetworks/synapse-types'
 
 const now = new Date().toISOString()
 const actUserId = '1234567'
@@ -52,3 +57,26 @@ export const mockJsonSchemaAccessRequirements: JsonSchemaAccessRequirement[] = [
   mockJsonSchemaAR1,
   mockJsonSchemaAR2,
 ]
+
+/**
+ * A wiki for {@link mockJsonSchemaAR1}. It is intentionally not registered with the shared access requirement wiki
+ * mocks, so that the AR is wiki-less by default.
+ */
+export const mockJsonSchemaAR1WikiPage: WikiPage = {
+  id: '9000',
+  etag: 'etag-wiki-9000',
+  createdOn: now,
+  createdBy: actUserId,
+  modifiedOn: now,
+  modifiedBy: actUserId,
+  title: '',
+  markdown:
+    '**Access to these genomics data is controlled.**\n\nTo request access, provide the information that is requested in the following steps, including a description of your proposed research.',
+  attachmentFileHandleIds: [],
+}
+
+export const mockJsonSchemaAR1WikiPageKey: WikiPageKey = {
+  wikiPageId: mockJsonSchemaAR1WikiPage.id,
+  ownerObjectId: String(mockJsonSchemaAR1.id),
+  ownerObjectType: ObjectType.ACCESS_REQUIREMENT,
+}

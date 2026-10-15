@@ -21,7 +21,7 @@ export type DetailsPageSectionLayoutType = {
 export function DetailsPageSectionLayout(props: DetailsPageSectionLayoutType) {
   const { id, title, hideTitle = false, element, helpText } = props
   return (
-    <section id={id}>
+    <section id={id} className="scroll-target">
       <CollapsibleSection
         title={title ?? ''}
         hideTitle={hideTitle}

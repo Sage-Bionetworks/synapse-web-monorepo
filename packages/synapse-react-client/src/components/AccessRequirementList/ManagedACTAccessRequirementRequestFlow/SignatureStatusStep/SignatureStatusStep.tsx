@@ -22,8 +22,6 @@ import {
   Button,
   DialogActions,
   DialogContent,
-  DialogTitle,
-  IconButton,
   Link,
   Skeleton,
   Stack,
@@ -36,13 +34,13 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import {
   FileHandleAssociateType,
-  ManagedACTAccessRequirement,
   RestrictableObjectType,
 } from '@sage-bionetworks/synapse-types'
 import dayjs from 'dayjs'
 import { useState } from 'react'
-import IconSvg from '../../../IconSvg/IconSvg'
+import { DialogBaseTitle } from '../../../DialogBase'
 import { longFieldLabelSx } from '../styles'
+import { RequestFlowAccessRequirement } from '../requestFlowTypes'
 
 /** Browser defaults indent a blockquote far too much for a nested list item. */
 const declinedReasonSx: SxProps = {
@@ -55,7 +53,7 @@ const declinedReasonSx: SxProps = {
 }
 
 export type SignatureStatusStepProps = {
-  managedACTAccessRequirement: ManagedACTAccessRequirement
+  managedACTAccessRequirement: RequestFlowAccessRequirement
   subjectId: string
   subjectType: RestrictableObjectType
   onHide: () => void
@@ -187,15 +185,7 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
 
   return (
     <>
-      <DialogTitle>
-        <Stack direction="row" sx={{ alignItems: 'center', gap: '5px' }}>
-          Request Access
-          <Box sx={{ flexGrow: 1 }} />
-          <IconButton aria-label={'Close'} onClick={onHide}>
-            <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
-          </IconButton>
-        </Stack>
-      </DialogTitle>
+      <DialogBaseTitle title={'Request Access'} onCancel={onHide} />
       <DialogContent>
         <Typography variant={'headline3'} sx={{ mb: 2 }}>
           Sign a Data Use Certificate (DUC)

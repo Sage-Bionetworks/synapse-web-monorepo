@@ -65,3 +65,18 @@ export const FileField: Story = {
     propertyKey: 'consentForm',
   },
 }
+
+/** A template file is attached, but the FormTemplate has not been saved yet, so download is not
+ * available. Expand the row to see the control. */
+export const FileFieldWithTemplateOnUnsavedTemplate: Story = {
+  args: {
+    field: {
+      schemaPath: '/consentForm',
+      uiDefinition: null,
+      templateFileHandleId: '987654321',
+    },
+    resolvedProperty: { format: 'synapse-filehandle-id' },
+    propertyKey: 'consentForm',
+    formTemplateId: undefined,
+  },
+}

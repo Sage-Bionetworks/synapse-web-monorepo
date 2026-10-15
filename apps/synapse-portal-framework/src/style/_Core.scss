@@ -99,6 +99,18 @@ body:has(.top-nav--with-sticky-search) {
   );
 }
 
+.scroll-target {
+  scroll-margin-top: var(--synapse-sticky-content-top);
+}
+
+/* Scoped to in-page hash jumps to prevent unwanted animation 
+   on programmatic scroll resets and back/forward restores. */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-smooth-scroll] {
+    scroll-behavior: smooth;
+  }
+}
+
 .nav + .spacer {
   min-height: var(--synapse-header-height);
   height: var(--synapse-header-height);

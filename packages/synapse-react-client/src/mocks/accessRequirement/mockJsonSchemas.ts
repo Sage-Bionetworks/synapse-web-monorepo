@@ -13,10 +13,11 @@
 import { RJSFSchema } from '@rjsf/utils'
 import { DataAccessRequestType } from '@sage-bionetworks/synapse-client'
 import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
+import { ACCESS_REQUIREMENT_BASE_SCHEMA_ID } from '@/components/FormTemplateEditor/formTemplateSchema'
 
 /** Genomics DAR data contract — all fields required. */
 export const mockGenomicsSchema: RJSFSchema = {
-  $id: 'org.sagebionetworks.dar.genomics-1.0.0',
+  $id: 'org.sagebionetworks.act-GenomicsDataAccessRequest-1.0.0',
   type: 'object',
   title: 'Genomics Data Access Request',
   properties: {
@@ -32,12 +33,9 @@ export const mockGenomicsSchema: RJSFSchema = {
       description:
         'I agree to abide by all terms and conditions for accessing this data.',
     },
-    [SUBMISSION_CONTEXT_PROPERTY]: {
-      type: 'string',
-      enum: [DataAccessRequestType.REQUEST, DataAccessRequestType.RENEWAL],
-    },
   },
-  required: ['intendedDataUse', 'agreeToTerms', SUBMISSION_CONTEXT_PROPERTY],
+  required: ['intendedDataUse', 'agreeToTerms'],
+  allOf: [{ $ref: ACCESS_REQUIREMENT_BASE_SCHEMA_ID }],
 }
 
 /**
@@ -45,7 +43,7 @@ export const mockGenomicsSchema: RJSFSchema = {
  * (`irbApprovalNumber`), gated behind an `x-synapse-submissionContext` conditional.
  */
 export const mockClinicalSchema: RJSFSchema = {
-  $id: 'org.sagebionetworks.dar.clinical-1.0.0',
+  $id: 'org.sagebionetworks.act-ClinicalTrialDataAccessRequest-1.0.0',
   type: 'object',
   title: 'Clinical Trial Data Access Request',
   properties: {
@@ -67,17 +65,10 @@ export const mockClinicalSchema: RJSFSchema = {
         'Upload a signed copy of the Data Use Agreement. A template is available for download.',
       format: 'synapse-filehandle-id',
     },
-    [SUBMISSION_CONTEXT_PROPERTY]: {
-      type: 'string',
-      enum: [DataAccessRequestType.REQUEST, DataAccessRequestType.RENEWAL],
-    },
   },
-  required: [
-    'projectTitle',
-    'signedDataUseAgreement',
-    SUBMISSION_CONTEXT_PROPERTY,
-  ],
+  required: ['projectTitle', 'signedDataUseAgreement'],
   allOf: [
+    { $ref: ACCESS_REQUIREMENT_BASE_SCHEMA_ID },
     {
       if: {
         properties: {

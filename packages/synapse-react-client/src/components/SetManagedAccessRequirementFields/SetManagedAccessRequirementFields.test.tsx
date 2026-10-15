@@ -32,9 +32,9 @@ import { noop } from 'lodash-es'
 import { http, HttpResponse } from 'msw'
 import { createRef } from 'react'
 import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse'
+import { DUC_TEMPLATE_UPLOAD_ERROR } from './DataUseCertificateFields'
+import { getValidExpirationPeriodOrErrorMessage } from './ExpirationPeriodField'
 import {
-  DUC_TEMPLATE_UPLOAD_ERROR,
-  getValidExpirationPeriodOrErrorMessage,
   SetManagedAccessRequirementFields,
   SetManagedAccessRequirementFieldsHandle,
   SetManagedAccessRequirementFieldsProps,

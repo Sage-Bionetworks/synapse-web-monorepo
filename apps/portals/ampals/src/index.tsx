@@ -34,6 +34,13 @@ root.render(
       aridhiaConfig={{
         apiBasePath: import.meta.env.VITE_ARIDHIA_GATEWAY_URL,
         subjectTokenIssuer: import.meta.env.VITE_ARIDHIA_SUBJECT_TOKEN_ISSUER,
+        fairPortalUrl: import.meta.env.VITE_ARIDHIA_FAIR_PORTAL_URL,
+        devEndpoints: {
+          apiBasePath: import.meta.env.VITE_ARIDHIA_DEV_GATEWAY_URL,
+          subjectTokenIssuer: import.meta.env
+            .VITE_ARIDHIA_DEV_SUBJECT_TOKEN_ISSUER,
+          fairPortalUrl: import.meta.env.VITE_ARIDHIA_DEV_FAIR_PORTAL_URL,
+        },
       }}
     />
   </StrictMode>,

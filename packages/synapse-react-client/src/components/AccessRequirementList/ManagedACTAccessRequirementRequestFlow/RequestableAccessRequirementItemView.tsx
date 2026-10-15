@@ -2,7 +2,6 @@ import { formatDate } from '@/utils/functions/DateFormatter'
 import { Alert, Box, ButtonProps, Link, Typography } from '@mui/material'
 import Stack from '@mui/material/Stack'
 import {
-  ManagedACTAccessRequirement,
   ManagedACTAccessRequirementStatus,
   RestrictionInformationResponse,
   SubmissionState,
@@ -11,12 +10,13 @@ import dayjs from 'dayjs'
 import { ReactNode, useState } from 'react'
 import { RequirementItemStatus } from '../AccessApprovalCheckMark'
 import RequirementItem from '../RequirementItem/RequirementItem'
+import { RequestFlowAccessRequirement } from './requestFlowTypes'
 
-export type ManagedACTAccessRequirementItemViewProps = {
+export type RequestableAccessRequirementItemViewProps = {
   /**
-   * The ManagedACTAccessRequirement to be displayed.
+   * The ManagedACTAccessRequirement or JsonSchemaAccessRequirement to be displayed.
    */
-  accessRequirement: ManagedACTAccessRequirement
+  accessRequirement: RequestFlowAccessRequirement
   /**
    * The user's status for this access requirement.
    */
@@ -169,8 +169,8 @@ function getActionButtonProps(
  *
  * This is a UI-only component that does not make any requests to external stores, and is exported for testing/Storybook only.
  */
-export function ManagedACTAccessRequirementItemView(
-  props: ManagedACTAccessRequirementItemViewProps,
+export function RequestableAccessRequirementItemView(
+  props: RequestableAccessRequirementItemViewProps,
 ) {
   const {
     accessRequirement,
@@ -283,11 +283,7 @@ export function ManagedACTAccessRequirementItemView(
   }
 
   return (
-    <RequirementItem
-      data-testid="ManagedACTAccessRequirementItem"
-      status={requirementItemState}
-      actions={actions}
-    >
+    <RequirementItem status={requirementItemState} actions={actions}>
       {/*  If not approved/exempt, show the terms */}
       {!isApproved && !isExempt && <>{requirementTermsWikiContent}</>}
       {(isApproved || isExempt) && (
@@ -313,4 +309,4 @@ export function ManagedACTAccessRequirementItemView(
   )
 }
 
-export default ManagedACTAccessRequirementItemView
+export default RequestableAccessRequirementItemView

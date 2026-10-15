@@ -2,6 +2,7 @@ import { useGridPresignedUrl } from '@/synapse-queries/grid/useGridPresignedUrl'
 import { DataGridWebSocket } from '@/components/DataGrid/DataGridWebSocket'
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 import { GridModel } from '@/components/DataGrid/DataGridTypes'
+import { CompactCodecPatch } from 'json-joy/lib/json-crdt-patch/codec/compact'
 import { useCallback, useState } from 'react'
 
 interface EstablishWebsocketParams {
@@ -16,6 +17,7 @@ interface EstablishWebsocketParams {
     onSyncStart?: () => void
     onSyncEnd?: () => void
     model?: GridModel | null
+    pendingPatches?: CompactCodecPatch[]
   }
 }
 

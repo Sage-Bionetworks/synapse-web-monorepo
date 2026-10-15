@@ -108,14 +108,10 @@ describe('FormTemplatePreview', () => {
     ).toBeInTheDocument()
   })
 
-  it('renders the single step title, description, and its bound field', () => {
+  it('renders the single step title and description exactly once, with its bound field', () => {
     renderPreview({ template: oneStepTemplate, jsonSchema: schema })
-    // The preview's own step-title heading is an h6; RJSF also renders the object schema's
-    // `title` as its own h5 inside the form -- assert the specific one this component owns.
-    expect(
-      screen.getByRole('heading', { name: 'Basics', level: 6 }),
-    ).toBeInTheDocument()
-    expect(screen.getAllByText('Tell us about yourself')[0]).toBeInTheDocument()
+    expect(screen.getAllByText('Basics')).toHaveLength(1)
+    expect(screen.getAllByText('Tell us about yourself')).toHaveLength(1)
     expect(getFieldLabel('Institution')).toBeInTheDocument()
   })
 
@@ -136,6 +132,18 @@ describe('FormTemplatePreview', () => {
     await user.click(screen.getByRole('button', { name: 'Additional info' }))
     expect(queryFieldLabel('Institution')).not.toBeInTheDocument()
     expect(getFieldLabel('Signing Official')).toBeInTheDocument()
+  })
+
+  it('keeps answers when moving between steps', async () => {
+    const user = userEvent.setup()
+    renderPreview({
+      template: twoAlwaysVisibleStepsTemplate,
+      jsonSchema: schema,
+    })
+    await user.type(screen.getByRole('textbox'), 'Sage Bionetworks')
+    await user.click(screen.getByRole('button', { name: 'Additional info' }))
+    await user.click(screen.getByRole('button', { name: 'Basics' }))
+    expect(screen.getByRole('textbox')).toHaveValue('Sage Bionetworks')
   })
 
   it('excludes a step whose only field is gated to the other request type', () => {
@@ -173,5 +181,36 @@ describe('FormTemplatePreview', () => {
     )
     // Previously-active index 1 no longer exists; should fall back to the last real step.
     expect(getFieldLabel('Institution')).toBeInTheDocument()
+  })
+
+  it('renders a multi-choice field as a multi-select that accumulates selections', async () => {
+    const user = userEvent.setup()
+    renderPreview({
+      template: template([
+        {
+          title: 'Basics',
+          fields: [{ schemaPath: '/colors', uiDefinition: {} }],
+        },
+      ]),
+      jsonSchema: {
+        ...schema,
+        properties: {
+          ...schema.properties,
+          colors: {
+            type: 'array',
+            title: 'Colors',
+            items: { type: 'string', enum: ['Red', 'Green', 'Blue'] },
+            uniqueItems: true,
+          },
+        },
+      },
+    })
+    const combobox = screen.getByRole('combobox')
+    await user.click(combobox)
+    await user.click(screen.getByRole('option', { name: 'Green' }))
+    await user.click(combobox)
+    await user.click(screen.getByRole('option', { name: 'Red' }))
+    expect(screen.getByRole('button', { name: 'Green' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Red' })).toBeInTheDocument()
   })
 })

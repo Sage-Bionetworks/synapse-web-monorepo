@@ -26,6 +26,10 @@ const updateTemplateSpy = vi.spyOn(
   MOCK_CONTEXT_VALUE.synapseClient.accessRequirementServicesClient,
   'postRepoV1AccessRequirementFormTemplateTemplateId',
 )
+const listSchemaVersionsSpy = vi.spyOn(
+  MOCK_CONTEXT_VALUE.synapseClient.jsonSchemaServicesClient,
+  'postRepoV1SchemaVersionList',
+)
 
 function mockSchemaCreation(newSchema$id: string) {
   const response: CreateSchemaResponse = {
@@ -41,8 +45,35 @@ function mockSchemaCreation(newSchema$id: string) {
   getJobSpy.mockResolvedValueOnce(completeStatus)
 }
 
+function mockRegisteredVersions(...semanticVersions: string[]) {
+  listSchemaVersionsSpy.mockResolvedValueOnce({
+    page: semanticVersions.map(semanticVersion => ({ semanticVersion })),
+  })
+}
+
+function expectVersionsListedFor(organizationName: string, schemaName: string) {
+  expect(listSchemaVersionsSpy).toHaveBeenCalledWith(
+    {
+      listJsonSchemaVersionInfoRequest: expect.objectContaining({
+        organizationName,
+        schemaName,
+      }),
+    },
+    expect.anything(),
+  )
+}
+
+function expectSchemaRegisteredAs(schema$id: string) {
+  expect(postJobSpy).toHaveBeenCalledWith({
+    asynchronousRequestBody: expect.objectContaining({
+      concreteType: 'org.sagebionetworks.repo.model.schema.CreateSchemaRequest',
+      schema: expect.objectContaining({ $id: schema$id }),
+    }),
+  })
+}
+
 const jsonSchema: RJSFSchema = {
-  $id: 'org.example-1.0.0',
+  $id: 'org.example-MyTemplate-1.0.0',
   type: 'object',
   properties: { a: { type: 'string' } },
 }
@@ -95,12 +126,13 @@ describe('useSaveFormTemplate', () => {
     expect(createTemplateSpy).not.toHaveBeenCalled()
   })
 
-  it('registers a new schema version and creates the template when there is no existing template', async () => {
-    mockSchemaCreation('org.example-1.0.1')
+  it('registers the next major version under a schema name derived from the template name, and creates the template, when there is no existing template', async () => {
+    mockRegisteredVersions('2.0.0')
+    mockSchemaCreation('org.sagebionetworks.act-MyTemplate-3.0.0')
     const createdTemplate: FormTemplate = {
       id: 'template-1',
       name: 'My Template',
-      schema$id: 'org.example-1.0.1',
+      schema$id: 'org.sagebionetworks.act-MyTemplate-3.0.0',
       steps: [],
       etag: 'etag-1',
       versionNumber: 1,
@@ -118,10 +150,12 @@ describe('useSaveFormTemplate', () => {
     })
 
     expect(saveResult).toEqual({ ok: true, template: createdTemplate })
+    expectVersionsListedFor('org.sagebionetworks.act', 'MyTemplate')
+    expectSchemaRegisteredAs('org.sagebionetworks.act-MyTemplate-3.0.0')
     expect(createTemplateSpy).toHaveBeenCalledWith({
       formTemplate: expect.objectContaining({
         name: 'My Template',
-        schema$id: 'org.example-1.0.1',
+        schema$id: 'org.sagebionetworks.act-MyTemplate-3.0.0',
       }),
     })
     expect(updateTemplateSpy).not.toHaveBeenCalled()
@@ -131,7 +165,7 @@ describe('useSaveFormTemplate', () => {
     const initialTemplate: FormTemplate = {
       id: 'template-1',
       name: 'My Template',
-      schema$id: 'org.example-1.0.0',
+      schema$id: 'org.example-MyTemplate-1.0.0',
       steps: [],
       etag: 'etag-1',
       versionNumber: 1,
@@ -157,10 +191,11 @@ describe('useSaveFormTemplate', () => {
 
     expect(saveResult).toEqual({ ok: true, template: updatedTemplate })
     expect(postJobSpy).not.toHaveBeenCalled()
+    expect(listSchemaVersionsSpy).not.toHaveBeenCalled()
     expect(updateTemplateSpy).toHaveBeenCalledWith({
       templateId: 'template-1',
       formTemplate: expect.objectContaining({
-        schema$id: 'org.example-1.0.0',
+        schema$id: 'org.example-MyTemplate-1.0.0',
       }),
     })
   })
@@ -169,7 +204,7 @@ describe('useSaveFormTemplate', () => {
     const initialTemplate: FormTemplate = {
       id: 'template-1',
       name: 'My Template',
-      schema$id: 'org.example-1.0.0',
+      schema$id: 'org.example-MyTemplate-1.0.0',
       steps: [],
       etag: 'stale-etag',
       versionNumber: 1,
@@ -199,19 +234,21 @@ describe('useSaveFormTemplate', () => {
     })
   })
 
-  it('registers a new schema version and updates the template when editing an existing template with a changed schema body', async () => {
-    mockSchemaCreation('org.example-1.0.1')
+  it("registers the next major version under the existing schema's name, even after a rename, and updates the template when its schema body changed", async () => {
+    mockRegisteredVersions('1.0.0')
+    mockSchemaCreation('org.example-MyTemplate-2.0.0')
     const initialTemplate: FormTemplate = {
       id: 'template-1',
       name: 'My Template',
-      schema$id: 'org.example-1.0.0',
+      schema$id: 'org.example-MyTemplate-1.0.0',
       steps: [],
       etag: 'etag-1',
       versionNumber: 1,
     }
     const updatedTemplate: FormTemplate = {
       ...initialTemplate,
-      schema$id: 'org.example-1.0.1',
+      name: 'Renamed Template',
+      schema$id: 'org.example-MyTemplate-2.0.0',
       etag: 'etag-2',
       versionNumber: 2,
     }
@@ -229,17 +266,19 @@ describe('useSaveFormTemplate', () => {
     const saveResult = await result.current.mutateAsync({
       initialTemplate,
       initialJsonSchema: jsonSchema,
-      name: 'My Template',
+      name: 'Renamed Template',
       jsonSchema: changedJsonSchema,
       steps,
     })
 
     expect(saveResult).toEqual({ ok: true, template: updatedTemplate })
-    expect(postJobSpy).toHaveBeenCalled()
+    expectVersionsListedFor('org.example', 'MyTemplate')
+    expectSchemaRegisteredAs('org.example-MyTemplate-2.0.0')
     expect(updateTemplateSpy).toHaveBeenCalledWith({
       templateId: 'template-1',
       formTemplate: expect.objectContaining({
-        schema$id: 'org.example-1.0.1',
+        name: 'Renamed Template',
+        schema$id: 'org.example-MyTemplate-2.0.0',
       }),
     })
   })
