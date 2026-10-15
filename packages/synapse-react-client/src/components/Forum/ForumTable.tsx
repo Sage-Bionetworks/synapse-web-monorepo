@@ -10,6 +10,7 @@ import { DiscussionThreadBundle as DiscussionThreadBundleGenerated } from '@sage
 import {
   DiscussionFilter,
   DiscussionThreadOrder,
+  PaginatedResults,
 } from '@sage-bionetworks/synapse-types'
 import {
   ColumnDef,
@@ -20,8 +21,9 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
 import isEmpty from 'lodash-es/isEmpty'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import IconSvg from '../IconSvg/IconSvg'
 import ColumnHeader from '../TanStackTable/ColumnHeader'
 import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
@@ -29,9 +31,16 @@ import { UserBadge } from '../UserCard/UserBadge'
 import UserCard from '../UserCard/UserCard'
 import DiscussionEmpty from './DiscussionEmpty'
 
+dayjs.extend(relativeTime)
+
 type ForumTableBaseProps = {
   limit: number
   onClickLink: (threadId: string) => void
+  noBackgroundColor?: boolean
+  /** Called when the first page loads, with whether there are no threads */
+  onIsEmptyChange?: (isEmpty: boolean) => void
+  /** Max height of the table before it scrolls. Use 'none' for full height. @default '250px' */
+  maxHeight?: string
 }
 
 export type ForumTableProps = ForumTableBaseProps &
@@ -55,13 +64,13 @@ function getColumns(
         </Link>
       ),
       enableSorting: true,
-      size: 250,
+      size: 300,
     }),
     columnHelper.accessor('createdBy', {
       header: props => <ColumnHeader {...props} title={'Author'} />,
       cell: ({ getValue }) => <UserBadge userId={getValue()} />,
       enableSorting: false,
-      size: 60,
+      size: 150,
     }),
     columnHelper.accessor('activeAuthors', {
       header: props => <ColumnHeader {...props} title={'Active Users'} />,
@@ -78,32 +87,40 @@ function getColumns(
           </div>
         )),
       enableSorting: false,
+      size: 200,
     }),
     columnHelper.accessor('numberOfReplies', {
       header: props => <ColumnHeader {...props} title={'Replies'} />,
       cell: ({ getValue }) => getValue()?.toLocaleString(),
       enableSorting: true,
-      minSize: 10,
-      size: 20,
+      minSize: 90,
+      size: 100,
     }),
     columnHelper.accessor('numberOfViews', {
       header: props => <ColumnHeader {...props} title={'Views'} />,
       cell: ({ getValue }) => getValue()?.toLocaleString(),
       enableSorting: true,
-      minSize: 10,
-      size: 20,
+      minSize: 90,
+      size: 100,
     }),
     columnHelper.accessor('lastActivity', {
       header: props => <ColumnHeader {...props} title={'Activity'} />,
-      cell: ({ getValue }) => getValue() && dayjs(getValue()).format('L'),
+      cell: ({ getValue }) => getValue() && dayjs(getValue()).fromNow(),
       enableSorting: true,
-      size: 30,
+      minSize: 120,
+      size: 140,
     }),
   ]
 }
 
 export function ForumTable(props: ForumTableProps) {
-  const { limit, onClickLink } = props
+  const {
+    limit,
+    onClickLink,
+    noBackgroundColor,
+    onIsEmptyChange,
+    maxHeight = '250px',
+  } = props
   const isEntityMode = 'entityId' in props
 
   const [tableSortState, setTableSortState] = useState<SortingState>([
@@ -156,10 +173,11 @@ export function ForumTable(props: ForumTableProps) {
     isFetchingNextPage,
   } = isEntityMode ? entityThreadsQuery : forumThreadsQuery
 
-  const threads = useMemo(
-    () => data?.pages.flatMap(page => page.results) ?? [],
-    [data],
-  )
+  const threads = useMemo(() => {
+    const pages: PaginatedResults<DiscussionThreadBundleGenerated>[] =
+      data?.pages ?? []
+    return pages.flatMap(page => page.results)
+  }, [data])
 
   const columns = useMemo(() => getColumns(onClickLink), [onClickLink])
 
@@ -181,6 +199,12 @@ export function ForumTable(props: ForumTableProps) {
 
   const hasNoResults = !isLoading && table.getRowModel().rows.length === 0
 
+  useEffect(() => {
+    if (!isLoading) {
+      onIsEmptyChange?.(hasNoResults)
+    }
+  }, [isLoading, hasNoResults, onIsEmptyChange])
+
   const onViewForumClicked = isEntityMode ? props.onViewForumClicked : undefined
 
   if (hasNoResults && onViewForumClicked) {
@@ -199,7 +223,10 @@ export function ForumTable(props: ForumTableProps) {
         table={
           <StyledTanStackTable
             table={table}
-            styledTableContainerProps={{ sx: { my: 2, maxHeight: '250px' } }}
+            styledTableContainerProps={{
+              sx: { my: 2, maxHeight },
+              noBackgroundColor,
+            }}
           />
         }
         isLoading={isLoading}

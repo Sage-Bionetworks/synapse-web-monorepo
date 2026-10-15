@@ -5,6 +5,7 @@ import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { DiscussionFilter } from '@sage-bionetworks/synapse-types'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { http, HttpResponse } from 'msw'
+import { fn } from 'storybook/test'
 import { ForumTable } from './ForumTable'
 
 const meta = {
@@ -16,6 +17,7 @@ const meta = {
   args: {
     limit: 5,
     onClickLink: () => alert('This functionality has not been implemented yet'),
+    onIsEmptyChange: fn(),
   },
 } satisfies Meta
 export default meta

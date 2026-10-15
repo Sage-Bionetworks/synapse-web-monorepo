@@ -97,7 +97,6 @@ const SynapseComponents = {
     () => import('./components/SynapseTable/datasets/DatasetItemsEditor'),
   ),
   DiscussionThread: lazy(() => import('./components/Forum/DiscussionThread')),
-  DiscussionEmpty: lazy(() => import('./components/Forum/DiscussionEmpty')),
   DownloadCartPage: lazy(
     () => import('./components/DownloadCart/DownloadCartPage'),
   ),

@@ -1,7 +1,7 @@
 import { MOCK_FORUM_ID } from '@/mocks/discussion/mock_discussion'
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { ENTITY_ID } from '@/utils/APIConstants'
+import { ENTITY_ID, FORUM_THREAD } from '@/utils/APIConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -98,5 +98,25 @@ describe('ForumTable', () => {
       screen.getByRole('button', { name: 'View Discussion Forum' }),
     )
     expect(onViewForumClicked).toHaveBeenCalledTimes(1)
+  })
+
+  it('forum mode with empty results', async () => {
+    server.use(
+      http.get(`${REPO_ORIGIN}${FORUM_THREAD(':forumId')}`, () =>
+        HttpResponse.json({ results: [], totalNumberOfResults: 0 }),
+      ),
+    )
+    const onIsEmptyChange = vi.fn()
+
+    renderComponent({
+      forumId: MOCK_FORUM_ID,
+      filter: DiscussionFilter.EXCLUDE_DELETED,
+      limit: 1,
+      onClickLink: vi.fn(),
+      onIsEmptyChange,
+    })
+
+    await screen.findByText('No Results')
+    expect(onIsEmptyChange).toHaveBeenCalledWith(true)
   })
 })
