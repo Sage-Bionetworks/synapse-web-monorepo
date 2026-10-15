@@ -105,7 +105,6 @@ async function setUp(expectedFileCount: number) {
 }
 
 describe('AddToDownloadListConfirmationAlert', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     vi.clearAllMocks()
 
@@ -141,8 +140,6 @@ describe('AddToDownloadListConfirmationAlert', () => {
       ),
     )
   })
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   it('shows stats, then adds files to download list using a table query when invoked', async () => {
     const { downloadConfirmationUiPassedProps, mockOnClose } = await setUp(5)

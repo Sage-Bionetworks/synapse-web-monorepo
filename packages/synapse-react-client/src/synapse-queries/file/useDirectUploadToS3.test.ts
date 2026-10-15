@@ -1,5 +1,4 @@
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { Upload } from '@aws-sdk/lib-storage'
 import { ExternalObjectStoreFileHandle } from '@sage-bionetworks/synapse-client'
@@ -45,9 +44,6 @@ function renderHook() {
 }
 
 describe('useDirectUploadToS3', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
   beforeEach(() => {
     vi.clearAllMocks()
   })

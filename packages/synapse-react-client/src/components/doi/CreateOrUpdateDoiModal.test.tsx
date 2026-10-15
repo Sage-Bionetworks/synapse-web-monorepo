@@ -192,15 +192,11 @@ const waitForFormToBeReady = async () => {
 
 describe('CreateOrUpdateDoiModal', () => {
   beforeAll(() => {
-    server.listen()
     // Mock the current time, since the current year is used to populate the publication year field
     vi.setSystemTime(new Date('2025-05-01T12:00:00Z'))
   })
 
-  afterEach(() => server.resetHandlers())
-
   afterAll(() => {
-    server.close()
     vi.useRealTimers()
     vi.resetAllMocks()
   })

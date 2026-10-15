@@ -118,10 +118,6 @@ const submissionEndpoint = `*${DATA_ACCESS_REQUEST_SUBMISSION(
 )}`
 
 describe('ManualUploadDucStep', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   beforeEach(() => {
     mockOnHide.mockReset()
     mockOnBackClicked.mockReset()

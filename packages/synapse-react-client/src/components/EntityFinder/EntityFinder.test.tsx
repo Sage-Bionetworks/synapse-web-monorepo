@@ -99,10 +99,6 @@ function renderComponent(propOverrides?: Partial<EntityFinderProps>) {
 }
 
 describe('EntityFinder tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   beforeEach(() => {
     vi.clearAllMocks()
 

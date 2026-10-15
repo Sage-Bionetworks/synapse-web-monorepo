@@ -1,5 +1,4 @@
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { server } from '@/mocks/msw/server'
 import syn16787123 from '@/mocks/query/syn16787123'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseConstants } from '@/utils'
@@ -30,12 +29,9 @@ const mockCardContainer = vi
   })
 
 describe('it performs basic functionality', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     registerTableQueryResult({ sql }, syn16787123)
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   const sql = 'SELECT * FROM syn16787123'
 

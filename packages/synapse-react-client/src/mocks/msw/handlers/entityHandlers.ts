@@ -7,6 +7,7 @@ import {
   ENTITY_ID_VERSIONS,
   ENTITY_JSON,
   ENTITY_SCHEMA_BINDING,
+  ENTITY_SCHEMA_VALIDATION,
 } from '@/utils/APIConstants'
 import { normalizeSynPrefix } from '@/utils/functions/EntityTypeUtils'
 import {
@@ -35,7 +36,11 @@ import {
   mockSynapseStorageUploadDestination,
   mockUploadDestinations,
 } from '../../mock_upload_destination'
-import { mockSchemaBinding } from '../../mockSchema'
+import { mockOpenRestrictionInformation } from '../../mock_has_access_data'
+import {
+  mockSchemaBinding,
+  mockSchemaValidationResults,
+} from '../../mockSchema'
 import { SynapseApiResponse } from '../handlers'
 
 function getMatchingMockEntities(entityIds: string[]): MockEntityData[] {
@@ -226,6 +231,12 @@ export const getEntityHandlers = (backendOrigin: string) => [
 
   http.get(`${backendOrigin}${ENTITY_SCHEMA_BINDING(':entityId')}`, () => {
     return HttpResponse.json(mockSchemaBinding, { status: 200 })
+  }),
+  http.get(`${backendOrigin}${ENTITY_SCHEMA_VALIDATION(':entityId')}`, () => {
+    return HttpResponse.json(mockSchemaValidationResults, { status: 200 })
+  }),
+  http.post(`${backendOrigin}/repo/v1/restrictionInformation`, () => {
+    return HttpResponse.json(mockOpenRestrictionInformation, { status: 200 })
   }),
   http.get(
     `${backendOrigin}${ENTITY_JSON(':entityId')}`,

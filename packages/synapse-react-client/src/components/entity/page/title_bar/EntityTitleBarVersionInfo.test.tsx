@@ -28,10 +28,6 @@ function renderComponent(props: EntityTitleBarVersionInfoProps) {
 }
 
 describe('EntityTitleBarVersionInfo', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   describe('Component tests', () => {
     it('Clicking the version number invokes the showVersionHistory callback', async () => {
       const mockCallback = vi.fn()

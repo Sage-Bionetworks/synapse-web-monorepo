@@ -4,7 +4,6 @@ import {
 } from '@/mocks/entity/mockFileEntity'
 import { MOCK_FILE_VIEW_ENTITY_ID } from '@/mocks/entity/mockFileView'
 import { MOCK_PROJECT_VIEW_ENTITY_ID } from '@/mocks/entity/mockProjectView'
-import { server } from '@/mocks/msw/server'
 import { MOCK_TEAM_ID } from '@/mocks/team/mockTeam'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
@@ -62,9 +61,6 @@ async function setUp(
 
 describe('EntitySubjectsSelector', () => {
   beforeEach(() => vi.clearAllMocks())
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   test('displays selected entities', async () => {
     await setUp()

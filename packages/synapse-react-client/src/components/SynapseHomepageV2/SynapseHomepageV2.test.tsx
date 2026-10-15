@@ -8,14 +8,11 @@ import { mockAllIsIntersecting } from 'react-intersection-observer/test-utils'
 import { SynapseHomepageV2 } from './SynapseHomepageV2'
 
 describe('SynapseHomepageV2 Snapshot test', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     vi.clearAllMocks()
     server.use(...getFileHandlers(MOCK_REPO_ORIGIN))
     registerSynapseHomepageMockQueries()
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
   it('Basic home page', () => {
     const { container } = render(
       <SynapseTestContext>

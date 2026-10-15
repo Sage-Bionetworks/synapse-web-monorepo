@@ -28,10 +28,6 @@ import PortalFeaturedPartners, {
 const mockQueryRequest = vi.fn()
 
 describe('ImageCardGridWithLinks Tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   const mockProps: PortalFeaturedPartnersProps = {
     sql: 'SELECT * FROM syn62661043',
   }

@@ -43,10 +43,6 @@ function renderComponent() {
 }
 
 describe('UserProjects tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   it('loads more available projects when inView', async () => {
     server.use(
       http.get(

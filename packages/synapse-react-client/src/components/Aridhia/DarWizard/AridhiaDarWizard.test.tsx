@@ -291,13 +291,10 @@ function clickNext(user: UserEvent) {
 }
 
 describe('AridhiaDarWizard', () => {
-  beforeAll(() => server.listen())
   afterEach(() => {
-    server.resetHandlers()
     capturedRequestBodies = []
     sessionStorage.clear()
   })
-  afterAll(() => server.close())
 
   it('submits an existing-workspace request with the expected payload', async () => {
     const user = userEvent.setup()

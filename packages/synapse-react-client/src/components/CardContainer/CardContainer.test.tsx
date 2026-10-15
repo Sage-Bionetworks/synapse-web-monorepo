@@ -1,6 +1,5 @@
 import { mockTableEntity } from '@/mocks/entity/mockTableEntity'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { server } from '@/mocks/msw/server'
 import mockUserCardTableQueryResultBundle from '@/mocks/query/mockUserCardTableQueryResultBundle'
 import syn16787123Json from '@/mocks/query/syn16787123'
 import { mockUserProfileData } from '@/mocks/user/mock_user_profile'
@@ -54,13 +53,10 @@ const renderComponent = (props: CardContainerProps) => {
 }
 
 describe('CardContainer tests', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     vi.clearAllMocks()
     registerTableQueryResult(lastQueryRequest.query, syn16787123Json)
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   const props: CardContainerProps = {
     rowSet: syn16787123Json.queryResult.queryResults,

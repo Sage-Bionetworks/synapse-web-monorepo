@@ -1,5 +1,4 @@
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { render, waitFor } from '@testing-library/react'
@@ -37,14 +36,11 @@ const tableQueryResult: QueryResultBundle = {
 
 describe('SynapsePlot', () => {
   beforeAll(() => {
-    server.listen()
     registerTableQueryResult(
       { sql: 'select "x", "y" from syn123' },
       tableQueryResult,
     )
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it('renders', async () => {
     const { container } = render(

@@ -8,7 +8,6 @@ import {
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { server } from '@/mocks/msw/server'
 import { SynapseConstants } from '@/utils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 
@@ -49,12 +48,9 @@ const mockBundleSuccess: QueryResultBundle = {
 }
 
 describe('SustainabilityScorecard Tests', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     registerTableQueryResult(mockQuery.query, mockBundleSuccess)
   })
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   const mockQuery: QueryBundleRequest = {
     entityId: 'syn68561794',

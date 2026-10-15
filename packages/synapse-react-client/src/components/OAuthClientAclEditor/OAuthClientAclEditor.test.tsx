@@ -91,15 +91,12 @@ const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 describe('OAuthClientAclEditor', () => {
   const mockOnSaveComplete = vi.fn()
 
-  beforeAll(() => server.listen())
   beforeEach(() => {
     server.use(getOAuthClientAclHandler(REPO_ENDPOINT))
   })
   afterEach(() => {
-    server.resetHandlers()
     vi.clearAllMocks()
   })
-  afterAll(() => server.close())
 
   it('renders AclEditor with correct props', async () => {
     renderComponent({

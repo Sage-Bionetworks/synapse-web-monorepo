@@ -108,9 +108,6 @@ async function setUp(props: SetBasicAccessRequirementFieldsProps) {
 
 describe('SetBasicAccessRequirementFields', () => {
   beforeEach(() => vi.clearAllMocks())
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   test('does not show text instructions for self-signed AR', async () => {
     const { buttons } = await setUp({

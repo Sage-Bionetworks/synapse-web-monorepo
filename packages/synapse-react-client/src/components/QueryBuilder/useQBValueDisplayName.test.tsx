@@ -1,7 +1,6 @@
 import mockFileEntityData, {
   MOCK_FILE_NAME,
 } from '@/mocks/entity/mockFileEntity'
-import { server } from '@/mocks/msw/server'
 import { MOCK_USER_ID, MOCK_USER_NAME } from '@/mocks/user/mock_user_profile'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { FRIENDLY_VALUE_NOT_SET, VALUE_NOT_SET } from '@/utils/SynapseConstants'
@@ -73,10 +72,6 @@ function renderUseQBValueDisplayName() {
 }
 
 describe('useQBValueDisplayName', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   it('resolves an ENTITYID value to the entity name', async () => {
     const { result } = renderUseQBValueDisplayName()
     await waitFor(() =>

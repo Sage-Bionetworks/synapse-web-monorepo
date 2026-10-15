@@ -1,6 +1,5 @@
 import mockDatasetEntityData from '@/mocks/entity/mockDataset'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { EntityRef, Table } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
@@ -22,10 +21,6 @@ const allDatasetItems: EntityRef[] = [
 ]
 
 describe('MissingQueryResultsWarning tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   it('shows no warning when total results is equal to total visible results', () => {
     const numberOfVisibleResults = allDatasetItems.length
 
