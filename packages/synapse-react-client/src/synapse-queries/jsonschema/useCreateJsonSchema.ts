@@ -5,7 +5,7 @@ import { doPost } from '@/synapse-client/HttpClient'
 import { ASYNCHRONOUS_JOB } from '@/utils/APIConstants'
 import { BackendDestinationEnum } from '@/utils/functions/getEndpoint'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { RJSFSchema } from '@rjsf/utils'
+import { JSONSchema7 } from 'json-schema'
 import {
   AsynchronousJobStatus,
   CreateSchemaResponse,
@@ -21,13 +21,13 @@ import { useMutation, UseMutationOptions } from '@tanstack/react-query'
  */
 export function useCreateJsonSchema(
   options?: Omit<
-    UseMutationOptions<CreateSchemaResponse, SynapseClientError, RJSFSchema>,
+    UseMutationOptions<CreateSchemaResponse, SynapseClientError, JSONSchema7>,
     'mutationFn'
   >,
 ) {
   const { synapseClient, accessToken } = useSynapseContext()
 
-  return useMutation<CreateSchemaResponse, SynapseClientError, RJSFSchema>({
+  return useMutation<CreateSchemaResponse, SynapseClientError, JSONSchema7>({
     ...options,
     mutationFn: async schema => {
       // The generated client serializes `schema` through its `JsonSchema` model, which drops any

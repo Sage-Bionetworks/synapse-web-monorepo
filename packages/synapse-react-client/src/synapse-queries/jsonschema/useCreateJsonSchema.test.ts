@@ -3,7 +3,6 @@ import { http, server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { ASYNCHRONOUS_JOB, ASYNCHRONOUS_JOB_TOKEN } from '@/utils/APIConstants'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
-import { RJSFSchema } from '@rjsf/utils'
 import { AsynchronousJobStatus } from '@sage-bionetworks/synapse-client'
 import { renderHook, waitFor } from '@testing-library/react'
 import { HttpResponse } from 'msw'
@@ -13,7 +12,7 @@ import { useCreateJsonSchema } from './useCreateJsonSchema'
 const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 const JOB_STATUS_URL = `${REPO_ENDPOINT}${ASYNCHRONOUS_JOB_TOKEN(':jobId')}`
 
-const schema: RJSFSchema = {
+const schema: JSONSchema7 = {
   $id: 'org.example-1.0.0',
   type: 'object',
   properties: { institution: { type: 'string' } },
@@ -107,7 +106,7 @@ describe('useCreateJsonSchema', () => {
 
   describe('request body', () => {
     it('sends choice options, constants, defaults, and conditionals to the server', async () => {
-      const choiceSchema: RJSFSchema = {
+      const choiceSchema: JSONSchema7 = {
         $id: 'org.example-1.0.0',
         type: 'object',
         properties: {
@@ -132,7 +131,7 @@ describe('useCreateJsonSchema', () => {
     })
 
     it('sends the keywords of schemas nested under composition, definition, and applicator keywords', async () => {
-      const nestedSchema: RJSFSchema = {
+      const nestedSchema: JSONSchema7 = {
         $id: 'org.example-1.0.0',
         type: 'object',
         definitions: { color: { type: 'string', enum: ['Red', 'Green'] } },
@@ -156,7 +155,7 @@ describe('useCreateJsonSchema', () => {
     })
 
     it('sends keywords that the generated JsonSchema model does not list', async () => {
-      const unlistedKeywordsSchema: RJSFSchema = {
+      const unlistedKeywordsSchema: JSONSchema7 = {
         $id: 'org.example-1.0.0',
         $comment: 'Authored in the raw JSON editor',
         type: 'object',
@@ -177,7 +176,7 @@ describe('useCreateJsonSchema', () => {
     })
 
     it('sends boolean subschemas as booleans', async () => {
-      const booleanSubschemas: RJSFSchema = {
+      const booleanSubschemas: JSONSchema7 = {
         $id: 'org.example-1.0.0',
         type: 'object',
         properties: { tags: { type: 'array', items: true } },
@@ -191,7 +190,7 @@ describe('useCreateJsonSchema', () => {
     })
 
     it('sends tuple-form items', async () => {
-      const tupleItems: RJSFSchema = {
+      const tupleItems: JSONSchema7 = {
         $id: 'org.example-1.0.0',
         type: 'object',
         properties: {
