@@ -1,13 +1,10 @@
 /*
  * Hook for registering a new JSON Schema version with the schema registry.
  */
-import { doPost } from '@/synapse-client/HttpClient'
-import { ASYNCHRONOUS_JOB } from '@/utils/APIConstants'
-import { BackendDestinationEnum } from '@/utils/functions/getEndpoint'
+import SynapseClient from '@/synapse-client'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { JSONSchema7 } from 'json-schema'
 import {
-  AsynchronousJobStatus,
   CreateSchemaResponse,
   waitForAsyncResult,
 } from '@sage-bionetworks/synapse-client'
@@ -30,23 +27,15 @@ export function useCreateJsonSchema(
   return useMutation<CreateSchemaResponse, SynapseClientError, JSONSchema7>({
     ...options,
     mutationFn: async schema => {
-      // The generated client serializes `schema` through its `JsonSchema` model, which drops any
-      // keyword the model does not list and rewrites boolean subschemas and tuple `items`.
-      const jobStatus = await doPost<AsynchronousJobStatus>(
-        ASYNCHRONOUS_JOB,
-        {
-          concreteType:
-            'org.sagebionetworks.repo.model.schema.CreateSchemaRequest',
-          schema,
-        },
+      const jobStatus = await SynapseClient.startCreateSchemaJob(
+        schema,
         accessToken,
-        BackendDestinationEnum.REPO_ENDPOINT,
       )
       // Polled with the generated client because the job status endpoint returns 200 even when the
       // job failed, and `waitForAsyncResult` is what turns a FAILED status into an error.
       const jobResult = await waitForAsyncResult(() =>
         synapseClient.asynchronousJobServicesClient.getRepoV1AsynchronousJobJobId(
-          { jobId: jobStatus.jobId! },
+          { jobId: jobStatus.jobId },
         ),
       )
       return jobResult.responseBody as CreateSchemaResponse
