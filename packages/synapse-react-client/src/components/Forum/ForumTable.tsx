@@ -35,7 +35,8 @@ dayjs.extend(relativeTime)
 
 type ForumTableBaseProps = {
   limit: number
-  onClickLink: (threadId: string) => void
+  /** Called with the clicked thread's ID and the ID of the project it belongs to */
+  onClickLink: (threadId: string, projectId?: string) => void
   noBackgroundColor?: boolean
   /** Called when the first page loads, with whether there are no threads */
   onIsEmptyChange?: (isEmpty: boolean) => void
@@ -52,13 +53,18 @@ export type ForumTableProps = ForumTableBaseProps &
 const columnHelper = createColumnHelper<DiscussionThreadBundleGenerated>()
 
 function getColumns(
-  onClickLink: (threadId: string) => void,
+  onClickLink: (threadId: string, projectId?: string) => void,
 ): ColumnDef<DiscussionThreadBundleGenerated, any>[] {
   return [
     columnHelper.accessor('title', {
       header: props => <ColumnHeader {...props} title={'Topic'} />,
       cell: ({ row }) => (
-        <Link onClick={() => row.original.id && onClickLink(row.original.id)}>
+        <Link
+          onClick={() =>
+            row.original.id &&
+            onClickLink(row.original.id, row.original.projectId)
+          }
+        >
           {row.original.isPinned ? <IconSvg icon="pushpin" /> : <></>}
           {row.original.title}
         </Link>

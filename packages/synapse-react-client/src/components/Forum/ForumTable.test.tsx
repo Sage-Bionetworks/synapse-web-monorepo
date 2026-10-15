@@ -72,10 +72,13 @@ describe('ForumTable', () => {
       }),
     )
 
-    renderComponent({ entityId: 'syn123', limit: 1, onClickLink: vi.fn() })
+    const onClickLink = vi.fn()
+    renderComponent({ entityId: 'syn123', limit: 1, onClickLink })
 
-    await screen.findByText('Thread about syn123')
+    await userEvent.click(await screen.findByText('Thread about syn123'))
     expect(requestedEntityIds).toEqual(['syn123'])
+    // the thread may belong to a different project than the entity
+    expect(onClickLink).toHaveBeenCalledWith('1', 'syn100')
   })
 
   it('prompts to view the forum when no threads reference the entity', async () => {
