@@ -203,7 +203,8 @@ export function ForumTable(props: ForumTableProps) {
       enableFilters: false,
     })
 
-  const hasNoResults = !isLoading && table.getRowModel().rows.length === 0
+  const hasNoResults =
+    !isLoading && !error && table.getRowModel().rows.length === 0
 
   useEffect(() => {
     if (!isLoading) {
