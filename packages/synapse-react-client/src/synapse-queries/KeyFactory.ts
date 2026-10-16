@@ -607,9 +607,19 @@ export class KeyFactory {
     return this.getKey('approvedSubmissionInfo', request)
   }
 
-  // Returns key that can be used to invalidate all data access request queries
+  /**
+   * Returns key that can be used to invalidate all data access request queries.
+   *
+   * Prefer a narrower key where one fits: this one also matches the eDUC preview, whose refetch
+   * costs a server-side PDF render.
+   */
   public getDataAccessRequestQueryKey() {
     return this.getKey(DATA_ACCESS_REQUEST_QUERY_KEY)
+  }
+
+  // Returns key that can be used to invalidate every data access request listing
+  public getDataAccessRequestListQueryKey() {
+    return this.getKey(DATA_ACCESS_REQUEST_QUERY_KEY, 'list')
   }
 
   public listDataAccessRequestsQueryKey(params?: AccessRequestListRequest) {
@@ -622,13 +632,12 @@ export class KeyFactory {
     return this.getKey(DATA_ACCESS_REQUEST_QUERY_KEY, 'list', 'all', params)
   }
 
+  /**
+   * The preview renders the request's own content, so it is deliberately a sibling of the
+   * signature keys rather than a child: signature mutations must not invalidate it.
+   */
   public getDataAccessRequestPreviewQueryKey(requestId: string) {
-    return this.getKey(
-      DATA_ACCESS_REQUEST_QUERY_KEY,
-      requestId,
-      'signature',
-      'preview',
-    )
+    return this.getKey(DATA_ACCESS_REQUEST_QUERY_KEY, requestId, 'preview')
   }
 
   public getDataAccessRequestSignatureQueryKey(requestId: string) {

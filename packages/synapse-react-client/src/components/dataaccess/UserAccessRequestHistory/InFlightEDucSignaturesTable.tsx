@@ -299,8 +299,14 @@ export function InFlightEDucSignaturesTable() {
             color={'error'}
             loading={isVoiding}
             onClick={() => {
-              if (cancellingSummary?.requestId) {
-                voidSignature(cancellingSummary.requestId)
+              if (
+                cancellingSummary?.requestId &&
+                cancellingSummary.accessRequirementId
+              ) {
+                voidSignature({
+                  requestId: cancellingSummary.requestId,
+                  accessRequirementId: cancellingSummary.accessRequirementId,
+                })
               }
             }}
           >
