@@ -6,7 +6,7 @@
   "dependencies": {
     "@sage-bionetworks/synapse-portal-framework": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
-    "katex": "^0.16.47",
+    "katex": "^0.18.2",
     "pluralize": "^8.0.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
