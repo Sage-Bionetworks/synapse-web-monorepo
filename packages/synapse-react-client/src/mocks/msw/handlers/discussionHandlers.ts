@@ -140,9 +140,9 @@ export function getDiscussionHandlers(backendOrigin: string) {
 
     http.get(`${backendOrigin}${ENTITY_ID(':id')}/threads`, ({ request }) => {
       const offsetParam = new URL(request.url).searchParams.get('offset')
-      const offset = offsetParam ? parseInt(offsetParam) : 0
+      const offset = offsetParam ? Number.parseInt(offsetParam) : 0
       const limitParam = new URL(request.url).searchParams.get('limit')
-      const limit = limitParam ? parseInt(limitParam) : 10
+      const limit = limitParam ? Number.parseInt(limitParam) : 10
 
       // Mock threads don't track which entities they reference, so treat every active thread as a match
       const referencingThreads = threadService.getMany(
