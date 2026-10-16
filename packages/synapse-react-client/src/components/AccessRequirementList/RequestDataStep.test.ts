@@ -2,11 +2,11 @@ import {
   JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
+import { RequestableAccessRequirement } from '@/utils/types/RequestableAccessRequirement'
 import {
   getFirstRequestStep,
   getNextRequestStep,
   getPreviousRequestStep,
-  RequestableAccessRequirement,
   RequestDataStep,
 } from './RequestDataStep'
 

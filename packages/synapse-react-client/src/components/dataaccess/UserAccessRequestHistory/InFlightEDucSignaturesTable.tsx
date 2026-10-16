@@ -1,8 +1,6 @@
 import AccessRequirementList from '@/components/AccessRequirementList/AccessRequirementList'
-import {
-  getFirstRequestStep,
-  RequestableAccessRequirement,
-} from '@/components/AccessRequirementList/RequestDataStep'
+import { getFirstRequestStep } from '@/components/AccessRequirementList/RequestDataStep'
+import { RequestableAccessRequirement } from '@/utils/types/RequestableAccessRequirement'
 import { SkeletonTable } from '@/components/Skeleton'
 import ColumnHeader from '@/components/TanStackTable/ColumnHeader'
 import StyledTanStackTable from '@/components/TanStackTable/StyledTanStackTable'

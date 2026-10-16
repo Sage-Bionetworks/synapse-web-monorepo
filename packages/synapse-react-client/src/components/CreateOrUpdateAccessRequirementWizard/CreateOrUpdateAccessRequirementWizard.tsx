@@ -1,4 +1,9 @@
-import { MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
+import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
+import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
+import {
+  JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+  MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
+} from '@sage-bionetworks/synapse-types'
 import { MouseEventHandler, useMemo, useRef, useState } from 'react'
 import {
   AccessRequirementAclEditor,
@@ -35,6 +40,9 @@ export function CreateOrUpdateAccessRequirementWizard(
   props: CreateOrUpdateAccessRequirementWizardProps,
 ) {
   const { open, onCancel, onComplete } = props
+  const isSchemaDrivenEnabled = useGetFeatureFlag(
+    FeatureFlagEnum.ACT_DASHBOARD_FORM_TEMPLATES,
+  )
 
   const [step, setStep] = useState<CreateOrUpdateAccessRequirementWizardStep>(
     'SET_AR_COMMON_FIELDS',
@@ -62,9 +70,14 @@ export function CreateOrUpdateAccessRequirementWizard(
             ref={setArCommonFieldsRef}
             onSave={(accessRequirementId, accessRequirementConcreteType) => {
               setAccessRequirementId(accessRequirementId)
-              const nextStep: CreateOrUpdateAccessRequirementWizardStep =
+              const isReviewedInSynapse =
                 accessRequirementConcreteType ===
-                MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
+                  MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE ||
+                (isSchemaDrivenEnabled &&
+                  accessRequirementConcreteType ===
+                    JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE)
+              const nextStep: CreateOrUpdateAccessRequirementWizardStep =
+                isReviewedInSynapse
                   ? 'SET_MANAGED_AR_FIELDS'
                   : 'SET_BASIC_AR_FIELDS'
               setStep(nextStep)
@@ -121,6 +134,7 @@ export function CreateOrUpdateAccessRequirementWizard(
     props.accessRequirementId,
     accessRequirementId,
     onComplete,
+    isSchemaDrivenEnabled,
   ])
 
   const onClickPrimary: MouseEventHandler<HTMLButtonElement> = e => {
