@@ -15,6 +15,7 @@ import {
   AccessRequestListRequest,
   AddToDownloadListStatsRequest,
   DiscussionSearchRequest,
+  DiscussionThreadOrder as DiscussionThreadOrderGenerated,
   EDucTemplateListRequest,
   EntityLookupRequest,
   FormTemplateSearchRequest,
@@ -799,6 +800,19 @@ export class KeyFactory {
     return this.getKey('forumthread', forumId, {
       limit,
       filter,
+      sort,
+      ascending,
+    })
+  }
+
+  public getEntityThreadsQueryKey(
+    entityId: string,
+    limit: number,
+    sort: DiscussionThreadOrderGenerated,
+    ascending: boolean,
+  ) {
+    return this.getKey('entitythread', entityId, {
+      limit,
       sort,
       ascending,
     })
