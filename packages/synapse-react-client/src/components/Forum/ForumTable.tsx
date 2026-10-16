@@ -215,12 +215,7 @@ export function ForumTable(props: ForumTableProps) {
   const onViewForumClicked = isEntityMode ? props.onViewForumClicked : undefined
 
   if (hasNoResults && onViewForumClicked) {
-    return (
-      <>
-        <ErrorBanner error={error} />
-        <DiscussionEmpty onViewForumClicked={onViewForumClicked} />
-      </>
-    )
+    return <DiscussionEmpty onViewForumClicked={onViewForumClicked} />
   }
 
   return (

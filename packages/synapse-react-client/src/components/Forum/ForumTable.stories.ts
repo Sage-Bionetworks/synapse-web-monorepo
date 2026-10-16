@@ -53,3 +53,27 @@ export const EntityThreadsEmpty: Story = {
     onViewForumClicked: () => alert('Navigate to the project discussion forum'),
   },
 }
+
+export const EntityThreadsError: Story = {
+  parameters: {
+    msw: {
+      handlers: {
+        discussion: [
+          http.get(`${MOCK_REPO_ORIGIN}${ENTITY_ID(':id')}/threads`, () =>
+            HttpResponse.json(
+              {
+                concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+                reason: 'Could not load threads',
+              },
+              { status: 400 },
+            ),
+          ),
+        ],
+      },
+    },
+  },
+  args: {
+    entityId: mockProject.id,
+    onViewForumClicked: () => alert('Navigate to the project discussion forum'),
+  },
+}

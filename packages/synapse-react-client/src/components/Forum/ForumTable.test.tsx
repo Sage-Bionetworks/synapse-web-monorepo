@@ -122,4 +122,31 @@ describe('ForumTable', () => {
     await screen.findByText('No Results')
     expect(onIsEmptyChange).toHaveBeenCalledWith(true)
   })
+
+  it('shows the error instead of the empty state when the request fails', async () => {
+    server.use(
+      http.get(ENTITY_THREADS_URL, () =>
+        HttpResponse.json(
+          {
+            concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+            reason: 'Could not load threads',
+          },
+          { status: 400 },
+        ),
+      ),
+    )
+    const onIsEmptyChange = vi.fn()
+
+    renderComponent({
+      entityId: 'syn123',
+      limit: 1,
+      onClickLink: vi.fn(),
+      onViewForumClicked: vi.fn(),
+      onIsEmptyChange,
+    })
+
+    await screen.findByText('Could not load threads')
+    expect(screen.queryByText('No discussions yet')).not.toBeInTheDocument()
+    expect(onIsEmptyChange).not.toHaveBeenCalledWith(true)
+  })
 })
