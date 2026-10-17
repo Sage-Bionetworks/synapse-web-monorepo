@@ -172,8 +172,7 @@ function renderComponent(propOverrides?: Partial<EntityTreeProps>) {
 }
 
 describe('EntityTree tests', () => {
-  beforeAll(() => {
-    server.listen()
+  beforeEach(() => {
     server.use(
       http.get(
         `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${FAVORITES}`,
@@ -227,8 +226,6 @@ describe('EntityTree tests', () => {
     )
   })
   beforeEach(() => vi.clearAllMocks())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it('loads more projects when rootNodeConfiguration.fetchNextPage is called', async () => {
     renderComponent({ initialScope: FinderScope.ALL_PROJECTS })

@@ -81,19 +81,13 @@ describe('CreateTableWizard integration tests', () => {
     }
   }
 
-  beforeAll(() => {
-    server.listen()
-  })
-
   beforeEach(() => {
     server.use(getFeatureFlagsOverride())
   })
 
   afterEach(() => {
-    server.resetHandlers()
     vi.clearAllMocks()
   })
-  afterAll(() => server.close())
 
   test('Create a table', async () => {
     const onComplete = vi.fn()

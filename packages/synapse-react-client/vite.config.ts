@@ -69,6 +69,8 @@ const config = mergeConfig(
         setupFiles: ['./src/testutils/vitest.setup.ts'],
         silent: process.env.CI === 'true' ? 'passed-only' : false,
         testTimeout: 15_000, // 15 seconds
+        // The shared setup file loads the MSW server (and all its handlers) in `beforeAll`, which is slow on a cold worker
+        hookTimeout: 30_000, // 30 seconds
       },
     }),
   ),

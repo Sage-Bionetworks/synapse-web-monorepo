@@ -3,7 +3,6 @@ import {
   mockToUAccessRequirementWithWiki,
 } from '@/mocks/accessRequirement/mockAccessRequirements'
 import { mockToUAccessRequirementWikiPage } from '@/mocks/mockWiki'
-import { server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
 import {
   confirmMarkdownSynapseTextContent,
@@ -38,9 +37,6 @@ function setUp(props: AccessRequirementWikiInstructionsProps) {
 
 describe('AccessRequirementWikiInstructions', () => {
   beforeEach(() => vi.clearAllMocks())
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   test('creates and edits new wiki when there is not an existing wiki', async () => {
     const props: AccessRequirementWikiInstructionsProps = {

@@ -28,7 +28,6 @@ describe('useUploadCsvToExistingTable', () => {
   const mockTableUpdateTransaction =
     vi.fn<(request: TableUpdateTransactionRequest) => void>()
 
-  beforeAll(() => server.listen())
   beforeEach(() => {
     server.use(
       ...generateAsyncJobHandlers(
@@ -56,10 +55,8 @@ describe('useUploadCsvToExistingTable', () => {
     )
   })
   afterEach(() => {
-    server.resetHandlers()
     vi.clearAllMocks()
   })
-  afterAll(() => server.close())
 
   it('calls tableTransaction with the provided tableId', async () => {
     const tableId = 'syn123'

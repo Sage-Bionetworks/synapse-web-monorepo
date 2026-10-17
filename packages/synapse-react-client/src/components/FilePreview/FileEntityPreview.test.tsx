@@ -107,7 +107,6 @@ const entityBundle: EntityBundle = {
 }
 
 describe('FileHandleContentRenderer tests', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     server.use(
       // Handler to return the presigned URL for the requested file
@@ -136,8 +135,6 @@ describe('FileHandleContentRenderer tests', () => {
       }),
     )
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it('Will render the original file handle HTML content', async () => {
     const fileHandleAssociation: FileHandleAssociation = {

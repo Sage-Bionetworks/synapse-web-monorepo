@@ -1,7 +1,6 @@
 import mockDatasetData from '@/mocks/entity/mockDataset'
 import mockFileEntityData from '@/mocks/entity/mockFileEntity'
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '@/utils/context/SynapseContext'
 import { render, screen, within } from '@testing-library/react'
@@ -28,10 +27,6 @@ function renderComponent(
 }
 
 describe('EntityPreview tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   it('Passes a file entity bundle to the FileEntityPreview component', async () => {
     renderComponent({
       entityId: mockFileEntityData.id,

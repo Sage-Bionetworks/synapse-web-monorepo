@@ -2,7 +2,6 @@ import { mockTableEntity } from '@/mocks/entity/mockTableEntity'
 import { mockQueryBundleRequest } from '@/mocks/mockFileViewQuery'
 import testData from '@/mocks/mockQueryResponseDataWithManyEnumFacets'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseConstants } from '@/utils'
 import {
@@ -102,7 +101,6 @@ function renderComponent(overrides?: FacetNavPanelProps) {
 }
 
 describe('FacetNavPanel tests', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     mockPlotContainerMeasurements = {
       width: 400,
@@ -114,8 +112,6 @@ describe('FacetNavPanel tests', () => {
     ] as any)
     registerTableQueryResult(request.query, testData)
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it('should initiate the panel with correct buttons and classes when not expanded', async () => {
     renderComponent()

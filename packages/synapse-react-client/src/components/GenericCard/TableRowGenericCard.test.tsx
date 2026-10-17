@@ -14,7 +14,6 @@ import {
   mockQueryResultBundle,
 } from '@/mocks/mockFileViewQuery'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { server } from '@/mocks/msw/server'
 import { MOCK_USER_ID, MOCK_USER_NAME } from '@/mocks/user/mock_user_profile'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
@@ -187,7 +186,6 @@ const propsForHeaderMode: TableRowGenericCardProps = {
 }
 
 describe('TableRowGenericCard tests', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     vi.clearAllMocks()
     registerTableQueryResult(
@@ -205,8 +203,6 @@ describe('TableRowGenericCard tests', () => {
       mockQueryResultBundle,
     )
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   test('renders the correct UI in non header mode', async () => {
     const { container } = renderComponent(propsForNonHeaderMode, 'TableEntity')

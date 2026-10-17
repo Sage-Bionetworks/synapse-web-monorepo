@@ -53,7 +53,6 @@ const addTeamMemberSpy = vi.spyOn(
 )
 
 describe('ChallengeRequirementsModal', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     server.use(
       ...getAccessRequirementStatusHandlers(
@@ -70,10 +69,8 @@ describe('ChallengeRequirementsModal', () => {
     )
   })
   afterEach(() => {
-    server.restoreHandlers()
     vi.clearAllMocks()
   })
-  afterAll(() => server.close())
 
   it("Shows a set of requirements. Once the user fulfills those requirements, they can click 'Register' to join the participant team.", async () => {
     const { user, dialog, registerButton } = await renderComponent({

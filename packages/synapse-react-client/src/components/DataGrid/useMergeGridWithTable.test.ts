@@ -50,12 +50,9 @@ describe('useMergeGridWithTable', () => {
   const onGridExportRequest = vi.fn()
   const onTableUpdateRequest = vi.fn()
 
-  beforeAll(() => server.listen())
   afterEach(() => {
-    server.resetHandlers()
     vi.clearAllMocks()
   })
-  afterAll(() => server.close())
 
   it('calls all steps and returns updateTable result', async () => {
     const entity = {

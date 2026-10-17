@@ -30,12 +30,9 @@ const mockAttachment: FileHandleAssociation = {
 }
 
 describe('useChatState', () => {
-  beforeAll(() => server.listen())
   afterEach(() => {
-    server.resetHandlers()
     vi.restoreAllMocks()
   })
-  afterAll(() => server.close())
 
   it('throws when there is no agent session', () => {
     const { wrapperFn } = createWrapperAndQueryClient()

@@ -73,10 +73,6 @@ function renderComponent(wrapperProps?: SynapseContextType) {
 }
 
 describe('MeetAccessRequirementCard tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   it('Indicates the action is complete if the user is approved in the AR', async () => {
     setupAccessRequirementResponse(mockToUAccessRequirement)
     setUpAccessRequirementStatus(true)

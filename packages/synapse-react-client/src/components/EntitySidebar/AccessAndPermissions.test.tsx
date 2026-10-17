@@ -105,10 +105,6 @@ function renderComponent(isAuthenticated = true) {
 }
 
 describe('AccessAndPermissions', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(useHasAccess).mockReturnValue(createUseHasAccessReturn())

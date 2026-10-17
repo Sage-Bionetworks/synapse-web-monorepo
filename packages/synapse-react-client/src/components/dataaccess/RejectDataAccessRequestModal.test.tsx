@@ -46,8 +46,7 @@ function renderComponent() {
 }
 
 describe('RejectDataAccessRequestModal', () => {
-  beforeAll(() => {
-    server.listen()
+  beforeEach(() => {
     server.use(
       http.put(
         `${getEndpoint(
@@ -59,8 +58,6 @@ describe('RejectDataAccessRequestModal', () => {
       ),
     )
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it('Renders CannedRejectionDialog, which invokes a callback to update the submission status', async () => {
     renderComponent()

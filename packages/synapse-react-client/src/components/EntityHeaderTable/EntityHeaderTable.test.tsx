@@ -7,7 +7,6 @@ import mockFileEntityData, {
   MOCK_FILE_ENTITY_ID,
   MOCK_FILE_NAME,
 } from '@/mocks/entity/mockFileEntity'
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { ReferenceList } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor } from '@testing-library/react'
@@ -31,13 +30,10 @@ const user = userEvent.setup({ advanceTimers: vi.runAllTimers })
 
 describe('EntityHeaderTable tests', () => {
   beforeAll(() => {
-    server.listen()
     vi.useFakeTimers()
   })
-  afterEach(() => server.resetHandlers())
   afterAll(() => {
     vi.useRealTimers()
-    server.close()
   })
 
   it('renders table (not editable)', async () => {

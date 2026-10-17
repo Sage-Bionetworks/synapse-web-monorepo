@@ -118,12 +118,9 @@ function useSynchronizeHandlers(onRequest: (requestBody: unknown) => void) {
 }
 
 describe('SyncGridWithSourceButton', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     vi.clearAllMocks()
   })
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   it('shows a loading skeleton instead of a button while the entity is loading', async () => {
     const onEntityRequest = vi.fn()

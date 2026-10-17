@@ -277,15 +277,12 @@ describe('Dataset Items Editor tests', () => {
   // Handle the msw lifecycle:
   beforeAll(() => {
     mockAllIsIntersecting(false)
-    server.listen()
   })
 
   beforeEach(() => {
     vi.clearAllMocks()
-    server.resetHandlers()
     server.use(getEntityHandler)
   })
-  afterAll(() => server.close())
 
   it('Displays call to action when there are no items', async () => {
     const { ADD_ITEMS, NO_ITEMS_IN_THIS_DATASET } = datasetCopy

@@ -1,5 +1,4 @@
 import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
-import { server } from '@/mocks/msw/server'
 import { MOCK_TEAM_ID, mockTeamUserGroups } from '@/mocks/team/mockTeam'
 import {
   mockUserData1,
@@ -43,9 +42,6 @@ const sendMessageSpy = vi.spyOn(SynapseClient, 'sendMessage')
 
 describe('useNotifyNewACLUsers', () => {
   beforeEach(() => vi.clearAllMocks())
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it('Sends a notification to new users', async () => {
     const initialResourceAccessList: ResourceAccess[] = [

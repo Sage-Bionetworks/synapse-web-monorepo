@@ -1,6 +1,5 @@
 import { MOCK_TABLE_ENTITY_ID } from '@/mocks/entity/mockTableEntity'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
 import {
@@ -120,13 +119,10 @@ function renderComponent(props: JsonColumnFacetFiltersProps) {
 }
 
 describe('FacetFilterControls tests', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     vi.clearAllMocks()
     registerTableQueryResult(queryRequest.query, queryResponseDataWithJsonFacet)
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it('renders a single group of JSON Subcolumn facets', async () => {
     renderComponent({

@@ -92,9 +92,6 @@ async function setUp(
 
 describe('AccessRequirementAclEditor', () => {
   beforeEach(() => vi.clearAllMocks())
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   describe('AR with existing ACL', () => {
     test('displays resource access list for an existing acl', async () => {

@@ -4,7 +4,7 @@ import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen } from '@testing-library/react'
 import MarkdownSynapse from './MarkdownSynapse'
 import { http, HttpResponse } from 'msw'
-import { afterAll, afterEach, beforeAll, describe, it } from 'vitest'
+import { describe, it } from 'vitest'
 import {
   BackendDestinationEnum,
   getEndpoint,
@@ -14,10 +14,6 @@ import { WikiPage } from '@sage-bionetworks/synapse-types'
 const REPO_ORIGIN = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
 describe('renders without crashing', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   const mockOwnerId = 'mock_owner_id'
   const mockWikiId = 'mock_wiki_id'
 
