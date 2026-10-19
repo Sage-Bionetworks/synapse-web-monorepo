@@ -246,3 +246,36 @@ No patched version exists (`Patched versions: <0.0.0`); `braces@3.0.3` is the la
 **Fix applied:** `pnpm update source-map-js --recursive`
 
 **Testing:** `pnpm why source-map-js --recursive` → only `source-map-js@1.2.2`; `sass` compile of `synapse-react-client/src/style/main.scss` with source map succeeds; `pnpm exec vitest run --coverage` in `apps/SageAccountWeb` → 57 passed / 1 skipped, coverage report generated.
+
+## smol-toml
+
+```
+┌─────────────────────┬────────────────────────────────────────────────────────┐
+│ moderate            │ smol-toml: Quadratic-time parse() from parseKey        │
+│                     │ rescanning to end of document on each key line         │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Package             │ smol-toml                                              │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Vulnerable versions │ <=1.8.0                                                │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Patched versions    │ >=1.9.0                                                │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Paths               │ .>nx>smol-toml                                         │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ More info           │ https://github.com/advisories/GHSA-r4xh-jqrq-34v2      │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+```
+
+**Analysis:**
+
+1 path found (dev/CI tooling):
+
+- `.>nx@22.7.12>smol-toml@1.8.0`: vulnerable — nx 22.7.12 hard-pins `smol-toml@1.6.1`. The existing targeted override `"nx@22.7.12>smol-toml": "^1.7.2"` (from an earlier advisory) locked 1.8.0.
+
+nx 23.3.0 pins `smol-toml@1.9.0`, but that's a major nx upgrade, already ruled out in the nx section.
+
+**Fix rationale:** Raise the existing nx-scoped override instead of a major nx upgrade. The override is already targeted at this exact nx version, so the blast radius doesn't change. smol-toml 1.9.1 was published 2026-10-09, outside the `minimumReleaseAge` window.
+
+**Fix applied:** root `pnpm.overrides` `"nx@22.7.12>smol-toml": "^1.7.2"` → `"^1.9.0"`; `pnpm install --no-frozen-lockfile`.
+
+**Testing:** `pnpm why smol-toml --recursive` → only `smol-toml@1.9.1`; `pnpm nx show projects` builds the project graph.
