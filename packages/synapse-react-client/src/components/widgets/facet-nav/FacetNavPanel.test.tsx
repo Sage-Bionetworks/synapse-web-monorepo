@@ -6,6 +6,7 @@ import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseConstants } from '@/utils'
 import {
+  ColumnTypeEnum,
   FacetColumnResultValues,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
@@ -13,7 +14,10 @@ import { render, screen, within } from '@testing-library/react'
 import { useMeasure } from '@react-hookz/web'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import QueryWrapper from '../../QueryWrapper'
-import FacetNavPanel, { FacetNavPanelProps } from './FacetNavPanel'
+import FacetNavPanel, {
+  extractPlotDataArray,
+  FacetNavPanelProps,
+} from './FacetNavPanel'
 import { truncate } from './FacetPlotLegendUtils'
 
 let mockPlotContainerMeasurements: { width?: number; height?: number } = {
@@ -185,5 +189,54 @@ describe('FacetNavPanel tests', () => {
     renderComponent()
     await screen.findByRole('figure')
     expect(await screen.findByTestId('facet-nav-plot')).toBeInTheDocument()
+  })
+})
+
+describe('extractPlotDataArray', () => {
+  const facet: FacetColumnResultValues = {
+    concreteType:
+      'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
+    columnName: 'sex',
+    facetType: 'enumeration',
+    facetValues: [
+      { value: 'Female', count: 10, isSelected: false },
+      { value: 'Unknown', count: 0, isSelected: false },
+    ],
+  }
+
+  it('shows post-processed counts as display text in the legend and hover text, without pie percentages', async () => {
+    const plotData = await extractPlotDataArray(
+      { ...facet, binSize: 5 },
+      ColumnTypeEnum.STRING,
+      0,
+      'PIE',
+      undefined,
+      true,
+    )
+
+    expect(plotData.labels.map(label => label.countText)).toEqual([
+      '10–14',
+      '1–4',
+    ])
+    expect(plotData.data[0]).toMatchObject({
+      customdata: ['10–14', '1–4'],
+      hovertemplate: '<b>%{text}</b><br>%{customdata}<br><extra></extra>',
+    })
+  })
+
+  it('keeps exact counts and pie percentages when counts are not post-processed', async () => {
+    const plotData = await extractPlotDataArray(
+      facet,
+      ColumnTypeEnum.STRING,
+      0,
+      'PIE',
+    )
+
+    expect(plotData.labels.map(label => label.countText)).toEqual(['10', '0'])
+    expect(plotData.data[0]).toMatchObject({
+      customdata: undefined,
+      hovertemplate:
+        '<b>%{text}</b><br>%{value} (%{percent})<br><extra></extra>',
+    })
   })
 })

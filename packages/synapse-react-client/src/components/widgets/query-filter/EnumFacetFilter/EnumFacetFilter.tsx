@@ -1,4 +1,5 @@
 import { isFacetColumnValuesRequest, SynapseConstants } from '@/utils'
+import { formatFacetValueCount } from '@/utils/functions/facetCountUtils'
 import {
   getCorrespondingColumnForFacet,
   getCorrespondingSelectedFacet,
@@ -144,6 +145,11 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
             currentSelectedFacet?.facetValues.includes(facetValue.value) ??
             false,
           displayText,
+          countText: formatFacetValueCount(
+            facetValue.count,
+            facet,
+            queryMetadata.facetPostProcessingApplied,
+          ),
           renderedLabel: (() => {
             const rendered = renderFacetValue?.(
               facet.columnName,
@@ -185,8 +191,8 @@ function EnumFacetFilterInternal(props: EnumFacetFilterProps) {
 
     return [...sortedValues, ...valueNotSetFacetArray]
   }, [
-    facet.facetValues,
-    facet.columnName,
+    facet,
+    queryMetadata.facetPostProcessingApplied,
     columnModel,
     currentSelectedFacet?.facetValues,
     userGroupHeaders,

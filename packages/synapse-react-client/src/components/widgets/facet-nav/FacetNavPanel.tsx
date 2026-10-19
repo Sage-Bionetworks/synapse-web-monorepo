@@ -2,6 +2,7 @@ import StyledFormControl from '@/components/styled/StyledFormControl'
 import SynapseClient from '@/synapse-client'
 import { SynapseConstants } from '@/utils'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
+import { formatFacetValueCount } from '@/utils/functions/facetCountUtils'
 import { getCorrespondingColumnForFacet } from '@/utils/functions/queryUtils'
 import InfoOutlined from '@mui/icons-material/InfoOutlined'
 import {
@@ -62,12 +63,17 @@ export type GraphData = {
   colors: string[]
 }
 
+/**
+ * @param facetPostProcessingApplied the QueryResultBundle's `facetPostProcessingApplied`. When set, counts are shown as
+ * ranges or approximations (see `formatFacetValueCount`) and pie percentages are omitted.
+ */
 export async function extractPlotDataArray(
   facetToPlot: FacetColumnResultValues,
   columnType: ColumnTypeEnum | undefined,
   index: number,
   plotType: PlotType,
   accessToken?: string,
+  facetPostProcessingApplied?: boolean,
 ) {
   const colorPalette = getContrastColorPalette(
     // Use only the odd palette, using the same offset for all plots until palettes are improved.
@@ -121,6 +127,11 @@ export async function extractPlotDataArray(
       label: getLabel(facetValue, false, map),
       truncatedLabel: getLabel(facetValue, true, map),
       count: facetValue.count,
+      countText: formatFacetValueCount(
+        facetValue.count,
+        facetToPlot,
+        facetPostProcessingApplied,
+      ),
     }))
   }
 
@@ -176,10 +187,19 @@ export async function extractPlotDataArray(
     y = Array(x?.length).fill('Proportional') // single value for every x value
   }
 
+  // Approximate counts are hovered as their display text, without a misleading exact value or percentage.
+  const exactHoverCount =
+    plotType === 'PIE' ? '%{value} (%{percent})' : '%{value}'
+  const hoverCount = facetPostProcessingApplied
+    ? '%{customdata}'
+    : exactHoverCount
   const singleChartData: Plotly.Data = {
     values: plotType === 'PIE' ? counts : undefined,
     labels: labels.map(el => el.label),
     text,
+    customdata: facetPostProcessingApplied
+      ? labels.map(el => el.countText)
+      : undefined,
     x,
     y,
     orientation: plotType === 'STACKED_HORIZONTAL_BAR' ? 'h' : 'v',
@@ -194,8 +214,8 @@ export async function extractPlotDataArray(
         : 'inside',
     hovertemplate:
       plotType === 'PIE'
-        ? '<b>%{text}</b><br>%{value} (%{percent})<br><extra></extra>'
-        : '<b>%{text}: </b><br>%{value} <br><extra></extra>',
+        ? `<b>%{text}</b><br>${hoverCount}<br><extra></extra>`
+        : `<b>%{text}: </b><br>${hoverCount} <br><extra></extra>`,
     textinfo: 'none',
     type: plotType === 'PIE' ? 'pie' : 'bar',
     pull:
@@ -358,6 +378,7 @@ function FacetNavPanel(props: FacetNavPanelProps) {
       index,
       plotType,
       accessToken,
+      queryMetadata?.facetPostProcessingApplied,
     ],
 
     queryFn: () =>
@@ -367,6 +388,7 @@ function FacetNavPanel(props: FacetNavPanelProps) {
         index,
         plotType,
         accessToken,
+        queryMetadata?.facetPostProcessingApplied,
       ),
 
     enabled: !!facetToPlot,

@@ -1,5 +1,13 @@
+import {
+  ADKP_MOCK_PROFILE,
+  CohortBuilderMockProfile,
+  ELITE_MOCK_PROFILE,
+} from '@/mocks/cohortBuilder/cohortBuilderMockProfiles'
+import { getCohortBuilderHandlers } from '@/mocks/msw/handlers/cohortBuilderHandlers'
+import { getEntityHandlers } from '@/mocks/msw/handlers/entityHandlers'
 import SynapseClient from '@/synapse-client'
 import { QUERY_FILTERS_SESSION_STORAGE_KEY } from '@/utils/functions'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import {
   DATASET,
   EXPERIMENTAL_TOOL,
@@ -508,4 +516,77 @@ export const TableWithRange: Story = {
     shouldDeepLink: false,
     enabledExternalAnalysisPlatforms: [],
   },
+}
+
+function getAggregateOnlyCohortBuilderParameters(
+  profile: CohortBuilderMockProfile,
+) {
+  return {
+    stack: 'mock',
+    msw: {
+      handlers: {
+        // The Cohort Builder handlers go first: the stock entity handlers answer 404 for unknown entity IDs.
+        entity: [
+          ...getCohortBuilderHandlers({
+            profile,
+            access: 'AGGREGATE_ONLY',
+            backendOrigin: MOCK_REPO_ORIGIN,
+          }),
+          ...getEntityHandlers(MOCK_REPO_ORIGIN),
+        ],
+      },
+    },
+  }
+}
+
+const aggregateOnlyFilesArgs = {
+  tableConfiguration: {},
+  facetsToPlot: ['referenceType', 'dataType', 'assay', 'fileFormat'],
+  defaultShowPlots: true,
+  hideDownload: true,
+  shouldDeepLink: false,
+} satisfies Partial<QueryWrapperPlotNavProps>
+
+/** Synthetic Cohort Builder 2.0 data with ROUNDING post-processing: facet counts show as bin ranges. */
+export const AggregateOnlyRoundedFacetCounts: Story = {
+  args: {
+    ...aggregateOnlyFilesArgs,
+    name: 'Files and Datasets (synthetic ELITE data, aggregate-only access)',
+    sql: `SELECT * FROM ${ELITE_MOCK_PROFILE.dataVirtualTableId}`,
+  },
+  parameters: getAggregateOnlyCohortBuilderParameters(ELITE_MOCK_PROFILE),
+}
+
+/** Synthetic Cohort Builder 2.0 data with NOISE post-processing: facet counts show as approximate. */
+export const AggregateOnlyNoisyFacetCounts: Story = {
+  args: {
+    ...aggregateOnlyFilesArgs,
+    name: 'Files and Datasets (synthetic ADKP data, aggregate-only access)',
+    sql: `SELECT * FROM ${ADKP_MOCK_PROFILE.dataVirtualTableId}`,
+  },
+  parameters: getAggregateOnlyCohortBuilderParameters(ADKP_MOCK_PROFILE),
+}
+
+const belowThresholdSql = `SELECT * FROM ${ELITE_MOCK_PROFILE.dataVirtualTableId}`
+/** Fewer matching rows than the suppression threshold: the server withholds the result. */
+export const AggregateOnlyBelowThreshold: Story = {
+  args: {
+    ...aggregateOnlyFilesArgs,
+    name: 'Files and Datasets for participants aged 105 and over (synthetic ELITE data, aggregate-only access)',
+    sql: belowThresholdSql,
+    initQueryJson: JSON.stringify({
+      sql: belowThresholdSql,
+      additionalFilters: [
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+          columnName: 'ageRange',
+          operator: ColumnSingleValueFilterOperator.IN,
+          values: ['105-109', '>109'],
+          isDefiningCondition: true,
+        },
+      ],
+    } satisfies Query),
+  },
+  parameters: getAggregateOnlyCohortBuilderParameters(ELITE_MOCK_PROFILE),
 }
