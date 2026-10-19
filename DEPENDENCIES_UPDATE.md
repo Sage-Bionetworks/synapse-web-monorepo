@@ -48,3 +48,37 @@ oxfmt releases pin `tinypool@2.1.0` through 0.66.0, `2.1.2` from 0.67.0, and `2.
 **Fix applied:** root `package.json` devDependency `"oxfmt": "^0.52.0"` → `"^0.73.0"` (caret style kept) via `pnpm add -Dw oxfmt@^0.73.0`; `pnpm exec oxfmt --write` on the 10 newly flagged files.
 
 **Testing:** `pnpm why tinypool --recursive` → only `tinypool@2.2.0`; `pnpm exec oxfmt --check .` → only the 2 pre-existing baseline files flagged.
+
+## shell-quote
+
+```
+┌─────────────────────┬────────────────────────────────────────────────────────┐
+│ critical            │ shell-quote: `quote()` command injection via a line    │
+│                     │ terminator in a token after a `{ comment }` token      │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Package             │ shell-quote                                            │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Vulnerable versions │ >=1.8.4 <1.11.0                                        │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Patched versions    │ >=1.11.0                                               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Paths               │ packages__aridhia-client>@openapitools/openapi-        │
+│                     │ generator-cli>concurrently>shell-quote                 │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ More info           │ https://github.com/advisories/GHSA-pqg4-j6r4-53mv      │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+```
+
+**Analysis:**
+
+1 path found (dev-only codegen tooling, used by `aridhia-client` and `synapse-client`):
+
+- `@openapitools/openapi-generator-cli@2.39.0>concurrently@10.0.3>shell-quote@1.10.0`: vulnerable — concurrently 10.0.3 hard-pins `shell-quote@1.8.4`, and the existing global override `"shell-quote": "^1.9.0"` (added for an earlier advisory) had locked 1.10.0.
+
+concurrently 10.0.6 pins `shell-quote@1.12.0`, and openapi-generator-cli 2.41.0 depends on `concurrently ^10.0.5`. Both workspace packages declare `@openapitools/openapi-generator-cli ^2.39.0`, which already allows 2.41.0.
+
+**Fix rationale:** A lockfile-range update of the parent pulls the fixed concurrently release without a new override. The investigation script printed "no upstream fix" for `concurrently@10.0.6` → `shell-quote@1.12.0`, which is a false negative. After the update, the global `shell-quote` override isn't needed anymore: its only consumer now pins a patched version. Removing it avoids a stale global override that could mask future pins.
+
+**Fix applied:** `pnpm update @openapitools/openapi-generator-cli --recursive` (specifiers in `packages/aridhia-client` and `packages/synapse-client` go `^2.39.0` → `^2.41.0`); removed `"shell-quote": "^1.9.0"` from root `pnpm.overrides`; ran `pnpm install --no-frozen-lockfile`.
+
+**Testing:** `pnpm why shell-quote --recursive` → only `shell-quote@1.12.0`; `pnpm generate` in `packages/aridhia-client` succeeds.
