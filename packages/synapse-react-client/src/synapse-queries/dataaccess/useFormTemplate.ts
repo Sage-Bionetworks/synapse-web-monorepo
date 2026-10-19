@@ -17,10 +17,12 @@ import {
   UseInfiniteQueryOptions,
   useMutation,
   UseMutationOptions,
+  useQueries,
   useQuery,
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
+import { useMemo } from 'react'
 
 /**
  * Retrieve the latest version of a FormTemplate by its ID. Disabled while templateId is undefined.
@@ -69,6 +71,55 @@ export function useGetFormTemplateVersion(
               { templateId, versionNumber },
             )
         : skipToken,
+  })
+}
+
+/**
+ * Retrieve every version of a FormTemplate. The API has no endpoint to list versions (PLFM-10045),
+ * so this fetches the latest version and then each earlier version number in turn. `versions` is
+ * ordered newest first and omits any version that has not loaded; `latestVersion` is always the
+ * template's actual latest version. Disabled while templateId is undefined.
+ */
+export function useGetFormTemplateVersions(templateId: string | undefined) {
+  const { keyFactory, synapseClient } = useSynapseContext()
+  const { data: latestVersion, error: latestVersionError } =
+    useGetFormTemplate(templateId)
+
+  const earlierVersionNumbers = useMemo(() => {
+    const earlierVersionCount = Math.max(
+      (latestVersion?.versionNumber ?? 0) - 1,
+      0,
+    )
+    return Array.from(
+      { length: earlierVersionCount },
+      (_, index) => earlierVersionCount - index,
+    )
+  }, [latestVersion?.versionNumber])
+
+  return useQueries({
+    queries: earlierVersionNumbers.map(versionNumber => ({
+      queryKey: keyFactory.getFormTemplateVersionQueryKey(
+        templateId ?? '',
+        versionNumber,
+      ),
+      queryFn: () =>
+        synapseClient.accessRequirementServicesClient.getRepoV1AccessRequirementFormTemplateTemplateIdVersionVersionNumber(
+          { templateId: templateId!, versionNumber },
+        ),
+    })),
+    combine: results => ({
+      latestVersion,
+      versions: [
+        ...(latestVersion ? [latestVersion] : []),
+        ...results.flatMap(result => (result.data ? [result.data] : [])),
+      ],
+      isLoading:
+        templateId != null &&
+        (latestVersion == null
+          ? latestVersionError == null
+          : results.some(result => result.isLoading)),
+      error: latestVersionError ?? results.find(result => result.error)?.error,
+    }),
   })
 }
 

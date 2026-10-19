@@ -2,15 +2,14 @@ import { mockGenomicsTemplate } from '@/mocks/accessRequirement/mockFormTemplate
 import { mockGenomicsSchema } from '@/mocks/accessRequirement/mockJsonSchemas'
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
 import { getFormTemplateHandlers } from '@/mocks/msw/handlers/formTemplateHandlers'
-import { getRegisteredSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
+import {
+  getCreateSchemaHandlers,
+  getRegisteredSchemaHandlers,
+} from '@/mocks/msw/handlers/schemaHandlers'
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
-import {
-  AsynchronousJobStatus,
-  CreateSchemaResponse,
-  FormTemplate,
-} from '@sage-bionetworks/synapse-client'
+import { FormTemplate } from '@sage-bionetworks/synapse-client'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent, { UserEvent } from '@testing-library/user-event'
 import { JSONSchema7 } from 'json-schema'
@@ -19,14 +18,8 @@ import { ACCESS_REQUIREMENT_BASE_SCHEMA_ID } from './formTemplateSchema'
 
 const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
-const postJobSpy = vi.spyOn(
-  MOCK_CONTEXT_VALUE.synapseClient.asynchronousJobServicesClient,
-  'postRepoV1AsynchronousJob',
-)
-const getJobSpy = vi.spyOn(
-  MOCK_CONTEXT_VALUE.synapseClient.asynchronousJobServicesClient,
-  'getRepoV1AsynchronousJobJobId',
-)
+const createdSchemas: JSONSchema7[] = []
+
 const createTemplateSpy = vi.spyOn(
   MOCK_CONTEXT_VALUE.synapseClient.accessRequirementServicesClient,
   'postRepoV1AccessRequirementFormTemplate',
@@ -35,18 +28,6 @@ const listSchemaVersionsSpy = vi.spyOn(
   MOCK_CONTEXT_VALUE.synapseClient.jsonSchemaServicesClient,
   'postRepoV1SchemaVersionList',
 )
-
-/** Resolve every in-flight generic async job (schema creation, schema-generation preview) as
- * complete on the first poll, so neither the live preview nor a save is left hanging. */
-function mockAsyncJobsAsComplete(response: CreateSchemaResponse) {
-  const completeStatus: AsynchronousJobStatus = {
-    jobId: 'job-1',
-    jobState: 'COMPLETE',
-    responseBody: response,
-  }
-  postJobSpy.mockResolvedValue(completeStatus)
-  getJobSpy.mockResolvedValue(completeStatus)
-}
 
 function renderEditor(onSaved = vi.fn(), templateId?: string) {
   return render(
@@ -71,20 +52,14 @@ describe('FormTemplateEditor', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    createdSchemas.length = 0
     server.use(
       ...getFormTemplateHandlers(REPO_ENDPOINT),
       ...getRegisteredSchemaHandlers(REPO_ENDPOINT, [
         mockGenomicsSchema as JSONSchema7,
       ]),
+      ...getCreateSchemaHandlers(REPO_ENDPOINT, createdSchemas),
     )
-    // The live preview also registers throwaway draft schema versions and generates a preview
-    // in the background; resolve every async job the same way so it never hangs the test.
-    const schemaCreationResponse: CreateSchemaResponse = {
-      concreteType:
-        'org.sagebionetworks.repo.model.schema.CreateSchemaResponse',
-      newVersionInfo: { $id: 'org.example.mock-schema-1.0.1' },
-    }
-    mockAsyncJobsAsComplete(schemaCreationResponse)
     listSchemaVersionsSpy.mockResolvedValue({ page: [] })
   })
 
@@ -194,16 +169,12 @@ describe('FormTemplateEditor', () => {
     await user.click(screen.getByRole('button', { name: 'Create Template' }))
 
     await waitFor(() => expect(onSaved).toHaveBeenCalled())
-    expect(postJobSpy).toHaveBeenCalledWith({
-      asynchronousRequestBody: expect.objectContaining({
-        concreteType:
-          'org.sagebionetworks.repo.model.schema.CreateSchemaRequest',
-        schema: expect.objectContaining({
-          $id: 'org.sagebionetworks.act-MyTemplate-1.0.0',
-          allOf: [{ $ref: ACCESS_REQUIREMENT_BASE_SCHEMA_ID }],
-        }),
+    expect(createdSchemas).toEqual([
+      expect.objectContaining({
+        $id: 'org.sagebionetworks.act-MyTemplate-1.0.0',
+        allOf: [{ $ref: ACCESS_REQUIREMENT_BASE_SCHEMA_ID }],
       }),
-    })
+    ])
     expect(createTemplateSpy).toHaveBeenCalledWith({
       formTemplate: expect.objectContaining({
         steps: [
@@ -295,20 +266,16 @@ describe('FormTemplateEditor', () => {
       },
       expect.anything(),
     )
-    expect(postJobSpy).toHaveBeenCalledWith({
-      asynchronousRequestBody: expect.objectContaining({
-        concreteType:
-          'org.sagebionetworks.repo.model.schema.CreateSchemaRequest',
-        schema: expect.objectContaining({
-          $id: 'org.sagebionetworks.act-GenomicsDataAccessRequest-2.0.0',
-          allOf: [{ $ref: ACCESS_REQUIREMENT_BASE_SCHEMA_ID }],
-          properties: expect.objectContaining({
-            intendedDataUse: mockGenomicsSchema.properties!.intendedDataUse,
-            newField: expect.anything(),
-          }),
+    expect(createdSchemas).toEqual([
+      expect.objectContaining({
+        $id: 'org.sagebionetworks.act-GenomicsDataAccessRequest-2.0.0',
+        allOf: [{ $ref: ACCESS_REQUIREMENT_BASE_SCHEMA_ID }],
+        properties: expect.objectContaining({
+          intendedDataUse: mockGenomicsSchema.properties!.intendedDataUse,
+          newField: expect.anything(),
         }),
       }),
-    })
+    ])
     expect(onSaved).toHaveBeenCalledWith(
       expect.objectContaining({ id: mockGenomicsTemplate.id }),
     )

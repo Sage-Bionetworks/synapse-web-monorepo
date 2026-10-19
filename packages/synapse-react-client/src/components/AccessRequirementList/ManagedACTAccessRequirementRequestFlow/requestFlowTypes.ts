@@ -1,5 +1,5 @@
 import { ManagedACTAccessRequirement } from '@sage-bionetworks/synapse-types'
-import { RequestableAccessRequirement } from '../RequestDataStep'
+import { RequestableAccessRequirement } from '@/utils/types/RequestableAccessRequirement'
 
 /**
  * The part of an access requirement that every data access request step needs. Satisfied by any access requirement

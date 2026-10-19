@@ -5,7 +5,10 @@ import {
 import { MOCK_DATA_ACCESS_REQUEST } from '@/mocks/dataaccess/MockDataAccessRequest'
 import { server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
-import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
+  createWrapper,
+  createWrapperAndQueryClient,
+} from '@/testutils/TestingLibraryUtils'
 import {
   DATA_ACCESS_REQUEST_PREVIEW,
   DATA_ACCESS_REQUEST_SIGNATURE,
@@ -101,22 +104,6 @@ function successfulPreviewHandler() {
       { status: 200 },
     ),
   )
-}
-
-/**
- * A successful preview handler that counts its calls. GET /preview mints a signature envelope as a
- * server-side side effect, so tests assert on how many times it ran, not just that it ran.
- */
-function trackedPreviewHandler() {
-  const previewCalls = { count: 0 }
-  const handler = http.get(previewEndpoint, () => {
-    previewCalls.count += 1
-    return HttpResponse.json(
-      { fileHandleId: 'preview-file-handle-456' },
-      { status: 200 },
-    )
-  })
-  return { previewCalls, handler }
 }
 
 function quotaHandler(quota: number, remaining: number) {
@@ -276,6 +263,37 @@ describe('EDucPreviewStep', () => {
 
     await waitFor(() => expect(mockOnSendForSignature).toHaveBeenCalledTimes(1))
     expect(calls).toEqual(['POST signature'])
+  })
+
+  it('sees the new envelope when the user returns to the step after sending', async () => {
+    // Routing now creates the envelope as well as sending it, so a request still cached from
+    // before the send would claim nothing is in flight and silently route a *second* live
+    // envelope -- spending a quota unit -- instead of offering keep-or-replace. The request is
+    // pinned with `staleTime: Infinity` and shared across wizard steps, so only the invalidation
+    // in the signature mutation keeps this honest.
+    const { wrapperFn } = createWrapperAndQueryClient({
+      withErrorBoundary: true,
+    })
+    server.use(successfulPreviewHandler(), precheckHandler(true))
+    mockGetDataRequestForUpdate.mockResolvedValue(MOCK_DATA_ACCESS_REQUEST)
+
+    const user = userEvent.setup()
+    const firstPass = render(<EDucPreviewStep {...defaultProps} />, {
+      wrapper: wrapperFn,
+    })
+    await screen.findByTitle('eDUC preview')
+
+    // From here the server would report the envelope the send is about to attach.
+    mockGetDataRequestForUpdate.mockResolvedValue(DAR_WITH_IN_FLIGHT_ENVELOPE)
+    await clickSendForSignature(user)
+    await waitFor(() => expect(mockOnSendForSignature).toHaveBeenCalledTimes(1))
+    firstPass.unmount()
+
+    // The user returns to the step to make a change, e.g. via "Modify Request".
+    render(<EDucPreviewStep {...defaultProps} />, { wrapper: wrapperFn })
+    await clickSendForSignature(user)
+
+    await screen.findByText(KEEP_OR_REPLACE_DIALOG_TITLE)
   })
 
   it('shows an error alert and does not advance when signature routing fails', async () => {
@@ -594,10 +612,9 @@ describe('EDucPreviewStep', () => {
       expect(mockOnSendForSignature).not.toHaveBeenCalled()
     })
 
-    it('does not regenerate the preview when the recreated routing fails after the void', async () => {
-      const { previewCalls, handler } = trackedPreviewHandler()
+    it('reports the failure and does not advance when the recreated routing fails after the void', async () => {
       server.use(
-        handler,
+        successfulPreviewHandler(),
         precheckHandler(false),
         http.delete(
           signatureEndpoint,
@@ -618,10 +635,10 @@ describe('EDucPreviewStep', () => {
       await screen.findByText(
         /couldn't send your DUC for electronic signature/i,
       )
-      // The void already destroyed the envelope; refetching the preview here would mint a
-      // replacement the user never asked for and quietly reset the request to draft.
-      await waitFor(() => expect(previewCalls.count).toBe(1))
-      expect(previewCalls.count).toBe(1)
+      expect(
+        screen.getByText('DocuSign rejected the new routing.'),
+      ).toBeInTheDocument()
+      expect(mockOnSendForSignature).not.toHaveBeenCalled()
     })
 
     it('keeps Send enabled at quota, because correcting an envelope costs no routings', async () => {

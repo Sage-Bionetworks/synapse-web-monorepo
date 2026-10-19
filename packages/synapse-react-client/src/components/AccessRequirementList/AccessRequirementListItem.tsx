@@ -9,7 +9,7 @@ import {
   RestrictableObjectType,
 } from '@sage-bionetworks/synapse-types'
 import React from 'react'
-import { RequestableAccessRequirement } from './RequestDataStep'
+import { RequestableAccessRequirement } from '@/utils/types/RequestableAccessRequirement'
 import UnmanagedACTAccessRequirementItem from './RequirementItem/UnmanagedACTAccessRequirementItem'
 import RequestableAccessRequirementItem from './ManagedACTAccessRequirementRequestFlow/RequestableAccessRequirementItem'
 import SelfSignAccessRequirementItem from './RequirementItem/SelfSignAccessRequirementItem'

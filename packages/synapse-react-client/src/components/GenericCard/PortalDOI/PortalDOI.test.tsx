@@ -1,28 +1,32 @@
 import { DoiAssociation, DoiObjectType } from '@sage-bionetworks/synapse-client'
-import { render, screen, within } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import PortalDOI, { PortalDOIProps } from './PortalDOI'
-import { useGetDOIAssociation } from '@/synapse-queries/doi/useDOI'
-import { useGetUserPortalPermissions } from '@/synapse-queries/portal/usePortal'
+import { server } from '@/mocks/msw/server'
+import { createWrapperAndQueryClient } from '@/testutils/TestingLibraryUtils'
 import {
-  getUseQueryLoadingMock,
-  getUseQuerySuccessMock,
-} from '@/testutils/ReactQueryMockUtils'
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
+import { delay, http, HttpResponse } from 'msw'
 import { CreateOrUpdateDoiModal } from '@/components/doi/CreateOrUpdateDoiModal'
 import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
-import { vi, describe, it, beforeEach } from 'vitest'
+import {
+  vi,
+  describe,
+  it,
+  beforeAll,
+  beforeEach,
+  afterEach,
+  afterAll,
+} from 'vitest'
 
-// Mock hooks and components
-vi.mock('@/synapse-queries/doi/useDOI')
-vi.mock('@/synapse-queries/portal/usePortal')
+// Mock components
 vi.mock('@/components/CopyToClipboardIcon', () => ({
   __esModule: true,
   default: vi.fn(() => <div data-testid="CopyToClipboardIcon"></div>),
 }))
 vi.mock('@/components/doi/CreateOrUpdateDoiModal')
-
-const mockUseGetDOIAssociation = vi.mocked(useGetDOIAssociation)
-const mockUseGetPortalPermissions = vi.mocked(useGetUserPortalPermissions)
 
 // Mock the modal and capture its props, especially `open` and `onClose`
 const mockCreateOrUpdateDoiModal = vi
@@ -53,34 +57,66 @@ const mockDoiAssociation: DoiAssociation = {
   updatedBy: String(MOCK_USER_ID),
 }
 
+const repoOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
+
+function mockBackend(
+  doiAssociation: DoiAssociation | null,
+  canMintDoi: boolean,
+) {
+  server.use(
+    http.get(`${repoOrigin}/repo/v1/doi/association`, () =>
+      doiAssociation
+        ? HttpResponse.json(doiAssociation)
+        : HttpResponse.json({ reason: 'Not found' }, { status: 404 }),
+    ),
+    http.get(`${repoOrigin}/repo/v1/portal/:portalId/permissions`, () =>
+      HttpResponse.json({ canMintDoi }),
+    ),
+  )
+}
+
+function renderComponent() {
+  const { wrapperFn, queryClient } = createWrapperAndQueryClient()
+  render(<PortalDOI {...defaultProps} />, { wrapper: wrapperFn })
+  return {
+    /** Resolves once all in-flight queries (DOI association and permissions) have settled */
+    waitForQueriesToSettle: () =>
+      waitFor(() => expect(queryClient.isFetching()).toBe(0)),
+  }
+}
+
 describe('PortalDOI', () => {
+  beforeAll(() => server.listen())
   beforeEach(() => {
     vi.clearAllMocks()
-    // Default mocks: successful load, no DOI, no permission
-    mockUseGetDOIAssociation.mockReturnValue(getUseQuerySuccessMock(null))
-    mockUseGetPortalPermissions.mockReturnValue(getUseQuerySuccessMock(false))
   })
+  afterEach(() => server.resetHandlers())
+  afterAll(() => server.close())
 
   it('should render skeleton while loading', () => {
-    mockUseGetDOIAssociation.mockReturnValue(getUseQueryLoadingMock())
-    render(<PortalDOI {...defaultProps} />)
+    server.use(
+      http.get(`${repoOrigin}/repo/v1/doi/association`, async () => {
+        await delay('infinite')
+      }),
+      http.get(`${repoOrigin}/repo/v1/portal/:portalId/permissions`, () =>
+        HttpResponse.json({ canMintDoi: false }),
+      ),
+    )
+    renderComponent()
     screen.getByRole('progressbar')
   })
 
   it('should render DOI link, copy icon, and edit button if DOI exists and user has permission', async () => {
-    mockUseGetDOIAssociation.mockReturnValue(
-      getUseQuerySuccessMock(mockDoiAssociation),
-    )
-    mockUseGetPortalPermissions.mockReturnValue(getUseQuerySuccessMock(true))
+    mockBackend(mockDoiAssociation, true)
 
-    render(<PortalDOI {...defaultProps} />)
+    renderComponent()
 
     // Check for DOI link, copy icon, and edit button
     const expectedLink = `https://doi.org/${mockDoiAssociation.doiUri}`
-    const link = screen.getByRole('link', { name: expectedLink })
+    const link = await screen.findByRole('link', { name: expectedLink })
     expect(link).toHaveAttribute('href', expectedLink)
     expect(screen.getByTestId('CopyToClipboardIcon')).toBeInTheDocument()
-    const editButton = screen.getByRole('button', { name: 'Edit DOI' })
+    const editButton = await screen.findByRole('button', { name: 'Edit DOI' })
     expect(editButton).toBeInTheDocument()
 
     // Click edit button
@@ -117,30 +153,33 @@ describe('PortalDOI', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('should render DOI link and copy icon but no edit button if DOI exists and user lacks permission', () => {
-    mockUseGetDOIAssociation.mockReturnValue(
-      getUseQuerySuccessMock(mockDoiAssociation),
-    )
-    mockUseGetPortalPermissions.mockReturnValue(getUseQuerySuccessMock(false)) // No permission
+  it('should render DOI link and copy icon but no edit button if DOI exists and user lacks permission', async () => {
+    mockBackend(mockDoiAssociation, false)
 
-    render(<PortalDOI {...defaultProps} />)
+    const { waitForQueriesToSettle } = renderComponent()
 
     // Check for DOI link and copy icon
     const expectedLink = `https://doi.org/${mockDoiAssociation.doiUri}`
-    const link = screen.getByRole('link', { name: expectedLink })
+    const link = await screen.findByRole('link', { name: expectedLink })
     expect(link).toHaveAttribute('href', expectedLink)
     expect(screen.getByTestId('CopyToClipboardIcon')).toBeInTheDocument()
 
+    // Permissions load independently of the DOI; wait for both queries to settle
+    await waitForQueriesToSettle()
     // Check that edit button and create link are NOT present
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
     expect(screen.queryByText('Click to Create a DOI')).not.toBeInTheDocument()
   })
 
   it('should render "Create DOI" link if DOI does not exist and user has permission', async () => {
-    mockUseGetDOIAssociation.mockReturnValue(getUseQuerySuccessMock(null)) // No DOI
-    mockUseGetPortalPermissions.mockReturnValue(getUseQuerySuccessMock(true)) // Has permission
+    mockBackend(null, true)
 
-    render(<PortalDOI {...defaultProps} />)
+    renderComponent()
+
+    // Wait for the create link, which requires both queries to have resolved
+    const createLink = await screen.findByRole('button', {
+      name: 'Click to Create a DOI',
+    })
 
     // Check that DOI link, copy icon, and edit button are NOT present
     expect(
@@ -152,9 +191,6 @@ describe('PortalDOI', () => {
     ).not.toBeInTheDocument()
 
     // Check for "Create DOI" link
-    const createLink = screen.getByRole('button', {
-      name: 'Click to Create a DOI',
-    })
     expect(createLink).toBeInTheDocument()
 
     // Click create link
@@ -172,11 +208,14 @@ describe('PortalDOI', () => {
     expect(screen.getByTestId('CreateOrUpdateDoiModal')).toBeInTheDocument()
   })
 
-  it('should render nothing if DOI does not exist and user lacks permission', () => {
-    mockUseGetDOIAssociation.mockReturnValue(getUseQuerySuccessMock(null)) // No DOI
-    mockUseGetPortalPermissions.mockReturnValue(getUseQuerySuccessMock(false)) // No permission
+  it('should render nothing if DOI does not exist and user lacks permission', async () => {
+    mockBackend(null, false)
 
-    render(<PortalDOI {...defaultProps} />)
+    const { waitForQueriesToSettle } = renderComponent()
+    await waitForQueriesToSettle()
+    await waitFor(() =>
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument(),
+    )
 
     // Check that no interactive elements or specific text are rendered
     expect(screen.queryByRole('link')).not.toBeInTheDocument()
