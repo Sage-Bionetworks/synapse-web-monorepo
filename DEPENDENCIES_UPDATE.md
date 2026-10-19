@@ -349,3 +349,41 @@ Upstream check: the latest `@rushstack/ts-command-line` (5.3.17, used by the lat
 **Fix applied:** None. Revisit when @rushstack/ts-command-line moves to argparse 2 (which has no dependencies).
 
 **Testing:** N/A (no changes).
+
+## elliptic
+
+```
+┌─────────────────────┬────────────────────────────────────────────────────────┐
+│ low                 │ Elliptic Uses a Cryptographic Primitive with a Risky   │
+│                     │ Implementation                                         │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Package             │ elliptic                                               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Vulnerable versions │ <=6.6.1                                                │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Patched versions    │ <0.0.0                                                 │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Paths               │ apps__SageAccountWeb>vite-plugin-node-polyfills>node-  │
+│                     │ stdlib-browser>crypto-browserify>browserify-           │
+│                     │ sign>elliptic                                          │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ More info           │ https://github.com/advisories/GHSA-848j-6mx2-7j84      │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+```
+
+**Analysis:**
+
+No patched version exists (`Patched versions: <0.0.0`); `elliptic@6.6.1` is the latest release. One installed version, reached two ways through the same polyfill:
+
+- `vite-plugin-node-polyfills@0.28.0>node-stdlib-browser@1.3.1>crypto-browserify@3.12.1>browserify-sign@4.2.6>elliptic`: vulnerable.
+- `…>crypto-browserify@3.12.1>create-ecdh@4.0.4>elliptic`: vulnerable.
+
+`vite-plugin-node-polyfills` is a devDependency of SageAccountWeb, synapse-oauth-signin, synapse-react-client, vite-config and every portal. 0.28.0 is its latest release.
+
+Bundle check: a fresh `SageAccountWeb` production build and the existing portal / synapse-oauth-signin builds contain none of elliptic's curve definitions (`secp256k1`, `ed25519`, `createECDH`). The `crypto` polyfill is tree-shaken out because no app code calls the affected signing/ECDH APIs. (A raw `elliptic` string match was a false positive: d3-geo's `hyperelliptical` projection, bundled through plotly.)
+
+**Fix rationale:** Not fixed — accepted risk. No version of elliptic is patched, and the polyfill chain has no newer release. The vulnerable code is installed but not shipped to browsers.
+
+**Fix applied:** None. Revisit if elliptic publishes a fix or app code starts using `crypto` sign/ECDH APIs in the browser.
+
+**Testing:** `grep -rlE "secp256k1|ed25519|createECDH"` over `apps/*/build` and `apps/portals/*/build` → 0 files.
