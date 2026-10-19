@@ -70,16 +70,14 @@ export default function ChallengeTeamTable(props: ChallengeTeamTableProps) {
         )
       })
     }
-    return filtered.map(
-      (team): RowData => ({
-        ...team,
-        hasInvitation: Boolean(
-          openInvitationsToJoinTeams?.some(
-            invitation => invitation.teamId === team.id,
-          ),
+    return filtered.map((team): RowData => ({
+      ...team,
+      hasInvitation: Boolean(
+        openInvitationsToJoinTeams?.some(
+          invitation => invitation.teamId === team.id,
         ),
-      }),
-    )
+      ),
+    }))
   }, [openInvitationsToJoinTeams, searchValue, teamsList?.list])
 
   const isLoading = isLoadingChallengeTeams || isLoadingTeamList
