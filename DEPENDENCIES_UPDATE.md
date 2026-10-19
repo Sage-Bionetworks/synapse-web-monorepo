@@ -145,3 +145,35 @@ nx 22.7.12 still hard-pins `smol-toml@1.6.1`, so the version-targeted override `
 **Fix applied:** root `package.json` `"nx": "22.7.7"` → `"22.7.12"`; override key `"nx@22.7.7>smol-toml"` → `"nx@22.7.12>smol-toml"` (value unchanged); `pnpm install --no-frozen-lockfile`.
 
 **Testing:** `pnpm why nx --recursive` → only `nx@22.7.12`; `pnpm why smol-toml --recursive` → still `smol-toml@1.8.0` (override still applies); `pnpm nx show projects` lists all 29 projects; `pnpm nx run-many -t lint -p synapse-types,synapse-client --skip-nx-cache` passes.
+
+## probe-image-size
+
+```
+┌─────────────────────┬────────────────────────────────────────────────────────┐
+│ high                │ probe-image-size: Quadratic-time Denial of Service in  │
+│                     │ the SVG Parser                                         │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Package             │ probe-image-size                                       │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Vulnerable versions │ <=7.3.0                                                │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Patched versions    │ >=7.4.0                                                │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Paths               │ packages__synapse-react-client>plotly.js>probe-image-  │
+│                     │ size                                                   │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ More info           │ https://github.com/advisories/GHSA-gjj5-9665-rwrc      │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+```
+
+**Analysis:**
+
+1 path found (production — `synapse-react-client` runtime dep via plotly.js):
+
+- `plotly.js@2.28.0>probe-image-size@7.3.0`: vulnerable — plotly.js declares `^7.2.3`, which already covers 7.4.0. The lockfile was just stale.
+
+**Fix rationale:** Lockfile-only update within the declared range. No package.json changes.
+
+**Fix applied:** `pnpm update probe-image-size --recursive`
+
+**Testing:** `pnpm why probe-image-size --recursive` → only `probe-image-size@7.4.0`; `pnpm exec vitest run Plot` in `packages/synapse-react-client` → 11 files, 41 passed / 2 skipped.
