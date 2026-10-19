@@ -177,3 +177,38 @@ nx 22.7.12 still hard-pins `smol-toml@1.6.1`, so the version-targeted override `
 **Fix applied:** `pnpm update probe-image-size --recursive`
 
 **Testing:** `pnpm why probe-image-size --recursive` → only `probe-image-size@7.4.0`; `pnpm exec vitest run Plot` in `packages/synapse-react-client` → 11 files, 41 passed / 2 skipped.
+
+## braces
+
+```
+┌─────────────────────┬────────────────────────────────────────────────────────┐
+│ high                │ braces vulnerable to stack-exhaustion denial of        │
+│                     │ service through deeply nested patterns                 │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Package             │ braces                                                 │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Vulnerable versions │ <=3.0.3                                                │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Patched versions    │ <0.0.0                                                 │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Paths               │ .>lint-staged>micromatch>braces                        │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ More info           │ https://github.com/advisories/GHSA-vfj7-8cjw-p6xm      │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+```
+
+**Analysis:**
+
+No patched version exists (`Patched versions: <0.0.0`); `braces@3.0.3` is the latest release (unchanged since 2024). One installed version, 5 paths, all dev-only:
+
+- `.>lint-staged@15.5.2>micromatch>braces`: vulnerable — lint-staged ≥16 uses picomatch instead (latest 17.6.0, requires Node ≥22.22.1).
+- `markdown-it-container>mocha@10.8.2>chokidar@3>braces`: vulnerable — mocha 12 uses chokidar 5 (no braces).
+- `synapse-react-client`, `synapse-portal-framework>vite-plugin-static-copy@4.1.1>chokidar@3>braces`: vulnerable — **latest** vite-plugin-static-copy (4.1.1) still depends on `chokidar ^3.6.0`.
+- `vite-config>vite-plugin-html@3.2.2>fast-glob@3>micromatch>braces`: vulnerable — **latest** vite-plugin-html (3.2.2) still depends on `fast-glob ^3.2.11`.
+- `synapse-react-client>jest-environment-jsdom@29.7.0>@jest/environment>@jest/fake-timers>jest-message-util>micromatch>braces`: vulnerable.
+
+**Fix rationale:** Not fixed — accepted risk. No version of braces is patched, and the current releases of `vite-plugin-static-copy` and `vite-plugin-html` still depend on it, so no set of upgrades removes the advisory. Major bumps of lint-staged (15→17) and mocha (10→12) would remove only 2 of the 5 paths and add breaking-change risk with no change to the audit result. The advisory is a stack-exhaustion DoS triggered by deeply nested brace patterns. Every consumer is build/test tooling that expands developer-authored glob patterns from repo config, not untrusted input. An override isn't possible because there's no version to override to.
+
+**Fix applied:** None. Revisit when braces publishes a fix, or when vite-plugin-static-copy / vite-plugin-html move off chokidar 3 / fast-glob 3.
+
+**Testing:** N/A (no changes).
