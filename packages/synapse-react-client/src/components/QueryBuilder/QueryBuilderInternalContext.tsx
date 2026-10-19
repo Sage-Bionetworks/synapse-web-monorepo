@@ -19,6 +19,8 @@ export type QueryBuilderInternalContextType = {
    * metadata. Cohort Builder sets this true.
    */
   onlyFacetedColumns: boolean
+  /** True when the tree already sends the maximum number of leaf predicates, so no condition can be added. */
+  isAtLeafPredicateLimit: boolean
   /**
    * Returns the user-facing label for a column — resolves `columnAliases`
    * first, then falls back to `unCamelCase(name)`. Wired from
