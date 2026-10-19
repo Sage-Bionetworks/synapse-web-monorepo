@@ -82,3 +82,66 @@ concurrently 10.0.6 pins `shell-quote@1.12.0`, and openapi-generator-cli 2.41.0 
 **Fix applied:** `pnpm update @openapitools/openapi-generator-cli --recursive` (specifiers in `packages/aridhia-client` and `packages/synapse-client` go `^2.39.0` → `^2.41.0`); removed `"shell-quote": "^1.9.0"` from root `pnpm.overrides`; ran `pnpm install --no-frozen-lockfile`.
 
 **Testing:** `pnpm why shell-quote --recursive` → only `shell-quote@1.12.0`; `pnpm generate` in `packages/aridhia-client` succeeds.
+
+## nx
+
+```
+┌─────────────────────┬────────────────────────────────────────────────────────┐
+│ high                │ Nx: OS command injection via git revisions and remote  │
+│                     │ refs                                                   │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Package             │ nx                                                     │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Vulnerable versions │ >=14.0.0 <22.7.8                                       │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Patched versions    │ >=22.7.8                                               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Paths               │ .>nx                                                   │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ More info           │ https://github.com/advisories/GHSA-w2vw-w76x-qr89      │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+┌─────────────────────┬────────────────────────────────────────────────────────┐
+│ high                │ Nx daemon and plugin worker sockets are accessible to  │
+│                     │ other local users                                      │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Package             │ nx                                                     │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Vulnerable versions │ >=14.6.0 <22.7.9                                       │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Patched versions    │ >=22.7.9                                               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Paths               │ .>nx                                                   │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ More info           │ https://github.com/advisories/GHSA-w3vv-58gj-gw77      │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+┌─────────────────────┬────────────────────────────────────────────────────────┐
+│ moderate            │ Nx: Path traversal in nx migrate package-migrations    │
+│                     │ extraction                                             │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Package             │ nx                                                     │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Vulnerable versions │ >=13.10.0 <22.7.10                                     │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Patched versions    │ >=22.7.10                                              │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Paths               │ .>nx                                                   │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ More info           │ https://github.com/advisories/GHSA-hrvq-x7jp-36xv      │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+```
+
+**Analysis:**
+
+1 path found:
+
+- `.>nx@22.7.7`: vulnerable — a direct root devDependency, exact-pinned. Dev/CI tooling only. The investigation script reported it as "not a direct dep" because it doesn't trace the workspace root's own dependencies.
+
+nx 22.7.10 fixes all three advisories. 22.7.12 is the newest 22.7.x patch release (published 2026-09-10, outside the `minimumReleaseAge` window). nx 23.x also fixes them but is a major upgrade (migrations via `nx migrate`) that doesn't belong in a security patch.
+
+nx 22.7.12 still hard-pins `smol-toml@1.6.1`, so the version-targeted override `nx@22.7.7>smol-toml` would stop matching after the bump and an older smol-toml would come back. The override key is moved to `nx@22.7.12`; the smol-toml advisory itself is handled in its own section.
+
+**Fix rationale:** Update the parent directly within the same minor line. Keeps the existing exact-pin style.
+
+**Fix applied:** root `package.json` `"nx": "22.7.7"` → `"22.7.12"`; override key `"nx@22.7.7>smol-toml"` → `"nx@22.7.12>smol-toml"` (value unchanged); `pnpm install --no-frozen-lockfile`.
+
+**Testing:** `pnpm why nx --recursive` → only `nx@22.7.12`; `pnpm why smol-toml --recursive` → still `smol-toml@1.8.0` (override still applies); `pnpm nx show projects` lists all 29 projects; `pnpm nx run-many -t lint -p synapse-types,synapse-client --skip-nx-cache` passes.
