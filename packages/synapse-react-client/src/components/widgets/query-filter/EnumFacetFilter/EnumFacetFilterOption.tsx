@@ -5,6 +5,8 @@ type EnumFacetFilterOptionProps = {
   readonly id: string
   readonly label: ReactNode
   readonly count?: number
+  /** Display text for the count (e.g. a range or an approximation); defaults to the localized count. */
+  readonly countText?: string
   readonly isDropdown: boolean
   readonly checked: boolean
   readonly onChange: (selected: boolean) => void
@@ -17,6 +19,7 @@ export function EnumFacetFilterOption(props: EnumFacetFilterOptionProps) {
     id,
     label,
     count,
+    countText,
     isDropdown,
     checked,
     onChange,
@@ -25,6 +28,7 @@ export function EnumFacetFilterOption(props: EnumFacetFilterOptionProps) {
   } = props
 
   const control = inputType === 'checkbox' ? <Checkbox /> : <Radio />
+  const displayedCount = countText ?? count?.toLocaleString()
 
   return (
     <Box
@@ -62,14 +66,14 @@ export function EnumFacetFilterOption(props: EnumFacetFilterOptionProps) {
         label={label}
       />
 
-      {count != null && (
+      {displayedCount != null && (
         <>
           {isDropdown && (
             <span
               className="EnumFacetFilter__count"
               style={{ flexShrink: 0, marginLeft: 8 }}
             >
-              ({count.toLocaleString()})
+              ({displayedCount})
             </span>
           )}
           {!isDropdown && (
@@ -77,7 +81,7 @@ export function EnumFacetFilterOption(props: EnumFacetFilterOptionProps) {
               className="EnumFacetFilter__count"
               style={{ flexShrink: 0, marginLeft: 8 }}
             >
-              {count.toLocaleString()}
+              {displayedCount}
             </div>
           )}
         </>
