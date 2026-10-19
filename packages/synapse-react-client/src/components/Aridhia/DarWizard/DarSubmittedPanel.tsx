@@ -24,11 +24,10 @@ export type DarSubmittedPanelProps = {
  */
 export function DarSubmittedPanel(props: DarSubmittedPanelProps) {
   const { requestCode, status } = props
-  const {
-    data: messageTerm,
-    isLoading,
-    isError,
-  } = useGetAridhiaVocabularyTerm(DAR_MESSAGE_VOCABULARY_CODE)
+  const { data: messageTerm, isLoading } = useGetAridhiaVocabularyTerm(
+    DAR_MESSAGE_VOCABULARY_CODE,
+  )
+  const message = messageTerm?.value
 
   return (
     <Stack spacing={2}>
@@ -38,8 +37,8 @@ export function DarSubmittedPanel(props: DarSubmittedPanelProps) {
         {status && <> &mdash; status: {status}</>}
       </Typography>
       {isLoading && <Skeleton variant="rounded" height={160} />}
-      {messageTerm && <MarkdownSynapse markdown={messageTerm.value} />}
-      {isError && (
+      {message && <MarkdownSynapse markdown={message} />}
+      {!isLoading && !message && (
         <Alert severity="warning">
           We could not load the details about what happens next. You can check
           the status of your request at any time by logging in to{' '}
