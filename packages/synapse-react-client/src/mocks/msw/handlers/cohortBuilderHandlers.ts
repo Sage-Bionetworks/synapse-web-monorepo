@@ -8,6 +8,7 @@ import {
 } from '@/mocks/cohortBuilder/cohortBuilderMockProfiles'
 import {
   CohortBuilderAccess,
+  CohortBuilderMockQueryOptions,
   getCohortBuilderColumnModels,
   runCohortBuilderMockQuery,
 } from '@/mocks/cohortBuilder/cohortBuilderMockQueryEngine'
@@ -16,6 +17,7 @@ import {
   createCohortBuilderSyntheticData,
 } from '@/mocks/cohortBuilder/cohortBuilderSyntheticData'
 import {
+  ENTITY_HEADERS,
   ENTITY_ID,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
@@ -26,7 +28,9 @@ import {
   MOCK_REPO_ORIGIN,
 } from '@/utils/functions/getEndpoint'
 import {
+  EntityHeader,
   QueryBundleRequest,
+  Reference,
   VirtualTable,
 } from '@sage-bionetworks/synapse-types'
 import { http, HttpHandler, HttpResponse } from 'msw'
@@ -115,7 +119,7 @@ function getVirtualTableEntities(
   ]
 }
 
-export type CohortBuilderHandlersOptions = {
+export type CohortBuilderHandlersOptions = CohortBuilderMockQueryOptions & {
   profile?: CohortBuilderMockProfile
   access?: CohortBuilderAccess
   backendOrigin?: string
@@ -132,6 +136,7 @@ export function getCohortBuilderHandlers(
   const {
     profile = ELITE_MOCK_PROFILE,
     access = 'AGGREGATE_ONLY',
+    maxCohortValues,
     backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
   } = options
   const data = getCohortBuilderSyntheticData(profile)
@@ -140,6 +145,39 @@ export function getCohortBuilderHandlers(
     http.get(`${backendOrigin}${ENTITY_ID(entity.id!)}`, () =>
       HttpResponse.json(entity),
     ),
+  )
+
+  // Headers for the synthetic files and datasets; other references fall through to the next handler.
+  const entityHeaderHandler = http.post(
+    `${backendOrigin}${ENTITY_HEADERS}`,
+    async ({ request }) => {
+      const { references } = (await request.clone().json()) as {
+        references: Reference[]
+      }
+      const results = references.flatMap((reference): EntityHeader[] => {
+        const syntheticReference = data.references.get(reference.targetId)
+        return syntheticReference
+          ? [
+              {
+                id: syntheticReference.id,
+                name: syntheticReference.name,
+                type:
+                  syntheticReference.referenceType === 'FILE'
+                    ? 'org.sagebionetworks.repo.model.FileEntity'
+                    : 'org.sagebionetworks.repo.model.table.Dataset',
+                versionNumber: 1,
+                isLatestVersion: true,
+                benefactorId: 90000000,
+                createdOn: '2026-10-01T00:00:00.000Z',
+                modifiedOn: '2026-10-01T00:00:00.000Z',
+                createdBy: '0',
+                modifiedBy: '0',
+              },
+            ]
+          : []
+      })
+      return results.length > 0 ? HttpResponse.json({ results }) : undefined
+    },
   )
 
   const queryHandlers = [
@@ -156,6 +194,7 @@ export function getCohortBuilderHandlers(
             // QueryBundleRequest, whose shape matches what the client sends.
             request as unknown as QueryBundleRequest,
             access,
+            { maxCohortValues },
           )
           return result.status === 200
             ? result.body
@@ -173,7 +212,7 @@ export function getCohortBuilderHandlers(
     ),
   )
 
-  return [...entityHandlers, ...queryHandlers]
+  return [...entityHandlers, entityHeaderHandler, ...queryHandlers]
 }
 
 /**

@@ -1,6 +1,12 @@
-import { ELITE_MOCK_PROFILE } from '@/mocks/cohortBuilder/cohortBuilderMockProfiles'
+import {
+  CohortBuilderMockProfile,
+  ELITE_MOCK_PROFILE,
+} from '@/mocks/cohortBuilder/cohortBuilderMockProfiles'
 import { CohortBuilderAccess } from '@/mocks/cohortBuilder/cohortBuilderMockQueryEngine'
-import { getCohortBuilderHandlers } from '@/mocks/msw/handlers/cohortBuilderHandlers'
+import {
+  CohortBuilderHandlersOptions,
+  getCohortBuilderHandlers,
+} from '@/mocks/msw/handlers/cohortBuilderHandlers'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
@@ -17,6 +23,11 @@ import {
   CohortBuilderProps,
   DEFAULT_COHORT_BUILDER_AUDIT_NOTICE,
 } from './CohortBuilder'
+import {
+  COHORT_FILES_ZERO_COUNT_TEXT,
+  COHORT_TOO_LARGE_TEXT,
+} from './CohortFilesPanel'
+import { MAX_COHORT_PARTICIPANTS } from './cohortHandOff'
 
 const participantsTableId = ELITE_MOCK_PROFILE.participantsVirtualTableId
 const allParticipantsCount = (2700).toLocaleString()
@@ -210,5 +221,143 @@ describe('CohortBuilder', () => {
     for (const request of sentRequests) {
       expect(request.aggregateDataPreview).toEqual(aggregateDataPreview)
     }
+  })
+
+  describe('Files/Datasets panel', () => {
+    function renderWithFiles(
+      handlerOptions: CohortBuilderHandlersOptions = {},
+    ) {
+      const profile = handlerOptions.profile ?? ELITE_MOCK_PROFILE
+      server.use(...getCohortBuilderHandlers(handlerOptions))
+      render(
+        <CohortBuilder
+          participantsTableId={profile.participantsVirtualTableId}
+          filesTableId={profile.dataVirtualTableId}
+        />,
+        { wrapper: createWrapper() },
+      )
+      return profile
+    }
+
+    async function buildCohort(property: string, values: string[]) {
+      const user = userEvent.setup()
+      await user.click(screen.getByRole('combobox', { name: 'Property' }))
+      await user.click(await screen.findByRole('option', { name: property }))
+      for (const value of values) {
+        await user.click(await screen.findByRole('button', { name: value }))
+      }
+      await user.click(screen.getByRole('button', { name: 'Update Results' }))
+    }
+
+    function filesRequests(profile: CohortBuilderMockProfile) {
+      return sentRequests.filter(
+        request => request.entityId === profile.dataVirtualTableId,
+      )
+    }
+
+    it('lists every file and dataset, without a cohort, when no filters are applied', async () => {
+      const profile = renderWithFiles()
+
+      expect(
+        await screen.findByText(
+          `${(2070).toLocaleString()} files and datasets`,
+        ),
+      ).toBeInTheDocument()
+      expect(filesRequests(profile)).not.toHaveLength(0)
+      expect(
+        filesRequests(profile).filter(
+          request => request.query.cohorts || request.query.additionalFilters,
+        ),
+      ).toEqual([])
+    })
+
+    it("hands the participant cohort to the files query by reference, and lists the cohort's files and datasets", async () => {
+      const profile = renderWithFiles()
+      await screen.findByText(`${allParticipantsCount} participants`)
+
+      await buildCohort('Race', ['Black or African American'])
+
+      expect(
+        await screen.findByText('193 files and datasets'),
+      ).toBeInTheDocument()
+      const participantRequest = sentRequests.findLast(
+        request =>
+          request.entityId === profile.participantsVirtualTableId &&
+          (request.query.additionalFilters?.length ?? 0) > 0,
+      )!
+      const filesRequest = filesRequests(profile).at(-1)!
+      expect(filesRequest.query.cohorts).toEqual([
+        {
+          name: 'c1',
+          query: {
+            sql: `SELECT individualId FROM ${profile.participantsVirtualTableId}`,
+            additionalFilters: participantRequest.query.additionalFilters,
+          },
+        },
+      ])
+      expect(filesRequest.query.additionalFilters).toEqual([
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.ColumnCohortFilter',
+          columnName: 'individualId',
+          cohortName: 'c1',
+          isDefiningCondition: true,
+        },
+      ])
+    })
+
+    it('shows a files-specific notice when a cohort matches fewer files and datasets than the threshold', async () => {
+      renderWithFiles()
+      await screen.findByText(`${allParticipantsCount} participants`)
+
+      // 1,200 participants, but only 3 datasets.
+      await buildCohort('Study', ['LLFS'])
+
+      expect(
+        await screen.findByText(
+          'A minimum of 20 files and datasets is required',
+        ),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByText(`${(1200).toLocaleString()} participants`),
+      ).toBeInTheDocument()
+    })
+
+    it('shows the cohort-too-large state when the server rejects the cohort as too large', async () => {
+      renderWithFiles({ maxCohortValues: 1000 })
+      await screen.findByText(`${allParticipantsCount} participants`)
+
+      // 1,096 participants: more than this server's maximum of 1,000.
+      await buildCohort('Sex', ['Male'])
+
+      expect(await screen.findByText(COHORT_TOO_LARGE_TEXT)).toBeInTheDocument()
+    })
+
+    it('does not send a cohort with more participants than the server allows', async () => {
+      const largeProfile: CohortBuilderMockProfile = {
+        ...ELITE_MOCK_PROFILE,
+        participantsVirtualTableId: 'syn90000021',
+        dataVirtualTableId: 'syn90000022',
+        studies: [
+          {
+            ...ELITE_MOCK_PROFILE.studies[0],
+            participantCount: MAX_COHORT_PARTICIPANTS + 1,
+          },
+        ],
+      }
+      const profile = renderWithFiles({ profile: largeProfile })
+      const largeCount = `${(MAX_COHORT_PARTICIPANTS + 1).toLocaleString()} participants`
+      await screen.findByText(largeCount)
+
+      // Every participant, as a cohort.
+      await buildCohort('Sex', ['Female', 'Male', 'Unknown'])
+
+      expect(await screen.findByText(COHORT_TOO_LARGE_TEXT)).toBeInTheDocument()
+      expect(screen.getByText(largeCount)).toBeInTheDocument()
+      expect(
+        filesRequests(profile).filter(request => request.query.cohorts),
+      ).toEqual([])
+      expect(screen.queryByText(COHORT_FILES_ZERO_COUNT_TEXT)).toBeNull()
+    })
   })
 })
