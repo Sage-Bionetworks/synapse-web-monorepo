@@ -54,13 +54,18 @@ export default function HomePage() {
     )
   }
 
-  // Sankey: center node / left flow -> datasets for that source.
-  const handleSankeySourceClick = (source: string) =>
-    navigateToFiltered('/Explore/Datasets', datasetsSql, 'source', source)
-  // Sankey: right flow -> files for that source. The files table records the
-  // originating group as "contributor", not "source".
-  const handleSankeyFilesClick = (source: string) =>
-    navigateToFiltered('/Explore/Files', filesSql, 'contributor', source)
+  // Sankey: center node / left flow -> datasets for that repository.
+  const handleSankeyRepositoryClick = (repository: string) =>
+    navigateToFiltered(
+      '/Explore/Datasets',
+      datasetsSql,
+      'repository',
+      repository,
+    )
+  // Sankey: right flow -> files for that repository. The files table records
+  // the originating group as "contributor" and has no "repository" column.
+  const handleSankeyFilesClick = (repository: string) =>
+    navigateToFiltered('/Explore/Files', filesSql, 'contributor', repository)
   // Sankey end nodes -> the unfiltered Explore pages.
   const handleAllDatasetsClick = () => {
     navigate('/Explore/Datasets')
@@ -176,8 +181,8 @@ export default function HomePage() {
           sql={sankeyPlotSql}
           rootLabel="All Datasets"
           unitLabel="datasets"
-          breakdownLabel="by source"
-          onCategoryClick={handleSankeySourceClick}
+          breakdownLabel="by repository"
+          onCategoryClick={handleSankeyRepositoryClick}
           onRootClick={handleAllDatasetsClick}
           rightValueColumn={2}
           rightLabel="All Files"

@@ -26,7 +26,7 @@ export const SourcesByDataset: Story = {
  */
 export const WithDetailPanel: Story = {
   args: {
-    sql: `SELECT source, count(source), sum(datasetItemCount) FROM ${TABLE_ID} group by source`,
+    sql: `SELECT repository, count(repository), sum(datasetItemCount) FROM ${TABLE_ID} group by repository`,
     rootLabel: 'All Datasets',
     unitLabel: 'datasets',
     rightValueColumn: 2,
@@ -40,7 +40,9 @@ export const WithDetailPanel: Story = {
           borderRadius: '6px',
         }}
       >
-        <h3 style={{ marginTop: 0 }}>{focusedCategory ?? 'All sources'}</h3>
+        <h3 style={{ marginTop: 0 }}>
+          {focusedCategory ?? 'All repositories'}
+        </h3>
         <p style={{ margin: 0 }}>
           {focusedCategory
             ? 'Details for the focused flow go here.'

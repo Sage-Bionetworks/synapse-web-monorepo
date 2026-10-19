@@ -159,10 +159,13 @@ export default function SankeyFlowDetails(props: SankeyFlowDetailsProps) {
 
   const summary = useMemo(() => {
     const relevantRows = focusedCategory
-      ? rows.filter(row => row.values[columnIndex.source] === focusedCategory)
-      : // The chart totals count(source), which skips datasets with no source,
-        // so the unfocused summary skips them too and the two figures agree.
-        rows.filter(row => row.values[columnIndex.source]?.trim())
+      ? rows.filter(
+          row => row.values[columnIndex.repository] === focusedCategory,
+        )
+      : // The chart totals count(repository), which skips datasets with no
+        // repository, so the unfocused summary skips them too and the two
+        // figures agree.
+        rows.filter(row => row.values[columnIndex.repository]?.trim())
     return summarizeRows(relevantRows, columnIndex)
   }, [rows, columnIndex, focusedCategory])
 
@@ -182,11 +185,11 @@ export default function SankeyFlowDetails(props: SankeyFlowDetailsProps) {
         component="h3"
         className={styles.title}
       >
-        {focusedCategory ?? 'All sources'}
+        {focusedCategory ?? 'All repositories'}
       </Typography>
       <Typography variant="smallText1" className={styles.lede}>
         {focusedCategory
-          ? 'Data contributed through this source.'
+          ? 'Data contributed through this repository.'
           : 'Hover over a flow in the chart for individual dataset statistics.'}
       </Typography>
 
