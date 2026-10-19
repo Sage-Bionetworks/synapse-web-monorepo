@@ -88,8 +88,22 @@ export interface FilterGroup {
   children?: QueryFilter[]
 }
 
+export const COLUMN_COHORT_FILTER_CONCRETE_TYPE_VALUE =
+  'org.sagebionetworks.repo.model.table.ColumnCohortFilter'
+export type COLUMN_COHORT_FILTER_CONCRETE_TYPE =
+  typeof COLUMN_COHORT_FILTER_CONCRETE_TYPE_VALUE
+
+// Restricts a column to the distinct values of a request-scoped cohort (see Query.cohorts). The cohort's values never leave the server.
+export interface ColumnCohortFilter {
+  concreteType: COLUMN_COHORT_FILTER_CONCRETE_TYPE
+  isDefiningCondition?: boolean // When true, for a query against a VirtualTable, the filter is applied in the VirtualTable's definingSQL and columnName is resolved against the VirtualTable's source.
+  columnName: string // name of the column to filter; its type must equal the type of the cohort's column
+  cohortName: string // name of a cohort defined in the same query's cohorts
+}
+
 export type QueryFilter =
   | TextMatchesQueryFilter
   | ColumnSingleValueQueryFilter
   | ColumnMultiValueFunctionQueryFilter
   | FilterGroup
+  | ColumnCohortFilter
