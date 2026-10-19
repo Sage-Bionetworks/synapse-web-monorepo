@@ -212,3 +212,37 @@ No patched version exists (`Patched versions: <0.0.0`); `braces@3.0.3` is the la
 **Fix applied:** None. Revisit when braces publishes a fix, or when vite-plugin-static-copy / vite-plugin-html move off chokidar 3 / fast-glob 3.
 
 **Testing:** N/A (no changes).
+
+## source-map-js
+
+```
+┌─────────────────────┬────────────────────────────────────────────────────────┐
+│ high                │ source-map-js allows event-loop denial of service      │
+│                     │ through indexed source-map section offsets             │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Package             │ source-map-js                                          │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Vulnerable versions │ >=1.0.0 <1.2.2                                         │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Patched versions    │ >=1.2.2                                                │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Paths               │ apps__SageAccountWeb>@vitest/coverage-                 │
+│                     │ v8>magicast>source-map-js                              │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ More info           │ https://github.com/advisories/GHSA-68fv-2mgg-jv7q      │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+```
+
+**Analysis:**
+
+7 parents of a single installed `source-map-js@1.2.1`, all with flexible ranges covering 1.2.2:
+
+- `magicast@0.5.3` (`^1.2.1`, via `@vitest/coverage-v8`): vulnerable — stale lockfile. Dev-only.
+- `postcss@8.5.25` (`^1.2.1`), `sass@1.100.0` (`>=0.6.2 <2.0.0`), `css-tree@2.3.1` / `3.2.1` (`^1.0.1` / `^1.2.1`): vulnerable — stale lockfile. Build-time CSS tooling, not shipped to browsers.
+- `css-tree@2.2.1` (`^1.0.1`), `@vue/compiler-core@3.5.35` (`^1.2.1`): vulnerable — stale lockfile. Dev-only.
+
+**Fix rationale:** Lockfile-only update within every declared range. No package.json changes.
+
+**Fix applied:** `pnpm update source-map-js --recursive`
+
+**Testing:** `pnpm why source-map-js --recursive` → only `source-map-js@1.2.2`; `sass` compile of `synapse-react-client/src/style/main.scss` with source map succeeds; `pnpm exec vitest run --coverage` in `apps/SageAccountWeb` → 57 passed / 1 skipped, coverage report generated.
