@@ -11,6 +11,7 @@ import {
   EDucTemplatePage,
   EDucTemplateValidationResult,
 } from '@sage-bionetworks/synapse-client'
+import { SynapseClient } from '@sage-bionetworks/synapse-client/SynapseClient'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
   InfiniteData,
@@ -149,7 +150,10 @@ export function useListAllUserDataAccessRequests(
 }
 
 /**
- * Retrieve the pre-signing preview of the eDUC for a data access request.
+ * Retrieve the pre-signing preview of the eDUC for a data access request. The document is rendered
+ * from the request as it stands, via an envelope the service discards once the PDF exists, so
+ * reading it neither routes anything for signature nor alters the request.
+ *
  * @see GET /repo/v1/dataAccessRequest/{requestId}/preview
  */
 export function useGetDataAccessRequestPreview(
@@ -232,33 +236,186 @@ export function useGetDataAccessRequestSignatureQuota(
 }
 
 /**
- * Initiate the DocuSign routing for a data access request's eDUC.
+ * Identifies the data access request a signature mutation acts on. The access requirement is
+ * carried alongside the request id because these mutations all change `eDucSignatureEnvelopeId`
+ * on the request itself, and the cache entry holding that field is keyed by access requirement
+ * rather than by request.
+ */
+export type DataAccessRequestSignatureVariables = {
+  requestId: string
+  accessRequirementId: string
+}
+
+/**
+ * Invalidates everything a change to the eDUC envelope makes obsolete.
+ *
+ * The preview is deliberately absent: it renders the request's own content, which routing does
+ * not touch, and regenerating it costs a server-side PDF render.
+ */
+function useInvalidateOnSignatureChange() {
+  const { keyFactory } = useSynapseContext()
+  const queryClient = useQueryClient()
+
+  return ({
+    requestId,
+    accessRequirementId,
+  }: DataAccessRequestSignatureVariables) =>
+    Promise.all([
+      queryClient.invalidateQueries({
+        queryKey: keyFactory.getDataAccessRequestSignatureQueryKey(requestId),
+      }),
+      // The listings report envelope status, so they move with every routing change.
+      queryClient.invalidateQueries({
+        queryKey: keyFactory.getDataAccessRequestListQueryKey(),
+      }),
+      // `eDucSignatureEnvelopeId` is how callers tell a first send from a re-send, so the request
+      // must not stay cached from before the routing changed.
+      queryClient.invalidateQueries({
+        queryKey:
+          keyFactory.getDataAccessRequestForUpdateQueryKey(accessRequirementId),
+      }),
+    ])
+}
+
+/**
+ * Initiate the DocuSign routing for a data access request's eDUC, creating the envelope and
+ * sending it to the signers.
  * @see POST /repo/v1/dataAccessRequest/{requestId}/signature
  */
 export function useInitiateDataAccessRequestSignature(
-  options?: UseMutationOptions<EDucSignatureQuota, SynapseClientError, string>,
+  options?: UseMutationOptions<
+    EDucSignatureQuota,
+    SynapseClientError,
+    DataAccessRequestSignatureVariables
+  >,
 ) {
   const { synapseClient } = useSynapseContext()
-  const queryClient = useQueryClient()
-  const { keyFactory } = useSynapseContext()
+  const invalidateOnSignatureChange = useInvalidateOnSignatureChange()
 
-  return useMutation<EDucSignatureQuota, SynapseClientError, string>({
+  return useMutation<
+    EDucSignatureQuota,
+    SynapseClientError,
+    DataAccessRequestSignatureVariables
+  >({
     ...options,
-    mutationFn: (requestId: string) =>
+    mutationFn: ({ requestId }) =>
       synapseClient.dataAccessServicesClient.postRepoV1DataAccessRequestRequestIdSignature(
         { requestId },
       ),
-    onSuccess: async (data, requestId, ctx) => {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: keyFactory.getDataAccessRequestSignatureQueryKey(requestId),
-        }),
-        queryClient.invalidateQueries({
-          queryKey: keyFactory.getDataAccessRequestQueryKey(),
-        }),
-      ])
+    onSuccess: async (data, variables, ctx) => {
+      await invalidateOnSignatureChange(variables)
       if (options?.onSuccess) {
-        return options.onSuccess(data, requestId, ctx)
+        return options.onSuccess(data, variables, ctx)
+      }
+      return
+    },
+  })
+}
+
+/**
+ * Reads the precheck's answer out of whichever shape it arrives in. The generated client types this
+ * endpoint as a bare `boolean` because that is what the OpenAPI spec declares, but neither the
+ * declared type nor the runtime value can be trusted directly: the deployed service answers with a
+ * `{ result }` wrapper, and the client falls back to handing back the raw response text whenever
+ * the content type isn't JSON. Every shape is therefore compared explicitly -- a truthiness check
+ * would read both the object `{ result: false }` and the string `"false"` as `true`.
+ *
+ * The spec is what is wrong here, not this endpoint: it declares a bare `boolean` for every
+ * BooleanResult-returning service (`GET /entity/{id}/access` and `GET /evaluation/{evalId}/access`
+ * are the others), so the generated types misdescribe all of them. Tracked by PLFM-10007 --
+ * delete this shim and read the generated type directly once the spec is corrected.
+ */
+function parseSignaturePrecheckResponse(response: unknown): boolean {
+  const answer =
+    typeof response === 'object' && response !== null && 'result' in response
+      ? (response as { result: unknown }).result
+      : response
+  return answer === true || answer === 'true'
+}
+
+/**
+ * Ask the server whether the data access request's pending changes can be applied to the envelope
+ * that is already in flight. The service owns every reason an envelope might be uncorrectable --
+ * completed, voided, cancelled, declined -- so the answer is never inferred from its status here.
+ *
+ * @see GET /repo/v1/dataAccessRequest/{requestId}/signature/precheck
+ */
+async function fetchSignaturePrecheck(
+  synapseClient: SynapseClient,
+  requestId: string,
+): Promise<boolean> {
+  const response: unknown =
+    await synapseClient.dataAccessServicesClient.getRepoV1DataAccessRequestRequestIdSignaturePrecheck(
+      { requestId },
+    )
+  return parseSignaturePrecheckResponse(response)
+}
+
+/**
+ * {@link fetchSignaturePrecheck} as a mutation, for the moment a user commits to sending. Modeled
+ * as a mutation despite being a GET because the answer decides which irreversible call follows, so
+ * it must never be served from cache.
+ */
+export function useCheckDataAccessRequestSignatureUpdatable(
+  options?: UseMutationOptions<boolean, SynapseClientError, string>,
+) {
+  const { synapseClient } = useSynapseContext()
+
+  return useMutation<boolean, SynapseClientError, string>({
+    ...options,
+    mutationFn: (requestId: string) =>
+      fetchSignaturePrecheck(synapseClient, requestId),
+  })
+}
+
+/**
+ * {@link fetchSignaturePrecheck} as a query, for screens that describe what sending *would* do
+ * rather than acting on it. Use {@link useCheckDataAccessRequestSignatureUpdatable} at the point
+ * of action, where a cached answer would be unsafe.
+ */
+export function useGetDataAccessRequestSignatureUpdatable(
+  requestId: string,
+  options?: Partial<UseQueryOptions<boolean, SynapseClientError>>,
+) {
+  const { keyFactory, synapseClient } = useSynapseContext()
+
+  return useQuery({
+    ...options,
+    queryKey:
+      keyFactory.getDataAccessRequestSignaturePrecheckQueryKey(requestId),
+    queryFn: () => fetchSignaturePrecheck(synapseClient, requestId),
+  })
+}
+
+/**
+ * Apply the data access request's pending changes to its in-flight eDUC envelope, preserving the
+ * signatures that have already been collected.
+ * @see PUT /repo/v1/dataAccessRequest/{requestId}/signature
+ */
+export function useUpdateDataAccessRequestSignature(
+  options?: UseMutationOptions<
+    EDucSignatureStatus,
+    SynapseClientError,
+    DataAccessRequestSignatureVariables
+  >,
+) {
+  const { synapseClient } = useSynapseContext()
+  const invalidateOnSignatureChange = useInvalidateOnSignatureChange()
+
+  return useMutation<
+    EDucSignatureStatus,
+    SynapseClientError,
+    DataAccessRequestSignatureVariables
+  >({
+    ...options,
+    mutationFn: ({ requestId }) =>
+      synapseClient.dataAccessServicesClient.putRepoV1DataAccessRequestRequestIdSignature(
+        { requestId },
+      ),
+    onSuccess: async (data, variables, ctx) => {
+      await invalidateOnSignatureChange(variables)
+      if (options?.onSuccess) {
+        return options.onSuccess(data, variables, ctx)
       }
       return
     },
@@ -270,29 +427,29 @@ export function useInitiateDataAccessRequestSignature(
  * @see DELETE /repo/v1/dataAccessRequest/{requestId}/signature
  */
 export function useVoidDataAccessRequestSignature(
-  options?: UseMutationOptions<void, SynapseClientError, string>,
+  options?: UseMutationOptions<
+    void,
+    SynapseClientError,
+    DataAccessRequestSignatureVariables
+  >,
 ) {
   const { synapseClient } = useSynapseContext()
-  const queryClient = useQueryClient()
-  const { keyFactory } = useSynapseContext()
+  const invalidateOnSignatureChange = useInvalidateOnSignatureChange()
 
-  return useMutation<void, SynapseClientError, string>({
+  return useMutation<
+    void,
+    SynapseClientError,
+    DataAccessRequestSignatureVariables
+  >({
     ...options,
-    mutationFn: (requestId: string) =>
+    mutationFn: ({ requestId }) =>
       synapseClient.dataAccessServicesClient.deleteRepoV1DataAccessRequestRequestIdSignature(
         { requestId },
       ),
-    onSuccess: async (data, requestId, ctx) => {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: keyFactory.getDataAccessRequestSignatureQueryKey(requestId),
-        }),
-        queryClient.invalidateQueries({
-          queryKey: keyFactory.getDataAccessRequestQueryKey(),
-        }),
-      ])
+    onSuccess: async (data, variables, ctx) => {
+      await invalidateOnSignatureChange(variables)
       if (options?.onSuccess) {
-        return options.onSuccess(data, requestId, ctx)
+        return options.onSuccess(data, variables, ctx)
       }
       return
     },

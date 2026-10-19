@@ -1,10 +1,12 @@
 export const getSearchParam = (keyName: string): string | undefined => {
   const urlSearchParams = new URLSearchParams(window.location.search)
-  let paramValue: string | undefined = undefined
-  if (urlSearchParams?.get(keyName)) {
-    paramValue = urlSearchParams.get(keyName)!
-  }
-  return paramValue
+  // A key can legitimately repeat when a link was built by appending a token to a URL that
+  // already contained one. The last non-empty value is the most recently appended, so it is the
+  // one that is still valid.
+  return urlSearchParams
+    .getAll(keyName)
+    .filter(value => value !== '')
+    .pop()
 }
 export const getStateParam = () => {
   let state = getSearchParam('state')

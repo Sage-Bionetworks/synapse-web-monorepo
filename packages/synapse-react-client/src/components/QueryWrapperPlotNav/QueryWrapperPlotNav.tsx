@@ -14,7 +14,7 @@ import { Box } from '@mui/material'
 import { Query, QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { useQuery } from '@tanstack/react-query'
 import { useAtomValue } from 'jotai'
-import { Suspense, useMemo, useState } from 'react'
+import { lazy, Suspense, useMemo, useState } from 'react'
 import { CardConfiguration } from '../CardContainer/CardConfiguration'
 import { SynapseErrorBoundary } from '../error'
 import FullTextSearch from '../FullTextSearch/FullTextSearch'
@@ -44,9 +44,36 @@ import PlotsContainer, {
 import FacetFilterControls, {
   FacetFilterControlsProps,
 } from '../widgets/query-filter/FacetFilterControls'
+import {
+  defaultQBGroup,
+  hasCompleteCondition,
+} from '../QueryBuilder/queryBuilderOperations'
+import {
+  qbNodeToApiFilter,
+  selectedFacetsToQBGroup,
+} from '../QueryBuilder/queryBuilderTranslation'
+import { QBGroup } from '../QueryBuilder/QueryBuilderTypes'
+import { ConfirmationDialog } from '../ConfirmationDialog'
+import { isFilterGroup } from '../../utils/types/IsType'
 import { QueryWrapperSynapsePlotProps } from './QueryWrapperSynapsePlot'
 import { RowSetView } from './RowSetView'
 import QueryWrapperLoadingScreen from '../QueryWrapper/QueryWrapperLoadingScreen'
+
+/**
+ * The Query Builder is hidden on every tab that renders this nav until the
+ * user opens it, and it pulls in a drag-and-drop library alongside its own
+ * panel. Loading it on demand keeps all of that off the critical path for the
+ * table and card views. It already renders inside a `Suspense` boundary, so
+ * there is nothing else to coordinate.
+ *
+ * The QB tree helpers imported above stay eager — they are pure functions this
+ * component calls from its own handlers, and none of them reach dnd-kit.
+ */
+const QueryBuilderControls = lazy(() =>
+  import('../QueryBuilder/QueryBuilderControls').then(module => ({
+    default: module.QueryBuilderControls,
+  })),
+)
 
 export const QUERY_FILTERS_EXPANDED_CSS: string = 'isShowingFacetFilters'
 export const QUERY_FILTERS_COLLAPSED_CSS: string = 'isHidingFacetFilters'
@@ -80,6 +107,19 @@ type QueryWrapperPlotNavOwnProps = {
   lockedColumn?: QueryWrapperProps['lockedColumn']
   initialLimit?: number
   hideTopLevelControls?: boolean
+  /**
+   * When true, shows a `Show / Hide Query Builder` toggle in `TopLevelControls`.
+   * The QB and the facet nav are mutually exclusive — turning the QB on hides
+   * the facet nav entirely.
+   */
+  showQueryBuilderControl?: boolean
+  /**
+   * When true, the QB is shown by default. When `showQueryBuilderControl` is
+   * also true, the user can toggle it back off from `TopLevelControls`. When
+   * `showQueryBuilderControl` is false the QB is permanently displayed with
+   * no toggle button.
+   */
+  defaultShowQueryBuilder?: boolean
 } & Omit<TopLevelControlsProps, 'entityId'> &
   Pick<QueryWrapperPlotNavCustomPlotParams, 'onCustomPlotClick'> &
   Pick<
@@ -141,6 +181,8 @@ export type QueryWrapperPlotNavContentsProps = Pick<
   | 'initialLimit'
   | 'initialPlotTypeByFacetColumnName'
   | 'hideTopLevelControls'
+  | 'showQueryBuilderControl'
+  | 'defaultShowQueryBuilder'
 > & {
   isFullTextSearchEnabled: boolean
   remount?: () => void
@@ -171,14 +213,85 @@ export function QueryWrapperPlotNavContents(
     initialLimit,
     initialPlotTypeByFacetColumnName,
     hideTopLevelControls,
+    showQueryBuilderControl = false,
+    defaultShowQueryBuilder = false,
   } = props
   const queryContext = useQueryContext()
   const [showExportMetadata, setShowExportMetadata] = useState(false)
+  const [showQueryBuilder, setShowQueryBuilder] = useState(
+    defaultShowQueryBuilder,
+  )
+  const [qbTree, setQbTree] = useState<QBGroup>(() => defaultQBGroup())
+  const [isConfirmingHideQb, setIsConfirmingHideQb] = useState(false)
   const { hasFacetedSelectColumn: isFaceted, queryMetadataQueryOptions } =
     queryContext
-  const { isLoading: isLoadingQueryMetadata } = useQuery(
+  const { executeQueryRequest } = queryContext
+  const { isLoading: isLoadingQueryMetadata, data: queryMetadata } = useQuery(
     queryMetadataQueryOptions,
   )
+
+  // Facets ↔ QB transitions: switching FF → QB silently translates
+  // selectedFacets into the QB tree and swaps them for a FilterGroup in
+  // additionalFilters so results stay stable. Switching QB → FF prompts if
+  // the QB has meaningful state (a completed condition or an applied filter),
+  // since we can't losslessly reverse the translation.
+  const enterQueryBuilder = () => {
+    const selectedFacets = queryContext.currentQueryRequest.query.selectedFacets
+    if (selectedFacets && selectedFacets.length > 0) {
+      const translated = selectedFacetsToQBGroup(
+        selectedFacets,
+        queryMetadata?.columnModels,
+      )
+      const asFilter = qbNodeToApiFilter(translated)
+      setQbTree(translated)
+      executeQueryRequest(prev => ({
+        ...prev,
+        query: {
+          ...prev.query,
+          selectedFacets: undefined,
+          additionalFilters: asFilter
+            ? [
+                ...(prev.query.additionalFilters ?? []).filter(
+                  f => !isFilterGroup(f),
+                ),
+                asFilter,
+              ]
+            : prev.query.additionalFilters,
+        },
+      }))
+    }
+    setShowQueryBuilder(true)
+  }
+
+  const exitQueryBuilder = () => {
+    setQbTree(defaultQBGroup())
+    executeQueryRequest(prev => ({
+      ...prev,
+      query: {
+        ...prev.query,
+        additionalFilters: prev.query.additionalFilters?.filter(
+          f => !isFilterGroup(f),
+        ),
+      },
+    }))
+    setShowQueryBuilder(false)
+  }
+
+  const handleToggleQueryBuilder = () => {
+    if (!showQueryBuilder) {
+      enterQueryBuilder()
+      return
+    }
+    const hasFilterGroupApplied =
+      queryContext.currentQueryRequest.query.additionalFilters?.some(
+        isFilterGroup,
+      ) ?? false
+    if (hasCompleteCondition(qbTree) || hasFilterGroupApplied) {
+      setIsConfirmingHideQb(true)
+      return
+    }
+    exitQueryBuilder()
+  }
 
   const isRowSelectionVisible = useAtomValue(isRowSelectionVisibleAtom)
 
@@ -205,12 +318,12 @@ export function QueryWrapperPlotNavContents(
         return (
           <Box
             className={`QueryWrapperPlotNav ${
-              queryVisualizationContext.showFacetFilter
+              queryVisualizationContext.showFacetFilter && !showQueryBuilder
                 ? QUERY_FILTERS_EXPANDED_CSS
                 : QUERY_FILTERS_COLLAPSED_CSS
             } ${isRowSelectionVisible ? HAS_SELECTED_ROWS_CSS : ''} ${
               hideTopLevelControls ? 'isHidingTopLevelControls' : ''
-            }`}
+            } ${showQueryBuilder ? 'isShowingQueryBuilder' : ''}`}
             sx={{
               '*': {
                 cursor: isLoadingQueryMetadata ? 'wait' : undefined,
@@ -249,7 +362,7 @@ export function QueryWrapperPlotNavContents(
                       hideProgrammaticOptionsMenuItem
                     }
                     hideQueryCount={hideQueryCount}
-                    hideFacetFilterControl={!isFaceted}
+                    hideFacetFilterControl={!isFaceted || showQueryBuilder}
                     hideVisualizationsControl={
                       !isFaceted || hideVisualizationsControl
                     }
@@ -257,16 +370,28 @@ export function QueryWrapperPlotNavContents(
                     cavaticaConnectAccountURL={cavaticaConnectAccountURL}
                     remount={remount}
                     customControls={customControls}
+                    showQueryBuilderControl={showQueryBuilderControl}
+                    showQueryBuilder={showQueryBuilder}
+                    onToggleQueryBuilder={handleToggleQueryBuilder}
                   />
                 </SynapseErrorBoundary>
               )}
-              {isFaceted && (
-                <>
+              {showQueryBuilder ? (
+                <Suspense fallback={null}>
+                  <div className="QueryBuilderControls">
+                    <QueryBuilderControls
+                      tree={qbTree}
+                      onTreeChange={setQbTree}
+                    />
+                  </div>
+                </Suspense>
+              ) : (
+                isFaceted && (
                   <FacetFilterControls
                     availableFacets={availableFacets}
                     initialExpandedFacetControls={initialExpandedFacetControls}
                   />
-                </>
+                )
               )}
               {/* Isolated Suspense so that metadata loading does not hide the table */}
               <Suspense fallback={null}>
@@ -299,6 +424,21 @@ export function QueryWrapperPlotNavContents(
                   onClose={() => setShowExportMetadata(false)}
                 />
               )}
+              <ConfirmationDialog
+                open={isConfirmingHideQb}
+                title="Hide Query Builder?"
+                content="Hiding the Query Builder will clear the conditions you've built. This can't be undone."
+                confirmButtonProps={{
+                  children: 'Hide Query Builder',
+                  color: 'error',
+                  variant: 'contained',
+                }}
+                onConfirm={() => {
+                  setIsConfirmingHideQb(false)
+                  exitQueryBuilder()
+                }}
+                onCancel={() => setIsConfirmingHideQb(false)}
+              />
             </QueryWrapperErrorBoundary>
           </Box>
         )

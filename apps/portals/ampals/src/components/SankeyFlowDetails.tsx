@@ -1,9 +1,13 @@
 import { useMemo } from 'react'
 import { Box, Skeleton, Typography } from '@mui/material'
-import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
+import { useGetFullTableQueryResults } from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { sankeyDetailsSql, sankeyDetailsTableId } from '@/config/resources'
+import {
+  sankeyDetailsSql,
+  sankeyTableId,
+  UNKNOWN_REPOSITORY_LABEL,
+} from '@/config/resources'
 import styles from './SankeyFlowDetails.module.scss'
 
 /** Facets summarized for a flow, in the order they are displayed. */
@@ -46,6 +50,11 @@ function parseMultiValue(raw: string | null): string[] {
     .split(',')
     .map(value => value.trim())
     .filter(Boolean)
+}
+
+/** The Sankey flow a dataset belongs to, matching the chart's own grouping. */
+function repositoryLabel(raw: string | null | undefined): string {
+  return raw?.trim() || UNKNOWN_REPOSITORY_LABEL
 }
 
 function summarizeRows(
@@ -134,7 +143,7 @@ export default function SankeyFlowDetails(props: SankeyFlowDetailsProps) {
   const queryRequest: QueryBundleRequest = useMemo(
     () => ({
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
-      entityId: sankeyDetailsTableId,
+      entityId: sankeyTableId,
       query: { sql: sankeyDetailsSql },
       partMask:
         SynapseConstants.BUNDLE_MASK_QUERY_RESULTS |
@@ -143,7 +152,7 @@ export default function SankeyFlowDetails(props: SankeyFlowDetailsProps) {
     [],
   )
 
-  const { data, isLoading, error } = useGetQueryResultBundle(queryRequest)
+  const { data, isLoading, error } = useGetFullTableQueryResults(queryRequest)
 
   const { columnIndex, rows } = useMemo(() => {
     const headers = data?.queryResult?.queryResults.headers ?? []
@@ -160,12 +169,11 @@ export default function SankeyFlowDetails(props: SankeyFlowDetailsProps) {
   const summary = useMemo(() => {
     const relevantRows = focusedCategory
       ? rows.filter(
-          row => row.values[columnIndex.repository] === focusedCategory,
+          row =>
+            repositoryLabel(row.values[columnIndex.repository]) ===
+            focusedCategory,
         )
-      : // The chart totals count(repository), which skips datasets with no
-        // repository, so the unfocused summary skips them too and the two
-        // figures agree.
-        rows.filter(row => row.values[columnIndex.repository]?.trim())
+      : rows
     return summarizeRows(relevantRows, columnIndex)
   }, [rows, columnIndex, focusedCategory])
 

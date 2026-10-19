@@ -14,7 +14,7 @@ import { ReactComponent as ContributeIcon } from '../assets/contribution.svg'
 import { ReactComponent as AgoraIcon } from '../assets/agora.svg'
 import { ReactComponent as ModelADIcon } from '../assets/modelAD.svg'
 import styles from './HomePage.module.scss'
-import { Box, Button, Stack } from '@mui/material'
+import { Box, Button } from '@mui/material'
 import { Link } from 'react-router'
 
 function HomePageInternal() {
@@ -113,7 +113,7 @@ function HomePageInternal() {
       </SectionLayout>
       <SectionLayout
         ContainerProps={{
-          sx: { marginBottom: '50px' },
+          sx: { marginBottom: '110px' },
         }}
         title="Data Analysis Platform Integrations"
         subtitle="Analyze your data in a trusted research environment (TRE), integrated with the knowledge portal ecosystem."
@@ -121,7 +121,11 @@ function HomePageInternal() {
       >
         <AdknowledgePlatformIntegrations />
       </SectionLayout>
-      <Stack className={styles.newsReleasesContainer}>
+      <SectionLayout
+        ContainerProps={{
+          sx: { marginBottom: '140px' },
+        }}
+      >
         <Box className={styles.newsReleasesContent}>
           <SectionLayout
             title="New Releases"
@@ -166,7 +170,7 @@ function HomePageInternal() {
             View All Releases
           </Button>
         </div>
-      </Stack>
+      </SectionLayout>
       <SectionLayout
         title="Research Ecosystem"
         subtitle="Grounded in truly open science and radical collaboration, the AD Knowledge Portal bridges data silos by integrating with a broad network of consortia and repositories. Each contributes unique data and expertise needed to drive discovery in Alzheimer's Disease research."

@@ -1,0 +1,402 @@
+import {
+  mockManagedACTAccessRequirement,
+  mockManagedACTAccessRequirementWikiPageKey,
+} from '@/mocks/accessRequirement/mockAccessRequirements'
+import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
+import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
+  AccessRequirementStatus,
+  RestrictableObjectType,
+  RestrictionLevel,
+  SubmissionState,
+} from '@sage-bionetworks/synapse-types'
+import { act, render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { SynapseClient, SynapseContextType } from '../../../index'
+import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
+import RequestableAccessRequirementItem, {
+  RequestableAccessRequirementItemProps,
+} from './RequestableAccessRequirementItem'
+import { formatDate } from '@/utils/functions/DateFormatter'
+
+vi.mock('@/utils/functions/DateFormatter', () => ({
+  formatDate: vi.fn(),
+}))
+
+async function renderComponent(
+  props: RequestableAccessRequirementItemProps,
+  wrapperProps?: Partial<SynapseContextType>,
+) {
+  let renderReturn
+  // We must await asynchronous events for our assertions to pass
+  // oxlint-disable-next-line @typescript-eslint/require-await
+  await act(async () => {
+    renderReturn = render(<RequestableAccessRequirementItem {...props} />, {
+      wrapper: createWrapper(wrapperProps),
+    })
+  })
+  return renderReturn
+}
+
+const mockGetAccessRequirementStatus = vi.spyOn(
+  SynapseClient,
+  'getAccessRequirementStatus',
+)
+
+const mockGetRestrictionInformation = vi.spyOn(
+  SynapseClient,
+  'getRestrictionInformation',
+)
+
+vi.spyOn(SynapseClient, 'getWikiPageKeyForAccessRequirement').mockResolvedValue(
+  mockManagedACTAccessRequirementWikiPageKey,
+)
+const mockFormatDate = vi.mocked(formatDate)
+
+const mockCancelSubmission = vi
+  .spyOn(SynapseClient, 'cancelDataAccessRequest')
+  .mockImplementation(submissionId =>
+    Promise.resolve({
+      submissionId: submissionId,
+      submittedBy: String(MOCK_USER_ID),
+      state: SubmissionState.CANCELLED,
+      modifiedOn: '2023-04-21T14:52:18+00:00',
+    }),
+  )
+
+vi.mock('../../Markdown/MarkdownSynapse', () => ({
+  __esModule: true,
+  default: vi.fn(),
+}))
+
+const mockRenderedMarkdown =
+  'These are the AR instructions presented to the user.'
+
+const mockMarkdownSynapse = vi.mocked(MarkdownSynapse)
+mockMarkdownSynapse.mockImplementation(
+  () =>
+    (
+      <div data-testid={'MarkdownSynapseContent'}>{mockRenderedMarkdown}</div>
+    ) as any,
+)
+const mockOnRequestAccess = vi.fn()
+const mockOnHide = vi.fn()
+
+const rejectedReason = 'You incorrectly filled out your IDU Statement.'
+
+const defaultProps: RequestableAccessRequirementItemProps = {
+  accessRequirement: mockManagedACTAccessRequirement,
+  onRequestAccess: mockOnRequestAccess,
+  onRejectTerms: mockOnHide,
+}
+
+const noSubmissionStatus: AccessRequirementStatus = {
+  accessRequirementId: String(mockManagedACTAccessRequirement.id),
+  concreteType:
+    'org.sagebionetworks.repo.model.dataaccess.ManagedACTAccessRequirementStatus',
+  isApproved: false,
+}
+
+const submittedStatus: AccessRequirementStatus = {
+  ...noSubmissionStatus,
+  isApproved: false,
+  currentSubmissionStatus: {
+    submissionId: '1234',
+    submittedBy: String(MOCK_USER_ID),
+    state: SubmissionState.SUBMITTED,
+    modifiedOn: '2023-04-21T14:52:18+00:00',
+  },
+}
+
+const cancelledStatus: AccessRequirementStatus = {
+  ...noSubmissionStatus,
+  isApproved: false,
+  currentSubmissionStatus: {
+    submissionId: '1234',
+    submittedBy: String(MOCK_USER_ID),
+    state: SubmissionState.CANCELLED,
+    modifiedOn: '2023-04-21T14:52:18+00:00',
+  },
+}
+
+const rejectedStatus = {
+  ...noSubmissionStatus,
+  isApproved: false,
+  currentSubmissionStatus: {
+    submissionId: '1234',
+    submittedBy: String(MOCK_USER_ID),
+    state: SubmissionState.REJECTED,
+    modifiedOn: '2023-04-21T14:52:18+00:00',
+    rejectedReason: rejectedReason,
+  },
+} satisfies AccessRequirementStatus
+
+const approvedStatus: AccessRequirementStatus = {
+  ...noSubmissionStatus,
+  isApproved: true,
+  currentSubmissionStatus: {
+    submissionId: '1234',
+    submittedBy: String(MOCK_USER_ID),
+    state: SubmissionState.APPROVED,
+    modifiedOn: '2023-04-21T14:52:18+00:00',
+  },
+}
+const revokedStatus: AccessRequirementStatus = {
+  ...noSubmissionStatus,
+  isApproved: false,
+  currentSubmissionStatus: {
+    submissionId: '1234',
+    submittedBy: String(MOCK_USER_ID),
+    state: SubmissionState.APPROVED,
+    modifiedOn: '2023-04-21T14:52:18+00:00',
+  },
+}
+
+const approvedWithoutSubmissionStatus: AccessRequirementStatus = {
+  ...noSubmissionStatus,
+  isApproved: true,
+  // No currentSubmissionStatus - this can happen when approval was granted
+  // through other means (back door direct ACT approval?)
+}
+
+async function testWikiToggle() {
+  expect(screen.queryByText(mockRenderedMarkdown)).not.toBeInTheDocument()
+
+  let toggle = await screen.findByRole('button', { name: 'View Terms' })
+  await userEvent.click(toggle)
+
+  await screen.findByText(mockRenderedMarkdown)
+  expect(mockMarkdownSynapse).toHaveBeenRenderedWithProps(
+    expect.objectContaining({
+      wikiId: mockManagedACTAccessRequirementWikiPageKey.wikiPageId,
+      ownerId: mockManagedACTAccessRequirementWikiPageKey.ownerObjectId,
+      objectType: mockManagedACTAccessRequirementWikiPageKey.ownerObjectType,
+    }),
+  )
+
+  toggle = await screen.findByRole('button', { name: 'Hide Terms' })
+  await userEvent.click(toggle)
+
+  await waitFor(() =>
+    expect(screen.queryByText(mockRenderedMarkdown)).not.toBeInTheDocument(),
+  )
+}
+
+async function testWikiShownWithoutToggle() {
+  await screen.findByText(mockRenderedMarkdown)
+  expect(mockMarkdownSynapse).toHaveBeenRenderedWithProps(
+    expect.objectContaining({
+      wikiId: mockManagedACTAccessRequirementWikiPageKey.wikiPageId,
+      ownerId: mockManagedACTAccessRequirementWikiPageKey.ownerObjectId,
+      objectType: mockManagedACTAccessRequirementWikiPageKey.ownerObjectType,
+    }),
+  )
+
+  expect(
+    screen.queryByRole('button', { name: /[View|Hide] Terms/ }),
+  ).not.toBeInTheDocument()
+}
+
+describe('RequestableAccessRequirementItem', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+  describe('Submission has not been created', () => {
+    beforeEach(async () => {
+      mockGetAccessRequirementStatus.mockResolvedValue(noSubmissionStatus)
+      await renderComponent(defaultProps)
+    })
+
+    it('Wiki is shown', async () => {
+      await testWikiShownWithoutToggle()
+    })
+
+    it('Can request access', async () => {
+      const button = await screen.findByRole('button', {
+        name: 'Request access',
+      })
+      await userEvent.click(button)
+      expect(mockOnRequestAccess).toHaveBeenCalled()
+    })
+
+    it('Hides the dialog when terms are not accepted', async () => {
+      const button = await screen.findByRole('button', {
+        name: 'I do not accept',
+      })
+      await userEvent.click(button)
+      expect(mockOnHide).toHaveBeenCalled()
+      expect(mockOnRequestAccess).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('Submission is APPROVED', () => {
+    beforeEach(async () => {
+      mockGetAccessRequirementStatus.mockResolvedValue(approvedStatus)
+      await renderComponent(defaultProps)
+    })
+
+    it('Request can be updated', async () => {
+      await screen.findByText('Your data access request has been approved.')
+      const button = await screen.findByRole('button', {
+        name: 'Update Request',
+      })
+      await userEvent.click(button)
+      expect(mockOnRequestAccess).toHaveBeenCalled()
+    })
+
+    it('Wiki is hidden and can be shown', async () => {
+      await testWikiToggle()
+    })
+  })
+
+  describe('Access is approved without active submission', () => {
+    beforeEach(async () => {
+      mockGetAccessRequirementStatus.mockResolvedValue(
+        approvedWithoutSubmissionStatus,
+      )
+      await renderComponent(defaultProps)
+    })
+
+    it('Shows approved message and complete status', async () => {
+      await screen.findByText('Your data access request has been approved.')
+      // Verify the status icon shows complete (green checkmark) not locked (yellow lock)
+      const checkmark = await screen.findByTestId(
+        'AccessApprovalCheckMark-COMPLETE',
+      )
+      expect(checkmark).toBeInTheDocument()
+    })
+
+    it('Request can be updated', async () => {
+      const button = await screen.findByRole('button', {
+        name: 'Update Request',
+      })
+      await userEvent.click(button)
+      expect(mockOnRequestAccess).toHaveBeenCalled()
+    })
+
+    it('Wiki is hidden and can be shown', async () => {
+      await testWikiToggle()
+    })
+  })
+
+  describe('Submission is SUBMITTED', () => {
+    beforeEach(async () => {
+      mockGetAccessRequirementStatus.mockResolvedValue(submittedStatus)
+      await renderComponent(defaultProps)
+    })
+
+    it('Request can be cancelled', async () => {
+      await screen.findByText('You have submitted a data access request.')
+      const button = await screen.findByRole('button', {
+        name: 'Cancel Request',
+      })
+      await userEvent.click(button)
+      expect(mockCancelSubmission).toHaveBeenCalledWith(
+        submittedStatus.currentSubmissionStatus!.submissionId,
+        MOCK_ACCESS_TOKEN,
+      )
+    })
+
+    it('Wiki is shown', async () => {
+      await testWikiShownWithoutToggle()
+    })
+  })
+  describe('Submission is REJECTED', () => {
+    beforeEach(async () => {
+      mockGetAccessRequirementStatus.mockResolvedValue(rejectedStatus)
+      await renderComponent(defaultProps)
+    })
+
+    it('Request can be updated', async () => {
+      await screen.findByText('Your data access request has been rejected.')
+      await screen.findByText(
+        rejectedStatus.currentSubmissionStatus.rejectedReason,
+      )
+      const button = await screen.findByRole('button', {
+        name: 'Update Request',
+      })
+      await userEvent.click(button)
+      expect(mockOnRequestAccess).toHaveBeenCalled()
+    })
+
+    it('Wiki is shown', async () => {
+      await testWikiShownWithoutToggle()
+    })
+  })
+  describe('Submission is CANCELLED', () => {
+    beforeEach(async () => {
+      mockGetAccessRequirementStatus.mockResolvedValue(cancelledStatus)
+      await renderComponent(defaultProps)
+    })
+
+    it('Request can be updated', async () => {
+      await screen.findByText('Your data access request has been canceled.')
+      const button = await screen.findByRole('button', {
+        name: 'Update Request',
+      })
+      await userEvent.click(button)
+      expect(mockOnRequestAccess).toHaveBeenCalled()
+    })
+
+    it('Wiki is shown', async () => {
+      await testWikiShownWithoutToggle()
+    })
+  })
+
+  describe('Submission is revoked', () => {
+    it('Request can be updated', async () => {
+      mockGetAccessRequirementStatus.mockResolvedValue(revokedStatus)
+      await renderComponent(defaultProps)
+
+      await screen.findByText('Your data access has been revoked.')
+      const button = await screen.findByRole('button', {
+        name: 'Update Request',
+      })
+      await userEvent.click(button)
+      expect(mockOnRequestAccess).toHaveBeenCalled()
+    })
+
+    it('Informs a user when their submission has expired', async () => {
+      mockFormatDate.mockReturnValue('2023-05-10')
+      mockGetAccessRequirementStatus.mockResolvedValue({
+        ...revokedStatus,
+        expiredOn: '2023-05-10T16:54:53.333Z',
+      })
+      await renderComponent(defaultProps)
+
+      await screen.findByText('Your data access has been revoked.')
+      await screen.findByText('Your access expired on 2023-05-10.')
+    })
+  })
+
+  describe('User is exempt from the access requirement', () => {
+    it('Informs the user that they are exempt from the access requirement', async () => {
+      mockGetAccessRequirementStatus.mockResolvedValue(noSubmissionStatus)
+      mockGetRestrictionInformation.mockResolvedValue({
+        restrictionDetails: [
+          {
+            accessRequirementId: mockManagedACTAccessRequirement.id,
+            isApproved: false,
+            isExempt: true,
+            isMet: true,
+          },
+        ],
+        objectId: 123,
+        restrictionLevel: RestrictionLevel.CONTROLLED_BY_ACT,
+        hasUnmetAccessRequirement: false,
+      })
+      await renderComponent({
+        ...defaultProps,
+        subjectId: 'syn123',
+        subjectType: RestrictableObjectType.ENTITY,
+      })
+
+      await screen.findByText(
+        'This data access requirement is fulfilled by your team membership and permissions.',
+      )
+      // User can still request access, if needed
+      await screen.findByRole('button', { name: 'Request access' })
+    })
+  })
+})

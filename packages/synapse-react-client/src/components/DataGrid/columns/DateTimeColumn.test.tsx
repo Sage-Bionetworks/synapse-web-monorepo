@@ -1,3 +1,4 @@
+import DatePicker from '@/components/DatePicker/DatePicker'
 import DateTimePicker from '@/components/DateTimePicker/DateTimePicker'
 import { render, screen } from '@testing-library/react'
 import dayjs, { Dayjs } from 'dayjs'
@@ -12,11 +13,26 @@ vi.mock('@/components/DateTimePicker/DateTimePicker', () => ({
   default: vi.fn(() => null),
 }))
 
-const mockDateTimePicker = vi.mocked(DateTimePicker)
+vi.mock('@/components/DatePicker/DatePicker', () => ({
+  default: vi.fn(() => null),
+}))
 
-function getLastRenderedOnChange(): (value: Dayjs | string | null) => void {
-  const lastCall = mockDateTimePicker.mock.calls.at(-1)!
+const mockDateTimePicker = vi.mocked(DateTimePicker)
+const mockDatePicker = vi.mocked(DatePicker)
+
+function getLastRenderedOnChange(
+  picker:
+    | typeof mockDateTimePicker
+    | typeof mockDatePicker = mockDateTimePicker,
+): (value: Dayjs | string | null) => void {
+  const lastCall = picker.mock.calls.at(-1)!
   return lastCall[0].onChange as (value: Dayjs | string | null) => void
+}
+
+function getCalendarDate(value: unknown, format = 'date'): string {
+  const result = interpretDateTimeCellValue(value, format)
+  expect(result.kind).toBe('date')
+  return (result as { date: Dayjs }).date.format('YYYY-MM-DD')
 }
 
 function renderCell(props: Partial<DateTimeCellProps>) {
@@ -86,6 +102,42 @@ describe('DateTimeCell', () => {
     })
   })
 
+  describe('a column whose schema format is "date"', () => {
+    it('renders a date-only picker', () => {
+      renderCell({ rowData: '2026-12-25', colType: 'string', format: 'date' })
+
+      expect(mockDatePicker).toHaveBeenCalled()
+      expect(mockDateTimePicker).not.toHaveBeenCalled()
+    })
+
+    it('saves an RFC 3339 full-date when colType is "string"', () => {
+      const setRowData = vi.fn()
+      renderCell({ colType: 'string', format: 'date', setRowData })
+
+      getLastRenderedOnChange(mockDatePicker)(dayjs('2026-12-25'))
+
+      expect(setRowData).toHaveBeenCalledWith('2026-12-25')
+    })
+
+    it('saves UTC midnight of the selected day when colType is "integer"', () => {
+      const setRowData = vi.fn()
+      renderCell({ colType: 'integer', format: 'date', setRowData })
+
+      getLastRenderedOnChange(mockDatePicker)(dayjs('2026-12-25'))
+
+      expect(setRowData).toHaveBeenCalledWith(Date.UTC(2026, 11, 25))
+    })
+
+    it('calls setRowData(null) when the value is cleared', () => {
+      const setRowData = vi.fn()
+      renderCell({ colType: 'string', format: 'date', setRowData })
+
+      getLastRenderedOnChange(mockDatePicker)(null)
+
+      expect(setRowData).toHaveBeenCalledWith(null)
+    })
+  })
+
   describe('value prop passed to DateTimePicker', () => {
     it('converts a numeric rowData to a Dayjs object for display', () => {
       const timestamp = 1798761600000
@@ -103,14 +155,18 @@ describe('DateTimeCell', () => {
       expect(value).toBeNull()
     })
 
-    it('reads epoch milliseconds stored as a string for a numeric colType', () => {
-      // dayjs would otherwise read "1705314600000" as a year and silently
-      // display a date in 1707.
-      renderCell({ rowData: '1705314600000', colType: 'integer' })
+    // dayjs would otherwise read "1705314600000" as a year and silently display
+    // a date in 1707. A string column is no less likely to hold millis than a
+    // numeric one, since the schema type constrains neither import nor an agent.
+    it.each(['integer', 'string'])(
+      'reads epoch milliseconds stored as a string when colType is "%s"',
+      colType => {
+        renderCell({ rowData: '1705314600000', colType })
 
-      const { value } = mockDateTimePicker.mock.calls[0][0]
-      expect((value as Dayjs).valueOf()).toBe(1705314600000)
-    })
+        const { value } = mockDateTimePicker.mock.calls[0][0]
+        expect((value as Dayjs).valueOf()).toBe(1705314600000)
+      },
+    )
   })
 
   // Regression: an unparseable value rendered the picker's field as blank, so
@@ -142,33 +198,69 @@ describe('DateTimeCell', () => {
 
 describe('interpretDateTimeCellValue', () => {
   it.each([
-    ['null', null, undefined],
-    ['undefined', undefined, undefined],
-    ['an empty string', '', undefined],
-    ['a whitespace-only string', '   ', undefined],
-  ])('reports %s as empty', (_label, rowData, colType) => {
-    expect(interpretDateTimeCellValue(rowData, colType)).toEqual({
+    ['null', null],
+    ['undefined', undefined],
+    ['an empty string', ''],
+    ['a whitespace-only string', '   '],
+  ])('reports %s as empty', (_label, rowData) => {
+    expect(interpretDateTimeCellValue(rowData)).toEqual({
       kind: 'empty',
     })
   })
 
   it.each([
-    ['an ISO string', '2024-01-15T10:30:00.000Z', undefined, 1705314600000],
-    ['epoch millis as a number', 1705314600000, 'integer', 1705314600000],
-    ['epoch millis as a string', '1705314600000', 'number', 1705314600000],
-    ['a Date', new Date(1705314600000), undefined, 1705314600000],
-  ])('parses %s', (_label, rowData, colType, expected) => {
-    const result = interpretDateTimeCellValue(rowData, colType)
+    ['an ISO string', '2024-01-15T10:30:00.000Z', 1705314600000],
+    ['epoch millis as a number', 1705314600000, 1705314600000],
+    ['epoch millis as a string', '1705314600000', 1705314600000],
+    ['a Date', new Date(1705314600000), 1705314600000],
+  ])('parses %s', (_label, rowData, expected) => {
+    const result = interpretDateTimeCellValue(rowData)
     expect(result.kind).toBe('date')
     expect((result as { date: Dayjs }).date.valueOf()).toBe(expected)
   })
 
-  it('parses an ISO string even when the schema type is numeric', () => {
-    const result = interpretDateTimeCellValue(
-      '2024-01-15T10:30:00.000Z',
-      'integer',
-    )
-    expect(result.kind).toBe('date')
+  // Only a numeric string too long to be a date notation is read as a
+  // timestamp, so shorter ones are still parsed as the dates they spell.
+  it.each([
+    ['a year', '2026', '2026-01-01'],
+    ['a compact full-date', '20261225', '2026-12-25'],
+  ])(
+    'parses %s rather than reading it as epoch millis',
+    (_label, rowData, expected) => {
+      expect(getCalendarDate(rowData, 'date-time')).toBe(expected)
+    },
+  )
+
+  // A `date` format column holds a calendar date rather than an instant, so the
+  // day it names must survive being read in a browser timezone that is offset
+  // from the one it was written in.
+  describe('a format of "date"', () => {
+    it('reads a full-date string as the day it names', () => {
+      expect(getCalendarDate('2026-12-25')).toBe('2026-12-25')
+    })
+
+    it('does not shift the day of a UTC-designated ISO string', () => {
+      expect(getCalendarDate('2026-12-25T00:00:00.000Z')).toBe('2026-12-25')
+    })
+
+    it('reads epoch millis as the UTC day', () => {
+      expect(getCalendarDate(Date.UTC(2026, 11, 25))).toBe('2026-12-25')
+    })
+
+    it('reads epoch millis stored as a string as the UTC day', () => {
+      expect(getCalendarDate(String(Date.UTC(2026, 11, 25)))).toBe('2026-12-25')
+    })
+
+    it('reads a locale date string as the day it names', () => {
+      expect(getCalendarDate('12/25/2026')).toBe('2026-12-25')
+    })
+
+    it('still reports an unparseable value as unparseable', () => {
+      expect(interpretDateTimeCellValue('not-a-date', 'date')).toEqual({
+        kind: 'unparseable',
+        text: 'not-a-date',
+      })
+    })
   })
 
   it.each([

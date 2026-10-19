@@ -6,6 +6,9 @@ interface ImportMetaEnv {
   readonly VITE_ARIDHIA_GATEWAY_URL: string
   readonly VITE_ARIDHIA_SUBJECT_TOKEN_ISSUER: string
   readonly VITE_ARIDHIA_FAIR_PORTAL_URL: string
+  readonly VITE_ARIDHIA_DEV_GATEWAY_URL: string
+  readonly VITE_ARIDHIA_DEV_SUBJECT_TOKEN_ISSUER: string
+  readonly VITE_ARIDHIA_DEV_FAIR_PORTAL_URL: string
 }
 
 interface ImportMeta {

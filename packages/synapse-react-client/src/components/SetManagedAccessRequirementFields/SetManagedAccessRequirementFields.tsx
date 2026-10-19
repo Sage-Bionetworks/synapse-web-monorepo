@@ -1,61 +1,34 @@
 import {
   useGetAccessRequirements,
-  useListEDucTemplates,
   useUpdateAccessRequirement,
 } from '@/synapse-queries'
 import { DAY_IN_MS } from '@/utils/SynapseConstants'
 import {
   Alert,
-  Autocomplete,
   Box,
   Checkbox,
   FormControlLabel,
-  TextField,
   Typography,
 } from '@mui/material'
-import { EDucTemplate } from '@sage-bionetworks/synapse-client'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
-import {
-  FileHandleAssociateType,
-  FileHandleAssociation,
-  FileUploadComplete,
-  ManagedACTAccessRequirement,
-  UploadCallbackResp,
-} from '@sage-bionetworks/synapse-types'
+import { RequestableAccessRequirement } from '@/utils/types/RequestableAccessRequirement'
+import { MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE } from '@sage-bionetworks/synapse-types'
 import {
   ForwardedRef,
   forwardRef,
   useEffect,
   useImperativeHandle,
-  useMemo,
   useState,
 } from 'react'
-import { UploadDocumentField } from '../AccessRequirementList/ManagedACTAccessRequirementRequestFlow/UploadDocumentField'
-import { SynapseErrorBoundary } from '../error/ErrorBanner'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import {
   AccessorRequirements,
   AccessRequirementWikiInstructions,
 } from '../SetBasicAccessRequirementFields'
-
-export const DUC_TEMPLATE_UPLOAD_ERROR =
-  'There was an error uploading the DUC template. '
-
-export const getValidExpirationPeriodOrErrorMessage = (
-  expirationPeriodDays: string,
-) => {
-  if (expirationPeriodDays === '') return 0
-
-  const msgPrefix = 'Please enter a valid expiration period (in days): '
-  if (/^[-]?\d+$/.test(expirationPeriodDays)) {
-    const num = Number(expirationPeriodDays)
-    if (num < 0) {
-      return `${msgPrefix}If expiration period is set, then it must be greater than 0.`
-    }
-    return num * DAY_IN_MS
-  }
-  return `${msgPrefix}For input string: "${expirationPeriodDays}"`
-}
+import { DataUseCertificateFields } from './DataUseCertificateFields'
+import {
+  ExpirationPeriodField,
+  getValidExpirationPeriodOrErrorMessage,
+} from './ExpirationPeriodField'
 
 export type SetManagedAccessRequirementFieldsHandle = {
   /* Allow the parent component to trigger saving the AR, so this may be embedded in an arbitrary modal. */
@@ -78,9 +51,11 @@ export const SetManagedAccessRequirementFields = forwardRef(
     const { accessRequirementId, onSave, onError } = props
 
     const { data: accessRequirement, error: getArError } =
-      useGetAccessRequirements<ManagedACTAccessRequirement>(
+      useGetAccessRequirements<RequestableAccessRequirement>(
         accessRequirementId,
-        { staleTime: Infinity },
+        {
+          staleTime: Infinity,
+        },
       )
     useEffect(() => {
       if (accessRequirement) {
@@ -91,78 +66,19 @@ export const SetManagedAccessRequirementFields = forwardRef(
       }
     }, [accessRequirement])
 
-    const [uploadDucTemplateError, setUploadDucTemplateError] = useState<
-      string | null
-    >(null)
     const [expirationPeriodError, setExpirationPeriodError] = useState<
       string | null
     >(null)
 
     const [updatedAr, setUpdatedAr] =
-      useState<ManagedACTAccessRequirement | null>(null)
+      useState<RequestableAccessRequirement | null>(null)
     const [expirationPeriodDays, setExpirationPeriodDays] = useState<string>('')
-
-    const ducTemplateFileHandleAssociation = useMemo(() => {
-      if (updatedAr?.ducTemplateFileHandleId) {
-        const ducTemplateFileHandleAssociation: FileHandleAssociation = {
-          fileHandleId: updatedAr.ducTemplateFileHandleId,
-          associateObjectType:
-            FileHandleAssociateType.AccessRequirementAttachment,
-          associateObjectId: updatedAr.id.toString(),
-        }
-        return ducTemplateFileHandleAssociation
-      }
-      return undefined
-    }, [updatedAr?.ducTemplateFileHandleId, updatedAr?.id])
-
-    const {
-      data: eDucTemplateData,
-      isLoading: isLoadingEDucTemplates,
-      hasNextPage: hasNextEDucTemplatePage,
-      fetchNextPage: fetchNextEDucTemplatePage,
-    } = useListEDucTemplates()
-    // Auto-fetch all pages so the dropdown always shows the complete template list.
-    useEffect(() => {
-      if (hasNextEDucTemplatePage) {
-        void fetchNextEDucTemplatePage()
-      }
-    }, [hasNextEDucTemplatePage, fetchNextEDucTemplatePage])
-    const eDucTemplates = useMemo(
-      () => eDucTemplateData?.pages.flatMap(page => page.results ?? []) ?? [],
-      [eDucTemplateData],
-    )
-    const selectedEDucTemplate = useMemo(
-      () =>
-        eDucTemplates.find(
-          template => template.templateId === updatedAr?.eDucTemplateId,
-        ) ?? null,
-      [eDucTemplates, updatedAr?.eDucTemplateId],
-    )
-
-    const uploadDucTemplateCallback = (data: UploadCallbackResp) => {
-      if (data.resp && data.success && updatedAr) {
-        setUploadDucTemplateError(null)
-        // Files are uploaded and synced with the server immediately
-        const uploadResponse: FileUploadComplete = data.resp
-        setUpdatedAr({
-          ...updatedAr,
-          ducTemplateFileHandleId: uploadResponse.fileHandleId,
-          eDucTemplateId: undefined, // mutually exclusive with file upload
-        })
-      } else if (!data.success && data.error) {
-        setUploadDucTemplateError(
-          `${DUC_TEMPLATE_UPLOAD_ERROR} ${
-            (data.error as SynapseClientError).reason
-          }`,
-        )
-      }
-    }
 
     const {
       mutate: updateAccessRequirement,
       isPending: isUpdatingAccessRequirement,
       error: updateArError,
-    } = useUpdateAccessRequirement<ManagedACTAccessRequirement>({
+    } = useUpdateAccessRequirement<RequestableAccessRequirement>({
       onSuccess: () => onSave(),
       onError: () => onError(),
     })
@@ -195,6 +111,12 @@ export const SetManagedAccessRequirementFields = forwardRef(
       }
     }
 
+    // A JsonSchemaAccessRequirement collects its remaining requirements through its form template,
+    // so IRB approval, other documents, and Intended Data Use only apply to a Managed ACT AR.
+    const isManagedAr =
+      updatedAr.concreteType ===
+      MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
+
     return (
       <>
         <AccessRequirementWikiInstructions accessRequirement={updatedAr} />
@@ -219,7 +141,7 @@ export const SetManagedAccessRequirementFields = forwardRef(
             <AccessorRequirements
               accessRequirement={updatedAr}
               onChange={updatedAr =>
-                setUpdatedAr(updatedAr as ManagedACTAccessRequirement)
+                setUpdatedAr(updatedAr as RequestableAccessRequirement)
               }
             />
             <Box
@@ -227,107 +149,44 @@ export const SetManagedAccessRequirementFields = forwardRef(
                 mb: 2,
               }}
             >
-              <Typography
-                variant="body1"
-                sx={{
-                  fontWeight: 700,
-                }}
-              >
-                DUC
-              </Typography>
-              <FormControlLabel
-                control={<Checkbox />}
-                label="DUC is required."
-                checked={updatedAr.isDUCRequired}
-                onChange={(_event, checked: boolean) =>
-                  setUpdatedAr({
-                    ...updatedAr,
-                    isDUCRequired: checked,
-                  })
-                }
+              <DataUseCertificateFields
+                accessRequirement={updatedAr}
+                isLoading={isUpdatingAccessRequirement}
+                onChange={changes => setUpdatedAr({ ...updatedAr, ...changes })}
               />
-              <SynapseErrorBoundary>
-                <UploadDocumentField
-                  id="duc"
-                  isLoading={isUpdatingAccessRequirement}
-                  disabled={!updatedAr.isDUCRequired}
-                  uploadCallback={resp => uploadDucTemplateCallback(resp)}
-                  documentName="Template DUC"
-                  fileHandleAssociations={
-                    ducTemplateFileHandleAssociation
-                      ? [ducTemplateFileHandleAssociation]
-                      : undefined
-                  }
-                  isMultiFileUpload={false}
-                  uploadBtnVariant="contained"
-                />
-                {uploadDucTemplateError && (
-                  <Alert severity="error" sx={{ marginTop: 2 }}>
-                    {uploadDucTemplateError}
-                  </Alert>
-                )}
-              </SynapseErrorBoundary>
-              <Box sx={{ mt: 2 }}>
-                <Autocomplete<EDucTemplate>
-                  id="eDucTemplate"
-                  options={eDucTemplates}
-                  loading={isLoadingEDucTemplates}
-                  disabled={!updatedAr.isDUCRequired}
-                  value={selectedEDucTemplate}
-                  onChange={(_event, template) =>
-                    setUpdatedAr({
-                      ...updatedAr,
-                      eDucTemplateId: template?.templateId,
-                    })
-                  }
-                  getOptionLabel={template => template.name ?? ''}
-                  isOptionEqualToValue={(option, value) =>
-                    option.templateId === value.templateId
-                  }
-                  renderInput={params => (
-                    <TextField
-                      {...params}
-                      label="eDUC template (electronic signing)"
-                      helperText="Optional. Select a DocuSign template to enable the eDUC signing flow for this Access Requirement."
-                    />
-                  )}
-                />
-              </Box>
-              <FormControlLabel
-                label="IRB approval is required."
-                checked={updatedAr.isIRBApprovalRequired}
-                control={<Checkbox />}
-                onChange={(_event, checked: boolean) =>
-                  setUpdatedAr({
-                    ...updatedAr,
-                    isIRBApprovalRequired: checked,
-                  })
-                }
-                sx={{ ml: 0 }}
-              />
-              <FormControlLabel
-                control={<Checkbox />}
-                label="Other documents are required."
-                checked={updatedAr.areOtherAttachmentsRequired}
-                onChange={(_event, checked: boolean) =>
-                  setUpdatedAr({
-                    ...updatedAr,
-                    areOtherAttachmentsRequired: checked,
-                  })
-                }
-              />
-              <TextField
-                id="expirationPeriod"
-                name="expirationPeriod"
-                label="Expiration period (days)"
-                value={expirationPeriodDays}
-                error={Boolean(expirationPeriodError)}
-                helperText={expirationPeriodError}
-                sx={{ mt: 1 }}
-                fullWidth
-                onChange={event => {
+              {isManagedAr && (
+                <>
+                  <FormControlLabel
+                    label="IRB approval is required."
+                    checked={updatedAr.isIRBApprovalRequired}
+                    control={<Checkbox />}
+                    onChange={(_event, checked: boolean) =>
+                      setUpdatedAr({
+                        ...updatedAr,
+                        isIRBApprovalRequired: checked,
+                      })
+                    }
+                    sx={{ ml: 0 }}
+                  />
+                  <FormControlLabel
+                    control={<Checkbox />}
+                    label="Other documents are required."
+                    checked={updatedAr.areOtherAttachmentsRequired}
+                    onChange={(_event, checked: boolean) =>
+                      setUpdatedAr({
+                        ...updatedAr,
+                        areOtherAttachmentsRequired: checked,
+                      })
+                    }
+                  />
+                </>
+              )}
+              <ExpirationPeriodField
+                days={expirationPeriodDays}
+                error={expirationPeriodError}
+                onChange={days => {
                   setExpirationPeriodError(null)
-                  setExpirationPeriodDays(event.target.value)
+                  setExpirationPeriodDays(days)
                 }}
                 onBlur={() => {
                   const expirationPeriodOrErrorMessage =
@@ -337,43 +196,45 @@ export const SetManagedAccessRequirementFields = forwardRef(
                   }
                 }}
               />
-              <Box
-                sx={{
-                  mt: 1,
-                }}
-              >
-                <FormControlLabel
-                  control={<Checkbox />}
-                  label="Intended Data Use statement is required."
-                  checked={updatedAr.isIDURequired}
-                  onChange={(_event, checked: boolean) => {
-                    if (checked) {
+              {isManagedAr && (
+                <Box
+                  sx={{
+                    mt: 1,
+                  }}
+                >
+                  <FormControlLabel
+                    control={<Checkbox />}
+                    label="Intended Data Use statement is required."
+                    checked={updatedAr.isIDURequired}
+                    onChange={(_event, checked: boolean) => {
+                      if (checked) {
+                        setUpdatedAr({
+                          ...updatedAr,
+                          isIDURequired: true,
+                        })
+                      } else {
+                        setUpdatedAr({
+                          ...updatedAr,
+                          isIDURequired: false,
+                          isIDUPublic: false,
+                        })
+                      }
+                    }}
+                  />
+                  <FormControlLabel
+                    control={<Checkbox />}
+                    label="Intended Data Use statements will be publicly available."
+                    checked={updatedAr.isIDUPublic}
+                    disabled={!updatedAr.isIDURequired}
+                    onChange={(_event, checked: boolean) =>
                       setUpdatedAr({
                         ...updatedAr,
-                        isIDURequired: true,
-                      })
-                    } else {
-                      setUpdatedAr({
-                        ...updatedAr,
-                        isIDURequired: false,
-                        isIDUPublic: false,
+                        isIDUPublic: checked,
                       })
                     }
-                  }}
-                />
-                <FormControlLabel
-                  control={<Checkbox />}
-                  label="Intended Data Use statements will be publicly available."
-                  checked={updatedAr.isIDUPublic}
-                  disabled={!updatedAr.isIDURequired}
-                  onChange={(_event, checked: boolean) =>
-                    setUpdatedAr({
-                      ...updatedAr,
-                      isIDUPublic: checked,
-                    })
-                  }
-                />
-              </Box>
+                  />
+                </Box>
+              )}
             </Box>
           </Box>
         </Box>

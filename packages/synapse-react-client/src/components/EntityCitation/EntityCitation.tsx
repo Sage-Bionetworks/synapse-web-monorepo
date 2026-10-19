@@ -9,7 +9,7 @@ import { useRef, useState } from 'react'
 import { useGetEntityDoiAssociation } from './EntityCitationUtils'
 import DropdownSelect from '../DropdownSelect'
 
-const CITATION_BUTTON_PADDING = '10px 12px'
+const CITATION_BUTTON_PADDING = '8px'
 
 export type EntityCitationProps = {
   projectId: string
@@ -127,6 +127,7 @@ const EntityCitation = ({
           options={options}
           anchorRef={citationButtonRef}
           sx={{
+            height: '28px',
             width: { xs: '100%', sm: 'initial' },
             '& .MuiButtonGroup-firstButton': {
               borderTopLeftRadius: '6px',
@@ -136,6 +137,9 @@ const EntityCitation = ({
             '& .MuiButtonGroup-lastButton': {
               borderTopRightRadius: '6px',
               borderBottomRightRadius: '6px',
+              '& svg': {
+                fontSize: '16px',
+              },
             },
             '& .MuiButton-root': {
               fontWeight: 540,
@@ -166,9 +170,10 @@ const EntityCitation = ({
             borderRadius: '6px',
             fontWeight: 540,
             padding: CITATION_BUTTON_PADDING,
+            height: '28px',
           }}
           variant="outlined"
-          startIcon={<DoubleQuotes width={18} height={18} />}
+          startIcon={<DoubleQuotes width={16} height={16} />}
         >
           {buttonText}
         </Button>

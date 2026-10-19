@@ -35,11 +35,14 @@
       "optional": true
     }
   },
+  "dependencies": {
+    "@juggle/resize-observer": "^3.4.0"
+  },
   "devDependencies": {
     "@rolldown/plugin-babel": "^0.2.3",
     "@svgr/plugin-jsx": "^8.1.0",
     "@vitejs/plugin-react": "^6.0.2",
-    "svgo": "^3.3.4",
+    "svgo": "^3.3.5",
     "typescript": "6.0.3",
     "vite": "^8.0.16",
     "vite-plugin-dts": "^4.5.4",
@@ -48,6 +51,6 @@
     "vite-plugin-lib-inject-css": "^2.2.2",
     "vite-plugin-node-polyfills": "^0.28.0",
     "vite-plugin-svgr": "^5.2.0",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.11"
   }
 }

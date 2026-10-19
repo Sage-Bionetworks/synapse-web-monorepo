@@ -26,6 +26,7 @@ import {
   OPEN_CURATOR_UNAUTHORIZED_ERROR_MESSAGE,
 } from '../utils/constants'
 import type { UseGridSessionForCurationTaskResult } from './useGridSessionForCurationTask'
+import useMarkCurationTaskInProgress from './useMarkCurationTaskInProgress'
 import useOpenCuratorFromTaskButton from './useOpenCuratorButton'
 
 vi.mock('./useGridSessionForCurationTask_legacy', () => ({
@@ -33,6 +34,10 @@ vi.mock('./useGridSessionForCurationTask_legacy', () => ({
 }))
 
 vi.mock('./useGridSessionForCurationTask', () => ({
+  default: vi.fn(),
+}))
+
+vi.mock('./useMarkCurationTaskInProgress', () => ({
   default: vi.fn(),
 }))
 
@@ -55,6 +60,9 @@ const mockUseGridSessionForCurationTask = vi.mocked(
 )
 const mockGetLinkToGridSession = vi.mocked(getLinkToGridSession)
 const mockUseGetEntityPermissions = vi.mocked(useGetEntityPermissions)
+const mockUseMarkCurationTaskInProgress = vi.mocked(
+  useMarkCurationTaskInProgress,
+)
 
 type UseGridForTaskLegacyMutationResult = UseMutationResult<
   GridSession,
@@ -72,6 +80,7 @@ const mockLegacyMutateAsync =
   vi.fn<UseGridForTaskLegacyMutationResult['mutateAsync']>()
 const mockTaskLinkedMutateAsync =
   vi.fn<UseGridForTaskMutationResult['mutateAsync']>()
+const mockMarkInProgressMutateAsync = vi.fn()
 
 const createLegacyMutationResult = (
   overrides: Partial<UseGridForTaskLegacyMutationResult> = {},
@@ -143,6 +152,10 @@ beforeEach(() => {
   mockUseGridSessionForCurationTask.mockReturnValue(
     createTaskLinkedMutationResult(),
   )
+  mockMarkInProgressMutateAsync.mockResolvedValue(undefined)
+  mockUseMarkCurationTaskInProgress.mockReturnValue({
+    mutateAsync: mockMarkInProgressMutateAsync,
+  } as unknown as ReturnType<typeof useMarkCurationTaskInProgress>)
   mockUseGetEntityPermissions.mockReturnValue(createPermissionsQueryResult())
   mockGetLinkToGridSession.mockReturnValue('mock-grid-url')
 })
@@ -177,6 +190,9 @@ describe('useOpenCuratorFromTaskButton', () => {
           'https://example.org/grid',
           '_blank',
           'noopener',
+        )
+        expect(mockMarkInProgressMutateAsync).toHaveBeenCalledWith(
+          MOCK_CURATION_TASK_ID,
         )
       })
       windowOpenSpy.mockRestore()
@@ -290,6 +306,9 @@ describe('useOpenCuratorFromTaskButton', () => {
           '_blank',
           'noopener',
         )
+        expect(mockMarkInProgressMutateAsync).toHaveBeenCalledWith(
+          MOCK_CURATION_TASK_ID,
+        )
       })
       windowOpenSpy.mockRestore()
     })
@@ -367,6 +386,66 @@ describe('useOpenCuratorFromTaskButton', () => {
       )
 
       expect(result.current.isPending).toBe(true)
+    })
+  })
+
+  describe('marking the task in progress', () => {
+    it('does not mark the task in progress when the grid session could not be opened', async () => {
+      const consoleErrorSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {})
+      mockLegacyMutateAsync.mockRejectedValue(new Error('Failed'))
+
+      const { result } = renderHook(() =>
+        useOpenCuratorFromTaskButton(mockTaskBundleNoAuthMode),
+      )
+
+      act(() => {
+        result.current.onClick()
+      })
+
+      await waitFor(() => {
+        expect(mockDisplayToast).toHaveBeenCalled()
+      })
+      expect(mockMarkInProgressMutateAsync).not.toHaveBeenCalled()
+
+      consoleErrorSpy.mockRestore()
+    })
+
+    it('logs but does not surface a failure to mark the task in progress, since Curator did open', async () => {
+      const consoleErrorSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {})
+      const windowOpenSpy = vi
+        .spyOn(window, 'open')
+        .mockReturnValue(null as unknown as Window)
+      mockMarkInProgressMutateAsync.mockRejectedValue(
+        new SynapseClientError(
+          403,
+          'Forbidden',
+          expect.getState().currentTestName!,
+        ),
+      )
+
+      const { result } = renderHook(() =>
+        useOpenCuratorFromTaskButton(mockTaskBundleNoAuthMode),
+      )
+
+      act(() => {
+        result.current.onClick()
+      })
+
+      await waitFor(() => {
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          'Failed to mark curation task as in progress',
+          expect.any(Error),
+        )
+      })
+      expect(windowOpenSpy).toHaveBeenCalled()
+      expect(mockDisplayToast).not.toHaveBeenCalled()
+
+      consoleErrorSpy.mockRestore()
+      windowOpenSpy.mockRestore()
     })
   })
 

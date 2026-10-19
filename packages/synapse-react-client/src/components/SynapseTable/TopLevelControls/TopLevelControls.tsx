@@ -38,6 +38,13 @@ import { SEND_TO_ANALYSIS_PLATFORM_SIGN_IN_MESSAGE } from '../SynapseTableUtils'
 const SEND_TO_ANALYSIS_PLATFORM_BUTTON_ID =
   'SendToAnalysisPlatformTopLevelControlButton'
 
+const FILTER_TOGGLE_BUTTON_SX = {
+  ml: 2,
+  fontWeight: 400,
+  fontSize: '14px',
+  textDecoration: 'none !important',
+} as const
+
 export type TopLevelControlsProps = {
   name?: string
   hideDownload?: boolean
@@ -49,6 +56,12 @@ export type TopLevelControlsProps = {
   hideFacetFilterControl?: boolean
   hideQueryCount?: boolean
   hideSqlEditorControl?: boolean
+  /** When true, shows a `Show / Hide Query Builder` toggle. */
+  showQueryBuilderControl?: boolean
+  /** Current QB visibility, driven by the parent. Required when `showQueryBuilderControl` is true. */
+  showQueryBuilder?: boolean
+  /** Callback invoked when the QB toggle is clicked. Required when `showQueryBuilderControl` is true. */
+  onToggleQueryBuilder?: () => void
   customControls?: CustomControl[]
   showColumnSelection?: boolean
   cavaticaConnectAccountURL?: string
@@ -94,6 +107,9 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
     hideFacetFilterControl = false,
     hideQueryCount = false,
     hideSqlEditorControl = true,
+    showQueryBuilderControl = false,
+    showQueryBuilder = false,
+    onToggleQueryBuilder,
     customControls,
     cavaticaConnectAccountURL,
     remount,
@@ -192,14 +208,24 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
                   wrap={false}
                 />
               }
-              sx={{
-                ml: 2,
-                fontWeight: 400,
-                fontSize: '14px',
-                textDecoration: 'none !important',
-              }}
+              sx={FILTER_TOGGLE_BUTTON_SX}
             >
               {showFacetFilter ? 'Hide' : 'Show'} filters
+            </Button>
+          )}
+          {showQueryBuilderControl && onToggleQueryBuilder && (
+            <Button
+              variant={'text'}
+              onClick={onToggleQueryBuilder}
+              startIcon={
+                <IconSvg
+                  icon={showQueryBuilder ? 'close' : 'filter'}
+                  wrap={false}
+                />
+              }
+              sx={FILTER_TOGGLE_BUTTON_SX}
+            >
+              {showQueryBuilder ? 'Hide' : 'Show'} Query Builder
             </Button>
           )}
         </div>

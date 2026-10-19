@@ -1,0 +1,184 @@
+/**
+ * Column-kind classification and operator availability per kind. The QB uses
+ * this both to populate the operator picker dropdown and to decide what shape
+ * of value input to render.
+ */
+import {
+  FacetColumnResult,
+  FacetColumnResultValues,
+} from '@sage-bionetworks/synapse-types'
+import { parseSynId } from '../../utils/functions/RegularExpressions'
+import {
+  FRIENDLY_VALUE_NOT_SET,
+  VALUE_NOT_SET,
+} from '../../utils/SynapseConstants'
+import { QBConditionOp } from './QueryBuilderTypes'
+
+/** Narrows a facet result to the enumerated-values variant the QB can render. */
+export function isFacetColumnResultValues(
+  facet: FacetColumnResult,
+): facet is FacetColumnResultValues {
+  return (
+    facet.concreteType ===
+    'org.sagebionetworks.repo.model.table.FacetColumnResultValues'
+  )
+}
+
+/** Categorization of columns for the QB UI. Not a synapse-types concept. */
+export type QBColumnKind =
+  | 'enum'
+  | 'list'
+  | 'range'
+  | 'boolean'
+  | 'text'
+  | 'unknown'
+
+/**
+ * Classify a column into a QB kind based on its `ColumnTypeEnum` string and
+ * whether the column has a facet in the query result. `hasFacet` distinguishes
+ * a faceted single-value column (`enum`) from a plain single-value column
+ * (`text`).
+ */
+export function classifyColumn(
+  columnType: string | null,
+  hasFacet: boolean,
+): QBColumnKind {
+  // `_LIST` columns keep the `list` kind so `is_all_of` remains available.
+  if (columnType?.endsWith('_LIST')) return 'list'
+  // Any faceted column becomes an enum picker regardless of the raw column
+  // type (even when the type is unknown, e.g. when the QB tree was hydrated
+  // from `selectedFacets` without column-model context).
+  if (hasFacet) return 'enum'
+  if (columnType == null) return 'unknown'
+  switch (columnType) {
+    case 'BOOLEAN':
+      return 'boolean'
+    case 'INTEGER':
+    case 'DOUBLE':
+    case 'DATE':
+    case 'DATE_TIME':
+      return 'range'
+    case 'STRING':
+    case 'LARGETEXT':
+    case 'LINK':
+    case 'MEDIUMTEXT':
+    case 'USERID':
+    case 'ENTITYID':
+    case 'EVALUATIONID':
+    case 'SUBMISSIONID':
+      return 'text'
+    default:
+      return 'text'
+  }
+}
+
+/**
+ * Ordered list of operators offered for a given column kind. Order controls
+ * the operator picker dropdown ordering.
+ */
+export function availableOpsForKind(kind: QBColumnKind): QBConditionOp[] {
+  switch (kind) {
+    case 'enum':
+      return ['is_any_of', 'has_value', 'no_value']
+    case 'list':
+      return ['is_any_of', 'is_all_of', 'has_value', 'no_value']
+    case 'range':
+      return [
+        'between',
+        'gt',
+        'gte',
+        'lt',
+        'lte',
+        'equal',
+        'not_equal',
+        'has_value',
+        'no_value',
+      ]
+    case 'boolean':
+      return ['equal', 'has_value', 'no_value']
+    case 'text':
+      return [
+        'contains',
+        'starts_with',
+        'ends_with',
+        'is_exactly',
+        'has_value',
+        'no_value',
+      ]
+    case 'unknown':
+      // No column picked yet; offer nothing until one is selected.
+      return []
+    default:
+      kind satisfies never
+      return []
+  }
+}
+
+/** Human-readable label for an operator, shown in the operator picker. */
+export function labelForOp(op: QBConditionOp): string {
+  switch (op) {
+    case 'is_any_of':
+      return 'is any of'
+    case 'is_all_of':
+      return 'is all of'
+    case 'between':
+      return 'between'
+    case 'gt':
+      return '>'
+    case 'gte':
+      return '≥'
+    case 'lt':
+      return '<'
+    case 'lte':
+      return '≤'
+    case 'equal':
+      return 'equals'
+    case 'not_equal':
+      return 'does not equal'
+    case 'has_value':
+      return 'has value'
+    case 'no_value':
+      return 'has no value'
+    case 'contains':
+      return 'contains'
+    case 'starts_with':
+      return 'starts with'
+    case 'ends_with':
+      return 'ends with'
+    case 'is_exactly':
+      return 'is exactly'
+    default:
+      op satisfies never
+      return op
+  }
+}
+
+/**
+ * Returns the user-facing label for a raw facet value. Backend sentinels like
+ * `VALUE_NOT_SET` display as `Not Assigned`; every other value renders as-is.
+ * The underlying value stored on the QB condition is unchanged.
+ */
+export function labelForFacetValue(value: string): string {
+  return value === VALUE_NOT_SET ? FRIENDLY_VALUE_NOT_SET : value
+}
+
+/**
+ * Does a facet value match the pill filter query? Matching considers both the
+ * user-facing label and the underlying value, so a pill labeled with a
+ * resolved entity or user name is still findable by the ID it stores.
+ *
+ * An empty query matches everything.
+ */
+export function facetValueMatchesFilter(
+  value: string,
+  label: string,
+  query: string,
+): boolean {
+  const normalizedQuery = query.trim().toLowerCase()
+  if (normalizedQuery === '') return true
+  if (label.toLowerCase().includes(normalizedQuery)) return true
+  if (value.toLowerCase().includes(normalizedQuery)) return true
+  // An entity ID pasted from elsewhere in Synapse carries a `syn` prefix (and
+  // possibly a version suffix) that an ENTITYID column's stored value doesn't.
+  return parseSynId(normalizedQuery)?.targetId === `syn${value}`
+}

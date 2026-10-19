@@ -46,7 +46,7 @@ export function ComplexMenu(props: ComplexMenuProps) {
       sx={theme => ({
         display: 'flex',
         alignItems: 'center',
-        gap: '10px',
+        gap: '6px',
         flexWrap: 'wrap',
         justifyContent: 'flex-end',
         [theme.breakpoints.down('md')]: {

@@ -3,6 +3,8 @@ import { useSynapseContext } from '@/utils'
 import {
   DiscussionSearchRequest,
   DiscussionSearchResponse,
+  DiscussionThreadBundle as DiscussionThreadBundleGenerated,
+  DiscussionThreadOrder as DiscussionThreadOrderGenerated,
 } from '@sage-bionetworks/synapse-client'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import {
@@ -134,5 +136,56 @@ export function useSearchForumInfinite<
       }),
     initialPageParam: undefined,
     getNextPageParam: page => page.nextPageToken,
+  })
+}
+
+/**
+ * Get the discussion threads that reference an entity, across all projects.
+ */
+export function useGetEntityThreadsInfinite<
+  TData = InfiniteData<PaginatedResults<DiscussionThreadBundleGenerated>>,
+>(
+  entityId: string,
+  limit: number,
+  sort: DiscussionThreadOrderGenerated,
+  ascending: boolean,
+  options?: Partial<
+    UseInfiniteQueryOptions<
+      PaginatedResults<DiscussionThreadBundleGenerated>,
+      SynapseClientError,
+      TData,
+      QueryKey,
+      number | undefined
+    >
+  >,
+) {
+  const { synapseClient, keyFactory } = useSynapseContext()
+  return useInfiniteQuery<
+    PaginatedResults<DiscussionThreadBundleGenerated>,
+    SynapseClientError,
+    TData,
+    QueryKey,
+    number | undefined
+  >({
+    ...options,
+    queryKey: keyFactory.getEntityThreadsQueryKey(
+      entityId,
+      limit,
+      sort,
+      ascending,
+    ),
+    queryFn: async context => {
+      const response =
+        await synapseClient.discussionServicesClient.getRepoV1EntityIdThreads({
+          id: entityId,
+          offset: context.pageParam ?? 0,
+          limit,
+          sort,
+          ascending,
+        })
+      return { ...response, results: response.results ?? [] }
+    },
+    initialPageParam: undefined,
+    getNextPageParam: getNextPageParamForPaginatedResults,
   })
 }

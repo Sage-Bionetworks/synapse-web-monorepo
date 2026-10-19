@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router'
+import { Outlet, ScrollRestoration } from 'react-router'
 import { CookiesNotification } from 'synapse-react-client/components/CookiesNotification/index'
 import './App.scss'
 
@@ -7,6 +7,7 @@ function App() {
     <div className="App">
       <CookiesNotification />
       <Outlet />
+      <ScrollRestoration />
     </div>
   )
 }

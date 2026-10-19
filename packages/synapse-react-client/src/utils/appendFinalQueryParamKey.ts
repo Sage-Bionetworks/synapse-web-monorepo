@@ -10,12 +10,18 @@ export default function appendFinalQueryParamKey(
   url: URL,
   queryParam: string,
 ): string {
-  // TODO: URLSearchParams.size returns undefined in our test environment
-  if (Array.from(url.searchParams).length === 0) {
-    // No params, so use `?`
-    return `${url.toString()}?${queryParam}=`
-  } else {
-    // Already has params, so use '&'
-    return `${url.toString()}&${queryParam}=`
+  let targetUrl = url
+  if (url.searchParams.has(queryParam)) {
+    // Callers typically pass the current browser URL, which may already carry a token from an
+    // earlier round-trip. Stale copies have to be dropped before appending: the API concatenates
+    // the new token onto the end of this string, so keeping them produces a link with duplicate
+    // keys, which `URLSearchParams.get` resolves to the first (stale or empty) value rather than
+    // the newly minted token.
+    targetUrl = new URL(url)
+    targetUrl.searchParams.delete(queryParam)
   }
+
+  // TODO: URLSearchParams.size returns undefined in our test environment
+  const separator = Array.from(targetUrl.searchParams).length === 0 ? '?' : '&'
+  return `${targetUrl.toString()}${separator}${queryParam}=`
 }

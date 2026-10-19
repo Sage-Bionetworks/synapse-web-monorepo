@@ -4,40 +4,46 @@ import {
   mockAgentSession,
   mockChatAttachment,
   mockChatJobStatus,
+  mockEmptyTraceEventsResponse,
 } from '@/mocks/chat/mockChat'
-import usePollAsynchronousJob from '@/synapse-queries/asynchronous/usePollAsynchronousJob'
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import { server } from '@/mocks/msw/server'
 import {
-  useCreateAgentSession,
-  useGetChatAgentTraceEvents,
-  useUpdateAgentSession,
-} from '@/synapse-queries/chat/useChat'
-import { getUseQuerySuccessMock } from '@/testutils/ReactQueryMockUtils'
-import { createWrapper } from '@/testutils/TestingLibraryUtils'
+  createWrapper,
+  createWrapperAndQueryClient,
+} from '@/testutils/TestingLibraryUtils'
+import {
+  AGENT_CHAT_TRACE,
+  AGENT_SESSION,
+  ASYNCHRONOUS_JOB_TOKEN,
+} from '@/utils/APIConstants'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import { FileHandleAssociateType } from '@sage-bionetworks/synapse-client'
-import { render, screen } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
 import {
   AddFilesDialog,
   AddFilesDialogProps,
 } from './components/AddFilesDialog/AddFilesDialog'
 import { SynapseChat, SynapseChatProps } from './SynapseChat'
 
-vi.mock('@/synapse-queries/chat/useChat')
-vi.mock('@/synapse-queries/asynchronous/usePollAsynchronousJob', () => ({
-  default: vi.fn(),
-}))
 vi.mock('@/components/SynapseChat/useChatState')
 vi.mock('./components/AddFilesDialog/AddFilesDialog', () => ({
   AddFilesDialog: vi.fn(),
   ALLOWED_FILE_TYPES_LABEL: 'pdf, csv, txt, json',
 }))
 
-const mockUseCreateAgentSession = vi.mocked(useCreateAgentSession)
-const mockUseUpdateAgentSession = vi.mocked(useUpdateAgentSession)
-const mockUseGetChatAgentTraceEvents = vi.mocked(useGetChatAgentTraceEvents)
-const mockUsePollAsynchronousJob = vi.mocked(usePollAsynchronousJob)
+const repoOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 const mockUseChatState = vi.mocked(useChatState)
 const mockAddFilesDialog = vi.mocked(AddFilesDialog)
+
+beforeAll(() => server.listen())
+afterEach(() => server.resetHandlers())
+afterAll(() => server.close())
 
 const mockSendChat = vi.fn()
 
@@ -45,25 +51,6 @@ const defaultMockChatState = {
   sendChat: mockSendChat,
   interactions: [],
   isAwaitingResponse: false,
-}
-
-const idleMutation = {
-  mutate: vi.fn(),
-  mutateAsync: vi.fn(),
-  data: undefined,
-  error: null,
-  isError: false,
-  isIdle: true,
-  isPending: false,
-  isSuccess: false,
-  failureCount: 0,
-  failureReason: null,
-  isPaused: false,
-  status: 'idle' as const,
-  variables: undefined,
-  submittedAt: 0,
-  reset: vi.fn(),
-  context: undefined,
 }
 
 const mockPrompts = [
@@ -80,11 +67,13 @@ const defaultProps: SynapseChatProps = {
 
 function renderComponent(props?: Partial<SynapseChatProps>) {
   const user = userEvent.setup()
+  const { wrapperFn, queryClient } = createWrapperAndQueryClient()
   const { rerender } = render(<SynapseChat {...defaultProps} {...props} />, {
-    wrapper: createWrapper(),
+    wrapper: wrapperFn,
   })
   return {
     user,
+    queryClient,
     // Re-renders with the same defaults, so a test can advance the mocked props (e.g. once the
     // interaction gains a jobId) without remounting and losing SynapseChat's own internal state.
     rerender: (newProps?: Partial<SynapseChatProps>) =>
@@ -99,14 +88,6 @@ describe('SynapseChat - suggestedPrompts', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-    mockUseCreateAgentSession.mockReturnValue(idleMutation as any)
-    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-    mockUseUpdateAgentSession.mockReturnValue(idleMutation as any)
-    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-    mockUseGetChatAgentTraceEvents.mockReturnValue({ data: undefined } as any)
-    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-    mockUsePollAsynchronousJob.mockReturnValue({ data: undefined } as any)
     mockUseChatState.mockReturnValue(defaultMockChatState)
   })
 
@@ -223,14 +204,6 @@ describe('SynapseChat - allowAttachments', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-    mockUseCreateAgentSession.mockReturnValue(idleMutation as any)
-    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-    mockUseUpdateAgentSession.mockReturnValue(idleMutation as any)
-    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-    mockUseGetChatAgentTraceEvents.mockReturnValue({ data: undefined } as any)
-    // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-    mockUsePollAsynchronousJob.mockReturnValue({ data: undefined } as any)
     mockUseChatState.mockReturnValue(defaultMockChatState)
     mockAddFilesDialog.mockImplementation(
       ({ open, onAttachmentUploaded }: AddFilesDialogProps) => (
@@ -376,7 +349,9 @@ describe('SynapseChat - allowAttachments', () => {
         </>
       ),
     )
-    const { user, rerender } = renderComponent({ allowAttachments: true })
+    const { user, rerender, queryClient } = renderComponent({
+      allowAttachments: true,
+    })
 
     await user.click(screen.getByRole('button', { name: 'Add files' }))
     await user.click(
@@ -387,25 +362,28 @@ describe('SynapseChat - allowAttachments', () => {
 
     // The async job has now been registered (jobId assigned), but has not finished processing --
     // the response, and thus attachmentStatuses, is not yet available.
-    mockUsePollAsynchronousJob.mockReturnValue(
-      getUseQuerySuccessMock(
-        mockChatJobStatus({
-          jobId: 'job-1',
-          jobState: 'PROCESSING',
-          responseBody: undefined,
-          requestBody: {
-            ...mockAgentChatRequest,
-            attachments: [
-              {
-                fileHandleId: '4242424',
-                associateObjectId: '4242424',
-                associateObjectType: FileHandleAssociateType.FileEntity,
-              },
-            ],
+    const jobStatus = mockChatJobStatus({
+      jobId: 'job-1',
+      jobState: 'PROCESSING',
+      responseBody: undefined,
+      requestBody: {
+        ...mockAgentChatRequest,
+        attachments: [
+          {
+            fileHandleId: '4242424',
+            associateObjectId: '4242424',
+            associateObjectType: FileHandleAssociateType.FileEntity,
           },
-        }),
-        // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-      ) as any,
+        ],
+      },
+    })
+    server.use(
+      http.get(`${repoOrigin}${ASYNCHRONOUS_JOB_TOKEN('job-1')}`, () =>
+        HttpResponse.json(jobStatus),
+      ),
+      http.post(`${repoOrigin}${AGENT_CHAT_TRACE(':id')}`, () =>
+        HttpResponse.json(mockEmptyTraceEventsResponse),
+      ),
     )
     rerender({
       allowAttachments: true,
@@ -415,8 +393,108 @@ describe('SynapseChat - allowAttachments', () => {
         isAwaitingResponse: true,
       },
     })
+    // Wait for the job status to be polled into the cache, then verify the filename is retained
+    await waitFor(() =>
+      expect(
+        queryClient.getQueryData(
+          MOCK_CONTEXT_VALUE.keyFactory.getAsyncJobStatusQueryKey('job-1'),
+        ),
+      ).toEqual(jobStatus),
+    )
 
     expect(screen.getByText('report.pdf')).toBeInTheDocument()
     expect(screen.queryByText('4242424')).not.toBeInTheDocument()
+  })
+})
+
+describe('SynapseChat - anonymous session creation', () => {
+  beforeAll(() => {
+    window.HTMLElement.prototype.scrollIntoView = vi.fn()
+  })
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockUseChatState.mockReturnValue(defaultMockChatState)
+  })
+
+  function renderWithAuth(
+    isAuthenticated: boolean,
+    props?: Partial<SynapseChatProps>,
+  ) {
+    // No external session, so SynapseChat creates one on mount.
+    return render(
+      <SynapseChat {...defaultProps} externalSession={undefined} {...props} />,
+      {
+        wrapper: createWrapper({ isAuthenticated }),
+      },
+    )
+  }
+
+  const unauthorizedReason = 'This agent is not available to anonymous users.'
+
+  function mockSessionCreationFailure(status: number, reason: string) {
+    server.use(
+      http.post(`${repoOrigin}${AGENT_SESSION}`, () =>
+        HttpResponse.json({ reason }, { status }),
+      ),
+    )
+  }
+
+  it('invokes onSessionCreationUnauthenticated when an anonymous session is rejected', async () => {
+    const onSessionCreationUnauthenticated = vi.fn()
+    mockSessionCreationFailure(403, unauthorizedReason)
+
+    renderWithAuth(false, { onSessionCreationUnauthenticated })
+
+    await waitFor(() =>
+      expect(onSessionCreationUnauthenticated).toHaveBeenCalledTimes(1),
+    )
+  })
+
+  it('does not invoke the callback for authenticated users', async () => {
+    const onSessionCreationUnauthenticated = vi.fn()
+    mockSessionCreationFailure(403, unauthorizedReason)
+
+    renderWithAuth(true, { onSessionCreationUnauthenticated })
+
+    // The inline error is shown once session creation has failed
+    await screen.findByRole('alert')
+    expect(onSessionCreationUnauthenticated).not.toHaveBeenCalled()
+  })
+
+  it('does not invoke the callback for non-authorization errors', async () => {
+    const onSessionCreationUnauthenticated = vi.fn()
+    mockSessionCreationFailure(400, 'boom')
+
+    renderWithAuth(false, { onSessionCreationUnauthenticated })
+
+    // The inline error is shown once session creation has failed
+    await screen.findByRole('alert')
+    expect(onSessionCreationUnauthenticated).not.toHaveBeenCalled()
+  })
+
+  it('suppresses the inline error when deferring an anonymous user to login', async () => {
+    const onSessionCreationUnauthenticated = vi.fn()
+    mockSessionCreationFailure(403, unauthorizedReason)
+
+    renderWithAuth(false, { onSessionCreationUnauthenticated })
+
+    await waitFor(() =>
+      expect(onSessionCreationUnauthenticated).toHaveBeenCalledTimes(1),
+    )
+    // Flush the remaining state updates from the failed mutation before asserting absence
+    await act(async () => {})
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
+  it('shows the inline error when there is no login fallback', async () => {
+    mockSessionCreationFailure(403, unauthorizedReason)
+
+    renderWithAuth(false)
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      unauthorizedReason,
+    )
   })
 })

@@ -75,6 +75,21 @@ const routes: RouteObject[] = [
         ],
       },
       {
+        path: 'Search',
+        children: [
+          {
+            index: true,
+            lazy: () =>
+              import('@/pages/Search').then(convertModuleToRouteObject),
+          },
+          {
+            path: ':resourceType',
+            lazy: () =>
+              import('@/pages/Search').then(convertModuleToRouteObject),
+          },
+        ],
+      },
+      {
         path: 'Contribute Study Metadata',
         lazy: () =>
           import('@/pages/ContributeData').then(convertModuleToRouteObject),

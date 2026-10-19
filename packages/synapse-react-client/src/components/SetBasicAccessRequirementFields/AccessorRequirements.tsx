@@ -1,5 +1,6 @@
 import {
   AccessRequirement,
+  JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
 import { hasAccessorRequirement } from './GovernanceUtils'
@@ -52,8 +53,10 @@ export function AccessorRequirements(props: AccessorRequirementsProps) {
                 })
               }
             />
-            {accessRequirement.concreteType ===
-              MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE && (
+            {(accessRequirement.concreteType ===
+              MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE ||
+              accessRequirement.concreteType ===
+                JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE) && (
               <FormControlLabel
                 control={<Checkbox />}
                 label="Accessors must use two-factor authentication (2FA)."

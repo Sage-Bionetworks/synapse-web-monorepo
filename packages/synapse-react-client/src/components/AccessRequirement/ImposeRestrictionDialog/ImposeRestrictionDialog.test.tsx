@@ -12,6 +12,7 @@ import { http, HttpResponse } from 'msw'
 import ImposeRestrictionDialog from './ImposeRestrictionDialog'
 
 const mockOnClose = vi.fn()
+const mockOnSuccess = vi.fn()
 
 function renderComponent() {
   return render(
@@ -19,6 +20,7 @@ function renderComponent() {
       entityId={mockFileEntityData.id}
       open={true}
       onClose={mockOnClose}
+      onSuccess={mockOnSuccess}
     />,
     {
       wrapper: createWrapper(),
@@ -66,6 +68,7 @@ describe('ImposeRestrictionDialog', () => {
 
     await userEvent.click(submitButton)
     await waitFor(() => expect(onApplyLock).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(mockOnSuccess).toHaveBeenCalled())
     await waitFor(() => expect(mockOnClose).toHaveBeenCalled())
   })
   it("Shows a warning and does nothing if the user chooses 'No'", async () => {
@@ -84,6 +87,7 @@ describe('ImposeRestrictionDialog', () => {
 
     await userEvent.click(submitButton)
     await waitFor(() => expect(mockOnClose).toHaveBeenCalled())
+    expect(mockOnSuccess).not.toHaveBeenCalled()
     await waitFor(() => expect(onApplyLock).not.toHaveBeenCalled())
   })
 })

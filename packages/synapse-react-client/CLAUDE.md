@@ -78,7 +78,7 @@ Cache keys are centralized in `src/synapse-queries/KeyFactory.ts`.
 - **Framework**: Vitest + Testing Library (`@testing-library/react`)
 - **API mocking**: MSW (Mock Service Worker) via `src/mocks/msw/server.ts` and per-domain handlers in `src/mocks/msw/handlers/`
 - **Test wrapper**: Use `createWrapper()` or `createWrapperAndQueryClient()` from `src/testutils/TestingLibraryUtils.tsx` to render components with proper context and an isolated query cache
-- **Hook state mocking**: Use `getUseQueryMock()` from `src/testutils/ReactQueryMockUtils.ts` when mocking entire hooks rather than intercepting at the network level
+- **Hook state mocking**: Don't mock TanStack Query hooks' return values. Run the real hooks inside `createWrapper()` and mock the network with `server.use(...)` (MSW). Faking hook results couples tests to TanStack's result types, which change often. Only mock a hook module when the hook isn't a data-fetching query (e.g. it wraps browser file uploads), and return only the fields the code under test reads
 - Test files live co-located with source: `src/components/Foo/Foo.test.tsx`
 
 ### Styling
@@ -87,6 +87,7 @@ Cache keys are centralized in `src/synapse-queries/KeyFactory.ts`.
 - Secondary: CSS Modules (`*.module.scss`) with simple camelCase class names (e.g., `.searchField`, `.portalCard`)
   - BEM naming (`ComponentName__element`) is legacy — CSS Modules provide scoping, so BEM is unnecessary
   - Prefer simple descriptive names over BEM structure in new components
+  - Never `@use`/`@import` `style/abstracts/_cssVariables` (or anything that emits a `:root`/selector block) from a `*.module.scss`. Doing so copies the default `--synapse-*` values into the code-split module CSS, which loads after a portal's theme override and silently reverts it. Modules should reference tokens with `var(--synapse-*)` and only `@use` side-effect-free partials (`abstracts/variables`, `abstracts/mixins`, `sass:*`).
 - Do not add to `src/style/base/_core.scss` — it is legacy and scheduled for removal
 
 ### Exposing new components

@@ -9,36 +9,24 @@ type TableInfo = {
 }
 type TableInfoMap = Record<string, Partial<TableInfo>>
 
+// Each id is a materialized view that b2ai-standards-registry's publish step
+// repoints at the latest verified snapshot of the underlying table, so the
+// portal picks up new data without a version bump here.
 const tableInfo: TableInfoMap = {
-  DST_denormalized: {
-    name: 'DST_denormalized',
-    id: 'syn65676531.93', // current version of DST_denormalized
-  },
-  DataSet: { name: 'DataSet', id: 'syn66330217' },
-  DataSet_denormalized: {
-    name: 'DataSet_denormalized',
-    id: 'syn68258237.4', // current version of DataSet_denormalized
-  },
-  DataSubstrate: { name: 'DataSubstrate', id: 'syn63096834' },
-  DataTopic: { name: 'DataTopic', id: 'syn63096835' },
-  // Requires Synapse login to access until public-access approval lands.
+  DST_denormalized: { name: 'mv_DST_denormalized', id: 'syn77626802' },
+  DataSet_denormalized: { name: 'mv_DataSet_denormalized', id: 'syn77626803' },
+  DataSubstrate: { name: 'mv_DataSubstrate', id: 'syn77626804' },
+  // DataTopic: { name: 'DataTopic', id: 'syn63096835' },
   DataTopic_denormalized: {
-    name: 'DataTopic_denormalized',
-    id: 'syn75081383',
+    name: 'mv_DataTopic_denormalized',
+    id: 'syn77626805',
   },
-  // Organization: { name: 'Organization', id: 'syn63096836.31' },
   Organization_denormalized: {
-    name: 'Organization',
-    id: 'syn69693360.24', // current version of Organization_denormalized
+    name: 'mv_Organization_denormalized',
+    id: 'syn77626806',
   },
-  D4D_content: {
-    name: 'D4D_content',
-    id: 'syn68885644.12', // current version of D4D_content
-  },
-  Manifest: {
-    name: 'Manifest',
-    id: 'syn72106735', // denormalized manifest, one row per data part
-  },
+  D4D_content: { name: 'mv_D4D_content', id: 'syn77626807' },
+  Manifest: { name: 'mv_Manifest', id: 'syn77626808' }, // denormalized manifest, one row per data part
   // UseCase: { name: 'UseCase', id: 'syn63096837' }, // not using this, might in the future?
 }
 
@@ -128,7 +116,7 @@ export const DATASET_DENORMALIZED_COLUMN_CONSTS: ColumnConsts = {
   DESCRIPTION: 'description',
   CATEGORY: 'category',
   DATA_URL: 'DataURL',
-  DATASHEET_URL: 'DatasheetURL',
+  ROCRATE_URL: 'ROCrateURL',
   DOCUMENTATION_URL: 'DocumentationURL',
   IS_PUBLIC: 'isPublic',
   PRODUCED_BY: 'producedBy',
@@ -236,14 +224,6 @@ export const standardsFtsConfig: FTSConfig = {
   textMatchesMode: 'BOOLEAN',
   distance: 50,
 }
-
-// Minimal column consts for the raw DataTopic table (used for cheap id→name
-// lookups from cells in other tables).
-export const DATA_TOPIC_COLUMN_CONSTS: ColumnConsts & { NAME: string } = {
-  ID: 'id',
-  NAME: 'name',
-} as const
-tableInfo.DataTopic.columnConsts = DATA_TOPIC_COLUMN_CONSTS
 
 export const TOPIC_TABLE_COLUMN_CONSTS: ColumnConsts & {
   NAME: string

@@ -92,6 +92,7 @@ To start or build the app and have it point to another stack, add the parameter 
 - production
 - staging
 - development
+- localhost
 
 For example, to start the app and have it point to the production stack, run:
 

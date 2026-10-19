@@ -5,7 +5,11 @@ import {
 import {
   Dataset,
   DATASET_CONCRETE_TYPE_VALUE,
+  ENTITY_VIEW_TYPE_MASK_FILE,
+  ENTITY_VIEW_TYPE_MASK_FOLDER,
+  ENTITY_VIEW_TYPE_MASK_RECORDSET,
   Entity,
+  EntityView,
   FILE_ENTITY_CONCRETE_TYPE_VALUE,
   FileEntity,
   TABLE_ENTITY_CONCRETE_TYPE_VALUE,
@@ -15,7 +19,9 @@ import {
   convertToEntityType,
   entityTypeToFriendlyName,
   getVersionDisplay,
+  hasFilesInView,
   isContainerType,
+  isFileView,
   isVersionableEntityType,
   normalizeSynPrefix,
 } from './EntityTypeUtils'
@@ -208,5 +214,34 @@ describe('EntityTypeUtils tests', () => {
     ])('normalizeSynPrefix - %s', (synId, expected) => {
       expect(normalizeSynPrefix(synId)).toBe(expected)
     })
+  })
+
+  describe('file-backed view masks', () => {
+    const viewWithMask = (viewTypeMask: number) =>
+      ({ viewTypeMask }) as EntityView
+
+    test.each([
+      [ENTITY_VIEW_TYPE_MASK_FILE, true, true],
+      [ENTITY_VIEW_TYPE_MASK_RECORDSET, true, true],
+      [
+        ENTITY_VIEW_TYPE_MASK_FILE | ENTITY_VIEW_TYPE_MASK_RECORDSET,
+        true,
+        true,
+      ],
+      [
+        ENTITY_VIEW_TYPE_MASK_RECORDSET | ENTITY_VIEW_TYPE_MASK_FOLDER,
+        true,
+        false,
+      ],
+      [ENTITY_VIEW_TYPE_MASK_FILE | ENTITY_VIEW_TYPE_MASK_FOLDER, true, false],
+      [ENTITY_VIEW_TYPE_MASK_FOLDER, false, false],
+      [0, false, false],
+    ])(
+      'mask %i: hasFilesInView=%s, isFileView=%s',
+      (mask, expectedHasFiles, expectedIsFileView) => {
+        expect(hasFilesInView(viewWithMask(mask))).toBe(expectedHasFiles)
+        expect(isFileView(viewWithMask(mask))).toBe(expectedIsFileView)
+      },
+    )
   })
 })

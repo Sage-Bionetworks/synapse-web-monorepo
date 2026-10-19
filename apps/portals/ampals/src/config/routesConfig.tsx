@@ -28,13 +28,6 @@ const routes: RouteObject[] = [
           import('@/pages/Explore/layout').then(convertModuleToRouteObject),
         children: [
           {
-            path: 'Programs',
-            lazy: () =>
-              import('@/pages/Explore/programs').then(
-                convertModuleToRouteObject,
-              ),
-          },
-          {
             path: 'Files',
             lazy: () =>
               import('@/pages/Explore/files').then(convertModuleToRouteObject),

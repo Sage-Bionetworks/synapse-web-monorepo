@@ -1,0 +1,103 @@
+import {
+  JsonSchemaAccessRequirement,
+  JsonSchemaAccessRequirementAccessTypeEnum,
+  JsonSchemaAccessRequirementConcreteTypeEnum,
+  RestrictableObjectDescriptorTypeEnum,
+} from '@sage-bionetworks/synapse-client'
+import { MOCK_FILE_ENTITY_ID } from '@/mocks/entity/mockFileEntity'
+import { MOCK_DUC_TEMPLATE_FILE_HANDLE_ID } from '@/mocks/mock_file_handle'
+import { DAY_IN_MS } from '@/utils/SynapseConstants'
+import {
+  ObjectType,
+  WikiPage,
+  WikiPageKey,
+} from '@sage-bionetworks/synapse-types'
+
+const now = new Date().toISOString()
+const actUserId = '1234567'
+
+/** AR 1: Genomics Data Access — references the Genomics FormTemplate. No DUC required. */
+export const mockJsonSchemaAR1: JsonSchemaAccessRequirement = {
+  id: 9000,
+  name: 'Genomics Data Access',
+  etag: 'etag-ar-9000',
+  versionNumber: 1,
+  createdOn: now,
+  modifiedOn: now,
+  createdBy: actUserId,
+  modifiedBy: actUserId,
+  concreteType:
+    JsonSchemaAccessRequirementConcreteTypeEnum.org_sagebionetworks_repo_model_JsonSchemaAccessRequirement,
+  formTemplateRef: { templateId: 'template-1', templateVersionNumber: 1 },
+  expirationPeriod: 31536000000, // 1 year
+  isCertifiedUserRequired: true,
+  isValidatedProfileRequired: false,
+  isTwoFaRequired: false,
+  isDUCRequired: false,
+}
+
+/** AR 2: Clinical Trial Data Access — references the Clinical Trial FormTemplate. Requires an uploaded DUC. */
+export const mockJsonSchemaAR2: JsonSchemaAccessRequirement = {
+  id: 9001,
+  name: 'Clinical Trial Data Access',
+  etag: 'etag-ar-9001',
+  versionNumber: 1,
+  createdOn: now,
+  modifiedOn: now,
+  createdBy: actUserId,
+  modifiedBy: actUserId,
+  concreteType:
+    JsonSchemaAccessRequirementConcreteTypeEnum.org_sagebionetworks_repo_model_JsonSchemaAccessRequirement,
+  formTemplateRef: { templateId: 'template-2', templateVersionNumber: 1 },
+  expirationPeriod: 15768000000, // 6 months
+  isCertifiedUserRequired: true,
+  isValidatedProfileRequired: true,
+  isTwoFaRequired: true,
+  isDUCRequired: true,
+  ducTemplateFileHandleId: MOCK_DUC_TEMPLATE_FILE_HANDLE_ID,
+}
+
+export const mockJsonSchemaAccessRequirements: JsonSchemaAccessRequirement[] = [
+  mockJsonSchemaAR1,
+  mockJsonSchemaAR2,
+]
+
+/**
+ * {@link mockJsonSchemaAR2} with the subjects, access type, and whole-day expiration period that the
+ * access requirement editor needs to load an existing AR.
+ */
+export const mockEditableJsonSchemaAR: JsonSchemaAccessRequirement = {
+  ...mockJsonSchemaAR2,
+  accessType: JsonSchemaAccessRequirementAccessTypeEnum.DOWNLOAD,
+  subjectIds: [
+    {
+      id: MOCK_FILE_ENTITY_ID,
+      type: RestrictableObjectDescriptorTypeEnum.ENTITY,
+    },
+  ],
+  subjectsDefinedByAnnotations: false,
+  expirationPeriod: 180 * DAY_IN_MS,
+}
+
+/**
+ * A wiki for {@link mockJsonSchemaAR1}. It is intentionally not registered with the shared access requirement wiki
+ * mocks, so that the AR is wiki-less by default.
+ */
+export const mockJsonSchemaAR1WikiPage: WikiPage = {
+  id: '9000',
+  etag: 'etag-wiki-9000',
+  createdOn: now,
+  createdBy: actUserId,
+  modifiedOn: now,
+  modifiedBy: actUserId,
+  title: '',
+  markdown:
+    '**Access to these genomics data is controlled.**\n\nTo request access, provide the information that is requested in the following steps, including a description of your proposed research.',
+  attachmentFileHandleIds: [],
+}
+
+export const mockJsonSchemaAR1WikiPageKey: WikiPageKey = {
+  wikiPageId: mockJsonSchemaAR1WikiPage.id,
+  ownerObjectId: String(mockJsonSchemaAR1.id),
+  ownerObjectType: ObjectType.ACCESS_REQUIREMENT,
+}

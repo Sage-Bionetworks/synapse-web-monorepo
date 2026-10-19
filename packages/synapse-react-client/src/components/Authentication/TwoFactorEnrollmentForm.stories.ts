@@ -1,3 +1,8 @@
+import {
+  getInvalidCodeTwoFactorEnrollmentHandler,
+  getUnexpectedErrorTwoFactorEnrollmentHandler,
+} from '@/mocks/msw/handlers/twoFactorEnrollmentHandlers'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import TwoFactorEnrollmentForm, {
   TwoFactorEnrollmentFormProps,
@@ -26,5 +31,36 @@ export const Demo: Story = {
       displayToast('Successfully enrolled in 2FA!', 'success')
     },
     onBackClicked: fn(),
+  },
+}
+
+export const InvalidCode: Story = {
+  args: Demo.args,
+  parameters: {
+    stack: 'mock',
+    msw: {
+      handlers: {
+        twoFactorEnrollment: [
+          getInvalidCodeTwoFactorEnrollmentHandler(MOCK_REPO_ORIGIN),
+        ],
+      },
+    },
+  },
+}
+
+export const UnexpectedError: Story = {
+  args: Demo.args,
+  parameters: {
+    stack: 'mock',
+    msw: {
+      handlers: {
+        twoFactorEnrollment: [
+          getUnexpectedErrorTwoFactorEnrollmentHandler(
+            MOCK_REPO_ORIGIN,
+            'Something went wrong',
+          ),
+        ],
+      },
+    },
   },
 }

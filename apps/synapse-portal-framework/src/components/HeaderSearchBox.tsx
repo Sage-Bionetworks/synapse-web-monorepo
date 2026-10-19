@@ -170,15 +170,15 @@ const HeaderSearchBox = ({
             getSuggestions={searchIndexConfig ? getSuggestions : undefined}
           />
         </Box>
-        <Stack className={styles.exampleSearchesSection}>
-          {variant === 'default' && (
-            <Typography className={styles.exampleSearchesLabel}>
-              Example searches
-            </Typography>
-          )}
-          <Box className={styles.exampleTermsContainer}>
-            {searchExampleTerms &&
-              searchExampleTerms.map(term => (
+        {searchExampleTerms?.length ? (
+          <Stack className={styles.exampleSearchesSection}>
+            {variant === 'default' ? (
+              <Typography className={styles.exampleSearchesLabel}>
+                Example searches
+              </Typography>
+            ) : null}
+            <Box className={styles.exampleTermsContainer}>
+              {searchExampleTerms.map(term => (
                 <Button
                   key={term}
                   variant={variant === 'default' ? 'contained' : 'outlined'}
@@ -207,8 +207,9 @@ const HeaderSearchBox = ({
                   </Typography>
                 </Button>
               ))}
-          </Box>
-        </Stack>
+            </Box>
+          </Stack>
+        ) : null}
       </Stack>
     </Box>
   )

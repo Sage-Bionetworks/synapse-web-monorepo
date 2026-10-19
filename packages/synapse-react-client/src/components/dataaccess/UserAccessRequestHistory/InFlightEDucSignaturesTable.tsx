@@ -1,6 +1,6 @@
-import AccessRequirementList, {
-  RequestDataStep,
-} from '@/components/AccessRequirementList/AccessRequirementList'
+import AccessRequirementList from '@/components/AccessRequirementList/AccessRequirementList'
+import { getFirstRequestStep } from '@/components/AccessRequirementList/RequestDataStep'
+import { RequestableAccessRequirement } from '@/utils/types/RequestableAccessRequirement'
 import { SkeletonTable } from '@/components/Skeleton'
 import ColumnHeader from '@/components/TanStackTable/ColumnHeader'
 import StyledTanStackTable from '@/components/TanStackTable/StyledTanStackTable'
@@ -27,7 +27,6 @@ import {
   AccessRequestSummary,
   AccessRequestSummaryStatusEnum,
 } from '@sage-bionetworks/synapse-client'
-import { ManagedACTAccessRequirement } from '@sage-bionetworks/synapse-types'
 import {
   createColumnHelper,
   getCoreRowModel,
@@ -43,12 +42,14 @@ import {
 const IN_FLIGHT_STATUSES: readonly AccessRequestSummaryStatusEnum[] = [
   'sent',
   'delivered',
+  'declined',
   'completed',
 ] as const
 
 const STATUS_DISPLAY: Record<string, string> = {
   sent: 'Signatures pending',
   delivered: 'Signatures pending',
+  declined: 'Signature declined',
   completed: 'Ready to submit',
 }
 
@@ -143,10 +144,9 @@ function buildColumns(actions: ActionCallbacks) {
 /**
  * Lists the requester's active eDUC signatures (routed / signed but not yet submitted).
  *
- * The underlying query walks every page of `POST /dataAccessRequest/list` inside its `queryFn`
- * because filtering is done client-side pending PLFM-9907 (which will add an `isEDuc` server-side
- * filter). Once server-side filtering ships, callers can switch back to a per-page infinite query
- * with a "Show More" button.
+ * The underlying query walks every page of `POST /dataAccessRequest/list` inside its `queryFn`,
+ * pushing the `isEDuc: true` filter to the server so the walk skips non-eDUC requests. Status is
+ * still filtered client-side because the list endpoint has no server-side status filter.
  *
  * Renders nothing when the fully-loaded, filtered list is empty.
  */
@@ -155,7 +155,7 @@ export function InFlightEDucSignaturesTable() {
     data: summaries,
     isLoading,
     error,
-  } = useListAllUserDataAccessRequests()
+  } = useListAllUserDataAccessRequests({ isEDuc: true })
 
   const [modifyingArId, setModifyingArId] = useState<string | undefined>()
   const [cancellingSummary, setCancellingSummary] = useState<
@@ -166,9 +166,12 @@ export function InFlightEDucSignaturesTable() {
     data: modifyAccessRequirement,
     isFetching: isFetchingModifyAr,
     error: modifyArError,
-  } = useGetAccessRequirements<ManagedACTAccessRequirement>(
+  } = useGetAccessRequirements<RequestableAccessRequirement>(
     modifyingArId ?? '',
-    { enabled: Boolean(modifyingArId), staleTime: Infinity },
+    {
+      enabled: Boolean(modifyingArId),
+      staleTime: Infinity,
+    },
   )
 
   // Bail out of the Modify flow if the AR fetch fails so the user isn't stuck on a disabled button.
@@ -216,7 +219,6 @@ export function InFlightEDucSignaturesTable() {
     () =>
       (summaries ?? []).filter(
         summary =>
-          summary.isEDuc === true &&
           summary.status !== undefined &&
           (IN_FLIGHT_STATUSES as readonly string[]).includes(summary.status),
       ),
@@ -263,8 +265,8 @@ export function InFlightEDucSignaturesTable() {
           renderAsModal
           onHide={() => setModifyingArId(undefined)}
           initialWizardEntry={{
-            step: RequestDataStep.UPDATE_RESEARCH_PROJECT,
-            managedACTAccessRequirement: modifyAccessRequirement,
+            step: getFirstRequestStep(modifyAccessRequirement),
+            accessRequirement: modifyAccessRequirement,
           }}
         />
       )}
@@ -297,8 +299,14 @@ export function InFlightEDucSignaturesTable() {
             color={'error'}
             loading={isVoiding}
             onClick={() => {
-              if (cancellingSummary?.requestId) {
-                voidSignature(cancellingSummary.requestId)
+              if (
+                cancellingSummary?.requestId &&
+                cancellingSummary.accessRequirementId
+              ) {
+                voidSignature({
+                  requestId: cancellingSummary.requestId,
+                  accessRequirementId: cancellingSummary.accessRequirementId,
+                })
               }
             }}
           >

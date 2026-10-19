@@ -17,17 +17,11 @@ import EntityPageTitleBar, {
   EntityPageTitleBarProps,
 } from './EntityPageTitleBar'
 import * as TitleBarVersionInfoModule from './EntityTitleBarVersionInfo'
-import * as TitleBarPropertiesModule from './TitleBarProperties'
 
-const TITLE_BAR_PROPERTIES_TEST_ID = 'title-bar-properties'
 const TITLE_BAR_VERSION_INFO_TEST_ID = 'title-bar-version-info'
 const TITLE_BAR_SYN_ID_TEST_ID = 'title-bar-syn-id'
 const ENTITY_ACTION_MENU_TEST_ID = 'entity-action-menu'
 const FAVORITE_BUTTON_TEST_ID = 'favorite-button'
-
-vi.spyOn(TitleBarPropertiesModule, 'default').mockImplementation(() => (
-  <div data-testid={TITLE_BAR_PROPERTIES_TEST_ID}></div>
-))
 
 vi.spyOn(
   TitleBarVersionInfoModule,
@@ -63,7 +57,6 @@ function useEntityBundleOverride(bundle: EntityBundle) {
   )
 }
 
-const onActMemberClickAddConditionsForUse = vi.fn()
 const toggleShowVersionHistory = vi.fn()
 
 const actionMenuProps: EntityActionMenuProps = {
@@ -92,7 +85,6 @@ const defaultProps: EntityPageTitleBarProps = {
   entityId: mockFileEntity.id,
   versionNumber: mockFileEntity.entity.versionNumber,
   entityActionMenuProps: actionMenuProps,
-  onActMemberClickAddConditionsForUse,
 }
 
 describe('Entity Page Title Bar', () => {
@@ -149,19 +141,6 @@ describe('Entity Page Title Bar', () => {
     await screen.findByTestId(ENTITY_ACTION_MENU_TEST_ID)
     expect(EntityActionMenuModule.default).toHaveBeenRenderedWithProps(
       defaultProps.entityActionMenuProps,
-    )
-  })
-  it('Shows the properties', async () => {
-    // Component is mocked and interactions are tested separately
-    renderComponent(defaultProps)
-    await screen.findByTestId(TITLE_BAR_PROPERTIES_TEST_ID)
-    expect(TitleBarPropertiesModule.default).toHaveBeenRenderedWithProps(
-      expect.objectContaining({
-        entityId: defaultProps.entityId,
-        versionNumber: defaultProps.versionNumber,
-        onActMemberClickAddConditionsForUse:
-          defaultProps.onActMemberClickAddConditionsForUse,
-      }),
     )
   })
 

@@ -384,6 +384,33 @@ describe('ReorderColumnsDialog', () => {
     })
   })
 
+  describe('when a column name has not arrived from the hub', () => {
+    // columnNames and columnOrder are patched independently, so identity index 1 can exist in
+    // columnNames with its name still unset
+    const columnNamesMissingA = [
+      'b',
+      undefined,
+      'c',
+      'extra',
+    ] as unknown as string[]
+
+    it('does not surface the unnamed column as a removed column', () => {
+      render(
+        <ReorderColumnsDialog
+          open
+          columnNames={columnNamesMissingA}
+          columnOrder={[0, 2, 3]}
+          jsonSchema={jsonSchema}
+          canRemoveColumns
+          onSave={vi.fn()}
+          onCancel={vi.fn()}
+        />,
+      )
+
+      expect(getListItemNames()).toEqual(['b', 'c', 'extra'])
+    })
+  })
+
   describe('when the schema composes its properties via allOf/$ref', () => {
     // Validation schemas returned by Synapse inline referenced schemas under `definitions` and
     // compose them with allOf, so 'a' and 'b' are schema columns despite not being declared in

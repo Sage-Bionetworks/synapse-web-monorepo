@@ -5,6 +5,13 @@
 // -----------------------------------------------------------------------------
 // Global CSS Variables used across all applications
 // -----------------------------------------------------------------------------
+//
+// WARNING: Never `@use`/`@import` this file from a `*.module.scss`. The `:root`
+// block below emits DEFAULT `--synapse-*` values into every module that imports
+// it. Code-split module CSS loads after a portal's `App.scss` override and would
+// re-assert these defaults, silently reverting portal theme colors. Modules only
+// need `var(--synapse-*)` at runtime — they must not pull in these declarations.
+// This file is imported once, globally, via the app entry SCSS.
 
 :root {
   --synapse-primary-focus-border: #{v.$primary-focus-border};
@@ -140,5 +147,18 @@
   --synapse-gray-regular: #515359; // this is fine, not changing,
   --synapse-gray-deemphasized: #ababac;
 
+  --synapse-drag-source-opacity: 0.4;
+
   --synapse-space-unit: 2.1rem;
+
+  --synapse-floating-row-selection-bar-height: 70px;
+  // Space occupied along the bottom edge of the viewport by app-level fixed UI
+  --synapse-bottom-viewport-inset: 0px;
+}
+
+// Let bottom-anchored UI (e.g. the Curie launcher) move clear of the floating row-selection bar
+body:has(.SynapseFloatingRowSelectionBar) {
+  --synapse-bottom-viewport-inset: var(
+    --synapse-floating-row-selection-bar-height
+  );
 }

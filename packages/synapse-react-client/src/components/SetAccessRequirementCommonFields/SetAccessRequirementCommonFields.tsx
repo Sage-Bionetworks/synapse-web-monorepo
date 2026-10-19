@@ -7,6 +7,7 @@ import { spreadSx } from '@/theme/spreadSx'
 import { HelpOutlineTwoTone } from '@mui/icons-material'
 import {
   Alert,
+  Box,
   Checkbox,
   FormControlLabel,
   Radio,
@@ -23,12 +24,20 @@ import {
   ACCESS_REQUIREMENT_CONCRETE_TYPE,
   ACCESS_TYPE,
   AccessRequirement,
+  JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
   RestrictableObjectDescriptor,
   RestrictableObjectType,
   SELF_SIGN_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
 } from '@sage-bionetworks/synapse-types'
 import pluralize from 'pluralize'
+import { FormTemplateReference } from '@sage-bionetworks/synapse-client'
+import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
+import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
+import {
+  FormTemplateReferenceField,
+  useFormTemplateReferenceError,
+} from '../FormTemplateReferenceField/FormTemplateReferenceField'
 import {
   ForwardedRef,
   forwardRef,
@@ -117,6 +126,20 @@ export const SetAccessRequirementCommonFields = forwardRef(
         : MANAGED_ACT_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE,
     )
     const [clientError, setClientError] = useState<string | null>(null)
+    const isSchemaDrivenEnabled = useGetFeatureFlag(
+      FeatureFlagEnum.ACT_DASHBOARD_FORM_TEMPLATES,
+    )
+    const [formTemplateRef, setFormTemplateRef] = useState<
+      FormTemplateReference | undefined
+    >(undefined)
+    const [showFormTemplateError, setShowFormTemplateError] =
+      useState<boolean>(false)
+    const isSchemaDrivenTypeSelected =
+      isSchemaDrivenEnabled &&
+      arType === JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
+    const formTemplateReferenceError = useFormTemplateReferenceError(
+      isSchemaDrivenTypeSelected ? formTemplateRef : undefined,
+    )
 
     const onMutationSuccess = (ar: AccessRequirement) => {
       setClientError(null)
@@ -149,6 +172,12 @@ export const SetAccessRequirementCommonFields = forwardRef(
     useEffect(() => {
       if (accessRequirement) {
         setArType(accessRequirement.concreteType)
+        if (
+          accessRequirement.concreteType ===
+          JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE
+        ) {
+          setFormTemplateRef(accessRequirement.formTemplateRef)
+        }
         setName(accessRequirement.name)
         setSubjects(accessRequirement.subjectIds)
         setSubjectsDefinedByAnnotations(
@@ -235,6 +264,12 @@ export const SetAccessRequirementCommonFields = forwardRef(
             return
           }
 
+          if (isSchemaDrivenTypeSelected && formTemplateReferenceError) {
+            setShowFormTemplateError(true)
+            onError()
+            return
+          }
+
           const newAccessType = getAccessType(subjectsType)
           if (!isEditing) {
             const newAr: Partial<AccessRequirement> = {
@@ -243,6 +278,7 @@ export const SetAccessRequirementCommonFields = forwardRef(
               name: name,
               accessType: newAccessType,
               subjectsDefinedByAnnotations: subjectsDefinedByAnnotations,
+              ...(isSchemaDrivenTypeSelected ? { formTemplateRef } : {}),
             }
             createAccessRequirement(newAr)
           }
@@ -254,6 +290,7 @@ export const SetAccessRequirementCommonFields = forwardRef(
               name: name,
               accessType: newAccessType,
               subjectsDefinedByAnnotations: subjectsDefinedByAnnotations,
+              ...(isSchemaDrivenTypeSelected ? { formTemplateRef } : {}),
             })
           }
         },
@@ -270,6 +307,9 @@ export const SetAccessRequirementCommonFields = forwardRef(
       createAccessRequirement,
       updateAccessRequirement,
       subjectsDefinedByAnnotations,
+      isSchemaDrivenTypeSelected,
+      formTemplateRef,
+      formTemplateReferenceError,
     ])
 
     if (isLoadingAr || !subjectsType) {
@@ -372,8 +412,33 @@ export const SetAccessRequirementCommonFields = forwardRef(
                 control={<Radio />}
                 label="Click wrap"
               />
+              {isSchemaDrivenEnabled && (
+                <FormControlLabel
+                  value={JSON_SCHEMA_ACCESS_REQUIREMENT_CONCRETE_TYPE_VALUE}
+                  control={<Radio />}
+                  label="Schema-driven - requests are in Synapse, using a form template"
+                />
+              )}
             </RadioGroup>
           </>
+        )}
+        {isSchemaDrivenTypeSelected && (
+          <Box sx={{ mt: 2 }}>
+            <Typography
+              {...headerProps}
+              sx={spreadSx({ mb: 1 }, headerProps.sx)}
+            >
+              Form presented to requesters
+            </Typography>
+            <FormTemplateReferenceField
+              value={formTemplateRef}
+              onChange={reference => {
+                setShowFormTemplateError(false)
+                setFormTemplateRef(reference)
+              }}
+              error={showFormTemplateError ? formTemplateReferenceError : null}
+            />
+          </Box>
         )}
         {clientError && (
           <Alert severity="error" sx={{ marginTop: 2 }}>

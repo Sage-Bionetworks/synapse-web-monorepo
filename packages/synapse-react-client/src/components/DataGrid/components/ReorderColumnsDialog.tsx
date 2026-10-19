@@ -1,5 +1,7 @@
 import { ConfirmationDialog } from '@/components/ConfirmationDialog'
 import { computeDefaultColumnOrder } from '@/components/DataGrid/utils/computeDefaultColumnOrder'
+import { getNamedColumnIndices } from '@/components/DataGrid/utils/getNamedColumnIndices'
+import { moveItem } from '@/utils/functions/ArrayUtils'
 import { collectTopLevelProperties } from '@/utils/jsonschema/collectTopLevelProperties'
 import {
   DeleteOutline,
@@ -34,13 +36,6 @@ export type ReorderColumnsDialogProps = {
   onCancel: () => void
 }
 
-function moveItem(order: number[], from: number, to: number): number[] {
-  const next = [...order]
-  const [moved] = next.splice(from, 1)
-  next.splice(to, 0, moved)
-  return next
-}
-
 export default function ReorderColumnsDialog(props: ReorderColumnsDialogProps) {
   const {
     open,
@@ -54,11 +49,13 @@ export default function ReorderColumnsDialog(props: ReorderColumnsDialogProps) {
   } = props
 
   // Columns previously removed (and saved) are absent from columnOrder entirely, but their
-  // identity index still exists in columnNames -- surface them so they can be restored.
+  // identity index still exists in columnNames -- surface them so they can be restored. Indices
+  // without a name are skipped: there is nothing to label them with in the list.
   const previouslyRemovedColumnIndices = canRemoveColumns
-    ? columnNames
-        .map((_, index) => index)
-        .filter(index => !columnOrder.includes(index))
+    ? getNamedColumnIndices(
+        columnNames,
+        columnNames.map((_, index) => index),
+      ).filter(index => !columnOrder.includes(index))
     : []
 
   const [workingOrder, setWorkingOrder] = useState<number[]>([
@@ -160,7 +157,7 @@ export default function ReorderColumnsDialog(props: ReorderColumnsDialogProps) {
                         disabled={isRemoved || displayIndex === 0}
                         onClick={() =>
                           setWorkingOrder(order =>
-                            moveItem(order, displayIndex, displayIndex - 1),
+                            moveItem(order, displayIndex, -1),
                           )
                         }
                       >
@@ -174,7 +171,7 @@ export default function ReorderColumnsDialog(props: ReorderColumnsDialogProps) {
                         }
                         onClick={() =>
                           setWorkingOrder(order =>
-                            moveItem(order, displayIndex, displayIndex + 1),
+                            moveItem(order, displayIndex, 1),
                           )
                         }
                       >

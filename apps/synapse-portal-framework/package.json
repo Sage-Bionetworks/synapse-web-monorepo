@@ -67,8 +67,8 @@
     "@types/plotly.js": "^2.35.14",
     "@types/react": "19.2.14",
     "@types/react-plotly.js": "^2.6.4",
-    "@vitest/coverage-v8": "^4.1.8",
-    "@vitest/ui": "^4.1.8",
+    "@vitest/coverage-v8": "^4.1.11",
+    "@vitest/ui": "^4.1.11",
     "@vitest/utils": "^4.1.8",
     "assert": "^2.1.0",
     "buffer": "^6.0.3",
@@ -94,7 +94,7 @@
     "util": "^0.12.5",
     "vite": "^8.0.16",
     "vite-plugin-static-copy": "^4.1.1",
-    "vitest": "^4.1.8",
+    "vitest": "^4.1.11",
     "whatwg-fetch": "^3.6.20"
   },
   "browserslist": {

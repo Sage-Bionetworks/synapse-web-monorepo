@@ -25,6 +25,7 @@ Data curation task management for Synapse. Enables two user types to collaborate
   - `useGetOrCreateGridSessionForSource` — Gets or creates a grid session for a task's data source
   - `useGridSessionForCurationTask_legacy` — Used when a task has no `suggestedAuthorizationMode` set. Gets or creates a grid session owned by the calling user. Does not link the session to the task. Deprecated long-term (enables a data-loss scenario when multiple users create parallel sessions).
   - `useGridSessionForCurationTask` — Task-linked variant. Used by tasks that have `suggestedAuthorizationMode` set. Reads `suggestedAuthorizationMode` from `taskProperties` and uses it as the `authorizationMode` when creating a grid session. For `SESSION_OWNER` mode, sets `ownerPrincipalId` to the task's assignee. Throws if `suggestedAuthorizationMode` is absent.
+  - `useMarkCurationTaskInProgress` — Advances a task's `TaskStatus` from `NOT_STARTED` to `IN_PROGRESS`. Re-reads the status before writing: `TaskStatus.etag` is shared with the `CurationTask` and is bumped when a grid session is linked to the task, so a caller's copy is routinely stale. No-op for any other state.
 - **`utils/`** — Helper functions
   - `getGridSourceIdForTask` — Determines the entity ID to open for editing
   - `getLatestGridSessionForSource` — Finds the most recent grid session for a data source
@@ -40,6 +41,8 @@ The path taken when a user clicks **Open** depends on whether the task has `sugg
 - **`suggestedAuthorizationMode` is absent** → `useGridSessionForCurationTask_legacy` (legacy path). Creates a session owned by the calling user; session is not linked to the task.
 
 The action cell gates the **Open** button on READ access to the source entity, but various other permission scenarios may block the user from accessing a grid session, depending on the session's authorization mode.
+
+Once the session is open, `useOpenCuratorButton` records that work has begun via `useMarkCurationTaskInProgress`. Unlike a Compute task — where the server drives `EXECUTING`/`COMPLETED` — nothing else advances a Curate task out of `NOT_STARTED`. This write is deliberately best-effort and runs _after_ the window opens: it must not delay the popup, hold the button in a pending state, or report a failure to open Curator.
 
 ## Testing
 

@@ -5,7 +5,7 @@
 1. Add the Portal's `apps/portals/` directory name to the `Portal` type in `src/configs/routesConfig.ts`, e.g. `eliteportal` for Elite Portal.
 2. Add the Portal to relevant configuration files in `src/configs`, e.g. use `src/configs/exploreConfig.ts` to list the expected objects (cards, charts, table, people) on each Explore tab of the Portal.
 3. Ensure that the e2e tests for the Portal run locally, as described [here](#local).
-4. Add the Portal configurations directory name to the `PORTALS` environment variable in the GitHub Action workflow for end-to-end testing: `.github/workflows/end-to-end-test-portals.yml`.
+4. Add the Portal configurations directory name to the [`portals_e2e.json`](../../.github/workflows/portals_e2e.json) environment variable referenced by the GitHub Action workflow for end-to-end testing: `.github/workflows/end-to-end-test-portals.yml`.
 5. Ensure that the e2e tests for the Portal run in CI, as described [here](#ci).
 
 ## Dev Setup

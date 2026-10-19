@@ -28,14 +28,23 @@ const meta = {
       handlers: [
         // In-flight eDUC signatures — powers the top table via useListAllUserDataAccessRequests.
         // Response is paginated by nextPageToken; the queryFn walks every page before rendering.
-        http.post<never, { nextPageToken?: string }>(
+        // Mirrors the server-side `isEDuc` filter so callers passing `{ isEDuc: true }` only get
+        // eDUC requests.
+        http.post<never, { nextPageToken?: string; isEDuc?: boolean }>(
           `${MOCK_REPO_ORIGIN}${DATA_ACCESS_REQUEST_LIST}`,
           async ({ request }) => {
             const body = await request.json()
+            const filterByEDuc = body?.isEDuc
+            const filter = (
+              results: NonNullable<AccessRequestList['results']>,
+            ) =>
+              filterByEDuc === undefined
+                ? results
+                : results.filter(r => r.isEDuc === filterByEDuc)
             const isSecondPage = body?.nextPageToken === 'page-2'
             const page: AccessRequestList = isSecondPage
-              ? { results: page2 }
-              : { results: page1, nextPageToken: 'page-2' }
+              ? { results: filter(page2) }
+              : { results: filter(page1), nextPageToken: 'page-2' }
             return HttpResponse.json(page, { status: 200 })
           },
         ),
@@ -56,7 +65,7 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const page1: AccessRequestList['results'] = [
+const page1: NonNullable<AccessRequestList['results']> = [
   {
     requestId: '100',
     accessRequirementName: 'ROSMAP eDUC',
@@ -84,7 +93,7 @@ const page1: AccessRequestList['results'] = [
   },
 ]
 
-const page2: AccessRequestList['results'] = [
+const page2: NonNullable<AccessRequestList['results']> = [
   {
     requestId: '102',
     accessRequirementName: 'AMP-PD Data',

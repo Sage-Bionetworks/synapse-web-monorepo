@@ -142,12 +142,38 @@ describe('columnFactory', () => {
       }
 
       const column = createColumn(config)
-      expect(mockDateTimeColumn).toHaveBeenCalled()
+      expect(mockDateTimeColumn).toHaveBeenCalledWith({
+        colType: 'string',
+        format: 'date-time',
+      })
 
       const headerProps = getHeaderProps(column.title)
       expect(headerProps.name).toBe('isActive')
       expect(headerProps.description).toBeUndefined()
     })
+
+    // The date column reads and writes a calendar date instead of an instant when
+    // the format is `date`, so the format has to reach it.
+    it.each(['string', 'integer'])(
+      'should create a date column for %s type and date format',
+      colType => {
+        const config = {
+          columnName: 'dueDate',
+          typeInfo: { type: colType, format: 'date', isArray: false },
+          enumeratedValues: [],
+          isRequired: false,
+        }
+
+        createColumn(config)
+
+        expect(mockDateTimeColumn).toHaveBeenCalledWith({
+          colType,
+          format: 'date',
+        })
+        expect(mockNumberColumn).not.toHaveBeenCalled()
+        expect(mockCreateTextColumn).not.toHaveBeenCalled()
+      },
+    )
 
     it('should create a number column for number type', () => {
       const config = {
@@ -266,6 +292,20 @@ describe('columnFactory', () => {
 
         expect(column.minWidth).toBeGreaterThanOrEqual(DATETIME_MIN_WIDTH)
         expect(column.basis).toBeGreaterThanOrEqual(DATETIME_MIN_WIDTH)
+      })
+
+      it('should not reserve time-of-day width for date-only columns', () => {
+        const config = {
+          columnName: 'dt',
+          typeInfo: { type: 'string', format: 'date', isArray: false },
+          enumeratedValues: [],
+          isRequired: false,
+        }
+
+        const column = createColumn(config)
+
+        expect(column.minWidth).toBe(DEFAULT_MIN_WIDTH)
+        expect(column.basis).toBe(DEFAULT_MIN_WIDTH)
       })
     })
 

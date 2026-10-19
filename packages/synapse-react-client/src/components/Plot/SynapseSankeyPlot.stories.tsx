@@ -10,6 +10,7 @@ type Story = StoryObj<typeof meta>
 
 const TABLE_ID = 'syn66496326'
 const SQL = `SELECT source, count(source) FROM ${TABLE_ID} group by source`
+const REPOSITORY_LABEL = `COALESCE(NULLIF(repository, ''), 'Unknown')`
 
 export const SourcesByDataset: Story = {
   args: {
@@ -26,7 +27,7 @@ export const SourcesByDataset: Story = {
  */
 export const WithDetailPanel: Story = {
   args: {
-    sql: `SELECT repository, count(repository), sum(datasetItemCount) FROM ${TABLE_ID} group by repository`,
+    sql: `SELECT ${REPOSITORY_LABEL}, count(*), sum(datasetItemCount) FROM ${TABLE_ID} group by ${REPOSITORY_LABEL}`,
     rootLabel: 'All Datasets',
     unitLabel: 'datasets',
     rightValueColumn: 2,

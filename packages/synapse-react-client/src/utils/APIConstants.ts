@@ -71,8 +71,9 @@ export const TABLE_QUERY_ASYNC_GET = (
   asyncJobToken: string,
 ) => `${ENTITY_ID(entityId)}/table/query/async/get/${asyncJobToken}`
 
+export const ASYNCHRONOUS_JOB = `${REPO}/asynchronous/job`
 export const ASYNCHRONOUS_JOB_TOKEN = (asyncJobToken: string) =>
-  `${REPO}/asynchronous/job/${asyncJobToken}`
+  `${ASYNCHRONOUS_JOB}/${asyncJobToken}`
 
 export const SEARCH_QUERY_ASYNC_START = `${REPO}/search/query/async/start`
 export const SEARCH_QUERY_ASYNC_GET = (asyncJobToken: string) =>
@@ -226,6 +227,8 @@ export const DATA_ACCESS_REQUEST_SIGNATURE_FILEHANDLE_ID = (
 ) => `${DATA_ACCESS_REQUEST}/${id}/signature/filehandleId`
 export const DATA_ACCESS_REQUEST_SIGNATURE_QUOTA = (id: string | number) =>
   `${DATA_ACCESS_REQUEST}/${id}/signature/quota`
+export const DATA_ACCESS_REQUEST_SIGNATURE_PRECHECK = (id: string | number) =>
+  `${DATA_ACCESS_REQUEST}/${id}/signature/precheck`
 export const ACCESS_REQUIREMENT_DATA_ACCESS_REQUEST_FOR_UPDATE = (
   accessRequirementId: string | number,
 ) =>

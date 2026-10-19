@@ -2,6 +2,7 @@ import { removeTrailingUndefinedElements } from '@/utils/functions/ArrayUtils'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions/index'
 import { hashCode, normalizeNumericId } from '@/utils/functions/StringUtils'
 import {
+  USER_BUNDLE_MASK_IDENTITY_PROVIDERS,
   USER_BUNDLE_MASK_IS_ACT_MEMBER,
   USER_BUNDLE_MASK_IS_AR_REVIEWER,
   USER_BUNDLE_MASK_IS_CERTIFIED,
@@ -14,8 +15,10 @@ import {
   AccessRequestListRequest,
   AddToDownloadListStatsRequest,
   DiscussionSearchRequest,
+  DiscussionThreadOrder as DiscussionThreadOrderGenerated,
   EDucTemplateListRequest,
   EntityLookupRequest,
+  FormTemplateSearchRequest,
   GetRepoV1DoiAssociationRequest,
   GetRepoV1DoiRequest,
   ListCurationTaskRequest,
@@ -207,6 +210,7 @@ const WIKI_PAGE_QUERY_KEY = 'wikiPage'
 const DATA_ACCESS_SUBMISSION_QUERY_KEY = 'dataAccessSubmission'
 const DATA_ACCESS_REQUEST_QUERY_KEY = 'dataAccessRequest'
 const EDUC_TEMPLATE_QUERY_KEY = 'eDucTemplate'
+const FORM_TEMPLATE_QUERY_KEY = 'formTemplate'
 
 /**
  * Returns a react-query Query Key.
@@ -217,6 +221,10 @@ const EDUC_TEMPLATE_QUERY_KEY = 'eDucTemplate'
  *
  * For more information, see https://tkdodo.eu/blog/leveraging-the-query-function-context
  */
+
+/** The userId value used in query keys for data scoped to the signed-in user (e.g. the current user's bundle). */
+export const CURRENT_USER_ID = 'current'
+
 export class KeyFactory {
   accessToken: string | undefined = undefined
   constructor(accessToken: string | undefined) {
@@ -600,9 +608,19 @@ export class KeyFactory {
     return this.getKey('approvedSubmissionInfo', request)
   }
 
-  // Returns key that can be used to invalidate all data access request queries
+  /**
+   * Returns key that can be used to invalidate all data access request queries.
+   *
+   * Prefer a narrower key where one fits: this one also matches the eDUC preview, whose refetch
+   * costs a server-side PDF render.
+   */
   public getDataAccessRequestQueryKey() {
     return this.getKey(DATA_ACCESS_REQUEST_QUERY_KEY)
+  }
+
+  // Returns key that can be used to invalidate every data access request listing
+  public getDataAccessRequestListQueryKey() {
+    return this.getKey(DATA_ACCESS_REQUEST_QUERY_KEY, 'list')
   }
 
   public listDataAccessRequestsQueryKey(params?: AccessRequestListRequest) {
@@ -615,13 +633,12 @@ export class KeyFactory {
     return this.getKey(DATA_ACCESS_REQUEST_QUERY_KEY, 'list', 'all', params)
   }
 
+  /**
+   * The preview renders the request's own content, so it is deliberately a sibling of the
+   * signature keys rather than a child: signature mutations must not invalidate it.
+   */
   public getDataAccessRequestPreviewQueryKey(requestId: string) {
-    return this.getKey(
-      DATA_ACCESS_REQUEST_QUERY_KEY,
-      requestId,
-      'signature',
-      'preview',
-    )
+    return this.getKey(DATA_ACCESS_REQUEST_QUERY_KEY, requestId, 'preview')
   }
 
   public getDataAccessRequestSignatureQueryKey(requestId: string) {
@@ -655,6 +672,15 @@ export class KeyFactory {
     )
   }
 
+  public getDataAccessRequestSignaturePrecheckQueryKey(requestId: string) {
+    return this.getKey(
+      DATA_ACCESS_REQUEST_QUERY_KEY,
+      requestId,
+      'signature',
+      'precheck',
+    )
+  }
+
   // Returns key that can be used to invalidate all eDUC template queries
   public getEDucTemplateQueryKey() {
     return this.getKey(EDUC_TEMPLATE_QUERY_KEY)
@@ -668,8 +694,37 @@ export class KeyFactory {
     return this.getKey(EDUC_TEMPLATE_QUERY_KEY, templateId, 'validation')
   }
 
+  // Returns key that can be used to invalidate all form template queries, e.g. after a create/update
+  public getFormTemplateQueryKey() {
+    return this.getKey(FORM_TEMPLATE_QUERY_KEY)
+  }
+
+  public getFormTemplateByIdQueryKey(templateId: string) {
+    return this.getKey(FORM_TEMPLATE_QUERY_KEY, templateId)
+  }
+
+  public getFormTemplateVersionQueryKey(
+    templateId: string,
+    versionNumber: number,
+  ) {
+    return this.getKey(
+      FORM_TEMPLATE_QUERY_KEY,
+      templateId,
+      'version',
+      versionNumber,
+    )
+  }
+
+  public searchFormTemplatesQueryKey(params?: FormTemplateSearchRequest) {
+    return this.getKey(FORM_TEMPLATE_QUERY_KEY, 'search', params)
+  }
+
   public getValidationSchemaQueryKey(schema$id: string) {
     return this.getKey('validationSchema', schema$id)
+  }
+
+  public getRegisteredSchemaQueryKey(schema$id: string) {
+    return this.getKey('registeredSchema', schema$id)
   }
 
   public getPresignedUrlContentQueryKey(
@@ -745,6 +800,19 @@ export class KeyFactory {
     return this.getKey('forumthread', forumId, {
       limit,
       filter,
+      sort,
+      ascending,
+    })
+  }
+
+  public getEntityThreadsQueryKey(
+    entityId: string,
+    limit: number,
+    sort: DiscussionThreadOrderGenerated,
+    ascending: boolean,
+  ) {
+    return this.getKey('entitythread', entityId, {
+      limit,
       sort,
       ascending,
     })
@@ -973,6 +1041,11 @@ export class KeyFactory {
     return this.getKey('user', 'current', 'profile')
   }
 
+  /** Prefix matching every user bundle query for the user, regardless of the requested mask. */
+  public getAllUserBundleQueryKey(userId: string) {
+    return this.getKey('user', userId, 'bundle')
+  }
+
   public getUserBundleQueryKey(userId: string, mask: number) {
     // Convert the mask into an object, where the field is only included (with value true) iff the bit in the mask is set
     const maskObject = {
@@ -997,8 +1070,11 @@ export class KeyFactory {
       ...((mask & USER_BUNDLE_MASK_IS_AR_REVIEWER) !== 0
         ? { isARReviewer: true }
         : undefined),
+      ...((mask & USER_BUNDLE_MASK_IDENTITY_PROVIDERS) !== 0
+        ? { isIdentityProviders: true }
+        : undefined),
     }
-    return this.getKey('user', userId, 'bundle', maskObject)
+    return [...this.getAllUserBundleQueryKey(userId), maskObject]
   }
 
   public getUserProfileQueryKey(userId: string) {
@@ -1037,6 +1113,10 @@ export class KeyFactory {
 
   public getBatchOfFiles(request: BatchFileRequest) {
     return this.getKey('fileBatch', request)
+  }
+
+  public getFileHandleQueryKey(fileHandleId: string) {
+    return this.getKey('fileHandle', fileHandleId)
   }
 
   public getChatAgentTraceKey(request: TraceEventsRequest) {

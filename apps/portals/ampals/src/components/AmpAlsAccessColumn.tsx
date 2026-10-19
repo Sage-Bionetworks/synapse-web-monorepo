@@ -1,3 +1,4 @@
+import { useAridhiaEndpoints } from '@sage-bionetworks/synapse-portal-framework/components/useAridhiaEndpoints'
 import { Row } from '@sage-bionetworks/synapse-types/src/Table/QueryResult'
 import { CellContext, ColumnDef } from '@tanstack/react-table'
 import AccessIcon, {
@@ -19,6 +20,7 @@ function AccessBySource(props: {
   datasetCode: string
 }) {
   const { source, id, datasetCode } = props
+  const { fairPortalUrl } = useAridhiaEndpoints()
 
   switch (source) {
     case 'GEO':
@@ -26,7 +28,7 @@ function AccessBySource(props: {
     case 'Critical Path Institute':
       return (
         <AridhiaAccessStatus
-          fairPortalUrl={import.meta.env.VITE_ARIDHIA_FAIR_PORTAL_URL}
+          fairPortalUrl={fairPortalUrl}
           datasetCode={datasetCode}
         />
       )

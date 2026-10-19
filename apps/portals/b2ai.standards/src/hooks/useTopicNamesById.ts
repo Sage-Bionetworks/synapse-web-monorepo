@@ -1,17 +1,21 @@
 import { useMemo } from 'react'
 import useGetQueryResultBundle from 'synapse-react-client/synapse-queries/entity/useGetQueryResultBundle'
-import { DATA_TOPIC_COLUMN_CONSTS as D } from '@/config/resources'
+import { TOPIC_TABLE_COLUMN_CONSTS as D } from '@/config/resources'
 import {
   getQueryBundleRequestWithIdFilter,
   getRowsAsObjects,
 } from '@/hooks/fetchDataUtils'
 
-// Fetches the DataTopic table (~52 rows) and returns a Map of id → name.
+// Fetches the DataTopic_denormalized table (~52 rows) and returns a Map of id → name.
 // react-query dedups the underlying request across all callers, so this hook
 // can be used freely in many cells without refetching.
 export function useTopicNamesById() {
   const request = useMemo(
-    () => getQueryBundleRequestWithIdFilter('DataTopic', [D.ID, D.NAME]),
+    () =>
+      getQueryBundleRequestWithIdFilter('DataTopic_denormalized', [
+        D.ID,
+        D.NAME,
+      ]),
     [],
   )
   return useGetQueryResultBundle(request, {

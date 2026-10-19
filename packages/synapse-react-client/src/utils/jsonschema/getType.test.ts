@@ -66,6 +66,34 @@ describe('getType', () => {
     })
   })
 
+  // Regression: dropping the parent's annotations left a nullable date column
+  // looking like a plain numeric column, which rendered epoch millis as a number.
+  it('keeps annotations declared beside oneOf', () => {
+    const schema: JSONSchema7 = {
+      format: 'date',
+      readOnly: true,
+      oneOf: [{ type: 'integer' }, { type: 'null' }],
+    }
+    expect(getFlatTypeInfo(schema)).toEqual({
+      type: 'integer',
+      format: 'date',
+      readOnly: true,
+      isArray: false,
+    })
+  })
+
+  it('prefers the annotations of the non-null oneOf option', () => {
+    const schema: JSONSchema7 = {
+      format: 'date',
+      oneOf: [{ type: 'string', format: 'date-time' }, { type: 'null' }],
+    }
+    expect(getFlatTypeInfo(schema)).toEqual({
+      type: 'string',
+      format: 'date-time',
+      isArray: false,
+    })
+  })
+
   it('returns default if oneOf has multiple non-null options', () => {
     const schema: JSONSchema7 = {
       oneOf: [{ type: 'string' }, { type: 'number' }],

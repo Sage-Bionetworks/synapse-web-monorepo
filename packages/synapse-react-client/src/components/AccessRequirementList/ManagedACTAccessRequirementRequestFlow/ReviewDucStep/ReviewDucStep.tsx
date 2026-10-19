@@ -4,19 +4,16 @@ import {
   Button,
   DialogActions,
   DialogContent,
-  DialogTitle,
-  IconButton,
-  Stack,
   Typography,
 } from '@mui/material'
-import { ManagedACTAccessRequirement } from '@sage-bionetworks/synapse-types'
-import IconSvg from '../../../IconSvg/IconSvg'
+import { DialogBaseTitle } from '../../../DialogBase'
 import ManagedACTAccessRequirementFormWikiWrapper from '../ManagedACTAccessRequirementFormWikiWrapper'
 import { ReviewCollaboratorsAndSigningOfficialAccordion } from '../ReviewCollaboratorsAndSigningOfficialAccordion'
 import { longFieldLabelSx } from '../styles'
+import { RequestFlowAccessRequirement } from '../requestFlowTypes'
 
 export type ReviewDucStepProps = {
-  managedACTAccessRequirement: ManagedACTAccessRequirement
+  managedACTAccessRequirement: RequestFlowAccessRequirement
   onHide: () => void
   onBackClicked: () => void
   /**
@@ -46,18 +43,10 @@ export default function ReviewDucStep(props: ReviewDucStepProps) {
 
   return (
     <>
-      <DialogTitle>
-        <Stack direction="row" sx={{ alignItems: 'center', gap: '5px' }}>
-          Request Access
-          <Box sx={{ flexGrow: 1 }} />
-          <IconButton aria-label={'Close'} onClick={onHide}>
-            <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
-          </IconButton>
-        </Stack>
-      </DialogTitle>
+      <DialogBaseTitle title={'Request Access'} onCancel={onHide} />
       <DialogContent>
         <ManagedACTAccessRequirementFormWikiWrapper
-          managedACTAccessRequirementId={String(managedACTAccessRequirement.id)}
+          accessRequirement={managedACTAccessRequirement}
         >
           <Box>
             <Typography variant={'headline3'} sx={{ mb: 2 }}>
