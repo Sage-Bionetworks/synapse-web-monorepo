@@ -61,7 +61,9 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
   const { columnModels, facetResults } = useQBFacetSourceMetadata()
   const { executeQueryRequest, getCurrentQueryRequest } = useQueryContext()
 
-  const activeTree = tree ?? defaultQBGroup()
+  // Created once: defaultQBGroup() makes new node IDs, which would remount every row on each render.
+  const [defaultTree] = useState(defaultQBGroup)
+  const activeTree = tree ?? defaultTree
   const filterGroup = useMemo(() => qbNodeToApiFilter(activeTree), [activeTree])
 
   // Validate everything Update Results would send: non-QB filters count toward the server's limits too.
