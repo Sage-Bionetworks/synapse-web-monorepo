@@ -3,11 +3,9 @@ import {
   CohortBuilderMockProfile,
   ELITE_MOCK_PROFILE,
 } from '@/mocks/cohortBuilder/cohortBuilderMockProfiles'
-import { getCohortBuilderHandlers } from '@/mocks/msw/handlers/cohortBuilderHandlers'
-import { getEntityHandlers } from '@/mocks/msw/handlers/entityHandlers'
+import { getCohortBuilderStorybookHandlers } from '@/mocks/msw/handlers/cohortBuilderHandlers'
 import SynapseClient from '@/synapse-client'
 import { QUERY_FILTERS_SESSION_STORAGE_KEY } from '@/utils/functions'
-import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import {
   DATASET,
   EXPERIMENTAL_TOOL,
@@ -524,17 +522,10 @@ function getAggregateOnlyCohortBuilderParameters(
   return {
     stack: 'mock',
     msw: {
-      handlers: {
-        // The Cohort Builder handlers go first: the stock entity handlers answer 404 for unknown entity IDs.
-        entity: [
-          ...getCohortBuilderHandlers({
-            profile,
-            access: 'AGGREGATE_ONLY',
-            backendOrigin: MOCK_REPO_ORIGIN,
-          }),
-          ...getEntityHandlers(MOCK_REPO_ORIGIN),
-        ],
-      },
+      handlers: getCohortBuilderStorybookHandlers({
+        profile,
+        access: 'AGGREGATE_ONLY',
+      }),
     },
   }
 }
