@@ -279,3 +279,38 @@ nx 23.3.0 pins `smol-toml@1.9.0`, but that's a major nx upgrade, already ruled o
 **Fix applied:** root `pnpm.overrides` `"nx@22.7.12>smol-toml": "^1.7.2"` → `"^1.9.0"`; `pnpm install --no-frozen-lockfile`.
 
 **Testing:** `pnpm why smol-toml --recursive` → only `smol-toml@1.9.1`; `pnpm nx show projects` builds the project graph.
+
+## pbkdf2
+
+```
+┌─────────────────────┬────────────────────────────────────────────────────────┐
+│ moderate            │ pbkdf2 rehashes long passwords on every iteration,     │
+│                     │ enabling denial of service                             │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Package             │ pbkdf2                                                 │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Vulnerable versions │ <=3.1.6                                                │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Patched versions    │ >=3.1.7                                                │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Paths               │ apps__SageAccountWeb>vite-plugin-node-polyfills>node-  │
+│                     │ stdlib-browser>crypto-browserify>pbkdf2                │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ More info           │ https://github.com/advisories/GHSA-477h-4r7f-fvrx      │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+```
+
+**Analysis:**
+
+2 parents of a single installed `pbkdf2@3.1.6`, both with flexible ranges covering 3.1.7:
+
+- `vite-plugin-node-polyfills>node-stdlib-browser>crypto-browserify@3.12.1` (`^3.1.2`): vulnerable — stale lockfile.
+- `…>browserify-sign>parse-asn1@5.1.9` (`^3.1.5`): vulnerable — stale lockfile.
+
+Production-relevant: the `crypto` polyfill is bundled into SageAccountWeb's browser build.
+
+**Fix rationale:** Lockfile-only update within declared ranges. No package.json changes.
+
+**Fix applied:** `pnpm update pbkdf2 --recursive`
+
+**Testing:** `pnpm why pbkdf2 --recursive` → only `pbkdf2@3.1.7`; installed module reproduces the RFC 6070 PBKDF2-HMAC-SHA1 vector (`password`/`salt`/4096 → `4b0079…29c1`); `pnpm nx run SageAccountWeb:build` succeeds.
