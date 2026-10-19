@@ -15,15 +15,21 @@ import { ErrorResponse } from '@sage-bionetworks/synapse-client/generated/models
 import { FacetColumnResult } from '@sage-bionetworks/synapse-client/generated/models/FacetColumnResult'
 import { QueryResultBundle } from '@sage-bionetworks/synapse-client/generated/models/QueryResultBundle'
 import { RowSuppressionErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/RowSuppressionErrorResponse'
+import { TableQueryResult } from '@sage-bionetworks/synapse-client/generated/models/TableQueryResult'
+import { TableSelectColumn } from '@sage-bionetworks/synapse-client/generated/models/TableSelectColumn'
 import {
   ColumnMultiValueFunction,
+  ColumnMultiValueFunctionQueryFilter,
   ColumnSingleValueFilterOperator,
+  ColumnSingleValueQueryFilter,
   FacetColumnRequest,
+  Query,
   QueryBundleRequest,
   QueryFilter,
   SortItem,
 } from '@sage-bionetworks/synapse-types'
 import {
+  CohortBuilderMockProfile,
   DATA_REFERENCE_COLUMN_NAME,
   PARTICIPANT_ID_COLUMN_NAME,
   REFERENCE_TYPE_COLUMN_NAME,
@@ -123,9 +129,9 @@ export function getCohortBuilderColumnModels(data: CohortBuilderSyntheticData) {
 
 function likeToRegExp(pattern: string): RegExp {
   const escaped = pattern
-    .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    .replace(/%/g, '.*')
-    .replace(/_/g, '.')
+    .replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`)
+    .replaceAll('%', '.*')
+    .replaceAll('_', '.')
   return new RegExp(`^${escaped}$`, 'i')
 }
 
@@ -169,6 +175,48 @@ function singleValueMatches(
   }
 }
 
+function singleValueFilterMatches(
+  row: VirtualTableRow | MaterialRow,
+  filter: ColumnSingleValueQueryFilter,
+): boolean {
+  if (!(filter.columnName in row)) {
+    throw invalidQuery(`Column does not exist: ${filter.columnName}`)
+  }
+  const cell = row[filter.columnName]
+  const isEmpty = Array.isArray(cell) ? cell.length === 0 : cell === ''
+  if (filter.operator === ColumnSingleValueFilterOperator.IS_NULL) {
+    return isEmpty
+  }
+  if (filter.operator === ColumnSingleValueFilterOperator.IS_NOT_NULL) {
+    return !isEmpty
+  }
+  const cellValues: readonly (string | number)[] = Array.isArray(cell)
+    ? cell
+    : [cell as string | number]
+  return cellValues.some(value =>
+    singleValueMatches(value, filter.operator, filter.values),
+  )
+}
+
+function multiValueFilterMatches(
+  row: VirtualTableRow | MaterialRow,
+  filter: ColumnMultiValueFunctionQueryFilter,
+  listColumnNames: ReadonlySet<string>,
+): boolean {
+  if (!listColumnNames.has(filter.columnName)) {
+    throw invalidQuery(
+      `${filter.function} can only be used on a multi-value (list) column: ${filter.columnName}`,
+    )
+  }
+  const cell = row[filter.columnName] as readonly string[]
+  if (filter.function === ColumnMultiValueFunction.HAS_LIKE) {
+    return filter.values.some(pattern =>
+      cell.some(value => likeToRegExp(pattern).test(value)),
+    )
+  }
+  return cell.some(value => filter.values.includes(value))
+}
+
 /**
  * Evaluates a query filter against one row. `listColumnNames` identifies the
  * row's multi-value columns, which accept only HAS / HAS_LIKE.
@@ -187,37 +235,10 @@ function filterMatches(
           : children.every(child => filterMatches(row, child, listColumnNames))
       return filter.not ? !matches : matches
     }
-    case 'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter': {
-      if (!(filter.columnName in row)) {
-        throw invalidQuery(`Column does not exist: ${filter.columnName}`)
-      }
-      const cell = row[filter.columnName]
-      if (filter.operator === ColumnSingleValueFilterOperator.IS_NULL) {
-        return Array.isArray(cell) ? cell.length === 0 : cell === ''
-      }
-      if (filter.operator === ColumnSingleValueFilterOperator.IS_NOT_NULL) {
-        return Array.isArray(cell) ? cell.length > 0 : cell !== ''
-      }
-      const cellValues: readonly (string | number)[] = Array.isArray(cell)
-        ? cell
-        : [cell as string | number]
-      return cellValues.some(value =>
-        singleValueMatches(value, filter.operator, filter.values),
-      )
-    }
-    case 'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter': {
-      if (!listColumnNames.has(filter.columnName)) {
-        throw invalidQuery(
-          `${filter.function} can only be used on a multi-value (list) column: ${filter.columnName}`,
-        )
-      }
-      const cell = row[filter.columnName] as readonly string[]
-      return filter.function === ColumnMultiValueFunction.HAS_LIKE
-        ? filter.values.some(pattern =>
-            cell.some(value => likeToRegExp(pattern).test(value)),
-          )
-        : cell.some(value => filter.values.includes(value))
-    }
+    case 'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter':
+      return singleValueFilterMatches(row, filter)
+    case 'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter':
+      return multiValueFilterMatches(row, filter, listColumnNames)
     default:
       throw invalidQuery(
         `The Cohort Builder mock does not support ${filter.concreteType}`,
@@ -280,7 +301,7 @@ function groupByParticipant(
     for (const name of data.dataAttributeNames) {
       participantRow[name] = Array.from(
         new Set(group.map(row => row[name])),
-      ).sort()
+      ).sort((a, b) => a.localeCompare(b))
     }
     return participantRow
   })
@@ -310,8 +331,8 @@ function groupByDataReference(
 function hashString(value: string): number {
   // FNV-1a, 32-bit
   let hash = 0x811c9dc5
-  for (let i = 0; i < value.length; i++) {
-    hash ^= value.charCodeAt(i)
+  for (const character of value) {
+    hash ^= character.codePointAt(0)!
     hash = Math.imul(hash, 0x01000193)
   }
   return hash >>> 0
@@ -411,7 +432,7 @@ function buildFacet(
 // -----------------------------------------------------------------------------
 
 function sqlLiteral(value: string): string {
-  return `'${value.replace(/'/g, "''")}'`
+  return `'${value.replaceAll("'", "''")}'`
 }
 
 const SQL_OPERATOR_BY_FILTER_OPERATOR: Partial<
@@ -490,51 +511,47 @@ function sortRows(
   })
 }
 
-function executeQuery(
-  data: CohortBuilderSyntheticData,
+function getPerspective(
+  profile: CohortBuilderMockProfile,
+  entityId: string,
+): Perspective {
+  if (entityId === profile.participantsVirtualTableId) {
+    return 'PARTICIPANTS'
+  }
+  if (entityId === profile.dataVirtualTableId) {
+    return 'DATA'
+  }
+  throw new MockQueryError(404, {
+    concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+    reason: `The Cohort Builder mock has no table ${entityId}`,
+  })
+}
+
+function getAggregateConfig(
+  profile: CohortBuilderMockProfile,
   request: CohortBuilderQueryBundleRequest,
   access: CohortBuilderAccess,
-): QueryResultBundle {
-  const { profile } = data
-  const perspective: Perspective | undefined =
-    request.entityId === profile.participantsVirtualTableId
-      ? 'PARTICIPANTS'
-      : request.entityId === profile.dataVirtualTableId
-        ? 'DATA'
-        : undefined
-  if (!perspective) {
-    throw new MockQueryError(404, {
-      concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
-      reason: `The Cohort Builder mock has no table ${request.entityId}`,
-    })
+): AggregateDataConfiguration | undefined {
+  // A data manager's preview applies only to callers who already have full access.
+  if (access === 'FULL') {
+    return request.aggregateDataPreview
   }
-  const columnModels =
-    getCohortBuilderColumnModels(data)[
-      perspective === 'PARTICIPANTS' ? 'participants' : 'dataReferences'
-    ]
-  const listColumnNames = new Set(
-    columnModels
-      .filter(column => column.columnType?.endsWith('_LIST'))
-      .map(column => column.name!),
-  )
-  const partMask = request.partMask ?? 0
-  const { query } = request
-  const additionalFilters = query.additionalFilters ?? []
-  const selectedFacets = query.selectedFacets ?? []
-  const isAggregateOnly = access === 'AGGREGATE_ONLY'
-  const aggregateConfig: AggregateDataConfiguration | undefined =
-    isAggregateOnly
-      ? {
-          suppressionThreshold: profile.suppressionThreshold,
-          countSuppressionStrategy: profile.countSuppressionStrategy,
-          facetPostProcessingConfig: profile.facetPostProcessingConfig,
-        }
-      : request.aggregateDataPreview
+  return {
+    suppressionThreshold: profile.suppressionThreshold,
+    countSuppressionStrategy: profile.countSuppressionStrategy,
+    facetPostProcessingConfig: profile.facetPostProcessingConfig,
+  }
+}
 
+function assertRowsAllowed(
+  perspective: Perspective,
+  partMask: number,
+  access: CohortBuilderAccess,
+): void {
   // The participant VT projects individualId, a quasi-identifier, so the
   // backend withholds its rows from aggregate-only callers during preflight.
   if (
-    isAggregateOnly &&
+    access === 'AGGREGATE_ONLY' &&
     perspective === 'PARTICIPANTS' &&
     (partMask & BUNDLE_MASK_QUERY_RESULTS) !== 0
   ) {
@@ -547,12 +564,48 @@ function executeQuery(
       rowSuppressionReasonCode: 'QID_PROJECTED',
     })
   }
+}
 
+function assertAboveSuppressionThreshold(
+  matchedRowCount: number,
+  aggregateConfig: AggregateDataConfiguration | undefined,
+): void {
+  if (!aggregateConfig) {
+    return
+  }
+  // Like the backend's COUNT(*) gate, both perspectives count the rows of the
+  // queried VirtualTable: participants, or files and datasets.
+  const threshold = aggregateConfig.suppressionThreshold
+  if (matchedRowCount > 0 && matchedRowCount < threshold) {
+    throw new MockQueryError(MOCK_BELOW_THRESHOLD_HTTP_STATUS, {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.BelowThresholdErrorResponse',
+      reason: `The number of records matched by this query is below the minimum threshold of ${threshold} required to return a result.`,
+      errorCode: 'BELOW_THRESHOLD',
+      suppressionThreshold: threshold,
+    })
+  }
+}
+
+type MatchedRows = {
+  rows: VirtualTableRow[]
+  /** The matching rows when one column's facet selection is ignored, as that column's facet counts require. */
+  ignoringFacetSelection: (columnName: string) => VirtualTableRow[]
+}
+
+function matchRows(
+  data: CohortBuilderSyntheticData,
+  perspective: Perspective,
+  query: Query,
+  listColumnNames: ReadonlySet<string>,
+): MatchedRows {
+  const additionalFilters = query.additionalFilters ?? []
+  const selectedFacets = query.selectedFacets ?? []
   const definingFilters = additionalFilters.filter(
     filter => filter.isDefiningCondition,
   )
   const outerFilters = additionalFilters.filter(
-    filter => !definingFilters.includes(filter),
+    filter => !filter.isDefiningCondition,
   )
   const materialRows = data.materialRows.filter(row =>
     definingFilters.every(filter => filterMatches(row, filter, new Set())),
@@ -561,8 +614,7 @@ function executeQuery(
     perspective === 'PARTICIPANTS'
       ? groupByParticipant(materialRows, data)
       : groupByDataReference(materialRows, data)
-
-  const applyOuterFilters = (excludedFacetColumnName?: string) =>
+  const filterRows = (ignoredFacetColumnName?: string) =>
     virtualTableRows.filter(
       row =>
         outerFilters.every(filter =>
@@ -570,26 +622,97 @@ function executeQuery(
         ) &&
         selectedFacets.every(
           selection =>
-            selection.columnName === excludedFacetColumnName ||
+            selection.columnName === ignoredFacetColumnName ||
             facetSelectionMatches(row, selection),
         ),
     )
-  const resultRows = applyOuterFilters()
+  return { rows: filterRows(), ignoringFacetSelection: filterRows }
+}
 
-  if (aggregateConfig) {
-    // Like the backend's COUNT(*) gate, both perspectives count the rows of the
-    // queried VirtualTable: participants, or files and datasets.
-    const threshold = aggregateConfig.suppressionThreshold
-    if (resultRows.length > 0 && resultRows.length < threshold) {
-      throw new MockQueryError(MOCK_BELOW_THRESHOLD_HTTP_STATUS, {
-        concreteType:
-          'org.sagebionetworks.repo.model.table.BelowThresholdErrorResponse',
-        reason: `The number of records matched by this query is below the minimum threshold of ${threshold} required to return a result.`,
-        errorCode: 'BELOW_THRESHOLD',
-        suppressionThreshold: threshold,
-      })
-    }
+function toQueryResult(
+  entityId: string,
+  columnModels: readonly ColumnModel[],
+  selectColumns: TableSelectColumn[],
+  rows: VirtualTableRow[],
+  query: Query,
+): TableQueryResult {
+  const offset = query.offset ?? 0
+  const page = sortRows(rows, query.sort).slice(
+    offset,
+    offset + (query.limit ?? rows.length),
+  )
+  return {
+    concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
+    queryResults: {
+      concreteType: 'org.sagebionetworks.repo.model.table.RowSet',
+      tableId: entityId,
+      headers: selectColumns,
+      rows: page.map(row => ({
+        values: columnModels.map(({ name }) => {
+          const cell = row[name!]
+          return Array.isArray(cell) ? JSON.stringify(cell) : String(cell)
+        }),
+      })),
+    },
   }
+}
+
+function buildFacets(
+  columnModels: readonly ColumnModel[],
+  query: Query,
+  matchedRows: MatchedRows,
+  aggregateConfig: AggregateDataConfiguration | undefined,
+): FacetColumnResult[] {
+  const selectedFacets = query.selectedFacets ?? []
+  const noiseKeyPrefix = JSON.stringify([
+    query.additionalFilters ?? [],
+    selectedFacets,
+  ])
+  return columnModels
+    .filter(column => column.facetType === 'enumeration')
+    .map(({ name }) => {
+      const selection = selectedFacets.find(facet => facet.columnName === name)
+      return buildFacet(
+        name!,
+        countFacetValues(matchedRows.ignoringFacetSelection(name!), name!),
+        selection?.concreteType ===
+          'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest'
+          ? selection.facetValues
+          : [],
+        aggregateConfig,
+        noiseKeyPrefix,
+      )
+    })
+}
+
+function toCombinedSql(entityId: string, filters: readonly QueryFilter[]) {
+  const predicates = filters.map(filterToSql).filter(Boolean)
+  const where =
+    predicates.length > 0 ? ` WHERE ${predicates.join(' AND ')}` : ''
+  return `SELECT * FROM ${entityId}${where}`
+}
+
+function executeQuery(
+  data: CohortBuilderSyntheticData,
+  request: CohortBuilderQueryBundleRequest,
+  access: CohortBuilderAccess,
+): QueryResultBundle {
+  const perspective = getPerspective(data.profile, request.entityId)
+  const columnModels =
+    getCohortBuilderColumnModels(data)[
+      perspective === 'PARTICIPANTS' ? 'participants' : 'dataReferences'
+    ]
+  const listColumnNames = new Set(
+    columnModels
+      .filter(column => column.columnType?.endsWith('_LIST'))
+      .map(column => column.name!),
+  )
+  const partMask = request.partMask ?? 0
+  const { query } = request
+  const aggregateConfig = getAggregateConfig(data.profile, request, access)
+  assertRowsAllowed(perspective, partMask, access)
+  const matchedRows = matchRows(data, perspective, query, listColumnNames)
+  assertAboveSuppressionThreshold(matchedRows.rows.length, aggregateConfig)
 
   const bundle: QueryResultBundle = {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
@@ -600,28 +723,16 @@ function executeQuery(
     columnType,
   }))
   if (partMask & BUNDLE_MASK_QUERY_RESULTS) {
-    const offset = query.offset ?? 0
-    const page = sortRows(resultRows, query.sort).slice(
-      offset,
-      offset + (query.limit ?? resultRows.length),
+    bundle.queryResult = toQueryResult(
+      request.entityId,
+      columnModels,
+      selectColumns,
+      matchedRows.rows,
+      query,
     )
-    bundle.queryResult = {
-      concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
-      queryResults: {
-        concreteType: 'org.sagebionetworks.repo.model.table.RowSet',
-        tableId: request.entityId,
-        headers: selectColumns,
-        rows: page.map(row => ({
-          values: columnModels.map(({ name }) => {
-            const cell = row[name!]
-            return Array.isArray(cell) ? JSON.stringify(cell) : String(cell)
-          }),
-        })),
-      },
-    }
   }
   if (partMask & BUNDLE_MASK_QUERY_COUNT) {
-    bundle.queryCount = resultRows.length
+    bundle.queryCount = matchedRows.rows.length
   }
   if (partMask & BUNDLE_MASK_QUERY_SELECT_COLUMNS) {
     bundle.selectColumns = selectColumns
@@ -633,24 +744,12 @@ function executeQuery(
     bundle.columnModels = columnModels
   }
   if (partMask & BUNDLE_MASK_QUERY_FACETS) {
-    const noiseKeyPrefix = JSON.stringify([additionalFilters, selectedFacets])
-    bundle.facets = columnModels
-      .filter(column => column.facetType === 'enumeration')
-      .map(({ name }) => {
-        const selection = selectedFacets.find(
-          facet => facet.columnName === name,
-        )
-        return buildFacet(
-          name!,
-          countFacetValues(applyOuterFilters(name), name!),
-          selection?.concreteType ===
-            'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest'
-            ? selection.facetValues
-            : [],
-          aggregateConfig,
-          noiseKeyPrefix,
-        )
-      })
+    bundle.facets = buildFacets(
+      columnModels,
+      query,
+      matchedRows,
+      aggregateConfig,
+    )
     bundle.facetPostProcessingApplied =
       aggregateConfig?.facetPostProcessingConfig !== undefined
   }
@@ -658,10 +757,10 @@ function executeQuery(
     bundle.lastUpdatedOn = MOCK_LAST_UPDATED_ON
   }
   if (partMask & BUNDLE_MASK_COMBINED_SQL) {
-    const predicates = additionalFilters.map(filterToSql).filter(Boolean)
-    bundle.combinedSql = `SELECT * FROM ${request.entityId}${
-      predicates.length > 0 ? ` WHERE ${predicates.join(' AND ')}` : ''
-    }`
+    bundle.combinedSql = toCombinedSql(
+      request.entityId,
+      query.additionalFilters ?? [],
+    )
   }
   return bundle
 }
