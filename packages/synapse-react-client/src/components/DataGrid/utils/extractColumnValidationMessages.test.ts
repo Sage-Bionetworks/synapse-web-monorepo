@@ -153,4 +153,28 @@ describe('extractColumnValidationMessages', () => {
       'required key [missingColumn] not found',
     ])
   })
+
+  it('should extract column name from extraneous key messages', () => {
+    const messages = [
+      '#: extraneous key [extraColumn] is not permitted',
+      '#: extraneous key [otherExtraColumn] is not permitted',
+    ]
+    const result = extractColumnValidationMessages(messages)
+
+    expect(result.size).toBe(2)
+    expect(result.get('extraColumn')).toEqual([
+      'extraneous key [extraColumn] is not permitted',
+    ])
+    expect(result.get('otherExtraColumn')).toEqual([
+      'extraneous key [otherExtraColumn] is not permitted',
+    ])
+  })
+
+  it('should keep a property key message under its column when it is not object-level', () => {
+    const messages = ['#/nested: required key [inner] not found']
+    const result = extractColumnValidationMessages(messages)
+
+    expect(result.size).toBe(1)
+    expect(result.get('nested')).toEqual(['required key [inner] not found'])
+  })
 })

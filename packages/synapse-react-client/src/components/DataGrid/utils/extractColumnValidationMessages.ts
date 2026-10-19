@@ -1,3 +1,19 @@
+// Object-level messages that are about a single property, capturing the property name
+const PROPERTY_KEY_MESSAGE_PATTERNS = [
+  /^required key \[([^\]]+)\] not found$/i,
+  /^extraneous key \[([^\]]+)\] is not permitted$/i,
+]
+
+function getPropertyKeyFromMessage(message: string): string | undefined {
+  for (const pattern of PROPERTY_KEY_MESSAGE_PATTERNS) {
+    const match = message.match(pattern)
+    if (match) {
+      return match[1]
+    }
+  }
+  return undefined
+}
+
 /**
  * Extracts column name and validation message from validation message strings.
  *
@@ -13,6 +29,9 @@
  *
  *  extractColumnValidationMessages(["#: required key [missingColumn] not found"])
  *  -> Map { "missingColumn" => ["required key [missingColumn] not found"] }
+ *
+ *  extractColumnValidationMessages(["#: extraneous key [extraColumn] is not permitted"])
+ *  -> Map { "extraColumn" => ["extraneous key [extraColumn] is not permitted"] }
  */
 export function extractColumnValidationMessages(
   messages: string[],
@@ -28,16 +47,9 @@ export function extractColumnValidationMessages(
     const str = raw.trimStart()
     const match = str.match(regex)
     if (match) {
-      let columnName = match[1]?.trim() ?? '_row'
       const message = match[2].trim()
-      if (columnName === '_row') {
-        const requiredKeyMatch = message.match(
-          /^required key \[([^\]]+)\] not found$/i,
-        )
-        if (requiredKeyMatch) {
-          columnName = requiredKeyMatch[1]
-        }
-      }
+      const columnName =
+        match[1]?.trim() ?? getPropertyKeyFromMessage(message) ?? '_row'
 
       if (!columnMap.has(columnName)) {
         columnMap.set(columnName, [])
