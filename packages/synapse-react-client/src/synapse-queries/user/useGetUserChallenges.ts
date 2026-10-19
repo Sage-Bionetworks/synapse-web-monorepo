@@ -90,8 +90,7 @@ export function useGetUserChallengesInfinite<
       }
     },
     getNextPageParam: (lastPage, pages) => {
-      if (lastPage.results.length > 0)
-        return pages.length * 10 //set the new offset to (page * limit)
+      if (lastPage.results.length > 0) return pages.length * 10 //set the new offset to (page * limit)
       else return undefined
     },
   })

@@ -410,12 +410,8 @@ export const entityJsonKeys: Record<ENTITY_CONCRETE_TYPE, string[]> = {
     'upsertKey',
     'csvDescriptor',
   ],
-  'org.sagebionetworks.repo.model.Preview': [
-    /* unused */
-  ],
-  'org.sagebionetworks.repo.model.ExampleEntity': [
-    /* unused */
-  ],
+  'org.sagebionetworks.repo.model.Preview': [/* unused */],
+  'org.sagebionetworks.repo.model.ExampleEntity': [/* unused */],
   'org.sagebionetworks.repo.model.search.table.SearchIndex': [
     ...allEntityKeys,
     'definingSQL',
