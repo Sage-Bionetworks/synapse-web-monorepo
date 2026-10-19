@@ -1,23 +1,39 @@
 import '@/mocks/msw/server'
 import React from 'react'
+import { ELITE_MOCK_PROFILE } from '@/mocks/cohortBuilder/cohortBuilderMockProfiles'
 import mockQueryResponseData from '@/mocks/mockQueryResponseData'
+import { getCohortBuilderHandlers } from '@/mocks/msw/handlers/cohortBuilderHandlers'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { TABLE_QUERY_ASYNC_START } from '@/utils/APIConstants'
 import {
   ALL_QUERY_BUNDLE_PARTS,
+  BUNDLE_MASK_LAST_UPDATED_ON,
+  BUNDLE_MASK_QUERY_COLUMN_MODELS,
+  BUNDLE_MASK_QUERY_COUNT,
+  BUNDLE_MASK_QUERY_FACETS,
+  BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE,
+  BUNDLE_MASK_QUERY_SELECT_COLUMNS,
   DEFAULT_PAGE_SIZE,
 } from '@/utils/SynapseConstants'
 import {
   getQueryRequestFromLink,
   generateCompressedQueryURL,
 } from '@/utils/functions/deepLinkingUtils'
-import { QueryBundleRequest, Row } from '@sage-bionetworks/synapse-types'
+import {
+  FacetColumnResultValues,
+  QueryBundleRequest,
+  QueryResultBundle,
+  Row,
+} from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { SetStateAction, useAtomValue, useSetAtom } from 'jotai'
 import { cloneDeep } from 'lodash-es'
 import { QueryContextType, useQueryContext } from '../QueryContext'
+import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
+import { useRowSet } from '../QueryWrapperPlotNav/UseRowSet'
 import { QueryWrapper, QueryWrapperProps } from './QueryWrapper'
 import { selectedRowsAtom } from './TableRowSelectionState'
 import { Mock } from 'vitest'
@@ -464,5 +480,100 @@ describe('QueryWrapper', () => {
       // Selection was not changed
       expect(selectedRows).toHaveLength(1)
     })
+  })
+
+  describe('count-only requests (no BUNDLE_MASK_QUERY_RESULTS)', () => {
+    const participantsTableId = ELITE_MOCK_PROFILE.participantsVirtualTableId
+    const countOnlyQueryRequest: QueryBundleRequest = {
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+      partMask:
+        BUNDLE_MASK_QUERY_COUNT |
+        BUNDLE_MASK_QUERY_SELECT_COLUMNS |
+        BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE |
+        BUNDLE_MASK_QUERY_COLUMN_MODELS |
+        BUNDLE_MASK_QUERY_FACETS |
+        BUNDLE_MASK_LAST_UPDATED_ON,
+      entityId: participantsTableId,
+      query: { sql: `SELECT * FROM ${participantsTableId}` },
+    }
+    const RowSetConsumer = (): React.ReactNode => {
+      useRowSet()
+      return null
+    }
+
+    let sentPartMasks: number[]
+    const recordQueryRequest = async ({ request }: { request: Request }) => {
+      if (
+        request.method === 'POST' &&
+        new URL(request.url).pathname ===
+          TABLE_QUERY_ASYNC_START(participantsTableId)
+      ) {
+        const body = (await request.clone().json()) as QueryBundleRequest
+        sentPartMasks.push(body.partMask)
+      }
+    }
+
+    beforeEach(() => {
+      sentPartMasks = []
+      // An aggregate-only caller is rejected with ROW_SUPPRESSED if any participant row request is sent.
+      server.use(
+        ...getCohortBuilderHandlers({
+          profile: ELITE_MOCK_PROFILE,
+          access: 'AGGREGATE_ONLY',
+        }),
+      )
+      server.events.on('request:start', recordQueryRequest)
+    })
+    afterEach(() => {
+      server.events.removeListener('request:start', recordQueryRequest)
+      server.resetHandlers()
+    })
+
+    it.each([false, true])(
+      'sends only the metadata request (isInfinite: %s), and reports metadata with binned facets normalized to value counts',
+      async isInfinite => {
+        const onQueryResultBundleChange: Mock<
+          NonNullable<QueryWrapperProps['onQueryResultBundleChange']>
+        > = vi.fn()
+        render(
+          <QueryWrapper
+            initQueryRequest={countOnlyQueryRequest}
+            isInfinite={isInfinite}
+            onQueryResultBundleChange={onQueryResultBundleChange}
+          >
+            <QueryVisualizationWrapper>
+              <RowSetConsumer />
+            </QueryVisualizationWrapper>
+          </QueryWrapper>,
+          { wrapper: createWrapper() },
+        )
+
+        await waitFor(() =>
+          expect(onQueryResultBundleChange).toHaveBeenCalled(),
+        )
+        const bundle = JSON.parse(
+          onQueryResultBundleChange.mock.lastCall![0],
+        ) as QueryResultBundle
+        expect(bundle.queryCount).toBe(2700)
+        expect(bundle.facetPostProcessingApplied).toBe(true)
+        const sexFacet = bundle.facets?.find(
+          facet => facet.columnName === 'sex',
+        ) as FacetColumnResultValues | undefined
+        expect(sexFacet?.concreteType).toBe(
+          'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
+        )
+        expect(sexFacet?.binSize).toBe(5)
+        expect(sexFacet?.facetValues).toContainEqual({
+          value: 'Female',
+          count: 1565,
+          isSelected: false,
+        })
+
+        // Row queries (paginated: partMask 0; infinite: COUNT only) must not be sent.
+        expect(new Set(sentPartMasks)).toEqual(
+          new Set([countOnlyQueryRequest.partMask]),
+        )
+      },
+    )
   })
 })

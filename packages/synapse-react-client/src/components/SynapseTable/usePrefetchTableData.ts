@@ -294,7 +294,10 @@ export function usePrefetchTableRows(): (pageNumber: number) => Promise<void> {
         ).rowDataQueryOptions
       }
 
-      // Finally, prefetch the data
+      // A request without BUNDLE_MASK_QUERY_RESULTS has no rows to prefetch.
+      if (rowDataQueryOptions.enabled === false) {
+        return Promise.resolve()
+      }
       return queryClient.prefetchQuery(rowDataQueryOptions)
     },
     [

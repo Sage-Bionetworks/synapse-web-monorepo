@@ -33,6 +33,7 @@ import {
   hasFacetedSelectColumn,
   hasResettableFilters,
   isSingleNotSetValue,
+  normalizeBinnedFacets,
   queryRequestsHaveSameTotalResults,
   removeEmptyQueryParams,
   removeLockedColumnFromFacetData,
@@ -734,6 +735,68 @@ describe('getCorrespondingSelectedFacet', () => {
       expect(
         result!.facets!.find(facet => facet.columnName === 'Make'),
       ).toBeDefined()
+    })
+  })
+})
+
+describe('normalizeBinnedFacets', () => {
+  it('converts binned facets to value counts at the bin minimum, keeping every value and leaving other facets unchanged', () => {
+    const valuesFacet: FacetColumnResultValues = {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
+      columnName: 'study',
+      facetType: 'enumeration',
+      facetValues: [{ value: 'LLFS', count: 1200, isSelected: false }],
+    }
+    const rangeFacet: FacetColumnResult = {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.FacetColumnResultRange',
+      columnName: 'age',
+      facetType: 'range',
+      columnMin: '20',
+      columnMax: '105',
+    }
+    // The legacy facet union cannot express FacetColumnResultBinnedValues, which the server returns.
+    const bundle = {
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
+      queryCount: 2700,
+      facetPostProcessingApplied: true,
+      facets: [
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnResultBinnedValues',
+          columnName: 'sex',
+          facetType: 'enumeration',
+          binSize: 5,
+          binnedValues: [
+            { value: 'Female', binMin: 1565, isSelected: true },
+            { value: 'Unknown', binMin: 0, isSelected: false },
+          ],
+        },
+        valuesFacet,
+        rangeFacet,
+      ],
+    } as unknown as QueryResultBundle
+
+    expect(normalizeBinnedFacets(bundle)).toEqual({
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
+      queryCount: 2700,
+      facetPostProcessingApplied: true,
+      facets: [
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
+          columnName: 'sex',
+          facetType: 'enumeration',
+          binSize: 5,
+          facetValues: [
+            { value: 'Female', count: 1565, isSelected: true },
+            { value: 'Unknown', count: 0, isSelected: false },
+          ],
+        },
+        valuesFacet,
+        rangeFacet,
+      ],
     })
   })
 })

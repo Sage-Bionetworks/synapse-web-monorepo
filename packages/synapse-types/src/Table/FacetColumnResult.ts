@@ -6,6 +6,12 @@ export type FacetColumnResultValues = {
   facetValues: FacetColumnResultValueCount[] // The list of QueryFacetResultValue that contain frequency counts for its most frequent values
   /* When present, these results represent a sub-column identified by its jsonPath. Note: The ColumnName will be the name of the root JSON column. */
   jsonPath?: string
+  /*
+   * Client-side only. Set when the server returned FacetColumnResultBinnedValues (ROUNDING post-processing for
+   * aggregate-only access) and the client converted it to this shape: each value's count is then its bin minimum, and
+   * the exact count lies within [count, count + binSize - 1].
+   */
+  binSize?: number
 }
 
 // https://rest-docs.synapse.org/rest/org/sagebionetworks/repo/model/table/FacetColumnResultValueCount.html
