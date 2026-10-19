@@ -387,3 +387,38 @@ Bundle check: a fresh `SageAccountWeb` production build and the existing portal 
 **Fix applied:** None. Revisit if elliptic publishes a fix or app code starts using `crypto` sign/ECDH APIs in the browser.
 
 **Testing:** `grep -rlE "secp256k1|ed25519|createECDH"` over `apps/*/build` and `apps/portals/*/build` → 0 files.
+
+## esbuild
+
+```
+┌─────────────────────┬────────────────────────────────────────────────────────┐
+│ low                 │ esbuild allows arbitrary file read when running the    │
+│                     │ development server on Windows                          │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Package             │ esbuild                                                │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Vulnerable versions │ >=0.27.3 <0.28.1                                       │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Patched versions    │ >=0.28.1                                               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Paths               │ apps__portals__arkportal>@react-router/dev>vite-       │
+│                     │ node>vite>esbuild                                      │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ More info           │ https://github.com/advisories/GHSA-g7r4-m6w7-qqqr      │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+```
+
+**Analysis:**
+
+1 vulnerable instance, dev-only (dev server / build tooling):
+
+- `@react-router/dev@7.18.2>vite-node@3.2.4>vite@7.3.5>esbuild@0.27.7`: vulnerable — vite 7.3.5 declares `esbuild ^0.27.0`. vite 7.3.6+ declares `^0.27.0 || ^0.28.0`, and vite-node's own range (`^5.0.0 || ^6.0.0 || ^7.0.0-0`) allows it, so the lockfile was just stale.
+- Every workspace's direct `vite@8.0.16` already resolves `esbuild@0.28.2`: patched.
+
+The advisory affects only the esbuild dev server on Windows.
+
+**Fix rationale:** Lockfile-only. `pnpm update vite --recursive` would also bump the direct vite 8.0.16 → 8.3.x and rewrite the specifier in 27 package.json files, too broad for this advisory. All @react-router/dev 7.x releases depend on `vite-node ^3.2.2`, so a parent update doesn't help (8.x is a major). Instead, the transitive vite was re-resolved within vite-node's declared range: a scoped override `"vite-node@3.2.4>vite": "^7.3.6"` was added, installed, then removed and reinstalled. pnpm keeps the in-range `vite@7.3.7` in the lockfile, so no override stays behind. esbuild now dedupes to one `0.28.2`, which drops the 0.27.7 platform binaries.
+
+**Fix applied:** `pnpm-lock.yaml` only (transitive `vite@7.3.5` → `7.3.7`, `esbuild@0.27.7` removed).
+
+**Testing:** `pnpm why esbuild --recursive` → only `esbuild@0.28.2`; `pnpm install --frozen-lockfile` passes with the unchanged package.json; `pnpm nx run arkportal:build` (react-router build via `@react-router/dev`) succeeds.
