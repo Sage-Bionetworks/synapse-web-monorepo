@@ -60,7 +60,7 @@ function pickWeighted(random: () => number, values: WeightedValues): string {
       return value
     }
   }
-  return entries[entries.length - 1][0]
+  return entries.at(-1)![0]
 }
 
 function pickOne<T>(random: () => number, values: readonly T[]): T {
@@ -104,6 +104,149 @@ function createParticipants(
   })
 }
 
+type SyntheticDataBuilder = {
+  random: () => number
+  references: Map<string, SyntheticDataReference>
+  materialRows: MaterialRow[]
+  addReference: (
+    study: MockStudy,
+    assay: MockAssay,
+    referenceType: ReferenceType,
+    name: string,
+  ) => SyntheticDataReference
+  link: (
+    participants: readonly Participant[],
+    reference: SyntheticDataReference,
+  ) => void
+}
+
+function createSyntheticDataBuilder(
+  random: () => number,
+  profile: CohortBuilderMockProfile,
+): SyntheticDataBuilder {
+  const references = new Map<string, SyntheticDataReference>()
+  const materialRows: MaterialRow[] = []
+  let nextEntityId = profile.firstReferenceEntityId
+  return {
+    random,
+    references,
+    materialRows,
+    addReference(study, assay, referenceType, name) {
+      const attributes: Record<string, string> = {
+        dataType: assay.dataType,
+        assay: assay.assay,
+        fileFormat: pickOne(random, assay.fileFormats),
+      }
+      for (const attributeName of profile.extraDataAttributeNames) {
+        attributes[attributeName] = pickOne(
+          random,
+          assay.extraAttributes[attributeName] ?? ['Unknown'],
+        )
+      }
+      const reference: SyntheticDataReference = {
+        id: `syn${nextEntityId++}`,
+        name,
+        referenceType,
+        study: study.name,
+        attributes,
+      }
+      references.set(reference.id, reference)
+      return reference
+    },
+    link(participants, reference) {
+      for (const participant of participants) {
+        materialRows.push({
+          ...participant,
+          [DATA_REFERENCE_COLUMN_NAME]: reference.id,
+          [REFERENCE_TYPE_COLUMN_NAME]: reference.referenceType,
+          ...reference.attributes,
+        })
+      }
+    },
+  }
+}
+
+/** Many:many studies map every participant to every study dataset. */
+function addDatasetStudy(
+  builder: SyntheticDataBuilder,
+  study: MockStudy,
+  participants: readonly Participant[],
+) {
+  for (const assay of study.assays) {
+    const dataset = builder.addReference(
+      study,
+      assay,
+      'DATASET',
+      `${study.name} ${assay.assay} (synthetic)`,
+    )
+    builder.link(participants, dataset)
+  }
+}
+
+function addBatchMatrixFiles(
+  builder: SyntheticDataBuilder,
+  study: MockStudy,
+  assay: MockAssay,
+  assayParticipants: readonly Participant[],
+) {
+  const { random } = builder
+  for (let batch = 1; batch <= SMALL_BATCHES_PER_ASSAY; batch++) {
+    const batchSize =
+      SMALL_BATCH_MIN_SIZE +
+      Math.floor(random() * (SMALL_BATCH_MAX_SIZE - SMALL_BATCH_MIN_SIZE + 1))
+    const batchFile = builder.addReference(
+      study,
+      assay,
+      'FILE',
+      `${study.name}_${assay.assay}_batch${batch}_matrix`,
+    )
+    const start = Math.floor(
+      random() * Math.max(1, assayParticipants.length - batchSize),
+    )
+    builder.link(assayParticipants.slice(start, start + batchSize), batchFile)
+  }
+}
+
+/**
+ * FILE studies give each participant a file per assay they took part in, plus
+ * an all-participants matrix and several small batch matrices per assay.
+ */
+function addFileStudy(
+  builder: SyntheticDataBuilder,
+  study: MockStudy,
+  participants: readonly Participant[],
+) {
+  const participantsByAssay = new Map<MockAssay, Participant[]>(
+    study.assays.map(assay => [assay, []]),
+  )
+  for (const participant of participants) {
+    for (const assay of pickSubset(builder.random, study.assays, 1)) {
+      participantsByAssay.get(assay)!.push(participant)
+      const file = builder.addReference(
+        study,
+        assay,
+        'FILE',
+        `${study.name}_${assay.assay}_sample${String(builder.references.size).padStart(5, '0')}`,
+      )
+      builder.link([participant], file)
+    }
+  }
+
+  for (const [assay, assayParticipants] of participantsByAssay) {
+    if (assayParticipants.length === 0) {
+      continue
+    }
+    const matrix = builder.addReference(
+      study,
+      assay,
+      'FILE',
+      `${study.name}_${assay.assay}_all_participants_matrix`,
+    )
+    builder.link(assayParticipants, matrix)
+    addBatchMatrixFiles(builder, study, assay, assayParticipants)
+  }
+}
+
 /**
  * Generates a deterministic synthetic participant ⋈ file/dataset dataset (the
  * MATERIAL rows) from a mock profile.
@@ -113,52 +256,8 @@ export function createCohortBuilderSyntheticData(
   seed: number = DEFAULT_SYNTHETIC_DATA_SEED,
 ): CohortBuilderSyntheticData {
   const random = createSeededRandom(seed)
-  const dataAttributeNames = [
-    ...CORE_DATA_ATTRIBUTE_NAMES,
-    ...profile.extraDataAttributeNames,
-  ]
-  const references = new Map<string, SyntheticDataReference>()
-  const materialRows: MaterialRow[] = []
-  let nextEntityId = profile.firstReferenceEntityId
+  const builder = createSyntheticDataBuilder(random, profile)
   let nextParticipantIndex = 1
-
-  function addReference(
-    study: MockStudy,
-    assay: MockAssay,
-    referenceType: ReferenceType,
-    name: string,
-  ): SyntheticDataReference {
-    const attributes: Record<string, string> = {
-      dataType: assay.dataType,
-      assay: assay.assay,
-      fileFormat: pickOne(random, assay.fileFormats),
-    }
-    for (const attributeName of profile.extraDataAttributeNames) {
-      attributes[attributeName] = pickOne(
-        random,
-        assay.extraAttributes[attributeName] ?? ['Unknown'],
-      )
-    }
-    const reference: SyntheticDataReference = {
-      id: `syn${nextEntityId++}`,
-      name,
-      referenceType,
-      study: study.name,
-      attributes,
-    }
-    references.set(reference.id, reference)
-    return reference
-  }
-
-  function link(participant: Participant, reference: SyntheticDataReference) {
-    materialRows.push({
-      ...participant,
-      [DATA_REFERENCE_COLUMN_NAME]: reference.id,
-      [REFERENCE_TYPE_COLUMN_NAME]: reference.referenceType,
-      ...reference.attributes,
-    })
-  }
-
   for (const study of profile.studies) {
     const participants = createParticipants(
       random,
@@ -167,70 +266,19 @@ export function createCohortBuilderSyntheticData(
       nextParticipantIndex,
     )
     nextParticipantIndex += participants.length
-
     if (study.mapping === 'DATASET') {
-      // Many:many studies map every participant to every study dataset.
-      for (const assay of study.assays) {
-        const dataset = addReference(
-          study,
-          assay,
-          'DATASET',
-          `${study.name} ${assay.assay} (synthetic)`,
-        )
-        participants.forEach(participant => link(participant, dataset))
-      }
-      continue
-    }
-
-    const participantsByAssay = new Map<MockAssay, Participant[]>(
-      study.assays.map(assay => [assay, []]),
-    )
-    for (const participant of participants) {
-      for (const assay of pickSubset(random, study.assays, 1)) {
-        participantsByAssay.get(assay)!.push(participant)
-        const file = addReference(
-          study,
-          assay,
-          'FILE',
-          `${study.name}_${assay.assay}_sample${String(references.size).padStart(5, '0')}`,
-        )
-        link(participant, file)
-      }
-    }
-
-    for (const [assay, assayParticipants] of participantsByAssay) {
-      if (assayParticipants.length === 0) {
-        continue
-      }
-      const matrix = addReference(
-        study,
-        assay,
-        'FILE',
-        `${study.name}_${assay.assay}_all_participants_matrix`,
-      )
-      assayParticipants.forEach(participant => link(participant, matrix))
-
-      for (let batch = 1; batch <= SMALL_BATCHES_PER_ASSAY; batch++) {
-        const batchSize =
-          SMALL_BATCH_MIN_SIZE +
-          Math.floor(
-            random() * (SMALL_BATCH_MAX_SIZE - SMALL_BATCH_MIN_SIZE + 1),
-          )
-        const batchFile = addReference(
-          study,
-          assay,
-          'FILE',
-          `${study.name}_${assay.assay}_batch${batch}_matrix`,
-        )
-        const start = Math.floor(
-          random() * Math.max(1, assayParticipants.length - batchSize),
-        )
-        assayParticipants
-          .slice(start, start + batchSize)
-          .forEach(participant => link(participant, batchFile))
-      }
+      addDatasetStudy(builder, study, participants)
+    } else {
+      addFileStudy(builder, study, participants)
     }
   }
-
-  return { profile, dataAttributeNames, references, materialRows }
+  return {
+    profile,
+    dataAttributeNames: [
+      ...CORE_DATA_ATTRIBUTE_NAMES,
+      ...profile.extraDataAttributeNames,
+    ],
+    references: builder.references,
+    materialRows: builder.materialRows,
+  }
 }
