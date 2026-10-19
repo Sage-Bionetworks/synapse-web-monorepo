@@ -25,7 +25,6 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import {
   DATA_REFERENCE_COLUMN_NAME,
-  PARTICIPANT_COUNT_COLUMN_NAME,
   PARTICIPANT_ID_COLUMN_NAME,
   REFERENCE_TYPE_COLUMN_NAME,
   STUDY_COLUMN_NAME,
@@ -40,7 +39,7 @@ import {
  * Which access tier the mocked caller has on the participants source:
  * - `FULL`: the caller met the access requirement (exact results, rows allowed).
  * - `AGGREGATE_ONLY`: authenticated but unapproved (count gate, post-processed
- *   facets, no participant rows, small participant counts suppressed).
+ *   facets, no participant rows).
  */
 export type CohortBuilderAccess = 'FULL' | 'AGGREGATE_ONLY'
 
@@ -53,12 +52,8 @@ export type CohortBuilderMockQueryResult =
   | { status: 200; body: QueryResultBundle }
   | { status: number; body: CohortBuilderMockErrorBody }
 
-// The OpenAPI spec does not state which HTTP status accompanies these errors.
-export const MOCK_BELOW_THRESHOLD_HTTP_STATUS = 400
-export const MOCK_ROW_SUPPRESSED_HTTP_STATUS = 400
-
-/** Sentinel the backend returns for a participant count masked by MASK_BELOW_THRESHOLD. */
-export const MASKED_PARTICIPANT_COUNT = -1
+export const MOCK_BELOW_THRESHOLD_HTTP_STATUS = 403
+export const MOCK_ROW_SUPPRESSED_HTTP_STATUS = 403
 
 const DATA_VIRTUAL_TABLE_ID_COLUMN_NAME = 'id'
 const DATA_VIRTUAL_TABLE_NAME_COLUMN_NAME = 'name'
@@ -118,7 +113,6 @@ export function getCohortBuilderColumnModels(data: CohortBuilderSyntheticData) {
     column(REFERENCE_TYPE_COLUMN_NAME, 'STRING', true),
     column(STUDY_COLUMN_NAME, 'STRING', true),
     ...dataAttributeNames.map(name => column(name, 'STRING', true)),
-    column(PARTICIPANT_COUNT_COLUMN_NAME, 'INTEGER', false),
   ]
   return { participants, dataReferences }
 }
@@ -296,14 +290,8 @@ function groupByDataReference(
   rows: readonly MaterialRow[],
   data: CohortBuilderSyntheticData,
 ): VirtualTableRow[] {
-  const participantsByReference = new Map<string, Set<string>>()
-  for (const row of rows) {
-    const referenceId = row[DATA_REFERENCE_COLUMN_NAME]
-    const participants = participantsByReference.get(referenceId) ?? new Set()
-    participants.add(row[PARTICIPANT_ID_COLUMN_NAME])
-    participantsByReference.set(referenceId, participants)
-  }
-  return Array.from(participantsByReference, ([referenceId, participants]) => {
+  const referenceIds = new Set(rows.map(row => row[DATA_REFERENCE_COLUMN_NAME]))
+  return Array.from(referenceIds, referenceId => {
     const reference = data.references.get(referenceId)!
     return {
       [DATA_VIRTUAL_TABLE_ID_COLUMN_NAME]: reference.id,
@@ -311,7 +299,6 @@ function groupByDataReference(
       [REFERENCE_TYPE_COLUMN_NAME]: reference.referenceType,
       [STUDY_COLUMN_NAME]: reference.study,
       ...reference.attributes,
-      [PARTICIPANT_COUNT_COLUMN_NAME]: participants.size,
     }
   })
 }
@@ -587,53 +574,21 @@ function executeQuery(
             facetSelectionMatches(row, selection),
         ),
     )
-  let resultRows = applyOuterFilters()
+  const resultRows = applyOuterFilters()
 
   if (aggregateConfig) {
-    const resultReferenceIds = new Set(
-      resultRows.map(row => row[DATA_VIRTUAL_TABLE_ID_COLUMN_NAME]),
-    )
-    // The backend may gate the data VT on its row count instead; that is
-    // unconfirmed, so the mock gates both perspectives on cohort participants.
-    const cohortSize =
-      perspective === 'PARTICIPANTS'
-        ? resultRows.length
-        : new Set(
-            materialRows
-              .filter(row =>
-                resultReferenceIds.has(row[DATA_REFERENCE_COLUMN_NAME]),
-              )
-              .map(row => row[PARTICIPANT_ID_COLUMN_NAME]),
-          ).size
+    // Like the backend's COUNT(*) gate, both perspectives count the rows of the
+    // queried VirtualTable: participants, or files and datasets.
     const threshold = aggregateConfig.suppressionThreshold
-    if (cohortSize > 0 && cohortSize < threshold) {
+    if (resultRows.length > 0 && resultRows.length < threshold) {
       throw new MockQueryError(MOCK_BELOW_THRESHOLD_HTTP_STATUS, {
         concreteType:
           'org.sagebionetworks.repo.model.table.BelowThresholdErrorResponse',
-        reason: `The number of matching participants is below the minimum of ${threshold}. Adjust your filters to include more participants.`,
+        reason: `The number of records matched by this query is below the minimum threshold of ${threshold} required to return a result.`,
         errorCode: 'BELOW_THRESHOLD',
         suppressionThreshold: threshold,
       })
     }
-  }
-
-  if (isAggregateOnly && perspective === 'DATA') {
-    const threshold = profile.suppressionThreshold
-    const isBelowThreshold = (row: VirtualTableRow) => {
-      const count = row[PARTICIPANT_COUNT_COLUMN_NAME] as number
-      return count > 0 && count < threshold
-    }
-    resultRows =
-      profile.countSuppressionStrategy === 'MASK_BELOW_THRESHOLD'
-        ? resultRows.map(row =>
-            isBelowThreshold(row)
-              ? {
-                  ...row,
-                  [PARTICIPANT_COUNT_COLUMN_NAME]: MASKED_PARTICIPANT_COUNT,
-                }
-              : row,
-          )
-        : resultRows.filter(row => !isBelowThreshold(row))
   }
 
   const bundle: QueryResultBundle = {
