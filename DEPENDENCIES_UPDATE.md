@@ -314,3 +314,38 @@ Production-relevant: the `crypto` polyfill is bundled into SageAccountWeb's brow
 **Fix applied:** `pnpm update pbkdf2 --recursive`
 
 **Testing:** `pnpm why pbkdf2 --recursive` → only `pbkdf2@3.1.7`; installed module reproduces the RFC 6070 PBKDF2-HMAC-SHA1 vector (`password`/`salt`/4096 → `4b0079…29c1`); `pnpm nx run SageAccountWeb:build` succeeds.
+
+## sprintf-js
+
+```
+┌─────────────────────┬────────────────────────────────────────────────────────┐
+│ moderate            │ sprintf-js vulnerable to denial of service through     │
+│                     │ unbounded precision specifiers                         │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Package             │ sprintf-js                                             │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Vulnerable versions │ <=1.1.3                                                │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Patched versions    │ <0.0.0                                                 │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Paths               │ packages__vite-config>vite-plugin-dts>@microsoft/api-  │
+│                     │ extractor>@rushstack/ts-command-line>argparse>sprintf- │
+│                     │ js                                                     │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ More info           │ https://github.com/advisories/GHSA-hp3w-g68c-fv3c      │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+```
+
+**Analysis:**
+
+No patched version exists (`Patched versions: <0.0.0`); latest is `sprintf-js@1.1.3`. 1 path found (build-time only):
+
+- `vite-config>vite-plugin-dts@4.5.4>@microsoft/api-extractor@7.58.8>@rushstack/ts-command-line@5.3.9>argparse@1.0.10>sprintf-js@1.0.3`: vulnerable.
+
+Upstream check: the latest `@rushstack/ts-command-line` (5.3.17, used by the latest `@microsoft/api-extractor` 7.59.4) still pins `argparse ~1.0.9`, and argparse 1.x depends on sprintf-js. vite-plugin-dts 5.x makes api-extractor an optional peer, but `vite-config` uses `dts({ rollupTypes: true })`, which requires api-extractor, so the chain stays.
+
+**Fix rationale:** Not fixed — accepted risk. No version of sprintf-js is patched, and no parent upgrade removes it. The DoS needs attacker-controlled format strings with huge precision specifiers. argparse 1.x uses sprintf-js only to format its own CLI help/error text, and vite-plugin-dts calls api-extractor programmatically during library builds, not through its CLI argument parser. No untrusted input reaches it.
+
+**Fix applied:** None. Revisit when @rushstack/ts-command-line moves to argparse 2 (which has no dependencies).
+
+**Testing:** N/A (no changes).
