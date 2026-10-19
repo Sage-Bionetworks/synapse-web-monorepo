@@ -7,7 +7,7 @@
     "@mui/material": "^7.3.11",
     "@sage-bionetworks/synapse-portal-framework": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
-    "katex": "^0.16.47",
+    "katex": "^0.18.2",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-router": "catalog:",

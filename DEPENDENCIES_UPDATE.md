@@ -422,3 +422,34 @@ The advisory affects only the esbuild dev server on Windows.
 **Fix applied:** `pnpm-lock.yaml` only (transitive `vite@7.3.5` → `7.3.7`, `esbuild@0.27.7` removed).
 
 **Testing:** `pnpm why esbuild --recursive` → only `esbuild@0.28.2`; `pnpm install --frozen-lockfile` passes with the unchanged package.json; `pnpm nx run arkportal:build` (react-router build via `@react-router/dev`) succeeds.
+
+## katex
+
+```
+┌─────────────────────┬────────────────────────────────────────────────────────┐
+│ low                 │ KaTeX: Existing prototype pollution can bypass trust   │
+│                     │ restrictions                                           │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Package             │ katex                                                  │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Vulnerable versions │ >=0.11.0 <0.18.2                                       │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Patched versions    │ >=0.18.2                                               │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ Paths               │ apps__SageAccountWeb>katex                             │
+├─────────────────────┼────────────────────────────────────────────────────────┤
+│ More info           │ https://github.com/advisories/GHSA-238p-pmpm-9mq7      │
+└─────────────────────┴────────────────────────────────────────────────────────┘
+```
+
+**Analysis:**
+
+20 paths, all direct production dependencies declared `"katex": "^0.16.47"` (0.x caret → `<0.17.0`): `synapse-react-client`, `synapse-portal-framework`, SageAccountWeb, synapse-oauth-signin, and all 17 portals. Installed `katex@0.16.47`: vulnerable. No range covers 0.18.2, so a lockfile update can't fix it.
+
+Breaking changes crossed: 0.17.0 changed the internal `__defineFunction` API (not used here). 0.18.0 prefixed KaTeX's CSS classes, which breaks custom styles or allowlists that target internal classes. Neither applies here: KaTeX output is rendered in one place (`synapse-react-client` `MarkdownUtils`, `katex.render(..., { output: 'html', throwOnError: false })`) after markdown sanitization, so no sanitizer allowlist sees KaTeX classes. Every app imports `katex/dist/katex.css` from the same package, so markup and styles move together, and no repo SCSS targets KaTeX internals. 0.19.0 (strict-mode changes) was deliberately not taken.
+
+**Fix rationale:** Bump the direct dependency (production). Confirmed with the user: `^0.18.2`, the smallest range containing the fix, over `^0.19.0` or accepting the risk. Resolves to 0.18.11 (outside the `minimumReleaseAge` window). Caret style kept.
+
+**Fix applied:** `"katex": "^0.16.47"` → `"^0.18.2"` in all 20 package.json files; `pnpm install --no-frozen-lockfile`.
+
+**Testing:** `pnpm why katex --recursive` → only `katex@0.18.11`; `pnpm exec vitest run Markdown` in `synapse-react-client` → 9 files, 72 passed; `pnpm nx run synapse-react-client:type-check` passes; throwaway render check: every styled class emitted by `katex.renderToString` has a matching selector in the shipped `katex.css`. The only unmatched names (`mord`, `mopen`, `mclose`, `mbin`, `mtight`) are semantic-only and also unstyled in 0.16.47.
