@@ -167,6 +167,35 @@ describe('modelRowsToGrid', () => {
       expect(row.__validationStatus).toBe('invalid')
     })
 
+    it('keeps row-level errors when a removed column is named like the row-level key', () => {
+      const model = createModel(1, 2)
+      model.api.vec(['columnNames']).set([[1, s.con('_row')]])
+      setRowValidation(model, 0, false, [
+        '#: only 1 subschema matches out of 2',
+        `#/_row: ${NULL_STRING_MESSAGE}`,
+      ])
+      setColumnOrder(model, [0])
+
+      const [row] = getGridRows(model)
+
+      expect(row.__cellValidationResults).toEqual(
+        new Map([['_row', ['only 1 subschema matches out of 2']]]),
+      )
+      expect(row.__validationStatus).toBe('invalid')
+    })
+
+    it('omits errors for a removed column whose name is escaped in the error pointer', () => {
+      const model = createModel(1, 2)
+      model.api.vec(['columnNames']).set([[1, s.con('a/b')]])
+      setRowValidation(model, 0, false, [`#/a~1b: ${NULL_STRING_MESSAGE}`])
+      setColumnOrder(model, [0])
+
+      const [row] = getGridRows(model)
+
+      expect(row.__cellValidationResults).toEqual(new Map())
+      expect(row.__validationStatus).toBe('valid')
+    })
+
     it('omits removed column errors from a row that is pending revalidation', () => {
       const model = createModel(1, 3)
       setRowValidation(model, 0, false, [

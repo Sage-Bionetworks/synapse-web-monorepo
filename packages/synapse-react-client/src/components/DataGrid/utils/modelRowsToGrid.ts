@@ -7,7 +7,10 @@ import { isValidationUpToDateForRow } from '@/components/DataGrid/utils/isValida
 import { ValidationResults } from '@sage-bionetworks/synapse-types'
 import { GRID_ROW_REACT_KEY_PROPERTY } from './DataGridUtils'
 import logicalTimestampToString from '@/components/DataGrid/utils/logicalTimestampToString'
-import { extractColumnValidationMessages } from './extractColumnValidationMessages'
+import {
+  extractColumnValidationMessages,
+  parseValidationMessage,
+} from './extractColumnValidationMessages'
 import { getRemovedColumnIndices } from './getRemovedColumnIndices'
 
 /**
@@ -23,28 +26,22 @@ function getDisplayedRowValidation(
     return { __validationStatus: isValid ? 'valid' : 'invalid' }
   }
 
-  const displayedColumnMessages = new Map<string, string[]>()
-  let removedColumnMessageCount = 0
-  extractColumnValidationMessages(allValidationMessages).forEach(
-    (messages, columnName) => {
-      if (removedColumnNames.has(columnName)) {
-        removedColumnMessageCount += messages.length
-      } else {
-        displayedColumnMessages.set(columnName, messages)
-      }
-    },
-  )
+  // Filter the raw messages rather than the per-column map: the map groups row-level messages under the
+  // same key that a column named `_row` would use, and row-level messages must stay visible.
+  const displayedMessages = allValidationMessages.filter(message => {
+    const columnName = parseValidationMessage(message)?.columnName
+    return columnName === undefined || !removedColumnNames.has(columnName)
+  })
 
   // Show the row as valid only when every one of its errors belongs to a removed column. Errors that
   // could not be attributed to any column still mark the row invalid.
   const allErrorsAreInRemovedColumns =
-    removedColumnMessageCount > 0 &&
-    removedColumnMessageCount === allValidationMessages.length
+    allValidationMessages.length > 0 && displayedMessages.length === 0
 
   return {
     __validationStatus:
       isValid || allErrorsAreInRemovedColumns ? 'valid' : 'invalid',
-    __cellValidationResults: displayedColumnMessages,
+    __cellValidationResults: extractColumnValidationMessages(displayedMessages),
   }
 }
 

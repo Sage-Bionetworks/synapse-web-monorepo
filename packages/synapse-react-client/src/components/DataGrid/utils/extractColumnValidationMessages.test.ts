@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import { extractColumnValidationMessages } from './extractColumnValidationMessages'
+import {
+  extractColumnValidationMessages,
+  parseValidationMessage,
+} from './extractColumnValidationMessages'
 
 describe('extractColumnValidationMessages', () => {
   it('should extract Column name and message from a single validation message', () => {
@@ -176,5 +179,58 @@ describe('extractColumnValidationMessages', () => {
 
     expect(result.size).toBe(1)
     expect(result.get('nested')).toEqual(['required key [inner] not found'])
+  })
+
+  it('should decode JSON Pointer escapes in column names taken from the pointer', () => {
+    const messages = [
+      '#/a~1b: slash in name',
+      '#/c~0d: tilde in name',
+      '#/e~01f: escaped tilde followed by 1',
+      '#/g~1h/0: slash in array column name',
+    ]
+    const result = extractColumnValidationMessages(messages)
+
+    expect(result).toEqual(
+      new Map([
+        ['a/b', ['slash in name']],
+        ['c~d', ['tilde in name']],
+        ['e~1f', ['escaped tilde followed by 1']],
+        ['g/h', ['slash in array column name']],
+      ]),
+    )
+  })
+
+  it('should keep column names taken from property key messages literal', () => {
+    const messages = ['#: required key [a~1b] not found']
+    const result = extractColumnValidationMessages(messages)
+
+    expect(result.get('a~1b')).toEqual(['required key [a~1b] not found'])
+  })
+})
+
+describe('parseValidationMessage', () => {
+  it('returns the column a message is about', () => {
+    expect(
+      parseValidationMessage('#/platform: expected type: String, found: Null'),
+    ).toEqual({
+      columnName: 'platform',
+      message: 'expected type: String, found: Null',
+    })
+  })
+
+  it('returns no column for row-level messages', () => {
+    expect(
+      parseValidationMessage('#: only 1 subschema matches out of 2'),
+    ).toEqual({
+      columnName: undefined,
+      message: 'only 1 subschema matches out of 2',
+    })
+  })
+
+  it('returns undefined for messages that are not in the expected format', () => {
+    expect(parseValidationMessage('invalid message without hash')).toBe(
+      undefined,
+    )
+    expect(parseValidationMessage(null as unknown as string)).toBe(undefined)
   })
 })
