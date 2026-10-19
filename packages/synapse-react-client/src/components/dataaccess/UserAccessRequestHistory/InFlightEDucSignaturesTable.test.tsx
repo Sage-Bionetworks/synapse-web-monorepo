@@ -85,7 +85,6 @@ const STATUS_EXPECTATIONS: Record<
   string | null
 > = {
   created: null,
-  draft: null,
   sent: 'Signatures pending',
   delivered: 'Signatures pending',
   completed: 'Ready to submit',
@@ -138,7 +137,7 @@ describe('InFlightEDucSignaturesTable', () => {
 
   it('renders nothing when the fully-loaded, filtered list is empty', async () => {
     // The list request passes `isEDuc: true` server-side, so the hook only ever sees eDUC
-    // records. Client-side we still drop anything past submission (draft / submitted / voided).
+    // records. Client-side we still drop anything not awaiting signatures (created / submitted / voided).
     const requestedBodies: unknown[] = []
     server.use(
       http.post(
@@ -149,8 +148,8 @@ describe('InFlightEDucSignaturesTable', () => {
             results: [
               // eDUC past submission is ignored.
               { requestId: '2', isEDuc: true, status: 'submitted' },
-              // Draft eDUC has not been routed for signature yet.
-              { requestId: '3', isEDuc: true, status: 'draft' },
+              // eDUC created but not yet routed for signature.
+              { requestId: '3', isEDuc: true, status: 'created' },
             ],
           })
         },

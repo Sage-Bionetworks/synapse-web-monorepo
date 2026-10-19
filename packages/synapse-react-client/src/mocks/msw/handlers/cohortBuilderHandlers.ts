@@ -2,7 +2,6 @@ import {
   CohortBuilderMockProfile,
   DATA_REFERENCE_COLUMN_NAME,
   ELITE_MOCK_PROFILE,
-  PARTICIPANT_COUNT_COLUMN_NAME,
   PARTICIPANT_ID_COLUMN_NAME,
   REFERENCE_TYPE_COLUMN_NAME,
   STUDY_COLUMN_NAME,
@@ -106,7 +105,7 @@ function getVirtualTableEntities(
     virtualTable(
       profile.dataVirtualTableId,
       `${profile.portalName} Cohort Builder Files and Datasets (synthetic)`,
-      `SELECT ${DATA_REFERENCE_COLUMN_NAME} AS id, name, ${dataColumns}, COUNT(DISTINCT ${PARTICIPANT_ID_COLUMN_NAME}) AS ${PARTICIPANT_COUNT_COLUMN_NAME} FROM ${MOCK_MATERIAL_VIEW_ID} GROUP BY ${DATA_REFERENCE_COLUMN_NAME}, name, ${dataColumns}`,
+      `SELECT ${DATA_REFERENCE_COLUMN_NAME} AS id, name, ${dataColumns} FROM ${MOCK_MATERIAL_VIEW_ID} GROUP BY ${DATA_REFERENCE_COLUMN_NAME}, name, ${dataColumns}`,
       columnModels.dataReferences.map(column => column.id!),
     ),
   ]

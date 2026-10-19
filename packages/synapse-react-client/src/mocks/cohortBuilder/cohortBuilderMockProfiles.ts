@@ -54,7 +54,6 @@ export const PARTICIPANT_ID_COLUMN_NAME = 'individualId'
 export const STUDY_COLUMN_NAME = 'study'
 export const DATA_REFERENCE_COLUMN_NAME = 'dataReference'
 export const REFERENCE_TYPE_COLUMN_NAME = 'referenceType'
-export const PARTICIPANT_COUNT_COLUMN_NAME = 'participantCount'
 export const CORE_DATA_ATTRIBUTE_NAMES = [
   'dataType',
   'assay',

@@ -32,8 +32,8 @@ export type CohortBuilderSyntheticData = {
 
 export const DEFAULT_SYNTHETIC_DATA_SEED = 42
 
-// Matrix-style files that combine a handful of participants produce small
-// per-file participant counts, which exercise below-threshold count masking.
+// Matrix-style files that each combine a handful of participants, alongside
+// the one-participant files.
 const SMALL_BATCH_MIN_SIZE = 3
 const SMALL_BATCH_MAX_SIZE = 12
 const SMALL_BATCHES_PER_ASSAY = 4
