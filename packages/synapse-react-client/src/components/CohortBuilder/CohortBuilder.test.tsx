@@ -6,7 +6,7 @@ import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
   COHORT_BUILDER_PART_MASK,
@@ -82,6 +82,20 @@ describe('CohortBuilder', () => {
           (request.partMask & BUNDLE_MASK_QUERY_RESULTS) !== 0,
       ),
     ).toEqual([])
+  })
+
+  it('shows facet plots of the cohort, which cannot change the cohort', async () => {
+    renderCohortBuilder({ facetsToPlot: ['sex'] })
+
+    const plot = await screen.findByRole('figure')
+    expect(
+      await within(plot).findByRole('button', {
+        name: 'Expand to large graph',
+      }),
+    ).toBeInTheDocument()
+    expect(
+      within(plot).queryByRole('button', { name: /^Filter by/ }),
+    ).not.toBeInTheDocument()
   })
 
   it('replaces only the results with a below-threshold notice, and keeps the cohort editable', async () => {
