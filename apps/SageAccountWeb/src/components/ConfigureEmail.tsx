@@ -9,6 +9,7 @@ import {
   Divider,
   FormControlLabel,
   IconButton,
+  Link,
   Stack,
   TextField,
   Typography,
@@ -25,10 +26,14 @@ import * as SynapseClient from 'synapse-react-client/synapse-client/SynapseClien
 import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
 import { useGetCurrentRealm } from 'synapse-react-client/synapse-queries/realm/useRealmPrincipals'
 import { SYNAPSE_REALM } from 'synapse-react-client/utils/SynapseConstants'
+import { RETURN_URL_AFTER_EMAIL_UPDATE_LOCALSTORAGE_KEY } from '@/utils/StorageKeys'
 
 export type ConfigureEmailProps = {
   returnToPath: string
 }
+
+const UNDELIVERABLE_EMAIL_TEXT =
+  'We can’t deliver email to this address. Until you set a working primary address, you won’t receive notifications about your account or data access. Choose another address below, or add a new one, and make it primary.'
 
 export const ConfigureEmail = (props: ConfigureEmailProps): React.ReactNode => {
   const { accessToken } = useSynapseContext()
@@ -76,7 +81,27 @@ export const ConfigureEmail = (props: ConfigureEmailProps): React.ReactNode => {
           hexDecodeEmailToken,
           accessToken,
         ).then(() => {
-          displayToast('Email has been successfully added', 'success')
+          // Set when the user chose to update their email from the undeliverable email prompt
+          const returnUrl = localStorage.getItem(
+            RETURN_URL_AFTER_EMAIL_UPDATE_LOCALSTORAGE_KEY,
+          )
+          localStorage.removeItem(
+            RETURN_URL_AFTER_EMAIL_UPDATE_LOCALSTORAGE_KEY,
+          )
+          if (returnUrl) {
+            displayToast(
+              <>
+                Email has been successfully added.{' '}
+                <Link href={returnUrl}>
+                  Click here to pick up where you left off.
+                </Link>
+              </>,
+              'success',
+              { autoCloseInMs: 0 },
+            )
+          } else {
+            displayToast('Email has been successfully added', 'success')
+          }
           refetchCurrentProfile()
           history.replaceState(
             {},
@@ -94,6 +119,7 @@ export const ConfigureEmail = (props: ConfigureEmailProps): React.ReactNode => {
     event.preventDefault()
     try {
       await SynapseClient.updateNotificationEmail(email, accessToken)
+      localStorage.removeItem(RETURN_URL_AFTER_EMAIL_UPDATE_LOCALSTORAGE_KEY)
       refetchNotificationEmail()
       displayToast('Notification email has been updated', 'success')
     } catch (err: any) {
@@ -144,10 +170,29 @@ export const ConfigureEmail = (props: ConfigureEmailProps): React.ReactNode => {
               <Box sx={{ padding: '15px 0px' }}>
                 {email}{' '}
                 <Chip
-                  sx={{ color: '#fff', marginLeft: '10px' }}
+                  sx={{
+                    color: '#fff',
+                    backgroundColor: 'var(--synapse-primary-action-color)',
+                    marginLeft: '10px',
+                  }}
                   label="PRIMARY"
-                  color="warning"
                 />
+                {primaryEmail?.quarantineStatus && (
+                  <>
+                    <Chip
+                      sx={{ color: '#fff', marginLeft: '10px' }}
+                      label="UNDELIVERABLE"
+                      color="error"
+                    />
+                    <Typography
+                      variant="smallText1"
+                      color="error"
+                      sx={{ marginTop: '8px' }}
+                    >
+                      {UNDELIVERABLE_EMAIL_TEXT}
+                    </Typography>
+                  </>
+                )}
               </Box>
               <Divider />
             </div>
