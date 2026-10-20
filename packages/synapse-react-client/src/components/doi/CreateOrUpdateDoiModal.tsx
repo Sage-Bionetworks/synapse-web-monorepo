@@ -25,7 +25,7 @@ import {
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
 import { DATA_CATALOG_PATH_SEGMENT } from '@/utils/SynapseConstants'
-import { HelpTwoTone } from '@mui/icons-material'
+import HelpTwoTone from '@mui/icons-material/HelpTwoTone'
 import {
   Alert,
   Button,

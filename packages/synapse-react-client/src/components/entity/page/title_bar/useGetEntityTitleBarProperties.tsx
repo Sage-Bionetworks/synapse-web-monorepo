@@ -22,7 +22,7 @@ import { useGetQueryResultBundleWithAsyncStatus } from '@/synapse-queries'
 import { entityTypeToFriendlyName } from '@/utils/functions/EntityTypeUtils'
 import { UserBadge } from '@/components/UserCard/UserBadge'
 import { formatDate } from '@/utils/functions/DateFormatter'
-import { InfoTwoTone } from '@mui/icons-material'
+import InfoTwoTone from '@mui/icons-material/InfoTwoTone'
 import dayjs from 'dayjs'
 import {
   DATASET_CREATED_BY_TOOLTIP,

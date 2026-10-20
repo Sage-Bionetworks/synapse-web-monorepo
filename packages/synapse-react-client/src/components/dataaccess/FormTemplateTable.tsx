@@ -1,5 +1,5 @@
 import { useSearchFormTemplatesInfinite } from '@/synapse-queries/dataaccess/useFormTemplate'
-import { SearchOutlined } from '@mui/icons-material'
+import SearchOutlined from '@mui/icons-material/SearchOutlined'
 import {
   Alert,
   Box,

@@ -21,7 +21,7 @@ import {
   XIcon,
 } from 'react-share'
 import styles from './ShareThisPage.module.scss'
-import { ShareTwoTone } from '@mui/icons-material'
+import ShareTwoTone from '@mui/icons-material/ShareTwoTone'
 import { useCreateShortUrl } from '../../utils/hooks/useCreateShortUrl'
 
 export type ShareThisPageProps = {

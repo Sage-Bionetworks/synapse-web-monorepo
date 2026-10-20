@@ -1,7 +1,7 @@
 import SynapseClient from '@/synapse-client'
 import { useSynapseContext } from '@/utils'
 import { EntityTypeGroup } from '@/utils/functions/EntityTypeUtils'
-import { DownloadTwoTone } from '@mui/icons-material'
+import DownloadTwoTone from '@mui/icons-material/DownloadTwoTone'
 import { Button, ButtonProps } from '@mui/material'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import { ColumnModel, Reference } from '@sage-bionetworks/synapse-types'

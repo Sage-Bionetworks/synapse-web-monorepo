@@ -1,5 +1,5 @@
 import { useGetPersonalAccessTokensInfinite } from '@/synapse-queries/user/usePersonalAccessToken'
-import { AddCircleTwoTone } from '@mui/icons-material'
+import AddCircleTwoTone from '@mui/icons-material/AddCircleTwoTone'
 import { Box, Button, Typography } from '@mui/material'
 import { ReactNode, useState } from 'react'
 import { ErrorBanner, SynapseErrorBoundary } from '../error/ErrorBanner'

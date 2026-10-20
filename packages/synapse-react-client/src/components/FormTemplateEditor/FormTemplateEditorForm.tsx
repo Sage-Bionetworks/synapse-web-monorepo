@@ -20,7 +20,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { RJSFSchema } from '@rjsf/utils'
 import { useMemo, useState } from 'react'
 import { displayToast } from '@/components/ToastMessage'

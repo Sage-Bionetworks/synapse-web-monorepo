@@ -94,6 +94,18 @@
     "valid-typeof": "error",
     "no-array-constructor": "error",
     "no-unused-expressions": "error",
+    "no-restricted-imports": [
+      "error",
+      {
+        "paths": [
+          {
+            "name": "@mui/icons-material",
+            "allowTypeImports": true,
+            "message": "Import icons individually, e.g. `import Add from '@mui/icons-material/Add'`. The package root re-exports ~2,000 icons and costs ~3.6s of import time per Vitest test file."
+          }
+        ]
+      }
+    ],
     "vitest/no-identical-title": "error",
     "vitest/no-commented-out-tests": "error",
     "vitest/valid-title": "error",

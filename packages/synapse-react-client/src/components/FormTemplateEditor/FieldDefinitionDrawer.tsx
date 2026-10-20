@@ -11,7 +11,8 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import { Close as CloseIcon, Delete as DeleteIcon } from '@mui/icons-material'
+import CloseIcon from '@mui/icons-material/Close'
+import DeleteIcon from '@mui/icons-material/Delete'
 import { RJSFSchema } from '@rjsf/utils'
 import { useState } from 'react'
 import { SchemaPropertyContext } from '@/utils/jsonschema/submissionContext'

@@ -28,7 +28,7 @@ import {
   Facet,
 } from '@sage-bionetworks/synapse-types'
 import { useDocumentMetadata } from '@/utils/context/DocumentMetadataContext'
-import { ArrowForward } from '@mui/icons-material'
+import ArrowForward from '@mui/icons-material/ArrowForward'
 import styles from './SynapseSearchPageResults.module.scss'
 import { useSuggestion } from '@/synapse-queries/search/useSuggestion'
 import { Suggestion } from '@sage-bionetworks/synapse-client'

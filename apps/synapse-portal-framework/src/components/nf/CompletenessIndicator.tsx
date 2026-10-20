@@ -1,4 +1,4 @@
-import { CheckCircleTwoTone } from '@mui/icons-material'
+import CheckCircleTwoTone from '@mui/icons-material/CheckCircleTwoTone'
 import { Tooltip, Typography } from '@mui/material'
 import styles from './CompletenessIndicator.module.scss'
 
