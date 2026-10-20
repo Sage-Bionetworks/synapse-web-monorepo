@@ -1,4 +1,5 @@
 import { FairField } from '@/aridhia-queries/FairFormPayload'
+import { DAR_MESSAGE_VOCABULARY_CODE } from '@/aridhia-queries/useGetAridhiaVocabularyTerm'
 import { http, HttpHandler, HttpResponse, JsonBodyType } from 'msw'
 
 export const MOCK_ARIDHIA_GATEWAY = 'https://mock-gateway.test'
@@ -206,6 +207,29 @@ export function getAridhiaCatalogueHandler(
   )
 }
 
+export const MOCK_ARIDHIA_DAR_MESSAGE = {
+  code: DAR_MESSAGE_VOCABULARY_CODE,
+  name: 'Data Access Request Message',
+  grouping: 'markdown',
+  value:
+    'Thank you for your request. The review process is usually completed within 2-3 business weeks.\n\nIf approved, the signatory will receive a **Data Use Agreement (DUA)**.',
+}
+
+/** Responds only to a request bearing the token that `getAridhiaAuthenticateHandler` issues. */
+export function getAridhiaDarMessageHandler(
+  body: JsonBodyType = MOCK_ARIDHIA_DAR_MESSAGE,
+  status = 200,
+): HttpHandler {
+  return http.get(
+    `${MOCK_ARIDHIA_GATEWAY}/fair/vocabularies/${DAR_MESSAGE_VOCABULARY_CODE}`,
+    ({ request }) =>
+      request.headers.get('Authorization') ===
+      `Bearer ${MOCK_ARIDHIA_ACCESS_TOKEN_RESPONSE.access_token}`
+        ? HttpResponse.json(body, { status })
+        : HttpResponse.json({ error: 'invalid_token' }, { status: 401 }),
+  )
+}
+
 /**
  * `respond` receives the submitted body, so a test can both assert on it and choose the
  * response (success, or a failure to exercise the retry path).
@@ -233,5 +257,6 @@ export function getAridhiaDarWizardHandlers(): HttpHandler[] {
     getAridhiaWorkspaceLocationsHandler(),
     getAridhiaWorkspacesHandler(),
     getAridhiaCatalogueHandler(),
+    getAridhiaDarMessageHandler(),
   ]
 }

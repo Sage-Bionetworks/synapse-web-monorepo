@@ -67,4 +67,8 @@ export class AridhiaKeyFactory {
   public workspaceRequestForm(): QueryKey {
     return this.getKey('workspaces-forms', 'workspace_request')
   }
+
+  public vocabularyTerm(code: string): QueryKey {
+    return this.getKey('vocabularies', code)
+  }
 }
