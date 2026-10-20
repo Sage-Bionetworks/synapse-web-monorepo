@@ -35,7 +35,10 @@ export type ConfigureEmailProps = {
 }
 
 const UNDELIVERABLE_EMAIL_TEXT =
-  'We can’t deliver email to this address. Until you set a working primary address, you won’t receive notifications about your account or data access. Choose another address below, or add a new one, and make it primary.'
+  'We can’t deliver email to this address. Until you set a working primary address, you won’t receive notifications about your account or data access.'
+const CHOOSE_OR_ADD_EMAIL_TEXT =
+  'Choose another address below, or add a new one, and make it primary.'
+const ADD_EMAIL_TEXT = 'Add a new address and make it primary.'
 
 export const ConfigureEmail = (props: ConfigureEmailProps): React.ReactNode => {
   const { accessToken } = useSynapseContext()
@@ -189,7 +192,10 @@ export const ConfigureEmail = (props: ConfigureEmailProps): React.ReactNode => {
                       color="error"
                       sx={{ marginTop: '8px' }}
                     >
-                      {UNDELIVERABLE_EMAIL_TEXT}
+                      {UNDELIVERABLE_EMAIL_TEXT}{' '}
+                      {emails.length > 1
+                        ? CHOOSE_OR_ADD_EMAIL_TEXT
+                        : ADD_EMAIL_TEXT}
                     </Typography>
                   </>
                 )}
