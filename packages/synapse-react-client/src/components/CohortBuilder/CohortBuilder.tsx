@@ -151,7 +151,8 @@ function CohortResults(props: { facetsToPlot?: string[] }) {
       <Typography variant="headline3" component="p" className={styles.count}>
         {count.toLocaleString()} {pluralize(unitDescription, count)}
       </Typography>
-      <PlotsContainer facetsToPlot={props.facetsToPlot} />
+      {/* The Query Builder is the only way to change the cohort. */}
+      <PlotsContainer facetsToPlot={props.facetsToPlot} disableFiltering />
     </>
   )
 }
