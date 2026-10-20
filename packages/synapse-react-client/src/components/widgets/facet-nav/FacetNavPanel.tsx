@@ -48,6 +48,11 @@ export type FacetNavPanelProps = {
   onHide: () => void
   isModalView: boolean
   onCloseModal?: () => void
+  /**
+   * When true, the plot cannot change the query: clicking a slice or bar does nothing, and the
+   * filter dropdowns are hidden. Presentation controls (expand, chart type, hide) still work.
+   */
+  disableFiltering?: boolean
 }
 
 const maxLabelLength: number = 19
@@ -310,6 +315,7 @@ function FacetNavPanel(props: FacetNavPanelProps) {
     facetToPlot,
     plotType,
     onSetPlotType,
+    disableFiltering = false,
   } = props
   const { accessToken } = useSynapseContext()
   const { data: queryMetadata, isLoading: isLoadingQueryMetadata } =
@@ -431,7 +437,9 @@ function FacetNavPanel(props: FacetNavPanelProps) {
           title={plotTitle ?? ''}
           content={<FacetNavPanel {...props} isModalView={true} />}
           hasCancelButton={false}
-          confirmButtonProps={{ children: 'Apply Filters' }}
+          confirmButtonProps={{
+            children: disableFiltering ? 'Close' : 'Apply Filters',
+          }}
           onConfirm={() => setShowModal(false)}
           maxWidth={'md'}
         />
@@ -444,7 +452,7 @@ function FacetNavPanel(props: FacetNavPanelProps) {
               data={queryMetadata}
               isLoading={isLoadingQueryMetadata}
               title={plotTitle}
-              facetToPlot={facetToPlot}
+              facetToPlot={disableFiltering ? undefined : facetToPlot}
               onHide={onHide}
               setShowModal={setShowModal}
             />
@@ -455,23 +463,25 @@ function FacetNavPanel(props: FacetNavPanelProps) {
                 gap: 2,
               }}
             >
-              <StyledFormControl>
-                <InputLabel
-                  id={filterByInputLabelId}
-                  sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
-                >
-                  <span>Filter All Data By</span>
-                  <Tooltip title="Selecting items in this dropdown will affect all facets on the Explore page.">
-                    <InfoOutlined className="SRC-hand-cursor SRC-secondary-text-color" />
-                  </Tooltip>
-                </InputLabel>
-                <EnumFacetFilter
-                  labelId={filterByInputLabelId}
-                  facet={facetToPlot}
-                  containerAs="Dropdown"
-                  dropdownType="SelectBox"
-                />
-              </StyledFormControl>
+              {!disableFiltering && (
+                <StyledFormControl>
+                  <InputLabel
+                    id={filterByInputLabelId}
+                    sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
+                  >
+                    <span>Filter All Data By</span>
+                    <Tooltip title="Selecting items in this dropdown will affect all facets on the Explore page.">
+                      <InfoOutlined className="SRC-hand-cursor SRC-secondary-text-color" />
+                    </Tooltip>
+                  </InputLabel>
+                  <EnumFacetFilter
+                    labelId={filterByInputLabelId}
+                    facet={facetToPlot}
+                    containerAs="Dropdown"
+                    dropdownType="SelectBox"
+                  />
+                </StyledFormControl>
+              )}
               {chartSelectionToggle}
             </Stack>
           )}
@@ -482,7 +492,7 @@ function FacetNavPanel(props: FacetNavPanelProps) {
               alignItems: 'center',
             }}
             role="graphics-object"
-            className="FacetNavPanel__body"
+            className={`FacetNavPanel__body${disableFiltering ? ' FacetNavPanel__body--filteringDisabled' : ''}`}
           >
             <div ref={plotContainerRef}>
               {plotWidth !== undefined && (
@@ -498,8 +508,15 @@ function FacetNavPanel(props: FacetNavPanelProps) {
                       : MAX_PLOT_HEIGHT_PX,
                   )}
                   config={{ displayModeBar: false }}
-                  onClick={evt =>
-                    applyFacetFilter(evt, facetToPlot, applyChangesToGraphSlice)
+                  onClick={
+                    disableFiltering
+                      ? undefined
+                      : evt =>
+                          applyFacetFilter(
+                            evt,
+                            facetToPlot,
+                            applyChangesToGraphSlice,
+                          )
                   }
                 />
               )}
