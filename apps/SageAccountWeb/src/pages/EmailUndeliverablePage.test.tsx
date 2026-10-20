@@ -3,7 +3,7 @@ import { server } from '@/mocks/node'
 import { AppContextProvider } from '@/AppContext'
 import {
   RETURN_URL_AFTER_EMAIL_UPDATE_LOCALSTORAGE_KEY,
-  SKIPPED_EMAIL_UNDELIVERABLE_SESSIONSTORAGE_KEY,
+  DISMISSED_EMAIL_UNDELIVERABLE_PROMPT_SESSIONSTORAGE_KEY,
 } from '@/utils/StorageKeys'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, screen } from '@testing-library/react'
@@ -97,7 +97,7 @@ describe('EmailUndeliverablePage', () => {
     screen.getByText('Action needed: Update your email address')
   })
 
-  it('records the skip and returns to the saved last place when the user ignores the prompt', async () => {
+  it('dismisses the prompt and returns to the saved last place when the user ignores it', async () => {
     localStorage.setItem(
       LAST_PLACE_LOCALSTORAGE_KEY,
       `${window.location.origin}/authenticated/certificationquiz`,
@@ -110,7 +110,9 @@ describe('EmailUndeliverablePage', () => {
 
     await screen.findByText('Certification quiz page')
     expect(
-      sessionStorage.getItem(SKIPPED_EMAIL_UNDELIVERABLE_SESSIONSTORAGE_KEY),
+      sessionStorage.getItem(
+        DISMISSED_EMAIL_UNDELIVERABLE_PROMPT_SESSIONSTORAGE_KEY,
+      ),
     ).toBe('true')
     expect(replaceLocation).not.toHaveBeenCalled()
   })
@@ -127,7 +129,7 @@ describe('EmailUndeliverablePage', () => {
     )
   })
 
-  it('records the skip, clears the saved last place, and opens the email section of account settings when the user chooses to update their email', async () => {
+  it('dismisses the prompt, clears the saved last place, and opens the email section of account settings when the user chooses to update their email', async () => {
     localStorage.setItem(
       LAST_PLACE_LOCALSTORAGE_KEY,
       `${window.location.origin}/authenticated/certificationquiz`,
@@ -140,7 +142,9 @@ describe('EmailUndeliverablePage', () => {
 
     await screen.findByText('Account settings page #email')
     expect(
-      sessionStorage.getItem(SKIPPED_EMAIL_UNDELIVERABLE_SESSIONSTORAGE_KEY),
+      sessionStorage.getItem(
+        DISMISSED_EMAIL_UNDELIVERABLE_PROMPT_SESSIONSTORAGE_KEY,
+      ),
     ).toBe('true')
     expect(localStorage.getItem(LAST_PLACE_LOCALSTORAGE_KEY)).toBeFalsy()
   })

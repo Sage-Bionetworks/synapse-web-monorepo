@@ -9,7 +9,7 @@ import {
 import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
 import { useGetNotificationEmail } from 'synapse-react-client/synapse-queries/user/useUserBundle'
 import { vi } from 'vitest'
-import { SKIPPED_EMAIL_UNDELIVERABLE_SESSIONSTORAGE_KEY } from '@/utils/StorageKeys'
+import { DISMISSED_EMAIL_UNDELIVERABLE_PROMPT_SESSIONSTORAGE_KEY } from '@/utils/StorageKeys'
 import { SKIPPED_SIGNING_TOS_SESSIONSTORAGE_KEY } from './useMaybePromptToSignTermsOfService'
 import useMaybePromptEmailQuarantine, {
   EMAIL_QUARANTINED_PATH,
@@ -117,9 +117,9 @@ describe('useMaybePromptEmailQuarantine', () => {
     expect(mockNavigate).not.toHaveBeenCalled()
   })
 
-  it('does not redirect and reports no prompt when the user skipped the prompt this session', async () => {
+  it('does not redirect and reports no prompt when the user dismissed the prompt this session', async () => {
     sessionStorage.setItem(
-      SKIPPED_EMAIL_UNDELIVERABLE_SESSIONSTORAGE_KEY,
+      DISMISSED_EMAIL_UNDELIVERABLE_PROMPT_SESSIONSTORAGE_KEY,
       'true',
     )
     mockNotificationEmailQuery({ data: quarantinedNotificationEmail })

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import { storeLastPlace } from 'synapse-react-client/utils/AppUtils/AppUtils'
-import { SKIPPED_EMAIL_UNDELIVERABLE_SESSIONSTORAGE_KEY } from '@/utils/StorageKeys'
+import { DISMISSED_EMAIL_UNDELIVERABLE_PROMPT_SESSIONSTORAGE_KEY } from '@/utils/StorageKeys'
 import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseContext'
 import { useGetNotificationEmail } from 'synapse-react-client/synapse-queries/user/useUserBundle'
 import { TermsOfServiceState } from '@sage-bionetworks/synapse-types'
@@ -26,9 +26,10 @@ export default function useMaybePromptEmailQuarantine() {
     termsOfServiceStatus?.userCurrentTermsOfServiceState !==
       TermsOfServiceState.UP_TO_DATE && !skippedToS
 
-  const skipped =
-    sessionStorage.getItem(SKIPPED_EMAIL_UNDELIVERABLE_SESSIONSTORAGE_KEY) ===
-    'true'
+  const dismissedPrompt =
+    sessionStorage.getItem(
+      DISMISSED_EMAIL_UNDELIVERABLE_PROMPT_SESSIONSTORAGE_KEY,
+    ) === 'true'
 
   // Don't interrupt flows the user must finish first (2FA enrollment, registration)
   const isInRequiredFlow =
@@ -46,7 +47,7 @@ export default function useMaybePromptEmailQuarantine() {
       isInRequiredFlow
     )
       return
-    if (notificationEmail?.quarantineStatus && !skipped) {
+    if (notificationEmail?.quarantineStatus && !dismissedPrompt) {
       if (location.pathname !== EMAIL_QUARANTINED_PATH) {
         storeLastPlace()
         navigate(EMAIL_QUARANTINED_PATH)
@@ -58,7 +59,7 @@ export default function useMaybePromptEmailQuarantine() {
     isAuthenticated,
     isLoading,
     notificationEmail,
-    skipped,
+    dismissedPrompt,
     location.pathname,
     navigate,
     termsOfServiceStatus,

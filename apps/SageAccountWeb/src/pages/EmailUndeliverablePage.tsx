@@ -13,7 +13,7 @@ import { useGetNotificationEmail } from 'synapse-react-client/synapse-queries/us
 import { useAppContext } from '@/AppContext'
 import {
   RETURN_URL_AFTER_EMAIL_UPDATE_LOCALSTORAGE_KEY,
-  SKIPPED_EMAIL_UNDELIVERABLE_SESSIONSTORAGE_KEY,
+  DISMISSED_EMAIL_UNDELIVERABLE_PROMPT_SESSIONSTORAGE_KEY,
 } from '@/utils/StorageKeys'
 import { LAST_PLACE_LOCALSTORAGE_KEY } from 'synapse-react-client/utils/SynapseConstants'
 
@@ -116,7 +116,7 @@ function EmailUndeliverablePage() {
               }}
               onClick={() => {
                 sessionStorage.setItem(
-                  SKIPPED_EMAIL_UNDELIVERABLE_SESSIONSTORAGE_KEY,
+                  DISMISSED_EMAIL_UNDELIVERABLE_PROMPT_SESSIONSTORAGE_KEY,
                   'true',
                 )
                 redirectAfterSkip()
@@ -136,7 +136,7 @@ function EmailUndeliverablePage() {
               }}
               onClick={() => {
                 sessionStorage.setItem(
-                  SKIPPED_EMAIL_UNDELIVERABLE_SESSIONSTORAGE_KEY,
+                  DISMISSED_EMAIL_UNDELIVERABLE_PROMPT_SESSIONSTORAGE_KEY,
                   'true',
                 )
                 // Only "Ignore for now" should return to the saved place
