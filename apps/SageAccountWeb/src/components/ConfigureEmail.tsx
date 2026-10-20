@@ -26,7 +26,9 @@ import * as SynapseClient from 'synapse-react-client/synapse-client/SynapseClien
 import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
 import { useGetCurrentRealm } from 'synapse-react-client/synapse-queries/realm/useRealmPrincipals'
 import { SYNAPSE_REALM } from 'synapse-react-client/utils/SynapseConstants'
-import { RETURN_URL_AFTER_EMAIL_UPDATE_LOCALSTORAGE_KEY } from '@/utils/StorageKeys'
+import Cookies from 'js-cookie'
+import { ONE_SAGE_REDIRECT_COOKIE_KEY } from 'synapse-react-client/utils/AppUtils/AppUtils'
+import { useAppContext } from '@/AppContext'
 
 export type ConfigureEmailProps = {
   returnToPath: string
@@ -37,6 +39,7 @@ const UNDELIVERABLE_EMAIL_TEXT =
 
 export const ConfigureEmail = (props: ConfigureEmailProps): React.ReactNode => {
   const { accessToken } = useSynapseContext()
+  const appContext = useAppContext()
   const { data: currentProfile, refetch: refetchCurrentProfile } =
     useGetCurrentUserProfile()
   const { data: primaryEmail, refetch: refetchNotificationEmail } =
@@ -80,15 +83,13 @@ export const ConfigureEmail = (props: ConfigureEmailProps): React.ReactNode => {
         SynapseClient.addEmailAddressStep2(
           hexDecodeEmailToken,
           accessToken,
-        ).then(() => {
-          // Set when the user chose to update their email from the undeliverable email prompt
-          const returnUrl = localStorage.getItem(
-            RETURN_URL_AFTER_EMAIL_UPDATE_LOCALSTORAGE_KEY,
-          )
-          localStorage.removeItem(
-            RETURN_URL_AFTER_EMAIL_UPDATE_LOCALSTORAGE_KEY,
-          )
-          if (returnUrl) {
+        ).then(async () => {
+          // A quarantined primary means the user is replacing an undeliverable address,
+          // so offer a way back to the source app page they were headed to
+          const { data: notificationEmail } = await refetchNotificationEmail()
+          const returnUrl =
+            Cookies.get(ONE_SAGE_REDIRECT_COOKIE_KEY) ?? appContext.redirectURL
+          if (notificationEmail?.quarantineStatus && returnUrl) {
             displayToast(
               <>
                 Email has been successfully added.{' '}
@@ -119,7 +120,6 @@ export const ConfigureEmail = (props: ConfigureEmailProps): React.ReactNode => {
     event.preventDefault()
     try {
       await SynapseClient.updateNotificationEmail(email, accessToken)
-      localStorage.removeItem(RETURN_URL_AFTER_EMAIL_UPDATE_LOCALSTORAGE_KEY)
       refetchNotificationEmail()
       displayToast('Notification email has been updated', 'success')
     } catch (err: any) {

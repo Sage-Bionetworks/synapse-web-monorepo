@@ -1,10 +1,7 @@
 import type { MockInstance } from 'vitest'
 import { server } from '@/mocks/node'
 import { AppContextProvider } from '@/AppContext'
-import {
-  RETURN_URL_AFTER_EMAIL_UPDATE_LOCALSTORAGE_KEY,
-  DISMISSED_EMAIL_UNDELIVERABLE_PROMPT_SESSIONSTORAGE_KEY,
-} from '@/utils/StorageKeys'
+import { DISMISSED_EMAIL_UNDELIVERABLE_PROMPT_SESSIONSTORAGE_KEY } from '@/utils/StorageKeys'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, screen } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
@@ -147,33 +144,5 @@ describe('EmailUndeliverablePage', () => {
       ),
     ).toBe('true')
     expect(localStorage.getItem(LAST_PLACE_LOCALSTORAGE_KEY)).toBeFalsy()
-  })
-
-  it('remembers the source app page to return to after the user verifies their new email', async () => {
-    const sourceAppPageUrl = 'https://www.synapse.org/Profile:v'
-    Cookies.set(ONE_SAGE_REDIRECT_COOKIE_KEY, sourceAppPageUrl, { path: '/' })
-    renderPage()
-
-    await userEvent.click(
-      await screen.findByRole('button', { name: 'Update your email' }),
-    )
-
-    await screen.findByText('Account settings page #email')
-    expect(
-      localStorage.getItem(RETURN_URL_AFTER_EMAIL_UPDATE_LOCALSTORAGE_KEY),
-    ).toBe(sourceAppPageUrl)
-  })
-
-  it('remembers the source app to return to when there is no redirect cookie', async () => {
-    renderPage()
-
-    await userEvent.click(
-      await screen.findByRole('button', { name: 'Update your email' }),
-    )
-
-    await screen.findByText('Account settings page #email')
-    expect(
-      localStorage.getItem(RETURN_URL_AFTER_EMAIL_UPDATE_LOCALSTORAGE_KEY),
-    ).toBe(SOURCE_APP_URL)
   })
 })

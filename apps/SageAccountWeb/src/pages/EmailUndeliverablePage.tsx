@@ -3,18 +3,13 @@ import { Paper, Typography, Button } from '@mui/material'
 import { Box } from '@mui/system'
 import { useNavigate } from 'react-router'
 import emailUndeliverableImageURL from '@/assets/EmailUndeliverable.svg?url'
-import Cookies from 'js-cookie'
 import {
-  ONE_SAGE_REDIRECT_COOKIE_KEY,
   processRedirectURLInOneSage,
   restoreLastPlace,
 } from 'synapse-react-client/utils/AppUtils/AppUtils'
 import { useGetNotificationEmail } from 'synapse-react-client/synapse-queries/user/useUserBundle'
 import { useAppContext } from '@/AppContext'
-import {
-  RETURN_URL_AFTER_EMAIL_UPDATE_LOCALSTORAGE_KEY,
-  DISMISSED_EMAIL_UNDELIVERABLE_PROMPT_SESSIONSTORAGE_KEY,
-} from '@/utils/StorageKeys'
+import { DISMISSED_EMAIL_UNDELIVERABLE_PROMPT_SESSIONSTORAGE_KEY } from '@/utils/StorageKeys'
 import { LAST_PLACE_LOCALSTORAGE_KEY } from 'synapse-react-client/utils/SynapseConstants'
 
 const EMAIL_UNDELIVERABLE_TITLE = 'Action needed: Update your email address'
@@ -141,16 +136,6 @@ function EmailUndeliverablePage() {
                 )
                 // Only "Ignore for now" should return to the saved place
                 localStorage.removeItem(LAST_PLACE_LOCALSTORAGE_KEY)
-                // Saved now because the redirect cookie may expire before the new email is verified
-                const returnUrl =
-                  Cookies.get(ONE_SAGE_REDIRECT_COOKIE_KEY) ??
-                  appContext?.redirectURL
-                if (returnUrl) {
-                  localStorage.setItem(
-                    RETURN_URL_AFTER_EMAIL_UPDATE_LOCALSTORAGE_KEY,
-                    returnUrl,
-                  )
-                }
                 navigate('/authenticated/myaccount#email')
               }}
             >

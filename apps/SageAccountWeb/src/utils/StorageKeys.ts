@@ -9,6 +9,3 @@ export const PATH_BEFORE_2FA_REDIRECT_LOCALSTORAGE_KEY =
 
 export const DISMISSED_EMAIL_UNDELIVERABLE_PROMPT_SESSIONSTORAGE_KEY =
   'org.sagebionetworks.web.client.dismissed_email_undeliverable_prompt'
-
-export const RETURN_URL_AFTER_EMAIL_UPDATE_LOCALSTORAGE_KEY =
-  'org.sagebionetworks.web.client.return_url_after_email_update'
