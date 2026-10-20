@@ -15,7 +15,7 @@ function RootApp() {
         }
         secondaryButtonConfig={{
           text: 'Give Feedback',
-          href: 'https://github.com/bridge2ai/b2ai-standards-registry/issues/new?template=feedback.yml',
+          href: 'https://forms.gle/aqTKsk7LZ2u7Zxbd8',
         }}
       />
     </App>
