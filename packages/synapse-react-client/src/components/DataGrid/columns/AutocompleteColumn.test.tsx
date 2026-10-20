@@ -516,6 +516,15 @@ describe('AutocompleteColumn', () => {
       ).toBe(false)
     })
 
+    it('returns false when parseFreeText changes', () => {
+      expect(
+        areAutocompleteCellPropsEqual(baseProps, {
+          ...baseProps,
+          parseFreeText: vi.fn(),
+        }),
+      ).toBe(false)
+    })
+
     it('returns false when focus changes', () => {
       expect(
         areAutocompleteCellPropsEqual(baseProps, {

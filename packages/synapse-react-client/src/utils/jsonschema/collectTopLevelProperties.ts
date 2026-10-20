@@ -15,7 +15,11 @@ function getRelativeRef(ref: string): string {
     : ref
 }
 
-function resolveRef(
+/**
+ * Resolve a local `#/definitions/X` reference (or bare `X` key) against the root schema's `definitions`.
+ * Returns undefined for a dangling reference or a boolean schema.
+ */
+export function resolveRef(
   ref: string,
   definitions: Definitions | undefined,
 ): JSONSchema7 | undefined {

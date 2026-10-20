@@ -49,11 +49,29 @@ export type AutocompleteOption =
   | Record<string, unknown>
   | Array<unknown>
 
+/** Converts text typed or pasted into a cell into the value stored in the model */
+export type ParseFreeText = (freeText: string) => unknown
+
+function parseCellText(
+  freeText: string,
+  colType: JSONSchema7Type | undefined,
+  parseFreeText: ParseFreeText | undefined,
+): unknown {
+  return parseFreeText
+    ? parseFreeText(freeText)
+    : parseFreeTextGivenJsonSchemaType(freeText, colType)
+}
+
 export type AutocompleteCellProps = CellProps & {
   rowData: AutocompleteOption
   setRowData: (value: AutocompleteOption) => void
   choices: AutocompleteOption[]
   colType?: JSONSchema7Type
+  /**
+   * Replaces parsing typed text by `colType`. Compared by reference when
+   * memoizing the cell, so it must be stable across renders.
+   */
+  parseFreeText?: ParseFreeText
   clearValue?: undefined | null
 }
 
@@ -91,6 +109,7 @@ export function AutocompleteCell({
   setRowData,
   choices,
   colType,
+  parseFreeText,
   focus,
   stopEditing,
   active,
@@ -112,6 +131,11 @@ export function AutocompleteCell({
   const [localInputState, setLocalInputState] =
     useState<string>(rowDataAsString)
 
+  const parseTypedText = useCallback(
+    (freeText: string) => parseCellText(freeText, colType, parseFreeText),
+    [parseFreeText, colType],
+  )
+
   const {
     menuIsOpen,
     inputRef,
@@ -127,10 +151,7 @@ export function AutocompleteCell({
     onDeactivate: () => {
       if (localInputState !== rowDataAsString) {
         // Commit any free-typed text that hasn't been saved yet
-        const parsed = parseFreeTextGivenJsonSchemaType(
-          localInputState,
-          colType,
-        )
+        const parsed = parseTypedText(localInputState)
         setRowDataRef.current(
           commitParsedValue(parsed, clearValue) as AutocompleteOption,
         )
@@ -198,10 +219,7 @@ export function AutocompleteCell({
         setRowDataRef.current(clearValue)
       } else if (reason === 'createOption') {
         // The user typed an option that wasn't a defined enum — cast to correct type
-        const parsed = parseFreeTextGivenJsonSchemaType(
-          newVal as string,
-          colType,
-        )
+        const parsed = parseTypedText(newVal as string)
         setRowDataRef.current(
           commitParsedValue(parsed, clearValue) as AutocompleteOption,
         )
@@ -212,7 +230,7 @@ export function AutocompleteCell({
         stopEditingRef.current({ nextRow: false })
       }, 0)
     },
-    [clearValue, colType, notifyOptionCommitted],
+    [clearValue, parseTypedText, notifyOptionCommitted],
   )
 
   return (
@@ -257,6 +275,7 @@ export function areAutocompleteCellPropsEqual(
     prevProps.rowData === nextProps.rowData &&
     prevProps.choices === nextProps.choices &&
     prevProps.colType === nextProps.colType &&
+    prevProps.parseFreeText === nextProps.parseFreeText &&
     prevProps.focus === nextProps.focus &&
     prevProps.active === nextProps.active &&
     prevProps.clearValue === nextProps.clearValue
@@ -270,12 +289,18 @@ export const MemoizedAutocompleteCell = memo(
 export type AutocompleteColumnProps = {
   choices: AutocompleteOption[]
   colType?: JSONSchema7Type
+  /**
+   * Parses both typed and pasted text. When omitted, typed text is parsed by
+   * `colType` and pasted text is stored as-is.
+   */
+  parseFreeText?: ParseFreeText
   clearValue: undefined | null
 }
 
 export function autocompleteColumn({
   choices,
   colType,
+  parseFreeText,
   clearValue,
 }: AutocompleteColumnProps): Partial<Column> {
   return {
@@ -284,12 +309,13 @@ export function autocompleteColumn({
         {...props}
         choices={choices}
         colType={colType}
+        parseFreeText={parseFreeText}
         clearValue={clearValue}
       />
     )) as CellComponent,
     // If we update our enums to support labels, then we can update copy to copy the label and paste to lookup the mapping from label -> value
     copyValue: ({ rowData }) => rowData,
-    pasteValue: ({ value }) => value,
+    pasteValue: ({ value }) => (parseFreeText ? parseFreeText(value) : value),
     disableKeys: true,
     keepFocus: true,
   }

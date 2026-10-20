@@ -1,3 +1,4 @@
+import { AgeMaskInfo, getAgeMaskInfo } from './getAgeMaskInfo'
 import getEnumeratedValues, { EnumeratedValue } from './getEnumeratedValues'
 import getSchemaForProperty from './getSchemaForProperty'
 import getRequiredAttributes from './getRequiredAttributes'
@@ -9,6 +10,8 @@ export interface SchemaPropertyInfo {
   isRequired: boolean
   enumeratedValues: EnumeratedValue[] | null
   description?: string
+  /** Present when the property is a masked age; see {@link getAgeMaskInfo} */
+  ageMask?: AgeMaskInfo
 }
 
 export interface SchemaPropertiesMap {
@@ -34,6 +37,24 @@ export function getSchemaPropertiesInfo(
   if (schema.properties) {
     Object.keys(schema.properties).forEach(propertyName => {
       const propertySchema = getSchemaForProperty(schema, propertyName)
+
+      const ageMask = getAgeMaskInfo(propertySchema, schema.definitions)
+      if (ageMask) {
+        // A masked age's `anyOf` describes neither a single type nor an
+        // enumeration, so both come from its detected branches.
+        propertiesMap[propertyName] = {
+          type: {
+            ...getFlatTypeInfo(propertySchema),
+            type: ageMask.numericType,
+          },
+          isRequired: requiredFields.includes(propertyName),
+          enumeratedValues: ageMask.sentinels,
+          description: propertySchema?.description,
+          ageMask,
+        }
+        return
+      }
+
       const type = getFlatTypeInfo(propertySchema)
       let enumeratedValues = getEnumeratedValues(propertySchema).map(
         item => item.value,

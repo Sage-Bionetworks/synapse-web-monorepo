@@ -5,7 +5,11 @@ import { DataSheetGridRef } from '@sage-bionetworks/react-datasheet-grid'
 import { SelectionWithId } from '@sage-bionetworks/react-datasheet-grid'
 import DataGrid from './DataGrid'
 import { DataGridRow, Operation } from './DataGridTypes'
-import { SchemaPropertiesMap } from '@/utils/jsonschema/getSchemaPropertyInfo'
+import { AGE_MASK_TITLE } from '@/utils/jsonschema/getAgeMaskInfo'
+import {
+  getSchemaPropertiesInfo,
+  SchemaPropertiesMap,
+} from '@/utils/jsonschema/getSchemaPropertyInfo'
 import dayjs from 'dayjs'
 
 const meta = {
@@ -530,6 +534,69 @@ export const WithSchemaMismatchedValues: Story = {
         },
       }}
       jsonSchema={{ type: 'object', properties: {} }}
+    />
+  ),
+}
+
+const maskedAgeSchema: JSONSchema7 = {
+  type: 'object',
+  properties: {
+    name: { type: 'string' },
+    age: {
+      anyOf: [
+        { type: 'number', minimum: 0, exclusiveMaximum: 90 },
+        { type: 'string', title: AGE_MASK_TITLE, enum: ['>= 90', 'Unknown'] },
+      ],
+    },
+  },
+  required: ['name'],
+}
+
+/**
+ * An age property whose values are either a number or one of the AgeMask
+ * strings. The cell offers the AgeMask strings as options and stores typed or
+ * pasted numbers as numbers; the backend rejects ages of 90 and over and
+ * numbers stored as text.
+ */
+export const WithMaskedAgeColumn: Story = {
+  render: () => (
+    <DataGridStoryWrapper
+      initialRowData={[
+        {
+          __reactKey: '1',
+          name: 'Number',
+          age: 43,
+          __validationStatus: 'valid',
+        },
+        {
+          __reactKey: '2',
+          name: 'Masked age',
+          age: '>= 90',
+          __validationStatus: 'valid',
+        },
+        {
+          __reactKey: '3',
+          name: 'Unknown age',
+          age: 'Unknown',
+          __validationStatus: 'valid',
+        },
+        {
+          __reactKey: '4',
+          name: 'Number stored as text',
+          age: '43',
+          __validationStatus: 'invalid',
+        },
+        {
+          __reactKey: '5',
+          name: 'Age that should be masked',
+          age: 95,
+          __validationStatus: 'invalid',
+        },
+      ]}
+      columnNames={['name', 'age']}
+      columnOrder={[0, 1]}
+      schemaPropertiesInfo={getSchemaPropertiesInfo(maskedAgeSchema)}
+      jsonSchema={maskedAgeSchema}
     />
   ),
 }

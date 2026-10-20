@@ -2,6 +2,7 @@ import {
   createTextColumn,
   keyColumn,
 } from '@sage-bionetworks/react-datasheet-grid'
+import { ageColumn } from '../columns/AgeColumn'
 import { autocompleteColumn } from '../columns/AutocompleteColumn'
 import { mocked } from 'storybook/test'
 import { describe, expect, it } from 'vitest'
@@ -26,6 +27,10 @@ vi.mock('@sage-bionetworks/react-datasheet-grid', async importActual => {
     createTextColumn: vi.fn(),
   }
 })
+
+vi.mock('../columns/AgeColumn', () => ({
+  ageColumn: vi.fn(),
+}))
 
 vi.mock('../columns/AutocompleteColumn', () => ({
   autocompleteColumn: vi.fn(),
@@ -91,6 +96,7 @@ const mockAutocompleteMultipleEnumColumn = mocked(
 ).mockReturnValue(fakeColumn)
 const mockDateTimeColumn = mocked(dateTimeColumn).mockReturnValue(fakeColumn)
 const mockNumberColumn = mocked(numberColumn).mockReturnValue(fakeColumn)
+const mockAgeColumn = mocked(ageColumn).mockReturnValue(fakeColumn)
 
 describe('columnFactory', () => {
   beforeEach(() => {
@@ -213,6 +219,37 @@ describe('columnFactory', () => {
       expect(headerProps.name).toBe('age')
       expect(headerProps.description).toBeUndefined()
     })
+
+    // A masked age reports its numeric branch as its type and its sentinels as
+    // its enumerated values, so the age check has to win over both.
+    it.each([
+      { required: true, clearValue: null },
+      { required: false, clearValue: undefined },
+    ])(
+      'should create an age column for a masked age (required: $required)',
+      ({ required, clearValue }) => {
+        const sentinels = ['>= 90', 'Unknown']
+        const typeInfo = { type: 'number', isArray: false }
+        const config = {
+          columnName: 'age',
+          typeInfo,
+          enumeratedValues: sentinels,
+          isRequired: required,
+          schemaPropertyInfo: {
+            type: typeInfo,
+            isRequired: required,
+            enumeratedValues: sentinels,
+            ageMask: { numericType: 'number' as const, sentinels },
+          },
+        }
+
+        createColumn(config)
+
+        expect(mockAgeColumn).toHaveBeenCalledWith({ sentinels, clearValue })
+        expect(mockNumberColumn).not.toHaveBeenCalled()
+        expect(mockAutocompleteColumn).not.toHaveBeenCalled()
+      },
+    )
 
     it('should create an enumerated column when enumeratedValues are provided', () => {
       const config = {

@@ -1,4 +1,5 @@
 import { dateTimeColumn } from '@/components/DataGrid/columns/DateTimeColumn'
+import { AgeMaskInfo } from '@/utils/jsonschema/getAgeMaskInfo'
 import { EnumeratedValue } from '@/utils/jsonschema/getEnumeratedValues'
 import { FlatTypeInfo } from '@/utils/jsonschema/getType'
 import { SchemaPropertyInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
@@ -9,6 +10,7 @@ import {
   createTextColumn,
   keyColumn,
 } from '@sage-bionetworks/react-datasheet-grid'
+import { ageColumn } from '../columns/AgeColumn'
 import { autocompleteColumn } from '../columns/AutocompleteColumn'
 import { autocompleteMultipleEnumColumn } from '../columns/AutocompleteMultipleEnumColumn'
 import { numberColumn } from '../columns/NumberColumn'
@@ -211,6 +213,16 @@ const COLUMN_FACTORIES = {
     )
   },
 
+  age: (config: ColumnConfig) => {
+    return createBaseColumn(
+      config,
+      ageColumn({
+        sentinels: config.schemaPropertyInfo?.ageMask?.sentinels ?? [],
+        clearValue: getEmptyValue(config.isRequired),
+      }),
+    )
+  },
+
   dateOrDateTime: (config: ColumnConfig) => {
     const columnImpl = dateTimeColumn({
       colType: config.typeInfo?.type || null,
@@ -259,7 +271,14 @@ const COLUMN_FACTORIES = {
 function getColumnType(
   typeInfo: FlatTypeInfo | null,
   enumeratedValues?: EnumeratedValue[] | string[] | null,
+  ageMask?: AgeMaskInfo,
 ): keyof typeof COLUMN_FACTORIES {
+  // A masked age reports its numeric branch as its type, so it must be matched
+  // before the number check claims it
+  if (ageMask) {
+    return 'age'
+  }
+
   if (!typeInfo) {
     return enumeratedValues && enumeratedValues.length > 0
       ? 'enumerated'
@@ -291,6 +310,10 @@ function getColumnType(
 }
 
 export function createColumn(config: ColumnConfig): Column {
-  const columnType = getColumnType(config.typeInfo, config.enumeratedValues)
+  const columnType = getColumnType(
+    config.typeInfo,
+    config.enumeratedValues,
+    config.schemaPropertyInfo?.ageMask,
+  )
   return COLUMN_FACTORIES[columnType](config)
 }
