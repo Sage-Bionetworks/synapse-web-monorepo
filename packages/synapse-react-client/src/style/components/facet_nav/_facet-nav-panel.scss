@@ -67,6 +67,14 @@
     padding: 20px 0;
     flex: 1;
     min-height: 0;
+
+    // A plot that can't filter must not look clickable.
+    &--filteringDisabled .js-plotly-plot .plotly {
+      .slice,
+      .draglayer {
+        cursor: default !important;
+      }
+    }
   }
 
   &--expanded {
