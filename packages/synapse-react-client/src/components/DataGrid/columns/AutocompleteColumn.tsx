@@ -289,10 +289,7 @@ export const MemoizedAutocompleteCell = memo(
 export type AutocompleteColumnProps = {
   choices: AutocompleteOption[]
   colType?: JSONSchema7Type
-  /**
-   * Parses both typed and pasted text. When omitted, typed text is parsed by
-   * `colType` and pasted text is stored as-is.
-   */
+  /** Parses typed and pasted text. When omitted, both are parsed by `colType`. */
   parseFreeText?: ParseFreeText
   clearValue: undefined | null
 }
@@ -315,7 +312,8 @@ export function autocompleteColumn({
     )) as CellComponent,
     // If we update our enums to support labels, then we can update copy to copy the label and paste to lookup the mapping from label -> value
     copyValue: ({ rowData }) => rowData,
-    pasteValue: ({ value }) => (parseFreeText ? parseFreeText(value) : value),
+    pasteValue: ({ value }: { value: string }) =>
+      parseCellText(value, colType, parseFreeText),
     disableKeys: true,
     keepFocus: true,
   }

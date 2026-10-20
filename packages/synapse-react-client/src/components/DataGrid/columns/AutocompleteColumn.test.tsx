@@ -6,6 +6,7 @@ import {
   areAutocompleteCellPropsEqual,
   AutocompleteCell,
   AutocompleteCellProps,
+  autocompleteColumn,
   MemoizedAutocompleteCell,
 } from './AutocompleteColumn'
 
@@ -613,6 +614,57 @@ describe('AutocompleteColumn', () => {
       render(<AutocompleteCell {...(mockCellProps as AutocompleteCellProps)} />)
       expect(screen.getByRole('combobox')).toHaveValue('2')
     })
+  })
+})
+
+describe('autocompleteColumn pasteValue', () => {
+  function paste(
+    columnProps: Parameters<typeof autocompleteColumn>[0],
+    value: string,
+  ): unknown {
+    return autocompleteColumn(columnProps).pasteValue!({
+      rowData: undefined,
+      value,
+      rowIndex: 0,
+    })
+  }
+
+  // Clipboard cells always arrive as text, so a boolean column has to parse
+  // them the same way it parses typed text.
+  it.each([
+    ['true', true],
+    ['FALSE', false],
+    ['yes', 'yes'],
+  ])('parses pasted %j as %j in a boolean column', (pasted, expected) => {
+    expect(
+      paste(
+        { choices: [true, false], colType: 'boolean', clearValue: undefined },
+        pasted,
+      ),
+    ).toBe(expected)
+  })
+
+  it('keeps pasted text unchanged in a string column', () => {
+    expect(
+      paste(
+        { choices: ['option1'], colType: 'string', clearValue: undefined },
+        'option1',
+      ),
+    ).toBe('option1')
+  })
+
+  it('uses parseFreeText in place of colType parsing', () => {
+    expect(
+      paste(
+        {
+          choices: [],
+          colType: 'boolean',
+          parseFreeText: text => `parsed:${text}`,
+          clearValue: undefined,
+        },
+        'true',
+      ),
+    ).toBe('parsed:true')
   })
 })
 
