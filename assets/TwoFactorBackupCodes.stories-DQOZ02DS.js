@@ -1,0 +1,1 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{en as t,tn as n}from"./iframe-CK17Tj1u.js";var r,i,a,o;e((()=>{n(),{fn:r}=__STORYBOOK_MODULE_TEST__,i={title:`Authentication/TwoFactorBackupCodes`,component:t,argTypes:{onClose:{action:`clicked`}}},a={args:{showReplaceOldCodesWarning:!0,onClose:r()}},o=[`Demo`]}))();export{a as Demo,o as __namedExportsOrder,i as default};
