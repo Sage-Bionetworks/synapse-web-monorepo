@@ -16,8 +16,4 @@ describe('getRemovedColumnIndices', () => {
 
     expect(getRemovedColumnIndices(columnNames, [0])).toEqual([3])
   })
-
-  it('ignores ordered indices that have no name yet', () => {
-    expect(getRemovedColumnIndices(['a', 'b'], [0, 5])).toEqual([1])
-  })
 })

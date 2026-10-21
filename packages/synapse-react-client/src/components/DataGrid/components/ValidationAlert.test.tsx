@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ValidationAlert } from './ValidationAlert'
 import { DataGridRow } from '../DataGridTypes'
+import { ROW_LEVEL_KEY } from '../utils/parseValidationMessage'
 
 const defaultProps = {
   columnNames: ['patientId', 'platform', 'disease'],
@@ -123,10 +124,12 @@ describe('ValidationAlert', () => {
       expect(onNavigateToCell).toHaveBeenCalledWith(0, 1)
     })
 
-    it('navigates to col 0 for row-level (_row) errors', async () => {
+    it('navigates to col 0 for row-level errors', async () => {
       const onNavigateToCell = vi.fn()
       const rowValues = [
-        makeInvalidRow({ _row: ['required key [platform] not found'] }),
+        makeInvalidRow({
+          [ROW_LEVEL_KEY]: ['required key [platform] not found'],
+        }),
       ]
       render(
         <ValidationAlert
@@ -201,7 +204,7 @@ describe('ValidationAlert', () => {
 
     it('shows row-level errors under "Row-level" section header', async () => {
       const rowValues = [
-        makeInvalidRow({ _row: ['required key [x] not found'] }),
+        makeInvalidRow({ [ROW_LEVEL_KEY]: ['required key [x] not found'] }),
       ]
       render(<ValidationAlert {...defaultProps} rowValues={rowValues} />)
 

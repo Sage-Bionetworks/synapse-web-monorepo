@@ -4,46 +4,10 @@ import {
   GridModelSnapshot,
 } from '@/components/DataGrid/DataGridTypes'
 import { isValidationUpToDateForRow } from '@/components/DataGrid/utils/isValidationUpToDateForRow'
-import { ValidationResults } from '@sage-bionetworks/synapse-types'
 import { GRID_ROW_REACT_KEY_PROPERTY } from './DataGridUtils'
 import logicalTimestampToString from '@/components/DataGrid/utils/logicalTimestampToString'
-import {
-  extractColumnValidationMessages,
-  parseValidationMessage,
-} from './extractColumnValidationMessages'
+import { getDisplayedRowValidation } from './getDisplayedRowValidation'
 import { getRemovedColumnIndices } from './getRemovedColumnIndices'
-
-/**
- * Derives the validation state shown in the grid for a row. Messages attributed to removed columns are
- * omitted because those columns are not displayed; they reappear once the column is restored.
- */
-function getDisplayedRowValidation(
-  validationResults: ValidationResults,
-  removedColumnNames: ReadonlySet<string>,
-): Pick<DataGridRow, '__validationStatus' | '__cellValidationResults'> {
-  const { isValid, allValidationMessages } = validationResults
-  if (!allValidationMessages) {
-    return { __validationStatus: isValid ? 'valid' : 'invalid' }
-  }
-
-  // Filter the raw messages rather than the per-column map: the map groups row-level messages under the
-  // same key that a column named `_row` would use, and row-level messages must stay visible.
-  const displayedMessages = allValidationMessages.filter(message => {
-    const columnName = parseValidationMessage(message)?.columnName
-    return columnName === undefined || !removedColumnNames.has(columnName)
-  })
-
-  // Show the row as valid only when every one of its errors belongs to a removed column. Errors that
-  // could not be attributed to any column still mark the row invalid.
-  const allErrorsAreInRemovedColumns =
-    allValidationMessages.length > 0 && displayedMessages.length === 0
-
-  return {
-    __validationStatus:
-      isValid || allErrorsAreInRemovedColumns ? 'valid' : 'invalid',
-    __cellValidationResults: extractColumnValidationMessages(displayedMessages),
-  }
-}
 
 /**
  * Convert model rows to a format suitable for DataSheetGrid
@@ -56,6 +20,7 @@ export default function modelRowsToGrid(
 ): DataGridRow[] {
   if (!model || !modelSnapshot) return []
   const { columnNames, columnOrder, rows } = modelSnapshot
+  const allColumnNames = new Set(columnNames.filter(Boolean))
   const removedColumnNames = new Set(
     getRemovedColumnIndices(columnNames, columnOrder).map(
       index => columnNames[index],
@@ -76,19 +41,15 @@ export default function modelRowsToGrid(
     )
 
     rowObj.__validationResults = row.metadata?.rowValidation
-    if (rowObj.__validationResults) {
-      Object.assign(
-        rowObj,
-        getDisplayedRowValidation(
-          rowObj.__validationResults,
-          removedColumnNames,
-        ),
-      )
-    }
-
-    if (!isValidationUpToDateForRow(model, rowIndex)) {
-      rowObj.__validationStatus = 'pending'
-    }
+    Object.assign(
+      rowObj,
+      getDisplayedRowValidation({
+        validationResults: rowObj.__validationResults,
+        isValidationUpToDate: isValidationUpToDateForRow(model, rowIndex),
+        columnNames: allColumnNames,
+        removedColumnNames,
+      }),
+    )
 
     return rowObj
   })

@@ -1,4 +1,5 @@
 import { DataGridRow } from '../DataGridTypes'
+import { ROW_LEVEL_KEY } from '../utils/parseValidationMessage'
 import {
   Box,
   Chip,
@@ -46,9 +47,9 @@ function getColDisplayIndex(
   return columnOrder.findIndex(i => columnNames[i] === colName)
 }
 
-/** Column name for display — '_row' becomes 'Row-level'. */
+/** Column name for display — {@link ROW_LEVEL_KEY} becomes 'Row-level'. */
 function colLabel(colName: string): string {
-  return colName === '_row' ? 'Row-level' : colName
+  return colName === ROW_LEVEL_KEY ? 'Row-level' : colName
 }
 
 /** Renders a column name + message pair with distinct styles. */
@@ -62,7 +63,7 @@ function ErrorText({
   rowIndex: number
 }) {
   const rowSuffix = ` (Row ${rowIndex + 1})`
-  if (columnName === '_row') {
+  if (columnName === ROW_LEVEL_KEY) {
     return (
       <>
         <Box component="span" sx={{ fontWeight: 'normal' }}>
