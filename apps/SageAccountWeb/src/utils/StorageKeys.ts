@@ -6,3 +6,6 @@ export const SKIPPED_2FA_REQUIREMENT_TIMESTAMP_LOCALSTORAGE_KEY =
 
 export const PATH_BEFORE_2FA_REDIRECT_LOCALSTORAGE_KEY =
   'org.sagebionetworks.web.client.path_before_2fa_redirect'
+
+export const DISMISSED_EMAIL_UNDELIVERABLE_PROMPT_SESSIONSTORAGE_KEY =
+  'org.sagebionetworks.web.client.dismissed_email_undeliverable_prompt'
