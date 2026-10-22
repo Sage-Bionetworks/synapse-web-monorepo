@@ -114,9 +114,9 @@ export function getDataFileHandle(
 ): FileHandle | undefined {
   let dataFileHandle: FileHandle | undefined = undefined
   if (entityBundle.entityType === EntityType.file) {
-    dataFileHandle = entityBundle.fileHandles.filter(
+    dataFileHandle = entityBundle.fileHandles.find(
       fh => fh.id === (entityBundle.entity as FileEntity).dataFileHandleId,
-    )[0]
+    )
   }
   return dataFileHandle
 }

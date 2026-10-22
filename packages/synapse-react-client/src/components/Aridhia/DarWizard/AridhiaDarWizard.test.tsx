@@ -588,7 +588,9 @@ describe('AridhiaDarWizard', () => {
     const body = capturedRequestBodies[0]
     expect(body.cohort?.queries?.[0].clauses).toHaveLength(2)
     expect(
-      body.cohort?.queries?.[0].clauses?.map(c => c.dictionary?.code).sort(),
+      body.cohort?.queries?.[0].clauses
+        ?.map(c => c.dictionary?.code)
+        .toSorted(),
     ).toEqual(['dict_a', 'dict_b'])
   })
 

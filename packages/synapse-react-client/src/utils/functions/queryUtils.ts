@@ -146,20 +146,20 @@ export function hasResettableFilters(
 ): boolean {
   const hasFacetFilters =
     Array.isArray(query.selectedFacets) &&
-    query.selectedFacets.filter(
+    query.selectedFacets.some(
       facet =>
         facet.columnName.toLowerCase() !==
         lockedColumn?.columnName?.toLowerCase(),
-    ).length > 0
+    )
   const hasAdditionalFilters =
     Array.isArray(query.additionalFilters) &&
-    query.additionalFilters.filter(queryFilter =>
+    query.additionalFilters.some(queryFilter =>
       isColumnSingleValueQueryFilter(queryFilter) ||
       isColumnMultiValueFunctionQueryFilter(queryFilter)
         ? queryFilter.columnName.toLowerCase() !==
           lockedColumn?.columnName?.toLowerCase()
         : true,
-    ).length > 0
+    )
 
   return hasFacetFilters || hasAdditionalFilters
 }

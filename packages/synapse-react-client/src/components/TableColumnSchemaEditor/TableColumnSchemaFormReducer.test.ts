@@ -134,7 +134,7 @@ describe('TableColumnSchemaFormReducer', () => {
     const newState = reducer(prevState, {
       type: 'appendColumn',
     })
-    expect(newState[newState.length - 1]).toEqual({
+    expect(newState.at(-1)).toEqual({
       name: '',
       isOriginallyDefaultColumn: false,
       columnType: ColumnTypeEnum.STRING,

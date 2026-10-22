@@ -44,13 +44,12 @@ const COLORS: string[] = [
 ]
 
 const hash = (userName: string) => {
-  const val = userName
-    .split('')
-    .reduce(
-      (prevHash, currVal) =>
-        ((prevHash << 5) - prevHash + currVal.charCodeAt(0)) | 0,
-      0,
-    )
+  const val = userName.split('').reduce(
+    (prevHash, currVal) =>
+      // oxlint-disable-next-line unicorn/prefer-math-trunc -- `| 0` wraps the hash to a 32-bit integer; Math.trunc would not
+      ((prevHash << 5) - prevHash + currVal.codePointAt(0)!) | 0,
+    0,
+  )
   return Math.abs(val)
 }
 

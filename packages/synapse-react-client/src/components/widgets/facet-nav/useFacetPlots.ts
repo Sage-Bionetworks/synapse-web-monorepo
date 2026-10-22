@@ -81,7 +81,7 @@ export function getFacets(
     data?.facets?.filter(item => {
       const isFacetToPlot =
         item.facetType === 'enumeration' &&
-        (!facetsToPlot?.length || facetsToPlot.indexOf(item.columnName) > -1)
+        (!facetsToPlot?.length || facetsToPlot.includes(item.columnName))
       // PORTALS-1993: only plot if the facet has count data
       return (
         isFacetToPlot &&
