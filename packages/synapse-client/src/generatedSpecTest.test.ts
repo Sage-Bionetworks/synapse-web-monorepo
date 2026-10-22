@@ -1,6 +1,7 @@
 import { describe, expect, expectTypeOf, test } from 'vitest'
 import { EntityFromJSONTyped } from './generated/models/Entity'
 import { FileEntity, instanceOfFileEntity } from './generated/models/FileEntity'
+import { TableQuery, TableQueryToJSON } from './generated/models/TableQuery'
 
 describe('Tests for the generated specification', () => {
   test('instanceOfXxx works for a model with a concreteType', () => {
@@ -60,5 +61,41 @@ describe('Tests for the generated specification', () => {
         'instanceOfFileEntity was false when it should have been true',
       )
     }
+  })
+
+  test("a query's cohorts are serialized with their own query", () => {
+    // A cohort's query is a Query. The published spec types it as a CohortDefinition, which patchSpec corrects;
+    // without that, serialization drops the cohort query's sql and filters.
+    const query: TableQuery = {
+      sql: 'SELECT * FROM syn2',
+      cohorts: [
+        {
+          name: 'c1',
+          query: {
+            sql: 'SELECT individualId FROM syn1',
+            additionalFilters: [
+              {
+                concreteType:
+                  'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+                columnName: 'race',
+                operator: 'EQUAL',
+                values: ['Asian'],
+              },
+            ],
+          },
+        },
+      ],
+      additionalFilters: [
+        {
+          concreteType:
+            'org.sagebionetworks.repo.model.table.ColumnCohortFilter',
+          columnName: 'individualId',
+          cohortName: 'c1',
+          isDefiningCondition: true,
+        },
+      ],
+    }
+
+    expect(JSON.parse(JSON.stringify(TableQueryToJSON(query)))).toEqual(query)
   })
 })

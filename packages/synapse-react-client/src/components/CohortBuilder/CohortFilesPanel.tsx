@@ -12,16 +12,20 @@ import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/Synaps
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { PropsWithChildren, Suspense, useId, useMemo } from 'react'
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary'
-import { ErrorBanner } from '../error/ErrorBanner'
+import AddToDownloadListConfirmationAlert from '../download_list/AddToDownloadListConfirmationAlert/AddToDownloadListConfirmationAlert'
+import { ErrorBanner, SynapseErrorBoundary } from '../error/ErrorBanner'
 import { useQueryContext } from '../QueryContext/QueryContext'
+import { useQueryVisualizationContext } from '../QueryVisualizationWrapper/QueryVisualizationContext'
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import {
   AggregateQueryErrorNotice,
   getAggregateQueryError,
 } from '../QueryWrapper/AggregateQueryErrorNotice'
 import { QueryWrapper } from '../QueryWrapper/QueryWrapper'
+import { useGetAddToDownloadListRequestForCurrentQuery } from '../QueryWrapper/useGetAddToDownloadListRequestForCurrentQuery'
 import { useSuspenseGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 import { RowSetView } from '../QueryWrapperPlotNav/RowSetView'
+import TopLevelControls from '../SynapseTable/TopLevelControls/TopLevelControls'
 import styles from './CohortBuilder.module.scss'
 import { buildCohortHandOff, MAX_COHORT_PARTICIPANTS } from './cohortHandOff'
 
@@ -96,7 +100,12 @@ export function CohortFilesPanel(props: CohortFilesPanelProps) {
           key={JSON.stringify(filesRequest)}
           initQueryRequest={filesRequest}
         >
-          <QueryVisualizationWrapper unitDescription="file">
+          {/* The files query is derived from the cohort, so it can't be searched, shared as a link, or re-run from SQL. */}
+          <QueryVisualizationWrapper
+            unitDescription="file"
+            hideSearchBarControl
+            hideCopyToClipboard
+          >
             <CohortFilesErrorBoundary>
               <Suspense fallback={null}>
                 <CohortFilesResults />
@@ -164,7 +173,34 @@ function CohortFilesResults() {
         {count.toLocaleString()}{' '}
         {count === 1 ? 'file or dataset' : FILES_AND_DATASETS}
       </Typography>
+      <SynapseErrorBoundary>
+        {/* Programmatic options are hidden: their code carries only the SQL, which can't express the cohort. */}
+        <TopLevelControls
+          hideQueryCount
+          hideFacetFilterControl
+          hideVisualizationsControl
+          hideProgrammaticOptionsMenuItem
+        />
+      </SynapseErrorBoundary>
+      <CohortFilesDownloadConfirmation />
       <RowSetView tableConfiguration={{}} hideDownload />
     </>
+  )
+}
+
+/** Adds the files of the cohort's files query, which carries the cohort, to the Download List. */
+function CohortFilesDownloadConfirmation() {
+  const { showDownloadConfirmation, setShowDownloadConfirmation } =
+    useQueryVisualizationContext()
+  const addToDownloadListRequest =
+    useGetAddToDownloadListRequestForCurrentQuery()
+  if (!showDownloadConfirmation) {
+    return null
+  }
+  return (
+    <AddToDownloadListConfirmationAlert
+      addToDownloadListRequest={addToDownloadListRequest}
+      onClose={() => setShowDownloadConfirmation(false)}
+    />
   )
 }

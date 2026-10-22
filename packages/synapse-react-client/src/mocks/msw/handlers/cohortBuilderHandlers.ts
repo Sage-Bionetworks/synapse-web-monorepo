@@ -22,13 +22,17 @@ import {
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
 } from '@/utils/APIConstants'
+import { BUNDLE_MASK_QUERY_COUNT } from '@/utils/SynapseConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
   MOCK_REPO_ORIGIN,
 } from '@/utils/functions/getEndpoint'
 import {
+  ColumnSingleValueFilterOperator,
+  ColumnSingleValueQueryFilter,
   EntityHeader,
+  Query,
   QueryBundleRequest,
   Reference,
   VirtualTable,
@@ -42,6 +46,17 @@ import {
 import { getEntityHandlers } from './entityHandlers'
 
 const MOCK_MATERIAL_VIEW_ID = 'syn_MATERIAL'
+
+const DOWNLOAD_LIST_ADD_ASYNC_START = '/repo/v1/download/list/add/async/start'
+const DOWNLOAD_LIST_ADD_ASYNC_GET = (token: string) =>
+  `/repo/v1/download/list/add/async/get/${token}`
+const DOWNLOAD_LIST_ADD_STATS_ASYNC_START =
+  '/repo/v1/download/list/add/stats/async/start'
+const DOWNLOAD_LIST_ADD_STATS_ASYNC_GET = (token: string) =>
+  `/repo/v1/download/list/add/stats/async/get/${token}`
+
+/** Synthetic files have no file handles; each is reported at this size in Download List statistics. */
+export const MOCK_COHORT_FILE_SIZE_BYTES = 10 * 1024 * 1024
 
 const syntheticDataByProfile = new Map<
   CohortBuilderMockProfile,
@@ -212,7 +227,104 @@ export function getCohortBuilderHandlers(
     ),
   )
 
-  return [...entityHandlers, entityHeaderHandler, ...queryHandlers]
+  // Counts a Files/Datasets query's rows as this caller sees them, optionally only the file rows.
+  function countDataRows(
+    requestQuery: unknown,
+    onlyFiles: boolean,
+  ): number | AsyncJobFailure {
+    // The async-job mocks type request bodies with the generated client models; the engine uses the legacy Query,
+    // whose shape (including cohorts) matches what the client sends.
+    const query = requestQuery as Query
+    const fileFilter: ColumnSingleValueQueryFilter = {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+      columnName: REFERENCE_TYPE_COLUMN_NAME,
+      operator: ColumnSingleValueFilterOperator.EQUAL,
+      values: ['FILE'],
+    }
+    const result = runCohortBuilderMockQuery(
+      data,
+      {
+        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+        entityId: profile.dataVirtualTableId,
+        partMask: BUNDLE_MASK_QUERY_COUNT,
+        query: onlyFiles
+          ? {
+              ...query,
+              additionalFilters: [
+                ...(query.additionalFilters ?? []),
+                fileFilter,
+              ],
+            }
+          : query,
+      },
+      access,
+      { maxCohortValues },
+    )
+    // A count-only request returns a bundle with queryCount; anything else is an error body.
+    return 'queryCount' in result.body
+      ? (result.body.queryCount ?? 0)
+      : new AsyncJobFailure(result.status, result.body)
+  }
+
+  // As on the server: the statistics count every row of the query, but only files are added. Datasets are skipped
+  // until the server adds a dataset's files instead (PLFM-9997).
+  const downloadListHandlers = [
+    ...generateAsyncJobHandlers(
+      dispatchEntry(
+        'org.sagebionetworks.repo.model.download.AddToDownloadListStatsRequest',
+        request => {
+          const fileCount = countDataRows(request.request?.query, false)
+          const filesOnly = countDataRows(request.request?.query, true)
+          if (fileCount instanceof AsyncJobFailure) return fileCount
+          if (filesOnly instanceof AsyncJobFailure) return filesOnly
+          return {
+            concreteType:
+              'org.sagebionetworks.repo.model.download.AddToDownloadListStatsResponse',
+            fileCount,
+            fileSize: filesOnly * MOCK_COHORT_FILE_SIZE_BYTES,
+            isFileCountAndSizeEstimate: false,
+          }
+        },
+      ),
+      {
+        asyncTypeServicePaths: {
+          requestPath: DOWNLOAD_LIST_ADD_STATS_ASYNC_START,
+          responsePath: DOWNLOAD_LIST_ADD_STATS_ASYNC_GET,
+        },
+        backendOrigin,
+      },
+    ),
+    ...generateAsyncJobHandlers(
+      dispatchEntry(
+        'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+        request => {
+          const numberOfFilesAdded = countDataRows(request.query, true)
+          return numberOfFilesAdded instanceof AsyncJobFailure
+            ? numberOfFilesAdded
+            : {
+                concreteType:
+                  'org.sagebionetworks.repo.model.download.AddToDownloadListResponse',
+                numberOfFilesAdded,
+              }
+        },
+      ),
+      {
+        asyncTypeServicePaths: {
+          requestPath: DOWNLOAD_LIST_ADD_ASYNC_START,
+          responsePath: DOWNLOAD_LIST_ADD_ASYNC_GET,
+        },
+        backendOrigin,
+      },
+    ),
+  ]
+
+  return [
+    ...entityHandlers,
+    entityHeaderHandler,
+    ...queryHandlers,
+    ...downloadListHandlers,
+  ]
 }
 
 /**
