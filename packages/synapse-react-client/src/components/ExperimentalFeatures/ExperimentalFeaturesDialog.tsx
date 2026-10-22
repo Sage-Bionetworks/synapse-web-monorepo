@@ -1,8 +1,10 @@
 import { Box, FormControlLabel, Switch } from '@mui/material'
-import { startCase } from 'lodash-es'
 import { useState } from 'react'
 import { DialogBase } from '../DialogBase'
-import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
+import {
+  FeatureFlagEnum,
+  getFeatureFlagDisplayName,
+} from '@/utils/featureflag/FeatureFlags'
 import styles from './ExperimentalFeaturesDialog.module.scss'
 import { ConfirmationButtons } from '../ConfirmationDialog/ConfirmationDialog'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
@@ -72,7 +74,7 @@ function ExperimentalFeaturesDialog({
               className={styles.featureRow}
               label={
                 <span className={styles.featureLabel}>
-                  {startCase(flag.toLowerCase())}
+                  {getFeatureFlagDisplayName(flag)}
                 </span>
               }
               control={
