@@ -146,7 +146,7 @@ export function fairSectionToRjsf(section: FairFormSection): FairRjsfSection {
       }
       case 'phone': {
         properties[name] = { type: 'string', maxLength: num(v.maximum) }
-        uiSchema[name] = { 'ui:options': { inputType: 'tel' } }
+        uiSchema[name] = { 'ui:widget': 'PhoneWidget' }
         break
       }
       case 'label': {
