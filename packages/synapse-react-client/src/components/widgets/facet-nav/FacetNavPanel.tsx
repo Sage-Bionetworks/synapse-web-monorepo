@@ -65,7 +65,7 @@ export type GraphData = {
 
 /**
  * @param facetPostProcessingApplied the QueryResultBundle's `facetPostProcessingApplied`. When set, counts are shown as
- * ranges or approximations (see `formatFacetValueCount`) and pie percentages are omitted.
+ * approximate (see `formatFacetValueCount`) and pie percentages are omitted.
  */
 export async function extractPlotDataArray(
   facetToPlot: EnumerationFacet,
