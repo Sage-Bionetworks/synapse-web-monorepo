@@ -1,6 +1,6 @@
 import { useDraggable } from '@dnd-kit/react'
 import { Box, Chip, Paper, Stack, Typography } from '@mui/material'
-import { DragIndicator as DragHandleIcon } from '@mui/icons-material'
+import DragHandleIcon from '@mui/icons-material/DragIndicator'
 import { RJSFSchema } from '@rjsf/utils'
 import {
   SchemaPropertyContext,

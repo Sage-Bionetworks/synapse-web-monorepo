@@ -1,5 +1,6 @@
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { ErrorOutlined, LockOutlined } from '@mui/icons-material'
+import ErrorOutlined from '@mui/icons-material/ErrorOutlined'
+import LockOutlined from '@mui/icons-material/LockOutlined'
 import { Avatar, Chip, Tooltip } from '@mui/material'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import { SignInPrompt, YOU_ARE_NOT_AUTHORIZED_MESSAGE } from './ErrorBanner'

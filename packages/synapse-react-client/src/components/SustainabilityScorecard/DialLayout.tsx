@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Stack, Tooltip, Typography } from '@mui/material'
-import { InfoTwoTone } from '@mui/icons-material'
+import InfoTwoTone from '@mui/icons-material/InfoTwoTone'
 import { ReactElement } from 'react'
 import { ScoreDescriptor } from './Dial'
 

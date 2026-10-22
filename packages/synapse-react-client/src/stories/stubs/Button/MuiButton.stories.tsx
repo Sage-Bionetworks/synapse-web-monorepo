@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { Button } from './MuiButton'
-import { GetAppTwoTone } from '@mui/icons-material'
+import GetAppTwoTone from '@mui/icons-material/GetAppTwoTone'
 
 const meta = {
   title: 'UI/MUI/Button',

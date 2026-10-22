@@ -1,4 +1,4 @@
-import { CalendarTodayTwoTone } from '@mui/icons-material'
+import CalendarTodayTwoTone from '@mui/icons-material/CalendarTodayTwoTone'
 import { Box, Button, Divider, Stack, Typography } from '@mui/material'
 import { Fragment, useEffect, useState } from 'react'
 import { Link as ReactRouterLink } from 'react-router'

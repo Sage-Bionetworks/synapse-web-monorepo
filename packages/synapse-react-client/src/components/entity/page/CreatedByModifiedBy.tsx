@@ -11,7 +11,7 @@ import {
   isTable,
 } from '@/utils/functions/EntityTypeUtils'
 import { BUNDLE_MASK_LAST_UPDATED_ON } from '@/utils/SynapseConstants'
-import { InfoTwoTone } from '@mui/icons-material'
+import InfoTwoTone from '@mui/icons-material/InfoTwoTone'
 import {
   Box,
   Breadcrumbs,

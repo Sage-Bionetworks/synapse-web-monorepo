@@ -1,7 +1,7 @@
 import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
 import UploadCsvToGridDialog from '@/components/DataGrid/components/UploadCsvToGridDialog'
 import { useGetEntity } from '@/synapse-queries/index'
-import { UploadTwoTone } from '@mui/icons-material'
+import UploadTwoTone from '@mui/icons-material/UploadTwoTone'
 import Skeleton from '@mui/material/Skeleton'
 import { instanceOfRecordSet } from '@sage-bionetworks/synapse-client'
 import { useState } from 'react'

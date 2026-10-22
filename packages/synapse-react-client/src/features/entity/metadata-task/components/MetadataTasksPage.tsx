@@ -7,7 +7,7 @@ import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 import { useCurationTaskListFilters } from '@/utils/hooks/useCurationTaskListFilters'
 import { Button, FormControlLabel, Stack, Switch } from '@mui/material'
 import { useMemo } from 'react'
-import { AddCircleTwoTone } from '@mui/icons-material'
+import AddCircleTwoTone from '@mui/icons-material/AddCircleTwoTone'
 import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { useNavigate } from 'react-router'
 import MetadataTasksPageRouter, {

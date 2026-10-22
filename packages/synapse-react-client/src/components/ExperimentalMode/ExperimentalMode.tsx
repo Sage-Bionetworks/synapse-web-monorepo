@@ -1,5 +1,5 @@
 import { EXPERIMENTAL_MODE_COOKIE } from '@/utils/SynapseConstants'
-import { InfoOutlined } from '@mui/icons-material'
+import InfoOutlined from '@mui/icons-material/InfoOutlined'
 import { Box, IconButton, Tooltip, Typography, useTheme } from '@mui/material'
 import Switch from 'react-switch'
 import { useCookieValue } from '@react-hookz/web/useCookieValue/index.js'

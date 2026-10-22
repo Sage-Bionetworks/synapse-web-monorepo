@@ -3,7 +3,7 @@ import { BUNDLE_MASK_QUERY_COUNT } from '@/utils/SynapseConstants'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions/SqlFunctions'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { Box, Button, ButtonProps } from '@mui/material'
-import { NavigateNext } from '@mui/icons-material'
+import NavigateNext from '@mui/icons-material/NavigateNext'
 import React from 'react'
 import { Link as RouterLink, useInRouterContext } from 'react-router'
 

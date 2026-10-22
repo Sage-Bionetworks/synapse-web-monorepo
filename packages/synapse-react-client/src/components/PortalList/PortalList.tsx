@@ -5,7 +5,7 @@ import { useInView } from 'react-intersection-observer'
 import PortalCard from './PortalCard'
 import CreatePortalModal from './CreatePortalModal'
 import styles from './PortalList.module.scss'
-import { Add } from '@mui/icons-material'
+import Add from '@mui/icons-material/Add'
 
 export function PortalList(): React.ReactNode {
   const { ref, inView } = useInView()

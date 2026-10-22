@@ -5,7 +5,7 @@ import {
   useUpdateDataAccessRequest,
   useUpdateResearchProject,
 } from '@/synapse-queries'
-import { InfoTwoTone } from '@mui/icons-material'
+import InfoTwoTone from '@mui/icons-material/InfoTwoTone'
 import {
   Alert,
   Box,

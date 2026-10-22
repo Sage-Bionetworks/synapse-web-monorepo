@@ -6,7 +6,7 @@ import {
 } from '@/synapse-queries'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { formatDate } from '@/utils/functions/DateFormatter'
-import { EmailTwoTone } from '@mui/icons-material'
+import EmailTwoTone from '@mui/icons-material/EmailTwoTone'
 import { Box, Link, Radio, Tooltip } from '@mui/material'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { Team } from '@sage-bionetworks/synapse-types'

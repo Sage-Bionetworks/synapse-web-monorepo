@@ -14,14 +14,12 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import {
-  ArrowDownward as DownIcon,
-  Delete as DeleteIcon,
-  DragIndicator as DragHandleIcon,
-  ExpandLess as ExpandLessIcon,
-  ExpandMore as ExpandMoreIcon,
-  ArrowUpward as UpIcon,
-} from '@mui/icons-material'
+import DownIcon from '@mui/icons-material/ArrowDownward'
+import DeleteIcon from '@mui/icons-material/Delete'
+import DragHandleIcon from '@mui/icons-material/DragIndicator'
+import ExpandLessIcon from '@mui/icons-material/ExpandLess'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import UpIcon from '@mui/icons-material/ArrowUpward'
 import { RJSFSchema } from '@rjsf/utils'
 import pluralize from 'pluralize'
 import { useState } from 'react'

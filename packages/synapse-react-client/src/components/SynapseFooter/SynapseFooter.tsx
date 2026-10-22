@@ -19,7 +19,7 @@ import {
 import ExperimentalMode from '../ExperimentalMode'
 import { PLANS_LINK } from '../SynapseHomepageV2/SynapseHomepageNavBar'
 import { SynapseLinksColumn } from './SynapseLinksColumn'
-import { LogoutTwoTone } from '@mui/icons-material'
+import LogoutTwoTone from '@mui/icons-material/LogoutTwoTone'
 import { SYNAPSE_REALM } from '@/utils/SynapseConstants'
 import { useGetCurrentRealm } from '@/synapse-queries/realm/useRealmPrincipals'
 

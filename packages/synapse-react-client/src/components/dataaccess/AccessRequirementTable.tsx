@@ -1,7 +1,7 @@
 import InfiniteTableLayout from '@/components/layout/InfiniteTableLayout'
 import { ACCESS_TYPE } from '@sage-bionetworks/synapse-types'
 import { Button, Typography } from '@mui/material'
-import { StarTwoTone } from '@mui/icons-material'
+import StarTwoTone from '@mui/icons-material/StarTwoTone'
 import { useAccessRequirementTable } from './UseAccessRequirementTable'
 import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 import { noop } from 'lodash-es'

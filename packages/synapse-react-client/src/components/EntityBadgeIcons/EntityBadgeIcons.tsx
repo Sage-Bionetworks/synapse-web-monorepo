@@ -7,15 +7,13 @@ import {
 } from '@/synapse-queries'
 import { useGetRealmPrincipals } from '@/synapse-queries/realm/useRealmPrincipals'
 import { isEntityPublic } from '@/utils/functions/AccessControlListUtils'
-import {
-  ChatBubbleTwoTone,
-  CheckTwoTone,
-  DescriptionTwoTone,
-  LinkOffTwoTone,
-  LocalOfferTwoTone,
-  LockTwoTone,
-  PublicTwoTone,
-} from '@mui/icons-material'
+import ChatBubbleTwoTone from '@mui/icons-material/ChatBubbleTwoTone'
+import CheckTwoTone from '@mui/icons-material/CheckTwoTone'
+import DescriptionTwoTone from '@mui/icons-material/DescriptionTwoTone'
+import LinkOffTwoTone from '@mui/icons-material/LinkOffTwoTone'
+import LocalOfferTwoTone from '@mui/icons-material/LocalOfferTwoTone'
+import LockTwoTone from '@mui/icons-material/LockTwoTone'
+import PublicTwoTone from '@mui/icons-material/PublicTwoTone'
 import { Tooltip } from '@mui/material'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import { ALL_ENTITY_BUNDLE_FIELDS } from '@sage-bionetworks/synapse-types'

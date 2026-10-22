@@ -4,10 +4,8 @@ import {
   FileUploadHandle,
 } from '@/components/file/upload/BasicFileHandleUpload'
 import { FileHandleLink } from '@/components/widgets/FileHandleLink'
-import {
-  Close as RemoveIcon,
-  UploadFile as UploadIcon,
-} from '@mui/icons-material'
+import RemoveIcon from '@mui/icons-material/Close'
+import UploadIcon from '@mui/icons-material/UploadFile'
 import {
   Alert,
   Box,

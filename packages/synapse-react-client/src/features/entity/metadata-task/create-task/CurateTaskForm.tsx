@@ -1,6 +1,6 @@
 import FieldDescription from '@/components/FieldDescription'
 import { StyledFormControl } from '@/components/styled'
-import { HelpTwoTone } from '@mui/icons-material'
+import HelpTwoTone from '@mui/icons-material/HelpTwoTone'
 import {
   Alert,
   Box,

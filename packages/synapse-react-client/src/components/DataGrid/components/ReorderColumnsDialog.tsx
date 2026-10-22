@@ -3,13 +3,11 @@ import { computeDefaultColumnOrder } from '@/components/DataGrid/utils/computeDe
 import { getNamedColumnIndices } from '@/components/DataGrid/utils/getNamedColumnIndices'
 import { moveItem } from '@/utils/functions/ArrayUtils'
 import { collectTopLevelProperties } from '@/utils/jsonschema/collectTopLevelProperties'
-import {
-  DeleteOutline,
-  North,
-  RestartAlt,
-  RestoreFromTrash,
-  South,
-} from '@mui/icons-material'
+import DeleteOutline from '@mui/icons-material/DeleteOutline'
+import North from '@mui/icons-material/North'
+import RestartAlt from '@mui/icons-material/RestartAlt'
+import RestoreFromTrash from '@mui/icons-material/RestoreFromTrash'
+import South from '@mui/icons-material/South'
 import {
   Box,
   Button,

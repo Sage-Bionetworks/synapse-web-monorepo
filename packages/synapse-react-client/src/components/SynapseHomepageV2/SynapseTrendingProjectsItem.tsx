@@ -4,7 +4,7 @@ import { ReactComponent as UsersIcon } from '@/assets/homepage/users.svg'
 import { useGetEntityHeader } from '@/synapse-queries'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { calculateFriendlyFileSize } from '@/utils/functions/calculateFriendlyFileSize'
-import { NavigateNext } from '@mui/icons-material'
+import NavigateNext from '@mui/icons-material/NavigateNext'
 import { Box, SxProps, Typography, useTheme } from '@mui/material'
 import { Color } from '@mui/material/styles'
 

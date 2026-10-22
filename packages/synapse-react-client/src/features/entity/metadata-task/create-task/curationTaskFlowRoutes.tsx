@@ -5,7 +5,7 @@ import {
   FILL_IN_CURATE_TASK_DETAILS_DESCRIPTION,
   BACK_TO_ALL_TASKS_LABEL,
 } from '../utils/constants'
-import { ArrowBack } from '@mui/icons-material'
+import ArrowBack from '@mui/icons-material/ArrowBack'
 import { Button } from '@mui/material'
 import {
   Navigate,

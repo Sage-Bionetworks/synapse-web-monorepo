@@ -6,7 +6,7 @@ import AcknowledgementsDialog from './AcknowledgementsDialog'
 import { MarkdownSynapseProps } from '../Markdown/MarkdownSynapse'
 import MarkdownCollapse from '../Markdown/MarkdownCollapse'
 import { StudyAcknowledgements } from './StudyAcknowledgements'
-import { LaunchTwoTone } from '@mui/icons-material'
+import LaunchTwoTone from '@mui/icons-material/LaunchTwoTone'
 export type AcknowledgementPageProps = {
   portalName: string
   createDoiHelpUrl: string
