@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { resolve } from 'node:path'
 import { mergeConfig, type UserConfig } from 'vite'
 import { sitemapViteConfig as baseSitemapViteConfig } from 'vite-config'
 

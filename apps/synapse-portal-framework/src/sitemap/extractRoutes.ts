@@ -51,7 +51,7 @@ export function flattenRoutePaths(
     }
 
     // URL-encode spaces in paths
-    const encodedPath = currentPath.replace(/ /g, '%20')
+    const encodedPath = currentPath.replaceAll(' ', '%20')
 
     // Check if this route should be included in the sitemap
     const isWildcard = route.path === '*'
@@ -108,8 +108,8 @@ export async function writeRoutePaths(
   const paths = flattenRoutePaths(routes)
 
   // Dynamic import of fs since this runs in Node
-  const fs = await import('fs')
-  const path = await import('path')
+  const fs = await import('node:fs')
+  const path = await import('node:path')
 
   // Ensure output directory exists
   const dir = path.dirname(outputPath)

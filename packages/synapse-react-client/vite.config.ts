@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { resolve } from 'node:path'
 import { globSync, readFileSync } from 'node:fs'
 import { mergeConfig } from 'vite'
 import {

@@ -64,15 +64,21 @@ describe('isListColumn', () => {
 
 describe('escapeLike / unescapeLike', () => {
   it('round-trips text with %, _, and \\', () => {
-    const originals = ['50%', 'a_b', 'raw text', '100% pure_junk\\', '%%__\\\\']
+    const originals = [
+      '50%',
+      'a_b',
+      'raw text',
+      '100% pure_junk\\',
+      String.raw`%%__\\`,
+    ]
     for (const original of originals) {
       expect(unescapeLike(escapeLike(original))).toBe(original)
     }
   })
 
   it('escapes the wildcards so they are not interpreted', () => {
-    expect(escapeLike('50%')).toBe('50\\%')
-    expect(escapeLike('a_b')).toBe('a\\_b')
+    expect(escapeLike('50%')).toBe(String.raw`50\%`)
+    expect(escapeLike('a_b')).toBe(String.raw`a\_b`)
   })
 })
 
@@ -102,7 +108,7 @@ describe('classifyLikePattern', () => {
     })
   })
   it('un-escapes literal wildcards inside the text', () => {
-    expect(classifyLikePattern('%50\\%%')).toEqual({
+    expect(classifyLikePattern(String.raw`%50\%%`)).toEqual({
       op: 'contains',
       text: '50%',
     })
@@ -348,7 +354,7 @@ describe('qbNodeToApiFilter — conditions', () => {
       const result = qbNodeToApiFilter(
         condition({ op: 'contains', text: '50%' }),
       ) as ColumnSingleValueQueryFilter
-      expect(result.values).toEqual(['%50\\%%'])
+      expect(result.values).toEqual([String.raw`%50\%%`])
     })
 
     it.each(['contains', 'starts_with', 'ends_with', 'is_exactly'])(
@@ -541,7 +547,7 @@ describe('apiFilterToQBNode', () => {
       concreteType: COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE_VALUE,
       columnName: 'col',
       operator: ColumnSingleValueFilterOperator.LIKE,
-      values: ['%50\\%%'],
+      values: [String.raw`%50\%%`],
     }) as QBCondition
     expect(contains).toMatchObject({ op: 'contains', text: '50%' })
   })

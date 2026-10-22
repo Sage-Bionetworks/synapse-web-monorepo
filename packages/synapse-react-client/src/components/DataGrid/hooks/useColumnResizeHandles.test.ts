@@ -582,7 +582,7 @@ describe('useColumnResizeHandles', () => {
 
       // Simulate virtualization removing Column A
       const cellToRemove = mockHeaderRow.querySelectorAll('.dsg-cell')[1] // First actual column (Column A)
-      mockHeaderRow.removeChild(cellToRemove)
+      cellToRemove.remove()
 
       // Trigger sync by dispatching a scroll event (which directly calls syncHandles)
       act(() => {
@@ -957,7 +957,7 @@ describe('useColumnResizeHandles', () => {
 
       // Update header cells to match
       while (mockHeaderRow.children.length > 1) {
-        mockHeaderRow.removeChild(mockHeaderRow.lastChild!)
+        mockHeaderRow.lastChild!.remove()
       }
       mockHeaderRow.appendChild(createMockCell('Column X'))
       mockHeaderRow.appendChild(createMockCell('Column Y'))
@@ -1009,7 +1009,7 @@ describe('useColumnResizeHandles', () => {
 
       // Remove a column from DOM to simulate virtualization
       const cellToRemove = mockHeaderRow.querySelectorAll('.dsg-cell')[1] // Column A
-      mockHeaderRow.removeChild(cellToRemove)
+      cellToRemove.remove()
 
       // Trigger scroll which should sync handles
       act(() => {
@@ -1087,7 +1087,7 @@ describe('useColumnResizeHandles', () => {
       // If it fell back to textContent the findIndex call would fail and no
       // handle would be created for that column.
       while (mockHeaderRow.children.length > 1) {
-        mockHeaderRow.removeChild(mockHeaderRow.lastChild!)
+        mockHeaderRow.lastChild!.remove()
       }
       // 'Column A' id, but visible text is something else entirely
       mockHeaderRow.appendChild(

@@ -31,7 +31,7 @@ export type CreateReactRouterConfigOptions = {
  * If future IDs include other path-breaking reserved characters, extend this function and add coverage.
  */
 function encodePathSegment(id: string): string {
-  return id.replace(/\//g, '%2F')
+  return id.replaceAll('/', '%2F')
 }
 
 /**
