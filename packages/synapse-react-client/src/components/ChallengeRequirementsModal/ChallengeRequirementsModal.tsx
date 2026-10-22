@@ -100,7 +100,7 @@ export default function ChallengeRequirementsModal(
     getMembershipStatusError,
     getAccessRequirementsError,
     registrationError,
-  ].filter((e): e is SynapseClientError => Boolean(e))
+  ].filter((e): e is SynapseClientError => e != null)
 
   // It's possible that the user joined the team, but requirements on the team changed since they became a member
   // They do not need to re-join the team, but they should still be prompted to accept the requirements

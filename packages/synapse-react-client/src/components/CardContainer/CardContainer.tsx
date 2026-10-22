@@ -140,7 +140,7 @@ export function CardContainer(props: CardContainerProps) {
       ? rowSet.headers.findIndex(el => el.name === userIdColumnName)
       : -1
     if (userIdColumnIndex === -1) {
-      throw Error(
+      throw new Error(
         'Type MEDIUM_USER_CARD specified but no columnType USERID found',
       )
     }

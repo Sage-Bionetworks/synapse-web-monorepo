@@ -268,7 +268,7 @@ describe('Hooks for fetching table query bundles using react-query', () => {
     })
     it('Does not return data until both queries resolve', async () => {
       let resolvePromise: () => void = () => {
-        throw Error('resolvePromise was not reassigned before being called')
+        throw new Error('resolvePromise was not reassigned before being called')
       }
       mockGetAsyncJobResults.mockImplementation(request => {
         if (request.partMask === BUNDLE_MASK_QUERY_COUNT) {

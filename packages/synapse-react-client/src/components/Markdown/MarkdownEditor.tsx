@@ -62,7 +62,7 @@ export function MarkdownEditor({
       setSelectionStart(start + user.length)
       newText.push(
         textBeforeTag,
-        `${tagModalWithKeyboard ? '' : '@'}${user.replace(/\s/g, '')}`,
+        `${tagModalWithKeyboard ? '' : '@'}${user.replaceAll(/\s/g, '')}`,
         textAfterTag,
       )
     }

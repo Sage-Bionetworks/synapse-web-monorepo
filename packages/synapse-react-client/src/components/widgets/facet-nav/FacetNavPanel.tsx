@@ -173,7 +173,7 @@ export async function extractPlotDataArray(
   if (plotType === 'BAR') {
     y = facetToPlot.facetValues.map(facet => facet.count)
   } else if (plotType === 'STACKED_HORIZONTAL_BAR') {
-    y = Array(x?.length).fill('Proportional') // single value for every x value
+    y = new Array(x?.length).fill('Proportional') // single value for every x value
   }
 
   const singleChartData: Plotly.Data = {

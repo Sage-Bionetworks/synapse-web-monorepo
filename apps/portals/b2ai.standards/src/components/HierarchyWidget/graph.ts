@@ -16,7 +16,7 @@ export type Graph = {
 }
 
 function nodeIdNum(id: string): number {
-  const m = id.match(/(\d+)$/)
+  const m = /(\d+)$/.exec(id)
   return m ? Number(m[1]) : 0
 }
 

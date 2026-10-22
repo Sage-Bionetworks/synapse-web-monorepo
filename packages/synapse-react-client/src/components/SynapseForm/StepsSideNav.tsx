@@ -96,7 +96,7 @@ export default function StepsSideNav(props: StepsSideNavProps) {
                         const childStep = props.stepList.find(
                           step => step.id === stepChildId,
                         )
-                        return typeof childStep === 'undefined' ? (
+                        return childStep === undefined ? (
                           <></>
                         ) : (
                           <li className="item-wrap" key={`${j}-${stepChildId}`}>

@@ -37,8 +37,7 @@ function getInitialValues(initialValues: RangeValues, domain: string[]) {
 
 function RangeSlider(props: RangeSliderProps) {
   const { onApplyClicked, onChange, step } = props
-  const stringArrToNumArr = (inputArr: string[]) =>
-    inputArr.map(value => Number(value))
+  const stringArrToNumArr = (inputArr: string[]) => inputArr.map(Number)
 
   const [values, setValues] = useState<number[]>(() =>
     getInitialValues(props.initialValues, props.domain),
