@@ -301,4 +301,21 @@ describe('extractPlotDataArray', () => {
         '<b>%{text}: </b><br>%{value} (%{percent}) <br><extra></extra>',
     })
   })
+
+  it('draws a horizontal bar chart with one bar per value: counts along x, values along y', async () => {
+    const plotData = await extractPlotDataArray(
+      facet,
+      ColumnTypeEnum.STRING,
+      0,
+      'HORIZONTAL_BAR',
+    )
+
+    expect(plotData.data[0]).toMatchObject({
+      type: 'bar',
+      orientation: 'h',
+      x: [10, 0],
+      y: ['Female', 'Unknown'],
+      hovertemplate: '<b>%{text}: </b><br>%{x} <br><extra></extra>',
+    })
+  })
 })

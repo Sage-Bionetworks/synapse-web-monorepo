@@ -152,7 +152,11 @@ function CohortResults(props: { facetsToPlot?: string[] }) {
         {count.toLocaleString()} {pluralize(unitDescription, count)}
       </Typography>
       {/* The Query Builder is the only way to change the cohort. */}
-      <PlotsContainer facetsToPlot={props.facetsToPlot} disableFiltering />
+      <PlotsContainer
+        facetsToPlot={props.facetsToPlot}
+        defaultPlotType="HORIZONTAL_BAR"
+        disableFiltering
+      />
     </>
   )
 }

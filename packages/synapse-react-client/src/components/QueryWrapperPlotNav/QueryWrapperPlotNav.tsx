@@ -180,6 +180,7 @@ export type QueryWrapperPlotNavContentsProps = Pick<
   | 'fileVersionColumnName'
   | 'initialLimit'
   | 'initialPlotTypeByFacetColumnName'
+  | 'defaultPlotType'
   | 'hideTopLevelControls'
   | 'showQueryBuilderControl'
   | 'defaultShowQueryBuilder'
@@ -212,6 +213,7 @@ export function QueryWrapperPlotNavContents(
     customPlots,
     initialLimit,
     initialPlotTypeByFacetColumnName,
+    defaultPlotType,
     hideTopLevelControls,
     showQueryBuilderControl = false,
     defaultShowQueryBuilder = false,
@@ -411,6 +413,7 @@ export function QueryWrapperPlotNavContents(
                 initialPlotTypeByFacetColumnName={
                   initialPlotTypeByFacetColumnName
                 }
+                defaultPlotType={defaultPlotType}
                 disableFiltering={showQueryBuilder}
               />
               <RowSetView

@@ -84,18 +84,24 @@ describe('CohortBuilder', () => {
     ).toEqual([])
   })
 
-  it('shows facet plots of the cohort, which cannot change the cohort', async () => {
+  it('shows horizontal bar charts of the cohort, which cannot change the cohort', async () => {
+    const user = userEvent.setup()
     renderCohortBuilder({ facetsToPlot: ['sex'] })
 
     const plot = await screen.findByRole('figure')
     expect(
+      within(plot).queryByRole('button', { name: /^Filter by/ }),
+    ).not.toBeInTheDocument()
+
+    await user.click(
       await within(plot).findByRole('button', {
         name: 'Expand to large graph',
       }),
-    ).toBeInTheDocument()
+    )
+    const dialog = await screen.findByRole('dialog')
     expect(
-      within(plot).queryByRole('button', { name: /^Filter by/ }),
-    ).not.toBeInTheDocument()
+      await within(dialog).findByRole('combobox', { name: 'Chart Type' }),
+    ).toHaveTextContent('Horizontal Bar Chart')
   })
 
   it('replaces only the results with a below-threshold notice, and keeps the cohort editable', async () => {
