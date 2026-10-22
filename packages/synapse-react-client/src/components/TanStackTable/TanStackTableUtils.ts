@@ -1,12 +1,24 @@
 import { Column } from '@tanstack/react-table'
 import { CSSProperties } from 'react'
 
+/**
+ * Column IDs are arbitrary strings (e.g. Synapse column names may contain spaces or periods), but a custom property
+ * name referenced in `var()` must be a valid CSS identifier. Characters outside [A-Za-z0-9-] are hex-encoded between
+ * underscores, so the encoding is valid and distinct IDs never map to the same name.
+ */
+function toCssIdentifierSafeString(id: string) {
+  return id.replace(
+    /[^A-Za-z0-9-]/g,
+    char => `_${char.charCodeAt(0).toString(16)}_`,
+  )
+}
+
 export function getColumnSizeCssVariable(columnId: string) {
-  return `--col-${columnId}-size`
+  return `--col-${toCssIdentifierSafeString(columnId)}-size`
 }
 
 export function getHeaderSizeCssVariable(headerId: string) {
-  return `--header-${headerId}-size`
+  return `--header-${toCssIdentifierSafeString(headerId)}-size`
 }
 
 // Styles for column pinning, retrieved from TanStack docs examples with very minor modifications

@@ -141,10 +141,6 @@ describe('DetailsView tests', () => {
     value: 800,
   })
 
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   beforeEach(() => {
     vi.clearAllMocks()
     server.use(

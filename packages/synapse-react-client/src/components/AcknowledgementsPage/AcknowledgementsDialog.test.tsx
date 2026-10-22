@@ -17,7 +17,8 @@ vi.mock('../DialogBase', () => ({
     </div>
   ),
 }))
-vi.mock('@/utils/functions/StringUtils', () => ({
+vi.mock(import('@/utils/functions/StringUtils'), async importOriginal => ({
+  ...(await importOriginal()),
   copyStringToClipboard: vi.fn(() => Promise.resolve()),
 }))
 vi.mock('../ToastMessage', () => ({

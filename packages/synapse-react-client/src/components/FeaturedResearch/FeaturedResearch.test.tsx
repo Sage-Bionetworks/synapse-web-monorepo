@@ -1,17 +1,28 @@
-import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
-import { getUseQuerySuccessMock } from '@/testutils/ReactQueryMockUtils'
+import {
+  dispatchEntry,
+  generateAsyncJobHandlers,
+} from '@/mocks/msw/handlers/asyncJobHandlers'
+import { http, server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
+  FILE_HANDLE_BATCH,
+  TABLE_QUERY_ASYNC_GET,
+  TABLE_QUERY_ASYNC_START,
+} from '@/utils/APIConstants'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import {
   BatchFileResult,
   ColumnTypeEnum,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
-import { SynapseClient } from '../../index'
+import { HttpResponse } from 'msw'
 import FeaturedResearch, { FeaturedResearchProps } from './FeaturedResearch'
 
-vi.mock('../../synapse-queries/entity/useGetQueryResultBundle')
-const mockUseGetQueryResultBundle = vi.mocked(useGetQueryResultBundle)
+const mockQueryRequest = vi.fn()
 
 describe('FeaturedResearch Tests', () => {
   const mockProps: FeaturedResearchProps = {
@@ -119,9 +130,30 @@ describe('FeaturedResearch Tests', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)
-    mockUseGetQueryResultBundle.mockReturnValue(
-      getUseQuerySuccessMock(mockQueryResult),
+    server.use(
+      ...generateAsyncJobHandlers(
+        dispatchEntry(
+          'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+          request => {
+            mockQueryRequest(request)
+            return mockQueryResult
+          },
+        ),
+        {
+          asyncTypeServicePaths: {
+            requestPath: TABLE_QUERY_ASYNC_START(':id'),
+            responsePath: tokenParam =>
+              TABLE_QUERY_ASYNC_GET(':id', tokenParam),
+          },
+        },
+      ),
+      http.post(
+        `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${FILE_HANDLE_BATCH}`,
+        () => HttpResponse.json(mockBatchFileResult, { status: 201 }),
+      ),
+      http.get('https://mockurl.com/:fileName', () =>
+        HttpResponse.text('mock image content'),
+      ),
     )
   })
 
@@ -132,19 +164,14 @@ describe('FeaturedResearch Tests', () => {
   }
 
   it('fetches and displays research cards', async () => {
-    mockUseGetQueryResultBundle.mockReturnValue(
-      getUseQuerySuccessMock(mockQueryResult),
-    )
     renderComponent(mockProps)
 
-    await waitFor(() =>
-      expect(mockUseGetQueryResultBundle).toHaveBeenCalledTimes(1),
-    )
+    await screen.findByText('Title 1')
+    expect(mockQueryRequest).toHaveBeenCalledTimes(1)
 
     const headings = screen.getAllByText('Featured Research')
     expect(headings.length).toBe(2)
     expect(screen.getByText('Read more')).toBeInTheDocument()
-    expect(screen.getByText('Title 1')).toBeInTheDocument()
     expect(screen.getByText('Description 1')).toBeInTheDocument()
 
     expect(screen.getByText('Title 2')).toBeInTheDocument()

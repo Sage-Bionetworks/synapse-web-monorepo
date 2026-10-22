@@ -40,10 +40,6 @@ function renderComponent(initialId?: string | number) {
 }
 
 describe('Access Requirement Search Box tests', () => {
-  beforeAll(() => {
-    server.listen()
-  })
-
   beforeEach(() => {
     // Configure MSW
     server.use(
@@ -70,10 +66,8 @@ describe('Access Requirement Search Box tests', () => {
     )
   })
   afterEach(() => {
-    server.restoreHandlers()
     vi.clearAllMocks()
   })
-  afterAll(() => server.close())
 
   describe('Test getOptionLabel', () => {
     it('Shows name and ID', () => {

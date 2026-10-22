@@ -108,9 +108,6 @@ function renderComponent() {
 
 // TODO: Fix flakiness
 describe.skip('Discussion Thread test', () => {
-  beforeAll(() => {
-    server.listen()
-  })
   beforeEach(() => {
     server.use(
       http.get(
@@ -162,10 +159,8 @@ describe.skip('Discussion Thread test', () => {
     )
   })
   afterEach(() => {
-    server.resetHandlers()
     vi.clearAllMocks()
   })
-  afterAll(() => server.close())
 
   it('Renders the author and thread', async () => {
     renderComponent()

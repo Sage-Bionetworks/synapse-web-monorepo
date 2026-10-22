@@ -1,10 +1,10 @@
+import '@/mocks/msw/server'
 import { MOCK_INVALID_PROJECT_NAME } from '@/mocks/entity/mockEntity'
 import mockProjectEntityData from '@/mocks/entity/mockProject'
 import {
   MOCK_AUTHENTICATED_PRINCIPAL_ID,
   MOCK_PUBLIC_PRINCIPAL_ID,
 } from '@/mocks/realm/mockRealmPrincipal'
-import { server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '@/utils/context/SynapseContext'
@@ -59,16 +59,13 @@ describe('CreateProjectModal tests', () => {
     ],
   }
 
-  beforeAll(() => server.listen())
   beforeEach(() => {
     vi.spyOn(SynapseClient, 'getEntityACL').mockResolvedValue(mockInitialAcl)
     vi.spyOn(SynapseClient, 'updateEntityACL').mockResolvedValue(mockInitialAcl)
   })
   afterEach(() => {
-    server.restoreHandlers()
     vi.restoreAllMocks()
   })
-  afterAll(() => server.close())
 
   it('Shows the modal', async () => {
     renderComponent()

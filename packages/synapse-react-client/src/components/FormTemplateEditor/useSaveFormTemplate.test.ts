@@ -1,23 +1,18 @@
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import { getCreateSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
+import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import {
-  AsynchronousJobStatus,
-  CreateSchemaResponse,
-  FormTemplate,
-} from '@sage-bionetworks/synapse-client'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
+import { FormTemplate } from '@sage-bionetworks/synapse-client'
 import { renderHook } from '@testing-library/react'
 import { RJSFSchema } from '@rjsf/utils'
+import { JSONSchema7 } from 'json-schema'
 import { EditableFormTemplateStep } from './utils'
 import { useSaveFormTemplate } from './useSaveFormTemplate'
 
-const postJobSpy = vi.spyOn(
-  MOCK_CONTEXT_VALUE.synapseClient.asynchronousJobServicesClient,
-  'postRepoV1AsynchronousJob',
-)
-const getJobSpy = vi.spyOn(
-  MOCK_CONTEXT_VALUE.synapseClient.asynchronousJobServicesClient,
-  'getRepoV1AsynchronousJobJobId',
-)
+const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
+const registeredSchemas: JSONSchema7[] = []
+
 const createTemplateSpy = vi.spyOn(
   MOCK_CONTEXT_VALUE.synapseClient.accessRequirementServicesClient,
   'postRepoV1AccessRequirementFormTemplate',
@@ -30,20 +25,6 @@ const listSchemaVersionsSpy = vi.spyOn(
   MOCK_CONTEXT_VALUE.synapseClient.jsonSchemaServicesClient,
   'postRepoV1SchemaVersionList',
 )
-
-function mockSchemaCreation(newSchema$id: string) {
-  const response: CreateSchemaResponse = {
-    concreteType: 'org.sagebionetworks.repo.model.schema.CreateSchemaResponse',
-    newVersionInfo: { $id: newSchema$id },
-  }
-  const completeStatus: AsynchronousJobStatus = {
-    jobId: 'job-1',
-    jobState: 'COMPLETE',
-    responseBody: response,
-  }
-  postJobSpy.mockResolvedValueOnce(completeStatus)
-  getJobSpy.mockResolvedValueOnce(completeStatus)
-}
 
 function mockRegisteredVersions(...semanticVersions: string[]) {
   listSchemaVersionsSpy.mockResolvedValueOnce({
@@ -64,12 +45,9 @@ function expectVersionsListedFor(organizationName: string, schemaName: string) {
 }
 
 function expectSchemaRegisteredAs(schema$id: string) {
-  expect(postJobSpy).toHaveBeenCalledWith({
-    asynchronousRequestBody: expect.objectContaining({
-      concreteType: 'org.sagebionetworks.repo.model.schema.CreateSchemaRequest',
-      schema: expect.objectContaining({ $id: schema$id }),
-    }),
-  })
+  expect(registeredSchemas).toEqual([
+    expect.objectContaining({ $id: schema$id }),
+  ])
 }
 
 const jsonSchema: RJSFSchema = {
@@ -95,6 +73,8 @@ const steps: EditableFormTemplateStep[] = [
 describe('useSaveFormTemplate', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    registeredSchemas.length = 0
+    server.use(...getCreateSchemaHandlers(REPO_ENDPOINT, registeredSchemas))
   })
 
   it('returns validation errors and never calls the network when the draft is invalid', async () => {
@@ -122,13 +102,12 @@ describe('useSaveFormTemplate', () => {
     })
 
     expect(saveResult.ok).toBe(false)
-    expect(postJobSpy).not.toHaveBeenCalled()
+    expect(registeredSchemas).toEqual([])
     expect(createTemplateSpy).not.toHaveBeenCalled()
   })
 
   it('registers the next major version under a schema name derived from the template name, and creates the template, when there is no existing template', async () => {
     mockRegisteredVersions('2.0.0')
-    mockSchemaCreation('org.sagebionetworks.act-MyTemplate-3.0.0')
     const createdTemplate: FormTemplate = {
       id: 'template-1',
       name: 'My Template',
@@ -190,7 +169,7 @@ describe('useSaveFormTemplate', () => {
     })
 
     expect(saveResult).toEqual({ ok: true, template: updatedTemplate })
-    expect(postJobSpy).not.toHaveBeenCalled()
+    expect(registeredSchemas).toEqual([])
     expect(listSchemaVersionsSpy).not.toHaveBeenCalled()
     expect(updateTemplateSpy).toHaveBeenCalledWith({
       templateId: 'template-1',
@@ -236,7 +215,6 @@ describe('useSaveFormTemplate', () => {
 
   it("registers the next major version under the existing schema's name, even after a rename, and updates the template when its schema body changed", async () => {
     mockRegisteredVersions('1.0.0')
-    mockSchemaCreation('org.example-MyTemplate-2.0.0')
     const initialTemplate: FormTemplate = {
       id: 'template-1',
       name: 'My Template',

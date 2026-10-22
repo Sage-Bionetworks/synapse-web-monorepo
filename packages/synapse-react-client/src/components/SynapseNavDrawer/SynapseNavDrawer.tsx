@@ -557,10 +557,11 @@ export function SynapseNavDrawer({
                   onKeyDown={event => {
                     if (event.key === 'Enter') {
                       if ((event.target as HTMLInputElement).value !== '') {
+                        const searchParams = new URLSearchParams({
+                          q: (event.target as HTMLInputElement).value,
+                        })
                         window.open(
-                          `https://help.synapse.org/search.html?max=10&s=docs&q=${encodeURI(
-                            (event.target as HTMLInputElement).value,
-                          )}`,
+                          `https://docs.synapse.org/search?${searchParams.toString()}`,
                         )
                         setDocSiteSearchText('')
                         handleDrawerClose()

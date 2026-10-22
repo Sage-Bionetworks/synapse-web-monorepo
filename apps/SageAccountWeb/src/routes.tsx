@@ -124,6 +124,13 @@ export const router = createBrowserRouter([
               ),
           },
           {
+            path: 'emailUndeliverable',
+            lazy: () =>
+              import('@/pages/EmailUndeliverablePage').then(
+                convertModuleToRouteObject,
+              ),
+          },
+          {
             path: '2fa/enroll',
             lazy: () =>
               import('@/pages/TwoFactorAuthEnrollmentPage').then(

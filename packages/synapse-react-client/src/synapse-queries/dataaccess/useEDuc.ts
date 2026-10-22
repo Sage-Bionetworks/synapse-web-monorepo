@@ -150,7 +150,10 @@ export function useListAllUserDataAccessRequests(
 }
 
 /**
- * Retrieve the pre-signing preview of the eDUC for a data access request.
+ * Retrieve the pre-signing preview of the eDUC for a data access request. The document is rendered
+ * from the request as it stands, via an envelope the service discards once the PDF exists, so
+ * reading it neither routes anything for signature nor alters the request.
+ *
  * @see GET /repo/v1/dataAccessRequest/{requestId}/preview
  */
 export function useGetDataAccessRequestPreview(
@@ -233,33 +236,76 @@ export function useGetDataAccessRequestSignatureQuota(
 }
 
 /**
- * Initiate the DocuSign routing for a data access request's eDUC.
+ * Identifies the data access request a signature mutation acts on. The access requirement is
+ * carried alongside the request id because these mutations all change `eDucSignatureEnvelopeId`
+ * on the request itself, and the cache entry holding that field is keyed by access requirement
+ * rather than by request.
+ */
+export type DataAccessRequestSignatureVariables = {
+  requestId: string
+  accessRequirementId: string
+}
+
+/**
+ * Invalidates everything a change to the eDUC envelope makes obsolete.
+ *
+ * The preview is deliberately absent: it renders the request's own content, which routing does
+ * not touch, and regenerating it costs a server-side PDF render.
+ */
+function useInvalidateOnSignatureChange() {
+  const { keyFactory } = useSynapseContext()
+  const queryClient = useQueryClient()
+
+  return ({
+    requestId,
+    accessRequirementId,
+  }: DataAccessRequestSignatureVariables) =>
+    Promise.all([
+      queryClient.invalidateQueries({
+        queryKey: keyFactory.getDataAccessRequestSignatureQueryKey(requestId),
+      }),
+      // The listings report envelope status, so they move with every routing change.
+      queryClient.invalidateQueries({
+        queryKey: keyFactory.getDataAccessRequestListQueryKey(),
+      }),
+      // `eDucSignatureEnvelopeId` is how callers tell a first send from a re-send, so the request
+      // must not stay cached from before the routing changed.
+      queryClient.invalidateQueries({
+        queryKey:
+          keyFactory.getDataAccessRequestForUpdateQueryKey(accessRequirementId),
+      }),
+    ])
+}
+
+/**
+ * Initiate the DocuSign routing for a data access request's eDUC, creating the envelope and
+ * sending it to the signers.
  * @see POST /repo/v1/dataAccessRequest/{requestId}/signature
  */
 export function useInitiateDataAccessRequestSignature(
-  options?: UseMutationOptions<EDucSignatureQuota, SynapseClientError, string>,
+  options?: UseMutationOptions<
+    EDucSignatureQuota,
+    SynapseClientError,
+    DataAccessRequestSignatureVariables
+  >,
 ) {
   const { synapseClient } = useSynapseContext()
-  const queryClient = useQueryClient()
-  const { keyFactory } = useSynapseContext()
+  const invalidateOnSignatureChange = useInvalidateOnSignatureChange()
 
-  return useMutation<EDucSignatureQuota, SynapseClientError, string>({
+  return useMutation<
+    EDucSignatureQuota,
+    SynapseClientError,
+    DataAccessRequestSignatureVariables
+  >({
     ...options,
-    mutationFn: (requestId: string) =>
+    mutationFn: ({ requestId }) =>
       synapseClient.dataAccessServicesClient.postRepoV1DataAccessRequestRequestIdSignature(
         { requestId },
       ),
-    onSuccess: async (data, requestId, ctx) => {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: keyFactory.getDataAccessRequestSignatureQueryKey(requestId),
-        }),
-        queryClient.invalidateQueries({
-          queryKey: keyFactory.getDataAccessRequestQueryKey(),
-        }),
-      ])
+    onSuccess: async (data, variables, ctx) => {
+      await invalidateOnSignatureChange(variables)
       if (options?.onSuccess) {
-        return options.onSuccess(data, requestId, ctx)
+        return options.onSuccess(data, variables, ctx)
       }
       return
     },
@@ -347,28 +393,29 @@ export function useGetDataAccessRequestSignatureUpdatable(
  * @see PUT /repo/v1/dataAccessRequest/{requestId}/signature
  */
 export function useUpdateDataAccessRequestSignature(
-  options?: UseMutationOptions<EDucSignatureStatus, SynapseClientError, string>,
+  options?: UseMutationOptions<
+    EDucSignatureStatus,
+    SynapseClientError,
+    DataAccessRequestSignatureVariables
+  >,
 ) {
-  const { keyFactory, synapseClient } = useSynapseContext()
-  const queryClient = useQueryClient()
+  const { synapseClient } = useSynapseContext()
+  const invalidateOnSignatureChange = useInvalidateOnSignatureChange()
 
-  return useMutation<EDucSignatureStatus, SynapseClientError, string>({
+  return useMutation<
+    EDucSignatureStatus,
+    SynapseClientError,
+    DataAccessRequestSignatureVariables
+  >({
     ...options,
-    mutationFn: (requestId: string) =>
+    mutationFn: ({ requestId }) =>
       synapseClient.dataAccessServicesClient.putRepoV1DataAccessRequestRequestIdSignature(
         { requestId },
       ),
-    onSuccess: async (data, requestId, ctx) => {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: keyFactory.getDataAccessRequestSignatureQueryKey(requestId),
-        }),
-        queryClient.invalidateQueries({
-          queryKey: keyFactory.getDataAccessRequestQueryKey(),
-        }),
-      ])
+    onSuccess: async (data, variables, ctx) => {
+      await invalidateOnSignatureChange(variables)
       if (options?.onSuccess) {
-        return options.onSuccess(data, requestId, ctx)
+        return options.onSuccess(data, variables, ctx)
       }
       return
     },
@@ -380,29 +427,29 @@ export function useUpdateDataAccessRequestSignature(
  * @see DELETE /repo/v1/dataAccessRequest/{requestId}/signature
  */
 export function useVoidDataAccessRequestSignature(
-  options?: UseMutationOptions<void, SynapseClientError, string>,
+  options?: UseMutationOptions<
+    void,
+    SynapseClientError,
+    DataAccessRequestSignatureVariables
+  >,
 ) {
   const { synapseClient } = useSynapseContext()
-  const queryClient = useQueryClient()
-  const { keyFactory } = useSynapseContext()
+  const invalidateOnSignatureChange = useInvalidateOnSignatureChange()
 
-  return useMutation<void, SynapseClientError, string>({
+  return useMutation<
+    void,
+    SynapseClientError,
+    DataAccessRequestSignatureVariables
+  >({
     ...options,
-    mutationFn: (requestId: string) =>
+    mutationFn: ({ requestId }) =>
       synapseClient.dataAccessServicesClient.deleteRepoV1DataAccessRequestRequestIdSignature(
         { requestId },
       ),
-    onSuccess: async (data, requestId, ctx) => {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: keyFactory.getDataAccessRequestSignatureQueryKey(requestId),
-        }),
-        queryClient.invalidateQueries({
-          queryKey: keyFactory.getDataAccessRequestQueryKey(),
-        }),
-      ])
+    onSuccess: async (data, variables, ctx) => {
+      await invalidateOnSignatureChange(variables)
       if (options?.onSuccess) {
-        return options.onSuccess(data, requestId, ctx)
+        return options.onSuccess(data, variables, ctx)
       }
       return
     },

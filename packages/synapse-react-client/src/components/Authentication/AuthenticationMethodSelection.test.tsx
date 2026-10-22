@@ -24,12 +24,17 @@ const ARCUS_REALM: Realm = {
   ],
 }
 
-vi.mock('@/synapse-client', () => ({
-  default: {
-    getRootURL: vi.fn(),
-    oAuthUrlRequest: vi.fn(),
-  },
-}))
+vi.mock(import('@/synapse-client'), async importOriginal => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    default: {
+      ...actual.default,
+      getRootURL: vi.fn(),
+      oAuthUrlRequest: vi.fn(),
+    },
+  }
+})
 
 const mockSynapseClient = vi.mocked(SynapseClient)
 

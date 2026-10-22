@@ -1,4 +1,3 @@
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   BatchFileResult,
@@ -102,11 +101,6 @@ const mockBatchFileResult: BatchFileResult = {
 }
 
 describe('useGetGoalData', () => {
-  beforeAll(() => {
-    server.listen()
-  })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
   beforeEach(() => {
     vi.clearAllMocks()
     vi.spyOn(SynapseClient, 'getFiles').mockResolvedValue(mockBatchFileResult)

@@ -88,10 +88,6 @@ const defaultProps: EntityPageTitleBarProps = {
 }
 
 describe('Entity Page Title Bar', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   it('Shows the entity name', async () => {
     renderComponent(defaultProps)
     await screen.findByText(mockFileEntity.name)

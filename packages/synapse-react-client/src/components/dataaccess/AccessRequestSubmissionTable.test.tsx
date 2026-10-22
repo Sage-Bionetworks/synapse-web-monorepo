@@ -75,9 +75,7 @@ const mockSubmissionSearchResponsePage2: SubmissionSearchResponse = {
 }
 
 describe('Access Request Submission Table tests', () => {
-  beforeAll(() => {
-    server.listen()
-
+  beforeEach(() => {
     // Configure MSW
     server.use(
       http.post<never, SubmissionSearchRequest>(
@@ -101,11 +99,8 @@ describe('Access Request Submission Table tests', () => {
   })
 
   afterEach(() => {
-    server.restoreHandlers()
     vi.clearAllMocks()
   })
-
-  afterAll(() => server.close())
 
   it('Passes along props to the search request', async () => {
     const accessorId = '456'

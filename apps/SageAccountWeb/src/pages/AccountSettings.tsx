@@ -222,6 +222,8 @@ const AccountSettings = (): React.ReactNode => {
       handleScroll(trustCredentialRef)
     } else if (hash === '#ChangePassword') {
       handleScroll(changePasswordRef)
+    } else if (hash === '#email') {
+      handleScroll(emailAddressesRef)
     }
   }, [hash])
 
@@ -252,6 +254,7 @@ const AccountSettings = (): React.ReactNode => {
   const handleScroll = (ref: RefObject<HTMLDivElement | null>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth' })
   }
+
   const isRequestValidationButtonDisabled =
     verificationState?.state == VerificationStateEnum.APPROVED ||
     verificationState?.state == VerificationStateEnum.SUBMITTED

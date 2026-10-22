@@ -1,8 +1,8 @@
+import '@/mocks/msw/server'
 import { mockDatasetEntity } from '@/mocks/entity/mockDataset'
 import mockFileEntity from '@/mocks/entity/mockFileEntity'
 import { mockTableEntity } from '@/mocks/entity/mockTableEntity'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { server } from '@/mocks/msw/server'
 import {
   mockUserProfileData,
   mockUserProfileData2,
@@ -23,10 +23,6 @@ function renderComponent(props: CreatedByModifiedByProps) {
 }
 
 describe('CreatedByModifiedBy tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   it('Shows created on/by, modified on/by for a file', async () => {
     renderComponent({ entityId: mockFileEntity.id })
 

@@ -28,7 +28,8 @@ export enum FeatureFlagEnum {
   // If enabled, opens the RDCA-DAP data access request form when requesting access to an Aridhia dataset
   AMPALS_RDCA_DAP_FORM_ENABLED = 'AMPALS_RDCA_DAP_FORM_ENABLED',
 
-  // If enabled, ACT members see the Form Templates tab in the reviewer (ACT) dashboard
+  // If enabled, ACT members see the Form Templates tab in the reviewer (ACT) dashboard, and can create and edit
+  // Access Requirements that collect a schema-driven form
   ACT_DASHBOARD_FORM_TEMPLATES = 'ACT_DASHBOARD_FORM_TEMPLATES',
 
   // Reserved for unit tests. Not configured in Stack Builder; do not use in production code.

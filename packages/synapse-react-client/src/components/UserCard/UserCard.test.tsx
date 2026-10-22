@@ -57,11 +57,6 @@ const renderAvatar = (props: Omit<UserCardProps, 'size'>) => {
 }
 
 describe('UserCard tests', () => {
-  // Handle the msw lifecycle:
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   beforeEach(() => {
     vi.useRealTimers()
   })

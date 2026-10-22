@@ -452,12 +452,21 @@ export function useUpdateDataAccessRequest(
     mutationFn: (requestInterface: Request | Renewal) =>
       SynapseClient.updateDataAccessRequest(requestInterface, accessToken!),
     onSuccess: async (data, variables, ctx) => {
-      // Invalidate the data access request query
-      await queryClient.invalidateQueries({
-        queryKey: keyFactory.getDataAccessRequestForUpdateQueryKey(
-          data.accessRequirementId,
-        ),
-      })
+      await Promise.all([
+        // Invalidate the data access request query
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getDataAccessRequestForUpdateQueryKey(
+            data.accessRequirementId,
+          ),
+        }),
+        // The eDUC preview renders this request's content, so any edit makes the cached document
+        // obsolete. Marked stale rather than refetched: regenerating it costs a server-side PDF
+        // render, and callers await this mutation for a fresh etag before submitting.
+        queryClient.invalidateQueries({
+          queryKey: keyFactory.getDataAccessRequestPreviewQueryKey(data.id),
+          refetchType: 'none',
+        }),
+      ])
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx)
       }

@@ -9,10 +9,6 @@ const onReceivedRequest = vi.fn()
 const PRESIGNED_URL = 'https://test-url.notarealurl/presigned.pdf'
 
 describe('usePreFetchResource tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   beforeEach(() => {
     vi.clearAllMocks()
   })

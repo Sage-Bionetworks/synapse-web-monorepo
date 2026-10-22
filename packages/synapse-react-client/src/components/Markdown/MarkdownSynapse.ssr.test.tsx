@@ -12,30 +12,25 @@
  * Rendering is done with `react-dom/server`'s `renderToStaticMarkup` rather
  * than Testing Library, since the latter requires a DOM.
  */
-import { getUseQueryIdleMock } from '@/testutils/ReactQueryMockUtils'
-import {
-  useGetWikiAttachments,
-  useGetWikiPage,
-} from '@/synapse-queries/wiki/useWiki'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactNode } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import MarkdownSynapse from './MarkdownSynapse'
 import { markdownToPlainText, stripHTML } from './MarkdownUtils'
 
-// The widget hooks would otherwise try to fetch data; stub them out so the
-// component renders purely from the `markdown` prop.
-vi.mock('@/synapse-queries/wiki/useWiki')
-
-const mockUseGetWikiPage = vi.mocked(useGetWikiPage)
-const mockUseGetWikiAttachments = vi.mocked(useGetWikiAttachments)
+// Effects (and therefore query fetches) never run in `renderToStaticMarkup`, so
+// the real wiki hooks stay in a pending state and the component renders purely
+// from the `markdown` prop.
+function renderStatic(element: ReactNode) {
+  return renderToStaticMarkup(
+    <QueryClientProvider client={new QueryClient()}>
+      {element}
+    </QueryClientProvider>,
+  )
+}
 
 describe('MarkdownSynapse SSR (node environment)', () => {
-  beforeEach(() => {
-    vi.clearAllMocks()
-    mockUseGetWikiPage.mockReturnValue(getUseQueryIdleMock())
-    mockUseGetWikiAttachments.mockReturnValue(getUseQueryIdleMock())
-  })
-
   it('confirms the test runs without browser DOM globals', () => {
     expect(typeof document).toBe('undefined')
     expect(typeof window).toBe('undefined')
@@ -57,7 +52,7 @@ describe('MarkdownSynapse SSR (node environment)', () => {
 
     let html = ''
     expect(() => {
-      html = renderToStaticMarkup(<MarkdownSynapse markdown={markdown} />)
+      html = renderStatic(<MarkdownSynapse markdown={markdown} />)
     }).not.toThrow()
 
     expect(html).toContain('Heading One')
@@ -74,7 +69,7 @@ describe('MarkdownSynapse SSR (node environment)', () => {
 
     let html = ''
     expect(() => {
-      html = renderToStaticMarkup(<MarkdownSynapse markdown={markdown} />)
+      html = renderStatic(<MarkdownSynapse markdown={markdown} />)
     }).not.toThrow()
 
     expect(html).toContain('block content')

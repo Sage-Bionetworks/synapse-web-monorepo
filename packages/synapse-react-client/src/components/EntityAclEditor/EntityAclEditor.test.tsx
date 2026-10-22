@@ -120,9 +120,6 @@ function verifyInheritsSharingSettingsPostUploadMessage() {
 
 describe('EntityAclEditor', () => {
   beforeEach(() => vi.clearAllMocks())
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it('can update an ACL', async () => {
     const { ref, user } = await setUp(
