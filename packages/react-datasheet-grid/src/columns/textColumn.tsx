@@ -2,7 +2,6 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { CellComponent, CellProps, Column } from '../types'
 import cx from 'classnames'
-import { useFirstRender } from '../hooks/useFirstRender'
 import {
   getVisibleCellBounds,
   isCellOriginVisible,
@@ -99,7 +98,6 @@ const TextComponent = React.memo<
     },
   }) => {
     const ref = useRef<HTMLTextAreaElement>(null)
-    const firstRender = useFirstRender()
 
     const [anchor, setAnchor] = useState<HTMLDivElement | null>(null)
     const [popupRect, setPopupRect] = useState<Rect | null>(null)
@@ -169,11 +167,11 @@ const TextComponent = React.memo<
       setRowData,
       parseUserInput,
       continuousUpdates,
-      firstRender,
-      // Timestamp of last focus (when focus becomes true) and last change (input change)
-      // used to prevent un-necessary updates when value was not changed
-      focusedAt: 0,
-      changedAt: 0,
+      // Set by typing while focused and cleared once committed or re-focused, so only a real edit is
+      // committed on blur. Mount, StrictMode's effect replay, and focusing without typing must not
+      // write the display-formatted value back, because formatBlurredInput may not round-trip
+      // through parseUserInput (e.g. locale-grouped numbers).
+      hasUncommittedEdit: false,
       // This allows us to keep track of whether or not the user blurred the input using the Esc key
       // If the Esc key is used we do not update the row's value (only relevant when continuousUpdates is false)
       escPressed: false,
@@ -186,10 +184,8 @@ const TextComponent = React.memo<
       setRowData,
       parseUserInput,
       continuousUpdates,
-      firstRender,
       // Keep the same values across renders
-      focusedAt: asyncRef.current.focusedAt,
-      changedAt: asyncRef.current.changedAt,
+      hasUncommittedEdit: asyncRef.current.hasUncommittedEdit,
       escPressed: asyncRef.current.escPressed,
       currentValue: asyncRef.current.currentValue,
     }
@@ -212,24 +208,22 @@ const TextComponent = React.memo<
 
         // We immediately reset the escPressed
         asyncRef.current.escPressed = false
-        // Save current timestamp
-        asyncRef.current.focusedAt = Date.now()
+        asyncRef.current.hasUncommittedEdit = false
       }
       // When the cell looses focus (by pressing Esc, Enter, clicking away...) we make sure to blur the input
       // Otherwise the user would still see the cursor blinking
       else {
         // Update the row's value on blur only if the user did not press escape (only relevant when continuousUpdates is false)
         if (
+          asyncRef.current.hasUncommittedEdit &&
           !asyncRef.current.escPressed &&
-          !asyncRef.current.continuousUpdates &&
-          !asyncRef.current.firstRender &&
-          // Make sure that focus was gained more than 10 ms ago, used to prevent flickering
-          asyncRef.current.changedAt >= asyncRef.current.focusedAt
+          !asyncRef.current.continuousUpdates
         ) {
           asyncRef.current.setRowData(
             asyncRef.current.parseUserInput(asyncRef.current.currentValue),
           )
         }
+        asyncRef.current.hasUncommittedEdit = false
         ref.current?.blur()
       }
     }, [focus])
@@ -291,7 +285,7 @@ const TextComponent = React.memo<
             : { pointerEvents: interactive ? 'auto' : 'none' }
         }
         onChange={e => {
-          asyncRef.current.changedAt = Date.now()
+          asyncRef.current.hasUncommittedEdit = true
           asyncRef.current.currentValue = e.target.value
 
           // Only update the row's value as the user types if continuousUpdates is true
