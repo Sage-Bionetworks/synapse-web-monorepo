@@ -92,7 +92,7 @@ export default class VisibilityObserver extends Component<
     )
   }
 
-  private getObserverChildren = (renderProps: {
+  private readonly getObserverChildren = (renderProps: {
     inView: boolean
     entry: IntersectionObserverEntry | undefined
     ref: RefObject<any> | ((node?: Element | null) => void)
@@ -111,16 +111,14 @@ export default class VisibilityObserver extends Component<
     return null
   }
 
-  private onVisibilityChange = (isVisible: boolean) => {
+  private readonly onVisibilityChange = (isVisible: boolean) => {
     if (isVisible) {
       this.setState({ hasBeenInView: true })
       if (this.props.onEnterView) {
         this.props.onEnterView()
       }
-    } else {
-      if (this.props.onLeaveView) {
-        this.props.onLeaveView()
-      }
+    } else if (this.props.onLeaveView) {
+      this.props.onLeaveView()
     }
   }
 }

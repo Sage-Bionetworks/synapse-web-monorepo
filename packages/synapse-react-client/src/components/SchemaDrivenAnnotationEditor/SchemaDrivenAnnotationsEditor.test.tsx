@@ -354,12 +354,11 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     })
 
     // Clear the component to ensure we get a full re-render
-    await Promise.all([
-      waitForElementToBeRemoved(schemaAlert),
-      act(() => {
-        rerender(<></>)
-      }),
-    ])
+    const schemaAlertRemoved = waitForElementToBeRemoved(schemaAlert)
+    act(() => {
+      rerender(<></>)
+    })
+    await schemaAlertRemoved
 
     // Re-rendering the editor should reload the existing annotations
     act(() => {
@@ -407,7 +406,7 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     ).not.toBeInTheDocument()
   })
 
-  it.skip('Sends a request to update annotations (no schema)', async () => {
+  it('Sends a request to update annotations (no schema)', async () => {
     server.use(
       annotationsWithoutSchemaHandler,
       noSchemaHandler,
@@ -415,11 +414,16 @@ describe('SchemaDrivenAnnotationEditor tests', () => {
     )
 
     await renderComponent()
+    await screen.findByRole('textbox', { name: 'root_country_0' })
 
     await clickSave()
 
-    expect(updateEntityJsonSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ country: ['USA'], state: ['Washington'] }),
+    await waitFor(() =>
+      expect(updateEntityJsonSpy).toHaveBeenCalledWith(
+        defaultProps.entityId,
+        expect.objectContaining({ country: ['USA'], state: ['Washington'] }),
+        expect.anything(),
+      ),
     )
   })
 

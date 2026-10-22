@@ -39,10 +39,12 @@ export type UserCardListRotateProps = {
 }
 
 export const getDisplayIds = (
-  ids: string[] = [],
-  count: number = DEFAULT_DISPLAY_COUNT,
+  ids: string[] | undefined,
+  count: number | undefined,
   storageUidKey: string,
 ): string[] => {
+  ids ??= []
+  count ??= DEFAULT_DISPLAY_COUNT
   // Guard against SSR / Node.js environments where localStorage is unavailable
   if (typeof localStorage === 'undefined') {
     return ids.slice(0, count)

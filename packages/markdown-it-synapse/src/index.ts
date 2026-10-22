@@ -13,22 +13,16 @@ import { type ParseResult } from 'markdown-it/lib/helpers/parse_link_destination
 const UNESCAPE_RE = /\\([ \\!"#$%&'()*+,.\/:;<=>?@[\]^_`{|}~-])/g
 const REFERENCE_START = 'reference?'
 const BOOKMARK_START = 'bookmark?'
-const synapseRE = new RegExp('^syn([0-9]+[.]?[0-9]*)+')
+const synapseRE = /^syn([0-9]+[.]?[0-9]*)+/
 // match url that starts with a leading slash / and is followed by an alphanumeric character
-const internalURL = new RegExp(/^\/\w/)
-const urlWithoutProtocolRE = new RegExp(
-  '^([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/w \\.-]*)*\\/?.*$',
-)
-const doiRE = new RegExp('^doi:10[.]{1}[0-9]+[/]{1}[a-zA-Z0-9_.]+$')
-const gridLayoutColumnParamRE = new RegExp(
-  '^\\s*(width[=]{1})?\\s*(.*)[}]{1}\\s*$',
-)
-const navTextParamRE = new RegExp(
-  '^\\s*(text[=]{1}["]{1})?\\s*(.*)["]{1}[}]{1}\\s*$',
-)
-const ulMarkerRE = new RegExp('^\\s*[*-+>]{1}[^|]*$')
-const olMarkerRE = new RegExp('^\\s*\\w+\\s*[.)]{1}[^|]*$')
-const codeRE = new RegExp('^\\s*[`]{3}s*([a-zA-Z_0-9-]*)s*$')
+const internalURL = /^\/\w/
+const urlWithoutProtocolRE = /^([\da-z\.-]+)\.([a-z\.]{2,6})([\/w \.-]*)*\/?.*$/
+const doiRE = /^doi:10[.]{1}[0-9]+[/]{1}[a-zA-Z0-9_.]+$/
+const gridLayoutColumnParamRE = /^\s*(width[=]{1})?\s*(.*)[}]{1}\s*$/
+const navTextParamRE = /^\s*(text[=]{1}["]{1})?\s*(.*)["]{1}[}]{1}\s*$/
+const ulMarkerRE = /^\s*[*-+>]{1}[^|]*$/
+const olMarkerRE = /^\s*\w+\s*[.)]{1}[^|]*$/
+const codeRE = /^\s*[`]{3}s*([a-zA-Z_0-9-]*)s*$/
 let suffix: string | undefined
 let widgetIndex: number | undefined
 let navIndex: number | undefined
@@ -41,8 +35,8 @@ function getParamValue(params: string, name: string): string | null {
   const queryStringParamArray = queryStringArray[1].split('&')
   let nameValue: string | null = null
   let queryStringNameValueArray: string[]
-  for (let i = 0; i < queryStringParamArray.length; i++) {
-    queryStringNameValueArray = queryStringParamArray[i].split('=')
+  for (const queryStringParam of queryStringParamArray) {
+    queryStringNameValueArray = queryStringParam.split('=')
     if (name === queryStringNameValueArray[0]) {
       nameValue = queryStringNameValueArray[1]
     }
@@ -95,8 +89,7 @@ function isSupportedUsernameCharacter(code: number) {
   return false
 }
 
-function startsWith(src: string, searchString: string, position?: number) {
-  position = position || 0
+function startsWith(src: string, searchString: string, position: number = 0) {
   return src.substr(position, searchString.length) === searchString
 }
 
@@ -125,16 +118,16 @@ const synapse: RuleInline = function (state, silent) {
     return false
   } // don't run any pairs in validation mode
   // handle special username mentions (output badge widget)
-  if (state.src.charCodeAt(start) === 0x40 /* @ */) {
+  if (state.src.codePointAt(start) === 0x40 /* @ */) {
     // do not process unless previous character is a whitespace
-    if (start > 0 && !isWhiteSpace(state.src.charCodeAt(state.pos - 1))) {
+    if (start > 0 && !isWhiteSpace(state.src.codePointAt(state.pos - 1))) {
       return false
     }
     // go to end of username
     while (
       state.pos < max &&
-      !isWhiteSpace(state.src.charCodeAt(state.pos)) &&
-      isSupportedUsernameCharacter(state.src.charCodeAt(state.pos))
+      !isWhiteSpace(state.src.codePointAt(state.pos)) &&
+      isSupportedUsernameCharacter(state.src.codePointAt(state.pos))
     ) {
       state.pos++
     }
@@ -168,26 +161,26 @@ const synapse: RuleInline = function (state, silent) {
     token = state.push('link_close', 'a', -1)
     token.markup = 'autolink'
     token.info = 'auto'
-    token = state.push('text', '', 0)
+    state.push('text', '', 0)
 
-    token = state.push('synapse_close', 'span', -1)
+    state.push('synapse_close', 'span', -1)
     state.pos = state.posMax
     state.posMax = max
     widgetIndex = widgetIndex + 1
     return true
   }
 
-  if (state.src.charCodeAt(start) !== 0x24 /* $ */) {
+  if (state.src.codePointAt(start) !== 0x24 /* $ */) {
     return false
   }
-  if (state.src.charCodeAt(start + 1) !== 0x7b /* { */) {
+  if (state.src.codePointAt(start + 1) !== 0x7b /* { */) {
     return false
   }
 
   state.pos = start + 2
 
   while (state.pos < max) {
-    if (state.src.charCodeAt(state.pos) === 0x7d /* } */) {
+    if (state.src.codePointAt(state.pos) === 0x7d /* } */) {
       found = true
       break
     }
@@ -207,7 +200,7 @@ const synapse: RuleInline = function (state, silent) {
     widgetParams += '&footnoteId=' + footnoteId
     token = state.push('synapse_reference_open', 'span', 1)
     token.attrs = [['id', 'wikiReference' + footnoteId]]
-    token = state.push('synapse_reference_close', 'span', -1)
+    state.push('synapse_reference_close', 'span', -1)
     // also push bookmark markdown into the environment variable
     // (will be reprocessed and appended to the html output from the first pass)
     decodedWidgetParams = decodeURIComponent(widgetParams)
@@ -228,7 +221,7 @@ const synapse: RuleInline = function (state, silent) {
     // If bookmark widget, add additional span (target)
     token = state.push('synapse_footnote_target_open', 'span', 1)
     token.attrs = [['id', 'wikiFootnote' + footnoteId]]
-    token = state.push('synapse_footnote_target_close', 'span', -1)
+    state.push('synapse_footnote_target_close', 'span', -1)
 
     footnoteId++
     widgetContainerClass = 'inlineWidgetContainer'
@@ -288,27 +281,26 @@ function preprocessMarkdown(mdString: string) {
   const splitMD = mdString.split('\n')
 
   let isPreviousLineInList = false
-  let isCurrentLineInList = false
   let isInCode = false
-  for (let i = 0; i < splitMD.length; i++) {
-    if (codeRE.test(splitMD[i])) {
+  for (const line of splitMD) {
+    if (codeRE.test(line)) {
       // toggle isInCode
       isInCode = !isInCode
     }
     if (!isInCode) {
-      isCurrentLineInList =
-        ulMarkerRE.test(splitMD[i]) || olMarkerRE.test(splitMD[i])
+      const isCurrentLineInList = ulMarkerRE.test(line) || olMarkerRE.test(line)
       if (isPreviousLineInList && !isCurrentLineInList) {
         md += '\n'
       }
       isPreviousLineInList = isCurrentLineInList
     }
-    md += splitMD[i] + '\n'
+    md += line + '\n'
   }
 
   return md
 }
 
+// oxlint-disable-next-line max-params -- public plugin API; callers pass each optional plugin positionally
 function init_markdown_it(
   md: MarkdownIt,
   markdownitSub?: MarkdownIt.PluginSimple,
@@ -387,7 +379,7 @@ function init_markdown_it(
         const tail = text.slice(pos)
         if (!self.re.synapse) {
           self.re.synapse = new RegExp(
-            '^([0-9]{3,}[.]?[0-9]*(\\/wiki\\/[0-9]+)?)+(?!_)(?=$|' +
+            String.raw`^([0-9]{3,}[.]?[0-9]*(\/wiki\/[0-9]+)?)+(?!_)(?=$|` +
               self.re.src_ZPCc +
               ')',
           )
@@ -432,7 +424,7 @@ function init_markdown_it(
     let title: string
     let token: Token
     let href = ''
-    let start = state.pos
+    let start: number
 
     const oldPos = state.pos,
       max = state.posMax,
@@ -442,7 +434,7 @@ function init_markdown_it(
       isSpace = md.utils.isSpace,
       normalizeReference = md.utils.normalizeReference
 
-    if (state.src.charCodeAt(state.pos) !== 0x5b) {
+    if (state.src.codePointAt(state.pos) !== 0x5b) {
       return false
     } // [
     const labelStart = state.pos + 1
@@ -454,7 +446,7 @@ function init_markdown_it(
     }
 
     pos = labelEnd + 1
-    if (pos < max && state.src.charCodeAt(pos) === 0x28) {
+    if (pos < max && state.src.codePointAt(pos) === 0x28) {
       // (
       //
       // Inline link
@@ -464,7 +456,7 @@ function init_markdown_it(
       //        ^^ skipping these spaces
       pos++
       for (; pos < max; pos++) {
-        code = state.src.charCodeAt(pos)
+        code = state.src.codePointAt(pos)
         if (!isSpace(code) && code !== 0x0a) {
           break
         }
@@ -475,7 +467,6 @@ function init_markdown_it(
 
       // [link](  <href>  "title"  )
       //          ^^^^^^ parsing link destination
-      start = pos
       res = parseLinkDestination(state.src, pos, state.posMax)
       if (res.ok) {
         // !!!!!!!!!!!!!!!!!! Changed for Synapse  !!!!!!!!!!!!!!!!!!!!!!!!!/
@@ -502,7 +493,7 @@ function init_markdown_it(
       //                ^^ skipping these spaces
       start = pos
       for (; pos < max; pos++) {
-        code = state.src.charCodeAt(pos)
+        code = state.src.codePointAt(pos)
         if (!isSpace(code) && code !== 0x0a) {
           break
         }
@@ -518,7 +509,7 @@ function init_markdown_it(
         // [link](  <href>  "title"  )
         //                         ^^ skipping these spaces
         for (; pos < max; pos++) {
-          code = state.src.charCodeAt(pos)
+          code = state.src.codePointAt(pos)
           if (!isSpace(code) && code !== 0x0a) {
             break
           }
@@ -527,7 +518,7 @@ function init_markdown_it(
         title = ''
       }
 
-      if (pos >= max || state.src.charCodeAt(pos) !== 0x29) {
+      if (pos >= max || state.src.codePointAt(pos) !== 0x29) {
         // )
         state.pos = oldPos
         return false
@@ -537,11 +528,11 @@ function init_markdown_it(
       //
       // Link reference
       //
-      if (typeof state.env.references === 'undefined') {
+      if (state.env.references === undefined) {
         return false
       }
 
-      if (pos < max && state.src.charCodeAt(pos) === 0x5b) {
+      if (pos < max && state.src.codePointAt(pos) === 0x5b) {
         // [
         start = pos + 1
         pos = parseLinkLabel(state, pos)
@@ -585,7 +576,7 @@ function init_markdown_it(
 
       state.md.inline.tokenize(state)
 
-      token = state.push('link_close', 'a', -1)
+      state.push('link_close', 'a', -1)
     }
 
     state.pos = pos
@@ -597,8 +588,8 @@ function init_markdown_it(
   function scanDelims(src, posMax, start) {
     let pos = start
     const max = posMax,
-      marker = src.charCodeAt(start)
-    while (pos < max && src.charCodeAt(pos) === marker) {
+      marker = src.codePointAt(start)
+    while (pos < max && src.codePointAt(pos) === marker) {
       pos++
     }
     const count = pos - start
@@ -616,7 +607,7 @@ function init_markdown_it(
   const emphasis: RuleInline = function (state, silent) {
     let i, token
     const start = state.pos,
-      marker = state.src.charCodeAt(start)
+      marker = state.src.codePointAt(start)
 
     if (silent) {
       return false
@@ -630,7 +621,7 @@ function init_markdown_it(
 
     for (i = 0; i < scanned.length; i++) {
       token = state.push('text', '', 0)
-      token.content = String.fromCharCode(marker)
+      token.content = String.fromCodePoint(marker)
 
       state.delimiters.push({
         // Char code of the starting marker (number).

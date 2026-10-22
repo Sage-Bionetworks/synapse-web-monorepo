@@ -1,7 +1,7 @@
 import React from 'react'
 import { ReactComponent as SageLogo } from '../assets/sage-logo.svg'
-import { ReactComponent as NCI } from './assets/nci.svg'
-import { ReactComponent as NIH } from './assets/nih.svg'
+import { ReactComponent as NciLogo } from './assets/nci.svg'
+import { ReactComponent as NihLogo } from './assets/nih.svg'
 import { Link, Stack, Typography } from '@mui/material'
 import DevelopedBySage from '../DevelopedBySage'
 
@@ -26,7 +26,7 @@ const CCKPDevelopedBySage = (): React.ReactNode => {
           rel="noreferrer"
           sx={{ svg: { width: { xs: '100%', sm: '150px' } } }}
         >
-          <NIH />
+          <NihLogo />
         </Link>
         <Link
           href="https://sagebionetworks.org/platform/synapse"
@@ -42,7 +42,7 @@ const CCKPDevelopedBySage = (): React.ReactNode => {
           rel="noreferrer"
           sx={{ svg: { width: { xs: '100%', sm: '150px' } } }}
         >
-          <NCI />
+          <NciLogo />
         </Link>
       </Stack>
     </DevelopedBySage>

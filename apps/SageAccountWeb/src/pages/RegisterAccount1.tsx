@@ -104,7 +104,7 @@ const RegisterAccount1 = (): React.ReactNode => {
   const [page, setPage] = useState(Pages.CHOOSE_REGISTRATION)
   const [membershipInvitationEmail, setMembershipInvitationEmail] =
     useState<string>()
-  const [oauthRegistrationProvider, setOAuthRegistrationProvider] =
+  const [oauthRegistrationProvider, setOauthRegistrationProvider] =
     useState<string>(SynapseConstants.OAUTH2_PROVIDERS.GOOGLE)
   const { search } = useLocation()
   const queryParams = useMemo(() => new URLSearchParams(search), [search])
@@ -134,7 +134,7 @@ const RegisterAccount1 = (): React.ReactNode => {
         console.error('No valid identity provider found for this app')
         provider = SynapseConstants.OAUTH2_PROVIDERS.GOOGLE
       }
-      setOAuthRegistrationProvider(provider)
+      setOauthRegistrationProvider(provider)
     }
   }, [isSingleIdp, isArcusApp, isSageBionetworksApp])
 
@@ -274,7 +274,7 @@ const RegisterAccount1 = (): React.ReactNode => {
                     <div>
                       <Button
                         onClick={() => {
-                          setOAuthRegistrationProvider(
+                          setOauthRegistrationProvider(
                             SynapseConstants.OAUTH2_PROVIDERS.GOOGLE,
                           )
                           setPage(Pages.OAUTH_REGISTRATION)

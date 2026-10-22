@@ -160,6 +160,9 @@ export function FormTemplateEditorForm({
     name,
     initialTemplate?.schema$id,
   )
+  const idleSaveButtonText = initialTemplate
+    ? 'Save Changes'
+    : 'Create Template'
 
   return (
     <DragDropProvider {...dragHandlers}>
@@ -269,11 +272,7 @@ export function FormTemplateEditorForm({
             onClick={() => void handleSave()}
             disabled={!name || isSaving || validationErrors.length > 0}
           >
-            {isSaving
-              ? 'Saving…'
-              : initialTemplate
-                ? 'Save Changes'
-                : 'Create Template'}
+            {isSaving ? 'Saving…' : idleSaveButtonText}
           </Button>
         </Box>
 

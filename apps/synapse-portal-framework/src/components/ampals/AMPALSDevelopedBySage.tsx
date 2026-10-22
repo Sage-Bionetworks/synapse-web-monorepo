@@ -1,7 +1,7 @@
 import React from 'react'
 import { ReactComponent as SageLogo } from '../assets/sage-logo.svg'
-import { ReactComponent as CPATH } from './assets/cpath.svg'
-import { ReactComponent as FNIH } from './assets/fnih.svg'
+import { ReactComponent as CPathLogo } from './assets/cpath.svg'
+import { ReactComponent as FnihLogo } from './assets/fnih.svg'
 import NINDSUrl from './assets/nih-ninds.png'
 import { Link, Stack, Typography } from '@mui/material'
 import DevelopedBySage from '../DevelopedBySage'
@@ -26,7 +26,7 @@ const AMPALSDevelopedBySage = (): React.ReactNode => {
           rel="noreferrer"
           sx={{ svg: { width: { xs: '80%', md: '150px' } } }}
         >
-          <CPATH />
+          <CPathLogo />
         </Link>
         <Link
           href="https://sagebionetworks.org/platform/synapse"
@@ -42,7 +42,7 @@ const AMPALSDevelopedBySage = (): React.ReactNode => {
           rel="noreferrer"
           sx={{ svg: { width: { xs: '80%', md: '130px' } } }}
         >
-          <FNIH />
+          <FnihLogo />
         </Link>
         <Link
           href="https://www.ninds.nih.gov/"

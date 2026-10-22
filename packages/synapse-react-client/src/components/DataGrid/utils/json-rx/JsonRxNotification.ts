@@ -5,8 +5,8 @@ export const NOTIFICATION_TYPE_CODE = 8
 export default class JsonRxNotification<
   TPayload = unknown,
 > extends JsonRxMessage {
-  private methodName: string
-  private payload?: TPayload
+  private readonly methodName: string
+  private readonly payload?: TPayload
 
   public getMethodName() {
     return this.methodName

@@ -14,7 +14,6 @@ import GenericCardActionButton from '../GenericCard/GenericCardActionButton'
 import {
   DATASET_HOSTING_CONFIG,
   DatasetHostingConfig,
-  DatasetHostingType,
   fillRepository,
   normalizeHosting,
 } from './DatasetHosting'
@@ -37,7 +36,7 @@ export type DatasetDownloadButtonProps = {
    * The dataset's hosting type. Accepts a raw annotation value (possibly blank,
    * null, or unrecognized); anything unrecognized is treated as `synapse`.
    */
-  hosting?: DatasetHostingType | string | null
+  hosting?: string | null
   /** Name of the external repository (e.g. "GEO", "dbGaP"), shown in the label/tooltip. */
   repository?: string
   /** Destination for the action when the dataset is not downloadable (e.g. dbGaP/EGA). */

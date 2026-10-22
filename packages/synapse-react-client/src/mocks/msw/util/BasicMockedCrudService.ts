@@ -15,8 +15,8 @@ export default class BasicMockedCrudService<
   TIDField extends keyof T = never,
 > {
   private data: T[]
-  private idField: TIDField | undefined
-  private autoGenerateId: boolean | undefined
+  private readonly idField: TIDField | undefined
+  private readonly autoGenerateId: boolean | undefined
 
   constructor(options?: BasicMockedCrudServiceConstructorOptions<T, TIDField>) {
     this.data = cloneDeep(options?.initialData) || []

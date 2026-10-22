@@ -94,6 +94,7 @@ describe('EntityTreeTableContext', () => {
 
     const { result } = renderHook(() => useEntityTreeTableContext(), {
       wrapper: ({ children }) => (
+        // oxlint-disable-next-line react/jsx-no-constructed-context-values -- test-only provider rendered once
         <EntityTreeTableContext.Provider value={emptyContextValue}>
           {children}
         </EntityTreeTableContext.Provider>
@@ -116,6 +117,7 @@ describe('EntityTreeTableContext', () => {
 
     const { result } = renderHook(() => useEntityTreeTableContext(), {
       wrapper: ({ children }) => (
+        // oxlint-disable-next-line react/jsx-no-constructed-context-values -- test-only provider rendered once
         <EntityTreeTableContext.Provider value={multipleItemsContext}>
           {children}
         </EntityTreeTableContext.Provider>

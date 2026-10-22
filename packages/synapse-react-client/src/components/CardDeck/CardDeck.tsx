@@ -32,7 +32,7 @@ export function CardDeck(props: CardDeckProps) {
         return showDesktop ? (
           <CardDeckDesktop key={i} cardDeckType={cardDeckType} {...card} />
         ) : (
-          <CardDeckMobile cardDeckType={cardDeckType} {...card} />
+          <CardDeckMobile key={i} cardDeckType={cardDeckType} {...card} />
         )
       })}
     </div>

@@ -18,6 +18,7 @@ export type VerifyIdentifyProps = {
 export const VerifyIdentify = (props: VerifyIdentifyProps): React.ReactNode => {
   const theme = useTheme()
   const { verificationSubmission } = props
+  // oxlint-disable-next-line react/hook-use-state -- snapshot of the attachments when the step mounts
   const [attachments] = useState(verificationSubmission.attachments)
 
   useEffect(() => {

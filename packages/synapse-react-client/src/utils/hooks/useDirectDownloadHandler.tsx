@@ -64,17 +64,15 @@ export function useDirectDownloadHandler() {
       if (!preSignedURL) {
         safariDownloadWindow?.close()
         console.log('Failed to get file download link')
+      } else if (isSafari && safariDownloadWindow) {
+        safariDownloadWindow.location = preSignedURL
+        setTimeout(() => {
+          if (safariDownloadWindow) {
+            safariDownloadWindow.close()
+          }
+        }, 10000)
       } else {
-        if (isSafari && safariDownloadWindow) {
-          safariDownloadWindow.location = preSignedURL
-          setTimeout(() => {
-            if (safariDownloadWindow) {
-              safariDownloadWindow.close()
-            }
-          }, 10000)
-        } else {
-          window.open(preSignedURL)
-        }
+        window.open(preSignedURL)
       }
     } catch (e) {
       safariDownloadWindow?.close()

@@ -78,18 +78,15 @@ export const ElementWithTooltip = ({
   menuItems,
 }: ElementWithTooltipProps): React.ReactNode => {
   const { place } = tooltipVisualProps
-  const iconComponent = icon ? (
-    typeof icon === 'string' ? (
-      <Icon type={icon}></Icon>
-    ) : (
-      icon
-    )
-  ) : undefined
-  const tooltipTriggerContents = iconComponent
-    ? iconComponent
-    : image
+  let iconComponent: ReactNode
+  if (icon) {
+    iconComponent = typeof icon === 'string' ? <Icon type={icon}></Icon> : icon
+  }
+  const tooltipTriggerContents =
+    iconComponent ||
+    (image
       ? getTooltipTriggerContents(image, imageColor, size)
-      : children || <></>
+      : children || <></>)
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)

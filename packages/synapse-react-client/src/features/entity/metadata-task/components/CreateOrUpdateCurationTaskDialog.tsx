@@ -183,6 +183,7 @@ export default function CreateOrUpdateCurationTaskDialog(
   const [authorizationMode, setAuthorizationMode] =
     useState<AuthorizationModeOption>(initialAuthMode)
   // Track the original value to detect unsaved changes
+  // oxlint-disable-next-line react/hook-use-state -- snapshot of the mount-time value; intentionally never updated
   const [originalAuthorizationMode] =
     useState<AuthorizationModeOption>(initialAuthMode)
 

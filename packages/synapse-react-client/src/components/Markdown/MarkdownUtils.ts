@@ -52,7 +52,7 @@ export function decodeXml(xml: string) {
     '&lt;': '<',
     '&quot;': '"',
   }
-  return xml.replace(
+  return xml.replaceAll(
     /(&quot;|&lt;|&gt;|&amp;)/g,
     (str: string, item: keyof typeof escapedOneToXmlSpecialMap) => {
       return escapedOneToXmlSpecialMap[item]
@@ -96,7 +96,7 @@ export function handleLinkClicks(event: MouseEvent) {
   const currentTarget = event.currentTarget as HTMLElement
   if (genericElement.tagName === 'A' || genericElement.tagName === 'BUTTON') {
     const anchor = event.target as HTMLAnchorElement
-    if (anchor.id.substring(0, 3) === 'ref') {
+    if (anchor.id.startsWith('ref')) {
       event.preventDefault()
 
       // its a reference, so we scroll to the appropriate bookmark
@@ -111,13 +111,10 @@ export function handleLinkClicks(event: MouseEvent) {
       } catch (e) {
         console.log('error on scroll', e)
       }
-    } else if (
-      currentTarget.id !== null &&
-      anchor.getAttribute('data-anchor')
-    ) {
+    } else if (currentTarget.id !== null && anchor.dataset.anchor) {
       event.preventDefault()
       // handle table of contents widget
-      const idOfContent = anchor.getAttribute('data-anchor')
+      const idOfContent = anchor.dataset.anchor
       const goTo = currentTarget.querySelector(`[id="${idOfContent}"]`)
       try {
         goTo!.scrollIntoView({
@@ -164,18 +161,16 @@ export function transformStringIntoMarkdownProps(
   const newProps: MarkdownSynapseProps = {}
   if (isRawMarkdown) {
     newProps.markdown = value
-  } else {
-    if (value.includes('/wiki/')) {
-      // value looks like syn20681023/wiki/594680
-      const split = value.split('/')
-      const ownerId = split[0]
-      const wikiId = split[2]
-      newProps.ownerId = ownerId
-      newProps.wikiId = wikiId
-    } else if (value) {
-      // else assume it's an ownerId
-      newProps.ownerId = value
-    }
+  } else if (value.includes('/wiki/')) {
+    // value looks like syn20681023/wiki/594680
+    const split = value.split('/')
+    const ownerId = split[0]
+    const wikiId = split[2]
+    newProps.ownerId = ownerId
+    newProps.wikiId = wikiId
+  } else if (value) {
+    // else assume it's an ownerId
+    newProps.ownerId = value
   }
   return newProps
 }
@@ -189,14 +184,14 @@ export const markdownToPlainText = (markdown: string, maxLength?: number) => {
 
   const html = md.render(markdown)
   const plainText = stripHTML(html)
-    .replace(/\|/g, '')
-    .replace(/#/g, '')
-    .replace(/<Synapse widget>/g, '')
+    .replaceAll('|', '')
+    .replaceAll('#', '')
+    .replaceAll('<Synapse widget>', '')
 
   return maxLength ? truncateString(plainText, maxLength) : plainText
 }
 
-const blockLevelTags = [
+const blockLevelTags = new Set([
   'address',
   'article',
   'aside',
@@ -231,14 +226,24 @@ const blockLevelTags = [
   'tfoot',
   'ul',
   'video',
-]
+])
 
-const inlineTags = ['span', 'a', 'em', 'strong', 'b', 'i', 'u', 'sub', 'sup']
+const inlineTags = new Set([
+  'span',
+  'a',
+  'em',
+  'strong',
+  'b',
+  'i',
+  'u',
+  'sub',
+  'sup',
+])
 
-const tableTags = ['table', 'thead', 'tbody', 'tr', 'tfoot']
+const tableTags = new Set(['table', 'thead', 'tbody', 'tr', 'tfoot'])
 
 // Widget types that render inline elements and should not be treated as block-level
-const inlineWidgetTypes = ['badge', 'image', 'imageLink', 'buttonlink']
+const inlineWidgetTypes = new Set(['badge', 'image', 'imageLink', 'buttonlink'])
 
 const isInlineContainer = (node: DOMNode): boolean => {
   if (!(node instanceof DomElement)) {
@@ -246,7 +251,7 @@ const isInlineContainer = (node: DOMNode): boolean => {
   }
 
   const tag = node.name.toLowerCase()
-  return inlineTags.includes(tag)
+  return inlineTags.has(tag)
 }
 
 // Check if a node is a block level element
@@ -256,12 +261,11 @@ export const isBlockLevelElement = (node: DOMNode): boolean => {
   }
 
   const tag = node.name.toLowerCase()
-  const isStandardBlock = blockLevelTags.includes(tag)
+  const isStandardBlock = blockLevelTags.has(tag)
 
   const widgetParams = node.attribs['data-widgetparams'] ?? null
   const isWidget =
-    widgetParams !== null &&
-    !inlineWidgetTypes.includes(widgetParams.split('?')[0])
+    widgetParams !== null && !inlineWidgetTypes.has(widgetParams.split('?')[0])
 
   return isStandardBlock || isWidget
 }
@@ -308,7 +312,7 @@ export function fixInvalidNesting(
     const parentTag =
       parent instanceof DomElement ? parent.name.toLowerCase() : undefined
 
-    if (parentTag && tableTags.includes(parentTag) && !node.data?.trim()) {
+    if (parentTag && tableTags.has(parentTag) && !node.data?.trim()) {
       const siblings = (parent as DomElement).children
       const index = siblings.indexOf(node)
       if (index !== -1) {

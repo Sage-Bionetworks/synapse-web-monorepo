@@ -97,7 +97,7 @@ export function HasAccessV2(props: HasAccessProps) {
     const hasUnmetAccessRequirement =
       restrictionInformation?.hasUnmetAccessRequirement
     const restrictionLevel = restrictionInformation?.restrictionLevel
-    let linkText = ''
+    let linkText: string
 
     if (hasUnmetAccessRequirement) {
       linkText = 'Request Access'

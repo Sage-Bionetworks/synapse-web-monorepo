@@ -75,7 +75,7 @@ export class EntityForm extends Component<EntityFormProps, EntityFormState> {
         .then(values => {
           const userprofile: UserProfile = values[0]
           this.getTargetContainer(userprofile, this.context.accessToken!).then(
-            // @ts-ignore
+            // @ts-expect-error
             (targetContainerId: string) => {
               const formSchemaFileEntity: FileEntity = values[1]
               const formUiSchemaFileEntity: FileEntity = values[2]
@@ -114,26 +114,27 @@ export class EntityForm extends Component<EntityFormProps, EntityFormState> {
     ]
 
     Promise.all(promises)
-      .then(values => {
+      .then(async values => {
+        let fileContent: Promise<string>[]
         try {
-          const fileContent = values.map(el => {
+          fileContent = values.map(el => {
             return getFileHandleContent(el.fileHandle!, el.preSignedURL!)
           })
-          Promise.all(fileContent)
-            .then(el => {
-              const formSchemaContent = JSON.parse(el[0])
-              const formUiSchemaContent = JSON.parse(el[1])
-              this.getExistingFileData(
-                targetFolderId,
-                formSchemaContent,
-                formUiSchemaContent,
-              )
-            })
-            .catch(e => {
-              console.log('getSchemaFileContent: Error getting form content', e)
-            })
         } catch (e) {
           console.log('getSchemaFileContent: Error getting schema content', e)
+          return
+        }
+        try {
+          const el = await Promise.all(fileContent)
+          const formSchemaContent = JSON.parse(el[0])
+          const formUiSchemaContent = JSON.parse(el[1])
+          this.getExistingFileData(
+            targetFolderId,
+            formSchemaContent,
+            formUiSchemaContent,
+          )
+        } catch (e) {
+          console.log('getSchemaFileContent: Error getting form content', e)
         }
       })
       .catch(error => {
@@ -163,29 +164,27 @@ export class EntityForm extends Component<EntityFormProps, EntityFormState> {
         return SynapseClient.getEntity<FileEntity>(
           this.context.accessToken,
           entityId.id,
-        ).then(entity => {
-          currentFileEntity = entity
-          if (this.props.initFormData) {
-            return SynapseClient.getFileResult(
-              currentFileEntity,
-              this.context.accessToken,
-              true,
-              true,
-            ).then(async existingFileData => {
-              try {
-                const fileContent = await getFileHandleContent(
-                  existingFileData.fileHandle!,
-                  existingFileData.preSignedURL!,
-                )
-                formData = JSON.parse(fileContent)
-              } catch (e) {
-                console.log('getExistingFileData: Error setting form data', e)
-              }
-            })
+        )
+      })
+      .then(async entity => {
+        currentFileEntity = entity
+        if (this.props.initFormData) {
+          const existingFileData = await SynapseClient.getFileResult(
+            currentFileEntity,
+            this.context.accessToken,
+            true,
+            true,
+          )
+          try {
+            const fileContent = await getFileHandleContent(
+              existingFileData.fileHandle!,
+              existingFileData.preSignedURL!,
+            )
+            formData = JSON.parse(fileContent)
+          } catch (e) {
+            console.log('getExistingFileData: Error setting form data', e)
           }
-          // else we're done
-          return Promise.resolve()
-        })
+        }
       })
       .finally(() => {
         this.setState({

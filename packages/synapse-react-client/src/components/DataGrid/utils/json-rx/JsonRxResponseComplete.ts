@@ -5,8 +5,8 @@ export const RESPONSE_COMPLETE_TYPE_CODE = 5
 export default class JsonRxResponseComplete<
   TPayload = unknown,
 > extends JsonRxMessage {
-  private subscriptionId: number
-  private payload?: TPayload
+  private readonly subscriptionId: number
+  private readonly payload?: TPayload
 
   public getSubscriptionId(): number {
     return this.subscriptionId

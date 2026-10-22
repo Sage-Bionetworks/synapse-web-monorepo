@@ -111,10 +111,10 @@ export function getFlatData(
         value: val,
       }
     })
-    .filter(item => item.label.indexOf('.properties.included.title') === -1) //included is the property we generate to help with validation of optional forms
+    .filter(item => !item.label.includes('.properties.included.title')) //included is the property we generate to help with validation of optional forms
 
   const result = flatFormData
-    .filter(item => item.screen && typeof item.value !== 'undefined')
+    .filter(item => item.screen && item.value !== undefined)
     .map(item => {
       return {
         label: item.label,
@@ -122,15 +122,13 @@ export function getFlatData(
         screen: item.screen!,
       }
     })
-    .sort((a, b) => a.screen.order - b.screen.order)
+    .toSorted((a, b) => a.screen.order - b.screen.order)
 
   return result
 }
 
 export default function SummaryTable(props: SummaryTableProps) {
-  let flatFormData: SummaryFormat[] = []
-
-  flatFormData = getFlatData(
+  const flatFormData: SummaryFormat[] = getFlatData(
     cloneDeep(props.formData),
     props.steps,
     props.schema,

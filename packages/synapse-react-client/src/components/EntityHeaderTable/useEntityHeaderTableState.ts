@@ -9,9 +9,11 @@ export function useEntityHeaderTableState(
   onUpdate?: (updatedRefs: ReferenceList) => void,
 ) {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+  // oxlint-disable-next-line react/hook-use-state -- raw setter; setRefsInState below wraps it to also notify onUpdate
   const [refsInState, _setRefsInState] = useState<ReferenceList>(
     cloneDeep(references),
   )
+  // oxlint-disable-next-line react/hook-use-state -- raw setter; setNewEntityIDs below wraps it to also notify onUpdateEntityIDsTextbox
   const [newEntityIDs, _setNewEntityIDs] = useState<string>('')
   const [parseErrors, setParseErrors] = useState<string[]>([])
 

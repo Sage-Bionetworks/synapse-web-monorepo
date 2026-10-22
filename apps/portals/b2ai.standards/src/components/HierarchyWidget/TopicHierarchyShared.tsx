@@ -87,10 +87,21 @@ type TogglePillProps = {
 }
 export function TogglePill({ state, count, title, onClick }: TogglePillProps) {
   if (state === 'leaf') return null
-  const arrow = state === 'expanded' ? '▼' : state === 'partial' ? '▷' : '▶'
   const isPartial = state === 'partial'
   const isExpanded = state === 'expanded'
   const isDisabled = state === 'disabled'
+  let arrow = '▶'
+  let borderColor = COLORS.toggleBorder
+  let background = COLORS.toggleBg
+  if (isExpanded) {
+    arrow = '▼'
+    borderColor = 'rgba(0,0,0,0.25)'
+    background = 'rgba(255,255,255,0.9)'
+  } else if (isPartial) {
+    arrow = '▷'
+    borderColor = COLORS.partialBorder
+    background = COLORS.partial
+  }
   return (
     <Box
       component="span"
@@ -104,24 +115,16 @@ export function TogglePill({ state, count, title, onClick }: TogglePillProps) {
         height: 18,
         px: '5px',
         border: '1px solid',
-        borderColor: isPartial
-          ? COLORS.partialBorder
-          : isExpanded
-            ? 'rgba(0,0,0,0.25)'
-            : COLORS.toggleBorder,
+        borderColor,
         borderRadius: '3px',
-        background: isPartial
-          ? COLORS.partial
-          : isExpanded
-            ? 'rgba(255,255,255,0.9)'
-            : COLORS.toggleBg,
+        background,
         color: isPartial ? COLORS.partialText : COLORS.toggleText,
         fontSize: '10px',
         lineHeight: 1,
         fontFamily: 'ui-monospace, monospace',
         userSelect: 'none',
         opacity: isDisabled ? 0.35 : 1,
-        cursor: isDisabled ? 'default' : onClick ? 'pointer' : 'default',
+        cursor: !isDisabled && onClick ? 'pointer' : 'default',
         flexShrink: 0,
       }}
     >
