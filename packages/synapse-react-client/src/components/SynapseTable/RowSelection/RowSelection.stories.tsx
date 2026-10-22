@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { displayToast } from '@/components/ToastMessage/ToastMessage'
-import { GetApp } from '@mui/icons-material'
+import GetApp from '@mui/icons-material/GetApp'
 import { RowSelectionUI, RowSelectionUIProps } from './RowSelectionUI'
 import { Button } from '@mui/material'
 import { times } from 'lodash-es'

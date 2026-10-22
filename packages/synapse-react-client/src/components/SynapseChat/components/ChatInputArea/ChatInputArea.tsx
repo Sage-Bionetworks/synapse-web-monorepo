@@ -1,4 +1,4 @@
-import { Add } from '@mui/icons-material'
+import Add from '@mui/icons-material/Add'
 import ArrowUpward from '@mui/icons-material/ArrowUpward'
 import { Box, IconButton, TextareaAutosize, Tooltip } from '@mui/material'
 import {

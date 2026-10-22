@@ -7,7 +7,7 @@ import {
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { USER_BUNDLE_MASK_IS_CERTIFIED } from '@/utils/SynapseConstants'
-import { HelpOutlineTwoTone } from '@mui/icons-material'
+import HelpOutlineTwoTone from '@mui/icons-material/HelpOutlineTwoTone'
 import {
   Alert,
   AlertTitle,

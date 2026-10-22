@@ -2,7 +2,7 @@ import styles from './DownloadCartPage.module.scss'
 import SynapseClient from '@/synapse-client'
 import { useGetDownloadListStatistics } from '@/synapse-queries/download/useDownloadList'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { DeleteTwoTone } from '@mui/icons-material'
+import DeleteTwoTone from '@mui/icons-material/DeleteTwoTone'
 import { Button, Tooltip, Typography } from '@mui/material'
 import {
   AvailableFilter,

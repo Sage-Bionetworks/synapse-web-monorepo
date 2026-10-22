@@ -2,7 +2,8 @@ import { SynapseSpinner } from '@/components/LoadingScreen/LoadingScreen'
 import extractMessageFromTraceEvent, {
   TraceMessage,
 } from '@/components/SynapseChat/extractMessageFromTraceEvent'
-import { KeyboardArrowDown, KeyboardArrowRight } from '@mui/icons-material'
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown'
+import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight'
 import {
   Alert,
   Box,

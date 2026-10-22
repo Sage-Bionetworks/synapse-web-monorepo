@@ -17,7 +17,7 @@ import {
   useUpdateCurationTaskStatus,
 } from '@/synapse-queries/curation/task/useCurationTask'
 import { EntityTypeGroup } from '@/utils/functions/EntityTypeUtils'
-import { HelpTwoTone } from '@mui/icons-material'
+import HelpTwoTone from '@mui/icons-material/HelpTwoTone'
 import Close from '@mui/icons-material/Close'
 import {
   Alert,

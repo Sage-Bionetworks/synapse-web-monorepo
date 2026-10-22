@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Typography, Link } from '@mui/material'
 import HeaderSearchBox from '../HeaderSearchBox'
-import { AddAlertTwoTone } from '@mui/icons-material'
+import AddAlertTwoTone from '@mui/icons-material/AddAlertTwoTone'
 
 const NFHeader = (): React.ReactNode => {
   const searchPlaceholder =

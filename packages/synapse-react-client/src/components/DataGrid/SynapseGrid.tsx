@@ -14,8 +14,8 @@ import { useGetCurrentUserBundle } from '@/synapse-queries'
 import { useListGridReplicas } from '@/synapse-queries/grid/useGridSession'
 import { useGetEntity } from '@/synapse-queries/index'
 import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
-import { HelpOutline } from '@mui/icons-material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import HelpOutline from '@mui/icons-material/HelpOutline'
 import {
   Accordion,
   AccordionDetails,

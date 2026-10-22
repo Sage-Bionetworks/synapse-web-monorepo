@@ -1,6 +1,6 @@
 import { FormTemplateStep } from '@sage-bionetworks/synapse-client'
 import { Alert, Box, Button, Paper, Stack, Typography } from '@mui/material'
-import { Add as AddIcon } from '@mui/icons-material'
+import AddIcon from '@mui/icons-material/Add'
 import pluralize from 'pluralize'
 import { RJSFSchema } from '@rjsf/utils'
 import {

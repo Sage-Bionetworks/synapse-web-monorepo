@@ -8,7 +8,7 @@ import {
   normalizeSynPrefix,
 } from '@/utils/functions/EntityTypeUtils'
 import { SYNAPSE_ENTITY_ID_REGEX } from '@/utils/functions/RegularExpressions'
-import { AddCircleTwoTone } from '@mui/icons-material'
+import AddCircleTwoTone from '@mui/icons-material/AddCircleTwoTone'
 import {
   Alert,
   AlertTitle,

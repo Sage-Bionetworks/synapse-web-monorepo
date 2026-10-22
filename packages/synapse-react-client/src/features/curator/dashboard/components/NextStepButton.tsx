@@ -1,6 +1,7 @@
 import styles from './NextStepButton.module.scss'
 import { Button, Tooltip, Typography } from '@mui/material'
-import { ArrowForwardIos, TableChartOutlined } from '@mui/icons-material'
+import ArrowForwardIos from '@mui/icons-material/ArrowForwardIos'
+import TableChartOutlined from '@mui/icons-material/TableChartOutlined'
 import { SynapseSpinner } from '@/components/LoadingScreen/LoadingScreen'
 import classNames from 'classnames'
 import { PropsWithChildren } from 'react'

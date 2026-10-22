@@ -4,7 +4,7 @@ import {
 } from '@/synapse-queries'
 import { useSourceAppConfigs } from '@/utils/hooks'
 import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
-import { ChevronRightTwoTone } from '@mui/icons-material'
+import ChevronRightTwoTone from '@mui/icons-material/ChevronRightTwoTone'
 import { Box, Typography } from '@mui/material'
 import {
   ColumnSingleValueQueryFilter,

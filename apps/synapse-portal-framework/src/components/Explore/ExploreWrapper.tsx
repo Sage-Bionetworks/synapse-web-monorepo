@@ -2,7 +2,8 @@ import {
   NEGATIVE_RESPONSIVE_SIDE_MARGIN,
   RESPONSIVE_SIDE_PADDING,
 } from '@/utils'
-import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material'
+import ArrowDropDown from '@mui/icons-material/ArrowDropDown'
+import ArrowDropUp from '@mui/icons-material/ArrowDropUp'
 import { Box, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { useState } from 'react'
 import { Outlet, useLocation, useMatch, useNavigation } from 'react-router'

@@ -1,5 +1,7 @@
 import { Box, IconButton, Tooltip } from '@mui/material'
-import { Key, PushPin, PushPinOutlined } from '@mui/icons-material'
+import Key from '@mui/icons-material/Key'
+import PushPin from '@mui/icons-material/PushPin'
+import PushPinOutlined from '@mui/icons-material/PushPinOutlined'
 import { TOOLTIP_DELAY_SHOW } from '@/components/SynapseTable/SynapseTableConstants'
 
 type ColumnHeaderWithTooltipProps = {
