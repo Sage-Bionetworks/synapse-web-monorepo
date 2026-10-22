@@ -370,14 +370,13 @@ describe('CohortBuilder', () => {
       const filesQuery = filesRequests(profile).at(-1)!.query
 
       await user.click(screen.getByRole('button', { name: 'Download Options' }))
-      await user.click(
-        await screen.findByRole('menuitem', { name: /Download List/ }),
-      )
-      // The menu stays open after a choice and hides the rest of the page from assistive technology until closed.
-      await user.keyboard('{Escape}')
+      const addMenuItem = await screen.findByRole('menuitem', {
+        name: /Download List/,
+      })
       expect(
         screen.queryByRole('menuitem', { name: 'Programmatic Options' }),
       ).not.toBeInTheDocument()
+      await user.click(addMenuItem)
       // The confirmation offers Add once the Download List statistics job completes.
       await user.click(await screen.findByRole('button', { name: 'Add' }))
 

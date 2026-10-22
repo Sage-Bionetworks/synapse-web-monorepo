@@ -148,6 +148,23 @@ describe('Download Options tests', () => {
     )
   })
 
+  it('closes the menu once an option is chosen', async () => {
+    registerTableQueryResult(fileViewQueryRequest.query, mockQueryResponseData)
+    renderComponent(props, fileViewQueryRequest)
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: 'Download Options' }),
+    )
+    await userEvent.click(
+      await screen.findByRole('menuitem', {
+        name: ADD_ALL_FILES_TO_DOWNLOAD_CART,
+      }),
+    )
+
+    expect(props.onDownloadFiles).toHaveBeenCalled()
+    await waitFor(() => expect(screen.queryByRole('menu')).toBeNull())
+  })
+
   it('Shows correct options for a Project View', async () => {
     registerTableQueryResult(
       projectViewQueryRequest.query,
