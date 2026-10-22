@@ -17,7 +17,14 @@ import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
 import { AddToDownloadListRequest } from '@sage-bionetworks/synapse-client'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
-import { render, screen, waitFor, within } from '@testing-library/react'
+import {
+  configure,
+  getConfig,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http } from 'msw'
 import {
@@ -233,7 +240,14 @@ describe('CohortBuilder', () => {
     }
   })
 
-  describe('Files/Datasets panel', () => {
+  // Each test builds a cohort with the Query Builder, then each result waits on chained async query jobs (participants,
+  // then files). When the whole suite is running, a single wait can exceed Testing Library's default and a whole test
+  // can exceed the suite's per-test timeout.
+  describe('Files/Datasets panel', { timeout: 30_000 }, () => {
+    const { asyncUtilTimeout } = getConfig()
+    beforeAll(() => configure({ asyncUtilTimeout: 5_000 }))
+    afterAll(() => configure({ asyncUtilTimeout }))
+
     function renderWithFiles(
       handlerOptions: CohortBuilderHandlersOptions = {},
     ) {
@@ -401,19 +415,7 @@ describe('CohortBuilder', () => {
         screen.queryByRole('menuitem', { name: 'Programmatic Options' }),
       ).not.toBeInTheDocument()
       // The confirmation offers Add once the Download List statistics job completes.
-      await user.click(
-        await screen.findByRole(
-          'button',
-          { name: 'Add' },
-          {
-            timeout: 5000,
-            onTimeout: error => {
-              error.message = `${error.message}\n${document.body.textContent?.slice(-600)}`
-              return error
-            },
-          },
-        ),
-      )
+      await user.click(await screen.findByRole('button', { name: 'Add' }))
 
       await waitFor(() => expect(addRequests).toHaveLength(1))
       server.events.removeListener('request:start', recordAddRequest)
