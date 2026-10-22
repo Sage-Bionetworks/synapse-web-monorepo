@@ -1,0 +1,44 @@
+.container {
+  display: flex;
+  align-items: center;
+}
+
+.switch:global(.MuiSwitch-root) {
+  width: 38px;
+  height: 20px;
+  padding: 0;
+
+  & :global(.MuiSwitch-switchBase) {
+    padding: 0;
+
+    &:global(.Mui-checked) {
+      transform: translateX(18px);
+    }
+
+    &:global(.Mui-checked + .MuiSwitch-track) {
+      opacity: 1;
+    }
+  }
+
+  & :global(.MuiSwitch-thumb) {
+    width: 20px;
+    height: 20px;
+  }
+
+  & :global(.MuiSwitch-track) {
+    border-radius: 10px;
+  }
+}
+
+.countThumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: var(--synapse-white);
+  color: var(--synapse-gray-900);
+  font-size: 10px;
+  font-weight: 700;
+}
