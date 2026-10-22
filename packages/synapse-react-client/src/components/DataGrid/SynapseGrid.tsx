@@ -15,7 +15,16 @@ import { useListGridReplicas } from '@/synapse-queries/grid/useGridSession'
 import { useGetEntity } from '@/synapse-queries/index'
 import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import { HelpOutline } from '@mui/icons-material'
-import { Box, Stack, Tooltip, Typography } from '@mui/material'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Stack,
+  Tooltip,
+  Typography,
+} from '@mui/material'
 import Grid from '@mui/material/Grid'
 import {
   DataSheetGridRef,
@@ -572,18 +581,29 @@ function SynapseGridInner({
                 size={12}
                 style={{
                   margin: '10px 0',
-                  padding: '10px',
-                  border: '1px solid #ccc',
                   maxHeight: '400px',
                   overflowY: 'auto',
                 }}
               >
-                <h3>Model</h3>
-                {model ? (
-                  <ClickableJsonCrdt model={model} />
-                ) : (
-                  'No model available'
-                )}
+                <Accordion
+                  disableGutters
+                  square
+                  variant="outlined"
+                  slotProps={{ transition: { unmountOnExit: true } }}
+                >
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography variant="headline1" component="h3">
+                      Model
+                    </Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    {model ? (
+                      <ClickableJsonCrdt model={model} />
+                    ) : (
+                      'No model available'
+                    )}
+                  </AccordionDetails>
+                </Accordion>
               </Grid>
             )}
           </>

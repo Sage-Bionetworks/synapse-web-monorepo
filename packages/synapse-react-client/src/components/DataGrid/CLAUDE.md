@@ -1,6 +1,6 @@
 # DataGrid
 
-A spreadsheet-style editor for Synapse curation data. Many people can edit the same grid at the same time. The shared data lives in a CRDT (a data structure that merges edits from many users without conflicts). Each browser keeps its own copy of the CRDT and syncs it with the server over a websocket.
+A spreadsheet-style editor for Synapse curation data. Many people can edit the same grid at the same time. The shared data lives in a CRDT (a data structure that merges edits from many users without conflicts). Each client keeps its own copy of the CRDT and syncs it with the server over a websocket.
 
 Entry point: `SynapseGrid`. It opens a grid session, connects the websocket, and renders the grid with `@sage-bionetworks/react-datasheet-grid` (called "DSG" below). This is the in-repo fork of react-datasheet-grid, so it can be changed in this repository.
 
