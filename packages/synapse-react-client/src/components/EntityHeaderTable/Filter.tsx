@@ -19,7 +19,7 @@ export function Filter({
     () =>
       typeof firstValue === 'number'
         ? []
-        : Array.from(column.getFacetedUniqueValues().keys()).sort(),
+        : Array.from<string>(column.getFacetedUniqueValues().keys()).toSorted(),
     [column.getFacetedUniqueValues()],
   )
   return (

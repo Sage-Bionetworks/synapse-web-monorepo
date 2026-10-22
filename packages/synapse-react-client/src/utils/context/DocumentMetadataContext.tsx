@@ -43,7 +43,7 @@ export function DocumentMetadataProvider(props: DocumentMetadataProviderProps) {
 
   // Keep registrations stable between renders and automatically clean up on unmount.
   const sortedEntries = useMemo(
-    () => [...entries].sort((a, b) => b.priority - a.priority),
+    () => [...entries].toSorted((a, b) => b.priority - a.priority),
     [entries],
   )
 

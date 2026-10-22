@@ -1,6 +1,6 @@
 // Copied from lib-shared-models ContentTypeUtils.class
 
-const CODE_EXTENSIONS = [
+const CODE_EXTENSIONS = new Set([
   '.awk',
   '.bat',
   '.btm',
@@ -49,14 +49,14 @@ const CODE_EXTENSIONS = [
   '.y',
   '.yaml',
   '.yxx',
-]
+])
 
 export const PLAIN_TEXT = 'text/plain'
 export const TEXT_COMMA_SEPARATED_VALUES = 'text/csv'
 export const TEXT_TAB_SEPARATED_VALUES = 'text/tab-separated-values'
 export const APPLICATION_OCTET_STREAM = 'application/octet-stream'
 
-const WEB_CODE_EXTENSIONS = ['.cwl', '.wdl', '.json']
+const WEB_CODE_EXTENSIONS = new Set(['.cwl', '.wdl', '.json'])
 
 export function isRecognizedCodeFileName(fileName: string): boolean {
   let isCodeFile = false
@@ -64,7 +64,7 @@ export function isRecognizedCodeFileName(fileName: string): boolean {
     const lastDot = fileName.lastIndexOf('.')
     if (lastDot > -1) {
       const extension = fileName.substring(lastDot).toLowerCase()
-      isCodeFile = CODE_EXTENSIONS.includes(extension)
+      isCodeFile = CODE_EXTENSIONS.has(extension)
     }
   }
 
@@ -85,7 +85,7 @@ function isWebRecognizedCodeFileName(fileName: string): boolean {
   let isPlainText = false
   const extension = getExtension(fileName)
   if (extension != null) {
-    isPlainText = WEB_CODE_EXTENSIONS.includes('.' + extension)
+    isPlainText = WEB_CODE_EXTENSIONS.has('.' + extension)
   }
   return isPlainText
 }
