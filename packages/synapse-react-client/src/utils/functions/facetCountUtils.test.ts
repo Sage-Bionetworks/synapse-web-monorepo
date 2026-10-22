@@ -3,18 +3,18 @@ import { formatFacetValueCount } from './facetCountUtils'
 describe('formatFacetValueCount', () => {
   it.each([
     {
-      case: 'a binned count as the bin range',
-      count: 10,
+      case: 'a binned count as approximate',
+      count: 1200,
       binSize: 5,
       facetPostProcessingApplied: true,
-      expected: '10–14',
+      expected: `≈ ${(1200).toLocaleString()}`,
     },
     {
-      case: 'a bin minimum of 0 as starting at 1',
+      case: 'a bin minimum of 0 as approximate',
       count: 0,
       binSize: 5,
       facetPostProcessingApplied: true,
-      expected: '1–4',
+      expected: '≈ 0',
     },
     {
       case: 'a bin size of 1 as the exact count',
@@ -52,10 +52,4 @@ describe('formatFacetValueCount', () => {
       ).toBe(expected)
     },
   )
-
-  it('localizes both ends of a bin range', () => {
-    expect(formatFacetValueCount(1565, { binSize: 5 }, true)).toBe(
-      `${(1565).toLocaleString()}–${(1569).toLocaleString()}`,
-    )
-  })
 })

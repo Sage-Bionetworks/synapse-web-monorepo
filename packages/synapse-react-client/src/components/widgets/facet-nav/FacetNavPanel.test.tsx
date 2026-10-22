@@ -215,11 +215,11 @@ describe('extractPlotDataArray', () => {
     )
 
     expect(plotData.labels.map(label => label.countText)).toEqual([
-      '10–14',
-      '1–4',
+      '≈ 10',
+      '≈ 0',
     ])
     expect(plotData.data[0]).toMatchObject({
-      customdata: ['10–14', '1–4'],
+      customdata: ['≈ 10', '≈ 0'],
       hovertemplate: '<b>%{text}</b><br>%{customdata}<br><extra></extra>',
     })
   })

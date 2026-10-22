@@ -547,7 +547,7 @@ const aggregateOnlyFilesArgs = {
   shouldDeepLink: false,
 } satisfies Partial<QueryWrapperPlotNavProps>
 
-/** Synthetic Cohort Builder 2.0 data with ROUNDING post-processing: facet counts show as bin ranges. */
+/** Synthetic Cohort Builder 2.0 data with ROUNDING post-processing: facet counts show as approximate bin minimums. */
 export const AggregateOnlyRoundedFacetCounts: Story = {
   args: {
     ...aggregateOnlyFilesArgs,
