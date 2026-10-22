@@ -168,13 +168,12 @@ function ParticipantsBarPlot({
   const [isLoaded, setIsLoaded] = useState(false)
   const [barPlotQueryData, setBarPlotQueryData] = useState<GraphItem[]>([])
   useEffect(() => {
-    const barPlotData = fetchData(token!)
-    Promise.all([barPlotData])
+    fetchData(token!)
       .then(result => {
         setBarPlotQueryData(
           SynapseUtilityFunctions.resultToJson(
-            result[0].headers,
-            result[0].rows,
+            result.headers,
+            result.rows,
           ) as unknown as GraphItem[],
         )
         setIsLoaded(true)

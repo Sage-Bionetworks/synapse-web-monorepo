@@ -29,7 +29,7 @@ export default function MarkdownButton(
     widgetParamsMapped.url?.startsWith('https://')
   const inRouterContext = useInRouterContext()
 
-  let linkProps: Partial<ButtonProps> & { target?: string; to?: string } = {}
+  let linkProps: Partial<ButtonProps> & { target?: string; to?: string }
 
   if (isExternalLink) {
     linkProps = {

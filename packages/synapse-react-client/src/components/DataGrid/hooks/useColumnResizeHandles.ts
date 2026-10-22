@@ -29,7 +29,7 @@ interface ResizeState {
 class ColumnResizeManager {
   private static readonly COLUMN_MIN_WIDTH_PX = 50
 
-  private handlesMap = new Map<string, ResizeHandleElement>()
+  private readonly handlesMap = new Map<string, ResizeHandleElement>()
   private cleanupFunctions: Array<(() => void) | HTMLDivElement> = []
   private activeResize: ResizeState | null = null
   private gridContainer: HTMLElement | null = null
@@ -183,7 +183,7 @@ class ColumnResizeManager {
   /**
    * Handles mousemove event to update handle position during drag.
    */
-  private handleMouseMove = (e: MouseEvent): void => {
+  private readonly handleMouseMove = (e: MouseEvent): void => {
     if (!this.activeResize) return
 
     const { startX, handle, initialLeft } = this.activeResize
@@ -194,7 +194,7 @@ class ColumnResizeManager {
   /**
    * Handles mouseup/mouseleave to finalize the resize operation.
    */
-  private handleMouseUp = (e: MouseEvent): void => {
+  private readonly handleMouseUp = (e: MouseEvent): void => {
     if (!this.activeResize) return
 
     const { columnName, startX, startWidth, handle } = this.activeResize
@@ -216,7 +216,7 @@ class ColumnResizeManager {
    * Synchronizes handles with currently visible columns in the header.
    * Handles virtualization by showing/hiding handles as columns appear/disappear.
    */
-  private syncHandles = (): void => {
+  private readonly syncHandles = (): void => {
     if (this.activeResize || !this.headerRow) return // Don't sync during resize
 
     const headerCells = this.headerRow.querySelectorAll('.dsg-cell')

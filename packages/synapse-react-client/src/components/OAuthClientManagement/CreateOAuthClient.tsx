@@ -187,12 +187,10 @@ export function CreateOAuthModal({
       setUpdatedClient(oAuthClient)
       if (warnTrigger === true) {
         setIsShowingConfirmModal(true)
+      } else if (isEdit) {
+        updateClient(oAuthClient)
       } else {
-        if (isEdit) {
-          updateClient(oAuthClient)
-        } else {
-          createClient(oAuthClient)
-        }
+        createClient(oAuthClient)
       }
     } catch (err) {
       displayToast(err.reason as string, 'danger')

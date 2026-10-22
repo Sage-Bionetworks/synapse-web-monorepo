@@ -72,6 +72,7 @@ export function useSessionManager(
   )
   onMissingExpectedAuthenticationRef.current = onMissingExpectedAuthentication
 
+  // oxlint-disable-next-line react/hook-use-state -- lazily creates one manager per mount; it is never replaced
   const [manager] = useState(
     () =>
       new SynapseSessionManager({

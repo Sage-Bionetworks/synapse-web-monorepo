@@ -66,6 +66,17 @@ function useFairSection(data: FairFormPayload | null | undefined, key: string) {
   }, [data, key])
 }
 
+function renderSectionStep<T>(
+  isLoading: boolean,
+  section: T | undefined,
+  renderStep: (section: T) => ReactNode,
+  errorMessage: string,
+): ReactNode {
+  if (isLoading) return <Skeleton height={200} />
+  if (!section) return <Alert severity="error">{errorMessage}</Alert>
+  return renderStep(section)
+}
+
 /**
  * Five-step (four when no new workspace is requested) DAR wizard: Destination, Workspace
  * (conditional), About, Project, Review & Submit.
@@ -344,12 +355,14 @@ function useAridhiaDarWizardParts(
                   ...Object.keys(aboutRjsf?.schema.properties ?? {}),
                   ...Object.keys(projectRjsf?.schema.properties ?? {}),
                 ])
-                const workspaceOnlyFieldNames = Object.keys(
-                  workspaceRjsf?.schema.properties ?? {},
-                ).filter(name => !sharedFieldNames.has(name))
+                const workspaceOnlyFieldNames = new Set(
+                  Object.keys(workspaceRjsf?.schema.properties ?? {}).filter(
+                    name => !sharedFieldNames.has(name),
+                  ),
+                )
                 next.values = Object.fromEntries(
                   Object.entries(previous.values).filter(
-                    ([key]) => !workspaceOnlyFieldNames.includes(key),
+                    ([key]) => !workspaceOnlyFieldNames.has(key),
                   ),
                 )
                 next.workspaceReference = undefined
@@ -365,62 +378,56 @@ function useAridhiaDarWizardParts(
       )}
 
       {currentStepKey === 'workspace' &&
-        (workspaceFormQuery.isLoading ? (
-          <Skeleton height={200} />
-        ) : workspaceRjsf ? (
-          <DarWorkspaceStep
-            schema={workspaceRjsf.schema}
-            uiSchema={workspaceRjsf.uiSchema}
-            formData={draft.values}
-            onChange={mergeValues}
-            reference={draft.workspaceReference ?? ''}
-            onReferenceChange={reference =>
-              setDraft(previous => ({
-                ...previous,
-                workspaceReference: reference,
-              }))
-            }
-          />
-        ) : (
-          <Alert severity="error">
-            Unable to load the new-workspace request form. Please try again
-            later.
-          </Alert>
-        ))}
+        renderSectionStep(
+          workspaceFormQuery.isLoading,
+          workspaceRjsf,
+          rjsf => (
+            <DarWorkspaceStep
+              schema={rjsf.schema}
+              uiSchema={rjsf.uiSchema}
+              formData={draft.values}
+              onChange={mergeValues}
+              reference={draft.workspaceReference ?? ''}
+              onReferenceChange={reference =>
+                setDraft(previous => ({
+                  ...previous,
+                  workspaceReference: reference,
+                }))
+              }
+            />
+          ),
+          'Unable to load the new-workspace request form. Please try again later.',
+        )}
 
       {currentStepKey === 'project' &&
-        (workflowQuery.isLoading ? (
-          <Skeleton height={200} />
-        ) : projectRjsf ? (
-          <DarProjectStep
-            schema={projectRjsf.schema}
-            uiSchema={projectRjsf.uiSchema}
-            formData={draft.values}
-            onChange={mergeValues}
-          />
-        ) : (
-          <Alert severity="error">
-            Unable to load the project section of this request form. Please try
-            again later.
-          </Alert>
-        ))}
+        renderSectionStep(
+          workflowQuery.isLoading,
+          projectRjsf,
+          rjsf => (
+            <DarProjectStep
+              schema={rjsf.schema}
+              uiSchema={rjsf.uiSchema}
+              formData={draft.values}
+              onChange={mergeValues}
+            />
+          ),
+          'Unable to load the project section of this request form. Please try again later.',
+        )}
 
       {currentStepKey === 'about' &&
-        (workflowQuery.isLoading ? (
-          <Skeleton height={200} />
-        ) : aboutRjsf ? (
-          <DarAboutStep
-            schema={aboutRjsf.schema}
-            uiSchema={aboutRjsf.uiSchema}
-            formData={draft.values}
-            onChange={mergeValues}
-          />
-        ) : (
-          <Alert severity="error">
-            Unable to load the &quot;about you&quot; section of this request
-            form. Please try again later.
-          </Alert>
-        ))}
+        renderSectionStep(
+          workflowQuery.isLoading,
+          aboutRjsf,
+          rjsf => (
+            <DarAboutStep
+              schema={rjsf.schema}
+              uiSchema={rjsf.uiSchema}
+              formData={draft.values}
+              onChange={mergeValues}
+            />
+          ),
+          'Unable to load the "about you" section of this request form. Please try again later.',
+        )}
 
       {currentStepKey === 'complete' && (
         <DarCompleteStep

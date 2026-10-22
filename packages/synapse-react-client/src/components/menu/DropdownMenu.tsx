@@ -300,7 +300,9 @@ export function DropdownMenu(props: DropdownMenuProps) {
                             </Tooltip>
                           )
                         }),
-                        index < array.length - 1 && <Divider />,
+                        index < array.length - 1 && (
+                          <Divider key={`divider-${index}`} />
+                        ),
                       ]
                     })}
                   </MenuList>

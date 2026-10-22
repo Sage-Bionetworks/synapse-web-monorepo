@@ -153,7 +153,7 @@ export function SynapseNavDrawer({
   initIsOpen = false,
   gotoPlace,
 }: SynapseNavDrawerProps) {
-  const [isOpen, setOpen] = useState(initIsOpen)
+  const [isOpen, setIsOpen] = useState(initIsOpen)
   const [selectedItem, setSelectedItem] = useState<NavItem>()
   const [projectSearchText, setProjectSearchText] = useState<string>('')
   const [docSiteSearchText, setDocSiteSearchText] = useState<string>('')
@@ -211,12 +211,12 @@ export function SynapseNavDrawer({
   )
 
   const handleDrawerOpen = (navItem?: NavItem) => {
-    setOpen(true)
+    setIsOpen(true)
     setSelectedItem(navItem)
   }
 
   const handleDrawerClose = () => {
-    setOpen(false)
+    setIsOpen(false)
     setSelectedItem(undefined)
   }
 

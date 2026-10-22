@@ -183,14 +183,14 @@ export function FieldDefinitionDrawer({
         )}
 
         <Box sx={{ flexGrow: 1, overflow: 'auto' }}>
-          {!property ? (
-            <Alert severity="info">No field selected.</Alert>
-          ) : isAdvanced ? (
+          {!property && <Alert severity="info">No field selected.</Alert>}
+          {property && isAdvanced && (
             <Alert severity="warning" variant="outlined">
               This field uses settings not supported by the simple editor. Edit
               it via the advanced raw JSON Schema view.
             </Alert>
-          ) : (
+          )}
+          {property && !isAdvanced && (
             <Stack spacing={2}>
               <TextField
                 label="Question label"

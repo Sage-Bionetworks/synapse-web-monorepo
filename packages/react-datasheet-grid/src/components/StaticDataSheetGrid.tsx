@@ -27,6 +27,7 @@ export const StaticDataSheetGrid = React.forwardRef<
     }: DataSheetGridProps<T>,
     ref: React.ForwardedRef<DataSheetGridRef>,
   ) => {
+    // oxlint-disable-next-line react/hook-use-state -- these props are intentionally captured once on mount and never updated
     const [staticProps] = useState({
       columns,
       gutterColumn,

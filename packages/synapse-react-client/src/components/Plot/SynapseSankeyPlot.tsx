@@ -534,14 +534,13 @@ export const SynapseSankeyPlot = (
 
   // Opacity helpers for the focus/dim interaction. Both flows of a focused
   // source share its center-node index.
-  const linkOpacity = (sourceIndex: number) =>
-    focusIndex === null
-      ? 0.6
-      : sourceIndex === focusIndex
-        ? clicked !== null
-          ? 1
-          : 0.95
-        : dimLink
+  const focusedLinkOpacity = clicked !== null ? 1 : 0.95
+  const linkOpacity = (sourceIndex: number) => {
+    if (focusIndex === null) {
+      return 0.6
+    }
+    return sourceIndex === focusIndex ? focusedLinkOpacity : dimLink
+  }
   const nodeOpacity = (node: LaidOutNode) =>
     focusIndex === null ||
     node.kind !== 'source' ||
@@ -651,12 +650,12 @@ export const SynapseSankeyPlot = (
         <g>
           {graph.nodes.map((node, i) => {
             const sourceIndex = (node.index ?? 1) - 1
-            const clickProps =
-              node.kind === 'leftEnd'
-                ? endProps(onRootClick)
-                : node.kind === 'rightEnd'
-                  ? endProps(onRightEndClick)
-                  : flowProps(sourceIndex, categoryFire(node.name))
+            let clickProps = flowProps(sourceIndex, categoryFire(node.name))
+            if (node.kind === 'leftEnd') {
+              clickProps = endProps(onRootClick)
+            } else if (node.kind === 'rightEnd') {
+              clickProps = endProps(onRightEndClick)
+            }
             return (
               <rect
                 key={i}

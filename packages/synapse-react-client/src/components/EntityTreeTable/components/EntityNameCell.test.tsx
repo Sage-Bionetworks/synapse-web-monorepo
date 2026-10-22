@@ -181,6 +181,7 @@ describe('NameCell', () => {
   it('should render entity name as plain text when disableEntityLinks is true', () => {
     render(
       <EntityTreeTableContext.Provider
+        // oxlint-disable-next-line react/jsx-no-constructed-context-values -- test-only provider rendered once
         value={{ ...mockContextValue, disableEntityLinks: true }}
       >
         <NameCell {...createMockCellContext(mockEntityBundleRow)} />

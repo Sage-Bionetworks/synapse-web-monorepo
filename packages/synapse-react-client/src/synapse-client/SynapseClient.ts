@@ -216,7 +216,7 @@ import {
   EvaluationRound,
   EvaluationRoundListRequest,
   EvaluationRoundListResponse,
-  EvaluationSubmission as EvaluationSubmission,
+  EvaluationSubmission,
   FavoriteSortBy,
   FavoriteSortDirection,
   FileEntity,
@@ -463,7 +463,7 @@ export const getFileHandleById = (
  **/
 export const getActualFileHandleByIdURL = (
   handleId: string,
-  accessToken: string | undefined = undefined,
+  accessToken: string | undefined,
   fileAssociateType: FileHandleAssociateType,
   fileAssociateId: string,
   redirect: boolean = true,
@@ -1238,11 +1238,11 @@ export const getBulkFiles = async (
  */
 
 export const getEntity = <T extends Entity>(
-  accessToken: string | undefined = undefined,
+  accessToken: string | undefined,
   entityId: string,
   versionNumber?: string | number,
 ) => {
-  if (entityId.indexOf('.') > -1) {
+  if (entityId.includes('.')) {
     // PORTALS-1943: we were given an entity Id with a version!
     const entityTokens = entityId.split('.')
     entityId = entityTokens[0]
@@ -1275,7 +1275,7 @@ export const getEntityHeaders = (
 ) => {
   // if references contains entity IDs with dot notation, fix the reference object
   const fixedReferences = references.map(reference => {
-    if (reference.targetId.indexOf('.') > -1) {
+    if (reference.targetId.includes('.')) {
       const entityTokens = reference.targetId.split('.')
       return {
         targetId: entityTokens[0],
@@ -1405,7 +1405,7 @@ export const updateEntity = <T extends Entity>(
 }
 
 export const deleteEntity = (
-  accessToken: string | undefined = undefined,
+  accessToken: string | undefined,
   entityId: string | number,
 ) => {
   return doDelete(
@@ -2140,7 +2140,7 @@ export const getAccessTokenFromCookie = async (): Promise<
   string | undefined
 > => {
   if (isOutsideSynapseOrg()) {
-    return Promise.resolve(Cookies.get(ACCESS_TOKEN_COOKIE_KEY) as string)
+    return Cookies.get(ACCESS_TOKEN_COOKIE_KEY) as string
   }
   return doGet<string>(
     '/Portal/sessioncookie?validate=true',
@@ -2185,7 +2185,7 @@ export async function deleteAllSessionAccessTokens(accessToken: string) {
  * @deprecated - Use `clearSession` provided by context, which will provide the correct default realm for the current application.
  */
 export const signOut = async (realm = '0'): Promise<string> => {
-  let accessToken: string | undefined = undefined
+  let accessToken: string | undefined
   try {
     accessToken = await getAccessTokenFromCookie()
     if (accessToken) {
@@ -2224,6 +2224,7 @@ export type ProgressCallback = {
  * @param file
  * @param endpoint
  */
+// oxlint-disable-next-line max-params -- public API; reordering into an options object would break callers
 export const uploadFile = (
   accessToken: string | undefined,
   filename: string,
@@ -2306,12 +2307,14 @@ export const calculateMd5: (blob: Blob) => Promise<string> = memoize(blob => {
       const start = currentChunk * chunkSize,
         end = start + chunkSize >= blob.size ? blob.size : start + chunkSize
 
+      // oxlint-disable-next-line unicorn/prefer-blob-reading-methods -- jsdom's Blob has no arrayBuffer(), and upload tests compute real MD5s
       fileReader.readAsArrayBuffer(blob.slice(start, end))
     }
     loadNext()
   })
 })
 
+// oxlint-disable-next-line max-params -- legacy multipart upload state is threaded positionally through recursive retries
 const processFilePart = async (
   partNumber: number,
   multipartUploadStatus: MultipartUploadStatus,
@@ -2417,11 +2420,7 @@ export const checkUploadComplete = (
   fileUploadReject: (reason: any) => void,
 ) => {
   // if all client-side parts are true (uploaded), then complete the upload and get the file handle!
-  if (
-    clientSidePartsState.every(v => {
-      return v
-    })
-  ) {
+  if (clientSidePartsState.every(Boolean)) {
     const url = `/file/v1/file/multipart/${status.uploadId}/complete`
     doPut<MultipartUploadStatus>(
       url,
@@ -2475,6 +2474,7 @@ const uploadFilePart = async (
     clearInterval(timer)
   }
 }
+// oxlint-disable-next-line max-params -- public API; reordering into an options object would break callers
 export const startMultipartUpload = (
   accessToken: string | undefined,
   fileName: string,
@@ -2564,11 +2564,10 @@ export const getFileHandleContentFromID = (
       .then(values => {
         const fileHandle: FileHandle = values[0]
         const presignedUrl: string = values[1]
-        return getFileHandleContent(fileHandle, presignedUrl).then(
-          (content: string) => {
-            resolve(content)
-          },
-        )
+        return getFileHandleContent(fileHandle, presignedUrl)
+      })
+      .then((content: string) => {
+        resolve(content)
       })
       .catch(err => {
         reject(err as Error)
@@ -2592,12 +2591,12 @@ export const getFileHandleContent = (
         headers: {
           'Content-Type': fileHandle.contentType,
         },
-      }).then(response => {
+      })
         // the response is always decoded using UTF-8
-        response.text().then(text => {
+        .then(response => response.text())
+        .then(text => {
           resolve(text)
         })
-      })
     } else {
       reject(
         new Error(
@@ -5225,13 +5224,13 @@ export async function getSynapseTeamGeoData(
  */
 export function getAllSubscriptions(
   accessToken: string | undefined,
-  limit: number = 100,
-  offset: number = 0,
+  limit: number | undefined,
+  offset: number | undefined,
   query: SubscriptionQuery,
 ) {
   const params = new URLSearchParams()
-  params.set('limit', limit.toString())
-  params.set('offset', offset.toString())
+  params.set('limit', (limit ?? 100).toString())
+  params.set('offset', (offset ?? 0).toString())
   params.set('objectType', query.objectType)
   if (query.sortBy) params.set('sortBy', query.sortBy)
   if (query.sortDirection) params.set('sortDirection', query.sortDirection)

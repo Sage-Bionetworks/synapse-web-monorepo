@@ -124,13 +124,13 @@ export const SynapsePlot = (props: SynapsePlotProps): React.ReactNode => {
   for (let i = 0; i < headers.length - 1; i += 1) {
     // make an entry for each set of data points
     const valueColumnName = headers[i + 1].name
-    const friendlyColumnName = unCamelCase(valueColumnName.replace(/_/g, ' '))
-    const hovertemplate =
-      type === 'bar'
-        ? horizontal
-          ? `<b>%{y}</b><br>${friendlyColumnName}: %{x:,}<extra></extra>`
-          : `<b>%{x}</b><br>${friendlyColumnName}: %{y:,}<extra></extra>`
-        : undefined
+    const friendlyColumnName = unCamelCase(valueColumnName.replaceAll('_', ' '))
+    let hovertemplate: string | undefined
+    if (type === 'bar') {
+      hovertemplate = horizontal
+        ? `<b>%{y}</b><br>${friendlyColumnName}: %{x:,}<extra></extra>`
+        : `<b>%{x}</b><br>${friendlyColumnName}: %{y:,}<extra></extra>`
+    }
     plotData[i] = {
       orientation,
       name: valueColumnName,

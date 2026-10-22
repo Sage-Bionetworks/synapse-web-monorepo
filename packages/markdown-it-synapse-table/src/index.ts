@@ -2,13 +2,11 @@ import MarkdownIt, { Token } from 'markdown-it'
 import StateBlock from 'markdown-it/lib/rules_block/state_block'
 import { RuleBlock } from 'markdown-it/lib/parser_block'
 
-const tableClassStartRE = new RegExp(
-  '^\\s*{[|]\\s*class\\s*=\\s*"\\s*(.*)"\\s*',
-)
-const tableClassEndRE = new RegExp('^\\s*[|]}\\s*')
-const centerStartRE = new RegExp('^s*->.*')
-const centerEndRE = new RegExp('.*<-s*$')
-const outerPipesRE = new RegExp('^s*[|].+[|]s*$')
+const tableClassStartRE = /^\s*{[|]\s*class\s*=\s*"\s*(.*)"\s*/
+const tableClassEndRE = /^\s*[|]}\s*/
+const centerStartRE = /^s*->.*/
+const centerEndRE = /.*<-s*$/
+const outerPipesRE = /^s*[|].+[|]s*$/
 
 function getLine(state: StateBlock, line: number): string {
   const pos = state.bMarks[line] + state.blkIndent
@@ -19,7 +17,7 @@ function getLine(state: StateBlock, line: number): string {
 
 function escapedSplit(str: string): string[] {
   if (outerPipesRE.test(str)) {
-    str = str.replace(/^\||\|$/g, '')
+    str = str.replaceAll(/^\||\|$/g, '')
   }
 
   const result: string[] = []
@@ -29,7 +27,7 @@ function escapedSplit(str: string): string[] {
   let escapes = 0
   let lastPos = 0
   let backTicked = false
-  let lastBackTick = (ch = str.charCodeAt(pos))
+  let lastBackTick = (ch = str.codePointAt(pos))
 
   while (pos < max) {
     if (ch === 0x60 && escapes % 2 === 0) {
@@ -56,7 +54,7 @@ function escapedSplit(str: string): string[] {
       pos = lastBackTick + 1
     }
 
-    ch = str.charCodeAt(pos)
+    ch = str.codePointAt(pos)
   }
 
   result.push(str.substring(lastPos))
@@ -64,18 +62,18 @@ function escapedSplit(str: string): string[] {
   return result
 }
 
-const ALLOWED_CLASS_NAMES = [
+const ALLOWED_CLASS_NAMES = new Set([
   'text-align-center',
   'text-align-right',
   'border',
   'center',
   'short',
-]
+])
 
 function filterClassNames(classNames: string): string {
   return classNames
     .split(' ')
-    .filter(className => ALLOWED_CLASS_NAMES.includes(className))
+    .filter(className => ALLOWED_CLASS_NAMES.has(className))
     .join(' ')
 }
 
@@ -134,8 +132,8 @@ export default function synapse_table_plugin(md: MarkdownIt) {
     // look for optional class definition start, like '{| class="border"'
     if (tableClassStartRE.test(lineText)) {
       // this table definition includes class names, so the start marker is {| and end marker will be |}
-      classNames = lineText.match(tableClassStartRE)[1]
-      wrapWithDiv = classNames.indexOf('short') !== -1
+      classNames = tableClassStartRE.exec(lineText)[1]
+      wrapWithDiv = classNames.includes('short')
       headerLine = startLine + 1
       // If tableClassStartRE passes, then it's definitely a table.
       isSpecialSyntaxTable = true
@@ -154,12 +152,12 @@ export default function synapse_table_plugin(md: MarkdownIt) {
 
     // read column headers
     lineText = getLine(state, headerLine).trim()
-    if (lineText.indexOf('|') === -1 && !isSpecialSyntaxTable) {
+    if (!lineText.includes('|') && !isSpecialSyntaxTable) {
       return false
     }
 
     // has a '|'.  If it looks like there is math on this line, skip it.
-    if (lineText.indexOf('$$') !== -1) {
+    if (lineText.includes('$$')) {
       return false
     }
     columns = escapedSplit(lineText)
@@ -188,7 +186,7 @@ export default function synapse_table_plugin(md: MarkdownIt) {
     let alignments: (string | null)[] | null = null
     // If this line is of the form ---|---|---, then we have column headers, and we should skip this line.
     // Else, no column headers and we should skip to the body.
-    if (/^[-:| ]+$/.test(lineText) && lineText.indexOf('|') !== -1) {
+    if (/^[-:| ]+$/.test(lineText) && lineText.includes('|')) {
       alignments = parseDividerForAlignment(lineText)
       // we have column headers
       tableBodyStartLine = headerLine + 2
@@ -210,11 +208,11 @@ export default function synapse_table_plugin(md: MarkdownIt) {
         token.map = [startLine, startLine + 1]
         token.children = []
 
-        token = state.push('th_close', 'th', -1)
+        state.push('th_close', 'th', -1)
       }
 
-      token = state.push('tr_close', 'tr', -1)
-      token = state.push('thead_close', 'thead', -1)
+      state.push('tr_close', 'tr', -1)
+      state.push('thead_close', 'thead', -1)
     } else {
       // no column headers
       tableBodyStartLine = headerLine
@@ -234,12 +232,12 @@ export default function synapse_table_plugin(md: MarkdownIt) {
         nextLine++
         break
       }
-      if (lineText.indexOf('|') === -1 && !isSpecialSyntaxTable) {
+      if (!lineText.includes('|') && !isSpecialSyntaxTable) {
         break
       }
       columns = escapedSplit(lineText)
 
-      token = state.push('tr_open', 'tr', 1)
+      state.push('tr_open', 'tr', 1)
       // if line starts with -> and ends with <-, then eat these characters (SWC-3000)
       if (
         centerStartRE.test(columns[0]) &&
@@ -260,9 +258,9 @@ export default function synapse_table_plugin(md: MarkdownIt) {
         token.content = columns[i] ? columns[i].trim() : ''
         token.children = []
 
-        token = state.push('td_close', 'td', -1)
+        state.push('td_close', 'td', -1)
       }
-      token = state.push('tr_close', 'tr', -1)
+      state.push('tr_close', 'tr', -1)
     }
     state.push('tbody_close', 'tbody', -1)
     state.push('table_close', 'table', -1)

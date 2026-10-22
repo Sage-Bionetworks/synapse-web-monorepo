@@ -35,12 +35,10 @@ export function useTableSort() {
   const setSortingState = (
     updaterOrValue: SortingState | Updater<SortingState>,
   ) => {
-    let newSortingState: SortingState | undefined = undefined
-    if (typeof updaterOrValue === 'function') {
-      newSortingState = updaterOrValue(sortingState)
-    } else {
-      newSortingState = updaterOrValue
-    }
+    const newSortingState =
+      typeof updaterOrValue === 'function'
+        ? updaterOrValue(sortingState)
+        : updaterOrValue
 
     const newSort = transformTanStackSortToQueryWrapperSort(newSortingState)
     queryContext.executeQueryRequest(qr => ({

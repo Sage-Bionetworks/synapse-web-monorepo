@@ -292,7 +292,7 @@ export function useRequestToJoinTeam(
       if (options.onSuccess) {
         return options.onSuccess(data, variables, ctx)
       }
-      return
+      return undefined
     },
   })
 }

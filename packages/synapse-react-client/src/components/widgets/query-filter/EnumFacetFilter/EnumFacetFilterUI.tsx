@@ -57,7 +57,7 @@ export type EnumFacetFilterUIProps<TValue = string> = {
 }
 
 function removeWhitespace(value: string): string {
-  return value.replace(/\s/g, '').toLowerCase()
+  return value.replaceAll(/\s/g, '').toLowerCase()
 }
 
 export default function EnumFacetFilterUI<TValue = string>(
@@ -82,7 +82,7 @@ export default function EnumFacetFilterUI<TValue = string>(
     useState<boolean>(defaultShowAllValues)
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
   const [showSearch, setShowSearch] = useState<boolean>(false)
-  const [searchTerm, setSearchText] = useState<string>('')
+  const [searchTerm, setSearchTerm] = useState<string>('')
 
   // e.g. we show a subset of facet values before hiding the rest behind "Show More"
   // If the user has selected a value that would normally be hidden, always show all of the values
@@ -100,10 +100,9 @@ export default function EnumFacetFilterUI<TValue = string>(
   const facetValuesToShow = useMemo(() => {
     if (showSearch && searchTerm.length > 0) {
       return facetValues.filter(({ displayText }) => {
-        return (
-          displayText.toLowerCase().indexOf(searchTerm.trim().toLowerCase()) >
-          -1
-        )
+        return displayText
+          .toLowerCase()
+          .includes(searchTerm.trim().toLowerCase())
       })
     }
     if (showAll) {
@@ -156,7 +155,7 @@ export default function EnumFacetFilterUI<TValue = string>(
                   <IconButton
                     size={'small'}
                     onClick={() => {
-                      setSearchText('')
+                      setSearchTerm('')
                       textInput.current?.focus()
                     }}
                   >
@@ -175,7 +174,7 @@ export default function EnumFacetFilterUI<TValue = string>(
           value={searchTerm}
           ref={textInput}
           onChange={e => {
-            setSearchText(e.target.value)
+            setSearchTerm(e.target.value)
           }}
         />
         {!showSearch && (
@@ -197,7 +196,7 @@ export default function EnumFacetFilterUI<TValue = string>(
                 size={'small'}
                 sx={{ aspectRatio: '1 / 1' }}
                 onClick={() => {
-                  setSearchText('')
+                  setSearchTerm('')
                   setShowSearch(true)
                   textInput.current?.focus()
                 }}
@@ -285,7 +284,7 @@ export default function EnumFacetFilterUI<TValue = string>(
       filterIsActive &&
       facetValuesToShow.filter(item => item.isSelected).length === 1
     ) {
-      return facetValuesToShow.filter(item => item.isSelected)[0].displayText
+      return facetValuesToShow.find(item => item.isSelected)!.displayText
     } else {
       return 'Multiple Values Selected'
     }

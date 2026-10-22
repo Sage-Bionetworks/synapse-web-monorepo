@@ -1,6 +1,6 @@
 import { Button, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import { DragDropProvider } from '@dnd-kit/react'
-import { useCallback, useMemo, useState } from 'react'
+import { ReactNode, useCallback, useMemo, useState } from 'react'
 import { isFilterGroup } from '../../utils/types/IsType'
 import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
@@ -167,6 +167,19 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
     error: sqlError,
   } = useQBCombinedSql(summaryMode === 'sql' ? activeTree : null)
 
+  let sqlSummary: ReactNode = (
+    <code className={styles.sqlText}>{combinedSql}</code>
+  )
+  if (sqlError) {
+    sqlSummary = (
+      <span className={styles.sqlError}>
+        Could not load SQL preview: {sqlError.message}
+      </span>
+    )
+  } else if (isSqlPending) {
+    sqlSummary = <span className={styles.sqlPlaceholder}>Loading SQL…</span>
+  }
+
   return (
     <QueryBuilderInternalContextProvider value={contextValue}>
       <DragDropProvider {...dragHandlers}>
@@ -197,17 +210,7 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
               aria-live="polite"
               aria-atomic="true"
             >
-              {summaryMode === 'plain-english' ? (
-                readable
-              ) : sqlError ? (
-                <span className={styles.sqlError}>
-                  Could not load SQL preview: {sqlError.message}
-                </span>
-              ) : isSqlPending ? (
-                <span className={styles.sqlPlaceholder}>Loading SQL…</span>
-              ) : (
-                <code className={styles.sqlText}>{combinedSql}</code>
-              )}
+              {summaryMode === 'plain-english' ? readable : sqlSummary}
             </div>
           </div>
 

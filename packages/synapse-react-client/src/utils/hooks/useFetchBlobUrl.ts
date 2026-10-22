@@ -22,13 +22,15 @@ export function useFetchBlobUrl(url: string | undefined): {
 
   const blobUrl = useCreateUrlForData(blob)
 
+  let normalizedError: Error | undefined
+  if (error instanceof Error) {
+    normalizedError = error
+  } else if (error != null) {
+    normalizedError = new Error(String(error))
+  }
+
   return {
     blobUrl,
-    error:
-      error instanceof Error
-        ? error
-        : error != null
-          ? new Error(String(error))
-          : undefined,
+    error: normalizedError,
   }
 }

@@ -50,6 +50,7 @@ const renderWithContext = (
 ) => {
   const contextValue = { ...mockContextValue, ...contextOverrides }
   return render(
+    // oxlint-disable-next-line react/jsx-no-constructed-context-values -- test-only provider rendered once
     <EntityTreeTableContext.Provider value={contextValue}>
       <table>
         <tbody>

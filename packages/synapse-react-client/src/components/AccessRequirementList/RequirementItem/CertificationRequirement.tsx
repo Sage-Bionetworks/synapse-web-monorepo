@@ -1,7 +1,10 @@
 import { useGetCurrentUserBundle } from '@/synapse-queries'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
 import { Link, Typography } from '@mui/material'
-import { RequirementItemStatus } from '../AccessApprovalCheckMark'
+import {
+  getRequirementItemStatus,
+  RequirementItemStatus,
+} from '../AccessApprovalCheckMark'
 import RequirementItem from './RequirementItem'
 
 /**
@@ -13,11 +16,10 @@ import RequirementItem from './RequirementItem'
 export default function CertificationRequirement() {
   const { data: userBundle, isLoading } = useGetCurrentUserBundle()
 
-  const requirementItemState: RequirementItemStatus = isLoading
-    ? RequirementItemStatus.LOADING
-    : userBundle?.isCertified
-      ? RequirementItemStatus.COMPLETE
-      : RequirementItemStatus.LOCKED
+  const requirementItemState: RequirementItemStatus = getRequirementItemStatus(
+    isLoading,
+    userBundle?.isCertified,
+  )
 
   return (
     <RequirementItem status={requirementItemState}>

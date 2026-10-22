@@ -6,6 +6,7 @@ import { Upload } from '@aws-sdk/lib-storage'
  * Directly (from the client runtime, e.g. browser) uploads a file to an
  * S3-compatible storage service.
  */
+// oxlint-disable-next-line max-params -- exported API; an options object would break existing callers
 export async function uploadToS3(
   blob: Blob,
   fileKey: string,

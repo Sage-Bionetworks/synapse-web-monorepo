@@ -35,7 +35,7 @@ function TermsAndConditionsItem(props: TermsAndConditionsItemProps) {
     true, // force this query to be run as the anonymous user (without an access token)
   )
 
-  const [showDesc, setShowDes] = useState<boolean>(false)
+  const [showDesc, setShowDesc] = useState<boolean>(false)
   const [isChecked, setIsChecked] = useState<boolean>(false)
   let mounted = true
 
@@ -51,7 +51,7 @@ function TermsAndConditionsItem(props: TermsAndConditionsItemProps) {
   const handleShowDescLink = (e: MouseEvent) => {
     e.preventDefault()
     if (enabled) {
-      setShowDes(!showDesc)
+      setShowDesc(!showDesc)
     }
   }
 

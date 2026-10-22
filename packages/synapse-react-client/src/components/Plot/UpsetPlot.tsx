@@ -195,7 +195,7 @@ export function UpsetPlot({
         // elems looks like [{ name: 'A', sets: ['S1', 'S2'] }, { name: 'B', sets: ['S1'] }, ...]
         const sets = extractSets(elems)
         // PORTALS-1673: sort by assay name
-        const sortedSets = (sets as ISet[]).sort((a, b) => {
+        const sortedSets = (sets as ISet[]).toSorted((a, b) => {
           return ('' + b.name).localeCompare(a.name)
         })
 
@@ -206,7 +206,7 @@ export function UpsetPlot({
           order: 'cardinality:desc',
         })
         if (!isCancelled) {
-          setData({ sets, combinations })
+          setData({ sets: sortedSets, combinations })
           setIsLoading(false)
         }
       } catch (err) {
@@ -265,7 +265,7 @@ export function UpsetPlot({
               color={plotColor}
               selectionColor={selectionColor}
               hoverHintColor={'orange'}
-              hasSelectionOpacity={selectionOpacity ? selectionOpacity : 0.3}
+              hasSelectionOpacity={selectionOpacity || 0.3}
               // alternatingBackgroundColor={false}
               setName={setName}
               combinationName={combinationName}
