@@ -92,10 +92,6 @@ function renderComponent(wrapperProps?: SynapseContextType) {
 }
 
 describe('RequestDownloadCard tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   it('Show a Request Download Card', async () => {
     setupEntityBundleResponse(false)
     renderComponent()

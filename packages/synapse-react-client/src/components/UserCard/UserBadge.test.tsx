@@ -1,4 +1,4 @@
-import { server } from '@/mocks/msw/server'
+import '@/mocks/msw/server'
 import {
   MOCK_USER_NAME,
   mockUserProfileData,
@@ -15,11 +15,6 @@ const renderComponent = (props: UserBadgeProps) => {
 }
 
 describe('UserBadge tests', () => {
-  // Handle the msw lifecycle:
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   beforeEach(() => {
     vi.useRealTimers()
   })

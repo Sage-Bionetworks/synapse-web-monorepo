@@ -76,10 +76,6 @@ function mockCreateEntityHandler(respond: (body: Entity) => Response) {
 }
 
 describe('useCreateFolderPath', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   function renderHook() {
     return _renderHook(() => useCreateFolderPath(), {
       wrapper: createWrapper(),

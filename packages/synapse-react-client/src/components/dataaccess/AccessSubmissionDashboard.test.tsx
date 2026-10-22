@@ -69,9 +69,7 @@ function renderComponent(initialEntries: string[] = ['/']) {
 }
 
 describe('AccessSubmissionDashboard tests', () => {
-  beforeAll(() => {
-    server.listen()
-
+  beforeEach(() => {
     server.use(
       http.post(
         `${getEndpoint(
@@ -107,10 +105,8 @@ describe('AccessSubmissionDashboard tests', () => {
     )
   })
   afterEach(() => {
-    server.restoreHandlers()
     window.history.pushState(null, document.title, '/')
   })
-  afterAll(() => server.close())
 
   it('Renders inputFields and the table component', async () => {
     renderComponent()

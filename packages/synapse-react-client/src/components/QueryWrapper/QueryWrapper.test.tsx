@@ -1,7 +1,7 @@
+import '@/mocks/msw/server'
 import React from 'react'
 import mockQueryResponseData from '@/mocks/mockQueryResponseData'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
@@ -75,7 +75,6 @@ const initialQueryRequest: QueryBundleRequest = {
 }
 
 describe('QueryWrapper', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     selectedRows = undefined
     setSelectedRows = undefined
@@ -86,8 +85,6 @@ describe('QueryWrapper', () => {
 
     registerTableQueryResult(initialQueryRequest.query, mockQueryResponseData)
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   describe('basic functionality', () => {
     it('renders without crashing', async () => {

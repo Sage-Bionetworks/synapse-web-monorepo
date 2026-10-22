@@ -9,6 +9,7 @@ import {
   Divider,
   FormControlLabel,
   IconButton,
+  Link,
   Stack,
   TextField,
   Typography,
@@ -25,13 +26,23 @@ import * as SynapseClient from 'synapse-react-client/synapse-client/SynapseClien
 import { displayToast } from 'synapse-react-client/components/ToastMessage/ToastMessage'
 import { useGetCurrentRealm } from 'synapse-react-client/synapse-queries/realm/useRealmPrincipals'
 import { SYNAPSE_REALM } from 'synapse-react-client/utils/SynapseConstants'
+import Cookies from 'js-cookie'
+import { ONE_SAGE_REDIRECT_COOKIE_KEY } from 'synapse-react-client/utils/AppUtils/AppUtils'
+import { useAppContext } from '@/AppContext'
 
 export type ConfigureEmailProps = {
   returnToPath: string
 }
 
+const UNDELIVERABLE_EMAIL_TEXT =
+  'We can’t deliver email to this address. Until you set a working primary address, you won’t receive notifications about your account or data access.'
+const CHOOSE_OR_ADD_EMAIL_TEXT =
+  'Choose another address below, or add a new one, and make it primary.'
+const ADD_EMAIL_TEXT = 'Add a new address and make it primary.'
+
 export const ConfigureEmail = (props: ConfigureEmailProps): React.ReactNode => {
   const { accessToken } = useSynapseContext()
+  const appContext = useAppContext()
   const { data: currentProfile, refetch: refetchCurrentProfile } =
     useGetCurrentUserProfile()
   const { data: primaryEmail, refetch: refetchNotificationEmail } =
@@ -75,8 +86,26 @@ export const ConfigureEmail = (props: ConfigureEmailProps): React.ReactNode => {
         SynapseClient.addEmailAddressStep2(
           hexDecodeEmailToken,
           accessToken,
-        ).then(() => {
-          displayToast('Email has been successfully added', 'success')
+        ).then(async () => {
+          // A quarantined primary means the user is replacing an undeliverable address,
+          // so offer a way back to the source app page they were headed to
+          const { data: notificationEmail } = await refetchNotificationEmail()
+          const returnUrl =
+            Cookies.get(ONE_SAGE_REDIRECT_COOKIE_KEY) ?? appContext.redirectURL
+          if (notificationEmail?.quarantineStatus && returnUrl) {
+            displayToast(
+              <>
+                Email has been successfully added.{' '}
+                <Link href={returnUrl}>
+                  Click here to pick up where you left off.
+                </Link>
+              </>,
+              'success',
+              { autoCloseInMs: 0 },
+            )
+          } else {
+            displayToast('Email has been successfully added', 'success')
+          }
           refetchCurrentProfile()
           history.replaceState(
             {},
@@ -144,10 +173,32 @@ export const ConfigureEmail = (props: ConfigureEmailProps): React.ReactNode => {
               <Box sx={{ padding: '15px 0px' }}>
                 {email}{' '}
                 <Chip
-                  sx={{ color: '#fff', marginLeft: '10px' }}
+                  sx={{
+                    color: '#fff',
+                    backgroundColor: 'var(--synapse-primary-action-color)',
+                    marginLeft: '10px',
+                  }}
                   label="PRIMARY"
-                  color="warning"
                 />
+                {primaryEmail?.quarantineStatus && (
+                  <>
+                    <Chip
+                      sx={{ color: '#fff', marginLeft: '10px' }}
+                      label="UNDELIVERABLE"
+                      color="error"
+                    />
+                    <Typography
+                      variant="smallText1"
+                      color="error"
+                      sx={{ marginTop: '8px' }}
+                    >
+                      {UNDELIVERABLE_EMAIL_TEXT}{' '}
+                      {emails.length > 1
+                        ? CHOOSE_OR_ADD_EMAIL_TEXT
+                        : ADD_EMAIL_TEXT}
+                    </Typography>
+                  </>
+                )}
               </Box>
               <Divider />
             </div>

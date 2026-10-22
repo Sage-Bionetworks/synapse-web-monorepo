@@ -19,10 +19,6 @@ const onBatchFileRequest = vi.fn()
 const onPresignedUrlRequest = vi.fn()
 
 describe('useImageUrl tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   beforeEach(() => {
     vi.clearAllMocks()
   })

@@ -2,6 +2,7 @@ import usePathBefore2FARedirect from '@/hooks/usePathBefore2FARedirect'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import { useApplicationSessionContext } from 'synapse-react-client/utils/AppUtils/session/ApplicationSessionContext'
+import { EMAIL_QUARANTINED_PATH } from '@/hooks/useMaybePromptEmailQuarantine'
 
 export default function useMaybeForceEnable2FA() {
   // Detect if two factor authentication is enabled
@@ -23,7 +24,8 @@ export default function useMaybeForceEnable2FA() {
         location.pathname === '/authenticated/signUpdatedTermsOfUse' ||
         location.pathname === '/authenticated/currentaffiliation' || // user is completing registration flow (affiliation comes before accountcreated)
         location.pathname === '/register1' || // user is in registration flow (unauthenticated)
-        location.pathname === '/register2' // user is in registration flow (unauthenticated)
+        location.pathname === '/register2' || // user is in registration flow (unauthenticated)
+        location.pathname === EMAIL_QUARANTINED_PATH // user is on the email quarantine page
       ) {
         return
       }

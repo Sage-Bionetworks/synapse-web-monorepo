@@ -88,7 +88,6 @@ async function waitForCertificationStateRequested() {
 const userBundleResult = { ...mockUserBundle, isCertified: false }
 
 describe('CertificationQuiz tests', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     server.use(
       getQuizHandler,
@@ -103,10 +102,8 @@ describe('CertificationQuiz tests', () => {
   })
 
   afterEach(() => {
-    server.resetHandlers()
     vi.clearAllMocks()
   })
-  afterAll(() => server.close())
 
   it('Shows loads the certification quiz', async () => {
     mockCertificationState(null, userBundleResult)

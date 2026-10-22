@@ -45,8 +45,7 @@ function renderComponent() {
 }
 
 describe('IDUReport tests', () => {
-  beforeAll(() => {
-    server.listen()
+  beforeEach(() => {
     server.use(
       http.post<{ arId: string }, SubmissionInfoPageRequest>(
         `${getEndpoint(
@@ -62,8 +61,6 @@ describe('IDUReport tests', () => {
       ),
     )
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it('loads more when inView', async () => {
     renderComponent()

@@ -167,9 +167,6 @@ const findDucTemplateButton = async (fileName: string) => {
 
 describe('SetManagedAccessRequirementFields', () => {
   beforeEach(() => vi.clearAllMocks())
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   test('displays existing managed AR', async () => {
     const { checkboxes, buttons, expirationPeriodInput } = await setUp()

@@ -100,7 +100,6 @@ function mockVerificationPrecheckService(reverificationRequired: boolean) {
 }
 
 describe('Create OAuth Client', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     server.use(
       http.post(
@@ -124,10 +123,8 @@ describe('Create OAuth Client', () => {
   })
   afterEach(() => {
     vi.clearAllMocks()
-    server.restoreHandlers()
     updatedClient.mockClear()
   })
-  afterAll(() => server.close())
 
   it('Shows the modal', async () => {
     renderComponent()

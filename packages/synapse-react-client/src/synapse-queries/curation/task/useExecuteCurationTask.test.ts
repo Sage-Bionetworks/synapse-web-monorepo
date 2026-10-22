@@ -7,9 +7,6 @@ import { getExecuteCurationTaskHandlers } from '@/mocks/msw/handlers/curationTas
 import { useExecuteCurationTask } from './useCurationTask'
 
 describe('useExecuteCurationTask', () => {
-  beforeAll(() => server.listen())
-  afterAll(() => server.close())
-
   it('starts the execution, polls to completion, and resolves with the response', async () => {
     server.use(
       ...getExecuteCurationTaskHandlers({ taskId: MOCK_CURATION_TASK_ID }),

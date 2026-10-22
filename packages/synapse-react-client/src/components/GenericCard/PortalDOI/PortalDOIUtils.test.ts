@@ -11,7 +11,7 @@ import {
 import { DoiAssociation, DoiObjectType } from '@sage-bionetworks/synapse-client'
 import { renderHook, waitFor } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
-import { afterAll, afterEach, beforeAll, describe, it, vi } from 'vitest'
+import { describe, it, vi } from 'vitest'
 
 const repoOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
@@ -32,10 +32,6 @@ function mockBackend(
 }
 
 describe('PortalDOIUtils', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   describe('useShowDoiCardLabel', () => {
     const mockPortalId = 'mockedPortalId'
     const mockResourceId = 'mockedResourceId'

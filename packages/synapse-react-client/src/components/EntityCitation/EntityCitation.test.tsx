@@ -103,12 +103,9 @@ function mockBackend(
 }
 
 describe('EntityCitation tests', () => {
-  beforeAll(() => server.listen())
   afterEach(() => {
-    server.resetHandlers()
     vi.clearAllMocks()
   })
-  afterAll(() => server.close())
 
   it('renders "Cite page" button when only entity DOI exists', async () => {
     mockBackend({ [mockEntityWithVersionedDoiId]: doiEntitySuccess })

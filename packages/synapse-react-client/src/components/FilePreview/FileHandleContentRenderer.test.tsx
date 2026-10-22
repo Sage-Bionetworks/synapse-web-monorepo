@@ -47,7 +47,6 @@ const PRESIGNED_URL = 'https://fake-presigned-url.not-real.gov/file'
 describe('FileHandleContentRenderer tests', () => {
   const onGetPresignedUrl = vi.fn<() => void>()
 
-  beforeAll(() => server.listen())
   beforeEach(() => {
     onGetPresignedUrl.mockClear()
     server.use(
@@ -78,8 +77,6 @@ describe('FileHandleContentRenderer tests', () => {
       }),
     )
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it('Will render HTML content', async () => {
     const fileHandle: FileHandle = {
