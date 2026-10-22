@@ -107,6 +107,7 @@ function renderComponent() {
 }
 
 // TODO: Fix flakiness
+// oxlint-disable-next-line vitest/no-disabled-tests -- all 4 tests fail when enabled (author/replies never render)
 describe.skip('Discussion Thread test', () => {
   beforeEach(() => {
     server.use(
@@ -124,7 +125,7 @@ describe.skip('Discussion Thread test', () => {
         )}`,
         ({ request }) => {
           const offset = new URL(request.url).searchParams.get('offset') ?? '0'
-          return HttpResponse.json(mockThread[parseInt(offset)], {
+          return HttpResponse.json(mockThread[Number.parseInt(offset)], {
             status: 200,
           })
         },

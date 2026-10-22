@@ -169,7 +169,7 @@ describe('EntityCitation tests', () => {
     screen.getByRole('dialog', { name: /Citation options/i })
   })
 
-  // Skipped, see PORTALS-3746
+  // oxlint-disable-next-line vitest/no-disabled-tests -- fails until PORTALS-3746 is fixed
   it.skip('Versioned Entity DOI', async () => {
     mockBackend({ [mockEntityWithVersionedDoiId]: versionedDoiEntitySuccess })
     render(
