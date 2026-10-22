@@ -156,6 +156,8 @@ export function DownloadOptions(props: DownloadOptionsProps) {
         darkTheme={darkTheme}
         icon={'download'}
         menuItems={downloadMenuItems}
+        // Every option opens a dialog or starts an action, so the menu closes once one is chosen.
+        closeMenuOnClick
       />
       {showLoginModal && (
         <DownloadLoginModal
