@@ -1,5 +1,5 @@
+import '@/mocks/msw/server'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { server } from '@/mocks/msw/server'
 import mockRejectionReasonsTableQueryResultBundle from '@/mocks/query/mockRejectionReasonsTableQueryResultBundle'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen, waitFor, within } from '@testing-library/react'
@@ -33,14 +33,11 @@ function renderComponent(
 
 describe('CannedRejectionDialog', () => {
   beforeAll(() => {
-    server.listen()
     registerTableQueryResult(
       { sql: `SELECT * FROM ${props.tableId}` },
       mockRejectionReasonsTableQueryResultBundle,
     )
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it('Shows options, generates an email, then invokes a callback', async () => {
     renderComponent()

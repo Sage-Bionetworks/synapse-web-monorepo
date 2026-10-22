@@ -1,7 +1,7 @@
+import '@/mocks/msw/server'
 import { MOCK_TABLE_ENTITY_ID } from '@/mocks/entity/mockTableEntity'
 import mockQueryResponseData from '@/mocks/mockQueryResponseData'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { DEFAULT_PAGE_SIZE, VALUE_NOT_SET } from '@/utils/SynapseConstants'
 import { Collapse as MockCollapse, CollapseProps } from '@mui/material'
@@ -123,14 +123,11 @@ function createTestProps(
 }
 
 describe('RangeFacetFilter tests', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     currentQueryContext = undefined
     capturedOnApplyClicked = undefined
     registerTableQueryResult(queryRequest.query, mockQueryResponseData)
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   let props: RangeFacetFilterProps
   function init(overrides?: RangeFacetFilterProps) {

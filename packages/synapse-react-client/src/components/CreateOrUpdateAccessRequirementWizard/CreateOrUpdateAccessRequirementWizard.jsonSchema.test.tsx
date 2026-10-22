@@ -40,10 +40,6 @@ async function editJsonSchemaAccessRequirement(schemaDrivenEnabled: boolean) {
 }
 
 describe('CreateOrUpdateAccessRequirementWizard for a JsonSchemaAccessRequirement', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   test('continues to the managed AR settings and reviewer permissions when the feature is enabled', async () => {
     const { user } = await editJsonSchemaAccessRequirement(true)
 

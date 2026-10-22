@@ -36,12 +36,9 @@ describe('oAuthManagement tests', () => {
       )
     })
 
-  beforeAll(() => server.listen())
   afterEach(() => {
-    server.resetHandlers()
     vi.clearAllMocks()
   })
-  afterAll(() => server.close())
 
   it('Renders all headers and a row of data', async () => {
     server.use(mockClientListHandler())

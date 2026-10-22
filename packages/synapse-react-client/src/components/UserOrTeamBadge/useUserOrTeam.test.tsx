@@ -59,7 +59,6 @@ vi.mock('@/utils/hooks/usePreFetchResource', () => ({
 const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
 describe('useUserOrTeam', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     server.use(
       ...getUserProfileHandlers(REPO_ENDPOINT),
@@ -67,8 +66,6 @@ describe('useUserOrTeam', () => {
       ...getRealmHandlers(REPO_ENDPOINT),
     )
   })
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   describe('when given an individual user ID', () => {
     it('resolves and returns the userGroupHeader', async () => {

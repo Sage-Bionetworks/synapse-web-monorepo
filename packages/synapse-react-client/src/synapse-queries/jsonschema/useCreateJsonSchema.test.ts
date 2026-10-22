@@ -27,13 +27,10 @@ function renderUseCreateJsonSchema() {
 describe('useCreateJsonSchema', () => {
   const registeredSchemas: JSONSchema7[] = []
 
-  beforeAll(() => server.listen())
-  afterAll(() => server.close())
   beforeEach(() => {
     registeredSchemas.length = 0
     server.use(...getCreateSchemaHandlers(REPO_ENDPOINT, registeredSchemas))
   })
-  afterEach(() => server.resetHandlers())
 
   it('resolves with the new version once the job completes', async () => {
     let pollCount = 0

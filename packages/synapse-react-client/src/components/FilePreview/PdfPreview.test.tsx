@@ -35,7 +35,6 @@ const mockFHA: FileHandleAssociation = {
 describe('PDF Preview tests', () => {
   const onGetPresignedUrl = vi.fn<() => void>()
 
-  beforeAll(() => server.listen())
   beforeEach(() => {
     onGetPresignedUrl.mockClear()
     server.use(
@@ -59,8 +58,6 @@ describe('PDF Preview tests', () => {
       }),
     )
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it('PDF is rendered', async () => {
     const { container } = renderComponent({

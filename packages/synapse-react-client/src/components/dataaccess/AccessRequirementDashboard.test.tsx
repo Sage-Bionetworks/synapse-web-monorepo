@@ -1,5 +1,5 @@
+import '@/mocks/msw/server'
 import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
-import { server } from '@/mocks/msw/server'
 import { MOCK_USER_ID, MOCK_USER_NAME } from '@/mocks/user/mock_user_profile'
 import SynapseClient from '@/synapse-client'
 import { getLocationTracker } from '@/testutils/LocationTracker'
@@ -56,10 +56,6 @@ function renderComponent(
 }
 
 describe('AccessRequirementDashboard tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   it('Renders input fields and the table component', async () => {
     const mockOnCreateNewAR = vi.fn()
     renderComponent({

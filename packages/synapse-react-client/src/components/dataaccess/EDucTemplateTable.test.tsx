@@ -32,10 +32,6 @@ function templatesHandler(templates = [mockEDucTemplate1, mockEDucTemplate2]) {
 }
 
 describe('EDucTemplateTable', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   it('renders template rows with name, description, and dates', async () => {
     server.use(templatesHandler())
     renderComponent()

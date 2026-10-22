@@ -55,10 +55,6 @@ function stepPropertyKeys(form: GeneratedSubmissionForm | undefined) {
 }
 
 describe('useGeneratedSubmissionForm', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   it('stays idle for a submission without schemaData, even when it records a template', () => {
     registerTemplateVersions([mockClinicalTemplate])
     const { schemaData: _omitted, ...submissionWithoutSchemaData } =

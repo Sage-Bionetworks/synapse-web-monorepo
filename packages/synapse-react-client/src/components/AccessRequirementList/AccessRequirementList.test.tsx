@@ -53,10 +53,6 @@ const sortAccessRequirementsByCompletionSpy = vi.spyOn(
 )
 
 describe('AccessRequirementList tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   async function init(props: AccessRequirementListProps) {
     // We must await asynchronous events for our assertions to pass
     // oxlint-disable-next-line @typescript-eslint/require-await

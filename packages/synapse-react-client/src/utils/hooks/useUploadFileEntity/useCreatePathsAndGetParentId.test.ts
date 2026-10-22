@@ -43,10 +43,6 @@ function mockExistingFolders(folderIds: Record<string, string>) {
 }
 
 describe('useCreatePathsAndGetParentId', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   function renderHook() {
     return _renderHook(() => useCreatePathsAndGetParentId(), {
       wrapper: createWrapper(),

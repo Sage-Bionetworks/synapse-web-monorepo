@@ -31,8 +31,7 @@ function renderComponent(props: AccessApprovalsTableProps) {
 }
 
 describe('AccessApprovalsTable tests', () => {
-  beforeAll(() => {
-    server.listen()
+  beforeEach(() => {
     server.use(
       http.post<never, AccessApprovalSearchRequest>(
         `${getEndpoint(
@@ -57,10 +56,8 @@ describe('AccessApprovalsTable tests', () => {
     )
   })
   afterEach(() => {
-    server.restoreHandlers()
     vi.clearAllMocks()
   })
-  afterAll(() => server.close())
 
   it('Renders all fields', async () => {
     renderComponent({

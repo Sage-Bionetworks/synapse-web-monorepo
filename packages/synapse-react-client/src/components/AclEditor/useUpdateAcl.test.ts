@@ -1,4 +1,4 @@
-import { server } from '@/mocks/msw/server'
+import '@/mocks/msw/server'
 import { MOCK_USER_ID, MOCK_USER_ID_2 } from '@/mocks/user/mock_user_profile'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { useGlobalIsEditingContext } from '@/utils/context/GlobalIsEditingContext'
@@ -38,10 +38,6 @@ describe('useUpdateAcl', () => {
       mockSetIsEditing,
     }
   }
-
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it('handles adding a new resource access item', async () => {
     const { result, mockSetIsEditing } = renderHook()

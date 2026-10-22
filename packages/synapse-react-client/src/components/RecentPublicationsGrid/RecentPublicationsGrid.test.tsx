@@ -104,10 +104,6 @@ describe('RecentPublicationsGrid Tests', () => {
     ],
   }
 
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   beforeEach(() => {
     mockQueryRequest.mockClear()
     server.use(

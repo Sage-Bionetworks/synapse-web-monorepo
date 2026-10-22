@@ -64,10 +64,6 @@ function renderComponent() {
 }
 
 describe('UserChallenges tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   it('loads more challenges when inView', async () => {
     const onChallengeRequest = vi.fn()
     const challengePages = [page1, page2]

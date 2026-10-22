@@ -1,7 +1,7 @@
+import '@/mocks/msw/server'
 import { SHOW_MORE_BUTTON_TEXT } from '@/components/layout/InfiniteTableLayout'
 import { MOCK_FORUM_ID } from '@/mocks/discussion/mock_discussion'
 import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
-import { server } from '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SubscriptionObjectType, Topic } from '@sage-bionetworks/synapse-types'
@@ -30,15 +30,9 @@ function renderComponent() {
 }
 
 describe('Forum Table test', () => {
-  beforeAll(() => {
-    server.listen()
-  })
-
   afterEach(() => {
-    server.resetHandlers()
     vi.clearAllMocks()
   })
-  afterAll(() => server.close())
 
   it('Renders all headers and a row of data', async () => {
     renderComponent()

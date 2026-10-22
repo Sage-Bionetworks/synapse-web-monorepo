@@ -145,13 +145,10 @@ async function typeAndSubmitTOTP(
 }
 
 describe('ChangePassword tests', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => vi.clearAllMocks())
   beforeEach(() => {
     server.use(getFeatureFlagsOverride())
   })
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   it('allows changing password', async () => {
     server.use(

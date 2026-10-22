@@ -26,10 +26,6 @@ describe('DirectDownload: basic functionality', () => {
     associatedObjectType: FileHandleAssociateType.FileEntity,
   }
 
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   const batchFileResponse: BatchFileResult = {
     requestedFiles: [
       {

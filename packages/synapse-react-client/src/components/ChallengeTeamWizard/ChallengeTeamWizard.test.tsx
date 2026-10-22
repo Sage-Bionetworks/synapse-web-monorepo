@@ -1,5 +1,5 @@
+import '@/mocks/msw/server'
 import mockProject from '@/mocks/entity/mockProject'
-import { server } from '@/mocks/msw/server'
 import {
   mockTeamData2,
   mockTeamData3,
@@ -49,12 +49,9 @@ function renderComponent() {
 }
 
 describe('ChallengeTeamWizard tests', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     vi.clearAllMocks()
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it('Shows the modal and starts on the "select team" step', async () => {
     const { dialog } = renderComponent()

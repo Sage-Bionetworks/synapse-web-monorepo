@@ -12,9 +12,12 @@ import {
   useGetEntityChildrenInfinite,
 } from './useGetEntityChildren'
 
-vi.mock('@/synapse-client', function () {
+vi.mock(import('@/synapse-client'), async importOriginal => {
+  const actual = await importOriginal()
   return {
+    ...actual,
     default: {
+      ...actual.default,
       getEntityChildren: vi.fn(),
     },
   }
