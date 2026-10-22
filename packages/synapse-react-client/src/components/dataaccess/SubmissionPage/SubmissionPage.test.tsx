@@ -157,7 +157,6 @@ const mockAccessApproval: AccessApproval = {
 }
 
 describe('Submission Page tests', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     // Configure MSW
     server.use(
@@ -248,10 +247,8 @@ describe('Submission Page tests', () => {
     )
   })
   afterEach(() => {
-    server.resetHandlers()
     vi.clearAllMocks()
   })
-  afterAll(() => server.close())
 
   it('Renders all fields', async () => {
     renderComponent({

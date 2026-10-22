@@ -92,12 +92,9 @@ async function selectSchemaRow(
 describe('JsonSchemaPicker', () => {
   let restoreVirtualizedTableLayout: () => void
   beforeAll(() => {
-    server.listen()
     restoreVirtualizedTableLayout = mockVirtualizedTableLayout()
   })
-  afterEach(() => server.resetHandlers())
   afterAll(() => {
-    server.close()
     restoreVirtualizedTableLayout()
   })
   beforeEach(() => {

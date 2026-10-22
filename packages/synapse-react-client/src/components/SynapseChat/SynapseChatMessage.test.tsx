@@ -62,10 +62,6 @@ function renderComponent(
 }
 
 describe('SynapseChatMessage', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   it('renders the known user message even before the async job has been registered (chatJobId undefined)', () => {
     render(
       <SynapseChatMessage

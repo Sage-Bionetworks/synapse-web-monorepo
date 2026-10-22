@@ -71,10 +71,6 @@ async function createWebhook(user: ReturnType<typeof userEvent.setup>) {
 }
 
 describe('WebhookDashboard', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   beforeEach(() => {
     webhookService.clear()
   })

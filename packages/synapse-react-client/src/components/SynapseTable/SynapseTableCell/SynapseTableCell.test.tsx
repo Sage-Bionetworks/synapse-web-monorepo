@@ -117,8 +117,7 @@ const mockEntityIdListComponent = vi
   })
 
 describe('SynapseTableCell tests', () => {
-  beforeAll(() => {
-    server.listen()
+  beforeEach(() => {
     registerTableQueryResult(lastQueryRequest.query, queryResultBundle)
     server.use(
       http.get(
@@ -173,8 +172,6 @@ describe('SynapseTableCell tests', () => {
       ),
     )
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   const MOCK_DATE_VALUE = '1581360939000'
   const MOCKED_DATE_LIST = `[${MOCK_DATE_VALUE}]`

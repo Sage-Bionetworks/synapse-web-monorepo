@@ -63,13 +63,10 @@ const mockSearchResult = {
 describe('RORInstitutionField', () => {
   const user = userEvent.setup({ advanceTimers: vi.runAllTimers })
   beforeAll(() => {
-    server.listen()
     vi.useFakeTimers()
   })
-  afterEach(() => server.resetHandlers())
   afterAll(() => {
     vi.useRealTimers()
-    server.close()
   })
   beforeEach(() => {
     server.use(

@@ -1,3 +1,4 @@
+import '@/mocks/msw/server'
 import {
   mockACTAccessRequirement,
   mockLockAccessRequirement,
@@ -9,7 +10,6 @@ import {
 } from '@/mocks/accessRequirement/mockAccessRequirements'
 import mockProjectData from '@/mocks/entity/mockProject'
 import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
-import { server } from '@/mocks/msw/server'
 import { MOCK_USER_NAME } from '@/mocks/user/mock_user_profile'
 import SynapseClient from '@/synapse-client'
 import { createWrapperAndQueryClient } from '@/testutils/TestingLibraryUtils'
@@ -57,16 +57,9 @@ function renderComponent(props: AccessRequirementTableProps) {
 }
 
 describe('Access Requirement Table tests', () => {
-  beforeAll(() => {
-    server.listen()
-  })
-
   afterEach(() => {
-    server.restoreHandlers()
     vi.clearAllMocks()
   })
-
-  afterAll(() => server.close())
 
   it('Passes along props to the search request', async () => {
     const nameOrID = 'a 1234567'

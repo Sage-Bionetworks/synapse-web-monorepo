@@ -1,7 +1,7 @@
+import '@/mocks/msw/server'
 import TableQueryEcosystem from '@/components/Ecosystem/TableQueryEcosystem'
 import { ImageFileHandle } from '@/components/widgets/ImageFileHandle'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { Query, QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
@@ -70,12 +70,9 @@ const query: Query = {
 }
 
 describe('TableQueryEcosystem', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     registerTableQueryResult(query, tableQueryResult)
   })
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   it('displays data from a table', async () => {
     render(<TableQueryEcosystem query={query} />, { wrapper: createWrapper() })

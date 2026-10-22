@@ -26,7 +26,6 @@ describe('test EvaluationEditor', () => {
   const onDeleteEvaluation = vi.fn()
   let user: ReturnType<(typeof userEvent)['setup']>
   beforeAll(() => {
-    server.listen()
     user = userEvent.setup({
       pointerEventsCheck: PointerEventsCheckLevel.Never,
     })
@@ -93,11 +92,7 @@ describe('test EvaluationEditor', () => {
     )
   })
   afterEach(() => {
-    server.restoreHandlers()
     vi.clearAllMocks()
-  })
-  afterAll(() => {
-    server.close()
   })
 
   test('retrieve evaluation from API if evaluationId is provided', async () => {

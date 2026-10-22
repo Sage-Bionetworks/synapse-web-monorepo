@@ -76,7 +76,7 @@ export function getGridHandlers(backendOrigin: string) {
 
     // Handler for GridSessionReplica
     http.post<{ sessionId: string }, CreateReplicaRequest>(
-      `${backendOrigin}/repo/v1/grid/:sessionId/replica`,
+      `${backendOrigin}/repo/v1/grid/session/:sessionId/replica`,
       async ({ request }) => {
         const { gridSessionId } = await request.json()
 
@@ -106,8 +106,8 @@ export function getGridHandlers(backendOrigin: string) {
     ),
 
     // Handler for Grid presigned URL
-    http.get<{ sessionId: string }>(
-      `${backendOrigin}/repo/v1/grid/:sessionId/presignedUrl`,
+    http.post<{ sessionId: string }>(
+      `${backendOrigin}/repo/v1/grid/session/:sessionId/presigned/url`,
       ({ params }) => {
         const { sessionId } = params
 

@@ -41,7 +41,6 @@ describe('useCreateTableFromCsv', () => {
   const mockTableUpdateTransaction =
     vi.fn<(request: TableUpdateTransactionRequest) => void>()
 
-  beforeAll(() => server.listen())
   beforeEach(() => {
     server.use(
       ...generateAsyncJobHandlers(
@@ -69,10 +68,8 @@ describe('useCreateTableFromCsv', () => {
     )
   })
   afterEach(() => {
-    server.resetHandlers()
     vi.clearAllMocks()
   })
-  afterAll(() => server.close())
 
   it('creates column models, entity, then runs the table transaction', async () => {
     const parentId = 'syn456'

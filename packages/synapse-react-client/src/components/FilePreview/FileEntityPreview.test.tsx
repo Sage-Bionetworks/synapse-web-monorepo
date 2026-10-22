@@ -2,15 +2,9 @@ import mockDatasetData from '@/mocks/entity/mockDataset'
 import mockFileEntityData from '@/mocks/entity/mockFileEntity'
 import { MOCK_FILE_HANDLE_ID } from '@/mocks/mock_file_handle'
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '@/utils/context/SynapseContext'
 import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '@/utils/functions/getEndpoint'
-import {
-  BatchFileResult,
   EntityBundle,
   FileEntity,
   FileHandleAssociateType,
@@ -18,7 +12,6 @@ import {
   S3FileHandle,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, within } from '@testing-library/react'
-import { http, HttpResponse } from 'msw'
 import FileEntityPreview, { FileEntityPreviewProps } from './FileEntityPreview'
 import * as FileHandleContentRendererModule from './FileHandleContentRenderer'
 import { PreviewRendererType } from './PreviewRendererType'
@@ -41,8 +34,6 @@ function renderComponent(
     wrapper: createWrapper(wrapperProps),
   })
 }
-
-const PRESIGNED_URL = 'https://fake-presigned-url.not-real.gov/file'
 
 const MOCK_PREVIEW_FILE_HANDLE_ID = '1234'
 
@@ -107,38 +98,6 @@ const entityBundle: EntityBundle = {
 }
 
 describe('FileHandleContentRenderer tests', () => {
-  beforeAll(() => server.listen())
-  beforeEach(() => {
-    server.use(
-      // Handler to return the presigned URL for the requested file
-      http.post(
-        `${getEndpoint(
-          BackendDestinationEnum.REPO_ENDPOINT,
-        )}/file/v1/fileHandle/batch`,
-        () => {
-          const result: BatchFileResult = {
-            requestedFiles: [
-              {
-                fileHandleId: MOCK_FILE_HANDLE_ID,
-                preSignedURL: PRESIGNED_URL,
-              },
-            ],
-          }
-          return HttpResponse.json(result, { status: 200 })
-        },
-      ),
-      // Handler for the presigned URL to return the file contents
-      http.get(PRESIGNED_URL, () => {
-        return new Response('file contents here', {
-          status: 200,
-          headers: { 'Content-Type': 'text/plain' },
-        })
-      }),
-    )
-  })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   it('Will render the original file handle HTML content', async () => {
     const fileHandleAssociation: FileHandleAssociation = {
       fileHandleId: htmlFileHandle.id,

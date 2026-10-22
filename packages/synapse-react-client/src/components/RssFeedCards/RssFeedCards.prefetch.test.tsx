@@ -29,10 +29,6 @@ const RSS_XML = `<?xml version="1.0" encoding="UTF-8"?>
 </rss>`
 
 describe('prefetchRssFeed', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   beforeEach(() => {
     server.use(
       http.get(RSS_URL + '/', info => {

@@ -7,7 +7,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
 import { delay, http } from 'msw'
-import { afterAll, afterEach, beforeAll, describe, it } from 'vitest'
+import { describe, it } from 'vitest'
 import CroissantButton from './CroissantButton'
 
 const CROISSANT_TABLE_SQL = 'SELECT * FROM syn65903895'
@@ -51,10 +51,6 @@ function renderComponent() {
 }
 
 describe('CroissantButton', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   it('Displays the button when croissantUrl is available', async () => {
     registerTableQueryResult(
       { sql: CROISSANT_TABLE_SQL },

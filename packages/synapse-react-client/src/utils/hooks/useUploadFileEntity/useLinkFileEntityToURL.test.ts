@@ -65,10 +65,6 @@ function mockEndpoints(existingEntity: Entity) {
 }
 
 describe('useLinkFileEntityToURL', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   function renderHook() {
     return _renderHook(() => useLinkFileEntityToURL(), {
       wrapper: createWrapper(),

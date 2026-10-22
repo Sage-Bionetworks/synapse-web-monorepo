@@ -1,5 +1,5 @@
+import '@/mocks/msw/server'
 import { MOCK_DOI } from '@/mocks/doi/MockDoi'
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -44,9 +44,6 @@ async function setUp(props: ErrorPageProps, isAuthenticated: boolean) {
 
 describe('ErrorPage: basic functionality', () => {
   beforeEach(() => vi.clearAllMocks())
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
   it('403 error on an entity', async () => {
     const mockWindowOpen = vi.fn()
     window.open = mockWindowOpen

@@ -47,9 +47,6 @@ function getKeyField() {
 }
 
 describe('FormTemplateEditor', () => {
-  beforeAll(() => server.listen())
-  afterAll(() => server.close())
-
   beforeEach(() => {
     vi.clearAllMocks()
     createdSchemas.length = 0
@@ -62,8 +59,6 @@ describe('FormTemplateEditor', () => {
     )
     listSchemaVersionsSpy.mockResolvedValue({ page: [] })
   })
-
-  afterEach(() => server.resetHandlers())
 
   it('derives the property key from the question label until it is overridden', async () => {
     const user = userEvent.setup()
