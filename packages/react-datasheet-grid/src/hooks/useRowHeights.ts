@@ -80,9 +80,8 @@ export const useRowHeights = <T>({
           return calculatedHeights.current[index]
         }
 
-        let lastBottom =
-          calculatedHeights.current[calculatedHeights.current.length - 1].top +
-          calculatedHeights.current[calculatedHeights.current.length - 1].height
+        const lastRow = calculatedHeights.current.at(-1)
+        let lastBottom = lastRow ? lastRow.top + lastRow.height : 0
 
         for (let i = calculatedHeights.current.length; i <= index; i++) {
           const height = rowHeight({ rowIndex: i, rowData: value[i] })
