@@ -57,8 +57,6 @@ const renderAvatar = (props: Omit<UserCardProps, 'size'>) => {
 }
 
 describe('UserCard tests', () => {
-  // Handle the msw lifecycle:
-
   beforeEach(() => {
     vi.useRealTimers()
   })

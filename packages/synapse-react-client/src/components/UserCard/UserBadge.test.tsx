@@ -15,8 +15,6 @@ const renderComponent = (props: UserBadgeProps) => {
 }
 
 describe('UserBadge tests', () => {
-  // Handle the msw lifecycle:
-
   beforeEach(() => {
     vi.useRealTimers()
   })

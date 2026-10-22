@@ -36,8 +36,6 @@ function renderComponent(
 }
 
 describe('MetadataTable tests', () => {
-  // Handle the msw lifecycle:
-
   it('Renders all rows for a project', async () => {
     renderComponent()
     await screen.findByText('Name')

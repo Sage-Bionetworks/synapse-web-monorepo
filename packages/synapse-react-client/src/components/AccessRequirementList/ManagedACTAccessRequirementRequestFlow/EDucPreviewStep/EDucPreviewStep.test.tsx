@@ -202,10 +202,6 @@ function findAllowanceSentence(sentence: string) {
 }
 
 describe('EDucPreviewStep', () => {
-  // resetHandlers, not restoreHandlers: these tests override the quota and precheck endpoints
-  // per case, and `restoreHandlers` leaves `server.use` overrides in place, making the suite
-  // order-dependent.
-
   beforeEach(() => {
     mockOnHide.mockReset()
     mockOnBackClicked.mockReset()

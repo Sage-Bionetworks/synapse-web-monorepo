@@ -274,7 +274,6 @@ describe('Dataset Items Editor tests', () => {
     value: 800,
   })
 
-  // Handle the msw lifecycle:
   beforeAll(() => {
     mockAllIsIntersecting(false)
   })

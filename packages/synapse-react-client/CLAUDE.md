@@ -77,6 +77,12 @@ Cache keys are centralized in `src/synapse-queries/KeyFactory.ts`.
 
 - **Framework**: Vitest + Testing Library (`@testing-library/react`)
 - **API mocking**: MSW (Mock Service Worker) via `src/mocks/msw/server.ts` and per-domain handlers in `src/mocks/msw/handlers/`
+  - **Importing `@/mocks/msw/server` is what turns MSW on for a test file.** The module registers `beforeAll(server.listen)`, `afterEach(server.resetHandlers)` and `afterAll(server.close)` as a side effect, so test files must NOT add their own `server.listen()` / `resetHandlers()` / `restoreHandlers()` / `close()` hooks (a second `listen()` throws `Invariant Violation: ... cannot configure an already enabled network`). A test that needs the network mocked but doesn't call `server.use` itself still needs the side-effect import: `import '@/mocks/msw/server'`.
+  - The server is deliberately not started from `vitest.setup.ts`: that would load every handler and fixture for every test file, including the many that never touch the network.
+  - The server runs with `onUnhandledRequest: 'error'`, so a request with no matching handler fails the test. Add a default handler under `src/mocks/msw/handlers/` (preferred when other tests will need it) or register one with `server.use(...)`.
+  - Handlers are reset after every test, so `server.use(...)` overrides apply to a single test. Register overrides in the test or in `beforeEach`, never in `beforeAll` or at module scope, where they would be dropped after the first test.
+  - If a test replaces a module with `vi.mock` that the shared handlers also import, use a partial mock (`vi.mock(import('...'), async importOriginal => ({ ...(await importOriginal()), ... }))`) so the handlers keep working.
+  - Default handler paths must match an operation in the Synapse OpenAPI spec (method and templated path); a handler with a path that doesn't exist silently matches nothing.
 - **Test wrapper**: Use `createWrapper()` or `createWrapperAndQueryClient()` from `src/testutils/TestingLibraryUtils.tsx` to render components with proper context and an isolated query cache
 - **Hook state mocking**: Don't mock TanStack Query hooks' return values. Run the real hooks inside `createWrapper()` and mock the network with `server.use(...)` (MSW). Faking hook results couples tests to TanStack's result types, which change often. Only mock a hook module when the hook isn't a data-fetching query (e.g. it wraps browser file uploads), and return only the fields the code under test reads
 - Test files live co-located with source: `src/components/Foo/Foo.test.tsx`

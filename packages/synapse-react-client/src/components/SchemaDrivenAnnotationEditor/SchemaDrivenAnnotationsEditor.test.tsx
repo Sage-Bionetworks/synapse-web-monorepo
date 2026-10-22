@@ -109,7 +109,6 @@ function configureSchemaBindingHandler(schemaBinding: JsonSchemaObjectBinding) {
 }
 
 describe('SchemaDrivenAnnotationEditor tests', () => {
-  // Handle the msw lifecycle:
   beforeEach(() => {
     server.use(...getValidationSchemaHandlers())
   })
