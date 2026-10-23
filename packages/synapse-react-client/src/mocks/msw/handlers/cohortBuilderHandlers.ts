@@ -29,6 +29,7 @@ import {
   MOCK_REPO_ORIGIN,
 } from '@/utils/functions/getEndpoint'
 import {
+  AddBatchOfFilesToDownloadListRequest,
   ColumnSingleValueFilterOperator,
   ColumnSingleValueQueryFilter,
   EntityHeader,
@@ -54,6 +55,7 @@ const DOWNLOAD_LIST_ADD_STATS_ASYNC_START =
   '/repo/v1/download/list/add/stats/async/start'
 const DOWNLOAD_LIST_ADD_STATS_ASYNC_GET = (token: string) =>
   `/repo/v1/download/list/add/stats/async/get/${token}`
+const DOWNLOAD_LIST_ADD_BATCH = '/repo/v1/download/list/add'
 
 /** Synthetic files have no file handles; each is reported at this size in Download List statistics. */
 export const MOCK_COHORT_FILE_SIZE_BYTES = 10 * 1024 * 1024
@@ -268,7 +270,8 @@ export function getCohortBuilderHandlers(
   }
 
   // As on the server: the statistics count every row of the query, but only files are added. Datasets are skipped
-  // until the server adds a dataset's files instead (PLFM-9997).
+  // until the server adds a dataset's files instead (PLFM-9997). Adding a VirtualTable query needs a version column,
+  // which these tables don't have, unless the current versions are requested.
   const downloadListHandlers = [
     ...generateAsyncJobHandlers(
       dispatchEntry(
@@ -299,6 +302,15 @@ export function getCohortBuilderHandlers(
       dispatchEntry(
         'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
         request => {
+          if (
+            request.useVersionNumber !== false &&
+            request.query?.selectFileVersionColumn === undefined
+          ) {
+            return new AsyncJobFailure(400, {
+              concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+              reason: `'${profile.dataVirtualTableId}' is not a file view or a dataset, the query.selectFileVersionColumn must be specified`,
+            })
+          }
           const numberOfFilesAdded = countDataRows(request.query, true)
           return numberOfFilesAdded instanceof AsyncJobFailure
             ? numberOfFilesAdded
@@ -315,6 +327,18 @@ export function getCohortBuilderHandlers(
           responsePath: DOWNLOAD_LIST_ADD_ASYNC_GET,
         },
         backendOrigin,
+      },
+    ),
+    http.post(
+      `${backendOrigin}${DOWNLOAD_LIST_ADD_BATCH}`,
+      async ({ request }) => {
+        const { batchToAdd } =
+          (await request.json()) as AddBatchOfFilesToDownloadListRequest
+        const numberOfFilesAdded = batchToAdd.filter(
+          item =>
+            data.references.get(item.fileEntityId)?.referenceType === 'FILE',
+        ).length
+        return HttpResponse.json({ numberOfFilesAdded })
       },
     ),
   ]
