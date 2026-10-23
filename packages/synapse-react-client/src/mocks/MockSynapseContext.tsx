@@ -12,6 +12,7 @@ export const MOCK_CONTEXT_VALUE: SynapseContextType = {
   isAuthenticated: true,
   utcTime: false,
   isInExperimentalMode: false,
+  enabledExperimentalFeatures: [],
   downloadCartPageUrl: '/DownloadCart',
   withErrorBoundary: false,
   keyFactory: new KeyFactory(MOCK_ACCESS_TOKEN),
