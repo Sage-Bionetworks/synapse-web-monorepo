@@ -70,11 +70,6 @@ type CellValue = string | number | readonly string[]
 type VirtualTableRow = Readonly<Record<string, CellValue>>
 type Perspective = 'PARTICIPANTS' | 'DATA'
 
-/** A request as sent over the wire; `aggregateDataPreview` is not yet in the legacy types. */
-export type CohortBuilderQueryBundleRequest = QueryBundleRequest & {
-  aggregateDataPreview?: AggregateDataConfiguration
-}
-
 class MockQueryError extends Error {
   constructor(
     readonly status: number,
@@ -529,7 +524,7 @@ function getPerspective(
 
 function getAggregateConfig(
   profile: CohortBuilderMockProfile,
-  request: CohortBuilderQueryBundleRequest,
+  request: QueryBundleRequest,
   access: CohortBuilderAccess,
 ): AggregateDataConfiguration | undefined {
   // A data manager's preview applies only to callers who already have full access.
@@ -694,7 +689,7 @@ function toCombinedSql(entityId: string, filters: readonly QueryFilter[]) {
 
 function executeQuery(
   data: CohortBuilderSyntheticData,
-  request: CohortBuilderQueryBundleRequest,
+  request: QueryBundleRequest,
   access: CohortBuilderAccess,
 ): QueryResultBundle {
   const perspective = getPerspective(data.profile, request.entityId)
@@ -771,7 +766,7 @@ function executeQuery(
  */
 export function runCohortBuilderMockQuery(
   data: CohortBuilderSyntheticData,
-  request: CohortBuilderQueryBundleRequest,
+  request: QueryBundleRequest,
   access: CohortBuilderAccess,
 ): CohortBuilderMockQueryResult {
   try {

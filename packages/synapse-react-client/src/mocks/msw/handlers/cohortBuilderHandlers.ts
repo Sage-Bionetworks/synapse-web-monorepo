@@ -8,7 +8,6 @@ import {
 } from '@/mocks/cohortBuilder/cohortBuilderMockProfiles'
 import {
   CohortBuilderAccess,
-  CohortBuilderQueryBundleRequest,
   getCohortBuilderColumnModels,
   runCohortBuilderMockQuery,
 } from '@/mocks/cohortBuilder/cohortBuilderMockQueryEngine'
@@ -26,7 +25,10 @@ import {
   getEndpoint,
   MOCK_REPO_ORIGIN,
 } from '@/utils/functions/getEndpoint'
-import { VirtualTable } from '@sage-bionetworks/synapse-types'
+import {
+  QueryBundleRequest,
+  VirtualTable,
+} from '@sage-bionetworks/synapse-types'
 import { http, HttpHandler, HttpResponse } from 'msw'
 import {
   AsyncJobFailure,
@@ -150,7 +152,9 @@ export function getCohortBuilderHandlers(
         request => {
           const result = runCohortBuilderMockQuery(
             data,
-            request as unknown as CohortBuilderQueryBundleRequest,
+            // The async-job mocks type request bodies with the generated client models; the engine uses the legacy
+            // QueryBundleRequest, whose shape matches what the client sends.
+            request as unknown as QueryBundleRequest,
             access,
           )
           return result.status === 200
