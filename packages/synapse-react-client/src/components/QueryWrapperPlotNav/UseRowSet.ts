@@ -7,15 +7,16 @@ import { useQueryContext } from '../QueryContext'
 
 function useGetInfiniteRowSet() {
   const { isInfinite, rowDataInfiniteQueryOptions } = useQueryContext()
+  const enabled = isInfinite && rowDataInfiniteQueryOptions.enabled !== false
   const infiniteQuery = useInfiniteQuery({
     ...rowDataInfiniteQueryOptions,
-    enabled: isInfinite,
+    enabled,
   })
 
   const infiniteQueryProgressMessage = useInfiniteQuery({
     ...rowDataInfiniteQueryOptions,
     select: asyncJob => asyncJob.pages[0].progressMessage,
-    enabled: isInfinite,
+    enabled,
   })
 
   const infiniteQueryRowSet: RowSet | undefined = useMemo(() => {
@@ -41,9 +42,10 @@ function useGetInfiniteRowSet() {
 function useGetPaginatedRowSet() {
   const { isInfinite, rowDataQueryOptions, getCurrentQueryRequest } =
     useQueryContext()
+  const enabled = !isInfinite && rowDataQueryOptions.enabled !== false
   const paginatedQuery = useQuery({
     ...rowDataQueryOptions,
-    enabled: !isInfinite,
+    enabled,
     // Keep the previous data when fetching a new page. We will use `UseQueryResult.isPlaceholderData` to trigger a showing placeholder UI
     placeholderData: prevData => {
       if (prevData) {
@@ -66,7 +68,7 @@ function useGetPaginatedRowSet() {
   const paginatedQueryProgressMessage = useQuery({
     ...rowDataQueryOptions,
     select: asyncJob => asyncJob.progressMessage,
-    enabled: !isInfinite,
+    enabled,
     // Keep the previous data when fetching a new page. We will use `isPlaceholderData` to trigger a showing placeholder UI
     placeholderData: prevData => prevData,
   })
