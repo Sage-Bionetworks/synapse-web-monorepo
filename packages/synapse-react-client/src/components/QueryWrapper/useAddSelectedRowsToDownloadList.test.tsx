@@ -135,13 +135,10 @@ async function renderAddSelectedRows(options: {
 }
 
 describe('useAddSelectedRowsToDownloadList', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     vi.clearAllMocks()
     batches = []
   })
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   it('adds file view rows at their row versions', async () => {
     const sent = await renderAddSelectedRows({
