@@ -5,7 +5,6 @@ import { DataSheetGridRef } from '@sage-bionetworks/react-datasheet-grid'
 import { SelectionWithId } from '@sage-bionetworks/react-datasheet-grid'
 import DataGrid from './DataGrid'
 import { DataGridRow, Operation } from './DataGridTypes'
-import { AGE_MASK_TITLE } from '@/utils/jsonschema/getAgeMaskInfo'
 import {
   getSchemaPropertiesInfo,
   SchemaPropertiesMap,
@@ -538,14 +537,21 @@ export const WithSchemaMismatchedValues: Story = {
   ),
 }
 
-const maskedAgeSchema: JSONSchema7 = {
+const numberOrEnumSchema: JSONSchema7 = {
   type: 'object',
   properties: {
     name: { type: 'string' },
     age: {
       anyOf: [
         { type: 'number', minimum: 0, exclusiveMaximum: 90 },
-        { type: 'string', title: AGE_MASK_TITLE, enum: ['>= 90', 'Unknown'] },
+        { type: 'string', enum: ['>= 90', 'Unknown'] },
+      ],
+    },
+    score: {
+      oneOf: [
+        { type: 'number' },
+        { const: 'N/A', title: 'Not applicable' },
+        { const: 'Not run', title: 'Not run' },
       ],
     },
   },
@@ -553,50 +559,55 @@ const maskedAgeSchema: JSONSchema7 = {
 }
 
 /**
- * An age property whose values are either a number or one of the AgeMask
- * strings. The cell offers the AgeMask strings as options and stores typed or
- * pasted numbers as numbers; the backend rejects ages of 90 and over and
- * numbers stored as text.
+ * Properties whose values are either a number or one of a closed set of
+ * strings, such as a masked age. The cell offers the strings as options and
+ * stores typed or pasted numbers as numbers; the backend rejects out-of-range
+ * numbers and numbers stored as text.
  */
-export const WithMaskedAgeColumn: Story = {
+export const WithNumberOrEnumColumns: Story = {
   render: () => (
     <DataGridStoryWrapper
       initialRowData={[
         {
           __reactKey: '1',
-          name: 'Number',
+          name: 'Numbers',
           age: 43,
+          score: 7.5,
           __validationStatus: 'valid',
         },
         {
           __reactKey: '2',
-          name: 'Masked age',
+          name: 'Allowed strings',
           age: '>= 90',
+          score: 'N/A',
           __validationStatus: 'valid',
         },
         {
           __reactKey: '3',
-          name: 'Unknown age',
+          name: 'Other allowed strings',
           age: 'Unknown',
+          score: 'Not run',
           __validationStatus: 'valid',
         },
         {
           __reactKey: '4',
-          name: 'Number stored as text',
+          name: 'Numbers stored as text',
           age: '43',
+          score: '7.5',
           __validationStatus: 'invalid',
         },
         {
           __reactKey: '5',
           name: 'Age that should be masked',
           age: 95,
+          score: 8,
           __validationStatus: 'invalid',
         },
       ]}
-      columnNames={['name', 'age']}
-      columnOrder={[0, 1]}
-      schemaPropertiesInfo={getSchemaPropertiesInfo(maskedAgeSchema)}
-      jsonSchema={maskedAgeSchema}
+      columnNames={['name', 'age', 'score']}
+      columnOrder={[0, 1, 2]}
+      schemaPropertiesInfo={getSchemaPropertiesInfo(numberOrEnumSchema)}
+      jsonSchema={numberOrEnumSchema}
     />
   ),
 }

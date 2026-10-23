@@ -1,5 +1,5 @@
-import { AgeMaskInfo, getAgeMaskInfo } from './getAgeMaskInfo'
 import getEnumeratedValues, { EnumeratedValue } from './getEnumeratedValues'
+import { getNumberOrEnumInfo, NumberOrEnumInfo } from './getNumberOrEnumInfo'
 import getSchemaForProperty from './getSchemaForProperty'
 import getRequiredAttributes from './getRequiredAttributes'
 import { FlatTypeInfo, getFlatTypeInfo } from './getType'
@@ -10,8 +10,11 @@ export interface SchemaPropertyInfo {
   isRequired: boolean
   enumeratedValues: EnumeratedValue[] | null
   description?: string
-  /** Present when the property is a masked age; see {@link getAgeMaskInfo} */
-  ageMask?: AgeMaskInfo
+  /**
+   * Present when the property is a number or one of a closed set of strings;
+   * see {@link getNumberOrEnumInfo}
+   */
+  numberOrEnum?: NumberOrEnumInfo
 }
 
 export interface SchemaPropertiesMap {
@@ -38,19 +41,22 @@ export function getSchemaPropertiesInfo(
     Object.keys(schema.properties).forEach(propertyName => {
       const propertySchema = getSchemaForProperty(schema, propertyName)
 
-      const ageMask = getAgeMaskInfo(propertySchema, schema.definitions)
-      if (ageMask) {
-        // A masked age's `anyOf` describes neither a single type nor an
+      const numberOrEnum = getNumberOrEnumInfo(
+        propertySchema,
+        schema.definitions,
+      )
+      if (numberOrEnum) {
+        // A number-or-enum union describes neither a single type nor an
         // enumeration, so both come from its detected branches.
         propertiesMap[propertyName] = {
           type: {
             ...getFlatTypeInfo(propertySchema),
-            type: ageMask.numericType,
+            type: numberOrEnum.numericType,
           },
           isRequired: requiredFields.includes(propertyName),
-          enumeratedValues: ageMask.sentinels,
+          enumeratedValues: numberOrEnum.enumValues,
           description: propertySchema?.description,
-          ageMask,
+          numberOrEnum,
         }
         return
       }

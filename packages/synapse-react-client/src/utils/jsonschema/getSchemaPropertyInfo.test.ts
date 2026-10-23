@@ -1,15 +1,11 @@
 import { JSONSchema7 } from 'json-schema'
-import { AGE_MASK_TITLE } from './getAgeMaskInfo'
 import { getSchemaPropertiesInfo } from './getSchemaPropertyInfo'
 
-const SENTINELS = ['>= 90', 'Unknown']
+const ENUM_VALUES = ['>= 90', 'Unknown']
 
 const maskedAgeSchema: JSONSchema7 = {
   description: 'Age at enrollment',
-  anyOf: [
-    { type: 'number' },
-    { type: 'string', title: AGE_MASK_TITLE, enum: SENTINELS },
-  ],
+  anyOf: [{ type: 'number' }, { type: 'string', enum: ENUM_VALUES }],
 }
 
 describe('getSchemaPropertiesInfo', () => {
@@ -17,7 +13,7 @@ describe('getSchemaPropertiesInfo', () => {
     expect(getSchemaPropertiesInfo(null)).toEqual({})
   })
 
-  it('describes a masked age by its numeric type and sentinels', () => {
+  it('describes a number-or-enum union by its numeric type and allowed strings', () => {
     const result = getSchemaPropertiesInfo({
       type: 'object',
       properties: { age: maskedAgeSchema },
@@ -27,13 +23,13 @@ describe('getSchemaPropertiesInfo', () => {
     expect(result.age).toEqual({
       type: { type: 'number', isArray: false },
       isRequired: true,
-      enumeratedValues: SENTINELS,
+      enumeratedValues: ENUM_VALUES,
       description: 'Age at enrollment',
-      ageMask: { numericType: 'number', sentinels: SENTINELS },
+      numberOrEnum: { numericType: 'number', enumValues: ENUM_VALUES },
     })
   })
 
-  it('keeps the read-only flag declared alongside a masked age', () => {
+  it('keeps the read-only flag declared alongside a number-or-enum union', () => {
     const result = getSchemaPropertiesInfo({
       type: 'object',
       properties: { age: { ...maskedAgeSchema, readOnly: true } },
@@ -46,11 +42,11 @@ describe('getSchemaPropertiesInfo', () => {
     })
   })
 
-  it('resolves a mask branch from the root definitions', () => {
+  it('resolves an enum branch from the root definitions', () => {
     const result = getSchemaPropertiesInfo({
       type: 'object',
       definitions: {
-        AgeMask: { type: 'string', title: AGE_MASK_TITLE, enum: SENTINELS },
+        AgeMask: { type: 'string', enum: ENUM_VALUES },
       },
       properties: {
         age: {
@@ -59,13 +55,13 @@ describe('getSchemaPropertiesInfo', () => {
       },
     })
 
-    expect(result.age.ageMask).toEqual({
+    expect(result.age.numberOrEnum).toEqual({
       numericType: 'integer',
-      sentinels: SENTINELS,
+      enumValues: ENUM_VALUES,
     })
   })
 
-  it('does not log an enumeration error for a masked age', () => {
+  it('does not log an enumeration error for a number-or-enum union', () => {
     const consoleErrorSpy = vi
       .spyOn(console, 'error')
       .mockImplementation(() => {})
@@ -79,7 +75,7 @@ describe('getSchemaPropertiesInfo', () => {
     consoleErrorSpy.mockRestore()
   })
 
-  it('leaves an anyOf without the AgeMask title as a plain string property', () => {
+  it('leaves a number-or-open-string union as a plain string property', () => {
     // getEnumeratedValues logs when RJSF cannot read this anyOf as an enumeration
     const consoleErrorSpy = vi
       .spyOn(console, 'error')
@@ -88,13 +84,11 @@ describe('getSchemaPropertiesInfo', () => {
     const result = getSchemaPropertiesInfo({
       type: 'object',
       properties: {
-        score: {
-          anyOf: [{ type: 'number' }, { type: 'string', enum: ['N/A'] }],
-        },
+        notes: { anyOf: [{ type: 'number' }, { type: 'string' }] },
       },
     })
 
-    expect(result.score).toEqual({
+    expect(result.notes).toEqual({
       type: { type: 'string', isArray: false },
       isRequired: false,
       enumeratedValues: null,

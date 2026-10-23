@@ -1,15 +1,17 @@
 import { modelColsToGrid } from '@/components/DataGrid/utils/modelColsToGrid'
-import { AGE_MASK_TITLE } from '@/utils/jsonschema/getAgeMaskInfo'
 import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { JSONSchema7 } from 'json-schema'
-import { ageColumn, parseAgeInput } from './AgeColumn'
 import { AutocompleteCellProps, AutocompleteOption } from './AutocompleteColumn'
+import {
+  numberOrEnumColumn,
+  parseNumberOrEnumInput,
+} from './NumberOrEnumColumn'
 
-const SENTINELS = ['>= 90', 'Unknown']
+const ENUM_VALUES = ['>= 90', 'Unknown']
 
-describe('parseAgeInput', () => {
+describe('parseNumberOrEnumInput', () => {
   it.each<[string, string | number]>([
     ['43', 43],
     [' 43 ', 43],
@@ -28,18 +30,18 @@ describe('parseAgeInput', () => {
     ['Infinity', 'Infinity'],
     ['', ''],
   ])('parses %j as %j', (text, expected) => {
-    expect(parseAgeInput(text, SENTINELS)).toBe(expected)
+    expect(parseNumberOrEnumInput(text, ENUM_VALUES)).toBe(expected)
   })
 
-  it('keeps a numeric-looking sentinel as a string', () => {
-    expect(parseAgeInput('999', ['999'])).toBe('999')
+  it('keeps a numeric-looking allowed string as a string', () => {
+    expect(parseNumberOrEnumInput('999', ['999'])).toBe('999')
   })
 })
 
-describe('ageColumn', () => {
-  function renderAgeCell(rowData: AutocompleteOption) {
-    const AgeCell = ageColumn({
-      sentinels: SENTINELS,
+describe('numberOrEnumColumn', () => {
+  function renderCell(rowData: AutocompleteOption) {
+    const NumberOrEnumCell = numberOrEnumColumn({
+      enumValues: ENUM_VALUES,
       clearValue: undefined,
     }).component!
     const setRowData = vi.fn()
@@ -52,12 +54,12 @@ describe('ageColumn', () => {
     }
 
     const { rerender } = render(
-      <AgeCell {...(cellProps as AutocompleteCellProps)} />,
+      <NumberOrEnumCell {...(cellProps as AutocompleteCellProps)} />,
     )
     const deactivate = () =>
       act(() => {
         rerender(
-          <AgeCell
+          <NumberOrEnumCell
             {...(cellProps as AutocompleteCellProps)}
             focus={false}
             active={false}
@@ -67,8 +69,8 @@ describe('ageColumn', () => {
     return { setRowData, deactivate }
   }
 
-  it('offers the sentinels as options', async () => {
-    renderAgeCell('')
+  it('offers the allowed strings as options', async () => {
+    renderCell('')
 
     expect(
       await screen.findByRole('option', { name: '>= 90' }),
@@ -76,8 +78,8 @@ describe('ageColumn', () => {
     expect(screen.getByRole('option', { name: 'Unknown' })).toBeInTheDocument()
   })
 
-  it('stores a picked sentinel as a string', async () => {
-    const { setRowData } = renderAgeCell('')
+  it('stores a picked option as a string', async () => {
+    const { setRowData } = renderCell('')
 
     await userEvent.click(await screen.findByRole('option', { name: '>= 90' }))
 
@@ -85,7 +87,7 @@ describe('ageColumn', () => {
   })
 
   it('stores a typed number as a number when the cell is deactivated', async () => {
-    const { setRowData, deactivate } = renderAgeCell('')
+    const { setRowData, deactivate } = renderCell('')
 
     await userEvent.type(screen.getByRole('combobox'), '43')
     deactivate()
@@ -94,7 +96,7 @@ describe('ageColumn', () => {
   })
 
   it('stores a typed number as a number when Enter is pressed', async () => {
-    const { setRowData } = renderAgeCell('')
+    const { setRowData } = renderCell('')
 
     await userEvent.type(screen.getByRole('combobox'), '95{Enter}')
 
@@ -102,7 +104,7 @@ describe('ageColumn', () => {
   })
 
   it('replaces a number stored as a string when a different value is typed', async () => {
-    const { setRowData, deactivate } = renderAgeCell('43')
+    const { setRowData, deactivate } = renderCell('43')
     const input = screen.getByRole('combobox')
 
     await userEvent.clear(input)
@@ -117,7 +119,10 @@ describe('ageColumn', () => {
     [' >= 90 ', '>= 90'],
     ['93+', '93+'],
   ])('parses pasted %j as %j', (pasted, expected) => {
-    const column = ageColumn({ sentinels: SENTINELS, clearValue: undefined })
+    const column = numberOrEnumColumn({
+      enumValues: ENUM_VALUES,
+      clearValue: undefined,
+    })
 
     expect(
       column.pasteValue!({ rowData: undefined, value: pasted, rowIndex: 0 }),
@@ -125,23 +130,24 @@ describe('ageColumn', () => {
   })
 })
 
-describe('masked age schema in the grid', () => {
+describe('number-or-enum schemas in the grid', () => {
   const schema: JSONSchema7 = {
     type: 'object',
     properties: {
       age: {
-        anyOf: [
-          { type: 'number' },
-          { type: 'string', title: AGE_MASK_TITLE, enum: SENTINELS },
-        ],
+        anyOf: [{ type: 'number' }, { type: 'string', enum: ENUM_VALUES }],
       },
       score: {
-        anyOf: [{ type: 'number' }, { type: 'string', enum: ['N/A'] }],
+        oneOf: [{ type: 'number' }, { const: 'N/A' }, { const: 'Not run' }],
+      },
+      notes: {
+        anyOf: [{ type: 'number' }, { type: 'string' }],
       },
     },
   }
 
   function pasteInto(columnName: string, value: string) {
+    // getEnumeratedValues logs when RJSF cannot read the `notes` anyOf as an enumeration
     vi.spyOn(console, 'error').mockImplementation(() => {})
     const [column] = modelColsToGrid(
       [columnName],
@@ -160,19 +166,21 @@ describe('masked age schema in the grid', () => {
     vi.restoreAllMocks()
   })
 
-  it.each<[string, string | number | undefined]>([
-    ['43', 43],
-    ['>= 90', '>= 90'],
-    ['Unknown', 'Unknown'],
-    ['', undefined],
+  it.each<[string, string, string | number | undefined]>([
+    ['age', '43', 43],
+    ['age', '>= 90', '>= 90'],
+    ['age', 'Unknown', 'Unknown'],
+    ['age', '', undefined],
+    ['score', '7.5', 7.5],
+    ['score', 'Not run', 'Not run'],
   ])(
-    'uses the age column, so pasted %j is stored as %j',
-    (pasted, expected) => {
-      expect(pasteInto('age', pasted)).toBe(expected)
+    'uses the number-or-enum column for %s, so pasted %j is stored as %j',
+    (columnName, pasted, expected) => {
+      expect(pasteInto(columnName, pasted)).toBe(expected)
     },
   )
 
-  it('does not use the age column for an anyOf without the AgeMask title', () => {
-    expect(pasteInto('score', '43')).toBe('43')
+  it('does not use the number-or-enum column when the strings are not a closed set', () => {
+    expect(pasteInto('notes', '43')).toBe('43')
   })
 })

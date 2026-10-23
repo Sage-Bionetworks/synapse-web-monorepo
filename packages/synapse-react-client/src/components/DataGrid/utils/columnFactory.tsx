@@ -1,6 +1,6 @@
 import { dateTimeColumn } from '@/components/DataGrid/columns/DateTimeColumn'
-import { AgeMaskInfo } from '@/utils/jsonschema/getAgeMaskInfo'
 import { EnumeratedValue } from '@/utils/jsonschema/getEnumeratedValues'
+import { NumberOrEnumInfo } from '@/utils/jsonschema/getNumberOrEnumInfo'
 import { FlatTypeInfo } from '@/utils/jsonschema/getType'
 import { SchemaPropertyInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import {
@@ -10,10 +10,10 @@ import {
   createTextColumn,
   keyColumn,
 } from '@sage-bionetworks/react-datasheet-grid'
-import { ageColumn } from '../columns/AgeColumn'
 import { autocompleteColumn } from '../columns/AutocompleteColumn'
 import { autocompleteMultipleEnumColumn } from '../columns/AutocompleteMultipleEnumColumn'
 import { numberColumn } from '../columns/NumberColumn'
+import { numberOrEnumColumn } from '../columns/NumberOrEnumColumn'
 import {
   calculateDefaultColumnWidth,
   HeaderOptions,
@@ -213,11 +213,11 @@ const COLUMN_FACTORIES = {
     )
   },
 
-  age: (config: ColumnConfig) => {
+  numberOrEnum: (config: ColumnConfig) => {
     return createBaseColumn(
       config,
-      ageColumn({
-        sentinels: config.schemaPropertyInfo?.ageMask?.sentinels ?? [],
+      numberOrEnumColumn({
+        enumValues: config.schemaPropertyInfo?.numberOrEnum?.enumValues ?? [],
         clearValue: getEmptyValue(config.isRequired),
       }),
     )
@@ -271,12 +271,12 @@ const COLUMN_FACTORIES = {
 function getColumnType(
   typeInfo: FlatTypeInfo | null,
   enumeratedValues?: EnumeratedValue[] | string[] | null,
-  ageMask?: AgeMaskInfo,
+  numberOrEnum?: NumberOrEnumInfo,
 ): keyof typeof COLUMN_FACTORIES {
-  // A masked age reports its numeric branch as its type, so it must be matched
-  // before the number check claims it
-  if (ageMask) {
-    return 'age'
+  // A number-or-enum union reports its numeric branch as its type, so it must
+  // be matched before the number check claims it
+  if (numberOrEnum) {
+    return 'numberOrEnum'
   }
 
   if (!typeInfo) {
@@ -313,7 +313,7 @@ export function createColumn(config: ColumnConfig): Column {
   const columnType = getColumnType(
     config.typeInfo,
     config.enumeratedValues,
-    config.schemaPropertyInfo?.ageMask,
+    config.schemaPropertyInfo?.numberOrEnum,
   )
   return COLUMN_FACTORIES[columnType](config)
 }
