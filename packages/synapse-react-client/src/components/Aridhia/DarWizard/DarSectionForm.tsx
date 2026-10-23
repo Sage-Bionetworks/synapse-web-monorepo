@@ -1,6 +1,7 @@
 import { RJSFSchema, UiSchema } from '@rjsf/utils'
 import { JsonSchemaForm } from '@/components/JsonSchemaForm/JsonSchemaForm'
 import { DateWidget } from '@/components/JsonSchemaForm/widgets/DateWidget'
+import { PhoneWidget } from '@/components/JsonSchemaForm/widgets/PhoneWidget'
 import FairLabelField from '@/components/Aridhia/FairLabelField'
 
 export type DarFormSectionStepProps = {
@@ -22,7 +23,7 @@ export function DarSectionForm(props: DarFormSectionStepProps) {
       uiSchema={uiSchema}
       formData={formData}
       fields={{ fairLabel: FairLabelField }}
-      widgets={{ DateWidget: DateWidget }}
+      widgets={{ DateWidget, PhoneWidget }}
       formContext={{ booleanWidget: 'checkbox' }}
       onChange={({ formData: next }) => onChange(next ?? {})}
       showErrorList={false}
