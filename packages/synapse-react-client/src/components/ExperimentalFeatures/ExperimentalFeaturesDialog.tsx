@@ -38,12 +38,18 @@ function ExperimentalFeaturesDialog({
   initialEnableAll,
   initialEnabledFlags,
 }: ExperimentalFeaturesDialogProps) {
-  // Single on/off toggle for enabling all experimental features
+  // Enable all acts like "select all": turning off any feature while it's on turns it off and keeps the rest individually enabled
   const [enableAll, setEnableAll] = useState(initialEnableAll)
   // Individual toggles for each experimental feature
   const [enabledFlags, setEnabledFlags] = useState(initialEnabledFlags)
 
   const toggleFlag = (flag: FeatureFlagEnum) => {
+    if (enableAll) {
+      setEnableAll(false)
+      setEnabledFlags(features.filter(feature => feature !== flag))
+      return
+    }
+
     setEnabledFlags(current =>
       current.includes(flag)
         ? current.filter(enabledFlag => enabledFlag !== flag)
@@ -80,7 +86,6 @@ function ExperimentalFeaturesDialog({
               control={
                 <Switch
                   checked={enableAll || enabledFlags.includes(flag)}
-                  disabled={enableAll}
                   onChange={() => toggleFlag(flag)}
                 />
               }
@@ -109,7 +114,12 @@ function ExperimentalFeaturesDialog({
         control={
           <Switch
             checked={enableAll}
-            onChange={() => setEnableAll(!enableAll)}
+            onChange={() => {
+              if (enableAll) {
+                setEnabledFlags([])
+              }
+              setEnableAll(!enableAll)
+            }}
           />
         }
       />
