@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { UserEvent } from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router'
@@ -40,6 +40,39 @@ const NO_ACCESS_ICON_NAME = 'You must request access to this restricted item.'
 const PENDING_ACCESS_ICON_NAME =
   'Your access request is pending approval by RDCA-DAP.'
 const HAS_ACCESS_ICON_NAME = 'You have access to this item on RDCA-DAP.'
+const DENIED_ACCESS_ICON_NAME =
+  'Your access request has been denied by RDCA-DAP.'
+const POPOVER_LIST_NAME = 'Your data access requests'
+
+function mockRequest(
+  code: string,
+  status: 'pending' | 'approved' | 'denied' | 'error',
+  updatedAt: string,
+  datasetCodes: string[] = [MOCK_ARIDHIA_DATASET_CODE],
+) {
+  return {
+    code,
+    name: code,
+    status,
+    datasets: datasetCodes.map(datasetCode => ({ code: datasetCode })),
+    created_at: updatedAt,
+    updated_at: updatedAt,
+  }
+}
+
+async function openStatusPopover(user: UserEvent, iconName: string) {
+  await screen.findByRole('img', { name: iconName })
+  await user.click(
+    screen.getByRole('button', { name: 'View data access request status' }),
+  )
+  await screen.findByRole('list', { name: POPOVER_LIST_NAME })
+}
+
+function getPopoverRequestNames() {
+  return within(screen.getByRole('list', { name: POPOVER_LIST_NAME }))
+    .getAllByRole('link')
+    .map(link => link.textContent)
+}
 
 function darFormFeatureFlagOverride(enabled: boolean) {
   return getFeatureFlagsOverride({
@@ -195,15 +228,140 @@ describe('AridhiaAccessStatus', () => {
         screen.getByText('My Request', { exact: false }),
       ).toBeInTheDocument(),
     )
-    expect(
-      screen.getByRole('link', { name: 'View on RDCA-DAP' }),
-    ).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'My Request' })).toHaveAttribute(
       'href',
       getAridhiaFairPortalRequestUrl(
         MOCK_ARIDHIA_FAIR_PORTAL_URL,
         'ampals-sdtm_als1003-abc12345',
       ),
     )
+  })
+
+  it('lists every request for the dataset in the status popover, newest first, without a new-request action when the feature flag is disabled', async () => {
+    const user = userEvent.setup()
+    server.use(
+      darFormFeatureFlagOverride(false),
+      getAridhiaAuthenticateHandler(),
+      getAridhiaRequestsHandler([
+        mockRequest('older-denied', 'denied', '2024-01-01T00:00:00Z'),
+        mockRequest('other-dataset', 'approved', '2025-01-01T00:00:00Z', [
+          'some_other_dataset',
+        ]),
+        mockRequest('newer-pending', 'pending', '2024-06-01T00:00:00Z'),
+      ]),
+    )
+    renderStatus(MOCK_ARIDHIA_FAIR_PORTAL_URL)
+
+    await openStatusPopover(user, PENDING_ACCESS_ICON_NAME)
+
+    expect(getPopoverRequestNames()).toEqual(['newer-pending', 'older-denied'])
+    expect(
+      screen.queryByRole('button', { name: 'Submit a new request' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('shows access, a dataset link, and a new-request action when an older request is approved and a newer one was denied', async () => {
+    const user = userEvent.setup()
+    server.use(
+      darFormFeatureFlagOverride(true),
+      getAridhiaAuthenticateHandler(),
+      getAridhiaRequestsHandler([
+        mockRequest('approved-tables-a-b', 'approved', '2024-01-01T00:00:00Z'),
+        mockRequest('denied-table-c', 'denied', '2024-06-01T00:00:00Z'),
+      ]),
+    )
+    renderStatus(MOCK_ARIDHIA_FAIR_PORTAL_URL)
+
+    await openStatusPopover(user, HAS_ACCESS_ICON_NAME)
+
+    expect(getPopoverRequestNames()).toEqual([
+      'denied-table-c',
+      'approved-tables-a-b',
+    ])
+    expect(
+      screen.getByRole('link', { name: 'Open dataset on RDCA-DAP' }),
+    ).toHaveAttribute(
+      'href',
+      getAridhiaFairPortalDatasetUrl(
+        MOCK_ARIDHIA_FAIR_PORTAL_URL,
+        MOCK_ARIDHIA_DATASET_CODE,
+      ),
+    )
+    expect(
+      screen.getByRole('button', { name: 'Submit a new request' }),
+    ).toBeInTheDocument()
+  })
+
+  it('opens the request wizard from the status popover so a denied request can be resubmitted', async () => {
+    const user = userEvent.setup()
+    server.use(
+      getAridhiaRequestsHandler([
+        mockRequest('denied-request', 'denied', '2024-01-01T00:00:00Z'),
+      ]),
+      ...wizardHandlers(),
+    )
+    renderStatus(MOCK_ARIDHIA_FAIR_PORTAL_URL)
+
+    await openStatusPopover(user, DENIED_ACCESS_ICON_NAME)
+    await user.click(
+      screen.getByRole('button', { name: 'Submit a new request' }),
+    )
+
+    expect(
+      await screen.findByRole('heading', { name: 'Request Data Access' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('list', { name: POPOVER_LIST_NAME }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('starts a fresh wizard with a new request code for a second request in the same session', async () => {
+    const user = userEvent.setup()
+    const submittedCodes: string[] = []
+    server.use(
+      ...wizardHandlers(),
+      getAridhiaSubmitRequestHandler<{ code: string }>(body => {
+        submittedCodes.push(body.code)
+        server.use(
+          getAridhiaRequestsHandler(
+            submittedCodes.map(code =>
+              mockRequest(code, 'pending', '2024-01-01T00:00:00Z'),
+            ),
+          ),
+        )
+        return HttpResponse.json(
+          { ...body, status: 'pending' },
+          { status: 201 },
+        )
+      }),
+    )
+    renderStatus()
+    await openWizard(user)
+    await fillAndSubmitWizard(user)
+    await user.click(await screen.findByRole('button', { name: 'Close' }))
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+    )
+
+    await openStatusPopover(user, PENDING_ACCESS_ICON_NAME)
+    await user.click(
+      screen.getByRole('button', { name: 'Submit a new request' }),
+    )
+
+    // The previous request's confirmation screen must not reappear.
+    expect(
+      await screen.findByRole('button', { name: 'Next' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Close' }),
+    ).not.toBeInTheDocument()
+
+    await fillAndSubmitWizard(user)
+    expect(
+      await screen.findByRole('button', { name: 'Close' }),
+    ).toBeInTheDocument()
+    expect(submittedCodes).toHaveLength(2)
+    expect(submittedCodes[1]).not.toBe(submittedCodes[0])
   })
 
   it('links out to the dataset on the FAIR portal when the request is approved', async () => {
