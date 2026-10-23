@@ -1,4 +1,4 @@
-import '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import { QueryContextType, useQueryContext } from '@/components/index'
 import { getTableQueryUseQueryOptions } from '@/components/QueryWrapper/TableQueryUseQueryOptions'
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
