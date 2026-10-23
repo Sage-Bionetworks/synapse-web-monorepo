@@ -7,7 +7,8 @@ export function useGetFeatureFlag(
   featureFlag: FeatureFlagEnum,
   options?: Partial<UseQueryOptions<FeatureFlags, SynapseClientError>>,
 ): boolean {
-  const { keyFactory, isInExperimentalMode } = useSynapseContext()
+  const { keyFactory, isInExperimentalMode, enabledExperimentalFeatures } =
+    useSynapseContext()
 
   const { data: featureFlags } = useQuery<FeatureFlags, SynapseClientError>({
     staleTime: Infinity,
@@ -16,6 +17,9 @@ export function useGetFeatureFlag(
     queryFn: () => SynapseClient.getFeatureFlags(),
   })
 
-  // true → always enabled; false → always disabled; null/undefined → follows experimental mode
-  return featureFlags?.[featureFlag] ?? isInExperimentalMode
+  // true → always enabled; false → always disabled; unset → on if Enable all is on or the user opted into this flag
+  return (
+    featureFlags?.[featureFlag] ??
+    (isInExperimentalMode || enabledExperimentalFeatures.includes(featureFlag))
+  )
 }

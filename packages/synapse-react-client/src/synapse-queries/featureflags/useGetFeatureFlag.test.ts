@@ -80,6 +80,27 @@ describe('useGetFeatureFlag', () => {
         expect(result.current).toBe(false)
       })
     })
+
+    it('is disabled even when the user individually enabled it', async () => {
+      server.use(
+        getFeatureFlagsOverride({
+          portalOrigin: PORTAL_ENDPOINT,
+          overrides: { [FeatureFlagEnum.TEST_ONLY]: false },
+        }),
+      )
+      const { result } = renderHook(
+        () => useGetFeatureFlag(FeatureFlagEnum.TEST_ONLY),
+        {
+          wrapper: createWrapper({
+            isInExperimentalMode: false,
+            enabledExperimentalFeatures: [FeatureFlagEnum.TEST_ONLY],
+          }),
+        },
+      )
+      await waitFor(() => {
+        expect(result.current).toBe(false)
+      })
+    })
   })
 
   describe('when the flag value is null/undefined (not set by the server)', () => {
@@ -108,6 +129,22 @@ describe('useGetFeatureFlag', () => {
       const { result } = renderHook(
         () => useGetFeatureFlag(FeatureFlagEnum.TEST_ONLY),
         { wrapper: createWrapper({ isInExperimentalMode: true }) },
+      )
+      await waitFor(() => {
+        expect(result.current).toBe(true)
+      })
+    })
+
+    it('is enabled when the user individually enabled it', async () => {
+      setupHandlerWithoutFlag()
+      const { result } = renderHook(
+        () => useGetFeatureFlag(FeatureFlagEnum.TEST_ONLY),
+        {
+          wrapper: createWrapper({
+            isInExperimentalMode: false,
+            enabledExperimentalFeatures: [FeatureFlagEnum.TEST_ONLY],
+          }),
+        },
       )
       await waitFor(() => {
         expect(result.current).toBe(true)
