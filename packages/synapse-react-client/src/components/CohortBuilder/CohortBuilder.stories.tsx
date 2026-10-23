@@ -22,11 +22,70 @@ type Story = StoryObj<typeof meta>
 function getMockParameters(
   profile: CohortBuilderMockProfile,
   access: CohortBuilderAccess,
+  maxCohortValues?: number,
 ) {
   return {
     stack: 'mock',
-    msw: { handlers: getCohortBuilderStorybookHandlers({ profile, access }) },
+    msw: {
+      handlers: getCohortBuilderStorybookHandlers({
+        profile,
+        access,
+        maxCohortValues,
+      }),
+    },
   }
+}
+
+/** A play function that builds the cohort "`property` is any of `value`" with the Query Builder. */
+function buildCohort(property: string, value: string): Story['play'] {
+  return async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    // The participant count shows once the cohort's results have loaded.
+    await canvas.findByText(/participants$/, undefined, { timeout: 30_000 })
+    await userEvent.type(
+      await canvas.findByRole('combobox', { name: 'Property' }),
+      property,
+    )
+    await userEvent.keyboard('{ArrowDown}{Enter}')
+    await userEvent.click(
+      await canvas.findByRole('button', { name: value }, { timeout: 10_000 }),
+    )
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Update Results' }),
+    )
+  }
+}
+
+const eliteWithFilesArgs = {
+  participantsTableId: ELITE_MOCK_PROFILE.participantsVirtualTableId,
+  filesTableId: ELITE_MOCK_PROFILE.dataVirtualTableId,
+}
+
+/** ELITE, unapproved user, with the Files/Datasets panel: no filters, so every file and dataset is listed. */
+export const EliteWithFiles: Story = {
+  args: eliteWithFilesArgs,
+  parameters: getMockParameters(ELITE_MOCK_PROFILE, 'AGGREGATE_ONLY'),
+}
+
+/** ELITE, unapproved user: the files and datasets of the cohort "Race is Black or African American". */
+export const EliteWithFilesForCohort: Story = {
+  args: eliteWithFilesArgs,
+  parameters: getMockParameters(ELITE_MOCK_PROFILE, 'AGGREGATE_ONLY'),
+  play: buildCohort('Race', 'Black or African American'),
+}
+
+/** ELITE, unapproved user: the LLFS cohort has 1,200 participants but only 3 datasets, fewer than the threshold of 20. */
+export const EliteWithFilesBelowThreshold: Story = {
+  args: eliteWithFilesArgs,
+  parameters: getMockParameters(ELITE_MOCK_PROFILE, 'AGGREGATE_ONLY'),
+  play: buildCohort('Study', 'LLFS'),
+}
+
+/** ELITE, unapproved user: with a cohort limit of 1,000, the 1,096 male participants are too many to hand off. */
+export const EliteWithFilesCohortTooLarge: Story = {
+  args: eliteWithFilesArgs,
+  parameters: getMockParameters(ELITE_MOCK_PROFILE, 'AGGREGATE_ONLY', 1000),
+  play: buildCohort('Sex', 'Male'),
 }
 
 /** ELITE synthetic participants, approved user: exact counts. */
@@ -51,26 +110,7 @@ export const AdkpFullAccess: Story = {
 export const EliteAggregateOnlyBelowThreshold: Story = {
   args: { participantsTableId: ELITE_MOCK_PROFILE.participantsVirtualTableId },
   parameters: getMockParameters(ELITE_MOCK_PROFILE, 'AGGREGATE_ONLY'),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement)
-    // The participant count shows once the cohort's results have loaded.
-    await canvas.findByText(/participants$/, undefined, { timeout: 30_000 })
-    await userEvent.type(
-      await canvas.findByRole('combobox', { name: 'Property' }),
-      'Race',
-    )
-    await userEvent.keyboard('{ArrowDown}{Enter}')
-    await userEvent.click(
-      await canvas.findByRole(
-        'button',
-        { name: 'American Indian or Alaska Native' },
-        { timeout: 10_000 },
-      ),
-    )
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Update Results' }),
-    )
-  },
+  play: buildCohort('Race', 'American Indian or Alaska Native'),
 }
 
 /** ADKP synthetic participants, unapproved user: facet counts with Laplace noise. */
