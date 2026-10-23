@@ -1,4 +1,4 @@
-import '@/mocks/msw/server'
+import { server } from '@/mocks/msw/server'
 import React from 'react'
 import { ELITE_MOCK_PROFILE } from '@/mocks/cohortBuilder/cohortBuilderMockProfiles'
 import mockQueryResponseData from '@/mocks/mockQueryResponseData'
@@ -526,7 +526,6 @@ describe('QueryWrapper', () => {
     })
     afterEach(() => {
       server.events.removeListener('request:start', recordQueryRequest)
-      server.resetHandlers()
     })
 
     it.each([false, true])(
