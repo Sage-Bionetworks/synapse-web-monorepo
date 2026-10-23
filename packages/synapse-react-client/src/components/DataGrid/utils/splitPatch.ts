@@ -9,6 +9,15 @@ import {
   CompactCodecTimestamp,
 } from 'json-joy/lib/json-crdt-patch/codec/compact/types'
 
+const JSON_ARRAY_BRACKETS_SIZE = 2
+const JSON_ELEMENT_SEPARATOR_SIZE = 1
+
+const textEncoder = new TextEncoder()
+
+function getJsonSizeInBytes(value: unknown): number {
+  return textEncoder.encode(JSON.stringify(value)).length
+}
+
 /**
  * Calculates the size in bytes of the UTF-8 string representation of a compact-encoded JSON CRDT Patch.
  * This is useful for determining the size of patch that will be sent in a WebSocket connection, which requires UTF-8
@@ -17,7 +26,7 @@ import {
  * @returns the size in bytes of the UTF-8 string representation of the patch
  */
 export function getPatchSizeInBytes(patch: CompactCodecPatch): number {
-  return new TextEncoder().encode(JSON.stringify(patch)).length
+  return getJsonSizeInBytes(patch)
 }
 
 /**
@@ -69,23 +78,30 @@ export function splitPatch(
     return [binaryEncodedPatch]
   }
 
-  const firstPatchHeader = binaryEncodedPatch[0]
+  // A JSON array serializes as `[`, its elements joined by `,`, and `]`, so the size of the
+  // split patch under construction is tracked by adding each element's size once. Re-serializing
+  // the whole chunk for every operation costs O(ops * chunk size).
   const splitPatches: CompactCodecPatch[] = []
-  let currentSplitPatch: CompactCodecPatch = [firstPatchHeader]
+  let currentSplitPatch: CompactCodecPatch = [binaryEncodedPatch[0]]
+  let currentSplitPatchSize =
+    JSON_ARRAY_BRACKETS_SIZE + getJsonSizeInBytes(currentSplitPatch[0])
   for (let i = 1; i < binaryEncodedPatch.length; i += 1) {
+    const operation = binaryEncodedPatch[i] as CompactCodecOperation
+    const operationSize =
+      JSON_ELEMENT_SEPARATOR_SIZE + getJsonSizeInBytes(operation)
     const currentSplitPatchOpCount = currentSplitPatch.length - 1 // Exclude header
-    const sizeOfCurrentSplitPatchWithNextOp = getPatchSizeInBytes([
-      ...currentSplitPatch,
-      binaryEncodedPatch[i] as CompactCodecOperation,
-    ])
     if (
-      sizeOfCurrentSplitPatchWithNextOp > maxPatchSizeBytes &&
+      currentSplitPatchSize + operationSize > maxPatchSizeBytes &&
       currentSplitPatchOpCount > 0
     ) {
       splitPatches.push(currentSplitPatch)
-      currentSplitPatch = [computeNextPatchHeader(currentSplitPatch)]
+      const nextHeader = computeNextPatchHeader(currentSplitPatch)
+      currentSplitPatch = [nextHeader]
+      currentSplitPatchSize =
+        JSON_ARRAY_BRACKETS_SIZE + getJsonSizeInBytes(nextHeader)
     }
-    currentSplitPatch.push(binaryEncodedPatch[i] as CompactCodecOperation)
+    currentSplitPatch.push(operation)
+    currentSplitPatchSize += operationSize
   }
   if (currentSplitPatch.length > 1) {
     splitPatches.push(currentSplitPatch)
