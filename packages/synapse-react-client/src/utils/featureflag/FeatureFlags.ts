@@ -38,13 +38,15 @@ export enum FeatureFlagEnum {
   TEST_ONLY = 'TEST_ONLY',
 }
 
-export type ExperimentFeatureScope = 'SYNAPSE' | 'PORTALS' | 'ACCOUNTS'
+export type ExperimentalFeatureScope = 'SYNAPSE' | 'PORTALS' | 'ACCOUNTS'
 
 type FeatureFlagConfig = {
   /** Apps whose experimental features menu may list this flag */
-  scopes: ExperimentFeatureScope[]
+  scopes: ExperimentalFeatureScope[]
   /** Overrides the name derived from the feature flag key */
   displayName?: string
+  /** Whether this feature is only available to ACT members */
+  actMembersOnly?: boolean
 }
 
 export const FEATURE_FLAG_CONFIG: Record<FeatureFlagEnum, FeatureFlagConfig> = {
@@ -63,6 +65,7 @@ export const FEATURE_FLAG_CONFIG: Record<FeatureFlagEnum, FeatureFlagConfig> = {
   [FeatureFlagEnum.ACT_DASHBOARD_FORM_TEMPLATES]: {
     scopes: ['SYNAPSE'],
     displayName: 'ACT Dashboard Form Templates',
+    actMembersOnly: true,
   },
   [FeatureFlagEnum.TEST_ONLY]: { scopes: [] },
 }

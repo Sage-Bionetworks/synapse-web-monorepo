@@ -7,6 +7,7 @@ const meta = {
   title: 'Synapse/ExperimentalFeaturesButton',
   component: ExperimentalFeaturesButton,
   args: {
+    isActive: false,
     count: 0,
     onClick: fn(),
   },
@@ -25,9 +26,13 @@ type Story = StoryObj<typeof meta>
 export const NoneEnabled: Story = {}
 
 export const SomeEnabled: Story = {
-  args: { count: 2 },
+  args: { isActive: true, count: 2 },
 }
 
 export const ManyEnabled: Story = {
-  args: { count: 12 },
+  args: { isActive: true, count: 12 },
+}
+
+export const EnableAllWithNoFeatures: Story = {
+  args: { isActive: true, count: 0 },
 }

@@ -3,6 +3,7 @@ import { Box, IconButton, Switch, Tooltip, Typography } from '@mui/material'
 import styles from './ExperimentalFeaturesButton.module.scss'
 
 type ExperimentalFeaturesButtonProps = {
+  isActive: boolean
   count: number
   onClick: () => void
 }
@@ -12,6 +13,7 @@ const experimentalFeaturesInfoText =
   'Experimental features give you early access to features that are still in development. Please note that we do not guarantee an absence of errors, and that the data created using these features may be lost during product upgrade.'
 
 function ExperimentalFeaturesButton({
+  isActive,
   count,
   onClick,
 }: ExperimentalFeaturesButtonProps) {
@@ -30,9 +32,13 @@ function ExperimentalFeaturesButton({
       <Switch
         className={styles.switch}
         color="secondary"
-        checked={count > 0}
+        checked={isActive}
         onChange={onClick}
-        checkedIcon={<span className={styles.countThumb}>{count}</span>}
+        checkedIcon={
+          count > 0 ? (
+            <span className={styles.countThumb}>{count}</span>
+          ) : undefined
+        }
         slotProps={{
           input: {
             'aria-label': `${EXPERIMENTAL_FEATURES_LABEL} (${count} enabled)`,
