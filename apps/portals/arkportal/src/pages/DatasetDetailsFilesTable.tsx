@@ -39,7 +39,6 @@ export default function DatasetDetailsFilesTable(
     <QueryWrapperPlotNav
       rgbIndex={0}
       sql={sql}
-      visibleColumnCount={7}
       tableConfiguration={{
         showAccessColumn: true,
         showDownloadColumn: true,
