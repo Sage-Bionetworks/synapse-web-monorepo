@@ -54,12 +54,9 @@ function renderQueryBuilder(tree: QBGroup) {
 }
 
 describe('QueryBuilderControls', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     server.use(...getCohortBuilderHandlers({ profile: ELITE_MOCK_PROFILE }))
   })
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   const allOfCondition = {
     ...newBlankCondition('fileFormat', 'STRING_LIST'),
