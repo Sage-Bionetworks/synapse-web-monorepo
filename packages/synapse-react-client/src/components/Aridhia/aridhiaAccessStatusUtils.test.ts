@@ -1,228 +1,142 @@
 import { describe, test, expect } from 'vitest'
 import { RestrictionUiType } from '../HasAccess/AccessIcon'
 import {
-  getRestrictionUiTypeFromAridhiaRequest,
-  findRequestForDataset,
+  getRestrictionUiTypeFromAridhiaRequests,
+  findRequestsForDataset,
 } from './aridhiaAccessStatusUtils'
 import { RequestListItem } from '@sage-bionetworks/aridhia-client/generated/models'
 
+type Status = NonNullable<RequestListItem['status']>
+
+const EXPECTED_BY_STATUS: Record<Status, RestrictionUiType> = {
+  approved: RestrictionUiType.AccessibleOnRDCADAP,
+  pending:
+    RestrictionUiType.AccessBlockedByRestrictionWithPendingRDCADAPRequest,
+  denied:
+    RestrictionUiType.AccessBlockedByRestrictionWithRejectedRDCADAPRequest,
+  error: RestrictionUiType.AccessBlockedByACL,
+}
+
+// Most favorable first: see `getRestrictionUiTypeFromAridhiaRequests`.
+const PRECEDENCE: Status[] = ['approved', 'pending', 'denied', 'error']
+
+function request(status: Status | undefined, updated_at?: string) {
+  return { status, updated_at } as RequestListItem
+}
+
 describe('aridhiaAccessStatusUtils', () => {
-  describe('getRestrictionUiTypeFromAridhiaRequest', () => {
-    test('should return AccessBlockedByRestriction when request is undefined', () => {
-      const result = getRestrictionUiTypeFromAridhiaRequest(undefined)
-      expect(result).toBe(RestrictionUiType.AccessBlockedByRestriction)
-    })
-
-    test('should return Accessible when request status is approved', () => {
-      const request: RequestListItem = {
-        status: 'approved',
-        code: 'REQ001',
-      }
-      const result = getRestrictionUiTypeFromAridhiaRequest(request)
-      expect(result).toBe(RestrictionUiType.AccessibleOnRDCADAP)
-    })
-
-    test('should return AccessBlockedByRestrictionWithPendingRDCADAPRequest when request status is pending', () => {
-      const request: RequestListItem = {
-        status: 'pending',
-        code: 'REQ002',
-      }
-      const result = getRestrictionUiTypeFromAridhiaRequest(request)
-      expect(result).toBe(
-        RestrictionUiType.AccessBlockedByRestrictionWithPendingRDCADAPRequest,
+  describe('getRestrictionUiTypeFromAridhiaRequests', () => {
+    test('returns AccessBlockedByRestriction when there are no requests', () => {
+      expect(getRestrictionUiTypeFromAridhiaRequests([])).toBe(
+        RestrictionUiType.AccessBlockedByRestriction,
       )
     })
 
-    test('should return AccessBlockedByRestrictionWithRejectedRDCADAPRequest when request status is denied', () => {
-      const request: RequestListItem = {
-        status: 'denied',
-        code: 'REQ003',
-      }
-      const result = getRestrictionUiTypeFromAridhiaRequest(request)
-      expect(result).toBe(
-        RestrictionUiType.AccessBlockedByRestrictionWithRejectedRDCADAPRequest,
+    test.each(PRECEDENCE)('maps a lone %s request', status => {
+      expect(getRestrictionUiTypeFromAridhiaRequests([request(status)])).toBe(
+        EXPECTED_BY_STATUS[status],
       )
     })
 
-    test('should return AccessBlockedByACL when request status is error', () => {
-      const request: RequestListItem = {
-        status: 'error',
-        code: 'REQ004',
-      }
-      const result = getRestrictionUiTypeFromAridhiaRequest(request)
-      expect(result).toBe(RestrictionUiType.AccessBlockedByACL)
-    })
+    test.each(
+      PRECEDENCE.flatMap((winner, i) =>
+        PRECEDENCE.slice(i + 1).map(loser => [winner, loser] as const),
+      ),
+    )(
+      '%s takes precedence over %s regardless of which is more recent',
+      (winner, loser) => {
+        const older = request(winner, '2024-01-01T00:00:00Z')
+        const newer = request(loser, '2025-01-01T00:00:00Z')
+        expect(getRestrictionUiTypeFromAridhiaRequests([older, newer])).toBe(
+          EXPECTED_BY_STATUS[winner],
+        )
+        expect(getRestrictionUiTypeFromAridhiaRequests([newer, older])).toBe(
+          EXPECTED_BY_STATUS[winner],
+        )
+      },
+    )
 
-    test('should return AccessBlockedByRestriction for unknown status', () => {
-      const request: RequestListItem = {
-        // @ts-expect-error Testing invalid status
-        status: 'unknown',
-        code: 'REQ005',
-      }
-      const result = getRestrictionUiTypeFromAridhiaRequest(request)
-      expect(result).toBe(RestrictionUiType.AccessBlockedByRestriction)
-    })
-
-    test('should return AccessBlockedByRestriction when status is undefined', () => {
-      const request: RequestListItem = {
-        code: 'REQ006',
-      }
-      const result = getRestrictionUiTypeFromAridhiaRequest(request)
-      expect(result).toBe(RestrictionUiType.AccessBlockedByRestriction)
+    test('ignores requests with an unrecognized or missing status', () => {
+      expect(
+        getRestrictionUiTypeFromAridhiaRequests([
+          request(undefined),
+          { status: 'unknown' } as unknown as RequestListItem,
+        ]),
+      ).toBe(RestrictionUiType.AccessBlockedByRestriction)
+      expect(
+        getRestrictionUiTypeFromAridhiaRequests([
+          request(undefined),
+          request('denied'),
+        ]),
+      ).toBe(EXPECTED_BY_STATUS.denied)
     })
   })
 
-  describe('findRequestForDataset', () => {
-    test('should return request when dataset code matches', () => {
-      const requests: RequestListItem[] = [
-        {
-          code: 'REQ001',
-          status: 'approved',
-          datasets: [{ code: 'DATASET_A' }],
-        },
-        {
-          code: 'REQ002',
-          status: 'pending',
-          datasets: [{ code: 'DATASET_C' }],
-        },
+  describe('findRequestsForDataset', () => {
+    const datasetCode = 'dataset-123'
+
+    function requestFor(
+      code: string,
+      datasetCodes: string[] | undefined,
+      updated_at?: string,
+    ) {
+      return {
+        code,
+        datasets: datasetCodes?.map(c => ({ code: c })),
+        updated_at,
+      } as RequestListItem
+    }
+
+    test('returns every request that includes the dataset, most recently updated first', () => {
+      const requests = [
+        requestFor('mid', [datasetCode], '2024-06-01T00:00:00Z'),
+        requestFor('other-dataset', ['other'], '2025-01-01T00:00:00Z'),
+        requestFor('newest', ['other', datasetCode], '2024-12-01T00:00:00Z'),
+        requestFor('oldest', [datasetCode], '2024-01-01T00:00:00Z'),
       ]
 
-      const result = findRequestForDataset(requests, 'DATASET_A')
-      expect(result).toBeDefined()
-      expect(result?.code).toBe('REQ001')
+      expect(
+        findRequestsForDataset(requests, datasetCode).map(r => r.code),
+      ).toEqual(['newest', 'mid', 'oldest'])
     })
 
-    test('should return undefined when no dataset matches', () => {
-      const requests: RequestListItem[] = [
-        {
-          code: 'REQ001',
-          status: 'approved',
-          datasets: [{ code: 'DATASET_A' }],
-        },
+    test('sorts requests without updated_at last', () => {
+      const requests = [
+        requestFor('undated', [datasetCode]),
+        requestFor('dated', [datasetCode], '2024-01-01T00:00:00Z'),
       ]
 
-      const result = findRequestForDataset(requests, 'DATASET_Z')
-      expect(result).toBeUndefined()
+      expect(
+        findRequestsForDataset(requests, datasetCode).map(r => r.code),
+      ).toEqual(['dated', 'undated'])
     })
 
-    test('should return undefined when requests array is empty', () => {
-      const result = findRequestForDataset([], 'DATASET_A')
-      expect(result).toBeUndefined()
-    })
-
-    test('should return undefined when request has no datasets', () => {
-      const requests: RequestListItem[] = [
-        {
-          code: 'REQ001',
-          status: 'approved',
-        },
+    test('does not reorder the input array', () => {
+      const requests = [
+        requestFor('older', [datasetCode], '2024-01-01T00:00:00Z'),
+        requestFor('newer', [datasetCode], '2025-01-01T00:00:00Z'),
       ]
-
-      const result = findRequestForDataset(requests, 'DATASET_A')
-      expect(result).toBeUndefined()
+      findRequestsForDataset(requests, datasetCode)
+      expect(requests.map(r => r.code)).toEqual(['older', 'newer'])
     })
 
-    test('should return most recently updated request when multiple requests contain the dataset', () => {
-      const requests: RequestListItem[] = [
-        {
-          code: 'REQ001',
-          status: 'approved',
-          datasets: [{ code: 'DATASET_A' }],
-          updated_at: '2024-01-01T10:00:00Z',
-        },
-        {
-          code: 'REQ002',
-          status: 'pending',
-          datasets: [{ code: 'DATASET_A' }],
-          updated_at: '2024-01-02T10:00:00Z',
-        },
-      ]
-
-      const result = findRequestForDataset(requests, 'DATASET_A')
-      expect(result).toBeDefined()
-      expect(result?.code).toBe('REQ002')
+    test('returns an empty array when no request includes the dataset', () => {
+      expect(
+        findRequestsForDataset(
+          [requestFor('a', ['other']), requestFor('b', undefined)],
+          datasetCode,
+        ),
+      ).toEqual([])
+      expect(findRequestsForDataset([], datasetCode)).toEqual([])
     })
 
-    test('should return most recently updated request even when not in order', () => {
-      const requests: RequestListItem[] = [
-        {
-          code: 'REQ001',
-          status: 'approved',
-          datasets: [{ code: 'DATASET_A' }],
-          updated_at: '2024-01-03T10:00:00Z', // Most recent
-        },
-        {
-          code: 'REQ002',
-          status: 'pending',
-          datasets: [{ code: 'DATASET_A' }],
-          updated_at: '2024-01-01T10:00:00Z', // Oldest
-        },
-        {
-          code: 'REQ003',
-          status: 'denied',
-          datasets: [{ code: 'DATASET_A' }],
-          updated_at: '2024-01-02T10:00:00Z', // Middle
-        },
-      ]
-
-      const result = findRequestForDataset(requests, 'DATASET_A')
-      expect(result).toBeDefined()
-      expect(result?.code).toBe('REQ001')
-    })
-
-    test('should handle requests with undefined updated_at', () => {
-      const requests: RequestListItem[] = [
-        {
-          code: 'REQ001',
-          status: 'approved',
-          datasets: [{ code: 'DATASET_A' }],
-          // No updated_at
-        },
-        {
-          code: 'REQ002',
-          status: 'pending',
-          datasets: [{ code: 'DATASET_A' }],
-          updated_at: '2024-01-01T10:00:00Z',
-        },
-      ]
-
-      const result = findRequestForDataset(requests, 'DATASET_A')
-      expect(result).toBeDefined()
-      // Should return the one with updated_at when the other doesn't have it
-      expect(result?.code).toBe('REQ002')
-    })
-
-    test('should return any matching request when all have undefined updated_at', () => {
-      const requests: RequestListItem[] = [
-        {
-          code: 'REQ001',
-          status: 'approved',
-          datasets: [{ code: 'DATASET_A' }],
-        },
-        {
-          code: 'REQ002',
-          status: 'pending',
-          datasets: [{ code: 'DATASET_A' }],
-        },
-      ]
-
-      const result = findRequestForDataset(requests, 'DATASET_A')
-      expect(result).toBeDefined()
-      // Should return one of them (the reduce logic will handle this)
-      expect(['REQ001', 'REQ002']).toContain(result?.code)
-    })
-
-    test('should match dataset code case-sensitively', () => {
-      const requests: RequestListItem[] = [
-        {
-          code: 'REQ001',
-          status: 'approved',
-          datasets: [{ code: 'dataset_a' }],
-        },
-      ]
-
-      const result = findRequestForDataset(requests, 'DATASET_A')
-      expect(result).toBeUndefined()
+    test('matches the dataset code case-sensitively', () => {
+      expect(
+        findRequestsForDataset(
+          [requestFor('a', [datasetCode.toUpperCase()])],
+          datasetCode,
+        ),
+      ).toEqual([])
     })
   })
 })

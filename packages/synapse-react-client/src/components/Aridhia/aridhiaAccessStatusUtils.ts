@@ -1,62 +1,62 @@
 import { RestrictionUiType } from '../HasAccess/AccessIcon'
 import { RequestListItem } from '@sage-bionetworks/aridhia-client/generated/models'
 
+type RequestStatus = NonNullable<RequestListItem['status']>
+
 /**
- * Maps an Aridhia request status to the appropriate RestrictionUiType for display.
- *
- * @param request - The Aridhia request object, or undefined if no request exists
- * @returns The appropriate RestrictionUiType based on the request status
+ * A user may hold several DARs for one dataset (e.g. different tables, or a resubmission after
+ * a denial). The icon reflects the most favorable one: any approval grants access to some of
+ * the data, and any pending request means a decision is still outstanding.
  */
-export function getRestrictionUiTypeFromAridhiaRequest(
-  request: RequestListItem | undefined,
-): RestrictionUiType {
-  if (!request) {
-    // No request found - user needs to request access
-    return RestrictionUiType.AccessBlockedByRestriction
+const STATUS_PRECEDENCE: readonly RequestStatus[] = [
+  'approved',
+  'pending',
+  'denied',
+  'error',
+]
+
+const RESTRICTION_UI_TYPE_BY_STATUS: Record<RequestStatus, RestrictionUiType> =
+  {
+    approved: RestrictionUiType.AccessibleOnRDCADAP,
+    pending:
+      RestrictionUiType.AccessBlockedByRestrictionWithPendingRDCADAPRequest,
+    denied:
+      RestrictionUiType.AccessBlockedByRestrictionWithRejectedRDCADAPRequest,
+    error: RestrictionUiType.AccessBlockedByACL,
   }
 
-  switch (request.status) {
-    case 'approved':
-      return RestrictionUiType.AccessibleOnRDCADAP
-    case 'pending':
-      return RestrictionUiType.AccessBlockedByRestrictionWithPendingRDCADAPRequest
-    case 'denied':
-      return RestrictionUiType.AccessBlockedByRestrictionWithRejectedRDCADAPRequest
-    case 'error':
-      return RestrictionUiType.AccessBlockedByACL
-    default:
-      return RestrictionUiType.AccessBlockedByRestriction
-  }
+/**
+ * Maps a user's Aridhia requests for one dataset to the RestrictionUiType for display.
+ *
+ * @param requests - Every request the user holds for the dataset (may be empty)
+ * @returns The RestrictionUiType of the highest-precedence status present, or
+ *   `AccessBlockedByRestriction` when no request has a recognized status
+ */
+export function getRestrictionUiTypeFromAridhiaRequests(
+  requests: readonly RequestListItem[],
+): RestrictionUiType {
+  const statuses = new Set(requests.map(request => request.status))
+  const status = STATUS_PRECEDENCE.find(candidate => statuses.has(candidate))
+  return status
+    ? RESTRICTION_UI_TYPE_BY_STATUS[status]
+    : RestrictionUiType.AccessBlockedByRestriction
 }
 
 /**
- * Finds the Aridhia request for a specific dataset from a list of requests.
- * If multiple requests match, returns the most recently updated one.
+ * Finds every Aridhia request that includes a specific dataset.
  *
  * @param requests - Array of Aridhia requests
- * @param datasetCode - The dataset code to search for
- * @returns The most recently updated request that contains the specified dataset, or undefined if not found
+ * @param datasetCode - The dataset code to search for (case-sensitive)
+ * @returns The matching requests, most recently updated first; requests without `updated_at`
+ *   sort last
  */
-export function findRequestForDataset(
-  requests: RequestListItem[],
+export function findRequestsForDataset(
+  requests: readonly RequestListItem[],
   datasetCode: string,
-): RequestListItem | undefined {
-  const matchingRequests = requests.filter(request =>
-    request.datasets?.some(dataset => dataset.code === datasetCode),
-  )
-
-  if (matchingRequests.length === 0) {
-    return undefined
-  }
-
-  // Return the most recently updated request
-  return matchingRequests.reduce((mostRecent, current) => {
-    if (!mostRecent.updated_at) {
-      return current
-    }
-    if (!current.updated_at) {
-      return mostRecent
-    }
-    return current.updated_at > mostRecent.updated_at ? current : mostRecent
-  })
+): RequestListItem[] {
+  return requests
+    .filter(request =>
+      request.datasets?.some(dataset => dataset.code === datasetCode),
+    )
+    .sort((a, b) => (b.updated_at ?? '').localeCompare(a.updated_at ?? ''))
 }
