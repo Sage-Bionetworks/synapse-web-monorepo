@@ -1,0 +1,1 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{ti as t}from"./TextField-B0ozAHdn.js";import{t as n}from"./jsx-runtime-l3w3GfrB.js";import{t as r}from"./createSvgIcon-DrQX71BT.js";var i,a,o=e((()=>{r(),i=n(),a=t((0,i.jsx)(`path`,{d:`m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z`}),`ArrowForward`)}));export{o as n,a as t};

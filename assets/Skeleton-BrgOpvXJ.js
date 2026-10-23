@@ -1,1 +1,0 @@
-import{o as e}from"./preload-helper-CsHsquCd.js";import{n as t}from"./SkeletonButton-BKLumyZQ.js";import{n}from"./SkeletonInlineBlock-CWAi8Z2R.js";import{n as r}from"./SkeletonTable-4PJtGg1g.js";import{n as i}from"./SkeletonParagraph-qDlw1XiT.js";var a=e((()=>{t(),n(),r(),i()}));export{a as t};

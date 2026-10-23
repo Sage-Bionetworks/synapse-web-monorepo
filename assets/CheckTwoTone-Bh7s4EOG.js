@@ -1,0 +1,1 @@
+import{o as e}from"./preload-helper-CsHsquCd.js";import{ti as t}from"./TextField-B0ozAHdn.js";import{t as n}from"./jsx-runtime-l3w3GfrB.js";import{t as r}from"./createSvgIcon-DrQX71BT.js";var i,a,o=e((()=>{r(),i=n(),a=t((0,i.jsx)(`path`,{d:`M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z`}),`CheckTwoTone`)}));export{o as n,a as t};

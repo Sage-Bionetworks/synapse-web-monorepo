@@ -1,1 +1,0 @@
-import{o as e}from"./preload-helper-CsHsquCd.js";import{n as t,t as n}from"./DraggableDialog-cm2Bwm32.js";var r,i,a;e((()=>{t(),r={title:`Components/DraggableDialog`,component:n,args:{open:!0,title:`Example Dialog`,children:`This is the content inside the draggable dialog.`}},i={},a=[`Default`]}))();export{i as Default,a as __namedExportsOrder,r as default};

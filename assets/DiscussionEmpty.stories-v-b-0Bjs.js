@@ -1,1 +1,0 @@
-import{o as e}from"./preload-helper-CsHsquCd.js";import{n as t,t as n}from"./DiscussionEmpty-sApqVHE0.js";var r,i,a;e((()=>{t(),r={title:`Synapse/DiscussionEmpty`,component:n},i={args:{onViewForumClicked:()=>{alert(`View Forum Clicked`)}}},a=[`DiscussionEmptyDemo`]}))();export{i as DiscussionEmptyDemo,a as __namedExportsOrder,r as default};
