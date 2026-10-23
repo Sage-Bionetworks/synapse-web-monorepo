@@ -61,7 +61,6 @@ function MatchingCount() {
 }
 
 describe('QueryWrapperErrorBoundary', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     queryContext = undefined
     server.use(
@@ -71,8 +70,6 @@ describe('QueryWrapperErrorBoundary', () => {
       }),
     )
   })
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   it('shows a below-threshold notice instead of the access-requirement UI for a BELOW_THRESHOLD 403, and clears it when the query changes', async () => {
     render(
