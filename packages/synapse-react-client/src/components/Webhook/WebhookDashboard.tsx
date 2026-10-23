@@ -4,7 +4,7 @@ import {
   useResendVerificationCode,
 } from '@/synapse-queries/webhook/useWebhook'
 import { formatDate } from '@/utils/functions/DateFormatter'
-import { AddCircleTwoTone } from '@mui/icons-material'
+import AddCircleTwoTone from '@mui/icons-material/AddCircleTwoTone'
 import {
   Box,
   Button,

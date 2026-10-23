@@ -2,43 +2,56 @@ import {
   useGetDataAccessRequestForUpdate,
   useGetDataAccessRequestPreview,
   useGetDataAccessRequestSignatureStatus,
+  useGetDataAccessRequestSignatureUpdatable,
   useGetDataAccessRequestSignedFileHandleId,
   useSubmitDataAccessRequest,
   useUpdateDataAccessRequest,
 } from '@/synapse-queries'
 import SynapseClient from '@/synapse-client'
+import { formatDate } from '@/utils/functions/DateFormatter'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
-import {
-  CheckCircleOutline,
-  HourglassEmpty,
-  OpenInNew,
-  Refresh,
-} from '@mui/icons-material'
+import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline'
+import HourglassEmpty from '@mui/icons-material/HourglassEmpty'
+import OpenInNew from '@mui/icons-material/OpenInNew'
+import Refresh from '@mui/icons-material/Refresh'
 import {
   Alert,
   Box,
   Button,
   DialogActions,
   DialogContent,
-  DialogTitle,
-  IconButton,
   Link,
   Skeleton,
   Stack,
+  SxProps,
   Typography,
 } from '@mui/material'
-import { EDucSignerStatus } from '@sage-bionetworks/synapse-client'
+import {
+  EDucSignerStatus,
+  EDucSignerStatusStatusEnum,
+} from '@sage-bionetworks/synapse-client'
 import {
   FileHandleAssociateType,
-  ManagedACTAccessRequirement,
   RestrictableObjectType,
 } from '@sage-bionetworks/synapse-types'
+import dayjs from 'dayjs'
 import { useState } from 'react'
-import IconSvg from '../../../IconSvg/IconSvg'
+import { DialogBaseTitle } from '../../../DialogBase'
 import { longFieldLabelSx } from '../styles'
+import { RequestFlowAccessRequirement } from '../requestFlowTypes'
+
+/** Browser defaults indent a blockquote far too much for a nested list item. */
+const declinedReasonSx: SxProps = {
+  mx: 0,
+  my: 0.5,
+  pl: 1.5,
+  borderLeft: '3px solid',
+  borderColor: 'grey.300',
+  color: 'grey.700',
+}
 
 export type SignatureStatusStepProps = {
-  managedACTAccessRequirement: ManagedACTAccessRequirement
+  managedACTAccessRequirement: RequestFlowAccessRequirement
   subjectId: string
   subjectType: RestrictableObjectType
   onHide: () => void
@@ -96,6 +109,14 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
   const totalCount = signers.length
   const allCollected = totalCount > 0 && collectedCount === totalCount
   const outstandingSigners = signers.filter(s => s.status !== 'done')
+
+  // Whether going Back could still deliver edits to this envelope is the server's call -- it knows
+  // every state DocuSign will refuse to correct. Only the copy below depends on it, so a stale or
+  // failed answer simply withholds the guidance rather than blocking the step.
+  const { data: isEnvelopeUpdatable } =
+    useGetDataAccessRequestSignatureUpdatable(requestId, {
+      enabled: Boolean(requestId) && !allCollected,
+    })
 
   const { data: previewFileHandle } = useGetDataAccessRequestPreview(
     requestId,
@@ -162,15 +183,7 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
 
   return (
     <>
-      <DialogTitle>
-        <Stack direction="row" sx={{ alignItems: 'center', gap: '5px' }}>
-          Request Access
-          <Box sx={{ flexGrow: 1 }} />
-          <IconButton aria-label={'Close'} onClick={onHide}>
-            <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
-          </IconButton>
-        </Stack>
-      </DialogTitle>
+      <DialogBaseTitle title={'Request Access'} onCancel={onHide} />
       <DialogContent>
         <Typography variant={'headline3'} sx={{ mb: 2 }}>
           Sign a Data Use Certificate (DUC)
@@ -180,12 +193,21 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
           (including the Signing Official) have been collected, you can submit
           the Data Access Request.
         </Typography>
-        {/* TODO: restore once the backend precheck allows editing collaborators mid-signature (PORTALS-4380 notes).
-        <Typography variant={'body1'} sx={{ ...longFieldLabelSx, mb: 3 }}>
-          You can update the list of Collaborators by pressing{' '}
-          <strong>Back</strong>.
-        </Typography>
-        */}
+        {/* Editing is only worth offering while signatures are still outstanding -- once every
+            signer is done the user should simply submit. Withheld until both the status and the
+            precheck resolve, so the copy neither appears and then vanishes nor promises that
+            existing signatures carry over when the server has already ruled that out. */}
+        {onBackClicked &&
+          signatureStatus &&
+          !allCollected &&
+          isEnvelopeUpdatable && (
+            <Typography variant={'body1'} sx={{ ...longFieldLabelSx, mb: 3 }}>
+              You can update the list of Collaborators by pressing{' '}
+              <strong>Back</strong>. Your changes will be applied to this
+              signature request, so anyone who has already signed will not need
+              to sign again.
+            </Typography>
+          )}
 
         {isLoadingStatus && (
           <Skeleton
@@ -305,6 +327,28 @@ export default function SignatureStatusStep(props: SignatureStatusStepProps) {
   )
 }
 
+/**
+ * Only surface non-pending problem states inline; pending is implied by the section header. A
+ * decline carries a timestamp, which folds into the label so the row doesn't read "(declined)"
+ * and then repeat itself underneath.
+ */
+function getSignerStatusLabel(signer: EDucSignerStatus): string {
+  if (
+    !signer.status ||
+    signer.status === EDucSignerStatusStatusEnum.pending ||
+    signer.status === EDucSignerStatusStatusEnum.done
+  ) {
+    return ''
+  }
+  if (
+    signer.status === EDucSignerStatusStatusEnum.declined &&
+    signer.declinedOn
+  ) {
+    return ` (declined ${formatDate(dayjs(signer.declinedOn))})`
+  }
+  return ` (${signer.status})`
+}
+
 function SignerLine(props: { signer: EDucSignerStatus }) {
   const { signer } = props
   const displayName = signer.name ?? 'Unnamed signer'
@@ -319,15 +363,22 @@ function SignerLine(props: { signer: EDucSignerStatus }) {
   ) : (
     <>{displayName}</>
   )
-  // Only surface non-pending problem states inline; pending is implied by the section header.
-  const statusLabel =
-    signer.status && signer.status !== 'pending' && signer.status !== 'done'
-      ? ` (${signer.status})`
-      : ''
   return (
-    <Typography variant={'body1'} component={'span'}>
-      {nameNode}
-      {statusLabel}
-    </Typography>
+    <>
+      <Typography variant={'body1'} component={'span'}>
+        {nameNode}
+        {getSignerStatusLabel(signer)}
+      </Typography>
+      {/* The reason is the signer's own words, so it is quoted rather than restated as UI copy. */}
+      {signer.declinedReason && (
+        <Typography
+          variant={'body1'}
+          component={'blockquote'}
+          sx={declinedReasonSx}
+        >
+          {signer.declinedReason}
+        </Typography>
+      )}
+    </>
   )
 }

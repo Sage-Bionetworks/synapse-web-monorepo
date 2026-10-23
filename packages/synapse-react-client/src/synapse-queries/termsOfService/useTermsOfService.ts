@@ -15,6 +15,8 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
+import { useMemo } from 'react'
+import { KeyFactory } from '../KeyFactory'
 
 export function useTermsOfServiceInfo(
   options?: Partial<UseQueryOptions<TermsOfServiceInfo, SynapseClientError>>,
@@ -32,10 +34,13 @@ export function useTermsOfServiceStatus(
   accessToken?: string, //usually we can fetch the access token from the context, but this hook is used by ApplicationSessionManager which sets the access token in the context (ApplicationSessionContextProvider)!
   options?: Partial<UseQueryOptions<TermsOfServiceStatus, SynapseClientError>>,
 ) {
-  const { keyFactory } = useSynapseContext()
+  const queryKeyFactory = useMemo(
+    () => new KeyFactory(accessToken),
+    [accessToken],
+  )
   return useQuery({
     ...options,
-    queryKey: keyFactory.getTermsOfServiceStatus(),
+    queryKey: queryKeyFactory.getTermsOfServiceStatus(),
 
     queryFn: () => SynapseClient.getTermsOfServiceStatus(accessToken),
   })
@@ -53,7 +58,9 @@ export function useSignTermsOfService(
     mutationFn: (accessToken: AccessToken) =>
       SynapseClient.signSynapseTermsOfUse(accessToken),
     onSuccess: async (resp, variables, ctx) => {
-      queryClient.invalidateQueries({
+      // Wait for the refetch so that consumers redirecting in onSuccess see the updated status.
+      // Otherwise, guards that check the (stale) status may send the user back to sign again.
+      await queryClient.invalidateQueries({
         queryKey: keyFactory.getTermsOfServiceStatus(),
       })
       if (options?.onSuccess) {

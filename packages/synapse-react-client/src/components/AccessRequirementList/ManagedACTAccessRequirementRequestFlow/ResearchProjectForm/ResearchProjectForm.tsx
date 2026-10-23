@@ -5,16 +5,13 @@ import {
   useUpdateDataAccessRequest,
   useUpdateResearchProject,
 } from '@/synapse-queries'
-import { InfoTwoTone } from '@mui/icons-material'
+import InfoTwoTone from '@mui/icons-material/InfoTwoTone'
 import {
   Alert,
   Box,
   Button,
   DialogActions,
   DialogContent,
-  DialogTitle,
-  IconButton,
-  Stack,
   TextField,
   Typography,
 } from '@mui/material'
@@ -24,18 +21,17 @@ import {
   Renewal,
   Request,
   ResearchProject,
-  TYPE_FILTER,
 } from '@sage-bionetworks/synapse-types'
 import isEmpty from 'lodash-es/isEmpty'
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import HelpPopover from '../../../HelpPopover'
-import IconSvg from '../../../IconSvg/IconSvg'
+import { DialogBaseTitle } from '../../../DialogBase'
 import TextFieldWithWordLimit, {
   getWordCount,
 } from '../../../TextField/TextFieldWithWordLimit'
-import UserSearchBox from '../../../UserSearchBox/UserSearchBox'
 import { AlertProps } from '../DataAccessRequestAccessorsFilesForm/DataAccessRequestAccessorsFilesForm'
 import ManagedACTAccessRequirementFormWikiWrapper from '../ManagedACTAccessRequirementFormWikiWrapper'
+import PrincipalInvestigatorFields from '../PrincipalInvestigatorFields'
 
 const INTENDED_DATA_USE_MIN_WORD_COUNT = 50
 const INTENDED_DATA_USE_MAX_WORD_COUNT = 750 // SWC-7526
@@ -246,21 +242,7 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
 
   return (
     <>
-      <DialogTitle>
-        <Stack
-          direction="row"
-          sx={{
-            alignItems: 'center',
-            gap: '5px',
-          }}
-        >
-          Request Access
-          <Box sx={{ flexGrow: 1 }} />
-          <IconButton aria-label={'Close'} onClick={onHide}>
-            <IconSvg icon={'close'} wrap={false} sx={{ color: 'grey.700' }} />
-          </IconButton>
-        </Stack>
-      </DialogTitle>
+      <DialogBaseTitle title={'Request Access'} onCancel={() => onHide?.()} />
       {showConfirmationScreen && (
         <ConfirmationScreenContent
           isIDURequired={managedACTAccessRequirement.isIDURequired}
@@ -268,10 +250,13 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
       )}
       {!showConfirmationScreen && (
         <DialogContent>
+          {alert && (
+            <Alert severity={alert.key} sx={{ mb: 2 }}>
+              {alert.message}
+            </Alert>
+          )}
           <ManagedACTAccessRequirementFormWikiWrapper
-            managedACTAccessRequirementId={String(
-              managedACTAccessRequirement.id,
-            )}
+            accessRequirement={managedACTAccessRequirement}
           >
             <Box
               component={'form'}
@@ -313,39 +298,13 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
                 }}
               />
               {isEDucEnabled && (
-                <Box sx={{ mb: '20px' }}>
-                  <Typography
-                    component="label"
-                    htmlFor="pi-user"
-                    variant="body1"
-                    sx={{ display: 'block', mb: 1 }}
-                  >
-                    Synapse username of your Project Lead or PI
-                    <Box component="span" sx={{ color: 'error.main' }}>
-                      {' '}
-                      *
-                    </Box>
-                  </Typography>
-                  <UserSearchBox
-                    inputId="pi-user"
-                    typeFilter={TYPE_FILTER.USERS_ONLY}
-                    value={piUserId}
-                    onChange={principalId => setPiUserId(principalId)}
-                    placeholder="Search Synapse for your Project Lead or PI"
-                  />
-                  <TextField
-                    id="pi-email"
-                    label="Institutional Email of your Project Lead or PI"
-                    type="email"
-                    placeholder="pi@example.edu"
-                    fullWidth
-                    disabled={isLoading}
-                    value={piEmail}
-                    required
-                    onChange={e => setPiEmail(e.target.value)}
-                    sx={{ mt: 2 }}
-                  />
-                </Box>
+                <PrincipalInvestigatorFields
+                  userId={piUserId}
+                  email={piEmail}
+                  disabled={isLoading}
+                  onUserIdChange={setPiUserId}
+                  onEmailChange={setPiEmail}
+                />
               )}
 
               <TextField
@@ -396,7 +355,6 @@ export default function ResearchProjectForm(props: ResearchProjectFormProps) {
               )}
             </Box>
           </ManagedACTAccessRequirementFormWikiWrapper>
-          {alert && <Alert severity={alert.key}>{alert.message}</Alert>}
         </DialogContent>
       )}
       <DialogActions>

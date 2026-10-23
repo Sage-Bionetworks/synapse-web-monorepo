@@ -41,7 +41,6 @@ export function DropdownNavButton(props) {
           onClick={() => {
             handleClose()
             onClickedNavLink()
-            window.scrollTo({ top: 0, behavior: 'smooth' })
           }}
         >
           {childRoute.name}

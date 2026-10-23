@@ -25,10 +25,6 @@ vi.spyOn(CardContainerModule, 'CardContainer').mockImplementation(() => (
 ))
 
 describe('prefetchCardContainerLogicData', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   beforeEach(() => {
     registerTableQueryResult({ sql: SQL }, syn16787123)
   })

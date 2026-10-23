@@ -5,6 +5,11 @@ import pluralize from 'pluralize'
 import { ReactNode } from 'react'
 import { isRowSelectionUIFloatingAtom } from '../../QueryWrapper/TableRowSelectionState'
 
+export const FLOATING_ROW_SELECTION_BAR_CLASS_NAME =
+  'SynapseFloatingRowSelectionBar'
+
+const HEIGHT_CSS_VARIABLE = 'var(--synapse-floating-row-selection-bar-height)'
+
 export type RowSelectionUIProps = {
   show?: boolean
   selectedRowCount: number
@@ -29,15 +34,22 @@ export function RowSelectionUI(props: RowSelectionUIProps) {
 
   return (
     <Paper
+      className={
+        isRowSelectionUIFloating
+          ? FLOATING_ROW_SELECTION_BAR_CLASS_NAME
+          : undefined
+      }
       sx={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         position: isRowSelectionUIFloating ? 'fixed' : 'absolute',
-        bottom: isRowSelectionUIFloating ? 0 : -70,
+        bottom: isRowSelectionUIFloating
+          ? 0
+          : `calc(-1 * ${HEIGHT_CSS_VARIABLE})`,
         left: 0,
         width: '100%',
-        height: '70px',
+        height: HEIGHT_CSS_VARIABLE,
         zIndex: 1,
         px: 2.5,
       }}

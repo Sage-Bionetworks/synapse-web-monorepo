@@ -1,5 +1,5 @@
 import { convertToConcreteEntityType } from '@/utils/functions/EntityTypeUtils'
-import { InfoTwoTone } from '@mui/icons-material'
+import InfoTwoTone from '@mui/icons-material/InfoTwoTone'
 import {
   Box,
   Checkbox,

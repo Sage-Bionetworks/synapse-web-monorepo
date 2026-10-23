@@ -53,6 +53,16 @@ const page2: AccessRequestList = {
       signaturesRequested: 3,
       modifiedOn: '2026-08-21T10:00:00Z',
     },
+    {
+      requestId: '103',
+      accessRequirementId: '9602705',
+      accessRequirementName: 'Declined Study Data',
+      isEDuc: true,
+      status: 'declined',
+      signaturesAcquired: 1,
+      signaturesRequested: 3,
+      modifiedOn: '2026-08-22T10:00:00Z',
+    },
   ],
 }
 

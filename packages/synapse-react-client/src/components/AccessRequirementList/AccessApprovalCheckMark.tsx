@@ -1,10 +1,8 @@
 import ConditionalWrapper from '@/components/utils/ConditionalWrapper'
 import { spreadSx } from '@/theme/spreadSx'
-import {
-  AccessTimeFilled,
-  CheckTwoTone,
-  LockTwoTone,
-} from '@mui/icons-material'
+import AccessTimeFilled from '@mui/icons-material/AccessTimeFilled'
+import CheckTwoTone from '@mui/icons-material/CheckTwoTone'
+import LockTwoTone from '@mui/icons-material/LockTwoTone'
 import { Avatar, styled, SxProps, useTheme } from '@mui/material'
 import Skeleton from '@mui/material/Skeleton'
 import { ReactNode } from 'react'

@@ -7,7 +7,8 @@ import {
   isContainerType,
 } from '@/utils/functions/EntityTypeUtils'
 import { Writable } from '@/utils/types/Writable'
-import { ChevronRight, ExpandMore } from '@mui/icons-material'
+import ChevronRight from '@mui/icons-material/ChevronRight'
+import ExpandMore from '@mui/icons-material/ExpandMore'
 import { Skeleton, Tooltip, Typography } from '@mui/material'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import { EntityChildrenRequest } from '@sage-bionetworks/synapse-types'

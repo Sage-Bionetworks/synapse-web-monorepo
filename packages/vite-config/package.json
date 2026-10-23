@@ -35,6 +35,9 @@
       "optional": true
     }
   },
+  "dependencies": {
+    "@juggle/resize-observer": "^3.4.0"
+  },
   "devDependencies": {
     "@rolldown/plugin-babel": "^0.2.3",
     "@svgr/plugin-jsx": "^8.1.0",

@@ -1,5 +1,6 @@
 import { PropsWithChildren } from 'react'
 import { AridhiaContextProvider } from 'synapse-react-client/utils/context/AridhiaContext'
+import { useAridhiaEndpoints } from './useAridhiaEndpoints'
 
 export type AridhiaIntegrationProps = PropsWithChildren<{
   /**
@@ -36,5 +37,22 @@ export function AridhiaIntegration(props: AridhiaIntegrationProps) {
     >
       {children}
     </AridhiaContextProvider>
+  )
+}
+
+/**
+ * {@link AridhiaIntegration} configured from the portal's `aridhiaConfig`, using the C-Path dev hub
+ * endpoints when served from a staging origin.
+ */
+export function PortalAridhiaIntegration(props: PropsWithChildren) {
+  const { apiBasePath, subjectTokenIssuer } = useAridhiaEndpoints()
+
+  return (
+    <AridhiaIntegration
+      apiBasePath={apiBasePath}
+      subjectTokenIssuer={subjectTokenIssuer}
+    >
+      {props.children}
+    </AridhiaIntegration>
   )
 }

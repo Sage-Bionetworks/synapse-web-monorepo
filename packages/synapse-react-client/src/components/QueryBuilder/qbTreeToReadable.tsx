@@ -1,6 +1,10 @@
 import { ReactNode } from 'react'
 import { isQBGroup, QBCondition, QBGroup, QBNode } from './QueryBuilderTypes'
-import { labelForFacetValue, labelForOp } from './queryBuilderMetadata'
+import { labelForOp } from './queryBuilderMetadata'
+import {
+  QBValueDisplayNameFn,
+  rawQBValueDisplayName,
+} from './useQBValueDisplayName'
 
 /**
  * Render a QB tree as a plain-English React node with the AND / OR / NOT
@@ -15,30 +19,37 @@ import { labelForFacetValue, labelForOp } from './queryBuilderMetadata'
 export function qbTreeToReadable(
   root: QBGroup,
   getColumnDisplayName: (columnName: string) => string = name => name,
+  getValueDisplayName: QBValueDisplayNameFn = rawQBValueDisplayName,
 ): ReactNode {
-  const rendered = renderNode(root, true, getColumnDisplayName)
+  const displayNames = { getColumnDisplayName, getValueDisplayName }
+  const rendered = renderNode(root, true, displayNames)
   if (rendered == null) return <span>(no filters)</span>
   return rendered
+}
+
+type DisplayNames = {
+  getColumnDisplayName: (columnName: string) => string
+  getValueDisplayName: QBValueDisplayNameFn
 }
 
 function renderNode(
   node: QBNode,
   isRoot: boolean,
-  getColumnDisplayName: (columnName: string) => string,
+  displayNames: DisplayNames,
 ): ReactNode | null {
-  if (isQBGroup(node)) return renderGroup(node, isRoot, getColumnDisplayName)
-  return renderCondition(node, getColumnDisplayName)
+  if (isQBGroup(node)) return renderGroup(node, isRoot, displayNames)
+  return renderCondition(node, displayNames)
 }
 
 function renderGroup(
   group: QBGroup,
   isRoot: boolean,
-  getColumnDisplayName: (columnName: string) => string,
+  displayNames: DisplayNames,
 ): ReactNode | null {
   const parts = group.children
     .map((child, index) => ({
       key: child.id,
-      node: renderNode(child, false, getColumnDisplayName),
+      node: renderNode(child, false, displayNames),
       index,
     }))
     .filter(part => part.node != null)
@@ -73,9 +84,10 @@ function renderGroup(
 
 function renderCondition(
   condition: QBCondition,
-  getColumnDisplayName: (columnName: string) => string,
+  displayNames: DisplayNames,
 ): ReactNode | null {
-  const valueSummary = summarizeConditionValue(condition)
+  const { getColumnDisplayName, getValueDisplayName } = displayNames
+  const valueSummary = summarizeConditionValue(condition, getValueDisplayName)
   // Skip fully-blank rows so they don't clutter the summary bar. A row is
   // fully blank when the user hasn't picked a column AND hasn't entered any
   // value yet — that's an in-progress row we don't want to narrate.
@@ -97,20 +109,23 @@ function renderCondition(
   )
 }
 
-function summarizeConditionValue(condition: QBCondition): string | null {
-  const { op, values, rangeMin, rangeMax, text } = condition
+function summarizeConditionValue(
+  condition: QBCondition,
+  getValueDisplayName: QBValueDisplayNameFn,
+): string | null {
+  const { columnName, op, values, rangeMin, rangeMax, text } = condition
+  const labelForValue = (value: string) =>
+    getValueDisplayName(columnName, value)
   switch (op) {
     case 'has_value':
     case 'no_value':
       return ''
     case 'is_any_of':
     case 'is_all_of':
-      return values.length === 0
-        ? null
-        : values.map(labelForFacetValue).join(', ')
+      return values.length === 0 ? null : values.map(labelForValue).join(', ')
     case 'equal':
     case 'not_equal':
-      return values.length === 0 ? null : labelForFacetValue(values[0])
+      return values.length === 0 ? null : labelForValue(values[0])
     case 'between':
       if (!rangeMin || !rangeMax) return null
       return `${rangeMin} and ${rangeMax}`

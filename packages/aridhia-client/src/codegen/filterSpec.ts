@@ -14,6 +14,7 @@ const ENDPOINTS_TO_KEEP = [
   'GET /datasets/{code}/catalogue',
   'GET /workspaces-forms/{code}',
   'GET /workflows/{code}',
+  'GET /vocabularies/{code}',
   // Deliberately dropped:
   //   - `GET /workflows/` (the workflow code is read from `settings.workflow_key`, never from a listing)
   //   - `GET /datasets/` (dataset codes in the AMP-ALS portal come from the Synapse dataset table's `dataset_code` column).

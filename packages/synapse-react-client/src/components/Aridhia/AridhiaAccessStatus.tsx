@@ -1,6 +1,8 @@
 import { ReactNode, useState } from 'react'
 import { useGetAridhiaRequests } from '@/aridhia-queries'
+import { useGetFeatureFlag } from '@/synapse-queries'
 import { useSynapseContext } from '@/utils'
+import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import { Button } from '@mui/material'
 import { DialogBase } from '../DialogBase'
@@ -33,6 +35,9 @@ export type AridhiaAccessStatusProps = {
 export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
   const { datasetCode, fairPortalUrl } = props
   const { isAuthenticated } = useSynapseContext()
+  const isDarFormEnabled = useGetFeatureFlag(
+    FeatureFlagEnum.AMPALS_RDCA_DAP_FORM_ENABLED,
+  )
 
   const {
     data: requestsResponse,
@@ -122,9 +127,12 @@ export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
       getRestrictionUiTypeFromAridhiaRequest(entityRequest)
     const icon = <AccessIcon restrictionUiType={restrictionUiType} />
 
-    if (restrictionUiType === RestrictionUiType.AccessibleOnRDCADAP) {
-      // Approved, or the RDCA-DAP request form is not yet enabled — keep the existing
-      // link-out to RDCA-DAP to access or request the data.
+    if (
+      restrictionUiType === RestrictionUiType.AccessibleOnRDCADAP ||
+      (!entityRequest && !isDarFormEnabled)
+    ) {
+      // Approved, or no request yet with the in-app request form not enabled — keep the
+      // existing link-out to RDCA-DAP to access or request the data.
       content = fairPortalUrl ? (
         <a
           href={getAridhiaFairPortalDatasetUrl(fairPortalUrl, datasetCode)}
@@ -156,10 +164,10 @@ export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
           />
         </>
       )
-    } else {
-      // No request yet — the icon opens the request wizard in a dialog. The same wizard also
-      // renders at the route-based, non-modal `AridhiaDarWizard` page for a full-page entry
-      // point.
+    } else if (isDarFormEnabled) {
+      // No request yet, and the in-app request form is enabled — the icon opens the request
+      // wizard in a dialog. The same wizard also renders at the route-based, non-modal
+      // `AridhiaDarWizard` page for a full-page entry point.
       content = (
         <Button
           sx={buttonSx}

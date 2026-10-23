@@ -1,4 +1,4 @@
-import { EastTwoTone } from '@mui/icons-material'
+import EastTwoTone from '@mui/icons-material/EastTwoTone'
 import { Box, Card, Chip, Link, SxProps, Typography } from '@mui/material'
 import ImageFromSynapseTable from '../ImageFromSynapseTable'
 

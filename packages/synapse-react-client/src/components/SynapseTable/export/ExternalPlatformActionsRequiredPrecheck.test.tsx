@@ -1,3 +1,4 @@
+import '@/mocks/msw/server'
 import {
   ColumnModel,
   ColumnSingleValueFilterOperator,
@@ -7,9 +8,16 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import { ButtonProps } from '@mui/material'
-import { upperFirst } from 'lodash-es'
+import { cloneDeep, upperFirst } from 'lodash-es'
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import {
+  BUNDLE_MASK_QUERY_COLUMN_MODELS,
+  BUNDLE_MASK_QUERY_RESULTS,
+  BUNDLE_MASK_QUERY_SELECT_COLUMNS,
+} from '@/utils/SynapseConstants'
 import { useExportTableQueryToAnalysisPlatform } from '../../../synapse-queries/entity/useExportTableQueryToAnalysisPlatform'
-import { getUseQuerySuccessMock } from '../../../testutils/ReactQueryMockUtils'
 import { TableQueryActionsRequired } from '../../DownloadCart/TableQueryActionsRequired'
 import { useQueryContext } from '../../QueryContext'
 import { QueryContextType } from '../../QueryContext/index'
@@ -22,7 +30,7 @@ import {
   useRowSelectionPrimaryKeyAtomValue,
   useSelectedRowsAtomValue,
 } from '../../QueryWrapper/TableRowSelectionState'
-import { useGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
+import { getTableQueryUseQueryOptions } from '../../QueryWrapper/TableQueryUseQueryOptions'
 import {
   EXTERNAL_ANALYSIS_PLATFORMS,
   ExternalAnalysisPlatform,
@@ -32,7 +40,6 @@ import ExternalPlatformActionsRequiredPrecheck from './ExternalPlatformActionsRe
 vi.mock('../../../synapse-queries/entity/useExportTableQueryToAnalysisPlatform')
 vi.mock('../../DownloadCart/TableQueryActionsRequired')
 vi.mock('../../QueryContext')
-vi.mock('../../QueryWrapper/useGetQueryMetadata')
 vi.mock('../../QueryVisualizationWrapper/index')
 vi.mock('../../QueryWrapper/TableRowSelectionState')
 
@@ -41,7 +48,6 @@ const mockUseExportTableQueryToAnalysisPlatform = vi.mocked(
 )
 const mockUseQueryContext = vi.mocked(useQueryContext)
 const mockUseQueryVisualizationContext = vi.mocked(useQueryVisualizationContext)
-const mockUseGetQueryMetadata = vi.mocked(useGetQueryMetadata)
 const MockTableQueryActionsRequired = vi.mocked(TableQueryActionsRequired)
 const mockOnConfirmButtonPropsChange = vi.fn<(props: ButtonProps) => void>()
 const mockOnSuccessfulExport = vi.fn()
@@ -62,7 +68,10 @@ const queryRequest: QueryBundleRequest = {
     sql: 'SELECT * FROM syn123',
   },
   entityId: 'syn123',
-  partMask: 1,
+  partMask:
+    BUNDLE_MASK_QUERY_RESULTS |
+    BUNDLE_MASK_QUERY_COLUMN_MODELS |
+    BUNDLE_MASK_QUERY_SELECT_COLUMNS,
 }
 
 const columnModels: ColumnModel[] = [
@@ -70,8 +79,16 @@ const columnModels: ColumnModel[] = [
 ]
 const selectColumns: SelectColumn[] = columnModels
 
+const { queryMetadataQueryOptions } = getTableQueryUseQueryOptions(
+  queryRequest,
+  undefined,
+  MOCK_CONTEXT_VALUE.keyFactory,
+  MOCK_CONTEXT_VALUE.accessToken,
+)
+
 const mockQueryContext: QueryContextType = {
-  getCurrentQueryRequest: vi.fn().mockReturnValue(queryRequest),
+  // The component under test mutates the request it receives, so hand out a fresh copy on each call
+  getCurrentQueryRequest: vi.fn(() => cloneDeep(queryRequest)),
   hasResettableFilters: false,
   fileIdColumnName: mockFileIdColumnName,
   fileVersionColumnName: mockFileVersionColumnName,
@@ -103,10 +120,7 @@ const mockQueryContext: QueryContextType = {
     initialPageParam: undefined,
     getNextPageParam: vi.fn() as never,
   },
-  queryMetadataQueryOptions: {
-    queryKey: ['queryMetadataQueryOptions'],
-    queryFn: vi.fn() as never,
-  },
+  queryMetadataQueryOptions,
   goToPage: vi.fn(),
   currentPage: 0,
   setPageSize: vi.fn(),
@@ -151,17 +165,15 @@ describe('ExternalPlatformActionsRequiredPrecheck', () => {
   beforeEach(() => {
     vi.clearAllMocks()
 
+    registerTableQueryResult(queryRequest.query, {
+      concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
+      columnModels,
+      selectColumns,
+    })
+
     mockUseQueryContext.mockReturnValue(mockQueryContext)
     mockUseQueryVisualizationContext.mockReturnValue(
       mockQueryVisualizationContext,
-    )
-
-    mockUseGetQueryMetadata.mockReturnValue(
-      getUseQuerySuccessMock({
-        concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
-        columnModels: columnModels,
-        selectColumns: selectColumns,
-      }),
     )
 
     mockUseSelectedRowsAtomValue.mockReturnValue([])
@@ -187,6 +199,7 @@ describe('ExternalPlatformActionsRequiredPrecheck', () => {
           onConfirmButtonPropsChange={mockOnConfirmButtonPropsChange}
           onSuccessfulExport={mockOnSuccessfulExport}
         />,
+        { wrapper: createWrapper() },
       )
 
       await screen.findByText(
@@ -246,19 +259,36 @@ describe('ExternalPlatformActionsRequiredPrecheck', () => {
     mockUseHasSelectedRowsAtomValue.mockReturnValue(true)
     mockUseRowSelectionPrimaryKeyAtomValue.mockReturnValue(['foo'])
 
+    const filteredQueryRequest: QueryBundleRequest = {
+      ...queryRequest,
+      query: {
+        ...queryRequest.query,
+        additionalFilters: [
+          {
+            concreteType:
+              'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+            columnName: 'foo',
+            operator: ColumnSingleValueFilterOperator.IN,
+            values: ['1'],
+          },
+        ],
+      },
+    }
+
     render(
       <ExternalPlatformActionsRequiredPrecheck
         selectedPlatform={'cavatica'}
         onConfirmButtonPropsChange={mockOnConfirmButtonPropsChange}
         onSuccessfulExport={mockOnSuccessfulExport}
       />,
+      { wrapper: createWrapper() },
     )
 
     await screen.findByText(`Before sending the selected data to CAVATICA:`)
 
     // Actions required component reports 0 actions required
     expect(MockTableQueryActionsRequired).toHaveBeenLastRenderedWithProps({
-      queryBundleRequest: queryRequest,
+      queryBundleRequest: filteredQueryRequest,
       columnModels: columnModels,
       onNumberOfRequiredActionsChanged: expect.any(Function),
     })
@@ -268,22 +298,7 @@ describe('ExternalPlatformActionsRequiredPrecheck', () => {
     })
 
     expect(mockUseExportTableQueryToAnalysisPlatform).toHaveBeenLastCalledWith({
-      queryBundleRequest: {
-        ...queryRequest,
-        query: {
-          ...queryRequest.query,
-
-          additionalFilters: [
-            {
-              concreteType:
-                'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-              columnName: 'foo',
-              operator: ColumnSingleValueFilterOperator.IN,
-              values: ['1'],
-            },
-          ],
-        },
-      },
+      queryBundleRequest: filteredQueryRequest,
       selectColumns: selectColumns,
       fileIdColumnName: mockFileIdColumnName,
       fileVersionColumnName: mockFileVersionColumnName,
@@ -318,6 +333,7 @@ describe('ExternalPlatformActionsRequiredPrecheck', () => {
         onConfirmButtonPropsChange={mockOnConfirmButtonPropsChange}
         onSuccessfulExport={mockOnSuccessfulExport}
       />,
+      { wrapper: createWrapper() },
     )
 
     await screen.findByText(`Before sending the selected data to CAVATICA:`)

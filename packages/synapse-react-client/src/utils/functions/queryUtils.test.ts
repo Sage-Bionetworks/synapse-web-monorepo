@@ -12,6 +12,7 @@ import {
   ColumnTypeEnum,
   ENTITY_VIEW_TYPE_MASK_FILE,
   ENTITY_VIEW_TYPE_MASK_FOLDER,
+  ENTITY_VIEW_TYPE_MASK_RECORDSET,
   FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
   FacetColumnRequest,
   FacetColumnResult,
@@ -277,6 +278,25 @@ describe('facet support', () => {
           '123',
         ),
       ).toEqual(false)
+    })
+
+    test('record-set-only view can be added to download list', () => {
+      expect(
+        canTableQueryBeAddedToDownloadList({
+          ...mockFileViewEntity,
+          viewTypeMask: ENTITY_VIEW_TYPE_MASK_RECORDSET,
+        }),
+      ).toEqual(true)
+    })
+
+    test('view that includes record sets and non-files can only be added to download list if a column ID is included', () => {
+      const entity = {
+        ...mockFileViewEntity,
+        viewTypeMask:
+          ENTITY_VIEW_TYPE_MASK_RECORDSET | ENTITY_VIEW_TYPE_MASK_FOLDER,
+      }
+      expect(canTableQueryBeAddedToDownloadList(entity)).toEqual(false)
+      expect(canTableQueryBeAddedToDownloadList(entity, '123')).toEqual(true)
     })
 
     test('file-only view can be added to download list', () => {

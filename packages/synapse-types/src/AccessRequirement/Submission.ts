@@ -20,8 +20,8 @@ export type Submission = {
   attachments?: Array<string>
   /** List of user changes. A user can gain access, renew access or have access revoked. */
   accessorChanges: Array<AccessorChange>
-  /** A research project describes a project at an institution that used a controlled data set for the purposes that are stated in the Intended Data Use Statement. */
-  researchProjectSnapshot: ResearchProject
+  /** A research project describes a project at an institution that used a controlled data set for the purposes that are stated in the Intended Data Use Statement. Absent for submissions that collect no first-class research project fields. */
+  researchProjectSnapshot?: ResearchProject
   /** True if this submission is a renewal submission. */
   isRenewalSubmission: boolean
   /** Link(s) to publication that used the controlled data. */
@@ -40,6 +40,8 @@ export type Submission = {
   state: SubmissionState
   /** The reason this submission is rejected, if it's rejected. */
   rejectedReason?: string
+  /** Additional data provided by the submitter, validated against the JSON Schema referenced by the Access Requirement's form template. */
+  schemaData?: Record<string, unknown>
   /** Synapse employs an Optimistic Concurrency Control (OCC) scheme to handle concurrent updates. Since the E-Tag changes every time a request is updated it is used to detect when a client's current representation of a request is out-of-date. */
   etag: string
   /** The ID of the subject user interested in. This information will be used to help user navigate back to where they were to continue their work. */

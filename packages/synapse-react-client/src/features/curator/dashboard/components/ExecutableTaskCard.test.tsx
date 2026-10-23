@@ -218,9 +218,6 @@ describe('ExecutableTaskCard', () => {
   })
 
   describe('starting the task', () => {
-    beforeAll(() => server.listen())
-    afterAll(() => server.close())
-
     it('calls the execute endpoint when Start is clicked', async () => {
       const user = userEvent.setup()
       let startCalled = false

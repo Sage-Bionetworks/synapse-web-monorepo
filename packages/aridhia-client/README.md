@@ -9,8 +9,8 @@ This package provides a TypeScript client for:
 
 - The Aridhia API gateway's third-party token exchange (`POST /authenticate`)
 - The C-Path FAIR API endpoints this integration needs: datasets, dataset settings,
-  dictionaries, workspaces, catalogue entries, workspace-request forms, workflows, and data
-  access requests
+  dictionaries, workspaces, catalogue entries, workspace-request forms, workflows, vocabulary
+  terms, and data access requests
 
 ## Installation
 
@@ -104,6 +104,9 @@ and `WorkspacesApi`.
 
 - **Workspaces** (`WorkspacesApi`)
   - `GET /workspaces-forms/{code}` - Get a form definition (e.g. `code: 'workspace_request'`)
+
+- **Personalisation** (`PersonalisationApi`)
+  - `GET /vocabularies/{code}` - Get a vocabulary term (UI copy maintained in the FAIR portal, e.g. `code: 'data-access-request-message'`). The spec types the response as a bare `object`
 
 ## Development
 

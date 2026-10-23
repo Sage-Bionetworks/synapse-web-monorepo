@@ -17,6 +17,7 @@ import {
   ALIAS_AVAILABLE,
   ALL_USER_SESSION_TOKENS,
   APPROVED_SUBMISSION_INFO,
+  ASYNCHRONOUS_JOB,
   ASYNCHRONOUS_JOB_TOKEN,
   BIND_INVITATION_TO_AUTHENTICATED_USER,
   CHANGE_PASSWORD,
@@ -624,6 +625,30 @@ export const getSearchQueryAsyncJobResults = async (
     SEARCH_QUERY_ASYNC_GET(asyncJobId.token),
     accessToken,
     setCurrentAsyncStatus,
+  )
+}
+
+/**
+ * Start the asynchronous job that registers a new JSON Schema version.
+ * https://rest-docs.synapse.org/rest/POST/asynchronous/job.html
+ *
+ * The generated client serializes `schema` through its `JsonSchema` model, which drops any keyword
+ * the model does not list and rewrites boolean subschemas and tuple `items`. The schema may have
+ * been authored in a raw JSON editor, so it is sent exactly as given. The caller polls the returned
+ * job for completion.
+ */
+export const startCreateSchemaJob = (
+  schema: JSONSchema7,
+  accessToken?: string,
+): Promise<AsynchronousJobStatus<unknown, unknown>> => {
+  return doPost<AsynchronousJobStatus<unknown, unknown>>(
+    ASYNCHRONOUS_JOB,
+    {
+      concreteType: 'org.sagebionetworks.repo.model.schema.CreateSchemaRequest',
+      schema,
+    },
+    accessToken,
+    BackendDestinationEnum.REPO_ENDPOINT,
   )
 }
 

@@ -8,6 +8,7 @@ export const ENTITY_VIEW_TYPE_MASK_VIEW = 0x10
 export const ENTITY_VIEW_TYPE_MASK_DOCKER = 0x20
 export const ENTITY_VIEW_TYPE_MASK_SUBMISSIONVIEW = 0x40
 export const ENTITY_VIEW_TYPE_MASK_DATASET = 0x80
+export const ENTITY_VIEW_TYPE_MASK_RECORDSET = 0x400
 
 export const ENTITY_VIEW_CONCRETE_TYPE_VALUE =
   'org.sagebionetworks.repo.model.table.EntityView'

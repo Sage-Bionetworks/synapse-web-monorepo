@@ -58,8 +58,6 @@ describe('CreateTableFromCsvDialog', () => {
     }
   }
 
-  beforeAll(() => server.listen())
-
   beforeEach(() => {
     server.use(
       ...getTableTransactionHandlers({
@@ -71,11 +69,8 @@ describe('CreateTableFromCsvDialog', () => {
   })
 
   afterEach(() => {
-    server.resetHandlers()
     vi.clearAllMocks()
   })
-
-  afterAll(() => server.close())
 
   async function simulateFileUpload(user: ReturnType<typeof userEvent.setup>) {
     await user.click(await screen.findByRole('button', { name: 'Upload' }))

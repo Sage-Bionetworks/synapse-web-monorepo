@@ -3,6 +3,7 @@ import {
   ENTITY_VIEW_TYPE_MASK_DOCKER,
   ENTITY_VIEW_TYPE_MASK_FILE,
   ENTITY_VIEW_TYPE_MASK_FOLDER,
+  ENTITY_VIEW_TYPE_MASK_RECORDSET,
   ENTITY_VIEW_TYPE_MASK_TABLE,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, within } from '@testing-library/react'
@@ -25,7 +26,7 @@ describe('EntityViewMaskEditor tests', () => {
     renderComponent({ value, onChange })
 
     const checkboxes = screen.getAllByRole('checkbox')
-    expect(checkboxes).toHaveLength(5)
+    expect(checkboxes).toHaveLength(6)
 
     expect(screen.getByLabelText('Files')).toBeChecked()
     expect(screen.getByLabelText('Folders')).toBeChecked()
@@ -74,6 +75,17 @@ describe('EntityViewMaskEditor tests', () => {
     )
   })
 
+  it('allows adding Record Sets to the view', async () => {
+    const value = ENTITY_VIEW_TYPE_MASK_FILE
+    const onChange = vi.fn()
+    renderComponent({ value, onChange })
+
+    await userEvent.click(screen.getByLabelText('Record Sets'))
+    expect(onChange).toHaveBeenCalledWith(
+      ENTITY_VIEW_TYPE_MASK_FILE | ENTITY_VIEW_TYPE_MASK_RECORDSET,
+    )
+  })
+
   it('isMaskSupportedInUI', () => {
     expect(isMaskSupportedInUI(ENTITY_VIEW_TYPE_MASK_FILE)).toBe(true)
     expect(
@@ -85,6 +97,12 @@ describe('EntityViewMaskEditor tests', () => {
     expect(
       isMaskSupportedInUI(
         ENTITY_VIEW_TYPE_MASK_FILE | ENTITY_VIEW_TYPE_MASK_DOCKER,
+      ),
+    ).toBe(true)
+
+    expect(
+      isMaskSupportedInUI(
+        ENTITY_VIEW_TYPE_MASK_FILE | ENTITY_VIEW_TYPE_MASK_RECORDSET,
       ),
     ).toBe(true)
 

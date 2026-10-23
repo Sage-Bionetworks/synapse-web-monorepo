@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box, Typography, Link } from '@mui/material'
 import HeaderSearchBox from '../HeaderSearchBox'
-import { AddAlertTwoTone } from '@mui/icons-material'
+import AddAlertTwoTone from '@mui/icons-material/AddAlertTwoTone'
 import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
 import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
 import { TypeAnimation } from 'react-type-animation'

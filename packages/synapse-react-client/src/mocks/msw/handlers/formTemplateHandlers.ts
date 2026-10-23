@@ -9,9 +9,14 @@ import BasicMockedCrudService from '../util/BasicMockedCrudService'
 
 const FORM_TEMPLATE_BASE = '/repo/v1/accessRequirement/formTemplate'
 
-export function getFormTemplateService() {
+export const getFormTemplateSearchUrl = (backendOrigin: string) =>
+  `${backendOrigin}${FORM_TEMPLATE_BASE}/search`
+
+export function getFormTemplateService(
+  initialData: FormTemplate[] = mockFormTemplates,
+) {
   return new BasicMockedCrudService<FormTemplate, 'id'>({
-    initialData: mockFormTemplates,
+    initialData,
     idField: 'id',
     autoGenerateId: true,
   })
@@ -33,6 +38,26 @@ export const getFormTemplateHandlers = (
     return HttpResponse.json(created, { status: 201 })
   }),
 
+  // Search form templates
+  http.post(getFormTemplateSearchUrl(backendOrigin), async ({ request }) => {
+    const body = (await request.json()) as FormTemplateSearchRequest
+    let results = service.getAll()
+
+    if (body.name) {
+      const searchLower = body.name.toLowerCase()
+      results = results.filter(t => t.name.toLowerCase().includes(searchLower))
+    }
+
+    if (!body.includeDeprecated) {
+      results = results.filter(t => !t.deprecated)
+    }
+
+    const response: FormTemplateSearchResponse = {
+      results,
+      nextPageToken: undefined,
+    }
+    return HttpResponse.json(response)
+  }),
   // Update a form template by id (creates a new version)
   http.post(
     `${backendOrigin}${FORM_TEMPLATE_BASE}/:id`,
@@ -86,32 +111,6 @@ export const getFormTemplateHandlers = (
         )
       }
       return HttpResponse.json(template)
-    },
-  ),
-
-  // Search form templates
-  http.post(
-    `${backendOrigin}${FORM_TEMPLATE_BASE}/search`,
-    async ({ request }) => {
-      const body = (await request.json()) as FormTemplateSearchRequest
-      let results = service.getAll()
-
-      if (body.name) {
-        const searchLower = body.name.toLowerCase()
-        results = results.filter(t =>
-          t.name.toLowerCase().includes(searchLower),
-        )
-      }
-
-      if (!body.includeDeprecated) {
-        results = results.filter(t => !t.deprecated)
-      }
-
-      const response: FormTemplateSearchResponse = {
-        results,
-        nextPageToken: undefined,
-      }
-      return HttpResponse.json(response)
     },
   ),
 ]

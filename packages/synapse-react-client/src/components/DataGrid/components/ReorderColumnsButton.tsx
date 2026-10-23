@@ -1,6 +1,6 @@
 import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
 import ReorderColumnsDialog from '@/components/DataGrid/components/ReorderColumnsDialog'
-import { SwapHoriz } from '@mui/icons-material'
+import SwapHoriz from '@mui/icons-material/SwapHoriz'
 import { JSONSchema7 } from 'json-schema'
 import { useState } from 'react'
 

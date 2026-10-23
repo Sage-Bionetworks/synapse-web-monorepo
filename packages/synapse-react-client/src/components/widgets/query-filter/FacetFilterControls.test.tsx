@@ -1,8 +1,8 @@
+import '@/mocks/msw/server'
 import React from 'react'
 import { MOCK_TABLE_ENTITY_ID } from '@/mocks/entity/mockTableEntity'
 import mockQueryResponseData from '@/mocks/mockQueryResponseData'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { DEFAULT_PAGE_SIZE } from '@/utils/SynapseConstants'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
@@ -77,13 +77,10 @@ function init(overrides?: FacetFilterControlsProps) {
 }
 
 describe('FacetFilterControls tests', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     vi.clearAllMocks()
     registerTableQueryResult(queryRequest.query, mockQueryResponseData)
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it('should only show three facets', async () => {
     init()

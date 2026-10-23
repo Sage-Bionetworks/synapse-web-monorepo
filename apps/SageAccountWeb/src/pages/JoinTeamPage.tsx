@@ -1,4 +1,5 @@
-import { CelebrationOutlined, Groups2Outlined } from '@mui/icons-material'
+import CelebrationOutlined from '@mui/icons-material/CelebrationOutlined'
+import Groups2Outlined from '@mui/icons-material/Groups2Outlined'
 import { Box, Button, Typography, useTheme } from '@mui/material'
 import {
   isJoinTeamSignedToken,

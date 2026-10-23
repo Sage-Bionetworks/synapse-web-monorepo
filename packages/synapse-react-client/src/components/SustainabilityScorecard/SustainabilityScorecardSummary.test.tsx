@@ -1,4 +1,5 @@
-import { act, render, screen } from '@testing-library/react'
+import '@/mocks/msw/server'
+import { render, screen } from '@testing-library/react'
 import SustainabilityScorecardSummary, {
   SustainabilityScorecardSummaryProps,
 } from './SustainabilityScorecardSummary'
@@ -7,20 +8,9 @@ import {
   QueryBundleRequest,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
-import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
-import { getUseQueryMock } from '@/testutils/ReactQueryMockUtils'
-import { SynapseClientError } from '@sage-bionetworks/synapse-client'
+import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
 import { SynapseConstants } from '@/utils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-
-vi.mock('@/synapse-queries/entity/useGetQueryResultBundle')
-
-const {
-  mock: mockUseGetQueryResultBundleImpl,
-  setSuccess: setGetQueryResultBundleSuccess,
-} = getUseQueryMock<QueryResultBundle, SynapseClientError>()
-
-const mockUseGetQueryResultBundle = vi.mocked(useGetQueryResultBundle)
 
 async function waitForDataLoad() {
   await screen.findByText('Dependencies')
@@ -60,11 +50,7 @@ const mockBundleSuccess: QueryResultBundle = {
 
 describe('SustainabilityScorecard Tests', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
-
-    mockUseGetQueryResultBundle.mockImplementation(
-      mockUseGetQueryResultBundleImpl,
-    )
+    registerTableQueryResult(mockQuery.query, mockBundleSuccess)
   })
 
   const mockQuery: QueryBundleRequest = {
@@ -125,9 +111,6 @@ describe('SustainabilityScorecard Tests', () => {
 
   it('displays header', async () => {
     renderComponent()
-    act(() => {
-      setGetQueryResultBundleSuccess(mockBundleSuccess)
-    })
 
     await waitForDataLoad()
 
@@ -137,9 +120,6 @@ describe('SustainabilityScorecard Tests', () => {
 
   it('displays card', async () => {
     renderComponent()
-    act(() => {
-      setGetQueryResultBundleSuccess(mockBundleSuccess)
-    })
 
     await waitForDataLoad()
 
@@ -154,9 +134,6 @@ describe('SustainabilityScorecard Tests', () => {
 
   it('renders the correct icons based on metric values', async () => {
     renderComponent()
-    act(() => {
-      setGetQueryResultBundleSuccess(mockBundleSuccess)
-    })
 
     await waitForDataLoad()
 

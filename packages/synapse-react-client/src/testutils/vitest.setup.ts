@@ -1,7 +1,6 @@
 // import jest-dom for Testing Library matchers (compatible with Vitest)
 import '@testing-library/jest-dom/vitest'
 import './ComponentToBePassedPropsCustomMatcher'
-import { ResizeObserver } from '@juggle/resize-observer'
 import './muiDatePickerMock'
 import { setupIntersectionMocking } from 'react-intersection-observer/test-utils'
 import 'whatwg-fetch'
@@ -11,9 +10,6 @@ import { TextEncoder, TextDecoder } from 'node:util'
 // globally, and may not directly support Vitest. Luckily, most of these utilities can work with Vitest's `vi` object,
 // so for those cases, we can stub `jest` to use `vi`.
 vi.stubGlobal('jest', vi)
-
-// ResizeObserver polyfill for JSDOM
-global.ResizeObserver = ResizeObserver
 
 if (typeof window !== 'undefined') {
   // JSDOM doesn't support createObjectURL and revokeObjectURL, so we shim them
@@ -25,6 +21,31 @@ if (typeof window !== 'undefined') {
 
   // IntersectionObserver polyfill for JSDOM
   setupIntersectionMocking(vi.fn)
+
+  // PointerEvent polyfill for JSDOM - https://github.com/jsdom/jsdom/issues/2527
+  // dnd-kit's pointer sensor narrows events with
+  // `event instanceof getWindow(event.target).PointerEvent`, which throws
+  // "Right-hand side of 'instanceof' is not an object" rather than returning
+  // false when the constructor is absent. The throw escapes as an unhandled
+  // error and fails the run even when every assertion passes.
+  //
+  // jsdom implements PointerEvent as of v27; drop this once this package
+  // moves off v26.
+  if (window.PointerEvent == null) {
+    class JSDOMPointerEvent extends MouseEvent {
+      readonly pointerId: number
+      readonly pointerType: string
+      readonly isPrimary: boolean
+
+      constructor(type: string, params: PointerEventInit = {}) {
+        super(type, params)
+        this.pointerId = params.pointerId ?? 0
+        this.pointerType = params.pointerType ?? ''
+        this.isPrimary = params.isPrimary ?? false
+      }
+    }
+    window.PointerEvent = JSDOMPointerEvent as unknown as typeof PointerEvent
+  }
 
   const oldWindowLocation = window.location
   const oldWindowOpen = window.open

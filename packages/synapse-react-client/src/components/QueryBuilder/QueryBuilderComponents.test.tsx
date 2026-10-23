@@ -3,7 +3,7 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ReactNode } from 'react'
 import { vi } from 'vitest'
-import { FilterConditionRow } from './FilterConditionRow'
+import { FilterConditionRow, PILL_FILTER_THRESHOLD } from './FilterConditionRow'
 import { FilterGroupNode } from './FilterGroupNode'
 import {
   QueryBuilderInternalContextProvider,
@@ -11,6 +11,7 @@ import {
 } from './QueryBuilderInternalContext'
 import { defaultQBGroup, newBlankCondition } from './queryBuilderOperations'
 import { QBGroup } from './QueryBuilderTypes'
+import { rawQBValueDisplayName } from './useQBValueDisplayName'
 
 function makeContext(
   overrides: Partial<QueryBuilderInternalContextType> = {},
@@ -20,6 +21,7 @@ function makeContext(
     facetResults: [],
     onlyFacetedColumns: false,
     getColumnDisplayName: (name: string) => name,
+    getValueDisplayName: rawQBValueDisplayName,
     addConditionAt: vi.fn(),
     addChildGroupAt: vi.fn(),
     clearGroupAt: vi.fn(),
@@ -66,6 +68,29 @@ const sexFacetResult: FacetColumnResult = {
     { value: 'Male', count: 100, isSelected: false },
     { value: 'Unknown', count: 20, isSelected: false },
   ],
+}
+
+const fileColumnModel: ColumnModel = {
+  id: '3',
+  name: 'File',
+  columnType: 'ENTITYID',
+  facetType: 'enumeration',
+}
+
+const fileFacetResult: FacetColumnResult = {
+  concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
+  columnName: 'File',
+  facetType: 'enumeration',
+  facetValues: [
+    { value: '123', count: 3, isSelected: false },
+    { value: '456', count: 1, isSelected: false },
+  ],
+}
+
+// Stands in for the ID lookup performed by `useQBValueDisplayName`.
+const mockEntityNames: Record<string, string> = {
+  '123': 'Zebra Data File',
+  '456': 'Aardvark Data File',
 }
 
 describe('FilterGroupNode', () => {
@@ -193,11 +218,20 @@ describe('FilterConditionRow', () => {
   const blankCondition = newBlankCondition(null, null)
 
   it('exposes an accessible property picker + drag/remove buttons', () => {
-    renderWithContext(<FilterConditionRow condition={blankCondition} />, {
-      columnModels: [sexColumnModel, ageColumnModel],
-    })
+    renderWithContext(
+      <FilterConditionRow
+        condition={blankCondition}
+        parentGroupId="root"
+        index={0}
+      />,
+      {
+        columnModels: [sexColumnModel, ageColumnModel],
+      },
+    )
     expect(
-      screen.getByRole('button', { name: 'Drag to reorder condition' }),
+      screen.getByRole('button', {
+        name: 'Drag condition into a condition group',
+      }),
     ).toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: 'Remove condition' }),
@@ -210,7 +244,11 @@ describe('FilterConditionRow', () => {
   it('dispatches removeConditionAt when trash is clicked', async () => {
     const user = userEvent.setup()
     const { contextValue } = renderWithContext(
-      <FilterConditionRow condition={blankCondition} />,
+      <FilterConditionRow
+        condition={blankCondition}
+        parentGroupId="root"
+        index={0}
+      />,
     )
     await user.click(screen.getByRole('button', { name: 'Remove condition' }))
     expect(contextValue.removeConditionAt).toHaveBeenCalledWith(
@@ -223,10 +261,17 @@ describe('FilterConditionRow', () => {
       ...newBlankCondition('Sex', 'STRING'),
       op: 'is_any_of' as const,
     }
-    renderWithContext(<FilterConditionRow condition={condition} />, {
-      columnModels: [sexColumnModel],
-      facetResults: [sexFacetResult],
-    })
+    renderWithContext(
+      <FilterConditionRow
+        condition={condition}
+        parentGroupId="root"
+        index={0}
+      />,
+      {
+        columnModels: [sexColumnModel],
+        facetResults: [sexFacetResult],
+      },
+    )
     const pillGroup = screen.getByRole('group', {
       name: /Selected values/,
     })
@@ -235,16 +280,104 @@ describe('FilterConditionRow', () => {
     within(pillGroup).getByRole('button', { name: 'Unknown' })
   })
 
+  const entityIdCondition = {
+    ...newBlankCondition('File', 'ENTITYID'),
+    op: 'is_any_of' as const,
+  }
+  const entityIdContext = {
+    columnModels: [fileColumnModel],
+    facetResults: [fileFacetResult],
+    getValueDisplayName: (_columnName: string | null, value: string) =>
+      mockEntityNames[value],
+  }
+
+  it('labels pills with the resolved value display name, sorted by that label', () => {
+    renderWithContext(
+      <FilterConditionRow
+        condition={entityIdCondition}
+        parentGroupId="root"
+        index={0}
+      />,
+      entityIdContext,
+    )
+    const pillGroup = screen.getByRole('group', { name: /Selected values/ })
+    const pills = within(pillGroup).getAllByRole('button')
+    // Sorted by the resolved label, not by the raw ID.
+    expect(pills.map(pill => pill.textContent)).toEqual([
+      'Aardvark Data File',
+      'Zebra Data File',
+    ])
+  })
+
+  it('filters pills labeled with a display name by pasted Synapse ID', async () => {
+    const user = userEvent.setup()
+    // The filter input only appears once the pill count exceeds the threshold.
+    const manyFacetValues = Array.from(
+      { length: PILL_FILTER_THRESHOLD + 1 },
+      (_unused, index) => ({
+        value: String(index),
+        count: 1,
+        isSelected: false,
+      }),
+    )
+    renderWithContext(
+      <FilterConditionRow
+        condition={entityIdCondition}
+        parentGroupId="root"
+        index={0}
+      />,
+      {
+        columnModels: [fileColumnModel],
+        facetResults: [{ ...fileFacetResult, facetValues: manyFacetValues }],
+        getValueDisplayName: (_columnName, value) => `Entity Number ${value}`,
+      },
+    )
+    await user.type(
+      screen.getByRole('textbox', { name: 'Filter values' }),
+      'syn7',
+    )
+    const pillGroup = screen.getByRole('group', { name: /Selected values/ })
+    expect(
+      within(pillGroup)
+        .getAllByRole('button')
+        .map(pill => pill.textContent),
+    ).toEqual(['Entity Number 7'])
+  })
+
+  it('stores the raw value when a pill labeled with a display name is selected', async () => {
+    const user = userEvent.setup()
+    const { contextValue } = renderWithContext(
+      <FilterConditionRow
+        condition={entityIdCondition}
+        parentGroupId="root"
+        index={0}
+      />,
+      entityIdContext,
+    )
+    await user.click(screen.getByRole('button', { name: 'Zebra Data File' }))
+    expect(contextValue.updateConditionAt).toHaveBeenCalledWith(
+      entityIdCondition.id,
+      { values: ['123'] },
+    )
+  })
+
   it('renders enum pills + operator picker when columnType is null but the column is faceted', () => {
     const condition = {
       ...newBlankCondition('Sex', null),
       op: 'is_any_of' as const,
       values: ['Female'],
     }
-    renderWithContext(<FilterConditionRow condition={condition} />, {
-      columnModels: [sexColumnModel],
-      facetResults: [sexFacetResult],
-    })
+    renderWithContext(
+      <FilterConditionRow
+        condition={condition}
+        parentGroupId="root"
+        index={0}
+      />,
+      {
+        columnModels: [sexColumnModel],
+        facetResults: [sexFacetResult],
+      },
+    )
     expect(
       screen.getByRole('combobox', { name: 'Operator' }),
     ).toBeInTheDocument()
@@ -260,7 +393,11 @@ describe('FilterConditionRow', () => {
       op: 'is_any_of' as const,
     }
     const { contextValue } = renderWithContext(
-      <FilterConditionRow condition={condition} />,
+      <FilterConditionRow
+        condition={condition}
+        parentGroupId="root"
+        index={0}
+      />,
       {
         columnModels: [sexColumnModel],
         facetResults: [sexFacetResult],
@@ -277,9 +414,16 @@ describe('FilterConditionRow', () => {
       ...newBlankCondition('Age', 'INTEGER'),
       op: 'between' as const,
     }
-    renderWithContext(<FilterConditionRow condition={condition} />, {
-      columnModels: [ageColumnModel],
-    })
+    renderWithContext(
+      <FilterConditionRow
+        condition={condition}
+        parentGroupId="root"
+        index={0}
+      />,
+      {
+        columnModels: [ageColumnModel],
+      },
+    )
     expect(screen.getByRole('textbox', { name: 'Minimum' })).toBeInTheDocument()
     expect(screen.getByRole('textbox', { name: 'Maximum' })).toBeInTheDocument()
   })
@@ -289,9 +433,16 @@ describe('FilterConditionRow', () => {
       ...newBlankCondition('Sex', 'STRING'),
       op: 'has_value' as const,
     }
-    renderWithContext(<FilterConditionRow condition={condition} />, {
-      columnModels: [sexColumnModel],
-    })
+    renderWithContext(
+      <FilterConditionRow
+        condition={condition}
+        parentGroupId="root"
+        index={0}
+      />,
+      {
+        columnModels: [sexColumnModel],
+      },
+    )
     expect(
       screen.queryByRole('textbox', { name: /Value/i }),
     ).not.toBeInTheDocument()
@@ -302,11 +453,18 @@ describe('FilterConditionRow', () => {
 
   it('offers only faceted columns when onlyFacetedColumns is true', async () => {
     const user = userEvent.setup()
-    renderWithContext(<FilterConditionRow condition={blankCondition} />, {
-      columnModels: [sexColumnModel, ageColumnModel],
-      facetResults: [sexFacetResult],
-      onlyFacetedColumns: true,
-    })
+    renderWithContext(
+      <FilterConditionRow
+        condition={blankCondition}
+        parentGroupId="root"
+        index={0}
+      />,
+      {
+        columnModels: [sexColumnModel, ageColumnModel],
+        facetResults: [sexFacetResult],
+        onlyFacetedColumns: true,
+      },
+    )
     await user.click(screen.getByRole('combobox', { name: 'Property' }))
     expect(screen.getByRole('option', { name: 'Sex' })).toBeInTheDocument()
     expect(

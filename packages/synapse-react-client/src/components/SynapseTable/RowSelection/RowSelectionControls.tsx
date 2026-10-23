@@ -2,7 +2,7 @@ import AddToDownloadListConfirmationAlert from '@/components/download_list/AddTo
 import { useGetAddToDownloadListRequestForCurrentQuery } from '@/components/QueryWrapper/useGetAddToDownloadListRequestForCurrentQuery'
 import { useGetEntity } from '@/synapse-queries'
 import { canTableQueryBeAddedToDownloadList } from '@/utils/functions/queryUtils'
-import { GetAppTwoTone } from '@mui/icons-material'
+import GetAppTwoTone from '@mui/icons-material/GetAppTwoTone'
 import { Box, Button } from '@mui/material'
 import { Table } from '@sage-bionetworks/synapse-types'
 import { useAtom } from 'jotai'

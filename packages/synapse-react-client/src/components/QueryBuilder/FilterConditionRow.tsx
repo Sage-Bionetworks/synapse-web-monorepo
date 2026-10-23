@@ -1,5 +1,5 @@
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
-import DragIndicatorIcon from '@mui/icons-material/DragIndicator'
+import { useSortable } from '@dnd-kit/react/sortable'
 import {
   Autocomplete,
   IconButton,
@@ -11,27 +11,32 @@ import {
   ToggleButtonGroup,
   Tooltip,
 } from '@mui/material'
-import { ColumnModel } from '@sage-bionetworks/synapse-types'
-import { useMemo, useState } from 'react'
+import { FacetColumnResult } from '@sage-bionetworks/synapse-types'
+import { useCallback, useMemo, useState } from 'react'
 import { splitAndTrim } from '../../utils/functions/StringUtils'
 import { useQueryBuilderInternalContext } from './QueryBuilderInternalContext'
 import {
   availableOpsForKind,
   classifyColumn,
-  labelForFacetValue,
+  facetValueMatchesFilter,
+  isFacetColumnResultValues,
   labelForOp,
   QBColumnKind,
 } from './queryBuilderMetadata'
 import styles from './FilterConditionRow.module.scss'
+import { QBDragHandle } from './QBDragHandle'
+import dragStyles from './queryBuilderDrag.module.scss'
 import { defaultOpForColumnType } from './queryBuilderOperations'
 import { QBCondition, QBConditionOp } from './QueryBuilderTypes'
 
 export type FilterConditionRowProps = {
   condition: QBCondition
+  parentGroupId: string
+  index: number
 }
 
 export function FilterConditionRow(props: FilterConditionRowProps) {
-  const { condition } = props
+  const { condition, parentGroupId, index } = props
   const {
     columnModels,
     facetResults,
@@ -41,16 +46,24 @@ export function FilterConditionRow(props: FilterConditionRowProps) {
     removeConditionAt,
   } = useQueryBuilderInternalContext()
 
+  // A condition is a drag source only. Dropping onto a condition has no
+  // meaning in a boolean tree — a node joins a group, not another leaf — so
+  // groups own every drop zone and this row never becomes a target.
+  const {
+    ref: sortableRef,
+    handleRef,
+    isDragSource,
+  } = useSortable({
+    id: condition.id,
+    index,
+    group: parentGroupId,
+    disabled: { droppable: true },
+  })
+
   const facetColumnNames = useMemo(
     () =>
       new Set(
-        facetResults
-          .filter(
-            f =>
-              f.concreteType ===
-              'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
-          )
-          .map(f => f.columnName),
+        facetResults.filter(isFacetColumnResultValues).map(f => f.columnName),
       ),
     [facetResults],
   )
@@ -78,20 +91,16 @@ export function FilterConditionRow(props: FilterConditionRowProps) {
 
   return (
     <div
-      className={styles.row}
+      ref={sortableRef}
+      className={`${styles.row}${isDragSource ? ` ${dragStyles.dragSource}` : ''}`}
       role="group"
       aria-label={`Filter condition${condition.columnName ? ` on ${condition.columnName}` : ''}`}
       data-qb-node-id={condition.id}
     >
-      <Tooltip title="Drag to reorder">
-        <IconButton
-          size="small"
-          className={styles.dragHandle}
-          aria-label="Drag to reorder condition"
-        >
-          <DragIndicatorIcon fontSize="small" />
-        </IconButton>
-      </Tooltip>
+      <QBDragHandle
+        handleRef={handleRef}
+        label="Drag condition into a condition group"
+      />
 
       <Tooltip title="Remove condition">
         <IconButton
@@ -180,7 +189,6 @@ export function FilterConditionRow(props: FilterConditionRowProps) {
         condition={condition}
         columnKind={columnKind}
         hasFacet={hasFacet}
-        columnModels={columnModels}
         facetValues={
           hasFacet && condition.columnName != null
             ? findFacetValues(facetResults, condition.columnName)
@@ -196,7 +204,6 @@ type ValueInputProps = {
   condition: QBCondition
   columnKind: QBColumnKind
   hasFacet: boolean
-  columnModels: ColumnModel[]
   facetValues: string[]
   onChange: (patch: Partial<Omit<QBCondition, 'kind' | 'id'>>) => void
 }
@@ -214,6 +221,7 @@ function ValueInput(props: ValueInputProps) {
       if ((columnKind === 'enum' || columnKind === 'list') && hasFacet) {
         return (
           <FacetPillGroup
+            columnName={condition.columnName}
             facetValues={facetValues}
             selectedValues={condition.values}
             onChange={next => onChange({ values: next })}
@@ -334,36 +342,42 @@ function ValueInput(props: ValueInputProps) {
 }
 
 type FacetPillGroupProps = {
+  columnName: string | null
   facetValues: string[]
   selectedValues: string[]
   onChange: (next: string[]) => void
 }
 
 // Above this many pills we show a text filter above the group.
-const PILL_FILTER_THRESHOLD = 40
+export const PILL_FILTER_THRESHOLD = 40
 
 function FacetPillGroup(props: FacetPillGroupProps) {
-  const { facetValues, selectedValues, onChange } = props
+  const { columnName, facetValues, selectedValues, onChange } = props
+  const { getValueDisplayName } = useQueryBuilderInternalContext()
   const [filter, setFilter] = useState('')
   const showFilter = facetValues.length > PILL_FILTER_THRESHOLD
+
+  const labelForValue = useCallback(
+    (value: string) => getValueDisplayName(columnName, value),
+    [getValueDisplayName, columnName],
+  )
 
   // Sort alphabetically by the user-facing label so the pill order is
   // predictable regardless of the backend's facet-result ordering.
   const sortedValues = useMemo(() => {
     return [...facetValues].sort((a, b) =>
-      labelForFacetValue(a).localeCompare(labelForFacetValue(b), undefined, {
+      labelForValue(a).localeCompare(labelForValue(b), undefined, {
         sensitivity: 'base',
       }),
     )
-  }, [facetValues])
+  }, [facetValues, labelForValue])
 
   const visibleValues = useMemo(() => {
-    if (!showFilter || filter.trim() === '') return sortedValues
-    const q = filter.trim().toLowerCase()
+    if (!showFilter) return sortedValues
     return sortedValues.filter(v =>
-      labelForFacetValue(v).toLowerCase().includes(q),
+      facetValueMatchesFilter(v, labelForValue(v), filter),
     )
-  }, [sortedValues, filter, showFilter])
+  }, [sortedValues, filter, showFilter, labelForValue])
 
   return (
     <div className={styles.pillGroupContainer}>
@@ -387,7 +401,7 @@ function FacetPillGroup(props: FacetPillGroupProps) {
         >
           {visibleValues.map(value => (
             <ToggleButton key={value} value={value}>
-              {labelForFacetValue(value)}
+              {labelForValue(value)}
             </ToggleButton>
           ))}
         </ToggleButtonGroup>
@@ -397,32 +411,19 @@ function FacetPillGroup(props: FacetPillGroupProps) {
 }
 
 function findFacetValues(
-  facetResults: readonly ReturnType<
-    typeof useQueryBuilderInternalContext
-  >['facetResults'][number][],
+  facetResults: readonly FacetColumnResult[],
   columnName: string,
 ): string[] {
   const match = facetResults.find(f => f.columnName === columnName)
-  if (match == null) return []
-  if (
-    match.concreteType ===
-    'org.sagebionetworks.repo.model.table.FacetColumnResultValues'
-  ) {
-    return match.facetValues.map(v => v.value)
-  }
-  return []
+  if (match == null || !isFacetColumnResultValues(match)) return []
+  return match.facetValues.map(v => v.value)
 }
 
 function hasFacetForColumnName(
-  facetResults: readonly ReturnType<
-    typeof useQueryBuilderInternalContext
-  >['facetResults'][number][],
+  facetResults: readonly FacetColumnResult[],
   columnName: string,
 ): boolean {
   return facetResults.some(
-    f =>
-      f.columnName === columnName &&
-      f.concreteType ===
-        'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
+    f => f.columnName === columnName && isFacetColumnResultValues(f),
   )
 }

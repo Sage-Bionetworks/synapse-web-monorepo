@@ -1,5 +1,14 @@
 import { generateBaseEntity } from '@/mocks/faker/generateFakeEntity'
 import {
+  dispatchEntry,
+  generateAsyncJobHandlers,
+} from '@/mocks/msw/handlers/asyncJobHandlers'
+import {
+  getEntityBundleHandler,
+  getVersionedEntityBundleHandler,
+} from '@/mocks/msw/handlers/entityHandlers'
+import { server } from '@/mocks/msw/server'
+import {
   MOCK_AUTHENTICATED_PRINCIPAL_ID,
   MOCK_PUBLIC_PRINCIPAL_ID,
   MOCK_REALM_PRINCIPAL,
@@ -8,41 +17,41 @@ import {
   MOCK_USER_ID,
   mockUserProfileData,
 } from '@/mocks/user/mock_user_profile'
-import { useCreateOrUpdateDOI, useGetDOI } from '@/synapse-queries/doi/useDOI'
-import { useGetVersions } from '@/synapse-queries/entity/useEntity'
-import { useGetEntityBundle } from '@/synapse-queries/entity/useEntityBundle'
-import { useGetPortal } from '@/synapse-queries/portal/usePortal'
-import { useGetRealmPrincipals } from '@/synapse-queries/realm/useRealmPrincipals'
-import { useGetCurrentUserProfile } from '@/synapse-queries/user/useUserBundle'
-import {
-  getUseMutationIdleMock,
-  getUseMutationPendingMock,
-  getUseQueryIdleMock,
-  getUseQuerySuccessMock,
-} from '@/testutils/ReactQueryMockUtils'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { DOI, ENTITY_ID_VERSIONS } from '@/utils/APIConstants'
 import { useGlobalIsEditingContext } from '@/utils/context/GlobalIsEditingContext'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
 import { getAccessTypeFromPermissionLevel } from '@/utils/PermissionLevelToAccessType'
 import {
   DoiNameIdentifierNameIdentifierSchemeEnum,
   DoiObjectType,
   DoiRequest,
+  DoiResponse,
+  V2Doi,
 } from '@sage-bionetworks/synapse-client'
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { EntityBundle, VersionInfo } from '@sage-bionetworks/synapse-types'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { delay, http, HttpResponse } from 'msw'
 import { displayToast } from '../ToastMessage'
 import {
   CreateOrUpdateDoiModal,
   CreateOrUpdateDoiModalProps,
 } from './CreateOrUpdateDoiModal'
 
-vi.mock('@/synapse-queries/doi/useDOI')
-vi.mock('@/synapse-queries/entity/useEntity')
-vi.mock('@/synapse-queries/entity/useEntityBundle')
-vi.mock('@/synapse-queries/realm/useRealmPrincipals')
-vi.mock('@/synapse-queries/user/useUserBundle')
 vi.mock('@/components/ToastMessage/ToastMessage')
-vi.mock('@/synapse-queries/portal/usePortal')
-vi.mock('@/utils/context/GlobalIsEditingContext')
+vi.mock(
+  import('@/utils/context/GlobalIsEditingContext'),
+  async importOriginal => ({
+    ...(await importOriginal()),
+    useGlobalIsEditingContext: vi.fn(),
+  }),
+)
+
+const repoOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
 const mockEntityWithPublicAccess = generateBaseEntity({
   acl: {
@@ -70,37 +79,70 @@ const mockEntityWithNoPublicAccess = generateBaseEntity({
   },
 })
 
-const mockUseCreateOrUpdateDOI = vi
-  .mocked(useCreateOrUpdateDOI)
-  .mockReturnValue(getUseMutationIdleMock())
+type MockBackendOptions = {
+  /** The entity bundle returned for the entity (regardless of version). Defaults to an entity with public access. */
+  bundle?: EntityBundle
+  /** The DOI that exists for the object. `null` means that no DOI exists yet (404). */
+  doi?: V2Doi | null
+  /** The versions of the entity */
+  versions?: VersionInfo[]
+}
 
-const mockUseGetEntityBundle = vi
-  .mocked(useGetEntityBundle)
-  .mockReturnValue(getUseQuerySuccessMock(mockEntityWithPublicAccess.bundle))
+/**
+ * Mocks the backend responses for the data the modal loads. The current user profile and realm principals use the
+ * default handlers.
+ */
+function mockBackend(options: MockBackendOptions = {}) {
+  const {
+    bundle = mockEntityWithPublicAccess.bundle,
+    doi = null,
+    versions = [],
+  } = options
+  server.use(
+    getEntityBundleHandler(repoOrigin, bundle),
+    getVersionedEntityBundleHandler(repoOrigin, bundle),
+    http.get(`${repoOrigin}${ENTITY_ID_VERSIONS(':entityId')}`, () =>
+      HttpResponse.json({ results: versions }),
+    ),
+    http.get(`${repoOrigin}${DOI}`, () =>
+      doi
+        ? HttpResponse.json(doi)
+        : HttpResponse.json({ reason: 'Not found' }, { status: 404 }),
+    ),
+  )
+}
 
-const mockUseGetRealmPrincipals = vi
-  .mocked(useGetRealmPrincipals)
-  .mockReturnValue(getUseQuerySuccessMock(MOCK_REALM_PRINCIPAL))
-
-const mockUseGetDOI = vi
-  .mocked(useGetDOI)
-  .mockReturnValue(getUseQuerySuccessMock(null))
-const mockUseGetVersions = vi
-  .mocked(useGetVersions)
-  .mockReturnValue(getUseQuerySuccessMock({ results: [] }))
-const mockUseGetCurrentUserProfile = vi
-  .mocked(useGetCurrentUserProfile)
-  .mockReturnValue(getUseQuerySuccessMock(mockUserProfileData))
-const mockUseGetPortal = vi
-  .mocked(useGetPortal)
-  .mockReturnValue(getUseQueryIdleMock())
+/**
+ * Mocks the asynchronous job used to create/update a DOI.
+ * @returns a spy that is called with each DoiRequest received by the backend
+ */
+function mockCreateOrUpdateDoi() {
+  const onDoiRequest = vi.fn<(request: DoiRequest) => void>()
+  server.use(
+    ...generateAsyncJobHandlers(
+      dispatchEntry(
+        'org.sagebionetworks.repo.model.doi.v2.DoiRequest',
+        request => {
+          onDoiRequest(request)
+          return {
+            concreteType: 'org.sagebionetworks.repo.model.doi.v2.DoiResponse',
+            doi: request.doi,
+          } satisfies DoiResponse
+        },
+      ),
+      {
+        asyncTypeServicePaths: {
+          requestPath: `${DOI}/async/start`,
+          responsePath: token => `${DOI}/async/get/${token}`,
+        },
+      },
+    ),
+  )
+  return onDoiRequest
+}
 
 const mockDisplayToast = vi.mocked(displayToast)
 const mockSetIsEditing = vi.fn()
-vi.mocked(useGlobalIsEditingContext).mockReturnValue({
-  isEditing: false,
-  setIsEditing: mockSetIsEditing,
-})
 
 const defaultProps: CreateOrUpdateDoiModalProps = {
   open: true,
@@ -111,7 +153,9 @@ const defaultProps: CreateOrUpdateDoiModalProps = {
 }
 const setup = (props = defaultProps) => {
   const user = userEvent.setup()
-  const { rerender } = render(<CreateOrUpdateDoiModal {...props} />)
+  const { rerender } = render(<CreateOrUpdateDoiModal {...props} />, {
+    wrapper: createWrapper(),
+  })
   return { user, rerender }
 }
 
@@ -138,6 +182,14 @@ const expectFormStep = (isVisible: boolean) => {
   }
 }
 
+/** Waits until the form has been pre-filled and the data it depends on has finished loading */
+const waitForFormToBeReady = async () => {
+  await screen.findByDisplayValue(mockEntityWithPublicAccess.entity.name)
+  await waitFor(() => {
+    expect(screen.getByText('Save')).toBeEnabled()
+  })
+}
+
 describe('CreateOrUpdateDoiModal', () => {
   beforeAll(() => {
     // Mock the current time, since the current year is used to populate the publication year field
@@ -150,19 +202,20 @@ describe('CreateOrUpdateDoiModal', () => {
   })
 
   beforeEach(() => {
-    mockUseGetEntityBundle.mockReturnValue(
-      getUseQuerySuccessMock(mockEntityWithPublicAccess.bundle),
-    )
-    mockUseGetDOI.mockReturnValue(getUseQuerySuccessMock(null))
-    mockUseCreateOrUpdateDOI.mockReturnValue(getUseMutationIdleMock())
+    vi.clearAllMocks()
+    vi.mocked(useGlobalIsEditingContext).mockReturnValue({
+      isEditing: false,
+      setIsEditing: mockSetIsEditing,
+    })
+    mockBackend()
   })
 
-  it('renders the modal with default content', () => {
+  it('renders the modal with default content', async () => {
     setup()
 
     expect(screen.getByText('Create or Update a DOI')).toBeInTheDocument()
     expect(
-      screen.getByText(
+      await screen.findByText(
         'Minting a DOI allows you to credit contributors and makes it easy to cite your work.',
       ),
     ).toBeInTheDocument()
@@ -175,23 +228,38 @@ describe('CreateOrUpdateDoiModal', () => {
     const { user } = setup()
 
     const cancelButton = screen.getByText('Cancel')
+    await waitFor(() => {
+      expect(cancelButton).toBeEnabled()
+    })
     await user.click(cancelButton)
 
     expect(defaultProps.onClose).toHaveBeenCalled()
   })
 
-  it('disables the Save button when loading', () => {
-    mockUseCreateOrUpdateDOI.mockReturnValue(getUseMutationPendingMock())
+  it('disables the Save button when loading', async () => {
+    // The request to create the DOI never completes, so the mutation stays pending
+    const onDoiRequestStarted = vi.fn()
+    server.use(
+      http.post(`${repoOrigin}${DOI}/async/start`, async () => {
+        onDoiRequestStarted()
+        await delay('infinite')
+      }),
+    )
 
-    setup()
+    const { user } = setup()
+    await waitForFormToBeReady()
 
-    const saveButton = screen.getByText('Save')
-    expect(saveButton).toBeDisabled()
+    await user.click(screen.getByText('Save'))
+
+    await waitFor(() => {
+      expect(onDoiRequestStarted).toHaveBeenCalled()
+    })
+    expect(screen.getByText('Save')).toBeDisabled()
   })
 
-  it('renders a warning if the DOI was modified via API', () => {
-    mockUseGetDOI.mockReturnValue(
-      getUseQuerySuccessMock({
+  it('renders a warning if the DOI was modified via API', async () => {
+    mockBackend({
+      doi: {
         titles: [{ title: 'Test DOI Title' }],
         creators: [
           {
@@ -205,19 +273,19 @@ describe('CreateOrUpdateDoiModal', () => {
             ],
           },
         ],
-      }),
-    )
+      },
+    })
     setup()
 
     expect(
-      screen.getByText(
+      await screen.findByText(
         'The metadata for this DOI was modified using a programmatic client, so data may be hidden from this view. Any changes may result in metadata being lost.',
       ),
     ).toBeInTheDocument()
   })
 
   it('renders the form with pre-filled data when DOI is null', async () => {
-    mockUseGetDOI.mockReturnValue(getUseQuerySuccessMock(null))
+    mockBackend({ doi: null })
 
     setup()
 
@@ -226,15 +294,11 @@ describe('CreateOrUpdateDoiModal', () => {
   })
 
   it('blocks submission when data violates the form schema', async () => {
-    const mockMutate = vi.fn()
-    mockUseCreateOrUpdateDOI.mockReturnValue({
-      ...getUseMutationIdleMock(),
-      mutate: mockMutate,
-    })
-
-    mockUseGetDOI.mockReturnValue(getUseQuerySuccessMock(null))
+    const onDoiRequest = mockCreateOrUpdateDoi()
+    mockBackend({ doi: null })
 
     const { user } = setup()
+    await waitForFormToBeReady()
 
     const pubYearInput = await screen.findByLabelText(/Publication Year/i)
     await user.clear(pubYearInput)
@@ -243,20 +307,14 @@ describe('CreateOrUpdateDoiModal', () => {
     await user.click(saveButton)
 
     await screen.findByText("must have required property 'Publication Year'")
-    expect(mockMutate).not.toHaveBeenCalled()
+    expect(onDoiRequest).not.toHaveBeenCalled()
   })
 
-  it('calls mutate when the form is submitted', async () => {
-    const mockMutate = vi.fn()
-    mockUseCreateOrUpdateDOI.mockReturnValue({
-      ...getUseMutationIdleMock(),
-      mutate: mockMutate,
-    })
-    mockUseGetCurrentUserProfile.mockReturnValue(
-      getUseQuerySuccessMock(mockUserProfileData),
-    )
+  it('sends the request when the form is submitted', async () => {
+    const onDoiRequest = mockCreateOrUpdateDoi()
 
     const { user } = setup()
+    await waitForFormToBeReady()
 
     // Fill out the form
     const titleInput = screen.getByLabelText(/Title/i)
@@ -292,64 +350,47 @@ describe('CreateOrUpdateDoiModal', () => {
       },
     }
 
-    // Wait for the mutate function to be called
+    // Wait for the request to be received by the backend
     await waitFor(() => {
-      expect(mockMutate).toHaveBeenCalledWith(expectedDoiRequest)
+      expect(onDoiRequest).toHaveBeenCalledWith(expectedDoiRequest)
     })
 
-    // Simulate calling onSuccess
-    act(() => {
-      mockUseCreateOrUpdateDOI.mock.lastCall![0]!.onSuccess!(
-        {
-          concreteType: 'org.sagebionetworks.repo.model.doi.v2.DoiResponse',
-          doi: expectedDoiRequest.doi,
-        },
-        expectedDoiRequest,
-        undefined,
+    // Once the job completes, the user is notified and the modal is closed
+    await waitFor(() => {
+      expect(mockDisplayToast).toHaveBeenCalledWith(
+        'The DOI was successfully updated.',
+        'success',
       )
     })
-    expect(mockDisplayToast).toHaveBeenCalledWith(
-      'The DOI was successfully updated.',
-      'success',
-    )
     expect(defaultProps.onClose).toHaveBeenCalled()
   })
 
   it('renders versions in the list, allows selecting a version, and includes it in the request', async () => {
-    const mockMutate = vi.fn()
-    mockUseCreateOrUpdateDOI.mockReturnValue({
-      ...getUseMutationIdleMock(),
-      mutate: mockMutate,
+    const onDoiRequest = mockCreateOrUpdateDoi()
+    mockBackend({
+      versions: [
+        {
+          versionNumber: 1,
+          versionLabel: 'v1',
+          id: 'syn123',
+          versionComment: '',
+          modifiedBy: mockUserProfileData.userName,
+          modifiedByPrincipalId: String(MOCK_USER_ID),
+          modifiedOn: new Date().toISOString(),
+          isLatestVersion: false,
+        },
+        {
+          versionNumber: 2,
+          versionLabel: 'v2',
+          id: 'syn123',
+          versionComment: '',
+          modifiedBy: mockUserProfileData.userName,
+          modifiedByPrincipalId: String(MOCK_USER_ID),
+          modifiedOn: new Date().toISOString(),
+          isLatestVersion: true,
+        },
+      ],
     })
-    mockUseGetVersions.mockReturnValue(
-      getUseQuerySuccessMock({
-        results: [
-          {
-            versionNumber: 1,
-            versionLabel: 'v1',
-            id: 'syn123',
-            versionComment: '',
-            modifiedBy: mockUserProfileData.userName,
-            modifiedByPrincipalId: String(MOCK_USER_ID),
-            modifiedOn: new Date().toISOString(),
-            isLatestVersion: false,
-          },
-          {
-            versionNumber: 2,
-            versionLabel: 'v2',
-            id: 'syn123',
-            versionComment: '',
-            modifiedBy: mockUserProfileData.userName,
-            modifiedByPrincipalId: String(MOCK_USER_ID),
-            modifiedOn: new Date().toISOString(),
-            isLatestVersion: true,
-          },
-        ],
-      }),
-    )
-    mockUseGetCurrentUserProfile.mockReturnValue(
-      getUseQuerySuccessMock(mockUserProfileData),
-    )
 
     const { user } = setup()
 
@@ -363,8 +404,13 @@ describe('CreateOrUpdateDoiModal', () => {
     await screen.findByRole('option', { name: 'Version 2 / v2' })
 
     // Select a version
-    const versionOption = screen.getByRole('option', { name: 'Version 2 / v2' })
+    const versionOption = screen.getByRole('option', {
+      name: 'Version 2 / v2',
+    })
     await user.click(versionOption)
+
+    // Selecting a version loads the entity and DOI for that version, which resets the form once loaded
+    await waitForFormToBeReady()
 
     // Fill out the form
     const titleInput = screen.getByLabelText(/Title/i)
@@ -401,22 +447,26 @@ describe('CreateOrUpdateDoiModal', () => {
       },
     }
 
-    // Wait for the mutate function to be called
+    // Wait for the request to be received by the backend
     await waitFor(() => {
-      expect(mockMutate).toHaveBeenCalledWith(expectedDoiRequest)
+      expect(onDoiRequest).toHaveBeenCalledWith(expectedDoiRequest)
     })
   })
 
   it('Displays the Publisher field if the DOI would belong to a portal', async () => {
     const mockPortalName = 'Test Portal'
-    mockUseGetPortal.mockReturnValue(
-      getUseQuerySuccessMock({ id: '123', name: mockPortalName }),
+    server.use(
+      http.get(`${repoOrigin}/repo/v1/portal/:portalId`, () =>
+        HttpResponse.json({ id: '123', name: mockPortalName }),
+      ),
     )
 
     setup({ ...defaultProps, portalId: '123' })
 
     const publisherField = await screen.findByLabelText('Publisher')
-    expect(publisherField).toHaveValue(mockPortalName)
+    await waitFor(() => {
+      expect(publisherField).toHaveValue(mockPortalName)
+    })
     expect(publisherField).toBeDisabled()
   })
 
@@ -444,9 +494,7 @@ describe('CreateOrUpdateDoiModal', () => {
     })
 
     it('shows warning step when creating DOI for private entity', async () => {
-      mockUseGetEntityBundle.mockReturnValue(
-        getUseQuerySuccessMock(mockEntityWithNoPublicAccess.bundle),
-      )
+      mockBackend({ bundle: mockEntityWithNoPublicAccess.bundle })
 
       setup()
 
@@ -466,15 +514,13 @@ describe('CreateOrUpdateDoiModal', () => {
     })
 
     it('shows form directly when updating existing DOI regardless of privacy', async () => {
-      mockUseGetEntityBundle.mockReturnValue(
-        getUseQuerySuccessMock(mockEntityWithNoPublicAccess.bundle),
-      )
-      mockUseGetDOI.mockReturnValue(
-        getUseQuerySuccessMock({
+      mockBackend({
+        bundle: mockEntityWithNoPublicAccess.bundle,
+        doi: {
           titles: [{ title: 'Existing DOI Title' }],
           creators: [{ creatorName: 'Doe, John' }],
-        }),
-      )
+        },
+      })
 
       setup()
 
@@ -485,15 +531,18 @@ describe('CreateOrUpdateDoiModal', () => {
     })
 
     it('advances to form step when clicking Continue on warning', async () => {
-      mockUseGetEntityBundle.mockReturnValue(
-        getUseQuerySuccessMock(mockEntityWithNoPublicAccess.bundle),
-      )
+      mockBackend({ bundle: mockEntityWithNoPublicAccess.bundle })
 
       const { user } = setup()
 
-      expectWarningStep(true)
+      await waitFor(() => {
+        expectWarningStep(true)
+      })
 
       const continueButton = screen.getByRole('button', { name: /continue/i })
+      await waitFor(() => {
+        expect(continueButton).toBeEnabled()
+      })
       await user.click(continueButton)
 
       expectFormStep(true)
@@ -501,9 +550,7 @@ describe('CreateOrUpdateDoiModal', () => {
     })
 
     it('closes modal when clicking Cancel on warning step', async () => {
-      mockUseGetEntityBundle.mockReturnValue(
-        getUseQuerySuccessMock(mockEntityWithNoPublicAccess.bundle),
-      )
+      mockBackend({ bundle: mockEntityWithNoPublicAccess.bundle })
 
       const onClose = vi.fn()
       const { user } = setup({ ...defaultProps, onClose })
@@ -513,24 +560,37 @@ describe('CreateOrUpdateDoiModal', () => {
       })
 
       const cancelButton = screen.getByRole('button', { name: /cancel/i })
+      await waitFor(() => {
+        expect(cancelButton).toBeEnabled()
+      })
       await user.click(cancelButton)
 
       expect(onClose).toHaveBeenCalled()
     })
 
     it('resets to warning step when modal is reopened', async () => {
-      mockUseGetEntityBundle.mockReturnValue(
-        getUseQuerySuccessMock(mockEntityWithNoPublicAccess.bundle),
+      mockBackend({ bundle: mockEntityWithNoPublicAccess.bundle })
+      const onRealmPrincipalsRequest = vi.fn()
+      server.use(
+        http.get(`${repoOrigin}/repo/v1/realm/principals`, () => {
+          onRealmPrincipalsRequest()
+          return HttpResponse.json(MOCK_REALM_PRINCIPAL)
+        }),
       )
 
       const { rerender, user } = setup({ ...defaultProps, open: true })
-      expect(mockUseGetRealmPrincipals).toHaveBeenCalled()
+      await waitFor(() => {
+        expect(onRealmPrincipalsRequest).toHaveBeenCalled()
+      })
 
       await waitFor(() => {
         expectWarningStep(true)
       })
 
       const continueButton = screen.getByRole('button', { name: /continue/i })
+      await waitFor(() => {
+        expect(continueButton).toBeEnabled()
+      })
       await user.click(continueButton)
 
       await waitFor(() => {
@@ -558,9 +618,7 @@ describe('CreateOrUpdateDoiModal', () => {
         },
       })
 
-      mockUseGetEntityBundle.mockReturnValue(
-        getUseQuerySuccessMock(entityWithAuthUsersAccess.bundle),
-      )
+      mockBackend({ bundle: entityWithAuthUsersAccess.bundle })
 
       setup()
 

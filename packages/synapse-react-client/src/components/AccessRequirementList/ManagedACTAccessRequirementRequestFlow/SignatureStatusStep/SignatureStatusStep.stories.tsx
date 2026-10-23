@@ -53,7 +53,13 @@ const partiallySignedHandler = http.get(
             status: 'pending',
           },
           { name: 'Cara Officer', status: 'pending' },
-          { name: 'Dan Declined', status: 'declined' },
+          {
+            name: 'Dan Declined',
+            status: 'declined',
+            declinedReason:
+              'The intended data use statement does not match what we agreed on. Please revise section 3 before re-sending.',
+            declinedOn: '2026-03-15T14:30:00.000Z',
+          },
         ],
       },
       { status: 200 },

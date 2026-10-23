@@ -217,6 +217,27 @@ export function moveNode(
   return insertNodeAt(withoutSource, targetGroupId, clampedTarget, source.node)
 }
 
+/**
+ * Move the node identified by `nodeId` to the front of the group identified
+ * by `groupId`.
+ *
+ * This is the operation behind drag-and-drop: only groups are drop targets,
+ * so every drag resolves to "put this node in that group". The node always
+ * lands first, matching where `addConditionToGroup` puts a new row — within
+ * an AND/OR group the order carries no meaning, so there is nothing for a
+ * drop position to express. Enforces the same invariants as `moveNode`, and
+ * additionally returns the tree unchanged when `groupId` names something that
+ * is not a group.
+ */
+export function moveNodeIntoGroup(
+  root: QBGroup,
+  nodeId: string,
+  groupId: string,
+): QBGroup {
+  if (findGroup(root, groupId) == null) return root
+  return moveNode(root, nodeId, groupId, 0)
+}
+
 // -----------------------------------------------------------------------------
 // Query helpers
 // -----------------------------------------------------------------------------

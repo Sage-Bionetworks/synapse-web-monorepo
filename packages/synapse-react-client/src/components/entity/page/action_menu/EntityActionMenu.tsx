@@ -165,11 +165,9 @@ export default function EntityActionMenu(props: EntityActionMenuProps) {
     )
     // Modify the layout: put the unmapped actions in their own group at the top of the menu
     layout.primaryMenuActions.unshift(
-      Object.entries(unmappedActions).map(
-        (entry): ActionViewProps => ({
-          action: entry[0],
-        }),
-      ),
+      Object.entries(unmappedActions).map((entry): ActionViewProps => ({
+        action: entry[0],
+      })),
     )
   }
 

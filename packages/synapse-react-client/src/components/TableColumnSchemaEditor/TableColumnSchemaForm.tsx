@@ -7,7 +7,7 @@ import {
   convertToConcreteEntityType,
   entityTypeToFriendlyName,
 } from '@/utils/functions/EntityTypeUtils'
-import { AddCircleTwoTone } from '@mui/icons-material'
+import AddCircleTwoTone from '@mui/icons-material/AddCircleTwoTone'
 import { Box, Button, styled } from '@mui/material'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import {

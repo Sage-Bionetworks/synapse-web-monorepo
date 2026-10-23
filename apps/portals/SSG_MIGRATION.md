@@ -164,9 +164,7 @@ import { preloadAllCroissantMetadata } from '@sage-bionetworks/synapse-portal-fr
 
 export default createReactRouterConfig({
   sitemapConfig,
-  metadataConfigs: [
-    /* ... */
-  ],
+  metadataConfigs: [/* ... */],
   additionalPreloads: [preloadAllCroissantMetadata],
 })
 ```

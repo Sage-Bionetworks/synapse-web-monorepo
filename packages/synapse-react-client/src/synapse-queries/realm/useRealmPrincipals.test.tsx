@@ -17,13 +17,11 @@ import { getRealmHandlers } from '@/mocks/msw/handlers/realmHandlers'
 const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
 describe('useRealm', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     server.use(
       ...getRealmHandlers(getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)),
     )
   })
-  afterAll(() => server.close())
 
   describe('useGetCurrentRealm', () => {
     it('fetches realm endpoint', async () => {

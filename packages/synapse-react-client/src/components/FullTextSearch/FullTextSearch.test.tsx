@@ -3,7 +3,6 @@ import {
   mockQueryResultBundle,
 } from '@/mocks/mockFileViewQuery'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   ColumnSingleValueFilterOperator,
@@ -65,7 +64,6 @@ const queryVisualizationContext: Partial<QueryVisualizationContextType> = {
 
 describe('FullTextSearch tests', () => {
   beforeAll(() => {
-    server.listen()
     registerTableQueryResult(initialQueryRequest.query, mockQueryResultBundle)
   })
   beforeEach(() => {
@@ -74,8 +72,6 @@ describe('FullTextSearch tests', () => {
       query: {},
     })
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it('shows/hides the search bar based on prop', () => {
     const component = renderComponent(queryContext, queryVisualizationContext)

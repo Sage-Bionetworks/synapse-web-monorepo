@@ -32,9 +32,9 @@ import { noop } from 'lodash-es'
 import { http, HttpResponse } from 'msw'
 import { createRef } from 'react'
 import { NO_WIKI_CONTENT } from '../Markdown/MarkdownSynapse'
+import { DUC_TEMPLATE_UPLOAD_ERROR } from './DataUseCertificateFields'
+import { getValidExpirationPeriodOrErrorMessage } from './ExpirationPeriodField'
 import {
-  DUC_TEMPLATE_UPLOAD_ERROR,
-  getValidExpirationPeriodOrErrorMessage,
   SetManagedAccessRequirementFields,
   SetManagedAccessRequirementFieldsHandle,
   SetManagedAccessRequirementFieldsProps,
@@ -167,9 +167,6 @@ const findDucTemplateButton = async (fileName: string) => {
 
 describe('SetManagedAccessRequirementFields', () => {
   beforeEach(() => vi.clearAllMocks())
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   test('displays existing managed AR', async () => {
     const { checkboxes, buttons, expirationPeriodInput } = await setUp()

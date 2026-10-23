@@ -89,10 +89,6 @@ const PERMISSIONS_CANNOT_EDIT: UserEntityPermissions = {
 }
 
 describe('EntityModal tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   it('Shows metadata like the syn ID', async () => {
     renderComponent()
     await screen.findByText(mockFileEntity.id!)

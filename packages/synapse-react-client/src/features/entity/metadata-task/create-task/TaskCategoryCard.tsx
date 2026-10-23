@@ -1,4 +1,4 @@
-import { InsertPhotoOutlined } from '@mui/icons-material'
+import InsertPhotoOutlined from '@mui/icons-material/InsertPhotoOutlined'
 import { Card, CardActionArea, Stack, Typography } from '@mui/material'
 import { ComponentType, ReactNode, SVGProps } from 'react'
 

@@ -97,7 +97,6 @@ const SynapseComponents = {
     () => import('./components/SynapseTable/datasets/DatasetItemsEditor'),
   ),
   DiscussionThread: lazy(() => import('./components/Forum/DiscussionThread')),
-  DiscussionEmpty: lazy(() => import('./components/Forum/DiscussionEmpty')),
   DownloadCartPage: lazy(
     () => import('./components/DownloadCart/DownloadCartPage'),
   ),
@@ -146,6 +145,7 @@ const SynapseComponents = {
   ),
   FavoritesPage: lazy(() => import('./components/favorites/FavoritesPage')),
   ForumSearch: lazy(() => import('./components/ForumSearch/ForumSearch')),
+  ForumTable: lazy(() => import('./components/Forum/ForumTable')),
   FullWidthAlert: lazy(
     () => import('./components/FullWidthAlert/FullWidthAlert'),
   ),
@@ -163,6 +163,10 @@ const SynapseComponents = {
   ),
   IDUReport: lazy(() => import('./components/IDUReport/IDUReport')),
   IconSvg: lazy(() => import('./components/IconSvg/IconSvg')),
+  ImposeRestrictionDialog: lazy(
+    () =>
+      import('./components/AccessRequirement/ImposeRestrictionDialog/ImposeRestrictionDialog'),
+  ),
   MetadataTasksPage: lazy(
     () =>
       import('./features/entity/metadata-task/components/MetadataTasksPageRouter'),

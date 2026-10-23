@@ -13,8 +13,8 @@ export type AnnotationsValue = {
 }
 
 export enum AnnotationsValueType {
-  'STRING',
-  'DOUBLE',
-  'LONG',
-  'TIMESTAMP_MS',
+  STRING,
+  DOUBLE,
+  LONG,
+  TIMESTAMP_MS,
 }

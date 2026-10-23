@@ -3,8 +3,6 @@ import {
   SynapseTestContext,
 } from '@/mocks/MockSynapseContext'
 import SynapseClient from '@/synapse-client'
-import * as useEntityBundleModule from '@/synapse-queries/entity/useEntityBundle'
-import { getUseQuerySuccessMock } from '@/testutils/ReactQueryMockUtils'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   EntityHeader,
@@ -35,8 +33,6 @@ vi.mock('react-reflex', () => {
     ReflexSplitter: vi.fn().mockImplementation(() => <div></div>),
   }
 })
-
-const mockUseGetEntityBundle = vi.spyOn(useEntityBundleModule, 'default')
 
 vi.spyOn(EntityTreeModule, 'EntityTree').mockImplementation(
   ({ toggleSelection, setDetailsViewConfiguration }) => {
@@ -99,16 +95,6 @@ function renderComponent(propOverrides?: Partial<EntityFinderProps>) {
 describe('EntityFinder tests', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-
-    mockUseGetEntityBundle.mockReturnValue(
-      getUseQuerySuccessMock({
-        entity: {
-          id: 'syn123',
-          name: 'My file entity',
-          concreteType: 'org.sagebionetworks.repo.model.FileEntity',
-        },
-      }),
-    )
   })
 
   describe('single-select toggleSelection validation', () => {

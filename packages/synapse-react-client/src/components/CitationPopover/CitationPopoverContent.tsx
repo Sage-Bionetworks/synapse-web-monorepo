@@ -15,7 +15,7 @@ import {
 import React from 'react'
 import { useCitation } from './useCitation'
 import { createLinkAndDownload } from './CitationPopoverUtils'
-import { KeyboardArrowDown } from '@mui/icons-material'
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown'
 import CloseIcon from '@mui/icons-material/Close'
 import { useState } from 'react'
 import CopyToClipboardIcon from '../CopyToClipboardIcon'

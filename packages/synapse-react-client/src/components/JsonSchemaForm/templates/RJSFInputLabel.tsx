@@ -1,5 +1,6 @@
 import { StyledPopover } from '@/components/styled/StyledPopover'
-import { HelpOutline, HelpTwoTone } from '@mui/icons-material'
+import HelpOutline from '@mui/icons-material/HelpOutline'
+import HelpTwoTone from '@mui/icons-material/HelpTwoTone'
 import { Collapse, IconButton, Tooltip } from '@mui/material'
 import {
   FormContextType,
@@ -74,6 +75,9 @@ export function RJSFInputLabelWrapper<
           {description && descriptionVariant === 'popover' && popoverButton}
           {description && descriptionVariant === 'expand' && expandButton}
         </div>
+      )}
+      {!hideLabel && descriptionVariant === 'inline' && description && (
+        <div className="field-description-inline">{description}</div>
       )}
       {children}
       {!hideLabel && descriptionVariant === 'expand' && (

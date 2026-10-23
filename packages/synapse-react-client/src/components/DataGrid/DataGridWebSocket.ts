@@ -54,6 +54,9 @@ type DataGridWebSocketConstructorArgs = {
   socket?: WebSocket
   model?: GridModel | null
   patchThrottleMs?: number
+  /** Patches the previous connection never saw acknowledged, resent in order ahead of new ones */
+  pendingPatches?: CompactCodecPatch[]
+  patchAckTimeoutMs?: number
 }
 
 // API Gateway WebSocket payload size limit is 32 KB per message
@@ -61,6 +64,8 @@ type DataGridWebSocketConstructorArgs = {
 // So add some buffer
 const DEFAULT_MAX_PAYLOAD_SIZE_BYTES = 30 * 1024 // 30 KB
 const DEFAULT_PATCH_THROTTLE_MS = 250
+// A patch is acknowledged only after the server has stored it, so a missing acknowledgement means the connection is unusable
+const DEFAULT_PATCH_ACK_TIMEOUT_MS = 15 * 1000
 
 export class DataGridWebSocket {
   private socket: WebSocket
@@ -71,6 +76,15 @@ export class DataGridWebSocket {
   private maxPayloadSizeBytes: number
   private throttledSendPatch: DebouncedFunc<() => void>
   private snapshotDecoder = new SnapshotDecoder()
+  // Oldest first. The server must receive patches in order, so only the head is ever on the wire
+  // (identified by inFlightPatchRequestId); the rest wait for its acknowledgement.
+  private unacknowledgedPatches: CompactCodecPatch[]
+  private inFlightPatchRequestId: number | null = null
+  private patchAckTimeoutMs: number
+  private patchAckTimer: number | null = null
+  // Set once disconnect() has been requested: the socket closes when the last patch is acknowledged
+  private isClosing = false
+  private isSyncExchangeOpen = false
 
   private onModelCreate: (model: GridModel) => void
   private onGridReady: () => void
@@ -97,12 +111,16 @@ export class DataGridWebSocket {
       socket,
       model,
       patchThrottleMs,
+      pendingPatches,
+      patchAckTimeoutMs,
     } = args
     this.messageCounter = new MessageCounter()
     this.replicaId = replicaId
     this.maxPayloadSizeBytes =
       maxPayloadSizeBytes ?? DEFAULT_MAX_PAYLOAD_SIZE_BYTES
     this.socket = socket ?? new WebSocket(url)
+    this.unacknowledgedPatches = [...(pendingPatches ?? [])]
+    this.patchAckTimeoutMs = patchAckTimeoutMs ?? DEFAULT_PATCH_ACK_TIMEOUT_MS
 
     // Assign callbacks, falling back to no-ops
     this.onModelCreate = onModelCreate ?? noop
@@ -144,6 +162,9 @@ export class DataGridWebSocket {
 
     this.socket.onclose = () => {
       console.debug('Disconnected from the WebSocket server')
+      this.stopWaitingForPatchAck()
+      // Edits not yet flushed stay in the model for the replacement connection to send
+      this.throttledSendPatch.cancel()
       this.onStatusChange(false, this)
     }
 
@@ -152,15 +173,45 @@ export class DataGridWebSocket {
     }
   }
 
+  /**
+   * Closes the connection once every unacknowledged patch has been acknowledged, so edits made
+   * just before leaving are not lost. The owner has moved on, so no further callbacks fire.
+   */
   public disconnect() {
+    if (this.socket.readyState !== WebSocket.OPEN) {
+      // Edits that were never flushed stay in the model for the next connection to send
+      this.throttledSendPatch.cancel()
+      console.warn('WebSocket is not open. No action taken.')
+      return
+    }
+
     this.throttledSendPatch.flush()
     this.throttledSendPatch.cancel()
-    if (this.socket.readyState === WebSocket.OPEN) {
-      this.socket.close()
-      console.debug('WebSocket connection closed')
-    } else {
-      console.warn('WebSocket is not open. No action taken.')
+    this.isClosing = true
+    this.onModelCreate = noop
+    this.onGridReady = noop
+    this.onStatusChange = noop
+    this.onReplicaConnected = noop
+    this.onReplicaDisconnected = noop
+    this.onSyncStart = noop
+    this.onSyncEnd = noop
+    this.onError = noop
+    if (this.unacknowledgedPatches.length === 0) {
+      this.closeSocket()
     }
+  }
+
+  private closeSocket() {
+    this.socket.close()
+    console.debug('WebSocket connection closed')
+  }
+
+  /**
+   * @returns the patches the server has not acknowledged, oldest first. A replacement connection
+   * created with these as `pendingPatches` resends them in order.
+   */
+  public getPendingPatches(): CompactCodecPatch[] {
+    return [...this.unacknowledgedPatches]
   }
 
   /**
@@ -183,12 +234,15 @@ export class DataGridWebSocket {
 
   private handleMessage(rawMessage: string) {
     const message = JsonRx.fromJson(JSON.parse(rawMessage))
+    if (this.isClosing && !(message instanceof JsonRxResponseComplete)) {
+      return
+    }
     if (message instanceof JsonRxResponse) {
       this.handleResponse(
         message as JsonRxResponse<SynapseGridWebSocketMessagePayload>,
       )
     } else if (message instanceof JsonRxResponseComplete) {
-      this.handleResponseComplete()
+      this.handleResponseComplete(message)
     } else if (message instanceof JsonRxNotification) {
       this.handleNotification(message)
     } else {
@@ -249,13 +303,32 @@ export class DataGridWebSocket {
     }
   }
 
-  private handleResponseComplete() {
+  private handleResponseComplete(message: JsonRxResponseComplete) {
+    if (message.getSubscriptionId() === this.inFlightPatchRequestId) {
+      this.handlePatchAcknowledged()
+      return
+    }
+    this.isSyncExchangeOpen = false
     // Clocks are in sync, no further action needed
     this.onGridReady()
     this.onSyncEnd()
     console.debug(
       'Clocks synchronized with server. Incrementing sequence number.',
     )
+  }
+
+  private handlePatchAcknowledged() {
+    this.unacknowledgedPatches.shift()
+    this.stopWaitingForPatchAck()
+    if (this.unacknowledgedPatches.length > 0) {
+      this.sendNextPatch()
+    } else if (this.isClosing) {
+      this.closeSocket()
+    } else if (this.isSyncExchangeOpen && this.model) {
+      // The sync was answered with local patches instead of a clock. Now that they are stored,
+      // confirm the clock so the server can complete the exchange.
+      this.sendSyncMessage(this.verboseEncoder.encode(this.model).time)
+    }
   }
 
   private handleNotification(message: JsonRxNotification) {
@@ -272,6 +345,8 @@ export class DataGridWebSocket {
         this.sendSyncMessage(
           this.model ? this.verboseEncoder.encode(this.model).time : undefined,
         )
+        // Resend patches an earlier connection never saw acknowledged
+        this.sendNextPatch()
         break
 
       case 'error':
@@ -325,7 +400,7 @@ export class DataGridWebSocket {
   }
 
   /**
-   * @returns true if one or more patches were sent
+   * @returns true if the model had local changes, which are now queued to be sent
    */
   private sendPatchImmediate(): boolean {
     if (!this.model) {
@@ -338,19 +413,59 @@ export class DataGridWebSocket {
 
     if (hasOperationsToDispatch) {
       // Split the patch if it exceeds the maximum size we can send in a single frame
-      const patches = splitPatch(patch, this.maxPayloadSizeBytes)
-      patches.forEach(compactEncodedPatch => {
-        console.debug('Sending patch to server:', compactEncodedPatch)
-        const msg = new JsonRxRequestComplete(
-          this.messageCounter.getNext(),
-          'patch',
-          compactEncodedPatch,
-        )
-        this.sendMessage(msg)
-      })
+      this.unacknowledgedPatches.push(
+        ...splitPatch(patch, this.maxPayloadSizeBytes),
+      )
+      this.sendNextPatch()
     }
 
     return hasOperationsToDispatch
+  }
+
+  private sendNextPatch() {
+    const nextPatch = this.unacknowledgedPatches[0]
+    if (
+      nextPatch === undefined ||
+      this.inFlightPatchRequestId !== null ||
+      this.socket.readyState !== WebSocket.OPEN
+    ) {
+      return
+    }
+    console.debug('Sending patch to server:', nextPatch)
+    const requestId = this.messageCounter.getNext()
+    this.inFlightPatchRequestId = requestId
+    this.patchAckTimer = window.setTimeout(
+      () => this.handlePatchAckTimeout(),
+      this.patchAckTimeoutMs,
+    )
+    this.sendMessage(new JsonRxRequestComplete(requestId, 'patch', nextPatch))
+  }
+
+  private stopWaitingForPatchAck() {
+    if (this.patchAckTimer !== null) {
+      window.clearTimeout(this.patchAckTimer)
+      this.patchAckTimer = null
+    }
+    this.inFlightPatchRequestId = null
+  }
+
+  /**
+   * Resending on the same connection could reorder patches, so the connection is dropped and
+   * the owner reconnects with getPendingPatches(). The server ignores patches it already stored.
+   */
+  private handlePatchAckTimeout() {
+    console.warn(
+      'Timed out waiting for a patch acknowledgement. Dropping the connection so unacknowledged patches are resent.',
+    )
+    // Detach handlers so late events from the abandoned socket can't interleave with its replacement
+    this.socket.onopen = null
+    this.socket.onmessage = null
+    this.socket.onclose = null
+    this.socket.onerror = null
+    this.throttledSendPatch.cancel()
+    this.stopWaitingForPatchAck()
+    this.socket.close()
+    this.onStatusChange(false, this)
   }
 
   private sendSyncMessage(clock?: number | JsonCrdtVerboseLogicalTimestamp[]) {
@@ -359,6 +474,7 @@ export class DataGridWebSocket {
       'synchronize-clock',
       clock ?? [],
     )
+    this.isSyncExchangeOpen = true
     this.onSyncStart()
     this.sendMessage(message)
   }

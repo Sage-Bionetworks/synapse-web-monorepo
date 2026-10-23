@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useMemo, useRef } from 'react'
-import { createBrowserRouter, RouteObject } from 'react-router'
+import { createBrowserRouter, Outlet, RouteObject } from 'react-router'
 import { RouterProvider } from 'react-router/dom'
 import { RouteErrorBoundary } from 'synapse-react-client/components/error/RouteErrorBoundary'
 import { ThemeProvider } from 'synapse-react-client/theme/ThemeProvider'
@@ -8,6 +8,8 @@ import { DocumentMetadataProvider } from 'synapse-react-client/utils/context/Doc
 import { defaultQueryClientConfig } from 'synapse-react-client/utils/context/FullContextProvider'
 import { PortalContextProvider } from './components/PortalContext'
 import { PortalProps } from './components/PortalProps'
+import { PortalScrollRestoration } from './components/PortalScrollRestoration'
+import { useReloadOnPreloadError } from './utils/reloadOnPreloadError'
 
 /**
  * Adds an errorElement to top-level routes that don't already have one
@@ -24,6 +26,7 @@ function addErrorBoundaryToRoutes(
 
 function Portal(props: PortalProps) {
   const { palette, ...context } = props
+  useReloadOnPreloadError()
   // Per-app QueryClient instance (stable via useRef).
   // Prevents cross-render cache leakage during SSR and avoids stale HMR state.
   const queryClientRef = useRef<QueryClient | null>(null)
@@ -40,8 +43,22 @@ function Portal(props: PortalProps) {
     [props.routeConfig, context.logoHeaderConfig?.icon],
   )
   const router = useMemo(
-    () => createBrowserRouter(routesWithErrorBoundary),
-    [routesWithErrorBoundary],
+    () =>
+      createBrowserRouter([
+        {
+          element: (
+            <>
+              <PortalScrollRestoration />
+              <Outlet />
+            </>
+          ),
+          errorElement: (
+            <RouteErrorBoundary icon={context.logoHeaderConfig?.icon} />
+          ),
+          children: routesWithErrorBoundary,
+        },
+      ]),
+    [routesWithErrorBoundary, context.logoHeaderConfig?.icon],
   )
   const defaultTitle = props.portalName || undefined
 

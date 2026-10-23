@@ -1,10 +1,15 @@
 import { uniqueId } from 'lodash-es'
 import React, { ReactNode, useRef } from 'react'
+import { useMediaQuery } from '@mui/material'
 import { toast, ToastBar, Toaster } from 'react-hot-toast'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import FullWidthAlert, {
   AlertButtonConfig,
 } from '../FullWidthAlert/FullWidthAlert'
+
+const TOAST_CONTAINER_CLASS_NAME = 'SynapseToastContainer'
+const TOAST_CONTAINER_TOP_CLASS_NAME = 'SynapseToastContainerTop'
+const TOAST_CONTAINER_BOTTOM_CLASS_NAME = 'SynapseToastContainerBottom'
 
 export type ToastMessageProps = {
   text: string
@@ -47,17 +52,27 @@ export function ToastMessage({
  * in SWC.
  */
 export function SynapseToastContainer(): React.ReactNode {
+  // Anchor toasts to the top on small screens, where a virtual keyboard can cover the bottom of the viewport
+  const anchorTop = useMediaQuery(theme => theme.breakpoints.down('sm'))
+
   return (
     <Toaster
-      containerClassName="SynapseToastContainer"
-      position="bottom-center"
+      containerClassName={`${TOAST_CONTAINER_CLASS_NAME} ${
+        anchorTop
+          ? TOAST_CONTAINER_TOP_CLASS_NAME
+          : TOAST_CONTAINER_BOTTOM_CLASS_NAME
+      }`}
+      position={anchorTop ? 'top-center' : 'bottom-center'}
     >
       {t => (
         <ToastBar
           toast={t}
           style={{
             ...t.style,
-            animation: t.visible ? 'fadeInUp 0.5s ease' : 'fadeOutDown 1s ease', // The exit animation needs to be long enough for the element to be removed, or else it will pop back in
+            // The exit animation needs to be long enough for the element to be removed, or else it will pop back in
+            animation: t.visible
+              ? `${anchorTop ? 'fadeInDown' : 'fadeInUp'} 0.5s ease`
+              : `${anchorTop ? 'fadeOutUp' : 'fadeOutDown'} 1s ease`,
           }}
         ></ToastBar>
       )}

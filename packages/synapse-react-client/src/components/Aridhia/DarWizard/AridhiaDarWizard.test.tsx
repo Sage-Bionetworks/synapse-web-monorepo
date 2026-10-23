@@ -291,13 +291,10 @@ function clickNext(user: UserEvent) {
 }
 
 describe('AridhiaDarWizard', () => {
-  beforeAll(() => server.listen())
   afterEach(() => {
-    server.resetHandlers()
     capturedRequestBodies = []
     sessionStorage.clear()
   })
-  afterAll(() => server.close())
 
   it('submits an existing-workspace request with the expected payload', async () => {
     const user = userEvent.setup()
@@ -344,6 +341,9 @@ describe('AridhiaDarWizard', () => {
         screen.getByText(/data access request was submitted/i),
       ).toBeInTheDocument(),
     )
+    expect(
+      await screen.findByText(/usually completed within 2-3 business weeks/),
+    ).toBeInTheDocument()
   })
 
   it('requests a new workspace, inserting the Workspace step and merging its answers into fields', async () => {

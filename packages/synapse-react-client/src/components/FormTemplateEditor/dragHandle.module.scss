@@ -1,0 +1,22 @@
+// Shared layout for the drag-indicator handles in FieldLibraryRow and StepFieldRow. Per-instance
+// color/cursor variations (e.g. disabled state) are layered on top via `sx`.
+.dragHandle {
+  display: flex;
+  align-items: center;
+  touch-action: none;
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+// Shared fade for the draggable item itself while it is the active drag source. Toggled with
+// `data-dragging` so each usage only reports state and the transition lives here once.
+.dragSource {
+  transition: opacity 120ms;
+
+  &[data-dragging='true'] {
+    opacity: var(--synapse-drag-source-opacity);
+  }
+}

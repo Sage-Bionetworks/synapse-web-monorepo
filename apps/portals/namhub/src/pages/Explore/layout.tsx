@@ -10,6 +10,9 @@ function ExploreLayout() {
         {
           path: 'Datasets',
         },
+        {
+          path: 'Publications',
+        },
       ]}
     />
   )

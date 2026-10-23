@@ -6,7 +6,7 @@ import {
 } from '@/synapse-queries'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { formatDate } from '@/utils/functions/DateFormatter'
-import { EmailTwoTone } from '@mui/icons-material'
+import EmailTwoTone from '@mui/icons-material/EmailTwoTone'
 import { Box, Link, Radio, Tooltip } from '@mui/material'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
 import { Team } from '@sage-bionetworks/synapse-types'
@@ -70,16 +70,14 @@ export default function ChallengeTeamTable(props: ChallengeTeamTableProps) {
         )
       })
     }
-    return filtered.map(
-      (team): RowData => ({
-        ...team,
-        hasInvitation: Boolean(
-          openInvitationsToJoinTeams?.some(
-            invitation => invitation.teamId === team.id,
-          ),
+    return filtered.map((team): RowData => ({
+      ...team,
+      hasInvitation: Boolean(
+        openInvitationsToJoinTeams?.some(
+          invitation => invitation.teamId === team.id,
         ),
-      }),
-    )
+      ),
+    }))
   }, [openInvitationsToJoinTeams, searchValue, teamsList?.list])
 
   const isLoading = isLoadingChallengeTeams || isLoadingTeamList

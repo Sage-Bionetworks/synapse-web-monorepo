@@ -91,9 +91,6 @@ function getMarkdownField(dialog: HTMLElement) {
 
 describe('WikiMarkdownEditorButton', () => {
   beforeEach(() => vi.clearAllMocks())
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   test('creates a root WikiPage when there was not an existing root WikiPage after user clicks edit button', async () => {
     const { button, user } = setUp(noRootProps)

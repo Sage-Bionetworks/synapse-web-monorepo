@@ -24,7 +24,7 @@ export type UnmanagedACTAccessRequirementItemProps = {
 /**
  * Renders a {@link RequirementItem} for the deprecated {@link ACTAccessRequirement}.
  *
- * For {@link ManagedACTAccessRequirement}s, see {@link ManagedACTAccessRequirementItem}
+ * For {@link ManagedACTAccessRequirement}s and {@link JsonSchemaAccessRequirement}s, see {@link RequestableAccessRequirementItem}
  *
  * For {@link SelfSignAccessRequirement} and {@link TermsOfUseAccessRequirement}, see {@link SelfSignAccessRequirementItem}
  */

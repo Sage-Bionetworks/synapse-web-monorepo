@@ -12,6 +12,7 @@ import { http, HttpResponse } from 'msw'
 import ImposeRestrictionDialog from './ImposeRestrictionDialog'
 
 const mockOnClose = vi.fn()
+const mockOnSuccess = vi.fn()
 
 function renderComponent() {
   return render(
@@ -19,6 +20,7 @@ function renderComponent() {
       entityId={mockFileEntityData.id}
       open={true}
       onClose={mockOnClose}
+      onSuccess={mockOnSuccess}
     />,
     {
       wrapper: createWrapper(),
@@ -27,23 +29,22 @@ function renderComponent() {
 }
 
 const onApplyLock = vi.fn()
-server.use(
-  http.post(
-    `${getEndpoint(
-      BackendDestinationEnum.REPO_ENDPOINT,
-    )}/repo/v1/entity/:id/lockAccessRequirement`,
-    () => {
-      onApplyLock()
-      return HttpResponse.json(mockLockAccessRequirement, { status: 201 })
-    },
-  ),
-)
+beforeEach(() => {
+  server.use(
+    http.post(
+      `${getEndpoint(
+        BackendDestinationEnum.REPO_ENDPOINT,
+      )}/repo/v1/entity/:id/lockAccessRequirement`,
+      () => {
+        onApplyLock()
+        return HttpResponse.json(mockLockAccessRequirement, { status: 201 })
+      },
+    ),
+  )
+})
 
 describe('ImposeRestrictionDialog', () => {
   beforeEach(() => vi.clearAllMocks())
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it('Prompts the user to choose if there is human data', async () => {
     renderComponent()
@@ -66,6 +67,7 @@ describe('ImposeRestrictionDialog', () => {
 
     await userEvent.click(submitButton)
     await waitFor(() => expect(onApplyLock).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(mockOnSuccess).toHaveBeenCalled())
     await waitFor(() => expect(mockOnClose).toHaveBeenCalled())
   })
   it("Shows a warning and does nothing if the user chooses 'No'", async () => {
@@ -84,6 +86,7 @@ describe('ImposeRestrictionDialog', () => {
 
     await userEvent.click(submitButton)
     await waitFor(() => expect(mockOnClose).toHaveBeenCalled())
+    expect(mockOnSuccess).not.toHaveBeenCalled()
     await waitFor(() => expect(onApplyLock).not.toHaveBeenCalled())
   })
 })

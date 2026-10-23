@@ -12,7 +12,7 @@ export function RegenerateBackupCodesWarning(
   const { onConfirm, onCancel } = props
   const theme = useTheme()
   return (
-    <Paper sx={{ m: 'auto', maxWidth: '500px', p: 8 }}>
+    <Paper sx={{ m: 'auto', maxWidth: '500px', p: { xs: '20px', md: 8 } }}>
       <Avatar
         sx={{
           bgcolor: theme.palette.primary.main,

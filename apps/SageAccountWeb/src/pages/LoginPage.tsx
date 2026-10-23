@@ -41,6 +41,26 @@ function getLoginMethod(window: Window) {
   return getLoginMethodByProviderQueryParam(provider)
 }
 
+const SignInHeading = (
+  <>
+    <Typography
+      className="headline"
+      variant="headline2"
+      sx={theme => ({
+        marginTop: '95px',
+        [theme.breakpoints.down('md')]: {
+          marginTop: 0,
+          marginBottom: '10px',
+          fontSize: '18px',
+        },
+      })}
+    >
+      Sign in to your account
+    </Typography>
+    <SourceAppDescription />
+  </>
+)
+
 function LoginPage(props: LoginPageProps) {
   const { returnToUrl } = props
   const { refreshSession, twoFactorAuthSSOErrorResponse } =
@@ -62,7 +82,7 @@ function LoginPage(props: LoginPageProps) {
         sx={theme => ({
           [theme.breakpoints.down('sm')]: {
             '& > div:nth-of-type(1), & > div:nth-of-type(2)': {
-              padding: '40px',
+              padding: '20px',
             },
           },
         })}
@@ -81,9 +101,22 @@ function LoginPage(props: LoginPageProps) {
               minHeight: { xs: '100%', md: '600px' },
             }}
           >
-            <div className={'panel-logo'}>
+            <Box
+              className={'panel-logo'}
+              sx={theme => ({
+                [theme.breakpoints.down('md')]: {
+                  '& > .SourceAppLogo': {
+                    marginBottom: '20px',
+                    marginTop: '44px',
+                  },
+                },
+              })}
+            >
               <SourceAppLogo />
-            </div>
+            </Box>
+            <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+              {SignInHeading}
+            </Box>
             <Box sx={{ my: 4 }}>
               <StandaloneLoginForm
                 sessionCallback={() => {
@@ -122,14 +155,9 @@ function LoginPage(props: LoginPageProps) {
             },
           }}
         >
-          <Typography
-            className="headline"
-            variant="headline2"
-            sx={{ marginTop: { xs: '45px', md: '95px' } }}
-          >
-            Sign in to your account
-          </Typography>
-          <SourceAppDescription />
+          <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+            {SignInHeading}
+          </Box>
           <SystemUseNotification />
         </Box>
       </StyledInnerContainer>
