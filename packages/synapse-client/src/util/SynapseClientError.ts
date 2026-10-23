@@ -1,12 +1,16 @@
 import { BaseError } from '../generated/models/BaseError'
+import { BelowThresholdErrorResponse } from '../generated/models/BelowThresholdErrorResponse'
 import { DrsErrorResponse } from '../generated/models/DrsErrorResponse'
 import { OAuthErrorResponse } from '../generated/models/OAuthErrorResponse'
+import { RowSuppressionErrorResponse } from '../generated/models/RowSuppressionErrorResponse'
 import { TwoFactorAuthErrorResponse } from '../generated/models/TwoFactorAuthErrorResponse'
 
 type SynapseError =
   | BaseError
+  | BelowThresholdErrorResponse
   | DrsErrorResponse
   | OAuthErrorResponse
+  | RowSuppressionErrorResponse
   | TwoFactorAuthErrorResponse
 
 /**

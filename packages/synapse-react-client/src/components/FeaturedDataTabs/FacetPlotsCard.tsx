@@ -121,7 +121,12 @@ function FacetPlotsCard(props: FacetPlotsCardProps) {
   }, [plotType])
   const maxPlotHeight = plotType === 'STACKED_HORIZONTAL_BAR' ? 50 : 150
   const { data: facetPlotDataArray } = useSuspenseQuery({
-    queryKey: ['facetPlotDataArray', facetsToPlot, facetDataArray],
+    queryKey: [
+      'facetPlotDataArray',
+      facetsToPlot,
+      facetDataArray,
+      queryMetadata.facetPostProcessingApplied,
+    ],
     queryFn: async () => {
       if (!facetsToPlot) {
         return []
@@ -142,6 +147,7 @@ function FacetPlotsCard(props: FacetPlotsCardProps) {
             index + 1, //individual plot rgbIndex
             plotType,
             accessToken,
+            queryMetadata.facetPostProcessingApplied,
           )
           return plotData
         }),

@@ -11,6 +11,8 @@ export function truncate(str: string | undefined, n: number) {
 export type FacetWithLabel = {
   label: string
   count: number
+  /** The count as displayed: localized, or a range/approximation for post-processed facet counts. */
+  countText: string
 }
 
 export type FacetPlotLegendProps = {
