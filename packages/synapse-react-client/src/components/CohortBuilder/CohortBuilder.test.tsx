@@ -348,20 +348,27 @@ describe('CohortBuilder', () => {
       expect(screen.queryByText(COHORT_FILES_ZERO_COUNT_TEXT)).toBeNull()
     })
 
-    it("adds the cohort's files to the Download List with the cohort query", async () => {
-      const addRequests: AddToDownloadListRequest[] = []
-      const recordAddRequest = async ({ request }: { request: Request }) => {
-        if (
-          new URL(request.url).pathname.endsWith(
-            '/download/list/add/async/start',
-          )
-        ) {
-          addRequests.push(
-            (await request.clone().json()) as AddToDownloadListRequest,
-          )
+    type DownloadListRequest = { path: string; body: unknown }
+    function recordDownloadListRequests() {
+      const downloadListRequests: DownloadListRequest[] = []
+      const listener = async ({ request }: { request: Request }) => {
+        const path = new URL(request.url).pathname
+        if (request.method === 'POST' && path.includes('/download/list/add')) {
+          downloadListRequests.push({
+            path,
+            body: await request.clone().json(),
+          })
         }
       }
-      server.events.on('request:start', recordAddRequest)
+      server.events.on('request:start', listener)
+      return {
+        downloadListRequests,
+        stop: () => server.events.removeListener('request:start', listener),
+      }
+    }
+
+    it("adds the cohort's files to the Download List with the cohort query, at their current versions", async () => {
+      const { downloadListRequests, stop } = recordDownloadListRequests()
       const user = userEvent.setup()
       const profile = renderWithFiles()
       await screen.findByText(`${allParticipantsCount} participants`)
@@ -370,28 +377,92 @@ describe('CohortBuilder', () => {
       const filesQuery = filesRequests(profile).at(-1)!.query
 
       await user.click(screen.getByRole('button', { name: 'Download Options' }))
-      await user.click(
-        await screen.findByRole('menuitem', { name: /Download List/ }),
-      )
-      // The menu stays open after a choice and hides the rest of the page from assistive technology until closed.
-      await user.keyboard('{Escape}')
+      const addMenuItem = await screen.findByRole('menuitem', {
+        name: /Download List/,
+      })
       expect(
         screen.queryByRole('menuitem', { name: 'Programmatic Options' }),
       ).not.toBeInTheDocument()
+      await user.click(addMenuItem)
       // The confirmation offers Add once the Download List statistics job completes.
       await user.click(await screen.findByRole('button', { name: 'Add' }))
 
-      await waitFor(() => expect(addRequests).toHaveLength(1))
-      server.events.removeListener('request:start', recordAddRequest)
+      await waitFor(() =>
+        expect(
+          downloadListRequests.filter(request =>
+            request.path.endsWith('/download/list/add/async/start'),
+          ),
+        ).toHaveLength(1),
+      )
+      stop()
+      const addRequest = downloadListRequests.find(request =>
+        request.path.endsWith('/download/list/add/async/start'),
+      )!.body as AddToDownloadListRequest
       const idColumn = getCohortBuilderColumnModels(
         getCohortBuilderSyntheticData(profile),
       ).dataReferences.find(column => column.name === 'id')!
-      expect(addRequests[0].query).toMatchObject({
-        sql: filesQuery.sql,
-        cohorts: filesQuery.cohorts,
-        additionalFilters: filesQuery.additionalFilters,
-        selectFileColumn: Number(idColumn.id),
+      // A VirtualTable has no row versions, so the server would reject a request for specific versions.
+      expect(addRequest).toMatchObject({
+        useVersionNumber: false,
+        query: {
+          sql: filesQuery.sql,
+          cohorts: filesQuery.cohorts,
+          additionalFilters: filesQuery.additionalFilters,
+          selectFileColumn: Number(idColumn.id),
+        },
       })
+    })
+
+    it('adds the selected files and datasets directly, without a confirmation or a query', async () => {
+      const { downloadListRequests, stop } = recordDownloadListRequests()
+      const user = userEvent.setup()
+      renderWithFiles()
+      await screen.findByText(`${allParticipantsCount} participants`)
+      await buildCohort('Race', ['Black or African American'])
+      await screen.findByText('193 files and datasets')
+
+      const table = await screen.findByRole('table')
+      const checkboxes = (
+        await within(table).findAllByRole('checkbox', { name: 'Select row' })
+      ).slice(0, 2)
+      const rows = checkboxes.map(checkbox => checkbox.closest('tr')!)
+      for (const checkbox of checkboxes) {
+        await user.click(checkbox)
+      }
+      // Each row links to its file or dataset.
+      const selectedIds = rows.map(row =>
+        within(row)
+          .getAllByRole('link')
+          .map(link => /syn\d+/.exec(link.getAttribute('href') ?? '')?.[0])
+          .find(Boolean),
+      )
+      expect(selectedIds).toEqual([
+        expect.stringMatching(/^syn\d+$/),
+        expect.stringMatching(/^syn\d+$/),
+      ])
+      const selectedBatch = {
+        path: '/repo/v1/download/list/add',
+        body: {
+          batchToAdd: selectedIds.map(fileEntityId => ({ fileEntityId })),
+        },
+      }
+
+      // From the row selection controls
+      await user.click(
+        screen.getByRole('button', { name: 'Add to Download List' }),
+      )
+      await waitFor(() => expect(downloadListRequests).toHaveLength(1))
+
+      // From the Download Options menu
+      await user.click(screen.getByRole('button', { name: 'Download Options' }))
+      await user.click(
+        await screen.findByRole('menuitem', { name: /Download List/ }),
+      )
+      await waitFor(() => expect(downloadListRequests).toHaveLength(2))
+      stop()
+
+      expect(downloadListRequests).toEqual([selectedBatch, selectedBatch])
+      expect(screen.queryByRole('button', { name: 'Add' })).toBeNull()
     })
   })
 })

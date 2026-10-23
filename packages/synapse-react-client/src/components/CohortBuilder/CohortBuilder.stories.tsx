@@ -162,3 +162,17 @@ export const SignedOut: Story = {
   },
   parameters: getMockParameters(ELITE_MOCK_PROFILE, 'AGGREGATE_ONLY'),
 }
+
+/**
+ * The synthetic test Cohort Builder on production, with the signed-in user's own access. Always uses the production
+ * stack, whatever the Stack toolbar is set to.
+ */
+export const ProductionSyntheticDataCohortBuilderTest: Story = {
+  args: {
+    participantsTableId: 'syn78350488',
+    filesTableId: 'syn78350475',
+  },
+  // Story globals override, and lock, the Stack toolbar for this story.
+  globals: { stack: 'production' },
+  parameters: { requireLogin: true },
+}

@@ -12,6 +12,7 @@ import {
   useHasSelectedRowsAtomValue,
   useSelectedRowsAtomValue,
 } from '../../QueryWrapper/TableRowSelectionState'
+import { useAddSelectedRowsToDownloadList } from '../../QueryWrapper/useAddSelectedRowsToDownloadList'
 import { useGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { getFileColumnModelId } from '../SynapseTableUtils'
@@ -19,6 +20,7 @@ import { getNumberOfResultsToAddToDownloadListCopy } from '../TopLevelControls/T
 import { DownloadLoginModal } from './DownloadLoginModal'
 
 export type DownloadOptionsProps = {
+  /** Invoked to add the whole query result to the Download List. Selected rows are added without it. */
   onDownloadFiles: () => void
   darkTheme?: boolean
   /** If true, the "Add ... files to Download List" menu item will be hidden */
@@ -40,6 +42,7 @@ export function DownloadOptions(props: DownloadOptionsProps) {
 
   const selectedRows = useSelectedRowsAtomValue()
   const hasSelectedRows = useHasSelectedRowsAtomValue()
+  const { addSelectedRowsToDownloadList } = useAddSelectedRowsToDownloadList()
 
   const queryBundleRequest = useMemo(
     () => getCurrentQueryRequest(),
@@ -85,9 +88,15 @@ export function DownloadOptions(props: DownloadOptionsProps) {
             disabled={disableDownload}
             // If disabled, add pointer-events-auto so the tooltip still works
             style={disableDownload ? { pointerEvents: 'auto' } : {}}
-            onClick={() =>
-              isAuthenticated ? onDownloadFiles() : setShowLoginModal(true)
-            }
+            onClick={() => {
+              if (!isAuthenticated) {
+                setShowLoginModal(true)
+              } else if (hasSelectedRows) {
+                addSelectedRowsToDownloadList()
+              } else {
+                onDownloadFiles()
+              }
+            }}
           >
             {getNumberOfResultsToAddToDownloadListCopy(
               hasResettableFilters,
@@ -137,6 +146,7 @@ export function DownloadOptions(props: DownloadOptionsProps) {
     }
     return downloadMenuItems
   }, [
+    addSelectedRowsToDownloadList,
     isAuthenticated,
     disableDownload,
     hasResettableFilters,
@@ -156,6 +166,8 @@ export function DownloadOptions(props: DownloadOptionsProps) {
         darkTheme={darkTheme}
         icon={'download'}
         menuItems={downloadMenuItems}
+        // Every option opens a dialog or starts an action, so the menu closes once one is chosen.
+        closeMenuOnClick
       />
       {showLoginModal && (
         <DownloadLoginModal

@@ -50,6 +50,11 @@ type ElementWithTooltipProps = PropsWithChildren<{
    * @see https://stackoverflow.com/questions/75083605/mui-the-menu-component-doesnt-accept-a-fragment-as-a-child-consider-providing
    */
   menuItems?: React.ReactNode
+  /**
+   * When true, choosing a menu item closes the menu. Leave unset for menus whose items toggle state in place, so
+   * several can be toggled in a row.
+   */
+  closeMenuOnClick?: boolean
 }>
 
 function getTooltipTriggerContents(
@@ -76,6 +81,7 @@ export const ElementWithTooltip = ({
   size,
   icon,
   menuItems,
+  closeMenuOnClick = false,
 }: ElementWithTooltipProps): React.ReactNode => {
   const { place } = tooltipVisualProps
   const iconComponent = icon ? (
@@ -137,7 +143,14 @@ export const ElementWithTooltip = ({
         {tooltipTrigger}
       </Tooltip>
       {menuItems && (
-        <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+        <Menu
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          slotProps={{
+            list: { onClick: closeMenuOnClick ? handleClose : undefined },
+          }}
+        >
           {menuItems}
         </Menu>
       )}

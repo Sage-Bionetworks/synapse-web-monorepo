@@ -95,10 +95,11 @@ export function CohortFilesPanel(props: CohortFilesPanelProps) {
           {COHORT_TOO_LARGE_TEXT}
         </Typography>
       ) : (
-        // Keyed on the request so a new cohort resets the files query, its paging and its filters.
+        // Keyed on the request so a new cohort resets the files query, its paging, its filters and the row selection.
         <QueryWrapper
           key={JSON.stringify(filesRequest)}
           initQueryRequest={filesRequest}
+          isRowSelectionVisible
         >
           {/* The files query is derived from the cohort, so it can't be searched, shared as a link, or re-run from SQL. */}
           <QueryVisualizationWrapper
