@@ -3,13 +3,6 @@ import { useState } from 'react'
 import { JsonSchemaForm } from '@/components/JsonSchemaForm/JsonSchemaForm'
 import { PhoneWidget } from './PhoneWidget'
 
-const meta = {
-  title: 'Components/JsonSchemaForm/PhoneWidget',
-  component: PhoneWidget,
-} satisfies Meta<typeof PhoneWidget>
-export default meta
-type Story = StoryObj<typeof meta>
-
 function PhoneWidgetDemo() {
   const [formData, setFormData] = useState<Record<string, unknown>>({})
   return (
@@ -30,6 +23,11 @@ function PhoneWidgetDemo() {
   )
 }
 
-export const Default: Story = {
-  render: () => <PhoneWidgetDemo />,
-}
+const meta = {
+  title: 'Components/JsonSchemaForm/PhoneWidget',
+  component: PhoneWidgetDemo,
+} satisfies Meta<typeof PhoneWidgetDemo>
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const Default: Story = {}
