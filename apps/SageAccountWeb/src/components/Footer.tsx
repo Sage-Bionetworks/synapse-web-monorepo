@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import { memo } from 'react'
-import { ExperimentalMode } from 'synapse-react-client/components/ExperimentalMode/index'
+import { ExperimentalFeatures } from 'synapse-react-client/components/ExperimentalFeatures/index'
 
 function Footer() {
   return (
@@ -16,7 +16,10 @@ function Footer() {
         }}
       >
         <Typography variant="body1">Sage Bionetworks</Typography>
-        <ExperimentalMode />
+        <ExperimentalFeatures
+          scope="ACCOUNTS"
+          onSave={() => window.location.reload()}
+        />
       </Box>
     </footer>
   )
