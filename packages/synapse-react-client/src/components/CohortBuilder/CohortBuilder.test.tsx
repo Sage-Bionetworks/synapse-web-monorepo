@@ -51,16 +51,13 @@ function renderCohortBuilder(
 }
 
 describe('CohortBuilder', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     sentRequests = []
     server.events.on('request:start', recordQueryRequest)
   })
   afterEach(() => {
     server.events.removeListener('request:start', recordQueryRequest)
-    server.resetHandlers()
   })
-  afterAll(() => server.close())
 
   it('shows the participant count and the logging notice, and never requests participant rows', async () => {
     renderCohortBuilder()
