@@ -32,6 +32,7 @@ import {
   useQueryClient,
   UseQueryOptions,
 } from '@tanstack/react-query'
+import { chunk } from 'lodash-es'
 
 export function useGetAvailableFilesToDownload(
   request: AvailableFilesRequest,
@@ -199,6 +200,10 @@ export function useAddFileToDownloadList(
   })
 }
 
+/** The most items that one request to add a batch to the Download List may carry. */
+export const MAX_DOWNLOAD_LIST_BATCH_SIZE = 1000
+
+/** Adds any number of files to the Download List, sending them in batches the server accepts. */
 export function useAddFileBatchToDownloadList(
   options?: Partial<
     UseMutationOptions<
@@ -215,8 +220,18 @@ export function useAddFileBatchToDownloadList(
   const queryClient = useQueryClient()
   return useMutation({
     ...options,
-    mutationFn: batchToAdd =>
-      SynapseClient.addFileBatchToDownloadListV2(batchToAdd, accessToken),
+    mutationFn: async batchToAdd => {
+      let numberOfFilesAdded = 0
+      // Sent one after another so a full Download List stops the remaining batches.
+      for (const batch of chunk(batchToAdd, MAX_DOWNLOAD_LIST_BATCH_SIZE)) {
+        const response = await SynapseClient.addFileBatchToDownloadListV2(
+          batch,
+          accessToken,
+        )
+        numberOfFilesAdded += response.numberOfFilesAdded
+      }
+      return { numberOfFilesAdded }
+    },
     mutationKey: ['addFileBatchToDownloadList'],
     onSuccess: async (data, variables, ctx, ...rest) => {
       // PORTALS-2222: Invalidate to load the accurate results
