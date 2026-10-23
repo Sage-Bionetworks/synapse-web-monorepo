@@ -210,7 +210,7 @@
     "react-dom": "^19.2.7",
     "react-select-event": "^5.5.1",
     "react-test-renderer": "^19.2.7",
-    "storybook": "10.6.1",
+    "storybook": "10.6.2",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "timers-browserify": "^2.0.12",
