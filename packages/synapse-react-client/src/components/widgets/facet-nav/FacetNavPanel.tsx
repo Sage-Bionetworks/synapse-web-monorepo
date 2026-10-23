@@ -212,10 +212,7 @@ export async function extractPlotDataArray(
       plotType === 'STACKED_HORIZONTAL_BAR' || plotType === 'BAR'
         ? 'none'
         : 'inside',
-    hovertemplate:
-      plotType === 'PIE'
-        ? `<b>%{text}</b><br>${hoverCount}<br><extra></extra>`
-        : `<b>%{text}: </b><br>${hoverCount} <br><extra></extra>`,
+    hovertemplate: `<b>%{text}: </b><br>${hoverCount} <br><extra></extra>`,
     textinfo: 'none',
     type: plotType === 'PIE' ? 'pie' : 'bar',
     pull:

@@ -220,7 +220,7 @@ describe('extractPlotDataArray', () => {
     ])
     expect(plotData.data[0]).toMatchObject({
       customdata: ['≈ 10', '≈ 0'],
-      hovertemplate: '<b>%{text}</b><br>%{customdata}<br><extra></extra>',
+      hovertemplate: '<b>%{text}: </b><br>%{customdata} <br><extra></extra>',
     })
   })
 
@@ -236,7 +236,7 @@ describe('extractPlotDataArray', () => {
     expect(plotData.data[0]).toMatchObject({
       customdata: undefined,
       hovertemplate:
-        '<b>%{text}</b><br>%{value} (%{percent})<br><extra></extra>',
+        '<b>%{text}: </b><br>%{value} (%{percent}) <br><extra></extra>',
     })
   })
 })
