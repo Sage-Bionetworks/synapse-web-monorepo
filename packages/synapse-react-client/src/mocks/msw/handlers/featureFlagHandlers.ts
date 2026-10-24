@@ -13,13 +13,11 @@ type FeatureFlagHandlerOptions = {
   overrides?: Partial<FeatureFlags>
 }
 
-export function getFeatureFlagsOverride(
-  options: FeatureFlagHandlerOptions = {
+export function getFeatureFlagsOverride(options?: FeatureFlagHandlerOptions) {
+  const { portalOrigin, overrides } = options ?? {
     portalOrigin: getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT),
     overrides: {},
-  },
-) {
-  const { portalOrigin, overrides } = options
+  }
   return http.get(`${portalOrigin}/Portal/featureflags`, () => {
     return HttpResponse.json(
       { ...MOCK_FEATURE_FLAGS_VALUE, ...overrides },

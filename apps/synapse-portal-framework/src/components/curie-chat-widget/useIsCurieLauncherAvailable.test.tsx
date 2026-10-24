@@ -30,9 +30,11 @@ function renderUseIsCurieLauncherAvailable(options: {
   const { isChatAvailable = true, isCurieLauncherEnabled } = options
   const wrapper = ({ children }: PropsWithChildren) => (
     <PortalContext.Provider
+      // oxlint-disable-next-line react/jsx-no-constructed-context-values -- test-only wrapper; re-renders don't matter here
       value={{ isCurieLauncherEnabled } as PortalContextType}
     >
       <ChatDialogContext.Provider
+        // oxlint-disable-next-line react/jsx-no-constructed-context-values -- test-only wrapper; re-renders don't matter here
         value={{ openChat: vi.fn(), isChatAvailable }}
       >
         {children}

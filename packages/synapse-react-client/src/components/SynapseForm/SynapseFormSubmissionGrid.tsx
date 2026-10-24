@@ -56,7 +56,7 @@ type SynapseFormSubmissionGridState = {
   modalContext?: { action: (...args: any[]) => void; arguments: any[] }
 }
 
-class _SynapseFormSubmissionGrid extends Component<
+class InternalSynapseFormSubmissionGrid extends Component<
   SynapseFormSubmissionGridProps,
   SynapseFormSubmissionGridState
 > {
@@ -133,7 +133,10 @@ class _SynapseFormSubmissionGrid extends Component<
     const groupId = this.props.formGroupId
     try {
       const cleanUpName = (item: FormData): FormData => {
-        item = { ...item, ...{ name: item.name.replace('.json', '') } }
+        item = {
+          ...item,
+          name: item.name.replace('.json', ''),
+        }
         return item
       }
       const request: ListRequest = {
@@ -156,7 +159,7 @@ class _SynapseFormSubmissionGrid extends Component<
       }
     } catch (error) {
       this.onError(error)
-      return Promise.reject(error as Error)
+      throw error
     } finally {
       this.setState({
         isLoading: false,
@@ -167,8 +170,8 @@ class _SynapseFormSubmissionGrid extends Component<
   getMore = async (fileListType: FileListType, nextPageToken: string) => {
     const statusList =
       fileListType === 'SUBMITTED'
-        ? _SynapseFormSubmissionGrid.requestFilter.SUBMITTED
-        : _SynapseFormSubmissionGrid.requestFilter.IN_PROGRESS
+        ? InternalSynapseFormSubmissionGrid.requestFilter.SUBMITTED
+        : InternalSynapseFormSubmissionGrid.requestFilter.IN_PROGRESS
     const result = await this.getTypeFileListing(statusList, nextPageToken)
     if (fileListType === 'SUBMITTED') {
       this.setState(prevState => ({
@@ -189,11 +192,11 @@ class _SynapseFormSubmissionGrid extends Component<
 
   getUserFileListing = async (): Promise<void> => {
     const inProgress = await this.getTypeFileListing(
-      _SynapseFormSubmissionGrid.requestFilter.IN_PROGRESS,
+      InternalSynapseFormSubmissionGrid.requestFilter.IN_PROGRESS,
       this.state.inProgress.nextPageToken,
     )
     const submitted = await this.getTypeFileListing(
-      _SynapseFormSubmissionGrid.requestFilter.SUBMITTED,
+      InternalSynapseFormSubmissionGrid.requestFilter.SUBMITTED,
       this.state.submitted.nextPageToken,
     )
 
@@ -201,8 +204,6 @@ class _SynapseFormSubmissionGrid extends Component<
       inProgress: inProgress,
       submitted: submitted,
     })
-
-    return
   }
   onError = (args: any) => {
     console.log(args)
@@ -490,7 +491,7 @@ class _SynapseFormSubmissionGrid extends Component<
           {this.state.modalContext && (
             <WarningDialog
               className={`theme-${this.props.formClass}`}
-              open={typeof this.state.modalContext !== 'undefined'}
+              open={this.state.modalContext !== undefined}
               title={this.modalTitle}
               content={this.modalCopy}
               onConfirmCallbackArgs={this.state.modalContext.arguments}
@@ -529,7 +530,7 @@ export function SynapseFormSubmissionGrid(
 ) {
   const { accessToken, isAuthenticated } = useSynapseContext()
   return (
-    <_SynapseFormSubmissionGrid
+    <InternalSynapseFormSubmissionGrid
       {...props}
       token={accessToken}
       isAuthenticated={isAuthenticated}

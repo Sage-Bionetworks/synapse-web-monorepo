@@ -18,7 +18,7 @@ import { Tooltip } from '@mui/material'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import { ALL_ENTITY_BUNDLE_FIELDS } from '@sage-bionetworks/synapse-types'
 import { isEmpty } from 'lodash-es'
-import React, { useEffect, useState } from 'react'
+import React, { CSSProperties, useEffect, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import { getDisplayedAnnotation } from '../entity/metadata/AnnotationsTable'
 import { EntityModal } from '../entity/metadata/EntityModal'
@@ -37,7 +37,7 @@ export type EntityBadgeIconsProps = {
     | 'revert'
     | 'unset'
     | 'wrap-reverse'
-  justifyContent?: 'flex-start' | 'flex-end' | string
+  justifyContent?: CSSProperties['justifyContent']
   /** Shows an icon indicating if the entity is 'public' or 'private'. Default true  */
   showIsPublicPrivate?: boolean
   /** Shows an icon if the entity has sharing settings set on itself. Default true  */
@@ -198,7 +198,7 @@ export const EntityBadgeIcons = (
     <div className="EntityBadgeTooltip">
       <table>
         <tbody>
-          {annotationsTableRows ? annotationsTableRows : ''}
+          {annotationsTableRows || ''}
           {valiationSchemaTableRow}
         </tbody>
       </table>

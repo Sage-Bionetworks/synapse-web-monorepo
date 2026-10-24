@@ -7,13 +7,13 @@ import { ContinueButton } from './ContinueButton'
 import { TextField } from 'synapse-react-client/components/TextField/index'
 import { ReturnToAppButton } from './ReturnToAppButton'
 
-const keysToValidate = ['firstName', 'lastName', 'location', 'company']
+const keysToValidate = new Set(['firstName', 'lastName', 'location', 'company'])
 
 function validate(values: Partial<VerificationSubmission>) {
   const requiredError = 'This field cannot be empty.'
   let errors: Record<string, string> = {}
   for (const [key, value] of Object.entries(values)) {
-    if (keysToValidate.includes(key)) {
+    if (keysToValidate.has(key)) {
       if (!value) {
         errors[key] = requiredError
       }
@@ -38,7 +38,7 @@ export const ProfileFieldsEditor = (
 ): React.ReactNode => {
   const theme = useTheme()
   const [values, setValues] = useState({ ...props.verificationSubmission })
-  const [errors] = useState({} as Partial<VerificationSubmission>)
+  const errors: Partial<VerificationSubmission> = {}
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setValues(values => ({

@@ -23,26 +23,43 @@ const includeTypes: EntityType[] = [
   EntityType.recordset,
 ]
 
-export const useTreeOperationsWithDirectFetch = (
-  expanded: Record<string, boolean>,
-  setExpanded: (value: React.SetStateAction<Record<string, boolean>>) => void,
-  tree: Record<string, TreeNode>,
-  setTree: (value: React.SetStateAction<Record<string, TreeNode>>) => void,
-  loadedChildren: Set<string>,
-  setLoadedChildren: (value: React.SetStateAction<Set<string>>) => void,
-  loadingIds: Set<string>,
-  setLoadingIds: (value: React.SetStateAction<Set<string>>) => void,
+type TreeOperationsWithDirectFetchOptions = {
+  expanded: Record<string, boolean>
+  setExpanded: (value: React.SetStateAction<Record<string, boolean>>) => void
+  tree: Record<string, TreeNode>
+  setTree: (value: React.SetStateAction<Record<string, TreeNode>>) => void
+  loadedChildren: Set<string>
+  setLoadedChildren: (value: React.SetStateAction<Set<string>>) => void
+  loadingIds: Set<string>
+  setLoadingIds: (value: React.SetStateAction<Set<string>>) => void
   setNextPageTokens: (
     value: React.SetStateAction<Record<string, string | undefined>>,
-  ) => void,
+  ) => void
   setLoadingPageTokens: (
     value: React.SetStateAction<Record<string, string | undefined>>,
-  ) => void,
-  loadingPageTokens: Record<string, string | undefined>,
-  nextPageTokens: Record<string, string | undefined>,
-  sortBy?: SortBy,
-  sortDirection?: Direction,
-) => {
+  ) => void
+  loadingPageTokens: Record<string, string | undefined>
+  nextPageTokens: Record<string, string | undefined>
+  sortBy?: SortBy
+  sortDirection?: Direction
+}
+
+export const useTreeOperationsWithDirectFetch = ({
+  expanded,
+  setExpanded,
+  tree,
+  setTree,
+  loadedChildren,
+  setLoadedChildren,
+  loadingIds,
+  setLoadingIds,
+  setNextPageTokens,
+  setLoadingPageTokens,
+  loadingPageTokens,
+  nextPageTokens,
+  sortBy,
+  sortDirection,
+}: TreeOperationsWithDirectFetchOptions) => {
   const queryClient = useQueryClient()
   const { accessToken, keyFactory } = useSynapseContext()
 

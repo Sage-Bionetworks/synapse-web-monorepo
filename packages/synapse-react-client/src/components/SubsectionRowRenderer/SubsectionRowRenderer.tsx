@@ -35,13 +35,13 @@ export type SubsectionRowRendererProps = {
   additionalFiltersSessionStorageKey?: string
 }
 
-const LIST_COLUMN_TYPES: ColumnType[] = [
+const LIST_COLUMN_TYPES: ReadonlySet<ColumnType> = new Set([
   ColumnTypeEnum.BOOLEAN_LIST,
   ColumnTypeEnum.DATE_LIST,
   ColumnTypeEnum.ENTITYID_LIST,
   ColumnTypeEnum.INTEGER_LIST,
   ColumnTypeEnum.STRING_LIST,
-]
+])
 
 function SubsectionRowRenderer({
   sql,
@@ -104,7 +104,7 @@ function SubsectionRowRenderer({
       return rawValue
     }
     const friendlyValue = friendlyValuesMap[rawValue]
-    return friendlyValue ? friendlyValue : rawValue
+    return friendlyValue || rawValue
   }
   return (
     <div className="SubsectionRowRenderer">
@@ -142,7 +142,7 @@ function SubsectionRowRenderer({
                   }
                   let values
                   // If this cell value represents a multi-value (the select column type is a *_LIST column), then parse it and break it apart
-                  if (LIST_COLUMN_TYPES.includes(selectColumn.columnType)) {
+                  if (LIST_COLUMN_TYPES.has(selectColumn.columnType)) {
                     const jsonData: string[] = JSON.parse(cellValue)
                     values = jsonData.map((val: string, index: number) => {
                       return (

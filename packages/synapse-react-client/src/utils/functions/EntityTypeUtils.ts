@@ -133,9 +133,7 @@ export function entityTypeToFriendlyName(entityType: EntityType): string {
   }
 }
 
-export function convertToEntityType(
-  typeString: string | ENTITY_CONCRETE_TYPE | EntityType,
-): EntityType {
+export function convertToEntityType(typeString: string): EntityType {
   if (Object.values(EntityType).includes(typeString as EntityType)) {
     return typeString as EntityType
   }
@@ -410,8 +408,12 @@ export const entityJsonKeys: Record<ENTITY_CONCRETE_TYPE, string[]> = {
     'upsertKey',
     'csvDescriptor',
   ],
-  'org.sagebionetworks.repo.model.Preview': [/* unused */],
-  'org.sagebionetworks.repo.model.ExampleEntity': [/* unused */],
+  'org.sagebionetworks.repo.model.Preview': [
+    /* unused */
+  ],
+  'org.sagebionetworks.repo.model.ExampleEntity': [
+    /* unused */
+  ],
   'org.sagebionetworks.repo.model.search.table.SearchIndex': [
     ...allEntityKeys,
     'definingSQL',

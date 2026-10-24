@@ -39,6 +39,7 @@ export type PortalRootProps = Omit<PortalContextType, 'routeConfig'> & {
 
 export default function PortalRoot(props: PortalRootProps) {
   const { children, palette, ...portalContextProps } = props
+  // oxlint-disable-next-line react/hook-use-state -- the QueryClient is created once per mount and never replaced
   const [queryClient] = useState(
     () => new QueryClient(defaultQueryClientConfig),
   )

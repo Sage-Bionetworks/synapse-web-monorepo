@@ -68,19 +68,19 @@ const DEFAULT_PATCH_THROTTLE_MS = 250
 const DEFAULT_PATCH_ACK_TIMEOUT_MS = 15 * 1000
 
 export class DataGridWebSocket {
-  private socket: WebSocket
+  private readonly socket: WebSocket
   private model: GridModel | null = null
-  private messageCounter: MessageCounter
-  private replicaId: number
-  private verboseEncoder = new VerboseEncoder()
-  private maxPayloadSizeBytes: number
-  private throttledSendPatch: DebouncedFunc<() => void>
-  private snapshotDecoder = new SnapshotDecoder()
+  private readonly messageCounter: MessageCounter
+  private readonly replicaId: number
+  private readonly verboseEncoder = new VerboseEncoder()
+  private readonly maxPayloadSizeBytes: number
+  private readonly throttledSendPatch: DebouncedFunc<() => void>
+  private readonly snapshotDecoder = new SnapshotDecoder()
   // Oldest first. The server must receive patches in order, so only the head is ever on the wire
   // (identified by inFlightPatchRequestId); the rest wait for its acknowledgement.
-  private unacknowledgedPatches: CompactCodecPatch[]
+  private readonly unacknowledgedPatches: CompactCodecPatch[]
   private inFlightPatchRequestId: number | null = null
-  private patchAckTimeoutMs: number
+  private readonly patchAckTimeoutMs: number
   private patchAckTimer: number | null = null
   // Set once disconnect() has been requested: the socket closes when the last patch is acknowledged
   private isClosing = false

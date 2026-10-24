@@ -96,9 +96,7 @@ export default function DropdownSelect(props: DropdownSelectProps) {
             }
           }}
         >
-          {buttonText
-            ? buttonText
-            : options[selectedIndex ?? selectedIndexLocal]}
+          {buttonText || options[selectedIndex ?? selectedIndexLocal]}
         </Button>
         <Button
           size="small"

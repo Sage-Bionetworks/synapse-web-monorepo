@@ -115,7 +115,7 @@ export function useCreateAccessRequirement<T extends AccessRequirement>(
       if (options?.onSuccess) {
         return await options.onSuccess(newAr, ar, ctx)
       }
-      return
+      return undefined
     },
   })
 }
@@ -137,7 +137,7 @@ export function useUpdateAccessRequirement<T extends AccessRequirement>(
       if (options?.onSuccess) {
         return await options.onSuccess(newAr, ar, ctx)
       }
-      return
+      return undefined
     },
   })
 }
@@ -202,7 +202,7 @@ export function useCreateAccessRequirementACL(
       if (options?.onSuccess) {
         return await options.onSuccess(newAcl, acl, ctx)
       }
-      return
+      return undefined
     },
   })
 }
@@ -228,7 +228,7 @@ export function useUpdateAccessRequirementACL(
       if (options?.onSuccess) {
         return await options.onSuccess(newAcl, acl, ctx)
       }
-      return
+      return undefined
     },
   })
 }
@@ -298,7 +298,7 @@ export function useCreateLockAccessRequirement(
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx)
       }
-      return
+      return undefined
     },
   })
 }
@@ -412,7 +412,7 @@ export function useUpdateResearchProject(
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx)
       }
-      return
+      return undefined
     },
   })
 }
@@ -470,7 +470,7 @@ export function useUpdateDataAccessRequest(
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx)
       }
-      return
+      return undefined
     },
   })
 }
@@ -510,7 +510,7 @@ export function useCreateAccessApproval(
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx)
       }
-      return
+      return undefined
     },
   })
 }
@@ -551,7 +551,7 @@ export function useCancelDataAccessRequest(
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx)
       }
-      return
+      return undefined
     },
   })
 }

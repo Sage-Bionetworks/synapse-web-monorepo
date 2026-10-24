@@ -28,7 +28,7 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
     dataAvailabilityProps,
     studyAcknowledgementSql,
   } = props
-  const [isAcknowledgementsDialogOpen, setAcknowledgementsDialogOpen] =
+  const [isAcknowledgementsDialogOpen, setIsAcknowledgementsDialogOpen] =
     useState<boolean>(false)
 
   const [portalAcknowledgement, setPortalAcknowledgement] = useState<string>()
@@ -38,7 +38,7 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
     AcknowledgementItem[]
   >([])
   const handleCloseDialog = useCallback(
-    () => setAcknowledgementsDialogOpen(false),
+    () => setIsAcknowledgementsDialogOpen(false),
     [],
   )
   return (
@@ -168,7 +168,7 @@ export function AcknowledgementPage(props: AcknowledgementPageProps) {
         </Typography>
         <Button
           variant="contained"
-          onClick={() => setAcknowledgementsDialogOpen(true)}
+          onClick={() => setIsAcknowledgementsDialogOpen(true)}
           sx={{ mb: '3em' }}
         >
           Generate compiled statement

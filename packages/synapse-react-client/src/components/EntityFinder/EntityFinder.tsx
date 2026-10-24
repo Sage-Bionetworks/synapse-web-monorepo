@@ -63,7 +63,7 @@ export type EntityFinderProps = {
   /** The SynID of the 'Current Project'. If this is not a defined, then the scope cannot be "Current Project" */
   projectId?: string
   /** The SynID of the entity that should open by default. If this is a Syn ID, then it must be in the project specified in `projectId` */
-  initialContainer: string | 'root' | null
+  initialContainer: EntityTreeContainer
   /** Determines if versions are selectable, and if so, how they should be shown. Default is "TRACKED" */
   versionSelection?: VersionSelectionType
   /** The entity types to show in the details view (right pane). Any types specified in `selectableTypes` will automatically be included. */
@@ -203,11 +203,12 @@ export function EntityFinder({
     setCurrentTab(newValue)
   }
 
-  const mainPanelClass = searchActive
-    ? 'MainPanelSearch'
-    : treeOnly
-      ? 'MainPanelSinglePane'
-      : 'MainPanelDualPane'
+  let mainPanelClass = 'MainPanelDualPane'
+  if (searchActive) {
+    mainPanelClass = 'MainPanelSearch'
+  } else if (treeOnly) {
+    mainPanelClass = 'MainPanelSinglePane'
+  }
 
   const entityDetailsListProps: EntityDetailsListProps = {
     configuration: configFromTreeView,

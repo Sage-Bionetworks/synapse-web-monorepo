@@ -159,7 +159,7 @@ export const getNodeData = (config: {
   selectableTypes: EntityType[]
   autoExpand: (entityId: string) => boolean
   defaultHeight: number
-  currentContainer?: string | 'root' | null
+  currentContainer?: string | null
 }): TreeWalkerValue<TreeData, NodeMeta> => {
   const {
     node,
@@ -239,16 +239,17 @@ export function Node(
     setOpen,
   } = props
 
-  const [isLoading, setLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const nodeText = isEntityHeaderNode(node) ? (
-    <span>{node.name}</span>
-  ) : isRootNodeConfiguration(node) ? (
-    <span>{node.nodeText}</span>
-  ) : (
+  let nodeText: ReactNode
+  if (isEntityHeaderNode(node)) {
+    nodeText = <span>{node.name}</span>
+  } else if (isRootNodeConfiguration(node)) {
+    nodeText = <span>{node.nodeText}</span>
+  } else {
     // Pagination node
-    <Skeleton width={100} />
-  )
+    nodeText = <Skeleton width={100} />
+  }
 
   // We only use this for pagination nodes. If the pagination node comes into view, then immediately call `getNextPageOfChildren`
   const { ref, inView } = useInView()
@@ -261,10 +262,10 @@ export function Node(
 
   const toggleExpand = useCallback(async () => {
     if (hasMoreChildren(node)) {
-      setLoading(true)
+      setIsLoading(true)
       await getNextPageOfChildren()
       await setOpen(!isOpen)
-      setLoading(false)
+      setIsLoading(false)
     } else {
       await setOpen(!isOpen)
     }
@@ -401,17 +402,27 @@ export function Node(
  * Extracted from the React component for testing purposes
  * @returns a generator function compatible with react-vtree
  */
-export function getTreeWalkerFunction(
-  rootNode: RootNodeConfiguration,
-  setSelectedId: VirtualizedTreeProps['setSelectedId'],
-  treeNodeType: VirtualizedTreeProps['treeNodeType'],
-  selected: VirtualizedTreeProps['selected'],
-  selectableTypes: VirtualizedTreeProps['selectableTypes'],
-  autoExpand: VirtualizedTreeProps['autoExpand'],
-  itemSize: (index?: number) => number,
-  currentContainer: VirtualizedTreeProps['currentContainer'],
-  fetchNextPageOfChildren: (node: Writable<EntityHeaderNode>) => Promise<void>,
-): TreeWalker<TreeData, NodeMeta> {
+export function getTreeWalkerFunction({
+  rootNode,
+  setSelectedId,
+  treeNodeType,
+  selected,
+  selectableTypes,
+  autoExpand,
+  itemSize,
+  currentContainer,
+  fetchNextPageOfChildren,
+}: {
+  rootNode: RootNodeConfiguration
+  setSelectedId: VirtualizedTreeProps['setSelectedId']
+  treeNodeType: VirtualizedTreeProps['treeNodeType']
+  selected: VirtualizedTreeProps['selected']
+  selectableTypes: VirtualizedTreeProps['selectableTypes']
+  autoExpand: VirtualizedTreeProps['autoExpand']
+  itemSize: (index?: number) => number
+  currentContainer: VirtualizedTreeProps['currentContainer']
+  fetchNextPageOfChildren: (node: Writable<EntityHeaderNode>) => Promise<void>
+}): TreeWalker<TreeData, NodeMeta> {
   return function* treeWalker() {
     // Step [1]: Define the root node of our tree.
     yield getNodeData({
@@ -435,9 +446,7 @@ export function getTreeWalkerFunction(
       if (maybeHasChildren(parentMeta.node)) {
         // Step [3]: Yielding all the known children of the parent
         if (parentMeta.node.children) {
-          for (let i = 0; i < parentMeta.node.children.length; i++) {
-            const childNode = parentMeta.node.children[i]
-
+          for (const childNode of parentMeta.node.children) {
             yield getNodeData({
               node: childNode,
               nestingLevel: parentMeta.nestingLevel + 1,
@@ -491,7 +500,7 @@ export type VirtualizedTreeProps = Readonly<{
   setSelectedId: (entityId: string) => void
   selected: EntitySelectionMapType
   /* currentContainer is the container whose contents are shown on in the right pane in dual-pane configuration, and may only be defined when treeNodeType is DUAL_PANE */
-  currentContainer?: string | 'root' | null
+  currentContainer?: string | null
   autoExpand: (entityId: string) => boolean
   selectableTypes: EntityType[]
   visibleTypes: EntityType[]
@@ -570,7 +579,7 @@ export const VirtualizedTree = (
       if (node.children) {
         for (const newChild of children.page) {
           // SWC-6751 - Prevent adding duplicate entries in case this function is called twice
-          if (!node.children.find(child => child.id == newChild.id)) {
+          if (!node.children.some(child => child.id == newChild.id)) {
             node.children.push(newChild)
           }
         }
@@ -599,7 +608,7 @@ export const VirtualizedTree = (
    * so the dependencies specified in useCallback are important.
    */
   const memoizedTreeWalker = useCallback(
-    getTreeWalkerFunction(
+    getTreeWalkerFunction({
       rootNode,
       setSelectedId,
       treeNodeType,
@@ -609,7 +618,7 @@ export const VirtualizedTree = (
       itemSize,
       currentContainer,
       fetchNextPageOfChildren,
-    ),
+    }),
     [
       rootNode,
       setSelectedId,

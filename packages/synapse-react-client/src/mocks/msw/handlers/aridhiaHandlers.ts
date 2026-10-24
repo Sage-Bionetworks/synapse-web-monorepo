@@ -148,6 +148,16 @@ export function getAridhiaWorkflowHandler(
   )
 }
 
+const DEFAULT_ARIDHIA_WORKSPACE_REQUEST_FORM_BODY: JsonBodyType = {
+  name: 'Request a workspace',
+  sections: {
+    workspace: {
+      label: 'Workspace details',
+      fields: MOCK_ARIDHIA_WORKSPACE_FORM_FIELDS,
+    },
+  },
+}
+
 /**
  * `body` defaults to the shape confirmed against a real gateway capture: `GET
  * /workspaces-forms/{code}` returns the form object directly, not wrapped in the `items`
@@ -155,15 +165,7 @@ export function getAridhiaWorkflowHandler(
  * exercise a different payload shape or field set.
  */
 export function getAridhiaWorkspaceRequestFormHandler(
-  body: JsonBodyType = {
-    name: 'Request a workspace',
-    sections: {
-      workspace: {
-        label: 'Workspace details',
-        fields: MOCK_ARIDHIA_WORKSPACE_FORM_FIELDS,
-      },
-    },
-  },
+  body: JsonBodyType = DEFAULT_ARIDHIA_WORKSPACE_REQUEST_FORM_BODY,
 ): HttpHandler {
   return http.get(
     `${MOCK_ARIDHIA_GATEWAY}/fair/workspaces-forms/workspace_request`,

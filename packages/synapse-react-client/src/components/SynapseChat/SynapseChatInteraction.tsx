@@ -127,7 +127,7 @@ export function SynapseChatInteraction({
   const hasTraceInfo = traceMessages.length > 0
 
   const lastReasoningMessage = useMemo(
-    () => traceMessages.filter(trace => 'reasoningText' in trace).at(-1),
+    () => traceMessages.findLast(trace => 'reasoningText' in trace),
     [traceMessages],
   )
 
@@ -139,6 +139,18 @@ export function SynapseChatInteraction({
   const traceButtonText = isLoading
     ? traceButtonLoadingText
     : `${showTrace ? 'Hide' : 'Show'} Trace`
+
+  const traceButtonLoadingIcon = showLoadingIcon ? (
+    <SynapseSpinner size={14} />
+  ) : undefined
+  const traceButtonToggleIcon = showTrace ? (
+    <KeyboardArrowDown sx={{ width: '14px' }} />
+  ) : (
+    <KeyboardArrowRight sx={{ width: '14px' }} />
+  )
+  const traceButtonStartIcon = isLoading
+    ? traceButtonLoadingIcon
+    : traceButtonToggleIcon
 
   const { textContent, guidePrompts } = useMemo(() => {
     try {
@@ -261,17 +273,7 @@ export function SynapseChatInteraction({
             <Button
               variant={'outlined'}
               size={'small'}
-              startIcon={
-                isLoading ? (
-                  showLoadingIcon ? (
-                    <SynapseSpinner size={14} />
-                  ) : undefined
-                ) : showTrace ? (
-                  <KeyboardArrowDown sx={{ width: '14px' }} />
-                ) : (
-                  <KeyboardArrowRight sx={{ width: '14px' }} />
-                )
-              }
+              startIcon={traceButtonStartIcon}
               disabled={!hasTraceInfo}
               onClick={() => {
                 setShowTrace(v => !v)

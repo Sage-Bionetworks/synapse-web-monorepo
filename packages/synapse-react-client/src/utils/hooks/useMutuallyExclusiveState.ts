@@ -20,13 +20,11 @@ function mutuallyExclusiveSetterFactory(
         }
         return next
       })
+    } else if (arg) {
+      setState(true)
+      setMutuallyExclusiveState(false)
     } else {
-      if (arg) {
-        setState(true)
-        setMutuallyExclusiveState(false)
-      } else {
-        setState(false)
-      }
+      setState(false)
     }
   }
 }
@@ -49,20 +47,20 @@ export function useMutuallyExclusiveState(
     throw new Error('initialValue1 and initialValue2 cannot both be true')
   }
 
-  const [value1, _setValue1] = React.useState(initialValue1)
-  const [value2, _setValue2] = React.useState(initialValue2)
+  const [value1State, setValue1State] = React.useState(initialValue1)
+  const [value2State, setValue2State] = React.useState(initialValue2)
 
   const setValue1 = useMemo(
-    () => mutuallyExclusiveSetterFactory(_setValue1, _setValue2),
+    () => mutuallyExclusiveSetterFactory(setValue1State, setValue2State),
     [],
   )
 
   const setValue2 = useMemo(
-    () => mutuallyExclusiveSetterFactory(_setValue2, _setValue1),
+    () => mutuallyExclusiveSetterFactory(setValue2State, setValue1State),
     [],
   )
 
-  return [value1, setValue1, value2, setValue2]
+  return [value1State, setValue1, value2State, setValue2]
 }
 
 export default useMutuallyExclusiveState

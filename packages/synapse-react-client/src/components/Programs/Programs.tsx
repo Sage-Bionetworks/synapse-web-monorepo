@@ -104,9 +104,9 @@ export function Programs(props: ProgramsProps) {
           fileHandleAssociation,
         }
         return showDesktop ? (
-          <ProgramsDesktop {...ProgramsDataProps} />
+          <ProgramsDesktop key={el.rowId} {...ProgramsDataProps} />
         ) : (
-          <ProgramsMobile {...ProgramsDataProps} />
+          <ProgramsMobile key={el.rowId} {...ProgramsDataProps} />
         )
       })}
     </div>

@@ -36,6 +36,6 @@ export async function getFileEntityData(
     if (onError) {
       onError(newError)
     }
-    return Promise.reject(newError)
+    throw newError
   }
 }
