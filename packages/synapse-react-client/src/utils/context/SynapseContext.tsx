@@ -3,6 +3,8 @@ import { KeyFactory } from '@/synapse-queries/KeyFactory'
 import { SynapseClient } from '@sage-bionetworks/synapse-client/SynapseClient'
 import { createContext, PropsWithChildren, useContext, useMemo } from 'react'
 import { BackendDestinationEnum, getEndpoint } from '../functions/getEndpoint'
+import { FeatureFlagEnum } from '../featureflag/FeatureFlags'
+import { getEnabledExperimentalFeatures } from '../featureflag/experimentalFeatureCookies'
 
 export type SynapseContextType = {
   /** The user's access token. If undefined, the user is not logged in */
@@ -11,6 +13,8 @@ export type SynapseContextType = {
   isAuthenticated: boolean
   /** If the user has enabled experimental mode */
   isInExperimentalMode: boolean
+  /** Feature flags the user has individually opted into via the Experimental Features menu */
+  enabledExperimentalFeatures: FeatureFlagEnum[]
   /** If the user prefers time to be displayed in UTC format */
   utcTime: boolean
   /** Whether to wrap all children of this context in an error boundary. Useful if this context wraps just one component. */
@@ -31,6 +35,7 @@ const defaultContext = {
   accessToken: undefined,
   isAuthenticated: false,
   isInExperimentalMode: false,
+  enabledExperimentalFeatures: [],
   utcTime: false,
   withErrorBoundary: false,
   keyFactory: new KeyFactory(undefined),
@@ -80,6 +85,9 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
       accessToken: providedContext?.accessToken,
       isAuthenticated: providedContext?.isAuthenticated ?? false,
       isInExperimentalMode: providedContext?.isInExperimentalMode ?? false,
+      enabledExperimentalFeatures:
+        providedContext?.enabledExperimentalFeatures ??
+        getEnabledExperimentalFeatures(),
       utcTime: providedContext?.utcTime ?? false,
       withErrorBoundary: providedContext?.withErrorBoundary ?? false,
       downloadCartPageUrl:
@@ -96,6 +104,7 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
       providedContext?.downloadCartPageUrl,
       providedContext?.peopleSearchPageUrl,
       providedContext?.isInExperimentalMode,
+      providedContext?.enabledExperimentalFeatures,
       providedContext?.keyFactory,
       providedContext?.utcTime,
       providedContext?.withErrorBoundary,

@@ -1,3 +1,5 @@
+import { startCase } from 'lodash-es'
+
 export type FeatureFlags = Record<FeatureFlagEnum, boolean>
 
 export enum FeatureFlagEnum {
@@ -34,4 +36,40 @@ export enum FeatureFlagEnum {
 
   // Reserved for unit tests. Not configured in Stack Builder; do not use in production code.
   TEST_ONLY = 'TEST_ONLY',
+}
+
+export type ExperimentalFeatureScope = 'SYNAPSE' | 'PORTALS' | 'ACCOUNTS'
+
+type FeatureFlagConfig = {
+  /** Apps whose experimental features menu may list this flag */
+  scopes: ExperimentalFeatureScope[]
+  /** Overrides the name derived from the feature flag key */
+  displayName?: string
+  /** Whether this feature is only available to ACT members */
+  actMembersOnly?: boolean
+}
+
+export const FEATURE_FLAG_CONFIG: Record<FeatureFlagEnum, FeatureFlagConfig> = {
+  [FeatureFlagEnum.PORTAL_SEARCH_HEADER]: { scopes: [] },
+  [FeatureFlagEnum.HOMEPAGE_CHATBOT]: { scopes: [] },
+  [FeatureFlagEnum.WEBHOOKS_UI]: { scopes: [] },
+  [FeatureFlagEnum.CRISP_CHAT]: { scopes: [] },
+  [FeatureFlagEnum.PORTAL_CHAT]: { scopes: [] },
+  [FeatureFlagEnum.CURIE_CHAT_WIDGET]: { scopes: [] },
+  [FeatureFlagEnum.CURATION_TASK_PAGE_SHOW_NEW_TASK_BUTTON]: {
+    scopes: ['SYNAPSE'],
+    displayName: 'New Tasks Button',
+  },
+  [FeatureFlagEnum.ELITE_PORTAL_MODELS]: { scopes: [] },
+  [FeatureFlagEnum.AMPALS_RDCA_DAP_FORM_ENABLED]: { scopes: [] },
+  [FeatureFlagEnum.ACT_DASHBOARD_FORM_TEMPLATES]: {
+    scopes: ['SYNAPSE'],
+    displayName: 'ACT Dashboard Form Templates',
+    actMembersOnly: true,
+  },
+  [FeatureFlagEnum.TEST_ONLY]: { scopes: [] },
+}
+
+export function getFeatureFlagDisplayName(flag: FeatureFlagEnum): string {
+  return FEATURE_FLAG_CONFIG[flag]?.displayName ?? startCase(flag.toLowerCase())
 }

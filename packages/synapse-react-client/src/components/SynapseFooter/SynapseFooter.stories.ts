@@ -16,10 +16,8 @@ export const Demo: Story = {
     gotoPlace: (href: string) => {
       window.alert(`Footer calling back to change route to ${href}`)
     },
-    onExperimentalModeToggle: (newMode: boolean) => {
-      window.alert(
-        `Footer calling back to toggle experimental mode to ${newMode}`,
-      )
+    onExperimentalFeaturesSaved: () => {
+      window.alert('Footer calling back after saving experimental features')
     },
   },
 }

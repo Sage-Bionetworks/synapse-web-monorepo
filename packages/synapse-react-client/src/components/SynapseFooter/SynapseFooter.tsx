@@ -16,7 +16,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
-import ExperimentalMode from '../ExperimentalMode'
+import ExperimentalFeatures from '../ExperimentalFeatures/ExperimentalFeatures'
 import { PLANS_LINK } from '../SynapseHomepageV2/SynapseHomepageNavBar'
 import { SynapseLinksColumn } from './SynapseLinksColumn'
 import LogoutTwoTone from '@mui/icons-material/LogoutTwoTone'
@@ -28,7 +28,8 @@ export type SynapseFooterProps = {
   srcVersion: string
   repoVersion: string
   gotoPlace: (href: string) => void
-  onExperimentalModeToggle: (newValue: boolean) => void
+  /** Called after the user saves their Experimental Features choices; SWC reloads the page */
+  onExperimentalFeaturesSaved: () => void
 }
 
 const currentYear = new Date().getFullYear()
@@ -37,7 +38,7 @@ export function SynapseFooter({
   srcVersion,
   repoVersion,
   gotoPlace,
-  onExperimentalModeToggle,
+  onExperimentalFeaturesSaved,
 }: SynapseFooterProps) {
   const { isAuthenticated, clearSession } = useApplicationSessionContext()
   const { data: realm } = useGetCurrentRealm()
@@ -347,7 +348,10 @@ export function SynapseFooter({
             </Stack>
           )}
         </Box>
-        <ExperimentalMode onExperimentalModeToggle={onExperimentalModeToggle} />
+        <ExperimentalFeatures
+          scope="SYNAPSE"
+          onSave={onExperimentalFeaturesSaved}
+        />
       </Box>
     </Box>
   )
