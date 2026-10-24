@@ -500,7 +500,7 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
         const confirmButtons = screen.getAllByRole('button', {
           name: /^delete$/i,
         })
-        await userEvent.click(confirmButtons[confirmButtons.length - 1])
+        await userEvent.click(confirmButtons.at(-1)!)
         await waitFor(() => {
           expect(mockDeleteMutate).toHaveBeenCalledWith(MOCK_CURATION_TASK_ID)
         })

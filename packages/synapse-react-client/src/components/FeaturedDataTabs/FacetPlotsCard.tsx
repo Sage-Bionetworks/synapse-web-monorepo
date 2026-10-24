@@ -172,7 +172,7 @@ function FacetPlotsCard(props: FacetPlotsCardProps) {
           return undefined
         }
       })
-      .filter(x => x !== undefined)[0]
+      .find(x => x !== undefined)
 
     if (selectedFacet?.value) {
       return selectedFacet?.value

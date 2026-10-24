@@ -77,14 +77,16 @@ export function isEntityPublic(
     anonymousUser?: string
   },
 ): boolean {
-  const publicPrincipalIds = [
-    realmPrincipals.authenticatedUsers,
-    realmPrincipals.publicGroup,
-    realmPrincipals.anonymousUser,
-  ].filter((id): id is string => id !== undefined)
+  const publicPrincipalIds = new Set(
+    [
+      realmPrincipals.authenticatedUsers,
+      realmPrincipals.publicGroup,
+      realmPrincipals.anonymousUser,
+    ].filter((id): id is string => id !== undefined),
+  )
 
   return resourceAccess.some(ra =>
-    publicPrincipalIds.includes(String(ra.principalId)),
+    publicPrincipalIds.has(String(ra.principalId)),
   )
 }
 

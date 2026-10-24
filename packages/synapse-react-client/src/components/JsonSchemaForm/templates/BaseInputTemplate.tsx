@@ -12,7 +12,12 @@ import {
   StrictRJSFSchema,
 } from '@rjsf/utils'
 
-const TYPES_THAT_SHRINK_LABEL = ['date', 'datetime-local', 'file', 'time']
+const TYPES_THAT_SHRINK_LABEL = new Set([
+  'date',
+  'datetime-local',
+  'file',
+  'time',
+])
 
 /** The `BaseInputTemplate` is the template to use to render the basic `<input>` component for the `core` theme.
  * It is used as the template for rendering many of the <input> based widgets that differ by `type` and callbacks only.
@@ -70,7 +75,7 @@ export default function BaseInputTemplate<
     onBlur(id, value)
   const _onFocus = ({ target: { value } }: FocusEvent<HTMLInputElement>) =>
     onFocus(id, value)
-  const DisplayInputLabelProps = TYPES_THAT_SHRINK_LABEL.includes(type)
+  const DisplayInputLabelProps = TYPES_THAT_SHRINK_LABEL.has(type)
     ? {
         ...InputLabelProps,
         shrink: true,

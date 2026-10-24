@@ -13,11 +13,13 @@ export function useGetTeamList(
   options?: Partial<UseQueryOptions<ListWrapper<Team>, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
+  // oxlint-disable-next-line typescript/require-array-sort-compare -- any deterministic order works; the default string order matches the cache key
+  const sortedTeamIds = teamIds.toSorted()
 
   return useQuery({
     ...options,
-    queryKey: keyFactory.getTeamListQueryKey(teamIds.sort().join()),
-    queryFn: () => SynapseClient.getTeamList(teamIds, accessToken),
+    queryKey: keyFactory.getTeamListQueryKey(sortedTeamIds.join()),
+    queryFn: () => SynapseClient.getTeamList(sortedTeamIds, accessToken),
   })
 }
 

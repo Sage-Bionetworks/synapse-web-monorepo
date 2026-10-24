@@ -573,7 +573,7 @@ describe('TableColumnSchemaEditor', () => {
 
     // Now add the name and ensure we can successfully submit
     const nameFields = await screen.findAllByLabelText('Name')
-    await user.type(nameFields[nameFields.length - 1], 'newColumnName')
+    await user.type(nameFields.at(-1)!, 'newColumnName')
 
     await user.click(saveButton)
     await waitFor(async () => {
@@ -730,7 +730,7 @@ describe('TableColumnSchemaEditor', () => {
       { name: 'Add Item' },
     )
     // Click the last one
-    await user.click(addItemButtons[addItemButtons.length - 1])
+    await user.click(addItemButtons.at(-1)!)
 
     inputs = await within(valueEditorModal).findAllByRole('textbox')
     expect(inputs).toHaveLength(4)

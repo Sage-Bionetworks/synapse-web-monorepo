@@ -51,12 +51,13 @@ export type UseLoginReturn = {
 }
 
 // When prompting the user for a 2FA code, allow the UI to show only these steps
-const VALID_STEPS_DURING_2FA_PROMPT: Array<UseLoginReturn['step']> = [
-  'VERIFICATION_CODE',
-  'RECOVERY_CODE',
-  'LOGGED_IN',
-  'DISABLE_2FA_PROMPT',
-]
+const VALID_STEPS_DURING_2FA_PROMPT: ReadonlySet<UseLoginReturn['step']> =
+  new Set([
+    'VERIFICATION_CODE',
+    'RECOVERY_CODE',
+    'LOGGED_IN',
+    'DISABLE_2FA_PROMPT',
+  ])
 
 /**
  * Stateful hook that manages logging into Synapse
@@ -107,7 +108,7 @@ export default function useLogin(opts: UseLoginOptions): UseLoginReturn {
           concreteType:
             'org.sagebionetworks.repo.model.auth.TwoFactorAuthErrorResponse',
         })
-        if (!VALID_STEPS_DURING_2FA_PROMPT.includes(step)) {
+        if (!VALID_STEPS_DURING_2FA_PROMPT.has(step)) {
           setStep('VERIFICATION_CODE')
         }
       }
@@ -124,7 +125,7 @@ export default function useLogin(opts: UseLoginOptions): UseLoginReturn {
   useEffect(() => {
     if (twoFaErrorResponse) {
       setTwoFaErrorResponse(twoFaErrorResponse)
-      if (!VALID_STEPS_DURING_2FA_PROMPT.includes(step)) {
+      if (!VALID_STEPS_DURING_2FA_PROMPT.has(step)) {
         setStep('VERIFICATION_CODE')
       }
     }
