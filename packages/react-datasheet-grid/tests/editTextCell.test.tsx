@@ -1,6 +1,7 @@
 import { test, expect, vi } from 'vitest'
 import userEvent from '@testing-library/user-event'
 import { act, render, waitFor, fireEvent } from '@testing-library/react'
+import { StrictMode } from 'react'
 import {
   Column,
   createTextColumn,
@@ -397,4 +398,75 @@ test('Edit cell auto add row', async () => {
       {},
     ])
   })
+})
+
+// Display formatting that does not round-trip through parseUserInput, like a locale-grouped number:
+// committing the displayed text would turn 1234 into the string '1,234'.
+const groupedNumberColumns: Column[] = [
+  keyColumn(
+    'count',
+    createTextColumn<number | string | null>({
+      continuousUpdates: false,
+      formatBlurredInput: value =>
+        typeof value === 'number' ? value.toLocaleString('en-US') : '',
+      formatInputOnFocus: value => String(value ?? ''),
+      parseUserInput: value => {
+        const parsed = Number(value)
+        return Number.isNaN(parsed) ? value : parsed
+      },
+    }),
+  ),
+]
+
+test('Lazy cell does not write its displayed value back on mount in StrictMode', async () => {
+  const ref = { current: null as unknown as DataSheetGridRef }
+  const initial = [{ count: 1234 }, { count: 5 }]
+  const data = { current: initial }
+
+  render(
+    <StrictMode>
+      <DataWrapper dataRef={data} dsgRef={ref} columns={groupedNumberColumns} />
+    </StrictMode>,
+  )
+
+  await waitFor(() => {
+    expect(document.querySelectorAll('.dsg-input')).toHaveLength(2)
+  })
+  expect(data.current).toBe(initial)
+})
+
+test('Lazy cell focused and blurred without typing keeps its value in StrictMode', async () => {
+  const ref = { current: null as unknown as DataSheetGridRef }
+  const initial = [{ count: 1234 }, { count: 5 }]
+  const data = { current: initial }
+
+  render(
+    <StrictMode>
+      <DataWrapper dataRef={data} dsgRef={ref} columns={groupedNumberColumns} />
+    </StrictMode>,
+  )
+
+  await setActiveCellAndWait(ref, { col: 0, row: 0 })
+  await userEvent.keyboard('[Enter]')
+  await waitForActiveInput()
+  await userEvent.keyboard('[Enter]')
+
+  expect(data.current).toBe(initial)
+})
+
+test('Lazy cell still commits a typed edit in StrictMode', async () => {
+  const ref = { current: null as unknown as DataSheetGridRef }
+  const data = { current: [{ count: 1234 }, { count: 5 }] }
+
+  render(
+    <StrictMode>
+      <DataWrapper dataRef={data} dsgRef={ref} columns={groupedNumberColumns} />
+    </StrictMode>,
+  )
+
+  await setActiveCellAndWait(ref, { col: 0, row: 0 })
+  await replaceCellText('42')
+  await userEvent.keyboard('[Enter]')
+
+  expect(data.current).toEqual([{ count: 42 }, { count: 5 }])
 })
