@@ -6,7 +6,8 @@ import {
 import { isValidationUpToDateForRow } from '@/components/DataGrid/utils/isValidationUpToDateForRow'
 import { GRID_ROW_REACT_KEY_PROPERTY } from './DataGridUtils'
 import logicalTimestampToString from '@/components/DataGrid/utils/logicalTimestampToString'
-import { extractColumnValidationMessages } from './extractColumnValidationMessages'
+import { getDisplayedRowValidation } from './getDisplayedRowValidation'
+import { getRemovedColumnIndices } from './getRemovedColumnIndices'
 
 /**
  * Convert model rows to a format suitable for DataSheetGrid
@@ -19,6 +20,12 @@ export default function modelRowsToGrid(
 ): DataGridRow[] {
   if (!model || !modelSnapshot) return []
   const { columnNames, columnOrder, rows } = modelSnapshot
+  const allColumnNames = new Set(columnNames.filter(Boolean))
+  const removedColumnNames = new Set(
+    getRemovedColumnIndices(columnNames, columnOrder).map(
+      index => columnNames[index],
+    ),
+  )
   const gridRows = rows.map((row, rowIndex): DataGridRow => {
     const rowObj: DataGridRow = {}
     columnOrder.forEach((index: number) => {
@@ -34,22 +41,15 @@ export default function modelRowsToGrid(
     )
 
     rowObj.__validationResults = row.metadata?.rowValidation
-    if (rowObj.__validationResults) {
-      rowObj.__validationStatus = rowObj.__validationResults?.isValid
-        ? 'valid'
-        : 'invalid'
-    }
-
-    if (!isValidationUpToDateForRow(model, rowIndex)) {
-      rowObj.__validationStatus = 'pending'
-    }
-
-    // Parse the validation messages into a Map of column name to messages
-    if (rowObj.__validationResults?.allValidationMessages) {
-      rowObj.__cellValidationResults = extractColumnValidationMessages(
-        rowObj.__validationResults.allValidationMessages,
-      )
-    }
+    Object.assign(
+      rowObj,
+      getDisplayedRowValidation({
+        validationResults: rowObj.__validationResults,
+        isValidationUpToDate: isValidationUpToDateForRow(model, rowIndex),
+        columnNames: allColumnNames,
+        removedColumnNames,
+      }),
+    )
 
     return rowObj
   })
