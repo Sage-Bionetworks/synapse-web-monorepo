@@ -326,10 +326,9 @@ export function getInfiniteQueryResultBundleOptions(
        */
       const firstPage = data?.pages[0]
       if (firstPage.responseBody) {
-        for (let i = 0; i < data.pages.length; i++) {
-          const page = data.pages[i]
+        for (const page of data.pages) {
           if (page.responseBody != null) {
-            data.pages[i].responseBody = {
+            page.responseBody = {
               ...firstPage.responseBody,
               // queryResult changes on each page.
               queryResult: page.responseBody.queryResult,

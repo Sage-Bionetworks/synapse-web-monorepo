@@ -41,7 +41,7 @@ export function CreateAccessTokenModal(props: CreateAccessTokenModalProps) {
   }
 
   const validateInput = (tokenName: string, access: boolean[]): boolean => {
-    return !!tokenName && access.some(x => x)
+    return !!tokenName && access.some(Boolean)
   }
 
   const onSubmit = () => {

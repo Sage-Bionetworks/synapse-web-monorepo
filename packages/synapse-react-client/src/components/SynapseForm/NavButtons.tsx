@@ -73,7 +73,7 @@ export function NavButtons(props: NavButtonsProps) {
 
 export function NextStepLink(props: NextStepLinkProps) {
   const nextStep = props.steps.find(step => step.id === props.nextStepId)
-  if (typeof nextStep === 'undefined') {
+  if (nextStep === undefined) {
     return <></>
   }
   return (

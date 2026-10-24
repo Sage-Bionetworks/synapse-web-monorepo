@@ -32,8 +32,7 @@ const RowDataTable = (props: RowDataTableProps): React.ReactNode => {
 
   const labelValueArray: [string, string][] = []
 
-  for (let i = 0; i < columns.length; i += 1) {
-    const columnName = columns[i]
+  for (const columnName of columns) {
     const columnIndex = headers.findIndex(header => header.name === columnName)
     const value = columnIndex !== -1 ? rowData[columnIndex] : undefined
 

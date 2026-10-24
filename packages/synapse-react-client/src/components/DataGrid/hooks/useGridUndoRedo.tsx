@@ -76,9 +76,9 @@ export function useGridUndoRedo(
 
   // Generate preview information for the undo menu
   const getUndoPreview = useCallback(() => {
-    if (undoStack.isEmpty()) return null
-
     const lastAction = undoStack.peek()
+    if (lastAction === undefined) return null
+
     let lastType: string
     let sameTypeCount = 0
 
@@ -112,9 +112,9 @@ export function useGridUndoRedo(
 
   // Generate preview information for the redo menu
   const getRedoPreview = useCallback(() => {
-    if (redoStack.isEmpty()) return null
-
     const lastAction = redoStack.peek()
+    if (lastAction === undefined) return null
+
     let lastType: string
     let sameTypeCount = 0
 
@@ -186,8 +186,7 @@ export function useGridUndoRedo(
     if (actionToRedo) {
       // If composite, redo all child actions in order
       if (actionToRedo.type === 'COMPOSITE') {
-        for (let i = 0; i < actionToRedo.actions.length; i++) {
-          const child = actionToRedo.actions[i]
+        for (const child of actionToRedo.actions) {
           const originalOp = convertActionToModelChange(child, 'redo')
           if (originalOp) {
             onApplyModelChange(originalOp)

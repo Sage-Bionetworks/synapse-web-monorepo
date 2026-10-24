@@ -20,7 +20,7 @@ export function addDrsUriToSql(
     ?.filter(col => col.name != 'name')
     .map(col => {
       if (removeSpacesFromSelectColumns && col.name.includes(' ')) {
-        return `"${col.name}" as "${col.name.replace(/\s/g, '')}"`
+        return `"${col.name}" as "${col.name.replaceAll(/\s/g, '')}"`
       }
       // else
       return `"${col.name}"`

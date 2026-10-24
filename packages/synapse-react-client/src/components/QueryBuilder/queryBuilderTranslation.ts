@@ -43,7 +43,7 @@ export function isListColumn(columnType: string | null): boolean {
  * (`\`) so a user's literal `50%` isn't treated as a wildcard match.
  */
 export function escapeLike(input: string): string {
-  return input.replace(/[\\%_]/g, ch => '\\' + ch)
+  return input.replaceAll(/[\\%_]/g, ch => '\\' + ch)
 }
 
 /**
@@ -51,7 +51,7 @@ export function escapeLike(input: string): string {
  * {@link escapeLike} added.
  */
 export function unescapeLike(input: string): string {
-  return input.replace(/\\([\\%_])/g, '$1')
+  return input.replaceAll(/\\([\\%_])/g, '$1')
 }
 
 /**

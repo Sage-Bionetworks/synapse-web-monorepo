@@ -20,7 +20,7 @@ export default function LegacyDetailsPageRedirect({
   const id = new URLSearchParams(search).get(paramName)
 
   // Split at /DetailsPage to keep any trailing tab segment (e.g. "/Details").
-  const match = pathname.match(/^(.*?)\/DetailsPage(\/.*)?$/)
+  const match = /^(.*?)\/DetailsPage(\/.*)?$/.exec(pathname)
   const newBase = match?.[1] ?? pathname
   const tabPath = match?.[2] ?? ''
 
