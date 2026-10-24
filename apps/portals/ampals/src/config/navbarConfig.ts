@@ -79,7 +79,7 @@ export const navbarConfig: NavbarConfig = {
     // },
     {
       name: 'Help',
-      path: 'https://als-knowledge-portal.scrollhelp.site/help/',
+      path: 'https://help.alsportal.org/help/',
     },
   ],
   isPortalsDropdownEnabled: false,
