@@ -1,5 +1,6 @@
 import { dateTimeColumn } from '@/components/DataGrid/columns/DateTimeColumn'
 import { EnumeratedValue } from '@/utils/jsonschema/getEnumeratedValues'
+import { NumberOrEnumInfo } from '@/utils/jsonschema/getNumberOrEnumInfo'
 import { FlatTypeInfo } from '@/utils/jsonschema/getType'
 import { SchemaPropertyInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import {
@@ -12,6 +13,7 @@ import {
 import { autocompleteColumn } from '../columns/AutocompleteColumn'
 import { autocompleteMultipleEnumColumn } from '../columns/AutocompleteMultipleEnumColumn'
 import { numberColumn } from '../columns/NumberColumn'
+import { numberOrEnumColumn } from '../columns/NumberOrEnumColumn'
 import {
   calculateDefaultColumnWidth,
   HeaderOptions,
@@ -211,6 +213,16 @@ const COLUMN_FACTORIES = {
     )
   },
 
+  numberOrEnum: (config: ColumnConfig) => {
+    return createBaseColumn(
+      config,
+      numberOrEnumColumn({
+        enumValues: config.schemaPropertyInfo?.numberOrEnum?.enumValues ?? [],
+        clearValue: getEmptyValue(config.isRequired),
+      }),
+    )
+  },
+
   dateOrDateTime: (config: ColumnConfig) => {
     const columnImpl = dateTimeColumn({
       colType: config.typeInfo?.type || null,
@@ -259,7 +271,14 @@ const COLUMN_FACTORIES = {
 function getColumnType(
   typeInfo: FlatTypeInfo | null,
   enumeratedValues?: EnumeratedValue[] | string[] | null,
+  numberOrEnum?: NumberOrEnumInfo,
 ): keyof typeof COLUMN_FACTORIES {
+  // A number-or-enum union reports its numeric branch as its type, so it must
+  // be matched before the number check claims it
+  if (numberOrEnum) {
+    return 'numberOrEnum'
+  }
+
   if (!typeInfo) {
     return enumeratedValues && enumeratedValues.length > 0
       ? 'enumerated'
@@ -291,6 +310,10 @@ function getColumnType(
 }
 
 export function createColumn(config: ColumnConfig): Column {
-  const columnType = getColumnType(config.typeInfo, config.enumeratedValues)
+  const columnType = getColumnType(
+    config.typeInfo,
+    config.enumeratedValues,
+    config.schemaPropertyInfo?.numberOrEnum,
+  )
   return COLUMN_FACTORIES[columnType](config)
 }
