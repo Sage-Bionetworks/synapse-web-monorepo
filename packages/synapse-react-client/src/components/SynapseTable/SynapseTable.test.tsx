@@ -163,7 +163,7 @@ vi.spyOn(NoContentPlaceholderModule, 'default').mockImplementation(() => {
   return <div data-testid="NoContentPlaceholder" />
 })
 
-// FIXME: Flaky in CI
+// oxlint-disable-next-line vitest/no-disabled-tests -- flaky in CI
 describe.skip('SynapseTable tests', () => {
   beforeEach(() => {
     server.use(
@@ -197,7 +197,7 @@ describe.skip('SynapseTable tests', () => {
           const responseBody: FileEntity = {
             id: `${params.id}`,
             name: `Mock Entity with Id ${params.id}`,
-            versionNumber: parseInt(params.version as string),
+            versionNumber: Number.parseInt(params.version as string),
             versionLabel: `v${params.version}`,
             versionComment: 'test',
             modifiedOn: '2021-03-31T18:30:00.000Z',
@@ -356,17 +356,17 @@ describe.skip('SynapseTable tests', () => {
           if (expected.expectAccessToBeVisible) {
             expect(accessCells.length).toBeGreaterThan(0)
           } else {
-            expect(accessCells.length).toBe(0)
+            expect(accessCells).toHaveLength(0)
           }
           if (expected.expectAddToDownloadListToBeVisible) {
             expect(downloadListCells.length).toBeGreaterThan(0)
           } else {
-            expect(downloadListCells.length).toBe(0)
+            expect(downloadListCells).toHaveLength(0)
           }
           if (expected.expectDirectDownloadToBeVisible) {
             expect(directDownloadCells.length).toBeGreaterThan(0)
           } else {
-            expect(directDownloadCells.length).toBe(0)
+            expect(directDownloadCells).toHaveLength(0)
           }
         })
       })
@@ -531,7 +531,7 @@ describe.skip('SynapseTable tests', () => {
     await userEvent.click(sortButton)
     // below we match only the part of the object that we expect to have changed
     await waitFor(() => {
-      expect(queryContext!.currentQueryRequest.query.sort).not.toBeDefined()
+      expect(queryContext!.currentQueryRequest.query.sort).toBeUndefined()
     })
   })
 
