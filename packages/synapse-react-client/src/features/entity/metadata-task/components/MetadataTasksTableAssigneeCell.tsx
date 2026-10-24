@@ -3,7 +3,7 @@ import UserOrTeamBadge from '@/components/UserOrTeamBadge/UserOrTeamBadge'
 import UserSearchBox from '@/components/UserSearchBox/UserSearchBox'
 import { displayToast } from '@/index'
 import { useUpdateCurationTask } from '@/synapse-queries/curation/task/useCurationTask'
-import { EditTwoTone } from '@mui/icons-material'
+import EditTwoTone from '@mui/icons-material/EditTwoTone'
 import { Alert, Box, IconButton, Stack, Typography } from '@mui/material'
 import {
   instanceOfGridExecutionDetails,

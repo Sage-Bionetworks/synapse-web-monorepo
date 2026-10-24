@@ -128,7 +128,7 @@ Recurring expectations from this repo's PR review history. Following them up fro
 - New components, hooks, and bug fixes get tests. A fix should include a test that captures the bug; a new behavior should include a test that exercises it (e.g. "add a test that the button is hidden when `canDelete` is false"). Tests are optional for purely presentational components with no logic (consider if such tests would be useful).
 - **Query priority (React Testing Library): prefer accessible queries — `getByRole`, `getByText`, `getByLabelText` — over `data-testid`.** Find banners, buttons, etc. by `role`; it's more robust and higher priority. Add a `data-testid` only when there's no accessible query, and delete test IDs that are no longer used.
 - For data-driven logic, prefer exhaustive tests that fail when a new case is added (e.g. iterate every `EntityType` and assert no throw) rather than spot-checking one value.
-- Don't stub `fetch` directly — mock at the network layer with MSW. Group Storybook MSW handlers as `Record<string, HttpHandler[]>` so a story can override one group.
+- Don't stub `fetch` directly — mock at the network layer with MSW. In `synapse-react-client`, importing `@/mocks/msw/server` starts the MSW server for that test file and registers its lifecycle hooks, so don't add your own `server.listen()` / `resetHandlers()` / `close()` (see `packages/synapse-react-client/CLAUDE.md`). Group Storybook MSW handlers as `Record<string, HttpHandler[]>` so a story can override one group.
 
 ### Storybook
 
@@ -141,6 +141,7 @@ Recurring expectations from this repo's PR review history. Following them up fro
 - Memoize objects passed to query hooks or children so references are stable across renders (`useMemo` for request objects) — don't build a new object inline on every render.
 - A `useQuery` result's `data` is possibly `undefined`; handle the loading/undefined state, don't assume it's always present. Handle loading and error states explicitly by using the `isLoading`, and `error` values returned by `useQuery`.
 - `import React from 'react'` is unnecessary (automatic JSX runtime).
+- Import MUI icons individually (`import Add from '@mui/icons-material/Add'`), never from the `@mui/icons-material` root barrel; it is slow to load and enforced by an oxlint `no-restricted-imports` rule.
 
 ### Types & the generated client
 

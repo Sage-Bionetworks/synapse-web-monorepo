@@ -14,7 +14,7 @@ import {
 } from '@/utils/functions/EntityTypeUtils'
 import { useDirectDownloadHandler } from '@/utils/hooks/useDirectDownloadHandler'
 import { isFileEntity } from '@/utils/types/IsType'
-import { DownloadOutlined as DownloadIcon } from '@mui/icons-material'
+import DownloadIcon from '@mui/icons-material/DownloadOutlined'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   FileHandleAssociateType,

@@ -73,13 +73,10 @@ const renderComponent = (
 const processMathSpy = vi.spyOn(MarkdownUtils, 'processMath')
 
 describe('MarkdownSynapse tests', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     processMathSpy.mockReset()
     vi.clearAllMocks()
   })
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   describe('renders with basic functionality', () => {
     it('mounts correctly with markdown already loaded', () => {

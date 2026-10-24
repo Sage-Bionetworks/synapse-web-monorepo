@@ -1,4 +1,4 @@
-import { StickyNote2Outlined } from '@mui/icons-material'
+import StickyNote2Outlined from '@mui/icons-material/StickyNote2Outlined'
 import { Box, Button, Tooltip } from '@mui/material'
 import { TaskBundle } from '@sage-bionetworks/synapse-client'
 import { useNavigate } from 'react-router'

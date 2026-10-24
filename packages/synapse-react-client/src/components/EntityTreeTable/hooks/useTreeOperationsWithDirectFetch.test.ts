@@ -7,11 +7,16 @@ import { useSynapseContext } from '@/utils/context/SynapseContext'
 // Mock dependencies
 vi.mock('@tanstack/react-query')
 vi.mock('@/utils/context/SynapseContext')
-vi.mock('@/synapse-client', () => ({
-  default: {
-    getEntityChildren: vi.fn(),
-  },
-}))
+vi.mock(import('@/synapse-client'), async importOriginal => {
+  const actual = await importOriginal()
+  return {
+    ...actual,
+    default: {
+      ...actual.default,
+      getEntityChildren: vi.fn(),
+    },
+  }
+})
 
 const mockQueryClient = {
   fetchQuery: vi.fn(),

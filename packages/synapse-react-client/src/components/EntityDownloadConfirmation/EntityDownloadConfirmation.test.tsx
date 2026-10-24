@@ -34,13 +34,10 @@ const mockAddToDownloadListConfirmationAlert = vi
   .mocked(AddToDownloadListConfirmationAlert)
   .mockReturnValue(<div data-testid="AddToDownloadListConfirmationAlert" />)
 
-beforeAll(() => server.listen())
 beforeEach(() => {
   vi.clearAllMocks()
   mockGetEntity(mockTableEntity.entity)
 })
-afterEach(() => server.resetHandlers())
-afterAll(() => server.close())
 
 describe('EntityDownloadConfirmation', () => {
   const props: EntityDownloadConfirmationProps = {

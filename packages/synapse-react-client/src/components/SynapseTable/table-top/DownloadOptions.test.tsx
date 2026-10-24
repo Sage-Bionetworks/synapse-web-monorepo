@@ -89,10 +89,6 @@ mockQueryResponseDataWithoutEntityIdColumn.columnModels =
   )
 
 describe('Download Options tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   it('Shows correct options for a TableEntity with no ENTITY_ID column', async () => {
     registerTableQueryResult(
       tableEntityQueryRequest.query,

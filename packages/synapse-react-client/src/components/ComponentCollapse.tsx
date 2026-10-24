@@ -1,8 +1,6 @@
 import { spreadSx } from '@/theme/spreadSx'
-import {
-  KeyboardArrowDownTwoTone,
-  KeyboardArrowUpTwoTone,
-} from '@mui/icons-material'
+import KeyboardArrowDownTwoTone from '@mui/icons-material/KeyboardArrowDownTwoTone'
+import KeyboardArrowUpTwoTone from '@mui/icons-material/KeyboardArrowUpTwoTone'
 import { Box, Collapse, SxProps } from '@mui/material'
 import {
   KeyboardEvent,

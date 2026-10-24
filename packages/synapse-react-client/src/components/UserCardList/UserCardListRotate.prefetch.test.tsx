@@ -42,10 +42,6 @@ const mockUserCardBundle: QueryResultBundle = {
 }
 
 describe('prefetchUserCardListRotate', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   beforeEach(() => {
     // Register only { sql } — JSON.stringify (used in the HTTP request body) drops undefined
     // values, so the request that arrives at the MSW handler has no additionalFilters or

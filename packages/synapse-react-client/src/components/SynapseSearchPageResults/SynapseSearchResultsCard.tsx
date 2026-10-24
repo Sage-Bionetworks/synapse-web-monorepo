@@ -6,12 +6,10 @@ import {
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
 import { StyledComponent } from '@emotion/styled'
-import {
-  ArticleOutlined,
-  DashboardTwoTone,
-  InfoOutline,
-  Update as UpdateIcon,
-} from '@mui/icons-material'
+import ArticleOutlined from '@mui/icons-material/ArticleOutlined'
+import DashboardTwoTone from '@mui/icons-material/DashboardTwoTone'
+import InfoOutline from '@mui/icons-material/InfoOutline'
+import UpdateIcon from '@mui/icons-material/Update'
 import {
   Box,
   Chip,

@@ -17,7 +17,7 @@ import { useLocation, useNavigate } from 'react-router'
 import defaultStyles from './HeaderSearchBox.module.scss'
 import v2Styles from './HeaderSearchBoxV2.module.scss'
 import v3Styles from './HeaderSearchBoxV3.module.scss'
-import { KeyboardArrowDown } from '@mui/icons-material'
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown'
 import { useState } from 'react'
 import {
   SEARCH_TERM,

@@ -54,12 +54,9 @@ async function openDialog() {
 }
 
 describe('ExperimentalFeatures', () => {
-  beforeAll(() => server.listen())
   afterEach(() => {
-    server.restoreHandlers()
     Cookies.remove(SYNAPSE_EXPERIMENTAL_FEATURES_COOKIE, { path: '/' })
   })
-  afterAll(() => server.close())
 
   it('hides flags the server pins', async () => {
     mockServerFlags({ [NEW_TASK]: false })

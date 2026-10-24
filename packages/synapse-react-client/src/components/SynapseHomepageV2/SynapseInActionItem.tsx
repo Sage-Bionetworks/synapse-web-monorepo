@@ -13,7 +13,7 @@ import {
   Fade,
 } from '@mui/material'
 import ImageFromSynapseTable from '../ImageFromSynapseTable'
-import { EastTwoTone } from '@mui/icons-material'
+import EastTwoTone from '@mui/icons-material/EastTwoTone'
 import { useInView } from 'react-intersection-observer'
 import { Slide } from '@mui/material'
 

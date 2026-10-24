@@ -1,4 +1,4 @@
-import { SearchOutlined } from '@mui/icons-material'
+import SearchOutlined from '@mui/icons-material/SearchOutlined'
 import { IconButton } from '@mui/material'
 import { useState } from 'react'
 import { TextField } from '../TextField'

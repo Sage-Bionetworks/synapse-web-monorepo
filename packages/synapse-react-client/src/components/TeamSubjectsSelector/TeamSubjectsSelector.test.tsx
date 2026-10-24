@@ -1,5 +1,5 @@
+import '@/mocks/msw/server'
 import { MOCK_FILE_ENTITY_ID } from '@/mocks/entity/mockFileEntity'
-import { server } from '@/mocks/msw/server'
 import {
   MOCK_TEAM_ID,
   MOCK_TEAM_ID_2,
@@ -82,9 +82,6 @@ async function addTeams(
 
 describe('TeamSubjectsSelector', () => {
   beforeEach(() => vi.clearAllMocks())
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   test('displays selected teams', async () => {
     await setUp()

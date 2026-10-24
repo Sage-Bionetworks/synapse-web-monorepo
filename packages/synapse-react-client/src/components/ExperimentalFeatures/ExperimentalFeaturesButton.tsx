@@ -1,4 +1,4 @@
-import { InfoOutlined } from '@mui/icons-material'
+import InfoOutlined from '@mui/icons-material/InfoOutlined'
 import { Box, IconButton, Switch, Tooltip, Typography } from '@mui/material'
 import styles from './ExperimentalFeaturesButton.module.scss'
 

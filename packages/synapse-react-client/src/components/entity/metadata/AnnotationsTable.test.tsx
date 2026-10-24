@@ -122,5 +122,40 @@ describe('AnnotationsTable tests', () => {
     await screen.findByText('This File has no annotations.')
   })
 
-  it.todo('Handles scenario where derived annotations are pending')
+  it('Keeps showing the loading state until reloaded derived annotations arrive', async () => {
+    mockGetSchemaBinding.mockResolvedValue(mockSchemaBinding)
+    mockGetValidationSchema.mockResolvedValue({
+      concreteType:
+        'org.sagebionetworks.repo.model.schema.GetValidationSchemaResponse',
+      validationSchema: mockValidationSchema,
+    })
+    // Validated before the entity was last modified, so derived annotations may be pending
+    mockGetValidationResults.mockResolvedValue({
+      ...mockSchemaValidationResults,
+      validatedOn: '2021-03-01T00:00:00.000Z',
+    })
+
+    renderComponent()
+
+    const reloadButton = await screen.findByRole('button', {
+      name: 'Reload Annotations',
+    })
+    screen.getByText('myStringKey')
+
+    const { promise: reloadedEntityJson, resolve: resolveEntityJson } =
+      Promise.withResolvers<typeof mockFileEntityJson>()
+    mockGetJson.mockReturnValueOnce(reloadedEntityJson)
+
+    await userEvent.click(reloadButton)
+
+    expect(screen.queryByText('myStringKey')).not.toBeInTheDocument()
+
+    resolveEntityJson({
+      ...mockFileEntityJson,
+      derivedAnnotationKey: 'derived value',
+    })
+
+    await screen.findByText('derivedAnnotationKey')
+    screen.getByText('derived value')
+  })
 })

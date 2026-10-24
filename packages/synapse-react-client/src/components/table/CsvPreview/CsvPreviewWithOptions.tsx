@@ -1,4 +1,4 @@
-import { RefreshTwoTone } from '@mui/icons-material'
+import RefreshTwoTone from '@mui/icons-material/RefreshTwoTone'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import {
   Accordion,

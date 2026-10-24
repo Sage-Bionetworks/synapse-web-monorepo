@@ -1,6 +1,6 @@
 import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
 import { useExportDataGridToCsv } from '@/components/DataGrid/hooks/useExportDataGridToCsv'
-import { DownloadTwoTone } from '@mui/icons-material'
+import DownloadTwoTone from '@mui/icons-material/DownloadTwoTone'
 
 export type ExportCsvFromGridButtonProps = {
   gridSessionId: string

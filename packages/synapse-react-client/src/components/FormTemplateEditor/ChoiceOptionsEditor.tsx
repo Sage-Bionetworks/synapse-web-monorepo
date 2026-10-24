@@ -6,7 +6,8 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material'
+import AddIcon from '@mui/icons-material/Add'
+import DeleteIcon from '@mui/icons-material/Delete'
 
 type ChoiceOptionsEditorProps = {
   options: string[]

@@ -82,7 +82,6 @@ function renderComponent(initialEntries: string[] = ['/']) {
 }
 
 describe('AccessHistoryDashboard tests', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     vi.clearAllMocks()
 
@@ -114,9 +113,6 @@ describe('AccessHistoryDashboard tests', () => {
       ),
     )
   })
-
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it('Renders only the user/team name input when there is no input', async () => {
     renderComponent()

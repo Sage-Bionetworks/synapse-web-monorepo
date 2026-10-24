@@ -29,10 +29,6 @@ import ImageCardGridWithLinks, {
 const mockQueryRequest = vi.fn()
 
 describe('ImageCardGridWithLinks Tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   const mockProps: ImageCardGridWithLinksProps = {
     sql: 'SELECT * FROM syn64112885',
     title: 'Test title',

@@ -55,30 +55,30 @@ function useIsNotInFavorites() {
   )
 }
 
-server.use(
-  http.post(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${FAVORITES}/:id`,
-    ({ params }) => {
-      onAddFavoriteCalled(params.id)
-      useIsInFavorites()
-      return HttpResponse.json(mockFileEntityData.entityHeader, { status: 201 })
-    },
-  ),
-  http.delete(
-    `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${FAVORITES}/:id`,
-    ({ params }) => {
-      onDeleteFavoriteCalled(params.id)
-      useIsNotInFavorites()
-      return new Response('', { status: 200 })
-    },
-  ),
-)
+beforeEach(() => {
+  server.use(
+    http.post(
+      `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${FAVORITES}/:id`,
+      ({ params }) => {
+        onAddFavoriteCalled(params.id)
+        useIsInFavorites()
+        return HttpResponse.json(mockFileEntityData.entityHeader, {
+          status: 201,
+        })
+      },
+    ),
+    http.delete(
+      `${getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)}${FAVORITES}/:id`,
+      ({ params }) => {
+        onDeleteFavoriteCalled(params.id)
+        useIsNotInFavorites()
+        return new Response('', { status: 200 })
+      },
+    ),
+  )
+})
 
 describe('FavoriteButton tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   it('Clicking the button adds/removes from favorites', async () => {
     useIsNotInFavorites()
 

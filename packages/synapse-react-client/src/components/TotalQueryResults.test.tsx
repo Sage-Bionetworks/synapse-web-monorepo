@@ -1,6 +1,6 @@
+import '@/mocks/msw/server'
 import { mockTableEntity } from '@/mocks/entity/mockTableEntity'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseConstants } from '@/utils'
 import {
@@ -51,7 +51,7 @@ const mockQueryReturn: QueryResultBundle = {
         'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
       columnName: 'studyStatus',
       facetType: 'enumeration',
-      // @ts-ignore
+      // @ts-expect-error
       facetValues: [
         { value: 'Active', count: 55, isSelected: false },
         { value: 'Completed', count: 28, isSelected: true },
@@ -62,7 +62,7 @@ const mockQueryReturn: QueryResultBundle = {
         'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
       columnName: 'dataStatus',
       facetType: 'enumeration',
-      // @ts-ignore
+      // @ts-expect-error
       facetValues: [
         { value: 'Published', count: 11, isSelected: false },
         { value: 'None', count: 9, isSelected: false },
@@ -94,12 +94,9 @@ function renderComponent(props: TotalQueryResultsProps) {
 }
 
 describe('TotalQueryResults test', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     registerTableQueryResult(mockQueryRequest.query, mockQueryReturn)
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
   const props: TotalQueryResultsProps = {
     frontText: displayText,
   }

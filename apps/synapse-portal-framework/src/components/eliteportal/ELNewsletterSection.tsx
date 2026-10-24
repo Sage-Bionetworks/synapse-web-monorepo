@@ -1,5 +1,5 @@
 import React from 'react'
-import { AddAlertTwoTone } from '@mui/icons-material'
+import AddAlertTwoTone from '@mui/icons-material/AddAlertTwoTone'
 import { Button, Typography, Link } from '@mui/material'
 import CTASectionWrapper from 'synapse-react-client/components/CTASectionWrapper/CTASectionWrapper'
 

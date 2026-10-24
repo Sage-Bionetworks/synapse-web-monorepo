@@ -10,10 +10,6 @@ import { useGetFeatureFlag } from './useGetFeatureFlag'
 const PORTAL_ENDPOINT = getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)
 
 describe('useGetFeatureFlag', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   describe('when the flag value is true', () => {
     it('is enabled when not in experimental mode', async () => {
       server.use(

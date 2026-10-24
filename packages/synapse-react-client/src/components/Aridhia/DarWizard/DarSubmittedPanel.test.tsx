@@ -30,12 +30,9 @@ function renderPanel(props: Partial<DarSubmittedPanelProps> = {}) {
 }
 
 describe('DarSubmittedPanel', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     server.use(getAridhiaAuthenticateHandler())
   })
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   it('renders the vocabulary term from the FAIR API as markdown', async () => {
     server.use(
