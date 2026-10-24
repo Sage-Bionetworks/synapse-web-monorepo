@@ -51,7 +51,7 @@ const mockQueryReturn: QueryResultBundle = {
         'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
       columnName: 'studyStatus',
       facetType: 'enumeration',
-      // @ts-expect-error
+      // @ts-ignore
       facetValues: [
         { value: 'Active', count: 55, isSelected: false },
         { value: 'Completed', count: 28, isSelected: true },
@@ -62,7 +62,7 @@ const mockQueryReturn: QueryResultBundle = {
         'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
       columnName: 'dataStatus',
       facetType: 'enumeration',
-      // @ts-expect-error
+      // @ts-ignore
       facetValues: [
         { value: 'Published', count: 11, isSelected: false },
         { value: 'None', count: 9, isSelected: false },
