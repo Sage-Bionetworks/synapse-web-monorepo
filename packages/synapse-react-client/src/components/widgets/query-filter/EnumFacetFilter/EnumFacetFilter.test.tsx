@@ -1,8 +1,8 @@
+import '@/mocks/msw/server'
 import mockFileEntityData from '@/mocks/entity/mockFileEntity'
 import { mockTableEntity } from '@/mocks/entity/mockTableEntity'
 import mockQueryResponseData from '@/mocks/mockQueryResponseData'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { server } from '@/mocks/msw/server'
 import {
   MOCK_USER_ID,
   MOCK_USER_ID_2,
@@ -155,7 +155,6 @@ async function init(overrides?: Partial<EnumFacetFilterProps>) {
 }
 
 describe('EnumFacetFilter', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     currentQueryContext = undefined
     vi.clearAllMocks()
@@ -164,8 +163,6 @@ describe('EnumFacetFilter', () => {
       columnModels: [columnModel],
     })
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   describe('initialization', () => {
     it('should initiate selected items correctly', async () => {

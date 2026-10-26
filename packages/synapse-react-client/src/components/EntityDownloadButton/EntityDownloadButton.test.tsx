@@ -126,8 +126,6 @@ describe('EntityDownloadButton', () => {
     await waitFor(() => expect(queryClient.isFetching()).toBe(0))
   }
 
-  beforeAll(() => server.listen())
-
   beforeEach(() => {
     confirmationContainer = document.createElement('div')
     document.body.appendChild(confirmationContainer)
@@ -150,11 +148,8 @@ describe('EntityDownloadButton', () => {
 
   afterEach(() => {
     document.body.removeChild(confirmationContainer)
-    server.resetHandlers()
     vi.clearAllMocks()
   })
-
-  afterAll(() => server.close())
 
   async function openDropdown() {
     const button = await screen.findByRole('button', { name: /download/i })

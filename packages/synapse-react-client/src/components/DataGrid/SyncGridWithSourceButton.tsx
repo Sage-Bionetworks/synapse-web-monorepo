@@ -6,7 +6,8 @@ import { displayToast } from '@/components/index'
 import { useGetEntity } from '@/synapse-queries'
 import { useGetSchemaBinding } from '@/synapse-queries/jsonschema/useEntityBoundSchema'
 import { convertToEntityType } from '@/utils/functions/EntityTypeUtils'
-import { CloudDownloadTwoTone, CloudSyncTwoTone } from '@mui/icons-material'
+import CloudDownloadTwoTone from '@mui/icons-material/CloudDownloadTwoTone'
+import CloudSyncTwoTone from '@mui/icons-material/CloudSyncTwoTone'
 import { Skeleton, Tooltip } from '@mui/material'
 import {
   Entity,

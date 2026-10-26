@@ -1,7 +1,7 @@
 import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
 import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { useGetCurrentUserBundle } from '@/synapse-queries/user/useUserBundle'
-import { DynamicFormOutlined } from '@mui/icons-material'
+import DynamicFormOutlined from '@mui/icons-material/DynamicFormOutlined'
 import { Box, Typography } from '@mui/material'
 import { ReactNode, useMemo } from 'react'
 import {

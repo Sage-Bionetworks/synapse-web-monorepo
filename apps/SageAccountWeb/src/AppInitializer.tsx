@@ -10,6 +10,7 @@ import { useFramebuster } from 'synapse-react-client/utils/AppUtils/AppUtils'
 import useMaybeForceEnable2FA from './hooks/useMaybeForceEnable2FA'
 import useGoogleAnalytics from 'synapse-react-client/utils/analytics/useGoogleAnalytics'
 import { BlockingLoader } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
+import useMaybePromptEmailQuarantine from './hooks/useMaybePromptEmailQuarantine'
 
 function AppInitializer(props: { children?: ReactNode }) {
   const [signedToken, setSignedToken] = useState<
@@ -66,6 +67,8 @@ function AppInitializer(props: { children?: ReactNode }) {
   useMaybePromptToSignTermsOfService()
   // Anywhere in the app, redirect the user to enable 2FA if required
   useMaybeForceEnable2FA()
+  // Anywhere in the app, redirect the user to the email quarantine page if required
+  useMaybePromptEmailQuarantine()
   return (
     <Suspense
       fallback={<BlockingLoader show={true} hintText="Initializing..." />}

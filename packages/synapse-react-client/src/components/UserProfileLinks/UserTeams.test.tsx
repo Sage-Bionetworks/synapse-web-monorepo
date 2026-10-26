@@ -34,10 +34,6 @@ function renderComponent() {
 }
 
 describe('UserTeams tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   it('loads more teams when inView', async () => {
     const onRequest = vi.fn()
     server.use(

@@ -1,4 +1,4 @@
-import { NewReleasesOutlined } from '@mui/icons-material'
+import NewReleasesOutlined from '@mui/icons-material/NewReleasesOutlined'
 import { Box, Link } from '@mui/material'
 import { AccessorStepAccessRequirement } from './requestFlowTypes'
 

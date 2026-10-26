@@ -1,6 +1,6 @@
+import '@/mocks/msw/server'
 import { mockFolderEntityHeader } from '@/mocks/entity/mockEntity'
 import mockFileEntityData from '@/mocks/entity/mockFileEntity'
-import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '@/utils'
 import { render, screen } from '@testing-library/react'
@@ -13,10 +13,6 @@ function renderComponent(wrapperProps?: SynapseContextType) {
 }
 
 describe('FavoritesPage tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   it('Shows the table of favorites', async () => {
     // mock successful response set up in handlers.ts
     renderComponent()

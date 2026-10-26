@@ -11,15 +11,7 @@ import {
 import { delay, http, HttpResponse } from 'msw'
 import { CreateOrUpdateDoiModal } from '@/components/doi/CreateOrUpdateDoiModal'
 import { MOCK_USER_ID } from '@/mocks/user/mock_user_profile'
-import {
-  vi,
-  describe,
-  it,
-  beforeAll,
-  beforeEach,
-  afterEach,
-  afterAll,
-} from 'vitest'
+import { vi, describe, it, beforeEach } from 'vitest'
 
 // Mock components
 vi.mock('@/components/CopyToClipboardIcon', () => ({
@@ -86,12 +78,9 @@ function renderComponent() {
 }
 
 describe('PortalDOI', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     vi.clearAllMocks()
   })
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   it('should render skeleton while loading', () => {
     server.use(

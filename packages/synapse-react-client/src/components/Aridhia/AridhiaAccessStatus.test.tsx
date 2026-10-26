@@ -121,10 +121,6 @@ function getDialogActions() {
 }
 
 describe('AridhiaAccessStatus', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   it('opens the request wizard in a dialog when no request exists for this dataset and the feature flag is enabled', async () => {
     const user = userEvent.setup()
     server.use(

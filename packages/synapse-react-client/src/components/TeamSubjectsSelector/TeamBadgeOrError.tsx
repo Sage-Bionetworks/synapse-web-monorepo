@@ -1,5 +1,5 @@
 import { useGetTeam } from '@/synapse-queries'
-import { ErrorTwoTone } from '@mui/icons-material'
+import ErrorTwoTone from '@mui/icons-material/ErrorTwoTone'
 import { Skeleton, Stack, Typography } from '@mui/material'
 import TeamBadge from '../TeamBadge'
 

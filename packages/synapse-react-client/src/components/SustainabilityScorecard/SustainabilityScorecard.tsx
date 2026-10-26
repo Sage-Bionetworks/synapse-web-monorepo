@@ -17,7 +17,7 @@ import {
   SUSTAINABILITY_ICON_COLORS,
   SustainabilityScorecardBaseProps,
 } from './SustainabilityScorecardUtils'
-import { InfoTwoTone } from '@mui/icons-material'
+import InfoTwoTone from '@mui/icons-material/InfoTwoTone'
 import { CheckIcon } from '@/assets/icons/terms/CheckIcon'
 import NoContentAvailable from '../SynapseTable/NoContentAvailable'
 import Dial from './Dial'

@@ -29,15 +29,9 @@ function renderComponent(props: ForumTableProps) {
 }
 
 describe('ForumTable', () => {
-  beforeAll(() => {
-    server.listen()
-  })
-
   afterEach(() => {
-    server.resetHandlers()
     vi.clearAllMocks()
   })
-  afterAll(() => server.close())
 
   it('shows a page of the forum threads', async () => {
     renderComponent(forumProps)

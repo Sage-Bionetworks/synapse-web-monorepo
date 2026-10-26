@@ -1,10 +1,10 @@
 import InfiniteTableLayout from '@/components/layout/InfiniteTableLayout'
 import SynapseClient from '@/synapse-client'
 import { useGetOAuthClientInfinite } from '@/synapse-queries'
-import { MoreVert } from '@mui/icons-material'
+import MoreVert from '@mui/icons-material/MoreVert'
 import { useSynapseContext } from '@/utils'
 import { formatDate } from '@/utils/functions/DateFormatter'
-import { AddCircleTwoTone } from '@mui/icons-material'
+import AddCircleTwoTone from '@mui/icons-material/AddCircleTwoTone'
 import { Box, Button, Link, IconButton, Menu, MenuItem } from '@mui/material'
 import { OAuthClient } from '@sage-bionetworks/synapse-client/generated/models/OAuthClient'
 import {

@@ -7,7 +7,7 @@ import {
   useGetAllOpenMembershipInvitations,
 } from '@/synapse-queries/team/useTeamMembers'
 import { useGetCurrentUserProfile } from '@/synapse-queries/user/useUserBundle'
-import { ChatTwoTone } from '@mui/icons-material'
+import ChatTwoTone from '@mui/icons-material/ChatTwoTone'
 import { Card, CardProps, Collapse, Divider, Tooltip } from '@mui/material'
 import Button from '@mui/material/Button'
 import Stack from '@mui/material/Stack'

@@ -27,7 +27,7 @@ export const getCookieDomain = () => {
 export function storeRedirectURLForOneSageLoginAndGotoURL(href: string) {
   // save current URL in a cookie that One Sage will use to send you back to the correct page
   const twoHoursFromNow = new Date()
-  twoHoursFromNow.setTime(twoHoursFromNow.getTime() + 60 * 60 * 1000)
+  twoHoursFromNow.setTime(twoHoursFromNow.getTime() + 2 * 60 * 60 * 1000)
 
   Cookies.set(ONE_SAGE_REDIRECT_COOKIE_KEY, window.location.href, {
     path: '/',

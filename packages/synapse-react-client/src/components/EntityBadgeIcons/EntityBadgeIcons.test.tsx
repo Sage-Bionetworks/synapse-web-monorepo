@@ -68,12 +68,9 @@ function renderComponent(wrapperProps?: Partial<SynapseContextType>) {
 }
 
 describe('EntityBadgeIcons tests', () => {
-  beforeAll(() => server.listen())
   beforeEach(() => {
     server.use(getFeatureFlagsOverride())
   })
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it('Renders annotations in a table', async () => {
     const bundleAnnotations = mockFileEntityBundle.annotations.annotations

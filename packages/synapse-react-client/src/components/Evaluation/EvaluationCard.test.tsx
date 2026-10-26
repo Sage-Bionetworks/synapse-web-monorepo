@@ -1,4 +1,4 @@
-import { server } from '@/mocks/msw/server'
+import '@/mocks/msw/server'
 import SynapseClient from '@/synapse-client'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { UserEvaluationPermissions } from '@sage-bionetworks/synapse-types'
@@ -26,7 +26,6 @@ describe('test Evaluation Card', () => {
   let user: ReturnType<(typeof userEvent)['setup']>
 
   beforeAll(() => {
-    server.listen()
     user = userEvent.setup({
       pointerEventsCheck: PointerEventsCheckLevel.Never,
     })
@@ -83,10 +82,8 @@ describe('test Evaluation Card', () => {
   })
 
   afterEach(() => {
-    server.restoreHandlers()
     vi.clearAllMocks()
   })
-  afterAll(() => server.close())
 
   test('retrieve evaluation permissions - failure', async () => {
     mockGetEvaluationPermissions.mockRejectedValue(

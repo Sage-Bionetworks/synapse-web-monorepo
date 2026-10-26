@@ -58,10 +58,6 @@ function renderAridhiaHook<T>(
 }
 
 describe('useAridhiaQuery', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   it('runs queryFn with a Configuration carrying the exchanged Aridhia token', async () => {
     server.use(getAridhiaAuthenticateHandler())
     const queryFn = vi.fn().mockResolvedValue('the-data')
@@ -160,10 +156,6 @@ describe('useAridhiaQuery', () => {
 })
 
 describe('useAridhiaMutation', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   it('does not call mutationFn until mutate() is invoked', async () => {
     server.use(getAridhiaAuthenticateHandler())
     const mutationFn = vi.fn().mockResolvedValue('the-data')

@@ -10,12 +10,10 @@ import {
 import SynapseClient from '@/synapse-client'
 import { formatDate } from '@/utils/functions/DateFormatter'
 import { PRODUCTION_ENDPOINT_CONFIG } from '@/utils/functions/getEndpoint'
-import {
-  CheckCircleOutline,
-  HourglassEmpty,
-  OpenInNew,
-  Refresh,
-} from '@mui/icons-material'
+import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline'
+import HourglassEmpty from '@mui/icons-material/HourglassEmpty'
+import OpenInNew from '@mui/icons-material/OpenInNew'
+import Refresh from '@mui/icons-material/Refresh'
 import {
   Alert,
   Box,

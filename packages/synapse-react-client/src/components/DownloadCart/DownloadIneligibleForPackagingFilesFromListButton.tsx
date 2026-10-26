@@ -9,7 +9,8 @@ import {
   Paper,
   Typography,
 } from '@mui/material'
-import { Close, Download } from '@mui/icons-material'
+import Close from '@mui/icons-material/Close'
+import Download from '@mui/icons-material/Download'
 import CloudWarning from '@/assets/icons/CloudWarning'
 import { SynapseClientError } from '@sage-bionetworks/synapse-client/util/SynapseClientError'
 import dayjs from 'dayjs'

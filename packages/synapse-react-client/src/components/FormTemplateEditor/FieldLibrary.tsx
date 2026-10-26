@@ -8,7 +8,8 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import { Add as AddIcon, Search as SearchIcon } from '@mui/icons-material'
+import AddIcon from '@mui/icons-material/Add'
+import SearchIcon from '@mui/icons-material/Search'
 import { RJSFSchema } from '@rjsf/utils'
 import { ReactNode, useMemo, useState } from 'react'
 import {

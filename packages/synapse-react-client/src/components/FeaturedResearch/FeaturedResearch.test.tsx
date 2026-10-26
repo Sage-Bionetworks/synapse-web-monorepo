@@ -25,10 +25,6 @@ import FeaturedResearch, { FeaturedResearchProps } from './FeaturedResearch'
 const mockQueryRequest = vi.fn()
 
 describe('FeaturedResearch Tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   const mockProps: FeaturedResearchProps = {
     sql: 'SELECT * FROM syn64542019',
   }

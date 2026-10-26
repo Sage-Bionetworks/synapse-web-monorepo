@@ -3,7 +3,9 @@ import {
   useListEDucTemplates,
 } from '@/synapse-queries'
 import { formatDate } from '@/utils/functions/DateFormatter'
-import { CheckCircleTwoTone, ErrorTwoTone, Replay } from '@mui/icons-material'
+import CheckCircleTwoTone from '@mui/icons-material/CheckCircleTwoTone'
+import ErrorTwoTone from '@mui/icons-material/ErrorTwoTone'
+import Replay from '@mui/icons-material/Replay'
 import {
   Alert,
   Box,

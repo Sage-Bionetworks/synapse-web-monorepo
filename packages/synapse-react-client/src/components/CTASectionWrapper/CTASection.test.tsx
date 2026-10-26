@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import CTASectionWrapper, { CTASectionWrapperProps } from './CTASectionWrapper'
 import { Button, Typography, Link } from '@mui/material'
-import { AddAlertTwoTone } from '@mui/icons-material'
+import AddAlertTwoTone from '@mui/icons-material/AddAlertTwoTone'
 
 const title = 'Test Title'
 const subtitle = 'Test Subtitle'

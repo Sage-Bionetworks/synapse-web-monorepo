@@ -10,10 +10,6 @@ import SynapseClient from './index'
 import * as HttpClient from './HttpClient'
 
 describe('SynapseClient integration tests', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   describe('getAsyncResultFromJobId tests', () => {
     const asyncJobId = 'async-123'
     const responseBodyServerEndpoint = `/repo/v1/entity/123/table/query/async/get/:jobId`

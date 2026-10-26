@@ -1,6 +1,6 @@
 import { InputSizedButton } from '@/components/styled/InputSizedButton'
 import { SYNAPSE_ENTITY_ID_REGEX } from '@/utils/functions/RegularExpressions'
-import { SearchOutlined } from '@mui/icons-material'
+import SearchOutlined from '@mui/icons-material/SearchOutlined'
 import { Grid, InputAdornment, TextField, Typography } from '@mui/material'
 import { useDebouncedState } from '@react-hookz/web'
 import { EntityType } from '@sage-bionetworks/synapse-client'

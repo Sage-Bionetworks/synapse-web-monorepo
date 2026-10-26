@@ -26,7 +26,7 @@ import {
 import { getColumnIndex } from '@/utils/functions/SqlFunctions'
 import { TargetEnum } from '@/utils/html/TargetEnum'
 import * as SynapseConstants from '@/utils/SynapseConstants'
-import { GetAppTwoTone } from '@mui/icons-material'
+import GetAppTwoTone from '@mui/icons-material/GetAppTwoTone'
 import { Box, Collapse, Link, Stack, Typography } from '@mui/material'
 import {
   ColumnModel,

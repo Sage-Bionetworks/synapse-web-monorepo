@@ -6,6 +6,7 @@ import { useSynapseContext } from 'synapse-react-client/utils/context/SynapseCon
 import { processRedirectURLInOneSage } from 'synapse-react-client/utils/AppUtils/index'
 import LoginPage from '@/pages/LoginPage'
 import useMaybeForceEnable2FA from '@/hooks/useMaybeForceEnable2FA'
+import useMaybePromptEmailQuarantine from '@/hooks/useMaybePromptEmailQuarantine'
 
 function LoggedInRedirector() {
   const { accessToken } = useSynapseContext()
@@ -17,6 +18,7 @@ function LoggedInRedirector() {
 
   const { mayPromptTermsOfUse } = useMaybePromptToSignTermsOfService()
   const { mayForceEnable2FA } = useMaybeForceEnable2FA()
+  const { mayPromptEmailQuarantine } = useMaybePromptEmailQuarantine()
 
   useEffect(() => {
     // User is on the root page (implied by route), logged in, not in the SSO Flow, and does not need to sign the ToS, and has enabled 2FA
@@ -25,7 +27,8 @@ function LoggedInRedirector() {
       accessToken &&
       !isInSSOFlow &&
       !mayPromptTermsOfUse &&
-      !mayForceEnable2FA
+      !mayForceEnable2FA &&
+      !mayPromptEmailQuarantine
     ) {
       // take user back to page they came from in the source app, if stored in a cookie
       const isProcessed = processRedirectURLInOneSage()
@@ -40,6 +43,7 @@ function LoggedInRedirector() {
     isInSSOFlow,
     mayPromptTermsOfUse,
     mayForceEnable2FA,
+    mayPromptEmailQuarantine,
   ])
   return <></>
 }

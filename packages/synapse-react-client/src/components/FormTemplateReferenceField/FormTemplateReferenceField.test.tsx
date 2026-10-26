@@ -70,9 +70,6 @@ const reference = (templateVersionNumber: number) => ({
 
 describe('FormTemplateReferenceField', () => {
   beforeEach(() => vi.clearAllMocks())
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
 
   test('shows the pinned template, its version, and its schema', async () => {
     serveTemplateVersions([version(1), version(2)])
@@ -303,10 +300,6 @@ describe('FormTemplateReferenceField', () => {
 })
 
 describe('useFormTemplateReferenceError', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   test('requires a reference', () => {
     const { result } = renderHook(
       () => useFormTemplateReferenceError(undefined),

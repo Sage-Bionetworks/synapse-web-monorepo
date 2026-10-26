@@ -61,10 +61,6 @@ const mockGoalsBundle: QueryResultBundle = {
 }
 
 describe('prefetchGoals', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
-
   beforeEach(() => {
     registerTableQueryResult({ sql: GOALS_SQL }, mockGoalsBundle)
   })

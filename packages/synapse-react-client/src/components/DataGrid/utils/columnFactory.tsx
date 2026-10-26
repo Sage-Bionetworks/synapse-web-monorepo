@@ -19,7 +19,7 @@ import {
 } from './calculateColumnWidth'
 import { ColumnHeaderWithTooltip } from '../components/ColumnHeaderWithTooltip'
 import { Tooltip } from '@mui/material'
-import { SmartToyTwoTone } from '@mui/icons-material'
+import SmartToyTwoTone from '@mui/icons-material/SmartToyTwoTone'
 import type { DataGridRow } from '../DataGridTypes'
 import { wrapPasteValueWithSchemaCoercion } from './schemaAwarePasteValue'
 import { getEmptyValue } from './getEmptyValue'

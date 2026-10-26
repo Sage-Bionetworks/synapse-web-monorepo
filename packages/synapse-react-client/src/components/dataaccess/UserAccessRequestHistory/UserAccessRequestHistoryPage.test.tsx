@@ -94,10 +94,6 @@ function renderPage() {
 }
 
 describe('UserAccessRequestHistoryTable', () => {
-  beforeAll(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  afterAll(() => server.close())
-
   it('Displays table of data', async () => {
     server.use(
       http.post(USER_REQUESTS_URL, () => HttpResponse.json({ results: data })),

@@ -29,23 +29,22 @@ function renderComponent() {
 }
 
 const onApplyLock = vi.fn()
-server.use(
-  http.post(
-    `${getEndpoint(
-      BackendDestinationEnum.REPO_ENDPOINT,
-    )}/repo/v1/entity/:id/lockAccessRequirement`,
-    () => {
-      onApplyLock()
-      return HttpResponse.json(mockLockAccessRequirement, { status: 201 })
-    },
-  ),
-)
+beforeEach(() => {
+  server.use(
+    http.post(
+      `${getEndpoint(
+        BackendDestinationEnum.REPO_ENDPOINT,
+      )}/repo/v1/entity/:id/lockAccessRequirement`,
+      () => {
+        onApplyLock()
+        return HttpResponse.json(mockLockAccessRequirement, { status: 201 })
+      },
+    ),
+  )
+})
 
 describe('ImposeRestrictionDialog', () => {
   beforeEach(() => vi.clearAllMocks())
-  beforeAll(() => server.listen())
-  afterEach(() => server.restoreHandlers())
-  afterAll(() => server.close())
 
   it('Prompts the user to choose if there is human data', async () => {
     renderComponent()

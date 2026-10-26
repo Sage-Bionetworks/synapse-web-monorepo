@@ -1,4 +1,4 @@
-import { ArrowBack } from '@mui/icons-material'
+import ArrowBack from '@mui/icons-material/ArrowBack'
 import { Button, Stack, Typography } from '@mui/material'
 import { BACK_TO_ALL_TASKS_LABEL } from '../utils/constants'
 

@@ -63,6 +63,7 @@ export const ProfileAvatar = (props: ProfileAvatarProps): React.ReactNode => {
         setOpenCropModal(true)
       })
       reader.readAsDataURL(e.target.files[0])
+      e.target.value = ''
     }
   }
 
@@ -73,28 +74,12 @@ export const ProfileAvatar = (props: ProfileAvatarProps): React.ReactNode => {
     }
   }
 
-  const UploadImageButton = (): React.ReactNode => {
-    const uploadButtonStyle: SxProps = {
-      backgroundColor: 'grey.200',
-      position: 'absolute',
-      marginLeft: '100px',
-      marginTop: '-65px',
-      '&:hover': { backgroundColor: 'grey.300' },
-    }
-
-    return (
-      <>
-        <input
-          type={'file'}
-          ref={hiddenFileInput}
-          onChange={onSelectFile}
-          style={{ display: 'none' }}
-        />
-        <IconButton sx={uploadButtonStyle} onClick={clickHandler}>
-          <IconSvg icon="edit" wrap={false} />
-        </IconButton>
-      </>
-    )
+  const uploadButtonStyle: SxProps = {
+    backgroundColor: 'grey.200',
+    position: 'absolute',
+    marginLeft: '100px',
+    marginTop: '-65px',
+    '&:hover': { backgroundColor: 'grey.300' },
   }
 
   const onCropComplete = (croppedArea: Area, croppedAreaPixels: Area) => {
@@ -153,7 +138,15 @@ export const ProfileAvatar = (props: ProfileAvatarProps): React.ReactNode => {
             }}
           />
         )}
-        <UploadImageButton />
+        <input
+          type={'file'}
+          ref={hiddenFileInput}
+          onChange={onSelectFile}
+          style={{ display: 'none' }}
+        />
+        <IconButton sx={uploadButtonStyle} onClick={clickHandler}>
+          <IconSvg icon="edit" wrap={false} />
+        </IconButton>
       </>
 
       <ConfirmationDialog
