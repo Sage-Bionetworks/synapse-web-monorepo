@@ -6,7 +6,6 @@ import {
 } from '@/synapse-queries'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
 import {
-  normalizeBinnedFacets,
   partitionQueryBundleRequestIntoRowsAndMetadata,
   removeLockedColumnFromFacetData,
 } from '@/utils/functions/queryUtils'
@@ -99,9 +98,7 @@ export function getTableQueryUseQueryOptions(
 
       select: data =>
         omit(
-          normalizeBinnedFacets(
-            removeLockedColumnFromFacetData(data.responseBody, lockedColumn),
-          ),
+          removeLockedColumnFromFacetData(data.responseBody, lockedColumn),
           'queryResults',
         ),
     }

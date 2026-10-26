@@ -8,11 +8,10 @@ import {
   Typography,
 } from '@mui/material'
 import {
-  ColumnTypeEnum,
-  FacetColumnResult,
-  FacetColumnResultValueCount,
-  FacetColumnResultValues,
-} from '@sage-bionetworks/synapse-types'
+  EnumerationFacet,
+  getEnumerationFacets,
+} from '@/utils/functions/enumerationFacet'
+import { ColumnTypeEnum } from '@sage-bionetworks/synapse-types'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { times } from 'lodash-es'
 import Plotly from 'plotly.js-basic-dist'
@@ -128,7 +127,7 @@ function FacetPlotsCard(props: FacetPlotsCardProps) {
       }
 
       const getColumnType = (
-        facetToPlot: FacetColumnResult,
+        facetToPlot: EnumerationFacet,
       ): ColumnTypeEnum | undefined =>
         queryMetadata.columnModels!.find(
           columnModel => columnModel.name === facetToPlot.columnName,
@@ -137,7 +136,7 @@ function FacetPlotsCard(props: FacetPlotsCardProps) {
       return Promise.all(
         facetDataArray.map(async (item, index) => {
           const plotData = await extractPlotDataArray(
-            item as FacetColumnResultValues,
+            item,
             getColumnType(item),
             index + 1, //individual plot rgbIndex
             plotType,
@@ -155,24 +154,9 @@ function FacetPlotsCard(props: FacetPlotsCardProps) {
     }
 
     // If we are showing a facet selection based card, then set the selectedFacetValue.  For example, facet column "study" with value "ROSMAP"
-    const selectedFacet: FacetColumnResultValueCount | undefined = queryMetadata
-      ?.facets!.map(item => {
-        const facetValues: FacetColumnResultValueCount[] = (
-          item as FacetColumnResultValues
-        ).facetValues
-        if (facetValues) {
-          const filteredFacetValues: FacetColumnResultValueCount[] =
-            facetValues.filter(facetValue => {
-              return facetValue.isSelected
-            })
-          return filteredFacetValues.length > 0
-            ? filteredFacetValues[0]
-            : undefined
-        } else {
-          return undefined
-        }
-      })
-      .filter(x => x !== undefined)[0]
+    const selectedFacet = getEnumerationFacets(queryMetadata?.facets)
+      .flatMap(facet => facet.facetValues)
+      .find(facetValue => facetValue.isSelected)
 
     if (selectedFacet?.value) {
       return selectedFacet?.value

@@ -22,7 +22,6 @@ import {
   generateCompressedQueryURL,
 } from '@/utils/functions/deepLinkingUtils'
 import {
-  FacetColumnResultValues,
   QueryBundleRequest,
   QueryResultBundle,
   Row,
@@ -529,7 +528,7 @@ describe('QueryWrapper', () => {
     })
 
     it.each([false, true])(
-      'sends only the metadata request (isInfinite: %s), and reports metadata with binned facets normalized to value counts',
+      'sends only the metadata request (isInfinite: %s), and reports binned facets as the server returned them',
       async isInfinite => {
         const onQueryResultBundleChange: Mock<
           NonNullable<QueryWrapperProps['onQueryResultBundleChange']>
@@ -555,17 +554,15 @@ describe('QueryWrapper', () => {
         ) as QueryResultBundle
         expect(bundle.queryCount).toBe(2700)
         expect(bundle.facetPostProcessingApplied).toBe(true)
-        const sexFacet = bundle.facets?.find(
-          facet => facet.columnName === 'sex',
-        ) as FacetColumnResultValues | undefined
-        expect(sexFacet?.concreteType).toBe(
-          'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
-        )
-        expect(sexFacet?.binSize).toBe(5)
-        expect(sexFacet?.facetValues).toContainEqual({
-          value: 'Female',
-          count: 1565,
-          isSelected: false,
+        expect(
+          bundle.facets?.find(facet => facet.columnName === 'sex'),
+        ).toMatchObject({
+          concreteType:
+            'org.sagebionetworks.repo.model.table.FacetColumnResultBinnedValues',
+          binSize: 5,
+          binnedValues: expect.arrayContaining([
+            { value: 'Female', binMin: 1565, isSelected: false },
+          ]),
         })
 
         // Row queries (paginated: partMask 0; infinite: COUNT only) must not be sent.

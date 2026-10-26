@@ -13,13 +13,13 @@ import {
 } from '@mui/material'
 import { FacetColumnResult } from '@sage-bionetworks/synapse-types'
 import { useCallback, useMemo, useState } from 'react'
+import { getEnumerationFacet } from '../../utils/functions/enumerationFacet'
 import { splitAndTrim } from '../../utils/functions/StringUtils'
 import { useQueryBuilderInternalContext } from './QueryBuilderInternalContext'
 import {
   availableOpsForKind,
   classifyColumn,
   facetValueMatchesFilter,
-  isFacetColumnResultValues,
   labelForOp,
   QBColumnKind,
 } from './queryBuilderMetadata'
@@ -63,7 +63,9 @@ export function FilterConditionRow(props: FilterConditionRowProps) {
   const facetColumnNames = useMemo(
     () =>
       new Set(
-        facetResults.filter(isFacetColumnResultValues).map(f => f.columnName),
+        facetResults
+          .filter(f => getEnumerationFacet(f) !== undefined)
+          .map(f => f.columnName),
       ),
     [facetResults],
   )
@@ -415,8 +417,8 @@ function findFacetValues(
   columnName: string,
 ): string[] {
   const match = facetResults.find(f => f.columnName === columnName)
-  if (match == null || !isFacetColumnResultValues(match)) return []
-  return match.facetValues.map(v => v.value)
+  const enumerationFacet = match && getEnumerationFacet(match)
+  return enumerationFacet?.facetValues.map(v => v.value) ?? []
 }
 
 function hasFacetForColumnName(
@@ -424,6 +426,6 @@ function hasFacetForColumnName(
   columnName: string,
 ): boolean {
   return facetResults.some(
-    f => f.columnName === columnName && isFacetColumnResultValues(f),
+    f => f.columnName === columnName && getEnumerationFacet(f) !== undefined,
   )
 }

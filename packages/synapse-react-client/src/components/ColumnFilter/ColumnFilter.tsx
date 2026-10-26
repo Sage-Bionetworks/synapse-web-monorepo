@@ -3,11 +3,9 @@ import {
   facetObjectMatchesDefinition,
   getCorrespondingSelectedFacet,
 } from '@/utils/functions/queryUtils'
+import { getEnumerationFacets } from '@/utils/functions/enumerationFacet'
 import { Autocomplete, TextField } from '@mui/material'
-import {
-  FacetColumnResultValues,
-  FacetColumnValuesRequest,
-} from '@sage-bionetworks/synapse-types'
+import { FacetColumnValuesRequest } from '@sage-bionetworks/synapse-types'
 import { SyntheticEvent } from 'react'
 import { useQueryContext } from '../QueryContext/QueryContext'
 import { useGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
@@ -28,9 +26,9 @@ function ColumnFilter(props: FilterProps) {
 
   const currentQuery = getCurrentQueryRequest()
 
-  const activeFacet = (queryMetadata?.facets ?? []).find(facet =>
+  const activeFacet = getEnumerationFacets(queryMetadata?.facets).find(facet =>
     facetObjectMatchesDefinition(facet, topLevelEnumeratedFacetToFilter),
-  ) as FacetColumnResultValues | undefined
+  )
 
   // Map the facet values to format for MUI Autocomplete options
   const filterOptions = activeFacet?.facetValues.map(({ value }) => value) ?? []

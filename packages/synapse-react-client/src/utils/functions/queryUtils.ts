@@ -16,7 +16,6 @@ import {
   SelectColumn,
   Table,
 } from '@sage-bionetworks/synapse-types'
-import { instanceOfFacetColumnResultBinnedValues } from '@sage-bionetworks/synapse-client/generated/models/FacetColumnResultBinnedValues'
 import { cloneDeep, isEqual, isEqualWith, isMatch, isNil } from 'lodash-es'
 import * as SynapseConstants from '../SynapseConstants'
 import { BUNDLE_MASK_QUERY_RESULTS } from '../SynapseConstants'
@@ -27,6 +26,7 @@ import {
   isEntityView,
   isFileView,
 } from './EntityTypeUtils'
+import { getEnumerationFacet } from './enumerationFacet'
 
 /**
  * Retrieve the index of a column using the column name
@@ -110,10 +110,10 @@ export const hasFacetedSelectColumn = (
 }
 
 export const isSingleNotSetValue = (facet: FacetColumnResult): boolean => {
+  const facetValues = getEnumerationFacet(facet)?.facetValues
   return (
-    facet.facetType === 'enumeration' &&
-    facet.facetValues.length == 1 &&
-    facet.facetValues[0].value == SynapseConstants.VALUE_NOT_SET
+    facetValues?.length == 1 &&
+    facetValues[0].value == SynapseConstants.VALUE_NOT_SET
   )
 }
 
@@ -134,41 +134,6 @@ export function removeLockedColumnFromFacetData(
   } else {
     // for other pages, just return the data
     return data
-  }
-}
-
-/**
- * Converts facets that the server post-processed with ROUNDING (FacetColumnResultBinnedValues) into
- * FacetColumnResultValues so that every facet consumer can render them. Each value's count becomes its bin minimum and
- * the facet keeps its binSize. Every returned value is kept, including values whose bin minimum is 0.
- */
-export function normalizeBinnedFacets(
-  bundle: QueryResultBundle | undefined,
-): QueryResultBundle | undefined {
-  // The legacy facet union omits FacetColumnResultBinnedValues, which the server returns for aggregate-only access.
-  const facets: object[] | undefined = bundle?.facets
-  if (!bundle || !facets?.some(instanceOfFacetColumnResultBinnedValues)) {
-    return bundle
-  }
-  return {
-    ...bundle,
-    facets: facets.map(facet =>
-      instanceOfFacetColumnResultBinnedValues(facet)
-        ? {
-            concreteType:
-              'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
-            columnName: facet.columnName!,
-            facetType: 'enumeration',
-            jsonPath: facet.jsonPath,
-            binSize: facet.binSize,
-            facetValues: (facet.binnedValues ?? []).map(binnedValue => ({
-              value: binnedValue.value!,
-              count: binnedValue.binMin!,
-              isSelected: binnedValue.isSelected ?? false,
-            })),
-          }
-        : (facet as FacetColumnResult),
-    ),
   }
 }
 
@@ -292,7 +257,7 @@ export function removeEmptyQueryParams(q: Query) {
  * @param columnModels
  */
 export function getCorrespondingColumnForFacet(
-  facet: FacetColumnResult,
+  facet: UniqueFacetIdentifier,
   columnModels: ColumnModel[],
 ): ColumnModel | JsonSubColumnModel | undefined {
   let columnModel: ColumnModel | JsonSubColumnModel | undefined =
