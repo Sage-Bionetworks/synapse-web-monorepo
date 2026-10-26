@@ -20,7 +20,7 @@ export function useRevokeCertification(
     ...options,
     mutationFn: (userId: string) =>
       SynapseClient.revokeCertification(userId, accessToken!),
-    onSuccess: async (updatedPassingRecord, userId, ctx) => {
+    onSuccess: async (updatedPassingRecord, userId, ctx, ...rest) => {
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: keyFactory.getUserBundleQueryKey(
@@ -31,7 +31,7 @@ export function useRevokeCertification(
       ])
 
       if (options?.onSuccess) {
-        await options.onSuccess(updatedPassingRecord, userId, ctx)
+        await options.onSuccess(updatedPassingRecord, userId, ctx, ...rest)
       }
     },
   })
