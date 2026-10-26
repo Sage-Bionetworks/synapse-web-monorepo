@@ -8,6 +8,7 @@ import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { http } from 'msw'
 import {
   COHORT_BUILDER_PART_MASK,
   COHORT_BUILDER_PREVIEW_NOTICE,
@@ -99,6 +100,41 @@ describe('CohortBuilder', () => {
     expect(
       await within(dialog).findByRole('combobox', { name: 'Chart Type' }),
     ).toHaveTextContent('Horizontal Bar Chart')
+  })
+
+  it('shows a loading indicator in place of the results while the cohort query runs', async () => {
+    const user = userEvent.setup()
+    let pendingQuery = Promise.withResolvers<void>()
+    server.use(
+      // Holds each query until the test releases it, then falls through to the mock handlers.
+      http.post(/\/table\/query\/async\/start$/, () => pendingQuery.promise),
+      ...getCohortBuilderHandlers({ profile: ELITE_MOCK_PROFILE }),
+    )
+    render(<CohortBuilder participantsTableId={participantsTableId} />, {
+      wrapper: createWrapper(),
+    })
+
+    expect(await screen.findByRole('progressbar')).toBeInTheDocument()
+    pendingQuery.resolve()
+    await screen.findByText(`${allParticipantsCount} participants`)
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
+
+    pendingQuery = Promise.withResolvers<void>()
+    await user.click(screen.getByRole('combobox', { name: 'Property' }))
+    await user.click(await screen.findByRole('option', { name: 'Race' }))
+    await user.click(
+      await screen.findByRole('button', { name: 'Black or African American' }),
+    )
+    await user.click(screen.getByRole('button', { name: 'Update Results' }))
+
+    expect(await screen.findByRole('progressbar')).toBeInTheDocument()
+    expect(
+      screen.getByText(`${allParticipantsCount} participants`),
+    ).not.toBeVisible()
+    expect(screen.getByRole('button', { name: 'Update Results' })).toBeVisible()
+    pendingQuery.resolve()
+    expect(await screen.findByText('243 participants')).toBeVisible()
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument()
   })
 
   it('replaces only the results with a below-threshold notice, and keeps the cohort editable', async () => {

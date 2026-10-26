@@ -16,6 +16,7 @@ import { QBGroup } from '../QueryBuilder/QueryBuilderTypes'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper/QueryVisualizationContext'
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { QueryWrapper } from '../QueryWrapper/QueryWrapper'
+import QueryWrapperLoadingScreen from '../QueryWrapper/QueryWrapperLoadingScreen'
 import { useSuspenseGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
 import PlotsContainer from '../widgets/facet-nav/PlotsContainer'
@@ -109,7 +110,7 @@ export function CohortBuilder(props: CohortBuilderProps) {
           <CohortQueryBuilder />
           {/* Only the results are replaced by an error or withheld-result notice, so the cohort stays editable. */}
           <QueryWrapperErrorBoundary>
-            <Suspense fallback={null}>
+            <Suspense fallback={<QueryWrapperLoadingScreen />}>
               <CohortResults facetsToPlot={facetsToPlot} />
             </Suspense>
           </QueryWrapperErrorBoundary>
