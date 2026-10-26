@@ -1,8 +1,8 @@
-import { FacetColumnResultValues } from '@sage-bionetworks/synapse-types'
+import { EnumerationFacet } from './enumerationFacet'
 
 /**
  * Formats a facet value's count for display. Post-processed counts show as approximate, e.g. `≈ 1,200`: a rounded
- * count (a facet with `binSize`, whose counts are bin minimums; see `normalizeBinnedFacets`) or a noised count. Exact
+ * count (a facet with `binSize`, whose counts are bin minimums; see `getEnumerationFacet`) or a noised count. Exact
  * counts, including counts rounded to a bin size of 1, show as-is.
  *
  * @param count the facet value's count (the bin minimum for a binned facet)
@@ -11,7 +11,7 @@ import { FacetColumnResultValues } from '@sage-bionetworks/synapse-types'
  */
 export function formatFacetValueCount(
   count: number,
-  facet: Pick<FacetColumnResultValues, 'binSize'>,
+  facet: Pick<EnumerationFacet, 'binSize'>,
   facetPostProcessingApplied: boolean | undefined,
 ): string {
   const { binSize } = facet
