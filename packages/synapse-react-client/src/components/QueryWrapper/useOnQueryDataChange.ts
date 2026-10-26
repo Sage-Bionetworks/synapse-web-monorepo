@@ -32,11 +32,12 @@ export default function useOnQueryDataChange(
   )
 
   // SWC requires the entire QueryResultBundle to enable editing table data, so merge the data back into one object before
-  // passing it to the onChange callback
+  // passing it to the onChange callback. A request without rows produces a metadata-only bundle.
+  const isRowDataRequested = rowDataQueryOptions.enabled !== false
   const [mergedData, setMergedData] = useState<QueryResultBundle>()
   useEffect(() => {
     if (
-      rowData &&
+      (rowData || !isRowDataRequested) &&
       queryMetadata &&
       !rowDataIsLoading &&
       !queryMetadataIsLoading
@@ -46,7 +47,13 @@ export default function useOnQueryDataChange(
         ...rowData,
       })
     }
-  }, [queryMetadata, queryMetadataIsLoading, rowData, rowDataIsLoading])
+  }, [
+    isRowDataRequested,
+    queryMetadata,
+    queryMetadataIsLoading,
+    rowData,
+    rowDataIsLoading,
+  ])
 
   // Use a ref so we always call the latest onChange without including it in the
   // effect dependency array. Including a frequently-recreated callback in deps

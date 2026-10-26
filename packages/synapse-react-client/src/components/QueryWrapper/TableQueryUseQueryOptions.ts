@@ -21,18 +21,21 @@ import {
   InfiniteData,
   QueryKey,
   UseInfiniteQueryOptions,
+  UseQueryOptions,
   UseSuspenseQueryOptions,
 } from '@tanstack/react-query'
 import { omit } from 'lodash-es'
 import { useMemo } from 'react'
 
 export type TableQueryUseQueryOptions = {
-  rowDataQueryOptions: UseSuspenseQueryOptions<
+  /** Disabled when the request's partMask does not include BUNDLE_MASK_QUERY_RESULTS. */
+  rowDataQueryOptions: UseQueryOptions<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
     SynapseClientError,
     RowSet | undefined
   >
 
+  /** Disabled when the request's partMask does not include BUNDLE_MASK_QUERY_RESULTS. */
   rowDataInfiniteQueryOptions: UseInfiniteQueryOptions<
     AsynchronousJobStatus<QueryBundleRequest, QueryResultBundle>,
     SynapseClientError,
@@ -56,6 +59,7 @@ export function getTableQueryUseQueryOptions(
 ) {
   const { rowDataRequest, queryMetadataRequest } =
     partitionQueryBundleRequestIntoRowsAndMetadata(queryBundleRequest)
+  const isRowDataRequested = rowDataRequest.partMask > 0
   const rowDataQueryOptions: TableQueryUseQueryOptions['rowDataQueryOptions'] =
     {
       ...tableQueryUseQueryDefaults,
@@ -66,6 +70,7 @@ export function getTableQueryUseQueryOptions(
       queryFn: () =>
         SynapseClient.getQueryTableAsyncJobResults(rowDataRequest, accessToken),
       select: data => data.responseBody?.queryResult?.queryResults,
+      enabled: isRowDataRequested,
     }
 
   const rowDataInfiniteQueryOptions: TableQueryUseQueryOptions['rowDataInfiniteQueryOptions'] =
@@ -75,6 +80,7 @@ export function getTableQueryUseQueryOptions(
         keyFactory,
         accessToken,
       ),
+      enabled: isRowDataRequested,
     }
 
   const queryMetadataQueryOptions: TableQueryUseQueryOptions['queryMetadataQueryOptions'] =

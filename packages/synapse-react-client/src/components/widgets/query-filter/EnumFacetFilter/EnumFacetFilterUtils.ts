@@ -1,12 +1,12 @@
 import { SynapseConstants } from '@/utils'
 import { getCorrespondingSelectedFacet } from '@/utils/functions/queryUtils'
 import { isFacetColumnValuesRequest } from '@/utils/types/IsType'
+import { EnumerationFacet } from '@/utils/functions/enumerationFacet'
 import {
   EntityHeader,
   Evaluation,
   FacetColumnRequest,
   FacetColumnResultValueCount,
-  FacetColumnResultValues,
   QueryBundleRequest,
   UserGroupHeader,
 } from '@sage-bionetworks/synapse-types'
@@ -51,7 +51,7 @@ export function valueToLabel(
  */
 export function getAllIsSelected(
   nextQueryRequest: QueryBundleRequest,
-  facet: FacetColumnResultValues,
+  facet: EnumerationFacet,
 ) {
   const matchingSelectedFacet: FacetColumnRequest | undefined =
     getCorrespondingSelectedFacet(facet, nextQueryRequest.query.selectedFacets)

@@ -1,3 +1,4 @@
+import { getEnumerationFacet } from '@/utils/functions/enumerationFacet'
 import { getCorrespondingColumnForFacet } from '@/utils/functions/queryUtils'
 import { Box, Collapse } from '@mui/material'
 import { ColumnModel, FacetColumnResult } from '@sage-bionetworks/synapse-types'
@@ -51,6 +52,7 @@ export default function JsonColumnFacetFilters(
               jsonSubcolumnFacet,
               queryMetadata.columnModels!,
             )
+            const enumerationFacet = getEnumerationFacet(jsonSubcolumnFacet)
             return (
               <Box
                 className="FacetFilterControls__facet"
@@ -64,14 +66,13 @@ export default function JsonColumnFacetFilters(
                   },
                 }}
               >
-                {jsonSubcolumnFacet.facetType === 'enumeration' &&
-                  jsonSubColumnModel && (
-                    <EnumFacetFilter
-                      containerAs="Collapsible"
-                      facet={jsonSubcolumnFacet}
-                      hideCollapsible={true}
-                    />
-                  )}
+                {enumerationFacet && jsonSubColumnModel && (
+                  <EnumFacetFilter
+                    containerAs="Collapsible"
+                    facet={enumerationFacet}
+                    hideCollapsible={true}
+                  />
+                )}
                 {jsonSubcolumnFacet.facetType === 'range' &&
                   jsonSubColumnModel && (
                     <RangeFacetFilter

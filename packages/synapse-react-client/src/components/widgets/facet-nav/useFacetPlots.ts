@@ -1,9 +1,11 @@
+import {
+  EnumerationFacet,
+  getEnumerationFacets,
+} from '@/utils/functions/enumerationFacet'
 import { isSingleNotSetValue } from '@/utils/functions/queryUtils'
 import {
   FacetColumnRequest,
-  FacetColumnResult,
   FacetColumnResultValueCount,
-  FacetColumnResultValues,
   QueryResultBundle,
 } from '@sage-bionetworks/synapse-types'
 import { useCallback, useMemo } from 'react'
@@ -50,12 +52,12 @@ export default function useFacetPlots(
     () =>
       facets.map(facet => {
         return {
-          facetToPlot: facet as FacetColumnResultValues,
+          facetToPlot: facet,
 
           applyChangesToFacetFilter: applyChangesFromQueryFilter,
 
           applyChangesToGraphSlice: (
-            facet: FacetColumnResultValues,
+            facet: EnumerationFacet,
             value: FacetColumnResultValueCount | undefined,
             isSelected: boolean,
           ) =>
@@ -76,19 +78,15 @@ export default function useFacetPlots(
 export function getFacets(
   data: QueryResultBundle | undefined,
   facetsToPlot?: string[],
-): FacetColumnResult[] {
-  const result =
-    data?.facets?.filter(item => {
-      const isFacetToPlot =
-        item.facetType === 'enumeration' &&
-        (!facetsToPlot?.length || facetsToPlot.indexOf(item.columnName) > -1)
+): EnumerationFacet[] {
+  const result = getEnumerationFacets(
+    data?.facets?.filter(facet => !isSingleNotSetValue(facet)),
+  ).filter(
+    facet =>
+      (!facetsToPlot?.length || facetsToPlot.indexOf(facet.columnName) > -1) &&
       // PORTALS-1993: only plot if the facet has count data
-      return (
-        isFacetToPlot &&
-        item.facetValues.length > 0 &&
-        !isSingleNotSetValue(item)
-      )
-    }) ?? []
+      facet.facetValues.length > 0,
+  )
   if (facetsToPlot?.length) {
     result.sort(
       (a, b) =>

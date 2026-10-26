@@ -1,7 +1,5 @@
-import {
-  FacetColumnResultValues,
-  QueryResultBundle,
-} from '@sage-bionetworks/synapse-types'
+import { EnumerationFacet } from '@/utils/functions/enumerationFacet'
+import { QueryResultBundle } from '@sage-bionetworks/synapse-types'
 import { SkeletonInlineBlock } from '../Skeleton/SkeletonInlineBlock'
 import { EnumFacetFilter } from '../widgets/query-filter/EnumFacetFilter/EnumFacetFilter'
 import { IconSvgButton } from '../IconSvgButton'
@@ -10,7 +8,7 @@ export type PlotPanelHeaderProps = {
   data?: QueryResultBundle
   isLoading?: boolean
   title: string
-  facetToPlot?: FacetColumnResultValues
+  facetToPlot?: EnumerationFacet
   onHide: () => void
   setShowModal?: (show: boolean) => void
 }
