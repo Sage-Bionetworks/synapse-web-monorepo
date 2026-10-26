@@ -114,7 +114,7 @@ export function useUpdateThreadTitle(
     ...options,
     mutationFn: (request: UpdateThreadTitleRequest) =>
       SynapseClient.putThreadTitle(accessToken, request),
-    onSuccess: async (newThread, variables, ctx) => {
+    onSuccess: async (newThread, variables, ctx, ...rest) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getAllForumThreadsQueryKey(newThread.forumId),
       })
@@ -122,7 +122,7 @@ export function useUpdateThreadTitle(
         queryKey: keyFactory.getThreadQueryKey(variables.threadId),
       })
       if (options?.onSuccess) {
-        await options.onSuccess(newThread, variables, ctx)
+        await options.onSuccess(newThread, variables, ctx, ...rest)
       }
     },
   })
@@ -146,12 +146,12 @@ export function useUpdateThreadMessage(
     ...options,
     mutationFn: (request: UpdateThreadMessageRequest) =>
       SynapseClient.putThreadMessage(accessToken, request),
-    onSuccess: async (newThread, variables, ctx) => {
+    onSuccess: async (newThread, variables, ctx, ...rest) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getThreadQueryKey(variables.threadId),
       })
       if (options?.onSuccess) {
-        await options.onSuccess(newThread, variables, ctx)
+        await options.onSuccess(newThread, variables, ctx, ...rest)
       }
     },
   })
@@ -175,12 +175,12 @@ export function useCreateThread(
     ...options,
     mutationFn: (newThread: CreateDiscussionThread) =>
       SynapseClient.postThread(accessToken, newThread),
-    onSuccess: async (threadBundle, newThreadRequest, ctx) => {
+    onSuccess: async (threadBundle, newThreadRequest, ctx, ...rest) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getAllForumThreadsQueryKey(threadBundle.forumId),
       })
       if (options?.onSuccess) {
-        await options.onSuccess(threadBundle, newThreadRequest, ctx)
+        await options.onSuccess(threadBundle, newThreadRequest, ctx, ...rest)
       }
     },
   })
@@ -200,7 +200,7 @@ export function useDeleteThread(
     ...options,
     mutationFn: (threadBundle: DiscussionThreadBundle) =>
       SynapseClient.deleteThread(accessToken, threadBundle.id),
-    onSuccess: async (updatedThread, threadBundle, ctx) => {
+    onSuccess: async (updatedThread, threadBundle, ctx, ...rest) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getAllForumThreadsQueryKey(threadBundle.forumId),
       })
@@ -208,7 +208,7 @@ export function useDeleteThread(
         queryKey: keyFactory.getThreadQueryKey(threadBundle.id),
       })
       if (options?.onSuccess) {
-        await options.onSuccess(updatedThread, threadBundle, ctx)
+        await options.onSuccess(updatedThread, threadBundle, ctx, ...rest)
       }
     },
   })
@@ -228,7 +228,7 @@ export function useRestoreThread(
     ...options,
     mutationFn: (threadBundle: DiscussionThreadBundle) =>
       SynapseClient.restoreThread(accessToken, threadBundle.id),
-    onSuccess: async (updatedThread, threadBundle, ctx) => {
+    onSuccess: async (updatedThread, threadBundle, ctx, ...rest) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getAllForumThreadsQueryKey(threadBundle.forumId),
       })
@@ -236,7 +236,7 @@ export function useRestoreThread(
         queryKey: keyFactory.getThreadQueryKey(threadBundle.id),
       })
       if (options?.onSuccess) {
-        await options.onSuccess(updatedThread, threadBundle, ctx)
+        await options.onSuccess(updatedThread, threadBundle, ctx, ...rest)
       }
     },
   })
@@ -256,7 +256,7 @@ export function usePinThread(
     ...options,
     mutationFn: (threadBundle: DiscussionThreadBundle) =>
       SynapseClient.pinThread(accessToken, threadBundle.id),
-    onSuccess: async (updatedThread, threadBundle, ctx) => {
+    onSuccess: async (updatedThread, threadBundle, ctx, ...rest) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getAllForumThreadsQueryKey(threadBundle.forumId),
       })
@@ -264,7 +264,7 @@ export function usePinThread(
         queryKey: keyFactory.getThreadQueryKey(threadBundle.id),
       })
       if (options?.onSuccess) {
-        await options.onSuccess(updatedThread, threadBundle, ctx)
+        await options.onSuccess(updatedThread, threadBundle, ctx, ...rest)
       }
     },
   })
@@ -284,7 +284,7 @@ export function useUnPinThread(
     ...options,
     mutationFn: (threadBundle: DiscussionThreadBundle) =>
       SynapseClient.unPinThread(accessToken, threadBundle.id),
-    onSuccess: async (updatedThread, threadBundle, ctx) => {
+    onSuccess: async (updatedThread, threadBundle, ctx, ...rest) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getAllForumThreadsQueryKey(threadBundle.forumId),
       })
@@ -292,7 +292,7 @@ export function useUnPinThread(
         queryKey: keyFactory.getThreadQueryKey(threadBundle.id),
       })
       if (options?.onSuccess) {
-        await options.onSuccess(updatedThread, threadBundle, ctx)
+        await options.onSuccess(updatedThread, threadBundle, ctx, ...rest)
       }
     },
   })

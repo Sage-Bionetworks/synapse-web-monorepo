@@ -73,6 +73,15 @@ API calls are organized in two layers:
 
 Cache keys are centralized in `src/synapse-queries/KeyFactory.ts`.
 
+Mutation hooks that accept `UseMutationOptions` and override `onSuccess`/`onError`/`onSettled` (e.g. to invalidate queries) must forward the caller's callback with a rest parameter, so arguments TanStack adds later are not dropped:
+
+```ts
+onSuccess: async (data, variables, ...rest) => {
+  await queryClient.invalidateQueries({ queryKey: keyFactory.getFooQueryKey(variables.id) })
+  await options?.onSuccess?.(data, variables, ...rest)
+},
+```
+
 ### Testing approach
 
 - **Framework**: Vitest + Testing Library (`@testing-library/react`)
