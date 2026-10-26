@@ -1,5 +1,5 @@
 import InfoOutlined from '@mui/icons-material/InfoOutlined'
-import { Box, IconButton, Switch, Tooltip, Typography } from '@mui/material'
+import { Box, ButtonBase, IconButton, Tooltip, Typography } from '@mui/material'
 import styles from './ExperimentalFeaturesButton.module.scss'
 
 type ExperimentalFeaturesButtonProps = {
@@ -29,22 +29,14 @@ function ExperimentalFeaturesButton({
           <InfoOutlined sx={{ verticalAlign: 'middle' }} />
         </IconButton>
       </Tooltip>
-      <Switch
-        className={styles.switch}
-        color="secondary"
-        checked={isActive}
-        onChange={onClick}
-        checkedIcon={
-          count > 0 ? (
-            <span className={styles.countThumb}>{count}</span>
-          ) : undefined
-        }
-        slotProps={{
-          input: {
-            'aria-label': `${EXPERIMENTAL_FEATURES_LABEL} (${count} enabled)`,
-          },
-        }}
-      />
+      <ButtonBase
+        className={isActive ? `${styles.track} ${styles.active}` : styles.track}
+        onClick={onClick}
+        aria-haspopup="dialog"
+        aria-label={`${EXPERIMENTAL_FEATURES_LABEL} (${count} enabled)`}
+      >
+        <span className={styles.thumb}>{count > 0 && count}</span>
+      </ButtonBase>
     </Box>
   )
 }

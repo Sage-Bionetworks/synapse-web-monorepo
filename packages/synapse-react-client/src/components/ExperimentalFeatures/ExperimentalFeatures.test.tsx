@@ -13,6 +13,7 @@ import userEvent from '@testing-library/user-event'
 import Cookies from 'js-cookie'
 import { http, HttpResponse } from 'msw'
 import ExperimentalFeatures from './ExperimentalFeatures'
+import styles from './ExperimentalFeaturesButton.module.scss'
 
 const NEW_TASK = FeatureFlagEnum.CURATION_TASK_PAGE_SHOW_NEW_TASK_BUTTON
 const ACT = FeatureFlagEnum.ACT_DASHBOARD_FORM_TEMPLATES
@@ -49,7 +50,7 @@ function renderComponent(
 
 async function openDialog() {
   await userEvent.click(
-    screen.getByRole('switch', { name: /Experimental Features/ }),
+    screen.getByRole('button', { name: /Experimental Features/ }),
   )
 }
 
@@ -109,7 +110,7 @@ describe('ExperimentalFeatures', () => {
     renderComponent({ isInExperimentalMode: true })
 
     expect(
-      await screen.findByRole('switch', { name: /Experimental Features/ }),
-    ).toBeChecked()
+      await screen.findByRole('button', { name: /Experimental Features/ }),
+    ).toHaveClass(styles.active)
   })
 })
