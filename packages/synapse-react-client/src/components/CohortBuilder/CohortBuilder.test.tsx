@@ -16,7 +16,10 @@ import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
 import { AddToDownloadListRequest } from '@sage-bionetworks/synapse-client'
-import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
+import {
+  DownloadFromTableRequest,
+  QueryBundleRequest,
+} from '@sage-bionetworks/synapse-types'
 import {
   configure,
   getConfig,
@@ -459,6 +462,49 @@ describe('CohortBuilder', () => {
         cohorts: filesQuery.cohorts,
         additionalFilters: filesQuery.additionalFilters,
         selectFileColumn: Number(idColumn.id),
+      })
+    })
+
+    it("exports the cohort's files and datasets as a CSV with the cohort definitions", async () => {
+      const exportRequests: DownloadFromTableRequest[] = []
+      const recordExportRequest = async ({ request }: { request: Request }) => {
+        if (
+          new URL(request.url).pathname.endsWith(
+            '/table/download/csv/async/start',
+          )
+        ) {
+          exportRequests.push(
+            (await request.clone().json()) as DownloadFromTableRequest,
+          )
+        }
+      }
+      server.events.on('request:start', recordExportRequest)
+      const user = userEvent.setup()
+      const profile = renderWithFiles()
+      await screen.findByText(`${allParticipantsCount} participants`)
+      await buildCohort('Race', ['Black or African American'])
+      await screen.findByText('193 files and datasets')
+      const filesQuery = filesRequests(profile).at(-1)!.query
+
+      await user.click(screen.getByRole('button', { name: 'Download Options' }))
+      await user.click(
+        await screen.findByRole('menuitem', { name: 'Export Table' }),
+      )
+      const dialog = await screen.findByRole('dialog', {
+        name: 'Download query results',
+      })
+      await user.click(within(dialog).getByRole('button', { name: 'Next' }))
+
+      // The export only succeeds when the cohort its filter references is defined in the same request.
+      expect(
+        await within(dialog).findByRole('button', { name: 'Download' }),
+      ).toBeInTheDocument()
+      server.events.removeListener('request:start', recordExportRequest)
+      expect(exportRequests).toHaveLength(1)
+      expect(exportRequests[0]).toMatchObject({
+        sql: filesQuery.sql,
+        cohorts: filesQuery.cohorts,
+        additionalFilters: filesQuery.additionalFilters,
       })
     })
   })

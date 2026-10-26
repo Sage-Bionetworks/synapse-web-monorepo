@@ -57,6 +57,8 @@ const DOWNLOAD_LIST_ADD_STATS_ASYNC_GET = (token: string) =>
 
 /** Synthetic files have no file handles; each is reported at this size in Download List statistics. */
 export const MOCK_COHORT_FILE_SIZE_BYTES = 10 * 1024 * 1024
+/** The file handle of every mock Files/Datasets CSV export. */
+export const MOCK_COHORT_CSV_FILE_HANDLE_ID = '90000003'
 
 const syntheticDataByProfile = new Map<
   CohortBuilderMockProfile,
@@ -319,11 +321,38 @@ export function getCohortBuilderHandlers(
     ),
   ]
 
+  // The CSV export resolves the request's cohorts like a query, so a cohort reference without its definition fails.
+  const csvExportHandlers = generateAsyncJobHandlers(
+    dispatchEntry(
+      'org.sagebionetworks.repo.model.table.DownloadFromTableRequest',
+      request => {
+        const rowCount = countDataRows(request, false)
+        return rowCount instanceof AsyncJobFailure
+          ? rowCount
+          : {
+              concreteType:
+                'org.sagebionetworks.repo.model.table.DownloadFromTableResult',
+              resultsFileHandleId: MOCK_COHORT_CSV_FILE_HANDLE_ID,
+              tableId: profile.dataVirtualTableId,
+            }
+      },
+    ),
+    {
+      asyncTypeServicePaths: {
+        requestPath: `/repo/v1/entity/${profile.dataVirtualTableId}/table/download/csv/async/start`,
+        responsePath: token =>
+          `/repo/v1/entity/${profile.dataVirtualTableId}/table/download/csv/async/get/${token}`,
+      },
+      backendOrigin,
+    },
+  )
+
   return [
     ...entityHandlers,
     entityHeaderHandler,
     ...queryHandlers,
     ...downloadListHandlers,
+    ...csvExportHandlers,
   ]
 }
 
