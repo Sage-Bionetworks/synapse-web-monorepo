@@ -8,6 +8,10 @@
   height: 20px;
   padding: 0;
 
+  & :global(.MuiSwitch-input) {
+    margin: 0;
+  }
+
   & :global(.MuiSwitch-switchBase) {
     padding: 0;
 

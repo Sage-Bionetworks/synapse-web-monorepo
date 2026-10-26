@@ -34,6 +34,15 @@ export enum FeatureFlagEnum {
   // Access Requirements that collect a schema-driven form
   ACT_DASHBOARD_FORM_TEMPLATES = 'ACT_DASHBOARD_FORM_TEMPLATES',
 
+  // If enabled, SWC shows options to insert experimental widgets in the wiki editor
+  ADD_WIKI_WIDGETS = 'ADD_WIKI_WIDGETS',
+
+  // If enabled, SWC shows a visibility chip (e.g. public/private) on the project title bar
+  PROJECT_VISIBILITY_CHIP = 'PROJECT_VISIBILITY_CHIP',
+
+  // If enabled, SWC shows the query builder control on table and view pages
+  QUERY_BUILDER_CONTROL = 'QUERY_BUILDER_CONTROL',
+
   // Reserved for unit tests. Not configured in Stack Builder; do not use in production code.
   TEST_ONLY = 'TEST_ONLY',
 }
@@ -67,6 +76,9 @@ export const FEATURE_FLAG_CONFIG: Record<FeatureFlagEnum, FeatureFlagConfig> = {
     displayName: 'ACT Dashboard Form Templates',
     actMembersOnly: true,
   },
+  [FeatureFlagEnum.ADD_WIKI_WIDGETS]: { scopes: ['SYNAPSE'] },
+  [FeatureFlagEnum.PROJECT_VISIBILITY_CHIP]: { scopes: ['SYNAPSE'] },
+  [FeatureFlagEnum.QUERY_BUILDER_CONTROL]: { scopes: ['SYNAPSE'] },
   [FeatureFlagEnum.TEST_ONLY]: { scopes: [] },
 }
 
