@@ -1,50 +1,25 @@
 import {
+  createMockTaskBundle,
   MOCK_CURATION_TASK_ASSIGNEE_PRINCIPAL_ID,
   MOCK_CURATION_TASK_ID,
 } from '@/mocks/curation/mockCurationTask'
-import {
-  useCreateCurationTask,
-  useDeleteCurationTask,
-  useGetCurationTaskStatus,
-  useUpdateCurationTask,
-  useUpdateCurationTaskStatus,
-} from '@/synapse-queries/curation/task/useCurationTask'
-import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
+import { getCurationTaskHandlers } from '@/mocks/msw/handlers/curationTaskHandlers'
+import { server } from '@/mocks/msw/server'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import {
   CurationTask,
+  TaskStatus,
   FileBasedMetadataTaskPropertiesConcreteTypeEnum,
   RecordBasedMetadataTaskPropertiesConcreteTypeEnum,
 } from '@sage-bionetworks/synapse-client'
-import { render, screen } from '@testing-library/react'
+import { render as rtlRender, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
+import type { Mock } from 'vitest'
 import CurateTaskForm from './CurateTaskForm'
 
-vi.mock('@/synapse-queries/curation/task/useCurationTask', () => ({
-  useCreateCurationTask: vi.fn(),
-  useUpdateCurationTask: vi.fn(),
-  useDeleteCurationTask: vi.fn(),
-  useGetCurationTaskStatus: vi.fn(),
-  useUpdateCurationTaskStatus: vi.fn(),
-}))
-
 vi.mock('@/components/ToastMessage/ToastMessage')
-
-vi.mock('@/synapse-queries/entity/useEntity', () => ({
-  useGetEntityPermissions: vi.fn(),
-}))
-
-const mockGetStatus = vi.hoisted(() => vi.fn())
-
-vi.mock('@/utils/index', async origImport => ({
-  ...(await origImport<typeof import('@/utils/index')>()),
-  useSynapseContext: vi.fn(() => ({
-    synapseClient: {
-      curationTaskServicesClient: {
-        getRepoV1CurationTaskTaskIdStatus: mockGetStatus,
-      },
-    },
-  })),
-}))
 
 vi.mock('@/components/UserSearchBox/UserSearchBox', () => ({
   default: ({
@@ -82,13 +57,6 @@ vi.mock('@/components/EntityFinder/EntityIdTextField', () => ({
   ),
 }))
 
-const mockUseCreateCurationTask = vi.mocked(useCreateCurationTask)
-const mockUseUpdateCurationTask = vi.mocked(useUpdateCurationTask)
-const mockUseDeleteCurationTask = vi.mocked(useDeleteCurationTask)
-const mockUseGetCurationTaskStatus = vi.mocked(useGetCurationTaskStatus)
-const mockUseUpdateCurationTaskStatus = vi.mocked(useUpdateCurationTaskStatus)
-const mockUseGetEntityPermissions = vi.mocked(useGetEntityPermissions)
-
 const FILE_BASED_TYPE =
   FileBasedMetadataTaskPropertiesConcreteTypeEnum.org_sagebionetworks_repo_model_curation_metadata_FileBasedMetadataTaskProperties
 const RECORD_BASED_TYPE =
@@ -99,10 +67,16 @@ const RECORD_BASED_TYPE =
 const DUE_DATE_INPUT = '2030-01-01'
 const DUE_DATE_ISO = '2030-01-01T00:00:00.000Z'
 
-const mockCreateMutateAsync = vi.fn()
-const mockUpdateMutateAsync = vi.fn()
-const mockUpdateStatusMutateAsync = vi.fn()
-const mockDeleteMutate = vi.fn()
+const REPO_ORIGIN = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
+
+/** The state of the in-memory curation task backend for the current test. */
+let backend: ReturnType<typeof getCurationTaskHandlers>
+/** Receives the body of every `PUT /curation/task/:taskId/status` request. */
+let statusPutSpy: Mock<(body: TaskStatus) => void>
+
+function render(ui: React.ReactElement) {
+  return rtlRender(ui, { wrapper: createWrapper() })
+}
 
 function fillRequiredCommonFields() {
   const user = userEvent.setup()
@@ -115,41 +89,36 @@ function fillRequiredCommonFields() {
   })()
 }
 
-beforeEach(() => {
-  vi.clearAllMocks()
-
-  mockUseCreateCurationTask.mockReturnValue({
-    mutateAsync: mockCreateMutateAsync,
-    isPending: false,
-    error: null,
-  } as any)
-  mockUseUpdateCurationTask.mockReturnValue({
-    mutateAsync: mockUpdateMutateAsync,
-    isPending: false,
-    error: null,
-  } as any)
-  mockUseUpdateCurationTaskStatus.mockReturnValue({
-    mutateAsync: mockUpdateStatusMutateAsync,
-    isPending: false,
-    error: null,
-  } as any)
-  mockUseDeleteCurationTask.mockImplementation(
-    options =>
-      ({
-        mutate: (taskId: number) => {
-          mockDeleteMutate(taskId)
-          options?.onSuccess?.(undefined, taskId, {})
-        },
-        isPending: false,
-      }) as any,
+/** Installs the in-memory curation task backend, seeded with `initialBundles`. */
+function installCurationTaskBackend(
+  initialBundles: Parameters<typeof getCurationTaskHandlers>[0],
+) {
+  backend = getCurationTaskHandlers(initialBundles)
+  statusPutSpy = vi.fn<(body: TaskStatus) => void>()
+  server.use(
+    // Registered before the shared handlers so the spy sees status writes; it delegates to the same
+    // in-memory store by echoing the body back.
+    http.put(
+      `${REPO_ORIGIN}/repo/v1/curation/task/:taskId/status`,
+      async ({ request, params }) => {
+        const body = (await request.json()) as TaskStatus
+        statusPutSpy(body)
+        backend.statuses.set(Number(params.taskId), body)
+        return HttpResponse.json(body)
+      },
+    ),
+    ...backend.handlers,
   )
-  mockUseGetCurationTaskStatus.mockReturnValue({
-    data: undefined,
-    isFetching: false,
-  } as any)
-  mockUseGetEntityPermissions.mockReturnValue({
-    data: { canDelete: true, canEdit: true },
-  } as any)
+}
+
+beforeEach(() => {
+  installCurationTaskBackend([])
+  server.use(
+    // The user can delete the project's tasks.
+    http.get(`${REPO_ORIGIN}/repo/v1/entity/:id/permissions`, () =>
+      HttpResponse.json({ canDelete: true, canEdit: true }),
+    ),
+  )
 })
 
 describe('CurateTaskForm', () => {
@@ -240,9 +209,6 @@ describe('CurateTaskForm', () => {
     })
 
     it('creates the task with the built payload and calls onCreated', async () => {
-      mockCreateMutateAsync.mockResolvedValue({
-        taskId: MOCK_CURATION_TASK_ID,
-      } as CurationTask)
       const onCreated = vi.fn()
       const user = userEvent.setup()
       render(<CurateTaskForm projectId="syn123" onCreated={onCreated} />)
@@ -252,7 +218,9 @@ describe('CurateTaskForm', () => {
       await user.type(screen.getByLabelText(/file view id/i), 'syn2')
       await user.click(screen.getByRole('button', { name: /create/i }))
 
-      expect(mockCreateMutateAsync).toHaveBeenCalledWith(
+      await waitFor(() => expect(onCreated).toHaveBeenCalled())
+
+      expect([...backend.tasks.values()]).toEqual([
         expect.objectContaining({
           projectId: 'syn123',
           dataType: 'My Task',
@@ -262,22 +230,19 @@ describe('CurateTaskForm', () => {
             concreteType: FILE_BASED_TYPE,
             uploadFolderId: 'syn1',
             fileViewId: 'syn2',
-            suggestedAuthorizationMode: undefined,
-            collaboratorPrincipalIds: undefined,
           },
         }),
-      )
+      ])
+      const [created] = [...backend.tasks.values()]
       expect(onCreated).toHaveBeenCalledWith(
-        expect.objectContaining({ taskId: MOCK_CURATION_TASK_ID }),
+        expect.objectContaining({ taskId: created.taskId }),
       )
     })
 
     it('includes the due date in the task payload on create', async () => {
-      mockCreateMutateAsync.mockResolvedValue({
-        taskId: MOCK_CURATION_TASK_ID,
-      } as CurationTask)
+      const onCreated = vi.fn()
       const user = userEvent.setup()
-      render(<CurateTaskForm projectId="syn123" onCreated={vi.fn()} />)
+      render(<CurateTaskForm projectId="syn123" onCreated={onCreated} />)
 
       // fillRequiredCommonFields types DUE_DATE_INPUT into the due date field.
       await fillRequiredCommonFields()
@@ -285,18 +250,18 @@ describe('CurateTaskForm', () => {
       await user.type(screen.getByLabelText(/file view id/i), 'syn2')
       await user.click(screen.getByRole('button', { name: /create/i }))
 
-      expect(mockCreateMutateAsync).toHaveBeenCalledWith(
+      await waitFor(() => expect(onCreated).toHaveBeenCalled())
+
+      expect([...backend.tasks.values()]).toEqual([
         expect.objectContaining({ dueDate: DUE_DATE_ISO }),
-      )
-      expect(mockUpdateStatusMutateAsync).not.toHaveBeenCalled()
+      ])
+      expect(statusPutSpy).not.toHaveBeenCalled()
     })
 
     it('sets suggestedAuthorizationMode from the selected Authorization Mode', async () => {
-      mockCreateMutateAsync.mockResolvedValue({
-        taskId: MOCK_CURATION_TASK_ID,
-      } as CurationTask)
+      const onCreated = vi.fn()
       const user = userEvent.setup()
-      render(<CurateTaskForm projectId="syn123" />)
+      render(<CurateTaskForm projectId="syn123" onCreated={onCreated} />)
 
       await fillRequiredCommonFields()
       await user.type(screen.getByLabelText(/upload folder id/i), 'syn1')
@@ -311,13 +276,12 @@ describe('CurateTaskForm', () => {
       )
       await user.click(screen.getByRole('button', { name: /create/i }))
 
-      expect(mockCreateMutateAsync).toHaveBeenCalledWith(
-        expect.objectContaining({
-          taskProperties: expect.objectContaining({
-            suggestedAuthorizationMode: 'SESSION_OWNER',
-          }),
-        }),
-      )
+      await waitFor(() => expect(onCreated).toHaveBeenCalled())
+
+      const [created] = [...backend.tasks.values()]
+      expect(created.taskProperties).toMatchObject({
+        suggestedAuthorizationMode: 'SESSION_OWNER',
+      })
     })
   })
 
@@ -336,6 +300,12 @@ describe('CurateTaskForm', () => {
         suggestedAuthorizationMode: 'SESSION_OWNER',
       },
     }
+
+    beforeEach(() => {
+      installCurationTaskBackend([
+        createMockTaskBundle(editTask, { state: 'NOT_STARTED' }),
+      ])
+    })
 
     it('prefills fields from the existing task and hides the project selector', () => {
       render(<CurateTaskForm task={editTask} />)
@@ -362,14 +332,15 @@ describe('CurateTaskForm', () => {
     })
 
     it('disables the EXECUTING status option, but leaves CANCELED selectable', async () => {
-      mockUseGetCurationTaskStatus.mockReturnValue({
-        data: { taskId: editTask.taskId, state: 'NOT_STARTED' },
-        isFetching: false,
-      } as any)
       const user = userEvent.setup()
       render(<CurateTaskForm task={editTask} />)
 
-      await user.click(screen.getByRole('combobox', { name: /^status$/i }))
+      // The status select stays disabled until the task's status has been fetched.
+      const statusSelect = screen.getByRole('combobox', { name: /^status$/i })
+      await waitFor(() =>
+        expect(statusSelect).not.toHaveAttribute('aria-disabled', 'true'),
+      )
+      await user.click(statusSelect)
 
       expect(
         await screen.findByRole('option', { name: /^executing$/i }),
@@ -384,37 +355,44 @@ describe('CurateTaskForm', () => {
       const user = userEvent.setup()
       render(<CurateTaskForm task={editTask} onDeleted={onDeleted} />)
 
-      await user.click(screen.getByRole('button', { name: /^delete$/i }))
+      // The Delete button appears once the project's permissions have loaded.
+      await user.click(await screen.findByRole('button', { name: /^delete$/i }))
       const deleteButtons = screen.getAllByRole('button', {
         name: /^delete$/i,
       })
       await user.click(deleteButtons.at(-1)!)
 
-      expect(mockDeleteMutate).toHaveBeenCalledWith(MOCK_CURATION_TASK_ID)
-      expect(onDeleted).toHaveBeenCalled()
+      await waitFor(() => expect(onDeleted).toHaveBeenCalled())
+      expect(backend.tasks.has(MOCK_CURATION_TASK_ID)).toBe(false)
     })
 
     it('saves the task via updateTask and calls onSaved', async () => {
-      mockUpdateMutateAsync.mockResolvedValue(editTask)
       const onSaved = vi.fn()
       const user = userEvent.setup()
       render(<CurateTaskForm task={editTask} onSaved={onSaved} />)
 
       await user.click(screen.getByRole('button', { name: /^save$/i }))
 
-      expect(mockUpdateMutateAsync).toHaveBeenCalledWith(
+      await waitFor(() => expect(onSaved).toHaveBeenCalled())
+
+      expect(backend.tasks.get(MOCK_CURATION_TASK_ID)).toEqual(
         expect.objectContaining({
           taskId: MOCK_CURATION_TASK_ID,
           dueDate: DUE_DATE_ISO,
         }),
       )
-      expect(onSaved).toHaveBeenCalledWith(editTask)
+      expect(onSaved).toHaveBeenCalledWith(
+        expect.objectContaining({
+          taskId: MOCK_CURATION_TASK_ID,
+          dueDate: DUE_DATE_ISO,
+        }),
+      )
     })
 
     it('clears the due date on the task when the user removes an existing due date', async () => {
-      mockUpdateMutateAsync.mockResolvedValue({ ...editTask, etag: 'etag-2' })
+      const onSaved = vi.fn()
       const user = userEvent.setup()
-      render(<CurateTaskForm task={editTask} onSaved={vi.fn()} />)
+      render(<CurateTaskForm task={editTask} onSaved={onSaved} />)
 
       const dueDateInput = screen.getByLabelText(/task due date/i)
       expect(dueDateInput).toHaveValue(DUE_DATE_INPUT)
@@ -422,10 +400,13 @@ describe('CurateTaskForm', () => {
 
       await user.click(screen.getByRole('button', { name: /^save$/i }))
 
-      expect(mockUpdateMutateAsync).toHaveBeenCalledWith(
-        expect.objectContaining({ dueDate: undefined }),
+      await waitFor(() => expect(onSaved).toHaveBeenCalled())
+
+      // The saved task has no due date at all, rather than the previously stored one.
+      expect(backend.tasks.get(MOCK_CURATION_TASK_ID)).not.toHaveProperty(
+        'dueDate',
       )
-      expect(mockUpdateStatusMutateAsync).not.toHaveBeenCalled()
+      expect(statusPutSpy).not.toHaveBeenCalled()
     })
 
     it('shows a warning when the Authorization Mode is changed', async () => {
