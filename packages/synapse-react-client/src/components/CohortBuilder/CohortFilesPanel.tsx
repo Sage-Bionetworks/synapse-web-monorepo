@@ -22,6 +22,7 @@ import {
   getAggregateQueryError,
 } from '../QueryWrapper/AggregateQueryErrorNotice'
 import { QueryWrapper } from '../QueryWrapper/QueryWrapper'
+import QueryWrapperLoadingScreen from '../QueryWrapper/QueryWrapperLoadingScreen'
 import { useGetAddToDownloadListRequestForCurrentQuery } from '../QueryWrapper/useGetAddToDownloadListRequestForCurrentQuery'
 import { useSuspenseGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 import { RowSetView } from '../QueryWrapperPlotNav/RowSetView'
@@ -107,7 +108,7 @@ export function CohortFilesPanel(props: CohortFilesPanelProps) {
             hideCopyToClipboard
           >
             <CohortFilesErrorBoundary>
-              <Suspense fallback={null}>
+              <Suspense fallback={<QueryWrapperLoadingScreen />}>
                 <CohortFilesResults />
               </Suspense>
             </CohortFilesErrorBoundary>

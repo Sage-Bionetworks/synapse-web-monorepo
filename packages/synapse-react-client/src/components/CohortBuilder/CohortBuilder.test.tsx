@@ -295,6 +295,38 @@ describe('CohortBuilder', () => {
       ).toEqual([])
     })
 
+    it('shows a loading indicator in the panel while the files query runs', async () => {
+      const pendingFilesQuery = Promise.withResolvers<void>()
+      renderWithFiles()
+      // Registered after the mock handlers so it runs first. The files query is only sent once the participant count
+      // has loaded, so it can't be sent before this.
+      server.use(
+        // Holds the files query until the test releases it, then falls through to the mock handlers.
+        http.post(
+          new RegExp(
+            `/entity/${ELITE_MOCK_PROFILE.dataVirtualTableId}/table/query/async/start$`,
+          ),
+          () => pendingFilesQuery.promise,
+        ),
+      )
+      await screen.findByText(`${allParticipantsCount} participants`)
+
+      const filesPanel = screen.getByRole('region', {
+        name: 'Files and datasets',
+      })
+      expect(await within(filesPanel).findByRole('progressbar')).toBeVisible()
+      pendingFilesQuery.resolve()
+      expect(
+        await within(filesPanel).findByText(
+          `${(2070).toLocaleString()} files and datasets`,
+        ),
+      ).toBeVisible()
+      await within(filesPanel).findByRole('table')
+      expect(
+        within(filesPanel).queryByRole('progressbar'),
+      ).not.toBeInTheDocument()
+    })
+
     it("hands the participant cohort to the files query by reference, and lists the cohort's files and datasets", async () => {
       const profile = renderWithFiles()
       await screen.findByText(`${allParticipantsCount} participants`)
