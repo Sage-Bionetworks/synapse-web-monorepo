@@ -25,7 +25,7 @@ describe('getSchemaPropertiesInfo', () => {
       isRequired: true,
       enumeratedValues: ENUM_VALUES,
       description: 'Age at enrollment',
-      numberOrEnum: { numericType: 'number', enumValues: ENUM_VALUES },
+      isNumberOrEnum: true,
     })
   })
 
@@ -55,9 +55,10 @@ describe('getSchemaPropertiesInfo', () => {
       },
     })
 
-    expect(result.age.numberOrEnum).toEqual({
-      numericType: 'integer',
-      enumValues: ENUM_VALUES,
+    expect(result.age).toMatchObject({
+      type: { type: 'integer' },
+      enumeratedValues: ENUM_VALUES,
+      isNumberOrEnum: true,
     })
   })
 

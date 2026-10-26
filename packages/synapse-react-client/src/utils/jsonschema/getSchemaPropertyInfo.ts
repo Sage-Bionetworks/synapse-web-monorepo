@@ -1,5 +1,5 @@
 import getEnumeratedValues, { EnumeratedValue } from './getEnumeratedValues'
-import { getNumberOrEnumInfo, NumberOrEnumInfo } from './getNumberOrEnumInfo'
+import { getNumberOrEnumInfo } from './getNumberOrEnumInfo'
 import getSchemaForProperty from './getSchemaForProperty'
 import getRequiredAttributes from './getRequiredAttributes'
 import { FlatTypeInfo, getFlatTypeInfo } from './getType'
@@ -11,10 +11,10 @@ export interface SchemaPropertyInfo {
   enumeratedValues: EnumeratedValue[] | null
   description?: string
   /**
-   * Present when the property is a number or one of a closed set of strings;
-   * see {@link getNumberOrEnumInfo}
+   * True when the property is either a number of the given `type` or one of the
+   * strings in `enumeratedValues`; see {@link getNumberOrEnumInfo}
    */
-  numberOrEnum?: NumberOrEnumInfo
+  isNumberOrEnum?: boolean
 }
 
 export interface SchemaPropertiesMap {
@@ -56,7 +56,7 @@ export function getSchemaPropertiesInfo(
           isRequired: requiredFields.includes(propertyName),
           enumeratedValues: numberOrEnum.enumValues,
           description: propertySchema?.description,
-          numberOrEnum,
+          isNumberOrEnum: true,
         }
         return
       }

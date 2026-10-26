@@ -240,7 +240,7 @@ describe('columnFactory', () => {
             type: typeInfo,
             isRequired: required,
             enumeratedValues: enumValues,
-            numberOrEnum: { numericType: 'number' as const, enumValues },
+            isNumberOrEnum: true,
           },
         }
 

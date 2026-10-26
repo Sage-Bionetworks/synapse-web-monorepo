@@ -1,3 +1,4 @@
+import { EnumeratedValue } from '@/utils/jsonschema/getEnumeratedValues'
 import { Column } from '@sage-bionetworks/react-datasheet-grid'
 import { autocompleteColumn } from './AutocompleteColumn'
 
@@ -13,7 +14,7 @@ const DECIMAL_NUMBER_PATTERN = /^-?\d+(\.\d+)?$/
  */
 export function parseNumberOrEnumInput(
   text: string,
-  enumValues: readonly string[],
+  enumValues: readonly EnumeratedValue[],
 ): string | number {
   const trimmed = text.trim()
   if (enumValues.includes(trimmed)) {
@@ -23,7 +24,7 @@ export function parseNumberOrEnumInput(
 }
 
 export type NumberOrEnumColumnProps = {
-  enumValues: string[]
+  enumValues: EnumeratedValue[]
   clearValue: undefined | null
 }
 

@@ -1,6 +1,5 @@
 import { dateTimeColumn } from '@/components/DataGrid/columns/DateTimeColumn'
 import { EnumeratedValue } from '@/utils/jsonschema/getEnumeratedValues'
-import { NumberOrEnumInfo } from '@/utils/jsonschema/getNumberOrEnumInfo'
 import { FlatTypeInfo } from '@/utils/jsonschema/getType'
 import { SchemaPropertyInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
 import {
@@ -217,7 +216,7 @@ const COLUMN_FACTORIES = {
     return createBaseColumn(
       config,
       numberOrEnumColumn({
-        enumValues: config.schemaPropertyInfo?.numberOrEnum?.enumValues ?? [],
+        enumValues: config.enumeratedValues ?? [],
         clearValue: getEmptyValue(config.isRequired),
       }),
     )
@@ -271,11 +270,11 @@ const COLUMN_FACTORIES = {
 function getColumnType(
   typeInfo: FlatTypeInfo | null,
   enumeratedValues?: EnumeratedValue[] | string[] | null,
-  numberOrEnum?: NumberOrEnumInfo,
+  isNumberOrEnum?: boolean,
 ): keyof typeof COLUMN_FACTORIES {
   // A number-or-enum union reports its numeric branch as its type, so it must
   // be matched before the number check claims it
-  if (numberOrEnum) {
+  if (isNumberOrEnum) {
     return 'numberOrEnum'
   }
 
@@ -313,7 +312,7 @@ export function createColumn(config: ColumnConfig): Column {
   const columnType = getColumnType(
     config.typeInfo,
     config.enumeratedValues,
-    config.schemaPropertyInfo?.numberOrEnum,
+    config.schemaPropertyInfo?.isNumberOrEnum,
   )
   return COLUMN_FACTORIES[columnType](config)
 }
