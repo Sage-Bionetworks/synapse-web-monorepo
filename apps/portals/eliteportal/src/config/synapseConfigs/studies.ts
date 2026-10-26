@@ -54,7 +54,7 @@ export const studyCardConfiguration: CardConfiguration = {
   genericCardSchema: {
     type: SynapseConstants.STUDY,
     title: 'studyName',
-    subTitle: 'institution',
+    subTitle: 'dataGenerationInstitution',
     icon: 'Access_Type',
     description: 'studyAbstract',
     secondaryLabels: [
