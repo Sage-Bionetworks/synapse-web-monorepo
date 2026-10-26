@@ -4,13 +4,13 @@ import {
   getCorrespondingSelectedFacet,
 } from '@/utils/functions/queryUtils'
 import useGetInfoFromIds from '@/utils/hooks/useGetInfoFromIds'
+import { EnumerationFacet } from '@/utils/functions/enumerationFacet'
 import {
   ColumnTypeEnum,
   EntityHeader,
   Evaluation,
   FacetColumnRequest,
   FacetColumnResultValueCount,
-  FacetColumnResultValues,
   FacetColumnValuesRequest,
   QueryBundleRequest,
   UserGroupHeader,
@@ -27,7 +27,7 @@ import FacetValueChip from '../../facet-nav/FacetValueChip'
 
 export type EnumFacetFilterProps = {
   labelId?: string
-  facet: FacetColumnResultValues
+  facet: EnumerationFacet
   containerAs?: 'Collapsible' | 'Dropdown'
   dropdownType?: 'Icon' | 'SelectBox'
   hideCollapsible?: boolean

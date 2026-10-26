@@ -9,10 +9,7 @@ import { useEffect, useMemo, useState } from 'react'
 import styles from './DataExplorer.module.scss'
 import { useSmartLink } from '../SmartLink/useSmartLink'
 import { parseEntityIdFromSqlStatement } from '@/utils/functions'
-import {
-  QueryBundleRequest,
-  FacetColumnResultValues,
-} from '@sage-bionetworks/synapse-types'
+import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { SynapseConstants } from '@/utils'
 import useGetQueryResultBundle from '@/synapse-queries/entity/useGetQueryResultBundle'
 import { getFieldIndex } from '@/utils/functions/queryUtils'
@@ -157,9 +154,7 @@ export default function DataExplorer({
 
   // Create a map of facet counts by column name and data type for quick lookup
   const facetCountsByColumn = useMemo(() => {
-    const facets = getFacets(
-      facetQueryResultBundle,
-    ) as FacetColumnResultValues[]
+    const facets = getFacets(facetQueryResultBundle)
     const map = new Map<string, Map<string, number>>()
     for (const facet of facets) {
       map.set(

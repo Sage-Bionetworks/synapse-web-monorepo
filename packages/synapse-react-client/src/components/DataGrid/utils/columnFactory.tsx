@@ -12,6 +12,7 @@ import {
 import { autocompleteColumn } from '../columns/AutocompleteColumn'
 import { autocompleteMultipleEnumColumn } from '../columns/AutocompleteMultipleEnumColumn'
 import { numberColumn } from '../columns/NumberColumn'
+import { numberOrEnumColumn } from '../columns/NumberOrEnumColumn'
 import {
   calculateDefaultColumnWidth,
   HeaderOptions,
@@ -211,6 +212,16 @@ const COLUMN_FACTORIES = {
     )
   },
 
+  numberOrEnum: (config: ColumnConfig) => {
+    return createBaseColumn(
+      config,
+      numberOrEnumColumn({
+        enumValues: config.enumeratedValues ?? [],
+        clearValue: getEmptyValue(config.isRequired),
+      }),
+    )
+  },
+
   dateOrDateTime: (config: ColumnConfig) => {
     const columnImpl = dateTimeColumn({
       colType: config.typeInfo?.type || null,
@@ -259,7 +270,14 @@ const COLUMN_FACTORIES = {
 function getColumnType(
   typeInfo: FlatTypeInfo | null,
   enumeratedValues?: EnumeratedValue[] | string[] | null,
+  isNumberOrEnum?: boolean,
 ): keyof typeof COLUMN_FACTORIES {
+  // A number-or-enum union reports its numeric branch as its type, so it must
+  // be matched before the number check claims it
+  if (isNumberOrEnum) {
+    return 'numberOrEnum'
+  }
+
   if (!typeInfo) {
     return enumeratedValues && enumeratedValues.length > 0
       ? 'enumerated'
@@ -291,6 +309,10 @@ function getColumnType(
 }
 
 export function createColumn(config: ColumnConfig): Column {
-  const columnType = getColumnType(config.typeInfo, config.enumeratedValues)
+  const columnType = getColumnType(
+    config.typeInfo,
+    config.enumeratedValues,
+    config.schemaPropertyInfo?.isNumberOrEnum,
+  )
   return COLUMN_FACTORIES[columnType](config)
 }

@@ -126,6 +126,22 @@ describe('facet support', () => {
     expect(isSingleNotSetValue(facet)).toEqual(false)
   })
 
+  it('facet has single NOT_SET value: binned facets', () => {
+    const facet: FacetColumnResult = {
+      columnName: 'study',
+      facetType: 'enumeration',
+      concreteType:
+        'org.sagebionetworks.repo.model.table.FacetColumnResultBinnedValues',
+      binSize: 5,
+      binnedValues: [
+        { value: SynapseConstants.VALUE_NOT_SET, binMin: 0, isSelected: false },
+      ],
+    }
+    expect(isSingleNotSetValue(facet)).toEqual(true)
+    facet.binnedValues.push({ value: 'LLFS', binMin: 1200, isSelected: false })
+    expect(isSingleNotSetValue(facet)).toEqual(false)
+  })
+
   describe('hasResettableFilters', function () {
     it('does not have facet filters', () => {
       const query: Query = {

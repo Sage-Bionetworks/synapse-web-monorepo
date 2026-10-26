@@ -93,7 +93,7 @@ const mockQueryContextValue: QueryContextType = {
     initialPageParam: undefined,
     getNextPageParam: vi.fn(),
   },
-  rowDataQueryOptions: { queryKey: [], queryFn: vi.fn() },
+  rowDataQueryOptions: { queryKey: [], queryFn: vi.fn() as never },
   setPageSize: vi.fn(),
   setRangeFacetValue: vi.fn(),
   versionNumber: undefined,

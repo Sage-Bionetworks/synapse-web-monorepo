@@ -1,9 +1,9 @@
 import { useGetEntityHeader } from '@/synapse-queries'
 import { Checkbox } from '@mui/material'
+import { getEnumerationFacet } from '@/utils/functions/enumerationFacet'
 import {
   ColumnTypeEnum,
   FacetColumnResult,
-  FacetColumnResultValues,
   Row,
 } from '@sage-bionetworks/synapse-types'
 import {
@@ -246,9 +246,9 @@ export function TableDataColumnHeader(
     },
   )
   // the header must be included in the facets and it has to be enumerable for current rendering capabilities
-  const isFacetSelection: boolean =
-    facetIndex !== -1 && facets[facetIndex].facetType === 'enumeration'
-  const facet = facets[facetIndex] as FacetColumnResultValues
+  const facet =
+    facetIndex === -1 ? undefined : getEnumerationFacet(facets[facetIndex])
+  const isFacetSelection = facet !== undefined
   const isLockedColumn =
     selectColumn &&
     selectColumn.name.toLowerCase() === lockedColumn?.columnName?.toLowerCase() // used in details page to disable filter the column
@@ -268,13 +268,15 @@ export function TableDataColumnHeader(
       title={displayColumnName}
       helpText={columnHelpText}
       filterControl={
-        <span>
-          <EnumFacetFilter
-            containerAs="Dropdown"
-            facet={facet}
-            defaultShowAllValues={true}
-          />
-        </span>
+        facet && (
+          <span>
+            <EnumFacetFilter
+              containerAs="Dropdown"
+              facet={facet}
+              defaultShowAllValues={true}
+            />
+          </span>
+        )
       }
       additionalButtons={
         <>{isEntityIDColumn && <EntityIDColumnCopyIcon size={'small'} />}</>

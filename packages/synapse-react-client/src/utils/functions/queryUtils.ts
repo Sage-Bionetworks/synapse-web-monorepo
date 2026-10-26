@@ -26,6 +26,7 @@ import {
   isEntityView,
   isFileView,
 } from './EntityTypeUtils'
+import { getEnumerationFacet } from './enumerationFacet'
 
 /**
  * Retrieve the index of a column using the column name
@@ -109,10 +110,10 @@ export const hasFacetedSelectColumn = (
 }
 
 export const isSingleNotSetValue = (facet: FacetColumnResult): boolean => {
+  const facetValues = getEnumerationFacet(facet)?.facetValues
   return (
-    facet.facetType === 'enumeration' &&
-    facet.facetValues.length == 1 &&
-    facet.facetValues[0].value == SynapseConstants.VALUE_NOT_SET
+    facetValues?.length == 1 &&
+    facetValues[0].value == SynapseConstants.VALUE_NOT_SET
   )
 }
 
@@ -256,7 +257,7 @@ export function removeEmptyQueryParams(q: Query) {
  * @param columnModels
  */
 export function getCorrespondingColumnForFacet(
-  facet: FacetColumnResult,
+  facet: UniqueFacetIdentifier,
   columnModels: ColumnModel[],
 ): ColumnModel | JsonSubColumnModel | undefined {
   let columnModel: ColumnModel | JsonSubColumnModel | undefined =

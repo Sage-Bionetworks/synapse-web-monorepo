@@ -2,7 +2,7 @@ import isArray from 'lodash-es/isArray'
 import isEqual from 'lodash-es/isEqual'
 import isObject from 'lodash-es/isObject'
 
-function isSchemaDescribingNullType(s: any) {
+export function isSchemaDescribingNullType(s: any) {
   return (
     isObject(s) &&
     'type' in s &&

@@ -1,4 +1,8 @@
 import {
+  EnumerationFacet,
+  getEnumerationFacet,
+} from '@/utils/functions/enumerationFacet'
+import {
   facetObjectMatchesDefinition,
   getCorrespondingColumnForFacet,
   isSingleNotSetValue,
@@ -6,7 +10,6 @@ import {
 import {
   FacetColumnRequest,
   FacetColumnResultRange,
-  FacetColumnResultValues,
   FacetColumnValuesRequest,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
@@ -33,7 +36,7 @@ export type FacetFilterControlsProps = {
 }
 
 const convertFacetToFacetColumnValuesRequest = (
-  facet: FacetColumnResultValues,
+  facet: EnumerationFacet,
 ): FacetColumnValuesRequest => ({
   concreteType: 'org.sagebionetworks.repo.model.table.FacetColumnValuesRequest',
   columnName: facet.columnName,
@@ -72,7 +75,7 @@ const patchRequestFacets = (
 
 export function applyChangesToValuesColumn(
   lastRequest: QueryBundleRequest | undefined,
-  facet: FacetColumnResultValues,
+  facet: EnumerationFacet,
   onChangeFn: (result: FacetColumnRequest[]) => void,
   facetName?: string,
   checked: boolean = false,
@@ -251,10 +254,14 @@ function FacetFilterControls(props: FacetFilterControlsProps) {
           facet,
           columnModels ?? [],
         )
+        const enumerationFacet = getEnumerationFacet(facet)
         return (
           <div className="FacetFilterControls__facet" key={facet.columnName}>
-            {facet.facetType === 'enumeration' && columnModel && (
-              <EnumFacetFilter containerAs="Collapsible" facet={facet} />
+            {enumerationFacet && columnModel && (
+              <EnumFacetFilter
+                containerAs="Collapsible"
+                facet={enumerationFacet}
+              />
             )}
             {facet.facetType === 'range' && columnModel && (
               <RangeFacetFilter facetResult={facet} />

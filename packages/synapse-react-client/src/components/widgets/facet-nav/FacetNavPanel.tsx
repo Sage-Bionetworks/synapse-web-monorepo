@@ -12,11 +12,11 @@ import {
   Stack,
   Tooltip,
 } from '@mui/material'
+import { EnumerationFacet } from '@/utils/functions/enumerationFacet'
 import {
   ColumnTypeEnum,
   FacetColumnRequest,
   FacetColumnResultValueCount,
-  FacetColumnResultValues,
 } from '@sage-bionetworks/synapse-types'
 import { useQuery } from '@tanstack/react-query'
 import type Plotly from 'plotly.js-basic-dist'
@@ -35,13 +35,13 @@ import { useMeasure } from '@react-hookz/web'
 
 export type FacetNavPanelProps = {
   applyChangesToGraphSlice: (
-    facet: FacetColumnResultValues,
+    facet: EnumerationFacet,
     value: FacetColumnResultValueCount | undefined,
     isSelected: boolean,
   ) => void
   applyChangesToFacetFilter: (facets: FacetColumnRequest[]) => void
   index: number
-  facetToPlot: FacetColumnResultValues
+  facetToPlot: EnumerationFacet
   plotType: PlotType
   onSetPlotType: (plotType: PlotType) => void
   onHide: () => void
@@ -63,7 +63,7 @@ export type GraphData = {
 }
 
 export async function extractPlotDataArray(
-  facetToPlot: FacetColumnResultValues,
+  facetToPlot: EnumerationFacet,
   columnType: ColumnTypeEnum | undefined,
   index: number,
   plotType: PlotType,
@@ -230,7 +230,7 @@ export async function extractPlotDataArray(
 
 const applyFacetFilter = (
   event: Plotly.PlotMouseEvent,
-  allFacetValues: FacetColumnResultValues,
+  allFacetValues: EnumerationFacet,
   callbackApplyFn: FacetNavPanelProps['applyChangesToGraphSlice'],
 ) => {
   if (event.points?.[0]) {

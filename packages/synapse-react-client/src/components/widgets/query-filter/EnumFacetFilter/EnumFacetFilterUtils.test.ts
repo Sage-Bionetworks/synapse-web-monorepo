@@ -120,10 +120,7 @@ describe('EnumFacetFilterUtils', () => {
             partMask: 511,
           },
           {
-            concreteType:
-              'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
             columnName: 'foo',
-            facetType: 'enumeration',
             facetValues: [
               { value: 'a', count: 10, isSelected: false },
               { value: 'b', count: 9, isSelected: false },
@@ -154,10 +151,7 @@ describe('EnumFacetFilterUtils', () => {
             partMask: 511,
           },
           {
-            concreteType:
-              'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
             columnName: 'foo',
-            facetType: 'enumeration',
             facetValues: [
               { value: 'a', count: 10, isSelected: false },
               { value: 'b', count: 9, isSelected: false },
@@ -189,10 +183,7 @@ describe('EnumFacetFilterUtils', () => {
             partMask: 511,
           },
           {
-            concreteType:
-              'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
             columnName: 'foo',
-            facetType: 'enumeration',
             facetValues: [
               { value: 'a', count: 10, isSelected: false },
               { value: 'b', count: 9, isSelected: false },
@@ -223,10 +214,7 @@ describe('EnumFacetFilterUtils', () => {
             partMask: 511,
           },
           {
-            concreteType:
-              'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
             columnName: 'foo',
-            facetType: 'enumeration',
             facetValues: [
               { value: 'a', count: 10, isSelected: false },
               { value: 'b', count: 9, isSelected: false },
@@ -257,10 +245,7 @@ describe('EnumFacetFilterUtils', () => {
             partMask: 511,
           },
           {
-            concreteType:
-              'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
             columnName: 'foo',
-            facetType: 'enumeration',
             facetValues: [
               { value: 'a', count: 10, isSelected: false },
               { value: 'b', count: 9, isSelected: false },

@@ -9,10 +9,8 @@ import {
 import { useCallback, useMemo } from 'react'
 import useGetInfoFromIds from '../../utils/hooks/useGetInfoFromIds'
 import { VALUE_NOT_SET } from '../../utils/SynapseConstants'
-import {
-  isFacetColumnResultValues,
-  labelForFacetValue,
-} from './queryBuilderMetadata'
+import { getEnumerationFacets } from '../../utils/functions/enumerationFacet'
+import { labelForFacetValue } from './queryBuilderMetadata'
 
 /**
  * Resolves the user-facing label for a value stored on a QB condition. Columns
@@ -73,8 +71,7 @@ export function useQBValueDisplayName(
       USER_PROFILE: [],
       EVALUATION_QUEUE: [],
     }
-    for (const facet of facetResults) {
-      if (!isFacetColumnResultValues(facet)) continue
+    for (const facet of getEnumerationFacets(facetResults)) {
       const lookupType = lookupTypeByColumnName.get(facet.columnName)
       if (lookupType == null) continue
       for (const facetValue of facet.facetValues) {

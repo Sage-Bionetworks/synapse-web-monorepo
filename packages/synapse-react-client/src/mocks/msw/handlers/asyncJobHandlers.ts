@@ -15,10 +15,24 @@ import {
 import { DefaultBodyType, http, HttpHandler, HttpResponse } from 'msw'
 import BasicMockedCrudService from '../util/BasicMockedCrudService'
 
+/**
+ * A dispatch result that makes a mocked job FAIL: the job status reports `FAILED`
+ * and the job's response endpoint returns `body` with the given HTTP `status`.
+ */
+export class AsyncJobFailure {
+  constructor(
+    readonly status: number,
+    /** An ErrorResponse or one of its subtypes, e.g. BelowThresholdErrorResponse. */
+    readonly body: { concreteType: string; reason?: string },
+  ) {}
+}
+
+type AsyncJobResult = DefaultBodyType | ErrorResponse | AsyncJobFailure
+
 type AsyncJobDetails = {
   id: string
   request: AsynchronousRequestBody
-  response: DefaultBodyType | ErrorResponse
+  response: AsyncJobResult
 }
 
 const mockAsynchronousJobService = new BasicMockedCrudService<
@@ -34,7 +48,7 @@ const mockAsynchronousJobService = new BasicMockedCrudService<
  */
 export type AsynchronousJobDispatch = Record<
   string,
-  (request: AsynchronousRequestBody) => DefaultBodyType | ErrorResponse
+  (request: AsynchronousRequestBody) => AsyncJobResult
 >
 
 /**
@@ -48,7 +62,7 @@ export function dispatchEntry<
   concreteType: T,
   handler: (
     request: Extract<AsynchronousRequestBody, { concreteType: T }>,
-  ) => DefaultBodyType | ErrorResponse,
+  ) => AsyncJobResult,
 ): AsynchronousJobDispatch {
   return {
     [concreteType]: request =>
@@ -98,12 +112,10 @@ export function generateAsyncJobHandlers(
     )
   }
 
-  const jobState: AsynchJobState =
+  const defaultJobState: AsynchJobState =
     serviceSpecificEndpointResponseStatus < 400 ? 'COMPLETE' : 'FAILED'
 
-  function resolveResponse(
-    body: AsynchronousRequestBody,
-  ): DefaultBodyType | ErrorResponse {
+  function resolveResponse(body: AsynchronousRequestBody): AsyncJobResult {
     const handler = dispatch[body.concreteType]
     if (!handler) {
       throw new Error(
@@ -150,17 +162,18 @@ export function generateAsyncJobHandlers(
           )
         }
         const { request, response } = asyncJobDetails
+        const failure = response instanceof AsyncJobFailure ? response : null
 
         return HttpResponse.json<
           AsynchronousJobStatus<AsynchronousRequestBody, DefaultBodyType>
         >(
           {
-            jobState,
+            jobState: failure ? 'FAILED' : defaultJobState,
             jobCanceling: false,
             requestBody: request,
             etag: '00000000-0000-0000-0000-000000000000',
             jobId: id,
-            responseBody: response as DefaultBodyType,
+            responseBody: failure ? undefined : (response as DefaultBodyType),
             startedByUserId: 0,
             startedOn: '',
             changedOn: '',
@@ -168,7 +181,7 @@ export function generateAsyncJobHandlers(
             progressCurrent: 100,
             progressTotal: 100,
             exception: '',
-            errorMessage: '',
+            errorMessage: failure?.body.reason ?? '',
             errorDetails: '',
             runtimeMS: 100,
           },
@@ -198,7 +211,11 @@ export function generateAsyncJobHandlers(
             )
           }
 
-          return HttpResponse.json(asyncJobDetails.response, {
+          const { response } = asyncJobDetails
+          if (response instanceof AsyncJobFailure) {
+            return HttpResponse.json(response.body, { status: response.status })
+          }
+          return HttpResponse.json(response, {
             status: serviceSpecificEndpointResponseStatus,
           })
         },
