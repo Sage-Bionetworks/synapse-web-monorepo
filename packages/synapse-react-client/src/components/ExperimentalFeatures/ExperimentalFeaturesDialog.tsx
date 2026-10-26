@@ -8,6 +8,7 @@ import {
 import styles from './ExperimentalFeaturesDialog.module.scss'
 import { ConfirmationButtons } from '../ConfirmationDialog/ConfirmationDialog'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
+import { isEqual, sortBy } from 'lodash-es'
 
 export const NO_FEATURES_AVAILABLE_TEXT =
   'No individual experimental features are available on this site right now.'
@@ -42,6 +43,10 @@ function ExperimentalFeaturesDialog({
   const [enableAll, setEnableAll] = useState(initialEnableAll)
   // Individual toggles for each experimental feature
   const [enabledFlags, setEnabledFlags] = useState(initialEnabledFlags)
+
+  const hasChanges =
+    enableAll !== initialEnableAll ||
+    !isEqual(sortBy(enabledFlags), sortBy(initialEnabledFlags))
 
   const toggleFlag = (flag: FeatureFlagEnum) => {
     if (enableAll) {
@@ -137,7 +142,11 @@ function ExperimentalFeaturesDialog({
         <ConfirmationButtons
           onCancel={onCancel}
           onConfirm={() => {
-            onSave(enableAll, enabledFlags)
+            if (hasChanges) {
+              onSave(enableAll, enabledFlags)
+            } else {
+              onCancel()
+            }
           }}
           confirmButtonProps={{
             children: 'Done',
