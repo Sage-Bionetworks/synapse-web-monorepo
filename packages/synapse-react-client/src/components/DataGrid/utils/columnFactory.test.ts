@@ -8,6 +8,7 @@ import { describe, expect, it } from 'vitest'
 import { autocompleteMultipleEnumColumn } from '../columns/AutocompleteMultipleEnumColumn'
 import { dateTimeColumn } from '../columns/DateTimeColumn'
 import { numberColumn } from '../columns/NumberColumn'
+import { numberOrEnumColumn } from '../columns/NumberOrEnumColumn'
 import { createColumn } from './columnFactory'
 import React, { isValidElement, ReactElement } from 'react'
 
@@ -41,6 +42,10 @@ vi.mock('../columns/AutocompleteMultipleEnumColumn', () => ({
 
 vi.mock('../columns/NumberColumn', () => ({
   numberColumn: vi.fn(),
+}))
+
+vi.mock('../columns/NumberOrEnumColumn', () => ({
+  numberOrEnumColumn: vi.fn(),
 }))
 
 /** Helper to extract props from ColumnHeaderWithTooltip React element */
@@ -91,6 +96,8 @@ const mockAutocompleteMultipleEnumColumn = mocked(
 ).mockReturnValue(fakeColumn)
 const mockDateTimeColumn = mocked(dateTimeColumn).mockReturnValue(fakeColumn)
 const mockNumberColumn = mocked(numberColumn).mockReturnValue(fakeColumn)
+const mockNumberOrEnumColumn =
+  mocked(numberOrEnumColumn).mockReturnValue(fakeColumn)
 
 describe('columnFactory', () => {
   beforeEach(() => {
@@ -213,6 +220,40 @@ describe('columnFactory', () => {
       expect(headerProps.name).toBe('age')
       expect(headerProps.description).toBeUndefined()
     })
+
+    // A number-or-enum union reports its numeric branch as its type and its
+    // strings as its enumerated values, so its check has to win over both.
+    it.each([
+      { required: true, clearValue: null },
+      { required: false, clearValue: undefined },
+    ])(
+      'should create a number-or-enum column for a number-or-enum union (required: $required)',
+      ({ required, clearValue }) => {
+        const enumValues = ['>= 90', 'Unknown']
+        const typeInfo = { type: 'number', isArray: false }
+        const config = {
+          columnName: 'age',
+          typeInfo,
+          enumeratedValues: enumValues,
+          isRequired: required,
+          schemaPropertyInfo: {
+            type: typeInfo,
+            isRequired: required,
+            enumeratedValues: enumValues,
+            isNumberOrEnum: true,
+          },
+        }
+
+        createColumn(config)
+
+        expect(mockNumberOrEnumColumn).toHaveBeenCalledWith({
+          enumValues,
+          clearValue,
+        })
+        expect(mockNumberColumn).not.toHaveBeenCalled()
+        expect(mockAutocompleteColumn).not.toHaveBeenCalled()
+      },
+    )
 
     it('should create an enumerated column when enumeratedValues are provided', () => {
       const config = {

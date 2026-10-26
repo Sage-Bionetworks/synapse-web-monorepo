@@ -1,4 +1,5 @@
 import getEnumeratedValues, { EnumeratedValue } from './getEnumeratedValues'
+import { getNumberOrEnumInfo } from './getNumberOrEnumInfo'
 import getSchemaForProperty from './getSchemaForProperty'
 import getRequiredAttributes from './getRequiredAttributes'
 import { FlatTypeInfo, getFlatTypeInfo } from './getType'
@@ -9,6 +10,11 @@ export interface SchemaPropertyInfo {
   isRequired: boolean
   enumeratedValues: EnumeratedValue[] | null
   description?: string
+  /**
+   * True when the property is either a number of the given `type` or one of the
+   * strings in `enumeratedValues`; see {@link getNumberOrEnumInfo}
+   */
+  isNumberOrEnum?: boolean
 }
 
 export interface SchemaPropertiesMap {
@@ -34,6 +40,27 @@ export function getSchemaPropertiesInfo(
   if (schema.properties) {
     Object.keys(schema.properties).forEach(propertyName => {
       const propertySchema = getSchemaForProperty(schema, propertyName)
+
+      const numberOrEnum = getNumberOrEnumInfo(
+        propertySchema,
+        schema.definitions,
+      )
+      if (numberOrEnum) {
+        // A number-or-enum union describes neither a single type nor an
+        // enumeration, so both come from its detected branches.
+        propertiesMap[propertyName] = {
+          type: {
+            ...getFlatTypeInfo(propertySchema),
+            type: numberOrEnum.numericType,
+          },
+          isRequired: requiredFields.includes(propertyName),
+          enumeratedValues: numberOrEnum.enumValues,
+          description: propertySchema?.description,
+          isNumberOrEnum: true,
+        }
+        return
+      }
+
       const type = getFlatTypeInfo(propertySchema)
       let enumeratedValues = getEnumeratedValues(propertySchema).map(
         item => item.value,

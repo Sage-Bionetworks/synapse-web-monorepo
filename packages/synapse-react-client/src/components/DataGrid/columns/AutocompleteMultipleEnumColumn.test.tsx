@@ -52,6 +52,24 @@ describe('autocompleteMultipleEnumColumn', () => {
     expect(result).toContain('three')
   })
 
+  // Clipboard cells always arrive as text, so each pasted item has to be parsed
+  // by the column's item type the same way typed text is.
+  it.each<[string, string, unknown[]]>([
+    ['boolean', 'true, FALSE', [true, false]],
+    ['boolean', 'yes', ['yes']],
+    ['number', '1, 2.5', [1, 2.5]],
+    ['string', 'option1', ['option1']],
+  ])(
+    'pasteValue parses each item by the %s item type (%j)',
+    (colType, pasted, expected) => {
+      const column = autocompleteMultipleEnumColumn({ choices: [], colType })
+
+      expect(
+        column.pasteValue!({ value: pasted, rowData: null, rowIndex: 0 }),
+      ).toEqual(expected)
+    },
+  )
+
   it('filters out null-like parses but keeps valid ones', () => {
     const column = autocompleteMultipleEnumColumn({
       choices: [],
