@@ -25,6 +25,8 @@ export type RenderedFacetValue<TValue = string> = Omit<
   displayText: string
   /* Optional custom node to render in place of the plain-text label. */
   renderedLabel?: ReactNode
+  /* Optional display text for the count (e.g. a range or an approximation); defaults to the localized count. */
+  countText?: string
 }
 
 export type EnumFacetFilterUIProps<TValue = string> = {
@@ -214,8 +216,14 @@ export default function EnumFacetFilterUI<TValue = string>(
       </div>
       <div>
         {facetValuesToShow.map((facetValueAndCount, index: number) => {
-          const { isSelected, displayText, renderedLabel, value, count } =
-            facetValueAndCount
+          const {
+            isSelected,
+            displayText,
+            renderedLabel,
+            value,
+            count,
+            countText,
+          } = facetValueAndCount
 
           return (
             <EnumFacetFilterOption
@@ -227,6 +235,7 @@ export default function EnumFacetFilterUI<TValue = string>(
               ].join('-')}
               label={renderedLabel ?? displayText}
               count={count}
+              countText={countText}
               isDropdown={isDropdown}
               checked={isSelected}
               onHover={() => {
