@@ -258,7 +258,6 @@
     "unicorn/prefer-dom-node-remove": "error",
     "unicorn/prefer-includes": "error",
     "unicorn/prefer-math-min-max": "error",
-    "unicorn/prefer-math-trunc": "error",
     "unicorn/prefer-native-coercion-functions": "error",
     "unicorn/prefer-negative-index": "error",
     "unicorn/prefer-node-protocol": "error",
