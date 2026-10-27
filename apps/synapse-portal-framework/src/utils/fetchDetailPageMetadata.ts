@@ -3,7 +3,7 @@ import {
   waitForAsyncResult,
 } from '@sage-bionetworks/synapse-client'
 import { extractEntityIdFromSql } from '../sitemap/queryTableForSitemap'
-import { PrerenderCache } from './cache'
+import { getSharedPrerenderCache } from './cache'
 import { createAnonymousSynapseClient } from './synapseClient'
 
 const BUNDLE_MASK_QUERY_RESULTS = 0x1
@@ -36,12 +36,14 @@ export interface DetailPageMetadata {
 // ---------------------------------------------------------------------------
 
 /**
- * Module-level cache for detail page metadata.
+ * Process-wide cache for detail page metadata, shared by every copy of this module in the build process.
  *
  * Pre-populated via {@link preloadDetailPageMetadata} during SSG builds.
  * Cache key format: `${sql}:${paramValue}`
  */
-const metadataCache = new PrerenderCache<string, DetailPageMetadata>()
+const metadataCache = getSharedPrerenderCache<string, DetailPageMetadata>(
+  'detailPageMetadata',
+)
 
 /**
  * Builds a cache key from the SQL query and filter parameter value.
@@ -92,8 +94,7 @@ export async function fetchDetailPageMetadata(
  * title and description columns, and pre-populates {@link metadataCache}
  * using its `set()` method.
  *
- * Safe to call multiple times — subsequent calls are no-ops if the cache
- * is still populated.
+ * Each call re-queries the whole table, so call it once per build.
  *
  * @param config - Describes which table and columns to query
  * @returns The number of entries preloaded
