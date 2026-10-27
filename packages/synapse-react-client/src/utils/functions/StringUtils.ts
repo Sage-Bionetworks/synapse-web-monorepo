@@ -37,7 +37,6 @@ export function hashCode(str?: string | null) {
     // oxlint-disable-next-line unicorn/prefer-code-point
     const chr = str.charCodeAt(i)
     hash = (hash << 5) - hash + chr
-    // oxlint-disable-next-line unicorn/prefer-math-trunc -- `|= 0` wraps the hash to a 32-bit integer; Math.trunc would not
     hash |= 0 // Convert to 32bit integer
   }
   return hash
