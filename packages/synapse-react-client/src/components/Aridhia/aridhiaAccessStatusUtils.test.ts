@@ -3,12 +3,11 @@ import { RestrictionUiType } from '../HasAccess/AccessIcon'
 import {
   getRestrictionUiTypeFromAridhiaRequests,
   findRequestsForDataset,
+  RequestStatus,
 } from './aridhiaAccessStatusUtils'
 import { RequestListItem } from '@sage-bionetworks/aridhia-client/generated/models'
 
-type Status = NonNullable<RequestListItem['status']>
-
-const EXPECTED_BY_STATUS: Record<Status, RestrictionUiType> = {
+const EXPECTED_BY_STATUS: Record<RequestStatus, RestrictionUiType> = {
   approved: RestrictionUiType.AccessibleOnRDCADAP,
   pending:
     RestrictionUiType.AccessBlockedByRestrictionWithPendingRDCADAPRequest,
@@ -18,9 +17,9 @@ const EXPECTED_BY_STATUS: Record<Status, RestrictionUiType> = {
 }
 
 // Most favorable first: see `getRestrictionUiTypeFromAridhiaRequests`.
-const PRECEDENCE: Status[] = ['approved', 'pending', 'denied', 'error']
+const PRECEDENCE: RequestStatus[] = ['approved', 'pending', 'denied', 'error']
 
-function request(status: Status | undefined, updated_at?: string) {
+function request(status: RequestStatus | undefined, updated_at?: string) {
   return { status, updated_at } as RequestListItem
 }
 
@@ -109,6 +108,29 @@ describe('aridhiaAccessStatusUtils', () => {
       expect(
         findRequestsForDataset(requests, datasetCode).map(r => r.code),
       ).toEqual(['dated', 'undated'])
+    })
+
+    test('sorts requests with an unparseable updated_at after dated ones', () => {
+      const requests = [
+        requestFor('garbled', [datasetCode], 'n/a'),
+        requestFor('dated', [datasetCode], '2024-01-01T00:00:00Z'),
+      ]
+
+      expect(
+        findRequestsForDataset(requests, datasetCode).map(r => r.code),
+      ).toEqual(['dated', 'garbled'])
+    })
+
+    test('orders by instant, not by string, when timestamps carry different offsets', () => {
+      const requests = [
+        // 2024-06-01T10:00Z: sorts first as a string, but is the earlier instant.
+        requestFor('earlier', [datasetCode], '2024-06-01T12:00:00+02:00'),
+        requestFor('later', [datasetCode], '2024-06-01T11:00:00Z'),
+      ]
+
+      expect(
+        findRequestsForDataset(requests, datasetCode).map(r => r.code),
+      ).toEqual(['later', 'earlier'])
     })
 
     test('does not reorder the input array', () => {

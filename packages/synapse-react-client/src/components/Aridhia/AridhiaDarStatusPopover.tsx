@@ -12,12 +12,11 @@ import {
   Typography,
 } from '@mui/material'
 import { RequestListItem } from '@sage-bionetworks/aridhia-client/generated/models'
+import { RequestStatus } from './aridhiaAccessStatusUtils'
 import {
   getAridhiaFairPortalDatasetUrl,
   getAridhiaFairPortalRequestUrl,
 } from './aridhiaFairPortalUrls'
-
-type RequestStatus = NonNullable<RequestListItem['status']>
 
 const STATUS_CHIP: Record<
   RequestStatus,
@@ -77,7 +76,7 @@ export default function AridhiaDarStatusPopover(
         <List aria-labelledby={headingId} disablePadding>
           {requests.map((request, index) => (
             <DarListItem
-              key={request.code}
+              key={request.code ?? `uncoded-${index}`}
               request={request}
               fairPortalUrl={fairPortalUrl}
               divider={index < requests.length - 1}

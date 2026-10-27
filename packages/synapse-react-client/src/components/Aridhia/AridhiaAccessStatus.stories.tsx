@@ -1,4 +1,5 @@
 import { Box } from '@mui/material'
+import { RequestListItem } from '@sage-bionetworks/aridhia-client/generated/models'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { HttpHandler } from 'msw'
 import { expect, userEvent, within } from 'storybook/test'
@@ -9,6 +10,7 @@ import {
   MOCK_ARIDHIA_DATASET_CODE,
   MOCK_ARIDHIA_FAIR_PORTAL_URL,
   MOCK_ARIDHIA_GATEWAY,
+  mockAridhiaRequestListItem,
 } from '@/mocks/msw/handlers/aridhiaHandlers'
 import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
 import { AridhiaContextProvider } from '@/utils/context/AridhiaContext'
@@ -18,38 +20,28 @@ import AridhiaAccessStatus, {
   AridhiaAccessStatusProps,
 } from './AridhiaAccessStatus'
 
-type RequestStatus = 'pending' | 'approved' | 'denied' | 'error'
-
-function mockRequest(name: string, status: RequestStatus, updatedAt: string) {
-  return {
-    code: `ampals-${MOCK_ARIDHIA_DATASET_CODE}-${name.toLowerCase().replaceAll(/\W+/g, '-')}`,
-    name,
-    status,
-    datasets: [{ code: MOCK_ARIDHIA_DATASET_CODE }],
-    created_at: updatedAt,
-    updated_at: updatedAt,
-  }
-}
-
-const PENDING = mockRequest(
-  'Biomarker tables',
-  'pending',
-  '2026-10-12T00:00:00Z',
-)
-const DENIED = mockRequest(
-  'Full dataset request',
-  'denied',
-  '2026-09-03T00:00:00Z',
-)
-const APPROVED = mockRequest(
-  'Demographics and vitals',
-  'approved',
-  '2026-08-20T00:00:00Z',
-)
+const PENDING = mockAridhiaRequestListItem({
+  code: `ampals-${MOCK_ARIDHIA_DATASET_CODE}-biomarker-tables`,
+  name: 'Biomarker tables',
+  status: 'pending',
+  updatedAt: '2026-10-12T00:00:00Z',
+})
+const DENIED = mockAridhiaRequestListItem({
+  code: `ampals-${MOCK_ARIDHIA_DATASET_CODE}-full-dataset-request`,
+  name: 'Full dataset request',
+  status: 'denied',
+  updatedAt: '2026-09-03T00:00:00Z',
+})
+const APPROVED = mockAridhiaRequestListItem({
+  code: `ampals-${MOCK_ARIDHIA_DATASET_CODE}-demographics-and-vitals`,
+  name: 'Demographics and vitals',
+  status: 'approved',
+  updatedAt: '2026-08-20T00:00:00Z',
+})
 
 function handlers(options: {
   formEnabled: boolean
-  requests: unknown[]
+  requests: RequestListItem[]
 }): Record<string, HttpHandler[]> {
   return {
     featureFlags: [

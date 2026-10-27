@@ -50,8 +50,9 @@ export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
   )
   const [eligibilityDialogOpen, setEligibilityDialogOpen] = useState(false)
   const [requestDialogOpen, setRequestDialogOpen] = useState(false)
-  // Each opening of the wizard is a new DAR, so it gets a fresh wizard session (and with it a
-  // fresh request code) rather than resuming the previous one's submitted state.
+  // Every opening of the wizard remounts it under a new session key, so a submitted request's
+  // confirmation screen never carries over. The remounted wizard resumes this dataset's
+  // unsubmitted draft if one exists, and otherwise starts a draft with a fresh request code.
   const [wizardSession, setWizardSession] = useState(0)
 
   function openRequestWizard() {

@@ -17,6 +17,7 @@ import {
   MOCK_ARIDHIA_FAIR_PORTAL_URL,
   MOCK_ARIDHIA_GATEWAY,
   MOCK_ARIDHIA_NOT_AUTHORIZED_ERROR,
+  mockAridhiaRequestListItem,
 } from '@/mocks/msw/handlers/aridhiaHandlers'
 import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
 import { server } from '@/mocks/msw/server'
@@ -44,20 +45,26 @@ const DENIED_ACCESS_ICON_NAME =
   'Your access request has been denied by RDCA-DAP.'
 const POPOVER_LIST_NAME = 'Your data access requests'
 
+/** The request's name, which the popover shows, deliberately differs from its code. */
 function mockRequest(
-  code: string,
+  name: string,
   status: 'pending' | 'approved' | 'denied' | 'error',
   updatedAt: string,
-  datasetCodes: string[] = [MOCK_ARIDHIA_DATASET_CODE],
+  datasetCodes?: string[],
 ) {
-  return {
-    code,
-    name: code,
+  return mockAridhiaRequestListItem({
+    code: `ampals-${MOCK_ARIDHIA_DATASET_CODE}-${name}`,
+    name,
     status,
-    datasets: datasetCodes.map(datasetCode => ({ code: datasetCode })),
-    created_at: updatedAt,
-    updated_at: updatedAt,
-  }
+    updatedAt,
+    datasetCodes,
+  })
+}
+
+function getPopoverListItems() {
+  return within(
+    screen.getByRole('list', { name: POPOVER_LIST_NAME }),
+  ).getAllByRole('listitem')
 }
 
 async function openStatusPopover(user: UserEvent, iconName: string) {
@@ -200,9 +207,10 @@ describe('AridhiaAccessStatus', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 
-  it('opens the status popover showing the request name when a request is pending, linking to the specific request on the FAIR portal', async () => {
+  it('opens the status popover showing the request name when a request is pending and the feature flag is disabled, linking to the specific request on the FAIR portal', async () => {
     const user = userEvent.setup()
     server.use(
+      darFormFeatureFlagOverride(false),
       getAridhiaAuthenticateHandler(),
       getAridhiaRequestsHandler([
         {
@@ -221,7 +229,9 @@ describe('AridhiaAccessStatus', () => {
         screen.getByRole('img', { name: PENDING_ACCESS_ICON_NAME }),
       ).toBeInTheDocument(),
     )
-    await user.click(screen.getByRole('button'))
+    await user.click(
+      screen.getByRole('button', { name: 'View data access request status' }),
+    )
 
     await waitFor(() =>
       expect(
@@ -235,6 +245,55 @@ describe('AridhiaAccessStatus', () => {
         'ampals-sdtm_als1003-abc12345',
       ),
     )
+  })
+
+  it('offers a new request, but no dataset link, when the only request is pending and the feature flag is enabled', async () => {
+    const user = userEvent.setup()
+    server.use(
+      darFormFeatureFlagOverride(true),
+      getAridhiaAuthenticateHandler(),
+      getAridhiaRequestsHandler([
+        mockRequest('Biomarker tables', 'pending', '2024-01-01T00:00:00Z'),
+      ]),
+    )
+    renderStatus(MOCK_ARIDHIA_FAIR_PORTAL_URL)
+
+    await openStatusPopover(user, PENDING_ACCESS_ICON_NAME)
+
+    expect(getPopoverRequestNames()).toEqual(['Biomarker tables'])
+    expect(
+      screen.getByRole('button', { name: 'Submit a new request' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole('link', { name: 'Open dataset on RDCA-DAP' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('opens the status popover with a dataset link and a new-request action when the only request is approved and the feature flag is enabled', async () => {
+    const user = userEvent.setup()
+    server.use(
+      darFormFeatureFlagOverride(true),
+      getAridhiaAuthenticateHandler(),
+      getAridhiaRequestsHandler([
+        mockRequest('Demographics', 'approved', '2024-01-01T00:00:00Z'),
+      ]),
+    )
+    renderStatus(MOCK_ARIDHIA_FAIR_PORTAL_URL)
+
+    await openStatusPopover(user, HAS_ACCESS_ICON_NAME)
+
+    expect(
+      screen.getByRole('link', { name: 'Open dataset on RDCA-DAP' }),
+    ).toHaveAttribute(
+      'href',
+      getAridhiaFairPortalDatasetUrl(
+        MOCK_ARIDHIA_FAIR_PORTAL_URL,
+        MOCK_ARIDHIA_DATASET_CODE,
+      ),
+    )
+    expect(
+      screen.getByRole('button', { name: 'Submit a new request' }),
+    ).toBeInTheDocument()
   })
 
   it('lists every request for the dataset in the status popover, newest first, without a new-request action when the feature flag is disabled', async () => {
@@ -255,6 +314,9 @@ describe('AridhiaAccessStatus', () => {
     await openStatusPopover(user, PENDING_ACCESS_ICON_NAME)
 
     expect(getPopoverRequestNames()).toEqual(['newer-pending', 'older-denied'])
+    const [newerItem, olderItem] = getPopoverListItems()
+    expect(newerItem).toHaveTextContent('Pending')
+    expect(olderItem).toHaveTextContent('Denied')
     expect(
       screen.queryByRole('button', { name: 'Submit a new request' }),
     ).not.toBeInTheDocument()
@@ -325,7 +387,12 @@ describe('AridhiaAccessStatus', () => {
         server.use(
           getAridhiaRequestsHandler(
             submittedCodes.map(code =>
-              mockRequest(code, 'pending', '2024-01-01T00:00:00Z'),
+              mockAridhiaRequestListItem({
+                code,
+                name: code,
+                status: 'pending',
+                updatedAt: '2024-01-01T00:00:00Z',
+              }),
             ),
           ),
         )
@@ -362,10 +429,16 @@ describe('AridhiaAccessStatus', () => {
     ).toBeInTheDocument()
     expect(submittedCodes).toHaveLength(2)
     expect(submittedCodes[1]).not.toBe(submittedCodes[0])
+    for (const code of submittedCodes) {
+      expect(code).toMatch(
+        new RegExp(`^ampals-${MOCK_ARIDHIA_DATASET_CODE}-[0-9a-f]{8}$`),
+      )
+    }
   })
 
-  it('links out to the dataset on the FAIR portal when the request is approved', async () => {
+  it('links out to the dataset on the FAIR portal when the request is approved and the feature flag is disabled', async () => {
     server.use(
+      darFormFeatureFlagOverride(false),
       getAridhiaAuthenticateHandler(),
       getAridhiaRequestsHandler([
         {

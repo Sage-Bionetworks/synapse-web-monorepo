@@ -1,7 +1,7 @@
 import { RestrictionUiType } from '../HasAccess/AccessIcon'
 import { RequestListItem } from '@sage-bionetworks/aridhia-client/generated/models'
 
-type RequestStatus = NonNullable<RequestListItem['status']>
+export type RequestStatus = NonNullable<RequestListItem['status']>
 
 /**
  * A user may hold several DARs for one dataset (e.g. different tables, or a resubmission after
@@ -47,8 +47,8 @@ export function getRestrictionUiTypeFromAridhiaRequests(
  *
  * @param requests - Array of Aridhia requests
  * @param datasetCode - The dataset code to search for (case-sensitive)
- * @returns The matching requests, most recently updated first; requests without `updated_at`
- *   sort last
+ * @returns The matching requests, most recently updated first; requests whose `updated_at` is
+ *   missing or unparseable sort last
  */
 export function findRequestsForDataset(
   requests: readonly RequestListItem[],
@@ -58,5 +58,15 @@ export function findRequestsForDataset(
     .filter(request =>
       request.datasets?.some(dataset => dataset.code === datasetCode),
     )
-    .sort((a, b) => (b.updated_at ?? '').localeCompare(a.updated_at ?? ''))
+    .sort((a, b) => {
+      const aMillis = updatedAtMillis(a)
+      const bMillis = updatedAtMillis(b)
+      return aMillis === bMillis ? 0 : bMillis - aMillis
+    })
+}
+
+/** Undated and unparseable timestamps map to -Infinity so they sort after every real date. */
+function updatedAtMillis(request: RequestListItem): number {
+  const millis = Date.parse(request.updated_at ?? '')
+  return Number.isNaN(millis) ? -Infinity : millis
 }
