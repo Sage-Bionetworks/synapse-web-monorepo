@@ -302,10 +302,10 @@ export function useInitiateDataAccessRequestSignature(
       synapseClient.dataAccessServicesClient.postRepoV1DataAccessRequestRequestIdSignature(
         { requestId },
       ),
-    onSuccess: async (data, variables, ctx) => {
+    onSuccess: async (data, variables, ctx, ...rest) => {
       await invalidateOnSignatureChange(variables)
       if (options?.onSuccess) {
-        return options.onSuccess(data, variables, ctx)
+        return options.onSuccess(data, variables, ctx, ...rest)
       }
       return
     },
@@ -412,10 +412,10 @@ export function useUpdateDataAccessRequestSignature(
       synapseClient.dataAccessServicesClient.putRepoV1DataAccessRequestRequestIdSignature(
         { requestId },
       ),
-    onSuccess: async (data, variables, ctx) => {
+    onSuccess: async (data, variables, ctx, ...rest) => {
       await invalidateOnSignatureChange(variables)
       if (options?.onSuccess) {
-        return options.onSuccess(data, variables, ctx)
+        return options.onSuccess(data, variables, ctx, ...rest)
       }
       return
     },
@@ -446,10 +446,10 @@ export function useVoidDataAccessRequestSignature(
       synapseClient.dataAccessServicesClient.deleteRepoV1DataAccessRequestRequestIdSignature(
         { requestId },
       ),
-    onSuccess: async (data, variables, ctx) => {
+    onSuccess: async (data, variables, ctx, ...rest) => {
       await invalidateOnSignatureChange(variables)
       if (options?.onSuccess) {
-        return options.onSuccess(data, variables, ctx)
+        return options.onSuccess(data, variables, ctx, ...rest)
       }
       return
     },
