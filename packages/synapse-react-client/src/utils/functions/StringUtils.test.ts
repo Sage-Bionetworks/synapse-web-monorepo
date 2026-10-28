@@ -17,6 +17,10 @@ describe('StringUtils', () => {
       expect(joinTeamToken.userId).toEqual('1234')
       expect(joinTeamToken.memberId).toEqual('1234')
     })
+
+    it('decodes a malformed hex pair to a NUL character instead of throwing', () => {
+      expect(hex2ascii('48zz49')).toBe('H\u0000I')
+    })
   })
 
   describe('normalizeNumericId', () => {

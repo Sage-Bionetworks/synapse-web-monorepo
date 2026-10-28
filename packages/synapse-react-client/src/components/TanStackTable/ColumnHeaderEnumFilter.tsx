@@ -30,9 +30,9 @@ function removeEnumFilterValue<TData extends RowData, TValue = unknown>(
 ) {
   column.setFilterValue((curr: TValue[] | null): TValue[] | null => {
     if (curr) {
-      const newValue = [
-        ...curr.filter(currValue => !isEqual(currValue, valueToRemove)),
-      ]
+      const newValue = curr.filter(
+        currValue => !isEqual(currValue, valueToRemove),
+      )
       if (!isEmpty(newValue)) {
         return newValue
       }

@@ -22,7 +22,7 @@ export default function container_plugin(md, name, options) {
   const marker_str = options.marker || ':'
   const end_marker_str = options.endMarker || marker_str
   const end_marker_len = end_marker_str.length
-  const marker_char = marker_str.charCodeAt(0)
+  const marker_char = marker_str.codePointAt(0)
   const marker_len = marker_str.length
   const validate = options.validate || validateDefault
   const render = options.render || renderDefault
@@ -36,7 +36,7 @@ export default function container_plugin(md, name, options) {
     // Check out the first character quickly,
     // this should filter out most of non-containers
     //
-    if (marker_char !== state.src.charCodeAt(start)) {
+    if (marker_char !== state.src.codePointAt(start)) {
       return false
     }
 
@@ -88,7 +88,7 @@ export default function container_plugin(md, name, options) {
         break
       }
 
-      if (marker_char !== state.src.charCodeAt(start)) {
+      if (marker_char !== state.src.codePointAt(start)) {
         continue
       }
 

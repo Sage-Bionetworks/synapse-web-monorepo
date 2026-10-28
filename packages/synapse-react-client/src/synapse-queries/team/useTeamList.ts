@@ -13,11 +13,14 @@ export function useGetTeamList(
   options?: Partial<UseQueryOptions<ListWrapper<Team>, SynapseClientError>>,
 ) {
   const { accessToken, keyFactory } = useSynapseContext()
+  const sortedTeamIds = teamIds.toSorted((a, b) =>
+    String(a).localeCompare(String(b)),
+  )
 
   return useQuery({
     ...options,
-    queryKey: keyFactory.getTeamListQueryKey(teamIds.sort().join()),
-    queryFn: () => SynapseClient.getTeamList(teamIds, accessToken),
+    queryKey: keyFactory.getTeamListQueryKey(sortedTeamIds.join()),
+    queryFn: () => SynapseClient.getTeamList(sortedTeamIds, accessToken),
   })
 }
 

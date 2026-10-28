@@ -89,7 +89,7 @@ export function removeSelectedFacet(
   ).filter(facet => {
     // Use lodash for deep comparison
     if (isArray) {
-      return !facetsToRemove.find(item => {
+      return !facetsToRemove.some(item => {
         return facetObjectMatchesDefinition(item, facet)
       })
     } else {
