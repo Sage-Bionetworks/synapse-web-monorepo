@@ -2,11 +2,11 @@ import MarkdownIt, { Token } from 'markdown-it'
 import StateBlock from 'markdown-it/lib/rules_block/state_block'
 import { RuleBlock } from 'markdown-it/lib/parser_block'
 
-const tableClassStartRE = /^\s*{[|]\s*class\s*=\s*"\s*(.*)"\s*/
-const tableClassEndRE = /^\s*[|]}\s*/
+const tableClassStartRE = /^\s*\{\|\s*class\s*=\s*"\s*(.*)"\s*/
+const tableClassEndRE = /^\s*\|\}\s*/
 const centerStartRE = /^s*->.*/
-const centerEndRE = /.*<-s*$/
-const outerPipesRE = /^s*[|].+[|]s*$/
+const centerEndRE = /<-s*$/
+const outerPipesRE = /^s*\|.+\|s*$/
 
 function getLine(state: StateBlock, line: number): string {
   const pos = state.bMarks[line] + state.blkIndent
