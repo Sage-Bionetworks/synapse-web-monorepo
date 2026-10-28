@@ -15,6 +15,7 @@ import {
   parseEntityIdFromSqlStatement,
 } from 'synapse-react-client/utils/functions/SqlFunctions'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
+import ClientOnly from '../ClientOnly'
 import { DetailsPageContextProvider } from './DetailsPageContext'
 import { DetailsPageDocumentMetadata } from './DetailsPageDocumentMetadata'
 
@@ -115,7 +116,9 @@ export default function DetailsPage(props: DetailsPageProps) {
       {!disableCanonicalUrl && (
         <DetailsPageDocumentMetadata resourcePrimaryKey={resourcePrimaryKey} />
       )}
-      {header}
+      {/* Headers such as CardContainerLogic suspend on a Synapse query, but none of their data reaches the
+          prerendered HTML, so rendering them at build time would cost one query per prerendered page. */}
+      <ClientOnly>{header}</ClientOnly>
       <Container
         maxWidth={'lg'}
         className="DetailsPage tab-layout"
