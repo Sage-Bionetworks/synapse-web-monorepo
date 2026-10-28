@@ -8,7 +8,6 @@ import {
 } from '@/mocks/cohortBuilder/cohortBuilderMockProfiles'
 import {
   CohortBuilderAccess,
-  CohortBuilderQueryBundleRequest,
   getCohortBuilderColumnModels,
   runCohortBuilderMockQuery,
 } from '@/mocks/cohortBuilder/cohortBuilderMockQueryEngine'
@@ -24,14 +23,19 @@ import {
 import {
   BackendDestinationEnum,
   getEndpoint,
+  MOCK_REPO_ORIGIN,
 } from '@/utils/functions/getEndpoint'
-import { VirtualTable } from '@sage-bionetworks/synapse-types'
+import {
+  QueryBundleRequest,
+  VirtualTable,
+} from '@sage-bionetworks/synapse-types'
 import { http, HttpHandler, HttpResponse } from 'msw'
 import {
   AsyncJobFailure,
   dispatchEntry,
   generateAsyncJobHandlers,
 } from './asyncJobHandlers'
+import { getEntityHandlers } from './entityHandlers'
 
 const MOCK_MATERIAL_VIEW_ID = 'syn_MATERIAL'
 
@@ -148,7 +152,9 @@ export function getCohortBuilderHandlers(
         request => {
           const result = runCohortBuilderMockQuery(
             data,
-            request as unknown as CohortBuilderQueryBundleRequest,
+            // The async-job mocks type request bodies with the generated client models; the engine uses the legacy
+            // QueryBundleRequest, whose shape matches what the client sends.
+            request as unknown as QueryBundleRequest,
             access,
           )
           return result.status === 200
@@ -168,4 +174,22 @@ export function getCohortBuilderHandlers(
   )
 
   return [...entityHandlers, ...queryHandlers]
+}
+
+/**
+ * Storybook MSW handler groups that serve the Cohort Builder mocks on the mock stack. They replace the `entity` group so
+ * they run before the stock entity handlers, which answer 404 for unknown entity IDs.
+ */
+export function getCohortBuilderStorybookHandlers(
+  options: Omit<CohortBuilderHandlersOptions, 'backendOrigin'> = {},
+): Record<string, HttpHandler[]> {
+  return {
+    entity: [
+      ...getCohortBuilderHandlers({
+        ...options,
+        backendOrigin: MOCK_REPO_ORIGIN,
+      }),
+      ...getEntityHandlers(MOCK_REPO_ORIGIN),
+    ],
+  }
 }
