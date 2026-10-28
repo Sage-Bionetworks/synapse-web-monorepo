@@ -76,7 +76,10 @@ export const FEATURE_FLAG_CONFIG: Record<FeatureFlagEnum, FeatureFlagConfig> = {
     displayName: 'ACT Dashboard Form Templates',
     actMembersOnly: true,
   },
-  [FeatureFlagEnum.ADD_WIKI_WIDGETS]: { scopes: ['SYNAPSE'] },
+  [FeatureFlagEnum.ADD_WIKI_WIDGETS]: {
+    scopes: ['SYNAPSE'],
+    displayName: 'Experimental Wiki Widgets',
+  },
   [FeatureFlagEnum.PROJECT_VISIBILITY_CHIP]: { scopes: ['SYNAPSE'] },
   [FeatureFlagEnum.QUERY_BUILDER_CONTROL]: { scopes: ['SYNAPSE'] },
   [FeatureFlagEnum.TEST_ONLY]: { scopes: [] },
