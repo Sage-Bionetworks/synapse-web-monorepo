@@ -45,9 +45,6 @@ describe('enrichRowsWithChangeInfo', () => {
 
   it('adds __cellChangeInfo to rows when replica is known', () => {
     const sid = 42
-    // createTestModel(1, 2) → columnNames=['','c0','c1'], columnOrder=[0,1]
-    // columnOrder[0]=0 → columnNames[0]='' → skipped
-    // columnOrder[1]=1 → columnNames[1]='c0' → attributed
     const model = createTestModel(1, 2, sid)
     const snapshot = model.api.getSnapshot()
     const rows: DataGridRow[] = [{ c0: 'a', c1: 'b' }]
@@ -62,6 +59,7 @@ describe('enrichRowsWithChangeInfo', () => {
 
     expect(result[0].__cellChangeInfo).toEqual({
       c0: { category: 'self', tooltipText: 'You changed this' },
+      c1: { category: 'self', tooltipText: 'You changed this' },
     })
   })
 
@@ -110,8 +108,7 @@ describe('enrichRowsWithChangeInfo', () => {
 
   it('includes tooltipText derived from profile for other-user', () => {
     const sid = 7
-    // Use 2 cols: columnOrder[1]=1 → columnNames[1]='c0' is the first reachable column
-    const model = createTestModel(1, 2, sid)
+    const model = createTestModel(1, 1, sid)
     const snapshot = model.api.getSnapshot()
     const rows: DataGridRow[] = [{ c0: 'x' }]
     const replicaUserMap = new Map([

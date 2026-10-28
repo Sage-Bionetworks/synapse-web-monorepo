@@ -7,17 +7,6 @@ import createTestModel from '@/components/DataGrid/utils/createTestModel'
 import { replicaSelectionToGridSelection } from '@/components/DataGrid/utils/replicaSelectionToGridSelection'
 import { SelectionWithId } from '@sage-bionetworks/react-datasheet-grid'
 
-/**
- * NOTE: createTestModel uses json-joy's `s.vec(s.con(''))` for columnNames,
- * which inserts a schema-default '' element at index 0.  After pushing c0…c2,
- * the snapshot snapshot.columnNames = ['', 'c0', 'c1', 'c2'] and
- * snapshot.columnOrder = [0, 1, 2].  Therefore the resolved column name for
- * colIdx N is columnNames[N], i.e.:
- *   colIdx 0 → ''
- *   colIdx 1 → 'c0'
- *   colIdx 2 → 'c1'
- */
-
 describe('replicaSelectionToGridSelection', () => {
   const sid = 456
   const nRow = 4
@@ -108,8 +97,7 @@ describe('replicaSelectionToGridSelection', () => {
     expect(result).not.toBeNull()
     expect(result!.minRow).toBe(0)
     expect(result!.maxRow).toBe(nRow - 1)
-    // colIdx 0 → '' (vec schema default), colIdx 1 → 'c0'
-    expect(result!.columnNames).toEqual(new Set(['', 'c0']))
+    expect(result!.columnNames).toEqual(new Set(['c0', 'c1']))
   })
 
   it('covers all rows and resolves a single column name when rowSelectAll is true', () => {
@@ -124,8 +112,7 @@ describe('replicaSelectionToGridSelection', () => {
     expect(result).not.toBeNull()
     expect(result!.minRow).toBe(0)
     expect(result!.maxRow).toBe(nRow - 1)
-    // colIdx 2 → 'c1'
-    expect(result!.columnNames).toEqual(new Set(['c1']))
+    expect(result!.columnNames).toEqual(new Set(['c2']))
   })
 
   // ── specific rows + columnSelectAll ───────────────────────────────────────
@@ -158,8 +145,7 @@ describe('replicaSelectionToGridSelection', () => {
     expect(result).not.toBeNull()
     expect(result!.minRow).toBe(2)
     expect(result!.maxRow).toBe(2)
-    // colIdx 1 → 'c0'
-    expect(result!.columnNames).toEqual(new Set(['c0']))
+    expect(result!.columnNames).toEqual(new Set(['c1']))
   })
 
   it('correctly maps a multi-row, multi-column selection back to its grid coordinates', () => {
@@ -173,8 +159,7 @@ describe('replicaSelectionToGridSelection', () => {
     expect(result).not.toBeNull()
     expect(result!.minRow).toBe(1)
     expect(result!.maxRow).toBe(3)
-    // colIdx 0 → '', colIdx 1 → 'c0'
-    expect(result!.columnNames).toEqual(new Set(['', 'c0']))
+    expect(result!.columnNames).toEqual(new Set(['c0', 'c1']))
   })
 
   it('derives minRow and maxRow from the minimum and maximum matched row indices', () => {
@@ -190,8 +175,7 @@ describe('replicaSelectionToGridSelection', () => {
     expect(result).not.toBeNull()
     expect(result!.minRow).toBe(0)
     expect(result!.maxRow).toBe(3)
-    // colIdx 2 → 'c1'
-    expect(result!.columnNames).toEqual(new Set(['c1']))
+    expect(result!.columnNames).toEqual(new Set(['c2']))
   })
 
   it('returns a single-row range for a first-row selection', () => {
@@ -205,7 +189,6 @@ describe('replicaSelectionToGridSelection', () => {
     expect(result).not.toBeNull()
     expect(result!.minRow).toBe(0)
     expect(result!.maxRow).toBe(0)
-    // colIdx 0 → ''
-    expect(result!.columnNames).toEqual(new Set(['']))
+    expect(result!.columnNames).toEqual(new Set(['c0']))
   })
 })
