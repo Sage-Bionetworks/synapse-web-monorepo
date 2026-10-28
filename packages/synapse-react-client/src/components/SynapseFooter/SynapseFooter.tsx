@@ -349,7 +349,7 @@ export function SynapseFooter({
           )}
         </Box>
         <ExperimentalFeatures
-          scope="SYNAPSE"
+          scopes={['SYNAPSE']}
           onSave={onExperimentalFeaturesSaved}
         />
       </Box>

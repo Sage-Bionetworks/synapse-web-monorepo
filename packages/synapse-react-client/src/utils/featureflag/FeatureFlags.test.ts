@@ -10,6 +10,21 @@ describe('FEATURE_FLAG_CONFIG', () => {
       expect(Array.isArray(FEATURE_FLAG_CONFIG[flag].scopes)).toBe(true)
     })
   })
+
+  it('keeps test-only flags out of every real menu', () => {
+    Object.values(FeatureFlagEnum).forEach(flag => {
+      const isTestOnlyFlag = flag.startsWith('TEST_ONLY')
+      const isInTestScope = FEATURE_FLAG_CONFIG[flag].scopes.includes('TEST')
+      expect(isInTestScope).toBe(
+        isTestOnlyFlag && FEATURE_FLAG_CONFIG[flag].scopes.length > 0,
+      )
+      if (isTestOnlyFlag) {
+        expect(
+          FEATURE_FLAG_CONFIG[flag].scopes.every(scope => scope === 'TEST'),
+        ).toBe(true)
+      }
+    })
+  })
 })
 
 describe('getFeatureFlagDisplayName', () => {

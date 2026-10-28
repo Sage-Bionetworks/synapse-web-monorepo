@@ -13,12 +13,12 @@ import ExperimentalFeaturesDialog from './ExperimentalFeaturesDialog'
 
 export type ExperimentalFeaturesProps = {
   /** The app this menu is in; only flags declared for this scope are listed */
-  scope: ExperimentalFeatureScope
+  scopes: ExperimentalFeatureScope[]
   /** Called after the user's choices are saved; the app should reload so flags re-resolve */
   onSave: () => void
 }
 
-function ExperimentalFeatures({ scope, onSave }: ExperimentalFeaturesProps) {
+function ExperimentalFeatures({ scopes, onSave }: ExperimentalFeaturesProps) {
   const {
     isAuthenticated,
     isInExperimentalMode: isEnableAllOn,
@@ -38,11 +38,11 @@ function ExperimentalFeatures({ scope, onSave }: ExperimentalFeaturesProps) {
         const config = FEATURE_FLAG_CONFIG[flag]
         return (
           serverFlags?.[flag] == null &&
-          config.scopes.includes(scope) &&
+          config.scopes.some(s => scopes.includes(s)) &&
           (!config.actMembersOnly || isACTMember)
         )
       }),
-    [serverFlags, scope, isACTMember],
+    [serverFlags, scopes, isACTMember],
   )
 
   const savedMenuOptIns = enabledExperimentalFeatures.filter(flag =>

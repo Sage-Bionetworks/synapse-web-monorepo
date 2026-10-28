@@ -1,5 +1,5 @@
-import { getCookieDomain } from ''../AppUtils/AppUtils'
 import { FeatureFlagEnum } from './FeatureFlags'
+import { getCookieDomain } from '../AppUtils/AppUtils'
 import Cookies from 'js-cookie'
 import {
   EXPERIMENTAL_MODE_COOKIE,

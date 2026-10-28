@@ -45,9 +45,16 @@ export enum FeatureFlagEnum {
 
   // Reserved for unit tests. Not configured in Stack Builder; do not use in production code.
   TEST_ONLY = 'TEST_ONLY',
+  TEST_ONLY_2 = 'TEST_ONLY_2',
+  TEST_ONLY_ACT_MEMBERS = 'TEST_ONLY_ACT_MEMBERS',
 }
 
-export type ExperimentalFeatureScope = 'SYNAPSE' | 'PORTALS' | 'ACCOUNTS'
+/** `TEST` is only used by unit tests; no app's menu lists it */
+export type ExperimentalFeatureScope =
+  | 'SYNAPSE'
+  | 'PORTALS'
+  | 'ACCOUNTS'
+  | 'TEST'
 
 type FeatureFlagConfig = {
   /** Apps whose experimental features menu may list this flag */
@@ -89,6 +96,11 @@ export const FEATURE_FLAG_CONFIG: Record<FeatureFlagEnum, FeatureFlagConfig> = {
     displayName: 'Query Builder for Tables and Views',
   },
   [FeatureFlagEnum.TEST_ONLY]: { scopes: [] },
+  [FeatureFlagEnum.TEST_ONLY_2]: { scopes: ['TEST'] },
+  [FeatureFlagEnum.TEST_ONLY_ACT_MEMBERS]: {
+    scopes: ['TEST'],
+    actMembersOnly: true,
+  },
 }
 
 export function getFeatureFlagDisplayName(flag: FeatureFlagEnum): string {

@@ -122,7 +122,7 @@ function Footer() {
           <Versions />
 
           <ExperimentalFeatures
-            scope="PORTALS"
+            scopes={['PORTALS']}
             onSave={() => window.location.reload()}
           />
         </Box>
