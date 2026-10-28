@@ -1,17 +1,14 @@
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
 import '@/mocks/msw/server'
-import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
-  ColumnTypeEnum,
-  QueryResultBundle,
-  SelectColumn,
-} from '@sage-bionetworks/synapse-types'
+  createColumnCategoryTableQueryResultBundle,
+  MockColumnCategoryRow,
+} from '@/mocks/query/mockColumnCategoryTable'
+import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { ColumnTypeEnum, SelectColumn } from '@sage-bionetworks/synapse-types'
 import { render, screen, within } from '@testing-library/react'
 import CategorizedRowDataTable, {
-  COLUMN_CATEGORY_TABLE_CATEGORY,
-  COLUMN_CATEGORY_TABLE_COLUMN_NAME,
-  COLUMN_CATEGORY_TABLE_DISPLAY_COLUMN_NAME,
-  COLUMN_CATEGORY_TABLE_ORDER,
+  getColumnCategoryTableQuery,
 } from './CategorizedRowDataTable'
 
 const columnCategoryTableId = 'syn123'
@@ -33,45 +30,10 @@ const rowData = [
   '[]',
 ]
 
-function registerColumnCategories(
-  rows: [string, string | null, string | null, number][],
-) {
-  const headers: SelectColumn[] = [
-    {
-      name: COLUMN_CATEGORY_TABLE_COLUMN_NAME,
-      columnType: ColumnTypeEnum.STRING,
-    },
-    {
-      name: COLUMN_CATEGORY_TABLE_DISPLAY_COLUMN_NAME,
-      columnType: ColumnTypeEnum.STRING,
-    },
-    { name: COLUMN_CATEGORY_TABLE_CATEGORY, columnType: ColumnTypeEnum.STRING },
-    { name: COLUMN_CATEGORY_TABLE_ORDER, columnType: ColumnTypeEnum.INTEGER },
-  ]
-  const bundle: QueryResultBundle = {
-    concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
-    queryCount: rows.length,
-    maxRowsPerPage: 25,
-    queryResult: {
-      concreteType: 'org.sagebionetworks.repo.model.table.QueryResult',
-      queryResults: {
-        concreteType: 'org.sagebionetworks.repo.model.table.RowSet',
-        tableId: columnCategoryTableId,
-        etag: 'DEFAULT',
-        headers,
-        rows: rows.map((values, index) => ({
-          rowId: index + 1,
-          values: values.map(value => (value == null ? null : String(value))),
-        })),
-      },
-    },
-    selectColumns: headers,
-  }
+function registerColumnCategories(rows: MockColumnCategoryRow[]) {
   registerTableQueryResult(
-    {
-      sql: `SELECT * FROM ${columnCategoryTableId} ORDER BY "${COLUMN_CATEGORY_TABLE_ORDER}" ASC`,
-    },
-    bundle,
+    getColumnCategoryTableQuery(columnCategoryTableId),
+    createColumnCategoryTableQueryResultBundle(columnCategoryTableId, rows),
   )
 }
 

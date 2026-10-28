@@ -2,6 +2,7 @@ import { useGetFullTableQueryResults } from '@/synapse-queries/entity/useGetQuer
 import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
 import { Typography } from '@mui/material'
 import {
+  Query,
   QueryBundleRequest,
   QueryResultBundle,
   SelectColumn,
@@ -80,6 +81,15 @@ function parseColumnCategoryConfig(
 }
 
 /**
+ * The query used to read a column category table, sorted so that rows of the same category are adjacent
+ */
+export function getColumnCategoryTableQuery(tableId: string): Query {
+  return {
+    sql: `SELECT * FROM ${tableId} ORDER BY "${COLUMN_CATEGORY_TABLE_ORDER}" ASC`,
+  }
+}
+
+/**
  * Displays a Synapse Table row as key/value pairs, grouped into titled category sections.
  * The displayed columns, their display names, order, and categories are read from a separate Synapse Table.
  * Categories without any values in the row are not shown.
@@ -92,9 +102,7 @@ function CategorizedRowDataTable(props: CategorizedRowDataTableProps) {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
       entityId: columnCategoryTableId,
       partMask: BUNDLE_MASK_QUERY_RESULTS,
-      query: {
-        sql: `SELECT * FROM ${columnCategoryTableId} ORDER BY "${COLUMN_CATEGORY_TABLE_ORDER}" ASC`,
-      },
+      query: getColumnCategoryTableQuery(columnCategoryTableId),
     }),
     [columnCategoryTableId],
   )
