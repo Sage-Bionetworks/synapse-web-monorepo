@@ -84,7 +84,10 @@ export const FEATURE_FLAG_CONFIG: Record<FeatureFlagEnum, FeatureFlagConfig> = {
     scopes: ['SYNAPSE'],
     displayName: 'Display Project Visibility',
   },
-  [FeatureFlagEnum.QUERY_BUILDER_CONTROL]: { scopes: ['SYNAPSE'] },
+  [FeatureFlagEnum.QUERY_BUILDER_CONTROL]: {
+    scopes: ['SYNAPSE'],
+    displayName: 'Query Builder for Tables and Views',
+  },
   [FeatureFlagEnum.TEST_ONLY]: { scopes: [] },
 }
 
