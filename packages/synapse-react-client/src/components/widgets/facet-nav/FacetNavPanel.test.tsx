@@ -11,6 +11,7 @@ import {
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { useMeasure } from '@react-hookz/web'
 import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import QueryWrapper from '../../QueryWrapper'
@@ -38,8 +39,22 @@ vi.mock('@react-hookz/web', async () => {
 const mockUseMeasure = vi.mocked(useMeasure)
 
 vi.mock('../../Plot/Plot', () => {
-  const MockPlot = (props: { style?: React.CSSProperties }) => (
-    <div data-testid="facet-nav-plot" style={props.style} />
+  // Clicking the mock plot reports a click on the first slice, as Plotly would.
+  const MockPlot = (props: {
+    style?: React.CSSProperties
+    onClick?: (event: unknown) => void
+  }) => (
+    <div
+      data-testid="facet-nav-plot"
+      style={props.style}
+      onClick={() =>
+        props.onClick?.({
+          points: [
+            { pointNumber: 0, data: { facetEnumerationValues: ['Honda'] } },
+          ],
+        })
+      }
+    />
   )
 
   return {
@@ -66,7 +81,9 @@ const stringFacetValues: FacetColumnResultValues = {
   ],
 }
 
-function createTestProps(overrides?: FacetNavPanelProps): FacetNavPanelProps {
+function createTestProps(
+  overrides?: Partial<FacetNavPanelProps>,
+): FacetNavPanelProps {
   const defaultProps: FacetNavPanelProps = {
     applyChangesToGraphSlice: mockApplyCallback,
     applyChangesToFacetFilter: mockApplyCallback,
@@ -93,7 +110,7 @@ const request: QueryBundleRequest = {
   },
 }
 
-function renderComponent(overrides?: FacetNavPanelProps) {
+function renderComponent(overrides?: Partial<FacetNavPanelProps>) {
   props = createTestProps(overrides)
   return render(
     <QueryWrapper initQueryRequest={request}>
@@ -116,6 +133,7 @@ describe('FacetNavPanel tests', () => {
       vi.fn(),
     ] as any)
     registerTableQueryResult(request.query, testData)
+    mockApplyCallback.mockClear()
   })
 
   it('should initiate the panel with correct buttons and classes when not expanded', async () => {
@@ -190,6 +208,50 @@ describe('FacetNavPanel tests', () => {
     await screen.findByRole('figure')
     expect(await screen.findByTestId('facet-nav-plot')).toBeInTheDocument()
   })
+
+  it('applies the clicked value as a facet filter', async () => {
+    renderComponent()
+
+    await userEvent.click(await screen.findByTestId('facet-nav-plot'))
+
+    expect(mockApplyCallback).toHaveBeenCalledWith(
+      stringFacetValues,
+      stringFacetValues.facetValues[0],
+      true,
+    )
+  })
+
+  it('cannot change the query when filtering is disabled, but can still be expanded, re-typed and hidden', async () => {
+    const user = userEvent.setup()
+    renderComponent({ disableFiltering: true })
+
+    await user.click(await screen.findByTestId('facet-nav-plot'))
+    expect(mockApplyCallback).not.toHaveBeenCalled()
+    expect(
+      screen.queryByRole('button', {
+        name: `Filter by ${stringFacetValues.columnName}`,
+      }),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Hide graph under Show More' }),
+    ).toBeInTheDocument()
+
+    await user.click(
+      screen.getByRole('button', { name: 'Expand to large graph' }),
+    )
+    const dialog = await screen.findByRole('dialog')
+    expect(
+      await within(dialog).findByRole('combobox', { name: 'Chart Type' }),
+    ).toBeInTheDocument()
+    expect(
+      within(dialog).queryByRole('combobox', { name: 'Filter All Data By' }),
+    ).not.toBeInTheDocument()
+    await user.click(within(dialog).getByTestId('facet-nav-plot'))
+    expect(mockApplyCallback).not.toHaveBeenCalled()
+    expect(
+      within(dialog).getByRole('button', { name: 'Close' }),
+    ).toBeInTheDocument()
+  })
 })
 
 describe('extractPlotDataArray', () => {
@@ -237,6 +299,23 @@ describe('extractPlotDataArray', () => {
       customdata: undefined,
       hovertemplate:
         '<b>%{text}: </b><br>%{value} (%{percent}) <br><extra></extra>',
+    })
+  })
+
+  it('draws a horizontal bar chart with one bar per value: counts along x, values along y', async () => {
+    const plotData = await extractPlotDataArray(
+      facet,
+      ColumnTypeEnum.STRING,
+      0,
+      'HORIZONTAL_BAR',
+    )
+
+    expect(plotData.data[0]).toMatchObject({
+      type: 'bar',
+      orientation: 'h',
+      x: [10, 0],
+      y: ['Female', 'Unknown'],
+      hovertemplate: '<b>%{text}: </b><br>%{x} <br><extra></extra>',
     })
   })
 })
