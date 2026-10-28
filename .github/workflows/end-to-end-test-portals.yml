@@ -61,8 +61,8 @@ jobs:
       # The Playwright image has no JRE; the OpenAPI client codegen that runs before the portal build needs one
       - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
-          distribution: temurin
-          java-version: 17
+          distribution: corretto
+          java-version: 21
       - uses: ./.github/actions/pnpm-setup-action
       - name: Build portal
         run: pnpm nx run portals-e2e:portal:build
