@@ -1,6 +1,11 @@
-import { Button, ToggleButton, ToggleButtonGroup } from '@mui/material'
+import {
+  Button,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography,
+} from '@mui/material'
 import { DragDropProvider } from '@dnd-kit/react'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useId, useMemo, useState } from 'react'
 import { isFilterGroup } from '../../utils/types/IsType'
 import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
@@ -9,6 +14,12 @@ import { useQueryBuilderDrag } from './queryBuilderDnd'
 import { qbNodeToApiFilter } from './queryBuilderTranslation'
 import { qbTreeToReadable } from './qbTreeToReadable'
 import { QueryBuilderInternalContextProvider } from './QueryBuilderInternalContext'
+import {
+  countQBLeafPredicates,
+  FILTER_LIMIT_VIOLATION_MESSAGES,
+  findFilterLimitViolation,
+  MAX_FILTER_LEAF_PREDICATES,
+} from './queryBuilderLimits'
 import styles from './QueryBuilderControls.module.scss'
 import {
   addChildGroup,
@@ -48,12 +59,25 @@ type SummaryMode = 'plain-english' | 'sql'
 export function QueryBuilderControls(props: QueryBuilderControlsProps) {
   const { tree, onTreeChange, onlyFacetedColumns = false } = props
   const { columnModels, facetResults } = useQBFacetSourceMetadata()
-  const { executeQueryRequest } = useQueryContext()
+  const { executeQueryRequest, getCurrentQueryRequest } = useQueryContext()
 
-  const activeTree = tree ?? defaultQBGroup()
+  // Created once: defaultQBGroup() makes new node IDs, which would remount every row on each render.
+  const [defaultTree] = useState(defaultQBGroup)
+  const activeTree = tree ?? defaultTree
+  const filterGroup = useMemo(() => qbNodeToApiFilter(activeTree), [activeTree])
+
+  // Validate everything Update Results would send: non-QB filters count toward the server's limits too.
+  const limitViolation = useMemo(() => {
+    const preserved = (
+      getCurrentQueryRequest().query.additionalFilters ?? []
+    ).filter(f => !isFilterGroup(f))
+    return findFilterLimitViolation(
+      filterGroup ? [...preserved, filterGroup] : preserved,
+    )
+  }, [filterGroup, getCurrentQueryRequest])
+  const limitViolationMessageId = useId()
 
   const onApply = useCallback(() => {
-    const filterGroup = qbNodeToApiFilter(activeTree)
     executeQueryRequest(prev => {
       // Preserve any non-QB additionalFilters (e.g. lockedColumn constraints
       // introduced by portal detail pages) — Update Results only owns the
@@ -70,7 +94,7 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
         },
       }
     })
-  }, [activeTree, executeQueryRequest])
+  }, [filterGroup, executeQueryRequest])
 
   const { getColumnDisplayName } = useQueryVisualizationContext()
   const getValueDisplayName = useQBValueDisplayName(columnModels, facetResults)
@@ -124,11 +148,15 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
   )
   const dragHandlers = useQueryBuilderDrag(activeTree, onTreeChange)
 
+  const isAtLeafPredicateLimit =
+    countQBLeafPredicates(activeTree) >= MAX_FILTER_LEAF_PREDICATES
+
   const contextValue = useMemo(
     () => ({
       columnModels,
       facetResults,
       onlyFacetedColumns,
+      isAtLeafPredicateLimit,
       getColumnDisplayName,
       getValueDisplayName,
       addConditionAt,
@@ -143,6 +171,7 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
       columnModels,
       facetResults,
       onlyFacetedColumns,
+      isAtLeafPredicateLimit,
       getColumnDisplayName,
       getValueDisplayName,
       addConditionAt,
@@ -214,11 +243,24 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
           <FilterGroupNode group={activeTree} isRoot />
 
           <div className={styles.applyRow}>
+            {limitViolation && (
+              <Typography
+                id={limitViolationMessageId}
+                variant="smallText1"
+                color="error"
+              >
+                {FILTER_LIMIT_VIOLATION_MESSAGES[limitViolation]}
+              </Typography>
+            )}
             <Button
               variant="contained"
               color="primary"
               onClick={onApply}
               className={styles.applyButton}
+              disabled={limitViolation !== undefined}
+              aria-describedby={
+                limitViolation ? limitViolationMessageId : undefined
+              }
             >
               Update Results
             </Button>
