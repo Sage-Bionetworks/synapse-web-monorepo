@@ -9,6 +9,7 @@ import {
 } from '@/utils/SynapseConstants'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { Suspense } from 'react'
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { QueryWrapper } from '../QueryWrapper/QueryWrapper'
@@ -40,7 +41,7 @@ function nestedTree(depth: number, innermost: QBNode): QBGroup {
   return node as QBGroup
 }
 
-function renderQueryBuilder(tree: QBGroup) {
+function renderQueryBuilder(tree: QBGroup | null) {
   render(
     <QueryWrapper initQueryRequest={queryRequest}>
       <QueryVisualizationWrapper>
@@ -86,5 +87,21 @@ describe('QueryBuilderControls', () => {
     expect(
       screen.queryByText(FILTER_LIMIT_VIOLATION_MESSAGES.depth),
     ).not.toBeInTheDocument()
+  })
+
+  it('keeps the default tree, and so each condition row, across re-renders when no tree is passed', async () => {
+    const user = userEvent.setup()
+    renderQueryBuilder(null)
+    const propertyInput = await screen.findByRole('combobox', {
+      name: 'Property',
+    })
+
+    // Any state change re-renders the Query Builder.
+    await user.click(screen.getByRole('button', { name: 'Show SQL' }))
+
+    expect(propertyInput).toBeInTheDocument()
+    expect(screen.getByRole('combobox', { name: 'Property' })).toBe(
+      propertyInput,
+    )
   })
 })
