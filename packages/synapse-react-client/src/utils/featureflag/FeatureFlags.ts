@@ -61,7 +61,7 @@ type FeatureFlagConfig = {
 export const FEATURE_FLAG_CONFIG: Record<FeatureFlagEnum, FeatureFlagConfig> = {
   [FeatureFlagEnum.PORTAL_SEARCH_HEADER]: { scopes: [] },
   [FeatureFlagEnum.HOMEPAGE_CHATBOT]: { scopes: [] },
-  [FeatureFlagEnum.WEBHOOKS_UI]: { scopes: [] },
+  [FeatureFlagEnum.WEBHOOKS_UI]: { scopes: ['ACCOUNTS'] },
   [FeatureFlagEnum.CRISP_CHAT]: { scopes: [] },
   [FeatureFlagEnum.PORTAL_CHAT]: { scopes: [] },
   [FeatureFlagEnum.CURIE_CHAT_WIDGET]: { scopes: [] },
