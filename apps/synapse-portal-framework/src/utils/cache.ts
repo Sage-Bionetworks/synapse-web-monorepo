@@ -85,10 +85,8 @@ export function getSharedPrerenderCache<K, V>(
   name: string,
 ): PrerenderCache<K, V> {
   const global = globalThis as GlobalWithSharedCaches
-  const caches = (global[SHARED_CACHES] ??= new Map<
-    string,
-    PrerenderCache<unknown, unknown>
-  >())
+  global[SHARED_CACHES] ??= new Map<string, PrerenderCache<unknown, unknown>>()
+  const caches = global[SHARED_CACHES]
   let cache = caches.get(name)
   if (!cache) {
     cache = new PrerenderCache<unknown, unknown>()

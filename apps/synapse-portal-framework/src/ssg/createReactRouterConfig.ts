@@ -100,8 +100,8 @@ export function createReactRouterConfig(
     ssr: false,
     prerender: {
       paths: async ({ getStaticPaths }) => {
-        const dynamicRoutes = await (dynamicRoutesPromise ??=
-          resolveDynamicRoutes())
+        dynamicRoutesPromise ??= resolveDynamicRoutes()
+        const dynamicRoutes = await dynamicRoutesPromise
 
         // Exclude legacy /DetailsPage redirect routes (and any sub-paths like
         // /DetailsPage/Details) from prerendering.
