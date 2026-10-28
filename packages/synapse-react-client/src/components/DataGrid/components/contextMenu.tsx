@@ -6,11 +6,11 @@ import {
 } from '@sage-bionetworks/react-datasheet-grid'
 
 // Define which context menu items are allowed for tables (a subset)
-const VIEW_ALLOWED_MENU_ITEMS: ContextMenuItem['type'][] = [
+const VIEW_ALLOWED_MENU_ITEMS: ReadonlySet<ContextMenuItem['type']> = new Set([
   'COPY',
   'PASTE',
   'CUT',
-]
+])
 
 // Create components outside of render to avoid recreating on every render
 const AddRowsComponent = createAddRowsComponent()
@@ -48,7 +48,7 @@ const ViewContextMenuComponent: React.FC<
 > = props => {
   // Filter the items to only include allowed ones for views
   const filteredItems = props.items.filter(item =>
-    VIEW_ALLOWED_MENU_ITEMS.includes(item.type),
+    VIEW_ALLOWED_MENU_ITEMS.has(item.type),
   )
 
   return <BaseViewContextMenuComponent {...props} items={filteredItems} />

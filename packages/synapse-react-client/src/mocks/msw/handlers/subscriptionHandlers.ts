@@ -43,7 +43,7 @@ function getSubscriptions(
       }
       return true
     })
-    .sort((a, b) => {
+    .toSorted((a, b) => {
       const val =
         new Date(b.createdOn).getTime() - new Date(a.createdOn).getTime()
       return sortDirection === 'ASC' ? val : -1 * val

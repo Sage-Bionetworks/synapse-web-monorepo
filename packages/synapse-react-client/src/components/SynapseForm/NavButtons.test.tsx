@@ -36,7 +36,10 @@ describe('NavButtons tests', () => {
 
   describe('previous button', () => {
     test('if wizard, display if previousStepIds array is not empty', () => {
-      const _props = { ...props, ...{ isWizardMode: true } }
+      const _props = {
+        ...props,
+        isWizardMode: true,
+      }
       renderNavButtonsComponent(_props)
       const buttons = screen.getAllByRole('button')
       expect(
@@ -45,7 +48,10 @@ describe('NavButtons tests', () => {
     })
 
     test('if wizard, do not display if previousStepIds array is empty', () => {
-      const _props = { ...props, ...{ isWizardMode: true } }
+      const _props = {
+        ...props,
+        isWizardMode: true,
+      }
       _props.previousStepIds = []
       renderNavButtonsComponent(_props)
       const buttons = screen.getAllByRole('button')
@@ -63,7 +69,10 @@ describe('NavButtons tests', () => {
     })
 
     test('if not wizard, do not display if on first step', () => {
-      const _props = { ...props, ...{ currentStep: stepsArray[0] } }
+      const _props = {
+        ...props,
+        currentStep: stepsArray[0],
+      }
       renderNavButtonsComponent(_props)
       const buttons = screen.getAllByRole('button')
       expect(
@@ -93,7 +102,10 @@ describe('NavButtons tests', () => {
     })
 
     test('do not display next if step is final and display save on all steps', () => {
-      const _props = { ...props, ...{ currentStep: stepsArray[2] } }
+      const _props = {
+        ...props,
+        currentStep: stepsArray[2],
+      }
       expect(_props.currentStep.final).toBe(true)
       renderNavButtonsComponent(_props)
       const buttons = screen.getAllByRole('button')

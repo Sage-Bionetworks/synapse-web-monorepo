@@ -34,10 +34,8 @@ import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 import CreateWebhookModal from './CreateWebhookModal'
 import { WebhookVerificationDialog } from './WebhookVerificationDialog'
 
-const WEBHOOK_CAN_RESEND_CODE_STATES: WebhookVerificationStatus[] = [
-  WebhookVerificationStatus.FAILED,
-  WebhookVerificationStatus.REVOKED,
-]
+const WEBHOOK_CAN_RESEND_CODE_STATES: ReadonlySet<WebhookVerificationStatus> =
+  new Set([WebhookVerificationStatus.FAILED, WebhookVerificationStatus.REVOKED])
 
 const columnHelper = createColumnHelper<Webhook>()
 
@@ -147,7 +145,7 @@ function getWebhookTableColumns(
             </Button>
           )}
 
-          {WEBHOOK_CAN_RESEND_CODE_STATES.includes(
+          {WEBHOOK_CAN_RESEND_CODE_STATES.has(
             ctx.row.original.verificationStatus as WebhookVerificationStatus,
           ) && (
             <Button
