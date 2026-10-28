@@ -713,7 +713,7 @@ export function getSearchQueryUseQueryOptions(
   const toKeyShape = (query: SearchIndexQuery) => ({
     ...query,
     responseParts: query.responseParts
-      ? [...query.responseParts].toSorted()
+      ? [...query.responseParts].toSorted((a, b) => a.localeCompare(b))
       : undefined,
   })
 
