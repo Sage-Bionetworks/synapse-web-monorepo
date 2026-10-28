@@ -1,4 +1,4 @@
-import { getCookieDomain } from '../AppUtils'
+import { getCookieDomain } from ''../AppUtils/AppUtils'
 import { FeatureFlagEnum } from './FeatureFlags'
 import Cookies from 'js-cookie'
 import {
