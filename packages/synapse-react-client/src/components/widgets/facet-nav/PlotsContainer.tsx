@@ -21,6 +21,11 @@ export type PlotsContainerProps = {
   facetsToPlot?: string[]
   customPlots?: QueryWrapperSynapsePlotProps[]
   initialPlotTypeByFacetColumnName?: Record<string, PlotType>
+  /**
+   * When true, the facet plots cannot change the query: slices can't be clicked and the filter
+   * dropdowns are hidden. Set while the Query Builder owns the filters.
+   */
+  disableFiltering?: boolean
 }
 type CustomPlotIdentifier = {
   title: string
@@ -138,6 +143,7 @@ function PlotsContainer(props: PlotsContainerProps) {
     facetsToPlot = DEFAULT_FACETS_TO_PLOT,
     customPlots = DEFAULT_CUSTOM_PLOTS,
     initialPlotTypeByFacetColumnName,
+    disableFiltering,
   } = props
   const { data: queryMetadata } = useSuspenseGetQueryMetadata()
   const { showPlots: showPlotVisualization } = useQueryVisualizationContext()
@@ -318,6 +324,7 @@ function PlotsContainer(props: PlotsContainerProps) {
                         setPlotType(plotUiState.plotId, plotType)
                       }
                       isModalView={false}
+                      disableFiltering={disableFiltering}
                       {...facetNavPanelProps}
                     />
                   )}

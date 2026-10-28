@@ -12,6 +12,7 @@ import {
   FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
   FILTER_GROUP_CONCRETE_TYPE_VALUE,
   FilterGroup,
+  QueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import {
   apiFilterToQBNode,
@@ -157,12 +158,12 @@ describe('qbNodeToApiFilter — conditions', () => {
   })
 
   describe('is_all_of', () => {
-    it('emits HAS on ColumnMultiValueFunctionQueryFilter', () => {
+    it('emits a single HAS for one value', () => {
       const result = qbNodeToApiFilter(
         condition({
           op: 'is_all_of',
           columnType: 'STRING_LIST',
-          values: ['a', 'b'],
+          values: ['a'],
         }),
       )
       expect(result).toEqual<ColumnMultiValueFunctionQueryFilter>({
@@ -171,7 +172,33 @@ describe('qbNodeToApiFilter — conditions', () => {
         columnName: 'col',
         function: ColumnMultiValueFunction.HAS,
         _function: ColumnMultiValueFunction.HAS,
-        values: ['a', 'b'],
+        values: ['a'],
+      })
+    })
+
+    it('emits an AND group of single-value HAS predicates for several values, because one HAS matches any of its values', () => {
+      const hasValue = (
+        value: string,
+      ): ColumnMultiValueFunctionQueryFilter => ({
+        concreteType:
+          COLUMN_MULTI_VALUE_FUNCTION_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+        columnName: 'col',
+        function: ColumnMultiValueFunction.HAS,
+        _function: ColumnMultiValueFunction.HAS,
+        values: [value],
+      })
+      expect(
+        qbNodeToApiFilter(
+          condition({
+            op: 'is_all_of',
+            columnType: 'STRING_LIST',
+            values: ['a', 'b'],
+          }),
+        ),
+      ).toEqual<FilterGroup>({
+        concreteType: FILTER_GROUP_CONCRETE_TYPE_VALUE,
+        operator: 'AND',
+        children: [hasValue('a'), hasValue('b')],
       })
     })
 
@@ -484,6 +511,40 @@ describe('apiFilterToQBNode', () => {
       operator: 'OR',
       not: true,
     })
+  })
+
+  it('restores is_all_of from the AND group of HAS predicates it emits', () => {
+    const allOf = qbNodeToApiFilter(
+      condition({
+        op: 'is_all_of',
+        columnType: 'STRING_LIST',
+        values: ['txt', 'csv'],
+      }),
+    )!
+    expect(apiFilterToQBNode(allOf)).toMatchObject({
+      kind: 'condition',
+      columnName: 'col',
+      op: 'is_all_of',
+      values: ['txt', 'csv'],
+    })
+  })
+
+  it('keeps an AND group of HAS predicates on different columns as a group', () => {
+    const hasOn = (columnName: string): QueryFilter => ({
+      concreteType:
+        COLUMN_MULTI_VALUE_FUNCTION_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+      columnName,
+      function: ColumnMultiValueFunction.HAS,
+      _function: ColumnMultiValueFunction.HAS,
+      values: ['x'],
+    })
+    expect(
+      apiFilterToQBNode({
+        concreteType: FILTER_GROUP_CONCRETE_TYPE_VALUE,
+        operator: 'AND',
+        children: [hasOn('a'), hasOn('b')],
+      }),
+    ).toMatchObject({ kind: 'group', combinator: 'AND' })
   })
 
   it.each([
