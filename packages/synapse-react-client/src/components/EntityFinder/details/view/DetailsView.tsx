@@ -456,10 +456,7 @@ export function DetailsView(props: DetailsViewProps) {
                       // We may already have the version from the header, but only use it if it's a valid snapshot
                       // (table types with "in progress" are not valid)
                       if (
-                        Object.prototype.hasOwnProperty.call(
-                          e,
-                          'versionNumber',
-                        ) &&
+                        Object.hasOwn(e, 'versionNumber') &&
                         !hasInProgressTableVersion(
                           entityType,
                           e as EntityHeader,
@@ -581,11 +578,11 @@ export function DetailsView(props: DetailsViewProps) {
   // Enabled if there's at least one visible & selectable entity, OR there's a page we haven't fetched
   const isSelectAllDisabled = !(
     hasNextPage ||
-    entities.filter(
+    entities.some(
       e =>
         selectableTypes.includes(getEntityTypeFromHeader(e)) &&
         visibleTypes.includes(getEntityTypeFromHeader(e)),
-    ).length > 0
+    )
   )
 
   const columns = useMemo(
@@ -662,8 +659,7 @@ export function DetailsView(props: DetailsViewProps) {
     getScrollElement: () => tableContainerRef.current,
     // measure dynamic row height, except in firefox because it measures table border height incorrectly
     measureElement:
-      typeof window !== 'undefined' &&
-      navigator.userAgent.indexOf('Firefox') === -1
+      typeof window !== 'undefined' && !navigator.userAgent.includes('Firefox')
         ? element => element?.getBoundingClientRect().height
         : undefined,
     overscan: 5,
@@ -677,7 +673,7 @@ export function DetailsView(props: DetailsViewProps) {
         isVersionableEntity &&
         versionSelection === VersionSelectionType.REQUIRED &&
         currentSelectedVersion == null &&
-        Object.prototype.hasOwnProperty.call(rowData, 'versionNumber')
+        Object.hasOwn(rowData, 'versionNumber')
       ) {
         // Only use EntityHeader's version if it's a valid snapshot (table types with "in progress" are not valid)
         if (!hasInProgressTableVersion(entityType, rowData)) {

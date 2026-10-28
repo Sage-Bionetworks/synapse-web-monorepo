@@ -45,7 +45,7 @@ function SynapseImage(props: SynapseImageProps) {
           fileHandleId: fileEntity.dataFileHandleId,
         }
       } else if (wikiId && fileName && fileResults) {
-        const { id } = fileResults.filter(el => el.fileName === fileName)[0]
+        const { id } = fileResults.find(el => el.fileName === fileName)!
         return {
           associateObjectId: wikiId,
           associateObjectType: FileHandleAssociateType.WikiAttachment,

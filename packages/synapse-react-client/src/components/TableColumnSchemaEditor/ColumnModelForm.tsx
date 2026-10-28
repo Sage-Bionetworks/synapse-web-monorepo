@@ -178,7 +178,7 @@ export default function ColumnModelForm(props: ColumnModelFormProps) {
       const errorsByField: Record<string, string> = {}
       validationErrors.forEach(e => {
         if (e.path) {
-          errorsByField[String(e.path[e.path.length - 1])] = e.message
+          errorsByField[String(e.path.at(-1))] = e.message
         }
       })
       return errorsByField

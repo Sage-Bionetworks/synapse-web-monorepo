@@ -1,0 +1,18 @@
+.section + .section {
+  margin-top: 32px;
+}
+
+// Each category starts with a shaded row; the extra `table` raises specificity above StyledTableContainer's striping
+.section table tr:nth-of-type(odd) {
+  background-color: var(--synapse-gray-100);
+}
+
+.section table tr:nth-of-type(even) {
+  background-color: var(--synapse-white);
+}
+
+.categoryTitle:global(.MuiTypography-root) {
+  color: var(--synapse-gray-900);
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--synapse-gray-300);
+}

@@ -200,7 +200,7 @@ describe('deepLinkingUtils', () => {
       )
       const compressedData = await new Response(stream).arrayBuffer()
       const base64 = btoa(
-        String.fromCharCode(...new Uint8Array(compressedData)),
+        String.fromCodePoint(...new Uint8Array(compressedData)),
       )
 
       window.location.search = `?qw0=${encodeURIComponent(base64)}`
@@ -251,7 +251,7 @@ describe('deepLinkingUtils', () => {
       )
       const compressedData = await new Response(stream).arrayBuffer()
       const base64 = btoa(
-        String.fromCharCode(...new Uint8Array(compressedData)),
+        String.fromCodePoint(...new Uint8Array(compressedData)),
       )
 
       window.location.search = `?qw0=${encodeURIComponent(base64)}`
@@ -311,7 +311,7 @@ describe('deepLinkingUtils', () => {
       )
       const compressedData = await new Response(stream).arrayBuffer()
       const base64 = btoa(
-        String.fromCharCode(...new Uint8Array(compressedData)),
+        String.fromCodePoint(...new Uint8Array(compressedData)),
       )
 
       const legacyQuery: Query = {

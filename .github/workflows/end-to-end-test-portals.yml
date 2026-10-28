@@ -17,6 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       portals: ${{ steps.affected.outputs.portals }}
+      playwright-version: ${{ steps.playwright.outputs.version }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -34,6 +35,13 @@ jobs:
           portals=$(jq -cn --argjson affected "$affected_json" --argjson all "$all_json" '[$all[] | select(IN($affected[]))]')
           echo "Affected portals: $portals"
           echo "portals=$portals" >> "$GITHUB_OUTPUT"
+      - name: Read the locked Playwright version
+        id: playwright
+        run: |
+          set -euo pipefail
+          version=$(pnpm --filter portals-e2e exec playwright --version | awk '{print $2}')
+          echo "Playwright version: $version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
   e2e-tests:
     needs: detect-affected-portals
     if: ${{ needs.detect-affected-portals.result == 'success' && needs.detect-affected-portals.outputs.portals != '[]' }}
@@ -43,21 +51,30 @@ jobs:
       matrix:
         PORTAL: ${{ fromJson(needs.detect-affected-portals.outputs.portals) }}
     runs-on: ubuntu-latest
+    # The image ships browsers and their OS dependencies, so jobs skip the apt-get install that
+    # `playwright install --with-deps` would run. Its tag must match the locked @playwright/test version.
+    container:
+      image: mcr.microsoft.com/playwright:v${{ needs.detect-affected-portals.outputs.playwright-version }}-noble
+      options: --user 1001 --ipc=host
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      # The Playwright image has no JRE; the OpenAPI client codegen that runs before the portal build needs one
+      - uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: corretto
+          java-version: 21
       - uses: ./.github/actions/pnpm-setup-action
       - name: Build portal
         run: pnpm nx run portals-e2e:portal:build
         env:
           PORTAL: ${{ matrix.PORTAL }}
-      - name: Install Playwright Browsers
-        run: |
-          cd "${{ env.PORTALS_E2E_SUBDIR }}"
-          pnpm playwright install --with-deps
       - name: Run e2e tests
-        run: pnpm nx run portals-e2e:e2e
+        run: pnpm nx run "portals-e2e:${E2E_TARGET}"
         env:
           PORTAL: ${{ matrix.PORTAL }}
+          # The specs run against Synapse prod, and responses don't vary by browser, so pull requests run only
+          # Chromium; pushes to main run every browser project to catch browser-specific rendering issues.
+          E2E_TARGET: ${{ github.event_name == 'pull_request' && 'e2e:chromium' || 'e2e' }}
       - name: Upload blob report to GitHub Actions Artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: ${{ always() }}

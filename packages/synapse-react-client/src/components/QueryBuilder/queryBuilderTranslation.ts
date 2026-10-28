@@ -103,7 +103,11 @@ export function qbNodeToApiFilter(node: QBNode): QueryFilter | null {
 
 function conditionToApiFilter(
   node: QBCondition,
-): ColumnSingleValueQueryFilter | ColumnMultiValueFunctionQueryFilter | null {
+):
+  | ColumnSingleValueQueryFilter
+  | ColumnMultiValueFunctionQueryFilter
+  | FilterGroup
+  | null {
   const { columnName, columnType, op, values, rangeMin, rangeMax, text } = node
   if (columnName === null) return null
 
@@ -111,9 +115,7 @@ function conditionToApiFilter(
     case 'is_any_of':
       return anyOfFilter(columnName, columnType, values)
     case 'is_all_of':
-      return values.length === 0
-        ? null
-        : makeMultiValueFilter(columnName, values)
+      return allOfFilter(columnName, values)
     case 'between':
       return betweenFilter(columnName, rangeMin, rangeMax)
     case 'gt':
@@ -209,6 +211,20 @@ function anyOfFilter(
   )
 }
 
+function allOfFilter(
+  columnName: string,
+  values: string[],
+): ColumnMultiValueFunctionQueryFilter | FilterGroup | null {
+  if (values.length === 0) return null
+  if (values.length === 1) return makeMultiValueFilter(columnName, values)
+  // HAS matches rows whose list contains any of its values, so "all of" is an AND of single-value HAS predicates.
+  return {
+    concreteType: FILTER_GROUP_CONCRETE_TYPE_VALUE,
+    operator: 'AND',
+    children: values.map(value => makeMultiValueFilter(columnName, [value])),
+  }
+}
+
 function betweenFilter(
   columnName: string,
   rangeMin: string | null,
@@ -288,13 +304,16 @@ function rangeBoundFilter(
  * query already contains a `FilterGroup` (see filterMode auto-detect) so the
  * QB tree can be reconstructed on mount.
  *
- * Some conversions are lossy — `HAS` always deserializes as `is_any_of` (we
- * can't distinguish it from an `is_all_of` at the API layer), and `EQUAL` on
- * text columns deserializes as `equal` (not `is_exactly`) because they share
- * the same wire representation. Users can adjust the operator picker.
+ * Some conversions are lossy — an AND group of single-value `HAS` predicates
+ * on one column (the shape `is_all_of` emits) deserializes as `is_all_of`, any
+ * other `HAS` as `is_any_of`, and `EQUAL` on text columns deserializes as
+ * `equal` (not `is_exactly`) because they share the same wire representation.
+ * Users can adjust the operator picker.
  */
 export function apiFilterToQBNode(filter: QueryFilter): QBNode | null {
   if (isFilterGroup(filter)) {
+    const allOfCondition = allOfGroupToCondition(filter)
+    if (allOfCondition) return allOfCondition
     const children = (filter.children ?? [])
       .map(apiFilterToQBNode)
       .filter((n): n is QBNode => n !== null)
@@ -325,6 +344,38 @@ export function apiFilterToQBNode(filter: QueryFilter): QBNode | null {
   // TextMatchesQueryFilter and other non-QB filter types are not part of the
   // QB tree — they belong in the non-QB baseline.
   return null
+}
+
+function allOfGroupToCondition(group: FilterGroup): QBCondition | null {
+  const children = group.children ?? []
+  if (group.not || (group.operator ?? 'AND') !== 'AND' || children.length < 2) {
+    return null
+  }
+  const hasPredicates = children
+    .filter(isColumnMultiValueFunctionQueryFilter)
+    .filter(
+      child =>
+        child.function === ColumnMultiValueFunction.HAS &&
+        child.values.length === 1,
+    )
+  const columnName = hasPredicates[0]?.columnName
+  if (
+    hasPredicates.length !== children.length ||
+    hasPredicates.some(child => child.columnName !== columnName)
+  ) {
+    return null
+  }
+  return {
+    kind: 'condition',
+    id: newQBNodeId(),
+    columnName,
+    columnType: null,
+    op: 'is_all_of',
+    values: hasPredicates.map(child => child.values[0]),
+    rangeMin: null,
+    rangeMax: null,
+    text: null,
+  }
 }
 
 function singleValueToCondition(
