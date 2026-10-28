@@ -192,7 +192,7 @@ export async function extractPlotDataArray(
     y = valueLabels
   } else if (plotType === 'STACKED_HORIZONTAL_BAR') {
     x = counts
-    y = Array(x.length).fill('Proportional') // single value for every x value
+    y = new Array(x.length).fill('Proportional') // single value for every x value
   }
 
   // Approximate counts are hovered as their display text, without a misleading exact value or percentage.

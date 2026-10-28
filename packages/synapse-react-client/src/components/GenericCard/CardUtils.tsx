@@ -102,7 +102,7 @@ export function getCardLinkHref(
 ): string | undefined {
   if (cardLink) {
     if (!data || !schema) {
-      throw Error('Must specify CardLink and data for linking to work')
+      throw new Error('Must specify CardLink and data for linking to work')
     }
     const { matchColumnName, overrideValueWithRowID } = cardLink
 

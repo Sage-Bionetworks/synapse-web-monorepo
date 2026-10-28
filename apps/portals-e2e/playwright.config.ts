@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test'
 import dotenv from 'dotenv'
-import path from 'path'
+import path from 'node:path'
 
 const baseURL = 'http://localhost:3001'
 export const viewports = {

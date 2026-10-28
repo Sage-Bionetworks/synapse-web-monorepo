@@ -1,6 +1,6 @@
 import type { RouteObject } from 'react-router'
 import { writeRoutePaths } from './extractRoutes'
-import * as path from 'path'
+import * as path from 'node:path'
 
 /**
  * Creates a sitemap route extraction entry point for a portal.

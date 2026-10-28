@@ -47,7 +47,7 @@ const props: HasAccessProps = {
 const expectIcon = async (iconName: string, tooltipText: string) => {
   const icon = await screen.findByRole('img')
   expect(icon).toHaveAccessibleName(tooltipText)
-  expect(icon.getAttribute('data-svg')).toEqual(iconName)
+  expect(icon.dataset.svg).toEqual(iconName)
 }
 const expectSignInButton = async () => {
   const button = await screen.findByRole('button')

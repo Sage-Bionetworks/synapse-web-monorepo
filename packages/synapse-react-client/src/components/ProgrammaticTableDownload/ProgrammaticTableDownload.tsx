@@ -52,12 +52,12 @@ export function ProgrammaticTableDownload({
 
   // Replace quotation marks with escaped quotations. For CLI, also escape backticks.
   const commandLineSql = useMemo(
-    () => generatedSql.replace(/(["`])/g, '\\$1'),
+    () => generatedSql.replaceAll(/(["`])/g, String.raw`\$1`),
     [generatedSql],
   )
 
   const clientSql = useMemo(
-    () => generatedSql.replace(/"/g, '\\"'),
+    () => generatedSql.replaceAll('"', String.raw`\"`),
     [generatedSql],
   )
 

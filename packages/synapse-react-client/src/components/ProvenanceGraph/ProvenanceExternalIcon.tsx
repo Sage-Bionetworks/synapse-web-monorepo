@@ -15,7 +15,7 @@ export const ProvenanceExternalIcon = (
   const parsedUrl = new URL(url)
   const { hostname } = parsedUrl
 
-  if (hostname.match(githubRegex) || hostname.match(githubusercontentRegex)) {
+  if (githubRegex.exec(hostname) || githubusercontentRegex.exec(hostname)) {
     icon = 'github'
   }
   // else if (url.includes("genomespace.org")) {

@@ -7,7 +7,7 @@ type HighlightedTypographyProps = {
 } & TypographyProps
 
 function escapeRegex(s: string) {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  return s.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`)
 }
 
 export function HighlightedTypography({

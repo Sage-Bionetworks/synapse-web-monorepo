@@ -363,13 +363,11 @@ export function transformColumnModelsToFormData(
         dcm => dcm.name === cm.name,
       ),
       jsonSubColumns: cm.jsonSubColumns
-        ? cm.jsonSubColumns.map(
-            (jsc): JsonSubColumnModelFormData => ({
-              ...jsc,
-              columnType: jsc.columnType as ColumnTypeEnum,
-              isSelected: false,
-            }),
-          )
+        ? cm.jsonSubColumns.map((jsc): JsonSubColumnModelFormData => ({
+            ...jsc,
+            columnType: jsc.columnType as ColumnTypeEnum,
+            isSelected: false,
+          }))
         : undefined,
       // If this is defaultValue for a LIST column, the value is a serialized string
       defaultValue:
