@@ -1,5 +1,6 @@
 import { FairField } from '@/aridhia-queries/FairFormPayload'
 import { DAR_MESSAGE_VOCABULARY_CODE } from '@/aridhia-queries/useGetAridhiaVocabularyTerm'
+import { RequestListItem } from '@sage-bionetworks/aridhia-client/generated/models'
 import { http, HttpHandler, HttpResponse, JsonBodyType } from 'msw'
 
 export const MOCK_ARIDHIA_GATEWAY = 'https://mock-gateway.test'
@@ -95,6 +96,29 @@ export function getAridhiaAuthenticateHandler(
   return http.post(`${MOCK_ARIDHIA_GATEWAY}/authenticate`, () =>
     HttpResponse.json(response, { status }),
   )
+}
+
+/**
+ * A `GET /fair/requests` list item covering `MOCK_ARIDHIA_DATASET_CODE`, created and last
+ * updated at `updatedAt`.
+ */
+export function mockAridhiaRequestListItem(
+  request: Pick<RequestListItem, 'code' | 'name' | 'status'> & {
+    updatedAt: string
+    datasetCodes?: string[]
+  },
+): RequestListItem {
+  const {
+    updatedAt,
+    datasetCodes = [MOCK_ARIDHIA_DATASET_CODE],
+    ...fields
+  } = request
+  return {
+    ...fields,
+    datasets: datasetCodes.map(code => ({ code })),
+    created_at: updatedAt,
+    updated_at: updatedAt,
+  }
 }
 
 export function getAridhiaRequestsHandler(
