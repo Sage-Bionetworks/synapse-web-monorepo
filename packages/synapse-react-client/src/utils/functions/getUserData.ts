@@ -48,7 +48,7 @@ const hash = (userName: string) => {
     .split('')
     .reduce(
       (prevHash, currVal) =>
-        ((prevHash << 5) - prevHash + currVal.charCodeAt(0)) | 0,
+        ((prevHash << 5) - prevHash + currVal.codePointAt(0)!) | 0,
       0,
     )
   return Math.abs(val)

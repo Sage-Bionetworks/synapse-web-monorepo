@@ -102,9 +102,9 @@ export function ObjectFieldTemplate<
             formData[schemaDefinedProperty] != null &&
             // Property matches `additionalProperties` requirements: is an array and contains non-null values
             Array.isArray(formData[schemaDefinedProperty]) &&
-            (formData[schemaDefinedProperty] as Array<never>).filter(
+            (formData[schemaDefinedProperty] as Array<never>).some(
               item => item != null,
-            ).length > 0
+            )
           )
         })
         if (lostProperties.length > 0) {

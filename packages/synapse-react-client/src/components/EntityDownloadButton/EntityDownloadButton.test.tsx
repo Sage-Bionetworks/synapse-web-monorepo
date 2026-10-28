@@ -147,7 +147,7 @@ describe('EntityDownloadButton', () => {
   })
 
   afterEach(() => {
-    document.body.removeChild(confirmationContainer)
+    confirmationContainer.remove()
     vi.clearAllMocks()
   })
 

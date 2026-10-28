@@ -64,11 +64,11 @@ export function clearLastLoginInfo() {
 }
 
 function getSourceAppIndefiniteArticle(val: string) {
-  return val.match(/^[aeiou]/i) ? 'an' : 'a'
+  return /^[aeiou]/i.exec(val) ? 'an' : 'a'
 }
 
 function getSourceAppDefiniteArticle(val: string) {
-  return val.match(' Portal$') ? 'the ' : ''
+  return / Portal$/.exec(val) ? 'the ' : ''
 }
 
 export default function LastLoginInfo(props: LastLoginInfoProps) {

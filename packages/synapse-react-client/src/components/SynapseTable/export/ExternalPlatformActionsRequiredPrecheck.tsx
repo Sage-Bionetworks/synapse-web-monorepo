@@ -27,7 +27,7 @@ function getConfirmButtonId(
   selectedPlatform: ExternalAnalysisPlatform,
 ): string {
   return `SendTo${upperFirst(
-    selectedPlatform.replace('\\s', ''),
+    selectedPlatform.replace(String.raw`\s`, ''),
   )}ButtonFromConfirmationDialog`
 }
 

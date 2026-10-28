@@ -5,7 +5,18 @@ import { useState } from 'react'
 import { NUMERIC_CODE_HTML_INPUT_PROPS } from './Constants'
 
 const TOTP_LENGTH = 6
-const DIGIT_CHARACTERS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+const DIGIT_CHARACTERS = new Set([
+  '0',
+  '1',
+  '2',
+  '3',
+  '4',
+  '5',
+  '6',
+  '7',
+  '8',
+  '9',
+])
 
 type TOTPFormProps = {
   onSubmit: (value: string) => void
@@ -29,7 +40,7 @@ export default function TOTPForm(props: TOTPFormProps) {
         onChange={setVerificationCode}
         onComplete={onSubmit}
         validateChar={(character: string) => {
-          return DIGIT_CHARACTERS.includes(character) || character === ''
+          return DIGIT_CHARACTERS.has(character) || character === ''
         }}
         gap={'2px'}
         sx={{

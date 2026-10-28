@@ -79,7 +79,7 @@ const isPlotInState = (
   plotId: PlotIdentifier,
   plotUiStateArray: UiPlotState[],
 ): boolean => {
-  return !!plotUiStateArray.find(plot => {
+  return plotUiStateArray.some(plot => {
     return plotMatchesDefinition(plot.plotId, plotId)
   })
 }
@@ -218,7 +218,7 @@ function PlotsContainer(props: PlotsContainerProps) {
   const showMoreButtonState = useMemo<ShowMoreState>(() => {
     if (
       // if at least one item is hidden
-      plotUiStateArray.find(item => item.isHidden === true)
+      plotUiStateArray.some(item => item.isHidden === true)
     ) {
       return 'MORE'
     } else if (plotUiStateArray.length <= DEFAULT_VISIBLE_PLOTS) {

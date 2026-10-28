@@ -78,7 +78,7 @@ function TermsAndConditions({
     'https://www.synapse.org/TrustCenter:TermsOfService'
   const trustCenter = 'https://sagebionetworks.org/trust-center'
   const getInitialCheckboxState = (checkboxCount: number) =>
-    Array.from(Array(checkboxCount).fill(false))
+    Array.from(new Array(checkboxCount).fill(false))
   let mounted = true
 
   // State variables

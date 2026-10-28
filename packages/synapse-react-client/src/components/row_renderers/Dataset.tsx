@@ -78,8 +78,7 @@ class Dataset extends Component<DatasetProps, never> {
     ]
     if (genericCardSchema?.secondaryLabels) {
       const { secondaryLabels } = genericCardSchema
-      for (let i = 0; i < secondaryLabels.length; i++) {
-        const columnName = secondaryLabels[i]
+      for (const columnName of secondaryLabels) {
         const value: string | undefined = data[schema[columnName]]
         let columnDisplayName
         if (value) {

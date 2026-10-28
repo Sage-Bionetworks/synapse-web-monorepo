@@ -36,12 +36,14 @@ describe('StepsSideNav', () => {
 
   test('should display status icons correctly', () => {
     const { container } = renderComponent(props)
-    const icons = container.querySelectorAll('span.styled-svg-wrapper')
+    const icons = container.querySelectorAll<HTMLElement>(
+      'span.styled-svg-wrapper',
+    )
     expect(icons).toHaveLength(4)
-    expect(icons[0].getAttribute('data-svg')).toEqual('circle')
-    expect(icons[1].getAttribute('data-svg')).toEqual('errorOutlined')
-    expect(icons[2].getAttribute('data-svg')).toEqual('checkCircle')
-    expect(icons[3].getAttribute('data-svg')).toEqual('block')
+    expect(icons[0].dataset.svg).toEqual('circle')
+    expect(icons[1].dataset.svg).toEqual('errorOutlined')
+    expect(icons[2].dataset.svg).toEqual('checkCircle')
+    expect(icons[3].dataset.svg).toEqual('block')
   })
 
   test('should call callback function with appropriate params', async () => {
@@ -54,7 +56,10 @@ describe('StepsSideNav', () => {
   })
 
   test('should have unclickable steps if in a wizard mode', () => {
-    const _props = { ...props, ...{ isWizardMode: true } }
+    const _props = {
+      ...props,
+      isWizardMode: true,
+    }
     renderComponent(_props)
     expect(screen.queryByRole('button')).not.toBeInTheDocument()
   })
