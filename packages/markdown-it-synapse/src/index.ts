@@ -16,13 +16,13 @@ const BOOKMARK_START = 'bookmark?'
 const synapseRE = /^syn([0-9]+[.]?[0-9]*)+/
 // match url that starts with a leading slash / and is followed by an alphanumeric character
 const internalURL = /^\/\w/
-const urlWithoutProtocolRE = /^([\da-z\.-]+)\.([a-z\.]{2,6})([\/w \.-]*)*\/?.*$/
+const urlWithoutProtocolRE = /^([\da-z.-]+)\.([a-z.]{2,6}).*$/
 const doiRE = /^doi:10[.]{1}[0-9]+[/]{1}[a-zA-Z0-9_.]+$/
 const gridLayoutColumnParamRE = /^\s*(width[=]{1})?\s*(.*)[}]{1}\s*$/
 const navTextParamRE = /^\s*(text[=]{1}["]{1})?\s*(.*)["]{1}[}]{1}\s*$/
 const ulMarkerRE = /^\s*[*-+>]{1}[^|]*$/
 const olMarkerRE = /^\s*\w+\s*[.)]{1}[^|]*$/
-const codeRE = /^\s*[`]{3}s*([a-zA-Z_0-9-]*)s*$/
+const codeRE = /^\s*`{3}[\w-]*$/
 let suffix: string | undefined
 let widgetIndex: number | undefined
 let navIndex: number | undefined
