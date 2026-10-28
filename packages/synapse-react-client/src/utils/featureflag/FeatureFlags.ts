@@ -80,7 +80,10 @@ export const FEATURE_FLAG_CONFIG: Record<FeatureFlagEnum, FeatureFlagConfig> = {
     scopes: ['SYNAPSE'],
     displayName: 'Experimental Wiki Widgets',
   },
-  [FeatureFlagEnum.PROJECT_VISIBILITY_CHIP]: { scopes: ['SYNAPSE'] },
+  [FeatureFlagEnum.PROJECT_VISIBILITY_CHIP]: {
+    scopes: ['SYNAPSE'],
+    displayName: 'Display Project Visibility',
+  },
   [FeatureFlagEnum.QUERY_BUILDER_CONTROL]: { scopes: ['SYNAPSE'] },
   [FeatureFlagEnum.TEST_ONLY]: { scopes: [] },
 }
