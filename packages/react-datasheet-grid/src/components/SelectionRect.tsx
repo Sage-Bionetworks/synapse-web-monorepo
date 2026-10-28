@@ -210,6 +210,10 @@ export const SelectionRect = React.memo<SelectionContextType>(
           1,
       }
 
+    const stickyRightColumnWidth = hasStickyRightColumn
+      ? columnWidths.at(-1)!
+      : 0
+
     return (
       <>
         <div
@@ -236,13 +240,8 @@ export const SelectionRect = React.memo<SelectionContextType>(
               height: viewHeight ? viewHeight - headerRowHeight : 0,
               width:
                 contentWidth && viewWidth
-                  ? viewWidth -
-                    columnWidths[0] -
-                    (hasStickyRightColumn ? columnWidths.at(-1)! : 0)
-                  : `calc(100% - ${
-                      columnWidths[0] +
-                      (hasStickyRightColumn ? columnWidths.at(-1)! : 0)
-                    }px)`,
+                  ? viewWidth - columnWidths[0] - stickyRightColumnWidth
+                  : `calc(100% - ${columnWidths[0] + stickyRightColumnWidth}px)`,
             }}
           />
         </div>

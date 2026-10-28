@@ -2142,7 +2142,7 @@ export const getAccessTokenFromCookie = async (): Promise<
   if (isOutsideSynapseOrg()) {
     return Cookies.get(ACCESS_TOKEN_COOKIE_KEY) as string
   }
-  return doGet<string>(
+  return await doGet<string>(
     '/Portal/sessioncookie?validate=true',
     undefined,
     BackendDestinationEnum.PORTAL_ENDPOINT,

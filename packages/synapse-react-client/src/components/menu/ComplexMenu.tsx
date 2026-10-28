@@ -125,11 +125,11 @@ export function ComplexMenu(props: ComplexMenuProps) {
         )
       })}
       {dropdownMenus.map(
-        (menuProps, index) =>
+        menuProps =>
           menuProps.items &&
           menuProps.items.length > 0 && (
             <Box
-              key={index}
+              key={menuProps.dropdownButtonText}
               sx={theme => ({
                 [theme.breakpoints.down('md')]: {
                   width: '100%',
