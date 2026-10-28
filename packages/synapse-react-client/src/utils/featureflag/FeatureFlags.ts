@@ -67,7 +67,7 @@ export const FEATURE_FLAG_CONFIG: Record<FeatureFlagEnum, FeatureFlagConfig> = {
   [FeatureFlagEnum.CURIE_CHAT_WIDGET]: { scopes: [] },
   [FeatureFlagEnum.CURATION_TASK_PAGE_SHOW_NEW_TASK_BUTTON]: {
     scopes: ['SYNAPSE'],
-    displayName: 'New Tasks Button',
+    displayName: 'Create New Curation Tasks',
   },
   [FeatureFlagEnum.ELITE_PORTAL_MODELS]: { scopes: [] },
   [FeatureFlagEnum.AMPALS_RDCA_DAP_FORM_ENABLED]: { scopes: [] },
