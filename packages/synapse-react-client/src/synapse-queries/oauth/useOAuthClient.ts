@@ -58,12 +58,12 @@ export function useDeleteOAuthClient(
     ...options,
     mutationFn: (clientId: string) =>
       SynapseClient.deleteOAuthClient(clientId, accessToken!),
-    onSuccess: async (updatedClient, clientId, ctx) => {
+    onSuccess: async (updatedClient, clientId, ctx, ...rest) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getMyOAuthClientsQueryKey(),
       })
       if (options?.onSuccess) {
-        await options.onSuccess(updatedClient, clientId, ctx)
+        await options.onSuccess(updatedClient, clientId, ctx, ...rest)
       }
     },
   })
@@ -84,12 +84,12 @@ export function useUpdateOAuthClient(
         id: client.client_id!,
         oAuthClient: client,
       }),
-    onSuccess: async (updatedClient, client, ctx) => {
+    onSuccess: async (updatedClient, client, ctx, ...rest) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getMyOAuthClientsQueryKey(),
       })
       if (options?.onSuccess) {
-        await options.onSuccess(updatedClient, client, ctx)
+        await options.onSuccess(updatedClient, client, ctx, ...rest)
       }
     },
   })
@@ -109,12 +109,12 @@ export function useCreateOAuthClient(
       synapseClient.openIDConnectServicesClient.postAuthV1Oauth2Client({
         oAuthClient: client,
       }),
-    onSuccess: async (updatedClient, client, ctx) => {
+    onSuccess: async (updatedClient, client, ctx, ...rest) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getMyOAuthClientsQueryKey(),
       })
       if (options?.onSuccess) {
-        await options.onSuccess(updatedClient, client, ctx)
+        await options.onSuccess(updatedClient, client, ctx, ...rest)
       }
     },
   })
@@ -155,14 +155,14 @@ export function useUpdateOAuthClientACL(
         id: acl.id!,
         accessControlList: acl,
       }),
-    onSuccess: async (newAcl, acl, ctx) => {
+    onSuccess: async (newAcl, acl, ctx, ...rest) => {
       const oauthClientAclQueryKey = keyFactory.getOAuthClientAclQueryKey(
         newAcl.id!,
       )
       queryClient.setQueryData(oauthClientAclQueryKey, newAcl)
 
       if (options?.onSuccess) {
-        return await options.onSuccess(newAcl, acl, ctx)
+        return await options.onSuccess(newAcl, acl, ctx, ...rest)
       }
       return
     },

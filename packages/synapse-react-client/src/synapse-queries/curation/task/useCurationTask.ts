@@ -33,12 +33,12 @@ export function useCreateCurationTask(
       synapseClient.curationTaskServicesClient.postRepoV1CurationTask({
         curationTask,
       }),
-    onSuccess: (data, variables, context) => {
+    onSuccess: (data, variables, context, ...rest) => {
       queryClient.invalidateQueries({
         queryKey: keyFactory.getAllCurationTaskListKey(),
       })
       if (options?.onSuccess) {
-        options.onSuccess(data, variables, context)
+        options.onSuccess(data, variables, context, ...rest)
       }
     },
   })
@@ -89,7 +89,7 @@ export function useUpdateCurationTask(
         taskId: curationTask.taskId!,
         curationTask,
       }),
-    onSuccess: (data, variables, context) => {
+    onSuccess: (data, variables, context, ...rest) => {
       // Invalidate both the status query and the task query using the ID key
       queryClient.invalidateQueries({
         queryKey: keyFactory.getCurationTaskIdKey(variables.taskId!),
@@ -98,7 +98,7 @@ export function useUpdateCurationTask(
         queryKey: keyFactory.getAllCurationTaskListKey(),
       })
       if (options?.onSuccess) {
-        options.onSuccess(data, variables, context)
+        options.onSuccess(data, variables, context, ...rest)
       }
     },
   })
@@ -117,7 +117,7 @@ export function useUpdateCurationTaskStatus(
       synapseClient.curationTaskServicesClient.putRepoV1CurationTaskTaskIdStatus(
         { taskId: taskStatus.taskId!, taskStatus },
       ),
-    onSuccess: (data, variables, context) => {
+    onSuccess: (data, variables, context, ...rest) => {
       queryClient.invalidateQueries({
         queryKey: keyFactory.getCurationTaskIdKey(variables.taskId!),
       })
@@ -126,7 +126,7 @@ export function useUpdateCurationTaskStatus(
       })
 
       if (options?.onSuccess) {
-        options.onSuccess(data, variables, context)
+        options.onSuccess(data, variables, context, ...rest)
       }
     },
   })
@@ -143,7 +143,7 @@ export function useDeleteCurationTask(
       synapseClient.curationTaskServicesClient.deleteRepoV1CurationTaskTaskId({
         taskId,
       }),
-    onSuccess: (data, taskId, context) => {
+    onSuccess: (data, taskId, context, ...rest) => {
       queryClient.invalidateQueries({
         queryKey: keyFactory.getCurationTaskIdKey(taskId),
       })
@@ -151,7 +151,7 @@ export function useDeleteCurationTask(
         queryKey: keyFactory.getAllCurationTaskListKey(),
       })
       if (options?.onSuccess) {
-        options.onSuccess(data, taskId, context)
+        options.onSuccess(data, taskId, context, ...rest)
       }
     },
   })
@@ -184,7 +184,7 @@ export function useExecuteCurationTask(
       )
       return asyncJobResponse.responseBody as ComputeTaskExecutionResponse
     },
-    onSuccess: (data, taskId, context) => {
+    onSuccess: (data, taskId, context, ...rest) => {
       queryClient.invalidateQueries({
         queryKey: keyFactory.getCurationTaskIdKey(taskId),
       })
@@ -192,7 +192,7 @@ export function useExecuteCurationTask(
         queryKey: keyFactory.getAllCurationTaskListKey(),
       })
       if (options?.onSuccess) {
-        options.onSuccess(data, taskId, context)
+        options.onSuccess(data, taskId, context, ...rest)
       }
     },
   })

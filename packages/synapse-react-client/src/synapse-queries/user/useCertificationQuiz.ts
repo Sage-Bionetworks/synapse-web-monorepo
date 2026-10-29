@@ -36,7 +36,7 @@ export function usePostCertifiedUserTestResponse(
     ...options,
     mutationFn: (quizResponse: QuizResponse) =>
       SynapseClient.postCertifiedUserTestResponse(accessToken, quizResponse),
-    onSuccess: async (updatedPassingRecord, variables, ctx) => {
+    onSuccess: async (updatedPassingRecord, variables, ctx, ...rest) => {
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: keyFactory.getPassingRecordQueryKey(userProfile?.ownerId!),
@@ -50,7 +50,7 @@ export function usePostCertifiedUserTestResponse(
       ])
 
       if (options?.onSuccess) {
-        await options.onSuccess(updatedPassingRecord, variables, ctx)
+        await options.onSuccess(updatedPassingRecord, variables, ctx, ...rest)
       }
     },
   })
