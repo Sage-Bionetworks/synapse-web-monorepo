@@ -1,5 +1,5 @@
 import { CsvTableDescriptor } from './CsvTableDescription'
-import { SortItem } from './Query'
+import { CohortDefinition, SortItem } from './Query'
 import { FacetColumnRequest } from './FacetColumnRequest'
 import { QueryFilter } from './QueryFilter'
 
@@ -19,4 +19,5 @@ export type DownloadFromTableRequest = {
   limit?: number // The optional limit to the results
   sort?: SortItem[]
   additionalFilters?: QueryFilter[]
+  cohorts?: CohortDefinition[] // Request-scoped cohorts referenced by `additionalFilters` (see Query.cohorts)
 }

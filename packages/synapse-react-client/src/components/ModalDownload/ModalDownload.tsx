@@ -92,6 +92,7 @@ export class ModalDownload extends Component<
       includeRowIdAndRowVersion,
       csvTableDescriptor: { separator },
       additionalFilters: queryRequest.query.additionalFilters,
+      cohorts: queryRequest.query.cohorts,
     }
     SynapseClient.createTableCsvForDownload(
       downloadFromTableRequest,

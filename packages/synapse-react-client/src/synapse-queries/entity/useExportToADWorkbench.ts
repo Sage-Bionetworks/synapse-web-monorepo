@@ -41,6 +41,7 @@ export function useExportToADWorkbench(
         includeRowIdAndRowVersion,
         csvTableDescriptor: { separator },
         additionalFilters: queryBundleRequest.query.additionalFilters,
+        cohorts: queryBundleRequest.query.cohorts,
       }
       const result = await SynapseClient.createTableCsvForDownload(
         downloadFromTableRequest,

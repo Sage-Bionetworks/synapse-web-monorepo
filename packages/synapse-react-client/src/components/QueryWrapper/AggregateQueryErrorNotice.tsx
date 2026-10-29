@@ -54,6 +54,8 @@ function getNoticeText(error: AggregateQueryError, units: string) {
 
 export type AggregateQueryErrorNoticeProps = {
   error: AggregateQueryError
+  /** What the queried rows are, in the plural (e.g. "files and datasets"). Defaults to the pluralized unitDescription. */
+  pluralUnitDescription?: string
 }
 
 /**
@@ -68,7 +70,7 @@ export function AggregateQueryErrorNotice(
     useContext(QueryVisualizationContext)?.unitDescription ?? 'result'
   const { title, description } = getNoticeText(
     props.error,
-    pluralize(unitDescription),
+    props.pluralUnitDescription ?? pluralize(unitDescription),
   )
   return (
     <Box role="status" sx={{ textAlign: 'center', py: 4 }}>
