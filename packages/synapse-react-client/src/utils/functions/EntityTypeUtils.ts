@@ -1,4 +1,5 @@
 import { isTypeViaConcreteTypeFactory } from '@/utils/types/IsType'
+import { LiteralUnion } from 'type-fest'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import {
   Dataset,
@@ -133,7 +134,14 @@ export function entityTypeToFriendlyName(entityType: EntityType): string {
   }
 }
 
-export function convertToEntityType(typeString: string): EntityType {
+/**
+ * Converts an entity type name (an {@link EntityType} value, e.g. `'file'`) or an entity's
+ * `concreteType` (e.g. `'org.sagebionetworks.repo.model.FileEntity'`) to its {@link EntityType}.
+ * @throws Error if `typeString` is neither
+ */
+export function convertToEntityType(
+  typeString: LiteralUnion<EntityType | ENTITY_CONCRETE_TYPE, string>,
+): EntityType {
   if (Object.values(EntityType).includes(typeString as EntityType)) {
     return typeString as EntityType
   }
@@ -408,12 +416,8 @@ export const entityJsonKeys: Record<ENTITY_CONCRETE_TYPE, string[]> = {
     'upsertKey',
     'csvDescriptor',
   ],
-  'org.sagebionetworks.repo.model.Preview': [
-    /* unused */
-  ],
-  'org.sagebionetworks.repo.model.ExampleEntity': [
-    /* unused */
-  ],
+  'org.sagebionetworks.repo.model.Preview': [/* unused */],
+  'org.sagebionetworks.repo.model.ExampleEntity': [/* unused */],
   'org.sagebionetworks.repo.model.search.table.SearchIndex': [
     ...allEntityKeys,
     'definingSQL',

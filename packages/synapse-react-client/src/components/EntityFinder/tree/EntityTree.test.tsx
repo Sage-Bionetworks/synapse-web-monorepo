@@ -31,13 +31,9 @@ import { Map } from 'immutable'
 import { http, HttpResponse } from 'msw'
 import { useState } from 'react'
 import { EntityDetailsListDataConfigurationType } from '../details/EntityDetailsList'
-import {
-  EntityTree,
-  EntityTreeContainer,
-  EntityTreeProps,
-  FinderScope,
-} from './EntityTree'
+import { EntityTree, EntityTreeProps, FinderScope } from './EntityTree'
 import * as VirtualizedTreeModule from './VirtualizedTree'
+import { EntityTreeContainer } from './VirtualizedTree'
 import { EntityTreeNodeType, VirtualizedTreeProps } from './VirtualizedTree'
 
 const VIRTUALIZED_TREE_TEST_ID = 'VirtualizedTreeComponent'

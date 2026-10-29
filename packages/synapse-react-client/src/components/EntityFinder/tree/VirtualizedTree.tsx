@@ -15,6 +15,7 @@ import { EntityChildrenRequest } from '@sage-bionetworks/synapse-types'
 import { useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { cloneDeep } from 'lodash-es'
+import { LiteralUnion } from 'type-fest'
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { useInView } from 'react-intersection-observer'
 import AutoSizer from 'react-virtualized-auto-sizer'
@@ -159,7 +160,7 @@ export const getNodeData = (config: {
   selectableTypes: EntityType[]
   autoExpand: (entityId: string) => boolean
   defaultHeight: number
-  currentContainer?: string | null
+  currentContainer?: EntityTreeContainer
 }): TreeWalkerValue<TreeData, NodeMeta> => {
   const {
     node,
@@ -494,13 +495,20 @@ export function getTreeWalkerFunction({
   }
 }
 
+/**
+ * Indicates which container is selected when the tree is used to control another component. If 'root', then the top-level entities
+ * should be shown in the other component. If a synID, then that entity's children should be shown in the other component. If null,
+ * then a selection has not been made.
+ */
+export type EntityTreeContainer = LiteralUnion<'root', string> | null
+
 export type VirtualizedTreeProps = Readonly<{
   treeNodeType: EntityTreeNodeType
   rootNodeConfiguration: RootNodeConfiguration
   setSelectedId: (entityId: string) => void
   selected: EntitySelectionMapType
   /* currentContainer is the container whose contents are shown on in the right pane in dual-pane configuration, and may only be defined when treeNodeType is DUAL_PANE */
-  currentContainer?: string | null
+  currentContainer?: EntityTreeContainer
   autoExpand: (entityId: string) => boolean
   selectableTypes: EntityType[]
   visibleTypes: EntityType[]

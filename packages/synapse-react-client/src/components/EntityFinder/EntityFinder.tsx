@@ -30,7 +30,8 @@ import {
   EntityDetailsListProps,
 } from './details/EntityDetailsList'
 import { EntityFinderHeader } from './EntityFinderHeader'
-import { EntityTree, EntityTreeContainer, FinderScope } from './tree/EntityTree'
+import { EntityTree, FinderScope } from './tree/EntityTree'
+import { EntityTreeContainer } from './tree/VirtualizedTree'
 import { EntityTreeNodeType } from './tree/VirtualizedTree'
 import { useEntitySelection } from './useEntitySelection'
 import { VersionSelectionType } from './VersionSelectionType'
