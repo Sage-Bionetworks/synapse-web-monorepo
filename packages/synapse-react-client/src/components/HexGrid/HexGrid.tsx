@@ -16,6 +16,7 @@ export type HexRowData = {
   imageFileHandleId: string | null
   description: string | null
   entityId: string
+  website: string | null
 }
 
 type HexGridProps = {
@@ -24,6 +25,7 @@ type HexGridProps = {
   imageColName: string
   descriptionColName: string
   isVisibleColName?: string
+  websiteColName?: string
   onRowClick?: (rowData: HexRowData) => void
 }
 
@@ -33,6 +35,7 @@ function HexGrid({
   imageColName,
   descriptionColName,
   isVisibleColName,
+  websiteColName,
   onRowClick,
 }: HexGridProps) {
   const entityId = parseEntityIdFromSqlStatement(sql)
@@ -58,6 +61,8 @@ function HexGrid({
 
   const toShowColIndex = getFieldIndex(isVisibleColName, queryResultBundle)
 
+  const websiteColIndex = getFieldIndex(websiteColName, queryResultBundle)
+
   const filteredDataRows = isVisibleColName
     ? dataRows.filter(row => row.values[toShowColIndex] === 'true')
     : dataRows
@@ -76,6 +81,7 @@ function HexGrid({
                   title: row.values[titleColIndex] ?? '',
                   imageFileHandleId: row.values[imageColIndex] ?? null,
                   description: row.values[descColIndex] ?? null,
+                  website: row.values[websiteColIndex] ?? null,
                   entityId,
                 })
               }
