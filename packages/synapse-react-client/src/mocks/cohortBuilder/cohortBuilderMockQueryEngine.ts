@@ -296,7 +296,7 @@ function groupByParticipant(
     for (const name of data.dataAttributeNames) {
       participantRow[name] = Array.from(
         new Set(group.map(row => row[name])),
-      ).sort((a, b) => a.localeCompare(b))
+      ).toSorted((a, b) => a.localeCompare(b))
     }
     return participantRow
   })
@@ -371,7 +371,7 @@ function buildFacet(
   aggregateConfig: AggregateDataConfiguration | undefined,
   noiseKeyPrefix: string,
 ): FacetColumnResult {
-  const sortedCounts = Array.from(counts).sort(
+  const sortedCounts = Array.from(counts).toSorted(
     ([valueA, countA], [valueB, countB]) =>
       countB - countA || valueA.localeCompare(valueB),
   )
@@ -490,7 +490,7 @@ function sortRows(
   if (!sort || sort.length === 0) {
     return rows
   }
-  return [...rows].sort((a, b) => {
+  return rows.toSorted((a, b) => {
     for (const { column, direction } of sort) {
       const toComparable = (cell: CellValue) =>
         Array.isArray(cell) ? cell.join(',') : (cell as string | number)

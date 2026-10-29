@@ -94,6 +94,7 @@ describe('App integration tests', () => {
     document.cookie = ''
   })
 
+  // oxlint-disable-next-line vitest/no-disabled-tests -- fails when enabled: the sign-in button never renders in jsdom and the query times out
   test.skip('Shows login when no token is provided', async () => {
     renderApp()
     await screen.findByRole(
@@ -104,6 +105,7 @@ describe('App integration tests', () => {
       overrideWaitForOptions,
     )
   })
+  // oxlint-disable-next-line vitest/no-disabled-tests -- fails when enabled: the sign-in button never renders in jsdom and the query times out
   test.skip('Shows login and does not redirect when an expired token is provided', async () => {
     // Need a token in the cookie so the app tries to use it
     document.cookie = `${ACCESS_TOKEN_COOKIE_KEY}=expired`
@@ -139,6 +141,7 @@ describe('App integration tests', () => {
     expect(window.location.replace).not.toHaveBeenCalled()
   })
 
+  // oxlint-disable-next-line vitest/no-disabled-tests -- fails when enabled: the sign-in button never renders in jsdom and the query times out
   test.skip('Stores the token when login is successful', async () => {
     renderApp()
 
@@ -410,6 +413,7 @@ describe('App integration tests', () => {
     expect(window.location.replace).not.toHaveBeenCalled()
   })
 
+  // oxlint-disable-next-line vitest/no-disabled-tests -- fails when enabled: the OAuth 2FA sign-in callback is never called with the expected arguments
   test.skip('Supports OAuth2 login with 2FA', async () => {
     vi.spyOn(window.history, 'replaceState')
 
