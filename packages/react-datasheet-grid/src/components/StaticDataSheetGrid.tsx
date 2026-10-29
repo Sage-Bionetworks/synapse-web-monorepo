@@ -1,5 +1,5 @@
 import { DataSheetGridProps, DataSheetGridRef } from '../types'
-import { useState } from 'react'
+import { useConstant } from '../hooks/useConstant'
 import { DataSheetGrid } from './DataSheetGrid'
 import React from 'react'
 
@@ -27,8 +27,7 @@ export const StaticDataSheetGrid = React.forwardRef<
     }: DataSheetGridProps<T>,
     ref: React.ForwardedRef<DataSheetGridRef>,
   ) => {
-    // oxlint-disable-next-line react/hook-use-state -- these props are intentionally captured once on mount and never updated
-    const [staticProps] = useState({
+    const staticProps = useConstant(() => ({
       columns,
       gutterColumn,
       stickyRightColumn,
@@ -43,7 +42,7 @@ export const StaticDataSheetGrid = React.forwardRef<
       onSelectionChange,
       rowClassName,
       rowHeight,
-    })
+    }))
 
     return (
       <DataSheetGrid

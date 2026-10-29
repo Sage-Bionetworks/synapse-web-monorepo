@@ -17,11 +17,12 @@
 import { CssBaseline } from '@mui/material'
 import type { PaletteOptions } from '@mui/material/styles'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useState, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { Outlet } from 'react-router'
 import { ThemeProvider } from 'synapse-react-client/theme/ThemeProvider'
 import { DocumentMetadataProvider } from 'synapse-react-client/utils/context/DocumentMetadataContext'
 import { defaultQueryClientConfig } from 'synapse-react-client/utils/context/FullContextProvider'
+import { useConstant } from 'synapse-react-client/utils/hooks/useConstant'
 import {
   PortalContextProvider,
   PortalContextType,
@@ -39,8 +40,7 @@ export type PortalRootProps = Omit<PortalContextType, 'routeConfig'> & {
 
 export default function PortalRoot(props: PortalRootProps) {
   const { children, palette, ...portalContextProps } = props
-  // oxlint-disable-next-line react/hook-use-state -- the QueryClient is created once per mount and never replaced
-  const [queryClient] = useState(
+  const queryClient = useConstant(
     () => new QueryClient(defaultQueryClientConfig),
   )
 
