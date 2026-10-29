@@ -15,7 +15,10 @@ import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
-import { AddToDownloadListRequest } from '@sage-bionetworks/synapse-client'
+import {
+  AddToDownloadListRequest,
+  AggregateDataConfiguration,
+} from '@sage-bionetworks/synapse-client'
 import {
   DownloadFromTableRequest,
   QueryBundleRequest,
@@ -226,23 +229,6 @@ describe('CohortBuilder', () => {
     expect(sentRequests).toEqual([])
   })
 
-  it('sends a data manager preview configuration with every query and says so', async () => {
-    const aggregateDataPreview = {
-      suppressionThreshold: ELITE_MOCK_PROFILE.suppressionThreshold,
-      facetPostProcessingConfig: ELITE_MOCK_PROFILE.facetPostProcessingConfig,
-    }
-    renderCohortBuilder({ aggregateDataPreview }, 'FULL')
-
-    expect(
-      await screen.findByText(`${allParticipantsCount} participants`),
-    ).toBeInTheDocument()
-    expect(screen.getByText(COHORT_BUILDER_PREVIEW_NOTICE)).toBeInTheDocument()
-    expect(sentRequests.length).toBeGreaterThan(0)
-    for (const request of sentRequests) {
-      expect(request.aggregateDataPreview).toEqual(aggregateDataPreview)
-    }
-  })
-
   // Each test builds a cohort with the Query Builder, then each result waits on chained async query jobs (participants,
   // then files). When the whole suite is running, a single wait can exceed Testing Library's default and a whole test
   // can exceed the suite's per-test timeout.
@@ -253,6 +239,7 @@ describe('CohortBuilder', () => {
 
     function renderWithFiles(
       handlerOptions: CohortBuilderHandlersOptions = {},
+      props: Partial<CohortBuilderProps> = {},
     ) {
       const profile = handlerOptions.profile ?? ELITE_MOCK_PROFILE
       server.use(...getCohortBuilderHandlers(handlerOptions))
@@ -260,6 +247,7 @@ describe('CohortBuilder', () => {
         <CohortBuilder
           participantsTableId={profile.participantsVirtualTableId}
           filesTableId={profile.dataVirtualTableId}
+          {...props}
         />,
         { wrapper: createWrapper() },
       )
@@ -281,6 +269,35 @@ describe('CohortBuilder', () => {
         request => request.entityId === profile.dataVirtualTableId,
       )
     }
+
+    it('previews the participant and files queries the way an aggregate-only user sees them, and says so', async () => {
+      const aggregateDataPreview: AggregateDataConfiguration = {
+        suppressionThreshold: ELITE_MOCK_PROFILE.suppressionThreshold,
+        quasiIdentifierColumnNames: ['individualId'],
+        facetPostProcessingConfig: ELITE_MOCK_PROFILE.facetPostProcessingConfig,
+      }
+      const profile = renderWithFiles(
+        { access: 'FULL' },
+        { aggregateDataPreview },
+      )
+      await screen.findByText(`${allParticipantsCount} participants`)
+      expect(
+        screen.getByText(COHORT_BUILDER_PREVIEW_NOTICE),
+      ).toBeInTheDocument()
+
+      // 1,200 participants, but only 3 datasets: an approved user would see them, an aggregate-only user wouldn't.
+      await buildCohort('Study', ['LLFS'])
+
+      expect(
+        await screen.findByText(
+          'A minimum of 20 files and datasets is required',
+        ),
+      ).toBeInTheDocument()
+      expect(filesRequests(profile)).not.toHaveLength(0)
+      for (const request of sentRequests) {
+        expect(request.aggregateDataPreview).toEqual(aggregateDataPreview)
+      }
+    })
 
     it('lists every file and dataset, without a cohort, when no filters are applied', async () => {
       const profile = renderWithFiles()
