@@ -64,8 +64,7 @@ describe('Tests for the generated specification', () => {
   })
 
   test("a query's cohorts are serialized with their own query", () => {
-    // A cohort's query is a Query. The published spec types it as a CohortDefinition, which patchSpec corrects;
-    // without that, serialization drops the cohort query's sql and filters.
+    // PLFM-10051: the spec must type a cohort's query as a Query; otherwise generated clients drop its sql and filters.
     const query: TableQuery = {
       sql: 'SELECT * FROM syn2',
       cohorts: [
