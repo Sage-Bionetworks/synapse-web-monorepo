@@ -22,7 +22,7 @@ export const useGoogleAnalytics = (measurementId: string = 'GTM-KPW4KS62') => {
       window.dataLayer = window.dataLayer || []
 
       window.dataLayer.push({
-        'gtm.start': new Date().getTime(),
+        'gtm.start': Date.now(),
         event: 'gtm.js',
       })
       const firstScriptElement = document.getElementsByTagName('script')[0]

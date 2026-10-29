@@ -186,7 +186,7 @@ export function useCreateFormTemplate(
       synapseClient.accessRequirementServicesClient.postRepoV1AccessRequirementFormTemplate(
         { formTemplate },
       ),
-    onSuccess: async (createdTemplate, variables, ctx) => {
+    onSuccess: async (createdTemplate, variables, ctx, ...rest) => {
       queryClient.setQueryData(
         keyFactory.getFormTemplateByIdQueryKey(createdTemplate.id!),
         createdTemplate,
@@ -195,7 +195,7 @@ export function useCreateFormTemplate(
         queryKey: keyFactory.getFormTemplateQueryKey(),
       })
       if (options?.onSuccess) {
-        await options.onSuccess(createdTemplate, variables, ctx)
+        await options.onSuccess(createdTemplate, variables, ctx, ...rest)
       }
     },
   })
@@ -239,7 +239,7 @@ export function useUpdateFormTemplate(
       synapseClient.accessRequirementServicesClient.postRepoV1AccessRequirementFormTemplateTemplateId(
         { templateId, formTemplate },
       ),
-    onSuccess: async (updatedTemplate, variables, ctx) => {
+    onSuccess: async (updatedTemplate, variables, ctx, ...rest) => {
       queryClient.setQueryData(
         keyFactory.getFormTemplateByIdQueryKey(variables.templateId),
         updatedTemplate,
@@ -248,7 +248,7 @@ export function useUpdateFormTemplate(
         queryKey: keyFactory.getFormTemplateQueryKey(),
       })
       if (options?.onSuccess) {
-        await options.onSuccess(updatedTemplate, variables, ctx)
+        await options.onSuccess(updatedTemplate, variables, ctx, ...rest)
       }
     },
   })

@@ -56,7 +56,7 @@ describe('Tests for the generated specification', () => {
     if (instanceOfFileEntity(fileEntityWithoutType)) {
       expectTypeOf(fileEntityWithoutType).toMatchTypeOf<FileEntity>()
     } else {
-      throw Error(
+      throw new Error(
         'instanceOfFileEntity was false when it should have been true',
       )
     }

@@ -28,12 +28,12 @@ export default class JsonRx {
    */
   static fromJson(json: unknown): JsonRxMessage {
     if (!Array.isArray(json)) {
-      throw new Error('Invalid JSON-Rx message: not an array')
+      throw new TypeError('Invalid JSON-Rx message: not an array')
     }
     const typeCode = json[0]
 
     if (typeof typeCode !== 'number') {
-      throw new Error(
+      throw new TypeError(
         `Invalid JSON-Rx message: type code is not a number, received ${typeCode}`,
       )
     }

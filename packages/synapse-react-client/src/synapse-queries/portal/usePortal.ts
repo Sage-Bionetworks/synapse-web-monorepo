@@ -25,12 +25,12 @@ export function useCreatePortal(
       synapseClient.portalsServicesClient.postRepoV1Portal({
         createOrUpdatePortalRequest: portal,
       }),
-    onSuccess: async (createdPortal, portal, ctx) => {
+    onSuccess: async (createdPortal, portal, ctx, ...rest) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getListPortalsQueryKey(),
       })
       if (options?.onSuccess) {
-        await options.onSuccess(createdPortal, portal, ctx)
+        await options.onSuccess(createdPortal, portal, ctx, ...rest)
       }
     },
   })
@@ -48,12 +48,12 @@ export function useDeletePortal(
       synapseClient.portalsServicesClient.deleteRepoV1PortalPortalId({
         portalId,
       }),
-    onSuccess: async (data, portalId, ctx) => {
+    onSuccess: async (data, portalId, ctx, ...rest) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getListPortalsQueryKey(),
       })
       if (options?.onSuccess) {
-        await options.onSuccess(data, portalId, ctx)
+        await options.onSuccess(data, portalId, ctx, ...rest)
       }
     },
   })
@@ -126,12 +126,12 @@ export function useUpdatePortalACL(
         portalId: acl.id!,
         accessControlList: acl,
       }),
-    onSuccess: async (newAcl, acl, ctx) => {
+    onSuccess: async (newAcl, acl, ctx, ...rest) => {
       const portalAclQueryKey = keyFactory.getPortalAclQueryKey(newAcl.id!)
       queryClient.setQueryData(portalAclQueryKey, newAcl)
 
       if (options?.onSuccess) {
-        return await options.onSuccess(newAcl, acl, ctx)
+        return await options.onSuccess(newAcl, acl, ctx, ...rest)
       }
       return undefined
     },

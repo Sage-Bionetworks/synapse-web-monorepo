@@ -1,4 +1,4 @@
-import path from 'path'
+import path from 'node:path'
 import generate from 'markdown-it-testgen'
 import markdownItSynapse, { init_markdown_it, preprocessMarkdown } from '../src'
 import MarkdownIt from 'markdown-it'

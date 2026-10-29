@@ -156,7 +156,7 @@ export function RssFeedCards(props: RssFeedCardsProps) {
                     )}
                     <p className="FeedItemTitle">{item.title}</p>
                     <div className="FeedItemDescription">
-                      {item.contentSnippet?.replace(/\[...\]|\[…\]/gm, '…')}
+                      {item.contentSnippet?.replaceAll(/\[...\]|\[…\]/gm, '…')}
                     </div>
                     <a
                       className="FeedItemLink"
