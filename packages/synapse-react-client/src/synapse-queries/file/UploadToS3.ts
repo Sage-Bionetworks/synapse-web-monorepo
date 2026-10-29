@@ -2,22 +2,33 @@ import { ProgressCallback } from '@/synapse-client/index'
 import { S3 } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
 
+export type UploadToS3Params = {
+  blob: Blob
+  fileKey: string
+  endpoint: string
+  accessKey: string
+  secretKey: string
+  bucketName: string
+  contentType: string
+  abortController?: AbortController
+  progressCallback?: (progress: ProgressCallback) => void
+}
+
 /**
  * Directly (from the client runtime, e.g. browser) uploads a file to an
  * S3-compatible storage service.
  */
-// oxlint-disable-next-line max-params -- exported API; an options object would break existing callers
-export async function uploadToS3(
-  blob: Blob,
-  fileKey: string,
-  endpoint: string,
-  accessKey: string,
-  secretKey: string,
-  bucketName: string,
-  contentType: string,
-  abortController: AbortController | undefined,
-  progressCallback: ((progress: ProgressCallback) => void) | undefined,
-) {
+export async function uploadToS3({
+  blob,
+  fileKey,
+  endpoint,
+  accessKey,
+  secretKey,
+  bucketName,
+  contentType,
+  abortController,
+  progressCallback,
+}: UploadToS3Params) {
   const s3Client = new S3({
     endpoint,
     region: 'us-east-1',

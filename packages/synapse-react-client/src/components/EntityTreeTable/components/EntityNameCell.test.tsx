@@ -30,6 +30,11 @@ const mockContextValue = {
   nextPageTokens: {},
 }
 
+const contextWithoutEntityLinks = {
+  ...mockContextValue,
+  disableEntityLinks: true,
+}
+
 const mockEntityBundleRow: EntityBundleRow = {
   entityId: 'syn123',
   entityHeader: {
@@ -180,10 +185,7 @@ describe('NameCell', () => {
 
   it('should render entity name as plain text when disableEntityLinks is true', () => {
     render(
-      <EntityTreeTableContext.Provider
-        // oxlint-disable-next-line react/jsx-no-constructed-context-values -- test-only provider rendered once
-        value={{ ...mockContextValue, disableEntityLinks: true }}
-      >
+      <EntityTreeTableContext.Provider value={contextWithoutEntityLinks}>
         <NameCell {...createMockCellContext(mockEntityBundleRow)} />
       </EntityTreeTableContext.Provider>,
     )
