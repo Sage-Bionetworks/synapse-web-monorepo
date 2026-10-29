@@ -73,3 +73,24 @@ describe('getRowIndex', () => {
     expect(getRowIndex(5)).toBe(2)
   })
 })
+
+describe('getRowSize', () => {
+  test('Already calculated', () => {
+    const { getRowSize } = fromSizes([2, 3, 4])
+
+    expect(getRowSize(1)).toEqual({ height: 3, top: 2 })
+  })
+
+  test('Calculates from the last calculated row', () => {
+    const { getRowSize } = fromSizes([2, 3, 4], 1)
+
+    expect(getRowSize(2)).toEqual({ height: 4, top: 5 })
+  })
+
+  test('No row calculated starts from the top', () => {
+    const { getRowSize } = fromSizes([2, 3, 4], 0)
+
+    expect(getRowSize(0)).toEqual({ height: 2, top: 0 })
+    expect(getRowSize(2)).toEqual({ height: 4, top: 5 })
+  })
+})
