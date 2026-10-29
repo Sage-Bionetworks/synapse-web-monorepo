@@ -3,7 +3,7 @@ import {
   waitForAsyncResult,
 } from '@sage-bionetworks/synapse-client'
 import pLimit from 'p-limit'
-import { PrerenderCache } from './cache'
+import { getSharedPrerenderCache } from './cache'
 import { createAnonymousSynapseClient } from './synapseClient'
 
 const BUNDLE_MASK_QUERY_RESULTS = 0x1
@@ -25,7 +25,9 @@ const FETCH_CONCURRENCY = 20
 /**
  * Cache for the URL index. The single key 'index' holds the entire Map.
  */
-const urlIndexCache = new PrerenderCache<string, Map<string, string>>()
+const urlIndexCache = getSharedPrerenderCache<string, Map<string, string>>(
+  'croissantUrlIndex',
+)
 
 /**
  * Fetches the entire Croissant table and builds a Map of dataset → S3 URL.
@@ -92,7 +94,9 @@ async function loadCroissantUrlIndex(): Promise<Map<string, string>> {
 // Content cache: dataset entity ID → parsed JSON-LD object
 // ---------------------------------------------------------------------------
 
-const contentCache = new PrerenderCache<string, Record<string, unknown>>()
+const contentCache = getSharedPrerenderCache<string, Record<string, unknown>>(
+  'croissantContent',
+)
 
 /**
  * Fetches a single Croissant file from S3 and parses it as JSON.

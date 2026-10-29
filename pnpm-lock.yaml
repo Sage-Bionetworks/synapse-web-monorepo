@@ -1626,6 +1626,9 @@ importers:
       '@types/react':
         specifier: 19.2.14
         version: 19.2.14
+      '@types/react-dom':
+        specifier: 19.2.3
+        version: 19.2.3(@types/react@19.2.14)
       '@types/react-plotly.js':
         specifier: ^2.6.4
         version: 2.6.4

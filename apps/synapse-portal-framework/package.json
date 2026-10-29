@@ -66,6 +66,7 @@
     "@types/node": "^22.19.20",
     "@types/plotly.js": "^2.35.14",
     "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
     "@types/react-plotly.js": "^2.6.4",
     "@vitest/coverage-v8": "^4.1.11",
     "@vitest/ui": "^4.1.11",

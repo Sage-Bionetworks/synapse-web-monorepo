@@ -53,46 +53,55 @@ export function createReactRouterConfig(
     concurrency = 16,
   } = options
 
+  // React Router calls `prerender.paths` more than once per build (server entry generation and ssr:false
+  // validation); resolve the Synapse-backed routes once and reuse them.
+  let dynamicRoutesPromise: Promise<string[]> | undefined
+
+  async function resolveDynamicRoutes(): Promise<string[]> {
+    const isProduction = process.env.NODE_ENV === 'production'
+    const dynamicRoutes: string[] = []
+
+    // Enumerate record IDs for each detail page type. We fetch only 1 ID
+    // when:
+    //   - in dev mode (keeps startup fast), or
+    //   - the detail page is marked `prerender: false` (high-cardinality
+    //     page that we don't want statically generated at scale).
+    // Either way React Router's ssr:false validator is satisfied because
+    // at least one path matches each loader-exporting route — the
+    // remaining paths fall through to the SPA fallback at runtime.
+    for (const detailPage of sitemapConfig.detailPages) {
+      const limit =
+        !isProduction || detailPage.prerender === false ? 1 : undefined
+      const result = await fetchResourceIds(detailPage, limit)
+      if (!result.success) {
+        console.warn(`[prerender] Skipping ${detailPage.path}: ${result.error}`)
+        continue
+      }
+      for (const id of result.ids) {
+        dynamicRoutes.push(`/${detailPage.path}/${encodePathSegment(id)}`)
+      }
+    }
+
+    // Hydrate caches so individual loader() calls during prerender are
+    // instant cache hits. Only needed for production builds where all routes
+    // are pre-rendered.
+    if (isProduction) {
+      await Promise.all([
+        ...metadataConfigs.map(mc => preloadDetailPageMetadata(mc)),
+        ...additionalPreloads.map(p => p()),
+      ])
+    }
+
+    return dynamicRoutes
+  }
+
   return {
     appDirectory,
     ssr: false,
     prerender: {
       paths: async ({ getStaticPaths }) => {
-        const isProduction = process.env.NODE_ENV === 'production'
-        const dynamicRoutes: string[] = []
-
-        // Enumerate record IDs for each detail page type. We fetch only 1 ID
-        // when:
-        //   - in dev mode (keeps startup fast), or
-        //   - the detail page is marked `prerender: false` (high-cardinality
-        //     page that we don't want statically generated at scale).
-        // Either way React Router's ssr:false validator is satisfied because
-        // at least one path matches each loader-exporting route — the
-        // remaining paths fall through to the SPA fallback at runtime.
-        for (const detailPage of sitemapConfig.detailPages) {
-          const limit =
-            !isProduction || detailPage.prerender === false ? 1 : undefined
-          const result = await fetchResourceIds(detailPage, limit)
-          if (!result.success) {
-            console.warn(
-              `[prerender] Skipping ${detailPage.path}: ${result.error}`,
-            )
-            continue
-          }
-          for (const id of result.ids) {
-            dynamicRoutes.push(`/${detailPage.path}/${encodePathSegment(id)}`)
-          }
-        }
-
-        // Hydrate caches so individual loader() calls during prerender are
-        // instant cache hits. Only needed for production builds where all routes
-        // are pre-rendered.
-        if (isProduction) {
-          await Promise.all([
-            ...metadataConfigs.map(mc => preloadDetailPageMetadata(mc)),
-            ...additionalPreloads.map(p => p()),
-          ])
-        }
+        dynamicRoutesPromise ??= resolveDynamicRoutes()
+        const dynamicRoutes = await dynamicRoutesPromise
 
         // Exclude legacy /DetailsPage redirect routes (and any sub-paths like
         // /DetailsPage/Details) from prerendering.
