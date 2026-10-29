@@ -1,4 +1,10 @@
-import { ReactNode, useEffect, useMemo, useState } from 'react'
+import {
+  PropsWithChildren,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { Alert, Box, Button, Link, Skeleton } from '@mui/material'
 import { RJSFSchema } from '@rjsf/utils'
 import { useGetAridhiaDatasetSettings } from '@/aridhia-queries/useGetAridhiaDatasetSettings'
@@ -66,15 +72,17 @@ function useFairSection(data: FairFormPayload | null | undefined, key: string) {
   }, [data, key])
 }
 
-function renderSectionStep<T>(
-  isLoading: boolean,
-  section: T | undefined,
-  renderStep: (section: T) => ReactNode,
-  errorMessage: string,
-): ReactNode {
+type DarSectionStepProps = PropsWithChildren<{
+  isLoading: boolean
+  isSectionMissing: boolean
+  errorMessage: string
+}>
+
+function DarSectionStep(props: DarSectionStepProps) {
+  const { isLoading, isSectionMissing, errorMessage, children } = props
   if (isLoading) return <Skeleton height={200} />
-  if (!section) return <Alert severity="error">{errorMessage}</Alert>
-  return renderStep(section)
+  if (isSectionMissing) return <Alert severity="error">{errorMessage}</Alert>
+  return children
 }
 
 /**
@@ -377,14 +385,16 @@ function useAridhiaDarWizardParts(
         />
       )}
 
-      {currentStepKey === 'workspace' &&
-        renderSectionStep(
-          workspaceFormQuery.isLoading,
-          workspaceRjsf,
-          rjsf => (
+      {currentStepKey === 'workspace' && (
+        <DarSectionStep
+          isLoading={workspaceFormQuery.isLoading}
+          isSectionMissing={!workspaceRjsf}
+          errorMessage="Unable to load the new-workspace request form. Please try again later."
+        >
+          {workspaceRjsf && (
             <DarWorkspaceStep
-              schema={rjsf.schema}
-              uiSchema={rjsf.uiSchema}
+              schema={workspaceRjsf.schema}
+              uiSchema={workspaceRjsf.uiSchema}
               formData={draft.values}
               onChange={mergeValues}
               reference={draft.workspaceReference ?? ''}
@@ -395,39 +405,43 @@ function useAridhiaDarWizardParts(
                 }))
               }
             />
-          ),
-          'Unable to load the new-workspace request form. Please try again later.',
-        )}
+          )}
+        </DarSectionStep>
+      )}
 
-      {currentStepKey === 'project' &&
-        renderSectionStep(
-          workflowQuery.isLoading,
-          projectRjsf,
-          rjsf => (
+      {currentStepKey === 'project' && (
+        <DarSectionStep
+          isLoading={workflowQuery.isLoading}
+          isSectionMissing={!projectRjsf}
+          errorMessage="Unable to load the project section of this request form. Please try again later."
+        >
+          {projectRjsf && (
             <DarProjectStep
-              schema={rjsf.schema}
-              uiSchema={rjsf.uiSchema}
+              schema={projectRjsf.schema}
+              uiSchema={projectRjsf.uiSchema}
               formData={draft.values}
               onChange={mergeValues}
             />
-          ),
-          'Unable to load the project section of this request form. Please try again later.',
-        )}
+          )}
+        </DarSectionStep>
+      )}
 
-      {currentStepKey === 'about' &&
-        renderSectionStep(
-          workflowQuery.isLoading,
-          aboutRjsf,
-          rjsf => (
+      {currentStepKey === 'about' && (
+        <DarSectionStep
+          isLoading={workflowQuery.isLoading}
+          isSectionMissing={!aboutRjsf}
+          errorMessage='Unable to load the "about you" section of this request form. Please try again later.'
+        >
+          {aboutRjsf && (
             <DarAboutStep
-              schema={rjsf.schema}
-              uiSchema={rjsf.uiSchema}
+              schema={aboutRjsf.schema}
+              uiSchema={aboutRjsf.uiSchema}
               formData={draft.values}
               onChange={mergeValues}
             />
-          ),
-          'Unable to load the "about you" section of this request form. Please try again later.',
-        )}
+          )}
+        </DarSectionStep>
+      )}
 
       {currentStepKey === 'complete' && (
         <DarCompleteStep
