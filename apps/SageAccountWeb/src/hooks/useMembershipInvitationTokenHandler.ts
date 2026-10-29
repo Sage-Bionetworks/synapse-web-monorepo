@@ -101,7 +101,6 @@ export default function useMembershipInvitationTokenHandler():
         inviteeVerificationSignedToken &&
         isMembershipInvtnSignedToken(signedToken)
       ) {
-        await SynapseClient.getMembershipInvitation(signedToken)
         // attempt to bind the membership invite to new account
         await SynapseClient.bindInvitationToAuthenticatedUser(
           inviteeVerificationSignedToken,

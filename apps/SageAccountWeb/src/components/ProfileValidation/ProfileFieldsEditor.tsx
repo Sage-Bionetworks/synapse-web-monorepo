@@ -38,7 +38,6 @@ export const ProfileFieldsEditor = (
 ): React.ReactNode => {
   const theme = useTheme()
   const [values, setValues] = useState({ ...props.verificationSubmission })
-  const errors: Partial<VerificationSubmission> = {}
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setValues(values => ({
@@ -70,7 +69,6 @@ export const ProfileFieldsEditor = (
           name="firstName"
           onChange={handleChange}
           value={values.firstName || ''}
-          error={!!errors.firstName}
         />
         <TextField
           fullWidth
@@ -80,12 +78,10 @@ export const ProfileFieldsEditor = (
           name="lastName"
           onChange={handleChange}
           value={values.lastName || ''}
-          error={!!errors.lastName}
         />
         <RORInstitutionField
           onChange={value => handleCompanyChange(value || '')}
           value={values.company || ''}
-          error={!!errors.company}
         />
         <TextField
           label={'Location'}
@@ -94,7 +90,6 @@ export const ProfileFieldsEditor = (
           fullWidth
           onChange={handleChange}
           value={values.location || ''}
-          error={!!errors.location}
         />
         <ContinueButton
           onClick={() => {
