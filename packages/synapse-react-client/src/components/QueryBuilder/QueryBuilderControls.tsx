@@ -6,6 +6,7 @@ import {
 } from '@mui/material'
 import { DragDropProvider } from '@dnd-kit/react'
 import { ReactNode, useCallback, useId, useMemo, useState } from 'react'
+import { useConstant } from '@/utils/hooks/useConstant'
 import { isFilterGroup } from '../../utils/types/IsType'
 import { useQueryContext } from '../QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper'
@@ -62,7 +63,7 @@ export function QueryBuilderControls(props: QueryBuilderControlsProps) {
   const { executeQueryRequest, getCurrentQueryRequest } = useQueryContext()
 
   // Created once: defaultQBGroup() makes new node IDs, which would remount every row on each render.
-  const [defaultTree] = useState(defaultQBGroup)
+  const defaultTree = useConstant(defaultQBGroup)
   const activeTree = tree ?? defaultTree
   const filterGroup = useMemo(() => qbNodeToApiFilter(activeTree), [activeTree])
 
