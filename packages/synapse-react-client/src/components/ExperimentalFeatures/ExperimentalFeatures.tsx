@@ -1,7 +1,6 @@
 import { useGetFeatureFlags } from '@/synapse-queries/featureflags/useGetFeatureFlag'
 import { useIsCurrentUserACTMember } from '@/synapse-queries/user/useUserBundle'
 import { useSynapseContext } from '@/utils/context/SynapseContext'
-import { saveExperimentalFeaturePreferences } from '@/utils/featureflag/experimentalFeatureCookies'
 import {
   ExperimentalFeatureScope,
   FEATURE_FLAG_CONFIG,
@@ -10,20 +9,22 @@ import {
 import { useMemo, useState } from 'react'
 import ExperimentalFeaturesButton from './ExperimentalFeaturesButton'
 import ExperimentalFeaturesDialog from './ExperimentalFeaturesDialog'
+import { useExperimentalFeaturePreferences } from '@/utils/featureflag/useExperimentalFeaturePreferences'
 
 export type ExperimentalFeaturesProps = {
-  /** The app this menu is in; only flags declared for this scope are listed */
+  /** The apps whose flags this menu lists; a flag is listed if it's declared for any of them */
   scopes: ExperimentalFeatureScope[]
   /** Called after the user's choices are saved; the app should reload so flags re-resolve */
-  onSave: () => void
+  onPreferencesSaved: () => void
 }
 
-function ExperimentalFeatures({ scopes, onSave }: ExperimentalFeaturesProps) {
-  const {
-    isAuthenticated,
-    isInExperimentalMode: isEnableAllOn,
-    enabledExperimentalFeatures,
-  } = useSynapseContext()
+function ExperimentalFeatures({
+  scopes,
+  onPreferencesSaved,
+}: ExperimentalFeaturesProps) {
+  const { isAuthenticated } = useSynapseContext()
+  const { isEnableAllOn, enabledFeatures, savePreferences } =
+    useExperimentalFeaturePreferences()
   const { data: serverFlags, isLoading } = useGetFeatureFlags()
   const { data: isACTMember = false } = useIsCurrentUserACTMember({
     enabled: isAuthenticated,
@@ -45,7 +46,7 @@ function ExperimentalFeatures({ scopes, onSave }: ExperimentalFeaturesProps) {
     [serverFlags, scopes, isACTMember],
   )
 
-  const savedMenuOptIns = enabledExperimentalFeatures.filter(flag =>
+  const savedMenuOptIns = enabledFeatures.filter(flag =>
     menuFeatures.includes(flag),
   )
 
@@ -57,9 +58,9 @@ function ExperimentalFeatures({ scopes, onSave }: ExperimentalFeaturesProps) {
   }
 
   const handleSave = (enableAll: boolean, enabledFlags: FeatureFlagEnum[]) => {
-    saveExperimentalFeaturePreferences(enableAll, enabledFlags, menuFeatures)
+    savePreferences(enableAll, enabledFlags, menuFeatures)
     setOpen(false)
-    onSave()
+    onPreferencesSaved()
   }
 
   return (

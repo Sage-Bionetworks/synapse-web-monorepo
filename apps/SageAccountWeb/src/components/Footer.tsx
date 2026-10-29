@@ -18,7 +18,7 @@ function Footer() {
         <Typography variant="body1">Sage Bionetworks</Typography>
         <ExperimentalFeatures
           scopes={['ACCOUNTS']}
-          onSave={() => window.location.reload()}
+          onPreferencesSaved={() => window.location.reload()}
         />
       </Box>
     </footer>

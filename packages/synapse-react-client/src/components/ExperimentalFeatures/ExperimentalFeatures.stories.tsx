@@ -11,7 +11,7 @@ const portalOrigin = getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)
 const meta = {
   title: 'Synapse/ExperimentalFeatures',
   component: ExperimentalFeatures,
-  args: { scopes: ['SYNAPSE'], onSave: fn() },
+  args: { scopes: ['SYNAPSE'], onPreferencesSaved: fn() },
   decorators: [
     Story => (
       <Box sx={{ backgroundColor: 'primary.main', color: 'white', p: 3 }}>

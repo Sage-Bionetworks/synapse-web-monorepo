@@ -123,7 +123,7 @@ function Footer() {
 
           <ExperimentalFeatures
             scopes={['PORTALS']}
-            onSave={() => window.location.reload()}
+            onPreferencesSaved={() => window.location.reload()}
           />
         </Box>
         <Box sx={{ mt: 2 }}>

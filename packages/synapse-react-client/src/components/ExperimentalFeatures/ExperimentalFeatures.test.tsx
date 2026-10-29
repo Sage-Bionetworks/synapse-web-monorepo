@@ -11,7 +11,10 @@ import {
   getFeatureFlagDisplayName,
 } from '@/utils/featureflag/FeatureFlags'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
-import { SYNAPSE_EXPERIMENTAL_FEATURES_COOKIE } from '@/utils/SynapseConstants'
+import {
+  EXPERIMENTAL_MODE_COOKIE,
+  SYNAPSE_EXPERIMENTAL_FEATURES_COOKIE,
+} from '@/utils/SynapseConstants'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Cookies from 'js-cookie'
@@ -48,12 +51,18 @@ function mockIsACTMember(isACTMember: boolean) {
 
 function renderComponent(
   context: Partial<SynapseContextType> = {},
-  onSave = vi.fn(),
+  onPreferencesSaved = vi.fn(),
 ) {
-  render(<ExperimentalFeatures scopes={['TEST']} onSave={onSave} />, {
-    wrapper: createWrapper(context),
-  })
-  return { onSave }
+  render(
+    <ExperimentalFeatures
+      scopes={['TEST']}
+      onPreferencesSaved={onPreferencesSaved}
+    />,
+    {
+      wrapper: createWrapper(context),
+    },
+  )
+  return { onPreferencesSaved }
 }
 
 async function openDialog() {
@@ -64,6 +73,7 @@ async function openDialog() {
 
 describe('ExperimentalFeatures', () => {
   afterEach(() => {
+    Cookies.remove(EXPERIMENTAL_MODE_COOKIE, { path: '/' })
     Cookies.remove(SYNAPSE_EXPERIMENTAL_FEATURES_COOKIE, { path: '/' })
   })
 
@@ -89,33 +99,34 @@ describe('ExperimentalFeatures', () => {
     expect(screen.queryByText(ACT_ONLY_FLAG_NAME)).not.toBeInTheDocument()
   })
 
-  it('saves the choices and calls onSave when Done is clicked', async () => {
+  it('saves the choices and calls onPreferencesSaved when Done is clicked', async () => {
     mockServerFlags()
-    const { onSave } = renderComponent()
+    const { onPreferencesSaved } = renderComponent()
 
     await openDialog()
     await userEvent.click(await screen.findByText(FLAG_NAME))
     await userEvent.click(screen.getByRole('button', { name: 'Done' }))
 
     expect(getEnabledExperimentalFeatures()).toEqual([FLAG])
-    expect(onSave).toHaveBeenCalled()
+    expect(onPreferencesSaved).toHaveBeenCalled()
   })
 
   it('saves nothing when Cancel is clicked', async () => {
     mockServerFlags()
-    const { onSave } = renderComponent()
+    const { onPreferencesSaved } = renderComponent()
 
     await openDialog()
     await userEvent.click(await screen.findByText(FLAG_NAME))
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
 
     expect(getEnabledExperimentalFeatures()).toEqual([])
-    expect(onSave).not.toHaveBeenCalled()
+    expect(onPreferencesSaved).not.toHaveBeenCalled()
   })
 
   it('shows the switch as on when Enable all is on, even with no features listed', async () => {
     mockServerFlags({ [FLAG]: false, [ACT_ONLY_FLAG]: false })
-    renderComponent({ isInExperimentalMode: true })
+    Cookies.set(EXPERIMENTAL_MODE_COOKIE, 'true')
+    renderComponent()
 
     expect(
       await screen.findByRole('button', { name: /Experimental Features/ }),
