@@ -31,8 +31,7 @@ import {
 } from './details/EntityDetailsList'
 import { EntityFinderHeader } from './EntityFinderHeader'
 import { EntityTree, FinderScope } from './tree/EntityTree'
-import { EntityTreeContainer } from './tree/VirtualizedTree'
-import { EntityTreeNodeType } from './tree/VirtualizedTree'
+import { EntityTreeContainer, EntityTreeNodeType } from './tree/VirtualizedTree'
 import { useEntitySelection } from './useEntitySelection'
 import { VersionSelectionType } from './VersionSelectionType'
 
