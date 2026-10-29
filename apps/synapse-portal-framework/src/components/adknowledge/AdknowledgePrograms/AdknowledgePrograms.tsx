@@ -1,4 +1,4 @@
-import { Button, Stack, Typography, useMediaQuery } from '@mui/material'
+import { Button, Stack, Typography, useMediaQuery, Link } from '@mui/material'
 import styles from './AdknowledgePrograms.module.scss'
 import HexGrid, {
   HexRowData,
@@ -47,6 +47,7 @@ function AdknowledgePrograms({ sql }: AdknowledgeProgramsProps) {
           imageColName="Homepage Image"
           descriptionColName="Short Description"
           isVisibleColName="Present on Homepage"
+          websiteColName="Website"
           onRowClick={handleRowClick}
         />
         <aside className={styles.sidebar}>
@@ -72,6 +73,16 @@ function AdknowledgePrograms({ sql }: AdknowledgeProgramsProps) {
               <Typography variant="body1" className={styles.sidebarDetails}>
                 {selected.description}
               </Typography>
+              {selected.website && (
+                <Link
+                  href={selected.website}
+                  className={styles.sidebarLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Visit website
+                </Link>
+              )}
               <Button
                 component={RouterLink}
                 to={getDetailsUrl(selected)}
