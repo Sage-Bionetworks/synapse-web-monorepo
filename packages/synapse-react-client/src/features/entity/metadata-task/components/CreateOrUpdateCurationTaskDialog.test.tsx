@@ -1,21 +1,25 @@
-import { render, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import {
-  useCreateCurationTask,
-  useDeleteCurationTask,
-  useGetCurationTaskStatus,
-  useUpdateCurationTask,
-  useUpdateCurationTaskStatus,
-} from '@/synapse-queries/curation/task/useCurationTask'
-import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
+import { getCurationTaskHandlers } from '@/mocks/msw/handlers/curationTaskHandlers'
 import {
   MOCK_CURATION_TASK_ASSIGNEE_PRINCIPAL_ID,
-  MOCK_CURATION_TASK_ID,
   MOCK_CURATION_TASK_FILE_VIEW_ID,
+  MOCK_CURATION_TASK_ID,
 } from '@/mocks/curation/mockCurationTask'
-import { CurationTask } from '@sage-bionetworks/synapse-client'
+import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
+import { server } from '@/mocks/msw/server'
+import { createWrapperAndQueryClient } from '@/testutils/TestingLibraryUtils'
 import { EntityIdTextFieldProps } from '@/components/EntityFinder/EntityIdTextField'
-import CreateOrUpdateCurationTaskDialog from './CreateOrUpdateCurationTaskDialog'
+import {
+  BackendDestinationEnum,
+  getEndpoint,
+} from '@/utils/functions/getEndpoint'
+import {
+  CurationTask,
+  TaskStatus,
+  TaskStatusStateEnum,
+} from '@sage-bionetworks/synapse-client'
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
 import {
   AUTH_MODE_SOURCE_BENEFACTOR_TITLE,
   DELETE_CURATION_TASK_DIALOG_TITLE,
@@ -24,19 +28,7 @@ import {
   TASK_STATUS_CONFIG,
   TASK_STATUS_INPUT_LABEL,
 } from '../utils/constants'
-import { TaskStatusStateEnum } from '@sage-bionetworks/synapse-client'
-
-vi.mock('@/synapse-queries/curation/task/useCurationTask', () => ({
-  useCreateCurationTask: vi.fn(),
-  useUpdateCurationTask: vi.fn(),
-  useDeleteCurationTask: vi.fn(),
-  useGetCurationTaskStatus: vi.fn(),
-  useUpdateCurationTaskStatus: vi.fn(),
-}))
-
-vi.mock('@/synapse-queries/entity/useEntity', () => ({
-  useGetEntityPermissions: vi.fn(),
-}))
+import CreateOrUpdateCurationTaskDialog from './CreateOrUpdateCurationTaskDialog'
 
 vi.mock('@/components/UserSearchBox/UserSearchBox', () => ({
   default: ({
@@ -67,83 +59,107 @@ vi.mock('@/components/EntityFinder/EntityIdTextField', () => ({
   ),
 }))
 
-const mockUseCreateCurationTask = vi.mocked(useCreateCurationTask)
-const mockUseUpdateCurationTask = vi.mocked(useUpdateCurationTask)
-const mockUseDeleteCurationTask = vi.mocked(useDeleteCurationTask)
-const mockUseGetCurationTaskStatus = vi.mocked(useGetCurationTaskStatus)
-const mockUseUpdateCurationTaskStatus = vi.mocked(useUpdateCurationTaskStatus)
-const mockUseGetEntityPermissions = vi.mocked(useGetEntityPermissions)
-
-const mockCreateMutate = vi.fn()
-const mockUpdateMutate = vi.fn()
-const mockDeleteMutate = vi.fn()
-const mockUpdateStatusMutate = vi.fn()
-// Capture the options passed to useDeleteCurationTask so tests can invoke onSuccess
-let lastDeleteOptions: Parameters<typeof useDeleteCurationTask>[0] | undefined
+const REPO_ORIGIN = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
+const TASK_URL = `${REPO_ORIGIN}/repo/v1/curation/task`
+const PROJECT_ID = 'syn123'
 
 const defaultProps = {
   open: true,
   onCancel: vi.fn(),
   onSuccess: vi.fn(),
-  projectId: 'syn123',
+  projectId: PROJECT_ID,
 }
 
-function renderCreateDialog(props = {}) {
-  return render(
-    <CreateOrUpdateCurationTaskDialog {...defaultProps} {...props} />,
+const fileBasedTask: CurationTask = {
+  taskId: MOCK_CURATION_TASK_ID,
+  projectId: PROJECT_ID,
+  dataType: 'Genomics',
+  instructions: 'Fill all fields.',
+  assigneePrincipalId: MOCK_CURATION_TASK_ASSIGNEE_PRINCIPAL_ID,
+  taskProperties: {
+    concreteType:
+      'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties',
+    uploadFolderId: 'syn100',
+    fileViewId: MOCK_CURATION_TASK_FILE_VIEW_ID,
+    suggestedAuthorizationMode: 'SESSION_OWNER',
+  },
+}
+
+const initialStatus: TaskStatus = {
+  taskId: MOCK_CURATION_TASK_ID,
+  state: TaskStatusStateEnum.NOT_STARTED,
+  etag: 'etag1',
+}
+
+/** Serves the project's permissions, which determine whether the Delete button is shown */
+function mockProjectPermissions(canDelete: boolean) {
+  server.use(
+    http.get(`${REPO_ORIGIN}/repo/v1/entity/${PROJECT_ID}/permissions`, () =>
+      HttpResponse.json({ canDelete }),
+    ),
   )
 }
 
-function renderEditDialog(task: CurationTask, props = {}) {
-  return render(
+let curationTaskStore: ReturnType<typeof getCurationTaskHandlers>
+
+function renderDialog(task?: CurationTask, props = {}) {
+  const { wrapperFn, queryClient } = createWrapperAndQueryClient()
+  render(
     <CreateOrUpdateCurationTaskDialog
       {...defaultProps}
       task={task}
       {...props}
     />,
+    { wrapper: wrapperFn },
+  )
+  return { queryClient }
+}
+
+function renderCreateDialog(props = {}) {
+  return renderDialog(undefined, props)
+}
+
+function renderEditDialog(task: CurationTask, props = {}) {
+  return renderDialog(task, props)
+}
+
+/** Waits for the permissions query to settle so that Delete button visibility is meaningful */
+async function waitForProjectPermissions(
+  queryClient: ReturnType<typeof renderDialog>['queryClient'],
+) {
+  await waitFor(() => {
+    expect(
+      queryClient.getQueryState(
+        MOCK_CONTEXT_VALUE.keyFactory.getEntityPermissionsQueryKey(PROJECT_ID),
+      )?.status,
+    ).toBe('success')
+  })
+}
+
+/** Selects a task status once the current status has loaded and the select is enabled */
+async function selectTaskStatus(state: TaskStatusStateEnum) {
+  const statusSelect = await screen.findByRole('combobox', {
+    name: TASK_STATUS_INPUT_LABEL,
+  })
+  await waitFor(() =>
+    expect(statusSelect).not.toHaveAttribute('aria-disabled', 'true'),
+  )
+  await userEvent.click(statusSelect)
+  await userEvent.click(
+    screen.getByRole('option', { name: TASK_STATUS_CONFIG[state].label }),
   )
 }
 
 beforeEach(() => {
   vi.clearAllMocks()
-  lastDeleteOptions = undefined
-  mockCreateMutate.mockResolvedValue({})
-  mockUpdateMutate.mockResolvedValue({})
-  mockDeleteMutate.mockResolvedValue(undefined)
-  mockUseCreateCurationTask.mockReturnValue({
-    mutateAsync: mockCreateMutate,
-    isPending: false,
-    error: null,
-  } as any)
-  mockUseUpdateCurationTask.mockReturnValue({
-    mutateAsync: mockUpdateMutate,
-    isPending: false,
-    error: null,
-  } as any)
-  mockUseDeleteCurationTask.mockImplementation(options => {
-    lastDeleteOptions = options
-    return {
-      mutate: mockDeleteMutate,
-      isPending: false,
-      error: null,
-    } as any
-  })
-  mockUseGetCurationTaskStatus.mockReturnValue({
-    data: {
-      taskId: MOCK_CURATION_TASK_ID,
-      state: 'NOT_STARTED',
-      etag: 'etag1',
+  curationTaskStore = getCurationTaskHandlers([
+    {
+      task: fileBasedTask,
+      status: initialStatus,
     },
-    isFetching: false,
-  } as any)
-  mockUseUpdateCurationTaskStatus.mockReturnValue({
-    mutateAsync: mockUpdateStatusMutate,
-    isPending: false,
-    error: null,
-  } as any)
-  mockUseGetEntityPermissions.mockReturnValue({
-    data: { canDelete: true },
-  } as any)
+  ])
+  server.use(...curationTaskStore.handlers)
+  mockProjectPermissions(true)
 })
 
 describe('CreateOrUpdateCurationTaskDialog', () => {
@@ -202,7 +218,7 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
       expect(screen.getByLabelText(/Upload Folder ID/i)).toBeInTheDocument()
     })
 
-    it('Save calls createTask with file-based payload', async () => {
+    it('Save creates a task with the file-based payload', async () => {
       renderCreateDialog()
       await userEvent.click(screen.getByText(FILE_BASED_TASK_TITLE))
 
@@ -216,22 +232,25 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
       await userEvent.click(screen.getByRole('button', { name: /save/i }))
 
       await waitFor(() => {
-        expect(mockCreateMutate).toHaveBeenCalledWith(
-          expect.objectContaining({
-            projectId: 'syn123',
-            dataType: 'Proteomics',
-            taskProperties: {
-              concreteType:
-                'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties',
-              uploadFolderId: 'syn10',
-              fileViewId: 'syn20',
-            },
-          }),
+        expect(defaultProps.onSuccess).toHaveBeenCalledWith(
+          expect.objectContaining({ taskId: 1000 }),
         )
       })
+      expect(curationTaskStore.tasks.get(1000)).toEqual(
+        expect.objectContaining({
+          projectId: PROJECT_ID,
+          dataType: 'Proteomics',
+          taskProperties: {
+            concreteType:
+              'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties',
+            uploadFolderId: 'syn10',
+            fileViewId: 'syn20',
+          },
+        }),
+      )
     })
 
-    it('Save calls createTask with record-based payload', async () => {
+    it('Save creates a task with the record-based payload', async () => {
       renderCreateDialog()
       await userEvent.click(screen.getByText(RECORD_BASED_TASK_TITLE))
       await userEvent.type(screen.getByLabelText(/Record Set ID/i), 'syn30')
@@ -242,36 +261,47 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
       await userEvent.click(screen.getByRole('button', { name: /save/i }))
 
       await waitFor(() => {
-        expect(mockCreateMutate).toHaveBeenCalledWith(
-          expect.objectContaining({
-            taskProperties: {
-              concreteType:
-                'org.sagebionetworks.repo.model.curation.metadata.RecordBasedMetadataTaskProperties',
-              recordSetId: 'syn30',
-            },
-          }),
+        expect(defaultProps.onSuccess).toHaveBeenCalledWith(
+          expect.objectContaining({ taskId: 1000 }),
         )
       })
+      expect(curationTaskStore.tasks.get(1000)).toEqual(
+        expect.objectContaining({
+          taskProperties: {
+            concreteType:
+              'org.sagebionetworks.repo.model.curation.metadata.RecordBasedMetadataTaskProperties',
+            recordSetId: 'syn30',
+          },
+        }),
+      )
     })
 
     it('shows API error alert when create fails', async () => {
-      mockUseCreateCurationTask.mockReturnValue({
-        mutateAsync: mockCreateMutate,
-        isPending: false,
-        error: { reason: 'Something went wrong' },
-      } as any)
+      server.use(
+        http.post(TASK_URL, () =>
+          HttpResponse.json(
+            { reason: 'Something went wrong' },
+            { status: 400 },
+          ),
+        ),
+      )
       renderCreateDialog()
       // Navigate through step 2 to step 3 where errors are rendered
       await userEvent.click(screen.getByText(FILE_BASED_TASK_TITLE))
       await userEvent.type(screen.getByLabelText(/Upload Folder ID/i), 'syn10')
       await userEvent.type(screen.getByLabelText(/File View ID/i), 'syn20')
       await userEvent.click(screen.getByRole('button', { name: /next/i }))
+      await userEvent.click(screen.getByRole('button', { name: /save/i }))
       // Error is rendered in step 3
-      expect(screen.getByText('Something went wrong')).toBeInTheDocument()
+      expect(
+        await screen.findByText('Something went wrong'),
+      ).toBeInTheDocument()
+      expect(defaultProps.onSuccess).not.toHaveBeenCalled()
     })
 
-    it('does not render the Delete button', () => {
-      renderCreateDialog({ onDeleteSuccess: vi.fn() })
+    it('does not render the Delete button', async () => {
+      const { queryClient } = renderCreateDialog({ onDeleteSuccess: vi.fn() })
+      await waitForProjectPermissions(queryClient)
       expect(
         screen.queryByRole('button', { name: /^delete$/i }),
       ).not.toBeInTheDocument()
@@ -279,21 +309,6 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
   })
 
   describe('Edit mode', () => {
-    const fileBasedTask: CurationTask = {
-      taskId: MOCK_CURATION_TASK_ID,
-      projectId: 'syn123',
-      dataType: 'Genomics',
-      instructions: 'Fill all fields.',
-      assigneePrincipalId: MOCK_CURATION_TASK_ASSIGNEE_PRINCIPAL_ID,
-      taskProperties: {
-        concreteType:
-          'org.sagebionetworks.repo.model.curation.metadata.FileBasedMetadataTaskProperties',
-        uploadFolderId: 'syn100',
-        fileViewId: MOCK_CURATION_TASK_FILE_VIEW_ID,
-        suggestedAuthorizationMode: 'SESSION_OWNER',
-      },
-    }
-
     it('shows edit title and pre-fills common fields', () => {
       renderEditDialog(fileBasedTask)
       expect(screen.getByText('Edit Curation Task')).toBeInTheDocument()
@@ -352,7 +367,7 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
       ).not.toBeInTheDocument()
     })
 
-    it('Save calls updateTask with updated fields', async () => {
+    it('Save updates the task with updated fields', async () => {
       renderEditDialog(fileBasedTask)
 
       const dataTypeInput = screen.getByLabelText(/Task Name/i)
@@ -362,43 +377,53 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
       await userEvent.click(screen.getByRole('button', { name: /save/i }))
 
       await waitFor(() => {
-        expect(mockUpdateMutate).toHaveBeenCalledWith(
+        expect(defaultProps.onSuccess).toHaveBeenCalledWith(
           expect.objectContaining({
             taskId: MOCK_CURATION_TASK_ID,
             dataType: 'Proteomics',
           }),
         )
       })
+      expect(curationTaskStore.tasks.get(MOCK_CURATION_TASK_ID)).toEqual(
+        expect.objectContaining({
+          taskId: MOCK_CURATION_TASK_ID,
+          dataType: 'Proteomics',
+        }),
+      )
     })
 
-    it('calls updateTaskStatus when only status is changed', async () => {
+    it('updates the task status when only status is changed', async () => {
       renderEditDialog(fileBasedTask)
 
       // Change only the status — no task field changes
-      await userEvent.click(
-        screen.getByRole('combobox', { name: TASK_STATUS_INPUT_LABEL }),
-      )
-      await userEvent.click(
-        screen.getByRole('option', {
-          name: TASK_STATUS_CONFIG[TaskStatusStateEnum.IN_PROGRESS].label,
-        }),
-      )
+      await selectTaskStatus(TaskStatusStateEnum.IN_PROGRESS)
 
       await userEvent.click(screen.getByRole('button', { name: /save/i }))
 
       await waitFor(() => {
-        expect(mockUpdateStatusMutate).toHaveBeenCalledWith(
+        expect(curationTaskStore.statuses.get(MOCK_CURATION_TASK_ID)).toEqual(
           expect.objectContaining({ state: 'IN_PROGRESS' }),
         )
       })
+      await waitFor(() => expect(defaultProps.onSuccess).toHaveBeenCalled())
     })
 
-    it('chains updateTaskStatus after updateTask and passes updated etag when both change', async () => {
+    it('updates the task status after updating the task and passes the updated etag when both change', async () => {
       const updatedEtag = 'new-etag-from-server'
-      mockUpdateMutate.mockResolvedValue({
-        ...fileBasedTask,
-        etag: updatedEtag,
-      })
+      const taskPutBodies: CurationTask[] = []
+      const statusPutBodies: TaskStatus[] = []
+      server.use(
+        http.put(`${TASK_URL}/:taskId`, async ({ request }) => {
+          const body = (await request.json()) as CurationTask
+          taskPutBodies.push(body)
+          return HttpResponse.json({ ...body, etag: updatedEtag })
+        }),
+        http.put(`${TASK_URL}/:taskId/status`, async ({ request }) => {
+          const body = (await request.json()) as TaskStatus
+          statusPutBodies.push(body)
+          return HttpResponse.json(body)
+        }),
+      )
       renderEditDialog(fileBasedTask)
 
       // Change a task field
@@ -407,42 +432,42 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
       await userEvent.type(dataTypeInput, 'Proteomics')
 
       // Change status
-      await userEvent.click(
-        screen.getByRole('combobox', { name: TASK_STATUS_INPUT_LABEL }),
-      )
-      await userEvent.click(
-        screen.getByRole('option', {
-          name: TASK_STATUS_CONFIG[TaskStatusStateEnum.IN_PROGRESS].label,
-        }),
-      )
+      await selectTaskStatus(TaskStatusStateEnum.IN_PROGRESS)
 
       await userEvent.click(screen.getByRole('button', { name: /save/i }))
 
       await waitFor(() => {
-        expect(mockUpdateMutate).toHaveBeenCalled()
-        expect(mockUpdateStatusMutate).toHaveBeenCalledWith(
-          expect.objectContaining({ state: 'IN_PROGRESS', etag: updatedEtag }),
-        )
         expect(defaultProps.onSuccess).toHaveBeenCalledWith(
           expect.objectContaining({ etag: updatedEtag }),
         )
       })
+      expect(taskPutBodies).toEqual([
+        expect.objectContaining({
+          taskId: MOCK_CURATION_TASK_ID,
+          dataType: 'Proteomics',
+        }),
+      ])
+      expect(statusPutBodies).toEqual([
+        expect.objectContaining({ state: 'IN_PROGRESS', etag: updatedEtag }),
+      ])
     })
 
-    it('shows API error alert when update fails', () => {
-      mockUseUpdateCurationTask.mockReturnValue({
-        mutateAsync: mockUpdateMutate,
-        isPending: false,
-        error: { reason: 'Update failed' },
-      } as any)
+    it('shows API error alert when update fails', async () => {
+      server.use(
+        http.put(`${TASK_URL}/:taskId`, () =>
+          HttpResponse.json({ reason: 'Update failed' }, { status: 400 }),
+        ),
+      )
       renderEditDialog(fileBasedTask)
-      expect(screen.getByText('Update failed')).toBeInTheDocument()
+      await userEvent.click(screen.getByRole('button', { name: /save/i }))
+      expect(await screen.findByText('Update failed')).toBeInTheDocument()
+      expect(defaultProps.onSuccess).not.toHaveBeenCalled()
     })
 
     it('does not render record-based task properties fields in edit mode', () => {
       const recordTask: CurationTask = {
         taskId: 200,
-        projectId: 'syn123',
+        projectId: PROJECT_ID,
         taskProperties: {
           concreteType:
             'org.sagebionetworks.repo.model.curation.metadata.RecordBasedMetadataTaskProperties',
@@ -456,25 +481,39 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
     })
 
     describe('Delete', () => {
-      it('does not render the Delete button when onDeleteSuccess is not provided', () => {
-        renderEditDialog(fileBasedTask)
+      const deletedTaskIds: number[] = []
+
+      beforeEach(() => {
+        deletedTaskIds.length = 0
+        server.use(
+          http.delete(`${TASK_URL}/:taskId`, ({ params }) => {
+            deletedTaskIds.push(Number(params.taskId))
+            return new HttpResponse(null, { status: 200 })
+          }),
+        )
+      })
+
+      it('does not render the Delete button when onDeleteSuccess is not provided', async () => {
+        const { queryClient } = renderEditDialog(fileBasedTask)
+        await waitForProjectPermissions(queryClient)
         expect(
           screen.queryByRole('button', { name: /^delete$/i }),
         ).not.toBeInTheDocument()
       })
 
-      it('renders the Delete button when onDeleteSuccess is provided', () => {
+      it('renders the Delete button when onDeleteSuccess is provided', async () => {
         renderEditDialog(fileBasedTask, { onDeleteSuccess: vi.fn() })
         expect(
-          screen.getByRole('button', { name: /^delete$/i }),
+          await screen.findByRole('button', { name: /^delete$/i }),
         ).toBeInTheDocument()
       })
 
-      it('does not render the Delete button when onDeleteSuccess is provided but canDelete permission is false', () => {
-        mockUseGetEntityPermissions.mockReturnValue({
-          data: { canDelete: false },
-        } as any)
-        renderEditDialog(fileBasedTask, { onDeleteSuccess: vi.fn() })
+      it('does not render the Delete button when onDeleteSuccess is provided but canDelete permission is false', async () => {
+        mockProjectPermissions(false)
+        const { queryClient } = renderEditDialog(fileBasedTask, {
+          onDeleteSuccess: vi.fn(),
+        })
+        await waitForProjectPermissions(queryClient)
         expect(
           screen.queryByRole('button', { name: /^delete$/i }),
         ).not.toBeInTheDocument()
@@ -482,7 +521,9 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
 
       it('opens the confirmation dialog when Delete is clicked', async () => {
         renderEditDialog(fileBasedTask, { onDeleteSuccess: vi.fn() })
-        await userEvent.click(screen.getByRole('button', { name: /^delete$/i }))
+        await userEvent.click(
+          await screen.findByRole('button', { name: /^delete$/i }),
+        )
         expect(
           screen.getByText(DELETE_CURATION_TASK_DIALOG_TITLE),
         ).toBeInTheDocument()
@@ -493,34 +534,46 @@ describe('CreateOrUpdateCurationTaskDialog', () => {
         ).toBeInTheDocument()
       })
 
-      it('calls deleteCurationTask with the task ID when confirmed', async () => {
+      it('deletes the task with the task ID when confirmed', async () => {
         renderEditDialog(fileBasedTask, { onDeleteSuccess: vi.fn() })
-        await userEvent.click(screen.getByRole('button', { name: /^delete$/i }))
+        await userEvent.click(
+          await screen.findByRole('button', { name: /^delete$/i }),
+        )
         // Confirm in the nested ConfirmationDialog
         const confirmButtons = screen.getAllByRole('button', {
           name: /^delete$/i,
         })
         await userEvent.click(confirmButtons.at(-1)!)
         await waitFor(() => {
-          expect(mockDeleteMutate).toHaveBeenCalledWith(MOCK_CURATION_TASK_ID)
+          expect(deletedTaskIds).toEqual([MOCK_CURATION_TASK_ID])
         })
       })
 
-      it('does not call deleteCurationTask when the confirmation is cancelled', async () => {
-        renderEditDialog(fileBasedTask, { onDeleteSuccess: vi.fn() })
-        await userEvent.click(screen.getByRole('button', { name: /^delete$/i }))
+      it('does not delete the task when the confirmation is cancelled', async () => {
+        const onDeleteSuccess = vi.fn()
+        renderEditDialog(fileBasedTask, { onDeleteSuccess })
+        await userEvent.click(
+          await screen.findByRole('button', { name: /^delete$/i }),
+        )
         await userEvent.click(screen.getByRole('button', { name: /cancel/i }))
-        expect(mockDeleteMutate).not.toHaveBeenCalled()
+        expect(deletedTaskIds).toEqual([])
+        expect(onDeleteSuccess).not.toHaveBeenCalled()
       })
 
-      it('calls onDeleteSuccess when the delete mutation succeeds', () => {
+      it('calls onDeleteSuccess when the delete succeeds', async () => {
         const onDeleteSuccess = vi.fn()
         renderEditDialog(fileBasedTask, { onDeleteSuccess })
 
-        // Simulate the mutation succeeding
-        lastDeleteOptions?.onSuccess?.(undefined, MOCK_CURATION_TASK_ID, {})
+        await userEvent.click(
+          await screen.findByRole('button', { name: /^delete$/i }),
+        )
+        const confirmButtons = screen.getAllByRole('button', {
+          name: /^delete$/i,
+        })
+        await userEvent.click(confirmButtons[confirmButtons.length - 1])
 
-        expect(onDeleteSuccess).toHaveBeenCalledTimes(1)
+        await waitFor(() => expect(onDeleteSuccess).toHaveBeenCalledTimes(1))
+        expect(deletedTaskIds).toEqual([MOCK_CURATION_TASK_ID])
       })
     })
   })
