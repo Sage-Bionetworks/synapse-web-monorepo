@@ -18,7 +18,7 @@
     "react-dom": "^19.2.7",
     "react-router": "catalog:",
     "synapse-react-client": "workspace:*",
-    "vite": "^8.0.16"
+    "vite": "^8.1.6"
   },
   "devDependencies": {
     "@react-router/dev": "catalog:",
