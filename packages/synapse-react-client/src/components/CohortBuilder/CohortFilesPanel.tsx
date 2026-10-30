@@ -71,6 +71,8 @@ export function CohortFilesPanel(props: CohortFilesPanelProps) {
       concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
       entityId: filesTableId,
       partMask: COHORT_FILES_PART_MASK,
+      // A data manager previewing aggregate-only results previews the files query the same way.
+      aggregateDataPreview: getCurrentQueryRequest().aggregateDataPreview,
       query: {
         sql: `SELECT * FROM ${filesTableId}`,
         limit: DEFAULT_PAGE_SIZE,
@@ -78,7 +80,7 @@ export function CohortFilesPanel(props: CohortFilesPanelProps) {
         additionalFilters: handOff ? [handOff.filter] : undefined,
       },
     }),
-    [filesTableId, handOff],
+    [filesTableId, getCurrentQueryRequest, handOff],
   )
 
   // The participant count is exact, so a cohort the server would reject as too large is not sent.

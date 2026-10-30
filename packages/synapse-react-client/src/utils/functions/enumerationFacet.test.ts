@@ -39,14 +39,16 @@ describe('getEnumerationFacet', () => {
     expect(getEnumerationFacet(valuesFacet)?.binSize).toBeUndefined()
   })
 
-  it('lists every binned value at its bin minimum, including 0, and keeps the bin size', () => {
+  it('lists every binned value at its bin midpoint, including the bin that starts at 0, and keeps the bin size', () => {
     expect(getEnumerationFacet(binnedFacet)).toEqual({
       columnName: 'sex',
       jsonPath: '$.sex',
       binSize: 5,
       facetValues: [
-        { value: 'Female', count: 1565, isSelected: true },
-        { value: 'Unknown', count: 0, isSelected: false },
+        // 1565–1569
+        { value: 'Female', count: 1567, isSelected: true },
+        // 0–4
+        { value: 'Unknown', count: 2, isSelected: false },
       ],
     })
   })

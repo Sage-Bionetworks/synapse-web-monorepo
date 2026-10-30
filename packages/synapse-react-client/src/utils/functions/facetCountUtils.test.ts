@@ -4,17 +4,24 @@ describe('formatFacetValueCount', () => {
   it.each([
     {
       case: 'a binned count as approximate',
-      count: 1200,
+      count: 1202,
       binSize: 5,
       facetPostProcessingApplied: true,
-      expected: `≈ ${(1200).toLocaleString()}`,
+      expected: `≈ ${(1202).toLocaleString()}`,
     },
     {
-      case: 'a bin minimum of 0 as approximate',
-      count: 0,
+      case: 'the midpoint of a bin that starts at 0 as approximate',
+      count: 2,
       binSize: 5,
       facetPostProcessingApplied: true,
-      expected: '≈ 0',
+      expected: '≈ 2',
+    },
+    {
+      case: 'the half-unit midpoint of an even-width bin as approximate',
+      count: 4.5,
+      binSize: 10,
+      facetPostProcessingApplied: true,
+      expected: `≈ ${(4.5).toLocaleString()}`,
     },
     {
       case: 'a bin size of 1 as the exact count',
