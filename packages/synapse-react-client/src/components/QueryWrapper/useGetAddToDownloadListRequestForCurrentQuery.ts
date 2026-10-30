@@ -1,21 +1,20 @@
 import { useQueryContext } from '@/components/QueryContext'
 import { useSuspenseGetQueryMetadata } from '@/components/QueryWrapper/useGetQueryMetadata'
-import { getFileColumnModelId } from '@/components/SynapseTable/SynapseTableUtils'
 import { useGetEntity } from '@/synapse-queries'
-import { isDataset, isEntityView } from '@/utils/functions/EntityTypeUtils'
 import {
   AddToDownloadListRequest,
   TableQuery,
 } from '@sage-bionetworks/synapse-client'
 import { Table } from '@sage-bionetworks/synapse-types'
 import { useMemo } from 'react'
+import { getDownloadListFileColumns } from './downloadListFiles'
 
 /**
  * Returns an AddToDownloadListRequest object configured to add the current fileview/dataset result set to the download list
  * (loads data using QueryWrapper). Selected rows are not considered; see `useAddSelectedRowsToDownloadList`.
  *
- * Files are added at the version in `fileVersionColumnName`, else at the row version for views and datasets, else at
- * their current version.
+ * Files are read from `fileIdColumnName` (else the table's file column) at the version in `fileVersionColumnName`, else
+ * at the row version for views and datasets, else at their current version.
  */
 export function useGetAddToDownloadListRequestForCurrentQuery(): AddToDownloadListRequest {
   const {
@@ -30,38 +29,26 @@ export function useGetAddToDownloadListRequestForCurrentQuery(): AddToDownloadLi
 
   return useMemo(() => {
     const query = getCurrentQueryRequest().query
-    // set the query.selectFileColumn
-    if (fileIdColumnName && fileVersionColumnName) {
-      // find the column model ID and set the parameters
-      const fileIdColumnModel = originalQueryMetadata.columnModels?.find(
-        col => col.name == fileIdColumnName,
-      )
-      const fileVersionColumnModel = originalQueryMetadata.columnModels?.find(
-        col => col.name == fileVersionColumnName,
-      )
-
-      query.selectFileColumn = fileIdColumnModel
-        ? Number(fileIdColumnModel.id)
-        : undefined
-      query.selectFileVersionColumn = fileVersionColumnModel
-        ? Number(fileVersionColumnModel.id)
-        : undefined
-    } else {
-      const fileColumnId = getFileColumnModelId(
+    const { fileColumn, fileVersionColumn, rowsAreEntities } =
+      getDownloadListFileColumns(
+        entity,
         originalQueryMetadata.columnModels,
+        fileIdColumnName,
+        fileVersionColumnName,
       )
-      if (fileColumnId) {
-        query.selectFileColumn = Number(fileColumnId)
-      }
+    if (fileColumn) {
+      query.selectFileColumn = Number(fileColumn.id)
+    }
+    if (fileVersionColumn) {
+      query.selectFileVersionColumn = Number(fileVersionColumn.id)
     }
 
     // The server infers the file version only for views and datasets (from the row version); other tables must name
     // a version column or add the current version.
     const addsCurrentVersion =
-      query.selectFileVersionColumn === undefined &&
+      fileVersionColumn === undefined &&
       entity !== undefined &&
-      !isEntityView(entity) &&
-      !isDataset(entity)
+      !rowsAreEntities
 
     return {
       concreteType:

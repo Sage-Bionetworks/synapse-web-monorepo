@@ -185,6 +185,21 @@ describe('useGetAddToDownloadListRequestForCurrentQuery', () => {
     })
   })
 
+  it('selects the column named by fileIdColumnName even without a version column, as for selected rows', async () => {
+    const columns: ColumnModel[] = [
+      fileEntityIdColumn,
+      { id: '9', name: 'fileId', columnType: ColumnType.ENTITYID },
+    ]
+    const { result } = await renderHookWithQueryMetadata(columns, {
+      fileIdColumnName: 'fileId',
+    })
+
+    expect(result.current.request.query?.selectFileColumn).toBe(9)
+    expect(
+      result.current.request.query?.selectFileVersionColumn,
+    ).toBeUndefined()
+  })
+
   it.each<{
     tableType: string
     concreteType: Entity['concreteType']
@@ -193,6 +208,16 @@ describe('useGetAddToDownloadListRequestForCurrentQuery', () => {
     {
       tableType: 'a VirtualTable',
       concreteType: 'org.sagebionetworks.repo.model.table.VirtualTable',
+      useVersionNumber: false,
+    },
+    {
+      tableType: 'a Table',
+      concreteType: 'org.sagebionetworks.repo.model.table.TableEntity',
+      useVersionNumber: false,
+    },
+    {
+      tableType: 'a MaterializedView',
+      concreteType: 'org.sagebionetworks.repo.model.table.MaterializedView',
       useVersionNumber: false,
     },
     {

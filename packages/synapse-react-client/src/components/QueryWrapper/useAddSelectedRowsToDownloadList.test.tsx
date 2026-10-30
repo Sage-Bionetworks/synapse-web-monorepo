@@ -1,10 +1,10 @@
 import { QueryContextType, useQueryContext } from '@/components/index'
 import { getTableQueryUseQueryOptions } from '@/components/QueryWrapper/TableQueryUseQueryOptions'
 import { useSelectedRowsAtomValue } from '@/components/QueryWrapper/TableRowSelectionState'
+import { displayToast } from '@/components/ToastMessage/ToastMessage'
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
 import { server } from '@/mocks/msw/server'
-import { useGetEntity } from '@/synapse-queries'
 import { MAX_DOWNLOAD_LIST_BATCH_SIZE } from '@/synapse-queries/download/useDownloadList'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { ENTITY_ID } from '@/utils/APIConstants'
@@ -27,9 +27,12 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
-import { ReactNode, Suspense } from 'react'
-import { useAddSelectedRowsToDownloadList } from './useAddSelectedRowsToDownloadList'
-import { useGetQueryMetadata } from './useGetQueryMetadata'
+import {
+  NO_FILES_IN_SELECTED_ROWS_MESSAGE,
+  NO_NEW_FILES_ADDED_MESSAGE,
+  TOO_MANY_SELECTED_ROWS_MESSAGE,
+  useAddSelectedRowsToDownloadList,
+} from './useAddSelectedRowsToDownloadList'
 
 vi.mock('@/components/QueryContext', () => ({
   useQueryContext: vi.fn(),
@@ -37,9 +40,13 @@ vi.mock('@/components/QueryContext', () => ({
 vi.mock('@/components/QueryWrapper/TableRowSelectionState', () => ({
   useSelectedRowsAtomValue: vi.fn(),
 }))
+vi.mock('@/components/ToastMessage/ToastMessage', () => ({
+  displayToast: vi.fn(),
+}))
 
 const mockUseQueryContext = vi.mocked(useQueryContext)
 const mockUseSelectedRowsAtomValue = vi.mocked(useSelectedRowsAtomValue)
+const mockDisplayToast = vi.mocked(displayToast)
 
 const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 const TABLE_ID = 'syn123'
@@ -50,7 +57,6 @@ const queryBundleRequest: QueryBundleRequest = {
   entityId: TABLE_ID,
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
 }
-
 const nameColumn: ColumnModel = {
   id: '1',
   name: 'name',
@@ -61,21 +67,27 @@ const idColumn: ColumnModel = {
   name: 'id',
   columnType: ColumnTypeEnum.ENTITYID,
 }
-const versionColumn: ColumnModel = {
-  id: '3',
-  name: 'fileVersion',
-  columnType: ColumnTypeEnum.INTEGER,
-}
+
+type AddResponse =
+  | { numberOfFilesAdded: number }
+  | { status: number; reason: string }
 
 let batches: AddBatchOfFilesToDownloadListRequest[]
 
-async function renderAddSelectedRows(options: {
+/**
+ * Renders the hook for a table, without waiting for the table or its query metadata to load, and chooses Add.
+ * Resolves once the add has settled.
+ */
+async function addSelectedRows(options: {
   concreteType: Entity['concreteType']
-  columnModels: ColumnModel[]
   selectedRows: Row[]
-  queryContext?: Partial<QueryContextType>
+  response?: (body: AddBatchOfFilesToDownloadListRequest) => AddResponse
 }) {
-  const { concreteType, columnModels, selectedRows, queryContext } = options
+  const {
+    concreteType,
+    selectedRows,
+    response = body => ({ numberOfFilesAdded: body.batchToAdd.length }),
+  } = options
   const entity: Entity = { id: TABLE_ID, name: 'table', concreteType }
   server.use(
     http.get(`${REPO_ENDPOINT}${ENTITY_ID(TABLE_ID)}`, () =>
@@ -85,13 +97,19 @@ async function renderAddSelectedRows(options: {
       const body =
         (await request.request.json()) as AddBatchOfFilesToDownloadListRequest
       batches.push(body)
-      return HttpResponse.json({ numberOfFilesAdded: body.batchToAdd.length })
+      const result = response(body)
+      return 'status' in result
+        ? HttpResponse.json(
+            { reason: result.reason },
+            { status: result.status },
+          )
+        : HttpResponse.json(result)
     }),
   )
   registerTableQueryResult(query, {
     concreteType: 'org.sagebionetworks.repo.model.table.QueryResultBundle',
-    columnModels,
-    selectColumns: columnModels,
+    columnModels: [nameColumn, idColumn],
+    selectColumns: [nameColumn, idColumn],
   })
   const { queryMetadataQueryOptions } = getTableQueryUseQueryOptions(
     queryBundleRequest,
@@ -106,32 +124,14 @@ async function renderAddSelectedRows(options: {
     fileVersionColumnName: undefined,
     queryMetadataQueryOptions,
     getCurrentQueryRequest: () => queryBundleRequest,
-    ...queryContext,
   } as QueryContextType)
   mockUseSelectedRowsAtomValue.mockReturnValue(selectedRows)
 
-  const SynapseWrapper = createWrapper()
-  const wrapper = ({ children }: { children?: ReactNode }) => (
-    <SynapseWrapper>
-      <Suspense fallback={null}>{children}</Suspense>
-    </SynapseWrapper>
-  )
-  const { result } = renderHook(
-    () => ({
-      ...useAddSelectedRowsToDownloadList(),
-      entity: useGetEntity(TABLE_ID).data,
-      queryMetadata: useGetQueryMetadata().data,
-    }),
-    { wrapper },
-  )
-  // Items depend on the table's entity type and column models, so add only once both have loaded.
-  await waitFor(() => {
-    expect(result.current.entity).toBeDefined()
-    expect(result.current.queryMetadata).toBeDefined()
+  const { result } = renderHook(() => useAddSelectedRowsToDownloadList(), {
+    wrapper: createWrapper(),
   })
-  act(() => result.current.addSelectedRowsToDownloadList())
+  await act(() => result.current.addSelectedRowsToDownloadList())
   await waitFor(() => expect(result.current.isPending).toBe(false))
-  return batches
 }
 
 describe('useAddSelectedRowsToDownloadList', () => {
@@ -140,16 +140,16 @@ describe('useAddSelectedRowsToDownloadList', () => {
     batches = []
   })
 
-  it('adds file view rows at their row versions', async () => {
-    const sent = await renderAddSelectedRows({
+  it("loads the table and its columns when they aren't cached, so file view rows keep their row versions", async () => {
+    await addSelectedRows({
       concreteType: 'org.sagebionetworks.repo.model.table.EntityView',
-      columnModels: [nameColumn, idColumn],
       selectedRows: [
         { rowId: 1, versionNumber: 4, values: ['a.txt', 'syn1'] },
         { rowId: 2, versionNumber: 7, values: ['b.txt', 'syn2'] },
       ],
     })
-    expect(sent).toEqual([
+
+    expect(batches).toEqual([
       {
         batchToAdd: [
           { fileEntityId: 'syn1', versionNumber: 4 },
@@ -157,79 +157,80 @@ describe('useAddSelectedRowsToDownloadList', () => {
         ],
       },
     ])
-  })
-
-  it('uses the row ID when a view query selects no file column', async () => {
-    const sent = await renderAddSelectedRows({
-      concreteType: 'org.sagebionetworks.repo.model.table.Dataset',
-      columnModels: [nameColumn],
-      selectedRows: [{ rowId: 9, versionNumber: 2, values: ['c.txt'] }],
-    })
-    expect(sent).toEqual([
-      { batchToAdd: [{ fileEntityId: 'syn9', versionNumber: 2 }] },
-    ])
-  })
-
-  it('adds the current version of rows of a table without a version column', async () => {
-    const sent = await renderAddSelectedRows({
-      concreteType: 'org.sagebionetworks.repo.model.table.VirtualTable',
-      columnModels: [nameColumn, idColumn],
-      selectedRows: [
-        { values: ['a.txt', 'syn1'] },
-        { values: ['dataset', 'syn5'] },
-      ],
-    })
-    expect(sent).toEqual([
-      { batchToAdd: [{ fileEntityId: 'syn1' }, { fileEntityId: 'syn5' }] },
-    ])
-  })
-
-  it('reads the named file and version columns', async () => {
-    const fileColumn: ColumnModel = {
-      id: '4',
-      name: 'fileId',
-      columnType: ColumnTypeEnum.ENTITYID,
-    }
-    const sent = await renderAddSelectedRows({
-      concreteType: 'org.sagebionetworks.repo.model.table.MaterializedView',
-      columnModels: [idColumn, fileColumn, versionColumn],
-      selectedRows: [
-        { values: ['syn100', 'syn1', '3'] },
-        // No file in this row.
-        { values: ['syn101', null, null] },
-      ],
-      queryContext: {
-        fileIdColumnName: 'fileId',
-        fileVersionColumnName: 'fileVersion',
-      },
-    })
-    expect(sent).toEqual([
-      { batchToAdd: [{ fileEntityId: 'syn1', versionNumber: 3 }] },
-    ])
-  })
-
-  it('adds a file selected in several rows once', async () => {
-    const sent = await renderAddSelectedRows({
-      concreteType: 'org.sagebionetworks.repo.model.table.VirtualTable',
-      columnModels: [nameColumn, idColumn],
-      selectedRows: [{ values: ['a', 'syn1'] }, { values: ['b', 'syn1'] }],
-    })
-    expect(sent).toEqual([{ batchToAdd: [{ fileEntityId: 'syn1' }] }])
-  })
-
-  it('splits a large selection into batches the server accepts', async () => {
-    const selectedRows: Row[] = Array.from(
-      { length: MAX_DOWNLOAD_LIST_BATCH_SIZE + 1 },
-      (_, index) => ({ values: [`file ${index}`, `syn${index + 1}`] }),
+    expect(mockDisplayToast).toHaveBeenCalledWith(
+      '2 files were added to your Download List.',
+      'success',
+      expect.anything(),
     )
-    const sent = await renderAddSelectedRows({
+  })
+
+  it("reports the server's count, and warns when it added nothing", async () => {
+    await addSelectedRows({
       concreteType: 'org.sagebionetworks.repo.model.table.VirtualTable',
-      columnModels: [nameColumn, idColumn],
-      selectedRows,
+      selectedRows: [{ values: ['dataset', 'syn5'] }],
+      response: () => ({ numberOfFilesAdded: 0 }),
     })
-    expect(sent.map(batch => batch.batchToAdd.length)).toEqual([
+
+    expect(batches).toHaveLength(1)
+    expect(mockDisplayToast).toHaveBeenCalledWith(
+      NO_NEW_FILES_ADDED_MESSAGE,
+      'warning',
+    )
+  })
+
+  it('sends nothing and says so when the selected rows have no files', async () => {
+    await addSelectedRows({
+      concreteType: 'org.sagebionetworks.repo.model.table.VirtualTable',
+      selectedRows: [{ values: ['a.txt', null] }],
+    })
+
+    expect(batches).toEqual([])
+    expect(mockDisplayToast).toHaveBeenCalledWith(
+      NO_FILES_IN_SELECTED_ROWS_MESSAGE,
+      'warning',
+    )
+  })
+
+  it('sends nothing and says so when more items are selected than one request can add', async () => {
+    await addSelectedRows({
+      concreteType: 'org.sagebionetworks.repo.model.table.VirtualTable',
+      selectedRows: Array.from(
+        { length: MAX_DOWNLOAD_LIST_BATCH_SIZE + 1 },
+        (_, index) => ({ values: [`file ${index}`, `syn${index + 1}`] }),
+      ),
+    })
+
+    expect(batches).toEqual([])
+    expect(mockDisplayToast).toHaveBeenCalledWith(
+      TOO_MANY_SELECTED_ROWS_MESSAGE,
+      'warning',
+    )
+  })
+
+  it('adds the most items one request carries in a single request', async () => {
+    await addSelectedRows({
+      concreteType: 'org.sagebionetworks.repo.model.table.VirtualTable',
+      selectedRows: Array.from(
+        { length: MAX_DOWNLOAD_LIST_BATCH_SIZE },
+        (_, index) => ({ values: [`file ${index}`, `syn${index + 1}`] }),
+      ),
+    })
+
+    expect(batches.map(batch => batch.batchToAdd.length)).toEqual([
       MAX_DOWNLOAD_LIST_BATCH_SIZE,
-      1,
     ])
+  })
+
+  it("shows the server's reason when the add fails", async () => {
+    await addSelectedRows({
+      concreteType: 'org.sagebionetworks.repo.model.table.VirtualTable',
+      selectedRows: [{ values: ['a.txt', 'syn1'] }],
+      response: () => ({ status: 400, reason: 'Download list is full' }),
+    })
+
+    expect(mockDisplayToast).toHaveBeenCalledWith(
+      'Download list is full',
+      'danger',
+    )
   })
 })

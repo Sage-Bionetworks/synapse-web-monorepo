@@ -118,10 +118,10 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
           {showAddToDownloadCart && (
             <Button
               variant="contained"
-              disabled={isAddingToDownloadList}
+              loading={isAddingToDownloadList}
               onClick={() =>
                 isAuthenticated
-                  ? addSelectedRowsToDownloadList()
+                  ? void addSelectedRowsToDownloadList()
                   : setShowDownloadLoginModal(true)
               }
               startIcon={<GetAppTwoTone />}

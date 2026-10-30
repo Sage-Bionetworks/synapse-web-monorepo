@@ -3,6 +3,7 @@ import { Menu, Tooltip } from '@mui/material'
 import {
   ComponentElement,
   CSSProperties,
+  KeyboardEvent,
   MouseEvent,
   PropsWithChildren,
   ReactNode,
@@ -105,6 +106,18 @@ export const ElementWithTooltip = ({
   const handleClose = () => {
     setAnchorEl(null)
   }
+  const closeAfterKeyboardChoice = (
+    event: KeyboardEvent<HTMLUListElement>,
+    key: string,
+  ) => {
+    const target = event.target as HTMLElement
+    if (
+      event.key === key &&
+      target.closest('[role="menuitem"]:not([aria-disabled="true"])')
+    ) {
+      handleClose()
+    }
+  }
   //if there is no callbackFn - assume it's a toggle
 
   let tooltipTrigger: ReactNode
@@ -148,7 +161,16 @@ export const ElementWithTooltip = ({
           open={open}
           onClose={handleClose}
           slotProps={{
-            list: { onClick: closeMenuOnClick ? handleClose : undefined },
+            list: closeMenuOnClick
+              ? {
+                  onClick: handleClose,
+                  // A menu item runs its action on Enter (key down) or Space (key up) without a click reaching the list.
+                  onKeyDown: (event: KeyboardEvent<HTMLUListElement>) =>
+                    closeAfterKeyboardChoice(event, 'Enter'),
+                  onKeyUp: (event: KeyboardEvent<HTMLUListElement>) =>
+                    closeAfterKeyboardChoice(event, ' '),
+                }
+              : undefined,
           }}
         >
           {menuItems}

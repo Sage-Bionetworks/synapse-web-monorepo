@@ -11,15 +11,24 @@ import {
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
 import {
+  AddBatchOfFilesToDownloadListRequest,
   ColumnTypeEnum,
   QueryBundleRequest,
+  Row,
 } from '@sage-bionetworks/synapse-types'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { useSetAtom } from 'jotai'
 import { cloneDeep } from 'lodash-es'
 import { http, HttpResponse } from 'msw'
-import { QueryVisualizationWrapper } from '../../QueryVisualizationWrapper'
+import { useEffect } from 'react'
+import {
+  QueryVisualizationWrapper,
+  useQueryVisualizationContext,
+} from '../../QueryVisualizationWrapper'
 import QueryWrapper from '../../QueryWrapper'
+import { selectedRowsAtom } from '../../QueryWrapper/TableRowSelectionState'
+import { TITLE as SIGN_IN_REQUIRED_TITLE } from '../../SignInRequiredModal/SignInRequiredModal'
 import { DownloadOptionsProps } from './DownloadOptions'
 import { DownloadOptions } from './index'
 
@@ -27,22 +36,48 @@ const ADD_ALL_FILES_TO_DOWNLOAD_CART = 'Add All Files to Download List'
 
 const mockDatasetEntity = mockDatasetData.entity
 
+const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
+const DOWNLOAD_CONFIRMATION_REQUESTED = 'Download confirmation requested'
+
+/** Stands in for the query view that shows the confirmation for adding the whole result. */
+function DownloadConfirmationRequested() {
+  const { showDownloadConfirmation } = useQueryVisualizationContext()
+  return showDownloadConfirmation ? (
+    <p>{DOWNLOAD_CONFIRMATION_REQUESTED}</p>
+  ) : null
+}
+
+function SelectRows(props: { rows: Row[] }) {
+  const setSelectedRows = useSetAtom(selectedRowsAtom)
+  const { rows } = props
+  useEffect(() => setSelectedRows(rows), [rows, setSelectedRows])
+  return null
+}
+
 function renderComponent(
   props: DownloadOptionsProps,
   queryRequest: QueryBundleRequest,
+  options: { isAuthenticated?: boolean; selectedRows?: Row[] } = {},
 ) {
+  const { isAuthenticated = true, selectedRows } = options
   return render(
-    <QueryWrapper initQueryRequest={queryRequest}>
+    <QueryWrapper initQueryRequest={queryRequest} isRowSelectionVisible>
       <QueryVisualizationWrapper>
+        {selectedRows && <SelectRows rows={selectedRows} />}
         <DownloadOptions {...props} />
+        <DownloadConfirmationRequested />
       </QueryVisualizationWrapper>
     </QueryWrapper>,
-    { wrapper: createWrapper() },
+    {
+      wrapper: createWrapper(
+        isAuthenticated
+          ? {}
+          : { isAuthenticated: false, accessToken: undefined },
+      ),
+    },
   )
 }
-const props: DownloadOptionsProps = {
-  onDownloadFiles: vi.fn(),
-}
+const props: DownloadOptionsProps = {}
 
 const tableEntityQueryRequest: QueryBundleRequest = {
   concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
@@ -148,7 +183,7 @@ describe('Download Options tests', () => {
     )
   })
 
-  it('closes the menu once an option is chosen', async () => {
+  it('asks the enclosing view to confirm adding the whole result, and closes the menu', async () => {
     registerTableQueryResult(fileViewQueryRequest.query, mockQueryResponseData)
     renderComponent(props, fileViewQueryRequest)
 
@@ -161,8 +196,61 @@ describe('Download Options tests', () => {
       }),
     )
 
-    expect(props.onDownloadFiles).toHaveBeenCalled()
+    expect(
+      await screen.findByText(DOWNLOAD_CONFIRMATION_REQUESTED),
+    ).toBeInTheDocument()
     await waitFor(() => expect(screen.queryByRole('menu')).toBeNull())
+  })
+
+  it('adds selected rows directly, without the confirmation', async () => {
+    const batches: AddBatchOfFilesToDownloadListRequest[] = []
+    server.use(
+      http.post(`${REPO_ENDPOINT}/repo/v1/download/list/add`, async request => {
+        const body =
+          (await request.request.json()) as AddBatchOfFilesToDownloadListRequest
+        batches.push(body)
+        return HttpResponse.json({ numberOfFilesAdded: 1 })
+      }),
+    )
+    registerTableQueryResult(fileViewQueryRequest.query, mockQueryResponseData)
+    // The row's synid column holds syn7844998.
+    renderComponent(props, fileViewQueryRequest, {
+      selectedRows: [mockQueryResponseData.queryResult.queryResults.rows[1]],
+    })
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: 'Download Options' }),
+    )
+    await userEvent.click(
+      await screen.findByRole('menuitem', { name: /Download List/ }),
+    )
+
+    await waitFor(() =>
+      expect(batches).toEqual([
+        { batchToAdd: [{ fileEntityId: 'syn7844998', versionNumber: 2 }] },
+      ]),
+    )
+    expect(screen.queryByText(DOWNLOAD_CONFIRMATION_REQUESTED)).toBeNull()
+  })
+
+  it('asks a signed-out user to sign in instead of adding selected rows', async () => {
+    registerTableQueryResult(fileViewQueryRequest.query, mockQueryResponseData)
+    renderComponent(props, fileViewQueryRequest, {
+      isAuthenticated: false,
+      selectedRows: [mockQueryResponseData.queryResult.queryResults.rows[1]],
+    })
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: 'Download Options' }),
+    )
+    await userEvent.click(
+      await screen.findByRole('menuitem', { name: /Download List/ }),
+    )
+
+    expect(
+      await screen.findByRole('dialog', { name: SIGN_IN_REQUIRED_TITLE }),
+    ).toBeInTheDocument()
+    expect(screen.queryByText(DOWNLOAD_CONFIRMATION_REQUESTED)).toBeNull()
   })
 
   it('Shows correct options for a Project View', async () => {

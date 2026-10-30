@@ -1,110 +1,105 @@
 import { useQueryContext } from '@/components/QueryContext'
 import { useSelectedRowsAtomValue } from '@/components/QueryWrapper/TableRowSelectionState'
-import { useGetQueryMetadata } from '@/components/QueryWrapper/useGetQueryMetadata'
-import { getFileColumnModelId } from '@/components/SynapseTable/SynapseTableUtils'
 import { displayFilesWereAddedToDownloadListSuccess } from '@/components/download_list/DownloadConfirmationUtils'
 import { displayToast } from '@/components/ToastMessage/ToastMessage'
-import { useGetEntity } from '@/synapse-queries'
-import { useAddFileBatchToDownloadList } from '@/synapse-queries/download/useDownloadList'
+import { useGetEntityQueryOptions } from '@/synapse-queries'
+import {
+  MAX_DOWNLOAD_LIST_BATCH_SIZE,
+  useAddFileBatchToDownloadList,
+} from '@/synapse-queries/download/useDownloadList'
 import { useSynapseContext } from '@/utils'
-import { isDataset, isEntityView } from '@/utils/functions/EntityTypeUtils'
-import { DownloadListItem, Row, Table } from '@sage-bionetworks/synapse-types'
+import { SynapseClientError } from '@sage-bionetworks/synapse-client'
+import { Table } from '@sage-bionetworks/synapse-types'
+import { useQueryClient } from '@tanstack/react-query'
 import { useCallback } from 'react'
+import {
+  getDownloadListFileColumns,
+  getDownloadListItems,
+} from './downloadListFiles'
 
-type ItemColumns = {
-  fileColumnIndex: number
-  versionColumnIndex: number
-  rowsAreEntities: boolean
-}
-
-function getDownloadListItem(
-  row: Row,
-  columns: ItemColumns,
-): DownloadListItem | undefined {
-  const { fileColumnIndex, versionColumnIndex, rowsAreEntities } = columns
-  // As on the server, a view or dataset row is itself the file when no file column is selected, and its row version
-  // is the file version when no version column is named.
-  const fileEntityId =
-    fileColumnIndex >= 0
-      ? row.values[fileColumnIndex]
-      : rowsAreEntities && row.rowId != null
-        ? `syn${row.rowId}`
-        : null
-  if (!fileEntityId) {
-    return undefined
-  }
-  if (versionColumnIndex >= 0) {
-    const version = row.values[versionColumnIndex]
-    return {
-      fileEntityId,
-      versionNumber: version == null ? undefined : Number(version),
-    }
-  }
-  return {
-    fileEntityId,
-    versionNumber: rowsAreEntities ? row.versionNumber : undefined,
-  }
-}
+export const NO_FILES_IN_SELECTED_ROWS_MESSAGE =
+  'The selected rows have no files to add to your Download List.'
+export const TOO_MANY_SELECTED_ROWS_MESSAGE = `Select at most ${MAX_DOWNLOAD_LIST_BATCH_SIZE.toLocaleString()} files and datasets to add to your Download List at once.`
+export const NO_NEW_FILES_ADDED_MESSAGE =
+  'No new files were added to your Download List.'
 
 /**
- * Adds the files and datasets of the selected rows of the current query to the Download List, without a confirmation
- * step, and reports the outcome in a toast.
+ * Adds the files and datasets of the selected rows of the current query to the Download List in one request, without
+ * a confirmation step, and reports how many files the server added in a toast. The request is all or nothing, so at
+ * most MAX_DOWNLOAD_LIST_BATCH_SIZE items can be added at once.
  *
- * Each item is the entity in the row's file column (`fileIdColumnName`, else the table's file column), at the version
- * in `fileVersionColumnName`. Without a version column, rows of views and datasets keep their row version and other
- * tables' rows get no version, which adds the current version. Rows without a file are skipped, and an item selected
- * in several rows is added once.
+ * Each row's item is chosen as for adding the whole result; see `getDownloadListFileColumns` and
+ * `getDownloadListItems`.
  */
 export function useAddSelectedRowsToDownloadList() {
-  const { entityId, versionNumber, fileIdColumnName, fileVersionColumnName } =
-    useQueryContext()
+  const {
+    entityId,
+    versionNumber,
+    fileIdColumnName,
+    fileVersionColumnName,
+    queryMetadataQueryOptions,
+  } = useQueryContext()
   const { downloadCartPageUrl } = useSynapseContext()
-  const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
-  const { data: queryMetadata } = useGetQueryMetadata()
+  const queryClient = useQueryClient()
+  const getEntityQueryOptions = useGetEntityQueryOptions<Table>()
   const selectedRows = useSelectedRowsAtomValue()
 
   const { mutate, isPending } = useAddFileBatchToDownloadList({
-    onSuccess: () =>
-      displayFilesWereAddedToDownloadListSuccess(downloadCartPageUrl),
+    onSuccess: ({ numberOfFilesAdded }) =>
+      numberOfFilesAdded > 0
+        ? displayFilesWereAddedToDownloadListSuccess(
+            downloadCartPageUrl,
+            numberOfFilesAdded,
+          )
+        : displayToast(NO_NEW_FILES_ADDED_MESSAGE, 'warning'),
     onError: error => displayToast(error.reason, 'danger'),
   })
 
-  const addSelectedRowsToDownloadList = useCallback(() => {
-    const columnModels = queryMetadata?.columnModels
-    const selectColumns = queryMetadata?.selectColumns ?? []
-    const fileColumnId = getFileColumnModelId(columnModels)
-    const fileColumnName =
-      fileIdColumnName ??
-      columnModels?.find(column => column.id === fileColumnId)?.name
-    const columns: ItemColumns = {
-      fileColumnIndex: selectColumns.findIndex(
-        column =>
-          fileColumnName !== undefined && column.name === fileColumnName,
-      ),
-      versionColumnIndex: selectColumns.findIndex(
-        column =>
-          fileVersionColumnName !== undefined &&
-          column.name === fileVersionColumnName,
-      ),
-      rowsAreEntities:
-        entity !== undefined && (isEntityView(entity) || isDataset(entity)),
+  const addSelectedRowsToDownloadList = useCallback(async () => {
+    let items
+    try {
+      // The table and its columns decide which file each row holds, so they are loaded if not already cached.
+      const [table, queryMetadata] = await Promise.all([
+        queryClient.ensureQueryData(
+          getEntityQueryOptions(entityId, versionNumber),
+        ),
+        queryClient.ensureQueryData(queryMetadataQueryOptions),
+      ])
+      const { columnModels, selectColumns } = queryMetadata.responseBody ?? {}
+      items = getDownloadListItems(
+        selectedRows,
+        selectColumns,
+        getDownloadListFileColumns(
+          table,
+          columnModels,
+          fileIdColumnName,
+          fileVersionColumnName,
+        ),
+      )
+    } catch (error) {
+      displayToast(
+        error instanceof SynapseClientError ? error.reason : String(error),
+        'danger',
+      )
+      return
     }
-    const items = new Map<string, DownloadListItem>()
-    for (const row of selectedRows) {
-      const item = getDownloadListItem(row, columns)
-      if (item) {
-        items.set(`${item.fileEntityId}.${item.versionNumber ?? ''}`, item)
-      }
+    if (items.length === 0) {
+      displayToast(NO_FILES_IN_SELECTED_ROWS_MESSAGE, 'warning')
+    } else if (items.length > MAX_DOWNLOAD_LIST_BATCH_SIZE) {
+      displayToast(TOO_MANY_SELECTED_ROWS_MESSAGE, 'warning')
+    } else {
+      mutate(items)
     }
-    mutate([...items.values()])
   }, [
-    entity,
+    entityId,
     fileIdColumnName,
     fileVersionColumnName,
+    getEntityQueryOptions,
     mutate,
-    queryMetadata?.columnModels,
-    queryMetadata?.selectColumns,
+    queryClient,
+    queryMetadataQueryOptions,
     selectedRows,
+    versionNumber,
   ])
 
   return { addSelectedRowsToDownloadList, isPending }

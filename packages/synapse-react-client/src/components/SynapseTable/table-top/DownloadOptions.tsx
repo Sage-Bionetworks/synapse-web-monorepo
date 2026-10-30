@@ -8,6 +8,7 @@ import { ReactNode, useMemo, useState } from 'react'
 import ModalDownload from '../../ModalDownload/ModalDownload'
 import ProgrammaticTableDownload from '../../ProgrammaticTableDownload/ProgrammaticTableDownload'
 import { useQueryContext } from '../../QueryContext'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import {
   useHasSelectedRowsAtomValue,
   useSelectedRowsAtomValue,
@@ -20,8 +21,6 @@ import { getNumberOfResultsToAddToDownloadListCopy } from '../TopLevelControls/T
 import { DownloadLoginModal } from './DownloadLoginModal'
 
 export type DownloadOptionsProps = {
-  /** Invoked to add the whole query result to the Download List. Selected rows are added without it. */
-  onDownloadFiles: () => void
   darkTheme?: boolean
   /** If true, the "Add ... files to Download List" menu item will be hidden */
   hideAddToDownloadListMenuItem?: boolean
@@ -53,16 +52,18 @@ export function DownloadOptions(props: DownloadOptionsProps) {
   const [showExportMetadata, setShowExportMetadata] = useState(false)
   const [showProgrammaticOptions, setShowProgrammaticOptions] = useState(false)
   const {
-    onDownloadFiles,
     darkTheme = true,
     hideAddToDownloadListMenuItem,
     hideProgrammaticOptionsMenuItem,
   } = props
+  const { setShowDownloadConfirmation } = useQueryVisualizationContext()
 
   const fileColumnId = getFileColumnModelId(queryMetadata?.columnModels)
 
+  // The table's type decides which file version the whole result adds, so the item waits for the table to load.
   const showAddQueryToDownloadList =
     !hideAddToDownloadListMenuItem &&
+    entity !== undefined &&
     canTableQueryBeAddedToDownloadList(entity, fileColumnId)
 
   // SWC-5878 - Disable downloading a "Draft" dataset
@@ -92,9 +93,10 @@ export function DownloadOptions(props: DownloadOptionsProps) {
               if (!isAuthenticated) {
                 setShowLoginModal(true)
               } else if (hasSelectedRows) {
-                addSelectedRowsToDownloadList()
+                void addSelectedRowsToDownloadList()
               } else {
-                onDownloadFiles()
+                // The enclosing query view shows the confirmation, with the whole result's file count and size.
+                setShowDownloadConfirmation(true)
               }
             }}
           >
@@ -152,7 +154,7 @@ export function DownloadOptions(props: DownloadOptionsProps) {
     hasResettableFilters,
     hasSelectedRows,
     hideProgrammaticOptionsMenuItem,
-    onDownloadFiles,
+    setShowDownloadConfirmation,
     queryMetadata?.queryCount,
     selectedRows,
     showAddQueryToDownloadList,
