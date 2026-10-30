@@ -134,7 +134,6 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
     enabledExternalAnalysisPlatforms,
     setIsShowingExportToAnalysisPlatformModal,
     unitDescription,
-    setShowDownloadConfirmation,
     showCopyToClipboard,
     hideSearchBarControl,
     setShowPlots,
@@ -316,7 +315,6 @@ const TopLevelControls = (props: TopLevelControlsProps): React.ReactNode => {
           {!hideDownload && (
             <DownloadOptions
               darkTheme={true}
-              onDownloadFiles={() => setShowDownloadConfirmation(true)}
               hideAddToDownloadListMenuItem={hideAddToDownloadListMenuItem}
               hideProgrammaticOptionsMenuItem={hideProgrammaticOptionsMenuItem}
             />

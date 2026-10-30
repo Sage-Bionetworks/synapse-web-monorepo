@@ -1,5 +1,13 @@
 import Columns from '@/assets/icons/columns'
-import { act, cleanup, render, screen } from '@testing-library/react'
+import { MenuItem } from '@mui/material'
+import {
+  act,
+  cleanup,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ComponentProps } from 'react'
 import { IconSvgProps } from '../IconSvg/IconSvg'
@@ -100,5 +108,75 @@ describe('ElementWithTooltip', () => {
       vi.runAllTimers()
     })
     await screen.findByText(props.tooltipText)
+  })
+
+  describe('menus', () => {
+    const onChoose = vi.fn()
+    function renderMenu(closeMenuOnClick?: boolean) {
+      onChoose.mockClear()
+      render(
+        <ElementWithTooltip
+          tooltipText="Options"
+          icon="download"
+          closeMenuOnClick={closeMenuOnClick}
+          menuItems={[
+            <MenuItem key="first" onClick={onChoose}>
+              First
+            </MenuItem>,
+            <MenuItem key="second" onClick={onChoose}>
+              Second
+            </MenuItem>,
+          ]}
+        />,
+      )
+    }
+    async function openMenu() {
+      await userEvent.click(screen.getByRole('button', { name: 'Options' }))
+      return screen.findByRole('menu')
+    }
+
+    it.each([
+      {
+        choice: 'a click',
+        choose: (item: HTMLElement) => userEvent.click(item),
+      },
+      {
+        choice: 'Enter',
+        choose: (item: HTMLElement) => {
+          item.focus()
+          return userEvent.keyboard('{Enter}')
+        },
+      },
+      {
+        choice: 'Space',
+        choose: (item: HTMLElement) => {
+          item.focus()
+          return userEvent.keyboard(' ')
+        },
+      },
+    ])(
+      'closes after an item is chosen with $choice when closeMenuOnClick is set',
+      async ({ choose }) => {
+        renderMenu(true)
+        const menu = await openMenu()
+
+        await choose(within(menu).getByRole('menuitem', { name: 'Second' }))
+
+        expect(onChoose).toHaveBeenCalledTimes(1)
+        await waitFor(() => expect(screen.queryByRole('menu')).toBeNull())
+      },
+    )
+
+    it('stays open after an item is chosen when closeMenuOnClick is not set', async () => {
+      renderMenu()
+      const menu = await openMenu()
+
+      await userEvent.click(
+        within(menu).getByRole('menuitem', { name: 'First' }),
+      )
+
+      expect(onChoose).toHaveBeenCalledTimes(1)
+      expect(screen.getByRole('menu')).toBeInTheDocument()
+    })
   })
 })

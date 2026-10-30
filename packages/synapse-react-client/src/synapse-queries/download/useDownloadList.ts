@@ -199,6 +199,12 @@ export function useAddFileToDownloadList(
   })
 }
 
+/**
+ * The most items that one request to add a batch to the Download List may carry. Each request is added all or nothing,
+ * so a larger set is not split across requests.
+ */
+export const MAX_DOWNLOAD_LIST_BATCH_SIZE = 1000
+
 export function useAddFileBatchToDownloadList(
   options?: Partial<
     UseMutationOptions<
