@@ -6,10 +6,6 @@ on:
   pull_request:
     branches: [main]
 
-permissions:
-  contents: read
-  pull-requests: read
-
 env:
   PACKAGE_SUBDIR: packages/react-datasheet-grid
 
@@ -20,6 +16,9 @@ concurrency:
 jobs:
   detect-changes:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     outputs:
       project_affected: ${{ steps.package_changes.outputs.project_affected }}
       playwright-version: ${{ steps.playwright.outputs.version }}
@@ -56,6 +55,8 @@ jobs:
     needs: detect-changes
     if: ${{ needs.detect-changes.outputs.project_affected == 'true' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     timeout-minutes: 20
     # The image ships browsers and their OS dependencies, so the job skips the apt-get install that
     # `playwright install --with-deps` would run. Its tag must match the locked @playwright/test version.
