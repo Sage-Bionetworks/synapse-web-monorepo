@@ -18,6 +18,8 @@ import { RowSuppressionErrorResponse } from '@sage-bionetworks/synapse-client/ge
 import { TableQueryResult } from '@sage-bionetworks/synapse-client/generated/models/TableQueryResult'
 import { TableSelectColumn } from '@sage-bionetworks/synapse-client/generated/models/TableSelectColumn'
 import {
+  CohortDefinition,
+  ColumnCohortFilter,
   ColumnMultiValueFunction,
   ColumnMultiValueFunctionQueryFilter,
   ColumnSingleValueFilterOperator,
@@ -193,12 +195,18 @@ function singleValueFilterMatches(
   )
 }
 
+/** What a filter needs beyond the row: which columns are lists, and the resolved values of each request-scoped cohort. */
+type FilterContext = {
+  listColumnNames: ReadonlySet<string>
+  cohortValues: ReadonlyMap<string, ReadonlySet<string>>
+}
+
 function multiValueFilterMatches(
   row: VirtualTableRow | MaterialRow,
   filter: ColumnMultiValueFunctionQueryFilter,
-  listColumnNames: ReadonlySet<string>,
+  context: FilterContext,
 ): boolean {
-  if (!listColumnNames.has(filter.columnName)) {
+  if (!context.listColumnNames.has(filter.columnName)) {
     throw invalidQuery(
       `${filter.function} can only be used on a multi-value (list) column: ${filter.columnName}`,
     )
@@ -212,28 +220,44 @@ function multiValueFilterMatches(
   return cell.some(value => filter.values.includes(value))
 }
 
-/**
- * Evaluates a query filter against one row. `listColumnNames` identifies the
- * row's multi-value columns, which accept only HAS / HAS_LIKE.
- */
+function cohortFilterMatches(
+  row: VirtualTableRow | MaterialRow,
+  filter: ColumnCohortFilter,
+  context: FilterContext,
+): boolean {
+  // A plain cohort filter must name a column of the queried table; a defining one is evaluated on MATERIAL rows.
+  if (!(filter.columnName in row)) {
+    throw invalidQuery(`Column does not exist: ${filter.columnName}`)
+  }
+  // An empty cohort expands to IN (NULL), which matches nothing.
+  return (
+    context.cohortValues
+      .get(filter.cohortName)
+      ?.has(String(row[filter.columnName])) ?? false
+  )
+}
+
+/** Evaluates a query filter against one row. */
 function filterMatches(
   row: VirtualTableRow | MaterialRow,
   filter: QueryFilter,
-  listColumnNames: ReadonlySet<string>,
+  context: FilterContext,
 ): boolean {
   switch (filter.concreteType) {
     case 'org.sagebionetworks.repo.model.table.FilterGroup': {
       const children = filter.children ?? []
       const matches =
         filter.operator === 'OR'
-          ? children.some(child => filterMatches(row, child, listColumnNames))
-          : children.every(child => filterMatches(row, child, listColumnNames))
+          ? children.some(child => filterMatches(row, child, context))
+          : children.every(child => filterMatches(row, child, context))
       return filter.not ? !matches : matches
     }
     case 'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter':
       return singleValueFilterMatches(row, filter)
     case 'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter':
-      return multiValueFilterMatches(row, filter, listColumnNames)
+      return multiValueFilterMatches(row, filter, context)
+    case 'org.sagebionetworks.repo.model.table.ColumnCohortFilter':
+      return cohortFilterMatches(row, filter, context)
     default:
       throw invalidQuery(
         `The Cohort Builder mock does not support ${filter.concreteType}`,
@@ -474,6 +498,8 @@ function filterToSql(filter: QueryFilter): string {
     }
     case 'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter':
       return `"${filter.columnName}" ${filter.function} (${filter.values.map(sqlLiteral).join(', ')})`
+    case 'org.sagebionetworks.repo.model.table.ColumnCohortFilter':
+      return `"${filter.columnName}" IN COHORT(${filter.cohortName})`
     default:
       return ''
   }
@@ -592,7 +618,7 @@ function matchRows(
   data: CohortBuilderSyntheticData,
   perspective: Perspective,
   query: Query,
-  listColumnNames: ReadonlySet<string>,
+  context: FilterContext,
 ): MatchedRows {
   const additionalFilters = query.additionalFilters ?? []
   const selectedFacets = query.selectedFacets ?? []
@@ -602,8 +628,15 @@ function matchRows(
   const outerFilters = additionalFilters.filter(
     filter => !filter.isDefiningCondition,
   )
+  // MATERIAL columns are all scalars.
+  const materialContext: FilterContext = {
+    ...context,
+    listColumnNames: new Set(),
+  }
   const materialRows = data.materialRows.filter(row =>
-    definingFilters.every(filter => filterMatches(row, filter, new Set())),
+    definingFilters.every(filter =>
+      filterMatches(row, filter, materialContext),
+    ),
   )
   const virtualTableRows =
     perspective === 'PARTICIPANTS'
@@ -612,9 +645,7 @@ function matchRows(
   const filterRows = (ignoredFacetColumnName?: string) =>
     virtualTableRows.filter(
       row =>
-        outerFilters.every(filter =>
-          filterMatches(row, filter, listColumnNames),
-        ) &&
+        outerFilters.every(filter => filterMatches(row, filter, context)) &&
         selectedFacets.every(
           selection =>
             selection.columnName === ignoredFacetColumnName ||
@@ -687,10 +718,237 @@ function toCombinedSql(entityId: string, filters: readonly QueryFilter[]) {
   return `SELECT * FROM ${entityId}${where}`
 }
 
+// -----------------------------------------------------------------------------
+// Request-scoped cohorts (design doc §5)
+// -----------------------------------------------------------------------------
+
+/** The stack default of `org.sagebionetworks.table.query.cohort.max.values`. */
+export const MOCK_MAX_COHORT_VALUES = 10_000
+const MAX_COHORTS_PER_QUERY = 5
+const COHORT_NAME_PATTERN = /^[A-Za-z_]\w*$/
+const COHORT_SQL_PATTERN = /^\s*SELECT\s+(\w+)\s+FROM\s+(syn\d+)\s*$/i
+
+export type CohortBuilderMockQueryOptions = {
+  /** Maximum number of distinct values in one cohort. Defaults to {@link MOCK_MAX_COHORT_VALUES}. */
+  maxCohortValues?: number
+}
+
+type CohortReference = {
+  filter: ColumnCohortFilter
+  /** True when the filter, or the top-level filter containing it, is a defining condition. */
+  isDefining: boolean
+}
+
+function findCohortReferences(
+  filters: readonly QueryFilter[],
+  isDefining = false,
+): CohortReference[] {
+  return filters.flatMap(filter => {
+    const filterIsDefining = isDefining || filter.isDefiningCondition === true
+    if (
+      filter.concreteType === 'org.sagebionetworks.repo.model.table.FilterGroup'
+    ) {
+      return findCohortReferences(filter.children ?? [], filterIsDefining)
+    }
+    return filter.concreteType ===
+      'org.sagebionetworks.repo.model.table.ColumnCohortFilter'
+      ? [{ filter, isDefining: filterIsDefining }]
+      : []
+  })
+}
+
+type ParsedCohort = {
+  name: string
+  query: Query
+  perspective: Perspective
+  columnName: string
+  columnType: string
+  columnModels: ColumnModel[]
+}
+
+/** Validates a cohort definition's shape without running it. */
+function parseCohort(
+  data: CohortBuilderSyntheticData,
+  cohort: CohortDefinition,
+): ParsedCohort {
+  const { name, query } = cohort
+  if (
+    (query.cohorts?.length ?? 0) > 0 ||
+    findCohortReferences(query.additionalFilters ?? []).length > 0
+  ) {
+    throw invalidQuery(`Cohort '${name}' cannot reference other cohorts.`)
+  }
+  if (
+    (query.sort?.length ?? 0) > 0 ||
+    query.limit !== undefined ||
+    query.offset !== undefined
+  ) {
+    throw invalidQuery(`Cohort '${name}' cannot use sort, limit or offset.`)
+  }
+  const sqlMatch = COHORT_SQL_PATTERN.exec(query.sql)
+  if (!sqlMatch) {
+    throw invalidQuery(
+      `Cohort '${name}' must select exactly one plain column from a single table.`,
+    )
+  }
+  const [, columnName, tableId] = sqlMatch
+  const perspective = getPerspective(data.profile, tableId)
+  const columnModels =
+    getCohortBuilderColumnModels(data)[
+      perspective === 'PARTICIPANTS' ? 'participants' : 'dataReferences'
+    ]
+  const column = columnModels.find(model => model.name === columnName)
+  if (!column?.columnType || column.columnType.endsWith('_LIST')) {
+    throw invalidQuery(
+      `Cohort '${name}' must select a non-list column of ${tableId}: ${columnName}`,
+    )
+  }
+  return {
+    name,
+    query,
+    perspective,
+    columnName,
+    columnType: column.columnType,
+    columnModels,
+  }
+}
+
+/** Runs a parsed cohort query as the caller and returns the cohort's distinct values. */
+function runCohortQuery(
+  data: CohortBuilderSyntheticData,
+  cohort: ParsedCohort,
+  request: QueryBundleRequest,
+  access: CohortBuilderAccess,
+  maxCohortValues: number,
+): Set<string> {
+  const { rows } = matchRows(data, cohort.perspective, cohort.query, {
+    listColumnNames: new Set(
+      cohort.columnModels
+        .filter(model => model.columnType?.endsWith('_LIST'))
+        .map(model => model.name!),
+    ),
+    cohortValues: new Map(),
+  })
+  const values = new Set(rows.map(row => String(row[cohort.columnName])))
+  if (values.size > maxCohortValues) {
+    throw new MockQueryError(400, {
+      concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+      reason: `Cohort '${cohort.name}' exceeds the maximum of ${maxCohortValues} values.`,
+      errorCode: 'COHORT_TOO_LARGE',
+    })
+  }
+  if (access === 'AGGREGATE_ONLY') {
+    assertAboveSuppressionThreshold(
+      values.size,
+      getAggregateConfig(data.profile, request, access),
+    )
+  }
+  return values
+}
+
+function assertCohortReferenceAllowed(
+  data: CohortBuilderSyntheticData,
+  reference: CohortReference,
+  cohort: ParsedCohort,
+  columnModels: readonly ColumnModel[],
+  access: CohortBuilderAccess,
+): void {
+  const { filter, isDefining } = reference
+  // A defining-condition filter is resolved against the VirtualTable's source (MATERIAL), whose columns are strings.
+  const sourceColumnType =
+    data.materialRows.length > 0 && filter.columnName in data.materialRows[0]
+      ? 'STRING'
+      : undefined
+  const referencedColumnType = isDefining
+    ? sourceColumnType
+    : columnModels.find(model => model.name === filter.columnName)?.columnType
+  if (referencedColumnType === undefined) {
+    throw invalidQuery(`Column does not exist: ${filter.columnName}`)
+  }
+  if (referencedColumnType !== cohort.columnType) {
+    throw invalidQuery(
+      `The column type of cohort '${filter.cohortName}' (${cohort.columnType}) does not match ${filter.columnName} (${referencedColumnType}).`,
+    )
+  }
+  // §5.6: a cohort from an aggregate-only source may only filter a quasi-identifier column (of a query that is itself
+  // aggregate-only, which both mock VirtualTables are for this caller).
+  const isQuasiIdentifier =
+    filter.columnName === PARTICIPANT_ID_COLUMN_NAME ||
+    data.profile.participantAttributes.some(
+      attribute =>
+        attribute.name === filter.columnName && attribute.isQuasiIdentifier,
+    )
+  if (access === 'AGGREGATE_ONLY' && !isQuasiIdentifier) {
+    throw new MockQueryError(403, {
+      concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+      reason: `A cohort from an aggregate-only source can only filter a quasi-identifier column, and ${filter.columnName} is not one.`,
+    })
+  }
+}
+
+/** Validates the query's cohorts and their references, runs each cohort query, and returns each cohort's values. */
+function resolveCohorts(
+  data: CohortBuilderSyntheticData,
+  request: QueryBundleRequest,
+  access: CohortBuilderAccess,
+  columnModels: readonly ColumnModel[],
+  maxCohortValues: number,
+): Map<string, Set<string>> {
+  const cohorts = request.query.cohorts ?? []
+  const references = findCohortReferences(request.query.additionalFilters ?? [])
+  if (cohorts.length > MAX_COHORTS_PER_QUERY) {
+    throw invalidQuery(
+      `A query can define at most ${MAX_COHORTS_PER_QUERY} cohorts.`,
+    )
+  }
+  const names = new Set<string>()
+  for (const { name } of cohorts) {
+    if (!COHORT_NAME_PATTERN.test(name)) {
+      throw invalidQuery(`Cohort name must be a simple identifier: ${name}`)
+    }
+    if (names.has(name)) {
+      throw invalidQuery(`Cohort names must be unique: ${name}`)
+    }
+    names.add(name)
+  }
+  const referencedNames = new Set(
+    references.map(reference => reference.filter.cohortName),
+  )
+  for (const name of referencedNames) {
+    if (!names.has(name)) {
+      throw invalidQuery(`Cohort is not defined: ${name}`)
+    }
+  }
+  for (const name of names) {
+    if (!referencedNames.has(name)) {
+      throw invalidQuery(`Cohort is defined but never referenced: ${name}`)
+    }
+  }
+  const parsed = new Map(
+    cohorts.map(cohort => [cohort.name, parseCohort(data, cohort)]),
+  )
+  for (const reference of references) {
+    assertCohortReferenceAllowed(
+      data,
+      reference,
+      parsed.get(reference.filter.cohortName)!,
+      columnModels,
+      access,
+    )
+  }
+  return new Map(
+    Array.from(parsed, ([name, cohort]) => [
+      name,
+      runCohortQuery(data, cohort, request, access, maxCohortValues),
+    ]),
+  )
+}
+
 function executeQuery(
   data: CohortBuilderSyntheticData,
   request: QueryBundleRequest,
   access: CohortBuilderAccess,
+  options: CohortBuilderMockQueryOptions,
 ): QueryResultBundle {
   const perspective = getPerspective(data.profile, request.entityId)
   const columnModels =
@@ -706,7 +964,17 @@ function executeQuery(
   const { query } = request
   const aggregateConfig = getAggregateConfig(data.profile, request, access)
   assertRowsAllowed(perspective, partMask, access)
-  const matchedRows = matchRows(data, perspective, query, listColumnNames)
+  const cohortValues = resolveCohorts(
+    data,
+    request,
+    access,
+    columnModels,
+    options.maxCohortValues ?? MOCK_MAX_COHORT_VALUES,
+  )
+  const matchedRows = matchRows(data, perspective, query, {
+    listColumnNames,
+    cohortValues,
+  })
   assertAboveSuppressionThreshold(matchedRows.rows.length, aggregateConfig)
 
   const bundle: QueryResultBundle = {
@@ -768,9 +1036,10 @@ export function runCohortBuilderMockQuery(
   data: CohortBuilderSyntheticData,
   request: QueryBundleRequest,
   access: CohortBuilderAccess,
+  options: CohortBuilderMockQueryOptions = {},
 ): CohortBuilderMockQueryResult {
   try {
-    return { status: 200, body: executeQuery(data, request, access) }
+    return { status: 200, body: executeQuery(data, request, access, options) }
   } catch (error) {
     if (error instanceof MockQueryError) {
       return { status: error.status, body: error.body }

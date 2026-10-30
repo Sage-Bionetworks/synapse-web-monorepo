@@ -21,6 +21,7 @@ import {
 import type {
   Aggregation,
   DslQuery,
+  HybridClause,
   SearchIndexQuery,
   SearchQueryResults,
   SearchSearchQuery,
@@ -56,22 +57,25 @@ export type SearchQueryStrategy =
 
 export type SearchQueryConfig = {
   /**
-   * Which OpenSearch query clause to emit when the user has typed a search term.
-   * Defaults to 'MULTI_MATCH' (all fields, fuzziness AUTO — today's behavior).
+   * Shapes the `multi_match` clause of the hybrid text-search query. When omitted,
+   * `multi_match` uses `best_fields` with `operator: and`. 'SIMPLE_QUERY_STRING'
+   * omits `multi_match`, because the hybrid query always includes a
+   * `simple_query_string` clause.
    */
   queryStrategy?: SearchQueryStrategy
   /**
-   * Per-field relevance multipliers. Serialized to the OpenSearch `fields` array
-   * as e.g. `["resourceName^5", "synonyms^4"]`. When omitted, all fields are
-   * queried at equal weight.
+   * Per-field relevance multipliers for the lexical (`simple_query_string` and
+   * `multi_match`) clauses. Serialized to the OpenSearch `fields` array as e.g.
+   * `["resourceName^5", "synonyms^4"]`. When omitted, all fields are queried at
+   * equal weight.
    */
   fieldBoosts?: Record<string, number>
   /** Whether to append `*` to fieldBoosts at neutral weight. Defaults to true. */
   includeUnlistedFields?: boolean
   /**
-   * Fuzziness override. Overrides the per-strategy default. Leave undefined to
-   * use each strategy's natural default (AUTO for MULTI_MATCH/BOOSTED_FUZZY,
-   * none for the rest).
+   * Fuzziness override for the `multi_match` clause. Overrides the per-strategy
+   * default. Leave undefined to use each strategy's natural default (AUTO for
+   * MULTI_MATCH/BOOSTED_FUZZY, none for the rest).
    */
   fuzziness?: string
 }
@@ -87,6 +91,7 @@ type MultiMatchClause = {
     query: string
     fuzziness?: string
     type?: 'best_fields' | 'cross_fields' | 'phrase_prefix'
+    operator?: 'and' | 'or'
     fields?: string[]
   }
 }
@@ -95,24 +100,17 @@ type SimpleQueryStringClause = {
   simple_query_string: { query: string; fields?: string[] }
 }
 
-type BoolQuery = {
-  bool: {
-    must?: MultiMatchClause[] | FilterClause[]
-    filter?: FilterClause[]
-  }
-}
-
 // post_filter / per-facet aggregation filter: a single FilterClause, match_all, or AND of many.
 type SelectionFilter =
   | FilterClause
   | { match_all: Record<never, never> }
   | { bool: { must: FilterClause[] } }
 
-type SearchQueryDSL =
-  | MultiMatchClause
-  | SimpleQueryStringClause
-  | { match_all: Record<never, never> }
-  | BoolQuery
+/**
+ * Vector field the backend adds to each indexed document when a column is flagged
+ * semantic; the only key a `neural` clause accepts.
+ */
+export const SEMANTIC_SEARCH_FIELD = 'semantic_search'
 
 function resolveFields(
   fieldBoosts: Record<string, number> | undefined,
@@ -128,61 +126,26 @@ function resolveFields(
   )
 }
 
-/**
- * Returns true if the query text contains at least one double-quoted phrase
- * (e.g. `"cancer genomics"`). OpenSearch `multi_match` does not understand the
- * `"phrase"` operator — only `simple_query_string` does — so callers use this
- * to route quoted queries appropriately.
- */
-function containsQuotedPhrase(text: string): boolean {
-  // Match a pair of double-quotes enclosing at least one non-quote character.
-  return /"[^"]+"/u.test(text)
-}
-
-/**
- * Returns true if the query text contains a Synapse entity ID token
- * (e.g. `syn12345` or `syn12345.4`). `multi_match` with fuzziness AUTO can match
- * neighbouring IDs (e.g. `syn12345` → `syn12344`), which is almost never desired
- * for identifier lookups. Callers use this to route ID-containing queries to
- * `simple_query_string`, which does not apply fuzziness.
- */
-function containsSynapseId(text: string): boolean {
-  return SYNAPSE_ENTITY_ID_TOKEN_REGEX.test(text)
-}
-
-function buildQueryClause(
+function buildMultiMatchClause(
   queryText: string,
-  config: SearchQueryConfig = {},
-): MultiMatchClause | SimpleQueryStringClause {
-  const {
-    queryStrategy = 'MULTI_MATCH',
-    fieldBoosts,
-    includeUnlistedFields = true,
-    fuzziness,
-  } = config
-  const fields = resolveFields(fieldBoosts, includeUnlistedFields)
-
-  // Route to simple_query_string when the query needs exact-token treatment:
-  //  - a double-quoted phrase (multi_match can't honour the phrase operator), or
-  //  - a Synapse entity ID (fuzziness would match neighbouring IDs).
-  // simple_query_string doesn't apply fuzziness by default, so both cases work.
-  if (containsQuotedPhrase(queryText) || containsSynapseId(queryText)) {
-    return {
-      simple_query_string: {
-        query: queryText,
-        ...(fields ? { fields } : {}),
-      },
-    }
-  }
-
+  config: SearchQueryConfig,
+  fields: string[] | undefined,
+): MultiMatchClause | undefined {
+  const { queryStrategy, fuzziness } = config
   switch (queryStrategy) {
-    case 'SIMPLE_QUERY_STRING':
+    case undefined:
       return {
-        simple_query_string: {
+        multi_match: {
           query: queryText,
+          type: 'best_fields',
+          operator: 'and',
           ...(fields ? { fields } : {}),
+          ...(fuzziness ? { fuzziness } : {}),
         },
       }
+    case 'SIMPLE_QUERY_STRING':
+      // The hybrid query always carries a simple_query_string clause.
+      return undefined
     case 'MULTI_MATCH_BEST_FIELDS':
       return {
         multi_match: {
@@ -217,13 +180,62 @@ function buildQueryClause(
           fuzziness: fuzziness ?? 'AUTO',
         },
       }
-    default: // 'MULTI_MATCH'
+    case 'MULTI_MATCH':
       return {
         multi_match: {
           query: queryText,
           fuzziness: fuzziness ?? 'AUTO',
         },
       }
+  }
+}
+
+/**
+ * Builds the text-search portion of a SearchQuery. A query containing a Synapse ID
+ * is a lone `simple_query_string`; any other query is a `hybrid` query blending
+ * `simple_query_string`, the configured `multi_match`, and `neural` semantic search.
+ * The backend drops the `neural` clause for indexes without semantic columns.
+ *
+ * @param semanticSearchK nearest neighbours the `neural` clause retrieves; when
+ *   undefined, the backend default applies
+ */
+function buildTextSearchQuery(
+  queryText: string,
+  semanticSearchK: number | undefined,
+  config: SearchQueryConfig = {},
+): Pick<SearchSearchQuery, 'query' | 'hybrid'> {
+  const fields = resolveFields(
+    config.fieldBoosts,
+    config.includeUnlistedFields ?? true,
+  )
+  const simpleQueryString: SimpleQueryStringClause = {
+    simple_query_string: {
+      query: queryText,
+      ...(fields ? { fields } : {}),
+    },
+  }
+
+  // Fuzzy multi_match and semantic neural matching both surface neighbouring IDs
+  // (e.g. syn12345 → syn12344), which is almost never desired for identifier lookups.
+  if (SYNAPSE_ENTITY_ID_TOKEN_REGEX.test(queryText)) {
+    return { query: simpleQueryString }
+  }
+
+  const multiMatch = buildMultiMatchClause(queryText, config, fields)
+  const neural: HybridClause = {
+    neural: {
+      [SEMANTIC_SEARCH_FIELD]: {
+        query_text: queryText,
+        ...(semanticSearchK != null ? { k: semanticSearchK } : {}),
+      },
+    },
+  }
+  return {
+    hybrid: {
+      queries: multiMatch
+        ? [simpleQueryString, multiMatch, neural]
+        : [simpleQueryString, neural],
+    },
   }
 }
 
@@ -294,7 +306,7 @@ export function getNextPageParamForSearchQueryResults(
  *  - columnModels (facetType 'enumeration') → aggregations (OpenSearch terms or filter-wrapped aggregations)
  *  - query.selectedFacets (enumeration) → post_filter (terms clauses) + per-facet filter aggregations
  *  - query.selectedFacets (range)       → post_filter (range clauses) + included in all per-facet aggregation filters
- *  - query.additionalFilters (TextMatchesQueryFilter) → multi_match query clause
+ *  - query.additionalFilters (TextMatchesQueryFilter) → hybrid query (simple_query_string alone for Synapse IDs)
  *  - query.sort → sort (SortItem { column, direction } → [{ column: 'asc'|'desc' }])
  *  - query.limit → size
  *  - query.offset → from
@@ -381,13 +393,14 @@ export function toSearchIndexQuery(
       ? textMatchesExpressions.join(' ')
       : undefined
 
-  // Build the OpenSearch query DSL (text search only; facet selections go to post_filter).
-  let query: SearchQueryDSL
-  if (queryText) {
-    query = buildQueryClause(queryText, searchQueryConfig)
-  } else {
-    query = { match_all: {} }
-  }
+  // Text search only; facet selections go to post_filter.
+  const textSearchQuery: Pick<SearchSearchQuery, 'query' | 'hybrid'> = queryText
+    ? buildTextSearchQuery(
+        queryText,
+        queryBundleRequest.query.limit,
+        searchQueryConfig,
+      )
+    : { query: { match_all: {} } }
 
   // post_filter narrows hits/total by ALL active facet selections without affecting the
   // aggregation counts. Each enum aggregation independently applies a per-facet filter
@@ -462,7 +475,7 @@ export function toSearchIndexQuery(
     .map(s => ({ [s.column]: s.direction.toLowerCase() }))
 
   const searchQuery: SearchSearchQuery = {
-    query: query as unknown as DslQuery,
+    ...textSearchQuery,
     post_filter: postFilter as unknown as DslQuery | undefined,
     aggregations,
     sort: sortEntries?.length ? sortEntries : undefined,

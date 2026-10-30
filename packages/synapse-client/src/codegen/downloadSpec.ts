@@ -3,6 +3,7 @@ import { request } from 'undici'
 import fs from 'node:fs'
 import path, { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { patchSpec } from './patchSpec'
 
 const outputFile = path.resolve(
   dirname(fileURLToPath(import.meta.url)),
@@ -30,4 +31,4 @@ switch (stack) {
 
 const { body } = await request(restDocsUrl)
 const spec = await body.text()
-fs.writeFileSync(outputFile, spec)
+fs.writeFileSync(outputFile, patchSpec(spec))

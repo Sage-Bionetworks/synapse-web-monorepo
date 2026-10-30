@@ -21,6 +21,7 @@ import { useSuspenseGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata
 import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
 import PlotsContainer from '../widgets/facet-nav/PlotsContainer'
 import styles from './CohortBuilder.module.scss'
+import { CohortFilesPanel } from './CohortFilesPanel'
 
 /**
  * The Cohort Builder only requests the count and facet statistics: it never shows participant rows, and the server
@@ -43,6 +44,11 @@ export const COHORT_BUILDER_PREVIEW_NOTICE =
 export type CohortBuilderProps = {
   /** The participant VirtualTable: one row per participant. */
   participantsTableId: string
+  /**
+   * The Files/Datasets VirtualTable. When set, the files and datasets of the cohort are listed below its plots, using
+   * the cohort as a request-scoped cohort.
+   */
+  filesTableId?: string
   /** Faceted columns to plot, in order. Defaults to every faceted column. */
   facetsToPlot?: string[]
   /** Mapping from column name to the name shown for the column. */
@@ -56,12 +62,13 @@ export type CohortBuilderProps = {
 }
 
 /**
- * Builds a cohort of participants with the Query Builder and shows the cohort's participant count and facet plots.
- * Participant rows are never requested. Signed-out users are asked to sign in.
+ * Builds a cohort of participants with the Query Builder and shows the cohort's participant count and facet plots,
+ * and optionally its files and datasets. Participant rows are never requested. Signed-out users are asked to sign in.
  */
 export function CohortBuilder(props: CohortBuilderProps) {
   const {
     participantsTableId,
+    filesTableId,
     facetsToPlot,
     columnAliases,
     unitDescription = 'participant',
@@ -111,7 +118,11 @@ export function CohortBuilder(props: CohortBuilderProps) {
           {/* Only the results are replaced by an error or withheld-result notice, so the cohort stays editable. */}
           <QueryWrapperErrorBoundary>
             <Suspense fallback={<QueryWrapperLoadingScreen />}>
-              <CohortResults facetsToPlot={facetsToPlot} />
+              <CohortResults
+                facetsToPlot={facetsToPlot}
+                participantsTableId={participantsTableId}
+                filesTableId={filesTableId}
+              />
             </Suspense>
           </QueryWrapperErrorBoundary>
         </div>
@@ -135,7 +146,12 @@ function CohortQueryBuilder() {
   )
 }
 
-function CohortResults(props: { facetsToPlot?: string[] }) {
+function CohortResults(props: {
+  facetsToPlot?: string[]
+  participantsTableId: string
+  filesTableId?: string
+}) {
+  const { facetsToPlot, participantsTableId, filesTableId } = props
   const { data: queryMetadata } = useSuspenseGetQueryMetadata()
   const { unitDescription } = useQueryVisualizationContext()
   const count = queryMetadata.queryCount ?? 0
@@ -154,10 +170,16 @@ function CohortResults(props: { facetsToPlot?: string[] }) {
       </Typography>
       {/* The Query Builder is the only way to change the cohort. */}
       <PlotsContainer
-        facetsToPlot={props.facetsToPlot}
+        facetsToPlot={facetsToPlot}
         defaultPlotType="HORIZONTAL_BAR"
         disableFiltering
       />
+      {filesTableId && (
+        <CohortFilesPanel
+          filesTableId={filesTableId}
+          participantsTableId={participantsTableId}
+        />
+      )}
     </>
   )
 }
