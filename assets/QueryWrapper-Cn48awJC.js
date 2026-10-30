@@ -1,1 +1,0 @@
-import{o as e}from"./preload-helper-CsHsquCd.js";import{f as t,n,p as r}from"./QueryWrapper-BVB-gn8t.js";var i,a,o=e((()=>{r(),i=e=>e.map(e=>({concreteType:`org.sagebionetworks.repo.model.table.FacetColumnValuesRequest`,columnName:e.facet,facetValues:[e.facetValue]})),a=async(e,n,r)=>t(e,0,{sql:n,selectedFacets:i(r)},{sql:n})})),s=e((()=>{o(),n()}));export{a as n,o as r,s as t};
