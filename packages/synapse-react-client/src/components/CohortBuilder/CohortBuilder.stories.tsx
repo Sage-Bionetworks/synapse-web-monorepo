@@ -176,3 +176,31 @@ export const ProductionSyntheticDataCohortBuilderTest: Story = {
   globals: { stack: 'production' },
   parameters: { requireLogin: true },
 }
+
+/**
+ * The ELITE Cohort Builder on production, with the signed-in user's own access. Always uses the production stack,
+ * whatever the Stack toolbar is set to.
+ */
+export const ProductionEliteCohortBuilder: Story = {
+  args: {
+    participantsTableId: 'syn78340012',
+    filesTableId: 'syn78340377',
+  },
+  // Story globals override, and lock, the Stack toolbar for this story.
+  globals: { stack: 'production' },
+  parameters: { requireLogin: true },
+}
+
+/**
+ * The ADKP Cohort Builder on production, with the signed-in user's own access. Always uses the production stack,
+ * whatever the Stack toolbar is set to.
+ */
+export const ProductionAdkpCohortBuilder: Story = {
+  args: {
+    participantsTableId: 'syn78155293',
+    filesTableId: 'syn78157126',
+  },
+  // Story globals override, and lock, the Stack toolbar for this story.
+  globals: { stack: 'production' },
+  parameters: { requireLogin: true },
+}
