@@ -18,9 +18,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  e2e-tests:
+  detect-changes:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    outputs:
+      project_affected: ${{ steps.package_changes.outputs.project_affected }}
+      playwright-version: ${{ steps.playwright.outputs.version }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -42,19 +44,34 @@ jobs:
             echo "project_affected=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Install Playwright Browsers
-        if: ${{ steps.package_changes.outputs.project_affected == 'true' }}
+      - name: Read the locked Playwright version
+        id: playwright
         run: |
-          cd "${{ env.PACKAGE_SUBDIR }}"
-          pnpm playwright install --with-deps chromium
+          set -euo pipefail
+          version=$(pnpm --filter @sage-bionetworks/react-datasheet-grid exec playwright --version | awk '{print $2}')
+          echo "Playwright version: $version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+  e2e-tests:
+    needs: detect-changes
+    if: ${{ needs.detect-changes.outputs.project_affected == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # The image ships browsers and their OS dependencies, so the job skips the apt-get install that
+    # `playwright install --with-deps` would run. Its tag must match the locked @playwright/test version.
+    container:
+      image: mcr.microsoft.com/playwright:v${{ needs.detect-changes.outputs.playwright-version }}-noble
+      options: --user 1001 --ipc=host
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: ./.github/actions/pnpm-setup-action
 
       - name: Run e2e tests
-        if: ${{ steps.package_changes.outputs.project_affected == 'true' }}
         run: pnpm nx run @sage-bionetworks/react-datasheet-grid:e2e
 
       - name: Upload HTML report
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        if: ${{ !cancelled() && steps.package_changes.outputs.project_affected == 'true' }}
+        if: ${{ !cancelled() }}
         with:
           name: datasheet-grid-e2e-report--attempt-${{ github.run_attempt }}
           path: '${{ env.PACKAGE_SUBDIR }}/playwright-report'
