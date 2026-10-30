@@ -127,7 +127,7 @@
     "ua-parser-js": "^1.0.41",
     "use-deep-compare-effect": "^1.8.1",
     "xss": "^1.0.15",
-    "zod": "^4.4.3"
+    "zod": "^4.6.6"
   },
   "peerDependencies": {
     "@sage-bionetworks/aridhia-client": "*",
