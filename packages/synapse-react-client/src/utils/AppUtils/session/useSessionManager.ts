@@ -10,6 +10,7 @@ import {
 } from 'react'
 import { useNavigate } from 'react-router'
 import { displayToast } from '../../../components/ToastMessage'
+import { useConstant } from '../../hooks/useConstant'
 import useDetectSSOCode from '../../hooks/useDetectSSOCode'
 import { restoreLastPlace } from '../AppUtils'
 import { ApplicationSessionContextType } from './ApplicationSessionContext'
@@ -72,7 +73,7 @@ export function useSessionManager(
   )
   onMissingExpectedAuthenticationRef.current = onMissingExpectedAuthentication
 
-  const [manager] = useState(
+  const manager = useConstant(
     () =>
       new SynapseSessionManager({
         defaultRealm,

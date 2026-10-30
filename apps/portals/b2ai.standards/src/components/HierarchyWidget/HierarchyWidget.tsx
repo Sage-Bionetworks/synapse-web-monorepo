@@ -104,7 +104,7 @@ export default function HierarchyWidget({
     const byPosIdx = new Map<number, DecoratedRow>()
     for (const [posIdx, row] of exitingRef.current) byPosIdx.set(posIdx, row)
     for (const row of decorated) byPosIdx.set(row.posIndex, row)
-    return [...byPosIdx.values()].sort((a, b) => a.posIndex - b.posIndex)
+    return [...byPosIdx.values()].toSorted((a, b) => a.posIndex - b.posIndex)
   }, [decorated])
 
   function handleRowExited(posIdx: number) {
@@ -164,7 +164,6 @@ export default function HierarchyWidget({
         })
       }
       setExpanded(prev => removeFrom(prev, posIndex))
-      return
     }
     // leaf, disabled: no-op
   }

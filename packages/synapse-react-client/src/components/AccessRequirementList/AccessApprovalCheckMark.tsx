@@ -14,6 +14,16 @@ export enum RequirementItemStatus {
   LOADING = 'LOADING',
 }
 
+export function getRequirementItemStatus(
+  isLoading: boolean,
+  isComplete: boolean | undefined,
+): RequirementItemStatus {
+  if (isLoading) return RequirementItemStatus.LOADING
+  return isComplete
+    ? RequirementItemStatus.COMPLETE
+    : RequirementItemStatus.LOCKED
+}
+
 export type CheckMarkProps = {
   status: RequirementItemStatus
   sx?: SxProps

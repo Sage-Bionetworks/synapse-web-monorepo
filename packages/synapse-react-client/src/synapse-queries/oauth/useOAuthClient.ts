@@ -164,7 +164,7 @@ export function useUpdateOAuthClientACL(
       if (options?.onSuccess) {
         return await options.onSuccess(newAcl, acl, ctx, ...rest)
       }
-      return
+      return undefined
     },
   })
 }

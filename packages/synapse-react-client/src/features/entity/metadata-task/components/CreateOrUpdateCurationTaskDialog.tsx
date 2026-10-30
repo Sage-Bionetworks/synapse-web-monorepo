@@ -47,6 +47,7 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import { TYPE_FILTER } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
+import { useConstant } from '@/utils/hooks/useConstant'
 import {
   AUTH_MODE_CHANGED_WARNING,
   AUTH_MODE_NONE_TITLE,
@@ -183,8 +184,9 @@ export default function CreateOrUpdateCurationTaskDialog(
   const [authorizationMode, setAuthorizationMode] =
     useState<AuthorizationModeOption>(initialAuthMode)
   // Track the original value to detect unsaved changes
-  const [originalAuthorizationMode] =
-    useState<AuthorizationModeOption>(initialAuthMode)
+  const originalAuthorizationMode = useConstant<AuthorizationModeOption>(
+    () => initialAuthMode,
+  )
 
   // FileBasedMetadataTaskProperties fields
   const [uploadFolderId, setUploadFolderId] = useState(() => {

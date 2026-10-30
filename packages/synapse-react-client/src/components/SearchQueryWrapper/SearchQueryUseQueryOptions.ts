@@ -444,12 +444,14 @@ export function toSearchIndexQuery(
           return clause.bool.must_not[0]?.exists?.field !== cm.name
         return true
       })
-      const aggFilter: SelectionFilter =
-        otherClauses.length === 0
-          ? { match_all: {} }
-          : otherClauses.length === 1
-            ? otherClauses[0]
-            : { bool: { must: otherClauses } }
+      let aggFilter: SelectionFilter
+      if (otherClauses.length === 0) {
+        aggFilter = { match_all: {} }
+      } else if (otherClauses.length === 1) {
+        aggFilter = otherClauses[0]
+      } else {
+        aggFilter = { bool: { must: otherClauses } }
+      }
       return [
         cm.name,
         {
@@ -474,7 +476,7 @@ export function toSearchIndexQuery(
 
   const searchQuery: SearchSearchQuery = {
     ...textSearchQuery,
-    post_filter: postFilter ? (postFilter as unknown as DslQuery) : undefined,
+    post_filter: postFilter as unknown as DslQuery | undefined,
     aggregations,
     sort: sortEntries?.length ? sortEntries : undefined,
     size: queryBundleRequest.query.limit,
@@ -651,7 +653,7 @@ export function searchQueryResultsToQueryResultBundle(
     ? [
         ...allFacets
           .filter(f => columnModels.some(cm => cm.name === f.columnName))
-          .sort(
+          .toSorted(
             (a, b) =>
               columnModels.findIndex(cm => cm.name === a.columnName) -
               columnModels.findIndex(cm => cm.name === b.columnName),
@@ -724,7 +726,7 @@ export function getSearchQueryUseQueryOptions(
   const toKeyShape = (query: SearchIndexQuery) => ({
     ...query,
     responseParts: query.responseParts
-      ? [...query.responseParts].sort()
+      ? [...query.responseParts].toSorted((a, b) => a.localeCompare(b))
       : undefined,
   })
 

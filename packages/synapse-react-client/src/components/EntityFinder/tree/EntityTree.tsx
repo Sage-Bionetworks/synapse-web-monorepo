@@ -33,6 +33,7 @@ import {
 import { EntityFinderHeader } from '../EntityFinderHeader'
 import { EntitySelectionMapType } from '../useEntitySelection'
 import {
+  EntityTreeContainer,
   EntityTreeNodeType,
   RootNodeConfiguration,
   VirtualizedTree,
@@ -77,13 +78,6 @@ function getScopeOptionNodeName(scope: FinderScope): string {
       return 'Favorites'
   }
 }
-
-/**
- * Indicates which container is selected when the tree is used to control another component. If 'root', then the top-level entities
- * should be shown in the other component. If a synID, then that entity's children should be shown in the other component. If null,
- * then a selection has not been made.
- */
-export type EntityTreeContainer = string | 'root' | null
 
 // if the first item is selected (matching the dropdown), then output a configuration. otherwise, output a synId
 export type EntityTreeProps = {

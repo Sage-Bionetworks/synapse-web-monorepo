@@ -307,7 +307,7 @@ export function useInitiateDataAccessRequestSignature(
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx, ...rest)
       }
-      return
+      return undefined
     },
   })
 }
@@ -417,7 +417,7 @@ export function useUpdateDataAccessRequestSignature(
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx, ...rest)
       }
-      return
+      return undefined
     },
   })
 }
@@ -451,7 +451,7 @@ export function useVoidDataAccessRequestSignature(
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx, ...rest)
       }
-      return
+      return undefined
     },
   })
 }

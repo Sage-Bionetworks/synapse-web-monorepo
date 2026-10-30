@@ -291,11 +291,10 @@ export const Overview: StoryObj = {
               ) as (keyof typeof DATASET_HOSTING_CONFIG)[]
             ).map(key => {
               const config = DATASET_HOSTING_CONFIG[key]
-              const repository = config.label.includes('{repository}')
-                ? key === 'external-access'
-                  ? 'dbGaP'
-                  : 'GEO'
-                : undefined
+              let repository: string | undefined
+              if (config.label.includes('{repository}')) {
+                repository = key === 'external-access' ? 'dbGaP' : 'GEO'
+              }
               const button = (style: CardActionButtonStyle) => (
                 <CardActionButtonStyleContext.Provider value={style}>
                   <DemoDownloadButton

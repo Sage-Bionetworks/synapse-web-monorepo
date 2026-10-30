@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react'
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, useMemo } from 'react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useGetFeatureFlag } from 'synapse-react-client/synapse-queries/index'
 import { FeatureFlagEnum } from 'synapse-react-client/utils/featureflag/FeatureFlags'
@@ -23,21 +23,42 @@ function setFeatureFlags(portalChat: boolean, curieWidget: boolean) {
   })
 }
 
+type CurieTestProvidersProps = PropsWithChildren<{
+  isChatAvailable: boolean
+  isCurieLauncherEnabled?: boolean
+}>
+
+function CurieTestProviders(props: CurieTestProvidersProps) {
+  const { isChatAvailable, isCurieLauncherEnabled, children } = props
+  const portalContextValue = useMemo(
+    () => ({ isCurieLauncherEnabled }) as PortalContextType,
+    [isCurieLauncherEnabled],
+  )
+  const chatDialogContextValue = useMemo(
+    () => ({ openChat: vi.fn(), isChatAvailable }),
+    [isChatAvailable],
+  )
+  return (
+    <PortalContext.Provider value={portalContextValue}>
+      <ChatDialogContext.Provider value={chatDialogContextValue}>
+        {children}
+      </ChatDialogContext.Provider>
+    </PortalContext.Provider>
+  )
+}
+
 function renderUseIsCurieLauncherAvailable(options: {
   isChatAvailable?: boolean
   isCurieLauncherEnabled?: boolean
 }) {
   const { isChatAvailable = true, isCurieLauncherEnabled } = options
   const wrapper = ({ children }: PropsWithChildren) => (
-    <PortalContext.Provider
-      value={{ isCurieLauncherEnabled } as PortalContextType}
+    <CurieTestProviders
+      isChatAvailable={isChatAvailable}
+      isCurieLauncherEnabled={isCurieLauncherEnabled}
     >
-      <ChatDialogContext.Provider
-        value={{ openChat: vi.fn(), isChatAvailable }}
-      >
-        {children}
-      </ChatDialogContext.Provider>
-    </PortalContext.Provider>
+      {children}
+    </CurieTestProviders>
   )
   return renderHook(() => useIsCurieLauncherAvailable(), { wrapper })
 }

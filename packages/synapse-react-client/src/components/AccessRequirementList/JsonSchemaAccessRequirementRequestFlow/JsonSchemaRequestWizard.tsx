@@ -237,11 +237,10 @@ function JsonSchemaRequestWizardContent(
       !isRequesterInformationComplete(requesterInformation, isEDucEnabled)) ||
     (isLastStep && fileUploadFieldTitles.length > 0)
 
-  const primaryActionText = !isLastStep
-    ? 'Next'
-    : onEDucContinue
-      ? 'Continue'
-      : 'Submit'
+  let primaryActionText = 'Next'
+  if (isLastStep) {
+    primaryActionText = onEDucContinue ? 'Continue' : 'Submit'
+  }
 
   return (
     <>

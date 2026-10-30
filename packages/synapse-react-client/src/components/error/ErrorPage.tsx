@@ -97,7 +97,7 @@ type ErrorPageAction = {
 
 function ErrorPage(props: ErrorPageProps) {
   const { type, message, gotoPlace, id, version, objectType, portalId } = props
-  const [isSendMessageToAdminDialogOpen, setSendMessageToAdminDialogOpen] =
+  const [isSendMessageToAdminDialogOpen, setIsSendMessageToAdminDialogOpen] =
     useState<boolean>(false)
   const { isAuthenticated } = useSynapseContext()
   const image = useMemo(() => getImage(type), [type])
@@ -145,7 +145,7 @@ function ErrorPage(props: ErrorPageProps) {
         // SWC-7073: Remove ability to send a message to the admins until we have a better option for the majority of the cases (service desk, contact emails, ...)
         // acts.push({
         //   linkText: CONTACT_ADMIN_LINK_TEXT,
-        //   onClick: () => setSendMessageToAdminDialogOpen(true),
+        //   onClick: () => setIsSendMessageToAdminDialogOpen(true),
         //   description: ACCESS_DENIED_CONTACT_ADMIN_ACTION_DESCRIPTION,
         // })
       }
@@ -154,7 +154,7 @@ function ErrorPage(props: ErrorPageProps) {
   }, [type, isAuthenticated, id, gotoPlace])
 
   const handleCloseDialog = useCallback(
-    () => setSendMessageToAdminDialogOpen(false),
+    () => setIsSendMessageToAdminDialogOpen(false),
     [],
   )
   return (

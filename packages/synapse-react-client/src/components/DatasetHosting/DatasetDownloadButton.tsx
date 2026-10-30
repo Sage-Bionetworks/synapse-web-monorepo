@@ -7,6 +7,7 @@ import BlockOutlined from '@mui/icons-material/BlockOutlined'
 import AssuredWorkloadOutlined from '@mui/icons-material/AssuredWorkloadOutlined'
 import LoginOutlined from '@mui/icons-material/LoginOutlined'
 import { ReactNode, useState } from 'react'
+import { LiteralUnion } from 'type-fest'
 import { TargetEnum } from '@/utils/html/TargetEnum'
 import { SRC_SIGN_IN_CLASS } from '@/utils/SynapseConstants'
 import { useSynapseContext } from '@/utils'
@@ -34,10 +35,11 @@ export type DatasetDownloadButtonProps = {
   /** The dataset name, shown in the download confirmation. */
   name: string
   /**
-   * The dataset's hosting type. Accepts a raw annotation value (possibly blank,
-   * null, or unrecognized); anything unrecognized is treated as `synapse`.
+   * The dataset's hosting type, normally a {@link DatasetHostingType}. Accepts a raw
+   * annotation value (possibly blank, null, or unrecognized); anything unrecognized
+   * is treated as `synapse`.
    */
-  hosting?: DatasetHostingType | string | null
+  hosting?: LiteralUnion<DatasetHostingType, string> | null
   /** Name of the external repository (e.g. "GEO", "dbGaP"), shown in the label/tooltip. */
   repository?: string
   /** Destination for the action when the dataset is not downloadable (e.g. dbGaP/EGA). */

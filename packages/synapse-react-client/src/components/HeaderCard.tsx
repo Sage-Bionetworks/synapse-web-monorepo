@@ -83,6 +83,25 @@ const HeaderCardClassic = forwardRef(function HeaderCardClassic(
     priority: 100,
   })
 
+  let titleContent: React.ReactNode = <span>{title}</span>
+  if (titleAsFileHandleLinkConfiguration) {
+    titleContent = (
+      <FileHandleLink
+        fileHandleAssociation={
+          titleAsFileHandleLinkConfiguration.fileHandleAssociation
+        }
+        showDownloadIcon={titleAsFileHandleLinkConfiguration.showDownloadIcon}
+        displayValue={title}
+      />
+    )
+  } else if (href) {
+    titleContent = (
+      <SmartLink href={href ?? ''} className="highlight-link" target={target}>
+        {title}
+      </SmartLink>
+    )
+  }
+
   return (
     <Box
       ref={ref}
@@ -118,27 +137,7 @@ const HeaderCardClassic = forwardRef(function HeaderCardClassic(
         {/* Row 2: Title */}
         <Box>
           <h3 className="SRC-boldText" style={{ margin: 'none' }}>
-            {titleAsFileHandleLinkConfiguration ? (
-              <FileHandleLink
-                fileHandleAssociation={
-                  titleAsFileHandleLinkConfiguration.fileHandleAssociation
-                }
-                showDownloadIcon={
-                  titleAsFileHandleLinkConfiguration.showDownloadIcon
-                }
-                displayValue={title}
-              />
-            ) : href ? (
-              <SmartLink
-                href={href ?? ''}
-                className="highlight-link"
-                target={target}
-              >
-                {title}
-              </SmartLink>
-            ) : (
-              <span>{title}</span>
-            )}
+            {titleContent}
           </h3>
         </Box>
 

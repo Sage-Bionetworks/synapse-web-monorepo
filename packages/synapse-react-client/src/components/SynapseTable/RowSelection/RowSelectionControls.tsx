@@ -69,6 +69,26 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
     fileColumnId,
   )
 
+  const showAddToDownloadListConfirmation = () => {
+    const toastId = toast.custom(
+      <Box
+        sx={{
+          width: '100%',
+        }}
+      >
+        <AddToDownloadListConfirmationAlert
+          addToDownloadListRequest={addToDownloadListRequest}
+          onClose={() => {
+            toast.dismiss(toastId)
+          }}
+        />
+      </Box>,
+      {
+        duration: Infinity,
+      },
+    )
+  }
+
   return (
     <RowSelectionUI
       show={selectedRows.length > 0}
@@ -118,25 +138,7 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
           {showAddToDownloadCart && (
             <Button
               variant="contained"
-              onClick={() => {
-                const toastId = toast.custom(
-                  <Box
-                    sx={{
-                      width: '100%',
-                    }}
-                  >
-                    <AddToDownloadListConfirmationAlert
-                      addToDownloadListRequest={addToDownloadListRequest}
-                      onClose={() => {
-                        toast.dismiss(toastId)
-                      }}
-                    />
-                  </Box>,
-                  {
-                    duration: Infinity,
-                  },
-                )
-              }}
+              onClick={showAddToDownloadListConfirmation}
               startIcon={<GetAppTwoTone />}
             >
               Add to Download List

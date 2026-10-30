@@ -3,8 +3,8 @@ import JsonRxMessage from './JsonRxMessage'
 export const RESPONSE_TYPE_CODE = 4
 
 export default class JsonRxResponse<TPayload = unknown> extends JsonRxMessage {
-  private subscriptionId: number
-  private payload: TPayload
+  private readonly subscriptionId: number
+  private readonly payload: TPayload
 
   public getPayload(): TPayload {
     return this.payload

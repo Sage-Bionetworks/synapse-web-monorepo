@@ -1,5 +1,5 @@
 import { DataSheetGridProps, DataSheetGridRef } from '../types'
-import { useState } from 'react'
+import { useConstant } from '../hooks/useConstant'
 import { DataSheetGrid } from './DataSheetGrid'
 import React from 'react'
 
@@ -27,7 +27,7 @@ export const StaticDataSheetGrid = React.forwardRef<
     }: DataSheetGridProps<T>,
     ref: React.ForwardedRef<DataSheetGridRef>,
   ) => {
-    const [staticProps] = useState({
+    const staticProps = useConstant(() => ({
       columns,
       gutterColumn,
       stickyRightColumn,
@@ -42,7 +42,7 @@ export const StaticDataSheetGrid = React.forwardRef<
       onSelectionChange,
       rowClassName,
       rowHeight,
-    })
+    }))
 
     return (
       <DataSheetGrid

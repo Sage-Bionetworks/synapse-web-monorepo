@@ -194,7 +194,7 @@ export function useAddFileToDownloadList(
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx, ...rest)
       }
-      return
+      return undefined
     },
   })
 }
@@ -226,7 +226,7 @@ export function useAddFileBatchToDownloadList(
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx, ...rest)
       }
-      return
+      return undefined
     },
   })
 }
@@ -271,7 +271,7 @@ export function useAddToDownloadList(
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx, ...rest)
       }
-      return
+      return undefined
     },
   })
 }
@@ -299,7 +299,7 @@ export function useRemoveFilesFromDownloadList(
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx, ...rest)
       }
-      return
+      return undefined
     },
   })
 }

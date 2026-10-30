@@ -3,6 +3,7 @@ import {
   createContext,
   PropsWithChildren,
   useContext,
+  useMemo,
   useSyncExternalStore,
 } from 'react'
 
@@ -41,9 +42,13 @@ export function GlobalIsEditingContextProvider(
   const { subscribe, getSnapshot, setIsEditing, children } = props
 
   const isEditing = useSyncExternalStore(subscribe, getSnapshot, () => false)
+  const contextValue = useMemo(
+    () => ({ isEditing, setIsEditing }),
+    [isEditing, setIsEditing],
+  )
 
   return (
-    <GlobalIsEditingContext.Provider value={{ isEditing, setIsEditing }}>
+    <GlobalIsEditingContext.Provider value={contextValue}>
       {children}
     </GlobalIsEditingContext.Provider>
   )

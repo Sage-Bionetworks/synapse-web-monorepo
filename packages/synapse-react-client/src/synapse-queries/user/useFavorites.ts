@@ -46,7 +46,7 @@ export function useAddFavorite(
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx, ...rest)
       }
-      return
+      return undefined
     },
   })
 }
@@ -70,7 +70,7 @@ export function useRemoveFavorite(
       if (options?.onSuccess) {
         return options.onSuccess(data, variables, ctx, ...rest)
       }
-      return
+      return undefined
     },
   })
 }

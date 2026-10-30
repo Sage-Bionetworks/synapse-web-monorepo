@@ -8,12 +8,10 @@ export function EnumFacetFilterSkeleton(
   const { containerAs = 'Collapsible', dropdownType = 'Icon' } = props
   if (containerAs === 'Collapsible') {
     return <FacetFilterSkeleton />
-  } else {
+  } else if (dropdownType === 'Icon') {
     // containerAs is 'Dropdown'
-    if (dropdownType === 'Icon') {
-      return <Skeleton variant={'rectangular'} width={25} height={25} />
-    } else {
-      return <Skeleton variant={'rectangular'} width={100} height={25} />
-    }
+    return <Skeleton variant={'rectangular'} width={25} height={25} />
+  } else {
+    return <Skeleton variant={'rectangular'} width={100} height={25} />
   }
 }

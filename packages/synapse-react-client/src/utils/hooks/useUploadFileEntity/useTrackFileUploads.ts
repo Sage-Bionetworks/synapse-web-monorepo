@@ -26,12 +26,14 @@ export const PENDING_UPLOAD_STATES: TrackedUploadProgress['status'][] = [
   'PAUSED',
 ]
 
-const UNTRACKED_BYTE_UPLOAD_STATES: TrackedUploadProgress['status'][] = [
+const UNTRACKED_BYTE_UPLOAD_STATES: ReadonlySet<
+  TrackedUploadProgress['status']
+> = new Set([
   ...PENDING_UPLOAD_STATES,
   // The project storage limits are eventually consistent, so complete uploads may not count against the limit immediately.
   // So we include those in our estimation.
   'COMPLETE',
-]
+])
 
 /**
  * Hook used to track the state of multiple file uploads, providing methods that can be used to interact with the upload state.
@@ -167,15 +169,16 @@ export function useTrackFileUploads() {
 
       if (entry == null) {
         // nothing to do
+      } else if (
+        entry.status != 'CANCELED_BY_USER' &&
+        entry.status != 'FAILED'
+      ) {
+        console.warn(
+          `Attempted to remove tracked upload progress before it was canceled.`,
+          entry,
+        )
       } else {
-        if (entry.status != 'CANCELED_BY_USER' && entry.status != 'FAILED') {
-          console.warn(
-            `Attempted to remove tracked upload progress before it was canceled.`,
-            entry,
-          )
-        } else {
-          newMap.delete(file)
-        }
+        newMap.delete(file)
       }
       return newMap
     })
@@ -185,7 +188,7 @@ export function useTrackFileUploads() {
   // Used to prevent the uploader from exceeding storage limits before uploading the file (the backend won't provide an error response until after the file is uploaded)
   const bytesPendingUpload = [...trackedUploadProgress].reduce(
     (acc, [file, progress]) => {
-      if (UNTRACKED_BYTE_UPLOAD_STATES.includes(progress.status)) {
+      if (UNTRACKED_BYTE_UPLOAD_STATES.has(progress.status)) {
         return acc + file.size
       }
 

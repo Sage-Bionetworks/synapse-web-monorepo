@@ -210,6 +210,10 @@ export const SelectionRect = React.memo<SelectionContextType>(
           1,
       }
 
+    const stickyRightColumnWidth = hasStickyRightColumn
+      ? columnWidths.at(-1)!
+      : 0
+
     return (
       <>
         <div
@@ -219,7 +223,7 @@ export const SelectionRect = React.memo<SelectionContextType>(
               rowHeight(dataLength - 1).top +
               rowHeight(dataLength - 1).height +
               headerRowHeight,
-            width: contentWidth ? contentWidth : '100%',
+            width: contentWidth || '100%',
           }}
         >
           <div
@@ -236,17 +240,8 @@ export const SelectionRect = React.memo<SelectionContextType>(
               height: viewHeight ? viewHeight - headerRowHeight : 0,
               width:
                 contentWidth && viewWidth
-                  ? viewWidth -
-                    columnWidths[0] -
-                    (hasStickyRightColumn
-                      ? columnWidths[columnWidths.length - 1]
-                      : 0)
-                  : `calc(100% - ${
-                      columnWidths[0] +
-                      (hasStickyRightColumn
-                        ? columnWidths[columnWidths.length - 1]
-                        : 0)
-                    }px)`,
+                  ? viewWidth - columnWidths[0] - stickyRightColumnWidth
+                  : `calc(100% - ${columnWidths[0] + stickyRightColumnWidth}px)`,
             }}
           />
         </div>
@@ -303,7 +298,7 @@ export const SelectionRect = React.memo<SelectionContextType>(
             style={{
               top: selectionRect?.top ?? activeCellRect?.top,
               height: selectionRect?.height ?? activeCellRect?.height,
-              width: contentWidth ? contentWidth : '100%',
+              width: contentWidth || '100%',
             }}
           >
             <div

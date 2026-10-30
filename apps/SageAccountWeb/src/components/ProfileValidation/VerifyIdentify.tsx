@@ -1,6 +1,5 @@
 import React from 'react'
 import { ORCiDButton } from './ORCiDButton'
-import { useEffect, useState } from 'react'
 import { VerificationSubmission } from '@sage-bionetworks/synapse-types'
 import CheckIcon from '@mui/icons-material/Check'
 //agendelTODO: mobe to sage account page
@@ -18,11 +17,6 @@ export type VerifyIdentifyProps = {
 export const VerifyIdentify = (props: VerifyIdentifyProps): React.ReactNode => {
   const theme = useTheme()
   const { verificationSubmission } = props
-  const [attachments] = useState(verificationSubmission.attachments)
-
-  useEffect(() => {
-    verificationSubmission.attachments = attachments
-  }, [attachments, verificationSubmission])
 
   return (
     <>

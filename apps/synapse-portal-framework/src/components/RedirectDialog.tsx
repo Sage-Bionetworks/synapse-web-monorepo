@@ -12,7 +12,7 @@ import { useGetEntity } from 'synapse-react-client/synapse-queries/index'
 import { isFileEntity } from 'synapse-react-client/utils/types/IsType'
 import { useLocation, useNavigate } from 'react-router'
 import { SynapseSpinner } from 'synapse-react-client/components/LoadingScreen/LoadingScreen'
-import { ReactComponent as RDCADAP } from '../portal-assets/RDCADAP.svg'
+import { ReactComponent as RdcaDapLogo } from '../portal-assets/RDCADAP.svg'
 
 export type RedirectDialogProps = {
   onCancelRedirect: () => void
@@ -293,7 +293,7 @@ const RedirectDialog = (props: RedirectDialogProps): React.ReactNode => {
                   alignItems: 'center',
                 }}
               >
-                <RDCADAP title="rdca-logo-image" />
+                <RdcaDapLogo title="rdca-logo-image" />
               </div>
             )}
           </DialogContent>
