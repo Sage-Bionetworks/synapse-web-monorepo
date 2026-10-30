@@ -3,29 +3,36 @@
 
 name: Build/Test All Projects
 
-permissions:
-  contents: read
-  pull-requests: read
-
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
 
+# Each job runs nrwl/nx-set-shas, which sets NX_BASE and NX_HEAD for `nx affected`: the merge base with main on
+# pull requests, and the commit of the last successful run of this workflow on pushes to main. Comparing a push
+# against origin/main itself would mark nothing as affected.
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
           filter: tree:0
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@3e9ad7370203c1e93d109be57f3b72eb0eb511b1 # v4.4.0
       - uses: ./.github/actions/pnpm-setup-action
-      - run: pnpm nx affected --target=build --base=remotes/origin/main
+      - run: pnpm nx affected --target=build
   test:
     runs-on:
       labels: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     # Job should not last longer than 60 minutes
     timeout-minutes: 60
     steps:
@@ -33,11 +40,13 @@ jobs:
         with:
           fetch-depth: 0
           filter: tree:0
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@3e9ad7370203c1e93d109be57f3b72eb0eb511b1 # v4.4.0
       - uses: ./.github/actions/pnpm-setup-action
       - name: Determine if SageAccountWeb has had any changes
         id: sage_account_web_changes
         run: |
-          if pnpm nx show projects --affected --base=remotes/origin/main --json \
+          if pnpm nx show projects --affected --json \
             | jq -e 'index("SageAccountWeb")' > /dev/null; then
             echo "Project is affected; setting project_affected=true"
             echo "project_affected=true" >> "$GITHUB_OUTPUT"
@@ -55,7 +64,7 @@ jobs:
           pnpm playwright install --with-deps chromium
       - id: test
         # Test runners run in parallel, so we use `--parallel=1` to avoid running them all at once
-        run: pnpm nx affected --target test --base=remotes/origin/main --parallel=1
+        run: pnpm nx affected --target test --parallel=1
       - name: Upload test report
         if: success() || steps.test.conclusion == 'failure'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -66,19 +75,29 @@ jobs:
             ./apps/*/coverage/
   lint:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
           filter: tree:0
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@3e9ad7370203c1e93d109be57f3b72eb0eb511b1 # v4.4.0
       - uses: ./.github/actions/pnpm-setup-action
-      - run: pnpm nx affected --target=lint --base=remotes/origin/main
+      - run: pnpm nx affected --target=lint
   typecheck:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
           filter: tree:0
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@3e9ad7370203c1e93d109be57f3b72eb0eb511b1 # v4.4.0
       - uses: ./.github/actions/pnpm-setup-action
-      - run: pnpm nx affected --target=type-check --base=remotes/origin/main
+      - run: pnpm nx affected --target=type-check
