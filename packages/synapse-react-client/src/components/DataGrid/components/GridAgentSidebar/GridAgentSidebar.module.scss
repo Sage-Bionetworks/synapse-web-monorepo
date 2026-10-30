@@ -1,0 +1,60 @@
+.sidebar {
+  position: sticky;
+  top: 0;
+  flex-shrink: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border-left: 1px solid var(--synapse-v2-gray-200);
+}
+
+.resizeHandle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -4px;
+  width: 8px;
+  z-index: 1;
+  cursor: col-resize;
+  touch-action: none;
+
+  &:hover,
+  &:focus-visible,
+  &.dragging {
+    outline: none;
+    background: linear-gradient(
+      to right,
+      transparent 3px,
+      var(--synapse-primary-action-color) 3px,
+      var(--synapse-primary-action-color) 5px,
+      transparent 5px
+    );
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 12px 8px 20px;
+}
+
+.body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 20px 16px;
+}
+
+.openButton:global(.MuiFab-root) {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  background-color: white;
+  border: 1px solid var(--synapse-v2-gray-200);
+
+  &:hover {
+    background-color: var(--synapse-v2-gray-50);
+  }
+}

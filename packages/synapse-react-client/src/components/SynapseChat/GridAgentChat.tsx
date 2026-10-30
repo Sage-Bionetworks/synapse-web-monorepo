@@ -1,3 +1,4 @@
+import GridAgentSidebar from '@/components/DataGrid/components/GridAgentSidebar/GridAgentSidebar'
 import { useChatState } from '@/components/SynapseChat/useChatState'
 import {
   AgentSession,
@@ -5,7 +6,6 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
-import DraggableDialog from '../DraggableDialog/DraggableDialog'
 import { SynapseChat } from './index'
 import { ReactComponent as CurieAvatarHead } from '@/assets/illustrations/curie_avatar_head.svg'
 
@@ -35,7 +35,7 @@ export function GridAgentChat({
   onClose,
   agentRegistrationId,
 }: GridAgentChatProps) {
-  // Storing state for the chat session here preserves chat history while the dialog is opened and closed.
+  // Storing state for the chat session here preserves chat history while the sidebar is closed and reopened.
   const [agentSession, setAgentSession] = useState<AgentSession | undefined>()
   const chatState = useChatState(agentSession)
 
@@ -49,14 +49,14 @@ export function GridAgentChat({
   }
 
   return (
-    <DraggableDialog open={open} onClose={onClose} title={chatbotName}>
+    <GridAgentSidebar open={open} onClose={onClose}>
       <SynapseChat
         agentAvatar={<CurieAvatarHead width={35} height="auto" />}
         agentRegistrationId={agentRegistrationId}
         chatbotName={chatbotName}
         initialMessage={initialMessage}
         sessionContext={sessionContext}
-        textboxPositionOffset="16px"
+        textboxPositionOffset="0px"
         hideTitle={true}
         showAccessLevelMenu={false}
         defaultAgentAccessLevel={AgentAccessLevel.WRITE_YOUR_PRIVATE_DATA}
@@ -67,7 +67,7 @@ export function GridAgentChat({
         suggestedPrompts={suggestedPrompts}
         allowAttachments={true}
       />
-    </DraggableDialog>
+    </GridAgentSidebar>
   )
 }
 

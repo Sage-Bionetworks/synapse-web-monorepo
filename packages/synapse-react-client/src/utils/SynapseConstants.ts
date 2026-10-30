@@ -187,6 +187,10 @@ export const ACCESS_TOKEN_COOKIE_KEY =
   'org.sagebionetworks.security.user.login.token'
 export const LAST_PLACE_LOCALSTORAGE_KEY = 'last_place_url'
 export const ENTITY_SIDEBAR_STATE_LOCALSTORAGE_KEY = 'entity_sidebar_open'
+export const GRID_AGENT_SIDEBAR_OPEN_LOCALSTORAGE_KEY =
+  'grid_agent_sidebar_open'
+export const GRID_AGENT_SIDEBAR_WIDTH_LOCALSTORAGE_KEY =
+  'grid_agent_sidebar_width'
 export const ACCOUNT_SITE_PROMPTED_FOR_LOGIN_COOKIE_KEY =
   'org.sagebionetworks.account.promptedforlogin'
 
