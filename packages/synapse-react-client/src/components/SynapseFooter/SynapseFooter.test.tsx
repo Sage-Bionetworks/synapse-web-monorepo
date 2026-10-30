@@ -22,6 +22,10 @@ vi.mock('@/utils/hooks/useOneSageURL', () => ({
   useOneSageURL: vi.fn(),
 }))
 
+vi.mock('../ExperimentalFeatures/ExperimentalFeatures', () => ({
+  default: () => null,
+}))
+
 const mockUseApplicationSessionContext = vi.mocked(useApplicationSessionContext)
 const mockUseGetCurrentRealm = vi.mocked(useGetCurrentRealm)
 const mockUseOneSageURL = vi.mocked(useOneSageURL)
@@ -31,7 +35,7 @@ const defaultProps: SynapseFooterProps = {
   srcVersion: '2.0.0',
   repoVersion: '3.0.0',
   gotoPlace: vi.fn(),
-  onExperimentalModeToggle: vi.fn(),
+  onExperimentalFeaturesSaved: vi.fn(),
 }
 
 function renderComponent(props: SynapseFooterProps = defaultProps) {

@@ -1,3 +1,5 @@
+import { startCase } from 'lodash-es'
+
 export type FeatureFlags = Record<FeatureFlagEnum, boolean>
 
 export enum FeatureFlagEnum {
@@ -32,6 +34,75 @@ export enum FeatureFlagEnum {
   // Access Requirements that collect a schema-driven form
   ACT_DASHBOARD_FORM_TEMPLATES = 'ACT_DASHBOARD_FORM_TEMPLATES',
 
+  // If enabled, SWC shows options to insert experimental widgets in the wiki editor
+  ADD_WIKI_WIDGETS = 'ADD_WIKI_WIDGETS',
+
+  // If enabled, SWC shows a visibility chip (e.g. public/private) on the project title bar
+  PROJECT_VISIBILITY_CHIP = 'PROJECT_VISIBILITY_CHIP',
+
+  // If enabled, SWC shows the query builder control on table and view pages
+  QUERY_BUILDER_CONTROL = 'QUERY_BUILDER_CONTROL',
+
   // Reserved for unit tests. Not configured in Stack Builder; do not use in production code.
   TEST_ONLY = 'TEST_ONLY',
+  TEST_ONLY_2 = 'TEST_ONLY_2',
+  TEST_ONLY_ACT_MEMBERS = 'TEST_ONLY_ACT_MEMBERS',
+}
+
+/** `TEST` is only used by unit tests; no app's menu lists it */
+export type ExperimentalFeatureScope =
+  | 'SYNAPSE'
+  | 'PORTALS'
+  | 'ACCOUNTS'
+  | 'TEST'
+
+type FeatureFlagConfig = {
+  /** Apps whose experimental features menu may list this flag */
+  scopes: ExperimentalFeatureScope[]
+  /** Overrides the name derived from the feature flag key */
+  displayName?: string
+  /** Whether this feature is only available to ACT members */
+  actMembersOnly?: boolean
+}
+
+export const FEATURE_FLAG_CONFIG: Record<FeatureFlagEnum, FeatureFlagConfig> = {
+  [FeatureFlagEnum.PORTAL_SEARCH_HEADER]: { scopes: [] },
+  [FeatureFlagEnum.HOMEPAGE_CHATBOT]: { scopes: [] },
+  [FeatureFlagEnum.WEBHOOKS_UI]: { scopes: ['ACCOUNTS'] },
+  [FeatureFlagEnum.CRISP_CHAT]: { scopes: [] },
+  [FeatureFlagEnum.PORTAL_CHAT]: { scopes: [] },
+  [FeatureFlagEnum.CURIE_CHAT_WIDGET]: { scopes: [] },
+  [FeatureFlagEnum.CURATION_TASK_PAGE_SHOW_NEW_TASK_BUTTON]: {
+    scopes: ['SYNAPSE'],
+    displayName: 'Create New Curation Tasks',
+  },
+  [FeatureFlagEnum.ELITE_PORTAL_MODELS]: { scopes: [] },
+  [FeatureFlagEnum.AMPALS_RDCA_DAP_FORM_ENABLED]: { scopes: [] },
+  [FeatureFlagEnum.ACT_DASHBOARD_FORM_TEMPLATES]: {
+    scopes: ['SYNAPSE'],
+    displayName: 'ACT Dashboard Form Templates',
+    actMembersOnly: true,
+  },
+  [FeatureFlagEnum.ADD_WIKI_WIDGETS]: {
+    scopes: ['SYNAPSE'],
+    displayName: 'Experimental Wiki Widgets',
+  },
+  [FeatureFlagEnum.PROJECT_VISIBILITY_CHIP]: {
+    scopes: ['SYNAPSE'],
+    displayName: 'Display Project Visibility',
+  },
+  [FeatureFlagEnum.QUERY_BUILDER_CONTROL]: {
+    scopes: ['SYNAPSE'],
+    displayName: 'Query Builder for Tables and Views',
+  },
+  [FeatureFlagEnum.TEST_ONLY]: { scopes: [] },
+  [FeatureFlagEnum.TEST_ONLY_2]: { scopes: ['TEST'] },
+  [FeatureFlagEnum.TEST_ONLY_ACT_MEMBERS]: {
+    scopes: ['TEST'],
+    actMembersOnly: true,
+  },
+}
+
+export function getFeatureFlagDisplayName(flag: FeatureFlagEnum): string {
+  return FEATURE_FLAG_CONFIG[flag]?.displayName ?? startCase(flag.toLowerCase())
 }

@@ -3,8 +3,9 @@ import {
   isInSynapseExperimentalMode,
 } from '@/synapse-client/SynapseClient'
 import { TwoFactorAuthErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/TwoFactorAuthErrorResponse'
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, useMemo } from 'react'
 import { SynapseContextProvider, SynapseContextType } from '../../context'
+import { getEnabledExperimentalFeatures } from '../../featureflag/experimentalFeatureCookies'
 import { useIsHydrated } from '../../hooks/useIsHydrated'
 import { ApplicationSessionContextProvider } from './ApplicationSessionContext'
 import { AuthenticationGuard } from './AuthenticationGuard'
@@ -66,6 +67,11 @@ export function ApplicationSessionManager(
   // component that branches on a feature flag.
   const isHydrated = useIsHydrated()
 
+  const enabledExperimentalFeatures = useMemo(
+    () => (isHydrated ? getEnabledExperimentalFeatures() : []),
+    [isHydrated],
+  )
+
   return (
     <ApplicationSessionContextProvider context={sessionContext}>
       <SynapseContextProvider
@@ -73,6 +79,7 @@ export function ApplicationSessionManager(
           accessToken: token,
           isAuthenticated: sessionContext.isAuthenticated,
           isInExperimentalMode: isHydrated && isInSynapseExperimentalMode(),
+          enabledExperimentalFeatures,
           utcTime: isHydrated && getUseUtcTimeFromCookie(),
           downloadCartPageUrl,
           appId: appId,

@@ -14,6 +14,7 @@ const baseContext: SynapseContextType = {
   accessToken: '',
   isAuthenticated: false,
   isInExperimentalMode: false,
+  enabledExperimentalFeatures: [],
   utcTime: false,
   withErrorBoundary: false,
   downloadCartPageUrl: '',

@@ -1,7 +1,7 @@
 import Versions from '@/components/Versions'
 import { Box, darken, Typography, useTheme } from '@mui/material'
 import { memo } from 'react'
-import ExperimentalMode from 'synapse-react-client/components/ExperimentalMode/index'
+import { ExperimentalFeatures } from 'synapse-react-client/components/ExperimentalFeatures/index'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { ReactComponent as PoweredBySvg } from '../portal-assets/poweredbysynapse.svg'
 import { usePortalContext } from './PortalContext'
@@ -121,7 +121,10 @@ function Footer() {
         >
           <Versions />
 
-          <ExperimentalMode />
+          <ExperimentalFeatures
+            scopes={['PORTALS']}
+            onPreferencesSaved={() => window.location.reload()}
+          />
         </Box>
         <Box sx={{ mt: 2 }}>
           <SageNonprofitAttribution />
