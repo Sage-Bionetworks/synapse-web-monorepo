@@ -1,6 +1,12 @@
+import { FileHandleWidgetContext } from '@/components/JsonSchemaForm/CustomFormContext'
 import { JsonSchemaForm } from '@/components/JsonSchemaForm/JsonSchemaForm'
+import { FileHandleWidget } from '@/components/JsonSchemaForm/widgets/FileHandleWidget'
 import { GeneratedFormStepForRjsf } from '@/utils/jsonschema/generateDataAccessSchema'
-import { getStepData, SchemaData } from '@/utils/jsonschema/schemaData'
+import {
+  getStepData,
+  SchemaData,
+  SYNAPSE_FILE_HANDLE_ID_FORMAT,
+} from '@/utils/jsonschema/schemaData'
 import RJSFForm from '@rjsf/core'
 import { Ref, useImperativeHandle, useRef } from 'react'
 
@@ -14,6 +20,8 @@ export type SchemaStepFormProps = {
   step: GeneratedFormStepForRjsf
   schemaData: SchemaData
   onSchemaDataChange: (schemaData: SchemaData) => void
+  /** How the step's file questions upload and download files */
+  fileHandleWidgetContext: FileHandleWidgetContext
   /** Invoked with the complete answers when the step's answers pass validation. */
   onValid?: (schemaData: SchemaData) => void
 }
@@ -23,7 +31,14 @@ export type SchemaStepFormProps = {
  * are kept in `schemaData`; the step shows and updates only its own.
  */
 export default function SchemaStepForm(props: SchemaStepFormProps) {
-  const { ref, step, schemaData, onSchemaDataChange, onValid } = props
+  const {
+    ref,
+    step,
+    schemaData,
+    onSchemaDataChange,
+    onValid,
+    fileHandleWidgetContext,
+  } = props
   const formRef = useRef<RJSFForm>(null)
 
   useImperativeHandle(ref, () => ({
@@ -36,7 +51,12 @@ export default function SchemaStepForm(props: SchemaStepFormProps) {
       schema={step.jsonSchema}
       uiSchema={step.uiSchema}
       formData={getStepData(schemaData, step)}
-      formContext={{ descriptionVariant: 'inline' }}
+      formContext={{
+        descriptionVariant: 'inline',
+        fileHandleWidget: fileHandleWidgetContext,
+      }}
+      // A property with this format is a number in the schema, and the widget is chosen by its format
+      widgets={{ [SYNAPSE_FILE_HANDLE_ID_FORMAT]: FileHandleWidget }}
       liveValidate={false}
       onChange={event =>
         onSchemaDataChange({ ...schemaData, ...event.formData })

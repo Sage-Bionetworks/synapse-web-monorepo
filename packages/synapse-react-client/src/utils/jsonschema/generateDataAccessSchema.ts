@@ -63,6 +63,19 @@ export function generateDataAccessSchema(
       if (field.uiDefinition && Object.keys(field.uiDefinition).length > 0) {
         uiSchema[resolved.propertyKey] = { ...(field.uiDefinition as UiSchema) }
       }
+      if (field.templateFileHandleId) {
+        // The file field's widget offers the template for download
+        const fieldUiSchema = uiSchema[resolved.propertyKey] as
+          | UiSchema
+          | undefined
+        uiSchema[resolved.propertyKey] = {
+          ...fieldUiSchema,
+          'ui:options': {
+            ...fieldUiSchema?.['ui:options'],
+            templateFileHandleId: field.templateFileHandleId,
+          },
+        }
+      }
       uiOrder.push(resolved.propertyKey)
     }
 

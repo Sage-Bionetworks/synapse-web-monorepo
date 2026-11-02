@@ -116,17 +116,3 @@ export function withSubmissionContext(
     [SUBMISSION_CONTEXT_PROPERTY]: requestType,
   }
 }
-
-/** The titles of the file upload fields, which the request form cannot yet collect. */
-export function getFileUploadFieldTitles(
-  steps: GeneratedFormStepForRjsf[],
-): string[] {
-  return steps.flatMap(step =>
-    Object.entries(step.jsonSchema.properties ?? {})
-      .filter(
-        ([, property]) =>
-          (property as RJSFSchema).format === SYNAPSE_FILE_HANDLE_ID_FORMAT,
-      )
-      .map(([key, property]) => (property as RJSFSchema).title ?? key),
-  )
-}

@@ -191,4 +191,38 @@ describe('generateDataAccessSchema', () => {
       'Tell us about yourself',
     )
   })
+
+  it('carries a field’s template file to its ui:options, keeping the other options', () => {
+    const result = generateDataAccessSchema(
+      template([
+        {
+          title: 'Basics',
+          fields: [
+            {
+              schemaPath: '/institution',
+              uiDefinition: { 'ui:options': { rows: 3 } },
+              templateFileHandleId: '1234',
+            },
+          ],
+        },
+      ]),
+      schema,
+    )
+    expect(result.steps[0].uiSchema.institution).toEqual({
+      'ui:options': { rows: 3, templateFileHandleId: '1234' },
+    })
+  })
+
+  it('leaves the uiSchema of a field without a template file untouched', () => {
+    const result = generateDataAccessSchema(
+      template([
+        {
+          title: 'Basics',
+          fields: [{ schemaPath: '/institution', uiDefinition: {} }],
+        },
+      ]),
+      schema,
+    )
+    expect(result.steps[0].uiSchema.institution).toBeUndefined()
+  })
 })

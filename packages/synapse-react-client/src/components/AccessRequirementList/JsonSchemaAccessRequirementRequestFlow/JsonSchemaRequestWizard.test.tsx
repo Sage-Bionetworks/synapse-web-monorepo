@@ -2,6 +2,8 @@ import {
   mockJsonSchemaAR1,
   mockJsonSchemaAR2,
 } from '@/mocks/accessRequirement/mockJsonSchemaAccessRequirements'
+import { MOCK_FILE_HANDLE_ID } from '@/mocks/mock_file_handle'
+import { BasicFileHandleUploadProps } from '@/components/file/upload/BasicFileHandleUpload'
 import {
   mockClinicalSchema,
   mockGenomicsSchema,
@@ -12,6 +14,8 @@ import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import {
+  FileHandleAssociateType,
+  FileHandleAssociation,
   JsonSchemaAccessRequirement,
   Renewal,
   Request,
@@ -44,6 +48,37 @@ vi.mock('@/components/FileUpload/FileUpload', () => {
   )
   return { FileUpload, default: FileUpload }
 })
+
+// The upload completes with whichever file handle the test sets
+let uploadedFileHandleId = '4242'
+vi.mock('@/components/file/upload/BasicFileHandleUpload', () => ({
+  BasicFileHandleUpload: (props: BasicFileHandleUploadProps) => (
+    <button
+      onClick={() =>
+        props.onFileUploadComplete?.(
+          uploadedFileHandleId,
+          new File(['contents'], 'agreement.pdf'),
+        )
+      }
+    >
+      Simulate upload complete
+    </button>
+  ),
+}))
+vi.mock('@/components/widgets/FileHandleLink', () => ({
+  FileHandleLink: (props: {
+    fileHandleAssociation?: FileHandleAssociation
+    creatorFileHandleId?: string
+  }) => (
+    <div data-testid="FileHandleLink">
+      {JSON.stringify(
+        props.fileHandleAssociation ?? {
+          creatorFileHandleId: props.creatorFileHandleId,
+        },
+      )}
+    </div>
+  ),
+}))
 
 const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
@@ -336,19 +371,176 @@ describe('JsonSchemaRequestWizard', () => {
     },
   )
 
-  it('does not allow submission while a question requires a file upload', async () => {
-    mockRequestServices(
-      clinicalAccessRequirement,
-      createRequest(clinicalAccessRequirement),
-    )
-    const user = userEvent.setup()
-    renderWizard(clinicalAccessRequirement)
-    await advanceToStep(user)
-    await user.type(await screen.findByRole('textbox'), 'Trial')
-    await user.click(screen.getByRole('button', { name: 'Next' }))
+  describe('file questions', () => {
+    const UPLOADED_FILE_HANDLE_ID = '4242'
+    const REPLACEMENT_FILE_HANDLE_ID = '5353'
 
-    await screen.findByText(/file upload questions/)
-    expect(screen.getByRole('button', { name: 'Submit' })).toBeDisabled()
+    async function advanceToFileQuestion(
+      user: ReturnType<typeof userEvent.setup>,
+    ) {
+      await advanceToStep(user)
+      await user.type(await screen.findByRole('textbox'), 'Trial')
+      await user.click(screen.getByRole('button', { name: 'Next' }))
+      await screen.findByText('No file uploaded')
+    }
+
+    async function upload(
+      user: ReturnType<typeof userEvent.setup>,
+      buttonName: 'Upload' | 'Replace',
+      fileHandleId: string,
+    ) {
+      await user.click(screen.getByRole('button', { name: buttonName }))
+      uploadedFileHandleId = fileHandleId
+      await user.click(
+        await screen.findByRole('button', { name: 'Simulate upload complete' }),
+      )
+    }
+
+    function getFileLinks() {
+      return screen
+        .queryAllByTestId('FileHandleLink')
+        .map(
+          link => JSON.parse(link.textContent ?? '') as Record<string, unknown>,
+        )
+    }
+
+    it('offers the template file through the access requirement', async () => {
+      mockRequestServices(
+        clinicalAccessRequirement,
+        createRequest(clinicalAccessRequirement),
+      )
+      const user = userEvent.setup()
+      renderWizard(clinicalAccessRequirement)
+      await advanceToFileQuestion(user)
+
+      expect(getFileLinks()).toEqual([
+        {
+          fileHandleId: MOCK_FILE_HANDLE_ID,
+          associateObjectType:
+            FileHandleAssociateType.AccessRequirementAttachment,
+          associateObjectId: String(clinicalAccessRequirement.id),
+        },
+      ])
+    })
+
+    it('saves an uploaded file as the answer and in attachments, and shows it through the request', async () => {
+      const { savedRequests } = mockRequestServices(
+        clinicalAccessRequirement,
+        createRequest(clinicalAccessRequirement),
+      )
+      const user = userEvent.setup()
+      renderWizard(clinicalAccessRequirement)
+      await advanceToFileQuestion(user)
+      const savesBeforeUpload = savedRequests.length
+
+      await upload(user, 'Upload', UPLOADED_FILE_HANDLE_ID)
+
+      await waitFor(() =>
+        expect(savedRequests).toHaveLength(savesBeforeUpload + 1),
+      )
+      expect(savedRequests.at(-1)?.schemaData).toMatchObject({
+        projectTitle: 'Trial',
+        signedDataUseAgreement: Number(UPLOADED_FILE_HANDLE_ID),
+      })
+      expect(savedRequests.at(-1)?.attachments).toEqual([
+        UPLOADED_FILE_HANDLE_ID,
+      ])
+      await waitFor(() =>
+        expect(getFileLinks()).toContainEqual({
+          fileHandleId: UPLOADED_FILE_HANDLE_ID,
+          associateObjectType:
+            FileHandleAssociateType.DataAccessRequestAttachment,
+          associateObjectId: REQUEST_ID,
+        }),
+      )
+      // The wizard stays on the step
+      expect(
+        await screen.findByRole('button', { name: 'Replace' }),
+      ).toBeVisible()
+    })
+
+    it('replaces the attachment when the file is replaced, and drops it when the file is removed', async () => {
+      const { savedRequests } = mockRequestServices(
+        clinicalAccessRequirement,
+        createRequest(clinicalAccessRequirement),
+      )
+      const user = userEvent.setup()
+      renderWizard(clinicalAccessRequirement)
+      await advanceToFileQuestion(user)
+      await upload(user, 'Upload', UPLOADED_FILE_HANDLE_ID)
+      await screen.findByRole('button', { name: 'Replace' })
+
+      await waitFor(() =>
+        expect(screen.getByRole('button', { name: 'Replace' })).toBeEnabled(),
+      )
+      await upload(user, 'Replace', REPLACEMENT_FILE_HANDLE_ID)
+      await waitFor(() =>
+        expect(savedRequests.at(-1)?.attachments).toEqual([
+          REPLACEMENT_FILE_HANDLE_ID,
+        ]),
+      )
+
+      const removeButton = await screen.findByRole('button', {
+        name: 'Remove file',
+      })
+      await waitFor(() => expect(removeButton).toBeEnabled())
+      await user.click(removeButton)
+      await waitFor(() => expect(savedRequests.at(-1)?.attachments).toEqual([]))
+      expect(
+        (savedRequests.at(-1)?.schemaData as Record<string, unknown>)
+          .signedDataUseAgreement,
+      ).toBeUndefined()
+      await screen.findByText('No file uploaded')
+    })
+
+    it('does not submit until a file is attached, then submits with the file in attachments', async () => {
+      const { savedRequests, submissionRequests } = mockRequestServices(
+        clinicalAccessRequirement,
+        createRequest(clinicalAccessRequirement),
+      )
+      const user = userEvent.setup()
+      const props = renderWizard(clinicalAccessRequirement)
+      await advanceToFileQuestion(user)
+
+      await user.click(screen.getByRole('button', { name: 'Submit' }))
+      expect(await screen.findAllByText(/required/i)).not.toHaveLength(0)
+      expect(submissionRequests).toHaveLength(0)
+
+      await upload(user, 'Upload', UPLOADED_FILE_HANDLE_ID)
+      await waitFor(() =>
+        expect(screen.getByRole('button', { name: 'Submit' })).toBeEnabled(),
+      )
+      await user.click(screen.getByRole('button', { name: 'Submit' }))
+
+      await waitFor(() =>
+        expect(props.onSubmissionCreated).toHaveBeenCalledWith(SUBMISSION_ID),
+      )
+      expect(savedRequests.at(-1)?.attachments).toEqual([
+        UPLOADED_FILE_HANDLE_ID,
+      ])
+    })
+
+    it('shows a file saved to the request through the request', async () => {
+      mockRequestServices(
+        clinicalAccessRequirement,
+        createRequest(clinicalAccessRequirement, {
+          schemaData: { projectTitle: 'Trial', signedDataUseAgreement: 123 },
+          attachments: ['123'],
+        }),
+      )
+      const user = userEvent.setup()
+      renderWizard(clinicalAccessRequirement)
+      await advanceToStep(user)
+      await user.click(await screen.findByRole('button', { name: 'Next' }))
+
+      await screen.findByRole('button', { name: 'Replace' })
+      expect(getFileLinks()).toContainEqual({
+        fileHandleId: '123',
+        associateObjectType:
+          FileHandleAssociateType.DataAccessRequestAttachment,
+        associateObjectId: REQUEST_ID,
+      })
+    })
   })
 
   it('saves the answers and continues to the eDUC steps instead of submitting', async () => {
