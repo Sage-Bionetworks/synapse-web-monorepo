@@ -180,18 +180,25 @@ export function transformStringIntoMarkdownProps(
   return newProps
 }
 
-const md = new MarkdownIt()
+// Synapse widget syntax: ${widgetType?param=value&...}. The closing brace is
+// optional because search-index descriptions can be truncated mid-widget.
+const SYNAPSE_WIDGET_REGEX = /\$\{[^}]*\}?/g
 
+// HTML must be parsed (not escaped) so comments and tags are dropped by stripHTML
+// rather than surfacing as literal text.
+const md = new MarkdownIt({ html: true })
+
+/**
+ * Converts Synapse markdown to a single line of plain text, removing Synapse
+ * widgets, HTML tags, and HTML comments.
+ */
 export const markdownToPlainText = (markdown: string, maxLength?: number) => {
-  if (!markdown || markdown.length === 0) {
+  if (!markdown) {
     return ''
   }
 
-  const html = md.render(markdown)
-  const plainText = stripHTML(html)
-    .replace(/\|/g, '')
-    .replace(/#/g, '')
-    .replace(/<Synapse widget>/g, '')
+  const html = md.render(markdown.replace(SYNAPSE_WIDGET_REGEX, ''))
+  const plainText = stripHTML(html).replace(/\s+/g, ' ').trim()
 
   return maxLength ? truncateString(plainText, maxLength) : plainText
 }
