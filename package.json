@@ -50,7 +50,7 @@
       "js-cookie": "^3.0.7",
       "js-yaml": "^4.3.2",
       "@nx/devkit@22.0.3>minimatch": "9.0.9",
-      "mocha@10.8.2>serialize-javascript": "7.0.5",
+      "mocha@10.8.2>serialize-javascript": "7.1.4",
       "@nestjs/core@11.1.17>path-to-regexp": "8.4.0",
       "axios": "^1.20.0",
       "form-data": "^4.0.6",
