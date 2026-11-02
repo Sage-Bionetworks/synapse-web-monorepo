@@ -44,6 +44,27 @@ export function getSchemaDataFileHandleIds(
   return [...new Set(ids)]
 }
 
+/**
+ * The attachments that are not already shown as file answers in `schemaData`. Without the schema the answers cannot
+ * be identified as files, so every attachment is returned.
+ */
+export function getAttachmentsNotInSchemaData(
+  attachments: string[] | undefined,
+  schema: RJSFSchema | undefined,
+  schemaData: SchemaData | undefined,
+): string[] {
+  if (!attachments) {
+    return []
+  }
+  if (!schema || !schemaData) {
+    return attachments
+  }
+  const answerFileHandleIds = new Set(
+    getSchemaDataFileHandleIds(schema, schemaData),
+  )
+  return attachments.filter(id => !answerFileHandleIds.has(id))
+}
+
 function getStepPropertyKeys(step: GeneratedFormStepForRjsf): string[] {
   return Object.keys(step.jsonSchema.properties ?? {})
 }

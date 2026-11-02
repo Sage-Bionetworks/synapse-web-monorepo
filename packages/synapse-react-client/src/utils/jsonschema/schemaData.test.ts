@@ -1,15 +1,20 @@
 import { RJSFSchema } from '@rjsf/utils'
-import { getSchemaDataFileHandleIds, isFileHandleIdValue } from './schemaData'
+import {
+  getAttachmentsNotInSchemaData,
+  getSchemaDataFileHandleIds,
+  isFileHandleIdValue,
+  SYNAPSE_FILE_HANDLE_ID_FORMAT,
+} from './schemaData'
 
 const schema: RJSFSchema = {
   type: 'object',
   properties: {
-    agreement: { type: 'number', format: 'synapse-filehandle-id' },
-    consent: { type: 'number', format: 'synapse-filehandle-id' },
+    agreement: { type: 'number', format: SYNAPSE_FILE_HANDLE_ID_FORMAT },
+    consent: { type: 'number', format: SYNAPSE_FILE_HANDLE_ID_FORMAT },
     title: { type: 'string' },
     extras: {
       type: 'array',
-      items: { type: 'number', format: 'synapse-filehandle-id' },
+      items: { type: 'number', format: SYNAPSE_FILE_HANDLE_ID_FORMAT },
     },
   },
 }
@@ -36,6 +41,26 @@ describe('getSchemaDataFileHandleIds', () => {
       }),
     ).toEqual([])
     expect(getSchemaDataFileHandleIds(schema, {})).toEqual([])
+  })
+})
+
+describe('getAttachmentsNotInSchemaData', () => {
+  it('omits the attachments that the answers reference', () => {
+    expect(
+      getAttachmentsNotInSchemaData(['123', '555'], schema, { agreement: 123 }),
+    ).toEqual(['555'])
+  })
+
+  it('returns every attachment when the schema is unavailable', () => {
+    expect(
+      getAttachmentsNotInSchemaData(['123', '555'], undefined, {
+        agreement: 123,
+      }),
+    ).toEqual(['123', '555'])
+  })
+
+  it('returns no attachments when there are none', () => {
+    expect(getAttachmentsNotInSchemaData(undefined, schema, {})).toEqual([])
   })
 })
 

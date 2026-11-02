@@ -1,3 +1,4 @@
+import { SYNAPSE_FILE_HANDLE_ID_FORMAT } from '@/utils/jsonschema/schemaData'
 import { RJSFSchema } from '@rjsf/utils'
 
 /**
@@ -26,7 +27,7 @@ export function detectFieldType(
   prop: RJSFSchema | undefined,
 ): SimpleFieldType | null {
   if (!prop || typeof prop !== 'object') return null
-  if (prop.format === 'synapse-filehandle-id') return 'file'
+  if (prop.format === SYNAPSE_FILE_HANDLE_ID_FORMAT) return 'file'
   if (prop.type === 'string' && Array.isArray(prop.enum)) return 'choice'
   // RJSF renders an array as a multi-select only when `uniqueItems` is set; without it the
   // property renders as a repeatable list, which the simple editor does not author.
@@ -89,7 +90,7 @@ export function applyFieldType(
       break
     case 'file':
       next.type = 'number'
-      next.format = 'synapse-filehandle-id'
+      next.format = SYNAPSE_FILE_HANDLE_ID_FORMAT
       break
   }
   return next

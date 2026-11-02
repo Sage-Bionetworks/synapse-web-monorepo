@@ -1,3 +1,4 @@
+import { SYNAPSE_FILE_HANDLE_ID_FORMAT } from '@/utils/jsonschema/schemaData'
 import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
 import { RJSFSchema } from '@rjsf/utils'
 import { AccessType, Renewal, Request } from '@sage-bionetworks/synapse-types'
@@ -109,7 +110,7 @@ const noFilesSchema: RJSFSchema = { type: 'object', properties: {} }
 const fileSchema: RJSFSchema = {
   type: 'object',
   properties: {
-    agreement: { type: 'number', format: 'synapse-filehandle-id' },
+    agreement: { type: 'number', format: SYNAPSE_FILE_HANDLE_ID_FORMAT },
     purpose: { type: 'string' },
   },
 }
@@ -120,6 +121,17 @@ describe('buildRequest', () => {
       { ...request, attachments: ['999'] },
       completeValues,
       { agreement: 123, purpose: '456' },
+      fileSchema,
+      false,
+    )
+    expect(built.attachments).toEqual(['123'])
+  })
+
+  it('replaces the attachments of a renewal', () => {
+    const built = buildRequest(
+      { ...renewal, attachments: ['999'] },
+      completeValues,
+      { agreement: 123 },
       fileSchema,
       false,
     )

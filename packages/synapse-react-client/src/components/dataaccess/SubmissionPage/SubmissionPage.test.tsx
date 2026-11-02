@@ -885,6 +885,25 @@ describe('Submission Page tests', () => {
       screen.getByRole('button', { name: 'Reject' })
     })
 
+    it('lists every attachment when the template cannot be loaded, since the answers then show no links', async () => {
+      serveSubmission({
+        ...mockSchemaDataSubmission,
+        attachments: [String(MOCK_FILE_HANDLE_ID), '555'],
+        formTemplateRef: { templateId: 'missing', templateVersionNumber: 1 },
+      } satisfies SubmissionWithFormTemplateRef)
+      renderComponent({
+        submissionId: mockSchemaDataSubmission.id,
+        isReviewer: true,
+      })
+
+      const otherAttachments = (
+        await screen.findByText('Other Attachments')
+      ).closest('section')!
+      expect(
+        within(otherAttachments).getAllByTestId('FileHandleLink'),
+      ).toHaveLength(2)
+    })
+
     it('approves a schema-driven submission the same way as a ManagedACT submission', async () => {
       renderComponent({
         submissionId: mockSchemaDataSubmission.id,

@@ -10,7 +10,7 @@ import {
 import useGetDataAccessSubmission from '@/synapse-queries/dataaccess/useDataAccessSubmission'
 import { useGetThreadForSubmission } from '@/synapse-queries/forum/useThread'
 import { useGeneratedSubmissionForm } from '@/synapse-queries/dataaccess/useGeneratedSubmissionForm'
-import { getSchemaDataFileHandleIds } from '@/utils/jsonschema/schemaData'
+import { getAttachmentsNotInSchemaData } from '@/utils/jsonschema/schemaData'
 import { useGetCurrentUserProfile } from '@/synapse-queries/user'
 import { useGetUserAccessApproval } from '@/synapse-queries/dataaccess/useAccessApprovals'
 import { formatDate } from '@/utils/functions/DateFormatter'
@@ -190,27 +190,13 @@ export default function SubmissionPage(props: SubmissionPageProps) {
   // A schema-driven submission lists the files its answers reference in `attachments`, and the answers already link
   // to them. If the form cannot be generated the answers show no links, so every attachment stays listed; while it
   // loads nothing is listed, rather than listing files that are about to be removed.
-  const otherAttachments = useMemo(() => {
-    if (isLoadingSubmissionForm) {
-      return []
-    }
-    const answerFileHandleIds = new Set(
-      submissionForm && submission?.schemaData
-        ? getSchemaDataFileHandleIds(
-            submissionForm.schema,
-            submission.schemaData,
-          )
-        : [],
-    )
-    return (submission?.attachments ?? []).filter(
-      fileHandleId => !answerFileHandleIds.has(fileHandleId),
-    )
-  }, [
-    isLoadingSubmissionForm,
-    submissionForm,
-    submission?.schemaData,
-    submission?.attachments,
-  ])
+  const otherAttachments = isLoadingSubmissionForm
+    ? []
+    : getAttachmentsNotInSchemaData(
+        submission?.attachments,
+        submissionForm?.schema,
+        submission?.schemaData,
+      )
   const hasDocuments = Boolean(
     submission?.ducFileHandleId ||
     submission?.irbFileHandleId ||
