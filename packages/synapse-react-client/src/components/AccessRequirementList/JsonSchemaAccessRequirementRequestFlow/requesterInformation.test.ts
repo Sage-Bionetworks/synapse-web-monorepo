@@ -1,4 +1,5 @@
 import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
+import { RJSFSchema } from '@rjsf/utils'
 import { AccessType, Renewal, Request } from '@sage-bionetworks/synapse-types'
 import {
   isRequesterInformationComplete,
@@ -104,12 +105,61 @@ describe('toRequesterInformationValues', () => {
   })
 })
 
+const noFilesSchema: RJSFSchema = { type: 'object', properties: {} }
+const fileSchema: RJSFSchema = {
+  type: 'object',
+  properties: {
+    agreement: { type: 'number', format: 'synapse-filehandle-id' },
+    purpose: { type: 'string' },
+  },
+}
+
 describe('buildRequest', () => {
+  it('replaces the attachments with the file handles that the answers reference', () => {
+    const built = buildRequest(
+      { ...request, attachments: ['999'] },
+      completeValues,
+      { agreement: 123, purpose: '456' },
+      fileSchema,
+      false,
+    )
+    expect(built.attachments).toEqual(['123'])
+  })
+
+  it('clears stale attachments when no answer is a file', () => {
+    const built = buildRequest(
+      { ...request, attachments: ['999'] },
+      completeValues,
+      { purpose: 'Research' },
+      fileSchema,
+      false,
+    )
+    expect(built.attachments).toEqual([])
+  })
+
+  it('does not list the DUC as an attachment', () => {
+    const built = buildRequest(
+      { ...request, ducFileHandleId: '77' },
+      completeValues,
+      {},
+      fileSchema,
+      false,
+    )
+    expect(built.attachments).toEqual([])
+    expect(built.ducFileHandleId).toBe('77')
+  })
+
   it.each([
     ['REQUEST', request],
     ['RENEWAL', renewal],
   ])('tags the schema data with the %s submission context', (context, r) => {
-    const built = buildRequest(r, completeValues, { answer: 1 }, false)
+    const built = buildRequest(
+      r,
+      completeValues,
+      { answer: 1 },
+      noFilesSchema,
+      false,
+    )
     expect(built.schemaData).toEqual({
       answer: 1,
       [SUBMISSION_CONTEXT_PROPERTY]: context,
@@ -117,7 +167,9 @@ describe('buildRequest', () => {
   })
 
   it('writes the eDUC participants when the AR has an eDUC', () => {
-    expect(buildRequest(request, completeValues, {}, true)).toMatchObject({
+    expect(
+      buildRequest(request, completeValues, {}, noFilesSchema, true),
+    ).toMatchObject({
       institution: 'Sage Bionetworks',
       principalInvestigator: {
         name: 'Pat Investigator',
@@ -136,6 +188,7 @@ describe('buildRequest', () => {
       request,
       { ...completeValues, piEmail: '', piUserId: null },
       {},
+      noFilesSchema,
       true,
     )
     expect(built.principalInvestigator?.institutionalEmail).toBeUndefined()
@@ -149,6 +202,7 @@ describe('buildRequest', () => {
       { ...request, principalInvestigator, signingOfficial },
       completeValues,
       {},
+      noFilesSchema,
       false,
     )
     expect(built.institution).toBe('Existing Institution')
@@ -158,7 +212,8 @@ describe('buildRequest', () => {
 
   it('saves the accessor changes', () => {
     expect(
-      buildRequest(request, completeValues, {}, false).accessorChanges,
+      buildRequest(request, completeValues, {}, noFilesSchema, false)
+        .accessorChanges,
     ).toEqual(completeValues.accessorChanges)
   })
 })

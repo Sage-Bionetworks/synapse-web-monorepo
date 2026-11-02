@@ -203,6 +203,7 @@ describe('JsonSchemaRequestWizard', () => {
       agreeToTerms: true,
       [SUBMISSION_CONTEXT_PROPERTY]: 'REQUEST',
     })
+    expect(savedRequests.at(-1)?.attachments).toEqual([])
     expect(submissionRequests).toEqual([
       expect.objectContaining({
         requestId: REQUEST_ID,
@@ -246,6 +247,22 @@ describe('JsonSchemaRequestWizard', () => {
     await advanceToStep(user)
 
     expect(await screen.findByRole('textbox')).toHaveValue('Saved answer')
+  })
+
+  it('replaces the saved attachments with the file handles that the saved answers reference', async () => {
+    const { savedRequests } = mockRequestServices(
+      clinicalAccessRequirement,
+      createRequest(clinicalAccessRequirement, {
+        schemaData: { projectTitle: 'Trial', signedDataUseAgreement: 123 },
+        attachments: ['999'],
+      }),
+    )
+    const user = userEvent.setup()
+    renderWizard(clinicalAccessRequirement)
+    await advanceToStep(user)
+
+    await waitFor(() => expect(savedRequests).toHaveLength(1))
+    expect(savedRequests[0].attachments).toEqual(['123'])
   })
 
   it.each([
