@@ -7,6 +7,18 @@ import { Meta, StoryObj } from '@storybook/react-vite'
 import { useMutation } from '@tanstack/react-query'
 import { SyntheticEvent, useState } from 'react'
 
+function InsecureCookieWarning() {
+  return (
+    <Alert severity="warning">
+      The token is stored in a browser cookie that is not secure: it is readable
+      by scripts and is kept for 10 days. If you signed in with a personal
+      access token, delete it from Account Settings (Personal Access Tokens)
+      when you are done. Signing out here only removes the cookie; it does not
+      revoke the token.
+    </Alert>
+  )
+}
+
 /**
  * Signs Storybook in with a pasted Synapse access token or personal access token (PAT). The token is stored in the
  * access token cookie, so every story in this Storybook instance shares the session.
@@ -48,6 +60,7 @@ function AccessTokenSignIn() {
   if (isAuthenticated) {
     return (
       <Stack spacing={2} sx={{ maxWidth: 600 }}>
+        <InsecureCookieWarning />
         <Alert severity="success">
           Signed in{userProfile ? ` as ${userProfile.userName}` : ''}. Other
           stories now use this session.
@@ -68,6 +81,7 @@ function AccessTokenSignIn() {
       sx={{ maxWidth: 600 }}
       onSubmit={onSubmit}
     >
+      <InsecureCookieWarning />
       <Typography variant="body1">
         Paste a Synapse access token or personal access token issued by the
         stack selected in the toolbar. Other stories use the resulting session.
