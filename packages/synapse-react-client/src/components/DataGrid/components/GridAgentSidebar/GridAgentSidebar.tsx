@@ -53,8 +53,9 @@ export type GridAgentSidebarProps = {
 
 /**
  * A right-hand sidebar that docks beside its siblings in a flex row layout, taking its own
- * horizontal space. Its left edge can be dragged (or moved with the arrow keys when focused) to
- * resize it, and the chosen width persists in localStorage. Renders nothing when closed.
+ * horizontal space and matching the height of the tallest sibling. Its content scrolls inside it
+ * rather than growing the row. Its left edge can be dragged (or moved with the arrow keys when
+ * focused) to resize it, and the chosen width persists in localStorage. Renders nothing when closed.
  */
 export function GridAgentSidebar({
   open,
@@ -174,19 +175,21 @@ export function GridAgentSidebar({
         onPointerDown={handleResizeStart}
         onKeyDown={handleResizeKeyDown}
       />
-      <div className={styles.header}>
-        <Typography id={titleId} variant="headline3" component="h2">
-          {GRID_AGENT_SIDEBAR_TITLE}
-        </Typography>
-        <IconButton
-          aria-label={`Close ${GRID_AGENT_SIDEBAR_TITLE}`}
-          size="small"
-          onClick={onClose}
-        >
-          <CloseIcon fontSize="small" />
-        </IconButton>
+      <div className={styles.panel}>
+        <div className={styles.header}>
+          <Typography id={titleId} variant="headline3" component="h2">
+            {GRID_AGENT_SIDEBAR_TITLE}
+          </Typography>
+          <IconButton
+            aria-label={`Close ${GRID_AGENT_SIDEBAR_TITLE}`}
+            size="small"
+            onClick={onClose}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        </div>
+        <div className={styles.body}>{children}</div>
       </div>
-      <div className={styles.body}>{children}</div>
     </aside>
   )
 }

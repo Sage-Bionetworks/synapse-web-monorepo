@@ -1,12 +1,17 @@
 .sidebar {
-  position: sticky;
-  top: 0;
+  position: relative;
   flex-shrink: 0;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
+  align-self: stretch;
   background-color: white;
   border-left: 1px solid var(--synapse-v2-gray-200);
+}
+
+// Absolutely positioned so the chat never adds height; the row height comes from the sidebar's siblings
+.panel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .resizeHandle {
