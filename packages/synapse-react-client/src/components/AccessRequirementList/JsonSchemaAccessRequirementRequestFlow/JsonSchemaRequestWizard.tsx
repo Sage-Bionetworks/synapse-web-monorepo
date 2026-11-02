@@ -27,7 +27,6 @@ import {
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
 import { RJSFSchema } from '@rjsf/utils'
-import { isEqual } from 'lodash-es'
 import { useMemo, useRef, useState } from 'react'
 import { DialogBaseTitle } from '../../DialogBase'
 import RequesterInformationFields from './RequesterInformationFields'
@@ -43,7 +42,7 @@ import SchemaStepForm, {
 } from '@/components/JsonSchemaForm/SchemaStepForm'
 import { FileHandleWidgetContext } from '@/components/JsonSchemaForm/CustomFormContext'
 import {
-  getSchemaDataFileHandleIds,
+  fileAnswersChanged,
   getStepTitle,
   SchemaData,
 } from '@/utils/jsonschema/schemaData'
@@ -203,12 +202,8 @@ function JsonSchemaRequestWizardContent(
   }
 
   function onSchemaDataChange(latestSchemaData: SchemaData) {
-    const fileHandleIdsChanged = !isEqual(
-      getSchemaDataFileHandleIds(schema, schemaData),
-      getSchemaDataFileHandleIds(schema, latestSchemaData),
-    )
     setSchemaData(latestSchemaData)
-    if (fileHandleIdsChanged) {
+    if (fileAnswersChanged(schema, schemaData, latestSchemaData)) {
       // Save a file answer as soon as it changes: the request must list the file in its attachments before the file can
       // be downloaded through the request, and the file should not be lost if the requester leaves the wizard
       void saveRequest(latestSchemaData)

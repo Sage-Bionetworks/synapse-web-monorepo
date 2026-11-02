@@ -1,5 +1,6 @@
 import { RJSFSchema } from '@rjsf/utils'
 import {
+  fileAnswersChanged,
   getAttachmentsNotInSchemaData,
   getSchemaDataFileHandleIds,
   isFileHandleIdValue,
@@ -87,6 +88,26 @@ describe('getAttachmentsNotInSchemaData', () => {
 
   it('returns no attachments when there are none', () => {
     expect(getAttachmentsNotInSchemaData(undefined, schema, {})).toEqual([])
+  })
+})
+
+describe('fileAnswersChanged', () => {
+  it.each([
+    ['a file is added', {}, { agreement: 1 }],
+    ['a file is replaced', { agreement: 1 }, { agreement: 2 }],
+    ['a file is removed', { agreement: 1 }, { agreement: undefined }],
+  ])('is true when %s', (_, previous, next) => {
+    expect(fileAnswersChanged(schema, previous, next)).toBe(true)
+  })
+
+  it('is false when only other answers change', () => {
+    expect(
+      fileAnswersChanged(
+        schema,
+        { agreement: 1, title: 'a' },
+        { agreement: 1, title: 'ab' },
+      ),
+    ).toBe(false)
   })
 })
 

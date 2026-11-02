@@ -375,6 +375,10 @@ describe('JsonSchemaRequestWizard', () => {
     const UPLOADED_FILE_HANDLE_ID = '4242'
     const REPLACEMENT_FILE_HANDLE_ID = '5353'
 
+    beforeEach(() => {
+      uploadedFileHandleId = UPLOADED_FILE_HANDLE_ID
+    })
+
     async function advanceToFileQuestion(
       user: ReturnType<typeof userEvent.setup>,
     ) {
@@ -503,7 +507,7 @@ describe('JsonSchemaRequestWizard', () => {
       await advanceToFileQuestion(user)
 
       await user.click(screen.getByRole('button', { name: 'Submit' }))
-      expect(await screen.findAllByText(/required/i)).not.toHaveLength(0)
+      await screen.findAllByText(/required property/i)
       expect(submissionRequests).toHaveLength(0)
 
       await upload(user, 'Upload', UPLOADED_FILE_HANDLE_ID)
@@ -518,6 +522,35 @@ describe('JsonSchemaRequestWizard', () => {
       expect(savedRequests.at(-1)?.attachments).toEqual([
         UPLOADED_FILE_HANDLE_ID,
       ])
+    })
+
+    it('reports a failed save of an uploaded file, keeps the answers, and shows the file through its creator', async () => {
+      const { savedRequests } = mockRequestServices(
+        clinicalAccessRequirement,
+        createRequest(clinicalAccessRequirement),
+      )
+      const user = userEvent.setup()
+      renderWizard(clinicalAccessRequirement)
+      await advanceToFileQuestion(user)
+      const savesBeforeUpload = savedRequests.length
+      server.use(
+        http.post(`${REPO_ENDPOINT}/repo/v1/dataAccessRequest`, () =>
+          HttpResponse.json(
+            { reason: 'The file cannot be attached' },
+            { status: 403 },
+          ),
+        ),
+      )
+
+      await upload(user, 'Upload', UPLOADED_FILE_HANDLE_ID)
+
+      await screen.findByText(/The file cannot be attached/)
+      expect(savedRequests).toHaveLength(savesBeforeUpload)
+      expect(getFileLinks()).toContainEqual({
+        creatorFileHandleId: UPLOADED_FILE_HANDLE_ID,
+      })
+      await user.click(await screen.findByRole('button', { name: 'Back' }))
+      expect(await screen.findByRole('textbox')).toHaveValue('Trial')
     })
 
     it('shows a file saved to the request through the request', async () => {

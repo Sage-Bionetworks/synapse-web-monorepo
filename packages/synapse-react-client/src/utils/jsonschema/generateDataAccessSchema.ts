@@ -3,6 +3,7 @@ import {
   DataAccessRequestType,
   FormTemplate,
 } from '@sage-bionetworks/synapse-client'
+import { TEMPLATE_FILE_HANDLE_ID_OPTION } from './schemaData'
 import {
   contextAppliesForRequestType,
   listResolvedSchemaProperties,
@@ -72,7 +73,7 @@ export function generateDataAccessSchema(
           ...fieldUiSchema,
           'ui:options': {
             ...fieldUiSchema?.['ui:options'],
-            templateFileHandleId: field.templateFileHandleId,
+            [TEMPLATE_FILE_HANDLE_ID_OPTION]: field.templateFileHandleId,
           },
         }
       }

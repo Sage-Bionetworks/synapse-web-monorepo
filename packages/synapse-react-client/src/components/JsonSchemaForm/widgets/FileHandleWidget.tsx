@@ -5,7 +5,10 @@ import {
 import { DialogBase } from '@/components/DialogBase'
 import { BasicFileHandleUpload } from '@/components/file/upload/BasicFileHandleUpload'
 import { FileHandleLink } from '@/components/widgets/FileHandleLink'
-import { isFileHandleIdValue } from '@/utils/jsonschema/schemaData'
+import {
+  isFileHandleIdValue,
+  TEMPLATE_FILE_HANDLE_ID_OPTION,
+} from '@/utils/jsonschema/schemaData'
 import RemoveIcon from '@mui/icons-material/Close'
 import UploadIcon from '@mui/icons-material/UploadFile'
 import {
@@ -19,9 +22,6 @@ import {
 import { Widget, WidgetProps } from '@rjsf/utils'
 import { FileHandleAssociation } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
-
-/** The widget's option that holds the ID of the field's template file */
-export const TEMPLATE_FILE_HANDLE_ID_OPTION = 'templateFileHandleId'
 
 /**
  * Widget for a property with the `synapse-filehandle-id` format: uploads, replaces, clears, and shows the file that
