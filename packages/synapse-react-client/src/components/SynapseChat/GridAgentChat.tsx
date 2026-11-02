@@ -8,12 +8,18 @@ import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
 import { memo, useMemo, useState } from 'react'
 import { SynapseChat } from './index'
 import { ReactComponent as CurieAvatarHead } from '@/assets/illustrations/curie_avatar_head.svg'
+import { ReactComponent as CurieAvatar } from '@/assets/illustrations/curie_avatar.svg'
 
 const suggestedPrompts = [
-  'Help me fill this out',
-  'Help me understand this',
-  'Find missing fields',
+  'Summarize this document',
+  'Explain what each column means',
+  'Fill in annotations from an uploaded document',
+  'What has been changed recently?',
+  'Interview me to fill in missing values',
 ]
+
+const WELCOME_DESCRIPTION =
+  'I’m here to help with your annotations. Ask me questions, ask for changes, or upload documents and I’ll fill in the details.'
 
 export type GridAgentChatProps = {
   gridSessionId: string
@@ -73,6 +79,12 @@ export const GridAgentChat = memo(function GridAgentChat({
         externalChatState={chatState}
         suggestedPrompts={suggestedPrompts}
         allowAttachments={true}
+        inputPlaceholder="Ask a question, upload a document, or describe what to change"
+        welcome={{
+          avatar: <CurieAvatar width={88} height="auto" aria-hidden />,
+          title: `Hi, I’m ${chatbotName}!`,
+          description: WELCOME_DESCRIPTION,
+        }}
       />
     </GridAgentSidebar>
   )

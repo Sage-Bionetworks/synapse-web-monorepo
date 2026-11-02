@@ -1,3 +1,6 @@
+import GridAgentChat from '@/components/SynapseChat/GridAgentChat'
+import { getChatbotHandlers } from '@/mocks/msw/handlers/chatHandlers'
+import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import {
   DynamicDataSheetGrid,
   keyColumn,
@@ -6,9 +9,9 @@ import {
 import '@sage-bionetworks/react-datasheet-grid/dist/style.css'
 import { Typography } from '@mui/material'
 import { Meta, StoryObj } from '@storybook/react-vite'
+import { HttpHandler } from 'msw'
 import { useState } from 'react'
 import synapseGridStyles from '../../SynapseGrid.module.scss'
-import { GridAgentSidebar } from './GridAgentSidebar'
 import { OpenGridAgentSidebarButton } from './OpenGridAgentSidebarButton'
 
 const COLUMN_KEYS = Array.from({ length: 12 }, (_, i) => `column${i + 1}`)
@@ -20,6 +23,10 @@ const columns = COLUMN_KEYS.map(key => ({
 const initialRows = Array.from({ length: 40 }, (_, row) =>
   Object.fromEntries(COLUMN_KEYS.map(key => [key, `${key} row ${row + 1}`])),
 )
+
+const handlers: Record<string, HttpHandler[]> = {
+  chatbot: getChatbotHandlers(MOCK_REPO_ORIGIN),
+}
 
 function DockedBesideGrid() {
   const [open, setOpen] = useState(true)
@@ -42,9 +49,13 @@ function DockedBesideGrid() {
           )}
         </div>
       </div>
-      <GridAgentSidebar open={open} onClose={() => setOpen(false)}>
-        <Typography>Chat content</Typography>
-      </GridAgentSidebar>
+      <GridAgentChat
+        open={open}
+        onClose={() => setOpen(false)}
+        gridSessionId="mock-grid-session"
+        usersReplicaId={1}
+        chatbotName="Curie"
+      />
     </div>
   )
 }
@@ -54,6 +65,9 @@ const meta = {
   component: DockedBesideGrid,
   parameters: {
     layout: 'fullscreen',
+    requireLogin: true,
+    stack: 'mock',
+    msw: { handlers },
   },
 } satisfies Meta<typeof DockedBesideGrid>
 
