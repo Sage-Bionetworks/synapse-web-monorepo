@@ -3,7 +3,7 @@ import { ReactNode } from 'react'
 import {
   ALLOWED_FILE_TYPES_LABEL,
   ATTACHMENT_COUNT_AND_SIZE_LIMIT_LABEL,
-} from '../AddFilesDialog/AddFilesDialog'
+} from '../../utils/attachmentLabels'
 import styles from './ChatWelcome.module.scss'
 
 export const UPLOAD_SUPPORTING_DOCUMENTS_LABEL = 'Upload supporting documents'

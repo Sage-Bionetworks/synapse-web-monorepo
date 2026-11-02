@@ -7,10 +7,7 @@ import {
 } from '../AddFilesDialog/AddFilesDialog'
 import { ChatInputArea, ChatInputAreaProps } from './ChatInputArea'
 
-vi.mock('../AddFilesDialog/AddFilesDialog', () => ({
-  AddFilesDialog: vi.fn(),
-  ALLOWED_FILE_TYPES_LABEL: 'pdf, csv, tsv, txt',
-}))
+vi.mock('../AddFilesDialog/AddFilesDialog', () => ({ AddFilesDialog: vi.fn() }))
 
 const mockAddFilesDialog = vi.mocked(AddFilesDialog)
 

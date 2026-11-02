@@ -211,7 +211,7 @@ export function SynapseChat({
   const { interactions, isAwaitingResponse, sendChat } = chatState
 
   const isConversationEmpty = interactions.length === 0
-  const showWelcome = !!welcome && isConversationEmpty
+  const shownWelcome = isConversationEmpty ? welcome : undefined
   const showGreeting = !welcome && variant === 'curie' && isConversationEmpty
   const chatInputAreaRef = useRef<ChatInputAreaHandle>(null)
 
@@ -418,7 +418,7 @@ export function SynapseChat({
               ...(variant === 'curie' && { pt: 0, pb: 0, gap: '20px' }),
               display: 'flex',
               flexDirection: 'column',
-              ...((showGreeting || showWelcome) && {
+              ...((showGreeting || shownWelcome) && {
                 minHeight: '100%',
                 justifyContent: 'flex-end',
               }),
@@ -451,10 +451,10 @@ export function SynapseChat({
                 </Typography>
               </ListItem>
             )}
-            {welcome && showWelcome && (
+            {shownWelcome && (
               <ListItem sx={{ p: 0 }}>
                 <ChatWelcome
-                  {...welcome}
+                  {...shownWelcome}
                   onUploadClick={
                     allowAttachments
                       ? () => chatInputAreaRef.current?.openAddFilesDialog()
@@ -512,7 +512,11 @@ export function SynapseChat({
                     >
                       {prompt}
                       <ChevronRight
-                        sx={{ fontSize: '16px', color: 'grey.700' }}
+                        sx={{
+                          flexShrink: 0,
+                          fontSize: '16px',
+                          color: 'grey.700',
+                        }}
                       />
                     </Stack>
                   }
@@ -521,6 +525,11 @@ export function SynapseChat({
                   sx={{
                     cursor: 'pointer',
                     maxWidth: '100%',
+                    // Long prompts wrap onto more lines rather than being cut off in a narrow chat
+                    height: 'auto',
+                    minHeight: '32px',
+                    py: '4px',
+                    '& .MuiChip-label': { whiteSpace: 'normal' },
                     bgcolor: 'secondary.100',
                     '&:hover': { bgcolor: 'secondary.200' },
                   }}
