@@ -9,10 +9,8 @@ import {
   useMemo,
   useState,
 } from 'react'
-import {
-  AddFilesDialog,
-  ALLOWED_FILE_TYPES_LABEL,
-} from '../AddFilesDialog/AddFilesDialog'
+import { ALLOWED_FILE_TYPES_LABEL } from '../../utils/attachmentLabels'
+import { AddFilesDialog } from '../AddFilesDialog/AddFilesDialog'
 import {
   AttachmentStripItem,
   ChatAttachmentStrip,

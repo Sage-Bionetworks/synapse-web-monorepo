@@ -29,19 +29,26 @@ import {
   AddFilesDialog,
   AddFilesDialogProps,
 } from './components/AddFilesDialog/AddFilesDialog'
+import { UPLOAD_SUPPORTING_DOCUMENTS_LABEL } from './components/ChatWelcome/ChatWelcome'
 import { SynapseChat, SynapseChatProps } from './SynapseChat'
+import {
+  ALLOWED_FILE_TYPES_LABEL,
+  ATTACHMENT_COUNT_AND_SIZE_LIMIT_LABEL,
+} from './utils/attachmentLabels'
 
 vi.mock('@/components/SynapseChat/useChatState')
 vi.mock('./components/AddFilesDialog/AddFilesDialog', () => ({
   AddFilesDialog: vi.fn(),
-  ALLOWED_FILE_TYPES_LABEL: 'pdf, csv, tsv, txt',
-  ATTACHMENT_COUNT_AND_SIZE_LIMIT_LABEL:
-    '10 files maximum, up to 100 MB per file',
 }))
 
 const repoOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 const mockUseChatState = vi.mocked(useChatState)
 const mockAddFilesDialog = vi.mocked(AddFilesDialog)
+
+/** The upload card's accessible name starts with its label and goes on to list the limits */
+function isUploadCardName(name: string) {
+  return name.startsWith(UPLOAD_SUPPORTING_DOCUMENTS_LABEL)
+}
 
 const mockSendChat = vi.fn()
 
@@ -278,9 +285,7 @@ describe('SynapseChat - allowAttachments', () => {
       welcome: mockWelcome,
     })
 
-    await user.click(
-      screen.getByRole('button', { name: /Upload supporting documents/ }),
-    )
+    await user.click(screen.getByRole('button', { name: isUploadCardName }))
     await user.click(
       screen.getByRole('button', { name: 'Simulate attachment uploaded' }),
     )
@@ -445,14 +450,10 @@ describe('SynapseChat - welcome', () => {
 
     expect(screen.getByText(mockWelcome.title)).toBeInTheDocument()
     expect(screen.getByText(mockWelcome.description)).toBeInTheDocument()
-    const uploadCard = screen.getByRole('button', {
-      name: /Upload supporting documents/,
-    })
+    const uploadCard = screen.getByRole('button', { name: isUploadCardName })
+    expect(uploadCard).toHaveTextContent(ATTACHMENT_COUNT_AND_SIZE_LIMIT_LABEL)
     expect(uploadCard).toHaveTextContent(
-      '10 files maximum, up to 100 MB per file',
-    )
-    expect(uploadCard).toHaveTextContent(
-      'Allowed file types: pdf, csv, tsv, txt',
+      `Allowed file types: ${ALLOWED_FILE_TYPES_LABEL}`,
     )
   })
 
@@ -461,7 +462,7 @@ describe('SynapseChat - welcome', () => {
 
     expect(screen.getByText(mockWelcome.title)).toBeInTheDocument()
     expect(
-      screen.queryByRole('button', { name: /Upload supporting documents/ }),
+      screen.queryByRole('button', { name: isUploadCardName }),
     ).not.toBeInTheDocument()
   })
 
@@ -477,7 +478,7 @@ describe('SynapseChat - welcome', () => {
 
     expect(screen.queryByText(mockWelcome.title)).not.toBeInTheDocument()
     expect(
-      screen.queryByRole('button', { name: /Upload supporting documents/ }),
+      screen.queryByRole('button', { name: isUploadCardName }),
     ).not.toBeInTheDocument()
   })
 
