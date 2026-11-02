@@ -40,7 +40,9 @@ import { SynapseChat, SynapseChatProps } from './SynapseChat'
 vi.mock('@/components/SynapseChat/useChatState')
 vi.mock('./components/AddFilesDialog/AddFilesDialog', () => ({
   AddFilesDialog: vi.fn(),
-  ALLOWED_FILE_TYPES_LABEL: 'pdf, csv, txt, json',
+  ALLOWED_FILE_TYPES_LABEL: 'pdf, csv, tsv, txt',
+  ATTACHMENT_COUNT_AND_SIZE_LIMIT_LABEL:
+    '10 files maximum, up to 100 MB per file',
 }))
 
 const repoOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
@@ -65,6 +67,12 @@ const mockGridAgentSessionContext: GridAgentSessionContext = {
   concreteType: 'org.sagebionetworks.repo.model.agent.GridAgentSessionContext',
   gridSessionId: 'grid-session',
   usersReplicaId: 1,
+}
+
+const mockWelcome = {
+  avatar: <span>Avatar</span>,
+  title: 'Hi, I’m Curie!',
+  description: 'I’m here to help with your annotations.',
 }
 
 const defaultProps: SynapseChatProps = {
@@ -269,6 +277,24 @@ describe('SynapseChat - allowAttachments', () => {
     await user.click(screen.getByRole('button', { name: 'Remove report.pdf' }))
 
     expect(screen.queryByText('report.pdf')).not.toBeInTheDocument()
+  })
+
+  it('opens the Add Files dialog from the welcome upload card, attaching uploads to the composer', async () => {
+    const { user } = renderComponent({
+      allowAttachments: true,
+      welcome: mockWelcome,
+    })
+
+    await user.click(
+      screen.getByRole('button', { name: /Upload supporting documents/ }),
+    )
+    await user.click(
+      screen.getByRole('button', { name: 'Simulate attachment uploaded' }),
+    )
+
+    expect(
+      screen.getByRole('button', { name: 'Remove report.pdf' }),
+    ).toBeInTheDocument()
   })
 
   it('sends attachments alongside the message text, then clears both', async () => {
@@ -809,6 +835,68 @@ describe('SynapseChat - creating the agent session', () => {
     expect(updates[0].agentAccessLevel).toBe(
       AgentAccessLevel.READ_YOUR_PRIVATE_DATA,
     )
+  })
+})
+
+describe('SynapseChat - welcome', () => {
+  beforeAll(() => {
+    window.HTMLElement.prototype.scrollIntoView = vi.fn()
+  })
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockUseChatState.mockReturnValue(defaultMockChatState)
+    mockAddFilesDialog.mockImplementation(() => <></>)
+  })
+
+  it('shows the welcome with the attachment limits in an empty conversation', () => {
+    renderComponent({ allowAttachments: true, welcome: mockWelcome })
+
+    expect(screen.getByText(mockWelcome.title)).toBeInTheDocument()
+    expect(screen.getByText(mockWelcome.description)).toBeInTheDocument()
+    const uploadCard = screen.getByRole('button', {
+      name: /Upload supporting documents/,
+    })
+    expect(uploadCard).toHaveTextContent(
+      '10 files maximum, up to 100 MB per file',
+    )
+    expect(uploadCard).toHaveTextContent(
+      'Allowed file types: pdf, csv, tsv, txt',
+    )
+  })
+
+  it('omits the upload card when attachments are not allowed', () => {
+    renderComponent({ welcome: mockWelcome })
+
+    expect(screen.getByText(mockWelcome.title)).toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /Upload supporting documents/ }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('hides the welcome once the conversation has started', () => {
+    renderComponent({
+      allowAttachments: true,
+      welcome: mockWelcome,
+      externalChatState: {
+        ...defaultMockChatState,
+        interactions: [{ id: '0', userMessage: 'hi', jobId: 'job-1' }],
+      },
+    })
+
+    expect(screen.queryByText(mockWelcome.title)).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: /Upload supporting documents/ }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('replaces the Curie greeting', () => {
+    renderComponent({ variant: 'curie', welcome: mockWelcome })
+
+    expect(screen.getByText(mockWelcome.title)).toBeInTheDocument()
+    expect(
+      screen.queryByText('Hi! How can I help you today?'),
+    ).not.toBeInTheDocument()
   })
 })
 
