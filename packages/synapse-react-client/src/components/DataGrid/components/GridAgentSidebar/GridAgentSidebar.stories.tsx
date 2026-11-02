@@ -7,6 +7,7 @@ import '@sage-bionetworks/react-datasheet-grid/dist/style.css'
 import { Typography } from '@mui/material'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
+import synapseGridStyles from '../../SynapseGrid.module.scss'
 import { GridAgentSidebar } from './GridAgentSidebar'
 import { OpenGridAgentSidebarButton } from './OpenGridAgentSidebarButton'
 
@@ -24,12 +25,12 @@ function DockedBesideGrid() {
   const [open, setOpen] = useState(true)
   const [rows, setRows] = useState(initialRows)
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-start' }}>
-      <div style={{ flex: '1 1 0', minWidth: 0, padding: 16 }}>
+    <div className={synapseGridStyles.layout}>
+      <div className={synapseGridStyles.main} style={{ padding: 16 }}>
         <Typography variant="headline2" component="h1" sx={{ mb: 2 }}>
           Grid content
         </Typography>
-        <div style={{ position: 'relative' }}>
+        <div className={synapseGridStyles.gridArea}>
           <DynamicDataSheetGrid
             value={rows}
             onChange={setRows}

@@ -2,6 +2,7 @@ import { GRID_AGENT_SIDEBAR_WIDTH_LOCALSTORAGE_KEY } from '@/utils/SynapseConsta
 import CloseIcon from '@mui/icons-material/Close'
 import { IconButton, Typography } from '@mui/material'
 import { useLocalStorageValue, useResizeObserver } from '@react-hookz/web'
+import classNames from 'classnames'
 import {
   KeyboardEvent,
   PointerEvent as ReactPointerEvent,
@@ -14,11 +15,21 @@ import {
 import styles from './GridAgentSidebar.module.scss'
 
 export const GRID_AGENT_SIDEBAR_TITLE = 'AI Assistant'
+export const OPEN_GRID_AGENT_SIDEBAR_LABEL = `Open ${GRID_AGENT_SIDEBAR_TITLE}`
+export const CLOSE_GRID_AGENT_SIDEBAR_LABEL = `Close ${GRID_AGENT_SIDEBAR_TITLE}`
 export const GRID_AGENT_SIDEBAR_DEFAULT_WIDTH = 400
 export const GRID_AGENT_SIDEBAR_MIN_WIDTH = 360
 /** The largest fraction of the docking layout's width that the sidebar may take */
-export const GRID_AGENT_SIDEBAR_MAX_WIDTH_FRACTION = 0.5
+const GRID_AGENT_SIDEBAR_MAX_WIDTH_FRACTION = 0.5
 export const GRID_AGENT_SIDEBAR_KEYBOARD_RESIZE_STEP = 16
+
+// localStorage can hold anything, so a stored width that isn't a finite number falls back to the default
+const storedWidthOptions = {
+  parse: (stored: string | null) => {
+    const width = stored === null ? NaN : Number(stored)
+    return Number.isFinite(width) ? width : null
+  },
+}
 
 /** A `layoutWidth` of 0 means the layout has not been measured, so there is no maximum. */
 function getMaxSidebarWidth(layoutWidth: number) {
@@ -70,7 +81,10 @@ export function GridAgentSidebar({
   )
 
   const { value: storedWidth, set: setStoredWidth } =
-    useLocalStorageValue<number>(GRID_AGENT_SIDEBAR_WIDTH_LOCALSTORAGE_KEY)
+    useLocalStorageValue<number>(
+      GRID_AGENT_SIDEBAR_WIDTH_LOCALSTORAGE_KEY,
+      storedWidthOptions,
+    )
 
   // The live width while dragging is kept out of localStorage so the value is written once per drag
   const [dragWidth, setDragWidth] = useState<number | null>(null)
@@ -171,7 +185,9 @@ export function GridAgentSidebar({
           layoutWidth ? getMaxSidebarWidth(layoutWidth) : undefined
         }
         tabIndex={0}
-        className={`${styles.resizeHandle} ${isDragging ? styles.dragging : ''}`}
+        className={classNames(styles.resizeHandle, {
+          [styles.dragging]: isDragging,
+        })}
         onPointerDown={handleResizeStart}
         onKeyDown={handleResizeKeyDown}
       />
@@ -181,7 +197,7 @@ export function GridAgentSidebar({
             {GRID_AGENT_SIDEBAR_TITLE}
           </Typography>
           <IconButton
-            aria-label={`Close ${GRID_AGENT_SIDEBAR_TITLE}`}
+            aria-label={CLOSE_GRID_AGENT_SIDEBAR_LABEL}
             size="small"
             onClick={onClose}
           >

@@ -1,6 +1,6 @@
 import CurieAvatarHead from '@/assets/mui_components/CurieAvatarHead'
 import { Fab, Tooltip } from '@mui/material'
-import { GRID_AGENT_SIDEBAR_TITLE } from './GridAgentSidebar'
+import { OPEN_GRID_AGENT_SIDEBAR_LABEL } from './GridAgentSidebar'
 import styles from './GridAgentSidebar.module.scss'
 
 export type OpenGridAgentSidebarButtonProps = {
@@ -14,12 +14,11 @@ export type OpenGridAgentSidebarButtonProps = {
 export function OpenGridAgentSidebarButton({
   onClick,
 }: OpenGridAgentSidebarButtonProps) {
-  const label = `Open ${GRID_AGENT_SIDEBAR_TITLE}`
   return (
-    <Tooltip title={label} placement="left">
+    <Tooltip title={OPEN_GRID_AGENT_SIDEBAR_LABEL} placement="left">
       <Fab
         size="small"
-        aria-label={label}
+        aria-label={OPEN_GRID_AGENT_SIDEBAR_LABEL}
         className={styles.openButton}
         onClick={onClick}
       >

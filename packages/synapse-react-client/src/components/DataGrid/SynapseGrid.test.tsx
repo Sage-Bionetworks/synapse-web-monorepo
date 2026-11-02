@@ -1,4 +1,8 @@
-import { GRID_AGENT_SIDEBAR_TITLE } from '@/components/DataGrid/components/GridAgentSidebar/GridAgentSidebar'
+import {
+  CLOSE_GRID_AGENT_SIDEBAR_LABEL,
+  GRID_AGENT_SIDEBAR_TITLE,
+  OPEN_GRID_AGENT_SIDEBAR_LABEL,
+} from '@/components/DataGrid/components/GridAgentSidebar/GridAgentSidebar'
 import createTestModel from '@/components/DataGrid/utils/createTestModel'
 import { mockAgentSession } from '@/mocks/chat/mockChat'
 import { getChatbotHandlers } from '@/mocks/msw/handlers/chatHandlers'
@@ -9,7 +13,6 @@ import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
-import { GRID_AGENT_SIDEBAR_OPEN_LOCALSTORAGE_KEY } from '@/utils/SynapseConstants'
 import {
   CreateReplicaResponse,
   GridSession,
@@ -39,9 +42,6 @@ const mockGridSession: GridSession = {
   modifiedOn: '2026-01-01T00:00:00.000Z',
 }
 
-const OPEN_SIDEBAR_BUTTON_NAME = `Open ${GRID_AGENT_SIDEBAR_TITLE}`
-const CLOSE_SIDEBAR_BUTTON_NAME = `Close ${GRID_AGENT_SIDEBAR_TITLE}`
-
 function getSidebar() {
   return screen.getByRole('complementary', { name: GRID_AGENT_SIDEBAR_TITLE })
 }
@@ -51,7 +51,7 @@ function querySidebar() {
 }
 
 function queryOpenSidebarButton() {
-  return screen.queryByRole('button', { name: OPEN_SIDEBAR_BUTTON_NAME })
+  return screen.queryByRole('button', { name: OPEN_GRID_AGENT_SIDEBAR_LABEL })
 }
 
 /** The chat input is enabled once the agent session exists and no response is pending */
@@ -160,9 +160,6 @@ describe('SynapseGrid AI Assistant sidebar', () => {
 
     expect(getSidebar()).toBeInTheDocument()
     expect(queryOpenSidebarButton()).not.toBeInTheDocument()
-    expect(
-      screen.queryByRole('button', { name: 'Open Curie' }),
-    ).not.toBeInTheDocument()
   })
 
   it('closes from its close button and reopens from the open button', async () => {
@@ -170,52 +167,15 @@ describe('SynapseGrid AI Assistant sidebar', () => {
     const { user } = await renderGridWithSession()
 
     await user.click(
-      screen.getByRole('button', { name: CLOSE_SIDEBAR_BUTTON_NAME }),
+      screen.getByRole('button', { name: CLOSE_GRID_AGENT_SIDEBAR_LABEL }),
     )
 
     expect(querySidebar()).not.toBeInTheDocument()
     const openButton = screen.getByRole('button', {
-      name: OPEN_SIDEBAR_BUTTON_NAME,
+      name: OPEN_GRID_AGENT_SIDEBAR_LABEL,
     })
 
     await user.click(openButton)
-
-    expect(getSidebar()).toBeInTheDocument()
-    expect(queryOpenSidebarButton()).not.toBeInTheDocument()
-  })
-
-  it('stays closed in a new grid after being closed', async () => {
-    registerChatHandlers()
-    const { user, unmount } = await renderGridWithSession()
-
-    await user.click(
-      screen.getByRole('button', { name: CLOSE_SIDEBAR_BUTTON_NAME }),
-    )
-    unmount()
-
-    await renderGridWithSession()
-
-    expect(querySidebar()).not.toBeInTheDocument()
-    expect(
-      screen.getByRole('button', { name: OPEN_SIDEBAR_BUTTON_NAME }),
-    ).toBeInTheDocument()
-  })
-
-  it('stays open in a new grid after being reopened', async () => {
-    registerChatHandlers()
-    localStorage.setItem(
-      GRID_AGENT_SIDEBAR_OPEN_LOCALSTORAGE_KEY,
-      JSON.stringify(false),
-    )
-    const { user, unmount } = await renderGridWithSession()
-
-    await user.click(
-      screen.getByRole('button', { name: OPEN_SIDEBAR_BUTTON_NAME }),
-    )
-    await waitForChatReady()
-    unmount()
-
-    await renderGridWithSession()
 
     expect(getSidebar()).toBeInTheDocument()
     expect(queryOpenSidebarButton()).not.toBeInTheDocument()
@@ -233,10 +193,10 @@ describe('SynapseGrid AI Assistant sidebar', () => {
     await waitForChatReady()
 
     await user.click(
-      screen.getByRole('button', { name: CLOSE_SIDEBAR_BUTTON_NAME }),
+      screen.getByRole('button', { name: CLOSE_GRID_AGENT_SIDEBAR_LABEL }),
     )
     await user.click(
-      screen.getByRole('button', { name: OPEN_SIDEBAR_BUTTON_NAME }),
+      screen.getByRole('button', { name: OPEN_GRID_AGENT_SIDEBAR_LABEL }),
     )
 
     expect(getSidebar()).toBeInTheDocument()

@@ -5,7 +5,7 @@ import {
   GridAgentSessionContext,
 } from '@sage-bionetworks/synapse-client'
 import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
-import { useState } from 'react'
+import { memo, useMemo, useState } from 'react'
 import { SynapseChat } from './index'
 import { ReactComponent as CurieAvatarHead } from '@/assets/illustrations/curie_avatar_head.svg'
 
@@ -26,7 +26,11 @@ export type GridAgentChatProps = {
   agentRegistrationId?: string
 }
 
-export function GridAgentChat({
+/**
+ * Memoized because it renders inside SynapseGrid, which re-renders on every grid model change,
+ * including selection moves; the chat only needs to re-render when its own props change.
+ */
+export const GridAgentChat = memo(function GridAgentChat({
   gridSessionId,
   usersReplicaId,
   chatbotName = 'Grid Assistant',
@@ -39,14 +43,18 @@ export function GridAgentChat({
   const [agentSession, setAgentSession] = useState<AgentSession | undefined>()
   const chatState = useChatState(agentSession)
 
-  // Create session context for grid sessions
-  const sessionContext: GridAgentSessionContext = {
-    concreteType:
-      'org.sagebionetworks.repo.model.agent.GridAgentSessionContext',
-    gridSessionId,
-    usersReplicaId,
-    experimental: true,
-  }
+  // SynapseChat creates an agent session whenever this changes before a session exists, so it must
+  // keep the same reference across renders to avoid duplicate sessions.
+  const sessionContext: GridAgentSessionContext = useMemo(
+    () => ({
+      concreteType:
+        'org.sagebionetworks.repo.model.agent.GridAgentSessionContext',
+      gridSessionId,
+      usersReplicaId,
+      experimental: true,
+    }),
+    [gridSessionId, usersReplicaId],
+  )
 
   return (
     <GridAgentSidebar open={open} onClose={onClose}>
@@ -56,7 +64,6 @@ export function GridAgentChat({
         chatbotName={chatbotName}
         initialMessage={initialMessage}
         sessionContext={sessionContext}
-        textboxPositionOffset="0px"
         hideTitle={true}
         showAccessLevelMenu={false}
         defaultAgentAccessLevel={AgentAccessLevel.WRITE_YOUR_PRIVATE_DATA}
@@ -69,6 +76,6 @@ export function GridAgentChat({
       />
     </GridAgentSidebar>
   )
-}
+})
 
 export default GridAgentChat

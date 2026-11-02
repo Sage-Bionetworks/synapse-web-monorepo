@@ -2,7 +2,7 @@
   position: relative;
   flex-shrink: 0;
   align-self: stretch;
-  background-color: white;
+  background-color: var(--synapse-white);
   border-left: 1px solid var(--synapse-v2-gray-200);
 }
 
@@ -56,7 +56,7 @@
   position: absolute;
   right: 16px;
   bottom: 16px;
-  background-color: white;
+  background-color: var(--synapse-white);
   border: 1px solid var(--synapse-v2-gray-200);
 
   &:hover {

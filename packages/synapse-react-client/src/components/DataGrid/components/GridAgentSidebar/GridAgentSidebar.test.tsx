@@ -3,6 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
   clampSidebarWidth,
+  CLOSE_GRID_AGENT_SIDEBAR_LABEL,
   GRID_AGENT_SIDEBAR_DEFAULT_WIDTH,
   GRID_AGENT_SIDEBAR_KEYBOARD_RESIZE_STEP,
   GRID_AGENT_SIDEBAR_MIN_WIDTH,
@@ -59,7 +60,7 @@ describe('GridAgentSidebar', () => {
     const { onClose } = renderSidebar()
 
     await userEvent.click(
-      screen.getByRole('button', { name: `Close ${GRID_AGENT_SIDEBAR_TITLE}` }),
+      screen.getByRole('button', { name: CLOSE_GRID_AGENT_SIDEBAR_LABEL }),
     )
 
     expect(onClose).toHaveBeenCalledTimes(1)
@@ -80,6 +81,18 @@ describe('GridAgentSidebar', () => {
     expect(getSidebar()).toHaveStyle({ width: '520px' })
   })
 
+  it.each(['"wide"', '{}', 'null', 'not json'])(
+    'uses the default width when the stored width is %s',
+    stored => {
+      localStorage.setItem(GRID_AGENT_SIDEBAR_WIDTH_LOCALSTORAGE_KEY, stored)
+      renderSidebar()
+
+      expect(getSidebar()).toHaveStyle({
+        width: `${GRID_AGENT_SIDEBAR_DEFAULT_WIDTH}px`,
+      })
+    },
+  )
+
   it('widens when the left edge is dragged left, and persists the width on release', () => {
     renderSidebar()
     const handle = getResizeHandle()
@@ -88,11 +101,37 @@ describe('GridAgentSidebar', () => {
     fireEvent.pointerMove(window, { clientX: 900 })
 
     expect(getSidebar()).toHaveStyle({ width: '500px' })
+    expect(getStoredWidth()).toBeNull()
 
     fireEvent.pointerUp(window, { clientX: 900 })
 
     expect(getStoredWidth()).toBe(500)
     expect(getSidebar()).toHaveStyle({ width: '500px' })
+  })
+
+  it('ends the drag and persists the width when the pointer is cancelled', () => {
+    renderSidebar()
+
+    fireEvent.pointerDown(getResizeHandle(), { button: 0, clientX: 1000 })
+    fireEvent.pointerMove(window, { clientX: 950 })
+    fireEvent.pointerCancel(window)
+    fireEvent.pointerMove(window, { clientX: 800 })
+
+    expect(getStoredWidth()).toBe(450)
+    expect(getSidebar()).toHaveStyle({ width: '450px' })
+  })
+
+  it('does not resize when dragged with a button other than the primary one', () => {
+    renderSidebar()
+
+    fireEvent.pointerDown(getResizeHandle(), { button: 2, clientX: 1000 })
+    fireEvent.pointerMove(window, { clientX: 900 })
+    fireEvent.pointerUp(window, { clientX: 900 })
+
+    expect(getStoredWidth()).toBeNull()
+    expect(getSidebar()).toHaveStyle({
+      width: `${GRID_AGENT_SIDEBAR_DEFAULT_WIDTH}px`,
+    })
   })
 
   it('does not shrink below the minimum width when dragged right', () => {
@@ -124,6 +163,23 @@ describe('GridAgentSidebar', () => {
     expect(getStoredWidth()).toBe(
       GRID_AGENT_SIDEBAR_DEFAULT_WIDTH -
         GRID_AGENT_SIDEBAR_KEYBOARD_RESIZE_STEP,
+    )
+  })
+
+  it('does not shrink below the minimum width with the arrow keys', async () => {
+    localStorage.setItem(
+      GRID_AGENT_SIDEBAR_WIDTH_LOCALSTORAGE_KEY,
+      String(GRID_AGENT_SIDEBAR_MIN_WIDTH),
+    )
+    renderSidebar()
+    getResizeHandle().focus()
+
+    await userEvent.keyboard('{ArrowRight}')
+
+    expect(getStoredWidth()).toBe(GRID_AGENT_SIDEBAR_MIN_WIDTH)
+    expect(getResizeHandle()).toHaveAttribute(
+      'aria-valuenow',
+      String(GRID_AGENT_SIDEBAR_MIN_WIDTH),
     )
   })
 })

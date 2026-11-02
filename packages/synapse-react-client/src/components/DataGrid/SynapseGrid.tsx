@@ -3,6 +3,7 @@ import ExportCsvFromGridButton from '@/components/DataGrid/components/ExportCsvF
 import GridLoadingState from '@/components/DataGrid/components/GridLoadingState'
 import GridMenuButton from '@/components/DataGrid/components/GridMenuButton/GridMenuButton'
 import OpenGridAgentSidebarButton from '@/components/DataGrid/components/GridAgentSidebar/OpenGridAgentSidebarButton'
+import useGridAgentSidebarOpen from '@/components/DataGrid/components/GridAgentSidebar/useGridAgentSidebarOpen'
 import ReorderColumnsButton from '@/components/DataGrid/components/ReorderColumnsButton'
 import UploadCsvToGridButton from '@/components/DataGrid/components/UploadCsvToGridButton'
 import useGetSchemaForGrid from '@/components/DataGrid/hooks/useGetSchemaForGrid'
@@ -15,7 +16,6 @@ import { useGetCurrentUserBundle } from '@/synapse-queries'
 import { useListGridReplicas } from '@/synapse-queries/grid/useGridSession'
 import { useGetEntity } from '@/synapse-queries/index'
 import { getSchemaPropertiesInfo } from '@/utils/jsonschema/getSchemaPropertyInfo'
-import { GRID_AGENT_SIDEBAR_OPEN_LOCALSTORAGE_KEY } from '@/utils/SynapseConstants'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import HelpOutline from '@mui/icons-material/HelpOutline'
 import {
@@ -37,7 +37,6 @@ import {
   GridSession,
   instanceOfRecordSet,
 } from '@sage-bionetworks/synapse-client'
-import { useLocalStorageValue } from '@react-hookz/web'
 import { ClickableJsonCrdt } from 'clickable-json'
 import {
   ReactNode,
@@ -93,9 +92,11 @@ function SynapseGridInner({
 }: SynapseGridProps) {
   const [session, setSession] = useState<GridSession | null>(null)
   const [replicaId, setReplicaId] = useState<number | null>(null)
-  const { value: storedAgentSidebarOpen, set: setAgentSidebarOpen } =
-    useLocalStorageValue<boolean>(GRID_AGENT_SIDEBAR_OPEN_LOCALSTORAGE_KEY)
-  const isAgentSidebarOpen = storedAgentSidebarOpen ?? true
+  const {
+    isOpen: isAgentSidebarOpen,
+    openSidebar: openAgentSidebar,
+    closeSidebar: closeAgentSidebar,
+  } = useGridAgentSidebarOpen()
   const [lastSelection, setLastSelection] = useState<SelectionWithId | null>(
     null,
   )
@@ -593,7 +594,7 @@ function SynapseGridInner({
                       />
                       {!isAgentSidebarOpen && (
                         <OpenGridAgentSidebarButton
-                          onClick={() => setAgentSidebarOpen(true)}
+                          onClick={openAgentSidebar}
                         />
                       )}
                     </Grid>
@@ -639,7 +640,7 @@ function SynapseGridInner({
         <GridAgentChat
           agentRegistrationId={agentRegistrationId}
           open={isAgentSidebarOpen}
-          onClose={() => setAgentSidebarOpen(false)}
+          onClose={closeAgentSidebar}
           gridSessionId={session.sessionId!}
           usersReplicaId={replicaId!}
           chatbotName="Curie"
