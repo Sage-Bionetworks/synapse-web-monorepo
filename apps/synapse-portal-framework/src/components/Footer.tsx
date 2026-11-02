@@ -1,11 +1,12 @@
 import Versions from '@/components/Versions'
 import { Box, darken, Typography, useTheme } from '@mui/material'
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
 import { ExperimentalFeatures } from 'synapse-react-client/components/ExperimentalFeatures/index'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { ReactComponent as PoweredBySvg } from '../portal-assets/poweredbysynapse.svg'
 import { usePortalContext } from './PortalContext'
 import SageNonprofitAttribution from './SageNonprofitAttribution'
+import { ExperimentalFeatureScope } from 'synapse-react-client/utils/featureflag/FeatureFlags'
 
 function Footer() {
   const { footerConfig, logoFooterConfig } = usePortalContext()
@@ -34,7 +35,11 @@ function Footer() {
   const termsOfServiceUrl =
     footerConfig.termsOfService ??
     SynapseConstants.URL_TERMS_CONDITIONS_AGREEMENT
-  const { variant } = footerConfig
+  const { variant, experimentalFeatureScopes } = footerConfig
+  const scopes = useMemo<ExperimentalFeatureScope[]>(
+    () => ['PORTALS', ...(experimentalFeatureScopes ?? [])],
+    [experimentalFeatureScopes],
+  )
   return (
     <footer id="footer" className={variant ? `footer--${variant}` : undefined}>
       <Box
@@ -122,7 +127,7 @@ function Footer() {
           <Versions />
 
           <ExperimentalFeatures
-            scopes={['PORTALS']}
+            scopes={scopes}
             onPreferencesSaved={() => window.location.reload()}
           />
         </Box>

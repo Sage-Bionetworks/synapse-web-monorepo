@@ -32,6 +32,7 @@ function ExperimentalFeatures({
 
   const [open, setOpen] = useState(false)
   const [dialogKey, setDialogKey] = useState(0)
+  const [isSaving, setIsSaving] = useState(false)
 
   const menuFeatures = useMemo(
     () =>
@@ -52,15 +53,21 @@ function ExperimentalFeatures({
 
   const count = isEnableAllOn ? menuFeatures.length : savedMenuOptIns.length
 
-  const handleOpen = () => {
-    setDialogKey(prev => prev + 1)
-    setOpen(true)
-  }
-
   const handleSave = (enableAll: boolean, enabledFlags: FeatureFlagEnum[]) => {
     savePreferences(enableAll, enabledFlags, menuFeatures)
     setOpen(false)
     onPreferencesSaved()
+  }
+
+  const handleClick = () => {
+    // With nothing to list, the dialog would only hold Enable all, so the switch toggles it directly
+    if (!isLoading && menuFeatures.length === 0) {
+      setIsSaving(true)
+      handleSave(!isEnableAllOn, [])
+      return
+    }
+    setDialogKey(prev => prev + 1)
+    setOpen(true)
   }
 
   return (
@@ -68,7 +75,8 @@ function ExperimentalFeatures({
       <ExperimentalFeaturesButton
         isActive={isEnableAllOn || count > 0}
         count={count}
-        onClick={handleOpen}
+        disabled={isSaving}
+        onClick={handleClick}
       />
       <ExperimentalFeaturesDialog
         key={dialogKey}

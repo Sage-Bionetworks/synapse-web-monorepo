@@ -5,6 +5,7 @@ import styles from './ExperimentalFeaturesButton.module.scss'
 type ExperimentalFeaturesButtonProps = {
   isActive: boolean
   count: number
+  disabled?: boolean
   onClick: () => void
 }
 
@@ -15,6 +16,7 @@ const experimentalFeaturesInfoText =
 function ExperimentalFeaturesButton({
   isActive,
   count,
+  disabled = false,
   onClick,
 }: ExperimentalFeaturesButtonProps) {
   return (
@@ -32,6 +34,7 @@ function ExperimentalFeaturesButton({
       <ButtonBase
         className={isActive ? `${styles.track} ${styles.active}` : styles.track}
         onClick={onClick}
+        disabled={disabled}
         aria-haspopup="dialog"
         aria-label={`${EXPERIMENTAL_FEATURES_LABEL} (${count} enabled)`}
       >

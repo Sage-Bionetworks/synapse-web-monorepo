@@ -1,7 +1,7 @@
 import { getFeatureFlagsOverride } from '@/mocks/msw/handlers/featureFlagHandlers'
 import { server } from '@/mocks/msw/server'
 import { mockUserBundle } from '@/mocks/user/mock_user_profile'
-import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { createWrapperAndQueryClient } from '@/testutils/TestingLibraryUtils'
 import { SynapseContextType } from '@/utils/context/SynapseContext'
 import { USER_BUNDLE } from '@/utils/APIConstants'
 import { getEnabledExperimentalFeatures } from '@/utils/featureflag/experimentalFeatureCookies'
@@ -15,7 +15,7 @@ import {
   EXPERIMENTAL_MODE_COOKIE,
   SYNAPSE_EXPERIMENTAL_FEATURES_COOKIE,
 } from '@/utils/SynapseConstants'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Cookies from 'js-cookie'
 import { http, HttpResponse } from 'msw'
@@ -53,16 +53,17 @@ function renderComponent(
   context: Partial<SynapseContextType> = {},
   onPreferencesSaved = vi.fn(),
 ) {
+  const { wrapperFn, queryClient } = createWrapperAndQueryClient(context)
   render(
     <ExperimentalFeatures
       scopes={['TEST']}
       onPreferencesSaved={onPreferencesSaved}
     />,
     {
-      wrapper: createWrapper(context),
+      wrapper: wrapperFn,
     },
   )
-  return { onPreferencesSaved }
+  return { onPreferencesSaved, queryClient }
 }
 
 async function openDialog() {
@@ -131,5 +132,47 @@ describe('ExperimentalFeatures', () => {
     expect(
       await screen.findByRole('button', { name: /Experimental Features/ }),
     ).toHaveClass(styles.active)
+  })
+
+  it('turns Enable all on without opening the dialog when no features are listed', async () => {
+    mockServerFlags({ [FLAG]: false, [ACT_ONLY_FLAG]: false })
+    Cookies.set(SYNAPSE_EXPERIMENTAL_FEATURES_COOKIE, FLAG)
+    const { onPreferencesSaved, queryClient } = renderComponent()
+    await waitFor(() => expect(queryClient.isFetching()).toBe(0))
+
+    await userEvent.click(
+      screen.getByRole('button', { name: /Experimental Features/ }),
+    )
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(Cookies.get(EXPERIMENTAL_MODE_COOKIE)).toBe('true')
+    expect(getEnabledExperimentalFeatures()).toEqual([FLAG])
+    expect(onPreferencesSaved).toHaveBeenCalled()
+  })
+
+  it('turns Enable all off without opening the dialog when no features are listed', async () => {
+    mockServerFlags({ [FLAG]: false, [ACT_ONLY_FLAG]: false })
+    Cookies.set(EXPERIMENTAL_MODE_COOKIE, 'true')
+    const { onPreferencesSaved, queryClient } = renderComponent()
+    await waitFor(() => expect(queryClient.isFetching()).toBe(0))
+
+    await userEvent.click(
+      screen.getByRole('button', { name: /Experimental Features/ }),
+    )
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(Cookies.get(EXPERIMENTAL_MODE_COOKIE)).toBeUndefined()
+    expect(onPreferencesSaved).toHaveBeenCalled()
+  })
+
+  it('disables the switch after it toggles Enable all so it cannot flip again before the reload', async () => {
+    mockServerFlags({ [FLAG]: false, [ACT_ONLY_FLAG]: false })
+    const { queryClient } = renderComponent()
+    await waitFor(() => expect(queryClient.isFetching()).toBe(0))
+    const button = screen.getByRole('button', { name: /Experimental Features/ })
+
+    await userEvent.click(button)
+
+    expect(button).toBeDisabled()
   })
 })

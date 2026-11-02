@@ -54,6 +54,7 @@ export type ExperimentalFeatureScope =
   | 'SYNAPSE'
   | 'PORTALS'
   | 'ACCOUNTS'
+  | 'AMP_ALS'
   | 'TEST'
 
 type FeatureFlagConfig = {
@@ -77,7 +78,10 @@ export const FEATURE_FLAG_CONFIG: Record<FeatureFlagEnum, FeatureFlagConfig> = {
     displayName: 'Create New Curation Tasks',
   },
   [FeatureFlagEnum.ELITE_PORTAL_MODELS]: { scopes: [] },
-  [FeatureFlagEnum.AMPALS_RDCA_DAP_FORM_ENABLED]: { scopes: [] },
+  [FeatureFlagEnum.AMPALS_RDCA_DAP_FORM_ENABLED]: {
+    scopes: ['AMP_ALS'],
+    displayName: 'Data Access Requests to RDCA-DAP',
+  },
   [FeatureFlagEnum.ACT_DASHBOARD_FORM_TEMPLATES]: {
     scopes: ['SYNAPSE'],
     displayName: 'ACT Dashboard Form Templates',
