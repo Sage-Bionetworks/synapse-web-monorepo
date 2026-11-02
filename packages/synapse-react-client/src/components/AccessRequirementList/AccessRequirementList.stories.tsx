@@ -8,6 +8,7 @@ import {
 } from '@/mocks/accessRequirement/mockAccessRequirements'
 import {
   mockJsonSchemaAR1,
+  mockJsonSchemaAR2,
   mockJsonSchemaAR1WikiPage,
   mockJsonSchemaAR1WikiPageKey,
 } from '@/mocks/accessRequirement/mockJsonSchemaAccessRequirements'
@@ -21,6 +22,7 @@ import {
   getAccessRequirementStatusHandlers,
 } from '@/mocks/msw/handlers/accessRequirementHandlers'
 import { getDataAccessRequestHandlers } from '@/mocks/msw/handlers/dataAccessRequestHandlers'
+import { getFileHandlers } from '@/mocks/msw/handlers/fileHandlers'
 import { getFormTemplateHandlers } from '@/mocks/msw/handlers/formTemplateHandlers'
 import { getRegisteredSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
 import { getEntityHandlers } from '@/mocks/msw/handlers/entityHandlers'
@@ -496,5 +498,40 @@ export const SchemaDrivenRequirement: Story = {
     accessRequirementFromProps: [schemaDrivenAccessRequirement],
     isAuthenticated: true,
     renderAsModal: true,
+  },
+}
+
+const schemaDrivenAccessRequirementWithFileQuestion =
+  mockJsonSchemaAR2 as unknown as AccessRequirement
+
+/**
+ * A JsonSchemaAccessRequirement whose FormTemplate asks the requester to upload a file, and offers a template file for
+ * download. The wizard saves the request when the file changes, listing the file in the request's attachments.
+ */
+export const SchemaDrivenRequirementWithFileQuestion: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        ...getFileHandlers(MOCK_REPO_ORIGIN),
+        ...getAccessRequirementStatusHandlers(MOCK_REPO_ORIGIN, [
+          {
+            accessRequirementId: String(mockJsonSchemaAR2.id),
+            concreteType:
+              'org.sagebionetworks.repo.model.dataaccess.ManagedACTAccessRequirementStatus',
+            isApproved: false,
+          },
+        ]),
+        ...getAccessRequirementEntityBindingHandlers(
+          MOCK_REPO_ORIGIN,
+          undefined,
+          [schemaDrivenAccessRequirementWithFileQuestion],
+        ),
+        ...(SchemaDrivenRequirement.parameters?.msw?.handlers as []),
+      ],
+    },
+  },
+  args: {
+    ...SchemaDrivenRequirement.args,
+    accessRequirementFromProps: [schemaDrivenAccessRequirementWithFileQuestion],
   },
 }

@@ -11,6 +11,11 @@ import { mockFileHandles } from '../../mock_file_handle'
 import { MOCK_USER_ID } from '../../user/mock_user_profile'
 import { SynapseApiResponse } from '../handlers'
 
+/** Synapse file handle IDs are numeric. These start above the IDs of the mock file handles. */
+function nextUploadedFileHandleId() {
+  return String(800000000 + Number(uniqueId()))
+}
+
 export function getFileHandlers(backendOrigin: string) {
   return [
     http.post<never, BatchFileRequest>(
@@ -57,7 +62,7 @@ export function getFileHandlers(backendOrigin: string) {
       // removing one attachment would remove them all.
       const response: SynapseApiResponse<MultipartUploadStatus> = {
         state: 'COMPLETED',
-        resultFileHandleId: uniqueId('mockFileHandleId'),
+        resultFileHandleId: nextUploadedFileHandleId(),
         uploadId: uniqueId('mockUploadId'),
         startedBy: String(MOCK_USER_ID),
         startedOn: new Date().toISOString(),
@@ -72,7 +77,7 @@ export function getFileHandlers(backendOrigin: string) {
       ({ params }) => {
         const response: SynapseApiResponse<MultipartUploadStatus> = {
           state: 'COMPLETED',
-          resultFileHandleId: uniqueId('mockFileHandleId'),
+          resultFileHandleId: nextUploadedFileHandleId(),
           uploadId: String(params.id),
           startedBy: String(MOCK_USER_ID),
           startedOn: new Date().toISOString(),

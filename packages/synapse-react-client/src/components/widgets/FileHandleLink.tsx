@@ -61,7 +61,7 @@ export const FileHandleLink = (props: FileHandleLinkProps): React.ReactNode => {
     { enabled: shouldLookUpFileName && !!creatorFileHandleId },
   )
   const fileName = fileHandleAssociation
-    ? batchFileResult?.requestedFiles[0].fileHandle?.fileName
+    ? batchFileResult?.requestedFiles[0]?.fileHandle?.fileName
     : creatorFileHandle?.fileName
 
   const { mutate: openFile } = useMutation({
