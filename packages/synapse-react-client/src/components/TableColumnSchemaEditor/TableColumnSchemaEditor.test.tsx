@@ -680,6 +680,55 @@ describe('TableColumnSchemaEditor', () => {
     })
   })
 
+  it('Removes the facetSortConfig when faceting is turned off', async () => {
+    const facetedColumn: ColumnModel = {
+      id: '1236',
+      name: 'facetedColumn',
+      columnType: ColumnTypeEnum.STRING,
+      maximumSize: 50,
+      facetType: 'enumeration',
+      facetSortConfig: { property: 'FREQUENCY', direction: 'DESC' },
+    }
+    server.use(
+      getEntityBundleHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        {
+          entity: mockTableEntityData.entity,
+          tableBundle: {
+            columnModels: [facetedColumn],
+            maxRowsPerPage: 25,
+          },
+        },
+      ),
+    )
+
+    const { user, saveButton } = await setUp({
+      entityId: mockTableEntityData.id,
+      open: true,
+      onColumnsUpdated: mockOnColumnsUpdated,
+      onCancel: mockOnCancel,
+    })
+
+    const facetTypeSelect = await screen.findByRole('combobox', {
+      name: 'Facet Type',
+    })
+    await user.click(facetTypeSelect)
+    const listbox = await screen.findByRole('listbox')
+    // The first option is the empty item, which turns faceting off
+    await user.click(within(listbox).getAllByRole('option')[0])
+
+    await user.click(saveButton)
+    await waitFor(() => {
+      expect(createTableUpdateTransactionRequestSpy).toHaveBeenCalledWith(
+        MOCK_ACCESS_TOKEN,
+        mockTableEntityData.id,
+        [facetedColumn],
+        [omit(facetedColumn, ['facetType', 'facetSortConfig'])],
+      )
+      expect(mockOnColumnsUpdated).toHaveBeenCalled()
+    })
+  })
+
   it('Can update restricted values for INTEGER type', async () => {
     const integerColumnWithRestrictedVals: ColumnModel = {
       id: '1235',
