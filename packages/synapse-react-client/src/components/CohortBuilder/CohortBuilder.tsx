@@ -6,13 +6,13 @@ import {
   BUNDLE_MASK_QUERY_SELECT_COLUMNS,
 } from '@/utils/SynapseConstants'
 import { Alert, Typography } from '@mui/material'
-import { AggregateDataConfiguration } from '@sage-bionetworks/synapse-client'
 import { QueryBundleRequest } from '@sage-bionetworks/synapse-types'
 import pluralize from 'pluralize'
 import { ReactNode, Suspense, useMemo, useState } from 'react'
 import { SignInPrompt, SynapseErrorBoundary } from '../error/ErrorBanner'
 import { QueryBuilderControls } from '../QueryBuilder/QueryBuilderControls'
 import { QBGroup } from '../QueryBuilder/QueryBuilderTypes'
+import { useQueryContext } from '../QueryContext/QueryContext'
 import { useQueryVisualizationContext } from '../QueryVisualizationWrapper/QueryVisualizationContext'
 import { QueryVisualizationWrapper } from '../QueryVisualizationWrapper/QueryVisualizationWrapper'
 import { QueryWrapper } from '../QueryWrapper/QueryWrapper'
@@ -20,6 +20,7 @@ import QueryWrapperLoadingScreen from '../QueryWrapper/QueryWrapperLoadingScreen
 import { useSuspenseGetQueryMetadata } from '../QueryWrapper/useGetQueryMetadata'
 import { QueryWrapperErrorBoundary } from '../QueryWrapperErrorBoundary'
 import PlotsContainer from '../widgets/facet-nav/PlotsContainer'
+import { AggregateDataPreviewControls } from './AggregateDataPreviewControls'
 import styles from './CohortBuilder.module.scss'
 import { CohortFilesPanel } from './CohortFilesPanel'
 
@@ -55,8 +56,6 @@ export type CohortBuilderProps = {
   columnAliases?: Record<string, string>
   /** The singular noun for one row of the participant table. Defaults to "participant". */
   unitDescription?: string
-  /** Lets a data manager preview the results that users with aggregate-only access see. */
-  aggregateDataPreview?: AggregateDataConfiguration
   /** Notice that queries are logged. Defaults to {@link DEFAULT_COHORT_BUILDER_AUDIT_NOTICE}. */
   auditNotice?: ReactNode
 }
@@ -72,7 +71,6 @@ export function CohortBuilder(props: CohortBuilderProps) {
     facetsToPlot,
     columnAliases,
     unitDescription = 'participant',
-    aggregateDataPreview,
     auditNotice = DEFAULT_COHORT_BUILDER_AUDIT_NOTICE,
   } = props
   const { isAuthenticated } = useSynapseContext()
@@ -83,9 +81,8 @@ export function CohortBuilder(props: CohortBuilderProps) {
       entityId: participantsTableId,
       partMask: COHORT_BUILDER_PART_MASK,
       query: { sql: `SELECT * FROM ${participantsTableId}` },
-      aggregateDataPreview,
     }),
-    [participantsTableId, aggregateDataPreview],
+    [participantsTableId],
   )
 
   if (!isAuthenticated) {
@@ -110,10 +107,9 @@ export function CohortBuilder(props: CohortBuilderProps) {
         <div className={styles.root}>
           <div className={styles.notices}>
             <Alert severity="info">{auditNotice}</Alert>
-            {aggregateDataPreview && (
-              <Alert severity="warning">{COHORT_BUILDER_PREVIEW_NOTICE}</Alert>
-            )}
+            <CohortPreviewNotice />
           </div>
+          <AggregateDataPreviewControls />
           <CohortQueryBuilder />
           {/* Only the results are replaced by an error or withheld-result notice, so the cohort stays editable. */}
           <QueryWrapperErrorBoundary>
@@ -129,6 +125,14 @@ export function CohortBuilder(props: CohortBuilderProps) {
       </QueryVisualizationWrapper>
     </QueryWrapper>
   )
+}
+
+function CohortPreviewNotice() {
+  const { currentQueryRequest } = useQueryContext()
+  if (!currentQueryRequest.aggregateDataPreview) {
+    return null
+  }
+  return <Alert severity="warning">{COHORT_BUILDER_PREVIEW_NOTICE}</Alert>
 }
 
 function CohortQueryBuilder() {
