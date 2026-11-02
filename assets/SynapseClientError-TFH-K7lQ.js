@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";var t;function n(){return(n=e((()=>{t=class extends Error{status;reason;errorResponse;url;constructor(e,t,n,r){super(t),this.status=e,this.reason=t,this.url=n,this.errorResponse=r,Object.setPrototypeOf(this,new.target.prototype)}}})))()}export{n,t};

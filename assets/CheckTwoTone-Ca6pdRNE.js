@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{t}from"./jsx-runtime-BB9-612F.js";import{n,t as r}from"./createSvgIcon-ieMAHhMP.js";var i,a;function o(){return(o=e((()=>{n(),i=t(),a=r((0,i.jsx)(`path`,{d:`M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z`}),`CheckTwoTone`)})))()}export{o as n,a as t};

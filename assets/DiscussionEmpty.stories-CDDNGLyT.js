@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{n as t,t as n}from"./DiscussionEmpty-C0zqIcfI.js";var r,i,a;function o(){return(o=e((()=>{t(),r={title:`Synapse/DiscussionEmpty`,component:n},i={args:{onViewForumClicked:()=>{alert(`View Forum Clicked`)}}},a=[`DiscussionEmptyDemo`]})))()}o();export{i as DiscussionEmptyDemo,a as __namedExportsOrder,r as default};

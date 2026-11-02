@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{t}from"./jsx-runtime-BB9-612F.js";import{n,t as r}from"./createSvgIcon-ieMAHhMP.js";var i,a;function o(){return(o=e((()=>{n(),i=t(),a=r((0,i.jsx)(`path`,{d:`M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z`}),`NavigateNext`)})))()}export{o as n,a as t};

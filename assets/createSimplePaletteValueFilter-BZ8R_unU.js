@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";function t(e){return typeof e.main==`string`}function n(e,n=[]){if(!t(e))return!1;for(let t of n)if(!e.hasOwnProperty(t)||typeof e[t]!=`string`)return!1;return!0}function r(e=[]){return([,t])=>t&&n(t,e)}function i(){return(i=e((()=>{})))()}export{i as n,r as t};

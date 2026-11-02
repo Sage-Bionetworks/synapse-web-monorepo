@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{t}from"./react-DNOQmUAz.js";function n(e){let t=(0,r.useRef)(e);return t.current=e,(0,r.useMemo)(()=>Object.freeze({get current(){return t.current}}),[])}var r;function i(){return(i=e((()=>{r=t()})))()}export{n,i as t};

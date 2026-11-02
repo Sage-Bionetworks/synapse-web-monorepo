@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";var t;function n(){return(n=e((()=>{t=e=>e.replaceAll(/([a-z])([A-Z])/g,`$1 $2`).replace(/\b([A-Z]+)([A-Z])([a-z])/,`$1 $2$3`).replace(/^./,e=>e.toUpperCase())})))()}export{t as n,n as t};

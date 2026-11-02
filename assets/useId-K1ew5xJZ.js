@@ -1,0 +1,1 @@
+import{n as e,o as t}from"./rolldown-runtime-BCiCTKAo.js";import{t as n}from"./react-DNOQmUAz.js";function r(e){let[t,n]=a.useState(e),r=e||t;return a.useEffect(()=>{t??(o+=1,n(`mui-${o}`))},[t]),r}function i(e){if(s!==void 0){let t=s();return e??t}return r(e)}var a,o,s;function c(){return(c=e((()=>{a=t(n()),o=0,s={...a}.useId})))()}export{i as n,c as t};

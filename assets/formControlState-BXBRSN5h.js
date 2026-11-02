@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";function t({props:e,states:t,muiFormControl:n}){return t.reduce((t,r)=>(t[r]=e[r],n&&e[r]===void 0&&(t[r]=n[r]),t),{})}function n(){return(n=e((()=>{})))()}export{n,t};

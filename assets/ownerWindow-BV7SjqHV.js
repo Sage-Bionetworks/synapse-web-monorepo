@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{n as t}from"./ownerDocument-BDupY3Zm.js";function n(e){return t(e).defaultView||window}function r(){return(r=e((()=>{})))()}export{n,r as t};

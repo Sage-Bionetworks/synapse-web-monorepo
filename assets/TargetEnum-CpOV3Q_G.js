@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";var t;function n(){return(n=e((()=>{t=function(e){return e.CURRENT_WINDOW=`_self`,e.NEW_WINDOW=`_blank`,e.PARENT_FRAME=`_parent`,e.FULL_WINDOW_BODY=`_top`,e}({})})))()}export{n,t};

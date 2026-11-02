@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{n as t,t as n}from"./TextField-CQNH66rs.js";var r,i,a;function o(){return(o=e((()=>{t(),r={title:`UI/SDS/TextField`,component:n},i={args:{label:`Label`,placeholder:`my placeholder`,fullWidth:!0,required:!0}},a=[`Demo`]})))()}o();export{i as Demo,a as __namedExportsOrder,r as default};

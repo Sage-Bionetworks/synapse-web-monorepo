@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{t}from"./react-DNOQmUAz.js";import{n,t as r}from"./useDebouncedCallback-BLWkPJrQ.js";function i(e,t,r,i=0){(0,a.useEffect)(n(e,t,r,i),t)}var a;function o(){return(o=e((()=>{a=t(),r()})))()}export{i as n,o as t};

@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{C as t,S as n,_ as r,g as i}from"./createTheme-CL4c-Jqh.js";import{i as a,r as o}from"./Box-DFBoow9p.js";var s;function c(){return(c=e((()=>{r(),s=i(`MuiBox`,[`root`])})))()}var l;function u(){return(u=e((()=>{t(),a(),c(),l=o({defaultClassName:s.root,generateClassName:n.generate})})))()}export{u as n,l as t};

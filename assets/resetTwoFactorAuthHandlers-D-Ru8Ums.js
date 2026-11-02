@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{n as t,t as n}from"./http-DtXqozkn.js";import{n as r,t as i}from"./HttpResponse-BZ5PYs37.js";function a(e){return[n.post(`${e}/auth/v1/2fa/reset`,()=>i.json(``,{status:201})),n.post(`${e}/auth/v1/2fa/disable`,()=>i.json(``,{status:200}))]}function o(){return(o=e((()=>{t(),r()})))()}export{o as n,a as t};

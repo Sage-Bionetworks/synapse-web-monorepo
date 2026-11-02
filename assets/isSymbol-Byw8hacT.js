@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{n as t,t as n}from"./_baseGetTag-BraCtiIr.js";import{n as r,t as i}from"./isObjectLike-BIEmXYyx.js";function a(e){return typeof e==`symbol`||r(e)&&n(e)==o}var o;function s(){return(s=e((()=>{t(),i(),o=`[object Symbol]`})))()}export{a as n,s as t};
