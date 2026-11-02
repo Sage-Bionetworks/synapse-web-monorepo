@@ -2,6 +2,7 @@ import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import {
   FeatureFlagEnum,
   getFeatureFlagDisplayName,
+  NON_TEST_FEATURE_FLAGS,
 } from '@/utils/featureflag/FeatureFlags'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -44,7 +45,7 @@ describe('ExperimentalFeaturesDialog', () => {
     expect(onSave).toHaveBeenCalledWith(true, [])
   })
 
-  it('turns off Enable all and keeps the other features on when one feature is turned off', async () => {
+  it('turns off Enable all and keeps every other feature on, including other menus', async () => {
     const { onSave } = renderDialog(true)
 
     await userEvent.click(screen.getByRole('switch', { name: FLAG_NAME }))
@@ -55,7 +56,10 @@ describe('ExperimentalFeaturesDialog', () => {
     expect(screen.getByRole('switch', { name: FLAG_NAME })).not.toBeChecked()
 
     await userEvent.click(screen.getByRole('button', { name: 'Done' }))
-    expect(onSave).toHaveBeenCalledWith(false, [OTHER_FLAG])
+    expect(onSave).toHaveBeenCalledWith(false, [
+      ...NON_TEST_FEATURE_FLAGS,
+      OTHER_FLAG,
+    ])
   })
 
   it('turns off every feature when Enable all is turned off', async () => {

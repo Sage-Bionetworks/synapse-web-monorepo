@@ -4,11 +4,12 @@ import { DialogBase } from '../DialogBase'
 import {
   FeatureFlagEnum,
   getFeatureFlagDisplayName,
+  NON_TEST_FEATURE_FLAGS,
 } from '@/utils/featureflag/FeatureFlags'
 import styles from './ExperimentalFeaturesDialog.module.scss'
 import { ConfirmationButtons } from '../ConfirmationDialog/ConfirmationDialog'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
-import { isEqual, sortBy } from 'lodash-es'
+import { isEqual, sortBy, union } from 'lodash-es'
 
 export const NO_FEATURES_AVAILABLE_TEXT =
   'No individual experimental features are available on this site right now.'
@@ -50,8 +51,13 @@ function ExperimentalFeaturesDialog({
 
   const toggleFlag = (flag: FeatureFlagEnum) => {
     if (enableAll) {
+      // Enable all also covers other sites' flags and unlisted ones; keep those on so only this flag turns off
       setEnableAll(false)
-      setEnabledFlags(features.filter(feature => feature !== flag))
+      setEnabledFlags(
+        union(NON_TEST_FEATURE_FLAGS, features).filter(
+          feature => feature !== flag,
+        ),
+      )
       return
     }
 
