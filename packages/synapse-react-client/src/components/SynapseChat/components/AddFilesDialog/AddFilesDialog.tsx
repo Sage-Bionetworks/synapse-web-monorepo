@@ -22,6 +22,8 @@ export const ALLOWED_FILE_TYPES_LABEL = APPROVED_ATTACHMENT_CONTENT_TYPES.map(
   contentType => getContentTypeLabel(contentType).toLowerCase(),
 ).join(', ')
 
+export const ATTACHMENT_COUNT_AND_SIZE_LIMIT_LABEL = `${MAX_AGENT_CHAT_ATTACHMENTS} files maximum, up to ${MAX_FILE_SIZE_MB} MB per file`
+
 export type AddFilesDialogProps = {
   open: boolean
   /**
@@ -84,10 +86,7 @@ export function AddFilesDialog({
           />
           <Typography sx={{ fontWeight: 700, mt: 2 }}>Limitations</Typography>
           <Typography component="ul" sx={{ pl: 3, m: 0 }}>
-            <li>
-              {MAX_AGENT_CHAT_ATTACHMENTS} files maximum, up to{' '}
-              {MAX_FILE_SIZE_MB} MB per file
-            </li>
+            <li>{ATTACHMENT_COUNT_AND_SIZE_LIMIT_LABEL}</li>
             <li>Allowed file types: {ALLOWED_FILE_TYPES_LABEL}</li>
           </Typography>
           {validationError && (

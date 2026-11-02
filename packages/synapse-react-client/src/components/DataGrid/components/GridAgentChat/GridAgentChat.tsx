@@ -1,3 +1,4 @@
+import { ReactComponent as CurieAvatar } from '@/assets/illustrations/curie_avatar.svg'
 import { ReactComponent as CurieAvatarHead } from '@/assets/illustrations/curie_avatar_head.svg'
 import GridAgentSidebar from '@/components/DataGrid/components/GridAgentSidebar/GridAgentSidebar'
 import DraggableDialog from '@/components/DraggableDialog/DraggableDialog'
@@ -10,11 +11,27 @@ import {
 import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
 import { memo, useMemo, useState } from 'react'
 
-const suggestedPrompts = [
+const DIALOG_SUGGESTED_PROMPTS = [
   'Help me fill this out',
   'Help me understand this',
   'Find missing fields',
 ]
+
+// The welcome, prompts and placeholder below are part of the sidebar redesign, which ships behind
+// the sidebar's feature flag, so the dialog keeps its original prompts
+const SIDEBAR_SUGGESTED_PROMPTS = [
+  'Summarize this document',
+  'Explain what each column means',
+  'Fill in annotations from an uploaded document',
+  'What has been changed recently?',
+  'Interview me to fill in missing values',
+]
+
+const SIDEBAR_INPUT_PLACEHOLDER =
+  'Ask a question, upload a document, or describe what to change'
+
+const WELCOME_DESCRIPTION =
+  'I’m here to help with your annotations. Ask me questions, ask for changes, or upload documents and I’ll fill in the details.'
 
 export type GridAgentChatProps = {
   gridSessionId: string
@@ -71,6 +88,7 @@ export const GridAgentChat = memo(function GridAgentChat({
     [gridSessionId, usersReplicaId],
   )
 
+  const isSidebar = variant === 'sidebar'
   const chat = (
     <SynapseChat
       agentAvatar={<CurieAvatarHead width={35} height="auto" />}
@@ -80,7 +98,7 @@ export const GridAgentChat = memo(function GridAgentChat({
       sessionContext={sessionContext}
       createSessionOnFirstMessage={true}
       // The dialog's content padding sits below the composer, which sticks to the bottom
-      textboxPositionOffset={variant === 'dialog' ? '16px' : undefined}
+      textboxPositionOffset={isSidebar ? undefined : '16px'}
       hideTitle={true}
       showAccessLevelMenu={false}
       defaultAgentAccessLevel={AgentAccessLevel.WRITE_YOUR_PRIVATE_DATA}
@@ -88,12 +106,24 @@ export const GridAgentChat = memo(function GridAgentChat({
       externalSession={agentSession}
       setExternalSession={setAgentSession}
       externalChatState={chatState}
-      suggestedPrompts={suggestedPrompts}
+      suggestedPrompts={
+        isSidebar ? SIDEBAR_SUGGESTED_PROMPTS : DIALOG_SUGGESTED_PROMPTS
+      }
       allowAttachments={true}
+      inputPlaceholder={isSidebar ? SIDEBAR_INPUT_PLACEHOLDER : undefined}
+      welcome={
+        isSidebar
+          ? {
+              avatar: <CurieAvatar width={88} height="auto" aria-hidden />,
+              title: `Hi, I’m ${chatbotName}!`,
+              description: WELCOME_DESCRIPTION,
+            }
+          : undefined
+      }
     />
   )
 
-  if (variant === 'sidebar') {
+  if (isSidebar) {
     return (
       <GridAgentSidebar open={open} onClose={onClose}>
         {chat}

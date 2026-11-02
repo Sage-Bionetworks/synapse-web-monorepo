@@ -9,7 +9,7 @@ import { ChatInputArea, ChatInputAreaProps } from './ChatInputArea'
 
 vi.mock('../AddFilesDialog/AddFilesDialog', () => ({
   AddFilesDialog: vi.fn(),
-  ALLOWED_FILE_TYPES_LABEL: 'pdf, csv, txt, json',
+  ALLOWED_FILE_TYPES_LABEL: 'pdf, csv, tsv, txt',
 }))
 
 const mockAddFilesDialog = vi.mocked(AddFilesDialog)
