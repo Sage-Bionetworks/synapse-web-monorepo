@@ -2,6 +2,7 @@ import { MOCK_ACCESS_TOKEN } from '@/mocks/MockSynapseContext'
 import {
   BUNDLE_MASK_QUERY_COUNT,
   BUNDLE_MASK_QUERY_RESULTS,
+  SYNAPSE_REALM,
 } from '@/utils/SynapseConstants'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 import { QueryKey } from '@tanstack/react-query'
@@ -15,6 +16,96 @@ describe('KeyFactory tests', () => {
   let keyFactory = new KeyFactory(MOCK_ACCESS_TOKEN)
   beforeEach(() => {
     keyFactory = new KeyFactory(MOCK_ACCESS_TOKEN)
+  })
+
+  describe('session key prefix', () => {
+    const ENTITY_ID = 'syn123'
+    const ANONYMOUS_TOKEN = 'anonymous-session-token'
+    const keyWithoutToken = new KeyFactory(undefined).getEntityQueryKey(
+      ENTITY_ID,
+    )
+
+    test('an anonymous session in the public realm shares the keys used before its token exists', () => {
+      const anonymousSession = new KeyFactory(ANONYMOUS_TOKEN, {
+        isAuthenticated: false,
+        realmId: SYNAPSE_REALM,
+      })
+
+      expect(anonymousSession.getEntityQueryKey(ENTITY_ID)).toEqual(
+        keyWithoutToken,
+      )
+    })
+
+    test('an anonymous session without a realm is treated as the public realm', () => {
+      const anonymousSession = new KeyFactory(ANONYMOUS_TOKEN, {
+        isAuthenticated: false,
+      })
+
+      expect(anonymousSession.getEntityQueryKey(ENTITY_ID)).toEqual(
+        keyWithoutToken,
+      )
+    })
+
+    test('anonymous sessions in another realm share keys only with that realm', () => {
+      const realmKey = new KeyFactory(ANONYMOUS_TOKEN, {
+        isAuthenticated: false,
+        realmId: '2',
+      }).getEntityQueryKey(ENTITY_ID)
+
+      expect(realmKey).not.toEqual(keyWithoutToken)
+      expect(realmKey).toEqual(
+        new KeyFactory('another-anonymous-token', {
+          isAuthenticated: false,
+          realmId: '2',
+        }).getEntityQueryKey(ENTITY_ID),
+      )
+    })
+
+    test('each signed-in user token gets its own keys', () => {
+      const userKey = new KeyFactory(MOCK_ACCESS_TOKEN, {
+        isAuthenticated: true,
+        realmId: SYNAPSE_REALM,
+      }).getEntityQueryKey(ENTITY_ID)
+
+      expect(userKey).not.toEqual(keyWithoutToken)
+      expect(userKey).not.toEqual(
+        new KeyFactory('another-user-token', {
+          isAuthenticated: true,
+        }).getEntityQueryKey(ENTITY_ID),
+      )
+    })
+
+    test('a token without a described session gets its own keys', () => {
+      expect(
+        new KeyFactory(ANONYMOUS_TOKEN).getEntityQueryKey(ENTITY_ID),
+      ).not.toEqual(keyWithoutToken)
+      expect(keyFactory.getEntityQueryKey(ENTITY_ID)).toEqual(
+        new KeyFactory(MOCK_ACCESS_TOKEN, {
+          isAuthenticated: true,
+        }).getEntityQueryKey(ENTITY_ID),
+      )
+    })
+
+    test('forced-anonymous keys ignore the session', () => {
+      const queryBundleRequest = {
+        concreteType:
+          'org.sagebionetworks.repo.model.table.QueryBundleRequest' as const,
+        entityId: ENTITY_ID,
+        query: { sql: `SELECT * FROM ${ENTITY_ID}` },
+        partMask: BUNDLE_MASK_QUERY_RESULTS,
+      }
+
+      expect(
+        new KeyFactory(MOCK_ACCESS_TOKEN, {
+          isAuthenticated: true,
+        }).getFullTableQueryResultQueryKey(queryBundleRequest, true),
+      ).toEqual(
+        new KeyFactory(undefined).getFullTableQueryResultQueryKey(
+          queryBundleRequest,
+          true,
+        ),
+      )
+    })
   })
 
   describe('Entity QueryKeys', () => {

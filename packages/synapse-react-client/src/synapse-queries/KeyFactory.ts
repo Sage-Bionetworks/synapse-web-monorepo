@@ -10,6 +10,7 @@ import {
   USER_BUNDLE_MASK_ORCID,
   USER_BUNDLE_MASK_USER_PROFILE,
   USER_BUNDLE_MASK_VERIFICATION_SUBMISSION,
+  SYNAPSE_REALM,
 } from '@/utils/SynapseConstants'
 import {
   AccessRequestListRequest,
@@ -225,29 +226,67 @@ const FORM_TEMPLATE_QUERY_KEY = 'formTemplate'
 /** The userId value used in query keys for data scoped to the signed-in user (e.g. the current user's bundle). */
 export const CURRENT_USER_ID = 'current'
 
+const ANONYMOUS_KEY_PREFIX = 'anonymous'
+
+/** Describes the session an access token belongs to, so anonymous sessions can share cache keys. */
+export type KeyFactorySession = {
+  /**
+   * Whether the access token belongs to a signed-in user. When `false`, the token is an anonymous session token.
+   * When omitted, every access token gets its own key prefix.
+   */
+  isAuthenticated?: boolean
+  /** The realm of the session. An omitted realm is treated as the public Synapse realm. */
+  realmId?: string
+}
+
+function getSessionKeyPrefix(
+  accessToken: string | undefined,
+  session: KeyFactorySession,
+): string {
+  if (accessToken == null) {
+    return ANONYMOUS_KEY_PREFIX
+  }
+  if (session.isAuthenticated === false) {
+    // Requests sent before the anonymous token exists carry no token and are answered for an anonymous user of the
+    // public realm, so an anonymous session in that realm keeps those keys instead of refetching every query.
+    // Anonymous visibility can differ in other realms, so their keys stay separate.
+    const realmId = session.realmId ?? SYNAPSE_REALM
+    return realmId === SYNAPSE_REALM
+      ? ANONYMOUS_KEY_PREFIX
+      : `${ANONYMOUS_KEY_PREFIX}-realm-${realmId}`
+  }
+  return btoa(String(hashCode(accessToken)))
+}
+
 export class KeyFactory {
   accessToken: string | undefined = undefined
-  constructor(accessToken: string | undefined) {
+  private readonly keyPrefix: string
+
+  /**
+   * @param accessToken - The session's access token, or undefined if there is none yet
+   * @param session - The session the token belongs to. Keys for an anonymous session in the public Synapse realm
+   *   match the keys used before any token is available; keys for a signed-in user are unique to their token.
+   */
+  constructor(
+    accessToken: string | undefined,
+    session: KeyFactorySession = {},
+  ) {
     this.accessToken = accessToken
+    this.keyPrefix = getSessionKeyPrefix(accessToken, session)
   }
 
   /**
-   * Returns a react-query Query Key. Prepends the key with the access token, so that the key is unique per-session.
+   * Returns a react-query Query Key. Prepends the key with the session's key prefix, so that the key is unique per-session.
    * Also removes trailing undefined elements from the passed args, so a key can be generated for query invalidation.
    * @param args
    * @private
    */
   private getKey(...args: unknown[]): QueryKey {
-    return [
-      this.accessToken == null
-        ? 'anonymous'
-        : btoa(String(hashCode(this.accessToken))),
-      ...removeTrailingUndefinedElements(args),
-    ]
+    return [this.keyPrefix, ...removeTrailingUndefinedElements(args)]
   }
 
   private getKeyAnonymous(...args: unknown[]): QueryKey {
-    return ['anonymous', ...removeTrailingUndefinedElements(args)]
+    return [ANONYMOUS_KEY_PREFIX, ...removeTrailingUndefinedElements(args)]
   }
 
   public getFeatureFlagQueryKey() {

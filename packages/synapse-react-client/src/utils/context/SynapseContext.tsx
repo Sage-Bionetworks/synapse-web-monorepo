@@ -23,6 +23,8 @@ export type SynapseContextType = {
   keyFactory: KeyFactory
   /** The appId identifying the product. Used to brand the Synapse account management site, aka OneSage. */
   appId?: string
+  /** The realm of the current session, if known. Anonymous sessions outside the public Synapse realm get separate cache keys. */
+  realmId?: string
   /* API client objects for Synapse. Generated automatically. */
   synapseClient: SynapseClient
 }
@@ -58,8 +60,16 @@ export type SynapseContextProviderProps = PropsWithChildren<{
 export function SynapseContextProvider(props: SynapseContextProviderProps) {
   const { children, synapseContext: providedContext } = props
   const queryKeyFactory = useMemo(
-    () => new KeyFactory(providedContext?.accessToken),
-    [providedContext?.accessToken],
+    () =>
+      new KeyFactory(providedContext?.accessToken, {
+        isAuthenticated: providedContext?.isAuthenticated,
+        realmId: providedContext?.realmId,
+      }),
+    [
+      providedContext?.accessToken,
+      providedContext?.isAuthenticated,
+      providedContext?.realmId,
+    ],
   )
 
   const basePath = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
@@ -88,6 +98,7 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
         providedContext?.peopleSearchPageUrl ?? '/PeopleSearch:',
       keyFactory: providedContext?.keyFactory ?? queryKeyFactory,
       appId: providedContext?.appId,
+      realmId: providedContext?.realmId,
       synapseClient: synapseApiClient,
     }),
     [
@@ -100,6 +111,7 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
       providedContext?.utcTime,
       providedContext?.withErrorBoundary,
       providedContext?.appId,
+      providedContext?.realmId,
       queryKeyFactory,
       synapseApiClient,
     ],
