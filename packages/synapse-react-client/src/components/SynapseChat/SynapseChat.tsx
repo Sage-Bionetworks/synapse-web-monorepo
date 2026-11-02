@@ -19,11 +19,15 @@ import {
   GridAgentSessionContext,
 } from '@sage-bionetworks/synapse-client'
 import { AgentAccessLevel } from '@sage-bionetworks/synapse-types'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { SkeletonParagraph } from '../Skeleton'
 import { displayToast } from '../ToastMessage'
 import AccessLevelMenu from './AccessLevelMenu'
 import { ChatAttachment } from './utils/types'
+import {
+  ChatScrollBlock,
+  scrollChatElementIntoView,
+} from './utils/scrollChatElementIntoView'
 import {
   ChatInputArea,
   ChatInputAreaHandle,
@@ -198,6 +202,21 @@ export function SynapseChat({
   const shownWelcome = isConversationEmpty ? welcome : undefined
   const showGreeting = !welcome && variant === 'curie' && isConversationEmpty
   const chatInputAreaRef = useRef<ChatInputAreaHandle>(null)
+  const messageListRef = useRef<HTMLDivElement>(null)
+  const messageListContentRef = useRef<HTMLUListElement>(null)
+  const scrollToMessageElement = useCallback(
+    (element: HTMLElement, block: ChatScrollBlock) => {
+      if (messageListRef.current && messageListContentRef.current) {
+        scrollChatElementIntoView(
+          element,
+          messageListRef.current,
+          messageListContentRef.current,
+          block,
+        )
+      }
+    },
+    [],
+  )
 
   const curieAccessLevelSuffix =
     variant === 'curie' ? CURIE_ACCESS_LEVEL_SUFFIX[agentAccessLevel] : ''
@@ -356,6 +375,7 @@ export function SynapseChat({
       {!agentSession && <SkeletonParagraph numRows={10} />}
       {agentSession && (
         <Box
+          ref={messageListRef}
           sx={{
             flexGrow: 1,
             // Without this, the list can't shrink below its content, so a tall conversation
@@ -366,6 +386,7 @@ export function SynapseChat({
           }}
         >
           <List
+            ref={messageListContentRef}
             sx={{
               flex: 1,
               overflowY: 'auto',
@@ -431,6 +452,7 @@ export function SynapseChat({
                   showLoadingIcon={variant !== 'curie'}
                   onSendChat={sendChat}
                   scrollIntoView={isLast}
+                  scrollToElement={scrollToMessageElement}
                   animateEntry={!presentAtMount.has(interaction.id)}
                   isAwaitingResponse={isAwaitingResponse}
                   pendingAttachments={

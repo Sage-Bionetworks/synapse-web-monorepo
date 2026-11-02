@@ -1,4 +1,5 @@
 import GridAgentChat from '@/components/SynapseChat/GridAgentChat'
+import { mockWideTableAgentChatResponse } from '@/mocks/chat/mockChat'
 import { getChatbotHandlers } from '@/mocks/msw/handlers/chatHandlers'
 import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import {
@@ -76,3 +77,18 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Demo: Story = {}
+
+/** The agent replies with a table wider than the sidebar */
+export const WideResponse: Story = {
+  parameters: {
+    msw: {
+      handlers: {
+        ...handlers,
+        chatbot: getChatbotHandlers(
+          MOCK_REPO_ORIGIN,
+          mockWideTableAgentChatResponse,
+        ),
+      },
+    },
+  },
+}
