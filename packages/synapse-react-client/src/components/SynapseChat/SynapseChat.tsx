@@ -512,7 +512,7 @@ export function SynapseChat({
                     >
                       {prompt}
                       <ChevronRight
-                        sx={{ fontSize: '16px', color: 'grey.500' }}
+                        sx={{ fontSize: '16px', color: 'grey.700' }}
                       />
                     </Stack>
                   }
@@ -521,8 +521,8 @@ export function SynapseChat({
                   sx={{
                     cursor: 'pointer',
                     maxWidth: '100%',
-                    bgcolor: 'grey.100',
-                    '&:hover': { bgcolor: 'grey.200' },
+                    bgcolor: 'secondary.100',
+                    '&:hover': { bgcolor: 'secondary.200' },
                   }}
                 />
               ))}
