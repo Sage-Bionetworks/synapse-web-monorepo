@@ -107,9 +107,11 @@ export const FEATURE_FLAG_CONFIG: Record<FeatureFlagEnum, FeatureFlagConfig> = {
   },
 }
 
-/** Every flag except those reserved for unit tests */
+/** Every flag a menu can show, except those reserved for unit tests */
 export const NON_TEST_FEATURE_FLAGS = Object.values(FeatureFlagEnum).filter(
-  flag => !flag.startsWith('TEST_ONLY'),
+  flag =>
+    !flag.startsWith('TEST_ONLY') &&
+    FEATURE_FLAG_CONFIG[flag].scopes.length > 0,
 )
 
 export function getFeatureFlagDisplayName(flag: FeatureFlagEnum): string {
