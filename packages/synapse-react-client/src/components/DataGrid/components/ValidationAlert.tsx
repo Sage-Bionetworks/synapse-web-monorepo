@@ -10,17 +10,16 @@ import {
   Tabs,
   Typography,
 } from '@mui/material'
+import pluralize from 'pluralize'
 import { Fragment, useMemo, useState } from 'react'
 import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
-
-type ValidationError = {
-  rowIndex: number
-  columnName: string
-  message: string
-  pending: boolean
-}
-
-type RowEntry = { rowIndex: number; pending: boolean }
+import {
+  groupErrors,
+  LimitedGroup,
+  limitGroups,
+  RowEntry,
+  ValidationError,
+} from '../utils/groupValidationErrors'
 
 type GroupBy = 'row' | 'column' | 'message'
 
@@ -28,12 +27,6 @@ type GroupBy = 'row' | 'column' | 'message'
  *  a styled MUI element, so rendering every error of a large grid freezes and
  *  can crash the tab. The badge still shows the full count. */
 export const MAX_LISTED_ERRORS = 100
-
-type LimitedGroup = {
-  key: string
-  totalCount: number
-  entries: { key: string; rows: RowEntry[]; hiddenRowCount: number }[]
-}
 
 type ValidationAlertProps = {
   rowValues: DataGridRow[]
@@ -60,53 +53,6 @@ function getColDisplayIndex(
 /** Column name for display — '_row' becomes 'Row-level'. */
 function colLabel(colName: string): string {
   return colName === '_row' ? 'Row-level' : colName
-}
-
-function groupErrors(
-  errors: ValidationError[],
-  groupKey: (error: ValidationError) => string,
-  entryKey: (error: ValidationError) => string,
-): Map<string, Map<string, RowEntry[]>> {
-  const groups = new Map<string, Map<string, RowEntry[]>>()
-  errors.forEach(error => {
-    const key = groupKey(error)
-    if (!groups.has(key)) groups.set(key, new Map())
-    const group = groups.get(key)!
-    const subKey = entryKey(error)
-    if (!group.has(subKey)) group.set(subKey, [])
-    group
-      .get(subKey)!
-      .push({ rowIndex: error.rowIndex, pending: error.pending })
-  })
-  return groups
-}
-
-/** Keeps at most `maxRows` row entries across all groups, in iteration order.
- *  Group totals still count every row. */
-function limitGroups(
-  groups: Map<string, Map<string, RowEntry[]>>,
-  maxRows: number,
-): LimitedGroup[] {
-  const limited: LimitedGroup[] = []
-  let remaining = maxRows
-  for (const [key, subGroups] of groups) {
-    if (remaining <= 0) break
-    let totalCount = 0
-    const entries: LimitedGroup['entries'] = []
-    for (const [subKey, rows] of subGroups) {
-      totalCount += rows.length
-      if (remaining <= 0) continue
-      const shownRows = rows.slice(0, remaining)
-      remaining -= shownRows.length
-      entries.push({
-        key: subKey,
-        rows: shownRows,
-        hiddenRowCount: rows.length - shownRows.length,
-      })
-    }
-    limited.push({ key, totalCount, entries })
-  }
-  return limited
 }
 
 /** Renders a column name + message pair with distinct styles. */
@@ -222,6 +168,18 @@ function RowLinks({
   )
 }
 
+/** Summarizes a group's entries that were dropped by the listing cap. */
+function HiddenEntries({ count, noun }: { count: number; noun: string }) {
+  if (count === 0) return null
+  return (
+    <Box sx={groupSectionItemSx}>
+      <Typography variant="body1" color="text.disabled">
+        +{count.toLocaleString()} more {pluralize(noun, count)}
+      </Typography>
+    </Box>
+  )
+}
+
 function ByColumnTab({
   groups,
   columnNames,
@@ -230,7 +188,7 @@ function ByColumnTab({
 }: NavProps & { groups: LimitedGroup[] }) {
   return (
     <Stack divider={<Divider />} spacing={1}>
-      {groups.map(({ key: colName, totalCount, entries }) => {
+      {groups.map(({ key: colName, totalCount, entries, hiddenEntryCount }) => {
         const navCol = Math.max(
           0,
           getColDisplayIndex(colName, columnNames, columnOrder),
@@ -264,6 +222,7 @@ function ByColumnTab({
                 />
               </Box>
             ))}
+            <HiddenEntries count={hiddenEntryCount} noun="message" />
           </Box>
         )
       })}
@@ -279,7 +238,7 @@ function ByMessageTab({
 }: NavProps & { groups: LimitedGroup[] }) {
   return (
     <Stack divider={<Divider />} spacing={1}>
-      {groups.map(({ key: msg, totalCount, entries }) => (
+      {groups.map(({ key: msg, totalCount, entries, hiddenEntryCount }) => (
         <Box key={msg}>
           <Box sx={groupSectionHeaderSx}>
             <Typography variant="body1" fontWeight="bold">
@@ -314,6 +273,7 @@ function ByMessageTab({
               </Box>
             )
           })}
+          <HiddenEntries count={hiddenEntryCount} noun="column" />
         </Box>
       ))}
     </Stack>
