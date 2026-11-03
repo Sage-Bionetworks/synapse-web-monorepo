@@ -213,6 +213,7 @@ export const ProductionSyntheticDataCohortBuilderTest: Story = {
   args: {
     participantsTableId: 'syn78350488',
     filesTableId: 'syn78350475',
+    participantsSourceTableId: 'syn78350314',
   },
   // Story globals override, and lock, the Stack toolbar for this story.
   globals: { stack: 'production' },
@@ -227,6 +228,7 @@ export const ProductionEliteCohortBuilder: Story = {
   args: {
     participantsTableId: 'syn78340012',
     filesTableId: 'syn78340377',
+    participantsSourceTableId: 'syn77454377',
   },
   // Story globals override, and lock, the Stack toolbar for this story.
   globals: { stack: 'production' },
@@ -241,6 +243,7 @@ export const ProductionAdkpCohortBuilder: Story = {
   args: {
     participantsTableId: 'syn78155293',
     filesTableId: 'syn78157126',
+    participantsSourceTableId: 'syn77485039',
   },
   // Story globals override, and lock, the Stack toolbar for this story.
   globals: { stack: 'production' },
