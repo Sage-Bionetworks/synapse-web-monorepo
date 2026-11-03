@@ -134,6 +134,21 @@ describe('ExperimentalFeatures', () => {
     ).toHaveClass(styles.active)
   })
 
+  it('counts opted-in features, leaving out flags the server pins', async () => {
+    mockServerFlags({ [FLAG]: true })
+    mockIsACTMember(true)
+    Cookies.set(
+      SYNAPSE_EXPERIMENTAL_FEATURES_COOKIE,
+      `${FLAG},${ACT_ONLY_FLAG}`,
+    )
+    const { queryClient } = renderComponent()
+    await waitFor(() => expect(queryClient.isFetching()).toBe(0))
+
+    expect(
+      screen.getByRole('button', { name: 'Experimental Features (1 enabled)' }),
+    ).toBeInTheDocument()
+  })
+
   it('turns Enable all on without opening the dialog when no features are listed', async () => {
     mockServerFlags({ [FLAG]: false, [ACT_ONLY_FLAG]: false })
     Cookies.set(SYNAPSE_EXPERIMENTAL_FEATURES_COOKIE, FLAG)
