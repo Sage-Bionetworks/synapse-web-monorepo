@@ -331,10 +331,11 @@ describe('ValidationAlert', () => {
     it('mounts no error list while collapsed', async () => {
       render(<ValidationAlert {...defaultProps} rowValues={sameErrorRows} />)
 
-      // `hidden` also matches elements inside a closed Collapse, which still cost a render.
+      // Text queries match mounted nodes regardless of visibility, so they also find
+      // elements inside a closed Collapse, which still cost a render. Role queries
+      // with `hidden: true` do not: accessible names skip hidden text.
       // The single match is the first-error preview.
-      const mountedErrorLinks = () =>
-        screen.queryAllByRole('button', { name: errorLinkName, hidden: true })
+      const mountedErrorLinks = () => screen.queryAllByText(errorLinkName)
       expect(mountedErrorLinks()).toHaveLength(1)
 
       await userEvent.click(screen.getByText('Expand'))
