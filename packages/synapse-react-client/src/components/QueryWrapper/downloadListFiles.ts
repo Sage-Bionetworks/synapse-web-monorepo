@@ -48,18 +48,27 @@ export function getDownloadListFileColumns(
   }
 }
 
+function getFileEntityId(
+  row: Row,
+  fileColumnIndex: number,
+  rowsAreEntities: boolean,
+) {
+  if (fileColumnIndex >= 0) {
+    return row.values[fileColumnIndex]
+  }
+  if (rowsAreEntities && row.rowId != null) {
+    return `syn${row.rowId}`
+  }
+  return null
+}
+
 function getDownloadListItem(
   row: Row,
   fileColumnIndex: number,
   versionColumnIndex: number,
   rowsAreEntities: boolean,
 ): DownloadListItem | undefined {
-  const fileEntityId =
-    fileColumnIndex >= 0
-      ? row.values[fileColumnIndex]
-      : rowsAreEntities && row.rowId != null
-        ? `syn${row.rowId}`
-        : null
+  const fileEntityId = getFileEntityId(row, fileColumnIndex, rowsAreEntities)
   if (!fileEntityId) {
     return undefined
   }
