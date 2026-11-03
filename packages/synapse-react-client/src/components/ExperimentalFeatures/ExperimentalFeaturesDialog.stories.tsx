@@ -40,7 +40,3 @@ export const EnableAll: Story = {
 export const Loading: Story = {
   args: { isLoading: true },
 }
-
-export const NoFeaturesAvailable: Story = {
-  args: { features: [] },
-}

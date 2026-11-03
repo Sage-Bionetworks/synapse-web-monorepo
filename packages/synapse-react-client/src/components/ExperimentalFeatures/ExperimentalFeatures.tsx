@@ -26,9 +26,10 @@ function ExperimentalFeatures({
   const { isEnableAllOn, enabledFeatures, savePreferences } =
     useExperimentalFeaturePreferences()
   const { data: serverFlags, isLoading } = useGetFeatureFlags()
-  const { data: isACTMember = false } = useIsCurrentUserACTMember({
-    enabled: isAuthenticated,
-  })
+  const { data: isACTMember = false, isLoading: isACTMemberLoading } =
+    useIsCurrentUserACTMember({
+      enabled: isAuthenticated,
+    })
 
   const [open, setOpen] = useState(false)
   const [dialogKey, setDialogKey] = useState(0)
@@ -77,7 +78,7 @@ function ExperimentalFeatures({
       <ExperimentalFeaturesButton
         isActive={isEnableAllOn || count > 0}
         count={count}
-        disabled={isSaving}
+        disabled={isSaving || isLoading || isACTMemberLoading}
         onClick={handleClick}
       />
       <ExperimentalFeaturesDialog

@@ -68,9 +68,9 @@ function renderComponent(
 }
 
 async function openDialog() {
-  await userEvent.click(
-    screen.getByRole('button', { name: /Experimental Features/ }),
-  )
+  const button = screen.getByRole('button', { name: /Experimental Features/ })
+  await waitFor(() => expect(button).toBeEnabled())
+  await userEvent.click(button)
 }
 
 describe('ExperimentalFeatures', () => {
@@ -163,6 +163,18 @@ describe('ExperimentalFeatures', () => {
     ).toBeInTheDocument()
   })
 
+  it('counts every listed feature and shows as active when Enable all is on', async () => {
+    mockServerFlags()
+    mockIsACTMember(true)
+    Cookies.set(EXPERIMENTAL_MODE_COOKIE, 'true')
+    const { queryClient } = renderComponent()
+    await waitFor(() => expect(queryClient.isFetching()).toBe(0))
+
+    expect(
+      screen.getByRole('button', { name: 'Experimental Features (2 enabled)' }),
+    ).toHaveClass(styles.active)
+  })
+
   it('lists and counts nothing when the server flags fail to load', async () => {
     server.use(
       http.get(FEATURE_FLAGS_URL, () =>
@@ -178,7 +190,7 @@ describe('ExperimentalFeatures', () => {
     ).toBeInTheDocument()
   })
 
-  it('shows saved choices once the flags load when the dialog opens while loading', async () => {
+  it('disables the switch until the flags load', async () => {
     mockServerFlags()
     // Holds the response briefly, then falls through to the handler above
     server.use(
@@ -186,12 +198,11 @@ describe('ExperimentalFeatures', () => {
         await delay(100)
       }),
     )
-    Cookies.set(SYNAPSE_EXPERIMENTAL_FEATURES_COOKIE, FLAG)
     renderComponent()
+    const button = screen.getByRole('button', { name: /Experimental Features/ })
 
-    await openDialog()
-
-    expect(await screen.findByRole('switch', { name: FLAG_NAME })).toBeChecked()
+    expect(button).toBeDisabled()
+    await waitFor(() => expect(button).toBeEnabled())
   })
 
   it('turns Enable all on without opening the dialog when no features are listed', async () => {

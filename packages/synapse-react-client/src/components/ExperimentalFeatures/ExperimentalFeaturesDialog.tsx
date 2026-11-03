@@ -11,9 +11,6 @@ import { ConfirmationButtons } from '../ConfirmationDialog/ConfirmationDialog'
 import { SynapseSpinner } from '../LoadingScreen/LoadingScreen'
 import { isEqual, sortBy, union } from 'lodash-es'
 
-export const NO_FEATURES_AVAILABLE_TEXT =
-  'No individual experimental features are available on this site right now.'
-
 type ExperimentalFeaturesDialogProps = {
   /** Whether the dialog is shown */
   open: boolean
@@ -78,10 +75,6 @@ function ExperimentalFeaturesDialog({
           <SynapseSpinner size={30} />
         </Box>
       )
-    }
-
-    if (features.length === 0) {
-      return <p>{NO_FEATURES_AVAILABLE_TEXT}</p>
     }
 
     return (
