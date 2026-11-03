@@ -419,7 +419,7 @@ export function toSearchIndexQuery(
   const aggregationEntries = columnModels
     ?.filter(cm => cm.facetType === 'enumeration')
     .map(cm => {
-      const termsAgg: TermsAggregation = { field: cm.name, size: 100 }
+      const termsAgg: TermsAggregation = { field: cm.name, size: 1000 }
       if (cm.facetSortConfig?.property != null) {
         // Map FacetColumnSortProperty ('VALUE'|'FREQUENCY') → OpenSearch order key ('_key'|'_count')
         const orderKey =
@@ -784,7 +784,7 @@ export function getSearchQueryUseQueryOptions(
       queryFn: (context: { pageParam?: number | string }) => {
         const offset =
           typeof context.pageParam === 'string'
-            ? parseInt(context.pageParam)
+            ? Number.parseInt(context.pageParam)
             : (context.pageParam ?? 0)
         const requestForPage: SearchIndexQuery = {
           ...rowDataQuery,
