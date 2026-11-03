@@ -234,13 +234,3 @@ export function getCurrentUserCertifiedValidatedHandler(
     return HttpResponse.json(response, { status })
   })
 }
-
-export function getCurrentUserIsACTMemberHandler(
-  backendOrigin: string,
-  isACTMember: boolean,
-) {
-  return http.get(`${backendOrigin}${USER_BUNDLE}`, () => {
-    const response: UserBundle = { ...mockUserBundle, isACTMember }
-    return HttpResponse.json(response, { status: 200 })
-  })
-}

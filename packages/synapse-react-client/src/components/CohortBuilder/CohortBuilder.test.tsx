@@ -12,14 +12,9 @@ import {
   getCohortBuilderSyntheticData,
 } from '@/mocks/msw/handlers/cohortBuilderHandlers'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import { getCurrentUserIsACTMemberHandler } from '@/mocks/msw/handlers/userProfileHandlers'
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { USER_BUNDLE } from '@/utils/APIConstants'
-import {
-  BackendDestinationEnum,
-  getEndpoint,
-} from '@/utils/functions/getEndpoint'
+import { ENTITY_PERMISSIONS } from '@/utils/APIConstants'
 import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
 import {
   AddToDownloadListRequest,
@@ -39,7 +34,7 @@ import {
   within,
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { http, HttpResponse } from 'msw'
+import { http } from 'msw'
 import {
   AGGREGATE_DATA_PREVIEW_TITLE,
   APPLY_PREVIEW_BUTTON_TEXT,
@@ -66,7 +61,6 @@ vi.mock('@/utils/functions/testDownloadSpeed', () => ({
 
 const participantsTableId = ELITE_MOCK_PROFILE.participantsVirtualTableId
 const allParticipantsCount = (2700).toLocaleString()
-const repoOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
 let sentRequests: QueryBundleRequest[]
 const recordQueryRequest = async ({ request }: { request: Request }) => {
@@ -242,22 +236,35 @@ describe('CohortBuilder', () => {
     expect(sentRequests).toEqual([])
   })
 
-  it('offers the aggregate-only preview to ACT members only', async () => {
-    let isUserBundleServed = false
-    server.use(
-      http.get(`${repoOrigin}${USER_BUNDLE}`, () => {
-        isUserBundleServed = true
-        return HttpResponse.json({ isACTMember: false })
-      }),
+  it('does not offer the aggregate-only preview to a user who does not administer the participant source table', async () => {
+    const permissionsPath = ENTITY_PERMISSIONS(
+      ELITE_MOCK_PROFILE.participantsSourceTableId,
     )
-    renderCohortBuilder({}, 'FULL')
+    let isPermissionsServed = false
+    const recordPermissionsResponse = ({ request }: { request: Request }) => {
+      if (new URL(request.url).pathname.endsWith(permissionsPath)) {
+        isPermissionsServed = true
+      }
+    }
+    server.events.on('response:mocked', recordPermissionsResponse)
+    try {
+      renderCohortBuilder(
+        {
+          participantsSourceTableId:
+            ELITE_MOCK_PROFILE.participantsSourceTableId,
+        },
+        'FULL',
+      )
 
-    await screen.findByText(`${allParticipantsCount} participants`)
-    await waitFor(() => expect(isUserBundleServed).toBe(true))
-    expect(
-      screen.queryByRole('button', { name: AGGREGATE_DATA_PREVIEW_TITLE }),
-    ).not.toBeInTheDocument()
-    expect(sentRequests.filter(r => r.aggregateDataPreview)).toEqual([])
+      await screen.findByText(`${allParticipantsCount} participants`)
+      await waitFor(() => expect(isPermissionsServed).toBe(true))
+      expect(
+        screen.queryByRole('button', { name: AGGREGATE_DATA_PREVIEW_TITLE }),
+      ).not.toBeInTheDocument()
+      expect(sentRequests.filter(r => r.aggregateDataPreview)).toEqual([])
+    } finally {
+      server.events.removeListener('response:mocked', recordPermissionsResponse)
+    }
   })
 
   // Each test builds a cohort with the Query Builder, then each result waits on chained async query jobs (participants,
@@ -301,10 +308,15 @@ describe('CohortBuilder', () => {
       )
     }
 
-    it('lets an ACT member preview the participant and files queries the way an aggregate-only user sees them, keeping the cohort', async () => {
+    it('lets an administrator of the participant source table preview the participant and files queries the way an aggregate-only user sees them, keeping the cohort', async () => {
       const user = userEvent.setup()
-      server.use(getCurrentUserIsACTMemberHandler(repoOrigin, true))
-      const profile = renderWithFiles({ access: 'FULL' })
+      const profile = renderWithFiles(
+        { access: 'FULL', isSourceAdministrator: true },
+        {
+          participantsSourceTableId:
+            ELITE_MOCK_PROFILE.participantsSourceTableId,
+        },
+      )
       await screen.findByText(`${allParticipantsCount} participants`)
 
       // 1,200 participants, but only 3 datasets: an approved user sees them, an aggregate-only user wouldn't.

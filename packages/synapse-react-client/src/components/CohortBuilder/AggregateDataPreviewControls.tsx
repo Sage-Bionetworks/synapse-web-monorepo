@@ -1,4 +1,4 @@
-import { useIsCurrentUserACTMember } from '@/synapse-queries/user/useUserBundle'
+import { useGetEntityPermissions } from '@/synapse-queries/entity/useEntity'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import {
   Accordion,
@@ -151,13 +151,22 @@ function toAggregateDataConfiguration(
   }
 }
 
+export type AggregateDataPreviewControlsProps = {
+  /** The AGGREGATE_DATA source table whose administrators may preview its aggregate-only results. */
+  sourceTableId: string
+}
+
 /**
- * Lets an ACT member set the `aggregateDataPreview` of the enclosing QueryWrapper's query, to see the results that users
- * with aggregate-only access would get under that configuration. Renders nothing for anyone else.
+ * Lets an administrator of the source table set the `aggregateDataPreview` of the enclosing QueryWrapper's query, to see
+ * the results that users with aggregate-only access would get under that configuration. Renders nothing for anyone
+ * else.
  */
-export function AggregateDataPreviewControls() {
-  const { data: isACTMember } = useIsCurrentUserACTMember()
-  if (!isACTMember) {
+export function AggregateDataPreviewControls(
+  props: AggregateDataPreviewControlsProps,
+) {
+  const { data: permissions } = useGetEntityPermissions(props.sourceTableId)
+  // Only the Administrator permission level grants CHANGE_PERMISSIONS.
+  if (!permissions?.canChangePermissions) {
     return null
   }
   return <AggregateDataPreviewForm />
@@ -197,7 +206,8 @@ function AggregateDataPreviewForm() {
       <AccordionDetails className={styles.preview}>
         <Typography variant="body1">
           Results are processed as they would be for users with aggregate-only
-          access. Only ACT members see this option.
+          access. Only administrators of the participant source table see this
+          option.
         </Typography>
         <div className={styles.previewFields}>
           <TextField

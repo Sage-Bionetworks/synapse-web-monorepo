@@ -6,11 +6,6 @@ import {
 import { CohortBuilderAccess } from '@/mocks/cohortBuilder/cohortBuilderMockQueryEngine'
 import { getCohortBuilderStorybookHandlers } from '@/mocks/msw/handlers/cohortBuilderHandlers'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
-import {
-  getCurrentUserIsACTMemberHandler,
-  getUserProfileHandlers,
-} from '@/mocks/msw/handlers/userProfileHandlers'
-import { MOCK_REPO_ORIGIN } from '@/utils/functions/getEndpoint'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { userEvent, within } from 'storybook/test'
 import {
@@ -128,22 +123,23 @@ export const AdkpAggregateOnly: Story = {
   parameters: getMockParameters(ADKP_MOCK_PROFILE, 'AGGREGATE_ONLY'),
 }
 
-/** An ACT member (approved) previewing what unapproved ELITE users see: rounding to bins of 5, threshold 20. */
+/**
+ * An administrator of the ELITE participant source table (approved) previewing what unapproved ELITE users see:
+ * rounding to bins of 5, threshold 20.
+ */
 export const ElitePreview: Story = {
-  args: eliteWithFilesArgs,
+  args: {
+    ...eliteWithFilesArgs,
+    participantsSourceTableId: ELITE_MOCK_PROFILE.participantsSourceTableId,
+  },
   parameters: {
     stack: 'mock',
     msw: {
-      handlers: {
-        ...getCohortBuilderStorybookHandlers({
-          profile: ELITE_MOCK_PROFILE,
-          access: 'FULL',
-        }),
-        userProfile: [
-          getCurrentUserIsACTMemberHandler(MOCK_REPO_ORIGIN, true),
-          ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
-        ],
-      },
+      handlers: getCohortBuilderStorybookHandlers({
+        profile: ELITE_MOCK_PROFILE,
+        access: 'FULL',
+        isSourceAdministrator: true,
+      }),
     },
   },
   play: async ({ canvasElement }) => {

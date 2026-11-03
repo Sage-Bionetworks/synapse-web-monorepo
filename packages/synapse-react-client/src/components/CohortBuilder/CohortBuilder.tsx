@@ -46,6 +46,11 @@ export type CohortBuilderProps = {
   /** The participant VirtualTable: one row per participant. */
   participantsTableId: string
   /**
+   * The AGGREGATE_DATA source table that the participant VirtualTable derives from. When set, users with the
+   * Administrator permission on it can preview the results that users with aggregate-only access see.
+   */
+  participantsSourceTableId?: string
+  /**
    * The Files/Datasets VirtualTable. When set, the files and datasets of the cohort are listed below its plots, using
    * the cohort as a request-scoped cohort.
    */
@@ -67,6 +72,7 @@ export type CohortBuilderProps = {
 export function CohortBuilder(props: CohortBuilderProps) {
   const {
     participantsTableId,
+    participantsSourceTableId,
     filesTableId,
     facetsToPlot,
     columnAliases,
@@ -109,7 +115,11 @@ export function CohortBuilder(props: CohortBuilderProps) {
             <Alert severity="info">{auditNotice}</Alert>
             <CohortPreviewNotice />
           </div>
-          <AggregateDataPreviewControls />
+          {participantsSourceTableId && (
+            <AggregateDataPreviewControls
+              sourceTableId={participantsSourceTableId}
+            />
+          )}
           <CohortQueryBuilder />
           {/* Only the results are replaced by an error or withheld-result notice, so the cohort stays editable. */}
           <QueryWrapperErrorBoundary>
