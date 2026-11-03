@@ -9,6 +9,7 @@ import { SynapseFooter, SynapseFooterProps } from './SynapseFooter'
 import { ApplicationSessionContextType } from '@/utils/AppUtils/session/ApplicationSessionContext'
 import { UseQueryResult } from '@tanstack/react-query'
 import { Realm } from '@sage-bionetworks/synapse-client'
+import ExperimentalFeatures from '../ExperimentalFeatures/ExperimentalFeatures'
 
 vi.mock('@/utils', () => ({
   useApplicationSessionContext: vi.fn(),
@@ -23,7 +24,7 @@ vi.mock('@/utils/hooks/useOneSageURL', () => ({
 }))
 
 vi.mock('../ExperimentalFeatures/ExperimentalFeatures', () => ({
-  default: () => null,
+  default: vi.fn(() => null),
 }))
 
 const mockUseApplicationSessionContext = vi.mocked(useApplicationSessionContext)
@@ -116,6 +117,23 @@ describe('SynapseFooter', () => {
       await userEvent.setup().click(resetButton)
 
       expect(mockClearSession).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  it("passes the SYNAPSE scope and SWC's save callback to the Experimental Features menu", () => {
+    mockUseApplicationSessionContext.mockReturnValue({
+      isAuthenticated: false,
+      clearSession: mockClearSession,
+    } as unknown as ApplicationSessionContextType)
+    mockUseGetCurrentRealm.mockReturnValue({
+      data: { id: SYNAPSE_REALM, name: 'Synapse' },
+    } as UseQueryResult<Realm, SynapseClientError>)
+
+    renderComponent()
+
+    expect(vi.mocked(ExperimentalFeatures).mock.calls[0][0]).toEqual({
+      scopes: ['SYNAPSE'],
+      onPreferencesSaved: defaultProps.onExperimentalFeaturesSaved,
     })
   })
 })
