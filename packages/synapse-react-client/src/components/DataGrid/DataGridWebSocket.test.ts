@@ -9,7 +9,7 @@ import { Decoder as SnapshotDecoder } from 'json-joy/lib/json-crdt/codec/indexed
 import { Encoder as SnapshotEncoder } from 'json-joy/lib/json-crdt/codec/indexed/binary/Encoder'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { GridModel, gridSchema } from './DataGridTypes'
-import { DataGridWebSocket } from './DataGridWebSocket'
+import { adoptReplicaSession, DataGridWebSocket } from './DataGridWebSocket'
 
 // Mock the compact codec to allow intercepting decode() in specific tests
 const mockDecode = vi.fn()
@@ -98,23 +98,18 @@ function buildPatchResponseMessage(model: GridModel): unknown[] {
   return [4, 1, { type: 'patch', body: encoded }]
 }
 
-/**
- * Build the raw JSON-Rx array for a JsonRxResponse carrying multiple compact-encoded patches.
- * Format: [4, subscriptionId, { type: 'patches', body: CompactCodecPatch[] }]
- */
+/** Build the raw JSON-Rx array for a JsonRxResponse carrying compact-encoded patches */
+function buildPatchesEnvelope(patches: Patch[]): unknown[] {
+  // JsonRxResponse type code is 4
+  return [4, 1, { type: 'patches', body: patches.map(patch => encode(patch)) }]
+}
+
 function buildPatchesResponseMessage(model: GridModel): unknown[] {
-  // First patch: set first column name
   model.api.vec(['columnNames']).set([[0, 'col_a']])
   const patch1 = model.api.flush()
-  const encoded1 = encode(patch1)
-
-  // Second patch: set second column name
   model.api.vec(['columnNames']).set([[1, 'col_b']])
   const patch2 = model.api.flush()
-  const encoded2 = encode(patch2)
-
-  // JsonRxResponse type code is 4
-  return [4, 1, { type: 'patches', body: [encoded1, encoded2] }]
+  return buildPatchesEnvelope([patch1, patch2])
 }
 
 const SNAPSHOT_MESSAGE = [
@@ -122,6 +117,11 @@ const SNAPSHOT_MESSAGE = [
   1,
   { type: 'snapshot', body: 'https://example.com/snapshot.cbor' },
 ]
+
+interface ServerHistory {
+  server: GridModel
+  serverPatches: Patch[]
+}
 
 /**
  * Server history in which this replica edited during an earlier connection, and another session edited
@@ -147,6 +147,30 @@ function buildReconnectingReplicaHistory() {
   }
 }
 
+/** Server history edited only by other sessions, so this replica has no prior operations */
+function buildFreshReplicaHistory(): ServerHistory {
+  const server = Model.create(gridSchema, 5551234)
+  const serverPatches: Patch[] = [server.api.flush()]
+  const otherSession = server.fork(7776543)
+  otherSession.api.vec(['columnNames']).set([[0, 'from_another_session']])
+  const otherPatch = otherSession.api.flush()
+  server.applyPatch(otherPatch)
+  serverPatches.push(otherPatch)
+  server.api.vec(['columnNames']).set([[1, 'from_the_server']])
+  serverPatches.push(server.api.flush())
+  return { server: server as unknown as GridModel, serverPatches }
+}
+
+function describeClock(model: GridModel) {
+  return {
+    sid: model.clock.sid,
+    time: model.clock.time,
+    peers: [...model.clock.peers.values()]
+      .map(peer => [peer.sid, peer.time])
+      .toSorted(([a], [b]) => a - b),
+  }
+}
+
 function decodeSnapshot(model: GridModel): GridModel {
   return new SnapshotDecoder().decode(
     new SnapshotEncoder().encode(model as unknown as Model),
@@ -166,10 +190,10 @@ function mockFetchAndDecodeSnapshot(
 function expectLocalEditsAfter(model: GridModel, earlierPatch: Patch) {
   model.api.vec(['columnNames']).set([[2, 'local_edit']])
   const localPatch = model.api.flush()
-  const earlierPatchLastTime =
-    earlierPatch.getId()!.time + earlierPatch.span() - 1
   expect(localPatch.getId()!.sid).toEqual(replicaId)
-  expect(localPatch.getId()!.time).toBeGreaterThan(earlierPatchLastTime)
+  expect(localPatch.getId()!.time).toBeGreaterThanOrEqual(
+    earlierPatch.nextTime(),
+  )
 }
 
 /** The clock sent to the server must report this replica at the model's local time, not an older entry */
@@ -184,6 +208,21 @@ function expectSyncClockReportsLocalTime(
   expect(clock.filter(([sid]) => sid === replicaId)).toEqual([
     [replicaId, model.clock.time],
   ])
+}
+
+/** The clock sent to the server must be exactly the model's clock: this replica's time and every peer */
+function expectSyncClockMatchesModel(
+  mockSocket: MockWebSocket,
+  model: GridModel,
+) {
+  const syncRequest = parseSentMessages(mockSocket).find(
+    message => message[2] === 'synchronize-clock',
+  )!
+  const { sid, time, peers } = describeClock(model)
+  expect(syncRequest[3]).toHaveLength(peers.length + 1)
+  expect(syncRequest[3]).toEqual(
+    expect.arrayContaining([[sid, time], ...peers]),
+  )
 }
 
 describe('DataGridWebSocket', () => {
@@ -764,6 +803,72 @@ describe('DataGridWebSocket', () => {
         methods.some(m => m === 'patch' || m === 'synchronize-clock'),
       ).toBe(true)
     })
+
+    it('writes as this replica and syncs its clock when the patches have no edits by it', () => {
+      const onModelCreate = vi.fn()
+      vi.spyOn(console, 'debug').mockImplementation(() => {})
+      vi.spyOn(console, 'log').mockImplementation(() => {})
+      const { serverPatches } = buildFreshReplicaHistory()
+      const { mockSocket } = createDataGridWebSocket({
+        onModelCreate,
+        model: null,
+      })
+
+      mockSocket.simulateMessage(buildPatchesEnvelope(serverPatches))
+
+      expect(onModelCreate).toHaveBeenCalledTimes(1)
+      const createdModel = onModelCreate.mock.calls[0][0] as GridModel
+      expect(createdModel.clock.sid).toEqual(replicaId)
+      expectSyncClockMatchesModel(mockSocket, createdModel)
+    })
+
+    describe('for a reconnecting replica', () => {
+      it('reports the local time for this replica in the sync clock, not its stale entry from the patches', () => {
+        const onModelCreate = vi.fn()
+        vi.spyOn(console, 'debug').mockImplementation(() => {})
+        vi.spyOn(console, 'log').mockImplementation(() => {})
+        const { serverPatches, previousReplicaPatch } =
+          buildReconnectingReplicaHistory()
+
+        const { mockSocket } = createDataGridWebSocket({
+          onModelCreate,
+          model: null,
+        })
+        mockSocket.simulateMessage(buildPatchesEnvelope(serverPatches))
+
+        expect(onModelCreate).toHaveBeenCalledTimes(1)
+        const createdModel = onModelCreate.mock.calls[0][0] as GridModel
+        expect(createdModel.clock.sid).toEqual(replicaId)
+        expectSyncClockReportsLocalTime(mockSocket, createdModel)
+        expectLocalEditsAfter(createdModel, previousReplicaPatch)
+      })
+    })
+  })
+
+  describe('adoptReplicaSession', () => {
+    const histories = {
+      'a replica with no edits in the history': buildFreshReplicaHistory,
+      'a reconnecting replica': buildReconnectingReplicaHistory,
+    }
+    const loaders = {
+      'a decoded snapshot': (history: ServerHistory) =>
+        decodeSnapshot(history.server),
+      'a model built from patches': (history: ServerHistory) =>
+        Model.fromPatches(history.serverPatches) as unknown as GridModel,
+    }
+    for (const [historyName, buildHistory] of Object.entries(histories)) {
+      for (const [loaderName, load] of Object.entries(loaders)) {
+        it(`gives ${loaderName} the clock fork would, for ${historyName}`, () => {
+          const history = buildHistory()
+          const adopted = load(history)
+          const forked = load(history).fork(replicaId) as unknown as GridModel
+
+          adoptReplicaSession(adopted, replicaId)
+
+          expect(describeClock(adopted)).toEqual(describeClock(forked))
+        })
+      }
+    }
   })
 
   describe('messageHandler — snapshot response', () => {
@@ -771,7 +876,7 @@ describe('DataGridWebSocket', () => {
       const onModelCreate = vi.fn()
       vi.spyOn(console, 'debug').mockImplementation(() => {})
       vi.spyOn(console, 'log').mockImplementation(() => {})
-      const { server } = buildReconnectingReplicaHistory()
+      const { server } = buildFreshReplicaHistory()
       const decodedModel = decodeSnapshot(server)
 
       const { ws, mockSocket } = createDataGridWebSocket({
@@ -787,9 +892,10 @@ describe('DataGridWebSocket', () => {
       expect(createdModel).toBe(decodedModel)
       expect(createdModel.clock.sid).toEqual(replicaId)
       expect(createdModel.api.getSnapshot()).toEqual(server.api.getSnapshot())
+      expectSyncClockMatchesModel(mockSocket, createdModel)
     })
 
-    it("timestamps a reconnecting replica's next edit after its edits in the snapshot", async () => {
+    it('reports the local time for a reconnecting replica in the sync clock, not its stale entry from the snapshot', async () => {
       const onModelCreate = vi.fn()
       vi.spyOn(console, 'debug').mockImplementation(() => {})
       vi.spyOn(console, 'log').mockImplementation(() => {})
@@ -805,32 +911,6 @@ describe('DataGridWebSocket', () => {
 
       await vi.waitFor(() => expect(onModelCreate).toHaveBeenCalledTimes(1))
       const createdModel = onModelCreate.mock.calls[0][0] as GridModel
-      expectSyncClockReportsLocalTime(mockSocket, createdModel)
-      expectLocalEditsAfter(createdModel, previousReplicaPatch)
-    })
-  })
-
-  describe('messageHandler — patches response for a reconnecting replica', () => {
-    it("timestamps the replica's next edit after its edits in the patches", () => {
-      const onModelCreate = vi.fn()
-      vi.spyOn(console, 'debug').mockImplementation(() => {})
-      vi.spyOn(console, 'log').mockImplementation(() => {})
-      const { serverPatches, previousReplicaPatch } =
-        buildReconnectingReplicaHistory()
-
-      const { mockSocket } = createDataGridWebSocket({
-        onModelCreate,
-        model: null,
-      })
-      mockSocket.simulateMessage([
-        4,
-        1,
-        { type: 'patches', body: serverPatches.map(patch => encode(patch)) },
-      ])
-
-      expect(onModelCreate).toHaveBeenCalledTimes(1)
-      const createdModel = onModelCreate.mock.calls[0][0] as GridModel
-      expect(createdModel.clock.sid).toEqual(replicaId)
       expectSyncClockReportsLocalTime(mockSocket, createdModel)
       expectLocalEditsAfter(createdModel, previousReplicaPatch)
     })
