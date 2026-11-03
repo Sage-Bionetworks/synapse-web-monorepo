@@ -10,19 +10,23 @@ import {
   Tabs,
   Typography,
 } from '@mui/material'
+import pluralize from 'pluralize'
 import { Fragment, useMemo, useState } from 'react'
 import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
-
-type ValidationError = {
-  rowIndex: number
-  columnName: string
-  message: string
-  pending: boolean
-}
-
-type RowEntry = { rowIndex: number; pending: boolean }
+import {
+  groupErrors,
+  LimitedGroup,
+  limitGroups,
+  RowEntry,
+  ValidationError,
+} from '../utils/groupValidationErrors'
 
 type GroupBy = 'row' | 'column' | 'message'
+
+/** Upper bound on errors rendered in the expanded panel. Each listed error is
+ *  a styled MUI element, so rendering every error of a large grid freezes and
+ *  can crash the tab. The badge still shows the full count. */
+export const MAX_LISTED_ERRORS = 100
 
 type ValidationAlertProps = {
   rowValues: DataGridRow[]
@@ -122,10 +126,12 @@ const groupSectionItemSx = {
  *  Pending entries are dimmed to signal unconfirmed validation state. */
 function RowLinks({
   rows,
+  hiddenRowCount,
   navCol,
   onNavigateToCell,
 }: {
   rows: RowEntry[]
+  hiddenRowCount: number
   navCol: number
   onNavigateToCell: (rowIndex: number, colIndex: number) => void
 }) {
@@ -153,7 +159,24 @@ function RowLinks({
           </Link>
         </Fragment>
       ))}
+      {hiddenRowCount > 0 && (
+        <Typography component="span" variant="body1" color="text.disabled">
+          +{hiddenRowCount.toLocaleString()} more
+        </Typography>
+      )}
     </>
+  )
+}
+
+/** Summarizes a group's entries that were dropped by the listing cap. */
+function HiddenEntries({ count, noun }: { count: number; noun: string }) {
+  if (count === 0) return null
+  return (
+    <Box sx={groupSectionItemSx}>
+      <Typography variant="body1" color="text.disabled">
+        +{count.toLocaleString()} more {pluralize(noun, count)}
+      </Typography>
+    </Box>
   )
 }
 
@@ -162,14 +185,10 @@ function ByColumnTab({
   columnNames,
   columnOrder,
   onNavigateToCell,
-}: NavProps & { groups: Map<string, Map<string, RowEntry[]>> }) {
+}: NavProps & { groups: LimitedGroup[] }) {
   return (
     <Stack divider={<Divider />} spacing={1}>
-      {Array.from(groups.entries()).map(([colName, messages]) => {
-        const totalCount = Array.from(messages.values()).reduce(
-          (sum, rows) => sum + rows.length,
-          0,
-        )
+      {groups.map(({ key: colName, totalCount, entries, hiddenEntryCount }) => {
         const navCol = Math.max(
           0,
           getColDisplayIndex(colName, columnNames, columnOrder),
@@ -180,9 +199,13 @@ function ByColumnTab({
               <Typography variant="body1" fontWeight="bold">
                 {colLabel(colName)}
               </Typography>
-              <Chip label={totalCount} color="error" size="small" />
+              <Chip
+                label={totalCount.toLocaleString()}
+                color="error"
+                size="small"
+              />
             </Box>
-            {Array.from(messages.entries()).map(([msg, rows]) => (
+            {entries.map(({ key: msg, rows, hiddenRowCount }) => (
               <Box key={msg} sx={groupSectionItemSx}>
                 <Typography
                   variant="body1"
@@ -193,11 +216,13 @@ function ByColumnTab({
                 </Typography>
                 <RowLinks
                   rows={rows}
+                  hiddenRowCount={hiddenRowCount}
                   navCol={navCol}
                   onNavigateToCell={onNavigateToCell}
                 />
               </Box>
             ))}
+            <HiddenEntries count={hiddenEntryCount} noun="message" />
           </Box>
         )
       })}
@@ -210,47 +235,47 @@ function ByMessageTab({
   columnNames,
   columnOrder,
   onNavigateToCell,
-}: NavProps & { groups: Map<string, Map<string, RowEntry[]>> }) {
+}: NavProps & { groups: LimitedGroup[] }) {
   return (
     <Stack divider={<Divider />} spacing={1}>
-      {Array.from(groups.entries()).map(([msg, columns]) => {
-        const totalCount = Array.from(columns.values()).reduce(
-          (sum, rows) => sum + rows.length,
-          0,
-        )
-        return (
-          <Box key={msg}>
-            <Box sx={groupSectionHeaderSx}>
-              <Typography variant="body1" fontWeight="bold">
-                {msg}
-              </Typography>
-              <Chip label={totalCount} color="error" size="small" />
-            </Box>
-            {Array.from(columns.entries()).map(([colName, rows]) => {
-              const navCol = Math.max(
-                0,
-                getColDisplayIndex(colName, columnNames, columnOrder),
-              )
-              return (
-                <Box key={colName} sx={groupSectionItemSx}>
-                  <Typography
-                    variant="body1"
-                    color="text.secondary"
-                    sx={{ mr: 0.5, fontStyle: 'italic' }}
-                  >
-                    {colLabel(colName)}
-                  </Typography>
-                  <RowLinks
-                    rows={rows}
-                    navCol={navCol}
-                    onNavigateToCell={onNavigateToCell}
-                  />
-                </Box>
-              )
-            })}
+      {groups.map(({ key: msg, totalCount, entries, hiddenEntryCount }) => (
+        <Box key={msg}>
+          <Box sx={groupSectionHeaderSx}>
+            <Typography variant="body1" fontWeight="bold">
+              {msg}
+            </Typography>
+            <Chip
+              label={totalCount.toLocaleString()}
+              color="error"
+              size="small"
+            />
           </Box>
-        )
-      })}
+          {entries.map(({ key: colName, rows, hiddenRowCount }) => {
+            const navCol = Math.max(
+              0,
+              getColDisplayIndex(colName, columnNames, columnOrder),
+            )
+            return (
+              <Box key={colName} sx={groupSectionItemSx}>
+                <Typography
+                  variant="body1"
+                  color="text.secondary"
+                  sx={{ mr: 0.5, fontStyle: 'italic' }}
+                >
+                  {colLabel(colName)}
+                </Typography>
+                <RowLinks
+                  rows={rows}
+                  hiddenRowCount={hiddenRowCount}
+                  navCol={navCol}
+                  onNavigateToCell={onNavigateToCell}
+                />
+              </Box>
+            )
+          })}
+          <HiddenEntries count={hiddenEntryCount} noun="column" />
+        </Box>
+      ))}
     </Stack>
   )
 }
@@ -280,29 +305,31 @@ export const ValidationAlert = ({
     return errors
   }, [rowValues])
 
-  // columnName → messageText → RowEntry[]
-  const byColumn = useMemo(() => {
-    const groups = new Map<string, Map<string, RowEntry[]>>()
-    allErrors.forEach(({ rowIndex, columnName, message, pending }) => {
-      if (!groups.has(columnName)) groups.set(columnName, new Map())
-      const colGroup = groups.get(columnName)!
-      if (!colGroup.has(message)) colGroup.set(message, [])
-      colGroup.get(message)!.push({ rowIndex, pending })
-    })
-    return groups
-  }, [allErrors])
+  const byColumn = useMemo(
+    () =>
+      limitGroups(
+        groupErrors(
+          allErrors,
+          e => e.columnName,
+          e => e.message,
+        ),
+        MAX_LISTED_ERRORS,
+      ),
+    [allErrors],
+  )
 
-  // messageText → columnName → RowEntry[]
-  const byMessage = useMemo(() => {
-    const groups = new Map<string, Map<string, RowEntry[]>>()
-    allErrors.forEach(({ rowIndex, columnName, message, pending }) => {
-      if (!groups.has(message)) groups.set(message, new Map())
-      const msgGroup = groups.get(message)!
-      if (!msgGroup.has(columnName)) msgGroup.set(columnName, [])
-      msgGroup.get(columnName)!.push({ rowIndex, pending })
-    })
-    return groups
-  }, [allErrors])
+  const byMessage = useMemo(
+    () =>
+      limitGroups(
+        groupErrors(
+          allErrors,
+          e => e.message,
+          e => e.columnName,
+        ),
+        MAX_LISTED_ERRORS,
+      ),
+    [allErrors],
+  )
 
   const shouldExpand = isExpanded && allErrors.length > 0
 
@@ -369,7 +396,11 @@ export const ValidationAlert = ({
         <Typography variant="body1" fontWeight="bold">
           Validation errors
         </Typography>
-        <Chip label={allErrors.length} color="error" size="small" />
+        <Chip
+          label={allErrors.length.toLocaleString()}
+          color="error"
+          size="small"
+        />
         <Link
           component="button"
           variant="body1"
@@ -414,7 +445,7 @@ export const ValidationAlert = ({
       </Box>
 
       {/* Expanded panel */}
-      <Collapse in={shouldExpand}>
+      <Collapse in={shouldExpand} unmountOnExit>
         <Tabs
           value={groupBy}
           onChange={(_, v: GroupBy) => setGroupBy(v)}
@@ -436,7 +467,7 @@ export const ValidationAlert = ({
           {/* ── By row ─────────────────────────────────────────── */}
           {groupBy === 'row' && (
             <Stack divider={<Divider />}>
-              {allErrors.map((error, i) => {
+              {allErrors.slice(0, MAX_LISTED_ERRORS).map((error, i) => {
                 const navCol = Math.max(
                   0,
                   getColDisplayIndex(
@@ -488,6 +519,13 @@ export const ValidationAlert = ({
               columnOrder={columnOrder}
               onNavigateToCell={onNavigateToCell}
             />
+          )}
+
+          {allErrors.length > MAX_LISTED_ERRORS && (
+            <Typography variant="body2" color="text.secondary" sx={{ pt: 1 }}>
+              Showing the first {MAX_LISTED_ERRORS.toLocaleString()} of{' '}
+              {allErrors.length.toLocaleString()} errors
+            </Typography>
           )}
         </Box>
       </Collapse>

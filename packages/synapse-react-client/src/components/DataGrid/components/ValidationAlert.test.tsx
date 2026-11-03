@@ -1,6 +1,6 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { ValidationAlert } from './ValidationAlert'
+import { MAX_LISTED_ERRORS, ValidationAlert } from './ValidationAlert'
 import { DataGridRow } from '../DataGridTypes'
 
 const defaultProps = {
@@ -309,6 +309,98 @@ describe('ValidationAlert', () => {
       ]
       render(<ValidationAlert {...defaultProps} rowValues={rowValues} />)
       expect(screen.getByText('2')).toBeInTheDocument()
+    })
+  })
+
+  describe('large error counts', () => {
+    // Exceeds the cap and 1,000, so counts include a locale group separator
+    const errorCount = Math.max(1_234, MAX_LISTED_ERRORS * 2)
+    const sameErrorRows = Array.from({ length: errorCount }, () =>
+      makeInvalidRow({ platform: ['cannot be empty'] }),
+    )
+    const truncationNote = `Showing the first ${MAX_LISTED_ERRORS.toLocaleString()} of ${errorCount.toLocaleString()} errors`
+    // Error links in "By row" and the collapsed first-error preview
+    const errorLinkName = /\(Row \d+\)$/
+
+    it('formats the error count badge with the locale', () => {
+      render(<ValidationAlert {...defaultProps} rowValues={sameErrorRows} />)
+
+      expect(screen.getByText(errorCount.toLocaleString())).toBeInTheDocument()
+    })
+
+    it('mounts no error list while collapsed', async () => {
+      render(<ValidationAlert {...defaultProps} rowValues={sameErrorRows} />)
+
+      // Text queries match mounted nodes regardless of visibility, so they also find
+      // elements inside a closed Collapse, which still cost a render. Role queries
+      // with `hidden: true` do not: accessible names skip hidden text.
+      // The single match is the first-error preview.
+      const mountedErrorLinks = () => screen.queryAllByText(errorLinkName)
+      expect(mountedErrorLinks()).toHaveLength(1)
+
+      await userEvent.click(screen.getByText('Expand'))
+      expect(mountedErrorLinks()).toHaveLength(MAX_LISTED_ERRORS)
+
+      await userEvent.click(screen.getByText('Collapse'))
+      await waitFor(() => expect(mountedErrorLinks()).toHaveLength(1))
+    })
+
+    it('lists at most MAX_LISTED_ERRORS errors by row and reports the total', async () => {
+      render(<ValidationAlert {...defaultProps} rowValues={sameErrorRows} />)
+
+      await userEvent.click(screen.getByText('Expand'))
+
+      expect(
+        screen.getAllByRole('button', { name: errorLinkName }),
+      ).toHaveLength(MAX_LISTED_ERRORS)
+      expect(screen.getByText(truncationNote)).toBeInTheDocument()
+    })
+
+    it('caps row links within a column group and keeps the full group total', async () => {
+      render(<ValidationAlert {...defaultProps} rowValues={sameErrorRows} />)
+
+      await userEvent.click(screen.getByText('Expand'))
+      await userEvent.click(screen.getByRole('tab', { name: 'By column' }))
+
+      expect(
+        screen.getAllByRole('button', { name: /^(Row )?\d+$/ }),
+      ).toHaveLength(MAX_LISTED_ERRORS)
+      expect(
+        screen.getByText(
+          `+${(errorCount - MAX_LISTED_ERRORS).toLocaleString()} more`,
+        ),
+      ).toBeInTheDocument()
+      // Header badge and the platform group chip
+      expect(screen.getAllByText(errorCount.toLocaleString())).toHaveLength(2)
+    })
+
+    it('reports messages dropped from a column group by the cap', async () => {
+      const rowValues = [
+        ...sameErrorRows,
+        makeInvalidRow({ platform: ['must be a string'] }),
+      ]
+      render(<ValidationAlert {...defaultProps} rowValues={rowValues} />)
+
+      await userEvent.click(screen.getByText('Expand'))
+      await userEvent.click(screen.getByRole('tab', { name: 'By column' }))
+
+      expect(screen.queryByText('must be a string')).not.toBeInTheDocument()
+      expect(screen.getByText('+1 more message')).toBeInTheDocument()
+    })
+
+    it('lists at most MAX_LISTED_ERRORS message groups', async () => {
+      const rowValues = Array.from({ length: errorCount }, (_, i) =>
+        makeInvalidRow({ platform: [`bad value ${i}`] }),
+      )
+      render(<ValidationAlert {...defaultProps} rowValues={rowValues} />)
+
+      await userEvent.click(screen.getByText('Expand'))
+      await userEvent.click(screen.getByRole('tab', { name: 'By message' }))
+
+      expect(screen.getAllByText(/^bad value \d+$/)).toHaveLength(
+        MAX_LISTED_ERRORS,
+      )
+      expect(screen.getByText(truncationNote)).toBeInTheDocument()
     })
   })
 })
