@@ -59,7 +59,6 @@ export function createReactRouterConfig(
 
   async function resolveDynamicRoutes(): Promise<string[]> {
     const isProduction = process.env.NODE_ENV === 'production'
-    const dynamicRoutes: string[] = []
 
     // Enumerate record IDs for each detail page type. We fetch only 1 ID
     // when:
@@ -69,30 +68,35 @@ export function createReactRouterConfig(
     // Either way React Router's ssr:false validator is satisfied because
     // at least one path matches each loader-exporting route — the
     // remaining paths fall through to the SPA fallback at runtime.
-    for (const detailPage of sitemapConfig.detailPages) {
-      const limit =
-        !isProduction || detailPage.prerender === false ? 1 : undefined
-      const result = await fetchResourceIds(detailPage, limit)
-      if (!result.success) {
-        console.warn(`[prerender] Skipping ${detailPage.path}: ${result.error}`)
-        continue
-      }
-      for (const id of result.ids) {
-        dynamicRoutes.push(`/${detailPage.path}/${encodePathSegment(id)}`)
-      }
-    }
+    const routesByDetailPage = Promise.all(
+      sitemapConfig.detailPages.map(async detailPage => {
+        const limit =
+          !isProduction || detailPage.prerender === false ? 1 : undefined
+        const result = await fetchResourceIds(detailPage, limit)
+        if (!result.success) {
+          console.warn(
+            `[prerender] Skipping ${detailPage.path}: ${result.error}`,
+          )
+          return []
+        }
+        return result.ids.map(
+          id => `/${detailPage.path}/${encodePathSegment(id)}`,
+        )
+      }),
+    )
 
     // Hydrate caches so individual loader() calls during prerender are
     // instant cache hits. Only needed for production builds where all routes
     // are pre-rendered.
-    if (isProduction) {
-      await Promise.all([
-        ...metadataConfigs.map(mc => preloadDetailPageMetadata(mc)),
-        ...additionalPreloads.map(p => p()),
-      ])
-    }
+    const preloads = isProduction
+      ? Promise.all([
+          ...metadataConfigs.map(mc => preloadDetailPageMetadata(mc)),
+          ...additionalPreloads.map(p => p()),
+        ])
+      : Promise.resolve()
 
-    return dynamicRoutes
+    const [dynamicRoutes] = await Promise.all([routesByDetailPage, preloads])
+    return dynamicRoutes.flat()
   }
 
   return {
