@@ -1,7 +1,7 @@
 import minimist from 'minimist'
 import { request } from 'undici'
-import fs from 'fs'
-import path, { dirname } from 'path'
+import fs from 'node:fs'
+import path, { dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { patchSpec } from './patchSpec'
 
@@ -29,8 +29,6 @@ switch (stack) {
     restDocsUrl = PROD_SPEC_URL
 }
 
-request(restDocsUrl).then(({ body }) => {
-  body.text().then(spec => {
-    fs.writeFileSync(outputFile, patchSpec(spec))
-  })
-})
+const { body } = await request(restDocsUrl)
+const spec = await body.text()
+fs.writeFileSync(outputFile, patchSpec(spec))

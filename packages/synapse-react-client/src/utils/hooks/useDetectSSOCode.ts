@@ -68,11 +68,13 @@ const UNLINKED_IDENTITY_ERROR_BY_PROVIDER: Partial<Record<string, string>> = {
  * (to look for this code parameter and complete the round-trip). If state is included, then we assume that this is being
  * used for account creation, where we pass the username through the process.
  */
+const DEFAULT_OPTIONS: UseDetectSSOCodeOptions = {
+  isInitializingSession: true,
+  isAuthenticated: false,
+}
+
 export default function useDetectSSOCode(
-  opts: UseDetectSSOCodeOptions = {
-    isInitializingSession: true,
-    isAuthenticated: false,
-  },
+  opts: UseDetectSSOCodeOptions = DEFAULT_OPTIONS,
 ): UseDetectSSOCodeReturnType {
   const defaultRegisterAccountURL = useOneSageURL('/register1')
 

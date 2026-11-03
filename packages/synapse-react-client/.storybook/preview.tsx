@@ -4,7 +4,7 @@ import { createTheme } from '@mui/material/styles'
 import { withThemeFromJSXProvider } from '@storybook/addon-themes'
 import { Preview } from '@storybook/react-vite'
 import whyDidYouRender from '@welldone-software/why-did-you-render'
-import { Buffer } from 'buffer'
+import { Buffer } from 'node:buffer'
 import isChromatic from 'chromatic/isChromatic'
 import { initialize, mswLoader } from 'msw-storybook-addon'
 import '../src/stories/DemoStyle.scss'
@@ -63,7 +63,7 @@ initialize({
 })
 
 const fontLoader = async () => ({
-  fonts: await Promise.all([document.fonts.load('700 1em "DM Sans"')]),
+  fonts: [await document.fonts.load('700 1em "DM Sans"')],
 })
 
 export const loaders = [mswLoader]

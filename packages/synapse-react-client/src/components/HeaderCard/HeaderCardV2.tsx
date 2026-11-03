@@ -11,7 +11,10 @@ import {
 } from '@mui/material'
 import { DescriptionConfig } from '../CardContainerLogic'
 import { CollapsibleDescription } from '../GenericCard/CollapsibleDescription'
-import { GenericCardProps } from '@/components/GenericCard/GenericCard'
+import {
+  CTALinkConfig,
+  GenericCardProps,
+} from '@/components/GenericCard/GenericCard'
 import { useDocumentMetadata } from '@/utils/context/DocumentMetadataContext'
 import { SmartButton } from '../SmartLink/SmartButton'
 import { SmartLink } from '../SmartLink/SmartLink'
@@ -170,11 +173,12 @@ const HeaderCardV2 = forwardRef(function HeaderCardV2(
   })
 
   // ctaLink stuff - normalize to array
-  const ctaLinkConfigs = ctaLinkConfig
-    ? Array.isArray(ctaLinkConfig)
+  let ctaLinkConfigs: CTALinkConfig[] = []
+  if (ctaLinkConfig) {
+    ctaLinkConfigs = Array.isArray(ctaLinkConfig)
       ? ctaLinkConfig
       : [ctaLinkConfig]
-    : []
+  }
   const ctaLinkBox =
     ctaLinkConfigs.length > 0 ? (
       <Box

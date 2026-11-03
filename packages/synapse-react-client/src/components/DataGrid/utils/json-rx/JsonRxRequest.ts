@@ -3,9 +3,9 @@ import JsonRxMessage from './JsonRxMessage'
 export const REQUEST_TYPE_CODE = 0
 
 export default class JsonRxRequest<TPayload = unknown> extends JsonRxMessage {
-  private requestId: number
-  private methodName: string
-  private payload?: TPayload
+  private readonly requestId: number
+  private readonly methodName: string
+  private readonly payload?: TPayload
 
   constructor(requestId: number, methodName: string, payload?: TPayload) {
     super(REQUEST_TYPE_CODE)

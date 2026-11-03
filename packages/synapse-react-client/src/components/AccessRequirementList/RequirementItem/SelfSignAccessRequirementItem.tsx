@@ -16,7 +16,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
-import { RequirementItemStatus } from '../AccessApprovalCheckMark'
+import { getRequirementItemStatus } from '../AccessApprovalCheckMark'
 import RequirementItem from './RequirementItem'
 
 export type SelfSignAccessRequirementItemProps = {
@@ -134,13 +134,7 @@ export default function SelfSignAccessRequirementItem(
   return (
     <RequirementItem
       data-testid="SelfSignAccessRequirementItem"
-      status={
-        isLoadingStatus
-          ? RequirementItemStatus.LOADING
-          : isApproved
-            ? RequirementItemStatus.COMPLETE
-            : RequirementItemStatus.LOCKED
-      }
+      status={getRequirementItemStatus(isLoadingStatus, isApproved)}
       actions={actions}
     >
       {isApproved ? (

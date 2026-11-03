@@ -48,14 +48,14 @@ export default function usePreFetchResource(
  * @param blob
  */
 export function useCreateUrlForData(blob: Blob | null | undefined) {
-  const [resourceUrl, setResourceURL] = useState<string | undefined>(undefined)
+  const [resourceUrl, setResourceUrl] = useState<string | undefined>(undefined)
 
   useEffect(() => {
     if (blob) {
       const objectUrl = URL.createObjectURL(blob)
-      setResourceURL(objectUrl)
+      setResourceUrl(objectUrl)
     } else {
-      setResourceURL(undefined)
+      setResourceUrl(undefined)
     }
   }, [blob])
 

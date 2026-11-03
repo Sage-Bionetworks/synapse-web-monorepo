@@ -43,18 +43,18 @@ export function EntityChildrenDetails({
     },
   ])
 
+  const primarySort = sortingState[0]
+  const primarySortDirection = primarySort?.desc
+    ? Direction.DESC
+    : Direction.ASC
   const getChildrenInfiniteRequestObject = {
     parentId: parentContainerId,
     includeTotalChildCount: true,
     includeTypes: sharedProps.visibleTypes,
-    sortBy: sortingState[0]
-      ? convertColumnToSortBy(sortingState[0].id as DetailsViewColumn)
+    sortBy: primarySort
+      ? convertColumnToSortBy(primarySort.id as DetailsViewColumn)
       : undefined,
-    sortDirection: sortingState[0]
-      ? sortingState[0].desc
-        ? Direction.DESC
-        : Direction.ASC
-      : undefined,
+    sortDirection: primarySort ? primarySortDirection : undefined,
   }
   const { data, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useGetEntityChildrenInfinite(getChildrenInfiniteRequestObject, {

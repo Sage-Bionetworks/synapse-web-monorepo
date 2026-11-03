@@ -27,13 +27,12 @@ export function getNextPageParamForPaginatedResults(
       // There are no more pages to fetch
       return undefined
     }
-  } else {
-    // If totalNumberOfResults is not present, the limit for the next page will be the total number of fetched results
-    if (lastPage.results.length > 0) {
-      return totalFetchedResults
-    }
-    // If the last page has no items, we've hit the end. No more pages to fetch
-    // We will end up with an empty last page, but that's ok
-    else return undefined
   }
+  // If totalNumberOfResults is not present, the limit for the next page will be the total number of fetched results
+  if (lastPage.results.length > 0) {
+    return totalFetchedResults
+  }
+  // If the last page has no items, we've hit the end. No more pages to fetch
+  // We will end up with an empty last page, but that's ok
+  return undefined
 }

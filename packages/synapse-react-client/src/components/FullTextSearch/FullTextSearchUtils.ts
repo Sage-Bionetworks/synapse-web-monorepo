@@ -21,7 +21,7 @@ export function getSearchTextFromBooleanModeSearchExpression(
    * ^"(.+?)": Matches the opening double quote and lazily captures any characters until the next quote.
    * \s*@\d+$: Matches optional whitespace, the @ symbol, and one or more digits at the end.
    */
-  const match = searchExpression.match(/^"(.+?)"\s*@\d+$/)
+  const match = /^"(.+?)"\s*@\d+$/.exec(searchExpression)
   if (match) {
     return match[1]
   } else {
@@ -29,13 +29,15 @@ export function getSearchTextFromBooleanModeSearchExpression(
   }
 }
 
+const DEFAULT_FTS_CONFIG: FTSConfig = {
+  textMatchesMode: 'NATURAL_LANGUAGE',
+}
+
 // Convert the user-provided searchText into a search expression given the current FTS configuration.
 // If configured to search using BOOLEAN mode, search expression will wrap the search text in double quotes and include the distance.
 export function getTextMatchesQueryFilter(
   searchText: string,
-  ftsConfig: FTSConfig = {
-    textMatchesMode: 'NATURAL_LANGUAGE',
-  },
+  ftsConfig: FTSConfig = DEFAULT_FTS_CONFIG,
 ) {
   const { textMatchesMode, distance = 0 } = ftsConfig
   let searchExpression = searchText

@@ -50,7 +50,7 @@ export function useDirectUploadToS3(
 
       const fileKey = `${keyPrefixUUID}/${fileName}`
 
-      await uploadToS3(
+      await uploadToS3({
         blob,
         fileKey,
         endpoint,
@@ -60,7 +60,7 @@ export function useDirectUploadToS3(
         contentType,
         abortController,
         progressCallback,
-      )
+      })
 
       const newFileHandle = (await createExternalFileHandle({
         externalFileHandleInterface: {

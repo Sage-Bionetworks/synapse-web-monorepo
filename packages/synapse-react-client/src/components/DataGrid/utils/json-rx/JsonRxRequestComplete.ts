@@ -6,8 +6,8 @@ export default class JsonRxRequestComplete<
   TPayload = unknown,
 > extends JsonRxMessage {
   private requestId: number
-  private methodName: string
-  private payload?: TPayload
+  private readonly methodName: string
+  private readonly payload?: TPayload
 
   public constructor(
     requestId: number,

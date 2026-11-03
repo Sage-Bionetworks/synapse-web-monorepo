@@ -7,9 +7,9 @@ import { CSSProperties } from 'react'
  * underscores, so the encoding is valid and distinct IDs never map to the same name.
  */
 function toCssIdentifierSafeString(id: string) {
-  return id.replace(
+  return id.replaceAll(
     /[^A-Za-z0-9-]/g,
-    char => `_${char.charCodeAt(0).toString(16)}_`,
+    char => `_${char.codePointAt(0)!.toString(16)}_`,
   )
 }
 
@@ -31,13 +31,17 @@ export function getCommonPinningStyles(column: Column<any>): CSSProperties {
     isPinned === 'right' && column.getIsFirstColumn('right')
 
   if (!isPinned) return {}
+
+  let boxShadow: string | undefined
+  if (isLastLeftPinnedColumn) {
+    boxShadow = '-4px 0 4px -4px gray inset'
+  } else if (isFirstRightPinnedColumn) {
+    boxShadow = '4px 0 4px -4px gray inset'
+  }
+
   return {
     background: 'inherit',
-    boxShadow: isLastLeftPinnedColumn
-      ? '-4px 0 4px -4px gray inset'
-      : isFirstRightPinnedColumn
-        ? '4px 0 4px -4px gray inset'
-        : undefined,
+    boxShadow,
     left: isPinned === 'left' ? `${column.getStart('left')}px` : undefined,
     right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
     opacity: 0.95,

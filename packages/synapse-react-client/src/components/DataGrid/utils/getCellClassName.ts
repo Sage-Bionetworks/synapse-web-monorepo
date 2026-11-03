@@ -38,9 +38,8 @@ export function getCellClassName(params: {
   }
 
   // Add selection styling based on lastSelection
-  let isInSelection = false
   if (lastSelection && columnId && colValues) {
-    isInSelection =
+    const isInSelection =
       rowIndex >= lastSelection.min.row &&
       rowIndex <= lastSelection.max.row &&
       colValues.findIndex(col => col.id === columnId) >=

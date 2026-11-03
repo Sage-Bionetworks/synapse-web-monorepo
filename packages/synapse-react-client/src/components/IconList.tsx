@@ -59,7 +59,7 @@ function IconList(props: IconListProps) {
       // if this data type value doesn't have a matching icon, we use the "other" icon
       if (!iconConfig) {
         noMatch = true
-        return
+        return undefined
       } else {
         return (
           <IconSvg

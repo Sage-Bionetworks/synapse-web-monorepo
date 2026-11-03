@@ -148,14 +148,14 @@ export function useUserOrTeam(
 
   const { data: realmPrincipals } = useGetRealmPrincipals()
 
-  const specialGroupType: 'authenticatedUsers' | 'publicGroup' | null =
-    isIndividual === false
-      ? realmPrincipals?.authenticatedUsers === resolvedPrincipalId
-        ? 'authenticatedUsers'
-        : realmPrincipals?.publicGroup === resolvedPrincipalId
-          ? 'publicGroup'
-          : null
-      : null
+  let specialGroupType: 'authenticatedUsers' | 'publicGroup' | null = null
+  if (isIndividual === false) {
+    if (realmPrincipals?.authenticatedUsers === resolvedPrincipalId) {
+      specialGroupType = 'authenticatedUsers'
+    } else if (realmPrincipals?.publicGroup === resolvedPrincipalId) {
+      specialGroupType = 'publicGroup'
+    }
+  }
 
   const isPublicGroup = specialGroupType !== null
 

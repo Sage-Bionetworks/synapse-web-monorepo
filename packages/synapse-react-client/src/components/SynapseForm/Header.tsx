@@ -9,12 +9,8 @@ export default function Header(props: HeaderProps) {
 
   if (props.isSubmitted) {
     bodyText = <div>Your information has been submitted</div>
-  } else {
-    if (props.bodyText) {
-      bodyText = (
-        <div dangerouslySetInnerHTML={{ __html: props.bodyText }}></div>
-      )
-    }
+  } else if (props.bodyText) {
+    bodyText = <div dangerouslySetInnerHTML={{ __html: props.bodyText }}></div>
   }
 
   return (

@@ -57,7 +57,7 @@ function loadOrCreateDraft(datasetCode: string): DarDraft {
  * institutional email, phone number, and street address.
  */
 export function useDarDraft(datasetCode: string) {
-  const [draft, setDraftState] = useState<DarDraft>(() =>
+  const [draftState, setDraftState] = useState<DarDraft>(() =>
     loadOrCreateDraft(datasetCode),
   )
 
@@ -79,5 +79,5 @@ export function useDarDraft(datasetCode: string) {
     sessionStorage.removeItem(draftStorageKey(datasetCode))
   }, [datasetCode])
 
-  return { draft, setDraft, clearDraft }
+  return { draft: draftState, setDraft, clearDraft }
 }

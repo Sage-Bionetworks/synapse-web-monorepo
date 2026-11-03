@@ -11,6 +11,15 @@ import { STATIC_SOURCE_APP_CONFIG } from 'synapse-react-client/utils/hooks/useSo
 import { MOCK_APPLICATION_SESSION_CONTEXT } from 'synapse-react-client/mocks/applicationSessionContext/MockApplicationSessionContext'
 import { serializeAndHexEncode } from '@/URLUtils'
 
+// Mock source app config with a valid realm to avoid skeleton loading state
+const testSourceAppConfig = {
+  ...STATIC_SOURCE_APP_CONFIG,
+  defaultRealm: {
+    id: '1',
+    name: 'Synapse',
+  },
+}
+
 describe('ResetTwoFactorAuth', () => {
   beforeAll(() => {
     server.listen()
@@ -38,15 +47,6 @@ describe('ResetTwoFactorAuth', () => {
   const hexEncodedResetToken = serializeAndHexEncode(
     mockTwoFactorAuthResetToken,
   )
-
-  // Mock source app config with a valid realm to avoid skeleton loading state
-  const testSourceAppConfig = {
-    ...STATIC_SOURCE_APP_CONFIG,
-    defaultRealm: {
-      id: '1',
-      name: 'Synapse',
-    },
-  }
 
   function renderComponent(wrapperProps?: TestWrapperProps) {
     const user = userEvent.setup()
