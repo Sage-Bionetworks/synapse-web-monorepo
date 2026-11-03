@@ -1,6 +1,7 @@
 import { useCookieValue } from '@react-hookz/web/useCookieValue/index.js'
 import { getCookieDomain } from '../AppUtils/AppUtils'
 import { useCallback, useMemo } from 'react'
+import Cookies from 'js-cookie'
 import { FeatureFlagEnum } from './FeatureFlags'
 import { parseEnabledExperimentalFeatures } from './experimentalFeatureCookies'
 import {
@@ -44,8 +45,11 @@ export function useExperimentalFeaturePreferences() {
 
       // The cookie is shared by every app on *.synapse.org; only replace the flags this menu showed.
       // Keys this build doesn't know are kept, since a site on a newer build may have saved them.
+      // Read the live cookie, not the hook's copy, so a save from another tab or site isn't lost.
       const shownKeys: string[] = shownFlags
-      const keysFromOtherMenus = (featuresCookie?.split(',') ?? []).filter(
+      const savedKeys =
+        Cookies.get(SYNAPSE_EXPERIMENTAL_FEATURES_COOKIE)?.split(',') ?? []
+      const keysFromOtherMenus = savedKeys.filter(
         key => !shownKeys.includes(key),
       )
       const flagsToSave = [...new Set([...keysFromOtherMenus, ...enabledFlags])]
@@ -57,7 +61,6 @@ export function useExperimentalFeaturePreferences() {
       }
     },
     [
-      featuresCookie,
       setEnableAllCookie,
       removeEnableAllCookie,
       setFeaturesCookie,

@@ -82,6 +82,17 @@ describe('useExperimentalFeaturePreferences', () => {
     )
   })
 
+  it('keeps flags another tab saved after this page loaded', async () => {
+    const result = await renderPreferences()
+    Cookies.set(SYNAPSE_EXPERIMENTAL_FEATURES_COOKIE, NOT_SHOWN_FLAG)
+
+    act(() => result.current.savePreferences(false, [FLAG], [FLAG, OTHER_FLAG]))
+
+    expect(Cookies.get(SYNAPSE_EXPERIMENTAL_FEATURES_COOKIE)).toBe(
+      `${NOT_SHOWN_FLAG},${FLAG}`,
+    )
+  })
+
   it('does not save a flag twice', async () => {
     Cookies.set(SYNAPSE_EXPERIMENTAL_FEATURES_COOKIE, FLAG)
     const result = await renderPreferences()
