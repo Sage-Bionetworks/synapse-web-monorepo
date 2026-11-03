@@ -147,8 +147,11 @@ function CohortPreviewNotice() {
 
 function CohortQueryBuilder() {
   const [tree, setTree] = useState<QBGroup | null>(null)
+  // The Query Builder's value options are queried with the current request, so changing it (e.g. stopping an
+  // aggregate-only preview whose threshold withheld them) can clear the error.
+  const { currentQueryRequest } = useQueryContext()
   return (
-    <SynapseErrorBoundary>
+    <SynapseErrorBoundary resetKeys={[currentQueryRequest]}>
       <Suspense fallback={null}>
         <QueryBuilderControls
           tree={tree}

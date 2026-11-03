@@ -383,7 +383,7 @@ describe('CohortBuilder', () => {
             ),
         ),
       ).not.toHaveLength(0)
-      expect(filesRequests(profile).slice(-1)[0].query.cohorts).toHaveLength(1)
+      expect(filesRequests(profile).at(-1)?.query.cohorts).toHaveLength(1)
 
       const requestsBeforeStop = sentRequests.length
       await user.click(
@@ -396,6 +396,78 @@ describe('CohortBuilder', () => {
       // Results without the preview may come from the cache, so no request has to be sent.
       for (const request of sentRequests.slice(requestsBeforeStop)) {
         expect(request.aggregateDataPreview).toBeUndefined()
+      }
+    })
+
+    async function openPreviewAsSourceAdministrator() {
+      const user = userEvent.setup()
+      renderWithFiles(
+        { access: 'FULL', isSourceAdministrator: true },
+        {
+          participantsSourceTableId:
+            ELITE_MOCK_PROFILE.participantsSourceTableId,
+        },
+      )
+      await screen.findByText(`${allParticipantsCount} participants`)
+      await user.click(
+        await screen.findByRole('button', {
+          name: AGGREGATE_DATA_PREVIEW_TITLE,
+        }),
+      )
+      return user
+    }
+
+    it('brings the Query Builder back when a preview that withheld its values is stopped', async () => {
+      const user = await openPreviewAsSourceAdministrator()
+      // Above the source's 2,700 participants, so even the Query Builder's unfiltered value query is withheld.
+      await user.type(
+        screen.getByRole('spinbutton', { name: /^Suppression threshold/ }),
+        '5000',
+      )
+      await user.click(
+        screen.getByRole('button', { name: APPLY_PREVIEW_BUTTON_TEXT }),
+      )
+      await waitFor(() =>
+        expect(
+          screen.queryByRole('combobox', { name: 'Property' }),
+        ).not.toBeInTheDocument(),
+      )
+
+      await user.click(
+        screen.getByRole('button', { name: STOP_PREVIEW_BUTTON_TEXT }),
+      )
+      expect(
+        await screen.findByRole('combobox', { name: 'Property' }),
+      ).toBeInTheDocument()
+    })
+
+    it('sends quasi-identifier names trimmed, without blank ones', async () => {
+      const user = await openPreviewAsSourceAdministrator()
+      const quasiIdentifierInput = screen.getByRole('combobox', {
+        name: 'Quasi-identifier columns',
+      })
+      await user.click(quasiIdentifierInput)
+      // Removes the default individualId chip.
+      await user.keyboard('{Backspace}')
+      await user.type(quasiIdentifierInput, ' individualId {Enter}')
+      await user.type(quasiIdentifierInput, '   {Enter}')
+      await user.type(
+        screen.getByRole('spinbutton', { name: /^Suppression threshold/ }),
+        String(ELITE_MOCK_PROFILE.suppressionThreshold),
+      )
+      const requestsBeforePreview = sentRequests.length
+      await user.click(
+        screen.getByRole('button', { name: APPLY_PREVIEW_BUTTON_TEXT }),
+      )
+
+      await screen.findByText(COHORT_BUILDER_PREVIEW_NOTICE)
+      await waitFor(() =>
+        expect(sentRequests.length).toBeGreaterThan(requestsBeforePreview),
+      )
+      for (const request of sentRequests.slice(requestsBeforePreview)) {
+        expect(
+          request.aggregateDataPreview?.quasiIdentifierColumnNames,
+        ).toEqual(['individualId'])
       }
     })
 

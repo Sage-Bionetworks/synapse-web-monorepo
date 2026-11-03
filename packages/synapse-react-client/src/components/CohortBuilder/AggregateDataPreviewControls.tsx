@@ -128,6 +128,14 @@ function toFacetPostProcessingConfig(
   }
 }
 
+/**
+ * Trims typed column names and drops blank and repeated ones: the server rejects any quasi-identifier name that is not
+ * a column of the source.
+ */
+function toColumnNames(names: string[]): string[] {
+  return [...new Set(names.map(name => name.trim()).filter(Boolean))]
+}
+
 /** Returns the configuration the form describes, or undefined when the form is invalid. */
 function toAggregateDataConfiguration(
   form: PreviewForm,
@@ -228,7 +236,11 @@ function AggregateDataPreviewForm() {
             options={[]}
             value={form.quasiIdentifierColumnNames}
             onChange={(_event, quasiIdentifierColumnNames) =>
-              updateForm({ quasiIdentifierColumnNames })
+              updateForm({
+                quasiIdentifierColumnNames: toColumnNames(
+                  quasiIdentifierColumnNames,
+                ),
+              })
             }
             renderInput={params => (
               <TextField
