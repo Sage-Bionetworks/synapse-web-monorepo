@@ -72,4 +72,38 @@ describe('ExperimentalFeaturesDialog', () => {
 
     expect(onSave).toHaveBeenCalledWith(false, [])
   })
+
+  it('does not save when a flag drops out of the list after loading and nothing else changed', async () => {
+    const onSave = vi.fn()
+    const onCancel = vi.fn()
+    const dialogProps = {
+      open: true,
+      initialEnableAll: false,
+      onCancel,
+      onSave,
+    }
+    const { rerender } = render(
+      <ExperimentalFeaturesDialog
+        {...dialogProps}
+        isLoading
+        features={[FLAG, OTHER_FLAG]}
+        initialEnabledFlags={[FLAG]}
+      />,
+      { wrapper: createWrapper() },
+    )
+
+    // The server pins FLAG, so it leaves the list and the saved choices
+    rerender(
+      <ExperimentalFeaturesDialog
+        {...dialogProps}
+        isLoading={false}
+        features={[OTHER_FLAG]}
+        initialEnabledFlags={[]}
+      />,
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Done' }))
+
+    expect(onSave).not.toHaveBeenCalled()
+    expect(onCancel).toHaveBeenCalled()
+  })
 })

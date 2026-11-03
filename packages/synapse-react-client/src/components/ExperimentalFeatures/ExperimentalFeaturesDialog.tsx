@@ -47,7 +47,10 @@ function ExperimentalFeaturesDialog({
 
   const hasChanges =
     enableAll !== initialEnableAll ||
-    !isEqual(sortBy(enabledFlags), sortBy(initialEnabledFlags))
+    !isEqual(
+      sortBy(enabledFlags.filter(flag => features.includes(flag))),
+      sortBy(initialEnabledFlags),
+    )
 
   const toggleFlag = (flag: FeatureFlagEnum) => {
     if (enableAll) {
