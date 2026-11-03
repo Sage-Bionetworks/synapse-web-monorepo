@@ -100,6 +100,19 @@ describe('ExperimentalFeatures', () => {
     expect(screen.queryByText(ACT_ONLY_FLAG_NAME)).not.toBeInTheDocument()
   })
 
+  it("lists only flags in the menu's scopes", async () => {
+    const UNSCOPED_FLAG = FeatureFlagEnum.TEST_ONLY
+    mockServerFlags({ [UNSCOPED_FLAG]: undefined })
+    renderComponent()
+
+    await openDialog()
+
+    expect(await screen.findByText(FLAG_NAME)).toBeInTheDocument()
+    expect(
+      screen.queryByText(getFeatureFlagDisplayName(UNSCOPED_FLAG)),
+    ).not.toBeInTheDocument()
+  })
+
   it('saves the choices and calls onPreferencesSaved when Done is clicked', async () => {
     mockServerFlags()
     const { onPreferencesSaved } = renderComponent()
