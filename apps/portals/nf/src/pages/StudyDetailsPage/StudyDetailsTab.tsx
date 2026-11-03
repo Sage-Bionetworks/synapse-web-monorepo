@@ -1,4 +1,9 @@
-import { publicationsSql, studiesSql, toolStudySql } from '@/config/resources'
+import {
+  citedBySql,
+  publicationsSql,
+  studiesSql,
+  toolStudySql,
+} from '@/config/resources'
 import { publicationsCardConfiguration } from '@/config/synapseConfigs/publications'
 import { studyCardConfiguration } from '@/config/synapseConfigs/studies'
 import { toolsCardConfiguration } from '@/config/synapseConfigs/tools'
@@ -60,6 +65,17 @@ function StudyDetailsTab() {
           element: (
             <CardContainerLogic
               sql={publicationsSql}
+              cardConfiguration={publicationsCardConfiguration}
+              searchParams={{ studyId }}
+            />
+          ),
+        },
+        {
+          id: 'Cited By',
+          title: 'Cited By',
+          element: (
+            <CardContainerLogic
+              sql={citedBySql}
               cardConfiguration={publicationsCardConfiguration}
               searchParams={{ studyId }}
             />
