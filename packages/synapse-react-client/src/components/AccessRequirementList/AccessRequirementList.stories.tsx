@@ -23,7 +23,11 @@ import {
 } from '@/mocks/msw/handlers/accessRequirementHandlers'
 import { getDataAccessRequestHandlers } from '@/mocks/msw/handlers/dataAccessRequestHandlers'
 import { getFileHandlers } from '@/mocks/msw/handlers/fileHandlers'
-import { getFormTemplateHandlers } from '@/mocks/msw/handlers/formTemplateHandlers'
+import {
+  getFormTemplateHandlers,
+  getFormTemplateService,
+} from '@/mocks/msw/handlers/formTemplateHandlers'
+import { mockFormTemplates } from '@/mocks/accessRequirement/mockFormTemplates'
 import { getRegisteredSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
 import { getEntityHandlers } from '@/mocks/msw/handlers/entityHandlers'
 import { getResearchProjectHandlers } from '@/mocks/msw/handlers/researchProjectHandlers'
@@ -526,12 +530,42 @@ export const SchemaDrivenRequirementWithFileQuestion: Story = {
           undefined,
           [schemaDrivenAccessRequirementWithFileQuestion],
         ),
-        ...(SchemaDrivenRequirement.parameters?.msw?.handlers as []),
+        ...((SchemaDrivenRequirement.parameters?.msw?.handlers ?? []) as []),
       ],
     },
   },
   args: {
     ...SchemaDrivenRequirement.args,
     accessRequirementFromProps: [schemaDrivenAccessRequirementWithFileQuestion],
+  },
+}
+
+/**
+ * The same file question when its field has no template file: the requester only uploads the file.
+ */
+export const SchemaDrivenRequirementWithFileQuestionWithoutTemplate: Story = {
+  ...SchemaDrivenRequirementWithFileQuestion,
+  parameters: {
+    msw: {
+      handlers: [
+        ...getFormTemplateHandlers(
+          MOCK_REPO_ORIGIN,
+          getFormTemplateService(
+            mockFormTemplates.map(template => ({
+              ...template,
+              steps: template.steps.map(step => ({
+                ...step,
+                fields: step.fields.map(
+                  ({ templateFileHandleId: _templateFileHandleId, ...field }) =>
+                    field,
+                ),
+              })),
+            })),
+          ),
+        ),
+        ...((SchemaDrivenRequirementWithFileQuestion.parameters?.msw
+          ?.handlers ?? []) as []),
+      ],
+    },
   },
 }

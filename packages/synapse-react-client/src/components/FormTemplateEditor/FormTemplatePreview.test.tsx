@@ -268,7 +268,9 @@ describe('FormTemplatePreview', () => {
       expect(
         JSON.parse(screen.getByTestId('FileHandleLink').textContent ?? ''),
       ).toMatchObject({ fileHandleId: '1234', associateObjectId: 'template-1' })
-      expect(screen.getByRole('button', { name: 'Upload' })).toBeDisabled()
+      expect(
+        screen.getByRole('button', { name: 'Upload Signed agreement' }),
+      ).toBeDisabled()
     })
 
     it('offers an unsaved template’s file as one that the current user created', () => {

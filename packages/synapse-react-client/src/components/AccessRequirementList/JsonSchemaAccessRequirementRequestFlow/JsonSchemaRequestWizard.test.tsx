@@ -3,7 +3,7 @@ import {
   mockJsonSchemaAR2,
 } from '@/mocks/accessRequirement/mockJsonSchemaAccessRequirements'
 import { MOCK_FILE_HANDLE_ID } from '@/mocks/mock_file_handle'
-import { BasicFileHandleUploadProps } from '@/components/file/upload/BasicFileHandleUpload'
+import { FileUploadProps } from '@/components/FileUpload/FileUpload'
 import {
   mockClinicalSchema,
   mockGenomicsSchema,
@@ -49,20 +49,34 @@ vi.mock('@/components/FileUpload/FileUpload', () => {
   return { FileUpload, default: FileUpload }
 })
 
-// The upload completes with whichever file handle the test sets
+// The upload completes with whichever file handle the test sets, or fails
 let uploadedFileHandleId = '4242'
-vi.mock('@/components/file/upload/BasicFileHandleUpload', () => ({
-  BasicFileHandleUpload: (props: BasicFileHandleUploadProps) => (
+let uploadFailure: string | undefined
+vi.mock('@/components/FileUpload/FileUpload', () => {
+  const FileUpload = (props: FileUploadProps) => (
     <button
+      type="button"
       onClick={() =>
-        props.onFileUploadComplete?.(
-          uploadedFileHandleId,
-          new File(['contents'], 'agreement.pdf'),
+        props.onComplete?.(
+          uploadFailure
+            ? { success: false, error: { reason: uploadFailure } }
+            : {
+                success: true,
+                resp: { fileHandleId: uploadedFileHandleId, fileName: 'a.pdf' },
+              },
         )
       }
     >
-      Simulate upload complete
+      {props.label}
     </button>
+  )
+  return { FileUpload, default: FileUpload }
+})
+vi.mock('@/components/DirectDownloadButton', () => ({
+  default: (props: { fileHandleAssociation: FileHandleAssociation }) => (
+    <div data-testid="DirectDownloadButton">
+      {JSON.stringify(props.fileHandleAssociation)}
+    </div>
   ),
 }))
 vi.mock('@/components/widgets/FileHandleLink', () => ({
@@ -375,8 +389,11 @@ describe('JsonSchemaRequestWizard', () => {
     const UPLOADED_FILE_HANDLE_ID = '4242'
     const REPLACEMENT_FILE_HANDLE_ID = '5353'
 
+    const UPLOAD_BUTTON = 'Upload Signed Data Use Agreement'
+
     beforeEach(() => {
       uploadedFileHandleId = UPLOADED_FILE_HANDLE_ID
+      uploadFailure = undefined
     })
 
     async function advanceToFileQuestion(
@@ -385,27 +402,26 @@ describe('JsonSchemaRequestWizard', () => {
       await advanceToStep(user)
       await user.type(await screen.findByRole('textbox'), 'Trial')
       await user.click(screen.getByRole('button', { name: 'Next' }))
-      await screen.findByText('No file uploaded')
+      await screen.findByRole('button', { name: UPLOAD_BUTTON })
     }
 
     async function upload(
       user: ReturnType<typeof userEvent.setup>,
-      buttonName: 'Upload' | 'Replace',
       fileHandleId: string,
     ) {
-      await user.click(screen.getByRole('button', { name: buttonName }))
       uploadedFileHandleId = fileHandleId
       await user.click(
-        await screen.findByRole('button', { name: 'Simulate upload complete' }),
+        await screen.findByRole('button', { name: UPLOAD_BUTTON }),
       )
     }
 
     function getFileLinks() {
-      return screen
-        .queryAllByTestId('FileHandleLink')
-        .map(
-          link => JSON.parse(link.textContent ?? '') as Record<string, unknown>,
-        )
+      return [
+        ...screen.queryAllByTestId('FileHandleLink'),
+        ...screen.queryAllByTestId('DirectDownloadButton'),
+      ].map(
+        link => JSON.parse(link.textContent ?? '') as Record<string, unknown>,
+      )
     }
 
     it('offers the template file through the access requirement', async () => {
@@ -437,7 +453,7 @@ describe('JsonSchemaRequestWizard', () => {
       await advanceToFileQuestion(user)
       const savesBeforeUpload = savedRequests.length
 
-      await upload(user, 'Upload', UPLOADED_FILE_HANDLE_ID)
+      await upload(user, UPLOADED_FILE_HANDLE_ID)
 
       await waitFor(() =>
         expect(savedRequests).toHaveLength(savesBeforeUpload + 1),
@@ -459,7 +475,7 @@ describe('JsonSchemaRequestWizard', () => {
       )
       // The wizard stays on the step
       expect(
-        await screen.findByRole('button', { name: 'Replace' }),
+        await screen.findByRole('button', { name: 'Remove file' }),
       ).toBeVisible()
     })
 
@@ -471,13 +487,19 @@ describe('JsonSchemaRequestWizard', () => {
       const user = userEvent.setup()
       renderWizard(clinicalAccessRequirement)
       await advanceToFileQuestion(user)
-      await upload(user, 'Upload', UPLOADED_FILE_HANDLE_ID)
-      await screen.findByRole('button', { name: 'Replace' })
-
+      await upload(user, UPLOADED_FILE_HANDLE_ID)
       await waitFor(() =>
-        expect(screen.getByRole('button', { name: 'Replace' })).toBeEnabled(),
+        expect(savedRequests.at(-1)?.attachments).toEqual([
+          UPLOADED_FILE_HANDLE_ID,
+        ]),
       )
-      await upload(user, 'Replace', REPLACEMENT_FILE_HANDLE_ID)
+      // The upload is disabled while the request is saved
+      await waitFor(() =>
+        expect(
+          screen.getByRole('button', { name: UPLOAD_BUTTON }),
+        ).toBeEnabled(),
+      )
+      await upload(user, REPLACEMENT_FILE_HANDLE_ID)
       await waitFor(() =>
         expect(savedRequests.at(-1)?.attachments).toEqual([
           REPLACEMENT_FILE_HANDLE_ID,
@@ -494,7 +516,11 @@ describe('JsonSchemaRequestWizard', () => {
         (savedRequests.at(-1)?.schemaData as Record<string, unknown>)
           .signedDataUseAgreement,
       ).toBeUndefined()
-      await screen.findByText('No file uploaded')
+      await waitFor(() =>
+        expect(
+          screen.queryByRole('button', { name: 'Remove file' }),
+        ).toBeNull(),
+      )
     })
 
     it('does not submit until a file is attached, then submits with the file in attachments', async () => {
@@ -510,7 +536,7 @@ describe('JsonSchemaRequestWizard', () => {
       await screen.findAllByText(/required property/i)
       expect(submissionRequests).toHaveLength(0)
 
-      await upload(user, 'Upload', UPLOADED_FILE_HANDLE_ID)
+      await upload(user, UPLOADED_FILE_HANDLE_ID)
       await waitFor(() =>
         expect(screen.getByRole('button', { name: 'Submit' })).toBeEnabled(),
       )
@@ -542,7 +568,7 @@ describe('JsonSchemaRequestWizard', () => {
         ),
       )
 
-      await upload(user, 'Upload', UPLOADED_FILE_HANDLE_ID)
+      await upload(user, UPLOADED_FILE_HANDLE_ID)
 
       await screen.findByText(/The file cannot be attached/)
       expect(savedRequests).toHaveLength(savesBeforeUpload)
@@ -550,6 +576,26 @@ describe('JsonSchemaRequestWizard', () => {
         creatorFileHandleId: UPLOADED_FILE_HANDLE_ID,
       })
       await user.click(await screen.findByRole('button', { name: 'Back' }))
+      expect(await screen.findByRole('textbox')).toHaveValue('Trial')
+    })
+
+    it('reports a failed upload and keeps the other answers', async () => {
+      const { savedRequests } = mockRequestServices(
+        clinicalAccessRequirement,
+        createRequest(clinicalAccessRequirement),
+      )
+      const user = userEvent.setup()
+      renderWizard(clinicalAccessRequirement)
+      await advanceToFileQuestion(user)
+      const savesBeforeUpload = savedRequests.length
+      uploadFailure = 'The file is too large'
+
+      await user.click(screen.getByRole('button', { name: UPLOAD_BUTTON }))
+
+      await screen.findByText('The file is too large')
+      expect(savedRequests).toHaveLength(savesBeforeUpload)
+      expect(screen.queryByRole('button', { name: 'Remove file' })).toBeNull()
+      await user.click(screen.getByRole('button', { name: 'Back' }))
       expect(await screen.findByRole('textbox')).toHaveValue('Trial')
     })
 
@@ -566,7 +612,7 @@ describe('JsonSchemaRequestWizard', () => {
       await advanceToStep(user)
       await user.click(await screen.findByRole('button', { name: 'Next' }))
 
-      await screen.findByRole('button', { name: 'Replace' })
+      await screen.findByRole('button', { name: 'Remove file' })
       expect(getFileLinks()).toContainEqual({
         fileHandleId: '123',
         associateObjectType:
