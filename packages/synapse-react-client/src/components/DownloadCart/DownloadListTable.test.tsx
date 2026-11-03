@@ -83,7 +83,7 @@ function renderComponent() {
   return render(<DownloadListTableV2 />, { wrapper: createWrapper() })
 }
 
-// FIXME: Flaky in CI
+// oxlint-disable-next-line vitest/no-disabled-tests -- flaky in CI
 describe.skip('DownloadListTable tests', () => {
   beforeEach(() => {
     vi.clearAllMocks()

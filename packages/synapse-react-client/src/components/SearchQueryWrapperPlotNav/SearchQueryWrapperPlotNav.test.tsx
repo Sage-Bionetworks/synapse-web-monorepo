@@ -35,6 +35,7 @@ describe('SearchQueryWrapperPlotNav', () => {
     addEntityBundleWithColumnModelsHandler()
   })
 
+  // oxlint-disable-next-line vitest/no-disabled-tests -- rows never render: no MSW mocks for the underlying table query (SELECT * FROM syn60000) or restrictionInformation/batch
   it.skip('renders row data returned by the SearchQueryServicesApi', async () => {
     render(
       <SearchQueryWrapperPlotNav
@@ -89,7 +90,7 @@ describe('SearchQueryWrapperPlotNav', () => {
     await screen.findByText('Machine Learning Framework')
   })
 
-  it.skip('applies a selected facet filter and updates the result count', async () => {
+  it('applies a selected facet filter and updates the result count', async () => {
     const user = userEvent.setup()
     const onQueryResultBundleChange = vi.fn()
 

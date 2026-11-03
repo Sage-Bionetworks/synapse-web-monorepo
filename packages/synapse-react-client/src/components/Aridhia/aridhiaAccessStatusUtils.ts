@@ -58,7 +58,7 @@ export function findRequestsForDataset(
     .filter(request =>
       request.datasets?.some(dataset => dataset.code === datasetCode),
     )
-    .sort((a, b) => {
+    .toSorted((a, b) => {
       const aMillis = updatedAtMillis(a)
       const bMillis = updatedAtMillis(b)
       return aMillis === bMillis ? 0 : bMillis - aMillis
