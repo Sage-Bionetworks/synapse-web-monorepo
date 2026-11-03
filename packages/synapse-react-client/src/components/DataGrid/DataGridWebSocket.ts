@@ -67,6 +67,21 @@ const DEFAULT_PATCH_THROTTLE_MS = 250
 // A patch is acknowledged only after the server has stored it, so a missing acknowledgement means the connection is unusable
 const DEFAULT_PATCH_ACK_TIMEOUT_MS = 15 * 1000
 
+/**
+ * Makes `model` write as `replicaId`, equivalently to `model.fork(replicaId)` but without copying it.
+ * The model is mutated in place, so call this only on a model nothing else holds yet, such as one just
+ * decoded from the server.
+ */
+export function adoptReplicaSession(model: GridModel, replicaId: number): void {
+  // The clock is a Lamport clock: its
+  // time is already past every operation in the model, including any by `replicaId` from an earlier
+  // connection, so new local operations stay newer than all of them. `setSid` keeps a peer entry for
+  // `replicaId` if the model saw its operations; `fork` drops it. Drop it too, otherwise the clock sent in
+  // sync messages reports that stale entry instead of the local time.
+  model.setSid(replicaId)
+  model.clock.peers.delete(replicaId)
+}
+
 export class DataGridWebSocket {
   private readonly socket: WebSocket
   private model: GridModel | null = null
@@ -278,9 +293,9 @@ export class DataGridWebSocket {
     try {
       const patches = encodedPatch.map(decode)
       if (!this.model) {
-        this.model = Model.fromPatches(patches).fork(
-          this.replicaId,
-        ) as unknown as GridModel
+        const model = Model.fromPatches(patches) as unknown as GridModel
+        adoptReplicaSession(model, this.replicaId)
+        this.model = model
         this.onModelCreate(this.model)
       } else {
         this.model.applyBatch(patches)
@@ -295,7 +310,8 @@ export class DataGridWebSocket {
     console.debug('Received snapshot URL from server:', snapshotUrl)
     try {
       const decodedModel = await this.fetchAndDecodeSnapshot(snapshotUrl)
-      this.model = decodedModel.fork(this.replicaId) as unknown as GridModel
+      adoptReplicaSession(decodedModel, this.replicaId)
+      this.model = decodedModel
       this.onModelCreate(this.model)
       this.sendClockSync()
     } catch (err) {
