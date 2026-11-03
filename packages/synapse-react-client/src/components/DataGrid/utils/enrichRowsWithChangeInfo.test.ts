@@ -135,7 +135,8 @@ describe('enrichRowsWithChangeInfo', () => {
   it('attributes each cell to the replica that last wrote it', () => {
     const originalSid = 10
     const peerSid = 20
-    // columnNames=['','c0','c1'], so data index 1 is 'c0' and index 2 is 'c1'
+    // columnNames=['','c0','c1','c2'] and columnOrder=[0,1,2], so data index 1
+    // is 'c0' and index 2 is 'c1'; 'c2' (index 3) is not reachable via columnOrder
     const model = createTestModel(1, 3, originalSid)
     const peer = (model as unknown as Model).fork(
       peerSid,
@@ -159,6 +160,35 @@ describe('enrichRowsWithChangeInfo', () => {
     expect(result[0].__cellChangeInfo).toEqual({
       c0: { category: 'other-user', tooltipText: 'Changed by Alice Smith' },
       c1: { category: 'self', tooltipText: 'You changed this' },
+    })
+  })
+
+  it('omits a cell by an unknown replica in a row that has a known-replica cell', () => {
+    const knownSid = 10
+    const unknownSid = 20
+    // columnOrder=[0,1,2] visits 'c0' (index 1) before 'c1' (index 2), so the
+    // unknown author is encountered after the row already has change info
+    const model = createTestModel(1, 3, knownSid)
+    const peer = (model as unknown as Model).fork(
+      unknownSid,
+    ) as unknown as GridModel
+    peer.api.vec(['rows', '0', 'data']).set([[2, s.con('peer-value')]])
+    ;(model as unknown as Model).applyPatch(peer.api.flush())
+    const snapshot = model.api.getSnapshot()
+    const rows: DataGridRow[] = [{ c0: 'r0c1', c1: 'peer-value' }]
+    const replicaUserMap = new Map([
+      [knownSid, makeReplicaUserInfo('self', knownSid)],
+    ])
+
+    const result = enrichRowsWithChangeInfo(
+      rows,
+      model,
+      snapshot,
+      replicaUserMap,
+    )
+
+    expect(result[0].__cellChangeInfo).toEqual({
+      c0: { category: 'self', tooltipText: 'You changed this' },
     })
   })
 
