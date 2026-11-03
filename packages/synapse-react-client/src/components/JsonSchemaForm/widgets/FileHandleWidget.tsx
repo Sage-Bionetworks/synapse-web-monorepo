@@ -27,13 +27,14 @@ import { useState } from 'react'
  * {@link CustomFormContext.fileHandleWidget}.
  */
 export const FileHandleWidget: Widget = (props: WidgetProps) => {
-  const { id, label, value, onChange, disabled, readonly, options } = props
+  const { id, label, onChange, disabled, readonly, options } = props
+  const value: unknown = props.value
   const context = (props.registry.formContext as CustomFormContext)
     .fileHandleWidget
   const [uploadError, setUploadError] = useState<string>()
 
   const canEdit = !!context?.canEdit && !disabled && !readonly
-  const templateFileHandleId = options[TEMPLATE_FILE_HANDLE_ID_OPTION]
+  const templateFileHandleId: unknown = options[TEMPLATE_FILE_HANDLE_ID_OPTION]
   const answer = isFileHandleIdValue(value) ? String(value) : undefined
   const answerAssociation = toAssociation(
     context?.answerFileHandleIds.includes(answer ?? '')

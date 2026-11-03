@@ -52,7 +52,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { JSONSchema7 } from 'json-schema'
-import { http, HttpResponse } from 'msw'
+import { http, HttpResponse, RequestHandler } from 'msw'
 import AccessRequirementList from './AccessRequirementList'
 
 const meta: Meta = {
@@ -505,6 +505,13 @@ export const SchemaDrivenRequirement: Story = {
   },
 }
 
+function getMswHandlers(story: Story): RequestHandler[] {
+  const parameters = story.parameters as
+    | { msw?: { handlers?: RequestHandler[] } }
+    | undefined
+  return parameters?.msw?.handlers ?? []
+}
+
 const schemaDrivenAccessRequirementWithFileQuestion =
   mockJsonSchemaAR2 as unknown as AccessRequirement
 
@@ -530,7 +537,7 @@ export const SchemaDrivenRequirementWithFileQuestion: Story = {
           undefined,
           [schemaDrivenAccessRequirementWithFileQuestion],
         ),
-        ...((SchemaDrivenRequirement.parameters?.msw?.handlers ?? []) as []),
+        ...getMswHandlers(SchemaDrivenRequirement),
       ],
     },
   },
@@ -563,8 +570,7 @@ export const SchemaDrivenRequirementWithFileQuestionWithoutTemplate: Story = {
             })),
           ),
         ),
-        ...((SchemaDrivenRequirementWithFileQuestion.parameters?.msw
-          ?.handlers ?? []) as []),
+        ...getMswHandlers(SchemaDrivenRequirementWithFileQuestion),
       ],
     },
   },

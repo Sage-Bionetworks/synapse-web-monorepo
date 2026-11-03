@@ -512,10 +512,9 @@ describe('JsonSchemaRequestWizard', () => {
       await waitFor(() => expect(removeButton).toBeEnabled())
       await user.click(removeButton)
       await waitFor(() => expect(savedRequests.at(-1)?.attachments).toEqual([]))
-      expect(
-        (savedRequests.at(-1)?.schemaData as Record<string, unknown>)
-          .signedDataUseAgreement,
-      ).toBeUndefined()
+      expect(savedRequests.at(-1)?.schemaData).not.toHaveProperty(
+        'signedDataUseAgreement',
+      )
       await waitFor(() =>
         expect(
           screen.queryByRole('button', { name: 'Remove file' }),
