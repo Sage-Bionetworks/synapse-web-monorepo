@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{n as t,t as n}from"./ChallengeDataDownload-CD-kve0R.js";var r,i,a;function o(){return(o=e((()=>{n(),r={title:`Synapse/Challenge/ChallengeDataDownload`,component:t},i={args:{parentContainerId:`syn51565244`}},a=[`Demo`]})))()}o();export{i as Demo,a as __namedExportsOrder,r as default};
