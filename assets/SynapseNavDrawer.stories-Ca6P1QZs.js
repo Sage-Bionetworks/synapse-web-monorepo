@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{r as t,t as n}from"./SynapseNavDrawer-IXolr0V0.js";var r,i,a;function o(){return(o=e((()=>{t(),r={title:`Synapse/SynapseNavDrawer`,component:n},i={args:{initIsOpen:!1,gotoPlace:e=>{window.alert(`Nav bar calling back to change route to ${e}`)}}},a=[`Demo`]})))()}o();export{i as Demo,a as __namedExportsOrder,r as default};
