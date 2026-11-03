@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{r as t,t as n}from"./AnnotationsTable-DCs8a3ej.js";var r,i,a;function o(){return(o=e((()=>{t(),r={title:`Synapse/AnnotationsTable`,component:n},i={args:{entityId:`syn23567475`}},a=[`Demo`]})))()}o();export{i as Demo,a as __namedExportsOrder,r as default};
