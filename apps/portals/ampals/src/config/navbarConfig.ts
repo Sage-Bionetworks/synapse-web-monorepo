@@ -48,10 +48,6 @@ export const navbarConfig: NavbarConfig = {
           name: 'Contact Us',
           path: '/ContactUs',
         },
-        // {
-        //   name: 'Publishing Requirements',
-        //   path: '/Resources/Publishing Requirements',
-        // },
       ],
     },
     {
