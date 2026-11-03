@@ -301,7 +301,7 @@ describe('DataGridWebSocket', () => {
 
       expect(ws.getPendingPatches()).toEqual([])
       const startTimes = sentPatchStartTimes(mockSocket)
-      expect(startTimes).toEqual([...startTimes].sort((a, b) => a - b))
+      expect(startTimes).toEqual([...startTimes].toSorted((a, b) => a - b))
     })
 
     it('holds a later flush behind the unacknowledged patch', () => {
@@ -313,7 +313,7 @@ describe('DataGridWebSocket', () => {
       expect(sentRequests(mockSocket, 'patch')).toHaveLength(1)
       expectPatchesSentOneAtATime(mockSocket, ws.getPendingPatches())
       const startTimes = sentPatchStartTimes(mockSocket)
-      expect(startTimes).toEqual([...startTimes].sort((a, b) => a - b))
+      expect(startTimes).toEqual([...startTimes].toSorted((a, b) => a - b))
     })
 
     it('does not release the next patch when a clock sync completes', () => {
@@ -440,7 +440,7 @@ describe('DataGridWebSocket', () => {
       expectPatchesSentOneAtATime(replacement.mockSocket, unacknowledgedPatches)
       expect(replacement.ws.getPendingPatches()).toEqual([])
       const startTimes = sentPatchStartTimes(replacement.mockSocket)
-      expect(startTimes).toEqual([...startTimes].sort((a, b) => a - b))
+      expect(startTimes).toEqual([...startTimes].toSorted((a, b) => a - b))
     })
 
     it('sends patches inherited from a previous connection before new edits', () => {

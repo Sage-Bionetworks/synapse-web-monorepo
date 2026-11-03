@@ -664,7 +664,7 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
           call => call[0].signingOfficial,
         )
         expect(lastCall.length).toBeGreaterThan(0)
-        const savedRequest = lastCall[lastCall.length - 1][0]
+        const savedRequest = lastCall.at(-1)![0]
         expect(savedRequest.signingOfficial).toMatchObject({
           name: 'Jane Smith',
           institutionalEmail: 'jane@example.edu',

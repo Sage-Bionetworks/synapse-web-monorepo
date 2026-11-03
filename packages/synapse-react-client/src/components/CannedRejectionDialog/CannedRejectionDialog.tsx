@@ -319,7 +319,7 @@ export function CannedRejectionDialog(props: CannedRejectionDialogProps) {
 
         for (const reason of defaultEmailMessageObject[key].reasons) {
           if (reason != null) {
-            message += '\n* ' + reason.replaceAll('\\n', '\n') + '\n'
+            message += '\n* ' + reason.replaceAll(String.raw`\n`, '\n') + '\n'
           }
         }
         return message

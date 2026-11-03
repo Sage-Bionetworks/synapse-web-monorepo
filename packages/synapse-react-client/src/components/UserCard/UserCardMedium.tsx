@@ -100,9 +100,8 @@ export function UserCardMedium({
   const ORCID = userBundle?.ORCID
 
   let name = ''
-  const linkLocation = link
-    ? link
-    : `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Profile:${ownerId}`
+  const linkLocation =
+    link || `${PRODUCTION_ENDPOINT_CONFIG.PORTAL}Profile:${ownerId}`
   // linkLocation is overriden by custom click handler
   const email = userName ? `${userName}@synapse.org` : undefined
   if (displayName) {

@@ -124,7 +124,7 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
     portalId,
   } = props
 
-  const [showConfirmCloseModal, setShowConfirmCloseDialog] = useState(false)
+  const [showConfirmCloseModal, setShowConfirmCloseModal] = useState(false)
   const [currentStep, setCurrentStep] =
     useState<CreateOrUpdateDoiModalStep | null>(null)
   const hasSetInitialStepForThisSession = useRef(false)
@@ -139,7 +139,7 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
 
   function handleClose() {
     if (isEditing) {
-      setShowConfirmCloseDialog(true)
+      setShowConfirmCloseModal(true)
     } else {
       onClose()
     }
@@ -450,10 +450,10 @@ export function CreateOrUpdateDoiModal(props: CreateOrUpdateDoiModalProps) {
       <ConfirmCloseWithoutSavingDialog
         open={showConfirmCloseModal}
         onCancel={() => {
-          setShowConfirmCloseDialog(false)
+          setShowConfirmCloseModal(false)
         }}
         onConfirm={() => {
-          setShowConfirmCloseDialog(false)
+          setShowConfirmCloseModal(false)
           onClose()
         }}
       />

@@ -21,6 +21,13 @@ export type PlotsContainerProps = {
   facetsToPlot?: string[]
   customPlots?: QueryWrapperSynapsePlotProps[]
   initialPlotTypeByFacetColumnName?: Record<string, PlotType>
+  /** Chart type of facet plots without an entry in `initialPlotTypeByFacetColumnName`. Defaults to a pie chart. */
+  defaultPlotType?: PlotType
+  /**
+   * When true, the facet plots cannot change the query: slices can't be clicked and the filter
+   * dropdowns are hidden. Set while the Query Builder owns the filters.
+   */
+  disableFiltering?: boolean
 }
 type CustomPlotIdentifier = {
   title: string
@@ -72,7 +79,7 @@ const isPlotInState = (
   plotId: PlotIdentifier,
   plotUiStateArray: UiPlotState[],
 ): boolean => {
-  return !!plotUiStateArray.find(plot => {
+  return plotUiStateArray.some(plot => {
     return plotMatchesDefinition(plot.plotId, plotId)
   })
 }
@@ -89,7 +96,8 @@ const getCombinedNewPlots = (
     FacetNavPanelProps,
     'applyChangesToFacetFilter' | 'applyChangesToGraphSlice' | 'facetToPlot'
   >[] = [],
-  initialPlotTypeByFacetColumnName?: Record<string, PlotType>,
+  initialPlotTypeByFacetColumnName: Record<string, PlotType> | undefined,
+  defaultPlotType: PlotType,
 ): UiPlotState[] => [
   ...customPlots.map((plotProps, index) => ({
     plotId: getCustomPlotIdentifier(plotProps),
@@ -102,7 +110,7 @@ const getCombinedNewPlots = (
     plotType:
       initialPlotTypeByFacetColumnName?.[
         facetPlotProps.facetToPlot.columnName
-      ] ?? DEFAULT_PLOT_TYPE,
+      ] ?? defaultPlotType,
   })),
 ]
 
@@ -138,6 +146,8 @@ function PlotsContainer(props: PlotsContainerProps) {
     facetsToPlot = DEFAULT_FACETS_TO_PLOT,
     customPlots = DEFAULT_CUSTOM_PLOTS,
     initialPlotTypeByFacetColumnName,
+    defaultPlotType = DEFAULT_PLOT_TYPE,
+    disableFiltering,
   } = props
   const { data: queryMetadata } = useSuspenseGetQueryMetadata()
   const { showPlots: showPlotVisualization } = useQueryVisualizationContext()
@@ -148,7 +158,7 @@ function PlotsContainer(props: PlotsContainerProps) {
     const plotType = plotUiStateArray.find(item =>
       plotMatchesDefinition(plotId, item.plotId),
     )?.plotType
-    return plotType ?? DEFAULT_PLOT_TYPE
+    return plotType ?? defaultPlotType
   }
 
   useEffect(() => {
@@ -156,6 +166,7 @@ function PlotsContainer(props: PlotsContainerProps) {
       customPlots,
       facetNavPanelPropsArray,
       initialPlotTypeByFacetColumnName,
+      defaultPlotType,
     )
 
     // Update the state with new plots
@@ -174,7 +185,12 @@ function PlotsContainer(props: PlotsContainerProps) {
       const combinedPlots = [...updatedPlots, ...newPlots]
       return combinedPlots
     })
-  }, [customPlots, facetNavPanelPropsArray, initialPlotTypeByFacetColumnName])
+  }, [
+    customPlots,
+    facetNavPanelPropsArray,
+    initialPlotTypeByFacetColumnName,
+    defaultPlotType,
+  ])
 
   // when 'show more/less' is clicked
   const onShowMoreClick = (shouldShowMore: boolean) => {
@@ -202,7 +218,7 @@ function PlotsContainer(props: PlotsContainerProps) {
   const showMoreButtonState = useMemo<ShowMoreState>(() => {
     if (
       // if at least one item is hidden
-      plotUiStateArray.find(item => item.isHidden === true)
+      plotUiStateArray.some(item => item.isHidden === true)
     ) {
       return 'MORE'
     } else if (plotUiStateArray.length <= DEFAULT_VISIBLE_PLOTS) {
@@ -318,6 +334,7 @@ function PlotsContainer(props: PlotsContainerProps) {
                         setPlotType(plotUiState.plotId, plotType)
                       }
                       isModalView={false}
+                      disableFiltering={disableFiltering}
                       {...facetNavPanelProps}
                     />
                   )}

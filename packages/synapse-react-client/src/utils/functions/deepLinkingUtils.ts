@@ -25,8 +25,8 @@ async function compressString(str: string): Promise<string> {
   // Convert to base64
   const bytes = new Uint8Array(compressedArrayBuffer)
   let binary = ''
-  for (let i = 0; i < bytes.length; i++) {
-    binary += String.fromCharCode(bytes[i])
+  for (const byte of bytes) {
+    binary += String.fromCodePoint(byte)
   }
   return btoa(binary)
 }
@@ -41,7 +41,7 @@ async function decompressString(base64Str: string): Promise<string> {
   const binary = atob(base64Str)
   const bytes = new Uint8Array(binary.length)
   for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i)
+    bytes[i] = binary.codePointAt(i)!
   }
 
   const decompressionStream = new DecompressionStream('gzip')

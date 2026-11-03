@@ -1,6 +1,6 @@
 import { RESPONSIVE_SIDE_PADDING } from '@/utils'
 import { Box, Button, Divider, Link, Menu, MenuItem } from '@mui/material'
-import { MouseEvent, Suspense, useEffect, useRef, useState } from 'react'
+import { MouseEvent, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
 import ShowDownloadV2 from 'synapse-react-client/components/DownloadCart/ShowDownloadV2'
 import SageResourcesPopover from 'synapse-react-client/components/SageResourcesPopover/index'
@@ -16,6 +16,7 @@ import {
   getEndpoint,
 } from 'synapse-react-client/utils/functions/index'
 import { useOneSageURL } from 'synapse-react-client/utils/hooks/useOneSageURL'
+import ClientOnly from '../ClientOnly'
 import HeaderSearchBox from '../HeaderSearchBox'
 import NavLink from '../NavLink'
 import NavUserLink from '../NavUserLink'
@@ -431,13 +432,14 @@ export default function Navbar({ layout: layoutProp }: NavbarProps = {}) {
               >
                 Portals
               </a>
-              <Suspense fallback={null}>
+              {/* The popover suspends on a Synapse query and starts closed, so there is nothing to prerender. */}
+              <ClientOnly>
                 <SageResourcesPopover
                   filterByType="SynapsePortal"
                   anchorEl={portalResourcesAnchorEl}
                   onClose={handleClosePortalResources}
                 />
-              </Suspense>
+              </ClientOnly>
             </>
           )}
           {navbarConfig.routes.toReversed().map(route => {

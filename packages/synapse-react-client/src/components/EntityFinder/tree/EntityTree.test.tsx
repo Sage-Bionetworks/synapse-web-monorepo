@@ -31,13 +31,9 @@ import { Map } from 'immutable'
 import { http, HttpResponse } from 'msw'
 import { useState } from 'react'
 import { EntityDetailsListDataConfigurationType } from '../details/EntityDetailsList'
-import {
-  EntityTree,
-  EntityTreeContainer,
-  EntityTreeProps,
-  FinderScope,
-} from './EntityTree'
+import { EntityTree, EntityTreeProps, FinderScope } from './EntityTree'
 import * as VirtualizedTreeModule from './VirtualizedTree'
+import { EntityTreeContainer } from './VirtualizedTree'
 import { EntityTreeNodeType, VirtualizedTreeProps } from './VirtualizedTree'
 
 const VIRTUALIZED_TREE_TEST_ID = 'VirtualizedTreeComponent'
@@ -236,9 +232,7 @@ describe('EntityTree tests', () => {
     // Capture the fetch function passed to the component, and check that the first project is passed along
     let props: VirtualizedTreeProps | undefined
     await waitFor(() => {
-      props = mockVirtualizedTree.mock.calls[
-        mockVirtualizedTree.mock.calls.length - 1
-      ][0] as VirtualizedTreeProps
+      props = mockVirtualizedTree.mock.calls.at(-1)![0] as VirtualizedTreeProps
       expect(props.rootNodeConfiguration.fetchNextPage).toBeDefined()
       expect(props.rootNodeConfiguration.children).toHaveLength(1)
     })
@@ -250,9 +244,7 @@ describe('EntityTree tests', () => {
 
     // Check that the second page of projects is now in the tree
     await waitFor(() => {
-      props = mockVirtualizedTree.mock.calls[
-        mockVirtualizedTree.mock.calls.length - 1
-      ][0] as VirtualizedTreeProps
+      props = mockVirtualizedTree.mock.calls.at(-1)![0] as VirtualizedTreeProps
       expect(props.rootNodeConfiguration.fetchNextPage).toBeDefined()
       expect(props.rootNodeConfiguration.children).toHaveLength(2)
     })
@@ -303,9 +295,9 @@ describe('EntityTree tests', () => {
 
       let props: VirtualizedTreeProps | undefined
       await waitFor(() => {
-        props = mockVirtualizedTree.mock.calls[
-          mockVirtualizedTree.mock.calls.length - 1
-        ][0] as VirtualizedTreeProps
+        props = mockVirtualizedTree.mock.calls.at(
+          -1,
+        )![0] as VirtualizedTreeProps
         expect(props.rootNodeConfiguration.children).toHaveLength(
           projectsPage1.length,
         )
@@ -322,9 +314,9 @@ describe('EntityTree tests', () => {
       await userEvent.click(screen.getByText('My Favorites'))
 
       await waitFor(() => {
-        props = mockVirtualizedTree.mock.calls[
-          mockVirtualizedTree.mock.calls.length - 1
-        ][0] as VirtualizedTreeProps
+        props = mockVirtualizedTree.mock.calls.at(
+          -1,
+        )![0] as VirtualizedTreeProps
         // While there are 2 favorites, only one is a container, so only one will appear
         expect(props.rootNodeConfiguration.children).toHaveLength(1)
         expect(props.rootNodeConfiguration.children[0].id).toBe(

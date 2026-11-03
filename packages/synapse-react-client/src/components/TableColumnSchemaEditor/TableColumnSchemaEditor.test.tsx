@@ -573,7 +573,7 @@ describe('TableColumnSchemaEditor', () => {
 
     // Now add the name and ensure we can successfully submit
     const nameFields = await screen.findAllByLabelText('Name')
-    await user.type(nameFields[nameFields.length - 1], 'newColumnName')
+    await user.type(nameFields.at(-1)!, 'newColumnName')
 
     await user.click(saveButton)
     await waitFor(async () => {
@@ -680,6 +680,55 @@ describe('TableColumnSchemaEditor', () => {
     })
   })
 
+  it('Removes the facetSortConfig when faceting is turned off', async () => {
+    const facetedColumn: ColumnModel = {
+      id: '1236',
+      name: 'facetedColumn',
+      columnType: ColumnTypeEnum.STRING,
+      maximumSize: 50,
+      facetType: 'enumeration',
+      facetSortConfig: { property: 'FREQUENCY', direction: 'DESC' },
+    }
+    server.use(
+      getEntityBundleHandler(
+        getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
+        {
+          entity: mockTableEntityData.entity,
+          tableBundle: {
+            columnModels: [facetedColumn],
+            maxRowsPerPage: 25,
+          },
+        },
+      ),
+    )
+
+    const { user, saveButton } = await setUp({
+      entityId: mockTableEntityData.id,
+      open: true,
+      onColumnsUpdated: mockOnColumnsUpdated,
+      onCancel: mockOnCancel,
+    })
+
+    const facetTypeSelect = await screen.findByRole('combobox', {
+      name: 'Facet Type',
+    })
+    await user.click(facetTypeSelect)
+    const listbox = await screen.findByRole('listbox')
+    // The first option is the empty item, which turns faceting off
+    await user.click(within(listbox).getAllByRole('option')[0])
+
+    await user.click(saveButton)
+    await waitFor(() => {
+      expect(createTableUpdateTransactionRequestSpy).toHaveBeenCalledWith(
+        MOCK_ACCESS_TOKEN,
+        mockTableEntityData.id,
+        [facetedColumn],
+        [omit(facetedColumn, ['facetType', 'facetSortConfig'])],
+      )
+      expect(mockOnColumnsUpdated).toHaveBeenCalled()
+    })
+  })
+
   it('Can update restricted values for INTEGER type', async () => {
     const integerColumnWithRestrictedVals: ColumnModel = {
       id: '1235',
@@ -730,7 +779,7 @@ describe('TableColumnSchemaEditor', () => {
       { name: 'Add Item' },
     )
     // Click the last one
-    await user.click(addItemButtons[addItemButtons.length - 1])
+    await user.click(addItemButtons.at(-1)!)
 
     inputs = await within(valueEditorModal).findAllByRole('textbox')
     expect(inputs).toHaveLength(4)

@@ -40,9 +40,8 @@ function ColorPaletteInspector() {
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
         {COLOR_PALETTE_ODD.reduce(
           (rows: any, key, index) =>
-            (index % 5 === 0
-              ? rows.push([key])
-              : rows[rows.length - 1].push(key)) && rows,
+            (index % 5 === 0 ? rows.push([key]) : rows.at(-1).push(key)) &&
+            rows,
 
           [],
         ).map((palette: string[], idx: number) => {
@@ -61,9 +60,8 @@ function ColorPaletteInspector() {
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
         {COLOR_PALETTE_EVEN.reduce(
           (rows: any, key, index) =>
-            (index % 5 === 0
-              ? rows.push([key])
-              : rows[rows.length - 1].push(key)) && rows,
+            (index % 5 === 0 ? rows.push([key]) : rows.at(-1).push(key)) &&
+            rows,
 
           [],
         ).map((palette: string[], idx: number) => {

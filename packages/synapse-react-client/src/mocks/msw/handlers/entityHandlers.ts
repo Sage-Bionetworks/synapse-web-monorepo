@@ -44,9 +44,9 @@ import {
 import { SynapseApiResponse } from '../handlers'
 
 function getMatchingMockEntities(entityIds: string[]): MockEntityData[] {
-  const normalizedPassedIds = entityIds.map(normalizeSynPrefix)
+  const normalizedPassedIds = new Set(entityIds.map(normalizeSynPrefix))
   return mockEntities.filter(entity =>
-    normalizedPassedIds.includes(normalizeSynPrefix(entity.id)),
+    normalizedPassedIds.has(normalizeSynPrefix(entity.id)),
   )
 }
 function getMatchingMockEntity(entityId: string): MockEntityData | undefined {
@@ -154,13 +154,11 @@ export const getEntityHandlers = (backendOrigin: string) => [
           requestBody,
         )}`,
       }
+    } else if (requestBody.name === MOCK_INVALID_PROJECT_NAME) {
+      ;(response as ErrorResponse).reason = 'Invalid project name'
+      status = 403
     } else {
-      if (requestBody.name === MOCK_INVALID_PROJECT_NAME) {
-        ;(response as ErrorResponse).reason = 'Invalid project name'
-        status = 403
-      } else {
-        response = { id: uniqueId('syn'), ...requestBody }
-      }
+      response = { id: uniqueId('syn'), ...requestBody }
     }
 
     return HttpResponse.json(response, { status })

@@ -54,7 +54,7 @@ export const getEndpoint = (endpoint: BackendDestinationEnum): string => {
   }
   const { PORTAL, REPO } = endpoint_config
   if (!PORTAL || !REPO) {
-    throw Error('Error failed to specify endpoints, cannot make call')
+    throw new Error('Error failed to specify endpoints, cannot make call')
   }
   if (endpoint === BackendDestinationEnum.PORTAL_ENDPOINT) {
     return PORTAL

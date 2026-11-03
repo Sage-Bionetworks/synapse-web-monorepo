@@ -103,7 +103,7 @@ export function generatePropertyKey(
   const base =
     title
       .toLowerCase()
-      .replace(/[^a-z0-9\s]/g, '')
+      .replaceAll(/[^a-z0-9\s]/g, '')
       .trim()
       .split(/\s+/)
       .filter(Boolean)
@@ -125,6 +125,6 @@ export function generatePropertyKey(
  * camelCase key from a display title).
  */
 export function sanitizePropertyKey(raw: string): string {
-  const stripped = raw.replace(/[^A-Za-z0-9_]/g, '')
+  const stripped = raw.replaceAll(/[^A-Za-z0-9_]/g, '')
   return /^[0-9]/.test(stripped) ? `_${stripped}` : stripped
 }

@@ -18,7 +18,7 @@ function useTraceEvent(chatJobId: string | undefined, enabled: boolean) {
     })
   }, [])
 
-  const latestTraceEvent = traceEvents.at(traceEvents.length - 1)
+  const latestTraceEvent = traceEvents.at(-1)
   const { data: newTraceEvents } = useGetChatAgentTraceEvents(
     {
       jobId: chatJobId ?? '',

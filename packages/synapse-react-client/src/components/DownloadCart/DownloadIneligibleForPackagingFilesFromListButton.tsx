@@ -323,7 +323,7 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
             anchor.style.display = 'none'
             document.body.appendChild(anchor)
             anchor.click()
-            document.body.removeChild(anchor)
+            anchor.remove()
 
             // Clean up blob URL after a delay to ensure download initiation
             setTimeout(() => URL.revokeObjectURL(blobUrl), 1000)

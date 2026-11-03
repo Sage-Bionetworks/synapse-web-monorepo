@@ -27,7 +27,7 @@ import ExecutableTaskCard from './ExecutableTaskCard'
 // Matches a button by its visible label as a substring, escaping regex-special characters
 // (RUN_AGENT_BUTTON_TEXT contains parentheses).
 function buttonByLabel(label: string) {
-  const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const escaped = label.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`)
   return { name: new RegExp(escaped) }
 }
 

@@ -190,7 +190,7 @@ test.describe('cell expansion on focus', () => {
     }))
 
     const firstNameCell = getFirstNameCell(page)
-    await startEditingWith(firstNameCell, Array(60).fill('word').join(' '))
+    await startEditingWith(firstNameCell, new Array(60).fill('word').join(' '))
     await expect(page.locator('.dsg-input:focus')).toBeVisible()
 
     const after = await container.evaluate(el => ({
@@ -219,7 +219,7 @@ test.describe('cell expansion on focus', () => {
     const containerBox = (await page.locator('.dsg-container').boundingBox())!
     const lastRowCell = getFirstNameCell(page, 3) // last of the 4 demo rows
 
-    await startEditingWith(lastRowCell, Array(40).fill('word').join(' '))
+    await startEditingWith(lastRowCell, new Array(40).fill('word').join(' '))
     await expect(page.locator('.dsg-input:focus')).toBeVisible()
     // Let field-sizing settle on its final (wrapped, multi-line) height.
     await expect
@@ -263,7 +263,7 @@ test.describe('cell expansion on focus', () => {
       .locator('.dsg-cell')
       .nth(cellCount - 1)
 
-    await startEditingWith(lastCell, Array(60).fill('word').join(' '))
+    await startEditingWith(lastCell, new Array(60).fill('word').join(' '))
     await expect(page.locator('.dsg-input:focus')).toBeVisible()
     await expect
       .poll(async () => (await activeInputRect(page)).width)
@@ -295,7 +295,7 @@ test.describe('cell expansion on focus', () => {
     expect(configuredValue).toBe('')
 
     const firstNameCell = getFirstNameCell(page)
-    await startEditingWith(firstNameCell, Array(80).fill('word').join(' '))
+    await startEditingWith(firstNameCell, new Array(80).fill('word').join(' '))
     await expect(page.locator('.dsg-input:focus')).toBeVisible()
     await expect
       .poll(async () => (await activeInputRect(page)).height)
@@ -310,7 +310,7 @@ test.describe('cell expansion on focus', () => {
   }) => {
     const container = page.locator('.dsg-container')
     const firstNameCell = getFirstNameCell(page)
-    await startEditingWith(firstNameCell, Array(20).fill('word').join(' '))
+    await startEditingWith(firstNameCell, new Array(20).fill('word').join(' '))
     await expect(page.locator('.dsg-input:focus')).toBeVisible()
 
     const before = await activeInputRect(page)
@@ -515,7 +515,10 @@ test.describe('cell expansion on focus', () => {
       const cellHeight = (await firstNameCell.boundingBox())!.height
 
       // Long enough to force wrapping onto multiple lines even once capped
-      await startEditingWith(firstNameCell, Array(40).fill('word').join(' '))
+      await startEditingWith(
+        firstNameCell,
+        new Array(40).fill('word').join(' '),
+      )
 
       const rect = await activeInputRect(page)
       const maxWidth = await page.evaluate(() =>
@@ -539,7 +542,10 @@ test.describe('cell expansion on focus', () => {
       test.skip(!supported, 'field-sizing not supported in this browser')
 
       const firstNameCell = getFirstNameCell(page)
-      await startEditingWith(firstNameCell, Array(120).fill('word').join(' '))
+      await startEditingWith(
+        firstNameCell,
+        new Array(120).fill('word').join(' '),
+      )
 
       const maxHeight = await page.evaluate(() =>
         parseFloat(

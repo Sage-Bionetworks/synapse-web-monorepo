@@ -116,10 +116,7 @@ export const Grid = <T,>({
         }
       }
       // Ensure sticky right column is always included
-      if (
-        hasStickyRightColumn &&
-        result[result.length - 1] !== columns.length - 1
-      ) {
+      if (hasStickyRightColumn && result.at(-1) !== columns.length - 1) {
         result.push(columns.length - 1)
       }
       return result

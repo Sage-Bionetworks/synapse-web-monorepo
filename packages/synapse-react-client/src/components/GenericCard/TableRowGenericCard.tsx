@@ -1,4 +1,5 @@
 import { CommonCardProps } from '@/components/CardContainer/CardConfiguration'
+import type { CTACardLink } from '@/components/CardContainerLogic/CardContainerLogic'
 import {
   getFileHandleAssociation,
   getLinkParams,
@@ -525,8 +526,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
   }
 
   const isView = table && !isTableEntity(table)
-  for (let i = 0; i < secondaryLabels.length; i += 1) {
-    const columnName = secondaryLabels[i]
+  for (const columnName of secondaryLabels) {
     const rawValue: string | undefined = data[schema[columnName]]
     let renderedValue: React.ReactNode = rawValue
     let columnDisplayName
@@ -587,11 +587,12 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
     doiColumnIndex !== undefined ? data[doiColumnIndex] : undefined
 
   // Normalize ctaLinkConfig to array and resolve each config
-  const ctaLinkConfigs = ctaLinkConfig
-    ? Array.isArray(ctaLinkConfig)
+  let ctaLinkConfigs: CTACardLink[] = []
+  if (ctaLinkConfig) {
+    ctaLinkConfigs = Array.isArray(ctaLinkConfig)
       ? ctaLinkConfig
       : [ctaLinkConfig]
-    : []
+  }
   const resolvedCtaLinkConfigs = ctaLinkConfigs
     .map(config => {
       const ctaLinkValue: string = data[schema[config.link]] || ''

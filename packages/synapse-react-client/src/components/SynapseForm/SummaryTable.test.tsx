@@ -14,7 +14,10 @@ const stepsArray: Step[] = _.cloneDeep(stepsWithUserData)
 
 const renderComponent = async (props: SummaryTableProps) => {
   const schema = await $RefParser.dereference(props.schema)
-  const _props = { ...props, ...{ schema } }
+  const _props = {
+    ...props,
+    schema,
+  }
   return render(<SummaryTable {..._props} />)
 }
 
@@ -50,7 +53,7 @@ describe('SummaryTable', () => {
     }
     const _props = {
       ...props,
-      ...{ formData: modifiedSubmissionData },
+      formData: modifiedSubmissionData,
     }
     const { container } = await renderComponent(_props)
     expect(_props.steps[0].title).toBe(titles.Efficacy)
@@ -90,8 +93,8 @@ describe('SummaryTable', () => {
 
     const firstColumns = container.querySelectorAll('td:first-child')
     let result = 0
-    for (let i = 0; i < firstColumns.length; i++) {
-      if (firstColumns[i].textContent !== '') {
+    for (const firstColumn of firstColumns) {
+      if (firstColumn.textContent !== '') {
         result++
       }
     }
@@ -120,7 +123,10 @@ describe('SummaryTable', () => {
   })
 
   test('should not display delete button when isWizard is false', async () => {
-    const _props = { ...props, ...{ isWizard: false } }
+    const _props = {
+      ...props,
+      isWizard: false,
+    }
     await renderComponent(_props)
     const buttons = screen.getAllByRole('button')
     expect(buttons).toHaveLength(1)

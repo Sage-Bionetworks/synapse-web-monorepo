@@ -2,7 +2,7 @@ import React from 'react'
 import { ReactComponent as SageLogo } from '../assets/sage-logo.svg'
 import { ReactComponent as NCState } from './assets/ncstate.svg'
 import { ReactComponent as StonyBrook } from './assets/stonybrook.svg'
-import { ReactComponent as NIA } from './assets/nia_light.svg'
+import { ReactComponent as NiaLogo } from './assets/nia_light.svg'
 import { Link, Stack, Typography } from '@mui/material'
 import DevelopedBySage from '../DevelopedBySage'
 
@@ -29,7 +29,7 @@ const ClassicDevelopedBySage = (): React.ReactNode => {
           rel="noreferrer"
           sx={{ svg: { width: { xs: '60%', sm: '150px' } } }}
         >
-          <NIA />
+          <NiaLogo />
         </Link>
         <Link
           href="https://sagebionetworks.org/platform/synapse"

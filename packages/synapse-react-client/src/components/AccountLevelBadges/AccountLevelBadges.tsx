@@ -33,7 +33,7 @@ export function AccountLevelBadges({ userId }: AccountLevelBadgesProps) {
     validated: userBundle?.isVerified || false,
     enabledMFA: userBundle?.userProfile?.twoFactorAuthEnabled || false,
   }
-  const hasBadges = Object.values(badgeStatuses).some(value => value)
+  const hasBadges = Object.values(badgeStatuses).some(Boolean)
 
   const {
     showButton: showRevokeCertificationButton,

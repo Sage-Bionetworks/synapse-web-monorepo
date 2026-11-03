@@ -27,17 +27,17 @@ describe('UploadToS3', () => {
   test('successful upload', async () => {
     const progressCallback = vi.fn()
 
-    await uploadToS3(
+    await uploadToS3({
       blob,
       fileKey,
-      storageEndpoint,
+      endpoint: storageEndpoint,
       accessKey,
       secretKey,
       bucketName,
       contentType,
       abortController,
       progressCallback,
-    )
+    })
 
     expect(mockUpload).toHaveBeenCalledTimes(1)
     const mockUploadInstance = mockUpload.mock.results[0].value
@@ -61,17 +61,17 @@ describe('UploadToS3', () => {
     const progressCallback = vi.fn()
 
     await expect(() =>
-      uploadToS3(
+      uploadToS3({
         blob,
         fileKey,
-        storageEndpoint,
+        endpoint: storageEndpoint,
         accessKey,
         secretKey,
         bucketName,
         contentType,
         abortController,
         progressCallback,
-      ),
+      }),
     ).rejects.toThrow('Access Denied')
     expect(progressCallback).not.toHaveBeenCalled()
   })

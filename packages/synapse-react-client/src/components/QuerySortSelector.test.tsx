@@ -69,7 +69,7 @@ describe('QuerySortSelector tests', () => {
   const sortByOpenAccessJournals = async () => {
     const input = screen.getByRole('combobox')
     await userEvent.type(input, 'journal')
-    await screen.findAllByText(new RegExp('Open Access Journals'))
+    await screen.findAllByText(/Open Access Journals/)
     await act(async () => {
       await selectEvent.select(input, 'Open Access Journals')
     })

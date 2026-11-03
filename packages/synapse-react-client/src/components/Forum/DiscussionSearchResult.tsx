@@ -92,10 +92,8 @@ const DiscussionSearchResult = (
         <div>
           {isLoading ? (
             <Skeleton variant="circular" width="30px" height={'30px'} />
-          ) : replyId ? (
-            <IconSvg icon="replyTwoTone" />
           ) : (
-            <IconSvg icon="chatTwoTone" />
+            <IconSvg icon={replyId ? 'replyTwoTone' : 'chatTwoTone'} />
           )}
         </div>
         <div>

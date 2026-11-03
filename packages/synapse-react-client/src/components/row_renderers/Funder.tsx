@@ -26,7 +26,7 @@ export default class Funder extends Component<FunderProps, never> {
     // remove leading http(s):// and trailing /
     let websiteDisplayName = website.replace('https://', '')
     websiteDisplayName = websiteDisplayName.replace('http://', '')
-    if (websiteDisplayName.charAt(websiteDisplayName.length - 1) === '/') {
+    if (websiteDisplayName.at(-1) === '/') {
       websiteDisplayName = websiteDisplayName.substring(
         0,
         websiteDisplayName.length - 1,

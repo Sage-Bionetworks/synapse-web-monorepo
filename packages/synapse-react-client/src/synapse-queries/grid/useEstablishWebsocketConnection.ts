@@ -53,7 +53,7 @@ export function useEstablishWebsocketConnection(
       return new DataGridWebSocket({
         replicaId,
         url,
-        ...(websocketOptions || {}),
+        ...websocketOptions,
       })
     },
     ...options,

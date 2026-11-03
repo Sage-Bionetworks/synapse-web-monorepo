@@ -308,9 +308,9 @@ export const DataSheetGrid = React.memo(
               if (
                 hasStickyRightColumn &&
                 outerBoundingClientRect.right - event.clientX <=
-                  columnWidths[columnWidths.length - 1]
+                  columnWidths.at(-1)!
               ) {
-                x = columnRights[columnRights.length - 2] + 1
+                x = columnRights.at(-2)! + 1
               }
             }
 
@@ -469,9 +469,7 @@ export const DataSheetGrid = React.memo(
             const leftMin =
               columnRights[cell.col] +
               columnWidths[cell.col + 1] +
-              (hasStickyRightColumn
-                ? columnWidths[columnWidths.length - 1]
-                : 0) -
+              (hasStickyRightColumn ? columnWidths.at(-1)! : 0) -
               width +
               1
 
@@ -513,9 +511,9 @@ export const DataSheetGrid = React.memo(
         (rowIndex: number, item: T) => {
           onChange(
             [
-              ...dataRef.current?.slice(0, rowIndex),
+              ...dataRef.current.slice(0, rowIndex),
               item,
-              ...dataRef.current?.slice(rowIndex + 1),
+              ...dataRef.current.slice(rowIndex + 1),
             ],
             [
               {
@@ -688,8 +686,8 @@ export const DataSheetGrid = React.memo(
                   `<tr>${row
                     .map(
                       cell =>
-                        `<td>${encodeHtml(String(cell ?? '')).replace(
-                          /\n/g,
+                        `<td>${encodeHtml(String(cell ?? '')).replaceAll(
+                          '\n',
                           '<br/>',
                         )}</td>`,
                     )
@@ -763,7 +761,7 @@ export const DataSheetGrid = React.memo(
                   columns[min.col + columnIndex + 1]?.prePasteValues
 
                 const values = pasteData.map(row => row[columnIndex])
-                return prePasteValues?.(values) ?? values
+                return Promise.resolve(prePasteValues?.(values) ?? values)
               }),
             )
 
@@ -1194,7 +1192,7 @@ export const DataSheetGrid = React.memo(
                   columns[min.col + columnIndex + 1]?.prePasteValues
 
                 const values = copyData.map(row => row[columnIndex])
-                return prePasteValues?.(values) ?? values
+                return Promise.resolve(prePasteValues?.(values) ?? values)
               }),
             ).then(results => {
               copyData = copyData.map((_, rowIndex) =>
@@ -1523,7 +1521,7 @@ export const DataSheetGrid = React.memo(
             )
             event.preventDefault()
           } else if (
-            (isPrintableUnicode(event.key) || event.code.match(/Key[A-Z]$/)) &&
+            (isPrintableUnicode(event.key) || /Key[A-Z]$/.exec(event.code)) &&
             !event.ctrlKey &&
             !event.metaKey &&
             !event.altKey

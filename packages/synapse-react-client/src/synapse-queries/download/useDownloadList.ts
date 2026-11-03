@@ -186,18 +186,24 @@ export function useAddFileToDownloadList(
         accessToken,
       ),
     mutationKey: ['addFileToDownloadList'],
-    onSuccess: async (data, variables, ctx) => {
+    onSuccess: async (data, variables, ctx, ...rest) => {
       // PORTALS-2222: Invalidate to load the accurate results
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getDownloadListBaseQueryKey(),
       })
       if (options?.onSuccess) {
-        return options.onSuccess(data, variables, ctx)
+        return options.onSuccess(data, variables, ctx, ...rest)
       }
-      return
+      return undefined
     },
   })
 }
+
+/**
+ * The most items that one request to add a batch to the Download List may carry. Each request is added all or nothing,
+ * so a larger set is not split across requests.
+ */
+export const MAX_DOWNLOAD_LIST_BATCH_SIZE = 1000
 
 export function useAddFileBatchToDownloadList(
   options?: Partial<
@@ -218,15 +224,15 @@ export function useAddFileBatchToDownloadList(
     mutationFn: batchToAdd =>
       SynapseClient.addFileBatchToDownloadListV2(batchToAdd, accessToken),
     mutationKey: ['addFileBatchToDownloadList'],
-    onSuccess: async (data, variables, ctx) => {
+    onSuccess: async (data, variables, ctx, ...rest) => {
       // PORTALS-2222: Invalidate to load the accurate results
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getDownloadListBaseQueryKey(),
       })
       if (options?.onSuccess) {
-        return options.onSuccess(data, variables, ctx)
+        return options.onSuccess(data, variables, ctx, ...rest)
       }
-      return
+      return undefined
     },
   })
 }
@@ -263,15 +269,15 @@ export function useAddToDownloadList(
       return asyncJobResponse.responseBody as AddToDownloadListResponse
     },
     mutationKey: ['addQueryToDownloadList'],
-    onSuccess: async (data, variables, ctx) => {
+    onSuccess: async (data, variables, ctx, ...rest) => {
       // Invalidate all download list queries
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getDownloadListBaseQueryKey(),
       })
       if (options?.onSuccess) {
-        return options.onSuccess(data, variables, ctx)
+        return options.onSuccess(data, variables, ctx, ...rest)
       }
-      return
+      return undefined
     },
   })
 }
@@ -291,15 +297,15 @@ export function useRemoveFilesFromDownloadList(
     ...options,
     mutationFn: request =>
       SynapseClient.removeItemsFromDownloadListV2(request, accessToken),
-    onSuccess: async (data, variables, ctx) => {
+    onSuccess: async (data, variables, ctx, ...rest) => {
       // PORTALS-2222: Invalidate to load the accurate results
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getDownloadListBaseQueryKey(),
       })
       if (options?.onSuccess) {
-        return options.onSuccess(data, variables, ctx)
+        return options.onSuccess(data, variables, ctx, ...rest)
       }
-      return
+      return undefined
     },
   })
 }

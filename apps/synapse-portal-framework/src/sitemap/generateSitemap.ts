@@ -1,5 +1,5 @@
-import * as fs from 'fs'
-import * as path from 'path'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
 import type {
   DetailPageConfig,
   SitemapConfig,
@@ -41,7 +41,7 @@ export async function generateDynamicUrls(
       warnings.push(
         `Warning: Failed to fetch resources for ${config.path}: ${result.error}`,
       )
-      console.warn(warnings[warnings.length - 1])
+      console.warn(warnings.at(-1))
       continue
     }
 
@@ -110,11 +110,11 @@ export function generateSitemapIndexXml(
  */
 function escapeXml(str: string): string {
   return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&apos;')
 }
 
 /**

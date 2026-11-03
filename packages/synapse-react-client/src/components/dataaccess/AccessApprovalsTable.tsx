@@ -23,6 +23,11 @@ import StyledTanStackTable from '../TanStackTable/StyledTanStackTable'
 import UserOrTeamBadge from '../UserOrTeamBadge/index'
 
 const columnHelper = createColumnHelper<AccessApprovalSearchResult>()
+
+function getExpirationClassName(expiredOn: string | undefined) {
+  if (!expiredOn) return 'non-expire'
+  return new Date() > new Date(expiredOn) ? 'expired' : ''
+}
 const columns = [
   columnHelper.accessor('accessRequirementId', {
     header: props => <ColumnHeader {...props} title={'AR ID'} />,
@@ -64,13 +69,7 @@ const columns = [
     enableSorting: true,
     cell: ctx => (
       <span
-        className={`${
-          ctx.getValue()
-            ? new Date() > new Date(ctx.getValue())
-              ? 'expired'
-              : ''
-            : 'non-expire'
-        } remove-border`}
+        className={`${getExpirationClassName(ctx.getValue())} remove-border`}
       >
         {ctx.getValue() ? formatDate(dayjs(ctx.getValue())) : 'Never'}
       </span>

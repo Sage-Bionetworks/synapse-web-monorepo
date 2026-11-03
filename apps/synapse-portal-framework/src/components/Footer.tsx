@@ -70,7 +70,7 @@ function Footer() {
           <Typography variant="body1">
             <a
               rel="noopener noreferrer"
-              target={termsOfServiceUrl.charAt(0) === '/' ? '_self' : '_blank'}
+              target={termsOfServiceUrl.startsWith('/') ? '_self' : '_blank'}
               href={termsOfServiceUrl}
             >
               Terms of Service

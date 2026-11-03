@@ -228,7 +228,7 @@ function TableColumnSchemaFormInternal(
           }
           // Only add columns that are not already present
           // Use the name column to match because the ID may vary, e.g. if the facetType was changed
-          return !currentFormData.find(fd => fd.name === cm.name)
+          return !currentFormData.some(fd => fd.name === cm.name)
         },
       )
       // Remove the ID column so TableColumnSchemaUtils.createTableUpdateTransactionRequest recognizes these as new columns

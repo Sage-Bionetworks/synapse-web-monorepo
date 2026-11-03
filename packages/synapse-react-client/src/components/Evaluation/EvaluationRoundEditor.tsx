@@ -98,7 +98,7 @@ const convertInputsToEvaluationRound = (
   if (totalSubmissionLimit) {
     const totalSubmissionLimitInt = Number(totalSubmissionLimit)
     if (Number.isNaN(totalSubmissionLimitInt)) {
-      throw TypeError('Total Submission is not an integer')
+      throw new TypeError('Total Submission is not an integer')
     }
     limits.push({
       limitType: 'TOTAL',
@@ -109,7 +109,7 @@ const convertInputsToEvaluationRound = (
     if (limitInput.maxSubmissionString) {
       const maxSubmissionInt = Number(limitInput.maxSubmissionString)
       if (Number.isNaN(maxSubmissionInt)) {
-        throw TypeError(limitInput.type + ' Limit is not an integer')
+        throw new TypeError(limitInput.type + ' Limit is not an integer')
       }
       limits.push({
         limitType: limitInput.type,

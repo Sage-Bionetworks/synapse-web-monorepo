@@ -118,7 +118,7 @@ export default function DuoTermTags(props: DuoTermTagsProps) {
   }
   const sorted = terms
     .map(resolveDuoTerm)
-    .sort((a, b) => ORDER[a.category] - ORDER[b.category])
+    .toSorted((a, b) => ORDER[a.category] - ORDER[b.category])
 
   return (
     <Box

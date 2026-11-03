@@ -1,13 +1,11 @@
-import AddToDownloadListConfirmationAlert from '@/components/download_list/AddToDownloadListConfirmationAlert/AddToDownloadListConfirmationAlert'
-import { useGetAddToDownloadListRequestForCurrentQuery } from '@/components/QueryWrapper/useGetAddToDownloadListRequestForCurrentQuery'
+import { useAddSelectedRowsToDownloadList } from '@/components/QueryWrapper/useAddSelectedRowsToDownloadList'
 import { useGetEntity } from '@/synapse-queries'
 import { canTableQueryBeAddedToDownloadList } from '@/utils/functions/queryUtils'
 import GetAppTwoTone from '@mui/icons-material/GetAppTwoTone'
-import { Box, Button } from '@mui/material'
+import { Button } from '@mui/material'
 import { Table } from '@sage-bionetworks/synapse-types'
 import { useAtom } from 'jotai'
 import { useState } from 'react'
-import { toast } from 'react-hot-toast'
 import { useSynapseContext } from '@/utils'
 import { useQueryContext } from '../../QueryContext'
 import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
@@ -21,6 +19,7 @@ import { CustomControlButton } from '../CustomControls/CustomControlButton'
 import { CustomControl } from '../TopLevelControls/TopLevelControls'
 import { RowSelectionUI } from './RowSelectionUI'
 import { SignInRequiredModal } from '@/components/SignInRequiredModal/SignInRequiredModal'
+import { DownloadLoginModal } from '../table-top/DownloadLoginModal'
 
 const SEND_TO_ANALYSIS_PLATFORM_BUTTON_ID =
   'SendToAnalysisPlatformRowSelectionControlButton'
@@ -40,13 +39,14 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
   const { customControls = [], remount } = props
   const { isAuthenticated } = useSynapseContext()
   const [showLoginModal, setShowLoginModal] = useState(false)
+  const [showDownloadLoginModal, setShowDownloadLoginModal] = useState(false)
   const { entityId, versionNumber, getCurrentQueryRequest } = useQueryContext()
   const { data: entity } = useGetEntity<Table>(entityId, versionNumber)
   const { data: queryMetadata } = useGetQueryMetadata()
   const [selectedRows, setSelectedRows] = useAtom(selectedRowsAtom)
 
-  const addToDownloadListRequest =
-    useGetAddToDownloadListRequestForCurrentQuery()
+  const { addSelectedRowsToDownloadList, isPending: isAddingToDownloadList } =
+    useAddSelectedRowsToDownloadList()
 
   const {
     setIsShowingExportToAnalysisPlatformModal,
@@ -118,29 +118,22 @@ export function RowSelectionControls(props: RowSelectionControlsProps) {
           {showAddToDownloadCart && (
             <Button
               variant="contained"
-              onClick={() => {
-                const toastId = toast.custom(
-                  <Box
-                    sx={{
-                      width: '100%',
-                    }}
-                  >
-                    <AddToDownloadListConfirmationAlert
-                      addToDownloadListRequest={addToDownloadListRequest}
-                      onClose={() => {
-                        toast.dismiss(toastId)
-                      }}
-                    />
-                  </Box>,
-                  {
-                    duration: Infinity,
-                  },
-                )
-              }}
+              loading={isAddingToDownloadList}
+              onClick={() =>
+                isAuthenticated
+                  ? void addSelectedRowsToDownloadList()
+                  : setShowDownloadLoginModal(true)
+              }
               startIcon={<GetAppTwoTone />}
             >
               Add to Download List
             </Button>
+          )}
+          {showDownloadLoginModal && (
+            <DownloadLoginModal
+              showModal={showDownloadLoginModal}
+              onHide={() => setShowDownloadLoginModal(false)}
+            />
           )}
         </>
       }

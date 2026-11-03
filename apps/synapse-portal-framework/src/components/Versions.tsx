@@ -13,14 +13,14 @@ function Versions() {
     let isDeployDateFetchCancelled: boolean = false
     const getDeployDate = () => {
       try {
-        fetch('/deploy_date.txt').then(v => {
-          v?.text().then(txt => {
+        fetch('/deploy_date.txt')
+          .then(v => v.text())
+          .then(txt => {
             // if file does not exist, the main html page might be returned.  version should not contain '<'
-            if (!isDeployDateFetchCancelled && txt.indexOf('<') === -1) {
+            if (!isDeployDateFetchCancelled && !txt.includes('<')) {
               setDeployDate(dayjs(txt).format('L LT'))
             }
           })
-        })
       } catch (err) {
         if (!isDeployDateFetchCancelled) {
           setBuildDate('Error retrieving deploy info')
@@ -37,13 +37,13 @@ function Versions() {
     let isBuildDateFetchCancelled: boolean = false
     const getBuildDate = () => {
       try {
-        fetch('/build-date.txt').then(v => {
-          v?.text().then(txt => {
+        fetch('/build-date.txt')
+          .then(v => v.text())
+          .then(txt => {
             if (!isBuildDateFetchCancelled) {
               setBuildDate(dayjs(txt).format('L LT'))
             }
           })
-        })
       } catch (err) {
         if (!isBuildDateFetchCancelled) {
           setBuildDate('Error retrieving build info')

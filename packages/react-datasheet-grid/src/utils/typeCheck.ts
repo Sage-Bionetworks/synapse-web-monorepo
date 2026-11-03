@@ -11,7 +11,7 @@ export const getCell = (
   }
 
   if (typeof value !== 'object') {
-    throw new Error('Value must be an object or null')
+    throw new TypeError('Value must be an object or null')
   }
 
   const colIndex = columns.findIndex(column => column.id === value.col)
@@ -25,7 +25,7 @@ export const getCell = (
   }
 
   if (isNaN(cell.col) || isNaN(cell.row)) {
-    throw new Error('col or cell are not valid positive numbers')
+    throw new TypeError('col or cell are not valid positive numbers')
   }
 
   return cell
@@ -54,7 +54,7 @@ export const getSelection = (
   }
 
   if (typeof value !== 'object') {
-    throw new Error('Value must be an object or null')
+    throw new TypeError('Value must be an object or null')
   }
 
   const selection = {

@@ -1,5 +1,6 @@
 import { FairField } from '@/aridhia-queries/FairFormPayload'
 import { DAR_MESSAGE_VOCABULARY_CODE } from '@/aridhia-queries/useGetAridhiaVocabularyTerm'
+import { RequestListItem } from '@sage-bionetworks/aridhia-client/generated/models'
 import { http, HttpHandler, HttpResponse, JsonBodyType } from 'msw'
 
 export const MOCK_ARIDHIA_GATEWAY = 'https://mock-gateway.test'
@@ -97,6 +98,29 @@ export function getAridhiaAuthenticateHandler(
   )
 }
 
+/**
+ * A `GET /fair/requests` list item covering `MOCK_ARIDHIA_DATASET_CODE`, created and last
+ * updated at `updatedAt`.
+ */
+export function mockAridhiaRequestListItem(
+  request: Pick<RequestListItem, 'code' | 'name' | 'status'> & {
+    updatedAt: string
+    datasetCodes?: string[]
+  },
+): RequestListItem {
+  const {
+    updatedAt,
+    datasetCodes = [MOCK_ARIDHIA_DATASET_CODE],
+    ...fields
+  } = request
+  return {
+    ...fields,
+    datasets: datasetCodes.map(code => ({ code })),
+    created_at: updatedAt,
+    updated_at: updatedAt,
+  }
+}
+
 export function getAridhiaRequestsHandler(
   items: unknown[] = [],
   errorResponse?: { status: number; body: object },
@@ -148,6 +172,16 @@ export function getAridhiaWorkflowHandler(
   )
 }
 
+const DEFAULT_ARIDHIA_WORKSPACE_REQUEST_FORM_BODY: JsonBodyType = {
+  name: 'Request a workspace',
+  sections: {
+    workspace: {
+      label: 'Workspace details',
+      fields: MOCK_ARIDHIA_WORKSPACE_FORM_FIELDS,
+    },
+  },
+}
+
 /**
  * `body` defaults to the shape confirmed against a real gateway capture: `GET
  * /workspaces-forms/{code}` returns the form object directly, not wrapped in the `items`
@@ -155,15 +189,7 @@ export function getAridhiaWorkflowHandler(
  * exercise a different payload shape or field set.
  */
 export function getAridhiaWorkspaceRequestFormHandler(
-  body: JsonBodyType = {
-    name: 'Request a workspace',
-    sections: {
-      workspace: {
-        label: 'Workspace details',
-        fields: MOCK_ARIDHIA_WORKSPACE_FORM_FIELDS,
-      },
-    },
-  },
+  body: JsonBodyType = DEFAULT_ARIDHIA_WORKSPACE_REQUEST_FORM_BODY,
 ): HttpHandler {
   return http.get(
     `${MOCK_ARIDHIA_GATEWAY}/fair/workspaces-forms/workspace_request`,

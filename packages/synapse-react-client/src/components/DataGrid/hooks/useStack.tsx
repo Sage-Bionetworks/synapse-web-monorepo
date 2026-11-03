@@ -27,13 +27,13 @@ import { useCallback, useState } from 'react'
   const pop = useCallback(() => {
     if (currentStack.length === 0) return undefined
 
-    const popped = currentStack[currentStack.length - 1]
+    const popped = currentStack.at(-1)
     setCurrentStack(prev => prev.slice(0, -1))
     return popped
   }, [currentStack])
 
   const peek = useCallback(() => {
-    return currentStack[currentStack.length - 1]
+    return currentStack.at(-1)
   }, [currentStack])
 
   const clear = useCallback(() => {

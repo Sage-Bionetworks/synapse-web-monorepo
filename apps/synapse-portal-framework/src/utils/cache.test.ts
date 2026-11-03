@@ -1,5 +1,32 @@
 import { describe, expect, it, vi } from 'vitest'
-import { PrerenderCache } from './cache'
+import { getSharedPrerenderCache, PrerenderCache } from './cache'
+
+describe('getSharedPrerenderCache', () => {
+  it('returns the same cache for the same name', () => {
+    expect(getSharedPrerenderCache('same-name')).toBe(
+      getSharedPrerenderCache('same-name'),
+    )
+  })
+
+  it('returns separate caches for different names', () => {
+    expect(getSharedPrerenderCache('name-a')).not.toBe(
+      getSharedPrerenderCache('name-b'),
+    )
+  })
+
+  it('shares entries with a separately loaded copy of the module', async () => {
+    getSharedPrerenderCache<string, string>('cross-copy').set('key', 'value')
+
+    vi.resetModules()
+    const otherCopy = await import('./cache')
+
+    expect(otherCopy.getSharedPrerenderCache).not.toBe(getSharedPrerenderCache)
+    const sharedCache = otherCopy.getSharedPrerenderCache<string, string>(
+      'cross-copy',
+    )
+    await expect(sharedCache.get('key', vi.fn())).resolves.toBe('value')
+  })
+})
 
 describe('PrerenderCache', () => {
   it('returns the fetched value on cache miss', async () => {

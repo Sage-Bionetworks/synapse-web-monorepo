@@ -66,9 +66,9 @@ export function useSubmitAridhiaDar(
     },
     {
       ...options,
-      onSuccess: (data, variables, context) => {
+      onSuccess: (data, variables, context, ...rest) => {
         queryClient.invalidateQueries({ queryKey: keyFactory.requests() })
-        options?.onSuccess?.(data, variables, context)
+        options?.onSuccess?.(data, variables, context, ...rest)
       },
     },
   )

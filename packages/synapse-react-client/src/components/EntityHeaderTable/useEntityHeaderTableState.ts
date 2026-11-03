@@ -9,20 +9,20 @@ export function useEntityHeaderTableState(
   onUpdate?: (updatedRefs: ReferenceList) => void,
 ) {
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
-  const [refsInState, _setRefsInState] = useState<ReferenceList>(
+  const [refsState, setRefsState] = useState<ReferenceList>(
     cloneDeep(references),
   )
-  const [newEntityIDs, _setNewEntityIDs] = useState<string>('')
+  const [newEntityIDsState, setNewEntityIDsState] = useState<string>('')
   const [parseErrors, setParseErrors] = useState<string[]>([])
 
   /* Reset state if the `references` argument changes */
   useEffect(() => {
-    _setRefsInState(cloneDeep(references))
+    setRefsState(cloneDeep(references))
   }, [references])
 
   const setNewEntityIDs = useCallback(
     (newValue: string) => {
-      _setNewEntityIDs(newValue)
+      setNewEntityIDsState(newValue)
       if (onUpdateEntityIDsTextbox) {
         onUpdateEntityIDsTextbox(newValue)
       }
@@ -33,7 +33,7 @@ export function useEntityHeaderTableState(
   const setRefsInState = useCallback(
     (refs: ReferenceList) => {
       setRowSelection({})
-      _setRefsInState(refs)
+      setRefsState(refs)
       if (onUpdate) {
         onUpdate(refs)
       }
@@ -46,9 +46,9 @@ export function useEntityHeaderTableState(
   return {
     rowSelection,
     setRowSelection,
-    refsInState,
+    refsInState: refsState,
     setRefsInState,
-    newEntityIDs,
+    newEntityIDs: newEntityIDsState,
     setNewEntityIDs,
     parseErrors,
     setParseErrors,

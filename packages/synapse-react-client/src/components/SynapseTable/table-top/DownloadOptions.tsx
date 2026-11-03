@@ -8,10 +8,12 @@ import { ReactNode, useMemo, useState } from 'react'
 import ModalDownload from '../../ModalDownload/ModalDownload'
 import ProgrammaticTableDownload from '../../ProgrammaticTableDownload/ProgrammaticTableDownload'
 import { useQueryContext } from '../../QueryContext'
+import { useQueryVisualizationContext } from '../../QueryVisualizationWrapper'
 import {
   useHasSelectedRowsAtomValue,
   useSelectedRowsAtomValue,
 } from '../../QueryWrapper/TableRowSelectionState'
+import { useAddSelectedRowsToDownloadList } from '../../QueryWrapper/useAddSelectedRowsToDownloadList'
 import { useGetQueryMetadata } from '../../QueryWrapper/useGetQueryMetadata'
 import { ElementWithTooltip } from '../../widgets/ElementWithTooltip'
 import { getFileColumnModelId } from '../SynapseTableUtils'
@@ -19,7 +21,6 @@ import { getNumberOfResultsToAddToDownloadListCopy } from '../TopLevelControls/T
 import { DownloadLoginModal } from './DownloadLoginModal'
 
 export type DownloadOptionsProps = {
-  onDownloadFiles: () => void
   darkTheme?: boolean
   /** If true, the "Add ... files to Download List" menu item will be hidden */
   hideAddToDownloadListMenuItem?: boolean
@@ -40,6 +41,7 @@ export function DownloadOptions(props: DownloadOptionsProps) {
 
   const selectedRows = useSelectedRowsAtomValue()
   const hasSelectedRows = useHasSelectedRowsAtomValue()
+  const { addSelectedRowsToDownloadList } = useAddSelectedRowsToDownloadList()
 
   const queryBundleRequest = useMemo(
     () => getCurrentQueryRequest(),
@@ -50,16 +52,18 @@ export function DownloadOptions(props: DownloadOptionsProps) {
   const [showExportMetadata, setShowExportMetadata] = useState(false)
   const [showProgrammaticOptions, setShowProgrammaticOptions] = useState(false)
   const {
-    onDownloadFiles,
     darkTheme = true,
     hideAddToDownloadListMenuItem,
     hideProgrammaticOptionsMenuItem,
   } = props
+  const { setShowDownloadConfirmation } = useQueryVisualizationContext()
 
   const fileColumnId = getFileColumnModelId(queryMetadata?.columnModels)
 
+  // The table's type decides which file version the whole result adds, so the item waits for the table to load.
   const showAddQueryToDownloadList =
     !hideAddToDownloadListMenuItem &&
+    entity !== undefined &&
     canTableQueryBeAddedToDownloadList(entity, fileColumnId)
 
   // SWC-5878 - Disable downloading a "Draft" dataset
@@ -85,9 +89,16 @@ export function DownloadOptions(props: DownloadOptionsProps) {
             disabled={disableDownload}
             // If disabled, add pointer-events-auto so the tooltip still works
             style={disableDownload ? { pointerEvents: 'auto' } : {}}
-            onClick={() =>
-              isAuthenticated ? onDownloadFiles() : setShowLoginModal(true)
-            }
+            onClick={() => {
+              if (!isAuthenticated) {
+                setShowLoginModal(true)
+              } else if (hasSelectedRows) {
+                void addSelectedRowsToDownloadList()
+              } else {
+                // The enclosing query view shows the confirmation, with the whole result's file count and size.
+                setShowDownloadConfirmation(true)
+              }
+            }}
           >
             {getNumberOfResultsToAddToDownloadListCopy(
               hasResettableFilters,
@@ -137,12 +148,13 @@ export function DownloadOptions(props: DownloadOptionsProps) {
     }
     return downloadMenuItems
   }, [
+    addSelectedRowsToDownloadList,
     isAuthenticated,
     disableDownload,
     hasResettableFilters,
     hasSelectedRows,
     hideProgrammaticOptionsMenuItem,
-    onDownloadFiles,
+    setShowDownloadConfirmation,
     queryMetadata?.queryCount,
     selectedRows,
     showAddQueryToDownloadList,
@@ -156,6 +168,8 @@ export function DownloadOptions(props: DownloadOptionsProps) {
         darkTheme={darkTheme}
         icon={'download'}
         menuItems={downloadMenuItems}
+        // Every option opens a dialog or starts an action, so the menu closes once one is chosen.
+        closeMenuOnClick
       />
       {showLoginModal && (
         <DownloadLoginModal

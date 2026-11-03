@@ -49,7 +49,7 @@ describe('TableColumnSchemaEditorUtils', () => {
       ]
       const actual = getAllowedColumnTypes(false, false)
 
-      expect(expected.sort()).toEqual(actual.sort())
+      expect(expected.toSorted()).toEqual(actual.toSorted())
     })
     it('allowed column types for a view, regular column model', () => {
       const expected = [
@@ -76,7 +76,7 @@ describe('TableColumnSchemaEditorUtils', () => {
       ]
       const actual = getAllowedColumnTypes(true, false)
 
-      expect(expected.sort()).toEqual(actual.sort())
+      expect(expected.toSorted()).toEqual(actual.toSorted())
     })
 
     it('allowed column types for a non-view, jsonSubColumn', () => {
@@ -104,36 +104,36 @@ describe('TableColumnSchemaEditorUtils', () => {
       ]
       const actual = getAllowedColumnTypes(false, true)
 
-      expect(expected.sort()).toEqual(actual.sort())
+      expect(expected.toSorted()).toEqual(actual.toSorted())
     })
   })
 
   it('canHaveSize', () => {
-    const expectedTrue = [
+    const expectedTrue = new Set([
       ColumnTypeEnum.STRING,
       ColumnTypeEnum.STRING_LIST,
       ColumnTypeEnum.LINK,
-    ]
+    ])
 
     Object.values(ColumnTypeEnum).forEach((key: ColumnType) => {
       const actual = canHaveSize(key)
-      const expected = expectedTrue.includes(key as ColumnTypeEnum)
+      const expected = expectedTrue.has(key as ColumnTypeEnum)
       expect(actual).toBe(expected)
     })
   })
   it('canHaveMaxListLength', () => {
-    const expectedTrue = [
+    const expectedTrue = new Set([
       ColumnTypeEnum.STRING_LIST,
       ColumnTypeEnum.BOOLEAN_LIST,
       ColumnTypeEnum.DATE_LIST,
       ColumnTypeEnum.INTEGER_LIST,
       ColumnTypeEnum.ENTITYID_LIST,
       ColumnTypeEnum.USERID_LIST,
-    ]
+    ])
 
     Object.values(ColumnTypeEnum).forEach((key: ColumnType) => {
       const actual = canHaveMaxListLength(key)
-      const expected = expectedTrue.includes(key as ColumnTypeEnum)
+      const expected = expectedTrue.has(key as ColumnTypeEnum)
       expect(actual).toBe(expected)
     })
   })
@@ -239,7 +239,7 @@ describe('TableColumnSchemaEditorUtils', () => {
     })
 
     it('certain column types support default values', () => {
-      const expectedFalse = [
+      const expectedFalse = new Set([
         ColumnTypeEnum.ENTITYID,
         ColumnTypeEnum.FILEHANDLEID,
         ColumnTypeEnum.USERID,
@@ -249,10 +249,10 @@ describe('TableColumnSchemaEditorUtils', () => {
         ColumnTypeEnum.EVALUATIONID,
         ColumnTypeEnum.USERID_LIST,
         ColumnTypeEnum.ENTITYID_LIST,
-      ]
+      ])
       Object.values(ColumnTypeEnum).forEach((type: ColumnType) => {
         const actual = canHaveDefault(type, false, false)
-        expect(actual).toBe(!expectedFalse.includes(type as ColumnTypeEnum))
+        expect(actual).toBe(!expectedFalse.has(type as ColumnTypeEnum))
       })
     })
   })
@@ -314,14 +314,14 @@ describe('TableColumnSchemaEditorUtils', () => {
 
   describe('canHaveRestrictedValues', () => {
     test('all types for top-level columnModel', () => {
-      const expectedTrue = [
+      const expectedTrue = new Set([
         ColumnTypeEnum.STRING,
         ColumnTypeEnum.INTEGER,
         ColumnTypeEnum.ENTITYID,
-      ]
+      ])
       Object.values(ColumnTypeEnum).forEach((type: ColumnType) => {
         const actual = canHaveRestrictedValues(type, false)
-        expect(actual).toBe(expectedTrue.includes(type as ColumnTypeEnum))
+        expect(actual).toBe(expectedTrue.has(type as ColumnTypeEnum))
       })
     })
     test('jsonSubColumnFacet', () => {

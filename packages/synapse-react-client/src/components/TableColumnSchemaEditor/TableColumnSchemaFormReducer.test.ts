@@ -134,7 +134,7 @@ describe('TableColumnSchemaFormReducer', () => {
     const newState = reducer(prevState, {
       type: 'appendColumn',
     })
-    expect(newState[newState.length - 1]).toEqual({
+    expect(newState.at(-1)).toEqual({
       name: '',
       isOriginallyDefaultColumn: false,
       columnType: ColumnTypeEnum.STRING,
@@ -203,6 +203,36 @@ describe('TableColumnSchemaFormReducer', () => {
     expect(newState[1]).toBe(unmodifiedParentColumnModel)
     expect(newState[1].jsonSubColumns![1]).toBe(unmodifiedSiblingJsonSubColumn)
     expect(newState[1].jsonSubColumns![0].name).toBe('newName')
+  })
+  test.each([undefined, 'range'] as const)(
+    'setColumnModelValue - removes facetSortConfig when facetType changes to %s',
+    facetType => {
+      const prevState: ColumnModelFormData[] = [
+        {
+          ...getDefaultColumnModelFormData(),
+          facetType: 'enumeration',
+          facetSortConfig: { property: 'FREQUENCY', direction: 'DESC' },
+        },
+      ]
+      const newState = reducer(prevState, {
+        type: 'setColumnModelValue',
+        columnModelIndex: 0,
+        value: { ...prevState[0], facetType },
+      })
+
+      expect(newState[0].facetType).toBe(facetType)
+      expect(Object.hasOwn(newState[0], 'facetSortConfig')).toBe(false)
+    },
+  )
+  test('setColumnModelValue - keeps facetSortConfig on an enumeration facet', () => {
+    const facetSortConfig = { property: 'VALUE', direction: 'ASC' } as const
+    const newState = reducer(prevState, {
+      type: 'setColumnModelValue',
+      columnModelIndex: 0,
+      value: { ...prevState[0], facetType: 'enumeration', facetSortConfig },
+    })
+
+    expect(newState[0].facetSortConfig).toEqual(facetSortConfig)
   })
   test('changeColumnModelType - both canHaveSize', () => {
     // STRING -> LINK
@@ -431,6 +461,25 @@ describe('TableColumnSchemaFormReducer', () => {
     expect(newState[0].columnType).toEqual(ColumnTypeEnum.FILEHANDLEID)
     // facetType should not exist on new column model
     expect(Object.hasOwn(newState[0], 'facetType')).toBe(false)
+  })
+  test('changeColumnModelType - removes facetSortConfig when the new type does not allow an enumeration facet', () => {
+    // STRING -> DOUBLE with 'enumeration'
+    const prevState: ColumnModelFormData[] = [
+      {
+        ...getDefaultColumnModelFormData(),
+        columnType: ColumnTypeEnum.STRING,
+        facetType: 'enumeration',
+        facetSortConfig: { property: 'FREQUENCY', direction: 'DESC' },
+      },
+    ]
+    const newState = reducer(prevState, {
+      type: 'changeColumnModelType',
+      columnModelIndex: 0,
+      newColumnType: ColumnTypeEnum.DOUBLE,
+    })
+
+    expect(Object.hasOwn(newState[0], 'facetType')).toBe(false)
+    expect(Object.hasOwn(newState[0], 'facetSortConfig')).toBe(false)
   })
 
   test('changeColumnModelType - both have jsonSubColumns', () => {

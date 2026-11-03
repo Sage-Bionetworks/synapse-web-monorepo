@@ -253,7 +253,7 @@ function getDataSetDifference(
 ) {
   const unchangedItems = oldDataSet.filter(
     oldItem =>
-      !changedItems.find(newItem => newItem.entityId === oldItem.entityId),
+      !changedItems.some(newItem => newItem.entityId === oldItem.entityId),
   )
   const deletedItems = [...unchangedItems]
   const { updatedItems, newItems } = changedItems.reduce(
@@ -653,8 +653,7 @@ export function DatasetItemsEditor(props: DatasetItemsEditorProps) {
     getScrollElement: () => tableContainerRef.current,
     // measure dynamic row height, except in firefox because it measures table border height incorrectly
     measureElement:
-      typeof window !== 'undefined' &&
-      navigator.userAgent.indexOf('Firefox') === -1
+      typeof window !== 'undefined' && !navigator.userAgent.includes('Firefox')
         ? element => element?.getBoundingClientRect().height
         : undefined,
     overscan: 5,

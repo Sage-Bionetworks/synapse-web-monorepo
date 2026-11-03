@@ -22,7 +22,7 @@ export function useCreateFolderPath() {
 
   return useMutation({
     mutationFn: async (args: { rootContainerId: string; path: string[] }) => {
-      const { rootContainerId: rootContainerId, path } = args
+      const { rootContainerId, path } = args
       let parentId = rootContainerId
       for (const pathElement of path) {
         const foundEntityId = await queryClient.fetchQuery(

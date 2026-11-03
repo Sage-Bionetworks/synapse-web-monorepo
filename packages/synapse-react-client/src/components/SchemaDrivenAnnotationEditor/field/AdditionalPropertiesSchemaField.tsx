@@ -84,7 +84,7 @@ export function transformDataFromPropertyType(
       return list.map(item => !!item)
     case 'String':
     default:
-      return list.map(item => String(item))
+      return list.map(String)
   }
 }
 
@@ -156,9 +156,7 @@ export function AdditionalPropertiesSchemaField<
   useEffect(() => {
     function onNextPropertyTypeUpdate() {
       if (Array.isArray(formData)) {
-        const dataIsEmpty =
-          formData.length === 0 ||
-          formData.every(item => item == null || item == '')
+        const dataIsEmpty = formData.every(item => item == null || item == '')
         const coercedList = transformDataFromPropertyType(
           formData,
           nextPropertyType,

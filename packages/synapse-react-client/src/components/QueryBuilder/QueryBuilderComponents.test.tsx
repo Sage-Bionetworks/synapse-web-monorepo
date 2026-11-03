@@ -9,6 +9,11 @@ import {
   QueryBuilderInternalContextProvider,
   QueryBuilderInternalContextType,
 } from './QueryBuilderInternalContext'
+import {
+  FILTER_LIMIT_VIOLATION_MESSAGES,
+  MAX_FILTER_GROUP_CHILDREN,
+  MAX_FILTER_GROUP_DEPTH,
+} from './queryBuilderLimits'
 import { defaultQBGroup, newBlankCondition } from './queryBuilderOperations'
 import { QBGroup } from './QueryBuilderTypes'
 import { rawQBValueDisplayName } from './useQBValueDisplayName'
@@ -20,6 +25,7 @@ function makeContext(
     columnModels: [],
     facetResults: [],
     onlyFacetedColumns: false,
+    isAtLeafPredicateLimit: false,
     getColumnDisplayName: (name: string) => name,
     getValueDisplayName: rawQBValueDisplayName,
     addConditionAt: vi.fn(),
@@ -176,6 +182,66 @@ describe('FilterGroupNode', () => {
       screen.getByRole('button', { name: /^\+ Condition Group$/ }),
     )
     expect(contextValue.addChildGroupAt).toHaveBeenCalledWith(rootAnd.id)
+  })
+
+  it('disables adding conditions and groups to a group that has the maximum number of children', () => {
+    const fullGroup: QBGroup = {
+      ...defaultQBGroup(),
+      children: Array.from({ length: MAX_FILTER_GROUP_CHILDREN }, () =>
+        newBlankCondition(null, null),
+      ),
+    }
+    renderWithContext(<FilterGroupNode group={fullGroup} isRoot />)
+
+    expect(
+      screen.getByRole('button', { name: /^\+ Condition$/ }),
+    ).toBeDisabled()
+    expect(
+      screen.getByRole('button', { name: /^\+ Condition Group$/ }),
+    ).toBeDisabled()
+    expect(
+      screen.getAllByLabelText(FILTER_LIMIT_VIOLATION_MESSAGES.groupChildren),
+    ).toHaveLength(2)
+  })
+
+  it('disables adding a group, but not a condition, at the maximum nesting depth', () => {
+    // FilterGroupNode depth starts at 0 for the root, which the server counts as depth 1.
+    renderWithContext(
+      <FilterGroupNode group={rootAnd} depth={MAX_FILTER_GROUP_DEPTH - 1} />,
+    )
+
+    expect(screen.getByRole('button', { name: /^\+ Condition$/ })).toBeEnabled()
+    expect(
+      screen.getByRole('button', { name: /^\+ Condition Group$/ }),
+    ).toBeDisabled()
+    expect(
+      screen.getByLabelText(FILTER_LIMIT_VIOLATION_MESSAGES.depth),
+    ).toBeInTheDocument()
+  })
+
+  it('allows adding a group one level above the maximum nesting depth', () => {
+    renderWithContext(
+      <FilterGroupNode group={rootAnd} depth={MAX_FILTER_GROUP_DEPTH - 2} />,
+    )
+    expect(
+      screen.getByRole('button', { name: /^\+ Condition Group$/ }),
+    ).toBeEnabled()
+  })
+
+  it('disables adding a condition, but not a group, at the leaf predicate limit', () => {
+    renderWithContext(<FilterGroupNode group={rootAnd} isRoot />, {
+      isAtLeafPredicateLimit: true,
+    })
+
+    expect(
+      screen.getByRole('button', { name: /^\+ Condition$/ }),
+    ).toBeDisabled()
+    expect(
+      screen.getByRole('button', { name: /^\+ Condition Group$/ }),
+    ).toBeEnabled()
+    expect(
+      screen.getByLabelText(FILTER_LIMIT_VIOLATION_MESSAGES.leafPredicates),
+    ).toBeInTheDocument()
   })
 
   it('dispatches updateGroupAt with combinator: "OR" when OR is picked', async () => {

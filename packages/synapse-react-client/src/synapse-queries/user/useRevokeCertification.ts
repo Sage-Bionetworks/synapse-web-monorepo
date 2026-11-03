@@ -20,18 +20,16 @@ export function useRevokeCertification(
     ...options,
     mutationFn: (userId: string) =>
       SynapseClient.revokeCertification(userId, accessToken!),
-    onSuccess: async (updatedPassingRecord, userId, ctx) => {
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: keyFactory.getUserBundleQueryKey(
-            userId,
-            USER_BUNDLE_MASK_IS_CERTIFIED,
-          ),
-        }),
-      ])
+    onSuccess: async (updatedPassingRecord, userId, ctx, ...rest) => {
+      await queryClient.invalidateQueries({
+        queryKey: keyFactory.getUserBundleQueryKey(
+          userId,
+          USER_BUNDLE_MASK_IS_CERTIFIED,
+        ),
+      })
 
       if (options?.onSuccess) {
-        await options.onSuccess(updatedPassingRecord, userId, ctx)
+        await options.onSuccess(updatedPassingRecord, userId, ctx, ...rest)
       }
     },
   })

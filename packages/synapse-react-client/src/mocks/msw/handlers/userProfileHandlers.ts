@@ -113,10 +113,12 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
   http.post<never, IdList>(
     `${backendOrigin}${USER_PROFILE}`,
     async ({ request }) => {
-      const requestedList = ((await request.json()).list ?? []).map(String)
+      const requestedList = new Set(
+        ((await request.json()).list ?? []).map(String),
+      )
       const responsePage: UserProfileList = {
         list: mockUserData
-          .filter(userData => requestedList.includes(userData.id.toString()))
+          .filter(userData => requestedList.has(userData.id.toString()))
           .map(userData => userData.userProfile)
           .filter(
             (userProfile): userProfile is UserProfile => userProfile != null,
@@ -193,7 +195,9 @@ export const getUserProfileHandlers = (backendOrigin: string) => [
     // A minimal 1x1 transparent PNG
     const onePixelPngBase64 =
       'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII='
-    const bytes = Uint8Array.from(atob(onePixelPngBase64), c => c.charCodeAt(0))
+    const bytes = Uint8Array.from(atob(onePixelPngBase64), c =>
+      c.codePointAt(0)!,
+    )
     return HttpResponse.arrayBuffer(bytes.buffer, {
       headers: { 'Content-Type': 'image/png' },
     })

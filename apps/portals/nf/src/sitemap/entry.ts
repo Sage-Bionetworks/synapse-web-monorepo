@@ -10,8 +10,8 @@
  *
  * Usage: vite build --config sitemap.vite.config.ts && node build/sitemap-entry.mjs
  */
-import * as fs from 'fs'
-import * as path from 'path'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
 
 // Static routes — same set as prerender() in react-router.config.ts.
 // Dynamic routes (detail pages) are enumerated by the CLI via sitemapConfig.

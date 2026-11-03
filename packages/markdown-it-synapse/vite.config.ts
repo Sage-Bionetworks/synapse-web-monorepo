@@ -1,5 +1,5 @@
 import { globSync } from 'node:fs'
-import { resolve } from 'path'
+import { resolve } from 'node:path'
 import { mergeConfig } from 'vite'
 import {
   baseConfig,

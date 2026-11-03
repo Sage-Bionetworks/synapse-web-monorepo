@@ -44,11 +44,15 @@ const mockContextValue = {
   onEntityIdClicked: vi.fn(),
 }
 
+const mockContextValueWith = (
+  contextOverrides: Partial<typeof mockContextValue>,
+) => ({ ...mockContextValue, ...contextOverrides })
+
 const renderWithContext = (
   props: any,
   contextOverrides: Partial<typeof mockContextValue> = {},
 ) => {
-  const contextValue = { ...mockContextValue, ...contextOverrides }
+  const contextValue = mockContextValueWith(contextOverrides)
   return render(
     <EntityTreeTableContext.Provider value={contextValue}>
       <table>

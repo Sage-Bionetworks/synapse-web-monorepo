@@ -11,7 +11,7 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { useState } from 'react'
 import MarkdownSynapse from '../../Markdown/MarkdownSynapse'
-import { RequirementItemStatus } from '../AccessApprovalCheckMark'
+import { getRequirementItemStatus } from '../AccessApprovalCheckMark'
 import RequirementItem from './RequirementItem'
 
 export type UnmanagedACTAccessRequirementItemProps = {
@@ -47,16 +47,13 @@ export default function UnmanagedACTAccessRequirementItem(
   const [showACTContactInfoInstructions, setShowACTContactInfoInstructions] =
     useState<boolean>(false)
 
-  let acceptButtonText = ''
-  if (
+  const isOnSynapseOrg =
     typeof window !== 'undefined' &&
     (window.location.hostname === 'www.synapse.org' ||
       window.location.hostname === 'staging.synapse.org')
-  ) {
-    acceptButtonText = 'Request access'
-  } else {
-    acceptButtonText = 'Request access via Synapse.org'
-  }
+  const acceptButtonText = isOnSynapseOrg
+    ? 'Request access'
+    : 'Request access via Synapse.org'
 
   const gotoSynapseAccessRequirementPage = () => {
     const subjectTypeFilter = subjectType ? `&TYPE=${subjectType}` : ''
@@ -107,13 +104,7 @@ export default function UnmanagedACTAccessRequirementItem(
   return (
     <RequirementItem
       data-testid={'UnmanagedACTAccessRequirementItem'}
-      status={
-        isLoadingStatus
-          ? RequirementItemStatus.LOADING
-          : isApproved
-            ? RequirementItemStatus.COMPLETE
-            : RequirementItemStatus.LOCKED
-      }
+      status={getRequirementItemStatus(isLoadingStatus, isApproved)}
       actions={actions}
     >
       {isApproved ? (

@@ -44,13 +44,13 @@
     "@vitejs/plugin-react": "^6.0.2",
     "svgo": "^3.3.5",
     "typescript": "6.0.3",
-    "vite": "^8.0.16",
+    "vite": "^8.3.5",
     "vite-plugin-dts": "^4.5.4",
     "vite-plugin-externalize-deps": "^0.10.0",
     "vite-plugin-html": "^3.2.2",
     "vite-plugin-lib-inject-css": "^2.2.2",
     "vite-plugin-node-polyfills": "^0.28.0",
     "vite-plugin-svgr": "^5.2.0",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.12"
   }
 }

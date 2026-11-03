@@ -55,9 +55,9 @@ const INITIAL_STATE: SessionState = {
  */
 export class SynapseSessionManager {
   private state: SessionState = INITIAL_STATE
-  private listeners = new Set<() => void>()
+  private readonly listeners = new Set<() => void>()
   private intervalId: ReturnType<typeof setInterval> | null = null
-  private options: Required<
+  private readonly options: Required<
     Pick<SynapseSessionManagerOptions, 'defaultRealm'>
   > &
     SynapseSessionManagerOptions

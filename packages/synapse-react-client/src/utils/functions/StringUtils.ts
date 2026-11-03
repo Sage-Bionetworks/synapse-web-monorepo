@@ -14,6 +14,8 @@ export function hex2ascii(inputString: string): string {
   const hex: string = inputString.toString()
   let str: string = ''
   for (let n = 0; n < hex.length; n += 2) {
+    // Each pair is a single byte; fromCodePoint would throw on the NaN that malformed hex produces
+    // oxlint-disable-next-line unicorn/prefer-code-point
     str += String.fromCharCode(parseInt(hex.substring(n, n + 2), 16))
   }
   return str
@@ -31,6 +33,8 @@ export function hashCode(str?: string | null) {
   }
   let hash = 0
   for (let i = 0, len = str.length; i < len; i++) {
+    // Java's String.hashCode() sums UTF-16 code units, so astral characters must not be read as one code point
+    // oxlint-disable-next-line unicorn/prefer-code-point
     const chr = str.charCodeAt(i)
     hash = (hash << 5) - hash + chr
     hash |= 0 // Convert to 32bit integer
@@ -95,7 +99,7 @@ export function replaceFileExtension(
   extension: string,
 ): string {
   const pathParts = filePath.split(/[\\/]/) // split on both '/' and '\'
-  const filename = pathParts[pathParts.length - 1] // last part of path
+  const filename = pathParts.at(-1)! // last part of path
   const baseName = filename.replace(/\.[^/.]+$/, '') // remove extension
   return `${baseName}.${extension}`
 }

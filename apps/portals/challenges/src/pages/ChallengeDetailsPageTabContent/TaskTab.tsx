@@ -86,14 +86,16 @@ function TaskTab() {
               >
                 {({ value }) => {
                   // Parse annotation value to determine which submission widget to show
-                  const submissionTypes = String(value || '')
-                    .split(',')
-                    .map(type => type.trim().toLowerCase())
+                  const submissionTypes = new Set(
+                    String(value || '')
+                      .split(',')
+                      .map(type => type.trim().toLowerCase()),
+                  )
 
                   const content: React.ReactElement[] = []
 
                   // Show file submission widget if submission type includes 'file'
-                  if (submissionTypes.includes('file')) {
+                  if (submissionTypes.has('file')) {
                     content.push(
                       <div style={{ marginBottom: '60px' }}>
                         <ChallengeSubmissionWrapper
@@ -106,7 +108,7 @@ function TaskTab() {
                   }
 
                   // Show docker submission widget if submission type includes 'dockerrepo'
-                  if (submissionTypes.includes('dockerrepo')) {
+                  if (submissionTypes.has('dockerrepo')) {
                     content.push(
                       <div style={{ marginBottom: '60px' }}>
                         <ChallengeSubmissionWrapper

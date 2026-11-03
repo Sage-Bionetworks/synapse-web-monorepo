@@ -12,6 +12,7 @@ import {
   FACET_COLUMN_VALUES_REQUEST_CONCRETE_TYPE_VALUE,
   FILTER_GROUP_CONCRETE_TYPE_VALUE,
   FilterGroup,
+  QueryFilter,
 } from '@sage-bionetworks/synapse-types'
 import {
   apiFilterToQBNode,
@@ -64,15 +65,21 @@ describe('isListColumn', () => {
 
 describe('escapeLike / unescapeLike', () => {
   it('round-trips text with %, _, and \\', () => {
-    const originals = ['50%', 'a_b', 'raw text', '100% pure_junk\\', '%%__\\\\']
+    const originals = [
+      '50%',
+      'a_b',
+      'raw text',
+      '100% pure_junk\\',
+      String.raw`%%__\\`,
+    ]
     for (const original of originals) {
       expect(unescapeLike(escapeLike(original))).toBe(original)
     }
   })
 
   it('escapes the wildcards so they are not interpreted', () => {
-    expect(escapeLike('50%')).toBe('50\\%')
-    expect(escapeLike('a_b')).toBe('a\\_b')
+    expect(escapeLike('50%')).toBe(String.raw`50\%`)
+    expect(escapeLike('a_b')).toBe(String.raw`a\_b`)
   })
 })
 
@@ -102,7 +109,7 @@ describe('classifyLikePattern', () => {
     })
   })
   it('un-escapes literal wildcards inside the text', () => {
-    expect(classifyLikePattern('%50\\%%')).toEqual({
+    expect(classifyLikePattern(String.raw`%50\%%`)).toEqual({
       op: 'contains',
       text: '50%',
     })
@@ -157,12 +164,12 @@ describe('qbNodeToApiFilter — conditions', () => {
   })
 
   describe('is_all_of', () => {
-    it('emits HAS on ColumnMultiValueFunctionQueryFilter', () => {
+    it('emits a single HAS for one value', () => {
       const result = qbNodeToApiFilter(
         condition({
           op: 'is_all_of',
           columnType: 'STRING_LIST',
-          values: ['a', 'b'],
+          values: ['a'],
         }),
       )
       expect(result).toEqual<ColumnMultiValueFunctionQueryFilter>({
@@ -171,7 +178,33 @@ describe('qbNodeToApiFilter — conditions', () => {
         columnName: 'col',
         function: ColumnMultiValueFunction.HAS,
         _function: ColumnMultiValueFunction.HAS,
-        values: ['a', 'b'],
+        values: ['a'],
+      })
+    })
+
+    it('emits an AND group of single-value HAS predicates for several values, because one HAS matches any of its values', () => {
+      const hasValue = (
+        value: string,
+      ): ColumnMultiValueFunctionQueryFilter => ({
+        concreteType:
+          COLUMN_MULTI_VALUE_FUNCTION_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+        columnName: 'col',
+        function: ColumnMultiValueFunction.HAS,
+        _function: ColumnMultiValueFunction.HAS,
+        values: [value],
+      })
+      expect(
+        qbNodeToApiFilter(
+          condition({
+            op: 'is_all_of',
+            columnType: 'STRING_LIST',
+            values: ['a', 'b'],
+          }),
+        ),
+      ).toEqual<FilterGroup>({
+        concreteType: FILTER_GROUP_CONCRETE_TYPE_VALUE,
+        operator: 'AND',
+        children: [hasValue('a'), hasValue('b')],
       })
     })
 
@@ -348,7 +381,7 @@ describe('qbNodeToApiFilter — conditions', () => {
       const result = qbNodeToApiFilter(
         condition({ op: 'contains', text: '50%' }),
       ) as ColumnSingleValueQueryFilter
-      expect(result.values).toEqual(['%50\\%%'])
+      expect(result.values).toEqual([String.raw`%50\%%`])
     })
 
     it.each(['contains', 'starts_with', 'ends_with', 'is_exactly'])(
@@ -486,6 +519,40 @@ describe('apiFilterToQBNode', () => {
     })
   })
 
+  it('restores is_all_of from the AND group of HAS predicates it emits', () => {
+    const allOf = qbNodeToApiFilter(
+      condition({
+        op: 'is_all_of',
+        columnType: 'STRING_LIST',
+        values: ['txt', 'csv'],
+      }),
+    )!
+    expect(apiFilterToQBNode(allOf)).toMatchObject({
+      kind: 'condition',
+      columnName: 'col',
+      op: 'is_all_of',
+      values: ['txt', 'csv'],
+    })
+  })
+
+  it('keeps an AND group of HAS predicates on different columns as a group', () => {
+    const hasOn = (columnName: string): QueryFilter => ({
+      concreteType:
+        COLUMN_MULTI_VALUE_FUNCTION_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+      columnName,
+      function: ColumnMultiValueFunction.HAS,
+      _function: ColumnMultiValueFunction.HAS,
+      values: ['x'],
+    })
+    expect(
+      apiFilterToQBNode({
+        concreteType: FILTER_GROUP_CONCRETE_TYPE_VALUE,
+        operator: 'AND',
+        children: [hasOn('a'), hasOn('b')],
+      }),
+    ).toMatchObject({ kind: 'group', combinator: 'AND' })
+  })
+
   it.each([
     [
       ColumnSingleValueFilterOperator.EQUAL,
@@ -541,7 +608,7 @@ describe('apiFilterToQBNode', () => {
       concreteType: COLUMN_SINGLE_VALUE_QUERY_FILTER_CONCRETE_TYPE_VALUE,
       columnName: 'col',
       operator: ColumnSingleValueFilterOperator.LIKE,
-      values: ['%50\\%%'],
+      values: [String.raw`%50\%%`],
     }) as QBCondition
     expect(contains).toMatchObject({ op: 'contains', text: '50%' })
   })

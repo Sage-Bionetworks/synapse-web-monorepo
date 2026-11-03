@@ -61,7 +61,7 @@ interface Notification extends Error {
   type: StatusEnum
 }
 
-class _SynapseFormWrapper extends Component<
+class InternalSynapseFormWrapper extends Component<
   SynapseFormWrapperProps,
   SynapseFormWrapperState
 > {
@@ -423,7 +423,9 @@ class _SynapseFormWrapper extends Component<
 export function SynapseFormWrapper(props: SynapseFormWrapperProps) {
   const synapseContext = useSynapseContext()
 
-  return <_SynapseFormWrapper {...props} token={synapseContext.accessToken} />
+  return (
+    <InternalSynapseFormWrapper {...props} token={synapseContext.accessToken} />
+  )
 }
 
 export default SynapseFormWrapper

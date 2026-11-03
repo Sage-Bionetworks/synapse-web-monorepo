@@ -35,6 +35,7 @@ export const DualPane: Story = {
 
 export const SinglePane: Story = {
   args: {
-    ...{ ...DualPane.args, configuration: { ...EntityFinderSinglePane.args } },
+    ...DualPane.args,
+    configuration: { ...EntityFinderSinglePane.args },
   },
 }

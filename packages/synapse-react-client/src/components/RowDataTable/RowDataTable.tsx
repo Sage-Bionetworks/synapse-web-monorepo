@@ -17,45 +17,60 @@ export type RowDataTableProps = {
   columnAliases?: Record<string, string>
 }
 
-/**
- * Displays a table of column names and Synapse Table row data represented as key/value pairs
- */
-const RowDataTable = (props: RowDataTableProps): React.ReactNode => {
-  const { columnAliases, columnLinks, headers, rowData, displayedColumns } =
-    props
+export type RowDataEntriesTableProps = Pick<
+  RowDataTableProps,
+  'rowData' | 'headers' | 'columnLinks' | 'columnAliases'
+> & {
+  /** The [columnName, value] pairs to display, in display order */
+  entries: [string, string][]
+}
 
-  const columns = displayedColumns
-    ? headers
-        .filter(header => displayedColumns.includes(header.name))
-        .map(header => header.name)
-    : headers.map(header => header.name)
-
-  const labelValueArray: [string, string][] = []
-
-  for (let i = 0; i < columns.length; i += 1) {
-    const columnName = columns[i]
-    const columnIndex = headers.findIndex(header => header.name === columnName)
-    const value = columnIndex !== -1 ? rowData[columnIndex] : undefined
-
-    // value can be 'null' if column type is of type STRING or '[null]' if column type is of STRING_LIST
-    const column = headers[columnIndex]
-    const isNullValue = value === 'null'
-    const isListType = column.columnType.endsWith('_LIST')
-
-    const isEmptyListOrListOfNull = value === '[]' || value === '[null]'
-    if (
-      typeof value === 'string' &&
-      !(isNullValue || (isListType && isEmptyListOrListOfNull))
-    ) {
-      labelValueArray.push([columnName, value])
-    }
+function hasDisplayableValue(
+  value: string | null | undefined,
+  column: SelectColumn,
+): value is string {
+  // value can be 'null' if column type is of type STRING or '[null]' if column type is of STRING_LIST
+  if (typeof value !== 'string' || value === 'null') {
+    return false
   }
+  const isListType = column.columnType.endsWith('_LIST')
+  const isEmptyListOrListOfNull = value === '[]' || value === '[null]'
+  return !(isListType && isEmptyListOrListOfNull)
+}
 
+/**
+ * Returns the [columnName, value] pairs for the given columns, in the order of `columns`.
+ * Columns that are not in `headers` or that have no value in `rowData` are omitted.
+ */
+export function getDisplayedRowDataEntries(
+  columns: string[],
+  headers: SelectColumn[],
+  rowData: Array<string | null>,
+): [string, string][] {
+  return columns.flatMap((columnName): [string, string][] => {
+    const columnIndex = headers.findIndex(header => header.name === columnName)
+    if (columnIndex === -1) {
+      return []
+    }
+    const value = rowData[columnIndex]
+    return hasDisplayableValue(value, headers[columnIndex])
+      ? [[columnName, value]]
+      : []
+  })
+}
+
+/**
+ * Displays the given column name/value pairs of a Synapse Table row as a key/value table
+ */
+export function RowDataEntriesTable(
+  props: RowDataEntriesTableProps,
+): React.ReactNode {
+  const { columnAliases, columnLinks, headers, rowData, entries } = props
   return (
     <StyledTableContainer sx={{ width: '100%' }}>
       <table style={{ width: '100%' }}>
         <tbody>
-          {labelValueArray?.map(([columnName, value]) => (
+          {entries.map(([columnName, value]) => (
             <tr key={columnName}>
               <td style={{ width: '256px' }}>
                 <span
@@ -86,6 +101,30 @@ const RowDataTable = (props: RowDataTableProps): React.ReactNode => {
         </tbody>
       </table>
     </StyledTableContainer>
+  )
+}
+
+/**
+ * Displays a table of column names and Synapse Table row data represented as key/value pairs
+ */
+const RowDataTable = (props: RowDataTableProps): React.ReactNode => {
+  const { columnAliases, columnLinks, headers, rowData, displayedColumns } =
+    props
+
+  const columns = displayedColumns
+    ? headers
+        .filter(header => displayedColumns.includes(header.name))
+        .map(header => header.name)
+    : headers.map(header => header.name)
+
+  return (
+    <RowDataEntriesTable
+      entries={getDisplayedRowDataEntries(columns, headers, rowData)}
+      headers={headers}
+      rowData={rowData}
+      columnLinks={columnLinks}
+      columnAliases={columnAliases}
+    />
   )
 }
 

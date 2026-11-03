@@ -142,13 +142,13 @@ export function pointerToPropertyKey(pointer: string): string | null {
   if (!pointer.startsWith('/')) return null
   const segment = pointer.slice(1)
   if (!segment || segment.includes('/')) return null
-  return segment.replace(/~1/g, '/').replace(/~0/g, '~')
+  return segment.replaceAll('~1', '/').replaceAll('~0', '~')
 }
 
 /** The single-segment JSON Pointer addressing a property key (e.g. `institution` -> `/institution`),
  * the inverse of `pointerToPropertyKey`. */
 export function propertyKeyToPointer(propertyKey: string): string {
-  return `/${propertyKey.replace(/~/g, '~0').replace(/\//g, '~1')}`
+  return `/${propertyKey.replaceAll('~', '~0').replaceAll('/', '~1')}`
 }
 
 /** Resolve a `FormTemplateField.schemaPath`-style JSON Pointer, applying the same rules as

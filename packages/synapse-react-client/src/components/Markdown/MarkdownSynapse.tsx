@@ -260,7 +260,7 @@ function getParserOptions(markdown: string): HTMLReactParserOptions {
           )
         default:
           // Let html-react-parser render the element with default handling.
-          return
+          return undefined
       }
     },
   }
@@ -318,7 +318,7 @@ function RenderMarkdown(props: {
     )
   }
 
-  return
+  return undefined
 }
 
 /**

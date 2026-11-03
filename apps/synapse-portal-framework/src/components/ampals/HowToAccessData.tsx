@@ -2,7 +2,7 @@ import React from 'react'
 import { Stack, Box, Typography } from '@mui/material'
 import { ReactComponent as HowToAccessDataLogo } from '../../portal-assets/howToAccessDataLogo.svg'
 import { ReactComponent as GeneExpressionOmnibusLogo } from '../../portal-assets/geneExpressionOmnibus.svg'
-import { ReactComponent as RDCADAP } from '../../portal-assets/RDCADAP.svg'
+import { ReactComponent as RdcaDapLogo } from '../../portal-assets/RDCADAP.svg'
 import SynapseFullLogo from 'synapse-react-client/assets/icons/SynapseFullLogo'
 
 const HowToAccessData = (): React.ReactNode => {
@@ -63,7 +63,7 @@ const HowToAccessData = (): React.ReactNode => {
           }}
         >
           {accessDataSteps.map((step, index) => (
-            <Stack sx={{ gap: { xs: '10px', lg: 0 } }}>
+            <Stack key={step.title} sx={{ gap: { xs: '10px', lg: 0 } }}>
               <Box
                 sx={theme => ({
                   [theme.breakpoints.down('md')]: {
@@ -150,7 +150,7 @@ const HowToAccessData = (): React.ReactNode => {
               target="_blank"
               rel="noreferrer"
             >
-              <RDCADAP />
+              <RdcaDapLogo />
             </a>
             <a
               href="https://www.synapse.org/Home:x"

@@ -436,13 +436,13 @@ const expectTable = async (page: Page, exploreTab: string) => {
 
       const rows = table.getByRole('row')
       const totalRowsText = await page.getByText('total rows').textContent()
-      const totalRows = Number(totalRowsText?.replace(/\D/g, ''))
+      const totalRows = Number(totalRowsText?.replaceAll(/\D/g, ''))
 
       await test.step('confirm total row count in heading', async () => {
         const tabHeading = await page
           .getByRole('heading', { name: /\d+/ })
           .textContent()
-        const totalRowsHeading = Number(tabHeading?.replace(/\D/g, '')) || 0
+        const totalRowsHeading = Number(tabHeading?.replaceAll(/\D/g, '')) || 0
         expect(totalRows).toEqual(totalRowsHeading)
       })
 

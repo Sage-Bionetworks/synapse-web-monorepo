@@ -26,13 +26,13 @@ export function extractColumnValidationMessages(
   for (const raw of messages) {
     if (typeof raw !== 'string') continue
     const str = raw.trimStart()
-    const match = str.match(regex)
+    const match = regex.exec(str)
     if (match) {
       let columnName = match[1]?.trim() ?? '_row'
       const message = match[2].trim()
       if (columnName === '_row') {
-        const requiredKeyMatch = message.match(
-          /^required key \[([^\]]+)\] not found$/i,
+        const requiredKeyMatch = /^required key \[([^\]]+)\] not found$/i.exec(
+          message,
         )
         if (requiredKeyMatch) {
           columnName = requiredKeyMatch[1]

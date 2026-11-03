@@ -78,7 +78,7 @@ describe('SynapseClient tests', () => {
     })
 
     it('works with exacty 50 results', async () => {
-      const totalResults = Array(50).fill('a')
+      const totalResults = new Array(50).fill('a')
       const mockFirstReturn: PaginatedResults<string> = {
         results: totalResults,
       }
@@ -97,7 +97,7 @@ describe('SynapseClient tests', () => {
     })
 
     it('works with > 50 results', async () => {
-      const totalResults = Array(75).fill('a')
+      const totalResults = new Array(75).fill('a')
       const firstResult = totalResults.slice(0, 50)
       const secondResult = totalResults.slice(50)
       const mockFirstReturn: PaginatedResults<string> = {

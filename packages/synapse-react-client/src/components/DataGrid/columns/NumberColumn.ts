@@ -64,6 +64,6 @@ export function numberColumn({
     // grouping separators never reach the parser.
     formatInputOnFocus: castCellValueToString,
     parseUserInput: parse,
-    parsePastedValue: value => parse(value.replace(/[\n\r]+/g, ' ')),
+    parsePastedValue: value => parse(value.replaceAll(/[\n\r]+/g, ' ')),
   })
 }

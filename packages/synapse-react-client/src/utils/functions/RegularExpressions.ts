@@ -65,5 +65,5 @@ export const MARKDOWN_LINK_HREF_REGEX = /\]\(([^)]+)\)/
  * returns the extracted href. If the string is not a markdown link, returns it unchanged.
  */
 export function extractMarkdownLinkHref(value: string): string {
-  return value.match(MARKDOWN_LINK_HREF_REGEX)?.[1] ?? value
+  return MARKDOWN_LINK_HREF_REGEX.exec(value)?.[1] ?? value
 }

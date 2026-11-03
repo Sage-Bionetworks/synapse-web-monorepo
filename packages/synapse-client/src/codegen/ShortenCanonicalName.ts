@@ -77,7 +77,7 @@ export function shortenCanonicalNames(
   while (duplicateNames.length > 0) {
     // For each duplicate name, extend the length of the name by one and check again
     Object.entries(caseInsensitiveMapping).forEach(([key, value]) => {
-      if (duplicateNames.find(duplicate => isEqual(duplicate, value))) {
+      if (duplicateNames.some(duplicate => isEqual(duplicate, value))) {
         // Extend the length of the name by one
         caseInsensitiveMapping[key] = key
           .toLowerCase()

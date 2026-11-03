@@ -1,3 +1,3 @@
-import { default as Bookmarks } from './Bookmarks'
+import Bookmarks from './Bookmarks'
 import type { BookmarksProps } from './Bookmarks'
 export { Bookmarks, BookmarksProps }

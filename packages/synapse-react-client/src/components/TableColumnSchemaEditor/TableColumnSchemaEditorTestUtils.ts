@@ -12,7 +12,7 @@ export async function addColumnModelToForm(
   await user.click(addColumnButton)
   if (columnName != null) {
     const nameFields = await screen.findAllByLabelText('Name')
-    await user.type(nameFields[nameFields.length - 1], columnName)
+    await user.type(nameFields.at(-1)!, columnName)
   }
 }
 

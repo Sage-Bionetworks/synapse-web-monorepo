@@ -177,7 +177,7 @@ export function decorateRows(
   for (const parentPosIdx of visibleOrdered) {
     const kids = visibleChildren.get(parentPosIdx)
     if (!kids || kids.length === 0) continue
-    const lastKid = kids[kids.length - 1]
+    const lastKid = kids.at(-1)
     const kidSet = new Set(kids)
 
     // Walk the parent's visible subtree starting just after the parent row.

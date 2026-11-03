@@ -94,7 +94,7 @@ const FeaturedTeam = ({ sql }: FeaturedTeamProps): React.ReactNode => {
           {dataRows.map(row => {
             const rawTeamMemberNames =
               row?.values[teamMemberNamesColumnIndex] ?? ''
-            let teamMemberNames: string[] = []
+            let teamMemberNames: string[]
             try {
               teamMemberNames = JSON.parse(rawTeamMemberNames)
               if (!Array.isArray(teamMemberNames)) {

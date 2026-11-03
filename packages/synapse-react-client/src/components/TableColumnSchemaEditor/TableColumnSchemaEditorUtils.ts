@@ -27,7 +27,7 @@ import {
  * These column types can only be used in Tables. They can not be used in views.
  *  See SWC-6333 - for views, only allow column types that are mapped to annotation types.
  */
-const unsupportedTypesForViews = [ColumnTypeEnum.JSON]
+const unsupportedTypesForViews = new Set([ColumnTypeEnum.JSON])
 
 /**
  * Get the allowed column types for a column model based on the table type.
@@ -40,7 +40,7 @@ export function getAllowedColumnTypes(
 ): ColumnTypeEnum[] {
   return Object.values(ColumnTypeEnum)
     .filter(columnType =>
-      isView ? !unsupportedTypesForViews.includes(columnType) : true,
+      isView ? !unsupportedTypesForViews.has(columnType) : true,
     )
     .filter(columnType => {
       if (isJsonSubColumnFacet) {

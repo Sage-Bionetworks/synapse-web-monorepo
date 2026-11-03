@@ -27914,7 +27914,7 @@
             "description": "Required. The name of the cohort, unique within the request. Must be a simple identifier (letters, digits and underscores, not starting with a digit)."
           },
           "query": {
-            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.table.CohortDefinition"
+            "$ref": "#/components/schemas/org.sagebionetworks.repo.model.table.Query"
           }
         },
         "description": "A named, request-scoped cohort: the distinct values of the single column selected by a query. The cohort query runs with the caller's own authorization. When the caller has aggregate-only access to the cohort source, a non-empty cohort smaller than the source's suppression threshold is rejected."

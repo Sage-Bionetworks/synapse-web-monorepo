@@ -8,7 +8,7 @@ import {
 } from '@/mocks/cohortBuilder/cohortBuilderMockProfiles'
 import {
   CohortBuilderAccess,
-  CohortBuilderQueryBundleRequest,
+  CohortBuilderMockQueryOptions,
   getCohortBuilderColumnModels,
   runCohortBuilderMockQuery,
 } from '@/mocks/cohortBuilder/cohortBuilderMockQueryEngine'
@@ -17,23 +17,50 @@ import {
   createCohortBuilderSyntheticData,
 } from '@/mocks/cohortBuilder/cohortBuilderSyntheticData'
 import {
+  ENTITY_HEADERS,
   ENTITY_ID,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
 } from '@/utils/APIConstants'
+import { BUNDLE_MASK_QUERY_COUNT } from '@/utils/SynapseConstants'
 import {
   BackendDestinationEnum,
   getEndpoint,
+  MOCK_REPO_ORIGIN,
 } from '@/utils/functions/getEndpoint'
-import { VirtualTable } from '@sage-bionetworks/synapse-types'
+import {
+  AddBatchOfFilesToDownloadListRequest,
+  ColumnSingleValueFilterOperator,
+  ColumnSingleValueQueryFilter,
+  EntityHeader,
+  Query,
+  QueryBundleRequest,
+  Reference,
+  VirtualTable,
+} from '@sage-bionetworks/synapse-types'
 import { http, HttpHandler, HttpResponse } from 'msw'
 import {
   AsyncJobFailure,
   dispatchEntry,
   generateAsyncJobHandlers,
 } from './asyncJobHandlers'
+import { getEntityHandlers } from './entityHandlers'
 
 const MOCK_MATERIAL_VIEW_ID = 'syn_MATERIAL'
+
+const DOWNLOAD_LIST_ADD_ASYNC_START = '/repo/v1/download/list/add/async/start'
+const DOWNLOAD_LIST_ADD_ASYNC_GET = (token: string) =>
+  `/repo/v1/download/list/add/async/get/${token}`
+const DOWNLOAD_LIST_ADD_STATS_ASYNC_START =
+  '/repo/v1/download/list/add/stats/async/start'
+const DOWNLOAD_LIST_ADD_STATS_ASYNC_GET = (token: string) =>
+  `/repo/v1/download/list/add/stats/async/get/${token}`
+const DOWNLOAD_LIST_ADD_BATCH = '/repo/v1/download/list/add'
+
+/** Synthetic files have no file handles; each is reported at this size in Download List statistics. */
+export const MOCK_COHORT_FILE_SIZE_BYTES = 10 * 1024 * 1024
+/** The file handle of every mock Files/Datasets CSV export. */
+export const MOCK_COHORT_CSV_FILE_HANDLE_ID = '90000003'
 
 const syntheticDataByProfile = new Map<
   CohortBuilderMockProfile,
@@ -111,7 +138,7 @@ function getVirtualTableEntities(
   ]
 }
 
-export type CohortBuilderHandlersOptions = {
+export type CohortBuilderHandlersOptions = CohortBuilderMockQueryOptions & {
   profile?: CohortBuilderMockProfile
   access?: CohortBuilderAccess
   backendOrigin?: string
@@ -128,6 +155,7 @@ export function getCohortBuilderHandlers(
   const {
     profile = ELITE_MOCK_PROFILE,
     access = 'AGGREGATE_ONLY',
+    maxCohortValues,
     backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
   } = options
   const data = getCohortBuilderSyntheticData(profile)
@@ -136,6 +164,39 @@ export function getCohortBuilderHandlers(
     http.get(`${backendOrigin}${ENTITY_ID(entity.id!)}`, () =>
       HttpResponse.json(entity),
     ),
+  )
+
+  // Headers for the synthetic files and datasets; other references fall through to the next handler.
+  const entityHeaderHandler = http.post(
+    `${backendOrigin}${ENTITY_HEADERS}`,
+    async ({ request }) => {
+      const { references } = (await request.clone().json()) as {
+        references: Reference[]
+      }
+      const results = references.flatMap((reference): EntityHeader[] => {
+        const syntheticReference = data.references.get(reference.targetId)
+        return syntheticReference
+          ? [
+              {
+                id: syntheticReference.id,
+                name: syntheticReference.name,
+                type:
+                  syntheticReference.referenceType === 'FILE'
+                    ? 'org.sagebionetworks.repo.model.FileEntity'
+                    : 'org.sagebionetworks.repo.model.table.Dataset',
+                versionNumber: 1,
+                isLatestVersion: true,
+                benefactorId: 90000000,
+                createdOn: '2026-10-01T00:00:00.000Z',
+                modifiedOn: '2026-10-01T00:00:00.000Z',
+                createdBy: '0',
+                modifiedBy: '0',
+              },
+            ]
+          : []
+      })
+      return results.length > 0 ? HttpResponse.json({ results }) : undefined
+    },
   )
 
   const queryHandlers = [
@@ -148,8 +209,11 @@ export function getCohortBuilderHandlers(
         request => {
           const result = runCohortBuilderMockQuery(
             data,
-            request as unknown as CohortBuilderQueryBundleRequest,
+            // The async-job mocks type request bodies with the generated client models; the engine uses the legacy
+            // QueryBundleRequest, whose shape matches what the client sends.
+            request as unknown as QueryBundleRequest,
             access,
+            { maxCohortValues },
           )
           return result.status === 200
             ? result.body
@@ -167,5 +231,169 @@ export function getCohortBuilderHandlers(
     ),
   )
 
-  return [...entityHandlers, ...queryHandlers]
+  // Counts a Files/Datasets query's rows as this caller sees them, optionally only the file rows.
+  function countDataRows(
+    requestQuery: unknown,
+    onlyFiles: boolean,
+  ): number | AsyncJobFailure {
+    // The async-job mocks type request bodies with the generated client models; the engine uses the legacy Query,
+    // whose shape (including cohorts) matches what the client sends.
+    const query = requestQuery as Query
+    const fileFilter: ColumnSingleValueQueryFilter = {
+      concreteType:
+        'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+      columnName: REFERENCE_TYPE_COLUMN_NAME,
+      operator: ColumnSingleValueFilterOperator.EQUAL,
+      values: ['FILE'],
+    }
+    const result = runCohortBuilderMockQuery(
+      data,
+      {
+        concreteType: 'org.sagebionetworks.repo.model.table.QueryBundleRequest',
+        entityId: profile.dataVirtualTableId,
+        partMask: BUNDLE_MASK_QUERY_COUNT,
+        query: onlyFiles
+          ? {
+              ...query,
+              additionalFilters: [
+                ...(query.additionalFilters ?? []),
+                fileFilter,
+              ],
+            }
+          : query,
+      },
+      access,
+      { maxCohortValues },
+    )
+    // A count-only request returns a bundle with queryCount; anything else is an error body.
+    return 'queryCount' in result.body
+      ? (result.body.queryCount ?? 0)
+      : new AsyncJobFailure(result.status, result.body)
+  }
+
+  // As on the server: the statistics count every row of the query, but only files are added. Datasets are skipped
+  // until the server adds a dataset's files instead (PLFM-9997). Adding a VirtualTable query needs a version column,
+  // which these tables don't have, unless the current versions are requested.
+  const downloadListHandlers = [
+    ...generateAsyncJobHandlers(
+      dispatchEntry(
+        'org.sagebionetworks.repo.model.download.AddToDownloadListStatsRequest',
+        request => {
+          const fileCount = countDataRows(request.request?.query, false)
+          const filesOnly = countDataRows(request.request?.query, true)
+          if (fileCount instanceof AsyncJobFailure) return fileCount
+          if (filesOnly instanceof AsyncJobFailure) return filesOnly
+          return {
+            concreteType:
+              'org.sagebionetworks.repo.model.download.AddToDownloadListStatsResponse',
+            fileCount,
+            fileSize: filesOnly * MOCK_COHORT_FILE_SIZE_BYTES,
+            isFileCountAndSizeEstimate: false,
+          }
+        },
+      ),
+      {
+        asyncTypeServicePaths: {
+          requestPath: DOWNLOAD_LIST_ADD_STATS_ASYNC_START,
+          responsePath: DOWNLOAD_LIST_ADD_STATS_ASYNC_GET,
+        },
+        backendOrigin,
+      },
+    ),
+    ...generateAsyncJobHandlers(
+      dispatchEntry(
+        'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
+        request => {
+          if (
+            request.useVersionNumber !== false &&
+            request.query?.selectFileVersionColumn === undefined
+          ) {
+            return new AsyncJobFailure(400, {
+              concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
+              reason: `'${profile.dataVirtualTableId}' is not a file view or a dataset, the query.selectFileVersionColumn must be specified`,
+            })
+          }
+          const numberOfFilesAdded = countDataRows(request.query, true)
+          return numberOfFilesAdded instanceof AsyncJobFailure
+            ? numberOfFilesAdded
+            : {
+                concreteType:
+                  'org.sagebionetworks.repo.model.download.AddToDownloadListResponse',
+                numberOfFilesAdded,
+              }
+        },
+      ),
+      {
+        asyncTypeServicePaths: {
+          requestPath: DOWNLOAD_LIST_ADD_ASYNC_START,
+          responsePath: DOWNLOAD_LIST_ADD_ASYNC_GET,
+        },
+        backendOrigin,
+      },
+    ),
+    http.post(
+      `${backendOrigin}${DOWNLOAD_LIST_ADD_BATCH}`,
+      async ({ request }) => {
+        const { batchToAdd } =
+          (await request.json()) as AddBatchOfFilesToDownloadListRequest
+        const numberOfFilesAdded = batchToAdd.filter(
+          item =>
+            data.references.get(item.fileEntityId)?.referenceType === 'FILE',
+        ).length
+        return HttpResponse.json({ numberOfFilesAdded })
+      },
+    ),
+  ]
+
+  // The CSV export resolves the request's cohorts like a query, so a cohort reference without its definition fails.
+  const csvExportHandlers = generateAsyncJobHandlers(
+    dispatchEntry(
+      'org.sagebionetworks.repo.model.table.DownloadFromTableRequest',
+      request => {
+        const rowCount = countDataRows(request, false)
+        return rowCount instanceof AsyncJobFailure
+          ? rowCount
+          : {
+              concreteType:
+                'org.sagebionetworks.repo.model.table.DownloadFromTableResult',
+              resultsFileHandleId: MOCK_COHORT_CSV_FILE_HANDLE_ID,
+              tableId: profile.dataVirtualTableId,
+            }
+      },
+    ),
+    {
+      asyncTypeServicePaths: {
+        requestPath: `/repo/v1/entity/${profile.dataVirtualTableId}/table/download/csv/async/start`,
+        responsePath: token =>
+          `/repo/v1/entity/${profile.dataVirtualTableId}/table/download/csv/async/get/${token}`,
+      },
+      backendOrigin,
+    },
+  )
+
+  return [
+    ...entityHandlers,
+    entityHeaderHandler,
+    ...queryHandlers,
+    ...downloadListHandlers,
+    ...csvExportHandlers,
+  ]
+}
+
+/**
+ * Storybook MSW handler groups that serve the Cohort Builder mocks on the mock stack. They replace the `entity` group so
+ * they run before the stock entity handlers, which answer 404 for unknown entity IDs.
+ */
+export function getCohortBuilderStorybookHandlers(
+  options: Omit<CohortBuilderHandlersOptions, 'backendOrigin'> = {},
+): Record<string, HttpHandler[]> {
+  return {
+    entity: [
+      ...getCohortBuilderHandlers({
+        ...options,
+        backendOrigin: MOCK_REPO_ORIGIN,
+      }),
+      ...getEntityHandlers(MOCK_REPO_ORIGIN),
+    ],
+  }
 }

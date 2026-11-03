@@ -217,6 +217,7 @@ describe('group drop zone registration', () => {
       columnModels: [],
       facetResults: [],
       onlyFacetedColumns: false,
+      isAtLeafPredicateLimit: false,
       getColumnDisplayName: (name: string) => name,
       getValueDisplayName: rawQBValueDisplayName,
       addConditionAt: vi.fn(),
