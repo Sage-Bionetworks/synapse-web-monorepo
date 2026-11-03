@@ -1,7 +1,9 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
+import { Model } from 'json-joy/lib/json-crdt'
+import { s } from 'json-joy/lib/json-crdt-patch'
 import { enrichRowsWithChangeInfo } from './enrichRowsWithChangeInfo'
 import createTestModel from './createTestModel'
-import type { DataGridRow } from '../DataGridTypes'
+import type { DataGridRow, GridModel } from '../DataGridTypes'
 import type { ReplicaUserInfo } from '../hooks/useGridReplicaUsers'
 
 function makeReplicaUserInfo(
@@ -128,5 +130,110 @@ describe('enrichRowsWithChangeInfo', () => {
     expect(result[0].__cellChangeInfo?.c0?.tooltipText).toBe(
       'Changed by Alice Smith',
     )
+  })
+
+  it('attributes each cell to the replica that last wrote it', () => {
+    const originalSid = 10
+    const peerSid = 20
+    // columnNames=['','c0','c1'], so data index 1 is 'c0' and index 2 is 'c1'
+    const model = createTestModel(1, 3, originalSid)
+    const peer = (model as unknown as Model).fork(
+      peerSid,
+    ) as unknown as GridModel
+    peer.api.vec(['rows', '0', 'data']).set([[1, s.con('new-value')]])
+    ;(model as unknown as Model).applyPatch(peer.api.flush())
+    const snapshot = model.api.getSnapshot()
+    const rows: DataGridRow[] = [{ c0: 'new-value', c1: 'r0c2' }]
+    const replicaUserMap = new Map([
+      [originalSid, makeReplicaUserInfo('self', originalSid)],
+      [peerSid, makeReplicaUserInfo('other-user', peerSid)],
+    ])
+
+    const result = enrichRowsWithChangeInfo(
+      rows,
+      model,
+      snapshot,
+      replicaUserMap,
+    )
+
+    expect(result[0].__cellChangeInfo).toEqual({
+      c0: { category: 'other-user', tooltipText: 'Changed by Alice Smith' },
+      c1: { category: 'self', tooltipText: 'You changed this' },
+    })
+  })
+
+  it('returns rows that are not in the model by reference', () => {
+    const sid = 42
+    const model = createTestModel(1, 2, sid)
+    const snapshot = model.api.getSnapshot()
+    const rows: DataGridRow[] = [{ c0: 'a' }, { c0: 'b' }]
+    const replicaUserMap = new Map([[sid, makeReplicaUserInfo('self', sid)]])
+
+    const result = enrichRowsWithChangeInfo(
+      rows,
+      model,
+      snapshot,
+      replicaUserMap,
+    )
+
+    expect(result[0].__cellChangeInfo).toBeDefined()
+    expect(result[1]).toBe(rows[1])
+  })
+
+  it('skips columns that have no cell in the row data', () => {
+    const sid = 42
+    // columnNames=['','c0','c1'] and each row has 2 cells, so column index 2 ('c1') has no cell
+    const model = createTestModel(1, 2, sid)
+    model.api.arr(['columnOrder']).push(s.con(2))
+    const snapshot = model.api.getSnapshot()
+    const rows: DataGridRow[] = [{ c0: 'a', c1: 'b' }]
+    const replicaUserMap = new Map([[sid, makeReplicaUserInfo('self', sid)]])
+
+    const result = enrichRowsWithChangeInfo(
+      rows,
+      model,
+      snapshot,
+      replicaUserMap,
+    )
+
+    expect(result[0].__cellChangeInfo).toEqual({
+      c0: { category: 'self', tooltipText: 'You changed this' },
+    })
+  })
+
+  it('shares one change info object across cells written by the same replica', () => {
+    const sid = 42
+    const model = createTestModel(2, 3, sid)
+    const snapshot = model.api.getSnapshot()
+    const rows: DataGridRow[] = [{}, {}]
+    const replicaUserMap = new Map([[sid, makeReplicaUserInfo('self', sid)]])
+
+    const result = enrichRowsWithChangeInfo(
+      rows,
+      model,
+      snapshot,
+      replicaUserMap,
+    )
+
+    const sharedInfo = result[0].__cellChangeInfo?.c0
+    expect(sharedInfo).toBeDefined()
+    expect(result[0].__cellChangeInfo?.c1).toBe(sharedInfo)
+    expect(result[1].__cellChangeInfo?.c0).toBe(sharedInfo)
+    expect(result[1].__cellChangeInfo?.c1).toBe(sharedInfo)
+  })
+
+  it('looks up each row in the model once, not once per cell', () => {
+    const sid = 42
+    const nRows = 5
+    const nCols = 4
+    const model = createTestModel(nRows, nCols, sid)
+    const snapshot = model.api.getSnapshot()
+    const rows: DataGridRow[] = Array.from({ length: nRows }, () => ({}))
+    const replicaUserMap = new Map([[sid, makeReplicaUserInfo('self', sid)]])
+    const vecSpy = vi.spyOn(model.api, 'vec')
+
+    enrichRowsWithChangeInfo(rows, model, snapshot, replicaUserMap)
+
+    expect(vecSpy).toHaveBeenCalledTimes(nRows)
   })
 })
