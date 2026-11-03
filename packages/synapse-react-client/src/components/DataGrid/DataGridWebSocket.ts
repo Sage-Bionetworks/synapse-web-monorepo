@@ -18,7 +18,7 @@ import noop from 'lodash-es/noop'
 import throttle from 'lodash-es/throttle'
 import { type DebouncedFunc } from 'lodash-es'
 import { Decoder as SnapshotDecoder } from 'json-joy/lib/json-crdt/codec/indexed/binary/Decoder'
-import { decode as decodeCbor } from 'cbor2'
+import { CborDecoder } from '@jsonjoy.com/json-pack/lib/cbor/CborDecoder'
 import type { IndexedFields } from 'json-joy/lib/json-crdt/codec/indexed/binary'
 import { fetchWithExponentialTimeout } from '@sage-bionetworks/synapse-client'
 
@@ -76,6 +76,7 @@ export class DataGridWebSocket {
   private readonly maxPayloadSizeBytes: number
   private readonly throttledSendPatch: DebouncedFunc<() => void>
   private readonly snapshotDecoder = new SnapshotDecoder()
+  private readonly cborDecoder = new CborDecoder()
   // Oldest first. The server must receive patches in order, so only the head is ever on the wire
   // (identified by inFlightPatchRequestId); the rest wait for its acknowledgement.
   private readonly unacknowledgedPatches: CompactCodecPatch[]
@@ -485,7 +486,7 @@ export class DataGridWebSocket {
     const response = await fetchWithExponentialTimeout(snapshotUrl)
     const blob = await response.blob()
     const buffer = await blob.arrayBuffer()
-    const decodedFromCbor = decodeCbor(new Uint8Array(buffer))
+    const decodedFromCbor = this.cborDecoder.decode(new Uint8Array(buffer))
     const decodedModel = this.snapshotDecoder.decode(
       decodedFromCbor as IndexedFields,
     ) as unknown as GridModel

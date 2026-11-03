@@ -7,6 +7,10 @@ import {
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { GridModel, gridSchema } from './DataGridTypes'
 import { DataGridWebSocket } from './DataGridWebSocket'
+import { Encoder as SnapshotEncoder } from 'json-joy/lib/json-crdt/codec/indexed/binary/Encoder'
+import { CborEncoder } from '@jsonjoy.com/json-pack/lib/cbor/CborEncoder'
+import { http, HttpResponse } from 'msw'
+import { server } from '@/mocks/msw/server'
 
 // Mock the compact codec to allow intercepting decode() in specific tests
 const mockDecode = vi.fn()
@@ -728,6 +732,27 @@ describe('DataGridWebSocket', () => {
         expect(createdModel.clock.sid).toEqual(replicaId)
       })
     })
+
+    it('decodes a CBOR-wrapped indexed snapshot into an equivalent model', async () => {
+      const snapshotUrl = 'https://example.com/snapshot.cbor'
+      const serverModel = createTestModel()
+      serverModel.api.vec(['columnNames']).set([[0, 'name']])
+      serverModel.api.flush()
+      // The server serializes the model with the indexed binary codec, then wraps the fields in CBOR.
+      const snapshotBytes = new CborEncoder().encode(
+        new SnapshotEncoder().encode(serverModel),
+      )
+      server.use(
+        http.get(snapshotUrl, () =>
+          HttpResponse.arrayBuffer(snapshotBytes.slice().buffer),
+        ),
+      )
+      const { ws } = createDataGridWebSocket({ model: null })
+
+      const decodedModel = await ws['fetchAndDecodeSnapshot'](snapshotUrl)
+
+      expect(decodedModel.view()).toEqual(serverModel.view())
+    })
   })
 
   describe('messageHandler — ResponseComplete', () => {
@@ -876,7 +901,7 @@ describe('DataGridWebSocket', () => {
       expect(consoleWarn).toHaveBeenCalledWith(
         "Model is not initialized. Cannot handle 'new-patch' message.",
       )
-      expect(mockSocket.sentMessages.length).toBe(0)
+      expect(mockSocket.sentMessages).toHaveLength(0)
     })
 
     it('calls onReplicaConnected on "replica-connected" notification', () => {
@@ -978,7 +1003,7 @@ describe('DataGridWebSocket', () => {
       expect(consoleWarn).toHaveBeenCalledWith(
         'Model is not initialized. Cannot send patch.',
       )
-      expect(mockSocket.sentMessages.length).toBe(0)
+      expect(mockSocket.sentMessages).toHaveLength(0)
       vi.useRealTimers()
     })
 
@@ -992,7 +1017,7 @@ describe('DataGridWebSocket', () => {
       vi.advanceTimersByTime(0)
 
       // No pending ops after flush in createTestModel, so nothing sent
-      expect(mockSocket.sentMessages.length).toBe(0)
+      expect(mockSocket.sentMessages).toHaveLength(0)
       vi.useRealTimers()
     })
   })
