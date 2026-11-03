@@ -22,11 +22,16 @@ export const GRID_AGENT_SIDEBAR_MIN_WIDTH = 360
 /** The largest fraction of the docking layout's width that the sidebar may take */
 const GRID_AGENT_SIDEBAR_MAX_WIDTH_FRACTION = 0.5
 export const GRID_AGENT_SIDEBAR_KEYBOARD_RESIZE_STEP = 16
+// The resize handle is on the left edge, so ArrowLeft widens the sidebar
+const KEYBOARD_RESIZE_DELTAS: Partial<Record<string, number>> = {
+  ArrowLeft: GRID_AGENT_SIDEBAR_KEYBOARD_RESIZE_STEP,
+  ArrowRight: -GRID_AGENT_SIDEBAR_KEYBOARD_RESIZE_STEP,
+}
 
 // localStorage can hold anything, so a stored width that isn't a finite number falls back to the default
 const storedWidthOptions = {
   parse: (stored: string | null) => {
-    const width = stored === null ? NaN : Number(stored)
+    const width = stored === null ? Number.NaN : Number(stored)
     return Number.isFinite(width) ? width : null
   },
 }
@@ -154,10 +159,8 @@ export function GridAgentSidebar({
   }
 
   function handleResizeKeyDown(e: KeyboardEvent<HTMLDivElement>) {
-    const step = GRID_AGENT_SIDEBAR_KEYBOARD_RESIZE_STEP
-    const delta =
-      e.key === 'ArrowLeft' ? step : e.key === 'ArrowRight' ? -step : 0
-    if (delta === 0) {
+    const delta = KEYBOARD_RESIZE_DELTAS[e.key]
+    if (delta === undefined) {
       return
     }
     e.preventDefault()

@@ -5,7 +5,7 @@ import { useCallback } from 'react'
 // localStorage can hold anything, so only a stored boolean counts; anything else means "never chosen"
 const storedOpenOptions = {
   parse: (stored: string | null) =>
-    stored === 'true' ? true : stored === 'false' ? false : null,
+    stored === 'true' || stored === 'false' ? stored === 'true' : null,
 }
 
 /**
