@@ -38,8 +38,10 @@ function ExperimentalFeatures({
     () =>
       Object.values(FeatureFlagEnum).filter(flag => {
         const config = FEATURE_FLAG_CONFIG[flag]
+        // Until the server's values load (or if they fail to), any flag might be pinned, so none are listed
         return (
-          serverFlags?.[flag] == null &&
+          serverFlags != null &&
+          serverFlags[flag] == null &&
           config.scopes.some(s => scopes.includes(s)) &&
           (!config.actMembersOnly || isACTMember)
         )
@@ -79,7 +81,8 @@ function ExperimentalFeatures({
         onClick={handleClick}
       />
       <ExperimentalFeaturesDialog
-        key={dialogKey}
+        // Remount once flags load so the saved choices show
+        key={`${dialogKey}-${isLoading}`}
         open={open}
         isLoading={isLoading}
         features={menuFeatures}

@@ -18,7 +18,7 @@ import {
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Cookies from 'js-cookie'
-import { http, HttpResponse } from 'msw'
+import { delay, http, HttpResponse } from 'msw'
 import ExperimentalFeatures from './ExperimentalFeatures'
 import styles from './ExperimentalFeaturesButton.module.scss'
 
@@ -26,6 +26,7 @@ const FLAG = FeatureFlagEnum.TEST_ONLY_2
 const ACT_ONLY_FLAG = FeatureFlagEnum.TEST_ONLY_ACT_MEMBERS
 const FLAG_NAME = getFeatureFlagDisplayName(FLAG)
 const ACT_ONLY_FLAG_NAME = getFeatureFlagDisplayName(ACT_ONLY_FLAG)
+const FEATURE_FLAGS_URL = `${getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)}/Portal/featureflags`
 
 function mockServerFlags(overrides: Partial<FeatureFlags> = {}) {
   server.use(
@@ -160,6 +161,37 @@ describe('ExperimentalFeatures', () => {
     expect(
       screen.getByRole('button', { name: 'Experimental Features (1 enabled)' }),
     ).toBeInTheDocument()
+  })
+
+  it('lists and counts nothing when the server flags fail to load', async () => {
+    server.use(
+      http.get(FEATURE_FLAGS_URL, () =>
+        HttpResponse.json({ reason: 'error' }, { status: 403 }),
+      ),
+    )
+    Cookies.set(SYNAPSE_EXPERIMENTAL_FEATURES_COOKIE, FLAG)
+    const { queryClient } = renderComponent()
+    await waitFor(() => expect(queryClient.isFetching()).toBe(0))
+
+    expect(
+      screen.getByRole('button', { name: 'Experimental Features (0 enabled)' }),
+    ).toBeInTheDocument()
+  })
+
+  it('shows saved choices once the flags load when the dialog opens while loading', async () => {
+    mockServerFlags()
+    // Holds the response briefly, then falls through to the handler above
+    server.use(
+      http.get(FEATURE_FLAGS_URL, async () => {
+        await delay(100)
+      }),
+    )
+    Cookies.set(SYNAPSE_EXPERIMENTAL_FEATURES_COOKIE, FLAG)
+    renderComponent()
+
+    await openDialog()
+
+    expect(await screen.findByRole('switch', { name: FLAG_NAME })).toBeChecked()
   })
 
   it('turns Enable all on without opening the dialog when no features are listed', async () => {
