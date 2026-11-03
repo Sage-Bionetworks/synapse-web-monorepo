@@ -20,7 +20,7 @@
     "js-cookie": "^3.0.8",
     "katex": "^0.18.2",
     "lodash-es": "^4.18.1",
-    "plotly.js-basic-dist": "^2.35.3",
+    "plotly.js-basic-dist": "^4.2.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-easy-crop": "^5.5.7",
