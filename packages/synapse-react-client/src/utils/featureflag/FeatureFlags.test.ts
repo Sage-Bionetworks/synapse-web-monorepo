@@ -6,23 +6,13 @@ import {
 } from './FeatureFlags'
 
 describe('FEATURE_FLAG_CONFIG', () => {
-  it('declares scopes for every feature flag', () => {
+  it('only uses the TEST scope for test-only flags', () => {
     Object.values(FeatureFlagEnum).forEach(flag => {
-      expect(Array.isArray(FEATURE_FLAG_CONFIG[flag].scopes)).toBe(true)
-    })
-  })
-
-  it('keeps test-only flags out of every real menu', () => {
-    Object.values(FeatureFlagEnum).forEach(flag => {
-      const isTestOnlyFlag = flag.startsWith('TEST_ONLY')
-      const isInTestScope = FEATURE_FLAG_CONFIG[flag].scopes.includes('TEST')
-      expect(isInTestScope).toBe(
-        isTestOnlyFlag && FEATURE_FLAG_CONFIG[flag].scopes.length > 0,
-      )
-      if (isTestOnlyFlag) {
-        expect(
-          FEATURE_FLAG_CONFIG[flag].scopes.every(scope => scope === 'TEST'),
-        ).toBe(true)
+      const { scopes } = FEATURE_FLAG_CONFIG[flag]
+      if (flag.startsWith('TEST_ONLY')) {
+        expect(scopes.every(scope => scope === 'TEST')).toBe(true)
+      } else {
+        expect(scopes).not.toContain('TEST')
       }
     })
   })
