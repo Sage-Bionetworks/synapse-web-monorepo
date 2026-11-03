@@ -82,6 +82,19 @@ const preview: Preview = {
         date: /Date$/,
       },
     },
+    options: {
+      // The first sorted story opens when Storybook is visited without a story path
+      storySort: {
+        order: [
+          'Authentication',
+          ['AccessTokenSignIn'],
+          'Components',
+          'Governance',
+          'UI',
+          '*',
+        ],
+      },
+    },
     msw: {
       handlers: getHandlersForStorybook(MOCK_REPO_ORIGIN),
     },

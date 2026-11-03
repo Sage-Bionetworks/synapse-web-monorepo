@@ -101,7 +101,7 @@ export function FacetPlotLegendTable(props: FacetPlotLegendTableProps) {
                       textAlign: 'right',
                     }}
                   >
-                    {facetValue.count}
+                    {facetValue.countText}
                   </Typography>
                 </td>
               </tr>

@@ -567,12 +567,12 @@ function getAggregateConfig(
 function assertRowsAllowed(
   perspective: Perspective,
   partMask: number,
-  access: CohortBuilderAccess,
+  isAggregateOnlyRead: boolean,
 ): void {
-  // The participant VT projects individualId, a quasi-identifier, so the
-  // backend withholds its rows from aggregate-only callers during preflight.
+  // The participant VT projects individualId, a quasi-identifier, so the backend withholds its rows during preflight
+  // from aggregate-only callers and from data manager previews.
   if (
-    access === 'AGGREGATE_ONLY' &&
+    isAggregateOnlyRead &&
     perspective === 'PARTICIPANTS' &&
     (partMask & BUNDLE_MASK_QUERY_RESULTS) !== 0
   ) {
@@ -963,7 +963,7 @@ function executeQuery(
   const partMask = request.partMask ?? 0
   const { query } = request
   const aggregateConfig = getAggregateConfig(data.profile, request, access)
-  assertRowsAllowed(perspective, partMask, access)
+  assertRowsAllowed(perspective, partMask, aggregateConfig !== undefined)
   const cohortValues = resolveCohorts(
     data,
     request,

@@ -1,6 +1,6 @@
 {
   "name": "synapse-react-client",
-  "version": "4.0.46",
+  "version": "4.0.48",
   "private": false,
   "type": "module",
   "main": "./dist/index.js",
@@ -127,7 +127,7 @@
     "ua-parser-js": "^1.0.41",
     "use-deep-compare-effect": "^1.8.1",
     "xss": "^1.0.15",
-    "zod": "^4.4.3"
+    "zod": "^4.6.7"
   },
   "peerDependencies": {
     "@sage-bionetworks/aridhia-client": "*",
@@ -185,10 +185,10 @@
     "@types/ua-parser-js": "^0.7.39",
     "@types/xml2js": "^0.4.14",
     "@vitejs/plugin-react": "^6.0.2",
-    "@vitest/coverage-v8": "^4.1.11",
-    "@vitest/spy": "^4.1.8",
-    "@vitest/ui": "^4.1.11",
-    "@vitest/utils": "^4.1.8",
+    "@vitest/coverage-v8": "^4.1.12",
+    "@vitest/spy": "^4.1.12",
+    "@vitest/ui": "^4.1.12",
+    "@vitest/utils": "^4.1.12",
     "@welldone-software/why-did-you-render": "^10.0.1",
     "babel-plugin-react-compiler": "^1.0.0",
     "buffer": "^6.0.3",
@@ -217,11 +217,11 @@
     "type-fest": "^4.41.0",
     "typescript": "6.0.3",
     "util": "^0.12.5",
-    "vite": "^8.0.16",
+    "vite": "^8.3.5",
     "vite-config": "workspace:*",
     "vite-plugin-node-polyfills": "^0.28.0",
     "vite-plugin-static-copy": "^4.1.1",
-    "vitest": "^4.1.11",
+    "vitest": "^4.1.12",
     "vitest-when": "^0.10.0",
     "weak-napi": "^2.0.2",
     "whatwg-fetch": "^3.6.20"

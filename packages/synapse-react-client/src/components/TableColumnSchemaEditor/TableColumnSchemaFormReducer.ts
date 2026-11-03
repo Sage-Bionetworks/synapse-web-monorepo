@@ -223,6 +223,20 @@ function updateColumnSizesToRecommendedValues(
   })
 }
 
+/**
+ * The backend rejects a facetSortConfig on any column whose facetType is not 'enumeration'
+ */
+function removeFacetSortConfigIfNotEnumerationFacet(
+  columnModel: ColumnModelFormData | JsonSubColumnModelFormData,
+) {
+  if (
+    'facetSortConfig' in columnModel &&
+    columnModel.facetType !== 'enumeration'
+  ) {
+    delete columnModel.facetSortConfig
+  }
+}
+
 function changeColumnModelType(
   action: {
     type: 'changeColumnModelType'
@@ -284,6 +298,7 @@ function changeColumnModelType(
   ) {
     delete newColumnModelValue.facetType
   }
+  removeFacetSortConfigIfNotEnumerationFacet(newColumnModelValue)
 
   if (
     'jsonSubColumns' in newColumnModelValue &&
@@ -338,7 +353,9 @@ function setColumnModelValue(
   },
   prevState: ColumnModelFormData[],
 ) {
-  const { columnModelIndex, jsonSubColumnModelIndex, value } = action
+  const { columnModelIndex, jsonSubColumnModelIndex } = action
+  const value = { ...action.value }
+  removeFacetSortConfigIfNotEnumerationFacet(value)
   if (prevState?.[columnModelIndex]) {
     if (
       prevState[columnModelIndex].jsonSubColumns &&
