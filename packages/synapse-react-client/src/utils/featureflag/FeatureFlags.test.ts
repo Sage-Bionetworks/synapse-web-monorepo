@@ -2,6 +2,7 @@ import {
   FEATURE_FLAG_CONFIG,
   FeatureFlagEnum,
   getFeatureFlagDisplayName,
+  NON_TEST_FEATURE_FLAGS,
 } from './FeatureFlags'
 
 describe('FEATURE_FLAG_CONFIG', () => {
@@ -42,5 +43,25 @@ describe('getFeatureFlagDisplayName', () => {
     expect(getFeatureFlagDisplayName(FeatureFlagEnum.TEST_ONLY)).toBe(
       'Test Only',
     )
+  })
+})
+
+describe('NON_TEST_FEATURE_FLAGS', () => {
+  it('only includes flags some menu can show', () => {
+    NON_TEST_FEATURE_FLAGS.forEach(flag => {
+      expect(FEATURE_FLAG_CONFIG[flag].scopes.length).toBeGreaterThan(0)
+    })
+  })
+
+  it('includes every non-test flag some menu can show', () => {
+    Object.values(FeatureFlagEnum)
+      .filter(
+        flag =>
+          !flag.startsWith('TEST_ONLY') &&
+          FEATURE_FLAG_CONFIG[flag].scopes.length > 0,
+      )
+      .forEach(flag => {
+        expect(NON_TEST_FEATURE_FLAGS).toContain(flag)
+      })
   })
 })
