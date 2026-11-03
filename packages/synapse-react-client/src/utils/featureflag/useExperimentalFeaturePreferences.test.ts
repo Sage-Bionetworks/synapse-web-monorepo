@@ -69,6 +69,19 @@ describe('useExperimentalFeaturePreferences', () => {
     )
   })
 
+  it('keeps saved flags that this build does not know, so an older site does not erase a newer flag', async () => {
+    const UNKNOWN_FLAG = 'FLAG_FROM_A_NEWER_BUILD'
+    Cookies.set(SYNAPSE_EXPERIMENTAL_FEATURES_COOKIE, `${UNKNOWN_FLAG},${FLAG}`)
+    const { result } = renderHook(() => useExperimentalFeaturePreferences())
+    await waitFor(() => expect(result.current.enabledFeatures).toEqual([FLAG]))
+
+    act(() => result.current.savePreferences(false, [OTHER_FLAG], [FLAG]))
+
+    expect(Cookies.get(SYNAPSE_EXPERIMENTAL_FEATURES_COOKIE)).toBe(
+      `${UNKNOWN_FLAG},${OTHER_FLAG}`,
+    )
+  })
+
   it('does not save a flag twice', async () => {
     Cookies.set(SYNAPSE_EXPERIMENTAL_FEATURES_COOKIE, FLAG)
     const result = await renderPreferences()

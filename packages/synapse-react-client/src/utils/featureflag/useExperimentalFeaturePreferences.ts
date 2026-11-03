@@ -42,13 +42,13 @@ export function useExperimentalFeaturePreferences() {
         removeEnableAllCookie()
       }
 
-      // The cookie is shared by every app on *.synapse.org; only replace the flags this menu showed
-      const flagsFromOtherMenus = enabledFeatures.filter(
-        flag => !shownFlags.includes(flag),
+      // The cookie is shared by every app on *.synapse.org; only replace the flags this menu showed.
+      // Keys this build doesn't know are kept, since a site on a newer build may have saved them.
+      const shownKeys: string[] = shownFlags
+      const keysFromOtherMenus = (featuresCookie?.split(',') ?? []).filter(
+        key => !shownKeys.includes(key),
       )
-      const flagsToSave = [
-        ...new Set([...flagsFromOtherMenus, ...enabledFlags]),
-      ]
+      const flagsToSave = [...new Set([...keysFromOtherMenus, ...enabledFlags])]
 
       if (flagsToSave.length > 0) {
         setFeaturesCookie(flagsToSave.join(','))
@@ -57,7 +57,7 @@ export function useExperimentalFeaturePreferences() {
       }
     },
     [
-      enabledFeatures,
+      featuresCookie,
       setEnableAllCookie,
       removeEnableAllCookie,
       setFeaturesCookie,
