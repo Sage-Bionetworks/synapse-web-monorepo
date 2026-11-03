@@ -19,6 +19,7 @@ import {
 import {
   ENTITY_HEADERS,
   ENTITY_ID,
+  ENTITY_PERMISSIONS,
   TABLE_QUERY_ASYNC_GET,
   TABLE_QUERY_ASYNC_START,
 } from '@/utils/APIConstants'
@@ -36,6 +37,7 @@ import {
   Query,
   QueryBundleRequest,
   Reference,
+  UserEntityPermissions,
   VirtualTable,
 } from '@sage-bionetworks/synapse-types'
 import { http, HttpHandler, HttpResponse } from 'msw'
@@ -141,7 +143,35 @@ function getVirtualTableEntities(
 export type CohortBuilderHandlersOptions = CohortBuilderMockQueryOptions & {
   profile?: CohortBuilderMockProfile
   access?: CohortBuilderAccess
+  /** Whether the caller has the Administrator permission on the participant source table. Defaults to false. */
+  isSourceAdministrator?: boolean
   backendOrigin?: string
+}
+
+function getSourceTablePermissions(
+  isSourceAdministrator: boolean,
+): UserEntityPermissions {
+  return {
+    canView: true,
+    canEdit: isSourceAdministrator,
+    canMove: isSourceAdministrator,
+    canAddChild: isSourceAdministrator,
+    canCertifiedUserEdit: isSourceAdministrator,
+    canCertifiedUserAddChild: isSourceAdministrator,
+    isCertifiedUser: true,
+    canChangePermissions: isSourceAdministrator,
+    canChangeSettings: isSourceAdministrator,
+    canDelete: isSourceAdministrator,
+    canDownload: isSourceAdministrator,
+    canUpload: isSourceAdministrator,
+    canEnableInheritance: isSourceAdministrator,
+    ownerPrincipalId: 0,
+    canPublicRead: false,
+    canModerate: isSourceAdministrator,
+    isCertificationRequired: false,
+    isEntityOpenData: false,
+    isUserDataContributor: false,
+  }
 }
 
 /**
@@ -155,6 +185,7 @@ export function getCohortBuilderHandlers(
   const {
     profile = ELITE_MOCK_PROFILE,
     access = 'AGGREGATE_ONLY',
+    isSourceAdministrator = false,
     maxCohortValues,
     backendOrigin = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT),
   } = options
@@ -164,6 +195,10 @@ export function getCohortBuilderHandlers(
     http.get(`${backendOrigin}${ENTITY_ID(entity.id!)}`, () =>
       HttpResponse.json(entity),
     ),
+  )
+  const sourceTablePermissionsHandler = http.get(
+    `${backendOrigin}${ENTITY_PERMISSIONS(profile.participantsSourceTableId)}`,
+    () => HttpResponse.json(getSourceTablePermissions(isSourceAdministrator)),
   )
 
   // Headers for the synthetic files and datasets; other references fall through to the next handler.
@@ -373,6 +408,7 @@ export function getCohortBuilderHandlers(
 
   return [
     ...entityHandlers,
+    sourceTablePermissionsHandler,
     entityHeaderHandler,
     ...queryHandlers,
     ...downloadListHandlers,

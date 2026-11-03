@@ -14,6 +14,7 @@ import {
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
+import { ENTITY_PERMISSIONS } from '@/utils/APIConstants'
 import { BUNDLE_MASK_QUERY_RESULTS } from '@/utils/SynapseConstants'
 import {
   AddToDownloadListRequest,
@@ -21,6 +22,7 @@ import {
 } from '@sage-bionetworks/synapse-client'
 import {
   DownloadFromTableRequest,
+  FILTER_GROUP_CONCRETE_TYPE_VALUE,
   QueryBundleRequest,
 } from '@sage-bionetworks/synapse-types'
 import {
@@ -33,6 +35,11 @@ import {
 } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http } from 'msw'
+import {
+  AGGREGATE_DATA_PREVIEW_TITLE,
+  APPLY_PREVIEW_BUTTON_TEXT,
+  STOP_PREVIEW_BUTTON_TEXT,
+} from './AggregateDataPreviewControls'
 import {
   COHORT_BUILDER_PART_MASK,
   COHORT_BUILDER_PREVIEW_NOTICE,
@@ -229,6 +236,37 @@ describe('CohortBuilder', () => {
     expect(sentRequests).toEqual([])
   })
 
+  it('does not offer the aggregate-only preview to a user who does not administer the participant source table', async () => {
+    const permissionsPath = ENTITY_PERMISSIONS(
+      ELITE_MOCK_PROFILE.participantsSourceTableId,
+    )
+    let isPermissionsServed = false
+    const recordPermissionsResponse = ({ request }: { request: Request }) => {
+      if (new URL(request.url).pathname.endsWith(permissionsPath)) {
+        isPermissionsServed = true
+      }
+    }
+    server.events.on('response:mocked', recordPermissionsResponse)
+    try {
+      renderCohortBuilder(
+        {
+          participantsSourceTableId:
+            ELITE_MOCK_PROFILE.participantsSourceTableId,
+        },
+        'FULL',
+      )
+
+      await screen.findByText(`${allParticipantsCount} participants`)
+      await waitFor(() => expect(isPermissionsServed).toBe(true))
+      expect(
+        screen.queryByRole('button', { name: AGGREGATE_DATA_PREVIEW_TITLE }),
+      ).not.toBeInTheDocument()
+      expect(sentRequests.filter(r => r.aggregateDataPreview)).toEqual([])
+    } finally {
+      server.events.removeListener('response:mocked', recordPermissionsResponse)
+    }
+  })
+
   // Each test builds a cohort with the Query Builder, then each result waits on chained async query jobs (participants,
   // then files). When the whole suite is running, a single wait can exceed Testing Library's default and a whole test
   // can exceed the suite's per-test timeout.
@@ -270,32 +308,166 @@ describe('CohortBuilder', () => {
       )
     }
 
-    it('previews the participant and files queries the way an aggregate-only user sees them, and says so', async () => {
-      const aggregateDataPreview: AggregateDataConfiguration = {
-        suppressionThreshold: ELITE_MOCK_PROFILE.suppressionThreshold,
-        quasiIdentifierColumnNames: ['individualId'],
-        facetPostProcessingConfig: ELITE_MOCK_PROFILE.facetPostProcessingConfig,
-      }
+    it('lets an administrator of the participant source table preview the participant and files queries the way an aggregate-only user sees them, keeping the cohort', async () => {
+      const user = userEvent.setup()
       const profile = renderWithFiles(
-        { access: 'FULL' },
-        { aggregateDataPreview },
+        { access: 'FULL', isSourceAdministrator: true },
+        {
+          participantsSourceTableId:
+            ELITE_MOCK_PROFILE.participantsSourceTableId,
+        },
       )
       await screen.findByText(`${allParticipantsCount} participants`)
-      expect(
-        screen.getByText(COHORT_BUILDER_PREVIEW_NOTICE),
-      ).toBeInTheDocument()
 
-      // 1,200 participants, but only 3 datasets: an approved user would see them, an aggregate-only user wouldn't.
+      // 1,200 participants, but only 3 datasets: an approved user sees them, an aggregate-only user wouldn't.
       await buildCohort('Study', ['LLFS'])
+      expect(
+        await screen.findByText('3 files and datasets'),
+      ).toBeInTheDocument()
+      expect(sentRequests.filter(r => r.aggregateDataPreview)).toEqual([])
+
+      await user.click(
+        await screen.findByRole('button', {
+          name: AGGREGATE_DATA_PREVIEW_TITLE,
+        }),
+      )
+      const applyButton = screen.getByRole('button', {
+        name: APPLY_PREVIEW_BUTTON_TEXT,
+      })
+      // The suppression threshold is required.
+      expect(applyButton).toBeDisabled()
+      await user.type(
+        screen.getByRole('spinbutton', { name: /^Suppression threshold/ }),
+        String(ELITE_MOCK_PROFILE.suppressionThreshold),
+      )
+      await user.click(
+        screen.getByRole('combobox', { name: 'Facet post-processing' }),
+      )
+      await user.click(screen.getByRole('option', { name: 'Rounding' }))
+      // Rounding needs its bin width.
+      expect(applyButton).toBeDisabled()
+      await user.type(
+        screen.getByRole('spinbutton', { name: /^Round to/ }),
+        '5',
+      )
+      const requestsBeforePreview = sentRequests.length
+      await user.click(applyButton)
 
       expect(
         await screen.findByText(
           'A minimum of 20 files and datasets is required',
         ),
       ).toBeInTheDocument()
-      expect(filesRequests(profile)).not.toHaveLength(0)
-      for (const request of sentRequests) {
-        expect(request.aggregateDataPreview).toEqual(aggregateDataPreview)
+      expect(
+        screen.getByText(COHORT_BUILDER_PREVIEW_NOTICE),
+      ).toBeInTheDocument()
+      const expectedPreview: AggregateDataConfiguration = {
+        suppressionThreshold: ELITE_MOCK_PROFILE.suppressionThreshold,
+        quasiIdentifierColumnNames: ['individualId'],
+        countSuppressionStrategy: 'EXCLUDE_ROW',
+        facetPostProcessingConfig: ELITE_MOCK_PROFILE.facetPostProcessingConfig,
+      }
+      const previewRequests = sentRequests.slice(requestsBeforePreview)
+      for (const request of previewRequests) {
+        expect(request.aggregateDataPreview).toEqual(expectedPreview)
+      }
+      // The cohort survives the preview: the participant results and the files query still carry it.
+      expect(
+        previewRequests.filter(
+          request =>
+            request.entityId === participantsTableId &&
+            request.partMask === COHORT_BUILDER_PART_MASK &&
+            request.query.additionalFilters?.some(
+              filter =>
+                filter.concreteType === FILTER_GROUP_CONCRETE_TYPE_VALUE,
+            ),
+        ),
+      ).not.toHaveLength(0)
+      expect(filesRequests(profile).at(-1)?.query.cohorts).toHaveLength(1)
+
+      const requestsBeforeStop = sentRequests.length
+      await user.click(
+        screen.getByRole('button', { name: STOP_PREVIEW_BUTTON_TEXT }),
+      )
+      expect(
+        await screen.findByText('3 files and datasets'),
+      ).toBeInTheDocument()
+      expect(screen.queryByText(COHORT_BUILDER_PREVIEW_NOTICE)).toBeNull()
+      // Results without the preview may come from the cache, so no request has to be sent.
+      for (const request of sentRequests.slice(requestsBeforeStop)) {
+        expect(request.aggregateDataPreview).toBeUndefined()
+      }
+    })
+
+    async function openPreviewAsSourceAdministrator() {
+      const user = userEvent.setup()
+      renderWithFiles(
+        { access: 'FULL', isSourceAdministrator: true },
+        {
+          participantsSourceTableId:
+            ELITE_MOCK_PROFILE.participantsSourceTableId,
+        },
+      )
+      await screen.findByText(`${allParticipantsCount} participants`)
+      await user.click(
+        await screen.findByRole('button', {
+          name: AGGREGATE_DATA_PREVIEW_TITLE,
+        }),
+      )
+      return user
+    }
+
+    it('brings the Query Builder back when a preview that withheld its values is stopped', async () => {
+      const user = await openPreviewAsSourceAdministrator()
+      // Above the source's 2,700 participants, so even the Query Builder's unfiltered value query is withheld.
+      await user.type(
+        screen.getByRole('spinbutton', { name: /^Suppression threshold/ }),
+        '5000',
+      )
+      await user.click(
+        screen.getByRole('button', { name: APPLY_PREVIEW_BUTTON_TEXT }),
+      )
+      await waitFor(() =>
+        expect(
+          screen.queryByRole('combobox', { name: 'Property' }),
+        ).not.toBeInTheDocument(),
+      )
+
+      await user.click(
+        screen.getByRole('button', { name: STOP_PREVIEW_BUTTON_TEXT }),
+      )
+      expect(
+        await screen.findByRole('combobox', { name: 'Property' }),
+      ).toBeInTheDocument()
+    })
+
+    it('sends quasi-identifier names trimmed, without blank ones', async () => {
+      const user = await openPreviewAsSourceAdministrator()
+      const quasiIdentifierInput = screen.getByRole('combobox', {
+        name: 'Quasi-identifier columns',
+      })
+      await user.click(quasiIdentifierInput)
+      // Removes the default individualId chip.
+      await user.keyboard('{Backspace}')
+      await user.type(quasiIdentifierInput, ' individualId {Enter}')
+      await user.type(quasiIdentifierInput, '   {Enter}')
+      await user.type(
+        screen.getByRole('spinbutton', { name: /^Suppression threshold/ }),
+        String(ELITE_MOCK_PROFILE.suppressionThreshold),
+      )
+      const requestsBeforePreview = sentRequests.length
+      await user.click(
+        screen.getByRole('button', { name: APPLY_PREVIEW_BUTTON_TEXT }),
+      )
+
+      await screen.findByText(COHORT_BUILDER_PREVIEW_NOTICE)
+      await waitFor(() =>
+        expect(sentRequests.length).toBeGreaterThan(requestsBeforePreview),
+      )
+      for (const request of sentRequests.slice(requestsBeforePreview)) {
+        expect(
+          request.aggregateDataPreview?.quasiIdentifierColumnNames,
+        ).toEqual(['individualId'])
       }
     })
 

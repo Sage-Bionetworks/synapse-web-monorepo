@@ -8,6 +8,10 @@ import { getCohortBuilderStorybookHandlers } from '@/mocks/msw/handlers/cohortBu
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
 import { Meta, StoryObj } from '@storybook/react-vite'
 import { userEvent, within } from 'storybook/test'
+import {
+  AGGREGATE_DATA_PREVIEW_TITLE,
+  APPLY_PREVIEW_BUTTON_TEXT,
+} from './AggregateDataPreviewControls'
 import { CohortBuilder, CohortBuilderProps } from './CohortBuilder'
 
 const meta: Meta<CohortBuilderProps & { isAuthenticated: boolean }> = {
@@ -119,16 +123,54 @@ export const AdkpAggregateOnly: Story = {
   parameters: getMockParameters(ADKP_MOCK_PROFILE, 'AGGREGATE_ONLY'),
 }
 
-/** A data manager (approved) previewing what unapproved ELITE users see. */
+/**
+ * An administrator of the ELITE participant source table (approved) previewing what unapproved ELITE users see:
+ * rounding to bins of 5, threshold 20.
+ */
 export const ElitePreview: Story = {
   args: {
-    participantsTableId: ELITE_MOCK_PROFILE.participantsVirtualTableId,
-    aggregateDataPreview: {
-      suppressionThreshold: ELITE_MOCK_PROFILE.suppressionThreshold,
-      facetPostProcessingConfig: ELITE_MOCK_PROFILE.facetPostProcessingConfig,
+    ...eliteWithFilesArgs,
+    participantsSourceTableId: ELITE_MOCK_PROFILE.participantsSourceTableId,
+  },
+  parameters: {
+    stack: 'mock',
+    msw: {
+      handlers: getCohortBuilderStorybookHandlers({
+        profile: ELITE_MOCK_PROFILE,
+        access: 'FULL',
+        isSourceAdministrator: true,
+      }),
     },
   },
-  parameters: getMockParameters(ELITE_MOCK_PROFILE, 'FULL'),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    await canvas.findByText(/participants$/, undefined, { timeout: 30_000 })
+    await userEvent.click(
+      await canvas.findByRole('button', {
+        name: AGGREGATE_DATA_PREVIEW_TITLE,
+      }),
+    )
+    await userEvent.type(
+      canvas.getByRole('spinbutton', { name: /^Suppression threshold/ }),
+      String(ELITE_MOCK_PROFILE.suppressionThreshold),
+    )
+    await userEvent.click(
+      canvas.getByRole('combobox', { name: 'Facet post-processing' }),
+    )
+    // The select's options render in a popover outside the story's canvas.
+    await userEvent.click(
+      within(canvasElement.ownerDocument.body).getByRole('option', {
+        name: 'Rounding',
+      }),
+    )
+    await userEvent.type(
+      canvas.getByRole('spinbutton', { name: /^Round to/ }),
+      '5',
+    )
+    await userEvent.click(
+      canvas.getByRole('button', { name: APPLY_PREVIEW_BUTTON_TEXT }),
+    )
+  },
 }
 
 const emptyTableId = 'syn90000099'
@@ -171,6 +213,7 @@ export const ProductionSyntheticDataCohortBuilderTest: Story = {
   args: {
     participantsTableId: 'syn78350488',
     filesTableId: 'syn78350475',
+    participantsSourceTableId: 'syn78350314',
   },
   // Story globals override, and lock, the Stack toolbar for this story.
   globals: { stack: 'production' },
@@ -185,6 +228,7 @@ export const ProductionEliteCohortBuilder: Story = {
   args: {
     participantsTableId: 'syn78340012',
     filesTableId: 'syn78340377',
+    participantsSourceTableId: 'syn77454377',
   },
   // Story globals override, and lock, the Stack toolbar for this story.
   globals: { stack: 'production' },
@@ -199,6 +243,7 @@ export const ProductionAdkpCohortBuilder: Story = {
   args: {
     participantsTableId: 'syn78155293',
     filesTableId: 'syn78157126',
+    participantsSourceTableId: 'syn77485039',
   },
   // Story globals override, and lock, the Stack toolbar for this story.
   globals: { stack: 'production' },
