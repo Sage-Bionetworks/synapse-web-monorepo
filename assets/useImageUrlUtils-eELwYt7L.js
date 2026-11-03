@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{Rt as t,r as n}from"./useLogin-C8DLXhFu.js";import{X as r,t as i}from"./dist-B-Zx1Tok.js";var a;function o(){return(o=e((()=>{n(),i(),a=(e,n)=>{let i={associateObjectId:n,associateObjectType:r.TableEntity,fileHandleId:e||``};return t(i,!1,{enabled:!!e})?.dataUrl}})))()}export{a as n,o as t};
