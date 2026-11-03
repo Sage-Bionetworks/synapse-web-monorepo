@@ -725,7 +725,11 @@ describe('Submission Page tests', () => {
       ).closest('section')!
       const links = within(otherAttachments).getAllByTestId('FileHandleLink')
       expect(
-        links.map(link => JSON.parse(link.textContent ?? '').fileHandleId),
+        links.map(
+          link =>
+            (JSON.parse(link.textContent ?? '') as FileHandleAssociation)
+              .fileHandleId,
+        ),
       ).toEqual(['555'])
     })
 
