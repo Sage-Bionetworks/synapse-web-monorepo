@@ -81,7 +81,7 @@ const AccountSettings = (): React.ReactNode => {
   const [changeInForm, setChangeInForm] = useState(false)
   const [orcid, setOrcid] = useState<string>()
   const [verified, setVerified] = useState<boolean>()
-  const [verificationState, setCurrentVerificationState] =
+  const [verificationState, setVerificationState] =
     useState<VerificationState>()
   const [isCertified, setIsCertified] = useState<boolean>()
   const [termsOfUse, setTermsOfUse] = useState<boolean>()
@@ -114,7 +114,7 @@ const AccountSettings = (): React.ReactNode => {
     navigate(`/authenticated/${val}`)
   }
 
-  const [isUTCTimeFormValue, setUTCTimeFormValue] = useState<string>('false')
+  const [isUTCTimeFormValue, setIsUTCTimeFormValue] = useState<string>('false')
   const [isUtcTimeCookie, setIsUtcTimeCookie] = useCookieValue(
     SynapseConstants.DATETIME_UTC_COOKIE_KEY,
     {
@@ -130,7 +130,7 @@ const AccountSettings = (): React.ReactNode => {
 
   // Instantiate the form with the cookie
   useEffect(() => {
-    setUTCTimeFormValue(isUtcTimeCookie === 'true' ? 'true' : 'false')
+    setIsUTCTimeFormValue(isUtcTimeCookie === 'true' ? 'true' : 'false')
   }, [isUtcTimeCookie])
 
   const confirmChangeUtcTimeCookie = useCallback(() => {
@@ -165,10 +165,8 @@ const AccountSettings = (): React.ReactNode => {
       ) ?? false,
     )
     const stateHistory = bundle.verificationSubmission?.stateHistory
-    const currentState = stateHistory
-      ? stateHistory[stateHistory.length - 1]
-      : undefined
-    setCurrentVerificationState(currentState)
+    const currentState = stateHistory ? stateHistory.at(-1) : undefined
+    setVerificationState(currentState)
   }
 
   const getUserData = async () => {
@@ -425,7 +423,7 @@ const AccountSettings = (): React.ReactNode => {
                   select
                   disabled={!cookiePreferences.functionalAllowed}
                   onChange={event => {
-                    setUTCTimeFormValue(event.target.value)
+                    setIsUTCTimeFormValue(event.target.value)
                   }}
                 >
                   <MenuItem value="false" sx={{ fontSize: '14px' }}>

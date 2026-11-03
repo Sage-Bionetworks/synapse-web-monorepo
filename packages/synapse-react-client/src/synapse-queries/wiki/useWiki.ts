@@ -170,7 +170,7 @@ export const useCreateWikiPage = (
       if (options?.onSuccess) {
         return await options.onSuccess(wikiPage, input, ctx, ...rest)
       }
-      return
+      return undefined
     },
   })
 }
@@ -212,7 +212,7 @@ export const useUpdateWikiPage = (
       if (options?.onSuccess) {
         return await options.onSuccess(wikiPage, input, ctx, ...rest)
       }
-      return
+      return undefined
     },
   })
 }

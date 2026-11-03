@@ -6,6 +6,7 @@ import FullContextProvider from 'synapse-react-client/utils/context/FullContextP
 import { MOCK_APPLICATION_SESSION_CONTEXT } from 'synapse-react-client/mocks/applicationSessionContext/MockApplicationSessionContext'
 
 describe('App initialization tests', () => {
+  // oxlint-disable-next-line vitest/no-disabled-tests -- LoginPage calls useRevalidator, which needs a data router; this test renders it in a MemoryRouter
   it.skip('renders a branded experience', async () => {
     window.localStorage.setItem('sourceAppId', 'MTB')
     render(

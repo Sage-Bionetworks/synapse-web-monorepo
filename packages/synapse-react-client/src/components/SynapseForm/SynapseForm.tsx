@@ -133,10 +133,10 @@ export default class SynapseForm extends Component<
       .map((step, i) => {
         return {
           ...step,
-          inProgress: i === 0 ? true : false,
+          inProgress: i === 0,
         }
       })
-      .sort((a, b) => a.order - b.order)
+      .toSorted((a, b) => a.order - b.order)
 
     this.formRef = createRef()
     this.formDivRef = createRef()
@@ -156,13 +156,11 @@ export default class SynapseForm extends Component<
   }
 
   onUnload = (ev: any) => {
-    {
-      if (this.state.hasUnsavedChanges) {
-        ev.preventDefault()
-        return (ev.returnValue = this.unsavedDataWarning)
-      }
-      return
+    if (this.state.hasUnsavedChanges) {
+      ev.preventDefault()
+      return (ev.returnValue = this.unsavedDataWarning)
     }
+    return undefined
   }
   // Setup the `beforeunload` event listener
   setupBeforeUnloadListener = () => {
@@ -314,10 +312,14 @@ export default class SynapseForm extends Component<
       if (step.id === currentStep.id) {
         return {
           ...step,
-          ...{ state: currentStepState, inProgress: false },
+          state: currentStepState,
+          inProgress: false,
         }
       } else if (step.id === nextStepId) {
-        return { ...step, ...{ inProgress: true } }
+        return {
+          ...step,
+          inProgress: true,
+        }
       }
       return step
     })
@@ -439,20 +441,20 @@ export default class SynapseForm extends Component<
   ): Step[] => {
     //error property is in the format: step.somevalue.etc  .welcome.submission_name example
     //find all the steps where there is an error
-    const stepsWithError = errors.map(
-      error => trimStart(error.property, '.').split('.')[0],
+    const stepsWithError = new Set(
+      errors.map(error => trimStart(error.property, '.').split('.')[0]),
     )
     //find all steps in current schema
     const stepsInCurrentSchema = Object.keys(currentSchemaProperties)
     const updatedSteps: Step[] = steps.map(step => {
       //if there is an error in this step
-      if (stepsWithError.indexOf(step.id) > -1) {
+      if (stepsWithError.has(step.id)) {
         return {
           ...step,
           state: StepStateEnum.ERROR,
         }
         //if no error and included in schema
-      } else if (stepsInCurrentSchema.indexOf(step.id) > -1) {
+      } else if (stepsInCurrentSchema.includes(step.id)) {
         let state = StepStateEnum.COMPLETED
         //if we are in wizard and possibly have not visited this step
         if (isWizard && !get(formData[step.id], 'included')) {
@@ -522,10 +524,10 @@ export default class SynapseForm extends Component<
           this.moveStep(this.state.formData, steps[0].id, false)
           this.setState({ isLoadingSaved: false })
         }
-        return
+        return undefined
       }
       default:
-        return
+        return undefined
     }
   }
 
@@ -558,7 +560,10 @@ export default class SynapseForm extends Component<
     this.setState((prevState, props) => {
       const steps = prevState.steps.map(stp => {
         if (stp.id === stepId) {
-          return { ...stp, ...{ excluded: isExclude } }
+          return {
+            ...stp,
+            excluded: isExclude,
+          }
         }
         return stp
       })
@@ -586,7 +591,7 @@ export default class SynapseForm extends Component<
     })
   }
 
-  private renderNotification = (status?: StatusEnum) => {
+  private readonly renderNotification = (status?: StatusEnum) => {
     if (status === StatusEnum.SAVE_SUCCESS) {
       return <div className="notification-area"> Successfully saved </div>
     }
@@ -600,7 +605,7 @@ export default class SynapseForm extends Component<
   }
 
   // displays the text for screens that don't have any form data
-  private renderTextForStaticScreen = () => {
+  private readonly renderTextForStaticScreen = () => {
     if (!this.state.currentStep.copy) {
       return <></>
     }
@@ -713,7 +718,7 @@ export default class SynapseForm extends Component<
       //take a rule
       const paramProp = rule.event.params.property
       // if it's just a normal rule - add it
-      if (paramProp.indexOf('[*]') === -1) {
+      if (!paramProp.includes('[*]')) {
         allRules.push(rule)
       } else {
         const path = paramProp.split('[*]')[0].substring(1)
@@ -722,7 +727,7 @@ export default class SynapseForm extends Component<
         if (Array.isArray(data) && typeof data !== 'string') {
           for (let i = 0; i < data.length; i++) {
             const newRule = JSON.parse(
-              JSON.stringify(rule).replace(/\[\*\]/g, `[${i}]`),
+              JSON.stringify(rule).replaceAll('[*]', `[${i}]`),
             )
             allRules.push(newRule)
           }
@@ -742,10 +747,8 @@ export default class SynapseForm extends Component<
       validationEvents.forEach(event => {
         const err: RJSFValidationError = {
           ...event.params,
-          ...{
-            params: {},
-            stack: `${event.params.property} ${event.params.message}`,
-          },
+          params: {},
+          stack: `${event.params.property} ${event.params.message}`,
         }
         errors.push(err)
       })
@@ -761,7 +764,7 @@ export default class SynapseForm extends Component<
     // over the errors and just set the step status
     // https://github.com/rjsf-team/react-jsonschema-form/issues/1263
     this.extraErrors.forEach(extraError => {
-      if (!errors.find(error => error.stack === extraError.stack)) {
+      if (!errors.some(error => error.stack === extraError.stack)) {
         errors.push(extraError)
       }
     })
@@ -799,7 +802,7 @@ export default class SynapseForm extends Component<
         )
         remove(errors, (error: RJSFValidationError) => {
           return (
-            (error.property || '').indexOf(parentPath) > -1 &&
+            (error.property || '').includes(parentPath) &&
             (error.name === 'enum' || error.name === 'oneOf')
           )
         })
@@ -826,7 +829,7 @@ export default class SynapseForm extends Component<
           this.props.schema,
         )
       })
-      .sort((a, b) => a.order - b.order)
+      .toSorted((a, b) => a.order - b.order)
       .map(li => li.element)
 
     return (
@@ -1056,7 +1059,7 @@ function renderTransformedErrorObject(
   //  ld50.experiments[0].species_other should look like 'ld50.experiments.items.species_other'
   const arrayLabelFromSchema = labelFromSchema.replace(/\[.*?\]/, '.items')
   const arrayLabelFromUI = labelFromUi.replace(/\[.*?\]/, '.items')
-  const indexMatch = labelFromSchema.match(/\[.*?\]/)
+  const indexMatch = /\[.*?\]/.exec(labelFromSchema)
 
   let index = first(indexMatch)
 

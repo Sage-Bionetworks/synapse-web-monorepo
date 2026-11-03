@@ -91,11 +91,11 @@ const getCustomPlotIdentifier = (
 }
 
 const getCombinedNewPlots = (
-  customPlots: QueryWrapperSynapsePlotProps[] = [],
+  customPlots: QueryWrapperSynapsePlotProps[],
   facetNavPanelPropsArray: Pick<
     FacetNavPanelProps,
     'applyChangesToFacetFilter' | 'applyChangesToGraphSlice' | 'facetToPlot'
-  >[] = [],
+  >[],
   initialPlotTypeByFacetColumnName: Record<string, PlotType> | undefined,
   defaultPlotType: PlotType,
 ): UiPlotState[] => [

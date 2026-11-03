@@ -31,7 +31,7 @@ export const CreatePackageV2 = (
   const { accessToken, keyFactory } = useSynapseContext()
   const queryClient = useQueryClient()
   const [isLoading, setIsLoading] = useState(false)
-  const [fileName, setZipFileName] = useState('')
+  const [fileName, setFileName] = useState('')
   const [alert, setAlert] = useState<AlertConfig>()
   const [bulkFileDownloadResponse, setBulkFileDownloadResponse] = useState<
     DownloadListPackageResponse | undefined
@@ -63,7 +63,7 @@ export const CreatePackageV2 = (
           resultFileHandleId,
           accessToken,
         )
-        setZipFileName('')
+        setFileName('')
         setBulkFileDownloadResponse(undefined)
         queryClient.invalidateQueries({
           queryKey: keyFactory.getDownloadListBaseQueryKey(),
@@ -83,7 +83,7 @@ export const CreatePackageV2 = (
   }
 
   const onChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setZipFileName(event.target.value)
+    setFileName(event.target.value)
   }
 
   return (

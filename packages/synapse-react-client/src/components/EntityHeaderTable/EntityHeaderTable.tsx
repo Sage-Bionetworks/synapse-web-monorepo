@@ -157,13 +157,11 @@ export const EntityHeaderTable = (
             }
           },
         })
-      } else {
+      } else if (!newEntityIDs.trim().match(SYNAPSE_ENTITY_ID_REGEX)) {
         // single item
-        if (!newEntityIDs.trim().match(SYNAPSE_ENTITY_ID_REGEX)) {
-          setInvalidEntityIDError([newEntityIDs])
-        } else {
-          addRefsFromEntityIDs([newEntityIDs])
-        }
+        setInvalidEntityIDError([newEntityIDs])
+      } else {
+        addRefsFromEntityIDs([newEntityIDs])
       }
     } else {
       setParseErrors([])

@@ -131,10 +131,10 @@ function summarizeConditionValue(
       return `${rangeMin} and ${rangeMax}`
     case 'gt':
     case 'gte':
-      return rangeMin ? rangeMin : null
+      return rangeMin || null
     case 'lt':
     case 'lte':
-      return rangeMax ? rangeMax : null
+      return rangeMax || null
     case 'contains':
     case 'starts_with':
     case 'ends_with':

@@ -214,7 +214,6 @@ export default function CreateTableViewWizard(
       await createEntity(entityToCreate)
     } catch (e) {
       // Error will be handled by the hook
-      return
     }
   }, [
     columnModels,

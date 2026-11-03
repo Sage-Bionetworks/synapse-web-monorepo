@@ -90,6 +90,7 @@ export function ComplexMenu(props: ComplexMenuProps) {
         }
         return isSmallScreen && iconButton.tooltipText ? (
           <Box
+            key={iconButton.tooltipText}
             sx={{
               width: '100%',
               textAlign: 'center',
@@ -99,7 +100,6 @@ export function ComplexMenu(props: ComplexMenuProps) {
               variant="text"
               startIcon={
                 <IconSvg
-                  key={iconButton.tooltipText}
                   icon={iconButton.icon!}
                   wrap={false}
                   fontSize={'inherit'}
@@ -125,10 +125,11 @@ export function ComplexMenu(props: ComplexMenuProps) {
         )
       })}
       {dropdownMenus.map(
-        (menuProps, index) =>
+        menuProps =>
           menuProps.items &&
           menuProps.items.length > 0 && (
             <Box
+              key={menuProps.dropdownButtonText}
               sx={theme => ({
                 [theme.breakpoints.down('md')]: {
                   width: '100%',
@@ -136,7 +137,7 @@ export function ComplexMenu(props: ComplexMenuProps) {
                 },
               })}
             >
-              <DropdownMenu key={index} {...menuProps} />
+              <DropdownMenu {...menuProps} />
             </Box>
           ),
       )}

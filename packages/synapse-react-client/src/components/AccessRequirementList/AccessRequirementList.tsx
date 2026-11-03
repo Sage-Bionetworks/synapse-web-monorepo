@@ -162,6 +162,22 @@ const isARUnsupported = (accessRequirement: AccessRequirement) => {
   return !SUPPORTED_ACCESS_REQUIREMENT_TYPES.has(accessRequirement.concreteType)
 }
 
+function getSubjectId(props: AccessRequirementListProps): string | undefined {
+  if ('subjectId' in props) return props.subjectId
+  if ('entityId' in props) return props.entityId
+  if ('teamId' in props) return props.teamId
+  return undefined
+}
+
+function getSubjectType(
+  props: AccessRequirementListProps,
+): RestrictableObjectType | undefined {
+  if ('subjectType' in props) return props.subjectType
+  if ('entityId' in props) return RestrictableObjectType.ENTITY
+  if ('teamId' in props) return RestrictableObjectType.TEAM
+  return undefined
+}
+
 export type RequestDataStepCallbackArgs = {
   step: RequestDataStep
   accessRequirement?: RequestableAccessRequirement
@@ -198,29 +214,12 @@ export default function AccessRequirementList(
     initialWizardEntry,
   } = props
 
-  const isShowingRequirementsForEntity = 'entityId' in props
-  const isShowingRequirementsForTeam = 'teamId' in props
   const isShowingRequirementsFromProps = 'accessRequirementFromProps' in props
 
-  const subjectId =
-    'subjectId' in props
-      ? props.subjectId
-      : isShowingRequirementsForEntity
-        ? props.entityId
-        : isShowingRequirementsForTeam
-          ? props.teamId
-          : undefined
+  const subjectId = getSubjectId(props)
+  const subjectType = getSubjectType(props)
 
-  const subjectType =
-    'subjectType' in props
-      ? props.subjectType
-      : isShowingRequirementsForEntity
-        ? RestrictableObjectType.ENTITY
-        : isShowingRequirementsForTeam
-          ? RestrictableObjectType.TEAM
-          : undefined
-
-  let { dialogTitle = 'Data Access Request' } = props
+  const { dialogTitle = 'Data Access Request' } = props
   const { isAuthenticated } = useSynapseContext()
   const [requestDataStep, setRequestDataStep] = useState<RequestDataStep>(
     initialWizardEntry?.step ?? RequestDataStep.SHOW_ALL_ARS,
@@ -293,17 +292,15 @@ export default function AccessRequirementList(
         'concreteType',
       )
       const sortedByTypeAndStatus =
-        SUPPORTED_ACCESS_REQUIREMENT_TYPES_SORTED.map(type => {
+        SUPPORTED_ACCESS_REQUIREMENT_TYPES_SORTED.flatMap(type => {
           const arsOfType = groupedAccessRequirementsByType[type]
           if (arsOfType) {
-            return sortedAccessRequirementIds.map(id =>
-              arsOfType.find(ar => id === String(ar.id))!,
+            return sortedAccessRequirementIds.map(
+              id => arsOfType.find(ar => id === String(ar.id))!,
             )
           }
           return []
-        })
-          .flat()
-          .filter((item): item is AccessRequirement => item !== undefined)
+        }).filter((item): item is AccessRequirement => item !== undefined)
       return sortedByTypeAndStatus
     }
     return undefined
@@ -392,7 +389,7 @@ export default function AccessRequirementList(
       ? 'xl'
       : 'md'
 
-  let renderContent = <></>
+  let renderContent: ReactNode
   switch (requestDataStep) {
     case RequestDataStep.UPDATE_RESEARCH_PROJECT:
       renderContent = (
@@ -550,7 +547,6 @@ export default function AccessRequirementList(
     case RequestDataStep.PROMPT_LOGIN:
       // Send to OneSage login page
       storeRedirectURLForOneSageLoginAndGotoURL(oneSageURL.toString())
-      dialogTitle = 'Please Log In'
       renderContent = <></>
       break
     case RequestDataStep.COMPLETE:
@@ -603,9 +599,7 @@ export default function AccessRequirementList(
             })}
           </DialogContent>
           <DialogActions>
-            {customDialogActions ? (
-              customDialogActions
-            ) : (
+            {customDialogActions || (
               <>
                 {renderAsModal && (
                   <Button variant="contained" onClick={onHide}>

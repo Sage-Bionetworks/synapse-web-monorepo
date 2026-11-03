@@ -54,7 +54,7 @@ export function QueryCountButton(props: QueryCountButtonProps) {
     href?.startsWith('http://') || href?.startsWith('https://')
 
   // Determine the appropriate link props based on context
-  let linkProps: Partial<ButtonProps> & { target?: string; to?: string } = {}
+  let linkProps: Partial<ButtonProps> & { target?: string; to?: string }
 
   if (isExternalLink) {
     linkProps = {

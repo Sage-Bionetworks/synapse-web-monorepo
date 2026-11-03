@@ -113,7 +113,7 @@ export default function MailchimpSubscribeSection({
       direction={{ xs: 'column', sm: 'row' }}
       spacing={4}
       sx={theme => ({
-        background: background ? background : theme.palette.lightPrimary.main,
+        background: background || theme.palette.lightPrimary.main,
         borderRadius: '12px',
       })}
     >

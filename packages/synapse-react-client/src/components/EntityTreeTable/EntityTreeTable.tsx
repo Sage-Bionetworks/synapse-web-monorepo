@@ -9,7 +9,10 @@ import { useTableColumns } from './hooks/useTableColumns'
 import { useTableData } from './hooks/useTableData'
 export { type TreeNode } from './hooks/useEntityTreeState'
 import { EntityTreeTableView } from './components/EntityTreeTableView'
-import { EntityTreeTableContext } from './components/EntityTreeTableContext'
+import {
+  EntityTreeTableContext,
+  EntityTreeTableContextType,
+} from './components/EntityTreeTableContext'
 import NoContentAvailable from '../SynapseTable/NoContentAvailable'
 import { EntityType } from '@sage-bionetworks/synapse-client'
 
@@ -79,7 +82,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
 
   // Use tree operations hook with direct fetch
   const { handleToggleExpanded, loadMoreChildren, flattenTree } =
-    useTreeOperationsWithDirectFetch(
+    useTreeOperationsWithDirectFetch({
       expanded,
       setExpanded,
       tree,
@@ -94,7 +97,7 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
       nextPageTokens,
       sortBy,
       sortDirection,
-    )
+    })
 
   // Get table columns
   const columns = useTableColumns(enableSorting, onToggleSelection != null)
@@ -149,26 +152,40 @@ export const EntityTreeTable: React.FC<EntityTreeTableProps> = ({
     enableColumnFilters: false,
   })
 
+  const contextValue: EntityTreeTableContextType = useMemo(
+    () => ({
+      expanded,
+      loadingIds,
+      handleToggleExpanded: (entityId: string) => {
+        void handleToggleExpanded(entityId)
+      },
+      loadMoreChildren: (entityId: string, pageToken?: string) => {
+        void loadMoreChildren(entityId, pageToken)
+      },
+      nextPageTokens,
+      onEntityIdClicked,
+      selectedIds,
+      onToggleSelection,
+      disableEntityLinks,
+      tree,
+    }),
+    [
+      expanded,
+      loadingIds,
+      handleToggleExpanded,
+      loadMoreChildren,
+      nextPageTokens,
+      onEntityIdClicked,
+      selectedIds,
+      onToggleSelection,
+      disableEntityLinks,
+      tree,
+    ],
+  )
+
   return (
     <Box>
-      <EntityTreeTableContext.Provider
-        value={{
-          expanded,
-          loadingIds,
-          handleToggleExpanded: (entityId: string) => {
-            void handleToggleExpanded(entityId)
-          },
-          loadMoreChildren: (entityId: string, pageToken?: string) => {
-            void loadMoreChildren(entityId, pageToken)
-          },
-          nextPageTokens,
-          onEntityIdClicked,
-          selectedIds,
-          onToggleSelection,
-          disableEntityLinks,
-          tree,
-        }}
-      >
+      <EntityTreeTableContext.Provider value={contextValue}>
         {isTreeEmpty ? (
           <NoContentAvailable />
         ) : (

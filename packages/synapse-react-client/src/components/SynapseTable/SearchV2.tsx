@@ -86,7 +86,7 @@ type InternalSearchProps = SearchV2Props & {
   columnModels: ColumnModel[] | undefined
 }
 
-class _Search extends Component<InternalSearchProps, SearchState> {
+class InternalSearch extends Component<InternalSearchProps, SearchState> {
   public searchFormRef: RefObject<HTMLFormElement | null>
   public radioFormRef: RefObject<HTMLFormElement | null>
 
@@ -153,9 +153,8 @@ class _Search extends Component<InternalSearchProps, SearchState> {
     if (columnName === '') {
       if (searchable) {
         // If searchable column names are defined in the config, grab the first one (that is not locked)
-        columnName = searchable.filter(
-          colName => colName !== lockedColumn?.columnName,
-        )[0]
+        columnName =
+          searchable.find(colName => colName !== lockedColumn?.columnName) ?? ''
       } else {
         // Otherwise, get the first column model that can be searched.
         // And for study details page: if lockedColumn is defined, remove it from the search
@@ -188,7 +187,7 @@ class _Search extends Component<InternalSearchProps, SearchState> {
     if (indexOfColumn === -1) {
       // get the column model to figure out what kind of filter we should apply.
       const columnModel: ColumnModel | undefined =
-        this.props.columnModels?.filter(el => el.name === columnName)[0]
+        this.props.columnModels?.find(el => el.name === columnName)
       if (columnModel?.columnType.endsWith('_LIST')) {
         const columnMultiValueQueryFilter: ColumnMultiValueFunctionQueryFilter =
           {
@@ -200,26 +199,24 @@ class _Search extends Component<InternalSearchProps, SearchState> {
               'org.sagebionetworks.repo.model.table.ColumnMultiValueFunctionQueryFilter',
           }
         additionalFilters.push(columnMultiValueQueryFilter)
-      } else {
-        if (columnModel?.columnType == ColumnTypeEnum.ENTITYID) {
-          const columnSingleValueQueryFilter: ColumnSingleValueQueryFilter = {
-            columnName,
-            operator: ColumnSingleValueFilterOperator.EQUAL,
-            values: [`${searchText.toLowerCase().replace('syn', '')}`],
-            concreteType:
-              'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-          }
-          additionalFilters.push(columnSingleValueQueryFilter)
-        } else {
-          const columnSingleValueQueryFilter: ColumnSingleValueQueryFilter = {
-            columnName,
-            operator: ColumnSingleValueFilterOperator.LIKE,
-            values: [`%${searchText}%`],
-            concreteType:
-              'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
-          }
-          additionalFilters.push(columnSingleValueQueryFilter)
+      } else if (columnModel?.columnType == ColumnTypeEnum.ENTITYID) {
+        const columnSingleValueQueryFilter: ColumnSingleValueQueryFilter = {
+          columnName,
+          operator: ColumnSingleValueFilterOperator.EQUAL,
+          values: [`${searchText.toLowerCase().replace('syn', '')}`],
+          concreteType:
+            'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
         }
+        additionalFilters.push(columnSingleValueQueryFilter)
+      } else {
+        const columnSingleValueQueryFilter: ColumnSingleValueQueryFilter = {
+          columnName,
+          operator: ColumnSingleValueFilterOperator.LIKE,
+          values: [`%${searchText}%`],
+          concreteType:
+            'org.sagebionetworks.repo.model.table.ColumnSingleValueQueryFilter',
+        }
+        additionalFilters.push(columnSingleValueQueryFilter)
       }
     } else {
       ;(
@@ -380,5 +377,7 @@ class _Search extends Component<InternalSearchProps, SearchState> {
 
 export default function Search(props: SearchV2Props) {
   const { data: queryMetadata } = useGetQueryMetadata()
-  return <_Search {...props} columnModels={queryMetadata?.columnModels} />
+  return (
+    <InternalSearch {...props} columnModels={queryMetadata?.columnModels} />
+  )
 }

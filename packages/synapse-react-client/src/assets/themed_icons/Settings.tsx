@@ -10,6 +10,7 @@ export const Settings = (): React.ReactNode => (
   >
     <mask
       id="SettingsMask0"
+      // oxlint-disable-next-line react/no-unknown-property -- React has no camelCase alias for the SVG mask-type attribute
       mask-type="alpha"
       maskUnits="userSpaceOnUse"
       x="10"

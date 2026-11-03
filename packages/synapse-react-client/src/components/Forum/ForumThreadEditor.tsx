@@ -82,26 +82,24 @@ export function ForumThreadEditor(props: ForumThreadEditorProps) {
           messageMarkdown: text,
         })
       }
+    } else if (isExistingThread) {
+      // updating thread
+      updateTitle({
+        title: title,
+        threadId: id,
+      })
+      updateMessage({
+        messageMarkdown: text,
+        threadId: id,
+      })
     } else {
-      if (isExistingThread) {
-        // updating thread
-        updateTitle({
-          title: title,
-          threadId: id,
-        })
-        updateMessage({
-          messageMarkdown: text,
-          threadId: id,
-        })
-      } else {
-        // posting thread
-        const request: CreateDiscussionThread = {
-          forumId: id,
-          title: title,
-          messageMarkdown: text,
-        }
-        createThread(request)
+      // posting thread
+      const request: CreateDiscussionThread = {
+        forumId: id,
+        title: title,
+        messageMarkdown: text,
       }
+      createThread(request)
     }
   }
 
@@ -126,6 +124,13 @@ export function ForumThreadEditor(props: ForumThreadEditorProps) {
 
   const confirmButtonText = updateIsPending ? 'Saving' : 'Post'
 
+  let dialogTitle = 'New Thread'
+  if (isReply) {
+    dialogTitle = 'Edit Reply'
+  } else if (isExistingThread) {
+    dialogTitle = 'Edit Thread'
+  }
+
   return (
     <>
       {isDialog ? (
@@ -133,13 +138,7 @@ export function ForumThreadEditor(props: ForumThreadEditorProps) {
           maxWidth="md"
           open={openDialog}
           onCancel={onClose}
-          title={
-            isReply
-              ? 'Edit Reply'
-              : isExistingThread
-                ? 'Edit Thread'
-                : 'New Thread'
-          }
+          title={dialogTitle}
           content={editorContent}
           onConfirm={() => onSave(text, title)}
           confirmButtonProps={{ children: confirmButtonText }}

@@ -144,11 +144,10 @@ function JsonSchemaVersionSelect(props: JsonSchemaVersionSelectProps) {
 
   const showLatestOption =
     versionSelectionType === VersionSelectionType.LATEST_ALLOWED
-  const value = selectedVersionInfo
-    ? getVersionOptionValue(selectedVersionInfo)
-    : showLatestOption
-      ? LATEST_OPTION_VALUE
-      : ''
+  let value = showLatestOption ? LATEST_OPTION_VALUE : ''
+  if (selectedVersionInfo) {
+    value = getVersionOptionValue(selectedVersionInfo)
+  }
 
   return (
     <Select

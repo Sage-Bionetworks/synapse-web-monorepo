@@ -1,4 +1,10 @@
-import { ReactNode, useEffect, useMemo, useState } from 'react'
+import {
+  PropsWithChildren,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { Alert, Box, Button, Link, Skeleton } from '@mui/material'
 import { RJSFSchema } from '@rjsf/utils'
 import { useGetAridhiaDatasetSettings } from '@/aridhia-queries/useGetAridhiaDatasetSettings'
@@ -64,6 +70,19 @@ function useFairSection(data: FairFormPayload | null | undefined, key: string) {
     const section = parseFairFormSections(data).find(s => s.key === key)
     return section ? fairSectionToRjsf(section) : undefined
   }, [data, key])
+}
+
+type DarSectionStepProps = PropsWithChildren<{
+  isLoading: boolean
+  isSectionMissing: boolean
+  errorMessage: string
+}>
+
+function DarSectionStep(props: DarSectionStepProps) {
+  const { isLoading, isSectionMissing, errorMessage, children } = props
+  if (isLoading) return <Skeleton height={200} />
+  if (isSectionMissing) return <Alert severity="error">{errorMessage}</Alert>
+  return children
 }
 
 /**
@@ -344,12 +363,14 @@ function useAridhiaDarWizardParts(
                   ...Object.keys(aboutRjsf?.schema.properties ?? {}),
                   ...Object.keys(projectRjsf?.schema.properties ?? {}),
                 ])
-                const workspaceOnlyFieldNames = Object.keys(
-                  workspaceRjsf?.schema.properties ?? {},
-                ).filter(name => !sharedFieldNames.has(name))
+                const workspaceOnlyFieldNames = new Set(
+                  Object.keys(workspaceRjsf?.schema.properties ?? {}).filter(
+                    name => !sharedFieldNames.has(name),
+                  ),
+                )
                 next.values = Object.fromEntries(
                   Object.entries(previous.values).filter(
-                    ([key]) => !workspaceOnlyFieldNames.includes(key),
+                    ([key]) => !workspaceOnlyFieldNames.has(key),
                   ),
                 )
                 next.workspaceReference = undefined
@@ -364,63 +385,63 @@ function useAridhiaDarWizardParts(
         />
       )}
 
-      {currentStepKey === 'workspace' &&
-        (workspaceFormQuery.isLoading ? (
-          <Skeleton height={200} />
-        ) : workspaceRjsf ? (
-          <DarWorkspaceStep
-            schema={workspaceRjsf.schema}
-            uiSchema={workspaceRjsf.uiSchema}
-            formData={draft.values}
-            onChange={mergeValues}
-            reference={draft.workspaceReference ?? ''}
-            onReferenceChange={reference =>
-              setDraft(previous => ({
-                ...previous,
-                workspaceReference: reference,
-              }))
-            }
-          />
-        ) : (
-          <Alert severity="error">
-            Unable to load the new-workspace request form. Please try again
-            later.
-          </Alert>
-        ))}
+      {currentStepKey === 'workspace' && (
+        <DarSectionStep
+          isLoading={workspaceFormQuery.isLoading}
+          isSectionMissing={!workspaceRjsf}
+          errorMessage="Unable to load the new-workspace request form. Please try again later."
+        >
+          {workspaceRjsf && (
+            <DarWorkspaceStep
+              schema={workspaceRjsf.schema}
+              uiSchema={workspaceRjsf.uiSchema}
+              formData={draft.values}
+              onChange={mergeValues}
+              reference={draft.workspaceReference ?? ''}
+              onReferenceChange={reference =>
+                setDraft(previous => ({
+                  ...previous,
+                  workspaceReference: reference,
+                }))
+              }
+            />
+          )}
+        </DarSectionStep>
+      )}
 
-      {currentStepKey === 'project' &&
-        (workflowQuery.isLoading ? (
-          <Skeleton height={200} />
-        ) : projectRjsf ? (
-          <DarProjectStep
-            schema={projectRjsf.schema}
-            uiSchema={projectRjsf.uiSchema}
-            formData={draft.values}
-            onChange={mergeValues}
-          />
-        ) : (
-          <Alert severity="error">
-            Unable to load the project section of this request form. Please try
-            again later.
-          </Alert>
-        ))}
+      {currentStepKey === 'project' && (
+        <DarSectionStep
+          isLoading={workflowQuery.isLoading}
+          isSectionMissing={!projectRjsf}
+          errorMessage="Unable to load the project section of this request form. Please try again later."
+        >
+          {projectRjsf && (
+            <DarProjectStep
+              schema={projectRjsf.schema}
+              uiSchema={projectRjsf.uiSchema}
+              formData={draft.values}
+              onChange={mergeValues}
+            />
+          )}
+        </DarSectionStep>
+      )}
 
-      {currentStepKey === 'about' &&
-        (workflowQuery.isLoading ? (
-          <Skeleton height={200} />
-        ) : aboutRjsf ? (
-          <DarAboutStep
-            schema={aboutRjsf.schema}
-            uiSchema={aboutRjsf.uiSchema}
-            formData={draft.values}
-            onChange={mergeValues}
-          />
-        ) : (
-          <Alert severity="error">
-            Unable to load the &quot;about you&quot; section of this request
-            form. Please try again later.
-          </Alert>
-        ))}
+      {currentStepKey === 'about' && (
+        <DarSectionStep
+          isLoading={workflowQuery.isLoading}
+          isSectionMissing={!aboutRjsf}
+          errorMessage='Unable to load the "about you" section of this request form. Please try again later.'
+        >
+          {aboutRjsf && (
+            <DarAboutStep
+              schema={aboutRjsf.schema}
+              uiSchema={aboutRjsf.uiSchema}
+              formData={draft.values}
+              onChange={mergeValues}
+            />
+          )}
+        </DarSectionStep>
+      )}
 
       {currentStepKey === 'complete' && (
         <DarCompleteStep

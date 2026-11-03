@@ -6,7 +6,7 @@ export class RenderIfInView extends Component<PropsWithChildren<unknown>> {
     return <VisibilityObserver renderInView={this.getChildren} />
   }
 
-  private getChildren = () => {
+  private readonly getChildren = () => {
     return <>{this.props.children}</>
   }
 }

@@ -51,21 +51,19 @@ export function SynapseAnnotationsRJSFObjectField<
           if (!Array.isArray(data)) {
             newFormData[key] = convertToArray(data)
           }
-        } else {
+        } else if (
           /**
            * If the schema does not call for an array, but the formData is an array, then this will coerce it to a string.
            *
            * This can occur when a formData value is an additionalProperty, which we always treat as an array, then the key
            * is added to the schema (e.g. conditionally).
            */
-          if (
-            typeof propertySchema === 'object' &&
-            'type' in propertySchema &&
-            propertySchema.type !== 'array' &&
-            Array.isArray(data)
-          ) {
-            newFormData[key] = data.map(v => `${v}`).join(', ')
-          }
+          typeof propertySchema === 'object' &&
+          'type' in propertySchema &&
+          propertySchema.type !== 'array' &&
+          Array.isArray(data)
+        ) {
+          newFormData[key] = data.map(v => `${v}`).join(', ')
         }
       })
       if (!deepEquals(formData, newFormData)) {

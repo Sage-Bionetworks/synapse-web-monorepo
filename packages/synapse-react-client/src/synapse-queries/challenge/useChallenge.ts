@@ -37,7 +37,7 @@ export function useRegisterTeamForChallenge(
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getChallengeTeamListQueryKey(request.challengeId),
       })
-      return
+      return undefined
     },
   })
 }

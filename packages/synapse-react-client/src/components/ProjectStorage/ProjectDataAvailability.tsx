@@ -39,12 +39,12 @@ export function ProjectDataAvailability({
   const rawUsagePercent = (sumFileBytes / maxAllowedFileBytes) * 100
   const boundedUsagePercent = Math.min(rawUsagePercent, 100)
 
-  const usagePercentLabel =
-    sumFileBytes === 0
-      ? '0%'
-      : rawUsagePercent < 1
-        ? '<1%'
-        : `${Math.round(rawUsagePercent)}%`
+  let usagePercentLabel = `${Math.round(rawUsagePercent)}%`
+  if (sumFileBytes === 0) {
+    usagePercentLabel = '0%'
+  } else if (rawUsagePercent < 1) {
+    usagePercentLabel = '<1%'
+  }
 
   const usageBarPercent =
     sumFileBytes === 0

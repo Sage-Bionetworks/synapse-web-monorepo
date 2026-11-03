@@ -12,6 +12,22 @@ const mockContextValue = {
   nextPageTokens: { syn123: 'token123' },
 }
 
+const emptyContextValue = {
+  expanded: {},
+  loadingIds: new Set<string>(),
+  handleToggleExpanded: vi.fn(),
+  loadMoreChildren: vi.fn(),
+  nextPageTokens: {},
+}
+
+const multipleItemsContext = {
+  expanded: { syn123: true, syn456: false, syn789: true },
+  loadingIds: new Set(['syn456', 'syn789', 'syn999']),
+  handleToggleExpanded: vi.fn(),
+  loadMoreChildren: vi.fn(),
+  nextPageTokens: { syn123: 'token1', syn456: 'token2' },
+}
+
 describe('EntityTreeTableContext', () => {
   it('should provide context values to consumers', () => {
     const { result } = renderHook(() => useEntityTreeTableContext(), {
@@ -84,14 +100,6 @@ describe('EntityTreeTableContext', () => {
   })
 
   it('should handle empty context values', () => {
-    const emptyContextValue = {
-      expanded: {},
-      loadingIds: new Set<string>(),
-      handleToggleExpanded: vi.fn(),
-      loadMoreChildren: vi.fn(),
-      nextPageTokens: {},
-    }
-
     const { result } = renderHook(() => useEntityTreeTableContext(), {
       wrapper: ({ children }) => (
         <EntityTreeTableContext.Provider value={emptyContextValue}>
@@ -106,14 +114,6 @@ describe('EntityTreeTableContext', () => {
   })
 
   it('should handle context with multiple expanded and loading items', () => {
-    const multipleItemsContext = {
-      expanded: { syn123: true, syn456: false, syn789: true },
-      loadingIds: new Set(['syn456', 'syn789', 'syn999']),
-      handleToggleExpanded: vi.fn(),
-      loadMoreChildren: vi.fn(),
-      nextPageTokens: { syn123: 'token1', syn456: 'token2' },
-    }
-
     const { result } = renderHook(() => useEntityTreeTableContext(), {
       wrapper: ({ children }) => (
         <EntityTreeTableContext.Provider value={multipleItemsContext}>
