@@ -5,7 +5,7 @@ import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { renderHook, waitFor } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
-import { useGetFeatureFlag } from './useGetFeatureFlag'
+import { useGetFeatureFlag, useGetFeatureFlags } from './useGetFeatureFlag'
 
 const PORTAL_ENDPOINT = getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)
 
@@ -134,7 +134,10 @@ describe('useGetFeatureFlag', () => {
     it('is enabled when the user individually enabled it', async () => {
       setupHandlerWithoutFlag()
       const { result } = renderHook(
-        () => useGetFeatureFlag(FeatureFlagEnum.TEST_ONLY),
+        () => ({
+          isEnabled: useGetFeatureFlag(FeatureFlagEnum.TEST_ONLY),
+          flagsQuery: useGetFeatureFlags(),
+        }),
         {
           wrapper: createWrapper({
             isInExperimentalMode: false,
@@ -142,9 +145,12 @@ describe('useGetFeatureFlag', () => {
           }),
         },
       )
-      await waitFor(() => {
-        expect(result.current).toBe(true)
-      })
+      // The hook returns the user's choice before the server responds, so wait for the response
+      await waitFor(() =>
+        expect(result.current.flagsQuery.isSuccess).toBe(true),
+      )
+
+      expect(result.current.isEnabled).toBe(true)
     })
   })
 })

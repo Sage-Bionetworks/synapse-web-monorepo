@@ -90,7 +90,7 @@ describe('ExperimentalFeatures', () => {
     expect(screen.queryByText(FLAG_NAME)).not.toBeInTheDocument()
   })
 
-  it('hides ACT_ONLY_FLAG-only flags from users who are not ACT_ONLY_FLAG members', async () => {
+  it('hides ACT-only flags from users who are not ACT members', async () => {
     mockServerFlags()
     mockIsACTMember(false)
     renderComponent()
@@ -112,6 +112,21 @@ describe('ExperimentalFeatures', () => {
     expect(
       screen.queryByText(getFeatureFlagDisplayName(UNSCOPED_FLAG)),
     ).not.toBeInTheDocument()
+  })
+
+  it("lists a flag that matches any one of the menu's scopes", async () => {
+    mockServerFlags()
+    render(
+      <ExperimentalFeatures
+        scopes={['ACCOUNTS', 'TEST']}
+        onPreferencesSaved={vi.fn()}
+      />,
+      { wrapper: createWrapperAndQueryClient().wrapperFn },
+    )
+
+    await openDialog()
+
+    expect(await screen.findByText(FLAG_NAME)).toBeInTheDocument()
   })
 
   it('saves the choices and calls onPreferencesSaved when Done is clicked', async () => {
@@ -138,7 +153,7 @@ describe('ExperimentalFeatures', () => {
     expect(onPreferencesSaved).not.toHaveBeenCalled()
   })
 
-  it('shows the switch as on when Enable all is on, even with no features listed', async () => {
+  it('shows the button as on when Enable all is on, even with no features listed', async () => {
     mockServerFlags({ [FLAG]: false, [ACT_ONLY_FLAG]: false })
     Cookies.set(EXPERIMENTAL_MODE_COOKIE, 'true')
     renderComponent()
