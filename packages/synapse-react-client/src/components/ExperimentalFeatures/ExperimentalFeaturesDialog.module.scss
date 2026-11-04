@@ -1,8 +1,11 @@
+$feature-row-height: 62px;
+$visible-feature-rows: 4;
+
 .featureList {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   column-gap: 20px;
-  max-height: 192px;
+  max-height: $feature-row-height * $visible-feature-rows;
   overflow-y: auto;
 
   @media (max-width: 768px) {
@@ -25,6 +28,7 @@
 }
 
 .featureLabel {
+  display: block;
   overflow: hidden;
   color: var(--synapse-gray-900);
   text-overflow: ellipsis;
