@@ -28,7 +28,7 @@ function AMPALSPublishingRequirements() {
         </>
       }
       buttonText="Learn more"
-      link="Resources/Publishing Requirements"
+      link="/Resources/Requirements for Publication"
       sx={{
         h2: {
           color: 'primary.contrastText',

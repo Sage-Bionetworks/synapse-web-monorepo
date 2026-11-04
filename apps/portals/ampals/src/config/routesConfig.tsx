@@ -1,6 +1,6 @@
 import App from '@sage-bionetworks/synapse-portal-framework/App'
 import sharedRoutes from '@sage-bionetworks/synapse-portal-framework/shared-config/sharedRoutes'
-import { RouteObject } from 'react-router'
+import { Navigate, RouteObject } from 'react-router'
 //import header images for Resources pages
 import { convertModuleToRouteObject } from '@sage-bionetworks/synapse-portal-framework/utils/convertModuleToRouteObject'
 import RepositoryUnderReviewAlert from '@sage-bionetworks/synapse-portal-framework/components/RepositoryUnderReviewAlert'
@@ -98,10 +98,9 @@ const routes: RouteObject[] = [
           },
           {
             path: 'Publishing Requirements',
-            lazy: () =>
-              import('@/pages/resources/PublishingRequirements').then(
-                convertModuleToRouteObject,
-              ),
+            element: (
+              <Navigate to="/Resources/Requirements for Publication" replace />
+            ),
           },
         ],
       },
