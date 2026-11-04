@@ -55,7 +55,7 @@ describe('numberColumn', () => {
     it.each([
       ['null', null],
       ['undefined', undefined],
-      ['NaN', NaN],
+      ['NaN', Number.NaN],
     ])('renders %s as an empty cell', (_label, value) => {
       expect(renderCell(value).value).toBe('')
     })
@@ -99,6 +99,10 @@ describe('numberColumn', () => {
       expect(parse('42.5')).toBe(42.5)
     })
 
+    it('keeps a decimal entered in an integer column so the validator can report it', () => {
+      expect(parse('42.5', { colType: 'integer' })).toBe(42.5)
+    })
+
     it('preserves text that is not a number so the validator can report it', () => {
       expect(parse('N/A')).toBe('N/A')
     })
@@ -113,8 +117,8 @@ describe('numberColumn', () => {
   })
 
   describe('parsePastedValue', () => {
-    function paste(value: string) {
-      return numberColumn({ colType: 'number' }).pasteValue!({
+    function paste(value: string, colType = 'number') {
+      return numberColumn({ colType }).pasteValue!({
         rowData: undefined,
         value,
         rowIndex: 0,
@@ -123,6 +127,10 @@ describe('numberColumn', () => {
 
     it('parses a valid number', () => {
       expect(paste('42')).toBe(42)
+    })
+
+    it('keeps a decimal pasted into an integer column', () => {
+      expect(paste('42.5', 'integer')).toBe(42.5)
     })
 
     it('preserves text that is not a number', () => {
@@ -159,7 +167,7 @@ describe('formatNumberCellValue', () => {
   })
 
   it('returns an empty string for NaN', () => {
-    expect(formatNumberCellValue(NaN)).toBe('')
+    expect(formatNumberCellValue(Number.NaN)).toBe('')
   })
 
   it('stringifies arrays', () => {
