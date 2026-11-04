@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{n as t,t as n}from"./Goals-D8M6oLYO.js";var r,i,a;function o(){return(o=e((()=>{t(),r={title:`Home Page/Goals`,component:n,parameters:{chromatic:{viewports:[600,1200]}}},i={args:{entityId:`syn22315959`}},a=[`Demo`]})))()}o();export{i as Demo,a as __namedExportsOrder,r as default};

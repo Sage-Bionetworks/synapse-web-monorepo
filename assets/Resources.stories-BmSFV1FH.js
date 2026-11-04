@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{n as t,t as n}from"./Resources-C_S6Yskh.js";var r,i,a;function o(){return(o=e((()=>{t(),r={title:`Home Page/Resources`,component:n},i={args:{entityId:`syn22311127`}},a=[`Demo`]})))()}o();export{i as Demo,a as __namedExportsOrder,r as default};
