@@ -138,4 +138,25 @@ describe('createReactRouterConfig', () => {
     await expect(paths({ getStaticPaths })).resolves.toEqual(['/'])
     await expect(paths({ getStaticPaths })).resolves.toEqual(['/'])
   })
+
+  it('excludes static child paths that still contain a parent route param', async () => {
+    const paths = getPrerenderPaths(
+      createReactRouterConfig({
+        sitemapConfig: { detailPages: [] },
+        metadataConfigs: [],
+      }),
+    )
+    const getStaticPaths = () => [
+      '/',
+      '/Explore/Studies',
+      '/Explore/Studies/:studyId/Details',
+      '/Explore/Tools/:resourceId/Data/Studies',
+      '/Docs/*',
+    ]
+
+    await expect(paths({ getStaticPaths })).resolves.toEqual([
+      '/',
+      '/Explore/Studies',
+    ])
+  })
 })

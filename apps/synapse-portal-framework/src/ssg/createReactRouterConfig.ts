@@ -34,6 +34,12 @@ function encodePathSegment(id: string): string {
   return id.replaceAll('/', '%2F')
 }
 
+function hasRouteParam(path: string): boolean {
+  return path
+    .split('/')
+    .some(segment => segment.startsWith(':') || segment === '*')
+}
+
 /**
  * Builds a React Router framework-mode `Config` for an SSG portal.
  *
@@ -114,8 +120,13 @@ export function createReactRouterConfig(
         // while dropping the query string, breaking the client-side redirect.
         // CloudFront serves __spa-fallback.html for these 404s, so React Router
         // handles them client-side with the full URL (including query) intact.
+        //
+        // Also exclude static children of dynamic routes, which React Router lists
+        // with the parent's param left in (e.g. /Explore/Studies/:studyId/Details).
+        // Prerendering them writes a page for a record named `:studyId` and makes
+        // an uncached Synapse query for it on every build.
         const staticPaths = getStaticPaths().filter(
-          p => !p.includes('/DetailsPage'),
+          p => !p.includes('/DetailsPage') && !hasRouteParam(p),
         )
 
         return [...staticPaths, ...dynamicRoutes]
