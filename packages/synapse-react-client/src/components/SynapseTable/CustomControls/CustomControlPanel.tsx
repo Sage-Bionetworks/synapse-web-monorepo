@@ -1,4 +1,5 @@
-import { ButtonProps, Box, Typography, Paper } from '@mui/material'
+import { ButtonProps } from '@mui/material'
+import { ActionPanel } from '../../ActionPanel/ActionPanel'
 import {
   CustomControl,
   CustomControlCallbackData,
@@ -15,39 +16,18 @@ function CustomControlPanel(props: CustomControlPanelProps) {
   const { title, description } = control
 
   return (
-    <Paper
-      sx={{
-        backgroundColor: 'grey.100',
-        p: 2,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 2,
-        borderRadius: 1,
-      }}
-      elevation={0}
-    >
-      <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1, gap: 0.5 }}>
-        {title && (
-          <Typography
-            variant="body1"
-            sx={{ fontWeight: 700, fontSize: '14px' }}
-          >
-            {title}
-          </Typography>
-        )}
-        {description && (
-          <Typography variant="body2" color="text.secondary">
-            {description}
-          </Typography>
-        )}
-      </Box>
-      <CustomControlButton
-        control={control}
-        callbackData={callbackData}
-        variant="outlined"
-        {...buttonProps}
-      />
-    </Paper>
+    <ActionPanel
+      title={title}
+      description={description}
+      action={
+        <CustomControlButton
+          control={control}
+          callbackData={callbackData}
+          variant="outlined"
+          {...buttonProps}
+        />
+      }
+    />
   )
 }
 

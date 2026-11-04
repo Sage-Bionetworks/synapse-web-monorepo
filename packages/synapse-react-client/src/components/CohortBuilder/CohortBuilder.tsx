@@ -23,6 +23,7 @@ import PlotsContainer from '../widgets/facet-nav/PlotsContainer'
 import { AggregateDataPreviewControls } from './AggregateDataPreviewControls'
 import styles from './CohortBuilder.module.scss'
 import { CohortFilesPanel } from './CohortFilesPanel'
+import { CohortDiscoveryBanner } from './CohortDiscoveryBanner'
 
 /**
  * The Cohort Builder only requests the count and facet statistics: it never shows participant rows, and the server
@@ -93,9 +94,12 @@ export function CohortBuilder(props: CohortBuilderProps) {
 
   if (!isAuthenticated) {
     return (
-      <Typography variant="body1" className={styles.state}>
-        <SignInPrompt />
-      </Typography>
+      <div className={styles.root}>
+        <CohortDiscoveryBanner />
+        <Typography variant="body1" className={styles.state}>
+          <SignInPrompt />
+        </Typography>
+      </div>
     )
   }
 
@@ -111,6 +115,7 @@ export function CohortBuilder(props: CohortBuilderProps) {
         defaultShowPlots
       >
         <div className={styles.root}>
+          <CohortDiscoveryBanner />
           <div className={styles.notices}>
             <Alert severity="info">{auditNotice}</Alert>
             <CohortPreviewNotice />
