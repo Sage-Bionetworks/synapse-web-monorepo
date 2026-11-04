@@ -40,3 +40,7 @@ export const EnableAll: Story = {
 export const Loading: Story = {
   args: { isLoading: true },
 }
+
+export const ManyFeatures: Story = {
+  args: { features: Object.values(FeatureFlagEnum) },
+}
