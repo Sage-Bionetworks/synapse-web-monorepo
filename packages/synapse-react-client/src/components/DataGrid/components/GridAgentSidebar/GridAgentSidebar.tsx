@@ -179,6 +179,7 @@ export function GridAgentSidebar({
       aria-labelledby={titleId}
     >
       <div
+        // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role -- a focusable separator is the ARIA window splitter pattern, which a static <hr> cannot express
         role="separator"
         aria-orientation="vertical"
         aria-label={`Resize ${GRID_AGENT_SIDEBAR_TITLE}`}

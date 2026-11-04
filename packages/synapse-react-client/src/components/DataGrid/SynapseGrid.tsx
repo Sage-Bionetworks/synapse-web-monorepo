@@ -518,7 +518,8 @@ function SynapseGridInner({
                       <Stack
                         direction={'row'}
                         spacing={1}
-                        sx={{ justifyContent: 'flex-end' }}
+                        useFlexGap
+                        sx={{ justifyContent: 'flex-end', flexWrap: 'wrap' }}
                       >
                         {/* Keep this sync indicator first in the stack, otherwise it will cause other buttons to shift */}
                         {isSyncing && (
