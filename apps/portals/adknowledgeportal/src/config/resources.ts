@@ -22,6 +22,10 @@ export const experimentalModelsSql =
 export const cohortBuilderSql = 'SELECT * FROM syn72123781'
 export const cohortBuilderFilesSql = 'SELECT * FROM syn72123859'
 
+export const cohortBuilderV2ParticipantsTableId = 'syn78155293'
+export const cohortBuilderV2FilesTableId = 'syn78157126'
+export const cohortBuilderV2ParticipantsSourceTableId = 'syn77485039'
+
 // PORTALS-2028: /MODEL-ADstrains redirects to "/Explore/Experimental Models" with this facet preselected
 export const modelADStrainsSelectedFacet = {
   columnName: 'program',

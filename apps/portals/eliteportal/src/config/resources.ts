@@ -23,6 +23,9 @@ export const modelColumnCategoriesTableId = 'syn78408511'
 export const upsetPlotSql = 'SELECT individualID, dataType from syn51581771'
 export const cohortBuilderSql = 'SELECT * FROM syn52234652'
 export const cohortBuilderFilesSql = 'SELECT * FROM syn52234677'
+export const cohortBuilderV2ParticipantsTableId = 'syn78340012'
+export const cohortBuilderV2FilesTableId = 'syn78340377'
+export const cohortBuilderV2ParticipantsSourceTableId = 'syn77454377'
 export const partnersSql =
   'SELECT * FROM syn62661043 order by organizationName desc'
 export const partnersSql2 =
