@@ -47,12 +47,12 @@ async function findLegendCount(value: string) {
 }
 
 describe('FacetPlotsCard', () => {
-  it('lists rounded counts in the legend as approximate bin midpoints', async () => {
+  it('lists rounded counts in the legend as bin ranges', async () => {
     renderStudyCard('AGGREGATE_ONLY')
 
     // 1,200 LLFS participants are reported in the bin 1,200–1,204.
     expect(await findLegendCount('LLFS')).toHaveTextContent(
-      `≈ ${(1202).toLocaleString()}`,
+      `${(1200).toLocaleString()}–${(1204).toLocaleString()}`,
     )
   })
 
