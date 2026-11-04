@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{g as t}from"./SynapseContext-Dcv0RdLM.js";function n(){return(n=e((()=>{t()})))()}export{n as t};
