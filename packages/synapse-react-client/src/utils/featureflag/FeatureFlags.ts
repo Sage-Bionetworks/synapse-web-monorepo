@@ -32,6 +32,9 @@ export enum FeatureFlagEnum {
   // Access Requirements that collect a schema-driven form
   ACT_DASHBOARD_FORM_TEMPLATES = 'ACT_DASHBOARD_FORM_TEMPLATES',
 
+  // If enabled, the ADKP and ELITE portals' Cohort Builder pages show the Cohort Builder 2.0 (CohortBuilder component)
+  COHORT_BUILDER_V2 = 'COHORT_BUILDER_V2',
+
   // Reserved for unit tests. Not configured in Stack Builder; do not use in production code.
   TEST_ONLY = 'TEST_ONLY',
 }

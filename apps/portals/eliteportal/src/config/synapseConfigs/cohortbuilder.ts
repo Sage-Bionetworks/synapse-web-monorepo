@@ -1,3 +1,4 @@
+import type { CohortBuilderProps } from 'synapse-react-client/components/CohortBuilder/CohortBuilder'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
 import type {
   QueryWrapperSynapsePlotProps,
@@ -8,6 +9,9 @@ import {
   cavaticaConnectAccountURL,
   cohortBuilderFilesSql,
   cohortBuilderSql,
+  cohortBuilderV2FilesTableId,
+  cohortBuilderV2ParticipantsSourceTableId,
+  cohortBuilderV2ParticipantsTableId,
   defaultSearchConfiguration,
   enabledAnalysisPlatforms,
 } from '../resources'
@@ -141,4 +145,10 @@ export const filesViewQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   customControls: [viewAssociatedParticipantsCustomControl],
   shouldDeepLink: false,
   searchConfiguration: defaultSearchConfiguration,
+}
+
+export const cohortBuilderV2Props: CohortBuilderProps = {
+  participantsTableId: cohortBuilderV2ParticipantsTableId,
+  filesTableId: cohortBuilderV2FilesTableId,
+  participantsSourceTableId: cohortBuilderV2ParticipantsSourceTableId,
 }
