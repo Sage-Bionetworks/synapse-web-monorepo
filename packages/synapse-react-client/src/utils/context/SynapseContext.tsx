@@ -85,6 +85,7 @@ export function SynapseContextProvider(props: SynapseContextProviderProps) {
       accessToken: providedContext?.accessToken,
       isAuthenticated: providedContext?.isAuthenticated ?? false,
       isInExperimentalMode: providedContext?.isInExperimentalMode ?? false,
+      // SWC doesn't pass this, so fall back to reading the cookie
       enabledExperimentalFeatures:
         providedContext?.enabledExperimentalFeatures ??
         getEnabledExperimentalFeatures(),
