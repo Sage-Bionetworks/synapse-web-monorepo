@@ -11,12 +11,9 @@ export default function parseFreeTextGivenJsonSchemaType(
       // empty string parse result is 0, so treat it as empty
       return freeText
     }
-    let parsed: number
-    if (colType === 'integer') {
-      parsed = parseInt(freeText, 10)
-    } else {
-      parsed = Number(freeText)
-    }
+    // Integer columns parse like number columns so a decimal is stored as
+    // entered and the backend validator, not the grid, rejects it
+    const parsed = Number(freeText)
     if (!isNaN(parsed)) {
       return parsed
     } else {
