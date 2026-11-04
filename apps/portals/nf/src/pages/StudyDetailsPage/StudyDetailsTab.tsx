@@ -66,7 +66,8 @@ function StudyDetailsTab() {
             <CardContainerLogic
               sql={publicationsSql}
               cardConfiguration={publicationsCardConfiguration}
-              searchParams={{ studyId }}
+              // studyName holds the linked studies' Synapse IDs (ENTITYID_LIST)
+              searchParams={{ studyName: studyId }}
             />
           ),
         },
@@ -77,7 +78,8 @@ function StudyDetailsTab() {
             <CardContainerLogic
               sql={citedBySql}
               cardConfiguration={publicationsCardConfiguration}
-              searchParams={{ studyId }}
+              // studyName holds the linked studies' Synapse IDs (ENTITYID_LIST)
+              searchParams={{ studyName: studyId }}
             />
           ),
         },
