@@ -136,7 +136,7 @@ function useGetEntitiesInTable(rowSet: RowSet) {
       const value = curr.values[index]
       if (
         value &&
-        !prev.find(e => e.targetId === value && e.targetVersionNumber == null)
+        !prev.some(e => e.targetId === value && e.targetVersionNumber == null)
       ) {
         prev.push({ targetId: value })
       }
@@ -149,7 +149,7 @@ function useGetEntitiesInTable(rowSet: RowSet) {
         ids.forEach(id => {
           if (
             id &&
-            !prev.find(e => e.targetId === id && e.targetVersionNumber == null)
+            !prev.some(e => e.targetId === id && e.targetVersionNumber == null)
           ) {
             prev.push({ targetId: id })
           }

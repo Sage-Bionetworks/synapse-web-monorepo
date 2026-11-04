@@ -131,7 +131,7 @@ beforeEach(() => {
         new DataGridWebSocket({
           replicaId,
           url: 'ws://mocked-url',
-          ...(websocketOptions ?? {}),
+          ...websocketOptions,
         }),
       ),
   )
@@ -584,7 +584,7 @@ describe('useDataGridWebSocket', () => {
         new DataGridWebSocket({
           replicaId: establishArgs!.replicaId,
           url: 'ws://mocked-url',
-          ...(establishArgs!.websocketOptions ?? {}),
+          ...establishArgs!.websocketOptions,
         }),
       )
     })

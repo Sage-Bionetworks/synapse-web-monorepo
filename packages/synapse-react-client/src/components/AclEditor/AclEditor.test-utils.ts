@@ -149,7 +149,7 @@ export async function addUserToAcl(
 
   await waitFor(() => expect(option).not.toBeInTheDocument())
   const rows = screen.getAllByRole('row')
-  return rows[rows.length - 1]
+  return rows.at(-1)!
 }
 
 /**
@@ -179,7 +179,7 @@ export async function addPublicToAcl(
   })
 
   return {
-    publicRow: rows[rows.length - 2],
-    authenticatedUsersRow: rows[rows.length - 1],
+    publicRow: rows.at(-2)!,
+    authenticatedUsersRow: rows.at(-1)!,
   }
 }

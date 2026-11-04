@@ -1,4 +1,4 @@
-import { createContext, PropsWithChildren, useContext } from 'react'
+import { createContext, PropsWithChildren, useContext, useMemo } from 'react'
 import { AuthenticationRequest } from '@sage-bionetworks/aridhia-client/generated/models'
 
 export type AridhiaContextType = {
@@ -40,10 +40,10 @@ export function AridhiaContextProvider(props: AridhiaContextProviderProps) {
     authenticationRequest,
   } = props
 
-  const contextValue: AridhiaContextType = {
-    apiBasePath,
-    authenticationRequest,
-  }
+  const contextValue: AridhiaContextType = useMemo(
+    () => ({ apiBasePath, authenticationRequest }),
+    [apiBasePath, authenticationRequest],
+  )
 
   return (
     <AridhiaContext.Provider value={contextValue}>

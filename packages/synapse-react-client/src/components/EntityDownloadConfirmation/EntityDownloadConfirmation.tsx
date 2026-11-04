@@ -24,18 +24,18 @@ export type EntityDownloadConfirmationProps = {
   handleClose: () => void
 }
 
-const typesToAddToDownloadListWithParentId: EntityType[] = [
+const typesToAddToDownloadListWithParentId: ReadonlySet<EntityType> = new Set([
   EntityType.project,
   EntityType.folder,
   EntityType.dataset,
   EntityType.datasetcollection,
-]
-const typesToAddToDownloadListWithQuery: EntityType[] = [EntityType.entityview]
+])
+const typesToAddToDownloadListWithQuery: ReadonlySet<EntityType> = new Set([
+  EntityType.entityview,
+])
 /** Users expect the specific file version included in the dataset to be added to the cart */
-const typesWhereFileVersionNumberShouldBeUsed: EntityType[] = [
-  EntityType.dataset,
-  EntityType.datasetcollection,
-]
+const typesWhereFileVersionNumberShouldBeUsed: ReadonlySet<EntityType> =
+  new Set([EntityType.dataset, EntityType.datasetcollection])
 
 /**
  * A component that allows users to add an entity to the download cart. It displays a confirmation dialog that displays
@@ -69,7 +69,7 @@ export function EntityDownloadConfirmation({
       if (!entityType) {
         return null
       }
-      if (typesToAddToDownloadListWithQuery.includes(entityType)) {
+      if (typesToAddToDownloadListWithQuery.has(entityType)) {
         return {
           concreteType:
             'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',
@@ -80,9 +80,9 @@ export function EntityDownloadConfirmation({
           },
         }
       }
-      if (typesToAddToDownloadListWithParentId.includes(entityType)) {
+      if (typesToAddToDownloadListWithParentId.has(entityType)) {
         const useVersionNumber =
-          typesWhereFileVersionNumberShouldBeUsed.includes(entityType)
+          typesWhereFileVersionNumberShouldBeUsed.has(entityType)
         return {
           concreteType:
             'org.sagebionetworks.repo.model.download.AddToDownloadListRequest',

@@ -17,7 +17,7 @@ const BUNDLE_MASK_QUERY_MAX_ROWS_PER_PAGE = 0x8
 // Simple extractor for the Synapse entity ID from a SQL string.
 // Mirrors the behavior of `parseEntityIdFromSqlStatement` in synapse-react-client
 export function extractEntityIdFromSql(sql: string): string | null {
-  const matches = sql.match(/from\s+(syn\d+)(?:\.\d+)?/i)
+  const matches = /from\s+(syn\d+)(?:\.\d+)?/i.exec(sql)
   return matches ? matches[1] : null
 }
 

@@ -25,7 +25,10 @@ const newFormData = {
 
 const renderComponent = async (props: SynapseFormProps) => {
   const schema = await $RefParser.dereference(props.schema)
-  const _props = { ...props, ...{ schema } }
+  const _props = {
+    ...props,
+    schema,
+  }
   const router = createMemoryRouter([
     {
       path: '/',
@@ -90,7 +93,10 @@ describe('SynapseForm', () => {
   })
 
   test('initialize for existing submission', async () => {
-    const _props = { ...props, ...{ formData: submissionData } }
+    const _props = {
+      ...props,
+      formData: submissionData,
+    }
     await renderComponent(_props)
 
     const firstNameInput =

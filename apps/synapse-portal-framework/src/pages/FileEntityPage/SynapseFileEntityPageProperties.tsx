@@ -38,7 +38,7 @@ const FilePropertyRow: React.FC<FilePropertyRowProps> = ({
   fileHandle,
   storageLocationName,
 }) => {
-  let content: React.ReactNode = null
+  let content: React.ReactNode
 
   switch (keyName) {
     case 'id':

@@ -56,9 +56,14 @@ export function FacetPlotLegendList(props: FacetPlotLegendProps) {
               </Typography>
               <Typography
                 variant="body2"
-                sx={{ color: 'grey.600', fontSize: '14px' }}
+                sx={{
+                  color: 'grey.600',
+                  fontSize: '14px',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                }}
               >
-                {facetValue.count.toLocaleString()}
+                {facetValue.countText}
               </Typography>
             </Box>
           </Tooltip>

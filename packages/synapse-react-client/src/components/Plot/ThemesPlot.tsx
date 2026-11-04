@@ -208,8 +208,8 @@ export function ThemesPlot({
   const { accessToken } = useSynapseContext()
   const [isLoaded, setIsLoaded] = useState(false)
   const [dotPlotQueryData, setDotPlotQueryData] = useState<GraphItem[]>([])
-  const [topBarPlotData, setTopBarQueryData] = useState<GraphItem[]>([])
-  const [sideBarPlotData, setSideBarQueryData] = useState<GraphItem[]>([])
+  const [topBarPlotData, setTopBarPlotData] = useState<GraphItem[]>([])
+  const [sideBarPlotData, setSideBarPlotData] = useState<GraphItem[]>([])
 
   useEffect(() => {
     const dotPlotData = fetchData(accessToken!, dotPlot)
@@ -223,13 +223,13 @@ export function ThemesPlot({
             result[0].rows,
           ) as unknown as GraphItem[],
         )
-        setTopBarQueryData(
+        setTopBarPlotData(
           resultToJson(
             result[1].headers,
             result[1].rows,
           ) as unknown as GraphItem[],
         )
-        setSideBarQueryData(
+        setSideBarPlotData(
           resultToJson(
             result[2].headers,
             result[2].rows,
@@ -248,10 +248,11 @@ export function ThemesPlot({
   let topBarPlotDataSorted: TotalsGroupByY[] = []
   let totalsByDotPlotY: TotalsGroupByY[] = []
   if (isLoaded) {
-    totalsByDotPlotY = getTotalsByProp(sideBarPlotData, 'y')
-    yLabelsForDotPlot = totalsByDotPlotY
-      .sort((a, b) => b.count - a.count)
-      .map(item => item.y)
+    totalsByDotPlotY = getTotalsByProp<TotalsGroupByY>(
+      sideBarPlotData,
+      'y',
+    ).toSorted((a, b) => b.count - a.count)
+    yLabelsForDotPlot = totalsByDotPlotY.map(item => item.y)
     xMaxForDotPlot = Math.max(...dotPlotQueryData.map(item => Number(item.x)))
     topBarPlotDataSorted = orderBy(getTotalsByProp(topBarPlotData, 'y'), ['y'])
     xLabelsForTopBarPlot = orderBy(

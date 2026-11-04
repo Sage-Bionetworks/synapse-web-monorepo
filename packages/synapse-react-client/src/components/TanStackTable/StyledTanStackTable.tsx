@@ -162,8 +162,7 @@ export default function StyledTanStackTable<
   const columnSizeVars = useMemo(() => {
     const headers = table.getFlatHeaders()
     const colSizes: { [key: string]: number } = {}
-    for (let i = 0; i < headers.length; i++) {
-      const header = headers[i]
+    for (const header of headers) {
       colSizes[getHeaderSizeCssVariable(header.id)] = header.getSize()
       colSizes[getColumnSizeCssVariable(header.column.id)] =
         header.column.getSize()

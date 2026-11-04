@@ -34,7 +34,7 @@ function getBarPlotDataPoints(
   if (filter) {
     data = data.filter(item => item.y === filter)
   }
-  const groups = uniq(data.map(item => item['group'])).sort()
+  const groups = uniq(data.map(item => item['group'] as string)).toSorted()
   const result: any[] = []
   const defaultColors = [`(28,118,175,1)`, `rgba(91,176,181,1)`]
 

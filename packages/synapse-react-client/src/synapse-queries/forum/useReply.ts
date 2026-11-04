@@ -121,7 +121,7 @@ export function usePostReply(
     ...options,
     mutationFn: (request: CreateDiscussionReply) =>
       SynapseClient.postReply(request, accessToken),
-    onSuccess: async (newReply, variables, ctx) => {
+    onSuccess: async (newReply, variables, ctx, ...rest) => {
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: keyFactory.getAllRepliesQueryKey(newReply.threadId),
@@ -135,7 +135,7 @@ export function usePostReply(
         }),
       ])
       if (options?.onSuccess) {
-        await options.onSuccess(newReply, variables, ctx)
+        await options.onSuccess(newReply, variables, ctx, ...rest)
       }
     },
   })
@@ -159,13 +159,13 @@ export function usePutReply(
     ...options,
     mutationFn: (request: UpdateDiscussionReply) =>
       SynapseClient.putReply(request, accessToken),
-    onSuccess: async (newReply, variables, ctx) => {
+    onSuccess: async (newReply, variables, ctx, ...rest) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getAllRepliesQueryKey(newReply.threadId),
       })
 
       if (options?.onSuccess) {
-        await options.onSuccess(newReply, variables, ctx)
+        await options.onSuccess(newReply, variables, ctx, ...rest)
       }
     },
   })
@@ -181,13 +181,13 @@ export function useDeleteReply(
     ...options,
     mutationFn: (match: Match) =>
       SynapseClient.deleteReply(accessToken, match.replyId),
-    onSuccess: async (updatedReply, variables, ctx) => {
+    onSuccess: async (updatedReply, variables, ctx, ...rest) => {
       await queryClient.invalidateQueries({
         queryKey: keyFactory.getAllRepliesQueryKey(variables.threadId),
       })
 
       if (options?.onSuccess) {
-        await options.onSuccess(updatedReply, variables, ctx)
+        await options.onSuccess(updatedReply, variables, ctx, ...rest)
       }
     },
   })

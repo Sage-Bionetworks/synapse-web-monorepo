@@ -72,7 +72,7 @@ const getEntityHeaderItems = async (
 ): Promise<EntityHeader[]> => {
   const newData = await getEntityHeaders(lookupList, accessToken)
   const notFound = lookupList.filter(
-    item => newData.results.map(item => item.id).indexOf(item.targetId) === -1,
+    item => !newData.results.map(item => item.id).includes(item.targetId),
   )
   const notFoundPlaceholders = notFound.map(item => ({
     ...entityHeaderTemplate,
@@ -89,7 +89,7 @@ const getUserGroupHeaderItems = async (
 ): Promise<UserGroupHeader[]> => {
   const newData = (await getGroupHeadersBatch(lookupList, accessToken)).children
   const notFound = lookupList.filter(
-    item => newData.map(item => item.ownerId).indexOf(item) === -1,
+    item => !newData.map(item => item.ownerId).includes(item),
   )
   const notFoundPlaceholders = notFound.map(item => ({
     ...UserGroupHeaderTemplate,
@@ -109,7 +109,7 @@ const getEvaluationItems = async (
     accessToken,
   )
   const notFound = lookupList.filter(
-    item => newData.results.map(item => item.id).indexOf(item) === -1,
+    item => !newData.results.map(item => item.id).includes(item),
   )
   const notFoundPlaceholders = notFound.map(item => ({
     ...evaluationTemplate,
@@ -168,10 +168,10 @@ export default function useGetInfoFromIds<
           ? JSON.parse(dataInStorage)
           : []
         //get an array of ids for items already in storage
-        const ids = dataInStorageAsObjectArr.map(item => item[idKey])
+        const ids = new Set(dataInStorageAsObjectArr.map(item => item[idKey]))
         //push all the new data if ids are new
         for (const dataObject of data) {
-          if (!ids.includes(dataObject[idKey])) {
+          if (!ids.has(dataObject[idKey])) {
             dataInStorageAsObjectArr.push(dataObject)
           }
         }

@@ -16,7 +16,7 @@ describe('InfiniteQueryUtils', () => {
       ]
 
       const nextPageParam = getNextPageParamForPaginatedResults(
-        pages[pages.length - 1],
+        pages.at(-1)!,
         pages,
       )
       expect(nextPageParam).toBe(4)
@@ -35,10 +35,10 @@ describe('InfiniteQueryUtils', () => {
       ]
 
       const nextPageParam = getNextPageParamForPaginatedResults(
-        pages[pages.length - 1],
+        pages.at(-1)!,
         pages,
       )
-      expect(nextPageParam).toBe(undefined)
+      expect(nextPageParam).toBeUndefined()
     })
     test('totalNumberOfResults is always correct more than fetched, not last page', () => {
       const pages: PaginatedResults<unknown>[] = [
@@ -49,7 +49,7 @@ describe('InfiniteQueryUtils', () => {
       ]
 
       const nextPageParam = getNextPageParamForPaginatedResults(
-        pages[pages.length - 1],
+        pages.at(-1)!,
         pages,
       )
       expect(nextPageParam).toBe(2)
@@ -67,10 +67,10 @@ describe('InfiniteQueryUtils', () => {
       ]
 
       const nextPageParam = getNextPageParamForPaginatedResults(
-        pages[pages.length - 1],
+        pages.at(-1)!,
         pages,
       )
-      expect(nextPageParam).toBe(undefined)
+      expect(nextPageParam).toBeUndefined()
     })
     test('totalNumberOfResults is undefined, not last page', () => {
       const pages: PaginatedResults<unknown>[] = [
@@ -80,7 +80,7 @@ describe('InfiniteQueryUtils', () => {
       ]
 
       const nextPageParam = getNextPageParamForPaginatedResults(
-        pages[pages.length - 1],
+        pages.at(-1)!,
         pages,
       )
       expect(nextPageParam).toBe(2)
@@ -97,10 +97,10 @@ describe('InfiniteQueryUtils', () => {
       ]
 
       const nextPageParam = getNextPageParamForPaginatedResults(
-        pages[pages.length - 1],
+        pages.at(-1)!,
         pages,
       )
-      expect(nextPageParam).toBe(undefined)
+      expect(nextPageParam).toBeUndefined()
     })
   })
 })

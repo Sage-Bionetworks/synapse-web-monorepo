@@ -6,11 +6,7 @@
 const MAX_MESSAGE_COUNTER_VALUE = Math.pow(2, 31) - 1
 
 export default class MessageCounter {
-  private counter: number
-
-  constructor() {
-    this.counter = 1
-  }
+  private counter: number = 1
 
   public getNext(): number {
     const current = this.counter

@@ -19,7 +19,7 @@ describe('getRequiredAttributes', () => {
         c: { type: 'boolean' },
       },
     }
-    expect(getRequiredAttributes(schema).sort()).toEqual(['a', 'b'])
+    expect(getRequiredAttributes(schema).toSorted()).toEqual(['a', 'b'])
   })
 
   it('deduplicates required fields', () => {
@@ -27,14 +27,14 @@ describe('getRequiredAttributes', () => {
       type: 'object',
       required: ['a', 'b', 'a'],
     }
-    expect(getRequiredAttributes(schema).sort()).toEqual(['a', 'b'])
+    expect(getRequiredAttributes(schema).toSorted()).toEqual(['a', 'b'])
   })
 
   it('handles anyOf union of required', () => {
     const schema = {
       anyOf: [{ required: ['x'] }, { required: ['y', 'z'] }, { required: [] }],
     }
-    expect(getRequiredAttributes(schema).sort()).toEqual([])
+    expect(getRequiredAttributes(schema).toSorted()).toEqual([])
   })
 
   it('handles oneOf union of required', () => {
@@ -45,7 +45,7 @@ describe('getRequiredAttributes', () => {
         { required: ['m', 'o'] },
       ],
     }
-    expect(getRequiredAttributes(schema).sort()).toEqual([])
+    expect(getRequiredAttributes(schema).toSorted()).toEqual([])
   })
 
   it('ignores non-array required and non-string entries', () => {
@@ -53,6 +53,6 @@ describe('getRequiredAttributes', () => {
       required: ['a', 5, null, undefined],
       allOf: [{ required: ['b'] }, { required: [Symbol('c') as any, 'd'] }],
     }
-    expect(getRequiredAttributes(schema).sort()).toEqual(['a', 'b', 'd'])
+    expect(getRequiredAttributes(schema).toSorted()).toEqual(['a', 'b', 'd'])
   })
 })

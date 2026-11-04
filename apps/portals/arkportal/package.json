@@ -8,7 +8,7 @@
     "@react-router/node": "catalog:",
     "@sage-bionetworks/synapse-portal-framework": "workspace:*",
     "@sage-bionetworks/synapse-types": "workspace:*",
-    "@tanstack/react-query": "5.80.10",
+    "@tanstack/react-query": "catalog:",
     "isbot": "^5.1.42",
     "jsdom": "^28.1.0",
     "katex": "^0.18.2",
@@ -16,7 +16,7 @@
     "react-dom": "^19.2.7",
     "react-router": "catalog:",
     "synapse-react-client": "workspace:*",
-    "vite": "^8.0.16"
+    "vite": "^8.3.5"
   },
   "devDependencies": {
     "@react-router/dev": "catalog:",
@@ -29,7 +29,7 @@
     "vite-config": "workspace:*",
     "vite-plugin-node-polyfills": "^0.28.0",
     "vite-plugin-svgr": "^5.2.0",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.12"
   },
   "nx": {
     "targets": {

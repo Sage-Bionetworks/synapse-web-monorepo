@@ -23,7 +23,7 @@ export default function RecoveryCodeForm(props: RecoveryCodeFormProps) {
           // coerce the input to lowercase and remove any nonalphanumeric or hyphen characters
           const valueWithAllowedChars = e.target.value
             .toLowerCase()
-            .replace(/[^a-z0-9-]/gi, '')
+            .replaceAll(/[^a-z0-9-]/gi, '')
           setRecoveryCode(valueWithAllowedChars)
         }}
       />

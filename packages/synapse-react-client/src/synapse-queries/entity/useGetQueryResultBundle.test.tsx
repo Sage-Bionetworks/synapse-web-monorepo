@@ -268,7 +268,7 @@ describe('Hooks for fetching table query bundles using react-query', () => {
     })
     it('Does not return data until both queries resolve', async () => {
       let resolvePromise: () => void = () => {
-        throw Error('resolvePromise was not reassigned before being called')
+        throw new Error('resolvePromise was not reassigned before being called')
       }
       mockGetAsyncJobResults.mockImplementation(request => {
         if (request.partMask === BUNDLE_MASK_QUERY_COUNT) {
@@ -335,7 +335,7 @@ describe('Hooks for fetching table query bundles using react-query', () => {
         mockUpdateStatus,
       )
       // Since one request is still in progress, the data should not be available
-      expect(result.current.data).not.toBeDefined()
+      expect(result.current.data).toBeUndefined()
 
       // The job completes, so the data should be available
       resolvePromise()
@@ -376,7 +376,7 @@ describe('Hooks for fetching table query bundles using react-query', () => {
         expect(result.current.isError).toBe(true)
       })
       // The job fails, so the result should be in error
-      expect(result.current.data).not.toBeDefined()
+      expect(result.current.data).toBeUndefined()
       expect(result.current.error).toBeInstanceOf(SynapseClientError)
     })
   })

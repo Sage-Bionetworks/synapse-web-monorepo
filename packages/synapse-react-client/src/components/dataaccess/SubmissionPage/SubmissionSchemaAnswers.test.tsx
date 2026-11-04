@@ -53,10 +53,9 @@ const form: GeneratedSubmissionForm = {
 
 function renderWithAnswers(
   schemaData: Record<string, unknown>,
-  { generatedForm }: { generatedForm: GeneratedSubmissionForm | undefined } = {
-    generatedForm: form,
-  },
+  options?: { generatedForm: GeneratedSubmissionForm | undefined },
 ) {
+  const generatedForm = options ? options.generatedForm : form
   render(
     <SubmissionSchemaAnswerList
       submissionId="10"

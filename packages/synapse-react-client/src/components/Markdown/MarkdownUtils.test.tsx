@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { isBlockLevelElement, fixInvalidNesting } from './MarkdownUtils'
+import {
+  isBlockLevelElement,
+  fixInvalidNesting,
+  markdownToPlainText,
+} from './MarkdownUtils'
 import {
   Element as DomElement,
   Text as DomText,
@@ -186,7 +190,7 @@ describe('MarkdownUtils DOM', () => {
       fixInvalidNesting(container)
 
       expect(findByTag([container], 'p')).toHaveLength(0)
-      expect(findByAttrib([container], 'data-widgetparams').length).toBe(1)
+      expect(findByAttrib([container], 'data-widgetparams')).toHaveLength(1)
     })
 
     it('should not swap <p> for a badge widget (inline widget)', () => {
@@ -197,7 +201,7 @@ describe('MarkdownUtils DOM', () => {
 
       fixInvalidNesting(container)
 
-      expect(findByTag([container], 'p').length).toBe(1)
+      expect(findByTag([container], 'p')).toHaveLength(1)
     })
 
     it('should not modify valid inline nesting', () => {
@@ -207,8 +211,40 @@ describe('MarkdownUtils DOM', () => {
 
       fixInvalidNesting(container)
 
-      expect(findByTag([container], 'p').length).toBe(1)
-      expect(findByTag([container], 'span').length).toBe(1)
+      expect(findByTag([container], 'p')).toHaveLength(1)
+      expect(findByTag([container], 'span')).toHaveLength(1)
+    })
+  })
+
+  describe('markdownToPlainText', () => {
+    it('removes Synapse widgets', () => {
+      expect(
+        markdownToPlainText(
+          'Before ${image?fileName=a%2Epng&align=Center} after ${reference?text=x}.',
+        ),
+      ).toBe('Before after .')
+    })
+
+    it('removes a widget truncated before its closing brace', () => {
+      expect(
+        markdownToPlainText(
+          'Register here ${jointeam?teamId=3486191&text=Register for BraTS%2DGoAT',
+        ),
+      ).toBe('Register here')
+    })
+
+    it('removes HTML comments and tags, including widgets inside HTML blocks', () => {
+      expect(
+        markdownToPlainText(
+          '<!-- <div class="col-sm-2"> </div> -->\n<div class="col-sm-4">\n${jointeam?teamId=1&text=Register}\n</div>\n\nThe challenge.',
+        ),
+      ).toBe('The challenge.')
+    })
+
+    it('removes markdown formatting and collapses whitespace', () => {
+      expect(
+        markdownToPlainText('# Overview\n\nThe **BraTS** challenge\n\n- one'),
+      ).toBe('Overview The BraTS challenge one')
     })
   })
 })

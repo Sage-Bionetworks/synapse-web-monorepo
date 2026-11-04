@@ -117,23 +117,37 @@ enum DownloadAction {
   exportTable,
 }
 
-// Function that creates menu items for download actions
-function getMenuItemForAction(
-  entityId: string,
-  entityName: string,
-  entityType: EntityType,
-  downloadAction: DownloadAction,
-  setShowProgrammaticAccess: (show: boolean) => void,
-  setShowExportMetadata: (show: boolean) => void,
+type MenuItemForActionOptions = {
+  entityId: string
+  entityType: EntityType
+  setShowProgrammaticAccess: (show: boolean) => void
+  setShowExportMetadata: (show: boolean) => void
   addFileToDownloadList: (params: {
     entityId: string
     entityVersionNumber: number | undefined
-  }) => void,
-  setShowDownloadConfirmation: (show: boolean) => void,
-  versionNumber?: number,
-  addToCartDisabled?: boolean,
-  onDownloadFile?: () => void,
-  isAuthenticated?: boolean,
+  }) => void
+  setShowDownloadConfirmation: (show: boolean) => void
+  versionNumber?: number
+  addToCartDisabled?: boolean
+  onDownloadFile?: () => void
+  isAuthenticated?: boolean
+}
+
+// Function that creates menu items for download actions
+function getMenuItemForAction(
+  downloadAction: DownloadAction,
+  {
+    entityId,
+    entityType,
+    setShowProgrammaticAccess,
+    setShowExportMetadata,
+    addFileToDownloadList,
+    setShowDownloadConfirmation,
+    versionNumber,
+    addToCartDisabled,
+    onDownloadFile,
+    isAuthenticated,
+  }: MenuItemForActionOptions,
 ): DropdownMenuItem {
   switch (downloadAction) {
     case DownloadAction.downloadFile:
@@ -435,20 +449,18 @@ export function EntityDownloadButton(props: {
   const downloadActions = getDownloadActionsForEntityType(props.entityType)
   const downloadMenuItems = downloadActions.map(actionGroup =>
     actionGroup.map(action =>
-      getMenuItemForAction(
-        props.entityId,
-        props.name,
-        props.entityType,
-        action,
+      getMenuItemForAction(action, {
+        entityId: props.entityId,
+        entityType: props.entityType,
         setShowProgrammaticAccess,
         setShowExportMetadata,
         addFileToDownloadList,
         setShowDownloadConfirmation,
-        latestVersionNumber,
+        versionNumber: latestVersionNumber,
         addToCartDisabled,
         onDownloadFile,
         isAuthenticated,
-      ),
+      }),
     ),
   )
 

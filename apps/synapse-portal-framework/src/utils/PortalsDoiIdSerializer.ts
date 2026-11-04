@@ -12,7 +12,7 @@ type DoiSerializerConfiguration<ResourceType extends string> = {
  * will always serialize to the same DOI ID string, so we can look it up later using this ID string.
  */
 class PortalsDoiIdSerializer<ResourceType extends string> {
-  private config: DoiSerializerConfiguration<ResourceType>
+  private readonly config: DoiSerializerConfiguration<ResourceType>
   constructor(config: DoiSerializerConfiguration<ResourceType>) {
     this.config = config
   }

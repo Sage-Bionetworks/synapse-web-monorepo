@@ -39,12 +39,12 @@ export function WikiMarkdownEditor(props: WikiMarkdownEditorProps) {
 
   const [title, setTitle] = useState<string>(wikiPage.title)
   const [markdown, setMarkdown] = useState<string>(wikiPage.markdown)
-  const [showConfirmCancelDialog, setShowConfirmDialog] =
+  const [showConfirmCancelDialog, setShowConfirmCancelDialog] =
     useState<boolean>(false)
 
   const handleCancel = () => {
     if (wikiPage && wikiPage.markdown !== markdown) {
-      setShowConfirmDialog(true)
+      setShowConfirmCancelDialog(true)
     } else {
       onCancel()
     }
@@ -85,9 +85,9 @@ export function WikiMarkdownEditor(props: WikiMarkdownEditorProps) {
                 open={showConfirmCancelDialog}
                 title={UNSAVED_CHANGES}
                 content={NAVIGATE_AWAY_CONFIRMATION_MESSAGE}
-                onCancel={() => setShowConfirmDialog(false)}
+                onCancel={() => setShowConfirmCancelDialog(false)}
                 onConfirm={() => {
-                  setShowConfirmDialog(false)
+                  setShowConfirmCancelDialog(false)
                   onCancel()
                 }}
               />

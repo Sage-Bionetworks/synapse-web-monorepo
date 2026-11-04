@@ -15,8 +15,8 @@
  *   --output: Output directory for the generated sitemap (defaults to 'build/')
  */
 
-import * as fs from 'fs'
-import * as path from 'path'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
 import { generateSitemap } from './generateSitemap'
 import type { SitemapConfig } from './types'
 
@@ -34,7 +34,7 @@ async function main() {
   }
 
   // Strip surrounding double quotes (if exist)
-  const portalName = args[0].replace(/^"|"$/g, '')
+  const portalName = args[0].replaceAll(/^"|"$/g, '')
 
   // Parse optional --config argument
   let sitemapConfigPath: string | undefined
@@ -129,4 +129,5 @@ async function main() {
   }
 }
 
+// oxlint-disable-next-line unicorn/prefer-top-level-await -- the package tsconfig targets ES6, which doesn't allow top-level await
 main()

@@ -1,7 +1,7 @@
 import resolve from '@rollup/plugin-node-resolve'
 import terser from '@rollup/plugin-terser'
 import { babel } from '@rollup/plugin-babel'
-import { readFileSync } from 'fs'
+import { readFileSync } from 'node:fs'
 
 const pkg = JSON.parse(readFileSync(new URL('package.json', import.meta.url)))
 const pkgName = 'markdown-it-container'
@@ -60,8 +60,8 @@ const config_cjs_no_deps = {
   plugins: [resolve(), babel({ babelHelpers: 'bundled' })],
 }
 
-let config = [config_umd_full, config_cjs_no_deps]
-
-if (process.env.CJS_ONLY) config = [config_cjs_no_deps]
+const config = process.env.CJS_ONLY
+  ? [config_cjs_no_deps]
+  : [config_umd_full, config_cjs_no_deps]
 
 export default config

@@ -35,14 +35,21 @@ describe('basic tests - submitted', () => {
   }
 
   it('should display that it has been submitted', () => {
-    const _props = { ...props, ...{ isSubmitted: true } }
+    const _props = {
+      ...props,
+      isSubmitted: true,
+    }
     renderComponent(_props)
 
     screen.getByText(submittedText)
   })
 
   it('should not crash without bodyText param', () => {
-    const _props = { ...props, ...{ isSubmitted: true, bodyText: undefined } }
+    const _props = {
+      ...props,
+      isSubmitted: true,
+      bodyText: undefined,
+    }
     renderComponent(_props)
     screen.getByText(submittedText)
   })

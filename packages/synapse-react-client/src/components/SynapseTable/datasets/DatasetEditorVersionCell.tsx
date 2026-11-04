@@ -26,7 +26,7 @@ export function DatasetEditorVersionCell(props: DatasetEditorVersionCellProps) {
     staleTime: 60 * 1000, // 60 seconds
   })
   const versions = versionData?.pages.flatMap(page => page.results) ?? []
-  const currentVersionHasBeenRetrieved = !!versions.find(
+  const currentVersionHasBeenRetrieved = versions.some(
     version => version.versionNumber === versionNumber,
   )
   useEffect(() => {
@@ -59,7 +59,7 @@ export function DatasetEditorVersionCell(props: DatasetEditorVersionCellProps) {
             event.stopPropagation()
             let version = event.target.value
             if (typeof version === 'string') {
-              version = parseInt(version)
+              version = Number.parseInt(version)
             }
             toggleSelection({
               entityId: entityId,

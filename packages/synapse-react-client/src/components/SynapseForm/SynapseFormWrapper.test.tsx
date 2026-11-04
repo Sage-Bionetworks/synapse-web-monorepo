@@ -240,7 +240,10 @@ describe('SynapseFormWrapper', () => {
     })
 
     test('should pass parameters correctly non wizard mode', async () => {
-      const _props = { ...props, ...{ formTitle: 'Another Title' } }
+      const _props = {
+        ...props,
+        formTitle: 'Another Title',
+      }
       renderComponent(_props)
 
       await screen.findByTestId('SynapseForm')

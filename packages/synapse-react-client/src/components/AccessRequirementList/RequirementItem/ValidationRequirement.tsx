@@ -1,7 +1,7 @@
 import { useGetCurrentUserBundle } from '@/synapse-queries'
 import { useOneSageURL } from '@/utils/hooks/useOneSageURL'
 import { Link, Typography } from '@mui/material'
-import { RequirementItemStatus } from '../AccessApprovalCheckMark'
+import { getRequirementItemStatus } from '../AccessApprovalCheckMark'
 import RequirementItem from './RequirementItem'
 
 /**
@@ -20,13 +20,7 @@ export default function ValidationRequirement() {
 
   return (
     <RequirementItem
-      status={
-        isLoading
-          ? RequirementItemStatus.LOADING
-          : userBundle!.isVerified
-            ? RequirementItemStatus.COMPLETE
-            : RequirementItemStatus.LOCKED
-      }
+      status={getRequirementItemStatus(isLoading, userBundle?.isVerified)}
     >
       <Typography variant={'body1'}>
         You must first apply to have your{' '}

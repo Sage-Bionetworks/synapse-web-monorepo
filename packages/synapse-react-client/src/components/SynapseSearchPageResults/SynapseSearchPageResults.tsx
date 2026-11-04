@@ -570,8 +570,13 @@ export function SynapseSearchPageResults(props: SynapseSearchPageResultsProps) {
           }}
         >
           {isLoading &&
-            Array.from({ length: 3 }, () => (
-              <Skeleton variant="rectangular" width={'100%'} height={'250px'} />
+            Array.from({ length: 3 }, (_, index) => (
+              <Skeleton
+                key={index}
+                variant="rectangular"
+                width={'100%'}
+                height={'250px'}
+              />
             ))}
           {error && <div>Error: {error.message}</div>}
           <Suspense

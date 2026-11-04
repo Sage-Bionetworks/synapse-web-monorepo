@@ -61,13 +61,9 @@ function MissingQueryResultsWarning({
 
     const difference = totalResults - totalVisibleResults
 
-    let helpMessage = ''
-
-    if (entity.isLatestVersion) {
-      helpMessage = DATASETS_CURRENT_VERSION_HELP
-    } else {
-      helpMessage = DATASETS_SNAPSHOT_HELP
-    }
+    const helpMessage = entity.isLatestVersion
+      ? DATASETS_CURRENT_VERSION_HELP
+      : DATASETS_SNAPSHOT_HELP
 
     return (
       <Typography

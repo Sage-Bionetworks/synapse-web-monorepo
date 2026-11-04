@@ -95,10 +95,10 @@ export function shouldShowFacetValue(
  */
 export const isUserFacet = (name: string): boolean => {
   // Normalize by removing underscores and converting to lowercase
-  const normalizedFacetName = name.toLowerCase().replace(/_/g, '')
+  const normalizedFacetName = name.toLowerCase().replaceAll('_', '')
 
   return USER_FACET_NAMES.some(
-    facet => facet.toLowerCase().replace(/_/g, '') === normalizedFacetName,
+    facet => facet.toLowerCase().replaceAll('_', '') === normalizedFacetName,
   )
 }
 
@@ -106,7 +106,9 @@ export const isUserFacet = (name: string): boolean => {
  * Format facet name: capitalize first letter, replace underscores with spaces
  */
 export function formatFacetName(name: string): string {
-  return name.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase())
+  return name
+    .replaceAll('_', ' ')
+    .replaceAll(/\b\w/g, char => char.toUpperCase())
 }
 
 /**
@@ -134,7 +136,7 @@ export function shouldRenderFacet(facet: Facet): boolean {
  * @returns The ID of the matching time range preset ('PAST_HOUR', 'PAST_DAY', etc.)
  */
 export function getSelectedTimeRangeId(timestamp: string): string {
-  const storedTimestamp = parseInt(timestamp)
+  const storedTimestamp = Number.parseInt(timestamp)
 
   if (!storedTimestamp) {
     return 'ANY_TIME'
@@ -172,7 +174,7 @@ export function getSelectedTimeRangeId(timestamp: string): string {
  * @returns A friendly display string
  */
 export function formatTimeRangeDisplayValue(timestamp: string): string {
-  const storedTimestamp = parseInt(timestamp)
+  const storedTimestamp = Number.parseInt(timestamp)
 
   if (isNaN(storedTimestamp)) {
     return timestamp

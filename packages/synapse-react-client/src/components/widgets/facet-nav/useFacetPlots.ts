@@ -83,7 +83,7 @@ export function getFacets(
     data?.facets?.filter(facet => !isSingleNotSetValue(facet)),
   ).filter(
     facet =>
-      (!facetsToPlot?.length || facetsToPlot.indexOf(facet.columnName) > -1) &&
+      (!facetsToPlot?.length || facetsToPlot.includes(facet.columnName)) &&
       // PORTALS-1993: only plot if the facet has count data
       facet.facetValues.length > 0,
   )

@@ -8,8 +8,8 @@ import { Button } from '@mui/material'
 import { DialogBase } from '../DialogBase'
 import AccessIcon, { RestrictionUiType } from '../HasAccess/AccessIcon'
 import {
-  findRequestForDataset,
-  getRestrictionUiTypeFromAridhiaRequest,
+  findRequestsForDataset,
+  getRestrictionUiTypeFromAridhiaRequests,
 } from './aridhiaAccessStatusUtils'
 import { getAridhiaFairPortalDatasetUrl } from './aridhiaFairPortalUrls'
 import AridhiaDarStatusPopover from './AridhiaDarStatusPopover'
@@ -50,14 +50,16 @@ export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
   )
   const [eligibilityDialogOpen, setEligibilityDialogOpen] = useState(false)
   const [requestDialogOpen, setRequestDialogOpen] = useState(false)
-  const { content: wizardContent, actions: wizardActions } =
-    useAridhiaDarWizardParts(
-      { datasetCode },
-      {
-        enabled: requestDialogOpen,
-        onClose: () => setRequestDialogOpen(false),
-      },
-    )
+  // Every opening of the wizard remounts it under a new session key, so a submitted request's
+  // confirmation screen never carries over. The remounted wizard resumes this dataset's
+  // unsubmitted draft if one exists, and otherwise starts a draft with a fresh request code.
+  const [wizardSession, setWizardSession] = useState(0)
+
+  function openRequestWizard() {
+    setPopoverAnchorEl(null)
+    setWizardSession(session => session + 1)
+    setRequestDialogOpen(true)
+  }
 
   if (!isAuthenticated) {
     return (
@@ -118,21 +120,21 @@ export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
       </>
     )
   } else {
-    // Check if there's a request for this dataset
-    const entityRequest = findRequestForDataset(
+    const datasetRequests = findRequestsForDataset(
       requestsResponse?.items ?? [],
       datasetCode,
     )
     const restrictionUiType =
-      getRestrictionUiTypeFromAridhiaRequest(entityRequest)
+      getRestrictionUiTypeFromAridhiaRequests(datasetRequests)
     const icon = <AccessIcon restrictionUiType={restrictionUiType} />
 
     if (
-      restrictionUiType === RestrictionUiType.AccessibleOnRDCADAP ||
-      (!entityRequest && !isDarFormEnabled)
+      !isDarFormEnabled &&
+      (datasetRequests.length === 0 ||
+        restrictionUiType === RestrictionUiType.AccessibleOnRDCADAP)
     ) {
-      // Approved, or no request yet with the in-app request form not enabled — keep the
-      // existing link-out to RDCA-DAP to access or request the data.
+      // Without the in-app request form, RDCA-DAP is where the user accesses or requests the
+      // data — link straight out to it.
       content = fairPortalUrl ? (
         <a
           href={getAridhiaFairPortalDatasetUrl(fairPortalUrl, datasetCode)}
@@ -144,8 +146,9 @@ export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
       ) : (
         icon
       )
-    } else if (entityRequest) {
-      // Pending or denied — click opens the status popover.
+    } else if (datasetRequests.length > 0) {
+      // The popover lists every request for this dataset; with the in-app form enabled it also
+      // offers another request (more tables, or a resubmission after a denial).
       content = (
         <>
           <Button
@@ -159,19 +162,21 @@ export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
             open={!!popoverAnchorEl}
             anchorEl={popoverAnchorEl}
             onClose={() => setPopoverAnchorEl(null)}
-            request={entityRequest}
+            datasetCode={datasetCode}
+            requests={datasetRequests}
             fairPortalUrl={fairPortalUrl}
+            onNewRequest={isDarFormEnabled ? openRequestWizard : undefined}
           />
         </>
       )
-    } else if (isDarFormEnabled) {
+    } else {
       // No request yet, and the in-app request form is enabled — the icon opens the request
       // wizard in a dialog. The same wizard also renders at the route-based, non-modal
       // `AridhiaDarWizard` page for a full-page entry point.
       content = (
         <Button
           sx={buttonSx}
-          onClick={() => setRequestDialogOpen(true)}
+          onClick={openRequestWizard}
           aria-label="Request data access"
         >
           {icon}
@@ -184,14 +189,34 @@ export default function AridhiaAccessStatus(props: AridhiaAccessStatusProps) {
     <>
       {content}
       {/*  Ensure all authenticated return paths render the wizard dialog to prevent flicker as the DAR state changes (e.g. on the confirmation screen). */}
-      <DialogBase
+      <AridhiaDarWizardDialog
+        key={wizardSession}
+        datasetCode={datasetCode}
         open={requestDialogOpen}
-        onCancel={() => setRequestDialogOpen(false)}
-        maxWidth="md"
-        title="Request Data Access"
-        content={wizardContent}
-        actions={wizardActions}
+        onClose={() => setRequestDialogOpen(false)}
       />
     </>
+  )
+}
+
+function AridhiaDarWizardDialog(props: {
+  datasetCode: string
+  open: boolean
+  onClose: () => void
+}) {
+  const { datasetCode, open, onClose } = props
+  const { content, actions } = useAridhiaDarWizardParts(
+    { datasetCode },
+    { enabled: open, onClose },
+  )
+  return (
+    <DialogBase
+      open={open}
+      onCancel={onClose}
+      maxWidth="md"
+      title="Request Data Access"
+      content={content}
+      actions={actions}
+    />
   )
 }

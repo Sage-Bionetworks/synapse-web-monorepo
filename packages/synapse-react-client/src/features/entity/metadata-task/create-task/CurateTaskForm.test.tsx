@@ -388,7 +388,7 @@ describe('CurateTaskForm', () => {
       const deleteButtons = screen.getAllByRole('button', {
         name: /^delete$/i,
       })
-      await user.click(deleteButtons[deleteButtons.length - 1])
+      await user.click(deleteButtons.at(-1)!)
 
       expect(mockDeleteMutate).toHaveBeenCalledWith(MOCK_CURATION_TASK_ID)
       expect(onDeleted).toHaveBeenCalled()

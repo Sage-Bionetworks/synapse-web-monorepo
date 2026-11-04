@@ -85,7 +85,7 @@ const permissionLevelToAccessType: Record<PermissionLevel, ACCESS_TYPE[]> = {
 }
 
 const prepAccessTypeForComparison = (accessType: ACCESS_TYPE[]) => {
-  return JSON.stringify(accessType.sort())
+  return JSON.stringify(accessType.toSorted())
 }
 
 export const getPermissionLevelFromAccessType = (accessType: ACCESS_TYPE[]) => {

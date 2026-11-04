@@ -40,6 +40,8 @@ export type CohortBuilderMockProfile = {
   participantIdPrefix: string
   participantsVirtualTableId: string
   dataVirtualTableId: string
+  /** The AGGREGATE_DATA participant source table that the VirtualTables derive from. */
+  participantsSourceTableId: string
   /** First synthetic entity ID assigned to a file or dataset reference. */
   firstReferenceEntityId: number
   participantAttributes: readonly MockParticipantAttribute[]
@@ -93,6 +95,7 @@ export const ELITE_MOCK_PROFILE: CohortBuilderMockProfile = {
   participantIdPrefix: 'ELITE-SYN',
   participantsVirtualTableId: 'syn90000001',
   dataVirtualTableId: 'syn90000002',
+  participantsSourceTableId: 'syn90000004',
   firstReferenceEntityId: 90100000,
   participantAttributes: [
     {
@@ -260,6 +263,7 @@ export const ADKP_MOCK_PROFILE: CohortBuilderMockProfile = {
   participantIdPrefix: 'ADKP-SYN',
   participantsVirtualTableId: 'syn90000011',
   dataVirtualTableId: 'syn90000012',
+  participantsSourceTableId: 'syn90000014',
   firstReferenceEntityId: 90200000,
   participantAttributes: [
     {

@@ -102,22 +102,7 @@ describe('useTreeOperationsWithDirectFetch', () => {
       mockQueryClient.fetchQuery.mockResolvedValue(mockChildrenResponse)
 
       const { result } = renderHook(() =>
-        useTreeOperationsWithDirectFetch(
-          mockProps.expanded,
-          mockProps.setExpanded,
-          mockProps.tree,
-          mockProps.setTree,
-          mockProps.loadedChildren,
-          mockProps.setLoadedChildren,
-          mockProps.loadingIds,
-          mockProps.setLoadingIds,
-          mockProps.setNextPageTokens,
-          mockProps.setLoadingPageTokens,
-          mockProps.loadingPageTokens,
-          mockProps.nextPageTokens,
-          mockProps.sortBy,
-          mockProps.sortDirection,
-        ),
+        useTreeOperationsWithDirectFetch(mockProps),
       )
 
       await act(async () => {
@@ -144,22 +129,7 @@ describe('useTreeOperationsWithDirectFetch', () => {
       }
 
       const { result } = renderHook(() =>
-        useTreeOperationsWithDirectFetch(
-          expandedProps.expanded,
-          expandedProps.setExpanded,
-          expandedProps.tree,
-          expandedProps.setTree,
-          expandedProps.loadedChildren,
-          expandedProps.setLoadedChildren,
-          expandedProps.loadingIds,
-          expandedProps.setLoadingIds,
-          expandedProps.setNextPageTokens,
-          expandedProps.setLoadingPageTokens,
-          expandedProps.loadingPageTokens,
-          expandedProps.nextPageTokens,
-          expandedProps.sortBy,
-          expandedProps.sortDirection,
-        ),
+        useTreeOperationsWithDirectFetch(expandedProps),
       )
 
       await act(async () => {
@@ -182,22 +152,7 @@ describe('useTreeOperationsWithDirectFetch', () => {
       }
 
       const { result } = renderHook(() =>
-        useTreeOperationsWithDirectFetch(
-          loadedProps.expanded,
-          loadedProps.setExpanded,
-          loadedProps.tree,
-          loadedProps.setTree,
-          loadedProps.loadedChildren,
-          loadedProps.setLoadedChildren,
-          loadedProps.loadingIds,
-          loadedProps.setLoadingIds,
-          loadedProps.setNextPageTokens,
-          loadedProps.setLoadingPageTokens,
-          loadedProps.loadingPageTokens,
-          loadedProps.nextPageTokens,
-          loadedProps.sortBy,
-          loadedProps.sortDirection,
-        ),
+        useTreeOperationsWithDirectFetch(loadedProps),
       )
 
       await act(async () => {
@@ -218,22 +173,7 @@ describe('useTreeOperationsWithDirectFetch', () => {
       mockQueryClient.fetchQuery.mockRejectedValue(new Error('Fetch failed'))
 
       const { result } = renderHook(() =>
-        useTreeOperationsWithDirectFetch(
-          mockProps.expanded,
-          mockProps.setExpanded,
-          mockProps.tree,
-          mockProps.setTree,
-          mockProps.loadedChildren,
-          mockProps.setLoadedChildren,
-          mockProps.loadingIds,
-          mockProps.setLoadingIds,
-          mockProps.setNextPageTokens,
-          mockProps.setLoadingPageTokens,
-          mockProps.loadingPageTokens,
-          mockProps.nextPageTokens,
-          mockProps.sortBy,
-          mockProps.sortDirection,
-        ),
+        useTreeOperationsWithDirectFetch(mockProps),
       )
 
       await act(async () => {
@@ -278,22 +218,7 @@ describe('useTreeOperationsWithDirectFetch', () => {
       mockQueryClient.fetchQuery.mockResolvedValue(mockChildrenResponse)
 
       const { result } = renderHook(() =>
-        useTreeOperationsWithDirectFetch(
-          mockProps.expanded,
-          mockProps.setExpanded,
-          mockProps.tree,
-          mockProps.setTree,
-          mockProps.loadedChildren,
-          mockProps.setLoadedChildren,
-          mockProps.loadingIds,
-          mockProps.setLoadingIds,
-          mockProps.setNextPageTokens,
-          mockProps.setLoadingPageTokens,
-          mockProps.loadingPageTokens,
-          mockProps.nextPageTokens,
-          mockProps.sortBy,
-          mockProps.sortDirection,
-        ),
+        useTreeOperationsWithDirectFetch(mockProps),
       )
 
       await act(async () => {
@@ -416,22 +341,10 @@ describe('useTreeOperationsWithDirectFetch', () => {
       }
 
       const { result, rerender } = renderHook(() =>
-        useTreeOperationsWithDirectFetch(
-          testProps.expanded,
-          testProps.setExpanded,
-          currentTree, // Use current tree state
-          testProps.setTree,
-          testProps.loadedChildren,
-          testProps.setLoadedChildren,
-          testProps.loadingIds,
-          testProps.setLoadingIds,
-          testProps.setNextPageTokens,
-          testProps.setLoadingPageTokens,
-          testProps.loadingPageTokens,
-          testProps.nextPageTokens,
-          testProps.sortBy,
-          testProps.sortDirection,
-        ),
+        useTreeOperationsWithDirectFetch({
+          ...testProps,
+          tree: currentTree, // Use current tree state
+        }),
       )
 
       // Load first page (initial expansion)
@@ -570,22 +483,7 @@ describe('useTreeOperationsWithDirectFetch', () => {
       }
 
       const { result } = renderHook(() =>
-        useTreeOperationsWithDirectFetch(
-          propsWithExistingChildren.expanded,
-          propsWithExistingChildren.setExpanded,
-          propsWithExistingChildren.tree,
-          propsWithExistingChildren.setTree,
-          propsWithExistingChildren.loadedChildren,
-          propsWithExistingChildren.setLoadedChildren,
-          propsWithExistingChildren.loadingIds,
-          propsWithExistingChildren.setLoadingIds,
-          propsWithExistingChildren.setNextPageTokens,
-          propsWithExistingChildren.setLoadingPageTokens,
-          propsWithExistingChildren.loadingPageTokens,
-          propsWithExistingChildren.nextPageTokens,
-          propsWithExistingChildren.sortBy,
-          propsWithExistingChildren.sortDirection,
-        ),
+        useTreeOperationsWithDirectFetch(propsWithExistingChildren),
       )
 
       await act(async () => {
@@ -617,22 +515,7 @@ describe('useTreeOperationsWithDirectFetch', () => {
       )
 
       const { result } = renderHook(() =>
-        useTreeOperationsWithDirectFetch(
-          mockProps.expanded,
-          mockProps.setExpanded,
-          mockProps.tree,
-          mockProps.setTree,
-          mockProps.loadedChildren,
-          mockProps.setLoadedChildren,
-          mockProps.loadingIds,
-          mockProps.setLoadingIds,
-          mockProps.setNextPageTokens,
-          mockProps.setLoadingPageTokens,
-          mockProps.loadingPageTokens,
-          mockProps.nextPageTokens,
-          mockProps.sortBy,
-          mockProps.sortDirection,
-        ),
+        useTreeOperationsWithDirectFetch(mockProps),
       )
 
       await act(async () => {
@@ -719,22 +602,11 @@ describe('useTreeOperationsWithDirectFetch', () => {
       const expandedState = { syn123: true }
 
       const { result } = renderHook(() =>
-        useTreeOperationsWithDirectFetch(
-          expandedState,
-          mockProps.setExpanded,
-          treeWithChildren,
-          mockProps.setTree,
-          mockProps.loadedChildren,
-          mockProps.setLoadedChildren,
-          mockProps.loadingIds,
-          mockProps.setLoadingIds,
-          mockProps.setNextPageTokens,
-          mockProps.setLoadingPageTokens,
-          mockProps.loadingPageTokens,
-          mockProps.nextPageTokens,
-          mockProps.sortBy,
-          mockProps.sortDirection,
-        ),
+        useTreeOperationsWithDirectFetch({
+          ...mockProps,
+          expanded: expandedState,
+          tree: treeWithChildren,
+        }),
       )
 
       const flattened = result.current.flattenTree('syn123')

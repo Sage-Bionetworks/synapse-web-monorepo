@@ -66,14 +66,14 @@ export function useUpdateAgentSession(
   >({
     mutationFn: (request: UpdateAgentSessionRequest) =>
       SynapseClient.updateAgentSession(request, accessToken),
-    onSuccess: async (session, variables, ctx) => {
+    onSuccess: async (session, variables, ctx, ...rest) => {
       if (options?.onSuccess) {
-        await options.onSuccess(session, variables, ctx)
+        await options.onSuccess(session, variables, ctx, ...rest)
       }
     },
-    onError: async (err, variables, ctx) => {
+    onError: async (err, variables, ctx, ...rest) => {
       if (options?.onError) {
-        await options.onError(err, variables, ctx)
+        await options.onError(err, variables, ctx, ...rest)
       }
     },
   })
@@ -103,14 +103,14 @@ export function useSendChatMessageToAgent(
         setCurrentAsyncStatus,
       )
     },
-    onSuccess: (data, variables, ctx) => {
+    onSuccess: (data, variables, ctx, ...rest) => {
       if (options?.onSuccess && data.responseBody) {
-        options.onSuccess(data, variables, ctx)
+        options.onSuccess(data, variables, ctx, ...rest)
       }
     },
-    onError: (err, variables, ctx) => {
+    onError: (err, variables, ctx, ...rest) => {
       if (options?.onError) {
-        options.onError(err, variables, ctx)
+        options.onError(err, variables, ctx, ...rest)
       }
     },
   })

@@ -99,14 +99,14 @@ const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
     { throwOnError: true },
   )
 
-  const PROVENANCE_NODE_TYPES = [
+  const PROVENANCE_NODE_TYPES = new Set([
     NodeType.ENTITY_PLACEHOLDER,
     NodeType.EXTERNAL,
     NodeType.ACTIVITY,
     NodeType.EXPAND,
-  ]
+  ])
   const hasProvenanceNodes = nodes.some(node =>
-    PROVENANCE_NODE_TYPES.includes((node.data as ProvenanceNodeData).type),
+    PROVENANCE_NODE_TYPES.has((node.data as ProvenanceNodeData).type),
   )
 
   const showNoProvenance = initialBuildComplete && !hasProvenanceNodes
@@ -260,11 +260,9 @@ const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
           const { results: usedEntityHeaderPageResults } = usedEntityHeadersPage
           // find refs that were not returned by the entity header call
           const refsMissingEntityHeaders = usedEntityReferences.filter(ref => {
-            return (
-              usedEntityHeaderPageResults.find(header => {
-                return header.id == ref.targetId
-              }) == undefined
-            )
+            return !usedEntityHeaderPageResults.some(header => {
+              return header.id == ref.targetId
+            })
           })
           refsMissingEntityHeaders.forEach(ref => {
             addEntityPlaceholderNode({ ref, activity, nodesCopy, edgesCopy })
@@ -411,10 +409,7 @@ const ProvenanceReactFlow = (props: ProvenanceProps): React.ReactNode => {
   const onPaneScrollFunction: (event?: WheelEvent) => void = useCallback(
     event => {
       // Cannot simply check the truthy value of event.deltaX (or Y) because the value might be 0 (or -0), which is falsy
-      if (
-        typeof event?.deltaX !== 'undefined' &&
-        typeof event.deltaY !== 'undefined'
-      ) {
+      if (event?.deltaX !== undefined && event.deltaY !== undefined) {
         window.scrollTo(
           window.scrollX + event.deltaX,
           window.scrollY + event.deltaY,

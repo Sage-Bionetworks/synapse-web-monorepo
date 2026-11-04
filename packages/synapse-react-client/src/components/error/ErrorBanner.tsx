@@ -12,6 +12,10 @@ import {
 import FullWidthAlert from '../FullWidthAlert'
 import SignInButton from '../SignInButton'
 import { AlertButtonConfig } from '../FullWidthAlert/FullWidthAlert'
+import {
+  AggregateQueryErrorNotice,
+  getAggregateQueryError,
+} from '../QueryWrapper/AggregateQueryErrorNotice'
 
 type ErrorBannerProps = {
   error?: string | Error | SynapseClientError | null
@@ -83,6 +87,11 @@ export const ErrorBanner = (props: ErrorBannerProps): React.ReactNode => {
     return <></>
   }
 
+  // A result withheld from an aggregate-only caller is a normal state, not an error, so it is not shown as a banner.
+  const aggregateQueryError = getAggregateQueryError(error)
+  if (aggregateQueryError) {
+    return <AggregateQueryErrorNotice error={aggregateQueryError} />
+  }
   let synapseClientError: SynapseClientError | undefined = undefined
   let jsError: Error | undefined = undefined
   let stringError: string | undefined = undefined

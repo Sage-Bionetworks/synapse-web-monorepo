@@ -9,7 +9,7 @@ import { removeUndefined } from './ObjectUtils'
  */
 export function removeTrailingUndefinedElements(params: unknown[]): unknown[] {
   const result = [...params]
-  let lastElement = result[result.length - 1]
+  let lastElement = result.at(-1)
   while (
     result.length > 0 &&
     (lastElement === undefined ||
@@ -18,7 +18,7 @@ export function removeTrailingUndefinedElements(params: unknown[]): unknown[] {
         isEmpty(removeUndefined(lastElement as Record<string, unknown>))))
   ) {
     result.pop()
-    lastElement = result[result.length - 1]
+    lastElement = result.at(-1)
   }
   return result
 }

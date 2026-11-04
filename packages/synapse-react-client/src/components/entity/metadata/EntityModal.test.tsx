@@ -97,9 +97,9 @@ describe('EntityModal tests', () => {
 
   it('Shows annotations when the tab is switched', async () => {
     const { user } = renderComponent()
-    const annotationsTab = (await screen.findAllByRole('tab')).filter(
+    const annotationsTab = (await screen.findAllByRole('tab')).find(
       tab => tab.innerHTML === 'ANNOTATIONS',
-    )[0]
+    )!
     await user.click(annotationsTab)
 
     await screen.findByText('Mock Annotations Table')

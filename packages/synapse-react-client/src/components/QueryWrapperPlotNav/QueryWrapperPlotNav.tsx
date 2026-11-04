@@ -153,7 +153,7 @@ type QueryWrapperPlotNavOwnProps = {
   Pick<QueryContextType, 'combineRangeFacetConfig'>
 
 export type QueryWrapperPlotNavProps = QueryOrDeprecatedSearchParams &
-  PlotsContainerProps &
+  Omit<PlotsContainerProps, 'disableFiltering'> &
   QueryWrapperPlotNavOwnProps
 
 export type QueryWrapperPlotNavContentsProps = Pick<
@@ -180,6 +180,7 @@ export type QueryWrapperPlotNavContentsProps = Pick<
   | 'fileVersionColumnName'
   | 'initialLimit'
   | 'initialPlotTypeByFacetColumnName'
+  | 'defaultPlotType'
   | 'hideTopLevelControls'
   | 'showQueryBuilderControl'
   | 'defaultShowQueryBuilder'
@@ -212,6 +213,7 @@ export function QueryWrapperPlotNavContents(
     customPlots,
     initialLimit,
     initialPlotTypeByFacetColumnName,
+    defaultPlotType,
     hideTopLevelControls,
     showQueryBuilderControl = false,
     defaultShowQueryBuilder = false,
@@ -411,6 +413,8 @@ export function QueryWrapperPlotNavContents(
                 initialPlotTypeByFacetColumnName={
                   initialPlotTypeByFacetColumnName
                 }
+                defaultPlotType={defaultPlotType}
+                disableFiltering={showQueryBuilder}
               />
               <RowSetView
                 tableConfiguration={tableConfiguration}

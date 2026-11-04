@@ -131,8 +131,8 @@ export function CollapsibleDescription({
   descriptionConfig,
   charCountCutoff = CHAR_COUNT_CUTOFF_DEFAULT,
 }: CollapsibleDescriptionProps) {
-  const [hasClickedShowMore, setClickedShowMore] = useState<boolean>(false)
-  const toggleShowMore = () => setClickedShowMore(prev => !prev)
+  const [hasClickedShowMore, setHasClickedShowMore] = useState<boolean>(false)
+  const toggleShowMore = () => setHasClickedShowMore(prev => !prev)
   /*
         Below is a hack that allows word highlighting to work, the Search component insert's
         html elements outside of the React DOM which if detected would break the app,

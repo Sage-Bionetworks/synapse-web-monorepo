@@ -43,6 +43,9 @@ export enum FeatureFlagEnum {
   // If enabled, SWC shows the query builder control on table and view pages
   QUERY_BUILDER_CONTROL = 'QUERY_BUILDER_CONTROL',
 
+  // If enabled, the ADKP and ELITE portals' Cohort Builder pages show the Cohort Builder 2.0 (CohortBuilder component)
+  COHORT_BUILDER_V2 = 'COHORT_BUILDER_V2',
+
   // Reserved for unit tests. Not configured in Stack Builder; do not use in production code.
   TEST_ONLY = 'TEST_ONLY',
   TEST_ONLY_2 = 'TEST_ONLY_2',
@@ -99,6 +102,7 @@ export const FEATURE_FLAG_CONFIG: Record<FeatureFlagEnum, FeatureFlagConfig> = {
     scopes: ['SYNAPSE'],
     displayName: 'Query Builder for Tables and Views',
   },
+  [FeatureFlagEnum.COHORT_BUILDER_V2]: { scopes: [] },
   [FeatureFlagEnum.TEST_ONLY]: { scopes: [] },
   [FeatureFlagEnum.TEST_ONLY_2]: { scopes: ['TEST'] },
   [FeatureFlagEnum.TEST_ONLY_ACT_MEMBERS]: {

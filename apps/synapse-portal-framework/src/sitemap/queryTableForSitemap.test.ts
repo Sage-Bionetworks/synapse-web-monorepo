@@ -353,7 +353,7 @@ describe('fetchResourceIds', () => {
         queryResult: {
           queryResults: {
             headers: [{ name: 'studyId' }],
-            rows: Array(25)
+            rows: new Array(25)
               .fill(null)
               .map((_, i) => ({ values: [`id${i}`] })),
           },

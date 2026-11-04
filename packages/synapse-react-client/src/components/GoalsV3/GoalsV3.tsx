@@ -101,7 +101,7 @@ const GoalsV3 = ({
       const iconKey = values[iconKeyColumnIndex]
 
       const svgIconComponent = iconKey
-        ? svgComponentMap?.[iconKey.toLowerCase().replace(/\s+/g, '_')]
+        ? svgComponentMap?.[iconKey.toLowerCase().replaceAll(/\s+/g, '_')]
         : undefined
 
       return {

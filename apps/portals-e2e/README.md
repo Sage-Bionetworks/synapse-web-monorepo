@@ -22,7 +22,7 @@
 
 In your forked repository, ensure that [Actions](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository) are enabled.
 
-In your forked repository, tests will run on each push to your forked repository. In the Sage-Bionetworks repo, tests will run on each PR or push to main. In both cases, the Playwright report will be saved as a GitHub Artifact.
+In your forked repository, tests will run on each push to your forked repository. In the Sage-Bionetworks repo, tests will run on each PR (Chromium only) or push to main (all browsers). In both cases, the Playwright report will be saved as a GitHub Artifact.
 
 The GitHub UI or CLI can be used to view the reports:
 

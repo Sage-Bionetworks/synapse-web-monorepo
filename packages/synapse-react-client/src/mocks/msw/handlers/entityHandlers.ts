@@ -44,9 +44,9 @@ import {
 import { SynapseApiResponse } from '../handlers'
 
 function getMatchingMockEntities(entityIds: string[]): MockEntityData[] {
-  const normalizedPassedIds = entityIds.map(normalizeSynPrefix)
+  const normalizedPassedIds = new Set(entityIds.map(normalizeSynPrefix))
   return mockEntities.filter(entity =>
-    normalizedPassedIds.includes(normalizeSynPrefix(entity.id)),
+    normalizedPassedIds.has(normalizeSynPrefix(entity.id)),
   )
 }
 function getMatchingMockEntity(entityId: string): MockEntityData | undefined {
@@ -106,7 +106,7 @@ export function getVersionedEntityBundleHandler(
     `${backendOrigin}${ENTITY_BUNDLE_V2(':entityId', ':versionNumber')}`,
     ({ params }) => {
       const entityId = params.entityId as string
-      const versionNumber = parseInt(params.versionNumber as string)
+      const versionNumber = Number.parseInt(params.versionNumber as string)
       let status = 404
       let response: SynapseApiResponse<EntityBundle> = {
         concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
@@ -154,13 +154,11 @@ export const getEntityHandlers = (backendOrigin: string) => [
           requestBody,
         )}`,
       }
+    } else if (requestBody.name === MOCK_INVALID_PROJECT_NAME) {
+      ;(response as ErrorResponse).reason = 'Invalid project name'
+      status = 403
     } else {
-      if (requestBody.name === MOCK_INVALID_PROJECT_NAME) {
-        ;(response as ErrorResponse).reason = 'Invalid project name'
-        status = 403
-      } else {
-        response = { id: uniqueId('syn'), ...requestBody }
-      }
+      response = { id: uniqueId('syn'), ...requestBody }
     }
 
     return HttpResponse.json(response, { status })
@@ -208,7 +206,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
       let status = 404
       const entityId = params.entityId
       const versionNumber = params.versionNumber.toString()
-      const requestedVersionNumber = parseInt(versionNumber)
+      const requestedVersionNumber = Number.parseInt(versionNumber)
 
       let response: SynapseApiResponse<VersionableEntity> = {
         concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
@@ -343,7 +341,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
         name: p.name,
         id: p.id,
         lastActivity: '2024-01-04T21:11:59.000Z',
-        modifiedBy: parseInt(p.entity.modifiedBy!),
+        modifiedBy: Number.parseInt(p.entity.modifiedBy!),
         modifiedOn: p.entity.modifiedOn!,
       })),
     }

@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useRef } from 'react'
 import { CellComponent, CellProps, Column } from '../types'
 
 // Those values are used when pasting values, all those values will be considered false, any other true
-const FALSY = [
+const FALSY = new Set([
   '',
   'false',
   'no',
@@ -16,7 +16,7 @@ const FALSY = [
   'null',
   'wrong',
   'negative',
-]
+])
 
 const CheckboxComponent = React.memo<CellProps<boolean, any>>(
   ({ focus, rowData, setRowData, active, stopEditing, disabled }) => {
@@ -60,6 +60,6 @@ export const checkboxColumn: Partial<Column<boolean, any, string>> = {
   copyValue: ({ rowData }) => (rowData ? 'YES' : 'NO'),
   // Since we copy custom values, we have to make sure pasting gives us the expected result
   // Here NO is included in the FALSY array, so it will be converted to false, YES is not, so it will be converted to true
-  pasteValue: ({ value }) => !FALSY.includes(value.toLowerCase()),
+  pasteValue: ({ value }) => !FALSY.has(value.toLowerCase()),
   isCellEmpty: ({ rowData }) => !rowData,
 }

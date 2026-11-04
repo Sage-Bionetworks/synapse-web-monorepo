@@ -372,17 +372,17 @@ describe('VirtualizedTree tests', () => {
        * - child-2
        * -
        */
-      const treeWalker = getTreeWalkerFunction(
-        rootNodeConfiguration,
-        mockSetSelectedId,
-        EntityTreeNodeType.DUAL_PANE,
+      const treeWalker = getTreeWalkerFunction({
+        rootNode: rootNodeConfiguration,
+        setSelectedId: mockSetSelectedId,
+        treeNodeType: EntityTreeNodeType.DUAL_PANE,
         selected,
         selectableTypes,
-        mockAutoExpand,
-        mockItemSize,
+        autoExpand: mockAutoExpand,
+        itemSize: mockItemSize,
         currentContainer,
-        mockFetchNextPage,
-      )
+        fetchNextPageOfChildren: mockFetchNextPage,
+      })
 
       const generator = treeWalker()
 
@@ -486,7 +486,7 @@ describe('VirtualizedTree tests', () => {
           nestingLevel: 1,
           node: rootNodeConfiguration.children[0],
         }).value,
-      ).toEqual(undefined)
+      ).toBeUndefined()
 
       // We could keep traversing a tree, but this should be good enough
     })

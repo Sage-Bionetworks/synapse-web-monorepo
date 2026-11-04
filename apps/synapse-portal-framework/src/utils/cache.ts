@@ -65,3 +65,32 @@ export class PrerenderCache<K, V> {
     return this.entries.size
   }
 }
+
+const SHARED_CACHES = Symbol.for(
+  '@sage-bionetworks/synapse-portal-framework/sharedPrerenderCaches',
+)
+
+type GlobalWithSharedCaches = typeof globalThis & {
+  [SHARED_CACHES]?: Map<string, PrerenderCache<unknown, unknown>>
+}
+
+/**
+ * Returns the process-wide {@link PrerenderCache} registered under `name`, creating it on first use.
+ *
+ * The prerender preload runs in the `react-router.config.ts` module graph, while route loaders run in the
+ * bundled server build; each graph has its own copy of this module, so a module-level cache would not be
+ * shared between them.
+ */
+export function getSharedPrerenderCache<K, V>(
+  name: string,
+): PrerenderCache<K, V> {
+  const global = globalThis as GlobalWithSharedCaches
+  global[SHARED_CACHES] ??= new Map<string, PrerenderCache<unknown, unknown>>()
+  const caches = global[SHARED_CACHES]
+  let cache = caches.get(name)
+  if (!cache) {
+    cache = new PrerenderCache<unknown, unknown>()
+    caches.set(name, cache)
+  }
+  return cache as PrerenderCache<K, V>
+}

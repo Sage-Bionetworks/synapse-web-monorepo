@@ -1,14 +1,19 @@
-import { Button, ToggleButton, ToggleButtonGroup } from '@mui/material'
+import { Button, ToggleButton, ToggleButtonGroup, Tooltip } from '@mui/material'
 import { useForkRef } from '@mui/material/utils'
 import { pointerIntersection } from '@dnd-kit/collision'
 import { useDroppable } from '@dnd-kit/react'
 import { useSortable } from '@dnd-kit/react/sortable'
-import { CSSProperties } from 'react'
+import { CSSProperties, ReactNode } from 'react'
 import { FilterConditionRow } from './FilterConditionRow'
 import styles from './FilterGroupNode.module.scss'
 import { QBDragHandle } from './QBDragHandle'
 import dragStyles from './queryBuilderDrag.module.scss'
 import { groupDropZoneData, groupDropZoneId } from './queryBuilderDnd'
+import {
+  FILTER_LIMIT_VIOLATION_MESSAGES,
+  MAX_FILTER_GROUP_CHILDREN,
+  MAX_FILTER_GROUP_DEPTH,
+} from './queryBuilderLimits'
 import { useQueryBuilderInternalContext } from './QueryBuilderInternalContext'
 import { isQBGroup, QBGroup } from './QueryBuilderTypes'
 
@@ -29,7 +34,24 @@ export function FilterGroupNode(props: FilterGroupNodeProps) {
     clearGroupAt,
     updateGroupAt,
     removeGroupAt,
+    isAtLeafPredicateLimit,
   } = useQueryBuilderInternalContext()
+
+  // The root group is sent directly in additionalFilters, where the server counts it as depth 1.
+  const filterDepth = depth + 1
+  const isAtChildLimit = group.children.length >= MAX_FILTER_GROUP_CHILDREN
+  let addConditionDisabledReason: string | undefined
+  if (isAtChildLimit) {
+    addConditionDisabledReason = FILTER_LIMIT_VIOLATION_MESSAGES.groupChildren
+  } else if (isAtLeafPredicateLimit) {
+    addConditionDisabledReason = FILTER_LIMIT_VIOLATION_MESSAGES.leafPredicates
+  }
+  let addGroupDisabledReason: string | undefined
+  if (isAtChildLimit) {
+    addGroupDisabledReason = FILTER_LIMIT_VIOLATION_MESSAGES.groupChildren
+  } else if (filterDepth >= MAX_FILTER_GROUP_DEPTH) {
+    addGroupDisabledReason = FILTER_LIMIT_VIOLATION_MESSAGES.depth
+  }
 
   // Groups become drop targets only through the `useDroppable` zone below.
   // Keep the sortable's droppable half disabled unless `useQueryBuilderDrag`
@@ -119,20 +141,18 @@ export function FilterGroupNode(props: FilterGroupNodeProps) {
         </ToggleButton>
 
         <div className={styles.actions}>
-          <Button
-            className={styles.actionButton}
-            size="small"
+          <AddButton
+            disabledReason={addConditionDisabledReason}
             onClick={() => addConditionAt(group.id)}
           >
             + Condition
-          </Button>
-          <Button
-            className={styles.actionButton}
-            size="small"
+          </AddButton>
+          <AddButton
+            disabledReason={addGroupDisabledReason}
             onClick={() => addChildGroupAt(group.id)}
           >
             + Condition Group
-          </Button>
+          </AddButton>
           <Button
             className={styles.actionButton}
             size="small"
@@ -183,6 +203,36 @@ export function FilterGroupNode(props: FilterGroupNodeProps) {
         )}
       </div>
     </div>
+  )
+}
+
+type AddButtonProps = {
+  /** When set, the button is disabled and this explanation is shown on hover. */
+  disabledReason: string | undefined
+  onClick: () => void
+  children: ReactNode
+}
+
+function AddButton(props: AddButtonProps) {
+  const { disabledReason, onClick, children } = props
+  const button = (
+    <Button
+      className={styles.actionButton}
+      size="small"
+      onClick={onClick}
+      disabled={disabledReason !== undefined}
+    >
+      {children}
+    </Button>
+  )
+  if (disabledReason === undefined) {
+    return button
+  }
+  // A disabled button fires no pointer events, so the tooltip listens on a wrapper.
+  return (
+    <Tooltip title={disabledReason}>
+      <span>{button}</span>
+    </Tooltip>
   )
 }
 

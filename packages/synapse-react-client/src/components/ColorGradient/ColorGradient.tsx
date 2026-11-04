@@ -19,9 +19,9 @@ export function getColorPalette(
   start: number,
   end: number,
 ): { colorPalette: string[]; textColors: string[] } {
-  let colorPaletteSelection: string[] = []
+  let colorPaletteSelection: string[]
   const textColors: string[] = []
-  let offset = -1
+  let offset: number
 
   if (start % 2 === 0) {
     colorPaletteSelection = COLOR_PALETTE_EVEN
@@ -54,7 +54,7 @@ export function getContrastColorPalette(
   offset: number,
   numberOfPalettes: number,
 ): string[] {
-  let colorPaletteSelection: string[] = []
+  let colorPaletteSelection: string[]
 
   if (palette === 'even') {
     colorPaletteSelection = COLOR_PALETTE_EVEN

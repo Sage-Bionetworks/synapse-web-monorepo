@@ -323,7 +323,7 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
             anchor.style.display = 'none'
             document.body.appendChild(anchor)
             anchor.click()
-            document.body.removeChild(anchor)
+            anchor.remove()
 
             // Clean up blob URL after a delay to ensure download initiation
             setTimeout(() => URL.revokeObjectURL(blobUrl), 1000)
@@ -425,7 +425,9 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
 
               // Get total file size from headers
               const contentLength = response.headers.get('content-length')
-              const totalBytes = contentLength ? parseInt(contentLength, 10) : 0
+              const totalBytes = contentLength
+                ? Number.parseInt(contentLength, 10)
+                : 0
 
               // Update progress with file size
               setDownloadProgress(prev =>

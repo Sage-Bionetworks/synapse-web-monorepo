@@ -50,7 +50,7 @@ export function MeetAccessRequirementCard({
   const arFriendlyName = useMemo(() => {
     if (!ar) {
       return ''
-    } else if (ar.name.match(/^\d+$/)) {
+    } else if (/^\d+$/.exec(ar.name)) {
       // Don't show the AR name to the user if it's just the numeric ID
       return ''
     }

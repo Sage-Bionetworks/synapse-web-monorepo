@@ -16,6 +16,7 @@ import { describe, expect, it } from 'vitest'
 import {
   getNextPageParamForSearchQueryResults,
   searchQueryResultsToQueryResultBundle,
+  SEMANTIC_SEARCH_FIELD,
   toSearchIndexQuery,
   type SearchQueryConfig,
 } from './SearchQueryUseQueryOptions'
@@ -38,6 +39,21 @@ function makeQueryBundleRequest(
       ...overrides,
     },
   }
+}
+
+function makeQueryBundleWithText(
+  searchExpression: string,
+  overrides: Partial<QueryBundleRequest['query']> = {},
+): QueryBundleRequest {
+  return makeQueryBundleRequest({
+    additionalFilters: [
+      {
+        concreteType: TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
+        searchExpression,
+      },
+    ],
+    ...overrides,
+  })
 }
 
 /** Minimal SearchIndexQuery for passing to searchQueryResultsToQueryResultBundle. */
@@ -169,20 +185,30 @@ describe('toSearchIndexQuery', () => {
     expect(result.searchQuery?.query).toEqual({ match_all: {} })
   })
 
-  it('uses fuzziness AUTO in the multi_match clause when query text is present', () => {
+  it('emits a hybrid query of simple_query_string, best_fields multi_match, and neural when query text is present', () => {
     const result = toSearchIndexQuery(
-      makeQueryBundleRequest({
-        additionalFilters: [
-          {
-            concreteType: TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
-            searchExpression: 'test',
-          },
-        ],
-      }),
+      makeQueryBundleWithText('test', { limit: 10 }),
       SEARCH_INDEX_ID,
     )
-    expect(result.searchQuery?.query).toMatchObject({
-      multi_match: { fuzziness: 'AUTO' },
+    expect(result.searchQuery?.query).toBeUndefined()
+    expect(result.searchQuery?.hybrid).toEqual({
+      queries: [
+        { simple_query_string: { query: 'test' } },
+        {
+          multi_match: { query: 'test', type: 'best_fields', operator: 'and' },
+        },
+        { neural: { [SEMANTIC_SEARCH_FIELD]: { query_text: 'test', k: 10 } } },
+      ],
+    })
+  })
+
+  it('omits neural k when the query has no limit, deferring to the backend default', () => {
+    const result = toSearchIndexQuery(
+      makeQueryBundleWithText('test', { limit: undefined }),
+      SEARCH_INDEX_ID,
+    )
+    expect(result.searchQuery?.hybrid?.queries?.[2]).toEqual({
+      neural: { [SEMANTIC_SEARCH_FIELD]: { query_text: 'test' } },
     })
   })
 
@@ -446,24 +472,7 @@ describe('toSearchIndexQuery', () => {
 
   // ---- additionalFilters → query DSL ---
 
-  it('sets the query to multi_match when only a TextMatchesQueryFilter is present', () => {
-    const result = toSearchIndexQuery(
-      makeQueryBundleRequest({
-        additionalFilters: [
-          {
-            concreteType: TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
-            searchExpression: 'glioblastoma brain',
-          },
-        ],
-      }),
-      SEARCH_INDEX_ID,
-    )
-    expect(result.searchQuery?.query).toMatchObject({
-      multi_match: { query: 'glioblastoma brain' },
-    })
-  })
-
-  it('concatenates TextMatchesQueryFilter searchExpressions into a single multi_match query', () => {
+  it('concatenates TextMatchesQueryFilter searchExpressions into a single query text', () => {
     const result = toSearchIndexQuery(
       makeQueryBundleRequest({
         additionalFilters: [
@@ -479,8 +488,8 @@ describe('toSearchIndexQuery', () => {
       }),
       SEARCH_INDEX_ID,
     )
-    expect(result.searchQuery?.query).toMatchObject({
-      multi_match: { query: 'glioblastoma brain' },
+    expect(result.searchQuery?.hybrid?.queries?.[0]).toEqual({
+      simple_query_string: { query: 'glioblastoma brain' },
     })
   })
 
@@ -492,7 +501,7 @@ describe('toSearchIndexQuery', () => {
     expect(result.searchQuery?.query).toEqual({ match_all: {} })
   })
 
-  it('keeps text search in the query and moves facet selection to post_filter', () => {
+  it('keeps text search in the hybrid query and moves facet selection to post_filter', () => {
     const result = toSearchIndexQuery(
       makeQueryBundleRequest({
         additionalFilters: [
@@ -511,9 +520,8 @@ describe('toSearchIndexQuery', () => {
       }),
       SEARCH_INDEX_ID,
     )
-    // Text search stays in the query field
-    expect(result.searchQuery?.query).toMatchObject({
-      multi_match: { query: 'glioblastoma' },
+    expect(result.searchQuery?.hybrid?.queries?.[0]).toEqual({
+      simple_query_string: { query: 'glioblastoma' },
     })
     // Facet selection moves to post_filter
     expect(result.searchQuery?.post_filter).toMatchObject({
@@ -1490,250 +1498,147 @@ describe('searchQueryResultsToQueryResultBundle', () => {
 // ---------------------------------------------------------------------------
 
 describe('toSearchIndexQuery – searchQueryConfig', () => {
-  const queryBundleWithText = makeQueryBundleRequest({
-    additionalFilters: [
-      {
-        concreteType: TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
-        searchExpression: 'schwann',
-      },
-    ],
-  })
-
-  it('omitting searchQueryConfig keeps the default MULTI_MATCH behavior (fuzziness AUTO, no fields)', () => {
-    const result = toSearchIndexQuery(queryBundleWithText, SEARCH_INDEX_ID)
-    expect(result.searchQuery?.query).toEqual({
-      multi_match: { query: 'schwann', fuzziness: 'AUTO' },
-    })
-  })
-
-  it('MULTI_MATCH strategy is identical to the default', () => {
-    const result = toSearchIndexQuery(
-      queryBundleWithText,
-      SEARCH_INDEX_ID,
-      undefined,
-      {
-        queryStrategy: 'MULTI_MATCH',
-      },
-    )
-    expect(result.searchQuery?.query).toEqual({
-      multi_match: { query: 'schwann', fuzziness: 'AUTO' },
-    })
-  })
-
-  it('MULTI_MATCH_BEST_FIELDS with field boosts emits type best_fields and fields array', () => {
-    const config: SearchQueryConfig = {
-      queryStrategy: 'MULTI_MATCH_BEST_FIELDS',
-      fieldBoosts: { resourceName: 5, synonyms: 4, rrid: 4 },
-    }
-    const result = toSearchIndexQuery(
-      queryBundleWithText,
+  /** The hybrid query's simple_query_string and multi_match clauses, without neural. */
+  function lexicalClauses(
+    config: SearchQueryConfig | undefined,
+    searchExpression = 'schwann',
+  ) {
+    return toSearchIndexQuery(
+      makeQueryBundleWithText(searchExpression),
       SEARCH_INDEX_ID,
       undefined,
       config,
-    )
-    expect(result.searchQuery?.query).toEqual({
+    ).searchQuery?.hybrid?.queries?.filter(clause => clause.neural == null)
+  }
+
+  it('omitting searchQueryConfig emits a best_fields multi_match with operator and', () => {
+    expect(lexicalClauses(undefined)).toEqual([
+      { simple_query_string: { query: 'schwann' } },
+      {
+        multi_match: { query: 'schwann', type: 'best_fields', operator: 'and' },
+      },
+    ])
+  })
+
+  it('fuzziness applies to the default multi_match', () => {
+    expect(lexicalClauses({ fuzziness: '1' })?.[1]).toEqual({
       multi_match: {
         query: 'schwann',
         type: 'best_fields',
-        fields: ['resourceName^5', 'synonyms^4', 'rrid^4', '*'],
+        operator: 'and',
+        fuzziness: '1',
       },
     })
   })
 
-  it('MULTI_MATCH_BEST_FIELDS without field boosts emits no fields key', () => {
+  it.each([
+    ['MULTI_MATCH', { query: 'schwann', fuzziness: 'AUTO' }],
+    ['MULTI_MATCH_BEST_FIELDS', { query: 'schwann', type: 'best_fields' }],
+    ['MULTI_MATCH_CROSS_FIELDS', { query: 'schwann', type: 'cross_fields' }],
+    ['PHRASE_PREFIX', { query: 'schwann', type: 'phrase_prefix' }],
+    ['BOOSTED_FUZZY', { query: 'schwann', fuzziness: 'AUTO' }],
+  ] as const)(
+    '%s strategy overrides the default multi_match clause',
+    (queryStrategy, multiMatch) => {
+      expect(lexicalClauses({ queryStrategy })).toEqual([
+        { simple_query_string: { query: 'schwann' } },
+        { multi_match: multiMatch },
+      ])
+    },
+  )
+
+  it('SIMPLE_QUERY_STRING strategy omits multi_match, leaving simple_query_string and neural', () => {
     const result = toSearchIndexQuery(
-      queryBundleWithText,
+      makeQueryBundleWithText('schwann'),
       SEARCH_INDEX_ID,
       undefined,
-      {
-        queryStrategy: 'MULTI_MATCH_BEST_FIELDS',
-      },
+      { queryStrategy: 'SIMPLE_QUERY_STRING' },
     )
-    expect(result.searchQuery?.query).toEqual({
-      multi_match: { query: 'schwann', type: 'best_fields' },
+    expect(result.searchQuery?.hybrid).toEqual({
+      queries: [
+        { simple_query_string: { query: 'schwann' } },
+        {
+          neural: { [SEMANTIC_SEARCH_FIELD]: { query_text: 'schwann', k: 25 } },
+        },
+      ],
     })
   })
 
-  it('MULTI_MATCH_CROSS_FIELDS with field boosts emits type cross_fields', () => {
+  it('field boosts apply to both lexical clauses and leave neural untouched', () => {
     const result = toSearchIndexQuery(
-      queryBundleWithText,
+      makeQueryBundleWithText('schwann'),
       SEARCH_INDEX_ID,
       undefined,
       {
         queryStrategy: 'MULTI_MATCH_CROSS_FIELDS',
-        fieldBoosts: { resourceName: 5, description: 1 },
+        fieldBoosts: { resourceName: 5, synonyms: 4, rrid: 4 },
       },
     )
-    expect(result.searchQuery?.query).toEqual({
-      multi_match: {
-        query: 'schwann',
-        type: 'cross_fields',
-        fields: ['resourceName^5', 'description', '*'],
-      },
-    })
-  })
-
-  it('SIMPLE_QUERY_STRING emits a simple_query_string clause with field boosts', () => {
-    const result = toSearchIndexQuery(
-      queryBundleWithText,
-      SEARCH_INDEX_ID,
-      undefined,
-      {
-        queryStrategy: 'SIMPLE_QUERY_STRING',
-        fieldBoosts: { resourceName: 5, synonyms: 4 },
-      },
-    )
-    expect(result.searchQuery?.query).toEqual({
-      simple_query_string: {
-        query: 'schwann',
-        fields: ['resourceName^5', 'synonyms^4', '*'],
-      },
-    })
-  })
-
-  it('SIMPLE_QUERY_STRING without field boosts emits no fields key', () => {
-    const result = toSearchIndexQuery(
-      queryBundleWithText,
-      SEARCH_INDEX_ID,
-      undefined,
-      {
-        queryStrategy: 'SIMPLE_QUERY_STRING',
-      },
-    )
-    expect(result.searchQuery?.query).toEqual({
-      simple_query_string: { query: 'schwann' },
-    })
-  })
-
-  it('PHRASE_PREFIX emits type phrase_prefix', () => {
-    const result = toSearchIndexQuery(
-      queryBundleWithText,
-      SEARCH_INDEX_ID,
-      undefined,
-      {
-        queryStrategy: 'PHRASE_PREFIX',
-      },
-    )
-    expect(result.searchQuery?.query).toEqual({
-      multi_match: { query: 'schwann', type: 'phrase_prefix' },
-    })
-  })
-
-  it('BOOSTED_FUZZY with field boosts emits fuzziness AUTO', () => {
-    const result = toSearchIndexQuery(
-      queryBundleWithText,
-      SEARCH_INDEX_ID,
-      undefined,
-      {
-        queryStrategy: 'BOOSTED_FUZZY',
-        fieldBoosts: { resourceName: 5, synonyms: 4 },
-      },
-    )
-    expect(result.searchQuery?.query).toEqual({
-      multi_match: {
-        query: 'schwann',
-        fields: ['resourceName^5', 'synonyms^4', '*'],
-        fuzziness: 'AUTO',
-      },
-    })
+    const fields = ['resourceName^5', 'synonyms^4', 'rrid^4', '*']
+    expect(result.searchQuery?.hybrid?.queries).toEqual([
+      { simple_query_string: { query: 'schwann', fields } },
+      { multi_match: { query: 'schwann', type: 'cross_fields', fields } },
+      { neural: { [SEMANTIC_SEARCH_FIELD]: { query_text: 'schwann', k: 25 } } },
+    ])
   })
 
   it('explicit fuzziness overrides the per-strategy default', () => {
-    const result = toSearchIndexQuery(
-      queryBundleWithText,
-      SEARCH_INDEX_ID,
-      undefined,
-      {
-        queryStrategy: 'MULTI_MATCH',
-        fuzziness: '1',
-      },
-    )
-    expect(result.searchQuery?.query).toEqual({
+    expect(
+      lexicalClauses({ queryStrategy: 'MULTI_MATCH', fuzziness: '1' })?.[1],
+    ).toEqual({
       multi_match: { query: 'schwann', fuzziness: '1' },
     })
   })
 
   it('a boost of 1 renders as the bare field name with no ^ suffix', () => {
-    const result = toSearchIndexQuery(
-      queryBundleWithText,
-      SEARCH_INDEX_ID,
-      undefined,
+    const fields = ['resourceName^5', 'description', '*']
+    expect(
+      lexicalClauses({ fieldBoosts: { resourceName: 5, description: 1 } }),
+    ).toEqual([
+      { simple_query_string: { query: 'schwann', fields } },
       {
-        queryStrategy: 'MULTI_MATCH_BEST_FIELDS',
-        fieldBoosts: { resourceName: 5, description: 1 },
+        multi_match: {
+          query: 'schwann',
+          type: 'best_fields',
+          operator: 'and',
+          fields,
+        },
       },
-    )
-    const clause = result.searchQuery?.query as {
-      multi_match: { fields: string[] }
-    }
-    expect(clause.multi_match.fields).toContain('description')
-    expect(clause.multi_match.fields).not.toContain('description^1')
+    ])
   })
 
-  it('field boosts without an explicit "*" get a "*": 1 fallback appended', () => {
-    const result = toSearchIndexQuery(
-      queryBundleWithText,
-      SEARCH_INDEX_ID,
-      undefined,
-      {
-        queryStrategy: 'MULTI_MATCH_BEST_FIELDS',
-        fieldBoosts: { resourceName: 5 },
-      },
-    )
-    expect(result.searchQuery?.query).toEqual({
-      multi_match: {
-        query: 'schwann',
-        type: 'best_fields',
-        fields: ['resourceName^5', '*'],
-      },
-    })
-  })
-
-  it.each(['schwann', '"schwann cell"', 'syn12345'])(
-    'searches only the listed fields for %s',
+  it.each(['schwann', '"schwann cell"'])(
+    'searches only the listed fields for %s when includeUnlistedFields is false',
     searchExpression => {
-      const result = toSearchIndexQuery(
-        makeQueryBundleRequest({
-          additionalFilters: [
-            {
-              concreteType: TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
-              searchExpression,
-            },
-          ],
-        }),
-        SEARCH_INDEX_ID,
-        undefined,
+      const fields = ['resourceName^5', 'description']
+      expect(
+        lexicalClauses(
+          {
+            includeUnlistedFields: false,
+            fieldBoosts: { resourceName: 5, description: 1 },
+          },
+          searchExpression,
+        ),
+      ).toEqual([
+        { simple_query_string: { query: searchExpression, fields } },
         {
-          queryStrategy: 'MULTI_MATCH_BEST_FIELDS',
-          includeUnlistedFields: false,
-          fieldBoosts: { resourceName: 5, description: 1 },
+          multi_match: {
+            query: searchExpression,
+            type: 'best_fields',
+            operator: 'and',
+            fields,
+          },
         },
-      )
-      const clauseType =
-        searchExpression !== 'schwann' ? 'simple_query_string' : 'multi_match'
-      expect(result.searchQuery?.query).toMatchObject({
-        [clauseType]: {
-          query: searchExpression,
-          fields: ['resourceName^5', 'description'],
-        },
-      })
+      ])
     },
   )
 
   it('an explicit "*" boost is respected and not overridden', () => {
-    const result = toSearchIndexQuery(
-      queryBundleWithText,
-      SEARCH_INDEX_ID,
-      undefined,
-      {
-        queryStrategy: 'MULTI_MATCH_BEST_FIELDS',
-        fieldBoosts: { resourceName: 5, '*': 2 },
-      },
-    )
-    expect(result.searchQuery?.query).toEqual({
-      multi_match: {
+    expect(
+      lexicalClauses({ fieldBoosts: { resourceName: 5, '*': 2 } })?.[0],
+    ).toEqual({
+      simple_query_string: {
         query: 'schwann',
-        type: 'best_fields',
         fields: ['resourceName^5', '*^2'],
       },
     })
@@ -1745,88 +1650,14 @@ describe('toSearchIndexQuery – searchQueryConfig', () => {
 // ---------------------------------------------------------------------------
 
 describe('toSearchIndexQuery – exact phrase matching', () => {
-  function makeQueryBundleWithText(searchExpression: string) {
-    return makeQueryBundleRequest({
-      additionalFilters: [
-        {
-          concreteType: TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
-          searchExpression,
-        },
-      ],
-    })
-  }
-
-  it('a fully-quoted phrase always emits simple_query_string regardless of strategy', () => {
-    const strategies = [
-      undefined,
-      'MULTI_MATCH',
-      'MULTI_MATCH_BEST_FIELDS',
-      'MULTI_MATCH_CROSS_FIELDS',
-      'PHRASE_PREFIX',
-      'BOOSTED_FUZZY',
-      'SIMPLE_QUERY_STRING',
-    ] as const
-
-    for (const queryStrategy of strategies) {
-      const result = toSearchIndexQuery(
-        makeQueryBundleWithText('"cancer genomics"'),
-        SEARCH_INDEX_ID,
-        undefined,
-        queryStrategy ? { queryStrategy } : undefined,
-      )
-      expect(result.searchQuery?.query).toEqual({
-        simple_query_string: { query: '"cancer genomics"' },
-      })
-    }
-  })
-
-  it('a mixed phrase+term query emits simple_query_string', () => {
+  it('a quoted phrase is sent in the hybrid query, whose simple_query_string clause honours the phrase operator', () => {
     const result = toSearchIndexQuery(
       makeQueryBundleWithText('"cancer genomics" atlas'),
       SEARCH_INDEX_ID,
     )
-    expect(result.searchQuery?.query).toEqual({
+    expect(result.searchQuery?.query).toBeUndefined()
+    expect(result.searchQuery?.hybrid?.queries?.[0]).toEqual({
       simple_query_string: { query: '"cancer genomics" atlas' },
-    })
-  })
-
-  it('field boosts are preserved when routing to simple_query_string for a phrase query', () => {
-    const result = toSearchIndexQuery(
-      makeQueryBundleWithText('"exact phrase"'),
-      SEARCH_INDEX_ID,
-      undefined,
-      {
-        queryStrategy: 'BOOSTED_FUZZY',
-        fieldBoosts: { resourceName: 5, synonyms: 4 },
-      },
-    )
-    expect(result.searchQuery?.query).toEqual({
-      simple_query_string: {
-        query: '"exact phrase"',
-        fields: ['resourceName^5', 'synonyms^4', '*'],
-      },
-    })
-  })
-
-  it('an unquoted query is NOT routed to simple_query_string by the phrase-detection path', () => {
-    const result = toSearchIndexQuery(
-      makeQueryBundleWithText('cancer genomics'),
-      SEARCH_INDEX_ID,
-    )
-    // Should use the default MULTI_MATCH path, not simple_query_string
-    expect(result.searchQuery?.query).toEqual({
-      multi_match: { query: 'cancer genomics', fuzziness: 'AUTO' },
-    })
-  })
-
-  it('a query with only an empty pair of double-quotes is NOT treated as a phrase', () => {
-    const result = toSearchIndexQuery(
-      makeQueryBundleWithText('""'),
-      SEARCH_INDEX_ID,
-    )
-    // "" contains no inner characters → falls through to the normal strategy
-    expect(result.searchQuery?.query).toEqual({
-      multi_match: { query: '""', fuzziness: 'AUTO' },
     })
   })
 })
@@ -1836,82 +1667,54 @@ describe('toSearchIndexQuery – exact phrase matching', () => {
 // ---------------------------------------------------------------------------
 
 describe('toSearchIndexQuery – Synapse ID detection', () => {
-  function makeQueryBundleWithText(searchExpression: string) {
-    return makeQueryBundleRequest({
-      additionalFilters: [
-        {
-          concreteType: TEXT_MATCHES_QUERY_FILTER_CONCRETE_TYPE_VALUE,
-          searchExpression,
-        },
-      ],
-    })
+  function textSearchQuery(
+    searchExpression: string,
+    config?: SearchQueryConfig,
+  ) {
+    const searchQuery = toSearchIndexQuery(
+      makeQueryBundleWithText(searchExpression),
+      SEARCH_INDEX_ID,
+      undefined,
+      config,
+    ).searchQuery
+    return { query: searchQuery?.query, hybrid: searchQuery?.hybrid }
   }
 
-  it('a bare Synapse ID always emits simple_query_string regardless of strategy', () => {
-    const strategies = [
-      undefined,
-      'MULTI_MATCH',
-      'MULTI_MATCH_BEST_FIELDS',
-      'MULTI_MATCH_CROSS_FIELDS',
-      'PHRASE_PREFIX',
-      'BOOSTED_FUZZY',
-      'SIMPLE_QUERY_STRING',
-    ] as const
-
-    for (const queryStrategy of strategies) {
-      const result = toSearchIndexQuery(
-        makeQueryBundleWithText('syn12345'),
-        SEARCH_INDEX_ID,
-        undefined,
-        queryStrategy ? { queryStrategy } : undefined,
-      )
-      expect(result.searchQuery?.query).toEqual({
-        simple_query_string: { query: 'syn12345' },
+  it.each([
+    undefined,
+    'MULTI_MATCH',
+    'MULTI_MATCH_BEST_FIELDS',
+    'MULTI_MATCH_CROSS_FIELDS',
+    'PHRASE_PREFIX',
+    'BOOSTED_FUZZY',
+    'SIMPLE_QUERY_STRING',
+  ] as const)(
+    'a Synapse ID emits only simple_query_string (no hybrid) with strategy %s',
+    queryStrategy => {
+      expect(textSearchQuery('syn12345', { queryStrategy })).toEqual({
+        query: { simple_query_string: { query: 'syn12345' } },
+        hybrid: undefined,
       })
-    }
-  })
+    },
+  )
 
-  it('an uppercase Synapse ID is detected (case-insensitive)', () => {
-    const result = toSearchIndexQuery(
-      makeQueryBundleWithText('SYN12345'),
-      SEARCH_INDEX_ID,
-    )
-    expect(result.searchQuery?.query).toEqual({
-      simple_query_string: { query: 'SYN12345' },
-    })
-  })
+  it.each(['SYN12345', 'syn12345.7', 'syn12345 cancer'])(
+    '%s is detected as containing a Synapse ID',
+    searchExpression => {
+      expect(textSearchQuery(searchExpression)).toEqual({
+        query: { simple_query_string: { query: searchExpression } },
+        hybrid: undefined,
+      })
+    },
+  )
 
-  it('a versioned Synapse ID (syn123.4) emits simple_query_string', () => {
-    const result = toSearchIndexQuery(
-      makeQueryBundleWithText('syn12345.7'),
-      SEARCH_INDEX_ID,
-    )
-    expect(result.searchQuery?.query).toEqual({
-      simple_query_string: { query: 'syn12345.7' },
-    })
-  })
-
-  it('a Synapse ID mixed with free-text terms emits simple_query_string', () => {
-    const result = toSearchIndexQuery(
-      makeQueryBundleWithText('syn12345 cancer'),
-      SEARCH_INDEX_ID,
-    )
-    expect(result.searchQuery?.query).toEqual({
-      simple_query_string: { query: 'syn12345 cancer' },
-    })
-  })
-
-  it('field boosts are preserved when routing to simple_query_string for a Synapse ID', () => {
-    const result = toSearchIndexQuery(
-      makeQueryBundleWithText('syn12345'),
-      SEARCH_INDEX_ID,
-      undefined,
-      {
+  it('field boosts are preserved on the simple_query_string for a Synapse ID', () => {
+    expect(
+      textSearchQuery('syn12345', {
         queryStrategy: 'BOOSTED_FUZZY',
         fieldBoosts: { resourceName: 5, synonyms: 4 },
-      },
-    )
-    expect(result.searchQuery?.query).toEqual({
+      }).query,
+    ).toEqual({
       simple_query_string: {
         query: 'syn12345',
         fields: ['resourceName^5', 'synonyms^4', '*'],
@@ -1919,43 +1722,12 @@ describe('toSearchIndexQuery – Synapse ID detection', () => {
     })
   })
 
-  it('a word that starts with "syn" but is not an ID (e.g. "synapse") is NOT routed to simple_query_string', () => {
-    const result = toSearchIndexQuery(
-      makeQueryBundleWithText('synapse'),
-      SEARCH_INDEX_ID,
-    )
-    expect(result.searchQuery?.query).toEqual({
-      multi_match: { query: 'synapse', fuzziness: 'AUTO' },
-    })
-  })
-
-  it('"synonyms" is NOT detected as a Synapse ID', () => {
-    const result = toSearchIndexQuery(
-      makeQueryBundleWithText('synonyms'),
-      SEARCH_INDEX_ID,
-    )
-    expect(result.searchQuery?.query).toEqual({
-      multi_match: { query: 'synonyms', fuzziness: 'AUTO' },
-    })
-  })
-
-  it('"syn" with no digits is NOT detected as a Synapse ID', () => {
-    const result = toSearchIndexQuery(
-      makeQueryBundleWithText('syn'),
-      SEARCH_INDEX_ID,
-    )
-    expect(result.searchQuery?.query).toEqual({
-      multi_match: { query: 'syn', fuzziness: 'AUTO' },
-    })
-  })
-
-  it('a Synapse ID embedded in a larger word (e.g. "asyn12345") is NOT detected', () => {
-    const result = toSearchIndexQuery(
-      makeQueryBundleWithText('asyn12345'),
-      SEARCH_INDEX_ID,
-    )
-    expect(result.searchQuery?.query).toEqual({
-      multi_match: { query: 'asyn12345', fuzziness: 'AUTO' },
-    })
-  })
+  it.each(['synapse', 'synonyms', 'syn', 'asyn12345'])(
+    '%s is NOT detected as a Synapse ID and emits a hybrid query',
+    searchExpression => {
+      const { query, hybrid } = textSearchQuery(searchExpression)
+      expect(query).toBeUndefined()
+      expect(hybrid?.queries).toHaveLength(3)
+    },
+  )
 })

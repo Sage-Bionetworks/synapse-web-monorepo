@@ -243,7 +243,7 @@ export function parseDuoModifiers(raw: string | null | undefined): string[] {
 const normalize = (s: string) =>
   s
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, ' ')
+    .replaceAll(/[^a-z0-9]+/g, ' ')
     .trim()
 
 const BY_NAME = new Map(TERMS.map(t => [normalize(t.name), t]))

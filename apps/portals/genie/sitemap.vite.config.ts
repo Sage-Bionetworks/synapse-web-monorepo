@@ -1,6 +1,6 @@
 import { mergeConfig } from 'vite'
 import { sitemapViteConfig } from 'vite-config'
-import { resolve } from 'path'
+import { resolve } from 'node:path'
 
 /**
  * Vite configuration for building the sitemap route extraction script.

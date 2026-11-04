@@ -24,7 +24,7 @@ type DataTransferType = {
 }
 
 class MockDataTransfer {
-  constructor(private data: DataTransferType) {}
+  constructor(private readonly data: DataTransferType) {}
 
   getData(format: keyof DataTransferType) {
     return this.data[format]

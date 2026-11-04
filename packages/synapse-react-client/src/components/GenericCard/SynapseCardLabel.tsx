@@ -202,7 +202,7 @@ export function SynapseCardLabel(props: SynapseCardLabelProps) {
       labelContent = <EntityColumnImage entityId={value} />
     }
   } else {
-    const split = strList ? strList : str.split(',')
+    const split = strList || str.split(',')
     let linkTarget: TargetEnum | undefined = undefined
     if ('target' in labelLink) {
       linkTarget = labelLink.target!

@@ -367,7 +367,7 @@ function FacetPillGroup(props: FacetPillGroupProps) {
   // Sort alphabetically by the user-facing label so the pill order is
   // predictable regardless of the backend's facet-result ordering.
   const sortedValues = useMemo(() => {
-    return [...facetValues].sort((a, b) =>
+    return [...facetValues].toSorted((a, b) =>
       labelForValue(a).localeCompare(labelForValue(b), undefined, {
         sensitivity: 'base',
       }),

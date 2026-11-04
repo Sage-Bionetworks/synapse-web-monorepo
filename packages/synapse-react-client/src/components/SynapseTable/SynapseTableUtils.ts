@@ -47,7 +47,7 @@ export const getUniqueEntities = (
       if (
         el != null &&
         indices.includes(colIndex) &&
-        !Object.prototype.hasOwnProperty.call(mapIdToHeader, el) &&
+        !Object.hasOwn(mapIdToHeader, el) &&
         el
       ) {
         distinctEntities.add(el)

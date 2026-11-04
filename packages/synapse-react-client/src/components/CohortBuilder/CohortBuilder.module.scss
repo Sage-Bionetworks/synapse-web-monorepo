@@ -1,0 +1,46 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.notices {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.count {
+  font-weight: 700;
+}
+
+.state {
+  text-align: center;
+  padding: 32px 0;
+}
+
+.preview {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.previewFields {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 16px;
+
+  > * {
+    flex: 1 1 220px;
+  }
+}
+
+.previewWideField {
+  flex-basis: 320px;
+}
+
+.previewActions {
+  display: flex;
+  gap: 8px;
+}

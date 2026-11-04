@@ -41,21 +41,21 @@ export function IconSvgButton(props: IconSvgButtonProps) {
     size: size,
     'aria-label': ariaLabel ?? tooltipText,
   }
-  const button = (
-    <>
-      {href ? (
-        <IconButton {...sharedIconButtonProps} href={href}>
-          {iconSvg}
-        </IconButton>
-      ) : onClick ? (
-        <IconButton {...sharedIconButtonProps} onClick={onClick}>
-          {iconSvg}
-        </IconButton>
-      ) : (
-        <></>
-      )}
-    </>
-  )
+  let iconButton = <></>
+  if (href) {
+    iconButton = (
+      <IconButton {...sharedIconButtonProps} href={href}>
+        {iconSvg}
+      </IconButton>
+    )
+  } else if (onClick) {
+    iconButton = (
+      <IconButton {...sharedIconButtonProps} onClick={onClick}>
+        {iconSvg}
+      </IconButton>
+    )
+  }
+  const button = <>{iconButton}</>
   return tooltipText ? (
     <Tooltip key={tooltipText} title={tooltipText} placement={tooltipPlacement}>
       <span>{button}</span>
