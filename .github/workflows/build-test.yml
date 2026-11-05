@@ -3,6 +3,10 @@
 
 name: Build/Test All Projects
 
+permissions:
+  contents: read
+  pull-requests: read
+
 on:
   push:
     branches: [main]
@@ -15,9 +19,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: read
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -30,9 +31,6 @@ jobs:
   test:
     runs-on:
       labels: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: read
     # Job should not last longer than 60 minutes
     timeout-minutes: 60
     steps:
@@ -75,9 +73,6 @@ jobs:
             ./apps/*/coverage/
   lint:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: read
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -89,9 +84,6 @@ jobs:
       - run: pnpm nx affected --target=lint
   typecheck:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pull-requests: read
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
