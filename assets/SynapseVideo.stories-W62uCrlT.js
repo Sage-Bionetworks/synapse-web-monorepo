@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{n as t,t as n}from"./SynapseVideo-DsThNjVD.js";var r,i,a;function o(){return(o=e((()=>{t(),r={title:`Markdown/SynapseVideo`,component:n},i={args:{params:{vimeoId:`355433104`}}},a=[`SynapseVideoDemo`]})))()}o();export{i as SynapseVideoDemo,a as __namedExportsOrder,r as default};
