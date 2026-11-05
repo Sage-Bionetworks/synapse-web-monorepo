@@ -33,6 +33,8 @@ import { PLANS_LINK } from '../SynapseHomepageV2/SynapseHomepageNavBar'
 import UserCard from '../UserCard/UserCard'
 import { DEFAULT_SEARCH_QUERY } from '@/utils/searchDefaults'
 import { useGetCurationTasksInfinite } from '@/synapse-queries/curation/task/useCurationTask'
+import { useGetFeatureFlag } from '@/synapse-queries/featureflags/useGetFeatureFlag'
+import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 
 export type SynapseNavDrawerProps = {
   initIsOpen?: boolean
@@ -210,6 +212,10 @@ export function SynapseNavDrawer({
     ),
   )
 
+  const isSearchManagementEnabled = useGetFeatureFlag(
+    FeatureFlagEnum.SEARCH_INDEX_MANAGEMENT,
+  )
+
   const handleDrawerOpen = (navItem?: NavItem) => {
     setIsOpen(true)
     setSelectedItem(navItem)
@@ -325,6 +331,15 @@ export function SynapseNavDrawer({
                       gotoPlace('/DataAccessManagement:default/Submissions')
                     }
                     badgeContent={countOfOpenSubmissionsForReview}
+                    handleDrawerClose={handleDrawerClose}
+                    handleDrawerOpen={handleDrawerOpen}
+                  />
+                )}
+                {isSearchManagementEnabled && (
+                  <NavDrawerListItem
+                    tooltip="Search Management"
+                    iconName="manageSearch"
+                    onClickGoToPlace={() => gotoPlace('/SearchManagement:0')}
                     handleDrawerClose={handleDrawerClose}
                     handleDrawerOpen={handleDrawerOpen}
                   />

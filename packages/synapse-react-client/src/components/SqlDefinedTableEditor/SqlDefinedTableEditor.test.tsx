@@ -30,4 +30,13 @@ describe('SqlDefinedTableEditor tests', () => {
       ),
     ).not.toBeInTheDocument()
   })
+  it('shows SearchIndex help text when entityType is SEARCH_INDEX', () => {
+    renderComponent({ entityType: EntityType.searchindex })
+
+    expect(
+      screen.getByText('must reference exactly one table or view', {
+        exact: false,
+      }),
+    ).toBeVisible()
+  })
 })

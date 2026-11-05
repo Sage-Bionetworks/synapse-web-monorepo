@@ -63,6 +63,10 @@ import {
   WikiPageKey,
 } from '@sage-bionetworks/synapse-types'
 import { SearchIndexQuery } from '@sage-bionetworks/synapse-client'
+import type {
+  SearchManagementResourceListRequest,
+  SearchManagementResourceType,
+} from './searchmanagement/SearchManagementResourceType'
 import { QueryKey } from '@tanstack/react-query'
 
 const entityQueryKeyObjects = {
@@ -1287,5 +1291,37 @@ export class KeyFactory {
       organizationName,
       schemaName,
     )
+  }
+
+  public getSearchManagementResourceQueryKey(
+    resourceType: SearchManagementResourceType,
+    id: string,
+  ) {
+    return this.getKey('searchManagement', resourceType, 'id', id)
+  }
+
+  public getSearchManagementResourceListQueryKey(
+    resourceType: SearchManagementResourceType,
+    request: SearchManagementResourceListRequest,
+    infinite: boolean,
+  ) {
+    return this.getKey(
+      'searchManagement',
+      resourceType,
+      'list',
+      request,
+      infinite ? 'infinite' : 'all',
+    )
+  }
+
+  /** Prefix of every list query for the given resource type, for invalidation. */
+  public getAllSearchManagementResourceListQueryKey(
+    resourceType: SearchManagementResourceType,
+  ) {
+    return this.getKey('searchManagement', resourceType, 'list')
+  }
+
+  public getSearchConfigBindingQueryKey(entityId: string) {
+    return this.getKey('searchConfigBinding', entityId)
   }
 }
