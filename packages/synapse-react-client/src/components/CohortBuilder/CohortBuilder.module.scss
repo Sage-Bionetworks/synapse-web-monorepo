@@ -44,3 +44,29 @@
   display: flex;
   gap: 8px;
 }
+
+.sampleQuery {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid var(--synapse-border-color-gray);
+  border-radius: 8px;
+}
+
+.sampleQueryTitle {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--synapse-gray-regular);
+}
+
+.sampleQuerySelect {
+  width: 100%;
+  max-width: 400px;
+}
+
+.sampleQueryPlaceholder {
+  color: var(--synapse-gray-deemphasized);
+}
