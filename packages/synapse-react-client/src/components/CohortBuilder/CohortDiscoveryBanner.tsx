@@ -59,13 +59,12 @@ function HowToUseCohortBuilderContent() {
         logic.
       </li>
       <li>
-        The <strong>Query Summary</strong> section above the tree always shows
-        the whole query in plain English or SQL.
+        The <strong>Query Summary</strong> at the top of the Query Builder
+        always shows the whole query in plain English or SQL.
       </li>
       <li>
-        Click <strong>Update Results</strong> below the tree to run your edits
-        against the results — Results and Results Distribution update then, not
-        while you’re still editing.
+        Click <strong>Update Results</strong> at the bottom of the Query Builder
+        to run your new query.
       </li>
     </ul>
   )
