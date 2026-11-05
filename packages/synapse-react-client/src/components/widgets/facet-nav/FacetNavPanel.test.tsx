@@ -267,8 +267,17 @@ describe('extractPlotDataArray', () => {
   }
 
   it('shows post-processed counts as display text in the legend and hover text, without pie percentages', async () => {
+    // Binned counts are bin midpoints (see getEnumerationFacet): bins 10–14 and 0–4.
+    const binnedFacet = {
+      ...facet,
+      binSize: 5,
+      facetValues: [
+        { value: 'Female', count: 12, isSelected: false },
+        { value: 'Unknown', count: 2, isSelected: false },
+      ],
+    }
     const plotData = await extractPlotDataArray(
-      { ...facet, binSize: 5 },
+      binnedFacet,
       ColumnTypeEnum.STRING,
       0,
       'PIE',
@@ -277,11 +286,11 @@ describe('extractPlotDataArray', () => {
     )
 
     expect(plotData.labels.map(label => label.countText)).toEqual([
-      '≈ 10',
-      '≈ 0',
+      '10–14',
+      '0–4',
     ])
     expect(plotData.data[0]).toMatchObject({
-      customdata: ['≈ 10', '≈ 0'],
+      customdata: ['10–14', '0–4'],
       hovertemplate: '<b>%{text}: </b><br>%{customdata} <br><extra></extra>',
     })
   })

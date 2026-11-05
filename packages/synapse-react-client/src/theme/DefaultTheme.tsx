@@ -267,6 +267,9 @@ export const defaultMuiThemeOptions: ThemeOptions = {
             borderRadius: '0px',
             padding: theme.spacing(5.5),
             alignSelf: 'flex-start',
+            // MUI moves focus to the dialog paper when it opens; like MUI's own dialog container, it is not an
+            // interactive control, so it should not show a focus ring.
+            outline: 0,
           },
         }),
       },

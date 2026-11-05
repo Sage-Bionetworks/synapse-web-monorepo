@@ -311,7 +311,9 @@ describe('Submission Page tests', () => {
       isReviewer: true,
     })
 
-    const approveButton = await screen.findByRole('button', { name: 'Approve' })
+    const approveButton = await screen.findByRole('button', {
+      name: 'Approve',
+    })
 
     await userEvent.click(approveButton)
 
@@ -708,6 +710,47 @@ describe('Submission Page tests', () => {
       })
     })
 
+    it('lists a schema-driven submission’s attachments that are not form answers under Other Attachments', async () => {
+      serveSubmission({
+        ...mockSchemaDataSubmission,
+        attachments: [String(MOCK_FILE_HANDLE_ID), '555'],
+      })
+      renderComponent({
+        submissionId: mockSchemaDataSubmission.id,
+        isReviewer: true,
+      })
+
+      const otherAttachments = (
+        await screen.findByText('Other Attachments')
+      ).closest('section')!
+      const links = within(otherAttachments).getAllByTestId('FileHandleLink')
+      expect(
+        links.map(
+          link =>
+            (JSON.parse(link.textContent ?? '') as FileHandleAssociation)
+              .fileHandleId,
+        ),
+      ).toEqual(['555'])
+    })
+
+    it('does not list a schema-driven submission’s files twice', async () => {
+      serveSubmission({
+        ...mockSchemaDataSubmission,
+        attachments: [String(MOCK_FILE_HANDLE_ID)],
+      })
+      renderComponent({
+        submissionId: mockSchemaDataSubmission.id,
+        isReviewer: true,
+      })
+
+      const compliance = (
+        await screen.findByRole('heading', { name: 'Compliance' })
+      ).closest('section')!
+      await within(compliance).findByTestId('FileHandleLink')
+      expect(screen.getAllByTestId('FileHandleLink')).toHaveLength(1)
+      expect(screen.queryByText('Other Attachments')).not.toBeInTheDocument()
+    })
+
     it('omits research project fields when the submission has no research project snapshot', async () => {
       renderComponent({
         submissionId: mockSchemaDataSubmission.id,
@@ -844,6 +887,25 @@ describe('Submission Page tests', () => {
       within(otherResponses).getByText('Longitudinal Biomarker Study')
       screen.getByRole('button', { name: 'Approve' })
       screen.getByRole('button', { name: 'Reject' })
+    })
+
+    it('lists every attachment when the template cannot be loaded, since the answers then show no links', async () => {
+      serveSubmission({
+        ...mockSchemaDataSubmission,
+        attachments: [String(MOCK_FILE_HANDLE_ID), '555'],
+        formTemplateRef: { templateId: 'missing', templateVersionNumber: 1 },
+      } satisfies SubmissionWithFormTemplateRef)
+      renderComponent({
+        submissionId: mockSchemaDataSubmission.id,
+        isReviewer: true,
+      })
+
+      const otherAttachments = (
+        await screen.findByText('Other Attachments')
+      ).closest('section')!
+      expect(
+        within(otherAttachments).getAllByTestId('FileHandleLink'),
+      ).toHaveLength(2)
     })
 
     it('approves a schema-driven submission the same way as a ManagedACT submission', async () => {

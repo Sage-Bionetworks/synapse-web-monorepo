@@ -184,6 +184,7 @@ function CohortFilesResults() {
           hideFacetFilterControl
           hideVisualizationsControl
           hideProgrammaticOptionsMenuItem
+          showColumnSelection
         />
       </SynapseErrorBoundary>
       <CohortFilesDownloadConfirmation />

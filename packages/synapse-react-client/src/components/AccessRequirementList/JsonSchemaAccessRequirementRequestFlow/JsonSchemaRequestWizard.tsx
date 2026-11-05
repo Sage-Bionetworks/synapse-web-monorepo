@@ -25,6 +25,7 @@ import {
   RestrictableObjectType,
   UploadCallbackResp,
 } from '@sage-bionetworks/synapse-types'
+import { RJSFSchema } from '@rjsf/utils'
 import { useRef, useState } from 'react'
 import { DialogBaseTitle } from '../../DialogBase'
 import RequesterInformationFields from './RequesterInformationFields'
@@ -108,6 +109,7 @@ export default function JsonSchemaRequestWizard(
       request={request}
       currentUserId={user.ownerId}
       steps={form.steps}
+      schema={form.schema}
     />
   )
 }
@@ -125,6 +127,7 @@ type JsonSchemaRequestWizardContentProps = JsonSchemaRequestWizardProps & {
   request: Request | Renewal
   currentUserId: string
   steps: GeneratedFormStepForRjsf[]
+  schema: RJSFSchema
 }
 
 function JsonSchemaRequestWizardContent(
@@ -141,6 +144,7 @@ function JsonSchemaRequestWizardContent(
     request,
     currentUserId,
     steps,
+    schema,
   } = props
   const isEDucEnabled = Boolean(accessRequirement.eDucTemplateId)
 
@@ -184,6 +188,7 @@ function JsonSchemaRequestWizardContent(
           request,
           requesterInformation,
           latestSchemaData,
+          schema,
           isEDucEnabled,
         ),
       )
@@ -223,7 +228,13 @@ function JsonSchemaRequestWizardContent(
     if (response.success && response.resp) {
       // The mutation's onError displays the message
       updateRequest({
-        ...request,
+        ...buildRequest(
+          request,
+          requesterInformation,
+          schemaData,
+          schema,
+          isEDucEnabled,
+        ),
         ducFileHandleId: response.resp.fileHandleId,
       }).catch(() => {})
     } else if (response.error) {
@@ -264,7 +275,10 @@ function JsonSchemaRequestWizardContent(
             request={request}
             values={requesterInformation}
             onChange={changes =>
-              setRequesterInformation(previous => ({ ...previous, ...changes }))
+              setRequesterInformation(previous => ({
+                ...previous,
+                ...changes,
+              }))
             }
             disabled={isBusy}
             isLoading={isBusy}
@@ -319,6 +333,7 @@ function JsonSchemaRequestWizardContent(
                 request,
                 requesterInformation,
                 schemaData,
+                schema,
                 isEDucEnabled,
               ),
             )

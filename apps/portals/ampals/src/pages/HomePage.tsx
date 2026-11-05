@@ -151,7 +151,7 @@ export default function HomePage() {
       title: 'Publishing Requirements',
       description:
         'Learn about the requirements for publishing data in this portal.',
-      link: '/Resources/Publishing Requirements',
+      link: '/Resources/Requirements for Publication',
     },
   ]
   return (

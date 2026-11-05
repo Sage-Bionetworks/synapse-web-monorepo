@@ -7,6 +7,10 @@ import * as SynapseUtilityFunctions from 'synapse-react-client/utils/functions/i
 import type { CustomControlCallbackData } from 'synapse-react-client/components/SynapseTable/TopLevelControls/TopLevelControls'
 import * as SynapseConstants from 'synapse-react-client/utils/SynapseConstants'
 import { CustomControl } from 'synapse-react-client/components/SynapseTable/TopLevelControls/TopLevelControls'
+import {
+  COHORT_DISCOVERY_DESCRIPTION,
+  COHORT_DISCOVERY_TITLE,
+} from 'synapse-react-client/components/CohortBuilder/CohortDiscoveryBanner'
 
 const getAllIDs = async (event: CustomControlCallbackData) => {
   const selectedFacets = event.request?.query.selectedFacets
@@ -175,9 +179,8 @@ export const createViewAssociatedFilesCustomControl = (
     handleSelectedParticipantsToFiles(event, filesPath)
   },
   buttonID: 'ViewAllFilesButton',
-  title: 'Cohort Discovery',
-  description:
-    'Use the Cohort Builder to define your custom research cohort. Filter for human research participants based on demographic or clinical attributes, browse their associated data files, then refine your selection using specific dataset or file-level properties. Once you have identified the data you need, add the files to your download list or send results to an analysis platform. ',
+  title: COHORT_DISCOVERY_TITLE,
+  description: COHORT_DISCOVERY_DESCRIPTION,
 })
 
 /**

@@ -6,6 +6,7 @@ import {
   ENTITY_ID_VERSION,
   ENTITY_ID_VERSIONS,
   ENTITY_JSON,
+  ENTITY_PERMISSIONS,
   ENTITY_SCHEMA_BINDING,
   ENTITY_SCHEMA_VALIDATION,
 } from '@/utils/APIConstants'
@@ -24,6 +25,7 @@ import {
   PaginatedResults,
   ProjectHeaderList,
   Reference,
+  UserEntityPermissions,
   VersionableEntity,
   VersionInfo,
 } from '@sage-bionetworks/synapse-types'
@@ -55,6 +57,16 @@ function getMatchingMockEntity(entityId: string): MockEntityData | undefined {
     return undefined
   }
   return matches[0]
+}
+
+/** Serves `permissions` for any entity's `GET /entity/:id/permissions`. */
+export function getEntityPermissionsHandler(
+  backendOrigin: string,
+  permissions: Partial<UserEntityPermissions>,
+) {
+  return http.get(`${backendOrigin}${ENTITY_PERMISSIONS(':entityId')}`, () =>
+    HttpResponse.json(permissions),
+  )
 }
 
 export function getEntityBundleHandler(

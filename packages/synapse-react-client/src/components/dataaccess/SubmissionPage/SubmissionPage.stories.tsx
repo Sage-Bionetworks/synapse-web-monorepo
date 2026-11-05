@@ -5,6 +5,10 @@ import {
   mockSchemaDataSubmission,
   mockSubmissions,
 } from '@/mocks/dataaccess/MockSubmission'
+import {
+  MOCK_FILE_HANDLE_ID,
+  MOCK_PREVIEW_FILE_HANDLE_ID,
+} from '@/mocks/mock_file_handle'
 import { getFormTemplateHandlers } from '@/mocks/msw/handlers/formTemplateHandlers'
 import { getRegisteredSchemaHandlers } from '@/mocks/msw/handlers/schemaHandlers'
 import { getHandlersForTableQuery } from '@/mocks/msw/handlers/tableQueryHandlers'
@@ -157,6 +161,32 @@ export const SchemaDataAndFirstClassFields: Story = {
   args: {
     ...Demo.args,
     submissionId: mockSchemaDataAndFirstClassSubmission.id,
+  },
+}
+
+/**
+ * A schema-driven submission lists the files its answers reference in `attachments`. The file answered in the form is
+ * shown with the form responses only, and `attachments` that are not answers are listed under Other Attachments.
+ */
+export const SchemaDataWithAttachments: Story = {
+  ...SchemaDataOnly,
+  name: 'Schema-driven submission with attachments',
+  parameters: {
+    ...Demo.parameters,
+    msw: {
+      handlers: [
+        http.get(
+          `${MOCK_REPO_ORIGIN}${DATA_ACCESS_SUBMISSION_BY_ID(':id')}`,
+          () =>
+            HttpResponse.json({
+              ...mockSchemaDataSubmission,
+              attachments: [MOCK_FILE_HANDLE_ID, MOCK_PREVIEW_FILE_HANDLE_ID],
+            }),
+        ),
+        ...formTemplateHandlers,
+        ...submissionPageHandlers,
+      ],
+    },
   },
 }
 
