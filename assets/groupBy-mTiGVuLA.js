@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{c as t,s as n}from"./_getPrototype-rDRXgh38.js";import{n as r,t as i}from"./_createAggregator-9G2jwOH_.js";var a,o;function s(){return(s=e((()=>{t(),r(),a=Object.prototype.hasOwnProperty,o=i(function(e,t,r){a.call(e,r)?e[r].push(t):n(e,r,[t])})})))()}export{s as n,o as t};

@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{n as t,t as n}from"./_baseClone-D4o-ax1o.js";function r(e){return n(e,i|a)}var i,a;function o(){return(o=e((()=>{t(),i=1,a=4})))()}export{o as n,r as t};
