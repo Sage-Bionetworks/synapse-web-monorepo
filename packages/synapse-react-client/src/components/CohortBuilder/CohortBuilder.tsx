@@ -159,11 +159,8 @@ function CohortQueryBuilder(props: {
 }) {
   const { sampleQueries } = props
   const [tree, setTree] = useState<QBGroup | null>(null)
-  // The Query Builder's value options are queried with the current request, so changing it (e.g. stopping an
-  // aggregate-only preview whose threshold withheld them) can clear the error.
-  const { currentQueryRequest } = useQueryContext()
   return (
-    <SynapseErrorBoundary resetKeys={[currentQueryRequest]}>
+    <ResetOnQueryRequestChangeErrorBoundary>
       <Suspense fallback={null}>
         {sampleQueries && Object.keys(sampleQueries).length > 0 && (
           <CohortSampleQuerySelector
@@ -178,6 +175,25 @@ function CohortQueryBuilder(props: {
           onlyFacetedColumns
         />
       </Suspense>
+    </ResetOnQueryRequestChangeErrorBoundary>
+  )
+}
+
+/**
+ * An error boundary that resets when the current query request changes. The Query Builder's value options are queried
+ * with the current request, so changing it (e.g. stopping an aggregate-only preview whose threshold withheld them)
+ * can clear the error.
+ */
+function ResetOnQueryRequestChangeErrorBoundary(props: {
+  children: ReactNode
+}) {
+  // Only this component subscribes to the QueryContext: `children` keeps its identity when the context changes, so
+  // React does not re-render a still-suspended subtree on each change. Re-rendering it creates new query observers,
+  // which change the QueryContext again; under React's act() (Storybook dev) that loops without end.
+  const { currentQueryRequest } = useQueryContext()
+  return (
+    <SynapseErrorBoundary resetKeys={[currentQueryRequest]}>
+      {props.children}
     </SynapseErrorBoundary>
   )
 }
