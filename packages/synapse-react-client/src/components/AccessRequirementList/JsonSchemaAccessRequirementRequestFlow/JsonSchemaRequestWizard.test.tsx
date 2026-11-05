@@ -29,25 +29,6 @@ import JsonSchemaRequestWizard, {
   REQUESTER_INFORMATION_STEP_LABEL,
   JsonSchemaRequestWizardProps,
 } from './JsonSchemaRequestWizard'
-import type { FileUploadProps } from '@/components/FileUpload/FileUpload'
-
-const UPLOADED_FILE_HANDLE_ID = '4242'
-vi.mock('@/components/FileUpload/FileUpload', () => {
-  const FileUpload = (props: FileUploadProps) => (
-    <button
-      type="button"
-      onClick={() =>
-        props.onComplete?.({
-          success: true,
-          resp: { fileHandleId: UPLOADED_FILE_HANDLE_ID, fileName: 'a.pdf' },
-        })
-      }
-    >
-      {props.label}
-    </button>
-  )
-  return { FileUpload, default: FileUpload }
-})
 
 // The upload completes with whichever file handle the test sets, or fails
 let uploadedFileHandleId = '4242'
@@ -355,7 +336,7 @@ describe('JsonSchemaRequestWizard', () => {
 
     await waitFor(() => expect(savedRequests).toHaveLength(1))
     expect(savedRequests[0]).toMatchObject({
-      ducFileHandleId: UPLOADED_FILE_HANDLE_ID,
+      ducFileHandleId: uploadedFileHandleId,
       attachments: ['123'],
     })
   })
