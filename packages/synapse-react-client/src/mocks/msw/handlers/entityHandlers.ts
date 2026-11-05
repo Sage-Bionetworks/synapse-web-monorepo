@@ -6,6 +6,7 @@ import {
   ENTITY_ID_VERSION,
   ENTITY_ID_VERSIONS,
   ENTITY_JSON,
+  ENTITY_PERMISSIONS,
   ENTITY_SCHEMA_BINDING,
   ENTITY_SCHEMA_VALIDATION,
 } from '@/utils/APIConstants'
@@ -24,6 +25,7 @@ import {
   PaginatedResults,
   ProjectHeaderList,
   Reference,
+  UserEntityPermissions,
   VersionableEntity,
   VersionInfo,
 } from '@sage-bionetworks/synapse-types'
@@ -55,6 +57,16 @@ function getMatchingMockEntity(entityId: string): MockEntityData | undefined {
     return undefined
   }
   return matches[0]
+}
+
+/** Serves `permissions` for any entity's `GET /entity/:id/permissions`. */
+export function getEntityPermissionsHandler(
+  backendOrigin: string,
+  permissions: Partial<UserEntityPermissions>,
+) {
+  return http.get(`${backendOrigin}${ENTITY_PERMISSIONS(':entityId')}`, () =>
+    HttpResponse.json(permissions),
+  )
 }
 
 export function getEntityBundleHandler(
@@ -106,7 +118,7 @@ export function getVersionedEntityBundleHandler(
     `${backendOrigin}${ENTITY_BUNDLE_V2(':entityId', ':versionNumber')}`,
     ({ params }) => {
       const entityId = params.entityId as string
-      const versionNumber = parseInt(params.versionNumber as string)
+      const versionNumber = Number.parseInt(params.versionNumber as string)
       let status = 404
       let response: SynapseApiResponse<EntityBundle> = {
         concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
@@ -206,7 +218,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
       let status = 404
       const entityId = params.entityId
       const versionNumber = params.versionNumber.toString()
-      const requestedVersionNumber = parseInt(versionNumber)
+      const requestedVersionNumber = Number.parseInt(versionNumber)
 
       let response: SynapseApiResponse<VersionableEntity> = {
         concreteType: 'org.sagebionetworks.repo.model.ErrorResponse',
@@ -341,7 +353,7 @@ export const getEntityHandlers = (backendOrigin: string) => [
         name: p.name,
         id: p.id,
         lastActivity: '2024-01-04T21:11:59.000Z',
-        modifiedBy: parseInt(p.entity.modifiedBy!),
+        modifiedBy: Number.parseInt(p.entity.modifiedBy!),
         modifiedOn: p.entity.modifiedOn!,
       })),
     }
