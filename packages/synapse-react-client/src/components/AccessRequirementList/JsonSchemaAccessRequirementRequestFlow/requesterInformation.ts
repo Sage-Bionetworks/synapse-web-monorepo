@@ -6,9 +6,11 @@ import {
 } from '@sage-bionetworks/synapse-types'
 import { ensureCurrentUserIsAccessor } from '../ManagedACTAccessRequirementRequestFlow/useInitializeRequestAccessors'
 import {
+  getSchemaDataFileHandleIds,
   SchemaData,
   withSubmissionContext,
 } from '@/utils/jsonschema/schemaData'
+import { RJSFSchema } from '@rjsf/utils'
 
 /**
  * The answers to the questions that the server itself consumes (eDUC signing and the accessor lifecycle). These are
@@ -86,17 +88,28 @@ export function toRequesterInformationValues(
 /**
  * The request to save for the answers given so far. Institution, PI, and signing official are only written when
  * the AR uses an eDUC; otherwise the request's existing values are kept.
+ *
+ * `attachments` always lists exactly the file handles that the saved `schemaData` answers reference, replacing any
+ * earlier list: Synapse does not find file handles inside `schemaData`. The DUC is not an attachment. Answers that
+ * apply only to the other request type are not saved (see `withSubmissionContext`), so they list no attachment.
  */
 export function buildRequest(
   request: Request | Renewal,
   values: RequesterInformationValues,
   schemaData: SchemaData,
+  schema: RJSFSchema,
   isEDucEnabled: boolean,
 ): Request | Renewal {
+  const submittedSchemaData = withSubmissionContext(
+    schema,
+    schemaData,
+    getRequestType(request),
+  )
   return {
     ...request,
     accessorChanges: values.accessorChanges,
-    schemaData: withSubmissionContext(schemaData, getRequestType(request)),
+    schemaData: submittedSchemaData,
+    attachments: getSchemaDataFileHandleIds(schema, submittedSchemaData),
     ...(isEDucEnabled
       ? {
           institution: values.institution,

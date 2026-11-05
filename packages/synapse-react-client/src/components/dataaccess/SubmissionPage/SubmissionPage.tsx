@@ -9,6 +9,8 @@ import {
 } from '@/synapse-queries/dataaccess/useAccessRequirements'
 import useGetDataAccessSubmission from '@/synapse-queries/dataaccess/useDataAccessSubmission'
 import { useGetThreadForSubmission } from '@/synapse-queries/forum/useThread'
+import { useGeneratedSubmissionForm } from '@/synapse-queries/dataaccess/useGeneratedSubmissionForm'
+import { getAttachmentsNotInSchemaData } from '@/utils/jsonschema/schemaData'
 import { useGetCurrentUserProfile } from '@/synapse-queries/user'
 import { useGetUserAccessApproval } from '@/synapse-queries/dataaccess/useAccessApprovals'
 import { formatDate } from '@/utils/functions/DateFormatter'
@@ -182,10 +184,23 @@ export default function SubmissionPage(props: SubmissionPageProps) {
 
   const hasSchemaAnswers =
     !!submission?.schemaData && Object.keys(submission.schemaData).length > 0
+  // Shares its query with SubmissionSchemaAnswers
+  const { form: submissionForm, isLoading: isLoadingSubmissionForm } =
+    useGeneratedSubmissionForm(submission)
+  // A schema-driven submission lists the files its answers reference in `attachments`, and the answers already link
+  // to them. If the form cannot be generated the answers show no links, so every attachment stays listed; while it
+  // loads nothing is listed, rather than listing files that are about to be removed.
+  const otherAttachments = isLoadingSubmissionForm
+    ? []
+    : getAttachmentsNotInSchemaData(
+        submission?.attachments,
+        submissionForm?.schema,
+        submission?.schemaData,
+      )
   const hasDocuments = Boolean(
     submission?.ducFileHandleId ||
     submission?.irbFileHandleId ||
-    submission?.attachments,
+    otherAttachments.length > 0,
   )
   // A schema-driven submission may carry its documents only as form answers, so an empty
   // Documents heading would sit directly above them.
@@ -555,12 +570,12 @@ export default function SubmissionPage(props: SubmissionPageProps) {
                   />
                 </section>
               )}
-              {submission?.attachments && (
+              {submission && otherAttachments.length > 0 && (
                 <section>
                   <Typography variant="smallText2" gutterBottom>
                     Other Attachments
                   </Typography>
-                  {submission.attachments.map(fileHandleId => (
+                  {otherAttachments.map(fileHandleId => (
                     <Fragment key={fileHandleId}>
                       <DataAccessSubmissionFileHandleLink
                         submissionId={submission.id}

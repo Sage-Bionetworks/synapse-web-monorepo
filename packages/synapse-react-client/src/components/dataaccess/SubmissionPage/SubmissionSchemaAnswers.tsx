@@ -8,6 +8,7 @@ import {
   listResolvedSchemaProperties,
   SUBMISSION_CONTEXT_PROPERTY,
 } from '@/utils/jsonschema/submissionContext'
+import { isFileHandleIdValue } from '@/utils/jsonschema/schemaData'
 import { Skeleton, Stack, Typography } from '@mui/material'
 import { RJSFSchema, UiSchema } from '@rjsf/utils'
 import { Submission } from '@sage-bionetworks/synapse-types'
@@ -16,7 +17,6 @@ import { DataAccessSubmissionFileHandleLink } from './DataAccessSubmissionFileHa
 
 export const NO_RESPONSE_TEXT = 'No response'
 export const OTHER_RESPONSES_TITLE = 'Other responses'
-const NUMERIC_ID_PATTERN = /^\d+$/
 const NO_SCHEMA_DATA: Record<string, unknown> = {}
 
 type AnsweredField = {
@@ -37,19 +37,6 @@ function isEmptyAnswer(value: unknown): boolean {
     value === null ||
     value === '' ||
     (Array.isArray(value) && value.length === 0)
-  )
-}
-
-/**
- * Whether `value` has the shape of a numeric ID. This does not establish what the ID refers to:
- * that comes from the schema declaring a file field. `schemaData` is written by the submitter, so
- * even then only a well-formed ID may be turned into a download request made with the reviewer's
- * credentials.
- */
-function isNumericId(value: unknown): value is string | number {
-  return (
-    (typeof value === 'string' || typeof value === 'number') &&
-    NUMERIC_ID_PATTERN.test(String(value))
   )
 }
 
@@ -77,7 +64,7 @@ function SchemaAnswerValue(props: {
       </Typography>
     )
   }
-  if (detectFieldType(subSchema) === 'file' && isNumericId(value)) {
+  if (detectFieldType(subSchema) === 'file' && isFileHandleIdValue(value)) {
     return (
       <DataAccessSubmissionFileHandleLink
         submissionId={submissionId}

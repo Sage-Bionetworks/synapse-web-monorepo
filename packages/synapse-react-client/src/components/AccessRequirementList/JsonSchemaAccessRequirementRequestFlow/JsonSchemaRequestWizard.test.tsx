@@ -25,6 +25,25 @@ import JsonSchemaRequestWizard, {
   REQUESTER_INFORMATION_STEP_LABEL,
   JsonSchemaRequestWizardProps,
 } from './JsonSchemaRequestWizard'
+import type { FileUploadProps } from '@/components/FileUpload/FileUpload'
+
+const UPLOADED_FILE_HANDLE_ID = '4242'
+vi.mock('@/components/FileUpload/FileUpload', () => {
+  const FileUpload = (props: FileUploadProps) => (
+    <button
+      type="button"
+      onClick={() =>
+        props.onComplete?.({
+          success: true,
+          resp: { fileHandleId: UPLOADED_FILE_HANDLE_ID, fileName: 'a.pdf' },
+        })
+      }
+    >
+      {props.label}
+    </button>
+  )
+  return { FileUpload, default: FileUpload }
+})
 
 const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
@@ -203,6 +222,7 @@ describe('JsonSchemaRequestWizard', () => {
       agreeToTerms: true,
       [SUBMISSION_CONTEXT_PROPERTY]: 'REQUEST',
     })
+    expect(savedRequests.at(-1)?.attachments).toEqual([])
     expect(submissionRequests).toEqual([
       expect.objectContaining({
         requestId: REQUEST_ID,
@@ -246,6 +266,49 @@ describe('JsonSchemaRequestWizard', () => {
     await advanceToStep(user)
 
     expect(await screen.findByRole('textbox')).toHaveValue('Saved answer')
+  })
+
+  it('replaces the saved attachments with the file handles that the saved answers reference', async () => {
+    const { savedRequests } = mockRequestServices(
+      clinicalAccessRequirement,
+      createRequest(clinicalAccessRequirement, {
+        schemaData: { projectTitle: 'Trial', signedDataUseAgreement: 123 },
+        attachments: ['999'],
+      }),
+    )
+    const user = userEvent.setup()
+    renderWizard(clinicalAccessRequirement)
+    await advanceToStep(user)
+
+    await waitFor(() => expect(savedRequests).toHaveLength(1))
+    expect(savedRequests[0].attachments).toEqual(['123'])
+  })
+
+  it('saves an uploaded DUC with the answers’ attachments, which do not include the DUC', async () => {
+    const ducAccessRequirement = {
+      ...clinicalAccessRequirement,
+      isDUCRequired: true,
+    }
+    const { savedRequests } = mockRequestServices(
+      ducAccessRequirement,
+      createRequest(ducAccessRequirement, {
+        schemaData: { projectTitle: 'Trial', signedDataUseAgreement: 123 },
+        attachments: ['999'],
+      }),
+    )
+    const user = userEvent.setup()
+    renderWizard(ducAccessRequirement)
+    await user.click(
+      await screen.findByRole('button', {
+        name: 'Upload Data Use Certificate',
+      }),
+    )
+
+    await waitFor(() => expect(savedRequests).toHaveLength(1))
+    expect(savedRequests[0]).toMatchObject({
+      ducFileHandleId: UPLOADED_FILE_HANDLE_ID,
+      attachments: ['123'],
+    })
   })
 
   it.each([
