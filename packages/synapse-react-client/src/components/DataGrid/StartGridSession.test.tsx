@@ -130,43 +130,13 @@ describe('StartGridSession - useImperativeHandle methods', () => {
         pages: [{ page: [mockGridSession, mockGridSession2] }],
         pageParams: [undefined],
       },
-      // Add other required properties for the infinite query result
       fetchNextPage: vi.fn(),
-      fetchPreviousPage: vi.fn(),
       hasNextPage: false,
-      hasPreviousPage: false,
       isFetchingNextPage: false,
-      isFetchingPreviousPage: false,
-      isFetchNextPageError: false,
-      isFetchPreviousPageError: false,
       isLoading: false,
-      isInitialLoading: false,
       isError: false,
       error: null,
-      refetch: vi.fn(),
-      status: 'success',
-      fetchStatus: 'idle',
-      dataUpdatedAt: 0,
-      errorUpdatedAt: 0,
-      failureCount: 0,
-      failureReason: null,
-      errorUpdateCount: 0,
-      isFetched: true,
-      isFetchedAfterMount: true,
-      isFetching: false,
-      isPending: false,
-      isLoadingError: false,
-      isPaused: false,
-      isPlaceholderData: false,
-      isRefetchError: false,
-      isRefetching: false,
-      isStale: false,
-      isSuccess: true,
-      promise: Promise.resolve({
-        pages: [{ page: [mockGridSession, mockGridSession2] }],
-        pageParams: [undefined],
-      }),
-    })
+    } as unknown as ReturnType<typeof useGetGridSessionsInfinite>)
   })
 
   describe('handleStartSession method', () => {
@@ -346,6 +316,7 @@ describe('StartGridSession - useImperativeHandle methods', () => {
             },
             { sessionId: 'new-session-999' },
             undefined,
+            {} as never,
           )
         }
       })
@@ -406,6 +377,7 @@ describe('StartGridSession - useImperativeHandle methods', () => {
             },
             { sessionId: 'test-session-111' },
             undefined,
+            {} as never,
           )
         }
       })
@@ -499,7 +471,7 @@ describe('StartGridSession - useImperativeHandle methods', () => {
       mockInitializeGridConnection.mockImplementation(
         (input: CreateOrGetGridSessionInput) => {
           if (capturedOptions?.onMutate) {
-            capturedOptions.onMutate(input)
+            capturedOptions.onMutate(input, {} as never)
           }
         },
       )
@@ -566,6 +538,7 @@ describe('StartGridSession - useImperativeHandle methods', () => {
             },
             { sessionId: 'session-1' },
             undefined,
+            {} as never,
           )
         }
       })
@@ -584,6 +557,7 @@ describe('StartGridSession - useImperativeHandle methods', () => {
             },
             { sessionId: 'session-2' },
             undefined,
+            {} as never,
           )
         }
       })
