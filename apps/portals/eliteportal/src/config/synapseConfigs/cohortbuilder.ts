@@ -151,4 +151,58 @@ export const cohortBuilderV2Props: CohortBuilderProps = {
   participantsTableId: cohortBuilderV2ParticipantsTableId,
   filesTableId: cohortBuilderV2FilesTableId,
   participantsSourceTableId: cohortBuilderV2ParticipantsSourceTableId,
+  sampleQueries: {
+    'Longevity Cohort, age 60+': {
+      combinator: 'AND',
+      children: [
+        {
+          columnName: 'binnedAge',
+          op: 'is_any_of',
+          values: [
+            '100-104',
+            '105-109',
+            '110+',
+            '60-64',
+            '65-69',
+            '70-74',
+            '75-79',
+            '80-84',
+            '85-89',
+            '90-94',
+            '95-99',
+          ],
+        },
+        {
+          columnName: 'cohort',
+          op: 'is_any_of',
+          values: ['LLFS Denmark Family', 'LLFS US Family'],
+        },
+        { columnName: 'isPostMortem', op: 'is_any_of', values: ['false'] },
+      ],
+    },
+    'Male Longevity Cohort, multiple assays': {
+      combinator: 'AND',
+      children: [
+        { columnName: 'Sex', op: 'is_any_of', values: ['Male'] },
+        { columnName: 'cohort', op: 'is_any_of', values: ['LLFS US Family'] },
+        {
+          columnName: 'Assays',
+          op: 'is_all_of',
+          values: ['bisulfiteSeq', 'wholeGenomeSeq'],
+        },
+      ],
+    },
+    'Metabolomics data, age 80-99': {
+      combinator: 'AND',
+      children: [
+        {
+          columnName: 'binnedAge',
+          op: 'is_any_of',
+          values: ['80-84', '85-89', '90-94', '95-99'],
+        },
+        { columnName: 'dataSubtypes', op: 'is_any_of', values: ['raw'] },
+        { columnName: 'dataTypes', op: 'is_any_of', values: ['metabolomics'] },
+      ],
+    },
+  },
 }
