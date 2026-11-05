@@ -3,25 +3,25 @@ import { formatFacetValueCount } from './facetCountUtils'
 describe('formatFacetValueCount', () => {
   it.each([
     {
-      case: 'a binned count as approximate',
+      case: 'a binned count as its bin range',
       count: 1202,
       binSize: 5,
       facetPostProcessingApplied: true,
-      expected: `≈ ${(1202).toLocaleString()}`,
+      expected: `${(1200).toLocaleString()}–${(1204).toLocaleString()}`,
     },
     {
-      case: 'the midpoint of a bin that starts at 0 as approximate',
+      case: 'the bin that starts at 0 as its range',
       count: 2,
       binSize: 5,
       facetPostProcessingApplied: true,
-      expected: '≈ 2',
+      expected: '0–4',
     },
     {
-      case: 'the half-unit midpoint of an even-width bin as approximate',
+      case: 'the half-unit midpoint of an even-width bin as its integer range',
       count: 4.5,
       binSize: 10,
       facetPostProcessingApplied: true,
-      expected: `≈ ${(4.5).toLocaleString()}`,
+      expected: '0–9',
     },
     {
       case: 'a bin size of 1 as the exact count',
