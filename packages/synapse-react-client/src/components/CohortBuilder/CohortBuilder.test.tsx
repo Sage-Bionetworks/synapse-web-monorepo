@@ -53,6 +53,11 @@ import {
   COHORT_TOO_LARGE_TEXT,
 } from './CohortFilesPanel'
 import { MAX_COHORT_PARTICIPANTS } from './cohortHandOff'
+import {
+  COHORT_DISCOVERY_DESCRIPTION,
+  HOW_TO_USE_COHORT_BUILDER_CONFIRM_TEXT,
+  HOW_TO_USE_COHORT_BUILDER_TITLE,
+} from './CohortDiscoveryBanner'
 
 // The Download List confirmation estimates download time by downloading a test file.
 vi.mock('@/utils/functions/testDownloadSpeed', () => ({
@@ -232,8 +237,30 @@ describe('CohortBuilder', () => {
     renderCohortBuilder({}, 'AGGREGATE_ONLY', false)
 
     expect(await screen.findByText('Sign In')).toBeInTheDocument()
+    expect(screen.getByText(COHORT_DISCOVERY_DESCRIPTION)).toBeVisible()
     expect(screen.queryByText(DEFAULT_COHORT_BUILDER_AUDIT_NOTICE)).toBeNull()
     expect(sentRequests).toEqual([])
+  })
+
+  it('opens and closes the How to Use instructions from the Cohort Discovery banner', async () => {
+    const user = userEvent.setup()
+    renderCohortBuilder()
+
+    expect(screen.getByText(COHORT_DISCOVERY_DESCRIPTION)).toBeVisible()
+    await user.click(
+      screen.getByRole('button', { name: HOW_TO_USE_COHORT_BUILDER_TITLE }),
+    )
+    const dialog = await screen.findByRole('dialog', {
+      name: HOW_TO_USE_COHORT_BUILDER_TITLE,
+    })
+    expect(within(dialog).getByText('Condition groups')).toBeVisible()
+
+    await user.click(
+      within(dialog).getByRole('button', {
+        name: HOW_TO_USE_COHORT_BUILDER_CONFIRM_TEXT,
+      }),
+    )
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
   })
 
   it('does not offer the aggregate-only preview to a user who does not administer the participant source table', async () => {
