@@ -1,10 +1,12 @@
 import { GeneratedFormStepForRjsf } from '@/utils/jsonschema/generateDataAccessSchema'
 import {
+  contextAppliesForRequestType,
   listResolvedSchemaProperties,
   SUBMISSION_CONTEXT_PROPERTY,
 } from '@/utils/jsonschema/submissionContext'
 import { RJSFSchema } from '@rjsf/utils'
 import { DataAccessRequestType } from '@sage-bionetworks/synapse-client'
+import omit from 'lodash-es/omit'
 import pick from 'lodash-es/pick'
 
 export type SchemaData = Record<string, unknown>
@@ -15,13 +17,14 @@ const NUMERIC_ID_PATTERN = /^\d+$/
 /**
  * Whether `value` has the shape of a file handle ID. This does not establish what the ID refers to: that comes
  * from the schema declaring a file field. `schemaData` is written by the submitter, so even then only a
- * well-formed ID may be turned into a download request made with another user's credentials.
+ * well-formed ID may be turned into a download request made with another user's credentials. A number must be a
+ * safe integer, because a larger one does not keep its digits when converted to the ID string.
  */
 export function isFileHandleIdValue(value: unknown): value is string | number {
-  return (
-    (typeof value === 'string' || typeof value === 'number') &&
-    NUMERIC_ID_PATTERN.test(String(value))
-  )
+  if (typeof value === 'number') {
+    return Number.isSafeInteger(value) && value >= 0
+  }
+  return typeof value === 'string' && NUMERIC_ID_PATTERN.test(value)
 }
 
 /**
@@ -93,13 +96,23 @@ export function getStepTitle(
 /**
  * The payload the server validates. It must declare the type of the request so that context-specific properties are
  * validated against the right branch of the schema.
+ *
+ * Answers to properties that apply only to the other request type are dropped. A renewal starts with the answers of
+ * the approved request, and the renewal form does not show a REQUEST_ONLY property, so the requester could neither
+ * see nor remove such an answer (or the file it references).
  */
 export function withSubmissionContext(
+  schema: RJSFSchema,
   schemaData: SchemaData,
   requestType: DataAccessRequestType,
 ): SchemaData {
+  const otherContextKeys = listResolvedSchemaProperties(schema)
+    .filter(
+      ({ context }) => !contextAppliesForRequestType(context, requestType),
+    )
+    .map(({ propertyKey }) => propertyKey)
   return {
-    ...schemaData,
+    ...omit(schemaData, otherContextKeys),
     [SUBMISSION_CONTEXT_PROPERTY]: requestType,
   }
 }

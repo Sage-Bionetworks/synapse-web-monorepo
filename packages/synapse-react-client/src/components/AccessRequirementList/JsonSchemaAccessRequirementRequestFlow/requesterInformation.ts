@@ -89,8 +89,9 @@ export function toRequesterInformationValues(
  * The request to save for the answers given so far. Institution, PI, and signing official are only written when
  * the AR uses an eDUC; otherwise the request's existing values are kept.
  *
- * `attachments` always lists exactly the file handles that the `schemaData` answers reference, replacing any
- * earlier list: Synapse does not find file handles inside `schemaData`. The DUC is not an attachment.
+ * `attachments` always lists exactly the file handles that the saved `schemaData` answers reference, replacing any
+ * earlier list: Synapse does not find file handles inside `schemaData`. The DUC is not an attachment. Answers that
+ * apply only to the other request type are not saved (see `withSubmissionContext`), so they list no attachment.
  */
 export function buildRequest(
   request: Request | Renewal,
@@ -99,11 +100,16 @@ export function buildRequest(
   schema: RJSFSchema,
   isEDucEnabled: boolean,
 ): Request | Renewal {
+  const submittedSchemaData = withSubmissionContext(
+    schema,
+    schemaData,
+    getRequestType(request),
+  )
   return {
     ...request,
     accessorChanges: values.accessorChanges,
-    schemaData: withSubmissionContext(schemaData, getRequestType(request)),
-    attachments: getSchemaDataFileHandleIds(schema, schemaData),
+    schemaData: submittedSchemaData,
+    attachments: getSchemaDataFileHandleIds(schema, submittedSchemaData),
     ...(isEDucEnabled
       ? {
           institution: values.institution,

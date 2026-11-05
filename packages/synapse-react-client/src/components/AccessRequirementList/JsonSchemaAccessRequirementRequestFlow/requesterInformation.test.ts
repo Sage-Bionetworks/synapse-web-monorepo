@@ -114,6 +114,32 @@ const fileSchema: RJSFSchema = {
     purpose: { type: 'string' },
   },
 }
+const contextualFileSchema: RJSFSchema = {
+  type: 'object',
+  properties: {
+    agreement: { type: 'number', format: SYNAPSE_FILE_HANDLE_ID_FORMAT },
+  },
+  allOf: [
+    {
+      if: {
+        properties: { [SUBMISSION_CONTEXT_PROPERTY]: { const: 'REQUEST' } },
+      },
+      then: {
+        properties: {
+          irbLetter: { type: 'number', format: SYNAPSE_FILE_HANDLE_ID_FORMAT },
+        },
+      },
+    },
+    {
+      if: {
+        properties: { [SUBMISSION_CONTEXT_PROPERTY]: { const: 'RENEWAL' } },
+      },
+      then: {
+        properties: { progressReport: { type: 'string' } },
+      },
+    },
+  ],
+}
 
 describe('buildRequest', () => {
   it('replaces the attachments with the file handles that the answers reference', () => {
@@ -159,6 +185,39 @@ describe('buildRequest', () => {
     )
     expect(built.attachments).toEqual([])
     expect(built.ducFileHandleId).toBe('77')
+  })
+
+  it('drops a renewal’s answers to request-only questions, and their files', () => {
+    // A renewal starts with the approved request's answers, but its form does not show request-only questions
+    const built = buildRequest(
+      { ...renewal, attachments: ['1', '2'] },
+      completeValues,
+      { agreement: 1, irbLetter: 2, progressReport: 'Done' },
+      contextualFileSchema,
+      false,
+    )
+    expect(built.schemaData).toEqual({
+      agreement: 1,
+      progressReport: 'Done',
+      [SUBMISSION_CONTEXT_PROPERTY]: 'RENEWAL',
+    })
+    expect(built.attachments).toEqual(['1'])
+  })
+
+  it('keeps a request’s answers to request-only questions, and their files', () => {
+    const built = buildRequest(
+      request,
+      completeValues,
+      { agreement: 1, irbLetter: 2 },
+      contextualFileSchema,
+      false,
+    )
+    expect(built.schemaData).toEqual({
+      agreement: 1,
+      irbLetter: 2,
+      [SUBMISSION_CONTEXT_PROPERTY]: 'REQUEST',
+    })
+    expect(built.attachments).toEqual(['1', '2'])
   })
 
   it.each([

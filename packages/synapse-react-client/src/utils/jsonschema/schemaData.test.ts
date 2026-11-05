@@ -5,6 +5,7 @@ import {
   isFileHandleIdValue,
   SYNAPSE_FILE_HANDLE_ID_FORMAT,
 } from './schemaData'
+import { SUBMISSION_CONTEXT_PROPERTY } from './submissionContext'
 
 const schema: RJSFSchema = {
   type: 'object',
@@ -42,6 +43,31 @@ describe('getSchemaDataFileHandleIds', () => {
     ).toEqual([])
     expect(getSchemaDataFileHandleIds(schema, {})).toEqual([])
   })
+
+  it('lists the file answers to questions of either submission context', () => {
+    // The reviewer page links the answers of either context; buildRequest drops the other context's answers first
+    const contextualSchema: RJSFSchema = {
+      type: 'object',
+      properties: {},
+      allOf: [
+        {
+          if: {
+            properties: {
+              [SUBMISSION_CONTEXT_PROPERTY]: { const: 'RENEWAL' },
+            },
+          },
+          then: {
+            properties: {
+              report: { type: 'number', format: SYNAPSE_FILE_HANDLE_ID_FORMAT },
+            },
+          },
+        },
+      ],
+    }
+    expect(getSchemaDataFileHandleIds(contextualSchema, { report: 8 })).toEqual(
+      ['8'],
+    )
+  })
 })
 
 describe('getAttachmentsNotInSchemaData', () => {
@@ -69,7 +95,7 @@ describe('isFileHandleIdValue', () => {
     expect(isFileHandleIdValue(value)).toBe(true)
   })
 
-  it.each([[''], ['12a'], [-1], [1.5], [null], [undefined], [[1]]])(
+  it.each([[''], ['12a'], [-1], [1.5], [2 ** 53], [null], [undefined], [[1]]])(
     'rejects %p',
     value => {
       expect(isFileHandleIdValue(value)).toBe(false)
