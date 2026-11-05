@@ -634,6 +634,8 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
         /Institutional Email of your Signing Official/i,
       )
 
+      // The fields are disabled while the request loads, and typing into a disabled field is ignored
+      await waitFor(() => expect(nameField).toBeEnabled())
       await user.type(nameField, 'Jane Smith')
       expect(submitButton).toBeDisabled()
 
@@ -652,6 +654,8 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
         /Institutional Email of your Signing Official/i,
       )
 
+      // The fields are disabled while the request loads, and typing into a disabled field is ignored
+      await waitFor(() => expect(nameField).toBeEnabled())
       await user.type(nameField, 'Jane Smith')
       await user.type(emailField, 'jane@example.edu')
 
@@ -770,6 +774,8 @@ describe('DataAccessRequestAccessorsFilesForm tests', () => {
       const emailField = screen.getByLabelText(
         /Institutional Email of your Signing Official/i,
       )
+      // The fields are disabled while the request loads, and typing into a disabled field is ignored
+      await waitFor(() => expect(nameField).toBeEnabled())
       await user.type(nameField, 'Jane Smith')
       await user.type(emailField, 'jane@example.edu')
 
