@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{n as t,t as n}from"./TableFeedCards-BxzobtmR.js";var r,i,a;function o(){return(o=e((()=>{t(),r={title:`Synapse/TableFeedCards`,component:n},i={args:{tableEntityId:`syn23520190`}},a=[`Demo`]})))()}o();export{i as Demo,a as __namedExportsOrder,r as default};
