@@ -61,8 +61,9 @@ jobs:
           cd apps/SageAccountWeb
           pnpm playwright install --with-deps chromium
       - id: test
-        # Test runners run in parallel, so we use `--parallel=1` to avoid running them all at once
-        run: pnpm nx affected --target test --parallel=1
+        # Test runners run in parallel, so we use `--parallel=1` to avoid running them all at once.
+        # synapse-react-client is excluded because the test-synapse-react-client job shards it.
+        run: pnpm nx affected --target test --parallel=1 --exclude=synapse-react-client
       - name: Upload test report
         if: success() || steps.test.conclusion == 'failure'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -71,6 +72,36 @@ jobs:
           path: |
             ./packages/*/coverage/
             ./apps/*/coverage/
+  # synapse-react-client's suite accounts for most of the test time, so it is
+  # split across parallel runners instead of running in the `test` job.
+  test-synapse-react-client:
+    name: test (synapse-react-client ${{ matrix.shard }}/${{ strategy.job-total }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      # Let every shard finish so a failure in one doesn't hide failures in the others
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          filter: tree:0
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@3e9ad7370203c1e93d109be57f3b72eb0eb511b1 # v4.4.0
+      - uses: ./.github/actions/pnpm-setup-action
+      - id: test
+        run: |
+          pnpm nx affected --target test \
+            --exclude='*,!synapse-react-client' \
+            -- --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+      - name: Upload test report
+        if: success() || steps.test.conclusion == 'failure'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: test-results-synapse-react-client-${{ matrix.shard }}
+          path: ./packages/synapse-react-client/coverage/
   lint:
     runs-on: ubuntu-latest
     steps:
