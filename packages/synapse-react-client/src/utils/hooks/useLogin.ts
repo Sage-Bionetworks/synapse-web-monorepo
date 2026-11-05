@@ -103,7 +103,7 @@ export default function useLogin(opts: UseLoginOptions): UseLoginReturn {
         setTwoFaErrorResponse({
           errorCode: ErrorResponseCode.TWO_FA_REQUIRED,
           reason: '',
-          userId: parseInt(userId, 10),
+          userId: Number.parseInt(userId, 10),
           twoFaToken,
           concreteType:
             'org.sagebionetworks.repo.model.auth.TwoFactorAuthErrorResponse',

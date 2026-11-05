@@ -9,7 +9,7 @@ const dateTimeString = z.string().transform(data => {
   // Note: can't use parseInt on a timestamp! "2000-01-01T00:00:00Z" will be parsed as 2000
   const isInt = /^\d+$/.exec(data)
   if (isInt) {
-    return dayjs.utc(parseInt(data)).toISOString()
+    return dayjs.utc(Number.parseInt(data)).toISOString()
   }
   return dayjs.utc(data).toISOString()
 })

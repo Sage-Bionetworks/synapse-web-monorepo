@@ -94,7 +94,7 @@ const parseSynIdFromRedirectUrl = (redirectUrl: string | undefined) => {
 
   return {
     entityId: matches[1],
-    versionNumber: matches[2] ? parseInt(matches[2]) : undefined,
+    versionNumber: matches[2] ? Number.parseInt(matches[2]) : undefined,
   }
 }
 

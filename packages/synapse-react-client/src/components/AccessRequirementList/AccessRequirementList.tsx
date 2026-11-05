@@ -295,8 +295,8 @@ export default function AccessRequirementList(
         SUPPORTED_ACCESS_REQUIREMENT_TYPES_SORTED.flatMap(type => {
           const arsOfType = groupedAccessRequirementsByType[type]
           if (arsOfType) {
-            return sortedAccessRequirementIds.map(
-              id => arsOfType.find(ar => id === String(ar.id))!,
+            return sortedAccessRequirementIds.map(id =>
+              arsOfType.find(ar => id === String(ar.id))!,
             )
           }
           return []

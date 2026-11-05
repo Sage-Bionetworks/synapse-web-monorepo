@@ -5,7 +5,7 @@ import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { FeatureFlagEnum } from '@/utils/featureflag/FeatureFlags'
 import { renderHook, waitFor } from '@testing-library/react'
 import { http, HttpResponse } from 'msw'
-import { useGetFeatureFlag } from './useGetFeatureFlag'
+import { useGetFeatureFlag, useGetFeatureFlags } from './useGetFeatureFlag'
 
 const PORTAL_ENDPOINT = getEndpoint(BackendDestinationEnum.PORTAL_ENDPOINT)
 
@@ -76,6 +76,27 @@ describe('useGetFeatureFlag', () => {
         expect(result.current).toBe(false)
       })
     })
+
+    it('is disabled even when the user individually enabled it', async () => {
+      server.use(
+        getFeatureFlagsOverride({
+          portalOrigin: PORTAL_ENDPOINT,
+          overrides: { [FeatureFlagEnum.TEST_ONLY]: false },
+        }),
+      )
+      const { result } = renderHook(
+        () => useGetFeatureFlag(FeatureFlagEnum.TEST_ONLY),
+        {
+          wrapper: createWrapper({
+            isInExperimentalMode: false,
+            enabledExperimentalFeatures: [FeatureFlagEnum.TEST_ONLY],
+          }),
+        },
+      )
+      await waitFor(() => {
+        expect(result.current).toBe(false)
+      })
+    })
   })
 
   describe('when the flag value is null/undefined (not set by the server)', () => {
@@ -108,6 +129,28 @@ describe('useGetFeatureFlag', () => {
       await waitFor(() => {
         expect(result.current).toBe(true)
       })
+    })
+
+    it('is enabled when the user individually enabled it', async () => {
+      setupHandlerWithoutFlag()
+      const { result } = renderHook(
+        () => ({
+          isEnabled: useGetFeatureFlag(FeatureFlagEnum.TEST_ONLY),
+          flagsQuery: useGetFeatureFlags(),
+        }),
+        {
+          wrapper: createWrapper({
+            isInExperimentalMode: false,
+            enabledExperimentalFeatures: [FeatureFlagEnum.TEST_ONLY],
+          }),
+        },
+      )
+      // The hook returns the user's choice before the server responds, so wait for the response
+      await waitFor(() =>
+        expect(result.current.flagsQuery.isSuccess).toBe(true),
+      )
+
+      expect(result.current.isEnabled).toBe(true)
     })
   })
 })

@@ -16,7 +16,7 @@ export function hex2ascii(inputString: string): string {
   for (let n = 0; n < hex.length; n += 2) {
     // Each pair is a single byte; fromCodePoint would throw on the NaN that malformed hex produces
     // oxlint-disable-next-line unicorn/prefer-code-point
-    str += String.fromCharCode(parseInt(hex.substring(n, n + 2), 16))
+    str += String.fromCharCode(Number.parseInt(hex.substring(n, n + 2), 16))
   }
   return str
 }
@@ -44,7 +44,7 @@ export function hashCode(str?: string | null) {
 
 export function normalizeNumericId(id: string | number): number {
   if (id == null) {
-    return NaN
+    return Number.NaN
   }
   if (typeof id === 'number') {
     return id
@@ -52,9 +52,9 @@ export function normalizeNumericId(id: string | number): number {
   if (id.match(SYNAPSE_ENTITY_ID_REGEX)) {
     // parse the ID to remove a possible version suffix ('syn123.4' -> 'syn123')
     const entityId = parseSynId(id)!.targetId
-    return parseInt(entityId.substring('syn'.length))
+    return Number.parseInt(entityId.substring('syn'.length))
   } else {
-    return parseInt(id)
+    return Number.parseInt(id)
   }
 }
 

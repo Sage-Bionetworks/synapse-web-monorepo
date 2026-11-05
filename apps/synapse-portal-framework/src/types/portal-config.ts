@@ -1,4 +1,5 @@
 import { ReactNode } from 'react'
+import { ExperimentalFeatureScope } from 'synapse-react-client/utils/featureflag/FeatureFlags'
 
 // For styling the header on the home page -- the main title and the summary text
 export type HomePageHeaderConfig = {
@@ -18,6 +19,8 @@ export type FooterConfig = {
   about?: string
   additionalLogos?: string[] //svg
   variant?: 'adkp'
+  /** Scopes listed in the experimental features menu in addition to `PORTALS` */
+  experimentalFeatureScopes?: ExperimentalFeatureScope[]
 }
 // Footer end
 

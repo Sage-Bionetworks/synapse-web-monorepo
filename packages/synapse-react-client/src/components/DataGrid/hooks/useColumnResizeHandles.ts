@@ -166,7 +166,7 @@ class ColumnResizeManager {
     if (!currentColumnName || !currentCellElement) return
 
     // Get current width and position at the time of mousedown
-    const currentLeft = parseFloat(handle.style.left)
+    const currentLeft = Number.parseFloat(handle.style.left)
 
     this.activeResize = {
       columnName: currentColumnName,

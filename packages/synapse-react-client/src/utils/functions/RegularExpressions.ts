@@ -47,7 +47,9 @@ export function parseSynId(synId: string): Reference | null {
   if (synIdMatch) {
     return {
       targetId: normalizeSynPrefix(synIdMatch[1]),
-      targetVersionNumber: synIdMatch[2] ? parseInt(synIdMatch[2]) : undefined,
+      targetVersionNumber: synIdMatch[2]
+        ? Number.parseInt(synIdMatch[2])
+        : undefined,
     }
   } else {
     return synIdMatch

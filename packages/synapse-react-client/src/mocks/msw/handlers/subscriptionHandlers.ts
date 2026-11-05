@@ -69,9 +69,9 @@ export function getSubscriptionHandlers(backendOrigin: string) {
           'sortDirection',
         ) as SortDirection) ?? undefined
       const offsetParam = new URL(request.url).searchParams.get('offset')
-      const offset = offsetParam ? parseInt(offsetParam) : undefined
+      const offset = offsetParam ? Number.parseInt(offsetParam) : undefined
       const limitParam = new URL(request.url).searchParams.get('limit')
-      const limit = limitParam ? parseInt(limitParam) : undefined
+      const limit = limitParam ? Number.parseInt(limitParam) : undefined
 
       const resp: SynapseApiResponse<SubscriptionPagedResults> =
         getSubscriptions(objectType ?? undefined, sortDirection, offset, limit)

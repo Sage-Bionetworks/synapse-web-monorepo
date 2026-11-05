@@ -515,7 +515,7 @@ describe('TableColumnSchemaEditor', () => {
     // New rows with each imported column should appear
     await waitFor(async () => {
       const nameFields = await screen.findAllByLabelText('Name')
-      expect(nameFields.length).toEqual(mockedImportedColumns.length)
+      expect(nameFields).toHaveLength(mockedImportedColumns.length)
       expect(nameFields[0]).toHaveValue(mockedImportedColumns[0].name)
       expect(nameFields[1]).toHaveValue(mockedImportedColumns[1].name)
     })
