@@ -1,0 +1,1 @@
+import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{n as t,t as n}from"./DownloadLoginModal-Cn4O9kHX.js";var r,i,a,o;function s(){return(s=e((()=>{t(),{fn:r}=__STORYBOOK_MODULE_TEST__,i={title:`Download/DownloadLoginModal`,component:n},a={args:{showModal:!0,onHide:r()}},o=[`Demo`]})))()}s();export{a as Demo,o as __namedExportsOrder,i as default};
