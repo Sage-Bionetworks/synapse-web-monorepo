@@ -59,7 +59,7 @@ export function DatasetEditorVersionCell(props: DatasetEditorVersionCellProps) {
             event.stopPropagation()
             let version = event.target.value
             if (typeof version === 'string') {
-              version = parseInt(version)
+              version = Number.parseInt(version)
             }
             toggleSelection({
               entityId: entityId,

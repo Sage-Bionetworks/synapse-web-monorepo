@@ -371,7 +371,7 @@ describe('useColumnResizeHandles', () => {
       const handle = document.querySelector<HTMLElement>(
         '.column-resize-handle',
       )!
-      const initialLeft = parseFloat(handle.style.left)
+      const initialLeft = Number.parseFloat(handle.style.left)
 
       act(() => {
         // Start drag
@@ -391,7 +391,7 @@ describe('useColumnResizeHandles', () => {
         document.dispatchEvent(mouseMoveEvent)
       })
 
-      const newLeft = parseFloat(handle.style.left)
+      const newLeft = Number.parseFloat(handle.style.left)
       expect(newLeft).toBe(initialLeft + 50)
     })
 
@@ -611,7 +611,7 @@ describe('useColumnResizeHandles', () => {
       const initialHandles = document.querySelectorAll<HTMLElement>(
         '.column-resize-handle',
       )
-      expect(initialHandles.length).toBe(3)
+      expect(initialHandles).toHaveLength(3)
 
       // Add a new column cell to the DOM
       const newCell = createMockCell('Column D', 150)
@@ -632,7 +632,7 @@ describe('useColumnResizeHandles', () => {
         '.column-resize-handle',
       )
       // Should have one more handle than before
-      expect(updatedHandles.length).toBe(4)
+      expect(updatedHandles).toHaveLength(4)
       expect(updatedHandles.length).toBeGreaterThan(initialHandles.length)
     })
 
@@ -1005,7 +1005,7 @@ describe('useColumnResizeHandles', () => {
       const handles = document.querySelectorAll<HTMLElement>(
         '.column-resize-handle',
       )
-      expect(handles.length).toBe(3)
+      expect(handles).toHaveLength(3)
 
       // Remove a column from DOM to simulate virtualization
       const cellToRemove = mockHeaderRow.querySelectorAll('.dsg-cell')[1] // Column A

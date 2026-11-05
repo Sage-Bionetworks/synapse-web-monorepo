@@ -190,7 +190,7 @@ describe('MarkdownUtils DOM', () => {
       fixInvalidNesting(container)
 
       expect(findByTag([container], 'p')).toHaveLength(0)
-      expect(findByAttrib([container], 'data-widgetparams').length).toBe(1)
+      expect(findByAttrib([container], 'data-widgetparams')).toHaveLength(1)
     })
 
     it('should not swap <p> for a badge widget (inline widget)', () => {
@@ -201,7 +201,7 @@ describe('MarkdownUtils DOM', () => {
 
       fixInvalidNesting(container)
 
-      expect(findByTag([container], 'p').length).toBe(1)
+      expect(findByTag([container], 'p')).toHaveLength(1)
     })
 
     it('should not modify valid inline nesting', () => {
@@ -211,8 +211,8 @@ describe('MarkdownUtils DOM', () => {
 
       fixInvalidNesting(container)
 
-      expect(findByTag([container], 'p').length).toBe(1)
-      expect(findByTag([container], 'span').length).toBe(1)
+      expect(findByTag([container], 'p')).toHaveLength(1)
+      expect(findByTag([container], 'span')).toHaveLength(1)
     })
   })
 

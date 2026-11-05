@@ -14,6 +14,7 @@ node_modules/
 # testing
 coverage/
 .vitest-attachments/
+.vitest/
 **/__screenshots__/
 
 # incremental builds

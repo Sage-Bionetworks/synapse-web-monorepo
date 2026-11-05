@@ -44,7 +44,7 @@ describe('QueryCountButton', () => {
     })
 
     // Button should display "Explore 42 files"
-    const button = screen.getByRole('link', { name: 'Explore 42 files' })
+    const button = await screen.findByRole('link', { name: 'Explore 42 files' })
     expect(button).toBeInTheDocument()
 
     // Verify the query was called with correct parameters
@@ -75,7 +75,7 @@ describe('QueryCountButton', () => {
       expect(mockGetQueryTableResults).toHaveBeenCalled()
     })
 
-    const button = screen.getByRole('link', { name: 'View 42 items' })
+    const button = await screen.findByRole('link', { name: 'View 42 items' })
 
     // Button should have href attribute when not in router context
     expect(button).toHaveAttribute('href', mockHref)
@@ -103,7 +103,7 @@ describe('QueryCountButton', () => {
       expect(mockGetQueryTableResults).toHaveBeenCalled()
     })
 
-    const button = screen.getByRole('link', { name: 'View 42 items' })
+    const button = await screen.findByRole('link', { name: 'View 42 items' })
 
     // Button should use RouterLink, which doesn't set href attribute
     // Instead it should have a parent link or be rendered as a link component
@@ -131,7 +131,7 @@ describe('QueryCountButton', () => {
       expect(mockGetQueryTableResults).toHaveBeenCalled()
     })
 
-    const button = screen.getByRole('link', { name: 'View 42 items' })
+    const button = await screen.findByRole('link', { name: 'View 42 items' })
 
     // Button should have href and target="_blank" for external links
     expect(button).toHaveAttribute('href', mockHref)
@@ -158,7 +158,7 @@ describe('QueryCountButton', () => {
       expect(mockGetQueryTableResults).toHaveBeenCalled()
     })
 
-    const button = screen.getByRole('link', { name: 'View 42 items' })
+    const button = await screen.findByRole('link', { name: 'View 42 items' })
     await userEvent.click(button)
 
     expect(mockOnClick).toHaveBeenCalledTimes(1)
@@ -183,7 +183,7 @@ describe('QueryCountButton', () => {
       expect(mockGetQueryTableResults).toHaveBeenCalled()
     })
 
-    const button = screen.getByRole('link', { name: 'View 42 items' })
+    const button = await screen.findByRole('link', { name: 'View 42 items' })
     expect(button).toHaveClass('MuiButton-outlined')
     expect(button).toHaveClass('MuiButton-colorSecondary')
   })

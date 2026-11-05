@@ -522,7 +522,7 @@ test.describe('cell expansion on focus', () => {
 
       const rect = await activeInputRect(page)
       const maxWidth = await page.evaluate(() =>
-        parseFloat(
+        Number.parseFloat(
           getComputedStyle(document.documentElement).getPropertyValue(
             '--dsg-cell-expanded-max-width',
           ),
@@ -548,7 +548,7 @@ test.describe('cell expansion on focus', () => {
       )
 
       const maxHeight = await page.evaluate(() =>
-        parseFloat(
+        Number.parseFloat(
           getComputedStyle(document.documentElement).getPropertyValue(
             '--dsg-cell-expanded-max-height',
           ),

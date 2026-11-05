@@ -537,7 +537,7 @@ export function TableRowGenericCard(props: TableRowGenericCardProps) {
         columnName === 'datasetSizeInBytes'
       ) {
         columnDisplayName = 'Size'
-        renderedValue = calculateFriendlyFileSize(parseInt(rawValue))
+        renderedValue = calculateFriendlyFileSize(Number.parseInt(rawValue))
       } // SWC-6115: special rendering of the version column (for Views)
       else if (isView && columnName === 'currentVersion') {
         const synapseId = data[schema.id]

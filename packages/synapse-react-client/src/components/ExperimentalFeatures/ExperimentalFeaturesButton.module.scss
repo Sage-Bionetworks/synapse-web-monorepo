@@ -1,0 +1,40 @@
+$track-width: 38px;
+$thumb-size: 20px;
+$switch-transition: 150ms;
+
+.container {
+  display: flex;
+  align-items: center;
+}
+
+.track:global(.MuiButtonBase-root) {
+  display: flex;
+  justify-content: flex-start;
+  width: $track-width;
+  height: $thumb-size;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.38);
+  transition: background-color $switch-transition;
+}
+
+.active:global(.MuiButtonBase-root) {
+  background-color: var(--synapse-secondary-action-color);
+
+  .thumb {
+    transform: translateX($track-width - $thumb-size);
+  }
+}
+
+.thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $thumb-size;
+  height: $thumb-size;
+  border-radius: 50%;
+  background-color: var(--synapse-white);
+  color: var(--synapse-gray-900);
+  font-size: 10px;
+  font-weight: 700;
+  transition: transform $switch-transition;
+}

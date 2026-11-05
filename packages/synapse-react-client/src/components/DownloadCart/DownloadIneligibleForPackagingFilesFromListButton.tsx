@@ -425,7 +425,9 @@ export function DownloadIneligibleForPackagingFilesFromListButton(
 
               // Get total file size from headers
               const contentLength = response.headers.get('content-length')
-              const totalBytes = contentLength ? parseInt(contentLength, 10) : 0
+              const totalBytes = contentLength
+                ? Number.parseInt(contentLength, 10)
+                : 0
 
               // Update progress with file size
               setDownloadProgress(prev =>

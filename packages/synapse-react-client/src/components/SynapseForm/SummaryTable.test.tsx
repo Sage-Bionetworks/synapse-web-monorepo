@@ -88,7 +88,7 @@ describe('SummaryTable', () => {
     expect(
       Object.keys(_props.formData.naming).indexOf('chemical_name'),
     ).not.toBe(-1)
-    expect(_props.formData.naming.chemical_name).not.toBeUndefined()
+    expect(_props.formData.naming.chemical_name).toBeDefined()
     screen.getByText('Chemical Name')
 
     const firstColumns = container.querySelectorAll('td:first-child')

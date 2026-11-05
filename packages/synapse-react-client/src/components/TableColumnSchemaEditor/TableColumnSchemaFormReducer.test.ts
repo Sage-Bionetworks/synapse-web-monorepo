@@ -143,7 +143,7 @@ describe('TableColumnSchemaFormReducer', () => {
     })
 
     expect(newState).not.toBe(prevState)
-    expect(newState.length).toBe(initialLength + 1)
+    expect(newState).toHaveLength(initialLength + 1)
   })
   test('appendJsonSubColumn', () => {
     const initialLength = prevState[1].jsonSubColumns!.length
@@ -162,7 +162,7 @@ describe('TableColumnSchemaFormReducer', () => {
     })
 
     expect(newState).not.toBe(prevState)
-    expect(newState[1].jsonSubColumns!.length).toBe(initialLength + 1)
+    expect(newState[1].jsonSubColumns!).toHaveLength(initialLength + 1)
   })
   test('setColumnModelValue - top level column model', () => {
     const initialValue = prevState[0]
@@ -308,7 +308,7 @@ describe('TableColumnSchemaFormReducer', () => {
     expect(newState[0].name).toEqual(initialValue.name)
     expect(newState[0].columnType).toEqual(ColumnTypeEnum.INTEGER_LIST)
     // maximumListLength should not have changed
-    expect(newState[0].maximumListLength).toEqual(5)
+    expect(newState[0].maximumListLength).toBe(5)
   })
   test('changeColumnModelType - canHaveMaxListLength becomes false', () => {
     // STRING_LIST -> STRING
@@ -410,7 +410,7 @@ describe('TableColumnSchemaFormReducer', () => {
     expect(newState[0].name).toEqual(initialValue.name)
     expect(newState[0].columnType).toEqual(ColumnTypeEnum.BOOLEAN)
     // facetType should not have changed
-    expect(newState[0].facetType).toEqual('enumeration')
+    expect(newState[0].facetType).toBe('enumeration')
   })
   test('changeColumnModelType - new type does not allow same facet type', () => {
     // STRING -> DOUBLE with 'enumeration'
@@ -914,7 +914,7 @@ describe('TableColumnSchemaFormReducer', () => {
     })
 
     expect(newState).not.toBe(prevState)
-    expect(newState.length).toBe(1)
+    expect(newState).toHaveLength(1)
     expect(newState[0]).toBe(prevState[1])
   })
 
@@ -945,8 +945,8 @@ describe('TableColumnSchemaFormReducer', () => {
     })
 
     expect(newState).not.toBe(prevState)
-    expect(newState.length).toBe(1)
-    expect(newState[0].jsonSubColumns!.length).toBe(1)
+    expect(newState).toHaveLength(1)
+    expect(newState[0].jsonSubColumns!).toHaveLength(1)
     expect(newState[0].jsonSubColumns![0]).toBe(jsonSubColumn2)
   })
 

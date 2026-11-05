@@ -215,9 +215,9 @@ describe('useAridhiaMutation', () => {
       result.current.mutate(undefined)
     })
 
-    await waitFor(() =>
-      expect(onSuccess).toHaveBeenCalledWith('the-data', undefined, undefined),
-    )
+    // Only the data is asserted: TanStack appends further callback arguments across versions.
+    await waitFor(() => expect(onSuccess).toHaveBeenCalledOnce())
+    expect(onSuccess.mock.calls[0][0]).toBe('the-data')
   })
 
   it.each([
