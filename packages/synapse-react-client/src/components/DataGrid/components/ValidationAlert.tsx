@@ -14,11 +14,11 @@ import pluralize from 'pluralize'
 import { Fragment, useMemo, useState } from 'react'
 import { SynapseSpinner } from '../../LoadingScreen/LoadingScreen'
 import {
+  collectValidationErrors,
   groupErrors,
   LimitedGroup,
   limitGroups,
   RowEntry,
-  ValidationError,
 } from '../utils/groupValidationErrors'
 
 type GroupBy = 'row' | 'column' | 'message'
@@ -34,6 +34,8 @@ type ValidationAlertProps = {
   columnOrder: number[]
   onNavigateToCell: (rowIndex: number, colIndex: number) => void
   isLoading?: boolean
+  /** When provided, the banner offers a "Hide" link that calls this. */
+  onHide?: () => void
 }
 
 type NavProps = {
@@ -94,6 +96,12 @@ const rowLinkSx = {
   textDecoration: 'none',
   cursor: 'pointer',
   '&:hover': { textDecoration: 'underline' },
+} as const
+
+const headerLinkSx = {
+  cursor: 'pointer',
+  flexShrink: 0,
+  fontWeight: 'normal',
 } as const
 
 const bannerBaseSx = {
@@ -286,24 +294,15 @@ export const ValidationAlert = ({
   columnOrder,
   onNavigateToCell,
   isLoading = false,
+  onHide,
 }: ValidationAlertProps) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [groupBy, setGroupBy] = useState<GroupBy>('row')
 
-  const allErrors = useMemo((): ValidationError[] => {
-    const errors: ValidationError[] = []
-    rowValues.forEach((row, rowIndex) => {
-      const status = row.__validationStatus
-      if (status !== 'invalid' && status !== 'pending') return
-      const pending = status === 'pending'
-      row.__cellValidationResults?.forEach((messages, columnName) => {
-        messages.forEach(message =>
-          errors.push({ rowIndex, columnName, message, pending }),
-        )
-      })
-    })
-    return errors
-  }, [rowValues])
+  const allErrors = useMemo(
+    () => collectValidationErrors(rowValues),
+    [rowValues],
+  )
 
   const byColumn = useMemo(
     () =>
@@ -393,19 +392,29 @@ export const ValidationAlert = ({
           gap: 1,
         }}
       >
-        <Typography variant="body1" fontWeight="bold">
-          Validation errors
-        </Typography>
         <Chip
           label={allErrors.length.toLocaleString()}
           color="error"
           size="small"
         />
+        <Typography variant="body1" fontWeight="bold">
+          Validation errors
+        </Typography>
+        {onHide && (
+          <Link
+            component="button"
+            variant="body1"
+            onClick={onHide}
+            sx={headerLinkSx}
+          >
+            Hide
+          </Link>
+        )}
         <Link
           component="button"
           variant="body1"
           onClick={() => setIsExpanded(p => !p)}
-          sx={{ cursor: 'pointer', flexShrink: 0, fontWeight: 'normal' }}
+          sx={headerLinkSx}
         >
           {shouldExpand ? 'Collapse' : 'Expand'}
         </Link>

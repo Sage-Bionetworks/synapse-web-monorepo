@@ -72,6 +72,29 @@ describe('ValidationAlert', () => {
     expect(screen.getByText('Collapse')).toBeInTheDocument()
   })
 
+  it('calls onHide when the Hide link is clicked', async () => {
+    const onHide = vi.fn()
+    const rowValues = [makeInvalidRow({ platform: ['cannot be empty'] })]
+    render(
+      <ValidationAlert
+        {...defaultProps}
+        rowValues={rowValues}
+        onHide={onHide}
+      />,
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Hide' }))
+    expect(onHide).toHaveBeenCalledOnce()
+  })
+
+  it('does not offer Hide without an onHide handler', () => {
+    const rowValues = [makeInvalidRow({ platform: ['cannot be empty'] })]
+    render(<ValidationAlert {...defaultProps} rowValues={rowValues} />)
+    expect(
+      screen.queryByRole('button', { name: 'Hide' }),
+    ).not.toBeInTheDocument()
+  })
+
   it('renders three tabs when expanded', async () => {
     const rowValues = [makeInvalidRow({ platform: ['cannot be empty'] })]
     render(<ValidationAlert {...defaultProps} rowValues={rowValues} />)

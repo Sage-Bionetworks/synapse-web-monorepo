@@ -1,3 +1,5 @@
+import type { DataGridRow } from '../DataGridTypes'
+
 export type ValidationError = {
   rowIndex: number
   columnName: string
@@ -14,6 +16,24 @@ export type LimitedGroup = {
   entries: { key: string; rows: RowEntry[]; hiddenRowCount: number }[]
   /** Entries dropped entirely because the row budget ran out */
   hiddenEntryCount: number
+}
+
+/** Lists every cell error of rows whose validation is invalid or pending, in row order. */
+export function collectValidationErrors(
+  rowValues: DataGridRow[],
+): ValidationError[] {
+  const errors: ValidationError[] = []
+  rowValues.forEach((row, rowIndex) => {
+    const status = row.__validationStatus
+    if (status !== 'invalid' && status !== 'pending') return
+    const pending = status === 'pending'
+    row.__cellValidationResults?.forEach((messages, columnName) => {
+      messages.forEach(message =>
+        errors.push({ rowIndex, columnName, message, pending }),
+      )
+    })
+  })
+  return errors
 }
 
 /** Groups errors two levels deep, preserving first-seen order at each level. */

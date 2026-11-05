@@ -1,0 +1,10 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 16px 0 8px;
+  border: 1px solid var(--synapse-gray-300);
+  border-radius: 18px;
+  white-space: nowrap;
+}
