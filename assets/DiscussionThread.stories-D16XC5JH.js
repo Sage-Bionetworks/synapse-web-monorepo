@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-BCiCTKAo.js";import{n as t,t as n}from"./DiscussionThread-3lZP8hhH.js";var r,i,a;function o(){return(o=e((()=>{t(),r={title:`Synapse/DiscussionThread`,component:n},i={args:{threadId:`1138`,limit:30}},a=[`DiscussionThreadDemo`]})))()}o();export{i as DiscussionThreadDemo,a as __namedExportsOrder,r as default};
