@@ -88,10 +88,12 @@ jobs:
         with:
           fetch-depth: 0
           filter: tree:0
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@3e9ad7370203c1e93d109be57f3b72eb0eb511b1 # v4.4.0
       - uses: ./.github/actions/pnpm-setup-action
       - id: test
         run: |
-          pnpm nx affected --target test --base=remotes/origin/main \
+          pnpm nx affected --target test \
             --exclude='*,!synapse-react-client' \
             -- --shard=${{ matrix.shard }}/${{ strategy.job-total }}
       - name: Upload test report
