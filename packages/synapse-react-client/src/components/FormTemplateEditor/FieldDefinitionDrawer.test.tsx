@@ -6,11 +6,7 @@ import {
   FieldDefinitionDrawer,
   FieldDefinitionDrawerProps,
 } from './FieldDefinitionDrawer'
-import {
-  applyFieldType,
-  FIELD_TYPE_OPTIONS,
-  SimpleFieldType,
-} from './schemaFieldUtils'
+import { applyFieldType, FIELD_TYPE_OPTIONS } from './schemaFieldUtils'
 
 const textProperty: RJSFSchema = { type: 'string', title: 'Institution' }
 
@@ -22,13 +18,14 @@ function baseProps(
     propertyKey: 'institution',
     existingKeys: new Set(['institution', 'summaryOfUse']),
     property: textProperty,
+    uiDefinition: {},
     isRequired: false,
     context: 'ALWAYS',
     isUsedInSteps: false,
     onClose: vi.fn(),
     onUpdate: vi.fn(),
     onRenameKey: vi.fn(),
-    onReplace: vi.fn(),
+    onChangeType: vi.fn(),
     onChangeRequired: vi.fn(),
     onChangeContext: vi.fn(),
     onRemove: vi.fn(),
@@ -111,43 +108,35 @@ describe('FieldDefinitionDrawer', () => {
   })
 
   it.each(FIELD_TYPE_OPTIONS)(
-    'replaces the property with the $value shape when the field type changes to it',
+    'reports $value when the field type changes to it',
     async ({ value, label }) => {
       const user = userEvent.setup()
-      const onReplace = vi.fn()
+      const onChangeType = vi.fn()
       // Start from a property of a *different* type than the option being selected -- MUI's
       // Select only fires onChange when the value actually changes.
       const startingType = value === 'text' ? 'boolean' : 'text'
       const startingProperty = applyFieldType(textProperty, startingType)
       render(
         <FieldDefinitionDrawer
-          {...baseProps({ property: startingProperty, onReplace })}
+          {...baseProps({ property: startingProperty, onChangeType })}
         />,
       )
       await user.click(screen.getByLabelText('Field type'))
       await user.click(screen.getByRole('option', { name: label }))
-      // Literal per-type shape (not a call to applyFieldType) so a regression in that helper's
-      // own mapping fails this integration test too, not only schemaFieldUtils.test.ts.
-      const expectedShapeByType: Record<SimpleFieldType, RJSFSchema> = {
-        text: { title: 'Institution', type: 'string' },
-        number: { title: 'Institution', type: 'number' },
-        boolean: { title: 'Institution', type: 'boolean' },
-        choice: { title: 'Institution', type: 'string', enum: ['Option 1'] },
-        multiChoice: {
-          title: 'Institution',
-          type: 'array',
-          items: { type: 'string', enum: ['Option 1'] },
-          uniqueItems: true,
-        },
-        file: {
-          title: 'Institution',
-          type: 'number',
-          format: 'synapse-filehandle-id',
-        },
-      }
-      expect(onReplace).toHaveBeenCalledWith(expectedShapeByType[value])
+      expect(onChangeType).toHaveBeenCalledWith(value)
     },
   )
+
+  it('shows a string whose uiDefinition asks for a textarea as Long answer', () => {
+    render(
+      <FieldDefinitionDrawer
+        {...baseProps({ uiDefinition: { 'ui:widget': 'textarea' } })}
+      />,
+    )
+    expect(
+      screen.getByRole('combobox', { name: 'Field type' }),
+    ).toHaveTextContent('Long answer')
+  })
 
   describe('property key editing', () => {
     it('shows "Required" when the key is cleared', async () => {

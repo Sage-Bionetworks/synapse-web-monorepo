@@ -608,6 +608,100 @@ describe('FormTemplateEditor', () => {
     expect(preview).toHaveAttribute('rows', '5')
   })
 
+  describe('Long answer', () => {
+    async function chooseFieldType(user: UserEvent, label: string) {
+      await user.click(screen.getByRole('combobox', { name: 'Field type' }))
+      await user.click(await screen.findByRole('option', { name: label }))
+    }
+
+    it('holds the choice for a property that is not bound yet, applies it at bind, and previews a multi-line box', async () => {
+      const user = userEvent.setup()
+      const templates = getFormTemplateService([])
+      server.use(...getFormTemplateHandlers(REPO_ENDPOINT, templates))
+      const onSaved = vi.fn()
+      renderEditor(onSaved)
+
+      await createField(user)
+      await chooseFieldType(user, 'Long answer')
+      expect(
+        screen.getByRole('combobox', { name: 'Field type' }),
+      ).toHaveTextContent('Long answer')
+      await user.click(
+        screen.getByRole('button', { name: 'Close field editor' }),
+      )
+      await waitFor(() =>
+        expect(screen.getByRole('button', { name: 'New' })).toBeEnabled(),
+      )
+      await user.click(screen.getByRole('combobox', { name: 'Bind field' }))
+      await user.click(
+        await screen.findByRole('option', { name: 'New field (/newField)' }),
+      )
+
+      const preview = screen.getByRole('textbox', { name: 'root_newField' })
+      expect(preview.tagName).toBe('TEXTAREA')
+
+      await user.type(getNameField(), 'My Template')
+      await user.click(screen.getByRole('button', { name: 'Create Template' }))
+      await waitFor(() => expect(onSaved).toHaveBeenCalled())
+      expect(templates.getAll()[0].steps[0].fields).toEqual([
+        {
+          schemaPath: '/newField',
+          uiDefinition: { 'ui:widget': 'textarea' },
+          isPublic: false,
+        },
+      ])
+      expect(createdSchemas[0].properties?.newField).toEqual(
+        expect.objectContaining({ type: 'string' }),
+      )
+    })
+
+    it('reopens as Long answer, and switching away removes only ui:widget', async () => {
+      const user = userEvent.setup()
+      const templates = getFormTemplateService()
+      server.use(...getFormTemplateHandlers(REPO_ENDPOINT, templates))
+      listSchemaVersionsSpy.mockResolvedValue({
+        page: [{ semanticVersion: '1.0.0' }],
+      })
+      const onSaved = vi.fn()
+      renderEditor(onSaved, mockGenomicsTemplate.id)
+      await screen.findByRole('heading', { name: 'Edit Form Template' })
+
+      const libraryRow = screen.getByRole('button', {
+        name: 'Edit Intended Data Use Statement',
+      })
+      expect(libraryRow).toHaveTextContent('Long answer')
+      await user.click(libraryRow)
+      expect(
+        screen.getByRole('combobox', { name: 'Field type' }),
+      ).toHaveTextContent('Long answer')
+
+      await chooseFieldType(user, 'Text')
+      await user.click(
+        screen.getByRole('button', { name: 'Close field editor' }),
+      )
+      await waitFor(() =>
+        expect(
+          screen.getByRole('button', { name: 'Save Changes' }),
+        ).toBeEnabled(),
+      )
+      expect(
+        screen.getByRole('textbox', { name: 'root_intendedDataUse' }).tagName,
+      ).toBe('INPUT')
+
+      await user.click(screen.getByRole('button', { name: 'Save Changes' }))
+      await waitFor(() => expect(onSaved).toHaveBeenCalled())
+      expect(
+        templates.getOneById(mockGenomicsTemplate.id)?.steps[0].fields,
+      ).toEqual([
+        {
+          schemaPath: '/intendedDataUse',
+          uiDefinition: { 'ui:options': { rows: 5 } },
+          isPublic: true,
+        },
+      ])
+    })
+  })
+
   it('shows an error instead of the editor when the template cannot be loaded', async () => {
     renderEditor(vi.fn(), 'missing-template')
 

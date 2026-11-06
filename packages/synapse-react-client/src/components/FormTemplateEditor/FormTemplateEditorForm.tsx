@@ -89,10 +89,11 @@ export function FormTemplateEditorForm({
     usedPaths,
     existingPropertyKeys,
     unboundProperties,
+    uiDefinitions,
     handleCreateField,
     renamePropertyKey,
     handleUpdateProperty,
-    handleReplaceProperty,
+    handleChangeFieldType,
     handleChangeRequired,
     handleChangeContext,
     handleRemoveProperty,
@@ -244,6 +245,7 @@ export function FormTemplateEditorForm({
             <FieldLibrary
               jsonSchema={jsonSchema}
               usedPaths={usedPaths}
+              uiDefinitions={uiDefinitions}
               selectedPropertyKey={editingPropertyKey}
               onSelectField={setEditingPropertyKey}
               onCreateField={handleCreateField}
@@ -332,6 +334,11 @@ export function FormTemplateEditorForm({
           propertyKey={editingPropertyKey}
           existingKeys={existingPropertyKeys}
           property={editingProperty}
+          uiDefinition={
+            editingPropertyKey
+              ? uiDefinitions[propertyKeyToPointer(editingPropertyKey)]
+              : undefined
+          }
           isRequired={editingIsRequired}
           context={editingContext}
           isUsedInSteps={editingIsUsedInSteps}
@@ -344,9 +351,9 @@ export function FormTemplateEditorForm({
             if (editingPropertyKey)
               renamePropertyKey(editingPropertyKey, newKey)
           }}
-          onReplace={next => {
+          onChangeType={type => {
             if (editingPropertyKey)
-              handleReplaceProperty(editingPropertyKey, next)
+              handleChangeFieldType(editingPropertyKey, type)
           }}
           onChangeRequired={isReq => {
             if (editingPropertyKey)
@@ -392,7 +399,12 @@ export function FormTemplateEditorForm({
                 {property.title || propertyKey}
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                {fieldTypeLabel(detectFieldType(property))}
+                {fieldTypeLabel(
+                  detectFieldType(
+                    property,
+                    uiDefinitions[propertyKeyToPointer(propertyKey)],
+                  ),
+                )}
               </Typography>
             </Paper>
           )

@@ -7,6 +7,7 @@ import {
 import {
   bindField,
   changeContext,
+  changeFieldType,
   changeRequired,
   createField,
   FormTemplateDraftState,
@@ -326,6 +327,48 @@ describe('replaceSteps', () => {
     const renamed = renamePropertyKey(unbound, 'age', 'yearsOld')
     expect(renamed.unboundUiDefinitions).toEqual({ '/yearsOld': uiDefinition })
     expect(removeProperty(renamed, 'yearsOld').unboundUiDefinitions).toEqual({})
+  })
+})
+
+describe('changeFieldType', () => {
+  it('writes the long-answer widget to the bound slot, and removes only that when switched back', () => {
+    const state = draft([
+      {
+        ...step('s1'),
+        fields: [
+          {
+            schemaPath: '/age',
+            uiDefinition: { 'ui:options': { rows: 3 } },
+            isPublic: false,
+          },
+        ],
+      },
+    ])
+
+    const long = changeFieldType(state, 'age', 'longText')
+    expect(resolve(long, 'age')?.subSchema).toMatchObject({ type: 'string' })
+    expect(long.steps[0].fields[0].uiDefinition).toEqual({
+      'ui:options': { rows: 3 },
+      'ui:widget': 'textarea',
+    })
+
+    const text = changeFieldType(long, 'age', 'text')
+    expect(text.steps[0].fields[0].uiDefinition).toEqual({
+      'ui:options': { rows: 3 },
+    })
+  })
+
+  it('holds the choice for an unbound property until it is bound', () => {
+    const long = changeFieldType(draft([step('s1')]), 'age', 'longText')
+    expect(long.unboundUiDefinitions).toEqual({
+      '/age': { 'ui:widget': 'textarea' },
+    })
+    expect(
+      bindField(long, 'age', 's1').steps[0].fields[0].uiDefinition,
+    ).toEqual({ 'ui:widget': 'textarea' })
+    expect(changeFieldType(long, 'age', 'number').unboundUiDefinitions).toEqual(
+      {},
+    )
   })
 })
 

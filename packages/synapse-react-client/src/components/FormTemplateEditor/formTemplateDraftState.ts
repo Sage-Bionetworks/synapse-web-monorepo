@@ -17,7 +17,12 @@ import {
   setSchemaPropertyContext,
   setSchemaPropertyRequired,
 } from '@/utils/jsonschema/submissionContext'
-import { generatePropertyKey } from './schemaFieldUtils'
+import {
+  applyFieldType,
+  applyFieldTypeUiDefinition,
+  generatePropertyKey,
+  SimpleFieldType,
+} from './schemaFieldUtils'
 import { EditableFormTemplateStep } from './utils'
 
 export type FormTemplateDraftState = {
@@ -156,6 +161,71 @@ export function replaceProperty(
   return {
     ...state,
     jsonSchema: replaceSchemaPropertyDefinition(state.jsonSchema, key, next),
+  }
+}
+
+/**
+ * Each property's slot `uiDefinition`, keyed by `schemaPath`: the bound slot's, or the one held for
+ * an unbound property.
+ */
+export function uiDefinitionsByPath(
+  state: FormTemplateDraftState,
+): Record<string, UiSchema> {
+  const byPath = { ...state.unboundUiDefinitions }
+  for (const field of state.steps.flatMap(step => step.fields)) {
+    byPath[field.schemaPath] = (field.uiDefinition as UiSchema | null) ?? {}
+  }
+  return byPath
+}
+
+/**
+ * Change a property to a simple field type: its schema takes that type's shape, and its slot
+ * `uiDefinition` (held in the draft until bound, if unbound) takes that type's widget.
+ */
+export function changeFieldType(
+  state: FormTemplateDraftState,
+  key: string,
+  type: SimpleFieldType,
+): FormTemplateDraftState {
+  const resolved = resolveSchemaPropertyAtPointer(
+    state.jsonSchema,
+    propertyKeyToPointer(key),
+  )
+  if (!resolved) return state
+  const next = replaceProperty(
+    state,
+    key,
+    applyFieldType(resolved.subSchema, type),
+  )
+  const path = propertyKeyToPointer(key)
+  if (boundSchemaPaths(state.steps).has(path)) {
+    return {
+      ...next,
+      steps: next.steps.map(step => ({
+        ...step,
+        fields: step.fields.map(f =>
+          f.schemaPath === path
+            ? {
+                ...f,
+                uiDefinition: applyFieldTypeUiDefinition(
+                  (f.uiDefinition as UiSchema | null) ?? {},
+                  type,
+                ),
+              }
+            : f,
+        ),
+      })),
+    }
+  }
+  const { [path]: held = {}, ...unboundUiDefinitions } =
+    state.unboundUiDefinitions
+  const uiDefinition = applyFieldTypeUiDefinition(held, type)
+  return {
+    ...next,
+    unboundUiDefinitions:
+      Object.keys(uiDefinition).length > 0
+        ? { ...unboundUiDefinitions, [path]: uiDefinition }
+        : unboundUiDefinitions,
   }
 }
 
