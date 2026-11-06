@@ -8,6 +8,7 @@ import {
   BUNDLE_MASK_QUERY_RESULTS,
   BUNDLE_MASK_QUERY_SELECT_COLUMNS,
 } from '@/utils/SynapseConstants'
+import { SUPPRESSED_FACET_VALUE_COUNT } from '@/utils/functions/enumerationFacet'
 import { AggregateDataConfiguration } from '@sage-bionetworks/synapse-client/generated/models/AggregateDataConfiguration'
 import { BelowThresholdErrorResponse } from '@sage-bionetworks/synapse-client/generated/models/BelowThresholdErrorResponse'
 import { ColumnModel } from '@sage-bionetworks/synapse-client/generated/models/ColumnModel'
@@ -394,11 +395,17 @@ function buildFacet(
   selectedValues: readonly string[],
   aggregateConfig: AggregateDataConfiguration | undefined,
   noiseKeyPrefix: string,
+  suppressFacetValuesBelowThreshold: boolean,
 ): FacetColumnResult {
   const sortedCounts = Array.from(counts).toSorted(
     ([valueA, countA], [valueB, countB]) =>
       countB - countA || valueA.localeCompare(valueB),
   )
+  const isSuppressed = (count: number) =>
+    suppressFacetValuesBelowThreshold &&
+    aggregateConfig !== undefined &&
+    count > 0 &&
+    count < aggregateConfig.suppressionThreshold
   const postProcessing = aggregateConfig?.facetPostProcessingConfig
   const parameters = postProcessing?.parameters
   if (
@@ -415,7 +422,9 @@ function buildFacet(
       binSize,
       binnedValues: sortedCounts.map(([value, count]) => ({
         value,
-        binMin: Math.floor(count / binSize) * binSize,
+        binMin: isSuppressed(count)
+          ? SUPPRESSED_FACET_VALUE_COUNT
+          : Math.floor(count / binSize) * binSize,
         isSelected: selectedValues.includes(value),
       })),
     }
@@ -431,18 +440,23 @@ function buildFacet(
       'org.sagebionetworks.repo.model.table.FacetColumnResultValues',
     columnName,
     facetType: 'enumeration',
-    facetValues: sortedCounts.map(([value, count]) => ({
-      value,
-      count:
-        epsilon === undefined
-          ? count
-          : addLaplaceNoise(
-              count,
-              epsilon,
-              `${noiseKeyPrefix}\u0000${columnName}\u0000${value}`,
-            ),
-      isSelected: selectedValues.includes(value),
-    })),
+    facetValues: sortedCounts.map(([value, count]) => {
+      let reportedCount = count
+      if (isSuppressed(count)) {
+        reportedCount = SUPPRESSED_FACET_VALUE_COUNT
+      } else if (epsilon !== undefined) {
+        reportedCount = addLaplaceNoise(
+          count,
+          epsilon,
+          `${noiseKeyPrefix}\u0000${columnName}\u0000${value}`,
+        )
+      }
+      return {
+        value,
+        count: reportedCount,
+        isSelected: selectedValues.includes(value),
+      }
+    }),
   }
 }
 
@@ -688,6 +702,7 @@ function buildFacets(
   query: Query,
   matchedRows: MatchedRows,
   aggregateConfig: AggregateDataConfiguration | undefined,
+  suppressFacetValuesBelowThreshold: boolean,
 ): FacetColumnResult[] {
   const selectedFacets = query.selectedFacets ?? []
   const noiseKeyPrefix = JSON.stringify([
@@ -707,6 +722,7 @@ function buildFacets(
           : [],
         aggregateConfig,
         noiseKeyPrefix,
+        suppressFacetValuesBelowThreshold,
       )
     })
 }
@@ -731,6 +747,11 @@ const COHORT_SQL_PATTERN = /^\s*SELECT\s+(\w+)\s+FROM\s+(syn\d+)\s*$/i
 export type CohortBuilderMockQueryOptions = {
   /** Maximum number of distinct values in one cohort. Defaults to {@link MOCK_MAX_COHORT_VALUES}. */
   maxCohortValues?: number
+  /**
+   * When true, an aggregate-only query reports each facet value whose count is below the suppression threshold as
+   * suppressed, as the backend will once PLFM-10107 is fixed. Defaults to false.
+   */
+  suppressFacetValuesBelowThreshold?: boolean
 }
 
 type CohortReference = {
@@ -1012,6 +1033,7 @@ function executeQuery(
       query,
       matchedRows,
       aggregateConfig,
+      options.suppressFacetValuesBelowThreshold ?? false,
     )
     bundle.facetPostProcessingApplied =
       aggregateConfig?.facetPostProcessingConfig !== undefined
