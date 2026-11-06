@@ -11,6 +11,7 @@ import {
   mockJsonSchemaAR1WikiPage,
   mockJsonSchemaAR1WikiPageKey,
 } from '@/mocks/accessRequirement/mockJsonSchemaAccessRequirements'
+import { getGenomicsDataSharingHandlers } from '@/mocks/accessRequirement/mockGenomicsDataSharing'
 import { mockJsonSchemaRegistry } from '@/mocks/accessRequirement/mockJsonSchemas'
 import { mockUnmetControlledDataRestrictionInformationACT } from '@/mocks/mock_has_access_data'
 import { mockApprovedSubmission } from '@/mocks/dataaccess/MockSubmission'
@@ -430,71 +431,83 @@ export const LockAccessRequirement: Story = {
 const schemaDrivenAccessRequirement =
   mockJsonSchemaAR1 as unknown as AccessRequirement
 
+const schemaDrivenRequirementHandlers = [
+  http.get(
+    `${MOCK_REPO_ORIGIN}${ACCESS_REQUIREMENT_WIKI_PAGE_KEY(mockJsonSchemaAR1WikiPageKey.ownerObjectId)}`,
+    () => HttpResponse.json(mockJsonSchemaAR1WikiPageKey),
+  ),
+  http.get(
+    `${MOCK_REPO_ORIGIN}${WIKI_PAGE_ID(
+      mockJsonSchemaAR1WikiPageKey.ownerObjectType,
+      mockJsonSchemaAR1WikiPageKey.ownerObjectId,
+      mockJsonSchemaAR1WikiPageKey.wikiPageId,
+    )}`,
+    () => HttpResponse.json(mockJsonSchemaAR1WikiPage),
+  ),
+  ...getWikiHandlers(MOCK_REPO_ORIGIN),
+  ...getEntityHandlers(MOCK_REPO_ORIGIN),
+  getCurrentUserCertifiedValidatedHandler(MOCK_REPO_ORIGIN, true, true),
+  ...getTwoFactorAuthStatusHandler(true),
+  ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN),
+  ...getAccessRequirementEntityBindingHandlers(MOCK_REPO_ORIGIN, undefined, [
+    schemaDrivenAccessRequirement,
+  ]),
+  ...getAccessRequirementStatusHandlers(MOCK_REPO_ORIGIN, [
+    {
+      accessRequirementId: String(mockJsonSchemaAR1.id),
+      concreteType:
+        'org.sagebionetworks.repo.model.dataaccess.ManagedACTAccessRequirementStatus',
+      isApproved: false,
+    },
+  ]),
+  http.post(`${MOCK_REPO_ORIGIN}/repo/v1/restrictionInformation`, () =>
+    HttpResponse.json({
+      ...mockUnmetControlledDataRestrictionInformationACT,
+      restrictionDetails: [
+        {
+          accessRequirementId: mockJsonSchemaAR1.id,
+          isMet: false,
+          isExempt: false,
+          isApproved: false,
+        },
+      ],
+    }),
+  ),
+  ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
+  ...getDataAccessRequestHandlers(MOCK_REPO_ORIGIN),
+  ...getFormTemplateHandlers(MOCK_REPO_ORIGIN),
+  ...getRegisteredSchemaHandlers(
+    MOCK_REPO_ORIGIN,
+    Object.values(mockJsonSchemaRegistry) as JSONSchema7[],
+  ),
+]
+
+const schemaDrivenRequirementArgs = {
+  entityId: mockFileEntity.id,
+  accessRequirementFromProps: [schemaDrivenAccessRequirement],
+  isAuthenticated: true,
+  renderAsModal: true,
+}
+
 /**
  * A JsonSchemaAccessRequirement asks the requester for the answers described by its FormTemplate after the
  * information every request needs.
  */
 export const SchemaDrivenRequirement: Story = {
+  parameters: { msw: { handlers: schemaDrivenRequirementHandlers } },
+  args: schemaDrivenRequirementArgs,
+}
+
+/** The schema-driven request form with a required Yes/No question, asked in its Data Sharing step. */
+export const SchemaDrivenRequirementWithYesNoQuestion: Story = {
   parameters: {
     msw: {
       handlers: [
-        http.get(
-          `${MOCK_REPO_ORIGIN}${ACCESS_REQUIREMENT_WIKI_PAGE_KEY(mockJsonSchemaAR1WikiPageKey.ownerObjectId)}`,
-          () => HttpResponse.json(mockJsonSchemaAR1WikiPageKey),
-        ),
-        http.get(
-          `${MOCK_REPO_ORIGIN}${WIKI_PAGE_ID(
-            mockJsonSchemaAR1WikiPageKey.ownerObjectType,
-            mockJsonSchemaAR1WikiPageKey.ownerObjectId,
-            mockJsonSchemaAR1WikiPageKey.wikiPageId,
-          )}`,
-          () => HttpResponse.json(mockJsonSchemaAR1WikiPage),
-        ),
-        ...getWikiHandlers(MOCK_REPO_ORIGIN),
-        ...getEntityHandlers(MOCK_REPO_ORIGIN),
-        getCurrentUserCertifiedValidatedHandler(MOCK_REPO_ORIGIN, true, true),
-        ...getTwoFactorAuthStatusHandler(true),
-        ...getAccessRequirementHandlers(MOCK_REPO_ORIGIN),
-        ...getAccessRequirementEntityBindingHandlers(
-          MOCK_REPO_ORIGIN,
-          undefined,
-          [schemaDrivenAccessRequirement],
-        ),
-        ...getAccessRequirementStatusHandlers(MOCK_REPO_ORIGIN, [
-          {
-            accessRequirementId: String(mockJsonSchemaAR1.id),
-            concreteType:
-              'org.sagebionetworks.repo.model.dataaccess.ManagedACTAccessRequirementStatus',
-            isApproved: false,
-          },
-        ]),
-        http.post(`${MOCK_REPO_ORIGIN}/repo/v1/restrictionInformation`, () =>
-          HttpResponse.json({
-            ...mockUnmetControlledDataRestrictionInformationACT,
-            restrictionDetails: [
-              {
-                accessRequirementId: mockJsonSchemaAR1.id,
-                isMet: false,
-                isExempt: false,
-                isApproved: false,
-              },
-            ],
-          }),
-        ),
-        ...getUserProfileHandlers(MOCK_REPO_ORIGIN),
-        ...getDataAccessRequestHandlers(MOCK_REPO_ORIGIN),
-        ...getFormTemplateHandlers(MOCK_REPO_ORIGIN),
-        ...getRegisteredSchemaHandlers(
-          MOCK_REPO_ORIGIN,
-          Object.values(mockJsonSchemaRegistry) as JSONSchema7[],
-        ),
+        // MSW uses the first matching handler, so these replace the plain genomics form
+        ...getGenomicsDataSharingHandlers(MOCK_REPO_ORIGIN),
+        ...schemaDrivenRequirementHandlers,
       ],
     },
   },
-  args: {
-    entityId: mockFileEntity.id,
-    accessRequirementFromProps: [schemaDrivenAccessRequirement],
-    isAuthenticated: true,
-    renderAsModal: true,
-  },
+  args: schemaDrivenRequirementArgs,
 }

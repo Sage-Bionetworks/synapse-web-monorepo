@@ -13,13 +13,24 @@ import { FieldTemplate } from '@/components/JsonSchemaForm/templates/FieldTempla
 import { BooleanWidget } from '@/components/JsonSchemaForm/widgets/BooleanWidget'
 import { DateTimeWidget } from '@/components/JsonSchemaForm/widgets/DateTimeWidget'
 import { SelectWidget } from '@/components/JsonSchemaForm/widgets/SelectWidget'
+import { YesNoRadioWidget } from '@/components/JsonSchemaForm/widgets/YesNoRadioWidget'
 import { Optional } from '@/utils/types/Optional'
 import RJSFForm, { FormProps } from '@rjsf/core'
 import Form from '@rjsf/mui'
-import { GenericObjectType, RJSFSchema } from '@rjsf/utils'
+import { GenericObjectType, RJSFSchema, Widget } from '@rjsf/utils'
 import validator from '@rjsf/validator-ajv8'
 import { Ref } from 'react'
 import styles from './JsonSchemaForm.module.scss'
+
+/** The widget that replaces RJSF's `CheckboxWidget` for each `booleanWidget` mode, if any. */
+const BOOLEAN_WIDGETS: Record<
+  NonNullable<CustomFormContext['booleanWidget']>,
+  Widget | undefined
+> = {
+  yesNoSelect: BooleanWidget,
+  yesNoRadio: YesNoRadioWidget,
+  checkbox: undefined,
+}
 
 /**
  * Wrapper around react-jsonschema-form that supplies default styling/templates/widgets for
@@ -30,9 +41,11 @@ export function JsonSchemaForm<T = any>(
     formRef?: Ref<RJSFForm<T, RJSFSchema, GenericObjectType>>
   },
 ) {
-  const useCustomBooleanWidget =
-    (props.formContext as CustomFormContext | undefined)?.booleanWidget !==
-    'checkbox'
+  const booleanWidget =
+    BOOLEAN_WIDGETS[
+      (props.formContext as CustomFormContext | undefined)?.booleanWidget ??
+        'yesNoSelect'
+    ]
   return (
     <Form
       ref={props.formRef}
@@ -54,7 +67,7 @@ export function JsonSchemaForm<T = any>(
         ...props.templates,
       }}
       widgets={{
-        ...(useCustomBooleanWidget ? { CheckboxWidget: BooleanWidget } : {}),
+        ...(booleanWidget ? { CheckboxWidget: booleanWidget } : {}),
         DateTimeWidget: DateTimeWidget,
         SelectWidget: SelectWidget,
         ...props.widgets,
