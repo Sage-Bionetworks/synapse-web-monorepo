@@ -66,7 +66,7 @@ function renderEditor(
       ),
     },
   ])
-  // Read the way SWC does: the host prompts before leaving while this says the user is editing.
+  // The host app (SWC) asks before leaving the page while this store reports editing.
   const isEditingStore = createTestIsEditingStore()
   const result = render(<RouterProvider router={router} />, {
     wrapper: createWrapper(undefined, isEditingStore),
