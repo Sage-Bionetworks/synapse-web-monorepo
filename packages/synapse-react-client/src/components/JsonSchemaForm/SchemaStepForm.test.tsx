@@ -1,6 +1,6 @@
 import { GeneratedFormStepForRjsf } from '@/utils/jsonschema/generateDataAccessSchema'
 import { SchemaData } from '@/utils/jsonschema/schemaData'
-import { act, render, screen } from '@testing-library/react'
+import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createRef } from 'react'
 import SchemaStepForm, { SchemaStepFormHandle } from './SchemaStepForm'
@@ -33,10 +33,17 @@ function renderStep(schemaData: SchemaData = {}) {
 }
 
 describe('SchemaStepForm', () => {
-  it('renders a Yes/No question as Yes and No radio buttons', () => {
+  it('renders a Yes/No question as a radio group named by the question, with neither picked', () => {
     renderStep()
-    expect(screen.getByRole('radio', { name: 'Yes' })).not.toBeChecked()
-    expect(screen.getByRole('radio', { name: 'No' })).not.toBeChecked()
+    const question = screen.getByRole('radiogroup', {
+      name: 'IRB approval obtained',
+    })
+    expect(
+      within(question).getByRole('radio', { name: 'Yes' }),
+    ).not.toBeChecked()
+    expect(
+      within(question).getByRole('radio', { name: 'No' }),
+    ).not.toBeChecked()
     expect(screen.queryByRole('combobox')).not.toBeInTheDocument()
   })
 
@@ -66,8 +73,10 @@ describe('SchemaStepForm', () => {
     expect(onValid).not.toHaveBeenCalled()
   })
 
-  it('passes validation once a required Yes/No question is answered No', () => {
-    const { ref, onValid } = renderStep({ hasIrbApproval: false })
+  it('passes validation once a required Yes/No question is answered No', async () => {
+    const user = userEvent.setup()
+    const { ref, onValid } = renderStep()
+    await user.click(screen.getByRole('radio', { name: 'No' }))
     act(() => ref.current?.submit())
     expect(onValid).toHaveBeenCalledWith({ hasIrbApproval: false })
   })

@@ -125,3 +125,25 @@ export const MultiSelectField: Story = {
     },
   },
 }
+
+export const YesNoField: Story = {
+  args: {
+    template: template([
+      {
+        title: 'Basics',
+        fields: [{ schemaPath: '/hasIrbApproval', uiDefinition: {} }],
+      },
+    ]),
+    jsonSchema: {
+      ...schema,
+      properties: {
+        ...schema.properties,
+        hasIrbApproval: {
+          type: 'boolean',
+          title: 'IRB approval obtained',
+          description: 'Has an IRB approved this research?',
+        },
+      },
+    },
+  },
+}
