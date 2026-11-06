@@ -1,8 +1,10 @@
 /*
- * Guards an editor's unsaved changes against being lost by leaving it: in-app navigation and
- * the editor's own exits (e.g. Cancel) ask for confirmation, and closing or reloading the tab
- * triggers the browser's leave-page prompt.
+ * Guards an editor's unsaved changes against being lost by leaving it. Navigation inside the
+ * router and the editor's own exits (e.g. Cancel) ask in a dialog. Leaving the page (host app
+ * links, closing or reloading the tab) is left to the host app through the global editing state,
+ * as SWC already does for its other editors; prompting here too would ask twice.
  */
+import { useGlobalIsEditingContext } from '@/utils/context/GlobalIsEditingContext'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useBlocker } from 'react-router'
 
@@ -43,12 +45,11 @@ export function useUnsavedChangesPrompt(
   )
   const [pendingExit, setPendingExit] = useState<(() => void) | null>(null)
 
+  const { setIsEditing } = useGlobalIsEditingContext()
   useEffect(() => {
-    if (!isDirty) return
-    const preventUnload = (event: BeforeUnloadEvent) => event.preventDefault()
-    window.addEventListener('beforeunload', preventUnload)
-    return () => window.removeEventListener('beforeunload', preventUnload)
-  }, [isDirty])
+    setIsEditing(isDirty)
+    return () => setIsEditing(false)
+  }, [isDirty, setIsEditing])
 
   const exitWithoutPrompt = useCallback((exit: () => void) => {
     isExitingRef.current = true

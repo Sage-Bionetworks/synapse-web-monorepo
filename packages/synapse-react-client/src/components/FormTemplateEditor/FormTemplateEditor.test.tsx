@@ -13,6 +13,7 @@ import {
   getRegisteredSchemaHandlers,
 } from '@/mocks/msw/handlers/schemaHandlers'
 import { server } from '@/mocks/msw/server'
+import { createTestIsEditingStore } from '@/testutils/IsEditingStoreTestUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { BackendDestinationEnum, getEndpoint } from '@/utils/functions'
 import { FormTemplate } from '@sage-bionetworks/synapse-client'
@@ -65,9 +66,12 @@ function renderEditor(
       ),
     },
   ])
-  return render(<RouterProvider router={router} />, {
-    wrapper: createWrapper(),
+  // Read the way SWC does: the host prompts before leaving while this says the user is editing.
+  const isEditingStore = createTestIsEditingStore()
+  const result = render(<RouterProvider router={router} />, {
+    wrapper: createWrapper(undefined, isEditingStore),
   })
+  return { ...result, isEditingStore }
 }
 
 /** Create a field via the library's "New" button; opens its drawer. */
@@ -808,12 +812,6 @@ describe('FormTemplateEditor', () => {
   })
 
   describe('unsaved changes', () => {
-    function isUnloadPrevented() {
-      const event = new Event('beforeunload', { cancelable: true })
-      window.dispatchEvent(event)
-      return event.defaultPrevented
-    }
-
     it('cancels right away when nothing changed', async () => {
       const user = userEvent.setup()
       const onCancel = vi.fn()
@@ -851,17 +849,21 @@ describe('FormTemplateEditor', () => {
       const user = userEvent.setup()
       const onSaved = vi.fn()
       const onCancel = vi.fn()
-      renderEditor(onSaved, mockGenomicsTemplate.id, onCancel)
+      const { isEditingStore } = renderEditor(
+        onSaved,
+        mockGenomicsTemplate.id,
+        onCancel,
+      )
       await user.type(
         await screen.findByRole('textbox', { name: 'Internal Name' }),
         ' v2',
       )
-      expect(isUnloadPrevented()).toBe(true)
+      expect(isEditingStore.getSnapshot()).toBe(true)
 
       await user.click(screen.getByRole('button', { name: 'Save Changes' }))
       await waitFor(() => expect(onSaved).toHaveBeenCalled())
 
-      expect(isUnloadPrevented()).toBe(false)
+      await waitFor(() => expect(isEditingStore.getSnapshot()).toBe(false))
       await user.click(screen.getByRole('button', { name: 'Cancel' }))
       expect(onCancel).toHaveBeenCalledTimes(1)
       expect(
