@@ -1,3 +1,4 @@
+import { isMustCheckBoolean } from '@/components/JsonSchemaForm/mustCheckBoolean'
 import { SYNAPSE_FILE_HANDLE_ID_FORMAT } from '@/utils/jsonschema/schemaData'
 import { RJSFSchema, UiSchema } from '@rjsf/utils'
 
@@ -65,10 +66,9 @@ export function detectFieldType(
       : 'text'
   }
   if (prop.type === 'number' || prop.type === 'integer') return 'number'
-  if (prop.type === 'boolean') {
-    if (prop.const === undefined) return 'boolean'
-    return prop.const === true ? 'mustCheck' : null
-  }
+  if (isMustCheckBoolean(prop)) return 'mustCheck'
+  if (prop.type === 'boolean')
+    return prop.const === undefined ? 'boolean' : null
   return null
 }
 
