@@ -38,7 +38,9 @@ export const COHORT_FILES_PART_MASK =
   BUNDLE_MASK_QUERY_COLUMN_MODELS |
   BUNDLE_MASK_QUERY_FACETS
 
-export const COHORT_FILES_TITLE = 'Files and datasets'
+export const COHORT_FILES_TITLE = 'Matching Files and Datasets'
+export const COHORT_FILES_DESCRIPTION =
+  'Each row is a file that contains data from at least one matching participant — not a list of individual participants.'
 export const COHORT_FILES_ZERO_COUNT_TEXT =
   'No files or datasets for the selected cohort'
 export const COHORT_TOO_LARGE_TEXT = `This cohort is too large to list its files and datasets. Narrow it to ${MAX_COHORT_PARTICIPANTS.toLocaleString()} participants or fewer.`
@@ -90,9 +92,12 @@ export function CohortFilesPanel(props: CohortFilesPanelProps) {
 
   return (
     <section aria-labelledby={titleId}>
-      <Typography variant="headline2" id={titleId}>
-        {COHORT_FILES_TITLE}
-      </Typography>
+      <div className={styles.filesHeader}>
+        <Typography variant="headline2" id={titleId}>
+          {COHORT_FILES_TITLE}
+        </Typography>
+        <Typography variant="body1">{COHORT_FILES_DESCRIPTION}</Typography>
+      </div>
       {isCohortTooLarge ? (
         <Typography variant="body1" className={styles.state}>
           {COHORT_TOO_LARGE_TEXT}

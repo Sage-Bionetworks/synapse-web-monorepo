@@ -49,6 +49,7 @@ import {
   DEFAULT_COHORT_BUILDER_AUDIT_NOTICE,
 } from './CohortBuilder'
 import {
+  COHORT_FILES_TITLE,
   COHORT_FILES_ZERO_COUNT_TEXT,
   COHORT_TOO_LARGE_TEXT,
 } from './CohortFilesPanel'
@@ -673,7 +674,7 @@ describe('CohortBuilder', () => {
       await screen.findByText(`${allParticipantsCount} participants`)
 
       const filesPanel = screen.getByRole('region', {
-        name: 'Files and datasets',
+        name: COHORT_FILES_TITLE,
       })
       expect(await within(filesPanel).findByRole('progressbar')).toBeVisible()
       pendingFilesQuery.resolve()
