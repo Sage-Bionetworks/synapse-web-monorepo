@@ -21,6 +21,38 @@ export function extractEntityIdFromSql(sql: string): string | null {
   return matches ? matches[1] : null
 }
 
+const SELECT_LIST_PATTERN = /^\s*select\s+([\s\S]+?)\s+(from\s+syn\d+)/i
+const PLAIN_COLUMN_PATTERN = /^(?:\w+|"(?:[^"]|"")+")$/
+
+/**
+ * Rewrites `sql` to select only `columns`, keeping its FROM, WHERE, and ORDER BY clauses.
+ *
+ * Synapse sizes each page of query results by row width, so selecting only the
+ * columns a caller reads lets a wide table be fetched in far fewer pages.
+ *
+ * @returns The rewritten SQL, or `sql` unchanged when its select list isn't `*`
+ *   or a plain list of column names, or when it has a GROUP BY clause
+ */
+export function selectOnlyColumns(sql: string, columns: string[]): string {
+  const match = SELECT_LIST_PATTERN.exec(sql)
+  if (!match) return sql
+  const [selectThroughTable, selectList, fromTable] = match
+
+  // DISTINCT, aggregates, aliases, and grouping make the returned rows depend on
+  // the select list, so narrowing those queries could change which rows come back.
+  const isPlainColumnList =
+    selectList.trim() === '*' ||
+    selectList.split(',').every(item => PLAIN_COLUMN_PATTERN.test(item.trim()))
+  if (!isPlainColumnList || /\bgroup\s+by\b/i.test(sql)) return sql
+
+  const quotedColumns = [...new Set(columns)].map(
+    column => `"${column.replaceAll('"', '""')}"`,
+  )
+  return `SELECT ${quotedColumns.join(', ')} ${fromTable}${sql.slice(
+    selectThroughTable.length,
+  )}`
+}
+
 /**
  * Queries Synapse anonymously to fetch resource IDs for a detail page.
  * Uses pagination to handle large result sets.
@@ -46,6 +78,7 @@ export async function fetchResourceIds(
     }
   }
 
+  const sql = selectOnlyColumns(config.sql, [config.primaryKeyColumn])
   const ids: string[] = []
   let offset = 0
   let hasMore = true
@@ -67,7 +100,7 @@ export async function fetchResourceIds(
         entityId,
         partMask,
         query: {
-          sql: config.sql,
+          sql,
           offset,
           limit: pageSize,
         },

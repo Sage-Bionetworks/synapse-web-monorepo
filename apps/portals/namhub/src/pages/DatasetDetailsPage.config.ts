@@ -4,6 +4,5 @@ import { datasetsSql } from '../config/resources'
 export const metadataConfig: DetailPageMetadataConfig = {
   sql: datasetsSql,
   titleColumn: 'name',
-  descriptionColumn: 'description',
   paramName: 'id',
 }

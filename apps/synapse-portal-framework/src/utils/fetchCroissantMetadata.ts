@@ -18,6 +18,13 @@ const CROISSANT_DATA_TABLE = 'syn65903895'
 /** Maximum number of concurrent S3 file fetches during batch pre-loading. */
 const FETCH_CONCURRENCY = 20
 
+/**
+ * How long a single Croissant file fetch may take before it is abandoned.
+ * Without a limit, one stalled S3 response holds up the whole build for the
+ * runtime's default fetch timeout (5 minutes in Node).
+ */
+export const CROISSANT_FETCH_TIMEOUT_MS = 30_000
+
 // ---------------------------------------------------------------------------
 // URL index cache: dataset entity ID → S3 URL
 // ---------------------------------------------------------------------------
@@ -100,12 +107,15 @@ const contentCache = getSharedPrerenderCache<string, Record<string, unknown>>(
 
 /**
  * Fetches a single Croissant file from S3 and parses it as JSON.
+ * Resolves to `null` if the file can't be fetched or parsed, or the fetch times out.
  */
 async function fetchSingleCroissantFile(
   s3Url: string,
 ): Promise<Record<string, unknown> | null> {
   try {
-    const response = await fetch(s3Url)
+    const response = await fetch(s3Url, {
+      signal: AbortSignal.timeout(CROISSANT_FETCH_TIMEOUT_MS),
+    })
     if (!response.ok) return null
     const content = await response.text()
     return JSON.parse(content) as Record<string, unknown>

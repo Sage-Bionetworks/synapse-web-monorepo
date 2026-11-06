@@ -2,6 +2,7 @@ import { describe, expect, it, vi, beforeEach } from 'vitest'
 import {
   extractEntityIdFromSql,
   fetchResourceIds,
+  selectOnlyColumns,
 } from './queryTableForSitemap'
 import type { DetailPageConfig } from './types'
 import {
@@ -61,6 +62,60 @@ describe('extractEntityIdFromSql', () => {
 
   it('returns null for empty string', () => {
     expect(extractEntityIdFromSql('')).toBeNull()
+  })
+})
+
+describe('selectOnlyColumns', () => {
+  it.each([
+    ['SELECT * FROM syn123', ['id'], 'SELECT "id" FROM syn123'],
+    [
+      "SELECT * FROM syn68554562 WHERE datasetStatus = 'released'",
+      ['id'],
+      `SELECT "id" FROM syn68554562 WHERE datasetStatus = 'released'`,
+    ],
+    [
+      "SELECT * FROM syn21994974.13 WHERE dhPortalIndex = 'TRUE' ORDER BY 'study'",
+      ['study'],
+      `SELECT "study" FROM syn21994974.13 WHERE dhPortalIndex = 'TRUE' ORDER BY 'study'`,
+    ],
+    [
+      'select * from syn24189696 order by initiative asc',
+      ['initiative'],
+      'SELECT "initiative" from syn24189696 order by initiative asc',
+    ],
+    [
+      'SELECT * FROM syn17024229 ORDER BY isFeatured DESC',
+      ['Grant Number'],
+      'SELECT "Grant Number" FROM syn17024229 ORDER BY isFeatured DESC',
+    ],
+    [
+      'SELECT name,id,contributor FROM syn66496326',
+      ['id'],
+      'SELECT "id" FROM syn66496326',
+    ],
+    [
+      'SELECT "Grant Number", id FROM syn1',
+      ['Grant Number'],
+      'SELECT "Grant Number" FROM syn1',
+    ],
+    [
+      'SELECT * FROM syn1',
+      ['id', 'title', 'id'],
+      'SELECT "id", "title" FROM syn1',
+    ],
+    ['SELECT * FROM syn1', ['say "hi"'], 'SELECT "say ""hi""" FROM syn1'],
+  ])('narrows %s to %j', (sql, columns, expected) => {
+    expect(selectOnlyColumns(sql, columns)).toBe(expected)
+  })
+
+  it.each([
+    ['DISTINCT', 'SELECT DISTINCT studyId FROM syn1'],
+    ['an aggregate', 'SELECT COUNT(*) FROM syn1'],
+    ['an alias', 'SELECT studyKey AS studyId FROM syn1'],
+    ['GROUP BY', 'SELECT studyId, name FROM syn1 GROUP BY studyId, name'],
+    ['no table reference', 'invalid sql'],
+  ])('leaves a query with %s unchanged', (_, sql) => {
+    expect(selectOnlyColumns(sql, ['studyId'])).toBe(sql)
   })
 })
 
@@ -138,6 +193,42 @@ describe('fetchResourceIds', () => {
 
     expect(result.success).toBe(true)
     expect(result.ids).toEqual(['syn111', 'syn222', 'syn333'])
+  })
+
+  it('queries only the primary key column', async () => {
+    const mockClient = {
+      tableServicesClient: {
+        postRepoV1EntityIdTableQueryAsyncStart: vi
+          .fn()
+          .mockResolvedValue({ token: 'job123' }),
+      },
+      asynchronousJobServicesClient: {
+        getRepoV1AsynchronousJobJobId: vi.fn(),
+      },
+    }
+    mockSynapseClient.mockImplementation(function () {
+      return mockClient as unknown as SynapseClient
+    })
+    mockWaitForAsyncResult.mockResolvedValueOnce({
+      jobState: 'COMPLETE',
+      responseBody: {
+        queryResult: {
+          queryResults: { headers: [{ name: 'studyId' }], rows: [] },
+        },
+      },
+    } as unknown as AsynchronousJobStatus)
+
+    await fetchResourceIds({
+      ...mockConfig,
+      sql: 'SELECT * FROM syn12345 WHERE isPublic = true',
+    })
+
+    const callArgs =
+      mockClient.tableServicesClient.postRepoV1EntityIdTableQueryAsyncStart.mock
+        .calls[0][0]
+    expect(callArgs.queryBundleRequest.query.sql).toBe(
+      'SELECT "studyId" FROM syn12345 WHERE isPublic = true',
+    )
   })
 
   it('handles pagination with multiple pages', async () => {
