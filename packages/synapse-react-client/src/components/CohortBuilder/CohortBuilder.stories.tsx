@@ -7,7 +7,10 @@ import {
   ADKP_MOCK_SAMPLE_QUERIES,
   ELITE_MOCK_SAMPLE_QUERIES,
 } from '@/mocks/cohortBuilder/cohortBuilderMockSampleQueries'
-import { CohortBuilderAccess } from '@/mocks/cohortBuilder/cohortBuilderMockQueryEngine'
+import {
+  CohortBuilderAccess,
+  CohortBuilderMockQueryOptions,
+} from '@/mocks/cohortBuilder/cohortBuilderMockQueryEngine'
 import { getCohortBuilderStorybookHandlers } from '@/mocks/msw/handlers/cohortBuilderHandlers'
 import { registerTableQueryResult } from '@/mocks/msw/handlers/tableQueryService'
 import { Meta, StoryObj } from '@storybook/react-vite'
@@ -30,7 +33,7 @@ type Story = StoryObj<typeof meta>
 function getMockParameters(
   profile: CohortBuilderMockProfile,
   access: CohortBuilderAccess,
-  maxCohortValues?: number,
+  queryOptions: CohortBuilderMockQueryOptions = {},
 ) {
   return {
     stack: 'mock',
@@ -38,7 +41,7 @@ function getMockParameters(
       handlers: getCohortBuilderStorybookHandlers({
         profile,
         access,
-        maxCohortValues,
+        ...queryOptions,
       }),
     },
   }
@@ -92,7 +95,9 @@ export const EliteWithFilesBelowThreshold: Story = {
 /** ELITE, unapproved user: with a cohort limit of 1,000, the 1,096 male participants are too many to hand off. */
 export const EliteWithFilesCohortTooLarge: Story = {
   args: eliteWithFilesArgs,
-  parameters: getMockParameters(ELITE_MOCK_PROFILE, 'AGGREGATE_ONLY', 1000),
+  parameters: getMockParameters(ELITE_MOCK_PROFILE, 'AGGREGATE_ONLY', {
+    maxCohortValues: 1000,
+  }),
   play: buildCohort('Sex', 'Male'),
 }
 
@@ -106,6 +111,14 @@ export const EliteFullAccess: Story = {
 export const EliteAggregateOnly: Story = {
   args: { participantsTableId: ELITE_MOCK_PROFILE.participantsVirtualTableId },
   parameters: getMockParameters(ELITE_MOCK_PROFILE, 'AGGREGATE_ONLY'),
+}
+
+/** ELITE, unapproved user: counts below the suppression threshold of 20 are suppressed (PLFM-10107), others binned. */
+export const EliteAggregateOnlySuppressedFacetValues: Story = {
+  args: { participantsTableId: ELITE_MOCK_PROFILE.participantsVirtualTableId },
+  parameters: getMockParameters(ELITE_MOCK_PROFILE, 'AGGREGATE_ONLY', {
+    suppressFacetValuesBelowThreshold: true,
+  }),
 }
 
 /** ADKP synthetic participants, approved user: exact counts. */
@@ -125,6 +138,14 @@ export const EliteAggregateOnlyBelowThreshold: Story = {
 export const AdkpAggregateOnly: Story = {
   args: { participantsTableId: ADKP_MOCK_PROFILE.participantsVirtualTableId },
   parameters: getMockParameters(ADKP_MOCK_PROFILE, 'AGGREGATE_ONLY'),
+}
+
+/** ADKP, unapproved user: counts below the suppression threshold of 20 are suppressed (PLFM-10107), others noised. */
+export const AdkpAggregateOnlySuppressedFacetValues: Story = {
+  args: { participantsTableId: ADKP_MOCK_PROFILE.participantsVirtualTableId },
+  parameters: getMockParameters(ADKP_MOCK_PROFILE, 'AGGREGATE_ONLY', {
+    suppressFacetValuesBelowThreshold: true,
+  }),
 }
 
 /** ELITE, unapproved user: sample queries to load into the Query Builder. */
