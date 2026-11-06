@@ -1,5 +1,9 @@
 import type { CohortBuilderProps } from 'synapse-react-client/components/CohortBuilder/CohortBuilder'
 import type { QueryWrapperPlotNavProps } from 'synapse-react-client/components/QueryWrapperPlotNav/QueryWrapperPlotNav'
+import type {
+  QBConditionDefinition,
+  QBGroupDefinition,
+} from 'synapse-react-client/components/QueryBuilder/QueryBuilderTypes'
 import {
   cavaticaConnectAccountURL,
   cohortBuilderFilesSql,
@@ -96,8 +100,86 @@ export const filesViewQueryWrapperPlotNavProps: QueryWrapperPlotNavProps = {
   shouldDeepLink: false,
 }
 
+const allBraakStages: QBConditionDefinition = {
+  columnName: 'Braak',
+  op: 'is_any_of',
+  values: [
+    'None',
+    'Stage I',
+    'Stage II',
+    'Stage III',
+    'Stage IV',
+    'Stage V',
+    'Stage VI',
+  ],
+}
+
+/** Participants with both single-nucleus RNA-seq and ATAC-seq data, from a 10x multiome assay or separate assays. */
+const multiomeAssays: QBGroupDefinition = {
+  combinator: 'AND',
+  children: [
+    {
+      columnName: 'Assays',
+      op: 'is_any_of',
+      values: ['10x multiome, snrnaSeq', 'snrnaSeq'],
+    },
+    {
+      columnName: 'Assays',
+      op: 'is_any_of',
+      values: ['10x multiome, snATACSeq', 'snATACSeq'],
+    },
+  ],
+}
+
+const neocorticalTissues: QBConditionDefinition = {
+  columnName: 'tissues',
+  op: 'is_any_of',
+  values: [
+    'inferior temporal gyrus',
+    'dorsolateral prefrontal cortex',
+    'angular gyrus',
+  ],
+}
+
 export const cohortBuilderV2Props: CohortBuilderProps = {
   participantsTableId: cohortBuilderV2ParticipantsTableId,
   filesTableId: cohortBuilderV2FilesTableId,
   participantsSourceTableId: cohortBuilderV2ParticipantsSourceTableId,
+  sampleQueries: {
+    'Hippocampal Multiome Across All Braak Stages': {
+      combinator: 'AND',
+      children: [
+        multiomeAssays,
+        allBraakStages,
+        {
+          columnName: 'tissues',
+          op: 'is_any_of',
+          values: [
+            'insular cortex',
+            'medial entorhinal cortex',
+            'lateral entorhinal cortex',
+            'hippocampus',
+          ],
+        },
+      ],
+    },
+    'Neocortical Multiome Across All Braak Stages': {
+      combinator: 'AND',
+      children: [multiomeAssays, allBraakStages, neocorticalTissues],
+    },
+    'Neocortical Multiome, Ages 71+, APOE4-Typed': {
+      combinator: 'AND',
+      children: [
+        {
+          columnName: 'binnedAges',
+          op: 'is_any_of',
+          values: ['71-75', '76-80', '81-85', '86-89', '90+'],
+        },
+        { columnName: 'apoe4Statuses', op: 'is_any_of', values: ['no', 'yes'] },
+        multiomeAssays,
+        allBraakStages,
+        neocorticalTissues,
+      ],
+    },
+  },
 }
