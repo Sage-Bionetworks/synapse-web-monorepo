@@ -212,4 +212,28 @@ describe('FormTemplatePreview', () => {
     expect(screen.getByRole('button', { name: 'Red' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Blue' })).toBeInTheDocument()
   })
+
+  it('shows a Yes/No question as Yes and No radio buttons', async () => {
+    const user = userEvent.setup()
+    renderPreview({
+      template: template([
+        {
+          title: 'Basics',
+          fields: [{ schemaPath: '/hasIrbApproval', uiDefinition: {} }],
+        },
+      ]),
+      jsonSchema: {
+        ...schema,
+        properties: {
+          ...schema.properties,
+          hasIrbApproval: { type: 'boolean', title: 'IRB approval obtained' },
+        },
+      },
+    })
+    expect(getFieldLabel('IRB approval obtained')).toBeInTheDocument()
+    expect(screen.queryByRole('combobox')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('radio', { name: 'No' }))
+    expect(screen.getByRole('radio', { name: 'No' })).toBeChecked()
+    expect(screen.getByRole('radio', { name: 'Yes' })).not.toBeChecked()
+  })
 })

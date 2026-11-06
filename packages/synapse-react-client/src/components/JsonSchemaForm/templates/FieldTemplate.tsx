@@ -35,8 +35,8 @@ export function FieldTemplate<
   const hasDescription = Boolean(uiOptions.description ?? schema.description)
 
   // The real checkbox widget (formContext.booleanWidget === 'checkbox') renders its own label
-  // via MUI's FormControlLabel; only the Yes/No select needs FieldTemplate to force one, since
-  // RJSF hides labels for boolean schemas by default.
+  // via MUI's FormControlLabel; only the true/false select and the Yes/No radios need
+  // FieldTemplate to force one, since RJSF hides labels for boolean schemas by default.
   const usesRealCheckbox =
     (registry.formContext as CustomFormContext | undefined)?.booleanWidget ===
     'checkbox'
@@ -61,8 +61,8 @@ export function FieldTemplate<
       classNames={classNamesList.join(' ').trim()}
     >
       <RJSFInputLabelWrapper<T, S, F>
-        // RJSF hides labels for boolean schemas by default; the Yes/No select widget doesn't
-        // render its own label, so force one on — the real checkbox widget does, so don't.
+        // RJSF hides labels for boolean schemas by default; the true/false select and the Yes/No
+        // radios don't render their own label, so force one on — the real checkbox widget does.
         hideLabel={
           !(displayLabel || (schema.type === 'boolean' && !usesRealCheckbox))
         }

@@ -1,8 +1,14 @@
+import { CustomFormContext } from '@/components/JsonSchemaForm/CustomFormContext'
 import { JsonSchemaForm } from '@/components/JsonSchemaForm/JsonSchemaForm'
 import { GeneratedFormStepForRjsf } from '@/utils/jsonschema/generateDataAccessSchema'
 import { getStepData, SchemaData } from '@/utils/jsonschema/schemaData'
 import RJSFForm from '@rjsf/core'
 import { Ref, useImperativeHandle, useRef } from 'react'
+
+const SCHEMA_STEP_FORM_CONTEXT: CustomFormContext = {
+  descriptionVariant: 'inline',
+  booleanWidget: 'yesNoRadio',
+}
 
 export type SchemaStepFormHandle = {
   /** Validates the step's answers, showing errors against invalid fields. */
@@ -36,7 +42,7 @@ export default function SchemaStepForm(props: SchemaStepFormProps) {
       schema={step.jsonSchema}
       uiSchema={step.uiSchema}
       formData={getStepData(schemaData, step)}
-      formContext={{ descriptionVariant: 'inline' }}
+      formContext={SCHEMA_STEP_FORM_CONTEXT}
       liveValidate={false}
       onChange={event =>
         onSchemaDataChange({ ...schemaData, ...event.formData })
