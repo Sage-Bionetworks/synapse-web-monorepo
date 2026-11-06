@@ -1,6 +1,7 @@
 import { RJSFSchema } from '@rjsf/utils'
 import {
   applyFieldType,
+  choiceOptionProblems,
   choiceOptions,
   detectFieldType,
   fieldTypeLabel,
@@ -39,8 +40,16 @@ describe('detectFieldType', () => {
       'with tuple items',
       { items: [{ type: 'string', enum: ['a'] }], uniqueItems: true },
     ],
+    [
+      'with a non-string value',
+      { items: { type: 'string', enum: ['a', 1] }, uniqueItems: true },
+    ],
   ])('treats an enum array %s as advanced', (_, shape) => {
     expect(detectFieldType({ type: 'array', ...shape })).toBeNull()
+  })
+
+  it('treats a string enum holding a non-string value as advanced, since choices are edited as text', () => {
+    expect(detectFieldType({ type: 'string', enum: ['a', null] })).toBeNull()
   })
 
   it('detects a plain string as text', () => {
@@ -62,6 +71,18 @@ describe('detectFieldType', () => {
 
   it('returns null for undefined', () => {
     expect(detectFieldType(undefined)).toBeNull()
+  })
+})
+
+describe('choiceOptionProblems', () => {
+  it('flags blank choices as empty, even when repeated, and every copy of a duplicate', () => {
+    expect(choiceOptionProblems(['Red', '', ' ', 'Blue', 'Red'])).toEqual([
+      'duplicate',
+      'empty',
+      'empty',
+      null,
+      'duplicate',
+    ])
   })
 })
 

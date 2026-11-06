@@ -9,12 +9,10 @@ import {
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { useRef } from 'react'
-import { ChoiceOptionProblem, choiceOptionProblems } from './schemaFieldUtils'
-
-const PROBLEM_TEXT: Record<ChoiceOptionProblem, string> = {
-  empty: 'Required',
-  duplicate: 'Already used by another choice',
-}
+import {
+  CHOICE_OPTION_PROBLEM_TEXT,
+  choiceOptionProblems,
+} from './schemaFieldUtils'
 
 type ChoiceOptionsEditorProps = {
   options: string[]
@@ -68,7 +66,7 @@ export function ChoiceOptionsEditor({
                 onChange={e => update(idx, e.target.value)}
                 placeholder={`Option ${idx + 1}`}
                 error={problem !== null}
-                helperText={problem && PROBLEM_TEXT[problem]}
+                helperText={problem && CHOICE_OPTION_PROBLEM_TEXT[problem]}
                 inputRef={(el: HTMLInputElement | null) => {
                   if (el && pendingFocusIdx.current === idx) {
                     pendingFocusIdx.current = null

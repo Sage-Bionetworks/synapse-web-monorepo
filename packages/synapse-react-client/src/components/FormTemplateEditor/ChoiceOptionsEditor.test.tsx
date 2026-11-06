@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { ChoiceOptionsEditor } from './ChoiceOptionsEditor'
+import { CHOICE_OPTION_PROBLEM_TEXT } from './schemaFieldUtils'
 
 /** Mirrors how a real consumer holds the options: state updated by `onChange`. */
 function Harness({ initialOptions }: { initialOptions: string[] }) {
@@ -62,7 +63,7 @@ describe('ChoiceOptionsEditor', () => {
     await user.click(screen.getByRole('button', { name: 'Add choice' }))
     const added = screen.getByRole('textbox', { name: 'Choice 2' })
     expect(added).toHaveAttribute('aria-invalid', 'true')
-    expect(added).toHaveAccessibleDescription('Required')
+    expect(added).toHaveAccessibleDescription(CHOICE_OPTION_PROBLEM_TEXT.empty)
     expect(screen.getByRole('textbox', { name: 'Choice 1' })).toHaveAttribute(
       'aria-invalid',
       'false',
@@ -77,7 +78,16 @@ describe('ChoiceOptionsEditor', () => {
     render(<Harness initialOptions={['Red', '  ']} />)
     expect(
       screen.getByRole('textbox', { name: 'Choice 2' }),
-    ).toHaveAccessibleDescription('Required')
+    ).toHaveAccessibleDescription(CHOICE_OPTION_PROBLEM_TEXT.empty)
+  })
+
+  it('flags repeated blank choices as empty rather than duplicated', () => {
+    render(<Harness initialOptions={['Red', '', '']} />)
+    for (const name of ['Choice 2', 'Choice 3']) {
+      expect(screen.getByRole('textbox', { name })).toHaveAccessibleDescription(
+        CHOICE_OPTION_PROBLEM_TEXT.empty,
+      )
+    }
   })
 
   it('flags each copy of a duplicated choice until they differ', async () => {
@@ -88,7 +98,7 @@ describe('ChoiceOptionsEditor', () => {
     for (const input of [first, third]) {
       expect(input).toHaveAttribute('aria-invalid', 'true')
       expect(input).toHaveAccessibleDescription(
-        'Already used by another choice',
+        CHOICE_OPTION_PROBLEM_TEXT.duplicate,
       )
     }
     expect(screen.getByRole('textbox', { name: 'Choice 2' })).toHaveAttribute(

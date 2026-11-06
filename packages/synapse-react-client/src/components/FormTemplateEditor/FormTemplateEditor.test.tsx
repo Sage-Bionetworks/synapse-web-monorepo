@@ -21,6 +21,7 @@ import userEvent, { UserEvent } from '@testing-library/user-event'
 import { JSONSchema7 } from 'json-schema'
 import { FormTemplateEditor } from './FormTemplateEditor'
 import { ACCESS_REQUIREMENT_BASE_SCHEMA_ID } from './formTemplateSchema'
+import { CHOICE_OPTION_PROBLEM_TEXT } from './schemaFieldUtils'
 
 const REPO_ENDPOINT = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
@@ -393,9 +394,13 @@ describe('FormTemplateEditor', () => {
     await screen.findByRole('heading', { name: 'Edit field' })
     await user.click(screen.getByLabelText('Field type'))
     await user.click(screen.getByRole('option', { name: 'Single choice' }))
+    // Switching to a choice type seeds one choice, so the field stays answerable.
+    expect(screen.getByRole('textbox', { name: 'Choice 1' })).toHaveValue(
+      'Option 1',
+    )
     await user.click(screen.getByRole('button', { name: 'Add choice' }))
     const added = screen.getByRole('textbox', { name: 'Choice 2' })
-    expect(added).toHaveAccessibleDescription('Required')
+    expect(added).toHaveAccessibleDescription(CHOICE_OPTION_PROBLEM_TEXT.empty)
 
     await user.click(screen.getByRole('button', { name: 'Done' }))
     await waitFor(() =>
@@ -412,7 +417,7 @@ describe('FormTemplateEditor', () => {
     )
     expect(
       screen.getByRole('textbox', { name: 'Choice 2' }),
-    ).toHaveAccessibleDescription('Already used by another choice')
+    ).toHaveAccessibleDescription(CHOICE_OPTION_PROBLEM_TEXT.duplicate)
 
     await user.click(screen.getByRole('button', { name: 'Done' }))
     await waitFor(() =>

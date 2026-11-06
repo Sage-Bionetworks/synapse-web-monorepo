@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react-vite'
+import { useState } from 'react'
 import { ChoiceOptionsEditor } from './ChoiceOptionsEditor'
 
 const meta = {
@@ -7,6 +8,19 @@ const meta = {
   args: {
     options: ['Option 1', 'Option 2'],
     onChange: (next: string[]) => console.log('onChange', next),
+  },
+  render: function Render(args) {
+    const [options, setOptions] = useState(args.options)
+    return (
+      <ChoiceOptionsEditor
+        {...args}
+        options={options}
+        onChange={next => {
+          setOptions(next)
+          args.onChange(next)
+        }}
+      />
+    )
   },
 } satisfies Meta<typeof ChoiceOptionsEditor>
 export default meta
@@ -32,5 +46,12 @@ export const ManyOptions: Story = {
       'Japan',
       'Australia',
     ],
+  },
+}
+
+/** An empty choice and a duplicated one, each flagged on its own input. */
+export const InvalidChoices: Story = {
+  args: {
+    options: ['Red', '', 'Blue', 'Red'],
   },
 }

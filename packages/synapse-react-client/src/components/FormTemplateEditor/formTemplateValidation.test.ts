@@ -234,4 +234,31 @@ describe('validateFormTemplateFields', () => {
       { schemaPath: '/color', message: '"color" has duplicate choices.' },
     ])
   })
+
+  it('reports both an empty and a duplicated choice, even on a property no field binds', () => {
+    expect(
+      validateFormTemplateFields([{ title: 'Step 1', fields: [field('/a')] }], {
+        type: 'object',
+        properties: {
+          a: { type: 'string' },
+          color: { type: 'string', enum: ['Red', 'Red', ''] },
+        },
+      }),
+    ).toEqual([
+      { schemaPath: '/color', message: '"color" has an empty choice.' },
+      { schemaPath: '/color', message: '"color" has duplicate choices.' },
+    ])
+  })
+
+  it('leaves an enum with non-string values to the advanced editor rather than checking its choices', () => {
+    expect(
+      validateFormTemplateFields(
+        [{ title: 'Step 1', fields: [field('/count')] }],
+        {
+          type: 'object',
+          properties: { count: { type: 'string', enum: ['one', 2, null] } },
+        },
+      ),
+    ).toEqual([])
+  })
 })
