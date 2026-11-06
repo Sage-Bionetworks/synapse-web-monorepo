@@ -1,6 +1,7 @@
 import { mockGenomicsTemplate } from '@/mocks/accessRequirement/mockFormTemplates'
 import { FormTemplate } from '@sage-bionetworks/synapse-client'
 import { server } from '@/mocks/msw/server'
+import { createTestIsEditingStore } from '@/testutils/IsEditingStoreTestUtils'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { act, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent, { UserEvent } from '@testing-library/user-event'
@@ -46,8 +47,13 @@ function renderAt(...initialEntries: string[]) {
     ],
     { initialEntries, initialIndex: initialEntries.length - 1 },
   )
-  render(<RouterProvider router={router} />, { wrapper: createWrapper() })
-  return router
+  // Read the way SWC does: SWC prompts before leaving the page (header links, other pages,
+  // closing the tab) while this says the user is editing.
+  const isEditingStore = createTestIsEditingStore()
+  render(<RouterProvider router={router} />, {
+    wrapper: createWrapper(undefined, isEditingStore),
+  })
+  return { router, isEditingStore }
 }
 
 async function editName(user: UserEvent) {
@@ -132,7 +138,7 @@ describe('FormTemplateEditorRoute', () => {
 
   it('asks before following an in-app link with unsaved changes', async () => {
     const user = userEvent.setup()
-    renderAt(NEW_FORM_TEMPLATE_PATH)
+    const { isEditingStore } = renderAt(NEW_FORM_TEMPLATE_PATH)
     await editName(user)
 
     await user.click(screen.getByRole('link', { name: 'Form Templates' }))
@@ -151,11 +157,12 @@ describe('FormTemplateEditorRoute', () => {
       }),
     )
     await screen.findByText('Template list')
+    expect(isEditingStore.getSnapshot()).toBe(false)
   })
 
   it('asks before going back with unsaved changes', async () => {
     const user = userEvent.setup()
-    const router = renderAt(FORM_TEMPLATES_PATH, NEW_FORM_TEMPLATE_PATH)
+    const { router } = renderAt(FORM_TEMPLATES_PATH, NEW_FORM_TEMPLATE_PATH)
     await editName(user)
 
     await act(() => router.navigate(-1))
@@ -189,28 +196,33 @@ describe('FormTemplateEditorRoute', () => {
     expect(queryDiscardPrompt()).not.toBeInTheDocument()
   })
 
-  it('asks the browser to confirm closing or reloading the tab only while there are unsaved changes', async () => {
+  it('tells the host app about unsaved changes, and leaves the leave-page prompt to it', async () => {
     const user = userEvent.setup()
-    renderAt(NEW_FORM_TEMPLATE_PATH)
+    const { isEditingStore } = renderAt(NEW_FORM_TEMPLATE_PATH)
     await screen.findByText('Create Form Template')
-    expect(dispatchBeforeUnload().defaultPrevented).toBe(false)
+    expect(isEditingStore.getSnapshot()).toBe(false)
 
     await editName(user)
-    expect(dispatchBeforeUnload().defaultPrevented).toBe(true)
+    expect(isEditingStore.getSnapshot()).toBe(true)
+    // The host already asks before the tab closes while editing; asking here too would ask twice.
+    expect(dispatchBeforeUnload().defaultPrevented).toBe(false)
 
     await user.clear(screen.getByRole('textbox', { name: 'Internal Name' }))
-    expect(dispatchBeforeUnload().defaultPrevented).toBe(false)
+    expect(isEditingStore.getSnapshot()).toBe(false)
   })
 
   it('returns to the list without asking after a successful save', async () => {
     const user = userEvent.setup()
     serveGenomicsTemplate()
-    renderAt(getFormTemplatePath(mockGenomicsTemplate.id!))
+    const { isEditingStore } = renderAt(
+      getFormTemplatePath(mockGenomicsTemplate.id!),
+    )
     await editName(user)
 
     await user.click(screen.getByRole('button', { name: 'Save Changes' }))
 
     await screen.findByText('Template list')
+    expect(isEditingStore.getSnapshot()).toBe(false)
     expect(queryDiscardPrompt()).not.toBeInTheDocument()
   })
 
@@ -252,7 +264,9 @@ describe('FormTemplateEditorRoute', () => {
         return HttpResponse.json({ reason: 'Server error' }, { status: 500 })
       }),
     )
-    renderAt(getFormTemplatePath(mockGenomicsTemplate.id!))
+    const { isEditingStore } = renderAt(
+      getFormTemplatePath(mockGenomicsTemplate.id!),
+    )
     await editName(user)
 
     await user.click(screen.getByRole('button', { name: 'Save Changes' }))
@@ -261,7 +275,7 @@ describe('FormTemplateEditorRoute', () => {
       expect(screen.getByRole('button', { name: 'Cancel' })).toBeEnabled(),
     )
 
-    expect(dispatchBeforeUnload().defaultPrevented).toBe(true)
+    expect(isEditingStore.getSnapshot()).toBe(true)
     await user.click(screen.getByRole('button', { name: 'Cancel' }))
     expect(getDiscardPrompt()).toBeVisible()
   })
