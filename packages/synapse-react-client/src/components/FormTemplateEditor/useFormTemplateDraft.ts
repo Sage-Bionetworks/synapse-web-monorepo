@@ -23,6 +23,7 @@ import {
   removeProperty,
   renamePropertyKey,
   replaceProperty,
+  replaceSteps,
   schemaPropertyKeys,
   updateProperty,
 } from './formTemplateDraftState'
@@ -73,6 +74,7 @@ export function useFormTemplateDraft(
       ? toEditableSteps(initialTemplate.steps)
       : [createEditableStep()],
     editingPropertyKey: null,
+    unboundUiDefinitions: {},
   }))
   const { jsonSchema, steps, editingPropertyKey } = draft
 
@@ -82,7 +84,7 @@ export function useFormTemplateDraft(
   )
   const setSteps = useCallback(
     (next: EditableFormTemplateStep[]) =>
-      setDraft(prev => ({ ...prev, steps: next })),
+      setDraft(prev => replaceSteps(prev, next)),
     [],
   )
   const setEditingPropertyKey = useCallback(

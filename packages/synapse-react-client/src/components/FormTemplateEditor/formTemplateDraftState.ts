@@ -3,7 +3,7 @@
  * and the property open for editing. Every transition keeps the three in sync (renaming a property
  * key rewrites every step field bound to it, removing a property unbinds it from every step, etc).
  */
-import { RJSFSchema } from '@rjsf/utils'
+import { RJSFSchema, UiSchema } from '@rjsf/utils'
 import {
   listResolvedSchemaProperties,
   propertyKeyToPointer,
@@ -25,6 +25,12 @@ export type FormTemplateDraftState = {
   steps: EditableFormTemplateStep[]
   /** The property open in the field definition drawer, if any. */
   editingPropertyKey: string | null
+  /**
+   * The `uiDefinition` each unbound property gets when it is next bound, keyed by `schemaPath`.
+   * Holds what a slot had when it was unbound, and display choices made before the property was
+   * ever bound, so neither is lost while the draft is open.
+   */
+  unboundUiDefinitions: Record<string, UiSchema>
 }
 
 export const NEW_FIELD_TITLE = 'New field'
@@ -86,8 +92,13 @@ export function renamePropertyKey(
   if (newKey === oldKey || !keys.has(oldKey) || keys.has(newKey)) return state
   const oldPath = propertyKeyToPointer(oldKey)
   const newPath = propertyKeyToPointer(newKey)
+  const { [oldPath]: unboundUiDefinition, ...unboundUiDefinitions } =
+    state.unboundUiDefinitions
   return {
     jsonSchema: renameSchemaProperty(state.jsonSchema, oldKey, newKey),
+    unboundUiDefinitions: unboundUiDefinition
+      ? { ...unboundUiDefinitions, [newPath]: unboundUiDefinition }
+      : unboundUiDefinitions,
     steps: state.steps.map(step => ({
       ...step,
       fields: step.fields.map(f =>
@@ -184,8 +195,11 @@ export function removeProperty(
   key: string,
 ): FormTemplateDraftState {
   const path = propertyKeyToPointer(key)
+  const { [path]: _removed, ...unboundUiDefinitions } =
+    state.unboundUiDefinitions
   return {
     jsonSchema: removeSchemaProperty(state.jsonSchema, key),
+    unboundUiDefinitions,
     steps: state.steps.map(step => ({
       ...step,
       fields: step.fields.filter(f => f.schemaPath !== path),
@@ -256,18 +270,48 @@ export function bindField(
   ) {
     return state
   }
+  const { [path]: uiDefinition = {}, ...unboundUiDefinitions } =
+    state.unboundUiDefinitions
   return {
     ...state,
+    unboundUiDefinitions,
     steps: state.steps.map(step =>
       step.uiKey === stepKey
         ? {
             ...step,
             fields: [
               ...step.fields,
-              { schemaPath: path, uiDefinition: {}, isPublic: false },
+              { schemaPath: path, uiDefinition, isPublic: false },
             ],
           }
         : step,
     ),
   }
+}
+
+/**
+ * Replace the step structure wholesale. A slot that drops out keeps its `uiDefinition` for when
+ * its property is bound again; a property that is bound again here no longer needs it kept.
+ */
+export function replaceSteps(
+  state: FormTemplateDraftState,
+  steps: EditableFormTemplateStep[],
+): FormTemplateDraftState {
+  const nextPaths = boundSchemaPaths(steps)
+  const unboundUiDefinitions = Object.fromEntries(
+    Object.entries(state.unboundUiDefinitions).filter(
+      ([path]) => !nextPaths.has(path),
+    ),
+  )
+  for (const field of state.steps.flatMap(step => step.fields)) {
+    const uiDefinition = field.uiDefinition as UiSchema | null
+    if (
+      !nextPaths.has(field.schemaPath) &&
+      uiDefinition &&
+      Object.keys(uiDefinition).length > 0
+    ) {
+      unboundUiDefinitions[field.schemaPath] = uiDefinition
+    }
+  }
+  return { ...state, steps, unboundUiDefinitions }
 }

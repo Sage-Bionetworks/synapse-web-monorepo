@@ -17,6 +17,7 @@ import {
   removeProperty,
   renamePropertyKey,
   replaceProperty,
+  replaceSteps,
   updateProperty,
 } from './formTemplateDraftState'
 import { EditableFormTemplateStep } from './utils'
@@ -69,7 +70,12 @@ function draft(
   steps: EditableFormTemplateStep[] = [step('s1', ['/institution'])],
   editingPropertyKey: string | null = null,
 ): FormTemplateDraftState {
-  return { jsonSchema: schema, steps, editingPropertyKey }
+  return {
+    jsonSchema: schema,
+    steps,
+    editingPropertyKey,
+    unboundUiDefinitions: {},
+  }
 }
 
 /** Each step's bound schemaPaths, for readable assertions. */
@@ -289,6 +295,37 @@ describe('bindField', () => {
   ])('is a no-op when %s', (_label, propertyKey, stepKey) => {
     const state = draft([step('s1', ['/institution']), step('s2')])
     expect(bindField(state, propertyKey, stepKey)).toBe(state)
+  })
+})
+
+describe('replaceSteps', () => {
+  const uiDefinition = { 'ui:widget': 'textarea', 'ui:options': { rows: 5 } }
+  const boundWithUi = () =>
+    draft([
+      {
+        ...step('s1'),
+        fields: [{ schemaPath: '/age', uiDefinition, isPublic: false }],
+      },
+      step('s2'),
+    ])
+
+  it("keeps an unbound slot's uiDefinition for when the property is bound again", () => {
+    const state = boundWithUi()
+    const unbound = replaceSteps(state, [step('s1'), step('s2')])
+    const rebound = bindField(unbound, 'age', 's2')
+
+    expect(rebound.steps[1].fields).toEqual([
+      { schemaPath: '/age', uiDefinition, isPublic: false },
+    ])
+    expect(rebound.unboundUiDefinitions).toEqual({})
+  })
+
+  it('follows a rename and is dropped with the property', () => {
+    const unbound = replaceSteps(boundWithUi(), [step('s1'), step('s2')])
+
+    const renamed = renamePropertyKey(unbound, 'age', 'yearsOld')
+    expect(renamed.unboundUiDefinitions).toEqual({ '/yearsOld': uiDefinition })
+    expect(removeProperty(renamed, 'yearsOld').unboundUiDefinitions).toEqual({})
   })
 })
 
