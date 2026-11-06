@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { ChoiceOptionsEditor } from './ChoiceOptionsEditor'
+import { CHOICE_OPTION_PROBLEM_TEXT } from './schemaFieldUtils'
 
 /** Mirrors how a real consumer holds the options: state updated by `onChange`. */
 function Harness({ initialOptions }: { initialOptions: string[] }) {
@@ -42,26 +43,71 @@ describe('ChoiceOptionsEditor', () => {
     expect(screen.getByRole('button', { name: 'Delete choice' })).toBeDisabled()
   })
 
-  it('adds a new option with a label unique from the existing ones', async () => {
+  it('adds an empty, focused choice whose placeholder suggests its label', async () => {
     const user = userEvent.setup()
-    render(<Harness initialOptions={['Option 1']} />)
+    render(<Harness initialOptions={['Red', 'Blue']} />)
     await user.click(screen.getByRole('button', { name: 'Add choice' }))
-    expect(screen.getByDisplayValue('Option 2')).toBeInTheDocument()
+    const added = screen.getByRole('textbox', { name: 'Choice 3' })
+    expect(added).toHaveValue('')
+    expect(added).toHaveAttribute('placeholder', 'Option 3')
+    expect(added).toHaveFocus()
+
+    // Typing goes straight into the new choice, with no prefilled text to clear first.
+    await user.keyboard('Green')
+    expect(added).toHaveValue('Green')
   })
 
-  it('generates a unique added label even after a middle deletion leaves the naive next-index label taken', async () => {
-    // Regression: naively appending `Option ${options.length + 1}` produces a duplicate once a
-    // middle option has been deleted (e.g. after deleting "Option 2" from
-    // [1, 2, 3], length + 1 = 3, which collides with the surviving "Option 3").
+  it('flags an empty choice on its input until it is filled in', async () => {
     const user = userEvent.setup()
-    render(
-      <Harness initialOptions={['Option 1', 'Option 3']} />, // simulates "Option 2" already removed
-    )
+    render(<Harness initialOptions={['Red']} />)
     await user.click(screen.getByRole('button', { name: 'Add choice' }))
-    const values = screen
-      .getAllByRole('textbox')
-      .map(el => (el as HTMLInputElement).value)
-    expect(values).toEqual(['Option 1', 'Option 3', 'Option 4'])
-    expect(new Set(values).size).toBe(values.length)
+    const added = screen.getByRole('textbox', { name: 'Choice 2' })
+    expect(added).toHaveAttribute('aria-invalid', 'true')
+    expect(added).toHaveAccessibleDescription(CHOICE_OPTION_PROBLEM_TEXT.empty)
+    expect(screen.getByRole('textbox', { name: 'Choice 1' })).toHaveAttribute(
+      'aria-invalid',
+      'false',
+    )
+
+    await user.type(added, 'Blue')
+    expect(added).toHaveAttribute('aria-invalid', 'false')
+    expect(added).not.toHaveAccessibleDescription()
+  })
+
+  it('treats a choice of only spaces as empty', () => {
+    render(<Harness initialOptions={['Red', '  ']} />)
+    expect(
+      screen.getByRole('textbox', { name: 'Choice 2' }),
+    ).toHaveAccessibleDescription(CHOICE_OPTION_PROBLEM_TEXT.empty)
+  })
+
+  it('flags repeated blank choices as empty rather than duplicated', () => {
+    render(<Harness initialOptions={['Red', '', '']} />)
+    for (const name of ['Choice 2', 'Choice 3']) {
+      expect(screen.getByRole('textbox', { name })).toHaveAccessibleDescription(
+        CHOICE_OPTION_PROBLEM_TEXT.empty,
+      )
+    }
+  })
+
+  it('flags each copy of a duplicated choice until they differ', async () => {
+    const user = userEvent.setup()
+    render(<Harness initialOptions={['Red', 'Blue', 'Red']} />)
+    const first = screen.getByRole('textbox', { name: 'Choice 1' })
+    const third = screen.getByRole('textbox', { name: 'Choice 3' })
+    for (const input of [first, third]) {
+      expect(input).toHaveAttribute('aria-invalid', 'true')
+      expect(input).toHaveAccessibleDescription(
+        CHOICE_OPTION_PROBLEM_TEXT.duplicate,
+      )
+    }
+    expect(screen.getByRole('textbox', { name: 'Choice 2' })).toHaveAttribute(
+      'aria-invalid',
+      'false',
+    )
+
+    await user.type(third, 'dish')
+    expect(first).toHaveAttribute('aria-invalid', 'false')
+    expect(third).toHaveAttribute('aria-invalid', 'false')
   })
 })

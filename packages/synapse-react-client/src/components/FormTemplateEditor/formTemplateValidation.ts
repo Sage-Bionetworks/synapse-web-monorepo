@@ -9,6 +9,11 @@ import {
   propertyKeyToPointer,
   resolveSchemaPropertyAtPointer,
 } from '@/utils/jsonschema/submissionContext'
+import {
+  choiceOptionProblems,
+  choiceOptions,
+  detectFieldType,
+} from './schemaFieldUtils'
 
 /**
  * A property is a "leaf" — the only kind a `FormTemplateField.schemaPath` may address — when it
@@ -52,8 +57,9 @@ export function isUiHintCompatible(
 }
 
 export type FormTemplateFieldValidationError = {
-  /** Index of the step/field slot this error is anchored to. Omitted for an error against a
-   * schema-required property that isn't bound to any field -- there is no slot to anchor it to. */
+  /** Index of the step/field slot this error is anchored to. Omitted for an error against the
+   * schema property itself (unbound but required, or with invalid choices) -- there is no single
+   * slot to anchor it to. */
   stepIndex?: number
   /** Omitted, along with `schemaPath`, for an error against a whole step. */
   fieldIndex?: number
@@ -73,7 +79,8 @@ function describeStep(step: FormTemplateStep, stepIndex: number): string {
  * at the offending step or field before ever reaching the server: the server only returns a flat,
  * concatenated message, not per-field errors. Also flags a schema property the server will
  * require (per its resolved submission context) that no field in the template binds to -- the
- * server accepts this silently, but the requester would then be unable to satisfy it.
+ * server accepts this silently, but the requester would then be unable to satisfy it -- and a
+ * choice property with an empty or duplicated choice, which can't be offered as an enum value.
  */
 export function validateFormTemplateFields(
   steps: FormTemplateStep[],
@@ -143,11 +150,29 @@ export function validateFormTemplateFields(
   })
 
   for (const property of listResolvedSchemaProperties(jsonSchema)) {
+    const schemaPath = propertyKeyToPointer(property.propertyKey)
     if (property.isRequired && !boundPropertyKeys.has(property.propertyKey)) {
       errors.push({
-        schemaPath: propertyKeyToPointer(property.propertyKey),
+        schemaPath,
         message: `"${property.propertyKey}" is required by the schema but is not bound to any field in this template.`,
       })
+    }
+
+    const fieldType = detectFieldType(property.subSchema)
+    if (fieldType === 'choice' || fieldType === 'multiChoice') {
+      const problems = choiceOptionProblems(choiceOptions(property.subSchema))
+      if (problems.includes('empty')) {
+        errors.push({
+          schemaPath,
+          message: `"${property.propertyKey}" has an empty choice.`,
+        })
+      }
+      if (problems.includes('duplicate')) {
+        errors.push({
+          schemaPath,
+          message: `"${property.propertyKey}" has duplicate choices.`,
+        })
+      }
     }
   }
 

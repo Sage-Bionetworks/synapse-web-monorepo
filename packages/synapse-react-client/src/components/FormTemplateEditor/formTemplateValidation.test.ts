@@ -194,4 +194,71 @@ describe('validateFormTemplateFields', () => {
       }),
     ).toEqual([])
   })
+
+  it.each<[string, RJSFSchema]>([
+    ['single', { type: 'string', enum: ['Red', ''] }],
+    [
+      'multiple',
+      {
+        type: 'array',
+        uniqueItems: true,
+        items: { type: 'string', enum: ['Red', ' '] },
+      },
+    ],
+  ])('flags a %s-choice property with an empty choice', (_, color) => {
+    const steps: FormTemplateStep[] = [
+      { title: 'Step 1', fields: [field('/color')] },
+    ]
+    expect(
+      validateFormTemplateFields(steps, {
+        type: 'object',
+        properties: { color },
+      }),
+    ).toEqual([
+      { schemaPath: '/color', message: '"color" has an empty choice.' },
+    ])
+  })
+
+  it('flags a choice property with duplicated choices', () => {
+    const steps: FormTemplateStep[] = [
+      { title: 'Step 1', fields: [field('/color')] },
+    ]
+    expect(
+      validateFormTemplateFields(steps, {
+        type: 'object',
+        properties: {
+          color: { type: 'string', enum: ['Red', 'Blue', 'Red'] },
+        },
+      }),
+    ).toEqual([
+      { schemaPath: '/color', message: '"color" has duplicate choices.' },
+    ])
+  })
+
+  it('reports both an empty and a duplicated choice, even on a property no field binds', () => {
+    expect(
+      validateFormTemplateFields([{ title: 'Step 1', fields: [field('/a')] }], {
+        type: 'object',
+        properties: {
+          a: { type: 'string' },
+          color: { type: 'string', enum: ['Red', 'Red', ''] },
+        },
+      }),
+    ).toEqual([
+      { schemaPath: '/color', message: '"color" has an empty choice.' },
+      { schemaPath: '/color', message: '"color" has duplicate choices.' },
+    ])
+  })
+
+  it('leaves an enum with non-string values to the advanced editor rather than checking its choices', () => {
+    expect(
+      validateFormTemplateFields(
+        [{ title: 'Step 1', fields: [field('/count')] }],
+        {
+          type: 'object',
+          properties: { count: { type: 'string', enum: ['one', 2, null] } },
+        },
+      ),
+    ).toEqual([])
+  })
 })
