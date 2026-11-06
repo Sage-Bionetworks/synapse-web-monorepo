@@ -22,6 +22,8 @@ export type SchemaStepFormProps = {
   onSchemaDataChange: (schemaData: SchemaData) => void
   /** Invoked with the complete answers when the step's answers pass validation. */
   onValid?: (schemaData: SchemaData) => void
+  /** Invoked when the step's answers fail validation; the errors are already shown against the fields. */
+  onInvalid?: () => void
 }
 
 /**
@@ -29,7 +31,8 @@ export type SchemaStepFormProps = {
  * are kept in `schemaData`; the step shows and updates only its own.
  */
 export default function SchemaStepForm(props: SchemaStepFormProps) {
-  const { ref, step, schemaData, onSchemaDataChange, onValid } = props
+  const { ref, step, schemaData, onSchemaDataChange, onValid, onInvalid } =
+    props
   const formRef = useRef<RJSFForm>(null)
 
   useImperativeHandle(ref, () => ({
@@ -50,6 +53,7 @@ export default function SchemaStepForm(props: SchemaStepFormProps) {
       onSubmit={event =>
         onValid?.({ ...schemaData, ...(event.formData as SchemaData) })
       }
+      onError={onInvalid}
     >
       <></>
     </JsonSchemaForm>

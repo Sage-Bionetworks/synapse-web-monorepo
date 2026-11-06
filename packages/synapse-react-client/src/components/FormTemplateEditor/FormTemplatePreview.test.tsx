@@ -3,11 +3,14 @@ import {
   DataAccessRequestType,
   FormTemplate,
 } from '@sage-bionetworks/synapse-client'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
 import { SUBMISSION_CONTEXT_PROPERTY } from '@/utils/jsonschema/submissionContext'
-import { FormTemplatePreview } from './FormTemplatePreview'
+import {
+  FormTemplatePreview,
+  VALIDATE_RESPONSES_LABEL,
+} from './FormTemplatePreview'
 
 const schema: RJSFSchema = {
   type: 'object',
@@ -98,7 +101,7 @@ function queryFieldLabel(title: string) {
   return screen.queryByText(title, { selector: 'label' })
 }
 function getValidateCheckbox() {
-  return screen.getByRole('checkbox', { name: 'Validate responses' })
+  return screen.getByRole('checkbox', { name: VALIDATE_RESPONSES_LABEL })
 }
 
 describe('FormTemplatePreview', () => {
@@ -251,10 +254,13 @@ describe('FormTemplatePreview', () => {
       // The required Institution field is blank
       await user.click(screen.getByRole('button', { name: 'Additional info' }))
       expect(getFieldLabel('Signing Official')).toBeInTheDocument()
-      expect(screen.queryByText(/required/i)).not.toBeInTheDocument()
+      expect(screen.getByRole('textbox')).not.toHaveAttribute(
+        'aria-invalid',
+        'true',
+      )
     })
 
-    it('keeps the current step and shows its errors when a required field is blank', async () => {
+    it('marks the blank required field invalid and stays on its step', async () => {
       const user = userEvent.setup()
       renderPreview({
         template: twoAlwaysVisibleStepsTemplate,
@@ -262,9 +268,42 @@ describe('FormTemplatePreview', () => {
       })
       await user.click(getValidateCheckbox())
       await user.click(screen.getByRole('button', { name: 'Additional info' }))
-      expect(await screen.findAllByText(/required/i)).not.toHaveLength(0)
+      await waitFor(() =>
+        expect(screen.getByRole('textbox')).toHaveAttribute(
+          'aria-invalid',
+          'true',
+        ),
+      )
       expect(getFieldLabel('Institution')).toBeInTheDocument()
       expect(queryFieldLabel('Signing Official')).not.toBeInTheDocument()
+    })
+
+    it('does not later move to a step whose navigation was blocked', async () => {
+      const user = userEvent.setup()
+      renderPreview({
+        template: twoAlwaysVisibleStepsTemplate,
+        jsonSchema: schema,
+      })
+      await user.click(getValidateCheckbox())
+      await user.click(screen.getByRole('button', { name: 'Additional info' }))
+      // Enter submits the step's form without a step being chosen
+      await user.type(screen.getByRole('textbox'), 'Sage Bionetworks{Enter}')
+      expect(getFieldLabel('Institution')).toBeInTheDocument()
+
+      await user.click(screen.getByRole('button', { name: 'Additional info' }))
+      expect(getFieldLabel('Signing Official')).toBeInTheDocument()
+    })
+
+    it('restores free navigation when unchecked', async () => {
+      const user = userEvent.setup()
+      renderPreview({
+        template: twoAlwaysVisibleStepsTemplate,
+        jsonSchema: schema,
+      })
+      await user.click(getValidateCheckbox())
+      await user.click(getValidateCheckbox())
+      await user.click(screen.getByRole('button', { name: 'Additional info' }))
+      expect(getFieldLabel('Signing Official')).toBeInTheDocument()
     })
 
     it('moves to the chosen step when the current step is valid', async () => {
@@ -282,18 +321,30 @@ describe('FormTemplatePreview', () => {
       expect(queryFieldLabel('Institution')).not.toBeInTheDocument()
     })
 
-    it('stays on when switching between the Request and Renewal views', async () => {
+    it('stays checked when switching between the Request and Renewal views', async () => {
       const user = userEvent.setup()
       renderPreview({ template: renewalGatedTemplate, jsonSchema: schema })
       await user.click(getValidateCheckbox())
       await user.click(screen.getByRole('button', { name: 'Renewal' }))
       expect(getValidateCheckbox()).toBeChecked()
-      await user.click(screen.getByRole('button', { name: 'Renewal details' }))
-      expect(await screen.findAllByText(/required/i)).not.toHaveLength(0)
-      expect(queryFieldLabel('Summary')).not.toBeInTheDocument()
-
       await user.click(screen.getByRole('button', { name: 'Request' }))
       expect(getValidateCheckbox()).toBeChecked()
+    })
+
+    it('blocks navigation in the Renewal view', async () => {
+      const user = userEvent.setup()
+      renderPreview({ template: renewalGatedTemplate, jsonSchema: schema })
+      await user.click(getValidateCheckbox())
+      await user.click(screen.getByRole('button', { name: 'Renewal' }))
+      await user.click(screen.getByRole('button', { name: 'Renewal details' }))
+      await waitFor(() =>
+        expect(screen.getByRole('textbox')).toHaveAttribute(
+          'aria-invalid',
+          'true',
+        ),
+      )
+      expect(getFieldLabel('Institution')).toBeInTheDocument()
+      expect(queryFieldLabel('Summary')).not.toBeInTheDocument()
     })
   })
 })
