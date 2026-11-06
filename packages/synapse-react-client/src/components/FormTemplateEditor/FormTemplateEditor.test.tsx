@@ -52,6 +52,23 @@ function getKeyField() {
   return screen.getByRole('textbox', { name: 'Property key' })
 }
 
+function getNameField() {
+  return screen.getByRole('textbox', { name: 'Internal Name' })
+}
+
+/** Create one field and bind it to the default step, leaving only the name to fill in. */
+async function createBoundField(user: UserEvent) {
+  await createField(user)
+  await user.click(screen.getByRole('button', { name: 'Close field editor' }))
+  await waitFor(() =>
+    expect(screen.getByRole('button', { name: 'New' })).toBeEnabled(),
+  )
+  await user.click(screen.getByRole('combobox', { name: 'Bind field' }))
+  await user.click(
+    await screen.findByRole('option', { name: 'New field (/newField)' }),
+  )
+}
+
 describe('FormTemplateEditor', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -127,6 +144,79 @@ describe('FormTemplateEditor', () => {
     await user.clear(keyField)
     await user.type(keyField, 'my field!! 1')
     expect(keyField).toHaveValue('myfield1')
+  })
+
+  it('marks Internal Name as required and shows an error only once it is left empty', async () => {
+    const user = userEvent.setup()
+    renderEditor()
+    const nameField = getNameField()
+
+    expect(nameField).toBeRequired()
+    expect(nameField).toHaveAttribute('aria-invalid', 'false')
+    expect(screen.queryByText('Name is required')).not.toBeInTheDocument()
+
+    await user.click(nameField)
+    await user.tab()
+
+    expect(nameField).toHaveAttribute('aria-invalid', 'true')
+    expect(nameField).toHaveAccessibleDescription('Name is required')
+
+    await user.type(nameField, 'My Template')
+    expect(nameField).toHaveAttribute('aria-invalid', 'false')
+    expect(screen.queryByText('Name is required')).not.toBeInTheDocument()
+  })
+
+  it('shows the name error instead of saving when Create is clicked without a name', async () => {
+    const user = userEvent.setup()
+    renderEditor()
+    await createBoundField(user)
+
+    await user.click(screen.getByRole('button', { name: 'Create Template' }))
+
+    expect(getNameField()).toHaveAttribute('aria-invalid', 'true')
+    expect(getNameField()).toHaveAccessibleDescription('Name is required')
+    expect(createTemplateSpy).not.toHaveBeenCalled()
+  })
+
+  it('treats a name of only spaces as empty', async () => {
+    const user = userEvent.setup()
+    renderEditor()
+    await createBoundField(user)
+
+    await user.type(getNameField(), '   ')
+    await user.click(screen.getByRole('button', { name: 'Create Template' }))
+
+    expect(screen.getByText('Name is required')).toBeVisible()
+    expect(createTemplateSpy).not.toHaveBeenCalled()
+    expect(createdSchemas).toEqual([])
+  })
+
+  it('saves the name without surrounding spaces', async () => {
+    const user = userEvent.setup()
+    const onSaved = vi.fn()
+    renderEditor(onSaved)
+    await createBoundField(user)
+
+    await user.type(getNameField(), '  My Template  ')
+    createTemplateSpy.mockResolvedValueOnce({
+      id: 'template-1',
+      name: 'My Template',
+      schema$id: 'org.example.mock-schema-1.0.1',
+      steps: [],
+      etag: 'etag-1',
+      versionNumber: 1,
+    })
+    await user.click(screen.getByRole('button', { name: 'Create Template' }))
+
+    await waitFor(() => expect(onSaved).toHaveBeenCalled())
+    expect(createTemplateSpy).toHaveBeenCalledWith({
+      formTemplate: expect.objectContaining({ name: 'My Template' }),
+    })
+    expect(createdSchemas).toEqual([
+      expect.objectContaining({
+        $id: 'org.sagebionetworks.act-MyTemplate-1.0.0',
+      }),
+    ])
   })
 
   it('registers a new template schema under the ACT organization, extending the base schema, and includes isPublic in the saved template', async () => {
