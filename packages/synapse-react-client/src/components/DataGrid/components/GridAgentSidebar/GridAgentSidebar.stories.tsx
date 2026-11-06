@@ -30,18 +30,14 @@ function DockedBesideGrid() {
         <Typography variant="headline2" component="h1" sx={{ mb: 2 }}>
           Grid content
         </Typography>
-        <div className={synapseGridStyles.gridArea}>
-          <DynamicDataSheetGrid
-            value={rows}
-            onChange={setRows}
-            columns={columns}
-            height={600}
-          />
-          {!open && (
-            <OpenGridAgentSidebarButton onClick={() => setOpen(true)} />
-          )}
-        </div>
+        <DynamicDataSheetGrid
+          value={rows}
+          onChange={setRows}
+          columns={columns}
+          height={600}
+        />
       </div>
+      {!open && <OpenGridAgentSidebarButton onClick={() => setOpen(true)} />}
       <GridAgentSidebar open={open} onClose={() => setOpen(false)}>
         <Typography>Chat content</Typography>
       </GridAgentSidebar>

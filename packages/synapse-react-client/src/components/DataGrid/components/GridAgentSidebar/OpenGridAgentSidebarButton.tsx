@@ -8,23 +8,26 @@ export type OpenGridAgentSidebarButtonProps = {
 }
 
 /**
- * A floating button that reopens the closed GridAgentSidebar. Positioned in the bottom-right
- * corner of the nearest positioned ancestor.
+ * A floating button that reopens the closed GridAgentSidebar. Render it in the sidebar's place in
+ * the flex row layout; it takes no width and stays in the bottom-right corner of the viewport while
+ * the page scrolls.
  */
 export function OpenGridAgentSidebarButton({
   onClick,
 }: OpenGridAgentSidebarButtonProps) {
   return (
-    <Tooltip title={OPEN_GRID_AGENT_SIDEBAR_LABEL} placement="left">
-      <Fab
-        size="small"
-        aria-label={OPEN_GRID_AGENT_SIDEBAR_LABEL}
-        className={styles.openButton}
-        onClick={onClick}
-      >
-        <CurieAvatarHead />
-      </Fab>
-    </Tooltip>
+    <div className={styles.openButtonRail}>
+      <Tooltip title={OPEN_GRID_AGENT_SIDEBAR_LABEL} placement="left">
+        <Fab
+          size="small"
+          aria-label={OPEN_GRID_AGENT_SIDEBAR_LABEL}
+          className={styles.openButton}
+          onClick={onClick}
+        >
+          <CurieAvatarHead />
+        </Fab>
+      </Tooltip>
+    </div>
   )
 }
 

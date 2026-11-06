@@ -578,7 +578,7 @@ function SynapseGridInner({
                         )}
                       </Stack>
                     </Grid>
-                    <Grid size={12} className={styles.gridArea}>
+                    <Grid size={12}>
                       <DataGrid
                         gridRef={gridRef}
                         rowValues={enrichedRowValues}
@@ -593,11 +593,6 @@ function SynapseGridInner({
                         remoteSelections={remoteSelections}
                         upsertKey={upsertKey}
                       />
-                      {!isAgentSidebarOpen && (
-                        <OpenGridAgentSidebarButton
-                          onClick={openAgentSidebar}
-                        />
-                      )}
                     </Grid>
                   </>
                 )}
@@ -638,14 +633,19 @@ function SynapseGridInner({
         </div>
       </div>
       {session && hasCompletedInitialLoad && (
-        <GridAgentChat
-          agentRegistrationId={agentRegistrationId}
-          open={isAgentSidebarOpen}
-          onClose={closeAgentSidebar}
-          gridSessionId={session.sessionId!}
-          usersReplicaId={replicaId!}
-          chatbotName="Curie"
-        />
+        <>
+          {!isAgentSidebarOpen && (
+            <OpenGridAgentSidebarButton onClick={openAgentSidebar} />
+          )}
+          <GridAgentChat
+            agentRegistrationId={agentRegistrationId}
+            open={isAgentSidebarOpen}
+            onClose={closeAgentSidebar}
+            gridSessionId={session.sessionId!}
+            usersReplicaId={replicaId!}
+            chatbotName="Curie"
+          />
+        </>
       )}
     </div>
   )

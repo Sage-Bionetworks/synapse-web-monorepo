@@ -1,17 +1,23 @@
-.sidebar {
-  position: relative;
+// Viewport height and stuck to the top of the viewport, so the chat composer and the reopen button
+// stay on screen however far the page scrolls
+.sidebar,
+.openButtonRail {
+  position: sticky;
+  top: 0;
   flex-shrink: 0;
-  align-self: stretch;
+  height: 100dvh;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
   background-color: var(--synapse-white);
   border-left: 1px solid var(--synapse-v2-gray-200);
 }
 
-// Absolutely positioned so the chat never adds height; the row height comes from the sidebar's siblings
-.panel {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
+// Zero width, so the closed sidebar gives all of its space back to its siblings
+.openButtonRail {
+  width: 0;
 }
 
 .resizeHandle {
