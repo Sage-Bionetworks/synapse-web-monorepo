@@ -57,6 +57,27 @@ export function choiceOptions(prop: RJSFSchema): string[] {
   return Array.isArray(options) ? (options as string[]) : []
 }
 
+export type ChoiceOptionProblem = 'empty' | 'duplicate'
+
+/**
+ * Per option, why it can't be saved as an enum value, or `null` if it can. An enum can't usefully
+ * hold a blank value or the same value twice. A blank option wins over a duplicate, and every
+ * copy of a duplicated option is flagged, since either copy may be the one to change.
+ */
+export function choiceOptionProblems(
+  options: string[],
+): (ChoiceOptionProblem | null)[] {
+  const counts = new Map<string, number>()
+  for (const option of options) {
+    counts.set(option, (counts.get(option) ?? 0) + 1)
+  }
+  return options.map(option => {
+    if (option.trim() === '') return 'empty'
+    if ((counts.get(option) ?? 0) > 1) return 'duplicate'
+    return null
+  })
+}
+
 /** Build a fresh schema body for the given simple type, preserving label and help text. */
 export function applyFieldType(
   prev: RJSFSchema,

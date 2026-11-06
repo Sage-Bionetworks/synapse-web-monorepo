@@ -194,4 +194,44 @@ describe('validateFormTemplateFields', () => {
       }),
     ).toEqual([])
   })
+
+  it.each<[string, RJSFSchema]>([
+    ['single', { type: 'string', enum: ['Red', ''] }],
+    [
+      'multiple',
+      {
+        type: 'array',
+        uniqueItems: true,
+        items: { type: 'string', enum: ['Red', ' '] },
+      },
+    ],
+  ])('flags a %s-choice property with an empty choice', (_, color) => {
+    const steps: FormTemplateStep[] = [
+      { title: 'Step 1', fields: [field('/color')] },
+    ]
+    expect(
+      validateFormTemplateFields(steps, {
+        type: 'object',
+        properties: { color },
+      }),
+    ).toEqual([
+      { schemaPath: '/color', message: '"color" has an empty choice.' },
+    ])
+  })
+
+  it('flags a choice property with duplicated choices', () => {
+    const steps: FormTemplateStep[] = [
+      { title: 'Step 1', fields: [field('/color')] },
+    ]
+    expect(
+      validateFormTemplateFields(steps, {
+        type: 'object',
+        properties: {
+          color: { type: 'string', enum: ['Red', 'Blue', 'Red'] },
+        },
+      }),
+    ).toEqual([
+      { schemaPath: '/color', message: '"color" has duplicate choices.' },
+    ])
+  })
 })

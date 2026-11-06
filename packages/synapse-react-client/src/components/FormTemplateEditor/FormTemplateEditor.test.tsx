@@ -383,6 +383,62 @@ describe('FormTemplateEditor', () => {
     ).toBeDisabled()
   })
 
+  it('blocks saving while a choice is empty or duplicated, until it is fixed', async () => {
+    const user = userEvent.setup()
+    renderEditor()
+    await createBoundField(user)
+    await user.type(getNameField(), 'My Template')
+
+    await user.click(screen.getByRole('button', { name: 'Edit New field' }))
+    await screen.findByRole('heading', { name: 'Edit field' })
+    await user.click(screen.getByLabelText('Field type'))
+    await user.click(screen.getByRole('option', { name: 'Single choice' }))
+    await user.click(screen.getByRole('button', { name: 'Add choice' }))
+    const added = screen.getByRole('textbox', { name: 'Choice 2' })
+    expect(added).toHaveAccessibleDescription('Required')
+
+    await user.click(screen.getByRole('button', { name: 'Done' }))
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: 'Create Template' }),
+      ).toBeDisabled(),
+    )
+    expect(screen.getByText('"newField" has an empty choice.')).toBeVisible()
+
+    await user.click(screen.getByRole('button', { name: 'Edit New field' }))
+    await user.type(
+      await screen.findByRole('textbox', { name: 'Choice 2' }),
+      'Option 1',
+    )
+    expect(
+      screen.getByRole('textbox', { name: 'Choice 2' }),
+    ).toHaveAccessibleDescription('Already used by another choice')
+
+    await user.click(screen.getByRole('button', { name: 'Done' }))
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: 'Create Template' }),
+      ).toBeDisabled(),
+    )
+    expect(screen.getByText('"newField" has duplicate choices.')).toBeVisible()
+    expect(
+      screen.queryByText('"newField" has an empty choice.'),
+    ).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Edit New field' }))
+    await user.type(
+      await screen.findByRole('textbox', { name: 'Choice 2' }),
+      '!',
+    )
+    await user.click(screen.getByRole('button', { name: 'Done' }))
+    await waitFor(() =>
+      expect(
+        screen.getByRole('button', { name: 'Create Template' }),
+      ).toBeEnabled(),
+    )
+    expect(screen.queryByText(/has (an empty|duplicate) choice/)).toBeNull()
+  })
+
   it("opens an existing template with its registered schema, and saves a changed schema as the schema's next major version with the base $ref kept", async () => {
     const user = userEvent.setup()
     const onSaved = vi.fn()

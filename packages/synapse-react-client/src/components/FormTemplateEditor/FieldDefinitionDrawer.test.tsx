@@ -84,7 +84,7 @@ describe('FieldDefinitionDrawer', () => {
     )
     await user.click(screen.getByRole('button', { name: 'Add choice' }))
     expect(onUpdate).toHaveBeenCalledWith({
-      items: { type: 'string', enum: ['A', 'Option 2'] },
+      items: { type: 'string', enum: ['A', ''] },
     })
   })
 
