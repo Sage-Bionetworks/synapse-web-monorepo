@@ -1,7 +1,7 @@
 import { useDraggable } from '@dnd-kit/react'
 import { Box, Chip, Paper, Stack, Typography } from '@mui/material'
 import DragHandleIcon from '@mui/icons-material/DragIndicator'
-import { RJSFSchema } from '@rjsf/utils'
+import { RJSFSchema, UiSchema } from '@rjsf/utils'
 import {
   SchemaPropertyContext,
   submissionContextLabel,
@@ -13,6 +13,8 @@ import { FIELD_DRAG_TYPE, fieldDragData } from './sortableIds'
 export type FieldLibraryRowProps = {
   propertyKey: string
   property: RJSFSchema
+  /** The property's slot `uiDefinition`, or the one held for it while it is unbound. */
+  uiDefinition?: UiSchema
   isRequired: boolean
   /** Which submission context (per the schema's `x-synapse-submissionContext` convention)
    * gates this property. `ALWAYS` properties show no badge. */
@@ -29,12 +31,13 @@ export type FieldLibraryRowProps = {
 export function FieldLibraryRow({
   propertyKey,
   property,
+  uiDefinition,
   isRequired,
   context,
   isUsedInSteps,
   onClick,
 }: FieldLibraryRowProps) {
-  const type = detectFieldType(property)
+  const type = detectFieldType(property, uiDefinition)
   const displayLabel = property.title || propertyKey
 
   const { ref, handleRef, isDragging } = useDraggable({

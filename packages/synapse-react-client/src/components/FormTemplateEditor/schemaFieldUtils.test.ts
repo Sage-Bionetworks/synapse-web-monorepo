@@ -1,11 +1,13 @@
 import { RJSFSchema } from '@rjsf/utils'
 import {
   applyFieldType,
+  applyFieldTypeUiDefinition,
   choiceOptionProblems,
   choiceOptions,
   detectFieldType,
   fieldTypeLabel,
   generatePropertyKey,
+  LONG_TEXT_WIDGET,
   sanitizePropertyKey,
 } from './schemaFieldUtils'
 
@@ -56,6 +58,15 @@ describe('detectFieldType', () => {
     expect(detectFieldType({ type: 'string' })).toBe('text')
   })
 
+  it('detects a plain string whose uiDefinition asks for a textarea as longText', () => {
+    expect(
+      detectFieldType({ type: 'string' }, { 'ui:widget': LONG_TEXT_WIDGET }),
+    ).toBe('longText')
+    expect(detectFieldType({ type: 'string' }, { 'ui:widget': 'email' })).toBe(
+      'text',
+    )
+  })
+
   it('detects number and integer as number', () => {
     expect(detectFieldType({ type: 'number' })).toBe('number')
     expect(detectFieldType({ type: 'integer' })).toBe('number')
@@ -89,6 +100,7 @@ describe('choiceOptionProblems', () => {
 describe('fieldTypeLabel', () => {
   it('labels every simple field type', () => {
     expect(fieldTypeLabel('text')).toBe('Text')
+    expect(fieldTypeLabel('longText')).toBe('Long answer')
     expect(fieldTypeLabel('number')).toBe('Number')
     expect(fieldTypeLabel('boolean')).toBe('Yes / No')
     expect(fieldTypeLabel('choice')).toBe('Single choice')
@@ -190,6 +202,31 @@ describe('applyFieldType', () => {
     expect(
       applyFieldType({ type: 'string', enum: ['Yes', 'No'] }, 'text'),
     ).not.toHaveProperty('enum')
+  })
+})
+
+describe('applyFieldTypeUiDefinition', () => {
+  const options = { 'ui:options': { rows: 5 } }
+
+  it('sets the textarea widget for longText, keeping other keys', () => {
+    expect(applyFieldTypeUiDefinition(options, 'longText')).toEqual({
+      ...options,
+      'ui:widget': LONG_TEXT_WIDGET,
+    })
+  })
+
+  it('removes only the textarea widget for any other type', () => {
+    expect(
+      applyFieldTypeUiDefinition(
+        { ...options, 'ui:widget': LONG_TEXT_WIDGET },
+        'text',
+      ),
+    ).toEqual(options)
+  })
+
+  it("leaves a widget it didn't set alone", () => {
+    const uiDefinition = { 'ui:widget': 'email' }
+    expect(applyFieldTypeUiDefinition(uiDefinition, 'text')).toBe(uiDefinition)
   })
 })
 

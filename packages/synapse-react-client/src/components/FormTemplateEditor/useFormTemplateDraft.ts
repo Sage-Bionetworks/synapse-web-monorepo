@@ -3,7 +3,7 @@
  * `formTemplateDraftState`. Has no knowledge of persistence — callers read `jsonSchema`/`name`/
  * `steps` to save, and seed the initial values from an existing template when editing one.
  */
-import { RJSFSchema } from '@rjsf/utils'
+import { RJSFSchema, UiSchema } from '@rjsf/utils'
 import { FormTemplate } from '@sage-bionetworks/synapse-client'
 import { useCallback, useMemo, useState } from 'react'
 import {
@@ -14,6 +14,7 @@ import {
   bindField,
   boundSchemaPaths,
   changeContext,
+  changeFieldType,
   changeRequired,
   createField,
   FormTemplateDraftState,
@@ -22,10 +23,13 @@ import {
   moveStep,
   removeProperty,
   renamePropertyKey,
-  replaceProperty,
+  replaceJsonSchema,
+  replaceSteps,
   schemaPropertyKeys,
+  uiDefinitionsByPath,
   updateProperty,
 } from './formTemplateDraftState'
+import { SimpleFieldType } from './schemaFieldUtils'
 import { createNewFormTemplateSchema } from './formTemplateSchema'
 import {
   createEditableStep,
@@ -49,10 +53,12 @@ export interface FormTemplateDraft {
   existingPropertyKeys: Set<string>
   /** Schema properties that no step binds yet. */
   unboundProperties: ResolvedSchemaProperty[]
+  /** Each property's slot `uiDefinition` by `schemaPath`, held in the draft while unbound. */
+  uiDefinitions: Record<string, UiSchema>
   handleCreateField: () => void
   renamePropertyKey: (oldKey: string, newKey: string) => void
   handleUpdateProperty: (key: string, patch: Partial<RJSFSchema>) => void
-  handleReplaceProperty: (key: string, next: RJSFSchema) => void
+  handleChangeFieldType: (key: string, type: SimpleFieldType) => void
   handleChangeRequired: (key: string, isRequired: boolean) => void
   handleChangeContext: (key: string, context: SchemaPropertyContext) => void
   handleRemoveProperty: (key: string) => void
@@ -73,16 +79,18 @@ export function useFormTemplateDraft(
       ? toEditableSteps(initialTemplate.steps)
       : [createEditableStep()],
     editingPropertyKey: null,
+    unboundUiDefinitions: {},
   }))
   const { jsonSchema, steps, editingPropertyKey } = draft
+  const uiDefinitions = useMemo(() => uiDefinitionsByPath(draft), [draft])
 
   const setJsonSchema = useCallback(
-    (next: RJSFSchema) => setDraft(prev => ({ ...prev, jsonSchema: next })),
+    (next: RJSFSchema) => setDraft(prev => replaceJsonSchema(prev, next)),
     [],
   )
   const setSteps = useCallback(
     (next: EditableFormTemplateStep[]) =>
-      setDraft(prev => ({ ...prev, steps: next })),
+      setDraft(prev => replaceSteps(prev, next)),
     [],
   )
   const setEditingPropertyKey = useCallback(
@@ -114,9 +122,9 @@ export function useFormTemplateDraft(
       setDraft(prev => updateProperty(prev, key, patch)),
     [],
   )
-  const handleReplaceProperty = useCallback(
-    (key: string, next: RJSFSchema) =>
-      setDraft(prev => replaceProperty(prev, key, next)),
+  const handleChangeFieldType = useCallback(
+    (key: string, type: SimpleFieldType) =>
+      setDraft(prev => changeFieldType(prev, key, type)),
     [],
   )
   const handleChangeRequired = useCallback(
@@ -171,10 +179,11 @@ export function useFormTemplateDraft(
     usedPaths,
     existingPropertyKeys,
     unboundProperties,
+    uiDefinitions,
     handleCreateField,
     renamePropertyKey: handleRenamePropertyKey,
     handleUpdateProperty,
-    handleReplaceProperty,
+    handleChangeFieldType,
     handleChangeRequired,
     handleChangeContext,
     handleRemoveProperty,

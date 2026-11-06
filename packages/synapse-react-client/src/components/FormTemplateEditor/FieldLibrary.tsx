@@ -10,7 +10,7 @@ import {
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import SearchIcon from '@mui/icons-material/Search'
-import { RJSFSchema } from '@rjsf/utils'
+import { RJSFSchema, UiSchema } from '@rjsf/utils'
 import { ReactNode, useMemo, useState } from 'react'
 import {
   listResolvedSchemaProperties,
@@ -23,6 +23,8 @@ export type FieldLibraryProps = {
   jsonSchema: RJSFSchema
   /** Set of JSON pointers (e.g. `/institution`) currently bound to a step. */
   usedPaths: Set<string>
+  /** Each property's slot `uiDefinition` by `schemaPath`, including those held while unbound. */
+  uiDefinitions: Record<string, UiSchema>
   selectedPropertyKey: string | null
   onSelectField: (propertyKey: string) => void
   onCreateField: () => void
@@ -37,6 +39,7 @@ export type FieldLibraryProps = {
 export function FieldLibrary({
   jsonSchema,
   usedPaths,
+  uiDefinitions,
   selectedPropertyKey,
   onSelectField,
   onCreateField,
@@ -79,6 +82,7 @@ export function FieldLibrary({
             <FieldLibraryRow
               propertyKey={p.propertyKey}
               property={p.subSchema}
+              uiDefinition={uiDefinitions[propertyKeyToPointer(p.propertyKey)]}
               isRequired={p.isRequired}
               context={p.context}
               isUsedInSteps={usedPaths.has(propertyKeyToPointer(p.propertyKey))}

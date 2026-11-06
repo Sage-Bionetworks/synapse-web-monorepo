@@ -3,7 +3,7 @@
  * and the property open for editing. Every transition keeps the three in sync (renaming a property
  * key rewrites every step field bound to it, removing a property unbinds it from every step, etc).
  */
-import { RJSFSchema } from '@rjsf/utils'
+import { RJSFSchema, UiSchema } from '@rjsf/utils'
 import {
   listResolvedSchemaProperties,
   propertyKeyToPointer,
@@ -17,7 +17,12 @@ import {
   setSchemaPropertyContext,
   setSchemaPropertyRequired,
 } from '@/utils/jsonschema/submissionContext'
-import { generatePropertyKey } from './schemaFieldUtils'
+import {
+  applyFieldType,
+  applyFieldTypeUiDefinition,
+  generatePropertyKey,
+  SimpleFieldType,
+} from './schemaFieldUtils'
 import { EditableFormTemplateStep } from './utils'
 
 export type FormTemplateDraftState = {
@@ -25,6 +30,12 @@ export type FormTemplateDraftState = {
   steps: EditableFormTemplateStep[]
   /** The property open in the field definition drawer, if any. */
   editingPropertyKey: string | null
+  /**
+   * The `uiDefinition` each unbound property gets when it is next bound, keyed by `schemaPath`.
+   * Holds what a slot had when it was unbound, and display choices made before the property was
+   * ever bound, so neither is lost while the draft is open.
+   */
+  unboundUiDefinitions: Record<string, UiSchema>
 }
 
 export const NEW_FIELD_TITLE = 'New field'
@@ -86,8 +97,13 @@ export function renamePropertyKey(
   if (newKey === oldKey || !keys.has(oldKey) || keys.has(newKey)) return state
   const oldPath = propertyKeyToPointer(oldKey)
   const newPath = propertyKeyToPointer(newKey)
+  const { [oldPath]: unboundUiDefinition, ...unboundUiDefinitions } =
+    state.unboundUiDefinitions
   return {
     jsonSchema: renameSchemaProperty(state.jsonSchema, oldKey, newKey),
+    unboundUiDefinitions: unboundUiDefinition
+      ? { ...unboundUiDefinitions, [newPath]: unboundUiDefinition }
+      : unboundUiDefinitions,
     steps: state.steps.map(step => ({
       ...step,
       fields: step.fields.map(f =>
@@ -148,6 +164,95 @@ export function replaceProperty(
   }
 }
 
+/**
+ * Replace the schema wholesale (the raw JSON editor). A `uiDefinition` held for a property the new
+ * schema no longer has is dropped, so a later property reusing that key doesn't inherit it.
+ */
+export function replaceJsonSchema(
+  state: FormTemplateDraftState,
+  jsonSchema: RJSFSchema,
+): FormTemplateDraftState {
+  const paths = new Set(
+    [...schemaPropertyKeys(jsonSchema)].map(propertyKeyToPointer),
+  )
+  return {
+    ...state,
+    jsonSchema,
+    unboundUiDefinitions: Object.fromEntries(
+      Object.entries(state.unboundUiDefinitions).filter(([path]) =>
+        paths.has(path),
+      ),
+    ),
+  }
+}
+
+/** A slot's `uiDefinition`, which the generated client types as `any`. */
+function slotUiDefinition(field: { uiDefinition: unknown }): UiSchema {
+  return (field.uiDefinition as UiSchema | null) ?? {}
+}
+
+/**
+ * Each property's slot `uiDefinition`, keyed by `schemaPath`: the bound slot's, or the one held for
+ * an unbound property.
+ */
+export function uiDefinitionsByPath(
+  state: FormTemplateDraftState,
+): Record<string, UiSchema> {
+  const byPath = { ...state.unboundUiDefinitions }
+  for (const field of state.steps.flatMap(step => step.fields)) {
+    byPath[field.schemaPath] = slotUiDefinition(field)
+  }
+  return byPath
+}
+
+/**
+ * Change a property to a simple field type: its schema takes that type's shape, and its slot
+ * `uiDefinition` (held in the draft until bound, if unbound) takes that type's widget.
+ */
+export function changeFieldType(
+  state: FormTemplateDraftState,
+  key: string,
+  type: SimpleFieldType,
+): FormTemplateDraftState {
+  const path = propertyKeyToPointer(key)
+  const resolved = resolveSchemaPropertyAtPointer(state.jsonSchema, path)
+  if (!resolved) return state
+  const next = replaceProperty(
+    state,
+    key,
+    applyFieldType(resolved.subSchema, type),
+  )
+  if (boundSchemaPaths(state.steps).has(path)) {
+    return {
+      ...next,
+      steps: next.steps.map(step => ({
+        ...step,
+        fields: step.fields.map(f =>
+          f.schemaPath === path
+            ? {
+                ...f,
+                uiDefinition: applyFieldTypeUiDefinition(
+                  slotUiDefinition(f),
+                  type,
+                ),
+              }
+            : f,
+        ),
+      })),
+    }
+  }
+  const { [path]: held = {}, ...unboundUiDefinitions } =
+    state.unboundUiDefinitions
+  const uiDefinition = applyFieldTypeUiDefinition(held, type)
+  return {
+    ...next,
+    unboundUiDefinitions:
+      Object.keys(uiDefinition).length > 0
+        ? { ...unboundUiDefinitions, [path]: uiDefinition }
+        : unboundUiDefinitions,
+  }
+}
+
 export function changeRequired(
   state: FormTemplateDraftState,
   key: string,
@@ -184,8 +289,11 @@ export function removeProperty(
   key: string,
 ): FormTemplateDraftState {
   const path = propertyKeyToPointer(key)
+  const { [path]: _removed, ...unboundUiDefinitions } =
+    state.unboundUiDefinitions
   return {
     jsonSchema: removeSchemaProperty(state.jsonSchema, key),
+    unboundUiDefinitions,
     steps: state.steps.map(step => ({
       ...step,
       fields: step.fields.filter(f => f.schemaPath !== path),
@@ -256,18 +364,47 @@ export function bindField(
   ) {
     return state
   }
+  const { [path]: uiDefinition = {}, ...unboundUiDefinitions } =
+    state.unboundUiDefinitions
   return {
     ...state,
+    unboundUiDefinitions,
     steps: state.steps.map(step =>
       step.uiKey === stepKey
         ? {
             ...step,
             fields: [
               ...step.fields,
-              { schemaPath: path, uiDefinition: {}, isPublic: false },
+              { schemaPath: path, uiDefinition, isPublic: false },
             ],
           }
         : step,
     ),
   }
+}
+
+/**
+ * Replace the step structure wholesale. A slot that drops out keeps its `uiDefinition` for when
+ * its property is bound again; a property that is bound again here no longer needs it kept.
+ */
+export function replaceSteps(
+  state: FormTemplateDraftState,
+  steps: EditableFormTemplateStep[],
+): FormTemplateDraftState {
+  const nextPaths = boundSchemaPaths(steps)
+  const unboundUiDefinitions = Object.fromEntries(
+    Object.entries(state.unboundUiDefinitions).filter(
+      ([path]) => !nextPaths.has(path),
+    ),
+  )
+  for (const field of state.steps.flatMap(step => step.fields)) {
+    const uiDefinition = slotUiDefinition(field)
+    if (
+      !nextPaths.has(field.schemaPath) &&
+      Object.keys(uiDefinition).length > 0
+    ) {
+      unboundUiDefinitions[field.schemaPath] = uiDefinition
+    }
+  }
+  return { ...state, steps, unboundUiDefinitions }
 }

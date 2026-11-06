@@ -1,5 +1,5 @@
 import { SYNAPSE_FILE_HANDLE_ID_FORMAT } from '@/utils/jsonschema/schemaData'
-import { RJSFSchema } from '@rjsf/utils'
+import { RJSFSchema, UiSchema } from '@rjsf/utils'
 
 /**
  * The set of property shapes the simple editor knows how to author. Anything
@@ -8,6 +8,7 @@ import { RJSFSchema } from '@rjsf/utils'
  */
 export type SimpleFieldType =
   | 'text'
+  | 'longText'
   | 'number'
   | 'boolean'
   | 'choice'
@@ -16,6 +17,7 @@ export type SimpleFieldType =
 
 export const FIELD_TYPE_OPTIONS: { value: SimpleFieldType; label: string }[] = [
   { value: 'text', label: 'Text' },
+  { value: 'longText', label: 'Long answer' },
   { value: 'number', label: 'Number' },
   { value: 'boolean', label: 'Yes / No' },
   { value: 'choice', label: 'Single choice' },
@@ -28,8 +30,17 @@ function isStringEnum(values: unknown): values is string[] {
   return Array.isArray(values) && values.every(v => typeof v === 'string')
 }
 
+/** The RJSF widget a slot's `uiDefinition` names to render a 'longText' string as a multi-line box. */
+export const LONG_TEXT_WIDGET = 'textarea'
+
+/**
+ * The simple type a property is authored as. Most types are a schema shape alone; 'longText' is a
+ * plain string whose slot `uiDefinition` asks for a multi-line box, so pass the slot's
+ * `uiDefinition` (or the one held for an unbound property) to tell it apart from 'text'.
+ */
 export function detectFieldType(
   prop: RJSFSchema | undefined,
+  uiDefinition?: UiSchema | null,
 ): SimpleFieldType | null {
   if (!prop || typeof prop !== 'object') return null
   if (prop.format === SYNAPSE_FILE_HANDLE_ID_FORMAT) return 'file'
@@ -46,7 +57,9 @@ export function detectFieldType(
     return 'multiChoice'
   }
   if (prop.type === 'string' && !prop.format && prop.enum === undefined) {
-    return 'text'
+    return uiDefinition?.['ui:widget'] === LONG_TEXT_WIDGET
+      ? 'longText'
+      : 'text'
   }
   if (prop.type === 'number' || prop.type === 'integer') return 'number'
   if (prop.type === 'boolean') return 'boolean'
@@ -105,6 +118,7 @@ export function applyFieldType(
   const choices = existingChoices.length > 0 ? existingChoices : ['Option 1']
   switch (type) {
     case 'text':
+    case 'longText':
       next.type = 'string'
       break
     case 'number':
@@ -128,6 +142,22 @@ export function applyFieldType(
       break
   }
   return next
+}
+
+/**
+ * The slot `uiDefinition` for a field changed to `type`: 'longText' sets the multi-line widget, and
+ * any other type drops it. Every other key, such as `ui:options`, is kept.
+ */
+export function applyFieldTypeUiDefinition(
+  uiDefinition: UiSchema,
+  type: SimpleFieldType,
+): UiSchema {
+  if (type === 'longText') {
+    return { ...uiDefinition, 'ui:widget': LONG_TEXT_WIDGET }
+  }
+  if (uiDefinition['ui:widget'] !== LONG_TEXT_WIDGET) return uiDefinition
+  const { 'ui:widget': _widget, ...rest } = uiDefinition
+  return rest
 }
 
 /** Derive a unique camelCase JSON property key from a display title. */

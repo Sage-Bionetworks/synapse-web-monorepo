@@ -1,7 +1,10 @@
 import { mockGenomicsTemplate } from '@/mocks/accessRequirement/mockFormTemplates'
 import { mockGenomicsSchema } from '@/mocks/accessRequirement/mockJsonSchemas'
 import { MOCK_CONTEXT_VALUE } from '@/mocks/MockSynapseContext'
-import { getFormTemplateHandlers } from '@/mocks/msw/handlers/formTemplateHandlers'
+import {
+  getFormTemplateHandlers,
+  getFormTemplateService,
+} from '@/mocks/msw/handlers/formTemplateHandlers'
 import {
   getCreateSchemaHandlers,
   getRegisteredSchemaHandlers,
@@ -514,6 +517,190 @@ describe('FormTemplateEditor', () => {
     expect(onSaved).toHaveBeenCalledWith(
       expect.objectContaining({ id: mockGenomicsTemplate.id }),
     )
+  })
+
+  it("keeps a field's uiDefinition, including keys the editor doesn't author, through edit, unbind, rebind, move, save, and reopen", async () => {
+    const user = userEvent.setup()
+    const templates = getFormTemplateService()
+    const registeredSchemas = [mockGenomicsSchema as JSONSchema7]
+    server.use(
+      ...getFormTemplateHandlers(REPO_ENDPOINT, templates),
+      ...getRegisteredSchemaHandlers(REPO_ENDPOINT, registeredSchemas),
+      ...getCreateSchemaHandlers(REPO_ENDPOINT, registeredSchemas),
+    )
+    listSchemaVersionsSpy.mockResolvedValue({
+      page: [{ semanticVersion: '1.0.0' }],
+    })
+    const onSaved = vi.fn()
+    // The genomics template's /intendedDataUse slot has
+    // { 'ui:widget': 'textarea', 'ui:options': { rows: 5 } }.
+    const { unmount } = renderEditor(onSaved, mockGenomicsTemplate.id)
+    await screen.findByRole('heading', { name: 'Edit Form Template' })
+
+    await user.click(
+      screen.getByRole('button', { name: 'Edit Intended Data Use Statement' }),
+    )
+    await user.type(
+      screen.getByRole('textbox', { name: 'Question label' }),
+      ' (detailed)',
+    )
+    await user.click(screen.getByRole('button', { name: 'Close field editor' }))
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'New' })).toBeEnabled(),
+    )
+
+    // Unbind it from the first step and bind it again on the second.
+    const firstStep = screen.getByRole('region', { name: /^Step 1:/ })
+    await user.click(
+      within(firstStep).getByRole('button', { name: 'Remove field from step' }),
+    )
+    const secondStep = screen.getByRole('region', { name: /^Step 2:/ })
+    await user.click(
+      within(secondStep).getByRole('button', { name: 'Expand step' }),
+    )
+    await user.click(
+      within(secondStep).getByRole('combobox', { name: 'Bind field' }),
+    )
+    await user.click(
+      await screen.findByRole('option', {
+        name: 'Intended Data Use Statement (detailed) (/intendedDataUse)',
+      }),
+    )
+    // Move it ahead of the other field, then drop the now-empty first step.
+    const movedStep = screen.getByRole('region', { name: /^Step 2:/ })
+    await user.click(
+      within(movedStep).getAllByRole('button', { name: 'Move field up' })[1],
+    )
+    await user.click(
+      within(screen.getByRole('region', { name: /^Step 1:/ })).getByRole(
+        'button',
+        { name: 'Remove step' },
+      ),
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Save Changes' }))
+    await waitFor(() => expect(onSaved).toHaveBeenCalled())
+
+    const expectedUiDefinition = {
+      'ui:widget': 'textarea',
+      'ui:options': { rows: 5 },
+    }
+    expect(templates.getOneById(mockGenomicsTemplate.id)?.steps).toEqual([
+      expect.objectContaining({
+        fields: [
+          {
+            schemaPath: '/intendedDataUse',
+            uiDefinition: expectedUiDefinition,
+            isPublic: false,
+          },
+          { schemaPath: '/agreeToTerms', uiDefinition: {} },
+        ],
+      }),
+    ])
+
+    // Reopened, the preview still applies the saved uiDefinition.
+    unmount()
+    renderEditor(vi.fn(), mockGenomicsTemplate.id)
+    await screen.findByRole('heading', { name: 'Edit Form Template' })
+    const preview = await screen.findByRole('textbox', {
+      name: 'root_intendedDataUse',
+    })
+    expect(preview.tagName).toBe('TEXTAREA')
+    expect(preview).toHaveAttribute('rows', '5')
+  })
+
+  describe('Long answer', () => {
+    async function chooseFieldType(user: UserEvent, label: string) {
+      await user.click(screen.getByRole('combobox', { name: 'Field type' }))
+      await user.click(await screen.findByRole('option', { name: label }))
+    }
+
+    it('holds the choice for a property that is not bound yet, applies it at bind, and previews a multi-line box', async () => {
+      const user = userEvent.setup()
+      const templates = getFormTemplateService([])
+      server.use(...getFormTemplateHandlers(REPO_ENDPOINT, templates))
+      const onSaved = vi.fn()
+      renderEditor(onSaved)
+
+      await createField(user)
+      await chooseFieldType(user, 'Long answer')
+      expect(
+        screen.getByRole('combobox', { name: 'Field type' }),
+      ).toHaveTextContent('Long answer')
+      await user.click(
+        screen.getByRole('button', { name: 'Close field editor' }),
+      )
+      await waitFor(() =>
+        expect(screen.getByRole('button', { name: 'New' })).toBeEnabled(),
+      )
+      await user.click(screen.getByRole('combobox', { name: 'Bind field' }))
+      await user.click(
+        await screen.findByRole('option', { name: 'New field (/newField)' }),
+      )
+
+      const preview = screen.getByRole('textbox', { name: 'root_newField' })
+      expect(preview.tagName).toBe('TEXTAREA')
+
+      await user.type(getNameField(), 'My Template')
+      await user.click(screen.getByRole('button', { name: 'Create Template' }))
+      await waitFor(() => expect(onSaved).toHaveBeenCalled())
+      expect(templates.getAll()[0].steps[0].fields).toEqual([
+        {
+          schemaPath: '/newField',
+          uiDefinition: { 'ui:widget': 'textarea' },
+          isPublic: false,
+        },
+      ])
+      expect(createdSchemas[0].properties?.newField).toEqual(
+        expect.objectContaining({ type: 'string' }),
+      )
+    })
+
+    it('reopens as Long answer, and switching away removes only ui:widget', async () => {
+      const user = userEvent.setup()
+      const templates = getFormTemplateService()
+      server.use(...getFormTemplateHandlers(REPO_ENDPOINT, templates))
+      listSchemaVersionsSpy.mockResolvedValue({
+        page: [{ semanticVersion: '1.0.0' }],
+      })
+      const onSaved = vi.fn()
+      renderEditor(onSaved, mockGenomicsTemplate.id)
+      await screen.findByRole('heading', { name: 'Edit Form Template' })
+
+      const libraryRow = screen.getByRole('button', {
+        name: 'Edit Intended Data Use Statement',
+      })
+      expect(libraryRow).toHaveTextContent('Long answer')
+      await user.click(libraryRow)
+      expect(
+        screen.getByRole('combobox', { name: 'Field type' }),
+      ).toHaveTextContent('Long answer')
+
+      await chooseFieldType(user, 'Text')
+      await user.click(
+        screen.getByRole('button', { name: 'Close field editor' }),
+      )
+      await waitFor(() =>
+        expect(
+          screen.getByRole('button', { name: 'Save Changes' }),
+        ).toBeEnabled(),
+      )
+      expect(
+        screen.getByRole('textbox', { name: 'root_intendedDataUse' }).tagName,
+      ).toBe('INPUT')
+
+      await user.click(screen.getByRole('button', { name: 'Save Changes' }))
+      await waitFor(() => expect(onSaved).toHaveBeenCalled())
+      expect(
+        templates.getOneById(mockGenomicsTemplate.id)?.steps[0].fields,
+      ).toEqual([
+        {
+          schemaPath: '/intendedDataUse',
+          uiDefinition: { 'ui:options': { rows: 5 } },
+          isPublic: true,
+        },
+      ])
+    })
   })
 
   it('shows an error instead of the editor when the template cannot be loaded', async () => {

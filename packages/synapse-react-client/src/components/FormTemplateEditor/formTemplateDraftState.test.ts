@@ -7,6 +7,7 @@ import {
 import {
   bindField,
   changeContext,
+  changeFieldType,
   changeRequired,
   createField,
   FormTemplateDraftState,
@@ -16,9 +17,12 @@ import {
   NEW_FIELD_TITLE,
   removeProperty,
   renamePropertyKey,
+  replaceJsonSchema,
   replaceProperty,
+  replaceSteps,
   updateProperty,
 } from './formTemplateDraftState'
+import { LONG_TEXT_WIDGET } from './schemaFieldUtils'
 import { EditableFormTemplateStep } from './utils'
 
 /**
@@ -69,7 +73,12 @@ function draft(
   steps: EditableFormTemplateStep[] = [step('s1', ['/institution'])],
   editingPropertyKey: string | null = null,
 ): FormTemplateDraftState {
-  return { jsonSchema: schema, steps, editingPropertyKey }
+  return {
+    jsonSchema: schema,
+    steps,
+    editingPropertyKey,
+    unboundUiDefinitions: {},
+  }
 }
 
 /** Each step's bound schemaPaths, for readable assertions. */
@@ -289,6 +298,115 @@ describe('bindField', () => {
   ])('is a no-op when %s', (_label, propertyKey, stepKey) => {
     const state = draft([step('s1', ['/institution']), step('s2')])
     expect(bindField(state, propertyKey, stepKey)).toBe(state)
+  })
+})
+
+describe('replaceSteps', () => {
+  const uiDefinition = {
+    'ui:widget': LONG_TEXT_WIDGET,
+    'ui:options': { rows: 5 },
+  }
+  const boundWithUi = () =>
+    draft([
+      {
+        ...step('s1'),
+        fields: [{ schemaPath: '/age', uiDefinition, isPublic: false }],
+      },
+      step('s2'),
+    ])
+
+  it("keeps an unbound slot's uiDefinition for when the property is bound again", () => {
+    const state = boundWithUi()
+    const unbound = replaceSteps(state, [step('s1'), step('s2')])
+    const rebound = bindField(unbound, 'age', 's2')
+
+    expect(rebound.steps[1].fields).toEqual([
+      { schemaPath: '/age', uiDefinition, isPublic: false },
+    ])
+    expect(rebound.unboundUiDefinitions).toEqual({})
+  })
+
+  it('drops a held uiDefinition once the new steps bind its property again', () => {
+    const state = boundWithUi()
+    const unbound = replaceSteps(state, [step('s1'), step('s2')])
+    expect(replaceSteps(unbound, state.steps).unboundUiDefinitions).toEqual({})
+  })
+
+  it('follows a rename and is dropped with the property', () => {
+    const unbound = replaceSteps(boundWithUi(), [step('s1'), step('s2')])
+
+    const renamed = renamePropertyKey(unbound, 'age', 'yearsOld')
+    expect(renamed.unboundUiDefinitions).toEqual({ '/yearsOld': uiDefinition })
+    expect(removeProperty(renamed, 'yearsOld').unboundUiDefinitions).toEqual({})
+  })
+})
+
+describe('changeFieldType', () => {
+  it('writes the long-answer widget to the bound slot, and removes only that when switched back', () => {
+    const state = draft([
+      {
+        ...step('s1'),
+        fields: [
+          {
+            schemaPath: '/age',
+            uiDefinition: { 'ui:options': { rows: 3 } },
+            isPublic: false,
+          },
+        ],
+      },
+    ])
+
+    const long = changeFieldType(state, 'age', 'longText')
+    expect(resolve(long, 'age')?.subSchema).toMatchObject({ type: 'string' })
+    expect(long.steps[0].fields[0].uiDefinition).toEqual({
+      'ui:options': { rows: 3 },
+      'ui:widget': LONG_TEXT_WIDGET,
+    })
+
+    const text = changeFieldType(long, 'age', 'text')
+    expect(text.steps[0].fields[0].uiDefinition).toEqual({
+      'ui:options': { rows: 3 },
+    })
+  })
+
+  it('holds the choice for an unbound property until it is bound', () => {
+    const long = changeFieldType(draft([step('s1')]), 'age', 'longText')
+    expect(long.unboundUiDefinitions).toEqual({
+      '/age': { 'ui:widget': LONG_TEXT_WIDGET },
+    })
+    expect(
+      bindField(long, 'age', 's1').steps[0].fields[0].uiDefinition,
+    ).toEqual({ 'ui:widget': LONG_TEXT_WIDGET })
+    expect(changeFieldType(long, 'age', 'number').unboundUiDefinitions).toEqual(
+      {},
+    )
+  })
+
+  it('keeps other held keys when an unbound property switches away', () => {
+    const state = {
+      ...draft([step('s1')]),
+      unboundUiDefinitions: {
+        '/age': { 'ui:widget': LONG_TEXT_WIDGET, 'ui:options': { rows: 3 } },
+      },
+    }
+    expect(changeFieldType(state, 'age', 'text').unboundUiDefinitions).toEqual({
+      '/age': { 'ui:options': { rows: 3 } },
+    })
+  })
+})
+
+describe('replaceJsonSchema', () => {
+  it('drops a held uiDefinition whose property the new schema no longer has', () => {
+    const state = {
+      ...draft([step('s1')]),
+      unboundUiDefinitions: {
+        '/age': { 'ui:widget': LONG_TEXT_WIDGET },
+        '/gone': { 'ui:widget': LONG_TEXT_WIDGET },
+      },
+    }
+    expect(replaceJsonSchema(state, schema).unboundUiDefinitions).toEqual({
+      '/age': { 'ui:widget': LONG_TEXT_WIDGET },
+    })
   })
 })
 
