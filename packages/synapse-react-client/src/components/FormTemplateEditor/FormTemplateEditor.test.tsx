@@ -175,6 +175,10 @@ describe('FormTemplateEditor', () => {
 
     expect(getNameField()).toHaveAttribute('aria-invalid', 'true')
     expect(getNameField()).toHaveAccessibleDescription('Name is required')
+    // A started save would relabel the button "Saving…".
+    expect(
+      screen.getByRole('button', { name: 'Create Template' }),
+    ).toBeEnabled()
     expect(createTemplateSpy).not.toHaveBeenCalled()
   })
 
@@ -187,8 +191,10 @@ describe('FormTemplateEditor', () => {
     await user.click(screen.getByRole('button', { name: 'Create Template' }))
 
     expect(screen.getByText('Name is required')).toBeVisible()
+    expect(
+      screen.getByRole('button', { name: 'Create Template' }),
+    ).toBeEnabled()
     expect(createTemplateSpy).not.toHaveBeenCalled()
-    expect(createdSchemas).toEqual([])
   })
 
   it('saves the name without surrounding spaces', async () => {
