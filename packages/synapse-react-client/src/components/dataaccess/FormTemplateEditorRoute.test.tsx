@@ -1,14 +1,19 @@
 import { mockGenomicsTemplate } from '@/mocks/accessRequirement/mockFormTemplates'
 import { server } from '@/mocks/msw/server'
 import { createWrapper } from '@/testutils/TestingLibraryUtils'
-import { render, screen } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
+import userEvent, { UserEvent } from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
-import { MemoryRouter, Route, Routes } from 'react-router'
+import { createMemoryRouter, RouterProvider } from 'react-router'
 import {
   BackendDestinationEnum,
   getEndpoint,
 } from '@/utils/functions/getEndpoint'
+import {
+  DISCARD_CHANGES_CONFIRM_TEXT,
+  DISCARD_CHANGES_TITLE,
+  KEEP_EDITING_TEXT,
+} from '../FormTemplateEditor/useUnsavedChangesPrompt'
 import { FormTemplateEditorRoute } from './FormTemplateEditorRoute'
 import {
   FORM_TEMPLATE_ROUTE,
@@ -22,23 +27,39 @@ import { mockGenomicsSchema } from '@/mocks/accessRequirement/mockJsonSchemas'
 
 const REPO_ORIGIN = getEndpoint(BackendDestinationEnum.REPO_ENDPOINT)
 
-function renderAt(path: string) {
-  render(
-    <MemoryRouter initialEntries={[path]}>
-      <Routes>
-        <Route path={FORM_TEMPLATES_PATH} element={<div>Template list</div>} />
-        <Route
-          path={NEW_FORM_TEMPLATE_PATH}
-          element={<FormTemplateEditorRoute />}
-        />
-        <Route
-          path={`/${FORM_TEMPLATE_ROUTE}`}
-          element={<FormTemplateEditorRoute />}
-        />
-      </Routes>
-    </MemoryRouter>,
-    { wrapper: createWrapper() },
+function renderAt(...initialEntries: string[]) {
+  // `useBlocker` only works under a data router, which is how the Reviewer Dashboard mounts this route.
+  const router = createMemoryRouter(
+    [
+      { path: FORM_TEMPLATES_PATH, element: <div>Template list</div> },
+      { path: NEW_FORM_TEMPLATE_PATH, element: <FormTemplateEditorRoute /> },
+      { path: `/${FORM_TEMPLATE_ROUTE}`, element: <FormTemplateEditorRoute /> },
+    ],
+    { initialEntries, initialIndex: initialEntries.length - 1 },
   )
+  render(<RouterProvider router={router} />, { wrapper: createWrapper() })
+  return router
+}
+
+async function editName(user: UserEvent) {
+  await user.type(
+    await screen.findByRole('textbox', { name: 'Internal Name' }),
+    'Unsaved name',
+  )
+}
+
+function getDiscardPrompt() {
+  return screen.getByRole('dialog', { name: DISCARD_CHANGES_TITLE })
+}
+
+function queryDiscardPrompt() {
+  return screen.queryByRole('dialog', { name: DISCARD_CHANGES_TITLE })
+}
+
+function dispatchBeforeUnload() {
+  const event = new Event('beforeunload', { cancelable: true })
+  window.dispatchEvent(event)
+  return event
 }
 
 describe('FormTemplateEditorRoute', () => {
@@ -56,11 +77,119 @@ describe('FormTemplateEditorRoute', () => {
     await screen.findByText('Edit Form Template')
   })
 
-  it('returns to the list on cancel', async () => {
+  it('returns to the list on cancel without asking when nothing changed', async () => {
     const user = userEvent.setup()
     renderAt(NEW_FORM_TEMPLATE_PATH)
     await user.click(await screen.findByRole('button', { name: 'Cancel' }))
     await screen.findByText('Template list')
+    expect(queryDiscardPrompt()).not.toBeInTheDocument()
+  })
+
+  it('asks before cancelling with unsaved changes, and stays when the user keeps editing', async () => {
+    const user = userEvent.setup()
+    renderAt(NEW_FORM_TEMPLATE_PATH)
+    await editName(user)
+
+    await user.click(screen.getByRole('button', { name: 'Cancel' }))
+    await user.click(
+      within(getDiscardPrompt()).getByRole('button', {
+        name: KEEP_EDITING_TEXT,
+      }),
+    )
+
+    await waitFor(() => expect(queryDiscardPrompt()).not.toBeInTheDocument())
+    expect(screen.getByRole('textbox', { name: 'Internal Name' })).toHaveValue(
+      'Unsaved name',
+    )
+    expect(screen.queryByText('Template list')).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Cancel' }))
+    await user.click(
+      within(getDiscardPrompt()).getByRole('button', {
+        name: DISCARD_CHANGES_CONFIRM_TEXT,
+      }),
+    )
+    await screen.findByText('Template list')
+  })
+
+  it('asks before following an in-app link with unsaved changes', async () => {
+    const user = userEvent.setup()
+    renderAt(NEW_FORM_TEMPLATE_PATH)
+    await editName(user)
+
+    await user.click(screen.getByRole('link', { name: 'Form Templates' }))
+    await user.click(
+      within(getDiscardPrompt()).getByRole('button', {
+        name: KEEP_EDITING_TEXT,
+      }),
+    )
+    await waitFor(() => expect(queryDiscardPrompt()).not.toBeInTheDocument())
+    expect(screen.getByText('Create Form Template')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('link', { name: 'Form Templates' }))
+    await user.click(
+      within(getDiscardPrompt()).getByRole('button', {
+        name: DISCARD_CHANGES_CONFIRM_TEXT,
+      }),
+    )
+    await screen.findByText('Template list')
+  })
+
+  it('asks before going back with unsaved changes', async () => {
+    const user = userEvent.setup()
+    const router = renderAt(FORM_TEMPLATES_PATH, NEW_FORM_TEMPLATE_PATH)
+    await editName(user)
+
+    await act(() => router.navigate(-1))
+
+    expect(getDiscardPrompt()).toBeVisible()
+    expect(screen.queryByText('Template list')).not.toBeInTheDocument()
+
+    await user.click(
+      within(getDiscardPrompt()).getByRole('button', {
+        name: DISCARD_CHANGES_CONFIRM_TEXT,
+      }),
+    )
+    await screen.findByText('Template list')
+  })
+
+  it('follows in-app links without asking when nothing changed', async () => {
+    const user = userEvent.setup()
+    renderAt(NEW_FORM_TEMPLATE_PATH)
+    await screen.findByText('Create Form Template')
+
+    await user.click(screen.getByRole('link', { name: 'Form Templates' }))
+
+    await screen.findByText('Template list')
+    expect(queryDiscardPrompt()).not.toBeInTheDocument()
+  })
+
+  it('asks the browser to confirm closing or reloading the tab only while there are unsaved changes', async () => {
+    const user = userEvent.setup()
+    renderAt(NEW_FORM_TEMPLATE_PATH)
+    await screen.findByText('Create Form Template')
+    expect(dispatchBeforeUnload().defaultPrevented).toBe(false)
+
+    await editName(user)
+    expect(dispatchBeforeUnload().defaultPrevented).toBe(true)
+
+    await user.clear(screen.getByRole('textbox', { name: 'Internal Name' }))
+    expect(dispatchBeforeUnload().defaultPrevented).toBe(false)
+  })
+
+  it('returns to the list without asking after a successful save', async () => {
+    const user = userEvent.setup()
+    server.use(
+      ...getFormTemplateHandlers(REPO_ORIGIN),
+      ...getRegisteredSchemaHandlers(REPO_ORIGIN, [mockGenomicsSchema]),
+    )
+    renderAt(getFormTemplatePath(mockGenomicsTemplate.id!))
+    await editName(user)
+
+    await user.click(screen.getByRole('button', { name: 'Save Changes' }))
+
+    await screen.findByText('Template list')
+    expect(queryDiscardPrompt()).not.toBeInTheDocument()
   })
 
   it('shows an error when the template cannot be loaded', async () => {
